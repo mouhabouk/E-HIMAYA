@@ -2,12 +2,15 @@ import 'dart:convert';
 
 import 'package:drift/drift.dart' show Value;
 import 'package:ehimaya/core/db/app_database.dart';
+import 'package:ehimaya/core/routing/app_router.dart';
 import 'package:ehimaya/core/storage/secure_store.dart';
 import 'package:ehimaya/features/home/home_screen.dart';
 import 'package:ehimaya/features/institution/my_institution_screen.dart';
+import 'package:ehimaya/features/report/report_queued_screen.dart';
 import 'package:ehimaya/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 
 import '../helpers/app_harness.dart';
 import '../helpers/fake_http.dart';
@@ -251,7 +254,8 @@ void main() {
     expect(h.sos.organizations, [orgId]);
 
     // The big button uses the settings default: myself.
-    await tester.tap(find.text('Accueil').last);
+    GoRouter.of(tester.element(find.byType(ReportQueuedScreen)))
+        .go(Routes.home);
     await tester.pumpAndSettle();
     await tester.longPress(find.byKey(const Key('sos-button')));
     await tester.pumpAndSettle();
