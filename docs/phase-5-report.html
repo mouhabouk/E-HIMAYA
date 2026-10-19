@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ء-حماية | تقرير المرحلة 5</title>
+<style>
+:root{--bg:#f7f8fa;--paper:#fff;--ink:#1b2430;--muted:#5b6675;--line:#dfe3e8;--accent:#b3261e;--accent2:#0b5cad;--ok:#1e7d3a;--warn:#a15c00;--chip:#eef1f5;--head:#f1f3f6}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1318;--paper:#161b22;--ink:#e6eaef;--muted:#9aa5b1;--line:#2a313b;--accent:#ff6b5e;--accent2:#5aa9ff;--ok:#5cc97a;--warn:#e0a24a;--chip:#1f2630;--head:#1c222b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Naskh Arabic","Segoe UI",Tahoma,Arial,sans-serif;line-height:1.75;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header.cover{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:10px;padding:28px 24px;margin-bottom:20px}
+header.cover h1{margin:0 0 6px;font-size:30px}
+header.cover .sub{color:var(--muted);margin:0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:16px}
+.meta div{background:var(--chip);border-radius:6px;padding:8px 12px;font-size:14px}
+.meta b{display:block;color:var(--muted);font-weight:600;font-size:12px}
+nav.toc{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px 24px;margin-bottom:20px}
+nav.toc ol{margin:0;padding-inline-start:20px;columns:2;column-gap:32px}
+@media (max-width:700px){nav.toc ol{columns:1}}
+nav.toc a,a{color:var(--accent2);text-decoration:none}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:20px}
+h2{margin-top:0;font-size:23px;border-bottom:2px solid var(--line);padding-bottom:8px}
+h3{font-size:19px;margin-top:28px;color:var(--accent2)}
+h4{font-size:16px;margin-bottom:4px}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:start;vertical-align:top}
+th{background:var(--head);font-weight:700;white-space:nowrap}
+td code,p code,li code{direction:ltr;unicode-bidi:isolate;background:var(--chip);padding:1px 5px;border-radius:4px;font-size:13px}
+.id{font-family:Consolas,monospace;direction:ltr;unicode-bidi:isolate;white-space:nowrap;font-size:13px;color:var(--muted)}
+.p{display:inline-block;border-radius:10px;padding:0 8px;font-size:12px;font-weight:700;white-space:nowrap}
+.M{background:#fde2e0;color:#8c1d16}.S{background:#fff1d6;color:#7a4a00}.C{background:#e1efff;color:#0a4a8c}.W{background:#e8e8e8;color:#444}
+@media (prefers-color-scheme:dark){.M{background:#4a1d1a;color:#ffb4ad}.S{background:#4a3510;color:#ffd38a}.C{background:#14304f;color:#a8d1ff}.W{background:#333;color:#ccc}}
+.note{border-inline-start:4px solid var(--accent2);background:var(--chip);padding:10px 14px;border-radius:6px;margin:12px 0}
+.warn{border-inline-start:4px solid var(--warn)}
+.ltr{direction:ltr;unicode-bidi:isolate}
+ul,ol{padding-inline-start:22px}
+footer{color:var(--muted);text-align:center;font-size:13px}
+@media print{body{background:#fff}section,header.cover,nav.toc{border:none;break-inside:avoid-page}nav.toc{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="cover">
+  <h1>ء-حماية <span class="ltr">e-Himaya</span></h1>
+  <p class="sub">تقرير نهاية المرحلة 5: العمليات والمتطوعون والتنبيهات</p>
+  <div class="meta">
+    <div><b>التاريخ</b>2026-10-19</div>
+    <div><b>الفرع</b><span class="ltr">phase-5-operations</span></div>
+    <div><b>الحالة</b>منجزة، بانتظار موافقتك للانتقال إلى المرحلة 6</div>
+    <div><b>المراجع</b><a href="01-requirements.html">المتطلبات</a> · <a href="02-architecture.html">الهيكلة</a> · <a href="api/phase-5-contract.md">عقد الواجهة البرمجية</a> · <a href="versions.md">الإصدارات</a></div>
+  </div>
+</header>
+
+<section>
+<h2>1. جدول التقدم (Progress Table)</h2>
+<div class="tbl"><table>
+<tr><th>#</th><th>العنصر</th><th>المخرجات في المستودع</th><th>التحقق</th><th>التقدم</th></tr>
+<tr><td>5.1</td><td>عقد الواجهة البرمجية</td><td><code>docs/api/phase-5-contract.md</code>: الأدوار، المستويات العملياتية، اللجان، الوحدات والموارد، التدخلات، المتطوعون والاستنفار، أجهزة الدفع، الإشعارات والتنبيهات، نصائح السلامة، البريد، الأحداث الحية، 39 رمز خطأ</td><td>الخلفية واللوحة والتطبيق مبنية عليه</td><td>100%</td></tr>
+<tr><td>5.2</td><td>المستويات العملياتية (§6.4، FR-C-24)</td><td>مستوى لكل ولاية: عادي، أزمة، كارثة. اللجنة المحلية تنتقل بين العادي والأزمة لولايتها فقط، والمركزية لأي مستوى وأي ولاية. عند التغيير: إعادة حساب أولوية البلاغات المفتوحة في آخر 48 ساعة، المستوى على الحوادث المفتوحة، سطر في سجلها، شريط تنبيه في كل شاشات اللوحة</td><td>اختبارات الصلاحيات وأثر المستوى على الأولوية</td><td>100%</td></tr>
+<tr><td>5.3</td><td>اللجان (FR-C-15، FR-C-16)</td><td>توجيهات من المركزية إلى الولايات (أو من المحلية لولايتها) مع الاستعجال، تأكيد الاستلام بملاحظة لكل ولاية، وما ينتظر التأكيد؛ لوحة أداء لكل ولاية وللمستوى الوطني: البلاغات، المغلقة، المرفوضة، متوسط أول استجابة وزمن الحل، الحوادث المفتوحة، التكليفات النشطة، المتطوعون المقبولون والجاهزون، التنبيهات النشطة</td><td>اختبارات التوجيهات والتأكيد والنطاق والأداء</td><td>100%</td></tr>
+<tr><td>5.4</td><td>الوحدات والموارد (FR-C-09، FR-C-10)</td><td>إدارات ووحدات ومراكز متقدمة بموقعها؛ عشرة أنواع موارد (شاحنة إطفاء، صهريج، إسعاف، إنقاذ، معدات ثقيلة، طائرة مسيّرة، مطفأة كبيرة، قارب، قيادة، أخرى) برمز نداء فريد في الوحدة؛ الحالة متاح أو مكلَّف أو خارج الخدمة؛ ملخص حسب النوع وطبقة على الخريطة</td><td>اختبارات النطاق والتفرد والحذف المحمي</td><td>100%</td></tr>
+<tr><td>5.5</td><td>التدخلات (FR-C-09، UC-01)</td><td>بطاقة الحادثة (عنوان وتصنيف دقيق حسب الصنف)، أوامر تكليف للموارد بمسار: أمر، في الطريق، في الموقع، انتهاء أو إلغاء؛ ملاحظات في سجل الحادثة؛ إغلاق بتقييم (النتيجة، الملخص، المنقذون والمصابون والوفيات والمُجلَون، الدروس). يرى المبلّغ حالة بلاغه تتقدم آليا: قيد المعالجة عند أول تكليف، تم التدخل عند الوصول، مغلق عند التقييم، مع إشعار على هاتفه</td><td>اختبار مسار التدخل كاملا وتقدم حالات البلاغات</td><td>100%</td></tr>
+<tr><td>5.6</td><td>المتطوعون (FR-A-020 إلى FR-A-023، FR-C-04)</td><td>طلب من التطبيق بالاختصاصات والتوفر والفترة، مراجعة (قبول، رفض بسبب، تعليق، إعادة تفعيل) مع بريد بلغة المتطوع؛ الجاهزية من 1 إلى 24 ساعة؛ الموقع اللحظي في Valkey فقط وينتهي مع الجاهزية دون أرشفة؛ استنفار (UC-05) لأقرب الجاهزين حسب الاختصاص والشعاع، قبول بوقت الوصول أو اعتذار، تكليف آلي للمقبول، اكتمال العدد، انتهاء دون رد بعد 30 دقيقة</td><td>اختبارات الطلب والمراجعة والبريد والجاهزية والاستنفار</td><td>100%</td></tr>
+<tr><td>5.7</td><td>الإشعارات الإعلامية والتنبيهات (FR-A-060، FR-A-061، FR-C-17، FR-C-18)</td><td>مسودة ثم نشر؛ ثلاث لغات (العربية إلزامية)؛ قنوات الدفع (FCM) والرسائل القصيرة والبريد؛ الإعلامية حسب الموضوع والجمهور (الكل، المتطوعون، المؤسسات، مستخدم واحد) والولايات؛ التنبيهات بالخطورة والفئة ونوع الخطر وتاريخ انتهاء خلال 7 أيام، والمنطقة ولايات أو مضلع مرسوم؛ الموقع الحالي للهاتف (مقرّبا إلى 1 كم تقريبا) يسبق ولاية الملف؛ تقدير الجمهور قبل النشر؛ إرسال في الخلفية على دفعات قابلة للاستئناف مع إحصاءات حية؛ إلغاء التنبيه يصل إلى الهواتف؛ صندوق الوارد في التطبيق والتنبيهات النشطة العامة</td><td>اختبارات دورة الحياة، النطاق، المضلع، الانتهاء، الإرسال على دفعات، القنوات غير المهيأة</td><td>100%</td></tr>
+<tr><td>5.8</td><td>نصائح السلامة (FR-A-062، FR-C-19)</td><td>تسع نصائح أولية بثلاث لغات (حريق، فيضان، حادث مرور، إسعاف، غرق، موجة حر، تسرب كيميائي، عاصفة، زلزال)؛ محرر في اللوحة بمعاينة؛ لا نشر إلا باكتمال اللغات الثلاث؛ رقم مراجعة (ETag) لتنزيل التطبيق النسخة الجديدة فقط، ونسخة مدمجة في التطبيق للعمل دون اتصال</td><td>اختبارات ETag و304 والترجمة الناقصة</td><td>100%</td></tr>
+<tr><td>5.9</td><td>البريد الإلكتروني</td><td>قرار المتطوع، دعوات المؤسسات (كانت تُشارك يدويا في المرحلة 4)، ملخص أسبوعي لمسؤولي المؤسسات بالتكوين المنتهي والصيانة المتأخرة (FR-B-005، FR-B-006)، والرسائل بقناة البريد؛ Mailpit في بيئة التطوير</td><td>اختبارات القوالب والصندوق الصادر؛ تجربة SMTP حقيقية محليا</td><td>100%</td></tr>
+<tr><td>5.10</td><td>التجميع الآلي في مستوى الكارثة (BR-11) ومكوّن المستوى في الأولوية</td><td>في مستوى الكارثة تُطبَّق اقتراحات التجميع آليا (الفاعل <code>system:auto_grouping</code>، ومعلَّمة «آليا» في سجل الحادثة)؛ مكوّن «المستوى العملياتي» يرفع الأولوية (0.7 في الأزمة، 1.0 في الكارثة، وزن 10 قابل للتعديل) ولا يخفضها أبدا</td><td>اختبار وحدة واختبار تكامل</td><td>100%</td></tr>
+<tr><td>5.11</td><td>لوحة التحكم <span class="ltr">apps/dashboard</span></td><td>لوحة العمليات في صفحة الحادثة (البطاقة، التكليفات بمسار الحالات، الاستنفار مع اقتراح المتطوعين ومواقعهم، الملاحظات، الإغلاق والتقييم)؛ صفحة الموارد والوحدات؛ المتطوعون بالمرشحات والمراجعة وخريطة حرارية للجاهزية؛ سجل الإشعارات ومحرر الرسائل والتنبيهات برسم المضلع على الخريطة وتقدير الجمهور وإحصاءات الإرسال؛ محرر نصائح السلامة بثلاث لغات ومعاينة؛ صفحة اللجان (المستويات، التوجيهات، الأداء)؛ طبقات جديدة على الخريطة (الموارد، المتطوعون الجاهزون، التنبيهات)؛ شريط مستوى الأزمة والكارثة في كل الشاشات؛ دخول محرر المحتوى ومدير النظام</td><td>240 اختبارا ناجحا (كانت 186)، الفحص والأنواع والبناء سليمة</td><td>100%</td></tr>
+<tr><td>5.12</td><td>تطبيق الهاتف <span class="ltr">apps/mobile</span></td><td>طلب التطوع ومتابعته وسحبه؛ الجاهزية مع إرسال الموقع والتطبيق مفتوح؛ الاستنفار (قبول بوقت الوصول، اعتذار، «وصلت»)؛ صندوق الإشعارات والتنبيهات النشطة لمكاني مع شريط أحمر للتنبيه العالي وتفاصيل التنبيه؛ إشعارات الدفع بقناة <code>ehimaya_alerts</code> وفتح الشاشة المناسبة عند النقر، مع استعلام دوري إن لم يُضبط Firebase؛ نصائح السلامة دون اتصال من أول تشغيل؛ مفتاح «تنبيهات حيث أكون» في الإعدادات</td><td>119 اختبارا ناجحا (كانت 85)، التحليل والتنسيق سليمان</td><td>100%</td></tr>
+<tr><td>5.13</td><td>البنية والاختبارات</td><td>الترحيل <code>0007</code>، عامل الإرسال في الخلفية، Mailpit ومتغيرات القنوات في compose و <code>.env.example</code></td><td>140 اختبارا للخلفية (كانت 123)، الترحيل صعودا ونزولا سليم؛ كشفت الاختبارات خللين في عامل الإرسال وصُححا قبل الدمج؛ انظر طلب الدمج</td><td>100%</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>2. قرارات تحتاج علمك</h2>
+<div class="tbl"><table>
+<tr><th>القرار</th><th>السبب</th></tr>
+<tr><td>إشعارات الدفع تحتاج مشروع Firebase (مجاني)</td><td>FCM هو الطريق الوحيد المجاني للوصول إلى أندرويد و iOS. يلزم إنشاء مشروع Firebase باسم الحماية المدنية، ثم وضع ملف حساب الخدمة في <code>FCM_SERVICE_ACCOUNT</code> وملفي التطبيق (<code>google-services.json</code> و <code>GoogleService-Info.plist</code>). دونها يعمل كل شيء ويستعلم التطبيق عن التنبيهات النشطة دوريا.</td></tr>
+<tr><td>مزود الرسائل القصيرة ما زال مفتوحا (Q3)</td><td>الخلفية تتصل ببوابة HTTP عامة (<code>SMS_HTTP_URL</code>)؛ يكفي التعاقد مع مزود تونسي وضبط العنوان والرمز. القناة مسجّلة «متجاوزة» حتى ذلك الحين.</td></tr>
+<tr><td>نشر التنبيه للمحرر أو اللجان فقط، ومدير العمليات يكتب المسودة</td><td>تطبيقا لـ UC-04 «مصادقة المحرر أو اللجنة» قبل أن يصل التنبيه إلى المواطنين.</td></tr>
+<tr><td>في مستوى الكارثة تُعلَّق الإشعارات الإعلامية لا التنبيهات</td><td>تطبيقا لـ §6.4 (تعليق الوظائف غير الأساسية)؛ رسائل السلامة تبقى ممكنة دائما.</td></tr>
+<tr><td>الموقع المحفوظ للهاتف مقرّب إلى 0.01 درجة (حوالي 1 كم)</td><td>يكفي لاستهداف منطقة تنبيه ولا يسمح بتتبع أحد؛ يُحذف إن ألغى المستخدم «تنبيهات حسب موقعي».</td></tr>
+<tr><td>نصائح السلامة الأولية ومفردات تصنيف الحوادث مؤقتة</td><td>كُتبت من مراجع عامة ويجب أن تصادق عليها الحماية المدنية قبل الإنتاج؛ تُعدَّل من اللوحة (النصائح) أو من وحدة واحدة في الخلفية (التصنيف).</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>3. حدود معروفة</h2>
+<ul>
+<li>الإرسال الفعلي عبر FCM ومزود الرسائل القصيرة لم يُجرَّب لغياب الحسابات؛ الاختبارات تستعمل قنوات وهمية، وبروتوكول SMTP جُرّب فعليا.</li>
+<li>منشئ قواعد التنبيه الآلي وحساسات إنترنت الأشياء وطبقة الطقس في المرحلة 7، كما في الخطة.</li>
+<li>مكتبة <span class="ltr">maplibre-gl</span> 5.24.0 ما زال عليها التنبيه الأمني المذكور في المرحلة 4؛ الترقية إلى 6.x تغيير مستقل.</li>
+<li>الموقع اللحظي للمتطوع الجاهز يُرسل والتطبيق مفتوح فقط؛ الإرسال في الخلفية يحتاج خدمة دائمة وإذن الموقع في الخلفية، وهو قرار خصوصية مؤجل.</li>
+<li>الإشعار لمستخدم واحد يتطلب لصق معرّف حسابه؛ البحث عن مستخدم بالبريد يأتي لاحقا.</li>
+<li>رسم المضلع على الخريطة مختبر بالمنطق ودون متصفح حقيقي؛ يُجرَّب في اختبار الدخان.</li>
+</ul>
+</section>
+
+<section>
+<h2>4. تقدم المشروع الإجمالي</h2>
+<div class="tbl"><table>
+<tr><th>#</th><th>المرحلة</th><th>الحالة</th><th>التقدم</th></tr>
+<tr><td>0</td><td>المتطلبات والهيكلة</td><td>معتمدة</td><td>100%</td></tr>
+<tr><td>1</td><td>الأساس التقني</td><td>مدمجة</td><td>100%</td></tr>
+<tr><td>2</td><td>مسار البلاغ الأساسي</td><td>مدمجة</td><td>100%</td></tr>
+<tr><td>3</td><td>طبقة الذكاء الاصطناعي 1</td><td>مدمجة</td><td>100%</td></tr>
+<tr><td>4</td><td>المؤسسات</td><td>مدمجة</td><td>100%</td></tr>
+<tr><td>5</td><td>العمليات والمتطوعون والتنبيهات</td><td>منجزة، بانتظار الدمج والموافقة</td><td>100%</td></tr>
+<tr><td>6</td><td>البث والرؤية</td><td>لم تبدأ</td><td>0%</td></tr>
+<tr><td>7</td><td>الطقس والتنبؤ والاتصالات</td><td>لم تبدأ</td><td>0%</td></tr>
+<tr><td>8</td><td>المعرفة والتحليلات</td><td>لم تبدأ</td><td>0%</td></tr>
+<tr><td>9</td><td>التصليب والإطلاق التجريبي</td><td>لم تبدأ</td><td>0%</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>5. المرحلة التالية (6): البث والرؤية</h2>
+<p>خادم البث MediaMTX، البث المباشر من التطبيق، كشف الحرائق والدخان بالرؤية الحاسوبية، والأرشيف. لن تبدأ قبل موافقتك.</p>
+</section>
+
+<footer>ء-حماية · تقرير المرحلة 5</footer>
+</div>
+</body>
+</html>

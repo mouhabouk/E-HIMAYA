@@ -5,6 +5,7 @@ import { Link } from "react-router";
 import { IncidentStatusChip, PriorityBadge } from "../components/AiBadges";
 import { CategoryLabel } from "../components/CategoryIcon";
 import { ErrorBox, Loading } from "../components/Feedback";
+import { LevelTag } from "../components/OperationsPanel";
 import { useServices } from "../context/services";
 import { useFormat, useGouvernorats } from "../lib/hooks";
 import { queryKeys, type IncidentStatusFilter } from "../lib/staffApi";
@@ -78,6 +79,7 @@ export function IncidentsPage() {
                 <th scope="col" className="num">
                   {t("incidents.columns.reporters")}
                 </th>
+                <th scope="col">{t("ops.list.operations")}</th>
                 <th scope="col">{t("incidents.columns.updatedAt")}</th>
               </tr>
             </thead>
@@ -97,6 +99,12 @@ export function IncidentsPage() {
                     >
                       <CategoryLabel category={i.category} />
                     </Link>
+                    {i.title && (
+                      <div className="cell-sub" dir="auto">
+                        {i.title}
+                      </div>
+                    )}
+                    {i.op_level && i.op_level !== "normal" && <LevelTag level={i.op_level} />}
                   </td>
                   <td>
                     <IncidentStatusChip status={i.status} />
@@ -104,6 +112,16 @@ export function IncidentsPage() {
                   <td>{gouvernorats.nameOf(i.gouvernorat_code) ?? t("common.notAvailable")}</td>
                   <td className="num">{fmt.number(i.report_count)}</td>
                   <td className="num">{fmt.number(i.reporter_count)}</td>
+                  <td>
+                    {(i.assignments_active ?? 0) === 0 && (i.callouts_open ?? 0) === 0 ? (
+                      <span className="muted">—</span>
+                    ) : (
+                      <span>
+                        {t("ops.list.assignments", { count: i.assignments_active ?? 0 })}
+                        {(i.callouts_open ?? 0) > 0 && ` · ${t("ops.list.callouts", { count: i.callouts_open ?? 0 })}`}
+                      </span>
+                    )}
+                  </td>
                   <td>
                     <time dateTime={i.updated_at}>{fmt.dateTime(i.updated_at)}</time>
                   </td>

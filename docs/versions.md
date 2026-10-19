@@ -87,6 +87,9 @@ Flutter 3.47.7 (القناة المستقرة) مع Dart 3.13.5، و Java 17 ل�
 | image_picker / record / just_audio | 1.2.4 / 7.1.2 / 0.10.6 | الصور والفيديو والتسجيل الصوتي |
 | url_launcher | 6.3.3 | الاتصال بأرقام النجدة عبر الشريحة (السيناريو 0) |
 | connectivity_plus / crypto / uuid | 7.3.2 / 3.0.7 / 4.6.0 | المزامنة، البصمة، معرف البلاغ |
+| firebase_core / firebase_messaging (المرحلة 5) | 4.15.0 / 16.7.0 | إشعارات الدفع عبر FCM؛ اختيارية عبر `--dart-define` (FIREBASE_API_KEY، FIREBASE_APP_ID، FIREBASE_MESSAGING_SENDER_ID، FIREBASE_PROJECT_ID) |
+| flutter_local_notifications (المرحلة 5) | 22.3.1 | قناتا أندرويد `ehimaya_alerts` و `ehimaya_default` وعرض الإشعار والتطبيق مفتوح |
+| desugar_jdk_libs (Gradle، المرحلة 5) | 2.1.4 | تتطلبه مكتبة الإشعارات المحلية |
 
 ## لوحة التحكم (`apps/dashboard`)
 

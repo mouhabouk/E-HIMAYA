@@ -6,6 +6,7 @@ import { IncidentStatusChip, PriorityBadge, ReportMarkers } from "../components/
 import { CategoryLabel } from "../components/CategoryIcon";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { LazyMapView } from "../components/LazyMap";
+import { LevelTag, OperationsPanel, OpsTimelineDetails } from "../components/OperationsPanel";
 import type { MapMarker } from "../components/MapView";
 import { StatusChip } from "../components/StatusChip";
 import { useAuth } from "../context/auth";
@@ -18,7 +19,7 @@ import { canManageIncidents } from "../lib/roles";
 import { queryKeys } from "../lib/staffApi";
 import { TIMELINE_KINDS, type IncidentDetail, type TimelineEntry } from "../lib/types";
 
-const VIA = ["suggestion", "manual", "new"] as const;
+const VIA = ["suggestion", "manual", "new", "auto"] as const;
 
 /** Bounds around the centroid and every member report (at least ~1 km wide). */
 export function incidentBounds(incident: IncidentDetail): BBox | null {
@@ -61,6 +62,7 @@ function TimelineItem({ entry, incident }: { entry: TimelineEntry; incident: Inc
         {typeof reports === "number" && (
           <span className="muted"> {t("incidents.detail.timelineReports", { count: reports })}</span>
         )}
+        <OpsTimelineDetails kind={entry.kind} payload={entry.payload} />
       </p>
     </li>
   );
@@ -225,9 +227,16 @@ export function IncidentDetailPage() {
       <div className="page__head">
         <h1 id="incident-title">
           {t("incidents.detail.title")} · <CategoryLabel category={incident.category} />
+          {incident.title && (
+            <>
+              {" · "}
+              <span dir="auto">{incident.title}</span>
+            </>
+          )}
         </h1>
         <IncidentStatusChip status={incident.status} />
         <PriorityBadge score={incident.severity} />
+        {incident.op_level && incident.op_level !== "normal" && <LevelTag level={incident.op_level} />}
       </div>
 
       <div className="detail__grid">
@@ -351,6 +360,8 @@ export function IncidentDetailPage() {
           </div>
         )}
       </section>
+
+      <OperationsPanel incident={incident} />
 
       <div className="detail__grid">
         <section className="card" aria-labelledby="sec-timeline">
