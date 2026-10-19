@@ -73,7 +73,7 @@ services:
 
   nats:
     <<: *restart
-    image: nats:2.10-alpine@sha256:b83efabe3e7def1e0a4a31ec6e078999bb17c80363f881df35edc70fcb6bb927
+    image: nats:2.15-alpine@sha256:2ae57dfba3063d5e25fecb75256118c0882a1a2d2cf7d0fba17a7c701df956f6
     command: ["-c", "/etc/nats/nats.conf"]
     environment:
       NATS_APP_USER: ${NATS_APP_USER:-ehimaya}
