@@ -1,0 +1,7 @@
+# SIMULATION — build context of the notify-sim channels simulator (dev/test only; see docs/api/notify-sim.md).
+.venv
+.mypy_cache
+.pytest_cache
+.ruff_cache
+**/__pycache__
+tests

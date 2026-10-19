@@ -3,6 +3,7 @@
 import base64
 import binascii
 from functools import lru_cache
+from pathlib import Path
 from typing import Annotated
 
 from pydantic import Field, SecretStr, field_validator
@@ -60,6 +61,15 @@ class Settings(BaseSettings):
     # as "skipped" and the other channels still go out.
     # Firebase Cloud Messaging (Android, and iOS through APNs): the service-account JSON, base64-encoded.
     fcm_service_account: SecretStr | None = None
+    # ┏━━ SIMULATION ━━ in development compose these two point at services/notify-sim (emulated FCM HTTP v1 + OAuth)
+    # ┃ PRODUCTION: set FCM_SERVICE_ACCOUNT=<base64 of the key from Firebase console > Project settings > Service
+    # ┃   accounts > Generate new private key>, FCM_API_URL=https://fcm.googleapis.com (the default here).
+    # ┃   FCM_SERVICE_ACCOUNT wins over FCM_SERVICE_ACCOUNT_FILE; the defaults below are the production ones.
+    # ┗━━━━━━━━━━━━━━━━
+    # Path of the service-account JSON file, used when FCM_SERVICE_ACCOUNT is unset.
+    fcm_service_account_file: Path | None = None
+    # Base URL of the FCM HTTP v1 API.
+    fcm_api_url: str = "https://fcm.googleapis.com"
     # SMS gateway of a Tunisian operator or aggregator: JSON POST {"to", "text", "sender"} with a bearer token.
     sms_http_url: str | None = None
     sms_http_token: SecretStr | None = None
@@ -107,6 +117,7 @@ class Settings(BaseSettings):
         "ai_service_token",
         "certificate_signing_key",
         "fcm_service_account",
+        "fcm_service_account_file",
         "sms_http_url",
         "sms_http_token",
         "smtp_host",
@@ -119,7 +130,13 @@ class Settings(BaseSettings):
         # Compose passes "" when the optional AI profile is not configured.
         return None if value == "" else value
 
-    @field_validator("portal_public_url")
+    @field_validator("fcm_api_url", mode="before")
+    @classmethod
+    def _default_fcm_api_url(cls, value: object) -> object:
+        # Compose passes "" when the variable is not set in .env.
+        return "https://fcm.googleapis.com" if value == "" or value is None else value
+
+    @field_validator("portal_public_url", "fcm_api_url")
     @classmethod
     def _strip_slash(cls, value: str) -> str:
         return value.rstrip("/")
