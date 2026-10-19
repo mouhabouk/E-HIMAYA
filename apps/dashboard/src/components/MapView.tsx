@@ -32,6 +32,8 @@ interface MapViewProps {
   zoom?: number;
   className?: string;
   dir: "rtl" | "ltr";
+  /** Optional non-interactive point drawn under the markers (e.g. an incident's centroid). */
+  centroid?: { lon: number; lat: number; label: string } | null;
 }
 
 const SVG_NS = "http://www.w3.org/2000/svg";
@@ -96,6 +98,7 @@ export function MapView({
   zoom,
   className,
   dir,
+  centroid,
 }: MapViewProps) {
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MlMap | null>(null);
@@ -169,6 +172,23 @@ export function MapView({
       }
     }
   }, [markers, openLabel]);
+
+  // Centroid marker (decorative for pointer users, labelled for screen readers).
+  const centroidLon = centroid?.lon;
+  const centroidLat = centroid?.lat;
+  const centroidLabel = centroid?.label;
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || centroidLon === undefined || centroidLat === undefined) return;
+    const el = document.createElement("div");
+    el.className = "map-centroid";
+    el.setAttribute("role", "img");
+    el.setAttribute("aria-label", centroidLabel ?? "");
+    const marker = new maplibregl.Marker({ element: el }).setLngLat([centroidLon, centroidLat]).addTo(map);
+    return () => {
+      marker.remove();
+    };
+  }, [centroidLon, centroidLat, centroidLabel]);
 
   return <div ref={container} className={className ?? "map"} role="region" aria-label={ariaLabel} />;
 }

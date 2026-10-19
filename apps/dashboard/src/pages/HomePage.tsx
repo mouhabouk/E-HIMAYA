@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { AiStatusBanner } from "../components/AiStatusBanner";
 import { BarChart, type Bar } from "../components/BarChart";
 import { CategoryLabel } from "../components/CategoryIcon";
 import { ErrorBox, Loading } from "../components/Feedback";
@@ -81,6 +82,7 @@ export function HomePage() {
         <h1>{t("kpi.title")}</h1>
         <PeriodSelector value={period} onChange={setPeriod} />
       </div>
+      <AiStatusBanner />
       {query.isPending && <Loading />}
       {query.isError && <ErrorBox error={query.error} onRetry={() => void query.refetch()} />}
       {query.data && summary && charts && (
@@ -91,6 +93,16 @@ export function HomePage() {
             <KpiCard label={t("kpi.received")} value={fmt.number(summary.received)} tone="kpi--received" />
             <KpiCard label={t("kpi.inProgress")} value={fmt.number(summary.inProgress)} tone="kpi--in_progress" />
             <KpiCard label={t("kpi.closed")} value={fmt.number(summary.closed)} tone="kpi--closed" />
+            <KpiCard
+              label={t("kpi.highPriority")}
+              value={fmt.number(query.data.high_priority)}
+              tone="kpi--high-priority"
+            />
+            <KpiCard
+              label={t("kpi.analysisPending")}
+              value={fmt.number(query.data.analysis_pending)}
+              tone="kpi--analysis"
+            />
             <KpiCard
               label={t("kpi.avgFirstResponse")}
               value={

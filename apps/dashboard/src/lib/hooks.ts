@@ -47,3 +47,14 @@ export function useDebounced<T>(value: T, delayMs: number): T {
   }, [value, delayMs]);
   return debounced;
 }
+
+/** AI service status (phase 3 §4): configured or not, and each capability ready or not. */
+export function useAiStatus() {
+  const { api } = useServices();
+  return useQuery({
+    queryKey: queryKeys.aiStatus,
+    queryFn: ({ signal }) => api.aiStatus(signal),
+    staleTime: 60_000,
+    refetchInterval: 5 * 60_000,
+  });
+}

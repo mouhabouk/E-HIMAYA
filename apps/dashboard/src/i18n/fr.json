@@ -7,8 +7,10 @@
   "nav": {
     "main": "Navigation principale",
     "home": "Indicateurs",
-    "reports": "Incidents",
-    "map": "Carte en direct"
+    "reports": "Signalements",
+    "map": "Carte en direct",
+    "incidents": "Incidents",
+    "aiSettings": "Réglages IA"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -100,7 +102,11 @@
     "loading": "Chargement…",
     "retry": "Réessayer",
     "notAvailable": "Non disponible",
-    "listSeparator": ", "
+    "listSeparator": ", ",
+    "yes": "Oui",
+    "no": "Non",
+    "cancel": "Annuler",
+    "none": "Aucun"
   },
   "errors": {
     "authentication_required": "Session expirée. Veuillez vous reconnecter.",
@@ -117,7 +123,14 @@
     "server_error": "Erreur du serveur. Réessayez dans un instant.",
     "idp_unavailable": "Le service d’identité est indisponible.",
     "network_error": "Impossible de joindre le serveur. Vérifiez le réseau.",
-    "unknown": "Une erreur inattendue s’est produite."
+    "unknown": "Une erreur inattendue s’est produite.",
+    "incident_not_open": "L’incident n’est plus ouvert. Les données ont été actualisées.",
+    "no_suggestion": "Aucune suggestion de regroupement n’attend pour ce signalement.",
+    "not_in_incident": "Ce signalement n’appartient à aucun incident.",
+    "suggestion_outdated": "La suggestion n’est plus valable ; le signalement a été actualisé.",
+    "incident_id_required": "Choisissez un incident.",
+    "same_incident": "Impossible de fusionner un incident avec lui-même.",
+    "national_scope_required": "La modification des réglages exige un compte de périmètre national."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -131,7 +144,9 @@
     "byCategory": "Répartition par catégorie",
     "byGouvernorat": "Répartition par gouvernorat",
     "outsideGouvernorats": "Hors gouvernorats",
-    "noData": "Aucune donnée pour cette période."
+    "noData": "Aucune donnée pour cette période.",
+    "highPriority": "Priorité haute (70 et plus)",
+    "analysisPending": "En attente d'analyse"
   },
   "filters": {
     "title": "Filtres",
@@ -144,7 +159,7 @@
     "reset": "Réinitialiser"
   },
   "reports": {
-    "title": "Incidents",
+    "title": "Signalements",
     "caption": "Liste des signalements, du plus récent au plus ancien",
     "columns": {
       "receivedAt": "Reçu le",
@@ -153,16 +168,24 @@
       "reporter": "Signalant",
       "gouvernorat": "Gouvernorat",
       "status": "Statut",
-      "media": "Médias"
+      "media": "Médias",
+      "priority": "Priorité",
+      "text": "Texte"
     },
     "empty": "Aucun signalement ne correspond aux filtres.",
     "loadMore": "Charger plus",
     "newBadge": "Nouveau",
-    "newCount": "Nouveaux signalements : {{count}}"
+    "newCount": "Nouveaux signalements : {{count}}",
+    "captionPriority": "Liste des signalements, de la priorité la plus haute à la plus basse",
+    "sort": {
+      "label": "Tri",
+      "received": "Plus récents d’abord",
+      "priority": "Priorité d’abord"
+    }
   },
   "detail": {
     "title": "Signalement",
-    "back": "Retour à la liste des incidents",
+    "back": "Retour à la liste des signalements",
     "info": "Informations",
     "fields": {
       "category": "Catégorie",
@@ -220,5 +243,267 @@
     "truncated": "D’autres signalements existent, zoomez pour les voir",
     "openDetail": "Ouvrir le détail",
     "listToggle": "Liste des signalements affichés sur la carte"
+  },
+  "priority": {
+    "badge": "Priorité {{score}} ({{band}})",
+    "none": "Priorité non encore évaluée",
+    "band": {
+      "high": "haute",
+      "medium": "moyenne",
+      "low": "basse"
+    }
+  },
+  "ai": {
+    "awaiting": "En attente d'analyse",
+    "incomplete": "Analyse incomplète",
+    "livesAtRisk": "Vies en danger",
+    "inIncident": "Rattaché à un incident",
+    "suggestionWaiting": "Regroupement suggéré",
+    "translation": "Traduction automatique en arabe",
+    "translationShort": "Traduction",
+    "componentOther": "Autre élément ({{key}})",
+    "banner": {
+      "notConfigured": "Le service d’IA n’est pas configuré : priorité, crédibilité et regroupement sont calculés par les règles seules (sans transcription, traduction ni extraction).",
+      "capabilityDown": "Certaines capacités de l’IA sont indisponibles : des scores peuvent ne venir que des règles et des analyses sont en attente.",
+      "link": "État du service d’IA"
+    },
+    "panel": {
+      "title": "Analyse automatique (IA)",
+      "notice": "Ces éléments sont des suggestions automatiques d’aide à la décision : la décision appartient toujours à l’opérateur. Aucun signalement n’est rejeté, clôturé ou recatégorisé automatiquement.",
+      "noAnalysis": "Ce signalement n’a pas encore été analysé.",
+      "noPriority": "Pas encore de score de priorité.",
+      "priority": "Score de priorité",
+      "priorityCaption": "Composantes du score de priorité",
+      "credibility": "Crédibilité suggérée",
+      "credibilityCaption": "Composantes de la crédibilité, en points",
+      "outOf": "{{score}} sur 100",
+      "component": "Élément",
+      "value": "Valeur",
+      "points": "Points",
+      "weight": "poids {{weight}}",
+      "noDataYet": "Pas encore de données",
+      "livesSource": "source : {{source}}",
+      "extraction": "Extraction par le modèle de langue",
+      "suggestedCategory": "Catégorie suggérée",
+      "differsFromReported": "Diffère de la catégorie déclarée",
+      "peopleTrapped": "Personnes bloquées",
+      "injured": "Nombre de blessés",
+      "deaths": "Décès mentionnés",
+      "hazards": "Dangers",
+      "keywords": "Mots-clés",
+      "confidence": "Confiance du modèle",
+      "summary": "Résumé en arabe",
+      "transcripts": "Transcriptions des enregistrements",
+      "language": "Langue",
+      "duration": "Durée",
+      "transcriptError": "Transcription impossible : {{reason}}",
+      "attempts": "Tentatives : {{count}}",
+      "updatedAt": "Dernière analyse : {{date}}",
+      "models": "Modèles"
+    },
+    "components": {
+      "severity": "Gravité de la catégorie",
+      "lives": "Vies en danger",
+      "casualties": "Victimes",
+      "reporters": "Nombre de signalants",
+      "credibility": "Crédibilité",
+      "sensitive_sites": "Sites sensibles à proximité",
+      "weather": "Météo"
+    },
+    "livesSource": {
+      "model": "modèle de langue",
+      "keywords": "mots-clés",
+      "category": "catégorie"
+    },
+    "credibility": {
+      "base": "Base",
+      "registered": "Signalant inscrit",
+      "confirmed_false_reports": "Faux signalements confirmés",
+      "useful_reports": "Signalements utiles antérieurs",
+      "media": "Média joint",
+      "precise_location": "Position précise",
+      "imprecise_location": "Position imprécise",
+      "corroborated": "Corroboré par d’autres signalants"
+    },
+    "steps": {
+      "transcribe": "Transcription",
+      "extract": "Extraction",
+      "translate": "Traduction",
+      "embed": "Représentation sémantique"
+    },
+    "stepState": {
+      "done": "terminé",
+      "skipped": "sans objet",
+      "failed": "échec",
+      "unavailable": "modèle indisponible",
+      "disabled": "désactivé"
+    },
+    "state": {
+      "pending": "En attente d'analyse",
+      "running": "Analyse en cours",
+      "done": "Analyse terminée",
+      "failed": "Analyse incomplète"
+    },
+    "transcriptErrors": {
+      "media_undecodable": "fichier illisible",
+      "audio_too_long": "enregistrement trop long",
+      "media_too_large": "fichier trop volumineux",
+      "media_fetch_failed": "téléchargement du fichier impossible",
+      "media_url_not_allowed": "lien du fichier refusé",
+      "invalid_model_output": "résultat invalide du modèle",
+      "model_unavailable": "modèle indisponible",
+      "other": "erreur inconnue"
+    },
+    "grouping": {
+      "title": "Regroupement en incident",
+      "suggestionTitle": "Suggestion de regroupement",
+      "suggestionIncident": "Rejoindre un incident existant",
+      "suggestionReport": "Former un incident avec le signalement",
+      "distance": "Distance",
+      "minutes": "Écart de temps",
+      "similarity": "Similarité du texte",
+      "score": "Confiance de la suggestion",
+      "matching": "Signalements correspondants",
+      "reasons": "Motifs",
+      "reason": {
+        "same_category": "Même catégorie",
+        "sos_nearby": "SOS à proximité",
+        "within_radius": "Dans le rayon",
+        "within_window": "Dans la fenêtre de temps",
+        "similar_content": "Contenu similaire"
+      },
+      "accept": "Accepter",
+      "dismiss": "Ignorer la suggestion",
+      "inIncident": "Ce signalement fait partie d’un incident.",
+      "openIncident": "Ouvrir l’incident",
+      "remove": "Retirer de l’incident",
+      "none": "Ce signalement n’est rattaché à aucun incident et aucune suggestion n’attend.",
+      "newIncident": "Nouvel incident",
+      "working": "En cours…",
+      "done": "Mise à jour effectuée.",
+      "readOnly": "Votre rôle permet uniquement de consulter le regroupement."
+    }
+  },
+  "incidents": {
+    "title": "Incidents",
+    "intro": "Un incident regroupe les signalements d’un même événement, confirmés par un opérateur (BR-10, BR-11).",
+    "caption": "Liste des incidents, activité la plus récente d’abord",
+    "statusFilter": "Statut de l’incident",
+    "status": {
+      "open": "Ouvert",
+      "closed": "Clôturé",
+      "merged": "Fusionné",
+      "dissolved": "Dissous",
+      "all": "Tous"
+    },
+    "columns": {
+      "severity": "Gravité",
+      "category": "Catégorie",
+      "status": "Statut",
+      "gouvernorat": "Gouvernorat",
+      "reports": "Signalements",
+      "reporters": "Signalants",
+      "updatedAt": "Dernière activité"
+    },
+    "openLabel": "Ouvrir l’incident {{category}} ouvert le {{date}}",
+    "empty": "Aucun incident avec ce statut.",
+    "timeline": {
+      "created": "Création de l’incident",
+      "report_linked": "Signalement ajouté",
+      "report_unlinked": "Signalement retiré",
+      "merged_from": "Fusion d’un autre incident",
+      "merged_into": "Fusionné dans un autre incident",
+      "closed": "Clôture",
+      "reopened": "Réouverture",
+      "dissolved": "Dissolution",
+      "other": "Autre événement"
+    },
+    "via": {
+      "suggestion": "(suggestion confirmée)",
+      "manual": "(manuellement)",
+      "new": "(à la création)"
+    },
+    "detail": {
+      "title": "Incident",
+      "back": "Retour à la liste des incidents",
+      "summary": "Résumé",
+      "openedAt": "Ouvert le",
+      "closedAt": "Clôturé le",
+      "mergedInto": "Fusionné dans",
+      "openMerged": "Ouvrir l’incident cible",
+      "centroid": "Centre",
+      "map": "Carte de l’incident et de ses signalements",
+      "centroidMarker": "Centre de l’incident",
+      "reports": "Signalements de l’incident",
+      "noReports": "Aucun signalement.",
+      "timeline": "Chronologie",
+      "timelineReport": "Signalement",
+      "timelineIncident": "L’autre incident",
+      "timelineReports": "Signalements déplacés : {{count}}",
+      "merge": "Fusionner un autre incident dans celui-ci",
+      "mergeHelp": "Les signalements de l’incident choisi rejoignent celui-ci ; l’incident choisi devient « fusionné ».",
+      "mergePick": "Incident à fusionner",
+      "mergeChoose": "Choisir un incident…",
+      "mergeOption": "{{category}} · signalements : {{count}} · {{date}}",
+      "mergeNoCandidate": "Aucun autre incident ouvert dans votre périmètre.",
+      "mergeAction": "Fusionner",
+      "mergeConfirm": "Confirmer la fusion",
+      "mergeConfirmText": "Confirmez-vous la fusion de l’incident choisi dans celui-ci ? L’incident choisi deviendra « fusionné ».",
+      "merged": "Fusion effectuée."
+    }
+  },
+  "aiSettings": {
+    "title": "Réglages de l’IA",
+    "intro": "Pondérations de la priorité (BR-20) et seuils de regroupement (BR-10). Les nouvelles valeurs s’appliquent aux signalements évalués après l’enregistrement.",
+    "readOnly": "Consultation seule : la modification est réservée au comité central ou à l’administrateur système, avec un périmètre national.",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "saved": "Réglages enregistrés.",
+    "saveFailed": "Échec de l’enregistrement des réglages",
+    "reset": "Annuler les modifications",
+    "status": {
+      "title": "État du service d’IA",
+      "configured": "Le service d’IA est configuré.",
+      "notConfigured": "Le service d’IA n’est pas configuré : scores et regroupement viennent des règles seules.",
+      "unreachable": "Le service d’IA ne répond pas actuellement.",
+      "capability": "Capacité",
+      "state": "État",
+      "model": "Modèle",
+      "ready": "Prête",
+      "down": "Indisponible"
+    },
+    "capabilities": {
+      "transcribe": "Transcription des enregistrements",
+      "translate_fr": "Traduction depuis le français",
+      "translate_en": "Traduction depuis l’anglais",
+      "embed": "Représentation sémantique",
+      "extract": "Extraction par le modèle de langue"
+    },
+    "priority": {
+      "title": "Priorité",
+      "weights": "Pondération des composantes",
+      "weightsHelp": "Entiers de 0 à 100, pas tous nuls. Le poids des composantes sans données est redistribué.",
+      "weightsTotal": "Total des pondérations : {{total}}",
+      "categorySeverity": "Gravité par catégorie",
+      "severityHelp": "Valeur entre 0 et 1.",
+      "suggestionMinConfidence": "Confiance minimale de la catégorie suggérée (entre 0 et 1)"
+    },
+    "grouping": {
+      "title": "Regroupement",
+      "help": "Même catégorie, plus proche que le rayon de la catégorie et dans la fenêtre de temps ; ou texte sémantiquement proche dans un rayon et une fenêtre plus larges.",
+      "windowMin": "Fenêtre de temps (minutes)",
+      "radius": "Rayon par catégorie (mètres)",
+      "semantic": "Similarité sémantique",
+      "semanticMinSimilarity": "Similarité minimale (entre 0,5 et 0,99)",
+      "semanticRadiusM": "Rayon (mètres)",
+      "semanticWindowMin": "Fenêtre de temps (minutes)"
+    },
+    "validation": {
+      "required": "Saisissez un nombre.",
+      "integer": "Saisissez un nombre entier.",
+      "range": "La valeur doit être entre {{min}} et {{max}}.",
+      "allZero": "Les pondérations ne peuvent pas être toutes nulles.",
+      "summary": "Corrigez les champs signalés avant d’enregistrer."
+    }
   }
 }
