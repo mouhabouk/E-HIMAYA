@@ -1,4 +1,5 @@
 import 'package:ehimaya/core/http/api_client.dart' show IdentityInterceptor;
+import 'package:ehimaya/core/push/push_dedup.dart';
 import 'package:ehimaya/core/push/push_messaging.dart';
 import 'package:ehimaya/core/push/push_notifications.dart';
 import 'package:ehimaya/core/push/push_payload.dart';
@@ -181,7 +182,8 @@ void main() {
         'ehimaya_alerts',
         'ehimaya_alerts',
       ]);
-      expect(notifications.shown.first.id, 1);
+      // Stable id per subject: a repeated push replaces its notification.
+      expect(notifications.shown.first.id, notificationIdFor(received[0]));
       expect(notifications.shown.first.payload.title, '[SIM] Flood warning');
       expect(pushChannelFor(received[1], 'ehimaya_default'), 'ehimaya_default');
       expect(pushChannelFor(received[1], 'bogus'), 'ehimaya_default');

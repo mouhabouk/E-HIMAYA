@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -32,6 +34,12 @@ abstract class LocationService {
   /// A position without ever showing the permission prompt (background uses such as alert
   /// targeting): null unless location was already granted.
   Future<GeoPoint?> withoutPrompt() => lastKnown();
+
+  /// Position updates for the volunteer's readiness, in the foreground only and without a
+  /// permission prompt. Battery: balanced (cell/Wi-Fi) accuracy and a 100 m distance filter
+  /// ([lowPower]: low-power accuracy, 250 m), so a stationary phone produces no updates and the
+  /// GPS chip stays off. Empty when location is not granted. Cancel the subscription to stop.
+  Stream<GeoPoint> watch({bool lowPower = false}) => const Stream.empty();
 }
 
 class GeolocatorLocationService extends LocationService {
@@ -82,20 +90,75 @@ class GeolocatorLocationService extends LocationService {
     }
   }
 
+  /// A last known position younger than this is good enough for coarse uses (alert targeting
+  /// is rounded to about 1 km by the server) and costs no radio time.
+  static const coarseMaxAge = Duration(minutes: 10);
+
+  Future<bool> _grantedWithoutPrompt() async {
+    try {
+      if (!await Geolocator.isLocationServiceEnabled()) return false;
+      final permission = await Geolocator.checkPermission();
+      return permission == LocationPermission.always ||
+          permission == LocationPermission.whileInUse;
+    } on Exception {
+      return false;
+    }
+  }
+
   @override
   Future<GeoPoint?> withoutPrompt() async {
+    if (!await _grantedWithoutPrompt()) return null;
     try {
-      if (!await Geolocator.isLocationServiceEnabled()) return null;
-      final permission = await Geolocator.checkPermission();
-      if (permission != LocationPermission.always &&
-          permission != LocationPermission.whileInUse) {
-        return null;
+      final last = await Geolocator.getLastKnownPosition();
+      if (last != null &&
+          DateTime.now().difference(last.timestamp) < coarseMaxAge) {
+        return _toPoint(last);
       }
-    } on Exception {
-      return null;
+      // Coarse fix from cell/Wi-Fi: no GPS warm-up for a 1 km-rounded position.
+      final pos = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.low,
+          timeLimit: Duration(seconds: 5),
+        ),
+      );
+      return _toPoint(pos);
+    } on TimeoutException {
+      return lastKnown();
+    } on Exception catch (e) {
+      _log.info('no coarse fix: ${e.runtimeType}');
+      return lastKnown();
     }
-    return await lastKnown() ??
-        await current(timeout: const Duration(seconds: 5));
+  }
+
+  static LocationSettings _watchSettings({required bool lowPower}) {
+    final accuracy = lowPower ? LocationAccuracy.low : LocationAccuracy.medium;
+    final distance = lowPower ? 250 : 100;
+    if (!kIsWeb && Platform.isAndroid) {
+      return AndroidSettings(
+        accuracy: accuracy,
+        distanceFilter: distance,
+        intervalDuration: Duration(seconds: lowPower ? 120 : 60),
+      );
+    }
+    if (!kIsWeb && Platform.isIOS) {
+      return AppleSettings(
+        accuracy: accuracy,
+        distanceFilter: distance,
+        pauseLocationUpdatesAutomatically: true,
+        allowBackgroundLocationUpdates: false,
+      );
+    }
+    return LocationSettings(accuracy: accuracy, distanceFilter: distance);
+  }
+
+  @override
+  Stream<GeoPoint> watch({bool lowPower = false}) async* {
+    if (!await _grantedWithoutPrompt()) return;
+    yield* Geolocator.getPositionStream(
+      locationSettings: _watchSettings(lowPower: lowPower),
+    ).map(_toPoint).handleError((Object e) {
+      _log.info('position updates stopped: ${e.runtimeType}');
+    });
   }
 
   static GeoPoint _toPoint(Position p) =>

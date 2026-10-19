@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The alert sound is referenced only by name from Dart and from FCM channels: keep it when
+     resources are shrunk. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@raw/ehimaya_alert" />

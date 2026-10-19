@@ -7,9 +7,12 @@ import '../../core/auth/identity.dart';
 import '../../core/config/providers.dart';
 import '../../core/http/api_error.dart';
 import '../../core/http/ehimaya_api.dart';
+import '../../core/http/models.dart';
 import '../../core/http/volunteer_models.dart';
 import '../../core/location/location_service.dart';
 import '../../core/logging/log.dart';
+import '../../core/power/battery_saver.dart';
+import '../../core/power/scheduling.dart';
 
 final _log = logger('volunteer');
 
@@ -87,18 +90,45 @@ final myCalloutsProvider = FutureProvider.autoDispose<List<MyCallout>>((
 }, retry: (_, _) => null);
 
 /// What [ReadinessTracker.tick] did.
-enum ReadinessTick { idle, sent, ended, skipped }
+enum ReadinessTick {
+  idle,
+  sent,
+  ended,
+  skipped,
+
+  /// Ready, but the volunteer has not moved enough since the last send (nothing sent).
+  unchanged,
+}
 
 /// Shares the live position while the volunteer is ready (FR-A-022), and stops at the end of
-/// readiness. Runs while the app is in the foreground; the server keeps the last position until
-/// `ready_until` and deletes it then.
+/// readiness. Runs while the app is in the foreground only; the server keeps the last position
+/// until `ready_until` and deletes it then.
+///
+/// Battery: position updates come from a balanced-accuracy stream with a distance filter (no
+/// GPS fix while the phone does not move); a send happens only after a real move (100 m, 250 m
+/// in battery saver), as a rare heartbeat, and never faster than the server accepts. The check
+/// timer starts at [interval] and stretches up to [maxInterval] while nothing changes. Sharing
+/// stops at once when readiness ends or the app leaves the foreground.
 class ReadinessTracker with WidgetsBindingObserver {
-  ReadinessTracker(this._ref, {this.interval = const Duration(seconds: 60)});
+  ReadinessTracker(
+    this._ref, {
+    this.interval = const Duration(seconds: 60),
+    this.maxInterval = const Duration(minutes: 8),
+    LocationCoalescer? coalescer,
+  }) : _coalescer = coalescer ?? LocationCoalescer(),
+       _cadence = AdaptiveInterval(min: interval, max: maxInterval);
 
-  /// The server accepts one update every 20 s; once a minute is enough to dispatch.
   final Duration interval;
+  final Duration maxInterval;
   final Ref _ref;
+  final LocationCoalescer _coalescer;
+  final AdaptiveInterval _cadence;
   Timer? _timer;
+  StreamSubscription<GeoPoint>? _watch;
+  bool _watchLowPower = false;
+  GeoPoint? _latest;
+  DateTime? _latestAt;
+  Future<ReadinessTick>? _inFlight;
   bool _started = false;
   bool _foreground = true;
 
@@ -106,26 +136,86 @@ class ReadinessTracker with WidgetsBindingObserver {
     if (_started) return;
     _started = true;
     WidgetsBinding.instance.addObserver(this);
-    _ref.listen(volunteerProvider, (_, _) => _sync(), fireImmediately: true);
+    _ref
+      ..listen(volunteerProvider, (_, _) => _sync(), fireImmediately: true)
+      ..listen(batterySaverActiveProvider, (_, _) {
+        // New radio settings for the stream.
+        _stopWatch();
+        _sync();
+      });
   }
 
   Volunteer? get _volunteer => _ref.read(volunteerProvider).value;
   DateTime get _now => _ref.read(clockProvider)();
+  bool get _saver => _ref.read(batterySaverActiveProvider);
 
-  bool get isSharing => _timer != null;
+  bool get isSharing => _timer != null || _watch != null;
+
+  /// Delay before the next check (for tests and diagnostics).
+  Duration get currentInterval => _cadence.current;
 
   void _sync() {
     final ready = _volunteer?.isReadyAt(_now) ?? false;
     if (ready && _foreground) {
-      _timer ??= Timer.periodic(interval, (_) => unawaited(tick()));
+      _timer ??= Timer(_cadence.current, _onTimer);
+      if (_watch == null && _started) {
+        _watchLowPower = _saver;
+        _watch = _ref
+            .read(locationServiceProvider)
+            .watch(lowPower: _watchLowPower)
+            .listen(_onFix, onError: (Object _) => _stopWatch());
+      }
     } else {
       _timer?.cancel();
       _timer = null;
+      _stopWatch();
+      _cadence.activity();
+      if (!ready) _coalescer.reset();
     }
   }
 
-  /// One update: sends the position while ready, and ends sharing when readiness is over.
-  Future<ReadinessTick> tick() async {
+  void _stopWatch() {
+    unawaited(_watch?.cancel());
+    _watch = null;
+    _latest = null;
+    _latestAt = null;
+  }
+
+  void _onFix(GeoPoint fix) {
+    _latest = fix;
+    _latestAt = _now;
+    if (_coalescer.shouldSend(fix, _now, batterySaver: _saver)) {
+      unawaited(tick());
+    }
+  }
+
+  Future<void> _onTimer() async {
+    _timer = null;
+    final result = await tick();
+    if (result == ReadinessTick.sent) {
+      _cadence.activity();
+    } else {
+      _cadence.idle();
+    }
+    _sync();
+  }
+
+  /// A stream fix younger than the check interval, else a cheap last-known/coarse position.
+  Future<GeoPoint?> _position() async {
+    final latest = _latest;
+    final at = _latestAt;
+    if (latest != null && at != null && _now.difference(at) <= maxInterval) {
+      return latest;
+    }
+    return _ref.read(locationServiceProvider).withoutPrompt();
+  }
+
+  /// One update: sends the position while ready (when it changed enough), and ends sharing when
+  /// readiness is over. Concurrent calls share the update in progress.
+  Future<ReadinessTick> tick() =>
+      _inFlight ??= _tick().whenComplete(() => _inFlight = null);
+
+  Future<ReadinessTick> _tick() async {
     final v = _volunteer;
     if (v == null || !v.ready) {
       _sync();
@@ -136,12 +226,17 @@ class ReadinessTracker with WidgetsBindingObserver {
       await _reload();
       return ReadinessTick.ended;
     }
-    final position = await _ref.read(locationServiceProvider).withoutPrompt();
+    final position = await _position();
     if (position == null || !position.isInTunisiaBox) {
       return ReadinessTick.skipped;
     }
+    final now = _now;
+    if (!_coalescer.shouldSend(position, now, batterySaver: _saver)) {
+      return ReadinessTick.unchanged;
+    }
     try {
       await _ref.read(apiProvider).putVolunteerLocation(position);
+      _coalescer.markSent(position, now);
       return ReadinessTick.sent;
     } on ApiException catch (e) {
       if (e.code == ApiErrorCode.notReady ||
@@ -165,14 +260,18 @@ class ReadinessTracker with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    _foreground = state == AppLifecycleState.resumed;
-    if (_foreground) unawaited(tick());
+    final foreground = state == AppLifecycleState.resumed;
+    if (state == AppLifecycleState.inactive) return; // transient
+    if (foreground == _foreground) return;
+    _foreground = foreground;
     _sync();
+    if (_foreground) unawaited(tick());
   }
 
   void dispose() {
     if (_started) WidgetsBinding.instance.removeObserver(this);
     _timer?.cancel();
+    _stopWatch();
   }
 }
 

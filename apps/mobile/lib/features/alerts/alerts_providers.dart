@@ -6,12 +6,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/auth/identity.dart';
 import '../../core/config/providers.dart';
+import '../../core/connectivity/connectivity.dart';
 import '../../core/http/api_error.dart';
 import '../../core/http/ehimaya_api.dart';
 import '../../core/http/models.dart';
 import '../../core/http/notify_models.dart';
 import '../../core/location/location_service.dart';
 import '../../core/logging/log.dart';
+import '../../core/power/battery_saver.dart';
+import '../../core/power/scheduling.dart';
 import '../../core/push/push_messaging.dart';
 import '../../core/storage/app_prefs.dart';
 
@@ -73,13 +76,16 @@ class ActiveAlertsController extends AsyncNotifier<List<ActiveAlert>> {
     }
   }
 
-  /// Re-fetches and keeps the shown list when the server cannot be reached.
-  Future<void> refresh() async {
+  /// Re-fetches and keeps the shown list when the server cannot be reached. Returns whether
+  /// the server answered.
+  Future<bool> refresh() async {
     try {
       final alerts = await _fetch();
       if (ref.mounted) state = AsyncData(alerts);
+      return true;
     } on ApiException catch (e) {
       _log.info('alerts not refreshed: ${e.code.wire}');
+      return false;
     }
   }
 }
@@ -158,52 +164,91 @@ final inboxProvider = AsyncNotifierProvider<InboxController, InboxState>(
   retry: (_, _) => null,
 );
 
-/// Keeps the active alerts current: on resume and periodically while the app is in the
-/// foreground, more often when push is not available on this phone. Started from `main()`.
+/// Keeps the active alerts current: on resume, when the network comes back, and periodically
+/// while the app is in the foreground ([AlertPolling]: every 15 min with push, 5 min without;
+/// doubled in battery saver; exponential back-off after failures). Nothing runs in the
+/// background or while the phone is offline. Started from `main()`.
 class AlertsScheduler with WidgetsBindingObserver {
   AlertsScheduler(this._ref);
 
-  static const withPush = Duration(minutes: 15);
-  static const withoutPush = Duration(minutes: 5);
-
   final Ref _ref;
   Timer? _timer;
+  StreamSubscription<bool>? _connectivity;
   bool _started = false;
+  bool _foreground = true;
+  bool _online = true;
+  int _failures = 0;
+  Future<void>? _inFlight;
 
   void start() {
     if (_started) return;
     _started = true;
     WidgetsBinding.instance.addObserver(this);
-    _ref.listen(pushAvailableProvider, (_, _) => _startTimer());
-    _startTimer();
+    _ref
+      ..listen(pushAvailableProvider, (_, _) => _schedule())
+      ..listen(batterySaverActiveProvider, (_, _) => _schedule());
+    _connectivity = _ref.read(connectivityProvider).onlineChanges.listen((
+      online,
+    ) {
+      final back = online && !_online;
+      _online = online;
+      if (back && _foreground) {
+        _failures = 0;
+        unawaited(refreshNow());
+      } else {
+        _schedule();
+      }
+    });
+    _schedule();
   }
+
+  /// Whether a refresh is scheduled (false in the background and offline).
+  bool get isScheduled => _timer != null;
 
   Duration get period =>
-      _ref.read(pushAvailableProvider) ? withPush : withoutPush;
+      AlertPolling.of(pushAvailable: _ref.read(pushAvailableProvider)).next(
+        failures: _failures,
+        batterySaver: _ref.read(batterySaverActiveProvider),
+      );
 
-  void _startTimer() {
+  void _schedule() {
     _timer?.cancel();
-    _timer = Timer.periodic(period, (_) => _refresh());
+    _timer = null;
+    if (!_started || !_foreground || !_online) return;
+    _timer = Timer(period, () => unawaited(refreshNow()));
   }
 
-  void _refresh() =>
-      unawaited(_ref.read(activeAlertsProvider.notifier).refresh());
+  /// Refreshes now and schedules the next refresh (concurrent calls share one request).
+  Future<void> refreshNow() => _inFlight ??= _refresh().whenComplete(() {
+    _inFlight = null;
+  });
+
+  Future<void> _refresh() async {
+    _timer?.cancel();
+    _timer = null;
+    final ok = await _ref.read(activeAlertsProvider.notifier).refresh();
+    _failures = ok ? 0 : _failures + 1;
+    _schedule();
+  }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      _refresh();
-      _startTimer();
+      if (_foreground) return;
+      _foreground = true;
+      unawaited(refreshNow());
     } else if (state == AppLifecycleState.paused ||
-        state == AppLifecycleState.hidden) {
-      _timer?.cancel();
-      _timer = null;
+        state == AppLifecycleState.hidden ||
+        state == AppLifecycleState.detached) {
+      _foreground = false;
+      _schedule();
     }
   }
 
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
+    if (_started) WidgetsBinding.instance.removeObserver(this);
     _timer?.cancel();
+    unawaited(_connectivity?.cancel());
   }
 }
 

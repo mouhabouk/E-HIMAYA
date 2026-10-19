@@ -122,6 +122,12 @@ class IdentityController extends Notifier<IdentityState> {
     if (session != null) await _oidc.endSession(session);
   }
 
+  /// After the account (or anonymous identity) was deleted on the server and the local data
+  /// wiped: no role, no identity, the app starts again from the charter.
+  void resetAfterAccountDeletion() {
+    state = const IdentityState(mode: IdentityMode.none);
+  }
+
   /// Data tied to the signed-in account: its institutions (offline copy) and the "report as"
   /// choices.
   Future<void> _clearAccountData() async {

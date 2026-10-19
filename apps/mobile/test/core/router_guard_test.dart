@@ -20,12 +20,44 @@ void main() {
     bool charter = true,
     IdentityState identity = none,
     bool prompted = true,
+    bool locked = false,
   }) => guardRedirect(
     location: location,
     charterAccepted: charter,
     identity: identity,
     profilePrompted: prompted,
+    lockedAlert: locked,
   );
+
+  test('over a locked phone only the public alert view exists', () {
+    for (final location in [
+      Routes.home,
+      Routes.reports,
+      Routes.settings,
+      Routes.profile,
+      Routes.myData,
+      Routes.deleteAccount,
+      Routes.emergency,
+      Routes.alert('a1'),
+      Routes.callouts,
+      Routes.charter,
+      '/unknown/deep/link',
+    ]) {
+      expect(
+        go(location, identity: registered, locked: true),
+        Routes.lockedAlert,
+        reason: location,
+      );
+    }
+    expect(go(Routes.lockedAlert, identity: registered, locked: true), isNull);
+    // Even before the charter: the lock wins.
+    expect(
+      go(Routes.charter, charter: false, locked: true),
+      Routes.lockedAlert,
+    );
+    // Once unlocked the alert view is left for the app.
+    expect(go(Routes.lockedAlert, identity: registered), Routes.home);
+  });
 
   test('charter first, emergency numbers always allowed', () {
     expect(go(Routes.home, charter: false), Routes.charter);

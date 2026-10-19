@@ -58,6 +58,25 @@ class PushPayload {
 
   String? get id => data['id'];
 
+  /// `high` | `medium` | `low` for alerts.
+  String? get severity => data['severity'];
+
+  /// The most severe official alert: full-screen on Android, and through Do Not Disturb when
+  /// the user opted in.
+  bool get severe => kind == PushKind.alert && severity == 'high';
+
+  /// A content-free personal push (A8): the text is fetched from the API with the user's
+  /// identity and shown on the device only.
+  bool get redacted => data['redacted'] == '1';
+
+  /// The same push with other text (resolved redacted content, simulator prefix).
+  PushPayload withText({String? title, String? body}) => PushPayload(
+    kind: kind,
+    data: data,
+    title: title ?? this.title,
+    body: body ?? this.body,
+  );
+
   /// Screen opened when the user taps the notification.
   String get route => switch (kind) {
     PushKind.alert when (id ?? '').isNotEmpty => Routes.alert(id!),

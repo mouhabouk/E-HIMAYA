@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -21,6 +23,11 @@ class TipsFetch {
   const TipsFetch(this.tips, this.etag);
   final SafetyTips? tips;
   final String? etag;
+}
+
+/// `POST /api/v1/me/delete` refused: the caller is the last admin of an institution.
+class LastAdminException implements Exception {
+  const LastAdminException();
 }
 
 /// Typed access to the phase-2 API (plus the phase-4 institution and phase-5 volunteer,
@@ -306,6 +313,40 @@ class EHimayaApi {
         if (a is Map<String, Object?>) ActiveAlert.fromJson(a),
     ];
   });
+
+  // ---------------------------------------------------------------- citizen rights (A6)
+
+  /// Every personal datum the server holds on the caller (profile, consents, reports with
+  /// media metadata, volunteer record, devices), as indented JSON text. Rate limited by the
+  /// server (3 a day).
+  Future<String> exportMyData() => guardApi(() async {
+    final r = await _dio.get<Object?>('/api/v1/me/export');
+    final data = r.data;
+    return data is String
+        ? data
+        : const JsonEncoder.withIndent('  ').convert(data);
+  });
+
+  /// Deletes the account (or this device's anonymous identity): the server anonymises the
+  /// profile at once and keeps reports detached from the person (legal retention).
+  /// Throws [LastAdminException] when the caller is the last admin of an institution (409
+  /// `last_admin`): they must hand the administration over first.
+  Future<void> deleteMyAccount() async {
+    try {
+      await _dio.post<Object?>(
+        '/api/v1/me/delete',
+        data: {'confirm': 'DELETE'},
+      );
+    } on DioException catch (e) {
+      final data = e.response?.data;
+      if (e.response?.statusCode == 409 &&
+          data is Map &&
+          (data['code'] == 'last_admin' || data['detail'] == 'last_admin')) {
+        throw const LastAdminException();
+      }
+      throw ApiException.fromDio(e);
+    }
+  }
 
   // ---------------------------------------------------------------- safety tips (§8)
 

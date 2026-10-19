@@ -5,20 +5,33 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../auth/identity.dart' show FlagNotifier;
 import '../http/api_client.dart' show httpAdapterProvider;
 import '../logging/log.dart';
 import '../storage/app_prefs.dart';
+import 'push_dedup.dart';
 import 'push_notifications.dart';
 import 'push_payload.dart';
 import 'simulated_push_messaging.dart';
 
 final _log = logger('push');
 
-/// Android channels (the server names them in each push, contract §6).
-const alertChannelId = 'ehimaya_alerts';
+/// Android channels. Their sound, vibration and importance cannot be changed once created, so
+/// the ids are versioned: a change of settings ships as a new id (and the old one is deleted).
+/// The server names the channel in each push (contract §6); a push naming a channel that does
+/// not exist on the phone (the legacy `ehimaya_alerts`, or `ehimaya_critical_v2` before the user
+/// opted in) falls back to the manifest default, [alertChannelId].
+const alertChannelId = 'ehimaya_alerts_v2';
+
+/// Most severe official alerts, bypassing Do Not Disturb. Created only after the user opted in
+/// on the "critical alerts" screen and granted Do Not Disturb access.
+const criticalChannelId = 'ehimaya_critical_v2';
 const defaultChannelId = 'ehimaya_default';
+
+/// Channel ids of earlier versions, deleted at start.
+const legacyChannelIds = ['ehimaya_alerts'];
 
 /// Channel names shown in the system settings (localized by the caller).
 class PushChannelNames {
@@ -27,12 +40,17 @@ class PushChannelNames {
     required this.alertsDescription,
     required this.general,
     required this.generalDescription,
-  });
+    String? critical,
+    String? criticalDescription,
+  }) : critical = critical ?? alerts,
+       criticalDescription = criticalDescription ?? alertsDescription;
 
   final String alerts;
   final String alertsDescription;
   final String general;
   final String generalDescription;
+  final String critical;
+  final String criticalDescription;
 }
 
 /// Push delivery as used by the app. [FirebasePushMessaging] in production; the app works the
@@ -101,15 +119,49 @@ FirebaseOptions? firebaseOptionsFromEnvironment() {
   );
 }
 
+/// Pushes delivered while the app is in the background or killed (Android). A push with a
+/// `notification` block was already shown by the system on the channel the server named; only
+/// data-only pushes (which the server may use for the most severe alerts, so that they can open
+/// full screen) are displayed here, on our channels.
+@pragma('vm:entry-point')
+Future<void> firebaseBackgroundMessage(RemoteMessage m) async {
+  if (m.notification != null) return;
+  final title = m.data['title'];
+  final body = m.data['body'];
+  final p = PushPayload.parse(
+    m.data,
+    title: title is String ? title : null,
+    body: body is String ? body : null,
+  );
+  // A redacted push (A8) has no text to show before the app fetches it: the generic title the
+  // server put in `title` is shown, the app resolves it when opened.
+  if (p == null || p.title == null) return;
+  final local = LocalPushNotifications();
+  await local.initBackground(
+    criticalOptIn: (await SharedPreferences.getInstance()).getBool(
+      AppPrefs.criticalAlertsKey,
+    ),
+  );
+  final channel = m.data['android_channel'];
+  await local.show(
+    notificationIdFor(p),
+    p,
+    channelId: channel is String ? channel : null,
+  );
+}
+
 class FirebasePushMessaging implements PushMessaging {
   FirebasePushMessaging({
     FirebaseOptions? options,
     PushNotifications? notifications,
+    PushDeduper? deduper,
   }) : _options = options ?? firebaseOptionsFromEnvironment(),
-       _local = notifications ?? LocalPushNotifications();
+       _local = notifications ?? LocalPushNotifications(),
+       _dedup = deduper ?? PushDeduper();
 
   final FirebaseOptions? _options;
   final PushNotifications _local;
+  final PushDeduper _dedup;
   final _foreground = StreamController<PushPayload>.broadcast();
   final _opened = StreamController<PushPayload>.broadcast();
   FirebaseMessaging? _messaging;
@@ -131,6 +183,7 @@ class FirebasePushMessaging implements PushMessaging {
         }
         await Firebase.initializeApp(options: options);
       }
+      FirebaseMessaging.onBackgroundMessage(firebaseBackgroundMessage);
       final messaging = FirebaseMessaging.instance;
       await _initLocal(names);
       final settings = await messaging.requestPermission();
@@ -172,11 +225,13 @@ class FirebasePushMessaging implements PushMessaging {
   Future<void> _onForegroundMessage(RemoteMessage m) async {
     final p = _payload(m);
     if (p == null) return;
+    final first = _dedup.firstTime(p, DateTime.now());
     _foreground.add(p);
-    // Android does not display pushes received in the foreground: show it ourselves.
-    if (platform != 'android' || p.title == null) return;
+    // Android does not display pushes received in the foreground: show it ourselves, once
+    // (a repeated push only refreshes the screens).
+    if (!first || platform != 'android' || p.title == null) return;
     await _local.show(
-      m.messageId.hashCode & 0x7fffffff,
+      notificationIdFor(p),
       p,
       channelId: m.notification?.android?.channelId,
     );
@@ -210,6 +265,11 @@ class FirebasePushMessaging implements PushMessaging {
   }
 }
 
+/// The one local-notification displayer of the app (shared by push and the settings screens).
+final pushNotificationsProvider = Provider<PushNotifications>(
+  (ref) => LocalPushNotifications(),
+);
+
 final pushMessagingProvider = Provider<PushMessaging>((ref) {
   // ┏━━ SIMULATION ━━ Picks the notify-sim poller when Firebase is absent and the URL is set.
   // ┃ PRODUCTION: nothing to change here: build without --dart-define=PUSH_SIMULATOR_URL and
@@ -224,11 +284,14 @@ final pushMessagingProvider = Provider<PushMessaging>((ref) {
         adapter: ref.watch(httpAdapterProvider),
       ),
       prefs: ref.watch(appPrefsProvider),
+      notifications: ref.watch(pushNotificationsProvider),
     );
     ref.onDispose(simulated.dispose);
     return simulated;
   }
-  return FirebasePushMessaging();
+  return FirebasePushMessaging(
+    notifications: ref.watch(pushNotificationsProvider),
+  );
 });
 
 // ┏━━ SIMULATION ━━ True while pushes come from notify-sim (drives the "Simulation mode" badge).

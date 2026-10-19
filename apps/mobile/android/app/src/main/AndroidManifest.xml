@@ -8,6 +8,16 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <!-- Alerts and call-outs (phase 5): asked at run time on Android 13+. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- Phase 5.5, alerts that get through:
+         - most severe official alerts open full screen over the lock screen (Android 14+: special
+           access the user can revoke; the alert check screen leads to it);
+         - Do Not Disturb access, requested only after the explicit opt-in on the
+           "critical alerts" screen (creates the DND-bypassing channel);
+         - battery optimisation exemption, asked only to volunteers on call, after an explanation. -->
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-feature android:name="android.hardware.location.gps" android:required="false" />
@@ -42,10 +52,14 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-        <!-- Pushes without an explicit channel land in the ordinary one (the app creates both). -->
+        <!-- FCM uses this channel when a push names one that does not exist on the phone: the
+             legacy "ehimaya_alerts" (replaced by the versioned id) and "ehimaya_critical_v2"
+             before the user opted in. Both are alerts, so they land on the official alerts
+             channel (own sound, vibration and light). The server always names a channel, so
+             ordinary messages keep "ehimaya_default". -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="ehimaya_default" />
+            android:value="ehimaya_alerts_v2" />
     </application>
 
     <!-- Package visibility (Android 11+). -->

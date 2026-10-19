@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../../core/auth/identity.dart';
 import '../../core/http/models.dart';
 import '../../core/location/location_service.dart';
+import '../../core/power/battery_saver.dart';
+import '../../core/power/scheduling.dart';
 import '../../core/push/push_controller.dart';
 import '../../core/push/push_simulation_banner.dart';
 import '../../core/routing/app_router.dart';
@@ -142,6 +144,15 @@ class SettingsScreen extends ConsumerWidget {
             onTap: () => context.push(Routes.notifications),
           ),
           ListTile(
+            key: const Key('settings-alert-check'),
+            leading: const Icon(Icons.notifications_active_outlined),
+            title: Text(l10n.alertCheckTitle),
+            subtitle: Text(l10n.alertCheckSubtitle),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.push(Routes.alertCheck),
+          ),
+          const _BatterySaverTile(),
+          ListTile(
             leading: const Icon(Icons.health_and_safety),
             title: Text(l10n.tipsTitle),
             trailing: const Icon(Icons.chevron_right),
@@ -192,6 +203,15 @@ class SettingsScreen extends ConsumerWidget {
               title: Text(l10n.myInstitutionTitle),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => openMyInstitution(context, orgs),
+            ),
+          if (identity.hasIdentity)
+            ListTile(
+              key: const Key('settings-my-data'),
+              leading: const Icon(Icons.folder_shared_outlined),
+              title: Text(l10n.myDataTitle),
+              subtitle: Text(l10n.myDataSubtitle),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push(Routes.myData),
             ),
           if (identity.isRegistered)
             ListTile(
@@ -279,6 +299,82 @@ class _LocationAlertsTileState extends ConsumerState<_LocationAlertsTile> {
       subtitle: Text(l10n.settingsLocationAlertsHelp),
       value: _on,
       onChanged: _set,
+    );
+  }
+}
+
+/// In-app battery saver: automatic (low battery), always on, or off.
+class _BatterySaverTile extends ConsumerWidget {
+  const _BatterySaverTile();
+
+  static String modeLabel(AppLocalizations l10n, BatterySaverMode mode) =>
+      switch (mode) {
+        BatterySaverMode.auto => l10n.batterySaverAuto,
+        BatterySaverMode.on => l10n.batterySaverOn,
+        BatterySaverMode.off => l10n.batterySaverOff,
+      };
+
+  Future<void> _choose(
+    BuildContext context,
+    WidgetRef ref,
+    BatterySaverMode current,
+  ) async {
+    final l10n = AppLocalizations.of(context);
+    final chosen = await showDialog<BatterySaverMode>(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: Text(l10n.batterySaverTitle),
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Text(l10n.batterySaverHelp),
+          ),
+          RadioGroup<BatterySaverMode>(
+            groupValue: current,
+            onChanged: (v) => Navigator.pop(context, v),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (final mode in BatterySaverMode.values)
+                  RadioListTile<BatterySaverMode>(
+                    key: Key('battery-saver-${mode.name}'),
+                    value: mode,
+                    title: Text(modeLabel(l10n, mode)),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+    if (chosen != null) {
+      await ref.read(batterySaverProvider.notifier).setMode(chosen);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final saver = ref.watch(batterySaverProvider);
+    final level = saver.reading?.level;
+    final status = saver.active
+        ? l10n.batterySaverActive
+        : l10n.batterySaverInactive;
+    return ListTile(
+      key: const Key('settings-battery-saver'),
+      leading: Icon(
+        saver.active ? Icons.battery_saver : Icons.battery_std_outlined,
+      ),
+      title: Text(l10n.batterySaverTitle),
+      subtitle: Text(
+        [
+          modeLabel(l10n, saver.mode),
+          status,
+          if (level != null) l10n.batteryLevel(level),
+        ].join(' · '),
+      ),
+      trailing: const Icon(Icons.chevron_right),
+      onTap: () => _choose(context, ref, saver.mode),
     );
   }
 }
