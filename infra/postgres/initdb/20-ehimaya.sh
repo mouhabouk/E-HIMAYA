@@ -1,6 +1,6 @@
 #!/bin/bash
 # ينشئ قاعدتي المنظومة و Keycloak بمستخدمين منفصلين.
-# Creates the application and Keycloak databases with separate owners.
+# Creates the application and Keycloak databases with separate owners, then the API runtime role.
 set -euo pipefail
 
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname postgres \
@@ -18,3 +18,6 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$EHIMAYA_DB_NAME" 
 	CREATE EXTENSION IF NOT EXISTS vector;
 	CREATE EXTENSION IF NOT EXISTS pgcrypto;
 EOSQL
+
+# Runtime role of the API (DML only); the owner above runs the migrations.
+/usr/local/bin/ehimaya-roles.sh
