@@ -56,6 +56,22 @@ class Settings(BaseSettings):
     # Without it certificates can be generated and submitted but not approved.
     certificate_signing_key: SecretStr | None = None
 
+    # Notification channels (phase 5). Each one is optional: without its settings the channel is recorded
+    # as "skipped" and the other channels still go out.
+    # Firebase Cloud Messaging (Android, and iOS through APNs): the service-account JSON, base64-encoded.
+    fcm_service_account: SecretStr | None = None
+    # SMS gateway of a Tunisian operator or aggregator: JSON POST {"to", "text", "sender"} with a bearer token.
+    sms_http_url: str | None = None
+    sms_http_token: SecretStr | None = None
+    sms_sender: str = "E-HIMAYA"
+    # Outgoing e-mail (Mailpit in development).
+    smtp_host: str | None = None
+    smtp_port: int = 587
+    smtp_username: str | None = None
+    smtp_password: SecretStr | None = None
+    smtp_from: str = "e-Himaya <no-reply@ehimaya.tn>"
+    smtp_starttls: bool = True
+
     api_cors_origins: Annotated[list[str], NoDecode] = Field(default_factory=list)
     api_log_level: str = "INFO"
     db_pool_size: int = 10
@@ -86,7 +102,18 @@ class Settings(BaseSettings):
             raise ValueError("CERTIFICATE_SIGNING_KEY must decode to 32 bytes (openssl rand -base64 32)")
         return value
 
-    @field_validator("ai_service_url", "ai_service_token", "certificate_signing_key", mode="before")
+    @field_validator(
+        "ai_service_url",
+        "ai_service_token",
+        "certificate_signing_key",
+        "fcm_service_account",
+        "sms_http_url",
+        "sms_http_token",
+        "smtp_host",
+        "smtp_username",
+        "smtp_password",
+        mode="before",
+    )
     @classmethod
     def _empty_is_unset(cls, value: object) -> object:
         # Compose passes "" when the optional AI profile is not configured.

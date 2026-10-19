@@ -29,6 +29,7 @@ from app.modules.ai import settings as ai_settings
 from app.modules.ai.client import AiClient, AiRejected, AiUnavailable, get_ai_client
 from app.modules.ai.models import Analysis
 from app.modules.identity.models import Account
+from app.modules.ops import levels
 from app.modules.orgs import sites
 from app.modules.reports.domain import Category, Status
 from app.modules.reports.models import Media, Report, StatusHistory
@@ -127,6 +128,7 @@ async def score(session: AsyncSession, report: Report, analysis: Analysis) -> li
         sensitive_site=await sites.nearest(
             session, select(Report.location).where(Report.id == report.id).scalar_subquery()
         ),
+        op_level=(await levels.level_of(session, report.gouvernorat_code)).value,
     )
     credibility = scoring.credibility(facts)
     priority = scoring.priority(facts, credibility["score"], settings.priority)
@@ -146,6 +148,20 @@ async def baseline(session: AsyncSession, report: Report) -> None:
     await session.flush()
     await score(session, report, analysis)
     await session.flush()
+    await auto_group(session, report)
+
+
+async def auto_group(session: AsyncSession, report: Report) -> None:
+    """At disaster level the grouping suggestion is applied at once (BR-11); never blocks a report."""
+    from fastapi import HTTPException
+
+    from app.modules.ops import service as incidents
+
+    try:
+        async with session.begin_nested():
+            await incidents.auto_group(session, report)
+    except HTTPException:
+        log.info("ai.auto_group_skipped", report_id=str(report.id))
 
 
 async def emit_enriched(session: AsyncSession, report_ids: list[uuid.UUID]) -> None:
@@ -356,6 +372,7 @@ async def _save(session: AsyncSession, report_id: uuid.UUID, generation: int, at
 
     matches = await score(session, report, analysis)
     await session.flush()
+    await auto_group(session, report)
     await emit_enriched(session, [report_id])
     # Reports describing the same event gain a corroborating reporter: refresh their scores too.
     others = [m.report_id for m in matches[:20]]

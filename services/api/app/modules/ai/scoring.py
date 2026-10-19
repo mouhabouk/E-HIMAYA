@@ -29,6 +29,8 @@ class Facts:
     organization_id: str | None = None
     # Most sensitive active institution within 300 m (orgs.sites.nearest); None = none.
     sensitive_site: tuple[float, dict[str, Any]] | None = None
+    # Operational level of the report's gouvernorat (requirements §6.4): normal | crisis | disaster.
+    op_level: str = "normal"
 
 
 def _component(key: str, value: float | None, detail: dict[str, Any]) -> dict[str, Any]:
@@ -111,9 +113,17 @@ def _reporters(facts: Facts) -> tuple[float, dict[str, Any]]:
     return min(math.log10(total), 1.0), {"reporters": total}
 
 
-# Components that can only raise the priority: the context around a report (a hazardous site nearby)
-# must never make an emergency rank lower than the same emergency elsewhere.
-BONUS_COMPONENTS = frozenset({"sensitive_sites"})
+# Components that can only raise the priority: the context around a report (a hazardous site nearby, a
+# crisis declared in the zone) must never make an emergency rank lower than the same emergency elsewhere.
+BONUS_COMPONENTS = frozenset({"sensitive_sites", "op_level"})
+LEVEL_VALUES = {"crisis": 0.7, "disaster": 1.0}
+
+
+def _op_level(facts: Facts) -> tuple[float | None, dict[str, Any]]:
+    value = LEVEL_VALUES.get(facts.op_level)
+    if value is None:
+        return None, {"reason": "normal_level"}
+    return value, {"level": facts.op_level}
 
 
 def priority(facts: Facts, credibility_score: int, settings: PrioritySettings) -> dict[str, Any]:
@@ -126,6 +136,8 @@ def priority(facts: Facts, credibility_score: int, settings: PrioritySettings) -
         "credibility": (credibility_score / 100, {"score": credibility_score}),
         # Registered institutions near the report (phase 4); none nearby = left out, like missing data.
         "sensitive_sites": facts.sensitive_site or (None, {"reason": "no_site_nearby"}),
+        # Crisis or disaster declared in the gouvernorat (phase 5); normal level = left out.
+        "op_level": _op_level(facts),
         # No data source yet: weather layer (FR-C-08, later phase).
         "weather": (None, {"reason": "no_data_yet"}),
     }

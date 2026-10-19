@@ -1,0 +1,440 @@
+[
+  {
+    "hazard": "fire",
+    "content": {
+      "ar": {
+        "title": "حريق",
+        "do": [
+          "اتصل فورا بالرقم 198 وحدد العنوان بدقة.",
+          "أخرج الجميع واتجه إلى أقرب مخرج آمن دون استعمال المصعد.",
+          "انخفض قريبا من الأرض وغطّ أنفك وفمك بقطعة قماش مبللة إن وُجد دخان.",
+          "تحسّس الباب بظهر اليد قبل فتحه؛ إن كان ساخنا ابحث عن مخرج آخر.",
+          "إن اشتعلت ملابسك: توقّف، انبطح، وتدحرج على الأرض.",
+          "إن كنت محاصرا: أغلق الأبواب، وسدّ الفتحات بقماش مبلل، ولوّح من النافذة."
+        ],
+        "dont": [
+          "لا تعد إلى المبنى لأخذ أغراضك.",
+          "لا تستعمل الماء لإطفاء حريق زيت أو كهرباء.",
+          "لا تفتح النوافذ والأبواب دون حاجة فهي تغذي النار بالهواء.",
+          "لا تقترب من حرائق الغابات لتصويرها."
+        ]
+      },
+      "fr": {
+        "title": "Incendie",
+        "do": [
+          "Appelez immédiatement le 198 et indiquez l'adresse exacte.",
+          "Faites sortir tout le monde par l'issue sûre la plus proche, sans utiliser l'ascenseur.",
+          "En présence de fumée, baissez-vous près du sol et couvrez le nez et la bouche d'un tissu mouillé.",
+          "Touchez la porte du dos de la main avant de l'ouvrir ; si elle est chaude, cherchez une autre issue.",
+          "Si vos vêtements prennent feu : arrêtez-vous, couchez-vous et roulez au sol.",
+          "Si vous êtes bloqué : fermez les portes, calfeutrez avec des linges mouillés et signalez-vous à la fenêtre."
+        ],
+        "dont": [
+          "Ne retournez pas dans le bâtiment pour récupérer vos affaires.",
+          "N'utilisez pas d'eau sur un feu d'huile ou d'origine électrique.",
+          "N'ouvrez pas portes et fenêtres sans nécessité : l'air attise le feu.",
+          "Ne vous approchez pas d'un feu de forêt pour le filmer."
+        ]
+      },
+      "en": {
+        "title": "Fire",
+        "do": [
+          "Call 198 at once and give the exact address.",
+          "Get everyone out through the nearest safe exit; do not use the lift.",
+          "If there is smoke, stay low and cover your nose and mouth with a wet cloth.",
+          "Feel the door with the back of your hand before opening it; if it is hot, find another way out.",
+          "If your clothes catch fire: stop, drop and roll.",
+          "If you are trapped: close the doors, seal the gaps with wet cloth and signal from the window."
+        ],
+        "dont": [
+          "Do not go back inside for your belongings.",
+          "Do not use water on an oil or electrical fire.",
+          "Do not open doors and windows needlessly: air feeds the fire.",
+          "Do not go near a forest fire to film it."
+        ]
+      }
+    }
+  },
+  {
+    "hazard": "flood",
+    "content": {
+      "ar": {
+        "title": "فيضان وأمطار غزيرة",
+        "do": [
+          "تابع تنبيهات الحماية المدنية واستعد للإخلاء إن طُلب منك.",
+          "اصعد إلى مكان مرتفع ومعك وثائقك وأدويتك وهاتف مشحون.",
+          "اقطع الكهرباء والغاز إن بدأ الماء يدخل المنزل.",
+          "ابتعد عن الأودية ومجاري المياه والجسور المغمورة."
+        ],
+        "dont": [
+          "لا تعبر طريقا أو واديا غمرته المياه، ولو بالسيارة: 30 سنتيمترا من ماء جارٍ تكفي لجرفها.",
+          "لا تلمس الأسلاك والتجهيزات الكهربائية المبللة.",
+          "لا تنزل إلى الأقبية والمرائب تحت الأرض أثناء الفيضان.",
+          "لا تشرب من ماء الحنفية قبل التأكد من سلامته."
+        ]
+      },
+      "fr": {
+        "title": "Inondation et fortes pluies",
+        "do": [
+          "Suivez les alertes de la Protection civile et préparez-vous à évacuer si on vous le demande.",
+          "Montez en hauteur avec vos papiers, vos médicaments et un téléphone chargé.",
+          "Coupez l'électricité et le gaz si l'eau commence à entrer.",
+          "Éloignez-vous des oueds, des cours d'eau et des ponts submergés."
+        ],
+        "dont": [
+          "Ne traversez pas une route ou un oued inondé, même en voiture : 30 cm d'eau courante suffisent à l'emporter.",
+          "Ne touchez pas aux fils et appareils électriques mouillés.",
+          "Ne descendez pas dans les caves et parkings souterrains pendant l'inondation.",
+          "Ne buvez pas l'eau du robinet avant d'être sûr qu'elle est saine."
+        ]
+      },
+      "en": {
+        "title": "Flood and heavy rain",
+        "do": [
+          "Follow Civil Protection alerts and be ready to evacuate if asked.",
+          "Move to higher ground with your papers, medicines and a charged phone.",
+          "Switch off electricity and gas if water starts coming in.",
+          "Keep away from wadis, streams and flooded bridges."
+        ],
+        "dont": [
+          "Do not cross a flooded road or wadi, even by car: 30 cm of moving water can sweep it away.",
+          "Do not touch wet wires or electrical equipment.",
+          "Do not go down into cellars or underground car parks during a flood.",
+          "Do not drink tap water until you know it is safe."
+        ]
+      }
+    }
+  },
+  {
+    "hazard": "traffic_accident",
+    "content": {
+      "ar": {
+        "title": "حادث مرور",
+        "do": [
+          "أوقف سيارتك بأمان، وشغّل أضواء التنبيه، وارتدِ السترة العاكسة.",
+          "ضع مثلث التنبيه على مسافة كافية خلف الحادث.",
+          "اتصل بالرقم 198 أو 190 وصف عدد المصابين وحالتهم.",
+          "اقطع محرك السيارة المتضررة إن أمكن دون خطر."
+        ],
+        "dont": [
+          "لا تحرّك مصابا إلا إذا كان مهددا بخطر مباشر (حريق، انفجار).",
+          "لا تنزع خوذة سائق الدراجة النارية.",
+          "لا تدخّن ولا تقترب بشعلة من الحادث.",
+          "لا تتوقف في وسط الطريق للمشاهدة أو التصوير."
+        ]
+      },
+      "fr": {
+        "title": "Accident de la route",
+        "do": [
+          "Garez-vous en sécurité, allumez les feux de détresse et portez le gilet réfléchissant.",
+          "Placez le triangle de signalisation assez loin derrière l'accident.",
+          "Appelez le 198 ou le 190 et décrivez le nombre et l'état des blessés.",
+          "Coupez le moteur du véhicule accidenté si c'est possible sans danger."
+        ],
+        "dont": [
+          "Ne déplacez pas un blessé sauf danger immédiat (incendie, explosion).",
+          "N'enlevez pas le casque d'un motard.",
+          "Ne fumez pas et n'approchez aucune flamme.",
+          "Ne vous arrêtez pas au milieu de la route pour regarder ou filmer."
+        ]
+      },
+      "en": {
+        "title": "Road accident",
+        "do": [
+          "Park safely, switch on the hazard lights and wear the reflective vest.",
+          "Place the warning triangle well behind the accident.",
+          "Call 198 or 190 and describe how many people are hurt and how badly.",
+          "Switch off the engine of the damaged vehicle if it is safe to do so."
+        ],
+        "dont": [
+          "Do not move an injured person unless there is immediate danger (fire, explosion).",
+          "Do not remove a motorcyclist's helmet.",
+          "Do not smoke or bring any flame near the scene.",
+          "Do not stop in the middle of the road to watch or film."
+        ]
+      }
+    }
+  },
+  {
+    "hazard": "medical",
+    "content": {
+      "ar": {
+        "title": "حالة صحية طارئة",
+        "do": [
+          "اتصل بالرقم 190 واذكر العمر والأعراض والعنوان.",
+          "إن كان الشخص لا يتنفس: ابدأ الضغط على وسط الصدر (100 إلى 120 ضغطة في الدقيقة) حتى وصول النجدة.",
+          "إن كان فاقدا للوعي ويتنفس: ضعه على جانبه في وضعية الأمان.",
+          "اضغط مباشرة على النزيف بقطعة قماش نظيفة."
+        ],
+        "dont": [
+          "لا تعطِ ماء أو طعاما لشخص فاقد الوعي.",
+          "لا تترك المصاب وحده إلا للاتصال بالنجدة.",
+          "لا تعطِ أدوية لم يصفها الطبيب."
+        ]
+      },
+      "fr": {
+        "title": "Urgence médicale",
+        "do": [
+          "Appelez le 190 en donnant l'âge, les symptômes et l'adresse.",
+          "Si la personne ne respire pas : commencez les compressions au centre de la poitrine (100 à 120 par minute) jusqu'à l'arrivée des secours.",
+          "Si elle est inconsciente et respire : mettez-la sur le côté en position latérale de sécurité.",
+          "Comprimez directement une hémorragie avec un linge propre."
+        ],
+        "dont": [
+          "Ne donnez ni eau ni nourriture à une personne inconsciente.",
+          "Ne laissez pas la victime seule, sauf pour appeler les secours.",
+          "Ne donnez pas de médicaments non prescrits."
+        ]
+      },
+      "en": {
+        "title": "Medical emergency",
+        "do": [
+          "Call 190 and give the age, the symptoms and the address.",
+          "If the person is not breathing: start chest compressions in the centre of the chest (100 to 120 a minute) until help arrives.",
+          "If unconscious but breathing: turn them on their side in the recovery position.",
+          "Press directly on any bleeding with a clean cloth."
+        ],
+        "dont": [
+          "Do not give water or food to an unconscious person.",
+          "Do not leave the casualty alone except to call for help.",
+          "Do not give medicines that were not prescribed."
+        ]
+      }
+    }
+  },
+  {
+    "hazard": "drowning",
+    "content": {
+      "ar": {
+        "title": "الغرق والسباحة",
+        "do": [
+          "اسبح في الشواطئ المحروسة واحترم ألوان الرايات.",
+          "إن رأيت شخصا يغرق: نبّه المنقذ أو اتصل بالرقم 198، وارمِ له شيئا يطفو.",
+          "إن جرفك تيار: لا تقاومه، اسبح موازيا للشاطئ ثم عد إليه.",
+          "راقب الأطفال باستمرار قرب الماء."
+        ],
+        "dont": [
+          "لا تسبح عند رفع الراية الحمراء.",
+          "لا تقفز في ماء لا تعرف عمقه.",
+          "لا تدخل الماء لإنقاذ غريق إن لم تكن مدرّبا.",
+          "لا تسبح بعد الأكل مباشرة أو بعد التعرض الطويل للشمس."
+        ]
+      },
+      "fr": {
+        "title": "Noyade et baignade",
+        "do": [
+          "Baignez-vous sur les plages surveillées et respectez les drapeaux.",
+          "Si quelqu'un se noie : alertez le sauveteur ou appelez le 198 et lancez-lui un objet flottant.",
+          "Pris dans un courant : ne luttez pas, nagez parallèlement à la plage puis revenez.",
+          "Surveillez les enfants en permanence près de l'eau."
+        ],
+        "dont": [
+          "Ne vous baignez pas quand le drapeau rouge est hissé.",
+          "Ne plongez pas dans une eau dont vous ignorez la profondeur.",
+          "N'entrez pas dans l'eau pour sauver quelqu'un si vous n'êtes pas formé.",
+          "Ne vous baignez pas juste après un repas ou une longue exposition au soleil."
+        ]
+      },
+      "en": {
+        "title": "Drowning and swimming",
+        "do": [
+          "Swim on supervised beaches and follow the flags.",
+          "If someone is drowning: alert the lifeguard or call 198 and throw them something that floats.",
+          "Caught in a current: do not fight it; swim parallel to the shore, then back in.",
+          "Watch children at all times near water."
+        ],
+        "dont": [
+          "Do not swim when the red flag is up.",
+          "Do not dive into water when you do not know its depth.",
+          "Do not go into the water to rescue someone unless you are trained.",
+          "Do not swim right after a meal or a long time in the sun."
+        ]
+      }
+    }
+  },
+  {
+    "hazard": "heat_wave",
+    "content": {
+      "ar": {
+        "title": "موجة حر",
+        "do": [
+          "اشرب الماء بانتظام ولو لم تشعر بالعطش.",
+          "ابقَ في مكان بارد أو مظلل بين منتصف النهار والساعة الرابعة.",
+          "اطمئن على كبار السن والمرضى والأطفال.",
+          "إن ظهرت دوخة أو قيء أو ارتفاع شديد للحرارة: برّد الشخص واتصل بالرقم 190."
+        ],
+        "dont": [
+          "لا تترك طفلا أو حيوانا في سيارة مغلقة ولو لدقائق.",
+          "لا تمارس مجهودا بدنيا في ساعات الذروة.",
+          "لا تشعل نارا في الغابات أو قربها."
+        ]
+      },
+      "fr": {
+        "title": "Canicule",
+        "do": [
+          "Buvez de l'eau régulièrement, même sans soif.",
+          "Restez au frais ou à l'ombre entre midi et 16 heures.",
+          "Prenez des nouvelles des personnes âgées, des malades et des enfants.",
+          "En cas de vertiges, vomissements ou forte fièvre : rafraîchissez la personne et appelez le 190."
+        ],
+        "dont": [
+          "Ne laissez jamais un enfant ou un animal dans une voiture fermée, même quelques minutes.",
+          "Évitez les efforts physiques aux heures les plus chaudes.",
+          "N'allumez pas de feu en forêt ou à proximité."
+        ]
+      },
+      "en": {
+        "title": "Heat wave",
+        "do": [
+          "Drink water regularly, even when you are not thirsty.",
+          "Stay somewhere cool or shaded between noon and 4 pm.",
+          "Check on elderly people, the sick and children.",
+          "In case of dizziness, vomiting or very high temperature: cool the person down and call 190."
+        ],
+        "dont": [
+          "Never leave a child or an animal in a closed car, even for a few minutes.",
+          "Avoid physical effort in the hottest hours.",
+          "Do not light a fire in or near forests."
+        ]
+      }
+    }
+  },
+  {
+    "hazard": "chemical_leak",
+    "content": {
+      "ar": {
+        "title": "تسرب غاز أو مواد كيميائية",
+        "do": [
+          "ابتعد عكس اتجاه الريح وانصح من حولك بالابتعاد.",
+          "في المنزل: أغلق قارورة الغاز وافتح النوافذ ثم اخرج.",
+          "اتصل بالرقم 198 من مكان آمن.",
+          "إن طُلب منك البقاء في الداخل: أغلق النوافذ والتهوية وانتظر التعليمات."
+        ],
+        "dont": [
+          "لا تشعل نارا ولا تشغّل أو تطفئ أي جهاز كهربائي قرب تسرب الغاز.",
+          "لا تلمس المادة المتسربة ولا تحاول تحديدها بالشم.",
+          "لا تستعمل الهاتف قرب مكان التسرب."
+        ]
+      },
+      "fr": {
+        "title": "Fuite de gaz ou de produits chimiques",
+        "do": [
+          "Éloignez-vous dos au vent et faites éloigner les personnes autour de vous.",
+          "À la maison : fermez la bouteille de gaz, ouvrez les fenêtres puis sortez.",
+          "Appelez le 198 depuis un endroit sûr.",
+          "Si l'on vous demande de rester à l'intérieur : fermez fenêtres et ventilation et attendez les consignes."
+        ],
+        "dont": [
+          "N'allumez aucune flamme et n'actionnez aucun interrupteur près d'une fuite de gaz.",
+          "Ne touchez pas le produit et n'essayez pas de l'identifier à l'odeur.",
+          "N'utilisez pas votre téléphone près de la fuite."
+        ]
+      },
+      "en": {
+        "title": "Gas or chemical leak",
+        "do": [
+          "Move away upwind and get the people around you to move away.",
+          "At home: close the gas bottle, open the windows, then go out.",
+          "Call 198 from a safe place.",
+          "If told to stay indoors: close windows and ventilation and wait for instructions."
+        ],
+        "dont": [
+          "Do not light a flame or flip any electrical switch near a gas leak.",
+          "Do not touch the substance or try to identify it by smell.",
+          "Do not use your phone near the leak."
+        ]
+      }
+    }
+  },
+  {
+    "hazard": "storm",
+    "content": {
+      "ar": {
+        "title": "عاصفة ورياح قوية",
+        "do": [
+          "ثبّت أو أدخل الأشياء التي قد تطير من الشرفات والأسطح.",
+          "ابقَ داخل مبنى صلب بعيدا عن النوافذ.",
+          "جهّز مصباحا وبطاريات وهاتفا مشحونا."
+        ],
+        "dont": [
+          "لا تقف تحت الأشجار واللوحات الإشهارية والأسلاك الكهربائية.",
+          "لا تخرج بالقارب أو تقترب من الأمواج.",
+          "لا تلمس الأسلاك الكهربائية المتساقطة."
+        ]
+      },
+      "fr": {
+        "title": "Tempête et vents violents",
+        "do": [
+          "Fixez ou rentrez les objets qui peuvent s'envoler des balcons et terrasses.",
+          "Restez dans un bâtiment solide, loin des fenêtres.",
+          "Préparez une lampe, des piles et un téléphone chargé."
+        ],
+        "dont": [
+          "Ne restez pas sous les arbres, les panneaux publicitaires ou les lignes électriques.",
+          "Ne sortez pas en mer et ne vous approchez pas des vagues.",
+          "Ne touchez pas les câbles électriques tombés au sol."
+        ]
+      },
+      "en": {
+        "title": "Storm and strong winds",
+        "do": [
+          "Secure or bring in anything that could blow off balconies and roofs.",
+          "Stay inside a solid building, away from windows.",
+          "Have a torch, batteries and a charged phone ready."
+        ],
+        "dont": [
+          "Do not stand under trees, billboards or power lines.",
+          "Do not go out to sea or near the waves.",
+          "Do not touch fallen power lines."
+        ]
+      }
+    }
+  },
+  {
+    "hazard": "earthquake",
+    "content": {
+      "ar": {
+        "title": "زلزال",
+        "do": [
+          "انبطح، احتمِ تحت طاولة متينة، وتمسّك بها حتى يتوقف الاهتزاز.",
+          "ابتعد عن النوافذ والخزائن والأشياء التي قد تسقط.",
+          "بعد الهزة: اخرج بهدوء إلى مكان مفتوح بعيدا عن المباني.",
+          "توقّع هزات ارتدادية."
+        ],
+        "dont": [
+          "لا تستعمل المصعد.",
+          "لا تركض نحو الخارج أثناء الاهتزاز.",
+          "لا تدخل المباني المتضررة."
+        ]
+      },
+      "fr": {
+        "title": "Séisme",
+        "do": [
+          "Baissez-vous, abritez-vous sous une table solide et tenez-la jusqu'à la fin des secousses.",
+          "Éloignez-vous des fenêtres, des armoires et des objets qui peuvent tomber.",
+          "Après la secousse : sortez calmement vers un espace dégagé, loin des bâtiments.",
+          "Attendez-vous à des répliques."
+        ],
+        "dont": [
+          "N'utilisez pas l'ascenseur.",
+          "Ne courez pas vers l'extérieur pendant la secousse.",
+          "N'entrez pas dans les bâtiments endommagés."
+        ]
+      },
+      "en": {
+        "title": "Earthquake",
+        "do": [
+          "Drop, take cover under a sturdy table and hold on until the shaking stops.",
+          "Keep away from windows, cupboards and things that can fall.",
+          "After the shaking: walk calmly to an open space away from buildings.",
+          "Expect aftershocks."
+        ],
+        "dont": [
+          "Do not use the lift.",
+          "Do not run outside while the ground is shaking.",
+          "Do not enter damaged buildings."
+        ]
+      }
+    }
+  }
+]

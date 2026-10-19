@@ -11,7 +11,18 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.modules.ai.models import AiSettingsRow
 from app.modules.reports.domain import Category
 
-PRIORITY_COMPONENTS = ("severity", "lives", "casualties", "reporters", "credibility", "sensitive_sites", "weather")
+PRIORITY_COMPONENTS = (
+    "severity",
+    "lives",
+    "casualties",
+    "reporters",
+    "credibility",
+    "sensitive_sites",
+    "weather",
+    "op_level",
+)
+# Components added after settings may have been saved: a stored value without them takes the default.
+_ADDED_WEIGHTS = {"op_level": 10}
 
 
 class PrioritySettings(BaseModel):
@@ -25,6 +36,7 @@ class PrioritySettings(BaseModel):
             "credibility": 10,
             "sensitive_sites": 5,
             "weather": 5,
+            "op_level": _ADDED_WEIGHTS["op_level"],
         }
     )
     # Intrinsic gravity of each type, 0 to 1.
@@ -43,6 +55,13 @@ class PrioritySettings(BaseModel):
     )
     # A category suggested by the model raises the severity only above this confidence (never lowers it).
     suggestion_min_confidence: float = Field(default=0.7, ge=0, le=1)
+
+    @model_validator(mode="before")
+    @classmethod
+    def _upgrade(cls, data: Any) -> Any:
+        if isinstance(data, dict) and isinstance(data.get("weights"), dict):
+            data = {**data, "weights": {**_ADDED_WEIGHTS, **data["weights"]}}
+        return data
 
     @model_validator(mode="after")
     def _complete(self) -> "PrioritySettings":

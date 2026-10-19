@@ -6,6 +6,7 @@ server then pushes the events the user's geographic scope allows. Tokens are ren
 
 import asyncio
 import time
+from collections.abc import Callable
 from typing import Any
 
 import structlog
@@ -25,8 +26,9 @@ CLOSE_UNAUTHORIZED = 4401
 CLOSE_FORBIDDEN = 4403
 CLOSE_TOO_SLOW = 4408
 CLOSE_TRY_LATER = 1013
-# Institutions events (phase 4) also go to the institutions auditor, who does not read reports.
-ORG_EVENTS = frozenset({"org.updated", "certificate.updated"})
+# Institutions events (phase 4) also go to the institutions auditor, who does not read reports;
+# notification events (phase 5) go to those who write them; levels and directives to every staff member.
+EDITOR_ROLES = frozenset({Role.CONTENT_EDITOR, Role.OPS_MANAGER, Role.LOCAL_COMMITTEE, Role.CENTRAL_COMMITTEE})
 
 
 class _Rejected(Exception):
@@ -44,6 +46,16 @@ class LiveClient:
     @property
     def reads_reports(self) -> bool:
         return bool(self.principal.roles & frozenset(READ_ROLES))
+
+    def allowed(self, audience: str) -> bool:
+        roles = self.principal.roles
+        if audience == "reports":
+            return self.reads_reports
+        if audience == "orgs":
+            return self.reads_reports or Role.ORG_AUDITOR in roles
+        if audience == "editors":
+            return bool(roles & EDITOR_ROLES)
+        return True
 
     def can_see(self, gouvernorat_code: int | None) -> bool:
         if self.principal.is_national:
@@ -66,21 +78,13 @@ class LiveHub:
         self._clients.discard(client)
 
     async def on_event(self, subject: str, payload: dict[str, Any]) -> None:
-        if subject in ("report.created", "report.status_changed", "report.enriched"):
-            gouvernorat = payload.get("report", {}).get("gouvernorat_code")
-        elif subject == "incident.updated":
-            gouvernorat = payload.get("incident", {}).get("gouvernorat_code")
-        elif subject == "media.stored":
-            gouvernorat = payload.get("gouvernorat_code")
-        elif subject == "org.updated":
-            gouvernorat = payload.get("org", {}).get("gouvernorat_code")
-        elif subject == "certificate.updated":
-            gouvernorat = payload.get("certificate", {}).get("gouvernorat_code")
-        else:
+        route = _route(subject, payload)
+        if route is None:
             return
+        audience, visible = route
         message = {"type": subject, **payload}
         for client in list(self._clients):
-            if not client.can_see(gouvernorat) or not (subject in ORG_EVENTS or client.reads_reports):
+            if not client.allowed(audience) or not visible(client):
                 continue
             try:
                 client.queue.put_nowait(message)
@@ -88,6 +92,53 @@ class LiveHub:
                 # A client that cannot keep up is disconnected; it reconnects and reloads the list.
                 self.discard(client)
                 asyncio.get_running_loop().create_task(_close(client.websocket, CLOSE_TOO_SLOW))
+
+
+def _in(gouvernorat: int | None) -> Callable[[LiveClient], bool]:
+    return lambda client: client.can_see(gouvernorat)
+
+
+def _among(codes: list[int] | None, everywhere_when_empty: bool = True) -> Callable[[LiveClient], bool]:
+    def visible(client: LiveClient) -> bool:
+        if client.principal.is_national:
+            return True
+        if not codes:
+            return everywhere_when_empty
+        return client.principal.gouvernorat_code in codes
+
+    return visible
+
+
+def _route(subject: str, payload: dict[str, Any]) -> tuple[str, Callable[[LiveClient], bool]] | None:
+    """Who may receive an event: an audience (``reports``, ``orgs``, ``staff``, ``editors``) and a scope test."""
+    if subject in ("report.created", "report.status_changed", "report.enriched"):
+        return "reports", _in(payload.get("report", {}).get("gouvernorat_code"))
+    if subject == "incident.updated":
+        return "reports", _in(payload.get("incident", {}).get("gouvernorat_code"))
+    if subject == "media.stored":
+        return "reports", _in(payload.get("gouvernorat_code"))
+    if subject in ("assignment.updated", "callout.updated"):
+        return "reports", _in(payload.get("gouvernorat_code"))
+    if subject == "resource.updated":
+        return "reports", _in(payload.get("resource", {}).get("gouvernorat_code"))
+    if subject == "volunteer.updated":
+        return "reports", _in(payload.get("volunteer", {}).get("gouvernorat_code"))
+    if subject == "org.updated":
+        return "orgs", _in(payload.get("org", {}).get("gouvernorat_code"))
+    if subject == "certificate.updated":
+        return "orgs", _in(payload.get("certificate", {}).get("gouvernorat_code"))
+    if subject == "oplevel.changed":
+        # Every staff member sees the national situation (levels are not personal data).
+        return "staff", lambda client: True
+    if subject == "directive.issued":
+        directive = payload.get("directive", {})
+        return "staff", _among(directive.get("gouvernorat_codes"))
+    if subject in ("notification.updated", "alert.issued"):
+        area = payload.get("message", {}).get("area", {})
+        if area.get("polygon"):
+            return "editors", lambda client: True
+        return "editors", _among(area.get("gouvernorat_codes"))
+    return None
 
 
 hub = LiveHub()
@@ -108,7 +159,7 @@ async def _authenticate(message: Any) -> tuple[Principal, float]:
     except HTTPException as exc:
         codes = {status.HTTP_403_FORBIDDEN: CLOSE_FORBIDDEN, status.HTTP_503_SERVICE_UNAVAILABLE: CLOSE_TRY_LATER}
         raise _Rejected(codes.get(exc.status_code, CLOSE_UNAUTHORIZED)) from exc
-    if not principal.is_staff or not principal.roles & frozenset((*READ_ROLES, Role.ORG_AUDITOR)):
+    if not principal.is_staff or not principal.roles:
         raise _Rejected(CLOSE_FORBIDDEN)
     return principal, float(principal.claims["exp"])
 
