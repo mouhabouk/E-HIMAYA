@@ -58,7 +58,7 @@ async def list_delegations(
     lang: Annotated[Lang, Query()] = "ar",
 ) -> list[DelegationOut]:
     if await session.get(Gouvernorat, code) is None:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "unknown gouvernorat")
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "unknown_gouvernorat")
     rows = await session.scalars(select(Delegation).where(Delegation.gouvernorat_code == code).order_by(Delegation.id))
     response.headers["Cache-Control"] = CACHE_HEADER
     return [

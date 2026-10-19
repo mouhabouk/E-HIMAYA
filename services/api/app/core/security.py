@@ -115,11 +115,11 @@ class TokenVerifier:
         try:
             unverified = jwt.decode(token, options={"verify_signature": False})
         except jwt.PyJWTError as exc:
-            raise _unauthorized("malformed token") from exc
+            raise _unauthorized("invalid_token") from exc
         issuer = str(unverified.get("iss", "")).rstrip("/")
         realm = self._issuers.get(issuer)
         if realm is None:
-            raise _unauthorized("unknown issuer")
+            raise _unauthorized("invalid_token")
         try:
             key = self._key_resolver(token, issuer)
             claims: dict[str, Any] = jwt.decode(
@@ -132,9 +132,9 @@ class TokenVerifier:
                 leeway=10,
             )
         except jwt.PyJWTError as exc:
-            raise _unauthorized("invalid token") from exc
+            raise _unauthorized("invalid_token") from exc
         except Exception as exc:  # JWKS unreachable, etc.
-            raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "identity provider unavailable") from exc
+            raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "identity_provider_unavailable") from exc
 
         raw_roles = set(claims.get("realm_access", {}).get("roles", []))
         allowed = REALM_ROLES[realm]
@@ -146,7 +146,7 @@ class TokenVerifier:
                 gouvernorat_code = int(claims["gouvernorat_code"])
             except (KeyError, TypeError, ValueError) as exc:
                 # A staff account without an explicit scope is refused rather than silently national.
-                raise HTTPException(status.HTTP_403_FORBIDDEN, "staff account has no geographic scope") from exc
+                raise HTTPException(status.HTTP_403_FORBIDDEN, "staff_scope_missing") from exc
 
         return Principal(
             subject=str(claims["sub"]),
@@ -193,7 +193,7 @@ async def get_optional_principal(
 
 async def get_principal(principal: Annotated[Principal | None, Depends(get_optional_principal)]) -> Principal:
     if principal is None:
-        raise _unauthorized("authentication required")
+        raise _unauthorized("authentication_required")
     return principal
 
 
@@ -203,7 +203,7 @@ def require_roles(*roles: Role) -> Callable[..., Awaitable[Principal]]:
 
     async def _dependency(principal: Annotated[Principal, Depends(get_principal)]) -> Principal:
         if not principal.roles & wanted:
-            raise HTTPException(status.HTTP_403_FORBIDDEN, "insufficient role")
+            raise HTTPException(status.HTTP_403_FORBIDDEN, "insufficient_role")
         return principal
 
     return _dependency
