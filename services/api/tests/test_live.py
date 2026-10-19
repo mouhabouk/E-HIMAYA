@@ -58,6 +58,18 @@ def test_events_are_filtered_by_scope(make_token: TokenFactory) -> None:
         assert ws.receive_json() == {"type": "pong"}
 
 
+def test_ai_and_incident_events_are_filtered_by_scope(make_token: TokenFactory) -> None:
+    with TestClient(app).websocket_connect(URL) as ws:
+        ws.send_json({"type": "auth", "token": _staff_token(make_token, 61)})
+        assert ws.receive_json() == {"type": "ready"}
+        ws.portal.call(hub.on_event, "report.enriched", _event(11, "tunis"))
+        ws.portal.call(hub.on_event, "incident.updated", {"incident": {"id": "i-tunis", "gouvernorat_code": 11}})
+        ws.portal.call(hub.on_event, "report.enriched", _event(61, "sfax"))
+        ws.portal.call(hub.on_event, "incident.updated", {"incident": {"id": "i-sfax", "gouvernorat_code": 61}})
+        assert ws.receive_json() == {"type": "report.enriched", **_event(61, "sfax")}
+        assert ws.receive_json()["incident"]["id"] == "i-sfax"
+
+
 def test_national_scope_sees_everything(make_token: TokenFactory) -> None:
     with TestClient(app).websocket_connect(URL) as ws:
         ws.send_json({"type": "auth", "token": _staff_token(make_token, None, roles=["central_committee"])})
