@@ -15,6 +15,7 @@ import structlog
 from sqlalchemy import delete, select, text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from app.core import metrics
 from app.modules.notify import service, templates
 from app.modules.notify.models import Device, Dispatch, Message, OrgDigest, Outbox
 from app.modules.notify.providers import Push, Result, get_providers
@@ -51,6 +52,16 @@ def _localized(value: dict[str, str], lang: str) -> str:
 
 
 def _push_for(message: Message, purpose: str, token: str, platform: str, locale: str) -> Push:
+    if message.audience == "user":
+        # A notification to one person is personal: content-free push, read in the app inbox (A8).
+        kind = "alert_cancelled" if purpose == "cancel" else message.kind
+        return Push(
+            token,
+            platform,
+            templates.pick(templates.PERSONAL_PUSH_TITLE, locale),
+            templates.pick(templates.PERSONAL_PUSH_BODY, locale),
+            {"type": kind, "id": str(message.id), "redacted": "1"},
+        )
     if purpose == "cancel":
         title = templates.pick(templates.ALERT_CANCELLED_TITLE, locale)
         return Push(
@@ -70,7 +81,14 @@ def _push_for(message: Message, purpose: str, token: str, platform: str, locale:
         _localized(message.body, locale),
         data,
         alert=message.kind == "alert",
+        critical=message.kind == "alert" and message.severity == "high",
     )
+
+
+def _count_failures(channel: str, results: list[Result]) -> None:
+    failed = sum(1 for r in results if not r.ok)
+    if failed:
+        metrics.NOTIFY_FAILURES.labels(channel=channel).inc(failed)
 
 
 # ---------------------------------------------------------------- fan-out jobs
@@ -119,15 +137,16 @@ async def _batch(
             push = _push_for(message, job.purpose, token, platform, locale)
             calls.append(partial(providers.push.send, push))
     elif job.channel == "sms":
-        for address, locale in rows:
+        for _phone_key, locale, secret in rows:
             sms_text = f"{_localized(message.title, locale)}: {_localized(message.body, locale)}"[:SMS_MAX_CHARS]
-            calls.append(partial(providers.sms.send, address, sms_text))
+            calls.append(partial(providers.sms.send, service.phone_of(secret), sms_text))
     else:
-        for address, locale in rows:
+        for address, locale, _secret in rows:
             lang = locale if locale in ("ar", "fr", "en") else "ar"
             body = f"{_localized(message.body, lang)}\n\n{templates.pick(templates.SIGNATURE, lang)}"
             calls.append(partial(providers.email.send, address, _localized(message.title, lang), body))
     results = await _gather(calls)
+    _count_failures(job.channel, results)
     gone = [rows[i][0] for i, r in enumerate(results) if r.unregistered] if job.channel == "push" else []
     cursor = rows[-1][0] if rows else job.cursor
     return results, cursor, len(rows), gone
@@ -212,6 +231,7 @@ async def run_outbox(sessionmaker: async_sessionmaker[AsyncSession], limit: int 
                 for t, plat, loc in targets
             ]
             results = await _gather(calls)
+            _count_failures("push", results)
             gone += [targets[i][0] for i, r in enumerate(results) if r.unregistered]
             ok = any(r.ok for r in results)
             outcomes[row.id] = ("sent", None) if ok else ("retry", results[0].error if results else None)
@@ -221,6 +241,7 @@ async def run_outbox(sessionmaker: async_sessionmaker[AsyncSession], limit: int 
                 continue
             assert row.address is not None
             result = await providers.email.send(row.address, row.payload["subject"], row.payload["text"])
+            _count_failures("email", [result])
             outcomes[row.id] = ("sent", None) if result.ok else ("retry", result.error)
     async with sessionmaker() as session, session.begin():
         for row_id, (state, error) in outcomes.items():

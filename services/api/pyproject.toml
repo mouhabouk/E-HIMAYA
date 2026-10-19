@@ -22,6 +22,7 @@ dependencies = [
   "weasyprint==70.0",
   "segno==1.6.6",
   "email-validator==2.3.0",
+  "prometheus-client==0.26.0",
 ]
 
 [dependency-groups]

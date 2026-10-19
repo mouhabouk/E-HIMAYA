@@ -1,6 +1,7 @@
 import hashlib
 import os
 import uuid
+from collections.abc import Callable
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
@@ -10,9 +11,19 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_sessionmaker
 from app.modules.reports.uploads import verify_one
-from tests.conftest import FakeStore, TokenFactory, accept_charter, bearer, device_headers, report_body
+from tests.conftest import (
+    HOOK_AUTH,
+    FakeStore,
+    TokenFactory,
+    accept_charter,
+    bearer,
+    device_headers,
+    outbox_events,
+    report_body,
+)
 
-HOOK = "/internal/tusd/hooks/test-hook-secret-test-hook-secret"
+HOOK = "/internal/tusd/hooks"
+JPEG = b"\xff\xd8\xff\xe0\x00\x10JFIF\x00"
 
 
 def _hook(kind: str, headers: dict[str, str], upload: dict[str, Any]) -> dict[str, Any]:
@@ -49,21 +60,32 @@ async def _report(client: httpx.AsyncClient, headers: dict[str, str]) -> str:
 
 
 async def _pre_create(client: httpx.AsyncClient, headers: dict[str, str], upload: dict[str, Any]) -> dict[str, Any]:
-    r = await client.post(HOOK, json=_hook("pre-create", headers, upload))
+    r = await client.post(HOOK, headers=HOOK_AUTH, json=_hook("pre-create", headers, upload))
     assert r.status_code == 200, r.text
     return r.json()  # type: ignore[no-any-return]
 
 
-async def test_hook_requires_secret(client: httpx.AsyncClient) -> None:
-    r = await client.post("/internal/tusd/hooks/wrong", json={"Type": "pre-create", "Event": {}})
-    assert r.status_code == 404
+async def test_hook_requires_secret_in_header(client: httpx.AsyncClient) -> None:
+    import base64
+
+    event = {"Type": "post-finish", "Event": {}}
+    assert (await client.post(HOOK, json=event)).status_code == 404
+    wrong = base64.b64encode(b"tusd:wrong-secret-wrong-secret-wrong").decode()
+    assert (await client.post(HOOK, json=event, headers={"Authorization": f"Basic {wrong}"})).status_code == 404
+    other_user = base64.b64encode(b"admin:test-hook-secret-test-hook-secret").decode()
+    assert (await client.post(HOOK, json=event, headers={"Authorization": f"Basic {other_user}"})).status_code == 404
+    # The secret is no longer accepted in the URL path.
+    assert (await client.post(f"{HOOK}/test-hook-secret-test-hook-secret", json=event)).status_code == 404
+    assert (await client.post(HOOK, json=event, headers=HOOK_AUTH)).status_code == 200
+    bearer_auth = {"Authorization": "Bearer test-hook-secret-test-hook-secret"}
+    assert (await client.post(HOOK, json=event, headers=bearer_auth)).status_code == 200
 
 
 async def test_full_upload_flow(
     client: httpx.AsyncClient, citizen: dict[str, str], fake_store: FakeStore, session: AsyncSession
 ) -> None:
     report_id = await _report(client, citizen)
-    data = os.urandom(4096)
+    data = JPEG + os.urandom(4096)
     answer = await _pre_create(client, citizen, _upload(report_id, data))
     assert "RejectUpload" not in answer
     upload_id = answer["ChangeFileInfo"]["ID"]
@@ -76,17 +98,19 @@ async def test_full_upload_flow(
     fake_store.objects[key] = data
     finished = {**_upload(report_id, data), "ID": f"{upload_id}+multipart-xyz", "Offset": len(data)}
     finished["Storage"] = {"Type": "s3store", "Bucket": "ehimaya-media", "Key": key}
-    assert (await client.post(HOOK, json=_hook("post-finish", citizen, finished))).status_code == 200
+    assert (await client.post(HOOK, headers=HOOK_AUTH, json=_hook("post-finish", citizen, finished))).status_code == 200
 
     assert await verify_one(get_sessionmaker(), fake_store) is True
     media = (await client.get("/api/v1/reports/mine", headers=citizen)).json()["items"][0]["media"][0]
     assert media["status"] == "stored" and media["bytes"] == len(data)
     assert media["sha256"] == hashlib.sha256(data).hexdigest()
-
-    event = await session.scalar(
-        text("SELECT payload FROM events.outbox WHERE subject = 'media.stored' AND payload->>'report_id' = :id"),
-        {"id": report_id},
+    assert media["content_type"] == "image/jpeg"
+    verified = await session.scalar(
+        text("SELECT verified_type FROM reports.media WHERE upload_id = :u"), {"u": upload_id}
     )
+    assert verified == "image/jpeg"
+
+    [event] = [e for e in await outbox_events(session, "media.stored") if e["report_id"] == report_id]
     assert event["gouvernorat_code"] == 61 and event["media"]["status"] == "stored"
 
 
@@ -101,7 +125,7 @@ async def test_hash_mismatch_rejects_and_deletes(
     key = f"uploads/{upload_id}"
     fake_store.objects[key] = b"tampered" + declared[8:]
     finished = {**_upload(report_id, declared), "ID": upload_id, "Storage": {"Key": key}}
-    await client.post(HOOK, json=_hook("post-finish", device, finished))
+    await client.post(HOOK, headers=HOOK_AUTH, json=_hook("post-finish", device, finished))
 
     assert await verify_one(get_sessionmaker(), fake_store) is True
     assert key in fake_store.deleted and f"{key}.info" in fake_store.deleted
@@ -162,6 +186,80 @@ async def test_terminated_upload_is_rejected(
     report_id = await _report(client, citizen)
     data = b"y" * 10
     upload_id = (await _pre_create(client, citizen, _upload(report_id, data)))["ChangeFileInfo"]["ID"]
-    await client.post(HOOK, json=_hook("post-terminate", citizen, {"ID": f"{upload_id}+mp"}))
+    await client.post(HOOK, headers=HOOK_AUTH, json=_hook("post-terminate", citizen, {"ID": f"{upload_id}+mp"}))
     status = await session.scalar(text("SELECT status FROM reports.media WHERE upload_id = :u"), {"u": upload_id})
     assert status == "rejected"
+
+
+async def _finished_upload(
+    client: httpx.AsyncClient, headers: dict[str, str], fake_store: FakeStore, data: bytes, **meta: str
+) -> tuple[str, str]:
+    report_id = await _report(client, headers)
+    upload_id = (await _pre_create(client, headers, _upload(report_id, data, **meta)))["ChangeFileInfo"]["ID"]
+    key = f"uploads/{upload_id}"
+    fake_store.objects[key] = data
+    finished = {**_upload(report_id, data, **meta), "ID": upload_id, "Storage": {"Key": key}}
+    await client.post(HOOK, headers=HOOK_AUTH, json=_hook("post-finish", headers, finished))
+    while await verify_one(get_sessionmaker(), fake_store):
+        pass
+    return report_id, upload_id
+
+
+async def test_declared_type_must_match_the_bytes(
+    client: httpx.AsyncClient,
+    citizen: dict[str, str],
+    fake_store: FakeStore,
+    session: AsyncSession,
+    staff: Callable[..., dict[str, str]],
+) -> None:
+    png = b"\x89PNG\r\n\x1a\n" + os.urandom(256)
+    report_id, upload_id = await _finished_upload(client, citizen, fake_store, png, filetype="image/jpeg")
+    row = (
+        await session.execute(
+            text("SELECT status, rejection_reason, verified_type FROM reports.media WHERE upload_id = :u"),
+            {"u": upload_id},
+        )
+    ).one()
+    assert tuple(row) == ("quarantined", "type_mismatch", None)
+    assert f"uploads/{upload_id}" not in fake_store.deleted  # kept as evidence
+    media_id = await session.scalar(text("SELECT id FROM reports.media WHERE upload_id = :u"), {"u": upload_id})
+    audit = await session.scalar(
+        text("SELECT details FROM audit.log WHERE action = 'media.quarantined' AND target = :t"),
+        {"t": f"media:{media_id}"},
+    )
+    assert audit == {"declared": "image/jpeg", "detected": "png"}
+
+    # Staff see the quarantine and its reason, and may only download the file as an opaque attachment.
+    detail = (await client.get(f"/api/v1/staff/reports/{report_id}", headers=staff())).json()
+    media = detail["media"][0]
+    assert media["status"] == "quarantined" and media["rejection_reason"] == "type_mismatch"
+    assert media["url"] is not None
+    assert fake_store.presigned[-1] == (
+        f"uploads/{upload_id}",
+        "application/octet-stream",
+        f'attachment; filename="{media["id"]}.bin"',
+    )
+
+
+async def test_active_content_is_quarantined(
+    client: httpx.AsyncClient, fake_store: FakeStore, session: AsyncSession
+) -> None:
+    html = b"<!doctype html><script>alert(document.cookie)</script>"
+    _, upload_id = await _finished_upload(client, device_headers(), fake_store, html, filetype="image/png")
+    row = (
+        await session.execute(
+            text("SELECT status, rejection_reason FROM reports.media WHERE upload_id = :u"), {"u": upload_id}
+        )
+    ).one()
+    assert tuple(row) == ("quarantined", "disallowed_type")
+
+
+async def test_stored_media_is_served_with_the_verified_type(
+    client: httpx.AsyncClient, citizen: dict[str, str], fake_store: FakeStore, staff: Callable[..., dict[str, str]]
+) -> None:
+    ogg = b"OggS\x00\x02" + os.urandom(512)
+    report_id, upload_id = await _finished_upload(client, citizen, fake_store, ogg, kind="audio", filetype="audio/ogg")
+    detail = (await client.get(f"/api/v1/staff/reports/{report_id}", headers=staff())).json()
+    media = detail["media"][0]
+    assert media["status"] == "stored" and media["content_type"] == "audio/ogg" and media["rejection_reason"] is None
+    assert (f"uploads/{upload_id}", "audio/ogg", f'inline; filename="{media["id"]}.ogg"') in fake_store.presigned

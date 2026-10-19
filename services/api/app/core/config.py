@@ -4,15 +4,21 @@ import base64
 import binascii
 from functools import lru_cache
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Literal
 
-from pydantic import Field, SecretStr, field_validator
+from pydantic import Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
+
+from app.core.secrets_policy import production_problems
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+    # hide_input_in_errors: a start-up error must never print the secrets it was given.
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore", hide_input_in_errors=True)
 
+    # production: no /docs, /redoc or /openapi.json, and start-up refuses weak or example secrets
+    # (app/core/secrets_policy.py). development (default): local stacks and tests.
+    app_env: Literal["development", "production"] = "development"
     database_url: str = Field(description="postgresql+asyncpg://user:pass@host:5432/db")
     valkey_url: str | None = None
     nats_url: str | None = None
@@ -33,14 +39,39 @@ class Settings(BaseSettings):
     oidc_audience: str = "ehimaya-api"
 
     anon_pseudonym_secret: SecretStr = Field(min_length=32)
-    # AES-256-GCM key for field-level encryption (CIN, medical data): base64 of 32 random bytes.
+    # AES-256-GCM key for field-level encryption (personal data at rest): base64 of 32 random bytes. It is key
+    # version 1 and the root of the blind indexes (CIN, phone, report search words), so it stays configured
+    # after a rotation.
     field_encryption_key: SecretStr
+    # Key rotation: further key versions "2:<base64>,3:<base64>" (2..255). New values are encrypted with the
+    # active version (default: the highest configured); every listed version stays readable. After adding a
+    # version run `python -m app.modules.privacy.cli reencrypt`, then retire the old one.
+    field_encryption_keys: SecretStr | None = None
+    field_encryption_active_version: int | None = Field(default=None, ge=1, le=255)
     # Version of the privacy charter every reporter must have accepted (FR-A-001).
     charter_version: str = "2026-10"
-    # Shared secret in the tusd hook URL path; the hook endpoint is disabled when unset.
+    # Shared secret tusd sends in the Authorization header of its hook calls (HTTP Basic, user "tusd", or
+    # "Bearer <secret>"); the hook endpoint is disabled when unset.
     tusd_hook_secret: SecretStr | None = Field(default=None, min_length=24)
     # Background loops (outbox relay, media verification). Disabled in tests, which drive them directly.
     background_workers: bool = True
+    # api: serve HTTP only, no background loop; worker: run the background loops and serve only /health and
+    # /metrics (no SOS traffic); all: both (single-container development).
+    process_role: Literal["api", "worker", "all"] = "all"
+    # Bearer token of the Prometheus scraper; /metrics answers 404 while unset.
+    metrics_token: SecretStr | None = Field(default=None, min_length=24)
+
+    # Abuse controls (A1). Per-client-IP limits apply to anonymous device identities only (registered
+    # citizens are limited per account); windows in seconds. Beyond the global anonymous budget, reports
+    # are still accepted but flagged "needs verification" with a lowered priority.
+    anon_identity_per_ip: int = Field(default=60, ge=1)
+    anon_identity_window_s: int = Field(default=3600, ge=1)
+    anon_report_per_ip: int = Field(default=60, ge=1)
+    anon_report_window_s: int = Field(default=600, ge=1)
+    anon_consent_per_ip: int = Field(default=60, ge=1)
+    anon_device_per_ip: int = Field(default=120, ge=1)
+    anon_report_budget: int = Field(default=300, ge=1)
+    anon_report_budget_window_s: int = Field(default=600, ge=1)
 
     # Internal AI inference service (services/ai). Without it, reports are scored and grouped by rules only.
     ai_service_url: str | None = None
@@ -82,6 +113,27 @@ class Settings(BaseSettings):
     smtp_from: str = "e-Himaya <no-reply@ehimaya.tn>"
     smtp_starttls: bool = True
 
+    # Retention and anonymisation (law 2004-63, architecture §5.3), run by the worker role. Durations in days.
+    retention_enabled: bool = True
+    retention_interval_s: int = Field(default=3600, ge=60)
+    # Domain events already relayed to the bus (the bus itself keeps 7 days).
+    retention_events_days: int = Field(default=7, ge=1)
+    # Individual pushes and e-mails once sent, skipped or failed.
+    retention_notify_outbox_days: int = Field(default=30, ge=1)
+    # Finished fan-out jobs of notifications and alerts (their delivery counters).
+    retention_notify_dispatch_days: int = Field(default=180, ge=1)
+    # Push devices not refreshed by the app for this long are forgotten; their rounded position earlier.
+    retention_device_days: int = Field(default=180, ge=1)
+    retention_device_location_days: int = Field(default=30, ge=1)
+    # Closed or rejected reports are anonymised this long after their last change (5 years).
+    retention_report_days: int = Field(default=1826, ge=1)
+    # Acceptances of a superseded charter, kept as proof while reports made under them are kept.
+    retention_consent_days: int = Field(default=1826, ge=1)
+    # Anonymous device identities that never reported and have no push device.
+    retention_anon_account_days: int = Field(default=365, ge=1)
+    # Erasure requests once the identity-provider account was disabled.
+    retention_erasure_days: int = Field(default=30, ge=1)
+
     api_cors_origins: Annotated[list[str], NoDecode] = Field(default_factory=list)
     api_log_level: str = "INFO"
     db_pool_size: int = 10
@@ -99,6 +151,30 @@ class Settings(BaseSettings):
             raise ValueError("FIELD_ENCRYPTION_KEY must decode to 32 bytes (openssl rand -base64 32)")
         return value
 
+    @field_validator("field_encryption_keys")
+    @classmethod
+    def _check_keyring(cls, value: SecretStr | None) -> SecretStr | None:
+        if value is None or not value.get_secret_value().strip():
+            return None
+        parse_keyring(value.get_secret_value())
+        return value
+
+    @model_validator(mode="after")
+    def _check_production_secrets(self) -> "Settings":
+        if self.app_env == "production":
+            problems = production_problems(self)
+            if problems:
+                raise ValueError("APP_ENV=production refuses weak or example secrets: " + "; ".join(problems))
+        return self
+
+    @model_validator(mode="after")
+    def _check_active_version(self) -> "Settings":
+        if self.field_encryption_active_version is not None:
+            extra = parse_keyring(self.field_encryption_keys.get_secret_value()) if self.field_encryption_keys else {}
+            if self.field_encryption_active_version not in {1, *extra}:
+                raise ValueError("FIELD_ENCRYPTION_ACTIVE_VERSION names a key version that is not configured")
+        return self
+
     @field_validator("certificate_signing_key")
     @classmethod
     def _check_signing_key(cls, value: SecretStr | None) -> SecretStr | None:
@@ -115,7 +191,11 @@ class Settings(BaseSettings):
     @field_validator(
         "ai_service_url",
         "ai_service_token",
+        "metrics_token",
+        "tusd_hook_secret",
         "certificate_signing_key",
+        "field_encryption_keys",
+        "field_encryption_active_version",
         "fcm_service_account",
         "fcm_service_account_file",
         "sms_http_url",
@@ -147,6 +227,28 @@ class Settings(BaseSettings):
         if isinstance(value, str):
             return [item.strip().rstrip("/") for item in value.split(",") if item.strip()]
         return value
+
+
+def parse_keyring(value: str) -> dict[int, bytes]:
+    """``"2:<base64>,3:<base64>"`` → {2: key, 3: key}; version 1 is FIELD_ENCRYPTION_KEY."""
+    keys: dict[int, bytes] = {}
+    for item in (part.strip() for part in value.split(",")):
+        if not item:
+            continue
+        version_text, sep, encoded = item.partition(":")
+        if not sep or not version_text.strip().isdigit():
+            raise ValueError("FIELD_ENCRYPTION_KEYS entries are <version>:<base64 key>")
+        version = int(version_text)
+        if not 2 <= version <= 255 or version in keys:
+            raise ValueError("FIELD_ENCRYPTION_KEYS versions are distinct numbers from 2 to 255")
+        try:
+            raw = base64.b64decode(encoded.strip(), validate=True)
+        except binascii.Error as exc:
+            raise ValueError("FIELD_ENCRYPTION_KEYS keys must be base64 (openssl rand -base64 32)") from exc
+        if len(raw) != 32:
+            raise ValueError("FIELD_ENCRYPTION_KEYS keys must decode to 32 bytes (openssl rand -base64 32)")
+        keys[version] = raw
+    return keys
 
 
 @lru_cache

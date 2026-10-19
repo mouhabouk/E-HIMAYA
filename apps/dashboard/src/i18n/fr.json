@@ -208,7 +208,8 @@
     "category": "Catégorie",
     "gouvernorat": "Gouvernorat",
     "allGouvernorats": "Tous les gouvernorats",
-    "reset": "Réinitialiser"
+    "reset": "Réinitialiser",
+    "unverified": "À vérifier uniquement"
   },
   "reports": {
     "title": "Signalements",
@@ -284,9 +285,18 @@
       "uploading": "En cours d’envoi",
       "verifying": "Vérification de l’empreinte",
       "stored": "Enregistré",
-      "rejected": "Rejeté (empreinte non conforme)"
+      "rejected": "Rejeté (empreinte non conforme)",
+      "quarantined": "En quarantaine (type de fichier non conforme)"
     },
-    "historyBy": "par {{actor}}"
+    "historyBy": "par {{actor}}",
+    "mediaQuarantined": "Fichier non affiché : son contenu ne correspond pas au type déclaré.",
+    "mediaDownload": "Télécharger le fichier (à ouvrir avec précaution)",
+    "mediaRejectionLabel": "Motif",
+    "mediaRejection": {
+      "sha256_mismatch": "Empreinte SHA-256 différente de celle déclarée par l’appareil",
+      "type_mismatch": "Le contenu du fichier ne correspond pas au type déclaré",
+      "disallowed_type": "Type de fichier non autorisé (ni image, ni vidéo, ni audio)"
+    }
   },
   "map": {
     "title": "Carte en direct",
@@ -1593,6 +1603,13 @@
         "volunteers": "Volontaires prêts / validés",
         "alerts": "Alertes actives"
       }
+    }
+  },
+  "verification": {
+    "badge": "À vérifier",
+    "reason": {
+      "anonymous_budget": "Signalement anonyme reçu au-delà du volume habituel : vérifier avant d’engager des moyens (priorité abaissée).",
+      "limiter_degraded": "Reçu pendant une panne du limiteur de débit : vérifier avant d’engager des moyens (priorité abaissée)."
     }
   }
 }

@@ -22,14 +22,14 @@ from app.modules.ai.models import Analysis
 from app.modules.geo.models import Gouvernorat
 from app.modules.identity.models import Account
 from app.modules.identity.service import Reporter, has_consented
-from app.modules.notify import outbox, templates
+from app.modules.notify import outbox
 from app.modules.orgs import service as orgs
 from app.modules.orgs.domain import OrgKind
 from app.modules.orgs.models import Organization
 from app.modules.orgs.schemas import OrgRef
 from app.modules.reports import schemas
 from app.modules.reports.domain import NEAREST_GOUVERNORAT_MAX_M, Category, Status, can_transition
-from app.modules.reports.models import Media, Report, StatusHistory
+from app.modules.reports.models import Media, Report, StatusHistory, report_search_tokens
 
 TUNIS_TZ = ZoneInfo("Africa/Tunis")
 HIGH_PRIORITY = 70
@@ -111,7 +111,7 @@ def media_out(media: Media) -> schemas.MediaOut:
         kind=media.kind,
         bytes=media.bytes,
         sha256=media.sha256,
-        content_type=media.content_type,
+        content_type=media.verified_type or media.content_type,
         status=media.status,
         created_at=media.created_at,
     )
@@ -153,8 +153,13 @@ async def get_report_row(session: AsyncSession, report_id: uuid.UUID) -> ReportR
 # ---------------------------------------------------------------- creation
 
 
-async def create_report(session: AsyncSession, reporter: Reporter, body: schemas.ReportIn) -> tuple[ReportRow, bool]:
-    """Create a report, or return the existing one for a replayed ``client_uuid`` (offline retries)."""
+async def create_report(
+    session: AsyncSession, reporter: Reporter, body: schemas.ReportIn, verification: str | None = None
+) -> tuple[ReportRow, bool]:
+    """Create a report, or return the existing one for a replayed ``client_uuid`` (offline retries).
+
+    ``verification`` (``anonymous_budget`` | ``limiter_degraded``) accepts the report flagged for a human
+    check with a lowered priority; a report is never refused for abuse-control reasons (A1)."""
     existing = await _by_client_uuid(session, body.client_uuid)
     if existing is not None:
         if existing.report.user_id != reporter.user_id:
@@ -187,6 +192,8 @@ async def create_report(session: AsyncSession, reporter: Reporter, body: schemas
         status=Status.RECEIVED.value,
         source="portal" if from_portal else "app",
         organization_id=org.id if org is not None else None,
+        needs_verification=verification is not None,
+        verification_reason=verification,
         created_at=created_at,
         received_at=received_at,
         updated_at=received_at,
@@ -283,6 +290,8 @@ def staff_report(
         incident_id=r.incident_id,
         has_suggestion=bool(analysis is not None and analysis.suggestion),
         organization=_org_ref(org),
+        needs_verification=r.needs_verification,
+        verification_reason=r.verification_reason,
     )
 
 
@@ -351,6 +360,7 @@ class StaffFilters:
     sort: str = "received"  # received | priority
     incident_id: uuid.UUID | None = None
     organization_id: uuid.UUID | None = None
+    needs_verification: bool | None = None
 
 
 async def staff_list(
@@ -373,17 +383,18 @@ async def staff_list(
         query = query.where(func.ST_Intersects(cast(Report.location, Geometry), envelope))
     if filters.q:
         pattern = "%" + filters.q.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_") + "%"
-        query = query.where(
-            or_(
-                Report.tracking_code.ilike(pattern, escape="\\"),
-                Report.text_original.ilike(pattern, escape="\\"),
-                Report.text_ar.ilike(pattern, escape="\\"),
-            )
-        )
+        matches: list[Any] = [Report.tracking_code.ilike(pattern, escape="\\")]
+        # The text is encrypted: whole words are matched through their blind indexes (every word of q).
+        tokens = report_search_tokens(filters.q, None)
+        if tokens:
+            matches.append(Report.search_tokens.contains(tokens))
+        query = query.where(or_(*matches))
     if filters.incident_id is not None:
         query = query.where(Report.incident_id == filters.incident_id)
     if filters.organization_id is not None:
         query = query.where(Report.organization_id == filters.organization_id)
+    if filters.needs_verification is not None:
+        query = query.where(Report.needs_verification.is_(filters.needs_verification))
     by_priority = filters.sort == "priority"
     priority = func.coalesce(Report.priority_score, -1)
     if cursor:
@@ -435,14 +446,13 @@ async def change_status(session: AsyncSession, report: Report, target: Status, a
     if report.first_response_at is None:
         report.first_response_at = now
     session.add(StatusHistory(report_id=report.id, status=target.value, at=now, actor=actor, note=note))
-    # UC-01: every status change reaches the reporter's phone (tracking code and status only).
+    # UC-01: every status change reaches the reporter's phone, as a content-free push (A8): the app reads
+    # the report over the API.
     outbox.push(
         session,
         report.user_id,
         "report_status",
-        templates.fill(templates.REPORT_STATUS_TITLE, code=report.tracking_code),
-        templates.REPORT_STATUS[target.value],
-        {"tracking_code": report.tracking_code, "status": target.value},
+        {"report_id": str(report.id), "tracking_code": report.tracking_code, "status": target.value},
     )
     await session.flush()
 

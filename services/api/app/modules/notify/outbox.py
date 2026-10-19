@@ -9,6 +9,7 @@ from typing import Any
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.modules.notify import templates
 from app.modules.notify.models import Outbox
 
 Localized = dict[str, str]
@@ -22,14 +23,22 @@ def push(
     session: AsyncSession,
     user_id: uuid.UUID,
     kind: str,
-    title: Localized,
-    body: Localized,
     data: dict[str, Any] | None = None,
     *,
     alert: bool = False,
 ) -> None:
-    """Queue a push to every device of ``user_id``. ``data`` must hold no personal data."""
-    payload = {"type": kind, "title": title, "body": body, "data": data or {}, "alert": alert}
+    """Queue a content-free push to every device of ``user_id`` (A8).
+
+    The title and body are the generic "you have an update" text in the device's language; ``data`` holds
+    only identifiers (never names, addresses or free text) plus ``redacted: "1"``, and the app fetches the
+    content over the authenticated API."""
+    payload = {
+        "type": kind,
+        "title": templates.PERSONAL_PUSH_TITLE,
+        "body": templates.PERSONAL_PUSH_BODY,
+        "data": {**(data or {}), "redacted": "1"},
+        "alert": alert,
+    }
     session.add(Outbox(channel="push", user_id=user_id, payload=payload))
 
 

@@ -19,7 +19,7 @@ from app.core.security import Principal
 from app.modules.audit import service as audit
 from app.modules.identity.models import Profile
 from app.modules.identity.service import Reporter
-from app.modules.notify import outbox, templates
+from app.modules.notify import outbox
 from app.modules.ops import resources, schemas
 from app.modules.ops import service as incidents
 from app.modules.ops.domain import ACTIVE_ASSIGNMENT, ASSIGNMENT_TRANSITIONS, classification_allowed
@@ -419,13 +419,9 @@ async def suggestions(
     return sorted(found, key=lambda s: (s.busy, s.distance_m))[:limit]
 
 
-def _callout_push(session: AsyncSession, user_id: uuid.UUID, callout: Callout, distance_m: int) -> None:
-    skill = templates.SKILLS.get(callout.skill, templates.SKILLS["other"])
-    body = {
-        lang: text.format(skill=skill[lang], km=max(1, round(distance_m / 1000)))
-        for lang, text in templates.CALLOUT_BODY.items()
-    }
-    outbox.push(session, user_id, "callout", templates.CALLOUT_TITLE, body, {"callout_id": str(callout.id)}, alert=True)
+def _callout_push(session: AsyncSession, user_id: uuid.UUID, callout: Callout) -> None:
+    # Content-free (A8): skill, distance and message are read in the app from /api/v1/me/callouts.
+    outbox.push(session, user_id, "callout", {"callout_id": str(callout.id)}, alert=True)
 
 
 async def create_callout(
@@ -457,7 +453,7 @@ async def create_callout(
         session.add(
             CalloutTarget(callout_id=callout.id, volunteer_id=candidate.volunteer_id, distance_m=candidate.distance_m)
         )
-        _callout_push(session, candidate.volunteer_id, callout, candidate.distance_m)
+        _callout_push(session, candidate.volunteer_id, callout)
     _timeline(
         session,
         incident.id,

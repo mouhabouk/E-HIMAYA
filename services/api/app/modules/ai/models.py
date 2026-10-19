@@ -6,6 +6,7 @@ from sqlalchemy import DateTime, ForeignKey, Integer, SmallInteger, Text, func
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
+from app.core.crypto import EncryptedJSON
 from app.core.db import Base
 
 
@@ -26,7 +27,8 @@ class Analysis(Base):
     last_error: Mapped[str | None] = mapped_column(Text)
     language: Mapped[str | None] = mapped_column(Text)
     steps: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default="{}")
-    extraction: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    # Model output includes a summary of the report text: encrypted like the text itself.
+    extraction: Mapped[dict[str, Any] | None] = mapped_column("extraction_enc", EncryptedJSON("ai.analysis.extraction"))
     priority: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
     credibility: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
     suggestion: Mapped[dict[str, Any] | None] = mapped_column(JSONB)

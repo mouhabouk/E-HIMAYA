@@ -48,6 +48,8 @@ class MediaOut(BaseModel):
 
 class StaffMediaOut(MediaOut):
     url: str | None = None
+    # Why the verification worker quarantined the file (declared type does not match its bytes, …).
+    rejection_reason: str | None = None
 
 
 class ReportOut(BaseModel):
@@ -123,6 +125,9 @@ class StaffReport(BaseModel):
     has_suggestion: bool = False
     # Institution the report was made on behalf of (phase 4, FR-A-080).
     organization: OrgRef | None = None
+    # Accepted beyond the anonymous budget or while the rate limiter ran degraded: check before dispatch.
+    needs_verification: bool = False
+    verification_reason: Literal["anonymous_budget", "limiter_degraded"] | None = None
 
 
 class StaffHistoryEntry(BaseModel):

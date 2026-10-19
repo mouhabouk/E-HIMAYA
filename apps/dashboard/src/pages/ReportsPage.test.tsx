@@ -79,4 +79,34 @@ describe("ReportsPage (phase 3)", () => {
     expect(tag).toHaveAttribute("href", "/orgs/o-1");
     expect(tag).toHaveTextContent("Signalement au nom d’un établissement");
   });
+
+  it("badges reports to verify and filters on them (phase 5.5)", async () => {
+    const api = fakeApi({
+      reports: vi.fn(() =>
+        Promise.resolve({
+          items: [
+            makeReport({
+              id: "v",
+              tracking_code: "EH-26-61-0000010",
+              needs_verification: true,
+              verification_reason: "anonymous_budget",
+            }),
+            makeReport({ id: "w", tracking_code: "EH-26-61-0000011" }),
+          ],
+          next_cursor: null,
+        }),
+      ),
+    });
+    renderApp(<ReportsPage />, { api, lang: "fr" });
+    await screen.findByRole("link", { name: "EH-26-61-0000010" });
+    const badge = within(rowOf("EH-26-61-0000010")).getByText("À vérifier");
+    expect(badge).toHaveClass("tag--verify");
+    expect(badge).toHaveAttribute("title", expect.stringContaining("anonyme"));
+    expect(within(rowOf("EH-26-61-0000011")).queryByText("À vérifier")).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByLabelText("À vérifier uniquement"));
+    await waitFor(() =>
+      expect(api.reports).toHaveBeenLastCalledWith(expect.objectContaining({ unverified: true }), expect.anything()),
+    );
+  });
 });

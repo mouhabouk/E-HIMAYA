@@ -451,7 +451,11 @@ async def download_url(
     if doc is None or doc.org_id != org_id:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "document_not_found")
     found = await service.stored_version(session, doc_id, version)
-    return schemas.DownloadOut(url=get_store().presign_get(found.object_key, content_type=found.content_type))
+    # The type is the one declared at upload: always a download, never rendered inline by the browser (A7).
+    url = get_store().presign_get(
+        found.object_key, content_type=found.content_type, disposition=f'attachment; filename="{found.id}"'
+    )
+    return schemas.DownloadOut(url=url)
 
 
 @router.get("/orgs/{org_id}/documents/{doc_id}/versions/{version}/download", response_model=schemas.DownloadOut)

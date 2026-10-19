@@ -160,3 +160,13 @@ def priority(facts: Facts, credibility_score: int, settings: PrioritySettings) -
         component["weight"] = weights[key]
         component["points"] = round(scored.get(key, 0.0), 1)
     return {"score": round(min(sum(scored.values()), 100)), "components": list(components.values())}
+
+
+# A report accepted beyond the anonymous budget (or while the limiter was degraded) is ranked lower until an
+# operator has checked it (A1); it is never dropped.
+UNVERIFIED_PRIORITY_FACTOR = 0.5
+
+
+def pending_verification(priority: dict[str, Any], reason: str | None) -> dict[str, Any]:
+    score = round(priority["score"] * UNVERIFIED_PRIORITY_FACTOR)
+    return {**priority, "score": score, "verification": {"reason": reason, "factor": UNVERIFIED_PRIORITY_FACTOR}}
