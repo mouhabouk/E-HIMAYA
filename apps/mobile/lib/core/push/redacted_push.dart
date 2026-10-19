@@ -1,0 +1,95 @@
+import '../../features/alerts/alert_labels.dart';
+import '../../features/report/category_labels.dart';
+import '../../features/reports/status_chip.dart';
+import '../../l10n/app_localizations.dart';
+import '../http/api_error.dart';
+import '../http/ehimaya_api.dart';
+import '../http/models.dart';
+import '../logging/log.dart';
+import 'push_payload.dart';
+
+final _log = logger('push');
+
+/// A8: personal pushes reach Google/Apple without any personal text (`redacted: "1"`). The
+/// phone fetches the content with the user's own identity from the existing authenticated
+/// endpoints and shows it locally; the text never transits the push services.
+class RedactedPushResolver {
+  RedactedPushResolver(this._api, this._l10n);
+
+  final EHimayaApi _api;
+  final AppLocalizations _l10n;
+
+  /// The push with its real title and body, or null when the content cannot be fetched (offline,
+  /// signed out, item gone): the generic text then stays.
+  Future<PushPayload?> resolve(PushPayload p) async {
+    if (!p.redacted) return null;
+    try {
+      return switch (p.kind) {
+        PushKind.callout => await _callout(p),
+        PushKind.reportStatus => await _report(p),
+        PushKind.info => await _info(p),
+        PushKind.alert || PushKind.alertCancelled => null,
+      };
+    } on ApiException catch (e) {
+      _log.info('redacted push not resolved: ${e.code.wire}');
+      return null;
+    }
+  }
+
+  Future<PushPayload?> _callout(PushPayload p) async {
+    final id = p.data['callout_id'] ?? p.data['id'];
+    final callouts = await _api.myCallouts();
+    final c =
+        callouts.where((c) => c.id == id).firstOrNull ??
+        (id == null ? callouts.firstOrNull : null);
+    if (c == null) return null;
+    final category = ReportCategory.fromWire(c.incidentCategory);
+    final distance = c.distanceM;
+    final parts = [
+      if (c.message != null && c.message!.trim().isNotEmpty) c.message!.trim(),
+      if (distance != null) distanceLabel(_l10n, distance),
+    ];
+    return p.withText(
+      title: category == null
+          ? _l10n.pushCalloutTitle
+          : '${_l10n.pushCalloutTitle} · ${categoryLabel(_l10n, category)}',
+      body: parts.isEmpty ? _l10n.pushOpenToSee : parts.join(' · '),
+    );
+  }
+
+  Future<PushPayload?> _report(PushPayload p) async {
+    final code = p.data['tracking_code'] ?? p.data['code'];
+    String? status;
+    String trackingCode;
+    if (code != null && code.isNotEmpty) {
+      final result = await _api.track(code);
+      status = result.status;
+      trackingCode = result.trackingCode;
+    } else {
+      final reportId = p.data['report_id'] ?? p.data['id'];
+      if (reportId == null) return null;
+      final mine = await _api.myReports(limit: 20);
+      final r = mine.items.where((r) => r.id == reportId).firstOrNull;
+      if (r == null) return null;
+      status = r.status;
+      trackingCode = r.trackingCode;
+    }
+    final parsed = ReportStatus.fromWire(status);
+    return p.withText(
+      title: _l10n.pushReportTitle(trackingCode),
+      body: parsed == null
+          ? _l10n.pushOpenToSee
+          : reportStatusLabel(_l10n, parsed),
+    );
+  }
+
+  Future<PushPayload?> _info(PushPayload p) async {
+    final id = p.data['id'];
+    if (id == null) return null;
+    final page = await _api.inbox(limit: 30);
+    final item = page.items.where((i) => i.id == id).firstOrNull;
+    if (item == null) return null;
+    final lang = _l10n.localeName;
+    return p.withText(title: item.title.of(lang), body: item.body.of(lang));
+  }
+}

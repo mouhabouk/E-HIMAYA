@@ -29,6 +29,13 @@ class DeviceKeyStore {
     return key;
   }
 
+  /// Account deletion: forgets this device's anonymous identity (a new key is generated if the
+  /// user continues anonymously again).
+  Future<void> forget() async {
+    _pending = null;
+    await _store.delete(SecureStoreKeys.deviceKey);
+  }
+
   static String generate(Random random) {
     final bytes = List<int>.generate(32, (_) => random.nextInt(256));
     return base64Url.encode(bytes).replaceAll('=', '');

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Official alerts break through Focus modes (aps.interruption-level "time-sensitive"). -->
+	<key>com.apple.developer.usernotifications.time-sensitive</key>
+	<true/>
+	<!-- CRITICAL ALERTS HOOK: sound through mute and Focus needs Apple's approval
+	     (https://developer.apple.com/contact/request/notifications-critical-alerts-entitlement/).
+	     Once granted, add:
+	       <key>com.apple.developer.usernotifications.critical-alerts</key><true/>
+	     then follow the note in lib/core/push/push_notifications.dart (requestCriticalPermission). -->
+	<!-- Enabling the Push Notifications capability in Xcode adds aps-environment here. -->
+</dict>
+</plist>

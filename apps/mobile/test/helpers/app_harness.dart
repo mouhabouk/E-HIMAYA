@@ -9,6 +9,7 @@ import 'package:ehimaya/core/db/open_database.dart';
 import 'package:ehimaya/core/http/api_client.dart';
 import 'package:ehimaya/core/http/models.dart';
 import 'package:ehimaya/core/location/location_service.dart';
+import 'package:ehimaya/core/power/scheduling.dart';
 import 'package:ehimaya/core/storage/app_prefs.dart';
 import 'package:ehimaya/core/storage/secure_store.dart';
 import 'package:ehimaya/core/sync/sync_scheduler.dart';
@@ -50,6 +51,8 @@ class FakeConnectivity implements ConnectivityMonitor {
   Future<bool> isOnline() async => true;
   @override
   Stream<bool> get onlineChanges => const Stream.empty();
+  @override
+  Future<NetworkKind> networkKind() async => NetworkKind.unmetered;
 }
 
 class FakeOidc implements OidcClient {

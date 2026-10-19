@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +9,7 @@ import '../../core/http/error_messages.dart';
 import '../../core/http/notify_models.dart';
 import '../../core/push/push_simulation_banner.dart';
 import '../../core/routing/app_router.dart';
+import '../../core/security/locked_alert.dart';
 import '../../core/settings/settings_controller.dart';
 import '../../core/ui/emergency_action.dart';
 import '../../l10n/app_localizations.dart';
@@ -266,11 +269,92 @@ class AlertDetailScreen extends ConsumerWidget {
   }
 }
 
+/// The only screen shown while the app is displayed over a locked phone (a most severe alert
+/// opened it full screen): the public alert itself, nothing personal, no navigation. Leaving it
+/// (button or back) asks the phone to unlock first and stays here when the user cancels.
+class LockedAlertScreen extends ConsumerWidget {
+  const LockedAlertScreen({super.key});
+
+  static Future<void> _leave(BuildContext context, WidgetRef ref) async {
+    final alertId = ref.read(lockedAlertProvider).alertId;
+    final router = GoRouter.of(context);
+    if (!await ref.read(lockedAlertProvider.notifier).unlock()) return;
+    router.go(alertId == null ? Routes.home : Routes.alert(alertId));
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final lang = ref.watch(localeCodeProvider);
+    final pushed = ref.watch(lockedAlertProvider).alert;
+    final alerts = ref.watch(currentAlertsProvider);
+    final alert = pushed?.id == null
+        ? ref.watch(highAlertsProvider).firstOrNull
+        : alerts.where((a) => a.id == pushed!.id).firstOrNull;
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) unawaited(_leave(context, ref));
+      },
+      child: Scaffold(
+        key: const Key('locked-alert'),
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: Text(l10n.alertTitle),
+        ),
+        body: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: alert != null
+                    ? _AlertDetail(alert: alert, lang: lang, locked: true)
+                    : ListView(
+                        padding: const EdgeInsets.all(16),
+                        children: [
+                          // The pushed text of a public official alert (never a personal push).
+                          Text(
+                            pushed?.title ?? l10n.alertTitle,
+                            style: theme.textTheme.titleLarge,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            pushed?.body ?? '',
+                            style: theme.textTheme.bodyLarge,
+                          ),
+                        ],
+                      ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: FilledButton.icon(
+                  key: const Key('locked-alert-open-app'),
+                  icon: const Icon(Icons.lock_open),
+                  label: Text(l10n.lockedAlertOpenApp),
+                  onPressed: () => _leave(context, ref),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _AlertDetail extends StatelessWidget {
-  const _AlertDetail({required this.alert, required this.lang});
+  const _AlertDetail({
+    required this.alert,
+    required this.lang,
+    this.locked = false,
+  });
 
   final ActiveAlert alert;
   final String lang;
+
+  /// Over the lock screen: no link to other screens.
+  final bool locked;
 
   @override
   Widget build(BuildContext context) {
@@ -333,13 +417,14 @@ class _AlertDetail extends StatelessWidget {
                 : l10n.alertAreaGouvernorats(alert.gouvernoratCodes.length),
           ),
         ),
-        const SizedBox(height: 8),
-        FilledButton.icon(
-          key: const Key('alert-tips'),
-          icon: const Icon(Icons.health_and_safety),
-          label: Text(l10n.tipsTitle),
-          onPressed: () => context.push(Routes.tips),
-        ),
+        if (!locked) const SizedBox(height: 8),
+        if (!locked)
+          FilledButton.icon(
+            key: const Key('alert-tips'),
+            icon: const Icon(Icons.health_and_safety),
+            label: Text(l10n.tipsTitle),
+            onPressed: () => context.push(Routes.tips),
+          ),
       ],
     );
   }

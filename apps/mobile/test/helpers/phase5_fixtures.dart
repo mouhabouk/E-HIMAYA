@@ -49,6 +49,7 @@ Future<ProviderContainer> phase5Container(
   DateTime Function()? clock,
   LocationService? location,
   PushMessaging? push,
+  SecureStore? secure,
   List<Override> overrides = const [],
 }) async {
   SharedPreferences.setMockInitialValues({
@@ -61,7 +62,7 @@ Future<ProviderContainer> phase5Container(
   final c = ProviderContainer(
     overrides: [
       sharedPreferencesProvider.overrideWithValue(sp),
-      secureStoreProvider.overrideWithValue(MemorySecureStore()),
+      secureStoreProvider.overrideWithValue(secure ?? MemorySecureStore()),
       appConfigProvider.overrideWithValue(testConfig),
       oidcClientProvider.overrideWithValue(FakeOidc()),
       httpAdapterProvider.overrideWithValue(adapter),

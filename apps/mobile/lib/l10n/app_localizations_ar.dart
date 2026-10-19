@@ -1365,4 +1365,224 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get volunteerLocationDenied =>
       'اسمح بالوصول إلى الموقع للتصريح بجاهزيتك.';
+
+  @override
+  String get actionNotNow => 'ليس الآن';
+
+  @override
+  String get channelCritical => 'التنبيهات الرسمية الحرجة';
+
+  @override
+  String get channelCriticalDesc =>
+      'أخطر تنبيهات الحماية المدنية، تُسمع حتى في وضع «عدم الإزعاج» (فقط إن سمحت بذلك).';
+
+  @override
+  String get alertCheckTitle => 'التحقق من وصول التنبيهات';
+
+  @override
+  String get alertCheckSubtitle => 'ما قد يمنع التنبيهات من الوصول إليك';
+
+  @override
+  String get alertCheckIntro =>
+      'للتنبيهات الرسمية صوتها واهتزازها وقناتها الخاصة، منفصلة عن التطبيقات الأخرى. لكن بعض إعدادات الهاتف قد تُسكتها: تحقق منها هنا.';
+
+  @override
+  String get alertCheckAllGood =>
+      'لا شيء يمنع التنبيهات الرسمية على هذا الهاتف.';
+
+  @override
+  String get alertCheckFix => 'إصلاح';
+
+  @override
+  String get alertChannelSettings => 'إعدادات صوت التنبيهات واهتزازها';
+
+  @override
+  String get issueNotificationsOff => 'الإشعارات معطلة';
+
+  @override
+  String get issueNotificationsOffHelp =>
+      'دون إشعارات لن تصلك التنبيهات ولا نداءات التدخل.';
+
+  @override
+  String get issueChannelMuted => 'التنبيهات الرسمية مكتومة';
+
+  @override
+  String get issueChannelMutedHelp =>
+      'تم تخفيض فئة «التنبيهات الرسمية» في إعدادات الهاتف: لم تعد ترنّ ولا تظهر أعلى الشاشة.';
+
+  @override
+  String get issueDnd => 'وضع «عدم الإزعاج» مفعّل';
+
+  @override
+  String get issueDndHelp =>
+      'قد تصل التنبيهات دون صوت. يمكنك السماح بمرور أخطر التنبيهات الرسمية.';
+
+  @override
+  String get issueFullScreen => 'التنبيهات بملء الشاشة غير مسموح بها';
+
+  @override
+  String get issueFullScreenHelp =>
+      'يجب أن تظهر أخطر التنبيهات فوق شاشة القفل. اسمح بـ«الإشعارات بملء الشاشة» لتطبيق ء-حماية.';
+
+  @override
+  String get issueBatteryOptimized => 'قد يؤخر تحسين البطارية نداءات التدخل';
+
+  @override
+  String get issueBatteryOptimizedHelp =>
+      'أنت في حالة جاهزية: قد يُنيم الهاتف التطبيق ويؤخر نداءات التدخل. استثنِ ء-حماية من تحسين البطارية طوال تطوعك.';
+
+  @override
+  String get issuePushUnavailable => 'إشعارات الدفع غير متوفرة';
+
+  @override
+  String get issuePushUnavailableHelp =>
+      'لا يستطيع هذا الهاتف استقبال إشعارات الدفع (مثلا دون خدمات Google): لا يتم التحقق من التنبيهات إلا والتطبيق مفتوح.';
+
+  @override
+  String get testAlertButton => 'إرسال تنبيه تجريبي';
+
+  @override
+  String get testAlertTitle => 'تجربة — تنبيه رسمي';
+
+  @override
+  String get testAlertBody =>
+      'هكذا يبدو تنبيه الحماية المدنية ويُسمع. لا حاجة لأي إجراء.';
+
+  @override
+  String get testAlertSent => 'تم إرسال التنبيه التجريبي.';
+
+  @override
+  String get criticalAlertsTitle => 'التنبيهات الحرجة في وضع «عدم الإزعاج»';
+
+  @override
+  String get criticalAlertsIntro =>
+      'يمكنك السماح لأخطر التنبيهات الرسمية (خطر على الأرواح: فيضان، حريق، إخلاء) بأن ترنّ حتى في وضع «عدم الإزعاج».';
+
+  @override
+  String get criticalAlertsHow =>
+      'لا تستعمل هذا إلا التنبيهات ذات الخطورة القصوى. سيطلب منك الهاتف منح ء-حماية «صلاحية الوصول إلى عدم الإزعاج»؛ ويمكنك إيقاف ذلك من هنا في أي وقت.';
+
+  @override
+  String get criticalAlertsEnable => 'السماح بالتنبيهات الحرجة';
+
+  @override
+  String get criticalAlertsEnabled =>
+      'يمكن للتنبيهات الحرجة أن ترنّ في وضع «عدم الإزعاج».';
+
+  @override
+  String get criticalAlertsDisable => 'إيقاف';
+
+  @override
+  String get batteryExemptTitle => 'استقبال نداءات التدخل في وقتها';
+
+  @override
+  String get batteryExemptBody =>
+      'أنت في حالة جاهزية. لتوفير البطارية قد يُنيم الهاتف ء-حماية فتصلك نداءات التدخل متأخرة. استثناء التطبيق من تحسين البطارية يجنّب ذلك؛ ولا يستعمل ء-حماية الموقع إلا وهو مفتوح وأنت جاهز.';
+
+  @override
+  String get batteryExemptAllow => 'استثناء التطبيق';
+
+  @override
+  String get batterySaverTitle => 'توفير البطارية';
+
+  @override
+  String get batterySaverHelp =>
+      'يقلّل من تواتر التحقق من التحديثات ومن مشاركة موقعك كمتطوع، ويؤجل الفيديوهات الكبيرة إلى شبكة Wi-Fi. لا تتأخر التنبيهات ونداءات الاستغاثة أبدا.';
+
+  @override
+  String get batterySaverAuto => 'تلقائي (عند ضعف البطارية)';
+
+  @override
+  String get batterySaverOn => 'مفعّل دائما';
+
+  @override
+  String get batterySaverOff => 'معطّل';
+
+  @override
+  String get batterySaverActive => 'نشط';
+
+  @override
+  String get batterySaverInactive => 'غير نشط';
+
+  @override
+  String batteryLevel(int percent) {
+    return 'البطارية $percent%';
+  }
+
+  @override
+  String get pushCalloutTitle => 'نداء تدخل';
+
+  @override
+  String get pushOpenToSee => 'افتح التطبيق للاطلاع على التفاصيل.';
+
+  @override
+  String pushReportTitle(String code) {
+    return 'البلاغ $code';
+  }
+
+  @override
+  String get myDataTitle => 'بياناتي';
+
+  @override
+  String get myDataSubtitle => 'تنزيل نسخة أو حذف حسابك';
+
+  @override
+  String get myDataIntro =>
+      'يمكنك الحصول على نسخة من كل البيانات الشخصية التي يحتفظ بها ء-حماية عنك (الملف الشخصي، الموافقات، البلاغات، ملف التطوع، الأجهزة)، 3 مرات في اليوم على الأكثر. احتفظ بالملف لنفسك: فهو يحتوي على بيانات شخصية.';
+
+  @override
+  String get myDataDownload => 'تنزيل بياناتي';
+
+  @override
+  String get myDataCopy => 'نسخ';
+
+  @override
+  String get myDataCopied => 'تم النسخ إلى الحافظة.';
+
+  @override
+  String get myDataSave => 'حفظ كملف';
+
+  @override
+  String myDataSaved(String path) {
+    return 'تم الحفظ: $path';
+  }
+
+  @override
+  String get myDataSaveFailed => 'تعذّر حفظ الملف.';
+
+  @override
+  String get deleteAccountTitle => 'حذف حسابي';
+
+  @override
+  String get deleteAccountSubtitle =>
+      'تُمحى بياناتك الشخصية؛ ولا يمكن التراجع عن ذلك.';
+
+  @override
+  String get deleteAccountExplain =>
+      'يُمحى ملفك الشخصي وموافقاتك وأجهزتك وملف تطوعك ويُغلق حسابك. تُحفظ البلاغات التي أرسلتها دون اسمك كما يقتضي القانون. ويُمسح كل ما هو مخزّن على هذا الهاتف ويعود التطبيق إلى البداية.';
+
+  @override
+  String get deleteAccountExplainAnonymous =>
+      'تُحذف الهوية المجهولة لهذا الهاتف من الخادم. تُحفظ البلاغات التي أرسلتها دون أي صلة بهذا الهاتف كما يقتضي القانون. ويُمسح كل ما هو مخزّن على هذا الهاتف ويعود التطبيق إلى البداية.';
+
+  @override
+  String get deleteAccountWord => 'حذف';
+
+  @override
+  String deleteAccountTypeWord(String word) {
+    return 'اكتب «$word» للتأكيد';
+  }
+
+  @override
+  String get deleteAccountConfirm => 'حذف نهائي';
+
+  @override
+  String get deleteAccountDone => 'تم حذف حسابك.';
+
+  @override
+  String get deleteAccountLastAdmin =>
+      'أنت آخر مسؤول عن إحدى المؤسسات. انقل صلاحية الإدارة إلى عضو آخر أولا، ثم احذف حسابك.';
+
+  @override
+  String get lockedAlertOpenApp => 'افتح قفل الهاتف لفتح التطبيق';
 }

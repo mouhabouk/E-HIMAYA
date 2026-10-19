@@ -1,20 +1,26 @@
 import 'dart:async';
 
+import 'package:flutter/widgets.dart' show Locale;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../features/alerts/alerts_providers.dart';
 import '../../features/reports/reports_providers.dart';
 import '../../features/volunteer/volunteer_providers.dart';
+import '../../l10n/app_localizations.dart';
 import '../auth/identity.dart';
 import '../http/api_error.dart';
 import '../http/ehimaya_api.dart';
 import '../location/location_service.dart';
 import '../logging/log.dart';
 import '../routing/app_router.dart';
+import '../security/locked_alert.dart';
 import '../settings/settings_controller.dart';
 import '../storage/app_prefs.dart';
+import '../ui/messenger.dart';
+import 'push_dedup.dart';
 import 'push_messaging.dart';
 import 'push_payload.dart';
+import 'redacted_push.dart';
 
 final _log = logger('push');
 
@@ -85,12 +91,23 @@ class PushController {
     final messaging = _ref.read(pushMessagingProvider);
     final available = await messaging.start(names);
     _ref.read(pushAvailableProvider.notifier).set(available);
-    if (!available) return;
+    if (!available) {
+      // No push on this build/phone: the channels still exist for the test alert and the
+      // settings checks.
+      try {
+        await _ref
+            .read(pushNotificationsProvider)
+            .init(names, onTap: (p) => unawaited(handleOpened(p)));
+      } on Object catch (e) {
+        _log.info('local notifications unavailable: ${e.runtimeType}');
+      }
+      return;
+    }
     final registrar = _ref.read(deviceRegistrarProvider);
     _subscriptions
       ..add(messaging.onTokenRefresh.listen((_) => registrar.register()))
       ..add(messaging.onForeground.listen(handleReceived))
-      ..add(messaging.onOpened.listen(handleOpened));
+      ..add(messaging.onOpened.listen((p) => unawaited(handleOpened(p))));
     _ref
       ..listen(identityProvider.select((s) => s.fingerprint), (prev, next) {
         if (next != null && next != prev) registrar.register();
@@ -98,11 +115,46 @@ class PushController {
       ..listen(localeCodeProvider, (_, _) => registrar.register());
     await registrar.register();
     final launch = await messaging.launchPayload();
-    if (launch != null) handleOpened(launch);
+    if (launch != null) await handleOpened(launch);
+  }
+
+  /// A8: fetches the real content of a content-free personal push with the user's identity,
+  /// replaces the generic notification text on the phone (Android, silently) and shows it in
+  /// the app. Returns the resolved push (null when it was not redacted or not resolvable).
+  Future<PushPayload?> resolveRedacted(
+    PushPayload p, {
+    required bool opened,
+  }) async {
+    if (!p.redacted || !_ref.read(identityProvider).hasIdentity) return null;
+    final l10n = lookupAppLocalizations(Locale(_ref.read(localeCodeProvider)));
+    final resolved = await RedactedPushResolver(
+      _ref.read(apiProvider),
+      l10n,
+    ).resolve(p);
+    if (resolved == null) return null;
+    if (!opened && _ref.read(pushMessagingProvider).platform == 'android') {
+      try {
+        await _ref
+            .read(pushNotificationsProvider)
+            .show(notificationIdFor(resolved), resolved);
+      } on Object catch (e) {
+        _log.info('notification not updated: ${e.runtimeType}');
+      }
+    }
+    // Never over a locked phone (personal content).
+    if (!_ref.read(lockedAlertProvider).locked) {
+      showRootMessage(resolved.title ?? '', resolved.body);
+    }
+    return resolved;
   }
 
   /// Refreshes what the push is about (the user may be looking at it).
   void handleReceived(PushPayload p) {
+    if (p.redacted) unawaited(resolveRedacted(p, opened: false));
+    _refresh(p);
+  }
+
+  void _refresh(PushPayload p) {
     switch (p.kind) {
       case PushKind.alert || PushKind.alertCancelled:
         unawaited(_ref.read(activeAlertsProvider.notifier).refresh());
@@ -116,9 +168,21 @@ class PushController {
     }
   }
 
-  void handleOpened(PushPayload p) {
-    handleReceived(p);
-    _ref.read(routerProvider).push(p.route);
+  /// A tapped notification. Over a locked phone, a public severe alert replaces the alert view;
+  /// anything else needs the phone unlocked first (nothing happens when the user cancels).
+  Future<void> handleOpened(PushPayload p) async {
+    final locked = _ref.read(lockedAlertProvider);
+    if (locked.locked) {
+      if (showableWhileLocked(p)) {
+        _ref.read(lockedAlertProvider.notifier).showAlert(p);
+        _refresh(p);
+        return;
+      }
+      if (!await _ref.read(lockedAlertProvider.notifier).unlock()) return;
+    }
+    if (p.redacted) unawaited(resolveRedacted(p, opened: true));
+    _refresh(p);
+    unawaited(_ref.read(routerProvider).push(p.route));
   }
 
   void dispose() {

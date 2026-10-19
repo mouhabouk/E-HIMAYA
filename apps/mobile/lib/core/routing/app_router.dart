@@ -12,12 +12,14 @@ import '../../features/institution/my_institution_screen.dart';
 import '../../features/onboarding/citizen_mode_screen.dart';
 import '../../features/onboarding/institution_screen.dart';
 import '../../features/onboarding/role_screen.dart';
+import '../../features/privacy/my_data_screen.dart';
 import '../../features/profile/profile_screen.dart';
 import '../../features/report/category_screen.dart';
 import '../../features/report/new_report_screen.dart';
 import '../../features/report/report_queued_screen.dart';
 import '../../features/reports/my_reports_screen.dart';
 import '../../features/reports/track_screen.dart';
+import '../../features/settings/alert_check.dart';
 import '../../features/settings/settings_screen.dart';
 import '../../features/tips/tips_screen.dart';
 import '../../features/volunteer/callouts_screen.dart';
@@ -25,6 +27,7 @@ import '../../features/volunteer/volunteer_form_screen.dart';
 import '../../features/volunteer/volunteer_screen.dart';
 import '../auth/identity.dart';
 import '../http/models.dart';
+import '../security/locked_alert.dart';
 
 abstract final class Routes {
   static const charter = '/charter';
@@ -51,6 +54,14 @@ abstract final class Routes {
   static const notifications = '/notifications';
   static String alert(String id) => '/alerts/${Uri.encodeComponent(id)}';
   static const tips = '/tips';
+  // Phase 5.5: alert delivery, citizen rights.
+  static const alertCheck = '/alert-check';
+  static const criticalAlerts = '/alert-check/critical';
+  static const myData = '/my-data';
+  static const deleteAccount = '/my-data/delete';
+
+  /// The public alert view over a locked phone (see [LockedAlertScreen]).
+  static const lockedAlert = '/locked-alert';
   static String tip(String hazard) => '/tips/${Uri.encodeComponent(hazard)}';
 }
 
@@ -61,7 +72,14 @@ String? guardRedirect({
   required bool charterAccepted,
   required IdentityState identity,
   required bool profilePrompted,
+  bool lockedAlert = false,
 }) {
+  // Over a locked phone only the public alert view exists: no shell, no other route, no deep
+  // link. Checked first, before anything else.
+  if (lockedAlert) {
+    return location == Routes.lockedAlert ? null : Routes.lockedAlert;
+  }
+  if (location == Routes.lockedAlert) return Routes.home;
   if (location == Routes.emergency) return null;
   if (!charterAccepted) {
     return location == Routes.charter ? null : Routes.charter;
@@ -98,6 +116,10 @@ final routerProvider = Provider<GoRouter>((ref) {
   ref.listen(charterAcceptedProvider, (_, _) => refresh.ping());
   ref.listen(identityProvider, (_, _) => refresh.ping());
   ref.listen(profilePromptedProvider, (_, _) => refresh.ping());
+  ref.listen(
+    lockedAlertProvider.select((s) => s.locked),
+    (_, _) => refresh.ping(),
+  );
 
   final router = GoRouter(
     navigatorKey: _rootKey,
@@ -108,6 +130,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       charterAccepted: ref.read(charterAcceptedProvider),
       identity: ref.read(identityProvider),
       profilePrompted: ref.read(profilePromptedProvider),
+      lockedAlert: ref.read(lockedAlertProvider).locked,
     ),
     routes: [
       GoRoute(
@@ -184,6 +207,30 @@ final routerProvider = Provider<GoRouter>((ref) {
         ],
       ),
       GoRoute(path: Routes.callouts, builder: (_, _) => const CalloutsScreen()),
+      GoRoute(
+        path: Routes.lockedAlert,
+        builder: (_, _) => const LockedAlertScreen(),
+      ),
+      GoRoute(
+        path: Routes.alertCheck,
+        builder: (_, _) => const AlertCheckScreen(),
+        routes: [
+          GoRoute(
+            path: 'critical',
+            builder: (_, _) => const CriticalAlertsScreen(),
+          ),
+        ],
+      ),
+      GoRoute(
+        path: Routes.myData,
+        builder: (_, _) => const MyDataScreen(),
+        routes: [
+          GoRoute(
+            path: 'delete',
+            builder: (_, _) => const DeleteAccountScreen(),
+          ),
+        ],
+      ),
       GoRoute(
         path: Routes.notifications,
         builder: (_, _) => const NotificationsScreen(),

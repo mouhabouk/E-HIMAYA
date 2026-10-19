@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/routing/app_router.dart';
 import 'core/settings/settings_controller.dart';
+import 'core/ui/messenger.dart';
 import 'core/ui/theme.dart';
 import 'l10n/app_localizations.dart';
 
@@ -23,6 +24,7 @@ class EHimayaApp extends ConsumerWidget {
       darkTheme: buildTheme(Brightness.dark),
       themeMode: settings.themeMode,
       routerConfig: router,
+      scaffoldMessengerKey: rootMessengerKey,
     );
   }
 }
