@@ -16,6 +16,8 @@ from app.modules.reports.domain import Category
 from tests.aihelpers import FakeAi, Staff, add_audio, analyse, create, detail, spot
 from tests.conftest import FakeStore, accept_charter
 
+pytestmark = pytest.mark.usefixtures("isolated_window")
+
 # ---------------------------------------------------------------- immediate scores (no model)
 
 
