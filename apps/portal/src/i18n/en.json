@@ -7,11 +7,23 @@
   },
   "header": {
     "language": "Language",
-    "languages": { "ar": "العربية", "fr": "Français", "en": "English" },
+    "languages": {
+      "ar": "العربية",
+      "fr": "Français",
+      "en": "English"
+    },
     "themeToggle": "Theme: {{current}} (click to change)",
-    "theme": { "system": "system", "light": "light", "dark": "dark" }
+    "theme": {
+      "system": "system",
+      "light": "light",
+      "dark": "dark"
+    }
   },
-  "nav": { "main": "Main navigation", "myOrgs": "My institutions", "verify": "Verify a certificate" },
+  "nav": {
+    "main": "Main navigation",
+    "myOrgs": "My institutions",
+    "verify": "Verify a certificate"
+  },
   "auth": {
     "signIn": "Sign in",
     "signOut": "Sign out",
@@ -47,7 +59,11 @@
     "copyFailed": "Copy failed: select the text and copy it manually.",
     "loadMore": "Load more"
   },
-  "notFound": { "title": "Page not found", "body": "The link you opened does not exist in the portal.", "home": "Back to the home page" },
+  "notFound": {
+    "title": "Page not found",
+    "body": "The link you opened does not exist in the portal.",
+    "home": "Back to the home page"
+  },
   "landing": {
     "title": "Institutions portal",
     "lead": "Register your institution with the Civil Protection, keep its safety file up to date and report emergencies on its behalf.",
@@ -97,7 +113,10 @@
     "mismatch": "The file does not match",
     "mismatchBody": "{{name}} differs from the registered PDF: it may have been modified, or it is another version of the certificate.",
     "computedHash": "Computed SHA-256:",
-    "readError": "The file {{name}} could not be read."
+    "readError": "The file {{name}} could not be read.",
+    "keyTitle": "Check the signature yourself",
+    "keyBody": "Signature algorithm {{algorithm}}. Signed message: {{message}}. Public key (base64):",
+    "keyNone": "No public key is published yet."
   },
   "myOrgs": {
     "title": "My institutions",
@@ -205,10 +224,22 @@
     "resubmit": "Resubmit for review",
     "resubmitAdminOnly": "Only an administrator can resubmit.",
     "status": {
-      "pending_review": { "title": "Pending review", "body": "The Civil Protection is reviewing the registration. You can already complete the file." },
-      "rejected": { "title": "Registration rejected", "body": "Fix the card according to the reason below, then resubmit." },
-      "suspended": { "title": "Institution suspended", "body": "The institution is suspended: its certificates are not valid and it cannot report or invite." },
-      "active": { "title": "Active", "body": "The institution is approved." }
+      "pending_review": {
+        "title": "Pending review",
+        "body": "The Civil Protection is reviewing the registration. You can already complete the file."
+      },
+      "rejected": {
+        "title": "Registration rejected",
+        "body": "Fix the card according to the reason below, then resubmit."
+      },
+      "suspended": {
+        "title": "Institution suspended",
+        "body": "The institution is suspended: its certificates are not valid and it cannot report or invite."
+      },
+      "active": {
+        "title": "Active",
+        "body": "The institution is approved."
+      }
     }
   },
   "classification": {
@@ -222,7 +253,12 @@
     "computed": "Computed by the platform from the card and the registers; it cannot be typed.",
     "provisional": "Provisional classification: the thresholds are a working model that must be validated against the official text (fire, explosion and panic safety code for buildings) with the Civil Protection."
   },
-  "family": { "high_rise": "High-rise building", "industrial": "Industrial", "erp": "Establishment receiving the public", "workplace": "Workplace" },
+  "family": {
+    "high_rise": "High-rise building",
+    "industrial": "Industrial",
+    "erp": "Establishment receiving the public",
+    "workplace": "Workplace"
+  },
   "completeness": {
     "title": "Safety file completeness",
     "ok": "The file is complete.",
@@ -235,7 +271,7 @@
     "safety_file": "Safety file (stored)",
     "safety_plan": "Safety plan (stored)",
     "safety_team": "Safety team: a representative and at least one member",
-    "training": "No expired training in the team",
+    "training": "Every team member has a training date, none expired",
     "hazmat_sds": "A safety data sheet for every hazardous material",
     "equipment": "At least one equipment item, none overdue",
     "evacuation_points": "At least one evacuation point on the map"
@@ -283,8 +319,16 @@
     "noRepresentative": "The team has no representative yet.",
     "oneRepresentative": "The team already has a representative (one at most)."
   },
-  "teamRoles": { "representative": "Representative", "member": "Member" },
-  "training": { "valid": "Valid", "expiring": "Expiring soon", "expired": "Expired", "unknown": "No training date" },
+  "teamRoles": {
+    "representative": "Representative",
+    "member": "Member"
+  },
+  "training": {
+    "valid": "Valid",
+    "expiring": "Expiring soon",
+    "expired": "Expired",
+    "unknown": "No training date"
+  },
   "hazmat": {
     "title": "Hazardous materials",
     "help": "Each stored hazardous material needs its safety data sheet (SDS) document.",
@@ -307,7 +351,12 @@
     "sdsMissing": "SDS missing",
     "empty": "No hazardous material registered."
   },
-  "units": { "kg": "kg", "t": "t", "l": "L", "m3": "m³" },
+  "units": {
+    "kg": "kg",
+    "t": "t",
+    "l": "L",
+    "m3": "m³"
+  },
   "equipment": {
     "title": "Safety equipment",
     "help": "Fire-fighting and alarm equipment with its maintenance schedule.",
@@ -334,7 +383,12 @@
     "fire_door": "Fire door",
     "other": "Other"
   },
-  "maintenance": { "ok": "Up to date", "due_soon": "Due soon", "overdue": "Overdue", "unknown": "No maintenance date" },
+  "maintenance": {
+    "ok": "Up to date",
+    "due_soon": "Due soon",
+    "overdue": "Overdue",
+    "unknown": "No maintenance date"
+  },
   "features": {
     "title": "Map of the site",
     "help": "Evacuation and assembly points, water points and alarms of the institution.",
@@ -351,7 +405,11 @@
     "institution": "Institution",
     "empty": "No point yet."
   },
-  "featureKinds": { "evacuation_point": "Evacuation and assembly point", "water_point": "Water point", "alarm": "Alarm" },
+  "featureKinds": {
+    "evacuation_point": "Evacuation and assembly point",
+    "water_point": "Water point",
+    "alarm": "Alarm"
+  },
   "documents": {
     "sectionTitle": "Documents",
     "help": "Each upload adds a new version; the history is kept. The server checks the fingerprint of every file.",
@@ -394,8 +452,18 @@
     "paused": "Paused at {{p}}.",
     "sent": "File sent. The server is verifying it; the version will show “Stored” once checked."
   },
-  "documentKinds": { "safety_file": "Safety file", "safety_plan": "Safety plan", "sds": "Safety data sheet", "other": "Other document" },
-  "versionStatus": { "uploading": "Uploading", "verifying": "Verifying", "stored": "Stored", "rejected": "Rejected" },
+  "documentKinds": {
+    "safety_file": "Safety file",
+    "safety_plan": "Safety plan",
+    "sds": "Safety data sheet",
+    "other": "Other document"
+  },
+  "versionStatus": {
+    "uploading": "Uploading",
+    "verifying": "Verifying",
+    "stored": "Stored",
+    "rejected": "Rejected"
+  },
   "members": {
     "title": "Members",
     "help": "People who can access the institution, and their role.",
@@ -430,7 +498,11 @@
     "leave": "Leave the institution",
     "confirmLeave": "Leave {{name}}? You will need a new invitation to come back."
   },
-  "roles": { "admin": "Administrator", "editor": "Editor", "member": "Member" },
+  "roles": {
+    "admin": "Administrator",
+    "editor": "Editor",
+    "member": "Member"
+  },
   "roleHelp": {
     "admin": "everything, plus members, invitations, certificate submission and document deletion",
     "editor": "edits the card, team, registers, map and documents; generates a draft certificate",
@@ -489,9 +561,24 @@
       }
     }
   },
-  "orgStatus": { "pending_review": "Pending review", "active": "Active", "rejected": "Rejected", "suspended": "Suspended" },
-  "kinds": { "industrial": "Industrial", "educational": "Educational", "hotel": "Hotel", "government": "Government", "private": "Private", "other": "Other" },
-  "identifierTypes": { "mf": "Tax identification number (MF)", "rne": "National business register (RNE)" },
+  "orgStatus": {
+    "pending_review": "Pending review",
+    "active": "Active",
+    "rejected": "Rejected",
+    "suspended": "Suspended"
+  },
+  "kinds": {
+    "industrial": "Industrial",
+    "educational": "Educational",
+    "hotel": "Hotel",
+    "government": "Government",
+    "private": "Private",
+    "other": "Other"
+  },
+  "identifierTypes": {
+    "mf": "Tax identification number (MF)",
+    "rne": "National business register (RNE)"
+  },
   "certificate": {
     "title": "Safety certificate",
     "help": "A draft snapshots the card, the classification, the team, the registers, the map and the current documents. An administrator submits it to the Civil Protection.",
@@ -517,9 +604,15 @@
     "verifyLink": "Public verification link:",
     "copyLink": "Copy the link",
     "openPdf": "Open the PDF",
-    "submit": "Submit for review"
+    "submit": "Submit for review",
+    "regenerate": "Generate a new draft"
   },
-  "certificateStatus": { "draft": "Draft", "submitted": "Submitted", "approved": "Approved", "rejected": "Rejected" },
+  "certificateStatus": {
+    "draft": "Draft",
+    "submitted": "Submitted",
+    "approved": "Approved",
+    "rejected": "Rejected"
+  },
   "status": {
     "received": "Received",
     "in_progress": "Being processed",
@@ -584,6 +677,9 @@
     "conflict": "Conflict with another change. Reload the page.",
     "server_error": "Server error. Try again in a moment.",
     "network_error": "Cannot reach the server. Check the network.",
-    "unknown": "An unexpected error occurred."
+    "unknown": "An unexpected error occurred.",
+    "certificate_outdated": "This draft was generated before the file was complete: generate a new draft, then submit it.",
+    "signing_key_missing": "The platform cannot sign certificates at the moment. Try again later.",
+    "invalid_note": "The note is too long (200 characters at most)."
   }
 }

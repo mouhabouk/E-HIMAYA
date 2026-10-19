@@ -7,11 +7,23 @@
   },
   "header": {
     "language": "Langue",
-    "languages": { "ar": "العربية", "fr": "Français", "en": "English" },
+    "languages": {
+      "ar": "العربية",
+      "fr": "Français",
+      "en": "English"
+    },
     "themeToggle": "Thème : {{current}} (cliquer pour changer)",
-    "theme": { "system": "système", "light": "clair", "dark": "sombre" }
+    "theme": {
+      "system": "système",
+      "light": "clair",
+      "dark": "sombre"
+    }
   },
-  "nav": { "main": "Navigation principale", "myOrgs": "Mes établissements", "verify": "Vérifier un certificat" },
+  "nav": {
+    "main": "Navigation principale",
+    "myOrgs": "Mes établissements",
+    "verify": "Vérifier un certificat"
+  },
   "auth": {
     "signIn": "Se connecter",
     "signOut": "Se déconnecter",
@@ -47,7 +59,11 @@
     "copyFailed": "Copie impossible : sélectionnez le texte et copiez-le manuellement.",
     "loadMore": "Charger plus"
   },
-  "notFound": { "title": "Page introuvable", "body": "Le lien ouvert n’existe pas dans le portail.", "home": "Retour à l’accueil" },
+  "notFound": {
+    "title": "Page introuvable",
+    "body": "Le lien ouvert n’existe pas dans le portail.",
+    "home": "Retour à l’accueil"
+  },
   "landing": {
     "title": "Portail des établissements",
     "lead": "Inscrivez votre établissement auprès de la Protection civile, tenez à jour son dossier de sécurité et signalez les urgences en son nom.",
@@ -97,7 +113,10 @@
     "mismatch": "Le fichier ne correspond pas",
     "mismatchBody": "{{name}} diffère du PDF enregistré : il a peut-être été modifié, ou c’est une autre version du certificat.",
     "computedHash": "SHA-256 calculé :",
-    "readError": "Le fichier {{name}} n’a pas pu être lu."
+    "readError": "Le fichier {{name}} n’a pas pu être lu.",
+    "keyTitle": "Vérifier la signature vous-même",
+    "keyBody": "Algorithme de signature {{algorithm}}. Message signé : {{message}}. Clé publique (base64) :",
+    "keyNone": "Aucune clé publique n’est encore publiée."
   },
   "myOrgs": {
     "title": "Mes établissements",
@@ -205,10 +224,22 @@
     "resubmit": "Soumettre à nouveau",
     "resubmitAdminOnly": "Seul un administrateur peut soumettre à nouveau.",
     "status": {
-      "pending_review": { "title": "En attente d’examen", "body": "La Protection civile examine l’inscription. Vous pouvez déjà compléter le dossier." },
-      "rejected": { "title": "Inscription rejetée", "body": "Corrigez la fiche selon le motif ci-dessous, puis soumettez-la à nouveau." },
-      "suspended": { "title": "Établissement suspendu", "body": "L’établissement est suspendu : ses certificats ne sont pas valides et il ne peut ni signaler ni inviter." },
-      "active": { "title": "Actif", "body": "L’établissement est approuvé." }
+      "pending_review": {
+        "title": "En attente d’examen",
+        "body": "La Protection civile examine l’inscription. Vous pouvez déjà compléter le dossier."
+      },
+      "rejected": {
+        "title": "Inscription rejetée",
+        "body": "Corrigez la fiche selon le motif ci-dessous, puis soumettez-la à nouveau."
+      },
+      "suspended": {
+        "title": "Établissement suspendu",
+        "body": "L’établissement est suspendu : ses certificats ne sont pas valides et il ne peut ni signaler ni inviter."
+      },
+      "active": {
+        "title": "Actif",
+        "body": "L’établissement est approuvé."
+      }
     }
   },
   "classification": {
@@ -222,7 +253,12 @@
     "computed": "Calculé par la plateforme à partir de la fiche et des registres ; il ne peut pas être saisi.",
     "provisional": "Classement provisoire : les seuils sont un modèle de travail qui doit être validé avec la Protection civile au regard du texte officiel (code de sécurité et de prévention des risques d’incendie, d’explosion et de panique dans les bâtiments)."
   },
-  "family": { "high_rise": "Immeuble de grande hauteur", "industrial": "Industriel", "erp": "Établissement recevant du public", "workplace": "Lieu de travail" },
+  "family": {
+    "high_rise": "Immeuble de grande hauteur",
+    "industrial": "Industriel",
+    "erp": "Établissement recevant du public",
+    "workplace": "Lieu de travail"
+  },
   "completeness": {
     "title": "Complétude du dossier de sécurité",
     "ok": "Le dossier est complet.",
@@ -235,7 +271,7 @@
     "safety_file": "Dossier de sécurité (enregistré)",
     "safety_plan": "Plan de sécurité (enregistré)",
     "safety_team": "Équipe de sécurité : un représentant et au moins un membre",
-    "training": "Aucune formation expirée dans l’équipe",
+    "training": "Chaque membre de l’équipe a une date de formation, aucune expirée",
     "hazmat_sds": "Une fiche de données de sécurité pour chaque matière dangereuse",
     "equipment": "Au moins un équipement, aucun en retard de maintenance",
     "evacuation_points": "Au moins un point d’évacuation sur la carte"
@@ -283,8 +319,16 @@
     "noRepresentative": "L’équipe n’a pas encore de représentant.",
     "oneRepresentative": "L’équipe a déjà un représentant (un seul au maximum)."
   },
-  "teamRoles": { "representative": "Représentant", "member": "Membre" },
-  "training": { "valid": "Valide", "expiring": "Expire bientôt", "expired": "Expirée", "unknown": "Sans date de formation" },
+  "teamRoles": {
+    "representative": "Représentant",
+    "member": "Membre"
+  },
+  "training": {
+    "valid": "Valide",
+    "expiring": "Expire bientôt",
+    "expired": "Expirée",
+    "unknown": "Sans date de formation"
+  },
   "hazmat": {
     "title": "Matières dangereuses",
     "help": "Chaque matière dangereuse stockée doit avoir son document de fiche de données de sécurité (FDS).",
@@ -307,7 +351,12 @@
     "sdsMissing": "FDS manquante",
     "empty": "Aucune matière dangereuse enregistrée."
   },
-  "units": { "kg": "kg", "t": "t", "l": "L", "m3": "m³" },
+  "units": {
+    "kg": "kg",
+    "t": "t",
+    "l": "L",
+    "m3": "m³"
+  },
   "equipment": {
     "title": "Équipements de sécurité",
     "help": "Équipements de lutte contre l’incendie et d’alarme, avec leur calendrier de maintenance.",
@@ -334,7 +383,12 @@
     "fire_door": "Porte coupe-feu",
     "other": "Autre"
   },
-  "maintenance": { "ok": "À jour", "due_soon": "Bientôt due", "overdue": "En retard", "unknown": "Sans date de maintenance" },
+  "maintenance": {
+    "ok": "À jour",
+    "due_soon": "Bientôt due",
+    "overdue": "En retard",
+    "unknown": "Sans date de maintenance"
+  },
   "features": {
     "title": "Carte du site",
     "help": "Points d’évacuation et de rassemblement, points d’eau et alarmes de l’établissement.",
@@ -351,7 +405,11 @@
     "institution": "Établissement",
     "empty": "Aucun point pour l’instant."
   },
-  "featureKinds": { "evacuation_point": "Point d’évacuation et de rassemblement", "water_point": "Point d’eau", "alarm": "Alarme" },
+  "featureKinds": {
+    "evacuation_point": "Point d’évacuation et de rassemblement",
+    "water_point": "Point d’eau",
+    "alarm": "Alarme"
+  },
   "documents": {
     "sectionTitle": "Documents",
     "help": "Chaque téléversement ajoute une nouvelle version ; l’historique est conservé. Le serveur vérifie l’empreinte de chaque fichier.",
@@ -394,8 +452,18 @@
     "paused": "En pause à {{p}}.",
     "sent": "Fichier envoyé. Le serveur le vérifie ; la version passera à « Enregistré » une fois contrôlée."
   },
-  "documentKinds": { "safety_file": "Dossier de sécurité", "safety_plan": "Plan de sécurité", "sds": "Fiche de données de sécurité", "other": "Autre document" },
-  "versionStatus": { "uploading": "Téléversement", "verifying": "Vérification", "stored": "Enregistré", "rejected": "Rejeté" },
+  "documentKinds": {
+    "safety_file": "Dossier de sécurité",
+    "safety_plan": "Plan de sécurité",
+    "sds": "Fiche de données de sécurité",
+    "other": "Autre document"
+  },
+  "versionStatus": {
+    "uploading": "Téléversement",
+    "verifying": "Vérification",
+    "stored": "Enregistré",
+    "rejected": "Rejeté"
+  },
   "members": {
     "title": "Membres",
     "help": "Les personnes ayant accès à l’établissement, et leur rôle.",
@@ -430,7 +498,11 @@
     "leave": "Quitter l’établissement",
     "confirmLeave": "Quitter {{name}} ? Il faudra une nouvelle invitation pour revenir."
   },
-  "roles": { "admin": "Administrateur", "editor": "Éditeur", "member": "Membre" },
+  "roles": {
+    "admin": "Administrateur",
+    "editor": "Éditeur",
+    "member": "Membre"
+  },
   "roleHelp": {
     "admin": "tout, plus les membres, les invitations, la soumission du certificat et la suppression de documents",
     "editor": "modifie la fiche, l’équipe, les registres, la carte et les documents ; génère un brouillon de certificat",
@@ -489,9 +561,24 @@
       }
     }
   },
-  "orgStatus": { "pending_review": "En attente d’examen", "active": "Actif", "rejected": "Rejeté", "suspended": "Suspendu" },
-  "kinds": { "industrial": "Industrielle", "educational": "Éducative", "hotel": "Hôtel", "government": "Administration publique", "private": "Privée", "other": "Autre" },
-  "identifierTypes": { "mf": "Matricule fiscal (MF)", "rne": "Registre national des entreprises (RNE)" },
+  "orgStatus": {
+    "pending_review": "En attente d’examen",
+    "active": "Actif",
+    "rejected": "Rejeté",
+    "suspended": "Suspendu"
+  },
+  "kinds": {
+    "industrial": "Industrielle",
+    "educational": "Éducative",
+    "hotel": "Hôtel",
+    "government": "Administration publique",
+    "private": "Privée",
+    "other": "Autre"
+  },
+  "identifierTypes": {
+    "mf": "Matricule fiscal (MF)",
+    "rne": "Registre national des entreprises (RNE)"
+  },
   "certificate": {
     "title": "Certificat de sécurité",
     "help": "Un brouillon fige la fiche, le classement, l’équipe, les registres, la carte et les documents en vigueur. Un administrateur le soumet à la Protection civile.",
@@ -517,9 +604,15 @@
     "verifyLink": "Lien de vérification publique :",
     "copyLink": "Copier le lien",
     "openPdf": "Ouvrir le PDF",
-    "submit": "Soumettre pour examen"
+    "submit": "Soumettre pour examen",
+    "regenerate": "Générer un nouveau brouillon"
   },
-  "certificateStatus": { "draft": "Brouillon", "submitted": "Soumis", "approved": "Approuvé", "rejected": "Rejeté" },
+  "certificateStatus": {
+    "draft": "Brouillon",
+    "submitted": "Soumis",
+    "approved": "Approuvé",
+    "rejected": "Rejeté"
+  },
   "status": {
     "received": "Reçu",
     "in_progress": "En cours de traitement",
@@ -584,6 +677,9 @@
     "conflict": "Conflit avec une autre modification. Rechargez la page.",
     "server_error": "Erreur du serveur. Réessayez dans un instant.",
     "network_error": "Impossible de joindre le serveur. Vérifiez le réseau.",
-    "unknown": "Une erreur inattendue s’est produite."
+    "unknown": "Une erreur inattendue s’est produite.",
+    "certificate_outdated": "Ce brouillon a été généré avant que le dossier soit complet : générez un nouveau brouillon, puis soumettez-le.",
+    "signing_key_missing": "La plateforme ne peut pas signer de certificats pour le moment. Réessayez plus tard.",
+    "invalid_note": "La note est trop longue (200 caractères au maximum)."
   }
 }

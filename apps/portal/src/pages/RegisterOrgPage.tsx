@@ -175,7 +175,7 @@ export function RegisterOrgPage() {
             onChange={(patch) => {
               setDraft((d) => ({ ...d, ...patch }));
               setErrors((old) =>
-                Object.fromEntries(Object.entries(old).filter(([k]) => !(k in patch))) as DraftErrors,
+                Object.fromEntries(Object.entries(old).filter(([k]) => !(k in patch))),
               );
             }}
           />
