@@ -1,0 +1,224 @@
+{
+  "app": {
+    "name": "e-Himaya · Tableau de bord central",
+    "documentTitle": "e-Himaya · Tableau de bord",
+    "skipToContent": "Aller au contenu principal"
+  },
+  "nav": {
+    "main": "Navigation principale",
+    "home": "Indicateurs",
+    "reports": "Incidents",
+    "map": "Carte en direct"
+  },
+  "header": {
+    "scope": "Périmètre géographique",
+    "national": "Périmètre national",
+    "gouvernorat": "Gouvernorat de {{name}}",
+    "roles": "Rôles",
+    "logout": "Se déconnecter",
+    "switchLanguage": "Passer à l’arabe",
+    "otherLanguage": "العربية",
+    "themeToggle": "Thème : {{current}} (cliquer pour changer)",
+    "theme": {
+      "system": "système",
+      "light": "clair",
+      "dark": "sombre"
+    }
+  },
+  "roles": {
+    "operator": "Opérateur",
+    "ops_manager": "Responsable des opérations",
+    "field_commander": "Commandant de terrain",
+    "local_committee": "Comité local",
+    "central_committee": "Comité central"
+  },
+  "status": {
+    "received": "Reçu",
+    "in_progress": "En cours de traitement",
+    "intervened": "Intervention effectuée",
+    "ongoing": "Intervention en cours",
+    "closed": "Intervention clôturée",
+    "rejected": "Rejeté"
+  },
+  "category": {
+    "sos": "Détresse (SOS)",
+    "fire": "Incendie",
+    "flood": "Inondation",
+    "traffic_accident": "Accident de la route",
+    "drowning": "Noyade",
+    "landslide": "Glissement de terrain",
+    "chemical_leak": "Fuite chimique",
+    "medical": "Urgence médicale",
+    "other": "Autre"
+  },
+  "reporterKind": {
+    "citizen": "Citoyen inscrit",
+    "anonymous": "Anonyme"
+  },
+  "languages": {
+    "ar": "arabe",
+    "fr": "français",
+    "en": "anglais"
+  },
+  "live": {
+    "state": {
+      "idle": "Direct inactif",
+      "connecting": "Connexion au direct…",
+      "open": "Direct connecté",
+      "reconnecting": "Direct interrompu, nouvelle tentative…",
+      "forbidden": "Direct non autorisé",
+      "unauthenticated": "Session expirée",
+      "stopped": "Direct arrêté"
+    }
+  },
+  "period": {
+    "label": "Période",
+    "24h": "24 heures",
+    "7d": "7 jours",
+    "30d": "30 jours"
+  },
+  "auth": {
+    "redirecting": "Redirection vers la page de connexion…",
+    "completing": "Finalisation de la connexion…",
+    "callbackErrorTitle": "Connexion impossible",
+    "callbackError": "La connexion n’a pas abouti ou la demande a expiré. Veuillez réessayer.",
+    "retry": "Se reconnecter"
+  },
+  "noAccess": {
+    "title": "Accès refusé",
+    "noRole": "Votre compte n’a aucun rôle permettant de consulter les signalements (opérateur, responsable des opérations, commandant de terrain, comité local ou central).",
+    "noScope": "Votre compte n’est rattaché ni à un gouvernorat ni au périmètre national : aucun signalement ne peut être affiché.",
+    "liveForbidden": "Le serveur a refusé la connexion au direct pour ce compte.",
+    "contact": "Contactez l’administrateur pour faire modifier vos droits."
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "body": "Le lien ouvert n’existe pas dans le tableau de bord.",
+    "home": "Retour aux indicateurs"
+  },
+  "common": {
+    "loading": "Chargement…",
+    "retry": "Réessayer",
+    "notAvailable": "Non disponible",
+    "listSeparator": ", "
+  },
+  "errors": {
+    "authentication_required": "Session expirée. Veuillez vous reconnecter.",
+    "account_suspended": "Ce compte est suspendu.",
+    "forbidden": "Vous n’avez pas le droit d’effectuer cette action.",
+    "no_scope": "Votre compte n’a pas de périmètre géographique.",
+    "not_found": "Élément introuvable ou hors de votre périmètre géographique.",
+    "invalid_transition": "Le statut a changé entre-temps ou cette transition n’est pas autorisée. Le signalement a été actualisé.",
+    "invalid_filter": "Filtres invalides. Réinitialisez-les puis réessayez.",
+    "rate_limited": "Trop de requêtes. Patientez un instant puis réessayez.",
+    "validation_error": "Certaines données envoyées sont invalides.",
+    "bad_request": "Requête invalide.",
+    "conflict": "Conflit avec une autre modification. Rechargez la page.",
+    "server_error": "Erreur du serveur. Réessayez dans un instant.",
+    "idp_unavailable": "Le service d’identité est indisponible.",
+    "network_error": "Impossible de joindre le serveur. Vérifiez le réseau.",
+    "unknown": "Une erreur inattendue s’est produite."
+  },
+  "kpi": {
+    "title": "Indicateurs clés",
+    "since": "Depuis le {{date}}",
+    "total": "Total des signalements",
+    "received": "Reçus (en attente)",
+    "inProgress": "En traitement et intervention",
+    "closed": "Clôturés",
+    "avgFirstResponse": "Délai moyen de première réponse",
+    "byStatus": "Répartition par statut",
+    "byCategory": "Répartition par catégorie",
+    "byGouvernorat": "Répartition par gouvernorat",
+    "outsideGouvernorats": "Hors gouvernorats",
+    "noData": "Aucune donnée pour cette période."
+  },
+  "filters": {
+    "title": "Filtres",
+    "search": "Recherche",
+    "searchPlaceholder": "Code de suivi ou texte du signalement",
+    "status": "Statut",
+    "category": "Catégorie",
+    "gouvernorat": "Gouvernorat",
+    "allGouvernorats": "Tous les gouvernorats",
+    "reset": "Réinitialiser"
+  },
+  "reports": {
+    "title": "Incidents",
+    "caption": "Liste des signalements, du plus récent au plus ancien",
+    "columns": {
+      "receivedAt": "Reçu le",
+      "trackingCode": "Code de suivi",
+      "category": "Catégorie",
+      "reporter": "Signalant",
+      "gouvernorat": "Gouvernorat",
+      "status": "Statut",
+      "media": "Médias"
+    },
+    "empty": "Aucun signalement ne correspond aux filtres.",
+    "loadMore": "Charger plus",
+    "newBadge": "Nouveau",
+    "newCount": "Nouveaux signalements : {{count}}"
+  },
+  "detail": {
+    "title": "Signalement",
+    "back": "Retour à la liste des incidents",
+    "info": "Informations",
+    "fields": {
+      "category": "Catégorie",
+      "receivedAt": "Reçu le",
+      "createdAt": "Créé sur l’appareil le",
+      "updatedAt": "Dernière mise à jour",
+      "gouvernorat": "Gouvernorat",
+      "delegation": "Délégation",
+      "reporterKind": "Type de signalant",
+      "coordinates": "Coordonnées"
+    },
+    "location": "Localisation",
+    "mapLabel": "Carte de la localisation du signalement",
+    "text": "Texte du signalement",
+    "textLang": "Langue d’origine du texte : {{lang}}",
+    "noText": "Aucun texte (signalement sans description).",
+    "reporter": "Signalant",
+    "anonymous": "Signalant anonyme",
+    "name": "Nom",
+    "phone": "Téléphone",
+    "statusChange": "Changer le statut",
+    "newStatus": "Nouveau statut",
+    "note": "Note (facultative)",
+    "apply": "Appliquer",
+    "applying": "Application…",
+    "changed": "Statut modifié.",
+    "final": "Statut final : il ne peut plus être modifié.",
+    "readOnly": "Votre rôle permet la consultation uniquement, sans changement de statut.",
+    "history": "Historique des statuts",
+    "noHistory": "Pas encore d’historique.",
+    "media": "Médias",
+    "noMedia": "Aucun média joint.",
+    "mediaUnavailable": "Aperçu indisponible (fichier en cours d’envoi ou rejeté).",
+    "mediaType": "Type",
+    "mediaStatusLabel": "État",
+    "size": "Taille",
+    "sha256": "Empreinte SHA-256",
+    "mediaKind": {
+      "image": "Image",
+      "video": "Vidéo",
+      "audio": "Enregistrement audio"
+    },
+    "mediaStatus": {
+      "uploading": "En cours d’envoi",
+      "verifying": "Vérification de l’empreinte",
+      "stored": "Enregistré",
+      "rejected": "Rejeté (empreinte non conforme)"
+    },
+    "historyBy": "par {{actor}}"
+  },
+  "map": {
+    "title": "Carte en direct",
+    "label": "Carte des signalements",
+    "count": "Signalements affichés : {{count}}",
+    "truncated": "D’autres signalements existent, zoomez pour les voir",
+    "openDetail": "Ouvrir le détail",
+    "listToggle": "Liste des signalements affichés sur la carte"
+  }
+}

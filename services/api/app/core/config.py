@@ -1,5 +1,7 @@
 """Runtime configuration, read from environment variables (see .env.example)."""
 
+import base64
+import binascii
 from functools import lru_cache
 from typing import Annotated
 
@@ -43,6 +45,18 @@ class Settings(BaseSettings):
     api_log_level: str = "INFO"
     db_pool_size: int = 10
     db_max_overflow: int = 20
+
+    @field_validator("field_encryption_key")
+    @classmethod
+    def _check_key(cls, value: SecretStr) -> SecretStr:
+        # Fail at start-up rather than on the first encrypted write.
+        try:
+            raw = base64.b64decode(value.get_secret_value(), validate=True)
+        except binascii.Error as exc:
+            raise ValueError("FIELD_ENCRYPTION_KEY must be base64 (openssl rand -base64 32)") from exc
+        if len(raw) != 32:
+            raise ValueError("FIELD_ENCRYPTION_KEY must decode to 32 bytes (openssl rand -base64 32)")
+        return value
 
     @field_validator("oidc_issuers", "api_cors_origins", mode="before")
     @classmethod

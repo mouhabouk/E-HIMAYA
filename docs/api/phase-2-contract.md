@@ -19,7 +19,10 @@ are stable and must be mapped to translated messages on the clients (never shown
 Keycloak (dev): `http://localhost:8080/realms/<realm>`; registration page for citizens: authorization
 request with `prompt=create`.
 
-Error codes: `authentication_required` (401), `invalid_device_key` (400), `anon_blocked` (403: the
+Error codes: `authentication_required` (401), `invalid_token` (401: malformed, expired, wrong issuer
+or audience), `identity_provider_unavailable` (503), `staff_scope_missing` (403: staff account without
+`gouvernorat_code` nor national scope), `insufficient_role` (403), `reporter_realm_required` (403: a staff
+token used to report), `registration_required` (403: anonymous caller on a registered-only endpoint), `invalid_device_key` (400), `anon_blocked` (403: the
 anonymous pseudonym is quarantined after confirmed false reports; the app must offer registration),
 `account_suspended` (403), `consent_required` (428), `rate_limited` (429, with `Retry-After`).
 
@@ -106,7 +109,7 @@ Resumable uploads go to the tus server at `POST /api/v1/uploads/` (dev: tusd on
 - `report_id` — the report's server `id` (create the report first, then upload its media)
 - `kind` — `image` | `video` | `audio`
 - `sha256` — lowercase hex SHA-256 of the whole file, computed on the device
-- `filetype` — MIME type (`image/jpeg`, `image/png`, `image/heic`, `video/mp4`, `audio/mp4`, `audio/aac`, `audio/mpeg`, `audio/ogg`, `audio/wav`)
+- `filetype` — MIME type: images `image/jpeg`, `image/png`, `image/heic`, `image/heif`, `image/webp`; videos `video/mp4`, `video/quicktime` (iPhone), `video/3gpp`, `video/webm`; audio `audio/mp4`, `audio/aac`, `audio/mpeg`, `audio/ogg`, `audio/wav`, `audio/webm`
 - `filename` — optional
 
 Limits: image ≤ 20 MB, video ≤ 300 MB, audio ≤ 30 MB (and ≤ 5 minutes, enforced by the app);
@@ -145,6 +148,10 @@ Every result is restricted to the token's geographic scope (`gouvernorat_code` c
 - `POST /api/v1/staff/reports/{id}/status` body `{"status": "in_progress", "note": "optional"}` →
   `StaffReportDetail`. Invalid transition → `409 invalid_transition`.
 
+Query errors (422): `invalid_status`, `invalid_category`, `invalid_bbox`, `invalid_cursor`.
+Geo reference: `404 unknown_gouvernorat`. History `actor` is `"<realm>:<subject>"` for staff, `"reporter"`
+for the creation entry, or `"system"`.
+
 `StaffReport` = `Report` fields + `reporter_kind` (`citizen` | `anonymous`) + `media_count` +
 `gouvernorat_code` + `delegation_id` (null for now).
 
@@ -155,8 +162,13 @@ Every result is restricted to the token's geographic scope (`gouvernorat_code` c
    - `{"type": "report.created", "report": StaffReport}`
    - `{"type": "report.status_changed", "report": StaffReport}`
    - `{"type": "media.stored", "report_id": "uuid", "media": {…}}`
-4. The client re-sends `{"type": "auth", "token": …}` after each token refresh; the server closes the
-   socket with 4401 when the token expires without refresh. Clients reconnect with back-off.
+4. The client re-sends `{"type": "auth", "token": …}` after each token refresh. A successful renewal
+   gets no reply; a token of another user closes the socket with 4403. The server closes with 4401
+   when the token expires without renewal.
+5. Keep-alive: `{"type": "ping"}` → `{"type": "pong"}`.
+6. Close codes: 4401 re-authenticate, 4403 no access (stop), 4408 client too slow (reconnect and
+   reload), 1013 identity provider unavailable (retry later). The browser `Origin` must be one of
+   `API_CORS_ORIGINS`. Clients reconnect with back-off.
 
 ## 6. Emergency numbers (FR-A-033, BR-30, scenario 0)
 198 الحماية المدنية · 190 الإسعاف الطبي الاستعجالي (SAMU) · 197 شرطة النجدة · 193 الحرس الوطني.

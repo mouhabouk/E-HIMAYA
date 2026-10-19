@@ -8,6 +8,8 @@
 | وثيقة هيكلة النظام (معتمدة، الإصدار 1.0) | [`docs/02-architecture.html`](docs/02-architecture.html) |
 | الإصدارات المثبتة للأدوات | [`docs/versions.md`](docs/versions.md) |
 | تقرير المرحلة 1 | [`docs/phase-1-report.html`](docs/phase-1-report.html) |
+| تقرير المرحلة 2 | [`docs/phase-2-report.html`](docs/phase-2-report.html) |
+| عقد الواجهة البرمجية لمسار البلاغ | [`docs/api/phase-2-contract.md`](docs/api/phase-2-contract.md) |
 
 ## محتوى المستودع
 
@@ -18,11 +20,14 @@ infra/
   keycloak/realms/       فضاءا الهوية: ehimaya-public (المواطنون والمؤسسات) و ehimaya-staff (لوحة التحكم، MFA إجباري)
   nats/                  ناقل الأحداث NATS JetStream
   seaweedfs/             تخزين الوسائط المتوافق مع S3
+  smoke/                 اختبار دخان للمنظومة كاملة بعد التشغيل
+apps/mobile/             تطبيق الهاتف (Flutter، عربية وفرنسية وإنجليزية)
+apps/dashboard/          لوحة التحكم المركزية (React، عربية وفرنسية)
 services/api/            الخلفية الأساسية (FastAPI)
   app/core/              الإعدادات، قاعدة البيانات، التحقق من الرموز والصلاحيات، السجلات
   app/modules/           الوحدات: geo، identity، audit، reports، ops، health
   migrations/            ترحيلات Alembic (المخطط الكامل + المرجع الإداري)
-  seed/                  الولايات الـ24 والمعتمديات الـ279
+  seed/                  الولايات الـ24 وحدودها والمعتمديات الـ279
   tests/                 اختبارات على قاعدة بيانات حقيقية
 docs/                    الوثائق وتقارير المراحل
 ```
@@ -34,11 +39,14 @@ docs/                    الوثائق وتقارير المراحل
 ```bash
 git clone https://github.com/YaamenMegdiche/E-HIMAYA.git && cd E-HIMAYA
 cp .env.example .env
-# غيّر كل كلمات المرور في .env، وولّد السر الخاص بالمبلّغين المجهولين:
-sed -i "s/^ANON_PSEUDONYM_SECRET=.*/ANON_PSEUDONYM_SECRET=$(openssl rand -hex 32)/" .env
+# غيّر كل كلمات المرور في .env، وولّد الأسرار الثلاثة:
+sed -i "s|^ANON_PSEUDONYM_SECRET=.*|ANON_PSEUDONYM_SECRET=$(openssl rand -hex 32)|" .env
+sed -i "s|^FIELD_ENCRYPTION_KEY=.*|FIELD_ENCRYPTION_KEY=$(openssl rand -base64 32)|" .env
+sed -i "s|^TUSD_HOOK_SECRET=.*|TUSD_HOOK_SECRET=$(openssl rand -hex 24)|" .env
 
 docker compose --env-file .env -f infra/compose.yml up -d --build
 docker compose --env-file .env -f infra/compose.yml ps
+python3 infra/smoke/smoke_test.py   # بلاغ مجهول + رفع ملف بالاستئناف + التحقق من البصمة
 ```
 
 عند التشغيل تطبّق الخلفية ترحيلات قاعدة البيانات آليا، ويستورد Keycloak الفضاءين.
@@ -48,6 +56,7 @@ docker compose --env-file .env -f infra/compose.yml ps
 | الواجهة البرمجية ووثائقها | http://localhost:8000/docs |
 | فحص الجاهزية | http://localhost:8000/health/ready |
 | Keycloak (الإدارة) | http://localhost:8080/admin |
+| رفع الوسائط بالاستئناف (tus) | http://localhost:1080/api/v1/uploads/ |
 | تخزين S3 | http://localhost:8333 |
 | مراقبة NATS | http://localhost:8222 |
 
@@ -67,6 +76,7 @@ cd services/api
 uv sync
 export DATABASE_URL=postgresql+asyncpg://ehimaya:<كلمة المرور>@localhost:5432/ehimaya
 export ANON_PSEUDONYM_SECRET=$(openssl rand -hex 32)
+export FIELD_ENCRYPTION_KEY=$(openssl rand -base64 32)
 uv run alembic upgrade head
 uv run pytest -q
 uv run ruff check . && uv run ruff format --check . && uv run mypy app
