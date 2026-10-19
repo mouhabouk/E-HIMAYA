@@ -89,10 +89,10 @@ services:
     restart: "no"
     entrypoint: ["/bin/sh", "-c"]
     command:
-      - >
+      - >-
         for i in $$(seq 1 60); do
-          echo "s3.bucket.create -name $${S3_BUCKET_MEDIA}" | weed shell -master=seaweedfs:9333 2>&1
-          | grep -q "created bucket" && exit 0; sleep 2;
+        echo "s3.bucket.create -name $${S3_BUCKET_MEDIA}" | weed shell -master=seaweedfs:9333 2>&1 | grep -q "created bucket" && exit 0;
+        sleep 2;
         done; echo "bucket creation failed"; exit 1
     environment:
       S3_BUCKET_MEDIA: ${S3_BUCKET_MEDIA:-ehimaya-media}
