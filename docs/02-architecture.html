@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ء-حماية | هيكلة النظام</title>
+<style>
+:root{--bg:#f7f8fa;--paper:#fff;--ink:#1b2430;--muted:#5b6675;--line:#dfe3e8;--accent:#b3261e;--accent2:#0b5cad;--warn:#a15c00;--chip:#eef1f5;--head:#f1f3f6;
+--b1:#e3eefc;--b1s:#4a7fc1;--b2:#e6f5ea;--b2s:#3b8f55;--b3:#fff1dc;--b3s:#c28224;--b4:#f6e5f7;--b4s:#9a4fa3;--b5:#fde7e5;--b5s:#c2463b}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1318;--paper:#161b22;--ink:#e6eaef;--muted:#9aa5b1;--line:#2a313b;--accent:#ff6b5e;--accent2:#5aa9ff;--warn:#e0a24a;--chip:#1f2630;--head:#1c222b;
+--b1:#16283d;--b1s:#5f95d6;--b2:#15301e;--b2s:#5cbf7a;--b3:#3a2a12;--b3s:#e0a24a;--b4:#33203a;--b4s:#c88ad0;--b5:#3d1c1a;--b5s:#ef7a6f}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Naskh Arabic","Segoe UI",Tahoma,Arial,sans-serif;line-height:1.75;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header.cover{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--accent2);border-radius:10px;padding:28px 24px;margin-bottom:20px}
+header.cover h1{margin:0 0 6px;font-size:30px}
+header.cover .sub{color:var(--muted);margin:0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:16px}
+.meta div{background:var(--chip);border-radius:6px;padding:8px 12px;font-size:14px}
+.meta b{display:block;color:var(--muted);font-weight:600;font-size:12px}
+nav.toc{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px 24px;margin-bottom:20px}
+nav.toc ol{margin:0;padding-inline-start:20px;columns:2;column-gap:32px}
+@media (max-width:700px){nav.toc ol{columns:1}}
+nav.toc a,a{color:var(--accent2);text-decoration:none}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:20px}
+h2{margin-top:0;font-size:23px;border-bottom:2px solid var(--line);padding-bottom:8px}
+h3{font-size:19px;margin-top:28px;color:var(--accent2)}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:start;vertical-align:top}
+th{background:var(--head);font-weight:700;white-space:nowrap}
+code,.ltr{direction:ltr;unicode-bidi:isolate}
+td code,p code,li code{background:var(--chip);padding:1px 5px;border-radius:4px;font-size:13px}
+pre{direction:ltr;text-align:left;background:var(--chip);border:1px solid var(--line);border-radius:8px;padding:12px 14px;overflow-x:auto;font-size:13px;line-height:1.55}
+.note{border-inline-start:4px solid var(--accent2);background:var(--chip);padding:10px 14px;border-radius:6px;margin:12px 0}
+.warn{border-inline-start-color:var(--warn)}
+.diagram{overflow-x:auto;margin:14px 0;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--paper)}
+.diagram svg{display:block;min-width:820px;width:100%;height:auto}
+svg text{fill:var(--ink);font-family:"Noto Naskh Arabic","Segoe UI",Tahoma,Arial,sans-serif}
+svg .sm{font-size:11px;fill:var(--muted)}
+svg .t{font-size:13px;font-weight:700}
+svg .g1{fill:var(--b1);stroke:var(--b1s)} svg .g2{fill:var(--b2);stroke:var(--b2s)} svg .g3{fill:var(--b3);stroke:var(--b3s)} svg .g4{fill:var(--b4);stroke:var(--b4s)} svg .g5{fill:var(--b5);stroke:var(--b5s)}
+svg .zone{fill:none;stroke:var(--line);stroke-dasharray:6 4}
+svg .arr{stroke:var(--muted);stroke-width:1.5;fill:none}
+svg marker path{fill:var(--muted)}
+.tag{display:inline-block;font-size:12px;border-radius:10px;padding:0 8px;background:var(--chip);white-space:nowrap}
+ul,ol{padding-inline-start:22px}
+footer{color:var(--muted);text-align:center;font-size:13px}
+@media print{body{background:#fff}section,header.cover{border:none;break-inside:avoid-page}nav.toc{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <h1>ء-حماية <span class="ltr">e-Himaya</span></h1>
+  <p class="sub">منظومة ذكية للتبليغ والمشاركة المجتمعية والمؤسساتية في مجال الوقاية والسلامة وإدارة المخاطر</p>
+  <h2 style="border:none;margin:18px 0 0;padding:0">وثيقة هيكلة النظام <span class="ltr" style="color:var(--muted);font-size:16px">System Architecture Document</span></h2>
+  <div class="meta">
+    <div><b>الإصدار</b>1.1 (تعديلات المرحلة 1)</div>
+    <div><b>التاريخ</b>2026-10-19</div>
+    <div><b>الحالة</b>معتمدة بتاريخ 2026-10-19</div>
+    <div><b>الوثيقة المرافقة</b><a href="01-requirements.html">وثيقة المتطلبات</a></div>
+  </div>
+</header>
+
+<nav class="toc">
+<strong>المحتويات</strong>
+<ol>
+<li><a href="#a1">مبادئ التصميم</a></li>
+<li><a href="#a2">السياق العام</a></li>
+<li><a href="#a3">الهيكلة المنطقية والخدمات</a></li>
+<li><a href="#a4">الأدوات والإصدارات والتنصيب</a></li>
+<li><a href="#a5">هيكلة البيانات</a></li>
+<li><a href="#a6">طبقة الذكاء الاصطناعي</a></li>
+<li><a href="#a7">مسار البث والرؤية الحاسوبية</a></li>
+<li><a href="#a8">الاتصالات الهاتفية</a></li>
+<li><a href="#a9">العمل دون اتصال والمزامنة</a></li>
+<li><a href="#a10">هيكلة الأمن</a></li>
+<li><a href="#a11">النشر والبنية التحتية</a></li>
+<li><a href="#a12">الواجهات البرمجية والأحداث</a></li>
+<li><a href="#a13">هيكل المستودع</a></li>
+<li><a href="#a14">القرارات المعمارية المقترحة</a></li>
+</ol>
+</nav>
+
+<!-- 1 -->
+<section id="a1">
+<h2>1. مبادئ التصميم</h2>
+<ol>
+<li><b>مسار البلاغ أولا:</b> استقبال البلاغ وإسناد رقم التتبع لا يتوقفان على أي خدمة ذكاء اصطناعي أو بث. كل معالجة ذكية تتم بشكل غير متزامن بعد الحفظ.</li>
+<li><b>وحدات مستقلة داخل نظام واحد قابل للتفكيك:</b> نبدأ بخلفية واحدة منظمة في وحدات ذات حدود واضحة (<span class="ltr">Modular Monolith</span>) مع خدمات منفصلة فقط حيث يفرض ذلك نوع العمل (الذكاء الاصطناعي، البث، الهاتف). يمكن فصل أي وحدة لاحقا دون إعادة كتابة.</li>
+<li><b>مفتوح المصدر ومحلي:</b> كل المكونات مجانية وقابلة للتشغيل داخل مركز بيانات تونسي، ولا تخرج المعطيات الشخصية نحو خدمات أجنبية.</li>
+<li><b>الإنسان يقرر:</b> النماذج تقترح وتشرح، والمشغّل أو القائد يصادق.</li>
+<li><b>الخصوصية منذ التصميم:</b> تقليل المعطيات، تشفير الحقول الحساسة، فصل هوية المبلّغ المجهول.</li>
+<li><b>قابلية التوسع التدريجي:</b> نفس الكود يعمل على خادم واحد في التجربة وعلى عنقود في النطاق الوطني.</li>
+</ol>
+</section>
+
+<!-- 2 -->
+<section id="a2">
+<h2>2. السياق العام</h2>
+<div class="diagram">
+<svg viewBox="0 0 1000 470" xmlns="http://www.w3.org/2000/svg" direction="rtl">
+<defs><marker id="m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
+<!-- center -->
+<rect x="380" y="170" width="240" height="120" rx="12" class="g5" stroke-width="2"/>
+<text x="500" y="215" text-anchor="middle" class="t" style="font-size:18px">منظومة ء-حماية</text>
+<text x="500" y="243" text-anchor="middle" class="sm">بلاغات · ذكاء اصطناعي · قيادة</text>
+<text x="500" y="263" text-anchor="middle" class="sm">بث · اتصالات · تنبيهات</text>
+<!-- left actors (users) -->
+<rect x="790" y="40" width="180" height="56" rx="8" class="g1"/><text x="880" y="65" text-anchor="middle" class="t">مواطن / متطوع</text><text x="880" y="85" text-anchor="middle" class="sm">تطبيق الهاتف</text>
+<rect x="790" y="130" width="180" height="56" rx="8" class="g1"/><text x="880" y="155" text-anchor="middle" class="t">مؤسسة</text><text x="880" y="175" text-anchor="middle" class="sm">بوابة الواب والتطبيق</text>
+<rect x="790" y="220" width="180" height="56" rx="8" class="g1"/><text x="880" y="245" text-anchor="middle" class="t">مشغّلون وقادة</text><text x="880" y="265" text-anchor="middle" class="sm">لوحة التحكم</text>
+<rect x="790" y="310" width="180" height="56" rx="8" class="g1"/><text x="880" y="335" text-anchor="middle" class="t">الوالي / الوزير</text><text x="880" y="355" text-anchor="middle" class="sm">اللجان المحلية والمركزية</text>
+<rect x="790" y="400" width="180" height="56" rx="8" class="g1"/><text x="880" y="425" text-anchor="middle" class="t">متصل هاتفي</text><text x="880" y="445" text-anchor="middle" class="sm">الرقم الداخلي 8000</text>
+<!-- right external systems -->
+<rect x="30" y="40" width="200" height="56" rx="8" class="g3"/><text x="130" y="65" text-anchor="middle" class="t">خدمات الطقس</text><text x="130" y="85" text-anchor="middle" class="sm">Open-Meteo · الرصد الجوي</text>
+<rect x="30" y="130" width="200" height="56" rx="8" class="g3"/><text x="130" y="155" text-anchor="middle" class="t">بوابة الرسائل القصيرة</text><text x="130" y="175" text-anchor="middle" class="sm">مزود تونسي</text>
+<rect x="30" y="220" width="200" height="56" rx="8" class="g3"/><text x="130" y="245" text-anchor="middle" class="t">إشعارات الهاتف</text><text x="130" y="265" text-anchor="middle" class="sm">FCM · APNs</text>
+<rect x="30" y="310" width="200" height="56" rx="8" class="g3"/><text x="130" y="335" text-anchor="middle" class="t">مركز 198 / SIP Trunk</text><text x="130" y="355" text-anchor="middle" class="sm">السيناريو 2 و3</text>
+<rect x="30" y="400" width="200" height="56" rx="8" class="g3"/><text x="130" y="425" text-anchor="middle" class="t">درونات · كاميرات · IoT</text><text x="130" y="445" text-anchor="middle" class="sm">RTSP · RTMP · MQTT</text>
+<!-- arrows -->
+<path d="M790,68 C680,68 660,180 620,195" class="arr" marker-end="url(#m)"/>
+<path d="M790,158 C700,158 660,200 620,215" class="arr" marker-end="url(#m)"/>
+<path d="M790,248 L620,240" class="arr" marker-end="url(#m)"/>
+<path d="M790,338 C700,338 660,280 620,265" class="arr" marker-end="url(#m)"/>
+<path d="M790,428 C680,428 660,300 620,282" class="arr" marker-end="url(#m)"/>
+<path d="M380,195 C320,180 300,68 230,68" class="arr" marker-start="url(#m)"/>
+<path d="M380,215 C320,210 290,158 230,158" class="arr" marker-end="url(#m)"/>
+<path d="M380,240 L230,248" class="arr" marker-end="url(#m)"/>
+<path d="M380,265 C320,280 290,338 230,338" class="arr" marker-end="url(#m)"/>
+<path d="M380,282 C320,300 300,428 230,428" class="arr" marker-start="url(#m)"/>
+</svg>
+</div>
+</section>
+
+<!-- 3 -->
+<section id="a3">
+<h2>3. الهيكلة المنطقية والخدمات</h2>
+<div class="diagram">
+<svg viewBox="0 0 1000 640" xmlns="http://www.w3.org/2000/svg" direction="rtl">
+<defs><marker id="m2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
+<!-- clients -->
+<text x="980" y="28" text-anchor="start" class="t">الواجهات</text>
+<rect x="690" y="40" width="290" height="60" rx="8" class="g1"/><text x="835" y="66" text-anchor="middle" class="t">تطبيق الهاتف</text><text x="835" y="86" text-anchor="middle" class="sm">Flutter · SQLite محلي مشفر</text>
+<rect x="355" y="40" width="290" height="60" rx="8" class="g1"/><text x="500" y="66" text-anchor="middle" class="t">بوابة المؤسسات</text><text x="500" y="86" text-anchor="middle" class="sm">React · TypeScript</text>
+<rect x="20" y="40" width="290" height="60" rx="8" class="g1"/><text x="165" y="66" text-anchor="middle" class="t">لوحة التحكم المركزية</text><text x="165" y="86" text-anchor="middle" class="sm">React · MapLibre · WebRTC</text>
+<!-- gateway -->
+<rect x="20" y="135" width="960" height="44" rx="8" class="g4"/><text x="500" y="162" text-anchor="middle" class="t">بوابة الدخول: Traefik (TLS، تحديد المعدل، توجيه) + Keycloak (الهوية، OIDC، MFA، الأدوار)</text>
+<!-- core -->
+<rect x="20" y="205" width="960" height="190" rx="10" class="zone"/>
+<text x="970" y="226" text-anchor="start" class="t">الخلفية الأساسية · FastAPI (وحدات مستقلة)</text>
+<g>
+<rect x="830" y="240" width="140" height="62" rx="6" class="g2"/><text x="900" y="267" text-anchor="middle" class="t">البلاغات</text><text x="900" y="287" text-anchor="middle" class="sm">رقم التتبع · الوسائط</text>
+<rect x="675" y="240" width="140" height="62" rx="6" class="g2"/><text x="745" y="267" text-anchor="middle" class="t">الحوادث والعمليات</text><text x="745" y="287" text-anchor="middle" class="sm">تجميع · موارد · خط زمني</text>
+<rect x="520" y="240" width="140" height="62" rx="6" class="g2"/><text x="590" y="267" text-anchor="middle" class="t">الحسابات</text><text x="590" y="287" text-anchor="middle" class="sm">مواطنون · متطوعون</text>
+<rect x="365" y="240" width="140" height="62" rx="6" class="g2"/><text x="435" y="267" text-anchor="middle" class="t">المؤسسات</text><text x="435" y="287" text-anchor="middle" class="sm">ملفات السلامة · شهادات</text>
+<rect x="210" y="240" width="140" height="62" rx="6" class="g2"/><text x="280" y="267" text-anchor="middle" class="t">الإشعارات والتنبيهات</text><text x="280" y="287" text-anchor="middle" class="sm">FCM · SMS · بريد</text>
+<rect x="30" y="240" width="165" height="62" rx="6" class="g2"/><text x="112" y="267" text-anchor="middle" class="t">الخريطة والجغرافيا</text><text x="112" y="287" text-anchor="middle" class="sm">طبقات · قرب · حرارية</text>
+<rect x="830" y="318" width="140" height="62" rx="6" class="g2"/><text x="900" y="345" text-anchor="middle" class="t">المحتوى</text><text x="900" y="365" text-anchor="middle" class="sm">نصائح · دليل الأرقام</text>
+<rect x="675" y="318" width="140" height="62" rx="6" class="g2"/><text x="745" y="345" text-anchor="middle" class="t">المكافآت</text><text x="745" y="365" text-anchor="middle" class="sm">نقاط · شارات</text>
+<rect x="520" y="318" width="140" height="62" rx="6" class="g2"/><text x="590" y="345" text-anchor="middle" class="t">التقارير والمعرفة</text><text x="590" y="365" text-anchor="middle" class="sm">ذاكرة · مكتبة أحداث</text>
+<rect x="365" y="318" width="140" height="62" rx="6" class="g2"/><text x="435" y="345" text-anchor="middle" class="t">قواعد التنبيه</text><text x="435" y="365" text-anchor="middle" class="sm">محرك القواعد · IoT</text>
+<rect x="210" y="318" width="140" height="62" rx="6" class="g2"/><text x="280" y="345" text-anchor="middle" class="t">الإدارة والتدقيق</text><text x="280" y="365" text-anchor="middle" class="sm">مستويات · سجلات</text>
+<rect x="30" y="318" width="165" height="62" rx="6" class="g2"/><text x="112" y="345" text-anchor="middle" class="t">الزمن الحقيقي</text><text x="112" y="365" text-anchor="middle" class="sm">WebSocket للوحة</text>
+</g>
+<!-- bus -->
+<rect x="20" y="415" width="960" height="40" rx="8" class="g4"/><text x="500" y="440" text-anchor="middle" class="t">ناقل الأحداث: NATS JetStream (report.created، media.analyzed، incident.updated ...)</text>
+<!-- workers -->
+<rect x="690" y="475" width="290" height="62" rx="8" class="g3"/><text x="835" y="502" text-anchor="middle" class="t">خدمات الذكاء الاصطناعي</text><text x="835" y="522" text-anchor="middle" class="sm">صوت · ترجمة · تصنيف · أولوية · تنبؤ</text>
+<rect x="355" y="475" width="290" height="62" rx="8" class="g3"/><text x="500" y="502" text-anchor="middle" class="t">البث والرؤية</text><text x="500" y="522" text-anchor="middle" class="sm">MediaMTX · كاشف الحرائق والدخان</text>
+<rect x="20" y="475" width="290" height="62" rx="8" class="g3"/><text x="165" y="502" text-anchor="middle" class="t">الاتصالات</text><text x="165" y="522" text-anchor="middle" class="sm">Asterisk · Kamailio · WebRTC</text>
+<!-- data -->
+<rect x="20" y="565" width="960" height="62" rx="8" class="g5"/><text x="500" y="590" text-anchor="middle" class="t">البيانات: PostgreSQL + PostGIS + pgvector · Valkey (ذاكرة مؤقتة) · SeaweedFS (وسائط S3) · OpenSearch (بحث، مرحلة لاحقة)</text>
+<text x="500" y="612" text-anchor="middle" class="sm">نسخ احتياطي مشفر · نسخ متماثل في الموقع الثاني</text>
+<!-- arrows -->
+<path d="M835,100 L835,135" class="arr" marker-end="url(#m2)"/><path d="M500,100 L500,135" class="arr" marker-end="url(#m2)"/><path d="M165,100 L165,135" class="arr" marker-end="url(#m2)"/>
+<path d="M500,179 L500,205" class="arr" marker-end="url(#m2)"/>
+<path d="M500,395 L500,415" class="arr" marker-end="url(#m2)" marker-start="url(#m2)"/>
+<path d="M835,455 L835,475" class="arr" marker-end="url(#m2)" marker-start="url(#m2)"/><path d="M500,455 L500,475" class="arr" marker-end="url(#m2)" marker-start="url(#m2)"/><path d="M165,455 L165,475" class="arr" marker-end="url(#m2)" marker-start="url(#m2)"/>
+<path d="M500,537 L500,565" class="arr" marker-end="url(#m2)"/>
+</svg>
+</div>
+
+<h3>3.1 مسؤوليات الوحدات</h3>
+<div class="tbl"><table>
+<tr><th>الوحدة</th><th>المسؤولية</th><th>متطلبات مغطاة</th></tr>
+<tr><td>البلاغات</td><td>الاستقبال، رقم التتبع، رفع الوسائط بالاستئناف (<span class="ltr">tus</span>)، البصمات، المجهول، الحالات.</td><td>FR-A-040..048، BR-01..06</td></tr>
+<tr><td>الحوادث والعمليات</td><td>التجميع، الأولوية، الإسناد، الموارد، الخط الزمني، المستويات التشغيلية.</td><td>FR-C-02، 09، BR-10..20</td></tr>
+<tr><td>الحسابات</td><td>الملفات الشخصية، المتطوعون، الموافقات، التحقق OTP (عبر Keycloak).</td><td>FR-A-001..023، FR-C-03، 04</td></tr>
+<tr><td>المؤسسات</td><td>البطاقات، الملفات، الفرق، المواد الخطرة، الشهادات الرقمية PDF.</td><td>FR-B-*، FR-C-05</td></tr>
+<tr><td>الإشعارات والتنبيهات</td><td>الاستهداف الجغرافي، القنوات المتعددة، الجدولة، الصلاحية.</td><td>FR-A-060، 061، FR-C-17، 18</td></tr>
+<tr><td>الخريطة والجغرافيا</td><td>الطبقات، استعلامات القرب، الخرائط الحرارية، المرجع الإداري للولايات والمعتمديات.</td><td>FR-C-06، 10</td></tr>
+<tr><td>قواعد التنبيه</td><td>محرك قواعد قابل للضبط من اللوحة، استقبال قراءات IoT عبر MQTT.</td><td>FR-C-24، FR-B-010</td></tr>
+<tr><td>الزمن الحقيقي</td><td>دفع التحديثات للوحة عبر WebSocket حسب النطاق الجغرافي للمستخدم.</td><td>NFR-01</td></tr>
+<tr><td>الإدارة والتدقيق</td><td>الأدوار، النطاقات، سجل التدقيق غير القابل للتعديل.</td><td>FR-C-24، NFR-06</td></tr>
+</table></div>
+</section>
+
+<!-- 4 -->
+<section id="a4">
+<h2>4. الأدوات والإصدارات وأولوية التنصيب</h2>
+<p>كل الأدوات مجانية ومفتوحة المصدر ما لم يُذكر غير ذلك. الإصدارات المذكورة هي الفروع المستقرة المعتمدة، ويُثبّت الإصدار الدقيق في ملف <code>versions.lock</code> عند المرحلة 1 بعد التحقق من آخر تحديث أمني.</p>
+<div class="tbl"><table>
+<tr><th>الأولوية</th><th>الأداة</th><th>الفرع</th><th>الدور</th><th>الرخصة / الكلفة</th></tr>
+<tr><td>1</td><td>Ubuntu Server</td><td>24.04 LTS</td><td>نظام التشغيل للخوادم</td><td>مجاني</td></tr>
+<tr><td>1</td><td>Docker Engine + Compose</td><td>27.x / v2</td><td>الحاويات للتطوير والتجربة</td><td>Apache-2.0</td></tr>
+<tr><td>1</td><td>Git + GitHub أو GitLab CE</td><td>—</td><td>إدارة الكود والتكامل المستمر</td><td>مجاني</td></tr>
+<tr><td>2</td><td>PostgreSQL</td><td>17</td><td>قاعدة البيانات الرئيسية</td><td>PostgreSQL License</td></tr>
+<tr><td>2</td><td>PostGIS</td><td>3.5</td><td>البيانات الجغرافية واستعلامات القرب</td><td>GPL-2.0</td></tr>
+<tr><td>2</td><td>pgvector</td><td>0.8</td><td>البحث الدلالي (مكتبة الأحداث، التجميع)</td><td>PostgreSQL License</td></tr>
+<tr><td>2</td><td>Valkey</td><td>8</td><td>ذاكرة مؤقتة، تحديد المعدل، الجلسات</td><td>BSD-3 (بديل حر لـ Redis)</td></tr>
+<tr><td>2</td><td>SeaweedFS</td><td>3.97</td><td>تخزين الوسائط (متوافق S3)</td><td>Apache-2.0 (يعوّض MinIO، انظر سجل التعديلات)</td></tr>
+<tr><td>2</td><td>NATS Server + JetStream</td><td>2.10</td><td>ناقل الأحداث</td><td>Apache-2.0</td></tr>
+<tr><td>3</td><td>Keycloak</td><td>26</td><td>الهوية، OIDC، MFA، الأدوار</td><td>Apache-2.0</td></tr>
+<tr><td>8</td><td>Traefik</td><td>3</td><td>البوابة العكسية وشهادات TLS (عند النشر خارج جهاز التطوير)</td><td>MIT</td></tr>
+<tr><td>3</td><td>Python + FastAPI + SQLAlchemy + Alembic</td><td>3.12 / 0.115+ / 2.0</td><td>الخلفية</td><td>MIT</td></tr>
+<tr><td>4</td><td>Node.js + React + Vite + TypeScript</td><td>22 LTS / 19 / 6 / 5</td><td>البوابة واللوحة</td><td>MIT</td></tr>
+<tr><td>4</td><td>MapLibre GL JS</td><td>5</td><td>الخرائط والطبقات والخرائط الحرارية</td><td>BSD-3</td></tr>
+<tr><td>4</td><td>OpenStreetMap (خرائط تونس) + خادم بلاطات محلي</td><td>—</td><td>خلفية الخرائط دون تبعية أجنبية</td><td>ODbL</td></tr>
+<tr><td>4</td><td>Flutter + Dart</td><td>3.x المستقر</td><td>تطبيق أندرويد و iOS</td><td>BSD-3 (حساب Apple للنشر مدفوع 99$ سنويا)</td></tr>
+<tr><td>5</td><td>faster-whisper (Whisper large-v3)</td><td>1.x</td><td>تحويل الصوت إلى نص</td><td>MIT</td></tr>
+<tr><td>5</td><td>Ollama + نموذج لغوي مفتوح متعدد اللغات (Qwen أو Llama)</td><td>—</td><td>التصنيف، الاستخلاص، التلخيص، دعم القرار</td><td>رخص النماذج تُراجع (انظر 6)</td></tr>
+<tr><td>5</td><td>Opus-MT (Helsinki-NLP)</td><td>—</td><td>ترجمة فرنسية وإنجليزية إلى العربية</td><td>CC-BY-4.0</td></tr>
+<tr><td>6</td><td>MediaMTX</td><td>1.x</td><td>خادم البث RTSP / RTMP / WebRTC / HLS</td><td>MIT</td></tr>
+<tr><td>6</td><td>كاشف الحرائق والدخان (YOLO)</td><td>—</td><td>الرؤية الحاسوبية</td><td>انظر ملاحظة الرخصة في 7</td></tr>
+<tr><td>7</td><td>Asterisk</td><td>22 LTS</td><td>مقسم الهاتف، التحويل، التسجيل، المؤتمرات</td><td>GPL-2.0</td></tr>
+<tr><td>7</td><td>Kamailio</td><td>5.8</td><td>خادم SIP وموازنة الحمل على النطاق الوطني</td><td>GPL-2.0</td></tr>
+<tr><td>7</td><td>Open-Meteo API</td><td>—</td><td>الطقس والتوقعات (مجاني للاستعمال غير التجاري، يمكن استضافته محليا)</td><td>AGPL-3.0 / بيانات CC-BY</td></tr>
+<tr><td>7</td><td>Eclipse Mosquitto</td><td>2</td><td>استقبال حساسات IoT (MQTT)</td><td>EPL-2.0</td></tr>
+<tr><td>8</td><td>Prometheus + Grafana + Loki</td><td>—</td><td>المراقبة والسجلات</td><td>Apache-2.0 / AGPL-3.0</td></tr>
+<tr><td>8</td><td>OpenSearch</td><td>2</td><td>بحث نصي متقدم بالعربية للمكتبة والتقارير</td><td>Apache-2.0</td></tr>
+<tr><td>8</td><td>k3s (Kubernetes)</td><td>—</td><td>النشر على النطاق الوطني</td><td>Apache-2.0</td></tr>
+</table></div>
+
+<h3>4.1 أوامر التنصيب الأساسية (بيئة التطوير)</h3>
+<pre># 1) Docker على Ubuntu 24.04
+sudo apt-get update && sudo apt-get install -y ca-certificates curl git
+curl -fsSL https://get.docker.com | sudo sh
+sudo usermod -aG docker $USER
+
+# 2) Python 3.12 و uv لإدارة الحزم
+sudo apt-get install -y python3.12 python3.12-venv
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# 3) Node.js 22 LTS
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# 4) Flutter (المستقر)
+sudo snap install flutter --classic && flutter doctor
+
+# 5) تشغيل البنية الأساسية للمنظومة (يوفرها المستودع في المرحلة 1)
+git clone &lt;repo&gt; e-himaya && cd e-himaya
+cp .env.example .env
+docker compose -f infra/compose.yml up -d postgres valkey minio nats keycloak traefik
+
+# 6) نماذج الذكاء الاصطناعي المحلية
+curl -fsSL https://ollama.com/install.sh | sh
+ollama pull qwen2.5:7b-instruct
+uv pip install faster-whisper</pre>
+<div class="note">ملف <code>infra/compose.yml</code> وملف قاعدة البيانات (<code>db/migrations</code> و <code>db/seed/tn_admin.sql</code> للولايات والمعتمديات) يُسلّمان في المرحلة 1 مع وصف كل خدمة ومتغيراتها.</div>
+</section>
+
+<!-- 5 -->
+<section id="a5">
+<h2>5. هيكلة البيانات</h2>
+<h3>5.1 المخططات (Schemas)</h3>
+<p>قاعدة PostgreSQL واحدة مقسمة إلى مخططات حسب الوحدة، بحيث لا تكتب وحدة في جداول وحدة أخرى مباشرة:</p>
+<p><code>identity</code> · <code>reports</code> · <code>ops</code> · <code>orgs</code> · <code>geo</code> · <code>notify</code> · <code>content</code> · <code>rewards</code> · <code>knowledge</code> · <code>audit</code></p>
+<h3>5.2 مقتطف من الجداول الأساسية</h3>
+<pre>CREATE EXTENSION IF NOT EXISTS postgis;
+CREATE EXTENSION IF NOT EXISTS vector;
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+CREATE TABLE geo.gouvernorat (
+  id smallint PRIMARY KEY,               -- 1..24
+  code text UNIQUE NOT NULL,
+  name_ar text NOT NULL, name_fr text NOT NULL,
+  boundary geometry(MultiPolygon, 4326)
+);
+CREATE TABLE geo.delegation (
+  id integer PRIMARY KEY,
+  gouvernorat_id smallint NOT NULL REFERENCES geo.gouvernorat(id),
+  name_ar text NOT NULL, name_fr text NOT NULL,
+  boundary geometry(MultiPolygon, 4326)
+);
+
+CREATE TYPE identity.account_kind AS ENUM ('citizen','organization','anonymous');
+CREATE TABLE identity.account (
+  user_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),   -- USERID الموحد
+  kind identity.account_kind NOT NULL,
+  keycloak_sub text UNIQUE,                             -- فارغ للمجهول
+  anon_pseudonym bytea UNIQUE,                          -- HMAC لمعرف الجهاز، للمجهول فقط
+  status text NOT NULL DEFAULT 'active',                -- active | suspended | banned
+  false_report_count int NOT NULL DEFAULT 0,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE TABLE identity.profile (
+  user_id uuid PRIMARY KEY REFERENCES identity.account(user_id),
+  first_name text, last_name text,
+  cin_enc bytea,                 -- رقم بطاقة التعريف مشفّر على مستوى الحقل
+  cin_hash bytea UNIQUE,         -- للبحث دون فك التشفير
+  phone text, email text,
+  gouvernorat_id smallint REFERENCES geo.gouvernorat(id),
+  delegation_id int REFERENCES geo.delegation(id),
+  address text,
+  medical_enc bytea,             -- العمر، الفصيلة، المعطيات الطبية (JSON مشفّر)
+  locale text NOT NULL DEFAULT 'ar'
+);
+
+CREATE TABLE reports.report (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  tracking_code text UNIQUE NOT NULL,    -- مثال: EH-26-SFX-0004821
+  client_uuid uuid UNIQUE,               -- لمنع التكرار عند إعادة الإرسال دون اتصال
+  user_id uuid NOT NULL REFERENCES identity.account(user_id),
+  incident_id uuid,
+  category text NOT NULL,
+  text_original text, lang_original text, text_ar text,
+  location geography(Point, 4326) NOT NULL,
+  location_accuracy_m real,
+  gouvernorat_id smallint REFERENCES geo.gouvernorat(id),
+  priority_score smallint, credibility_score smallint,
+  status text NOT NULL DEFAULT 'received',
+  source text NOT NULL DEFAULT 'app',    -- app | portal | iot | call | sms
+  embedding vector(768),
+  created_at timestamptz NOT NULL, received_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX ON reports.report USING gist (location);
+CREATE INDEX ON reports.report (gouvernorat_id, status, created_at DESC);
+
+CREATE TABLE reports.media (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  report_id uuid REFERENCES reports.report(id),
+  stream_id uuid,
+  kind text NOT NULL,                    -- image | video | audio | recording
+  object_key text NOT NULL,              -- مسار في تخزين S3
+  sha256 char(64) NOT NULL,
+  bytes bigint, duration_s real,
+  transcript text, analysis jsonb,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE ops.incident (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  category text NOT NULL, severity smallint,
+  centroid geography(Point, 4326), area geography(Polygon, 4326),
+  gouvernorat_id smallint REFERENCES geo.gouvernorat(id),
+  op_level text NOT NULL DEFAULT 'normal',   -- normal | crisis | disaster
+  status text NOT NULL DEFAULT 'open',
+  opened_at timestamptz NOT NULL DEFAULT now(), closed_at timestamptz
+);
+CREATE TABLE ops.timeline_event (
+  id bigserial PRIMARY KEY,
+  incident_id uuid NOT NULL REFERENCES ops.incident(id),
+  at timestamptz NOT NULL DEFAULT now(),
+  actor uuid, kind text NOT NULL, payload jsonb
+);
+
+CREATE TABLE audit.log (
+  id bigserial PRIMARY KEY,
+  at timestamptz NOT NULL DEFAULT now(),
+  actor uuid, action text NOT NULL, target text, reason text,
+  prev_hash char(64), hash char(64) NOT NULL     -- سلسلة بصمات تمنع التعديل
+);</pre>
+<p>المخطط الكامل لكل الكيانات (المؤسسات، المتطوعون، الموارد، الإشعارات، المكافآت، قواعد التنبيه، دليل الأرقام) يُسلّم كملفات ترحيل Alembic في المرحلة 1.</p>
+<h3>5.3 التخزين والاحتفاظ</h3>
+<div class="tbl"><table>
+<tr><th>البيانات</th><th>المخزن</th><th>التشفير</th><th>الاحتفاظ</th></tr>
+<tr><td>البلاغات والحوادث</td><td>PostgreSQL</td><td>تشفير القرص + حقول حساسة</td><td>5 سنوات ثم إخفاء الهوية</td></tr>
+<tr><td>الوسائط والتسجيلات</td><td>SeaweedFS عبر واجهة S3 (نسخ غير قابلة للتعديل للأدلة)</td><td>SSE AES-256</td><td>5 سنوات للبلاغات، سنتان للمكالمات</td></tr>
+<tr><td>مواقع المتطوعين اللحظية</td><td>Valkey</td><td>—</td><td>خلال الجاهزية فقط، دون أرشفة</td></tr>
+<tr><td>سجل التدقيق</td><td>PostgreSQL (إلحاق فقط)</td><td>سلسلة بصمات</td><td>5 سنوات</td></tr>
+</table></div>
+</section>
+
+<!-- 6 -->
+<section id="a6">
+<h2>6. طبقة الذكاء الاصطناعي</h2>
+<p>كل النماذج تعمل محليا. خادم GPU واحد متوسط (مثلا 24 GB VRAM) يكفي للتجربة، ويمكن تشغيل الكاشف البصري على أجهزة طرفية.</p>
+<div class="tbl"><table>
+<tr><th>القدرة</th><th>النموذج المقترح</th><th>بديل</th><th>المدخل والمخرج</th></tr>
+<tr><td>تحويل الصوت إلى نص</td><td>Whisper large-v3 عبر faster-whisper</td><td>Whisper medium على المعالج</td><td>تسجيل حتى 5 دقائق ← نص ولغة. تحسين لاحق باللهجة التونسية عبر ضبط دقيق على بيانات مُعلّمة.</td></tr>
+<tr><td>الترجمة</td><td>Opus-MT fr→ar و en→ar</td><td>النموذج اللغوي المحلي</td><td>نص ← نص عربي مع الاحتفاظ بالأصل.</td></tr>
+<tr><td>التصنيف والاستخلاص</td><td>نموذج لغوي مفتوح 7 إلى 8 مليار معامل عبر Ollama (Qwen2.5 أو Llama 3.1)</td><td>مصنف خفيف مدرّب على البلاغات</td><td>نص ← نوع الحادثة، مؤشرات وجود أرواح في خطر، عدد المصابين، كلمات مفتاحية، بصيغة JSON مضبوطة.</td></tr>
+<tr><td>التجميع الدلالي</td><td>نموذج تضمين متعدد اللغات (multilingual-e5 أو bge-m3)</td><td>—</td><td>نص ← متجه في pgvector، يُستعمل مع المسافة والزمن.</td></tr>
+<tr><td>الأولوية</td><td>قواعد شفافة موزونة (BR-20) ثم نموذج إحصائي بعد تجميع بيانات كافية</td><td>—</td><td>ميزات البلاغ ← درجة 0 إلى 100 مع تفسير مكوناتها.</td></tr>
+<tr><td>كشف الحرائق والدخان</td><td>YOLO مدرّب على بيانات حرائق ودخان</td><td>RT-DETR</td><td>صورة أو إطارات البث ← صناديق وثقة.</td></tr>
+<tr><td>انتشار الحريق</td><td>نموذج فيزيائي مبسط (Rothermel) مع الرياح والرطوبة والانحدار</td><td>تكامل لاحق مع أدوات مثل FARSITE</td><td>نقطة الاشتعال والطقس ← مضلعات انتشار متوقعة.</td></tr>
+<tr><td>المساعد لدعم القرار</td><td>النموذج اللغوي المحلي مع استرجاع من الذاكرة الوطنية ودليل الإجراءات (RAG)</td><td>—</td><td>حالة الحادثة ← توصيات مع مصادرها.</td></tr>
+</table></div>
+<div class="note warn"><b>رخص النماذج:</b> مكتبة Ultralytics (YOLOv8 و YOLO11) مرخصة AGPL-3.0، وتشترط نشر الكود المصدري أو اقتناء رخصة تجارية. البديل المقترح هو تنفيذ <a class="ltr" href="https://github.com/MultimediaTechLab/YOLO">MultimediaTechLab/YOLO</a> المرخص MIT، أو RT-DETR المرخص Apache-2.0. كذلك نموذج الترجمة NLLB-200 مرخص للاستعمال غير التجاري فقط ولذلك لم يُعتمد. يُراجع ترخيص كل نموذج لغوي قبل الاعتماد.</div>
+<h3>6.1 تدفق المعالجة غير المتزامنة</h3>
+<pre>report.created ──► [transcribe] ──► [translate] ──► [classify+extract] ──► [embed]
+       │                                                         │
+       └──► media.uploaded ──► [vision: fire/smoke/person]       ▼
+                                         │               [priority + dedup suggest]
+                                         └──────────────► report.enriched ──► WebSocket للوحة</pre>
+<p>كل خطوة تقرأ من NATS وتكتب نتيجتها في الجدول، وعند فشل نموذج يبقى البلاغ ظاهرا في اللوحة بحالة «بانتظار التحليل».</p>
+</section>
+
+<!-- 7 -->
+<section id="a7">
+<h2>7. مسار البث والرؤية الحاسوبية</h2>
+<pre>تطبيق الهاتف ── WHIP/WebRTC ──┐
+درون / كاميرا ── RTSP/RTMP ────┼──► MediaMTX ── runOnReady / runOnNotReady (Webhook) ──► خلفية ء-حماية
+                               │        │                                              (ربط البث بالمستخدم والبلاغ)
+                               │        ├── record: fMP4 ──► S3 ──► SHA-256 ──► reports.media
+                               │        ├── RTSP داخلي ──► كاشف الحرائق والدخان ──► media.analyzed
+                               │        └── WebRTC / HLS ──► لوحة التحكم (عرض متعدد الشاشات)</pre>
+<ul>
+<li>المصادقة على البث عبر <code>authHTTPAddress</code> في MediaMTX، الذي يسأل الخلفية إن كان للمستخدم بلاغ مفتوح ورمز صالح.</li>
+<li>التسجيل الآلي بقطع زمنية، ثم حساب البصمة عند إغلاق كل قطعة وربطها بالبلاغ (FR-C-07).</li>
+<li>الكاشف يقرأ إطارا أو اثنين في الثانية لكل بث لتخفيف الحمل، ويرفع المعدل عند الاشتباه.</li>
+<li>مشاريع جاهزة للتقييم في المرحلة 6: <a class="ltr" href="https://github.com/soos3d/SpectraX">SpectraX</a> (يجمع MediaMTX مع YOLO) ومشاريع كشف الحرائق والدخان عبر RTSP المنشورة على GitHub و Hugging Face. يُقيّم كل منها على الدقة والرخصة وقابلية الصيانة قبل الاعتماد، ويمكن أن نأخذ منها الأفكار ونبني كاشفا خاصا برخصة مناسبة.</li>
+<li>التشغيل الطرفي: تصدير الكاشف بصيغة ONNX أو NCNN للعمل على Raspberry Pi 5 قرب الكاميرات، وإرسال النتائج فقط.</li>
+</ul>
+</section>
+
+<!-- 8 -->
+<section id="a8">
+<h2>8. الاتصالات الهاتفية</h2>
+<div class="note"><b>القاعدة:</b> أرقام النجدة في التطبيق (198، 190، 197، 193) تعمل دائما بالسيناريو 0، أي مكالمة هاتفية عادية عبر الشريحة لا تمر بالمنظومة. المخطط أدناه يخص فقط المكالمات التي تمر عبر مشغّل ء-حماية (السيناريوهات 1 إلى 3).</div>
+<pre>المتصل (هاتف / تطبيق WebRTC)
+      │
+      ▼
+ Kamailio (نطاق وطني: توجيه SIP وموازنة)  ← اختياري في التجربة
+      │
+      ▼
+ Asterisk ── الرقم الداخلي 8000 ──► طابور المشغّلين (لوحة التحكم عبر WebRTC / SIP.js)
+      │           │
+      │           ├── تسجيل المكالمة (MixMonitor) ──► S3 + ربط برقم التتبع
+      │           ├── غرف مؤتمرات الأزمة (ConfBridge)
+      │           └── واجهة ARI ◄── زر «تحويل إلى 198» في اللوحة
+      │
+      └── SIP Trunk (مشغّل تونسي) ──► 198   [السيناريو 2 و3، يتطلب اتفاقية]</pre>
+<div class="tbl"><table>
+<tr><th>السيناريو</th><th>ما يُبنى</th><th>متى</th></tr>
+<tr><td>0 · المسار الأصلي</td><td>في تطبيق الهاتف: النقر على أي رقم نجدة يفتح تطبيق الاتصال بالرقم (<code>tel:198</code>) فتتم مكالمة عادية عبر الشريحة وشبكة المشغّل، دون أي مرور بالمنظومة. لا يحتاج إنترنت ولا خادما. لا تُسجّل المكالمة ولا محتواها.</td><td>الإصدار الأول (المرحلة 2)</td></tr>
+<tr><td>1 · تحويل يدوي</td><td>Asterisk، طابور المشغّلين، هاتف واب في اللوحة، تسجيل، ربط المكالمة بالبلاغ.</td><td>المرحلة 7</td></tr>
+<tr><td>2 · تحويل تقني</td><td>نفس ما سبق مع زر التحويل عبر ARI و SIP Trunk. الكود جاهز ويُفعّل بإعداد.</td><td>عند توقيع اتفاقية مع مشغّل</td></tr>
+<tr><td>3 · ربط مباشر</td><td>توجيه 198 مباشرة نحو المركز الحكومي مع تسجيل البيانات الوصفية فقط.</td><td>عند اتفاقية مع الدولة</td></tr>
+</table></div>
+</section>
+
+<!-- 9 -->
+<section id="a9">
+<h2>9. العمل دون اتصال والمزامنة (تطبيق الهاتف)</h2>
+<ul>
+<li>قاعدة محلية SQLite مشفرة (SQLCipher عبر drift) تحفظ البلاغات والوسائط ونصائح السلامة وأرقام الطوارئ.</li>
+<li>كل بلاغ يحمل <code>client_uuid</code> يُنشأ على الجهاز، فيكون الإرسال المتكرر غير مضاعف (idempotent) على الخادم.</li>
+<li>طابور إرسال يعمل في الخلفية (WorkManager على أندرويد و BGTaskScheduler على iOS) ويعيد المحاولة بفواصل متزايدة.</li>
+<li>رفع الوسائط بالاستئناف (بروتوكول tus) لأن الشبكات الضعيفة شائعة أثناء الكوارث، مع ضغط الصور قبل الرفع والاحتفاظ بالأصل.</li>
+<li>رقم تتبع مؤقت محلي يُستبدل بالرقم النهائي عند التأكيد، ويُعرض للمستخدم في الحالتين.</li>
+<li>عند غياب الإنترنت تماما: اقتراح الاتصال بـ198 أو إرسال SMS مُنسّق يحتوي النوع والإحداثيات.</li>
+</ul>
+</section>
+
+<!-- 10 -->
+<section id="a10">
+<h2>10. هيكلة الأمن</h2>
+<div class="tbl"><table>
+<tr><th>الطبقة</th><th>الإجراءات</th></tr>
+<tr><td>الهوية</td><td>Keycloak: OIDC مع PKCE للتطبيق والواب، MFA إجباري لكل مستخدمي اللوحة، سياسات كلمات المرور، قفل الحساب، CAPTCHA بعد 3 محاولات، OTP بالهاتف أو البريد.</td></tr>
+<tr><td>الصلاحيات</td><td>RBAC من Keycloak مع نطاق جغرافي (ولاية، معتمدية) ومستوى تشغيلي، تُفرض في الخلفية على كل استعلام (وليس في الواجهة فقط)، مع أمن على مستوى الصفوف في PostgreSQL للبيانات الحساسة.</td></tr>
+<tr><td>النقل</td><td>TLS 1.3 خارجيا، و mTLS بين الخدمات في النطاق الوطني، وتثبيت الشهادة في تطبيق الهاتف.</td></tr>
+<tr><td>التخزين</td><td>تشفير الأقراص، تشفير التخزين من جهة الخادم، تشفير الحقول الحساسة بمفاتيح منفصلة تُدار في OpenBao (بديل حر لـ Vault).</td></tr>
+<tr><td>المجهول</td><td>المعرف المستعار = HMAC(سر الخادم، معرف التثبيت)، لا يُخزن IP (البوابة تحذفه من السجلات لمسار المجهول)، إزالة بيانات EXIF والموقع المضمّن من الوسائط بعد استخراج ما يلزم.</td></tr>
+<tr><td>الحماية من الإساءة</td><td>تحديد معدل الطلبات حسب الحساب والجهاز، حماية ضد التعداد (ردود موحدة)، فحص الملفات المرفوعة (النوع، الحجم، مضاد الفيروسات ClamAV).</td></tr>
+<tr><td>التدقيق</td><td>سجل إلحاق فقط بسلسلة بصمات، تسجيل كل اطلاع على المعطيات الطبية.</td></tr>
+<tr><td>التطوير الآمن</td><td>فحص التبعيات والأسرار في التكامل المستمر، تحليل ساكن (Semgrep، Bandit)، اختبار OWASP ZAP، اختبار اختراق قبل الإطلاق.</td></tr>
+</table></div>
+</section>
+
+<!-- 11 -->
+<section id="a11">
+<h2>11. النشر والبنية التحتية</h2>
+<div class="tbl"><table>
+<tr><th></th><th>التطوير والتجربة (ولاية واحدة)</th><th>النطاق الوطني</th></tr>
+<tr><td>التنسيق</td><td>Docker Compose على خادمين</td><td>k3s على عنقود في مركز بيانات تونسي + موقع ثانٍ للاستعادة</td></tr>
+<tr><td>الخوادم</td><td>خادم تطبيقات (16 نواة، 64 GB) + خادم GPU (24 GB VRAM)</td><td>عقد تطبيقات متعددة، 2 إلى 4 خوادم GPU، عقد تخزين SeaweedFS موزعة</td></tr>
+<tr><td>قاعدة البيانات</td><td>نسخة واحدة + نسخ احتياطي يومي و WAL</td><td>عنقود Patroni بنسخ متماثل متزامن + نسخة في الموقع الثاني</td></tr>
+<tr><td>البث</td><td>نسخة MediaMTX واحدة</td><td>نسخة لكل منطقة قرب المستخدمين</td></tr>
+<tr><td>الهاتف</td><td>Asterisk واحد</td><td>Kamailio أمام عدة Asterisk</td></tr>
+</table></div>
+<p><b>المستويات التشغيلية تقنيا:</b> المستوى (عادي، أزمة، كارثة) إعداد عام يُقرأ من كل الوحدات، ويغيّر حدود المعدل وأولويات الطوابير وتفعيل الوظائف (مثلا إيقاف المكافآت في مستوى الكارثة وتخصيص كل GPU لتحليل البلاغات).</p>
+</section>
+
+<!-- 12 -->
+<section id="a12">
+<h2>12. الواجهات البرمجية والأحداث</h2>
+<p>واجهة REST موثقة بـ OpenAPI 3.1 تحت <code>/api/v1</code>، مع WebSocket للوحة. أمثلة:</p>
+<div class="tbl"><table>
+<tr><th>الطريقة</th><th>المسار</th><th>الغرض</th></tr>
+<tr><td>POST</td><td><code>/api/v1/reports</code></td><td>إنشاء بلاغ (يقبل client_uuid) ويعيد رقم التتبع</td></tr>
+<tr><td>POST</td><td><code>/api/v1/uploads</code></td><td>رفع وسائط بالاستئناف (tus)</td></tr>
+<tr><td>GET</td><td><code>/api/v1/reports/track/{code}</code></td><td>حالة البلاغ برقم التتبع (متاح للمجهول)</td></tr>
+<tr><td>GET</td><td><code>/api/v1/incidents?bbox=&amp;status=</code></td><td>الحوادث في نطاق الخريطة</td></tr>
+<tr><td>POST</td><td><code>/api/v1/incidents/{id}/assignments</code></td><td>إسناد مورد أو متطوع</td></tr>
+<tr><td>GET</td><td><code>/api/v1/volunteers/nearby?lat=&amp;lon=&amp;skill=</code></td><td>المتطوعون الأقرب حسب الاختصاص</td></tr>
+<tr><td>POST</td><td><code>/api/v1/alerts</code></td><td>تنبيه عاجل جغرافي</td></tr>
+<tr><td>POST</td><td><code>/internal/mediamtx/hooks</code></td><td>أحداث بداية ونهاية البث</td></tr>
+<tr><td>POST</td><td><code>/api/v1/orgs/{id}/certificate</code></td><td>توليد شهادة السلامة الرقمية</td></tr>
+</table></div>
+<p>أحداث NATS الرئيسية: <code>report.created</code> · <code>report.enriched</code> · <code>media.uploaded</code> · <code>media.analyzed</code> · <code>incident.created</code> · <code>incident.updated</code> · <code>alert.issued</code> · <code>stream.started</code> · <code>stream.ended</code> · <code>oplevel.changed</code></p>
+</section>
+
+<!-- 13 -->
+<section id="a13">
+<h2>13. هيكل المستودع المقترح</h2>
+<pre>e-himaya/
+├── apps/
+│   ├── mobile/            # Flutter (ar / fr / en، RTL و LTR)
+│   ├── portal/            # بوابة المؤسسات React (ar / fr / en)
+│   └── dashboard/         # لوحة التحكم React (ar / fr)
+├── services/
+│   ├── api/               # FastAPI: الوحدات الأساسية
+│   ├── ai-workers/        # تحويل الصوت، الترجمة، التصنيف، التضمين
+│   ├── vision/            # كاشف الحرائق والدخان
+│   └── telephony/         # إعدادات Asterisk و ARI
+├── packages/
+│   ├── i18n/              # ملفات الترجمة المشتركة
+│   └── api-client/        # عميل مولّد من OpenAPI
+├── db/
+│   ├── migrations/        # Alembic
+│   └── seed/              # الولايات والمعتمديات، الأصناف، النصائح
+├── infra/
+│   ├── compose.yml
+│   ├── mediamtx.yml
+│   ├── keycloak/          # تصدير realm
+│   └── k8s/               # للنطاق الوطني
+└── docs/                  # هذه الوثائق، وتقارير نهاية كل مرحلة</pre>
+</section>
+
+<!-- 14 -->
+<section id="a14">
+<h2>14. القرارات المعمارية المقترحة</h2>
+<p>هذه القرارات معتمدة منذ 2026-10-19 ولا تُنقض إلا بقرار صريح منك.</p>
+<div class="tbl"><table>
+<tr><th>#</th><th>القرار</th><th>السبب</th><th>البديل المرفوض</th></tr>
+<tr><td>ADR-01</td><td>خلفية Python و FastAPI بوحدات مستقلة</td><td>نفس لغة نماذج الذكاء الاصطناعي، سرعة التطوير، توثيق آلي.</td><td>خدمات مصغرة منذ البداية (كلفة تشغيل عالية للتجربة).</td></tr>
+<tr><td>ADR-02</td><td>Flutter لتطبيق الهاتف</td><td>كود واحد لأندرويد و iOS، دعم RTL جيد، أداء الكاميرا والخرائط.</td><td>React Native، تطبيقان أصليان.</td></tr>
+<tr><td>ADR-03</td><td>React و TypeScript للبوابة واللوحة</td><td>منظومة ناضجة للخرائط والجداول والزمن الحقيقي.</td><td>Angular.</td></tr>
+<tr><td>ADR-04</td><td>PostgreSQL مع PostGIS و pgvector كقاعدة واحدة</td><td>بيانات جغرافية ودلالية وعلائقية في مكان واحد، أقل تعقيدا.</td><td>قواعد منفصلة لكل نوع.</td></tr>
+<tr><td>ADR-05</td><td>Keycloak للهوية</td><td>MFA و OIDC و RBAC جاهزة ومجربة.</td><td>نظام هوية مكتوب داخليا.</td></tr>
+<tr><td>ADR-06</td><td>NATS JetStream للأحداث</td><td>خفيف وسهل التشغيل مع ضمان التسليم.</td><td>Kafka (ثقيل للتجربة).</td></tr>
+<tr><td>ADR-07</td><td>نماذج مفتوحة محلية فقط للمعطيات الشخصية</td><td>السيادة، القانون 2004-63، الكلفة.</td><td>واجهات نماذج تجارية أجنبية.</td></tr>
+<tr><td>ADR-08</td><td>كاشف بصري برخصة MIT أو Apache</td><td>تجنب التزامات AGPL.</td><td>Ultralytics دون رخصة تجارية.</td></tr>
+<tr><td>ADR-09</td><td>MapLibre مع بلاطات OpenStreetMap محلية</td><td>مجانية ولا تبعية لخدمة أجنبية.</td><td>Google Maps (مدفوع وخارجي).</td></tr>
+<tr><td>ADR-10</td><td>السيناريو 0 (مكالمة عادية عبر الشريحة) لكل أرقام النجدة، مع السيناريو 1 عبر المنظومة في الإصدار الأول</td><td>المواطن يصل إلى النجدة حتى لو تعطلت المنظومة أو الإنترنت؛ السيناريو 1 لا يتطلب اتفاقيات، والكود جاهز للسيناريو 2.</td><td>تمرير كل المكالمات عبر المنظومة.</td></tr>
+</table></div>
+<div class="note"><b>الخطوة التالية بعد الموافقة:</b> المرحلة 1 (الأساس التقني) وتشمل المستودع، ملف <code>compose.yml</code>، ملفات قاعدة البيانات والمرجع الإداري للولايات والمعتمديات، إعداد Keycloak، والتكامل المستمر، مع تقرير تقدم في نهايتها.</div>
+</section>
+
+<section id="changelog">
+<h2>سجل التعديلات</h2>
+<div class="tbl"><table>
+<tr><th>الإصدار</th><th>التاريخ</th><th>التعديل</th><th>السبب</th></tr>
+<tr><td>1.1</td><td>2026-10-19</td><td>تعويض MinIO بـ SeaweedFS لتخزين الوسائط (نفس واجهة S3، فلا يتغير كود الخلفية).</td><td>لم تعد صور MinIO المجانية متاحة للتنزيل من Docker Hub، وتم التحقق من ذلك عند التنصيب. SeaweedFS مرخص Apache-2.0.</td></tr>
+<tr><td>1.1</td><td>2026-10-19</td><td>فضاءا هوية منفصلان في Keycloak: <code>ehimaya-public</code> للمواطنين والمؤسسات و <code>ehimaya-staff</code> للوحة التحكم مع تحقق ثنائي إجباري.</td><td>تطبيق الفصل بين فضاء المواطن وفضاء الإدارة (FR-C-00): لا يمكن لرمز من الفضاء العام أن يحمل دورا إداريا.</td></tr>
+<tr><td>1.1</td><td>2026-10-19</td><td>Traefik يُضاف عند النشر خارج جهاز التطوير بدل المرحلة 1.</td><td>في التطوير كل الخدمات مربوطة بالعنوان المحلي فقط ولا تحتاج بوابة.</td></tr>
+<tr><td>1.0</td><td>2026-10-19</td><td>إضافة السيناريو 0: أرقام النجدة تفتح مكالمة عادية عبر الشريحة دون المرور بالمنظومة.</td><td>طلب صاحب المشروع عند الموافقة.</td></tr>
+</table></div>
+</section>
+
+<footer>ء-حماية · وثيقة هيكلة النظام · الإصدار 1.1</footer>
+</div>
+</body>
+</html>

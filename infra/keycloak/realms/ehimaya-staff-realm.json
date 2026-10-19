@@ -1,0 +1,204 @@
+{
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationEmailAsUsername": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": true,
+  "permanentLockout": false,
+  "failureFactor": 3,
+  "waitIncrementSeconds": 60,
+  "maxFailureWaitSeconds": 900,
+  "maxDeltaTimeSeconds": 43200,
+  "quickLoginCheckMilliSeconds": 1000,
+  "minimumQuickLoginWaitSeconds": 60,
+  "passwordPolicy": "length(8) and digits(1) and specialChars(1) and upperCase(1) and notUsername and notEmail and passwordHistory(3)",
+  "otpPolicyType": "totp",
+  "otpPolicyAlgorithm": "HmacSHA1",
+  "otpPolicyDigits": 6,
+  "otpPolicyPeriod": 30,
+  "internationalizationEnabled": true,
+  "supportedLocales": [
+    "ar",
+    "fr"
+  ],
+  "defaultLocale": "ar",
+  "accessTokenLifespan": 300,
+  "ssoSessionIdleTimeout": 900,
+  "ssoSessionMaxLifespan": 43200,
+  "eventsEnabled": true,
+  "adminEventsEnabled": true,
+  "adminEventsDetailsEnabled": true,
+  "eventsExpiration": 7776000,
+  "realm": "ehimaya-staff",
+  "displayName": "ء-حماية · لوحة التحكم",
+  "registrationAllowed": false,
+  "verifyEmail": false,
+  "roles": {
+    "realm": [
+      {
+        "name": "uma_authorization",
+        "description": "${role_uma_authorization}"
+      },
+      {
+        "name": "offline_access",
+        "description": "${role_offline-access}"
+      },
+      {
+        "name": "operator",
+        "description": "مشغّل بلاغات"
+      },
+      {
+        "name": "ops_manager",
+        "description": "مدير عمليات"
+      },
+      {
+        "name": "field_commander",
+        "description": "قائد ميداني"
+      },
+      {
+        "name": "local_committee",
+        "description": "اللجنة المحلية (الوالي)"
+      },
+      {
+        "name": "central_committee",
+        "description": "اللجنة المركزية (وزير الداخلية)"
+      },
+      {
+        "name": "org_auditor",
+        "description": "مدقق مؤسسات"
+      },
+      {
+        "name": "content_editor",
+        "description": "محرر محتوى"
+      },
+      {
+        "name": "sysadmin",
+        "description": "مدير النظام"
+      },
+      {
+        "name": "default-roles-ehimaya-staff",
+        "description": "Default roles",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "offline_access",
+            "uma_authorization"
+          ]
+        }
+      }
+    ]
+  },
+  "requiredActions": [
+    {
+      "alias": "CONFIGURE_TOTP",
+      "name": "Configure OTP",
+      "providerId": "CONFIGURE_TOTP",
+      "enabled": true,
+      "defaultAction": true,
+      "priority": 10
+    },
+    {
+      "alias": "UPDATE_PASSWORD",
+      "name": "Update Password",
+      "providerId": "UPDATE_PASSWORD",
+      "enabled": true,
+      "defaultAction": true,
+      "priority": 20
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "ehimaya-api",
+      "name": "e-Himaya API (audience only)",
+      "enabled": true,
+      "publicClient": false,
+      "bearerOnly": false,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "protocol": "openid-connect"
+    },
+    {
+      "clientId": "ehimaya-dashboard",
+      "name": "e-Himaya central dashboard",
+      "enabled": true,
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "implicitFlowEnabled": false,
+      "redirectUris": [
+        "http://localhost:5173/*"
+      ],
+      "webOrigins": [
+        "http://localhost:5173"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "+"
+      },
+      "protocolMappers": [
+        {
+          "name": "audience-ehimaya-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.client.audience": "ehimaya-api",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        },
+        {
+          "name": "attr-gouvernorat_code",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "gouvernorat_code",
+            "claim.name": "gouvernorat_code",
+            "jsonType.label": "String",
+            "access.token.claim": "true",
+            "id.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        },
+        {
+          "name": "attr-scope_level",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "scope_level",
+            "claim.name": "scope_level",
+            "jsonType.label": "String",
+            "access.token.claim": "true",
+            "id.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+  "components": {
+    "org.keycloak.userprofile.UserProfileProvider": [
+      {
+        "providerId": "declarative-user-profile",
+        "subComponents": {},
+        "config": {
+          "kc.user.profile.config": [
+            "{\"attributes\": [{\"name\": \"username\", \"displayName\": \"${username}\", \"permissions\": {\"view\": [\"admin\", \"user\"], \"edit\": [\"admin\"]}, \"multivalued\": false, \"validations\": {\"length\": {\"min\": 3, \"max\": 255}, \"username-prohibited-characters\": {}, \"up-username-not-idn-homograph\": {}}}, {\"name\": \"email\", \"displayName\": \"${email}\", \"permissions\": {\"view\": [\"admin\", \"user\"], \"edit\": [\"admin\", \"user\"]}, \"multivalued\": false, \"required\": {\"roles\": [\"user\"]}, \"validations\": {\"email\": {}, \"length\": {\"max\": 255}}}, {\"name\": \"firstName\", \"displayName\": \"${firstName}\", \"permissions\": {\"view\": [\"admin\", \"user\"], \"edit\": [\"admin\", \"user\"]}, \"multivalued\": false, \"required\": {\"roles\": [\"user\"]}, \"validations\": {\"length\": {\"max\": 255}, \"person-name-prohibited-characters\": {}}}, {\"name\": \"lastName\", \"displayName\": \"${lastName}\", \"permissions\": {\"view\": [\"admin\", \"user\"], \"edit\": [\"admin\", \"user\"]}, \"multivalued\": false, \"required\": {\"roles\": [\"user\"]}, \"validations\": {\"length\": {\"max\": 255}, \"person-name-prohibited-characters\": {}}}, {\"name\": \"gouvernorat_code\", \"displayName\": \"Gouvernorat / الولاية\", \"permissions\": {\"view\": [\"admin\", \"user\"], \"edit\": [\"admin\"]}, \"multivalued\": false, \"validations\": {\"pattern\": {\"pattern\": \"^(1[1-4]|2[1-3]|3[1-4]|4[1-3]|5[1-3]|61|7[1-3]|8[1-3])$\", \"error-message\": \"invalid gouvernorat code\"}}}, {\"name\": \"scope_level\", \"displayName\": \"Scope / النطاق\", \"permissions\": {\"view\": [\"admin\", \"user\"], \"edit\": [\"admin\"]}, \"multivalued\": false, \"validations\": {\"options\": {\"options\": [\"national\", \"gouvernorat\"]}}}], \"groups\": [{\"name\": \"user-metadata\", \"displayHeader\": \"User metadata\", \"displayDescription\": \"Attributes, which refer to user metadata\"}], \"unmanagedAttributePolicy\": \"ADMIN_VIEW\"}"
+          ]
+        }
+      }
+    ]
+  },
+  "defaultRole": {
+    "name": "default-roles-ehimaya-staff",
+    "description": "Default roles",
+    "composite": true
+  }
+}
