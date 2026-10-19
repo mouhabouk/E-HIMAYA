@@ -19,6 +19,7 @@ import '../http/models.dart';
 import '../logging/log.dart';
 import '../tus/tus_client.dart';
 import 'backoff.dart';
+import 'report_queue.dart';
 
 final _log = logger('sync');
 
@@ -46,7 +47,9 @@ class SyncSummary {
 ///
 /// Failures are retried with exponential back-off and jitter. `428 consent_required` re-sends
 /// the charter consent and retries at once. Conflicts: the server copy wins, the local copy is
-/// kept and flagged.
+/// kept and flagged. A report sent on behalf of an institution that the server refuses
+/// (`org_not_found`, `org_not_active`) is kept as [ReportState.orgRefused] for the user to
+/// resend as themselves; it is never dropped nor silently sent without the institution.
 class SyncEngine {
   SyncEngine({
     required this.db,
@@ -96,6 +99,12 @@ class SyncEngine {
     var awaitingStored = false;
     for (final report in reports) {
       if (report.state == ReportState.blocked && id.isAnonymous) continue;
+      // An institution never reports anonymously (phase 4 §8): wait for a signed-in account.
+      if (!id.isRegistered &&
+          report.serverId == null &&
+          payloadOrganizationId(report.payload) != null) {
+        continue;
+      }
       var current = report;
       if (current.serverId == null) {
         if (!_due(current.nextAttemptAt)) continue;
@@ -170,6 +179,10 @@ class SyncEngine {
         onAnonBlocked();
       case ApiErrorCode.clientUuidConflict:
         state = ReportState.conflict;
+      case ApiErrorCode.orgNotFound || ApiErrorCode.orgNotActive:
+        // Not a member any more, or the institution is not active: keep the report and let
+        // the user resend it as themselves.
+        state = ReportState.orgRefused;
       case ApiErrorCode.validation || ApiErrorCode.unknownCharterVersion:
         state = ReportState.failed;
       case ApiErrorCode.unknown

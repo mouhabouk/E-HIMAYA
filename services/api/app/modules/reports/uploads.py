@@ -7,6 +7,8 @@ tusd stores the bytes in S3 and calls these hooks:
 * ``post-finish``: the object is complete; mark the media ``verifying``.
 * ``post-terminate``: the client abandoned the upload; mark it ``rejected``.
 
+Uploads whose metadata says ``target=org_document`` are institution documents (``orgs.documents``).
+
 A background worker then re-reads every finished object, recomputes SHA-256 and compares it with the
 hash declared by the device: ``stored`` when they match, ``rejected`` (object deleted) otherwise.
 """
@@ -28,11 +30,12 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from app.core.config import get_settings
 from app.core.db import get_session
 from app.core.events import emit
-from app.core.security import get_token_verifier
+from app.core.security import Principal, get_token_verifier
 from app.core.storage import ObjectStore, get_store
 from app.modules.ai import pipeline
 from app.modules.audit import service as audit
 from app.modules.identity.service import resolve_reporter
+from app.modules.orgs import documents
 from app.modules.reports.domain import MEDIA_MAX_BYTES, MEDIA_PER_REPORT, MEDIA_TYPES, MEDIA_UPLOAD_WINDOW_H
 from app.modules.reports.models import Media, Report
 from app.modules.reports.service import media_out
@@ -71,6 +74,13 @@ def _header(event: dict[str, Any], name: str) -> str | None:
     return None
 
 
+async def _bearer(event: dict[str, Any]) -> Principal | None:
+    authorization = _header(event, "Authorization")
+    if authorization and authorization.lower().startswith("bearer "):
+        return await to_thread.run_sync(get_token_verifier().verify, authorization[7:].strip())
+    return None
+
+
 async def _pre_create(session: AsyncSession, event: dict[str, Any]) -> dict[str, Any]:
     upload = event.get("Upload", {})
     meta: dict[str, str] = upload.get("MetaData") or {}
@@ -81,6 +91,13 @@ async def _pre_create(session: AsyncSession, event: dict[str, Any]) -> dict[str,
         return _reject(400, "concatenation_not_supported")
     if upload.get("SizeIsDeferred") or not isinstance(size, int) or size <= 0:
         return _reject(400, "upload_length_required")
+    if meta.get("target") == "org_document":
+        # Institution documents (FR-B-004): signed-in members only, rules in orgs.documents.
+        try:
+            return await documents.pre_create(session, upload, meta, await _bearer(event))
+        except HTTPException as exc:
+            await session.rollback()
+            return _reject(exc.status_code, str(exc.detail))
     if kind not in MEDIA_TYPES or filetype not in MEDIA_TYPES[kind]:
         return _reject(415, "unsupported_media_type")
     if size > MEDIA_MAX_BYTES[kind]:
@@ -92,12 +109,8 @@ async def _pre_create(session: AsyncSession, event: dict[str, Any]) -> dict[str,
     except ValueError:
         return _reject(400, "invalid_report_id")
 
-    authorization = _header(event, "Authorization")
-    principal = None
     try:
-        if authorization and authorization.lower().startswith("bearer "):
-            principal = await to_thread.run_sync(get_token_verifier().verify, authorization[7:].strip())
-        reporter = await resolve_reporter(session, principal, _header(event, "X-Device-Key"))
+        reporter = await resolve_reporter(session, await _bearer(event), _header(event, "X-Device-Key"))
     except HTTPException as exc:
         return _reject(exc.status_code, str(exc.detail))
 
@@ -135,18 +148,25 @@ async def _pre_create(session: AsyncSession, event: dict[str, Any]) -> dict[str,
     }
 
 
-async def _media_by_upload(session: AsyncSession, event: dict[str, Any]) -> Media | None:
-    upload_id = str(event.get("Upload", {}).get("ID", "")).split("+", 1)[0]
-    if not upload_id:
-        return None
+def _upload_id(event: dict[str, Any]) -> str:
+    return str(event.get("Upload", {}).get("ID", "")).split("+", 1)[0]
+
+
+async def _media_by_upload(session: AsyncSession, upload_id: str) -> Media | None:
     return await session.scalar(select(Media).where(Media.upload_id == upload_id).with_for_update())
 
 
 async def _post_finish(session: AsyncSession, event: dict[str, Any]) -> dict[str, Any]:
-    media = await _media_by_upload(session, event)
-    if media is None or media.status != "uploading":
+    upload_id = _upload_id(event)
+    if not upload_id:
         return {}
     storage = event.get("Upload", {}).get("Storage") or {}
+    media = await _media_by_upload(session, upload_id)
+    if media is None:
+        await documents.post_finish(session, upload_id, storage.get("Key"))
+        return {}
+    if media.status != "uploading":
+        return {}
     if storage.get("Key"):
         media.object_key = storage["Key"]
     media.status = "verifying"
@@ -155,8 +175,13 @@ async def _post_finish(session: AsyncSession, event: dict[str, Any]) -> dict[str
 
 
 async def _post_terminate(session: AsyncSession, event: dict[str, Any]) -> dict[str, Any]:
-    media = await _media_by_upload(session, event)
-    if media is not None and media.status == "uploading":
+    upload_id = _upload_id(event)
+    if not upload_id:
+        return {}
+    media = await _media_by_upload(session, upload_id)
+    if media is None:
+        await documents.post_terminate(session, upload_id)
+    elif media.status == "uploading":
         media.status = "rejected"
         await session.commit()
     return {}
@@ -230,7 +255,9 @@ async def verify_one(sessionmaker: async_sessionmaker[AsyncSession], store: Obje
 async def verify_forever(sessionmaker: async_sessionmaker[AsyncSession], idle_s: float = 1.0) -> None:
     while True:
         try:
-            worked = await verify_one(sessionmaker, get_store())
+            store = get_store()
+            worked = await verify_one(sessionmaker, store)
+            worked = await documents.verify_one(sessionmaker, store) or worked
         except asyncio.CancelledError:
             raise
         except Exception:

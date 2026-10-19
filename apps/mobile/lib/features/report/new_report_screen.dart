@@ -15,6 +15,8 @@ import '../../core/sync/report_queue.dart';
 import '../../core/sync/sync_scheduler.dart';
 import '../../core/ui/emergency_action.dart';
 import '../../l10n/app_localizations.dart';
+import '../institution/institution_providers.dart';
+import '../institution/report_as_selector.dart';
 import 'audio_recorder_panel.dart';
 import 'category_labels.dart';
 import 'location_picker.dart';
@@ -24,7 +26,8 @@ final _log = logger('report.new');
 final imagePickerProvider = Provider<ImagePicker>((ref) => ImagePicker());
 
 /// FR-A-040..047: optional text (language = UI language), GPS + map pin, photos/videos,
-/// voice message, then saved to the encrypted queue with a temporary code.
+/// voice message, then saved to the encrypted queue with a temporary code. Members of an
+/// active institution choose whether they report as themselves or for it (FR-A-080).
 class NewReportScreen extends ConsumerStatefulWidget {
   const NewReportScreen({super.key, required this.category});
 
@@ -132,6 +135,7 @@ class _NewReportScreenState extends ConsumerState<NewReportScreen> {
               location: location,
               text: _text.text,
               lang: ref.read(localeCodeProvider),
+              organizationId: ref.read(reportAsProvider),
               attachments: [
                 ..._attachments,
                 if (audio != null)
@@ -166,6 +170,7 @@ class _NewReportScreenState extends ConsumerState<NewReportScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final activeOrgs = ref.watch(activeOrgsProvider);
     return Scaffold(
       appBar: AppBar(
         title: Text(categoryLabel(l10n, widget.category)),
@@ -259,6 +264,15 @@ class _NewReportScreenState extends ConsumerState<NewReportScreen> {
                 onChanged: (path) => setState(() => _audioPath = path),
               ),
               const SizedBox(height: 24),
+              if (activeOrgs.isNotEmpty) ...[
+                ReportAsSelector(
+                  orgs: activeOrgs,
+                  value: ref.watch(reportAsProvider),
+                  onChanged: (orgId) =>
+                      ref.read(reportAsChoiceProvider.notifier).choose(orgId),
+                ),
+                const SizedBox(height: 16),
+              ],
               FilledButton.icon(
                 key: const Key('report-submit'),
                 onPressed: _submitting ? null : _submit,

@@ -7,6 +7,8 @@ import '../../core/db/app_database.dart';
 import '../../core/db/open_database.dart';
 import '../../core/http/ehimaya_api.dart';
 import '../../core/http/models.dart';
+import '../../core/sync/report_queue.dart';
+import '../institution/institution_providers.dart';
 
 /// One row of "My reports": the local queue merged with `GET /api/v1/reports/mine`.
 class ReportListItem {
@@ -20,6 +22,9 @@ class ReportListItem {
     this.localState,
     this.mediaPending = 0,
     this.mediaFailed = 0,
+    this.organizationId,
+    this.organizationName,
+    this.lastError,
   });
 
   final String? clientUuid;
@@ -37,6 +42,17 @@ class ReportListItem {
   /// Attachments refused (checksum mismatch, too late, too large…): not retried.
   final int mediaFailed;
   final DateTime createdAt;
+
+  /// Institution the report was sent for (FR-B-011), null when sent by the user themselves.
+  final String? organizationId;
+
+  /// Its name; empty when not known on this phone.
+  final String? organizationName;
+
+  /// Machine code of the last sync failure of the local copy (e.g. `org_not_active`).
+  final String? lastError;
+
+  bool get isForOrganization => organizationId != null;
 }
 
 /// Merge rule (NFR-04, server wins): status and tracking code come from the server when it
@@ -45,6 +61,7 @@ List<ReportListItem> mergeReports({
   required List<PendingReport> local,
   required List<MediaItem> media,
   required List<ServerReport> server,
+  Map<String, String> orgNames = const {},
 }) {
   final byUuid = {
     for (final s in server)
@@ -70,6 +87,7 @@ List<ReportListItem> mergeReports({
               (m.state == MediaState.rejected || m.state == MediaState.failed),
         )
         .length;
+    final orgId = s?.organization?.id ?? payloadOrganizationId(r.payload);
     items.add(
       ReportListItem(
         clientUuid: r.clientUuid,
@@ -81,6 +99,11 @@ List<ReportListItem> mergeReports({
         mediaPending: pendingMedia,
         mediaFailed: failedMedia,
         createdAt: r.createdAt,
+        organizationId: orgId,
+        organizationName: orgId == null
+            ? null
+            : (s?.organization?.name ?? orgNames[orgId] ?? ''),
+        lastError: r.lastError,
       ),
     );
   }
@@ -97,6 +120,8 @@ List<ReportListItem> mergeReports({
             s.createdAt ??
             s.receivedAt ??
             DateTime.fromMillisecondsSinceEpoch(0),
+        organizationId: s.organization?.id,
+        organizationName: s.organization?.name,
       ),
     );
   }
@@ -162,6 +187,7 @@ final mergedReportsProvider = Provider<AsyncValue<List<ReportListItem>>>((ref) {
       local: local.value ?? const [],
       media: media.value ?? const [],
       server: server.value ?? const [],
+      orgNames: ref.watch(orgNamesProvider),
     ),
   );
 });

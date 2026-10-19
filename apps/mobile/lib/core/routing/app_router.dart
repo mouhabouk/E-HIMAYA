@@ -7,6 +7,7 @@ import '../../features/charter/charter_screen.dart';
 import '../../features/emergency/emergency_screen.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/home/main_shell.dart';
+import '../../features/institution/my_institution_screen.dart';
 import '../../features/onboarding/citizen_mode_screen.dart';
 import '../../features/onboarding/institution_screen.dart';
 import '../../features/onboarding/role_screen.dart';
@@ -35,6 +36,9 @@ abstract final class Routes {
   static String newReportFor(ReportCategory c) => '/report/new/${c.wire}';
   static const reportQueued = '/report/queued';
   static const track = '/track';
+  static const institutions = '/institutions';
+  static String institution(String id) =>
+      '/institutions/${Uri.encodeComponent(id)}';
 }
 
 /// Navigation guard (charter accepted → role chosen → identity → home). Pure function so it can
@@ -145,6 +149,17 @@ final routerProvider = Provider<GoRouter>((ref) {
         ),
       ),
       GoRoute(path: Routes.track, builder: (_, _) => const TrackScreen()),
+      GoRoute(
+        path: Routes.institutions,
+        builder: (_, _) => const MyInstitutionsScreen(),
+        routes: [
+          GoRoute(
+            path: ':id',
+            builder: (_, state) =>
+                MyInstitutionScreen(orgId: state.pathParameters['id'] ?? ''),
+          ),
+        ],
+      ),
       StatefulShellRoute.indexedStack(
         builder: (_, _, shell) => MainShell(shell: shell),
         branches: [

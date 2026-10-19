@@ -22,6 +22,10 @@ from app.modules.ai.models import Analysis
 from app.modules.geo.models import Gouvernorat
 from app.modules.identity.models import Account
 from app.modules.identity.service import Reporter, has_consented
+from app.modules.orgs import service as orgs
+from app.modules.orgs.domain import OrgKind
+from app.modules.orgs.models import Organization
+from app.modules.orgs.schemas import OrgRef
 from app.modules.reports import schemas
 from app.modules.reports.domain import NEAREST_GOUVERNORAT_MAX_M, Category, Status, can_transition
 from app.modules.reports.models import Media, Report, StatusHistory
@@ -30,6 +34,7 @@ TUNIS_TZ = ZoneInfo("Africa/Tunis")
 HIGH_PRIORITY = 70
 # Device clocks drift; a creation time in the future is replaced by the reception time.
 _MAX_CLOCK_SKEW = timedelta(minutes=5)
+PORTAL_CLIENT = "ehimaya-portal"
 
 _LAT = func.ST_Y(cast(Report.location, Geometry)).label("lat")
 _LON = func.ST_X(cast(Report.location, Geometry)).label("lon")
@@ -115,7 +120,11 @@ def _location(row: ReportRow) -> schemas.LocationOut:
     return schemas.LocationOut(lat=row.lat, lon=row.lon, accuracy_m=row.report.location_accuracy_m)
 
 
-def report_out(row: ReportRow, media: list[Media]) -> schemas.ReportOut:
+def _org_ref(org: Organization | None) -> OrgRef | None:
+    return OrgRef(id=org.id, name=org.name, kind=OrgKind(org.kind)) if org is not None else None
+
+
+def report_out(row: ReportRow, media: list[Media], org: Organization | None = None) -> schemas.ReportOut:
     r = row.report
     return schemas.ReportOut(
         id=r.id,
@@ -131,6 +140,7 @@ def report_out(row: ReportRow, media: list[Media]) -> schemas.ReportOut:
         received_at=r.received_at,
         updated_at=r.updated_at,
         media=[media_out(m) for m in media],
+        organization=schemas.ReportOrganization(id=org.id, name=org.name) if org is not None else None,
     )
 
 
@@ -152,6 +162,8 @@ async def create_report(session: AsyncSession, reporter: Reporter, body: schemas
 
     if not await has_consented(session, reporter.user_id, get_settings().charter_version):
         raise HTTPException(status.HTTP_428_PRECONDITION_REQUIRED, "consent_required")
+    org = await orgs.reporting_org(session, reporter, body.organization_id) if body.organization_id else None
+    from_portal = reporter.principal is not None and reporter.principal.claims.get("azp") == PORTAL_CLIENT
 
     received_at = datetime.now(UTC)
     created_at = min(body.created_at, received_at + _MAX_CLOCK_SKEW)
@@ -172,7 +184,8 @@ async def create_report(session: AsyncSession, reporter: Reporter, body: schemas
         location_accuracy_m=body.location.accuracy_m,
         gouvernorat_code=gouvernorat,
         status=Status.RECEIVED.value,
-        source="app",
+        source="portal" if from_portal else "app",
+        organization_id=org.id if org is not None else None,
         created_at=created_at,
         received_at=received_at,
         updated_at=received_at,
@@ -196,7 +209,7 @@ async def create_report(session: AsyncSession, reporter: Reporter, body: schemas
     await emit(
         session,
         "report.created",
-        {"report": staff_report(row, reporter.kind.value, 0, analysis).model_dump(mode="json")},
+        {"report": staff_report(row, reporter.kind.value, 0, analysis, org).model_dump(mode="json")},
     )
     await session.commit()
     return row, True
@@ -215,7 +228,8 @@ async def my_reports(
         query = query.where(Report.received_at < before)
     rows = [_row(r) for r in (await session.execute(query.order_by(Report.received_at.desc()).limit(limit)))]
     media = await media_for(session, [r.report.id for r in rows])
-    items = [report_out(r, media[r.report.id]) for r in rows]
+    refs = await orgs.refs(session, [r.report.organization_id for r in rows])
+    items = [report_out(r, media[r.report.id], refs.get(r.report.organization_id)) for r in rows]  # type: ignore[arg-type]
     next_before = rows[-1].report.received_at if len(rows) == limit else None
     return items, next_before
 
@@ -240,7 +254,7 @@ async def track(session: AsyncSession, tracking_code: str) -> schemas.TrackOut |
 
 
 def staff_report(
-    row: ReportRow, reporter_kind: str, media_count: int, analysis: Analysis | None
+    row: ReportRow, reporter_kind: str, media_count: int, analysis: Analysis | None, org: Organization | None = None
 ) -> schemas.StaffReport:
     r = row.report
     extraction = analysis.extraction if analysis is not None else None
@@ -267,6 +281,7 @@ def staff_report(
         suggested_category=Category(extraction["category"]) if extraction and extraction.get("category") else None,
         incident_id=r.incident_id,
         has_suggestion=bool(analysis is not None and analysis.suggestion),
+        organization=_org_ref(org),
     )
 
 
@@ -314,6 +329,15 @@ def decode_cursor(cursor: str) -> tuple[datetime, uuid.UUID, int | None]:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "invalid_cursor") from exc
 
 
+def _staff_select() -> Select[Any]:
+    return (
+        select(Report, _LAT, _LON, Account.kind, _MEDIA_COUNT, Analysis, Organization)
+        .join(Account, Account.user_id == Report.user_id)
+        .outerjoin(Analysis, Analysis.report_id == Report.id)
+        .outerjoin(Organization, Organization.id == Report.organization_id)
+    )
+
+
 @dataclass(frozen=True, slots=True)
 class StaffFilters:
     statuses: list[Status]
@@ -325,17 +349,13 @@ class StaffFilters:
     q: str | None
     sort: str = "received"  # received | priority
     incident_id: uuid.UUID | None = None
+    organization_id: uuid.UUID | None = None
 
 
 async def staff_list(
     session: AsyncSession, principal: Principal, filters: StaffFilters, limit: int, cursor: str | None
 ) -> tuple[list[schemas.StaffReport], str | None]:
-    query = (
-        select(Report, _LAT, _LON, Account.kind, _MEDIA_COUNT, Analysis)
-        .join(Account, Account.user_id == Report.user_id)
-        .outerjoin(Analysis, Analysis.report_id == Report.id)
-        .where(scope_filter(principal))
-    )
+    query = _staff_select().where(scope_filter(principal))
     if filters.statuses:
         query = query.where(Report.status.in_([s.value for s in filters.statuses]))
     if filters.categories:
@@ -361,6 +381,8 @@ async def staff_list(
         )
     if filters.incident_id is not None:
         query = query.where(Report.incident_id == filters.incident_id)
+    if filters.organization_id is not None:
+        query = query.where(Report.organization_id == filters.organization_id)
     by_priority = filters.sort == "priority"
     priority = func.coalesce(Report.priority_score, -1)
     if cursor:
@@ -375,7 +397,7 @@ async def staff_list(
     if by_priority:
         order.insert(0, priority.desc())
     rows = (await session.execute(query.order_by(*order).limit(limit))).all()
-    items = [staff_report(ReportRow(r[0], r[1], r[2]), r[3].value, int(r[4]), r[5]) for r in rows]
+    items = [staff_report(ReportRow(r[0], r[1], r[2]), r[3].value, int(r[4]), r[5], r[6]) for r in rows]
     next_cursor = None
     if len(rows) == limit:
         last = rows[-1][0]
@@ -388,18 +410,11 @@ async def staff_list(
 
 
 async def staff_summary(session: AsyncSession, report_id: uuid.UUID) -> tuple[schemas.StaffReport, Report] | None:
-    found = (
-        await session.execute(
-            select(Report, _LAT, _LON, Account.kind, _MEDIA_COUNT, Analysis)
-            .join(Account, Account.user_id == Report.user_id)
-            .outerjoin(Analysis, Analysis.report_id == Report.id)
-            .where(Report.id == report_id)
-        )
-    ).first()
+    found = (await session.execute(_staff_select().where(Report.id == report_id))).first()
     if found is None:
         return None
     row = ReportRow(found[0], found[1], found[2])
-    return staff_report(row, found[3].value, int(found[4]), found[5]), found[0]
+    return staff_report(row, found[3].value, int(found[4]), found[5], found[6]), found[0]
 
 
 async def history_of(session: AsyncSession, report_id: uuid.UUID) -> list[schemas.StaffHistoryEntry]:
@@ -450,8 +465,11 @@ async def kpis(session: AsyncSession, principal: Principal, since: datetime) -> 
         .join(Analysis, Analysis.report_id == Report.id)
         .where(base, Analysis.state.in_(("pending", "running")))
     )
+    orgs_pending, certificates_submitted = await orgs.kpis(session, principal)
     return schemas.Kpis(
         since=since,
+        orgs_pending_review=orgs_pending,
+        certificates_submitted=certificates_submitted,
         high_priority=int(high or 0),
         analysis_pending=int(pending or 0),
         total=sum(by_status.values()),

@@ -3,12 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/auth/identity.dart';
+import '../../core/http/models.dart';
 import '../../core/routing/app_router.dart';
 import '../../core/settings/settings_controller.dart';
 import '../../core/ui/directional_icons.dart';
 import '../../core/ui/emergency_action.dart';
 import '../../l10n/app_localizations.dart';
 import '../charter/charter_controller.dart';
+import '../institution/institution_providers.dart';
+import '../institution/my_institution_screen.dart';
+import '../institution/report_as_selector.dart';
 import '../onboarding/login_actions.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -60,6 +64,10 @@ class SettingsScreen extends ConsumerWidget {
             : l10n.identityRegisteredAs(name),
       IdentityMode.none => l10n.identityNone,
     };
+    final orgs = identity.isRegistered
+        ? ref.watch(myOrgsProvider).value ?? const <MyOrg>[]
+        : const <MyOrg>[];
+    final activeOrgs = ref.watch(activeOrgsProvider);
     final roleText = identity.role == UserRole.institution
         ? l10n.roleInstitution
         : l10n.roleCitizen;
@@ -145,6 +153,14 @@ class SettingsScreen extends ConsumerWidget {
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.push(Routes.profile),
             ),
+          if (identity.isRegistered && orgs.isNotEmpty)
+            ListTile(
+              key: const Key('settings-institution'),
+              leading: const Icon(Icons.apartment),
+              title: Text(l10n.myInstitutionTitle),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => openMyInstitution(context, orgs),
+            ),
           if (identity.isRegistered)
             ListTile(
               key: const Key('settings-logout'),
@@ -167,6 +183,21 @@ class SettingsScreen extends ConsumerWidget {
               await ref.read(identityProvider.notifier).chooseRole(null);
             },
           ),
+          if (activeOrgs.isNotEmpty) ...[
+            const Divider(),
+            _Header(l10n.settingsSosReportAs),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: ReportAsSelector(
+                key: const Key('settings-sos-report-as'),
+                title: l10n.settingsSosReportAsHint,
+                orgs: activeOrgs,
+                value: ref.watch(sosReportAsProvider),
+                onChanged: (orgId) =>
+                    ref.read(sosReportAsChoiceProvider.notifier).choose(orgId),
+              ),
+            ),
+          ],
           const Divider(),
           ListTile(
             leading: const Icon(Icons.privacy_tip),

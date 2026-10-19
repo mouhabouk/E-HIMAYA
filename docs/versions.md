@@ -34,7 +34,10 @@
 | nats-py | 2.16.0 |
 | structlog | 26.1.0 |
 | boto3 (S3) | 1.43.114 |
-| cryptography (AES-256-GCM) | 50.0.2 |
+| cryptography (AES-256-GCM، توقيع الشهادات Ed25519) | 50.0.2 |
+| weasyprint (شهادة السلامة PDF، المرحلة 4؛ تحتاج pango و harfbuzz و fonts-noto-core في الصورة) | 70.0 |
+| segno (رمز QR للتحقق من الشهادة) | 1.6.6 |
+| email-validator (عناوين البريد في بطاقة المؤسسة والدعوات) | 2.3.0 |
 | pytest / pytest-asyncio | 9.1.1 / 1.4.0 |
 | ruff / mypy | 0.17.1 / 2.4.0 |
 
@@ -92,6 +95,17 @@ Node.js 22 LTS و npm 10 أو أحدث. الحزم مثبتة بإصدارات �
 | maplibre-gl | 5.24.0 |
 | vite / typescript | 7.3.6 / 5.9.3 |
 | vitest / eslint | 4.1.11 / 10.12.0 |
+
+## بوابة المؤسسات (`apps/portal`)
+
+نفس أدوات لوحة التحكم (Node.js 22 و npm 10 أو أحدث، `npm ci`)، بثلاث لغات (ar/fr/en) وعلى المنفذ 5174.
+الحزم مثبتة بإصدارات دقيقة في `apps/portal/package.json` و `package-lock.json`؛ الإصدارات نفسها المعتمدة في لوحة التحكم
+(react 19.3.0، react-router 7.18.4، react-query 5.104.1، oidc-client-ts 3.5.0، i18next 26.4.2، maplibre-gl 5.24.0،
+vite 7.3.6، typescript 5.9.3، vitest 4.1.11، eslint 10.12.0). البصمة SHA-256 تُحسب في المتصفح (WebCrypto) ولا يغادر
+الملف جهاز الزائر عند التحقق من شهادة.
+
+> تنبيه أمني: `maplibre-gl` 5.24.0 عليه تنبيه حرج (GHSA-jrc7-96c5-q579). الإصلاح في 6.15.0 وهو ترقية كاسرة تُجرى
+> للوحة التحكم والبوابة معًا في تغيير مستقل.
 
 ## أولوية التنصيب
 

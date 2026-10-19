@@ -719,4 +719,213 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get errorMediaRejected =>
       'La pièce jointe a été altérée pendant l’envoi et refusée.';
+
+  @override
+  String get errorOrgNotFound =>
+      'Établissement introuvable, ou vous n’en êtes plus membre.';
+
+  @override
+  String get errorOrgNotActive =>
+      'Cet établissement n’est pas actif (en cours d’examen, rejeté ou suspendu) : il ne peut pas signaler.';
+
+  @override
+  String get errorOrgRoleRequired =>
+      'Votre rôle dans cet établissement ne permet pas cette action.';
+
+  @override
+  String get reportAsTitle => 'Signaler en tant que';
+
+  @override
+  String get reportAsSelf => 'Moi-même';
+
+  @override
+  String get reportAsInstitutionUnnamed => 'Établissement';
+
+  @override
+  String get reportOrgRefused => 'Refusé pour l’établissement';
+
+  @override
+  String get reportOrgNotFoundBody =>
+      'Ce signalement n’a pas pu être envoyé au nom de l’établissement : il est introuvable ou vous n’en êtes plus membre. Il est conservé sur ce téléphone. Vous pouvez l’envoyer en votre nom.';
+
+  @override
+  String get reportOrgNotActiveBody =>
+      'Ce signalement n’a pas pu être envoyé au nom de l’établissement car celui-ci n’est pas actif. Il est conservé sur ce téléphone. Vous pouvez l’envoyer en votre nom.';
+
+  @override
+  String get reportResendAsSelf => 'Envoyer en mon nom';
+
+  @override
+  String get reportResentAsSelf => 'Le signalement sera envoyé en votre nom.';
+
+  @override
+  String get settingsSosReportAs => 'SOS';
+
+  @override
+  String get settingsSosReportAsHint =>
+      'Le bouton SOS envoie l’alerte en tant que :';
+
+  @override
+  String get myInstitutionTitle => 'Mon établissement';
+
+  @override
+  String get myInstitutionsTitle => 'Mes établissements';
+
+  @override
+  String get myInstitutionsEmpty => 'Vous n’êtes membre d’aucun établissement.';
+
+  @override
+  String get homeInstitutionDesc =>
+      'Fiche de sécurité, équipe et signalements de votre établissement';
+
+  @override
+  String get orgKindIndustrial => 'Industrielle';
+
+  @override
+  String get orgKindEducational => 'Éducative';
+
+  @override
+  String get orgKindHotel => 'Hôtel';
+
+  @override
+  String get orgKindGovernment => 'Administration publique';
+
+  @override
+  String get orgKindPrivate => 'Privée';
+
+  @override
+  String get orgKindOther => 'Autre';
+
+  @override
+  String get orgStatusPendingReview => 'En cours d’examen';
+
+  @override
+  String get orgStatusActive => 'Active';
+
+  @override
+  String get orgStatusRejected => 'Rejetée';
+
+  @override
+  String get orgStatusSuspended => 'Suspendue';
+
+  @override
+  String get orgFamilyHighRise => 'Immeuble de grande hauteur';
+
+  @override
+  String get orgFamilyIndustrial => 'Établissement industriel';
+
+  @override
+  String get orgFamilyErp => 'Établissement recevant du public';
+
+  @override
+  String get orgFamilyWorkplace => 'Lieu de travail';
+
+  @override
+  String orgErpCategory(int category) {
+    return 'catégorie $category';
+  }
+
+  @override
+  String get orgTeamRepresentative => 'Représentant';
+
+  @override
+  String get orgTeamMember => 'Membre';
+
+  @override
+  String get trainingValid => 'valide';
+
+  @override
+  String get trainingExpiring => 'expire bientôt';
+
+  @override
+  String get trainingExpired => 'expirée';
+
+  @override
+  String get trainingUnknown => 'inconnue';
+
+  @override
+  String orgTraining(String status) {
+    return 'Formation : $status';
+  }
+
+  @override
+  String get orgCapacity => 'Capacité (nombre maximal de personnes)';
+
+  @override
+  String get orgAddress => 'Adresse';
+
+  @override
+  String get orgClassification => 'Classement';
+
+  @override
+  String get orgClassificationProvisional =>
+      'Provisoire : calculé avec des seuils encore à valider par la Protection civile.';
+
+  @override
+  String get orgAlerts => 'Alertes';
+
+  @override
+  String orgAlertsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count alertes',
+      one: '1 alerte',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get orgNoAlerts => 'Aucune alerte';
+
+  @override
+  String get orgSafetyTeam => 'Équipe de sécurité';
+
+  @override
+  String get orgTeamEmpty => 'Aucune équipe de sécurité enregistrée.';
+
+  @override
+  String orgCallMember(String name) {
+    return 'Appeler $name';
+  }
+
+  @override
+  String orgHazmatTitle(int count) {
+    return 'Matières dangereuses ($count)';
+  }
+
+  @override
+  String get orgHazmatEmpty => 'Aucune matière dangereuse enregistrée.';
+
+  @override
+  String orgUnNumber(String number) {
+    return 'ONU $number';
+  }
+
+  @override
+  String orgOfflineCopy(String date) {
+    return 'Hors ligne : copie enregistrée le $date.';
+  }
+
+  @override
+  String get orgPortalNote =>
+      'La modification détaillée de l’établissement (fiche, équipe, matières dangereuses, documents, certificat) se fait sur le portail des établissements.';
+
+  @override
+  String get orgOpenPortal => 'Ouvrir le portail';
+
+  @override
+  String get orgPortalUnavailable =>
+      'Impossible d’ouvrir le portail sur ce téléphone.';
+
+  @override
+  String get orgRecentReports => 'Signalements récents de l’établissement';
+
+  @override
+  String get orgReportsEmpty => 'Aucun signalement pour le moment.';
+
+  @override
+  String orgReportBy(String name) {
+    return 'Par $name';
+  }
 }

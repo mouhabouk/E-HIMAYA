@@ -5,6 +5,8 @@ export const INTL_LOCALE: Record<Language, string> = { ar: "ar-TN-u-nu-latn", fr
 
 export interface Formatters {
   dateTime(iso: string): string;
+  /** Calendar date; a bare "YYYY-MM-DD" is read as a local date (no time-zone shift). */
+  date(iso: string): string;
   time(iso: string): string;
   number(n: number): string;
   bytes(n: number): string;
@@ -21,6 +23,7 @@ export interface Formatters {
 export function createFormatters(lang: Language): Formatters {
   const locale = INTL_LOCALE[lang];
   const dateTimeFmt = new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" });
+  const dateFmt = new Intl.DateTimeFormat(locale, { dateStyle: "medium" });
   const timeFmt = new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit" });
   const numberFmt = new Intl.NumberFormat(locale);
   const percentFmt = new Intl.NumberFormat(locale, { style: "percent", maximumFractionDigits: 0 });
@@ -33,6 +36,11 @@ export function createFormatters(lang: Language): Formatters {
     dateTime: (iso) => {
       const d = new Date(iso);
       return Number.isNaN(d.getTime()) ? "—" : dateTimeFmt.format(d);
+    },
+    date: (iso) => {
+      const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+      const d = m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : new Date(iso);
+      return Number.isNaN(d.getTime()) ? "—" : dateFmt.format(d);
     },
     time: (iso) => {
       const d = new Date(iso);

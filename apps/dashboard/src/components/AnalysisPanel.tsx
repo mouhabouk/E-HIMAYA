@@ -1,9 +1,11 @@
 import type { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
 import { useFormat } from "../lib/hooks";
 import {
   ANALYSIS_STEPS,
   PRIORITY_COMPONENTS,
+  SENSITIVE_REASONS,
   STEP_STATES,
   type ExplainedScore,
   type Extraction,
@@ -23,6 +25,7 @@ const CREDIBILITY_COMPONENTS = [
   "precise_location",
   "imprecise_location",
   "corroborated",
+  "organization",
 ] as const;
 const LIVES_SOURCES = ["model", "keywords", "category"] as const;
 const TEXT_LANGS = ["ar", "fr", "en"] as const;
@@ -49,6 +52,38 @@ function labelOf(t: TFunction, prefix: string, known: readonly string[], key: st
 export function languageLabel(t: TFunction, code: string | null | undefined): string {
   if (!code) return t("common.notAvailable");
   return isOneOf(TEXT_LANGS, code) ? t(`languages.${code}`) : code.toUpperCase();
+}
+
+/**
+ * `sensitive_sites` (phase 4 §10): the nearest institution, its distance and why it is sensitive.
+ * `detail` = {org_id, name, distance_m, reason}; without an institution nearby the value is shown alone.
+ */
+function SensitiveSite({ component }: { component: ScoreComponent }) {
+  const { t } = useTranslation();
+  const fmt = useFormat();
+  const { org_id: orgId, name, distance_m: distance, reason, counted } = component.detail;
+  if (reason === "no_site_nearby") return <span className="muted score-source">{t("ai.sensitive.none")}</span>;
+  if (component.value === null || component.value === undefined) return null;
+  if (typeof orgId !== "string" || typeof name !== "string") {
+    return <span className="muted score-source">{t("ai.sensitive.none")}</span>;
+  }
+  return (
+    <span className="score-source sensitive-site">
+      <Link to={`/orgs/${encodeURIComponent(orgId)}`} dir="auto">
+        {name}
+      </Link>
+      {typeof distance === "number" && <> · {t("ai.sensitive.site", { distance: fmt.meters(distance) })}</>}
+      {typeof reason === "string" && (
+        <>
+          {" · "}
+          {isOneOf(SENSITIVE_REASONS, reason)
+            ? t(`ai.sensitive.reason.${reason}`)
+            : t("ai.sensitive.reason.other", { key: reason })}
+        </>
+      )}
+      {counted === false && <> · {t("ai.sensitive.notCounted")}</>}
+    </span>
+  );
 }
 
 function PriorityBreakdown({ score }: { score: ExplainedScore }) {
@@ -97,6 +132,7 @@ function PriorityBreakdown({ score }: { score: ExplainedScore }) {
                       {t("ai.panel.livesSource", { source: t(`ai.livesSource.${source}`) })}
                     </span>
                   )}
+                  {c.key === "sensitive_sites" && <SensitiveSite component={c} />}
                 </th>
                 <td>{value(c)}</td>
                 <td className="num">{c.value === null || c.value === undefined ? "—" : fmt.decimal(c.points)}</td>

@@ -63,4 +63,20 @@ describe("ReportsPage (phase 3)", () => {
     );
     expect(sessionStorage.getItem("ehimaya.reportsSort")).toBe("priority");
   });
+
+  it("marks reports made on behalf of an institution with a link to it (phase 4)", async () => {
+    const api = fakeApi({
+      reports: vi.fn(() =>
+        Promise.resolve({
+          items: [makeReport({ id: "o", tracking_code: "EH-26-61-0000009", organization: { id: "o-1", name: "Société X" } })],
+          next_cursor: null,
+        }),
+      ),
+    });
+    renderApp(<ReportsPage />, { api, lang: "fr" });
+    const row = (await screen.findByRole("link", { name: "EH-26-61-0000009" })).closest("tr") as HTMLElement;
+    const tag = within(row).getByRole("link", { name: /Société X/ });
+    expect(tag).toHaveAttribute("href", "/orgs/o-1");
+    expect(tag).toHaveTextContent("Signalement au nom d’un établissement");
+  });
 });

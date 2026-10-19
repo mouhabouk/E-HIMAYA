@@ -709,4 +709,211 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get errorMediaRejected => 'تلف المرفق أثناء الإرسال فتم رفضه.';
+
+  @override
+  String get errorOrgNotFound => 'المؤسسة غير موجودة أو لم تعد عضوا فيها.';
+
+  @override
+  String get errorOrgNotActive =>
+      'هذه المؤسسة غير نشطة (قيد المراجعة أو مرفوضة أو معلّقة): لا يمكنها التبليغ.';
+
+  @override
+  String get errorOrgRoleRequired =>
+      'دورك في هذه المؤسسة لا يسمح بهذا الإجراء.';
+
+  @override
+  String get reportAsTitle => 'التبليغ بصفة';
+
+  @override
+  String get reportAsSelf => 'بصفتي الشخصية';
+
+  @override
+  String get reportAsInstitutionUnnamed => 'مؤسسة';
+
+  @override
+  String get reportOrgRefused => 'مرفوض باسم المؤسسة';
+
+  @override
+  String get reportOrgNotFoundBody =>
+      'تعذّر إرسال هذا البلاغ باسم المؤسسة: المؤسسة غير موجودة أو لم تعد عضوا فيها. البلاغ محفوظ في هذا الهاتف ويمكنك إرساله بصفتك الشخصية.';
+
+  @override
+  String get reportOrgNotActiveBody =>
+      'تعذّر إرسال هذا البلاغ باسم المؤسسة لأنها غير نشطة. البلاغ محفوظ في هذا الهاتف ويمكنك إرساله بصفتك الشخصية.';
+
+  @override
+  String get reportResendAsSelf => 'الإرسال بصفتي الشخصية';
+
+  @override
+  String get reportResentAsSelf => 'سيُرسل البلاغ بصفتك الشخصية.';
+
+  @override
+  String get settingsSosReportAs => 'نداء النجدة';
+
+  @override
+  String get settingsSosReportAsHint => 'زر النجدة يرسل النداء بصفة:';
+
+  @override
+  String get myInstitutionTitle => 'مؤسستي';
+
+  @override
+  String get myInstitutionsTitle => 'مؤسساتي';
+
+  @override
+  String get myInstitutionsEmpty => 'لست عضوا في أي مؤسسة.';
+
+  @override
+  String get homeInstitutionDesc => 'بطاقة السلامة والفريق وبلاغات مؤسستك';
+
+  @override
+  String get orgKindIndustrial => 'صناعية';
+
+  @override
+  String get orgKindEducational => 'تعليمية';
+
+  @override
+  String get orgKindHotel => 'نزل';
+
+  @override
+  String get orgKindGovernment => 'حكومية';
+
+  @override
+  String get orgKindPrivate => 'خاصة';
+
+  @override
+  String get orgKindOther => 'أخرى';
+
+  @override
+  String get orgStatusPendingReview => 'قيد المراجعة';
+
+  @override
+  String get orgStatusActive => 'نشطة';
+
+  @override
+  String get orgStatusRejected => 'مرفوضة';
+
+  @override
+  String get orgStatusSuspended => 'معلّقة';
+
+  @override
+  String get orgFamilyHighRise => 'بناية شاهقة';
+
+  @override
+  String get orgFamilyIndustrial => 'منشأة صناعية';
+
+  @override
+  String get orgFamilyErp => 'مؤسسة مفتوحة للعموم';
+
+  @override
+  String get orgFamilyWorkplace => 'مكان عمل';
+
+  @override
+  String orgErpCategory(int category) {
+    return 'الصنف $category';
+  }
+
+  @override
+  String get orgTeamRepresentative => 'الممثل';
+
+  @override
+  String get orgTeamMember => 'عضو';
+
+  @override
+  String get trainingValid => 'سارٍ';
+
+  @override
+  String get trainingExpiring => 'ينتهي قريبا';
+
+  @override
+  String get trainingExpired => 'منتهٍ';
+
+  @override
+  String get trainingUnknown => 'غير معروف';
+
+  @override
+  String orgTraining(String status) {
+    return 'التكوين: $status';
+  }
+
+  @override
+  String get orgCapacity => 'الطاقة الاستيعابية (أقصى عدد من الأشخاص)';
+
+  @override
+  String get orgAddress => 'العنوان';
+
+  @override
+  String get orgClassification => 'التصنيف';
+
+  @override
+  String get orgClassificationProvisional =>
+      'تصنيف مؤقت: محسوب بعتبات لم تصادق عليها الحماية المدنية بعد.';
+
+  @override
+  String get orgAlerts => 'التنبيهات';
+
+  @override
+  String orgAlertsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count تنبيها',
+      few: '$count تنبيهات',
+      two: 'تنبيهان',
+      one: 'تنبيه واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get orgNoAlerts => 'لا توجد تنبيهات';
+
+  @override
+  String get orgSafetyTeam => 'فريق السلامة';
+
+  @override
+  String get orgTeamEmpty => 'لم يُسجَّل فريق سلامة.';
+
+  @override
+  String orgCallMember(String name) {
+    return 'الاتصال بـ$name';
+  }
+
+  @override
+  String orgHazmatTitle(int count) {
+    return 'المواد الخطرة ($count)';
+  }
+
+  @override
+  String get orgHazmatEmpty => 'لا توجد مواد خطرة مسجّلة.';
+
+  @override
+  String orgUnNumber(String number) {
+    return 'UN $number';
+  }
+
+  @override
+  String orgOfflineCopy(String date) {
+    return 'دون اتصال: نسخة محفوظة بتاريخ $date.';
+  }
+
+  @override
+  String get orgPortalNote =>
+      'التعديل المفصّل لبيانات المؤسسة (البطاقة، الفريق، المواد الخطرة، الوثائق، الشهادة) يتم عبر بوابة المؤسسات.';
+
+  @override
+  String get orgOpenPortal => 'فتح البوابة';
+
+  @override
+  String get orgPortalUnavailable => 'تعذّر فتح البوابة على هذا الهاتف.';
+
+  @override
+  String get orgRecentReports => 'آخر بلاغات المؤسسة';
+
+  @override
+  String get orgReportsEmpty => 'لا توجد بلاغات بعد.';
+
+  @override
+  String orgReportBy(String name) {
+    return 'من $name';
+  }
 }

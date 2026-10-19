@@ -4,7 +4,7 @@ import { NavLink, Outlet } from "react-router";
 import { useAuth } from "../context/auth";
 import { useLiveState } from "../context/live";
 import { useGouvernorats, useLanguage } from "../lib/hooks";
-import { staffRoles } from "../lib/roles";
+import { canReadOrgs, hasReadAccess, staffRoles } from "../lib/roles";
 import { applyTheme, nextTheme, storedTheme, type Theme } from "../lib/theme";
 import { NoAccessPage } from "../pages/NoAccessPage";
 
@@ -78,6 +78,9 @@ export function Layout() {
   const scope = identity.national
     ? t("header.national")
     : t("header.gouvernorat", { name: gouvernorats.nameOf(identity.gouvernoratCode) ?? "" });
+  // Only the screens the user's roles can use (the API enforces the same rules).
+  const readsReports = hasReadAccess(identity.roles);
+  const readsOrgs = canReadOrgs(identity.roles);
   const roles = staffRoles(identity.roles)
     .map((r) => t(`roles.${r}`))
     .join(t("common.listSeparator"));
@@ -93,13 +96,25 @@ export function Layout() {
           <span>{t("app.name")}</span>
         </div>
         <nav aria-label={t("nav.main")} className="header__nav">
-          <NavLink to="/" end>
-            {t("nav.home")}
-          </NavLink>
-          <NavLink to="/reports">{t("nav.reports")}</NavLink>
-          <NavLink to="/incidents">{t("nav.incidents")}</NavLink>
-          <NavLink to="/map">{t("nav.map")}</NavLink>
-          <NavLink to="/settings/ai">{t("nav.aiSettings")}</NavLink>
+          {readsReports && (
+            <>
+              <NavLink to="/" end>
+                {t("nav.home")}
+              </NavLink>
+              <NavLink to="/reports">{t("nav.reports")}</NavLink>
+              <NavLink to="/incidents">{t("nav.incidents")}</NavLink>
+              <NavLink to="/map">{t("nav.map")}</NavLink>
+            </>
+          )}
+          {readsOrgs && (
+            <>
+              <NavLink to="/orgs" end>
+                {t("nav.orgs")}
+              </NavLink>
+              <NavLink to="/orgs/certificates">{t("nav.certificates")}</NavLink>
+            </>
+          )}
+          {readsReports && <NavLink to="/settings/ai">{t("nav.aiSettings")}</NavLink>}
         </nav>
         <div className="header__tools">
           <LiveIndicator />

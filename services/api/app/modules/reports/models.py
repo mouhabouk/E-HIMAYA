@@ -20,6 +20,8 @@ class Report(Base):
     client_uuid: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), unique=True)
     user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("identity.account.user_id"))
     incident_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("ops.incident.id"))
+    # Set when a member reports on behalf of an institution (FR-A-080).
+    organization_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("org.organization.id"))
     category: Mapped[str] = mapped_column(Text)
     text_original: Mapped[str | None] = mapped_column(Text)
     lang_original: Mapped[str | None] = mapped_column(Text)

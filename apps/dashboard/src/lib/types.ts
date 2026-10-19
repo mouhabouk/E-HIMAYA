@@ -1,4 +1,7 @@
-/** Types mirroring docs/api/phase-2-contract.md (sections 3 and 5) and phase-3-contract.md (AI layer 1). */
+/**
+ * Types mirroring docs/api/phase-2-contract.md (sections 3 and 5), phase-3-contract.md (AI layer 1) and
+ * phase-4-contract.md (institutions, sections 8–10).
+ */
 
 export const REPORT_STATUSES = ["received", "in_progress", "intervened", "ongoing", "closed", "rejected"] as const;
 export type ReportStatus = (typeof REPORT_STATUSES)[number];
@@ -74,6 +77,8 @@ export interface StaffReport {
   incident_id: string | null;
   /** A grouping suggestion is waiting for the operator. */
   has_suggestion: boolean;
+  /** Institution the report was made on behalf of (phase 4 §8–9); absent from older payloads. */
+  organization?: OrgRef | null;
 }
 
 export interface HistoryEntry {
@@ -96,6 +101,8 @@ export interface StaffReportDetail extends StaffReport {
   allowed_transitions?: ReportStatus[];
   /** AI analysis (phase 3); null/absent before the first analysis. */
   analysis?: Analysis | null;
+  /** Card of the reporting institution for responders (phase 4 §9); null when not reported by an institution. */
+  organization_card?: OrganizationCard | null;
 }
 
 /** Priority components (BR-20), in the order of the settings. */
@@ -288,6 +295,10 @@ export interface Kpis {
   high_priority: number;
   /** Reports waiting for (or in) AI analysis (phase 3). */
   analysis_pending: number;
+  /** Institutions waiting for a registration review, in scope (phase 4). */
+  orgs_pending_review?: number;
+  /** Certificates waiting for review, in scope (phase 4). */
+  certificates_submitted?: number;
 }
 
 export interface Gouvernorat {
@@ -317,4 +328,309 @@ export function isCategory(v: unknown): v is Category {
 
 export function isIncidentStatus(v: unknown): v is IncidentStatus {
   return typeof v === "string" && (INCIDENT_STATUSES as readonly string[]).includes(v);
+}
+
+// ---------- Institutions (phase 4, FR-B-001…FR-B-011, FR-C-05) ----------
+
+export function isOneOf<T extends string>(list: readonly T[], v: unknown): v is T {
+  return typeof v === "string" && (list as readonly string[]).includes(v);
+}
+
+export const ORG_STATUSES = ["pending_review", "active", "rejected", "suspended"] as const;
+export type OrgStatus = (typeof ORG_STATUSES)[number];
+
+export const ORG_KINDS = ["industrial", "educational", "hotel", "government", "private", "other"] as const;
+export type OrgKind = (typeof ORG_KINDS)[number];
+
+export const ORG_FAMILIES = ["high_rise", "industrial", "erp", "workplace"] as const;
+export type OrgFamily = (typeof ORG_FAMILIES)[number];
+
+/** Codes of `classification.required` and `completeness.missing` (§1). */
+export const REQUIREMENTS = [
+  "safety_file",
+  "safety_plan",
+  "safety_team",
+  "training",
+  "hazmat_sds",
+  "equipment",
+  "evacuation_points",
+] as const;
+export type Requirement = (typeof REQUIREMENTS)[number];
+
+/** Alert kinds named by the contract example; others are shown with a generic label. */
+export const ORG_ALERT_KINDS = ["training_expired", "maintenance_overdue"] as const;
+
+export const CERTIFICATE_STATUSES = ["draft", "submitted", "approved", "rejected"] as const;
+export type CertificateStatus = (typeof CERTIFICATE_STATUSES)[number];
+/** `certificate_status` of a StaffOrg and the `certificate=` list filter. */
+export const ORG_CERTIFICATE_STATES = ["none", ...CERTIFICATE_STATUSES, "expired"] as const;
+export type OrgCertificateState = (typeof ORG_CERTIFICATE_STATES)[number];
+
+export const TEAM_ROLES = ["representative", "member"] as const;
+export const TRAINING_STATUSES = ["valid", "expiring", "expired", "unknown"] as const;
+export type TrainingStatus = (typeof TRAINING_STATUSES)[number];
+export const EQUIPMENT_KINDS = [
+  "extinguisher",
+  "fire_hose_reel",
+  "sprinkler",
+  "smoke_detector",
+  "alarm_panel",
+  "emergency_lighting",
+  "fire_door",
+  "other",
+] as const;
+export const MAINTENANCE_STATUSES = ["ok", "due_soon", "overdue", "unknown"] as const;
+export type MaintenanceStatus = (typeof MAINTENANCE_STATUSES)[number];
+export const HAZMAT_UNITS = ["kg", "t", "l", "m3"] as const;
+export const FEATURE_KINDS = ["evacuation_point", "water_point", "alarm"] as const;
+export type FeatureKind = (typeof FEATURE_KINDS)[number];
+export const DOCUMENT_KINDS = ["safety_file", "safety_plan", "sds", "other"] as const;
+export const MEMBER_ROLES = ["admin", "editor", "member"] as const;
+/** `reason` of the sensitive_sites priority component (§10). */
+export const SENSITIVE_REASONS = ["hazmat", "high_rise", "large_public", "public", "nearby"] as const;
+
+/** Registration review decisions (§9) and the institution statuses they apply to. */
+export const ORG_DECISIONS = ["approve", "reject", "suspend", "reinstate"] as const;
+export type OrgDecision = (typeof ORG_DECISIONS)[number];
+
+export interface OrgRef {
+  id: string;
+  name: string;
+  kind?: string;
+}
+
+export interface Classification {
+  family: string;
+  /** ERP category 1–5, null for the other families. */
+  category: number | null;
+  high_rise?: boolean;
+  required?: string[];
+  /** Thresholds are a working model to be validated against the official text. */
+  provisional?: boolean;
+}
+
+export interface Completeness {
+  ok: boolean;
+  missing: string[];
+}
+
+export interface OrgAlert {
+  kind: string;
+  ref: string | null;
+  since: string | null;
+}
+
+export interface Person {
+  full_name: string | null;
+  phone: string | null;
+  email?: string | null;
+}
+
+export interface TeamMember {
+  id: string;
+  full_name: string;
+  team_role: string;
+  position: string | null;
+  phone: string | null;
+  email: string | null;
+  last_training_on: string | null;
+  training_valid_months: number | null;
+  training_status: string;
+  training_expires_on: string | null;
+}
+
+export interface Hazmat {
+  id?: string;
+  name: string;
+  un_number: string | null;
+  hazard_class: string | null;
+  quantity: number | null;
+  unit: string | null;
+  storage_location: string | null;
+  sds_document_id?: string | null;
+}
+
+export interface Equipment {
+  id: string;
+  kind: string;
+  count: number | null;
+  location: string | null;
+  last_maintenance_on: string | null;
+  maintenance_interval_months: number | null;
+  maintenance_status: string;
+  next_maintenance_on: string | null;
+}
+
+export interface MapFeature {
+  id: string;
+  kind: string;
+  label: string | null;
+  location: { lat: number; lon: number };
+}
+
+export interface DocumentVersion {
+  version: number;
+  filename: string | null;
+  content_type: string | null;
+  bytes: number | null;
+  sha256: string | null;
+  status: string;
+  uploaded_at: string | null;
+  uploaded_by: string | null;
+  note: string | null;
+}
+
+export interface OrgDocument {
+  id: string;
+  kind: string;
+  title: string;
+  current_version: DocumentVersion | null;
+  versions_count: number;
+  /** Not in the contract: used when the server inlines the history in the staff detail. */
+  versions?: DocumentVersion[];
+}
+
+export interface Certificate {
+  id: string;
+  code: string;
+  status: CertificateStatus;
+  superseded: boolean;
+  created_at: string;
+  submitted_at: string | null;
+  reviewed_at: string | null;
+  review_reason: string | null;
+  valid_until: string | null;
+  fingerprint: string | null;
+  pdf_sha256: string | null;
+  verify_url: string | null;
+}
+
+export interface StaffOrgMember {
+  display_name: string | null;
+  email: string | null;
+  role: string;
+}
+
+/** Row of `GET /api/v1/staff/orgs` (§9) and payload of the `org.updated` live event. */
+export interface StaffOrg {
+  id: string;
+  name: string;
+  kind: OrgKind;
+  status: OrgStatus;
+  identifier_type: string;
+  identifier: string;
+  gouvernorat_code: number | null;
+  capacity: number | null;
+  location: { lat: number; lon: number } | null;
+  classification: Classification | null;
+  hazmat_count: number;
+  alerts_count: number;
+  certificate_status: OrgCertificateState;
+  certificate_valid_until: string | null;
+  created_at: string;
+}
+
+/** `GET /api/v1/staff/orgs/{id}`: the Organization card (without my_role) and its registers. Audited. */
+export interface StaffOrgDetail {
+  id: string;
+  status: OrgStatus;
+  version?: number;
+  name: string;
+  kind: OrgKind;
+  identifier_type: string;
+  identifier: string;
+  activity_sector: string | null;
+  activity_type: string | null;
+  capacity: number | null;
+  floors: number | null;
+  height_m: number | null;
+  receives_public: boolean | null;
+  address: string | null;
+  location: { lat: number; lon: number } | null;
+  gouvernorat_code: number | null;
+  delegation_id: number | null;
+  manager: Person | null;
+  contact_email: string | null;
+  contact_phone: string | null;
+  classification: Classification | null;
+  completeness: Completeness | null;
+  alerts: OrgAlert[];
+  review: { reason: string | null; at: string | null } | null;
+  created_at: string;
+  updated_at: string;
+  team: TeamMember[];
+  hazmat: Hazmat[];
+  equipment: Equipment[];
+  features: MapFeature[];
+  documents: OrgDocument[];
+  members: StaffOrgMember[];
+  certificates: Certificate[];
+}
+
+/** `organization_card` of a StaffReportDetail (§9): what responders need on the way. */
+export interface OrganizationCard {
+  id: string;
+  name: string;
+  kind: string;
+  capacity: number | null;
+  address: string | null;
+  location: { lat: number; lon: number } | null;
+  classification: Classification | null;
+  representative: { full_name: string | null; phone: string | null } | null;
+  hazmat: Hazmat[];
+  features: MapFeature[];
+}
+
+/** Row of the certificate review queue `GET /api/v1/staff/certificates` (oldest submission first). */
+export interface QueueCertificate {
+  id: string;
+  code: string;
+  status: CertificateStatus;
+  org_id: string;
+  org_name: string;
+  gouvernorat_code: number | null;
+  submitted_at: string | null;
+  completeness: Completeness | null;
+}
+
+/** Payload of the `certificate.updated` live event. */
+export interface CertificateEvent {
+  id: string;
+  code: string;
+  status: CertificateStatus;
+  org_id: string;
+  org_name: string;
+  gouvernorat_code: number | null;
+}
+
+export type OrgReviewBody = { decision: OrgDecision; reason?: string };
+export type CertificateReviewBody =
+  | { decision: "approve"; valid_until: string; reason?: string }
+  | { decision: "reject"; reason: string };
+
+/** `GET /api/v1/staff/orgs/map` (map layer «المؤسسات», FR-C-10). */
+export interface OrgMapProperties {
+  id: string;
+  name: string;
+  kind: string;
+  capacity: number | null;
+  hazmat_count: number;
+  category: number | null;
+  family: string | null;
+}
+
+export interface OrgMapFeature {
+  type: "Feature";
+  geometry: { type: "Point"; coordinates: [number, number] };
+  properties: OrgMapProperties;
+  id?: string | number;
+}
+
+export interface OrgMapCollection {
+  type: "FeatureCollection";
+  features: OrgMapFeature[];
+}
+
+export interface DownloadLink {
+  url: string;
 }

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:crypto/crypto.dart';
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -38,6 +39,7 @@ class ReportDraft {
     this.text,
     this.lang,
     this.attachments = const [],
+    this.organizationId,
   });
 
   final ReportCategory category;
@@ -45,6 +47,9 @@ class ReportDraft {
   final String? text;
   final String? lang;
   final List<DraftAttachment> attachments;
+
+  /// Institution the report is sent for (phase 4 §8); null: the user themselves.
+  final String? organizationId;
 }
 
 class QueuedReport {
@@ -94,6 +99,7 @@ class ReportQueue {
         'lang': draft.lang,
       'location': draft.location.toJson(),
       'created_at': now.toIso8601String(),
+      organizationIdKey: ?draft.organizationId,
     };
 
     final media = <MediaItemsCompanion>[];
@@ -141,6 +147,28 @@ class ReportQueue {
     return QueuedReport(clientUuid, tempCode);
   }
 
+  /// A report refused for its institution (`org_not_found` / `org_not_active`) is queued again
+  /// without `organization_id`, i.e. as the user themselves. The server never stored it, so
+  /// the same `client_uuid` is reused.
+  Future<bool> resendAsSelf(String clientUuid) async {
+    final row = await db.reportByUuid(clientUuid);
+    if (row == null || row.state != ReportState.orgRefused) return false;
+    final payload = jsonDecode(row.payload) as Map<String, Object?>
+      ..remove(organizationIdKey);
+    await db.updateReport(
+      clientUuid,
+      PendingReportsCompanion(
+        payload: Value(jsonEncode(payload)),
+        state: const Value(ReportState.queued),
+        attempts: const Value(0),
+        lastError: const Value(null),
+        nextAttemptAt: const Value(null),
+        updatedAt: Value(clock().toUtc()),
+      ),
+    );
+    return true;
+  }
+
   /// Removes the local copy of a report the user dismissed (only used for failed/conflict).
   Future<void> discard(String clientUuid) async {
     final items = await db.mediaForReport(clientUuid);
@@ -156,6 +184,21 @@ class ReportQueue {
         db.pendingReports,
       )..where((r) => r.clientUuid.equals(clientUuid))).go();
     });
+  }
+}
+
+/// Key of the institution in the `POST /api/v1/reports` body (phase 4 §8).
+const organizationIdKey = 'organization_id';
+
+/// Institution a queued report is sent for, read from its frozen payload.
+String? payloadOrganizationId(String payload) {
+  try {
+    final json = jsonDecode(payload);
+    if (json is! Map) return null;
+    final id = json[organizationIdKey];
+    return id is String ? id : null;
+  } on FormatException {
+    return null;
   }
 }
 
