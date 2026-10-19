@@ -121,6 +121,19 @@ def test_media_url_must_point_at_the_object_store(client: TestClient, monkeypatc
         assert (r.status_code, r.json()["detail"]) == (422, "media_url_not_allowed"), url
 
 
+def test_undecodable_media_gives_a_stable_code(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+    from types import SimpleNamespace
+
+    from app import models
+
+    fake = SimpleNamespace(feature_extractor=SimpleNamespace(sampling_rate=16000))
+    monkeypatch.setattr(models.whisper, "get", lambda: fake)
+    ollama(lambda request: httpx.Response(200, content=b"not audio at all" * 1000))
+    r = client.post("/v1/transcribe", json={"url": "http://seaweedfs:8333/x.wav"}, headers=AUTH)
+    # PyAV's message names the temporary file: it must not reach the caller.
+    assert (r.status_code, r.json()["detail"]) == (422, "media_undecodable")
+
+
 def test_mean_pool_ignores_padding_and_normalizes() -> None:
     hidden = np.array([[[1.0, 0.0], [3.0, 0.0], [100.0, 100.0]], [[0.0, 2.0], [0.0, 2.0], [0.0, 2.0]]])
     pooled = mean_pool(hidden, [2, 3], 2)

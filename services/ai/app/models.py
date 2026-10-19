@@ -22,6 +22,10 @@ class ModelUnavailable(Exception):
     """The model files are not installed or failed to load."""
 
 
+class MediaRejected(Exception):
+    """The media cannot be processed; the message is a stable error code."""
+
+
 @dataclass(frozen=True, slots=True)
 class Manifest:
     path: Path
@@ -107,9 +111,12 @@ class Whisper(_Lazy[Any]):
         settings = get_settings()
         model = self.get()
         sampling_rate = model.feature_extractor.sampling_rate
-        audio = decode_audio(audio_path, sampling_rate=sampling_rate)
+        try:
+            audio = decode_audio(audio_path, sampling_rate=sampling_rate)
+        except Exception as exc:  # PyAV raises many error types (some are ValueError) for bad input
+            raise MediaRejected("media_undecodable") from exc
         if len(audio) / sampling_rate > settings.max_audio_s:
-            raise ValueError("audio_too_long")
+            raise MediaRejected("audio_too_long")
         options: dict[str, Any] = {
             "beam_size": settings.whisper_beam_size,
             "vad_filter": True,

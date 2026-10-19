@@ -173,7 +173,7 @@ jobs:
         run: |
           sudo apt-get update -q && sudo apt-get install -y -q espeak-ng
           mkdir -p "$SAMPLES"
-          espeak-ng -v fr -s 140 -w "$SAMPLES/fr.wav" "Bonjour, il y a un incendie dans la forêt près de la maison."
+          espeak-ng -v fr -s 115 -w "$SAMPLES/fr.wav" "Bonjour, il y a un incendie dans la forêt près de la maison."
           espeak-ng -v en -s 140 -w "$SAMPLES/en.wav" "Hello, there is a fire in the building and two people are trapped."
           espeak-ng -v ar -s 130 -w "$SAMPLES/ar.wav" "يوجد حريق كبير في الغابة قرب الطريق"
           head -c 20000 /dev/urandom > "$SAMPLES/garbage.wav"
