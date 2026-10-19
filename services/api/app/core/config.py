@@ -18,6 +18,9 @@ class Settings(BaseSettings):
     s3_access_key: str | None = None
     s3_secret_key: SecretStr | None = None
     s3_bucket_media: str = "ehimaya-media"
+    # Endpoint used in pre-signed URLs handed to browsers (defaults to s3_endpoint_url).
+    s3_public_endpoint_url: str | None = None
+    s3_region: str = "us-east-1"
 
     # Comma-separated list of accepted token issuers (public realm, staff realm).
     oidc_issuers: Annotated[list[str], NoDecode] = Field(default_factory=list)
@@ -27,6 +30,14 @@ class Settings(BaseSettings):
     oidc_audience: str = "ehimaya-api"
 
     anon_pseudonym_secret: SecretStr = Field(min_length=32)
+    # AES-256-GCM key for field-level encryption (CIN, medical data): base64 of 32 random bytes.
+    field_encryption_key: SecretStr
+    # Version of the privacy charter every reporter must have accepted (FR-A-001).
+    charter_version: str = "2026-10"
+    # Shared secret in the tusd hook URL path; the hook endpoint is disabled when unset.
+    tusd_hook_secret: SecretStr | None = Field(default=None, min_length=24)
+    # Background loops (outbox relay, media verification). Disabled in tests, which drive them directly.
+    background_workers: bool = True
 
     api_cors_origins: Annotated[list[str], NoDecode] = Field(default_factory=list)
     api_log_level: str = "INFO"
