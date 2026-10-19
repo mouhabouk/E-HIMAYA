@@ -20,9 +20,9 @@ concurrency:
 
 jobs:
   dashboard:
-    name: Dashboard · lint, types, tests, build
+    name: Dashboard · lint, types, tests, build, browser tests
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: apps/dashboard
@@ -49,3 +49,20 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      # Browser tests (MapLibre needs a real browser). The version matches the pinned @playwright/test.
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Browser tests
+        run: npm run test:e2e
+
+      - name: Upload browser test report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dashboard-playwright-report
+          path: |
+            apps/dashboard/playwright-report/
+            apps/dashboard/test-results/
+          retention-days: 7

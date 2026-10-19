@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/auth/identity.dart';
 import '../../core/http/models.dart';
 import '../../core/routing/app_router.dart';
 import '../../core/ui/emergency_action.dart';
 import '../../l10n/app_localizations.dart';
+import '../alerts/alerts_providers.dart';
+import '../alerts/notifications_screen.dart';
 import '../institution/institution_providers.dart';
 import '../institution/my_institution_screen.dart';
 import '../reports/reports_providers.dart';
@@ -20,15 +23,30 @@ class HomeScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final pending = ref.watch(pendingSyncCountProvider).value ?? 0;
     final orgs = ref.watch(myOrgsProvider).value ?? const <MyOrg>[];
+    final identity = ref.watch(identityProvider);
+    final alertsCount = ref.watch(currentAlertsProvider).length;
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.appTitle),
-        actions: const [EmergencyNumbersAction()],
+        actions: [
+          IconButton(
+            key: const Key('home-notifications'),
+            tooltip: l10n.notificationsTitle,
+            onPressed: () => context.push(Routes.notifications),
+            icon: Badge(
+              isLabelVisible: alertsCount > 0,
+              label: Text('$alertsCount'),
+              child: const Icon(Icons.notifications_outlined),
+            ),
+          ),
+          const EmergencyNumbersAction(),
+        ],
       ),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            const HighAlertsBanner(),
             Text(
               l10n.homeTagline,
               textAlign: TextAlign.center,
@@ -68,6 +86,21 @@ class HomeScreen extends ConsumerWidget {
               subtitle: l10n.homeTrackDesc,
               onTap: () => context.push(Routes.track),
             ),
+            _HomeAction(
+              key: const Key('home-tips'),
+              icon: Icons.health_and_safety,
+              title: l10n.tipsTitle,
+              subtitle: l10n.homeTipsDesc,
+              onTap: () => context.push(Routes.tips),
+            ),
+            if (identity.isRegistered && identity.role == UserRole.citizen)
+              _HomeAction(
+                key: const Key('home-volunteer'),
+                icon: Icons.volunteer_activism,
+                title: l10n.volunteerTitle,
+                subtitle: l10n.homeVolunteerDesc,
+                onTap: () => context.push(Routes.volunteer),
+              ),
             if (orgs.isNotEmpty)
               _HomeAction(
                 key: const Key('home-institution'),

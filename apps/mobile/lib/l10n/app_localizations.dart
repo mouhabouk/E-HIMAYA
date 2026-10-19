@@ -1683,6 +1683,804 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'By {name}'**
   String orgReportBy(String name);
+
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationsTitle;
+
+  /// No description provided for @activeAlertsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts in force'**
+  String get activeAlertsTitle;
+
+  /// No description provided for @activeAlertsNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No alert in force for your area.'**
+  String get activeAlertsNone;
+
+  /// No description provided for @inboxTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages'**
+  String get inboxTitle;
+
+  /// No description provided for @inboxEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No message yet.'**
+  String get inboxEmpty;
+
+  /// No description provided for @inboxNoIdentity.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose how to use the app to receive messages.'**
+  String get inboxNoIdentity;
+
+  /// No description provided for @inboxLoadMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Show older messages'**
+  String get inboxLoadMore;
+
+  /// No description provided for @inboxAlertActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert in force'**
+  String get inboxAlertActive;
+
+  /// No description provided for @inboxAlertEnded.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert ended'**
+  String get inboxAlertEnded;
+
+  /// No description provided for @alertTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert'**
+  String get alertTitle;
+
+  /// No description provided for @alertOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the alert'**
+  String get alertOpen;
+
+  /// No description provided for @alertUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Until {time}'**
+  String alertUntil(String time);
+
+  /// No description provided for @alertPublishedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Issued {time}'**
+  String alertPublishedAt(String time);
+
+  /// No description provided for @alertNotActive.
+  ///
+  /// In en, this message translates to:
+  /// **'This alert has ended or was lifted.'**
+  String get alertNotActive;
+
+  /// No description provided for @alertAreaNational.
+  ///
+  /// In en, this message translates to:
+  /// **'Whole country'**
+  String get alertAreaNational;
+
+  /// No description provided for @alertAreaZone.
+  ///
+  /// In en, this message translates to:
+  /// **'Zone drawn on the map'**
+  String get alertAreaZone;
+
+  /// No description provided for @alertAreaGouvernorats.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 gouvernorate} other{{count} gouvernorates}}'**
+  String alertAreaGouvernorats(int count);
+
+  /// No description provided for @severityHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'Red alert'**
+  String get severityHigh;
+
+  /// No description provided for @severityMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Orange alert'**
+  String get severityMedium;
+
+  /// No description provided for @severityLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Yellow alert'**
+  String get severityLow;
+
+  /// No description provided for @hazardHeavyRain.
+  ///
+  /// In en, this message translates to:
+  /// **'Heavy rain'**
+  String get hazardHeavyRain;
+
+  /// No description provided for @hazardFlood.
+  ///
+  /// In en, this message translates to:
+  /// **'Flood'**
+  String get hazardFlood;
+
+  /// No description provided for @hazardStorm.
+  ///
+  /// In en, this message translates to:
+  /// **'Storm'**
+  String get hazardStorm;
+
+  /// No description provided for @hazardWind.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong wind'**
+  String get hazardWind;
+
+  /// No description provided for @hazardHeatWave.
+  ///
+  /// In en, this message translates to:
+  /// **'Heat wave'**
+  String get hazardHeatWave;
+
+  /// No description provided for @hazardColdWave.
+  ///
+  /// In en, this message translates to:
+  /// **'Cold wave'**
+  String get hazardColdWave;
+
+  /// No description provided for @hazardSea.
+  ///
+  /// In en, this message translates to:
+  /// **'Rough sea'**
+  String get hazardSea;
+
+  /// No description provided for @hazardForestFire.
+  ///
+  /// In en, this message translates to:
+  /// **'Forest fire'**
+  String get hazardForestFire;
+
+  /// No description provided for @hazardChemical.
+  ///
+  /// In en, this message translates to:
+  /// **'Chemical hazard'**
+  String get hazardChemical;
+
+  /// No description provided for @hazardOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other hazard'**
+  String get hazardOther;
+
+  /// No description provided for @topicActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity'**
+  String get topicActivity;
+
+  /// No description provided for @topicAwareness.
+  ///
+  /// In en, this message translates to:
+  /// **'Awareness'**
+  String get topicAwareness;
+
+  /// No description provided for @topicTraining.
+  ///
+  /// In en, this message translates to:
+  /// **'Training'**
+  String get topicTraining;
+
+  /// No description provided for @topicWorldDay.
+  ///
+  /// In en, this message translates to:
+  /// **'World day'**
+  String get topicWorldDay;
+
+  /// No description provided for @topicOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Information'**
+  String get topicOther;
+
+  /// No description provided for @settingsAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts and notifications'**
+  String get settingsAlerts;
+
+  /// No description provided for @settingsLocationAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts where I am'**
+  String get settingsLocationAlerts;
+
+  /// No description provided for @settingsLocationAlertsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Uses the phone’s approximate position (about 1 km) to send you alerts for the area you are in.'**
+  String get settingsLocationAlertsHelp;
+
+  /// No description provided for @channelAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Urgent alerts'**
+  String get channelAlerts;
+
+  /// No description provided for @channelAlertsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Civil Protection alerts and volunteer call-outs.'**
+  String get channelAlertsDesc;
+
+  /// No description provided for @channelGeneral.
+  ///
+  /// In en, this message translates to:
+  /// **'Information'**
+  String get channelGeneral;
+
+  /// No description provided for @channelGeneralDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow-up of your reports and information messages.'**
+  String get channelGeneralDesc;
+
+  /// No description provided for @pushSimulationBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Simulation mode'**
+  String get pushSimulationBadge;
+
+  /// No description provided for @pushSimulationHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Push notifications come from the local simulator, not from Firebase. Nothing is delivered by a real push service.'**
+  String get pushSimulationHelp;
+
+  /// No description provided for @tipsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety tips'**
+  String get tipsTitle;
+
+  /// No description provided for @tipsIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'What to do and what to avoid. Available without connection.'**
+  String get tipsIntro;
+
+  /// No description provided for @tipsDo.
+  ///
+  /// In en, this message translates to:
+  /// **'Do'**
+  String get tipsDo;
+
+  /// No description provided for @tipsDont.
+  ///
+  /// In en, this message translates to:
+  /// **'Don’t'**
+  String get tipsDont;
+
+  /// No description provided for @tipEarthquake.
+  ///
+  /// In en, this message translates to:
+  /// **'Earthquake'**
+  String get tipEarthquake;
+
+  /// No description provided for @homeTipsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'The right actions in an emergency, even offline.'**
+  String get homeTipsDesc;
+
+  /// No description provided for @volunteerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Volunteering'**
+  String get volunteerTitle;
+
+  /// No description provided for @homeVolunteerDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Join the volunteers and answer call-outs near you.'**
+  String get homeVolunteerDesc;
+
+  /// No description provided for @volunteerIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Volunteers help the Civil Protection teams in emergencies, according to their skills. Your application is reviewed before you can be called out.'**
+  String get volunteerIntro;
+
+  /// No description provided for @volunteerApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply as a volunteer'**
+  String get volunteerApply;
+
+  /// No description provided for @volunteerApplication.
+  ///
+  /// In en, this message translates to:
+  /// **'My application'**
+  String get volunteerApplication;
+
+  /// No description provided for @volunteerStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Under review'**
+  String get volunteerStatusPending;
+
+  /// No description provided for @volunteerStatusApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get volunteerStatusApproved;
+
+  /// No description provided for @volunteerStatusRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get volunteerStatusRejected;
+
+  /// No description provided for @volunteerStatusSuspended.
+  ///
+  /// In en, this message translates to:
+  /// **'Suspended'**
+  String get volunteerStatusSuspended;
+
+  /// No description provided for @volunteerStatusWithdrawn.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawn'**
+  String get volunteerStatusWithdrawn;
+
+  /// No description provided for @volunteerPendingHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Your application will be reviewed by the Civil Protection. You will receive an e-mail with the decision.'**
+  String get volunteerPendingHelp;
+
+  /// No description provided for @volunteerApprovedHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'You can declare yourself ready and receive call-outs near you.'**
+  String get volunteerApprovedHelp;
+
+  /// No description provided for @volunteerRejectedHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Your application was not accepted. You can correct it and apply again.'**
+  String get volunteerRejectedHelp;
+
+  /// No description provided for @volunteerSuspendedHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Your volunteering is suspended: you will not receive call-outs.'**
+  String get volunteerSuspendedHelp;
+
+  /// No description provided for @volunteerWithdrawnHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'You have withdrawn. You can apply again at any time.'**
+  String get volunteerWithdrawnHelp;
+
+  /// No description provided for @volunteerReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason: {reason}'**
+  String volunteerReason(String reason);
+
+  /// No description provided for @volunteerPeriodFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From {from}'**
+  String volunteerPeriodFrom(String from);
+
+  /// No description provided for @volunteerPeriodRange.
+  ///
+  /// In en, this message translates to:
+  /// **'From {from} to {to}'**
+  String volunteerPeriodRange(String from, String to);
+
+  /// No description provided for @availabilityContinuous.
+  ///
+  /// In en, this message translates to:
+  /// **'Continuous'**
+  String get availabilityContinuous;
+
+  /// No description provided for @availabilityIntermittent.
+  ///
+  /// In en, this message translates to:
+  /// **'Intermittent'**
+  String get availabilityIntermittent;
+
+  /// No description provided for @volunteerEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit my application'**
+  String get volunteerEdit;
+
+  /// No description provided for @volunteerResubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply again'**
+  String get volunteerResubmit;
+
+  /// No description provided for @volunteerWithdraw.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw'**
+  String get volunteerWithdraw;
+
+  /// No description provided for @volunteerWithdrawConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'You will no longer receive call-outs and your position will no longer be shared.'**
+  String get volunteerWithdrawConfirm;
+
+  /// No description provided for @volunteerReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to help'**
+  String get volunteerReady;
+
+  /// No description provided for @volunteerReadyHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'While you are ready, the Civil Protection sees your position to call you out.'**
+  String get volunteerReadyHelp;
+
+  /// No description provided for @volunteerReadyUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready until {time}'**
+  String volunteerReadyUntil(String time);
+
+  /// No description provided for @volunteerReadyFor.
+  ///
+  /// In en, this message translates to:
+  /// **'For'**
+  String get volunteerReadyFor;
+
+  /// No description provided for @hoursShort.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} h'**
+  String hoursShort(int hours);
+
+  /// No description provided for @volunteerLocationPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Your position is shared only while you are ready, is deleted when readiness ends and is never archived.'**
+  String get volunteerLocationPrivacy;
+
+  /// No description provided for @volunteerNoFix.
+  ///
+  /// In en, this message translates to:
+  /// **'Your position could not be determined. Try again outdoors.'**
+  String get volunteerNoFix;
+
+  /// No description provided for @volunteerSkills.
+  ///
+  /// In en, this message translates to:
+  /// **'Skills'**
+  String get volunteerSkills;
+
+  /// No description provided for @volunteerSkillsRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose at least one skill.'**
+  String get volunteerSkillsRequired;
+
+  /// No description provided for @volunteerOtherSkill.
+  ///
+  /// In en, this message translates to:
+  /// **'Other skill'**
+  String get volunteerOtherSkill;
+
+  /// No description provided for @volunteerAvailability.
+  ///
+  /// In en, this message translates to:
+  /// **'Availability'**
+  String get volunteerAvailability;
+
+  /// No description provided for @volunteerPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Volunteering period'**
+  String get volunteerPeriod;
+
+  /// No description provided for @volunteerFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get volunteerFrom;
+
+  /// No description provided for @volunteerTo.
+  ///
+  /// In en, this message translates to:
+  /// **'End'**
+  String get volunteerTo;
+
+  /// No description provided for @volunteerNoEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'No end date'**
+  String get volunteerNoEnd;
+
+  /// No description provided for @volunteerNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes (optional)'**
+  String get volunteerNotes;
+
+  /// No description provided for @volunteerProfileNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Your name, phone and gouvernorate are taken from your profile.'**
+  String get volunteerProfileNote;
+
+  /// No description provided for @volunteerSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Send my application'**
+  String get volunteerSubmit;
+
+  /// No description provided for @volunteerSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Application sent.'**
+  String get volunteerSubmitted;
+
+  /// No description provided for @fieldRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get fieldRequired;
+
+  /// No description provided for @skillFirstAid.
+  ///
+  /// In en, this message translates to:
+  /// **'First aid'**
+  String get skillFirstAid;
+
+  /// No description provided for @skillDiving.
+  ///
+  /// In en, this message translates to:
+  /// **'Diving'**
+  String get skillDiving;
+
+  /// No description provided for @skillHeavyVehicles.
+  ///
+  /// In en, this message translates to:
+  /// **'Heavy vehicles'**
+  String get skillHeavyVehicles;
+
+  /// No description provided for @skillFirefighting.
+  ///
+  /// In en, this message translates to:
+  /// **'Firefighting'**
+  String get skillFirefighting;
+
+  /// No description provided for @skillSearchRescue.
+  ///
+  /// In en, this message translates to:
+  /// **'Search and rescue'**
+  String get skillSearchRescue;
+
+  /// No description provided for @skillLogistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Logistics'**
+  String get skillLogistics;
+
+  /// No description provided for @skillMedical.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical'**
+  String get skillMedical;
+
+  /// No description provided for @skillOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get skillOther;
+
+  /// No description provided for @calloutsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Call-outs'**
+  String get calloutsTitle;
+
+  /// No description provided for @calloutsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests for help near you.'**
+  String get calloutsDesc;
+
+  /// No description provided for @calloutsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No call-out at the moment.'**
+  String get calloutsEmpty;
+
+  /// No description provided for @calloutAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'I’m going'**
+  String get calloutAccept;
+
+  /// No description provided for @calloutDecline.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available'**
+  String get calloutDecline;
+
+  /// No description provided for @calloutArrived.
+  ///
+  /// In en, this message translates to:
+  /// **'I’m on site'**
+  String get calloutArrived;
+
+  /// No description provided for @calloutEtaLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrival in (minutes)'**
+  String get calloutEtaLabel;
+
+  /// No description provided for @calloutEta.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrival in {minutes} min'**
+  String calloutEta(int minutes);
+
+  /// No description provided for @calloutSkill.
+  ///
+  /// In en, this message translates to:
+  /// **'Skill: {skill}'**
+  String calloutSkill(String skill);
+
+  /// No description provided for @calloutDistance.
+  ///
+  /// In en, this message translates to:
+  /// **'At {distance}'**
+  String calloutDistance(String distance);
+
+  /// No description provided for @calloutAnswerSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Awaiting your answer'**
+  String get calloutAnswerSent;
+
+  /// No description provided for @calloutAnswerAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'On the way'**
+  String get calloutAnswerAccepted;
+
+  /// No description provided for @calloutAnswerDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined'**
+  String get calloutAnswerDeclined;
+
+  /// No description provided for @calloutAnswerExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get calloutAnswerExpired;
+
+  /// No description provided for @calloutAnswerArrived.
+  ///
+  /// In en, this message translates to:
+  /// **'On site'**
+  String get calloutAnswerArrived;
+
+  /// No description provided for @distanceMeters.
+  ///
+  /// In en, this message translates to:
+  /// **'{meters} m'**
+  String distanceMeters(int meters);
+
+  /// No description provided for @distanceKm.
+  ///
+  /// In en, this message translates to:
+  /// **'{km} km'**
+  String distanceKm(String km);
+
+  /// No description provided for @errorRegistrationRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'You need an account to volunteer.'**
+  String get errorRegistrationRequired;
+
+  /// No description provided for @errorNotVolunteer.
+  ///
+  /// In en, this message translates to:
+  /// **'You have not applied as a volunteer.'**
+  String get errorNotVolunteer;
+
+  /// No description provided for @errorProfileIncomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your profile (phone and gouvernorate) first.'**
+  String get errorProfileIncomplete;
+
+  /// No description provided for @errorInvalidPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'The period is invalid (end before start or more than two years ahead).'**
+  String get errorInvalidPeriod;
+
+  /// No description provided for @errorVolunteerNotApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Your volunteer application is not approved.'**
+  String get errorVolunteerNotApproved;
+
+  /// No description provided for @errorOutsidePeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Today is outside your volunteering period.'**
+  String get errorOutsidePeriod;
+
+  /// No description provided for @errorNotReady.
+  ///
+  /// In en, this message translates to:
+  /// **'You are no longer ready.'**
+  String get errorNotReady;
+
+  /// No description provided for @errorLocationRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Your position is needed to be ready.'**
+  String get errorLocationRequired;
+
+  /// No description provided for @errorCalloutClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'This call-out is closed.'**
+  String get errorCalloutClosed;
+
+  /// No description provided for @errorEtaRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a time between 1 and 600 minutes.'**
+  String get errorEtaRequired;
+
+  /// No description provided for @errorInvalidTransition.
+  ///
+  /// In en, this message translates to:
+  /// **'This action is no longer possible.'**
+  String get errorInvalidTransition;
+
+  /// No description provided for @errorVersionConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data changed meanwhile. Reload and try again.'**
+  String get errorVersionConflict;
+
+  /// No description provided for @locationServiceDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Location is turned off on this phone.'**
+  String get locationServiceDisabled;
+
+  /// No description provided for @volunteerLocationDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow location access to declare yourself ready.'**
+  String get volunteerLocationDenied;
 }
 
 class _AppLocalizationsDelegate

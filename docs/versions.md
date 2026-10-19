@@ -1,4 +1,4 @@
-# الإصدارات المثبتة (المراحل 1 إلى 3)
+# الإصدارات المثبتة (المراحل 1 إلى 5)
 
 تُحدَّث هذه القائمة مع كل مرحلة. تُعتمد الإصدارات الدقيقة أدناه في الكود والحاويات.
 
@@ -14,6 +14,8 @@
 | رفع الوسائط بالاستئناف (tus) | `tusproject/tusd:v2.8.0` | MIT |
 | الخلفية وخدمة الذكاء الاصطناعي | `python:3.12-slim` | PSF |
 | خادم النموذج اللغوي المحلي | `ollama/ollama:0.40.1` | MIT |
+| التقاط البريد في التطوير (المرحلة 5) | `axllent/mailpit:v1.31.3` | MIT |
+| محاكي Firebase وبوابة SMS في التطوير (`services/notify-sim`، **محاكاة**) | `python:3.12-slim` | — |
 
 ## حزم Python (الخلفية)
 
@@ -40,6 +42,17 @@
 | email-validator (عناوين البريد في بطاقة المؤسسة والدعوات) | 2.3.0 |
 | pytest / pytest-asyncio | 9.1.1 / 1.4.0 |
 | ruff / mypy | 0.17.1 / 2.4.0 |
+
+### قنوات الإشعار (المرحلة 5)
+
+لا حزمة جديدة: الدفع عبر واجهة FCM HTTP v1 باستعمال httpx و pyjwt (توقيع RS256 لحساب الخدمة)، والبريد عبر
+`smtplib` من مكتبة Python القياسية، والرسائل القصيرة عبر بوابة HTTP لمزود تونسي (`SMS_HTTP_URL`). كل قناة اختيارية:
+دون إعداداتها تُسجَّل عمليات الإرسال «متجاوزة» وتواصل القنوات الأخرى.
+
+**محاكي القنوات (`services/notify-sim`، للتطوير والاختبار فقط):** يحاكي FCM HTTP v1 (مع مصادقة حساب الخدمة) وبوابة
+SMS، ويعرض ما يستقبله في صندوق على المنفذ 8090. حزمه بالإصدارات نفسها المعتمدة في الخلفية: fastapi 0.146.0،
+uvicorn 0.54.0، pydantic-settings 2.16.0، pyjwt 2.15.1، cryptography 50.0.2، وللاختبار httpx 0.28.1، pytest 9.1.1،
+ruff 0.17.1، mypy 2.4.0. التحويل إلى الإرسال الحقيقي موثق في `docs/api/notify-sim.md`.
 
 ## طبقة الذكاء الاصطناعي 1 (`services/ai`، المرحلة 3)
 
@@ -80,6 +93,9 @@ Flutter 3.47.7 (القناة المستقرة) مع Dart 3.13.5، و Java 17 ل�
 | image_picker / record / just_audio | 1.2.4 / 7.1.2 / 0.10.6 | الصور والفيديو والتسجيل الصوتي |
 | url_launcher | 6.3.3 | الاتصال بأرقام النجدة عبر الشريحة (السيناريو 0) |
 | connectivity_plus / crypto / uuid | 7.3.2 / 3.0.7 / 4.6.0 | المزامنة، البصمة، معرف البلاغ |
+| firebase_core / firebase_messaging (المرحلة 5) | 4.15.0 / 16.7.0 | إشعارات الدفع عبر FCM؛ اختيارية عبر `--dart-define` (FIREBASE_API_KEY، FIREBASE_APP_ID، FIREBASE_MESSAGING_SENDER_ID، FIREBASE_PROJECT_ID) |
+| flutter_local_notifications (المرحلة 5) | 22.3.1 | قناتا أندرويد `ehimaya_alerts` و `ehimaya_default` وعرض الإشعار والتطبيق مفتوح |
+| desugar_jdk_libs (Gradle، المرحلة 5) | 2.1.4 | تتطلبه مكتبة الإشعارات المحلية |
 
 ## لوحة التحكم (`apps/dashboard`)
 
@@ -92,20 +108,21 @@ Node.js 22 LTS و npm 10 أو أحدث. الحزم مثبتة بإصدارات �
 | @tanstack/react-query | 5.104.1 |
 | oidc-client-ts | 3.5.0 |
 | i18next / react-i18next | 26.4.2 / 17.0.15 |
-| maplibre-gl | 5.24.0 |
+| maplibre-gl | 6.12.0 |
 | vite / typescript | 7.3.6 / 5.9.3 |
 | vitest / eslint | 4.1.11 / 10.12.0 |
+| @playwright/test (اختبار المتصفح) | 1.56.1 |
 
 ## بوابة المؤسسات (`apps/portal`)
 
 نفس أدوات لوحة التحكم (Node.js 22 و npm 10 أو أحدث، `npm ci`)، بثلاث لغات (ar/fr/en) وعلى المنفذ 5174.
 الحزم مثبتة بإصدارات دقيقة في `apps/portal/package.json` و `package-lock.json`؛ الإصدارات نفسها المعتمدة في لوحة التحكم
-(react 19.3.0، react-router 7.18.4، react-query 5.104.1، oidc-client-ts 3.5.0، i18next 26.4.2، maplibre-gl 5.24.0،
+(react 19.3.0، react-router 7.18.4، react-query 5.104.1، oidc-client-ts 3.5.0، i18next 26.4.2، maplibre-gl 6.12.0،
 vite 7.3.6، typescript 5.9.3، vitest 4.1.11، eslint 10.12.0). البصمة SHA-256 تُحسب في المتصفح (WebCrypto) ولا يغادر
 الملف جهاز الزائر عند التحقق من شهادة.
 
-> تنبيه أمني: `maplibre-gl` 5.24.0 عليه تنبيه حرج (GHSA-jrc7-96c5-q579). الإصلاح في 6.15.0 وهو ترقية كاسرة تُجرى
-> للوحة التحكم والبوابة معًا في تغيير مستقل.
+> رُقّيت `maplibre-gl` من 5.24.0 إلى 6.12.0 في اللوحة والبوابة لإزالة التنبيه الأمني GHSA-jrc7-96c5-q579
+> (يشمل الإصدارات حتى 6.4.0)؛ `npm audit` نظيف في التطبيقين.
 
 ## أولوية التنصيب
 

@@ -12,7 +12,12 @@
     "incidents": "Incidents",
     "aiSettings": "Réglages IA",
     "orgs": "Établissements",
-    "certificates": "Certificats à examiner"
+    "certificates": "Certificats à examiner",
+    "resources": "Moyens",
+    "volunteers": "Volontaires",
+    "notifications": "Notifications et alertes",
+    "safetyTips": "Conseils de sécurité",
+    "committee": "Comités"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -35,7 +40,9 @@
     "field_commander": "Commandant de terrain",
     "local_committee": "Comité local",
     "central_committee": "Comité central",
-    "org_auditor": "Auditeur des établissements"
+    "org_auditor": "Auditeur des établissements",
+    "content_editor": "Éditeur de contenu",
+    "sysadmin": "Administrateur système"
   },
   "status": {
     "received": "Reçu",
@@ -144,7 +151,35 @@
     "signing_key_missing": "La clé de signature des certificats n’est pas configurée sur le serveur : l’approbation est impossible pour le moment (le rejet reste possible).",
     "certificate_outdated": "Ce certificat ne correspond plus au dossier de l’établissement.",
     "realm_not_allowed": "Ce compte ne peut pas accéder à cette ressource.",
-    "version_conflict": "Les données ont changé entre-temps. Rechargez puis réessayez."
+    "version_conflict": "Les données ont changé entre-temps. Rechargez puis réessayez.",
+    "level_not_allowed": "Votre rôle ne permet pas ce niveau ou ce gouvernorat.",
+    "out_of_scope": "La cible est hors de votre périmètre géographique.",
+    "already_acknowledged": "La réception de cette directive a déjà été confirmée.",
+    "unit_in_use": "Impossible de supprimer une unité qui a encore des moyens.",
+    "label_taken": "Cet indicatif est déjà utilisé par un autre moyen de l’unité.",
+    "resource_in_history": "Ce moyen a participé à des interventions : mettez-le hors service plutôt que de le supprimer.",
+    "resource_busy": "Le moyen est actuellement engagé.",
+    "incident_without_location": "Cet incident n’a pas de position.",
+    "invalid_classification": "La classification ne correspond pas à la catégorie de l’incident.",
+    "assignments_active": "Des engagements sont actifs : terminez-les ou annulez-les avant la clôture.",
+    "eta_required": "L’heure d’arrivée estimée est requise.",
+    "invalid_skill": "Compétence inconnue.",
+    "volunteer_not_approved": "Le volontaire n’est pas validé.",
+    "callout_closed": "Cet appel est clos.",
+    "no_volunteer_available": "Aucun volontaire disponible correspondant dans ce rayon.",
+    "invalid_area": "Zone dessinée invalide (un contour de 4 à 500 points en Tunisie, sans gouvernorats).",
+    "invalid_gouvernorat": "Gouvernorat inconnu.",
+    "invalid_user": "Le compte ciblé n’existe pas.",
+    "user_not_found": "Aucun compte citoyen actif n’a exactement cette adresse e-mail.",
+    "ambiguous_email": "Plusieurs comptes portent cette adresse : collez l’identifiant du compte.",
+    "invalid_expiry": "L’expiration de l’alerte doit être future et dans les 7 jours.",
+    "severity_category_expiry_required": "Gravité, catégorie et expiration sont requises pour une alerte.",
+    "topic_and_audience_required": "Le thème et le public sont requis pour une notification d’information.",
+    "kind_change": "Le type d’un message ne peut pas changer après sa création.",
+    "not_draft": "Ce message n’est plus un brouillon.",
+    "not_published": "L’élément n’est pas publié.",
+    "suspended_by_level": "Les notifications d’information sont suspendues dans un gouvernorat au niveau catastrophe (pas les alertes).",
+    "translation_missing": "Traduction incomplète : titre et au moins un élément en arabe, français et anglais."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -325,7 +360,8 @@
       "reporters": "Nombre de signalants",
       "credibility": "Crédibilité",
       "sensitive_sites": "Sites sensibles à proximité",
-      "weather": "Météo"
+      "weather": "Météo",
+      "op_level": "Niveau opérationnel"
     },
     "livesSource": {
       "model": "modèle de langue",
@@ -447,12 +483,23 @@
       "closed": "Clôture",
       "reopened": "Réouverture",
       "dissolved": "Dissolution",
-      "other": "Autre événement"
+      "other": "Autre événement",
+      "card_updated": "Fiche de l’incident mise à jour",
+      "note": "Note",
+      "assignment_created": "Ordre d’engagement",
+      "assignment_status": "Engagement mis à jour",
+      "callout_sent": "Appel aux volontaires",
+      "callout_accepted": "Volontaire disponible",
+      "callout_declined": "Volontaire indisponible",
+      "callout_cancelled": "Appel annulé",
+      "evaluated": "Clôture et évaluation",
+      "level_changed": "Changement de niveau opérationnel"
     },
     "via": {
       "suggestion": "(suggestion confirmée)",
       "manual": "(manuellement)",
-      "new": "(à la création)"
+      "new": "(à la création)",
+      "auto": "(automatiquement, niveau catastrophe)"
     },
     "detail": {
       "title": "Incident",
@@ -862,6 +909,690 @@
       "open": "Ouvrir la fiche",
       "legend": "Légende",
       "report": "Position du signalement"
+    }
+  },
+  "levels": {
+    "name": {
+      "normal": "Normal",
+      "crisis": "Crise",
+      "disaster": "Catastrophe"
+    },
+    "banner": {
+      "crisis": "Niveau de crise actif : {{places}}.",
+      "disaster": "Niveau catastrophe actif : {{places}}. Regroupement automatique des signalements activé, notifications d’information suspendues.",
+      "link": "Détail des niveaux"
+    }
+  },
+  "ops": {
+    "working": "En cours…",
+    "volunteer": "Volontaire",
+    "card": {
+      "heading": "Fiche de l’incident",
+      "title": "Titre de l’incident",
+      "classification": "Classification",
+      "noClassification": "Sans classification",
+      "level": "Niveau opérationnel",
+      "save": "Enregistrer la fiche",
+      "saved": "Fiche enregistrée."
+    },
+    "classification": {
+      "forest_fire": "Feu de forêt",
+      "residential_fire": "Feu d’habitation",
+      "industrial_fire": "Feu industriel",
+      "vehicle_fire": "Feu de véhicule",
+      "river_flood": "Crue d’oued",
+      "urban_flood": "Inondation urbaine",
+      "flash_flood": "Crue éclair",
+      "road_accident": "Accident de la route",
+      "chemical_road_accident": "Accident routier avec produits chimiques",
+      "rail_accident": "Accident ferroviaire",
+      "beach": "Plage",
+      "dam_or_lake": "Barrage ou lac",
+      "well": "Puits",
+      "landslide": "Glissement de terrain",
+      "rockfall": "Chute de pierres",
+      "building_collapse": "Effondrement de bâtiment",
+      "industrial_leak": "Fuite industrielle",
+      "transport_leak": "Fuite lors du transport",
+      "gas_leak": "Fuite de gaz",
+      "cardiac": "Urgence cardiaque",
+      "trauma": "Traumatisme",
+      "mass_casualty": "Nombreuses victimes",
+      "other": "Autre"
+    },
+    "assignment": {
+      "title": "Ordres d’engagement",
+      "none": "Aucun engagement actif.",
+      "active": "Engagements actifs",
+      "past": "Engagements terminés ({{count}})",
+      "pastCaption": "Engagements terminés",
+      "who": "Moyen ou volontaire",
+      "statusCol": "Statut",
+      "order": "Ordre",
+      "actions": "Actions",
+      "note": "Note (facultative)",
+      "moveLabel": "{{who}} : {{status}}",
+      "status": {
+        "ordered": "Ordonné",
+        "en_route": "En route",
+        "on_scene": "Sur place",
+        "released": "Terminé",
+        "cancelled": "Annulé"
+      },
+      "action": {
+        "en_route": "En route",
+        "on_scene": "Arrivé sur place",
+        "released": "Terminer l’engagement",
+        "cancelled": "Annuler"
+      },
+      "formTitle": "Engager un moyen",
+      "resource": "Moyen",
+      "chooseResource": "Choisir un moyen disponible",
+      "noResource": "Aucun moyen disponible dans votre périmètre",
+      "submit": "Émettre l’ordre"
+    },
+    "callout": {
+      "title": "Appel aux volontaires",
+      "none": "Aucun volontaire appelé pour cet incident.",
+      "label": "Appel : {{skill}}",
+      "status": {
+        "open": "Ouvert",
+        "filled": "Complet",
+        "cancelled": "Annulé",
+        "closed": "Clos"
+      },
+      "target": {
+        "sent": "Envoyé",
+        "accepted": "Accepté",
+        "declined": "Décliné",
+        "expired": "Expiré",
+        "arrived": "Arrivé"
+      },
+      "accepted": "Acceptations : {{accepted}} sur {{requested}}",
+      "radius": "rayon de {{km}} km",
+      "targets": "Volontaires appelés",
+      "volunteer": "Volontaire",
+      "distance": "Distance",
+      "answer": "Réponse",
+      "eta": "Arrivée estimée",
+      "position": "Dernière position",
+      "minutes": "{{count}} min",
+      "markArrived": "Confirmer l’arrivée",
+      "markArrivedLabel": "Confirmer l’arrivée de {{name}}",
+      "cancel": "Annuler l’appel",
+      "formTitle": "Nouvel appel",
+      "skill": "Compétence demandée",
+      "radiusKm": "Rayon (km)",
+      "requested": "Nombre demandé",
+      "suggestions": "Volontaires disponibles les plus proches",
+      "pickHelp": "Choisissez des volontaires précis, ou laissez vide pour appeler automatiquement les plus proches.",
+      "noSuggestion": "Aucun volontaire disponible avec cette compétence dans ce rayon.",
+      "busy": "occupé par un autre appel",
+      "message": "Message aux volontaires (facultatif)",
+      "submitAuto": "Appeler les plus proches",
+      "submitPicked": "Appeler la sélection ({{count}})",
+      "sent": "Appel envoyé."
+    },
+    "note": {
+      "title": "Note au journal",
+      "label": "Texte de la note",
+      "submit": "Ajouter la note"
+    },
+    "close": {
+      "title": "Clôturer et évaluer l’incident",
+      "evaluation": "Évaluation de l’intervention",
+      "outcome": "Issue",
+      "outcomes": {
+        "resolved": "Traité",
+        "false_alarm": "Fausse alerte",
+        "transferred": "Transféré"
+      },
+      "summary": "Synthèse de l’intervention",
+      "summaryLength": "La synthèse fait entre {{min}} et 5000 caractères.",
+      "casualties": "Bilan",
+      "casualty": {
+        "rescued": "Secourus",
+        "injured": "Blessés",
+        "deceased": "Décès",
+        "evacuated": "Évacués"
+      },
+      "lessons": "Retour d’expérience (facultatif)",
+      "closedBy": "Clôturé par",
+      "blocked": "Des engagements sont actifs ({{count}}) : terminez-les ou annulez-les avant la clôture.",
+      "submit": "Clôturer l’incident",
+      "confirm": "Confirmer la clôture",
+      "confirmText": "L’incident, ses signalements et ses appels ouverts seront clos. Confirmer ?"
+    },
+    "timeline": {
+      "requested": "demandés : {{count}}",
+      "sent": "appelés : {{count}}"
+    },
+    "list": {
+      "operations": "Opérations",
+      "assignments": "Engagements : {{count}}",
+      "callouts": "Appels : {{count}}"
+    },
+    "map": {
+      "layers": "Couches de la carte",
+      "resourcesToggle": "Couche des unités et moyens",
+      "volunteersToggle": "Couche des volontaires disponibles",
+      "alertsToggle": "Couche des alertes actives",
+      "unit": "Unité de la Protection civile",
+      "resource": "Moyen disponible",
+      "resourceBusy": "Moyen engagé",
+      "volunteer": "Volontaire disponible",
+      "alertsTitle": "Alertes actives",
+      "noAlert": "Aucune alerte active.",
+      "drawnArea": "zone dessinée sur la carte",
+      "national": "tout le territoire",
+      "until": "jusqu’au {{time}}",
+      "severity": {
+        "high": "Gravité haute",
+        "medium": "Gravité moyenne",
+        "low": "Gravité faible"
+      }
+    }
+  },
+  "resources": {
+    "title": "Unités et moyens",
+    "intro": "Unités et équipements de votre périmètre et leur état. Le statut d’un moyen engagé suit son ordre d’engagement.",
+    "summary": {
+      "title": "Disponibilité par type",
+      "caption": "Nombre de moyens par type et statut",
+      "empty": "Aucun moyen enregistré."
+    },
+    "listTitle": "Moyens",
+    "filters": "Filtrer les moyens",
+    "any": "Tous",
+    "empty": "Aucun moyen avec ces critères.",
+    "needUnit": "Ajoutez d’abord une unité pour enregistrer ses moyens.",
+    "add": "Ajouter un moyen",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "confirmDelete": "Confirmer la suppression",
+    "editLabel": "Modifier {{label}}",
+    "deleteLabel": "Supprimer {{label}}",
+    "openIncident": "Ouvrir l’incident",
+    "columns": {
+      "label": "Indicatif",
+      "kind": "Type",
+      "unit": "Unité",
+      "status": "Statut",
+      "notes": "Notes",
+      "actions": "Actions"
+    },
+    "kind": {
+      "fire_engine": "Fourgon d’incendie",
+      "water_tanker": "Citerne d’eau",
+      "ambulance": "Ambulance",
+      "rescue_vehicle": "Véhicule de secours",
+      "heavy_equipment": "Engin lourd",
+      "drone": "Drone",
+      "large_extinguisher": "Grand extincteur",
+      "boat": "Embarcation",
+      "command_vehicle": "Véhicule de commandement",
+      "other": "Autre"
+    },
+    "status": {
+      "available": "Disponible",
+      "assigned": "Engagé",
+      "out_of_service": "Hors service"
+    },
+    "form": {
+      "newTitle": "Nouveau moyen",
+      "editTitle": "Modifier le moyen {{label}}",
+      "lat": "Latitude",
+      "lon": "Longitude",
+      "locationHelp": "Position facultative : sans elle, le moyen est montré à la position de son unité.",
+      "invalid": "Indiquez l’indicatif et vérifiez les coordonnées (en Tunisie, latitude et longitude ensemble).",
+      "save": "Enregistrer"
+    },
+    "units": {
+      "title": "Unités",
+      "add": "Ajouter une unité",
+      "empty": "Aucune unité.",
+      "newTitle": "Nouvelle unité",
+      "editTitle": "Modifier l’unité",
+      "name": "Nom",
+      "nameAr": "Nom en arabe",
+      "nameFr": "Nom en français",
+      "kindLabel": "Type",
+      "phone": "Téléphone",
+      "resources": "Moyens",
+      "chooseGouvernorat": "Choisir le gouvernorat",
+      "invalid": "Indiquez les deux noms, le gouvernorat et des coordonnées en Tunisie.",
+      "kind": {
+        "directorate": "Direction régionale",
+        "unit": "Unité",
+        "advanced_post": "Poste avancé"
+      }
+    }
+  },
+  "volunteers": {
+    "title": "Volontaires",
+    "intro": "Réseau des volontaires de votre périmètre, nouvelles demandes en premier. Chaque validation ou refus est envoyé au volontaire par e-mail.",
+    "caption": "Liste des volontaires",
+    "empty": "Aucun volontaire avec ces critères.",
+    "back": "Retour aux volontaires",
+    "open": "Ouvrir la fiche",
+    "ready": "Disponible",
+    "notReady": "Non disponible",
+    "readyUntil": "Disponible jusqu’à {{time}}",
+    "filters": {
+      "title": "Filtrer les volontaires",
+      "search": "Recherche par nom ou téléphone",
+      "any": "Tous"
+    },
+    "columns": {
+      "name": "Nom",
+      "status": "Statut",
+      "skills": "Compétences",
+      "availability": "Disponibilité",
+      "ready": "Disponibilité immédiate",
+      "submittedAt": "Date de la demande"
+    },
+    "status": {
+      "pending": "En attente",
+      "approved": "Validé",
+      "rejected": "Refusé",
+      "suspended": "Suspendu",
+      "withdrawn": "Retiré"
+    },
+    "skill": {
+      "first_aid": "Premiers secours",
+      "diving": "Plongée",
+      "heavy_vehicles": "Conduite d’engins lourds",
+      "firefighting": "Lutte contre l’incendie",
+      "search_rescue": "Recherche et sauvetage",
+      "logistics": "Logistique",
+      "medical": "Médical",
+      "other": "Autre compétence"
+    },
+    "availability": {
+      "continuous": "Continue",
+      "intermittent": "Ponctuelle"
+    },
+    "map": {
+      "title": "Carte de disponibilité",
+      "privacy": "Seules les positions des volontaires disponibles sont montrées, pendant leur disponibilité, sans être conservées.",
+      "count": "Volontaires disponibles : {{count}}",
+      "label": "Carte des volontaires disponibles",
+      "legend": "Volontaire disponible"
+    },
+    "detail": {
+      "profile": "Fiche",
+      "period": "Période de volontariat",
+      "periodRange": "du {{from}} au {{to}}",
+      "periodOpen": "à partir du {{from}}",
+      "phone": "Téléphone",
+      "email": "E-mail",
+      "notes": "Notes du volontaire",
+      "reviewReason": "Motif de la dernière décision",
+      "reviews": "Historique des décisions",
+      "noReview": "Aucune décision pour l’instant.",
+      "callouts": "Derniers appels",
+      "noCallout": "Jamais appelé.",
+      "sentAt": "Envoyé le",
+      "incident": "Incident",
+      "openIncident": "Ouvrir l’incident"
+    },
+    "review": {
+      "title": "Décision",
+      "none": "Aucune décision possible dans ce statut.",
+      "choose": "Choisir la décision",
+      "decision": {
+        "approve": "Valider",
+        "reject": "Refuser",
+        "suspend": "Suspendre",
+        "reinstate": "Réactiver"
+      },
+      "reason": "Motif",
+      "reasonOptional": "Motif (facultatif)",
+      "reasonRequired": "Le motif est requis pour cette décision.",
+      "emailNotice": "Le volontaire sera informé de la décision par e-mail.",
+      "confirm": "Confirmer la décision",
+      "done": "Décision enregistrée."
+    }
+  },
+  "notify": {
+    "title": "Notifications et alertes",
+    "intro": "Notifications d’information et alertes de vigilance envoyées aux citoyens par notification, SMS et e-mail. Un message est rédigé en brouillon, son audience est estimée, puis il est publié.",
+    "newAlert": "Nouvelle alerte",
+    "newInfo": "Nouvelle notification",
+    "register": "Registre des notifications et alertes",
+    "empty": "Aucun message ne correspond aux filtres.",
+    "loadMore": "Afficher plus",
+    "back": "← Retour aux notifications",
+    "activeAlerts": "Alertes en cours : {{count}}",
+    "until": "jusqu’au {{at}}",
+    "statsLine": "{{channel}} : {{status}}, {{sent}} envoyés, {{failed}} échecs",
+    "saved": "Brouillon enregistré.",
+    "saving": "Enregistrement…",
+    "saveDraft": "Enregistrer le brouillon",
+    "publishedOk": "Message publié : l’envoi est en cours.",
+    "publishAlert": "Publier l’alerte",
+    "publishInfo": "Publier la notification",
+    "deleteDraft": "Supprimer le brouillon",
+    "confirmPublishAlert": "Cette alerte sera envoyée immédiatement à environ {{push}} appareils (notification), {{sms}} numéros (SMS) et {{email}} adresses (e-mail). Confirmer ?",
+    "confirmPublishInfo": "Cette notification sera envoyée à environ {{push}} appareils (notification), {{sms}} numéros (SMS) et {{email}} adresses (e-mail). Confirmer ?",
+    "confirmPublish": "Confirmer la publication",
+    "confirmDeleteText": "Supprimer définitivement ce brouillon ?",
+    "confirmDelete": "Confirmer la suppression",
+    "saveBeforePublish": "Enregistrez les modifications avant de publier : l’estimation porte sur la version enregistrée.",
+    "publishByEditor": "La publication est réservée aux rôles habilités ; ce brouillon attend leur validation.",
+    "audienceTitle": "Audience estimée",
+    "audienceLine": "Notification : {{push}} appareils · SMS : {{sms}} numéros · E-mail : {{email}} adresses",
+    "audienceStale": "Estimation calculée sur la dernière version enregistrée.",
+    "counter": "{{n}} / {{max}} caractères",
+    "fallbackHint": "L’arabe est obligatoire ; si le français ou l’anglais est vide, le texte arabe est envoyé à la place.",
+    "smsPreview": "Aperçu du SMS (300 caractères au plus)",
+    "content": "Contenu",
+    "sending": "Envoi",
+    "createdBy": "Rédigé par",
+    "publishedBy": "Publié par",
+    "cancelledAt": "Annulé le",
+    "delivery": "Distribution par canal",
+    "deliveryLive": "Les compteurs se mettent à jour pendant l’envoi.",
+    "sent": "Envoyés",
+    "failed": "Échecs",
+    "cancelAlert": "Annuler l’alerte",
+    "cancelInfo": "Annuler la notification",
+    "cancelAlertHelp": "L’alerte disparaît des applications et de la carte ; les messages déjà reçus ne peuvent pas être rappelés.",
+    "cancelInfoHelp": "La notification disparaît des applications ; les messages déjà reçus ne peuvent pas être rappelés.",
+    "confirmCancelText": "Annuler ce message maintenant ?",
+    "confirmCancel": "Confirmer l’annulation",
+    "kind": {
+      "info": "Information",
+      "alert": "Alerte"
+    },
+    "status": {
+      "draft": "Brouillon",
+      "published": "Publié",
+      "cancelled": "Annulé",
+      "expired": "Expiré"
+    },
+    "severity": {
+      "high": "Rouge",
+      "medium": "Orange",
+      "low": "Jaune"
+    },
+    "category": {
+      "weather": "Météo",
+      "climate": "Climat",
+      "hazard": "Risque"
+    },
+    "hazard": {
+      "heavy_rain": "Fortes pluies",
+      "flood": "Inondation",
+      "storm": "Orage",
+      "wind": "Vents forts",
+      "heat_wave": "Vague de chaleur",
+      "cold_wave": "Vague de froid",
+      "sea": "Mer agitée",
+      "forest_fire": "Feu de forêt",
+      "chemical": "Risque chimique",
+      "other": "Autre"
+    },
+    "topic": {
+      "activity": "Activité",
+      "awareness": "Sensibilisation",
+      "training": "Formation",
+      "world_day": "Journée mondiale",
+      "other": "Autre"
+    },
+    "audience": {
+      "all": "Tous les citoyens",
+      "volunteers": "Volontaires",
+      "organizations": "Établissements",
+      "user": "Un utilisateur"
+    },
+    "channel": {
+      "push": "Notification",
+      "sms": "SMS",
+      "email": "E-mail"
+    },
+    "dispatch": {
+      "pending": "en attente",
+      "running": "en cours",
+      "done": "terminé",
+      "skipped": "sans destinataire",
+      "failed": "échoué"
+    },
+    "target": {
+      "user": "Un utilisateur",
+      "polygon": "Zone dessinée",
+      "national": "Tout le pays"
+    },
+    "filters": {
+      "kind": "Type",
+      "status": "Statut",
+      "all": "Tous"
+    },
+    "columns": {
+      "kind": "Type",
+      "title": "Titre",
+      "status": "Statut",
+      "target": "Cible",
+      "delivery": "Distribution",
+      "date": "Date"
+    },
+    "fields": {
+      "title": {
+        "ar": "Titre (arabe)",
+        "fr": "Titre (français)",
+        "en": "Titre (anglais)"
+      },
+      "body": {
+        "ar": "Texte (arabe)",
+        "fr": "Texte (français)",
+        "en": "Texte (anglais)"
+      },
+      "topic": "Thème",
+      "audience": "Public",
+      "severity": "Niveau de vigilance",
+      "category": "Catégorie",
+      "hazard": "Phénomène",
+      "userId": "Identifiant de l’utilisateur",
+      "expiresAt": "Fin de validité",
+      "channels": "Canaux",
+      "choose": "Choisir…",
+      "none": "Non précisé"
+    },
+    "area": {
+      "legend": "Zone concernée",
+      "mode": {
+        "gouvernorats": "Gouvernorats",
+        "polygon": "Zone dessinée"
+      },
+      "drawHelp": "Cliquez sur la carte pour placer les sommets de la zone (3 à {{max}} points), puis terminez.",
+      "mapLabel": "Carte de la zone d’alerte",
+      "points": "Sommets : {{count}}",
+      "closed": "zone fermée",
+      "finish": "Terminer la zone",
+      "resume": "Reprendre le tracé",
+      "undo": "Annuler le dernier point",
+      "clear": "Effacer la zone",
+      "own": "Cible : gouvernorat de {{name}}",
+      "gouvernorats": "Gouvernorats ciblés",
+      "emptyIsNational": "Aucun gouvernorat coché : tout le pays."
+    },
+    "validation": {
+      "summary": "Corrigez les champs signalés.",
+      "titleRequired": "Le titre en arabe est obligatoire.",
+      "bodyRequired": "Le texte en arabe est obligatoire.",
+      "channelsRequired": "Choisissez au moins un canal.",
+      "topicRequired": "Choisissez un thème.",
+      "audienceRequired": "Choisissez un public.",
+      "userIdInvalid": "Identifiant invalide (UUID attendu).",
+      "severityRequired": "Choisissez un niveau de vigilance.",
+      "categoryRequired": "Choisissez une catégorie.",
+      "expiryRequired": "Indiquez la fin de validité.",
+      "expiryRange": "La fin de validité doit être dans le futur et dans 7 jours au plus.",
+      "polygon": {
+        "too_few": "La zone doit compter au moins 3 sommets (au plus {{max}}).",
+        "too_many": "La zone compte trop de sommets (au plus {{max}}).",
+        "outside": "La zone doit rester en Tunisie (au plus {{max}} sommets).",
+        "self_intersecting": "Les côtés de la zone se croisent (au plus {{max}} sommets)."
+      }
+    },
+    "userLookup": {
+      "email": "E-mail du compte",
+      "help": "Saisissez l’adresse exacte (sans recherche partielle). Chaque recherche est journalisée.",
+      "search": "Rechercher",
+      "searching": "Recherche…",
+      "invalidEmail": "Adresse e-mail invalide.",
+      "found": "Compte trouvé",
+      "noName": "Nom non renseigné",
+      "channels": "Joignable par : {{list}}",
+      "noChannel": "Aucun canal de contact enregistré.",
+      "clear": "Retirer ce compte",
+      "orId": "Ou collez directement l’identifiant du compte :"
+    }
+  },
+  "tips": {
+    "title": "Conseils de sécurité",
+    "intro": "Les conseils publiés s’affichent dans l’application et restent disponibles hors ligne. Un conseil n’est publié que complet en arabe, français et anglais ; son contenu doit être validé par la Protection civile.",
+    "new": "Nouveau conseil",
+    "empty": "Aucun conseil.",
+    "newTitle": "Nouveau conseil",
+    "editTitle": "Modifier le conseil",
+    "edit": "Modifier",
+    "editOne": "Modifier : {{title}}",
+    "actions": "Actions",
+    "position": "Ordre",
+    "hazardLabel": "Risque",
+    "titleLabel": "Titre",
+    "statusLabel": "Statut",
+    "languages": "Langues",
+    "updatedAt": "Dernière modification",
+    "status": {
+      "draft": "Brouillon",
+      "published": "Publié"
+    },
+    "complete": "complète",
+    "incomplete": "incomplète",
+    "hazard": {
+      "fire": "Incendies",
+      "flood": "Inondations",
+      "traffic_accident": "Accidents de la route",
+      "medical": "Premiers secours",
+      "drowning": "Noyade",
+      "landslide": "Glissements de terrain",
+      "chemical_leak": "Fuites chimiques",
+      "heat_wave": "Canicule",
+      "storm": "Tempêtes",
+      "earthquake": "Séismes",
+      "other": "Autre"
+    },
+    "do": "À faire",
+    "dont": "À éviter",
+    "noItems": "Aucun élément.",
+    "itemLabel": "{{list}}, élément {{n}}",
+    "addItem": "Ajouter à « {{list}} »",
+    "moveUp": "Monter l’élément {{n}}",
+    "moveDown": "Descendre l’élément {{n}}",
+    "remove": "Supprimer l’élément {{n}}",
+    "preview": "Aperçu ({{lang}})",
+    "completeHint": "La publication exige, dans chaque langue, un titre et au moins un élément.",
+    "publishedIncomplete": "Ce conseil est publié : un contenu incomplet ne sera pas accepté.",
+    "saveBeforePublish": "Enregistrez les modifications avant de publier.",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "saved": "Conseil enregistré.",
+    "publish": "Publier",
+    "published": "Conseil publié ; les applications se mettront à jour.",
+    "unpublish": "Dépublier",
+    "unpublished": "Conseil dépublié.",
+    "delete": "Supprimer",
+    "deleteConfirm": "Supprimer définitivement ce brouillon ?",
+    "deleteConfirmPublished": "Ce conseil est publié : le supprimer le retire des applications. Continuer ?",
+    "deleteConfirmAction": "Confirmer la suppression",
+    "deleted": "Conseil supprimé.",
+    "close": "Fermer"
+  },
+  "committee": {
+    "title": "Comités et niveaux opérationnels",
+    "saving": "Enregistrement…",
+    "loadMore": "Afficher plus",
+    "selectAll": "Tout sélectionner",
+    "selectNone": "Tout désélectionner",
+    "columns": {
+      "gouvernorat": "Gouvernorat",
+      "level": "Niveau",
+      "since": "Depuis",
+      "reason": "Motif",
+      "setBy": "Décidé par"
+    },
+    "urgency": {
+      "normal": "Normale",
+      "urgent": "Urgente"
+    },
+    "levels": {
+      "title": "Niveaux opérationnels des gouvernorats",
+      "intro": "Normal → crise → catastrophe. La crise relève la priorité des signalements du gouvernorat ; la catastrophe active le regroupement automatique et suspend les notifications d’information.",
+      "formTitle": "Changer le niveau",
+      "targets": "Gouvernorats concernés",
+      "targetsRequired": "Choisissez au moins un gouvernorat.",
+      "ownOnly": "Un comité local ne peut changer que le niveau de son gouvernorat.",
+      "level": "Nouveau niveau",
+      "levelRequired": "Choisissez le niveau.",
+      "localLimit": "Déclarer une catastrophe, ou abaisser le niveau d’un gouvernorat en catastrophe, relève du comité central.",
+      "reason": "Motif (visible dans la chronologie des incidents et l’audit)",
+      "reasonLength": "Le motif compte entre {{min}} et {{max}} caractères.",
+      "confirmText": "Confirmer le niveau « {{level}} » pour {{count}} gouvernorat(s) ?",
+      "disasterEffects": "Au niveau catastrophe : chaque signalement est regroupé automatiquement avec l’incident suggéré, les notifications d’information sont suspendues (pas les alertes) et la priorité des signalements ouverts est relevée.",
+      "crisisEffects": "Au niveau crise : la priorité des signalements ouverts des dernières 48 heures est relevée et le bandeau de crise s’affiche.",
+      "confirm": "Confirmer le changement",
+      "apply": "Appliquer",
+      "saved": "Niveau « {{level}} » appliqué à {{count}} gouvernorat(s)."
+    },
+    "directives": {
+      "title": "Directives",
+      "issueTitle": "Émettre une directive",
+      "fieldTitle": "Titre",
+      "fieldBody": "Texte de la directive",
+      "titleLength": "Le titre compte entre 3 et 150 caractères.",
+      "bodyRequired": "Le texte de la directive est requis.",
+      "urgency": "Urgence",
+      "targetsLegend": "Gouvernorats destinataires",
+      "emptyIsAll": "Sans sélection : les 24 gouvernorats.",
+      "ownTarget": "La directive est adressée à votre gouvernorat : {{name}}.",
+      "issue": "Émettre",
+      "issuedOk": "Directive émise ; les gouvernorats concernés sont avertis.",
+      "pendingOnly": "En attente d’accusé de réception seulement",
+      "empty": "Aucune directive.",
+      "issued": "Émise par {{by}} le {{at}}",
+      "targets": "À : {{targets}}",
+      "allGouvernorats": "tous les gouvernorats",
+      "from": {
+        "central": "Comité central",
+        "local": "Comité local"
+      },
+      "acks": "Accusés de réception",
+      "ackedBy": "{{by}} le {{at}}",
+      "pending": "En attente :",
+      "ackNote": "Note (facultative)",
+      "acknowledge": "Accuser réception"
+    },
+    "performance": {
+      "title": "Suivi de la performance",
+      "intro": "Indicateurs des gouvernorats de votre périmètre sur la période choisie.",
+      "period": "Période",
+      "lastDays": "{{count}} derniers jours",
+      "total": "Total",
+      "columns": {
+        "gouvernorat": "Gouvernorat",
+        "level": "Niveau",
+        "reports": "Signalements",
+        "closed": "Clôturés",
+        "rejected": "Rejetés",
+        "firstResponse": "Première réponse moyenne",
+        "resolution": "Durée de traitement moyenne",
+        "openIncidents": "Incidents ouverts",
+        "activeAssignments": "Engagements actifs",
+        "volunteers": "Volontaires prêts / validés",
+        "alerts": "Alertes actives"
+      }
     }
   }
 }

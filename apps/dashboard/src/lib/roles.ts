@@ -10,8 +10,24 @@ export const AI_SETTINGS_ROLES = ["central_committee", "sysadmin"] as const;
 export const ORG_READ_ROLES = [...READ_ROLES, "org_auditor"] as const;
 /** Registration and certificate reviews are `org_auditor` only. */
 export const ORG_REVIEW_ROLES = ["org_auditor"] as const;
+// ---------- Phase 5 (contract §0) ----------
+/** Units and resources: managed by `ops_manager` and `sysadmin`, read by the report read roles too. */
+export const LOGISTICS_ROLES = ["ops_manager", "sysadmin"] as const;
+export const LOGISTICS_READ_ROLES = [...READ_ROLES, "sysadmin"] as const;
+/** Closing and evaluating an incident. */
+export const CLOSE_ROLES = ["ops_manager", "field_commander"] as const;
+export const VOLUNTEER_REVIEW_ROLES = ["ops_manager", "local_committee", "central_committee"] as const;
+export const COMMITTEE_ROLES = ["local_committee", "central_committee"] as const;
+/** Committee performance: the committees and the operations manager. */
+export const MONITOR_ROLES = [...COMMITTEE_ROLES, "ops_manager"] as const;
+/** Notifications register and composer (alerts are drafted by `ops_manager` too). */
+export const NOTIFY_ROLES = ["content_editor", "ops_manager", "local_committee", "central_committee"] as const;
+export const INFO_ROLES = ["content_editor", "local_committee", "central_committee"] as const;
+export const ALERT_PUBLISH_ROLES = INFO_ROLES;
+export const TIPS_ROLES = ["content_editor"] as const;
+
 /** Every role the dashboard knows (shown in the header). */
-export const STAFF_ROLES = ORG_READ_ROLES;
+export const STAFF_ROLES = [...ORG_READ_ROLES, "content_editor", "sysadmin"] as const;
 export type StaffRole = (typeof STAFF_ROLES)[number];
 
 export function staffRoles(roles: readonly string[]): StaffRole[] {
@@ -31,9 +47,9 @@ export function canReviewOrgs(roles: readonly string[]): boolean {
   return ORG_REVIEW_ROLES.some((r) => roles.includes(r));
 }
 
-/** May open the dashboard at all: reports or institutions. */
+/** May open the dashboard at all: reports, institutions, logistics or content. */
 export function hasDashboardAccess(roles: readonly string[]): boolean {
-  return hasReadAccess(roles) || canReadOrgs(roles);
+  return hasReadAccess(roles) || canReadOrgs(roles) || canReadResources(roles) || canUseNotifications(roles);
 }
 
 export function canChangeStatus(roles: readonly string[]): boolean {
@@ -47,4 +63,77 @@ export function canManageIncidents(roles: readonly string[]): boolean {
 /** The API refuses settings changes outside national scope, for both roles (`national_scope_required`). */
 export function canEditAiSettings(identity: { roles: readonly string[]; national: boolean }): boolean {
   return identity.national && AI_SETTINGS_ROLES.some((r) => identity.roles.includes(r));
+}
+
+const any = (allowed: readonly string[], roles: readonly string[]) => allowed.some((r) => roles.includes(r));
+
+export function canReadResources(roles: readonly string[]): boolean {
+  return any(LOGISTICS_READ_ROLES, roles);
+}
+
+export function canManageResources(roles: readonly string[]): boolean {
+  return any(LOGISTICS_ROLES, roles);
+}
+
+/** Assign resources, update assignments, call volunteers out, add timeline notes. */
+export function canDispatch(roles: readonly string[]): boolean {
+  return any(INCIDENT_WRITE_ROLES, roles);
+}
+
+export function canCloseIncidents(roles: readonly string[]): boolean {
+  return any(CLOSE_ROLES, roles);
+}
+
+export function canReviewVolunteers(roles: readonly string[]): boolean {
+  return any(VOLUNTEER_REVIEW_ROLES, roles);
+}
+
+export function isCommittee(roles: readonly string[]): boolean {
+  return any(COMMITTEE_ROLES, roles);
+}
+
+export function canMonitorPerformance(roles: readonly string[]): boolean {
+  return any(MONITOR_ROLES, roles);
+}
+
+/** Levels the user may set (§1): a local committee only `normal`/`crisis` for its own gouvernorat. */
+export function settableLevels(identity: { roles: readonly string[] }): readonly ("normal" | "crisis" | "disaster")[] {
+  if (identity.roles.includes("central_committee")) return ["normal", "crisis", "disaster"];
+  if (identity.roles.includes("local_committee")) return ["normal", "crisis"];
+  return [];
+}
+
+/** Directives: issued by both committees, acknowledged by the local committee of a target gouvernorat. */
+export function canIssueDirectives(roles: readonly string[]): boolean {
+  return isCommittee(roles);
+}
+
+export function canAcknowledgeDirectives(roles: readonly string[]): boolean {
+  return roles.includes("local_committee");
+}
+
+export function canUseNotifications(roles: readonly string[]): boolean {
+  return any(NOTIFY_ROLES, roles);
+}
+
+export function canDraftMessage(roles: readonly string[], kind: "info" | "alert"): boolean {
+  return any(kind === "info" ? INFO_ROLES : NOTIFY_ROLES, roles);
+}
+
+export function canPublishMessage(roles: readonly string[], kind: "info" | "alert"): boolean {
+  return any(kind === "info" ? INFO_ROLES : ALERT_PUBLISH_ROLES, roles);
+}
+
+export function canEditTips(roles: readonly string[]): boolean {
+  return any(TIPS_ROLES, roles);
+}
+
+/** Pages a user lands on when the KPIs are not theirs: the first area their roles open. */
+export function landingPath(roles: readonly string[]): string {
+  if (hasReadAccess(roles)) return "/";
+  if (canReadOrgs(roles)) return "/orgs";
+  if (canUseNotifications(roles)) return "/notifications";
+  if (canEditTips(roles)) return "/safety-tips";
+  if (canReadResources(roles)) return "/resources";
+  return "/";
 }

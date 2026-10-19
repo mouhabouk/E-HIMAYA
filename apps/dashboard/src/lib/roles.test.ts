@@ -2,7 +2,19 @@ import { describe, expect, it } from "vitest";
 import { identityFromClaims, identityFromToken } from "../auth/identity";
 import { fakeJwt } from "../test/fixtures";
 import {
+  canAcknowledgeDirectives,
   canChangeStatus,
+  canCloseIncidents,
+  canDispatch,
+  canDraftMessage,
+  canEditTips,
+  canManageResources,
+  canMonitorPerformance,
+  canPublishMessage,
+  canReadResources,
+  canReviewVolunteers,
+  landingPath,
+  settableLevels,
   canEditAiSettings,
   canManageIncidents,
   canReadOrgs,
@@ -66,7 +78,45 @@ describe("role gating (contract §5)", () => {
   it("opens the dashboard to an institutions auditor without report roles", () => {
     expect(hasDashboardAccess(["org_auditor"])).toBe(true);
     expect(hasReadAccess(["org_auditor"])).toBe(false);
-    expect(hasDashboardAccess(["sysadmin"])).toBe(false);
+    expect(hasDashboardAccess(["org_admin", "offline_access"])).toBe(false);
+  });
+});
+
+describe("phase 5 permissions (contract §0)", () => {
+  it("opens logistics to sysadmin and content pages to content_editor", () => {
+    expect(hasDashboardAccess(["sysadmin"])).toBe(true);
+    expect(canReadResources(["sysadmin"])).toBe(true);
+    expect(canManageResources(["sysadmin"])).toBe(true);
+    expect(canManageResources(["operator"])).toBe(false);
+    expect(hasDashboardAccess(["content_editor"])).toBe(true);
+    expect(canEditTips(["content_editor"])).toBe(true);
+    expect(canEditTips(["central_committee"])).toBe(false);
+    expect(landingPath(["content_editor"])).toBe("/notifications");
+    expect(landingPath(["sysadmin"])).toBe("/resources");
+    expect(landingPath(["operator"])).toBe("/");
+  });
+
+  it("lets ops_manager draft alerts but only editors and committees publish them", () => {
+    expect(canDraftMessage(["ops_manager"], "alert")).toBe(true);
+    expect(canPublishMessage(["ops_manager"], "alert")).toBe(false);
+    expect(canDraftMessage(["ops_manager"], "info")).toBe(false);
+    for (const r of ["content_editor", "local_committee", "central_committee"]) {
+      expect(canPublishMessage([r], "alert"), r).toBe(true);
+      expect(canPublishMessage([r], "info"), r).toBe(true);
+    }
+  });
+
+  it("limits incident closing, volunteer review and levels to their roles", () => {
+    expect(canCloseIncidents(["field_commander"])).toBe(true);
+    expect(canCloseIncidents(["operator"])).toBe(false);
+    expect(canDispatch(["operator"])).toBe(true);
+    expect(canReviewVolunteers(["local_committee"])).toBe(true);
+    expect(canReviewVolunteers(["operator"])).toBe(false);
+    expect(settableLevels({ roles: ["local_committee"] })).toEqual(["normal", "crisis"]);
+    expect(settableLevels({ roles: ["central_committee"] })).toEqual(["normal", "crisis", "disaster"]);
+    expect(settableLevels({ roles: ["ops_manager"] })).toEqual([]);
+    expect(canAcknowledgeDirectives(["central_committee"])).toBe(false);
+    expect(canMonitorPerformance(["ops_manager"])).toBe(true);
   });
 });
 

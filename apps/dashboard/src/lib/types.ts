@@ -1,7 +1,8 @@
 /**
  * Types mirroring docs/api/phase-2-contract.md (sections 3 and 5), phase-3-contract.md (AI layer 1) and
- * phase-4-contract.md (institutions, sections 8–10).
+ * phase-4-contract.md (institutions, sections 8–10). Phase 5 types live in opsTypes.ts.
  */
+import type { Assignment, Callout, Evaluation, OpLevel } from "./opsTypes";
 
 export const REPORT_STATUSES = ["received", "in_progress", "intervened", "ongoing", "closed", "rejected"] as const;
 export type ReportStatus = (typeof REPORT_STATUSES)[number];
@@ -114,6 +115,8 @@ export const PRIORITY_COMPONENTS = [
   "credibility",
   "sensitive_sites",
   "weather",
+  /** Phase 5: bonus while the gouvernorat is at crisis or disaster level. */
+  "op_level",
 ] as const;
 export type PriorityComponent = (typeof PRIORITY_COMPONENTS)[number];
 
@@ -213,6 +216,17 @@ export const TIMELINE_KINDS = [
   "closed",
   "reopened",
   "dissolved",
+  // Phase 5 (interventions, §4)
+  "card_updated",
+  "note",
+  "assignment_created",
+  "assignment_status",
+  "callout_sent",
+  "callout_accepted",
+  "callout_declined",
+  "callout_cancelled",
+  "evaluated",
+  "level_changed",
 ] as const;
 
 export interface IncidentSummary {
@@ -229,6 +243,12 @@ export interface IncidentSummary {
   updated_at: string;
   closed_at: string | null;
   merged_into: string | null;
+  // Phase 5 (§4); absent from older payloads.
+  title?: string | null;
+  classification?: string | null;
+  op_level?: OpLevel;
+  assignments_active?: number;
+  callouts_open?: number;
 }
 
 export interface TimelineEntry {
@@ -241,6 +261,10 @@ export interface TimelineEntry {
 export interface IncidentDetail extends IncidentSummary {
   reports: StaffReport[];
   timeline: TimelineEntry[];
+  // Phase 5 (§4).
+  assignments?: Assignment[];
+  callouts?: Callout[];
+  evaluation?: Evaluation | null;
 }
 
 export type IncidentLinkBody =

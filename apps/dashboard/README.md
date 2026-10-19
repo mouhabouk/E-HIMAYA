@@ -94,11 +94,12 @@
 | @tanstack/react-query | 5.104.1 |
 | oidc-client-ts | 3.5.0 |
 | i18next / react-i18next | 26.4.2 / 17.0.15 |
-| maplibre-gl | 5.24.0 |
+| maplibre-gl | 6.12.0 (ESM فقط؛ عنوان الـ worker يُضبط في `src/lib/maplibre.ts`) |
 | vite / @vitejs/plugin-react | 7.3.6 / 5.2.0 |
 | typescript | 5.9.3 |
 | vitest / jsdom / @testing-library/react | 4.1.11 / 29.1.1 / 16.3.3 |
 | eslint / typescript-eslint / eslint-plugin-react-hooks | 10.12.0 / 8.71.0 / 7.1.1 |
+| @playwright/test (اختبارات المتصفح) | 1.56.1 (Chromium 141، المراجعة 1194) |
 
 ## التشغيل مع المكدس المحلي
 
@@ -147,7 +148,13 @@ npm run lint        # ESLint (typescript-eslint strict-type-checked + react-hook
 npm run typecheck   # tsc -b --noEmit (strict، noUncheckedIndexedAccess)
 npm test            # vitest run (jsdom)
 npm run build       # tsc -b ثم vite build إلى dist/
+npm run test:e2e    # Playwright في Chromium: يبني إلى dist-e2e ويشغّل vite preview على 4173
 ```
+
+اختبارات المتصفح (`e2e/`) تغطي ما لا يشغّله jsdom (MapLibre يحتاج WebGL2): رسم منطقة تنبيه بالنقر على الخريطة،
+التراجع عن نقطة، المسح، الإغلاق، ثم مقارنة الرؤوس المرسلة في طلبي الإنشاء والتعديل بإسقاط Mercator. الـ API ونمط
+الخريطة وجلسة الدخول محاكاة داخل المتصفح (`page.route`، نطاقات `*.e2e.test`)، ولا يُسمح بأي طلب شبكة آخر. محليا
+يُستعمل Chromium المثبت مسبقا (`PLAYWRIGHT_BROWSERS_PATH`)؛ وإلا: `npx playwright install chromium`.
 
 تغطي الاختبارات (`src/**/*.test.ts(x)`): تطابق مفاتيح ar/fr والمتغيرات، تسميات الحالات الرسمية، جدول
 الانتقالات و`allowed_transitions`، صلاحيات الأدوار وقراءة الرمز، عميل البث المباشر بمقبس وهمي (auth عند

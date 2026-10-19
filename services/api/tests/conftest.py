@@ -186,16 +186,47 @@ class FakeStore:
         return f"http://{'s3-internal' if internal else 's3'}.test/{key}?sig=1"
 
 
+class FakeChannel:
+    """Records what a delivery channel was asked to send."""
+
+    def __init__(self, configured: bool = True) -> None:
+        self.configured = configured
+        self.sent: list[tuple[Any, ...]] = []
+        self.unregistered: set[str] = set()
+
+    async def send(self, *args: Any) -> Any:
+        from app.modules.notify.providers import Result
+
+        self.sent.append(args)
+        token = getattr(args[0], "token", None)
+        if token in self.unregistered:
+            return Result(ok=False, unregistered=True, error="http_404")
+        return Result(ok=True)
+
+
 @pytest.fixture(autouse=True)
 def _isolated_infra() -> Iterator[FakeStore]:
     from app.core import ratelimit, storage
+    from app.modules.notify import providers
+    from app.modules.volunteers import presence
 
     store = FakeStore()
     storage.set_store(store)
     ratelimit.set_limiter(ratelimit.MemoryLimiter())
+    presence.set_presence(presence.MemoryPresence())
+    providers.set_providers(providers.Providers(push=FakeChannel(), sms=FakeChannel(), email=FakeChannel()))
     yield store
     storage.set_store(None)
     ratelimit.set_limiter(None)
+    presence.set_presence(None)
+    providers.set_providers(None)
+
+
+@pytest.fixture
+def channels() -> Any:
+    from app.modules.notify.providers import get_providers
+
+    return get_providers()
 
 
 @pytest.fixture

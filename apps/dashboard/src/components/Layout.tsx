@@ -4,9 +4,19 @@ import { NavLink, Outlet } from "react-router";
 import { useAuth } from "../context/auth";
 import { useLiveState } from "../context/live";
 import { useGouvernorats, useLanguage } from "../lib/hooks";
-import { canReadOrgs, hasReadAccess, staffRoles } from "../lib/roles";
+import {
+  canEditTips,
+  canMonitorPerformance,
+  canReadOrgs,
+  canReadResources,
+  canUseNotifications,
+  hasReadAccess,
+  isCommittee,
+  staffRoles,
+} from "../lib/roles";
 import { applyTheme, nextTheme, storedTheme, type Theme } from "../lib/theme";
 import { NoAccessPage } from "../pages/NoAccessPage";
+import { LevelBanner } from "./LevelBanner";
 
 export function LanguageSwitch() {
   const { t, i18n } = useTranslation();
@@ -81,6 +91,10 @@ export function Layout() {
   // Only the screens the user's roles can use (the API enforces the same rules).
   const readsReports = hasReadAccess(identity.roles);
   const readsOrgs = canReadOrgs(identity.roles);
+  const readsResources = canReadResources(identity.roles);
+  const notifies = canUseNotifications(identity.roles);
+  const editsTips = canEditTips(identity.roles);
+  const committee = isCommittee(identity.roles) || canMonitorPerformance(identity.roles);
   const roles = staffRoles(identity.roles)
     .map((r) => t(`roles.${r}`))
     .join(t("common.listSeparator"));
@@ -104,8 +118,12 @@ export function Layout() {
               <NavLink to="/reports">{t("nav.reports")}</NavLink>
               <NavLink to="/incidents">{t("nav.incidents")}</NavLink>
               <NavLink to="/map">{t("nav.map")}</NavLink>
+              <NavLink to="/volunteers">{t("nav.volunteers")}</NavLink>
             </>
           )}
+          {readsResources && <NavLink to="/resources">{t("nav.resources")}</NavLink>}
+          {notifies && <NavLink to="/notifications">{t("nav.notifications")}</NavLink>}
+          {committee && <NavLink to="/committee">{t("nav.committee")}</NavLink>}
           {readsOrgs && (
             <>
               <NavLink to="/orgs" end>
@@ -114,6 +132,7 @@ export function Layout() {
               <NavLink to="/orgs/certificates">{t("nav.certificates")}</NavLink>
             </>
           )}
+          {editsTips && <NavLink to="/safety-tips">{t("nav.safetyTips")}</NavLink>}
           {readsReports && <NavLink to="/settings/ai">{t("nav.aiSettings")}</NavLink>}
         </nav>
         <div className="header__tools">
@@ -136,6 +155,7 @@ export function Layout() {
           </button>
         </div>
       </header>
+      <LevelBanner />
       <main id="main" tabIndex={-1} className="main">
         {live === "forbidden" ? <NoAccessPage reason="liveForbidden" embedded /> : <Outlet />}
       </main>

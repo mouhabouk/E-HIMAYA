@@ -3,11 +3,14 @@
  *
  * Protocol: send {"type":"auth","token"} right after the socket opens and again after every token renewal;
  * the server answers {"type":"ready"} and then pushes report.created, report.status_changed and media.stored
- * (phase 2), report.enriched and incident.updated (phase 3), org.updated and certificate.updated (phase 4).
+ * (phase 2), report.enriched and incident.updated (phase 3), org.updated and certificate.updated (phase 4),
+ * and the operations events of phase 5 (§10): levels, directives, assignments, call-outs, resources, volunteers,
+ * notifications and alerts.
  * Close code 4401 = token missing/expired → renew the token, then reconnect. 4403 = no access → stop.
  * Any other close (incl. 4408 "too slow" and 1013 "try later") → reconnect with exponential back-off and jitter.
  * Once ready, a {"type":"ping"} keep-alive is sent periodically (the API answers {"type":"pong"}, ignored).
  */
+import type { Assignment, Callout, Directive, LevelRow, Message, Resource, StaffVolunteer } from "./opsTypes";
 import type { CertificateEvent, IncidentSummary, Media, StaffOrg, StaffReport } from "./types";
 
 export type LiveEvent =
@@ -19,7 +22,27 @@ export type LiveEvent =
   | { type: "incident.updated"; incident: IncidentSummary }
   /** Registration, review or card change of an institution (phase 4). */
   | { type: "org.updated"; org: StaffOrg }
-  | { type: "certificate.updated"; certificate: CertificateEvent };
+  | { type: "certificate.updated"; certificate: CertificateEvent }
+  // Phase 5 (§10).
+  | { type: "oplevel.changed"; level: LevelRow }
+  | { type: "directive.issued"; directive: Directive }
+  | { type: "assignment.updated"; assignment: Assignment; gouvernorat_code: number | null }
+  | { type: "callout.updated"; callout: Callout; gouvernorat_code: number | null }
+  | { type: "resource.updated"; resource: Resource }
+  | { type: "volunteer.updated"; volunteer: StaffVolunteer }
+  | { type: "notification.updated"; message: Message }
+  | { type: "alert.issued"; message: Message };
+
+/** Phase 5 events and the object each one carries (validated as an object with a string `id`, or a level row). */
+const OPS_EVENT_FIELDS: Readonly<Record<string, string>> = {
+  "directive.issued": "directive",
+  "assignment.updated": "assignment",
+  "callout.updated": "callout",
+  "resource.updated": "resource",
+  "volunteer.updated": "volunteer",
+  "notification.updated": "message",
+  "alert.issued": "message",
+};
 
 export type LiveState =
   | "idle"
@@ -100,6 +123,22 @@ function parseEvent(raw: unknown): LiveEvent | { type: "ready" } | null {
         typeof (m.certificate as { id?: unknown }).id === "string"
         ? (m as unknown as LiveEvent)
         : null;
+    case "oplevel.changed":
+      return m.level && typeof m.level === "object" && typeof (m.level as { gouvernorat_code?: unknown }).gouvernorat_code === "number"
+        ? (m as unknown as LiveEvent)
+        : null;
+    case "directive.issued":
+    case "assignment.updated":
+    case "callout.updated":
+    case "resource.updated":
+    case "volunteer.updated":
+    case "notification.updated":
+    case "alert.issued": {
+      const field = m[OPS_EVENT_FIELDS[m.type] ?? ""];
+      return field && typeof field === "object" && typeof (field as { id?: unknown }).id === "string"
+        ? (m as unknown as LiveEvent)
+        : null;
+    }
     case "media.stored":
       return typeof m.report_id === "string" && m.media && typeof m.media === "object"
         ? (m as unknown as LiveEvent)

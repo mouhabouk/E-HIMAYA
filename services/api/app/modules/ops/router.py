@@ -1,4 +1,5 @@
-"""Incident grouping endpoints (FR-C-02, BR-10, BR-11): confirm suggestions, link, split, merge."""
+"""Incident endpoints: grouping (FR-C-02, BR-10, BR-11) and interventions (FR-C-09: card, assignments,
+volunteer call-outs, closing evaluation)."""
 
 import uuid
 from typing import Annotated
@@ -7,10 +8,10 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_session
-from app.core.security import Principal, require_roles
+from app.core.security import Principal, Role, require_roles
 from app.modules.audit import service as audit
 from app.modules.audit.service import actor_of
-from app.modules.ops import schemas, service
+from app.modules.ops import interventions, schemas, service
 from app.modules.reports import service as reports
 from app.modules.reports.models import Report
 from app.modules.reports.schemas import StaffReportDetail
@@ -20,6 +21,7 @@ router = APIRouter(prefix="/api/v1/staff", tags=["incidents"])
 
 StaffReader = Annotated[Principal, Depends(require_roles(*READ_ROLES))]
 StaffWriter = Annotated[Principal, Depends(require_roles(*WRITE_ROLES))]
+Closer = Annotated[Principal, Depends(require_roles(Role.OPS_MANAGER, Role.FIELD_COMMANDER))]
 Session = Annotated[AsyncSession, Depends(get_session)]
 STATUSES = ("open", "closed", "merged", "dissolved")
 
@@ -55,6 +57,9 @@ async def get_incident(principal: StaffReader, session: Session, incident_id: uu
         **(await service.summary(session, incident)).model_dump(),
         reports=members,
         timeline=await service.timeline(session, incident_id),
+        assignments=await interventions.assignments_of(session, incident_id),
+        callouts=await interventions.callouts_of(session, incident_id),
+        evaluation=interventions.evaluation_of(incident),
     )
 
 
@@ -120,3 +125,148 @@ async def merge_incidents(
     )
     await session.commit()
     return await get_incident(principal, session, incident_id)
+
+
+# ---------------------------------------------------------------- interventions (FR-C-09, phase 5)
+
+
+@router.patch("/incidents/{incident_id}", response_model=schemas.IncidentDetail)
+async def update_card(
+    principal: StaffWriter, session: Session, incident_id: uuid.UUID, body: schemas.IncidentCardIn
+) -> schemas.IncidentDetail:
+    incident = await service.get_in_scope(session, principal, incident_id, lock=True)
+    await interventions.update_card(session, principal, incident, body)
+    await audit.record(
+        session,
+        actor=actor_of(principal),
+        action="incident.card",
+        target=f"incident:{incident_id}",
+        details=body.model_dump(exclude_unset=True),
+    )
+    await session.commit()
+    return await get_incident(principal, session, incident_id)
+
+
+@router.post(
+    "/incidents/{incident_id}/notes", response_model=schemas.TimelineEntry, status_code=status.HTTP_201_CREATED
+)
+async def add_note(
+    principal: StaffWriter, session: Session, incident_id: uuid.UUID, body: schemas.NoteIn
+) -> schemas.TimelineEntry:
+    incident = await service.get_in_scope(session, principal, incident_id)
+    entry = await interventions.add_note(session, principal, incident, body.text)
+    await session.commit()
+    return entry
+
+
+@router.post(
+    "/incidents/{incident_id}/assignments", response_model=schemas.AssignmentOut, status_code=status.HTTP_201_CREATED
+)
+async def create_assignment(
+    principal: StaffWriter, session: Session, incident_id: uuid.UUID, body: schemas.AssignmentIn
+) -> schemas.AssignmentOut:
+    incident = await service.get_in_scope(session, principal, incident_id, lock=True)
+    assignment = await interventions.create_assignment(session, principal, incident, body)
+    await audit.record(
+        session,
+        actor=actor_of(principal),
+        action="assignment.create",
+        target=f"incident:{incident_id}",
+        details={"assignment_id": str(assignment.id), "resource_id": str(body.resource_id)},
+    )
+    await session.commit()
+    return await interventions.assignment_out(session, assignment.id)
+
+
+@router.post("/assignments/{assignment_id}/status", response_model=schemas.AssignmentOut)
+async def update_assignment(
+    principal: StaffWriter, session: Session, assignment_id: uuid.UUID, body: schemas.AssignmentStatusIn
+) -> schemas.AssignmentOut:
+    assignment = await interventions.update_assignment(session, principal, assignment_id, body)
+    await audit.record(
+        session,
+        actor=actor_of(principal),
+        action="assignment.status",
+        target=f"incident:{assignment.incident_id}",
+        reason=body.note,
+        details={"assignment_id": str(assignment_id), "status": body.status},
+    )
+    await session.commit()
+    return await interventions.assignment_out(session, assignment_id)
+
+
+@router.post("/incidents/{incident_id}/close", response_model=schemas.IncidentDetail)
+async def close_incident(
+    principal: Closer, session: Session, incident_id: uuid.UUID, body: schemas.CloseIn
+) -> schemas.IncidentDetail:
+    incident = await service.get_in_scope(session, principal, incident_id, lock=True)
+    await interventions.close(session, principal, incident, body)
+    await audit.record(
+        session,
+        actor=actor_of(principal),
+        action="incident.close",
+        target=f"incident:{incident_id}",
+        reason=body.summary,
+        details={"outcome": body.outcome, "casualties": body.casualties.model_dump()},
+    )
+    await session.commit()
+    return await get_incident(principal, session, incident_id)
+
+
+@router.get("/incidents/{incident_id}/volunteer-suggestions", response_model=list[schemas.VolunteerSuggestion])
+async def volunteer_suggestions(
+    principal: StaffReader,
+    session: Session,
+    incident_id: uuid.UUID,
+    skill: str | None = None,
+    radius_km: Annotated[int, Query(ge=1, le=100)] = 30,
+    limit: Annotated[int, Query(ge=1, le=100)] = 20,
+) -> list[schemas.VolunteerSuggestion]:
+    incident = await service.get_in_scope(session, principal, incident_id)
+    return await interventions.suggestions(session, principal, incident, skill, radius_km, limit)
+
+
+@router.post(
+    "/incidents/{incident_id}/callouts", response_model=schemas.CalloutOut, status_code=status.HTTP_201_CREATED
+)
+async def create_callout(
+    principal: StaffWriter, session: Session, incident_id: uuid.UUID, body: schemas.CalloutIn
+) -> schemas.CalloutOut:
+    incident = await service.get_in_scope(session, principal, incident_id, lock=True)
+    callout = await interventions.create_callout(session, principal, incident, body)
+    await audit.record(
+        session,
+        actor=actor_of(principal),
+        action="callout.create",
+        target=f"incident:{incident_id}",
+        details={"callout_id": str(callout.id), "skill": body.skill, "requested": body.requested},
+    )
+    await session.commit()
+    return await interventions.callout_out(session, callout)
+
+
+@router.get("/callouts/{callout_id}", response_model=schemas.CalloutOut)
+async def get_callout(principal: StaffReader, session: Session, callout_id: uuid.UUID) -> schemas.CalloutOut:
+    callout, _ = await interventions.get_callout(session, principal, callout_id)
+    return await interventions.callout_out(session, callout)
+
+
+@router.post("/callouts/{callout_id}/cancel", response_model=schemas.CalloutOut)
+async def cancel_callout(principal: StaffWriter, session: Session, callout_id: uuid.UUID) -> schemas.CalloutOut:
+    callout = await interventions.cancel_callout(session, principal, callout_id)
+    await audit.record(
+        session, actor=actor_of(principal), action="callout.cancel", target=f"incident:{callout.incident_id}"
+    )
+    await session.commit()
+    return await interventions.callout_out(session, callout)
+
+
+@router.post("/callouts/{callout_id}/targets/{volunteer_id}/arrived", response_model=schemas.CalloutOut)
+async def target_arrived(
+    principal: StaffWriter, session: Session, callout_id: uuid.UUID, volunteer_id: uuid.UUID
+) -> schemas.CalloutOut:
+    callout, incident = await interventions.get_callout(session, principal, callout_id, lock=True)
+    await interventions.mark_arrived(session, callout, volunteer_id, actor_of(principal))
+    await interventions.announce_callout(session, callout, incident.gouvernorat_code)
+    await session.commit()
+    return await interventions.callout_out(session, callout)

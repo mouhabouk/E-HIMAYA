@@ -916,4 +916,453 @@ class AppLocalizationsAr extends AppLocalizations {
   String orgReportBy(String name) {
     return 'من $name';
   }
+
+  @override
+  String get notificationsTitle => 'الإشعارات';
+
+  @override
+  String get activeAlertsTitle => 'التنبيهات السارية';
+
+  @override
+  String get activeAlertsNone => 'لا يوجد تنبيه سارٍ في منطقتك.';
+
+  @override
+  String get inboxTitle => 'الرسائل';
+
+  @override
+  String get inboxEmpty => 'لا توجد رسائل بعد.';
+
+  @override
+  String get inboxNoIdentity => 'اختر طريقة استعمال التطبيق لتلقي الرسائل.';
+
+  @override
+  String get inboxLoadMore => 'عرض الرسائل الأقدم';
+
+  @override
+  String get inboxAlertActive => 'تنبيه سارٍ';
+
+  @override
+  String get inboxAlertEnded => 'تنبيه منتهٍ';
+
+  @override
+  String get alertTitle => 'تنبيه';
+
+  @override
+  String get alertOpen => 'فتح التنبيه';
+
+  @override
+  String alertUntil(String time) {
+    return 'إلى غاية $time';
+  }
+
+  @override
+  String alertPublishedAt(String time) {
+    return 'صدر في $time';
+  }
+
+  @override
+  String get alertNotActive => 'انتهى هذا التنبيه أو تم رفعه.';
+
+  @override
+  String get alertAreaNational => 'كامل البلاد';
+
+  @override
+  String get alertAreaZone => 'منطقة محددة على الخريطة';
+
+  @override
+  String alertAreaGouvernorats(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ولاية',
+      few: '$count ولايات',
+      two: 'ولايتان',
+      one: 'ولاية واحدة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get severityHigh => 'إنذار أحمر';
+
+  @override
+  String get severityMedium => 'إنذار برتقالي';
+
+  @override
+  String get severityLow => 'إنذار أصفر';
+
+  @override
+  String get hazardHeavyRain => 'أمطار غزيرة';
+
+  @override
+  String get hazardFlood => 'فيضان';
+
+  @override
+  String get hazardStorm => 'عاصفة';
+
+  @override
+  String get hazardWind => 'رياح قوية';
+
+  @override
+  String get hazardHeatWave => 'موجة حر';
+
+  @override
+  String get hazardColdWave => 'موجة برد';
+
+  @override
+  String get hazardSea => 'اضطراب البحر';
+
+  @override
+  String get hazardForestFire => 'حريق غابات';
+
+  @override
+  String get hazardChemical => 'خطر كيميائي';
+
+  @override
+  String get hazardOther => 'خطر آخر';
+
+  @override
+  String get topicActivity => 'نشاط';
+
+  @override
+  String get topicAwareness => 'توعية';
+
+  @override
+  String get topicTraining => 'تكوين';
+
+  @override
+  String get topicWorldDay => 'يوم عالمي';
+
+  @override
+  String get topicOther => 'معلومة';
+
+  @override
+  String get settingsAlerts => 'التنبيهات والإشعارات';
+
+  @override
+  String get settingsLocationAlerts => 'تنبيهات حيث أكون';
+
+  @override
+  String get settingsLocationAlertsHelp =>
+      'يستعمل الموقع التقريبي للهاتف (حوالي 1 كم) لإرسال تنبيهات المنطقة التي توجد فيها.';
+
+  @override
+  String get channelAlerts => 'التنبيهات العاجلة';
+
+  @override
+  String get channelAlertsDesc => 'تنبيهات الحماية المدنية واستنفار المتطوعين.';
+
+  @override
+  String get channelGeneral => 'المعلومات';
+
+  @override
+  String get channelGeneralDesc => 'متابعة بلاغاتك والرسائل الإعلامية.';
+
+  @override
+  String get pushSimulationBadge => 'وضع المحاكاة';
+
+  @override
+  String get pushSimulationHelp =>
+      'الإشعارات صادرة عن المحاكي المحلي وليس عن Firebase. لا يُسلَّم أي إشعار عبر خدمة دفع حقيقية.';
+
+  @override
+  String get tipsTitle => 'نصائح السلامة';
+
+  @override
+  String get tipsIntro => 'ما يجب فعله وما يجب تجنبه. متاحة دون اتصال.';
+
+  @override
+  String get tipsDo => 'ما يجب فعله';
+
+  @override
+  String get tipsDont => 'ما يجب تجنبه';
+
+  @override
+  String get tipEarthquake => 'زلزال';
+
+  @override
+  String get homeTipsDesc => 'التصرفات الصحيحة عند الطوارئ، حتى دون اتصال.';
+
+  @override
+  String get volunteerTitle => 'التطوع';
+
+  @override
+  String get homeVolunteerDesc =>
+      'انضم إلى المتطوعين واستجب للاستنفار القريب منك.';
+
+  @override
+  String get volunteerIntro =>
+      'يساعد المتطوعون فرق الحماية المدنية في حالات الطوارئ حسب اختصاصاتهم. تتم دراسة طلبك قبل أي استنفار.';
+
+  @override
+  String get volunteerApply => 'التسجيل كمتطوع';
+
+  @override
+  String get volunteerApplication => 'طلبي';
+
+  @override
+  String get volunteerStatusPending => 'قيد الدراسة';
+
+  @override
+  String get volunteerStatusApproved => 'مقبول';
+
+  @override
+  String get volunteerStatusRejected => 'مرفوض';
+
+  @override
+  String get volunteerStatusSuspended => 'موقوف';
+
+  @override
+  String get volunteerStatusWithdrawn => 'منسحب';
+
+  @override
+  String get volunteerPendingHelp =>
+      'ستدرس الحماية المدنية طلبك وستتلقى القرار عبر البريد الإلكتروني.';
+
+  @override
+  String get volunteerApprovedHelp =>
+      'يمكنك التصريح بجاهزيتك وتلقي الاستنفار القريب منك.';
+
+  @override
+  String get volunteerRejectedHelp =>
+      'لم يُقبل طلبك. يمكنك تعديله وإعادة تقديمه.';
+
+  @override
+  String get volunteerSuspendedHelp => 'تطوعك موقوف: لن تتلقى أي استنفار.';
+
+  @override
+  String get volunteerWithdrawnHelp =>
+      'لقد انسحبت. يمكنك التسجيل من جديد في أي وقت.';
+
+  @override
+  String volunteerReason(String reason) {
+    return 'السبب: $reason';
+  }
+
+  @override
+  String volunteerPeriodFrom(String from) {
+    return 'ابتداءً من $from';
+  }
+
+  @override
+  String volunteerPeriodRange(String from, String to) {
+    return 'من $from إلى $to';
+  }
+
+  @override
+  String get availabilityContinuous => 'مباشر';
+
+  @override
+  String get availabilityIntermittent => 'منقطع';
+
+  @override
+  String get volunteerEdit => 'تعديل طلبي';
+
+  @override
+  String get volunteerResubmit => 'إعادة التقديم';
+
+  @override
+  String get volunteerWithdraw => 'الانسحاب';
+
+  @override
+  String get volunteerWithdrawConfirm =>
+      'لن تتلقى أي استنفار ولن تتم مشاركة موقعك بعد الآن.';
+
+  @override
+  String get volunteerReady => 'جاهز للتدخل';
+
+  @override
+  String get volunteerReadyHelp =>
+      'طوال فترة جاهزيتك، ترى الحماية المدنية موقعك لاستنفارك.';
+
+  @override
+  String volunteerReadyUntil(String time) {
+    return 'جاهز إلى غاية $time';
+  }
+
+  @override
+  String get volunteerReadyFor => 'لمدة';
+
+  @override
+  String hoursShort(int hours) {
+    return '$hours س';
+  }
+
+  @override
+  String get volunteerLocationPrivacy =>
+      'لا تتم مشاركة موقعك إلا خلال فترة الجاهزية، ويُحذف عند انتهائها ولا يُؤرشف أبدا.';
+
+  @override
+  String get volunteerNoFix => 'تعذر تحديد موقعك. أعد المحاولة في مكان مفتوح.';
+
+  @override
+  String get volunteerSkills => 'الاختصاصات';
+
+  @override
+  String get volunteerSkillsRequired => 'اختر اختصاصا واحدا على الأقل.';
+
+  @override
+  String get volunteerOtherSkill => 'اختصاص آخر';
+
+  @override
+  String get volunteerAvailability => 'نوع التوفر';
+
+  @override
+  String get volunteerPeriod => 'فترة التطوع';
+
+  @override
+  String get volunteerFrom => 'البداية';
+
+  @override
+  String get volunteerTo => 'النهاية';
+
+  @override
+  String get volunteerNoEnd => 'دون تاريخ نهاية';
+
+  @override
+  String get volunteerNotes => 'ملاحظات (اختياري)';
+
+  @override
+  String get volunteerProfileNote =>
+      'يتم أخذ اسمك وهاتفك وولايتك من ملفك الشخصي.';
+
+  @override
+  String get volunteerSubmit => 'إرسال طلبي';
+
+  @override
+  String get volunteerSubmitted => 'تم إرسال الطلب.';
+
+  @override
+  String get fieldRequired => 'إجباري';
+
+  @override
+  String get skillFirstAid => 'الإسعافات الأولية';
+
+  @override
+  String get skillDiving => 'الغوص';
+
+  @override
+  String get skillHeavyVehicles => 'قيادة العربات الثقيلة';
+
+  @override
+  String get skillFirefighting => 'إطفاء الحرائق';
+
+  @override
+  String get skillSearchRescue => 'البحث والإنقاذ';
+
+  @override
+  String get skillLogistics => 'الإمداد والتموين';
+
+  @override
+  String get skillMedical => 'طبي';
+
+  @override
+  String get skillOther => 'أخرى';
+
+  @override
+  String get calloutsTitle => 'الاستنفار';
+
+  @override
+  String get calloutsDesc => 'طلبات المساعدة القريبة منك.';
+
+  @override
+  String get calloutsEmpty => 'لا يوجد استنفار حاليا.';
+
+  @override
+  String get calloutAccept => 'سأتوجه';
+
+  @override
+  String get calloutDecline => 'غير متاح';
+
+  @override
+  String get calloutArrived => 'وصلت إلى المكان';
+
+  @override
+  String get calloutEtaLabel => 'الوصول خلال (دقائق)';
+
+  @override
+  String calloutEta(int minutes) {
+    return 'الوصول خلال $minutes د';
+  }
+
+  @override
+  String calloutSkill(String skill) {
+    return 'الاختصاص: $skill';
+  }
+
+  @override
+  String calloutDistance(String distance) {
+    return 'على بعد $distance';
+  }
+
+  @override
+  String get calloutAnswerSent => 'في انتظار ردك';
+
+  @override
+  String get calloutAnswerAccepted => 'في الطريق';
+
+  @override
+  String get calloutAnswerDeclined => 'معتذر';
+
+  @override
+  String get calloutAnswerExpired => 'منتهي';
+
+  @override
+  String get calloutAnswerArrived => 'في المكان';
+
+  @override
+  String distanceMeters(int meters) {
+    return '$meters م';
+  }
+
+  @override
+  String distanceKm(String km) {
+    return '$km كم';
+  }
+
+  @override
+  String get errorRegistrationRequired => 'يلزمك حساب للتطوع.';
+
+  @override
+  String get errorNotVolunteer => 'لم تسجل كمتطوع.';
+
+  @override
+  String get errorProfileIncomplete =>
+      'أكمل ملفك الشخصي أولا (الهاتف والولاية).';
+
+  @override
+  String get errorInvalidPeriod =>
+      'الفترة غير صالحة (النهاية قبل البداية أو بعد أكثر من سنتين).';
+
+  @override
+  String get errorVolunteerNotApproved => 'طلب تطوعك غير مقبول.';
+
+  @override
+  String get errorOutsidePeriod => 'اليوم خارج فترة تطوعك.';
+
+  @override
+  String get errorNotReady => 'لم تعد في وضع الجاهزية.';
+
+  @override
+  String get errorLocationRequired => 'موقعك ضروري للتصريح بالجاهزية.';
+
+  @override
+  String get errorCalloutClosed => 'تم إغلاق هذا الاستنفار.';
+
+  @override
+  String get errorEtaRequired => 'أدخل مدة بين 1 و600 دقيقة.';
+
+  @override
+  String get errorInvalidTransition => 'لم يعد هذا الإجراء ممكنا.';
+
+  @override
+  String get errorVersionConflict =>
+      'تغيرت بياناتك في الأثناء. أعد التحميل وحاول مجددا.';
+
+  @override
+  String get locationServiceDisabled => 'خدمة الموقع معطلة على هذا الهاتف.';
+
+  @override
+  String get volunteerLocationDenied =>
+      'اسمح بالوصول إلى الموقع للتصريح بجاهزيتك.';
 }

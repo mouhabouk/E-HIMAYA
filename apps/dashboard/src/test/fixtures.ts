@@ -178,7 +178,7 @@ export function makeIncidentDetail(overrides: Partial<IncidentDetail> = {}): Inc
 
 export const AI_SETTINGS: AiSettings = {
   priority: {
-    weights: { severity: 35, lives: 25, casualties: 10, reporters: 10, credibility: 10, sensitive_sites: 5, weather: 5 },
+    weights: { severity: 35, lives: 25, casualties: 10, reporters: 10, credibility: 10, sensitive_sites: 5, weather: 5, op_level: 10 },
     category_severity: {
       sos: 0.9,
       fire: 0.8,

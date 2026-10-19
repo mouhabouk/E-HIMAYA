@@ -20,6 +20,13 @@ class AppPrefs {
   static const _profilePrompted = 'profile.prompted';
   static const _reportAs = 'orgs.report_as';
   static const _sosReportAs = 'orgs.sos_report_as';
+  static const _locationAlerts = 'alerts.location';
+  static const _pushToken = 'push.registered_token';
+  static const _simPushToken = 'push.sim_token';
+  static const _simPushSeq = 'push.sim_last_seq';
+  static const _tipsEtag = 'tips.etag';
+  static const _tipsJson = 'tips.json';
+  static const _alertsJson = 'alerts.last';
 
   String? get charterAcceptedVersion => _prefs.getString(_charterVersion);
   DateTime? get charterAcceptedAt {
@@ -72,6 +79,45 @@ class AppPrefs {
   Future<void> setSosReportAsOrgId(String? value) => value == null
       ? _prefs.remove(_sosReportAs)
       : _prefs.setString(_sosReportAs, value);
+
+  /// FR-A-061: receive alerts for the phone's current (coarse) position, not only for the
+  /// profile gouvernorat. On by default; the user can turn it off in settings.
+  bool get locationAlerts => _prefs.getBool(_locationAlerts) ?? true;
+  Future<void> setLocationAlerts(bool value) =>
+      _prefs.setBool(_locationAlerts, value);
+
+  /// Push token last registered with the server (to unregister it at sign-out).
+  String? get pushToken => _prefs.getString(_pushToken);
+  Future<void> setPushToken(String? value) => value == null
+      ? _prefs.remove(_pushToken)
+      : _prefs.setString(_pushToken, value);
+
+  /// Token of the simulated push (development builds with PUSH_SIMULATOR_URL only).
+  String? get simPushToken => _prefs.getString(_simPushToken);
+  Future<void> setSimPushToken(String value) =>
+      _prefs.setString(_simPushToken, value);
+
+  /// Last simulator message seen, so a restart does not show old pushes again.
+  int get simPushLastSeq => _prefs.getInt(_simPushSeq) ?? 0;
+  Future<void> setSimPushLastSeq(int value) =>
+      _prefs.setInt(_simPushSeq, value);
+
+  /// Offline copy of the published safety tips (public content) and its ETag.
+  String? get tipsEtag => _prefs.getString(_tipsEtag);
+  String? get tipsJson => _prefs.getString(_tipsJson);
+  Future<void> setTips(String json, String? etag) async {
+    await _prefs.setString(_tipsJson, json);
+    if (etag == null) {
+      await _prefs.remove(_tipsEtag);
+    } else {
+      await _prefs.setString(_tipsEtag, etag);
+    }
+  }
+
+  /// Last active alerts seen (public content), shown when offline until they expire.
+  String? get lastAlertsJson => _prefs.getString(_alertsJson);
+  Future<void> setLastAlertsJson(String value) =>
+      _prefs.setString(_alertsJson, value);
 }
 
 /// Overridden in `main()` (and in tests) with an initialised [SharedPreferences].
