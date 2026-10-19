@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/alerts/notifications_screen.dart';
 import '../../features/charter/charter_controller.dart';
 import '../../features/charter/charter_screen.dart';
 import '../../features/emergency/emergency_screen.dart';
@@ -18,6 +19,10 @@ import '../../features/report/report_queued_screen.dart';
 import '../../features/reports/my_reports_screen.dart';
 import '../../features/reports/track_screen.dart';
 import '../../features/settings/settings_screen.dart';
+import '../../features/tips/tips_screen.dart';
+import '../../features/volunteer/callouts_screen.dart';
+import '../../features/volunteer/volunteer_form_screen.dart';
+import '../../features/volunteer/volunteer_screen.dart';
 import '../auth/identity.dart';
 import '../http/models.dart';
 
@@ -39,6 +44,14 @@ abstract final class Routes {
   static const institutions = '/institutions';
   static String institution(String id) =>
       '/institutions/${Uri.encodeComponent(id)}';
+  // Phase 5: volunteers, notifications and alerts, safety tips.
+  static const volunteer = '/volunteer';
+  static const volunteerApply = '/volunteer/apply';
+  static const callouts = '/callouts';
+  static const notifications = '/notifications';
+  static String alert(String id) => '/alerts/${Uri.encodeComponent(id)}';
+  static const tips = '/tips';
+  static String tip(String hazard) => '/tips/${Uri.encodeComponent(hazard)}';
 }
 
 /// Navigation guard (charter accepted → role chosen → identity → home). Pure function so it can
@@ -157,6 +170,37 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: ':id',
             builder: (_, state) =>
                 MyInstitutionScreen(orgId: state.pathParameters['id'] ?? ''),
+          ),
+        ],
+      ),
+      GoRoute(
+        path: Routes.volunteer,
+        builder: (_, _) => const VolunteerScreen(),
+        routes: [
+          GoRoute(
+            path: 'apply',
+            builder: (_, _) => const VolunteerFormScreen(),
+          ),
+        ],
+      ),
+      GoRoute(path: Routes.callouts, builder: (_, _) => const CalloutsScreen()),
+      GoRoute(
+        path: Routes.notifications,
+        builder: (_, _) => const NotificationsScreen(),
+      ),
+      GoRoute(
+        path: '/alerts/:id',
+        builder: (_, state) =>
+            AlertDetailScreen(alertId: state.pathParameters['id'] ?? ''),
+      ),
+      GoRoute(
+        path: Routes.tips,
+        builder: (_, _) => const TipsScreen(),
+        routes: [
+          GoRoute(
+            path: ':hazard',
+            builder: (_, state) =>
+                TipDetailScreen(hazard: state.pathParameters['hazard'] ?? ''),
           ),
         ],
       ),

@@ -4,11 +4,15 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/auth/identity.dart';
 import '../../core/http/models.dart';
+import '../../core/location/location_service.dart';
+import '../../core/push/push_controller.dart';
 import '../../core/routing/app_router.dart';
 import '../../core/settings/settings_controller.dart';
+import '../../core/storage/app_prefs.dart';
 import '../../core/ui/directional_icons.dart';
 import '../../core/ui/emergency_action.dart';
 import '../../l10n/app_localizations.dart';
+import '../alerts/alerts_providers.dart';
 import '../charter/charter_controller.dart';
 import '../institution/institution_providers.dart';
 import '../institution/my_institution_screen.dart';
@@ -45,6 +49,8 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
     if (ok != true) return;
+    // While the session still proves whose phone it is.
+    await ref.read(deviceRegistrarProvider).unregister();
     await ref.read(profilePromptedProvider.notifier).reset();
     await ref.read(identityProvider.notifier).logout();
   }
@@ -124,6 +130,22 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ),
           const Divider(),
+          _Header(l10n.settingsAlerts),
+          const _LocationAlertsTile(),
+          ListTile(
+            key: const Key('settings-notifications'),
+            leading: const Icon(Icons.notifications_outlined),
+            title: Text(l10n.notificationsTitle),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.push(Routes.notifications),
+          ),
+          ListTile(
+            leading: const Icon(Icons.health_and_safety),
+            title: Text(l10n.tipsTitle),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.push(Routes.tips),
+          ),
+          const Divider(),
           _Header(l10n.settingsIdentity),
           ListTile(
             leading: Icon(
@@ -153,6 +175,14 @@ class SettingsScreen extends ConsumerWidget {
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.push(Routes.profile),
             ),
+          if (identity.isRegistered && identity.role == UserRole.citizen)
+            ListTile(
+              key: const Key('settings-volunteer'),
+              leading: const Icon(Icons.volunteer_activism),
+              title: Text(l10n.volunteerTitle),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push(Routes.volunteer),
+            ),
           if (identity.isRegistered && orgs.isNotEmpty)
             ListTile(
               key: const Key('settings-institution'),
@@ -179,6 +209,8 @@ class SettingsScreen extends ConsumerWidget {
               if (identity.isRegistered) {
                 await _logout(context, ref);
                 if (ref.read(identityProvider).isRegistered) return;
+              } else {
+                await ref.read(deviceRegistrarProvider).unregister();
               }
               await ref.read(identityProvider.notifier).chooseRole(null);
             },
@@ -207,6 +239,44 @@ class SettingsScreen extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// FR-A-061: alerts for the phone's current position (coarse, about 1 km), on by default.
+class _LocationAlertsTile extends ConsumerStatefulWidget {
+  const _LocationAlertsTile();
+
+  @override
+  ConsumerState<_LocationAlertsTile> createState() =>
+      _LocationAlertsTileState();
+}
+
+class _LocationAlertsTileState extends ConsumerState<_LocationAlertsTile> {
+  late bool _on = ref.read(appPrefsProvider).locationAlerts;
+
+  Future<void> _set(bool on) async {
+    if (on) {
+      // Asked here, where the user expects it, never in the background.
+      await ref.read(locationServiceProvider).ensurePermission();
+    }
+    await ref.read(appPrefsProvider).setLocationAlerts(on);
+    if (!mounted) return;
+    setState(() => _on = on);
+    await ref.read(deviceRegistrarProvider).register();
+    await ref.read(activeAlertsProvider.notifier).refresh();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return SwitchListTile(
+      key: const Key('settings-location-alerts'),
+      secondary: const Icon(Icons.my_location),
+      title: Text(l10n.settingsLocationAlerts),
+      subtitle: Text(l10n.settingsLocationAlertsHelp),
+      value: _on,
+      onChanged: _set,
     );
   }
 }

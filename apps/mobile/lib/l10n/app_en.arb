@@ -434,5 +434,230 @@
         "type": "String"
       }
     }
-  }
+  },
+  "notificationsTitle": "Notifications",
+  "activeAlertsTitle": "Alerts in force",
+  "activeAlertsNone": "No alert in force for your area.",
+  "inboxTitle": "Messages",
+  "inboxEmpty": "No message yet.",
+  "inboxNoIdentity": "Choose how to use the app to receive messages.",
+  "inboxLoadMore": "Show older messages",
+  "inboxAlertActive": "Alert in force",
+  "inboxAlertEnded": "Alert ended",
+  "alertTitle": "Alert",
+  "alertOpen": "Open the alert",
+  "alertUntil": "Until {time}",
+  "@alertUntil": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "alertPublishedAt": "Issued {time}",
+  "@alertPublishedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "alertNotActive": "This alert has ended or was lifted.",
+  "alertAreaNational": "Whole country",
+  "alertAreaZone": "Zone drawn on the map",
+  "alertAreaGouvernorats": "{count, plural, =1{1 gouvernorate} other{{count} gouvernorates}}",
+  "@alertAreaGouvernorats": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "severityHigh": "Red alert",
+  "severityMedium": "Orange alert",
+  "severityLow": "Yellow alert",
+  "hazardHeavyRain": "Heavy rain",
+  "hazardFlood": "Flood",
+  "hazardStorm": "Storm",
+  "hazardWind": "Strong wind",
+  "hazardHeatWave": "Heat wave",
+  "hazardColdWave": "Cold wave",
+  "hazardSea": "Rough sea",
+  "hazardForestFire": "Forest fire",
+  "hazardChemical": "Chemical hazard",
+  "hazardOther": "Other hazard",
+  "topicActivity": "Activity",
+  "topicAwareness": "Awareness",
+  "topicTraining": "Training",
+  "topicWorldDay": "World day",
+  "topicOther": "Information",
+  "settingsAlerts": "Alerts and notifications",
+  "settingsLocationAlerts": "Alerts where I am",
+  "settingsLocationAlertsHelp": "Uses the phone’s approximate position (about 1 km) to send you alerts for the area you are in.",
+  "channelAlerts": "Urgent alerts",
+  "channelAlertsDesc": "Civil Protection alerts and volunteer call-outs.",
+  "channelGeneral": "Information",
+  "channelGeneralDesc": "Follow-up of your reports and information messages.",
+  "tipsTitle": "Safety tips",
+  "tipsIntro": "What to do and what to avoid. Available without connection.",
+  "tipsDo": "Do",
+  "tipsDont": "Don’t",
+  "tipEarthquake": "Earthquake",
+  "homeTipsDesc": "The right actions in an emergency, even offline.",
+  "volunteerTitle": "Volunteering",
+  "homeVolunteerDesc": "Join the volunteers and answer call-outs near you.",
+  "volunteerIntro": "Volunteers help the Civil Protection teams in emergencies, according to their skills. Your application is reviewed before you can be called out.",
+  "volunteerApply": "Apply as a volunteer",
+  "volunteerApplication": "My application",
+  "volunteerStatusPending": "Under review",
+  "volunteerStatusApproved": "Approved",
+  "volunteerStatusRejected": "Rejected",
+  "volunteerStatusSuspended": "Suspended",
+  "volunteerStatusWithdrawn": "Withdrawn",
+  "volunteerPendingHelp": "Your application will be reviewed by the Civil Protection. You will receive an e-mail with the decision.",
+  "volunteerApprovedHelp": "You can declare yourself ready and receive call-outs near you.",
+  "volunteerRejectedHelp": "Your application was not accepted. You can correct it and apply again.",
+  "volunteerSuspendedHelp": "Your volunteering is suspended: you will not receive call-outs.",
+  "volunteerWithdrawnHelp": "You have withdrawn. You can apply again at any time.",
+  "volunteerReason": "Reason: {reason}",
+  "@volunteerReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "volunteerPeriodFrom": "From {from}",
+  "@volunteerPeriodFrom": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      }
+    }
+  },
+  "volunteerPeriodRange": "From {from} to {to}",
+  "@volunteerPeriodRange": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "availabilityContinuous": "Continuous",
+  "availabilityIntermittent": "Intermittent",
+  "volunteerEdit": "Edit my application",
+  "volunteerResubmit": "Apply again",
+  "volunteerWithdraw": "Withdraw",
+  "volunteerWithdrawConfirm": "You will no longer receive call-outs and your position will no longer be shared.",
+  "volunteerReady": "Ready to help",
+  "volunteerReadyHelp": "While you are ready, the Civil Protection sees your position to call you out.",
+  "volunteerReadyUntil": "Ready until {time}",
+  "@volunteerReadyUntil": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "volunteerReadyFor": "For",
+  "hoursShort": "{hours} h",
+  "@hoursShort": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "volunteerLocationPrivacy": "Your position is shared only while you are ready, is deleted when readiness ends and is never archived.",
+  "volunteerNoFix": "Your position could not be determined. Try again outdoors.",
+  "volunteerSkills": "Skills",
+  "volunteerSkillsRequired": "Choose at least one skill.",
+  "volunteerOtherSkill": "Other skill",
+  "volunteerAvailability": "Availability",
+  "volunteerPeriod": "Volunteering period",
+  "volunteerFrom": "Start",
+  "volunteerTo": "End",
+  "volunteerNoEnd": "No end date",
+  "volunteerNotes": "Notes (optional)",
+  "volunteerProfileNote": "Your name, phone and gouvernorate are taken from your profile.",
+  "volunteerSubmit": "Send my application",
+  "volunteerSubmitted": "Application sent.",
+  "fieldRequired": "Required",
+  "skillFirstAid": "First aid",
+  "skillDiving": "Diving",
+  "skillHeavyVehicles": "Heavy vehicles",
+  "skillFirefighting": "Firefighting",
+  "skillSearchRescue": "Search and rescue",
+  "skillLogistics": "Logistics",
+  "skillMedical": "Medical",
+  "skillOther": "Other",
+  "calloutsTitle": "Call-outs",
+  "calloutsDesc": "Requests for help near you.",
+  "calloutsEmpty": "No call-out at the moment.",
+  "calloutAccept": "I’m going",
+  "calloutDecline": "Not available",
+  "calloutArrived": "I’m on site",
+  "calloutEtaLabel": "Arrival in (minutes)",
+  "calloutEta": "Arrival in {minutes} min",
+  "@calloutEta": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "calloutSkill": "Skill: {skill}",
+  "@calloutSkill": {
+    "placeholders": {
+      "skill": {
+        "type": "String"
+      }
+    }
+  },
+  "calloutDistance": "At {distance}",
+  "@calloutDistance": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+  "calloutAnswerSent": "Awaiting your answer",
+  "calloutAnswerAccepted": "On the way",
+  "calloutAnswerDeclined": "Declined",
+  "calloutAnswerExpired": "Expired",
+  "calloutAnswerArrived": "On site",
+  "distanceMeters": "{meters} m",
+  "@distanceMeters": {
+    "placeholders": {
+      "meters": {
+        "type": "int"
+      }
+    }
+  },
+  "distanceKm": "{km} km",
+  "@distanceKm": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "errorRegistrationRequired": "You need an account to volunteer.",
+  "errorNotVolunteer": "You have not applied as a volunteer.",
+  "errorProfileIncomplete": "Complete your profile (phone and gouvernorate) first.",
+  "errorInvalidPeriod": "The period is invalid (end before start or more than two years ahead).",
+  "errorVolunteerNotApproved": "Your volunteer application is not approved.",
+  "errorOutsidePeriod": "Today is outside your volunteering period.",
+  "errorNotReady": "You are no longer ready.",
+  "errorLocationRequired": "Your position is needed to be ready.",
+  "errorCalloutClosed": "This call-out is closed.",
+  "errorEtaRequired": "Enter a time between 1 and 600 minutes.",
+  "errorInvalidTransition": "This action is no longer possible.",
+  "errorVersionConflict": "Your data changed meanwhile. Reload and try again.",
+  "locationServiceDisabled": "Location is turned off on this phone.",
+  "volunteerLocationDenied": "Allow location access to declare yourself ready."
 }

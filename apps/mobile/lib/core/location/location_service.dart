@@ -28,6 +28,10 @@ abstract class LocationService {
     final fresh = await current(timeout: timeout);
     return fresh ?? await last;
   }
+
+  /// A position without ever showing the permission prompt (background uses such as alert
+  /// targeting): null unless location was already granted.
+  Future<GeoPoint?> withoutPrompt() => lastKnown();
 }
 
 class GeolocatorLocationService extends LocationService {
@@ -76,6 +80,22 @@ class GeolocatorLocationService extends LocationService {
     } on Exception {
       return null;
     }
+  }
+
+  @override
+  Future<GeoPoint?> withoutPrompt() async {
+    try {
+      if (!await Geolocator.isLocationServiceEnabled()) return null;
+      final permission = await Geolocator.checkPermission();
+      if (permission != LocationPermission.always &&
+          permission != LocationPermission.whileInUse) {
+        return null;
+      }
+    } on Exception {
+      return null;
+    }
+    return await lastKnown() ??
+        await current(timeout: const Duration(seconds: 5));
   }
 
   static GeoPoint _toPoint(Position p) =>
