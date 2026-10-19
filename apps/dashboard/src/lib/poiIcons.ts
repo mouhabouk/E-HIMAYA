@@ -1,6 +1,19 @@
-/** Map points of interest of the institutions layer (phase 4 §5, §9): kinds and 24×24 icon paths. */
+/**
+ * Map points of interest: the institutions layer (phase 4 §5, §9) and the operations layers (phase 5:
+ * Civil Protection units, resources, ready volunteers): kinds and 24×24 icon paths.
+ */
 
-export const POI_KINDS = ["org", "org_hazmat", "evacuation_point", "water_point", "alarm"] as const;
+export const POI_KINDS = [
+  "org",
+  "org_hazmat",
+  "evacuation_point",
+  "water_point",
+  "alarm",
+  "unit",
+  "resource",
+  "resource_busy",
+  "volunteer",
+] as const;
 export type PoiKind = (typeof POI_KINDS)[number];
 
 export const POI_ICON_PATHS: Record<PoiKind, string> = {
@@ -14,6 +27,14 @@ export const POI_ICON_PATHS: Record<PoiKind, string> = {
   water_point: "M12 2s7 8 7 13a7 7 0 0 1-14 0c0-5 7-13 7-13z",
   // Bell.
   alarm: "M12 22a2 2 0 0 0 2-2h-4a2 2 0 0 0 2 2zm6-6v-5a6 6 0 0 0-5-5.9V4h-2v1.1A6 6 0 0 0 6 11v5l-2 2v1h16v-1l-2-2z",
+  // Shield (Civil Protection unit).
+  unit: "M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3zm-1 5h2v4h4v2h-4v4h-2v-4H7v-2h4V7z",
+  // Truck (resource available).
+  resource: "M2 6h12v9h1.5A3 3 0 0 1 21 15h1v-4l-3-4h-4V6h0V5H2v1zm0 1v8h1a3 3 0 0 1 5.8 0H13V7H2zm4.5 7a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm11 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4z",
+  // Truck with a flag (resource engaged).
+  resource_busy: "M2 6h12v9h1.5A3 3 0 0 1 21 15h1v-4l-3-4h-4V5H2v1zm4.5 8a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm11 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM16 2h6v4h-5v2h-1V2z",
+  // Person with a cross (volunteer).
+  volunteer: "M10 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6zM4 20v-3c0-3 3-5 6-5s6 2 6 5v3H4zm14-11h2v2h2v2h-2v2h-2v-2h-2v-2h2V9z",
 };
 
 export function isPoiKind(v: unknown): v is PoiKind {

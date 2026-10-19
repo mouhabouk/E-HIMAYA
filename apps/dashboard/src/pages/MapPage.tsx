@@ -5,17 +5,19 @@ import { Link, useNavigate } from "react-router";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { FiltersBar } from "../components/FiltersBar";
 import { LazyMapView } from "../components/LazyMap";
-import type { MapMarker, MapPoi } from "../components/MapView";
+import type { HeatPoint, MapMarker, MapPoi, MapPolygon } from "../components/MapView";
 import { MapLegend, orgKindLabel } from "../components/OrgBits";
 import { useAuth } from "../context/auth";
 import { useLiveEvents } from "../context/live";
 import { useServices } from "../context/services";
 import { directionOf } from "../i18n";
 import type { BBox } from "../lib/filters";
-import { useDebounced, useFormat, useLanguage } from "../lib/hooks";
+import { useDebounced, useFormat, useGouvernorats, useLanguage } from "../lib/hooks";
 import { mapKey } from "../lib/liveCache";
 import { initialBoundsFor } from "../lib/mapStyle";
-import { canReadOrgs } from "../lib/roles";
+import { opsKeys } from "../lib/opsApi";
+import type { Message } from "../lib/opsTypes";
+import { canReadOrgs, canReadResources } from "../lib/roles";
 import { queryKeys } from "../lib/staffApi";
 import type { Page, StaffReport } from "../lib/types";
 import { useEffectiveFilters } from "./useEffectiveFilters";
@@ -23,13 +25,52 @@ import { useEffectiveFilters } from "./useEffectiveFilters";
 const PAGE_SIZE = 200; // server maximum is 500
 const MAX_PAGES = 2;
 const ORG_LAYER_KEY = "ehimaya.mapOrgLayer";
+const RESOURCE_LAYER_KEY = "ehimaya.mapResourceLayer";
+const VOLUNTEER_LAYER_KEY = "ehimaya.mapVolunteerLayer";
+const ALERT_LAYER_KEY = "ehimaya.mapAlertLayer";
 
-function storedOrgLayer(): boolean {
+function storedLayer(key: string): boolean {
   try {
-    return sessionStorage.getItem(ORG_LAYER_KEY) === "1";
+    return sessionStorage.getItem(key) === "1";
   } catch {
     return false;
   }
+}
+
+function storeLayer(key: string, on: boolean): void {
+  try {
+    sessionStorage.setItem(key, on ? "1" : "0");
+  } catch {
+    /* ignore */
+  }
+}
+
+/** A map layer switch remembered for the tab (like the institutions layer). */
+function useLayer(key: string): [boolean, (on: boolean) => void] {
+  const [on, setOn] = useState(() => storedLayer(key));
+  return [
+    on,
+    (value: boolean) => {
+      setOn(value);
+      storeLayer(key, value);
+    },
+  ];
+}
+
+function LayerToggle({ checked, onChange, label }: { checked: boolean; onChange: (on: boolean) => void; label: string }) {
+  const id = useId();
+  return (
+    <label htmlFor={id} className="checkbox">
+      <input id={id} type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} />
+      <span>{label}</span>
+    </label>
+  );
+}
+
+function alertPolygons(alerts: readonly Message[]): MapPolygon[] {
+  return alerts.flatMap((a) =>
+    a.area.polygon ? [{ id: a.id, coordinates: a.area.polygon.coordinates, tone: a.severity ?? "low" }] : [],
+  );
 }
 
 /** FR-C-02 (map): reports in the visible area, coloured by status, updated live. */
@@ -47,16 +88,39 @@ export function MapPage() {
   const [initialBounds] = useState(() => initialBoundsFor(user?.identity.gouvernoratCode ?? null));
   const layerToggleId = useId();
   const orgLayerAllowed = canReadOrgs(user?.identity.roles ?? []);
-  const [orgLayer, setOrgLayerState] = useState(storedOrgLayer);
+  const [orgLayer, setOrgLayer] = useLayer(ORG_LAYER_KEY);
   const showOrgs = orgLayerAllowed && orgLayer;
-  const setOrgLayer = (on: boolean) => {
-    setOrgLayerState(on);
-    try {
-      sessionStorage.setItem(ORG_LAYER_KEY, on ? "1" : "0");
-    } catch {
-      /* ignore */
-    }
-  };
+  const resourceLayerAllowed = canReadResources(user?.identity.roles ?? []);
+  const [resourceLayer, setResourceLayer] = useLayer(RESOURCE_LAYER_KEY);
+  const showResources = resourceLayerAllowed && resourceLayer;
+  const [showVolunteers, setVolunteerLayer] = useLayer(VOLUNTEER_LAYER_KEY);
+  const [showAlerts, setAlertLayer] = useLayer(ALERT_LAYER_KEY);
+  const gouvernorats = useGouvernorats();
+
+  // Operations layers (phase 5, FR-C-06 / FR-C-10): resources and units, ready volunteers, active alerts.
+  const resourcesQuery = useQuery({
+    queryKey: bbox ? opsKeys.resourcesMap(bbox) : ["resources-map", "pending"],
+    enabled: showResources && bbox !== null,
+    placeholderData: keepPreviousData,
+    queryFn: ({ signal }) => {
+      if (!bbox) throw new Error("no bbox");
+      return api.resourcesMap(bbox, signal);
+    },
+  });
+  const volunteersQuery = useQuery({
+    queryKey: bbox ? opsKeys.volunteersMap(bbox, "") : ["volunteers-map", "pending"],
+    enabled: showVolunteers && bbox !== null,
+    placeholderData: keepPreviousData,
+    queryFn: ({ signal }) => {
+      if (!bbox) throw new Error("no bbox");
+      return api.volunteersMap(bbox, "", signal);
+    },
+  });
+  const alertsQuery = useQuery({
+    queryKey: opsKeys.activeAlerts,
+    enabled: showAlerts,
+    queryFn: ({ signal }) => api.activeAlerts(signal),
+  });
 
   // Institutions layer «المؤسسات» (FR-C-10): refetched with the same debounced bbox as the reports.
   const orgsQuery = useQuery({
@@ -134,13 +198,80 @@ export function MapPage() {
       }),
     [orgFeatures, t, fmt],
   );
-  const legend = useMemo(
-    () => [
-      { kind: "org" as const, label: t("orgs.layer.org") },
-      { kind: "org_hazmat" as const, label: t("orgs.layer.hazmat") },
-    ],
-    [t],
+  const opsPois = useMemo<MapPoi[]>(() => {
+    const out: MapPoi[] = [];
+    if (showResources) {
+      for (const f of resourcesQuery.data?.features ?? []) {
+        const [lon, lat] = f.geometry.coordinates;
+        const p = f.properties;
+        if (p.layer === "unit") {
+          out.push({
+            id: `unit-${p.id}`,
+            lon,
+            lat,
+            kind: "unit",
+            title: lang === "ar" ? p.name : p.name_fr,
+            subtitle: [t(`resources.units.kind.${p.kind}`), p.phone].filter(Boolean).join(" · "),
+            href: "/resources",
+          });
+        } else {
+          out.push({
+            id: `resource-${p.id}`,
+            lon,
+            lat,
+            kind: p.status === "assigned" ? "resource_busy" : "resource",
+            title: `${p.label} · ${t(`resources.kind.${p.kind}`)}`,
+            subtitle: `${t(`resources.status.${p.status}`)} · ${p.unit_name}`,
+            href: p.incident_id ? `/incidents/${encodeURIComponent(p.incident_id)}` : "/resources",
+          });
+        }
+      }
+    }
+    if (showVolunteers) {
+      for (const f of volunteersQuery.data?.features ?? []) {
+        const p = f.properties;
+        out.push({
+          id: `volunteer-${p.id}`,
+          lon: f.geometry.coordinates[0],
+          lat: f.geometry.coordinates[1],
+          kind: "volunteer",
+          title: p.full_name ?? t("ops.volunteer"),
+          subtitle: p.skills.map((sk) => t(`volunteers.skill.${sk}`)).join(t("common.listSeparator")),
+          href: `/volunteers/${encodeURIComponent(p.id)}`,
+        });
+      }
+    }
+    return out;
+  }, [showResources, resourcesQuery.data, showVolunteers, volunteersQuery.data, lang, t]);
+  const allPois = useMemo(() => [...pois, ...opsPois], [pois, opsPois]);
+  const heat = useMemo<HeatPoint[]>(
+    () =>
+      showVolunteers
+        ? (volunteersQuery.data?.features ?? []).map((f) => ({
+            lon: f.geometry.coordinates[0],
+            lat: f.geometry.coordinates[1],
+          }))
+        : [],
+    [showVolunteers, volunteersQuery.data],
   );
+  const alerts = useMemo(() => (showAlerts ? (alertsQuery.data ?? []) : []), [showAlerts, alertsQuery.data]);
+  const polygons = useMemo(() => alertPolygons(alerts), [alerts]);
+
+  const legend = useMemo(() => {
+    const items: { kind: MapPoi["kind"]; label: string }[] = [];
+    if (showOrgs) {
+      items.push({ kind: "org", label: t("orgs.layer.org") }, { kind: "org_hazmat", label: t("orgs.layer.hazmat") });
+    }
+    if (showResources) {
+      items.push(
+        { kind: "unit", label: t("ops.map.unit") },
+        { kind: "resource", label: t("ops.map.resource") },
+        { kind: "resource_busy", label: t("ops.map.resourceBusy") },
+      );
+    }
+    if (showVolunteers) items.push({ kind: "volunteer", label: t("ops.map.volunteer") });
+    return items;
+  }, [showOrgs, showResources, showVolunteers, t]);
 
   return (
     <div className="page page--map">
@@ -152,8 +283,8 @@ export function MapPage() {
         </p>
       </div>
       <FiltersBar showGouvernorat={national} />
-      {orgLayerAllowed && (
-        <div className="map-layers">
+      <div className="map-layers" role="group" aria-label={t("ops.map.layers")}>
+        {orgLayerAllowed && (
           <label htmlFor={layerToggleId} className="checkbox">
             <input
               id={layerToggleId}
@@ -163,15 +294,53 @@ export function MapPage() {
             />
             <span>{t("orgs.layer.toggle")}</span>
           </label>
-          {showOrgs && (
-            <>
-              <span className="muted" role="status" aria-live="polite">
-                {orgsQuery.isFetching ? t("common.loading") : t("orgs.layer.count", { count: fmt.number(pois.length) })}
-              </span>
-              <MapLegend items={legend} />
-            </>
+        )}
+        {resourceLayerAllowed && (
+          <LayerToggle checked={resourceLayer} onChange={setResourceLayer} label={t("ops.map.resourcesToggle")} />
+        )}
+        <LayerToggle checked={showVolunteers} onChange={setVolunteerLayer} label={t("ops.map.volunteersToggle")} />
+        <LayerToggle checked={showAlerts} onChange={setAlertLayer} label={t("ops.map.alertsToggle")} />
+        {showOrgs && (
+          <span className="muted" role="status" aria-live="polite">
+            {orgsQuery.isFetching ? t("common.loading") : t("orgs.layer.count", { count: fmt.number(pois.length) })}
+          </span>
+        )}
+        {legend.length > 0 && <MapLegend items={legend} />}
+      </div>
+      {showAlerts && (
+        <section className="card map-alerts" aria-label={t("ops.map.alertsTitle")}>
+          {alertsQuery.isError && <ErrorBox error={alertsQuery.error} onRetry={() => void alertsQuery.refetch()} />}
+          {alertsQuery.isSuccess && alerts.length === 0 && <p className="muted">{t("ops.map.noAlert")}</p>}
+          {alerts.length > 0 && (
+            <ul className="alerts-list">
+              {alerts.map((a) => (
+                <li key={a.id}>
+                  <span className={`chip chip--severity-${a.severity ?? "low"}`}>
+                    {t(`ops.map.severity.${a.severity ?? "low"}`)}
+                  </span>{" "}
+                  <strong dir="auto">{lang === "ar" ? a.title.ar : a.title.fr || a.title.ar}</strong>
+                  <span className="muted">
+                    {" · "}
+                    {a.area.polygon
+                      ? t("ops.map.drawnArea")
+                      : a.area.gouvernorat_codes.length === 0
+                        ? t("ops.map.national")
+                        : a.area.gouvernorat_codes
+                            .map((c) => gouvernorats.nameOf(c) ?? String(c))
+                            .join(t("common.listSeparator"))}
+                    {a.expires_at && ` · ${t("ops.map.until", { time: fmt.dateTime(a.expires_at) })}`}
+                  </span>
+                </li>
+              ))}
+            </ul>
           )}
-        </div>
+        </section>
+      )}
+      {showResources && resourcesQuery.isError && (
+        <ErrorBox error={resourcesQuery.error} onRetry={() => void resourcesQuery.refetch()} />
+      )}
+      {showVolunteers && volunteersQuery.isError && (
+        <ErrorBox error={volunteersQuery.error} onRetry={() => void volunteersQuery.refetch()} />
       )}
       {query.isError && <ErrorBox error={query.error} onRetry={() => void query.refetch()} />}
       {showOrgs && orgsQuery.isError && (
@@ -188,9 +357,11 @@ export function MapPage() {
           onBoundsChange={setRawBBox}
           styleUrl={mapStyleUrl}
           dir={directionOf(lang)}
-          pois={pois}
+          pois={allPois}
           poiOpenLabel={t("orgs.layer.open")}
           onOpenPoi={onOpenPoi}
+          polygons={polygons}
+          heat={heat}
         />
       </Suspense>
       <details className="card map-list">
@@ -203,8 +374,8 @@ export function MapPage() {
               </Link>
             </li>
           ))}
-          {pois.map((p) => (
-            <li key={`org-${p.id}`}>
+          {allPois.map((p) => (
+            <li key={`poi-${p.id}`}>
               <Link to={p.href ?? "/orgs"}>
                 <span dir="auto">{p.title}</span> — {p.subtitle}
               </Link>
