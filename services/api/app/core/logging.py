@@ -1,0 +1,21 @@
+"""Structured JSON logging. Personal data must never be logged: log ids, not names or phone numbers."""
+
+import logging
+import sys
+
+import structlog
+
+
+def configure_logging(level: str = "INFO") -> None:
+    logging.basicConfig(format="%(message)s", stream=sys.stdout, level=level.upper())
+    structlog.configure(
+        processors=[
+            structlog.contextvars.merge_contextvars,
+            structlog.processors.add_log_level,
+            structlog.processors.TimeStamper(fmt="iso", utc=True),
+            structlog.processors.dict_tracebacks,
+            structlog.processors.JSONRenderer(ensure_ascii=False),
+        ],
+        wrapper_class=structlog.make_filtering_bound_logger(logging.getLevelNamesMapping()[level.upper()]),
+        cache_logger_on_first_use=True,
+    )

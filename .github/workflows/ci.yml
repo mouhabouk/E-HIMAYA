@@ -1,0 +1,95 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  api:
+    name: API · lint, types, migrations, tests
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: services/api
+    env:
+      DATABASE_URL: postgresql+asyncpg://ehimaya:ehimaya-ci@localhost:5432/ehimaya
+      ANON_PSEUDONYM_SECRET: ci-only-secret-ci-only-secret-ci-only-01
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build database image (PostgreSQL + PostGIS + pgvector)
+        working-directory: infra/postgres
+        run: docker build -t ehimaya/postgres:ci .
+
+      - name: Start database
+        run: |
+          docker run -d --name pg -p 5432:5432 \
+            -e POSTGRES_PASSWORD=postgres-ci \
+            -e EHIMAYA_DB_NAME=ehimaya -e EHIMAYA_DB_USER=ehimaya -e EHIMAYA_DB_PASSWORD=ehimaya-ci \
+            -e KEYCLOAK_DB_NAME=keycloak -e KEYCLOAK_DB_USER=keycloak -e KEYCLOAK_DB_PASSWORD=keycloak-ci \
+            ehimaya/postgres:ci
+          for i in $(seq 1 60); do
+            if docker exec pg psql -U ehimaya -d ehimaya -tAc "SELECT extname FROM pg_extension WHERE extname='vector'" 2>/dev/null | grep -q vector; then
+              echo "database ready"; exit 0
+            fi
+            sleep 2
+          done
+          docker logs pg; exit 1
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: uv sync --locked
+
+      - name: Lint
+        run: |
+          uv run ruff check .
+          uv run ruff format --check .
+
+      - name: Type check
+        run: uv run mypy app
+
+      - name: Migrate (up, down, up)
+        run: |
+          uv run alembic upgrade head
+          uv run alembic downgrade base
+          uv run alembic upgrade head
+
+      - name: Tests
+        run: uv run pytest -q
+
+  api-image:
+    name: API · container image
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t ehimaya/api:ci services/api
+
+  keycloak-realms:
+    name: Keycloak · realm import
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Import both realms into a throwaway Keycloak
+        run: |
+          docker run -d --name kc -p 9000:9000 \
+            -e KC_HEALTH_ENABLED=true -e KC_BOOTSTRAP_ADMIN_USERNAME=admin -e KC_BOOTSTRAP_ADMIN_PASSWORD=admin \
+            -v "$PWD/infra/keycloak/realms:/opt/keycloak/data/import:ro" \
+            keycloak/keycloak:26.3 start-dev --import-realm
+          for i in $(seq 1 60); do
+            if curl -fs http://localhost:9000/health/ready >/dev/null; then break; fi
+            sleep 3
+          done
+          docker logs kc 2>&1 | tee kc.log | tail -20
+          grep -q "Realm 'ehimaya-public' imported" kc.log
+          grep -q "Realm 'ehimaya-staff' imported" kc.log
