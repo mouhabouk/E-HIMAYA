@@ -1,9 +1,9 @@
 import { useInfiniteQuery, useMutation, useQueryClient, type InfiniteData } from "@tanstack/react-query";
 import { useId, useState, type SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import { ErrorBox, Loading } from "../components/Feedback";
-import { DownloadButton, requirementLabel } from "../components/OrgBits";
+import { CertificateChip, DownloadButton, requirementLabel } from "../components/OrgBits";
 import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
 import { errorMessageKey, isApiError } from "../lib/api";
@@ -11,7 +11,11 @@ import { useFormat, useGouvernorats } from "../lib/hooks";
 import { validateValidUntil, validUntilBounds, type ValidUntilError } from "../lib/orgs";
 import { canReviewOrgs } from "../lib/roles";
 import { queryKeys } from "../lib/staffApi";
-import type { CertificateReviewBody, Page, QueueCertificate } from "../lib/types";
+import { isOneOf, type CertificateReviewBody, type Page, type QueueCertificate } from "../lib/types";
+
+/** Statuses the staff queue accepts (§9): the review queue itself, then decided certificates. */
+export const QUEUE_STATUSES = ["submitted", "approved", "rejected"] as const;
+type QueueStatus = (typeof QUEUE_STATUSES)[number];
 
 type QueueData = InfiniteData<Page<QueueCertificate>, string | null>;
 type Mode = "approve" | "reject";
@@ -48,6 +52,7 @@ function CertificateReview({ cert, onDone }: { cert: QueueCertificate; onDone: (
         });
       }
       void qc.invalidateQueries({ queryKey: queryKeys.org(cert.org_id), exact: true, refetchType: "active" });
+      void qc.invalidateQueries({ queryKey: queryKeys.certificates(body.decision === "approve" ? "approved" : "rejected") });
       void qc.invalidateQueries({ queryKey: queryKeys.orgsAll });
       void qc.invalidateQueries({ queryKey: ["kpis"] });
       onDone(
@@ -213,10 +218,14 @@ export function CertificatesPage() {
   const gouvernorats = useGouvernorats();
   const canReview = canReviewOrgs(user?.identity.roles ?? []);
   const [message, setMessage] = useState<string | null>(null);
+  const [params, setParams] = useSearchParams();
+  const rawStatus = params.get("status");
+  const status: QueueStatus = isOneOf(QUEUE_STATUSES, rawStatus) ? rawStatus : "submitted";
+  const statusId = useId();
 
   const query = useInfiniteQuery({
-    queryKey: queryKeys.certificates("submitted"),
-    queryFn: ({ pageParam, signal }) => api.certificates({ status: "submitted", cursor: pageParam, signal }),
+    queryKey: queryKeys.certificates(status),
+    queryFn: ({ pageParam, signal }) => api.certificates({ status, cursor: pageParam, signal }),
     initialPageParam: null as string | null,
     getNextPageParam: (last) => last.next_cursor,
   });
@@ -229,16 +238,42 @@ export function CertificatesPage() {
         <Link to="/orgs">{t("orgs.detail.back")}</Link>
       </div>
       <p className="muted">{t("orgs.certs.intro")}</p>
-      {!canReview && <p className="alert alert--info">{t("orgs.certs.readOnly")}</p>}
+      <div className="filters card filters__row">
+        <div className="field">
+          <label htmlFor={statusId}>{t("orgs.certs.statusFilter")}</label>
+          <select
+            id={statusId}
+            value={status}
+            onChange={(e) => {
+              setMessage(null);
+              setParams(e.target.value === "submitted" ? {} : { status: e.target.value }, { replace: true });
+            }}
+          >
+            {QUEUE_STATUSES.map((s) => (
+              <option key={s} value={s}>
+                {t(`orgs.certificate.${s}`)}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+      {!canReview && status === "submitted" && <p className="alert alert--info">{t("orgs.certs.readOnly")}</p>}
       <div aria-live="polite" role="status">
         {message && <p className="alert alert--ok">{message}</p>}
       </div>
 
       {query.isPending && <Loading />}
       {query.isError && <ErrorBox error={query.error} onRetry={() => void query.refetch()} />}
-      {query.isSuccess && items.length === 0 && <p className="card empty">{t("orgs.certs.empty")}</p>}
+      {query.isSuccess && items.length === 0 && (
+        <p className="card empty">{status === "submitted" ? t("orgs.certs.empty") : t("orgs.certs.emptyDecided")}</p>
+      )}
       {items.length > 0 && (
-        <ol className="queue" aria-label={t("orgs.certs.caption")}>
+        <ol
+          className="queue"
+          aria-label={
+            status === "submitted" ? t("orgs.certs.caption") : `${t("orgs.certs.title")} — ${t(`orgs.certificate.${status}`)}`
+          }
+        >
           {items.map((c) => {
             const missing = c.completeness?.missing ?? [];
             return (
@@ -249,7 +284,8 @@ export function CertificatesPage() {
                   </span>
                   <Link to={`/orgs/${encodeURIComponent(c.org_id)}`} dir="auto">
                     {c.org_name}
-                  </Link>
+                  </Link>{" "}
+                  <CertificateChip status={c.status} />
                 </p>
                 <dl className="fields">
                   <dt>{t("orgs.certs.columns.gouvernorat")}</dt>
@@ -278,7 +314,7 @@ export function CertificatesPage() {
                     />
                   </dd>
                 </dl>
-                {canReview && (
+                {canReview && c.status === "submitted" && (
                   <CertificateReview
                     cert={c}
                     onDone={(m) => {

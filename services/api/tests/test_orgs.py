@@ -432,7 +432,7 @@ async def test_map_features_must_be_near(client: httpx.AsyncClient, user: User) 
 # ---------------------------------------------------------------- documents
 
 
-async def test_document_versions(client: httpx.AsyncClient, user: User, fake_store: FakeStore) -> None:
+async def test_document_versions(client: httpx.AsyncClient, user: User, staff: Staff, fake_store: FakeStore) -> None:
     admin = user()
     org = await register(client, admin)
     base = f"/api/v1/orgs/{org['id']}/documents"
@@ -455,6 +455,8 @@ async def test_document_versions(client: httpx.AsyncClient, user: User, fake_sto
         not in (await client.get(f"/api/v1/orgs/{org['id']}", headers=admin)).json()["completeness"]["missing"]
     )
 
+    staff_versions = await client.get(f"/api/v1/staff/orgs/{org['id']}/documents/{doc['id']}/versions", headers=staff())
+    assert [v["version"] for v in staff_versions.json()] == [2, 1]
     renamed = (await client.put(f"{base}/{doc['id']}", json={"title": "Dossier 2027"}, headers=admin)).json()
     assert renamed["title"] == "Dossier 2027" and renamed["versions_count"] == 2
     assert (await client.delete(f"{base}/{doc['id']}", headers=admin)).status_code == 204

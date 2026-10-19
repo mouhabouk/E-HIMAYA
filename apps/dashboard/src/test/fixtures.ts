@@ -1,4 +1,5 @@
 import type {
+  Certificate,
   AiSettings,
   AiStatus,
   Analysis,
@@ -374,22 +375,25 @@ export function makeOrgDetail(overrides: Partial<StaffOrgDetail> = {}): StaffOrg
       },
     ],
     members: [{ display_name: "Sonia Gharbi", email: "sonia@example.tn", role: "admin" }],
-    certificates: [
-      {
-        id: "c-1",
-        code: "EHC-26-61-000123",
-        status: "submitted",
-        superseded: false,
-        created_at: "2026-10-01T08:00:00Z",
-        submitted_at: "2026-10-02T08:00:00Z",
-        reviewed_at: null,
-        review_reason: null,
-        valid_until: null,
-        fingerprint: "e".repeat(64),
-        pdf_sha256: "f".repeat(64),
-        verify_url: "http://localhost:5174/verify/EHC-26-61-000123",
-      },
-    ],
+    certificates: [makeCertificate()],
+    ...overrides,
+  };
+}
+
+export function makeCertificate(overrides: Partial<Certificate> = {}): Certificate {
+  return {
+    id: "c-1",
+    code: "EHC-26-61-000123",
+    status: "submitted",
+    superseded: false,
+    created_at: "2026-10-01T08:00:00Z",
+    submitted_at: "2026-10-02T08:00:00Z",
+    reviewed_at: null,
+    review_reason: null,
+    valid_until: null,
+    fingerprint: "e".repeat(64),
+    pdf_sha256: "f".repeat(64),
+    verify_url: "http://localhost:5174/verify/EHC-26-61-000123",
     ...overrides,
   };
 }

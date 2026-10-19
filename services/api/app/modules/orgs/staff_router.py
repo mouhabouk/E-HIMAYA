@@ -14,7 +14,7 @@ from app.modules.audit import service as audit
 from app.modules.audit.service import actor_of
 from app.modules.orgs import certificate, schemas, service
 from app.modules.orgs.domain import OrgKind, OrgRole, OrgStatus
-from app.modules.orgs.models import Certificate, Organization
+from app.modules.orgs.models import Certificate, Document, Organization
 from app.modules.orgs.router import delete_objects, download_url
 from app.modules.reports import service as reports
 from app.modules.reports.schemas import StaffReportPage
@@ -106,6 +106,17 @@ async def get_org(principal: OrgReader, session: Session, org_id: uuid.UUID) -> 
     await audit.record(session, actor=actor_of(principal), action="org.view", target=f"org:{org_id}")
     await session.commit()
     return detail
+
+
+@router.get("/orgs/{org_id}/documents/{doc_id}/versions", response_model=list[schemas.DocumentVersionOut])
+async def list_versions(
+    principal: OrgReader, session: Session, org_id: uuid.UUID, doc_id: uuid.UUID
+) -> list[schemas.DocumentVersionOut]:
+    await _org_in_scope(session, principal, org_id)
+    doc = await session.get(Document, doc_id)
+    if doc is None or doc.org_id != org_id:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "document_not_found")
+    return [service.version_out(v) for v in await service.versions(session, doc_id)]
 
 
 @router.get("/orgs/{org_id}/documents/{doc_id}/versions/{version}/download", response_model=schemas.DownloadOut)
