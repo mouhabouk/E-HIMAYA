@@ -223,8 +223,9 @@ status change pushes `{"type": "report_status", "tracking_code", "status"}` to t
 back to Arabic when empty; title ≤ 120, body ≤ 1000; SMS uses the title and the first 300 characters).
 
 Informational (`kind: "info"`) adds `{"topic": "activity" | "awareness" | "training" | "world_day" |
-"other", "audience": "all" | "volunteers" | "organizations" | "user", "gouvernorat_codes": [..],
-"user_id": "…" | null}`; empty `gouvernorat_codes` = national.
+"other", "audience": "all" | "volunteers" | "organizations" | "user", "area": {"gouvernorat_codes": [..]},
+"user_id": "…" | null}`; empty `gouvernorat_codes` = national (a regional author's draft defaults to its
+gouvernorat). Every `Message` carries `area` (`{"gouvernorat_codes": [..], "polygon": GeoJSON | null}`).
 
 Alert (`kind: "alert"`) adds `{"severity": "high" | "medium" | "low", "category": "weather" | "climate" |
 "hazard", "hazard": "heavy_rain" | "flood" | "storm" | "wind" | "heat_wave" | "cold_wave" | "sea" |
@@ -284,9 +285,45 @@ messages with the `email` channel.
 `{"message"}`; `incident.updated` carries the new summary fields.
 
 ## 11. Error codes added in this phase
-`level_not_allowed`, `out_of_scope`, `already_acknowledged`, `unit_in_use`, `resource_busy`,
-`incident_not_open`, `invalid_classification`, `assignments_active`, `registration_required`,
-`not_volunteer`, `profile_incomplete`, `invalid_period`, `volunteer_not_approved`, `outside_period`,
-`not_ready`, `callout_closed`, `no_volunteer_available`, `invalid_area`, `invalid_expiry`, `not_draft`,
-`suspended_by_level`, `translation_missing`, `invalid_transition`, `reason_required`, `version_conflict`,
-`not_found`.
+
+| HTTP | `detail` | Meaning |
+|---|---|---|
+| 403 | `level_not_allowed` | A committee sets a level or a gouvernorat outside what its role allows. |
+| 403 | `out_of_scope` | A regional staff member targets another gouvernorat (or a polygon beyond its own, 5 km tolerance). |
+| 403 | `insufficient_role` | Drafting or publishing a notification kind the role cannot handle. |
+| 409 | `already_acknowledged` | The directive was already acknowledged by this gouvernorat. |
+| 409 | `unit_in_use` | A unit still has resources. |
+| 409 | `label_taken` | A resource label already exists in the unit. |
+| 409 | `resource_in_history` | A resource that took part in an intervention is retired, not deleted. |
+| 409 | `resource_busy` | The resource already has an active assignment. |
+| 409 | `incident_not_open` | The incident is closed. |
+| 409 | `incident_without_location` | Volunteer suggestions or a call-out need an incident location. |
+| 422 | `invalid_classification` | Classification does not fit the incident category. |
+| 409 | `assignments_active` | Closing while assignments are still active. |
+| 422 | `eta_required` | An `en_route` status needs an ETA. |
+| 422 | `invalid_skill` | Unknown volunteer skill. |
+| 403 | `registration_required` | Volunteering needs a registered (non-anonymous) account. |
+| 404 | `not_volunteer` | No volunteer application for this account. |
+| 409 | `profile_incomplete` | The profile lacks fields required to volunteer. |
+| 422 | `invalid_period` | Readiness period is empty, in the past or too long. |
+| 422 | `location_required` | Readiness needs a current position. |
+| 409 | `volunteer_not_approved` | Readiness or a response from a volunteer not approved. |
+| 409 | `outside_period` | Location sent outside the readiness period. |
+| 409 | `not_ready` | The volunteer is not ready. |
+| 409 | `callout_closed` | The call-out was cancelled or has expired. |
+| 409 | `no_volunteer_available` | No ready volunteer matches the call-out. |
+| 422 | `invalid_area` | Polygon malformed, outside Tunisia, invalid, or combined with gouvernorats. |
+| 422 | `invalid_gouvernorat` | Unknown gouvernorat code. |
+| 422 | `invalid_user` | `audience: user` with an unknown account. |
+| 422 | `invalid_expiry` | Alert expiry in the past or more than 7 days ahead. |
+| 422 | `severity_category_expiry_required` | An alert needs severity, category and expiry. |
+| 422 | `topic_and_audience_required` | An informational message needs a topic and an audience. |
+| 422 | `kind_change` | A draft cannot change between `info` and `alert`. |
+| 409 | `not_draft` | Editing, deleting or publishing a message that is no longer a draft. |
+| 409 | `not_published` | Cancelling a message, or unpublishing a tip, that is not published. |
+| 409 | `suspended_by_level` | Informational messages to a gouvernorat at disaster level are suspended (alerts are not). |
+| 409 | `translation_missing` | A safety tip is published only complete in ar, fr and en. |
+| 409 | `invalid_transition` | Assignment or volunteer status change not allowed. |
+| 422 | `reason_required` | Rejecting a volunteer or cancelling a call-out needs a reason. |
+| 409 | `version_conflict` | Optimistic locking: the object changed since it was read. |
+| 404 | `not_found` | Missing, or outside the caller's scope. |

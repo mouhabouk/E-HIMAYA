@@ -17,7 +17,7 @@ describe("RequireAuth", () => {
   });
 
   it("shows the no-access page without a staff read role", async () => {
-    const auth = fakeAuth({ ...OPERATOR_CLAIMS, realm_access: { roles: ["sysadmin", "offline_access"] } });
+    const auth = fakeAuth({ ...OPERATOR_CLAIMS, realm_access: { roles: ["org_admin", "offline_access"] } });
     renderApp(<Protected />, { auth, lang: "fr" });
     expect(await screen.findByRole("heading", { name: "Accès refusé" })).toBeInTheDocument();
     expect(screen.queryByText("secret")).not.toBeInTheDocument();

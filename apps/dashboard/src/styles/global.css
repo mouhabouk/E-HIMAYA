@@ -1794,3 +1794,83 @@ button.map-poi {
     padding: 0.75rem;
   }
 }
+
+/* ---------- Phase 5: operational levels (§6.4), always paired with the level's name ---------- */
+
+:root {
+  --level-crisis-bg: #fff1e6;
+  --level-crisis-border: #c2410c;
+  --level-crisis-text: #7c2d12;
+  --level-disaster-bg: #fdecec;
+  --level-disaster-border: #991b1b;
+  --level-disaster-text: #7f1d1d;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --level-crisis-bg: #3a2414;
+    --level-crisis-border: #fb923c;
+    --level-crisis-text: #fed7aa;
+    --level-disaster-bg: #3b1515;
+    --level-disaster-border: #f87171;
+    --level-disaster-text: #fecaca;
+  }
+}
+
+:root[data-theme="dark"] {
+  --level-crisis-bg: #3a2414;
+  --level-crisis-border: #fb923c;
+  --level-crisis-text: #fed7aa;
+  --level-disaster-bg: #3b1515;
+  --level-disaster-border: #f87171;
+  --level-disaster-text: #fecaca;
+}
+
+.level-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  padding: 0.6rem 1.25rem;
+  border-block-end: 3px solid;
+}
+
+.level-banner a {
+  color: inherit;
+  font-weight: 600;
+}
+
+.level-banner--crisis {
+  background: var(--level-crisis-bg);
+  border-color: var(--level-crisis-border);
+  color: var(--level-crisis-text);
+}
+
+.level-banner--disaster {
+  background: var(--level-disaster-bg);
+  border-color: var(--level-disaster-border);
+  color: var(--level-disaster-text);
+}
+
+.level-tag {
+  display: inline-block;
+  padding: 0.1rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+.level-tag--normal {
+  color: var(--muted);
+}
+
+.level-tag--crisis {
+  color: var(--level-crisis-border);
+  background: var(--level-crisis-bg);
+}
+
+.level-tag--disaster {
+  color: var(--level-disaster-border);
+  background: var(--level-disaster-bg);
+}

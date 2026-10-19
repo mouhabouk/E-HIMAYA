@@ -1,6 +1,8 @@
 import type { InfiniteData, QueryClient } from "@tanstack/react-query";
 import { inBBox, matchesFilters, type BBox, type ReportFilters } from "./filters";
 import type { LiveEvent } from "./live";
+import { opsKeys } from "./opsApi";
+import type { LevelRow } from "./opsTypes";
 import { compareOrgNames, matchesOrgFilters, type OrgFilters } from "./orgs";
 import { comparePriority } from "./priority";
 import { queryKeys, type IncidentStatusFilter, type ReportSort } from "./staffApi";
@@ -257,7 +259,56 @@ function applyCertificateUpdate(qc: QueryClient, cert: CertificateEvent): void {
  * Apply one live event to react-query caches: report detail, report lists, map queries, incidents and
  * institutions. KPI invalidation is debounced by the caller.
  */
+/**
+ * Phase 5 events (§10): the level table is patched in place; the other lists are small and scoped, so they are
+ * refetched (only the queries on screen, the others when next shown).
+ */
+function applyOpsEvent(qc: QueryClient, event: LiveEvent): boolean {
+  switch (event.type) {
+    case "oplevel.changed":
+      qc.setQueryData<LevelRow[]>(opsKeys.levels, (rows) =>
+        rows?.some((r) => r.gouvernorat_code === event.level.gouvernorat_code)
+          ? rows.map((r) => (r.gouvernorat_code === event.level.gouvernorat_code ? event.level : r))
+          : rows,
+      );
+      void qc.invalidateQueries({ queryKey: ["performance"] });
+      return true;
+    case "directive.issued":
+      void qc.invalidateQueries({ queryKey: opsKeys.directivesAll });
+      return true;
+    case "assignment.updated":
+      void qc.invalidateQueries({ queryKey: queryKeys.incident(event.assignment.incident_id) });
+      void qc.invalidateQueries({ queryKey: opsKeys.resourcesAll });
+      void qc.invalidateQueries({ queryKey: opsKeys.resourceSummary });
+      void qc.invalidateQueries({ queryKey: opsKeys.resourcesMapAll });
+      return true;
+    case "callout.updated":
+      void qc.invalidateQueries({ queryKey: queryKeys.incident(event.callout.incident_id) });
+      void qc.invalidateQueries({ queryKey: ["volunteer-suggestions", event.callout.incident_id] });
+      return true;
+    case "resource.updated":
+      void qc.invalidateQueries({ queryKey: opsKeys.resourcesAll });
+      void qc.invalidateQueries({ queryKey: opsKeys.resourceSummary });
+      void qc.invalidateQueries({ queryKey: opsKeys.resourcesMapAll });
+      return true;
+    case "volunteer.updated":
+      void qc.invalidateQueries({ queryKey: opsKeys.volunteersAll });
+      void qc.invalidateQueries({ queryKey: opsKeys.volunteer(event.volunteer.id) });
+      void qc.invalidateQueries({ queryKey: opsKeys.volunteersMapAll });
+      return true;
+    case "notification.updated":
+    case "alert.issued":
+      qc.setQueryData(opsKeys.message(event.message.id), event.message);
+      void qc.invalidateQueries({ queryKey: opsKeys.messagesAll });
+      if (event.message.kind === "alert") void qc.invalidateQueries({ queryKey: opsKeys.activeAlerts });
+      return true;
+    default:
+      return false;
+  }
+}
+
 export function applyLiveEvent(qc: QueryClient, event: LiveEvent, now: number = Date.now()): void {
+  if (applyOpsEvent(qc, event)) return;
   if (event.type === "media.stored") {
     // The detail carries pre-signed URLs, so refetch rather than patch.
     void qc.invalidateQueries({ queryKey: queryKeys.report(event.report_id) });
@@ -273,6 +324,9 @@ export function applyLiveEvent(qc: QueryClient, event: LiveEvent, now: number = 
   }
   if (event.type === "certificate.updated") {
     applyCertificateUpdate(qc, event.certificate);
+    return;
+  }
+  if (event.type !== "report.created" && event.type !== "report.status_changed" && event.type !== "report.enriched") {
     return;
   }
   const report = event.report;
