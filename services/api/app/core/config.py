@@ -50,6 +50,12 @@ class Settings(BaseSettings):
     # Retries with back-off when a model is unavailable, then the analysis is marked failed.
     ai_max_attempts: int = Field(default=8, ge=1, le=50)
 
+    # Institutions portal (FR-B-*): base of invitation links and of the certificate verification page.
+    portal_public_url: str = "http://localhost:5174"
+    # Ed25519 private key (base64 of the 32-byte seed) signing approved safety certificates (FR-B-008).
+    # Without it certificates can be generated and submitted but not approved.
+    certificate_signing_key: SecretStr | None = None
+
     api_cors_origins: Annotated[list[str], NoDecode] = Field(default_factory=list)
     api_log_level: str = "INFO"
     db_pool_size: int = 10
@@ -67,11 +73,29 @@ class Settings(BaseSettings):
             raise ValueError("FIELD_ENCRYPTION_KEY must decode to 32 bytes (openssl rand -base64 32)")
         return value
 
-    @field_validator("ai_service_url", "ai_service_token", mode="before")
+    @field_validator("certificate_signing_key")
+    @classmethod
+    def _check_signing_key(cls, value: SecretStr | None) -> SecretStr | None:
+        if value is None:
+            return None
+        try:
+            raw = base64.b64decode(value.get_secret_value(), validate=True)
+        except binascii.Error as exc:
+            raise ValueError("CERTIFICATE_SIGNING_KEY must be base64 (openssl rand -base64 32)") from exc
+        if len(raw) != 32:
+            raise ValueError("CERTIFICATE_SIGNING_KEY must decode to 32 bytes (openssl rand -base64 32)")
+        return value
+
+    @field_validator("ai_service_url", "ai_service_token", "certificate_signing_key", mode="before")
     @classmethod
     def _empty_is_unset(cls, value: object) -> object:
         # Compose passes "" when the optional AI profile is not configured.
         return None if value == "" else value
+
+    @field_validator("portal_public_url")
+    @classmethod
+    def _strip_slash(cls, value: str) -> str:
+        return value.rstrip("/")
 
     @field_validator("oidc_issuers", "api_cors_origins", mode="before")
     @classmethod

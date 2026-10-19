@@ -29,6 +29,7 @@ from app.modules.ai import settings as ai_settings
 from app.modules.ai.client import AiClient, AiRejected, AiUnavailable, get_ai_client
 from app.modules.ai.models import Analysis
 from app.modules.identity.models import Account
+from app.modules.orgs import sites
 from app.modules.reports.domain import Category, Status
 from app.modules.reports.models import Media, Report, StatusHistory
 
@@ -122,6 +123,10 @@ async def score(session: AsyncSession, report: Report, analysis: Analysis) -> li
         corroborating_reporters=len(corroborating),
         extraction=analysis.extraction,
         keywords=lexicon.signals("\n".join(report_texts(report, media))),
+        organization_id=str(report.organization_id) if report.organization_id else None,
+        sensitive_site=await sites.nearest(
+            session, select(Report.location).where(Report.id == report.id).scalar_subquery()
+        ),
     )
     credibility = scoring.credibility(facts)
     priority = scoring.priority(facts, credibility["score"], settings.priority)

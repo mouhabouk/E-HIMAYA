@@ -94,7 +94,7 @@ Computed by the server from the card and the registers, never typed by the user:
   5 for ≤ 50. `null` for the other families.
 - `required` items and `completeness.missing` use these codes: `safety_file` (a stored safety file),
   `safety_plan` (a stored safety plan), `safety_team` (a representative and at least one member),
-  `training` (no expired training in the team), `hazmat_sds` (a safety data sheet for every
+  `training` (every team member has a training date and none is expired), `hazmat_sds` (a safety data sheet for every
   hazardous material), `equipment` (at least one equipment item, none overdue), `evacuation_points`
   (at least one). Required sets: every family needs `safety_file`, `safety_team`, `equipment`;
   `erp` categories 1–3, `high_rise` and `industrial` also need `safety_plan`, `training`,
@@ -196,7 +196,7 @@ institution's location (`422 feature_too_far`). At most 200 per institution.
 **Upload** = tus, same server and rules as report media (`POST /api/v1/uploads/`, `Authorization`
 header forwarded). `Upload-Metadata`: `target=org_document`, `document_id`, `sha256`, `filetype` (one of
 the types above), `filename` (kept: it is the institution's file name, shown in the history), `note`
-(optional, ≤ 200 chars). The server recomputes SHA-256 after upload (`uploading` → `verifying` →
+(optional, ≤ 200 chars, else `400 invalid_note`). The server recomputes SHA-256 after upload (`uploading` → `verifying` →
 `stored` | `rejected`). Errors: those of §4 of phase 2 plus `404 document_not_found`,
 `403 org_role_required`, `415 unsupported_media_type`, `413 document_too_large`.
 
@@ -223,8 +223,15 @@ the types above), `filename` (kept: it is the institution's file name, shown in 
 - `POST /api/v1/orgs/{id}/certificates/{cert_id}/submit` (admin; `active` institution; draft only;
   `completeness.ok` must be true at submission else `409 incomplete` with `{"detail": "incomplete"}` and
   the client shows `completeness.missing`) → `Certificate` (`submitted`).
+  If the registers were completed after the draft was generated, the draft still certifies the incomplete
+  state: `409 certificate_outdated`, generate a new draft.
 - On approval the server re-renders the PDF without the draft mark, with the approval date, validity
-  and the server signature (Ed25519 over the fingerprint); the fingerprint itself does not change.
+  and the server signature: Ed25519 over the UTF-8 text `<code>|<fingerprint>|<valid_until>` (ISO date).
+  The fingerprint itself does not change. Without a configured signing key approval answers
+  `503 signing_key_missing` (rejection still works).
+- `GET /api/v1/public/certificate-key` (no sign-in) → `{"algorithm": "Ed25519", "public_key": "<base64 of
+  the raw 32 bytes>" | null, "signed_message": "<code>|<fingerprint>|<valid_until ISO date>, UTF-8"}`, so
+  anyone can check a signature independently.
 
 ### Public verification (no sign-in, rate limited)
 `GET /api/v1/public/certificates/{code}` →
@@ -293,9 +300,16 @@ the visitor drop their PDF copy: the browser computes its SHA-256 and compares i
 ## 10. Priority: sensitive sites (BR-20)
 The `sensitive_sites` priority component (shown "no data" in phase 3) now uses the institutions: a
 report within 300 m of an `active` institution gets `value` = 1.0 if it stores hazardous materials,
-0.8 for `high_rise` or `erp` category 1–2, 0.6 for other `erp`/`educational`, 0.4 otherwise; `detail`
-= `{"org_id", "name", "distance_m", "reason": "hazmat|high_rise|large_public|public|nearby"}`.
-Its weight is in the AI settings (default 5, unchanged).
+0.8 for `high_rise` or `erp` category 1–2, 0.6 for other `erp`/`educational`, 0.4 otherwise (the most
+sensitive institution in the radius wins, then the nearest); `detail` = `{"org_id", "name", "distance_m",
+"reason": "hazmat|high_rise|large_public|public|nearby"}`. With no institution in the radius the value
+stays `null` (`detail.reason = "no_site_nearby"`) and the component is left out, as before.
+The component can only **raise** a priority: when counting it would lower the score (a low-sensitivity
+site next to a grave emergency) it gets 0 points and `detail.counted = false`. Its weight is in the AI
+settings (default 5, unchanged).
+
+The credibility score gains a component `organization` (+10, `detail = {"org_id"}`) for reports made on
+behalf of an institution.
 
 ## 11. Error codes added in this phase
 `realm_not_allowed`, `org_not_found`, `org_role_required`, `org_not_active`, `version_conflict`,
@@ -303,4 +317,5 @@ Its weight is in the AI settings (default 5, unchanged).
 `invalid_phone`, `last_admin`, `too_many_invitations`, `invitation_not_found`, `invitation_expired`,
 `invitation_email_mismatch`, `representative_exists`, `invalid_un_number`, `invalid_document`,
 `feature_too_far`, `too_many_features`, `document_not_found`, `document_in_use`, `document_too_large`,
-`incomplete`, `invalid_valid_until`, `reason_required`, `invalid_transition`, `not_found`.
+`incomplete`, `certificate_outdated`, `signing_key_missing`, `invalid_valid_until`, `reason_required`,
+`invalid_transition`, `invalid_note`, `not_found`.

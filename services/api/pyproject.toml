@@ -19,6 +19,9 @@ dependencies = [
   "structlog==26.1.0",
   "boto3==1.43.114",
   "cryptography==50.0.2",
+  "weasyprint==70.0",
+  "segno==1.6.6",
+  "email-validator==2.3.0",
 ]
 
 [dependency-groups]
