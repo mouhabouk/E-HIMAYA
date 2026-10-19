@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_session
+from app.core.ratelimit import enforce, opaque
 from app.core.security import Principal, Role, require_roles
 from app.modules.audit import service as audit
 from app.modules.notify import schemas, service
@@ -18,8 +19,11 @@ Editor = Annotated[
     Principal,
     Depends(require_roles(Role.CONTENT_EDITOR, Role.OPS_MANAGER, Role.LOCAL_COMMITTEE, Role.CENTRAL_COMMITTEE)),
 ]
+# Only roles that can send an informational message to one user may resolve an e-mail to an account.
+UserLookup = Annotated[Principal, Depends(require_roles(*service.INFO_ROLES))]
 AlertReader = Annotated[Principal, Depends(require_roles(*READ_ROLES, Role.CONTENT_EDITOR))]
 KINDS, STATUSES = ("info", "alert"), ("draft", "published", "cancelled", "expired")
+LOOKUP_LIMIT, LOOKUP_WINDOW_S = 30, 600
 
 
 def _csv(raw: str | None, allowed: tuple[str, ...], code: str) -> list[str]:
@@ -57,6 +61,30 @@ async def create_message(principal: Editor, session: Session, body: schemas.Mess
     out = await service.message_out(session, message)
     await session.commit()
     return out
+
+
+@router.post("/users/lookup", response_model=schemas.UserLookupOut)
+async def lookup_user(principal: UserLookup, session: Session, body: schemas.UserLookupIn) -> schemas.UserLookupOut:
+    """Resolve an exact e-mail to the account a one-user notification targets (personal data: audited)."""
+    await enforce(f"user-lookup:{opaque(principal.subject)}", LOOKUP_LIMIT, LOOKUP_WINDOW_S)
+    try:
+        found = await service.lookup_user(session, str(body.email))
+    except HTTPException as exc:
+        # Misses are audited too, so a series of guesses stays visible (the address itself is not kept).
+        await audit.record(
+            session, actor=audit.actor_of(principal), action="user.lookup", details={"result": exc.detail}
+        )
+        await session.commit()
+        raise
+    await audit.record(
+        session,
+        actor=audit.actor_of(principal),
+        action="user.lookup",
+        target=f"account:{found.user_id}",
+        details={"result": "found"},
+    )
+    await session.commit()
+    return found
 
 
 @router.get("/notifications/{message_id}", response_model=schemas.MessageOut)

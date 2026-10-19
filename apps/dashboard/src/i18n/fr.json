@@ -170,6 +170,8 @@
     "invalid_area": "Zone dessinée invalide (un contour de 4 à 500 points en Tunisie, sans gouvernorats).",
     "invalid_gouvernorat": "Gouvernorat inconnu.",
     "invalid_user": "Le compte ciblé n’existe pas.",
+    "user_not_found": "Aucun compte citoyen actif n’a exactement cette adresse e-mail.",
+    "ambiguous_email": "Plusieurs comptes portent cette adresse : collez l’identifiant du compte.",
     "invalid_expiry": "L’expiration de l’alerte doit être future et dans les 7 jours.",
     "severity_category_expiry_required": "Gravité, catégorie et expiration sont requises pour une alerte.",
     "topic_and_audience_required": "Le thème et le public sont requis pour une notification d’information.",
@@ -1432,6 +1434,19 @@
         "outside": "La zone doit rester en Tunisie (au plus {{max}} sommets).",
         "self_intersecting": "Les côtés de la zone se croisent (au plus {{max}} sommets)."
       }
+    },
+    "userLookup": {
+      "email": "E-mail du compte",
+      "help": "Saisissez l’adresse exacte (sans recherche partielle). Chaque recherche est journalisée.",
+      "search": "Rechercher",
+      "searching": "Recherche…",
+      "invalidEmail": "Adresse e-mail invalide.",
+      "found": "Compte trouvé",
+      "noName": "Nom non renseigné",
+      "channels": "Joignable par : {{list}}",
+      "noChannel": "Aucun canal de contact enregistré.",
+      "clear": "Retirer ce compte",
+      "orId": "Ou collez directement l’identifiant du compte :"
     }
   },
   "tips": {

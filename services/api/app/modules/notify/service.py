@@ -379,6 +379,47 @@ async def expire_alerts(session: AsyncSession) -> list[uuid.UUID]:
     return list(rows)
 
 
+# ---------------------------------------------------------------- one-user lookup
+
+# Exact, case-insensitive match on the registered profile e-mail of an active citizen account. No partial
+# search: the caller must already know the address (served by ix_profile_email_lower).
+_LOOKUP_SQL = """
+    SELECT a.user_id, p.first_name, p.last_name, p.email, p.phone IS NOT NULL AS has_phone,
+           EXISTS (SELECT 1 FROM notify.device d WHERE d.user_id = a.user_id) AS has_push
+    FROM identity.profile p
+    JOIN identity.account a ON a.user_id = p.user_id AND a.kind = 'citizen' AND a.status = 'active'
+    WHERE lower(p.email) = :email
+    LIMIT 2
+"""
+
+
+def mask_email(email: str) -> str:
+    local, _, domain = email.partition("@")
+    return f"{local[:1]}***@{domain.lower()}"
+
+
+def mask_name(first_name: str | None, last_name: str | None) -> str | None:
+    first, last = (first_name or "").strip(), (last_name or "").strip()
+    if not first and not last:
+        return None
+    return " ".join(part for part in (f"{first[:1]}***" if first else "", f"{last[:1]}." if last else "") if part)
+
+
+async def lookup_user(session: AsyncSession, email: str) -> schemas.UserLookupOut:
+    rows = (await session.execute(text(_LOOKUP_SQL), {"email": email.strip().lower()})).all()
+    if not rows:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "user_not_found")
+    if len(rows) > 1:  # a stale profile still holds an address another account now uses
+        raise HTTPException(status.HTTP_409_CONFLICT, "ambiguous_email")
+    row = rows[0]
+    return schemas.UserLookupOut(
+        user_id=row.user_id,
+        display_name=mask_name(row.first_name, row.last_name),
+        email=mask_email(row.email),
+        channels=schemas.UserChannels(push=bool(row.has_push), sms=bool(row.has_phone), email=True),
+    )
+
+
 # ---------------------------------------------------------------- recipients
 
 

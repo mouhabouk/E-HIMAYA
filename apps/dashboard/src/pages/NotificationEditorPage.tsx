@@ -32,6 +32,7 @@ import {
   TOPICS,
   type Message,
   type MessageKind,
+  type UserLookup,
 } from "../lib/opsTypes";
 import { addVertex, MAX_VERTICES, undoVertex, verticesBounds } from "../lib/polygon";
 import { canDraftMessage, canPublishMessage } from "../lib/roles";
@@ -208,6 +209,128 @@ function GouvernoratTargets({ form, setForm }: { form: MessageForm; setForm: (pa
   );
 }
 
+// Enough to catch a typo before asking the API; the API validates the address fully.
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/**
+ * Target of a message to one user: find the account by its exact e-mail (masked result, audited by the API),
+ * or paste its id directly. The id field stays the source of truth sent with the message.
+ */
+function UserTarget({
+  userId,
+  setUserId,
+  error,
+}: {
+  userId: string;
+  setUserId: (id: string) => void;
+  error: string | undefined;
+}) {
+  const { t } = useTranslation();
+  const { api } = useServices();
+  const base = useId();
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState(false);
+  const [found, setFound] = useState<UserLookup | null>(null);
+  const lookup = useMutation({
+    mutationFn: (address: string) => api.lookupUser(address),
+    onSuccess: (account) => {
+      setFound(account);
+      setUserId(account.user_id);
+    },
+  });
+  const search = () => {
+    const address = email.trim();
+    const valid = EMAIL.test(address);
+    setEmailError(!valid);
+    if (valid) lookup.mutate(address);
+  };
+  // A pasted or edited id no longer matches the account that was found.
+  const shown = found && found.user_id === userId.trim() ? found : null;
+  const reachable = shown ? CHANNELS.filter((c) => shown.channels[c]) : [];
+  const emailId = `${base}-email`;
+  const idId = `${base}-id`;
+  return (
+    <div className="user-target">
+      <div className={`field${emailError || lookup.isError ? " field--invalid" : ""}`}>
+        <label htmlFor={emailId}>{t("notify.userLookup.email")}</label>
+        <div className="input-with-button">
+          <input
+            id={emailId}
+            type="email"
+            dir="ltr"
+            autoComplete="off"
+            value={email}
+            aria-invalid={emailError || lookup.isError ? true : undefined}
+            aria-describedby={`${base}-email-help${emailError || lookup.isError ? ` ${base}-email-error` : ""}`}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setEmailError(false);
+              lookup.reset();
+            }}
+            onKeyDown={(e) => {
+              // Enter searches here instead of submitting the whole message form.
+              if (e.key === "Enter") {
+                e.preventDefault();
+                search();
+              }
+            }}
+          />
+          <button type="button" className="btn" disabled={lookup.isPending || !email.trim()} onClick={search}>
+            {lookup.isPending ? t("notify.userLookup.searching") : t("notify.userLookup.search")}
+          </button>
+        </div>
+        <p id={`${base}-email-help`} className="muted">
+          {t("notify.userLookup.help")}
+        </p>
+        {(emailError || lookup.isError) && (
+          <p id={`${base}-email-error`} className="field__error" role="alert">
+            {emailError ? t("notify.userLookup.invalidEmail") : t(errorMessageKey(lookup.error))}
+          </p>
+        )}
+      </div>
+      {shown && (
+        <div className="card user-target__found" role="status" aria-label={t("notify.userLookup.found")}>
+          <p>
+            <strong>{t("notify.userLookup.found")}</strong> · <span dir="auto">{shown.display_name ?? t("notify.userLookup.noName")}</span>{" "}
+            · <span dir="ltr">{shown.email}</span>
+          </p>
+          <p className="muted">
+            {reachable.length > 0
+              ? t("notify.userLookup.channels", {
+                  list: reachable.map((c) => t(`notify.channel.${c}`)).join(t("common.listSeparator")),
+                })
+              : t("notify.userLookup.noChannel")}
+          </p>
+          <button
+            type="button"
+            className="btn btn--ghost"
+            onClick={() => {
+              setFound(null);
+              setUserId("");
+              setEmail("");
+              lookup.reset();
+            }}
+          >
+            {t("notify.userLookup.clear")}
+          </button>
+        </div>
+      )}
+      <p className="muted">{t("notify.userLookup.orId")}</p>
+      <Field id={idId} label={t("notify.fields.userId")} error={error}>
+        <input
+          id={idId}
+          type="text"
+          dir="ltr"
+          value={userId}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? `${idId}-error` : undefined}
+          onChange={(e) => setUserId(e.target.value)}
+        />
+      </Field>
+    </div>
+  );
+}
+
 function Composer({ message, kind }: { message: Message | null; kind: MessageKind }) {
   const { t } = useTranslation();
   const { api } = useServices();
@@ -369,19 +492,6 @@ function Composer({ message, kind }: { message: Message | null; kind: MessageKin
           <div className="fields-row">
             {selectField("topic", TOPICS, "notify.topic")}
             {selectField("audience", AUDIENCES, "notify.audience")}
-            {form.audience === "user" && (
-              <Field id={id("user")} label={t("notify.fields.userId")} error={errors.userId}>
-                <input
-                  id={id("user")}
-                  type="text"
-                  dir="ltr"
-                  value={form.userId}
-                  aria-invalid={errors.userId ? true : undefined}
-                  aria-describedby={describedBy("userId")}
-                  onChange={(e) => setForm({ userId: e.target.value })}
-                />
-              </Field>
-            )}
           </div>
         ) : (
           <div className="fields-row">
@@ -400,6 +510,10 @@ function Composer({ message, kind }: { message: Message | null; kind: MessageKin
               />
             </Field>
           </div>
+        )}
+
+        {kind === "info" && form.audience === "user" && (
+          <UserTarget userId={form.userId} setUserId={(userId) => setForm({ userId })} error={errors.userId} />
         )}
 
         {kind === "alert" ? (

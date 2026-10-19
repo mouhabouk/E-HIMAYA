@@ -200,6 +200,87 @@ describe("NotificationEditorPage", () => {
     });
   });
 
+  it("finds the one-user target by exact e-mail, shows the masked account and can clear it", async () => {
+    const createMessage = vi.fn(() => Promise.resolve(makeMessage({ id: "m-6", kind: "info" })));
+    const lookupUser = vi
+      .fn()
+      .mockRejectedValueOnce(new ApiError(404, "user_not_found", "user_not_found"))
+      .mockResolvedValue({
+        user_id: "1b4e28ba-2fa1-11d2-883f-0016d3cca427",
+        display_name: "A*** J.",
+        email: "a***@example.tn",
+        channels: { push: true, sms: false, email: true },
+      });
+    setup("/notifications/new?kind=info", EDITOR, {
+      createMessage,
+      lookupUser,
+      message: vi.fn(() => new Promise<Message>(() => undefined)),
+    });
+    fireEvent.change(await screen.findByLabelText("Titre (arabe)"), { target: { value: "دورة تكوينية" } });
+    fireEvent.change(screen.getByLabelText("Texte (arabe)"), { target: { value: "التسجيل مفتوح" } });
+    fireEvent.change(screen.getByLabelText("Thème"), { target: { value: "training" } });
+    fireEvent.change(screen.getByLabelText("Public"), { target: { value: "user" } });
+
+    const email = screen.getByLabelText("E-mail du compte");
+    // A malformed address is not sent.
+    fireEvent.change(email, { target: { value: "amel@" } });
+    fireEvent.click(screen.getByRole("button", { name: "Rechercher" }));
+    expect(await screen.findByText("Adresse e-mail invalide.")).toBeInTheDocument();
+    expect(lookupUser).not.toHaveBeenCalled();
+
+    fireEvent.change(email, { target: { value: "amel@example.tn" } });
+    fireEvent.click(screen.getByRole("button", { name: "Rechercher" }));
+    expect(await screen.findByText("Aucun compte citoyen actif n’a exactement cette adresse e-mail.")).toBeInTheDocument();
+    expect(email).toHaveAttribute("aria-invalid", "true");
+
+    // Enter searches instead of submitting the form.
+    fireEvent.change(email, { target: { value: "  Amel.Jaziri@example.tn " } });
+    fireEvent.keyDown(email, { key: "Enter" });
+    await waitFor(() => expect(lookupUser).toHaveBeenLastCalledWith("Amel.Jaziri@example.tn"));
+    expect(createMessage).not.toHaveBeenCalled();
+    const found = await screen.findByRole("status", { name: "Compte trouvé" });
+    expect(found).toHaveTextContent("A*** J.");
+    expect(found).toHaveTextContent("a***@example.tn");
+    expect(found).toHaveTextContent("Joignable par : Notification, E-mail");
+    expect(screen.getByLabelText("Identifiant de l’utilisateur")).toHaveValue("1b4e28ba-2fa1-11d2-883f-0016d3cca427");
+
+    // Clearing removes the account and its id.
+    fireEvent.click(screen.getByRole("button", { name: "Retirer ce compte" }));
+    expect(screen.queryByRole("status", { name: "Compte trouvé" })).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Identifiant de l’utilisateur")).toHaveValue("");
+    expect(screen.getByLabelText("E-mail du compte")).toHaveValue("");
+
+    // Found again, the account is the message's target.
+    fireEvent.change(email, { target: { value: "amel.jaziri@example.tn" } });
+    fireEvent.click(screen.getByRole("button", { name: "Rechercher" }));
+    expect(await screen.findByRole("status", { name: "Compte trouvé" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Enregistrer le brouillon" }));
+    await waitFor(() => expect(createMessage).toHaveBeenCalledTimes(1));
+    expect(lastBody(createMessage)).toMatchObject({ audience: "user", user_id: "1b4e28ba-2fa1-11d2-883f-0016d3cca427" });
+  });
+
+  it("hides a found account once its id is edited by hand", async () => {
+    const lookupUser = vi.fn(() =>
+      Promise.resolve({
+        user_id: "1b4e28ba-2fa1-11d2-883f-0016d3cca427",
+        display_name: null,
+        email: "a***@example.tn",
+        channels: { push: false, sms: false, email: false },
+      }),
+    );
+    setup("/notifications/new?kind=info", EDITOR, { lookupUser });
+    fireEvent.change(await screen.findByLabelText("Public"), { target: { value: "user" } });
+    fireEvent.change(screen.getByLabelText("E-mail du compte"), { target: { value: "amel@example.tn" } });
+    fireEvent.click(screen.getByRole("button", { name: "Rechercher" }));
+    const found = await screen.findByRole("status", { name: "Compte trouvé" });
+    expect(found).toHaveTextContent("Nom non renseigné");
+    expect(found).toHaveTextContent("Aucun canal de contact enregistré.");
+    fireEvent.change(screen.getByLabelText("Identifiant de l’utilisateur"), {
+      target: { value: "00000000-0000-4000-8000-000000000000" },
+    });
+    expect(screen.queryByRole("status", { name: "Compte trouvé" })).not.toBeInTheDocument();
+  });
+
   it("shows a published alert's delivery per channel and cancels it after confirmation", async () => {
     const published = makeMessage({
       status: "published",
