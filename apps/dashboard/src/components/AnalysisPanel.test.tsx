@@ -122,6 +122,19 @@ describe("AnalysisPanel — sensitive sites (phase 4 §10)", () => {
     );
     expect(screen.getByText(/بناية شاهقة أو مؤسسة كبيرة مفتوحة للعموم/)).toBeInTheDocument();
   });
+
+  it("marks a site that was not counted, and shows no_site_nearby as 'none'", () => {
+    const { unmount } = renderApp(
+      <AnalysisPanel
+        report={withSensitive(0.4, { org_id: "o-3", name: "Kiosque", distance_m: 250, reason: "nearby", counted: false })}
+      />,
+      { lang: "fr" },
+    );
+    expect(screen.getByText(/Non compté : il aurait baissé la priorité\./)).toBeInTheDocument();
+    unmount();
+    renderApp(<AnalysisPanel report={withSensitive(null, { reason: "no_site_nearby" })} />, { lang: "ar" });
+    expect(screen.getByText("لا توجد مؤسسة على بعد أقل من 300 متر.")).toBeInTheDocument();
+  });
 });
 
 const SUGGESTION = {

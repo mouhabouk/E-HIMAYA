@@ -14,6 +14,12 @@ function section(name: string | RegExp): HTMLElement {
   return screen.getByRole("region", { name });
 }
 
+function currentVersion() {
+  const v = makeOrgDetail().documents[0]?.current_version;
+  if (!v) throw new Error("fixture without a current version");
+  return v;
+}
+
 describe("OrgDetailPage", () => {
   it("shows the card, contacts, classification with the provisional note and the completeness checklist", async () => {
     const api = fakeApi({ org: vi.fn(() => Promise.resolve(makeOrgDetail())) });
@@ -79,8 +85,8 @@ describe("OrgDetailPage", () => {
       org: vi.fn(() => Promise.resolve(makeOrgDetail())),
       orgDocumentVersions: vi.fn(() =>
         Promise.resolve([
-          { ...makeOrgDetail().documents[0]!.current_version!, version: 3 },
-          { ...makeOrgDetail().documents[0]!.current_version!, version: 2, note: "Première révision" },
+          { ...currentVersion(), version: 3 },
+          { ...currentVersion(), version: 2, note: "Première révision" },
         ]),
       ),
     });

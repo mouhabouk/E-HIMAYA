@@ -270,6 +270,7 @@ the visitor drop their PDF copy: the browser computes its SHA-256 and compares i
 - `GET /api/v1/staff/orgs/{id}` → `StaffOrgDetail` = `Organization` (without `my_role`) + `team` +
   `hazmat` + `equipment` + `features` + `documents` + `members` (`[{"display_name", "email", "role"}]`) +
   `certificates`. Opening it is written to the audit log.
+- `GET /api/v1/staff/orgs/{id}/documents/{doc_id}/versions` → `[DocumentVersion]` newest first.
 - `GET /api/v1/staff/orgs/{id}/documents/{doc_id}/versions/{version}/download` and
   `GET /api/v1/staff/orgs/{id}/certificates/{cert_id}/pdf` → `{"url"}`.
 - `GET /api/v1/staff/orgs/{id}/reports?limit&cursor` → `{"items": [StaffReport], "next_cursor"}`.
@@ -291,7 +292,8 @@ the visitor drop their PDF copy: the browser computes its SHA-256 and compares i
   detail also gains `"organization_card"` (for responders): `{"id", "name", "kind", "capacity",
   "address", "location", "classification", "representative": {"full_name", "phone"} | null,
   "hazmat": [Hazmat without ids], "features": [MapFeature]}`.
-- `GET /api/v1/staff/kpis` gains `orgs_pending_review` and `certificates_submitted` (in scope).
+- `GET /api/v1/staff/kpis` gains `orgs_pending_review` and `certificates_submitted` (in scope). It stays
+  limited to the report read roles: an `org_auditor` alone gets `403` and uses the institutions pages.
 
 ### Live events (WS `/api/v1/staff/live`, filtered by scope)
 - `{"type": "org.updated", "org": StaffOrg}` — registration, review, card change.

@@ -340,7 +340,8 @@
       "media": "Média joint",
       "precise_location": "Position précise",
       "imprecise_location": "Position imprécise",
-      "corroborated": "Corroboré par d’autres signalants"
+      "corroborated": "Corroboré par d’autres signalants",
+      "organization": "Signalement au nom d’un établissement"
     },
     "steps": {
       "transcribe": "Transcription",
@@ -833,7 +834,9 @@
         "range": "La date doit être comprise entre demain et dans cinq ans.",
         "reasonRequired": "Le motif du rejet est obligatoire."
       },
-      "invalidTransition": "Le certificat a déjà été examiné ou n’est plus soumis. La liste a été actualisée."
+      "invalidTransition": "Le certificat a déjà été examiné ou n’est plus soumis. La liste a été actualisée.",
+      "statusFilter": "Statut",
+      "emptyDecided": "Aucun certificat dans cet état."
     },
     "card": {
       "title": "Fiche de l’établissement déclarant",

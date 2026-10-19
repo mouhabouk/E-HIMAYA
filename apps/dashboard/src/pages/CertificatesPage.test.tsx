@@ -2,7 +2,7 @@ import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { ApiError } from "../lib/api";
 import { validUntilBounds } from "../lib/orgs";
-import { makeQueueCertificate } from "../test/fixtures";
+import { makeCertificate, makeQueueCertificate } from "../test/fixtures";
 import { AUDITOR_CLAIMS, fakeApi, fakeAuth, renderApp } from "../test/render";
 import { CertificatesPage } from "./CertificatesPage";
 
@@ -51,7 +51,7 @@ describe("CertificatesPage (review queue)", () => {
   });
 
   it("approves with a validity date (default one year), after confirmation", async () => {
-    const { api } = setup({ reviewCertificate: vi.fn(() => Promise.resolve({})) });
+    const { api } = setup({ reviewCertificate: vi.fn(() => Promise.resolve(makeCertificate())) });
     const bounds = validUntilBounds();
     const li = await item("EHC-26-61-000123");
     fireEvent.click(within(li).getByRole("button", { name: "Approuver" }));
@@ -90,7 +90,7 @@ describe("CertificatesPage (review queue)", () => {
   });
 
   it("requires a reason to reject, then rejects after confirmation", async () => {
-    const { api } = setup({ reviewCertificate: vi.fn(() => Promise.resolve({})) });
+    const { api } = setup({ reviewCertificate: vi.fn(() => Promise.resolve(makeCertificate())) });
     const li = await item("EHC-26-11-000200");
     fireEvent.click(within(li).getByRole("button", { name: "Rejeter" }));
     const form = within(li).getByLabelText("Motif du rejet").closest("form") as HTMLFormElement;
@@ -122,6 +122,33 @@ describe("CertificatesPage (review queue)", () => {
     fireEvent.submit(form);
     expect(await within(li).findByText("Votre rôle ne permet pas cette action.")).toBeInTheDocument();
     expect(screen.queryByText(/insufficient_role|invalid_valid_until/)).not.toBeInTheDocument();
+  });
+
+  it("explains a missing signing key (503 signing_key_missing)", async () => {
+    setup({ reviewCertificate: vi.fn().mockRejectedValue(new ApiError(503, "signing_key_missing")) });
+    const li = await item("EHC-26-61-000123");
+    fireEvent.click(within(li).getByRole("button", { name: "Approuver" }));
+    const form = within(li).getByLabelText("Valable jusqu’au").closest("form") as HTMLFormElement;
+    fireEvent.submit(form);
+    fireEvent.submit(form);
+    expect(await within(li).findByText(/La clé de signature des certificats n’est pas configurée/)).toBeInTheDocument();
+    expect(screen.queryByText(/signing_key_missing/)).not.toBeInTheDocument();
+  });
+
+  it("lists decided certificates by status, without review actions", async () => {
+    const certificates = vi.fn((opts?: { status?: string }) =>
+      Promise.resolve({
+        items: opts?.status === "approved" ? [makeQueueCertificate({ id: "c-9", code: "EHC-26-61-000099", status: "approved" })] : QUEUE,
+        next_cursor: null,
+      }),
+    );
+    setup({ certificates });
+    await item("EHC-26-61-000123");
+    fireEvent.change(screen.getByLabelText("Statut"), { target: { value: "approved" } });
+    const li = await item("EHC-26-61-000099");
+    expect(certificates).toHaveBeenLastCalledWith(expect.objectContaining({ status: "approved" }));
+    expect(within(li).getByText("Approuvé")).toBeInTheDocument();
+    expect(within(li).queryByRole("button", { name: "Approuver" })).not.toBeInTheDocument();
   });
 
   it("is read-only for other roles", async () => {

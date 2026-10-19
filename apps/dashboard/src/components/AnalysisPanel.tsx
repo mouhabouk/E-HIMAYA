@@ -25,6 +25,7 @@ const CREDIBILITY_COMPONENTS = [
   "precise_location",
   "imprecise_location",
   "corroborated",
+  "organization",
 ] as const;
 const LIVES_SOURCES = ["model", "keywords", "category"] as const;
 const TEXT_LANGS = ["ar", "fr", "en"] as const;
@@ -61,6 +62,7 @@ function SensitiveSite({ component }: { component: ScoreComponent }) {
   const { t } = useTranslation();
   const fmt = useFormat();
   const { org_id: orgId, name, distance_m: distance, reason, counted } = component.detail;
+  if (reason === "no_site_nearby") return <span className="muted score-source">{t("ai.sensitive.none")}</span>;
   if (component.value === null || component.value === undefined) return null;
   if (typeof orgId !== "string" || typeof name !== "string") {
     return <span className="muted score-source">{t("ai.sensitive.none")}</span>;
