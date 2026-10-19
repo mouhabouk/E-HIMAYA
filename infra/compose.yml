@@ -9,7 +9,7 @@ services:
   postgres:
     <<: *restart
     build: ./postgres
-    image: ehimaya/postgres:17-3.5-pgvector
+    image: ehimaya/postgres:17-postgis-pgvector
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
       EHIMAYA_DB_NAME: ${EHIMAYA_DB_NAME:-ehimaya}
