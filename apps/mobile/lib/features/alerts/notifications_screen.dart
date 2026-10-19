@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/auth/identity.dart';
 import '../../core/http/error_messages.dart';
 import '../../core/http/notify_models.dart';
+import '../../core/push/push_simulation_banner.dart';
 import '../../core/routing/app_router.dart';
 import '../../core/settings/settings_controller.dart';
 import '../../core/ui/emergency_action.dart';
@@ -46,6 +47,7 @@ class NotificationsScreen extends ConsumerWidget {
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.all(16),
           children: [
+            const PushSimulationBanner(),
             _SectionTitle(l10n.activeAlertsTitle),
             if (alertsState.isLoading && alerts.isEmpty)
               const Padding(

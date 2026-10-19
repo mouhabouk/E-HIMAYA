@@ -498,6 +498,8 @@
   "channelAlertsDesc": "Civil Protection alerts and volunteer call-outs.",
   "channelGeneral": "Information",
   "channelGeneralDesc": "Follow-up of your reports and information messages.",
+  "pushSimulationBadge": "Simulation mode",
+  "pushSimulationHelp": "Push notifications come from the local simulator, not from Firebase. Nothing is delivered by a real push service.",
   "tipsTitle": "Safety tips",
   "tipsIntro": "What to do and what to avoid. Available without connection.",
   "tipsDo": "Do",

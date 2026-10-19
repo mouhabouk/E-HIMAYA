@@ -1,16 +1,18 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../auth/identity.dart' show FlagNotifier;
+import '../http/api_client.dart' show httpAdapterProvider;
 import '../logging/log.dart';
+import '../storage/app_prefs.dart';
+import 'push_notifications.dart';
 import 'push_payload.dart';
+import 'simulated_push_messaging.dart';
 
 final _log = logger('push');
 
@@ -100,11 +102,14 @@ FirebaseOptions? firebaseOptionsFromEnvironment() {
 }
 
 class FirebasePushMessaging implements PushMessaging {
-  FirebasePushMessaging({FirebaseOptions? options})
-    : _options = options ?? firebaseOptionsFromEnvironment();
+  FirebasePushMessaging({
+    FirebaseOptions? options,
+    PushNotifications? notifications,
+  }) : _options = options ?? firebaseOptionsFromEnvironment(),
+       _local = notifications ?? LocalPushNotifications();
 
   final FirebaseOptions? _options;
-  final _local = FlutterLocalNotificationsPlugin();
+  final PushNotifications _local;
   final _foreground = StreamController<PushPayload>.broadcast();
   final _opened = StreamController<PushPayload>.broadcast();
   FirebaseMessaging? _messaging;
@@ -154,44 +159,8 @@ class FirebasePushMessaging implements PushMessaging {
   }
 
   Future<void> _initLocal(PushChannelNames names) async {
-    await _local.initialize(
-      settings: const InitializationSettings(
-        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-        iOS: DarwinInitializationSettings(
-          requestAlertPermission: false,
-          requestBadgePermission: false,
-          requestSoundPermission: false,
-        ),
-      ),
-      onDidReceiveNotificationResponse: (response) {
-        final p = _decode(response.payload);
-        if (p != null) _opened.add(p);
-      },
-    );
-    final launch = await _local.getNotificationAppLaunchDetails();
-    if (launch?.didNotificationLaunchApp ?? false) {
-      _launch ??= _decode(launch!.notificationResponse?.payload);
-    }
-    final android = _local
-        .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin
-        >();
-    await android?.createNotificationChannel(
-      AndroidNotificationChannel(
-        alertChannelId,
-        names.alerts,
-        description: names.alertsDescription,
-        importance: Importance.max,
-      ),
-    );
-    await android?.createNotificationChannel(
-      AndroidNotificationChannel(
-        defaultChannelId,
-        names.general,
-        description: names.generalDescription,
-        importance: Importance.defaultImportance,
-      ),
-    );
+    final launch = await _local.init(names, onTap: _opened.add);
+    _launch ??= launch;
   }
 
   static PushPayload? _payload(RemoteMessage m) => PushPayload.parse(
@@ -200,39 +169,16 @@ class FirebasePushMessaging implements PushMessaging {
     body: m.notification?.body,
   );
 
-  static PushPayload? _decode(String? raw) {
-    if (raw == null) return null;
-    try {
-      final json = jsonDecode(raw);
-      return json is Map<String, Object?> ? PushPayload.parse(json) : null;
-    } on FormatException {
-      return null;
-    }
-  }
-
   Future<void> _onForegroundMessage(RemoteMessage m) async {
     final p = _payload(m);
     if (p == null) return;
     _foreground.add(p);
     // Android does not display pushes received in the foreground: show it ourselves.
     if (platform != 'android' || p.title == null) return;
-    final channel = p.kind.urgent ? alertChannelId : defaultChannelId;
     await _local.show(
-      id: m.messageId.hashCode & 0x7fffffff,
-      title: p.title,
-      body: p.body,
-      notificationDetails: NotificationDetails(
-        android: AndroidNotificationDetails(
-          channel,
-          channel,
-          importance: p.kind.urgent
-              ? Importance.max
-              : Importance.defaultImportance,
-          priority: p.kind.urgent ? Priority.high : Priority.defaultPriority,
-          styleInformation: BigTextStyleInformation(p.body ?? ''),
-        ),
-      ),
-      payload: jsonEncode(p.data),
+      m.messageId.hashCode & 0x7fffffff,
+      p,
+      channelId: m.notification?.android?.channelId,
     );
   }
 
@@ -264,8 +210,34 @@ class FirebasePushMessaging implements PushMessaging {
   }
 }
 
-final pushMessagingProvider = Provider<PushMessaging>(
-  (ref) => FirebasePushMessaging(),
+final pushMessagingProvider = Provider<PushMessaging>((ref) {
+  // ┏━━ SIMULATION ━━ Picks the notify-sim poller when Firebase is absent and the URL is set.
+  // ┃ PRODUCTION: nothing to change here: build without --dart-define=PUSH_SIMULATOR_URL and
+  // ┃   with FIREBASE_API_KEY / FIREBASE_APP_ID / FIREBASE_MESSAGING_SENDER_ID /
+  // ┃   FIREBASE_PROJECT_ID (Firebase console > Project settings > Your apps); the Firebase
+  // ┃   options always win over the simulator. See simulated_push_messaging.dart.
+  // ┗━━━━━━━━━━━━━━━━
+  if (pushSimulatorUrl.isNotEmpty && firebaseOptionsFromEnvironment() == null) {
+    final simulated = SimulatedPushMessaging(
+      dio: buildSimulatorDio(
+        pushSimulatorUrl,
+        adapter: ref.watch(httpAdapterProvider),
+      ),
+      prefs: ref.watch(appPrefsProvider),
+    );
+    ref.onDispose(simulated.dispose);
+    return simulated;
+  }
+  return FirebasePushMessaging();
+});
+
+// ┏━━ SIMULATION ━━ True while pushes come from notify-sim (drives the "Simulation mode" badge).
+// ┃ PRODUCTION: always false once the build has no PUSH_SIMULATOR_URL (see above).
+// ┗━━━━━━━━━━━━━━━━
+final pushSimulationActiveProvider = Provider<bool>(
+  (ref) =>
+      ref.watch(pushAvailableProvider) &&
+      ref.watch(pushMessagingProvider) is SimulatedPushMessaging,
 );
 
 /// Whether push works on this phone (false until started, and on builds without Firebase).

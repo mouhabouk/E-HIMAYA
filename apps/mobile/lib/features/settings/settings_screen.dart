@@ -6,6 +6,7 @@ import '../../core/auth/identity.dart';
 import '../../core/http/models.dart';
 import '../../core/location/location_service.dart';
 import '../../core/push/push_controller.dart';
+import '../../core/push/push_simulation_banner.dart';
 import '../../core/routing/app_router.dart';
 import '../../core/settings/settings_controller.dart';
 import '../../core/storage/app_prefs.dart';
@@ -86,6 +87,7 @@ class SettingsScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.only(bottom: 96),
         children: [
+          const PushSimulationBanner(),
           _Header(l10n.settingsLanguage),
           RadioGroup<String>(
             groupValue: settings.locale.languageCode,
