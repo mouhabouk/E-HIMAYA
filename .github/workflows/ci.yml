@@ -20,7 +20,11 @@ jobs:
       run:
         working-directory: services/api
     env:
+      # Tests connect as the owner (they also check the triggers); the runtime role is exercised by
+      # tests/test_db_roles.py and by the "API on the runtime role" step below.
       DATABASE_URL: postgresql+asyncpg://ehimaya:ehimaya-ci@localhost:5432/ehimaya
+      RUNTIME_DATABASE_URL: postgresql+asyncpg://ehimaya_app:ehimaya-app-ci@localhost:5432/ehimaya
+      DB_RUNTIME_ROLE: ehimaya_app
       ANON_PSEUDONYM_SECRET: ci-only-secret-ci-only-secret-ci-only-01
       FIELD_ENCRYPTION_KEY: Y2ktb25seS1rZXktY2ktb25seS1rZXktY2ktb25seTE=
     steps:
@@ -35,6 +39,7 @@ jobs:
           docker run -d --name pg -p 5432:5432 \
             -e POSTGRES_PASSWORD=postgres-ci \
             -e EHIMAYA_DB_NAME=ehimaya -e EHIMAYA_DB_USER=ehimaya -e EHIMAYA_DB_PASSWORD=ehimaya-ci \
+            -e EHIMAYA_DB_RUNTIME_USER=ehimaya_app -e EHIMAYA_DB_RUNTIME_PASSWORD=ehimaya-app-ci \
             -e KEYCLOAK_DB_NAME=keycloak -e KEYCLOAK_DB_USER=keycloak -e KEYCLOAK_DB_PASSWORD=keycloak-ci \
             ehimaya/postgres:ci
           for i in $(seq 1 60); do
@@ -60,11 +65,37 @@ jobs:
       - name: Type check
         run: uv run mypy app
 
-      - name: Migrate (up, down, up)
+      # Two roles (A4): alembic connects with MIGRATION_DATABASE_URL (owner) while DATABASE_URL is the runtime role,
+      # and grants the runtime role its privileges after the upgrade.
+      - name: Migrate as the owner (up, down, up)
+        env:
+          MIGRATION_DATABASE_URL: ${{ env.DATABASE_URL }}
+          DATABASE_URL: ${{ env.RUNTIME_DATABASE_URL }}
         run: |
           uv run alembic upgrade head
           uv run alembic downgrade base
           uv run alembic upgrade head
+
+      - name: Runtime role cannot migrate
+        env:
+          DATABASE_URL: ${{ env.RUNTIME_DATABASE_URL }}
+        run: |
+          if uv run alembic downgrade -1; then echo "the runtime role was able to change the schema"; exit 1; fi
+
+      - name: API on the runtime role (anonymous consent + report)
+        env:
+          DATABASE_URL: ${{ env.RUNTIME_DATABASE_URL }}
+          BACKGROUND_WORKERS: "false"
+        run: |
+          uv run uvicorn app.main:app --port 8000 > api.log 2>&1 &
+          API_PID=$!
+          for i in $(seq 1 30); do curl -fs http://127.0.0.1:8000/health/ready && break; sleep 1; done
+          KEY=$(openssl rand -base64 32 | tr '+/' '-_' | tr -d '=')
+          curl -fsS -X POST http://127.0.0.1:8000/api/v1/consents -H "X-Device-Key: $KEY" -H 'Content-Type: application/json' \
+            -d '{"charter_version":"2026-10","locale":"ar","platform":"android"}'
+          curl -fsS -X POST http://127.0.0.1:8000/api/v1/reports -H "X-Device-Key: $KEY" -H 'Content-Type: application/json' \
+            -d "{\"client_uuid\":\"$(cat /proc/sys/kernel/random/uuid)\",\"category\":\"sos\",\"location\":{\"lat\":36.8,\"lon\":10.18},\"created_at\":\"$(date -u +%FT%TZ)\"}"
+          kill $API_PID; tail -20 api.log
 
       - name: Tests
         run: uv run pytest -q
@@ -75,6 +106,45 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: docker build -t ehimaya/api:ci services/api
+
+  # Supply chain (A9): every image we build is scanned; a CRITICAL vulnerability with a fix available fails CI.
+  image-scan:
+    name: Images · build and Trivy scan
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: api, context: services/api, args: "" }
+          - { name: notify-sim, context: services/notify-sim, args: "" }
+          - { name: ai, context: services/ai, args: "--target runtime" }
+          - { name: postgres, context: infra/postgres, args: "" }
+          - { name: dashboard, context: apps/dashboard, args: "--build-context web=infra/web" }
+          - { name: portal, context: apps/portal, args: "--build-context web=infra/web" }
+    env:
+      # Allow-listed secret findings (each one justified in the file).
+      TRIVY_SECRET_CONFIG: .github/trivy-secret.yaml
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build
+        run: docker build ${{ matrix.args }} -t ehimaya/${{ matrix.name }}:scan ${{ matrix.context }}
+      - name: Trivy (fail on CRITICAL)
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # 0.35.0
+        with:
+          image-ref: ehimaya/${{ matrix.name }}:scan
+          severity: CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
+          format: table
+      - name: Trivy report (HIGH and CRITICAL, informational)
+        if: always()
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # 0.35.0
+        with:
+          image-ref: ehimaya/${{ matrix.name }}:scan
+          severity: HIGH,CRITICAL
+          exit-code: "0"
+          format: table
+          skip-setup-trivy: true
 
   # ┏━━ SIMULATION ━━ notify-sim: development emulator of Firebase Cloud Messaging (HTTP v1 + OAuth) and the SMS gateway
   # ┃ PRODUCTION: these two jobs only check the simulator; when it is removed from the repository, delete them. The
@@ -127,7 +197,7 @@ jobs:
           docker run -d --name kc -p 9000:9000 \
             -e KC_HEALTH_ENABLED=true -e KC_BOOTSTRAP_ADMIN_USERNAME=admin -e KC_BOOTSTRAP_ADMIN_PASSWORD=admin \
             -v "$PWD/infra/keycloak/realms:/opt/keycloak/data/import:ro" \
-            keycloak/keycloak:26.3 start-dev --import-realm
+            keycloak/keycloak:26.3@sha256:357829ec7c4693397533035092ad13b0644bcc95ded311f33a3738c4d9e9bdba start-dev --import-realm
           for i in $(seq 1 60); do
             if curl -fs http://localhost:9000/health/ready >/dev/null; then break; fi
             sleep 3
@@ -201,7 +271,7 @@ jobs:
       - name: Start Ollama
         run: |
           mkdir -p "$OLLAMA_DIR"
-          docker run -d --name ollama -p 11434:11434 -v "$OLLAMA_DIR:/root/.ollama" ollama/ollama:0.40.1
+          docker run -d --name ollama -p 11434:11434 -v "$OLLAMA_DIR:/root/.ollama" ollama/ollama:0.40.1@sha256:69f27594d8127cb43db1edcafa5e2d3cd8f88bdbc54a2cf3ceb11b8d138a24b1
           for i in $(seq 1 30); do curl -fs http://localhost:11434/api/tags >/dev/null && break; sleep 2; done
 
       - name: Download, convert and check the models (profile ci)
@@ -254,6 +324,20 @@ jobs:
           sed -i "s|^TUSD_HOOK_SECRET=.*|TUSD_HOOK_SECRET=$(openssl rand -hex 24)|" .env
           sed -i "s|^AI_SERVICE_TOKEN=.*|AI_SERVICE_TOKEN=$(openssl rand -hex 24)|" .env
           sed -i "s|^CERTIFICATE_SIGNING_KEY=.*|CERTIFICATE_SIGNING_KEY=$(openssl rand -base64 32)|" .env
+      - name: Production overlay renders (Caddy, Keycloak start, no host ports but 80/443)
+        run: |
+          cat > prod.env <<EOF
+          API_HOST=api.ehimaya.test
+          DASHBOARD_HOST=dashboard.ehimaya.test
+          PORTAL_HOST=portal.ehimaya.test
+          AUTH_HOST=auth.ehimaya.test
+          MEDIA_HOST=media.ehimaya.test
+          EHIMAYA_DB_RUNTIME_PASSWORD=$(openssl rand -hex 24)
+          TUSD_CORS_ORIGIN_REGEX=^https://(dashboard|portal)\.ehimaya\.test\$
+          EOF
+          cat .env prod.env > prod-full.env
+          docker compose --env-file prod-full.env -f infra/compose.yml -f infra/compose.prod.yml config > prod.yml
+          python3 -c "import yaml; s=yaml.safe_load(open('prod.yml'))['services']; p={n:[x.get('published') for x in v.get('ports',[])] for n,v in s.items() if v.get('ports')}; print(p); assert set(p)=={'caddy'}, p; assert 'notify-sim' not in s and 'mailpit' not in s"
       - name: Start the stack
         run: docker compose --env-file .env -f infra/compose.yml up -d --build
       - name: Anonymous report, resumable upload, integrity check, notify-sim health

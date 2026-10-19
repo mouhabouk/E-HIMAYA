@@ -1,0 +1,7 @@
+# Build context of the AI service: never send the local virtualenv or caches.
+.venv
+.mypy_cache
+.pytest_cache
+.ruff_cache
+**/__pycache__
+tests

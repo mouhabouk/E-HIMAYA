@@ -1,0 +1,10 @@
+# Build context of the production image: sources only (dependencies are installed with npm ci).
+node_modules
+dist
+dist-e2e
+test-results
+playwright-report
+.env
+.env.*
+!.env.example
+*.tsbuildinfo

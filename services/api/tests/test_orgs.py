@@ -19,9 +19,18 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import get_settings
 from app.core.db import get_sessionmaker
 from app.modules.orgs import documents
-from tests.conftest import STAFF_ISS, FakeStore, TokenFactory, accept_charter, bearer, report_body
+from tests.conftest import (
+    HOOK_AUTH,
+    STAFF_ISS,
+    FakeStore,
+    TokenFactory,
+    accept_charter,
+    bearer,
+    outbox_events,
+    report_body,
+)
 
-HOOK = "/internal/tusd/hooks/test-hook-secret-test-hook-secret"
+HOOK = "/internal/tusd/hooks"
 SFAX = {"lat": 34.7406, "lon": 10.7603}
 TUNIS = {"lat": 36.8065, "lon": 10.1815}
 Staff = Callable[..., dict[str, str]]
@@ -126,13 +135,15 @@ async def upload_document(
     client: httpx.AsyncClient, headers: dict[str, str], store: FakeStore, document_id: str, data: bytes | None = None
 ) -> dict[str, Any]:
     data = data or b"%PDF-1.7 " + os.urandom(2048)
-    answer = (await client.post(HOOK, json=_hook("pre-create", headers, _upload(document_id, data)))).json()
+    answer = (
+        await client.post(HOOK, headers=HOOK_AUTH, json=_hook("pre-create", headers, _upload(document_id, data)))
+    ).json()
     assert "RejectUpload" not in answer, answer
     upload_id = answer["ChangeFileInfo"]["ID"]
     key = f"uploads/{upload_id}"
     store.objects[key] = data
     finished = {**_upload(document_id, data), "ID": f"{upload_id}+mp", "Storage": {"Key": key}}
-    assert (await client.post(HOOK, json=_hook("post-finish", headers, finished))).status_code == 200
+    assert (await client.post(HOOK, headers=HOOK_AUTH, json=_hook("post-finish", headers, finished))).status_code == 200
     assert await documents.verify_one(get_sessionmaker(), store) is True
     return answer  # type: ignore[no-any-return]
 
@@ -474,7 +485,7 @@ async def test_document_upload_rejections(
     data = b"%PDF-1.7 " + os.urandom(64)
 
     async def pre(headers: dict[str, str], upload: dict[str, Any]) -> tuple[int, str]:
-        answer = (await client.post(HOOK, json=_hook("pre-create", headers, upload))).json()
+        answer = (await client.post(HOOK, headers=HOOK_AUTH, json=_hook("pre-create", headers, upload))).json()
         response = answer["HTTPResponse"]
         return response["StatusCode"], response["Body"]
 
@@ -490,18 +501,22 @@ async def test_document_upload_rejections(
     member = await add_member(client, admin, org_id, user, "member")
     assert (await pre(member, _upload(doc["id"], data)))[1] == '{"detail":"org_role_required"}'
 
-    answer = (await client.post(HOOK, json=_hook("pre-create", admin, _upload(doc["id"], data)))).json()
+    answer = (
+        await client.post(HOOK, headers=HOOK_AUTH, json=_hook("pre-create", admin, _upload(doc["id"], data)))
+    ).json()
     upload_id = answer["ChangeFileInfo"]["ID"]
     fake_store.objects[f"uploads/{upload_id}"] = b"tampered"
     finished = {**_upload(doc["id"], data), "ID": upload_id, "Storage": {"Key": f"uploads/{upload_id}"}}
-    await client.post(HOOK, json=_hook("post-finish", admin, finished))
+    await client.post(HOOK, headers=HOOK_AUTH, json=_hook("post-finish", admin, finished))
     assert await documents.verify_one(get_sessionmaker(), fake_store) is True
     state = await session.scalar(text("SELECT status FROM org.document_version WHERE upload_id = :u"), {"u": upload_id})
     assert state == "rejected"
 
-    second = (await client.post(HOOK, json=_hook("pre-create", admin, _upload(doc["id"], data)))).json()
+    second = (
+        await client.post(HOOK, headers=HOOK_AUTH, json=_hook("pre-create", admin, _upload(doc["id"], data)))
+    ).json()
     terminated = {**_upload(doc["id"], data), "ID": second["ChangeFileInfo"]["ID"]}
-    await client.post(HOOK, json=_hook("post-terminate", admin, terminated))
+    await client.post(HOOK, headers=HOOK_AUTH, json=_hook("post-terminate", admin, terminated))
     assert (await client.get(f"/api/v1/orgs/{org_id}/documents", headers=admin)).json()[0]["versions_count"] == 0
 
 
@@ -644,13 +659,7 @@ async def test_staff_detail_is_audited_and_events_are_queued(
         text("SELECT action FROM audit.log WHERE target = :t ORDER BY seq DESC LIMIT 1"), {"t": f"org:{org['id']}"}
     )
     assert action == "org.view"
-    payload = await session.scalar(
-        text(
-            "SELECT payload FROM events.outbox WHERE subject = 'org.updated' AND payload->'org'->>'id' = :id "
-            "ORDER BY id DESC LIMIT 1"
-        ),
-        {"id": org["id"]},
-    )
+    payload = [e for e in await outbox_events(session, "org.updated") if e["org"]["id"] == org["id"]][-1]
     assert payload["org"]["status"] == "pending_review" and payload["org"]["gouvernorat_code"] == 61
 
 

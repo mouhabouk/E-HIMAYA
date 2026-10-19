@@ -17,10 +17,11 @@ from fastapi import HTTPException, status
 from sqlalchemy import and_, any_, func, or_, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.crypto import get_cipher
 from app.core.events import emit
 from app.core.security import Principal, Role
 from app.modules.audit import service as audit
-from app.modules.identity.models import Account
+from app.modules.identity.models import PHONE_CONTEXT, Account
 from app.modules.notify import schemas
 from app.modules.notify.models import Dispatch, Message
 from app.modules.ops.levels import levels_of
@@ -384,7 +385,7 @@ async def expire_alerts(session: AsyncSession) -> list[uuid.UUID]:
 # Exact, case-insensitive match on the registered profile e-mail of an active citizen account. No partial
 # search: the caller must already know the address (served by ix_profile_email_lower).
 _LOOKUP_SQL = """
-    SELECT a.user_id, p.first_name, p.last_name, p.email, p.phone IS NOT NULL AS has_phone,
+    SELECT a.user_id, p.first_name, p.last_name, p.email, p.phone_enc IS NOT NULL AS has_phone,
            EXISTS (SELECT 1 FROM notify.device d WHERE d.user_id = a.user_id) AS has_push
     FROM identity.profile p
     JOIN identity.account a ON a.user_id = p.user_id AND a.kind = 'citizen' AND a.status = 'active'
@@ -470,10 +471,11 @@ DEVICES_SQL = f"""
     WHERE d.token > :after AND {_device_target()}
     ORDER BY d.token LIMIT :limit
 """  # noqa: S608 (constant SQL fragments, values are bound)
-# Phones and e-mails of registered profiles (one message per address, in the profile's language).
+# Phones and e-mails of registered profiles (one message per address, in the profile's language). Phones are
+# encrypted: ``address`` is then the hex blind index (dedup and cursor) and ``secret`` the encrypted number.
 PROFILES_SQL = """
-    SELECT DISTINCT ON (address) address, locale FROM (
-        SELECT {column} AS address, p.locale FROM identity.profile p
+    SELECT DISTINCT ON (address) address, locale, secret FROM (
+        SELECT {column} AS address, p.locale, {secret} AS secret FROM identity.profile p
         JOIN identity.account a ON a.user_id = p.user_id AND a.status = 'active'
         JOIN notify.message m ON m.id = :mid
         WHERE {column} IS NOT NULL AND {target}
@@ -485,7 +487,7 @@ PROFILES_SQL = """
 # Institutions are reached at their members' e-mails (members may have no citizen profile).
 _ORG_EMAILS = """
     UNION ALL
-    SELECT om.email AS address, 'ar' AS locale FROM org.member om
+    SELECT om.email AS address, 'ar' AS locale, NULL::bytea AS secret FROM org.member om
     JOIN org.organization o ON o.id = om.org_id AND o.status = 'active'
     JOIN notify.message m ON m.id = :mid
     WHERE om.email IS NOT NULL AND m.audience = 'organizations'
@@ -494,9 +496,15 @@ _ORG_EMAILS = """
 
 
 def profiles_sql(channel: str) -> str:
-    column = "p.phone" if channel == "sms" else "lower(p.email)"
+    column = "encode(p.phone_hash, 'hex')" if channel == "sms" else "lower(p.email)"
+    secret = "p.phone_enc" if channel == "sms" else "NULL::bytea"
     extra = _ORG_EMAILS if channel == "email" else ""
-    return PROFILES_SQL.format(column=column, target=_profile_target(), extra=extra)
+    return PROFILES_SQL.format(column=column, secret=secret, target=_profile_target(), extra=extra)
+
+
+def phone_of(secret: bytes) -> str:
+    """Clear phone number of a ``profiles_sql("sms")`` row, decrypted just before sending."""
+    return get_cipher().decrypt(bytes(secret), context=PHONE_CONTEXT)
 
 
 async def audience(session: AsyncSession, message: Message) -> schemas.AudienceOut:

@@ -10,10 +10,18 @@ tusd stores the bytes in S3 and calls these hooks:
 Uploads whose metadata says ``target=org_document`` are institution documents (``orgs.documents``).
 
 A background worker then re-reads every finished object, recomputes SHA-256 and compares it with the
-hash declared by the device: ``stored`` when they match, ``rejected`` (object deleted) otherwise.
+hash declared by the device: ``rejected`` (object deleted) when they differ. It then reads the first bytes
+(magic numbers): a file whose bytes are not the declared media type, or not an allowed media type at all,
+is ``quarantined`` (kept as evidence, shown to staff with the reason, only ever downloaded as an
+attachment); otherwise it is ``stored`` with its ``verified_type``, the only type it is served with.
+
+tusd authenticates to the hooks with the shared secret in the ``Authorization`` header (HTTP Basic, user
+``tusd``, which Go's HTTP client sends for ``http://tusd:<secret>@api:8000/...``), never in the URL path.
 """
 
 import asyncio
+import base64
+import binascii
 import hmac
 import re
 import uuid
@@ -22,11 +30,12 @@ from typing import Annotated, Any
 
 import structlog
 from anyio import to_thread
-from fastapi import APIRouter, Depends, HTTPException, Path
+from fastapi import APIRouter, Depends, Header, HTTPException
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from app.core import metrics
 from app.core.config import get_settings
 from app.core.db import get_session
 from app.core.events import emit
@@ -36,6 +45,7 @@ from app.modules.ai import pipeline
 from app.modules.audit import service as audit
 from app.modules.identity.service import resolve_reporter
 from app.modules.orgs import documents
+from app.modules.reports import sniff
 from app.modules.reports.domain import MEDIA_MAX_BYTES, MEDIA_PER_REPORT, MEDIA_TYPES, MEDIA_UPLOAD_WINDOW_H
 from app.modules.reports.models import Media, Report
 from app.modules.reports.service import media_out
@@ -190,14 +200,31 @@ async def _post_terminate(session: AsyncSession, event: dict[str, Any]) -> dict[
 _HANDLERS = {"pre-create": _pre_create, "post-finish": _post_finish, "post-terminate": _post_terminate}
 
 
-@router.post("/internal/tusd/hooks/{secret}")
+def _presented_secret(authorization: str | None) -> str:
+    """The hook secret from ``Authorization: Basic base64(tusd:<secret>)`` or ``Bearer <secret>``."""
+    if not authorization:
+        return ""
+    scheme, _, value = authorization.partition(" ")
+    if scheme.lower() == "bearer":
+        return value.strip()
+    if scheme.lower() == "basic":
+        try:
+            user, _, password = base64.b64decode(value.strip(), validate=True).decode().partition(":")
+        except (binascii.Error, UnicodeDecodeError):
+            return ""
+        return password if user == "tusd" else ""
+    return ""
+
+
+@router.post("/internal/tusd/hooks")
 async def tusd_hook(
-    secret: Annotated[str, Path(max_length=256)],
     body: HookRequest,
     session: Annotated[AsyncSession, Depends(get_session)],
+    authorization: Annotated[str | None, Header(max_length=512)] = None,
 ) -> dict[str, Any]:
     expected = get_settings().tusd_hook_secret
-    if expected is None or not hmac.compare_digest(secret.encode(), expected.get_secret_value().encode()):
+    presented = _presented_secret(authorization)
+    if expected is None or not hmac.compare_digest(presented.encode(), expected.get_secret_value().encode()):
         raise HTTPException(404, "not_found")
     handler = _HANDLERS.get(body.type)
     if handler is None:
@@ -222,8 +249,23 @@ async def verify_one(sessionmaker: async_sessionmaker[AsyncSession], store: Obje
             return False
         digest, size = await store.sha256(media.object_key)
         report = await session.get(Report, media.report_id) if media.report_id else None
-        if hmac.compare_digest(digest, media.sha256):
+        checked = sniff.verify(media.content_type, await store.head(media.object_key, sniff.HEAD_BYTES))
+        if hmac.compare_digest(digest, media.sha256) and checked.reason is not None:
+            media.status = "quarantined"
+            media.rejection_reason = checked.reason
+            media.bytes = size
+            metrics.MEDIA_QUARANTINED.labels(reason=checked.reason).inc()
+            await audit.record(
+                session,
+                actor=audit.SYSTEM_ACTOR,
+                action="media.quarantined",
+                target=f"media:{media.id}",
+                reason=checked.reason,
+                details={"declared": media.content_type, "detected": checked.detected},
+            )
+        elif hmac.compare_digest(digest, media.sha256):
             media.status = "stored"
+            media.verified_type = checked.verified_type
             media.bytes = size
             media.stored_at = datetime.now(UTC)
             if media.report_id is not None:
@@ -240,6 +282,7 @@ async def verify_one(sessionmaker: async_sessionmaker[AsyncSession], store: Obje
             )
         else:
             media.status = "rejected"
+            media.rejection_reason = "sha256_mismatch"
             await store.delete(media.object_key, f"{media.object_key}.info")
             await audit.record(
                 session,
@@ -250,6 +293,23 @@ async def verify_one(sessionmaker: async_sessionmaker[AsyncSession], store: Obje
                 details={"declared": media.sha256, "computed": digest},
             )
         return True
+
+
+def media_url(store: ObjectStore, media: Media) -> str | None:
+    """Download link for staff: stored media inline with its verified type; quarantined media (and media
+    stored before type verification existed) only as an opaque attachment, never rendered by the browser."""
+    if media.status == "stored" and media.verified_type:
+        name = f"{media.id}{sniff.EXTENSIONS.get(media.verified_type, '')}"
+        return store.presign_get(
+            media.object_key, content_type=media.verified_type, disposition=f'inline; filename="{name}"'
+        )
+    if media.status in ("stored", "quarantined"):
+        return store.presign_get(
+            media.object_key,
+            content_type="application/octet-stream",
+            disposition=f'attachment; filename="{media.id}.bin"',
+        )
+    return None
 
 
 async def verify_forever(sessionmaker: async_sessionmaker[AsyncSession], idle_s: float = 1.0) -> None:

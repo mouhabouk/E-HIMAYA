@@ -116,7 +116,7 @@ async def test_fcm_token_flow_and_alert_payload(sim: Sim, account: dict[str, Any
     sent = json.loads(sim.requests[1].content)
     assert sent == push.message(alert("sim-device-1"))
     assert sent["message"]["apns"] == {
-        "headers": {"apns-priority": "10"},
+        "headers": {"apns-priority": "10", "apns-collapse-id": "alert:42"},
         "payload": {"aps": {"sound": "alert.caf", "interruption-level": "time-sensitive"}},
     }
     assert sim.requests[1].headers["authorization"] == sim.requests[2].headers["authorization"]
@@ -125,8 +125,20 @@ async def test_fcm_token_flow_and_alert_payload(sim: Sim, account: dict[str, Any
     assert first["token"] == "sim-device-1"
     assert (first["title"], first["body"]) == ("إنذار فيضان", "ابتعدوا عن الأودية")
     assert first["data"] == {"type": "alert", "id": "42"}
-    assert (first["android_channel"], first["priority"]) == ("ehimaya_alerts", "high")
+    assert (first["android_channel"], first["priority"]) == ("ehimaya_alerts_v2", "high")
     assert second["android_channel"] == "ehimaya_default"
+    assert sent["message"]["android"]["notification"]["tag"] == "alert:42"
+
+    critical = Push(
+        "sim-device-3", "android", "إنذار", "إخلاء", {"type": "alert", "id": "44"}, alert=True, critical=True
+    )
+    assert await push.send(critical) == Result(ok=True)
+    [third] = await sim.messages(token="sim-device-3")
+    assert third["android_channel"] == "ehimaya_critical_v2"
+
+    # Personal pushes carry no "id": the collapse key falls back to the call-out or report id (same key as the app).
+    callout = Push("sim-device-4", "android", "t", "b", {"type": "callout", "callout_id": "c-7", "redacted": "1"})
+    assert push.message(callout)["message"]["android"]["notification"]["tag"] == "callout:c-7"
     assert [m["token"] for m in await sim.messages(token="sim-device-2")] == ["sim-device-2"]
 
 

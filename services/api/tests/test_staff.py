@@ -5,7 +5,7 @@ import httpx
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from tests.conftest import SFAX, TUNIS, TokenFactory, accept_charter, bearer, device_headers, report_body
+from tests.conftest import SFAX, TUNIS, TokenFactory, accept_charter, bearer, device_headers, outbox_events, report_body
 from tests.test_profile import random_cin
 
 Staff = Callable[..., dict[str, str]]
@@ -158,14 +158,8 @@ async def test_status_lifecycle(
         {"t": f"report:{report['id']}"},
     )
     assert actions == 4
-    events = await session.scalar(
-        text(
-            "SELECT count(*) FROM events.outbox WHERE subject = 'report.status_changed' "
-            "AND payload->'report'->>'id' = :id"
-        ),
-        {"id": report["id"]},
-    )
-    assert events == 4
+    events = [e for e in await outbox_events(session, "report.status_changed") if e["report"]["id"] == report["id"]]
+    assert len(events) == 4
 
 
 async def test_committees_can_read_but_not_change(

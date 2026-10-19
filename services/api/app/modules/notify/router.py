@@ -7,9 +7,10 @@ from sqlalchemy import delete, func
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import get_settings
 from app.core.db import get_session
 from app.core.ratelimit import enforce, opaque
-from app.modules.identity.service import CurrentReporter
+from app.modules.identity.service import CurrentReporter, limit_reporter
 from app.modules.notify import schemas, service
 from app.modules.notify.models import Device
 from app.modules.reports.service import locate_gouvernorat
@@ -20,7 +21,12 @@ ALERTS_LIMIT, ALERTS_WINDOW_S = 60, 60
 
 
 @router.put("/devices", status_code=status.HTTP_204_NO_CONTENT)
-async def register_device(reporter: CurrentReporter, session: Session, body: schemas.DeviceIn) -> Response:
+async def register_device(
+    request: Request, reporter: CurrentReporter, session: Session, body: schemas.DeviceIn
+) -> Response:
+    await limit_reporter(
+        request, reporter, "device", per_account=30, per_ip=get_settings().anon_device_per_ip, window_s=3600
+    )
     location, gouvernorat = None, None
     if body.location_alerts and body.lat is not None and body.lon is not None:
         # About 1 km: enough to target an alert zone, too coarse to follow anyone.

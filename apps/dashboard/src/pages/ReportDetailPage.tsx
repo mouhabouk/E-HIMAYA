@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Suspense, useId, useMemo, useState, type SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useParams } from "react-router";
-import { PriorityBadge } from "../components/AiBadges";
+import { PriorityBadge, VerificationBadge } from "../components/AiBadges";
 import { AnalysisPanel } from "../components/AnalysisPanel";
 import { CategoryLabel } from "../components/CategoryIcon";
 import { ErrorBox, Loading } from "../components/Feedback";
@@ -45,7 +45,17 @@ function MediaItem({ media, onBroken }: { media: Media; onBroken: () => void }) 
             <source src={media.url ?? undefined} type={media.content_type ?? undefined} onError={onBroken} />
           </audio>
         )}
-        {!playable && <p className="muted">{t("detail.mediaUnavailable")}</p>}
+        {!playable && media.status === "quarantined" && (
+          <>
+            <p className="muted">{t("detail.mediaQuarantined")}</p>
+            {media.url && (
+              <a href={media.url} rel="noopener noreferrer" download>
+                {t("detail.mediaDownload")}
+              </a>
+            )}
+          </>
+        )}
+        {!playable && media.status !== "quarantined" && <p className="muted">{t("detail.mediaUnavailable")}</p>}
       </div>
       <dl className="media__meta">
         <dt>{t("detail.mediaType")}</dt>
@@ -54,6 +64,12 @@ function MediaItem({ media, onBroken }: { media: Media; onBroken: () => void }) 
         <dd>
           <span className={`tag tag--media-${media.status}`}>{t(`detail.mediaStatus.${media.status}`)}</span>
         </dd>
+        {media.rejection_reason && (
+          <>
+            <dt>{t("detail.mediaRejectionLabel")}</dt>
+            <dd>{t(`detail.mediaRejection.${media.rejection_reason}`)}</dd>
+          </>
+        )}
         <dt>{t("detail.size")}</dt>
         <dd>{media.bytes === null ? t("common.notAvailable") : fmt.bytes(media.bytes)}</dd>
         <dt>{t("detail.sha256")}</dt>
@@ -226,6 +242,7 @@ export function ReportDetailPage() {
         </h1>
         <StatusChip status={r.status} />
         <PriorityBadge score={r.priority_score} />
+        <VerificationBadge report={r} />
         {r.organization && (
           <Link to={`/orgs/${encodeURIComponent(r.organization.id)}`} className="tag tag--org">
             {t("orgs.reportOnBehalf", { name: r.organization.name })}

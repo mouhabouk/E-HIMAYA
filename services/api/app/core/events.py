@@ -5,6 +5,10 @@
 2. ``relay_pending`` (run by every API instance; ``SKIP LOCKED`` shares the work) publishes pending rows
    to the bus and marks them published. JetStream de-duplicates on ``Nats-Msg-Id`` = outbox id.
 3. Every instance subscribes to the bus and hands events to local listeners (dashboard WebSockets).
+
+Payloads carry personal data (report text, volunteer phone), so they are sealed with the field
+encryption keys (``crypto.seal``) in the outbox table and on the bus, and opened only before the local
+listeners: nothing readable is left at rest in PostgreSQL or in the JetStream files.
 """
 
 import asyncio
@@ -18,11 +22,13 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.core.config import get_settings
+from app.core.crypto import seal, unseal
 
 log = structlog.get_logger()
 
 SUBJECT_PREFIX = "ehimaya."
 STREAM_NAME = "EHIMAYA"
+SEAL_CONTEXT = "events.outbox"
 
 Listener = Callable[[str, dict[str, Any]], Awaitable[None]]
 
@@ -31,7 +37,7 @@ async def emit(session: AsyncSession, subject: str, payload: dict[str, Any]) -> 
     """Queue an event inside the current transaction (the caller commits)."""
     await session.execute(
         text("INSERT INTO events.outbox (subject, payload) VALUES (:subject, CAST(:payload AS jsonb))"),
-        {"subject": subject, "payload": json.dumps(payload, default=str, ensure_ascii=False)},
+        {"subject": subject, "payload": json.dumps(seal(payload, context=SEAL_CONTEXT))},
     )
 
 
@@ -105,7 +111,17 @@ class NatsBus:
             self._nc = None
 
 
+def open_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    """Clear payload of an outbox row or bus message (rows written before sealing are already clear)."""
+    return unseal(payload, context=SEAL_CONTEXT)
+
+
 async def _dispatch(listeners: list[Listener], subject: str, payload: dict[str, Any]) -> None:
+    try:
+        payload = open_payload(payload)
+    except Exception:
+        log.warning("events.unreadable_payload", subject=subject)
+        return
     for listener in listeners:
         try:
             await listener(subject, payload)

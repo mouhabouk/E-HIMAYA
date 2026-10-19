@@ -661,5 +661,97 @@
   "errorInvalidTransition": "This action is no longer possible.",
   "errorVersionConflict": "Your data changed meanwhile. Reload and try again.",
   "locationServiceDisabled": "Location is turned off on this phone.",
-  "volunteerLocationDenied": "Allow location access to declare yourself ready."
+  "volunteerLocationDenied": "Allow location access to declare yourself ready.",
+  "actionNotNow": "Not now",
+  "channelCritical": "Critical official alerts",
+  "channelCriticalDesc": "The most severe alerts of the civil protection, heard even in Do Not Disturb (only if you allowed it).",
+  "alertCheckTitle": "Alert delivery check",
+  "alertCheckSubtitle": "What could keep alerts from reaching you",
+  "alertCheckIntro": "Official alerts use their own sound, vibration and channel, separate from other apps. Some phone settings can still silence them: check them here.",
+  "alertCheckAllGood": "Nothing blocks official alerts on this phone.",
+  "alertCheckFix": "Fix",
+  "alertChannelSettings": "Alert sound and vibration settings",
+  "issueNotificationsOff": "Notifications are turned off",
+  "issueNotificationsOffHelp": "Without notifications you will not receive alerts or call-outs.",
+  "issueChannelMuted": "Official alerts are muted",
+  "issueChannelMutedHelp": "The “Official alerts” category was lowered in the phone settings: it no longer rings nor pops up.",
+  "issueDnd": "Do Not Disturb is on",
+  "issueDndHelp": "Alerts may arrive silently. You can let the most severe official alerts through.",
+  "issueFullScreen": "Full-screen alerts are not allowed",
+  "issueFullScreenHelp": "The most severe alerts should open over the lock screen. Allow “full-screen notifications” for e-Himaya.",
+  "issueBatteryOptimized": "Battery optimisation may delay call-outs",
+  "issueBatteryOptimizedHelp": "You are on call: the phone may put the app to sleep and delay call-outs. Exempt e-Himaya while you volunteer.",
+  "issuePushUnavailable": "Push notifications are unavailable",
+  "issuePushUnavailableHelp": "This phone cannot receive pushes (for example without Google services): alerts are checked only while the app is open.",
+  "testAlertButton": "Send a test alert",
+  "testAlertTitle": "Test — official alert",
+  "testAlertBody": "This is what an alert from the civil protection looks and sounds like. No action needed.",
+  "testAlertSent": "Test alert sent.",
+  "criticalAlertsTitle": "Critical alerts in Do Not Disturb",
+  "criticalAlertsIntro": "You can let the most severe official alerts (danger to life: flood, fire, evacuation) ring even when Do Not Disturb is on.",
+  "criticalAlertsHow": "Only alerts of the highest severity use this. The phone will ask you to give e-Himaya “Do Not Disturb access”; you can turn this off here at any time.",
+  "criticalAlertsEnable": "Allow critical alerts",
+  "criticalAlertsEnabled": "Critical alerts can ring in Do Not Disturb.",
+  "criticalAlertsDisable": "Turn off",
+  "batteryExemptTitle": "Keep call-outs on time",
+  "batteryExemptBody": "You are on call. To save battery, the phone may put e-Himaya to sleep and deliver call-outs late. Exempting the app from battery optimisation avoids this; e-Himaya itself only uses location while it is open and you are ready.",
+  "batteryExemptAllow": "Exempt the app",
+  "batterySaverTitle": "Battery saver",
+  "batterySaverHelp": "Checks less often for updates, shares your volunteer position less often and keeps large videos for Wi-Fi. Alerts and SOS are never delayed.",
+  "batterySaverAuto": "Automatic (low battery)",
+  "batterySaverOn": "Always on",
+  "batterySaverOff": "Off",
+  "batterySaverActive": "active",
+  "batterySaverInactive": "inactive",
+  "batteryLevel": "battery {percent}%",
+  "@batteryLevel": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "pushCalloutTitle": "Call-out",
+  "pushOpenToSee": "Open the app to see the details.",
+  "pushReportTitle": "Report {code}",
+  "@pushReportTitle": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "myDataTitle": "My data",
+  "myDataSubtitle": "Download a copy or delete your account",
+  "myDataIntro": "You can get a copy of all the personal data e-Himaya holds about you (profile, consents, reports, volunteer record, devices), at most 3 times a day. Keep the file private: it contains personal data.",
+  "myDataDownload": "Download my data",
+  "myDataCopy": "Copy",
+  "myDataCopied": "Copied to the clipboard.",
+  "myDataSave": "Save as file",
+  "myDataSaved": "Saved: {path}",
+  "@myDataSaved": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "myDataSaveFailed": "The file could not be saved.",
+  "deleteAccountTitle": "Delete my account",
+  "deleteAccountSubtitle": "Your personal data is erased; this cannot be undone.",
+  "deleteAccountExplain": "Your profile, consents, devices and volunteer record are erased and your account is closed. Reports you sent are kept without your name, as the law requires. Everything stored on this phone is wiped and the app starts again from the beginning.",
+  "deleteAccountExplainAnonymous": "This phone's anonymous identity is deleted on the server. Reports you sent are kept without any link to this phone, as the law requires. Everything stored on this phone is wiped and the app starts again from the beginning.",
+  "deleteAccountWord": "DELETE",
+  "deleteAccountTypeWord": "Type {word} to confirm",
+  "@deleteAccountTypeWord": {
+    "placeholders": {
+      "word": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteAccountConfirm": "Delete permanently",
+  "deleteAccountDone": "Your account was deleted.",
+  "deleteAccountLastAdmin": "You are the last administrator of an institution. Hand the administration over to another member first, then delete your account.",
+  "lockedAlertOpenApp": "Unlock to open the app"
 }

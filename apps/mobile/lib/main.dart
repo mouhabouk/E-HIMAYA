@@ -9,8 +9,11 @@ import 'core/auth/identity.dart';
 import 'core/db/app_database.dart';
 import 'core/db/open_database.dart';
 import 'core/logging/log.dart';
+import 'core/platform/device_services.dart';
+import 'core/power/battery_saver.dart';
 import 'core/push/push_controller.dart';
 import 'core/push/push_messaging.dart';
+import 'core/security/locked_alert.dart';
 import 'core/storage/app_prefs.dart';
 import 'core/storage/secure_store.dart';
 import 'core/sync/sync_scheduler.dart';
@@ -36,14 +39,20 @@ Future<void> main() async {
     return;
   }
 
+  // Opened over a locked phone by a severe alert: decided before the first frame.
+  final lockedAlert = await const PlatformDeviceServices().lockedAlertMode();
+
   final container = ProviderContainer(
     overrides: [
+      initialLockedAlertProvider.overrideWithValue(lockedAlert),
       sharedPreferencesProvider.overrideWithValue(prefs),
       secureStoreProvider.overrideWithValue(secure),
       initialAuthSessionProvider.overrideWithValue(session),
       databaseProvider.overrideWithValue(db),
     ],
   );
+  container.read(lockedAlertProvider.notifier).start();
+  container.read(batterySaverProvider.notifier).start();
   container.read(syncSchedulerProvider).start();
   container.read(alertsSchedulerProvider).start();
   container.read(readinessTrackerProvider).start();
@@ -69,5 +78,7 @@ PushChannelNames _channelNames(String? code) {
     alertsDescription: l10n.channelAlertsDesc,
     general: l10n.channelGeneral,
     generalDescription: l10n.channelGeneralDesc,
+    critical: l10n.channelCritical,
+    criticalDescription: l10n.channelCriticalDesc,
   );
 }
