@@ -304,6 +304,70 @@ void main() {
         ..writeAsBytesSync(List.generate(2500, (i) => i % 7));
     });
 
+    test('battery saver gate: the report goes at once, the media waits (no failure)', () async {
+      final q = await enqueue(
+        media: [
+          DraftAttachment(
+            path: audio.path,
+            kind: MediaKind.audio,
+            mime: 'audio/mp4',
+          ),
+        ],
+      );
+      var allow = false;
+      var stored = 0;
+      final gated = SyncEngine(
+        db: db,
+        api: EHimayaApi(
+          Dio(BaseOptions(baseUrl: 'http://api.test'))
+            ..httpClientAdapter = adapter,
+        ),
+        tus: TusClient(
+          Dio(BaseOptions(baseUrl: 'http://tus.test/api/v1/uploads/'))
+            ..httpClientAdapter = adapter,
+          chunkSize: 1024,
+        ),
+        consent: consent,
+        clock: () => now,
+        identity: () => identity,
+        onAnonBlocked: () {},
+        mediaGate: (report, media) async => allow,
+      );
+      adapter.handler = (r) {
+        if (r.uri.host == 'api.test' && r.method == 'POST') {
+          return FakeResponse(201, json: serverReport(q.clientUuid));
+        }
+        if (r.method == 'POST') {
+          return const FakeResponse(
+            201,
+            headers: {'Location': '/api/v1/uploads/abc'},
+          );
+        }
+        if (r.method == 'PATCH') {
+          stored += r.body!.length;
+          return FakeResponse(204, headers: {'Upload-Offset': '$stored'});
+        }
+        return const FakeResponse(
+          200,
+          json: {'items': [], 'next_before': null},
+        );
+      };
+
+      final first = await gated.runOnce();
+      expect(first.reportsSent, 1);
+      expect(first.failures, 0);
+      var m = (await db.mediaForReport(q.clientUuid)).single;
+      expect(m.state, MediaState.pending);
+      expect(m.attempts, 0);
+      expect(adapter.requests.where((r) => r.uri.host == 'tus.test'), isEmpty);
+
+      allow = true;
+      final second = await gated.runOnce();
+      expect(second.mediaUploaded, 1);
+      m = (await db.mediaForReport(q.clientUuid)).single;
+      expect(m.state, MediaState.uploaded);
+    });
+
     test('report first, then tus upload, file deleted once stored', () async {
       final q = await enqueue(
         media: [

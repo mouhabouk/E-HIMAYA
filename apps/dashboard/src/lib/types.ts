@@ -22,7 +22,17 @@ export type Category = (typeof CATEGORIES)[number];
 
 export type ReporterKind = "citizen" | "anonymous";
 export type MediaKind = "image" | "video" | "audio";
-export type MediaStatus = "uploading" | "verifying" | "stored" | "rejected";
+export type MediaStatus = "uploading" | "verifying" | "stored" | "rejected" | "quarantined";
+/** Why the verification worker refused a file (phase 5.5, A7). */
+export type MediaRejectionReason = "sha256_mismatch" | "type_mismatch" | "disallowed_type";
+export const MEDIA_REJECTION_REASONS: readonly MediaRejectionReason[] = [
+  "sha256_mismatch",
+  "type_mismatch",
+  "disallowed_type",
+];
+/** Why a report was accepted but flagged for a human check (phase 5.5, A1/A2). */
+export type VerificationReason = "anonymous_budget" | "limiter_degraded";
+export const VERIFICATION_REASONS: readonly VerificationReason[] = ["anonymous_budget", "limiter_degraded"];
 export type TextLang = "ar" | "fr" | "en";
 
 export const ANALYSIS_STATES = ["pending", "running", "done", "failed"] as const;
@@ -40,11 +50,13 @@ export interface Media {
   bytes: number | null;
   sha256: string;
   status: MediaStatus;
-  /** MIME type declared at upload (e.g. video/mp4). */
+  /** MIME type: the one verified from the file's bytes once stored (e.g. video/mp4). */
   content_type?: string | null;
   created_at?: string;
-  /** Pre-signed URL (10 minutes), only in StaffReportDetail and only when status is "stored". */
+  /** Pre-signed URL (10 minutes), only in StaffReportDetail: "stored" media inline, "quarantined" as a download. */
   url?: string | null;
+  /** Set on quarantined media (staff only). */
+  rejection_reason?: MediaRejectionReason | null;
 }
 
 export interface StaffReport {
@@ -80,6 +92,9 @@ export interface StaffReport {
   has_suggestion: boolean;
   /** Institution the report was made on behalf of (phase 4 §8–9); absent from older payloads. */
   organization?: OrgRef | null;
+  /** Accepted beyond the anonymous budget or while the rate limiter was degraded: check before dispatch. */
+  needs_verification?: boolean;
+  verification_reason?: VerificationReason | null;
 }
 
 export interface HistoryEntry {

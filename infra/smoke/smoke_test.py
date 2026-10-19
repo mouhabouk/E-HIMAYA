@@ -81,7 +81,8 @@ def main() -> None:
     print("report:", report["tracking_code"], "gouvernorat", report["gouvernorat_code"])
     assert report["gouvernorat_code"] == 11
 
-    data = os.urandom(3 * 1024 * 1024 + 7)
+    # A JPEG signature: the API checks the magic bytes against the declared type (A7) and quarantines a mismatch.
+    data = b"\xff\xd8\xff\xe0" + os.urandom(3 * 1024 * 1024 + 3)
     meta = {
         "report_id": report["id"],
         "kind": "image",

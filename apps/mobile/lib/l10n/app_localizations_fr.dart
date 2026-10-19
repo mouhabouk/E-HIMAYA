@@ -1387,4 +1387,230 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get volunteerLocationDenied =>
       'Autorisez l’accès à la localisation pour vous déclarer disponible.';
+
+  @override
+  String get actionNotNow => 'Pas maintenant';
+
+  @override
+  String get channelCritical => 'Alertes officielles critiques';
+
+  @override
+  String get channelCriticalDesc =>
+      'Les alertes les plus graves de la protection civile, entendues même en mode Ne pas déranger (seulement si vous l\'avez autorisé).';
+
+  @override
+  String get alertCheckTitle => 'Vérifier la réception des alertes';
+
+  @override
+  String get alertCheckSubtitle =>
+      'Ce qui pourrait empêcher les alertes de vous parvenir';
+
+  @override
+  String get alertCheckIntro =>
+      'Les alertes officielles ont leur propre son, vibration et canal, séparés des autres applications. Certains réglages du téléphone peuvent tout de même les faire taire : vérifiez-les ici.';
+
+  @override
+  String get alertCheckAllGood =>
+      'Rien ne bloque les alertes officielles sur ce téléphone.';
+
+  @override
+  String get alertCheckFix => 'Corriger';
+
+  @override
+  String get alertChannelSettings =>
+      'Réglages du son et de la vibration des alertes';
+
+  @override
+  String get issueNotificationsOff => 'Les notifications sont désactivées';
+
+  @override
+  String get issueNotificationsOffHelp =>
+      'Sans notifications, vous ne recevrez ni alertes ni sollicitations.';
+
+  @override
+  String get issueChannelMuted => 'Les alertes officielles sont en sourdine';
+
+  @override
+  String get issueChannelMutedHelp =>
+      'La catégorie « Alertes officielles » a été réduite dans les réglages du téléphone : elle ne sonne plus et ne s\'affiche plus en haut de l\'écran.';
+
+  @override
+  String get issueDnd => 'Le mode Ne pas déranger est activé';
+
+  @override
+  String get issueDndHelp =>
+      'Les alertes peuvent arriver sans son. Vous pouvez laisser passer les alertes officielles les plus graves.';
+
+  @override
+  String get issueFullScreen =>
+      'Les alertes plein écran ne sont pas autorisées';
+
+  @override
+  String get issueFullScreenHelp =>
+      'Les alertes les plus graves doivent s\'ouvrir par-dessus l\'écran de verrouillage. Autorisez les « notifications plein écran » pour e-Himaya.';
+
+  @override
+  String get issueBatteryOptimized =>
+      'L\'optimisation de la batterie peut retarder les sollicitations';
+
+  @override
+  String get issueBatteryOptimizedHelp =>
+      'Vous êtes de garde : le téléphone peut mettre l\'application en veille et retarder les sollicitations. Exemptez e-Himaya pendant votre volontariat.';
+
+  @override
+  String get issuePushUnavailable =>
+      'Les notifications push sont indisponibles';
+
+  @override
+  String get issuePushUnavailableHelp =>
+      'Ce téléphone ne peut pas recevoir de push (par exemple sans services Google) : les alertes ne sont vérifiées que lorsque l\'application est ouverte.';
+
+  @override
+  String get testAlertButton => 'Envoyer une alerte de test';
+
+  @override
+  String get testAlertTitle => 'Test — alerte officielle';
+
+  @override
+  String get testAlertBody =>
+      'Voici à quoi ressemble une alerte de la protection civile. Aucune action n\'est nécessaire.';
+
+  @override
+  String get testAlertSent => 'Alerte de test envoyée.';
+
+  @override
+  String get criticalAlertsTitle => 'Alertes critiques en mode Ne pas déranger';
+
+  @override
+  String get criticalAlertsIntro =>
+      'Vous pouvez laisser sonner les alertes officielles les plus graves (danger de mort : inondation, incendie, évacuation) même en mode Ne pas déranger.';
+
+  @override
+  String get criticalAlertsHow =>
+      'Seules les alertes de gravité maximale l\'utilisent. Le téléphone vous demandera d\'accorder à e-Himaya l\'« accès à Ne pas déranger » ; vous pouvez le désactiver ici à tout moment.';
+
+  @override
+  String get criticalAlertsEnable => 'Autoriser les alertes critiques';
+
+  @override
+  String get criticalAlertsEnabled =>
+      'Les alertes critiques peuvent sonner en mode Ne pas déranger.';
+
+  @override
+  String get criticalAlertsDisable => 'Désactiver';
+
+  @override
+  String get batteryExemptTitle => 'Recevoir les sollicitations à temps';
+
+  @override
+  String get batteryExemptBody =>
+      'Vous êtes de garde. Pour économiser la batterie, le téléphone peut mettre e-Himaya en veille et livrer les sollicitations en retard. Exempter l\'application de l\'optimisation de la batterie l\'évite ; e-Himaya n\'utilise la localisation que lorsqu\'elle est ouverte et que vous êtes disponible.';
+
+  @override
+  String get batteryExemptAllow => 'Exempter l\'application';
+
+  @override
+  String get batterySaverTitle => 'Économiseur de batterie';
+
+  @override
+  String get batterySaverHelp =>
+      'Vérifie moins souvent les mises à jour, partage moins souvent votre position de volontaire et garde les grandes vidéos pour le Wi-Fi. Les alertes et les SOS ne sont jamais retardés.';
+
+  @override
+  String get batterySaverAuto => 'Automatique (batterie faible)';
+
+  @override
+  String get batterySaverOn => 'Toujours activé';
+
+  @override
+  String get batterySaverOff => 'Désactivé';
+
+  @override
+  String get batterySaverActive => 'actif';
+
+  @override
+  String get batterySaverInactive => 'inactif';
+
+  @override
+  String batteryLevel(int percent) {
+    return 'batterie $percent %';
+  }
+
+  @override
+  String get pushCalloutTitle => 'Sollicitation';
+
+  @override
+  String get pushOpenToSee => 'Ouvrez l\'application pour voir le détail.';
+
+  @override
+  String pushReportTitle(String code) {
+    return 'Signalement $code';
+  }
+
+  @override
+  String get myDataTitle => 'Mes données';
+
+  @override
+  String get myDataSubtitle =>
+      'Télécharger une copie ou supprimer votre compte';
+
+  @override
+  String get myDataIntro =>
+      'Vous pouvez obtenir une copie de toutes les données personnelles qu\'e-Himaya détient sur vous (profil, consentements, signalements, dossier de volontaire, appareils), au plus 3 fois par jour. Gardez ce fichier privé : il contient des données personnelles.';
+
+  @override
+  String get myDataDownload => 'Télécharger mes données';
+
+  @override
+  String get myDataCopy => 'Copier';
+
+  @override
+  String get myDataCopied => 'Copié dans le presse-papiers.';
+
+  @override
+  String get myDataSave => 'Enregistrer le fichier';
+
+  @override
+  String myDataSaved(String path) {
+    return 'Enregistré : $path';
+  }
+
+  @override
+  String get myDataSaveFailed => 'Le fichier n\'a pas pu être enregistré.';
+
+  @override
+  String get deleteAccountTitle => 'Supprimer mon compte';
+
+  @override
+  String get deleteAccountSubtitle =>
+      'Vos données personnelles sont effacées ; c\'est irréversible.';
+
+  @override
+  String get deleteAccountExplain =>
+      'Votre profil, vos consentements, vos appareils et votre dossier de volontaire sont effacés et votre compte est fermé. Les signalements envoyés sont conservés sans votre nom, comme l\'exige la loi. Tout ce qui est stocké sur ce téléphone est effacé et l\'application recommence depuis le début.';
+
+  @override
+  String get deleteAccountExplainAnonymous =>
+      'L\'identité anonyme de ce téléphone est supprimée sur le serveur. Les signalements envoyés sont conservés sans lien avec ce téléphone, comme l\'exige la loi. Tout ce qui est stocké sur ce téléphone est effacé et l\'application recommence depuis le début.';
+
+  @override
+  String get deleteAccountWord => 'SUPPRIMER';
+
+  @override
+  String deleteAccountTypeWord(String word) {
+    return 'Tapez $word pour confirmer';
+  }
+
+  @override
+  String get deleteAccountConfirm => 'Supprimer définitivement';
+
+  @override
+  String get deleteAccountDone => 'Votre compte a été supprimé.';
+
+  @override
+  String get deleteAccountLastAdmin =>
+      'Vous êtes le dernier administrateur d\'une institution. Confiez d\'abord l\'administration à un autre membre, puis supprimez votre compte.';
+
+  @override
+  String get lockedAlertOpenApp => 'Déverrouiller pour ouvrir l\'application';
 }

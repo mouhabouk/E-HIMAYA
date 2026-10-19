@@ -73,7 +73,7 @@ async def enqueue(session: AsyncSession, report_id: uuid.UUID) -> None:
 def report_texts(report: Report, media: list[Media]) -> list[str]:
     texts = [report.text_original] if report.text_original else []
     texts += [m.transcript for m in media if m.transcript]
-    texts += [str((m.analysis or {}).get("translation_ar")) for m in media if (m.analysis or {}).get("translation_ar")]
+    texts += [m.translation_ar for m in media if m.translation_ar]
     if report.text_ar:
         texts.append(report.text_ar)
     return texts
@@ -132,6 +132,8 @@ async def score(session: AsyncSession, report: Report, analysis: Analysis) -> li
     )
     credibility = scoring.credibility(facts)
     priority = scoring.priority(facts, credibility["score"], settings.priority)
+    if report.needs_verification:
+        priority = scoring.pending_verification(priority, report.verification_reason)
     analysis.credibility = credibility
     analysis.priority = priority
     analysis.suggestion = grouping.suggestion(matches, report.incident_id, list(analysis.dismissed or []))
@@ -342,9 +344,10 @@ async def _save(session: AsyncSession, report_id: uuid.UUID, generation: int, at
                 model=result.get("model"),
                 segments=len(result.get("segments") or []),
             )
-        for key in ("translation_ar", "error"):
-            if key in result:
-                info[key] = result[key]
+        if "translation_ar" in result:
+            media.translation_ar = result["translation_ar"]
+        if "error" in result:
+            info["error"] = result["error"]
         media.analysis = info
 
     if out.extraction is not None:

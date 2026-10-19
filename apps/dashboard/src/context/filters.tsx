@@ -23,6 +23,7 @@ function load(): ReportFilters {
       gouvernorat: typeof v.gouvernorat === "number" ? v.gouvernorat : null,
       period: isPeriod(v.period) ? v.period : DEFAULT_FILTERS.period,
       q: typeof v.q === "string" ? v.q : "",
+      unverified: v.unverified === true,
     };
   } catch {
     return DEFAULT_FILTERS;

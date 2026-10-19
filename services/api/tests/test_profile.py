@@ -4,6 +4,7 @@ import httpx
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.modules.identity.models import phone_index
 from tests.conftest import TokenFactory, bearer, device_headers
 
 
@@ -45,9 +46,9 @@ async def test_profile_roundtrip_encrypts_cin(
         await session.execute(
             text(
                 "SELECT cin_enc, cin_hash, email_verified_at FROM identity.profile "
-                "WHERE phone = :p ORDER BY updated_at DESC"
+                "WHERE phone_hash = :p ORDER BY updated_at DESC"
             ),
-            {"p": "+21622333444"},
+            {"p": phone_index("+21622333444")},
         )
     ).first()
     assert row is not None

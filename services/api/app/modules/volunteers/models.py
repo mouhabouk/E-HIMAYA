@@ -5,6 +5,7 @@ from sqlalchemy import BigInteger, Date, DateTime, ForeignKey, Integer, SmallInt
 from sqlalchemy.dialects.postgresql import ARRAY, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
+from app.core.crypto import EncryptedText
 from app.core.db import Base
 
 
@@ -19,11 +20,12 @@ class Volunteer(Base):
     )
     status: Mapped[str] = mapped_column(Text, server_default="pending")
     skills: Mapped[list[str]] = mapped_column(ARRAY(Text))
-    other_skill: Mapped[str | None] = mapped_column(Text)
+    # The volunteer's own free text is encrypted.
+    other_skill: Mapped[str | None] = mapped_column("other_skill_enc", EncryptedText("identity.volunteer.other_skill"))
     availability: Mapped[str] = mapped_column(Text)
     period_from: Mapped[date] = mapped_column(Date)
     period_to: Mapped[date | None] = mapped_column(Date)
-    notes: Mapped[str | None] = mapped_column(Text)
+    notes: Mapped[str | None] = mapped_column("notes_enc", EncryptedText("identity.volunteer.notes"))
     gouvernorat_code: Mapped[int] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
     submitted_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

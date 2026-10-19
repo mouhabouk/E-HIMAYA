@@ -9,6 +9,7 @@ import 'package:path/path.dart' as p;
 
 import '../auth/identity.dart';
 import '../config/providers.dart';
+import '../connectivity/connectivity.dart';
 import '../consent/consent_service.dart';
 import '../db/app_database.dart';
 import '../db/open_database.dart';
@@ -17,6 +18,8 @@ import '../http/api_error.dart';
 import '../http/ehimaya_api.dart';
 import '../http/models.dart';
 import '../logging/log.dart';
+import '../power/battery_saver.dart';
+import '../power/scheduling.dart';
 import '../tus/tus_client.dart';
 import 'backoff.dart';
 import 'report_queue.dart';
@@ -59,6 +62,7 @@ class SyncEngine {
     required this.clock,
     required this.identity,
     required this.onAnonBlocked,
+    this.mediaGate,
     Random? random,
   }) : _random = random ?? Random();
 
@@ -69,6 +73,11 @@ class SyncEngine {
   final DateTime Function() clock;
   final IdentityState Function() identity;
   final void Function() onAnonBlocked;
+
+  /// Whether a media file may be uploaded now (battery saver keeps large files of non-SOS
+  /// reports for Wi-Fi for a while, see [MediaUploadPolicy]). Null: always. A deferred file is
+  /// not a failure: it is simply tried again on a later pass.
+  final Future<bool> Function(PendingReport report, MediaItem media)? mediaGate;
   final Random _random;
 
   /// Reconcile passes an uploaded file may be missing from `/reports/mine` before it is
@@ -220,6 +229,8 @@ class SyncEngine {
       }
       if (MediaState.terminal.contains(m.state)) continue;
       if (!_due(m.nextAttemptAt)) continue;
+      final gate = mediaGate;
+      if (gate != null && !await gate(report, m)) continue;
       final file = File(m.path);
       if (!await file.exists()) {
         await db.updateMedia(
@@ -450,5 +461,17 @@ final syncEngineProvider = Provider<SyncEngine>(
     clock: ref.watch(clockProvider),
     identity: () => ref.read(identityProvider),
     onAnonBlocked: () => ref.read(anonBlockedProvider.notifier).set(true),
+    mediaGate: (report, media) async {
+      final saver = ref.read(batterySaverActiveProvider);
+      if (!saver) return true;
+      return const MediaUploadPolicy().mayUpload(
+        sos: report.category == ReportCategory.sos.wire,
+        sizeBytes: media.size,
+        network: await ref.read(connectivityProvider).networkKind(),
+        batterySaver: saver,
+        queuedAt: report.createdAt,
+        now: ref.read(clockProvider)(),
+      );
+    },
   ),
 );

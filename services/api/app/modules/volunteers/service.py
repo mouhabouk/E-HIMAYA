@@ -17,10 +17,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.events import emit
 from app.core.security import Principal
 from app.modules.audit import service as audit
-from app.modules.identity.models import Profile
+from app.modules.identity.models import Profile, phone_index
 from app.modules.identity.service import Reporter
 from app.modules.notify import outbox, templates
 from app.modules.ops.models import Callout, CalloutTarget
+from app.modules.orgs.domain import normalize_phone
 from app.modules.volunteers import schemas
 from app.modules.volunteers.models import Volunteer, VolunteerReview
 from app.modules.volunteers.presence import Fix, get_presence
@@ -252,14 +253,16 @@ async def staff_list(
         query = query.where(live if ready else ~live)
     if q:
         pattern = f"%{q.replace('%', '').replace('_', '')}%"
-        query = query.where(
-            or_(
-                Profile.first_name.ilike(pattern),
-                Profile.last_name.ilike(pattern),
-                Profile.phone.ilike(pattern),
-                func.concat(Profile.first_name, " ", Profile.last_name).ilike(pattern),
-            )
-        )
+        matches: list[Any] = [
+            Profile.first_name.ilike(pattern),
+            Profile.last_name.ilike(pattern),
+            func.concat(Profile.first_name, " ", Profile.last_name).ilike(pattern),
+        ]
+        # Phones are encrypted: a complete number is matched exactly through its blind index.
+        phone = normalize_phone(q.strip().removeprefix("216") if len(q.strip()) == 11 else q.strip())
+        if phone:
+            matches.append(Profile.phone_hash == phone_index(phone))
+        query = query.where(or_(*matches))
     if cursor:
         c_rank, c_at, c_id = _decode(cursor)
         query = query.where(

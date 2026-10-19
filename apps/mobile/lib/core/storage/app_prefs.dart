@@ -27,6 +27,15 @@ class AppPrefs {
   static const _tipsEtag = 'tips.etag';
   static const _tipsJson = 'tips.json';
   static const _alertsJson = 'alerts.last';
+  static const _batterySaver = 'power.battery_saver';
+  static const _criticalAlerts = criticalAlertsKey;
+
+  /// Read directly by the push background isolate.
+  static const criticalAlertsKey = 'alerts.critical_opt_in';
+  static const _batteryOptAskedAt = 'power.battery_opt_asked_at';
+
+  /// Kept when the account is deleted: interface choices, not personal data.
+  static const _keptOnWipe = {_locale, _theme, _batterySaver};
 
   String? get charterAcceptedVersion => _prefs.getString(_charterVersion);
   DateTime? get charterAcceptedAt {
@@ -118,6 +127,35 @@ class AppPrefs {
   String? get lastAlertsJson => _prefs.getString(_alertsJson);
   Future<void> setLastAlertsJson(String value) =>
       _prefs.setString(_alertsJson, value);
+
+  /// In-app battery saver: `auto` (default), `on` or `off`.
+  String? get batterySaverMode => _prefs.getString(_batterySaver);
+  Future<void> setBatterySaverMode(String value) =>
+      _prefs.setString(_batterySaver, value);
+
+  /// The user opted in to official alerts of the highest severity breaking through Do Not
+  /// Disturb (Android; never enabled without this explicit choice).
+  bool get criticalAlertsOptIn => _prefs.getBool(_criticalAlerts) ?? false;
+  Future<void> setCriticalAlertsOptIn(bool value) =>
+      _prefs.setBool(_criticalAlerts, value);
+
+  /// When a ready volunteer was last asked to exempt the app from battery optimisation (asked
+  /// at most once a month, never to other users).
+  DateTime? get batteryOptAskedAt {
+    final raw = _prefs.getString(_batteryOptAskedAt);
+    return raw == null ? null : DateTime.tryParse(raw);
+  }
+
+  Future<void> setBatteryOptAskedAt(DateTime at) =>
+      _prefs.setString(_batteryOptAskedAt, at.toUtc().toIso8601String());
+
+  /// Account deletion: forgets everything except the language, theme and battery saver choice
+  /// (the app then starts again from the charter).
+  Future<void> wipeForAccountDeletion() async {
+    for (final key in _prefs.getKeys().toList()) {
+      if (!_keptOnWipe.contains(key)) await _prefs.remove(key);
+    }
+  }
 }
 
 /// Overridden in `main()` (and in tests) with an initialised [SharedPreferences].

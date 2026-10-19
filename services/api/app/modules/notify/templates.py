@@ -15,44 +15,15 @@ SIGNATURE: Localized = {
     "en": "e-Himaya — National Civil Protection Office",
 }
 
-REPORT_STATUS: dict[str, Localized] = {
-    "received": {"ar": "تم استلام بلاغك", "fr": "Votre signalement a été reçu", "en": "Your report was received"},
-    "in_progress": {
-        "ar": "بلاغك قيد المعالجة",
-        "fr": "Votre signalement est en cours de traitement",
-        "en": "Your report is being handled",
-    },
-    "intervened": {
-        "ar": "تم التدخل في الحادثة التي بلّغت عنها",
-        "fr": "Les secours sont intervenus sur l'incident signalé",
-        "en": "Responders have intervened on the incident you reported",
-    },
-    "ongoing": {"ar": "التدخل متواصل", "fr": "L'intervention se poursuit", "en": "The intervention is ongoing"},
-    "closed": {"ar": "أُغلق التدخل", "fr": "L'intervention est terminée", "en": "The intervention is closed"},
-    "rejected": {"ar": "رُفض البلاغ", "fr": "Le signalement a été rejeté", "en": "The report was rejected"},
+# Personal pushes (report status, volunteer call-out, one-user notification) carry no personal text: the
+# push services (Google, Apple) only see this generic text; the app fetches the content over the API (A8).
+PERSONAL_PUSH_TITLE: Localized = {"ar": "ء-حماية", "fr": "e-Himaya", "en": "e-Himaya"}
+PERSONAL_PUSH_BODY: Localized = {
+    "ar": "لديك تحديث جديد",
+    "fr": "Vous avez une nouvelle mise à jour",
+    "en": "You have a new update",
 }
-REPORT_STATUS_TITLE: Localized = {"ar": "بلاغ {code}", "fr": "Signalement {code}", "en": "Report {code}"}
 
-CALLOUT_TITLE: Localized = {
-    "ar": "استدعاء متطوعين",
-    "fr": "Appel aux volontaires",
-    "en": "Volunteer call-out",
-}
-CALLOUT_BODY: Localized = {
-    "ar": "مطلوب {skill} على بعد {km} كم. افتح التطبيق للرد.",
-    "fr": "Besoin : {skill} à {km} km. Ouvrez l'application pour répondre.",
-    "en": "Needed: {skill}, {km} km away. Open the app to answer.",
-}
-SKILLS: dict[str, Localized] = {
-    "first_aid": {"ar": "إسعاف", "fr": "secourisme", "en": "first aid"},
-    "diving": {"ar": "غوص", "fr": "plongée", "en": "diving"},
-    "heavy_vehicles": {"ar": "قيادة آليات ثقيلة", "fr": "conduite d'engins lourds", "en": "heavy vehicles"},
-    "firefighting": {"ar": "إطفاء", "fr": "lutte contre l'incendie", "en": "firefighting"},
-    "search_rescue": {"ar": "بحث وإنقاذ", "fr": "recherche et sauvetage", "en": "search and rescue"},
-    "logistics": {"ar": "لوجستيك", "fr": "logistique", "en": "logistics"},
-    "medical": {"ar": "طب وتمريض", "fr": "médical", "en": "medical"},
-    "other": {"ar": "اختصاص آخر", "fr": "autre compétence", "en": "other skill"},
-}
 
 ALERT_CANCELLED_TITLE: Localized = {"ar": "رُفع التنبيه", "fr": "Alerte levée", "en": "Alert lifted"}
 

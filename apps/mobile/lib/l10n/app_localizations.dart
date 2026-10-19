@@ -2481,6 +2481,390 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Allow location access to declare yourself ready.'**
   String get volunteerLocationDenied;
+
+  /// No description provided for @actionNotNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get actionNotNow;
+
+  /// No description provided for @channelCritical.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical official alerts'**
+  String get channelCritical;
+
+  /// No description provided for @channelCriticalDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'The most severe alerts of the civil protection, heard even in Do Not Disturb (only if you allowed it).'**
+  String get channelCriticalDesc;
+
+  /// No description provided for @alertCheckTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert delivery check'**
+  String get alertCheckTitle;
+
+  /// No description provided for @alertCheckSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What could keep alerts from reaching you'**
+  String get alertCheckSubtitle;
+
+  /// No description provided for @alertCheckIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Official alerts use their own sound, vibration and channel, separate from other apps. Some phone settings can still silence them: check them here.'**
+  String get alertCheckIntro;
+
+  /// No description provided for @alertCheckAllGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing blocks official alerts on this phone.'**
+  String get alertCheckAllGood;
+
+  /// No description provided for @alertCheckFix.
+  ///
+  /// In en, this message translates to:
+  /// **'Fix'**
+  String get alertCheckFix;
+
+  /// No description provided for @alertChannelSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert sound and vibration settings'**
+  String get alertChannelSettings;
+
+  /// No description provided for @issueNotificationsOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are turned off'**
+  String get issueNotificationsOff;
+
+  /// No description provided for @issueNotificationsOffHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Without notifications you will not receive alerts or call-outs.'**
+  String get issueNotificationsOffHelp;
+
+  /// No description provided for @issueChannelMuted.
+  ///
+  /// In en, this message translates to:
+  /// **'Official alerts are muted'**
+  String get issueChannelMuted;
+
+  /// No description provided for @issueChannelMutedHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The “Official alerts” category was lowered in the phone settings: it no longer rings nor pops up.'**
+  String get issueChannelMutedHelp;
+
+  /// No description provided for @issueDnd.
+  ///
+  /// In en, this message translates to:
+  /// **'Do Not Disturb is on'**
+  String get issueDnd;
+
+  /// No description provided for @issueDndHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts may arrive silently. You can let the most severe official alerts through.'**
+  String get issueDndHelp;
+
+  /// No description provided for @issueFullScreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Full-screen alerts are not allowed'**
+  String get issueFullScreen;
+
+  /// No description provided for @issueFullScreenHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The most severe alerts should open over the lock screen. Allow “full-screen notifications” for e-Himaya.'**
+  String get issueFullScreenHelp;
+
+  /// No description provided for @issueBatteryOptimized.
+  ///
+  /// In en, this message translates to:
+  /// **'Battery optimisation may delay call-outs'**
+  String get issueBatteryOptimized;
+
+  /// No description provided for @issueBatteryOptimizedHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'You are on call: the phone may put the app to sleep and delay call-outs. Exempt e-Himaya while you volunteer.'**
+  String get issueBatteryOptimizedHelp;
+
+  /// No description provided for @issuePushUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Push notifications are unavailable'**
+  String get issuePushUnavailable;
+
+  /// No description provided for @issuePushUnavailableHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'This phone cannot receive pushes (for example without Google services): alerts are checked only while the app is open.'**
+  String get issuePushUnavailableHelp;
+
+  /// No description provided for @testAlertButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a test alert'**
+  String get testAlertButton;
+
+  /// No description provided for @testAlertTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Test — official alert'**
+  String get testAlertTitle;
+
+  /// No description provided for @testAlertBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This is what an alert from the civil protection looks and sounds like. No action needed.'**
+  String get testAlertBody;
+
+  /// No description provided for @testAlertSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Test alert sent.'**
+  String get testAlertSent;
+
+  /// No description provided for @criticalAlertsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical alerts in Do Not Disturb'**
+  String get criticalAlertsTitle;
+
+  /// No description provided for @criticalAlertsIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'You can let the most severe official alerts (danger to life: flood, fire, evacuation) ring even when Do Not Disturb is on.'**
+  String get criticalAlertsIntro;
+
+  /// No description provided for @criticalAlertsHow.
+  ///
+  /// In en, this message translates to:
+  /// **'Only alerts of the highest severity use this. The phone will ask you to give e-Himaya “Do Not Disturb access”; you can turn this off here at any time.'**
+  String get criticalAlertsHow;
+
+  /// No description provided for @criticalAlertsEnable.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow critical alerts'**
+  String get criticalAlertsEnable;
+
+  /// No description provided for @criticalAlertsEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical alerts can ring in Do Not Disturb.'**
+  String get criticalAlertsEnabled;
+
+  /// No description provided for @criticalAlertsDisable.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off'**
+  String get criticalAlertsDisable;
+
+  /// No description provided for @batteryExemptTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep call-outs on time'**
+  String get batteryExemptTitle;
+
+  /// No description provided for @batteryExemptBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You are on call. To save battery, the phone may put e-Himaya to sleep and deliver call-outs late. Exempting the app from battery optimisation avoids this; e-Himaya itself only uses location while it is open and you are ready.'**
+  String get batteryExemptBody;
+
+  /// No description provided for @batteryExemptAllow.
+  ///
+  /// In en, this message translates to:
+  /// **'Exempt the app'**
+  String get batteryExemptAllow;
+
+  /// No description provided for @batterySaverTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Battery saver'**
+  String get batterySaverTitle;
+
+  /// No description provided for @batterySaverHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Checks less often for updates, shares your volunteer position less often and keeps large videos for Wi-Fi. Alerts and SOS are never delayed.'**
+  String get batterySaverHelp;
+
+  /// No description provided for @batterySaverAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic (low battery)'**
+  String get batterySaverAuto;
+
+  /// No description provided for @batterySaverOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Always on'**
+  String get batterySaverOn;
+
+  /// No description provided for @batterySaverOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get batterySaverOff;
+
+  /// No description provided for @batterySaverActive.
+  ///
+  /// In en, this message translates to:
+  /// **'active'**
+  String get batterySaverActive;
+
+  /// No description provided for @batterySaverInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'inactive'**
+  String get batterySaverInactive;
+
+  /// No description provided for @batteryLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'battery {percent}%'**
+  String batteryLevel(int percent);
+
+  /// No description provided for @pushCalloutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Call-out'**
+  String get pushCalloutTitle;
+
+  /// No description provided for @pushOpenToSee.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the app to see the details.'**
+  String get pushOpenToSee;
+
+  /// No description provided for @pushReportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report {code}'**
+  String pushReportTitle(String code);
+
+  /// No description provided for @myDataTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My data'**
+  String get myDataTitle;
+
+  /// No description provided for @myDataSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Download a copy or delete your account'**
+  String get myDataSubtitle;
+
+  /// No description provided for @myDataIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'You can get a copy of all the personal data e-Himaya holds about you (profile, consents, reports, volunteer record, devices), at most 3 times a day. Keep the file private: it contains personal data.'**
+  String get myDataIntro;
+
+  /// No description provided for @myDataDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Download my data'**
+  String get myDataDownload;
+
+  /// No description provided for @myDataCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get myDataCopy;
+
+  /// No description provided for @myDataCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied to the clipboard.'**
+  String get myDataCopied;
+
+  /// No description provided for @myDataSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save as file'**
+  String get myDataSave;
+
+  /// No description provided for @myDataSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved: {path}'**
+  String myDataSaved(String path);
+
+  /// No description provided for @myDataSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The file could not be saved.'**
+  String get myDataSaveFailed;
+
+  /// No description provided for @deleteAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete my account'**
+  String get deleteAccountTitle;
+
+  /// No description provided for @deleteAccountSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your personal data is erased; this cannot be undone.'**
+  String get deleteAccountSubtitle;
+
+  /// No description provided for @deleteAccountExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Your profile, consents, devices and volunteer record are erased and your account is closed. Reports you sent are kept without your name, as the law requires. Everything stored on this phone is wiped and the app starts again from the beginning.'**
+  String get deleteAccountExplain;
+
+  /// No description provided for @deleteAccountExplainAnonymous.
+  ///
+  /// In en, this message translates to:
+  /// **'This phone\'s anonymous identity is deleted on the server. Reports you sent are kept without any link to this phone, as the law requires. Everything stored on this phone is wiped and the app starts again from the beginning.'**
+  String get deleteAccountExplainAnonymous;
+
+  /// No description provided for @deleteAccountWord.
+  ///
+  /// In en, this message translates to:
+  /// **'DELETE'**
+  String get deleteAccountWord;
+
+  /// No description provided for @deleteAccountTypeWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Type {word} to confirm'**
+  String deleteAccountTypeWord(String word);
+
+  /// No description provided for @deleteAccountConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete permanently'**
+  String get deleteAccountConfirm;
+
+  /// No description provided for @deleteAccountDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account was deleted.'**
+  String get deleteAccountDone;
+
+  /// No description provided for @deleteAccountLastAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'You are the last administrator of an institution. Hand the administration over to another member first, then delete your account.'**
+  String get deleteAccountLastAdmin;
+
+  /// No description provided for @lockedAlertOpenApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock to open the app'**
+  String get lockedAlertOpenApp;
 }
 
 class _AppLocalizationsDelegate

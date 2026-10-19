@@ -14,7 +14,7 @@ from app.modules.ai.client import AiRejected, AiUnavailable
 from app.modules.ai.settings import PrioritySettings
 from app.modules.reports.domain import Category
 from tests.aihelpers import FakeAi, Staff, add_audio, analyse, create, detail, spot
-from tests.conftest import FakeStore, accept_charter
+from tests.conftest import FakeStore, accept_charter, outbox_events
 
 pytestmark = pytest.mark.usefixtures("isolated_window")
 
@@ -106,11 +106,8 @@ async def test_full_analysis_with_models(
         text("SELECT embedding IS NOT NULL FROM reports.report WHERE id = :id"), {"id": report["id"]}
     )
     assert stored
-    events = await session.scalar(
-        text("SELECT count(*) FROM events.outbox WHERE subject = 'report.enriched' AND payload->'report'->>'id' = :id"),
-        {"id": report["id"]},
-    )
-    assert events >= 1
+    events = [e for e in await outbox_events(session, "report.enriched") if e["report"]["id"] == report["id"]]
+    assert len(events) >= 1
 
     # Nothing left to do: a second pass does not call the models again.
     fake_ai.calls.clear()

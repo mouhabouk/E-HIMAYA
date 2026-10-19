@@ -1376,4 +1376,225 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get volunteerLocationDenied =>
       'Allow location access to declare yourself ready.';
+
+  @override
+  String get actionNotNow => 'Not now';
+
+  @override
+  String get channelCritical => 'Critical official alerts';
+
+  @override
+  String get channelCriticalDesc =>
+      'The most severe alerts of the civil protection, heard even in Do Not Disturb (only if you allowed it).';
+
+  @override
+  String get alertCheckTitle => 'Alert delivery check';
+
+  @override
+  String get alertCheckSubtitle => 'What could keep alerts from reaching you';
+
+  @override
+  String get alertCheckIntro =>
+      'Official alerts use their own sound, vibration and channel, separate from other apps. Some phone settings can still silence them: check them here.';
+
+  @override
+  String get alertCheckAllGood =>
+      'Nothing blocks official alerts on this phone.';
+
+  @override
+  String get alertCheckFix => 'Fix';
+
+  @override
+  String get alertChannelSettings => 'Alert sound and vibration settings';
+
+  @override
+  String get issueNotificationsOff => 'Notifications are turned off';
+
+  @override
+  String get issueNotificationsOffHelp =>
+      'Without notifications you will not receive alerts or call-outs.';
+
+  @override
+  String get issueChannelMuted => 'Official alerts are muted';
+
+  @override
+  String get issueChannelMutedHelp =>
+      'The “Official alerts” category was lowered in the phone settings: it no longer rings nor pops up.';
+
+  @override
+  String get issueDnd => 'Do Not Disturb is on';
+
+  @override
+  String get issueDndHelp =>
+      'Alerts may arrive silently. You can let the most severe official alerts through.';
+
+  @override
+  String get issueFullScreen => 'Full-screen alerts are not allowed';
+
+  @override
+  String get issueFullScreenHelp =>
+      'The most severe alerts should open over the lock screen. Allow “full-screen notifications” for e-Himaya.';
+
+  @override
+  String get issueBatteryOptimized =>
+      'Battery optimisation may delay call-outs';
+
+  @override
+  String get issueBatteryOptimizedHelp =>
+      'You are on call: the phone may put the app to sleep and delay call-outs. Exempt e-Himaya while you volunteer.';
+
+  @override
+  String get issuePushUnavailable => 'Push notifications are unavailable';
+
+  @override
+  String get issuePushUnavailableHelp =>
+      'This phone cannot receive pushes (for example without Google services): alerts are checked only while the app is open.';
+
+  @override
+  String get testAlertButton => 'Send a test alert';
+
+  @override
+  String get testAlertTitle => 'Test — official alert';
+
+  @override
+  String get testAlertBody =>
+      'This is what an alert from the civil protection looks and sounds like. No action needed.';
+
+  @override
+  String get testAlertSent => 'Test alert sent.';
+
+  @override
+  String get criticalAlertsTitle => 'Critical alerts in Do Not Disturb';
+
+  @override
+  String get criticalAlertsIntro =>
+      'You can let the most severe official alerts (danger to life: flood, fire, evacuation) ring even when Do Not Disturb is on.';
+
+  @override
+  String get criticalAlertsHow =>
+      'Only alerts of the highest severity use this. The phone will ask you to give e-Himaya “Do Not Disturb access”; you can turn this off here at any time.';
+
+  @override
+  String get criticalAlertsEnable => 'Allow critical alerts';
+
+  @override
+  String get criticalAlertsEnabled =>
+      'Critical alerts can ring in Do Not Disturb.';
+
+  @override
+  String get criticalAlertsDisable => 'Turn off';
+
+  @override
+  String get batteryExemptTitle => 'Keep call-outs on time';
+
+  @override
+  String get batteryExemptBody =>
+      'You are on call. To save battery, the phone may put e-Himaya to sleep and deliver call-outs late. Exempting the app from battery optimisation avoids this; e-Himaya itself only uses location while it is open and you are ready.';
+
+  @override
+  String get batteryExemptAllow => 'Exempt the app';
+
+  @override
+  String get batterySaverTitle => 'Battery saver';
+
+  @override
+  String get batterySaverHelp =>
+      'Checks less often for updates, shares your volunteer position less often and keeps large videos for Wi-Fi. Alerts and SOS are never delayed.';
+
+  @override
+  String get batterySaverAuto => 'Automatic (low battery)';
+
+  @override
+  String get batterySaverOn => 'Always on';
+
+  @override
+  String get batterySaverOff => 'Off';
+
+  @override
+  String get batterySaverActive => 'active';
+
+  @override
+  String get batterySaverInactive => 'inactive';
+
+  @override
+  String batteryLevel(int percent) {
+    return 'battery $percent%';
+  }
+
+  @override
+  String get pushCalloutTitle => 'Call-out';
+
+  @override
+  String get pushOpenToSee => 'Open the app to see the details.';
+
+  @override
+  String pushReportTitle(String code) {
+    return 'Report $code';
+  }
+
+  @override
+  String get myDataTitle => 'My data';
+
+  @override
+  String get myDataSubtitle => 'Download a copy or delete your account';
+
+  @override
+  String get myDataIntro =>
+      'You can get a copy of all the personal data e-Himaya holds about you (profile, consents, reports, volunteer record, devices), at most 3 times a day. Keep the file private: it contains personal data.';
+
+  @override
+  String get myDataDownload => 'Download my data';
+
+  @override
+  String get myDataCopy => 'Copy';
+
+  @override
+  String get myDataCopied => 'Copied to the clipboard.';
+
+  @override
+  String get myDataSave => 'Save as file';
+
+  @override
+  String myDataSaved(String path) {
+    return 'Saved: $path';
+  }
+
+  @override
+  String get myDataSaveFailed => 'The file could not be saved.';
+
+  @override
+  String get deleteAccountTitle => 'Delete my account';
+
+  @override
+  String get deleteAccountSubtitle =>
+      'Your personal data is erased; this cannot be undone.';
+
+  @override
+  String get deleteAccountExplain =>
+      'Your profile, consents, devices and volunteer record are erased and your account is closed. Reports you sent are kept without your name, as the law requires. Everything stored on this phone is wiped and the app starts again from the beginning.';
+
+  @override
+  String get deleteAccountExplainAnonymous =>
+      'This phone\'s anonymous identity is deleted on the server. Reports you sent are kept without any link to this phone, as the law requires. Everything stored on this phone is wiped and the app starts again from the beginning.';
+
+  @override
+  String get deleteAccountWord => 'DELETE';
+
+  @override
+  String deleteAccountTypeWord(String word) {
+    return 'Type $word to confirm';
+  }
+
+  @override
+  String get deleteAccountConfirm => 'Delete permanently';
+
+  @override
+  String get deleteAccountDone => 'Your account was deleted.';
+
+  @override
+  String get deleteAccountLastAdmin =>
+      'You are the last administrator of an institution. Hand the administration over to another member first, then delete your account.';
+
+  @override
+  String get lockedAlertOpenApp => 'Unlock to open the app';
 }

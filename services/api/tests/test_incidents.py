@@ -9,7 +9,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from tests.aihelpers import FakeAi, Staff, analyse, create, detail, spot
-from tests.conftest import TUNIS, TokenFactory, accept_charter, bearer
+from tests.conftest import TUNIS, TokenFactory, accept_charter, bearer, outbox_events
 
 pytestmark = pytest.mark.usefixtures("isolated_window")
 
@@ -116,13 +116,8 @@ async def test_confirm_split_and_dissolve(
         {"t": f"report:{second['id']}"},
     )
     assert audited == 2
-    updates = await session.scalar(
-        text(
-            "SELECT count(*) FROM events.outbox WHERE subject = 'incident.updated' AND payload->'incident'->>'id' = :i"
-        ),
-        {"i": incident_id},
-    )
-    assert updates >= 5
+    updates = [e for e in await outbox_events(session, "incident.updated") if e["incident"]["id"] == incident_id]
+    assert len(updates) >= 5
 
 
 async def test_new_link_and_merge(client: httpx.AsyncClient, make_token: TokenFactory, staff: Staff) -> None:

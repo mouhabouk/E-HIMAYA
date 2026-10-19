@@ -18,7 +18,9 @@ import 'package:flutter/widgets.dart';
 import 'package:uuid/uuid.dart';
 
 import '../logging/log.dart';
+import '../power/scheduling.dart';
 import '../storage/app_prefs.dart';
+import 'push_dedup.dart';
 import 'push_messaging.dart';
 import 'push_notifications.dart';
 import 'push_payload.dart';
@@ -59,6 +61,10 @@ const simulatedTitlePrefix = '[SIM] ';
 /// The token (`sim-<uuid v4>`) is registered with the API like a real FCM token. Polling runs
 /// only while the app is in the foreground; each push is shown as a local notification on the
 /// channel the server chose and emitted on [onForeground], and tapping it emits [onOpened].
+///
+/// Battery: polls every [interval] while messages arrive, and backs off up to [maxIdle] while
+/// the inbox stays empty (back to [interval] on resume or on a new message); never polls in the
+/// background.
 class SimulatedPushMessaging
     with WidgetsBindingObserver
     implements PushMessaging {
@@ -68,11 +74,16 @@ class SimulatedPushMessaging
     PushNotifications? notifications,
     this.interval = const Duration(seconds: 5),
     this.maxBackoff = const Duration(minutes: 1),
+    Duration? maxIdle,
     Uuid? uuid,
   }) : _notifications = notifications ?? LocalPushNotifications(),
-       _uuid = uuid ?? const Uuid();
+       _uuid = uuid ?? const Uuid(),
+       _idle = AdaptiveInterval(
+         min: interval,
+         max: maxIdle == null || maxIdle < interval ? interval * 12 : maxIdle,
+       );
 
-  /// Delay between two polls while the simulator answers.
+  /// Delay between two polls while messages arrive.
   final Duration interval;
 
   /// Longest delay between two polls while the simulator is unreachable.
@@ -86,6 +97,9 @@ class SimulatedPushMessaging
   final Uuid _uuid;
   final _foreground = StreamController<PushPayload>.broadcast();
   final _opened = StreamController<PushPayload>.broadcast();
+  final _dedup = PushDeduper();
+  final AdaptiveInterval _idle;
+  bool _received = false;
 
   bool _started = false;
   bool _disposed = false;
@@ -170,6 +184,7 @@ class SimulatedPushMessaging
     if (_disposed || _inForeground) return;
     _inForeground = true;
     _failures = 0;
+    _idle.activity();
     _schedule(Duration.zero);
   }
 
@@ -186,9 +201,14 @@ class SimulatedPushMessaging
     _schedule(_nextDelay());
   }
 
-  /// [interval], doubled after each consecutive failure up to [maxBackoff].
+  /// The idle back-off while the simulator answers ([interval] after a message), doubled after
+  /// each consecutive failure up to [maxBackoff].
   Duration _nextDelay() {
-    if (_failures == 0) return interval;
+    if (_failures == 0) {
+      final next = _received ? _idle.activity() : _idle.idle();
+      _received = false;
+      return next;
+    }
     final factor = 1 << math.min(_failures, 10);
     final ms = math.min(
       interval.inMilliseconds * factor,
@@ -228,7 +248,8 @@ class SimulatedPushMessaging
         final seq = item['seq'];
         if (seq is! int || seq <= after) continue;
         last = math.max(last, seq);
-        await _deliver(seq, item);
+        _received = true;
+        await _deliver(item);
       }
       final serverLast = body['last_seq'];
       if (serverLast is int && serverLast < after) {
@@ -244,21 +265,17 @@ class SimulatedPushMessaging
     }
   }
 
-  Future<void> _deliver(int seq, Map<Object?, Object?> item) async {
+  Future<void> _deliver(Map<Object?, Object?> item) async {
     final payload = parseSimulatorItem(item);
     if (payload == null || _disposed) return;
+    final first = _dedup.firstTime(payload, DateTime.now());
     _foreground.add(payload);
-    if (payload.title == null) return;
+    if (!first || payload.title == null) return;
     final channel = item['android_channel'];
     try {
       await _notifications.show(
-        seq & 0x7fffffff,
-        PushPayload(
-          kind: payload.kind,
-          data: payload.data,
-          title: '$simulatedTitlePrefix${payload.title}',
-          body: payload.body,
-        ),
+        notificationIdFor(payload),
+        payload.withText(title: '$simulatedTitlePrefix${payload.title}'),
         channelId: channel is String ? channel : null,
       );
     } on Object catch (e) {

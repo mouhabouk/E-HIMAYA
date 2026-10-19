@@ -3,6 +3,7 @@
 TEST_DATABASE_URL=postgresql+asyncpg://ehimaya:...@localhost:5432/ehimaya pytest
 """
 
+import json
 import os
 import time
 import uuid
@@ -108,6 +109,18 @@ async def session() -> AsyncIterator[AsyncSession]:
         yield s
 
 
+# tusd authenticates its hook calls with HTTP Basic (user "tusd", password TUSD_HOOK_SECRET).
+HOOK_AUTH = {"Authorization": "Basic dHVzZDp0ZXN0LWhvb2stc2VjcmV0LXRlc3QtaG9vay1zZWNyZXQ="}
+
+
+async def outbox_events(session: AsyncSession, subject: str) -> list[dict[str, Any]]:
+    """Clear payloads of the queued domain events of a subject (they are sealed at rest)."""
+    from app.core.events import open_payload
+
+    rows = await session.scalars(text("SELECT payload FROM events.outbox WHERE subject = :s"), {"s": subject})
+    return [open_payload(json.loads(p) if isinstance(p, str) else p) for p in rows]
+
+
 def bearer(token: str) -> dict[str, str]:
     return {"Authorization": f"Bearer {token}"}
 
@@ -165,12 +178,16 @@ class FakeStore:
     def __init__(self) -> None:
         self.objects: dict[str, bytes] = {}
         self.deleted: list[str] = []
+        self.presigned: list[tuple[str, str | None, str | None]] = []
 
     async def sha256(self, key: str) -> tuple[str, int]:
         import hashlib
 
         data = self.objects[key]
         return hashlib.sha256(data).hexdigest(), len(data)
+
+    async def head(self, key: str, size: int) -> bytes:
+        return self.objects[key][:size]
 
     async def delete(self, *keys: str) -> None:
         self.deleted.extend(keys)
@@ -181,8 +198,15 @@ class FakeStore:
         self.objects[key] = data
 
     def presign_get(
-        self, key: str, *, expires_s: int = 600, content_type: str | None = None, internal: bool = False
+        self,
+        key: str,
+        *,
+        expires_s: int = 600,
+        content_type: str | None = None,
+        internal: bool = False,
+        disposition: str | None = None,
     ) -> str:
+        self.presigned.append((key, content_type, disposition))
         return f"http://{'s3-internal' if internal else 's3'}.test/{key}?sig=1"
 
 

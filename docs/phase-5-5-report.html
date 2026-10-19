@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ء-حماية | تقرير المرحلة 5.5</title>
+<style>
+:root{--bg:#f7f8fa;--paper:#fff;--ink:#1b2430;--muted:#5b6675;--line:#dfe3e8;--accent:#b3261e;--accent2:#0b5cad;--ok:#1e7d3a;--warn:#a15c00;--chip:#eef1f5;--head:#f1f3f6}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1318;--paper:#161b22;--ink:#e6eaef;--muted:#9aa5b1;--line:#2a313b;--accent:#ff6b5e;--accent2:#5aa9ff;--ok:#5cc97a;--warn:#e0a24a;--chip:#1f2630;--head:#1c222b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Naskh Arabic","Segoe UI",Tahoma,Arial,sans-serif;line-height:1.75;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header.cover{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:10px;padding:28px 24px;margin-bottom:20px}
+header.cover h1{margin:0 0 6px;font-size:30px}
+header.cover .sub{color:var(--muted);margin:0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:16px}
+.meta div{background:var(--chip);border-radius:6px;padding:8px 12px;font-size:14px}
+.meta b{display:block;color:var(--muted);font-weight:600;font-size:12px}
+nav.toc{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px 24px;margin-bottom:20px}
+nav.toc ol{margin:0;padding-inline-start:20px;columns:2;column-gap:32px}
+@media (max-width:700px){nav.toc ol{columns:1}}
+nav.toc a,a{color:var(--accent2);text-decoration:none}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:20px}
+h2{margin-top:0;font-size:23px;border-bottom:2px solid var(--line);padding-bottom:8px}
+h3{font-size:19px;margin-top:28px;color:var(--accent2)}
+h4{font-size:16px;margin-bottom:4px}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:start;vertical-align:top}
+th{background:var(--head);font-weight:700;white-space:nowrap}
+td code,p code,li code{direction:ltr;unicode-bidi:isolate;background:var(--chip);padding:1px 5px;border-radius:4px;font-size:13px}
+.id{font-family:Consolas,monospace;direction:ltr;unicode-bidi:isolate;white-space:nowrap;font-size:13px;color:var(--muted)}
+.p{display:inline-block;border-radius:10px;padding:0 8px;font-size:12px;font-weight:700;white-space:nowrap}
+.M{background:#fde2e0;color:#8c1d16}.S{background:#fff1d6;color:#7a4a00}.C{background:#e1efff;color:#0a4a8c}.W{background:#e8e8e8;color:#444}
+@media (prefers-color-scheme:dark){.M{background:#4a1d1a;color:#ffb4ad}.S{background:#4a3510;color:#ffd38a}.C{background:#14304f;color:#a8d1ff}.W{background:#333;color:#ccc}}
+.note{border-inline-start:4px solid var(--accent2);background:var(--chip);padding:10px 14px;border-radius:6px;margin:12px 0}
+.warn{border-inline-start:4px solid var(--warn)}
+.sim{display:inline-block;background:#f59e0b;color:#1f1300;font-weight:700;font-size:12px;padding:1px 8px;border-radius:999px;margin-inline-end:6px}
+tr.simrow td{background:color-mix(in srgb,#f59e0b 12%,transparent)}
+.ltr{direction:ltr;unicode-bidi:isolate}
+ul,ol{padding-inline-start:22px}
+footer{color:var(--muted);text-align:center;font-size:13px}
+@media print{body{background:#fff}section,header.cover,nav.toc{border:none;break-inside:avoid-page}nav.toc{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="cover">
+  <h1>ء-حماية <span class="ltr">e-Himaya</span></h1>
+  <p class="sub">تقرير المرحلة 5.5: رفع الإخلالات الأمنية الجوهرية، والبطارية ووصول التنبيهات</p>
+  <div class="meta">
+    <div><b>التاريخ</b>2026-10-19</div>
+    <div><b>الفرع</b><span class="ltr">phase-5-5-hardening</span></div>
+    <div><b>الحالة</b>منجزة، بانتظار الدمج وموافقتك للانتقال إلى المرحلة 6</div>
+    <div><b>المراجع</b><a href="api/phase-5-5-contract.md">عقد الواجهة البرمجية</a> · <a href="deploy-production.md">دليل النشر</a> · <a href="versions.md">الإصدارات</a></div>
+  </div>
+</header>
+
+<section>
+<h2>1. جدول التقدم</h2>
+<div class="tbl"><table>
+<tr><th>#</th><th>البند</th><th>ما أُنجز</th><th>التحقق</th><th>التقدم</th></tr>
+<tr><td>A1</td><td>حدود الاستعمال المجهول</td><td>حدود لكل عنوان (مخزن بصمة فقط، لا IP) على إنشاء الهويات المجهولة والبلاغات والموافقات وتسجيل الأجهزة. ميزانية عامة للبلاغات المجهولة (300 كل 10 دقائق افتراضيا): ما يتجاوزها لا يُرفض أبدا، بل يُقبل ويُوسم «يحتاج تحقق» وتُخفض أولويته، مع شارة وفلتر في اللوحة. المواطن المسجل غير معني بالميزانية.</td><td>اختبارات: ألف مفتاح جهاز من عنوان واحد، تجاوز الميزانية، مرور بلاغ حقيقي دائما</td><td>100%</td></tr>
+<tr><td>A2</td><td>حدود الاستعمال خلف الوكيل وعند التعطل</td><td>الوكيل الموثوق قابل للضبط (<code>FORWARDED_ALLOW_IPS</code>، مثبت على Caddy في الإنتاج). عند تعطل Valkey يتولى محدِّد احتياطي في الذاكرة بدل إلغاء الحدود، ولا يُرفض بلاغ أبدا. فحص الجاهزية يعلن «متدهور» ويُرجع 503 فقط عند تعطل قاعدة البيانات.</td><td>اختبارات بعناوين متعددة وبـ Valkey معطل</td><td>100%</td></tr>
+<tr><td>A3</td><td>نشر إنتاج مصلب</td><td><code>infra/compose.prod.yml</code>: وكيل Caddy بـ TLS، و Keycloak في وضع الإنتاج، وصور ثابتة للوحة والبوابة، ورؤوس CSP و HSTS و frame-ancestors و Permissions-Policy. <code>APP_ENV=production</code> يغلق صفحات التوثيق ويرفض الأسرار الضعيفة أو أسرار المثال. لا منافذ مكشوفة لقاعدة البيانات أو Valkey أو NATS. دليل نشر بالعربية.</td><td>اختبار الدخان عبر Caddy ناجح؛ التوثيق و <code>/metrics</code> يُرجعان 404 للعموم؛ اختبار المتصفح للوحة دون أي خرق لـ CSP</td><td>100%</td></tr>
+<tr><td>A4</td><td>فصل أدوار قاعدة البيانات</td><td>دور مالك للترحيل ودور تشغيل لا يملك المخطط؛ سجل التدقيق للإدراج والقراءة فقط؛ الترحيل في خدمة <code>migrate</code> مستقلة تُشغَّل مرة واحدة؛ الأحجام القديمة تُرقّى دون تدخل يدوي.</td><td>اختبار يثبت أن دور التشغيل لا يعدّل السجل ولا يحذفه ولا يفرغه ولا يعطل محفزاته</td><td>100%</td></tr>
+<tr><td>A5</td><td>تشفير المعطيات الحساسة</td><td>AES-256-GCM على: الهاتف (مع فهرس أعمى) والعنوان والمعطيات الطبية، ونص البلاغ وترجمته، والتفريغ، وملاحظات المتطوعين، وملخص الذكاء الاصطناعي، وحمولات الأحداث في الجدول وفي NATS. البحث في البلاغات يعمل بالكلمات الكاملة عبر فهارس عمياء. تدوير المفاتيح بحلقة مفاتيح مرقمة وأمر إعادة تشفير.</td><td>اختبارات تقرأ القاعدة مباشرة وتثبت غياب النص الصريح؛ ترحيل صعودا ونزولا على بيانات حقيقية؛ اختبار تدوير</td><td>100%</td></tr>
+<tr><td>A6</td><td>مدة الحفظ وحقوق المواطن</td><td>مهام حذف وإخفاء هوية مجدولة بمدد قابلة للضبط (البلاغات المغلقة تُخفى هويتها بعد 5 سنوات ويُقرَّب موقعها إلى 1 كم). «تنزيل معطياتي» و«حذف حسابي» في التطبيق والواجهة، مع سجل تدقيق وحدود استعمال.</td><td>اختبارات بتواريخ مصطنعة، وتصدير وحذف من البداية إلى النهاية</td><td>100%</td></tr>
+<tr><td>A7</td><td>أمن الملفات المرفوعة</td><td>فحص البايتات الأولى: أي ملف لا يطابق نوعه يُعزل كدليل ويظهر للموظفين بسببه. تقديم الملفات بنوعها المتحقق منه. سر ربط tusd انتقل من مسار الرابط إلى ترويسة.</td><td>اختبار ملف تنفيذي مقدم كصورة</td><td>100%</td></tr>
+<tr><td>A8</td><td>إشعارات شخصية دون محتوى</td><td>حالة البلاغ ونداء المتطوع والإشعار لمستخدم واحد تحمل نصا عاما ومعرّفات فقط؛ يجلب التطبيق النص من الخادم ويحدّث الإشعار على الهاتف. التنبيهات العامة تبقى بنصها.</td><td>اختبار عبر المحاكي يثبت غياب أي معطى شخصي في الحمولة</td><td>100%</td></tr>
+<tr><td>A9</td><td>سلسلة التوريد</td><td>الصور تُبنى من ملفات القفل (<code>uv sync --locked</code>)، كل صورة مثبتة بالبصمة، فحص Trivy في CI يفشل عند ثغرة حرجة، و Dependabot أسبوعي.</td><td>Trivy محليا: لا ثغرة حرجة</td><td>100%</td></tr>
+<tr><td>B1</td><td>فصل العمال عن استقبال البلاغات</td><td><code>PROCESS_ROLE=api|worker|all</code>؛ خدمة <code>worker</code> مستقلة في الإنتاج.</td><td>انظر اختبار الحمل أدناه</td><td>100%</td></tr>
+<tr><td>B2</td><td>مقاييس المراقبة</td><td>نقطة <code>/metrics</code> محمية برمز: زمن استقبال البلاغ، تراكم الطوابير، عمق طابور الذكاء الاصطناعي، فشل الإرسال، حالة المحدِّد، تجاوز الميزانية، الملفات المعزولة.</td><td>اختبارات</td><td>100%</td></tr>
+<tr><td>B3</td><td>اختبار الحمل</td><td>سيناريو k6 لذروة SOS (<code>infra/loadtest/</code>)، والنتائج في <code>RESULTS.md</code>.</td><td>انظر القسم 2</td><td>100%</td></tr>
+<tr><td>M1</td><td>تقليص استهلاك البطارية</td><td>كل المؤقتات تتوقف في الخلفية ودون اتصال؛ لا مؤقت مزامنة والطابور فارغ (كان 80 استيقاظا في الساعة)؛ موقع المتطوع بدقة متوازنة وفلتر 100 م بدل تحديد GPS دقيق كل دقيقة (هاتف ثابت: 4 إرسالات في الساعة بدل 60)؛ وضع توفير آلي عند 20% أو أقل.</td><td>اختبارات لمنطق الجدولة والتراجع؛ التقدير محسوب من الكود لا مقاس على جهاز</td><td>100%</td></tr>
+<tr><td>M2</td><td>وصول التنبيهات رغم إشعارات التطبيقات الأخرى</td><td>قناة أندرويد خاصة بأعلى أهمية وصوت واهتزاز خاصين ومرئية على شاشة القفل؛ قناة حرجة تتجاوز «عدم الإزعاج» بعد موافقة صريحة؛ عرض بملء الشاشة لأخطر التنبيهات؛ منع التكرار بمفتاح مشترك مع الخادم؛ شاشة «فحص وصول التنبيهات» تعرض ما قد يحجبها مع أزرار الإصلاح، وتنبيه تجريبي. فوق شاشة القفل لا يظهر إلا التنبيه العام، وأي خروج منه يطلب فتح القفل.</td><td>192 اختبارا للتطبيق (كانت 134)</td><td>100%</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>2. اختبار الحمل</h2>
+<p>جهاز افتراضي بـ 4 معالجات و 15 GiB، مشترك مع أعمال أخرى؛ ذروة 20 بلاغا في الثانية من 300 جهاز، نحو 3000 بلاغ لكل تشغيل.</p>
+<div class="tbl"><table>
+<tr><th>الإعداد</th><th>زمن إنشاء البلاغ p50 / p95 / p99</th><th>الأخطاء</th><th>النتيجة</th></tr>
+<tr><td>عملية واحدة (واجهة وعمال معا)</td><td class="ltr">987 ms / 4.91 s / 6.94 s</td><td>0.02%</td><td>p95 يتجاوز الحد</td></tr>
+<tr><td>واجهة منفصلة (3 عمليات) وعامل مستقل</td><td class="ltr">71 ms / 328 ms / 1.05 s</td><td>0.02%</td><td>كل الحدود محققة</td></tr>
+</table></div>
+<p class="note">فصل العمال عن استقبال البلاغات (B1) خفّض زمن p95 من نحو 5 ثوان إلى أقل من ثلث ثانية. عند 40 بلاغا في الثانية تشبّع الجهاز كله عند نحو 16 بلاغا في الثانية، فالحد هنا هو الجهاز لا الكود.</p>
+</section>
+
+<section>
+<h2>3. قرارات تحتاج علمك</h2>
+<div class="tbl"><table>
+<tr><th>القرار</th><th>السبب</th></tr>
+<tr><td>البلاغ المجهول الزائد عن الميزانية يُقبل ويُوسم ولا يُرفض</td><td>في كارثة حقيقية قد تتجاوز البلاغات الصادقة أي ميزانية؛ رفضها أخطر من معالجة بلاغات مزيفة بأولوية منخفضة.</td></tr>
+<tr><td>الأسماء والبريد والموقع الجغرافي للبلاغ تبقى غير مشفرة</td><td>الأسماء للبحث الجزئي عن المتطوعين، والبريد هو معرف الدخول وعنوان القناة، والموقع لازم للنطاق والخريطة والتجميع؛ يُقرَّب إلى 1 كم عند إخفاء الهوية. التفاصيل في عقد الواجهة.</td></tr>
+<tr><td>البحث في نص البلاغات بالكلمات الكاملة فقط</td><td>نتيجة مباشرة لتشفير النص؛ رمز التتبع ما زال يطابق جزئيا.</td></tr>
+<tr><td>حذف الحساب يبقي البلاغات مجهولة</td><td>البلاغ سجل عملياتي يلزم حفظه؛ تُفصل عنه هوية صاحبه وتُمسح نصوصه الحرة عند انتهاء المدة.</td></tr>
+<tr><td>الإعفاء من تحسين البطارية يُطلب من المتطوع الجاهز فقط</td><td>هو وحده من يحتاج وصول النداء فورا؛ بقية المستخدمين لا يُطلب منهم ما يزيد الاستهلاك.</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>4. حدود معروفة</h2>
+<ul>
+<li><b>النسخ الاحتياطي والتوفر العالي غير مبرمجين</b> في مشروع التخرج حسب توجيهك. الحل المقترح للإنتاج: pgBackRest مع أرشفة WAL إلى موقع ثان وتمرين استرجاع، وعنقود Patroni، و NATS بثلاث عقد.</li>
+<li>لم تُبنَ هنا صورتا قاعدة البيانات والخلفية الحقيقيتان لأن مستودع حزم Debian محجوب في بيئة العمل؛ جُرّبت المنظومة بصور بديلة مكافئة، وتُبنى الصور الحقيقية في CI.</li>
+<li>تحسينات البطارية ووصول التنبيهات لم تُجرَّب على هاتف حقيقي؛ تقدير التوفير محسوب من الكود.</li>
+<li>حذف الحساب لا يعطل حساب Keycloak آليا لغياب عميل إدارة؛ يُسجَّل الطلب في قائمة يعالجها المسؤول بأمر.</li>
+<li>عرض التنبيه بملء الشاشة والتطبيق مغلق يحتاج رسائل FCM من نوع البيانات فقط، والمعالج جاهز في التطبيق.</li>
+<li>التنبيهات الحرجة على iOS تحتاج ترخيصا من Apple؛ نقطة الربط موثقة.</li>
+<li>تحقق سلامة التطبيق (Play Integrity و App Attest) ومضاد الفيروسات واختبار الاختراق المستقل خارج النطاق كما في الخطة.</li>
+<li>ملفات PDF لوثائق المؤسسات لا تُفحص بايتاتها الأولى بعد.</li>
+</ul>
+</section>
+
+<section>
+<h2>5. الاختبارات</h2>
+<div class="tbl"><table>
+<tr><th>المكون</th><th>قبل</th><th>بعد</th></tr>
+<tr><td>الخلفية</td><td>151</td><td>241</td></tr>
+<tr><td>لوحة التحكم</td><td>242</td><td>245، مع اختبار المتصفح خلف CSP</td></tr>
+<tr><td>البوابة</td><td>82</td><td>82</td></tr>
+<tr><td>محاكي القنوات</td><td>109</td><td>109</td></tr>
+<tr><td>تطبيق الهاتف</td><td>134</td><td>192</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>6. المرحلة التالية (6): البث والرؤية</h2>
+<p>خادم البث MediaMTX، البث المباشر من التطبيق، كشف الحرائق والدخان بالرؤية الحاسوبية، والأرشيف. لن تبدأ قبل موافقتك.</p>
+</section>
+
+<footer>ء-حماية · تقرير المرحلة 5.5</footer>
+</div>
+</body>
+</html>

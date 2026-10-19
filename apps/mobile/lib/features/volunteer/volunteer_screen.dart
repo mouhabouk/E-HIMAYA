@@ -13,6 +13,7 @@ import '../../core/ui/emergency_action.dart';
 import '../../l10n/app_localizations.dart';
 import '../alerts/alert_labels.dart';
 import '../onboarding/login_actions.dart';
+import '../settings/alert_check.dart';
 import 'volunteer_providers.dart';
 
 /// Shows [error] in a snack bar; offers the profile form when the server needs it completed.
@@ -303,6 +304,8 @@ class _ReadinessCardState extends ConsumerState<_ReadinessCard> {
       final controller = ref.read(volunteerProvider.notifier);
       if (ready) {
         await controller.setReady(_hours);
+        // On call: the one case where the app asks to leave battery optimisation.
+        if (mounted) await maybeAskBatteryExemption(context, ref);
       } else {
         await controller.setNotReady();
       }

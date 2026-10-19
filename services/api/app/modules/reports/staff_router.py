@@ -21,6 +21,7 @@ from app.modules.orgs.models import Organization
 from app.modules.reports import schemas, service
 from app.modules.reports.domain import TRANSITIONS, Category, Status
 from app.modules.reports.models import Media
+from app.modules.reports.uploads import media_url
 
 router = APIRouter(prefix="/api/v1/staff", tags=["staff"])
 
@@ -71,6 +72,7 @@ async def list_reports(
     q: Annotated[str | None, Query(max_length=100)] = None,
     sort: Annotated[Literal["received", "priority"], Query()] = "received",
     incident_id: uuid.UUID | None = None,
+    needs_verification: bool | None = None,
     limit: Annotated[int, Query(ge=1, le=500)] = 50,
     cursor: str | None = None,
 ) -> schemas.StaffReportPage:
@@ -84,6 +86,7 @@ async def list_reports(
         q=q.strip() if q and q.strip() else None,
         sort=sort,
         incident_id=incident_id,
+        needs_verification=needs_verification,
     )
     items, next_cursor = await service.staff_list(session, principal, filters, limit, cursor)
     return schemas.StaffReportPage(items=items, next_cursor=next_cursor)
@@ -101,7 +104,8 @@ async def detail_of(session: AsyncSession, principal: Principal, report_id: uuid
     media_out = [
         schemas.StaffMediaOut(
             **service.media_out(m).model_dump(),
-            url=store.presign_get(m.object_key, content_type=m.content_type) if m.status == "stored" else None,
+            url=media_url(store, m),
+            rejection_reason=m.rejection_reason,
         )
         for m in media
     ]
@@ -137,7 +141,7 @@ def analysis_out(analysis: Analysis, media: list[Media]) -> schemas.AnalysisOut:
             language=(m.analysis or {}).get("language"),
             language_probability=(m.analysis or {}).get("language_probability"),
             duration_s=m.duration_s,
-            translation_ar=(m.analysis or {}).get("translation_ar"),
+            translation_ar=m.translation_ar,
             error=(m.analysis or {}).get("error"),
             model=(m.analysis or {}).get("model"),
         )
