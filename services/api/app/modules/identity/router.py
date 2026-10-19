@@ -1,9 +1,26 @@
-from fastapi import APIRouter
-from pydantic import BaseModel
+from datetime import UTC, datetime
+from typing import Annotated, Literal
 
+from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import BaseModel, Field
+from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.config import get_settings
+from app.core.crypto import get_cipher
+from app.core.db import get_session
 from app.core.security import CurrentPrincipal
+from app.modules.audit import service as audit
+from app.modules.geo.models import Delegation, Gouvernorat
+from app.modules.identity.models import Consent, Profile
+from app.modules.identity.service import CurrentReporter, Reporter
 
 router = APIRouter(prefix="/api/v1", tags=["identity"])
+
+Session = Annotated[AsyncSession, Depends(get_session)]
+Locale = Literal["ar", "fr", "en"]
+_CIN_CONTEXT = "identity.profile.cin"
 
 
 class MeOut(BaseModel):
@@ -24,3 +41,156 @@ async def me(principal: CurrentPrincipal) -> MeOut:
         gouvernorat_code=principal.gouvernorat_code,
         is_staff=principal.is_staff,
     )
+
+
+# ---------------------------------------------------------------- profile (FR-A-005)
+
+
+class ProfileIn(BaseModel):
+    first_name: str = Field(min_length=1, max_length=100)
+    last_name: str = Field(min_length=1, max_length=100)
+    cin: str = Field(pattern=r"^\d{8}$", description="Tunisian national ID card number (8 digits)")
+    phone: str = Field(pattern=r"^\+216\d{8}$")
+    gouvernorat_code: int
+    delegation_id: int
+    address: str | None = Field(default=None, max_length=300)
+    locale: Locale = "ar"
+
+
+class ProfileOut(BaseModel):
+    first_name: str | None
+    last_name: str | None
+    cin_last4: str | None
+    phone: str | None
+    email: str | None
+    gouvernorat_code: int | None
+    delegation_id: int | None
+    address: str | None
+    locale: str
+
+
+def _registered(reporter: Reporter) -> Reporter:
+    if reporter.principal is None:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "registration_required")
+    return reporter
+
+
+def _profile_out(profile: Profile | None, email: str | None) -> ProfileOut:
+    if profile is None:
+        return ProfileOut(
+            first_name=None,
+            last_name=None,
+            cin_last4=None,
+            phone=None,
+            email=email,
+            gouvernorat_code=None,
+            delegation_id=None,
+            address=None,
+            locale="ar",
+        )
+    cin_last4 = get_cipher().decrypt(profile.cin_enc, context=_CIN_CONTEXT)[-4:] if profile.cin_enc else None
+    return ProfileOut(
+        first_name=profile.first_name,
+        last_name=profile.last_name,
+        cin_last4=cin_last4,
+        phone=profile.phone,
+        email=profile.email or email,
+        gouvernorat_code=profile.gouvernorat_code,
+        delegation_id=profile.delegation_id,
+        address=profile.address,
+        locale=profile.locale,
+    )
+
+
+def _token_email(reporter: Reporter) -> str | None:
+    assert reporter.principal is not None
+    email = reporter.principal.claims.get("email")
+    return str(email) if email else None
+
+
+@router.get("/me/profile", response_model=ProfileOut)
+async def get_profile(reporter: CurrentReporter, session: Session) -> ProfileOut:
+    _registered(reporter)
+    profile = await session.get(Profile, reporter.user_id)
+    return _profile_out(profile, _token_email(reporter))
+
+
+@router.put("/me/profile", response_model=ProfileOut)
+async def put_profile(body: ProfileIn, reporter: CurrentReporter, session: Session) -> ProfileOut:
+    _registered(reporter)
+    assert reporter.principal is not None
+    if await session.get(Gouvernorat, body.gouvernorat_code) is None:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "unknown_gouvernorat")
+    delegation = await session.get(Delegation, body.delegation_id)
+    if delegation is None or delegation.gouvernorat_code != body.gouvernorat_code:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "delegation_mismatch")
+
+    cipher = get_cipher()
+    claims = reporter.principal.claims
+    email = _token_email(reporter)
+    now = datetime.now(UTC)
+    profile = await session.get(Profile, reporter.user_id) or Profile(user_id=reporter.user_id)
+    profile.first_name = body.first_name.strip()
+    profile.last_name = body.last_name.strip()
+    profile.cin_enc = cipher.encrypt(body.cin, context=_CIN_CONTEXT)
+    profile.cin_hash = cipher.blind_index(body.cin, context=_CIN_CONTEXT)
+    if profile.phone != body.phone:
+        profile.phone = body.phone
+        profile.phone_verified_at = None  # SMS verification comes with the SMS gateway
+    profile.email = email
+    profile.email_verified_at = now if email and claims.get("email_verified") else None
+    profile.gouvernorat_code = body.gouvernorat_code
+    profile.delegation_id = body.delegation_id
+    profile.address = body.address.strip() if body.address else None
+    profile.locale = body.locale
+    profile.updated_at = now
+    session.add(profile)
+    try:
+        await audit.record(session, actor=reporter.actor, action="profile.update", target=f"account:{reporter.user_id}")
+        await session.commit()
+    except IntegrityError as exc:
+        await session.rollback()
+        raise HTTPException(status.HTTP_409_CONFLICT, "cin_already_registered") from exc
+    return _profile_out(profile, email)
+
+
+# ---------------------------------------------------------------- charter consent (FR-A-001)
+
+
+class CharterOut(BaseModel):
+    version: str
+
+
+class ConsentIn(BaseModel):
+    charter_version: str = Field(max_length=32)
+    locale: Locale
+    platform: Literal["android", "ios", "web"]
+
+
+class ConsentOut(BaseModel):
+    charter_version: str
+    accepted_at: datetime
+
+
+@router.get("/charter", response_model=CharterOut)
+async def charter() -> CharterOut:
+    return CharterOut(version=get_settings().charter_version)
+
+
+@router.post("/consents", response_model=ConsentOut, status_code=status.HTTP_201_CREATED)
+async def accept_charter(body: ConsentIn, reporter: CurrentReporter, session: Session) -> ConsentOut:
+    if body.charter_version != get_settings().charter_version:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "unknown_charter_version")
+    existing = await session.scalar(
+        select(Consent).where(Consent.user_id == reporter.user_id, Consent.charter_version == body.charter_version)
+    )
+    if existing is not None:
+        return ConsentOut(charter_version=existing.charter_version, accepted_at=existing.accepted_at)
+    consent = Consent(
+        user_id=reporter.user_id, charter_version=body.charter_version, locale=body.locale, platform=body.platform
+    )
+    session.add(consent)
+    await session.flush()
+    await session.refresh(consent)
+    await session.commit()
+    return ConsentOut(charter_version=consent.charter_version, accepted_at=consent.accepted_at)

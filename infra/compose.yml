@@ -1,4 +1,4 @@
-# ء-حماية / e-Himaya — البنية الأساسية للتطوير والتجربة (المرحلة 1)
+# ء-حماية / e-Himaya — البنية الأساسية للتطوير والتجربة (المرحلتان 1 و2)
 # Usage (from repo root):  docker compose --env-file .env -f infra/compose.yml up -d
 name: ehimaya
 
@@ -83,6 +83,50 @@ services:
     ports:
       - "127.0.0.1:8333:8333"
 
+  # One-shot: create the media bucket (the API's S3 identity has no admin rights).
+  seaweedfs-init:
+    image: chrislusf/seaweedfs:3.97
+    restart: "no"
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - >
+        for i in $$(seq 1 60); do
+          echo "s3.bucket.create -name $${S3_BUCKET_MEDIA}" | weed shell -master=seaweedfs:9333 2>&1
+          | grep -q "created bucket" && exit 0; sleep 2;
+        done; echo "bucket creation failed"; exit 1
+    environment:
+      S3_BUCKET_MEDIA: ${S3_BUCKET_MEDIA:-ehimaya-media}
+    depends_on:
+      - seaweedfs
+
+  # Resumable uploads (tus 1.0) straight to S3; every upload is authorized by the API through hooks.
+  tusd:
+    <<: *restart
+    image: tusproject/tusd:v2.8.0
+    command:
+      - -host=0.0.0.0
+      - -port=1080
+      - -base-path=/api/v1/uploads/
+      - -s3-bucket=${S3_BUCKET_MEDIA:-ehimaya-media}
+      - -s3-endpoint=http://seaweedfs:8333
+      - -s3-object-prefix=uploads/
+      - -disable-download
+      - -max-size=314572800
+      - -hooks-http=http://api:8000/internal/tusd/hooks/${TUSD_HOOK_SECRET:?set TUSD_HOOK_SECRET}
+      - -hooks-enabled-events=pre-create,post-finish,post-terminate
+      - -hooks-http-forward-headers=Authorization,X-Device-Key
+      - -cors-allow-origin=${TUSD_CORS_ORIGIN_REGEX:-^http://localhost:517[34]$$}
+      - -cors-allow-headers=Authorization,X-Device-Key
+    environment:
+      AWS_ACCESS_KEY_ID: ${S3_ACCESS_KEY}
+      AWS_SECRET_ACCESS_KEY: ${S3_SECRET_KEY}
+      AWS_REGION: us-east-1
+    ports:
+      - "127.0.0.1:1080:1080"
+    depends_on:
+      seaweedfs-init:
+        condition: service_completed_successfully
+
   keycloak:
     <<: *restart
     image: keycloak/keycloak:26.3
@@ -118,11 +162,15 @@ services:
       S3_ACCESS_KEY: ${S3_ACCESS_KEY}
       S3_SECRET_KEY: ${S3_SECRET_KEY}
       S3_BUCKET_MEDIA: ${S3_BUCKET_MEDIA:-ehimaya-media}
+      # Pre-signed media links opened by the dashboard in the browser.
+      S3_PUBLIC_ENDPOINT_URL: ${S3_PUBLIC_ENDPOINT_URL:-http://localhost:8333}
       # Issuer = public URL in tokens; JWKS fetched over the internal network.
       OIDC_ISSUERS: ${KEYCLOAK_HOSTNAME:-http://localhost:8080}/realms/ehimaya-public,${KEYCLOAK_HOSTNAME:-http://localhost:8080}/realms/ehimaya-staff
       OIDC_JWKS_BASE_URL: http://keycloak:8080
       OIDC_AUDIENCE: ehimaya-api
       ANON_PSEUDONYM_SECRET: ${ANON_PSEUDONYM_SECRET:?set ANON_PSEUDONYM_SECRET}
+      FIELD_ENCRYPTION_KEY: ${FIELD_ENCRYPTION_KEY:?set FIELD_ENCRYPTION_KEY}
+      TUSD_HOOK_SECRET: ${TUSD_HOOK_SECRET}
       API_CORS_ORIGINS: ${API_CORS_ORIGINS:-}
       API_LOG_LEVEL: ${API_LOG_LEVEL:-INFO}
     ports:

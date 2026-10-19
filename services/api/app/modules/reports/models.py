@@ -35,6 +35,22 @@ class Report(Base):
     embedding: Mapped[list[float] | None] = mapped_column(Vector(768), deferred=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     received_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    first_response_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class StatusHistory(Base):
+    __tablename__ = "status_history"
+    __table_args__ = {"schema": "reports"}
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    report_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("reports.report.id", ondelete="CASCADE")
+    )
+    status: Mapped[str] = mapped_column(Text)
+    at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    actor: Mapped[str] = mapped_column(Text)
+    note: Mapped[str | None] = mapped_column(Text)
 
 
 class Media(Base):
@@ -53,4 +69,8 @@ class Media(Base):
     duration_s: Mapped[float | None] = mapped_column(Float(precision=24))
     transcript: Mapped[str | None] = mapped_column(Text)
     analysis: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    upload_id: Mapped[str | None] = mapped_column(Text, unique=True)
+    content_type: Mapped[str | None] = mapped_column(Text)
+    status: Mapped[str] = mapped_column(Text, server_default="uploading")
+    stored_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
