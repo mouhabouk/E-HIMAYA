@@ -20,6 +20,11 @@ import tomllib
 print("\n".join(tomllib.load(open("pyproject.toml","rb"))["project"]["dependencies"]))
 PY
 RUN pip install -r /tmp/req.txt
+# GPU servers (NFR-01: 60 s of audio in under 20 s): docker build --build-arg GPU=1 adds the CUDA libraries
+# CTranslate2 needs (cuBLAS 12, cuDNN 9). Run with the NVIDIA container toolkit (infra/compose.gpu.yml).
+ARG GPU=0
+RUN if [ "$GPU" = "1" ]; then pip install nvidia-cublas-cu12==12.9.2.10 nvidia-cudnn-cu12==9.27.0.42; fi
+ENV LD_LIBRARY_PATH=/usr/local/lib/python3.12/site-packages/nvidia/cublas/lib:/usr/local/lib/python3.12/site-packages/nvidia/cudnn/lib
 COPY app ./app
 # The models are local files: never reach the Hugging Face hub at run time (NFR-10, NFR-11).
 ENV HF_HUB_OFFLINE=1 AI_MODELS_DIR=/models

@@ -48,6 +48,17 @@ def write_manifest(target: Path, **data: Any) -> None:
     print(f"✓ {target.name}: {data['source']}@{str(data['revision'])[:10]} ({data['license']})")
 
 
+def installed(target: Path, source: str) -> bool:
+    """Already prepared from the same source: keep it (re-run with --force to refresh)."""
+    try:
+        return FORCE is False and json.loads((target / "manifest.json").read_text()).get("source") == source
+    except (OSError, ValueError):
+        return False
+
+
+FORCE = False
+
+
 def fresh(target: Path) -> Path:
     if target.exists():
         shutil.rmtree(target)
@@ -56,6 +67,9 @@ def fresh(target: Path) -> Path:
 
 
 def fetch_whisper(out: Path, repo: str) -> None:
+    if installed(out / "whisper", repo):
+        print(f"= whisper: {repo} already installed")
+        return
     source, revision, license_ = snapshot(repo)
     target = fresh(out / "whisper")
     shutil.copytree(source, target)
@@ -68,6 +82,9 @@ def fetch_translation(out: Path, name: str, repo: str) -> None:
     from ctranslate2.converters import TransformersConverter
     from transformers import AutoTokenizer
 
+    if installed(out / name, repo):
+        print(f"= {name}: {repo} already installed")
+        return
     source, revision, license_ = snapshot(repo)
     target = fresh(out / name)
     TransformersConverter(str(source)).convert(str(target), quantization="float16")
@@ -99,6 +116,9 @@ def fetch_embedding(out: Path) -> None:
     from tokenizers import Tokenizer
     from transformers import AutoModel, AutoTokenizer
 
+    if installed(out / "embed", EMBEDDING):
+        print(f"= embed: {EMBEDDING} already installed")
+        return
     source, revision, license_ = snapshot(EMBEDDING)
     target = fresh(out / "embed")
     TransformersConverter(str(source)).convert(str(target), quantization="float16")
@@ -156,7 +176,10 @@ def main() -> None:
     parser.add_argument("--out", type=Path, default=Path("/models"))
     parser.add_argument("--ollama", default=None, help="Ollama base URL; the language model is skipped when absent")
     parser.add_argument("--only", nargs="*", choices=["whisper", "translate", "embed", "llm"])
+    parser.add_argument("--force", action="store_true", help="download and convert again even if installed")
     args = parser.parse_args()
+    global FORCE
+    FORCE = args.force
     profile = PROFILES[args.profile]
     wanted = set(args.only or ["whisper", "translate", "embed", "llm"])
     args.out.mkdir(parents=True, exist_ok=True)

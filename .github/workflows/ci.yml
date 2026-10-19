@@ -95,6 +95,107 @@ jobs:
           grep -q "Realm 'ehimaya-public' imported" kc.log
           grep -q "Realm 'ehimaya-staff' imported" kc.log
 
+  ai:
+    name: AI · lint, types, tests
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: services/ai
+    env:
+      AI_SERVICE_TOKEN: ci-only-token-ci-only-token-0001
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+      - run: uv sync --locked
+      - name: Lint
+        run: |
+          uv run ruff check .
+          uv run ruff format --check .
+      - name: Type check
+        run: uv run mypy app
+      - name: Tests
+        run: uv run pytest -q
+
+  ai-images:
+    name: AI · container images
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build --target runtime -t ehimaya/ai:ci services/ai
+      - run: docker build --target models -t ehimaya/ai-models:ci services/ai
+
+  ai-models:
+    name: AI · real models
+    runs-on: ubuntu-24.04
+    env:
+      MODELS: /home/runner/ai-models
+      OLLAMA_DIR: /home/runner/ollama
+      SAMPLES: /home/runner/samples
+      AI_SERVICE_TOKEN: ci-only-token-ci-only-token-0001
+      AI_OLLAMA_URL: http://localhost:11434
+      AI_LLM_MODEL: qwen3:1.7b
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+
+      - name: Restore models
+        uses: actions/cache@v4
+        with:
+          path: |
+            /home/runner/ai-models
+            /home/runner/ollama
+          key: ai-models-ci-${{ hashFiles('services/ai/models/fetch_models.py', 'services/ai/models/requirements.txt') }}
+
+      - name: Start Ollama
+        run: |
+          mkdir -p "$OLLAMA_DIR"
+          docker run -d --name ollama -p 11434:11434 -v "$OLLAMA_DIR:/root/.ollama" ollama/ollama:0.40.1
+          for i in $(seq 1 30); do curl -fs http://localhost:11434/api/tags >/dev/null && break; sleep 2; done
+
+      - name: Download, convert and check the models (profile ci)
+        run: |
+          python -m venv /tmp/convert
+          /tmp/convert/bin/pip install -q --extra-index-url https://download.pytorch.org/whl/cpu -r services/ai/models/requirements.txt
+          /tmp/convert/bin/python services/ai/models/fetch_models.py --profile ci --out "$MODELS" --ollama "$AI_OLLAMA_URL"
+
+      - name: Speech samples (espeak-ng)
+        run: |
+          sudo apt-get update -q && sudo apt-get install -y -q espeak-ng
+          mkdir -p "$SAMPLES"
+          espeak-ng -v fr -s 140 -w "$SAMPLES/fr.wav" "Bonjour, il y a un incendie dans la forêt près de la maison."
+          espeak-ng -v en -s 140 -w "$SAMPLES/en.wav" "Hello, there is a fire in the building and two people are trapped."
+          espeak-ng -v ar -s 130 -w "$SAMPLES/ar.wav" "يوجد حريق كبير في الغابة قرب الطريق"
+          head -c 20000 /dev/urandom > "$SAMPLES/garbage.wav"
+
+      - name: Tests against the real models
+        working-directory: services/ai
+        run: |
+          uv sync --locked
+          AI_MODELS_DIR="$MODELS" AI_TEST_AUDIO_DIR="$SAMPLES" uv run pytest -o addopts="" -m models -v -s
+
+      - name: API ↔ AI service contract
+        run: |
+          cd services/ai
+          AI_MODELS_DIR="$MODELS" AI_MEDIA_URL_PREFIX=http://127.0.0.1:8099/ uv run uvicorn app.main:app --port 8100 &
+          (cd "$SAMPLES" && python -m http.server 8099 --bind 127.0.0.1 &)
+          for i in $(seq 1 30); do curl -fs http://127.0.0.1:8100/health/live >/dev/null && break; sleep 1; done
+          cd ../api && uv sync --locked
+          DATABASE_URL=postgresql+asyncpg://unused:unused@localhost/unused \
+          ANON_PSEUDONYM_SECRET=ci-only-secret-ci-only-secret-ci-only-01 \
+          FIELD_ENCRYPTION_KEY=Y2ktb25seS1rZXktY2ktb25seS1rZXktY2ktb25seTE= \
+          PYTHONPATH="$PWD" uv run python ../ai/tests/api_contract_check.py http://127.0.0.1:8100 "$AI_SERVICE_TOKEN" http://127.0.0.1:8099/fr.wav
+
+      - name: Make the model cache readable
+        if: always()
+        run: sudo chown -R "$(id -u)" "$OLLAMA_DIR" || true
+
   stack:
     name: Stack · compose smoke test
     runs-on: ubuntu-24.04
@@ -106,6 +207,7 @@ jobs:
           sed -i "s|^FIELD_ENCRYPTION_KEY=.*|FIELD_ENCRYPTION_KEY=$(openssl rand -base64 32)|" .env
           sed -i "s|^ANON_PSEUDONYM_SECRET=.*|ANON_PSEUDONYM_SECRET=$(openssl rand -hex 32)|" .env
           sed -i "s|^TUSD_HOOK_SECRET=.*|TUSD_HOOK_SECRET=$(openssl rand -hex 24)|" .env
+          sed -i "s|^AI_SERVICE_TOKEN=.*|AI_SERVICE_TOKEN=$(openssl rand -hex 24)|" .env
       - name: Start the stack
         run: docker compose --env-file .env -f infra/compose.yml up -d --build
       - name: Anonymous report, resumable upload and integrity check

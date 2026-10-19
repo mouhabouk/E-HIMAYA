@@ -67,6 +67,12 @@ class Settings(BaseSettings):
             raise ValueError("FIELD_ENCRYPTION_KEY must decode to 32 bytes (openssl rand -base64 32)")
         return value
 
+    @field_validator("ai_service_url", "ai_service_token", mode="before")
+    @classmethod
+    def _empty_is_unset(cls, value: object) -> object:
+        # Compose passes "" when the optional AI profile is not configured.
+        return None if value == "" else value
+
     @field_validator("oidc_issuers", "api_cors_origins", mode="before")
     @classmethod
     def _split_csv(cls, value: object) -> object:
