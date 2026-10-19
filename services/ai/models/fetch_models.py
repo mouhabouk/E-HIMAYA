@@ -28,6 +28,15 @@ PROFILES: dict[str, dict[str, str]] = {
 TRANSLATION = {"opus-mt-fr-ar": "Helsinki-NLP/opus-mt-fr-ar", "opus-mt-en-ar": "Helsinki-NLP/opus-mt-en-ar"}
 EMBEDDING = "intfloat/multilingual-e5-base"
 EMBEDDING_DIM = 768  # reports.report.embedding is vector(768)
+# Only the PyTorch weights and tokenizer: the repo also ships ONNX/OpenVINO copies (several GB).
+EMBEDDING_FILES = [
+    "config.json",
+    "model.safetensors",
+    "sentencepiece.bpe.model",
+    "special_tokens_map.json",
+    "tokenizer.json",
+    "tokenizer_config.json",
+]
 # Licences accepted for production use (NFR-10): permissive only.
 ALLOWED_LICENSES = {"mit", "apache-2.0", "cc-by-4.0"}
 
@@ -119,7 +128,7 @@ def fetch_embedding(out: Path) -> None:
     if installed(out / "embed", EMBEDDING):
         print(f"= embed: {EMBEDDING} already installed")
         return
-    source, revision, license_ = snapshot(EMBEDDING)
+    source, revision, license_ = snapshot(EMBEDDING, EMBEDDING_FILES)
     target = fresh(out / "embed")
     TransformersConverter(str(source)).convert(str(target), quantization="float16")
     shutil.copy(source / "tokenizer.json", target / "tokenizer.json")
