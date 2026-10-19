@@ -17,6 +17,18 @@ String apiErrorMessage(AppLocalizations l10n, ApiErrorCode code) =>
       ApiErrorCode.orgNotActive => l10n.errorOrgNotActive,
       ApiErrorCode.orgRoleRequired => l10n.errorOrgRoleRequired,
       ApiErrorCode.reportNotFound => l10n.errorNotFound,
+      ApiErrorCode.registrationRequired => l10n.errorRegistrationRequired,
+      ApiErrorCode.notVolunteer => l10n.errorNotVolunteer,
+      ApiErrorCode.profileIncomplete => l10n.errorProfileIncomplete,
+      ApiErrorCode.invalidPeriod => l10n.errorInvalidPeriod,
+      ApiErrorCode.volunteerNotApproved => l10n.errorVolunteerNotApproved,
+      ApiErrorCode.outsidePeriod => l10n.errorOutsidePeriod,
+      ApiErrorCode.notReady => l10n.errorNotReady,
+      ApiErrorCode.locationRequired => l10n.errorLocationRequired,
+      ApiErrorCode.calloutClosed => l10n.errorCalloutClosed,
+      ApiErrorCode.etaRequired => l10n.errorEtaRequired,
+      ApiErrorCode.invalidTransition => l10n.errorInvalidTransition,
+      ApiErrorCode.versionConflict => l10n.errorVersionConflict,
       ApiErrorCode.invalidSha256 ||
       ApiErrorCode.invalidReportId ||
       ApiErrorCode.uploadLengthRequired ||

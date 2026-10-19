@@ -17,6 +17,7 @@ import 'package:ehimaya/features/institution/institution_providers.dart';
 import 'package:ehimaya/features/sos/sos_service.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -109,6 +110,7 @@ Future<AppHarness> pumpApp(
   FakeHandler? api,
   MemorySecureStore? secure,
   List<Uri>? opened,
+  List<Override> overrides = const [],
 }) async {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
   SharedPreferences.setMockInitialValues(prefs);
@@ -139,6 +141,7 @@ Future<AppHarness> pumpApp(
           return true;
         }),
         requestSyncProvider.overrideWithValue(() async {}),
+        ...overrides,
       ],
       child: const EHimayaApp(),
     ),

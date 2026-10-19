@@ -57,5 +57,11 @@ jobs:
       - name: Test
         run: flutter test
 
+      - name: Free runner disk space
+        # The hosted image ships ~30 GB of toolchains the APK build never uses.
+        run: |
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL /usr/local/share/boost /usr/share/swift /usr/local/share/powershell
+          df -h /
+
       - name: Build debug APK
         run: flutter build apk --debug

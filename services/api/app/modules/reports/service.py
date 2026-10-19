@@ -22,6 +22,7 @@ from app.modules.ai.models import Analysis
 from app.modules.geo.models import Gouvernorat
 from app.modules.identity.models import Account
 from app.modules.identity.service import Reporter, has_consented
+from app.modules.notify import outbox, templates
 from app.modules.orgs import service as orgs
 from app.modules.orgs.domain import OrgKind
 from app.modules.orgs.models import Organization
@@ -434,6 +435,15 @@ async def change_status(session: AsyncSession, report: Report, target: Status, a
     if report.first_response_at is None:
         report.first_response_at = now
     session.add(StatusHistory(report_id=report.id, status=target.value, at=now, actor=actor, note=note))
+    # UC-01: every status change reaches the reporter's phone (tracking code and status only).
+    outbox.push(
+        session,
+        report.user_id,
+        "report_status",
+        templates.fill(templates.REPORT_STATUS_TITLE, code=report.tracking_code),
+        templates.REPORT_STATUS[target.value],
+        {"tracking_code": report.tracking_code, "status": target.value},
+    )
     await session.flush()
 
 

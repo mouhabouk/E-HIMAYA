@@ -10,20 +10,36 @@ import { FiltersProvider } from "./context/filters";
 import { LiveProvider } from "./context/live";
 import { ServicesProvider, type Services } from "./context/services";
 import { isApiError } from "./lib/api";
-import { canReadOrgs, hasReadAccess } from "./lib/roles";
+import {
+  canEditTips,
+  canMonitorPerformance,
+  canReadOrgs,
+  canReadResources,
+  canUseNotifications,
+  hasReadAccess,
+  isCommittee,
+  landingPath,
+} from "./lib/roles";
 import { AiSettingsPage } from "./pages/AiSettingsPage";
 import { CallbackPage } from "./pages/CallbackPage";
 import { CertificatesPage } from "./pages/CertificatesPage";
+import { CommitteePage } from "./pages/CommitteePage";
 import { HomePage } from "./pages/HomePage";
 import { IncidentDetailPage } from "./pages/IncidentDetailPage";
 import { IncidentsPage } from "./pages/IncidentsPage";
 import { MapPage } from "./pages/MapPage";
 import { NoAccessPage } from "./pages/NoAccessPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
+import { NotificationEditorPage } from "./pages/NotificationEditorPage";
+import { NotificationsPage } from "./pages/NotificationsPage";
 import { OrgDetailPage } from "./pages/OrgDetailPage";
 import { OrgsPage } from "./pages/OrgsPage";
 import { ReportDetailPage } from "./pages/ReportDetailPage";
 import { ReportsPage } from "./pages/ReportsPage";
+import { ResourcesPage } from "./pages/ResourcesPage";
+import { SafetyTipsPage } from "./pages/SafetyTipsPage";
+import { VolunteerDetailPage } from "./pages/VolunteerDetailPage";
+import { VolunteersPage } from "./pages/VolunteersPage";
 
 export function createQueryClient(): QueryClient {
   return new QueryClient({
@@ -44,17 +60,24 @@ export function Gate({ allow, children }: { allow: (roles: readonly string[]) =>
   return children;
 }
 
-/** The KPIs need a report read role; an institutions auditor starts on the institutions list. */
+/** The KPIs need a report read role; other staff start on the first area their roles open. */
 function Home() {
   const { user } = useAuth();
-  if (user && !hasReadAccess(user.identity.roles) && canReadOrgs(user.identity.roles)) {
-    return <Navigate to="/orgs" replace />;
+  if (user && !hasReadAccess(user.identity.roles)) {
+    const path = landingPath(user.identity.roles);
+    if (path !== "/") return <Navigate to={path} replace />;
   }
   return <HomePage />;
 }
 
 const reports = (page: ReactNode) => <Gate allow={hasReadAccess}>{page}</Gate>;
 const orgs = (page: ReactNode) => <Gate allow={canReadOrgs}>{page}</Gate>;
+const resources = (page: ReactNode) => <Gate allow={canReadResources}>{page}</Gate>;
+const notifications = (page: ReactNode) => <Gate allow={canUseNotifications}>{page}</Gate>;
+const tips = (page: ReactNode) => <Gate allow={canEditTips}>{page}</Gate>;
+const committee = (page: ReactNode) => (
+  <Gate allow={(roles) => isCommittee(roles) || canMonitorPerformance(roles)}>{page}</Gate>
+);
 
 export function AppRoutes() {
   return (
@@ -77,6 +100,14 @@ export function AppRoutes() {
         <Route path="orgs" element={orgs(<OrgsPage />)} />
         <Route path="orgs/certificates" element={orgs(<CertificatesPage />)} />
         <Route path="orgs/:id" element={orgs(<OrgDetailPage />)} />
+        <Route path="resources" element={resources(<ResourcesPage />)} />
+        <Route path="volunteers" element={reports(<VolunteersPage />)} />
+        <Route path="volunteers/:id" element={reports(<VolunteerDetailPage />)} />
+        <Route path="notifications" element={notifications(<NotificationsPage />)} />
+        <Route path="notifications/new" element={notifications(<NotificationEditorPage />)} />
+        <Route path="notifications/:id" element={notifications(<NotificationEditorPage />)} />
+        <Route path="safety-tips" element={tips(<SafetyTipsPage />)} />
+        <Route path="committee" element={committee(<CommitteePage />)} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>

@@ -18,9 +18,14 @@ from app.modules import models as _models  # noqa: F401  (registers every table 
 from app.modules.ai.pipeline import analyze_forever
 from app.modules.ai.router import router as ai_router
 from app.modules.audit.router import router as audit_router
+from app.modules.content.router import router as content_router
 from app.modules.geo.router import router as geo_router
 from app.modules.health.router import router as health_router
 from app.modules.identity.router import router as identity_router
+from app.modules.notify.delivery import deliver_forever
+from app.modules.notify.router import router as notify_router
+from app.modules.notify.staff_router import router as notify_staff_router
+from app.modules.ops.command_router import router as command_router
 from app.modules.ops.router import router as ops_router
 from app.modules.orgs.router import router as orgs_router
 from app.modules.orgs.staff_router import router as orgs_staff_router
@@ -30,6 +35,8 @@ from app.modules.reports.router import router as reports_router
 from app.modules.reports.staff_router import router as staff_router
 from app.modules.reports.uploads import router as uploads_router
 from app.modules.reports.uploads import verify_forever
+from app.modules.volunteers.router import router as volunteers_router
+from app.modules.volunteers.staff_router import router as volunteers_staff_router
 
 log = structlog.get_logger()
 _REQUEST_ID = re.compile(r"^[A-Za-z0-9-]{8,64}$")
@@ -47,6 +54,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
             asyncio.create_task(relay_forever(sessionmaker), name="outbox-relay"),
             asyncio.create_task(verify_forever(sessionmaker), name="media-verify"),
             asyncio.create_task(analyze_forever(sessionmaker), name="ai-analysis"),
+            asyncio.create_task(deliver_forever(sessionmaker), name="notify-delivery"),
         ]
     try:
         yield
@@ -99,6 +107,12 @@ def create_app() -> FastAPI:
         reports_router,
         staff_router,
         ops_router,
+        command_router,
+        volunteers_router,
+        volunteers_staff_router,
+        notify_router,
+        notify_staff_router,
+        content_router,
         orgs_router,
         orgs_staff_router,
         ai_router,

@@ -1,8 +1,10 @@
-import maplibregl, { type Map as MlMap, type Marker } from "maplibre-gl";
+import type { GeoJSONSource, Map as MlMap, Marker } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
+import type { FeatureCollection } from "geojson";
 import { useEffect, useRef } from "react";
 import { CATEGORY_ICON_PATHS } from "../lib/categoryIcons";
 import type { BBox } from "../lib/filters";
+import { maplibregl } from "../lib/maplibre";
 import { mapStyle } from "../lib/mapStyle";
 import { POI_ICON_PATHS, type PoiKind } from "../lib/poiIcons";
 import type { Category, ReportStatus } from "../lib/types";
@@ -33,6 +35,21 @@ export interface MapPoi {
   href?: string;
 }
 
+/** A filled area drawn under the markers (phase 5: alert polygons), always also named in a list beside the map. */
+export interface MapPolygon {
+  id: string;
+  /** GeoJSON Polygon rings of [lon, lat]. */
+  coordinates: [number, number][][];
+  /** Colour band of the area (alerts: their severity). */
+  tone: "high" | "medium" | "low";
+}
+
+/** A point of a density (heat) layer, e.g. ready volunteers. */
+export interface HeatPoint {
+  lon: number;
+  lat: number;
+}
+
 interface MapViewProps {
   markers: MapMarker[];
   bounds: BBox;
@@ -53,6 +70,42 @@ interface MapViewProps {
   /** Text of the popup link of a point that has an `href`. */
   poiOpenLabel?: string;
   onOpenPoi?: (href: string) => void;
+  /** Areas drawn as translucent fills with an outline (alerts layer). */
+  polygons?: MapPolygon[];
+  /** Density layer (ready volunteers): a MapLibre heatmap under the markers. */
+  heat?: HeatPoint[];
+}
+
+type GeoJsonData = FeatureCollection;
+
+const POLYGON_SOURCE = "ehimaya-polygons";
+const HEAT_SOURCE = "ehimaya-heat";
+const TONE_COLOURS: Record<MapPolygon["tone"], string> = { high: "#b91c1c", medium: "#b45309", low: "#4b5563" };
+
+/** Run `fn` now if the style is ready, otherwise once it has loaded. */
+function whenStyleReady(map: MlMap, fn: () => void): void {
+  if (map.isStyleLoaded()) fn();
+  // The style loads once: a plain listener is enough (`once` without a listener returns a promise).
+  else map.on("load", fn);
+}
+
+function polygonData(polygons: MapPolygon[]): GeoJsonData {
+  return {
+    type: "FeatureCollection",
+    features: polygons.map((p) => ({
+      type: "Feature",
+      id: p.id,
+      properties: { colour: TONE_COLOURS[p.tone] },
+      geometry: { type: "Polygon", coordinates: p.coordinates },
+    })),
+  };
+}
+
+function heatData(points: HeatPoint[]): GeoJsonData {
+  return {
+    type: "FeatureCollection",
+    features: points.map((p) => ({ type: "Feature", properties: {}, geometry: { type: "Point", coordinates: [p.lon, p.lat] } })),
+  };
 }
 
 const SVG_NS = "http://www.w3.org/2000/svg";
@@ -174,6 +227,8 @@ export function MapView({
   pois,
   poiOpenLabel,
   onOpenPoi,
+  polygons,
+  heat,
 }: MapViewProps) {
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MlMap | null>(null);
@@ -283,6 +338,72 @@ export function MapView({
       }
     }
   }, [pois, poiOpenLabel]);
+
+  // Alert areas: one GeoJSON source, created on first use and then only updated.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || polygons === undefined) return;
+    const data = polygonData(polygons);
+    whenStyleReady(map, () => {
+      const source = map.getSource<GeoJSONSource>(POLYGON_SOURCE);
+      if (source) {
+        void source.setData(data); // resolves once applied; failures are fired as map "error" events
+        return;
+      }
+      map.addSource(POLYGON_SOURCE, { type: "geojson", data });
+      map.addLayer({
+        id: `${POLYGON_SOURCE}-fill`,
+        type: "fill",
+        source: POLYGON_SOURCE,
+        paint: { "fill-color": ["get", "colour"], "fill-opacity": 0.18 },
+      });
+      map.addLayer({
+        id: `${POLYGON_SOURCE}-line`,
+        type: "line",
+        source: POLYGON_SOURCE,
+        paint: { "line-color": ["get", "colour"], "line-width": 2, "line-dasharray": [3, 2] },
+      });
+    });
+  }, [polygons]);
+
+  // Readiness density (ready volunteers).
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || heat === undefined) return;
+    const data = heatData(heat);
+    whenStyleReady(map, () => {
+      const source = map.getSource<GeoJSONSource>(HEAT_SOURCE);
+      if (source) {
+        void source.setData(data); // resolves once applied; failures are fired as map "error" events
+        return;
+      }
+      map.addSource(HEAT_SOURCE, { type: "geojson", data });
+      map.addLayer({
+        id: `${HEAT_SOURCE}-layer`,
+        type: "heatmap",
+        source: HEAT_SOURCE,
+        maxzoom: 15,
+        paint: {
+          "heatmap-radius": ["interpolate", ["linear"], ["zoom"], 6, 12, 14, 30],
+          "heatmap-intensity": ["interpolate", ["linear"], ["zoom"], 6, 0.6, 14, 1.5],
+          "heatmap-opacity": 0.65,
+          "heatmap-color": [
+            "interpolate",
+            ["linear"],
+            ["heatmap-density"],
+            0,
+            "rgba(21,128,61,0)",
+            0.3,
+            "rgb(134,239,172)",
+            0.6,
+            "rgb(34,197,94)",
+            1,
+            "rgb(20,83,45)",
+          ],
+        },
+      });
+    });
+  }, [heat]);
 
   // Centroid marker (decorative for pointer users, labelled for screen readers).
   const centroidLon = centroid?.lon;

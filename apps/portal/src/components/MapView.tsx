@@ -1,8 +1,9 @@
 import type { FeatureCollection } from "geojson";
-import maplibregl, { type GeoJSONSource, type Map as MlMap, type Marker } from "maplibre-gl";
+import type { GeoJSONSource, Map as MlMap, Marker } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef } from "react";
 import { mapStyle } from "../lib/mapStyle";
+import { maplibregl } from "../lib/maplibre";
 import type { GeoPoint } from "../lib/types";
 
 export type MarkerKind = "org" | "point" | "evacuation_point" | "water_point" | "alarm";
@@ -164,7 +165,7 @@ export function MapView({
 
   useEffect(() => {
     const source = mapRef.current?.getSource<GeoJSONSource>("radius");
-    source?.setData(circleData(circle));
+    void source?.setData(circleData(circle)); // resolves once applied; failures are fired as map "error" events
   }, [circle]);
 
   useEffect(() => {
