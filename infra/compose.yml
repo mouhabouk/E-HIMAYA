@@ -176,6 +176,9 @@ services:
       TUSD_HOOK_SECRET: ${TUSD_HOOK_SECRET}
       API_CORS_ORIGINS: ${API_CORS_ORIGINS:-}
       API_LOG_LEVEL: ${API_LOG_LEVEL:-INFO}
+      # Institutions portal (phase 4): invitation and certificate verification links, certificate signing.
+      PORTAL_PUBLIC_URL: ${PORTAL_PUBLIC_URL:-http://localhost:5174}
+      CERTIFICATE_SIGNING_KEY: ${CERTIFICATE_SIGNING_KEY:-}
       # AI layer (profile "ai"). Unset: reports are still scored and grouped by the rules.
       AI_SERVICE_URL: ${AI_SERVICE_URL:-}
       AI_SERVICE_TOKEN: ${AI_SERVICE_TOKEN:-}

@@ -16,6 +16,8 @@ from app.modules.audit import service as audit
 from app.modules.audit.service import actor_of
 from app.modules.identity.models import Profile
 from app.modules.ops import service as ops
+from app.modules.orgs import service as orgs
+from app.modules.orgs.models import Organization
 from app.modules.reports import schemas, service
 from app.modules.reports.domain import TRANSITIONS, Category, Status
 from app.modules.reports.models import Media
@@ -114,6 +116,7 @@ async def detail_of(session: AsyncSession, principal: Principal, report_id: uuid
                 phone=profile.phone,
             )
     analysis = await session.get(Analysis, report.id)
+    org = await session.get(Organization, report.organization_id) if report.organization_id else None
     return schemas.StaffReportDetail(
         **summary.model_dump(),
         history=await service.history_of(session, report.id),
@@ -121,6 +124,7 @@ async def detail_of(session: AsyncSession, principal: Principal, report_id: uuid
         reporter=reporter,
         allowed_transitions=sorted(TRANSITIONS[Status(report.status)]),
         analysis=analysis_out(analysis, media) if analysis is not None else None,
+        organization_card=await orgs.organization_card(session, org) if org is not None else None,
     )
 
 

@@ -212,10 +212,18 @@ jobs:
           sed -i "s|^ANON_PSEUDONYM_SECRET=.*|ANON_PSEUDONYM_SECRET=$(openssl rand -hex 32)|" .env
           sed -i "s|^TUSD_HOOK_SECRET=.*|TUSD_HOOK_SECRET=$(openssl rand -hex 24)|" .env
           sed -i "s|^AI_SERVICE_TOKEN=.*|AI_SERVICE_TOKEN=$(openssl rand -hex 24)|" .env
+          sed -i "s|^CERTIFICATE_SIGNING_KEY=.*|CERTIFICATE_SIGNING_KEY=$(openssl rand -base64 32)|" .env
       - name: Start the stack
         run: docker compose --env-file .env -f infra/compose.yml up -d --build
       - name: Anonymous report, resumable upload and integrity check
         run: python3 infra/smoke/smoke_test.py
+      - name: Certificate PDFs render in the API image (Arabic shaping, fonts)
+        run: |
+          docker compose --env-file .env -f infra/compose.yml exec -T api python -c "
+          from weasyprint import HTML
+          pdf = HTML(string='<html dir=rtl><body><h1>شهادة السلامة الرقمية</h1><p>Certificat</p></body></html>').write_pdf()
+          assert pdf.startswith(b'%PDF') and len(pdf) > 2000, len(pdf)
+          print('pdf ok', len(pdf))"
       - name: Logs on failure
         if: failure()
         run: docker compose --env-file .env -f infra/compose.yml logs --tail=200

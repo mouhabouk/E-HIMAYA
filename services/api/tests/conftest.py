@@ -177,6 +177,9 @@ class FakeStore:
         for key in keys:
             self.objects.pop(key, None)
 
+    async def put(self, key: str, data: bytes, content_type: str) -> None:
+        self.objects[key] = data
+
     def presign_get(
         self, key: str, *, expires_s: int = 600, content_type: str | None = None, internal: bool = False
     ) -> str:

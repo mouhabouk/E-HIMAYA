@@ -22,6 +22,8 @@ from app.modules.geo.router import router as geo_router
 from app.modules.health.router import router as health_router
 from app.modules.identity.router import router as identity_router
 from app.modules.ops.router import router as ops_router
+from app.modules.orgs.router import router as orgs_router
+from app.modules.orgs.staff_router import router as orgs_staff_router
 from app.modules.reports.live import hub
 from app.modules.reports.live import router as live_router
 from app.modules.reports.router import router as reports_router
@@ -97,6 +99,8 @@ def create_app() -> FastAPI:
         reports_router,
         staff_router,
         ops_router,
+        orgs_router,
+        orgs_staff_router,
         ai_router,
         live_router,
         uploads_router,

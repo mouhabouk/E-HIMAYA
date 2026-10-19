@@ -1,4 +1,7 @@
-"""S3-compatible object storage (SeaweedFS) for media evidence. boto3 is synchronous, so calls run in threads."""
+"""S3-compatible object storage (SeaweedFS): media evidence, institution documents, certificate PDFs.
+
+boto3 is synchronous, so calls run in threads.
+"""
 
 import hashlib
 from functools import lru_cache
@@ -17,6 +20,8 @@ class ObjectStore(Protocol):
     async def sha256(self, key: str) -> tuple[str, int]: ...
 
     async def delete(self, *keys: str) -> None: ...
+
+    async def put(self, key: str, data: bytes, content_type: str) -> None: ...
 
     def presign_get(
         self, key: str, *, expires_s: int = 600, content_type: str | None = None, internal: bool = False
@@ -58,6 +63,13 @@ class S3ObjectStore:
     async def delete(self, *keys: str) -> None:
         if keys:
             await to_thread.run_sync(self._delete_sync, keys)
+
+    def _put_sync(self, key: str, data: bytes, content_type: str) -> None:
+        self._client.put_object(Bucket=self._bucket, Key=key, Body=data, ContentType=content_type)
+
+    async def put(self, key: str, data: bytes, content_type: str) -> None:
+        """Store a server-generated object (certificate PDFs)."""
+        await to_thread.run_sync(self._put_sync, key, data, content_type)
 
     def presign_get(
         self, key: str, *, expires_s: int = 600, content_type: str | None = None, internal: bool = False
