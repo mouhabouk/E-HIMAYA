@@ -14,6 +14,7 @@ import { createI18n, type Language } from "../i18n";
 import type { StaffApi } from "../lib/staffApi";
 import { FakeWebSocket } from "./FakeWebSocket";
 import { AI_STATUS_READY, fakeJwt } from "./fixtures";
+import { fakeOpsApi } from "./opsFixtures";
 
 export function fakeAuth(claims: Record<string, unknown> | null): AuthService {
   const token = claims ? fakeJwt(claims) : null;
@@ -68,6 +69,7 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     reviewOrg: vi.fn(),
     certificates: vi.fn(() => Promise.resolve({ items: [], next_cursor: null })),
     reviewCertificate: vi.fn(),
+    ...fakeOpsApi(),
     gouvernorats: vi.fn(() =>
       Promise.resolve([
         { code: 11, iso_code: "TN-11", name: "تونس", name_ar: "تونس", name_fr: "Tunis", delegation_count: 21 },

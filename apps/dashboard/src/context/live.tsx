@@ -15,6 +15,13 @@ interface LiveContextValue {
 const LiveContext = createContext<LiveContextValue | null>(null);
 
 const KPI_DEBOUNCE_MS = 2000;
+const KPI_EVENTS: ReadonlySet<LiveEvent["type"]> = new Set([
+  "report.created",
+  "report.status_changed",
+  "report.enriched",
+  "org.updated",
+  "certificate.updated",
+]);
 
 /**
  * Owns the live WebSocket for the signed-in user: re-authenticates after each token renewal,
@@ -38,8 +45,8 @@ export function LiveProvider({ children }: { children: ReactNode }) {
       onStateChange: setState,
       onEvent: (event) => {
         applyLiveEvent(queryClient, event);
-        // KPIs count reports (incl. high_priority / analysis_pending): incident events do not change them.
-        if (event.type !== "media.stored" && event.type !== "incident.updated") {
+        // KPIs count reports (incl. high_priority / analysis_pending): only report and institution events change them.
+        if (KPI_EVENTS.has(event.type)) {
           if (kpiTimer) clearTimeout(kpiTimer);
           kpiTimer = setTimeout(() => void queryClient.invalidateQueries({ queryKey: ["kpis"] }), KPI_DEBOUNCE_MS);
         }

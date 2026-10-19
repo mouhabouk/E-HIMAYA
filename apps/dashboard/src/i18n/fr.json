@@ -12,7 +12,12 @@
     "incidents": "Incidents",
     "aiSettings": "Réglages IA",
     "orgs": "Établissements",
-    "certificates": "Certificats à examiner"
+    "certificates": "Certificats à examiner",
+    "resources": "Moyens",
+    "volunteers": "Volontaires",
+    "notifications": "Notifications et alertes",
+    "safetyTips": "Conseils de sécurité",
+    "committee": "Comités"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -35,7 +40,9 @@
     "field_commander": "Commandant de terrain",
     "local_committee": "Comité local",
     "central_committee": "Comité central",
-    "org_auditor": "Auditeur des établissements"
+    "org_auditor": "Auditeur des établissements",
+    "content_editor": "Éditeur de contenu",
+    "sysadmin": "Administrateur système"
   },
   "status": {
     "received": "Reçu",
@@ -144,7 +151,33 @@
     "signing_key_missing": "La clé de signature des certificats n’est pas configurée sur le serveur : l’approbation est impossible pour le moment (le rejet reste possible).",
     "certificate_outdated": "Ce certificat ne correspond plus au dossier de l’établissement.",
     "realm_not_allowed": "Ce compte ne peut pas accéder à cette ressource.",
-    "version_conflict": "Les données ont changé entre-temps. Rechargez puis réessayez."
+    "version_conflict": "Les données ont changé entre-temps. Rechargez puis réessayez.",
+    "level_not_allowed": "Votre rôle ne permet pas ce niveau ou ce gouvernorat.",
+    "out_of_scope": "La cible est hors de votre périmètre géographique.",
+    "already_acknowledged": "La réception de cette directive a déjà été confirmée.",
+    "unit_in_use": "Impossible de supprimer une unité qui a encore des moyens.",
+    "label_taken": "Cet indicatif est déjà utilisé par un autre moyen de l’unité.",
+    "resource_in_history": "Ce moyen a participé à des interventions : mettez-le hors service plutôt que de le supprimer.",
+    "resource_busy": "Le moyen est actuellement engagé.",
+    "incident_without_location": "Cet incident n’a pas de position.",
+    "invalid_classification": "La classification ne correspond pas à la catégorie de l’incident.",
+    "assignments_active": "Des engagements sont actifs : terminez-les ou annulez-les avant la clôture.",
+    "eta_required": "L’heure d’arrivée estimée est requise.",
+    "invalid_skill": "Compétence inconnue.",
+    "volunteer_not_approved": "Le volontaire n’est pas validé.",
+    "callout_closed": "Cet appel est clos.",
+    "no_volunteer_available": "Aucun volontaire disponible correspondant dans ce rayon.",
+    "invalid_area": "Zone dessinée invalide (un contour de 4 à 500 points en Tunisie, sans gouvernorats).",
+    "invalid_gouvernorat": "Gouvernorat inconnu.",
+    "invalid_user": "Le compte ciblé n’existe pas.",
+    "invalid_expiry": "L’expiration de l’alerte doit être future et dans les 7 jours.",
+    "severity_category_expiry_required": "Gravité, catégorie et expiration sont requises pour une alerte.",
+    "topic_and_audience_required": "Le thème et le public sont requis pour une notification d’information.",
+    "kind_change": "Le type d’un message ne peut pas changer après sa création.",
+    "not_draft": "Ce message n’est plus un brouillon.",
+    "not_published": "L’élément n’est pas publié.",
+    "suspended_by_level": "Les notifications d’information sont suspendues dans un gouvernorat au niveau catastrophe (pas les alertes).",
+    "translation_missing": "Traduction incomplète : titre et au moins un élément en arabe, français et anglais."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -325,7 +358,8 @@
       "reporters": "Nombre de signalants",
       "credibility": "Crédibilité",
       "sensitive_sites": "Sites sensibles à proximité",
-      "weather": "Météo"
+      "weather": "Météo",
+      "op_level": "Niveau opérationnel"
     },
     "livesSource": {
       "model": "modèle de langue",
@@ -447,12 +481,23 @@
       "closed": "Clôture",
       "reopened": "Réouverture",
       "dissolved": "Dissolution",
-      "other": "Autre événement"
+      "other": "Autre événement",
+      "card_updated": "Fiche de l’incident mise à jour",
+      "note": "Note",
+      "assignment_created": "Ordre d’engagement",
+      "assignment_status": "Engagement mis à jour",
+      "callout_sent": "Appel aux volontaires",
+      "callout_accepted": "Volontaire disponible",
+      "callout_declined": "Volontaire indisponible",
+      "callout_cancelled": "Appel annulé",
+      "evaluated": "Clôture et évaluation",
+      "level_changed": "Changement de niveau opérationnel"
     },
     "via": {
       "suggestion": "(suggestion confirmée)",
       "manual": "(manuellement)",
-      "new": "(à la création)"
+      "new": "(à la création)",
+      "auto": "(automatiquement, niveau catastrophe)"
     },
     "detail": {
       "title": "Incident",
@@ -863,5 +908,23 @@
       "legend": "Légende",
       "report": "Position du signalement"
     }
-  }
+  },
+  "levels": {
+    "name": {
+      "normal": "Normal",
+      "crisis": "Crise",
+      "disaster": "Catastrophe"
+    },
+    "banner": {
+      "crisis": "Niveau de crise actif : {{places}}.",
+      "disaster": "Niveau catastrophe actif : {{places}}. Regroupement automatique des signalements activé, notifications d’information suspendues.",
+      "link": "Détail des niveaux"
+    }
+  },
+  "ops": {},
+  "resources": {},
+  "volunteers": {},
+  "notify": {},
+  "tips": {},
+  "committee": {}
 }

@@ -1,4 +1,4 @@
-# ء-حماية / e-Himaya — البنية الأساسية للتطوير والتجربة (المراحل 1 إلى 3)
+# ء-حماية / e-Himaya — البنية الأساسية للتطوير والتجربة (المراحل 1 إلى 5)
 # Usage (from repo root):  docker compose --env-file .env -f infra/compose.yml up -d
 # With the AI layer (downloads the models once, several GB):
 #   docker compose --env-file .env -f infra/compose.yml --profile ai up -d
@@ -182,6 +182,18 @@ services:
       # AI layer (profile "ai"). Unset: reports are still scored and grouped by the rules.
       AI_SERVICE_URL: ${AI_SERVICE_URL:-}
       AI_SERVICE_TOKEN: ${AI_SERVICE_TOKEN:-}
+      # Notification channels (phase 5). An empty channel is recorded as skipped; the others still go out.
+      # E-mail goes to Mailpit by default (development): every message is visible at http://localhost:8025.
+      SMTP_HOST: ${SMTP_HOST:-mailpit}
+      SMTP_PORT: ${SMTP_PORT:-1025}
+      SMTP_USERNAME: ${SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_FROM: ${SMTP_FROM:-e-Himaya <no-reply@ehimaya.tn>}
+      SMTP_STARTTLS: ${SMTP_STARTTLS:-false}
+      FCM_SERVICE_ACCOUNT: ${FCM_SERVICE_ACCOUNT:-}
+      SMS_HTTP_URL: ${SMS_HTTP_URL:-}
+      SMS_HTTP_TOKEN: ${SMS_HTTP_TOKEN:-}
+      SMS_SENDER: ${SMS_SENDER:-E-HIMAYA}
     ports:
       - "127.0.0.1:8000:8000"
     depends_on:
@@ -191,6 +203,17 @@ services:
         condition: service_healthy
       nats:
         condition: service_healthy
+
+  # Development mail catcher (MIT): receives every e-mail the API sends; web UI on http://localhost:8025.
+  # In production point SMTP_HOST at the real relay instead.
+  mailpit:
+    <<: *restart
+    image: axllent/mailpit:v1.31.3
+    environment:
+      MP_MAX_MESSAGES: 5000
+    ports:
+      - "127.0.0.1:8025:8025"
+      - "127.0.0.1:1025:1025"
 
   # ---------------- AI layer 1 (profile "ai"): all models run on our own servers (NFR-10, NFR-11) ----------------
 

@@ -1,5 +1,6 @@
 import type { ApiClient } from "./api";
 import { bboxParam, filtersToQuery, type BBox, type ReportFilters } from "./filters";
+import { opsApi } from "./opsApi";
 import { normalizeOrgFilters, orgFiltersToQuery, type OrgFilters } from "./orgs";
 import type {
   AiSettings,
@@ -37,7 +38,10 @@ const incidentPath = (id: string) => `/api/v1/staff/incidents/${encodeURICompone
 const orgPath = (id: string) => `/api/v1/staff/orgs/${encodeURIComponent(id)}`;
 const docPath = (orgId: string, docId: string) => `${orgPath(orgId)}/documents/${encodeURIComponent(docId)}`;
 
-/** Typed calls for contract section 5 (phase 2), sections 2–4 (phase 3), section 9 (phase 4) and the geo reference. */
+/**
+ * Typed calls for contract section 5 (phase 2), sections 2–4 (phase 3), section 9 (phase 4), the geo reference
+ * and phase 5 (operations, volunteers, notifications, safety tips: see opsApi.ts).
+ */
 export function staffApi(api: ApiClient) {
   return {
     kpis: (since: string, signal?: AbortSignal) =>
@@ -167,6 +171,8 @@ export function staffApi(api: ApiClient) {
 
     gouvernorats: (signal?: AbortSignal) =>
       api.request<Gouvernorat[]>("/api/v1/geo/gouvernorats", { query: { lang: "ar" }, signal }),
+
+    ...opsApi(api),
   };
 }
 
