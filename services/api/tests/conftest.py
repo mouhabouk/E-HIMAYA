@@ -30,6 +30,7 @@ import httpx  # noqa: E402
 import jwt  # noqa: E402
 import pytest  # noqa: E402
 from cryptography.hazmat.primitives.asymmetric import rsa  # noqa: E402
+from sqlalchemy import text  # noqa: E402
 from sqlalchemy.ext.asyncio import AsyncSession  # noqa: E402
 
 from app.core import security  # noqa: E402
@@ -92,6 +93,13 @@ async def client() -> AsyncIterator[httpx.AsyncClient]:
     transport = httpx.ASGITransport(app=app)
     async with httpx.AsyncClient(transport=transport, base_url="http://api.test") as c:
         yield c
+
+
+@pytest.fixture
+async def isolated_window() -> None:
+    """Move earlier tests' reports out of every grouping window, so suggestions only see this test's reports."""
+    async with get_sessionmaker()() as s, s.begin():
+        await s.execute(text("UPDATE reports.report SET received_at = received_at - interval '30 days'"))
 
 
 @pytest.fixture

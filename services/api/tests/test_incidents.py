@@ -4,11 +4,14 @@ import uuid
 from typing import Any
 
 import httpx
+import pytest
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from tests.aihelpers import FakeAi, Staff, analyse, create, detail, spot
 from tests.conftest import TUNIS, TokenFactory, accept_charter, bearer
+
+pytestmark = pytest.mark.usefixtures("isolated_window")
 
 
 async def reporter(client: httpx.AsyncClient, make_token: TokenFactory) -> dict[str, str]:

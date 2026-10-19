@@ -55,6 +55,7 @@
 | الحزمة | الإصدار | الدور |
 |---|---|---|
 | faster-whisper | 1.2.1 | تحويل الصوت (مع كشف الصمت VAD) |
+| PyAV (av) | 17.0.0 | فك ترميز الصوت لـ faster-whisper (الإصدار 19 أزال معاملا يستعمله faster-whisper 1.2.1) |
 | ctranslate2 | 4.8.3 | تشغيل Whisper و Opus-MT و e5 بسرعة على المعالج أو GPU |
 | sentencepiece / tokenizers | 0.2.2 / 0.23.3 | تقطيع النصوص |
 | numpy | 2.5.4 | تجميع المتجهات |
