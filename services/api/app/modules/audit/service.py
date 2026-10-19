@@ -15,6 +15,15 @@ def actor_of(principal: Principal | None) -> str:
     return f"{principal.realm.value}:{principal.subject}" if principal else SYSTEM_ACTOR
 
 
+def name_of(principal: Principal | None) -> str | None:
+    """Display name of a signed-in user (shown next to decisions, e.g. who raised a level)."""
+    if principal is None:
+        return None
+    claims = principal.claims
+    name = claims.get("name") or " ".join(p for p in (claims.get("given_name"), claims.get("family_name")) if p)
+    return str(name or claims.get("preferred_username") or "")[:200] or None
+
+
 async def record(
     session: AsyncSession,
     *,

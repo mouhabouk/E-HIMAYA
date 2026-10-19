@@ -26,6 +26,7 @@ from app.core.db import get_session
 from app.core.events import emit
 from app.core.security import CurrentPrincipal, Principal, Realm
 from app.modules.identity.service import Reporter, resolve_reporter
+from app.modules.notify import outbox, templates
 from app.modules.orgs import domain, schemas
 from app.modules.orgs.domain import OrgRole, OrgStatus
 from app.modules.orgs.models import (
@@ -603,11 +604,21 @@ async def invite(
     session.add(invitation)
     await session.flush()
     await session.refresh(invitation)
-    return schemas.InvitationCreated(
-        **invitation_out(invitation).model_dump(),
-        token=token,
-        accept_url=f"{get_settings().portal_public_url}/invite/{token}",
+    accept_url = f"{get_settings().portal_public_url}/invite/{token}"
+    # The link is also returned to the admin, who can share it another way if the e-mail does not arrive.
+    values = {
+        "org": org.name,
+        "inviter": user.display_name or user.email or "",
+        "expires": invitation.expires_at.date().isoformat(),
+        "link": accept_url,
+    }
+    outbox.email(
+        session,
+        invitation.email,
+        templates.pick(templates.fill(templates.INVITATION_SUBJECT, org=org.name), "ar"),
+        templates.multilingual(templates.fill(templates.INVITATION_BODY, **values)),
     )
+    return schemas.InvitationCreated(**invitation_out(invitation).model_dump(), token=token, accept_url=accept_url)
 
 
 def invitation_out(invitation: Invitation) -> schemas.InvitationOut:

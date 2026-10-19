@@ -1,0 +1,159 @@
+"""Texts of the messages the platform sends on its own (push and e-mail), in the three app languages.
+
+Every text is here (NFR-08: no user-facing string in the code paths). ``{…}`` placeholders are filled
+with ``str.format``; values never include personal data in pushes.
+"""
+
+from typing import Literal
+
+Lang = Literal["ar", "fr", "en"]
+Localized = dict[str, str]
+
+SIGNATURE: Localized = {
+    "ar": "ء-حماية — الديوان الوطني للحماية المدنية",
+    "fr": "e-Himaya — Office national de la protection civile",
+    "en": "e-Himaya — National Civil Protection Office",
+}
+
+REPORT_STATUS: dict[str, Localized] = {
+    "received": {"ar": "تم استلام بلاغك", "fr": "Votre signalement a été reçu", "en": "Your report was received"},
+    "in_progress": {
+        "ar": "بلاغك قيد المعالجة",
+        "fr": "Votre signalement est en cours de traitement",
+        "en": "Your report is being handled",
+    },
+    "intervened": {
+        "ar": "تم التدخل في الحادثة التي بلّغت عنها",
+        "fr": "Les secours sont intervenus sur l'incident signalé",
+        "en": "Responders have intervened on the incident you reported",
+    },
+    "ongoing": {"ar": "التدخل متواصل", "fr": "L'intervention se poursuit", "en": "The intervention is ongoing"},
+    "closed": {"ar": "أُغلق التدخل", "fr": "L'intervention est terminée", "en": "The intervention is closed"},
+    "rejected": {"ar": "رُفض البلاغ", "fr": "Le signalement a été rejeté", "en": "The report was rejected"},
+}
+REPORT_STATUS_TITLE: Localized = {"ar": "بلاغ {code}", "fr": "Signalement {code}", "en": "Report {code}"}
+
+CALLOUT_TITLE: Localized = {
+    "ar": "استدعاء متطوعين",
+    "fr": "Appel aux volontaires",
+    "en": "Volunteer call-out",
+}
+CALLOUT_BODY: Localized = {
+    "ar": "مطلوب {skill} على بعد {km} كم. افتح التطبيق للرد.",
+    "fr": "Besoin : {skill} à {km} km. Ouvrez l'application pour répondre.",
+    "en": "Needed: {skill}, {km} km away. Open the app to answer.",
+}
+SKILLS: dict[str, Localized] = {
+    "first_aid": {"ar": "إسعاف", "fr": "secourisme", "en": "first aid"},
+    "diving": {"ar": "غوص", "fr": "plongée", "en": "diving"},
+    "heavy_vehicles": {"ar": "قيادة آليات ثقيلة", "fr": "conduite d'engins lourds", "en": "heavy vehicles"},
+    "firefighting": {"ar": "إطفاء", "fr": "lutte contre l'incendie", "en": "firefighting"},
+    "search_rescue": {"ar": "بحث وإنقاذ", "fr": "recherche et sauvetage", "en": "search and rescue"},
+    "logistics": {"ar": "لوجستيك", "fr": "logistique", "en": "logistics"},
+    "medical": {"ar": "طب وتمريض", "fr": "médical", "en": "medical"},
+    "other": {"ar": "اختصاص آخر", "fr": "autre compétence", "en": "other skill"},
+}
+
+ALERT_CANCELLED_TITLE: Localized = {"ar": "رُفع التنبيه", "fr": "Alerte levée", "en": "Alert lifted"}
+
+VOLUNTEER_DECISION_SUBJECT: dict[str, Localized] = {
+    "approve": {
+        "ar": "قبول طلب التطوع — ء-حماية",
+        "fr": "Votre candidature de volontaire est acceptée — e-Himaya",
+        "en": "Your volunteer application is approved — e-Himaya",
+    },
+    "reject": {
+        "ar": "طلب التطوع — ء-حماية",
+        "fr": "Votre candidature de volontaire — e-Himaya",
+        "en": "Your volunteer application — e-Himaya",
+    },
+    "suspend": {
+        "ar": "تعليق صفة التطوع — ء-حماية",
+        "fr": "Suspension de votre statut de volontaire — e-Himaya",
+        "en": "Your volunteer status is suspended — e-Himaya",
+    },
+    "reinstate": {
+        "ar": "إعادة تفعيل صفة التطوع — ء-حماية",
+        "fr": "Votre statut de volontaire est rétabli — e-Himaya",
+        "en": "Your volunteer status is reinstated — e-Himaya",
+    },
+}
+VOLUNTEER_DECISION_BODY: dict[str, Localized] = {
+    "approve": {
+        "ar": "مرحبا {name}،\n\nقبلت الحماية المدنية طلب تطوعك وأُدرجت في سجلاتها. يمكنك الآن تفعيل زر «جاهز» في التطبيق لتلقي الاستدعاءات القريبة منك.\n\nشكرا على التزامك.",
+        "fr": "Bonjour {name},\n\nLa Protection civile a accepté votre candidature et vous a inscrit(e) dans ses registres. Vous pouvez maintenant activer « Disponible » dans l'application pour recevoir les appels proches de vous.\n\nMerci pour votre engagement.",
+        "en": "Hello {name},\n\nThe Civil Protection has approved your application and added you to its registers. You can now switch on “Ready” in the app to receive call-outs near you.\n\nThank you for your commitment.",
+    },
+    "reject": {
+        "ar": "مرحبا {name}،\n\nلم يُقبل طلب تطوعك في الوقت الحالي.\nالسبب: {reason}\n\nيمكنك تحيين طلبك وإعادة تقديمه من التطبيق.",
+        "fr": "Bonjour {name},\n\nVotre candidature n'a pas été retenue pour le moment.\nMotif : {reason}\n\nVous pouvez la mettre à jour et la soumettre de nouveau depuis l'application.",
+        "en": "Hello {name},\n\nYour application was not accepted for now.\nReason: {reason}\n\nYou can update it and submit it again from the app.",
+    },
+    "suspend": {
+        "ar": "مرحبا {name}،\n\nعُلّقت صفة التطوع الخاصة بك.\nالسبب: {reason}",
+        "fr": "Bonjour {name},\n\nVotre statut de volontaire est suspendu.\nMotif : {reason}",
+        "en": "Hello {name},\n\nYour volunteer status is suspended.\nReason: {reason}",
+    },
+    "reinstate": {
+        "ar": "مرحبا {name}،\n\nأُعيد تفعيل صفة التطوع الخاصة بك. يمكنك من جديد تلقي الاستدعاءات.",
+        "fr": "Bonjour {name},\n\nVotre statut de volontaire est rétabli. Vous pouvez de nouveau recevoir des appels.",
+        "en": "Hello {name},\n\nYour volunteer status is reinstated. You can receive call-outs again.",
+    },
+}
+
+INVITATION_SUBJECT: Localized = {
+    "ar": "دعوة للانضمام إلى {org} على ء-حماية",
+    "fr": "Invitation à rejoindre {org} sur e-Himaya",
+    "en": "Invitation to join {org} on e-Himaya",
+}
+INVITATION_BODY: Localized = {
+    "ar": "مرحبا،\n\nدعاك {inviter} للانضمام إلى فضاء المؤسسة «{org}» على بوابة ء-حماية.\nلقبول الدعوة افتح الرابط التالي قبل {expires}:\n{link}",
+    "fr": "Bonjour,\n\n{inviter} vous invite à rejoindre l'espace de l'établissement « {org} » sur le portail e-Himaya.\nPour accepter, ouvrez ce lien avant le {expires} :\n{link}",
+    "en": "Hello,\n\n{inviter} invites you to join the space of “{org}” on the e-Himaya portal.\nTo accept, open this link before {expires}:\n{link}",
+}
+
+DIGEST_SUBJECT: Localized = {
+    "ar": "تنبيهات السلامة لمؤسستكم {org}",
+    "fr": "Alertes de sécurité de votre établissement {org}",
+    "en": "Safety alerts for your institution {org}",
+}
+DIGEST_BODY: Localized = {
+    "ar": "مرحبا،\n\nتحتاج المعطيات التالية في ملف السلامة لمؤسستكم «{org}» إلى تحيين:\n\n{items}\n\nيمكنكم تحيينها من البوابة: {link}",
+    "fr": "Bonjour,\n\nLes éléments suivants du dossier de sécurité de votre établissement « {org} » sont à mettre à jour :\n\n{items}\n\nMise à jour depuis le portail : {link}",
+    "en": "Hello,\n\nThe following items of the safety file of “{org}” need updating:\n\n{items}\n\nUpdate them from the portal: {link}",
+}
+DIGEST_ITEM: dict[str, Localized] = {
+    "training_expired": {
+        "ar": "انتهت صلاحية تكوين عضو فريق السلامة: {name}",
+        "fr": "Formation expirée du membre de l'équipe de sécurité : {name}",
+        "en": "Expired safety training of team member: {name}",
+    },
+    "training_expiring": {
+        "ar": "تقترب نهاية صلاحية تكوين عضو فريق السلامة: {name}",
+        "fr": "Formation bientôt expirée du membre de l'équipe de sécurité : {name}",
+        "en": "Safety training about to expire for team member: {name}",
+    },
+    "maintenance_overdue": {
+        "ar": "صيانة متأخرة لأداة السلامة: {name}",
+        "fr": "Maintenance en retard de l'équipement : {name}",
+        "en": "Overdue maintenance of equipment: {name}",
+    },
+    "maintenance_due_soon": {
+        "ar": "تقترب الصيانة الدورية لأداة السلامة: {name}",
+        "fr": "Maintenance bientôt due de l'équipement : {name}",
+        "en": "Maintenance due soon for equipment: {name}",
+    },
+}
+
+
+def pick(text: Localized, lang: str) -> str:
+    return text.get(lang) or text["ar"]
+
+
+def fill(text: Localized, **values: object) -> Localized:
+    return {lang: value.format(**values) for lang, value in text.items()}
+
+
+def multilingual(text: Localized) -> str:
+    """One e-mail body in the three languages, for recipients whose language is unknown."""
+    return "\n\n— — —\n\n".join(text[lang] for lang in ("ar", "fr", "en") if text.get(lang))
