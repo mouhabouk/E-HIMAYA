@@ -1,6 +1,6 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { fakeApi, renderApp } from "../test/render";
+import { fakeApi, fakeAuth, OPERATOR_CLAIMS, renderApp } from "../test/render";
 import { KPIS } from "../test/fixtures";
 import { HomePage, summarize } from "./HomePage";
 
@@ -73,5 +73,23 @@ describe("HomePage (KPIs)", () => {
     renderApp(<HomePage />, { api, lang: "fr" });
     expect(await screen.findByRole("alert")).toHaveTextContent("Trop de requêtes");
     expect(screen.queryByText("rate_limited")).not.toBeInTheDocument();
+  });
+
+  it("shows the institution KPIs with links to the filtered list and the queue (phase 4)", async () => {
+    const api = fakeApi({ kpis: vi.fn(() => Promise.resolve({ ...KPIS, orgs_pending_review: 3, certificates_submitted: 5 })) });
+    renderApp(<HomePage />, { api, lang: "fr" });
+    const pending = (await screen.findByText("Établissements en attente de validation")).closest(".kpi") as HTMLElement;
+    expect(within(pending).getByText("3")).toBeInTheDocument();
+    expect(within(pending).getByRole("link")).toHaveAttribute("href", "/orgs?status=pending_review");
+    const certs = screen.getByText("Certificats de sécurité à examiner").closest(".kpi") as HTMLElement;
+    expect(within(certs).getByText("5")).toBeInTheDocument();
+    expect(within(certs).getByRole("link")).toHaveAttribute("href", "/orgs/certificates");
+  });
+
+  it("hides the institution KPIs when the API does not send them", async () => {
+    const api = fakeApi({ kpis: vi.fn(() => Promise.resolve(KPIS)) });
+    renderApp(<HomePage />, { api, auth: fakeAuth(OPERATOR_CLAIMS), lang: "fr" });
+    await screen.findByText("Total des signalements");
+    expect(screen.queryByText("Établissements en attente de validation")).not.toBeInTheDocument();
   });
 });

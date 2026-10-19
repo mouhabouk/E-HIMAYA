@@ -22,9 +22,10 @@ class SosNoLocation extends SosResult {
 }
 
 /// One-touch SOS (NFR-09): current position (or the last known one when the fix is slow) is
-/// queued as a `sos` report and pushed by the sync engine.
+/// queued as a `sos` report and pushed by the sync engine. [organizationId] sends it on behalf
+/// of an institution (FR-A-080); null: the user themselves.
 abstract class SosService {
-  Future<SosResult> send();
+  Future<SosResult> send({String? organizationId});
 }
 
 class QueueSosService implements SosService {
@@ -41,13 +42,18 @@ class QueueSosService implements SosService {
   final String lang;
 
   @override
-  Future<SosResult> send() async {
+  Future<SosResult> send({String? organizationId}) async {
     final point = await location.bestEffort(
       timeout: const Duration(seconds: 5),
     );
     if (point == null) return const SosNoLocation();
     final queued = await queue.enqueue(
-      ReportDraft(category: ReportCategory.sos, location: point, lang: lang),
+      ReportDraft(
+        category: ReportCategory.sos,
+        location: point,
+        lang: lang,
+        organizationId: organizationId,
+      ),
     );
     unawaited(requestSync());
     return SosQueued(queued.tempCode);

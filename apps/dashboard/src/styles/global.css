@@ -39,6 +39,16 @@
   --warn-text: #6b4500;
   --info-bg: #e8f0fe;
   --info-text: #1e3a8a;
+
+  /* Institutions (phase 4): hazard panel and map points (always paired with a shape and a text label). */
+  --hazard-bg: #fff1e6;
+  --hazard-border: #c2410c;
+  --hazard-text: #7c2d12;
+  --poi-org: #334155;
+  --poi-hazmat: #c2410c;
+  --poi-evac: #15803d;
+  --poi-water: #0369a1;
+  --poi-alarm: #b91c1c;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -72,6 +82,14 @@
     --warn-text: #fde68a;
     --info-bg: #172554;
     --info-text: #bfdbfe;
+    --hazard-bg: #3a1d0b;
+    --hazard-border: #fb923c;
+    --hazard-text: #fed7aa;
+    --poi-org: #94a3b8;
+    --poi-hazmat: #fb923c;
+    --poi-evac: #4ade80;
+    --poi-water: #38bdf8;
+    --poi-alarm: #f87171;
   }
 }
 
@@ -105,6 +123,14 @@
   --warn-text: #fde68a;
   --info-bg: #172554;
   --info-text: #bfdbfe;
+  --hazard-bg: #3a1d0b;
+  --hazard-border: #fb923c;
+  --hazard-text: #fed7aa;
+  --poi-org: #94a3b8;
+  --poi-hazmat: #fb923c;
+  --poi-evac: #4ade80;
+  --poi-water: #38bdf8;
+  --poi-alarm: #f87171;
 }
 
 *,
@@ -208,6 +234,7 @@ a {
 
 .header__nav {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.25rem;
 }
 
@@ -1374,6 +1401,379 @@ legend {
 }
 .kpi--analysis {
   border-inline-start-color: var(--link);
+}
+
+/* ---------- Institutions (phase 4) ---------- */
+.chip--org-pending_review {
+  color: var(--status-in_progress);
+}
+.chip--org-active {
+  color: var(--status-closed);
+}
+.chip--org-rejected {
+  color: var(--status-received);
+}
+.chip--org-suspended,
+.chip--org-unknown {
+  color: var(--status-rejected);
+}
+
+.tag--level-ok,
+.tag--cert-approved {
+  background: var(--ok-bg);
+  color: var(--ok-text);
+}
+.tag--level-warn,
+.tag--cert-submitted,
+.tag--cert-draft {
+  background: var(--warn-bg);
+  color: var(--warn-text);
+}
+.tag--level-bad,
+.tag--cert-rejected,
+.tag--cert-expired {
+  background: var(--error-bg);
+  color: var(--error-text);
+}
+.tag--level-none,
+.tag--cert-none {
+  background: var(--surface-2);
+  color: var(--muted);
+}
+.tag--cert {
+  margin-inline-start: 0;
+}
+.tag--hazmat {
+  margin-inline-start: 0;
+  background: var(--hazard-bg);
+  color: var(--hazard-text);
+  border: 1px solid var(--hazard-border);
+  font-weight: 600;
+}
+.tag--org {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: var(--info-bg);
+  color: var(--info-text);
+  text-decoration: none;
+}
+.tag--org:hover {
+  text-decoration: underline;
+}
+
+.inline-icon {
+  flex: none;
+  vertical-align: -0.15em;
+}
+
+.cell-sub {
+  display: block;
+  font-size: 0.8rem;
+}
+
+.subhead {
+  font-size: 1rem;
+  margin-block: 1rem 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.btn--small {
+  min-block-size: 1.9rem;
+  padding: 0.15rem 0.6rem;
+  font-size: 0.85rem;
+}
+
+.btn--call {
+  background: var(--ok-bg);
+  color: var(--ok-text);
+  border-color: var(--ok-text);
+  font-weight: 700;
+}
+
+.download {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.6rem;
+}
+
+.download__hint {
+  font-size: 0.8rem;
+}
+
+.provisional {
+  margin-block: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.checklist,
+.alerts-list,
+.feature-list,
+.docs,
+.certs,
+.versions,
+.queue {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.checklist__ok > span[aria-hidden] {
+  color: var(--ok-text);
+  font-weight: 700;
+}
+.checklist__missing {
+  color: var(--error-text);
+}
+.checklist__missing > span[aria-hidden] {
+  font-weight: 700;
+}
+
+.docs,
+.certs {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+  gap: 0.75rem;
+}
+
+.doc h3,
+.cert h3 {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.doc,
+.cert,
+.queue__item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  box-shadow: none;
+}
+
+.doc details summary {
+  cursor: pointer;
+}
+
+.versions {
+  margin-block-start: 0.5rem;
+  padding-inline-start: 0.75rem;
+  border-inline-start: 2px solid var(--border);
+}
+
+.cert__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  font-weight: 600;
+}
+
+.review,
+.review__confirm,
+.cert-review {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.review__confirm textarea,
+.review__confirm input[type="date"] {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
+  max-inline-size: 100%;
+}
+
+.review__confirm input[type="date"] {
+  inline-size: 12rem;
+}
+
+.field--invalid textarea {
+  border-color: var(--error-text);
+  outline: 1px solid var(--error-text);
+}
+
+.btn[aria-pressed="true"] {
+  box-shadow: inset 0 0 0 2px var(--text);
+}
+
+/* Hazard panels: hazardous materials are a danger for responders. */
+.hazard {
+  background: var(--hazard-bg);
+  color: var(--hazard-text);
+  border: 2px solid var(--hazard-border);
+  border-inline-start-width: 6px;
+  border-radius: var(--radius);
+  padding: 0.75rem;
+  margin-block: 0.75rem;
+}
+
+.card.hazard {
+  margin-block: 0;
+}
+
+.hazard .table th,
+.hazard .table td {
+  border-block-end-color: var(--hazard-border);
+}
+
+.hazard .table thead th {
+  background: transparent;
+}
+
+.hazard__title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 1rem;
+  margin: 0 0 0.25rem;
+}
+
+.hazard__note {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+}
+
+.org-card__name {
+  margin-block: 0 0.75rem;
+  font-weight: 600;
+}
+
+.org-card__capacity {
+  font-weight: 700;
+}
+
+/* Map points of the institutions layer: one colour and one shape per kind. */
+.map-poi {
+  display: grid;
+  place-items: center;
+  inline-size: 26px;
+  block-size: 26px;
+  padding: 0;
+  border: 2px solid #fff;
+  border-radius: 6px;
+  background: var(--poi-org);
+  color: #fff;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 40%);
+}
+
+button.map-poi {
+  cursor: pointer;
+}
+
+.map-poi:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.map-poi svg {
+  inline-size: 16px;
+  block-size: 16px;
+}
+
+/* No transform here: MapLibre positions markers with an inline transform. */
+.map-poi--org_hazmat {
+  background: var(--poi-hazmat);
+  border-radius: 2px;
+  border-color: #000;
+  inline-size: 30px;
+  block-size: 30px;
+}
+.map-poi--evacuation_point {
+  background: var(--poi-evac);
+  border-radius: 50%;
+  inline-size: 22px;
+  block-size: 22px;
+}
+.map-poi--water_point {
+  background: var(--poi-water);
+  border-radius: 50%;
+  inline-size: 22px;
+  block-size: 22px;
+}
+.map-poi--alarm {
+  background: var(--poi-alarm);
+  border-radius: 50%;
+  inline-size: 22px;
+  block-size: 22px;
+}
+
+.map-poi--static {
+  display: inline-grid;
+  inline-size: 20px;
+  block-size: 20px;
+  box-shadow: none;
+}
+.map-poi--static svg {
+  inline-size: 12px;
+  block-size: 12px;
+}
+
+.map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  font-size: 0.85rem;
+}
+
+.map-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.map-layers {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.25rem;
+}
+
+.map-layers .map-legend {
+  margin: 0;
+}
+
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.checkbox input {
+  inline-size: 1.1rem;
+  block-size: 1.1rem;
+  accent-color: var(--primary);
+}
+
+.kpi--orgs {
+  border-inline-start-color: var(--status-in_progress);
+}
+.kpi--certs {
+  border-inline-start-color: var(--status-intervened);
+}
+
+.kpi__link {
+  margin: 0.25rem 0 0;
+  font-size: 0.85rem;
+}
+
+.sensitive-site {
+  font-size: 0.8rem;
 }
 
 @media (prefers-reduced-motion: reduce) {

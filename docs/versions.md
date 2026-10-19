@@ -34,7 +34,10 @@
 | nats-py | 2.16.0 |
 | structlog | 26.1.0 |
 | boto3 (S3) | 1.43.114 |
-| cryptography (AES-256-GCM) | 50.0.2 |
+| cryptography (AES-256-GCM، توقيع الشهادات Ed25519) | 50.0.2 |
+| weasyprint (شهادة السلامة PDF، المرحلة 4؛ تحتاج pango و harfbuzz و fonts-noto-core في الصورة) | 70.0 |
+| segno (رمز QR للتحقق من الشهادة) | 1.6.6 |
+| email-validator (عناوين البريد في بطاقة المؤسسة والدعوات) | 2.3.0 |
 | pytest / pytest-asyncio | 9.1.1 / 1.4.0 |
 | ruff / mypy | 0.17.1 / 2.4.0 |
 

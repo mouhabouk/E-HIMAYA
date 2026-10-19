@@ -9,15 +9,24 @@ import '../../core/ui/theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../emergency/dialer.dart';
 import '../emergency/emergency_numbers.dart';
+import '../institution/institution_providers.dart';
+import '../institution/report_as_selector.dart';
 import 'sos_service.dart';
 
 /// Sends the SOS and shows the outcome (temporary code, or a call-198 fallback).
-Future<void> performSos(BuildContext context, WidgetRef ref) async {
+/// [organizationId] null: as the user themselves.
+Future<void> performSos(
+  BuildContext context,
+  WidgetRef ref, {
+  String? organizationId,
+}) async {
   final l10n = AppLocalizations.of(context);
   final messenger = ScaffoldMessenger.of(context);
   final router = GoRouter.of(context);
   final dial = ref.read(dialerProvider);
-  final result = await ref.read(sosServiceProvider).send();
+  final result = await ref
+      .read(sosServiceProvider)
+      .send(organizationId: organizationId);
   switch (result) {
     case SosQueued(:final tempCode):
       unawaited(
@@ -70,7 +79,13 @@ class _SosButtonState extends ConsumerState<SosButton> {
       _sending = true;
     });
     try {
-      await performSos(context, ref);
+      // The big button sends at once: for the default chosen in settings (myself unless an
+      // institution was chosen there).
+      await performSos(
+        context,
+        ref,
+        organizationId: ref.read(sosReportAsProvider),
+      );
     } finally {
       if (mounted) setState(() => _sending = false);
     }
@@ -171,14 +186,17 @@ class SosFab extends ConsumerWidget {
 }
 
 Future<void> showSosConfirmSheet(BuildContext context, WidgetRef ref) async {
+  final orgs = ref.read(activeOrgsProvider);
+  var reportAs = ref.read(sosReportAsProvider);
   final confirmed = await showModalBottomSheet<bool>(
     context: context,
     showDragHandle: true,
+    isScrollControlled: orgs.isNotEmpty,
     builder: (context) {
       final l10n = AppLocalizations.of(context);
       final theme = Theme.of(context);
       return SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -187,6 +205,16 @@ Future<void> showSosConfirmSheet(BuildContext context, WidgetRef ref) async {
               Text(l10n.sosConfirmTitle, style: theme.textTheme.titleLarge),
               const SizedBox(height: 8),
               Text(l10n.sosConfirmBody),
+              if (orgs.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                StatefulBuilder(
+                  builder: (context, setState) => ReportAsSelector(
+                    orgs: orgs,
+                    value: reportAs,
+                    onChanged: (orgId) => setState(() => reportAs = orgId),
+                  ),
+                ),
+              ],
               const SizedBox(height: 16),
               FilledButton.icon(
                 key: const Key('sos-confirm'),
@@ -210,5 +238,7 @@ Future<void> showSosConfirmSheet(BuildContext context, WidgetRef ref) async {
       );
     },
   );
-  if (confirmed == true && context.mounted) await performSos(context, ref);
+  if (confirmed == true && context.mounted) {
+    await performSos(context, ref, organizationId: reportAs);
+  }
 }

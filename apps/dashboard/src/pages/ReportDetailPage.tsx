@@ -1,13 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Suspense, useId, useState, type SyntheticEvent } from "react";
+import { Suspense, useId, useMemo, useState, type SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 import { PriorityBadge } from "../components/AiBadges";
 import { AnalysisPanel } from "../components/AnalysisPanel";
 import { CategoryLabel } from "../components/CategoryIcon";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { GroupingSection } from "../components/GroupingSection";
 import { LazyMapView } from "../components/LazyMap";
+import { OrganizationCardPanel } from "../components/OrganizationCardPanel";
+import { featureKindLabel, MapLegend, orgKindLabel, orgPois, pointsBounds, useLegendItems } from "../components/OrgBits";
 import { StatusChip } from "../components/StatusChip";
 import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
@@ -173,6 +175,7 @@ export function ReportDetailPage() {
   const fmt = useFormat();
   const lang = useLanguage();
   const gouvernorats = useGouvernorats();
+  const navigate = useNavigate();
 
   const query = useQuery({
     queryKey: queryKeys.report(id),
@@ -182,6 +185,19 @@ export function ReportDetailPage() {
     refetchInterval: 8 * 60_000,
     retry: (count, error) => !(isApiError(error) && [403, 404].includes(error.status)) && count < 2,
   });
+
+  // Institution and its features (evacuation points, water points, alarms) drawn on the report's map.
+  const card = query.data?.organization_card ?? null;
+  const pois = useMemo(
+    () =>
+      card
+        ? orgPois(card, card.hazmat.length > 0, card.features, (f) => f.label ?? featureKindLabel(t, f.kind), orgKindLabel(t, card.kind)).map(
+            (p) => (p.id === card.id ? { ...p, href: `/orgs/${encodeURIComponent(card.id)}` } : p),
+          )
+        : [],
+    [card, t],
+  );
+  const legend = useLegendItems((card?.hazmat.length ?? 0) > 0);
 
   if (query.isPending) return <Loading />;
   if (query.isError)
@@ -196,6 +212,8 @@ export function ReportDetailPage() {
   const { lon, lat, accuracy_m } = r.location;
   const reporter = r.reporter;
   const delta = 0.01;
+  const withOrg = pointsBounds([{ lon, lat }, ...pois], 0.004);
+  const bounds = withOrg && pois.length > 0 ? withOrg : ([lon - delta, lat - delta, lon + delta, lat + delta] as const);
 
   return (
     <article className="page detail" aria-labelledby="detail-title">
@@ -208,6 +226,11 @@ export function ReportDetailPage() {
         </h1>
         <StatusChip status={r.status} />
         <PriorityBadge score={r.priority_score} />
+        {r.organization && (
+          <Link to={`/orgs/${encodeURIComponent(r.organization.id)}`} className="tag tag--org">
+            {t("orgs.reportOnBehalf", { name: r.organization.name })}
+          </Link>
+        )}
       </div>
 
       <div className="detail__grid">
@@ -254,14 +277,20 @@ export function ReportDetailPage() {
                   subtitle: t(`status.${r.status}`),
                 },
               ]}
-              bounds={[lon - delta, lat - delta, lon + delta, lat + delta]}
+              bounds={bounds}
               zoom={15}
               ariaLabel={t("detail.mapLabel")}
               styleUrl={mapStyleUrl}
               dir={directionOf(lang)}
+              pois={pois}
+              poiOpenLabel={t("orgs.layer.open")}
+              onOpenPoi={(href) => void navigate(href)}
             />
           </Suspense>
+          {pois.length > 0 && <MapLegend items={legend} />}
         </section>
+
+        {r.organization_card && <OrganizationCardPanel card={r.organization_card} />}
 
         <section className="card" aria-labelledby="sec-text">
           <h2 id="sec-text">{t("detail.text")}</h2>

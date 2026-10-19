@@ -22,6 +22,10 @@ abstract final class ReportState {
   /// `403 anon_blocked`: waits until the user registers.
   static const blocked = 'blocked';
 
+  /// Sent on behalf of an institution and refused (`404 org_not_found`, `409 org_not_active`):
+  /// kept locally until the user resends it as themselves (phase 4 §8).
+  static const orgRefused = 'org_refused';
+
   static const pendingStates = [queued, created, blocked];
 }
 

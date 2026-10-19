@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/http/models.dart';
 import '../../core/routing/app_router.dart';
 import '../../core/ui/emergency_action.dart';
 import '../../l10n/app_localizations.dart';
+import '../institution/institution_providers.dart';
+import '../institution/my_institution_screen.dart';
 import '../reports/reports_providers.dart';
 import '../sos/sos_widgets.dart';
 
@@ -16,6 +19,7 @@ class HomeScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final pending = ref.watch(pendingSyncCountProvider).value ?? 0;
+    final orgs = ref.watch(myOrgsProvider).value ?? const <MyOrg>[];
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.appTitle),
@@ -64,6 +68,14 @@ class HomeScreen extends ConsumerWidget {
               subtitle: l10n.homeTrackDesc,
               onTap: () => context.push(Routes.track),
             ),
+            if (orgs.isNotEmpty)
+              _HomeAction(
+                key: const Key('home-institution'),
+                icon: Icons.apartment,
+                title: l10n.myInstitutionTitle,
+                subtitle: l10n.homeInstitutionDesc,
+                onTap: () => openMyInstitution(context, orgs),
+              ),
           ],
         ),
       ),

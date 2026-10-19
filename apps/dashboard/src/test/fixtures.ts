@@ -5,6 +5,10 @@ import type {
   IncidentDetail,
   IncidentSummary,
   Kpis,
+  OrganizationCard,
+  QueueCertificate,
+  StaffOrg,
+  StaffOrgDetail,
   StaffReport,
   StaffReportDetail,
 } from "../lib/types";
@@ -34,6 +38,7 @@ export function makeReport(overrides: Partial<StaffReport> = {}): StaffReport {
     suggested_category: null,
     incident_id: null,
     has_suggestion: false,
+    organization: null,
     ...overrides,
   };
 }
@@ -215,6 +220,211 @@ export const AI_STATUS_READY: AiStatus = {
     extract: { ready: true, model: "qwen3:8b", detail: null },
   },
 };
+
+// ---------- Institutions (phase 4) ----------
+
+export function makeStaffOrg(overrides: Partial<StaffOrg> = {}): StaffOrg {
+  return {
+    id: "o-1",
+    name: "Société Chimique du Sud",
+    kind: "industrial",
+    status: "active",
+    identifier_type: "mf",
+    identifier: "1234567A",
+    gouvernorat_code: 61,
+    capacity: 420,
+    location: { lat: 34.7, lon: 10.72 },
+    classification: { family: "industrial", category: null, high_rise: false, provisional: true },
+    hazmat_count: 2,
+    alerts_count: 1,
+    certificate_status: "approved",
+    certificate_valid_until: "2027-10-19",
+    created_at: "2026-09-01T08:00:00Z",
+    ...overrides,
+  };
+}
+
+/** The Organization example of phase-4-contract.md §1 with its registers (§3–§7). */
+export function makeOrgDetail(overrides: Partial<StaffOrgDetail> = {}): StaffOrgDetail {
+  return {
+    id: "o-1",
+    status: "pending_review",
+    version: 7,
+    name: "Société Chimique du Sud",
+    kind: "industrial",
+    identifier_type: "mf",
+    identifier: "1234567A",
+    activity_sector: "Chimie",
+    activity_type: "Fabrication de peintures",
+    capacity: 420,
+    floors: 3,
+    height_m: 12.5,
+    receives_public: false,
+    address: "Route de Gabès km 4",
+    location: { lat: 34.7, lon: 10.72 },
+    gouvernorat_code: 61,
+    delegation_id: null,
+    manager: { full_name: "Hédi Trabelsi", phone: "+21698000000", email: "hedi@example.tn" },
+    contact_email: "contact@example.tn",
+    contact_phone: "+21674000000",
+    classification: {
+      family: "industrial",
+      category: null,
+      high_rise: false,
+      required: ["safety_file", "safety_plan", "safety_team", "training", "hazmat_sds", "equipment"],
+      provisional: true,
+    },
+    completeness: { ok: false, missing: ["safety_plan", "hazmat_sds"] },
+    alerts: [
+      { kind: "training_expired", ref: "t-2", since: "2026-09-01" },
+      { kind: "maintenance_overdue", ref: "e-1", since: "2026-08-15" },
+    ],
+    review: { reason: null, at: null },
+    created_at: "2026-09-01T08:00:00Z",
+    updated_at: "2026-10-01T08:00:00Z",
+    team: [
+      {
+        id: "t-1",
+        full_name: "Sonia Gharbi",
+        team_role: "representative",
+        position: "Responsable HSE",
+        phone: "+21622000000",
+        email: "sonia@example.tn",
+        last_training_on: "2025-03-10",
+        training_valid_months: 24,
+        training_status: "valid",
+        training_expires_on: "2027-03-10",
+      },
+      {
+        id: "t-2",
+        full_name: "Karim Ayadi",
+        team_role: "member",
+        position: null,
+        phone: null,
+        email: null,
+        last_training_on: "2023-01-10",
+        training_valid_months: 24,
+        training_status: "expired",
+        training_expires_on: "2025-01-10",
+      },
+    ],
+    hazmat: [
+      {
+        id: "h-1",
+        name: "Acétone",
+        un_number: "1090",
+        hazard_class: "3",
+        quantity: 2.5,
+        unit: "t",
+        storage_location: "Dépôt B",
+        sds_document_id: "d-2",
+      },
+      { id: "h-2", name: "Chlore", un_number: "1017", hazard_class: "2.3", quantity: 500, unit: "kg", storage_location: null, sds_document_id: null },
+    ],
+    equipment: [
+      {
+        id: "e-1",
+        kind: "extinguisher",
+        count: 24,
+        location: "Tous niveaux",
+        last_maintenance_on: "2025-02-01",
+        maintenance_interval_months: 12,
+        maintenance_status: "overdue",
+        next_maintenance_on: "2026-02-01",
+      },
+    ],
+    features: [
+      { id: "f-1", kind: "evacuation_point", label: "Parking nord", location: { lat: 34.701, lon: 10.721 } },
+      { id: "f-2", kind: "water_point", label: null, location: { lat: 34.699, lon: 10.719 } },
+    ],
+    documents: [
+      {
+        id: "d-1",
+        kind: "safety_file",
+        title: "Dossier de sécurité 2026",
+        current_version: {
+          version: 3,
+          filename: "dossier.pdf",
+          content_type: "application/pdf",
+          bytes: 1832211,
+          sha256: "c".repeat(64),
+          status: "stored",
+          uploaded_at: "2026-09-20T10:00:00Z",
+          uploaded_by: "Sonia Gharbi",
+          note: "Mise à jour après audit",
+        },
+        versions_count: 3,
+      },
+      {
+        id: "d-2",
+        kind: "sds",
+        title: "FDS Acétone",
+        current_version: {
+          version: 1,
+          filename: "fds-acetone.pdf",
+          content_type: "application/pdf",
+          bytes: 200000,
+          sha256: "d".repeat(64),
+          status: "stored",
+          uploaded_at: "2026-09-21T10:00:00Z",
+          uploaded_by: "Sonia Gharbi",
+          note: null,
+        },
+        versions_count: 1,
+      },
+    ],
+    members: [{ display_name: "Sonia Gharbi", email: "sonia@example.tn", role: "admin" }],
+    certificates: [
+      {
+        id: "c-1",
+        code: "EHC-26-61-000123",
+        status: "submitted",
+        superseded: false,
+        created_at: "2026-10-01T08:00:00Z",
+        submitted_at: "2026-10-02T08:00:00Z",
+        reviewed_at: null,
+        review_reason: null,
+        valid_until: null,
+        fingerprint: "e".repeat(64),
+        pdf_sha256: "f".repeat(64),
+        verify_url: "http://localhost:5174/verify/EHC-26-61-000123",
+      },
+    ],
+    ...overrides,
+  };
+}
+
+export function makeQueueCertificate(overrides: Partial<QueueCertificate> = {}): QueueCertificate {
+  return {
+    id: "c-1",
+    code: "EHC-26-61-000123",
+    status: "submitted",
+    org_id: "o-1",
+    org_name: "Société Chimique du Sud",
+    gouvernorat_code: 61,
+    submitted_at: "2026-10-02T08:00:00Z",
+    completeness: { ok: true, missing: [] },
+    ...overrides,
+  };
+}
+
+export function makeOrganizationCard(overrides: Partial<OrganizationCard> = {}): OrganizationCard {
+  return {
+    id: "o-1",
+    name: "Société Chimique du Sud",
+    kind: "industrial",
+    capacity: 420,
+    address: "Route de Gabès km 4",
+    location: { lat: 34.7, lon: 10.72 },
+    classification: { family: "industrial", category: null },
+    representative: { full_name: "Sonia Gharbi", phone: "+21622000000" },
+    hazmat: [
+      { name: "Acétone", un_number: "1090", hazard_class: "3", quantity: 2.5, unit: "t", storage_location: "Dépôt B" },
+    ],
+    features: [{ id: "f-1", kind: "evacuation_point", label: "Parking nord", location: { lat: 34.701, lon: 10.721 } }],
+    ...overrides,
+  };
+}
 
 /** Unsigned JWT with the given claims (the dashboard never verifies signatures). */
 export function fakeJwt(claims: Record<string, unknown>): string {
