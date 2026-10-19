@@ -478,4 +478,147 @@ void main() {
       expect(stored, 2500);
     });
   });
+
+  group('on behalf of an institution (phase 4 §8)', () {
+    const orgId = '7b0c6a2e-3d1f-4e55-9a10-1f2d3c4b5a60';
+
+    setUp(() {
+      identity = IdentityState(
+        mode: IdentityMode.registered,
+        role: UserRole.citizen,
+        session: AuthSession(accessToken: 'a.b.c', expiresAt: DateTime(2100)),
+      );
+    });
+
+    Future<QueuedReport> enqueueForOrg({String? organizationId = orgId}) =>
+        queue.enqueue(
+          ReportDraft(
+            category: ReportCategory.fire,
+            location: point,
+            text: 'Feu',
+            lang: 'fr',
+            organizationId: organizationId,
+          ),
+        );
+
+    test('online: organization_id is in the outgoing body', () async {
+      final q = await enqueueForOrg();
+      Object? body;
+      adapter.handler = (r) {
+        body = r.json;
+        return FakeResponse(
+          201,
+          json: {
+            ...serverReport(q.clientUuid),
+            'organization': {'id': orgId, 'name': 'Société X'},
+          },
+        );
+      };
+      await engine.runOnce();
+      expect((body! as Map)['organization_id'], orgId);
+      expect((body! as Map)['client_uuid'], q.clientUuid);
+      expect((await db.reportByUuid(q.clientUuid))!.state, ReportState.synced);
+    });
+
+    test('a report as myself carries no organization_id', () async {
+      final q = await enqueueForOrg(organizationId: null);
+      final row = (await db.reportByUuid(q.clientUuid))!;
+      expect(jsonDecode(row.payload), isNot(contains('organization_id')));
+      expect(payloadOrganizationId(row.payload), isNull);
+    });
+
+    test('offline: the choice is kept in the queue and sent at sync', () async {
+      final q = await enqueueForOrg();
+      expect(
+        payloadOrganizationId((await db.reportByUuid(q.clientUuid))!.payload),
+        orgId,
+      );
+      adapter.handler = (_) => const FakeResponse.network();
+      await engine.runOnce();
+      final row = (await db.reportByUuid(q.clientUuid))!;
+      expect(row.state, ReportState.queued);
+
+      now = row.nextAttemptAt!.add(const Duration(seconds: 1));
+      Object? body;
+      adapter.handler = (r) {
+        body = r.json;
+        return FakeResponse(201, json: serverReport(q.clientUuid));
+      };
+      await engine.runOnce();
+      expect((body! as Map)['organization_id'], orgId);
+      expect((await db.reportByUuid(q.clientUuid))!.state, ReportState.synced);
+    });
+
+    for (final (status, code) in [
+      (404, 'org_not_found'),
+      (409, 'org_not_active'),
+    ]) {
+      test(
+        '$status $code: kept, not retried, resent as myself on request',
+        () async {
+          final q = await enqueueForOrg();
+          adapter.handler = (_) => FakeResponse(status, json: {'detail': code});
+          await engine.runOnce();
+          var row = (await db.reportByUuid(q.clientUuid))!;
+          expect(row.state, ReportState.orgRefused);
+          expect(row.lastError, code);
+          expect(row.nextAttemptAt, isNull);
+          expect(payloadOrganizationId(row.payload), orgId); // never dropped
+
+          // Not sent again on its own (no silent retry, no silent drop of the institution).
+          adapter.requests.clear();
+          now = now.add(const Duration(days: 1));
+          await engine.runOnce();
+          expect(
+            adapter.requests.where((r) => r.path == '/api/v1/reports'),
+            isEmpty,
+          );
+
+          // The user asks to send it as themselves: same client_uuid, no organization_id.
+          expect(await queue.resendAsSelf(q.clientUuid), isTrue);
+          row = (await db.reportByUuid(q.clientUuid))!;
+          expect(row.state, ReportState.queued);
+          expect(row.lastError, isNull);
+          Object? body;
+          adapter.handler = (r) {
+            body = r.json;
+            return FakeResponse(201, json: serverReport(q.clientUuid));
+          };
+          await engine.runOnce();
+          expect(body, isNot(contains('organization_id')));
+          expect((body! as Map)['client_uuid'], q.clientUuid);
+          expect((body! as Map)['text'], 'Feu');
+          expect(
+            (await db.reportByUuid(q.clientUuid))!.state,
+            ReportState.synced,
+          );
+        },
+      );
+    }
+
+    test('resendAsSelf only applies to refused reports', () async {
+      final q = await enqueueForOrg();
+      expect(await queue.resendAsSelf(q.clientUuid), isFalse);
+      expect(
+        payloadOrganizationId((await db.reportByUuid(q.clientUuid))!.payload),
+        orgId,
+      );
+    });
+
+    test('never sent anonymously: waits for a signed-in account', () async {
+      final q = await enqueueForOrg();
+      identity = const IdentityState(
+        mode: IdentityMode.anonymous,
+        role: UserRole.citizen,
+      );
+      adapter.handler = (_) =>
+          FakeResponse(201, json: serverReport(q.clientUuid));
+      await engine.runOnce();
+      expect(
+        adapter.requests.where((r) => r.path == '/api/v1/reports'),
+        isEmpty,
+      );
+      expect((await db.reportByUuid(q.clientUuid))!.state, ReportState.queued);
+    });
+  });
 }

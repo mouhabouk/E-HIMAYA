@@ -85,6 +85,58 @@ describe("AnalysisPanel", () => {
   });
 });
 
+describe("AnalysisPanel — sensitive sites (phase 4 §10)", () => {
+  function withSensitive(value: number | null, detail: Record<string, unknown>) {
+    const analysis = makeAnalysis();
+    const components = analysis.priority?.components.map((c) =>
+      c.key === "sensitive_sites" ? { ...c, value, points: value === null ? 0 : 4.2, detail } : c,
+    );
+    return makeDetail({ analysis: { ...analysis, priority: { score: 80, components: components ?? [] } } });
+  }
+
+  it("names the institution (link), its distance and the translated reason", () => {
+    const report = withSensitive(1, { org_id: "o-1", name: "Société Chimique du Sud", distance_m: 182.4, reason: "hazmat" });
+    renderApp(<AnalysisPanel report={report} />, { lang: "fr" });
+    const table = screen.getByRole("table", { name: "Composantes du score de priorité" });
+    const row = within(table).getByRole("rowheader", { name: /Sites sensibles à proximité/ }).closest("tr") as HTMLElement;
+    expect(within(row).getByRole("link", { name: "Société Chimique du Sud" })).toHaveAttribute("href", "/orgs/o-1");
+    expect(row).toHaveTextContent("à 182 m de l’établissement");
+    expect(row).toHaveTextContent("stocke des matières dangereuses");
+    expect(row).toHaveTextContent("100 %");
+    expect(row).not.toHaveTextContent("Pas encore de données");
+  });
+
+  it("says when no institution is within 300 m, and keeps 'no data' for a null value", () => {
+    const { unmount } = renderApp(<AnalysisPanel report={withSensitive(0, {})} />, { lang: "fr" });
+    expect(screen.getByText("Aucun établissement à moins de 300 m.")).toBeInTheDocument();
+    unmount();
+    renderApp(<AnalysisPanel report={withSensitive(null, { reason: "no_data_yet" })} />, { lang: "ar" });
+    const row = screen.getByRole("rowheader", { name: /مواقع حساسة قريبة/ }).closest("tr") as HTMLElement;
+    expect(row).toHaveTextContent("لا توجد بيانات بعد");
+  });
+
+  it("translates every reason in Arabic", () => {
+    renderApp(
+      <AnalysisPanel report={withSensitive(0.8, { org_id: "o-2", name: "برج", distance_m: 90, reason: "high_rise" })} />,
+      { lang: "ar" },
+    );
+    expect(screen.getByText(/بناية شاهقة أو مؤسسة كبيرة مفتوحة للعموم/)).toBeInTheDocument();
+  });
+
+  it("marks a site that was not counted, and shows no_site_nearby as 'none'", () => {
+    const { unmount } = renderApp(
+      <AnalysisPanel
+        report={withSensitive(0.4, { org_id: "o-3", name: "Kiosque", distance_m: 250, reason: "nearby", counted: false })}
+      />,
+      { lang: "fr" },
+    );
+    expect(screen.getByText(/Non compté : il aurait baissé la priorité\./)).toBeInTheDocument();
+    unmount();
+    renderApp(<AnalysisPanel report={withSensitive(null, { reason: "no_site_nearby" })} />, { lang: "ar" });
+    expect(screen.getByText("لا توجد مؤسسة على بعد أقل من 300 متر.")).toBeInTheDocument();
+  });
+});
+
 const SUGGESTION = {
   kind: "report" as const,
   incident_id: null,

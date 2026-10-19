@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ء-حماية | تقرير المرحلة 4</title>
+<style>
+:root{--bg:#f7f8fa;--paper:#fff;--ink:#1b2430;--muted:#5b6675;--line:#dfe3e8;--accent:#b3261e;--accent2:#0b5cad;--ok:#1e7d3a;--warn:#a15c00;--chip:#eef1f5;--head:#f1f3f6}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1318;--paper:#161b22;--ink:#e6eaef;--muted:#9aa5b1;--line:#2a313b;--accent:#ff6b5e;--accent2:#5aa9ff;--ok:#5cc97a;--warn:#e0a24a;--chip:#1f2630;--head:#1c222b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Naskh Arabic","Segoe UI",Tahoma,Arial,sans-serif;line-height:1.75;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header.cover{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:10px;padding:28px 24px;margin-bottom:20px}
+header.cover h1{margin:0 0 6px;font-size:30px}
+header.cover .sub{color:var(--muted);margin:0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:16px}
+.meta div{background:var(--chip);border-radius:6px;padding:8px 12px;font-size:14px}
+.meta b{display:block;color:var(--muted);font-weight:600;font-size:12px}
+nav.toc{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px 24px;margin-bottom:20px}
+nav.toc ol{margin:0;padding-inline-start:20px;columns:2;column-gap:32px}
+@media (max-width:700px){nav.toc ol{columns:1}}
+nav.toc a,a{color:var(--accent2);text-decoration:none}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:20px}
+h2{margin-top:0;font-size:23px;border-bottom:2px solid var(--line);padding-bottom:8px}
+h3{font-size:19px;margin-top:28px;color:var(--accent2)}
+h4{font-size:16px;margin-bottom:4px}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:start;vertical-align:top}
+th{background:var(--head);font-weight:700;white-space:nowrap}
+td code,p code,li code{direction:ltr;unicode-bidi:isolate;background:var(--chip);padding:1px 5px;border-radius:4px;font-size:13px}
+.id{font-family:Consolas,monospace;direction:ltr;unicode-bidi:isolate;white-space:nowrap;font-size:13px;color:var(--muted)}
+.p{display:inline-block;border-radius:10px;padding:0 8px;font-size:12px;font-weight:700;white-space:nowrap}
+.M{background:#fde2e0;color:#8c1d16}.S{background:#fff1d6;color:#7a4a00}.C{background:#e1efff;color:#0a4a8c}.W{background:#e8e8e8;color:#444}
+@media (prefers-color-scheme:dark){.M{background:#4a1d1a;color:#ffb4ad}.S{background:#4a3510;color:#ffd38a}.C{background:#14304f;color:#a8d1ff}.W{background:#333;color:#ccc}}
+.note{border-inline-start:4px solid var(--accent2);background:var(--chip);padding:10px 14px;border-radius:6px;margin:12px 0}
+.warn{border-inline-start:4px solid var(--warn)}
+.ltr{direction:ltr;unicode-bidi:isolate}
+ul,ol{padding-inline-start:22px}
+footer{color:var(--muted);text-align:center;font-size:13px}
+@media print{body{background:#fff}section,header.cover,nav.toc{border:none;break-inside:avoid-page}nav.toc{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="cover">
+  <h1>ء-حماية <span class="ltr">e-Himaya</span></h1>
+  <p class="sub">تقرير نهاية المرحلة 4: المؤسسات</p>
+  <div class="meta">
+    <div><b>التاريخ</b>2026-10-19</div>
+    <div><b>الفرع</b><span class="ltr">phase-4-institutions</span></div>
+    <div><b>الحالة</b>منجزة، بانتظار موافقتك للانتقال إلى المرحلة 5</div>
+    <div><b>المراجع</b><a href="01-requirements.html">المتطلبات</a> · <a href="02-architecture.html">الهيكلة</a> · <a href="api/phase-4-contract.md">عقد الواجهة البرمجية</a> · <a href="versions.md">الإصدارات</a></div>
+  </div>
+</header>
+
+<section>
+<h2>1. جدول التقدم (Progress Table)</h2>
+<div class="tbl"><table>
+<tr><th>#</th><th>العنصر</th><th>المخرجات في المستودع</th><th>التحقق</th><th>التقدم</th></tr>
+<tr><td>4.1</td><td>عقد الواجهة البرمجية</td><td><code>docs/api/phase-4-contract.md</code>: المؤسسة، الأعضاء والدعوات، السجلات، الوثائق، الشهادة، التبليغ باسم مؤسسة، محور الموظفين، المواقع الحساسة، رموز الأخطاء</td><td>الخلفية والتطبيقات الثلاثة مبنية عليه</td><td>100%</td></tr>
+<tr><td>4.2</td><td>بطاقة المؤسسة والتسجيل (FR-B-001، FR-B-002)</td><td>تسجيل بالمعرف الجبائي أو السجل الوطني للمؤسسات (تحقق من الصيغة والتفرد)، الصبغة، الطاقة الاستيعابية، الطوابق، الارتفاع، الموقع والولاية آليا، المسؤول؛ مراجعة من مدقق المؤسسات (قبول، رفض بسبب، تعليق، إعادة تفعيل)؛ تزامن متفائل بالإصدار</td><td>اختبارات التسجيل والتحقق والتفرد والمراجعة وتعارض الإصدار</td><td>100%</td></tr>
+<tr><td>4.3</td><td>التصنيف واكتمال الملف (FR-B-003)</td><td>العائلة (عمارة شاهقة، صناعية، مؤسسة تستقبل العموم بفئاتها 1 إلى 5، مكان عمل) والعناصر المطلوبة لكل عائلة تحسبها الخلفية وحدها، مع علامة «مؤقت»</td><td>اختبارات التصنيف والعناصر الناقصة</td><td>100%</td></tr>
+<tr><td>4.4</td><td>الوثائق بالإصدارات (FR-B-004)</td><td>ملف السلامة، مخطط السلامة (PDF أو DWG/DXF)، بطاقات بيانات السلامة؛ رفع قابل للاستئناف عبر tus، إعادة حساب SHA-256 في الخادم، تاريخ الإصدارات لا يُحذف، روابط تنزيل مؤقتة</td><td>اختبارات الرفع والتلاعب بالملف والإلغاء والأنواع والأحجام والصلاحيات</td><td>100%</td></tr>
+<tr><td>4.5</td><td>فريق السلامة والسجلات (FR-B-005، FR-B-006، FR-B-007)</td><td>الممثل والأعضاء مع صلاحية التكوين؛ المواد الخطرة (رقم الأمم المتحدة، الصنف، الكمية)؛ التجهيزات وصيانتها؛ نقاط الإخلاء ومآخذ المياه وأجهزة الإنذار على الخريطة (في حدود 2 كم)؛ تنبيهات انتهاء التكوين وتأخر الصيانة</td><td>اختبارات الفريق والتنبيهات والسجلات والمسافة</td><td>100%</td></tr>
+<tr><td>4.6</td><td>الشهادة الرقمية (FR-B-008)</td><td>لقطة مجمّدة من الملف، بصمة SHA-256، PDF عربي فرنسي برمز QR وعلامة «مسودة» قبل المصادقة؛ إرسال ثم مراجعة؛ توقيع Ed25519 عند المصادقة؛ الشهادة الأحدث تلغي السابقة؛ صفحة تحقق عامة بالرمز مع مقارنة بصمة ملف PDF داخل المتصفح</td><td>اختبار دورة الحياة كاملة، التوقيع، الإلغاء، رفض دون مفتاح</td><td>100%</td></tr>
+<tr><td>4.7</td><td>الأعضاء والأدوار (FR-B-009)</td><td>مسؤول، محرر، عضو؛ دعوة برابط يُعرض مرة واحدة صالح 7 أيام ويشترط تطابق البريد الموثق؛ حماية آخر مسؤول</td><td>اختبارات الأدوار والدعوات المنتهية والملغاة</td><td>100%</td></tr>
+<tr><td>4.8</td><td>التبليغ باسم مؤسسة (FR-A-080، FR-A-081، FR-B-011)</td><td>في التطبيق والبوابة؛ يرى المشغّل بطاقة المؤسسة (الممثل، المواد الخطرة، نقاط الإخلاء)؛ بلاغات المؤسسة لأعضائها؛ بطاقة مختصرة في التطبيق تعمل دون اتصال</td><td>اختبارات الخلفية + 31 اختبارا جديدا في التطبيق (85 إجمالا)</td><td>100%</td></tr>
+<tr><td>4.9</td><td>المواقع الحساسة في الأولوية (BR-20)</td><td>بلاغ في حدود 300 م من مؤسسة نشطة: 1.0 للمواد الخطرة، 0.8 للعمارات الشاهقة والمؤسسات الكبرى، 0.6 للمؤسسات العمومية والتعليمية، 0.4 لغيرها؛ المكوّن لا يمكن إلا أن يرفع الأولوية؛ +10 مصداقية للبلاغ باسم مؤسسة</td><td>اختبار وحدة واختبار تكامل</td><td>100%</td></tr>
+<tr><td>4.10</td><td>بوابة المؤسسات <span class="ltr">apps/portal</span></td><td>عربية وفرنسية وإنجليزية مع RTL كامل؛ تسجيل بالمعالج، مساحة عمل حسب الدور، الوثائق، الشهادة، الأعضاء، التبليغ، صفحة التحقق العامة</td><td>82 اختبارا ناجحا، الفحص والأنواع والبناء سليمة</td><td>100%</td></tr>
+<tr><td>4.11</td><td>محور المؤسسات في اللوحة (FR-C-05)</td><td>قائمة بالمرشحات، تفاصيل مدقَّقة، مراجعة التسجيل، طابور الشهادات، طبقة «المؤسسات» على الخريطة، بطاقة المؤسسة في تفاصيل البلاغ، مؤشرات جديدة، أحداث حية</td><td>186 اختبارا ناجحا (كانت 125)</td><td>100%</td></tr>
+<tr><td>4.12</td><td>البنية والتكامل المستمر</td><td>مكتبات pango وخطوط Noto في صورة الخلفية، متغيرا <code>PORTAL_PUBLIC_URL</code> و <code>CERTIFICATE_SIGNING_KEY</code>، مسار CI للبوابة، فحص توليد PDF داخل الصورة</td><td>123 اختبارا للخلفية (كانت 97)، الترحيل صعودا ونزولا سليم؛ انظر طلب الدمج</td><td>100%</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>2. قرارات تحتاج علمك</h2>
+<div class="tbl"><table>
+<tr><th>القرار</th><th>السبب</th></tr>
+<tr><td>العضوية في المؤسسة تُحفظ في قاعدة البيانات لا في أدوار Keycloak</td><td>حساب واحد قد ينتمي لعدة مؤسسات بأدوار مختلفة، والمسؤول يدير فريقه دون صلاحيات إدارية على Keycloak.</td></tr>
+<tr><td>عتبات التصنيف مؤقتة</td><td>مبنية على نموذج عمل ويجب مطابقتها مع مجلة السلامة والوقاية من أخطار الحريق والانفجار والفزع بالبنايات بالتعاون مع الحماية المدنية قبل الإنتاج. هي في وحدة واحدة في الخلفية وتُصحح دون تغيير التطبيقات.</td></tr>
+<tr><td>المصادقة على الشهادات تتطلب مفتاح توقيع</td><td>دون <code>CERTIFICATE_SIGNING_KEY</code> يُرفض الاعتماد (الرفض يعمل). المفتاح يجب حفظه بنسخة احتياطية: فقدانه يجعل الشهادات الموقعة به غير قابلة للتحقق.</td></tr>
+<tr><td>المؤسسة القريبة لا تخفض الأولوية أبدا</td><td>في تجربة أولى، سقط بلاغ غرق طفل من «أولوية عالية» لمجرد غياب مؤسسة قريبة؛ المكوّن صار مكافأة فقط.</td></tr>
+<tr><td>حساسات إنترنت الأشياء (FR-B-010) مؤجلة إلى المرحلة 7، والإشعارات (بريد، SMS، دفع) إلى المرحلة 5</td><td>تأتي مع محرك قواعد التنبيه؛ هذه المرحلة تحسب التنبيهات التي ستُرسل، ورابط الدعوة يشاركه المسؤول يدويا الآن.</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>3. حدود معروفة</h2>
+<ul>
+<li>التطبيقات الثلاثة اختُبرت بخدمات وهمية؛ التجربة الكاملة مع Keycloak و tusd الحقيقيين تتم في اختبار الدخان على compose.</li>
+<li>نص ميثاق الخصوصية في البوابة مؤقت ومعلَّم بذلك؛ يحتاج النص الرسمي.</li>
+<li>مكتبة <span class="ltr">maplibre-gl</span> 5.24.0 عليها تنبيه أمني حرج (GHSA-jrc7-96c5-q579)؛ الإصلاح ترقية كبرى إلى 6.15 للوحة والبوابة معا في تغيير مستقل.</li>
+<li>قوائم بلاغات المؤسسة ومؤسسات المستخدم في التطبيق تعرض الصفحة الأولى فقط (50).</li>
+<li>التحقق من التوقيع يتم في الخادم؛ المفتاح العام منشور ليتحقق منه أي طرف مستقل.</li>
+</ul>
+</section>
+
+<section>
+<h2>4. تقدم المشروع الإجمالي</h2>
+<div class="tbl"><table>
+<tr><th>#</th><th>المرحلة</th><th>الحالة</th><th>التقدم</th></tr>
+<tr><td>0</td><td>المتطلبات والهيكلة</td><td>معتمدة</td><td>100%</td></tr>
+<tr><td>1</td><td>الأساس التقني</td><td>مدمجة</td><td>100%</td></tr>
+<tr><td>2</td><td>مسار البلاغ الأساسي</td><td>مدمجة</td><td>100%</td></tr>
+<tr><td>3</td><td>طبقة الذكاء الاصطناعي 1</td><td>مدمجة</td><td>100%</td></tr>
+<tr><td>4</td><td>المؤسسات</td><td>منجزة، بانتظار الدمج والموافقة</td><td>100%</td></tr>
+<tr><td>5</td><td>العمليات والمتطوعون والتنبيهات</td><td>لم تبدأ</td><td>0%</td></tr>
+<tr><td>6</td><td>البث والرؤية</td><td>لم تبدأ</td><td>0%</td></tr>
+<tr><td>7</td><td>الطقس والتنبؤ والاتصالات</td><td>لم تبدأ</td><td>0%</td></tr>
+<tr><td>8</td><td>المعرفة والتحليلات</td><td>لم تبدأ</td><td>0%</td></tr>
+<tr><td>9</td><td>التصليب والإطلاق التجريبي</td><td>لم تبدأ</td><td>0%</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>5. المرحلة التالية (5): العمليات والمتطوعون والتنبيهات</h2>
+<p>التدخلات والموارد، المتطوعون، الإشعارات (ومنها إرسال الدعوات وتنبيهات التكوين والصيانة)، التنبيهات والنصائح، اللجان. لن تبدأ قبل موافقتك.</p>
+</section>
+
+<footer>ء-حماية · تقرير المرحلة 4</footer>
+</div>
+</body>
+</html>

@@ -1,19 +1,26 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
+import '../../core/db/app_database.dart';
+import '../../core/http/api_error.dart';
 import '../../core/http/error_messages.dart';
 import '../../core/routing/app_router.dart';
+import '../../core/sync/report_queue.dart';
 import '../../core/sync/sync_scheduler.dart';
 import '../../core/ui/emergency_action.dart';
 import '../../l10n/app_localizations.dart';
+import '../institution/org_labels.dart';
 import '../report/category_labels.dart';
 import 'reports_providers.dart';
 import 'status_chip.dart';
 
 /// FR-A-032: local queue merged with the server list, pull-to-refresh, tracking-code copy.
+/// Reports sent for an institution carry its name (FR-B-011).
 class MyReportsScreen extends ConsumerWidget {
   const MyReportsScreen({super.key});
 
@@ -79,13 +86,26 @@ class _Message extends StatelessWidget {
   );
 }
 
-class ReportTile extends StatelessWidget {
+class ReportTile extends ConsumerWidget {
   const ReportTile({super.key, required this.item});
 
   final ReportListItem item;
 
+  /// FR-A-080: the institution refused the report (`org_not_found` / `org_not_active`); it
+  /// is sent again as the user themselves, only when they ask for it.
+  Future<void> _resendAsSelf(BuildContext context, WidgetRef ref) async {
+    final uuid = item.clientUuid;
+    if (uuid == null) return;
+    final messenger = ScaffoldMessenger.of(context);
+    final l10n = AppLocalizations.of(context);
+    final ok = await ref.read(reportQueueProvider).resendAsSelf(uuid);
+    if (!ok) return;
+    messenger.showSnackBar(SnackBar(content: Text(l10n.reportResentAsSelf)));
+    unawaited(ref.read(requestSyncProvider)());
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final locale = Localizations.localeOf(context).languageCode;
@@ -156,8 +176,31 @@ class ReportTile extends StatelessWidget {
                     backgroundColor: theme.colorScheme.errorContainer,
                     side: BorderSide.none,
                   ),
+                if (item.isForOrganization)
+                  OrgChip(name: item.organizationName ?? ''),
               ],
             ),
+            if (item.localState == ReportState.orgRefused) ...[
+              const SizedBox(height: 8),
+              Padding(
+                padding: const EdgeInsetsDirectional.only(end: 12),
+                child: Text(
+                  item.lastError == ApiErrorCode.orgNotActive.wire
+                      ? l10n.reportOrgNotActiveBody
+                      : l10n.reportOrgNotFoundBody,
+                  style: TextStyle(color: theme.colorScheme.error),
+                ),
+              ),
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: TextButton.icon(
+                  key: Key('resend-as-self-${item.clientUuid}'),
+                  onPressed: () => _resendAsSelf(context, ref),
+                  icon: const Icon(Icons.person),
+                  label: Text(l10n.reportResendAsSelf),
+                ),
+              ),
+            ],
           ],
         ),
       ),

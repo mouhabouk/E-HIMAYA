@@ -4,6 +4,11 @@ WORKDIR /app
 
 RUN useradd --system --uid 10001 --home /app ehimaya
 
+# Text shaping and fonts for the certificate PDFs (WeasyPrint): Arabic and Latin from Noto.
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0 fonts-noto-core \
+ && rm -rf /var/lib/apt/lists/*
+
 COPY pyproject.toml ./
 RUN python - <<'PY' > /tmp/req.txt
 import tomllib

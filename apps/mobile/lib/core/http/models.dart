@@ -1,4 +1,4 @@
-/// DTOs of the phase-2 contract (snake_case JSON).
+/// DTOs of the phase-2 and phase-4 contracts (snake_case JSON).
 library;
 
 /// Report status lifecycle (FR-A-032).
@@ -132,6 +132,7 @@ class ServerReport {
     this.createdAt,
     this.receivedAt,
     this.updatedAt,
+    this.organization,
   });
 
   final String id;
@@ -147,6 +148,9 @@ class ServerReport {
   final DateTime? receivedAt;
   final DateTime? updatedAt;
   final List<ServerMedia> media;
+
+  /// Phase 4 §8: set when the report was sent on behalf of an institution.
+  final OrgRef? organization;
 
   factory ServerReport.fromJson(Map<String, Object?> json) => ServerReport(
     id: json['id']! as String,
@@ -165,6 +169,7 @@ class ServerReport {
       for (final m in (json['media'] as List? ?? const []))
         if (m is Map<String, Object?>) ServerMedia.fromJson(m),
     ],
+    organization: OrgRef.fromJson(json['organization']),
   );
 }
 
@@ -333,3 +338,286 @@ class Profile {
 }
 
 DateTime? _date(Object? v) => v is String ? DateTime.tryParse(v) : null;
+
+// ---- Phase 4: institutions (FR-A-080, FR-A-081, FR-B-011) ------------------------------------
+
+/// Institution status (phase 4 §1). Only `active` institutions can report.
+enum OrgStatus {
+  pendingReview('pending_review'),
+  active,
+  rejected,
+  suspended;
+
+  const OrgStatus([this._wire]);
+  final String? _wire;
+  String get wire => _wire ?? name;
+
+  static OrgStatus? fromWire(String? value) {
+    for (final s in values) {
+      if (s.wire == value) return s;
+    }
+    return null;
+  }
+}
+
+/// Institution kind (الصبغة, phase 4 §1).
+enum OrgKind {
+  industrial,
+  educational,
+  hotel,
+  government,
+  private,
+  other;
+
+  String get wire => name;
+
+  static OrgKind? fromWire(String? value) {
+    for (final k in values) {
+      if (k.wire == value) return k;
+    }
+    return null;
+  }
+}
+
+/// `{"id", "name"}` attached to a report sent on behalf of an institution.
+class OrgRef {
+  const OrgRef({required this.id, required this.name});
+
+  final String id;
+  final String name;
+
+  static OrgRef? fromJson(Object? json) {
+    if (json is! Map) return null;
+    final id = json['id'];
+    if (id is! String) return null;
+    final name = json['name'];
+    return OrgRef(id: id, name: name is String ? name : '');
+  }
+}
+
+/// One row of `GET /api/v1/orgs/mine`.
+class MyOrg {
+  const MyOrg({
+    required this.id,
+    required this.name,
+    required this.kind,
+    required this.status,
+    this.myRole,
+    this.alertsCount = 0,
+  });
+
+  final String id;
+  final String name;
+
+  /// Wire value; see [OrgKind].
+  final String kind;
+
+  /// Wire value; see [OrgStatus].
+  final String status;
+
+  /// `admin` | `editor` | `member`.
+  final String? myRole;
+  final int alertsCount;
+
+  bool get isActive => status == OrgStatus.active.wire;
+
+  factory MyOrg.fromJson(Map<String, Object?> json) => MyOrg(
+    id: json['id']! as String,
+    name: json['name'] as String? ?? '',
+    kind: json['kind'] as String? ?? OrgKind.other.wire,
+    status: json['status'] as String? ?? OrgStatus.pendingReview.wire,
+    myRole: json['my_role'] as String?,
+    alertsCount: (json['alerts_count'] as num?)?.toInt() ?? 0,
+  );
+
+  Map<String, Object?> toJson() => {
+    'id': id,
+    'name': name,
+    'kind': kind,
+    'status': status,
+    'my_role': myRole,
+    'alerts_count': alertsCount,
+  };
+}
+
+/// Computed classification (phase 4 §1, FR-B-003).
+class OrgClassification {
+  const OrgClassification({
+    required this.family,
+    this.category,
+    this.highRise = false,
+    this.provisional = false,
+  });
+
+  /// `high_rise` | `industrial` | `erp` | `workplace`.
+  final String family;
+
+  /// 1–5 for `erp`, null otherwise.
+  final int? category;
+  final bool highRise;
+
+  /// The thresholds still have to be validated against the official text.
+  final bool provisional;
+
+  static OrgClassification? fromJson(Object? json) {
+    if (json is! Map) return null;
+    final family = json['family'];
+    if (family is! String) return null;
+    final category = json['category'];
+    return OrgClassification(
+      family: family,
+      category: category is num ? category.toInt() : null,
+      highRise: json['high_rise'] == true,
+      provisional: json['provisional'] == true,
+    );
+  }
+}
+
+/// Safety team member as shown by the app summary (phase 4 §8).
+class OrgTeamMember {
+  const OrgTeamMember({
+    required this.fullName,
+    required this.teamRole,
+    required this.trainingStatus,
+    this.phone,
+  });
+
+  final String fullName;
+
+  /// `representative` | `member`.
+  final String teamRole;
+  final String? phone;
+
+  /// `valid` | `expiring` | `expired` | `unknown`.
+  final String trainingStatus;
+
+  factory OrgTeamMember.fromJson(Map<String, Object?> json) => OrgTeamMember(
+    fullName: json['full_name'] as String? ?? '',
+    teamRole: json['team_role'] as String? ?? 'member',
+    phone: json['phone'] as String?,
+    trainingStatus: json['training_status'] as String? ?? 'unknown',
+  );
+}
+
+/// Hazardous material as shown by the app summary (phase 4 §8).
+class OrgHazmat {
+  const OrgHazmat({
+    required this.name,
+    this.unNumber,
+    this.quantity,
+    this.unit,
+  });
+
+  final String name;
+  final String? unNumber;
+  final double? quantity;
+
+  /// `kg` | `t` | `l` | `m3`.
+  final String? unit;
+
+  factory OrgHazmat.fromJson(Map<String, Object?> json) => OrgHazmat(
+    name: json['name'] as String? ?? '',
+    unNumber: json['un_number'] as String?,
+    quantity: (json['quantity'] as num?)?.toDouble(),
+    unit: json['unit'] as String?,
+  );
+}
+
+/// `GET /api/v1/orgs/{id}/summary` (FR-A-081). [source] keeps the server JSON so the last
+/// summary can be cached and shown offline.
+class OrgSummary {
+  const OrgSummary({
+    required this.id,
+    required this.name,
+    required this.kind,
+    required this.status,
+    required this.team,
+    required this.hazmat,
+    required this.source,
+    this.capacity,
+    this.address,
+    this.location,
+    this.classification,
+    this.hazmatCount = 0,
+    this.alertsCount = 0,
+  });
+
+  final String id;
+  final String name;
+  final String kind;
+  final String status;
+  final int? capacity;
+  final String? address;
+  final GeoPoint? location;
+  final OrgClassification? classification;
+  final List<OrgTeamMember> team;
+  final int hazmatCount;
+  final List<OrgHazmat> hazmat;
+  final int alertsCount;
+  final Map<String, Object?> source;
+
+  factory OrgSummary.fromJson(Map<String, Object?> json) {
+    final hazmat = [
+      for (final h in (json['hazmat'] as List? ?? const []))
+        if (h is Map<String, Object?>) OrgHazmat.fromJson(h),
+    ];
+    return OrgSummary(
+      id: json['id']! as String,
+      name: json['name'] as String? ?? '',
+      kind: json['kind'] as String? ?? OrgKind.other.wire,
+      status: json['status'] as String? ?? OrgStatus.pendingReview.wire,
+      capacity: (json['capacity'] as num?)?.toInt(),
+      address: json['address'] as String?,
+      location: GeoPoint.fromJson(json['location']),
+      classification: OrgClassification.fromJson(json['classification']),
+      team: [
+        for (final t in (json['team'] as List? ?? const []))
+          if (t is Map<String, Object?>) OrgTeamMember.fromJson(t),
+      ],
+      hazmatCount: (json['hazmat_count'] as num?)?.toInt() ?? hazmat.length,
+      hazmat: hazmat,
+      alertsCount: (json['alerts_count'] as num?)?.toInt() ?? 0,
+      source: json,
+    );
+  }
+}
+
+/// One row of `GET /api/v1/orgs/{id}/reports`.
+class OrgReport {
+  const OrgReport({
+    required this.id,
+    required this.trackingCode,
+    required this.category,
+    required this.status,
+    this.text,
+    this.receivedAt,
+    this.updatedAt,
+    this.reporterDisplayName,
+  });
+
+  final String id;
+  final String trackingCode;
+  final String category;
+  final String status;
+  final String? text;
+  final DateTime? receivedAt;
+  final DateTime? updatedAt;
+  final String? reporterDisplayName;
+
+  factory OrgReport.fromJson(Map<String, Object?> json) => OrgReport(
+    id: json['id']! as String,
+    trackingCode: json['tracking_code']! as String,
+    category: json['category'] as String? ?? 'other',
+    status: json['status'] as String? ?? 'received',
+    text: json['text'] as String?,
+    receivedAt: _date(json['received_at']),
+    updatedAt: _date(json['updated_at']),
+    reporterDisplayName: json['reporter_display_name'] as String?,
+  );
+}
+
+class OrgReportsPage {
+  const OrgReportsPage(this.items, this.nextCursor);
+  final List<OrgReport> items;
+  final String? nextCursor;
+}

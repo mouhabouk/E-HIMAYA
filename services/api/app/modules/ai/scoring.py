@@ -25,6 +25,10 @@ class Facts:
     corroborating_reporters: int = 0  # other distinct reporters describing the same event
     extraction: dict[str, Any] | None = None  # language model output, when available
     keywords: dict[str, Any] = field(default_factory=dict)  # lexicon.signals() of all the report's text
+    # Report made on behalf of a registered institution (FR-A-080): its id, else None.
+    organization_id: str | None = None
+    # Most sensitive active institution within 300 m (orgs.sites.nearest); None = none.
+    sensitive_site: tuple[float, dict[str, Any]] | None = None
 
 
 def _component(key: str, value: float | None, detail: dict[str, Any]) -> dict[str, Any]:
@@ -36,6 +40,9 @@ def credibility(facts: Facts) -> dict[str, Any]:
     parts: list[tuple[str, int, dict[str, Any]]] = [("base", 50, {})]
     if facts.reporter_kind != "anonymous":
         parts.append(("registered", 15, {"kind": facts.reporter_kind}))
+    if facts.organization_id is not None:
+        # Made by a member of an approved institution, accountable for its reports.
+        parts.append(("organization", 10, {"org_id": facts.organization_id}))
     if facts.false_reports:
         parts.append(("confirmed_false_reports", -min(15 * facts.false_reports, 45), {"count": facts.false_reports}))
     if facts.useful_reports:
@@ -104,6 +111,11 @@ def _reporters(facts: Facts) -> tuple[float, dict[str, Any]]:
     return min(math.log10(total), 1.0), {"reporters": total}
 
 
+# Components that can only raise the priority: the context around a report (a hazardous site nearby)
+# must never make an emergency rank lower than the same emergency elsewhere.
+BONUS_COMPONENTS = frozenset({"sensitive_sites"})
+
+
 def priority(facts: Facts, credibility_score: int, settings: PrioritySettings) -> dict[str, Any]:
     """0 to 100: weighted sum of the BR-20 components that have data, rescaled to the available weights."""
     values: dict[str, tuple[float | None, dict[str, Any]]] = {
@@ -112,20 +124,27 @@ def priority(facts: Facts, credibility_score: int, settings: PrioritySettings) -
         "casualties": _casualties(facts),
         "reporters": _reporters(facts),
         "credibility": (credibility_score / 100, {"score": credibility_score}),
-        # No data source yet: sensitive sites (later phase) and weather layer (FR-C-08, later phase).
-        "sensitive_sites": (None, {"reason": "no_data_yet"}),
+        # Registered institutions near the report (phase 4); none nearby = left out, like missing data.
+        "sensitive_sites": facts.sensitive_site or (None, {"reason": "no_site_nearby"}),
+        # No data source yet: weather layer (FR-C-08, later phase).
         "weather": (None, {"reason": "no_data_yet"}),
     }
     weights = settings.weights
-    available = sum(weights[k] for k in PRIORITY_COMPONENTS if values[k][0] is not None) or 1
-    components = []
-    total = 0.0
-    for key in PRIORITY_COMPONENTS:
-        value, detail = values[key]
-        component = _component(key, value, detail)
+    components = {key: _component(key, *values[key]) for key in PRIORITY_COMPONENTS}
+
+    def points(counted: set[str]) -> dict[str, float]:
+        available = sum(weights[k] for k in counted) or 1
+        return {k: 100 * weights[k] * components[k]["value"] / available for k in counted}
+
+    counted = {k for k in PRIORITY_COMPONENTS if components[k]["value"] is not None}
+    scored = points(counted)
+    for key in BONUS_COMPONENTS & counted:
+        without = points(counted - {key})
+        if sum(without.values()) >= sum(scored.values()):
+            counted.discard(key)
+            scored = without
+            components[key]["detail"] = {**components[key]["detail"], "counted": False}
+    for key, component in components.items():
         component["weight"] = weights[key]
-        points = 0.0 if value is None else 100 * weights[key] * component["value"] / available
-        component["points"] = round(points, 1)
-        total += points
-        components.append(component)
-    return {"score": round(min(total, 100)), "components": components}
+        component["points"] = round(scored.get(key, 0.0), 1)
+    return {"score": round(min(sum(scored.values()), 100)), "components": list(components.values())}

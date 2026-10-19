@@ -3,12 +3,12 @@
  *
  * Protocol: send {"type":"auth","token"} right after the socket opens and again after every token renewal;
  * the server answers {"type":"ready"} and then pushes report.created, report.status_changed and media.stored
- * (phase 2), report.enriched and incident.updated (phase 3).
+ * (phase 2), report.enriched and incident.updated (phase 3), org.updated and certificate.updated (phase 4).
  * Close code 4401 = token missing/expired → renew the token, then reconnect. 4403 = no access → stop.
  * Any other close (incl. 4408 "too slow" and 1013 "try later") → reconnect with exponential back-off and jitter.
  * Once ready, a {"type":"ping"} keep-alive is sent periodically (the API answers {"type":"pong"}, ignored).
  */
-import type { IncidentSummary, Media, StaffReport } from "./types";
+import type { CertificateEvent, IncidentSummary, Media, StaffOrg, StaffReport } from "./types";
 
 export type LiveEvent =
   | { type: "report.created"; report: StaffReport }
@@ -16,7 +16,10 @@ export type LiveEvent =
   | { type: "media.stored"; report_id: string; media: Media }
   /** Scores, translation, suggestion or incident of a report changed (phase 3). */
   | { type: "report.enriched"; report: StaffReport }
-  | { type: "incident.updated"; incident: IncidentSummary };
+  | { type: "incident.updated"; incident: IncidentSummary }
+  /** Registration, review or card change of an institution (phase 4). */
+  | { type: "org.updated"; org: StaffOrg }
+  | { type: "certificate.updated"; certificate: CertificateEvent };
 
 export type LiveState =
   | "idle"
@@ -87,6 +90,16 @@ function parseEvent(raw: unknown): LiveEvent | { type: "ready" } | null {
       return m.report && typeof m.report === "object" ? (m as unknown as LiveEvent) : null;
     case "incident.updated":
       return m.incident && typeof m.incident === "object" ? (m as unknown as LiveEvent) : null;
+    case "org.updated":
+      return m.org && typeof m.org === "object" && typeof (m.org as { id?: unknown }).id === "string"
+        ? (m as unknown as LiveEvent)
+        : null;
+    case "certificate.updated":
+      return m.certificate &&
+        typeof m.certificate === "object" &&
+        typeof (m.certificate as { id?: unknown }).id === "string"
+        ? (m as unknown as LiveEvent)
+        : null;
     case "media.stored":
       return typeof m.report_id === "string" && m.media && typeof m.media === "object"
         ? (m as unknown as LiveEvent)

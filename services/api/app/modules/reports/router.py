@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.db import get_session
 from app.core.ratelimit import enforce, opaque
 from app.modules.identity.service import CurrentReporter
+from app.modules.orgs import service as orgs
 from app.modules.reports import schemas, service
 from app.modules.reports.domain import CATEGORY_LABELS, Lang
 
@@ -41,7 +42,9 @@ async def create_report(
     if not created:
         response.status_code = status.HTTP_200_OK
     media = await service.media_for(session, [row.report.id])
-    return service.report_out(row, media[row.report.id])
+    refs = await orgs.refs(session, [row.report.organization_id])
+    org = refs.get(row.report.organization_id) if row.report.organization_id else None
+    return service.report_out(row, media[row.report.id], org)
 
 
 @router.get("/mine", response_model=schemas.ReportPage)

@@ -7,6 +7,7 @@ import { AiStatusBanner } from "../components/AiStatusBanner";
 import { CategoryLabel } from "../components/CategoryIcon";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { FiltersBar } from "../components/FiltersBar";
+import { InlineIcon } from "../components/OrgBits";
 import { StatusChip } from "../components/StatusChip";
 import { useLiveEvents } from "../context/live";
 import { useServices } from "../context/services";
@@ -170,6 +171,17 @@ export function ReportsPage() {
                     </Link>
                     {fresh.has(r.id) && <span className="tag tag--new">{t("reports.newBadge")}</span>}
                     <ReportMarkers report={r} />
+                    {r.organization && (
+                      <Link
+                        to={`/orgs/${encodeURIComponent(r.organization.id)}`}
+                        className="tag tag--org"
+                        title={t("orgs.reportOnBehalf", { name: r.organization.name })}
+                      >
+                        <InlineIcon kind="org" />
+                        <span className="visually-hidden">{t("orgs.card.reportedBy")}: </span>
+                        <span dir="auto">{r.organization.name}</span>
+                      </Link>
+                    )}
                   </td>
                   <td>
                     <CategoryLabel category={r.category} />

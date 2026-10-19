@@ -13,6 +13,9 @@ String apiErrorMessage(AppLocalizations l10n, ApiErrorCode code) =>
       ApiErrorCode.unknownCharterVersion => l10n.errorUnknownCharterVersion,
       ApiErrorCode.clientUuidConflict => l10n.errorClientUuidConflict,
       ApiErrorCode.notFound => l10n.errorNotFound,
+      ApiErrorCode.orgNotFound => l10n.errorOrgNotFound,
+      ApiErrorCode.orgNotActive => l10n.errorOrgNotActive,
+      ApiErrorCode.orgRoleRequired => l10n.errorOrgRoleRequired,
       ApiErrorCode.reportNotFound => l10n.errorNotFound,
       ApiErrorCode.invalidSha256 ||
       ApiErrorCode.invalidReportId ||

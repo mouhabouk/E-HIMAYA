@@ -10,7 +10,9 @@
     "reports": "Signalements",
     "map": "Carte en direct",
     "incidents": "Incidents",
-    "aiSettings": "Réglages IA"
+    "aiSettings": "Réglages IA",
+    "orgs": "Établissements",
+    "certificates": "Certificats à examiner"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -32,7 +34,8 @@
     "ops_manager": "Responsable des opérations",
     "field_commander": "Commandant de terrain",
     "local_committee": "Comité local",
-    "central_committee": "Comité central"
+    "central_committee": "Comité central",
+    "org_auditor": "Auditeur des établissements"
   },
   "status": {
     "received": "Reçu",
@@ -88,7 +91,7 @@
   },
   "noAccess": {
     "title": "Accès refusé",
-    "noRole": "Votre compte n’a aucun rôle permettant de consulter les signalements (opérateur, responsable des opérations, commandant de terrain, comité local ou central).",
+    "noRole": "Votre compte n’a aucun rôle permettant d’utiliser le tableau de bord (opérateur, responsable des opérations, commandant de terrain, comité local ou central, auditeur des établissements).",
     "noScope": "Votre compte n’est rattaché ni à un gouvernorat ni au périmètre national : aucun signalement ne peut être affiché.",
     "liveForbidden": "Le serveur a refusé la connexion au direct pour ce compte.",
     "contact": "Contactez l’administrateur pour faire modifier vos droits."
@@ -130,7 +133,18 @@
     "suggestion_outdated": "La suggestion n’est plus valable ; le signalement a été actualisé.",
     "incident_id_required": "Choisissez un incident.",
     "same_incident": "Impossible de fusionner un incident avec lui-même.",
-    "national_scope_required": "La modification des réglages exige un compte de périmètre national."
+    "national_scope_required": "La modification des réglages exige un compte de périmètre national.",
+    "insufficient_role": "Votre rôle ne permet pas cette action.",
+    "reason_required": "Un motif est obligatoire pour cette décision.",
+    "invalid_valid_until": "La date de fin de validité doit être comprise entre demain et dans cinq ans.",
+    "org_not_found": "Établissement introuvable ou hors de votre périmètre géographique.",
+    "org_not_active": "L’établissement n’est pas actif : action impossible.",
+    "document_not_found": "Document introuvable.",
+    "incomplete": "Le dossier de l’établissement est incomplet.",
+    "signing_key_missing": "La clé de signature des certificats n’est pas configurée sur le serveur : l’approbation est impossible pour le moment (le rejet reste possible).",
+    "certificate_outdated": "Ce certificat ne correspond plus au dossier de l’établissement.",
+    "realm_not_allowed": "Ce compte ne peut pas accéder à cette ressource.",
+    "version_conflict": "Les données ont changé entre-temps. Rechargez puis réessayez."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -146,7 +160,10 @@
     "outsideGouvernorats": "Hors gouvernorats",
     "noData": "Aucune donnée pour cette période.",
     "highPriority": "Priorité haute (70 et plus)",
-    "analysisPending": "En attente d'analyse"
+    "analysisPending": "En attente d'analyse",
+    "orgsPendingReview": "Établissements en attente de validation",
+    "certificatesSubmitted": "Certificats de sécurité à examiner",
+    "openFiltered": "Voir la liste"
   },
   "filters": {
     "title": "Filtres",
@@ -323,7 +340,8 @@
       "media": "Média joint",
       "precise_location": "Position précise",
       "imprecise_location": "Position imprécise",
-      "corroborated": "Corroboré par d’autres signalants"
+      "corroborated": "Corroboré par d’autres signalants",
+      "organization": "Signalement au nom d’un établissement"
     },
     "steps": {
       "transcribe": "Transcription",
@@ -382,6 +400,19 @@
       "working": "En cours…",
       "done": "Mise à jour effectuée.",
       "readOnly": "Votre rôle permet uniquement de consulter le regroupement."
+    },
+    "sensitive": {
+      "site": "à {{distance}} de l’établissement",
+      "none": "Aucun établissement à moins de 300 m.",
+      "reason": {
+        "hazmat": "stocke des matières dangereuses",
+        "high_rise": "immeuble de grande hauteur ou grand ERP",
+        "large_public": "grand établissement recevant du public",
+        "public": "établissement recevant du public ou éducatif",
+        "nearby": "établissement à proximité",
+        "other": "autre motif ({{key}})"
+      },
+      "notCounted": "Non compté : il aurait baissé la priorité."
     }
   },
   "incidents": {
@@ -504,6 +535,333 @@
       "range": "La valeur doit être entre {{min}} et {{max}}.",
       "allZero": "Les pondérations ne peuvent pas être toutes nulles.",
       "summary": "Corrigez les champs signalés avant d’enregistrer."
+    }
+  },
+  "orgs": {
+    "title": "Établissements",
+    "intro": "Établissements enregistrés dans votre périmètre : fiche, dossier de sécurité, matières dangereuses et certificat numérique (FR-C-05).",
+    "caption": "Liste des établissements par ordre alphabétique",
+    "empty": "Aucun établissement ne correspond aux filtres.",
+    "openLabel": "Ouvrir la fiche de l’établissement {{name}}",
+    "reportOnBehalf": "Signalement au nom de l’établissement {{name}}",
+    "queueLink": "Certificats en attente d’examen",
+    "columns": {
+      "name": "Établissement",
+      "kind": "Type",
+      "status": "Statut d’enregistrement",
+      "gouvernorat": "Gouvernorat",
+      "capacity": "Capacité d’accueil",
+      "classification": "Classement",
+      "hazmat": "Matières dangereuses",
+      "alerts": "Alertes",
+      "certificate": "Certificat de sécurité"
+    },
+    "filters": {
+      "title": "Filtrer les établissements",
+      "search": "Recherche",
+      "searchPlaceholder": "Nom ou identifiant de l’établissement",
+      "status": "Statut d’enregistrement",
+      "kind": "Type",
+      "certificate": "Certificat de sécurité",
+      "hazmat": "Matières dangereuses",
+      "any": "Tous",
+      "hazmatYes": "Avec matières dangereuses",
+      "hazmatNo": "Sans matières dangereuses",
+      "reset": "Réinitialiser"
+    },
+    "status": {
+      "pending_review": "En attente de validation",
+      "active": "Active",
+      "rejected": "Rejetée",
+      "suspended": "Suspendue"
+    },
+    "kind": {
+      "industrial": "Industrielle",
+      "educational": "Éducative",
+      "hotel": "Hôtel",
+      "government": "Administration publique",
+      "private": "Privée",
+      "other": "Autre"
+    },
+    "family": {
+      "high_rise": "Immeuble de grande hauteur",
+      "industrial": "Établissement industriel",
+      "erp": "Établissement recevant du public",
+      "workplace": "Lieu de travail",
+      "other": "Autre classement ({{key}})"
+    },
+    "erpCategory": "catégorie {{category}}",
+    "certificate": {
+      "none": "Aucun",
+      "draft": "Brouillon",
+      "submitted": "Soumis",
+      "approved": "Approuvé",
+      "rejected": "Rejeté",
+      "expired": "Expiré"
+    },
+    "validUntil": "valable jusqu’au {{date}}",
+    "hazmatBadge": "Matières dangereuses : {{count}}",
+    "requirement": {
+      "safety_file": "Dossier de sécurité",
+      "safety_plan": "Plan de sécurité",
+      "safety_team": "Équipe de sécurité (un représentant et au moins un membre)",
+      "training": "Formation à jour pour toute l’équipe",
+      "hazmat_sds": "Fiche de données de sécurité pour chaque matière dangereuse",
+      "equipment": "Équipements de sécurité sans maintenance en retard",
+      "evacuation_points": "Au moins un point d’évacuation et de rassemblement",
+      "other": "Autre élément ({{key}})"
+    },
+    "alertKind": {
+      "training_expired": "Formation expirée",
+      "maintenance_overdue": "Maintenance en retard",
+      "other": "Alerte ({{key}})"
+    },
+    "identifierType": {
+      "mf": "Matricule fiscal",
+      "rne": "Registre national des entreprises"
+    },
+    "trainingStatus": {
+      "valid": "Formation valide",
+      "expiring": "Expire bientôt",
+      "expired": "Formation expirée",
+      "unknown": "Sans date de formation"
+    },
+    "teamRole": {
+      "representative": "Représentant",
+      "member": "Membre"
+    },
+    "equipmentKind": {
+      "extinguisher": "Extincteur",
+      "fire_hose_reel": "Robinet d’incendie armé",
+      "sprinkler": "Sprinkler",
+      "smoke_detector": "Détecteur de fumée",
+      "alarm_panel": "Centrale d’alarme",
+      "emergency_lighting": "Éclairage de sécurité",
+      "fire_door": "Porte coupe-feu",
+      "other": "Autre"
+    },
+    "maintenanceStatus": {
+      "ok": "Maintenance à jour",
+      "due_soon": "Maintenance proche",
+      "overdue": "Maintenance en retard",
+      "unknown": "Sans date de maintenance"
+    },
+    "featureKind": {
+      "evacuation_point": "Point d’évacuation et de rassemblement",
+      "water_point": "Point d’eau",
+      "alarm": "Alarme",
+      "other": "Autre repère"
+    },
+    "docKind": {
+      "safety_file": "Dossier de sécurité",
+      "safety_plan": "Plan de sécurité",
+      "sds": "Fiche de données de sécurité",
+      "other": "Autre document"
+    },
+    "memberRole": {
+      "admin": "Administrateur",
+      "editor": "Éditeur",
+      "member": "Membre"
+    },
+    "units": {
+      "kg": "kg",
+      "t": "t",
+      "l": "l",
+      "m3": "m³"
+    },
+    "download": {
+      "get": "Obtenir le lien",
+      "getting": "En cours…",
+      "open": "Ouvrir le fichier",
+      "validity": "Le lien est valable 10 minutes."
+    },
+    "detail": {
+      "back": "Retour à la liste des établissements",
+      "title": "Établissement",
+      "card": "Fiche de l’établissement",
+      "identifier": "Identifiant",
+      "activitySector": "Secteur d’activité",
+      "activityType": "Type d’activité",
+      "capacity": "Capacité (effectif maximal présent)",
+      "floors": "Nombre de niveaux",
+      "height": "Hauteur",
+      "receivesPublic": "Reçoit du public",
+      "address": "Adresse",
+      "coordinates": "Coordonnées",
+      "gouvernorat": "Gouvernorat",
+      "createdAt": "Enregistré le",
+      "updatedAt": "Dernière mise à jour",
+      "contacts": "Contacts",
+      "manager": "Responsable",
+      "contactEmail": "E-mail de l’établissement",
+      "contactPhone": "Téléphone de l’établissement",
+      "name": "Nom",
+      "phone": "Téléphone",
+      "email": "E-mail",
+      "lastDecision": "Motif de la dernière décision",
+      "classification": "Classement",
+      "family": "Famille",
+      "category": "Catégorie ERP",
+      "highRise": "Immeuble de grande hauteur",
+      "required": "Éléments exigés",
+      "provisional": "Seuils de classement provisoires : à valider avec la Protection civile au regard du code de sécurité et de prévention des risques d’incendie, d’explosion et de panique dans les bâtiments.",
+      "completeness": "Complétude du dossier",
+      "complete": "Dossier complet",
+      "incomplete": "Dossier incomplet",
+      "itemPresent": "présent",
+      "itemMissing": "manquant",
+      "alerts": "Alertes",
+      "noAlerts": "Aucune alerte.",
+      "alertSince": "depuis le {{date}}",
+      "team": "Équipe de sécurité",
+      "noTeam": "Aucun membre enregistré.",
+      "position": "Fonction",
+      "lastTraining": "Dernière formation",
+      "trainingExpires": "Fin de validité de la formation",
+      "training": "Formation",
+      "teamRoleLabel": "Rôle",
+      "hazmat": "Matières dangereuses",
+      "noHazmat": "Aucune matière dangereuse enregistrée.",
+      "hazmatName": "Matière",
+      "unNumber": "Numéro ONU",
+      "hazardClass": "Classe de danger",
+      "quantity": "Quantité",
+      "storage": "Lieu de stockage",
+      "sds": "Fiche de données de sécurité",
+      "sdsMissing": "absente",
+      "equipment": "Équipements de sécurité",
+      "noEquipment": "Aucun équipement enregistré.",
+      "equipmentKindLabel": "Type",
+      "count": "Nombre",
+      "location": "Emplacement",
+      "lastMaintenance": "Dernière maintenance",
+      "nextMaintenance": "Prochaine maintenance",
+      "maintenance": "Maintenance",
+      "map": "Localisation et repères",
+      "mapLabel": "Carte de l’établissement et de ses repères (évacuation, points d’eau, alarmes)",
+      "noLocation": "Aucune localisation.",
+      "legend": "Légende",
+      "features": "Repères",
+      "noFeatures": "Aucun repère enregistré.",
+      "documents": "Documents",
+      "noDocuments": "Aucun document.",
+      "docKindLabel": "Type",
+      "currentVersion": "Version actuelle {{version}}",
+      "noVersion": "Aucune version enregistrée.",
+      "history": "Historique des versions ({{count}})",
+      "historyUnavailable": "Détail de l’historique indisponible ; chaque version reste téléchargeable par son numéro.",
+      "version": "Version {{version}}",
+      "uploadedAt": "Déposé le",
+      "uploadedBy": "Déposé par",
+      "note": "Note",
+      "file": "Fichier",
+      "size": "Taille",
+      "sha256": "Empreinte SHA-256",
+      "fileStatus": "État",
+      "members": "Membres",
+      "noMembers": "Aucun membre.",
+      "memberRoleLabel": "Rôle dans l’établissement",
+      "certificates": "Certificats de sécurité",
+      "noCertificates": "Aucun certificat.",
+      "code": "Code",
+      "status": "Statut",
+      "validUntilLabel": "Valable jusqu’au",
+      "fingerprint": "Empreinte",
+      "pdfSha256": "Empreinte du PDF",
+      "submittedAt": "Soumis le",
+      "reviewedAt": "Examiné le",
+      "reviewReason": "Motif de la décision",
+      "superseded": "Remplacé par un certificat plus récent",
+      "verify": "Page de vérification publique",
+      "pdf": "PDF",
+      "reports": "Signalements de l’établissement",
+      "noReports": "Aucun signalement de cet établissement."
+    },
+    "review": {
+      "title": "Validation de l’enregistrement",
+      "readOnly": "La validation est réservée aux auditeurs des établissements ; votre rôle permet la consultation seulement.",
+      "none": "Aucune décision possible dans cet état.",
+      "decision": {
+        "approve": "Approuver",
+        "reject": "Rejeter",
+        "suspend": "Suspendre",
+        "reinstate": "Réactiver"
+      },
+      "confirmText": {
+        "approve": "Confirmez-vous l’approbation de cet établissement ?",
+        "reject": "Confirmez-vous le rejet de cet établissement ? Le motif lui sera communiqué.",
+        "suspend": "Confirmez-vous la suspension ? L’établissement ne pourra plus signaler ni soumettre de certificat.",
+        "reinstate": "Confirmez-vous la réactivation de cet établissement ?"
+      },
+      "reason": "Motif",
+      "reasonOptional": "Note (facultative)",
+      "reasonRequired": "Le motif est obligatoire pour cette décision.",
+      "confirm": "Confirmer la décision",
+      "working": "En cours…",
+      "done": "Décision enregistrée.",
+      "invalidTransition": "Le statut de l’établissement a changé entre-temps ou cette décision n’est pas permise. La fiche a été actualisée."
+    },
+    "certs": {
+      "title": "Examen des certificats de sécurité",
+      "intro": "Certificats soumis, du plus ancien au plus récent. L’approbation rend le certificat valable jusqu’à la date choisie.",
+      "caption": "Certificats en attente d’examen, du plus ancien au plus récent",
+      "empty": "Aucun certificat en attente d’examen.",
+      "columns": {
+        "code": "Code du certificat",
+        "org": "Établissement",
+        "gouvernorat": "Gouvernorat",
+        "submittedAt": "Soumis le",
+        "completeness": "Complétude",
+        "pdf": "PDF",
+        "review": "Décision"
+      },
+      "missing": "Manquant : {{items}}",
+      "approve": "Approuver",
+      "reject": "Rejeter",
+      "validUntil": "Valable jusqu’au",
+      "validUntilHelp": "Entre le {{min}} et le {{max}}",
+      "reason": "Motif du rejet",
+      "confirmApprove": "Confirmez-vous l’approbation du certificat {{code}} jusqu’au {{date}} ?",
+      "confirmReject": "Confirmez-vous le rejet du certificat {{code}} ?",
+      "confirm": "Confirmer",
+      "working": "En cours…",
+      "approved": "Certificat {{code}} approuvé.",
+      "rejected": "Certificat {{code}} rejeté.",
+      "readOnly": "L’examen est réservé aux auditeurs des établissements ; votre rôle permet la consultation seulement.",
+      "validation": {
+        "required": "Choisissez la date de fin de validité.",
+        "format": "Date invalide.",
+        "range": "La date doit être comprise entre demain et dans cinq ans.",
+        "reasonRequired": "Le motif du rejet est obligatoire."
+      },
+      "invalidTransition": "Le certificat a déjà été examiné ou n’est plus soumis. La liste a été actualisée.",
+      "statusFilter": "Statut",
+      "emptyDecided": "Aucun certificat dans cet état."
+    },
+    "card": {
+      "title": "Fiche de l’établissement déclarant",
+      "reportedBy": "Signalement au nom d’un établissement",
+      "open": "Ouvrir la fiche complète",
+      "capacity": "Capacité d’accueil",
+      "address": "Adresse",
+      "classification": "Classement",
+      "representative": "Représentant de l’équipe de sécurité",
+      "noRepresentative": "Aucun représentant enregistré.",
+      "call": "Appeler {{name}} au {{phone}}",
+      "hazmatTitle": "Danger : matières dangereuses stockées sur le site",
+      "hazmatWarning": "Les équipes d’intervention doivent tenir compte de ces matières (numéro ONU et classe de danger).",
+      "noHazmat": "Aucune matière dangereuse déclarée.",
+      "features": "Repères de l’établissement sur la carte"
+    },
+    "layer": {
+      "toggle": "Couche des établissements",
+      "count": "Établissements affichés : {{count}}",
+      "org": "Établissement",
+      "hazmat": "Établissement avec matières dangereuses",
+      "capacity": "Capacité : {{capacity}}",
+      "open": "Ouvrir la fiche",
+      "legend": "Légende",
+      "report": "Position du signalement"
     }
   }
 }

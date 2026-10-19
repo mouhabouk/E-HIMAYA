@@ -4,6 +4,7 @@ from typing import Any, Literal
 
 from pydantic import AwareDatetime, BaseModel, Field
 
+from app.modules.orgs.schemas import OrganizationCard, OrgRef
 from app.modules.reports.domain import LAT_MAX, LAT_MIN, LON_MAX, LON_MIN, Category, Lang, Status
 
 
@@ -26,6 +27,13 @@ class ReportIn(BaseModel):
     lang: Lang | None = None
     location: LocationIn
     created_at: AwareDatetime
+    # Report made on behalf of an institution the caller is a member of (FR-A-080).
+    organization_id: uuid.UUID | None = None
+
+
+class ReportOrganization(BaseModel):
+    id: uuid.UUID
+    name: str
 
 
 class MediaOut(BaseModel):
@@ -56,6 +64,7 @@ class ReportOut(BaseModel):
     received_at: datetime
     updated_at: datetime
     media: list[MediaOut]
+    organization: ReportOrganization | None = None
 
 
 class ReportPage(BaseModel):
@@ -112,6 +121,8 @@ class StaffReport(BaseModel):
     suggested_category: Category | None = None
     incident_id: uuid.UUID | None = None
     has_suggestion: bool = False
+    # Institution the report was made on behalf of (phase 4, FR-A-080).
+    organization: OrgRef | None = None
 
 
 class StaffHistoryEntry(BaseModel):
@@ -201,6 +212,8 @@ class StaffReportDetail(StaffReport):
     reporter: Reporter
     allowed_transitions: list[Status]
     analysis: AnalysisOut | None = None
+    # What responders need about that institution (registers, representative, evacuation points).
+    organization_card: OrganizationCard | None = None
 
 
 class StaffReportPage(BaseModel):
@@ -228,3 +241,6 @@ class Kpis(BaseModel):
     # Reports with priority >= 70, and reports still waiting for their AI analysis.
     high_priority: int = 0
     analysis_pending: int = 0
+    # Institutions hub (phase 4): registrations and certificates waiting for the auditor, in scope.
+    orgs_pending_review: int = 0
+    certificates_submitted: int = 0

@@ -12,6 +12,7 @@ class AppConfig {
     required this.oidcRedirectUrl,
     required this.mapTileUrl,
     required this.mapAttribution,
+    required this.portalUrl,
   });
 
   factory AppConfig.fromEnvironment() => const AppConfig(
@@ -40,6 +41,10 @@ class AppConfig {
       'MAP_ATTRIBUTION',
       defaultValue: '© OpenStreetMap contributors',
     ),
+    portalUrl: String.fromEnvironment(
+      'PORTAL_URL',
+      defaultValue: 'http://localhost:5174',
+    ),
   );
 
   final String apiBaseUrl;
@@ -49,6 +54,9 @@ class AppConfig {
   final String oidcRedirectUrl;
   final String mapTileUrl;
   final String mapAttribution;
+
+  /// Institutions portal (phase 4): detailed editing of an institution is done there.
+  final String portalUrl;
 
   /// The OIDC issuer may be plain HTTP only on the development stack.
   bool get allowInsecureOidc => Uri.parse(oidcIssuer).scheme == 'http';

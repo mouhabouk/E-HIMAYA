@@ -13,7 +13,7 @@ from anyio import to_thread
 from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect, status
 
 from app.core.config import get_settings
-from app.core.security import Principal, get_token_verifier
+from app.core.security import Principal, Role, get_token_verifier
 from app.modules.reports.staff_router import READ_ROLES
 
 log = structlog.get_logger()
@@ -25,6 +25,8 @@ CLOSE_UNAUTHORIZED = 4401
 CLOSE_FORBIDDEN = 4403
 CLOSE_TOO_SLOW = 4408
 CLOSE_TRY_LATER = 1013
+# Institutions events (phase 4) also go to the institutions auditor, who does not read reports.
+ORG_EVENTS = frozenset({"org.updated", "certificate.updated"})
 
 
 class _Rejected(Exception):
@@ -38,6 +40,10 @@ class LiveClient:
         self.principal = principal
         self.expires_at = expires_at
         self.queue: asyncio.Queue[dict[str, Any]] = asyncio.Queue(QUEUE_SIZE)
+
+    @property
+    def reads_reports(self) -> bool:
+        return bool(self.principal.roles & frozenset(READ_ROLES))
 
     def can_see(self, gouvernorat_code: int | None) -> bool:
         if self.principal.is_national:
@@ -66,11 +72,15 @@ class LiveHub:
             gouvernorat = payload.get("incident", {}).get("gouvernorat_code")
         elif subject == "media.stored":
             gouvernorat = payload.get("gouvernorat_code")
+        elif subject == "org.updated":
+            gouvernorat = payload.get("org", {}).get("gouvernorat_code")
+        elif subject == "certificate.updated":
+            gouvernorat = payload.get("certificate", {}).get("gouvernorat_code")
         else:
             return
         message = {"type": subject, **payload}
         for client in list(self._clients):
-            if not client.can_see(gouvernorat):
+            if not client.can_see(gouvernorat) or not (subject in ORG_EVENTS or client.reads_reports):
                 continue
             try:
                 client.queue.put_nowait(message)
@@ -98,7 +108,7 @@ async def _authenticate(message: Any) -> tuple[Principal, float]:
     except HTTPException as exc:
         codes = {status.HTTP_403_FORBIDDEN: CLOSE_FORBIDDEN, status.HTTP_503_SERVICE_UNAVAILABLE: CLOSE_TRY_LATER}
         raise _Rejected(codes.get(exc.status_code, CLOSE_UNAUTHORIZED)) from exc
-    if not principal.is_staff or not principal.roles & frozenset(READ_ROLES):
+    if not principal.is_staff or not principal.roles & frozenset((*READ_ROLES, Role.ORG_AUDITOR)):
         raise _Rejected(CLOSE_FORBIDDEN)
     return principal, float(principal.claims["exp"])
 

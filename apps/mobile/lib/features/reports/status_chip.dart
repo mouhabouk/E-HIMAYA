@@ -19,6 +19,7 @@ String localStateLabel(AppLocalizations l10n, String state) => switch (state) {
   ReportState.conflict => l10n.reportConflict,
   ReportState.failed => l10n.reportFailed,
   ReportState.blocked => l10n.reportBlocked,
+  ReportState.orgRefused => l10n.reportOrgRefused,
   _ => l10n.reportPendingSync,
 };
 
@@ -80,7 +81,8 @@ class LocalStateChip extends StatelessWidget {
     final problem =
         state == ReportState.failed ||
         state == ReportState.blocked ||
-        state == ReportState.conflict;
+        state == ReportState.conflict ||
+        state == ReportState.orgRefused;
     return Chip(
       avatar: Icon(
         problem ? Icons.error_outline : Icons.cloud_upload_outlined,

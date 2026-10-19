@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:ehimaya/app.dart';
 import 'package:ehimaya/core/auth/auth_session.dart';
+import 'package:ehimaya/core/auth/identity.dart';
 import 'package:ehimaya/core/auth/oidc_client.dart';
 import 'package:ehimaya/core/connectivity/connectivity.dart';
 import 'package:ehimaya/core/db/app_database.dart';
@@ -12,6 +13,7 @@ import 'package:ehimaya/core/storage/app_prefs.dart';
 import 'package:ehimaya/core/storage/secure_store.dart';
 import 'package:ehimaya/core/sync/sync_scheduler.dart';
 import 'package:ehimaya/features/emergency/dialer.dart';
+import 'package:ehimaya/features/institution/institution_providers.dart';
 import 'package:ehimaya/features/sos/sos_service.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,9 +24,11 @@ import 'fake_http.dart';
 
 class FakeSosService implements SosService {
   int calls = 0;
+  final List<String?> organizations = [];
   @override
-  Future<SosResult> send() async {
+  Future<SosResult> send({String? organizationId}) async {
     calls++;
+    organizations.add(organizationId);
     return const SosQueued('TMP-ABC234');
   }
 }
@@ -75,9 +79,36 @@ class AppHarness {
   final FakeAdapter adapter;
 }
 
+/// Preferences of a signed-in citizen (the profile form was already offered).
+Map<String, Object> registeredPrefs({String locale = 'ar'}) => {
+  'charter.accepted_version': '2026-10',
+  'charter.accepted_at': '2026-10-19T10:00:00Z',
+  'onboarding.role': 'citizen',
+  'onboarding.identity_mode': 'registered',
+  'profile.prompted': true,
+  'settings.locale': locale,
+};
+
+/// Session of a signed-in account (never expires during a test).
+final testSession = AuthSession(
+  accessToken: 'a.b.c',
+  expiresAt: DateTime(2100),
+);
+
+FakeResponse defaultApiResponse(SeenRequest r) {
+  if (r.path == '/api/v1/reports/mine') {
+    return const FakeResponse(200, json: {'items': [], 'next_before': null});
+  }
+  return const FakeResponse(404, json: {'detail': 'not_found'});
+}
+
 Future<AppHarness> pumpApp(
   WidgetTester tester, {
   Map<String, Object> prefs = const {},
+  AuthSession? session,
+  FakeHandler? api,
+  MemorySecureStore? secure,
+  List<Uri>? opened,
 }) async {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
   SharedPreferences.setMockInitialValues(prefs);
@@ -85,18 +116,18 @@ Future<AppHarness> pumpApp(
   final db = inMemoryDatabase();
   final sos = FakeSosService();
   final dialled = <Uri>[];
-  final adapter = FakeAdapter((r) {
-    if (r.path == '/api/v1/reports/mine') {
-      return const FakeResponse(200, json: {'items': [], 'next_before': null});
-    }
-    return const FakeResponse(404, json: {'detail': 'not_found'});
-  });
+  final adapter = FakeAdapter(api ?? defaultApiResponse);
   addTearDown(db.close);
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
         sharedPreferencesProvider.overrideWithValue(sp),
-        secureStoreProvider.overrideWithValue(MemorySecureStore()),
+        secureStoreProvider.overrideWithValue(secure ?? MemorySecureStore()),
+        initialAuthSessionProvider.overrideWithValue(session),
+        urlOpenerProvider.overrideWithValue((url) async {
+          opened?.add(url);
+          return true;
+        }),
         databaseProvider.overrideWithValue(db),
         httpAdapterProvider.overrideWithValue(adapter),
         locationServiceProvider.overrideWithValue(FakeLocationService()),

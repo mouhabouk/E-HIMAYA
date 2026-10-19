@@ -51,8 +51,11 @@ def test_french_speech_is_transcribed(client: TestClient, media_server: str) -> 
     body = r.json()
     print(f"\n  fr ({body['duration_s']:.1f}s audio, {elapsed:.1f}s): {body['text']}")
     assert body["language"] == "fr"
-    # The sample is a synthetic voice (espeak): check the content words, not the exact wording.
-    assert any(word in body["text"].lower() for word in ("incendie", "feu", "forêt")), body["text"]
+    # The sample is a synthetic voice (espeak) and Whisper's temperature fallback samples, so single content
+    # words vary between runs ("forêt" one day, "fourrée" the next): require several parts of the sentence.
+    expected = ("bonjour", "il y a", "incendie", "dans la", "forêt", "près de la", "maison")
+    heard = [part for part in expected if part in body["text"].lower()]
+    assert len(heard) >= 3, body["text"]
 
 
 def test_english_speech_is_transcribed(client: TestClient, media_server: str) -> None:

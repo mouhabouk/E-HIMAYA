@@ -1329,6 +1329,360 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The attachment was damaged in transfer and was refused.'**
   String get errorMediaRejected;
+
+  /// No description provided for @errorOrgNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'This institution was not found or you are no longer one of its members.'**
+  String get errorOrgNotFound;
+
+  /// No description provided for @errorOrgNotActive.
+  ///
+  /// In en, this message translates to:
+  /// **'This institution is not active (under review, rejected or suspended): it cannot report.'**
+  String get errorOrgNotActive;
+
+  /// No description provided for @errorOrgRoleRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Your role in this institution does not allow this action.'**
+  String get errorOrgRoleRequired;
+
+  /// No description provided for @reportAsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report as'**
+  String get reportAsTitle;
+
+  /// No description provided for @reportAsSelf.
+  ///
+  /// In en, this message translates to:
+  /// **'Myself'**
+  String get reportAsSelf;
+
+  /// No description provided for @reportAsInstitutionUnnamed.
+  ///
+  /// In en, this message translates to:
+  /// **'Institution'**
+  String get reportAsInstitutionUnnamed;
+
+  /// No description provided for @reportOrgRefused.
+  ///
+  /// In en, this message translates to:
+  /// **'Refused for the institution'**
+  String get reportOrgRefused;
+
+  /// No description provided for @reportOrgNotFoundBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This report could not be sent on behalf of the institution: it was not found or you are no longer one of its members. It is kept on this phone. You can send it as yourself.'**
+  String get reportOrgNotFoundBody;
+
+  /// No description provided for @reportOrgNotActiveBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This report could not be sent on behalf of the institution because it is not active. It is kept on this phone. You can send it as yourself.'**
+  String get reportOrgNotActiveBody;
+
+  /// No description provided for @reportResendAsSelf.
+  ///
+  /// In en, this message translates to:
+  /// **'Send as myself'**
+  String get reportResendAsSelf;
+
+  /// No description provided for @reportResentAsSelf.
+  ///
+  /// In en, this message translates to:
+  /// **'The report will be sent as yourself.'**
+  String get reportResentAsSelf;
+
+  /// No description provided for @settingsSosReportAs.
+  ///
+  /// In en, this message translates to:
+  /// **'SOS'**
+  String get settingsSosReportAs;
+
+  /// No description provided for @settingsSosReportAsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The SOS button sends the alert as:'**
+  String get settingsSosReportAsHint;
+
+  /// No description provided for @myInstitutionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My institution'**
+  String get myInstitutionTitle;
+
+  /// No description provided for @myInstitutionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My institutions'**
+  String get myInstitutionsTitle;
+
+  /// No description provided for @myInstitutionsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You do not belong to any institution.'**
+  String get myInstitutionsEmpty;
+
+  /// No description provided for @homeInstitutionDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety card, team and reports of your institution'**
+  String get homeInstitutionDesc;
+
+  /// No description provided for @orgKindIndustrial.
+  ///
+  /// In en, this message translates to:
+  /// **'Industrial'**
+  String get orgKindIndustrial;
+
+  /// No description provided for @orgKindEducational.
+  ///
+  /// In en, this message translates to:
+  /// **'Educational'**
+  String get orgKindEducational;
+
+  /// No description provided for @orgKindHotel.
+  ///
+  /// In en, this message translates to:
+  /// **'Hotel'**
+  String get orgKindHotel;
+
+  /// No description provided for @orgKindGovernment.
+  ///
+  /// In en, this message translates to:
+  /// **'Government'**
+  String get orgKindGovernment;
+
+  /// No description provided for @orgKindPrivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Private'**
+  String get orgKindPrivate;
+
+  /// No description provided for @orgKindOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get orgKindOther;
+
+  /// No description provided for @orgStatusPendingReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Under review'**
+  String get orgStatusPendingReview;
+
+  /// No description provided for @orgStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get orgStatusActive;
+
+  /// No description provided for @orgStatusRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get orgStatusRejected;
+
+  /// No description provided for @orgStatusSuspended.
+  ///
+  /// In en, this message translates to:
+  /// **'Suspended'**
+  String get orgStatusSuspended;
+
+  /// No description provided for @orgFamilyHighRise.
+  ///
+  /// In en, this message translates to:
+  /// **'High-rise building'**
+  String get orgFamilyHighRise;
+
+  /// No description provided for @orgFamilyIndustrial.
+  ///
+  /// In en, this message translates to:
+  /// **'Industrial establishment'**
+  String get orgFamilyIndustrial;
+
+  /// No description provided for @orgFamilyErp.
+  ///
+  /// In en, this message translates to:
+  /// **'Building open to the public'**
+  String get orgFamilyErp;
+
+  /// No description provided for @orgFamilyWorkplace.
+  ///
+  /// In en, this message translates to:
+  /// **'Workplace'**
+  String get orgFamilyWorkplace;
+
+  /// No description provided for @orgErpCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'category {category}'**
+  String orgErpCategory(int category);
+
+  /// No description provided for @orgTeamRepresentative.
+  ///
+  /// In en, this message translates to:
+  /// **'Representative'**
+  String get orgTeamRepresentative;
+
+  /// No description provided for @orgTeamMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Member'**
+  String get orgTeamMember;
+
+  /// No description provided for @trainingValid.
+  ///
+  /// In en, this message translates to:
+  /// **'valid'**
+  String get trainingValid;
+
+  /// No description provided for @trainingExpiring.
+  ///
+  /// In en, this message translates to:
+  /// **'expiring soon'**
+  String get trainingExpiring;
+
+  /// No description provided for @trainingExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'expired'**
+  String get trainingExpired;
+
+  /// No description provided for @trainingUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'unknown'**
+  String get trainingUnknown;
+
+  /// No description provided for @orgTraining.
+  ///
+  /// In en, this message translates to:
+  /// **'Training: {status}'**
+  String orgTraining(String status);
+
+  /// No description provided for @orgCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Capacity (maximum number of people)'**
+  String get orgCapacity;
+
+  /// No description provided for @orgAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get orgAddress;
+
+  /// No description provided for @orgClassification.
+  ///
+  /// In en, this message translates to:
+  /// **'Classification'**
+  String get orgClassification;
+
+  /// No description provided for @orgClassificationProvisional.
+  ///
+  /// In en, this message translates to:
+  /// **'Provisional: computed with thresholds still to be validated by the Civil Protection.'**
+  String get orgClassificationProvisional;
+
+  /// No description provided for @orgAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts'**
+  String get orgAlerts;
+
+  /// No description provided for @orgAlertsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 alert} other{{count} alerts}}'**
+  String orgAlertsCount(int count);
+
+  /// No description provided for @orgNoAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'No alert'**
+  String get orgNoAlerts;
+
+  /// No description provided for @orgSafetyTeam.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety team'**
+  String get orgSafetyTeam;
+
+  /// No description provided for @orgTeamEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No safety team registered.'**
+  String get orgTeamEmpty;
+
+  /// No description provided for @orgCallMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Call {name}'**
+  String orgCallMember(String name);
+
+  /// No description provided for @orgHazmatTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hazardous materials ({count})'**
+  String orgHazmatTitle(int count);
+
+  /// No description provided for @orgHazmatEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No hazardous material registered.'**
+  String get orgHazmatEmpty;
+
+  /// No description provided for @orgUnNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'UN {number}'**
+  String orgUnNumber(String number);
+
+  /// No description provided for @orgOfflineCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline: copy saved on {date}.'**
+  String orgOfflineCopy(String date);
+
+  /// No description provided for @orgPortalNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Detailed editing of the institution (card, team, hazardous materials, documents, certificate) is done on the institutions portal.'**
+  String get orgPortalNote;
+
+  /// No description provided for @orgOpenPortal.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the portal'**
+  String get orgOpenPortal;
+
+  /// No description provided for @orgPortalUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The portal could not be opened on this phone.'**
+  String get orgPortalUnavailable;
+
+  /// No description provided for @orgRecentReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent reports of the institution'**
+  String get orgRecentReports;
+
+  /// No description provided for @orgReportsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No report yet.'**
+  String get orgReportsEmpty;
+
+  /// No description provided for @orgReportBy.
+  ///
+  /// In en, this message translates to:
+  /// **'By {name}'**
+  String orgReportBy(String name);
 }
 
 class _AppLocalizationsDelegate

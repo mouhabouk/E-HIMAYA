@@ -3,7 +3,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 /// Key/value store backed by the platform keystore (Android Keystore, iOS Keychain).
 ///
-/// Holds the OIDC tokens, the anonymous device key and the SQLCipher key.
+/// Holds the OIDC tokens, the anonymous device key, the SQLCipher key and the offline copy of
+/// the account's institutions (safety team phone numbers are personal data).
 abstract class SecureStore {
   Future<String?> read(String key);
   Future<void> write(String key, String value);
@@ -14,6 +15,9 @@ class SecureStoreKeys {
   static const deviceKey = 'device_key_v1';
   static const dbKey = 'db_key_v1';
   static const authSession = 'auth_session_v1';
+
+  /// Institutions of the signed-in account and their last summaries (offline copy).
+  static const orgCache = 'org_cache_v1';
 }
 
 class PlatformSecureStore implements SecureStore {
