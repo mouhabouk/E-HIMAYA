@@ -1,0 +1,44 @@
+# ء-حماية / e-Himaya — static server of a built web app (dashboard, portal) inside its own container.
+# Plain HTTP on :8080 as an unprivileged user; TLS and HSTS are added by the edge proxy (infra/caddy/Caddyfile).
+{
+	admin off
+	auto_https off
+	persist_config off
+}
+
+:8080 {
+	root * /srv
+	encode zstd gzip
+
+	# Content-Security-Policy generated at build time from the app's configuration (infra/web/csp.mjs).
+	import /etc/caddy/csp.caddy
+	header {
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		# Origin only, so tile servers (OpenStreetMap usage policy) still see which site uses them.
+		Referrer-Policy strict-origin-when-cross-origin
+		Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+		Cross-Origin-Opener-Policy same-origin-allow-popups
+		Cross-Origin-Resource-Policy same-origin
+		-Server
+	}
+
+	handle /healthz {
+		respond "ok" 200
+	}
+
+	# Fingerprinted bundles never change; a missing one is a plain 404.
+	handle /assets/* {
+		@found file
+		header @found Cache-Control "public, max-age=31536000, immutable"
+		file_server
+	}
+
+	# Single-page app: unknown paths serve index.html (client-side routes), always revalidated so a deployment
+	# is picked up at once.
+	handle {
+		header Cache-Control "no-cache"
+		try_files {path} /index.html
+		file_server
+	}
+}

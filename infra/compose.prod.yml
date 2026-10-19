@@ -1,0 +1,214 @@
+# ء-حماية / e-Himaya — production overlay (docs/deploy-production.md).
+#   docker compose --env-file .env -f infra/compose.yml -f infra/compose.prod.yml up -d --build
+# On top of the development file it:
+#   - puts Caddy in front of everything (TLS: ACME certificates for real domains, or `tls internal` for a demo),
+#     and publishes only ports 80/443: no database, Valkey, NATS, S3, tusd, Keycloak or API port on the host;
+#   - runs Keycloak in production mode (`start`, hostname, proxy headers, health on the management port);
+#   - builds the dashboard and the portal as static images with their CSP;
+#   - runs the API as two processes (api: HTTP only, worker: background loops) with APP_ENV=production, which hides
+#     /docs and refuses example secrets at start-up;
+#   - leaves out the development helpers mailpit and notify-sim (profile "dev-tools", never started here).
+# Required in .env on top of the development ones: API_HOST, DASHBOARD_HOST, PORTAL_HOST, AUTH_HOST, MEDIA_HOST,
+# CADDY_TLS, EHIMAYA_DB_RUNTIME_PASSWORD, SMTP_HOST, real FCM/SMS settings (or empty to skip those channels).
+
+# Settings shared by the api, worker and migrate containers in production.
+x-api-prod-env: &api-prod-env
+  APP_ENV: production
+  OIDC_ISSUERS: https://${AUTH_HOST:?set AUTH_HOST}/realms/ehimaya-public,https://${AUTH_HOST}/realms/ehimaya-staff
+  OIDC_JWKS_BASE_URL: http://keycloak:8080
+  S3_PUBLIC_ENDPOINT_URL: https://${MEDIA_HOST:?set MEDIA_HOST}
+  PORTAL_PUBLIC_URL: https://${PORTAL_HOST:?set PORTAL_HOST}
+  API_CORS_ORIGINS: https://${DASHBOARD_HOST:?set DASHBOARD_HOST},https://${PORTAL_HOST}
+  DATABASE_URL: postgresql+asyncpg://${EHIMAYA_DB_RUNTIME_USER:-ehimaya_app}:${EHIMAYA_DB_RUNTIME_PASSWORD:?set EHIMAYA_DB_RUNTIME_PASSWORD}@postgres:5432/${EHIMAYA_DB_NAME:-ehimaya}
+  # Only the edge proxy (fixed address below) may set X-Forwarded-For: per-address limits see real clients.
+  FORWARDED_ALLOW_IPS: ${EDGE_PROXY_IP:-172.31.250.10}
+  # Real channels only: empty values are recorded as "skipped" (no simulator in production).
+  SMTP_HOST: ${SMTP_HOST:-}
+  SMTP_PORT: ${SMTP_PORT:-587}
+  SMTP_STARTTLS: ${SMTP_STARTTLS:-true}
+  FCM_SERVICE_ACCOUNT_FILE: ${FCM_SERVICE_ACCOUNT_FILE:-}
+  FCM_API_URL: ${FCM_API_URL:-https://fcm.googleapis.com}
+  SMS_HTTP_URL: ${SMS_HTTP_URL:-}
+  SMS_HTTP_TOKEN: ${SMS_HTTP_TOKEN:-}
+
+x-api-prod-deps: &api-prod-deps
+  migrate:
+    condition: service_completed_successfully
+  valkey:
+    condition: service_healthy
+  nats:
+    condition: service_healthy
+
+services:
+  # ---------------- edge: the only published ports ----------------
+  caddy:
+    image: caddy:2.11-alpine@sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f
+    restart: unless-stopped
+    environment:
+      API_HOST: ${API_HOST:?set API_HOST}
+      DASHBOARD_HOST: ${DASHBOARD_HOST}
+      PORTAL_HOST: ${PORTAL_HOST}
+      AUTH_HOST: ${AUTH_HOST}
+      MEDIA_HOST: ${MEDIA_HOST}
+      # "internal" = certificates from Caddy's own CA (demo, test domains); an e-mail address = Let's Encrypt/ZeroSSL.
+      CADDY_TLS: ${CADDY_TLS:-internal}
+      # Who may open the Keycloak admin console (CIDRs, space-separated). Default: private networks only.
+      KEYCLOAK_ADMIN_ALLOW: ${KEYCLOAK_ADMIN_ALLOW:-private_ranges}
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddydata:/data
+      - caddyconfig:/config
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    cap_drop: [ALL]
+    cap_add: [NET_BIND_SERVICE]
+    networks:
+      default:
+        ipv4_address: ${EDGE_PROXY_IP:-172.31.250.10}
+    depends_on:
+      api:
+        condition: service_healthy
+      dashboard:
+        condition: service_healthy
+      portal:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+
+  dashboard:
+    build:
+      context: ../apps/dashboard
+      additional_contexts:
+        web: ./web
+      args:
+        VITE_API_BASE_URL: https://${API_HOST}
+        VITE_OIDC_ISSUER: https://${AUTH_HOST}/realms/ehimaya-staff
+        VITE_OIDC_CLIENT_ID: ehimaya-dashboard
+        VITE_MAP_STYLE_URL: ${MAP_STYLE_URL:-}
+        CSP_MAP_SRC: ${CSP_MAP_SRC:-}
+        CSP_MEDIA_SRC: https://${MEDIA_HOST}
+    image: ehimaya/dashboard:prod
+    restart: unless-stopped
+    read_only: true
+    tmpfs: [/tmp]
+
+  portal:
+    build:
+      context: ../apps/portal
+      additional_contexts:
+        web: ./web
+      args:
+        VITE_API_BASE_URL: https://${API_HOST}
+        VITE_OIDC_ISSUER: https://${AUTH_HOST}/realms/ehimaya-public
+        VITE_OIDC_CLIENT_ID: ehimaya-portal
+        VITE_TUS_ENDPOINT: https://${API_HOST}/api/v1/uploads/
+        VITE_MAP_STYLE_URL: ${MAP_STYLE_URL:-}
+        CSP_MAP_SRC: ${CSP_MAP_SRC:-}
+        CSP_MEDIA_SRC: https://${MEDIA_HOST}
+    image: ehimaya/portal:prod
+    restart: unless-stopped
+    read_only: true
+    tmpfs: [/tmp]
+
+  # ---------------- application ----------------
+  api:
+    environment:
+      <<: *api-prod-env
+      PROCESS_ROLE: api
+      # uvicorn processes per api container (one Python process saturates one core; infra/loadtest/RESULTS.md).
+      WEB_CONCURRENCY: ${API_WORKERS:-4}
+    ports: !reset []
+    # No simulator volume and no dependency on notify-sim.
+    volumes: !reset []
+    depends_on: !override
+      <<: *api-prod-deps
+
+  # Background loops (outbox relay, media verification, AI analysis, notification delivery, retention). Never routed
+  # by Caddy; serves only /health and /metrics on the internal network. Exactly one replica.
+  worker:
+    extends:
+      file: compose.yml
+      service: api
+    environment:
+      <<: *api-prod-env
+      PROCESS_ROLE: worker
+      WEB_CONCURRENCY: "1"
+    ports: !reset []
+    volumes: !reset []
+    depends_on: !override
+      <<: *api-prod-deps
+
+  migrate:
+    environment:
+      <<: *api-prod-env
+    volumes: !reset []
+
+  keycloak:
+    # Production mode: HTTPS terminated by Caddy, plain HTTP on the internal network only.
+    command: ["start", "--import-realm"]
+    environment:
+      KC_HOSTNAME: https://${AUTH_HOST}
+      KC_PROXY_HEADERS: xforwarded
+      KC_HTTP_ENABLED: "true"
+      KC_HEALTH_ENABLED: "true"
+      KC_HOSTNAME_STRICT: "true"
+    ports: !reset []
+    healthcheck:
+      # The image has no curl: plain bash on the management port (9000).
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/9000 && printf 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && grep -q '\"UP\"' <&3"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+
+  tusd:
+    # Browsers reach tusd only through Caddy (https://API_HOST/api/v1/uploads/). Its hook URL (with the hook secret)
+    # stays on the internal network; tusd prints that URL in its start-up log, so its logs are confidential.
+    command:
+      - -host=0.0.0.0
+      - -port=1080
+      - -base-path=/api/v1/uploads/
+      - -behind-proxy
+      - -s3-bucket=${S3_BUCKET_MEDIA:-ehimaya-media}
+      - -s3-endpoint=http://seaweedfs:8333
+      - -s3-object-prefix=uploads/
+      - -disable-download
+      - -max-size=314572800
+      - -hooks-http=http://tusd:${TUSD_HOOK_SECRET:?set TUSD_HOOK_SECRET}@api:8000/internal/tusd/hooks
+      - -hooks-enabled-events=pre-create,post-finish,post-terminate
+      # e.g. ^https://(dashboard|portal)\.ehimaya\.tn$$ (dots escaped)
+      - -cors-allow-origin=${TUSD_CORS_ORIGIN_REGEX:?set TUSD_CORS_ORIGIN_REGEX to the dashboard and portal origins}
+      - -cors-allow-headers=Authorization,X-Device-Key
+    ports: !reset []
+
+  # No published port: data services are reached only on the internal network.
+  postgres:
+    ports: !reset []
+  valkey:
+    ports: !reset []
+  nats:
+    ports: !reset []
+  seaweedfs:
+    ports: !reset []
+
+  # Development helpers, never started in production (no profile "dev-tools" is enabled here).
+  mailpit:
+    profiles: ["dev-tools"]
+    ports: !reset []
+  notify-sim:
+    profiles: ["dev-tools"]
+    ports: !reset []
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: ${EDGE_SUBNET:-172.31.250.0/24}
+          # Dynamic addresses come from the upper half, so the edge proxy's fixed address is never taken.
+          ip_range: ${EDGE_DYNAMIC_RANGE:-172.31.250.128/25}
+
+volumes:
+  caddydata:
+  caddyconfig:

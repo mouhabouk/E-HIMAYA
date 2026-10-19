@@ -1,0 +1,84 @@
+# ء-حماية / e-Himaya — edge reverse proxy (infra/compose.prod.yml): TLS, HSTS, and the only public entry point.
+# TLS: CADDY_TLS=internal issues certificates from Caddy's own CA (demo; trust /data/caddy/pki/authorities/local/root.crt
+# on the test devices), an e-mail address obtains public certificates (ACME) for real DNS names.
+{
+	admin off
+	servers {
+		# Clients' addresses as seen here are forwarded to the API in X-Forwarded-For (rate limits per address).
+		trusted_proxies static private_ranges
+	}
+}
+
+(edge) {
+	tls {$CADDY_TLS}
+	encode zstd gzip
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options nosniff
+		-Server
+		-X-Powered-By
+	}
+	log {
+		output stdout
+		format json
+	}
+}
+
+# API (REST + WebSocket) and resumable uploads (tusd) on one origin.
+{$API_HOST} {
+	import edge
+	# Internal endpoints are never public: tusd hooks (API) and the Prometheus scrape (scraped on the internal network).
+	@internal path /internal/* /metrics /metrics/*
+	handle @internal {
+		respond 404
+	}
+	handle /api/v1/uploads/* {
+		reverse_proxy tusd:1080
+	}
+	handle {
+		reverse_proxy api:8000
+	}
+}
+
+{$DASHBOARD_HOST} {
+	import edge
+	reverse_proxy dashboard:8080
+}
+
+{$PORTAL_HOST} {
+	import edge
+	reverse_proxy portal:8080
+}
+
+# Keycloak (production mode, X-Forwarded-* headers). The admin console only from KEYCLOAK_ADMIN_ALLOW.
+{$AUTH_HOST} {
+	import edge
+	header X-Frame-Options SAMEORIGIN
+	@admin {
+		path /admin /admin/*
+		not remote_ip {$KEYCLOAK_ADMIN_ALLOW}
+	}
+	handle @admin {
+		respond 403
+	}
+	handle {
+		reverse_proxy keycloak:8080
+	}
+}
+
+# Pre-signed media links (S3, SeaweedFS). The Host header is passed unchanged: it is part of the signature.
+{$MEDIA_HOST} {
+	import edge
+	header {
+		Content-Security-Policy "default-src 'none'; frame-ancestors 'none'; sandbox"
+		Cross-Origin-Resource-Policy cross-origin
+	}
+	# Browsers only download (pre-signed GET); uploads go through tusd, never straight to the bucket.
+	@write not method GET HEAD
+	handle @write {
+		respond 405
+	}
+	handle {
+		reverse_proxy seaweedfs:8333
+	}
+}

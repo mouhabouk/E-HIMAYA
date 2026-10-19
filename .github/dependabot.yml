@@ -1,0 +1,68 @@
+# Weekly dependency updates (A9). Python services are locked with uv (uv.lock), the web apps with npm
+# (package-lock.json), the mobile app with pub (pubspec.lock); container images are pinned by digest in the
+# Dockerfiles and compose files, GitHub Actions by version. Each update runs the full CI, including the Trivy scan.
+version: 2
+updates:
+  - package-ecosystem: uv
+    directories:
+      - /services/api
+      - /services/ai
+      - /services/notify-sim
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      python-minor:
+        update-types: [minor, patch]
+    open-pull-requests-limit: 10
+
+  # Model download and conversion tools (Docker target "models", CI job ai-models).
+  - package-ecosystem: pip
+    directory: /services/ai/models
+    schedule:
+      interval: weekly
+      day: monday
+
+  - package-ecosystem: npm
+    directories:
+      - /apps/dashboard
+      - /apps/portal
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      web-minor:
+        update-types: [minor, patch]
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: pub
+    directory: /apps/mobile
+    schedule:
+      interval: weekly
+      day: monday
+
+  # Base images (tag@digest) of every Dockerfile.
+  - package-ecosystem: docker
+    directories:
+      - /services/api
+      - /services/ai
+      - /services/notify-sim
+      - /infra/postgres
+      - /apps/dashboard
+      - /apps/portal
+    schedule:
+      interval: weekly
+      day: monday
+
+  # Service images (tag@digest) of the compose files.
+  - package-ecosystem: docker-compose
+    directory: /infra
+    schedule:
+      interval: weekly
+      day: monday
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday

@@ -10,12 +10,16 @@
 | تقرير المرحلة 1 | [`docs/phase-1-report.html`](docs/phase-1-report.html) |
 | تقرير المرحلة 2 | [`docs/phase-2-report.html`](docs/phase-2-report.html) |
 | عقد الواجهة البرمجية لمسار البلاغ | [`docs/api/phase-2-contract.md`](docs/api/phase-2-contract.md) |
+| دليل النشر في الإنتاج (TLS، أدوار قاعدة البيانات، الترقية) | [`docs/deploy-production.md`](docs/deploy-production.md) |
 
 ## محتوى المستودع
 
 ```
 infra/
   compose.yml            البنية الأساسية للتطوير والتجربة
+  compose.prod.yml       ملف الإنتاج الإضافي: Caddy و TLS، Keycloak بوضع الإنتاج، صور ثابتة للواجهتين (docs/deploy-production.md)
+  caddy/ web/            الوكيل العكسي، وخادم الملفات الثابتة مع CSP مولَّدة عند البناء
+  loadtest/              اختبار الحمل لموجة بلاغات SOS (k6) ونتائجه
   postgres/              PostgreSQL 17 + PostGIS 3.5 + pgvector، وسكربت إنشاء القاعدتين
   keycloak/realms/       فضاءا الهوية: ehimaya-public (المواطنون والمؤسسات) و ehimaya-staff (لوحة التحكم، MFA إجباري)
   nats/                  ناقل الأحداث NATS JetStream
