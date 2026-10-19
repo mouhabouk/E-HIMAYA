@@ -1,9 +1,10 @@
-import maplibregl, { type GeoJSONSource, type Map as MlMap, type Marker } from "maplibre-gl";
+import type { GeoJSONSource, Map as MlMap, Marker } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { FeatureCollection } from "geojson";
 import { useEffect, useRef } from "react";
 import { CATEGORY_ICON_PATHS } from "../lib/categoryIcons";
 import type { BBox } from "../lib/filters";
+import { maplibregl } from "../lib/maplibre";
 import { mapStyle } from "../lib/mapStyle";
 import { POI_ICON_PATHS, type PoiKind } from "../lib/poiIcons";
 import type { Category, ReportStatus } from "../lib/types";
@@ -346,7 +347,7 @@ export function MapView({
     whenStyleReady(map, () => {
       const source = map.getSource<GeoJSONSource>(POLYGON_SOURCE);
       if (source) {
-        source.setData(data);
+        void source.setData(data); // resolves once applied; failures are fired as map "error" events
         return;
       }
       map.addSource(POLYGON_SOURCE, { type: "geojson", data });
@@ -373,7 +374,7 @@ export function MapView({
     whenStyleReady(map, () => {
       const source = map.getSource<GeoJSONSource>(HEAT_SOURCE);
       if (source) {
-        source.setData(data);
+        void source.setData(data); // resolves once applied; failures are fired as map "error" events
         return;
       }
       map.addSource(HEAT_SOURCE, { type: "geojson", data });

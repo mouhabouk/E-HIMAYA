@@ -1,7 +1,8 @@
-import maplibregl, { type GeoJSONSource, type Map as MlMap } from "maplibre-gl";
+import type { GeoJSONSource, Map as MlMap } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef } from "react";
 import type { BBox } from "../lib/filters";
+import { maplibregl } from "../lib/maplibre";
 import { mapStyle } from "../lib/mapStyle";
 import type { Vertex } from "../lib/polygon";
 
@@ -114,7 +115,7 @@ export function PolygonDrawMap({ vertices, onAddVertex, bounds, ariaLabel, style
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !loaded.current) return;
-    map.getSource<GeoJSONSource>(SOURCE)?.setData(areaData(vertices));
+    void map.getSource<GeoJSONSource>(SOURCE)?.setData(areaData(vertices));
   }, [vertices]);
 
   useEffect(() => {
