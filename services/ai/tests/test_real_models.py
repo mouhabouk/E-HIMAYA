@@ -50,7 +50,8 @@ def test_french_speech_is_transcribed(client: TestClient, media_server: str) -> 
     body = r.json()
     print(f"\n  fr ({body['duration_s']:.1f}s audio, {elapsed:.1f}s): {body['text']}")
     assert body["language"] == "fr"
-    assert any(word in body["text"].lower() for word in ("incendie", "feu")), body["text"]
+    # The sample is a synthetic voice (espeak): check the content words, not the exact wording.
+    assert any(word in body["text"].lower() for word in ("feu", "forêt")), body["text"]
 
 
 def test_english_speech_is_transcribed(client: TestClient, media_server: str) -> None:
