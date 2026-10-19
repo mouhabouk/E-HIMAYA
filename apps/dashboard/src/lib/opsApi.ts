@@ -29,6 +29,7 @@ import type {
   StaffVolunteerDetail,
   Unit,
   UnitBody,
+  UserLookup,
   VolunteerDecision,
   VolunteerFilters,
   VolunteerMapProperties,
@@ -188,6 +189,9 @@ export function opsApi(api: ApiClient) {
     publishMessage: (id: string) => api.request<Message>(`${messagePath(id)}/publish`, { method: "POST" }),
     cancelMessage: (id: string) => api.request<Message>(`${messagePath(id)}/cancel`, { method: "POST" }),
     activeAlerts: (signal?: AbortSignal) => api.request<Message[]>("/api/v1/staff/alerts/active", { signal }),
+    /** Exact e-mail match only; the address goes in the body so it stays out of URLs and logs. */
+    lookupUser: (email: string) =>
+      api.request<UserLookup>("/api/v1/staff/users/lookup", { method: "POST", body: { email: email.trim() } }),
 
     // ---------- Safety tips (§8) ----------
     tips: (signal?: AbortSignal) => api.request<SafetyTip[]>("/api/v1/staff/safety-tips", { signal }),

@@ -27,6 +27,7 @@ powers inside Keycloak (accounts and roles stay administered in Keycloak).
 | draft an alert | `ops_manager`, `content_editor`, `local_committee`, `central_committee` |
 | publish or cancel an alert (UC-04: «مصادقة المحرر أو اللجنة») | `content_editor`, `local_committee`, `central_committee` |
 | draft, publish, cancel an informational notification | `content_editor`, `local_committee`, `central_committee` |
+| look up a citizen account by e-mail (one-user notifications) | `content_editor`, `local_committee`, `central_committee` (any gouvernorat) |
 | safety tips | `content_editor` |
 | set the operational level | `local_committee` (own gouvernorat, `normal` ↔ `crisis`), `central_committee` (any) |
 | issue directives | `central_committee` (to any gouvernorat), `local_committee` (to its own) |
@@ -242,6 +243,20 @@ Staff (`/api/v1/staff/notifications`):
 - `POST /{id}/cancel` → `Message` (published only). Cancelling an alert pushes `alert_cancelled`.
 - `GET /api/v1/staff/alerts/active` → active alerts in scope (map layer).
 
+### One-user target lookup (`audience: "user"`)
+- `POST /api/v1/staff/users/lookup` body `{"email": "…"}` → `{"user_id", "display_name": "A*** J." | null,
+  "email": "a***@example.tn", "channels": {"push", "sms", "email"}}` (booleans: the account has a push
+  device, a phone, an e-mail). Same roles as informational notifications. The address is sent in the body,
+  not the query string, so it stays out of URLs and proxy logs.
+- Exact, case-insensitive match (surrounding spaces ignored) on the profile e-mail of an **active
+  citizen** account; no partial, prefix or wildcard search and no listing. Accounts without a completed
+  profile have no stored e-mail and are not found (their id can still be pasted).
+- `404 user_not_found` when nothing matches; `409 ambiguous_email` when two profiles hold the address
+  (a stale profile; use the id); `422` for a malformed address.
+- Audited as `user.lookup` (target `account:{id}` when found, `{"result": "user_not_found" |
+  "ambiguous_email"}` otherwise; the searched address is never written). Limited to 30 lookups per staff
+  member per 10 minutes (`429 rate_limited`, `Retry-After`).
+
 Recipients: push → devices targeted by gouvernorat (profile or device position), polygon (device
 position, else profile gouvernorat intersecting it), audience or user; SMS → verified phones of
 registered profiles in the area; e-mail → registered profiles in the area. Channels without a
@@ -315,6 +330,8 @@ messages with the `email` channel.
 | 422 | `invalid_area` | Polygon malformed, outside Tunisia, invalid, or combined with gouvernorats. |
 | 422 | `invalid_gouvernorat` | Unknown gouvernorat code. |
 | 422 | `invalid_user` | `audience: user` with an unknown account. |
+| 404 | `user_not_found` | No active citizen account has this exact e-mail. |
+| 409 | `ambiguous_email` | Several profiles hold this e-mail; target the account by id. |
 | 422 | `invalid_expiry` | Alert expiry in the past or more than 7 days ahead. |
 | 422 | `severity_category_expiry_required` | An alert needs severity, category and expiry. |
 | 422 | `topic_and_audience_required` | An informational message needs a topic and an audience. |

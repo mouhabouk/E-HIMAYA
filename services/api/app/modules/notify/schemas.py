@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, Field, StringConstraints, field_validator
+from pydantic import BaseModel, EmailStr, Field, StringConstraints, field_validator
 
 Kind = Literal["info", "alert"]
 MessageStatus = Literal["draft", "published", "cancelled", "expired"]
@@ -136,3 +136,23 @@ class DeviceIn(BaseModel):
     lat: float | None = Field(default=None, ge=30.0, le=37.6)
     lon: float | None = Field(default=None, ge=7.4, le=11.7)
     location_alerts: bool = True
+
+
+class UserLookupIn(BaseModel):
+    # In the body rather than the query string, so the address stays out of URLs and proxy logs.
+    email: EmailStr = Field(max_length=254)
+
+
+class UserChannels(BaseModel):
+    push: bool
+    sms: bool
+    email: bool
+
+
+class UserLookupOut(BaseModel):
+    """Just enough to confirm the right person before targeting them (no full name, no full address)."""
+
+    user_id: uuid.UUID
+    display_name: str | None
+    email: str
+    channels: UserChannels

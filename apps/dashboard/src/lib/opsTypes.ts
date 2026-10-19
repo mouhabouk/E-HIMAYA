@@ -464,6 +464,14 @@ export interface AudienceEstimate {
   email: number;
 }
 
+/** One citizen account found by its exact e-mail (§7, one-user target): masked, for confirmation only. */
+export interface UserLookup {
+  user_id: string;
+  display_name: string | null;
+  email: string;
+  channels: Record<Channel, boolean>;
+}
+
 // ---------- Safety tips (§8) ----------
 
 export const TIP_HAZARDS = [

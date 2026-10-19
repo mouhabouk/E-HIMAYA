@@ -60,6 +60,7 @@ export function fakeOpsApi(): OpsApi {
     publishMessage: vi.fn(),
     cancelMessage: vi.fn(),
     activeAlerts: vi.fn(() => Promise.resolve([])),
+    lookupUser: vi.fn(),
     tips: vi.fn(() => Promise.resolve([])),
     createTip: vi.fn(),
     updateTip: vi.fn(),

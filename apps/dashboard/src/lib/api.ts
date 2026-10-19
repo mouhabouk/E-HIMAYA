@@ -50,6 +50,8 @@ export const ERROR_CODES = [
   "invalid_area",
   "invalid_gouvernorat",
   "invalid_user",
+  "user_not_found",
+  "ambiguous_email",
   "invalid_expiry",
   "severity_category_expiry_required",
   "topic_and_audience_required",

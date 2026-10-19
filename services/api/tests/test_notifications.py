@@ -354,6 +354,68 @@ async def test_info_notifications(
     assert (await client.get("/api/v1/staff/notifications?status=sent", headers=editor)).status_code == 422
 
 
+async def test_user_lookup_by_email(client: httpx.AsyncClient, staff: Staff, make_token: TokenFactory) -> None:
+    address = f"Amel.{secrets.token_hex(4)}@Example.tn"
+    headers = citizen_headers(make_token, email=address)
+    profile = {
+        "first_name": "Amel",
+        "last_name": "Jaziri",
+        "cin": f"{secrets.randbelow(100_000_000):08d}",
+        "phone": f"+2162{secrets.randbelow(10_000_000):07d}",
+        "gouvernorat_code": 61,
+        "delegation_id": 6101,
+        "locale": "fr",
+    }
+    assert (await client.put("/api/v1/me/profile", json=profile, headers=headers)).status_code == 200
+    token = await register(client, headers, None)
+    user_id = await user_of(token)
+    lookup = lambda email, h: client.post("/api/v1/staff/users/lookup", json={"email": email}, headers=h)  # noqa: E731
+
+    # Same roles as informational messages: an operations manager cannot resolve e-mails.
+    assert (await lookup(address, staff(["ops_manager"]))).json()["detail"] == "insufficient_role"
+    assert (await lookup(address, citizen_headers(make_token))).status_code == 403
+
+    editor = staff(["content_editor"], gouvernorat=None)
+    r = await lookup(f"  {address.upper()} ", editor)
+    assert r.status_code == 200, r.text
+    assert r.json() == {
+        "user_id": user_id,
+        "display_name": "A*** J.",
+        "email": "A***@example.tn",
+        "channels": {"push": True, "sms": True, "email": True},
+    }
+    # Exact match only: no prefix, partial or wildcard search.
+    for partial in (address[:-1], "%" + address[1:], address.split("@")[0] + "@example"):
+        r = await lookup(partial, editor)
+        assert r.status_code in (404, 422), partial
+    assert (await lookup("amel@", editor)).status_code == 422
+    assert (await lookup(f"nobody.{secrets.token_hex(4)}@example.tn", editor)).json()["detail"] == "user_not_found"
+
+    # The found account is directly usable as a one-user target.
+    r = await client.post(
+        "/api/v1/staff/notifications", json=info_body(audience="user", user_id=user_id), headers=editor
+    )
+    assert r.status_code == 201, r.text
+
+    # Every lookup is audited, without the searched address.
+    async with get_sessionmaker()() as s:
+        rows = (
+            await s.execute(
+                text("SELECT target, details FROM audit.log WHERE action = 'user.lookup' ORDER BY seq DESC LIMIT 6")
+            )
+        ).all()
+    assert (f"account:{user_id}", {"result": "found"}) in [(t, d) for t, d in rows]
+    assert (None, {"result": "user_not_found"}) in [(t, d) for t, d in rows]
+    assert all(address.lower() not in str(d).lower() for _, d in rows)
+
+    # Rate limited per staff member.
+    regional = staff(["local_committee"], gouvernorat=61)
+    for _ in range(30):
+        assert (await lookup(address, regional)).status_code == 200
+    r = await lookup(address, regional)
+    assert r.status_code == 429 and r.json()["detail"] == "rate_limited"
+
+
 async def test_sms_and_email_channels(client: httpx.AsyncClient, staff: Staff, make_token: TokenFactory) -> None:
     sms = FakeChannel()
     set_providers(Providers(push=FakeChannel(), sms=sms, email=FakeChannel(configured=False)))
