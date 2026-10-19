@@ -22,6 +22,7 @@ jobs:
     env:
       DATABASE_URL: postgresql+asyncpg://ehimaya:ehimaya-ci@localhost:5432/ehimaya
       ANON_PSEUDONYM_SECRET: ci-only-secret-ci-only-secret-ci-only-01
+      FIELD_ENCRYPTION_KEY: Y2ktb25seS1rZXktY2ktb25seS1rZXktY2ktb25seTE=
     steps:
       - uses: actions/checkout@v4
 
