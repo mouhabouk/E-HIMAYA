@@ -7,6 +7,7 @@
 | المكون | الصورة | الرخصة |
 |---|---|---|
 | PostgreSQL + PostGIS | `postgres:17-bookworm` + `postgresql-17-postgis-3` + `postgresql-17-pgvector` (PGDG) | PostgreSQL / GPL-2.0 |
+| gosu (داخل صورة قاعدة البيانات) | 1.19، يعاد بناؤه بـ `golang:1.26-bookworm` لسد CVE-2025-68121 | Apache-2.0 |
 | Valkey | `valkey/valkey:8.1-alpine` | BSD-3 |
 | NATS | `nats:2.10-alpine` | Apache-2.0 |
 | SeaweedFS (S3) | `chrislusf/seaweedfs:3.97` | Apache-2.0 |
