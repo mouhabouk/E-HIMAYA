@@ -42,7 +42,7 @@ function MissingList({ missing }: { missing: readonly string[] }) {
   );
 }
 
-function CertificateItem({ cert }: { cert: Certificate }) {
+function CertificateItem({ cert, onRegenerate }: { cert: Certificate; onRegenerate: (() => void) | null }) {
   const { t } = useTranslation();
   const { org, can } = useOrg();
   const { api } = useServices();
@@ -143,7 +143,19 @@ function CertificateItem({ cert }: { cert: Certificate }) {
       </div>
       {isDraft && <BlockedNote action="submitCertificate" />}
       {pdf.isError && <ErrorBox error={pdf.error} />}
-      {missing ? <MissingList missing={missing} /> : submit.isError && <ErrorBox error={submit.error} />}
+      {missing ? (
+        <MissingList missing={missing} />
+      ) : (
+        submit.isError && (
+          <ErrorBox error={submit.error}>
+            {isApiError(submit.error) && submit.error.code === "certificate_outdated" && onRegenerate && (
+              <button type="button" className="btn btn--primary" onClick={onRegenerate}>
+                {t("certificate.regenerate")}
+              </button>
+            )}
+          </ErrorBox>
+        )
+      )}
     </li>
   );
 }
@@ -187,7 +199,7 @@ export function CertificatesTab() {
       ) : (
         <ul className="certs">
           {query.data.map((c) => (
-            <CertificateItem key={c.id} cert={c} />
+            <CertificateItem key={c.id} cert={c} onRegenerate={can("generateCertificate") ? () => generate.mutate() : null} />
           ))}
         </ul>
       )}

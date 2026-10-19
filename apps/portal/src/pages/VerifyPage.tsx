@@ -75,6 +75,27 @@ function PdfCompare({ expected }: { expected: string }) {
   );
 }
 
+/** Public signing key (contract §7), so anyone can check the Ed25519 signature independently. */
+function SigningKey() {
+  const { t } = useTranslation();
+  const { api } = useServices();
+  const key = useQuery({ queryKey: queryKeys.certificateKey, queryFn: ({ signal }) => api.certificateKey(signal), staleTime: Infinity, retry: false });
+  if (!key.data) return null;
+  return (
+    <details className="card">
+      <summary>{t("verify.keyTitle")}</summary>
+      {key.data.public_key ? (
+        <>
+          <p>{t("verify.keyBody", { algorithm: key.data.algorithm, message: key.data.signed_message })}</p>
+          <p className="hash">{key.data.public_key}</p>
+        </>
+      ) : (
+        <p className="muted">{t("verify.keyNone")}</p>
+      )}
+    </details>
+  );
+}
+
 function CertificateResult({ cert }: { cert: PublicCertificate }) {
   const { t } = useTranslation();
   const fmt = useFormat();
@@ -136,6 +157,7 @@ function CertificateResult({ cert }: { cert: PublicCertificate }) {
         </dl>
       </section>
       {cert.pdf_sha256 ? <PdfCompare expected={cert.pdf_sha256} /> : null}
+      <SigningKey />
     </>
   );
 }

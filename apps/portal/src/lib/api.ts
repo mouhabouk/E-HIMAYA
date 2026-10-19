@@ -43,6 +43,9 @@ export const ERROR_CODES = [
   "document_in_use",
   "document_too_large",
   "incomplete",
+  "certificate_outdated",
+  "signing_key_missing",
+  "invalid_note",
   "invalid_transition",
   "not_found",
   // generic, derived from the HTTP status

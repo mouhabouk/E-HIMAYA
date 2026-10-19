@@ -136,6 +136,8 @@ function CharterDialog({ onAccepted, onClose }: { onAccepted: () => void; onClos
           className="form"
           onSubmit={(e) => {
             e.preventDefault();
+            // The dialog is portalled but React still bubbles submit through the component tree.
+            e.stopPropagation();
             if (checked && version) accept.mutate(version);
           }}
         >
@@ -247,6 +249,7 @@ export function NewReportPage() {
   const consentPending = send.isError && isApiError(send.error) && send.error.code === "consent_required";
 
   return (
+    <>
     <form className="stack" onSubmit={submit} noValidate>
       <section className="card" aria-labelledby="new-report-title">
         <p>
@@ -313,6 +316,7 @@ export function NewReportPage() {
           </button>
         </div>
       </div>
+    </form>
       {askCharter && (
         <CharterDialog
           onClose={() => setAskCharter(false)}
@@ -322,6 +326,6 @@ export function NewReportPage() {
           }}
         />
       )}
-    </form>
+    </>
   );
 }

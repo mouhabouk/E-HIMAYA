@@ -103,6 +103,12 @@ export function portalApi(api: ApiClient) {
     publicCertificate: (code: string, signal?: AbortSignal) =>
       api.request<PublicCertificate>(`/api/v1/public/certificates/${enc(code)}`, { signal, anonymous: true }),
 
+    certificateKey: (signal?: AbortSignal) =>
+      api.request<{ algorithm: string; public_key: string | null; signed_message: string }>(
+        "/api/v1/public/certificate-key",
+        { signal, anonymous: true },
+      ),
+
     // §8 reports on behalf of the institution, phase 2 §2 consent
     orgReports: (id: string, cursor?: string | null, signal?: AbortSignal) =>
       api.request<Page<OrgReport>>(`${orgPath(id)}/reports`, { query: { limit: 50, cursor }, signal }),
@@ -134,5 +140,6 @@ export const queryKeys = {
   reports: (id: string) => ["org", id, "reports"] as const,
   invitation: (token: string) => ["invitation", token] as const,
   publicCertificate: (code: string) => ["public-certificate", code] as const,
+  certificateKey: ["certificate-key"] as const,
   gouvernorats: ["gouvernorats"] as const,
 };

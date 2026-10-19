@@ -35,18 +35,17 @@ export function fakeAuth(claims: Record<string, unknown> | null): AuthService {
  * Renders a screen with the real API client over a mocked fetch (routes "METHOD /path" → reply),
  * a fake auth service, and a memory router.
  */
-export function renderApp(
-  ui: ReactNode,
-  options: {
-    routes?: Record<string, Handler | Handler[]>;
-    auth?: AuthService;
-    lang?: Language;
-    path?: string;
-    route?: string;
-    /** Extra nested routes rendered under `route` (for workspace tabs). */
-    children?: ReactNode;
-  } = {},
-) {
+export interface RenderOptions {
+  routes?: Record<string, Handler | Handler[]>;
+  auth?: AuthService;
+  lang?: Language;
+  path?: string;
+  route?: string;
+  /** Extra nested routes rendered under `route` (for workspace tabs). */
+  children?: ReactNode;
+}
+
+export function renderApp(ui: ReactNode, options: RenderOptions = {}) {
   const i18n = createI18n(options.lang ?? "ar");
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
   const fetcher = mockFetch({ "GET /api/v1/geo/gouvernorats": { body: GOUVERNORATS }, ...options.routes });
