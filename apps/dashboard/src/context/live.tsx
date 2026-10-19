@@ -38,7 +38,8 @@ export function LiveProvider({ children }: { children: ReactNode }) {
       onStateChange: setState,
       onEvent: (event) => {
         applyLiveEvent(queryClient, event);
-        if (event.type !== "media.stored") {
+        // KPIs count reports (incl. high_priority / analysis_pending): incident events do not change them.
+        if (event.type !== "media.stored" && event.type !== "incident.updated") {
           if (kpiTimer) clearTimeout(kpiTimer);
           kpiTimer = setTimeout(() => void queryClient.invalidateQueries({ queryKey: ["kpis"] }), KPI_DEBOUNCE_MS);
         }

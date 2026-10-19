@@ -1,8 +1,8 @@
-import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { ApiError } from "../lib/api";
 import type { StaffReportDetail } from "../lib/types";
-import { makeDetail } from "../test/fixtures";
+import { makeAnalysis, makeDetail } from "../test/fixtures";
 import { fakeApi, fakeAuth, OPERATOR_CLAIMS, renderApp } from "../test/render";
 import { ReportDetailPage } from "./ReportDetailPage";
 
@@ -62,6 +62,27 @@ describe("ReportDetailPage", () => {
     await waitFor(() => expect(screen.queryByText("équipe envoyée", { selector: ".timeline__note" })).not.toBeInTheDocument());
     // The truth is refetched after a conflict.
     await waitFor(() => expect(vi.mocked(api.report).mock.calls.length).toBeGreaterThan(1));
+  });
+
+  it("shows the Arabic translation and the AI analysis panel", async () => {
+    const detail = makeDetail({
+      id: "r1",
+      text: "Feu dans un immeuble",
+      lang: "fr",
+      text_ar: "حريق في عمارة",
+      priority_score: 79,
+      analysis: makeAnalysis(),
+    });
+    const api = fakeApi({ report: vi.fn(() => Promise.resolve(detail)) });
+    renderApp(<ReportDetailPage />, { api, path: "/reports/r1", route, lang: "fr" });
+
+    expect(await screen.findByText("Feu dans un immeuble")).toBeInTheDocument();
+    const textSection = screen.getByRole("region", { name: "Texte du signalement" });
+    expect(within(textSection).getByText("Traduction automatique en arabe")).toBeInTheDocument();
+    expect(within(textSection).getByText("حريق في عمارة")).toHaveAttribute("lang", "ar");
+    expect(screen.getByRole("heading", { name: "Analyse automatique (IA)" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Regroupement en incident" })).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: "Nouvel incident" })).toBeInTheDocument();
   });
 
   it("renders a translated not-found error", async () => {

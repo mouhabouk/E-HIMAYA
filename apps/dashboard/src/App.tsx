@@ -10,8 +10,11 @@ import { FiltersProvider } from "./context/filters";
 import { LiveProvider } from "./context/live";
 import { ServicesProvider, type Services } from "./context/services";
 import { isApiError } from "./lib/api";
+import { AiSettingsPage } from "./pages/AiSettingsPage";
 import { CallbackPage } from "./pages/CallbackPage";
 import { HomePage } from "./pages/HomePage";
+import { IncidentDetailPage } from "./pages/IncidentDetailPage";
+import { IncidentsPage } from "./pages/IncidentsPage";
 import { MapPage } from "./pages/MapPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { ReportDetailPage } from "./pages/ReportDetailPage";
@@ -43,7 +46,10 @@ export function AppRoutes() {
         <Route index element={<HomePage />} />
         <Route path="reports" element={<ReportsPage />} />
         <Route path="reports/:id" element={<ReportDetailPage />} />
+        <Route path="incidents" element={<IncidentsPage />} />
+        <Route path="incidents/:id" element={<IncidentDetailPage />} />
         <Route path="map" element={<MapPage />} />
+        <Route path="settings/ai" element={<AiSettingsPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>

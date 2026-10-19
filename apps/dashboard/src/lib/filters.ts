@@ -79,7 +79,12 @@ export function matchesFilters(
   if (filters.gouvernorat !== null && report.gouvernorat_code !== filters.gouvernorat) return false;
   if (Date.parse(report.received_at) < Date.parse(periodSince(filters.period, options.now))) return false;
   const q = filters.q.trim().toLowerCase();
-  if (q && !report.tracking_code.toLowerCase().includes(q) && !(report.text ?? "").toLowerCase().includes(q)) {
+  if (
+    q &&
+    !report.tracking_code.toLowerCase().includes(q) &&
+    !(report.text ?? "").toLowerCase().includes(q) &&
+    !(report.text_ar ?? "").toLowerCase().includes(q)
+  ) {
     return false;
   }
   if (options.bbox && !inBBox(report.location.lon, report.location.lat, options.bbox)) return false;
