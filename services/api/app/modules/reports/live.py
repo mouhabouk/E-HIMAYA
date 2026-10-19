@@ -60,8 +60,10 @@ class LiveHub:
         self._clients.discard(client)
 
     async def on_event(self, subject: str, payload: dict[str, Any]) -> None:
-        if subject in ("report.created", "report.status_changed"):
+        if subject in ("report.created", "report.status_changed", "report.enriched"):
             gouvernorat = payload.get("report", {}).get("gouvernorat_code")
+        elif subject == "incident.updated":
+            gouvernorat = payload.get("incident", {}).get("gouvernorat_code")
         elif subject == "media.stored":
             gouvernorat = payload.get("gouvernorat_code")
         else:

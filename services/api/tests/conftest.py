@@ -169,8 +169,10 @@ class FakeStore:
         for key in keys:
             self.objects.pop(key, None)
 
-    def presign_get(self, key: str, *, expires_s: int = 600, content_type: str | None = None) -> str:
-        return f"http://s3.test/{key}?sig=1"
+    def presign_get(
+        self, key: str, *, expires_s: int = 600, content_type: str | None = None, internal: bool = False
+    ) -> str:
+        return f"http://{'s3-internal' if internal else 's3'}.test/{key}?sig=1"
 
 
 @pytest.fixture(autouse=True)
@@ -188,3 +190,15 @@ def _isolated_infra() -> Iterator[FakeStore]:
 @pytest.fixture
 def fake_store(_isolated_infra: FakeStore) -> FakeStore:
     return _isolated_infra
+
+
+@pytest.fixture
+def fake_ai() -> Iterator[Any]:
+    """An in-process stand-in for the AI inference service (tests/aihelpers.py)."""
+    from app.modules.ai.client import set_ai_client
+    from tests.aihelpers import FakeAi
+
+    ai = FakeAi()
+    set_ai_client(ai)
+    yield ai
+    set_ai_client(None)

@@ -1,0 +1,52 @@
+[project]
+name = "ehimaya-ai"
+version = "0.1.0"
+description = "ء-حماية / e-Himaya — local AI inference service (speech-to-text, translation, embeddings, extraction)"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi==0.146.0",
+  "uvicorn[standard]==0.54.0",
+  "pydantic-settings==2.16.0",
+  "httpx==0.28.1",
+  "structlog==26.1.0",
+  "faster-whisper==1.2.1",
+  "ctranslate2==4.8.3",
+  "sentencepiece==0.2.2",
+  "tokenizers==0.23.3",
+  "numpy==2.5.4",
+]
+
+[dependency-groups]
+dev = [
+  "pytest==9.1.1",
+  "pytest-asyncio==1.4.0",
+  "ruff==0.17.1",
+  "mypy==2.4.0",
+]
+
+[tool.uv]
+default-groups = ["dev"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "ASYNC", "RUF"]
+ignore = ["S101", "RUF001", "RUF002", "RUF003"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S105", "S106"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+markers = ["models: needs the real models in AI_MODELS_DIR and a running Ollama (CI job 'AI · real models')"]
+addopts = "-m 'not models'"
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]
+ignore_missing_imports = true
+exclude = ["tests/"]

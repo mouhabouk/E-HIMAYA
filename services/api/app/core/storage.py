@@ -18,7 +18,9 @@ class ObjectStore(Protocol):
 
     async def delete(self, *keys: str) -> None: ...
 
-    def presign_get(self, key: str, *, expires_s: int = 600, content_type: str | None = None) -> str: ...
+    def presign_get(
+        self, key: str, *, expires_s: int = 600, content_type: str | None = None, internal: bool = False
+    ) -> str: ...
 
 
 class S3ObjectStore:
@@ -57,11 +59,15 @@ class S3ObjectStore:
         if keys:
             await to_thread.run_sync(self._delete_sync, keys)
 
-    def presign_get(self, key: str, *, expires_s: int = 600, content_type: str | None = None) -> str:
+    def presign_get(
+        self, key: str, *, expires_s: int = 600, content_type: str | None = None, internal: bool = False
+    ) -> str:
+        """Short-lived read link: public address for browsers, internal address for the AI service."""
         params: dict[str, str] = {"Bucket": self._bucket, "Key": key}
         if content_type:
             params["ResponseContentType"] = content_type
-        url: str = self._presigner.generate_presigned_url("get_object", Params=params, ExpiresIn=expires_s)
+        signer = self._client if internal else self._presigner
+        url: str = signer.generate_presigned_url("get_object", Params=params, ExpiresIn=expires_s)
         return url
 
 
