@@ -928,4 +928,456 @@ class AppLocalizationsFr extends AppLocalizations {
   String orgReportBy(String name) {
     return 'Par $name';
   }
+
+  @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get activeAlertsTitle => 'Alertes en cours';
+
+  @override
+  String get activeAlertsNone => 'Aucune alerte en cours pour votre zone.';
+
+  @override
+  String get inboxTitle => 'Messages';
+
+  @override
+  String get inboxEmpty => 'Aucun message pour l’instant.';
+
+  @override
+  String get inboxNoIdentity =>
+      'Choisissez comment utiliser l’application pour recevoir des messages.';
+
+  @override
+  String get inboxLoadMore => 'Afficher les messages plus anciens';
+
+  @override
+  String get inboxAlertActive => 'Alerte en cours';
+
+  @override
+  String get inboxAlertEnded => 'Alerte terminée';
+
+  @override
+  String get alertTitle => 'Alerte';
+
+  @override
+  String get alertOpen => 'Ouvrir l’alerte';
+
+  @override
+  String alertUntil(String time) {
+    return 'Jusqu’au $time';
+  }
+
+  @override
+  String alertPublishedAt(String time) {
+    return 'Émise le $time';
+  }
+
+  @override
+  String get alertNotActive => 'Cette alerte est terminée ou a été levée.';
+
+  @override
+  String get alertAreaNational => 'Tout le pays';
+
+  @override
+  String get alertAreaZone => 'Zone délimitée sur la carte';
+
+  @override
+  String alertAreaGouvernorats(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count gouvernorats',
+      one: '1 gouvernorat',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get severityHigh => 'Alerte rouge';
+
+  @override
+  String get severityMedium => 'Alerte orange';
+
+  @override
+  String get severityLow => 'Alerte jaune';
+
+  @override
+  String get hazardHeavyRain => 'Fortes pluies';
+
+  @override
+  String get hazardFlood => 'Inondation';
+
+  @override
+  String get hazardStorm => 'Tempête';
+
+  @override
+  String get hazardWind => 'Vent violent';
+
+  @override
+  String get hazardHeatWave => 'Canicule';
+
+  @override
+  String get hazardColdWave => 'Vague de froid';
+
+  @override
+  String get hazardSea => 'Mer agitée';
+
+  @override
+  String get hazardForestFire => 'Feu de forêt';
+
+  @override
+  String get hazardChemical => 'Risque chimique';
+
+  @override
+  String get hazardOther => 'Autre risque';
+
+  @override
+  String get topicActivity => 'Activité';
+
+  @override
+  String get topicAwareness => 'Sensibilisation';
+
+  @override
+  String get topicTraining => 'Formation';
+
+  @override
+  String get topicWorldDay => 'Journée mondiale';
+
+  @override
+  String get topicOther => 'Information';
+
+  @override
+  String get settingsAlerts => 'Alertes et notifications';
+
+  @override
+  String get settingsLocationAlerts => 'Alertes là où je suis';
+
+  @override
+  String get settingsLocationAlertsHelp =>
+      'Utilise la position approximative du téléphone (environ 1 km) pour vous envoyer les alertes de la zone où vous êtes.';
+
+  @override
+  String get channelAlerts => 'Alertes urgentes';
+
+  @override
+  String get channelAlertsDesc =>
+      'Alertes de la Protection civile et appels aux volontaires.';
+
+  @override
+  String get channelGeneral => 'Informations';
+
+  @override
+  String get channelGeneralDesc =>
+      'Suivi de vos signalements et messages d’information.';
+
+  @override
+  String get tipsTitle => 'Conseils de sécurité';
+
+  @override
+  String get tipsIntro =>
+      'Les bons gestes et ce qu’il faut éviter. Disponibles sans connexion.';
+
+  @override
+  String get tipsDo => 'À faire';
+
+  @override
+  String get tipsDont => 'À éviter';
+
+  @override
+  String get tipEarthquake => 'Séisme';
+
+  @override
+  String get homeTipsDesc =>
+      'Les bons gestes en cas d’urgence, même hors ligne.';
+
+  @override
+  String get volunteerTitle => 'Volontariat';
+
+  @override
+  String get homeVolunteerDesc =>
+      'Rejoignez les volontaires et répondez aux appels près de chez vous.';
+
+  @override
+  String get volunteerIntro =>
+      'Les volontaires aident les équipes de la Protection civile lors des urgences, selon leurs compétences. Votre candidature est examinée avant tout appel.';
+
+  @override
+  String get volunteerApply => 'Devenir volontaire';
+
+  @override
+  String get volunteerApplication => 'Ma candidature';
+
+  @override
+  String get volunteerStatusPending => 'En cours d’examen';
+
+  @override
+  String get volunteerStatusApproved => 'Acceptée';
+
+  @override
+  String get volunteerStatusRejected => 'Refusée';
+
+  @override
+  String get volunteerStatusSuspended => 'Suspendue';
+
+  @override
+  String get volunteerStatusWithdrawn => 'Retirée';
+
+  @override
+  String get volunteerPendingHelp =>
+      'Votre candidature sera examinée par la Protection civile. Vous recevrez la décision par e-mail.';
+
+  @override
+  String get volunteerApprovedHelp =>
+      'Vous pouvez vous déclarer disponible et recevoir des appels près de chez vous.';
+
+  @override
+  String get volunteerRejectedHelp =>
+      'Votre candidature n’a pas été acceptée. Vous pouvez la corriger et la soumettre à nouveau.';
+
+  @override
+  String get volunteerSuspendedHelp =>
+      'Votre volontariat est suspendu : vous ne recevrez pas d’appels.';
+
+  @override
+  String get volunteerWithdrawnHelp =>
+      'Vous vous êtes retiré. Vous pouvez postuler à nouveau à tout moment.';
+
+  @override
+  String volunteerReason(String reason) {
+    return 'Motif : $reason';
+  }
+
+  @override
+  String volunteerPeriodFrom(String from) {
+    return 'À partir du $from';
+  }
+
+  @override
+  String volunteerPeriodRange(String from, String to) {
+    return 'Du $from au $to';
+  }
+
+  @override
+  String get availabilityContinuous => 'Continue';
+
+  @override
+  String get availabilityIntermittent => 'Intermittente';
+
+  @override
+  String get volunteerEdit => 'Modifier ma candidature';
+
+  @override
+  String get volunteerResubmit => 'Postuler à nouveau';
+
+  @override
+  String get volunteerWithdraw => 'Me retirer';
+
+  @override
+  String get volunteerWithdrawConfirm =>
+      'Vous ne recevrez plus d’appels et votre position ne sera plus partagée.';
+
+  @override
+  String get volunteerReady => 'Disponible pour intervenir';
+
+  @override
+  String get volunteerReadyHelp =>
+      'Tant que vous êtes disponible, la Protection civile voit votre position pour vous appeler.';
+
+  @override
+  String volunteerReadyUntil(String time) {
+    return 'Disponible jusqu’au $time';
+  }
+
+  @override
+  String get volunteerReadyFor => 'Pendant';
+
+  @override
+  String hoursShort(int hours) {
+    return '$hours h';
+  }
+
+  @override
+  String get volunteerLocationPrivacy =>
+      'Votre position n’est partagée que pendant votre disponibilité, est effacée à sa fin et n’est jamais archivée.';
+
+  @override
+  String get volunteerNoFix =>
+      'Votre position n’a pas pu être déterminée. Réessayez à l’extérieur.';
+
+  @override
+  String get volunteerSkills => 'Compétences';
+
+  @override
+  String get volunteerSkillsRequired => 'Choisissez au moins une compétence.';
+
+  @override
+  String get volunteerOtherSkill => 'Autre compétence';
+
+  @override
+  String get volunteerAvailability => 'Disponibilité';
+
+  @override
+  String get volunteerPeriod => 'Période de volontariat';
+
+  @override
+  String get volunteerFrom => 'Début';
+
+  @override
+  String get volunteerTo => 'Fin';
+
+  @override
+  String get volunteerNoEnd => 'Sans date de fin';
+
+  @override
+  String get volunteerNotes => 'Remarques (facultatif)';
+
+  @override
+  String get volunteerProfileNote =>
+      'Vos nom, téléphone et gouvernorat sont repris de votre profil.';
+
+  @override
+  String get volunteerSubmit => 'Envoyer ma candidature';
+
+  @override
+  String get volunteerSubmitted => 'Candidature envoyée.';
+
+  @override
+  String get fieldRequired => 'Obligatoire';
+
+  @override
+  String get skillFirstAid => 'Secourisme';
+
+  @override
+  String get skillDiving => 'Plongée';
+
+  @override
+  String get skillHeavyVehicles => 'Véhicules lourds';
+
+  @override
+  String get skillFirefighting => 'Lutte contre l’incendie';
+
+  @override
+  String get skillSearchRescue => 'Recherche et sauvetage';
+
+  @override
+  String get skillLogistics => 'Logistique';
+
+  @override
+  String get skillMedical => 'Médical';
+
+  @override
+  String get skillOther => 'Autre';
+
+  @override
+  String get calloutsTitle => 'Appels d’intervention';
+
+  @override
+  String get calloutsDesc => 'Demandes d’aide près de chez vous.';
+
+  @override
+  String get calloutsEmpty => 'Aucun appel pour le moment.';
+
+  @override
+  String get calloutAccept => 'J’y vais';
+
+  @override
+  String get calloutDecline => 'Indisponible';
+
+  @override
+  String get calloutArrived => 'Je suis sur place';
+
+  @override
+  String get calloutEtaLabel => 'Arrivée dans (minutes)';
+
+  @override
+  String calloutEta(int minutes) {
+    return 'Arrivée dans $minutes min';
+  }
+
+  @override
+  String calloutSkill(String skill) {
+    return 'Compétence : $skill';
+  }
+
+  @override
+  String calloutDistance(String distance) {
+    return 'À $distance';
+  }
+
+  @override
+  String get calloutAnswerSent => 'En attente de réponse';
+
+  @override
+  String get calloutAnswerAccepted => 'En route';
+
+  @override
+  String get calloutAnswerDeclined => 'Décliné';
+
+  @override
+  String get calloutAnswerExpired => 'Expiré';
+
+  @override
+  String get calloutAnswerArrived => 'Sur place';
+
+  @override
+  String distanceMeters(int meters) {
+    return '$meters m';
+  }
+
+  @override
+  String distanceKm(String km) {
+    return '$km km';
+  }
+
+  @override
+  String get errorRegistrationRequired =>
+      'Un compte est nécessaire pour devenir volontaire.';
+
+  @override
+  String get errorNotVolunteer => 'Vous n’avez pas postulé comme volontaire.';
+
+  @override
+  String get errorProfileIncomplete =>
+      'Complétez d’abord votre profil (téléphone et gouvernorat).';
+
+  @override
+  String get errorInvalidPeriod =>
+      'La période est invalide (fin avant le début ou au-delà de deux ans).';
+
+  @override
+  String get errorVolunteerNotApproved =>
+      'Votre candidature de volontaire n’est pas acceptée.';
+
+  @override
+  String get errorOutsidePeriod =>
+      'Aujourd’hui est hors de votre période de volontariat.';
+
+  @override
+  String get errorNotReady => 'Vous n’êtes plus disponible.';
+
+  @override
+  String get errorLocationRequired =>
+      'Votre position est nécessaire pour être disponible.';
+
+  @override
+  String get errorCalloutClosed => 'Cet appel est clos.';
+
+  @override
+  String get errorEtaRequired => 'Indiquez une durée entre 1 et 600 minutes.';
+
+  @override
+  String get errorInvalidTransition => 'Cette action n’est plus possible.';
+
+  @override
+  String get errorVersionConflict =>
+      'Vos données ont changé entre-temps. Rechargez et réessayez.';
+
+  @override
+  String get locationServiceDisabled =>
+      'La localisation est désactivée sur ce téléphone.';
+
+  @override
+  String get volunteerLocationDenied =>
+      'Autorisez l’accès à la localisation pour vous déclarer disponible.';
 }
