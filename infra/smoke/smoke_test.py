@@ -1,7 +1,8 @@
 """Smoke test of a running stack (docker compose): anonymous report + resumable upload + integrity check.
 
 Standard library only, so it runs anywhere:  python3 infra/smoke/smoke_test.py
-Environment: API_URL (default http://localhost:8000), TUS_URL (default http://localhost:1080/api/v1/uploads/).
+Environment: API_URL (default http://localhost:8000), TUS_URL (default http://localhost:1080/api/v1/uploads/),
+NOTIFY_SIM_URL (default http://localhost:8090; empty to skip, e.g. when real FCM/SMS providers are configured).
 """
 
 import base64
@@ -19,6 +20,7 @@ from urllib.parse import urljoin
 
 API = os.environ.get("API_URL", "http://localhost:8000")
 TUS = os.environ.get("TUS_URL", "http://localhost:1080/api/v1/uploads/")
+NOTIFY_SIM = os.environ.get("NOTIFY_SIM_URL", "http://localhost:8090")
 DEVICE = {"X-Device-Key": base64.urlsafe_b64encode(os.urandom(32)).decode().rstrip("=")}
 
 
@@ -50,8 +52,20 @@ def wait_ready() -> None:
     sys.exit("api never became ready")
 
 
+def check_notify_sim() -> None:
+    # SIMULATION: development channels simulator (docs/api/notify-sim.md). PRODUCTION: run with NOTIFY_SIM_URL="".
+    if not NOTIFY_SIM:
+        return
+    status, _, raw = call("GET", f"{NOTIFY_SIM}/healthz")
+    assert status == 200 and json.loads(raw) == {"status": "ok"}, (status, raw)
+    status, _, raw = call("GET", f"{NOTIFY_SIM}/api/messages?limit=1")
+    assert status == 200 and "last_seq" in json.loads(raw), (status, raw)
+    print("notify-sim ready")
+
+
 def main() -> None:
     wait_ready()
+    check_notify_sim()
     status, _ = api("POST", "/api/v1/consents", {"charter_version": "2026-10", "locale": "ar", "platform": "android"})
     assert status == 201, status
     body = {
