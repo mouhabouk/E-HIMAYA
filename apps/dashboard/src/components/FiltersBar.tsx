@@ -116,6 +116,14 @@ export function FiltersBar({ showGouvernorat }: { showGouvernorat: boolean }) {
           </div>
         )}
         <PeriodSelector value={filters.period} onChange={(period) => setFilters({ period })} />
+        <label className="chip-toggle">
+          <input
+            type="checkbox"
+            checked={Boolean(filters.unverified)}
+            onChange={(e) => setFilters({ unverified: e.target.checked })}
+          />
+          <span>{t("filters.unverified")}</span>
+        </label>
         <button
           type="button"
           className="btn btn--ghost"

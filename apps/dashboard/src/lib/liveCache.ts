@@ -41,6 +41,7 @@ export function normalizeFilters(f: ReportFilters): ReportFilters {
     gouvernorat: f.gouvernorat,
     period: f.period,
     q: f.q.trim(),
+    ...(f.unverified ? { unverified: true } : {}),
   };
 }
 

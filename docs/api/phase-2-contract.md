@@ -40,6 +40,30 @@ anonymous pseudonym is quarantined after confirmed false reports; the app must o
   Any other version → `422 unknown_charter_version`.
 - Report creation answers `428 consent_required` until the caller has accepted the current version.
 
+### Abuse controls (phase 5.5, A1/A2)
+An anonymous identity costs nothing to create (a random device key), so anonymous callers are also limited
+per client address. The address is only used as a keyed hash inside the rate limiter (never stored); behind
+the reverse proxy it is the real client address only when uvicorn trusts the proxy (`FORWARDED_ALLOW_IPS`).
+Registered citizens are limited per account only, so carrier-grade NAT never locks them out.
+
+| What | Per account | Per address (anonymous only) | Over the limit |
+|---|---|---|---|
+| New anonymous identity (first call with an unknown `X-Device-Key`) | — | `ANON_IDENTITY_PER_IP` (60) / `ANON_IDENTITY_WINDOW_S` (3600 s) | `429 rate_limited` |
+| `POST /api/v1/consents` | 10 / hour | `ANON_CONSENT_PER_IP` (60) / hour | `429 rate_limited` |
+| `PUT /api/v1/devices` | 30 / hour | `ANON_DEVICE_PER_IP` (120) / hour | `429 rate_limited` |
+| `POST /api/v1/reports` | 20 / 10 min | `ANON_REPORT_PER_IP` (60) / `ANON_REPORT_WINDOW_S` (600 s) | `429 rate_limited` |
+
+Global anonymous budget: at most `ANON_REPORT_BUDGET` (300) anonymous reports per
+`ANON_REPORT_BUDGET_WINDOW_S` (600 s), all callers together. A report beyond it is **never refused**: it is
+created normally (`201`, same body), flagged for staff with `needs_verification: true`,
+`verification_reason: "anonymous_budget"`, and its priority score is halved until handled. Registered
+citizens' reports never count against nor are affected by this budget. The flag is not shown to the reporter.
+
+When the shared limiter (Valkey) is unreachable, each API instance enforces the same limits in memory
+(`/health/ready` → `checks.rate_limiter: "degraded: in-process fallback"`, metric `ehimaya_ratelimit_degraded`).
+Report creation is then never refused: a report the fallback would have refused is accepted and flagged
+`verification_reason: "limiter_degraded"`.
+
 ## 3. Reports
 
 ### Categories (FR-A-040)
@@ -103,7 +127,7 @@ Nothing else (no category, text or location). `404 not_found`.
 
 Resumable uploads go to the tus server at `POST /api/v1/uploads/` (dev: tusd on
 `http://localhost:1080/api/v1/uploads/`). Send the same identity headers as the API
-(`Authorization` or `X-Device-Key`); tusd forwards them to the API, which authorizes each upload.
+(`Authorization` or `X-Device-Key`); tusd relays them to the API in the hook event, and the API authorizes each upload.
 
 `Upload-Metadata` (tus base64 pairs) must contain:
 - `report_id` — the report's server `id` (create the report first, then upload its media)
@@ -118,10 +142,18 @@ Use the `creation` extension, then `PATCH` in chunks (recommended 1 MB on mobile
 `HEAD` to resume from `Upload-Offset` after a disconnect.
 
 When the upload completes the server recomputes SHA-256 over the stored object. If it differs from
-the declared value the media is marked `rejected` and the object deleted. Media `status`:
-`uploading` → `verifying` → `stored` | `rejected` (rejected media are hidden from lists).
-The original is never modified (derived copies come later). Downloads through tusd are disabled;
-staff read media through short-lived pre-signed links only.
+the declared value the media is marked `rejected` and the object deleted. It then reads the first bytes
+of the file (magic numbers): when they are not the declared `filetype` (e.g. a PNG declared `image/jpeg`)
+or not an allowed media format at all (HTML, SVG, PDF, archives…), the media is `quarantined` — kept as
+evidence, never analysed nor shown inline, `rejection_reason` `type_mismatch` | `disallowed_type` for staff.
+Media `status`: `uploading` → `verifying` → `stored` | `quarantined` | `rejected` (rejected media are hidden
+from lists). `content_type` of a stored media is the verified type. The original is never modified (derived
+copies come later). Downloads through tusd are disabled; staff read media through short-lived pre-signed
+links only, served with the verified type (`Content-Disposition: inline`); quarantined media only as
+`application/octet-stream` with `Content-Disposition: attachment`.
+
+tusd calls the API hooks at `POST /internal/tusd/hooks` with the shared `TUSD_HOOK_SECRET` in the
+`Authorization` header (HTTP Basic, user `tusd`; `Bearer <secret>` is also accepted), never in the URL.
 
 A refused upload creation answers with the HTTP status below and a body `{"detail": "<code>"}`:
 `401 authentication_required`, `403 anon_blocked`, `404 report_not_found`, `400 invalid_sha256`,
@@ -138,12 +170,14 @@ Every result is restricted to the token's geographic scope (`gouvernorat_code` c
 - `GET /api/v1/staff/kpis?since=<ISO, default now-24h>` →
   `{"since", "total", "by_status": {"received": 3, …}, "by_category": {"fire": 2, …},
     "by_gouvernorat": [{"code": 61, "count": 4}], "avg_first_response_s": 312.5 | null}`
-- `GET /api/v1/staff/reports?status=&category=&gouvernorat_code=&since=&until=&bbox=minLon,minLat,maxLon,maxLat&q=&limit=50&cursor=`
+- `GET /api/v1/staff/reports?status=&category=&gouvernorat_code=&since=&until=&bbox=minLon,minLat,maxLon,maxLat&q=&needs_verification=&limit=50&cursor=`
   → `{"items": [StaffReport], "next_cursor": "…" | null}` newest first. `status` and `category`
-  accept comma-separated lists; `q` searches the tracking code and the text.
+  accept comma-separated lists; `q` searches the tracking code and the text; `needs_verification=true|false`
+  keeps only reports flagged (or not flagged) by the abuse controls.
 - `GET /api/v1/staff/reports/{id}` → `StaffReportDetail` = `StaffReport` + `history`
   (`[{"status", "at", "actor", "note"}]`) + `allowed_transitions` (statuses reachable from the current one) +
-  `media[].url` (pre-signed, 10 minutes, only when `status` is `stored`) + `reporter` (`{"kind": "citizen", "first_name", "last_name", "phone"}`
+  `media[].url` (pre-signed, 10 minutes, when `status` is `stored`, or `quarantined` as a download) +
+  `media[].rejection_reason` (`type_mismatch` | `disallowed_type` for quarantined media) + `reporter` (`{"kind": "citizen", "first_name", "last_name", "phone"}`
   or `{"kind": "anonymous"}`). Opening a detail is written to the audit log.
 - `POST /api/v1/staff/reports/{id}/status` body `{"status": "in_progress", "note": "optional"}` →
   `StaffReportDetail`. Invalid transition → `409 invalid_transition`.
@@ -153,7 +187,8 @@ Geo reference: `404 unknown_gouvernorat`. History `actor` is `"<realm>:<subject>
 for the creation entry, or `"system"`.
 
 `StaffReport` = `Report` fields + `reporter_kind` (`citizen` | `anonymous`) + `media_count` +
-`gouvernorat_code` + `delegation_id` (null for now).
+`gouvernorat_code` + `delegation_id` (null for now) + `needs_verification` (bool) +
+`verification_reason` (`anonymous_budget` | `limiter_degraded` | null; see §2 Abuse controls).
 
 ### Live updates — `WS /api/v1/staff/live`
 1. Client connects and sends, within 10 s: `{"type": "auth", "token": "<staff access token>"}`.

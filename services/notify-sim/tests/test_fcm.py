@@ -17,7 +17,7 @@ ALERT: dict[str, Any] = {
         "token": "sim-6f1c2e8a-0d7b-4b0e-9d55-7d6c3b1d2a10",
         "notification": {"title": "إنذار فيضان", "body": "ابتعدوا عن الأودية"},
         "data": {"type": "alert", "id": "42", "severity": "severe"},
-        "android": {"priority": "high", "notification": {"channel_id": "ehimaya_alerts"}},
+        "android": {"priority": "high", "notification": {"channel_id": "ehimaya_alerts_v2"}},
         "apns": {
             "headers": {"apns-priority": "10"},
             "payload": {"aps": {"sound": "alert.caf", "interruption-level": "time-sensitive"}},
@@ -42,7 +42,7 @@ def test_message_accepted_and_stored(client: TestClient, access_token: str) -> N
     assert item["title"] == "إنذار فيضان"
     assert item["body"] == "ابتعدوا عن الأودية"
     assert item["data"] == {"type": "alert", "id": "42", "severity": "severe"}
-    assert item["android_channel"] == "ehimaya_alerts"
+    assert item["android_channel"] == "ehimaya_alerts_v2"
     assert item["priority"] == "high"
     assert item["to"] is None and item["text"] is None and item["segments"] is None
 

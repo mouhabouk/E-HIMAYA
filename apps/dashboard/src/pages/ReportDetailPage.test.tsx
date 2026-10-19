@@ -26,6 +26,34 @@ describe("ReportDetailPage", () => {
     expect(screen.getByRole("radio", { name: "Rejeté" })).toBeInTheDocument();
   });
 
+  it("shows the verification flag and quarantined media as a download only (phase 5.5)", async () => {
+    const [first] = makeDetail({ id: "r1" }).media;
+    if (!first) throw new Error("fixture without media");
+    const detail = makeDetail({
+      id: "r1",
+      needs_verification: true,
+      verification_reason: "limiter_degraded",
+      media: [
+        {
+          ...first,
+          status: "quarantined",
+          rejection_reason: "type_mismatch",
+          url: "http://s3.test/uploads/q?sig=1",
+        },
+      ],
+    });
+    const api = fakeApi({ report: vi.fn(() => Promise.resolve(detail)) });
+    renderApp(<ReportDetailPage />, { api, path: "/reports/r1", route, lang: "fr" });
+
+    expect(await screen.findByText("À vérifier")).toHaveAttribute("title", expect.stringContaining("limiteur"));
+    expect(screen.queryByRole("img", { name: "Image" })).not.toBeInTheDocument();
+    expect(screen.getByText("En quarantaine (type de fichier non conforme)")).toBeInTheDocument();
+    expect(screen.getByText("Le contenu du fichier ne correspond pas au type déclaré")).toBeInTheDocument();
+    const link = screen.getByRole("link", { name: /Télécharger le fichier/ });
+    expect(link).toHaveAttribute("href", "http://s3.test/uploads/q?sig=1");
+    expect(link).toHaveAttribute("download");
+  });
+
   it("is read-only for committee roles", async () => {
     const api = fakeApi({ report: vi.fn(() => Promise.resolve(makeDetail({ id: "r1" }))) });
     const auth = fakeAuth({ ...OPERATOR_CLAIMS, realm_access: { roles: ["local_committee"] } });

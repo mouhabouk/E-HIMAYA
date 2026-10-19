@@ -34,10 +34,24 @@ export function AnalysisChip({ state }: { state: StaffReport["analysis_state"] }
 }
 
 /** Compact markers of a list row: analysis state, lives at risk, incident membership, waiting suggestion. */
+/** Accepted beyond the anonymous budget (or while the limiter was degraded): a human checks it first. */
+export function VerificationBadge({ report }: { report: Pick<StaffReport, "needs_verification" | "verification_reason"> }) {
+  const { t } = useTranslation();
+  if (!report.needs_verification) return null;
+  const reason = report.verification_reason ? t(`verification.reason.${report.verification_reason}`) : undefined;
+  return (
+    <span className="tag tag--verify" title={reason}>
+      {t("verification.badge")}
+      {reason && <span className="visually-hidden">: {reason}</span>}
+    </span>
+  );
+}
+
 export function ReportMarkers({ report }: { report: StaffReport }) {
   const { t } = useTranslation();
   return (
     <span className="markers">
+      <VerificationBadge report={report} />
       <AnalysisChip state={report.analysis_state} />
       {report.lives_at_risk && <span className="tag tag--lives">{t("ai.livesAtRisk")}</span>}
       {report.incident_id && <span className="tag tag--incident">{t("ai.inIncident")}</span>}

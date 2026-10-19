@@ -19,12 +19,20 @@ _CHUNK = 1024 * 1024
 class ObjectStore(Protocol):
     async def sha256(self, key: str) -> tuple[str, int]: ...
 
+    async def head(self, key: str, size: int) -> bytes: ...
+
     async def delete(self, *keys: str) -> None: ...
 
     async def put(self, key: str, data: bytes, content_type: str) -> None: ...
 
     def presign_get(
-        self, key: str, *, expires_s: int = 600, content_type: str | None = None, internal: bool = False
+        self,
+        key: str,
+        *,
+        expires_s: int = 600,
+        content_type: str | None = None,
+        internal: bool = False,
+        disposition: str | None = None,
     ) -> str: ...
 
 
@@ -57,6 +65,15 @@ class S3ObjectStore:
         """Stream the stored object and hash it (evidence integrity, NFR-07)."""
         return await to_thread.run_sync(self._sha256_sync, key)
 
+    def _head_sync(self, key: str, size: int) -> bytes:
+        body = self._client.get_object(Bucket=self._bucket, Key=key, Range=f"bytes=0-{size - 1}")["Body"]
+        data: bytes = body.read(size)
+        return data
+
+    async def head(self, key: str, size: int) -> bytes:
+        """The first ``size`` bytes of an object (magic-number type detection)."""
+        return await to_thread.run_sync(self._head_sync, key, size)
+
     def _delete_sync(self, keys: tuple[str, ...]) -> None:
         self._client.delete_objects(Bucket=self._bucket, Delete={"Objects": [{"Key": k} for k in keys], "Quiet": True})
 
@@ -72,12 +89,22 @@ class S3ObjectStore:
         await to_thread.run_sync(self._put_sync, key, data, content_type)
 
     def presign_get(
-        self, key: str, *, expires_s: int = 600, content_type: str | None = None, internal: bool = False
+        self,
+        key: str,
+        *,
+        expires_s: int = 600,
+        content_type: str | None = None,
+        internal: bool = False,
+        disposition: str | None = None,
     ) -> str:
-        """Short-lived read link: public address for browsers, internal address for the AI service."""
+        """Short-lived read link: public address for browsers, internal address for the AI service.
+
+        ``content_type`` and ``disposition`` override the stored headers of the response."""
         params: dict[str, str] = {"Bucket": self._bucket, "Key": key}
         if content_type:
             params["ResponseContentType"] = content_type
+        if disposition:
+            params["ResponseContentDisposition"] = disposition
         signer = self._client if internal else self._presigner
         url: str = signer.generate_presigned_url("get_object", Params=params, ExpiresIn=expires_s)
         return url

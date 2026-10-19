@@ -3,12 +3,15 @@
 import asyncio
 import re
 import uuid
-from collections.abc import AsyncIterator, Awaitable, Callable
+from collections.abc import AsyncIterator, Awaitable, Callable, Coroutine
 from contextlib import asynccontextmanager
+from typing import Any
 
 import structlog
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.core.config import get_settings
 from app.core.db import dispose_engine, get_sessionmaker
@@ -20,6 +23,7 @@ from app.modules.ai.router import router as ai_router
 from app.modules.audit.router import router as audit_router
 from app.modules.content.router import router as content_router
 from app.modules.geo.router import router as geo_router
+from app.modules.health.router import metrics_router
 from app.modules.health.router import router as health_router
 from app.modules.identity.router import router as identity_router
 from app.modules.notify.delivery import deliver_forever
@@ -29,6 +33,8 @@ from app.modules.ops.command_router import router as command_router
 from app.modules.ops.router import router as ops_router
 from app.modules.orgs.router import router as orgs_router
 from app.modules.orgs.staff_router import router as orgs_staff_router
+from app.modules.privacy.retention import retention_forever
+from app.modules.privacy.router import router as privacy_router
 from app.modules.reports.live import hub
 from app.modules.reports.live import router as live_router
 from app.modules.reports.router import router as reports_router
@@ -40,22 +46,45 @@ from app.modules.volunteers.staff_router import router as volunteers_staff_route
 
 log = structlog.get_logger()
 _REQUEST_ID = re.compile(r"^[A-Za-z0-9-]{8,64}$")
+# JSON API: nothing may be rendered, framed or scripted from its responses (A3).
+_API_CSP = "default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"
+_SECURITY_HEADERS = {
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "no-referrer",
+    "X-Frame-Options": "DENY",
+    "Cross-Origin-Opener-Policy": "same-origin",
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
+}
+# Swagger UI and ReDoc (development only) load their scripts from a CDN: no CSP on those pages.
+_DOCS_PATHS = ("/docs", "/redoc")
+
+WorkerLoop = Callable[[async_sessionmaker[AsyncSession]], Coroutine[Any, Any, None]]
+# Background loops run by the worker role (PROCESS_ROLE=worker|all). Each one must be safe to run in
+# several processes at once (row locks with SKIP LOCKED, leases or advisory locks). Modules add theirs here.
+WORKER_LOOPS: list[tuple[str, WorkerLoop]] = [
+    ("outbox-relay", relay_forever),
+    ("media-verify", verify_forever),
+    ("ai-analysis", analyze_forever),
+    ("notify-delivery", deliver_forever),
+    ("retention", retention_forever),
+]
+# Paths a worker-role process still serves: probes and the metrics scrape, never SOS traffic.
+_WORKER_PATHS = ("/health/", "/metrics")
+
+
+def start_worker_loops(sessionmaker: async_sessionmaker[AsyncSession]) -> list[asyncio.Task[None]]:
+    return [asyncio.create_task(loop(sessionmaker), name=name) for name, loop in WORKER_LOOPS]
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-    log.info("api.start", version=app.version)
+    settings = get_settings()
+    log.info("api.start", version=app.version, process_role=settings.process_role)
     bus = await start_bus()
     bus.add_listener(hub.on_event)
     workers: list[asyncio.Task[None]] = []
-    if get_settings().background_workers:
-        sessionmaker = get_sessionmaker()
-        workers = [
-            asyncio.create_task(relay_forever(sessionmaker), name="outbox-relay"),
-            asyncio.create_task(verify_forever(sessionmaker), name="media-verify"),
-            asyncio.create_task(analyze_forever(sessionmaker), name="ai-analysis"),
-            asyncio.create_task(deliver_forever(sessionmaker), name="notify-delivery"),
-        ]
+    if settings.background_workers and settings.process_role in ("worker", "all"):
+        workers = start_worker_loops(get_sessionmaker())
     try:
         yield
     finally:
@@ -71,13 +100,19 @@ def create_app() -> FastAPI:
     settings = get_settings()
     configure_logging(settings.api_log_level)
 
+    production = settings.app_env == "production"
     app = FastAPI(
         title="ء-حماية / e-Himaya API",
         version="0.1.0",
         lifespan=lifespan,
-        docs_url="/docs",
-        openapi_url="/openapi.json",
+        # Interactive documentation and the schema are development aids; production does not publish them.
+        docs_url=None if production else "/docs",
+        redoc_url=None if production else "/redoc",
+        openapi_url=None if production else "/openapi.json",
     )
+    headers = dict(_SECURITY_HEADERS)
+    if production:
+        headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
 
     if settings.api_cors_origins:
         app.add_middleware(
@@ -94,14 +129,19 @@ def create_app() -> FastAPI:
         request_id = incoming if _REQUEST_ID.match(incoming) else uuid.uuid4().hex
         structlog.contextvars.clear_contextvars()
         structlog.contextvars.bind_contextvars(request_id=request_id, path=request.url.path)
-        response = await call_next(request)
+        if settings.process_role == "worker" and not request.url.path.startswith(_WORKER_PATHS):
+            response: Response = JSONResponse({"detail": "worker_process"}, status_code=503)
+        else:
+            response = await call_next(request)
         response.headers["X-Request-ID"] = request_id
-        response.headers["X-Content-Type-Options"] = "nosniff"
-        response.headers["Referrer-Policy"] = "no-referrer"
+        response.headers.update(headers)
+        if not request.url.path.startswith(_DOCS_PATHS) or production:
+            response.headers["Content-Security-Policy"] = _API_CSP
         return response
 
     routers = (
         health_router,
+        metrics_router,
         geo_router,
         identity_router,
         reports_router,
@@ -119,6 +159,7 @@ def create_app() -> FastAPI:
         live_router,
         uploads_router,
         audit_router,
+        privacy_router,
     )
     for router in routers:
         app.include_router(router)

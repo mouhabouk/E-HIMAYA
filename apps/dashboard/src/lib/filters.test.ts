@@ -28,6 +28,11 @@ describe("filters", () => {
     });
   });
 
+  it("asks the server for flagged reports only when the filter is on", () => {
+    expect(filtersToQuery({ ...DEFAULT_FILTERS, unverified: true }, { now: NOW }).needs_verification).toBe(true);
+    expect(filtersToQuery(DEFAULT_FILTERS, { now: NOW }).needs_verification).toBeUndefined();
+  });
+
   it("matches live reports like the server would", () => {
     const r = makeReport({ received_at: "2026-10-19T11:00:00Z" });
     expect(matchesFilters(r, DEFAULT_FILTERS, { now: NOW })).toBe(true);
@@ -39,6 +44,9 @@ describe("filters", () => {
     expect(matchesFilters(r, { ...DEFAULT_FILTERS, q: "zzz" }, { now: NOW })).toBe(false);
     expect(matchesFilters(r, DEFAULT_FILTERS, { now: NOW, bbox: [10, 34, 11, 35] })).toBe(true);
     expect(matchesFilters(r, DEFAULT_FILTERS, { now: NOW, bbox: [8, 36, 9, 37] })).toBe(false);
+    expect(matchesFilters(r, { ...DEFAULT_FILTERS, unverified: true }, { now: NOW })).toBe(false);
+    const flagged = makeReport({ received_at: "2026-10-19T11:00:00Z", needs_verification: true });
+    expect(matchesFilters(flagged, { ...DEFAULT_FILTERS, unverified: true }, { now: NOW })).toBe(true);
     const old = makeReport({ received_at: "2026-09-01T00:00:00Z" });
     expect(matchesFilters(old, DEFAULT_FILTERS, { now: NOW })).toBe(false);
   });

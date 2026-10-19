@@ -10,13 +10,15 @@ import uuid
 from dataclasses import dataclass
 from typing import Annotated
 
-from fastapi import Depends, Header, HTTPException, status
+from fastapi import Depends, Header, HTTPException, Request, status
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import get_settings
 from app.core.crypto import pseudonym
 from app.core.db import get_session
+from app.core.ratelimit import client_key, enforce
 from app.core.security import OptionalPrincipal, Principal, Realm, Role
 from app.modules.identity.models import Account, AccountKind, AccountStatus, Consent
 
@@ -66,17 +68,28 @@ async def _upsert_account(session: AsyncSession, kind: AccountKind, *, sub: str 
 
 
 async def resolve_reporter(
-    session: AsyncSession, principal: Principal | None, device_key_header: str | None
+    session: AsyncSession,
+    principal: Principal | None,
+    device_key_header: str | None,
+    client_ref: str | None = None,
 ) -> Reporter:
+    """``client_ref`` (opaque client address) enables the per-address limit on new anonymous identities."""
     if principal is not None:
         if principal.realm is not Realm.PUBLIC:
             raise HTTPException(status.HTTP_403_FORBIDDEN, "reporter_realm_required")
         kind = AccountKind.ORGANIZATION if principal.roles & _ORG_ROLES else AccountKind.CITIZEN
         account = await _upsert_account(session, kind, sub=principal.subject, anon=None)
     elif device_key_header:
-        account = await _upsert_account(
-            session, AccountKind.ANONYMOUS, sub=None, anon=pseudonym(parse_device_key(device_key_header))
-        )
+        anon = pseudonym(parse_device_key(device_key_header))
+        found = await session.scalar(select(Account).where(Account.anon_pseudonym == anon))
+        if found is not None:
+            account = found
+        else:
+            if client_ref is not None:
+                # Each random device key is a new identity: cap how many one address can mint (A1).
+                settings = get_settings()
+                await enforce(f"anon-new:{client_ref}", settings.anon_identity_per_ip, settings.anon_identity_window_s)
+            account = await _upsert_account(session, AccountKind.ANONYMOUS, sub=None, anon=anon)
     else:
         raise HTTPException(
             status.HTTP_401_UNAUTHORIZED, "authentication_required", headers={"WWW-Authenticate": "Bearer"}
@@ -92,11 +105,12 @@ async def resolve_reporter(
 
 
 async def get_reporter(
+    request: Request,
     principal: OptionalPrincipal,
     session: Annotated[AsyncSession, Depends(get_session)],
     x_device_key: Annotated[str | None, Header(max_length=64)] = None,
 ) -> Reporter:
-    return await resolve_reporter(session, principal, x_device_key)
+    return await resolve_reporter(session, principal, x_device_key, client_key(request))
 
 
 CurrentReporter = Annotated[Reporter, Depends(get_reporter)]
@@ -107,3 +121,15 @@ async def has_consented(session: AsyncSession, user_id: uuid.UUID, version: str)
         select(Consent.id).where(Consent.user_id == user_id, Consent.charter_version == version).limit(1)
     )
     return found is not None
+
+
+async def limit_reporter(
+    request: Request, reporter: Reporter, action: str, *, per_account: int, per_ip: int, window_s: int
+) -> None:
+    """Rate limit an action per account and, for anonymous device identities, per client address (A1).
+
+    Anonymous identities are free to mint (a random device key), so only the address bounds them;
+    registered citizens are accountable and only limited per account (CGNAT must not lock them out)."""
+    await enforce(f"{action}:{reporter.user_id}", per_account, window_s)
+    if reporter.is_anonymous:
+        await enforce(f"{action}-ip:{client_key(request)}", per_ip, window_s)

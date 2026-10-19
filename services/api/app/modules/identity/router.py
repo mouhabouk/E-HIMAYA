@@ -1,7 +1,7 @@
 from datetime import UTC, datetime
 from typing import Annotated, Literal
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
@@ -13,8 +13,8 @@ from app.core.db import get_session
 from app.core.security import CurrentPrincipal
 from app.modules.audit import service as audit
 from app.modules.geo.models import Delegation, Gouvernorat
-from app.modules.identity.models import Consent, Profile
-from app.modules.identity.service import CurrentReporter, Reporter
+from app.modules.identity.models import Consent, Profile, phone_index
+from app.modules.identity.service import CurrentReporter, Reporter, limit_reporter
 
 router = APIRouter(prefix="/api/v1", tags=["identity"])
 
@@ -46,6 +46,20 @@ async def me(principal: CurrentPrincipal) -> MeOut:
 # ---------------------------------------------------------------- profile (FR-A-005)
 
 
+BloodGroup = Literal["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]
+
+
+class MedicalInfo(BaseModel):
+    """Optional data shown to responders (stored encrypted, never searchable)."""
+
+    blood_group: BloodGroup | None = None
+    conditions: str | None = Field(default=None, max_length=500)
+    allergies: str | None = Field(default=None, max_length=300)
+    medications: str | None = Field(default=None, max_length=300)
+    emergency_contact_name: str | None = Field(default=None, max_length=100)
+    emergency_contact_phone: str | None = Field(default=None, pattern=r"^\+216\d{8}$")
+
+
 class ProfileIn(BaseModel):
     first_name: str = Field(min_length=1, max_length=100)
     last_name: str = Field(min_length=1, max_length=100)
@@ -55,6 +69,8 @@ class ProfileIn(BaseModel):
     delegation_id: int
     address: str | None = Field(default=None, max_length=300)
     locale: Locale = "ar"
+    # Left out: unchanged; null: erased.
+    medical: MedicalInfo | None = None
 
 
 class ProfileOut(BaseModel):
@@ -67,6 +83,7 @@ class ProfileOut(BaseModel):
     delegation_id: int | None
     address: str | None
     locale: str
+    medical: MedicalInfo | None = None
 
 
 def _registered(reporter: Reporter) -> Reporter:
@@ -99,6 +116,7 @@ def _profile_out(profile: Profile | None, email: str | None) -> ProfileOut:
         delegation_id=profile.delegation_id,
         address=profile.address,
         locale=profile.locale,
+        medical=MedicalInfo.model_validate(profile.medical) if profile.medical else None,
     )
 
 
@@ -136,6 +154,7 @@ async def put_profile(body: ProfileIn, reporter: CurrentReporter, session: Sessi
     profile.cin_hash = cipher.blind_index(body.cin, context=_CIN_CONTEXT)
     if profile.phone != body.phone:
         profile.phone = body.phone
+        profile.phone_hash = phone_index(body.phone)
         profile.phone_verified_at = None  # SMS verification comes with the SMS gateway
     profile.email = email
     profile.email_verified_at = now if email and claims.get("email_verified") else None
@@ -143,6 +162,9 @@ async def put_profile(body: ProfileIn, reporter: CurrentReporter, session: Sessi
     profile.delegation_id = body.delegation_id
     profile.address = body.address.strip() if body.address else None
     profile.locale = body.locale
+    if "medical" in body.model_fields_set:
+        medical = body.medical.model_dump(exclude_none=True) if body.medical else None
+        profile.medical = medical or None
     profile.updated_at = now
     session.add(profile)
     try:
@@ -178,7 +200,11 @@ async def charter() -> CharterOut:
 
 
 @router.post("/consents", response_model=ConsentOut, status_code=status.HTTP_201_CREATED)
-async def accept_charter(body: ConsentIn, reporter: CurrentReporter, session: Session) -> ConsentOut:
+async def accept_charter(request: Request, body: ConsentIn, reporter: CurrentReporter, session: Session) -> ConsentOut:
+    settings = get_settings()
+    await limit_reporter(
+        request, reporter, "consent", per_account=10, per_ip=settings.anon_consent_per_ip, window_s=3600
+    )
     if body.charter_version != get_settings().charter_version:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "unknown_charter_version")
     existing = await session.scalar(

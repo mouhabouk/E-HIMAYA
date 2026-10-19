@@ -15,6 +15,7 @@ from tests.conftest import (
     accept_charter,
     bearer,
     device_headers,
+    outbox_events,
     report_body,
 )
 
@@ -220,10 +221,10 @@ async def test_creation_queues_an_event(
 ) -> None:
     await accept_charter(client, citizen)
     report_id = (await client.post("/api/v1/reports", json=report_body(), headers=citizen)).json()["id"]
-    payload = await session.scalar(
-        text("SELECT payload FROM events.outbox WHERE subject = 'report.created' AND payload->'report'->>'id' = :id"),
-        {"id": report_id},
-    )
+    [payload] = [e for e in await outbox_events(session, "report.created") if e["report"]["id"] == report_id]
+    # Sealed at rest: the report text never appears in the outbox table.
+    raw = await session.scalar(text("SELECT string_agg(payload::text, '') FROM events.outbox"))
+    assert "دخان كثيف" not in raw and payload["report"]["text"] == "دخان كثيف قرب المخزن"
     assert payload["report"]["reporter_kind"] == "citizen"
     assert payload["report"]["gouvernorat_code"] == 61
 

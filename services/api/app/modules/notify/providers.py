@@ -24,7 +24,11 @@ from app.core.config import get_settings
 
 log = structlog.get_logger()
 
-ANDROID_ALERT_CHANNEL = "ehimaya_alerts"
+# Versioned: Android freezes a channel's sound and importance once created, so a change needs a new id.
+ANDROID_ALERT_CHANNEL = "ehimaya_alerts_v2"
+# Bypasses Do Not Disturb; the app creates it only after the user opts in. Without it Android falls back to the
+# manifest default channel (ANDROID_ALERT_CHANNEL).
+ANDROID_CRITICAL_CHANNEL = "ehimaya_critical_v2"
 ANDROID_DEFAULT_CHANNEL = "ehimaya_default"
 IOS_ALERT_SOUND = "alert.caf"
 
@@ -37,6 +41,8 @@ class Push:
     body: str
     data: dict[str, str] = field(default_factory=dict)
     alert: bool = False
+    # Highest-severity public alert: critical channel on Android.
+    critical: bool = False
 
 
 @dataclass(frozen=True, slots=True)
@@ -118,8 +124,19 @@ class FcmPush:
 
     def message(self, push: Push) -> dict[str, Any]:
         android_notification: dict[str, Any] = {
-            "channel_id": ANDROID_ALERT_CHANNEL if push.alert else ANDROID_DEFAULT_CHANNEL
+            "channel_id": ANDROID_CRITICAL_CHANNEL
+            if push.critical
+            else ANDROID_ALERT_CHANNEL
+            if push.alert
+            else ANDROID_DEFAULT_CHANNEL
         }
+        apns_headers = {"apns-priority": "10"}
+        ref = push.data.get("id") or push.data.get("callout_id") or push.data.get("report_id")
+        if ref:
+            # A repeated push about the same item replaces the shown notification instead of stacking.
+            collapse = f"{push.data.get('type', 'msg')}:{ref}"[:64]
+            android_notification["tag"] = collapse
+            apns_headers["apns-collapse-id"] = collapse
         aps: dict[str, Any] = {"sound": IOS_ALERT_SOUND if push.alert else "default"}
         if push.alert:
             # Shown through Focus modes; "critical" would need an Apple entitlement.
@@ -130,7 +147,7 @@ class FcmPush:
                 "notification": {"title": push.title, "body": push.body},
                 "data": push.data,
                 "android": {"priority": "high", "notification": android_notification},
-                "apns": {"headers": {"apns-priority": "10"}, "payload": {"aps": aps}},
+                "apns": {"headers": apns_headers, "payload": {"aps": aps}},
             }
         }
 

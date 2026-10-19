@@ -307,7 +307,7 @@ async def test_intervention_flow(client: httpx.AsyncClient, staff: Staff, sessio
     assert {e["kind"] for e in detail["timeline"]} >= {"assignment_created", "assignment_status", "evaluated"}
     assert await report_status(client, staff, report_id) == "closed"
 
-    # The reporter was told of every step on their phone (tracking code and status only).
+    # The reporter was told of every step on their phone (content-free push: ids and status only).
     pushes = (
         (
             await session.execute(
@@ -551,7 +551,14 @@ async def test_callout_flow(
     while await delivery.run_outbox(get_sessionmaker()):
         pass
     callout_pushes = [p for (p,) in channels.push.sent if p.data.get("type") == "callout"]
-    assert any(p.token == "tok-" + "v" * 30 and p.alert and "km" in p.body for p in callout_pushes)
+    # Content-free (A8): generic text in the device's language, ids only; the app reads /me/callouts.
+    assert any(
+        p.token == "tok-" + "v" * 30
+        and p.alert
+        and p.data == {"callout_id": callout["id"], "redacted": "1", "type": "callout"}
+        and (p.title, p.body) == ("e-Himaya", "Vous avez une nouvelle mise à jour")
+        for p in callout_pushes
+    )
 
     r = await client.post(f"/api/v1/staff/callouts/{callout['id']}/cancel", headers=operator)
     assert r.status_code == 200 and r.json()["status"] == "cancelled"

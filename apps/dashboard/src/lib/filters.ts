@@ -20,6 +20,8 @@ export interface ReportFilters {
   gouvernorat: number | null;
   period: Period;
   q: string;
+  /** Only reports flagged "needs verification" by the abuse controls (phase 5.5). */
+  unverified?: boolean;
 }
 
 export const DEFAULT_FILTERS: ReportFilters = { statuses: [], categories: [], gouvernorat: null, period: "7d", q: "" };
@@ -50,17 +52,21 @@ export function filtersToQuery(
     bbox: options.bbox ? bboxParam(options.bbox) : undefined,
     cursor: options.cursor ?? undefined,
     limit: options.limit ?? 50,
+    needs_verification: filters.unverified ? true : undefined,
   };
 }
 
 /** Stable, serialisable representation for react-query keys (excludes the moving `since` instant). */
-export function filtersKey(filters: ReportFilters): readonly [string, string, number | null, Period, string] {
+export function filtersKey(
+  filters: ReportFilters,
+): readonly [string, string, number | null, Period, string, boolean] {
   return [
     [...filters.statuses].sort().join(","),
     [...filters.categories].sort().join(","),
     filters.gouvernorat,
     filters.period,
     filters.q.trim().toLowerCase(),
+    Boolean(filters.unverified),
   ];
 }
 
@@ -77,6 +83,7 @@ export function matchesFilters(
   if (filters.statuses.length > 0 && !filters.statuses.includes(report.status)) return false;
   if (filters.categories.length > 0 && !filters.categories.includes(report.category)) return false;
   if (filters.gouvernorat !== null && report.gouvernorat_code !== filters.gouvernorat) return false;
+  if (filters.unverified && !report.needs_verification) return false;
   if (Date.parse(report.received_at) < Date.parse(periodSince(filters.period, options.now))) return false;
   const q = filters.q.trim().toLowerCase();
   if (

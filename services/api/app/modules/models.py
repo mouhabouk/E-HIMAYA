@@ -4,7 +4,7 @@ from app.modules.ai.models import AiSettingsRow, Analysis
 from app.modules.audit.models import AuditLog
 from app.modules.content.models import Revision, SafetyTip
 from app.modules.geo.models import Delegation, Gouvernorat
-from app.modules.identity.models import Account, Consent, Profile
+from app.modules.identity.models import Account, Consent, ErasureRequest, Profile
 from app.modules.notify.models import Device, Dispatch, Message, OrgDigest, Outbox
 from app.modules.ops.models import (
     Assignment,
@@ -51,6 +51,7 @@ __all__ = [
     "Document",
     "DocumentVersion",
     "Equipment",
+    "ErasureRequest",
     "Gouvernorat",
     "Hazmat",
     "Incident",

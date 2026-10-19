@@ -140,7 +140,7 @@ article.alert .badge { color: var(--alert); }
   }
 
   function card(item) {
-    const alert = item.android_channel === "ehimaya_alerts";
+    const alert = (item.android_channel || "").startsWith("ehimaya_alerts") || (item.android_channel || "").startsWith("ehimaya_critical");
     const node = el("article", item.channel + (alert ? " alert" : ""));
     const row = el("div", "row");
     row.append(el("span", "badge", item.channel === "push" ? t("push") : t("sms")));

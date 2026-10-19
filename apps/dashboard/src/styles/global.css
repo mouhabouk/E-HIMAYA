@@ -519,9 +519,17 @@ legend {
   color: var(--ok-text);
 }
 
-.tag--media-rejected {
+.tag--media-rejected,
+.tag--media-quarantined {
   background: var(--error-bg);
   color: var(--error-text);
+}
+
+/* Report accepted beyond the anonymous budget or while the limiter was degraded (phase 5.5). */
+.tag--verify {
+  background: var(--warn-bg);
+  color: var(--warn-text);
+  font-weight: 700;
 }
 
 /* ---------- Filters ---------- */
