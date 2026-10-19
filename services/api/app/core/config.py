@@ -41,6 +41,15 @@ class Settings(BaseSettings):
     # Background loops (outbox relay, media verification). Disabled in tests, which drive them directly.
     background_workers: bool = True
 
+    # Internal AI inference service (services/ai). Without it, reports are scored and grouped by rules only.
+    ai_service_url: str | None = None
+    ai_service_token: SecretStr | None = Field(default=None, min_length=24)
+    # Long audio on a CPU-only server can take minutes to transcribe.
+    ai_request_timeout_s: float = 900.0
+    ai_concurrency: int = Field(default=2, ge=1, le=32)
+    # Retries with back-off when a model is unavailable, then the analysis is marked failed.
+    ai_max_attempts: int = Field(default=8, ge=1, le=50)
+
     api_cors_origins: Annotated[list[str], NoDecode] = Field(default_factory=list)
     api_log_level: str = "INFO"
     db_pool_size: int = 10
@@ -57,6 +66,12 @@ class Settings(BaseSettings):
         if len(raw) != 32:
             raise ValueError("FIELD_ENCRYPTION_KEY must decode to 32 bytes (openssl rand -base64 32)")
         return value
+
+    @field_validator("ai_service_url", "ai_service_token", mode="before")
+    @classmethod
+    def _empty_is_unset(cls, value: object) -> object:
+        # Compose passes "" when the optional AI profile is not configured.
+        return None if value == "" else value
 
     @field_validator("oidc_issuers", "api_cors_origins", mode="before")
     @classmethod

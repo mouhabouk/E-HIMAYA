@@ -10,6 +10,12 @@ export interface Formatters {
   bytes(n: number): string;
   duration(seconds: number): string;
   meters(m: number): string;
+  /** 0..1 → "82 %". */
+  percent(fraction: number): string;
+  /** Signed number with at most one decimal ("+15", "−15", "0"). */
+  signed(n: number): string;
+  /** At most one decimal (score points). */
+  decimal(n: number): string;
 }
 
 export function createFormatters(lang: Language): Formatters {
@@ -17,6 +23,9 @@ export function createFormatters(lang: Language): Formatters {
   const dateTimeFmt = new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" });
   const timeFmt = new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit" });
   const numberFmt = new Intl.NumberFormat(locale);
+  const percentFmt = new Intl.NumberFormat(locale, { style: "percent", maximumFractionDigits: 0 });
+  const signedFmt = new Intl.NumberFormat(locale, { signDisplay: "exceptZero", maximumFractionDigits: 1 });
+  const decimalFmt = new Intl.NumberFormat(locale, { maximumFractionDigits: 1 });
   const unit = (u: string, max = 0) =>
     new Intl.NumberFormat(locale, { style: "unit", unit: u, unitDisplay: "short", maximumFractionDigits: max });
 
@@ -36,6 +45,9 @@ export function createFormatters(lang: Language): Formatters {
       return unit("byte").format(n);
     },
     meters: (m) => unit("meter").format(Math.round(m)),
+    percent: (fraction) => percentFmt.format(fraction),
+    signed: (n) => signedFmt.format(n),
+    decimal: (n) => decimalFmt.format(n),
     duration: (seconds) => {
       const s = Math.max(0, Math.round(seconds));
       if (s < 60) return unit("second").format(s);

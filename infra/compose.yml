@@ -1,5 +1,8 @@
-# ء-حماية / e-Himaya — البنية الأساسية للتطوير والتجربة (المرحلتان 1 و2)
+# ء-حماية / e-Himaya — البنية الأساسية للتطوير والتجربة (المراحل 1 إلى 3)
 # Usage (from repo root):  docker compose --env-file .env -f infra/compose.yml up -d
+# With the AI layer (downloads the models once, several GB):
+#   docker compose --env-file .env -f infra/compose.yml --profile ai up -d
+# On a GPU server add: -f infra/compose.gpu.yml
 name: ehimaya
 
 x-restart: &restart
@@ -173,6 +176,9 @@ services:
       TUSD_HOOK_SECRET: ${TUSD_HOOK_SECRET}
       API_CORS_ORIGINS: ${API_CORS_ORIGINS:-}
       API_LOG_LEVEL: ${API_LOG_LEVEL:-INFO}
+      # AI layer (profile "ai"). Unset: reports are still scored and grouped by the rules.
+      AI_SERVICE_URL: ${AI_SERVICE_URL:-}
+      AI_SERVICE_TOKEN: ${AI_SERVICE_TOKEN:-}
     ports:
       - "127.0.0.1:8000:8000"
     depends_on:
@@ -183,7 +189,61 @@ services:
       nats:
         condition: service_healthy
 
+  # ---------------- AI layer 1 (profile "ai"): all models run on our own servers (NFR-10, NFR-11) ----------------
+
+  # Local open language model server (Qwen3, Apache-2.0).
+  ollama:
+    <<: *restart
+    profiles: ["ai"]
+    image: ollama/ollama:0.40.1
+    environment:
+      OLLAMA_KEEP_ALIVE: 30m
+    volumes:
+      - ollamadata:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+  # One-shot: download, convert and check the models (skipped when already installed).
+  ai-models:
+    profiles: ["ai"]
+    build:
+      context: ../services/ai
+      target: models
+    image: ehimaya/ai-models:dev
+    restart: "no"
+    command: ["--profile", "${AI_MODEL_PROFILE:-cpu}", "--out", "/models", "--ollama", "http://ollama:11434"]
+    volumes:
+      - aimodels:/models
+    depends_on:
+      ollama:
+        condition: service_healthy
+
+  # Inference service: speech-to-text, translation, embeddings, structured reading. Internal only.
+  ai:
+    <<: *restart
+    profiles: ["ai"]
+    build:
+      context: ../services/ai
+      target: runtime
+    image: ehimaya/ai:dev
+    environment:
+      AI_SERVICE_TOKEN: ${AI_SERVICE_TOKEN:?set AI_SERVICE_TOKEN}
+      AI_OLLAMA_URL: http://ollama:11434
+      AI_LLM_MODEL: ${AI_LLM_MODEL:-qwen3:4b}
+      AI_MEDIA_URL_PREFIX: http://seaweedfs:8333/
+      AI_DEVICE: ${AI_DEVICE:-auto}
+    volumes:
+      - aimodels:/models:ro
+    depends_on:
+      ai-models:
+        condition: service_completed_successfully
+
 volumes:
+  aimodels:
+  ollamadata:
   pgdata:
   valkeydata:
   natsdata:

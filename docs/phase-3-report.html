@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ء-حماية | تقرير المرحلة 3</title>
+<style>
+:root{--bg:#f7f8fa;--paper:#fff;--ink:#1b2430;--muted:#5b6675;--line:#dfe3e8;--accent:#b3261e;--accent2:#0b5cad;--ok:#1e7d3a;--warn:#a15c00;--chip:#eef1f5;--head:#f1f3f6}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1318;--paper:#161b22;--ink:#e6eaef;--muted:#9aa5b1;--line:#2a313b;--accent:#ff6b5e;--accent2:#5aa9ff;--ok:#5cc97a;--warn:#e0a24a;--chip:#1f2630;--head:#1c222b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Naskh Arabic","Segoe UI",Tahoma,Arial,sans-serif;line-height:1.75;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header.cover{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:10px;padding:28px 24px;margin-bottom:20px}
+header.cover h1{margin:0 0 6px;font-size:30px}
+header.cover .sub{color:var(--muted);margin:0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:16px}
+.meta div{background:var(--chip);border-radius:6px;padding:8px 12px;font-size:14px}
+.meta b{display:block;color:var(--muted);font-weight:600;font-size:12px}
+nav.toc{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px 24px;margin-bottom:20px}
+nav.toc ol{margin:0;padding-inline-start:20px;columns:2;column-gap:32px}
+@media (max-width:700px){nav.toc ol{columns:1}}
+nav.toc a,a{color:var(--accent2);text-decoration:none}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:20px}
+h2{margin-top:0;font-size:23px;border-bottom:2px solid var(--line);padding-bottom:8px}
+h3{font-size:19px;margin-top:28px;color:var(--accent2)}
+h4{font-size:16px;margin-bottom:4px}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:start;vertical-align:top}
+th{background:var(--head);font-weight:700;white-space:nowrap}
+td code,p code,li code{direction:ltr;unicode-bidi:isolate;background:var(--chip);padding:1px 5px;border-radius:4px;font-size:13px}
+.id{font-family:Consolas,monospace;direction:ltr;unicode-bidi:isolate;white-space:nowrap;font-size:13px;color:var(--muted)}
+.p{display:inline-block;border-radius:10px;padding:0 8px;font-size:12px;font-weight:700;white-space:nowrap}
+.M{background:#fde2e0;color:#8c1d16}.S{background:#fff1d6;color:#7a4a00}.C{background:#e1efff;color:#0a4a8c}.W{background:#e8e8e8;color:#444}
+@media (prefers-color-scheme:dark){.M{background:#4a1d1a;color:#ffb4ad}.S{background:#4a3510;color:#ffd38a}.C{background:#14304f;color:#a8d1ff}.W{background:#333;color:#ccc}}
+.note{border-inline-start:4px solid var(--accent2);background:var(--chip);padding:10px 14px;border-radius:6px;margin:12px 0}
+.warn{border-inline-start:4px solid var(--warn)}
+.ltr{direction:ltr;unicode-bidi:isolate}
+ul,ol{padding-inline-start:22px}
+footer{color:var(--muted);text-align:center;font-size:13px}
+@media print{body{background:#fff}section,header.cover,nav.toc{border:none;break-inside:avoid-page}nav.toc{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="cover">
+  <h1>ء-حماية <span class="ltr">e-Himaya</span></h1>
+  <p class="sub">تقرير نهاية المرحلة 3: طبقة الذكاء الاصطناعي 1</p>
+  <div class="meta">
+    <div><b>التاريخ</b>2026-10-19</div>
+    <div><b>الفرع</b><span class="ltr">phase-3-ai</span></div>
+    <div><b>الحالة</b>منجزة، بانتظار موافقتك للانتقال إلى المرحلة 4</div>
+    <div><b>المراجع</b><a href="01-requirements.html">المتطلبات</a> · <a href="02-architecture.html">الهيكلة</a> · <a href="api/phase-3-contract.md">عقد الواجهة البرمجية</a> · <a href="versions.md">الإصدارات</a></div>
+  </div>
+</header>
+
+<section>
+<h2>1. جدول التقدم (Progress Table)</h2>
+<div class="tbl"><table>
+<tr><th>#</th><th>العنصر</th><th>المخرجات في المستودع</th><th>التحقق</th><th>التقدم</th></tr>
+<tr><td>3.1</td><td>عقد الواجهة البرمجية</td><td><code>docs/api/phase-3-contract.md</code>: التحليل، الأولوية المفسّرة، المصداقية، الحوادث، إعدادات الذكاء الاصطناعي، أحداث البث الجديدة، رموز الأخطاء</td><td>الخلفية واللوحة مبنيتان عليه</td><td>100%</td></tr>
+<tr><td>3.2</td><td>خدمة الاستدلال المحلية</td><td><code>services/ai</code>: خدمة داخلية بلا قاعدة بيانات ولا مفاتيح تخزين، رمز خدمة، تجلب الوسائط من العنوان الداخلي للتخزين فقط (حماية من SSRF)، تعمل دون إنترنت</td><td>12 اختبار وحدة + 9 اختبارات على النماذج الحقيقية في CI</td><td>100%</td></tr>
+<tr><td>3.3</td><td>تحويل الصوت إلى نص (FR-A-044)</td><td>faster-whisper مع كشف الصمت، اللغة محصورة في العربية والفرنسية والإنجليزية، تلميح بمفردات تونسية للعربية، رفض الملفات التالفة</td><td>الإنجليزية حرفيا «Hello, there is a fire in the building and two people are trapped»؛ العربية التقطت «حريق»؛ ملف تالف ← <code>media_undecodable</code></td><td>100%</td></tr>
+<tr><td>3.4</td><td>الترجمة إلى العربية (FR-A-045)</td><td>Opus-MT فرنسي→عربي وإنجليزي→عربي عبر CTranslate2، جملة بجملة</td><td>«Il y a un incendie dans la forêt près de la route» ← «هناك حريق في الغابة بالقرب من الطريق»</td><td>100%</td></tr>
+<tr><td>3.5</td><td>التصنيف والاستخراج</td><td>Qwen3 عبر Ollama بمخطط JSON إلزامي: الفئة، الأرواح المهددة، المحاصرون، عدد الجرحى، المخاطر؛ مع قاموس كلمات مفتاحية بالعربية والدارجة والعربيزي والفرنسية والإنجليزية يعمل حتى دون نموذج</td><td>نص «حريق في عمارة بصفاقس، طفلان عالقان» ← حريق، أرواح مهددة، محاصرون (19.5 ث على CPU)</td><td>100%</td></tr>
+<tr><td>3.6</td><td>الأولوية المفسّرة (BR-20)</td><td>درجة 0..100 بمكوّنات ظاهرة: الخطورة، الأرواح، الإصابات، عدد المبلّغين، المصداقية؛ المكوّنات دون بيانات بعد (المواقع الحساسة، الطقس) تُعرض «لا بيانات» ويُعاد توزيع الأوزان</td><td>اختبارات الحساب وإعادة التوزيع والترتيب</td><td>100%</td></tr>
+<tr><td>3.7</td><td>المصداقية (BR-06)</td><td>أساس 50 ثم نقاط موجبة وسالبة مفسّرة (هوية موثقة، وسائط، تأكيد من بلاغات أخرى، سجل كاذب…)</td><td>اختبارات</td><td>100%</td></tr>
+<tr><td>3.8</td><td>التجميع في حوادث (BR-10، BR-11)</td><td>اقتراح فقط: نفس الفئة داخل نصف قطر ونافذة زمنية، أو تشابه دلالي ≥ 0.88 داخل 5 كم و3 ساعات (multilingual-e5)؛ المشغّل يقبل أو يرفض أو ينشئ أو يفصل أو يدمج؛ إغلاق آلي للحادثة عند إغلاق كل بلاغاتها؛ خط زمني وسجل تدقيق</td><td>اختبارات القبول والفصل والدمج والإغلاق والنطاق</td><td>100%</td></tr>
+<tr><td>3.9</td><td>طابور التحليل المتين</td><td>جدول <code>ai.analysis</code> بحجز <span class="ltr">SKIP LOCKED</span>، ترتيب بالأولوية، إعادة المحاولة بتباعد متزايد (حتى 8 محاولات)، تحليل أولي بالقواعد لحظة إنشاء البلاغ</td><td>اختبارات تعطل الخدمة والرفض وإعادة المحاولة</td><td>100%</td></tr>
+<tr><td>3.10</td><td>إعدادات الذكاء الاصطناعي</td><td>الأوزان وعتبات التجميع قابلة للتعديل من اللجنة المركزية أو مدير النظام على المستوى الوطني، مع تدقيق</td><td>اختبارات الصلاحيات والتحقق</td><td>100%</td></tr>
+<tr><td>3.11</td><td>لوحة التحكم</td><td>شارة الأولوية والترتيب بها، لوحة «تحليل الذكاء الاصطناعي» بجدول المكوّنات، التفريغ الصوتي وترجمته، قسم التجميع، صفحة الحوادث وتفاصيلها مع الدمج، صفحة الإعدادات، تنبيه عند تعطل قدرة؛ عربية وفرنسية</td><td>125 اختبارا ناجحا (كانت 70)، الفحص والأنواع والبناء سليمة</td><td>100%</td></tr>
+<tr><td>3.12</td><td>البنية والتكامل المستمر</td><td>ملف تشغيل «ai» في compose (Ollama، تحضير النماذج، الخدمة) وملف GPU اختياري؛ وظائف CI: فحص الخدمة، بناء الصور، النماذج الحقيقية مع اختبار العقد بين الخلفية والخدمة</td><td>انظر طلب الدمج</td><td>100%</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>2. النتائج على النماذج الحقيقية</h2>
+<p>شُغّلت النماذج الحقيقية في التكامل المستمر (ملف «ci»: Whisper small، Qwen3 1.7B، على CPU دون GPU). النتائج:</p>
+<ul>
+<li>تحويل الصوت (Whisper small): العيّنة الإنجليزية نُسخت حرفيا؛ العربية «يوجد حريق كبير في الغابة قرب الطريق» صارت «حي، حريق، كمي، في، أجامة، كول، أطريق» (اللغة والكلمة المفتاحية صحيحتان، والباقي ضعيف لأن الصوت آلي)؛ الفرنسية التقطت «forêt» لكن كلمة «incendie» بالصوت الآلي لم تُفهم، وكشف اللغة عليها غير ثابت (يُختبر كشف اللغة بالعيّنة الإنجليزية)؛ الملف التالف رُفض برمز <code>media_undecodable</code>.</li>
+<li>الترجمة: الجملة الفرنسية والإنجليزية «حريق في الغابة قرب الطريق» تُرجمتا إلى «هناك حريق في الغابة بالقرب من الطريق».</li>
+<li>التشابه الدلالي: «حريق» بالعربية و«incendie» بالفرنسية: 0.913؛ «حريق» و«فيضان»: 0.871.</li>
+<li>الاستخراج: بلاغ حريق في عمارة مع طفلين عالقين ← فئة حريق، أرواح مهددة، محاصرون، خطر انتشار، ثقة 0.9.</li>
+<li>تحويل النماذج تحقق ذاتيا: ترجمة عربية فعلية، وتطابق المتجهات مع المرجع الأصلي (تشابه ≥ 0.99).</li>
+<li>كل النماذج برخص مفتوحة (MIT، Apache-2.0) وتعمل محليا؛ لا يُرسل أي بلاغ إلى خدمة خارجية.</li>
+</ul>
+</section>
+
+<section>
+<h2>3. قرارات تحتاج علمك</h2>
+<div class="tbl"><table>
+<tr><th>القرار</th><th>السبب</th></tr>
+<tr><td>طابور التحليل في PostgreSQL بدل مستهلكين منفصلين على NATS لكل خطوة</td><td>حالة كل بلاغ ومحاولاته في مكان واحد ومعاملة واحدة، ترتيب بالأولوية، استئناف بعد التعطل دون فقدان. NATS يبقى ناقل الأحداث الحية.</td></tr>
+<tr><td>الذكاء الاصطناعي يقترح ولا يقرر</td><td>الفئة المقترحة والتجميع يظهران كاقتراحات؛ تغيير الفئة أو الربط بحادثة يتم بيد المشغّل ويُسجّل.</td></tr>
+<tr><td>ثلاثة ملفات تشغيل: prod (large-v3، qwen3:8b)، cpu (medium، qwen3:4b)، ci</td><td>نفس الشيفرة على خادم بـ GPU أو دونه؛ الاختيار بمتغير واحد.</td></tr>
+<tr><td>تسمية «الحوادث» في اللوحة صارت للحوادث المجمّعة، وقائمة المرحلة 2 صارت «البلاغات»</td><td>التمييز بين البلاغ الفردي والحادثة التي تجمع عدة بلاغات.</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>4. حدود معروفة</h2>
+<ul>
+<li>شبكة بيئة العمل هنا تحجب Hugging Face وسجل Ollama، لذلك جُرّبت النماذج الحقيقية في التكامل المستمر فقط، وبالنماذج الصغيرة على CPU.</li>
+<li>النموذج الصغير في CI (1.7B) أعاد الملخص بلغة النص الأصلي بدل العربية؛ نموذج الإنتاج 8B يُنتظر أن يلتزم أكثر، ويحتاج تجربة على خادم الإنتاج.</li>
+<li>هامش التشابه الدلالي ضيق بين الحوادث المتقاربة في المعنى (0.871 مقابل عتبة 0.88)؛ العتبة قابلة للتعديل من صفحة الإعدادات وتحتاج معايرة على بلاغات حقيقية.</li>
+<li>عيّنات الصوت في الاختبار مولدة آليا (espeak) ونتائجها أضعف من الصوت البشري؛ قياس الدقة الحقيقي، خاصة على اللهجة التونسية وبنموذج large-v3، يحتاج عيّنات مسجلة من بلاغات فعلية.</li>
+<li>مكوّنا المواقع الحساسة والطقس في الأولوية بلا بيانات بعد (المرحلة 7)، والتجميع التلقائي على مستوى «كارثة» ينتظر المستويات العملياتية (المرحلة 5).</li>
+<li>كشف الحرائق والدخان من الصور ينتمي إلى المرحلة 6.</li>
+<li>مكتبة <span class="ltr">maplibre-gl</span> عليها تنبيه أمني يتطلب ترقية كبرى (6.x)؛ مؤجلة لمرحلة التصليب.</li>
+</ul>
+</section>
+
+<section>
+<h2>5. تقدم المشروع الإجمالي</h2>
+<div class="tbl"><table>
+<tr><th>#</th><th>المرحلة</th><th>الحالة</th><th>التقدم</th></tr>
+<tr><td>0</td><td>المتطلبات والهيكلة</td><td>معتمدة</td><td>100%</td></tr>
+<tr><td>1</td><td>الأساس التقني</td><td>مدمجة</td><td>100%</td></tr>
+<tr><td>2</td><td>مسار البلاغ الأساسي</td><td>مدمجة</td><td>100%</td></tr>
+<tr><td>3</td><td>طبقة الذكاء الاصطناعي 1</td><td>منجزة، بانتظار الدمج والموافقة</td><td>100%</td></tr>
+<tr><td>4</td><td>المؤسسات</td><td>لم تبدأ</td><td>0%</td></tr>
+<tr><td>5</td><td>العمليات والمتطوعون والتنبيهات</td><td>لم تبدأ</td><td>0%</td></tr>
+<tr><td>6</td><td>البث والرؤية</td><td>لم تبدأ</td><td>0%</td></tr>
+<tr><td>7</td><td>الطقس والتنبؤ والاتصالات</td><td>لم تبدأ</td><td>0%</td></tr>
+<tr><td>8</td><td>المعرفة والتحليلات</td><td>لم تبدأ</td><td>0%</td></tr>
+<tr><td>9</td><td>التصليب والإطلاق التجريبي</td><td>لم تبدأ</td><td>0%</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>6. المرحلة التالية (4): المؤسسات</h2>
+<p>بوابة المؤسسات بالعربية والفرنسية والإنجليزية، الشهادة الرقمية للمؤسسة، ومحور المؤسسات في لوحة التحكم. لن تبدأ قبل موافقتك.</p>
+</section>
+
+<footer>ء-حماية · تقرير المرحلة 3</footer>
+</div>
+</body>
+</html>

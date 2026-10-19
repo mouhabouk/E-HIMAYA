@@ -13,7 +13,7 @@ import { ServicesProvider } from "../context/services";
 import { createI18n, type Language } from "../i18n";
 import type { StaffApi } from "../lib/staffApi";
 import { FakeWebSocket } from "./FakeWebSocket";
-import { fakeJwt } from "./fixtures";
+import { AI_STATUS_READY, fakeJwt } from "./fixtures";
 
 export function fakeAuth(claims: Record<string, unknown> | null): AuthService {
   const token = claims ? fakeJwt(claims) : null;
@@ -42,6 +42,15 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     reports: vi.fn(() => Promise.resolve({ items: [], next_cursor: null })),
     report: vi.fn(),
     changeStatus: vi.fn(),
+    incidents: vi.fn(() => Promise.resolve({ items: [], next_cursor: null })),
+    incident: vi.fn(),
+    linkIncident: vi.fn(),
+    detachIncident: vi.fn(),
+    dismissSuggestion: vi.fn(),
+    mergeIncident: vi.fn(),
+    aiSettings: vi.fn(),
+    saveAiSettings: vi.fn(),
+    aiStatus: vi.fn(() => Promise.resolve(AI_STATUS_READY)),
     gouvernorats: vi.fn(() =>
       Promise.resolve([
         { code: 11, iso_code: "TN-11", name: "تونس", name_ar: "تونس", name_fr: "Tunis", delegation_count: 21 },
