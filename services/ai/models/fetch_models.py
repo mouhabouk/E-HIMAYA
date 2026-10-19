@@ -8,7 +8,7 @@ the models live in AI_MODELS_DIR on our own servers (NFR-10, NFR-11).
 Profiles (docs/versions.md lists the models and their licences):
     prod  GPU server: Whisper large-v3, Opus-MT fr→ar and en→ar, multilingual-e5-base, Qwen3 8B
     cpu   CPU-only server: Whisper medium, same translation and embedding models, Qwen3 4B
-    ci    automated tests: Whisper base, same translation and embedding models, Qwen3 1.7B
+    ci    automated tests: Whisper small, same translation and embedding models, Qwen3 1.7B
 """
 
 import argparse
@@ -23,7 +23,7 @@ import httpx
 PROFILES: dict[str, dict[str, str]] = {
     "prod": {"whisper": "Systran/faster-whisper-large-v3", "llm": "qwen3:8b"},
     "cpu": {"whisper": "Systran/faster-whisper-medium", "llm": "qwen3:4b"},
-    "ci": {"whisper": "Systran/faster-whisper-base", "llm": "qwen3:1.7b"},
+    "ci": {"whisper": "Systran/faster-whisper-small", "llm": "qwen3:1.7b"},
 }
 TRANSLATION = {"opus-mt-fr-ar": "Helsinki-NLP/opus-mt-fr-ar", "opus-mt-en-ar": "Helsinki-NLP/opus-mt-en-ar"}
 EMBEDDING = "intfloat/multilingual-e5-base"

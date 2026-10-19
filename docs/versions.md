@@ -45,7 +45,7 @@
 
 | القدرة | النموذج (prod، خادم GPU) | النموذج (cpu) | النموذج (ci) | الرخصة | المصدر |
 |---|---|---|---|---|---|
-| تحويل الصوت إلى نص | Whisper large-v3 (`Systran/faster-whisper-large-v3`) | Whisper medium | Whisper base | MIT | <https://huggingface.co/Systran> |
+| تحويل الصوت إلى نص | Whisper large-v3 (`Systran/faster-whisper-large-v3`) | Whisper medium | Whisper small | MIT | <https://huggingface.co/Systran> |
 | الترجمة fr→ar و en→ar | Opus-MT (`Helsinki-NLP/opus-mt-fr-ar`، `opus-mt-en-ar`) | نفسه | نفسه | Apache-2.0 / CC-BY-4.0 | <https://huggingface.co/Helsinki-NLP> |
 | التضمين الدلالي (768 بعدا) | `intfloat/multilingual-e5-base` | نفسه | نفسه | MIT | <https://huggingface.co/intfloat/multilingual-e5-base> |
 | القراءة المهيكلة للبلاغ | Qwen3 8B (`qwen3:8b`) | Qwen3 4B | Qwen3 1.7B | Apache-2.0 | <https://ollama.com/library/qwen3> |

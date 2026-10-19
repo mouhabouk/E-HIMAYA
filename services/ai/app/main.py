@@ -107,7 +107,7 @@ async def transcribe(request: Request, body: TranscribeIn, _: Authorized) -> Tra
     async with downloaded(body.url, request.app.state.http) as path:
         try:
             result = await _run(request, "whisper", models.whisper.transcribe, path, body.language)
-        except ValueError as exc:
+        except models.MediaRejected as exc:
             raise HTTPException(422, str(exc)) from exc
         except ModelUnavailable:
             raise
