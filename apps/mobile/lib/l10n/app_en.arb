@@ -1,0 +1,323 @@
+{
+  "@@locale": "en",
+  "appTitle": "e-Himaya",
+  "actionContinue": "Continue",
+  "actionCancel": "Cancel",
+  "actionSave": "Save",
+  "actionLater": "Later",
+  "actionRetry": "Retry",
+  "copied": "Tracking code copied.",
+  "copyTrackingCode": "Copy tracking code",
+  "callNumber": "Call {number}",
+  "@callNumber": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "charterTitle": "Privacy & personal data charter",
+  "charterVersionLabel": "Version {version}",
+  "@charterVersionLabel": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "charterIntro": "e-Himaya is the national platform for reporting emergencies to the Civil Protection. Before using it, please read how your data is handled and what your obligations are.",
+  "charterDataTitle": "Data we collect and why",
+  "charterDataBody": "For each report: its category, your description, the position of the incident and the photos, videos or voice messages you attach. If you create an account: your name, national ID card (CIN) number, phone number and region. This data is used only to handle emergencies and to inform you of the follow-up of your reports.",
+  "charterLawTitle": "Legal framework",
+  "charterLawBody": "Your personal data is processed in accordance with Organic Law No. 2004-63 of 27 July 2004 on the protection of personal data and its implementing texts, under the supervision of the National Authority for the Protection of Personal Data (INPDP).",
+  "charterAnonymousTitle": "Reporting without an account",
+  "charterAnonymousBody": "You may report without an account. The app then uses a random key created on this phone; the platform keeps only a pseudonym derived from it and does not store your IP address. Anonymous reporting from a device can be suspended after confirmed false reports.",
+  "charterRightsTitle": "Your rights",
+  "charterRightsBody": "You have the right to access, rectify and object to the processing of your data under the conditions set by law. You can exercise these rights with the platform operator and refer the matter to the INPDP.",
+  "charterRetentionTitle": "Security and retention",
+  "charterRetentionBody": "Reports waiting to be sent are stored encrypted on your phone. On the platform, data is kept only as long as needed to handle the emergency and to meet legal obligations, and is accessible only to authorised staff.",
+  "charterLiabilityTitle": "Responsibility for false reports",
+  "charterLiabilityBody": "Every report mobilises rescue teams that may be needed elsewhere. Knowingly making a false report or a false alert engages your legal liability and exposes you to prosecution under Tunisian law.",
+  "charterCheckbox": "I have read and accept the charter, and I understand that a knowingly false report engages my legal liability.",
+  "charterAcceptedOn": "Accepted on {date}",
+  "@charterAcceptedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "roleTitle": "Who are you?",
+  "roleCitizen": "Citizen",
+  "roleCitizenDesc": "Report an emergency, send an SOS and follow your reports.",
+  "roleInstitution": "Institution",
+  "roleInstitutionDesc": "Public or private institution with a registered account.",
+  "institutionTitle": "Institutions",
+  "institutionBody": "Registration is mandatory for institutions and is done through the institutions portal, not in this app. If your institution already has an account, sign in below.",
+  "institutionLogin": "Sign in",
+  "citizenModeTitle": "How do you want to report?",
+  "citizenAnonymous": "Continue without an account",
+  "citizenAnonymousDesc": "Fastest. No personal information is asked.",
+  "citizenRegister": "Create an account",
+  "citizenRegisterDesc": "Follow your reports on any device; your reports carry more weight.",
+  "citizenLogin": "I already have an account",
+  "citizenLoginDesc": "Sign in with your e-Himaya account.",
+  "changeRole": "Change role",
+  "loginCancelled": "Sign-in cancelled.",
+  "loginFailed": "Sign-in failed. Check your connection and try again.",
+  "profileTitle": "Complete your profile",
+  "profileIntro": "This information will be used to verify your reports. You can complete it later from the settings.",
+  "profileFirstName": "First name",
+  "profileLastName": "Last name",
+  "profileCin": "National ID card (CIN) number",
+  "profileCinHint": "8 digits",
+  "profileCinStored": "Saved CIN ends with {last4}; enter it again to save changes.",
+  "@profileCinStored": {
+    "placeholders": {
+      "last4": {
+        "type": "String"
+      }
+    }
+  },
+  "profilePhone": "Phone number",
+  "profileGouvernorat": "Gouvernorat",
+  "profileDelegation": "Délégation",
+  "profileAddress": "Address (optional)",
+  "profileSaved": "Profile saved.",
+  "validationRequired": "Required.",
+  "validationCin": "The CIN has exactly 8 digits.",
+  "validationPhone": "Enter the 8 digits after +216.",
+  "geoLoadFailed": "Could not load the list.",
+  "navHome": "Home",
+  "navReports": "My reports",
+  "navSettings": "Settings",
+  "homeTagline": "In an emergency, every second counts.",
+  "homeNewReport": "New report",
+  "homeNewReportDesc": "Fire, flood, accident… with photos, video or voice.",
+  "homeEmergencyDesc": "Call 198, 190, 197 or 193 directly, even offline.",
+  "homeTrackDesc": "Follow a report with its tracking code.",
+  "pendingSyncBanner": "{count, plural, =1{1 report waiting to be sent} other{{count} reports waiting to be sent}}",
+  "@pendingSyncBanner": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sosButtonLabel": "SOS",
+  "sosHint": "Tap twice or hold to send your position.",
+  "sosArmed": "Tap again to send the SOS.",
+  "sosSending": "Sending SOS…",
+  "sosConfirmTitle": "Send an SOS?",
+  "sosConfirmBody": "Your current position will be sent to the Civil Protection.",
+  "sosConfirmAction": "Send SOS",
+  "sosNoLocation": "Your position is not available. Enable location, or call the Civil Protection.",
+  "sosQueuedTitle": "SOS saved",
+  "anonBlockedBody": "Reporting without an account is suspended on this device. Create an account to keep reporting.",
+  "emergencyTitle": "Emergency numbers",
+  "emergencyIntro": "Calls go directly through your SIM card, even without internet.",
+  "emergencyCivilProtection": "Civil Protection",
+  "emergencySamu": "Emergency medical service (SAMU)",
+  "emergencyPolice": "Police emergency",
+  "emergencyNationalGuard": "National Guard",
+  "emergencyCallSemantics": "Call {name}, {number}",
+  "@emergencyCallSemantics": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "dialFailed": "This device cannot place calls.",
+  "categorySos": "SOS",
+  "categoryFire": "Fire",
+  "categoryFlood": "Flood",
+  "categoryTrafficAccident": "Traffic accident",
+  "categoryDrowning": "Drowning",
+  "categoryLandslide": "Landslide",
+  "categoryChemicalLeak": "Chemical leak",
+  "categoryMedical": "Medical emergency",
+  "categoryOther": "Other",
+  "statusReceived": "Received",
+  "statusInProgress": "Being processed",
+  "statusIntervened": "Intervened",
+  "statusOngoing": "Intervention ongoing",
+  "statusClosed": "Closed",
+  "statusRejected": "Rejected",
+  "statusUnknown": "Unknown status",
+  "newReportTitle": "New report",
+  "chooseCategory": "What is happening?",
+  "reportLocation": "Location",
+  "locationLocating": "Locating…",
+  "locationAccuracy": "Position found, accuracy ±{meters} m",
+  "@locationAccuracy": {
+    "placeholders": {
+      "meters": {
+        "type": "int"
+      }
+    }
+  },
+  "locationManual": "Position set on the map",
+  "locationAdjustHint": "Move the map to place the pin exactly on the incident.",
+  "locationUnavailable": "No GPS position yet. Place the pin on the map or try again.",
+  "locationPermissionDenied": "Location is off or not allowed. Place the pin on the map.",
+  "locationOutsideTunisia": "The location must be in Tunisia.",
+  "locationRefresh": "Use my position",
+  "mapPinSemantics": "Report location pin",
+  "reportDescription": "Description (optional)",
+  "reportDescriptionHint": "What do you see? Are there injured people?",
+  "reportAttachments": "Photos, videos and voice message",
+  "attachTakePhoto": "Take a photo",
+  "attachPickPhoto": "Photo gallery",
+  "attachRecordVideo": "Record a video",
+  "attachPickVideo": "Choose a video",
+  "attachmentPhoto": "Photo {n}",
+  "@attachmentPhoto": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "attachmentVideo": "Video {n}",
+  "@attachmentVideo": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "attachmentTooLarge": "This file is too large (maximum {maxMb} MB).",
+  "@attachmentTooLarge": {
+    "placeholders": {
+      "maxMb": {
+        "type": "int"
+      }
+    }
+  },
+  "attachmentUnsupported": "This file format is not accepted.",
+  "attachmentLimit": "At most {max} files per report.",
+  "@attachmentLimit": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "removeAttachment": "Remove attachment",
+  "pickerFailed": "Could not open the camera or the gallery.",
+  "audioTitle": "Voice message",
+  "audioMaxDuration": "5 minutes max.",
+  "audioRecord": "Record",
+  "audioStop": "Stop",
+  "audioPlay": "Play the recording",
+  "audioPause": "Pause",
+  "audioReRecord": "Record again",
+  "audioDelete": "Delete the recording",
+  "audioRecording": "Recording… {duration}",
+  "@audioRecording": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "audioPermissionDenied": "Microphone access was refused.",
+  "audioFailed": "The recording could not start.",
+  "reportSubmit": "Send report",
+  "reportNeedsLocation": "Wait for your position or place the pin on the map.",
+  "reportOfflineNote": "Without network, the report is saved encrypted on the phone and sent automatically later.",
+  "reportSaveFailed": "The report could not be saved. Try again.",
+  "reportQueuedTitle": "Report saved",
+  "reportTempCodeLabel": "Temporary code",
+  "reportQueuedBody": "Keep this code. It will be replaced by the final tracking code as soon as the Civil Protection receives your report.",
+  "reportReceivedBody": "Your report was received by the Civil Protection. Use this code to follow it.",
+  "reportBackHome": "Back to home",
+  "temporaryCodeNote": "Temporary code, waiting to be sent",
+  "myReportsTitle": "My reports",
+  "myReportsEmpty": "No reports yet.",
+  "myReportsOffline": "Could not refresh from the server.",
+  "reportPendingSync": "Waiting to be sent",
+  "reportConflict": "Server version kept",
+  "reportFailed": "Not accepted",
+  "reportBlocked": "Account required",
+  "reportUploadingMedia": "{count, plural, =1{1 attachment being sent} other{{count} attachments being sent}}",
+  "@reportUploadingMedia": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reportMediaRejected": "{count, plural, =1{1 attachment refused} other{{count} attachments refused}}",
+  "@reportMediaRejected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "trackTitle": "Track a report",
+  "trackingCodeLabel": "Tracking code",
+  "trackHint": "EH-26-61-0004821",
+  "trackAction": "Track",
+  "trackInvalid": "Enter a code like EH-26-61-0004821.",
+  "trackHistory": "History",
+  "receivedAt": "Received on {date}",
+  "@receivedAt": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsTitle": "Settings",
+  "settingsLanguage": "Language",
+  "languageArabic": "العربية",
+  "languageFrench": "Français",
+  "languageEnglish": "English",
+  "settingsTheme": "Appearance",
+  "themeSystem": "Same as the phone",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "settingsIdentity": "Identity",
+  "identityAnonymous": "Without account (this device)",
+  "identityRegistered": "Signed in",
+  "identityRegisteredAs": "Signed in as {name}",
+  "@identityRegisteredAs": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "identityNone": "Not signed in",
+  "settingsRegister": "Create an account",
+  "settingsProfile": "My profile",
+  "settingsLogout": "Sign out",
+  "logoutConfirmTitle": "Sign out?",
+  "logoutConfirmBody": "Reports waiting to be sent stay on this phone and will be sent after you sign in again or choose to continue without an account.",
+  "settingsCharter": "Read the charter again",
+  "errorAuthenticationRequired": "Your session has expired. Please sign in again.",
+  "errorInvalidDeviceKey": "This device could not be identified. Restart the app.",
+  "errorAnonBlocked": "Reporting without an account is suspended on this device. Please create an account.",
+  "errorAccountSuspended": "Your account is suspended.",
+  "errorConsentRequired": "Please accept the charter before reporting.",
+  "errorRateLimited": "Too many requests. Please wait a moment.",
+  "errorUnknownCharterVersion": "The charter has changed. Please read it again.",
+  "errorClientUuidConflict": "This report conflicts with another one on the server.",
+  "errorNotFound": "Not found. Check the code.",
+  "errorValidation": "Some information is invalid.",
+  "errorNetwork": "No connection to the server. It will be retried automatically.",
+  "errorServer": "The service is temporarily unavailable.",
+  "errorUnknown": "Something went wrong.",
+  "errorMediaRefused": "The attachment was refused.",
+  "errorMediaTooLarge": "The attachment is too large.",
+  "errorUnsupportedMediaType": "This attachment format is not accepted.",
+  "errorTooManyMedia": "This report already has the maximum number of attachments.",
+  "errorUploadWindowClosed": "Attachments can only be added within 24 hours of the report.",
+  "errorMediaRejected": "The attachment was damaged in transfer and was refused."
+}

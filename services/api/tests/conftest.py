@@ -6,7 +6,7 @@ TEST_DATABASE_URL=postgresql+asyncpg://ehimaya:...@localhost:5432/ehimaya pytest
 import os
 import time
 import uuid
-from collections.abc import AsyncIterator, Callable
+from collections.abc import AsyncIterator, Callable, Iterator
 from typing import Any
 
 PUBLIC_ISS = "http://kc.test/realms/ehimaya-public"
@@ -19,6 +19,10 @@ os.environ.setdefault(
 os.environ["OIDC_ISSUERS"] = f"{PUBLIC_ISS},{STAFF_ISS}"
 os.environ["OIDC_AUDIENCE"] = "ehimaya-api"
 os.environ.setdefault("ANON_PSEUDONYM_SECRET", "test-secret-test-secret-test-secret-0001")
+os.environ.setdefault("FIELD_ENCRYPTION_KEY", "dGVzdC1rZXktdGVzdC1rZXktdGVzdC1rZXktMzJieXQ=")
+os.environ["TUSD_HOOK_SECRET"] = "test-hook-secret-test-hook-secret"
+os.environ["BACKGROUND_WORKERS"] = "false"
+os.environ.pop("API_CORS_ORIGINS", None)
 os.environ.pop("VALKEY_URL", None)
 os.environ.pop("NATS_URL", None)
 
@@ -98,3 +102,89 @@ async def session() -> AsyncIterator[AsyncSession]:
 
 def bearer(token: str) -> dict[str, str]:
     return {"Authorization": f"Bearer {token}"}
+
+
+# ---------------------------------------------------------------- reporting helpers
+
+SFAX = {"lat": 34.7406, "lon": 10.7603, "accuracy_m": 8.0}
+TUNIS = {"lat": 36.8065, "lon": 10.1815, "accuracy_m": 15.0}
+
+
+def device_headers() -> dict[str, str]:
+    import base64
+
+    return {"X-Device-Key": base64.urlsafe_b64encode(os.urandom(32)).decode().rstrip("=")}
+
+
+def report_body(location: dict[str, float] | None = None, **overrides: Any) -> dict[str, Any]:
+    from datetime import UTC, datetime
+
+    body: dict[str, Any] = {
+        "client_uuid": str(uuid.uuid4()),
+        "category": "fire",
+        "text": "دخان كثيف قرب المخزن",
+        "lang": "ar",
+        "location": location or SFAX,
+        "created_at": datetime.now(UTC).isoformat(),
+    }
+    body.update(overrides)
+    return body
+
+
+async def accept_charter(client: httpx.AsyncClient, headers: dict[str, str]) -> None:
+    r = await client.post(
+        "/api/v1/consents", json={"charter_version": "2026-10", "locale": "ar", "platform": "android"}, headers=headers
+    )
+    assert r.status_code == 201, r.text
+
+
+@pytest.fixture
+def citizen(make_token: TokenFactory) -> dict[str, str]:
+    """Headers of a fresh registered citizen."""
+    return bearer(make_token(roles=["citizen"], email="citizen@example.tn", email_verified=True))
+
+
+@pytest.fixture
+def staff(make_token: TokenFactory) -> Callable[..., dict[str, str]]:
+    def _staff(roles: list[str] | None = None, gouvernorat: int | None = 61) -> dict[str, str]:
+        scope: dict[str, Any] = {"gouvernorat_code": str(gouvernorat)} if gouvernorat else {"scope_level": "national"}
+        return bearer(make_token(issuer=STAFF_ISS, roles=roles or ["operator"], **scope))
+
+    return _staff
+
+
+class FakeStore:
+    def __init__(self) -> None:
+        self.objects: dict[str, bytes] = {}
+        self.deleted: list[str] = []
+
+    async def sha256(self, key: str) -> tuple[str, int]:
+        import hashlib
+
+        data = self.objects[key]
+        return hashlib.sha256(data).hexdigest(), len(data)
+
+    async def delete(self, *keys: str) -> None:
+        self.deleted.extend(keys)
+        for key in keys:
+            self.objects.pop(key, None)
+
+    def presign_get(self, key: str, *, expires_s: int = 600, content_type: str | None = None) -> str:
+        return f"http://s3.test/{key}?sig=1"
+
+
+@pytest.fixture(autouse=True)
+def _isolated_infra() -> Iterator[FakeStore]:
+    from app.core import ratelimit, storage
+
+    store = FakeStore()
+    storage.set_store(store)
+    ratelimit.set_limiter(ratelimit.MemoryLimiter())
+    yield store
+    storage.set_store(None)
+    ratelimit.set_limiter(None)
+
+
+@pytest.fixture
+def fake_store(_isolated_infra: FakeStore) -> FakeStore:
+    return _isolated_infra

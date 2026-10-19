@@ -4,7 +4,7 @@ from app.modules.audit.models import AuditLog
 from app.modules.geo.models import Delegation, Gouvernorat
 from app.modules.identity.models import Account, Consent, Profile
 from app.modules.ops.models import Incident, TimelineEvent
-from app.modules.reports.models import Media, Report
+from app.modules.reports.models import Media, Report, StatusHistory
 
 __all__ = [
     "Account",
@@ -16,5 +16,6 @@ __all__ = [
     "Media",
     "Profile",
     "Report",
+    "StatusHistory",
     "TimelineEvent",
 ]

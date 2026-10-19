@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ء-حماية | تقرير المرحلة 2</title>
+<style>
+:root{--bg:#f7f8fa;--paper:#fff;--ink:#1b2430;--muted:#5b6675;--line:#dfe3e8;--accent:#b3261e;--accent2:#0b5cad;--ok:#1e7d3a;--warn:#a15c00;--chip:#eef1f5;--head:#f1f3f6}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1318;--paper:#161b22;--ink:#e6eaef;--muted:#9aa5b1;--line:#2a313b;--accent:#ff6b5e;--accent2:#5aa9ff;--ok:#5cc97a;--warn:#e0a24a;--chip:#1f2630;--head:#1c222b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Naskh Arabic","Segoe UI",Tahoma,Arial,sans-serif;line-height:1.75;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header.cover{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:10px;padding:28px 24px;margin-bottom:20px}
+header.cover h1{margin:0 0 6px;font-size:30px}
+header.cover .sub{color:var(--muted);margin:0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:16px}
+.meta div{background:var(--chip);border-radius:6px;padding:8px 12px;font-size:14px}
+.meta b{display:block;color:var(--muted);font-weight:600;font-size:12px}
+nav.toc{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px 24px;margin-bottom:20px}
+nav.toc ol{margin:0;padding-inline-start:20px;columns:2;column-gap:32px}
+@media (max-width:700px){nav.toc ol{columns:1}}
+nav.toc a,a{color:var(--accent2);text-decoration:none}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:20px}
+h2{margin-top:0;font-size:23px;border-bottom:2px solid var(--line);padding-bottom:8px}
+h3{font-size:19px;margin-top:28px;color:var(--accent2)}
+h4{font-size:16px;margin-bottom:4px}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:start;vertical-align:top}
+th{background:var(--head);font-weight:700;white-space:nowrap}
+td code,p code,li code{direction:ltr;unicode-bidi:isolate;background:var(--chip);padding:1px 5px;border-radius:4px;font-size:13px}
+.id{font-family:Consolas,monospace;direction:ltr;unicode-bidi:isolate;white-space:nowrap;font-size:13px;color:var(--muted)}
+.p{display:inline-block;border-radius:10px;padding:0 8px;font-size:12px;font-weight:700;white-space:nowrap}
+.M{background:#fde2e0;color:#8c1d16}.S{background:#fff1d6;color:#7a4a00}.C{background:#e1efff;color:#0a4a8c}.W{background:#e8e8e8;color:#444}
+@media (prefers-color-scheme:dark){.M{background:#4a1d1a;color:#ffb4ad}.S{background:#4a3510;color:#ffd38a}.C{background:#14304f;color:#a8d1ff}.W{background:#333;color:#ccc}}
+.note{border-inline-start:4px solid var(--accent2);background:var(--chip);padding:10px 14px;border-radius:6px;margin:12px 0}
+.warn{border-inline-start:4px solid var(--warn)}
+.ltr{direction:ltr;unicode-bidi:isolate}
+ul,ol{padding-inline-start:22px}
+footer{color:var(--muted);text-align:center;font-size:13px}
+@media print{body{background:#fff}section,header.cover,nav.toc{border:none;break-inside:avoid-page}nav.toc{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="cover">
+  <h1>ء-حماية <span class="ltr">e-Himaya</span></h1>
+  <p class="sub">تقرير نهاية المرحلة 2: مسار البلاغ الأساسي</p>
+  <div class="meta">
+    <div><b>التاريخ</b>2026-10-19</div>
+    <div><b>الفرع</b><span class="ltr">phase-2-reporting</span></div>
+    <div><b>الحالة</b>منجزة، بانتظار موافقتك للانتقال إلى المرحلة 3</div>
+    <div><b>المراجع</b><a href="01-requirements.html">المتطلبات</a> · <a href="02-architecture.html">الهيكلة</a> · <a href="api/phase-2-contract.md">عقد الواجهة البرمجية</a></div>
+  </div>
+</header>
+
+<section>
+<h2>1. جدول التقدم (Progress Table)</h2>
+<div class="tbl"><table>
+<tr><th>#</th><th>العنصر</th><th>المخرجات في المستودع</th><th>التحقق</th><th>التقدم</th></tr>
+<tr><td>2.1</td><td>عقد الواجهة البرمجية</td><td><code>docs/api/phase-2-contract.md</code>: الهويات، الميثاق، البلاغ، رقم التتبع، الحالات، الرفع، واجهات اللوحة، البث الحي، رموز الأخطاء</td><td>الخلفية والتطبيق واللوحة مبنية عليه</td><td>100%</td></tr>
+<tr><td>2.2</td><td>إنشاء البلاغ (FR-A-040..046)</td><td>بلاغ دون تكرار بمعرف الجهاز، رقم تتبع سنوي <span class="ltr">EH-26-61-0004821</span>، تحديد الولاية آليا من الإحداثيات (حدود الولايات الـ24)، أقرب ولاية للبلاغات البحرية</td><td>اختبارات + اختبار شامل: استلام البلاغ في 66 ملي ثانية</td><td>100%</td></tr>
+<tr><td>2.3</td><td>التبليغ المجهول (BR-01، BR-02، BR-04)</td><td>مفتاح جهاز سري، معرف مستعار HMAC، لا تسجيل لعنوان IP، حجر المعرف بعد البلاغات الكاذبة المؤكدة</td><td>اختبارات: عزل البلاغات بين الأجهزة، الرفض عند الحجر</td><td>100%</td></tr>
+<tr><td>2.4</td><td>الميثاق والملف الشخصي (FR-A-001، FR-A-005)</td><td>لا بلاغ قبل قبول نسخة الميثاق الحالية؛ رقم بطاقة التعريف مشفر AES-256-GCM مع بصمة للتفرد</td><td>اختبارات: 428 قبل القبول، الرقم غير مقروء في القاعدة، رفض التكرار</td><td>100%</td></tr>
+<tr><td>2.5</td><td>رفع الوسائط بالاستئناف (FR-A-041، FR-A-047، NFR-07)</td><td>خادم tusd نحو SeaweedFS، كل رفع تأذن به الخلفية، إعادة حساب SHA-256 على الملف المخزن ورفض المخالف وحذفه، التنزيل عبر tusd معطل</td><td>اختبار شامل: ملف 5 ميغا انقطع واستُؤنف، البصمة مطابقة، ملف مزوّر رُفض وحُذف</td><td>100%</td></tr>
+<tr><td>2.6</td><td>الحالات والمتابعة (FR-A-032)</td><td>6 حالات وجدول انتقالات، سجل الحالات، متابعة عامة برقم التتبع لا تكشف المحتوى</td><td>اختبارات الانتقالات المسموحة والممنوعة</td><td>100%</td></tr>
+<tr><td>2.7</td><td>الأحداث والزمن الحقيقي (NFR-01)</td><td>صندوق صادر في نفس المعاملة ثم NATS JetStream، قناة WebSocket للوحة مفلترة حسب الولاية</td><td>البلاغ ظهر في اللوحة بعد 447 ملي ثانية (الهدف أقل من 3 ثوان)</td><td>100%</td></tr>
+<tr><td>2.8</td><td>واجهات اللوحة (FR-C-01، FR-C-02)</td><td>المؤشرات، قائمة بفلاتر وبحث وترقيم، التفاصيل بروابط وسائط مؤقتة، تغيير الحالة، تسجيل كل اطلاع في سجل التدقيق</td><td>اختبارات النطاق الجغرافي والأدوار والمؤشرات</td><td>100%</td></tr>
+<tr><td>2.9</td><td>تطبيق الهاتف (Flutter)</td><td><code>apps/mobile</code>: الميثاق، اختيار الصفة، الدخول والتسجيل، المجهول، SOS بلمستين، أرقام النجدة بالسيناريو 0، نموذج البلاغ بالصور والفيديو والصوت والخريطة، قاعدة محلية مشفرة ومزامنة، سجل البلاغات؛ عربية وفرنسية وإنجليزية</td><td>54 اختبارا ناجحا، التحليل دون ملاحظات</td><td>100%</td></tr>
+<tr><td>2.10</td><td>لوحة التحكم (React)</td><td><code>apps/dashboard</code>: الدخول عبر Keycloak مع TOTP، المؤشرات، قائمة الحوادث، التفاصيل وتغيير الحالة، الخريطة الحية؛ عربية وفرنسية</td><td>70 اختبارا ناجحا، الفحص والأنواع والبناء سليمة</td><td>100%</td></tr>
+<tr><td>2.11</td><td>التكامل المستمر</td><td>فحوص الخلفية، صورة الخلفية، Keycloak، اختبار دخان للمنظومة كاملة، التطبيق (بما فيه بناء APK)، اللوحة</td><td>انظر طلب الدمج</td><td>100%</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>2. الاختبار الشامل على المنظومة الحقيقية</h2>
+<p>شُغّلت المكونات الحقيقية معا: Keycloak 26.3 و tusd 2.8 و SeaweedFS 3.97 و NATS 2.10 و Valkey 8.1 و PostgreSQL مع PostGIS. النتائج:</p>
+<ul>
+<li>مواطن مسجل بحساب Keycloak حقيقي: قبول الميثاق، ثم بلاغ حريق في صفاقس حصل على الرقم <span class="ltr">EH-26-61-…</span> وولاية 61.</li>
+<li>ظهور البلاغ في قناة اللوحة لمشغّل صفاقس بعد أقل من نصف ثانية، وإعادة الإرسال بنفس المعرف لم تنشئ بلاغا ثانيا.</li>
+<li>رفع صورة 5 ميغا بقطع 1 ميغا مع انقطاع مقصود بعد قطعتين، ثم الاستئناف من حيث توقف، ثم تحقق الخادم من البصمة.</li>
+<li>ملف بصمته المعلنة لا تطابق محتواه رُفض وحُذف من التخزين وسُجل في سجل التدقيق.</li>
+<li>رفع دون هوية رُفض (401)، وتنزيل الملفات عبر خادم الرفع معطل (405).</li>
+<li>المشغّل فتح التفاصيل ونزّل الصورة عبر رابط مؤقت، وكانت مطابقة للأصل بايتا ببايت.</li>
+<li>تغيير الحالة إلى «قيد المعالجة» وصل للوحة مباشرة وظهر في المتابعة العامة برقم التتبع.</li>
+<li>جهاز مجهول أرسل بلاغ SOS وتسجيلا صوتيا، وكلاهما خُزّن وتُحقق منه.</li>
+</ul>
+</section>
+
+<section>
+<h2>3. قرارات تحتاج علمك</h2>
+<div class="tbl"><table>
+<tr><th>القرار</th><th>السبب</th></tr>
+<tr><td>رقم التتبع يحمل رمز الولاية الرقمي (61) بدل الاختصار (SFX) الوارد كمثال في الهيكلة</td><td>الرموز الرقمية رسمية (ISO 3166-2:TN) ولا تحتاج جدول اختصارات غير رسمي.</td></tr>
+<tr><td>خادم tusd مستقل لرفع الوسائط</td><td>الأداة الرسمية لبروتوكول tus، ترفع مباشرة إلى S3 وتتوسع أفقيا، والخلفية تبقى صاحبة القرار عبر الخطافات.</td></tr>
+<tr><td>تجميع البلاغات في حوادث مؤجل إلى المرحلة 3</td><td>القاعدة BR-10 تعتمد أيضا على التقارب الدلالي، وهو جزء من طبقة الذكاء الاصطناعي. اللوحة تعرض البلاغات الآن.</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>4. حدود معروفة</h2>
+<ul>
+<li>تطبيق الهاتف لم يُبنَ هنا لأندرويد أو iOS (لا توجد أدوات البناء)؛ أول بناء APK يتم في التكامل المستمر، وتشغيله على جهاز حقيقي لم يتم بعد.</li>
+<li>الدخول الفعلي من المتصفح ومن الهاتف عبر Keycloak لم يُجرَّب يدويا؛ اختُبرت الرموز الحقيقية مع الخلفية.</li>
+<li>التحقق من رقم الهاتف برسالة SMS ينتظر مزود الرسائل القصيرة؛ البريد الإلكتروني يُتحقق منه عبر Keycloak.</li>
+<li>المزامنة في التطبيق تعمل والتطبيق مفتوح فقط، ولا تخزين لبلاطات الخريطة دون اتصال.</li>
+<li>حدود المعتمديات غير محمّلة بعد (264 في المصدر مقابل 279 في قائمتنا)، فالمعتمدية فارغة في البلاغ.</li>
+<li>بلاطات OpenStreetMap العامة للتطوير فقط؛ الإنتاج يحتاج خادم بلاطات محلي (ADR-09).</li>
+<li>إشعار المبلّغ بتغير الحالة (FCM و APNs) يأتي مع مرحلة التنبيهات.</li>
+</ul>
+</section>
+
+<section>
+<h2>5. تقدم المشروع الإجمالي</h2>
+<div class="tbl"><table>
+<tr><th>#</th><th>المرحلة</th><th>الحالة</th><th>التقدم</th></tr>
+<tr><td>0</td><td>المتطلبات والهيكلة</td><td>معتمدة</td><td>100%</td></tr>
+<tr><td>1</td><td>الأساس التقني</td><td>مدمجة</td><td>100%</td></tr>
+<tr><td>2</td><td>مسار البلاغ الأساسي</td><td>منجزة، بانتظار الدمج والموافقة</td><td>100%</td></tr>
+<tr><td>3</td><td>طبقة الذكاء الاصطناعي 1</td><td>لم تبدأ</td><td>0%</td></tr>
+<tr><td>4</td><td>المؤسسات</td><td>لم تبدأ</td><td>0%</td></tr>
+<tr><td>5</td><td>العمليات والمتطوعون والتنبيهات</td><td>لم تبدأ</td><td>0%</td></tr>
+<tr><td>6</td><td>البث والرؤية</td><td>لم تبدأ</td><td>0%</td></tr>
+<tr><td>7</td><td>الطقس والتنبؤ والاتصالات</td><td>لم تبدأ</td><td>0%</td></tr>
+<tr><td>8</td><td>المعرفة والتحليلات</td><td>لم تبدأ</td><td>0%</td></tr>
+<tr><td>9</td><td>التصليب والإطلاق التجريبي</td><td>لم تبدأ</td><td>0%</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>6. المرحلة التالية (3): طبقة الذكاء الاصطناعي 1</h2>
+<p>تحويل الصوت إلى نص بـ Whisper مع اللهجة التونسية، الترجمة الآلية إلى العربية، درجة المصداقية والأولوية مع عرض مكوناتها، تجميع البلاغات في حوادث (المسافة والزمن والتقارب الدلالي) مع مصادقة المشغّل، وكلها بنماذج مفتوحة تعمل محليا.</p>
+</section>
+<footer>ء-حماية · تقرير المرحلة 2</footer>
+</div>
+</body>
+</html>
