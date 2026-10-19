@@ -1,0 +1,70 @@
+"""ء-حماية / e-Himaya — core API entry point."""
+
+import re
+import uuid
+from collections.abc import AsyncIterator, Awaitable, Callable
+from contextlib import asynccontextmanager
+
+import structlog
+from fastapi import FastAPI, Request, Response
+from fastapi.middleware.cors import CORSMiddleware
+
+from app.core.config import get_settings
+from app.core.db import dispose_engine
+from app.core.logging import configure_logging
+from app.modules.audit.router import router as audit_router
+from app.modules.geo.router import router as geo_router
+from app.modules.health.router import router as health_router
+from app.modules.identity.router import router as identity_router
+
+log = structlog.get_logger()
+_REQUEST_ID = re.compile(r"^[A-Za-z0-9-]{8,64}$")
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    log.info("api.start", version=app.version)
+    yield
+    await dispose_engine()
+    log.info("api.stop")
+
+
+def create_app() -> FastAPI:
+    settings = get_settings()
+    configure_logging(settings.api_log_level)
+
+    app = FastAPI(
+        title="ء-حماية / e-Himaya API",
+        version="0.1.0",
+        lifespan=lifespan,
+        docs_url="/docs",
+        openapi_url="/openapi.json",
+    )
+
+    if settings.api_cors_origins:
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=settings.api_cors_origins,
+            allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
+            allow_headers=["Authorization", "Content-Type", "Accept-Language", "X-Request-ID"],
+            max_age=600,
+        )
+
+    @app.middleware("http")
+    async def request_context(request: Request, call_next: Callable[[Request], Awaitable[Response]]) -> Response:
+        incoming = request.headers.get("X-Request-ID", "")
+        request_id = incoming if _REQUEST_ID.match(incoming) else uuid.uuid4().hex
+        structlog.contextvars.clear_contextvars()
+        structlog.contextvars.bind_contextvars(request_id=request_id, path=request.url.path)
+        response = await call_next(request)
+        response.headers["X-Request-ID"] = request_id
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["Referrer-Policy"] = "no-referrer"
+        return response
+
+    for router in (health_router, geo_router, identity_router, audit_router):
+        app.include_router(router)
+    return app
+
+
+app = create_app()
