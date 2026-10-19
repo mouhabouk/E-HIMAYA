@@ -1,5 +1,7 @@
 """Runtime configuration, read from environment variables (see .env.example)."""
 
+import base64
+import binascii
 from functools import lru_cache
 from typing import Annotated
 
@@ -18,6 +20,9 @@ class Settings(BaseSettings):
     s3_access_key: str | None = None
     s3_secret_key: SecretStr | None = None
     s3_bucket_media: str = "ehimaya-media"
+    # Endpoint used in pre-signed URLs handed to browsers (defaults to s3_endpoint_url).
+    s3_public_endpoint_url: str | None = None
+    s3_region: str = "us-east-1"
 
     # Comma-separated list of accepted token issuers (public realm, staff realm).
     oidc_issuers: Annotated[list[str], NoDecode] = Field(default_factory=list)
@@ -27,11 +32,31 @@ class Settings(BaseSettings):
     oidc_audience: str = "ehimaya-api"
 
     anon_pseudonym_secret: SecretStr = Field(min_length=32)
+    # AES-256-GCM key for field-level encryption (CIN, medical data): base64 of 32 random bytes.
+    field_encryption_key: SecretStr
+    # Version of the privacy charter every reporter must have accepted (FR-A-001).
+    charter_version: str = "2026-10"
+    # Shared secret in the tusd hook URL path; the hook endpoint is disabled when unset.
+    tusd_hook_secret: SecretStr | None = Field(default=None, min_length=24)
+    # Background loops (outbox relay, media verification). Disabled in tests, which drive them directly.
+    background_workers: bool = True
 
     api_cors_origins: Annotated[list[str], NoDecode] = Field(default_factory=list)
     api_log_level: str = "INFO"
     db_pool_size: int = 10
     db_max_overflow: int = 20
+
+    @field_validator("field_encryption_key")
+    @classmethod
+    def _check_key(cls, value: SecretStr) -> SecretStr:
+        # Fail at start-up rather than on the first encrypted write.
+        try:
+            raw = base64.b64decode(value.get_secret_value(), validate=True)
+        except binascii.Error as exc:
+            raise ValueError("FIELD_ENCRYPTION_KEY must be base64 (openssl rand -base64 32)") from exc
+        if len(raw) != 32:
+            raise ValueError("FIELD_ENCRYPTION_KEY must decode to 32 bytes (openssl rand -base64 32)")
+        return value
 
     @field_validator("oidc_issuers", "api_cors_origins", mode="before")
     @classmethod

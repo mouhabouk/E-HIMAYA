@@ -22,6 +22,7 @@ jobs:
     env:
       DATABASE_URL: postgresql+asyncpg://ehimaya:ehimaya-ci@localhost:5432/ehimaya
       ANON_PSEUDONYM_SECRET: ci-only-secret-ci-only-secret-ci-only-01
+      FIELD_ENCRYPTION_KEY: Y2ktb25seS1rZXktY2ktb25seS1rZXktY2ktb25seTE=
     steps:
       - uses: actions/checkout@v4
 
@@ -93,3 +94,22 @@ jobs:
           docker logs kc 2>&1 | tee kc.log | tail -20
           grep -q "Realm 'ehimaya-public' imported" kc.log
           grep -q "Realm 'ehimaya-staff' imported" kc.log
+
+  stack:
+    name: Stack · compose smoke test
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate a throwaway .env
+        run: |
+          cp .env.example .env
+          sed -i "s|^FIELD_ENCRYPTION_KEY=.*|FIELD_ENCRYPTION_KEY=$(openssl rand -base64 32)|" .env
+          sed -i "s|^ANON_PSEUDONYM_SECRET=.*|ANON_PSEUDONYM_SECRET=$(openssl rand -hex 32)|" .env
+          sed -i "s|^TUSD_HOOK_SECRET=.*|TUSD_HOOK_SECRET=$(openssl rand -hex 24)|" .env
+      - name: Start the stack
+        run: docker compose --env-file .env -f infra/compose.yml up -d --build
+      - name: Anonymous report, resumable upload and integrity check
+        run: python3 infra/smoke/smoke_test.py
+      - name: Logs on failure
+        if: failure()
+        run: docker compose --env-file .env -f infra/compose.yml logs --tail=200

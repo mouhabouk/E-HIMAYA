@@ -1,0 +1,6 @@
+/* Localized Info.plist values (permission prompts and app name). */
+"CFBundleDisplayName" = "e-Himaya";
+"NSCameraUsageDescription" = "La caméra sert à prendre des photos ou vidéos à joindre à votre signalement.";
+"NSLocationWhenInUseUsageDescription" = "Votre position sert à localiser le signalement ou l’appel SOS envoyé à la Protection civile.";
+"NSMicrophoneUsageDescription" = "Le microphone sert à enregistrer un message vocal à joindre à votre signalement.";
+"NSPhotoLibraryUsageDescription" = "La photothèque sert à choisir des photos ou vidéos à joindre à votre signalement.";

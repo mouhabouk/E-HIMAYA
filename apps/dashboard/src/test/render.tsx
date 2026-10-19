@@ -1,0 +1,97 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { render } from "@testing-library/react";
+import type { ReactNode } from "react";
+import { I18nextProvider } from "react-i18next";
+import { MemoryRouter, Route, Routes } from "react-router";
+import { vi } from "vitest";
+import type { AuthService, AuthUser } from "../auth/authService";
+import { identityFromClaims } from "../auth/identity";
+import { AuthProvider } from "../context/auth";
+import { FiltersProvider } from "../context/filters";
+import { LiveProvider } from "../context/live";
+import { ServicesProvider } from "../context/services";
+import { createI18n, type Language } from "../i18n";
+import type { StaffApi } from "../lib/staffApi";
+import { FakeWebSocket } from "./FakeWebSocket";
+import { fakeJwt } from "./fixtures";
+
+export function fakeAuth(claims: Record<string, unknown> | null): AuthService {
+  const token = claims ? fakeJwt(claims) : null;
+  const user: AuthUser | null = token && claims ? { accessToken: token, identity: identityFromClaims(claims) } : null;
+  return {
+    getAccessToken: () => token,
+    renew: vi.fn(() => Promise.resolve(token)),
+    load: vi.fn(() => Promise.resolve(user)),
+    signIn: vi.fn(() => Promise.resolve()),
+    completeSignIn: vi.fn(() => Promise.resolve("/")),
+    signOut: vi.fn(() => Promise.resolve()),
+    subscribe: () => () => undefined,
+  };
+}
+
+export const OPERATOR_CLAIMS = {
+  sub: "u-1",
+  name: "Sami Operator",
+  realm_access: { roles: ["operator", "offline_access"] },
+  gouvernorat_code: "61",
+};
+
+export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
+  return {
+    kpis: vi.fn(),
+    reports: vi.fn(() => Promise.resolve({ items: [], next_cursor: null })),
+    report: vi.fn(),
+    changeStatus: vi.fn(),
+    gouvernorats: vi.fn(() =>
+      Promise.resolve([
+        { code: 11, iso_code: "TN-11", name: "تونس", name_ar: "تونس", name_fr: "Tunis", delegation_count: 21 },
+        { code: 61, iso_code: "TN-61", name: "صفاقس", name_ar: "صفاقس", name_fr: "Sfax", delegation_count: 16 },
+      ]),
+    ),
+    ...overrides,
+  };
+}
+
+export function renderApp(
+  ui: ReactNode,
+  options: {
+    api?: StaffApi;
+    auth?: AuthService;
+    lang?: Language;
+    path?: string;
+    route?: string;
+  } = {},
+) {
+  const i18n = createI18n(options.lang ?? "ar");
+  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
+  const api = options.api ?? fakeApi();
+  const auth = options.auth ?? fakeAuth(OPERATOR_CLAIMS);
+  const utils = render(
+    <I18nextProvider i18n={i18n}>
+      <ServicesProvider
+        services={{
+          api,
+          auth,
+          liveUrl: "ws://test/api/v1/staff/live",
+          createSocket: (url) => new FakeWebSocket(url),
+          mapStyleUrl: null,
+        }}
+      >
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <LiveProvider>
+              <FiltersProvider>
+                <MemoryRouter initialEntries={[options.path ?? "/"]}>
+                  <Routes>
+                    <Route path={options.route ?? "*"} element={ui} />
+                  </Routes>
+                </MemoryRouter>
+              </FiltersProvider>
+            </LiveProvider>
+          </AuthProvider>
+        </QueryClientProvider>
+      </ServicesProvider>
+    </I18nextProvider>,
+  );
+  return { ...utils, api, auth, i18n, queryClient };
+}

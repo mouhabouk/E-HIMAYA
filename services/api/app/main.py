@@ -1,5 +1,6 @@
 """ء-حماية / e-Himaya — core API entry point."""
 
+import asyncio
 import re
 import uuid
 from collections.abc import AsyncIterator, Awaitable, Callable
@@ -10,12 +11,20 @@ from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import get_settings
-from app.core.db import dispose_engine
+from app.core.db import dispose_engine, get_sessionmaker
+from app.core.events import relay_forever, start_bus, stop_bus
 from app.core.logging import configure_logging
+from app.modules import models as _models  # noqa: F401  (registers every table for cross-module foreign keys)
 from app.modules.audit.router import router as audit_router
 from app.modules.geo.router import router as geo_router
 from app.modules.health.router import router as health_router
 from app.modules.identity.router import router as identity_router
+from app.modules.reports.live import hub
+from app.modules.reports.live import router as live_router
+from app.modules.reports.router import router as reports_router
+from app.modules.reports.staff_router import router as staff_router
+from app.modules.reports.uploads import router as uploads_router
+from app.modules.reports.uploads import verify_forever
 
 log = structlog.get_logger()
 _REQUEST_ID = re.compile(r"^[A-Za-z0-9-]{8,64}$")
@@ -24,9 +33,24 @@ _REQUEST_ID = re.compile(r"^[A-Za-z0-9-]{8,64}$")
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     log.info("api.start", version=app.version)
-    yield
-    await dispose_engine()
-    log.info("api.stop")
+    bus = await start_bus()
+    bus.add_listener(hub.on_event)
+    workers: list[asyncio.Task[None]] = []
+    if get_settings().background_workers:
+        sessionmaker = get_sessionmaker()
+        workers = [
+            asyncio.create_task(relay_forever(sessionmaker), name="outbox-relay"),
+            asyncio.create_task(verify_forever(sessionmaker), name="media-verify"),
+        ]
+    try:
+        yield
+    finally:
+        for task in workers:
+            task.cancel()
+        await asyncio.gather(*workers, return_exceptions=True)
+        await stop_bus()
+        await dispose_engine()
+        log.info("api.stop")
 
 
 def create_app() -> FastAPI:
@@ -46,7 +70,7 @@ def create_app() -> FastAPI:
             CORSMiddleware,
             allow_origins=settings.api_cors_origins,
             allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
-            allow_headers=["Authorization", "Content-Type", "Accept-Language", "X-Request-ID"],
+            allow_headers=["Authorization", "Content-Type", "Accept-Language", "X-Request-ID", "X-Device-Key"],
             max_age=600,
         )
 
@@ -62,7 +86,17 @@ def create_app() -> FastAPI:
         response.headers["Referrer-Policy"] = "no-referrer"
         return response
 
-    for router in (health_router, geo_router, identity_router, audit_router):
+    routers = (
+        health_router,
+        geo_router,
+        identity_router,
+        reports_router,
+        staff_router,
+        live_router,
+        uploads_router,
+        audit_router,
+    )
+    for router in routers:
         app.include_router(router)
     return app
 

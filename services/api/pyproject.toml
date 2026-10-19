@@ -17,6 +17,8 @@ dependencies = [
   "redis==8.1.0",
   "nats-py==2.16.0",
   "structlog==26.1.0",
+  "boto3==1.43.114",
+  "cryptography==50.0.2",
 ]
 
 [dependency-groups]

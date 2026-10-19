@@ -1,0 +1,6 @@
+/* Localized Info.plist values (permission prompts and app name). */
+"CFBundleDisplayName" = "e-Himaya";
+"NSCameraUsageDescription" = "The camera is used to take photos or videos to attach to your report.";
+"NSLocationWhenInUseUsageDescription" = "Your location is used to place your report or SOS call sent to the Civil Protection.";
+"NSMicrophoneUsageDescription" = "The microphone is used to record a voice message to attach to your report.";
+"NSPhotoLibraryUsageDescription" = "The photo library is used to choose photos or videos to attach to your report.";
