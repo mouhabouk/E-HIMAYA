@@ -113,7 +113,7 @@ async def transcribe(request: Request, body: TranscribeIn, _: Authorized) -> Tra
             raise
         except Exception as exc:
             # Undecodable or corrupted media: not retryable.
-            log.warning("ai.transcribe_failed", error=type(exc).__name__)
+            log.warning("ai.transcribe_failed", error=type(exc).__name__, detail=str(exc)[:200])
             raise HTTPException(422, "media_undecodable") from exc
     return TranscribeOut(
         text=result.text,
