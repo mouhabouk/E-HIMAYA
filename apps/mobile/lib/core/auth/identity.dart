@@ -116,9 +116,18 @@ class IdentityController extends Notifier<IdentityState> {
   Future<void> logout() async {
     final session = state.session;
     await _secure.delete(SecureStoreKeys.authSession);
+    await _clearAccountData();
     await _prefs.setIdentityMode(null);
     state = state.copyWith(mode: IdentityMode.none, clearSession: true);
     if (session != null) await _oidc.endSession(session);
+  }
+
+  /// Data tied to the signed-in account: its institutions (offline copy) and the "report as"
+  /// choices.
+  Future<void> _clearAccountData() async {
+    await _secure.delete(SecureStoreKeys.orgCache);
+    await _prefs.setReportAsOrgId(null);
+    await _prefs.setSosReportAsOrgId(null);
   }
 
   /// A valid access token, refreshed when it expires within 30 s. Concurrent callers share one
@@ -145,6 +154,7 @@ class IdentityController extends Notifier<IdentityState> {
     } on OidcSessionExpired {
       _log.info('session expired, signing out locally');
       await _secure.delete(SecureStoreKeys.authSession);
+      await _clearAccountData();
       await _prefs.setIdentityMode(null);
       state = state.copyWith(mode: IdentityMode.none, clearSession: true);
       return null;

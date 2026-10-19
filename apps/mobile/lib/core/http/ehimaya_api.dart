@@ -12,7 +12,7 @@ class CreateReportResult {
   final bool created;
 }
 
-/// Typed access to the phase-2 API. Every method throws [ApiException] on failure.
+/// Typed access to the phase-2 API (and the phase-4 institution endpoints used by the app). Every method throws [ApiException] on failure.
 class EHimayaApi {
   EHimayaApi(this._dio);
 
@@ -108,6 +108,40 @@ class EHimayaApi {
       data: profile.toJson(),
     );
     return Profile.fromJson(r.data!);
+  });
+
+  /// Institutions of the signed-in account (phase 4 §1), any status.
+  Future<List<MyOrg>> myOrgs() => guardApi(() async {
+    final r = await _dio.get<List<Object?>>('/api/v1/orgs/mine');
+    return [
+      for (final o in r.data!)
+        if (o is Map<String, Object?>) MyOrg.fromJson(o),
+    ];
+  });
+
+  /// Short card of an institution for the app (phase 4 §8, FR-A-081).
+  Future<OrgSummary> orgSummary(String orgId) => guardApi(() async {
+    final r = await _dio.get<Map<String, Object?>>(
+      '/api/v1/orgs/${Uri.encodeComponent(orgId)}/summary',
+    );
+    return OrgSummary.fromJson(r.data!);
+  });
+
+  /// Reports sent on behalf of an institution, newest first (phase 4 §8).
+  Future<OrgReportsPage> orgReports(
+    String orgId, {
+    int limit = 50,
+    String? cursor,
+  }) => guardApi(() async {
+    final r = await _dio.get<Map<String, Object?>>(
+      '/api/v1/orgs/${Uri.encodeComponent(orgId)}/reports',
+      queryParameters: {'limit': limit, 'cursor': ?cursor},
+    );
+    final data = r.data!;
+    return OrgReportsPage([
+      for (final item in (data['items'] as List? ?? const []))
+        if (item is Map<String, Object?>) OrgReport.fromJson(item),
+    ], data['next_cursor'] as String?);
   });
 }
 

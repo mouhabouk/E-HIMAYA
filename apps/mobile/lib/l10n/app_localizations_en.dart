@@ -714,4 +714,212 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get errorMediaRejected =>
       'The attachment was damaged in transfer and was refused.';
+
+  @override
+  String get errorOrgNotFound =>
+      'This institution was not found or you are no longer one of its members.';
+
+  @override
+  String get errorOrgNotActive =>
+      'This institution is not active (under review, rejected or suspended): it cannot report.';
+
+  @override
+  String get errorOrgRoleRequired =>
+      'Your role in this institution does not allow this action.';
+
+  @override
+  String get reportAsTitle => 'Report as';
+
+  @override
+  String get reportAsSelf => 'Myself';
+
+  @override
+  String get reportAsInstitutionUnnamed => 'Institution';
+
+  @override
+  String get reportOrgRefused => 'Refused for the institution';
+
+  @override
+  String get reportOrgNotFoundBody =>
+      'This report could not be sent on behalf of the institution: it was not found or you are no longer one of its members. It is kept on this phone. You can send it as yourself.';
+
+  @override
+  String get reportOrgNotActiveBody =>
+      'This report could not be sent on behalf of the institution because it is not active. It is kept on this phone. You can send it as yourself.';
+
+  @override
+  String get reportResendAsSelf => 'Send as myself';
+
+  @override
+  String get reportResentAsSelf => 'The report will be sent as yourself.';
+
+  @override
+  String get settingsSosReportAs => 'SOS';
+
+  @override
+  String get settingsSosReportAsHint => 'The SOS button sends the alert as:';
+
+  @override
+  String get myInstitutionTitle => 'My institution';
+
+  @override
+  String get myInstitutionsTitle => 'My institutions';
+
+  @override
+  String get myInstitutionsEmpty => 'You do not belong to any institution.';
+
+  @override
+  String get homeInstitutionDesc =>
+      'Safety card, team and reports of your institution';
+
+  @override
+  String get orgKindIndustrial => 'Industrial';
+
+  @override
+  String get orgKindEducational => 'Educational';
+
+  @override
+  String get orgKindHotel => 'Hotel';
+
+  @override
+  String get orgKindGovernment => 'Government';
+
+  @override
+  String get orgKindPrivate => 'Private';
+
+  @override
+  String get orgKindOther => 'Other';
+
+  @override
+  String get orgStatusPendingReview => 'Under review';
+
+  @override
+  String get orgStatusActive => 'Active';
+
+  @override
+  String get orgStatusRejected => 'Rejected';
+
+  @override
+  String get orgStatusSuspended => 'Suspended';
+
+  @override
+  String get orgFamilyHighRise => 'High-rise building';
+
+  @override
+  String get orgFamilyIndustrial => 'Industrial establishment';
+
+  @override
+  String get orgFamilyErp => 'Building open to the public';
+
+  @override
+  String get orgFamilyWorkplace => 'Workplace';
+
+  @override
+  String orgErpCategory(int category) {
+    return 'category $category';
+  }
+
+  @override
+  String get orgTeamRepresentative => 'Representative';
+
+  @override
+  String get orgTeamMember => 'Member';
+
+  @override
+  String get trainingValid => 'valid';
+
+  @override
+  String get trainingExpiring => 'expiring soon';
+
+  @override
+  String get trainingExpired => 'expired';
+
+  @override
+  String get trainingUnknown => 'unknown';
+
+  @override
+  String orgTraining(String status) {
+    return 'Training: $status';
+  }
+
+  @override
+  String get orgCapacity => 'Capacity (maximum number of people)';
+
+  @override
+  String get orgAddress => 'Address';
+
+  @override
+  String get orgClassification => 'Classification';
+
+  @override
+  String get orgClassificationProvisional =>
+      'Provisional: computed with thresholds still to be validated by the Civil Protection.';
+
+  @override
+  String get orgAlerts => 'Alerts';
+
+  @override
+  String orgAlertsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count alerts',
+      one: '1 alert',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get orgNoAlerts => 'No alert';
+
+  @override
+  String get orgSafetyTeam => 'Safety team';
+
+  @override
+  String get orgTeamEmpty => 'No safety team registered.';
+
+  @override
+  String orgCallMember(String name) {
+    return 'Call $name';
+  }
+
+  @override
+  String orgHazmatTitle(int count) {
+    return 'Hazardous materials ($count)';
+  }
+
+  @override
+  String get orgHazmatEmpty => 'No hazardous material registered.';
+
+  @override
+  String orgUnNumber(String number) {
+    return 'UN $number';
+  }
+
+  @override
+  String orgOfflineCopy(String date) {
+    return 'Offline: copy saved on $date.';
+  }
+
+  @override
+  String get orgPortalNote =>
+      'Detailed editing of the institution (card, team, hazardous materials, documents, certificate) is done on the institutions portal.';
+
+  @override
+  String get orgOpenPortal => 'Open the portal';
+
+  @override
+  String get orgPortalUnavailable =>
+      'The portal could not be opened on this phone.';
+
+  @override
+  String get orgRecentReports => 'Recent reports of the institution';
+
+  @override
+  String get orgReportsEmpty => 'No report yet.';
+
+  @override
+  String orgReportBy(String name) {
+    return 'By $name';
+  }
 }

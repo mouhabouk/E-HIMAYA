@@ -4,10 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/db/app_database.dart';
+import '../../core/http/api_error.dart';
 import '../../core/routing/app_router.dart';
+import '../../core/sync/report_queue.dart';
 import '../../l10n/app_localizations.dart';
 import '../emergency/dialer.dart';
 import '../emergency/emergency_numbers.dart';
+import '../institution/institution_providers.dart';
+import '../institution/org_labels.dart';
 import '../reports/reports_providers.dart';
 
 /// Shown right after submit: the temporary code is available instantly, offline. It switches to
@@ -31,6 +35,7 @@ class ReportQueuedScreen extends ConsumerWidget {
     final row = local.where((r) => r.tempCode == tempCode).firstOrNull;
     final serverCode = row?.serverTrackingCode;
     final code = serverCode ?? tempCode;
+    final orgId = row == null ? null : payloadOrganizationId(row.payload);
     final civil = emergencyNumbers.first;
     return Scaffold(
       appBar: AppBar(
@@ -84,6 +89,25 @@ class ReportQueuedScreen extends ConsumerWidget {
                   : l10n.reportReceivedBody,
               textAlign: TextAlign.center,
             ),
+            if (orgId != null) ...[
+              const SizedBox(height: 8),
+              Center(
+                child: OrgChip(
+                  key: const Key('queued-org'),
+                  name: ref.watch(orgNamesProvider)[orgId] ?? '',
+                ),
+              ),
+            ],
+            if (row?.state == ReportState.orgRefused) ...[
+              const SizedBox(height: 8),
+              Text(
+                row?.lastError == ApiErrorCode.orgNotActive.wire
+                    ? l10n.reportOrgNotActiveBody
+                    : l10n.reportOrgNotFoundBody,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: theme.colorScheme.error),
+              ),
+            ],
             if (row?.state == ReportState.blocked) ...[
               const SizedBox(height: 8),
               Text(

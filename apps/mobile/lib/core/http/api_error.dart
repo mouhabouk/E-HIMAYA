@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-/// Stable machine codes of the phase-2 contract (plus client-side categories).
+/// Stable machine codes of the phase-2 and phase-4 contracts (plus client-side categories).
 enum ApiErrorCode {
   authenticationRequired('authentication_required'),
   invalidDeviceKey('invalid_device_key'),
@@ -11,6 +11,10 @@ enum ApiErrorCode {
   unknownCharterVersion('unknown_charter_version'),
   clientUuidConflict('client_uuid_conflict'),
   notFound('not_found'),
+  // Phase 4 §8: reporting on behalf of an institution.
+  orgNotFound('org_not_found'),
+  orgNotActive('org_not_active'),
+  orgRoleRequired('org_role_required'),
   // tus upload creation refusals (contract §4): permanent for that file.
   reportNotFound('report_not_found'),
   invalidSha256('invalid_sha256'),

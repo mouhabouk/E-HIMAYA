@@ -1,13 +1,27 @@
 import type { InfiniteData, QueryClient } from "@tanstack/react-query";
-import { matchesFilters, type BBox, type ReportFilters } from "./filters";
+import { inBBox, matchesFilters, type BBox, type ReportFilters } from "./filters";
 import type { LiveEvent } from "./live";
+import { compareOrgNames, matchesOrgFilters, type OrgFilters } from "./orgs";
 import { comparePriority } from "./priority";
 import { queryKeys, type IncidentStatusFilter, type ReportSort } from "./staffApi";
 import { TRANSITIONS } from "./status";
-import type { IncidentDetail, IncidentSummary, Page, StaffReport, StaffReportDetail } from "./types";
+import type {
+  CertificateEvent,
+  IncidentDetail,
+  IncidentSummary,
+  OrgMapCollection,
+  Page,
+  QueueCertificate,
+  StaffOrg,
+  StaffOrgDetail,
+  StaffReport,
+  StaffReportDetail,
+} from "./types";
 
 type ReportsData = InfiniteData<Page<StaffReport>, string | null>;
 type IncidentsData = InfiniteData<Page<IncidentSummary>, string | null>;
+type OrgsData = InfiniteData<Page<StaffOrg>, string | null>;
+type QueueData = InfiniteData<Page<QueueCertificate>, string | null>;
 
 /** Query keys used by list and map so the cache updater can recover their filters (and the list's sort). */
 export function listKey(filters: ReportFilters, sort: ReportSort = "received") {
@@ -114,9 +128,134 @@ function applyReportToIncidents(qc: QueryClient, report: StaffReport): void {
   }
 }
 
+// ---------- Institutions (phase 4) ----------
+
 /**
- * Apply one live event to react-query caches: report detail, report lists, map queries and incidents.
- * KPI invalidation is debounced by the caller.
+ * Place an institution in a name-sorted paged list: remove its old row, then insert it at its rank inside the
+ * loaded range. A row ranked after every loaded one is only appended when the list has no further page.
+ */
+export function mergeOrgIntoPages(data: OrgsData | undefined, org: StaffOrg, matches: boolean): OrgsData | undefined {
+  if (!data || !Array.isArray(data.pages) || data.pages.length === 0) return data;
+  const pages = data.pages.map((page) =>
+    page.items.some((o) => o.id === org.id) ? { ...page, items: page.items.filter((o) => o.id !== org.id) } : page,
+  );
+  if (matches) {
+    let placed = false;
+    for (let i = 0; i < pages.length && !placed; i += 1) {
+      const page = pages[i];
+      if (!page) continue;
+      const at = page.items.findIndex((o) => compareOrgNames(org, o) < 0);
+      if (at !== -1) {
+        pages[i] = { ...page, items: [...page.items.slice(0, at), org, ...page.items.slice(at)] };
+        placed = true;
+      }
+    }
+    const last = pages[pages.length - 1];
+    if (!placed && last && !last.next_cursor) {
+      pages[pages.length - 1] = { ...last, items: [...last.items, org] };
+    }
+  }
+  return { ...data, pages };
+}
+
+/** Upsert (active institutions inside the bbox) or remove one point of a cached map layer. */
+export function mergeOrgIntoMap(data: OrgMapCollection | undefined, org: StaffOrg, bbox: BBox): OrgMapCollection | undefined {
+  if (!data || !Array.isArray(data.features)) return data;
+  const features = data.features.filter((f) => f.properties.id !== org.id);
+  const loc = org.location;
+  if (org.status === "active" && loc && inBBox(loc.lon, loc.lat, bbox)) {
+    features.push({
+      type: "Feature",
+      geometry: { type: "Point", coordinates: [loc.lon, loc.lat] },
+      properties: {
+        id: org.id,
+        name: org.name,
+        kind: org.kind,
+        capacity: org.capacity,
+        hazmat_count: org.hazmat_count,
+        category: org.classification?.category ?? null,
+        family: org.classification?.family ?? null,
+      },
+    });
+  }
+  return { ...data, features };
+}
+
+function applyOrgUpdate(qc: QueryClient, org: StaffOrg): void {
+  for (const [key, data] of qc.getQueriesData<OrgsData>({ queryKey: queryKeys.orgsAll })) {
+    const filters = key[1] as OrgFilters | undefined;
+    if (!filters || typeof filters !== "object") continue;
+    qc.setQueryData<OrgsData>(key, mergeOrgIntoPages(data, org, matchesOrgFilters(org, filters)));
+  }
+
+  for (const [key, data] of qc.getQueriesData<OrgMapCollection>({ queryKey: queryKeys.orgsMapAll })) {
+    const bbox: unknown = key[1];
+    if (!Array.isArray(bbox) || bbox.length !== 4) continue;
+    qc.setQueryData<OrgMapCollection>(key, mergeOrgIntoMap(data, org, bbox as unknown as BBox));
+  }
+
+  const detailKey = queryKeys.org(org.id);
+  const detail = qc.getQueryData<StaffOrgDetail>(detailKey);
+  if (detail) {
+    qc.setQueryData<StaffOrgDetail>(detailKey, {
+      ...detail,
+      name: org.name,
+      kind: org.kind,
+      status: org.status,
+      identifier_type: org.identifier_type,
+      identifier: org.identifier,
+      gouvernorat_code: org.gouvernorat_code,
+      capacity: org.capacity,
+      location: org.location,
+      classification: org.classification,
+    });
+    // Opening the staff detail writes an audit entry: refetch only a detail that is on screen; a cached
+    // one in the background is just marked stale and reloads when it is opened again.
+    void qc.invalidateQueries({ queryKey: detailKey, exact: true, refetchType: "active" });
+  }
+}
+
+function applyCertificateUpdate(qc: QueryClient, cert: CertificateEvent): void {
+  for (const [key, data] of qc.getQueriesData<QueueData>({ queryKey: queryKeys.certificatesAll })) {
+    const status = key[1];
+    if (typeof status !== "string" || !data || !Array.isArray(data.pages)) continue;
+    const listed = data.pages.some((p) => p.items.some((c) => c.id === cert.id));
+    if (listed) {
+      const pages = data.pages.map((p) => ({
+        ...p,
+        items:
+          cert.status === status
+            ? p.items.map((c) => (c.id === cert.id ? { ...c, code: cert.code, status: cert.status, org_name: cert.org_name } : c))
+            : p.items.filter((c) => c.id !== cert.id),
+      }));
+      qc.setQueryData<QueueData>(key, { ...data, pages });
+    } else if (cert.status === status) {
+      // The event lacks submission time and completeness: reload the queue (not an audited endpoint).
+      void qc.invalidateQueries({ queryKey: key, exact: true });
+    }
+  }
+
+  const detailKey = queryKeys.org(cert.org_id);
+  const detail = qc.getQueryData<StaffOrgDetail>(detailKey);
+  if (detail) {
+    qc.setQueryData<StaffOrgDetail>(detailKey, {
+      ...detail,
+      certificates: detail.certificates.map((c) => (c.id === cert.id ? { ...c, status: cert.status } : c)),
+    });
+    void qc.invalidateQueries({ queryKey: detailKey, exact: true, refetchType: "active" });
+  }
+
+  // The list's certificate column (status, validity) comes from the server: reload lists showing the institution.
+  for (const [key, data] of qc.getQueriesData<OrgsData>({ queryKey: queryKeys.orgsAll })) {
+    if (data?.pages.some((p) => p.items.some((o) => o.id === cert.org_id))) {
+      void qc.invalidateQueries({ queryKey: key, exact: true });
+    }
+  }
+}
+
+/**
+ * Apply one live event to react-query caches: report detail, report lists, map queries, incidents and
+ * institutions. KPI invalidation is debounced by the caller.
  */
 export function applyLiveEvent(qc: QueryClient, event: LiveEvent, now: number = Date.now()): void {
   if (event.type === "media.stored") {
@@ -126,6 +265,14 @@ export function applyLiveEvent(qc: QueryClient, event: LiveEvent, now: number = 
   }
   if (event.type === "incident.updated") {
     applyIncidentUpdate(qc, event.incident);
+    return;
+  }
+  if (event.type === "org.updated") {
+    applyOrgUpdate(qc, event.org);
+    return;
+  }
+  if (event.type === "certificate.updated") {
+    applyCertificateUpdate(qc, event.certificate);
     return;
   }
   const report = event.report;
@@ -163,6 +310,13 @@ export function applyLiveEvent(qc: QueryClient, event: LiveEvent, now: number = 
     if (!filters || !bbox) continue;
     const matches = matchesFilters(report, filters, { now, bbox });
     qc.setQueryData<ReportsData>(key, mergeIntoPages(data, report, matches, true));
+  }
+
+  // Reports made on behalf of an institution (phase 4 §8): its "reports" list on the institution page.
+  const orgId = report.organization?.id;
+  if (orgId) {
+    const key = queryKeys.orgReports(orgId);
+    qc.setQueryData<ReportsData>(key, (data) => mergeIntoPages(data, report, true, isNew));
   }
 
   if (!isNew) applyReportToIncidents(qc, report);

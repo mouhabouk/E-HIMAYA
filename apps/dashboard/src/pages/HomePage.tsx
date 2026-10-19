@@ -1,15 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
 import { AiStatusBanner } from "../components/AiStatusBanner";
 import { BarChart, type Bar } from "../components/BarChart";
 import { CategoryLabel } from "../components/CategoryIcon";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { PeriodSelector } from "../components/FiltersBar";
 import { StatusChip } from "../components/StatusChip";
+import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
 import { periodSince, type Period } from "../lib/filters";
 import { useFormat, useGouvernorats } from "../lib/hooks";
+import { canReadOrgs } from "../lib/roles";
 import { queryKeys } from "../lib/staffApi";
 import { CATEGORIES, REPORT_STATUSES, type Kpis } from "../lib/types";
 
@@ -18,6 +21,22 @@ function KpiCard({ label, value, tone }: { label: string; value: string; tone?: 
     <div className={`kpi card ${tone ?? ""}`}>
       <dt className="kpi__label">{label}</dt>
       <dd className="kpi__value">{value}</dd>
+    </div>
+  );
+}
+
+/** A KPI that opens the matching list (institutions to review, certificate queue). */
+function KpiLinkCard({ label, value, tone, to }: { label: string; value: string; tone?: string; to: string }) {
+  const { t } = useTranslation();
+  return (
+    <div className={`kpi card ${tone ?? ""}`}>
+      <dt className="kpi__label">{label}</dt>
+      <dd className="kpi__value">{value}</dd>
+      <dd className="kpi__link">
+        <Link to={to} aria-label={`${t("kpi.openFiltered")} — ${label}`}>
+          {t("kpi.openFiltered")}
+        </Link>
+      </dd>
     </div>
   );
 }
@@ -40,6 +59,8 @@ export function HomePage() {
   const { api } = useServices();
   const fmt = useFormat();
   const gouvernorats = useGouvernorats();
+  const { user } = useAuth();
+  const showOrgKpis = canReadOrgs(user?.identity.roles ?? []);
   const [period, setPeriod] = useState<Period>("24h");
 
   const query = useQuery({
@@ -111,6 +132,22 @@ export function HomePage() {
                   : fmt.duration(query.data.avg_first_response_s)
               }
             />
+            {showOrgKpis && typeof query.data.orgs_pending_review === "number" && (
+              <KpiLinkCard
+                label={t("kpi.orgsPendingReview")}
+                value={fmt.number(query.data.orgs_pending_review)}
+                tone="kpi--orgs"
+                to="/orgs?status=pending_review"
+              />
+            )}
+            {showOrgKpis && typeof query.data.certificates_submitted === "number" && (
+              <KpiLinkCard
+                label={t("kpi.certificatesSubmitted")}
+                value={fmt.number(query.data.certificates_submitted)}
+                tone="kpi--certs"
+                to="/orgs/certificates"
+              />
+            )}
           </dl>
           <div className="charts">
             <BarChart caption={t("kpi.byStatus")} bars={charts.byStatus} emptyText={t("kpi.noData")} />

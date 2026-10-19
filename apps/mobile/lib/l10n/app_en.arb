@@ -319,5 +319,120 @@
   "errorUnsupportedMediaType": "This attachment format is not accepted.",
   "errorTooManyMedia": "This report already has the maximum number of attachments.",
   "errorUploadWindowClosed": "Attachments can only be added within 24 hours of the report.",
-  "errorMediaRejected": "The attachment was damaged in transfer and was refused."
+  "errorMediaRejected": "The attachment was damaged in transfer and was refused.",
+  "errorOrgNotFound": "This institution was not found or you are no longer one of its members.",
+  "errorOrgNotActive": "This institution is not active (under review, rejected or suspended): it cannot report.",
+  "errorOrgRoleRequired": "Your role in this institution does not allow this action.",
+  "reportAsTitle": "Report as",
+  "reportAsSelf": "Myself",
+  "reportAsInstitutionUnnamed": "Institution",
+  "reportOrgRefused": "Refused for the institution",
+  "reportOrgNotFoundBody": "This report could not be sent on behalf of the institution: it was not found or you are no longer one of its members. It is kept on this phone. You can send it as yourself.",
+  "reportOrgNotActiveBody": "This report could not be sent on behalf of the institution because it is not active. It is kept on this phone. You can send it as yourself.",
+  "reportResendAsSelf": "Send as myself",
+  "reportResentAsSelf": "The report will be sent as yourself.",
+  "settingsSosReportAs": "SOS",
+  "settingsSosReportAsHint": "The SOS button sends the alert as:",
+  "myInstitutionTitle": "My institution",
+  "myInstitutionsTitle": "My institutions",
+  "myInstitutionsEmpty": "You do not belong to any institution.",
+  "homeInstitutionDesc": "Safety card, team and reports of your institution",
+  "orgKindIndustrial": "Industrial",
+  "orgKindEducational": "Educational",
+  "orgKindHotel": "Hotel",
+  "orgKindGovernment": "Government",
+  "orgKindPrivate": "Private",
+  "orgKindOther": "Other",
+  "orgStatusPendingReview": "Under review",
+  "orgStatusActive": "Active",
+  "orgStatusRejected": "Rejected",
+  "orgStatusSuspended": "Suspended",
+  "orgFamilyHighRise": "High-rise building",
+  "orgFamilyIndustrial": "Industrial establishment",
+  "orgFamilyErp": "Building open to the public",
+  "orgFamilyWorkplace": "Workplace",
+  "orgErpCategory": "category {category}",
+  "@orgErpCategory": {
+    "placeholders": {
+      "category": {
+        "type": "int"
+      }
+    }
+  },
+  "orgTeamRepresentative": "Representative",
+  "orgTeamMember": "Member",
+  "trainingValid": "valid",
+  "trainingExpiring": "expiring soon",
+  "trainingExpired": "expired",
+  "trainingUnknown": "unknown",
+  "orgTraining": "Training: {status}",
+  "@orgTraining": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "orgCapacity": "Capacity (maximum number of people)",
+  "orgAddress": "Address",
+  "orgClassification": "Classification",
+  "orgClassificationProvisional": "Provisional: computed with thresholds still to be validated by the Civil Protection.",
+  "orgAlerts": "Alerts",
+  "orgAlertsCount": "{count, plural, =1{1 alert} other{{count} alerts}}",
+  "@orgAlertsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "orgNoAlerts": "No alert",
+  "orgSafetyTeam": "Safety team",
+  "orgTeamEmpty": "No safety team registered.",
+  "orgCallMember": "Call {name}",
+  "@orgCallMember": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "orgHazmatTitle": "Hazardous materials ({count})",
+  "@orgHazmatTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "orgHazmatEmpty": "No hazardous material registered.",
+  "orgUnNumber": "UN {number}",
+  "@orgUnNumber": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "orgOfflineCopy": "Offline: copy saved on {date}.",
+  "@orgOfflineCopy": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "orgPortalNote": "Detailed editing of the institution (card, team, hazardous materials, documents, certificate) is done on the institutions portal.",
+  "orgOpenPortal": "Open the portal",
+  "orgPortalUnavailable": "The portal could not be opened on this phone.",
+  "orgRecentReports": "Recent reports of the institution",
+  "orgReportsEmpty": "No report yet.",
+  "orgReportBy": "By {name}",
+  "@orgReportBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -1,7 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Non-sensitive local settings (charter acceptance, chosen role, UI language and theme).
+/// Non-sensitive local settings (charter acceptance, chosen role, UI language and theme,
+/// "report as" choices).
 ///
 /// Secrets never go here: see [SecureStore].
 class AppPrefs {
@@ -17,6 +18,8 @@ class AppPrefs {
   static const _locale = 'settings.locale';
   static const _theme = 'settings.theme';
   static const _profilePrompted = 'profile.prompted';
+  static const _reportAs = 'orgs.report_as';
+  static const _sosReportAs = 'orgs.sos_report_as';
 
   String? get charterAcceptedVersion => _prefs.getString(_charterVersion);
   DateTime? get charterAcceptedAt {
@@ -57,6 +60,18 @@ class AppPrefs {
   bool get profilePrompted => _prefs.getBool(_profilePrompted) ?? false;
   Future<void> setProfilePrompted(bool value) =>
       _prefs.setBool(_profilePrompted, value);
+
+  /// Institution id last chosen in "Report as" on the report form (null: myself).
+  String? get reportAsOrgId => _prefs.getString(_reportAs);
+  Future<void> setReportAsOrgId(String? value) => value == null
+      ? _prefs.remove(_reportAs)
+      : _prefs.setString(_reportAs, value);
+
+  /// Institution id the SOS is sent for by default (null: myself), chosen in settings.
+  String? get sosReportAsOrgId => _prefs.getString(_sosReportAs);
+  Future<void> setSosReportAsOrgId(String? value) => value == null
+      ? _prefs.remove(_sosReportAs)
+      : _prefs.setString(_sosReportAs, value);
 }
 
 /// Overridden in `main()` (and in tests) with an initialised [SharedPreferences].

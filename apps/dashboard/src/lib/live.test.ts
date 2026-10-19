@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { FakeWebSocket } from "../test/FakeWebSocket";
-import { makeIncident, makeReport } from "../test/fixtures";
+import { makeIncident, makeReport, makeStaffOrg } from "../test/fixtures";
 import { backoffDelay, LiveClient, type LiveClientOptions, type LiveState } from "./live";
 
 function setup(overrides: Partial<LiveClientOptions> = {}) {
@@ -131,6 +131,22 @@ describe("LiveClient", () => {
     ws.serverSend({ type: "report.enriched" });
     ws.serverSend({ type: "incident.updated", incident: "x" });
     expect(events.map((e) => (e as { type: string }).type)).toEqual(["report.enriched", "incident.updated"]);
+  });
+
+  it("dispatches the phase 4 events org.updated and certificate.updated", () => {
+    const { client, events } = setup();
+    client.start();
+    const ws = FakeWebSocket.last();
+    ws.serverOpen();
+    ws.serverSend({ type: "ready" });
+    ws.serverSend({ type: "org.updated", org: makeStaffOrg() });
+    ws.serverSend({
+      type: "certificate.updated",
+      certificate: { id: "c-1", code: "EHC-26-61-000123", status: "approved", org_id: "o-1", org_name: "X", gouvernorat_code: 61 },
+    });
+    ws.serverSend({ type: "org.updated", org: { name: "no id" } });
+    ws.serverSend({ type: "certificate.updated" });
+    expect(events.map((e) => (e as { type: string }).type)).toEqual(["org.updated", "certificate.updated"]);
   });
 
   it("reconnects with exponential back-off after abnormal closes and resets after ready", () => {

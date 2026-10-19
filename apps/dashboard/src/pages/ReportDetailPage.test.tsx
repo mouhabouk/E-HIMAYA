@@ -2,7 +2,7 @@ import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { ApiError } from "../lib/api";
 import type { StaffReportDetail } from "../lib/types";
-import { makeAnalysis, makeDetail } from "../test/fixtures";
+import { makeAnalysis, makeDetail, makeOrganizationCard } from "../test/fixtures";
 import { fakeApi, fakeAuth, OPERATOR_CLAIMS, renderApp } from "../test/render";
 import { ReportDetailPage } from "./ReportDetailPage";
 
@@ -89,5 +89,55 @@ describe("ReportDetailPage", () => {
     const api = fakeApi({ report: vi.fn(() => Promise.reject(new ApiError(404, "not_found"))) });
     renderApp(<ReportDetailPage />, { api, path: "/reports/x", route });
     expect(await screen.findByRole("alert")).toHaveTextContent("العنصر المطلوب غير موجود");
+  });
+
+  it("shows the reporting institution in the header and its card for responders (phase 4)", async () => {
+    const detail = makeDetail({
+      id: "r1",
+      organization: { id: "o-1", name: "Société Chimique du Sud", kind: "industrial" },
+      organization_card: makeOrganizationCard(),
+    });
+    const api = fakeApi({ report: vi.fn(() => Promise.resolve(detail)) });
+    renderApp(<ReportDetailPage />, { api, path: "/reports/r1", route, lang: "fr" });
+
+    expect(await screen.findByRole("link", { name: "Signalement au nom de l’établissement Société Chimique du Sud" })).toHaveAttribute(
+      "href",
+      "/orgs/o-1",
+    );
+    const card = screen.getByRole("region", { name: "Fiche de l’établissement déclarant" });
+    expect(within(card).getByText("420")).toBeInTheDocument();
+    expect(within(card).getByText("Établissement industriel")).toBeInTheDocument();
+    const call = within(card).getByRole("link", { name: "Appeler Sonia Gharbi au +21622000000" });
+    expect(call).toHaveAttribute("href", "tel:+21622000000");
+
+    const hazard = within(card).getByRole("group", { name: "Danger : matières dangereuses stockées sur le site" });
+    expect(hazard).toHaveClass("hazard");
+    expect(within(hazard).getByText("UN 1090")).toBeInTheDocument();
+    expect(within(hazard).getByText("2,5 t")).toBeInTheDocument();
+    expect(within(card).getByText(/Parking nord/)).toBeInTheDocument();
+    // The features are drawn on the report's map, with a legend.
+    expect(screen.getByRole("list", { name: "Légende" })).toHaveTextContent("Point d’évacuation et de rassemblement");
+  });
+
+  it("shows no institution card for an ordinary report", async () => {
+    const api = fakeApi({ report: vi.fn(() => Promise.resolve(makeDetail({ id: "r1" }))) });
+    renderApp(<ReportDetailPage />, { api, path: "/reports/r1", route, lang: "fr" });
+    await screen.findByText("EH-26-61-0004821");
+    expect(screen.queryByRole("region", { name: "Fiche de l’établissement déclarant" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("list", { name: "Légende" })).not.toBeInTheDocument();
+  });
+
+  it("says when the institution declared no hazardous material and has no representative", async () => {
+    const detail = makeDetail({
+      id: "r1",
+      organization: { id: "o-1", name: "École X" },
+      organization_card: makeOrganizationCard({ name: "École X", kind: "educational", hazmat: [], representative: null, features: [] }),
+    });
+    const api = fakeApi({ report: vi.fn(() => Promise.resolve(detail)) });
+    renderApp(<ReportDetailPage />, { api, path: "/reports/r1", route, lang: "ar" });
+    const card = await screen.findByRole("region", { name: "بطاقة المؤسسة المُبلِّغة" });
+    expect(within(card).getByText("لم تُصرّح المؤسسة بأي مادة خطرة.")).toBeInTheDocument();
+    expect(within(card).getByText("لا يوجد ممثل مسجّل.")).toBeInTheDocument();
+    expect(within(card).getByText("تعليمية")).toBeInTheDocument();
   });
 });

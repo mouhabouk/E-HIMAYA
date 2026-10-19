@@ -1,7 +1,16 @@
 import { describe, expect, it } from "vitest";
 import { identityFromClaims, identityFromToken } from "../auth/identity";
 import { fakeJwt } from "../test/fixtures";
-import { canChangeStatus, canEditAiSettings, canManageIncidents, hasReadAccess, staffRoles } from "./roles";
+import {
+  canChangeStatus,
+  canEditAiSettings,
+  canManageIncidents,
+  canReadOrgs,
+  canReviewOrgs,
+  hasDashboardAccess,
+  hasReadAccess,
+  staffRoles,
+} from "./roles";
 
 describe("role gating (contract §5)", () => {
   it("grants read access to the five staff read roles only", () => {
@@ -37,6 +46,27 @@ describe("role gating (contract §5)", () => {
 
   it("keeps only staff roles for display", () => {
     expect(staffRoles(["offline_access", "ops_manager", "operator"])).toEqual(["operator", "ops_manager"]);
+    expect(staffRoles(["org_auditor", "uma_authorization"])).toEqual(["org_auditor"]);
+  });
+
+  it("lets the five read roles and org_auditor read institutions (phase 4 §0)", () => {
+    for (const r of ["operator", "ops_manager", "field_commander", "local_committee", "central_committee", "org_auditor"]) {
+      expect(canReadOrgs([r]), r).toBe(true);
+    }
+    expect(canReadOrgs(["sysadmin", "content_editor", "org_admin", "org_member"])).toBe(false);
+  });
+
+  it("reserves registration and certificate reviews to org_auditor", () => {
+    expect(canReviewOrgs(["org_auditor"])).toBe(true);
+    for (const r of ["operator", "ops_manager", "central_committee", "sysadmin", "org_admin"]) {
+      expect(canReviewOrgs([r]), r).toBe(false);
+    }
+  });
+
+  it("opens the dashboard to an institutions auditor without report roles", () => {
+    expect(hasDashboardAccess(["org_auditor"])).toBe(true);
+    expect(hasReadAccess(["org_auditor"])).toBe(false);
+    expect(hasDashboardAccess(["sysadmin"])).toBe(false);
   });
 });
 

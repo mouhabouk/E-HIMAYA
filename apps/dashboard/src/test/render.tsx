@@ -36,6 +36,13 @@ export const OPERATOR_CLAIMS = {
   gouvernorat_code: "61",
 };
 
+export const AUDITOR_CLAIMS = {
+  sub: "u-9",
+  name: "Leila Auditor",
+  realm_access: { roles: ["org_auditor"] },
+  gouvernorat_code: "61",
+};
+
 export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
   return {
     kpis: vi.fn(),
@@ -51,6 +58,16 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     aiSettings: vi.fn(),
     saveAiSettings: vi.fn(),
     aiStatus: vi.fn(() => Promise.resolve(AI_STATUS_READY)),
+    orgs: vi.fn(() => Promise.resolve({ items: [], next_cursor: null })),
+    org: vi.fn(),
+    orgReports: vi.fn(() => Promise.resolve({ items: [], next_cursor: null })),
+    orgDocumentVersions: vi.fn(() => Promise.resolve([])),
+    orgDocumentDownload: vi.fn(() => Promise.resolve({ url: "https://s3.example/doc?sig=x" })),
+    certificatePdf: vi.fn(() => Promise.resolve({ url: "https://s3.example/cert.pdf?sig=x" })),
+    orgsMap: vi.fn(() => Promise.resolve({ type: "FeatureCollection" as const, features: [] })),
+    reviewOrg: vi.fn(),
+    certificates: vi.fn(() => Promise.resolve({ items: [], next_cursor: null })),
+    reviewCertificate: vi.fn(),
     gouvernorats: vi.fn(() =>
       Promise.resolve([
         { code: 11, iso_code: "TN-11", name: "تونس", name_ar: "تونس", name_fr: "Tunis", delegation_count: 21 },
