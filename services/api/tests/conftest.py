@@ -30,6 +30,7 @@ import httpx  # noqa: E402
 import jwt  # noqa: E402
 import pytest  # noqa: E402
 from cryptography.hazmat.primitives.asymmetric import rsa  # noqa: E402
+from sqlalchemy import text  # noqa: E402
 from sqlalchemy.ext.asyncio import AsyncSession  # noqa: E402
 
 from app.core import security  # noqa: E402
@@ -92,6 +93,13 @@ async def client() -> AsyncIterator[httpx.AsyncClient]:
     transport = httpx.ASGITransport(app=app)
     async with httpx.AsyncClient(transport=transport, base_url="http://api.test") as c:
         yield c
+
+
+@pytest.fixture
+async def isolated_window() -> None:
+    """Move earlier tests' reports out of every grouping window, so suggestions only see this test's reports."""
+    async with get_sessionmaker()() as s, s.begin():
+        await s.execute(text("UPDATE reports.report SET received_at = received_at - interval '30 days'"))
 
 
 @pytest.fixture
@@ -169,8 +177,10 @@ class FakeStore:
         for key in keys:
             self.objects.pop(key, None)
 
-    def presign_get(self, key: str, *, expires_s: int = 600, content_type: str | None = None) -> str:
-        return f"http://s3.test/{key}?sig=1"
+    def presign_get(
+        self, key: str, *, expires_s: int = 600, content_type: str | None = None, internal: bool = False
+    ) -> str:
+        return f"http://{'s3-internal' if internal else 's3'}.test/{key}?sig=1"
 
 
 @pytest.fixture(autouse=True)
@@ -188,3 +198,15 @@ def _isolated_infra() -> Iterator[FakeStore]:
 @pytest.fixture
 def fake_store(_isolated_infra: FakeStore) -> FakeStore:
     return _isolated_infra
+
+
+@pytest.fixture
+def fake_ai() -> Iterator[Any]:
+    """An in-process stand-in for the AI inference service (tests/aihelpers.py)."""
+    from app.modules.ai.client import set_ai_client
+    from tests.aihelpers import FakeAi
+
+    ai = FakeAi()
+    set_ai_client(ai)
+    yield ai
+    set_ai_client(None)

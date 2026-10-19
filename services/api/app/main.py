@@ -15,10 +15,13 @@ from app.core.db import dispose_engine, get_sessionmaker
 from app.core.events import relay_forever, start_bus, stop_bus
 from app.core.logging import configure_logging
 from app.modules import models as _models  # noqa: F401  (registers every table for cross-module foreign keys)
+from app.modules.ai.pipeline import analyze_forever
+from app.modules.ai.router import router as ai_router
 from app.modules.audit.router import router as audit_router
 from app.modules.geo.router import router as geo_router
 from app.modules.health.router import router as health_router
 from app.modules.identity.router import router as identity_router
+from app.modules.ops.router import router as ops_router
 from app.modules.reports.live import hub
 from app.modules.reports.live import router as live_router
 from app.modules.reports.router import router as reports_router
@@ -41,6 +44,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         workers = [
             asyncio.create_task(relay_forever(sessionmaker), name="outbox-relay"),
             asyncio.create_task(verify_forever(sessionmaker), name="media-verify"),
+            asyncio.create_task(analyze_forever(sessionmaker), name="ai-analysis"),
         ]
     try:
         yield
@@ -92,6 +96,8 @@ def create_app() -> FastAPI:
         identity_router,
         reports_router,
         staff_router,
+        ops_router,
+        ai_router,
         live_router,
         uploads_router,
         audit_router,

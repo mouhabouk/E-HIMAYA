@@ -30,6 +30,7 @@ from app.core.db import get_session
 from app.core.events import emit
 from app.core.security import get_token_verifier
 from app.core.storage import ObjectStore, get_store
+from app.modules.ai import pipeline
 from app.modules.audit import service as audit
 from app.modules.identity.service import resolve_reporter
 from app.modules.reports.domain import MEDIA_MAX_BYTES, MEDIA_PER_REPORT, MEDIA_TYPES, MEDIA_UPLOAD_WINDOW_H
@@ -200,6 +201,9 @@ async def verify_one(sessionmaker: async_sessionmaker[AsyncSession], store: Obje
             media.status = "stored"
             media.bytes = size
             media.stored_at = datetime.now(UTC)
+            if media.report_id is not None:
+                # New evidence: re-analyse (transcription of audio/video, credibility, priority).
+                await pipeline.enqueue(session, media.report_id)
             await emit(
                 session,
                 "media.stored",

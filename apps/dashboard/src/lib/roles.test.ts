@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { identityFromClaims, identityFromToken } from "../auth/identity";
 import { fakeJwt } from "../test/fixtures";
-import { canChangeStatus, hasReadAccess, staffRoles } from "./roles";
+import { canChangeStatus, canEditAiSettings, canManageIncidents, hasReadAccess, staffRoles } from "./roles";
 
 describe("role gating (contract §5)", () => {
   it("grants read access to the five staff read roles only", () => {
@@ -20,6 +20,19 @@ describe("role gating (contract §5)", () => {
     expect(canChangeStatus(["local_committee"])).toBe(false);
     expect(canChangeStatus(["central_committee"])).toBe(false);
     expect(canChangeStatus(["sysadmin"])).toBe(false);
+  });
+
+  it("allows incident grouping actions to the status-change roles only (phase 3)", () => {
+    for (const r of ["operator", "ops_manager", "field_commander"]) expect(canManageIncidents([r]), r).toBe(true);
+    for (const r of ["local_committee", "central_committee", "sysadmin"]) expect(canManageIncidents([r]), r).toBe(false);
+  });
+
+  it("allows AI settings changes to the central committee or sysadmin with national scope", () => {
+    expect(canEditAiSettings({ roles: ["central_committee"], national: true })).toBe(true);
+    expect(canEditAiSettings({ roles: ["central_committee"], national: false })).toBe(false);
+    expect(canEditAiSettings({ roles: ["sysadmin", "operator"], national: true })).toBe(true);
+    expect(canEditAiSettings({ roles: ["sysadmin"], national: false })).toBe(false);
+    expect(canEditAiSettings({ roles: ["ops_manager", "local_committee"], national: true })).toBe(false);
   });
 
   it("keeps only staff roles for display", () => {

@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import AwareDatetime, BaseModel, Field
 
@@ -84,6 +84,9 @@ class TrackOut(BaseModel):
 # ---------------------------------------------------------------- staff
 
 
+AnalysisState = Literal["pending", "running", "done", "failed"]
+
+
 class StaffReport(BaseModel):
     id: uuid.UUID
     tracking_code: str
@@ -91,6 +94,8 @@ class StaffReport(BaseModel):
     status: Status
     text: str | None
     lang: str | None
+    # Arabic translation of a French or English text (FR-A-045); null for Arabic texts.
+    text_ar: str | None = None
     location: LocationOut
     gouvernorat_code: int | None
     delegation_id: int | None
@@ -99,6 +104,14 @@ class StaffReport(BaseModel):
     created_at: datetime
     received_at: datetime
     updated_at: datetime
+    # AI layer 1 (phase 3): suggestions for the operator, never applied automatically (BR-06, BR-11).
+    priority_score: int | None = None
+    credibility_score: int | None = None
+    analysis_state: AnalysisState | None = None
+    lives_at_risk: bool | None = None
+    suggested_category: Category | None = None
+    incident_id: uuid.UUID | None = None
+    has_suggestion: bool = False
 
 
 class StaffHistoryEntry(BaseModel):
@@ -115,11 +128,79 @@ class Reporter(BaseModel):
     phone: str | None = None
 
 
+class ScoreComponent(BaseModel):
+    key: str
+    # Priority: value 0..1 (null = no data yet), weight and points; credibility: points only.
+    value: float | None = None
+    weight: int | None = None
+    points: float
+    detail: dict[str, Any]
+
+
+class ExplainedScore(BaseModel):
+    score: int
+    components: list[ScoreComponent]
+
+
+class Extraction(BaseModel):
+    language: str
+    category: Category
+    lives_at_risk: bool
+    people_trapped: bool
+    injured_count: int
+    deaths_reported: bool
+    hazards: list[str]
+    keywords: list[str]
+    summary_ar: str
+    confidence: float
+
+
+class Suggestion(BaseModel):
+    kind: Literal["incident", "report"]
+    incident_id: uuid.UUID | None
+    report_id: uuid.UUID
+    tracking_code: str
+    score: float
+    distance_m: float
+    minutes: float
+    similarity: float | None
+    reasons: list[str]
+    matching_reports: int
+
+
+class Transcript(BaseModel):
+    media_id: uuid.UUID
+    kind: str
+    text: str | None
+    language: str | None
+    language_probability: float | None
+    duration_s: float | None
+    translation_ar: str | None
+    error: str | None
+    model: str | None
+
+
+class AnalysisOut(BaseModel):
+    state: AnalysisState
+    attempts: int
+    language: str | None
+    # transcribe / extract / translate / embed: done | skipped | failed | unavailable | disabled
+    steps: dict[str, str]
+    extraction: Extraction | None
+    priority: ExplainedScore | None
+    credibility: ExplainedScore | None
+    suggestion: Suggestion | None
+    transcripts: list[Transcript]
+    models: dict[str, str]
+    updated_at: datetime
+
+
 class StaffReportDetail(StaffReport):
     history: list[StaffHistoryEntry]
     media: list[StaffMediaOut]
     reporter: Reporter
     allowed_transitions: list[Status]
+    analysis: AnalysisOut | None = None
 
 
 class StaffReportPage(BaseModel):
@@ -144,3 +225,6 @@ class Kpis(BaseModel):
     by_category: dict[str, int]
     by_gouvernorat: list[GouvernoratCount]
     avg_first_response_s: float | None
+    # Reports with priority >= 70, and reports still waiting for their AI analysis.
+    high_priority: int = 0
+    analysis_pending: int = 0

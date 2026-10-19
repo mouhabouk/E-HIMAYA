@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { FakeWebSocket } from "../test/FakeWebSocket";
-import { makeReport } from "../test/fixtures";
+import { makeIncident, makeReport } from "../test/fixtures";
 import { backoffDelay, LiveClient, type LiveClientOptions, type LiveState } from "./live";
 
 function setup(overrides: Partial<LiveClientOptions> = {}) {
@@ -118,6 +118,19 @@ describe("LiveClient", () => {
       "report.status_changed",
       "media.stored",
     ]);
+  });
+
+  it("dispatches the phase 3 events report.enriched and incident.updated", () => {
+    const { client, events } = setup();
+    client.start();
+    const ws = FakeWebSocket.last();
+    ws.serverOpen();
+    ws.serverSend({ type: "ready" });
+    ws.serverSend({ type: "report.enriched", report: makeReport({ priority_score: 80 }) });
+    ws.serverSend({ type: "incident.updated", incident: makeIncident() });
+    ws.serverSend({ type: "report.enriched" });
+    ws.serverSend({ type: "incident.updated", incident: "x" });
+    expect(events.map((e) => (e as { type: string }).type)).toEqual(["report.enriched", "incident.updated"]);
   });
 
   it("reconnects with exponential back-off after abnormal closes and resets after ready", () => {

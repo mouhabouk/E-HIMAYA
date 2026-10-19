@@ -2,7 +2,7 @@
 
 import uuid
 from datetime import UTC, datetime, timedelta
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,11 +11,14 @@ from app.core.db import get_session
 from app.core.events import emit
 from app.core.security import Principal, Role, require_roles
 from app.core.storage import get_store
+from app.modules.ai.models import Analysis
 from app.modules.audit import service as audit
 from app.modules.audit.service import actor_of
 from app.modules.identity.models import Profile
+from app.modules.ops import service as ops
 from app.modules.reports import schemas, service
 from app.modules.reports.domain import TRANSITIONS, Category, Status
+from app.modules.reports.models import Media
 
 router = APIRouter(prefix="/api/v1/staff", tags=["staff"])
 
@@ -64,6 +67,8 @@ async def list_reports(
     until: datetime | None = None,
     bbox: str | None = None,
     q: Annotated[str | None, Query(max_length=100)] = None,
+    sort: Annotated[Literal["received", "priority"], Query()] = "received",
+    incident_id: uuid.UUID | None = None,
     limit: Annotated[int, Query(ge=1, le=500)] = 50,
     cursor: str | None = None,
 ) -> schemas.StaffReportPage:
@@ -75,12 +80,14 @@ async def list_reports(
         until=until,
         bbox=_bbox(bbox),
         q=q.strip() if q and q.strip() else None,
+        sort=sort,
+        incident_id=incident_id,
     )
     items, next_cursor = await service.staff_list(session, principal, filters, limit, cursor)
     return schemas.StaffReportPage(items=items, next_cursor=next_cursor)
 
 
-async def _detail(session: AsyncSession, principal: Principal, report_id: uuid.UUID) -> schemas.StaffReportDetail:
+async def detail_of(session: AsyncSession, principal: Principal, report_id: uuid.UUID) -> schemas.StaffReportDetail:
     found = await service.staff_summary(session, report_id)
     # Out-of-scope reports answer 404, not 403, so their existence is not disclosed.
     if found is None or not service.in_scope(principal, found[1].gouvernorat_code):
@@ -106,18 +113,51 @@ async def _detail(session: AsyncSession, principal: Principal, report_id: uuid.U
                 last_name=profile.last_name,
                 phone=profile.phone,
             )
+    analysis = await session.get(Analysis, report.id)
     return schemas.StaffReportDetail(
         **summary.model_dump(),
         history=await service.history_of(session, report.id),
         media=media_out,
         reporter=reporter,
         allowed_transitions=sorted(TRANSITIONS[Status(report.status)]),
+        analysis=analysis_out(analysis, media) if analysis is not None else None,
+    )
+
+
+def analysis_out(analysis: Analysis, media: list[Media]) -> schemas.AnalysisOut:
+    transcripts = [
+        schemas.Transcript(
+            media_id=m.id,
+            kind=m.kind,
+            text=m.transcript,
+            language=(m.analysis or {}).get("language"),
+            language_probability=(m.analysis or {}).get("language_probability"),
+            duration_s=m.duration_s,
+            translation_ar=(m.analysis or {}).get("translation_ar"),
+            error=(m.analysis or {}).get("error"),
+            model=(m.analysis or {}).get("model"),
+        )
+        for m in media
+        if m.kind in ("audio", "video") and (m.transcript is not None or (m.analysis or {}).get("error"))
+    ]
+    return schemas.AnalysisOut(
+        state=analysis.state,
+        attempts=analysis.attempts,
+        language=analysis.language,
+        steps=analysis.steps or {},
+        extraction=schemas.Extraction.model_validate(analysis.extraction) if analysis.extraction else None,
+        priority=schemas.ExplainedScore.model_validate(analysis.priority) if analysis.priority else None,
+        credibility=schemas.ExplainedScore.model_validate(analysis.credibility) if analysis.credibility else None,
+        suggestion=schemas.Suggestion.model_validate(analysis.suggestion) if analysis.suggestion else None,
+        transcripts=transcripts,
+        models=analysis.models or {},
+        updated_at=analysis.updated_at,
     )
 
 
 @router.get("/reports/{report_id}", response_model=schemas.StaffReportDetail)
 async def get_report(principal: StaffReader, session: Session, report_id: uuid.UUID) -> schemas.StaffReportDetail:
-    detail = await _detail(session, principal, report_id)
+    detail = await detail_of(session, principal, report_id)
     # NFR-06: opening a report shows personal data (reporter identity, location, media) and is audited.
     await audit.record(session, actor=actor_of(principal), action="report.view", target=f"report:{report_id}")
     await session.commit()
@@ -143,8 +183,9 @@ async def change_status(
         reason=body.note,
         details={"from": previous, "to": body.status.value},
     )
+    await ops.after_status_change(session, report, actor)
     summary = await service.staff_summary(session, report_id)
     assert summary is not None
     await emit(session, "report.status_changed", {"report": summary[0].model_dump(mode="json")})
     await session.commit()
-    return await _detail(session, principal, report_id)
+    return await detail_of(session, principal, report_id)

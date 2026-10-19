@@ -2,8 +2,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Suspense, useId, useState, type SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router";
+import { PriorityBadge } from "../components/AiBadges";
+import { AnalysisPanel } from "../components/AnalysisPanel";
 import { CategoryLabel } from "../components/CategoryIcon";
 import { ErrorBox, Loading } from "../components/Feedback";
+import { GroupingSection } from "../components/GroupingSection";
 import { LazyMapView } from "../components/LazyMap";
 import { StatusChip } from "../components/StatusChip";
 import { useAuth } from "../context/auth";
@@ -162,7 +165,7 @@ function StatusChangeForm({ report }: { report: StaffReportDetail }) {
   );
 }
 
-/** FR-C-02 (detail): every field of a report, its media, history and the status control. */
+/** FR-C-02 (detail): every field of a report, its media, history, the status control and the AI analysis. */
 export function ReportDetailPage() {
   const { id = "" } = useParams();
   const { t } = useTranslation();
@@ -204,6 +207,7 @@ export function ReportDetailPage() {
           {t("detail.title")} <span dir="ltr" className="code">{r.tracking_code}</span>
         </h1>
         <StatusChip status={r.status} />
+        <PriorityBadge score={r.priority_score} />
       </div>
 
       <div className="detail__grid">
@@ -269,6 +273,14 @@ export function ReportDetailPage() {
               <blockquote className="report-text" lang={r.lang ?? undefined} dir="auto">
                 {r.text}
               </blockquote>
+              {r.text_ar && (
+                <>
+                  <p className="muted translation-label">{t("ai.translation")}</p>
+                  <blockquote className="report-text report-text--translation" lang="ar" dir="rtl">
+                    {r.text_ar}
+                  </blockquote>
+                </>
+              )}
             </>
           ) : (
             <p className="muted">{t("detail.noText")}</p>
@@ -304,6 +316,8 @@ export function ReportDetailPage() {
           <StatusChangeForm report={r} />
         </section>
 
+        <GroupingSection report={r} />
+
         <section className="card" aria-labelledby="sec-history">
           <h2 id="sec-history">{t("detail.history")}</h2>
           {r.history.length === 0 ? (
@@ -330,6 +344,8 @@ export function ReportDetailPage() {
           )}
         </section>
       </div>
+
+      <AnalysisPanel report={r} />
 
       <section className="card" aria-labelledby="sec-media">
         <h2 id="sec-media">

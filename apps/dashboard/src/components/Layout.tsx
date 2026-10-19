@@ -97,7 +97,9 @@ export function Layout() {
             {t("nav.home")}
           </NavLink>
           <NavLink to="/reports">{t("nav.reports")}</NavLink>
+          <NavLink to="/incidents">{t("nav.incidents")}</NavLink>
           <NavLink to="/map">{t("nav.map")}</NavLink>
+          <NavLink to="/settings/ai">{t("nav.aiSettings")}</NavLink>
         </nav>
         <div className="header__tools">
           <LiveIndicator />

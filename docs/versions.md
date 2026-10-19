@@ -1,4 +1,4 @@
-# الإصدارات المثبتة (المرحلتان 1 و2)
+# الإصدارات المثبتة (المراحل 1 إلى 3)
 
 تُحدَّث هذه القائمة مع كل مرحلة. تُعتمد الإصدارات الدقيقة أدناه في الكود والحاويات.
 
@@ -12,7 +12,8 @@
 | SeaweedFS (S3) | `chrislusf/seaweedfs:3.97` | Apache-2.0 |
 | Keycloak | `keycloak/keycloak:26.3` (اختُبر 26.3.5) | Apache-2.0 |
 | رفع الوسائط بالاستئناف (tus) | `tusproject/tusd:v2.8.0` | MIT |
-| الخلفية | `python:3.12-slim` | PSF |
+| الخلفية وخدمة الذكاء الاصطناعي | `python:3.12-slim` | PSF |
+| خادم النموذج اللغوي المحلي | `ollama/ollama:0.40.1` | MIT |
 
 ## حزم Python (الخلفية)
 
@@ -36,6 +37,30 @@
 | cryptography (AES-256-GCM) | 50.0.2 |
 | pytest / pytest-asyncio | 9.1.1 / 1.4.0 |
 | ruff / mypy | 0.17.1 / 2.4.0 |
+
+## طبقة الذكاء الاصطناعي 1 (`services/ai`، المرحلة 3)
+
+كل النماذج تعمل على خوادمنا ولا تُرسل أي معطيات إلى خدمة خارجية (NFR-10، NFR-11). سكربت
+`services/ai/models/fetch_models.py` ينزّل النماذج ويحوّلها ويتحقق من صحتها، ويرفض أي نموذج رخصته غير متساهلة.
+
+| القدرة | النموذج (prod، خادم GPU) | النموذج (cpu) | النموذج (ci) | الرخصة | المصدر |
+|---|---|---|---|---|---|
+| تحويل الصوت إلى نص | Whisper large-v3 (`Systran/faster-whisper-large-v3`) | Whisper medium | Whisper small | MIT | <https://huggingface.co/Systran> |
+| الترجمة fr→ar و en→ar | Opus-MT (`Helsinki-NLP/opus-mt-fr-ar`، `opus-mt-en-ar`) | نفسه | نفسه | Apache-2.0 / CC-BY-4.0 | <https://huggingface.co/Helsinki-NLP> |
+| التضمين الدلالي (768 بعدا) | `intfloat/multilingual-e5-base` | نفسه | نفسه | MIT | <https://huggingface.co/intfloat/multilingual-e5-base> |
+| القراءة المهيكلة للبلاغ | Qwen3 8B (`qwen3:8b`) | Qwen3 4B | Qwen3 1.7B | Apache-2.0 | <https://ollama.com/library/qwen3> |
+
+حزم Python للخدمة، مثبتة في `services/ai/pyproject.toml` و `uv.lock`:
+
+| الحزمة | الإصدار | الدور |
+|---|---|---|
+| faster-whisper | 1.2.1 | تحويل الصوت (مع كشف الصمت VAD) |
+| PyAV (av) | 17.0.0 | فك ترميز الصوت لـ faster-whisper (الإصدار 19 أزال معاملا يستعمله faster-whisper 1.2.1) |
+| ctranslate2 | 4.8.3 | تشغيل Whisper و Opus-MT و e5 بسرعة على المعالج أو GPU |
+| sentencepiece / tokenizers | 0.2.2 / 0.23.3 | تقطيع النصوص |
+| numpy | 2.5.4 | تجميع المتجهات |
+| تحويل النماذج فقط: transformers / torch (CPU) / huggingface-hub | 5.20.1 / 2.14.1 / 2.2.0 | لا تُثبت في صورة التشغيل |
+| خادم GPU فقط: nvidia-cublas-cu12 / nvidia-cudnn-cu12 | 12.9.2.10 / 9.27.0.42 | مكتبات CUDA لـ CTranslate2 |
 
 ## تطبيق الهاتف (`apps/mobile`)
 
@@ -74,3 +99,5 @@ Node.js 22 LTS و npm 10 أو أحدث. الحزم مثبتة بإصدارات �
 2. Python 3.12 و uv (تطوير الخلفية).
 3. Node.js 22 (لوحة التحكم).
 4. Flutter 3.47.7 و Android Studio أو Xcode (تطبيق الهاتف).
+5. طبقة الذكاء الاصطناعي: `docker compose ... --profile ai up -d` (ينزّل النماذج مرة واحدة، حوالي 6 غيغابايت في ملف cpu).
+   على خادم GPU: مشغّل NVIDIA و NVIDIA Container Toolkit، ثم إضافة `-f infra/compose.gpu.yml`.

@@ -1,4 +1,4 @@
-import { screen, within } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { fakeApi, renderApp } from "../test/render";
 import { KPIS } from "../test/fixtures";
@@ -38,6 +38,33 @@ describe("HomePage (KPIs)", () => {
     const sinces = vi.mocked(api.kpis).mock.calls.map((c) => Date.parse(c[0]));
     const days = ((sinces[0] ?? 0) - (sinces[1] ?? 0)) / 86_400_000;
     expect(Math.round(days)).toBe(6);
+  });
+
+  it("shows the phase 3 KPIs: high priority and awaiting analysis", async () => {
+    const api = fakeApi({ kpis: vi.fn(() => Promise.resolve(KPIS)) });
+    renderApp(<HomePage />, { api, lang: "fr" });
+    const high = (await screen.findByText("Priorité haute (70 et plus)")).closest(".kpi") as HTMLElement;
+    expect(within(high).getByText("4")).toBeInTheDocument();
+    const pending = screen.getByText("En attente d'analyse").closest(".kpi") as HTMLElement;
+    expect(within(pending).getByText("2")).toBeInTheDocument();
+  });
+
+  it("warns when scores come from the rules only", async () => {
+    const api = fakeApi({
+      kpis: vi.fn(() => Promise.resolve(KPIS)),
+      aiStatus: vi.fn(() => Promise.resolve({ configured: false, capabilities: {} })),
+    });
+    renderApp(<HomePage />, { api, lang: "fr" });
+    expect(await screen.findByText(/calculés par les règles seules/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "État du service d’IA" })).toHaveAttribute("href", "/settings/ai");
+  });
+
+  it("shows no AI banner when every capability is ready", async () => {
+    const api = fakeApi({ kpis: vi.fn(() => Promise.resolve(KPIS)) });
+    renderApp(<HomePage />, { api, lang: "fr" });
+    await screen.findByText("Total des signalements");
+    await waitFor(() => expect(api.aiStatus).toHaveBeenCalled());
+    expect(screen.queryByText("État du service d’IA")).not.toBeInTheDocument();
   });
 
   it("shows a translated error, never the raw code", async () => {

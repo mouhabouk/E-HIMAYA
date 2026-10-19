@@ -2,17 +2,21 @@
  * Live updates client for `WS /api/v1/staff/live` (contract section 5).
  *
  * Protocol: send {"type":"auth","token"} right after the socket opens and again after every token renewal;
- * the server answers {"type":"ready"} and then pushes report.created, report.status_changed and media.stored.
+ * the server answers {"type":"ready"} and then pushes report.created, report.status_changed and media.stored
+ * (phase 2), report.enriched and incident.updated (phase 3).
  * Close code 4401 = token missing/expired → renew the token, then reconnect. 4403 = no access → stop.
  * Any other close (incl. 4408 "too slow" and 1013 "try later") → reconnect with exponential back-off and jitter.
  * Once ready, a {"type":"ping"} keep-alive is sent periodically (the API answers {"type":"pong"}, ignored).
  */
-import type { Media, StaffReport } from "./types";
+import type { IncidentSummary, Media, StaffReport } from "./types";
 
 export type LiveEvent =
   | { type: "report.created"; report: StaffReport }
   | { type: "report.status_changed"; report: StaffReport }
-  | { type: "media.stored"; report_id: string; media: Media };
+  | { type: "media.stored"; report_id: string; media: Media }
+  /** Scores, translation, suggestion or incident of a report changed (phase 3). */
+  | { type: "report.enriched"; report: StaffReport }
+  | { type: "incident.updated"; incident: IncidentSummary };
 
 export type LiveState =
   | "idle"
@@ -79,7 +83,10 @@ function parseEvent(raw: unknown): LiveEvent | { type: "ready" } | null {
       return { type: "ready" };
     case "report.created":
     case "report.status_changed":
+    case "report.enriched":
       return m.report && typeof m.report === "object" ? (m as unknown as LiveEvent) : null;
+    case "incident.updated":
+      return m.incident && typeof m.incident === "object" ? (m as unknown as LiveEvent) : null;
     case "media.stored":
       return typeof m.report_id === "string" && m.media && typeof m.media === "object"
         ? (m as unknown as LiveEvent)
