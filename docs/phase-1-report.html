@@ -67,7 +67,7 @@ footer{color:var(--muted);text-align:center;font-size:13px}
 <tr><td>1.7</td><td>الخلفية الأساسية</td><td>FastAPI: فحص الحياة والجاهزية، المرجع الإداري بثلاث لغات، التحقق من الرموز للفضاءين، الأدوار، سجل التدقيق</td><td>22 اختبارا ناجحا، ruff و mypy (الوضع الصارم) دون أخطاء</td><td>100%</td></tr>
 <tr><td>1.8</td><td>التكامل المستمر</td><td><code>.github/workflows/ci.yml</code>: الفحص، الأنواع، الترحيلات، الاختبارات، بناء الصورة، استيراد الفضاءين</td><td>يعمل عند أول رفع إلى GitHub</td><td>100%</td></tr>
 <tr><td>1.9</td><td>الإصدارات المثبتة</td><td><code>docs/versions.md</code> و <code>uv.lock</code></td><td>—</td><td>100%</td></tr>
-<tr><td>1.10</td><td>الرفع إلى المستودع</td><td>الفرع <code>phase-1-foundation</code> وطلب دمج</td><td>بانتظار صلاحية الكتابة</td><td>0%</td></tr>
+<tr><td>1.10</td><td>الرفع إلى المستودع</td><td>الفرع <code>phase-1-foundation</code> وطلب دمج</td><td>طلب الدمج #1 مفتوح، والتكامل المستمر ناجح في الفحوص الثلاثة</td><td>100%</td></tr>
 </table></div>
 </section>
 
@@ -95,7 +95,7 @@ footer{color:var(--muted);text-align:center;font-size:13px}
 <section>
 <h2>4. حدود معروفة</h2>
 <ul>
-<li>صورة قاعدة البيانات (تضيف pgvector فوق PostGIS) لم أستطع بناءها في بيئتي لأن مستودعات Debian محجوبة عنها. اختبرت نفس الترحيلات على PostgreSQL 16 مع PostGIS و pgvector، والتكامل المستمر في GitHub يبني الصورة الحقيقية عند أول رفع.</li>
+<li>صورة قاعدة البيانات مبنية على <code>postgres:17-bookworm</code> مع PostGIS و pgvector من مستودع PGDG، لأن صورة <code>postgis/postgis:17-3.5</code> مبنية على Debian bullseye الذي أُزيل مستودعه. التكامل المستمر في GitHub بنى الصورة وشغّل عليها كل الترحيلات والاختبارات بنجاح على PostgreSQL 17.</li>
 <li>أسماء المعتمديات بالعربية كُتبت يدويا انطلاقا من القائمة اللاتينية، ويجب مطابقتها مع المرجع الرسمي للمعهد الوطني للإحصاء قبل الإطلاق، مع إضافة الحدود الجغرافية.</li>
 <li>Keycloak يعمل في وضع التطوير (<code>start-dev</code>). وضع الإنتاج مع TLS يأتي مع النشر.</li>
 <li>مستخدم قاعدة البيانات للخلفية هو نفسه مالك المخطط. الفصل بين مستخدم الترحيلات ومستخدم التشغيل مبرمج في مرحلة التصليب (9).</li>
@@ -107,7 +107,7 @@ footer{color:var(--muted);text-align:center;font-size:13px}
 <div class="tbl"><table>
 <tr><th>#</th><th>المرحلة</th><th>الحالة</th><th>التقدم</th></tr>
 <tr><td>0</td><td>المتطلبات والهيكلة</td><td>معتمدة</td><td>100%</td></tr>
-<tr><td>1</td><td>الأساس التقني</td><td>منجزة، بانتظار الرفع والموافقة</td><td>95%</td></tr>
+<tr><td>1</td><td>الأساس التقني</td><td>منجزة، بانتظار الدمج والموافقة</td><td>100%</td></tr>
 <tr><td>2</td><td>مسار البلاغ الأساسي</td><td>لم تبدأ</td><td>0%</td></tr>
 <tr><td>3</td><td>طبقة الذكاء الاصطناعي 1</td><td>لم تبدأ</td><td>0%</td></tr>
 <tr><td>4</td><td>المؤسسات</td><td>لم تبدأ</td><td>0%</td></tr>
