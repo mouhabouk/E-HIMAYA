@@ -92,6 +92,7 @@ flutter run \
 | `MAP_TILE_URL` | `https://tile.openstreetmap.org/{z}/{x}/{y}.png` (مع إسناد OpenStreetMap ظاهر على الخريطة) |
 | `MAP_ATTRIBUTION` | `© OpenStreetMap contributors` |
 | `PORTAL_URL` | `http://localhost:5174` (بوابة المؤسسات، يُفتح منها التعديل المفصّل لبطاقة المؤسسة) |
+| `PUSH_SIMULATOR_URL` | فارغ (محاكي الدفع معطّل؛ انظر «الإشعارات دون Firebase» أدناه) |
 
 القيم الافتراضية بـ 10.0.2.2 تكفي للوضع المجهول (الواجهة و tus)؛ الدخول بحساب يتطلب الطريقة أعلاه.
 رابط العودة بعد الدخول: `tn.ehimaya.app:/oauth2redirect`.
@@ -102,6 +103,46 @@ flutter run \
   (`NSAllowsLocalNetworking`). على محاكي iOS استعمل `localhost` مباشرة.
 - لاختبار الوضع دون شبكة: فعّل وضع الطيران، أرسل بلاغا (يظهر الرمز المؤقت فورا)، ثم أعد الشبكة:
   يُرسل البلاغ آليا ويُعوّض الرمز المؤقت برمز `EH-…`.
+
+## الإشعارات دون Firebase (محاكي الدفع)
+
+لتجربة مسار الإشعارات كاملا دون مشروع Firebase، شغّل خدمة المحاكاة `notify-sim` (المنفذ 8090، ضمن
+المنظومة المحلية) ثم:
+
+```bash
+flutter run --dart-define=PUSH_SIMULATOR_URL=http://10.0.2.2:8090
+# أو مع adb reverse tcp:8090 tcp:8090:  --dart-define=PUSH_SIMULATOR_URL=http://localhost:8090
+```
+
+- لا يُفعَّل المحاكي إلا إذا مُرّر `PUSH_SIMULATOR_URL` **ولم** تُمرَّر متغيرات `FIREBASE_*` (خيارات
+  Firebase تغلب دائما).
+- يولّد التطبيق رمزا `sim-<uuid v4>` يُحفظ محليا ويُسجَّل لدى الواجهة كرمز FCM عادي، ثم يستطلع
+  `GET {PUSH_SIMULATOR_URL}/api/messages?channel=push&token=…&after=<seq>` كل 5 ثوان والتطبيق في
+  الواجهة فقط (يتوقف في الخلفية، ويتباطأ تدريجيا حتى دقيقة إن تعذّر الوصول إلى المحاكي، دون أي رسالة خطأ).
+  آخر رقم تسلسل يُحفظ فلا تُعاد الإشعارات بعد إعادة التشغيل.
+- كل إشعار يُعرض محليا على قناة Android التي اختارها الخادم (`ehimaya_alerts` / `ehimaya_default`)
+  ويبدأ عنوانه بـ `[SIM]`، والنقر عليه يفتح الشاشة نفسها كإشعار حقيقي.
+- تظهر لافتة كهرمانية «وضع المحاكاة» / «Mode simulation» / «Simulation mode» أعلى شاشتي الإعدادات
+  والإشعارات طالما المحاكي مفعّل.
+- الشيفرة الخاصة بالمحاكاة معلَّمة في المصدر بإطار `// ┏━━ SIMULATION ━━` (‏`lib/core/push/`).
+
+### Switching to production (الانتقال إلى الإنتاج)
+
+هذه هي الخطوات نفسها المكتوبة في إطارات `SIMULATION` في الشيفرة:
+
+1. **التطبيق:** ابنِ **دون** ‎`--dart-define=PUSH_SIMULATOR_URL` (تصبح شيفرة المحاكاة غير مستعملة
+   وتختفي اللافتة).
+2. **Android:** مرّر ‎`--dart-define` لـ `FIREBASE_API_KEY` و `FIREBASE_APP_ID`
+   و `FIREBASE_MESSAGING_SENDER_ID` و `FIREBASE_PROJECT_ID`، من Firebase console > Project settings >
+   General > Your apps (تطبيق Android ‏`tn.ehimaya.app`). لا يُستعمل ملحق google-services في هذا البناء،
+   فبدون هذه القيم الأربع يبقى الدفع معطلا على Android.
+3. **iOS:** أضف `ios/Runner/GoogleService-Info.plist` (أو القيم الأربع نفسها)، فعّل قدرة Push
+   Notifications (‏`aps-environment`) في Xcode، وارفع مفتاح APNs في Firebase console > Project settings >
+   Cloud Messaging.
+4. **الواجهة (services/api):** اضبط `FCM_SERVICE_ACCOUNT` (‏base64 لمفتاح Firebase console > Project
+   settings > Service accounts > Generate new private key)، واحذف `FCM_API_URL` و
+   `FCM_SERVICE_ACCOUNT_FILE` اللذين يوجّهان الإرسال إلى المحاكي.
+5. تحقّق: لا لافتة «وضع المحاكاة»، ولا بادئة `[SIM]`، والرمز المسجّل لا يبدأ بـ `sim-`.
 
 ## الاختبارات والفحوص
 

@@ -1936,6 +1936,18 @@ abstract class AppLocalizations {
   /// **'Follow-up of your reports and information messages.'**
   String get channelGeneralDesc;
 
+  /// No description provided for @pushSimulationBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Simulation mode'**
+  String get pushSimulationBadge;
+
+  /// No description provided for @pushSimulationHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Push notifications come from the local simulator, not from Firebase. Nothing is delivered by a real push service.'**
+  String get pushSimulationHelp;
+
   /// No description provided for @tipsTitle.
   ///
   /// In en, this message translates to:

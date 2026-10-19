@@ -1059,6 +1059,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get channelGeneralDesc => 'متابعة بلاغاتك والرسائل الإعلامية.';
 
   @override
+  String get pushSimulationBadge => 'وضع المحاكاة';
+
+  @override
+  String get pushSimulationHelp =>
+      'الإشعارات صادرة عن المحاكي المحلي وليس عن Firebase. لا يُسلَّم أي إشعار عبر خدمة دفع حقيقية.';
+
+  @override
   String get tipsTitle => 'نصائح السلامة';
 
   @override

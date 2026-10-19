@@ -1072,6 +1072,13 @@ class AppLocalizationsFr extends AppLocalizations {
       'Suivi de vos signalements et messages d’information.';
 
   @override
+  String get pushSimulationBadge => 'Mode simulation';
+
+  @override
+  String get pushSimulationHelp =>
+      'Les notifications proviennent du simulateur local, pas de Firebase. Aucune livraison par un vrai service push.';
+
+  @override
   String get tipsTitle => 'Conseils de sécurité';
 
   @override

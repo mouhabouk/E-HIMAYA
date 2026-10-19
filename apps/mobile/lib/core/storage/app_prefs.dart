@@ -22,6 +22,8 @@ class AppPrefs {
   static const _sosReportAs = 'orgs.sos_report_as';
   static const _locationAlerts = 'alerts.location';
   static const _pushToken = 'push.registered_token';
+  static const _simPushToken = 'push.sim_token';
+  static const _simPushSeq = 'push.sim_last_seq';
   static const _tipsEtag = 'tips.etag';
   static const _tipsJson = 'tips.json';
   static const _alertsJson = 'alerts.last';
@@ -89,6 +91,16 @@ class AppPrefs {
   Future<void> setPushToken(String? value) => value == null
       ? _prefs.remove(_pushToken)
       : _prefs.setString(_pushToken, value);
+
+  /// Token of the simulated push (development builds with PUSH_SIMULATOR_URL only).
+  String? get simPushToken => _prefs.getString(_simPushToken);
+  Future<void> setSimPushToken(String value) =>
+      _prefs.setString(_simPushToken, value);
+
+  /// Last simulator message seen, so a restart does not show old pushes again.
+  int get simPushLastSeq => _prefs.getInt(_simPushSeq) ?? 0;
+  Future<void> setSimPushLastSeq(int value) =>
+      _prefs.setInt(_simPushSeq, value);
 
   /// Offline copy of the published safety tips (public content) and its ETag.
   String? get tipsEtag => _prefs.getString(_tipsEtag);

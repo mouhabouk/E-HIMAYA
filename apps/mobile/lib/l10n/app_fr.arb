@@ -306,6 +306,8 @@
   "channelAlertsDesc": "Alertes de la Protection civile et appels aux volontaires.",
   "channelGeneral": "Informations",
   "channelGeneralDesc": "Suivi de vos signalements et messages d’information.",
+  "pushSimulationBadge": "Mode simulation",
+  "pushSimulationHelp": "Les notifications proviennent du simulateur local, pas de Firebase. Aucune livraison par un vrai service push.",
   "tipsTitle": "Conseils de sécurité",
   "tipsIntro": "Les bons gestes et ce qu’il faut éviter. Disponibles sans connexion.",
   "tipsDo": "À faire",
