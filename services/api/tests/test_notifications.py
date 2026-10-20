@@ -397,6 +397,21 @@ async def test_user_lookup_by_email(client: httpx.AsyncClient, staff: Staff, mak
     )
     assert r.status_code == 201, r.text
 
+    # Phase 9 §5.6: a regional editor resolves and targets the accounts of its own gouvernorat only.
+    gabes_editor = staff(["content_editor"], gouvernorat=81)
+    r = await lookup(address, gabes_editor)
+    assert (r.status_code, r.json()["detail"]) == (404, "not_found")
+    r = await client.post(
+        "/api/v1/staff/notifications", json=info_body(audience="user", user_id=user_id), headers=gabes_editor
+    )
+    assert (r.status_code, r.json()["detail"]) == (403, "out_of_scope")
+    sfax_editor = staff(["content_editor"], gouvernorat=61)
+    assert (await lookup(address, sfax_editor)).status_code == 200
+    r = await client.post(
+        "/api/v1/staff/notifications", json=info_body(audience="user", user_id=user_id), headers=sfax_editor
+    )
+    assert r.status_code == 201, r.text
+
     # Every lookup is audited, without the searched address.
     async with get_sessionmaker()() as s:
         rows = (

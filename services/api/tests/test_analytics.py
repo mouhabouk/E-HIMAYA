@@ -846,3 +846,66 @@ async def test_schedule_crud_and_firing(
         )
     )
     assert {"analytics.schedule.create", "analytics.schedule.update", "analytics.schedule.delete"} <= actions
+
+
+# ---------------------------------------------------------------- phase 9: English, participation, national ranking
+
+
+async def test_document_in_english(
+    client: httpx.AsyncClient, staff: Staff, march_2019: dict[str, Any], fake_store: FakeStore
+) -> None:
+    created = await _create(client, national(staff, ["ops_manager"]), lang="en", title="March 2019 summary")
+    await _generate_all()
+    r = await client.get(f"/api/v1/staff/reports-library/{created['id']}", headers=national(staff, ["ops_manager"]))
+    assert r.json()["status"] == "ready", r.json()
+    assert fake_store.objects[f"analytics/reports/{created['id']}.pdf"].startswith(b"%PDF")
+    from app.modules.analytics import documents
+    from app.modules.analytics.models import Report
+
+    async with get_sessionmaker()() as s:
+        row = await s.get(Report, uuid.UUID(created["id"]))
+        assert row is not None
+        page = documents.render_html(await documents.build(s, row))
+    assert 'dir="ltr"' in page and 'lang="en"' in page
+    assert "Reports received" in page and "Signalements reçus" not in page
+
+
+async def test_participating_breakdown(
+    client: httpx.AsyncClient, staff: Staff, march_2019: dict[str, Any], session: AsyncSession
+) -> None:
+    """An incident led by Kef with Siliana participating counts once for Kef (lead) and once, as participating, for
+    Siliana; the Siliana-led incident of the fixture is not participating."""
+    shared = await seed_incident(session, KEF, "fire", local(date(2019, 3, 20), 8))
+    await session.execute(
+        text(
+            "INSERT INTO ops.incident_gouvernorat (incident_id, gouvernorat_code, role, added_by, reason) "
+            "VALUES (:i, :g, 'participating', 'test', 'renfort')"
+        ),
+        {"i": shared, "g": SILIANA},
+    )
+    await session.commit()
+    params = march_2019["params"]
+    siliana = (
+        await client.get("/api/v1/staff/analytics/overview", params=params, headers=staff(["operator"], SILIANA))
+    ).json()
+    assert {(i["participating"], i["count"]) for i in siliana["incidents"]} == {(False, 1), (True, 1)}
+    kef = (await client.get("/api/v1/staff/analytics/overview", params=params, headers=staff(["operator"], KEF))).json()
+    assert {(i["participating"], i["count"]) for i in kef["incidents"]} == {(False, 1)}
+    # The national room reads the same split per gouvernorat.
+    national_kef = (
+        await client.get(
+            "/api/v1/staff/analytics/overview", params=params | {"gouvernorat": KEF}, headers=national(staff)
+        )
+    ).json()
+    assert national_kef["incidents"] == kef["incidents"]
+
+
+async def test_leaderboard_national_refused(client: httpx.AsyncClient, staff: Staff) -> None:
+    url = "/api/v1/staff/rewards/leaderboard"
+    r = await client.get(url, params={"scope": "national"}, headers=staff(["ops_manager"], SILIANA))
+    assert (r.status_code, r.json()["detail"]) == (403, "out_of_scope")
+    r = await client.get(url, params={"gouvernorat": KEF}, headers=staff(["ops_manager"], SILIANA))
+    assert (r.status_code, r.json()["detail"]) == (403, "out_of_scope")
+    assert (await client.get(url, headers=staff(["ops_manager"], SILIANA))).status_code == 200
+    r = await client.get(url, params={"scope": "national"}, headers=national(staff, ["ops_manager"]))
+    assert r.status_code == 200 and r.json()["scope"] == "national"
