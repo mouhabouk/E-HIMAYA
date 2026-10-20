@@ -1,0 +1,15 @@
+; SIP over TLS (trunk side). Certificate and key are mounted read-only (docs/telephony.md).
+[transport-tls]
+type = transport
+protocol = tls
+bind = 0.0.0.0:5061
+cert_file = /etc/ehimaya-asterisk/certs/tls.crt
+priv_key_file = /etc/ehimaya-asterisk/certs/tls.key
+ca_list_file = /etc/ssl/certs/ca-certificates.crt
+method = tlsv1_2
+verify_server = yes
+local_net = @@TELEPHONY_LOCAL_NET_1@@
+local_net = @@TELEPHONY_LOCAL_NET_2@@
+local_net = @@TELEPHONY_LOCAL_NET_3@@
+external_media_address = @@TELEPHONY_EXTERNAL_HOST@@
+external_signaling_address = @@TELEPHONY_EXTERNAL_HOST@@

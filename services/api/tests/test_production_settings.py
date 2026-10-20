@@ -26,6 +26,10 @@ STRONG: dict[str, Any] = {
     "vision_callback_token": secrets.token_urlsafe(24),
     "vision_read_password": secrets.token_urlsafe(24),
     "stream_sim_token": None,
+    # Phase 7 (telephony, SMS gateway): same.
+    "telephony_ari_password": secrets.token_urlsafe(24),
+    "sms_inbound_secret": secrets.token_urlsafe(32),
+    "telephony_sim_token": None,
 }
 
 
@@ -54,6 +58,9 @@ def test_strong_secrets_start() -> None:
         ("mediamtx_api_password", "change-me-generate-with-openssl-rand-hex-24", "change-me"),
         ("vision_callback_token", "change-me-generate-with-openssl-rand-hex-24", "change-me"),
         ("vision_api_token", "change-me-generate-with-openssl-rand-hex-24", "change-me"),
+        ("telephony_ari_password", "change-me-generate-with-openssl-rand-hex-24", "change-me"),
+        ("sms_inbound_secret", "change-me-generate-with-openssl-rand-hex-32", "change-me"),
+        ("telephony_sim_token", secrets.token_urlsafe(24), "TELEPHONY_SIM_TOKEN"),
     ],
 )
 def test_weak_secret_is_refused(setting: str, value: str, reason: str) -> None:

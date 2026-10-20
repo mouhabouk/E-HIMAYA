@@ -1760,4 +1760,164 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get errorReportClosed => 'هذا البلاغ مغلق: لا يمكن فتح بث مباشر له.';
+
+  @override
+  String get weatherTitle => 'الطقس قربك';
+
+  @override
+  String get weatherLoading => 'جارٍ تحميل حالة الطقس…';
+
+  @override
+  String get weatherNoLocation =>
+      'اسمح بالوصول إلى الموقع لعرض حالة الطقس حيث أنت.';
+
+  @override
+  String get weatherUseLocation => 'استعمال موقعي';
+
+  @override
+  String get weatherOutsideCoverage => 'تغطي توقعات الطقس التراب التونسي فقط.';
+
+  @override
+  String get weatherOffline =>
+      'لا يوجد اتصال بالإنترنت: ستُعرض حالة الطقس عند عودة الاتصال.';
+
+  @override
+  String get weatherUnavailable => 'تعذّر تحميل حالة الطقس.';
+
+  @override
+  String get weatherRetry => 'إعادة المحاولة';
+
+  @override
+  String get weatherNotRefreshed =>
+      'لم يتم التحديث: تُعرض آخر المعطيات المستلمة.';
+
+  @override
+  String weatherUpdated(String time) {
+    return 'آخر تحديث $time';
+  }
+
+  @override
+  String weatherCachedAt(String time) {
+    return 'نسخة محفوظة من $time';
+  }
+
+  @override
+  String get weatherNow => 'الآن';
+
+  @override
+  String get weatherNextHours => 'الساعات القادمة';
+
+  @override
+  String weatherTemperature(String value) {
+    return '$value درجة مئوية';
+  }
+
+  @override
+  String weatherWind(String speed) {
+    return 'الرياح $speed كم/س';
+  }
+
+  @override
+  String weatherGusts(String speed) {
+    return 'هبّات $speed كم/س';
+  }
+
+  @override
+  String weatherHumidity(String value) {
+    return 'الرطوبة $value%';
+  }
+
+  @override
+  String weatherRain(String value) {
+    return 'الأمطار $value مم/س';
+  }
+
+  @override
+  String weatherRain24h(String value) {
+    return '$value مم خلال 24 ساعة';
+  }
+
+  @override
+  String weatherFireDanger(String level) {
+    return 'خطر الحرائق: $level';
+  }
+
+  @override
+  String get weatherFireLow => 'ضعيف';
+
+  @override
+  String get weatherFireModerate => 'معتدل';
+
+  @override
+  String get weatherFireHigh => 'مرتفع';
+
+  @override
+  String get weatherFireVeryHigh => 'مرتفع جدا';
+
+  @override
+  String get weatherFireExtreme => 'قصوى';
+
+  @override
+  String weatherHeavyRain(String level) {
+    return 'أمطار غزيرة: $level';
+  }
+
+  @override
+  String get weatherRainWatch => 'يقظة';
+
+  @override
+  String get weatherRainWarning => 'إنذار';
+
+  @override
+  String get weatherCondClear => 'سماء صافية';
+
+  @override
+  String get weatherCondCloudy => 'غائم';
+
+  @override
+  String get weatherCondFog => 'ضباب';
+
+  @override
+  String get weatherCondRain => 'أمطار';
+
+  @override
+  String get weatherCondSnow => 'ثلوج';
+
+  @override
+  String get weatherCondStorm => 'عاصفة رعدية';
+
+  @override
+  String get weatherAlertsTitle => 'تنبيهات جوية سارية';
+
+  @override
+  String weatherSource(String source) {
+    return 'المعطيات: $source';
+  }
+
+  @override
+  String get weatherSimulationBadge => 'وضع المحاكاة';
+
+  @override
+  String get weatherSimulationHelp =>
+      'قيم الطقس هذه محاكاة وليست قياسات حقيقية.';
+
+  @override
+  String get offlineFallbackTitle => 'لا يوجد اتصال بالإنترنت';
+
+  @override
+  String get offlineFallbackBody =>
+      'بلاغك محفوظ في الهاتف وسيُرسل آليا عند عودة الإنترنت. لإعلام الحماية المدنية الآن:';
+
+  @override
+  String get offlineSendSms => 'الإرسال عبر رسالة قصيرة';
+
+  @override
+  String get offlineSmsHelp =>
+      'يفتح تطبيق الرسائل برسالة قصيرة (نوع البلاغ وموقعه). أنت من يضغط على «إرسال».';
+
+  @override
+  String get offlineSmsFee => 'قد يحتسب مشغّل الهاتف ثمن رسالة قصيرة عادية.';
+
+  @override
+  String get offlineSmsFailed => 'تعذّر فتح تطبيق الرسائل. اتصل بالرقم 198.';
 }

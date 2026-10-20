@@ -1,6 +1,7 @@
 import type { InfiniteData, QueryClient } from "@tanstack/react-query";
 import { inBBox, matchesFilters, type BBox, type ReportFilters } from "./filters";
 import { isStreamEvent, type LiveEvent } from "./live";
+import { p7Keys } from "./phase7Api";
 import { opsKeys } from "./opsApi";
 import type { LevelRow } from "./opsTypes";
 import { compareOrgNames, matchesOrgFilters, type OrgFilters } from "./orgs";
@@ -309,8 +310,28 @@ function applyOpsEvent(qc: QueryClient, event: LiveEvent): boolean {
   }
 }
 
+/** Phase 7: the suggestion queue and the calls log are small: refetch what is on screen. */
+function applyPhase7Event(qc: QueryClient, event: LiveEvent): boolean {
+  switch (event.type) {
+    case "weather.suggestion":
+      void qc.invalidateQueries({ queryKey: p7Keys.suggestions });
+      return true;
+    case "call.ringing":
+    case "call.answered":
+    case "call.ended":
+    case "call.recording":
+      if (event.call) qc.setQueryData(p7Keys.call(event.call_id), event.call);
+      else void qc.invalidateQueries({ queryKey: p7Keys.call(event.call_id) });
+      void qc.invalidateQueries({ queryKey: p7Keys.callsAll });
+      return true;
+    default:
+      return false;
+  }
+}
+
 export function applyLiveEvent(qc: QueryClient, event: LiveEvent, now: number = Date.now()): void {
   if (applyOpsEvent(qc, event)) return;
+  if (applyPhase7Event(qc, event)) return;
   if (isStreamEvent(event)) {
     applyStreamEvent(qc, event);
     return;

@@ -15,6 +15,7 @@ import {
 } from "../lib/opsTypes";
 import { canReviewVolunteers } from "../lib/roles";
 import { ReadyTag, SkillList, VolunteerStatusChip } from "./VolunteersPage";
+import { CallButton } from "../components/Softphone";
 
 const NEEDS_REASON: readonly VolunteerDecision[] = ["reject", "suspend"];
 
@@ -178,7 +179,18 @@ export function VolunteerDetailPage() {
             <dt>{t("filters.gouvernorat")}</dt>
             <dd>{gouvernorats.nameOf(v.gouvernorat_code)}</dd>
             <dt>{t("volunteers.detail.phone")}</dt>
-            <dd dir="ltr">{v.phone ? <a href={`tel:${v.phone}`}>{v.phone}</a> : "—"}</dd>
+            <dd>
+              {v.phone ? (
+                <>
+                  <a href={`tel:${v.phone}`} dir="ltr">
+                    {v.phone}
+                  </a>{" "}
+                  <CallButton body={{ volunteer_id: v.id }} label={t("phone.callVolunteer")} />
+                </>
+              ) : (
+                "—"
+              )}
+            </dd>
             <dt>{t("volunteers.detail.email")}</dt>
             <dd dir="ltr">{v.email ? <a href={`mailto:${v.email}`}>{v.email}</a> : "—"}</dd>
             <dt>{t("volunteers.columns.submittedAt")}</dt>

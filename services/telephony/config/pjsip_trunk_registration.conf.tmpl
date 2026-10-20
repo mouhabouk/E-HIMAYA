@@ -1,0 +1,13 @@
+; Registration to the operator (when the contract uses registration instead of IP authentication).
+[trunk-registration]
+type = registration
+transport = transport-@@TELEPHONY_TRUNK_TRANSPORT@@
+outbound_auth = trunk-auth
+server_uri = sip:@@TELEPHONY_TRUNK_HOST@@:@@TELEPHONY_TRUNK_PORT@@
+client_uri = sip:@@TELEPHONY_TRUNK_USERNAME@@@@@TELEPHONY_TRUNK_DOMAIN@@
+contact_user = @@TELEPHONY_TRUNK_USERNAME@@
+retry_interval = 30
+forbidden_retry_interval = 300
+expiration = 600
+line = yes
+endpoint = trunk

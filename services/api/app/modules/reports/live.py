@@ -16,6 +16,7 @@ from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect, st
 from app.core.config import get_settings
 from app.core.security import Principal, Role, get_token_verifier
 from app.modules.reports.staff_router import READ_ROLES
+from app.modules.telephony.domain import CALL_ROLES, mask_number
 
 log = structlog.get_logger()
 router = APIRouter()
@@ -83,11 +84,12 @@ class LiveHub:
             return
         audience, visible = route
         message = {"type": subject, **payload}
+        masked = _masked_call(message) if subject.startswith("call.") else message
         for client in list(self._clients):
             if not client.allowed(audience) or not visible(client):
                 continue
             try:
-                client.queue.put_nowait(message)
+                client.queue.put_nowait(message if client.principal.roles & CALL_ROLES else masked)
             except asyncio.QueueFull:
                 # A client that cannot keep up is disconnected; it reconnects and reloads the list.
                 self.discard(client)
@@ -109,6 +111,22 @@ def _among(codes: list[int] | None, everywhere_when_empty: bool = True) -> Calla
     return visible
 
 
+def _masked_call(message: dict[str, Any]) -> dict[str, Any]:
+    """Telephony events (phase 7) for readers without call access: the caller number keeps its last 2 digits."""
+    call = message.get("call")
+    if not isinstance(call, dict) or not call.get("caller_number"):
+        return message
+    number = call["caller_number"]
+    return {**message, "call": {**call, "caller_number": mask_number(number), "caller_masked": True}}
+
+
+def _call_scope(payload: dict[str, Any]) -> Callable[[LiveClient], bool]:
+    # Calls not located yet belong to the shared queue every operator sees; operators always see the calls they took.
+    code = payload.get("gouvernorat_code")
+    operator = (payload.get("call") or {}).get("operator_user_id")
+    return lambda client: code is None or client.can_see(code) or client.principal.subject == operator
+
+
 def _route(subject: str, payload: dict[str, Any]) -> tuple[str, Callable[[LiveClient], bool]] | None:
     """Who may receive an event: an audience (``reports``, ``orgs``, ``staff``, ``editors``) and a scope test."""
     if subject in ("report.created", "report.status_changed", "report.enriched"):
@@ -120,6 +138,8 @@ def _route(subject: str, payload: dict[str, Any]) -> tuple[str, Callable[[LiveCl
     if subject in ("stream.started", "stream.ended", "stream.location", "stream.alert", "stream.recording"):
         # Live streams (phase 6) are scoped like the reports they belong to (fixed sources by their gouvernorat).
         return "reports", _in(payload.get("gouvernorat_code"))
+    if subject in ("call.ringing", "call.answered", "call.ended", "call.recording"):
+        return "reports", _call_scope(payload)
     if subject in ("assignment.updated", "callout.updated"):
         return "reports", _in(payload.get("gouvernorat_code"))
     if subject == "resource.updated":
@@ -136,6 +156,9 @@ def _route(subject: str, payload: dict[str, Any]) -> tuple[str, Callable[[LiveCl
     if subject == "directive.issued":
         directive = payload.get("directive", {})
         return "staff", _among(directive.get("gouvernorat_codes"))
+    if subject == "weather.suggestion":
+        # Suggested weather alerts (phase 7) go to those who write alerts, scoped to the suggestion's gouvernorats.
+        return "editors", _among(payload.get("suggestion", {}).get("gouvernorat_codes"))
     if subject in ("notification.updated", "alert.issued"):
         area = payload.get("message", {}).get("area", {})
         if area.get("polygon"):

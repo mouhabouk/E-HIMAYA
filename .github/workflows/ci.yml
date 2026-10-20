@@ -65,6 +65,10 @@ jobs:
       - name: Type check
         run: uv run mypy app
 
+      - name: Validate procedures library
+        working-directory: services/api
+        run: uv run python -m app.modules.decision.cli check ../../docs/procedures
+
       # Two roles (A4): alembic connects with MIGRATION_DATABASE_URL (owner) while DATABASE_URL is the runtime role,
       # and grants the runtime role its privileges after the upgrade.
       - name: Migrate as the owner (up, down, up)

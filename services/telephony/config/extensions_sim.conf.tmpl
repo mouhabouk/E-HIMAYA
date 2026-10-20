@@ -1,0 +1,8 @@
+; ┏━━ SIMULATION ━━ calls of the call-sim service (and of the smoke test: channel originate Local/8000@ehimaya-sim-in)
+; ┃   enter 8000 marked source=sim; a call without a number gets a fictitious one.
+; ┃ PRODUCTION: TELEPHONY_SIM_PASSWORD is empty, this file is not rendered and the context does not exist.
+; ┗━━━━━━━━━━━━━━━━
+[ehimaya-sim-in]
+exten => 8000,1,Set(__EH_SOURCE=sim)
+ same => n,ExecIf($["${CALLERID(num)}" = ""]?Set(CALLERID(all)="SIM" <+21620000099>))
+ same => n,Goto(ehimaya-entry,8000,1)

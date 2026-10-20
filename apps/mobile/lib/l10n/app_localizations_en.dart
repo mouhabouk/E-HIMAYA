@@ -1781,4 +1781,166 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get errorReportClosed =>
       'This report is closed: a live stream cannot be opened on it.';
+
+  @override
+  String get weatherTitle => 'Weather near you';
+
+  @override
+  String get weatherLoading => 'Loading the weather…';
+
+  @override
+  String get weatherNoLocation =>
+      'Allow location access to see the weather where you are.';
+
+  @override
+  String get weatherUseLocation => 'Use my location';
+
+  @override
+  String get weatherOutsideCoverage =>
+      'The weather forecast covers Tunisia only.';
+
+  @override
+  String get weatherOffline =>
+      'No internet: the weather will be shown when the connection is back.';
+
+  @override
+  String get weatherUnavailable => 'The weather could not be loaded.';
+
+  @override
+  String get weatherRetry => 'Retry';
+
+  @override
+  String get weatherNotRefreshed =>
+      'Not refreshed: showing the last data received.';
+
+  @override
+  String weatherUpdated(String time) {
+    return 'Updated $time';
+  }
+
+  @override
+  String weatherCachedAt(String time) {
+    return 'Offline copy from $time';
+  }
+
+  @override
+  String get weatherNow => 'Now';
+
+  @override
+  String get weatherNextHours => 'Next hours';
+
+  @override
+  String weatherTemperature(String value) {
+    return '$value °C';
+  }
+
+  @override
+  String weatherWind(String speed) {
+    return 'Wind $speed km/h';
+  }
+
+  @override
+  String weatherGusts(String speed) {
+    return 'gusts $speed km/h';
+  }
+
+  @override
+  String weatherHumidity(String value) {
+    return 'Humidity $value%';
+  }
+
+  @override
+  String weatherRain(String value) {
+    return 'Rain $value mm/h';
+  }
+
+  @override
+  String weatherRain24h(String value) {
+    return '$value mm over 24 h';
+  }
+
+  @override
+  String weatherFireDanger(String level) {
+    return 'Fire danger: $level';
+  }
+
+  @override
+  String get weatherFireLow => 'low';
+
+  @override
+  String get weatherFireModerate => 'moderate';
+
+  @override
+  String get weatherFireHigh => 'high';
+
+  @override
+  String get weatherFireVeryHigh => 'very high';
+
+  @override
+  String get weatherFireExtreme => 'extreme';
+
+  @override
+  String weatherHeavyRain(String level) {
+    return 'Heavy rain: $level';
+  }
+
+  @override
+  String get weatherRainWatch => 'watch';
+
+  @override
+  String get weatherRainWarning => 'warning';
+
+  @override
+  String get weatherCondClear => 'Clear sky';
+
+  @override
+  String get weatherCondCloudy => 'Cloudy';
+
+  @override
+  String get weatherCondFog => 'Fog';
+
+  @override
+  String get weatherCondRain => 'Rain';
+
+  @override
+  String get weatherCondSnow => 'Snow';
+
+  @override
+  String get weatherCondStorm => 'Thunderstorm';
+
+  @override
+  String get weatherAlertsTitle => 'Weather alerts in force';
+
+  @override
+  String weatherSource(String source) {
+    return 'Data: $source';
+  }
+
+  @override
+  String get weatherSimulationBadge => 'Simulation mode';
+
+  @override
+  String get weatherSimulationHelp =>
+      'These weather values are simulated, not real measurements.';
+
+  @override
+  String get offlineFallbackTitle => 'No internet connection';
+
+  @override
+  String get offlineFallbackBody =>
+      'Your report is saved on the phone and will be sent automatically when the internet is back. To alert the civil protection now:';
+
+  @override
+  String get offlineSendSms => 'Send by SMS';
+
+  @override
+  String get offlineSmsHelp =>
+      'Opens your SMS app with a short message (type and position of the report). You press Send yourself.';
+
+  @override
+  String get offlineSmsFee =>
+      'Your operator may charge the price of a standard SMS.';
+
+  @override
+  String get offlineSmsFailed => 'The SMS app could not be opened. Call 198.';
 }

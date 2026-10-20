@@ -28,6 +28,11 @@ os.environ["MEDIAMTX_API_PASSWORD"] = "test-mediamtx-api-password-0001"
 os.environ["VISION_CALLBACK_TOKEN"] = "test-vision-callback-token-0001"
 os.environ["VISION_READ_PASSWORD"] = "test-vision-read-password-0001"
 os.environ["STREAM_SIM_TOKEN"] = "test-stream-sim-token-0000001"
+# Telephony (phase 7): ARI is replaced by a fake (tests/test_telephony.py), SMS gateway secret, call simulator.
+os.environ["TELEPHONY_ARI_PASSWORD"] = "test-ari-password-0001"
+os.environ["SMS_INBOUND_SECRET"] = "test-sms-inbound-secret-000001"
+os.environ["TELEPHONY_SIM_TOKEN"] = "test-telephony-sim-token-0001"
+os.environ.pop("TELEPHONY_ARI_URL", None)
 os.environ.pop("MEDIAMTX_API_URL", None)
 os.environ.pop("VISION_SERVICE_URL", None)
 os.environ["BACKGROUND_WORKERS"] = "false"

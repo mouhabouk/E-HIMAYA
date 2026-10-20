@@ -10,14 +10,14 @@
 	root * /srv
 	encode zstd gzip
 
-	# Content-Security-Policy generated at build time from the app's configuration (infra/web/csp.mjs).
+	# Content-Security-Policy and Permissions-Policy generated at build time from the app's configuration
+	# (infra/web/csp.mjs): the dashboard softphone needs the microphone, the portal does not.
 	import /etc/caddy/csp.caddy
 	header {
 		X-Content-Type-Options nosniff
 		X-Frame-Options DENY
 		# Origin only, so tile servers (OpenStreetMap usage policy) still see which site uses them.
 		Referrer-Policy strict-origin-when-cross-origin
-		Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
 		Cross-Origin-Opener-Policy same-origin-allow-popups
 		Cross-Origin-Resource-Policy same-origin
 		-Server

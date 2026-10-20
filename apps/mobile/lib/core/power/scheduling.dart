@@ -12,7 +12,9 @@ import '../http/models.dart';
 ///   progresses;
 /// - volunteer readiness: about 4 position sends while stationary (was 60), the GPS radio in
 ///   balanced (cell/Wi-Fi) mode with a 100 m filter instead of a high-accuracy fix every minute;
-/// - simulated push (dev only): 5 s while messages arrive, up to 60 s when idle (was 720 polls).
+/// - simulated push (dev only): 5 s while messages arrive, up to 60 s when idle (was 720 polls);
+/// - weather card (phase 7, FR-A-034): at most 2 requests (1 in battery saver), with a coarse
+///   cell/Wi-Fi position, never in the background or offline.
 ///
 /// The one deliberate exception is live streaming (phase 6, FR-A-052): while a stream is open the
 /// position is sent at the server's cadence with a high-accuracy fix and the screen stays on,
@@ -123,6 +125,38 @@ abstract final class AlertPolling {
 
   static PollSchedule of({required bool pushAvailable}) =>
       pushAvailable ? withPush : withoutPush;
+}
+
+/// Weather card refresh (FR-A-034): the server refreshes its grid every 30 min, so asking more
+/// often brings nothing. Foreground only; failures back off up to 2 h.
+abstract final class WeatherPolling {
+  static const schedule = PollSchedule(
+    normal: Duration(minutes: 30),
+    saver: Duration(minutes: 60),
+    maxBackoff: Duration(hours: 2),
+  );
+
+  /// A user's explicit "retry" is honoured, but never twice within this delay.
+  static const manualFloor = Duration(seconds: 15);
+
+  /// Offline copy shown for at most this long (the forecast covers 12 h ahead).
+  static const cacheMaxAge = Duration(hours: 24);
+
+  /// Whether a refresh may run now. [lastAttempt] is the last request sent (answered or not).
+  static bool isDue({
+    required DateTime? lastAttempt,
+    required DateTime now,
+    required int failures,
+    required bool batterySaver,
+    bool manual = false,
+  }) {
+    if (lastAttempt == null) return true;
+    final elapsed = now.difference(lastAttempt);
+    if (elapsed.isNegative) return true; // clock moved back: do not stay stuck
+    if (manual) return elapsed >= manualFloor;
+    return elapsed >=
+        schedule.next(failures: failures, batterySaver: batterySaver);
+  }
 }
 
 /// A delay that grows while nothing happens and snaps back on activity (stationary volunteer,

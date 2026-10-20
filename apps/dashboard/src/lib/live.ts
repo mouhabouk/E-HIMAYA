@@ -6,14 +6,18 @@
  * (phase 2), report.enriched and incident.updated (phase 3), org.updated and certificate.updated (phase 4),
  * and the operations events of phase 5 (§10): levels, directives, assignments, call-outs, resources, volunteers,
  * notifications and alerts, and the live stream events of phase 6 (§4): stream.started, stream.ended,
- * stream.location, stream.alert and stream.recording.
+ * stream.location, stream.alert and stream.recording, and the phase 7 events: weather.suggestion and
+ * call.ringing, call.answered, call.ended, call.recording (scoped; the caller number is masked for roles without
+ * call access).
  * Close code 4401 = token missing/expired → renew the token, then reconnect. 4403 = no access → stop.
  * Any other close (incl. 4408 "too slow" and 1013 "try later") → reconnect with exponential back-off and jitter.
  * Once ready, a {"type":"ping"} keep-alive is sent periodically (the API answers {"type":"pong"}, ignored).
  */
 import type { Assignment, Callout, Directive, LevelRow, Message, Resource, StaffVolunteer } from "./opsTypes";
 import { isAlertLabel, type AlertLabel, type StaffStream } from "./streamTypes";
+import type { QueueInfo, StaffCall } from "./telephonyTypes";
 import type { CertificateEvent, IncidentSummary, Media, StaffOrg, StaffReport } from "./types";
+import type { WeatherSuggestion } from "./weatherTypes";
 
 export type LiveEvent =
   | { type: "report.created"; report: StaffReport }
@@ -50,7 +54,19 @@ export type LiveEvent =
       media_id?: string | null;
       at?: string | null;
     }
-  | { type: "stream.recording"; stream_id: string; media_id: string; report_id?: string | null };
+  | { type: "stream.recording"; stream_id: string; media_id: string; report_id?: string | null }
+  // Phase 7, normalised by parsePhase7Event (the contract names the events, not their payload).
+  /** A threshold rule produced a suggested weather alert (`suggestion` when the API sends the row). */
+  | { type: "weather.suggestion"; suggestion_id: string; suggestion: WeatherSuggestion | null }
+  | {
+      type: "call.ringing" | "call.answered" | "call.ended" | "call.recording";
+      call_id: string;
+      call: StaffCall | null;
+      queue: QueueInfo | null;
+      media_id: string | null;
+    };
+
+export type CallLiveEvent = Extract<LiveEvent, { type: `call.${string}` }>;
 
 export type StreamLiveEvent = Extract<LiveEvent, { type: `stream.${string}` }>;
 
@@ -165,6 +181,38 @@ export function parseStreamEvent(m: Record<string, unknown>): StreamLiveEvent | 
   }
 }
 
+const str = (v: unknown): string | null => (typeof v === "string" && v ? v : null);
+
+/** Phase 7 events: `{"suggestion": {row}}` or `{"suggestion_id"}`; `{"call": {row}, "queue"?}` or `{"call_id"}`. */
+export function parsePhase7Event(m: Record<string, unknown>): LiveEvent | null {
+  if (m.type === "weather.suggestion") {
+    const row = isObject(m.suggestion) && typeof m.suggestion.id === "string" ? (m.suggestion as unknown as WeatherSuggestion) : null;
+    const id = str(m.suggestion_id) ?? row?.id ?? str(m.id);
+    return id ? { type: "weather.suggestion", suggestion_id: id, suggestion: row } : null;
+  }
+  if (m.type === "call.ringing" || m.type === "call.answered" || m.type === "call.ended" || m.type === "call.recording") {
+    const call = isObject(m.call) && typeof m.call.id === "string" ? (m.call as unknown as StaffCall) : null;
+    const id = str(m.call_id) ?? call?.id ?? null;
+    if (!id) return null;
+    const q = isObject(m.queue) ? m.queue : null;
+    const queue: QueueInfo | null =
+      q || typeof m.queue === "string" || finite(m.waiting) || finite(m.queue_size)
+        ? {
+            name: str(q?.name) ?? str(m.queue) ?? call?.queue ?? null,
+            waiting: finite(q?.waiting) ? q.waiting : finite(m.waiting) ? m.waiting : finite(m.queue_size) ? m.queue_size : null,
+          }
+        : null;
+    return {
+      type: m.type,
+      call_id: id,
+      call,
+      queue,
+      media_id: str(m.media_id) ?? call?.recording_media_id ?? null,
+    };
+  }
+  return null;
+}
+
 function parseEvent(raw: unknown): LiveEvent | { type: "ready" } | null {
   if (typeof raw !== "string") return null;
   let msg: unknown;
@@ -220,6 +268,12 @@ function parseEvent(raw: unknown): LiveEvent | { type: "ready" } | null {
     case "stream.alert":
     case "stream.recording":
       return parseStreamEvent(m);
+    case "weather.suggestion":
+    case "call.ringing":
+    case "call.answered":
+    case "call.ended":
+    case "call.recording":
+      return parsePhase7Event(m);
     default:
       return null;
   }
