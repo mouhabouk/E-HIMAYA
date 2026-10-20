@@ -34,6 +34,8 @@ class AppPrefs {
   /// Read directly by the push background isolate.
   static const criticalAlertsKey = 'alerts.critical_opt_in';
   static const _batteryOptAskedAt = 'power.battery_opt_asked_at';
+  static const _anonQuotaLimit = 'quota.anon_limit';
+  static const _anonQuotaRemaining = 'quota.anon_remaining';
 
   /// Kept when the account is deleted: interface choices, not personal data.
   static const _keptOnWipe = {_locale, _theme, _batterySaver};
@@ -155,6 +157,23 @@ class AppPrefs {
 
   Future<void> setBatteryOptAskedAt(DateTime at) =>
       _prefs.setString(_batteryOptAskedAt, at.toUtc().toIso8601String());
+
+  /// Anonymous report quota last announced by the server (phase 9 §3: `X-Anon-Quota-*` headers
+  /// and `GET /reports/quota`). Null when unknown; the server stays the only authority.
+  int? get anonQuotaLimit => _prefs.getInt(_anonQuotaLimit);
+  int? get anonQuotaRemaining => _prefs.getInt(_anonQuotaRemaining);
+  Future<void> setAnonQuota({int? limit, int? remaining}) async {
+    if (limit == null) {
+      await _prefs.remove(_anonQuotaLimit);
+    } else {
+      await _prefs.setInt(_anonQuotaLimit, limit);
+    }
+    if (remaining == null) {
+      await _prefs.remove(_anonQuotaRemaining);
+    } else {
+      await _prefs.setInt(_anonQuotaRemaining, remaining);
+    }
+  }
 
   /// Account deletion: forgets everything except the language, theme and battery saver choice
   /// (the app then starts again from the charter).

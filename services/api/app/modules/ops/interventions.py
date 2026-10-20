@@ -14,13 +14,14 @@ from geoalchemy2 import Geometry
 from sqlalchemy import any_, cast, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.access import Action
 from app.core.events import emit
 from app.core.security import Principal
 from app.modules.audit import service as audit
 from app.modules.identity.models import Profile
 from app.modules.identity.service import Reporter
 from app.modules.notify import outbox
-from app.modules.ops import resources, schemas
+from app.modules.ops import resources, schemas, scope
 from app.modules.ops import service as incidents
 from app.modules.ops.domain import ACTIVE_ASSIGNMENT, ASSIGNMENT_TRANSITIONS, classification_allowed
 from app.modules.ops.models import Assignment, Callout, CalloutTarget, Incident, Resource, TimelineEvent, Unit
@@ -49,12 +50,10 @@ def _timeline(session: AsyncSession, incident_id: uuid.UUID, kind: str, actor: s
     session.add(TimelineEvent(incident_id=incident_id, kind=kind, actor=actor, payload=payload))
 
 
-async def _announce_incident(session: AsyncSession, incident: Incident) -> None:
+async def announce_incident(session: AsyncSession, incident: Incident) -> None:
     incident.updated_at = _now()
     await session.flush()
-    await emit(
-        session, "incident.updated", {"incident": (await incidents.summary(session, incident)).model_dump(mode="json")}
-    )
+    await incidents.announce_incident(session, incident)
 
 
 # ---------------------------------------------------------------- reporters' tracking codes
@@ -212,18 +211,38 @@ async def callouts_of(session: AsyncSession, incident_id: uuid.UUID) -> list[sch
     return [await callout_out(session, c) for c in rows]
 
 
-async def announce_callout(session: AsyncSession, callout: Callout, gouvernorat_code: int | None) -> None:
+async def announce_callout(session: AsyncSession, callout: Callout, _gouvernorat_code: int | None = None) -> None:
+    """``callout.updated`` routed to every gouvernorat of the incident (lead and participants). The third argument
+    of the phase 5 signature is ignored (kept for the volunteers module)."""
     out = await callout_out(session, callout)
+    codes = await incidents.all_gouvernorats(session, callout.incident_id)
     await emit(
-        session, "callout.updated", {"callout": out.model_dump(mode="json"), "gouvernorat_code": gouvernorat_code}
+        session,
+        "callout.updated",
+        {"callout": out.model_dump(mode="json"), "gouvernorat_codes": codes},
     )
 
 
-async def _announce_assignment(session: AsyncSession, assignment: Assignment, gouvernorat_code: int | None) -> None:
+async def announce_assignment(session: AsyncSession, assignment: Assignment) -> None:
+    """``assignment.updated`` routed to every gouvernorat of the incident (lead and participants)."""
     out = await assignment_out(session, assignment.id)
+    codes = await incidents.all_gouvernorats(session, assignment.incident_id)
     await emit(
-        session, "assignment.updated", {"assignment": out.model_dump(mode="json"), "gouvernorat_code": gouvernorat_code}
+        session,
+        "assignment.updated",
+        {"assignment": out.model_dump(mode="json"), "gouvernorat_codes": codes},
     )
+
+
+async def _owned_resource(session: AsyncSession, own: int, resource_id: uuid.UUID, lock: bool = False) -> Resource:
+    """A resource of the caller's gouvernorat; another gouvernorat's resource is engaged through a request."""
+    resource = await session.get(Resource, resource_id, with_for_update=lock)
+    if resource is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
+    unit = await session.get(Unit, resource.unit_id)
+    if unit is None or unit.gouvernorat_code != own:
+        raise scope.forbidden("resource_not_owned")
+    return resource
 
 
 def evaluation_of(incident: Incident) -> schemas.Evaluation | None:
@@ -249,7 +268,7 @@ async def update_card(
         changes["classification"] = incident.classification
     if changes:
         _timeline(session, incident.id, "card_updated", _who(principal), **changes)
-        await _announce_incident(session, incident)
+        await announce_incident(session, incident)
 
 
 async def add_note(session: AsyncSession, principal: Principal, incident: Incident, text: str) -> schemas.TimelineEntry:
@@ -266,9 +285,12 @@ async def add_note(session: AsyncSession, principal: Principal, incident: Incide
 async def create_assignment(
     session: AsyncSession, principal: Principal, incident: Incident, body: schemas.AssignmentIn
 ) -> Assignment:
+    """Phase 9 §5.4: a regional room orders its own resources on an incident it leads or takes part in."""
+    own = scope.regional_only(principal)
+    await scope.check_incident(session, principal, incident, Action.INCIDENT_ASSIGN)
     if incident.status != "open":
         raise HTTPException(status.HTTP_409_CONFLICT, "incident_not_open")
-    resource = await resources.get_resource(session, principal, body.resource_id, lock=True)
+    resource = await _owned_resource(session, own, body.resource_id, lock=True)
     if resource.status != "available":
         raise HTTPException(status.HTTP_409_CONFLICT, "resource_busy")
     first = not await session.scalar(select(func.count()).where(Assignment.incident_id == incident.id))
@@ -295,9 +317,9 @@ async def create_assignment(
     )
     if first:
         await advance_reports(session, incident.id, Status.IN_PROGRESS)
-    await _announce_assignment(session, assignment, incident.gouvernorat_code)
+    await announce_assignment(session, assignment)
     await resources.announce(session, resource.id)
-    await _announce_incident(session, incident)
+    await announce_incident(session, incident)
     return assignment
 
 
@@ -332,6 +354,11 @@ async def update_assignment(
     if assignment is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
     incident = await incidents.get_in_scope(session, principal, assignment.incident_id)
+    # Assignment status changes stay with the region owning the resource (§5.4).
+    own = scope.regional_only(principal)
+    await scope.check_incident(session, principal, incident, Action.ASSIGNMENT_STATUS)
+    if assignment.resource_id is not None:
+        await _owned_resource(session, own, assignment.resource_id)
     await _set_assignment_status(session, assignment, body.status, _who(principal))
     if body.note:
         _timeline(session, incident.id, "note", _who(principal), text=body.note, assignment_id=str(assignment.id))
@@ -343,10 +370,10 @@ async def update_assignment(
         )
     if body.status == "on_scene":
         await advance_reports(session, incident.id, Status.INTERVENED)
-    await _announce_assignment(session, assignment, incident.gouvernorat_code)
+    await announce_assignment(session, assignment)
     if assignment.resource_id is not None:
         await resources.announce(session, assignment.resource_id)
-    await _announce_incident(session, incident)
+    await announce_incident(session, incident)
     return assignment
 
 
@@ -427,6 +454,9 @@ def _callout_push(session: AsyncSession, user_id: uuid.UUID, callout: Callout) -
 async def create_callout(
     session: AsyncSession, principal: Principal, incident: Incident, body: schemas.CalloutIn
 ) -> Callout:
+    """Volunteers of the caller's own gouvernorat only; national rooms do not call volunteers out (§5.4)."""
+    scope.regional_only(principal)
+    await scope.check_incident(session, principal, incident, Action.INCIDENT_CALLOUT)
     if incident.status != "open":
         raise HTTPException(status.HTTP_409_CONFLICT, "incident_not_open")
     candidates = await suggestions(session, principal, incident, body.skill, body.radius_km, 100)
@@ -465,8 +495,8 @@ async def create_callout(
         sent=len(chosen),
     )
     await session.flush()
-    await announce_callout(session, callout, incident.gouvernorat_code)
-    await _announce_incident(session, incident)
+    await announce_callout(session, callout)
+    await announce_incident(session, incident)
     return callout
 
 
@@ -489,8 +519,18 @@ async def _close_callout(session: AsyncSession, callout: Callout, final: str) ->
     )
 
 
-async def cancel_callout(session: AsyncSession, principal: Principal, callout_id: uuid.UUID) -> Callout:
+async def callout_action(
+    session: AsyncSession, principal: Principal, callout_id: uuid.UUID
+) -> tuple[Callout, Incident]:
+    """A call-out the caller's regional room may act on (cancel, mark an arrival)."""
     callout, incident = await get_callout(session, principal, callout_id, lock=True)
+    scope.regional_only(principal)
+    await scope.check_incident(session, principal, incident, Action.INCIDENT_CALLOUT)
+    return callout, incident
+
+
+async def cancel_callout(session: AsyncSession, principal: Principal, callout_id: uuid.UUID) -> Callout:
+    callout, incident = await callout_action(session, principal, callout_id)
     if callout.status not in ("open", "filled"):
         raise HTTPException(status.HTTP_409_CONFLICT, "callout_closed")
     await _close_callout(session, callout, "cancelled")
@@ -501,8 +541,8 @@ async def cancel_callout(session: AsyncSession, principal: Principal, callout_id
         await _set_assignment_status(session, assignment, "cancelled", _who(principal))
     _timeline(session, incident.id, "callout_cancelled", _who(principal), callout_id=str(callout.id))
     await session.flush()
-    await announce_callout(session, callout, incident.gouvernorat_code)
-    await _announce_incident(session, incident)
+    await announce_callout(session, callout)
+    await announce_incident(session, incident)
     return callout
 
 
@@ -531,7 +571,7 @@ async def respond(
             if target.status in ("accepted", "arrived"):
                 target.eta_minutes = eta_minutes
                 await session.flush()
-                await announce_callout(session, callout, incident.gouvernorat_code)
+                await announce_callout(session, callout)
                 return callout
             raise HTTPException(status.HTTP_409_CONFLICT, "callout_closed")
         if volunteer.status != "approved":
@@ -571,7 +611,7 @@ async def respond(
         if (accepted or 0) >= callout.requested:
             await _close_callout(session, callout, "filled")
         await advance_reports(session, incident.id, Status.IN_PROGRESS)
-        await _announce_assignment(session, assignment, incident.gouvernorat_code)
+        await announce_assignment(session, assignment)
     else:
         if target.status == "arrived":
             raise HTTPException(status.HTTP_409_CONFLICT, "invalid_transition")
@@ -592,8 +632,8 @@ async def respond(
             volunteer_id=str(volunteer.user_id),
         )
     await session.flush()
-    await announce_callout(session, callout, incident.gouvernorat_code)
-    await _announce_incident(session, incident)
+    await announce_callout(session, callout)
+    await announce_incident(session, incident)
     return callout
 
 
@@ -609,7 +649,7 @@ async def mark_arrived(session: AsyncSession, callout: Callout, volunteer_id: uu
             incident = await session.get(Incident, callout.incident_id)
             assert incident is not None
             await advance_reports(session, incident.id, Status.INTERVENED)
-            await _announce_assignment(session, assignment, incident.gouvernorat_code)
+            await announce_assignment(session, assignment)
     await session.flush()
 
 
@@ -667,6 +707,7 @@ async def expire_targets(session: AsyncSession) -> int:
 
 
 async def close(session: AsyncSession, principal: Principal, incident: Incident, body: schemas.CloseIn) -> None:
+    await scope.check_incident(session, principal, incident, Action.INCIDENT_CLOSE)
     if incident.status not in ("open", "closed") or (incident.status == "closed" and incident.evaluation):
         raise HTTPException(status.HTTP_409_CONFLICT, "incident_not_open")
     active = await session.scalar(
@@ -688,4 +729,4 @@ async def close(session: AsyncSession, principal: Principal, incident: Incident,
     _timeline(session, incident.id, "evaluated", who, outcome=body.outcome, casualties=body.casualties.model_dump())
     await advance_reports(session, incident.id, Status.CLOSED, audit.actor_of(principal))
     await incidents.refresh(session, incident, who)
-    await _announce_incident(session, incident)
+    await announce_incident(session, incident)

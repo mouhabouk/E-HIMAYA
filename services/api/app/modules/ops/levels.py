@@ -110,6 +110,13 @@ async def set_levels(
             TimelineEvent(incident_id=incident_id, kind="level_changed", actor=actor, payload={"level": target.value})
         )
     await session.flush()
+    # The lead's level is part of the command level rule (phase 9 §5.3).
+    from app.modules.ops.service import update_command_level
+
+    for incident in await session.scalars(
+        select(Incident).where(Incident.id.in_(open_incidents)).execution_options(populate_existing=True)
+    ):
+        await update_command_level(session, incident, actor)
     for row in changed:
         await emit(session, "oplevel.changed", {"level": level_out(row).model_dump(mode="json")})
     # The level is a priority component: re-rank the zone's recent open reports.

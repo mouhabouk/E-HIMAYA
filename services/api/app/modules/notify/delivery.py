@@ -16,9 +16,12 @@ from sqlalchemy import delete, select, text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.core import metrics
+from app.core.config import get_settings
 from app.modules.notify import service, templates
 from app.modules.notify.models import Device, Dispatch, Message, OrgDigest, Outbox
 from app.modules.notify.providers import Push, Result, get_providers
+from app.modules.settings import domain as settings_domain
+from app.modules.settings import service as settings_service
 
 log = structlog.get_logger()
 
@@ -152,6 +155,19 @@ async def _batch(
     return results, cursor, len(rows), gone
 
 
+async def real_send_allowed(sessionmaker: async_sessionmaker[AsyncSession]) -> bool:
+    """Phase 9 §7.4: outside production the providers are the simulators (SIMULATION) and alerts go out as before;
+    in production an alert reaches a real provider only when ``NOTIFY_REAL_SEND`` (with its approval reference) and
+    the platform setting ``notify.real_send_enabled`` are both on. Neither is on in this phase."""
+    settings = get_settings()
+    if settings.app_env != "production":
+        return True
+    if not settings.notify_real_send:
+        return False
+    async with sessionmaker() as session:
+        return bool(await settings_service.get(session, settings_domain.NOTIFY_REAL_SEND))
+
+
 async def run_job(sessionmaker: async_sessionmaker[AsyncSession]) -> bool:
     """Advance one fan-out job by one batch. Returns False when nothing was waiting."""
     claimed = await _claim_job(sessionmaker)
@@ -159,7 +175,12 @@ async def run_job(sessionmaker: async_sessionmaker[AsyncSession]) -> bool:
         return False
     job, message = claimed
     provider = getattr(get_providers(), job.channel)
+    skipped: str | None = None
     if not provider.configured:
+        skipped = "not_configured"
+    elif message.kind == "alert" and not await real_send_allowed(sessionmaker):
+        skipped = "real_send_disabled"
+    if skipped is not None:
         results: list[Result] = []
         cursor, size, final = job.cursor, 0, "skipped"
         gone: list[str] = []
@@ -178,7 +199,7 @@ async def run_job(sessionmaker: async_sessionmaker[AsyncSession]) -> bool:
         row.lease_until = None if final != "running" else _now()
         if final != "running":
             row.finished_at = _now()
-            row.error = "not_configured" if final == "skipped" else None
+            row.error = skipped if final == "skipped" else None
         if gone:
             await session.execute(delete(Device).where(Device.token.in_(gone)))
         current = await session.get(Message, job.message_id)

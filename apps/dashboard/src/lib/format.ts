@@ -1,7 +1,11 @@
 import type { Language } from "../i18n";
 
-/** BCP 47 locales with Western (Latin) digits, as required for both languages. */
-export const INTL_LOCALE: Record<Language, string> = { ar: "ar-TN-u-nu-latn", fr: "fr-TN-u-nu-latn" };
+/** BCP 47 locales with Western (Latin) digits for every language (English: British conventions, phase 9 §8). */
+export const INTL_LOCALE: Record<Language, string> = {
+  ar: "ar-TN-u-nu-latn",
+  fr: "fr-TN-u-nu-latn",
+  en: "en-GB-u-nu-latn",
+};
 
 export interface Formatters {
   dateTime(iso: string): string;

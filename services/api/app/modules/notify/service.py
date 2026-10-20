@@ -108,7 +108,12 @@ async def check_scope(session: AsyncSession, principal: Principal, message: Mess
         if not inside:
             raise _forbid("out_of_scope")
     elif message.audience == "user":
-        return
+        # Phase 9 §5.6: a one-user message from a regional editor targets an account of its gouvernorat only.
+        target = await session.scalar(
+            text("SELECT gouvernorat_code FROM identity.profile WHERE user_id = :uid"), {"uid": message.user_id}
+        )
+        if target != own:
+            raise _forbid("out_of_scope")
     elif set(message.gouvernorat_codes) != {own}:
         raise _forbid("out_of_scope")
 
@@ -194,9 +199,27 @@ async def message_out(session: AsyncSession, message: Message) -> schemas.Messag
     )
 
 
+async def area_codes(session: AsyncSession, message: Message) -> list[int]:
+    """Gouvernorats a polygon intersects (live routing to the editors concerned, phase 9 §5.6)."""
+    if message.area_polygon is None:
+        return list(message.gouvernorat_codes)
+    rows = await session.scalars(
+        text(
+            "SELECT g.code FROM geo.gouvernorat g, notify.message m "
+            "WHERE m.id = :mid AND ST_Intersects(g.boundary, m.area_polygon) ORDER BY g.code"
+        ),
+        {"mid": message.id},
+    )
+    return [int(c) for c in rows]
+
+
 async def announce(session: AsyncSession, message: Message) -> None:
     out = await message_out(session, message)
-    await emit(session, "notification.updated", {"message": out.model_dump(mode="json")})
+    await emit(
+        session,
+        "notification.updated",
+        {"message": out.model_dump(mode="json"), "gouvernorat_codes": await area_codes(session, message)},
+    )
 
 
 # ---------------------------------------------------------------- staff actions
@@ -212,8 +235,12 @@ def _visible(principal: Principal) -> Any:
     return or_(
         Message.creator_scope == own,
         any_(Message.gouvernorat_codes) == own,
+        # National messages once published; a one-user message stays with the gouvernorat that wrote it (phase 9).
         and_(
-            func.cardinality(Message.gouvernorat_codes) == 0, Message.area_polygon.is_(None), Message.status != "draft"
+            func.cardinality(Message.gouvernorat_codes) == 0,
+            Message.area_polygon.is_(None),
+            Message.status != "draft",
+            Message.audience.is_distinct_from("user"),
         ),
         and_(Message.area_polygon.is_not(None), touches_polygon),
     )
@@ -346,7 +373,11 @@ async def publish(session: AsyncSession, principal: Principal, message: Message)
     await session.flush()
     if message.kind == "alert":
         out = await message_out(session, message)
-        await emit(session, "alert.issued", {"message": out.model_dump(mode="json")})
+        await emit(
+            session,
+            "alert.issued",
+            {"message": out.model_dump(mode="json"), "gouvernorat_codes": await area_codes(session, message)},
+        )
 
 
 async def cancel(session: AsyncSession, principal: Principal, message: Message) -> None:
@@ -385,7 +416,7 @@ async def expire_alerts(session: AsyncSession) -> list[uuid.UUID]:
 # Exact, case-insensitive match on the registered profile e-mail of an active citizen account. No partial
 # search: the caller must already know the address (served by ix_profile_email_lower).
 _LOOKUP_SQL = """
-    SELECT a.user_id, p.first_name, p.last_name, p.email, p.phone_enc IS NOT NULL AS has_phone,
+    SELECT a.user_id, p.first_name, p.last_name, p.email, p.gouvernorat_code, p.phone_enc IS NOT NULL AS has_phone,
            EXISTS (SELECT 1 FROM notify.device d WHERE d.user_id = a.user_id) AS has_push
     FROM identity.profile p
     JOIN identity.account a ON a.user_id = p.user_id AND a.kind = 'citizen' AND a.status = 'active'
@@ -406,13 +437,16 @@ def mask_name(first_name: str | None, last_name: str | None) -> str | None:
     return " ".join(part for part in (f"{first[:1]}***" if first else "", f"{last[:1]}." if last else "") if part)
 
 
-async def lookup_user(session: AsyncSession, email: str) -> schemas.UserLookupOut:
+async def lookup_user(session: AsyncSession, email: str, principal: Principal | None = None) -> schemas.UserLookupOut:
     rows = (await session.execute(text(_LOOKUP_SQL), {"email": email.strip().lower()})).all()
     if not rows:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "user_not_found")
     if len(rows) > 1:  # a stale profile still holds an address another account now uses
         raise HTTPException(status.HTTP_409_CONFLICT, "ambiguous_email")
     row = rows[0]
+    if principal is not None and not principal.is_national and row.gouvernorat_code != principal.gouvernorat_code:
+        # Phase 9 §5.6: a regional editor resolves the accounts of its gouvernorat only.
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
     return schemas.UserLookupOut(
         user_id=row.user_id,
         display_name=mask_name(row.first_name, row.last_name),

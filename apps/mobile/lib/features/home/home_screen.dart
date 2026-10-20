@@ -12,6 +12,7 @@ import '../alerts/alerts_providers.dart';
 import '../alerts/notifications_screen.dart';
 import '../institution/institution_providers.dart';
 import '../institution/my_institution_screen.dart';
+import '../quota/quota_widgets.dart';
 import '../reports/reports_providers.dart';
 import '../sos/sos_widgets.dart';
 import '../weather/weather_card.dart';
@@ -90,6 +91,8 @@ class HomeScreen extends ConsumerWidget {
                   onTap: () => context.go(Routes.reports),
                 ),
               ),
+            // Phase 9 §3: reports left without an account (anonymous only).
+            const AnonQuotaCard(),
             const SizedBox(height: 8),
             _HomeAction(
               key: const Key('home-new-report'),

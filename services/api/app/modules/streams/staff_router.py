@@ -25,7 +25,8 @@ from app.modules.streams.models import LiveStream
 
 router = APIRouter(prefix="/api/v1/staff/streams", tags=["staff", "streams"])
 
-REGISTER_ROLES = (Role.OPS_MANAGER, Role.SYSADMIN)
+# Fixed cameras and drones are operational resources: ops managers only (phase 9 §10; not sysadmin).
+REGISTER_ROLES = (Role.OPS_MANAGER,)
 StaffReader = Annotated[Principal, Depends(require_roles(*READ_ROLES))]
 StaffWriter = Annotated[Principal, Depends(require_roles(*WRITE_ROLES))]
 StaffRegistrar = Annotated[Principal, Depends(require_roles(*REGISTER_ROLES))]

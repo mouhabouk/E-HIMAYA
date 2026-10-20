@@ -8,13 +8,15 @@ import base64
 import binascii
 import uuid
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from typing import Annotated
 
 from fastapi import Depends, Header, HTTPException, Request, status
-from sqlalchemy import select
+from sqlalchemy import func, select, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.access import DbScope, set_db_scope
 from app.core.config import get_settings
 from app.core.crypto import pseudonym
 from app.core.db import get_session
@@ -110,7 +112,10 @@ async def get_reporter(
     session: Annotated[AsyncSession, Depends(get_session)],
     x_device_key: Annotated[str | None, Header(max_length=64)] = None,
 ) -> Reporter:
-    return await resolve_reporter(session, principal, x_device_key, client_key(request))
+    reporter = await resolve_reporter(session, principal, x_device_key, client_key(request))
+    # Database scope (row-level security, phase 9 §9.1): a reporter sees its own rows only.
+    set_db_scope(DbScope.public(reporter.user_id))
+    return reporter
 
 
 CurrentReporter = Annotated[Reporter, Depends(get_reporter)]
@@ -133,3 +138,56 @@ async def limit_reporter(
     await enforce(f"{action}:{reporter.user_id}", per_account, window_s)
     if reporter.is_anonymous:
         await enforce(f"{action}-ip:{client_key(request)}", per_ip, window_s)
+
+
+# ---------------------------------------------------------------- anonymous report quota (phase 9 §3)
+
+
+@dataclass(frozen=True, slots=True)
+class AnonQuota:
+    limit: int
+    used: int
+
+    @property
+    def remaining(self) -> int:
+        return max(self.limit - self.used, 0)
+
+
+async def anon_quota(session: AsyncSession, reporter: Reporter, limit: int) -> AnonQuota | None:
+    """Where an anonymous installation stands against the quota; ``None`` for registered accounts (no quota)."""
+    if not reporter.is_anonymous:
+        return None
+    used = await session.scalar(select(Account.anon_reports_accepted).where(Account.user_id == reporter.user_id))
+    return AnonQuota(limit=limit, used=int(used or 0))
+
+
+async def consume_anon_quota(session: AsyncSession, user_id: uuid.UUID, limit: int, *, beyond: bool) -> bool:
+    """Count one accepted anonymous report in the caller's transaction (rolled back with the report's insert).
+
+    Returns False when the quota is already used up; with ``beyond`` (SOS) the report is counted anyway.
+    The row lock taken by the UPDATE serialises concurrent reports of the same installation."""
+    now = datetime.now(UTC)
+    counted = await session.scalar(
+        update(Account)
+        .where(Account.user_id == user_id, Account.anon_reports_accepted < limit)
+        .values(anon_reports_accepted=Account.anon_reports_accepted + 1)
+        .returning(Account.anon_reports_accepted)
+    )
+    if counted is not None:
+        if counted >= limit:
+            await session.execute(
+                update(Account)
+                .where(Account.user_id == user_id, Account.anon_quota_reached_at.is_(None))
+                .values(anon_quota_reached_at=now)
+            )
+        return True
+    if beyond:
+        await session.execute(
+            update(Account)
+            .where(Account.user_id == user_id)
+            .values(
+                anon_reports_accepted=Account.anon_reports_accepted + 1,
+                anon_quota_reached_at=func.coalesce(Account.anon_quota_reached_at, now),
+            )
+        )
+    return False

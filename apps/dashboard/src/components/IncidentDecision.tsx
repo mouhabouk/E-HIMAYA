@@ -33,6 +33,7 @@ import type { IncidentDetail } from "../lib/types";
 import { ErrorBox, Loading } from "./Feedback";
 import { CallButton } from "./Softphone";
 import { SimTag, SimulationBand } from "./StreamBits";
+import type { Language } from "../i18n";
 
 const HORIZON_CHOICES = [30, 60, 120, 240] as const;
 
@@ -320,7 +321,7 @@ export function ForecastLegend({ forecast }: { forecast: ForecastState }) {
 function actionLabel(
   t: (k: string, o?: Record<string, unknown>) => string,
   a: RecommendationAction,
-  lang: "ar" | "fr",
+  lang: Language,
 ): string {
   const custom = bilingual(a.label ?? null, lang);
   return custom || t(`decision.action.${a.type}`);

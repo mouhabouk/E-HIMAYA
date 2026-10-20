@@ -5,7 +5,9 @@
 import type { Geometry, Position } from "geojson";
 import type { MapPolygon } from "../components/MapView";
 import type { BBox } from "./filters";
+import type { Language } from "../i18n";
 import type { ForecastKind, ForecastPolygon, ForecastRun } from "./decisionTypes";
+import { localized, type TextByLanguage } from "./localized";
 
 /** Yellow → dark red with the horizon (fire); light → dark blue with the level (flood). */
 const FIRE_COLOURS = ["#f59e0b", "#ea580c", "#c2410c", "#991b1b", "#7f1d1d"] as const;
@@ -62,14 +64,9 @@ export function forecastBounds(polygons: MapPolygon[]): BBox | null {
   return boundsOfPositions(polygons.flatMap((p) => p.coordinates.flat()));
 }
 
-/** Text of a bilingual value (or plain string) in the UI language, falling back to Arabic. */
-export function bilingual(
-  v: Partial<Record<"ar" | "fr", string>> | string | null | undefined,
-  lang: "ar" | "fr",
-): string {
-  if (!v) return "";
-  if (typeof v === "string") return v;
-  return (lang === "fr" ? v.fr || v.ar : v.ar || v.fr) ?? "";
+/** Text of a bilingual value (or plain string) in the UI language, with the phase 9 fallback order (localized.ts). */
+export function bilingual(v: TextByLanguage | string | null | undefined, lang: Language): string {
+  return localized(v, lang);
 }
 
 /** One input value as text (numbers rounded, objects as key=value pairs). */

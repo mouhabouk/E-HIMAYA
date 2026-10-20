@@ -691,10 +691,13 @@ async def test_fixed_sources(
     manager = staff(roles=["ops_manager"], gouvernorat=61)
     r = await client.post("/api/v1/staff/streams", json={**body, "gouvernorat_code": 11}, headers=manager)
     assert r.status_code == 403 and r.json() == {"detail": "out_of_scope"}
+    # Phase 9 §10: registering sources is an operational act, no longer open to sysadmin.
+    r = await client.post("/api/v1/staff/streams", json=body, headers=staff(roles=["sysadmin"], gouvernorat=None))
+    assert r.status_code == 403
     r = await client.post(
         "/api/v1/staff/streams",
         json={**body, "gouvernorat_code": 99},
-        headers=staff(roles=["sysadmin"], gouvernorat=None),
+        headers=staff(roles=["ops_manager"], gouvernorat=None),
     )
     assert r.status_code == 422
     r = await client.post("/api/v1/staff/streams", json=body, headers=manager)

@@ -21,6 +21,7 @@ import type {
 } from "./telephonyTypes";
 import type { Page } from "./types";
 import type { WeatherGrid, WeatherPointDetail, WeatherSuggestion } from "./weatherTypes";
+import type { Language } from "../i18n";
 
 const enc = encodeURIComponent;
 const incidentPath = (id: string) => `/api/v1/staff/incidents/${enc(id)}`;
@@ -89,10 +90,11 @@ export function phase7Api(api: ApiClient) {
         }),
       ),
 
-    askAssistant: (incidentId: string, question: string, lang: "ar" | "fr") =>
+    /** The assistant answers in ar or fr (phase 7 §1): an English interface asks for French. */
+    askAssistant: (incidentId: string, question: string, lang: Language) =>
       api.request<AssistantAnswer>(`${incidentPath(incidentId)}/assistant`, {
         method: "POST",
-        body: { question, lang },
+        body: { question, lang: lang === "ar" ? "ar" : "fr" },
       }),
 
     // ---------- §4 telephony ----------

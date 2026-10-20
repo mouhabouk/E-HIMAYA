@@ -22,6 +22,8 @@ import {
   type UnitKind,
 } from "../lib/opsTypes";
 import { canManageResources } from "../lib/roles";
+import type { Language } from "../i18n";
+import { localizedName } from "../lib/localized";
 
 const LAT = { min: 30, max: 37.6 };
 const LON = { min: 7.4, max: 11.7 };
@@ -31,8 +33,8 @@ export function ResourceStatusChip({ status }: { status: ResourceStatus }) {
   return <span className={`chip chip--resource-${status}`}>{t(`resources.status.${status}`)}</span>;
 }
 
-function unitName(unit: Pick<Unit, "name_ar" | "name_fr">, lang: string): string {
-  return lang === "ar" ? unit.name_ar : unit.name_fr;
+function unitName(unit: Pick<Unit, "name_ar" | "name_fr">, lang: Language): string {
+  return localizedName(unit, lang);
 }
 
 function parseCoord(raw: string, range: { min: number; max: number }): number | null {

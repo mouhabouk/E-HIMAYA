@@ -43,9 +43,10 @@ router = APIRouter(prefix="/api/v1/staff/rewards", tags=["staff", "rewards"])
 Session = Annotated[AsyncSession, Depends(get_session)]
 
 MANAGE_ROLES = (Role.OPS_MANAGER, Role.LOCAL_COMMITTEE, Role.CENTRAL_COMMITTEE)
-RULE_ROLES = (Role.CENTRAL_COMMITTEE, Role.SYSADMIN)
+# National decision of the central committee only (phase 9 §2): technical roles hold no operational settings.
+RULE_ROLES = (Role.CENTRAL_COMMITTEE,)
 Reader = Annotated[Principal, Depends(require_roles(*READ_ROLES))]
-SettingsReader = Annotated[Principal, Depends(require_roles(*READ_ROLES, Role.SYSADMIN))]
+SettingsReader = Annotated[Principal, Depends(require_roles(*READ_ROLES))]
 Manager = Annotated[Principal, Depends(require_roles(*MANAGE_ROLES))]
 RuleAdmin = Annotated[Principal, Depends(require_roles(*RULE_ROLES))]
 RescueWriter = Annotated[Principal, Depends(require_roles(*WRITE_ROLES))]
@@ -952,7 +953,9 @@ async def leaderboard(
     del period
     year = year or service.now_utc().astimezone(service.TUNIS_TZ).year
     if scope == "national":
-        _national(principal)
+        # Phase 9 §10: the national ranking is for the central room only.
+        if not principal.is_national:
+            raise HTTPException(status.HTTP_403_FORBIDDEN, "out_of_scope")
         code = None
     else:
         code = gouvernorat if gouvernorat is not None else principal.gouvernorat_code

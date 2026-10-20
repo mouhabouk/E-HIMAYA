@@ -45,6 +45,9 @@ FIRE_DISCLAIMER = {
     "fr": "Estimation automatique de la propagation (modèle de Rothermel, forme elliptique) à partir de la météo, du "
     "relief et des hypothèses listées. C'est une aide à la décision, pas une consigne : le feu réel peut s'en écarter "
     "fortement (vent local, végétation, interventions). La décision appartient toujours au responsable.",
+    "en": "Automatic estimate of the spread (Rothermel model, elliptical shape) from the weather, the terrain and the "
+    "assumptions listed. It is a decision aid, not an order: the real fire may differ widely (local wind, "
+    "vegetation, interventions). The decision always rests with the officer in charge.",
 }
 FLOOD_DISCLAIMER = {
     "ar": "تنبيه استشاري وليس نموذجًا هيدروليكيًا: يجمع كميات الأمطار المرصودة والمتوقعة مع المناطق المنخفضة "
@@ -52,72 +55,91 @@ FLOOD_DISCLAIMER = {
     "fr": "Avis consultatif, pas un modèle hydraulique : il combine la pluie observée et prévue avec les points bas et "
     "le sens d'écoulement du modèle de terrain. Il ne calcule ni hauteurs d'eau, ni barrages, ni réseaux "
     "d'assainissement. La décision appartient au responsable.",
+    "en": "Advisory notice, not a hydraulic model: it combines observed and forecast rain with the low points and the "
+    "flow direction of the terrain model. It computes neither water depths, nor dams, nor drainage networks. The "
+    "decision rests with the officer in charge.",
 }
 
 ASSUMPTIONS: dict[str, dict[str, str]] = {
     "no_terrain": {
         "ar": "نموذج التضاريس غير مثبّت: اعتُبر الانحدار صفرًا.",
         "fr": "Modèle de terrain non installé : pente supposée nulle.",
+        "en": "Terrain model not installed: slope assumed to be zero.",
     },
     "default_fuel": {
         "ar": "لا توجد طبقة غطاء نباتي: استُعمل نموذج الوقود «مختلط» (أندرسون 2).",
         "fr": "Pas de couche d'occupation du sol : combustible « mixte » (Anderson 2) retenu.",
+        "en": "No land-cover layer: “mixed” fuel (Anderson 2) used.",
     },
     "uniform_conditions": {
         "ar": "الطقس والوقود والانحدار عند نقطة الاشتعال مفترضة ثابتة على كامل المساحة وطوال المدة.",
         "fr": "Météo, combustible et pente du point d'éclosion supposés uniformes sur la zone et dans le temps.",
+        "en": "Weather, fuel and slope at the ignition point assumed uniform over the area and over time.",
     },
     "dead_moisture_from_ffmc": {
         "ar": "رطوبة الوقود الميت من مؤشر FFMC لليوم (+1٪ و+2٪ للأقطار الأكبر).",
         "fr": "Humidité des combustibles morts tirée du FFMC du jour (+1 % et +2 % pour les classes 10 h et 100 h).",
+        "en": "Dead fuel moisture taken from the day's FFMC (+1% and +2% for the 10 h and 100 h classes).",
     },
     "dead_moisture_default": {
         "ar": "لا يتوفر مؤشر FFMC: رطوبة الوقود الميت مفترضة 8٪.",
         "fr": "FFMC indisponible : humidité des combustibles morts supposée de 8 %.",
+        "en": "FFMC unavailable: dead fuel moisture assumed to be 8%.",
     },
     "live_moisture_season": {
         "ar": "رطوبة الوقود الحي مفترضة حسب الفصل (80٪ صيفًا، 120٪ في باقي السنة).",
         "fr": "Humidité des combustibles vivants supposée selon la saison (80 % l'été, 120 % le reste de l'année).",
+        "en": "Live fuel moisture assumed by season (80% in summer, 120% the rest of the year).",
     },
     "wind_10m_to_midflame": {
         "ar": "الرياح على ارتفاع 10 م محوّلة إلى مستوى اللهب بمعامل تعديل الرياح للنموذج.",
         "fr": "Vent à 10 m ramené à mi-flamme par le facteur d'ajustement du modèle de combustible.",
+        "en": "10 m wind reduced to mid-flame height by the fuel model's wind adjustment factor.",
     },
     "wind_limit": {
         "ar": "طُبّق حدّ سرعة الرياح في نموذج روثرميل (Andrews وآخرون 2013).",
         "fr": "La limite de vent du modèle de Rothermel a été appliquée (Andrews et al. 2013).",
+        "en": "The wind limit of the Rothermel model was applied (Andrews et al. 2013).",
     },
     "no_suppression": {
         "ar": "لا يأخذ في الحسبان أي تدخل للإطفاء ولا الحواجز (طرقات، أودية).",
         "fr": "Ne tient compte d'aucune action de lutte ni des coupures (routes, oueds).",
+        "en": "Takes no account of firefighting or of firebreaks (roads, wadis).",
     },
     "ignition_centroid": {
         "ar": "نقطة الاشتعال هي مركز الحادث.",
         "fr": "Le point d'éclosion est le centre de l'incident.",
+        "en": "The ignition point is the centre of the incident.",
     },
     "simulated_weather": {
         "ar": "[محاكاة] الطقس المستعمل مُحاكى وليس بيانات حقيقية.",
         "fr": "[SIM] Météo simulée, pas des données réelles.",
+        "en": "[SIM] Simulated weather, not real data.",
     },
     "flood_area_circle": {
         "ar": "منطقة الحادث غير محددة: حُلّلت دائرة نصف قطرها 3 كم حول مركزه.",
         "fr": "Zone de l'incident non définie : cercle de 3 km de rayon autour de son centre analysé.",
+        "en": "Incident area not defined: a 3 km radius circle around its centre was analysed.",
     },
     "flood_point_rain": {
         "ar": "الأمطار هي أمطار أقرب نقطة من شبكة الطقس، مفترضة متجانسة على المنطقة.",
         "fr": "Pluie du point de grille météo le plus proche, supposée homogène sur la zone.",
+        "en": "Rain of the nearest weather grid point, assumed uniform over the area.",
     },
     "flood_no_terrain": {
         "ar": "نموذج التضاريس غير مثبّت: منطقة الخطر هي منطقة الحادث بأكملها دون نقاط منخفضة.",
         "fr": "Modèle de terrain non installé : la zone de risque est toute la zone, sans points bas.",
+        "en": "Terrain model not installed: the risk area is the whole area, without low points.",
     },
     "flood_no_hydraulics": {
         "ar": "لا يحسب التدفق في الأودية ولا قدرة التصريف ولا تشبّع التربة.",
         "fr": "Ne calcule ni débit des oueds, ni capacité d'évacuation, ni saturation des sols.",
+        "en": "Computes neither wadi flow, nor drainage capacity, nor soil saturation.",
     },
     "flood_dsm": {
         "ar": "نموذج التضاريس نموذج سطح (يشمل المباني والأشجار) بدقة 90 م.",
         "fr": "Le modèle de terrain est un modèle de surface (bâtiments, arbres) à 90 m.",
+        "en": "The terrain model is a 90 m surface model (buildings, trees).",
     },
 }
 

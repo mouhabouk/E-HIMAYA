@@ -19,6 +19,8 @@ import {
   type TreeAxis,
   type TreeNode,
 } from "../lib/phase8Types";
+import { directionOf } from "../i18n";
+import { INTL_LOCALE } from "../lib/format";
 
 const VIEWS = ["results", "calendar", "tree"] as const;
 type View = (typeof VIEWS)[number];
@@ -240,7 +242,7 @@ function CalendarView({ query, onDay }: { query: LibraryQuery; onDay: (date: str
     placeholderData: keepPreviousData,
   });
   const counts = new Map((cal.data?.days ?? []).map((d) => [d.date, d.count]));
-  const monthName = new Intl.DateTimeFormat(lang === "ar" ? "ar-TN-u-nu-latn" : "fr-TN", { month: "long", year: "numeric" }).format(
+  const monthName = new Intl.DateTimeFormat(INTL_LOCALE[lang], { month: "long", year: "numeric" }).format(
     new Date(ym.y, ym.m - 1, 1),
   );
   // Weeks start on Monday (ISO); leading blanks before the 1st.
@@ -254,13 +256,13 @@ function CalendarView({ query, onDay }: { query: LibraryQuery; onDay: (date: str
     <section className="card calendar" aria-labelledby="events-calendar">
       <div className="calendar__head">
         <button type="button" className="btn btn--small" onClick={() => shift(-1)} aria-label={t("events.calendar.prev")}>
-          {lang === "ar" ? "→" : "←"}
+          {directionOf(lang) === "rtl" ? "→" : "←"}
         </button>
         <h2 id="events-calendar" aria-live="polite">
           {monthName}
         </h2>
         <button type="button" className="btn btn--small" onClick={() => shift(1)} aria-label={t("events.calendar.next")}>
-          {lang === "ar" ? "←" : "→"}
+          {directionOf(lang) === "rtl" ? "←" : "→"}
         </button>
       </div>
       {cal.isError && <ErrorBox error={cal.error} onRetry={() => void cal.refetch()} />}

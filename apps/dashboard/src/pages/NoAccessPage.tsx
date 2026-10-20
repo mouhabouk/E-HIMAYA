@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/auth";
-import { LanguageSwitch } from "../components/Layout";
+import { LanguageMenu } from "../components/Layout";
 
 export type NoAccessReason = "noRole" | "noScope" | "liveForbidden";
 
@@ -23,7 +23,7 @@ export function NoAccessPage({ reason, embedded = false }: { reason: NoAccessRea
   return (
     <main id="main" className="standalone">
       <div className="standalone__tools">
-        <LanguageSwitch />
+        <LanguageMenu />
       </div>
       {body}
     </main>

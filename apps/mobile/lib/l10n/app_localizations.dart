@@ -3711,6 +3711,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'See my rewards'**
   String get trackPointsOpenRewards;
+
+  /// No description provided for @anonQuotaCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports without an account'**
+  String get anonQuotaCardTitle;
+
+  /// No description provided for @anonQuotaRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'{remaining} of {limit} left'**
+  String anonQuotaRemaining(int remaining, int limit);
+
+  /// No description provided for @anonQuotaRemainingShort.
+  ///
+  /// In en, this message translates to:
+  /// **'{remaining} left'**
+  String anonQuotaRemainingShort(int remaining);
+
+  /// No description provided for @anonQuotaExhaustedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Limit reached: create an account to keep reporting. SOS and 198 always work.'**
+  String get anonQuotaExhaustedHint;
+
+  /// No description provided for @anonQuotaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reporting without an account'**
+  String get anonQuotaTitle;
+
+  /// No description provided for @anonQuotaExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'To prevent abuse, each installation of the app can send a limited number of reports without an account. With a free account you can keep reporting, follow your reports on any device, and your reports carry more weight.'**
+  String get anonQuotaExplanation;
+
+  /// No description provided for @anonQuotaEmergencyNote.
+  ///
+  /// In en, this message translates to:
+  /// **'In an emergency, the SOS button and a call to 198 always work, with or without an account.'**
+  String get anonQuotaEmergencyNote;
+
+  /// No description provided for @anonQuotaDraftKept.
+  ///
+  /// In en, this message translates to:
+  /// **'Your report {code} is kept on this phone. It will be sent as soon as you create an account or sign in.'**
+  String anonQuotaDraftKept(String code);
+
+  /// No description provided for @anonQuotaReportKeptBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The limit of reports without an account is reached. This report is kept on this phone and will be sent as soon as you create an account or sign in.'**
+  String get anonQuotaReportKeptBody;
+
+  /// No description provided for @anonQuotaOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Why a limit?'**
+  String get anonQuotaOpen;
+
+  /// No description provided for @errorAnonQuotaExhausted.
+  ///
+  /// In en, this message translates to:
+  /// **'The limit of reports without an account is reached on this device. Please create an account.'**
+  String get errorAnonQuotaExhausted;
 }
 
 class _AppLocalizationsDelegate

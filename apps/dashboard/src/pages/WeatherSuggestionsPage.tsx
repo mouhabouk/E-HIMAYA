@@ -14,6 +14,7 @@ import { useFormat, useGouvernorats, useLanguage } from "../lib/hooks";
 import { p7Keys } from "../lib/phase7Api";
 import { canDraftMessage } from "../lib/roles";
 import type { SuggestionEvidence, WeatherSuggestion } from "../lib/weatherTypes";
+import { localized } from "../lib/localized";
 
 const REASON_MIN = 3;
 const KNOWN_METRICS = [
@@ -168,8 +169,8 @@ function SuggestionCard({ suggestion, fresh }: { suggestion: WeatherSuggestion; 
       void navigate(NEW_ALERT_PATH, { state: prefillFromSuggestion(suggestion) });
     },
   });
-  const title = (lang === "ar" ? suggestion.title.ar : suggestion.title.fr || suggestion.title.ar) ?? "";
-  const body = (lang === "ar" ? suggestion.body.ar : suggestion.body.fr || suggestion.body.ar) ?? "";
+  const title = localized(suggestion.title, lang);
+  const body = localized(suggestion.body, lang);
   const area =
     suggestion.gouvernorat_codes.length === 0
       ? t("ops.map.national")

@@ -1,8 +1,8 @@
 import uuid
 from datetime import datetime
-from typing import Any, Literal
+from typing import Annotated, Any, Literal
 
-from pydantic import AwareDatetime, BaseModel, Field
+from pydantic import AwareDatetime, BaseModel, Field, StringConstraints
 
 from app.modules.orgs.schemas import OrganizationCard, OrgRef
 from app.modules.reports.domain import LAT_MAX, LAT_MIN, LON_MAX, LON_MIN, Category, Lang, Status
@@ -96,6 +96,12 @@ class TrackOut(BaseModel):
 
 
 AnalysisState = Literal["pending", "running", "done", "failed"]
+GeoState = Literal["trusted", "pending", "contradictory", "verified"]
+SlaBand = Literal["critical", "high", "normal", "low"]
+EscalationState = Literal["none", "late", "central_responding", "referred", "referral_accepted", "referral_refused"]
+EscalationKind = Literal[
+    "late", "central_claim", "referral", "referral_accepted", "referral_refused", "geo_verified", "claim_released"
+]
 
 
 class StaffReport(BaseModel):
@@ -125,9 +131,19 @@ class StaffReport(BaseModel):
     has_suggestion: bool = False
     # Institution the report was made on behalf of (phase 4, FR-A-080).
     organization: OrgRef | None = None
-    # Accepted beyond the anonymous budget or while the rate limiter ran degraded: check before dispatch.
+    # Accepted beyond the anonymous budget or quota, or while the rate limiter ran degraded: check before dispatch.
     needs_verification: bool = False
-    verification_reason: Literal["anonymous_budget", "limiter_degraded"] | None = None
+    verification_reason: Literal["anonymous_budget", "anonymous_quota", "limiter_degraded"] | None = None
+    # Jurisdiction, claim and SLA (phase 9 §4.6).
+    geo_state: GeoState = "trusted"
+    geo_candidates: list[int] = Field(default_factory=list)
+    claimed_room: str | None = None
+    claimed_by_name: str | None = None
+    claimed_at: datetime | None = None
+    sla_band: SlaBand | None = None
+    sla_due_at: datetime | None = None
+    escalation_state: EscalationState = "none"
+    late: bool = False
 
 
 class StaffHistoryEntry(BaseModel):
@@ -139,9 +155,25 @@ class StaffHistoryEntry(BaseModel):
 
 class Reporter(BaseModel):
     kind: Literal["citizen", "organization", "anonymous"]
+    # Identity hidden outside the handling operations room (§1.3): names null, phone reduced to its last two digits.
+    masked: bool = False
     first_name: str | None = None
     last_name: str | None = None
     phone: str | None = None
+
+
+class ReporterContextOut(BaseModel):
+    reporter_gouvernorat_code: int | None
+    source: Literal["profile", "none"]
+
+
+class EscalationOut(BaseModel):
+    kind: EscalationKind
+    from_room: str | None
+    to_room: str | None
+    actor_name: str | None
+    at: datetime
+    reason: str | None
 
 
 class ScoreComponent(BaseModel):
@@ -219,6 +251,8 @@ class StaffReportDetail(StaffReport):
     analysis: AnalysisOut | None = None
     # What responders need about that institution (registers, representative, evacuation points).
     organization_card: OrganizationCard | None = None
+    escalations: list[EscalationOut] = Field(default_factory=list)
+    reporter_context: ReporterContextOut | None = None
 
 
 class StaffReportPage(BaseModel):
@@ -249,3 +283,44 @@ class Kpis(BaseModel):
     # Institutions hub (phase 4): registrations and certificates waiting for the auditor, in scope.
     orgs_pending_review: int = 0
     certificates_submitted: int = 0
+
+
+class QuotaOut(BaseModel):
+    """Anonymous report quota (phase 9 §3); all null for registered accounts (no quota)."""
+
+    limit: int | None
+    used: int | None
+    remaining: int | None
+
+
+Reason = Annotated[str, StringConstraints(strip_whitespace=True, min_length=5, max_length=500)]
+Note = Annotated[str, StringConstraints(strip_whitespace=True, max_length=1000)]
+
+
+class ReleaseIn(BaseModel):
+    reason: Reason
+
+
+class DirectiveSpec(BaseModel):
+    title: Annotated[str, StringConstraints(strip_whitespace=True, min_length=3, max_length=150)]
+    body: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=5000)]
+    urgency: Literal["normal", "urgent"] = "normal"
+
+
+class ReferIn(BaseModel):
+    to_gouvernorat_code: int
+    reason: Reason
+    directive: DirectiveSpec | None = None
+
+
+class ReferralAcceptIn(BaseModel):
+    note: Note | None = None
+
+
+class ReferralRefuseIn(BaseModel):
+    reason: Reason
+
+
+class GeoVerifyIn(BaseModel):
+    gouvernorat_code: int
+    reason: Reason

@@ -21,8 +21,10 @@ Reader = Annotated[Principal, Depends(require_roles(*READ_ROLES))]
 Committee = Annotated[Principal, Depends(require_roles(Role.LOCAL_COMMITTEE, Role.CENTRAL_COMMITTEE))]
 Monitor = Annotated[Principal, Depends(require_roles(Role.LOCAL_COMMITTEE, Role.CENTRAL_COMMITTEE, Role.OPS_MANAGER))]
 LocalCommittee = Annotated[Principal, Depends(require_roles(Role.LOCAL_COMMITTEE))]
-Logistics = Annotated[Principal, Depends(require_roles(Role.OPS_MANAGER, Role.SYSADMIN))]
-LogisticsReader = Annotated[Principal, Depends(require_roles(*READ_ROLES, Role.SYSADMIN))]
+# Units and resources are operational: written by the ops manager of their gouvernorat (national: all), read by the
+# readers of reports. Technical roles (sysadmin) have no operational rights from phase 9 (§1.2).
+Logistics = Annotated[Principal, Depends(require_roles(Role.OPS_MANAGER))]
+LogisticsReader = Annotated[Principal, Depends(require_roles(*READ_ROLES))]
 
 
 def _csv(raw: str | None, allowed: tuple[str, ...], code: str) -> list[str]:

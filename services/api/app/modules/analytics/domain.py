@@ -1,4 +1,4 @@
-"""Analytics vocabulary: roles, labels (ar/fr), the k-anonymity floor, report periods and schedule times.
+"""Analytics vocabulary: roles, labels (ar/fr/en), the k-anonymity floor, report periods and schedule times.
 
 Pure functions only (no database), shared by the API, the document renderers and the worker.
 """
@@ -30,7 +30,7 @@ REPORT_KINDS: tuple[ReportKind, ...] = (
 SCHEDULABLE_KINDS = ("period_summary", "gouvernorat_summary")
 INCIDENT_KINDS = ("incident_summary", "after_action")
 ReportFormat = Literal["pdf", "xlsx"]
-ReportLang = Literal["ar", "fr"]
+ReportLang = Literal["ar", "fr", "en"]
 CONTENT_TYPES = {
     "pdf": "application/pdf",
     "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -44,64 +44,64 @@ SOURCES = ("app", "sms", "call", "portal", "iot")
 LabelPair = dict[str, str]
 
 KIND_LABELS: dict[str, LabelPair] = {
-    "incident_summary": {"ar": "ملخص تدخل", "fr": "Synthèse d'intervention"},
-    "period_summary": {"ar": "ملخص فترة", "fr": "Synthèse de période"},
-    "gouvernorat_summary": {"ar": "ملخص حسب الولاية", "fr": "Synthèse par gouvernorat"},
-    "scenario": {"ar": "سيناريو افتراضي", "fr": "Scénario de simulation"},
-    "after_action": {"ar": "تقييم ما بعد التدخل", "fr": "Retour d'expérience"},
+    "incident_summary": {"ar": "ملخص تدخل", "fr": "Synthèse d'intervention", "en": "Intervention summary"},
+    "period_summary": {"ar": "ملخص فترة", "fr": "Synthèse de période", "en": "Period summary"},
+    "gouvernorat_summary": {"ar": "ملخص حسب الولاية", "fr": "Synthèse par gouvernorat", "en": "Summary by governorate"},
+    "scenario": {"ar": "سيناريو افتراضي", "fr": "Scénario de simulation", "en": "Simulation scenario"},
+    "after_action": {"ar": "تقييم ما بعد التدخل", "fr": "Retour d'expérience", "en": "After-action review"},
 }
 STATUS_LABELS: dict[str, LabelPair] = {
-    "received": {"ar": "مستلم", "fr": "Reçu"},
-    "in_progress": {"ar": "قيد المعالجة", "fr": "En cours"},
-    "intervened": {"ar": "تم التدخل", "fr": "Intervention faite"},
-    "ongoing": {"ar": "متواصل", "fr": "En continu"},
-    "closed": {"ar": "مغلق", "fr": "Clôturé"},
-    "rejected": {"ar": "مرفوض", "fr": "Rejeté"},
+    "received": {"ar": "مستلم", "fr": "Reçu", "en": "Received"},
+    "in_progress": {"ar": "قيد المعالجة", "fr": "En cours", "en": "In progress"},
+    "intervened": {"ar": "تم التدخل", "fr": "Intervention faite", "en": "Intervened"},
+    "ongoing": {"ar": "متواصل", "fr": "En continu", "en": "Ongoing"},
+    "closed": {"ar": "مغلق", "fr": "Clôturé", "en": "Closed"},
+    "rejected": {"ar": "مرفوض", "fr": "Rejeté", "en": "Rejected"},
 }
 SOURCE_LABELS: dict[str, LabelPair] = {
-    "app": {"ar": "التطبيق", "fr": "Application"},
-    "sms": {"ar": "رسالة قصيرة", "fr": "SMS"},
-    "call": {"ar": "مكالمة", "fr": "Appel"},
-    "portal": {"ar": "البوابة", "fr": "Portail"},
-    "iot": {"ar": "أجهزة الاستشعار", "fr": "Capteurs"},
+    "app": {"ar": "التطبيق", "fr": "Application", "en": "App"},
+    "sms": {"ar": "رسالة قصيرة", "fr": "SMS", "en": "SMS"},
+    "call": {"ar": "مكالمة", "fr": "Appel", "en": "Call"},
+    "portal": {"ar": "البوابة", "fr": "Portail", "en": "Portal"},
+    "iot": {"ar": "أجهزة الاستشعار", "fr": "Capteurs", "en": "Sensors"},
 }
 RESOURCE_LABELS: dict[str, LabelPair] = {
-    "fire_engine": {"ar": "شاحنة إطفاء", "fr": "Engin d'incendie"},
-    "water_tanker": {"ar": "صهريج ماء", "fr": "Citerne"},
-    "ambulance": {"ar": "سيارة إسعاف", "fr": "Ambulance"},
-    "rescue_vehicle": {"ar": "سيارة إنقاذ", "fr": "Véhicule de secours"},
-    "heavy_equipment": {"ar": "معدات ثقيلة", "fr": "Engin lourd"},
-    "drone": {"ar": "طائرة مسيرة", "fr": "Drone"},
-    "large_extinguisher": {"ar": "مطفأة كبيرة", "fr": "Grand extincteur"},
-    "boat": {"ar": "زورق", "fr": "Embarcation"},
-    "command_vehicle": {"ar": "سيارة قيادة", "fr": "Véhicule de commandement"},
-    "other": {"ar": "أخرى", "fr": "Autre"},
+    "fire_engine": {"ar": "شاحنة إطفاء", "fr": "Engin d'incendie", "en": "Fire engine"},
+    "water_tanker": {"ar": "صهريج ماء", "fr": "Citerne", "en": "Water tanker"},
+    "ambulance": {"ar": "سيارة إسعاف", "fr": "Ambulance", "en": "Ambulance"},
+    "rescue_vehicle": {"ar": "سيارة إنقاذ", "fr": "Véhicule de secours", "en": "Rescue vehicle"},
+    "heavy_equipment": {"ar": "معدات ثقيلة", "fr": "Engin lourd", "en": "Heavy equipment"},
+    "drone": {"ar": "طائرة مسيرة", "fr": "Drone", "en": "Drone"},
+    "large_extinguisher": {"ar": "مطفأة كبيرة", "fr": "Grand extincteur", "en": "Large extinguisher"},
+    "boat": {"ar": "زورق", "fr": "Embarcation", "en": "Boat"},
+    "command_vehicle": {"ar": "سيارة قيادة", "fr": "Véhicule de commandement", "en": "Command vehicle"},
+    "other": {"ar": "أخرى", "fr": "Autre", "en": "Other"},
 }
 WEEKDAY_LABELS: dict[int, LabelPair] = {
-    1: {"ar": "الإثنين", "fr": "Lundi"},
-    2: {"ar": "الثلاثاء", "fr": "Mardi"},
-    3: {"ar": "الأربعاء", "fr": "Mercredi"},
-    4: {"ar": "الخميس", "fr": "Jeudi"},
-    5: {"ar": "الجمعة", "fr": "Vendredi"},
-    6: {"ar": "السبت", "fr": "Samedi"},
-    7: {"ar": "الأحد", "fr": "Dimanche"},
+    1: {"ar": "الإثنين", "fr": "Lundi", "en": "Monday"},
+    2: {"ar": "الثلاثاء", "fr": "Mardi", "en": "Tuesday"},
+    3: {"ar": "الأربعاء", "fr": "Mercredi", "en": "Wednesday"},
+    4: {"ar": "الخميس", "fr": "Jeudi", "en": "Thursday"},
+    5: {"ar": "الجمعة", "fr": "Vendredi", "en": "Friday"},
+    6: {"ar": "السبت", "fr": "Samedi", "en": "Saturday"},
+    7: {"ar": "الأحد", "fr": "Dimanche", "en": "Sunday"},
 }
 
 
 def category_label(category: str | None) -> LabelPair:
     if category is None:
-        return {"ar": "كل الأصناف", "fr": "Toutes catégories"}
+        return {"ar": "كل الأصناف", "fr": "Toutes catégories", "en": "All categories"}
     try:
         labels = CATEGORY_LABELS[Category(category)]
     except ValueError:
-        return {"ar": category, "fr": category}
-    return {"ar": labels["ar"], "fr": labels["fr"]}
+        return {"ar": category, "fr": category, "en": category}
+    return {"ar": labels["ar"], "fr": labels["fr"], "en": labels.get("en", labels["fr"])}
 
 
 def label(table: dict[str, LabelPair], key: str | None) -> LabelPair:
     if key is None:
-        return {"ar": "—", "fr": "—"}
-    return table.get(key, {"ar": key, "fr": key})
+        return {"ar": "—", "fr": "—", "en": "—"}
+    return table.get(key, {"ar": key, "fr": key, "en": key})
 
 
 # ---------------------------------------------------------------- k-anonymity floor
@@ -121,6 +121,8 @@ def floor_rule(min_cell: int) -> LabelPair:
         "fr": f"Toute case de moins de {min_cell} signalements est affichée « <{min_cell} » (seuil de "
         "k-anonymat). Ce document ne contient que des effectifs, des durées et des zones : aucun nom, numéro "
         "de téléphone ni position exacte.",
+        "en": f'Any cell with fewer than {min_cell} reports is shown as "<{min_cell}" (k-anonymity threshold). '
+        "This document only contains counts, durations and areas: no names, phone numbers or exact locations.",
     }
 
 
