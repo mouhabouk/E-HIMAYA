@@ -118,6 +118,7 @@ jobs:
           - { name: api, context: services/api, args: "" }
           - { name: notify-sim, context: services/notify-sim, args: "" }
           - { name: ai, context: services/ai, args: "--target runtime" }
+          - { name: vision, context: services/vision, args: "--target runtime" }
           - { name: postgres, context: infra/postgres, args: "" }
           - { name: dashboard, context: apps/dashboard, args: "--build-context web=infra/web" }
           - { name: portal, context: apps/portal, args: "--build-context web=infra/web" }
@@ -311,6 +312,93 @@ jobs:
         if: always()
         run: sudo chown -R "$(id -u)" "$OLLAMA_DIR" || true
 
+  vision:
+    name: Vision · lint, types, tests
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: services/vision
+    env:
+      VISION_API_TOKEN: ci-only-token-ci-only-token-0001
+      VISION_CALLBACK_TOKEN: ci-only-callback-ci-only-callback-01
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+      - run: uv sync --locked
+      - name: Lint
+        run: |
+          uv run ruff check .
+          uv run ruff format --check .
+      - name: Type check
+        run: uv run mypy app
+      - name: Tests
+        run: uv run pytest -q
+
+  # Real detectors (ONNX files pinned by SHA-256, cached), the held-out evaluation sample (pinned images, cached) and
+  # the two container images working together: models job fills a volume, the service starts healthy on it.
+  vision-models:
+    name: Vision · real models
+    runs-on: ubuntu-24.04
+    env:
+      MODELS: /home/runner/vision-models
+      VISION_API_TOKEN: ci-only-token-ci-only-token-0001
+      VISION_CALLBACK_TOKEN: ci-only-callback-ci-only-callback-01
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+
+      - name: Restore models
+        uses: actions/cache@v4
+        with:
+          path: /home/runner/vision-models
+          key: vision-models-${{ hashFiles('services/vision/models/fetch_models.py', 'services/vision/models/weights/**') }}
+
+      - name: Restore evaluation images
+        uses: actions/cache@v4
+        with:
+          path: services/vision/eval/cache
+          key: vision-eval-${{ hashFiles('services/vision/eval/samples.json') }}
+
+      - name: Download and check the models
+        run: python3 services/vision/models/fetch_models.py --out "$MODELS"
+
+      - name: Tests against the real models
+        working-directory: services/vision
+        run: |
+          uv sync --locked
+          VISION_MODELS_DIR="$MODELS" uv run pytest -o addopts="" -m models -v -s
+
+      - name: Evaluation on the held-out sample (frame-level precision/recall, CPU latency)
+        working-directory: services/vision
+        run: VISION_MODELS_DIR="$MODELS" uv run python eval/evaluate.py --threads 2 --json eval/results.json
+
+      - name: Images work together (models job → volume → healthy service)
+        run: |
+          docker build --target models -t ehimaya/vision-models:ci services/vision
+          docker build --target runtime -t ehimaya/vision:ci services/vision
+          docker volume create visionmodels
+          docker run --rm -v visionmodels:/models ehimaya/vision-models:ci
+          docker run -d --name vision -v visionmodels:/models:ro \
+            -e VISION_API_TOKEN -e VISION_CALLBACK_TOKEN -p 127.0.0.1:8100:8100 ehimaya/vision:ci
+          for i in $(seq 1 30); do
+            [ "$(docker inspect -f '{{.State.Health.Status}}' vision)" = healthy ] && break
+            sleep 2
+          done
+          curl -fsS http://127.0.0.1:8100/healthz | tee health.json
+          python3 -c "import json; h=json.load(open('health.json')); assert h['status'] == 'ok', h"
+          curl -fsS -H "Authorization: Bearer $VISION_API_TOKEN" http://127.0.0.1:8100/v1/model
+          SAMPLE=$(python3 -c "import json; print(json.load(open('services/vision/eval/samples.json'))['samples'][0]['id'])")
+          curl -fsS -H "Authorization: Bearer $VISION_API_TOKEN" -F "image=@services/vision/eval/cache/$SAMPLE.jpg;type=image/jpeg" \
+            http://127.0.0.1:8100/v1/detect
+
+      - name: Logs on failure
+        if: failure()
+        run: docker logs vision || true
+
   stack:
     name: Stack · compose smoke test
     runs-on: ubuntu-24.04
@@ -324,6 +412,8 @@ jobs:
           sed -i "s|^TUSD_HOOK_SECRET=.*|TUSD_HOOK_SECRET=$(openssl rand -hex 24)|" .env
           sed -i "s|^AI_SERVICE_TOKEN=.*|AI_SERVICE_TOKEN=$(openssl rand -hex 24)|" .env
           sed -i "s|^CERTIFICATE_SIGNING_KEY=.*|CERTIFICATE_SIGNING_KEY=$(openssl rand -base64 32)|" .env
+          sed -i "s|^MEDIAMTX_HOOK_TOKEN=.*|MEDIAMTX_HOOK_TOKEN=$(openssl rand -hex 24)|" .env
+          sed -i "s|^MEDIAMTX_API_PASSWORD=.*|MEDIAMTX_API_PASSWORD=$(openssl rand -hex 24)|" .env
       - name: Production overlay renders (Caddy, Keycloak start, no host ports but 80/443)
         run: |
           cat > prod.env <<EOF
@@ -337,7 +427,7 @@ jobs:
           EOF
           cat .env prod.env > prod-full.env
           docker compose --env-file prod-full.env -f infra/compose.yml -f infra/compose.prod.yml config > prod.yml
-          python3 -c "import yaml; s=yaml.safe_load(open('prod.yml'))['services']; p={n:[x.get('published') for x in v.get('ports',[])] for n,v in s.items() if v.get('ports')}; print(p); assert set(p)=={'caddy'}, p; assert 'notify-sim' not in s and 'mailpit' not in s"
+          python3 -c "import yaml; s=yaml.safe_load(open('prod.yml'))['services']; p={n:sorted(str(x.get('published'))+'/'+x.get('protocol','tcp') for x in v.get('ports',[])) for n,v in s.items() if v.get('ports')}; print(p); assert set(p)=={'caddy','mediamtx'}, p; assert p['mediamtx']==['1935/tcp','8189/udp','8554/tcp'], p; assert 'notify-sim' not in s and 'mailpit' not in s and 'stream-sim' not in s"
       - name: Start the stack
         run: docker compose --env-file .env -f infra/compose.yml up -d --build
       - name: Anonymous report, resumable upload, integrity check, notify-sim health

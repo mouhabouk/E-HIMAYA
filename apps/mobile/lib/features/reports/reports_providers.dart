@@ -18,6 +18,7 @@ class ReportListItem {
     required this.category,
     required this.createdAt,
     this.clientUuid,
+    this.serverId,
     this.status,
     this.localState,
     this.mediaPending = 0,
@@ -28,6 +29,9 @@ class ReportListItem {
   });
 
   final String? clientUuid;
+
+  /// Id of the report on the server, null until it was accepted (needed to go live, phase 6).
+  final String? serverId;
 
   /// Server code when known, otherwise the local `TMP-XXXXXX`.
   final String trackingCode;
@@ -53,6 +57,12 @@ class ReportListItem {
   final String? lastError;
 
   bool get isForOrganization => organizationId != null;
+
+  /// A live stream can be opened on it (phase 6 §2: the server knows it and it is not over).
+  bool get canGoLive =>
+      serverId != null &&
+      status != ReportStatus.closed &&
+      status != ReportStatus.rejected;
 }
 
 /// Merge rule (NFR-04, server wins): status and tracking code come from the server when it
@@ -70,8 +80,11 @@ List<ReportListItem> mergeReports({
   final seen = <String>{};
   final items = <ReportListItem>[];
   for (final r in local) {
-    final s = byUuid[r.clientUuid];
+    final s =
+        byUuid[r.clientUuid] ??
+        server.where((x) => x.id == r.serverId).firstOrNull;
     if (s != null) seen.add(s.id);
+    if (r.serverId != null) seen.add(r.serverId!);
     final code = s?.trackingCode ?? r.serverTrackingCode;
     final pendingMedia = media
         .where(
@@ -91,6 +104,7 @@ List<ReportListItem> mergeReports({
     items.add(
       ReportListItem(
         clientUuid: r.clientUuid,
+        serverId: s?.id ?? r.serverId,
         trackingCode: code ?? r.tempCode,
         isTemporary: code == null,
         category: ReportCategory.fromWire(r.category) ?? ReportCategory.other,
@@ -112,6 +126,7 @@ List<ReportListItem> mergeReports({
     items.add(
       ReportListItem(
         clientUuid: s.clientUuid,
+        serverId: s.id,
         trackingCode: s.trackingCode,
         isTemporary: false,
         category: ReportCategory.fromWire(s.category) ?? ReportCategory.other,

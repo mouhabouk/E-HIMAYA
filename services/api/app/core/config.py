@@ -134,6 +134,67 @@ class Settings(BaseSettings):
     # Erasure requests once the identity-provider account was disabled.
     retention_erasure_days: int = Field(default=30, ge=1)
 
+    # Live streaming (phase 6, docs/streaming.md). MediaMTX authenticates every publisher and reader through
+    # POST /internal/mediamtx/auth and reports the stream life cycle to POST /internal/mediamtx/hooks.
+    # Public base of the WebRTC endpoints (WHIP for the app, WHEP for the dashboard): <base>/live/<id>/whip.
+    stream_webrtc_public_url: str = "http://localhost:8889"
+    # Public base of the HLS endpoints (dashboard fallback): <base>/live/<id>/index.m3u8.
+    stream_hls_public_url: str = "http://localhost:8888"
+    # Host name and ports fixed sources (drones, cameras) publish to over RTSP or RTMP.
+    stream_ingest_host: str = "localhost"
+    stream_rtsp_port: int = Field(default=8554, ge=1, le=65535)
+    stream_rtmp_port: int = Field(default=1935, ge=1, le=65535)
+    # Internal RTSP base the vision service reads streams from (with its own read credentials).
+    stream_internal_rtsp_url: str = "rtsp://mediamtx:8554"
+    # MediaMTX control API (kicking publishers). Unset: a stopped stream ends at its next reconnection only.
+    mediamtx_api_url: str | None = None
+    mediamtx_api_user: str = "ehimaya-api"
+    mediamtx_api_password: SecretStr | None = Field(default=None, min_length=24)
+    # Shared secret MediaMTX's hook script sends in X-Hook-Token; the hook endpoint answers 404 while unset.
+    mediamtx_hook_token: SecretStr | None = Field(default=None, min_length=24)
+    # Directory MediaMTX records fMP4 segments into (volume shared with the api and worker containers).
+    stream_recordings_dir: Path = Path("/recordings")
+    # A citizen's publish token must be used within this time; a stream then lasts at most stream_max_duration_s.
+    stream_start_window_s: int = Field(default=600, ge=60, le=3600)
+    stream_max_duration_s: int = Field(default=900, ge=60, le=7200)
+    # Interval the app sends its position at while streaming (the API ignores calls closer than 3 s).
+    stream_location_interval_s: int = Field(default=10, ge=3, le=300)
+    # A staff viewer token must be used within this time (WHEP/HLS session start).
+    stream_viewer_token_ttl_s: int = Field(default=300, ge=30, le=3600)
+    # New live streams per citizen account per hour.
+    stream_create_per_hour: int = Field(default=6, ge=1)
+    # Segments no hook announced (MediaMTX restarted, API down) are picked up once untouched for this long.
+    stream_segment_orphan_after_s: int = Field(default=600, ge=120)
+    # ┏━━ SIMULATION ━━ token of the stream-sim service (compose profile "sim"), which registers a source=sim stream
+    # ┃   through POST /internal/sim/streams and publishes a looped sample clip.
+    # ┃ PRODUCTION: leave STREAM_SIM_TOKEN empty (APP_ENV=production refuses it); register real drones and cameras
+    # ┃   with POST /api/v1/staff/streams (docs/streaming.md).
+    # ┗━━━━━━━━━━━━━━━━
+    stream_sim_token: SecretStr | None = Field(default=None, min_length=24)
+
+    # Vision service (services/vision, fire/smoke/person detector). Unset: streams and images are not analysed.
+    vision_service_url: str | None = None
+    # Bearer token the API presents to the vision service.
+    vision_api_token: SecretStr | None = Field(default=None, min_length=24)
+    # Token the vision service presents on POST /internal/vision/detections (X-Vision-Token); 404 while unset.
+    vision_callback_token: SecretStr | None = Field(default=None, min_length=24)
+    # Address of the detections callback as reached from the vision service.
+    vision_callback_url: str = "http://api:8000/internal/vision/detections"
+    # MediaMTX read password of the internal "vision" user (RTSP reads of every live path).
+    vision_read_password: SecretStr | None = Field(default=None, min_length=24)
+    # Detections below the first threshold are dropped; a fire or smoke at or above the second in 3 of the last
+    # 5 analysed frames is confirmed (raises the priority, alerts the operators; never a public alert).
+    vision_min_confidence: float = Field(default=0.45, ge=0, le=1)
+    vision_alert_confidence: float = Field(default=0.6, ge=0, le=1)
+    # A label confirmed on a stream is announced again only after this pause.
+    vision_alert_cooldown_s: int = Field(default=300, ge=10)
+    vision_request_timeout_s: float = Field(default=10.0, gt=0, le=120)
+    # Retries with back-off when the vision service is unavailable, then an uploaded image stays unanalysed.
+    vision_max_attempts: int = Field(default=8, ge=1, le=50)
+    # Streams without a report (drones, cameras, simulation): recordings, track and detections kept this long
+    # after the stream ended. Streams of a report follow the report (anonymised with it).
+    retention_stream_days: int = Field(default=365, ge=1)
+
     api_cors_origins: Annotated[list[str], NoDecode] = Field(default_factory=list)
     api_log_level: str = "INFO"
     db_pool_size: int = 10
@@ -163,6 +224,9 @@ class Settings(BaseSettings):
     def _check_production_secrets(self) -> "Settings":
         if self.app_env == "production":
             problems = production_problems(self)
+            if self.stream_sim_token is not None:
+                # SIMULATION: the stream simulator never runs in production.
+                problems.append("STREAM_SIM_TOKEN must be empty (simulation only)")
             if problems:
                 raise ValueError("APP_ENV=production refuses weak or example secrets: " + "; ".join(problems))
         return self
@@ -203,6 +267,14 @@ class Settings(BaseSettings):
         "smtp_host",
         "smtp_username",
         "smtp_password",
+        "mediamtx_api_url",
+        "mediamtx_api_password",
+        "mediamtx_hook_token",
+        "stream_sim_token",
+        "vision_service_url",
+        "vision_api_token",
+        "vision_callback_token",
+        "vision_read_password",
         mode="before",
     )
     @classmethod
@@ -216,10 +288,24 @@ class Settings(BaseSettings):
         # Compose passes "" when the variable is not set in .env.
         return "https://fcm.googleapis.com" if value == "" or value is None else value
 
-    @field_validator("portal_public_url", "fcm_api_url")
+    @field_validator(
+        "portal_public_url",
+        "fcm_api_url",
+        "stream_webrtc_public_url",
+        "stream_hls_public_url",
+        "stream_internal_rtsp_url",
+        "mediamtx_api_url",
+        "vision_service_url",
+    )
     @classmethod
-    def _strip_slash(cls, value: str) -> str:
-        return value.rstrip("/")
+    def _strip_slash(cls, value: str | None) -> str | None:
+        return value.rstrip("/") if value else value
+
+    @model_validator(mode="after")
+    def _check_vision_thresholds(self) -> "Settings":
+        if self.vision_alert_confidence < self.vision_min_confidence:
+            raise ValueError("VISION_ALERT_CONFIDENCE must be at least VISION_MIN_CONFIDENCE")
+        return self
 
     @field_validator("oidc_issuers", "api_cors_origins", mode="before")
     @classmethod

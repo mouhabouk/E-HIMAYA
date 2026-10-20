@@ -3,6 +3,7 @@
  * phase-4-contract.md (institutions, sections 8–10). Phase 5 types live in opsTypes.ts.
  */
 import type { Assignment, Callout, Evaluation, OpLevel } from "./opsTypes";
+import type { MediaAnalysis } from "./streamTypes";
 
 export const REPORT_STATUSES = ["received", "in_progress", "intervened", "ongoing", "closed", "rejected"] as const;
 export type ReportStatus = (typeof REPORT_STATUSES)[number];
@@ -21,7 +22,8 @@ export const CATEGORIES = [
 export type Category = (typeof CATEGORIES)[number];
 
 export type ReporterKind = "citizen" | "anonymous";
-export type MediaKind = "image" | "video" | "audio";
+/** `recording`: a segment of a live stream (phase 6 §1), stored with `stream_id` and `duration_s`. */
+export type MediaKind = "image" | "video" | "audio" | "recording";
 export type MediaStatus = "uploading" | "verifying" | "stored" | "rejected" | "quarantined";
 /** Why the verification worker refused a file (phase 5.5, A7). */
 export type MediaRejectionReason = "sha256_mismatch" | "type_mismatch" | "disallowed_type";
@@ -57,6 +59,11 @@ export interface Media {
   url?: string | null;
   /** Set on quarantined media (staff only). */
   rejection_reason?: MediaRejectionReason | null;
+  /** Phase 6: the live stream a recording (or a frame stored by the vision service) belongs to. */
+  stream_id?: string | null;
+  duration_s?: number | null;
+  /** Phase 6: `analysis.vision` (fire/smoke/person detections) of an image; `source = "vision"` for stream frames. */
+  analysis?: MediaAnalysis | null;
 }
 
 export interface StaffReport {
@@ -132,6 +139,8 @@ export const PRIORITY_COMPONENTS = [
   "weather",
   /** Phase 5: bonus while the gouvernorat is at crisis or disaster level. */
   "op_level",
+  /** Phase 6: strongest confirmed fire or smoke of the report (live stream or uploaded image); bonus. */
+  "vision_fire",
 ] as const;
 export type PriorityComponent = (typeof PRIORITY_COMPONENTS)[number];
 

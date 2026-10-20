@@ -1585,4 +1585,179 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get lockedAlertOpenApp => 'افتح قفل الهاتف لفتح التطبيق';
+
+  @override
+  String get liveBadge => 'مباشر';
+
+  @override
+  String get homeLive => 'بث مباشر';
+
+  @override
+  String get homeLiveDesc => 'صوّر الحادثة مباشرة لأعوان الحماية المدنية.';
+
+  @override
+  String get liveTitle => 'بث مباشر';
+
+  @override
+  String get liveIntro =>
+      'تُبث صورة الكاميرا وصوت الميكروفون مباشرة إلى قاعة العمليات بالحماية المدنية، وتُسجَّل وتُربط ببلاغك. يُرسل موقعك طوال مدة البث.';
+
+  @override
+  String get livePermissionRationale =>
+      'يحتاج البث إلى الكاميرا والميكروفون وإلى موقعك. سيطلب الهاتف إذنك عند البدء، ولا تُستعمل إلا أثناء البث.';
+
+  @override
+  String get liveCategoryLabel => 'نوع الحادثة';
+
+  @override
+  String get liveStart => 'ابدأ البث';
+
+  @override
+  String get liveStop => 'إيقاف البث';
+
+  @override
+  String get liveMute => 'كتم الميكروفون';
+
+  @override
+  String get liveUnmute => 'تشغيل الميكروفون';
+
+  @override
+  String get liveSwitchCamera => 'تبديل الكاميرا';
+
+  @override
+  String get livePreparing => 'جارٍ تحضير البث…';
+
+  @override
+  String get liveConnecting => 'جارٍ الاتصال بخادم البث…';
+
+  @override
+  String liveReconnecting(int attempt, int max) {
+    return 'انقطع الاتصال. محاولة $attempt من $max…';
+  }
+
+  @override
+  String get liveWeakNetwork =>
+      'الشبكة ضعيفة جدا للبث. يمكنك تسجيل مقطع قصير وإرساله بدلا من ذلك.';
+
+  @override
+  String get liveLocationOff => 'الموقع غير مفعّل: لن يُرسل موقعك أثناء البث.';
+
+  @override
+  String get liveLocationOn => 'يُرسل موقعك أثناء البث';
+
+  @override
+  String liveEndsIn(String time) {
+    return 'ينتهي البث آليا خلال $time';
+  }
+
+  @override
+  String liveReportCode(String code) {
+    return 'البلاغ $code';
+  }
+
+  @override
+  String liveSemanticsOnAir(String duration) {
+    return 'البث جارٍ منذ $duration';
+  }
+
+  @override
+  String get liveEndedTitle => 'انتهى البث';
+
+  @override
+  String get liveEndedByUser => 'أوقفت البث. التسجيل محفوظ مع بلاغك.';
+
+  @override
+  String get liveEndedByOperator =>
+      'أنهى عون قاعة العمليات البث. شكرا، الصور وصلت.';
+
+  @override
+  String liveEndedMaxDuration(int minutes) {
+    return 'بلغ البث مدته القصوى ($minutes دقيقة).';
+  }
+
+  @override
+  String get liveEndedByServer => 'أنهت المنصة البث.';
+
+  @override
+  String get liveEndedLocked => 'توقف البث لأن الهاتف عاد إلى شاشة القفل.';
+
+  @override
+  String liveDuration(String duration) {
+    return 'المدة: $duration';
+  }
+
+  @override
+  String get liveFailedTitle => 'تعذّر البث المباشر';
+
+  @override
+  String get liveFailNoLocation =>
+      'تعذّر تحديد موقعك، فلا يمكن إنشاء البلاغ. اتصل بالرقم 198.';
+
+  @override
+  String get liveFailReportNotSent =>
+      'بلاغك محفوظ على الهاتف وسيُرسل عند عودة الشبكة. يمكنك تسجيل مقطع يُرفق به.';
+
+  @override
+  String get liveFailPermission =>
+      'رُفض الوصول إلى الكاميرا أو الميكروفون. فعّله من إعدادات الهاتف لاستعمال البث.';
+
+  @override
+  String get liveFailCamera => 'الكاميرا غير متاحة (قد يستعملها تطبيق آخر).';
+
+  @override
+  String get liveFailConnection => 'تعذّر الاتصال بخادم البث رغم عدة محاولات.';
+
+  @override
+  String get liveFailLocked =>
+      'البث غير متاح من شاشة التنبيه فوق القفل. افتح قفل الهاتف أولا.';
+
+  @override
+  String get liveFallbackTitle => 'إرسال مقطع فيديو بدلا من البث';
+
+  @override
+  String get liveFallbackBody =>
+      'سجّل مقطعا لا يتجاوز 60 ثانية، يُرفع آليا مع بلاغك ولو كانت الشبكة ضعيفة.';
+
+  @override
+  String get liveRecordClip => 'تسجيل مقطع (60 ثانية)';
+
+  @override
+  String get liveClipQueued => 'المقطع محفوظ وسيُرسل مع بلاغك.';
+
+  @override
+  String get liveClipFailed => 'تعذّر حفظ المقطع.';
+
+  @override
+  String get liveRetry => 'إعادة المحاولة';
+
+  @override
+  String get liveOpenSettings => 'فتح الإعدادات';
+
+  @override
+  String get liveDone => 'تم';
+
+  @override
+  String get liveLeaveTitle => 'إيقاف البث؟';
+
+  @override
+  String get liveLeaveBody => 'البث جارٍ. الخروج يوقف إرسال الصورة والموقع.';
+
+  @override
+  String get liveSimulationBadge => 'وضع المحاكاة';
+
+  @override
+  String get liveSimulationHelp =>
+      'هذا البث يمر بمنظومة المحاكاة ولا يصل إلى قاعة عمليات حقيقية.';
+
+  @override
+  String get reportGoLive => 'بث مباشر لهذا البلاغ';
+
+  @override
+  String get errorStreamAlreadyActive => 'بث مباشر جارٍ بالفعل لهذا البلاغ.';
+
+  @override
+  String get errorStreamNotActive => 'انتهى هذا البث.';
+
+  @override
+  String get errorReportClosed => 'هذا البلاغ مغلق: لا يمكن فتح بث مباشر له.';
 }

@@ -14,6 +14,7 @@ class SeenRequest {
   final Uint8List? body;
 
   String get path => uri.path;
+  String get text => body == null ? '' : utf8.decode(body!);
   Object? get json =>
       body == null || body!.isEmpty ? null : jsonDecode(utf8.decode(body!));
 
@@ -32,6 +33,7 @@ class FakeResponse {
   const FakeResponse(
     this.status, {
     this.json,
+    this.text,
     this.headers = const {},
     this.networkError = false,
   });
@@ -40,11 +42,15 @@ class FakeResponse {
   const FakeResponse.network()
     : status = 0,
       json = null,
+      text = null,
       headers = const {},
       networkError = true;
 
   final int status;
   final Object? json;
+
+  /// Raw body (SDP for WHIP), sent instead of [json].
+  final String? text;
   final Map<String, String> headers;
   final bool networkError;
 }
@@ -91,7 +97,7 @@ class FakeAdapter implements HttpClientAdapter {
       if (r.json != null) 'content-type': ['application/json'],
     };
     return ResponseBody.fromString(
-      r.json == null ? '' : jsonEncode(r.json),
+      r.text ?? (r.json == null ? '' : jsonEncode(r.json)),
       r.status,
       headers: headers,
     );

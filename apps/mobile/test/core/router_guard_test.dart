@@ -1,5 +1,6 @@
 import 'package:ehimaya/core/auth/auth_session.dart';
 import 'package:ehimaya/core/auth/identity.dart';
+import 'package:ehimaya/core/http/models.dart';
 import 'package:ehimaya/core/routing/app_router.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -40,6 +41,9 @@ void main() {
       Routes.emergency,
       Routes.alert('a1'),
       Routes.callouts,
+      // Phase 6: live streaming is never reachable from the locked alert view.
+      Routes.live,
+      Routes.liveFor(serverId: 'rep-1'),
       Routes.charter,
       '/unknown/deep/link',
     ]) {
@@ -101,5 +105,27 @@ void main() {
     expect(go(Routes.profile, identity: registered, prompted: false), isNull);
     expect(go(Routes.home, identity: registered), isNull);
     expect(go(Routes.home, identity: anon, prompted: false), isNull);
+  });
+
+  test('live route: new report without parameters, else the given report', () {
+    final fresh = liveTargetFromQuery(Uri.parse(Routes.live));
+    expect(fresh.isNew, isTrue);
+    expect(fresh.category, ReportCategory.other);
+    final uri = Uri.parse(
+      Routes.liveFor(
+        clientUuid: 'c-1',
+        serverId: 'rep-1',
+        trackingCode: 'EH-26-11-0000001',
+        category: ReportCategory.fire,
+      ),
+    );
+    final t = liveTargetFromQuery(uri);
+    expect(t.isNew, isFalse);
+    expect(t.clientUuid, 'c-1');
+    expect(t.serverId, 'rep-1');
+    expect(t.trackingCode, 'EH-26-11-0000001');
+    expect(t.category, ReportCategory.fire);
+    expect(go(Routes.live, identity: anon), isNull);
+    expect(liveTargetFromQuery(Uri.parse('/live?report=r9')).serverId, 'r9');
   });
 }

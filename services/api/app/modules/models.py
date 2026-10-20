@@ -31,6 +31,7 @@ from app.modules.orgs.models import (
     TeamMember,
 )
 from app.modules.reports.models import Media, Report, StatusHistory
+from app.modules.streams.models import LiveStream, StreamDetection, StreamLocation, StreamSegment
 from app.modules.volunteers.models import Volunteer, VolunteerReview
 
 __all__ = [
@@ -57,6 +58,7 @@ __all__ = [
     "Incident",
     "Invitation",
     "LevelState",
+    "LiveStream",
     "MapFeature",
     "Media",
     "Member",
@@ -70,6 +72,9 @@ __all__ = [
     "Revision",
     "SafetyTip",
     "StatusHistory",
+    "StreamDetection",
+    "StreamLocation",
+    "StreamSegment",
     "TeamMember",
     "TimelineEvent",
     "Unit",

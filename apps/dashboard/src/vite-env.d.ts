@@ -10,3 +10,9 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+// hls.js ships no typings for its light build: same API as the full one.
+declare module "hls.js/light" {
+  import Hls from "hls.js";
+  export default Hls;
+}

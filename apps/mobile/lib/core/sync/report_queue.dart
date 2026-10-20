@@ -52,6 +52,23 @@ class ReportDraft {
   final String? organizationId;
 }
 
+/// A report to attach a file to: its local row and/or its server id.
+class AttachTarget {
+  const AttachTarget({
+    this.clientUuid,
+    this.serverId,
+    this.trackingCode,
+    this.category = ReportCategory.other,
+  });
+
+  final String? clientUuid;
+  final String? serverId;
+  final String? trackingCode;
+
+  /// Used only when a local row must be created for a server-only report.
+  final ReportCategory category;
+}
+
 class QueuedReport {
   const QueuedReport(this.clientUuid, this.tempCode);
   final String clientUuid;
@@ -167,6 +184,98 @@ class ReportQueue {
       ),
     );
     return true;
+  }
+
+  /// Adds a file to a report that was already queued or sent (phase 6: the clip recorded when a
+  /// live stream is not possible, FR-A-051). [target] names the report by its local
+  /// `client_uuid` and/or its server id. A report known only from the server (sent from another
+  /// install of the queue, or whose local row was cleaned) gets a local row in state `created`,
+  /// so the sync engine uploads the file with tus exactly like any other attachment.
+  ///
+  /// Returns the `client_uuid` of the local row. Throws [ArgumentError] when the report already
+  /// holds [MediaRules.maxFilesPerReport] files or when it is unknown and has no server id.
+  Future<String> attach(AttachTarget target, DraftAttachment attachment) async {
+    var row = target.clientUuid == null
+        ? null
+        : await db.reportByUuid(target.clientUuid!);
+    final serverId = target.serverId;
+    if (row == null && serverId != null) {
+      row = await (db.select(
+        db.pendingReports,
+      )..where((r) => r.serverId.equals(serverId))).getSingleOrNull();
+    }
+    final now = clock().toUtc();
+    if (row == null) {
+      if (serverId == null) throw ArgumentError('unknown report');
+      final uuid = target.clientUuid ?? _uuid.v4();
+      await db.insertReport(
+        PendingReportsCompanion.insert(
+          clientUuid: uuid,
+          category: target.category.wire,
+          payload: jsonEncode({
+            'client_uuid': uuid,
+            'category': target.category.wire,
+          }),
+          tempCode: target.trackingCode ?? newTempCode(),
+          serverId: Value(serverId),
+          serverTrackingCode: Value(target.trackingCode),
+          state: const Value(ReportState.created),
+          createdAt: now,
+          updatedAt: now,
+        ),
+        const [],
+      );
+      row = (await db.reportByUuid(uuid))!;
+    }
+    final existing = await db.mediaForReport(row.clientUuid);
+    if (existing.length >= MediaRules.maxFilesPerReport) {
+      throw ArgumentError('too many attachments');
+    }
+    final root = await mediaDir();
+    final dir = Directory(p.join(root.path, row.clientUuid));
+    await dir.create(recursive: true);
+    final source = File(attachment.path);
+    final copy = File(
+      p.join(
+        dir.path,
+        'live_${now.millisecondsSinceEpoch}${p.extension(attachment.path)}',
+      ),
+    );
+    await source.copy(copy.path);
+    if (attachment.deleteSourceAfterQueue) {
+      try {
+        await source.delete();
+      } on FileSystemException {
+        // Best effort: a temporary file.
+      }
+    }
+    final uuid = row.clientUuid;
+    await db.transaction(() async {
+      await db
+          .into(db.mediaItems)
+          .insert(
+            MediaItemsCompanion.insert(
+              reportUuid: uuid,
+              path: copy.path,
+              kind: attachment.kind.name,
+              mime: attachment.mime,
+              size: await copy.length(),
+              sha256: await sha256OfFile(copy),
+            ),
+          );
+      // A report already fully synced goes back to `created` so the engine picks the file up.
+      final current = await db.reportByUuid(uuid);
+      if (current != null && current.state == ReportState.synced) {
+        await db.updateReport(
+          uuid,
+          PendingReportsCompanion(
+            state: const Value(ReportState.created),
+            updatedAt: Value(now),
+          ),
+        );
+      }
+    });
+    return uuid;
   }
 
   /// Removes the local copy of a report the user dismissed (only used for failed/conflict).

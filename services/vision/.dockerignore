@@ -1,0 +1,9 @@
+# Build context of the vision service: never send the local virtualenv, caches, tests or training material.
+.venv
+.mypy_cache
+.pytest_cache
+.ruff_cache
+**/__pycache__
+tests
+training
+eval

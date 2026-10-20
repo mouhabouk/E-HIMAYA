@@ -20,9 +20,10 @@ PRIORITY_COMPONENTS = (
     "sensitive_sites",
     "weather",
     "op_level",
+    "vision_fire",
 )
 # Components added after settings may have been saved: a stored value without them takes the default.
-_ADDED_WEIGHTS = {"op_level": 10}
+_ADDED_WEIGHTS = {"op_level": 10, "vision_fire": 10}
 
 
 class PrioritySettings(BaseModel):
@@ -37,6 +38,7 @@ class PrioritySettings(BaseModel):
             "sensitive_sites": 5,
             "weather": 5,
             "op_level": _ADDED_WEIGHTS["op_level"],
+            "vision_fire": _ADDED_WEIGHTS["vision_fire"],
         }
     )
     # Intrinsic gravity of each type, 0 to 1.

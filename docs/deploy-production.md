@@ -25,7 +25,8 @@
   `infra/loadtest/RESULTS.md` تم على 4 vCPU و 15 GiB لكل المنظومة.
 - خمسة أسماء DNS تشير إلى الخادم، مثلًا: `api.ehimaya.tn`، `dashboard.ehimaya.tn`، `portal.ehimaya.tn`،
   `auth.ehimaya.tn`، `media.ehimaya.tn`.
-- جدار ناري: 80/tcp و 443/tcp و 443/udp فقط من الإنترنت (و SSH من شبكة الإدارة).
+- جدار ناري: 80/tcp و 443/tcp و 443/udp من الإنترنت، و 8189/udp لوسائط WebRTC (البث المباشر)، و 8554/tcp
+  (RTSP) و 1935/tcp (RTMP) من شبكات الطائرات المسيّرة والكاميرات فقط (و SSH من شبكة الإدارة). انظر `docs/streaming.md`.
 
 ## 3. الإعداد (`.env`)
 
@@ -34,12 +35,15 @@
 ```bash
 # كل كلمة مرور وكل سر: قيمة عشوائية جديدة (لا تُعاد أبدًا قيمة من .env.example)
 for v in POSTGRES_PASSWORD EHIMAYA_DB_PASSWORD EHIMAYA_DB_RUNTIME_PASSWORD KEYCLOAK_DB_PASSWORD KEYCLOAK_ADMIN_PASSWORD \
-         VALKEY_PASSWORD NATS_APP_PASSWORD S3_SECRET_KEY TUSD_HOOK_SECRET AI_SERVICE_TOKEN METRICS_TOKEN; do
+         VALKEY_PASSWORD NATS_APP_PASSWORD S3_SECRET_KEY TUSD_HOOK_SECRET AI_SERVICE_TOKEN METRICS_TOKEN \
+         MEDIAMTX_HOOK_TOKEN MEDIAMTX_API_PASSWORD VISION_API_TOKEN VISION_CALLBACK_TOKEN VISION_READ_PASSWORD; do
   sed -i "s|^$v=.*|$v=$(openssl rand -hex 24)|" .env
 done
 sed -i "s|^ANON_PSEUDONYM_SECRET=.*|ANON_PSEUDONYM_SECRET=$(openssl rand -hex 32)|" .env
 sed -i "s|^FIELD_ENCRYPTION_KEY=.*|FIELD_ENCRYPTION_KEY=$(openssl rand -base64 32)|" .env
 sed -i "s|^CERTIFICATE_SIGNING_KEY=.*|CERTIFICATE_SIGNING_KEY=$(openssl rand -base64 32)|" .env
+# المحاكاة ممنوعة في الإنتاج (الـ API يرفض الإقلاع بها)
+sed -i "s|^STREAM_SIM_TOKEN=.*|STREAM_SIM_TOKEN=|" .env
 ```
 
 ثم أضف:

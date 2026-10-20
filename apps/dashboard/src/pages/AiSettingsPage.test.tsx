@@ -32,7 +32,7 @@ describe("AiSettingsPage", () => {
   it("rejects all-zero weights", async () => {
     const { api } = setup();
     await screen.findByLabelText("Météo");
-    for (const label of ["Gravité de la catégorie", "Vies en danger", "Victimes", "Nombre de signalants", "Crédibilité", "Sites sensibles à proximité", "Météo", "Niveau opérationnel"]) {
+    for (const label of ["Gravité de la catégorie", "Vies en danger", "Victimes", "Nombre de signalants", "Crédibilité", "Sites sensibles à proximité", "Météo", "Niveau opérationnel", "Feu ou fumée confirmés par l’analyse d’image"]) {
       fireEvent.change(screen.getByLabelText(label), { target: { value: "0" } });
     }
     fireEvent.click(await screen.findByRole("button", { name: "Enregistrer" }));

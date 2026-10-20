@@ -753,5 +753,101 @@
   "deleteAccountConfirm": "Delete permanently",
   "deleteAccountDone": "Your account was deleted.",
   "deleteAccountLastAdmin": "You are the last administrator of an institution. Hand the administration over to another member first, then delete your account.",
-  "lockedAlertOpenApp": "Unlock to open the app"
+  "lockedAlertOpenApp": "Unlock to open the app",
+  "liveBadge": "LIVE",
+  "homeLive": "Go live",
+  "homeLiveDesc": "Show the incident live to the Civil Protection.",
+  "liveTitle": "Live stream",
+  "liveIntro": "The camera picture and the microphone sound go live to the Civil Protection operations room, are recorded and linked to your report. Your position is sent for as long as the stream lasts.",
+  "livePermissionRationale": "Streaming needs the camera, the microphone and your location. Your phone asks for permission when you start; they are used only while streaming.",
+  "liveCategoryLabel": "Incident type",
+  "liveStart": "Start live",
+  "liveStop": "Stop live",
+  "liveMute": "Mute microphone",
+  "liveUnmute": "Unmute microphone",
+  "liveSwitchCamera": "Switch camera",
+  "livePreparing": "Preparing the live stream…",
+  "liveConnecting": "Connecting to the video server…",
+  "liveReconnecting": "Connection lost. Attempt {attempt} of {max}…",
+  "@liveReconnecting": {
+    "placeholders": {
+      "attempt": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "liveWeakNetwork": "The network is too weak for live video. You can record a short clip and send it instead.",
+  "liveLocationOff": "Location is off: your position is not sent during the stream.",
+  "liveLocationOn": "Position shared while live",
+  "liveEndsIn": "The stream stops automatically in {time}",
+  "@liveEndsIn": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "liveReportCode": "Report {code}",
+  "@liveReportCode": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "liveSemanticsOnAir": "Live for {duration}",
+  "@liveSemanticsOnAir": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "liveEndedTitle": "Live stream ended",
+  "liveEndedByUser": "You stopped the stream. The recording is kept with your report.",
+  "liveEndedByOperator": "The operator ended the stream. Thank you, the pictures arrived.",
+  "liveEndedMaxDuration": "The stream reached its maximum length ({minutes} min).",
+  "@liveEndedMaxDuration": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "liveEndedByServer": "The platform ended the stream.",
+  "liveEndedLocked": "The stream stopped because the phone went back to the lock screen.",
+  "liveDuration": "Duration: {duration}",
+  "@liveDuration": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "liveFailedTitle": "Live stream not possible",
+  "liveFailNoLocation": "Your position could not be found, so the report cannot be created. Call 198.",
+  "liveFailReportNotSent": "Your report is saved on the phone and will be sent when the network is back. You can record a clip to attach to it.",
+  "liveFailPermission": "Camera or microphone access was refused. Allow it in the phone settings to stream.",
+  "liveFailCamera": "The camera is not available (another app may be using it).",
+  "liveFailConnection": "The video server could not be reached after several attempts.",
+  "liveFailLocked": "Live streaming is not available from the alert over the lock screen. Unlock the phone first.",
+  "liveFallbackTitle": "Send a video clip instead",
+  "liveFallbackBody": "Record a clip of up to 60 seconds: it is uploaded automatically with your report, even on a weak network.",
+  "liveRecordClip": "Record a clip (60 s)",
+  "liveClipQueued": "The clip is saved and will be sent with your report.",
+  "liveClipFailed": "The clip could not be saved.",
+  "liveRetry": "Try again",
+  "liveOpenSettings": "Open settings",
+  "liveDone": "Done",
+  "liveLeaveTitle": "Stop the live stream?",
+  "liveLeaveBody": "The stream is on. Leaving stops sending the picture and your position.",
+  "liveSimulationBadge": "Simulation mode",
+  "liveSimulationHelp": "This stream goes through the simulation platform and reaches no real operations room.",
+  "reportGoLive": "Go live for this report",
+  "errorStreamAlreadyActive": "A live stream is already running for this report.",
+  "errorStreamNotActive": "This live stream is over.",
+  "errorReportClosed": "This report is closed: a live stream cannot be opened on it."
 }

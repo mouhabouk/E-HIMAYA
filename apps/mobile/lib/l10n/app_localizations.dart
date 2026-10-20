@@ -2865,6 +2865,312 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unlock to open the app'**
   String get lockedAlertOpenApp;
+
+  /// No description provided for @liveBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'LIVE'**
+  String get liveBadge;
+
+  /// No description provided for @homeLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Go live'**
+  String get homeLive;
+
+  /// No description provided for @homeLiveDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Show the incident live to the Civil Protection.'**
+  String get homeLiveDesc;
+
+  /// No description provided for @liveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Live stream'**
+  String get liveTitle;
+
+  /// No description provided for @liveIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'The camera picture and the microphone sound go live to the Civil Protection operations room, are recorded and linked to your report. Your position is sent for as long as the stream lasts.'**
+  String get liveIntro;
+
+  /// No description provided for @livePermissionRationale.
+  ///
+  /// In en, this message translates to:
+  /// **'Streaming needs the camera, the microphone and your location. Your phone asks for permission when you start; they are used only while streaming.'**
+  String get livePermissionRationale;
+
+  /// No description provided for @liveCategoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Incident type'**
+  String get liveCategoryLabel;
+
+  /// No description provided for @liveStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start live'**
+  String get liveStart;
+
+  /// No description provided for @liveStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop live'**
+  String get liveStop;
+
+  /// No description provided for @liveMute.
+  ///
+  /// In en, this message translates to:
+  /// **'Mute microphone'**
+  String get liveMute;
+
+  /// No description provided for @liveUnmute.
+  ///
+  /// In en, this message translates to:
+  /// **'Unmute microphone'**
+  String get liveUnmute;
+
+  /// No description provided for @liveSwitchCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch camera'**
+  String get liveSwitchCamera;
+
+  /// No description provided for @livePreparing.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing the live stream…'**
+  String get livePreparing;
+
+  /// No description provided for @liveConnecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting to the video server…'**
+  String get liveConnecting;
+
+  /// No description provided for @liveReconnecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection lost. Attempt {attempt} of {max}…'**
+  String liveReconnecting(int attempt, int max);
+
+  /// No description provided for @liveWeakNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'The network is too weak for live video. You can record a short clip and send it instead.'**
+  String get liveWeakNetwork;
+
+  /// No description provided for @liveLocationOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Location is off: your position is not sent during the stream.'**
+  String get liveLocationOff;
+
+  /// No description provided for @liveLocationOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Position shared while live'**
+  String get liveLocationOn;
+
+  /// No description provided for @liveEndsIn.
+  ///
+  /// In en, this message translates to:
+  /// **'The stream stops automatically in {time}'**
+  String liveEndsIn(String time);
+
+  /// No description provided for @liveReportCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Report {code}'**
+  String liveReportCode(String code);
+
+  /// No description provided for @liveSemanticsOnAir.
+  ///
+  /// In en, this message translates to:
+  /// **'Live for {duration}'**
+  String liveSemanticsOnAir(String duration);
+
+  /// No description provided for @liveEndedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Live stream ended'**
+  String get liveEndedTitle;
+
+  /// No description provided for @liveEndedByUser.
+  ///
+  /// In en, this message translates to:
+  /// **'You stopped the stream. The recording is kept with your report.'**
+  String get liveEndedByUser;
+
+  /// No description provided for @liveEndedByOperator.
+  ///
+  /// In en, this message translates to:
+  /// **'The operator ended the stream. Thank you, the pictures arrived.'**
+  String get liveEndedByOperator;
+
+  /// No description provided for @liveEndedMaxDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'The stream reached its maximum length ({minutes} min).'**
+  String liveEndedMaxDuration(int minutes);
+
+  /// No description provided for @liveEndedByServer.
+  ///
+  /// In en, this message translates to:
+  /// **'The platform ended the stream.'**
+  String get liveEndedByServer;
+
+  /// No description provided for @liveEndedLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'The stream stopped because the phone went back to the lock screen.'**
+  String get liveEndedLocked;
+
+  /// No description provided for @liveDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration: {duration}'**
+  String liveDuration(String duration);
+
+  /// No description provided for @liveFailedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Live stream not possible'**
+  String get liveFailedTitle;
+
+  /// No description provided for @liveFailNoLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Your position could not be found, so the report cannot be created. Call 198.'**
+  String get liveFailNoLocation;
+
+  /// No description provided for @liveFailReportNotSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Your report is saved on the phone and will be sent when the network is back. You can record a clip to attach to it.'**
+  String get liveFailReportNotSent;
+
+  /// No description provided for @liveFailPermission.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera or microphone access was refused. Allow it in the phone settings to stream.'**
+  String get liveFailPermission;
+
+  /// No description provided for @liveFailCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'The camera is not available (another app may be using it).'**
+  String get liveFailCamera;
+
+  /// No description provided for @liveFailConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'The video server could not be reached after several attempts.'**
+  String get liveFailConnection;
+
+  /// No description provided for @liveFailLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Live streaming is not available from the alert over the lock screen. Unlock the phone first.'**
+  String get liveFailLocked;
+
+  /// No description provided for @liveFallbackTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a video clip instead'**
+  String get liveFallbackTitle;
+
+  /// No description provided for @liveFallbackBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Record a clip of up to 60 seconds: it is uploaded automatically with your report, even on a weak network.'**
+  String get liveFallbackBody;
+
+  /// No description provided for @liveRecordClip.
+  ///
+  /// In en, this message translates to:
+  /// **'Record a clip (60 s)'**
+  String get liveRecordClip;
+
+  /// No description provided for @liveClipQueued.
+  ///
+  /// In en, this message translates to:
+  /// **'The clip is saved and will be sent with your report.'**
+  String get liveClipQueued;
+
+  /// No description provided for @liveClipFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The clip could not be saved.'**
+  String get liveClipFailed;
+
+  /// No description provided for @liveRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get liveRetry;
+
+  /// No description provided for @liveOpenSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open settings'**
+  String get liveOpenSettings;
+
+  /// No description provided for @liveDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get liveDone;
+
+  /// No description provided for @liveLeaveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop the live stream?'**
+  String get liveLeaveTitle;
+
+  /// No description provided for @liveLeaveBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The stream is on. Leaving stops sending the picture and your position.'**
+  String get liveLeaveBody;
+
+  /// No description provided for @liveSimulationBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Simulation mode'**
+  String get liveSimulationBadge;
+
+  /// No description provided for @liveSimulationHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'This stream goes through the simulation platform and reaches no real operations room.'**
+  String get liveSimulationHelp;
+
+  /// No description provided for @reportGoLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Go live for this report'**
+  String get reportGoLive;
+
+  /// No description provided for @errorStreamAlreadyActive.
+  ///
+  /// In en, this message translates to:
+  /// **'A live stream is already running for this report.'**
+  String get errorStreamAlreadyActive;
+
+  /// No description provided for @errorStreamNotActive.
+  ///
+  /// In en, this message translates to:
+  /// **'This live stream is over.'**
+  String get errorStreamNotActive;
+
+  /// No description provided for @errorReportClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'This report is closed: a live stream cannot be opened on it.'**
+  String get errorReportClosed;
 }
 
 class _AppLocalizationsDelegate
