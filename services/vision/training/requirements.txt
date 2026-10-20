@@ -2,7 +2,7 @@
 # PyTorch CPU (or CUDA) build: conda-forge pytorch=2.14.1=cpu* or the CPU wheel index of pytorch.org.
 torch==2.14.1
 torchvision==0.29.1
-transformers==4.57.1
+transformers==5.20.1
 onnxruntime==1.30.0
 onnx==1.23.2
 numpy==2.5.4
