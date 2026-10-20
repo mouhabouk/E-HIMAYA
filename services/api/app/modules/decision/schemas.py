@@ -96,7 +96,7 @@ class AssistantIn(BaseModel):
 
 
 class Source(BaseModel):
-    kind: Literal["procedure", "incident", "report"]
+    kind: Literal["procedure", "incident", "report", "memory"]
     id: str
     title: str
     excerpt: str

@@ -20,6 +20,9 @@ from app.core.logging import configure_logging
 from app.modules import models as _models  # noqa: F401  (registers every table for cross-module foreign keys)
 from app.modules.ai.pipeline import analyze_forever
 from app.modules.ai.router import router as ai_router
+from app.modules.analytics.library import router as analytics_library_router
+from app.modules.analytics.router import router as analytics_router
+from app.modules.analytics.worker import analytics_forever
 from app.modules.audit.router import router as audit_router
 from app.modules.content.router import router as content_router
 from app.modules.decision.procedures import procedures_forever
@@ -29,6 +32,8 @@ from app.modules.geo.router import router as geo_router
 from app.modules.health.router import metrics_router
 from app.modules.health.router import router as health_router
 from app.modules.identity.router import router as identity_router
+from app.modules.knowledge.indexer import knowledge_forever
+from app.modules.knowledge.router import router as knowledge_router
 from app.modules.notify.delivery import deliver_forever
 from app.modules.notify.router import router as notify_router
 from app.modules.notify.staff_router import router as notify_staff_router
@@ -44,6 +49,9 @@ from app.modules.reports.router import router as reports_router
 from app.modules.reports.staff_router import router as staff_router
 from app.modules.reports.uploads import router as uploads_router
 from app.modules.reports.uploads import verify_forever
+from app.modules.rewards.consumer import rewards_forever
+from app.modules.rewards.router import router as rewards_router
+from app.modules.rewards.staff_router import router as rewards_staff_router
 from app.modules.streams.internal import router as streams_internal_router
 from app.modules.streams.router import router as streams_router
 from app.modules.streams.staff_router import router as streams_staff_router
@@ -88,6 +96,9 @@ WORKER_LOOPS: list[tuple[str, WorkerLoop]] = [
     ("telephony-events", ari_events_forever),
     ("telephony-recordings", recordings_forever),
     ("telephony-endpoints", endpoints_forever),
+    ("knowledge", knowledge_forever),
+    ("analytics", analytics_forever),
+    ("rewards", rewards_forever),
 ]
 # Paths a worker-role process still serves: probes and the metrics scrape, never SOS traffic.
 _WORKER_PATHS = ("/health/", "/metrics")
@@ -190,6 +201,11 @@ def create_app() -> FastAPI:
         decision_router,
         telephony_staff_router,
         telephony_internal_router,
+        knowledge_router,
+        analytics_router,
+        analytics_library_router,
+        rewards_router,
+        rewards_staff_router,
     )
     for router in routers:
         app.include_router(router)

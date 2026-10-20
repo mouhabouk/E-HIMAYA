@@ -39,6 +39,25 @@ export const TELEPHONY_ROLES = ["operator", "ops_manager", "field_commander"] as
 /** Crisis conference rooms: the dispatch roles and both committees. */
 export const CONFERENCE_ROLES = [...TELEPHONY_ROLES, ...COMMITTEE_ROLES] as const;
 
+// ---------- Phase 8 ----------
+/** Analytics, trends, hotspots and the reports library are read with the report read roles (§1). */
+export const ANALYTICS_ROLES = READ_ROLES;
+/** Generating a report and running a what-if scenario. */
+export const REPORT_CREATE_ROLES = ["ops_manager", "field_commander", ...COMMITTEE_ROLES] as const;
+export const SCENARIO_ROLES = REPORT_CREATE_ROLES;
+/** Scheduled reports. */
+export const SCHEDULE_ROLES = ["ops_manager", ...COMMITTEE_ROLES] as const;
+/** National memory and events library (§2): the report read roles and the content editors. */
+export const KNOWLEDGE_READ_ROLES = [...READ_ROLES, "content_editor"] as const;
+export const MEMORY_AUTHOR_ROLES = ["ops_manager", "field_commander", ...COMMITTEE_ROLES, "content_editor"] as const;
+/** Reviewers publish (never their own entry: the API refuses it), request changes and archive. */
+export const MEMORY_REVIEW_ROLES = ["ops_manager", ...COMMITTEE_ROLES] as const;
+/** Rewards (§3): read by the report read roles; badges, nominations and certificates managed by these. */
+export const REWARDS_READ_ROLES = READ_ROLES;
+export const REWARDS_MANAGE_ROLES = ["ops_manager", ...COMMITTEE_ROLES] as const;
+/** Rules: changed by the central committee or a system administrator, always with national scope. */
+export const REWARD_RULE_ROLES = ["central_committee", "sysadmin"] as const;
+
 /** Every role the dashboard knows (shown in the header). */
 export const STAFF_ROLES = [...ORG_READ_ROLES, "content_editor", "sysadmin"] as const;
 export type StaffRole = (typeof STAFF_ROLES)[number];
@@ -177,4 +196,50 @@ export function landingPath(roles: readonly string[]): string {
   if (canEditTips(roles)) return "/safety-tips";
   if (canReadResources(roles)) return "/resources";
   return "/";
+}
+
+export function canReadAnalytics(roles: readonly string[]): boolean {
+  return any(ANALYTICS_ROLES, roles);
+}
+
+export function canCreateReports(roles: readonly string[]): boolean {
+  return any(REPORT_CREATE_ROLES, roles);
+}
+
+export function canRunScenarios(roles: readonly string[]): boolean {
+  return any(SCENARIO_ROLES, roles);
+}
+
+export function canManageSchedules(roles: readonly string[]): boolean {
+  return any(SCHEDULE_ROLES, roles);
+}
+
+export function canReadKnowledge(roles: readonly string[]): boolean {
+  return any(KNOWLEDGE_READ_ROLES, roles);
+}
+
+export function canAuthorMemory(roles: readonly string[]): boolean {
+  return any(MEMORY_AUTHOR_ROLES, roles);
+}
+
+export function canReviewMemory(roles: readonly string[]): boolean {
+  return any(MEMORY_REVIEW_ROLES, roles);
+}
+
+/** The rewards area: the read roles, and system administrators for the rules and settings. */
+export function canReadRewards(roles: readonly string[]): boolean {
+  return any(REWARDS_READ_ROLES, roles) || roles.includes("sysadmin");
+}
+
+/** Badges, nominations, certificates and the leaderboard (gouvernorat scope applied by the API). */
+export function canSeeRewardActivity(roles: readonly string[]): boolean {
+  return any(REWARDS_READ_ROLES, roles);
+}
+
+export function canManageRewards(roles: readonly string[]): boolean {
+  return any(REWARDS_MANAGE_ROLES, roles);
+}
+
+export function canEditRewardRules(identity: { roles: readonly string[]; national: boolean }): boolean {
+  return identity.national && any(REWARD_RULE_ROLES, identity.roles);
 }

@@ -7,6 +7,9 @@ import { useGouvernorats, useLanguage } from "../lib/hooks";
 import {
   canEditTips,
   canMonitorPerformance,
+  canReadAnalytics,
+  canReadKnowledge,
+  canReadRewards,
   canReadOrgs,
   canReadResources,
   canReviewWeatherSuggestions,
@@ -99,6 +102,9 @@ export function Layout() {
   const editsTips = canEditTips(identity.roles);
   const reviewsWeather = canReviewWeatherSuggestions(identity.roles);
   const committee = isCommittee(identity.roles) || canMonitorPerformance(identity.roles);
+  const analytics = canReadAnalytics(identity.roles);
+  const knowledge = canReadKnowledge(identity.roles);
+  const rewards = canReadRewards(identity.roles);
   const roles = staffRoles(identity.roles)
     .map((r) => t(`roles.${r}`))
     .join(t("common.listSeparator"));
@@ -131,6 +137,19 @@ export function Layout() {
           {notifies && <NavLink to="/notifications">{t("nav.notifications")}</NavLink>}
           {reviewsWeather && <NavLink to="/weather/suggestions">{t("nav.weatherSuggestions")}</NavLink>}
           {committee && <NavLink to="/committee">{t("nav.committee")}</NavLink>}
+          {analytics && (
+            <>
+              <NavLink to="/analytics">{t("nav.analytics")}</NavLink>
+              <NavLink to="/reports-library">{t("nav.reportsLibrary")}</NavLink>
+            </>
+          )}
+          {knowledge && (
+            <>
+              <NavLink to="/memory">{t("nav.memory")}</NavLink>
+              <NavLink to="/library">{t("nav.library")}</NavLink>
+            </>
+          )}
+          {rewards && <NavLink to="/rewards">{t("nav.rewards")}</NavLink>}
           {readsOrgs && (
             <>
               <NavLink to="/orgs" end>

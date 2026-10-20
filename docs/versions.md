@@ -1,4 +1,4 @@
-# الإصدارات المثبتة (المراحل 1 إلى 7)
+# الإصدارات المثبتة (المراحل 1 إلى 8)
 
 تُحدَّث هذه القائمة مع كل مرحلة. تُعتمد الإصدارات الدقيقة أدناه في الكود والحاويات.
 
@@ -21,6 +21,7 @@
 | خادم البث المباشر (المرحلة 6: WHIP/WHEP و RTSP و RTMP و HLS والتسجيل fMP4)، ويستعمله أيضا `stream-sim` | `bluenviron/mediamtx:1.21.2-ffmpeg` | MIT |
 | خدمة الرؤية الحاسوبية (`services/vision`، المرحلة 6) | `python:3.12-slim` | PSF |
 | المقسم الهاتفي (`services/telephony`، المرحلة 7) | Asterisk 22.11.0 LTS مبني من المصدر (SHA-256 `3bd5ee04…4d94`) مع pjproject 2.17، على `ubuntu:26.04` | GPL-2.0 (عملية مستقلة، تتصل بها الخلفية عبر HTTP و WebSocket فقط) |
+| محرك البحث في مكتبة الأحداث (المرحلة 8، ملف `search`؛ دائم في الإنتاج): عقدة واحدة، إضافة الأمان مفعلة، محللا العربية والفرنسية | `opensearchproject/opensearch:2.19.6` (`sha256:be67c71b…80b5`) | Apache-2.0 |
 | محرك التوجيه (المرحلة 7، ملف `routing`) | `ghcr.io/valhalla/valhalla:3.9.1` على خريطة OpenStreetMap لتونس (Geofabrik) | MIT / البيانات ODbL 1.0 |
 | بناء لوحة التحكم والبوابة (مرحلة البناء فقط) | `node:22-alpine` | MIT |
 | تثبيت حزم Python من `uv.lock` (مرحلة البناء فقط) | `ghcr.io/astral-sh/uv:0.11.32` | MIT / Apache-2.0 |
@@ -53,6 +54,7 @@
 | cryptography (AES-256-GCM، توقيع الشهادات Ed25519) | 50.0.2 |
 | weasyprint (شهادة السلامة PDF، المرحلة 4؛ تحتاج pango و harfbuzz و fonts-noto-core في الصورة) | 70.0 |
 | segno (رمز QR للتحقق من الشهادة) | 1.6.6 |
+| openpyxl (تصدير XLSX لمستودع التقارير، المرحلة 8؛ MIT) | 3.1.5 |
 | email-validator (عناوين البريد في بطاقة المؤسسة والدعوات) | 2.3.0 |
 | pytest / pytest-asyncio | 9.1.1 / 1.4.0 |
 | ruff / mypy | 0.17.1 / 2.4.0 |
@@ -145,6 +147,7 @@ Flutter 3.47.7 (القناة المستقرة) مع Dart 3.13.5، و Java 17 ل�
 | flutter_local_notifications (المرحلة 5) | 22.3.1 | قناتا أندرويد `ehimaya_alerts` و `ehimaya_default` وعرض الإشعار والتطبيق مفتوح |
 | desugar_jdk_libs (Gradle، المرحلة 5) | 2.1.4 | تتطلبه مكتبة الإشعارات المحلية |
 | flutter_webrtc (المرحلة 6) | 1.6.2+hotfix.3 | البث المباشر عبر WHIP (MIT؛ مكتبة WebRTC الأصلية 150.7871.01) |
+| open_filex (المرحلة 8) | 4.7.0 | فتح شهادة المكافآت (PDF) في عارض الهاتف عبر FileProvider (BSD-3-Clause)؛ أذونات قراءة الوسائط التي يعلنها محذوفة من بيان التطبيق |
 
 ## لوحة التحكم (`apps/dashboard`)
 
@@ -163,6 +166,9 @@ Node.js 22 LTS و npm 10 أو أحدث. الحزم مثبتة بإصدارات �
 | @playwright/test (اختبار المتصفح) | 1.56.1 |
 | jssip (المرحلة 7، الهاتف الشبكي للمشغل، يُحمّل عند تفعيله فقط) | 3.13.8 (MIT) |
 | hls.js (المرحلة 6، بديل HLS عند تعذر WHEP، يُحمّل عند الحاجة فقط) | 1.7.3 (Apache-2.0) |
+| uplot (المرحلة 8، رسوم التحليلات على canvas، تُحمّل عند الحاجة فقط) | 1.6.32 (MIT) |
+| markdown-it (المرحلة 8، عرض Markdown للذاكرة الوطنية، `html: false`) | 15.0.2 (MIT) |
+| dompurify (المرحلة 8، تعقيم HTML الناتج قبل عرضه) | 3.4.16 (MPL-2.0 OR Apache-2.0، مستعملة بترخيص Apache-2.0) |
 
 ## بوابة المؤسسات (`apps/portal`)
 

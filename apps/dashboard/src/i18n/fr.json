@@ -20,7 +20,12 @@
     "committee": "Comités",
     "streams": "Diffusion en direct",
     "calls": "Appels",
-    "weatherSuggestions": "Alertes météo suggérées"
+    "weatherSuggestions": "Alertes météo suggérées",
+    "analytics": "Analyses",
+    "reportsLibrary": "Rapports",
+    "memory": "Mémoire nationale",
+    "library": "Médiathèque des événements",
+    "rewards": "Récompenses"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -191,7 +196,32 @@
     "no_active_call": "Cet appel n’est plus en cours.",
     "softphone_not_registered": "Le téléphone du tableau de bord n’est pas connecté. Activez-le puis réessayez.",
     "telephony_unavailable": "La téléphonie est indisponible pour le moment.",
-    "forecast_unavailable": "La prévision est indisponible pour le moment."
+    "forecast_unavailable": "La prévision est indisponible pour le moment.",
+    "invalid_period": "Période invalide.",
+    "period_too_long": "La période demandée est trop longue.",
+    "invalid_filters": "Filtres invalides.",
+    "incident_required": "Ce type de rapport exige un incident.",
+    "scenario_required": "Ce type de rapport exige une simulation.",
+    "unknown_resource": "Un moyen indiqué est inconnu.",
+    "no_capacity": "Aucun moyen disponible dans ce périmètre : la simulation n’a pas de capacité.",
+    "invalid_recipients": "Destinataires invalides (agents uniquement).",
+    "invalid_cron": "Planification invalide.",
+    "report_not_ready": "Le rapport n’est pas encore prêt.",
+    "entry_in_review": "La fiche est en relecture : elle ne peut pas être modifiée.",
+    "entry_archived": "La fiche est archivée.",
+    "entry_published_once": "Une fiche déjà publiée ne peut pas être supprimée (archivez-la).",
+    "self_review_forbidden": "Vous ne pouvez pas valider une fiche que vous avez rédigée ou modifiée en dernier.",
+    "note_required": "Une note est obligatoire pour cette décision.",
+    "rule_exists": "Une règle existe déjà pour ce motif et cette catégorie.",
+    "default_rule": "Les règles par défaut ne peuvent pas être supprimées.",
+    "invalid_subject": "Le type de bénéficiaire ne correspond pas à la nomination.",
+    "duplicate_nomination": "Cette nomination existe déjà pour cette année.",
+    "same_reviewer": "La personne qui propose ne peut pas décider de sa propre nomination.",
+    "not_eligible": "Non éligible à un certificat.",
+    "already_revoked": "Déjà révoqué.",
+    "invalid_rule": "Valeur de règle invalide (points ou multiplicateur selon le motif).",
+    "invalid_evidence": "Un justificatif indiqué est introuvable.",
+    "nothing_to_revoke": "Rien à révoquer."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -2031,7 +2061,8 @@
     "kind": {
       "procedure": "Procédure",
       "incident": "Incident",
-      "report": "Signalement"
+      "report": "Signalement",
+      "memory": "Mémoire nationale"
     }
   },
   "conference": {
@@ -2151,6 +2182,626 @@
       "inbound": "Entrant",
       "outbound": "Sortant",
       "conference": "Conférence"
+    }
+  },
+  "charts": {
+    "showTable": "Afficher les données (tableau)",
+    "hideTable": "Masquer le tableau",
+    "tableOf": "Données : {{caption}}"
+  },
+  "p8": {
+    "reasonRequired": "Indiquez un motif (3 caractères au moins)."
+  },
+  "analytics": {
+    "title": "Analyses",
+    "intro": "Tendances, délais d’intervention et zones de concentration. Les agrégats ne montrent jamais de personnes ni de positions exactes.",
+    "tabs": {
+      "label": "Analyses",
+      "overview": "Vue d’ensemble",
+      "whatIf": "Simulation « et si »"
+    },
+    "filters": "Filtres des analyses",
+    "from": "Du",
+    "to": "Au",
+    "gouvernorat": "Gouvernorat",
+    "national": "National",
+    "category": "Catégorie",
+    "allCategories": "Toutes les catégories",
+    "export": "Exporter (rapport)",
+    "noData": "Aucune donnée pour ces filtres.",
+    "minCell": "Dans les exports diffusés hors du niveau national, toute case de moins de {{n}} signalements est affichée « <{{n}} ».",
+    "totals": {
+      "received": "Reçus",
+      "verified": "Vérifiés",
+      "in_progress": "En cours",
+      "closed": "Clôturés",
+      "rejected": "Rejetés"
+    },
+    "responseTime": {
+      "caption": "Délais d’intervention",
+      "stage": "Étape",
+      "mean": "Moyenne",
+      "p90": "90e centile",
+      "n": "Signalements mesurés",
+      "to_assignment": "Réception → première affectation",
+      "to_on_scene": "Réception → arrivée sur place",
+      "to_closed": "Réception → clôture"
+    },
+    "trends": {
+      "title": "Tendances",
+      "metric": "Mesure",
+      "interval": "Pas",
+      "caption": "Évolution : {{metric}}",
+      "period": "Période",
+      "lastYear": "Même période l’an dernier",
+      "expected": "Attendu (saisonnier)",
+      "low": "Bas de la plage habituelle",
+      "high": "Haut de la plage habituelle",
+      "band": "Plage saisonnière habituelle",
+      "aboveBand": "Périodes au-dessus de la plage habituelle : {{n}}",
+      "noBaseline": "Historique trop court : pas de référence saisonnière."
+    },
+    "metric": {
+      "reports": "Signalements",
+      "response_time": "Délai jusqu’à l’affectation",
+      "interventions": "Interventions"
+    },
+    "interval": {
+      "day": "Jour",
+      "week": "Semaine",
+      "month": "Mois"
+    },
+    "by": {
+      "title": "Répartitions",
+      "category": "Par catégorie",
+      "gouvernorat": "Par gouvernorat",
+      "status": "Par statut",
+      "source": "Par canal",
+      "hour": "Par heure",
+      "weekday": "Par jour de la semaine"
+    },
+    "source": {
+      "app": "Application",
+      "sms": "SMS",
+      "call": "Appel",
+      "portal": "Portail"
+    },
+    "hourLabel": "{{hour}} h",
+    "weekday": {
+      "1": "Lundi",
+      "2": "Mardi",
+      "3": "Mercredi",
+      "4": "Jeudi",
+      "5": "Vendredi",
+      "6": "Samedi",
+      "7": "Dimanche"
+    },
+    "hotspots": {
+      "title": "Zones de concentration",
+      "intro": "Grille d’hexagones : chaque cellule compte les signalements, jamais un point isolé.",
+      "size": "Taille des cellules",
+      "km": "{{n}} km",
+      "mapLabel": "Carte des zones de concentration (hexagones)",
+      "legend": "Légende des hexagones",
+      "range": "{{from}} à {{to}}",
+      "tableToggle": "Cellules les plus chargées (tableau)",
+      "tableCaption": "Les {{n}} cellules les plus chargées",
+      "cell": "Cellule",
+      "centre": "Centre (lat, lon)",
+      "count": "Signalements"
+    }
+  },
+  "scenarios": {
+    "title": "Simulation « et si »",
+    "intro": "Rejoue l’historique des arrivées (catégorie, lieu, saison) multiplié par un facteur, face aux moyens restants. Outil d’aide à la planification fondé sur l’historique.",
+    "form": {
+      "title": "Nouvelle simulation",
+      "name": "Nom",
+      "nameRequired": "Donnez un nom à la simulation.",
+      "gouvernorats": "Gouvernorats",
+      "gouvernoratsRequired": "Choisissez au moins un gouvernorat.",
+      "category": "Catégorie",
+      "factor": "Facteur de demande",
+      "factorHint": "Entre {{min}} et {{max}} (1 = comme d’habitude).",
+      "horizon": "Horizon (heures)",
+      "horizonHint": "Entre {{min}} et {{max}} heures.",
+      "weather": "Météo",
+      "unavailable": "Moyens indisponibles",
+      "unavailableHint": "Nombre de moyens retirés, par type (vide = aucun).",
+      "run": "Lancer la simulation",
+      "running": "Simulation en cours…"
+    },
+    "weather": {
+      "as_forecast": "Selon les prévisions",
+      "fire_danger_extreme": "Danger d’incendie extrême",
+      "heavy_rain": "Fortes pluies"
+    },
+    "history": "Simulations précédentes",
+    "none": "Aucune simulation.",
+    "overloadCount": "Heures en surcharge",
+    "createdAt": "Lancée le",
+    "hours": "{{n}} h",
+    "back": "← Simulations",
+    "resultTitle": "Simulation : {{name}}",
+    "disclaimerTitle": "Aide à la planification, pas une prévision.",
+    "disclaimerFallback": "Résultat fondé sur l’historique ; il ne remplace pas l’appréciation des responsables.",
+    "lowConfidence": "Confiance faible :",
+    "failed": "La simulation a échoué.",
+    "seedRuns": "Graine et tirages",
+    "totalReports": "Signalements attendus (médiane, 10–90 %)",
+    "capacity": "Capacité",
+    "wait": "Attente",
+    "utilisation": "Taux d’occupation",
+    "demand": "Signalements par heure",
+    "minutes": "{{n}} min",
+    "overloadHours": "Demande supérieure à la capacité aux heures : {{hours}}",
+    "noOverload": "La demande reste sous la capacité sur tout l’horizon.",
+    "chart": {
+      "demand": "Signalements par heure (bande 10–90 %)",
+      "wait": "Attente attendue (bande 10–90 %)",
+      "utilisation": "Occupation des moyens (bande 10–90 %)"
+    },
+    "hour": "Heure",
+    "band": "Bande 10–90 %",
+    "overloaded": "Surcharge",
+    "p10": "10 %",
+    "p50": "médiane",
+    "p90": "90 %",
+    "assumptions": "Hypothèses",
+    "provenance": "Historique utilisé : du {{from}} au {{to}}, {{events}} signalements sur {{days}} jours.",
+    "resourceCount": "{{n}} moyens",
+    "toReport": "Créer un rapport de cette simulation"
+  },
+  "library": {
+    "reports": {
+      "title": "Bibliothèque de rapports",
+      "tabs": {
+        "label": "Rapports",
+        "reports": "Rapports",
+        "schedules": "Planifications"
+      },
+      "new": "Nouveau rapport",
+      "filters": "Filtres des rapports",
+      "search": "Recherche (titre, filtres)",
+      "kind": "Type",
+      "allKinds": "Tous les types",
+      "statusField": "État",
+      "allStatuses": "Tous les états",
+      "titleField": "Titre",
+      "period": "Période",
+      "format": "Format",
+      "lang": "Langue du document",
+      "createdAt": "Créé le",
+      "download": "Téléchargement",
+      "count": "Rapports affichés : {{n}}",
+      "none": "Aucun rapport.",
+      "scheduled": "Planifié",
+      "notices": "Rapports prêts : {{n}}",
+      "markRead": "Marquer comme lu",
+      "kinds": {
+        "incident_summary": "Synthèse d’incident",
+        "period_summary": "Synthèse de période",
+        "gouvernorat_summary": "Synthèse de gouvernorat",
+        "scenario": "Simulation",
+        "after_action": "Retour d’expérience"
+      },
+      "status": {
+        "queued": "En attente",
+        "running": "En production",
+        "ready": "Prêt",
+        "failed": "Échec"
+      },
+      "formats": {
+        "pdf": "PDF",
+        "xlsx": "Excel (XLSX)"
+      },
+      "form": {
+        "title": "Générer un rapport",
+        "titleRequired": "Indiquez un titre.",
+        "periodInvalid": "La période est invalide.",
+        "gouvernoratRequired": "Choisissez un gouvernorat.",
+        "incident": "Identifiant de l’incident",
+        "incidentRequired": "Indiquez l’incident.",
+        "scenario": "Identifiant de la simulation",
+        "scenarioRequired": "Indiquez la simulation.",
+        "minCellNote": "Le document porte une page de garde, les filtres utilisés et la règle de confidentialité (cases de moins de 5 masquées hors niveau national).",
+        "submit": "Générer"
+      }
+    }
+  },
+  "schedules": {
+    "title": "Rapports planifiés",
+    "intro": "Chaque exécution génère le rapport et prévient les destinataires dans l’application (pas de courriel dans cette version).",
+    "new": "Nouvelle planification",
+    "edit": "Modifier la planification",
+    "editShort": "Modifier",
+    "save": "Enregistrer",
+    "none": "Aucune planification.",
+    "frequency": "Fréquence",
+    "weekday": "Jour",
+    "day": "Jour du mois (1–28)",
+    "time": "Heure",
+    "timezoneNote": "Heure de Tunis (Africa/Tunis). Quotidien : la veille ; hebdomadaire : les 7 jours précédents ; mensuel : le mois précédent.",
+    "frequencies": {
+      "daily": "Quotidienne",
+      "weekly": "Hebdomadaire",
+      "monthly": "Mensuelle"
+    },
+    "cron": {
+      "daily": "Chaque jour à {{time}}",
+      "weekly": "Chaque {{day}} à {{time}}",
+      "monthly": "Le {{day}} de chaque mois à {{time}}"
+    },
+    "recipients": "Destinataires",
+    "recipientsHint": "Agents uniquement, par identifiant de compte.",
+    "recipientId": "Identifiant d’agent (UUID)",
+    "addRecipient": "Ajouter",
+    "addMe": "M’ajouter",
+    "me": "Moi",
+    "removeRecipient": "Retirer {{id}}",
+    "recipientInvalid": "Identifiant invalide.",
+    "recipientsRequired": "Ajoutez au moins un destinataire.",
+    "enabled": "Active",
+    "toggle": "Activer « {{title}} »",
+    "when": "Quand",
+    "nextRun": "Prochaine exécution",
+    "actions": "Actions",
+    "delete": "Supprimer",
+    "confirmDelete": "Confirmer la suppression"
+  },
+  "memory": {
+    "title": "Mémoire nationale",
+    "intro": "Retours d’expérience des événements passés : forces, faiblesses, leçons et recommandations, en arabe et en français.",
+    "new": "Nouvelle fiche",
+    "filters": "Filtres de la mémoire",
+    "search": "Recherche",
+    "statusField": "État",
+    "allStatuses": "Tous les états",
+    "accessField": "Accès",
+    "allAccess": "Tous les accès",
+    "eventType": "Type d’événement",
+    "titleField": "Titre",
+    "period": "Période",
+    "version": "Version",
+    "updatedAt": "Mise à jour",
+    "none": "Aucune fiche.",
+    "untitled": "(sans titre)",
+    "back": "← Mémoire nationale",
+    "publishedVersion": "publiée : v{{v}}",
+    "gouvernorats": "Gouvernorats",
+    "startedAt": "Début",
+    "endedAt": "Fin",
+    "incidents": "Incidents liés",
+    "incidentsHint": "Identifiants d’incidents, un par ligne.",
+    "sources": "Sources",
+    "sourceTitle": "Titre de la source",
+    "sourceUrl": "Lien (https)",
+    "sourceMedia": "Média archivé",
+    "addSource": "Ajouter une source",
+    "removeSource": "Retirer",
+    "author": "Auteur",
+    "unknownPerson": "Agent",
+    "status": {
+      "draft": "Brouillon",
+      "in_review": "En relecture",
+      "published": "Publiée",
+      "archived": "Archivée"
+    },
+    "access": {
+      "national": "National",
+      "gouvernorat": "Gouvernorat",
+      "committee": "Comités"
+    },
+    "section": {
+      "title": "Titre",
+      "summary": "Résumé",
+      "strengths": "Points forts",
+      "weaknesses": "Points faibles",
+      "lessons": "Leçons apprises",
+      "recommendations": "Recommandations"
+    },
+    "editor": {
+      "label": "Éditeur de la fiche",
+      "meta": "Informations",
+      "write": "Écrire",
+      "preview": "Aperçu",
+      "empty": "(vide)",
+      "lang": {
+        "ar": "Arabe",
+        "fr": "Français"
+      },
+      "open": "Modifier",
+      "close": "Fermer l’éditeur",
+      "save": "Enregistrer",
+      "create": "Créer le brouillon",
+      "markdownHelp": "Texte en Markdown (titres, listes, gras, liens https). Le HTML n’est pas interprété.",
+      "publishedNote": "Modifier une fiche publiée crée un brouillon ; la version publiée reste visible jusqu’à la nouvelle publication.",
+      "conflict": "Quelqu’un a enregistré cette fiche entre-temps. Rechargez-la avant de modifier.",
+      "reload": "Recharger",
+      "errors": {
+        "title": "Indiquez un titre (arabe ou français).",
+        "started_at": "Indiquez la date de début.",
+        "ended_at": "La fin précède le début.",
+        "incident_ids": "Un identifiant d’incident est invalide.",
+        "sources": "Chaque source a un titre et, le cas échéant, un lien https."
+      }
+    },
+    "workflow": {
+      "title": "Relecture",
+      "rule": "Brouillon → relecture → publication : un autre agent relit et publie ; rien n’est publié automatiquement.",
+      "action": {
+        "submit": "Soumettre à relecture",
+        "publish": "Publier",
+        "requestChanges": "Demander des modifications",
+        "archive": "Archiver",
+        "restore": "Restaurer en brouillon"
+      },
+      "note": {
+        "requestChanges": "Modifications demandées",
+        "archive": "Motif de l’archivage",
+        "submit": "Note",
+        "publish": "Note",
+        "restore": "Note"
+      },
+      "decision": {
+        "approved": "a approuvé",
+        "changes_requested": "a demandé des modifications"
+      },
+      "delete": "Supprimer le brouillon",
+      "confirmDelete": "Confirmer la suppression"
+    },
+    "versions": {
+      "title": "Historique des versions",
+      "from": "Comparer la version",
+      "to": "avec la version",
+      "same": "Aucune différence.",
+      "diffOf": "Différences : {{field}}",
+      "op": {
+        "add": "ajouté :",
+        "del": "supprimé :",
+        "same": "inchangé :"
+      },
+      "change": {
+        "created": "création",
+        "edited": "modification",
+        "in_review": "soumise à relecture",
+        "published": "publication",
+        "changes_requested": "modifications demandées",
+        "archived": "archivage",
+        "restored": "restauration"
+      }
+    },
+    "fromIncident": {
+      "button": "Démarrer une fiche de mémoire",
+      "hint": "Crée un brouillon prérempli (chronologie, chiffres, moyens, délais) pour le retour d’expérience ; rien n’est publié."
+    }
+  },
+  "events": {
+    "title": "Médiathèque des événements",
+    "intro": "Une seule recherche dans la mémoire nationale, les rapports, les chronologies d’incidents, les signalements, les transcriptions et les procédures.",
+    "search": "Rechercher",
+    "searchPlaceholder": "Mots-clés (arabe ou français)",
+    "views": "Affichage",
+    "view": {
+      "results": "Résultats",
+      "calendar": "Calendrier",
+      "tree": "Arborescence"
+    },
+    "facets": "Affiner",
+    "facet": {
+      "kind": "Type",
+      "year": "Année",
+      "gouvernorat": "Gouvernorat",
+      "category": "Catégorie"
+    },
+    "kind": {
+      "memory": "Mémoire nationale",
+      "report_doc": "Rapport",
+      "incident": "Incident",
+      "report": "Signalement",
+      "transcript": "Transcription",
+      "procedure": "Procédure"
+    },
+    "results": "Résultats",
+    "count": "Résultats affichés : {{n}}",
+    "none": "Aucun résultat.",
+    "fallback": "recherche de secours (PostgreSQL)",
+    "untitled": "(sans titre)",
+    "openIncident": "Ouvrir l’incident",
+    "dateFilter": "Dates : {{from}} → {{to}}",
+    "clearDates": "Effacer les dates",
+    "back": "← Médiathèque",
+    "calendar": {
+      "prev": "Mois précédent",
+      "next": "Mois suivant",
+      "caption": "Éléments par jour, {{month}}",
+      "day": "{{date}} : {{n}} éléments",
+      "short": {
+        "1": "Lun",
+        "2": "Mar",
+        "3": "Mer",
+        "4": "Jeu",
+        "5": "Ven",
+        "6": "Sam",
+        "7": "Dim"
+      }
+    },
+    "tree": {
+      "title": "Arborescence",
+      "by": "Classer par",
+      "axis": {
+        "period": "Période",
+        "type": "Type",
+        "gouvernorat": "Gouvernorat"
+      },
+      "showAll": "Tout afficher : {{label}}"
+    },
+    "item": {
+      "date": "Date",
+      "content": "Contenu",
+      "media": "Médias liés",
+      "noMedia": "Aucun média lié.",
+      "mediaUnavailable": "Média indisponible.",
+      "openMemory": "Ouvrir la fiche de mémoire",
+      "mediaKind": {
+        "image": "Image",
+        "video": "Vidéo",
+        "audio": "Audio",
+        "recording": "Enregistrement",
+        "document": "Document"
+      }
+    }
+  },
+  "rewards": {
+    "title": "Récompenses",
+    "tabs": {
+      "label": "Récompenses",
+      "rules": "Règles",
+      "confirmations": "Confirmations",
+      "nominations": "Nominations",
+      "certificates": "Certificats",
+      "leaderboard": "Classement"
+    },
+    "safety": "Les points ne récompensent que l’utilité vérifiée, jamais le nombre de signalements, de photos ou la présence sur place. Ne jamais se mettre en danger pour signaler : appeler le 198.",
+    "points": "{{n}} points",
+    "pseudonym": "Pseudonyme",
+    "balance": "Solde",
+    "allYears": "Toutes les années",
+    "settings": {
+      "title": "Paramètres",
+      "dailyCap": "Plafond quotidien par citoyen",
+      "threshold": "Seuil {{badge}}",
+      "readOnly": "Paramètres de déploiement, en lecture seule (secours exclus du plafond).",
+      "paused": "Points en attente (niveau catastrophe) : {{list}}",
+      "noCash": "Aucune récompense en argent dans cette version : les prix financiers annuels relèvent d’une décision de l’autorité compétente."
+    },
+    "rules": {
+      "title": "Règles",
+      "intro": "Modifications auditées. Les règles par catégorie remplacent la règle par défaut.",
+      "readOnly": "Modifiables par le comité central ou un administrateur (portée nationale).",
+      "reason": "Motif",
+      "value": "Valeur",
+      "enabled": "Active",
+      "default": "Par défaut",
+      "allCategories": "Toutes",
+      "save": "Enregistrer",
+      "delete": "Supprimer",
+      "valueOf": "Valeur : {{rule}}",
+      "enabledOf": "Activer : {{rule}}",
+      "newOverride": "Nouvelle règle par catégorie",
+      "add": "Ajouter",
+      "multiplier": "Multiplicateur",
+      "pointsField": "Points",
+      "multiplierRange": "Entre {{min}} et {{max}}.",
+      "pointsRange": "Entre {{min}} et {{max}} points."
+    },
+    "reason": {
+      "report_verified": "Signalement vérifié",
+      "report_helped_rescue": "Signalement ayant aidé un sauvetage",
+      "accurate_category": "Catégorie exacte",
+      "volunteer_mission": "Mission de volontariat",
+      "manual": "Ajustement manuel",
+      "revocation": "Révocation"
+    },
+    "badge": {
+      "bronze": "Bronze",
+      "silver": "Argent",
+      "gold": "Or",
+      "ambassador": "Ambassadeur"
+    },
+    "badgeStatus": {
+      "pending": "À confirmer",
+      "confirmed": "Confirmé",
+      "rejected": "Refusé",
+      "revoked": "Révoqué"
+    },
+    "badges": {
+      "title": "Confirmations de badges",
+      "intro": "Argent, or et ambassadeur ne s’affichent qu’après confirmation par un agent (décision auditée).",
+      "statusField": "État",
+      "level": "Badge",
+      "awardedAt": "Atteint le",
+      "none": "Aucun badge dans cet état.",
+      "confirm": "Confirmer",
+      "reject": "Refuser",
+      "revoke": "Révoquer",
+      "rejectReason": "Motif du refus",
+      "revokeReason": "Motif de la révocation"
+    },
+    "nominationKind": {
+      "vigilant_citizen": "Citoyen vigilant",
+      "brave_volunteer": "Volontaire courageux",
+      "leading_institution": "Établissement exemplaire"
+    },
+    "nominationStatus": {
+      "proposed": "Proposée",
+      "approved": "Approuvée",
+      "rejected": "Rejetée"
+    },
+    "nominations": {
+      "title": "Nominations",
+      "new": "Nouvelle nomination",
+      "kind": "Distinction",
+      "year": "Année",
+      "reason": "Justification",
+      "subject": {
+        "citizen": "Citoyen (identifiant)",
+        "volunteer": "Volontaire (identifiant)",
+        "org": "Établissement (identifiant)"
+      },
+      "reportIds": "Signalements justificatifs (identifiants)",
+      "interventionIds": "Interventions justificatives (identifiants d’incident)",
+      "evidence": "Justificatifs",
+      "evidenceCount": "{{reports}} signalements, {{interventions}} interventions",
+      "proposedAt": "Proposée le",
+      "decidedAt": "Décidée le",
+      "anonymised": "(anonymisé)",
+      "statusField": "État",
+      "none": "Aucune nomination.",
+      "submit": "Proposer",
+      "approve": "Approuver",
+      "reject": "Rejeter",
+      "approveReason": "Commentaire (facultatif)",
+      "rejectReason": "Motif du rejet",
+      "humanDecides": "Une nomination est décidée par un autre agent ; la décision est auditée.",
+      "sameReviewer": "La personne qui a proposé ne peut pas décider.",
+      "errors": {
+        "subject": "Indiquez le bénéficiaire.",
+        "year": "Année invalide.",
+        "reason": "Justification trop courte (10 caractères au moins).",
+        "evidence": "Un identifiant justificatif est invalide."
+      }
+    },
+    "certificates": {
+      "title": "Certificats de distinction",
+      "intro": "Certificats PDF (arabe et français) avec QR de vérification publique (initiales, distinction et date seulement).",
+      "none": "Aucun certificat.",
+      "code": "Code",
+      "distinction": "Distinction",
+      "issuedAt": "Délivré le",
+      "state": "État",
+      "valid": "Valide",
+      "revokedOn": "Révoqué le {{date}}",
+      "getPdf": "Obtenir le PDF",
+      "openPdf": "Ouvrir le PDF",
+      "verify": "Page de vérification",
+      "revoke": "Révoquer",
+      "revokeReason": "Motif de la révocation",
+      "issue": "Délivrer le certificat",
+      "issued": "Certificat délivré"
+    },
+    "leaderboard": {
+      "title": "Classement",
+      "intro": "Pseudonymes uniquement.",
+      "scope": "Portée",
+      "scopes": {
+        "national": "National",
+        "gouvernorat": "Gouvernorat"
+      },
+      "choose": "Choisir…",
+      "rank": "Rang",
+      "points": "Points",
+      "none": "Aucun classement pour cette sélection."
     }
   }
 }

@@ -127,6 +127,15 @@ class HomeScreen extends ConsumerWidget {
                 subtitle: l10n.homeVolunteerDesc,
                 onTap: () => context.push(Routes.volunteer),
               ),
+            // FR-A-072: anonymous citizens see why they earn no points.
+            if (identity.role == UserRole.citizen)
+              _HomeAction(
+                key: const Key('home-rewards'),
+                icon: Icons.military_tech,
+                title: l10n.rewardsTitle,
+                subtitle: l10n.homeRewardsDesc,
+                onTap: () => context.push(Routes.rewards),
+              ),
             if (orgs.isNotEmpty)
               _HomeAction(
                 key: const Key('home-institution'),
