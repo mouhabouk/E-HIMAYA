@@ -70,6 +70,8 @@ class AriClient(Protocol):
 
     async def hangup(self, channel_id: str) -> None: ...
 
+    async def set_variable(self, channel_id: str, name: str, value: str) -> None: ...
+
     async def channel_ids(self) -> set[str]: ...
 
 
@@ -140,7 +142,9 @@ class HttpAriClient:
             "callerId": f'"{display}" <{extension}>',
             "timeout": "30",
         }
-        await self._request("POST", "/channels", params=params, json={"variables": {"EH_SOURCE": "operator"}})
+        # The softphone pairs the INVITE with the call it requested (X-EHimaya-Call-Id = calls.id = channel id).
+        variables = {"EH_SOURCE": "operator", "PJSIP_HEADER(add,X-EHimaya-Call-Id)": channel_id}
+        await self._request("POST", "/channels", params=params, json={"variables": variables})
 
     async def invite(self, extension: str, room: str) -> None:
         """Call ``extension`` (216XXXXXXXX) and put the answering party into crisis room ``room``."""
@@ -156,6 +160,10 @@ class HttpAriClient:
 
     async def hangup(self, channel_id: str) -> None:
         await self._request("DELETE", f"/channels/{quote(channel_id, safe='')}", ok_missing=True)
+
+    async def set_variable(self, channel_id: str, name: str, value: str) -> None:
+        params = {"variable": name, "value": value}
+        await self._request("POST", f"/channels/{quote(channel_id, safe='')}/variable", params=params, ok_missing=True)
 
     async def channel_ids(self) -> set[str]:
         channels = await self._request("GET", "/channels") or []

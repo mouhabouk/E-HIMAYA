@@ -189,3 +189,77 @@ Assumptions where the contract is open; the dashboard parses leniently (unknown 
   log = the staff read roles.
 * Deployment: the dashboard image takes `CSP_TELEPHONY_SRC` (SIP WebSocket origin, e.g. `wss://sip.example.tn`) for
   `connect-src`, and emits `Permissions-Policy: microphone=(self)` (`CSP_MICROPHONE=self`, `infra/web/csp.mjs`).
+
+### Weather and forecasts (§1–§2) — as implemented
+
+Details: `docs/weather-forecast.md`.
+
+* Refresh: the loop runs every 30 min and re-fetches each of the 285 grid points at most once an hour (Open-Meteo
+  free-tier volume ≈ 6,840 calls/day); stored series = yesterday + next 72 h. Empty `WEATHER_PROVIDER` = `sim` in
+  development/CI, `open-meteo` in production (which refuses `sim`).
+* `GET /api/v1/weather` matches the mobile shape above exactly, in its object forms: `fire_danger` =
+  `{"class","fwi","ffmc","dmc","dc","isi","bui"}` (null before the FWI spin-up), `heavy_rain` = `{"level"}`,
+  `attribution` = `{"text","url","licence"}` (a `[SIM]` string when simulated). It adds `grid_point` `{"lat","lon"}`
+  and `distance_km`. Values are cached server-side 10 min per grid point, alerts are read fresh;
+  `Cache-Control: public, max-age=60`; rate limit 60/min per client; `503 weather_unavailable` without data near the
+  point.
+* Staff grid: `hour` is an offset from the current hour, `-24`…`48`; `bbox` = `minLon,minLat,maxLon,maxLat`
+  (`422 invalid_bbox`). Feature properties are flat for styling: `fire_danger` (class string), `fwi`, `rain_level` =
+  `heavy_rain` (level string), `fire_indices` (the object), plus the HOUR fields, `point_id`, `gouvernorat_code`,
+  `simulated`. `GET …/at` → `{"point":{"id","lat","lon","gouvernorat_code","distance_km"},"lat","lon","updated_at",
+  "current","past" (last 24 h),"hourly" (next 48 h),"alerts","attribution","simulated"}`; `404 no_weather_data`.
+* Suggestions: page `{"items":[…]}`; `evidence` is an object (`metric`, `max_value`, `<metric>`: value, `peak_at`,
+  `peak_point`, `thresholds` and `per_gouvernorat` by gouvernorat code, `rule_ids`, `window`, `source`, and
+  `max_fwi` for fire). **Accept** does not create a draft: it marks the suggestion accepted and returns
+  `{"suggestion", "alert_form"}` where `alert_form` is a valid phase 5 `MessageIn` (a local editor's form covers
+  their own gouvernorat only). Live event payload `{"suggestion_id","suggestion"}`.
+* Extra endpoints: `GET /api/v1/staff/weather/rules`, `PUT /api/v1/staff/weather/rules`
+  `{"gouvernorat_code": null|int, "rules":[{"metric","threshold","severity","enabled"?}]}` (national scope needs all
+  four metrics; `fire_danger` thresholds are class ranks 0–4), and `GET /api/v1/staff/incidents/{id}/forecasts`
+  (latest runs, newest first, `?limit=` 1–50).
+* Fire forecast: `fuel_model` maps to Anderson models (`grass` 1, `shrub` 4, `timber_litter` 9 sheltered, `mixed` 2;
+  default `mixed` with an assumption). The response adds `incident_id`, `backing_rate_m_min`, `heading_deg`,
+  `length_to_breadth`, `fireline_intensity_kw_m`, `flame_length_m`, `disclaimer`, `attribution`, `created_by`,
+  `simulated`; each polygon adds `head_m`, `back_m`, `length_m`, `width_m`. Assumptions are `{"code","text":{ar,fr}}`.
+  Rate limit 30 runs / 10 min per user; `409 incident_without_location`, `503 weather_unavailable`.
+* Flood advisory: `level` ∈ `minimal|low|moderate|high`, `"advisory": true`, `risk_polygon`, `risk_area_ha`,
+  `low_points`, `drainage_direction_deg`, inputs `rain` (observed 24 h, next 6/12/24 h, max 1 h, total).
+* Priority: `weather` is a bonus component (raises, never lowers); without data its detail is `no_weather_data`.
+
+### Telephony and SMS (§4, §5 SMS) — as implemented
+
+Details: `docs/telephony.md`.
+
+* Asterisk 22.11.0 LTS from the release tarball (SHA-256 pinned) with bundled pjproject 2.17, on `ubuntu:26.04`
+  (digest pinned), uid 10001, ~190 MB, a curated module set (chan_pjsip, WebRTC/WSS, queues, MixMonitor, ConfBridge,
+  ARI/Stasis). Inbound calls never use Stasis: the dialplan answers 8000, plays the recorded-call notice (ar, fr),
+  starts MixMonitor (when `TELEPHONY_RECORDING_ENABLED`, default false in production, legal point L04) and queues;
+  the API follows over the ARI WebSocket (`EhimayaCall` user events, `ChannelDestroyed`). Control actions (queue
+  membership, transfer, conference kick) are Local channels the API originates into a context no endpoint reaches.
+* Data: schema `telephony` (`call`, `operator_endpoint`, `conference`, `sms_inbound`), migration `0014_telephony`;
+  `reports.media.kind` accepts `call_recording` (`report_id` null; the call references it). `operator_user_id` is the
+  staff member's token subject (text), as in audit. For outbound calls `caller_number` holds the called party.
+  Retention: calls, recordings, SMS records and retired endpoints after `RETENTION_CALL_DAYS` (730, refused above).
+* Credentials response adds `display_name`, `transfer_198_enabled` (scenario 2 available) and `simulated` (no trunk:
+  call-sim answers). Queue INVITEs carry `X-EHimaya-Call-Id: <calls.id>` (set on the caller's channel over ARI while
+  the notice plays, best effort) and `X-EHimaya-Queue: operators`; outbound operator legs carry `X-EHimaya-Call-Id`.
+* `POST /calls/dial` answers 201 with the full call item (it has `id`) and rings the operator's endpoint first; it
+  takes exactly one of `number`, `report_id` (SMS sender, the citizen's phone, or a linked call), `volunteer_id`.
+  Errors: `409 softphone_not_registered|outbound_unavailable|no_number`, `422 invalid_number`, `503
+  telephony_unavailable`. `GET /calls?status=active|ringing|…&cursor=`; `GET /calls/{id}` (audited) adds `recording`
+  and `transfer_198_available`; `POST /calls/{id}/link` takes exactly one of `report_id`, `tracking_code`,
+  `incident_id`; recording download is a 302 only (no `{"url"}` form).
+* Conferences: `POST /incidents/{id}/conference` (201 new, 200 the open one), `GET /incidents/{id}/conference` and
+  `…/conferences` (list), `DELETE /incidents/{id}/conference/{room}` and `POST /conferences/{id}/end` (end, kicks
+  everyone), plus `POST /conferences/{id}/invite` `{"number"|"volunteer_id"}` → 202 (calls a Tunisian number into the
+  room through the trunk). Timeline events `conference_opened`, `conference_ended`, `call_linked`.
+* Live events `call.ringing|answered|ended` carry `{"call_id","gouvernorat_code","call"}` and `call.recording`
+  `{"call_id","media_id","gouvernorat_code","sha256","duration_s"}`; no `queue` object yet. Calls not located yet go
+  to every reader (one national queue); numbers are masked (last 2 digits) for readers without call access.
+* SMS webhook: besides the WSS path, Caddy routes exactly `POST /internal/sms/inbound` (the provider is on the
+  internet; HMAC `X-Signature: sha256=…` over `"<X-Timestamp>.<body>"`, 5 min window, 404 without secret). Body
+  `{"message_id","from","to"?,"text","received_at"?}`; answer `{"status":"created|duplicate|ignored","tracking_code",
+  "reason"}`. Dedup as the mobile note requires (prefix AND category AND window AND same verified sender, else within
+  5 km); an SMS-first report is adopted by the app's later `POST /reports` (answer 200, same tracking code).
+* Not done here: the staff report schema has no `source` field, so the dashboard cannot yet badge SMS reports
+  (reports module); the optional notify-sim inbound-SMS poster was not added (the tests sign requests directly).

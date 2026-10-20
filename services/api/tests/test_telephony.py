@@ -62,6 +62,7 @@ class FakeAri:
         self.controls: list[str] = []
         self.originated: list[tuple[str, str, str]] = []
         self.invites: list[tuple[str, str]] = []
+        self.variables: dict[str, dict[str, str]] = {}
         self.live: set[str] = set()
 
     def _check(self) -> None:
@@ -90,6 +91,10 @@ class FakeAri:
 
     async def hangup(self, channel_id: str) -> None:
         self._check()
+
+    async def set_variable(self, channel_id: str, name: str, value: str) -> None:
+        self._check()
+        self.variables.setdefault(channel_id, {})[name] = value
 
     async def channel_ids(self) -> set[str]:
         self._check()
@@ -258,12 +263,16 @@ def test_sms_body_parsing() -> None:
 # ---------------------------------------------------------------- ARI events → calls
 
 
-async def test_inbound_call_life_cycle(client: httpx.AsyncClient, staff: Staff, session: AsyncSession) -> None:
+async def test_inbound_call_life_cycle(
+    client: httpx.AsyncClient, staff: Staff, session: AsyncSession, fake_ari: FakeAri
+) -> None:
     operator = staff(gouvernorat=61)
     number = mobile()
     channel_id = await ringing("00" + number[1:])
     call = await call_row(session, channel_id)
     assert call.status == "ringing" and call.direction == "inbound" and call.source == "trunk"
+    # calls.id handed to Asterisk for the X-EHimaya-Call-Id header of the INVITEs to operators.
+    assert fake_ari.variables[channel_id] == {"__EH_CALL_UUID": str(call.id)}
     assert call.caller_number == number and call.caller_hash == caller_index(number)
     assert call.gouvernorat_code is None and call.recording_state == "pending"
     # The number is encrypted at rest.
@@ -373,6 +382,7 @@ async def test_credentials(client: httpx.AsyncClient, staff: Staff, fake_ari: Fa
     endpoint = endpoint_for(subject_of(operator))
     assert body["username"] == endpoint and body["sip_uri"] == f"sip:{endpoint}@ehimaya.local"
     assert body["ws_url"] == "ws://localhost:8088/ws" and len(body["password"]) >= 32
+    assert body["transfer_198_enabled"] is False and body["simulated"] is True
     expires = datetime.fromisoformat(body["expires_at"])
     assert timedelta(hours=3, minutes=59) < expires - datetime.now(UTC) <= timedelta(hours=4)
     assert fake_ari.pushed[-1][:2] == (endpoint, body["password"])
@@ -569,9 +579,17 @@ async def test_conference(client: httpx.AsyncClient, staff: Staff, fake_ari: Fak
         )
     )
     assert kinds == ["conference_opened", "conference_ended"]
-    # A new room once the previous one ended.
+    # A new room once the previous one ended; the dashboard's forms: GET …/conference (list), DELETE …/{room}.
     r = await client.post(f"/api/v1/staff/incidents/{incident_id}/conference", headers=operator)
     assert r.status_code == 201 and r.json()["id"] != room["id"]
+    second = r.json()
+    listed = (await client.get(f"/api/v1/staff/incidents/{incident_id}/conference", headers=operator)).json()
+    assert [c["id"] for c in listed["items"]] == [second["id"], room["id"]]
+    r = await client.delete(f"/api/v1/staff/incidents/{incident_id}/conference/{second['room']}", headers=operator)
+    assert r.status_code == 200 and r.json()["active"] is False
+    assert fake_ari.controls[-1] == f"confkick-{second['room']}"
+    r = await client.delete(f"/api/v1/staff/incidents/{incident_id}/conference/00000000", headers=operator)
+    assert r.status_code == 404
 
 
 # ---------------------------------------------------------------- recordings
@@ -868,3 +886,37 @@ async def test_retention_purges_old_calls(session: AsyncSession, fake_store: Fak
     assert remaining == {recent}
     assert key in fake_store.deleted
     assert await session.scalar(text("SELECT count(*) FROM reports.media WHERE id = :m"), {"m": media_id}) == 0
+
+
+async def test_calls_not_recorded_when_recording_is_disabled(
+    session: AsyncSession, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # The dialplan says whether it records (TELEPHONY_RECORDING_ENABLED of the telephony container) ...
+    channel_id = channel()
+    await call_event(channel_id, "ringing", number=mobile(), source="trunk", recording="0")
+    assert (await call_row(session, channel_id)).recording_state == "none"
+    await destroyed(channel_id)
+    assert (await call_row(session, channel_id)).recording_state == "none"
+    # ... and without that field the API's own setting decides.
+    monkeypatch.setattr(get_settings(), "telephony_recording_enabled", False)
+    other = await ringing()
+    assert (await call_row(session, other)).recording_state == "none"
+    await destroyed(other)
+
+
+def test_call_retention_is_at_most_two_years() -> None:
+    from pydantic import ValidationError
+
+    from app.core.config import Settings
+
+    assert get_settings().retention_call_days == 730
+    with pytest.raises(ValidationError):
+        Settings(_env_file=None, retention_call_days=731)  # type: ignore[call-arg]
+
+
+def test_recording_is_opt_in_in_production() -> None:
+    from tests.test_production_settings import production
+
+    assert production(telephony_recording_enabled="").telephony_recording_enabled is False
+    assert production(telephony_recording_enabled="true").telephony_recording_enabled is True
+    assert production().telephony_transfer_198_enabled is False

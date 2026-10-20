@@ -126,6 +126,8 @@ jobs:
           - { name: postgres, context: infra/postgres, args: "" }
           - { name: dashboard, context: apps/dashboard, args: "--build-context web=infra/web" }
           - { name: portal, context: apps/portal, args: "--build-context web=infra/web" }
+          - { name: telephony, context: services/telephony, args: "--target runtime" }
+          - { name: call-sim, context: services/telephony, args: "--target call-sim" }
     env:
       # Allow-listed secret findings (each one justified in the file).
       TRIVY_SECRET_CONFIG: .github/trivy-secret.yaml
@@ -150,6 +152,81 @@ jobs:
           exit-code: "0"
           format: table
           skip-setup-trivy: true
+
+  # Telephony (phase 7, docs/telephony.md): the Asterisk image starts as its unprivileged user, loads the modules the
+  # platform relies on, renders its dialplan (recorded-call notice before recording and queueing), refuses a missing
+  # ARI password, and a simulated call reaches the operators queue.
+  telephony:
+    name: Telephony · Asterisk image
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build (runtime and call-sim)
+        run: |
+          docker build --target runtime -t ehimaya/telephony:ci services/telephony
+          docker build --target call-sim -t ehimaya/call-sim:ci services/telephony
+      - name: Refuses to start without an ARI password
+        run: |
+          if docker run --rm ehimaya/telephony:ci true 2> err.txt; then echo "started without TELEPHONY_ARI_PASSWORD"; exit 1; fi
+          grep -q "TELEPHONY_ARI_PASSWORD is required" err.txt
+      - name: Start Asterisk and call-sim
+        run: |
+          docker network create tel
+          docker run -d --name telephony --network tel -p 127.0.0.1:8088:8088 \
+            -e TELEPHONY_ARI_PASSWORD=ci-ari-password-0123456789 -e TELEPHONY_SIM_PASSWORD=ci-sim-password-0123456789 \
+            ehimaya/telephony:ci
+          for i in $(seq 1 30); do
+            [ "$(docker inspect -f '{{.State.Health.Status}}' telephony)" = healthy ] && break; sleep 2
+          done
+          docker inspect -f '{{.State.Health.Status}}' telephony | grep -qx healthy
+      - name: Version, user, modules, dialplan, ARI
+        run: |
+          ast() { docker exec telephony asterisk -C /run/asterisk/etc/asterisk.conf -rx "$1"; }
+          ast "core show version" | tee version.txt
+          grep -q "^Asterisk 22\." version.txt
+          [ "$(docker exec telephony id -u)" = 10001 ]
+          for module in chan_pjsip res_pjsip_transport_websocket res_srtp app_queue app_mixmonitor app_confbridge \
+                        res_ari res_ari_channels res_ari_asterisk res_stasis res_pjsip_header_funcs \
+                        res_clioriginate codec_alaw format_wav; do
+            ast "module show like $module" | grep -q "^$module.so .*Running" || { echo "module $module not running"; exit 1; }
+          done
+          # No module outside the curated set (chan_sip, AMI clients, CDR back-ends ...).
+          if ast "module show" | grep -E "^(chan_sip|chan_iax2|cdr_|cel_|res_config_)"; then exit 1; fi
+          ast "pjsip show transports" | grep -q "transport-wss"
+          # The recorded-call notice plays before MixMonitor and before the queue (legal point L04).
+          ast "dialplan show 8000@ehimaya-entry" > entry.txt
+          notice=$(grep -n "notice-ar&ehimaya/notice-fr" entry.txt | cut -d: -f1)
+          monitor=$(grep -n "MixMonitor" entry.txt | cut -d: -f1)
+          queue=$(grep -n "Queue(operators" entry.txt | head -1 | cut -d: -f1)
+          [ -n "$notice" ] && [ "$notice" -lt "$monitor" ] && [ "$monitor" -lt "$queue" ]
+          docker exec telephony test -s /var/lib/asterisk/sounds/ehimaya/notice-ar.wav
+          docker exec telephony test -s /var/lib/asterisk/sounds/ehimaya/notice-fr.wav
+          curl -fsS -u ehimaya-api:ci-ari-password-0123456789 http://127.0.0.1:8088/ari/asterisk/info | grep -q '"version":"22\.'
+          [ "$(curl -s -o /dev/null -w '%{http_code}' -u ehimaya-api:wrong-password-0000 http://127.0.0.1:8088/ari/asterisk/info)" = 401 ]
+      - name: Recording can be switched off
+        run: |
+          docker run -d --name norec -e TELEPHONY_ARI_PASSWORD=ci-ari-password-0123456789 \
+            -e TELEPHONY_RECORDING_ENABLED=false ehimaya/telephony:ci
+          sleep 8
+          docker logs norec 2>&1 | grep -q "recording=0"
+          docker rm -f norec
+      - name: A simulated call reaches the operators queue after the notice
+        run: |
+          docker run -d --name call-sim --network tel -e TELEPHONY_SIM_PASSWORD=ci-sim-password-0123456789 \
+            -e CALL_SIM_FIRST_DELAY_S=2 -e CALL_SIM_TALK_S=40 -e CALL_SIM_INTERVAL_S=600 ehimaya/call-sim:ci
+          for i in $(seq 1 45); do
+            docker exec telephony asterisk -C /run/asterisk/etc/asterisk.conf -rx "queue show operators" | grep -q "PJSIP/call-sim" && break
+            sleep 1
+          done
+          docker exec telephony asterisk -C /run/asterisk/etc/asterisk.conf -rx "queue show operators" | tee queue.txt
+          grep -q "PJSIP/call-sim" queue.txt
+          # Recording started (after the notice) for that call.
+          docker exec telephony sh -c 'ls /var/spool/asterisk/ehimaya/*.wav'
+      - name: Logs on failure
+        if: failure()
+        run: |
+          docker logs telephony 2>&1 | tail -100
+          docker logs call-sim 2>&1 | tail -50 || true
 
   # ┏━━ SIMULATION ━━ notify-sim: development emulator of Firebase Cloud Messaging (HTTP v1 + OAuth) and the SMS gateway
   # ┃ PRODUCTION: these two jobs only check the simulator; when it is removed from the repository, delete them. The
@@ -418,7 +495,11 @@ jobs:
           sed -i "s|^CERTIFICATE_SIGNING_KEY=.*|CERTIFICATE_SIGNING_KEY=$(openssl rand -base64 32)|" .env
           sed -i "s|^MEDIAMTX_HOOK_TOKEN=.*|MEDIAMTX_HOOK_TOKEN=$(openssl rand -hex 24)|" .env
           sed -i "s|^MEDIAMTX_API_PASSWORD=.*|MEDIAMTX_API_PASSWORD=$(openssl rand -hex 24)|" .env
-      - name: Production overlay renders (Caddy, Keycloak start, no host ports but 80/443)
+          sed -i "s|^TELEPHONY_ARI_PASSWORD=.*|TELEPHONY_ARI_PASSWORD=$(openssl rand -hex 24)|" .env
+          sed -i "s|^TELEPHONY_SIM_PASSWORD=.*|TELEPHONY_SIM_PASSWORD=$(openssl rand -hex 24)|" .env
+          sed -i "s|^TELEPHONY_SIM_TOKEN=.*|TELEPHONY_SIM_TOKEN=$(openssl rand -hex 24)|" .env
+          sed -i "s|^SMS_INBOUND_SECRET=.*|SMS_INBOUND_SECRET=$(openssl rand -hex 32)|" .env
+      - name: Production overlay renders (Caddy, Keycloak start, no host ports but 80/443, streaming and telephony)
         run: |
           cat > prod.env <<EOF
           API_HOST=api.ehimaya.test
@@ -431,7 +512,9 @@ jobs:
           EOF
           cat .env prod.env > prod-full.env
           docker compose --env-file prod-full.env -f infra/compose.yml -f infra/compose.prod.yml config > prod.yml
-          python3 -c "import yaml; s=yaml.safe_load(open('prod.yml'))['services']; p={n:sorted(str(x.get('published'))+'/'+x.get('protocol','tcp') for x in v.get('ports',[])) for n,v in s.items() if v.get('ports')}; print(p); assert set(p)=={'caddy','mediamtx'}, p; assert p['mediamtx']==['1935/tcp','8189/udp','8554/tcp'], p; assert 'notify-sim' not in s and 'mailpit' not in s and 'stream-sim' not in s"
+          python3 -c "import yaml; s=yaml.safe_load(open('prod.yml'))['services']; p={n:sorted(str(x.get('published'))+'/'+x.get('protocol','tcp') for x in v.get('ports',[])) for n,v in s.items() if v.get('ports')}; print(p); assert set(p)=={'caddy','mediamtx','telephony'}, p; assert p['mediamtx']==['1935/tcp','8189/udp','8554/tcp'], p; assert set(p['telephony'])=={'5060/tcp','5060/udp','5061/tcp'}|{f'{n}/udp' for n in range(10000,10100)}, p['telephony']; assert all('8088' not in x for x in p['telephony']); assert 'notify-sim' not in s and 'mailpit' not in s and 'stream-sim' not in s and 'call-sim' not in s; e=s['worker']['environment']; assert e['TELEPHONY_RECORDING_ENABLED']=='false' and e['TELEPHONY_SIM_TOKEN']=='' and e['TELEPHONY_WS_PUBLIC_URL']=='wss://api.ehimaya.test/telephony/ws', e"
+      - name: Terrain one-shot service renders (opt-in profile)
+        run: docker compose --env-file .env -f infra/compose.yml --profile terrain config -q
       - name: Start the stack
         run: docker compose --env-file .env -f infra/compose.yml up -d --build
       - name: Anonymous report, resumable upload, integrity check, notify-sim health

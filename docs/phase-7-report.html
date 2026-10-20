@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ء-حماية | تقرير المرحلة 7</title>
+<style>
+:root{--bg:#f7f8fa;--paper:#fff;--ink:#1b2430;--muted:#5b6675;--line:#dfe3e8;--accent:#b3261e;--accent2:#0b5cad;--ok:#1e7d3a;--warn:#a15c00;--chip:#eef1f5;--head:#f1f3f6}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1318;--paper:#161b22;--ink:#e6eaef;--muted:#9aa5b1;--line:#2a313b;--accent:#ff6b5e;--accent2:#5aa9ff;--ok:#5cc97a;--warn:#e0a24a;--chip:#1f2630;--head:#1c222b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Naskh Arabic","Segoe UI",Tahoma,Arial,sans-serif;line-height:1.75;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header.cover{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:10px;padding:28px 24px;margin-bottom:20px}
+header.cover h1{margin:0 0 6px;font-size:30px}
+header.cover .sub{color:var(--muted);margin:0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:16px}
+.meta div{background:var(--chip);border-radius:6px;padding:8px 12px;font-size:14px}
+.meta b{display:block;color:var(--muted);font-weight:600;font-size:12px}
+nav.toc{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px 24px;margin-bottom:20px}
+nav.toc ol{margin:0;padding-inline-start:20px;columns:2;column-gap:32px}
+@media (max-width:700px){nav.toc ol{columns:1}}
+nav.toc a,a{color:var(--accent2);text-decoration:none}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:20px}
+h2{margin-top:0;font-size:23px;border-bottom:2px solid var(--line);padding-bottom:8px}
+h3{font-size:19px;margin-top:28px;color:var(--accent2)}
+h4{font-size:16px;margin-bottom:4px}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:start;vertical-align:top}
+th{background:var(--head);font-weight:700;white-space:nowrap}
+td code,p code,li code{direction:ltr;unicode-bidi:isolate;background:var(--chip);padding:1px 5px;border-radius:4px;font-size:13px}
+.id{font-family:Consolas,monospace;direction:ltr;unicode-bidi:isolate;white-space:nowrap;font-size:13px;color:var(--muted)}
+.p{display:inline-block;border-radius:10px;padding:0 8px;font-size:12px;font-weight:700;white-space:nowrap}
+.M{background:#fde2e0;color:#8c1d16}.S{background:#fff1d6;color:#7a4a00}.C{background:#e1efff;color:#0a4a8c}.W{background:#e8e8e8;color:#444}
+@media (prefers-color-scheme:dark){.M{background:#4a1d1a;color:#ffb4ad}.S{background:#4a3510;color:#ffd38a}.C{background:#14304f;color:#a8d1ff}.W{background:#333;color:#ccc}}
+.note{border-inline-start:4px solid var(--accent2);background:var(--chip);padding:10px 14px;border-radius:6px;margin:12px 0}
+.warn{border-inline-start:4px solid var(--warn)}
+.sim{display:inline-block;background:#f59e0b;color:#1f1300;font-weight:700;font-size:12px;padding:1px 8px;border-radius:999px;margin-inline-end:6px}
+tr.simrow td{background:color-mix(in srgb,#f59e0b 12%,transparent)}
+.ltr{direction:ltr;unicode-bidi:isolate}
+ul,ol{padding-inline-start:22px}
+footer{color:var(--muted);text-align:center;font-size:13px}
+@media print{body{background:#fff}section,header.cover,nav.toc{border:none;break-inside:avoid-page}nav.toc{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="cover">
+  <h1>ء-حماية <span class="ltr">e-Himaya</span></h1>
+  <p class="sub">تقرير المرحلة 7: الطقس والتنبؤ ودعم القرار والاتصالات</p>
+  <div class="meta">
+    <div><b>التاريخ</b>2026-10-20</div>
+    <div><b>الفرع</b><span class="ltr">phase-7</span></div>
+    <div><b>الحالة</b>منجزة، بانتظار الدمج وموافقتك</div>
+    <div><b>المراجع</b><a href="api/phase-7-contract.md">عقد الواجهة البرمجية</a> · <a href="weather-forecast.md">الطقس والتنبؤ</a> · <a href="decision-support.md">دعم القرار</a> · <a href="telephony.md">الاتصالات</a> · <a href="versions.md">الإصدارات</a></div>
+  </div>
+</header>
+
+<section>
+<h2>1. جدول التقدم</h2>
+<div class="tbl"><table>
+<tr><th>المتطلب</th><th>البند</th><th>ما أُنجز</th><th>التحقق</th><th>التقدم</th></tr>
+<tr><td>FR-C-08، FR-C-10</td><td>طبقة الطقس</td><td>شبكة من 285 نقطة تغطي الولايات الـ24 تُحدَّث كل ساعة من Open-Meteo: الرياح واتجاهها، الحرارة، الرطوبة، الأمطار، ومؤشر خطر الحرائق الكندي FWI محسوبا داخل المنصة. طبقة على خريطة اللوحة مع شريط زمني لـ48 ساعة. دون إنترنت تعمل محاكاة بالعلامات المعتمدة.</td><td>مؤشر FWI يطابق كل الصفوف الـ49 من الجدول المرجعي المنشور (Wang 2015)</td><td>100%</td></tr>
+<tr><td>سيناريو التنبيه الجوي</td><td>اقتراح التنبيهات</td><td>قواعد عتبات قابلة للضبط لكل ولاية (خطر حرائق مرتفع جدا، هبات رياح، أمطار غزيرة) تنشئ اقتراح تنبيه بنص جاهز بثلاث لغات وبالأدلة. المحرر أو اللجنة يقبل فيُفتح نموذج التنبيه معبأ، أو يرفض بسبب. لا يُرسل شيء آليا.</td><td>اختبارات</td><td>100%</td></tr>
+<tr><td>BR-20</td><td>الطقس في درجة الأولوية</td><td>مكون الطقس في الأولوية صار يعمل: خطر الحرائق لبلاغات الحريق، والأمطار لبلاغات الفيضان، والرياح لغيرها.</td><td>اختبارات</td><td>100%</td></tr>
+<tr><td>FR-C-11</td><td>نماذج الانتشار</td><td>انتشار الحريق بنموذج Rothermel مع الرياح والرطوبة والانحدار (نموذج تضاريس Copernicus)، وشكل بيضوي باتجاه الريح، ومضلعات بعد 30 و60 و120 دقيقة. للفيضان تقدير إرشادي من الأمطار المتراكمة والمتوقعة والمنخفضات، معلن بوضوح أنه ليس نموذجا هيدروليكيا. كل نتيجة تعرض مدخلاتها وافتراضاتها وتنبيها للمشغل.</td><td>سرعات الانتشار ضمن 12% من القيم المنشورة لأنواع الوقود المستعملة في تونس</td><td>100%</td></tr>
+<tr><td>FR-C-11، FR-C-13</td><td>دعم القرار</td><td>توصيات لكل حادثة (موارد، متطوعون، طريق، تصعيد، تنبيه، جهات متدخلة)، كل واحدة بمبرراتها ومدخلاتها ودرجة ثقة وأزرار تفتح الإجراء المعني دون تنفيذه. حساب الطريق الأفضل عبر Valhalla على خريطة OpenStreetMap، مع تقدير بخط مستقيم عند غياب المحرك.</td><td>اختبارات</td><td>100%</td></tr>
+<tr><td>FR-C-11</td><td>المساعد الذكي</td><td>نموذج لغوي محلي يجيب عن أسئلة المشغل حول حادثة من دليل إجراءات كُتب للمشروع (ثمانية أخطار بالعربية والفرنسية، مع مصادرها) ومن الحوادث المشابهة، ويذكر مصادره ويرفض الإجابة دونها. كل سؤال وجواب يُسجل في الخط الزمني للحادثة.</td><td>اختبارات بنموذج وهمي</td><td>100%</td></tr>
+<tr><td>FR-C-14</td><td>المقسم الهاتفي</td><td>Asterisk 22 LTS: الرقم 8000 يُجاب بإشعار تسجيل بالعربية ثم الفرنسية، ثم طابور المشغلين. هاتف شبكي داخل اللوحة (رد، انتظار، كتم، إنهاء، ربط المكالمة ببلاغ أو حادثة)، اتصال صادر من الخريطة أو البلاغ، وغرف مؤتمرات للأزمات. التسجيل ببصمة SHA-256 ويُحفظ سنتين.</td><td>مكالمة محاكاة حقيقية من البداية إلى النهاية في CI</td><td>100%</td></tr>
+<tr><td>FR-C-14، ADR-10</td><td>سيناريوهات الاتصال</td><td>أرقام النجدة في التطبيق تبقى دائما مكالمة عادية عبر الشريحة (السيناريو 0). زر التحويل إلى 198 (السيناريو 2) جاهز لكنه معطل افتراضيا حتى توقيع اتفاقية، والتسجيل يمكن تعطيله بإعداد.</td><td>اختبارات</td><td>100%</td></tr>
+<tr><td>FR-A-034</td><td>بطاقة الطقس في التطبيق</td><td>الطقس الحالي والساعات القادمة حسب الموقع التقريبي، مع إبراز التنبيهات الجوية وشارتي خطر الحرائق والأمطار، ونسخة محفوظة للعمل دون اتصال، ضمن قواعد البطارية.</td><td>اختبارات</td><td>100%</td></tr>
+<tr><td>FR-A-048</td><td>البلاغ بالرسائل القصيرة</td><td>عند غياب الإنترنت كليا يقترح التطبيق إرسال ملخص البلاغ برسالة SMS يضغط المستعمل على إرسالها بنفسه، أو الاتصال بـ198. الخلفية تستقبل الرسالة الموقعة وتنشئ البلاغ وتمنع تكراره عند المزامنة.</td><td>اختبارات</td><td>100%</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>2. قرارات تحتاج علمك</h2>
+<div class="tbl"><table>
+<tr><th>القرار</th><th>السبب</th></tr>
+<tr><td>Open-Meteo مصدرا للطقس</td><td>لا واجهة عامة للمعهد الوطني للرصد الجوي. الخدمة المجانية مخصصة للاستعمال غير التجاري، وهذا يكفي للتجربة. في الإنتاج: استضافة Open-Meteo محليا أو اشتراك تجاري أو ربط INM عند توفره (الخطوات موثقة).</td></tr>
+<tr><td>التسجيل الهاتفي معطل افتراضيا في الإنتاج</td><td>تنفيذا لملاحظة المراجعة القانونية (L04): يُفعَّل بعد التصريح لدى الهيئة الوطنية لحماية المعطيات الشخصية.</td></tr>
+<tr><td>Valhalla بدل OSRM للتوجيه</td><td>خريطة واحدة للسيارات والشاحنات، وحساب مصفوفة الأزمنة لترتيب الموارد.</td></tr>
+<tr><td>Asterisk على Ubuntu</td><td>مستودع Debian محجوب في بيئة العمل؛ الصورة تبنى من المصدر وتعمل بمستعمل غير مدير.</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>3. حدود معروفة</h2>
+<ul>
+<li>لم يُجرَّب اتصال الطقس الحي ولا تنزيل خريطة تونس ولا نموذج التضاريس من بيئة العمل لأن الشبكة تحجبها. الطقس جُرّب بالمحاكاة، والطريق يعمل بالتقدير المستقيم حتى يضبط المشغل ملف الخريطة وبصمته.</li>
+<li>شبكة الطقس بدقة 25 كم تقريبا، وعتبات خطر الحرائق أوروبية (EFFIS) غير معايرة على تونس.</li>
+<li>نموذج الحريق يفترض وقودا متجانسا وطقسا ثابتا، دون حرائق التيجان أو الشرر المتطاير، والمشغل يختار نوع الوقود لغياب طبقة الغطاء النباتي.</li>
+<li>قواعد التوصيات بعتبات ثابتة، ودليل الإجراءات يحتاج مراجعة مختص قبل الاستعمال الفعلي.</li>
+<li>إعدادات الربط مع مشغلي الاتصالات التونسيين موثقة كقائمة أسئلة لكل مشغل، دون قيم حقيقية.</li>
+<li>لا خادم TURN بعد للهاتف الشبكي خارج الشبكة الداخلية.</li>
+</ul>
+</section>
+
+<section>
+<h2>4. الاختبارات</h2>
+<div class="tbl"><table>
+<tr><th>المكون</th><th>قبل</th><th>بعد</th></tr>
+<tr><td>الخلفية</td><td>277</td><td>396</td></tr>
+<tr><td>لوحة التحكم</td><td>288، و3 اختبارات متصفح</td><td>323، و7 اختبارات متصفح (منها الهاتف الشبكي بمكالمة صوتية حقيقية)</td></tr>
+<tr><td>تطبيق الهاتف</td><td>260</td><td>295</td></tr>
+<tr><td>البوابة</td><td>82</td><td>82</td></tr>
+<tr><td>المقسم الهاتفي (جديد)</td><td>—</td><td>فحص الصورة والوحدات وترتيب إشعار التسجيل ومكالمة محاكاة في CI</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>5. بالتوازي: إعادة تدريب نموذج الحرائق</h2>
+<p>بطلبك، يجري البحث في GitHub عن قواعد صور حرائق ودخان برخص واضحة وإعادة تدريب النموذج عليها. النتيجة ومقارنتها بالنموذج الحالي ستصلك منفصلة، ولا يُستبدل النموذج إلا إذا تحسنت الدقة فعلا.</p>
+</section>
+
+<footer>ء-حماية · تقرير المرحلة 7</footer>
+</div>
+</body>
+</html>
