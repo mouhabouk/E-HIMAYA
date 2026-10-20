@@ -1,8 +1,9 @@
-# Vision service: evaluation (v1.0.0, October 2026)
+# Vision service: evaluation (v2.0.0, October 2026)
 
 These are honest numbers for the detectors shipped in `models/fetch_models.py`, measured with `eval/evaluate.py` on
-a held-out sample. The sample was never used for training or for calibration. Read the limits at the end before
-quoting any figure.
+a held-out sample. The sample was never used for training, for picking the best epoch or for calibration. Read the
+limits at the end before quoting any figure. Model 1.0.0 was measured again in the same session, on the same
+machine, for the comparison.
 
 ## What was measured
 
@@ -20,50 +21,68 @@ quoting any figure.
 
 * **Metric.** The metric is **frame-level** precision and recall per label. A frame counts as "fire" when at least
   one fire box reaches the threshold, which is the decision the live pipeline takes on each frame. Open Images has
-  no fire or smoke *boxes*, so box-level mAP **cannot** be measured here, and none is claimed.
+  no fire or smoke *boxes*, so box-level mAP **cannot** be measured on this sample, and none is claimed.
 * **Thresholds.** 0.45 is `VISION_MIN_CONFIDENCE`, the API's floor. 0.6 is `VISION_ALERT_CONFIDENCE`, the
   confirmation level that must be reached in 3 of 5 frames.
+* **Extra test sets with human boxes** (`eval/evaluate_yolo.py`): the 90 validation images of FireNET and 69 frames
+  of three FURG videos (`case2_car`, `hand_held_winnebago`, `house1`), all held out of training. They box fire only,
+  so they give fire recall and box AP50, not precision or smoke figures.
 * **Machine.** 4 vCPU Intel Xeon @ 2.80 GHz (cloud VM, shared with other jobs), ONNX Runtime 1.30.0, CPU only.
 
-## Results (`python eval/evaluate.py --threads 2`)
+## Results: 2.0.0 against 1.0.0
 
-### Fire (`ehimaya-fire-smoke-yolox-tiny` 1.0.0, with the calibration below)
+Both with their own calibration (2.0.0: fire 0.56, smoke 0.74; 1.0.0: fire 0.72, smoke uncalibrated).
 
-| Threshold | Precision | Recall | F1 | TP | FP | FN | TN |
-|---|---|---|---|---|---|---|---|
-| 0.30 | 0.630 | 0.943 | 0.756 | 116 | 68 | 7 | 155 |
-| 0.45 (API floor) | **0.704** | **0.870** | 0.778 | 107 | 45 | 16 | 178 |
-| 0.50 | 0.746 | 0.837 | 0.789 | 103 | 35 | 20 | 188 |
-| 0.60 (alert level) | **0.776** | **0.732** | 0.753 | 90 | 26 | 33 | 197 |
-| 0.70 | 0.829 | 0.512 | 0.633 | 63 | 13 | 60 | 210 |
-
-### Share of frames flagged, by group
-
-| Group | Images | Fire ≥ 0.45 | Fire ≥ 0.6 | Smoke ≥ 0.45 | Person ≥ 0.45 |
+| Label | Threshold | 1.0.0 precision | 1.0.0 recall | **2.0.0 precision** | **2.0.0 recall** |
 |---|---|---|---|---|---|
-| fire | 120 | **0.88** | 0.74 | 0.01 | 0.28 |
-| hard_negative | 120 | **0.34** | 0.23 | 0.07 | 0.23 |
-| person (ordinary scenes) | 60 | **0.00** | 0.00 | 0.00 | 0.88 |
-| no_person (ordinary scenes) | 40 | 0.05 | 0.00 | 0.03 | 0.07 |
-| smoke | 43 | 0.14 | 0.02 | 0.07 | 0.12 |
+| fire | 0.45 | 0.704 (107 TP, 45 FP) | 0.870 | 0.677 (107 TP, 51 FP) | 0.870 |
+| fire | 0.60 | 0.776 | 0.732 | 0.752 | 0.764 |
+| smoke | 0.45 | 0.750 (3 TP, 1 FP) | **0.070** | 0.634 (26 TP, 15 FP) | **0.605** |
+| smoke | 0.60 | — (0 detections) | 0.000 | 0.750 (21 TP, 7 FP) | 0.488 |
 
-The false fire alarms come almost entirely from the *hard negatives*, which are fire-like scenes a human had to
-reject. On ordinary scenes the fire false-positive rate is 0–5 % per frame. The API also requires 3 of 5 frames
-≥ 0.6 before it confirms an alert, which lowers the false-alarm rate on a live stream further. That reduction is not
-measured here, because the sample is made of still images.
+| Held-out set with human fire boxes | 1.0.0 AP50 | 1.0.0 frame recall at 0.45 | **2.0.0 AP50** | **2.0.0 frame recall at 0.45** |
+|---|---|---|---|---|
+| FireNET validation (90 images, 138 boxes) | 0.331 | 0.656 | 0.691 | 0.900 |
+| FURG, 3 held-out videos (69 frames, 75 boxes) | 0.406 | 0.783 | 0.549 | 0.928 |
 
-### Smoke: not reliable in v1.0.0
+### Share of frames flagged, by group (false-alarm rate on the negative groups)
 
-| Threshold | Precision | Recall | TP | FP | FN |
+| Group | Images | Fire ≥ 0.45 (1.0.0 → 2.0.0) | Fire ≥ 0.6 | Smoke ≥ 0.45 | Smoke ≥ 0.6 |
 |---|---|---|---|---|---|
-| 0.25 | 0.625 | 0.349 | 15 | 9 | 28 |
-| 0.45 | 0.750 | **0.070** | 3 | 1 | 40 |
-| 0.60 | — | 0.000 | 0 | 0 | 43 |
+| fire | 120 | 0.88 → 0.87 | 0.74 → 0.77 | 0.01 → 0.17 | 0.00 → 0.08 |
+| smoke | 43 | 0.14 → 0.16 | 0.02 → 0.12 | 0.07 → **0.60** | 0.00 → **0.49** |
+| hard_negative (fire-like scenes) | 120 | 0.34 → 0.42 | 0.23 → 0.28 | 0.07 → 0.24 | 0.00 → 0.15 |
+| person (ordinary scenes) | 60 | 0.00 → 0.03 | 0.00 → 0.00 | 0.00 → 0.03 | 0.00 → 0.02 |
+| no_person (ordinary scenes) | 40 | 0.05 → 0.03 | 0.00 → 0.00 | 0.03 → 0.12 | 0.00 → 0.07 |
 
-Smoke recall is very low because the training set had only 167 smoke boxes. **Smoke detections must not be relied
-on yet.** Fire detections are usable as a hint to operators. The fix is more smoke data (see "Improving the model").
+**Reading.**
 
-### People (`yolox-tiny-coco-person`, official COCO weights, not trained by us)
+* **Smoke** goes from unusable (7 % recall at 0.45) to usable as a hint (60 % recall at precision 0.63; 49 % at
+  precision 0.75 at the alert level). The price is false smoke on fire-like scenes (fog, steam, haze, dust: 24 % at
+  0.45) and on some ordinary scenes (3–12 %).
+* **Fire** is unchanged on this sample within its sampling error (same recall at 0.45, precision −2.7 points;
+  at 0.6 recall +3.2, precision −2.4). It is much better on the two held-out sets with human boxes (AP50 ×2 on
+  FireNET, frame recall +12 to +24 points): the new data covers small flames, video frames and night scenes. The
+  FireNET gain is partly in-distribution (same kind of web thumbnails as its training split).
+* Fire false alarms on fire-like scenes rose from 34 % to 42 % of frames at 0.45 (10 of 120 images). The API's
+  3-of-5 confirmation at 0.6 and the operator remain the safeguards (FR-C-11).
+
+### Full tables (2.0.0, `python eval/evaluate.py --threads 2`)
+
+| Label | Threshold | Precision | Recall | F1 | TP | FP | FN | TN |
+|---|---|---|---|---|---|---|---|---|
+| fire | 0.30 | 0.632 | 0.951 | 0.760 | 117 | 68 | 6 | 155 |
+| fire | 0.45 | 0.677 | 0.870 | 0.762 | 107 | 51 | 16 | 172 |
+| fire | 0.50 | 0.701 | 0.821 | 0.757 | 101 | 43 | 22 | 180 |
+| fire | 0.60 | 0.752 | 0.764 | 0.758 | 94 | 31 | 29 | 192 |
+| fire | 0.70 | 0.804 | 0.634 | 0.709 | 78 | 19 | 45 | 204 |
+| smoke | 0.30 | 0.458 | 0.628 | 0.529 | 27 | 32 | 16 | 94 |
+| smoke | 0.45 | 0.634 | 0.605 | 0.619 | 26 | 15 | 17 | 111 |
+| smoke | 0.50 | 0.641 | 0.581 | 0.610 | 25 | 14 | 18 | 112 |
+| smoke | 0.60 | 0.750 | 0.488 | 0.592 | 21 | 7 | 22 | 119 |
+| smoke | 0.70 | 0.818 | 0.419 | 0.554 | 18 | 4 | 25 | 122 |
+
+### People (`yolox-tiny-coco-person`, official COCO weights, not trained by us; unchanged)
 
 | Threshold | Precision | Recall | F1 |
 |---|---|---|---|
@@ -72,80 +91,82 @@ on yet.** Fire detections are usable as a hint to operators. The fix is more smo
 
 ### CPU latency
 
-The pipeline is letterbox → both ONNX models → decode and NMS, with no GPU.
+The pipeline is letterbox → both ONNX models → decode and NMS, with no GPU. 2.0.0 has the same architecture and
+input size as 1.0.0, so the cost is the same (measured in the same session):
 
-| Configuration | Median | p95 |
+| Configuration | 1.0.0 | 2.0.0 |
 |---|---|---|
-| 720p frame, both models, 2 threads | **121–129 ms** | 136–161 ms |
-| 720p frame, both models, 1 thread | 175 ms | 228 ms |
-| Uploaded photos (mixed sizes, decode excluded), 2 threads | 119 ms (mean) | 151 ms |
-| 720p frame, both models, 2 threads, inside the real-model test | 115 ms | — |
+| 720p frame, both models, 2 threads, median | 97 ms | 98 ms |
+| 720p frame, both models, 2 threads, p95 | 110 ms | 124 ms (shared VM) |
+| Uploaded photos (mixed sizes, decode excluded), 2 threads, mean | 104 ms | 103 ms |
+| Fire and smoke model alone, 720p, 2 threads, median | — | 47 ms |
 
-One 2-thread worker therefore analyses about 8 frames per second. That covers `VISION_MAX_STREAMS=8` streams at 1
-frame per second, or 4 pending streams at 2 frames per second. The default of 2 workers leaves headroom; for more
-streams, add workers and cores.
+One 2-thread worker therefore analyses about 8–10 frames per second. That covers `VISION_MAX_STREAMS=8` streams at
+1 frame per second, or 4 pending streams at 2 frames per second. Decoding one stream takes one more thread.
 
-Decoding one stream takes one more thread (H.264 at 720p and 30 fps). Frames are converted to RGB only at 1 or 2 per
-second.
+For comparison, the Grounding DINO teacher took **4–11 s per image** at 512 px on the same (shared) machine, which
+is why it is only used offline to draw training boxes.
 
-For comparison, the Grounding DINO teacher took **3.8–8 s per image** at 512 px on the same machine. That is about
-50 times slower, which is why it is only used offline to draw training boxes.
-
-### End-to-end checks (local, real binaries)
+### End-to-end checks (local, real binaries; model 1.0.0, the pipeline is unchanged)
 
 * **RTSP through MediaMTX.** MediaMTX 1.21.2 ran with read authentication (user `vision`), and a PyAV publisher sent
-  an MPEG-4 stream of a fire photo at 10 fps. The service watched it through `PUT /v1/streams`. It posted 16
-  callbacks with `fire` 0.83, the `X-Vision-Token` header and a JPEG frame. The mean interval was **0.55 s**, which
-  is 2 frames per second while pending.
+  an MPEG-4 stream of a fire photo at 10 fps. The service posted 16 callbacks with `fire` 0.83, the
+  `X-Vision-Token` header and a JPEG frame, at 2 frames per second while pending.
 * **Publisher stop.** After the publisher stopped, MediaMTX answered 404 and the service reconnected with backoff.
   It ended the watch as `gone` and freed the slot.
-* **People only.** With only people in the picture, about 1 frame per second was analysed and a callback was sent
-  every 10 s.
 
 ## How the fire and smoke model was built
 
 | Step | Detail |
 |---|---|
-| Images | Open Images V7 train and validation splits. **471** images with fire or smoke boxes, plus **1,922** without (verified-absent hard negatives and ordinary scenes with people). The public mirror only holds part of the train split, so 2,393 images were usable out of 5,159 selected. |
-| Boxes | Grounding DINO Swin-T OGC, prompt `fire . smoke .`, 512 px short side. Boxes were kept at score ≥ 0.30 when the class was human-verified present, and ≥ 0.50 when it was not verified. A class verified absent got no box. **92** verified-positive images were dropped because the teacher found nothing. The result was 623 boxes: 456 fire and 167 smoke. |
-| Student | YOLOX-Tiny (5.0 M parameters, 416×416), initialised from the official COCO weights, with only the class layers re-initialised. |
-| Training | 24 epochs on CPU (4 vCPU, about 155 s per epoch, 63 min in total). Batch 16, SGD with Nesterov momentum, lr 0.005, one warm-up epoch then cosine decay, weight decay 5e-4, EMA. Each epoch used all positives and an equal number of random negatives. Mosaic, scale, flip and HSV augmentation (small hue shift) ran for epochs 0–19; epochs 20–23 had no mosaic and added the L1 loss. The final loss was 4.75 (IoU 1.61, objectness 1.93, class 0.56). |
-| Export | ONNX opset 17, raw head output without decoding. The maximum relative difference from PyTorch is 1.8e-6. SHA-256 `173073b780ef5f74d389ee9bdd7e90260a1ce22ee8a867aea79b20c71bcdaa00`, 20.2 MB. |
-| Calibration | `score_power` = {fire: 0.72}. It was fitted on `eval/calibration.json`, 256 other test-split images **disjoint** from the evaluation set. The criterion was the lowest raw threshold reaching precision 0.80, which was 0.33 (recall 0.79), mapped to 0.45. The calibration set has too few smoke images, so smoke is left uncalibrated. |
-
-The evaluation set holds more fire-like hard negatives (120) than the calibration set (36). This is why precision at
-0.45 is 0.70 on evaluation against 0.80 on calibration. The calibration was **not** re-tuned on the evaluation set.
+| Data search | GitHub search for fire and smoke datasets (README.md, "Fire and smoke datasets found on GitHub"). Only datasets whose own repository grants a permissive licence **and** that are hosted on GitHub were usable from the build machine: FireNET (MIT) and FURG (CC0-1.0). D-Fire (CC0-1.0) is on OneDrive/Kaggle, unreachable there. |
+| Open Images | The V7 label files list 1,433 human-verified smoke images in train, against 532 in the V5 files used for 1.0.0. 1,354 new verified-positive images (743 with smoke) and 269 new verified-absent hard negatives were on the public mirror. On the shared CPU the teacher was run on every new **smoke** image first; 536 fire-only images were left out for time. |
+| Boxes | Grounding DINO Swin-T OGC, prompt `fire . smoke .`, 512 px short side, gated by the human labels as for 1.0.0 (≥ 0.30 when the class is verified present, ≥ 0.50 when not verified, none when verified absent; an image whose verified class the teacher misses is dropped: 110 of 812). FireNET and FURG keep their human fire boxes; the teacher added smoke boxes (≥ 0.50) to 38 of their images. |
+| FURG frames | About one frame per second of the 17 annotated videos, only frames with flame boxes, minus near-identical consecutive frames (dHash ≤ 6 bits); 10 frames of the non-fire robot video as negatives. Whole videos are held out as the test split. |
+| De-duplication | `training/dedupe.py`: 64-bit DCT pHash of every image. **22** training images within 8 bits of an evaluation, calibration or test image and **26** training images within 4 bits of another training image were excluded. The close pairs inspected by eye were mostly dark scenes (candles, night fires) with similar hashes, not copies; they were excluded anyway. |
+| Training set | 3,919 images: 1,724 with boxes (986 with fire, 851 with smoke; 1,245 fire and 1,056 smoke boxes, against 456 and 167 for 1.0.0) and 2,195 without. 8 % of them (325 images, grouped so that frames of one video stay together) were held out to pick the best epoch. |
+| Student | YOLOX-Tiny (5.0 M parameters, 416×416), initialised from model 1.0.0 (itself from the COCO weights). |
+| Training | 14 epochs on the shared 4-vCPU machine, 2 h 36 min (9–22 min per epoch). Each epoch: every positive, every smoke image a second time (`--smoke-repeat 2`), and 0.6 negatives per positive drawn at random: 3,305 images, batch 16. SGD with Nesterov momentum, lr 0.005, one warm-up epoch then cosine decay, weight decay 5e-4, EMA. Mosaic, mixup (p 0.15), scale, flip, HSV (small hue shift) and blur (p 0.1) for epochs 0–10; epochs 11–13 without mosaic or mixup, with the L1 loss. |
+| Model selection | Image-level AP per class of the EMA weights on the 325 held-out images after every epoch. Best: epoch 10, fire AP 0.943 and smoke AP 0.801 (model 1.0.0 on the same images: 0.836 and 0.547). |
+| Export | ONNX opset 17, raw head output without decoding. The maximum relative difference from PyTorch is 1.1e-6. SHA-256 `3b9f2b5f8513ad76a1817a18614bfc73c4d625f5fcf2f3952ed1839ae43339b6`, 20.2 MB. |
+| Calibration | `score_power` = {fire: 0.56, smoke: 0.74}: the lowest raw threshold reaching precision 0.80 (with at least 20 true positives) is mapped to 0.45. Fire: fitted on `eval/calibration.json` as for 1.0.0 (raw 0.24, recall 0.83 there). Smoke: `eval/calibration.json` has only 3 smoke images, so the fit pools the 325 held-out training-validation images (74 smoke) with `eval/calibration.json`, whose ordinary scenes and fire-like hard negatives keep the threshold honest (raw 0.34, recall 0.69 there). A fit on the validation split alone gave 0.45 (raw 0.17), which flagged smoke on 20–25 % of ordinary scenes; it was not used. None of these images is in the evaluation sample. |
 
 ## Limits and known weaknesses
 
-1. **Smoke recall is very low (7 % at 0.45).** Do not use smoke alone for any decision.
-2. **Fire-like scenes** fool the fire model on about a third of the frames at 0.45: sunsets, candles, stage lights,
-   orange-lit interiors. The API's 3-of-5 confirmation and the human operator are the safeguards. Detections are
+1. **Smoke: about 60 % recall, precision 0.63 at 0.45.** Fog, steam, haze, clouds, dust and snow spray are the
+   main false smoke detections. Use smoke as a hint for the operator, never alone for a decision.
+2. **Fire-like scenes** fool the fire model on about 40 % of the frames at 0.45 (sunsets, candles, stage lights,
+   orange-lit interiors). The API's 3-of-5 confirmation and the human operator are the safeguards. Detections are
    suggestions only (FR-C-11).
-3. **Teacher boxes, not human boxes.** Box placement inherits Grounding DINO's errors, so the box geometry is
-   approximate. The frame-level decision is what was evaluated.
-4. **Small dataset, photos not CCTV.** The model was trained on 471 positive images, mostly consumer photos. Drone,
-   CCTV, night and infrared footage are under-represented and were not evaluated.
+3. **Teacher boxes.** The Open Images boxes and all smoke boxes come from Grounding DINO, not from people, so box
+   geometry is approximate; the frame-level decision is what was evaluated. The human fire boxes of FireNET and FURG
+   are the only box-level ground truth.
+4. **Still a small dataset.** CCTV, drone, night and infrared footage remain under-represented; FURG adds a little
+   video and night footage.
 5. **The sample is small**, so expect ±4–8 points of sampling error on each figure: 123 fire-positive and 43
-   smoke-positive images.
-6. The evaluation machine was a shared cloud VM. Latency on a dedicated server core is likely lower.
+   smoke-positive images. The differences in fire figures between 1.0.0 and 2.0.0 are inside that error.
+6. The machine was a shared cloud VM; latency on a dedicated server core is likely lower.
 
 ## Improving the model
 
 The service does not change: only the ONNX file and its SHA-256 in `models/fetch_models.py` change.
 
-* Add D-Fire (CC0-1.0, 21,527 images with human fire and smoke boxes) on a GPU, then retrain and re-evaluate:
+* Add D-Fire (CC0-1.0, 21,527 images with human fire and smoke boxes, 0 = smoke, 1 = fire) from a machine that can
+  reach OneDrive or Kaggle, de-duplicate it against `eval/cache` with `training/dedupe.py`, then retrain:
 
   ```bash
-  python training/train.py --data training/work/data --yolo /data/D-Fire/train:smoke,fire --device cuda --epochs 80
+  python training/train.py ... --yolo /data/D-Fire/train:smoke,fire --device cuda --epochs 40
   ```
 
+* Label the remaining 536 fire-only Open Images V7 images with the teacher (they were left out for CPU time).
 * Train YOLOX-S at 640 px on a GPU server for better small-fire recall, at about 3 times the CPU cost.
 * Collect labelled frames from Tunisian Civil Protection footage, with their consent and under the platform's data
-  rules.
+  rules; a few hundred frames of local fog and steam would help smoke precision most.
 
 Reproduce these numbers:
 
 ```bash
 VISION_MODELS_DIR=/models python eval/evaluate.py --threads 2 --json results.json
+VISION_MODELS_DIR=/models python eval/evaluate_yolo.py --dir training/work/extra/firenet/test --classes fire,smoke
+VISION_MODELS_DIR=/models python eval/evaluate_yolo.py --dir training/work/extra/furg/test --classes fire,smoke
 ```

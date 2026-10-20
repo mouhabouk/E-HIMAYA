@@ -7,6 +7,8 @@ onnxruntime==1.30.0
 onnx==1.23.2
 numpy==2.5.4
 pillow==13.0.0
+# extra_datasets.py (FURG video frames) and the frame dHash; model 2.0.0.
+opencv-python-headless==5.0.0
 # YOLOX (Apache-2.0) at commit 6ddff4824372906469a7fae2dc3206c7aa4bbaee: PYTHONPATH=<checkout>, plus its imports:
 loguru==0.7.3
 psutil==7.2.2
