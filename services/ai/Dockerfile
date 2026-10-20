@@ -2,7 +2,7 @@
 #   docker build --target runtime -t ehimaya/ai .   the service (no model inside; models are mounted on /models)
 #   docker build --target models  -t ehimaya/ai-models .   one-shot job that downloads and converts the models
 # Base images pinned by digest (tag kept for readability); Dependabot proposes the updates.
-FROM ghcr.io/astral-sh/uv:0.11.32@sha256:df4cae8f3a96d175e2e5f992e597550000edbe78fdc2594d5cd8de1a217f504c AS uv
+FROM ghcr.io/astral-sh/uv:0.13.3@sha256:bee0a2a458fd956c5df7b8b4c5fed2257b0af34866e3da7b51db0be3acb375d1 AS uv
 
 # Dependencies exactly as locked in uv.lock (hashes checked), without the dev group, into /opt/venv.
 FROM python:3.12-slim@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1 AS deps
