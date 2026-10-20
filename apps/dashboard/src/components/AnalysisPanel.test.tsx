@@ -74,7 +74,7 @@ describe("AnalysisPanel", () => {
     renderApp(<AnalysisPanel report={report} />, { lang: "fr" });
     expect(screen.getByText("En attente d'analyse")).toBeInTheDocument();
     expect(screen.getByText("Ce signalement n’a pas encore été analysé.")).toBeInTheDocument();
-    expect(screen.getByTitle("Priorité 42 (moyenne)")).toBeInTheDocument();
+    expect(screen.getByTitle("Priorité 42 (normale)")).toBeInTheDocument();
   });
 
   it("renders in Arabic with the translated component labels", () => {
