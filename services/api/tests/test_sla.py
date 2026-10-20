@@ -50,7 +50,7 @@ async def _late_report(client: httpx.AsyncClient, session: AsyncSession, **overr
 
 
 async def _late_ids(client: httpx.AsyncClient, headers: dict[str, str], **params: Any) -> set[str]:
-    """Every id on the late list, following the cursor (the shared test database keeps late reports of earlier tests)."""
+    """Every id on the late list, following the cursor (the shared test database keeps earlier tests' late reports)."""
     ids: set[str] = set()
     cursor: str | None = None
     while True:

@@ -46,8 +46,8 @@ from app.modules.orgs.router import router as orgs_router
 from app.modules.orgs.staff_router import router as orgs_staff_router
 from app.modules.privacy.retention import retention_forever
 from app.modules.privacy.router import router as privacy_router
-from app.modules.reports.live import hub
 from app.modules.reports.jurisdiction import sla_forever
+from app.modules.reports.live import hub
 from app.modules.reports.live import router as live_router
 from app.modules.reports.router import router as reports_router
 from app.modules.reports.staff_router import router as staff_router

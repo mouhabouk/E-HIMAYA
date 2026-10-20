@@ -67,7 +67,9 @@ async def new_incident(
 ) -> tuple[str, str]:
     report = await new_report(client, location, **overrides)
     r = await client.post(
-        f"/api/v1/staff/reports/{report['id']}/incident", json={"action": "new"}, headers=staff(gouvernorat=code)
+        f"/api/v1/staff/reports/{report['id']}/incident",
+        json={"action": "new", "override_reason": "independent test incident"},
+        headers=staff(gouvernorat=code),
     )
     assert r.status_code == 200, r.text
     return r.json()["incident_id"], report["id"]
