@@ -26,9 +26,10 @@ from pathlib import Path
 from PIL import Image
 
 # Train and validation splits; the test split is kept for the evaluation (eval/evaluate.py).
+# V7 labels: about 2.7 times more verified fire and smoke images than the V5 files used for model 1.0.0.
 SPLITS = {
-    "train": "https://storage.googleapis.com/openimages/v5/train-annotations-human-imagelabels.csv",
-    "validation": "https://storage.googleapis.com/openimages/v5/validation-annotations-human-imagelabels.csv",
+    "train": "https://storage.googleapis.com/openimages/v7/oidv7-train-annotations-human-imagelabels.csv",
+    "validation": "https://storage.googleapis.com/openimages/v7/oidv7-val-annotations-human-imagelabels.csv",
 }
 # The public mirror only holds part of the train split (the "boxable" subset); missing images are skipped.
 IMAGE_URL = "https://open-images-dataset.s3.amazonaws.com/{}/{}.jpg"
@@ -66,7 +67,7 @@ def read_split(cache: Path, url: str) -> list[tuple[str, str, int]]:
                 if len(parts) != 4 or parts[2] not in keep:
                     continue
                 # People are everywhere: keep a fixed 1/64 sample of them (background images).
-                if parts[2] == PERSON and (parts[3] != "1" or stable(parts[0])[:2] not in SAMPLE):
+                if parts[2] == PERSON and (float(parts[3]) != 1 or stable(parts[0])[:2] not in SAMPLE):
                     continue
                 out.write(raw)
     rows = []

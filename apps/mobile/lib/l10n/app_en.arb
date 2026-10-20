@@ -849,5 +849,126 @@
   "reportGoLive": "Go live for this report",
   "errorStreamAlreadyActive": "A live stream is already running for this report.",
   "errorStreamNotActive": "This live stream is over.",
-  "errorReportClosed": "This report is closed: a live stream cannot be opened on it."
+  "errorReportClosed": "This report is closed: a live stream cannot be opened on it.",
+  "weatherTitle": "Weather near you",
+  "weatherLoading": "Loading the weather…",
+  "weatherNoLocation": "Allow location access to see the weather where you are.",
+  "weatherUseLocation": "Use my location",
+  "weatherOutsideCoverage": "The weather forecast covers Tunisia only.",
+  "weatherOffline": "No internet: the weather will be shown when the connection is back.",
+  "weatherUnavailable": "The weather could not be loaded.",
+  "weatherRetry": "Retry",
+  "weatherNotRefreshed": "Not refreshed: showing the last data received.",
+  "weatherUpdated": "Updated {time}",
+  "@weatherUpdated": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "weatherCachedAt": "Offline copy from {time}",
+  "@weatherCachedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "weatherNow": "Now",
+  "weatherNextHours": "Next hours",
+  "weatherTemperature": "{value} °C",
+  "@weatherTemperature": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "weatherWind": "Wind {speed} km/h",
+  "@weatherWind": {
+    "placeholders": {
+      "speed": {
+        "type": "String"
+      }
+    }
+  },
+  "weatherGusts": "gusts {speed} km/h",
+  "@weatherGusts": {
+    "placeholders": {
+      "speed": {
+        "type": "String"
+      }
+    }
+  },
+  "weatherHumidity": "Humidity {value}%",
+  "@weatherHumidity": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "weatherRain": "Rain {value} mm/h",
+  "@weatherRain": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "weatherRain24h": "{value} mm over 24 h",
+  "@weatherRain24h": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "weatherFireDanger": "Fire danger: {level}",
+  "@weatherFireDanger": {
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "weatherFireLow": "low",
+  "weatherFireModerate": "moderate",
+  "weatherFireHigh": "high",
+  "weatherFireVeryHigh": "very high",
+  "weatherFireExtreme": "extreme",
+  "weatherHeavyRain": "Heavy rain: {level}",
+  "@weatherHeavyRain": {
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "weatherRainWatch": "watch",
+  "weatherRainWarning": "warning",
+  "weatherCondClear": "Clear sky",
+  "weatherCondCloudy": "Cloudy",
+  "weatherCondFog": "Fog",
+  "weatherCondRain": "Rain",
+  "weatherCondSnow": "Snow",
+  "weatherCondStorm": "Thunderstorm",
+  "weatherAlertsTitle": "Weather alerts in force",
+  "weatherSource": "Data: {source}",
+  "@weatherSource": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "weatherSimulationBadge": "Simulation mode",
+  "weatherSimulationHelp": "These weather values are simulated, not real measurements.",
+  "offlineFallbackTitle": "No internet connection",
+  "offlineFallbackBody": "Your report is saved on the phone and will be sent automatically when the internet is back. To alert the civil protection now:",
+  "offlineSendSms": "Send by SMS",
+  "offlineSmsHelp": "Opens your SMS app with a short message (type and position of the report). You press Send yourself.",
+  "offlineSmsFee": "Your operator may charge the price of a standard SMS.",
+  "offlineSmsFailed": "The SMS app could not be opened. Call 198."
 }

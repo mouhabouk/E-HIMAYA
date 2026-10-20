@@ -168,6 +168,13 @@ async def create_report(
 
     if not await has_consented(session, reporter.user_id, get_settings().charter_version):
         raise HTTPException(status.HTTP_428_PRECONDITION_REQUIRED, "consent_required")
+    # Phase 7: the same report may already have arrived by SMS (no data connection); it is adopted, not doubled.
+    from app.modules.telephony.sms import adopt_sms_report
+
+    adopted = await adopt_sms_report(session, reporter, body)
+    if adopted is not None:
+        await session.commit()
+        return adopted, False
     org = await orgs.reporting_org(session, reporter, body.organization_id) if body.organization_id else None
     from_portal = reporter.principal is not None and reporter.principal.claims.get("azp") == PORTAL_CLIENT
 

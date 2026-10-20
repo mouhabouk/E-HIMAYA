@@ -1,0 +1,27 @@
+; ┏━━ SIMULATION ━━ endpoint of the call-sim service (compose profile "sim"): it calls 8000 with these credentials,
+; ┃   and outbound calls go to it when no trunk is configured (it answers and plays its prompt).
+; ┃ PRODUCTION: leave TELEPHONY_SIM_PASSWORD empty: this file is not rendered and the endpoint does not exist.
+; ┗━━━━━━━━━━━━━━━━
+[call-sim]
+type = auth
+auth_type = userpass
+username = call-sim
+password = @@TELEPHONY_SIM_PASSWORD@@
+
+[call-sim]
+type = aor
+contact = sip:call-sim:5060
+
+[call-sim]
+type = endpoint
+; A call whose media stopped (network lost, no BYE) is hung up instead of staying in the queue.
+rtp_timeout = 60
+context = ehimaya-sim-in
+disallow = all
+allow = ulaw,alaw
+transport = transport-udp
+auth = call-sim
+aors = call-sim
+direct_media = no
+trust_id_inbound = yes
+allow_transfer = no

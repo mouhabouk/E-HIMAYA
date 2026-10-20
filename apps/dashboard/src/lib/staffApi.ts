@@ -1,6 +1,7 @@
 import type { ApiClient } from "./api";
 import { bboxParam, filtersToQuery, type BBox, type ReportFilters } from "./filters";
 import { opsApi } from "./opsApi";
+import { phase7Api } from "./phase7Api";
 import { streamsApi } from "./streamsApi";
 import { normalizeOrgFilters, orgFiltersToQuery, type OrgFilters } from "./orgs";
 import type {
@@ -42,7 +43,7 @@ const docPath = (orgId: string, docId: string) => `${orgPath(orgId)}/documents/$
 /**
  * Typed calls for contract section 5 (phase 2), sections 2–4 (phase 3), section 9 (phase 4), the geo reference
  * phase 5 (operations, volunteers, notifications, safety tips: see opsApi.ts) and phase 6 (live streams:
- * see streamsApi.ts).
+ * see streamsApi.ts) and phase 7 (weather, forecast, decision support, telephony: see phase7Api.ts).
  */
 export function staffApi(api: ApiClient) {
   return {
@@ -176,6 +177,7 @@ export function staffApi(api: ApiClient) {
 
     ...opsApi(api),
     ...streamsApi(api),
+    ...phase7Api(api),
   };
 }
 

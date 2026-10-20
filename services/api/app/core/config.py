@@ -6,7 +6,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Annotated, Literal
 
-from pydantic import Field, SecretStr, field_validator, model_validator
+from pydantic import Field, SecretStr, ValidationInfo, field_validator, model_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 from app.core.secrets_policy import production_problems
@@ -195,6 +195,87 @@ class Settings(BaseSettings):
     # after the stream ended. Streams of a report follow the report (anonymised with it).
     retention_stream_days: int = Field(default=365, ge=1)
 
+    # Telephony (phase 7, docs/telephony.md): Asterisk driven over ARI (HTTP + WebSocket events in the worker role).
+    # Unset TELEPHONY_ARI_URL: the call endpoints answer 503 telephony_unavailable and no loop connects; SMS reports
+    # (POST /internal/sms/inbound) work without it.
+    telephony_ari_url: str | None = None
+    telephony_ari_user: str = "ehimaya-api"
+    telephony_ari_password: SecretStr | None = Field(default=None, min_length=16)
+    telephony_ari_app: str = "ehimaya"
+    # Handed to the dashboard softphone with its credentials: SIP over WebSocket URL (production:
+    # wss://<API_HOST>/telephony/ws through Caddy), SIP domain of the URIs, ICE servers (comma-separated URLs).
+    telephony_ws_public_url: str = "ws://localhost:8088/ws"
+    telephony_sip_domain: str = "ehimaya.local"
+    telephony_ice_servers: Annotated[list[str], NoDecode] = Field(default_factory=list)
+    # Lifetime of an operator's SIP credentials; the softphone asks for new ones before they expire.
+    telephony_credential_ttl_s: int = Field(default=14400, ge=300, le=86400)
+    # Directory Asterisk's MixMonitor writes call recordings into (volume shared with the worker).
+    telephony_recordings_dir: Path = Path("/telephony-recordings")
+    # A SIP trunk is configured on the Asterisk side (TELEPHONY_TRUNK_HOST): outbound calls to the PSTN possible.
+    telephony_trunk_enabled: bool = False
+    # Scenario 2 (ADR-10): blind transfer to 198 through the trunk. Off by default (scenario 1: the operator calls 198).
+    telephony_transfer_198_enabled: bool = False
+    # Outbound calls per staff member per hour (contact from the map, invitations to a crisis room).
+    telephony_dial_per_hour: int = Field(default=60, ge=1)
+    # Calls are recorded (after the recorded-call notice) only when true; must match TELEPHONY_RECORDING_ENABLED of the
+    # telephony container. Production: only once the processing is declared to the INPDP (legal point L04).
+    telephony_recording_enabled: bool = True
+    # Call records (metadata) and their recordings are deleted this long after the call ended: at most 2 years (L04).
+    retention_call_days: int = Field(default=730, ge=1, le=730)
+    # ┏━━ SIMULATION ━━ token of the smoke test / call-sim checks on GET /internal/sim/calls (calls with source=sim).
+    # ┃ PRODUCTION: leave TELEPHONY_SIM_TOKEN empty (APP_ENV=production refuses it); the endpoint then answers 404.
+    # ┗━━━━━━━━━━━━━━━━
+    telephony_sim_token: SecretStr | None = Field(default=None, min_length=24)
+    # SMS reports (FR-A-048): HMAC-SHA256 key shared with the SMS gateway that signs POST /internal/sms/inbound
+    # (X-Signature: sha256=<hex> of "<X-Timestamp>.<body>"). Unset: the endpoint answers 404.
+    sms_inbound_secret: SecretStr | None = Field(default=None, min_length=24)
+    # Window in which an SMS report and the same report synced later by the app are merged (same 8-hex prefix,
+    # category and sender), and in which a repeated SMS returns the existing report.
+    sms_dedup_window_h: int = Field(default=48, ge=1, le=168)
+
+    # Decision support (phase 7, docs/decision-support.md). Self-hosted routing engine (Valhalla on OpenStreetMap
+    # Tunisia, compose profile "routing"). Unset or down: straight-line estimate answered with "engine": "fallback".
+    routing_url: str | None = None
+    routing_timeout_s: float = Field(default=5.0, gt=0, le=60)
+    # Ollama server of the incident assistant (the local model of the AI layer, compose profile "ai"). Unset or model
+    # not pulled: the assistant answers 503 assistant_unavailable; recommendations and routing still work.
+    ollama_url: str | None = None
+    assistant_model: str = "qwen3:4b"
+    assistant_timeout_s: float = Field(default=120.0, gt=0, le=600)
+    assistant_num_ctx: int = Field(default=8192, ge=2048, le=131072)
+    # Assistant questions per staff member per hour.
+    assistant_per_hour: int = Field(default=30, ge=1)
+    # Procedures library (docs/procedures/*.ar.md, *.fr.md) indexed by the worker. Unset: the repository's
+    # docs/procedures when present (development, tests); compose mounts it at /app/procedures.
+    procedures_dir: Path | None = None
+
+    # Weather layer and spread forecasts (phase 7, docs/weather-forecast.md).
+    # ┏━━ SIMULATION ━━ WEATHER_PROVIDER=sim: a deterministic weather simulator feeds the grid (no network); it is the
+    # ┃   default when APP_ENV=development (local stacks, CI, tests), so tests never call Open-Meteo.
+    # ┃ PRODUCTION: WEATHER_PROVIDER=open-meteo (the default when APP_ENV=production, which refuses "sim"), and
+    # ┃   WEATHER_API_URL=https://api.open-meteo.com, https://customer-api.open-meteo.com with WEATHER_API_KEY, a
+    # ┃   self-hosted Open-Meteo or an INM feed exposing the same /v1/forecast interface.
+    # ┗━━━━━━━━━━━━━━━━
+    weather_provider: Literal["open-meteo", "sim"] | None = None
+    weather_api_url: str = "https://api.open-meteo.com"
+    # Commercial Open-Meteo API key (customer-api.open-meteo.com); unset for the free tier or a self-hosted server.
+    weather_api_key: SecretStr | None = None
+    # The worker refreshes the grid every interval; a point is fetched again only when its data is older than
+    # weather_fetch_min_age_s, at most weather_max_points_per_cycle points per cycle (free tier: < 10 000 calls a day).
+    weather_refresh_interval_s: int = Field(default=1800, ge=60)
+    weather_fetch_min_age_s: int = Field(default=3600, ge=60)
+    weather_max_points_per_cycle: int = Field(default=160, ge=1, le=5000)
+    weather_batch_size: int = Field(default=50, ge=1, le=100)
+    weather_request_timeout_s: float = Field(default=20.0, gt=0, le=120)
+    # Days of past weather requested once for a new point, to spin up the fire weather moisture codes.
+    weather_spinup_days: int = Field(default=30, ge=1, le=92)
+    # Spacing of the grid laid over Tunisia on first start (degrees).
+    weather_grid_step_deg: float = Field(default=0.25, ge=0.05, le=1.0)
+    # A position farther than this from every grid point has no weather (km).
+    weather_max_distance_km: float = Field(default=40.0, gt=0, le=200)
+    # Terrain model (Copernicus DEM GLO-90) installed by the one-shot "terrain" job; absent: slope 0, stated.
+    terrain_dir: Path = Path("/terrain")
+
     api_cors_origins: Annotated[list[str], NoDecode] = Field(default_factory=list)
     api_log_level: str = "INFO"
     db_pool_size: int = 10
@@ -227,6 +308,12 @@ class Settings(BaseSettings):
             if self.stream_sim_token is not None:
                 # SIMULATION: the stream simulator never runs in production.
                 problems.append("STREAM_SIM_TOKEN must be empty (simulation only)")
+            if self.weather_provider == "sim":
+                # SIMULATION: simulated weather never feeds production decisions.
+                problems.append("WEATHER_PROVIDER must not be sim (simulation only)")
+            if self.telephony_sim_token is not None:
+                # SIMULATION: the call simulator checks never run in production.
+                problems.append("TELEPHONY_SIM_TOKEN must be empty (simulation only)")
             if problems:
                 raise ValueError("APP_ENV=production refuses weak or example secrets: " + "; ".join(problems))
         return self
@@ -275,12 +362,29 @@ class Settings(BaseSettings):
         "vision_api_token",
         "vision_callback_token",
         "vision_read_password",
+        "telephony_ari_url",
+        "telephony_ari_password",
+        "telephony_sim_token",
+        "sms_inbound_secret",
+        "routing_url",
+        "ollama_url",
+        "procedures_dir",
+        "weather_provider",
+        "weather_api_key",
         mode="before",
     )
     @classmethod
     def _empty_is_unset(cls, value: object) -> object:
         # Compose passes "" when the optional AI profile is not configured.
         return None if value == "" else value
+
+    @field_validator("telephony_recording_enabled", mode="before")
+    @classmethod
+    def _recording_default(cls, value: object, info: ValidationInfo) -> object:
+        # Empty in .env = the environment's default: recorded in development, not in production (INPDP, L04).
+        if value == "" or value is None:
+            return info.data.get("app_env") != "production"
+        return value
 
     @field_validator("fcm_api_url", mode="before")
     @classmethod
@@ -296,6 +400,11 @@ class Settings(BaseSettings):
         "stream_internal_rtsp_url",
         "mediamtx_api_url",
         "vision_service_url",
+        "routing_url",
+        "ollama_url",
+        "telephony_ari_url",
+        "telephony_ws_public_url",
+        "weather_api_url",
     )
     @classmethod
     def _strip_slash(cls, value: str | None) -> str | None:
@@ -307,12 +416,19 @@ class Settings(BaseSettings):
             raise ValueError("VISION_ALERT_CONFIDENCE must be at least VISION_MIN_CONFIDENCE")
         return self
 
-    @field_validator("oidc_issuers", "api_cors_origins", mode="before")
+    @field_validator("oidc_issuers", "api_cors_origins", "telephony_ice_servers", mode="before")
     @classmethod
     def _split_csv(cls, value: object) -> object:
         if isinstance(value, str):
             return [item.strip().rstrip("/") for item in value.split(",") if item.strip()]
         return value
+
+    @property
+    def weather_source(self) -> Literal["open-meteo", "sim"]:
+        """WEATHER_PROVIDER, defaulting to the simulator in development and to Open-Meteo in production."""
+        if self.weather_provider is not None:
+            return self.weather_provider
+        return "open-meteo" if self.app_env == "production" else "sim"
 
 
 def parse_keyring(value: str) -> dict[int, bytes]:

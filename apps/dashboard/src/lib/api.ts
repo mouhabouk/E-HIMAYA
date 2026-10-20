@@ -62,6 +62,15 @@ export const ERROR_CODES = [
   "translation_missing",
   // Live streams (phase 6 §2, §4).
   "stream_not_active",
+  // Weather, forecast, decision support and telephony (phase 7).
+  "suggestion_not_pending",
+  "assistant_unavailable",
+  "transfer_disabled",
+  "invalid_number",
+  "no_active_call",
+  "softphone_not_registered",
+  "telephony_unavailable",
+  "forecast_unavailable",
   "rate_limited",
   "validation_error",
   "bad_request",

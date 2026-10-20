@@ -13,6 +13,7 @@ class AppConfig {
     required this.mapTileUrl,
     required this.mapAttribution,
     required this.portalUrl,
+    this.smsReportNumber = '',
   });
 
   factory AppConfig.fromEnvironment() => const AppConfig(
@@ -45,6 +46,7 @@ class AppConfig {
       'PORTAL_URL',
       defaultValue: 'http://localhost:5174',
     ),
+    smsReportNumber: String.fromEnvironment('SMS_REPORT_NUMBER'),
   );
 
   final String apiBaseUrl;
@@ -57,6 +59,10 @@ class AppConfig {
 
   /// Institutions portal (phase 4): detailed editing of an institution is done there.
   final String portalUrl;
+
+  /// FR-A-048: number of the platform's SMS gateway that receives `EH1 …` reports when the
+  /// phone has no internet. Empty (the default): the "send by SMS" option is hidden.
+  final String smsReportNumber;
 
   /// The OIDC issuer may be plain HTTP only on the development stack.
   bool get allowInsecureOidc => Uri.parse(oidcIssuer).scheme == 'http';

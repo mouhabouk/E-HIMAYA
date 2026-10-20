@@ -20,6 +20,7 @@ import 'core/sync/sync_scheduler.dart';
 import 'features/alerts/alerts_providers.dart';
 import 'features/emergency/emergency_only_app.dart';
 import 'features/volunteer/volunteer_providers.dart';
+import 'features/weather/weather_providers.dart';
 import 'l10n/app_localizations.dart';
 
 Future<void> main() async {
@@ -55,6 +56,7 @@ Future<void> main() async {
   container.read(batterySaverProvider.notifier).start();
   container.read(syncSchedulerProvider).start();
   container.read(alertsSchedulerProvider).start();
+  container.read(weatherSchedulerProvider).start();
   container.read(readinessTrackerProvider).start();
   // Push is optional: without Firebase on this build the app polls the active alerts.
   unawaited(

@@ -3171,6 +3171,270 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This report is closed: a live stream cannot be opened on it.'**
   String get errorReportClosed;
+
+  /// No description provided for @weatherTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Weather near you'**
+  String get weatherTitle;
+
+  /// No description provided for @weatherLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading the weather…'**
+  String get weatherLoading;
+
+  /// No description provided for @weatherNoLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow location access to see the weather where you are.'**
+  String get weatherNoLocation;
+
+  /// No description provided for @weatherUseLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Use my location'**
+  String get weatherUseLocation;
+
+  /// No description provided for @weatherOutsideCoverage.
+  ///
+  /// In en, this message translates to:
+  /// **'The weather forecast covers Tunisia only.'**
+  String get weatherOutsideCoverage;
+
+  /// No description provided for @weatherOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet: the weather will be shown when the connection is back.'**
+  String get weatherOffline;
+
+  /// No description provided for @weatherUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The weather could not be loaded.'**
+  String get weatherUnavailable;
+
+  /// No description provided for @weatherRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get weatherRetry;
+
+  /// No description provided for @weatherNotRefreshed.
+  ///
+  /// In en, this message translates to:
+  /// **'Not refreshed: showing the last data received.'**
+  String get weatherNotRefreshed;
+
+  /// No description provided for @weatherUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated {time}'**
+  String weatherUpdated(String time);
+
+  /// No description provided for @weatherCachedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline copy from {time}'**
+  String weatherCachedAt(String time);
+
+  /// No description provided for @weatherNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Now'**
+  String get weatherNow;
+
+  /// No description provided for @weatherNextHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Next hours'**
+  String get weatherNextHours;
+
+  /// No description provided for @weatherTemperature.
+  ///
+  /// In en, this message translates to:
+  /// **'{value} °C'**
+  String weatherTemperature(String value);
+
+  /// No description provided for @weatherWind.
+  ///
+  /// In en, this message translates to:
+  /// **'Wind {speed} km/h'**
+  String weatherWind(String speed);
+
+  /// No description provided for @weatherGusts.
+  ///
+  /// In en, this message translates to:
+  /// **'gusts {speed} km/h'**
+  String weatherGusts(String speed);
+
+  /// No description provided for @weatherHumidity.
+  ///
+  /// In en, this message translates to:
+  /// **'Humidity {value}%'**
+  String weatherHumidity(String value);
+
+  /// No description provided for @weatherRain.
+  ///
+  /// In en, this message translates to:
+  /// **'Rain {value} mm/h'**
+  String weatherRain(String value);
+
+  /// No description provided for @weatherRain24h.
+  ///
+  /// In en, this message translates to:
+  /// **'{value} mm over 24 h'**
+  String weatherRain24h(String value);
+
+  /// No description provided for @weatherFireDanger.
+  ///
+  /// In en, this message translates to:
+  /// **'Fire danger: {level}'**
+  String weatherFireDanger(String level);
+
+  /// No description provided for @weatherFireLow.
+  ///
+  /// In en, this message translates to:
+  /// **'low'**
+  String get weatherFireLow;
+
+  /// No description provided for @weatherFireModerate.
+  ///
+  /// In en, this message translates to:
+  /// **'moderate'**
+  String get weatherFireModerate;
+
+  /// No description provided for @weatherFireHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'high'**
+  String get weatherFireHigh;
+
+  /// No description provided for @weatherFireVeryHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'very high'**
+  String get weatherFireVeryHigh;
+
+  /// No description provided for @weatherFireExtreme.
+  ///
+  /// In en, this message translates to:
+  /// **'extreme'**
+  String get weatherFireExtreme;
+
+  /// No description provided for @weatherHeavyRain.
+  ///
+  /// In en, this message translates to:
+  /// **'Heavy rain: {level}'**
+  String weatherHeavyRain(String level);
+
+  /// No description provided for @weatherRainWatch.
+  ///
+  /// In en, this message translates to:
+  /// **'watch'**
+  String get weatherRainWatch;
+
+  /// No description provided for @weatherRainWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'warning'**
+  String get weatherRainWarning;
+
+  /// No description provided for @weatherCondClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear sky'**
+  String get weatherCondClear;
+
+  /// No description provided for @weatherCondCloudy.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloudy'**
+  String get weatherCondCloudy;
+
+  /// No description provided for @weatherCondFog.
+  ///
+  /// In en, this message translates to:
+  /// **'Fog'**
+  String get weatherCondFog;
+
+  /// No description provided for @weatherCondRain.
+  ///
+  /// In en, this message translates to:
+  /// **'Rain'**
+  String get weatherCondRain;
+
+  /// No description provided for @weatherCondSnow.
+  ///
+  /// In en, this message translates to:
+  /// **'Snow'**
+  String get weatherCondSnow;
+
+  /// No description provided for @weatherCondStorm.
+  ///
+  /// In en, this message translates to:
+  /// **'Thunderstorm'**
+  String get weatherCondStorm;
+
+  /// No description provided for @weatherAlertsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Weather alerts in force'**
+  String get weatherAlertsTitle;
+
+  /// No description provided for @weatherSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Data: {source}'**
+  String weatherSource(String source);
+
+  /// No description provided for @weatherSimulationBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Simulation mode'**
+  String get weatherSimulationBadge;
+
+  /// No description provided for @weatherSimulationHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'These weather values are simulated, not real measurements.'**
+  String get weatherSimulationHelp;
+
+  /// No description provided for @offlineFallbackTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection'**
+  String get offlineFallbackTitle;
+
+  /// No description provided for @offlineFallbackBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your report is saved on the phone and will be sent automatically when the internet is back. To alert the civil protection now:'**
+  String get offlineFallbackBody;
+
+  /// No description provided for @offlineSendSms.
+  ///
+  /// In en, this message translates to:
+  /// **'Send by SMS'**
+  String get offlineSendSms;
+
+  /// No description provided for @offlineSmsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Opens your SMS app with a short message (type and position of the report). You press Send yourself.'**
+  String get offlineSmsHelp;
+
+  /// No description provided for @offlineSmsFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Your operator may charge the price of a standard SMS.'**
+  String get offlineSmsFee;
+
+  /// No description provided for @offlineSmsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The SMS app could not be opened. Call 198.'**
+  String get offlineSmsFailed;
 }
 
 class _AppLocalizationsDelegate
