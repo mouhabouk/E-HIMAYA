@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +8,7 @@ import 'api_client.dart';
 import 'api_error.dart';
 import 'models.dart';
 import 'notify_models.dart';
+import 'rewards_models.dart';
 import 'stream_models.dart';
 import 'volunteer_models.dart';
 import 'weather_models.dart';
@@ -423,6 +425,56 @@ class EHimayaApi {
     final newEtag = r.headers.value('etag') ?? etag;
     if (r.statusCode == 304) return TipsFetch(null, newEtag);
     return TipsFetch(SafetyTips.fromJson(r.data), newEtag);
+  });
+
+  // ---------------------------------------------------------------- rewards (phase 8 §3)
+
+  /// Balance, badges, latest history and certificates of the caller. An anonymous identity gets
+  /// zeros with `anonymous: true` (anonymous reports earn no points).
+  Future<RewardsSummary> myRewards() => guardApi(() async {
+    final r = await _dio.get<Map<String, Object?>>('/api/v1/me/rewards');
+    return RewardsSummary.fromJson(r.data!);
+  });
+
+  /// Older ledger rows, after the first page carried by [myRewards].
+  Future<PointsHistoryPage> rewardsHistory({
+    required String cursor,
+    int limit = 50,
+  }) => guardApi(() async {
+    final r = await _dio.get<Map<String, Object?>>(
+      '/api/v1/me/rewards/history',
+      queryParameters: {'cursor': cursor, 'limit': limit},
+    );
+    return PointsHistoryPage.fromJson(r.data!);
+  });
+
+  /// The PDF of one of the caller's certificates. The API answers with a redirect to a
+  /// short-lived presigned storage URL, fetched without any identity header (the Bearer token
+  /// never leaves the API); an inline PDF answer is accepted too.
+  Future<Uint8List> rewardCertificatePdf(String id) => guardApi(() async {
+    final r = await _dio.get<List<int>>(
+      '/api/v1/me/rewards/certificates/${Uri.encodeComponent(id)}',
+      options: Options(
+        responseType: ResponseType.bytes,
+        followRedirects: false,
+        validateStatus: (s) => s != null && s >= 200 && s < 400,
+      ),
+    );
+    if (r.statusCode == 200) return Uint8List.fromList(r.data ?? const []);
+    final location = r.headers.value('location');
+    if (location == null) {
+      throw ApiException(ApiErrorCode.server, statusCode: r.statusCode);
+    }
+    final target = Uri.parse(_dio.options.baseUrl).resolve(location);
+    final pdf = await _dio.getUri<List<int>>(
+      target,
+      options: Options(
+        responseType: ResponseType.bytes,
+        headers: {'Accept': 'application/pdf'},
+        extra: {kPublicEndpoint: true},
+      ),
+    );
+    return Uint8List.fromList(pdf.data ?? const []);
   });
 }
 

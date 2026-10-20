@@ -2,9 +2,10 @@
 
 Retrieval gathers numbered sources — passages of docs/procedures in the operator's language (e5 vectors when the AI
 service is up, full-text otherwise, boosted by the incident's category and classification), similar closed incidents
-of the operator's scope (pgvector over their reports, their closing evaluation as excerpt) and the incident's own
-reports. The local model answers from those sources only, cites them by number, and says so when they do not hold
-the answer (``supported: false``, fixed refusal text, no sources).
+of the operator's scope (pgvector over their reports, their closing evaluation as excerpt), published entries of the
+national memory the operator may read (phase 8, ``kind: "memory"``) and the incident's own reports. The local model
+answers from those sources only, cites them by number, and says so when they do not hold the answer
+(``supported: false``, fixed refusal text, no sources).
 
 Prompt-injection safety: the sources and the incident facts are wrapped as data, angle brackets in them are
 neutralised so no text can close a block, the system prompt states that report texts may contain instructions that
@@ -30,6 +31,7 @@ from app.modules.audit import service as audit
 from app.modules.decision import domain, procedures
 from app.modules.decision import schemas as s
 from app.modules.decision.llm import LlmClient, LlmRejected, LlmUnavailable, get_llm
+from app.modules.knowledge import search as library
 from app.modules.ops.models import Incident, TimelineEvent
 from app.modules.reports.domain import Status
 from app.modules.reports.models import Report
@@ -38,6 +40,7 @@ log = structlog.get_logger()
 
 PROCEDURE_SOURCES = 4
 INCIDENT_SOURCES = 2
+MEMORY_SOURCES = 2
 REPORT_SOURCES = 3
 SIMILAR_MIN = 0.85
 EXCERPT_CHARS = 500
@@ -182,6 +185,22 @@ async def _similar_incidents(session: AsyncSession, principal: Principal, incide
     return found
 
 
+async def _memory_entries(
+    session: AsyncSession, principal: Principal, incident: Incident, question: str, vector: list[float] | None
+) -> list[Candidate]:
+    rows = await library.memory_for_assistant(
+        session, principal, question=question, category=incident.category, vector=vector, limit=MEMORY_SOURCES
+    )
+    return [
+        Candidate(
+            source=s.Source(kind="memory", id=row.ref_id, title=row.title, excerpt=_excerpt(row.body or "")),
+            body=_excerpt(row.body or "", 1500),
+            label="national memory (after-action review published by staff)",
+        )
+        for row in rows
+    ]
+
+
 async def _own_reports(session: AsyncSession, incident: Incident) -> list[Candidate]:
     rows = (
         await session.execute(
@@ -291,6 +310,7 @@ async def ask(session: AsyncSession, principal: Principal, incident: Incident, b
         for h in hits
     ]
     candidates += await _similar_incidents(session, principal, incident)
+    candidates += await _memory_entries(session, principal, incident, body.question, vector)
     candidates += await _own_reports(session, incident)
 
     answer, supported = "", False

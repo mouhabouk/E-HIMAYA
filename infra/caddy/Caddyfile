@@ -18,9 +18,19 @@
 		-Server
 		-X-Powered-By
 	}
+	# No client addresses in access logs (audit R1, S07: anonymous reporters must not be traceable through the
+	# edge). Rate limiting happens in the API on an opaque hash, so the logs never need the raw IP.
 	log {
 		output stdout
-		format json
+		format filter {
+			wrap json
+			request>remote_ip delete
+			request>remote_port delete
+			request>client_ip delete
+			request>headers>X-Forwarded-For delete
+			request>headers>X-Real-Ip delete
+			request>headers>Cf-Connecting-Ip delete
+		}
 	}
 }
 

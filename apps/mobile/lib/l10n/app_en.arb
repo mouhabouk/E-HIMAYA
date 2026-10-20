@@ -970,5 +970,110 @@
   "offlineSendSms": "Send by SMS",
   "offlineSmsHelp": "Opens your SMS app with a short message (type and position of the report). You press Send yourself.",
   "offlineSmsFee": "Your operator may charge the price of a standard SMS.",
-  "offlineSmsFailed": "The SMS app could not be opened. Call 198."
+  "offlineSmsFailed": "The SMS app could not be opened. Call 198.",
+  "rewardsTitle": "My rewards",
+  "homeRewardsDesc": "Points, badges and certificates earned by useful reports.",
+  "rewardsBalanceLabel": "Points balance",
+  "rewardsNoBadge": "No badge yet",
+  "rewardsCurrentBadge": "Current badge: {badge}",
+  "@rewardsCurrentBadge": {
+    "placeholders": {
+      "badge": {
+        "type": "String"
+      }
+    }
+  },
+  "rewardsNextBadge": "Next badge, {badge}: {points} points to go",
+  "@rewardsNextBadge": {
+    "placeholders": {
+      "badge": {
+        "type": "String"
+      },
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "rewardsTopBadge": "You hold the highest badge. Thank you for your vigilance.",
+  "rewardsConfirmNote": "Silver, gold and ambassador badges appear once a civil protection officer has confirmed them.",
+  "badgeBronze": "Bronze",
+  "badgeSilver": "Silver",
+  "badgeGold": "Gold",
+  "badgeAmbassador": "Ambassador",
+  "rewardsPausedTitle": "Points paused",
+  "rewardsPausedBody": "A disaster level is in force. New points are kept and will be added when the level drops.",
+  "rewardsPendingPoints": "Points waiting: {points}",
+  "@rewardsPendingPoints": {
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "rewardsHistoryTitle": "History",
+  "rewardsHistoryEmpty": "No points yet. Points are added when a report you sent is verified and closed.",
+  "rewardsShowMore": "Show more",
+  "pointsReasonReportVerified": "Verified report",
+  "pointsReasonHelpedRescue": "Report that helped a rescue",
+  "pointsReasonAccurateCategory": "Right category chosen",
+  "pointsReasonVolunteerMission": "Volunteer mission completed",
+  "pointsReasonManual": "Adjustment by the civil protection",
+  "pointsReasonRevocation": "Points withdrawn",
+  "pointsReasonOther": "Other",
+  "rewardsCapped": "daily limit reached",
+  "rewardsDailyCap": "At most {points} points can be earned per day.",
+  "@rewardsDailyCap": {
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "rewardsCertificatesTitle": "Certificates",
+  "rewardsCertificatesEmpty": "No certificate yet.",
+  "rewardsCertificateYear": "Year {year}",
+  "@rewardsCertificateYear": {
+    "placeholders": {
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "distinctionVigilantCitizen": "Vigilant citizen",
+  "distinctionBraveVolunteer": "Brave volunteer",
+  "distinctionLeadingInstitution": "Leading institution",
+  "distinctionBadge": "{badge} badge",
+  "@distinctionBadge": {
+    "placeholders": {
+      "badge": {
+        "type": "String"
+      }
+    }
+  },
+  "distinctionOther": "Distinction",
+  "rewardsOpenPdf": "Open the PDF certificate",
+  "rewardsPdfNoViewer": "No app on this phone can open the PDF.",
+  "rewardsAnonymousTitle": "Anonymous reports earn no points",
+  "rewardsAnonymousBody": "A report sent without an account cannot be linked to a person, so it earns no points, badges or certificates. Create an account to take part; reports already sent anonymously stay anonymous.",
+  "rewardsSafetyNotice": "Never put yourself in danger to report. Your safety comes first: in an emergency, call 198.",
+  "rewardsPrizesNotice": "Points, badges and certificates are a public recognition, not money. Any annual prize is subject to a decision of the competent authority.",
+  "rewardsOfflineCopy": "Offline: copy saved on {date}.",
+  "@rewardsOfflineCopy": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "rewardsHowTitle": "How to earn points",
+  "rewardsHowBody": "Points are added when a report you sent is verified and closed, with more when it helped a rescue or when you chose the right category, and for each volunteer mission completed. No points are given for false or rejected reports.",
+  "trackPointsEarned": "Points earned by this report: {points}",
+  "@trackPointsEarned": {
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "trackPointsOpenRewards": "See my rewards"
 }

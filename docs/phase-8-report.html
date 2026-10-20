@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ء-حماية | تقرير المرحلة 8</title>
+<style>
+:root{--bg:#f7f8fa;--paper:#fff;--ink:#1b2430;--muted:#5b6675;--line:#dfe3e8;--accent:#b3261e;--accent2:#0b5cad;--ok:#1e7d3a;--warn:#a15c00;--chip:#eef1f5;--head:#f1f3f6}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1318;--paper:#161b22;--ink:#e6eaef;--muted:#9aa5b1;--line:#2a313b;--accent:#ff6b5e;--accent2:#5aa9ff;--ok:#5cc97a;--warn:#e0a24a;--chip:#1f2630;--head:#1c222b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Naskh Arabic","Segoe UI",Tahoma,Arial,sans-serif;line-height:1.75;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header.cover{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:10px;padding:28px 24px;margin-bottom:20px}
+header.cover h1{margin:0 0 6px;font-size:30px}
+header.cover .sub{color:var(--muted);margin:0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:16px}
+.meta div{background:var(--chip);border-radius:6px;padding:8px 12px;font-size:14px}
+.meta b{display:block;color:var(--muted);font-weight:600;font-size:12px}
+nav.toc{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px 24px;margin-bottom:20px}
+nav.toc ol{margin:0;padding-inline-start:20px;columns:2;column-gap:32px}
+@media (max-width:700px){nav.toc ol{columns:1}}
+nav.toc a,a{color:var(--accent2);text-decoration:none}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:20px}
+h2{margin-top:0;font-size:23px;border-bottom:2px solid var(--line);padding-bottom:8px}
+h3{font-size:19px;margin-top:28px;color:var(--accent2)}
+h4{font-size:16px;margin-bottom:4px}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:start;vertical-align:top}
+th{background:var(--head);font-weight:700;white-space:nowrap}
+td code,p code,li code{direction:ltr;unicode-bidi:isolate;background:var(--chip);padding:1px 5px;border-radius:4px;font-size:13px}
+.id{font-family:Consolas,monospace;direction:ltr;unicode-bidi:isolate;white-space:nowrap;font-size:13px;color:var(--muted)}
+.p{display:inline-block;border-radius:10px;padding:0 8px;font-size:12px;font-weight:700;white-space:nowrap}
+.M{background:#fde2e0;color:#8c1d16}.S{background:#fff1d6;color:#7a4a00}.C{background:#e1efff;color:#0a4a8c}.W{background:#e8e8e8;color:#444}
+@media (prefers-color-scheme:dark){.M{background:#4a1d1a;color:#ffb4ad}.S{background:#4a3510;color:#ffd38a}.C{background:#14304f;color:#a8d1ff}.W{background:#333;color:#ccc}}
+.note{border-inline-start:4px solid var(--accent2);background:var(--chip);padding:10px 14px;border-radius:6px;margin:12px 0}
+.warn{border-inline-start:4px solid var(--warn)}
+.sim{display:inline-block;background:#f59e0b;color:#1f1300;font-weight:700;font-size:12px;padding:1px 8px;border-radius:999px;margin-inline-end:6px}
+tr.simrow td{background:color-mix(in srgb,#f59e0b 12%,transparent)}
+.ltr{direction:ltr;unicode-bidi:isolate}
+ul,ol{padding-inline-start:22px}
+footer{color:var(--muted);text-align:center;font-size:13px}
+@media print{body{background:#fff}section,header.cover,nav.toc{border:none;break-inside:avoid-page}nav.toc{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="cover">
+  <h1>ء-حماية <span class="ltr">e-Himaya</span></h1>
+  <p class="sub">تقرير المرحلة 8: المعرفة والتحليلات</p>
+  <div class="meta">
+    <div><b>التاريخ</b>2026-10-20</div>
+    <div><b>الفرع</b><span class="ltr">phase-8</span></div>
+    <div><b>الحالة</b>منجزة، بانتظار الدمج وموافقتك</div>
+    <div><b>المراجع</b><a href="api/phase-8-contract.md">عقد الواجهة البرمجية</a> · <a href="audit-r1-closure.html">جدول إغلاق تدقيق R1</a> · <a href="deploy-production.md">النشر</a> · <a href="versions.md">الإصدارات</a></div>
+  </div>
+</header>
+
+<section>
+<h2>1. جدول التقدم</h2>
+<div class="tbl"><table>
+<tr><th>المتطلب</th><th>البند</th><th>ما أُنجز</th><th>التحقق</th><th>التقدم</th></tr>
+<tr><td>FR-C-01</td><td>التحليلات</td><td>مؤشرات الفترة (المستلم، الموثق، الجاري، المغلق، المرفوض)، متوسط زمن الاستجابة والشريحة 90%، التوزيع حسب الصنف والولاية والحالة والمصدر والساعة. منحنيات زمنية مع المقارنة بالسنة السابقة ونطاق موسمي متوقع، وخريطة حرارية بخلايا سداسية لا تكشف أي موقع فردي. لكل رسم جدول بديل لقارئات الشاشة.</td><td>اختبارات بأرقام محسوبة يدويا</td><td>100%</td></tr>
+<tr><td>FR-C-12</td><td>محاكاة «ماذا لو»</td><td>سيناريو بحسب الولايات والصنف ومعامل الطلب والموارد غير المتوفرة والطقس: يعيد تشغيل معدل البلاغات التاريخي في 200 محاكاة على الأقل بنواة ثابتة، ويعطي الانتظار المتوقع واستغلال الموارد والساعات التي يتجاوز فيها الطلب القدرة. كل نتيجة تذكر مصدرها التاريخي وأنها غير معايرة، وتعلن ثقة منخفضة عند قلة المعطيات.</td><td>اختبارات (النتيجة نفسها بالنواة نفسها)</td><td>100%</td></tr>
+<tr><td>FR-C-21</td><td>مستودع التقارير</td><td>تقارير PDF (عربية من اليمين إلى اليسار أو فرنسية) وExcel: ملخص حادثة أو فترة أو ولاية أو سيناريو أو مراجعة ما بعد الحدث. بحث وتصفية، تنزيل مدقق، وتقارير دورية يومية أو أسبوعية أو شهرية بتوقيت تونس مع إشعار للمستلمين. كل خانة أقل من 5 بلاغات تظهر «&lt;5».</td><td>ملفات PDF وExcel حقيقية تُنتج وتُفحص في الاختبارات</td><td>100%</td></tr>
+<tr><td>FR-C-22</td><td>الذاكرة الوطنية</td><td>بطاقات للكوارث السابقة: الخلاصة ونقاط القوة والضعف والدروس والتوصيات بالعربية والفرنسية، بمستويات وصول، ومسار مسودة ثم مراجعة ثم نشر (المراجع غير الكاتب)، وسجل نسخ مع مقارنة. زر «ابدأ من الحادثة» يملأ المسودة من خطها الزمني وأرقامها. البطاقات المنشورة صارت مصدرا للمساعد الذكي.</td><td>اختبارات</td><td>100%</td></tr>
+<tr><td>FR-C-23</td><td>مكتبة الأحداث</td><td>بحث واحد في الذاكرة والتقارير والحوادث ونصوص البلاغات والمكالمات والإجراءات: OpenSearch 2 بمحللي العربية والفرنسية، مع بحث دلالي بالتضمينات يُدمج مع النتائج النصية، وروزنامة وعرض شجري حسب الفترة والنوع والولاية. يرجع إلى PostgreSQL آليا إذا توقف OpenSearch. كل نتيجة تُصفّى بصلاحية المستعمل وولايته قبل عرضها.</td><td>19 اختبارا، منها اختباران على عقدة OpenSearch حقيقية في CI</td><td>100%</td></tr>
+<tr><td>FR-A-070، 071، 072، FR-C-20</td><td>المكافآت</td><td>سجل نقاط لا يقبل التعديل، قواعد قابلة للضبط، شارات برونزية وفضية وذهبية وسفير (الفضية فما فوق بتأكيد موظف)، ترشيحات «المواطن اليقظ» و«المتطوع الشجاع» و«المؤسسة الرائدة» (المقترح لا يقرر)، وشهادات PDF موقعة برمز QR لا يكشف إلا الحروف الأولى من الاسم. شاشة المكافآت في التطبيق بثلاث لغات، تعمل دون اتصال، وتظهر النقاط على شاشة تتبع البلاغ.</td><td>12 اختبارا للخلفية و15 للتطبيق</td><td>100%</td></tr>
+<tr><td>تدقيق R1</td><td>جدول الإغلاق</td><td>البنود الـ27 مقابل الدليل الموجود فعلا في الكود، وما ينقص، والمسؤول، والموعد. أُغلق فيها S07: رمز التتبع صار عشوائيا بدل التسلسلي، وحُذفت عناوين IP من سجلات الخادم الأمامي.</td><td>مراجعة الكود بندا بندا</td><td>100%</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>2. قرارات تحتاج علمك</h2>
+<div class="tbl"><table>
+<tr><th>القرار</th><th>السبب</th></tr>
+<tr><td>المكافآت على الفائدة الموثقة فقط</td><td>تنفيذا لملاحظة التدقيق T25: لا نقاط على عدد البلاغات أو الصور أو البث أو الوجود في المكان، حد يومي 200 نقطة، نقاط التوثيق مرة واحدة لكل حادثة، لا نقاط للمجهول ولا للبلاغ الكاذب، ولا جوائز مالية في الكود. رسالة ثابتة في التطبيق: «لا تعرّض نفسك للخطر من أجل التبليغ، اتصل بـ198».</td></tr>
+<tr><td>إخفاء الخانات الصغيرة في كل التصديرات</td><td>العقد طلبه للتصديرات خارج المستوى الوطني فقط، لكن التقرير الوطني قد يُعاد إرساله، فطُبق على الكل.</td></tr>
+<tr><td>OpenSearch دائم في الإنتاج</td><td>كما في وثيقة الهندسة للمرحلة 8. يحتاج نحو 2 جيغابايت ذاكرة، ويخزن نصوص البلاغات غير مشفرة داخله، فيجب أن يحظى قرصه بحماية قاعدة البيانات نفسها (مكتوب في دليل النشر).</td></tr>
+<tr><td>إشعارات التقارير الدورية داخل اللوحة</td><td>وحدة الإشعارات الحالية تخاطب المواطنين فقط، فأُضيف صندوق إشعارات للموظفين. لا بريد إلكتروني في هذه المرحلة.</td></tr>
+<tr><td>وصف المنصة في التطبيق والبوابة (G01)</td><td>ينتظر جوابك على البطاقة في المحادثة.</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>3. حدود معروفة</h2>
+<ul>
+<li>محاكاة «ماذا لو» لم تُقارن بنتائج حقيقية، وتقول ذلك في كل نتيجة.</li>
+<li>عند توقف OpenSearch يطابق البحث في النصوص المشفرة الكلمات الكاملة فقط.</li>
+<li>لم يُبنَ ملف APK في بيئة العمل لغياب أدوات Android؛ أول تشغيل لـ CI هو الاختبار الحقيقي لمكتبة فتح ملفات PDF الجديدة.</li>
+<li>لا إشعار فوري للمواطن عند كسب النقاط، والشارات لا تُسحب آليا إذا نقص الرصيد.</li>
+<li>إذا توقف عامل المكافآت أكثر من 7 أيام تضيع الأحداث بينها وتُضاف النقاط يدويا.</li>
+<li>مستلمو التقارير الدورية يُضافون بالمعرّف لغياب دليل للموظفين في الواجهة.</li>
+</ul>
+</section>
+
+<section>
+<h2>4. الاختبارات</h2>
+<div class="tbl"><table>
+<tr><th>المكون</th><th>قبل</th><th>بعد</th></tr>
+<tr><td>الخلفية</td><td>396</td><td>441، واختباران إضافيان على OpenSearch حقيقي</td></tr>
+<tr><td>لوحة التحكم</td><td>323، و7 اختبارات متصفح</td><td>370، و12 اختبار متصفح</td></tr>
+<tr><td>تطبيق الهاتف</td><td>295</td><td>310</td></tr>
+<tr><td>البوابة</td><td>82</td><td>82</td></tr>
+</table></div>
+<p>كل الفحوص شُغلت محليا على قاعدة جديدة: التنسيق، الأنواع الصارمة (188 ملفا)، الترحيلات صعودا ونزولا ثم صعودا، ومنع دور التشغيل من تعديل المخطط.</p>
+</section>
+
+<section>
+<h2>5. بالتوازي: إعادة تدريب نموذج الحرائق</h2>
+<p>ما زالت جارية. نتيجتها ومقارنتها بالنموذج الحالي تصلك في طلب دمج مستقل، ولا يُستبدل النموذج إلا إذا تحسنت الدقة فعلا.</p>
+</section>
+
+<footer>ء-حماية · تقرير المرحلة 8</footer>
+</div>
+</body>
+</html>

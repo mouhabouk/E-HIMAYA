@@ -82,6 +82,15 @@ export interface MapPopupContent {
   node: ReactNode;
 }
 
+/** A cell of an aggregate grid (phase 8 hotspots): a hexagon filled by its count class, never a single point. */
+export interface MapHex {
+  id: string;
+  /** GeoJSON Polygon rings of [lon, lat]. */
+  coordinates: [number, number][][];
+  colour: string;
+  count: number;
+}
+
 /** A point of a density (heat) layer, e.g. ready volunteers. */
 export interface HeatPoint {
   lon: number;
@@ -110,6 +119,8 @@ interface MapViewProps {
   onOpenPoi?: (href: string) => void;
   /** Areas drawn as translucent fills with an outline (alerts layer). */
   polygons?: MapPolygon[];
+  /** Aggregate hexagon grid (analytics hotspots), drawn under every other layer. */
+  hexes?: MapHex[];
   /** Density layer (ready volunteers): a MapLibre heatmap under the markers. */
   heat?: HeatPoint[];
   /** Paths (stream location tracks). */
@@ -132,6 +143,7 @@ type GeoJsonData = FeatureCollection;
 
 const POLYGON_SOURCE = "ehimaya-polygons";
 const HEAT_SOURCE = "ehimaya-heat";
+const HEX_SOURCE = "ehimaya-hexes";
 const LINE_SOURCE = "ehimaya-lines";
 const WEATHER_SOURCE = "ehimaya-weather";
 const WIND_ICON = "ehimaya-wind-arrow";
@@ -152,6 +164,18 @@ function polygonData(polygons: MapPolygon[]): GeoJsonData {
       id: p.id,
       properties: { colour: p.colour ?? TONE_COLOURS[p.tone], dashed: p.outline !== "solid" },
       geometry: { type: "Polygon", coordinates: p.coordinates },
+    })),
+  };
+}
+
+function hexData(hexes: MapHex[]): GeoJsonData {
+  return {
+    type: "FeatureCollection",
+    features: hexes.map((h) => ({
+      type: "Feature",
+      id: h.id,
+      properties: { colour: h.colour, count: h.count },
+      geometry: { type: "Polygon", coordinates: h.coordinates },
     })),
   };
 }
@@ -318,6 +342,7 @@ export function MapView({
   poiOpenLabel,
   onOpenPoi,
   polygons,
+  hexes,
   heat,
   lines,
   weather,
@@ -488,6 +513,33 @@ export function MapView({
       });
     });
   }, [polygons]);
+
+  // Hotspot hexagons (phase 8): one source, created on first use and then only updated.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || hexes === undefined) return;
+    const data = hexData(hexes);
+    whenStyleReady(map, () => {
+      const source = map.getSource<GeoJSONSource>(HEX_SOURCE);
+      if (source) {
+        void source.setData(data); // resolves once applied; failures are fired as map "error" events
+        return;
+      }
+      map.addSource(HEX_SOURCE, { type: "geojson", data });
+      map.addLayer({
+        id: `${HEX_SOURCE}-fill`,
+        type: "fill",
+        source: HEX_SOURCE,
+        paint: { "fill-color": ["get", "colour"], "fill-opacity": 0.62 },
+      });
+      map.addLayer({
+        id: `${HEX_SOURCE}-line`,
+        type: "line",
+        source: HEX_SOURCE,
+        paint: { "line-color": "#ffffff", "line-width": 0.6, "line-opacity": 0.8 },
+      });
+    });
+  }, [hexes]);
 
   // Readiness density (ready volunteers).
   useEffect(() => {

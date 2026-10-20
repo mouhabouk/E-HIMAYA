@@ -1,5 +1,6 @@
 import re
 from datetime import UTC, datetime, timedelta
+from itertools import pairwise
 
 import httpx
 import pytest
@@ -49,11 +50,17 @@ async def test_create_assigns_tracking_code_and_gouvernorat(client: httpx.AsyncC
     assert r.json()["gouvernorat_code"] == 11
 
 
-async def test_tracking_numbers_increase(client: httpx.AsyncClient, citizen: dict[str, str]) -> None:
+async def test_tracking_numbers_are_not_sequential(client: httpx.AsyncClient, citizen: dict[str, str]) -> None:
+    """Audit R1, S07: codes must not be guessable from a previous one."""
     await accept_charter(client, citizen)
-    first = (await client.post("/api/v1/reports", json=report_body(), headers=citizen)).json()["tracking_code"]
-    second = (await client.post("/api/v1/reports", json=report_body(), headers=citizen)).json()["tracking_code"]
-    assert int(second[-7:]) > int(first[-7:])
+    codes = [
+        (await client.post("/api/v1/reports", json=report_body(), headers=citizen)).json()["tracking_code"]
+        for _ in range(4)
+    ]
+    assert all(CODE.match(code) for code in codes)
+    numbers = [int(code[-7:]) for code in codes]
+    assert len(set(numbers)) == len(numbers)
+    assert [b - a for a, b in pairwise(numbers)] != [1, 1, 1]
 
 
 async def test_offshore_point_takes_nearest_gouvernorat(client: httpx.AsyncClient, citizen: dict[str, str]) -> None:

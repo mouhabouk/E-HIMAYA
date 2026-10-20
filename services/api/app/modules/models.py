@@ -1,12 +1,15 @@
 """Import every module's models so they register on ``Base.metadata`` (used by Alembic)."""
 
 from app.modules.ai.models import AiSettingsRow, Analysis
+from app.modules.analytics.models import Notification, Scenario, Schedule
+from app.modules.analytics.models import Report as AnalyticsReport
 from app.modules.audit.models import AuditLog
 from app.modules.content.models import Revision, SafetyTip
 from app.modules.decision.models import ProcedureChunk
 from app.modules.forecast.models import ForecastRun
 from app.modules.geo.models import Delegation, Gouvernorat
 from app.modules.identity.models import Account, Consent, ErasureRequest, Profile
+from app.modules.knowledge.models import IndexState, MemoryEntry, MemoryEntryVersion, SearchDoc
 from app.modules.notify.models import Device, Dispatch, Message, OrgDigest, Outbox
 from app.modules.ops.models import (
     Assignment,
@@ -33,6 +36,15 @@ from app.modules.orgs.models import (
     TeamMember,
 )
 from app.modules.reports.models import Media, Report, StatusHistory
+from app.modules.rewards.models import (
+    BadgeAward,
+    ConsumerCursor,
+    LedgerEntry,
+    Nomination,
+    PendingAward,
+    RewardCertificate,
+    RewardRule,
+)
 from app.modules.streams.models import LiveStream, StreamDetection, StreamLocation, StreamSegment
 from app.modules.telephony.models import Call, Conference, OperatorEndpoint, SmsInbound
 from app.modules.volunteers.models import Volunteer, VolunteerReview
@@ -43,14 +55,17 @@ __all__ = [
     "AiSettingsRow",
     "AlertSuggestion",
     "Analysis",
+    "AnalyticsReport",
     "Assignment",
     "AuditLog",
+    "BadgeAward",
     "Call",
     "Callout",
     "CalloutTarget",
     "Certificate",
     "Conference",
     "Consent",
+    "ConsumerCursor",
     "Delegation",
     "Device",
     "Directive",
@@ -65,25 +80,37 @@ __all__ = [
     "GridPoint",
     "Hazmat",
     "Incident",
+    "IndexState",
     "Invitation",
+    "LedgerEntry",
     "LevelState",
     "LiveStream",
     "MapFeature",
     "Media",
     "Member",
+    "MemoryEntry",
+    "MemoryEntryVersion",
     "Message",
+    "Nomination",
+    "Notification",
     "Observation",
     "OperatorEndpoint",
     "OrgDigest",
     "Organization",
     "Outbox",
+    "PendingAward",
     "ProcedureChunk",
     "Profile",
     "Report",
     "Resource",
     "Revision",
+    "RewardCertificate",
+    "RewardRule",
     "Rule",
     "SafetyTip",
+    "Scenario",
+    "Schedule",
+    "SearchDoc",
     "SmsInbound",
     "StatusHistory",
     "StreamDetection",

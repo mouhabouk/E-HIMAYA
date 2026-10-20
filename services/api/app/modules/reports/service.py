@@ -1,6 +1,7 @@
 """Reporting flow: creation (idempotent), tracking codes, location, status changes, staff queries."""
 
 import base64
+import secrets
 import uuid
 from collections.abc import Sequence
 from dataclasses import dataclass
@@ -10,7 +11,7 @@ from zoneinfo import ZoneInfo
 
 from fastapi import HTTPException, status
 from geoalchemy2 import Geography, Geometry
-from sqlalchemy import Select, and_, cast, func, or_, select, text
+from sqlalchemy import Select, and_, cast, exists, func, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -36,6 +37,7 @@ HIGH_PRIORITY = 70
 # Device clocks drift; a creation time in the future is replaced by the reception time.
 _MAX_CLOCK_SKEW = timedelta(minutes=5)
 PORTAL_CLIENT = "ehimaya-portal"
+TRACKING_CODE_ATTEMPTS = 8
 
 _LAT = func.ST_Y(cast(Report.location, Geometry)).label("lat")
 _LON = func.ST_X(cast(Report.location, Geometry)).label("lon")
@@ -77,16 +79,18 @@ async def locate_gouvernorat(session: AsyncSession, lat: float, lon: float) -> i
 
 
 async def next_tracking_code(session: AsyncSession, received_at: datetime, gouvernorat_code: int | None) -> str:
-    """``EH-<yy>-<gouvernorat>-<7 digits>``, numbered per year (FR-A-046)."""
-    year = received_at.astimezone(TUNIS_TZ).year
-    number = await session.scalar(
-        text(
-            "INSERT INTO reports.tracking_counter (year, last) VALUES (:year, 1) "
-            "ON CONFLICT (year) DO UPDATE SET last = reports.tracking_counter.last + 1 RETURNING last"
-        ),
-        {"year": year},
-    )
-    return f"EH-{year % 100:02d}-{gouvernorat_code or 0:02d}-{int(number or 0):07d}"
+    """``EH-<yy>-<gouvernorat>-<7 random digits>`` (FR-A-046).
+
+    The number is random, not sequential (audit R1, S07): a sequential counter let anyone guess valid codes and read
+    the daily report volume of each gouvernorat through ``/track``. Collisions are retried; the unique constraint on
+    ``reports.report.tracking_code`` stays the last guard.
+    """
+    prefix = f"EH-{received_at.astimezone(TUNIS_TZ).year % 100:02d}-{gouvernorat_code or 0:02d}-"
+    for _ in range(TRACKING_CODE_ATTEMPTS):
+        code = f"{prefix}{secrets.randbelow(10**7):07d}"
+        if not await session.scalar(select(exists().where(Report.tracking_code == code))):
+            return code
+    raise RuntimeError("tracking_code_space_exhausted")
 
 
 # ---------------------------------------------------------------- views

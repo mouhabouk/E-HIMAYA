@@ -21,6 +21,7 @@ import '../../features/report/new_report_screen.dart';
 import '../../features/report/report_queued_screen.dart';
 import '../../features/reports/my_reports_screen.dart';
 import '../../features/reports/track_screen.dart';
+import '../../features/rewards/rewards_screen.dart';
 import '../../features/settings/alert_check.dart';
 import '../../features/settings/settings_screen.dart';
 import '../../features/tips/tips_screen.dart';
@@ -82,6 +83,9 @@ abstract final class Routes {
   /// The public alert view over a locked phone (see [LockedAlertScreen]).
   static const lockedAlert = '/locked-alert';
   static String tip(String hazard) => '/tips/${Uri.encodeComponent(hazard)}';
+
+  // Phase 8: points, badges and certificates (FR-A-072).
+  static const rewards = '/rewards';
 }
 
 /// Navigation guard (charter accepted → role chosen → identity → home). Pure function so it can
@@ -223,6 +227,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         ),
       ),
       GoRoute(path: Routes.track, builder: (_, _) => const TrackScreen()),
+      GoRoute(path: Routes.rewards, builder: (_, _) => const RewardsScreen()),
       GoRoute(
         path: Routes.live,
         builder: (_, state) =>

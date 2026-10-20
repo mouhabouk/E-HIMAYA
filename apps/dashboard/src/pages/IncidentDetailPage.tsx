@@ -5,6 +5,7 @@ import { Link, useParams } from "react-router";
 import { IncidentStatusChip, PriorityBadge, ReportMarkers } from "../components/AiBadges";
 import { CategoryLabel } from "../components/CategoryIcon";
 import { ErrorBox, Loading } from "../components/Feedback";
+import { MemoryFromIncidentButton } from "../components/MemoryFromIncident";
 import {
   AssistantPanel,
   ConferencePanel,
@@ -286,6 +287,7 @@ export function IncidentDetailPage() {
         <IncidentStatusChip status={incident.status} />
         <PriorityBadge score={incident.severity} />
         {incident.op_level && incident.op_level !== "normal" && <LevelTag level={incident.op_level} />}
+        {incident.status !== "dissolved" && <MemoryFromIncidentButton incidentId={incident.id} />}
       </div>
 
       <div className="detail__grid">

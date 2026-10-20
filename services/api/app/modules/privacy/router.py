@@ -5,6 +5,7 @@
   retention period, detached from any identifier (the account keeps only its random id). Live streams still
   running are ended (their publisher disconnected); recordings and the position track stay with the report.
   Calls and emergency SMS lose the person's number; calls and their recordings stay for their retention period.
+  Rewards: points and badges are deleted, nominations anonymised, certificates lose their holder and PDF.
 """
 
 import uuid
@@ -27,6 +28,7 @@ from app.modules.notify.models import Device, Message, Outbox
 from app.modules.orgs.domain import OrgRole
 from app.modules.orgs.models import Member
 from app.modules.reports.models import Media, Report, StatusHistory
+from app.modules.rewards import privacy as rewards
 from app.modules.streams import mediamtx
 from app.modules.streams import service as streams
 from app.modules.streams.domain import ACTIVE as ACTIVE_STREAMS
@@ -170,6 +172,8 @@ class ExportOut(BaseModel):
     calls: list[telephony.ExportCall]
     sms: list[telephony.ExportSms]
     volunteer: VolunteerOut | None
+    # Phase 8: points ledger, badges, certificates and nominations naming the person.
+    rewards: rewards.ExportRewards
     devices: list[ExportDevice]
     messages: list[ExportMessage]
 
@@ -340,6 +344,7 @@ async def export_my_data(
         calls=calls,
         sms=sms,
         volunteer=volunteers.volunteer_out(volunteer) if volunteer is not None else None,
+        rewards=await rewards.export(session, user_id),
         devices=[
             ExportDevice(
                 platform=d.platform,
@@ -402,6 +407,8 @@ async def delete_my_account(request: Request, body: DeleteIn, reporter: CurrentR
     details["organizations_left"] = await _leave_organizations(session, user_id)
     # Before the profile goes: the verified phone number is what links calls and SMS to the person.
     details.update(await telephony.forget(session, user_id))
+    # Phase 8: ledger and badges deleted, nominations anonymised, certificates detached (PDF removed).
+    details.update(await rewards.forget(session, user_id))
     details["profile"] = (await session.execute(delete(Profile).where(Profile.user_id == user_id))).rowcount > 0  # type: ignore[attr-defined]
     details["devices"] = (await session.execute(delete(Device).where(Device.user_id == user_id))).rowcount  # type: ignore[attr-defined]
     await session.execute(delete(Outbox).where(Outbox.user_id == user_id, Outbox.status == "pending"))
