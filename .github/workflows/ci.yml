@@ -50,7 +50,7 @@ jobs:
           done
           docker logs pg; exit 1
 
-      - uses: astral-sh/setup-uv@v6
+      - uses: astral-sh/setup-uv@v7
         with:
           python-version: "3.12"
 
@@ -273,7 +273,7 @@ jobs:
         working-directory: services/notify-sim
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v6
+      - uses: astral-sh/setup-uv@v7
         with:
           python-version: "3.12"
       - run: uv sync --locked
@@ -331,7 +331,7 @@ jobs:
       AI_SERVICE_TOKEN: ci-only-token-ci-only-token-0001
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v6
+      - uses: astral-sh/setup-uv@v7
         with:
           python-version: "3.12"
       - run: uv sync --locked
@@ -373,7 +373,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - uses: astral-sh/setup-uv@v6
+      - uses: astral-sh/setup-uv@v7
         with:
           python-version: "3.12"
 
@@ -439,7 +439,7 @@ jobs:
       VISION_CALLBACK_TOKEN: ci-only-callback-ci-only-callback-01
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v6
+      - uses: astral-sh/setup-uv@v7
         with:
           python-version: "3.12"
       - run: uv sync --locked
@@ -463,7 +463,7 @@ jobs:
       VISION_CALLBACK_TOKEN: ci-only-callback-ci-only-callback-01
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v6
+      - uses: astral-sh/setup-uv@v7
         with:
           python-version: "3.12"
 
