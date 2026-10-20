@@ -24,19 +24,22 @@ MODELS: dict[str, dict[str, Any]] = {
     # Fire and smoke: YOLOX-Tiny fine-tuned by e-Himaya (services/vision/training, EVALUATION.md).
     "fire-smoke": {
         "name": "ehimaya-fire-smoke-yolox-tiny",
-        "version": "1.0.0",
+        "version": "2.0.0",
         "license": "Apache-2.0",
         # Our own weights ship in the repository (20 MB): the repository is private, so no anonymous download URL.
-        "bundled": "weights/fire-smoke-yolox-tiny-v1.onnx",
-        "sha256": "173073b780ef5f74d389ee9bdd7e90260a1ce22ee8a867aea79b20c71bcdaa00",
+        "bundled": "weights/fire-smoke-yolox-tiny-v2.onnx",
+        "sha256": "3b9f2b5f8513ad76a1817a18614bfc73c4d625f5fcf2f3952ed1839ae43339b6",
         "source": "e-Himaya: YOLOX-Tiny (Megvii, Apache-2.0) fine-tuned on Open Images V7 fire/smoke images "
-        "(CC BY 2.0 / CC BY 4.0), boxes drawn by Grounding DINO (Apache-2.0), see services/vision/training",
+        "(images CC BY 2.0, labels CC BY 4.0, Google LLC; boxes drawn by Grounding DINO, Apache-2.0), "
+        "FireNET by Moses Olafenwa (MIT, github.com/OlafenwaMoses/FireNET) and the FURG fire dataset by "
+        "Steffens et al. (CC0-1.0, github.com/steffensbola/furg-fire-dataset); see services/vision/training",
         "format": "yolox",
         "input_size": [416, 416],
         "labels": ["fire", "smoke"],
-        # Fitted on eval/calibration.json (disjoint from the evaluation sample): raw fire score 0.33 → 0.45,
-        # precision 0.80 there. Smoke: too few calibration positives, left raw. See EVALUATION.md.
-        "score_power": {"fire": 0.72},
+        # Raw score r becomes r ** power, so that the threshold reaching precision 0.80 maps to 0.45 (EVALUATION.md):
+        # fire fitted on eval/calibration.json (raw 0.24); smoke on the training-validation split pooled with
+        # eval/calibration.json (raw 0.34). Neither set overlaps the evaluation sample.
+        "score_power": {"fire": 0.56, "smoke": 0.74},
     },
     # People: the official YOLOX-Tiny COCO model (Megvii, release 0.1.1rc0), only the "person" class is used.
     "person": {
