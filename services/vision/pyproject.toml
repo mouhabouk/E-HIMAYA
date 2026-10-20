@@ -13,7 +13,7 @@ dependencies = [
   "structlog==26.1.0",
   "numpy==2.5.4",
   "onnxruntime==1.30.0",
-  "pillow==12.3.0",
+  "pillow==13.0.0",
   "av==19.0.1",
   "prometheus-client==0.26.0",
 ]
