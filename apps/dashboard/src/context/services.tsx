@@ -1,6 +1,7 @@
 import { createContext, useContext, type ReactNode } from "react";
 import type { AuthService } from "../auth/authService";
 import type { WebSocketFactory } from "../lib/live";
+import type { SipEngineFactory } from "../lib/softphone";
 import type { StaffApi } from "../lib/staffApi";
 import type { StreamSessionOptions } from "../lib/streamSession";
 
@@ -12,6 +13,8 @@ export interface Services {
   mapStyleUrl: string | null;
   /** Live stream viewers (phase 6); defaults to StreamSession (WHEP, then HLS). Tests inject a fake. */
   createStreamSession?: (options: StreamSessionOptions) => StreamSessionLike;
+  /** Softphone SIP stack (phase 7); defaults to JsSIP, loaded on demand. Tests inject a fake. */
+  createSipEngine?: SipEngineFactory;
 }
 
 export interface StreamSessionLike {

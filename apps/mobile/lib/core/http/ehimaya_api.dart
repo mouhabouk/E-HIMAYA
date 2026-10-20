@@ -9,6 +9,7 @@ import 'models.dart';
 import 'notify_models.dart';
 import 'stream_models.dart';
 import 'volunteer_models.dart';
+import 'weather_models.dart';
 
 /// Result of `POST /api/v1/reports`: 201 (new) and 200 (same `client_uuid` replayed) are
 /// handled the same way by the sync engine.
@@ -389,6 +390,23 @@ class EHimayaApi {
       '/api/v1/streams/${Uri.encodeComponent(streamId)}',
     );
     return LiveStreamInfo.fromJson(r.data!);
+  });
+
+  // ---------------------------------------------------------------- weather (phase 7 §1)
+
+  /// Public: current weather, the next hours and the weather alerts at [position] (the caller
+  /// rounds it). An answer that cannot be read is reported as a server error.
+  Future<WeatherReport> weather(GeoPoint position) => guardApi(() async {
+    final r = await _dio.get<Map<String, Object?>>(
+      '/api/v1/weather',
+      queryParameters: {'lat': position.lat, 'lon': position.lon},
+      options: Options(extra: {kPublicEndpoint: true}),
+    );
+    final report = WeatherReport.fromJson(r.data);
+    if (report == null) {
+      throw ApiException(ApiErrorCode.server, statusCode: r.statusCode);
+    }
+    return report;
   });
 
   // ---------------------------------------------------------------- safety tips (§8)

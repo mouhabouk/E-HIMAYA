@@ -78,6 +78,15 @@
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="tel" />
         </intent>
+        <!-- FR-A-048: the offline report is prepared in the SMS app (sms:), the user sends it. -->
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="sms" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="sms" />
+        </intent>
         <!-- Browser / Custom Tabs used by AppAuth for the Keycloak login page. -->
         <intent>
             <action android:name="android.intent.action.VIEW" />

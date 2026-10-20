@@ -11,6 +11,10 @@
 //   CSP_MAP_SRC    space-separated origins of tiles, glyphs and sprites of a custom map style
 //   CSP_STREAM_SRC space-separated origins of the live stream viewers (MediaMTX WHEP and HLS, phase 6); the WebRTC
 //                  media itself is not governed by the CSP, only the WHEP/HLS HTTP requests are
+//   CSP_TELEPHONY_SRC space-separated origins of the SIP-over-WebSocket server of the softphone (phase 7, e.g.
+//                  wss://sip.example.tn); the RTP media itself is not governed by the CSP
+//   CSP_MICROPHONE  "self" lets the app's own pages use the microphone (dashboard softphone); empty = denied
+// The output also carries the Permissions-Policy header (no camera, geolocation, payment or USB in any case).
 import { createHash } from "node:crypto";
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -56,6 +60,13 @@ const styleUrl = env("VITE_MAP_STYLE_URL");
 const map = styleUrl ? [origin(styleUrl), ...list("CSP_MAP_SRC")] : [OSM_TILES];
 const media = list("CSP_MEDIA_SRC");
 const streams = list("CSP_STREAM_SRC");
+// SIP WebSocket (ws:/wss:): origin() keeps the scheme.
+const telephony = list("CSP_TELEPHONY_SRC");
+const microphone = env("CSP_MICROPHONE");
+if (microphone && microphone !== "self") {
+  console.error(`csp: CSP_MICROPHONE must be empty or "self", not ${microphone}`);
+  process.exit(1);
+}
 
 // Inline scripts of index.html (the pre-paint language/theme script), allowed by hash.
 const html = readFileSync(join(dist, "index.html"), "utf8");
@@ -74,7 +85,8 @@ const directives = {
   "font-src": "'self'",
   // Media origins: a stream recording download follows the API's redirect to its pre-signed link (fetch).
   // Stream origins: WHEP offers / session teardown and hls.js playlist and segment requests.
-  "connect-src": unique(["'self'", api, ws, issuer, tus, ...map, ...media, ...streams]),
+  // Telephony origins: the softphone's SIP WebSocket.
+  "connect-src": unique(["'self'", api, ws, issuer, tus, ...map, ...media, ...streams, ...telephony]),
   // MapLibre's worker is a same-origin chunk (src/lib/maplibre.ts).
   "worker-src": "'self'",
   "frame-src": "'none'",
@@ -93,5 +105,10 @@ if (policy.includes('"')) {
   process.exit(1);
 }
 
-writeFileSync(output, `header Content-Security-Policy "${policy}"\n`);
+const permissions = `camera=(), microphone=(${microphone}), geolocation=(), payment=(), usb=()`;
+writeFileSync(
+  output,
+  `header Content-Security-Policy "${policy}"\nheader Permissions-Policy "${permissions}"\n`,
+);
 console.log(policy);
+console.log(`Permissions-Policy: ${permissions}`);

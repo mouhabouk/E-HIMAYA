@@ -2725,3 +2725,447 @@ button.map-poi {
 .stop-stream {
   margin-block-start: 0.75rem;
 }
+
+/* ---------------------------------------------------------------- phase 7: weather, decision support, telephony */
+
+.btn--danger {
+  background: var(--prio-high);
+  border-color: var(--prio-high);
+  color: #fff;
+}
+
+.table--compact th,
+.table--compact td {
+  padding-block: 0.3rem;
+}
+
+.fields--compact {
+  gap: 0.2rem 0.75rem;
+  font-size: 0.92rem;
+}
+
+.fields__pair {
+  display: contents;
+}
+
+/* Weather layer (FR-C-08): colours are always paired with the class name in the legend and popup. */
+.weather-panel {
+  display: grid;
+  gap: 0.6rem;
+}
+.weather-panel__title {
+  font-size: 1.05rem;
+  margin: 0;
+}
+.weather-views {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+.weather-slider input[type="range"] {
+  inline-size: 100%;
+  accent-color: var(--focus);
+}
+.weather-slider output {
+  font-weight: 600;
+}
+.weather-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+}
+.weather-legend ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.88rem;
+}
+.weather-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.weather-swatch {
+  display: inline-block;
+  inline-size: 0.9rem;
+  block-size: 0.9rem;
+  border-radius: 3px;
+  border: 1px solid rgb(0 0 0 / 25%);
+  margin-inline-end: 0.3rem;
+  vertical-align: middle;
+}
+.weather-swatch--ring {
+  background: transparent;
+  border-width: 3px;
+  border-radius: 50%;
+}
+.weather-arrow {
+  font-weight: 700;
+}
+.weather-attribution {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin: 0;
+}
+.weather-card {
+  display: grid;
+  gap: 0.25rem;
+  min-inline-size: 15rem;
+  /* Fits above or below a point in the middle of the smallest map (28rem): long content scrolls. */
+  max-block-size: 12rem;
+  overflow-y: auto;
+  color: #16202a;
+}
+.weather-card .weather-attribution {
+  color: #55606c;
+}
+.weather-card__alerts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.weather-class {
+  font-weight: 600;
+  padding-inline: 0.3rem;
+  border-radius: 4px;
+  border: 1px solid currentColor;
+}
+.weather-class--very_high,
+.weather-class--extreme,
+.weather-class--rain-warning {
+  color: var(--prio-high);
+}
+.weather-class--high,
+.weather-class--rain-watch {
+  color: var(--prio-medium);
+}
+
+/* Weather alert suggestions. */
+.suggestions {
+  display: grid;
+  gap: 1rem;
+}
+.suggestion__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.suggestion__head h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+.suggestion--new {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+.suggestion__body {
+  white-space: pre-wrap;
+}
+
+/* Decision support: advisory notes, recommendations, forecast, route, assistant. */
+.advisory {
+  background: var(--info-bg);
+  color: var(--info-text);
+  border-radius: var(--radius);
+  padding: 0.45rem 0.75rem;
+  margin-block: 0.5rem;
+}
+.tag--advisory {
+  background: var(--info-bg);
+  color: var(--info-text);
+}
+.recommendations {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+.recommendation {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.75rem;
+  display: grid;
+  gap: 0.4rem;
+}
+.recommendation__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.recommendation__head h3 {
+  margin: 0;
+  font-size: 1rem;
+  flex: 1 1 12rem;
+}
+.recommendation__why {
+  margin: 0;
+}
+.chip--confidence-high {
+  color: var(--status-closed);
+}
+.chip--confidence-medium {
+  color: var(--status-in_progress);
+}
+.chip--confidence-low {
+  color: var(--status-rejected);
+}
+.inputs summary {
+  cursor: pointer;
+  color: var(--link);
+}
+.assumptions {
+  margin-block: 0.25rem;
+  padding-inline-start: 1.25rem;
+}
+.forecast-form fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0 0 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+}
+.forecast-form legend {
+  font-weight: 600;
+  margin-block-end: 0.25rem;
+}
+.forecast-coords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  inline-size: 100%;
+}
+.forecast-result {
+  display: grid;
+  gap: 0.5rem;
+  margin-block-start: 0.75rem;
+}
+.forecast-legend caption {
+  text-align: start;
+  font-weight: 600;
+}
+.map--incident {
+  block-size: 26rem;
+}
+.route-summary {
+  margin-block-start: 0.75rem;
+}
+.route-summary h3 {
+  font-size: 1rem;
+  margin: 0 0 0.25rem;
+}
+.route-swatch {
+  display: inline-block;
+  inline-size: 1.5rem;
+  block-size: 4px;
+  background: #1d4ed8;
+  vertical-align: middle;
+  margin-inline-end: 0.4rem;
+}
+.responders {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+.responders__why {
+  margin: 0.15rem 0;
+}
+.assistant__turn {
+  border-block-start: 1px solid var(--border);
+  padding-block: 0.75rem;
+}
+.assistant__q {
+  margin: 0 0 0.4rem;
+}
+.assistant__a {
+  background: var(--surface-2);
+  border-radius: var(--radius);
+  padding: 0.6rem 0.8rem;
+}
+.assistant__label {
+  margin: 0 0 0.3rem;
+}
+.assistant__text {
+  white-space: pre-wrap;
+}
+.assistant__a h3 {
+  font-size: 0.95rem;
+  margin: 0.6rem 0 0.25rem;
+}
+.assistant__sources {
+  margin: 0;
+  padding-inline-start: 1.25rem;
+}
+.assistant__sources blockquote {
+  margin: 0.2rem 0 0.5rem;
+  padding-inline-start: 0.6rem;
+  border-inline-start: 3px solid var(--border);
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.conferences {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+/* Softphone dock: bottom start corner (the stream alerts use the end corner). */
+.softphone {
+  position: fixed;
+  inset-block-end: 1rem;
+  inset-inline-start: 1rem;
+  z-index: 1000;
+  inline-size: min(24rem, calc(100vw - 2rem));
+  max-block-size: calc(100vh - 2rem);
+  overflow: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 6px 24px rgb(0 0 0 / 20%);
+}
+.softphone:not(.softphone--open) {
+  inline-size: auto;
+}
+.softphone__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding-inline-end: 0.5rem;
+}
+.softphone__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.softphone__dot {
+  inline-size: 0.6rem;
+  block-size: 0.6rem;
+  border-radius: 50%;
+  background: var(--status-rejected);
+}
+.softphone__dot--ready {
+  background: var(--status-closed);
+}
+.softphone__dot--connecting {
+  background: var(--status-in_progress);
+}
+.softphone__dot--error {
+  background: var(--prio-high);
+}
+.softphone__body {
+  display: grid;
+  gap: 0.6rem;
+  padding: 0 0.75rem 0.75rem;
+}
+.phone-call {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.6rem 0.75rem;
+  display: grid;
+  gap: 0.35rem;
+}
+.phone-call h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+.phone-call--ringing {
+  border-inline-start: 6px solid var(--status-closed);
+  animation: phone-ring 1.2s ease-in-out infinite alternate;
+}
+.phone-call--ended {
+  opacity: 0.7;
+}
+.phone-call__who {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 0;
+}
+.phone-controls .btn[aria-pressed="true"] {
+  outline: 2px solid var(--focus);
+}
+.phone-link {
+  display: grid;
+  gap: 0.35rem;
+}
+.phone-link__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.phone-link__row .field {
+  flex: 1 1 8rem;
+}
+.phone-link__current {
+  margin: 0;
+}
+.phone-198 p {
+  margin: 0 0 0.35rem;
+}
+.copy-number {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.copy-number strong {
+  font-size: 1.3rem;
+}
+.call-button {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+.call-recording {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+.call-recording audio {
+  max-inline-size: 16rem;
+}
+.chip--call-answered,
+.chip--call-ended {
+  color: var(--status-closed);
+}
+.chip--call-ringing,
+.chip--call-queued {
+  color: var(--status-in_progress);
+}
+.chip--call-missed,
+.chip--call-abandoned,
+.chip--call-failed {
+  color: var(--prio-high);
+}
+.chip--call-transferred {
+  color: var(--status-intervened);
+}
+
+@keyframes phone-ring {
+  from {
+    box-shadow: 0 0 0 0 rgb(21 128 61 / 0%);
+  }
+  to {
+    box-shadow: 0 0 0 4px rgb(21 128 61 / 35%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phone-call--ringing {
+    animation: none;
+  }
+}

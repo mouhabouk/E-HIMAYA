@@ -10,10 +10,15 @@
 #   - leaves out the development helpers mailpit and notify-sim (profile "dev-tools", never started here);
 #   - live streaming: WHIP/WHEP and HLS through Caddy on API_HOST (/live/<id>/...), WebRTC media on 8189/udp, and
 #     RTSP 8554 / RTMP 1935 for registered drones and cameras: the only ports published besides Caddy's
-#     (docs/streaming.md: restrict 8554/1935 to the camera networks in the host firewall).
+#     (docs/streaming.md: restrict 8554/1935 to the camera networks in the host firewall);
+#   - telephony: the softphone's SIP over WebSocket through Caddy (wss://API_HOST/telephony/ws, nothing else of
+#     Asterisk), SIP 5060/5061 for the operator's trunk and the RTP range for media (docs/telephony.md: restrict SIP to
+#     the operator's SBC addresses in the host firewall); ARI stays internal; the call simulator is never started.
 # Required in .env on top of the development ones: API_HOST, DASHBOARD_HOST, PORTAL_HOST, AUTH_HOST, MEDIA_HOST,
 # CADDY_TLS, EHIMAYA_DB_RUNTIME_PASSWORD, SMTP_HOST, real FCM/SMS settings (or empty to skip those channels),
-# MEDIAMTX_HOOK_TOKEN and MEDIAMTX_API_PASSWORD (random), MEDIAMTX_WEBRTC_HOSTS when API_HOST is not this server.
+# MEDIAMTX_HOOK_TOKEN and MEDIAMTX_API_PASSWORD (random), MEDIAMTX_WEBRTC_HOSTS when API_HOST is not this server,
+# TELEPHONY_ARI_PASSWORD (random), TELEPHONY_EXTERNAL_HOST when API_HOST is not this server's public address, the
+# TELEPHONY_TRUNK_* settings of the operator and SMS_INBOUND_SECRET agreed with the SMS gateway (docs/telephony.md).
 
 # Settings shared by the api, worker and migrate containers in production.
 x-api-prod-env: &api-prod-env
@@ -40,6 +45,9 @@ x-api-prod-env: &api-prod-env
   STREAM_INGEST_HOST: ${STREAM_INGEST_HOST:-${API_HOST}}
   # SIMULATION never runs in production (the API refuses to start with a sim token).
   STREAM_SIM_TOKEN: ""
+  # Telephony: the dashboard softphone registers over WSS through Caddy; no call simulator.
+  TELEPHONY_WS_PUBLIC_URL: wss://${API_HOST}/telephony/ws
+  TELEPHONY_SIM_TOKEN: ""
 
 x-api-prod-deps: &api-prod-deps
   migrate:
@@ -88,6 +96,8 @@ services:
         condition: service_healthy
       mediamtx:
         condition: service_healthy
+      telephony:
+        condition: service_healthy
 
   dashboard:
     build:
@@ -103,6 +113,8 @@ services:
         CSP_MEDIA_SRC: https://${MEDIA_HOST}
         # WHEP/HLS playback of live streams, served by Caddy on the API host (infra/caddy/Caddyfile, /live/*).
         CSP_STREAM_SRC: https://${API_HOST}
+        # Softphone (SIP over WebSocket to Asterisk), served by Caddy on the API host (/telephony/ws).
+        CSP_TELEPHONY_SRC: wss://${API_HOST}
     image: ehimaya/dashboard:prod
     restart: unless-stopped
     read_only: true
@@ -150,9 +162,13 @@ services:
       PROCESS_ROLE: worker
       WEB_CONCURRENCY: "1"
     ports: !reset []
-    # Only the recordings volume (segment ingestion runs here); no simulator volume.
+    # Only the recordings volumes (segment and call recording ingestion run here) and the procedures library (indexed here for the
+    # incident assistant, docs/decision-support.md); no simulator volume.
     volumes: !override
       - recordings:/recordings
+      # Call recordings written by Asterisk (ingestion runs here).
+      - telrecordings:/telephony-recordings
+      - ../docs/procedures:/app/procedures:ro
     depends_on: !override
       <<: *api-prod-deps
 
@@ -217,6 +233,20 @@ services:
       - "8554:8554"
       - "1935:1935"
 
+  telephony:
+    environment:
+      # Address announced to the trunk and to browsers (SDP, ICE): the public IP or a name resolving to it.
+      TELEPHONY_EXTERNAL_HOST: ${TELEPHONY_EXTERNAL_HOST:-${API_HOST}}
+      # No simulator endpoint in production.
+      TELEPHONY_SIM_PASSWORD: ""
+    ports: !override
+      # SIP trunk of the operator (UDP/TCP, TLS on 5061). Firewall these to the operator's SBC addresses.
+      - "5060:5060/udp"
+      - "5060:5060/tcp"
+      - "5061:5061/tcp"
+      # RTP media of trunk calls and of the dashboard softphones (DTLS-SRTP).
+      - "${TELEPHONY_RTP_START:-10000}-${TELEPHONY_RTP_END:-10099}:${TELEPHONY_RTP_START:-10000}-${TELEPHONY_RTP_END:-10099}/udp"
+
   # No published port: data services are reached only on the internal network.
   postgres:
     ports: !reset []
@@ -236,6 +266,9 @@ services:
     ports: !reset []
   # SIMULATION: the simulated camera is development-only (the API refuses its token in production anyway).
   stream-sim:
+    profiles: !override ["dev-tools"]
+  # SIMULATION: the call simulator is development-only (no simulator endpoint exists in production).
+  call-sim:
     profiles: !override ["dev-tools"]
 
 networks:

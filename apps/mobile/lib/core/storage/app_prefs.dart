@@ -27,6 +27,7 @@ class AppPrefs {
   static const _tipsEtag = 'tips.etag';
   static const _tipsJson = 'tips.json';
   static const _alertsJson = 'alerts.last';
+  static const _weatherJson = 'weather.last';
   static const _batterySaver = 'power.battery_saver';
   static const _criticalAlerts = criticalAlertsKey;
 
@@ -127,6 +128,12 @@ class AppPrefs {
   String? get lastAlertsJson => _prefs.getString(_alertsJson);
   Future<void> setLastAlertsJson(String value) =>
       _prefs.setString(_alertsJson, value);
+
+  /// Last weather answer and when it was fetched (`{"fetched_at", "report"}`), shown offline
+  /// with its time. It holds the grid point (≈ 1 km), so it is wiped with the account.
+  String? get lastWeatherJson => _prefs.getString(_weatherJson);
+  Future<void> setLastWeatherJson(String value) =>
+      _prefs.setString(_weatherJson, value);
 
   /// In-app battery saver: `auto` (default), `on` or `off`.
   String? get batterySaverMode => _prefs.getString(_batterySaver);

@@ -18,7 +18,8 @@ from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import structlog
-from sqlalchemy import func, select, text
+from geoalchemy2 import Geometry
+from sqlalchemy import cast, func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.core.config import get_settings
@@ -34,6 +35,7 @@ from app.modules.orgs import sites
 from app.modules.reports.domain import Category, Status
 from app.modules.reports.models import Media, Report, StatusHistory
 from app.modules.streams import signals
+from app.modules.weather.signals import weather_signal
 
 log = structlog.get_logger()
 
@@ -107,6 +109,19 @@ async def _incident_reporters(session: AsyncSession, report: Report) -> set[uuid
     return set(rows)
 
 
+async def _weather(session: AsyncSession, report: Report, category: Category) -> tuple[float, dict[str, Any]] | None:
+    position = (
+        await session.execute(
+            select(func.ST_Y(cast(Report.location, Geometry)), func.ST_X(cast(Report.location, Geometry))).where(
+                Report.id == report.id
+            )
+        )
+    ).first()
+    if position is None:
+        return None
+    return await weather_signal(session, category, position[0], position[1])
+
+
 async def score(session: AsyncSession, report: Report, analysis: Analysis) -> list[grouping.Match]:
     """Recompute credibility, priority and the grouping suggestion of a report from what is known now."""
     settings = await ai_settings.load(session)
@@ -131,6 +146,7 @@ async def score(session: AsyncSession, report: Report, analysis: Analysis) -> li
         ),
         op_level=(await levels.level_of(session, report.gouvernorat_code)).value,
         vision_fire=await signals.vision_signal(session, report.id),
+        weather=await _weather(session, report, category),
     )
     credibility = scoring.credibility(facts)
     priority = scoring.priority(facts, credibility["score"], settings.priority)

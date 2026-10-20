@@ -34,6 +34,9 @@ class Facts:
     # Strongest confirmed fire or smoke seen by the vision detector on the report's live stream or images (phase 6):
     # (confidence, detail); None = nothing confirmed.
     vision_fire: tuple[float, dict[str, Any]] | None = None
+    # Weather at the report's nearest grid point (phase 7, weather.signals): fire danger for fires, heavy-rain level
+    # for floods, wind gusts otherwise; None = no weather data there.
+    weather: tuple[float, dict[str, Any]] | None = None
 
 
 def _component(key: str, value: float | None, detail: dict[str, Any]) -> dict[str, Any]:
@@ -118,7 +121,7 @@ def _reporters(facts: Facts) -> tuple[float, dict[str, Any]]:
 
 # Components that can only raise the priority: the context around a report (a hazardous site nearby, a
 # crisis declared in the zone) must never make an emergency rank lower than the same emergency elsewhere.
-BONUS_COMPONENTS = frozenset({"sensitive_sites", "op_level", "vision_fire"})
+BONUS_COMPONENTS = frozenset({"sensitive_sites", "op_level", "vision_fire", "weather"})
 LEVEL_VALUES = {"crisis": 0.7, "disaster": 1.0}
 
 
@@ -143,8 +146,8 @@ def priority(facts: Facts, credibility_score: int, settings: PrioritySettings) -
         "op_level": _op_level(facts),
         # Confirmed fire or smoke on the report's live stream or images (phase 6); none = left out.
         "vision_fire": facts.vision_fire or (None, {"reason": "no_confirmed_detection"}),
-        # No data source yet: weather layer (FR-C-08, later phase).
-        "weather": (None, {"reason": "no_data_yet"}),
+        # Weather layer (phase 7, FR-C-08): no grid point with data near the report = left out.
+        "weather": facts.weather or (None, {"reason": "no_weather_data"}),
     }
     weights = settings.weights
     components = {key: _component(key, *values[key]) for key in PRIORITY_COMPONENTS}

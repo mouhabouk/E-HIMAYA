@@ -18,6 +18,8 @@ at once and a crash leaves at most one batch to redo. Durations come from the se
 | consents            | acceptances of a superseded charter version                            | 5 years  |
 | anonymous_accounts  | device identities with no report and no device                         | 365 days |
 | erasure_requests    | erasure requests once the identity-provider account was disabled       | 30 days  |
+| calls, sms_inbound, | telephony (phase 7): calls with their recordings, inbound SMS, retired | 2 years  |
+| operator_endpoints  | operator endpoints (app.modules.telephony.retention)                   |          |
 """
 
 import asyncio
@@ -33,6 +35,7 @@ from app.core.config import Settings, get_settings
 from app.core.storage import get_store
 from app.modules.audit import service as audit
 from app.modules.identity.models import DETACHED_ACCOUNT_ID
+from app.modules.telephony import retention as telephony
 
 log = structlog.get_logger()
 
@@ -241,6 +244,9 @@ JOBS: list[tuple[str, Job]] = [
     ("consents", purge_consents),
     ("anonymous_accounts", purge_anonymous_accounts),
     ("erasure_requests", purge_erasure_requests),
+    ("calls", telephony.purge_calls),
+    ("sms_inbound", telephony.purge_sms_inbound),
+    ("operator_endpoints", telephony.purge_endpoints),
 ]
 
 

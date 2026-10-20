@@ -1,12 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Suspense, useId, useMemo, useState, type ReactNode, type SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate, useParams, useSearchParams } from "react-router";
+import { Link, useLocation, useNavigate, useParams, useSearchParams } from "react-router";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { LazyPolygonDrawMap } from "../components/LazyPolygonMap";
 import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
 import { directionOf } from "../i18n";
+import { isAlertPrefillState } from "../lib/alertPrefill";
 import { errorMessageKey, isApiError } from "../lib/api";
 import { useFormat, useGouvernorats, useLanguage } from "../lib/hooks";
 import { initialBoundsFor } from "../lib/mapStyle";
@@ -341,10 +342,15 @@ function Composer({ message, kind }: { message: Message | null; kind: MessageKin
   const base = useId();
   const roles = user?.identity.roles ?? [];
   const regional = user && !user.identity.national ? user.identity.gouvernoratCode : null;
+  // Phase 7: a new alert may arrive prefilled (accepted weather suggestion, decision-support recommendation).
+  const location = useLocation();
+  const prefill = !message && kind === "alert" && isAlertPrefillState(location.state) ? location.state.alertPrefill : null;
   const [form, setFormState] = useState<MessageForm>(() => {
     if (message) return formFromMessage(message);
     const empty = emptyForm(kind);
-    return regional !== null ? { ...empty, gouvernorats: [regional] } : empty;
+    const base = prefill ? { ...empty, ...prefill.form, kind } : empty;
+    // A regional author can only target its own gouvernorat (§7).
+    return regional !== null && base.areaMode === "gouvernorats" ? { ...base, gouvernorats: [regional] } : base;
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [confirm, setConfirm] = useState<"publish" | "delete" | null>(null);
@@ -447,6 +453,11 @@ function Composer({ message, kind }: { message: Message | null; kind: MessageKin
 
   return (
     <form className="composer" onSubmit={submit} noValidate>
+      {prefill && (
+        <p className="alert alert--info" role="note">
+          {t(`notify.prefilled.${prefill.source}`)}
+        </p>
+      )}
       <fieldset disabled={busy || !canEdit} className="composer__fields">
         <legend className="visually-hidden">{t(`notify.kind.${kind}`)}</legend>
         <div className="composer__langs">

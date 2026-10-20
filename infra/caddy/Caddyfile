@@ -27,6 +27,18 @@
 # API (REST + WebSocket) and resumable uploads (tusd) on one origin.
 {$API_HOST} {
 	import edge
+	# SMS gateway webhook (phase 7, docs/telephony.md): the only public /internal path, POST only, HMAC-signed by
+	# the gateway (SMS_INBOUND_SECRET); the API answers 404 while no secret is set.
+	@smsInbound {
+		method POST
+		path /internal/sms/inbound
+	}
+	handle @smsInbound {
+		request_body {
+			max_size 16KB
+		}
+		reverse_proxy api:8000
+	}
 	# Internal endpoints are never public: tusd hooks (API) and the Prometheus scrape (scraped on the internal network).
 	@internal path /internal/* /metrics /metrics/*
 	handle @internal {
@@ -51,6 +63,15 @@
 		reverse_proxy mediamtx:8888
 	}
 	handle /live/* {
+		respond 404
+	}
+	# Telephony (docs/telephony.md): only the SIP-over-WebSocket endpoint of Asterisk for the dashboard softphone;
+	# ARI and every other Asterisk path stay internal.
+	handle /telephony/ws {
+		rewrite * /ws
+		reverse_proxy telephony:8088
+	}
+	handle /telephony/* {
 		respond 404
 	}
 	handle {

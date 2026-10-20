@@ -13,6 +13,7 @@ import '../../core/security/locked_alert.dart';
 import '../../core/settings/settings_controller.dart';
 import '../../core/ui/emergency_action.dart';
 import '../../l10n/app_localizations.dart';
+import '../weather/weather_providers.dart';
 import 'alert_labels.dart';
 import 'alerts_providers.dart';
 
@@ -231,9 +232,11 @@ class AlertDetailScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final lang = ref.watch(localeCodeProvider);
     final state = ref.watch(activeAlertsProvider);
-    final alert = (state.value ?? const <ActiveAlert>[])
-        .where((a) => a.id == alertId)
-        .firstOrNull;
+    // A weather alert listed on the weather card (phase 7) opens here too.
+    final alert = [
+      ...?state.value,
+      ...ref.watch(weatherAlertsProvider),
+    ].where((a) => a.id == alertId).firstOrNull;
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.alertTitle),

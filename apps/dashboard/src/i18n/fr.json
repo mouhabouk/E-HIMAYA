@@ -18,7 +18,9 @@
     "notifications": "Notifications et alertes",
     "safetyTips": "Conseils de sécurité",
     "committee": "Comités",
-    "streams": "Diffusion en direct"
+    "streams": "Diffusion en direct",
+    "calls": "Appels",
+    "weatherSuggestions": "Alertes météo suggérées"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -181,7 +183,15 @@
     "not_published": "L’élément n’est pas publié.",
     "suspended_by_level": "Les notifications d’information sont suspendues dans un gouvernorat au niveau catastrophe (pas les alertes).",
     "translation_missing": "Traduction incomplète : titre et au moins un élément en arabe, français et anglais.",
-    "stream_not_active": "La diffusion n’est pas active."
+    "stream_not_active": "La diffusion n’est pas active.",
+    "suggestion_not_pending": "Cette suggestion a déjà été traitée.",
+    "assistant_unavailable": "L’assistant n’est pas disponible : le modèle local n’est pas installé.",
+    "transfer_disabled": "Le transfert vers le 198 n’est pas activé : appelez le 198 depuis votre téléphone.",
+    "invalid_number": "Numéro invalide (formats tunisiens uniquement).",
+    "no_active_call": "Cet appel n’est plus en cours.",
+    "softphone_not_registered": "Le téléphone du tableau de bord n’est pas connecté. Activez-le puis réessayez.",
+    "telephony_unavailable": "La téléphonie est indisponible pour le moment.",
+    "forecast_unavailable": "La prévision est indisponible pour le moment."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -1466,6 +1476,10 @@
       "noChannel": "Aucun canal de contact enregistré.",
       "clear": "Retirer ce compte",
       "orId": "Ou collez directement l’identifiant du compte :"
+    },
+    "prefilled": {
+      "weather_suggestion": "Formulaire prérempli à partir d’une alerte météo suggérée. Vérifiez chaque champ : rien n’est envoyé avant votre publication.",
+      "recommendation": "Formulaire prérempli à partir d’une recommandation. Vérifiez chaque champ : rien n’est envoyé avant votre publication."
     }
   },
   "tips": {
@@ -1806,6 +1820,337 @@
       "model": "Modèle : {{model}}",
       "nothing": "Ni feu, ni fumée, ni personne détectés.",
       "note": "À titre d’aide : la décision reste à l’agent."
+    }
+  },
+  "weather": {
+    "toggle": "Météo",
+    "title": "Couche météo",
+    "simBand": "Données météo simulées (aucun service réel n’est interrogé).",
+    "viewsLegend": "Informations affichées",
+    "views": {
+      "fire": "Danger d’incendie",
+      "wind": "Vent",
+      "rain": "Fortes pluies"
+    },
+    "hourLabel": "Heure de prévision (48 h)",
+    "now": "Maintenant ({{time}})",
+    "plusHours": "+{{count}} h",
+    "points": "Points de grille affichés : {{count}}",
+    "updated": "mis à jour {{time}}",
+    "legend": "Légende de la couche météo",
+    "windLegend": "Flèche : sens où souffle le vent (taille selon la vitesse)",
+    "atCentre": "Météo au centre de la carte",
+    "clickHint": "Cliquez sur la carte pour la météo d’un point.",
+    "attribution": "Données météo :",
+    "pointTitle": "Météo du point",
+    "activeAlerts": "Alertes météo en cours",
+    "fireDanger": {
+      "low": "Faible",
+      "moderate": "Modéré",
+      "high": "Élevé",
+      "very_high": "Très élevé",
+      "extreme": "Extrême"
+    },
+    "rainLevel": {
+      "none": "Aucune",
+      "watch": "Vigilance pluie",
+      "warning": "Alerte pluie"
+    },
+    "field": {
+      "fireDanger": "Danger d’incendie",
+      "wind": "Vent",
+      "temperature": "Température",
+      "humidity": "Humidité",
+      "rain": "Pluie"
+    },
+    "fwi": "IFM {{value}}",
+    "gusts": "rafales {{value}} km/h",
+    "from": "venant du {{dir}} ({{deg}}°)",
+    "rain24": "{{value}} mm sur 24 h",
+    "compass": {
+      "N": "nord",
+      "NNE": "nord-nord-est",
+      "NE": "nord-est",
+      "ENE": "est-nord-est",
+      "E": "est",
+      "ESE": "est-sud-est",
+      "SE": "sud-est",
+      "SSE": "sud-sud-est",
+      "S": "sud",
+      "SSW": "sud-sud-ouest",
+      "SW": "sud-ouest",
+      "WSW": "ouest-sud-ouest",
+      "W": "ouest",
+      "WNW": "ouest-nord-ouest",
+      "NW": "nord-ouest",
+      "NNW": "nord-nord-ouest"
+    },
+    "metric": {
+      "fire_danger": "Danger d’incendie",
+      "fwi": "Indice forêt-météo (IFM)",
+      "wind_gust_kmh": "Rafales (km/h)",
+      "wind_speed_kmh": "Vent moyen (km/h)",
+      "rain_1h_mm": "Pluie en 1 h (mm)",
+      "rain_24h_mm": "Pluie sur 24 h (mm)",
+      "precipitation_mm_h": "Précipitations (mm/h)",
+      "temperature_c": "Température (°C)",
+      "humidity_pct": "Humidité (%)"
+    },
+    "suggestions": {
+      "title": "Alertes météo suggérées",
+      "intro": "Des seuils météo ont été dépassés. Chaque suggestion montre ses mesures ; l’accepter ouvre le formulaire d’alerte prérempli, que vous vérifiez et publiez vous-même.",
+      "count": "Suggestions en attente : {{count}}",
+      "none": "Aucune suggestion en attente.",
+      "arrived": "Nouvelle alerte météo suggérée.",
+      "new": "Nouvelle",
+      "untitled": "Alerte météo",
+      "area": "Zone",
+      "validUntil": "Valable jusqu’au",
+      "createdAt": "Proposée le",
+      "rule": "Règle",
+      "evidence": "Mesures à l’origine de la suggestion",
+      "noEvidence": "Aucune mesure fournie.",
+      "metric": "Mesure",
+      "value": "Valeur",
+      "threshold": "Seuil",
+      "where": "Lieu et heure",
+      "humanDecides": "Aucune alerte n’est envoyée automatiquement : vous décidez.",
+      "accept": "Accepter et ouvrir le formulaire d’alerte",
+      "dismiss": "Écarter",
+      "reason": "Motif (obligatoire)",
+      "reasonRequired": "Indiquez un motif (au moins 3 caractères).",
+      "confirmDismiss": "Écarter la suggestion"
+    }
+  },
+  "decision": {
+    "title": "Recommandations",
+    "advisory": "Aide à la décision —",
+    "humanDecides": "chaque proposition est justifiée ; rien n’est appliqué sans votre décision.",
+    "simBand": "Recommandations calculées sur des données simulées.",
+    "generated": "Calculées {{time}}",
+    "refresh": "Actualiser",
+    "none": "Aucune recommandation pour le moment.",
+    "rationale": "Pourquoi :",
+    "inputs": "Données utilisées",
+    "kind": {
+      "resources": "Moyens",
+      "volunteers": "Volontaires",
+      "route": "Itinéraire",
+      "escalation": "Escalade",
+      "alert": "Alerte",
+      "responders": "Responsables"
+    },
+    "confidence": {
+      "low": "Confiance faible",
+      "medium": "Confiance moyenne",
+      "high": "Confiance élevée"
+    },
+    "action": {
+      "open_assignment": "Préparer l’affectation",
+      "open_alert_form": "Ouvrir le formulaire d’alerte",
+      "call": "Appeler",
+      "show_route": "Afficher l’itinéraire"
+    }
+  },
+  "forecast": {
+    "title": "Prévision de propagation",
+    "advisory": "estimation par modèle, à confronter au terrain.",
+    "kind": "Type de prévision",
+    "kinds": {
+      "fire": "Feu",
+      "flood": "Inondation"
+    },
+    "horizons": "Horizons",
+    "minutes": "{{count}} min",
+    "horizonRequired": "Choisissez au moins un horizon.",
+    "fuel": "Combustible",
+    "fuelAuto": "Automatique (occupation du sol)",
+    "fuels": {
+      "grass": "Herbe",
+      "shrub": "Maquis / broussailles",
+      "timber_litter": "Litière forestière",
+      "mixed": "Mixte"
+    },
+    "ignition": "Point d’éclosion",
+    "ignitionCentroid": "Centre de l’incident",
+    "ignitionCustom": "Coordonnées précises",
+    "lat": "Latitude",
+    "lon": "Longitude",
+    "coordsInvalid": "Coordonnées invalides.",
+    "floodHelp": "Avis fondé sur la pluie observée et prévue (6, 12, 24 h), les points bas et le sens d’écoulement : ce n’est pas un modèle hydraulique.",
+    "run": "Lancer la prévision",
+    "refresh": "Relancer la prévision",
+    "running": "Calcul…",
+    "none": "Aucune prévision lancée.",
+    "simBand": "Prévision calculée sur des données météo simulées.",
+    "ros": "Vitesse de propagation : {{value}} m/min",
+    "level": "Niveau de risque : {{level}}",
+    "levels": {
+      "low": "faible",
+      "moderate": "modéré",
+      "medium": "moyen",
+      "high": "élevé",
+      "very_high": "très élevé",
+      "unknown": "inconnu"
+    },
+    "showOnMap": "Afficher sur la carte",
+    "inputs": "Données d’entrée",
+    "assumptions": "Hypothèses",
+    "legend": "Légende de la prévision",
+    "horizon": "Horizon",
+    "riskLevel": "Niveau",
+    "area": "Surface",
+    "hectares": "{{value}} ha"
+  },
+  "route": {
+    "title": "Itinéraire du véhicule",
+    "summary": "{{distance}} · {{duration}}",
+    "profile": {
+      "car": "voiture",
+      "truck": "camion"
+    },
+    "fallback": "Moteur d’itinéraire indisponible : estimation en ligne droite.",
+    "engine": "Moteur : {{engine}}",
+    "attribution": "Itinéraire © contributeurs OpenStreetMap (ODbL)",
+    "clear": "Effacer l’itinéraire"
+  },
+  "responders": {
+    "title": "Responsables à associer",
+    "intro": "Suggestions de l’annuaire selon le type d’incident et le gouvernorat, avec leur raison.",
+    "none": "Aucun responsable suggéré."
+  },
+  "assistant": {
+    "title": "Assistant (procédures et incidents passés)",
+    "advisory": "réponses à titre indicatif, uniquement à partir des sources citées ; vérifiez-les.",
+    "question": "Votre question",
+    "ask": "Demander",
+    "thinking": "Recherche…",
+    "you": "Question :",
+    "sources": "Sources citées",
+    "noSources": "Aucune source : l’assistant ne sait pas répondre.",
+    "kind": {
+      "procedure": "Procédure",
+      "incident": "Incident",
+      "report": "Signalement"
+    }
+  },
+  "conference": {
+    "title": "Conférence de crise",
+    "intro": "Salle audio de l’incident, rejointe depuis le téléphone du tableau de bord.",
+    "start": "Ouvrir une conférence",
+    "join": "Rejoindre",
+    "end": "Clore",
+    "confirmEnd": "Confirmer la clôture",
+    "joined": "Conférence rejointe.",
+    "participants": "participants : {{count}}"
+  },
+  "phone": {
+    "title": "Téléphone",
+    "status": {
+      "off": "hors ligne",
+      "connecting": "connexion…",
+      "ready": "disponible",
+      "error": "erreur"
+    },
+    "connect": "Activer le téléphone",
+    "disconnect": "Désactiver",
+    "idle": "Aucun appel en cours.",
+    "ringingCount": "{{count}} appel(s) entrant(s)",
+    "incoming": "Appel entrant",
+    "queue": "File",
+    "defaultQueue": "Opérateurs",
+    "waiting": "En attente dans la file",
+    "waited": "Attente",
+    "answer": "Répondre",
+    "decline": "Refuser",
+    "inCall": "Appel en cours",
+    "dialing": "Appel en cours d’établissement…",
+    "ended": "Appel terminé",
+    "inConference": "Conférence {{room}}",
+    "conference": "Conférence de crise",
+    "connecting": "Connexion…",
+    "onHold": "en attente",
+    "muted": "micro coupé",
+    "hold": "Mettre en attente",
+    "resume": "Reprendre",
+    "mute": "Couper le micro",
+    "unmute": "Rétablir le micro",
+    "hangup": "Raccrocher",
+    "remoteAudio": "Son de l’appel",
+    "unknownCaller": "Numéro inconnu",
+    "scenario1": "Transfert direct non activé : appelez le 198 depuis votre propre téléphone et transmettez les informations.",
+    "copyNumber": "Copier le numéro",
+    "copied": "Numéro copié.",
+    "transfer198": "Transférer au 198",
+    "transferConfirmText": "L’appelant sera transféré au 198 par la ligne opérateur et quittera ce poste.",
+    "transferConfirm": "Confirmer le transfert",
+    "transferred": "Appel transféré au 198.",
+    "call": "Appeler",
+    "callName": "Appeler {{name}}",
+    "callReporter": "Appeler le déclarant",
+    "callVolunteer": "Appeler le volontaire",
+    "dialStarted": "Appel lancé : votre téléphone va sonner puis le correspondant.",
+    "error": {
+      "registration_failed": "Enregistrement refusé par le serveur téléphonique.",
+      "microphone": "Microphone inaccessible : autorisez-le dans le navigateur."
+    },
+    "link": {
+      "title": "Lier l’appel",
+      "linked": "Lié à :",
+      "report": "Signalement",
+      "incident": "Incident",
+      "kind": "Lier à",
+      "kinds": {
+        "tracking_code": "Code de suivi",
+        "report_id": "Identifiant de signalement",
+        "incident_id": "Identifiant d’incident"
+      },
+      "value": "Valeur",
+      "submit": "Lier",
+      "waitingId": "En attente de l’identifiant de l’appel…",
+      "done": "Appel lié."
+    }
+  },
+  "calls": {
+    "title": "Journal des appels",
+    "intro": "Appels de la file, appels sortants et conférences. Les enregistrements sont conservés 2 ans ; chaque écoute est journalisée.",
+    "count": "Appels affichés : {{count}}",
+    "filters": "Filtres des appels",
+    "all": "Tous",
+    "linked": "Liés",
+    "unlinked": "Non liés",
+    "search": "Rechercher (code, numéro, file)",
+    "none": "Aucun appel.",
+    "more": "Afficher plus",
+    "listen": "Écouter",
+    "download": "Télécharger",
+    "recordingOf": "Enregistrement de l’appel du {{time}}",
+    "operatorSet": "Opérateur",
+    "columns": {
+      "startedAt": "Début",
+      "direction": "Sens",
+      "number": "Numéro",
+      "queue": "File",
+      "status": "État",
+      "duration": "Durée",
+      "operator": "Opérateur",
+      "link": "Lien",
+      "recording": "Enregistrement"
+    },
+    "status": {
+      "queued": "En file",
+      "ringing": "Sonne",
+      "answered": "Répondu",
+      "ended": "Terminé",
+      "missed": "Manqué",
+      "abandoned": "Abandonné",
+      "transferred": "Transféré",
+      "failed": "Échec"
+    },
+    "direction": {
+      "inbound": "Entrant",
+      "outbound": "Sortant",
+      "conference": "Conférence"
     }
   }
 }

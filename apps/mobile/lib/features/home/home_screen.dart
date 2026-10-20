@@ -14,6 +14,7 @@ import '../institution/institution_providers.dart';
 import '../institution/my_institution_screen.dart';
 import '../reports/reports_providers.dart';
 import '../sos/sos_widgets.dart';
+import '../weather/weather_card.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -134,6 +135,9 @@ class HomeScreen extends ConsumerWidget {
                 subtitle: l10n.homeInstitutionDesc,
                 onTap: () => openMyInstitution(context, orgs),
               ),
+            const SizedBox(height: 8),
+            // FR-A-034: below the emergency actions, which stay first on screen.
+            const WeatherCard(),
           ],
         ),
       ),

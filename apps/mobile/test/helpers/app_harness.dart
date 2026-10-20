@@ -113,6 +113,8 @@ Future<AppHarness> pumpApp(
   FakeHandler? api,
   MemorySecureStore? secure,
   List<Uri>? opened,
+  LocationService? location,
+  ConnectivityMonitor? connectivity,
   List<Override> overrides = const [],
 }) async {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
@@ -135,8 +137,12 @@ Future<AppHarness> pumpApp(
         }),
         databaseProvider.overrideWithValue(db),
         httpAdapterProvider.overrideWithValue(adapter),
-        locationServiceProvider.overrideWithValue(FakeLocationService()),
-        connectivityProvider.overrideWithValue(FakeConnectivity()),
+        locationServiceProvider.overrideWithValue(
+          location ?? FakeLocationService(),
+        ),
+        connectivityProvider.overrideWithValue(
+          connectivity ?? FakeConnectivity(),
+        ),
         oidcClientProvider.overrideWithValue(FakeOidc()),
         sosServiceProvider.overrideWithValue(sos),
         dialerProvider.overrideWithValue((uri) async {

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/connectivity/connectivity.dart';
 import '../../core/db/app_database.dart';
 import '../../core/http/api_error.dart';
 import '../../core/http/models.dart';
@@ -15,6 +16,7 @@ import '../emergency/emergency_numbers.dart';
 import '../institution/institution_providers.dart';
 import '../institution/org_labels.dart';
 import '../reports/reports_providers.dart';
+import 'sms_fallback.dart';
 
 /// Shown right after submit: the temporary code is available instantly, offline. It switches to
 /// the server tracking code as soon as the sync engine gets it.
@@ -50,6 +52,12 @@ class ReportQueuedScreen extends ConsumerWidget {
     final code = serverCode ?? tempCode;
     final orgId = row == null ? null : payloadOrganizationId(row.payload);
     final civil = emergencyNumbers.first;
+    // FR-A-048: not on the server yet and no network at all → SMS / 198 fallback.
+    final offlineFallback =
+        row != null &&
+        serverCode == null &&
+        ReportState.pendingStates.contains(row.state) &&
+        !(ref.watch(onlineProvider).value ?? true);
     return Scaffold(
       appBar: AppBar(
         title: Text(sos ? l10n.sosQueuedTitle : l10n.reportQueuedTitle),
@@ -129,7 +137,12 @@ class ReportQueuedScreen extends ConsumerWidget {
                 style: TextStyle(color: theme.colorScheme.error),
               ),
             ],
-            if (sos) ...[
+            if (offlineFallback) ...[
+              const SizedBox(height: 16),
+              OfflineFallbackCard(row: row),
+            ],
+            // The fallback card has its own call button.
+            if (sos && !offlineFallback) ...[
               const SizedBox(height: 24),
               FilledButton.icon(
                 style: FilledButton.styleFrom(

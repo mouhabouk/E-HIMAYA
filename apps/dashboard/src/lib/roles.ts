@@ -29,6 +29,16 @@ export const TIPS_ROLES = ["content_editor"] as const;
 /** Live streams are read with the report read roles; ending one for everyone is for the dispatch roles. */
 export const STREAM_STOP_ROLES = ["operator", "ops_manager", "field_commander"] as const;
 
+// ---------- Phase 7 ----------
+/** Weather alert suggestions (§1): reviewed by those who draft alerts — editors, the ops manager and committees. */
+export const WEATHER_SUGGESTION_ROLES = NOTIFY_ROLES;
+/** Spread forecasts are run by the dispatch roles (audited); everyone who reads the incident sees them. */
+export const FORECAST_ROLES = INCIDENT_WRITE_ROLES;
+/** Softphone (§4): the operators' queue, outbound calls, linking and transfer. */
+export const TELEPHONY_ROLES = ["operator", "ops_manager", "field_commander"] as const;
+/** Crisis conference rooms: the dispatch roles and both committees. */
+export const CONFERENCE_ROLES = [...TELEPHONY_ROLES, ...COMMITTEE_ROLES] as const;
+
 /** Every role the dashboard knows (shown in the header). */
 export const STAFF_ROLES = [...ORG_READ_ROLES, "content_editor", "sysadmin"] as const;
 export type StaffRole = (typeof STAFF_ROLES)[number];
@@ -134,6 +144,29 @@ export function canEditTips(roles: readonly string[]): boolean {
 /** Stop a live stream (`POST /api/v1/staff/streams/{id}/stop`). */
 export function canStopStreams(roles: readonly string[]): boolean {
   return any(STREAM_STOP_ROLES, roles);
+}
+
+export function canReviewWeatherSuggestions(roles: readonly string[]): boolean {
+  return any(WEATHER_SUGGESTION_ROLES, roles);
+}
+
+export function canRunForecast(roles: readonly string[]): boolean {
+  return any(FORECAST_ROLES, roles);
+}
+
+/** Answer queue calls, dial out, link and transfer calls. */
+export function canUseTelephony(roles: readonly string[]): boolean {
+  return any(TELEPHONY_ROLES, roles);
+}
+
+/** Start or join an incident's crisis conference (also loads the softphone). */
+export function canJoinConference(roles: readonly string[]): boolean {
+  return any(CONFERENCE_ROLES, roles);
+}
+
+/** The softphone is loaded for anyone who may call or join a conference. */
+export function hasSoftphone(roles: readonly string[]): boolean {
+  return canUseTelephony(roles) || canJoinConference(roles);
 }
 
 /** Pages a user lands on when the KPIs are not theirs: the first area their roles open. */

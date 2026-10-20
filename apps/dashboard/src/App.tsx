@@ -9,18 +9,21 @@ import { AuthProvider, useAuth } from "./context/auth";
 import { FiltersProvider } from "./context/filters";
 import { LiveProvider } from "./context/live";
 import { ServicesProvider, type Services } from "./context/services";
+import { SoftphoneProvider } from "./context/softphone";
 import { isApiError } from "./lib/api";
 import {
   canEditTips,
   canMonitorPerformance,
   canReadOrgs,
   canReadResources,
+  canReviewWeatherSuggestions,
   canUseNotifications,
   hasReadAccess,
   isCommittee,
   landingPath,
 } from "./lib/roles";
 import { AiSettingsPage } from "./pages/AiSettingsPage";
+import { CallsPage } from "./pages/CallsPage";
 import { CallbackPage } from "./pages/CallbackPage";
 import { CertificatesPage } from "./pages/CertificatesPage";
 import { CommitteePage } from "./pages/CommitteePage";
@@ -44,6 +47,7 @@ import { StreamsPage } from "./pages/StreamsPage";
 import { StreamWallPage } from "./pages/StreamWallPage";
 import { VolunteerDetailPage } from "./pages/VolunteerDetailPage";
 import { VolunteersPage } from "./pages/VolunteersPage";
+import { WeatherSuggestionsPage } from "./pages/WeatherSuggestionsPage";
 
 export function createQueryClient(): QueryClient {
   return new QueryClient({
@@ -79,6 +83,7 @@ const orgs = (page: ReactNode) => <Gate allow={canReadOrgs}>{page}</Gate>;
 const resources = (page: ReactNode) => <Gate allow={canReadResources}>{page}</Gate>;
 const notifications = (page: ReactNode) => <Gate allow={canUseNotifications}>{page}</Gate>;
 const tips = (page: ReactNode) => <Gate allow={canEditTips}>{page}</Gate>;
+const weather = (page: ReactNode) => <Gate allow={canReviewWeatherSuggestions}>{page}</Gate>;
 const committee = (page: ReactNode) => (
   <Gate allow={(roles) => isCommittee(roles) || canMonitorPerformance(roles)}>{page}</Gate>
 );
@@ -105,6 +110,8 @@ export function AppRoutes() {
         <Route path="streams/archive" element={reports(<StreamArchivePage />)} />
         <Route path="streams/:id" element={reports(<StreamDetailPage />)} />
         <Route path="settings/ai" element={reports(<AiSettingsPage />)} />
+        <Route path="calls" element={reports(<CallsPage />)} />
+        <Route path="weather/suggestions" element={weather(<WeatherSuggestionsPage />)} />
         <Route path="orgs" element={orgs(<OrgsPage />)} />
         <Route path="orgs/certificates" element={orgs(<CertificatesPage />)} />
         <Route path="orgs/:id" element={orgs(<OrgDetailPage />)} />
@@ -130,11 +137,13 @@ export function App({ services, i18n }: { services: Services; i18n: i18n }) {
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
             <LiveProvider>
-              <FiltersProvider>
-                <BrowserRouter>
-                  <AppRoutes />
-                </BrowserRouter>
-              </FiltersProvider>
+              <SoftphoneProvider>
+                <FiltersProvider>
+                  <BrowserRouter>
+                    <AppRoutes />
+                  </BrowserRouter>
+                </FiltersProvider>
+              </SoftphoneProvider>
             </LiveProvider>
           </AuthProvider>
         </QueryClientProvider>

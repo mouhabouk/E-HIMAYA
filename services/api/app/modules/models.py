@@ -3,6 +3,8 @@
 from app.modules.ai.models import AiSettingsRow, Analysis
 from app.modules.audit.models import AuditLog
 from app.modules.content.models import Revision, SafetyTip
+from app.modules.decision.models import ProcedureChunk
+from app.modules.forecast.models import ForecastRun
 from app.modules.geo.models import Delegation, Gouvernorat
 from app.modules.identity.models import Account, Consent, ErasureRequest, Profile
 from app.modules.notify.models import Device, Dispatch, Message, OrgDigest, Outbox
@@ -32,17 +34,22 @@ from app.modules.orgs.models import (
 )
 from app.modules.reports.models import Media, Report, StatusHistory
 from app.modules.streams.models import LiveStream, StreamDetection, StreamLocation, StreamSegment
+from app.modules.telephony.models import Call, Conference, OperatorEndpoint, SmsInbound
 from app.modules.volunteers.models import Volunteer, VolunteerReview
+from app.modules.weather.models import AlertSuggestion, GridPoint, Observation, Rule
 
 __all__ = [
     "Account",
     "AiSettingsRow",
+    "AlertSuggestion",
     "Analysis",
     "Assignment",
     "AuditLog",
+    "Call",
     "Callout",
     "CalloutTarget",
     "Certificate",
+    "Conference",
     "Consent",
     "Delegation",
     "Device",
@@ -53,7 +60,9 @@ __all__ = [
     "DocumentVersion",
     "Equipment",
     "ErasureRequest",
+    "ForecastRun",
     "Gouvernorat",
+    "GridPoint",
     "Hazmat",
     "Incident",
     "Invitation",
@@ -63,14 +72,19 @@ __all__ = [
     "Media",
     "Member",
     "Message",
+    "Observation",
+    "OperatorEndpoint",
     "OrgDigest",
     "Organization",
     "Outbox",
+    "ProcedureChunk",
     "Profile",
     "Report",
     "Resource",
     "Revision",
+    "Rule",
     "SafetyTip",
+    "SmsInbound",
     "StatusHistory",
     "StreamDetection",
     "StreamLocation",

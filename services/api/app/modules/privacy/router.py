@@ -4,6 +4,7 @@
 * ``POST /api/v1/me/delete`` — erasure: the profile is wiped at once; reports are kept for the legal
   retention period, detached from any identifier (the account keeps only its random id). Live streams still
   running are ended (their publisher disconnected); recordings and the position track stay with the report.
+  Calls and emergency SMS lose the person's number; calls and their recordings stay for their retention period.
 """
 
 import uuid
@@ -31,6 +32,7 @@ from app.modules.streams import service as streams
 from app.modules.streams.domain import ACTIVE as ACTIVE_STREAMS
 from app.modules.streams.domain import EndReason
 from app.modules.streams.models import LiveStream, StreamLocation
+from app.modules.telephony import privacy as telephony
 from app.modules.volunteers import service as volunteers
 from app.modules.volunteers.models import Volunteer
 from app.modules.volunteers.presence import get_presence
@@ -164,6 +166,9 @@ class ExportOut(BaseModel):
     consents: list[ExportConsent]
     reports: list[ExportReport]
     streams: list[ExportStream]
+    # Phase 7: calls from or to the verified phone number, emergency SMS sent from it or creating own reports.
+    calls: list[telephony.ExportCall]
+    sms: list[telephony.ExportSms]
     volunteer: VolunteerOut | None
     devices: list[ExportDevice]
     messages: list[ExportMessage]
@@ -317,6 +322,7 @@ async def export_my_data(
         .where(Message.audience == "user", Message.user_id == user_id, Message.status != "draft")
         .order_by(Message.created_at)
     )
+    calls, sms = await telephony.export(session, user_id)
     out = ExportOut(
         generated_at=datetime.now(UTC),
         account=ExportAccount(
@@ -331,6 +337,8 @@ async def export_my_data(
         ],
         reports=await _reports(session, user_id),
         streams=await _streams(session, user_id),
+        calls=calls,
+        sms=sms,
         volunteer=volunteers.volunteer_out(volunteer) if volunteer is not None else None,
         devices=[
             ExportDevice(
@@ -392,6 +400,8 @@ async def delete_my_account(request: Request, body: DeleteIn, reporter: CurrentR
     details: dict[str, Any] = {"kind": account.kind.value}
 
     details["organizations_left"] = await _leave_organizations(session, user_id)
+    # Before the profile goes: the verified phone number is what links calls and SMS to the person.
+    details.update(await telephony.forget(session, user_id))
     details["profile"] = (await session.execute(delete(Profile).where(Profile.user_id == user_id))).rowcount > 0  # type: ignore[attr-defined]
     details["devices"] = (await session.execute(delete(Device).where(Device.user_id == user_id))).rowcount  # type: ignore[attr-defined]
     await session.execute(delete(Outbox).where(Outbox.user_id == user_id, Outbox.status == "pending"))

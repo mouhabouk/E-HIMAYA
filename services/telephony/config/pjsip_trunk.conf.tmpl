@@ -1,0 +1,38 @@
+; SIP trunk of the Tunisian operator (Tunisie Telecom, Ooredoo or Orange; docs/telephony.md). Inbound calls to the
+; platform's DID go to 8000; outbound calls (contact from the map, crisis-room invitations, scenario 2 transfer to
+; 198) leave through it.
+[trunk-auth]
+type = auth
+auth_type = userpass
+username = @@TELEPHONY_TRUNK_USERNAME@@
+password = @@TELEPHONY_TRUNK_PASSWORD@@
+
+[trunk]
+type = aor
+contact = sip:@@TELEPHONY_TRUNK_HOST@@:@@TELEPHONY_TRUNK_PORT@@
+qualify_frequency = 60
+
+[trunk]
+type = endpoint
+context = ehimaya-trunk-in
+disallow = all
+allow = @@TELEPHONY_TRUNK_CODECS@@
+transport = transport-@@TELEPHONY_TRUNK_TRANSPORT@@
+outbound_auth = trunk-auth
+aors = trunk
+from_user = @@TELEPHONY_TRUNK_USERNAME@@
+from_domain = @@TELEPHONY_TRUNK_DOMAIN@@
+direct_media = no
+rtp_symmetric = yes
+force_rport = yes
+rewrite_contact = yes
+send_pai = yes
+; The operator asserts the caller's number (P-Asserted-Identity): trusted on this endpoint only.
+trust_id_inbound = yes
+allow_transfer = no
+media_encryption = @@TELEPHONY_TRUNK_MEDIA_ENCRYPTION@@
+
+[trunk]
+type = identify
+endpoint = trunk
+match = @@TELEPHONY_TRUNK_MATCH@@
