@@ -3,9 +3,17 @@ import { useTranslation } from "react-i18next";
 import { NavLink, Outlet } from "react-router";
 import { useAuth } from "../context/auth";
 import { useLiveState } from "../context/live";
+import { directionOf, LANGUAGES, type Language } from "../i18n";
 import { useGouvernorats, useLanguage } from "../lib/hooks";
 import {
+  canEditAiSettings,
   canEditTips,
+  canManageAccounts,
+  canOpenBreakGlass,
+  canReadPlatformSettings,
+  canReadScopedAudit,
+  canRequestBreakGlass,
+  canSeeNationalQueues,
   canMonitorPerformance,
   canReadAnalytics,
   canReadKnowledge,
@@ -20,24 +28,39 @@ import {
 } from "../lib/roles";
 import { applyTheme, nextTheme, storedTheme, type Theme } from "../lib/theme";
 import { NoAccessPage } from "../pages/NoAccessPage";
+import { ActiveGrantBanner } from "./BreakGlass";
 import { LevelBanner } from "./LevelBanner";
 import { SoftphoneDock } from "./Softphone";
 import { StreamAlertToasts } from "./StreamAlertToasts";
 
-export function LanguageSwitch() {
+/** Native names of the interface languages, shown in their own script whatever the current language. */
+export const LANGUAGE_NAMES: Record<Language, string> = { ar: "العربية", fr: "Français", en: "English" };
+
+/**
+ * Three-way language menu. Changing the language only re-renders: the route, its query string and the scope stay
+ * as they are, and the document direction and title follow (`i18n/index.ts`).
+ */
+export function LanguageMenu() {
   const { t, i18n } = useTranslation();
   const lang = useLanguage();
-  const other = lang === "ar" ? "fr" : "ar";
   return (
-    <button
-      type="button"
-      className="btn btn--ghost"
-      lang={other}
-      onClick={() => void i18n.changeLanguage(other)}
-      aria-label={t("header.switchLanguage")}
-    >
-      {t("header.otherLanguage")}
-    </button>
+    <div className="lang-menu" role="group" aria-label={t("header.language")}>
+      {LANGUAGES.map((l) => (
+        <button
+          key={l}
+          type="button"
+          className="btn btn--ghost btn--small"
+          lang={l}
+          dir={directionOf(l)}
+          aria-pressed={l === lang}
+          onClick={() => {
+            if (l !== lang) void i18n.changeLanguage(l);
+          }}
+        >
+          {LANGUAGE_NAMES[l]}
+        </button>
+      ))}
+    </div>
   );
 }
 
@@ -105,6 +128,8 @@ export function Layout() {
   const analytics = canReadAnalytics(identity.roles);
   const knowledge = canReadKnowledge(identity.roles);
   const rewards = canReadRewards(identity.roles);
+  const nationalQueues = canSeeNationalQueues(identity);
+  const aiSettings = readsReports || canEditAiSettings(identity);
   const roles = staffRoles(identity.roles)
     .map((r) => t(`roles.${r}`))
     .join(t("common.listSeparator"));
@@ -131,6 +156,13 @@ export function Layout() {
               <NavLink to="/streams">{t("nav.streams")}</NavLink>
               <NavLink to="/volunteers">{t("nav.volunteers")}</NavLink>
               <NavLink to="/calls">{t("nav.calls")}</NavLink>
+              <NavLink to="/resource-requests">{t("nav.resourceRequests")}</NavLink>
+            </>
+          )}
+          {nationalQueues && (
+            <>
+              <NavLink to="/reports/late">{t("nav.late")}</NavLink>
+              <NavLink to="/reports/geo-queue">{t("nav.geoQueue")}</NavLink>
             </>
           )}
           {readsResources && <NavLink to="/resources">{t("nav.resources")}</NavLink>}
@@ -159,7 +191,15 @@ export function Layout() {
             </>
           )}
           {editsTips && <NavLink to="/safety-tips">{t("nav.safetyTips")}</NavLink>}
-          {readsReports && <NavLink to="/settings/ai">{t("nav.aiSettings")}</NavLink>}
+          {canReadPlatformSettings(identity.roles) && (
+            <NavLink to="/settings" end>
+              {t("nav.settings")}
+            </NavLink>
+          )}
+          {aiSettings && <NavLink to="/settings/ai">{t("nav.aiSettings")}</NavLink>}
+          {canManageAccounts(identity) && <NavLink to="/accounts">{t("nav.accounts")}</NavLink>}
+          {canReadScopedAudit(identity) && <NavLink to="/audit">{t("nav.audit")}</NavLink>}
+          {canOpenBreakGlass(identity) && <NavLink to="/break-glass">{t("nav.breakGlass")}</NavLink>}
         </nav>
         <div className="header__tools">
           <LiveIndicator />
@@ -174,7 +214,7 @@ export function Layout() {
               {roles}
             </span>
           </div>
-          <LanguageSwitch />
+          <LanguageMenu />
           <ThemeToggle />
           <button type="button" className="btn" onClick={() => void signOut()}>
             {t("header.logout")}
@@ -182,6 +222,11 @@ export function Layout() {
         </div>
       </header>
       <LevelBanner />
+      {canRequestBreakGlass(identity.roles) && (
+        <div className="shell__banner">
+          <ActiveGrantBanner />
+        </div>
+      )}
       <main id="main" tabIndex={-1} className="main">
         {live === "forbidden" ? <NoAccessPage reason="liveForbidden" embedded /> : <Outlet />}
       </main>

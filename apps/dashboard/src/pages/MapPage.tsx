@@ -25,6 +25,7 @@ import type { DialBody } from "../lib/telephonyTypes";
 import { queryKeys } from "../lib/staffApi";
 import type { Page, StaffReport } from "../lib/types";
 import { useEffectiveFilters } from "./useEffectiveFilters";
+import { localized } from "../lib/localized";
 
 const PAGE_SIZE = 200; // server maximum is 500
 const MAX_PAGES = 2;
@@ -291,7 +292,7 @@ export function MapPage() {
             lon,
             lat,
             kind: "unit",
-            title: lang === "ar" ? p.name : p.name_fr,
+            title: lang === "ar" ? p.name : p.name_fr || p.name,
             subtitle: [t(`resources.units.kind.${p.kind}`), p.phone].filter(Boolean).join(" · "),
             href: "/resources",
             ...(p.phone ? { call: { number: p.phone } } : {}),
@@ -419,7 +420,7 @@ export function MapPage() {
                   <span className={`chip chip--severity-${a.severity ?? "low"}`}>
                     {t(`ops.map.severity.${a.severity ?? "low"}`)}
                   </span>{" "}
-                  <strong dir="auto">{lang === "ar" ? a.title.ar : a.title.fr || a.title.ar}</strong>
+                  <strong dir="auto">{localized(a.title, lang)}</strong>
                   <span className="muted">
                     {" · "}
                     {a.area.polygon

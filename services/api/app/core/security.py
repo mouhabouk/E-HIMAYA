@@ -10,7 +10,7 @@ realm can never carry a staff role even if such a role were created there by mis
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
 from enum import StrEnum
-from typing import Annotated, Any, Protocol
+from typing import Annotated, Any, Literal, Protocol
 from urllib.parse import urlsplit
 
 import jwt
@@ -41,6 +41,10 @@ class Role(StrEnum):
     ORG_AUDITOR = "org_auditor"
     CONTENT_EDITOR = "content_editor"
     SYSADMIN = "sysadmin"
+    # Technical administration split in phase 9 (docs/api/phase-9-contract.md §1.1): none grants operational rights.
+    SECURITY_ADMIN = "security_admin"
+    AI_ADMIN = "ai_admin"
+    REGIONAL_ACCOUNT_ADMIN = "regional_account_admin"
 
 
 REALM_ROLES: dict[Realm, frozenset[Role]] = {
@@ -55,8 +59,28 @@ REALM_ROLES: dict[Realm, frozenset[Role]] = {
             Role.ORG_AUDITOR,
             Role.CONTENT_EDITOR,
             Role.SYSADMIN,
+            Role.SECURITY_ADMIN,
+            Role.AI_ADMIN,
+            Role.REGIONAL_ACCOUNT_ADMIN,
         }
     ),
+}
+
+
+class Function(StrEnum):
+    """Families of staff roles (phase 9 §1.1). Derived from the roles, never read from a token claim."""
+
+    COMMAND = "command"
+    OPERATIONS = "operations"
+    TECHNICAL = "technical"
+    SUPPORT = "support"
+
+
+FUNCTION_ROLES: dict[Function, frozenset[Role]] = {
+    Function.COMMAND: frozenset({Role.CENTRAL_COMMITTEE, Role.LOCAL_COMMITTEE, Role.FIELD_COMMANDER}),
+    Function.OPERATIONS: frozenset({Role.OPERATOR, Role.OPS_MANAGER}),
+    Function.TECHNICAL: frozenset({Role.SYSADMIN, Role.SECURITY_ADMIN, Role.AI_ADMIN, Role.REGIONAL_ACCOUNT_ADMIN}),
+    Function.SUPPORT: frozenset({Role.CONTENT_EDITOR, Role.ORG_AUDITOR}),
 }
 
 
@@ -79,6 +103,18 @@ class Principal:
 
     def can_access_gouvernorat(self, code: int) -> bool:
         return self.is_national or self.gouvernorat_code == code
+
+    @property
+    def functions(self) -> frozenset[str]:
+        """Role families of a staff member (a token may carry roles of several families)."""
+        if not self.is_staff:
+            return frozenset()
+        return frozenset(f.value for f, members in FUNCTION_ROLES.items() if self.roles & members)
+
+    @property
+    def room(self) -> Literal["central", "regional"]:
+        """Operations room the staff member works in: central (national scope) or regional."""
+        return "central" if self.is_national else "regional"
 
 
 class KeyResolver(Protocol):
@@ -194,6 +230,10 @@ async def get_optional_principal(
 async def get_principal(principal: Annotated[Principal | None, Depends(get_optional_principal)]) -> Principal:
     if principal is None:
         raise _unauthorized("authentication_required")
+    # Database scope of this request (row-level security, phase 9 §9.1); reporters refine it in get_reporter.
+    from app.core.access import scope_of_principal, set_db_scope
+
+    set_db_scope(scope_of_principal(principal))
     return principal
 
 

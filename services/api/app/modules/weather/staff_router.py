@@ -27,7 +27,8 @@ router = APIRouter(prefix="/api/v1/staff/weather", tags=["staff", "weather"])
 Session = Annotated[AsyncSession, Depends(get_session)]
 EDITOR_ROLES = (Role.CONTENT_EDITOR, Role.OPS_MANAGER, Role.LOCAL_COMMITTEE, Role.CENTRAL_COMMITTEE)
 RULE_ROLES = (Role.OPS_MANAGER, Role.LOCAL_COMMITTEE, Role.CENTRAL_COMMITTEE)
-StaffReader = Annotated[Principal, Depends(require_roles(*READ_ROLES, *EDITOR_ROLES, Role.SYSADMIN))]
+# Technical roles hold no operational data (phase 9 §1.1): sysadmin no longer reads the weather picture.
+StaffReader = Annotated[Principal, Depends(require_roles(*READ_ROLES, *EDITOR_ROLES))]
 Editor = Annotated[Principal, Depends(require_roles(*EDITOR_ROLES))]
 RuleEditor = Annotated[Principal, Depends(require_roles(*RULE_ROLES))]
 HOURS_AHEAD = 48

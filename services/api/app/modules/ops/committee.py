@@ -2,7 +2,8 @@
 
 The central committee issues directives to the local committees of chosen gouvernorats (or all of
 them); a local committee issues directives to its own gouvernorat. Each target gouvernorat
-acknowledges once. Performance compares the gouvernorats in the caller's scope.
+acknowledges once. Performance compares the gouvernorats in the caller's scope; incidents count for their lead
+gouvernorat, participations in incidents led elsewhere are counted apart (phase 9 §5.6).
 """
 
 import base64
@@ -186,6 +187,11 @@ _PERFORMANCE = text(
         GROUP BY r.gouvernorat_code
     ),
     i AS (SELECT gouvernorat_code AS code, count(*) AS n FROM ops.incident WHERE status = 'open' GROUP BY 1),
+    p AS (
+        SELECT ig.gouvernorat_code AS code, count(*) AS n FROM ops.incident_gouvernorat ig
+        JOIN ops.incident i ON i.id = ig.incident_id
+        WHERE ig.role = 'participating' AND i.status = 'open' GROUP BY 1
+    ),
     a AS (
         SELECT i.gouvernorat_code AS code, count(*) AS n FROM ops.assignment a
         JOIN ops.incident i ON i.id = a.incident_id
@@ -208,13 +214,14 @@ _PERFORMANCE = text(
            coalesce(r.rejected, 0) AS rejected, r.avg_first, r.avg_resolution,
            coalesce(i.n, 0) AS open_incidents, coalesce(a.n, 0) AS active_assignments,
            coalesce(v.approved, 0) AS volunteers_approved, coalesce(v.ready, 0) AS volunteers_ready,
-           coalesce(al.n, 0) AS alerts_active
+           coalesce(al.n, 0) AS alerts_active, coalesce(p.n, 0) AS participating_incidents
     FROM g
     LEFT JOIN r ON r.code = g.code
     LEFT JOIN i ON i.code = g.code
     LEFT JOIN a ON a.code = g.code
     LEFT JOIN v ON v.code = g.code
     LEFT JOIN al ON al.code = g.code
+    LEFT JOIN p ON p.code = g.code
     ORDER BY g.code
     """
 )
@@ -250,6 +257,7 @@ async def performance(session: AsyncSession, principal: Principal, since: dateti
             volunteers_approved=row.volunteers_approved,
             volunteers_ready=row.volunteers_ready,
             alerts_active=row.alerts_active,
+            participating_incidents=row.participating_incidents,
         )
         for row in rows
     ]
@@ -272,5 +280,6 @@ async def performance(session: AsyncSession, principal: Principal, since: dateti
         volunteers_approved=sum(r.volunteers_approved for r in out),
         volunteers_ready=sum(r.volunteers_ready for r in out),
         alerts_active=int(await session.scalar(_ACTIVE_ALERTS, {"scope": principal.gouvernorat_code}) or 0),
+        participating_incidents=sum(r.participating_incidents for r in out),
     )
     return schemas.PerformanceOut(since=since, rows=out, national=national)

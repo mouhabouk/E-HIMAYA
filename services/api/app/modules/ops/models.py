@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Any
 
 from geoalchemy2 import Geography
-from sqlalchemy import DateTime, Enum, ForeignKey, Integer, SmallInteger, Text, func
+from sqlalchemy import Boolean, DateTime, Enum, ForeignKey, Integer, SmallInteger, Text, func
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -26,6 +26,7 @@ class Incident(Base):
     severity: Mapped[int | None] = mapped_column(SmallInteger)
     centroid: Mapped[object | None] = mapped_column(Geography("POINT", srid=4326))
     area: Mapped[object | None] = mapped_column(Geography("POLYGON", srid=4326))
+    # Lead gouvernorat (phase 9 §5.1): fixed at creation, changed only by an audited transfer.
     gouvernorat_code: Mapped[int | None] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
     delegation_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("geo.delegation.id"))
     op_level: Mapped[OpLevel] = mapped_column(
@@ -41,6 +42,29 @@ class Incident(Base):
     title: Mapped[str | None] = mapped_column(Text)
     classification: Mapped[str | None] = mapped_column(Text)
     evaluation: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    lead_set_by: Mapped[str | None] = mapped_column(Text)
+    lead_set_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # regional | central (phase 9 §5.3).
+    command_level: Mapped[str] = mapped_column(Text, server_default="regional")
+    command_level_reason: Mapped[str | None] = mapped_column(Text)
+    command_level_manual: Mapped[bool] = mapped_column(Boolean, server_default="false")
+
+
+class IncidentGouvernorat(Base):
+    """Lead and participating gouvernorats of an incident; the lead row follows ``incident.gouvernorat_code``
+    (database trigger)."""
+
+    __tablename__ = "incident_gouvernorat"
+    __table_args__ = {"schema": "ops"}
+
+    incident_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ops.incident.id", ondelete="CASCADE"), primary_key=True
+    )
+    gouvernorat_code: Mapped[int] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"), primary_key=True)
+    role: Mapped[str] = mapped_column(Text)
+    added_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    added_by: Mapped[str | None] = mapped_column(Text)
+    reason: Mapped[str | None] = mapped_column(Text)
 
 
 class TimelineEvent(Base):
@@ -176,6 +200,9 @@ class Assignment(Base):
         UUID(as_uuid=True), ForeignKey("identity.volunteer.user_id", ondelete="SET NULL")
     )
     callout_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("ops.callout.id"))
+    request_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ops.resource_request.id", ondelete="SET NULL")
+    )
     order: Mapped[str | None] = mapped_column(Text)
     status: Mapped[str] = mapped_column(Text)
     created_by: Mapped[str] = mapped_column(Text)
@@ -203,3 +230,32 @@ class CalloutTarget(Base):
     responded_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     arrived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     assignment_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("ops.assignment.id"))
+
+
+class ResourceRequest(Base):
+    """A room asks the gouvernorat owning a resource to engage it on an incident (phase 9 §5.4)."""
+
+    __tablename__ = "resource_request"
+    __table_args__ = {"schema": "ops"}
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    incident_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ops.incident.id", ondelete="CASCADE")
+    )
+    # "central" or "g:<code>".
+    from_room: Mapped[str] = mapped_column(Text)
+    to_gouvernorat_code: Mapped[int] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
+    resource_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ops.resource.id", ondelete="SET NULL")
+    )
+    resource_kind: Mapped[str] = mapped_column(Text)
+    quantity: Mapped[int] = mapped_column(SmallInteger, server_default="1")
+    reason: Mapped[str] = mapped_column(Text)
+    status: Mapped[str] = mapped_column(Text, server_default="pending")
+    requested_by: Mapped[str] = mapped_column(Text)
+    requested_by_name: Mapped[str | None] = mapped_column(Text)
+    requested_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    decided_by: Mapped[str | None] = mapped_column(Text)
+    decided_by_name: Mapped[str | None] = mapped_column(Text)
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    decision_note: Mapped[str | None] = mapped_column(Text)

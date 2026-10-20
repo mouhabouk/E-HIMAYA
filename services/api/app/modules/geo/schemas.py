@@ -20,4 +20,5 @@ class GouvernoratOut(BaseModel):
     name: str
     name_ar: str
     name_fr: str
+    name_en: str
     delegation_count: int

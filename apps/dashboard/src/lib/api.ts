@@ -97,6 +97,30 @@ export const ERROR_CODES = [
   "invalid_rule",
   "invalid_evidence",
   "nothing_to_revoke",
+  // Central and regional rooms, settings, break-glass, accounts (phase 9).
+  "action_not_allowed",
+  "anon_quota_exhausted",
+  "claim_required",
+  "already_claimed",
+  "not_claimable",
+  "referral_pending",
+  "referral_not_pending",
+  "geo_not_pending",
+  "field_action_regional_only",
+  "possible_duplicate",
+  "participant_active",
+  "request_not_pending",
+  "resource_not_owned",
+  "invalid_setting",
+  "requires_formal_approval",
+  "breakglass_justification_required",
+  "invalid_target",
+  "breakglass_self_review",
+  "already_reviewed",
+  "role_not_grantable",
+  "self_edit",
+  "identity_provider_error",
+  "username_taken",
   "rate_limited",
   "validation_error",
   "bad_request",
@@ -155,14 +179,23 @@ export class ApiError extends Error {
   readonly code: ErrorCode;
   readonly detail: unknown;
   readonly retryAfterS: number | null;
+  /** Whole JSON error body: some errors carry more than `detail` (phase 9: `already_claimed`, `possible_duplicate`). */
+  readonly body: Record<string, unknown> | null;
 
-  constructor(status: number, code: ErrorCode, detail: unknown = null, retryAfterS: number | null = null) {
+  constructor(
+    status: number,
+    code: ErrorCode,
+    detail: unknown = null,
+    retryAfterS: number | null = null,
+    body: Record<string, unknown> | null = null,
+  ) {
     super(`API error ${status}: ${code}`);
     this.name = "ApiError";
     this.status = status;
     this.code = code;
     this.detail = detail;
     this.retryAfterS = retryAfterS;
+    this.body = body;
   }
 }
 
@@ -228,11 +261,10 @@ function parseRetryAfter(value: string | null): number | null {
   return Number.isNaN(date) ? null : Math.max(0, Math.round((date - Date.now()) / 1000));
 }
 
-async function readDetail(response: Response): Promise<unknown> {
+async function readBody(response: Response): Promise<Record<string, unknown> | null> {
   try {
     const body: unknown = await response.json();
-    if (body && typeof body === "object" && "detail" in body) return body.detail;
-    return null;
+    return body && typeof body === "object" && !Array.isArray(body) ? (body as Record<string, unknown>) : null;
   } catch {
     return null;
   }
@@ -271,12 +303,14 @@ export function createApiClient(
       if (renewed) response = await send(url, options, renewed);
     }
     if (!response.ok) {
-      const detail = await readDetail(response);
+      const body = await readBody(response);
+      const detail = body && "detail" in body ? body.detail : null;
       throw new ApiError(
         response.status,
         errorCodeFrom(response.status, detail),
         detail,
         parseRetryAfter(response.headers.get("Retry-After")),
+        body,
       );
     }
     return response;

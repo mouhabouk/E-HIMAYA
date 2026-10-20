@@ -18,7 +18,10 @@ from app.modules.reports.domain import Category
 from app.modules.reports.schemas import StaffReport
 
 IncidentStatus = Literal["open", "closed", "merged", "dissolved"]
+CommandLevel = Literal["regional", "central"]
+RequestStatus = Literal["pending", "approved", "refused", "cancelled"]
 Text = Annotated[str, StringConstraints(strip_whitespace=True)]
+Reason = Annotated[Text, StringConstraints(min_length=5, max_length=500)]
 
 
 class Point(BaseModel):
@@ -30,6 +33,7 @@ class IncidentSummary(BaseModel):
     id: uuid.UUID
     category: Category
     status: IncidentStatus
+    # Lead gouvernorat (phase 9); ``lead_gouvernorat_code`` repeats it under its explicit name.
     gouvernorat_code: int | None
     centroid: Point | None
     # Highest priority among its reports (0..100).
@@ -45,6 +49,22 @@ class IncidentSummary(BaseModel):
     op_level: OpLevel = OpLevel.NORMAL
     assignments_active: int = 0
     callouts_open: int = 0
+    lead_gouvernorat_code: int | None = None
+    participating_gouvernorats: list[int] = Field(default_factory=list)
+    command_level: CommandLevel = "regional"
+
+
+class NearbyIncident(BaseModel):
+    """Summary of an open incident near a report, whatever its gouvernorat (no reporter data)."""
+
+    id: uuid.UUID
+    category: Category
+    lead_gouvernorat_code: int | None
+    participating_gouvernorats: list[int]
+    centroid: Point | None
+    severity: int | None
+    opened_at: datetime
+    report_count: int
 
 
 class TimelineEntry(BaseModel):
@@ -141,6 +161,7 @@ class IncidentDetail(IncidentSummary):
     assignments: list[AssignmentOut] = Field(default_factory=list)
     callouts: list[CalloutOut] = Field(default_factory=list)
     evaluation: Evaluation | None = None
+    resource_requests: list["ResourceRequestOut"] = Field(default_factory=list)
 
 
 class IncidentCardIn(BaseModel):
@@ -245,6 +266,8 @@ class PerformanceRow(BaseModel):
     volunteers_approved: int
     volunteers_ready: int
     alerts_active: int
+    # Open incidents led elsewhere in which the gouvernorat participates (counted apart from those it leads).
+    participating_incidents: int = 0
 
 
 class PerformanceOut(BaseModel):
@@ -333,8 +356,69 @@ class IncidentLinkIn(BaseModel):
 
     action: Literal["accept_suggestion", "link", "new"]
     incident_id: uuid.UUID | None = None
+    # ``new`` next to an open incident of a compatible type (409 possible_duplicate) needs a reason (audited).
+    override_reason: Reason | None = None
+
+
+class ParticipantIn(BaseModel):
+    gouvernorat_code: int
+    reason: Reason
+
+
+class ReasonIn(BaseModel):
+    reason: Reason
+
+
+class LeadIn(BaseModel):
+    gouvernorat_code: int
+    reason: Reason
+
+
+class CommandLevelIn(BaseModel):
+    # None returns to the automatic rule.
+    level: CommandLevel | None
+    reason: Reason
+
+
+class ResourceRequestIn(BaseModel):
+    to_gouvernorat_code: int
+    resource_id: uuid.UUID | None = None
+    resource_kind: ResourceKind | None = None
+    quantity: int = Field(default=1, ge=1, le=50)
+    reason: Reason
+
+
+class ResourceRequestOut(BaseModel):
+    id: uuid.UUID
+    incident_id: uuid.UUID
+    from_room: str
+    to_gouvernorat_code: int
+    resource_id: uuid.UUID | None
+    resource_kind: str
+    quantity: int
+    reason: str
+    status: RequestStatus
+    requested_by_name: str | None
+    requested_at: datetime
+    decided_by_name: str | None
+    decided_at: datetime | None
+    decision_note: str | None
+    assignment_ids: list[uuid.UUID] = Field(default_factory=list)
+
+
+class ResourceRequestPage(BaseModel):
+    items: list[ResourceRequestOut]
+    next_cursor: str | None
+
+
+class ApproveIn(BaseModel):
+    resource_ids: list[uuid.UUID] = Field(min_length=1, max_length=50)
+    note: Annotated[Text, StringConstraints(max_length=500)] | None = None
 
 
 class MergeIn(BaseModel):
     # The incident absorbed into the one in the path (its reports move, it becomes "merged").
     incident_id: uuid.UUID
+
+
+IncidentDetail.model_rebuild()

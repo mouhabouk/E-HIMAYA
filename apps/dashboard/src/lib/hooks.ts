@@ -6,6 +6,7 @@ import { currentLanguage, type Language } from "../i18n";
 import { createFormatters, type Formatters } from "./format";
 import { queryKeys } from "./staffApi";
 import type { Gouvernorat } from "./types";
+import { localizedName } from "./localized";
 
 export function useLanguage(): Language {
   const { i18n } = useTranslation();
@@ -33,7 +34,7 @@ export function useGouvernorats() {
       if (code === null || code === undefined) return null;
       const g = byCode.get(code);
       if (!g) return String(code);
-      return lang === "ar" ? g.name_ar : g.name_fr;
+      return localizedName(g, lang) || String(code);
     };
   }, [query.data, lang]);
   return { list: query.data ?? [], nameOf, isLoading: query.isLoading };

@@ -19,7 +19,8 @@ abstract final class ReportState {
   /// Permanent refusal (validation error); kept locally, not retried.
   static const failed = 'failed';
 
-  /// `403 anon_blocked`: waits until the user registers.
+  /// `403 anon_blocked`, or `403 anon_quota_exhausted` (phase 9 §3, also set on the device
+  /// before queuing when the known quota is exhausted): waits until the user registers.
   static const blocked = 'blocked';
 
   /// Sent on behalf of an institution and refused (`404 org_not_found`, `409 org_not_active`):

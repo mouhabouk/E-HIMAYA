@@ -91,6 +91,23 @@ def _report_filter(codes: list[int], category: str | None, alias: str = "r") -> 
     return " AND ".join(clauses), params
 
 
+def _incident_filter(codes: list[int], category: str | None) -> tuple[str, dict[str, Any]]:
+    """SQL condition on ``ops.incident`` (alias ``i``): led by, or with the participation of, the gouvernorats."""
+    clauses: list[str] = ["TRUE"]
+    params: dict[str, Any] = {}
+    if codes:
+        clauses.append(
+            "(i.gouvernorat_code = ANY(CAST(:codes AS smallint[])) OR EXISTS (SELECT 1 "
+            "FROM ops.incident_gouvernorat ig WHERE ig.incident_id = i.id "
+            "AND ig.gouvernorat_code = ANY(CAST(:codes AS smallint[]))))"
+        )
+        params["codes"] = codes
+    if category:
+        clauses.append("i.category = :category")
+        params["category"] = category
+    return " AND ".join(clauses), params
+
+
 def _bounds(start: date, end: date) -> dict[str, datetime]:
     return {"t0": domain.day_start(start), "t1": domain.day_start(end + timedelta(days=1))}
 
@@ -158,9 +175,20 @@ async def overview(
             ),
             params,
         )
-        groups[name] = [schemas.KeyCount(key=k if k is not None else "unknown", count=int(n)) for k, n in rows.all()]
+        # Reports not located yet have no gouvernorat (phase 9 §4): "unverified", which only national queries see.
+        missing = "unverified" if name == "gouvernorat" else "unknown"
+        groups[name] = [schemas.KeyCount(key=k if k is not None else missing, count=int(n)) for k, n in rows.all()]
     by_status = {str(g.key): g.count for g in groups["status"]}
     stages = (await session.execute(text(_STAGES_SQL.format(where=where)), params)).one()
+    incident_where, incident_params = _incident_filter(codes, category)
+    lead = "i.gouvernorat_code = ANY(CAST(:codes AS smallint[]))" if codes else "TRUE"
+    incident_rows = await session.execute(
+        text(
+            f"SELECT NOT ({lead}) AS participating, count(*) FROM ops.incident i "  # noqa: S608 (constant SQL fragments, values are bound)
+            f"WHERE i.opened_at >= :t0 AND i.opened_at < :t1 AND {incident_where} GROUP BY 1 ORDER BY 1"
+        ),
+        incident_params | _bounds(start, end),
+    )
     return schemas.Overview(
         from_=start,
         to=end,
@@ -184,6 +212,7 @@ async def overview(
         by_source=groups["source"],
         by_hour=sorted(groups["hour"], key=lambda g: int(g.key)),
         by_weekday=sorted(groups["weekday"], key=lambda g: int(g.key)),
+        incidents=[schemas.IncidentCount(participating=bool(p), count=int(n)) for p, n in incident_rows.all()],
         min_cell=get_settings().analytics_min_cell,
     )
 
@@ -225,7 +254,8 @@ def buckets_between(start: date, end: date, interval: Interval) -> list[date]:
 
 def _series_sql(metric: Metric, interval: Interval, where: str) -> str:
     if metric == "interventions":
-        # Resources ordered on incidents (cancelled orders excluded), scoped by the incident's gouvernorat.
+        # Resources ordered on incidents (cancelled orders excluded), scoped by the incident's lead gouvernorat or the
+        # gouvernorats taking part in it (phase 9).
         local = "(a.created_at AT TIME ZONE 'Africa/Tunis')"
         return (
             f"SELECT CAST(date_trunc('{interval}', {local}) AS date) AS b, CAST(count(*) AS float8) "  # noqa: S608 (constant SQL fragments, values are bound)
@@ -298,7 +328,7 @@ async def trends(
     if len(periods) > MAX_POINTS[interval]:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "period_too_long")
     # Interventions are scoped by their incident (alias i), reports and response times by the report (alias r).
-    where, params = _report_filter(codes, category, "i" if metric == "interventions" else "r")
+    where, params = _incident_filter(codes, category) if metric == "interventions" else _report_filter(codes, category)
     history_start = shift_back(periods[0], interval, BASELINE_YEARS)
     params |= _bounds(history_start, end)
     rows = await session.execute(text(_series_sql(metric, interval, where)), params)
@@ -395,5 +425,5 @@ async def hotspots(
 
 
 async def gouvernorat_names(session: AsyncSession) -> dict[int, dict[str, str]]:
-    rows = await session.execute(text("SELECT code, name_ar, name_fr FROM geo.gouvernorat"))
-    return {int(code): {"ar": ar, "fr": fr} for code, ar, fr in rows.all()}
+    rows = await session.execute(text("SELECT code, name_ar, name_fr, name_en FROM geo.gouvernorat"))
+    return {int(code): {"ar": ar, "fr": fr, "en": en} for code, ar, fr, en in rows.all()}

@@ -68,7 +68,7 @@ async def lookup_user(principal: UserLookup, session: Session, body: schemas.Use
     """Resolve an exact e-mail to the account a one-user notification targets (personal data: audited)."""
     await enforce(f"user-lookup:{opaque(principal.subject)}", LOOKUP_LIMIT, LOOKUP_WINDOW_S)
     try:
-        found = await service.lookup_user(session, str(body.email))
+        found = await service.lookup_user(session, str(body.email), principal)
     except HTTPException as exc:
         # Misses are audited too, so a series of guesses stays visible (the address itself is not kept).
         await audit.record(

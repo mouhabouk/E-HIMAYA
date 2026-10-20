@@ -63,16 +63,29 @@ async def test_tracking_numbers_are_not_sequential(client: httpx.AsyncClient, ci
     assert [b - a for a, b in pairwise(numbers)] != [1, 1, 1]
 
 
-async def test_offshore_point_takes_nearest_gouvernorat(client: httpx.AsyncClient, citizen: dict[str, str]) -> None:
+async def test_offshore_point_waits_for_geo_verification(
+    client: httpx.AsyncClient, citizen: dict[str, str], session: AsyncSession
+) -> None:
+    """Phase 9 §4.2 (changes phase 2): an offshore point is no longer given the nearest gouvernorat; it waits in the
+    geo-verification queue with that gouvernorat as candidate. The tracking code keeps the phase 2 format."""
     await accept_charter(client, citizen)
     # A few kilometres off the Sfax coast (drowning, boat in distress).
     r = await client.post(
         "/api/v1/reports",
-        json=report_body({"lat": 34.70, "lon": 10.86}, category="drowning"),
+        json=report_body({"lat": 34.70, "lon": 10.86, "accuracy_m": 10.0}, category="drowning"),
         headers=citizen,
     )
     assert r.status_code == 201
-    assert r.json()["gouvernorat_code"] == 61
+    assert r.json()["gouvernorat_code"] is None
+    match = CODE.match(r.json()["tracking_code"])
+    assert match and match.group(1) == "61"
+    row = (
+        await session.execute(
+            text("SELECT geo_state, geo_candidates, geo_reason FROM reports.report WHERE id = :id"),
+            {"id": r.json()["id"]},
+        )
+    ).one()
+    assert (row.geo_state, row.geo_candidates, row.geo_reason) == ("pending", [61], "outside_boundaries")
 
 
 async def test_point_outside_tunisia_is_refused(client: httpx.AsyncClient, citizen: dict[str, str]) -> None:

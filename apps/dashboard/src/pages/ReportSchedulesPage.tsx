@@ -19,6 +19,7 @@ import {
 } from "../lib/phase8Types";
 import type { Category } from "../lib/types";
 import { ReportsLibraryTabs } from "./ReportsLibraryPage";
+import { LANGUAGES, type Language } from "../i18n";
 
 const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 /** Staff subject ids are UUIDs (Keycloak `sub`). */
@@ -30,7 +31,7 @@ export interface ScheduleFormState {
   gouvernorat: number | null;
   category: Category | null;
   format: ReportFormat;
-  lang: "ar" | "fr";
+  lang: Language;
   frequency: ScheduleFrequency;
   time: string;
   weekday: number;
@@ -67,7 +68,7 @@ export function scheduleBody(f: ScheduleFormState): { body: ScheduleBody | null;
   };
 }
 
-function formFrom(s: ReportSchedule | null, own: number | null, me: string, lang: "ar" | "fr"): ScheduleFormState {
+function formFrom(s: ReportSchedule | null, own: number | null, me: string, lang: Language): ScheduleFormState {
   if (!s)
     return {
       title: "",
@@ -280,7 +281,7 @@ function ScheduleForm({ schedule, onDone }: { schedule: ReportSchedule | null; o
         </fieldset>
         <fieldset className="segmented">
           <legend>{t("library.reports.lang")}</legend>
-          {(["ar", "fr"] as const).map((l) => (
+          {LANGUAGES.map((l) => (
             <label key={l} className="segmented__item">
               <input type="radio" name={`${base}-lang`} checked={form.lang === l} onChange={() => set({ lang: l })} />
               <span lang={l}>{t(`languages.${l}`)}</span>

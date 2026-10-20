@@ -6,6 +6,9 @@
 import type { FeatureCollection, Polygon } from "geojson";
 import type { Category } from "./types";
 
+/** Language of a generated document or schedule (phase 9 §8: ar, fr, en; Arabic is right to left). */
+export type DocumentLanguage = "ar" | "fr" | "en";
+
 /** `{ar, fr}` text (Markdown in the memory sections). */
 export interface LocalizedText {
   ar: string;
@@ -213,7 +216,7 @@ export interface LibraryReport {
   schedule_id: string | null;
   created_at: string;
   /** Language of the file (Arabic RTL or French). */
-  lang?: "ar" | "fr";
+  lang?: DocumentLanguage;
   error?: string | null;
   bytes?: number | null;
   ready_at?: string | null;
@@ -227,7 +230,7 @@ export interface LibraryReportBody {
   gouvernorats: number[];
   filters: ReportFiltersUsed;
   format: ReportFormat;
-  lang: "ar" | "fr";
+  lang: DocumentLanguage;
 }
 
 export interface LibraryReportQuery {
@@ -264,7 +267,7 @@ export interface ReportSchedule {
   filters: ReportFiltersUsed;
   gouvernorats: number[];
   format: ReportFormat;
-  lang: "ar" | "fr";
+  lang: DocumentLanguage;
   cron: ScheduleCron;
   /** Staff subject ids. */
   recipients: string[];

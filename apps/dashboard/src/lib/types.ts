@@ -3,6 +3,17 @@
  * phase-4-contract.md (institutions, sections 8–10). Phase 5 types live in opsTypes.ts.
  */
 import type { Assignment, Callout, Evaluation, OpLevel } from "./opsTypes";
+import { PHASE9_TIMELINE_KINDS } from "./phase9Types";
+import type {
+  CommandLevel,
+  Escalation,
+  EscalationState,
+  GeoState,
+  ReporterContext,
+  ResourceRequest,
+  Room,
+  SlaBand,
+} from "./phase9Types";
 import type { MediaAnalysis } from "./streamTypes";
 
 export const REPORT_STATUSES = ["received", "in_progress", "intervened", "ongoing", "closed", "rejected"] as const;
@@ -33,8 +44,9 @@ export const MEDIA_REJECTION_REASONS: readonly MediaRejectionReason[] = [
   "disallowed_type",
 ];
 /** Why a report was accepted but flagged for a human check (phase 5.5, A1/A2). */
-export type VerificationReason = "anonymous_budget" | "limiter_degraded";
-export const VERIFICATION_REASONS: readonly VerificationReason[] = ["anonymous_budget", "limiter_degraded"];
+/** `anonymous_quota`: an SOS accepted beyond the anonymous quota (phase 9 §3). */
+export type VerificationReason = "anonymous_budget" | "limiter_degraded" | "anonymous_quota";
+export const VERIFICATION_REASONS: readonly VerificationReason[] = ["anonymous_budget", "limiter_degraded", "anonymous_quota"];
 export type TextLang = "ar" | "fr" | "en";
 
 export const ANALYSIS_STATES = ["pending", "running", "done", "failed"] as const;
@@ -102,6 +114,20 @@ export interface StaffReport {
   /** Accepted beyond the anonymous budget or while the rate limiter was degraded: check before dispatch. */
   needs_verification?: boolean;
   verification_reason?: VerificationReason | null;
+  // Phase 9 (§4.6): jurisdiction, claim and SLA; absent from older payloads.
+  geo_state?: GeoState;
+  /** Candidate gouvernorats of a location that is not trusted yet (§4.2). */
+  geo_candidates?: number[];
+  geo_reason?: string | null;
+  /** `central` or `g:<code>`: the room handling the report. */
+  claimed_room?: Room | null;
+  claimed_by_name?: string | null;
+  claimed_at?: string | null;
+  sla_band?: SlaBand | null;
+  sla_due_at?: string | null;
+  escalation_state?: EscalationState;
+  late?: boolean;
+  referred_to?: number | null;
 }
 
 export interface HistoryEntry {
@@ -112,9 +138,13 @@ export interface HistoryEntry {
   note?: string | null;
 }
 
+/**
+ * Reporter of a report. From phase 9 (§1.3) the API masks it unless the caller's room handles the report or holds a
+ * break-glass grant: `masked: true`, names null and the phone reduced to its last two digits ("+216••••••12").
+ */
 export type Reporter =
-  | { kind: "citizen"; first_name: string | null; last_name: string | null; phone: string | null }
-  | { kind: "anonymous" };
+  | { kind: "citizen"; first_name: string | null; last_name: string | null; phone: string | null; masked?: boolean }
+  | { kind: "anonymous"; masked?: boolean; first_name?: null; last_name?: null; phone?: string | null };
 
 export interface StaffReportDetail extends StaffReport {
   history: HistoryEntry[];
@@ -126,6 +156,10 @@ export interface StaffReportDetail extends StaffReport {
   analysis?: Analysis | null;
   /** Card of the reporting institution for responders (phase 4 §9); null when not reported by an institution. */
   organization_card?: OrganizationCard | null;
+  // Phase 9 (§4.6).
+  escalations?: Escalation[];
+  /** Restricted (§1.3): null unless the caller may read sensitive data. */
+  reporter_context?: ReporterContext | null;
 }
 
 /** Priority components (BR-20), in the order of the settings. */
@@ -251,6 +285,8 @@ export const TIMELINE_KINDS = [
   "callout_cancelled",
   "evaluated",
   "level_changed",
+  // Phase 9 (§5.5)
+  ...PHASE9_TIMELINE_KINDS,
 ] as const;
 
 export interface IncidentSummary {
@@ -273,6 +309,13 @@ export interface IncidentSummary {
   op_level?: OpLevel;
   assignments_active?: number;
   callouts_open?: number;
+  // Phase 9 (§5.5): `gouvernorat_code` is the lead gouvernorat.
+  lead_gouvernorat_code?: number | null;
+  participating_gouvernorats?: number[];
+  command_level?: CommandLevel;
+  /** Not listed in §5.5 (stored by §5.1): read when the API sends them. */
+  command_level_manual?: boolean;
+  command_level_reason?: string | null;
 }
 
 export interface TimelineEntry {
@@ -289,12 +332,15 @@ export interface IncidentDetail extends IncidentSummary {
   assignments?: Assignment[];
   callouts?: Callout[];
   evaluation?: Evaluation | null;
+  // Phase 9 (§5.5).
+  resource_requests?: ResourceRequest[];
 }
 
 export type IncidentLinkBody =
   | { action: "accept_suggestion" }
   | { action: "link"; incident_id: string }
-  | { action: "new" };
+  /** `override_reason` (5–500 characters) creates the incident despite `409 possible_duplicate` (phase 9 §5.2). */
+  | { action: "new"; override_reason?: string };
 
 // ---------- AI settings and status (phase 3, section 4) ----------
 
@@ -355,6 +401,8 @@ export interface Gouvernorat {
   name: string;
   name_ar: string;
   name_fr: string;
+  /** English name (phase 9 §8, `geo.gouvernorat.name_en`); absent from older payloads. */
+  name_en?: string | null;
   delegation_count: number;
 }
 

@@ -9,7 +9,7 @@ from typing import Literal
 
 from app.modules.reports.domain import Category
 
-Lang = Literal["ar", "fr"]
+Lang = Literal["ar", "fr", "en"]
 Bilingual = dict[str, str]
 Confidence = Literal["low", "medium", "high"]
 RecommendationKind = Literal["resources", "volunteers", "route", "escalation", "alert", "responders"]
@@ -27,39 +27,39 @@ def rain_at_least(value: str | None, threshold: str) -> bool:
 
 
 CATEGORY_LABELS: dict[str, Bilingual] = {
-    Category.SOS: {"ar": "نداء استغاثة", "fr": "SOS"},
-    Category.FIRE: {"ar": "حريق", "fr": "incendie"},
-    Category.FLOOD: {"ar": "فيضان", "fr": "inondation"},
-    Category.TRAFFIC_ACCIDENT: {"ar": "حادث مرور", "fr": "accident de la circulation"},
-    Category.DROWNING: {"ar": "غرق", "fr": "noyade"},
-    Category.LANDSLIDE: {"ar": "انزلاق أرضي", "fr": "glissement de terrain"},
-    Category.CHEMICAL_LEAK: {"ar": "تسرب مادة كيميائية", "fr": "fuite de produit chimique"},
-    Category.MEDICAL: {"ar": "حالة طبية", "fr": "urgence médicale"},
-    Category.OTHER: {"ar": "حادثة أخرى", "fr": "autre incident"},
+    Category.SOS: {"ar": "نداء استغاثة", "fr": "SOS", "en": "SOS"},
+    Category.FIRE: {"ar": "حريق", "fr": "incendie", "en": "fire"},
+    Category.FLOOD: {"ar": "فيضان", "fr": "inondation", "en": "flood"},
+    Category.TRAFFIC_ACCIDENT: {"ar": "حادث مرور", "fr": "accident de la circulation", "en": "road traffic accident"},
+    Category.DROWNING: {"ar": "غرق", "fr": "noyade", "en": "drowning"},
+    Category.LANDSLIDE: {"ar": "انزلاق أرضي", "fr": "glissement de terrain", "en": "landslide"},
+    Category.CHEMICAL_LEAK: {"ar": "تسرب مادة كيميائية", "fr": "fuite de produit chimique", "en": "chemical leak"},
+    Category.MEDICAL: {"ar": "حالة طبية", "fr": "urgence médicale", "en": "medical emergency"},
+    Category.OTHER: {"ar": "حادثة أخرى", "fr": "autre incident", "en": "other incident"},
 }
 
 RESOURCE_LABELS: dict[str, Bilingual] = {
-    "fire_engine": {"ar": "شاحنة إطفاء", "fr": "fourgon d'incendie"},
-    "water_tanker": {"ar": "شاحنة صهريج ماء", "fr": "camion-citerne d'eau"},
-    "ambulance": {"ar": "سيارة إسعاف", "fr": "ambulance"},
-    "rescue_vehicle": {"ar": "آلية نجدة وإنقاذ", "fr": "véhicule de secours et sauvetage"},
-    "heavy_equipment": {"ar": "آلية ثقيلة", "fr": "engin lourd"},
-    "drone": {"ar": "طائرة مسيرة", "fr": "drone"},
-    "large_extinguisher": {"ar": "مطفأة كبيرة", "fr": "grand extincteur"},
-    "boat": {"ar": "قارب", "fr": "embarcation"},
-    "command_vehicle": {"ar": "سيارة قيادة", "fr": "véhicule de commandement"},
-    "other": {"ar": "وسيلة أخرى", "fr": "autre moyen"},
+    "fire_engine": {"ar": "شاحنة إطفاء", "fr": "fourgon d'incendie", "en": "fire engine"},
+    "water_tanker": {"ar": "شاحنة صهريج ماء", "fr": "camion-citerne d'eau", "en": "water tanker truck"},
+    "ambulance": {"ar": "سيارة إسعاف", "fr": "ambulance", "en": "ambulance"},
+    "rescue_vehicle": {"ar": "آلية نجدة وإنقاذ", "fr": "véhicule de secours et sauvetage", "en": "rescue vehicle"},
+    "heavy_equipment": {"ar": "آلية ثقيلة", "fr": "engin lourd", "en": "heavy machinery"},
+    "drone": {"ar": "طائرة مسيرة", "fr": "drone", "en": "drone"},
+    "large_extinguisher": {"ar": "مطفأة كبيرة", "fr": "grand extincteur", "en": "large extinguisher"},
+    "boat": {"ar": "قارب", "fr": "embarcation", "en": "boat"},
+    "command_vehicle": {"ar": "سيارة قيادة", "fr": "véhicule de commandement", "en": "command vehicle"},
+    "other": {"ar": "وسيلة أخرى", "fr": "autre moyen", "en": "other resource"},
 }
 
 SKILL_LABELS: dict[str, Bilingual] = {
-    "first_aid": {"ar": "الإسعافات الأولية", "fr": "premiers secours"},
-    "diving": {"ar": "الغوص", "fr": "plongée"},
-    "heavy_vehicles": {"ar": "الآليات الثقيلة", "fr": "engins lourds"},
-    "firefighting": {"ar": "مكافحة الحرائق", "fr": "lutte contre l'incendie"},
-    "search_rescue": {"ar": "البحث والإنقاذ", "fr": "recherche et sauvetage"},
-    "logistics": {"ar": "الإمداد", "fr": "logistique"},
-    "medical": {"ar": "طبي", "fr": "médical"},
-    "other": {"ar": "أخرى", "fr": "autre"},
+    "first_aid": {"ar": "الإسعافات الأولية", "fr": "premiers secours", "en": "first aid"},
+    "diving": {"ar": "الغوص", "fr": "plongée", "en": "diving"},
+    "heavy_vehicles": {"ar": "الآليات الثقيلة", "fr": "engins lourds", "en": "heavy machinery"},
+    "firefighting": {"ar": "مكافحة الحرائق", "fr": "lutte contre l'incendie", "en": "firefighting"},
+    "search_rescue": {"ar": "البحث والإنقاذ", "fr": "recherche et sauvetage", "en": "search and rescue"},
+    "logistics": {"ar": "الإمداد", "fr": "logistique", "en": "logistics"},
+    "medical": {"ar": "طبي", "fr": "médical", "en": "medical"},
+    "other": {"ar": "أخرى", "fr": "autre", "en": "other"},
 }
 
 # Vehicles routed with the truck profile (weight, height, width restrictions of the road network).
@@ -188,27 +188,67 @@ AgencyKey = Literal[
 
 # National services involved by incident type, with their public emergency number when one exists nationally.
 AGENCIES: dict[str, dict[str, object]] = {
-    "samu": {"name": {"ar": "الإسعاف الطبي الاستعجالي", "fr": "SAMU"}, "phone": "190"},
-    "police": {"name": {"ar": "الأمن الوطني", "fr": "Police nationale"}, "phone": "197"},
-    "garde_nationale": {"name": {"ar": "الحرس الوطني", "fr": "Garde nationale"}, "phone": "193"},
-    "steg": {"name": {"ar": "الشركة التونسية للكهرباء والغاز", "fr": "STEG (électricité et gaz)"}, "phone": None},
+    "samu": {"name": {"ar": "الإسعاف الطبي الاستعجالي", "fr": "SAMU", "en": "SAMU"}, "phone": "190"},
+    "police": {"name": {"ar": "الأمن الوطني", "fr": "Police nationale", "en": "National Police"}, "phone": "197"},
+    "garde_nationale": {
+        "name": {"ar": "الحرس الوطني", "fr": "Garde nationale", "en": "National Guard"},
+        "phone": "193",
+    },
+    "steg": {
+        "name": {
+            "ar": "الشركة التونسية للكهرباء والغاز",
+            "fr": "STEG (électricité et gaz)",
+            "en": "STEG (electricity and gas)",
+        },
+        "phone": None,
+    },
     "sonede": {
-        "name": {"ar": "الشركة الوطنية لاستغلال وتوزيع المياه", "fr": "SONEDE (eau potable)"},
+        "name": {
+            "ar": "الشركة الوطنية لاستغلال وتوزيع المياه",
+            "fr": "SONEDE (eau potable)",
+            "en": "SONEDE (drinking water)",
+        },
         "phone": None,
     },
-    "forests": {"name": {"ar": "الإدارة العامة للغابات", "fr": "Direction Générale des Forêts"}, "phone": None},
+    "forests": {
+        "name": {
+            "ar": "الإدارة العامة للغابات",
+            "fr": "Direction Générale des Forêts",
+            "en": "General Directorate of Forests",
+        },
+        "phone": None,
+    },
     "anpe": {
-        "name": {"ar": "الوكالة الوطنية لحماية المحيط", "fr": "ANPE (protection de l'environnement)"},
+        "name": {
+            "ar": "الوكالة الوطنية لحماية المحيط",
+            "fr": "ANPE (protection de l'environnement)",
+            "en": "ANPE (environmental protection)",
+        },
         "phone": None,
     },
-    "inm": {"name": {"ar": "المعهد الوطني للرصد الجوي", "fr": "Institut National de la Météorologie"}, "phone": None},
+    "inm": {
+        "name": {
+            "ar": "المعهد الوطني للرصد الجوي",
+            "fr": "Institut National de la Météorologie",
+            "en": "National Institute of Meteorology",
+        },
+        "phone": None,
+    },
     "poison_center": {
-        "name": {"ar": "المركز الطبي للمساعدة الاستعجالية (مقاومة التسمم)", "fr": "CAMU — centre antipoison"},
+        "name": {
+            "ar": "المركز الطبي للمساعدة الاستعجالية (مقاومة التسمم)",
+            "fr": "CAMU — centre antipoison",
+            "en": "CAMU — poison control centre",
+        },
         "phone": None,
     },
-    "municipality": {"name": {"ar": "البلدية", "fr": "Municipalité"}, "phone": None},
+    "municipality": {"name": {"ar": "البلدية", "fr": "Municipalité", "en": "Municipality"}, "phone": None},
     "equipment": {
-        "name": {"ar": "الإدارة الجهوية للتجهيز", "fr": "Direction régionale de l'Équipement"},
+        "name": {
+            "ar": "الإدارة الجهوية للتجهيز",
+            "fr": "Direction régionale de l'Équipement",
+            "en": "Regional Directorate of Public Works",
+        },
         "phone": None,
     },
 }
@@ -216,51 +256,158 @@ AGENCIES: dict[str, dict[str, object]] = {
 # Why each service is involved, per category (an empty list: none by rule). Classification-specific additions below.
 AGENCY_RULES: dict[str, list[tuple[str, Bilingual]]] = {
     Category.FIRE: [
-        ("police", {"ar": "تأمين الطوق وتنظيم المرور", "fr": "périmètre et circulation"}),
-        ("steg", {"ar": "قطع الغاز والكهرباء عن المباني المتضررة", "fr": "coupure du gaz et de l'électricité"}),
+        (
+            "police",
+            {"ar": "تأمين الطوق وتنظيم المرور", "fr": "périmètre et circulation", "en": "perimeter and traffic"},
+        ),
+        (
+            "steg",
+            {
+                "ar": "قطع الغاز والكهرباء عن المباني المتضررة",
+                "fr": "coupure du gaz et de l'électricité",
+                "en": "gas and electricity shut-off",
+            },
+        ),
     ],
     Category.FLOOD: [
-        ("garde_nationale", {"ar": "غلق المعابر والطرقات المغمورة", "fr": "fermeture des gués et routes submergées"}),
-        ("steg", {"ar": "قطع الكهرباء عن الأحياء المغمورة", "fr": "coupure de l'électricité des quartiers inondés"}),
-        ("inm", {"ar": "تطور الأمطار والتحذيرات", "fr": "évolution de la pluie et vigilances"}),
-        ("sonede", {"ar": "سلامة ماء الشرب", "fr": "sécurité de l'eau potable"}),
-        ("municipality", {"ar": "مراكز الإيواء المؤقت", "fr": "hébergement provisoire"}),
+        (
+            "garde_nationale",
+            {
+                "ar": "غلق المعابر والطرقات المغمورة",
+                "fr": "fermeture des gués et routes submergées",
+                "en": "closure of fords and flooded roads",
+            },
+        ),
+        (
+            "steg",
+            {
+                "ar": "قطع الكهرباء عن الأحياء المغمورة",
+                "fr": "coupure de l'électricité des quartiers inondés",
+                "en": "power cut in flooded neighbourhoods",
+            },
+        ),
+        (
+            "inm",
+            {
+                "ar": "تطور الأمطار والتحذيرات",
+                "fr": "évolution de la pluie et vigilances",
+                "en": "rainfall trend and weather warnings",
+            },
+        ),
+        ("sonede", {"ar": "سلامة ماء الشرب", "fr": "sécurité de l'eau potable", "en": "drinking water safety"}),
+        ("municipality", {"ar": "مراكز الإيواء المؤقت", "fr": "hébergement provisoire", "en": "temporary shelter"}),
     ],
     Category.TRAFFIC_ACCIDENT: [
-        ("garde_nationale", {"ar": "تأمين الطريق والمعاينات", "fr": "sécurité de la route et constatations"}),
-        ("police", {"ar": "تأمين الطريق داخل المدن", "fr": "sécurité de la route en ville"}),
+        (
+            "garde_nationale",
+            {
+                "ar": "تأمين الطريق والمعاينات",
+                "fr": "sécurité de la route et constatations",
+                "en": "road safety and on-scene findings",
+            },
+        ),
+        (
+            "police",
+            {"ar": "تأمين الطريق داخل المدن", "fr": "sécurité de la route en ville", "en": "road safety in towns"},
+        ),
     ],
     Category.DROWNING: [
-        ("garde_nationale", {"ar": "الحرس البحري والبحث في الماء", "fr": "garde maritime et recherches en mer"}),
+        (
+            "garde_nationale",
+            {
+                "ar": "الحرس البحري والبحث في الماء",
+                "fr": "garde maritime et recherches en mer",
+                "en": "coast guard and search at sea",
+            },
+        ),
     ],
     Category.LANDSLIDE: [
-        ("garde_nationale", {"ar": "غلق الطرقات المهددة", "fr": "fermeture des routes menacées"}),
-        ("equipment", {"ar": "الخبرة الجيوتقنية وحالة الطرقات", "fr": "expertise géotechnique et routes"}),
-        ("steg", {"ar": "قطع الغاز والكهرباء", "fr": "coupure du gaz et de l'électricité"}),
-        ("sonede", {"ar": "فحص قنوات الماء", "fr": "contrôle des conduites d'eau"}),
+        (
+            "garde_nationale",
+            {"ar": "غلق الطرقات المهددة", "fr": "fermeture des routes menacées", "en": "closure of threatened roads"},
+        ),
+        (
+            "equipment",
+            {
+                "ar": "الخبرة الجيوتقنية وحالة الطرقات",
+                "fr": "expertise géotechnique et routes",
+                "en": "geotechnical survey and roads",
+            },
+        ),
+        (
+            "steg",
+            {
+                "ar": "قطع الغاز والكهرباء",
+                "fr": "coupure du gaz et de l'électricité",
+                "en": "gas and electricity shut-off",
+            },
+        ),
+        ("sonede", {"ar": "فحص قنوات الماء", "fr": "contrôle des conduites d'eau", "en": "inspection of water mains"}),
     ],
     Category.CHEMICAL_LEAK: [
-        ("police", {"ar": "الأطواق والإخلاء", "fr": "périmètres et évacuation"}),
-        ("anpe", {"ar": "التلوث البيئي", "fr": "pollution de l'environnement"}),
-        ("poison_center", {"ar": "التكفل بالمتسممين", "fr": "prise en charge des intoxications"}),
-        ("samu", {"ar": "التكفل الطبي بعد إزالة التلوث", "fr": "prise en charge médicale après décontamination"}),
+        ("police", {"ar": "الأطواق والإخلاء", "fr": "périmètres et évacuation", "en": "perimeters and evacuation"}),
+        ("anpe", {"ar": "التلوث البيئي", "fr": "pollution de l'environnement", "en": "environmental pollution"}),
+        (
+            "poison_center",
+            {"ar": "التكفل بالمتسممين", "fr": "prise en charge des intoxications", "en": "care of poisoning victims"},
+        ),
+        (
+            "samu",
+            {
+                "ar": "التكفل الطبي بعد إزالة التلوث",
+                "fr": "prise en charge médicale après décontamination",
+                "en": "medical care after decontamination",
+            },
+        ),
     ],
-    Category.MEDICAL: [("samu", {"ar": "التكفل الطبي", "fr": "prise en charge médicale"})],
-    Category.SOS: [("police", {"ar": "تحديد الوضعية وتأمينها", "fr": "lever le doute et sécuriser"})],
+    Category.MEDICAL: [("samu", {"ar": "التكفل الطبي", "fr": "prise en charge médicale", "en": "medical care"})],
+    Category.SOS: [
+        (
+            "police",
+            {
+                "ar": "تحديد الوضعية وتأمينها",
+                "fr": "lever le doute et sécuriser",
+                "en": "assess and secure the situation",
+            },
+        )
+    ],
     Category.OTHER: [],
 }
 
 CLASSIFICATION_AGENCIES: dict[str, list[tuple[str, Bilingual]]] = {
     "forest_fire": [
-        ("forests", {"ar": "مصالح الغابات وحراسها", "fr": "services et gardes forestiers"}),
-        ("garde_nationale", {"ar": "غلق الطرقات والإخلاء في الأرياف", "fr": "routes et évacuation en zone rurale"}),
+        (
+            "forests",
+            {"ar": "مصالح الغابات وحراسها", "fr": "services et gardes forestiers", "en": "forest services and rangers"},
+        ),
+        (
+            "garde_nationale",
+            {
+                "ar": "غلق الطرقات والإخلاء في الأرياف",
+                "fr": "routes et évacuation en zone rurale",
+                "en": "roads and evacuation in rural areas",
+            },
+        ),
     ],
-    "gas_leak": [("steg", {"ar": "قطع غاز الشبكة", "fr": "coupure du gaz de réseau"})],
+    "gas_leak": [("steg", {"ar": "قطع غاز الشبكة", "fr": "coupure du gaz de réseau", "en": "mains gas shut-off"})],
     "building_collapse": [
-        ("equipment", {"ar": "تقييم الهيكل والتدعيم", "fr": "évaluation de la structure et étaiement"}),
-        ("municipality", {"ar": "إيواء المتضررين", "fr": "relogement des sinistrés"}),
+        (
+            "equipment",
+            {
+                "ar": "تقييم الهيكل والتدعيم",
+                "fr": "évaluation de la structure et étaiement",
+                "en": "structural assessment and shoring",
+            },
+        ),
+        ("municipality", {"ar": "إيواء المتضررين", "fr": "relogement des sinistrés", "en": "rehousing of victims"}),
     ],
-    "chemical_road_accident": [("anpe", {"ar": "التلوث البيئي", "fr": "pollution de l'environnement"})],
+    "chemical_road_accident": [
+        ("anpe", {"ar": "التلوث البيئي", "fr": "pollution de l'environnement", "en": "environmental pollution"})
+    ],
 }
 
-SAMU_REASON: Bilingual = {"ar": "أرواح في خطر أو مصابون", "fr": "vies en danger ou blessés"}
+SAMU_REASON: Bilingual = {
+    "ar": "أرواح في خطر أو مصابون",
+    "fr": "vies en danger ou blessés",
+    "en": "lives at risk or injured",
+}

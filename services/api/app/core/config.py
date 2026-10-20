@@ -318,6 +318,19 @@ class Settings(BaseSettings):
     # Library searches per staff member per minute.
     library_search_per_minute: int = Field(default=60, ge=1)
 
+    # Central and regional rooms (phase 9, docs/api/phase-9-contract.md). Worker loop "sla-escalation": seconds
+    # between passes marking unclaimed reports late (§4.4); delays and bands are national settings (/staff/settings).
+    sla_interval_s: float = Field(default=5.0, ge=0.5, le=3600)
+    # Regional account administration (§6.2): confidential client of the staff realm with a service account holding
+    # realm-management manage-users/view-users. Unset URL = the accounts endpoints answer 502 identity_provider_error.
+    keycloak_admin_url: str | None = None
+    keycloak_admin_client_id: str = "ehimaya-account-admin"
+    keycloak_admin_client_secret: SecretStr | None = Field(default=None, min_length=16)
+    keycloak_staff_realm: str = "ehimaya-staff"
+    # Real alert sending stays off (§7.4): enabling it needs the reference of the formal approval.
+    notify_real_send: bool = False
+    notify_real_send_approval_ref: str | None = Field(default=None, max_length=200)
+
     api_cors_origins: Annotated[list[str], NoDecode] = Field(default_factory=list)
     api_log_level: str = "INFO"
     db_pool_size: int = 10
@@ -356,6 +369,9 @@ class Settings(BaseSettings):
             if self.telephony_sim_token is not None:
                 # SIMULATION: the call simulator checks never run in production.
                 problems.append("TELEPHONY_SIM_TOKEN must be empty (simulation only)")
+            if self.notify_real_send and not (self.notify_real_send_approval_ref or "").strip():
+                # Real alert sending needs a formal approval (phase 9 §7.4).
+                problems.append("NOTIFY_REAL_SEND=true requires NOTIFY_REAL_SEND_APPROVAL_REF")
             if problems:
                 raise ValueError("APP_ENV=production refuses weak or example secrets: " + "; ".join(problems))
         return self
@@ -416,6 +432,9 @@ class Settings(BaseSettings):
         "opensearch_url",
         "opensearch_password",
         "opensearch_ca_file",
+        "keycloak_admin_url",
+        "keycloak_admin_client_secret",
+        "notify_real_send_approval_ref",
         mode="before",
     )
     @classmethod
@@ -452,6 +471,7 @@ class Settings(BaseSettings):
         "telephony_ws_public_url",
         "weather_api_url",
         "opensearch_url",
+        "keycloak_admin_url",
     )
     @classmethod
     def _strip_slash(cls, value: str | None) -> str | None:

@@ -9,10 +9,12 @@ import { useFormat, useGouvernorats, useLanguage } from "../lib/hooks";
 import { opsKeys } from "../lib/opsApi";
 import { CHANNELS, MESSAGE_KINDS, MESSAGE_STATUSES, type Message, type MessageKind, type MessageStatus } from "../lib/opsTypes";
 import { canDraftMessage, hasReadAccess } from "../lib/roles";
+import type { Language } from "../i18n";
+import { localized } from "../lib/localized";
 
-/** Title in the dashboard language, Arabic when the French text is empty (the contract's fallback). */
-export function localizedTitle(m: Pick<Message, "title">, lang: "ar" | "fr"): string {
-  return m.title[lang] || m.title.ar;
+/** Title in the dashboard language, with the fallback order of localized.ts (Arabic is always present). */
+export function localizedTitle(m: Pick<Message, "title">, lang: Language): string {
+  return localized(m.title, lang) || m.title.ar;
 }
 
 export function MessageKindTag({ message }: { message: Pick<Message, "kind" | "severity"> }) {

@@ -468,6 +468,10 @@ async def test_rules_crud(client: httpx.AsyncClient, staff: Staff, make_token: T
         "detail"
     ] == "national_scope_required"
     assert (await client.patch(path, json={"points": 80}, headers=staff(["ops_manager"]))).status_code == 403
+    # Phase 9 §2: reward rules are a central committee decision only (sysadmin removed).
+    sysadmin = staff(["sysadmin"], gouvernorat=None)
+    assert (await client.patch(path, json={"points": 80}, headers=sysadmin)).status_code == 403
+    assert (await client.get("/api/v1/staff/rewards/rules", headers=sysadmin)).status_code == 403
     assert (await client.delete(path, headers=national)).json()["detail"] == "default_rule"
     assert (await client.patch(path, json={"multiplier": 2}, headers=national)).json()["detail"] == "invalid_rule"
 
@@ -544,9 +548,10 @@ async def test_nominations_and_scope(
     ).status_code == 404
     listed = (await client.get("/api/v1/staff/rewards/certificates?limit=200", headers=reader)).json()["items"]
     assert cert["id"] not in [c["id"] for c in listed]
+    # Phase 9 §10: the national ranking needs national scope (403 out_of_scope).
     assert (await client.get("/api/v1/staff/rewards/leaderboard?scope=national", headers=reader)).json()[
         "detail"
-    ] == "national_scope_required"
+    ] == "out_of_scope"
     assert (
         await client.get(f"/api/v1/staff/rewards/leaderboard?gouvernorat={SFAX_CODE}", headers=reader)
     ).status_code == 403
