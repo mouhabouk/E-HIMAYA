@@ -145,6 +145,7 @@ def add_timeline(
     incident_id: uuid.UUID,
     kind: str,
     actor: str,
+    /,
     actor_name: str | None = None,
     **payload: Any,
 ) -> TimelineEvent:
@@ -157,7 +158,7 @@ def add_timeline(
     return event
 
 
-async def _timeline(session: AsyncSession, incident: Incident, kind: str, actor: str, **payload: Any) -> None:
+async def _timeline(session: AsyncSession, incident: Incident, kind: str, actor: str, /, **payload: Any) -> None:
     add_timeline(session, incident.id, kind, actor, **payload)
 
 

@@ -112,21 +112,7 @@ def current_scope(session: Session) -> DbScope:
     pinned = session.info.get(_INFO_KEY)
     if isinstance(pinned, DbScope):
         return pinned
-    scope = db_scope.get()
-    if scope is None:
-        scope = _access_scope()
-    return scope if isinstance(scope, DbScope) else NO_SCOPE
-
-
-def _access_scope() -> object:
-    """``core.access.db_scope`` when it is a separate variable from :data:`db_scope` (it should be the same one)."""
-    import sys
-
-    module = sys.modules.get("app.core.access")
-    var = getattr(module, "db_scope", None) if module is not None else None
-    if isinstance(var, ContextVar) and var is not db_scope:
-        return var.get(None)
-    return None
+    return db_scope.get() or NO_SCOPE
 
 
 class ScopedSession(Session):

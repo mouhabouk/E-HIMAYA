@@ -132,13 +132,17 @@ async def test_new_link_and_merge(client: httpx.AsyncClient, make_token: TokenFa
     assert (await link(client, operator, c["id"], action="link")).status_code == 422
     assert (await link(client, operator, c["id"], action="accept_suggestion")).status_code == 409
 
+    # Merging is a lead-room decision (phase 9 §1.2): the operator is refused, the room's ops manager merges.
     r = await client.post(f"/api/v1/staff/incidents/{first}/merge", json={"incident_id": second}, headers=operator)
+    assert r.status_code == 403
+    manager = staff(roles=["ops_manager"], gouvernorat=61)
+    r = await client.post(f"/api/v1/staff/incidents/{first}/merge", json={"incident_id": second}, headers=manager)
     assert r.status_code == 200, r.text
     assert {x["id"] for x in r.json()["reports"]} == {a["id"], b["id"], c["id"]}
     merged = (await client.get(f"/api/v1/staff/incidents/{second}", headers=operator)).json()
     assert merged["status"] == "merged" and merged["merged_into"] == first
     assert (await link(client, operator, a["id"], action="link", incident_id=second)).status_code == 409
-    again = await client.post(f"/api/v1/staff/incidents/{first}/merge", json={"incident_id": first}, headers=operator)
+    again = await client.post(f"/api/v1/staff/incidents/{first}/merge", json={"incident_id": first}, headers=manager)
     assert again.status_code == 422
 
 

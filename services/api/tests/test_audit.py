@@ -37,14 +37,24 @@ async def test_client_cannot_forge_chain_fields(session: AsyncSession) -> None:
     assert await service.verify_chain(session) is None
 
 
-async def test_sysadmin_reads_and_reading_is_audited(client: httpx.AsyncClient, make_token: TokenFactory) -> None:
-    token = make_token(issuer=STAFF_ISS, roles=["sysadmin"], scope_level="national")
+async def test_security_admin_reads_and_reading_is_audited(client: httpx.AsyncClient, make_token: TokenFactory) -> None:
+    token = make_token(issuer=STAFF_ISS, roles=["security_admin"], scope_level="national")
     r = await client.get("/api/v1/admin/audit", headers=bearer(token), params={"limit": 5})
     assert r.status_code == 200
     r = await client.get("/api/v1/admin/audit", headers=bearer(token), params={"limit": 1})
     assert r.json()[0]["action"] == "audit.read"
     r = await client.get("/api/v1/admin/audit/verify", headers=bearer(token))
     assert r.json() == {"intact": True, "first_broken_seq": None}
+
+
+async def test_sysadmin_refused_raw(client: httpx.AsyncClient, make_token: TokenFactory) -> None:
+    """Phase 9 §7.3: the raw log is the security administrator's; sysadmin keeps only the chain check."""
+    token = make_token(issuer=STAFF_ISS, roles=["sysadmin"], scope_level="national")
+    assert (await client.get("/api/v1/admin/audit", headers=bearer(token))).status_code == 403
+    r = await client.get("/api/v1/admin/audit/verify", headers=bearer(token))
+    assert r.status_code == 200 and r.json()["intact"] is True
+    regional = make_token(issuer=STAFF_ISS, roles=["security_admin"], gouvernorat_code="61")
+    assert (await client.get("/api/v1/admin/audit", headers=bearer(regional))).status_code == 403
 
 
 async def test_operator_cannot_read_audit(client: httpx.AsyncClient, make_token: TokenFactory) -> None:

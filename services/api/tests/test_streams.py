@@ -585,7 +585,9 @@ async def test_confirmed_detection_reaches_the_incident_timeline(
     _, stream = await citizen_stream(client, make_token)
     operator = staff(gouvernorat=61)
     r = await client.post(
-        f"/api/v1/staff/reports/{stream['report_id']}/incident", json={"action": "new"}, headers=operator
+        f"/api/v1/staff/reports/{stream['report_id']}/incident",
+        json={"action": "new", "override_reason": "independent test incident"},
+        headers=operator,
     )
     assert r.status_code == 200, r.text
     incident_id = r.json()["incident_id"]

@@ -94,7 +94,11 @@ async def report(
 
 
 async def incident_of(client: httpx.AsyncClient, staff: Staff, report_id: str, incident_id: str | None = None) -> str:
-    body = {"action": "new"} if incident_id is None else {"action": "link", "incident_id": incident_id}
+    body = (
+        {"action": "new", "override_reason": "independent test incident"}
+        if incident_id is None
+        else {"action": "link", "incident_id": incident_id}
+    )
     r = await client.post(f"/api/v1/staff/reports/{report_id}/incident", json=body, headers=staff(["operator"]))
     assert r.status_code == 200, r.text
     return r.json()["incident_id"]  # type: ignore[no-any-return]

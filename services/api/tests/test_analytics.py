@@ -465,12 +465,12 @@ async def test_scenario_seeded_determinism_and_provenance(
     assert prov["history_from"] and prov["history_to"]
     assert prov["weather_factor"] == 2.5 and prov["weather_factor_source"] == "default"
     assert prov["service_time_source"] == "default"
-    assert res1["calibration"] == "uncalibrated" and set(res1["calibration_note"]) == {"ar", "fr"}
+    assert res1["calibration"] == "uncalibrated" and set(res1["calibration_note"]) == {"ar", "fr", "en"}
     assert res1["confidence"] == "low"  # default engagement times (and few days of history)
     assert any("Durées" in reason["fr"] for reason in res1["confidence_reasons"])
     if prov["days_covered"] < scenario.MIN_DAYS:
         assert any("jours" in reason["fr"] for reason in res1["confidence_reasons"])
-    assert all(set(a) == {"ar", "fr"} for a in res1["assumptions"]) and len(res1["assumptions"]) >= 5
+    assert all(set(a) == {"ar", "fr", "en"} for a in res1["assumptions"]) and len(res1["assumptions"]) >= 5
     assert "historique" in res1["disclaimer"]["fr"]
     # Stored, listed (without the hourly detail), readable, audited.
     r = await client.get(f"/api/v1/staff/analytics/scenarios/{one['id']}", headers=headers)

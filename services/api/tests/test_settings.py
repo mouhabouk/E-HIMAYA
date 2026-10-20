@@ -152,7 +152,8 @@ async def test_audit_before_after_and_event(
     row = (
         await session.execute(
             text(
-                "SELECT reason, details FROM audit.log WHERE action = 'settings.update' AND target = 'setting:sla.bands' "
+                "SELECT reason, details FROM audit.log "
+                "WHERE action = 'settings.update' AND target = 'setting:sla.bands' "
                 "ORDER BY seq DESC LIMIT 1"
             )
         )
