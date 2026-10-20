@@ -32,6 +32,8 @@ CACHE = ROOT / "eval" / "cache"
 # model or of the pre/post-processing fails CI.
 MIN_FIRE_RECALL = 0.75
 MAX_FIRE_FALSE_POSITIVE_RATE = 0.4
+MIN_SMOKE_RECALL = 0.45
+MAX_SMOKE_FALSE_POSITIVE_RATE = 0.2
 
 
 def image(sample: dict) -> bytes:
@@ -73,6 +75,22 @@ def test_fire_recall_and_false_positives(detectors: Detectors) -> None:
     print(f"\n  fire recall {recall:.2f} on {len(positives)}, false positive rate {false_positive_rate:.2f}")
     assert recall >= MIN_FIRE_RECALL
     assert false_positive_rate <= MAX_FIRE_FALSE_POSITIVE_RATE
+
+
+def test_smoke_recall_and_false_positives(detectors: Detectors) -> None:
+    from app.imaging import decode
+
+    def smoke_found(sample: dict) -> bool:
+        detections = detectors.detect(decode(image(sample), "image/jpeg", 40_000_000))
+        return any(d.label == "smoke" and d.confidence >= 0.45 for d in detections)
+
+    positives = group("smoke", 43)
+    negatives = group("person", 60) + group("no_person", 40)
+    recall = sum(map(smoke_found, positives)) / len(positives)
+    false_positive_rate = sum(map(smoke_found, negatives)) / len(negatives)
+    print(f"\n  smoke recall {recall:.2f} on {len(positives)}, false positives {false_positive_rate:.2f}")
+    assert recall >= MIN_SMOKE_RECALL
+    assert false_positive_rate <= MAX_SMOKE_FALSE_POSITIVE_RATE
 
 
 def test_detect_endpoint_on_a_real_photo(client: TestClient) -> None:
