@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ء-حماية | تقرير المرحلة 6</title>
+<style>
+:root{--bg:#f7f8fa;--paper:#fff;--ink:#1b2430;--muted:#5b6675;--line:#dfe3e8;--accent:#b3261e;--accent2:#0b5cad;--ok:#1e7d3a;--warn:#a15c00;--chip:#eef1f5;--head:#f1f3f6}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1318;--paper:#161b22;--ink:#e6eaef;--muted:#9aa5b1;--line:#2a313b;--accent:#ff6b5e;--accent2:#5aa9ff;--ok:#5cc97a;--warn:#e0a24a;--chip:#1f2630;--head:#1c222b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Naskh Arabic","Segoe UI",Tahoma,Arial,sans-serif;line-height:1.75;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header.cover{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:10px;padding:28px 24px;margin-bottom:20px}
+header.cover h1{margin:0 0 6px;font-size:30px}
+header.cover .sub{color:var(--muted);margin:0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:16px}
+.meta div{background:var(--chip);border-radius:6px;padding:8px 12px;font-size:14px}
+.meta b{display:block;color:var(--muted);font-weight:600;font-size:12px}
+nav.toc{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px 24px;margin-bottom:20px}
+nav.toc ol{margin:0;padding-inline-start:20px;columns:2;column-gap:32px}
+@media (max-width:700px){nav.toc ol{columns:1}}
+nav.toc a,a{color:var(--accent2);text-decoration:none}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:20px}
+h2{margin-top:0;font-size:23px;border-bottom:2px solid var(--line);padding-bottom:8px}
+h3{font-size:19px;margin-top:28px;color:var(--accent2)}
+h4{font-size:16px;margin-bottom:4px}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:start;vertical-align:top}
+th{background:var(--head);font-weight:700;white-space:nowrap}
+td code,p code,li code{direction:ltr;unicode-bidi:isolate;background:var(--chip);padding:1px 5px;border-radius:4px;font-size:13px}
+.id{font-family:Consolas,monospace;direction:ltr;unicode-bidi:isolate;white-space:nowrap;font-size:13px;color:var(--muted)}
+.p{display:inline-block;border-radius:10px;padding:0 8px;font-size:12px;font-weight:700;white-space:nowrap}
+.M{background:#fde2e0;color:#8c1d16}.S{background:#fff1d6;color:#7a4a00}.C{background:#e1efff;color:#0a4a8c}.W{background:#e8e8e8;color:#444}
+@media (prefers-color-scheme:dark){.M{background:#4a1d1a;color:#ffb4ad}.S{background:#4a3510;color:#ffd38a}.C{background:#14304f;color:#a8d1ff}.W{background:#333;color:#ccc}}
+.note{border-inline-start:4px solid var(--accent2);background:var(--chip);padding:10px 14px;border-radius:6px;margin:12px 0}
+.warn{border-inline-start:4px solid var(--warn)}
+.sim{display:inline-block;background:#f59e0b;color:#1f1300;font-weight:700;font-size:12px;padding:1px 8px;border-radius:999px;margin-inline-end:6px}
+tr.simrow td{background:color-mix(in srgb,#f59e0b 12%,transparent)}
+.ltr{direction:ltr;unicode-bidi:isolate}
+ul,ol{padding-inline-start:22px}
+footer{color:var(--muted);text-align:center;font-size:13px}
+@media print{body{background:#fff}section,header.cover,nav.toc{border:none;break-inside:avoid-page}nav.toc{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="cover">
+  <h1>ء-حماية <span class="ltr">e-Himaya</span></h1>
+  <p class="sub">تقرير المرحلة 6: البث المباشر والرؤية الحاسوبية</p>
+  <div class="meta">
+    <div><b>التاريخ</b>2026-10-20</div>
+    <div><b>الفرع</b><span class="ltr">phase-6-streaming-vision</span></div>
+    <div><b>الحالة</b>منجزة، بانتظار الدمج وموافقتك</div>
+    <div><b>المراجع</b><a href="api/phase-6-contract.md">عقد الواجهة البرمجية</a> · <a href="streaming.md">دليل تشغيل البث</a> · <a href="../services/vision/EVALUATION.md">تقييم النموذج</a> · <a href="versions.md">الإصدارات</a></div>
+  </div>
+</header>
+
+<section>
+<h2>1. جدول التقدم</h2>
+<div class="tbl"><table>
+<tr><th>المتطلب</th><th>البند</th><th>ما أُنجز</th><th>التحقق</th><th>التقدم</th></tr>
+<tr><td>FR-C-07</td><td>خادم البث</td><td>MediaMTX 1.21.2 يستقبل WHIP/WebRTC من الهاتف و RTSP و RTMP من الدرونات والكاميرات، ويقدم WHEP و HLS للوحة. كل نشر أو مشاهدة يسأل الخلفية عبر <code>authHTTPAddress</code>: رمز نشر لجلسة واحدة مرتبط بالبلاغ، ورمز مشاهدة قصير مرتبط بالمسار، وصلاحيات منفصلة لخدمة الرؤية. في الإنتاج لا يمر عبر Caddy إلا مسارات الوسائط، أما واجهة MediaMTX و <code>/internal</code> فمحجوبة.</td><td>تشغيل حقيقي لـ MediaMTX مع الخلفية: نشر ومشاهدة ورفض الرموز الخاطئة وطرد الناشر؛ اختبار توجيه Caddy</td><td>100%</td></tr>
+<tr><td>FR-C-07</td><td>ربط البث بالمستخدم والبلاغ والتسجيل</td><td>كل بث مرتبط بمستخدم وبلاغ (جدول <code>live_stream</code>، ترحيل 0011). أحداث البداية والنهاية عبر Webhook. تسجيل آلي بقطع fMP4 مدتها 60 ثانية، تُحسب بصمة SHA-256 لكل قطعة وتُرفع إلى S3 وتُربط بالبلاغ، مع طابور يستعيد أي قطعة ضاع حدثها.</td><td>اختبار دورة كاملة: قطع تُحسب بصمتها وتُخزن وتُحذف محليا</td><td>100%</td></tr>
+<tr><td>FR-A-031، FR-A-050، FR-A-052</td><td>زر البث المباشر في التطبيق</td><td>زر مستقل في الشاشة الرئيسية وعلى البلاغات المفتوحة. بث الكاميرا الخلفية والصوت عبر WHIP، بجودة تتكيف مع الشبكة (من 720p إلى 240p). مؤشر أحمر واضح مع المدة، وإيقاف بلمسة، وإرسال الموقع طوال البث، وإعادة اتصال عند الانقطاع، واحترام إيقاف المشغل للبث.</td><td>260 اختبارا للتطبيق (كانت 192)</td><td>100%</td></tr>
+<tr><td>FR-A-051</td><td>البديل عند ضعف الشبكة</td><td>تسجيل مقطع حتى 60 ثانية ورفعه بالاستئناف مع البلاغ، ويعمل دون اتصال.</td><td>اختبارات</td><td>100%</td></tr>
+<tr><td>FR-C-07، UC-06</td><td>كشف الحرائق والدخان والأشخاص</td><td>خدمة <code>services/vision</code> تحلل إطارا في الثانية لكل بث (إطارين عند الاشتباه)، والصور المرفوعة مع البلاغات. الإنذار لا يُعتمد إلا إذا تكرر الكشف في 3 من آخر 5 إطارات، فيرفع أولوية البلاغ وينبه اللوحة، ولا يرسل أي تنبيه عام آليا: القرار يبقى بشريا.</td><td>تشغيل حقيقي على بث RTSP: كشف حريق بثقة 0.83؛ اختبار النموذج الحقيقي في CI</td><td>100%</td></tr>
+<tr><td>FR-C-07</td><td>العرض المتعدد والأرشيف في اللوحة</td><td>قائمة البث الجاري مباشرة، وحائط من 1 أو 4 أو 9 شاشات مع مربعات الكشف وخريطة مواقع المبلّغين، وصفحة لكل بث (المسار على الخريطة، سجل الكشف، التسجيلات ببصماتها وتنزيلها، زر إيقاف للأدوار المخولة)، وأرشيف بفلاتر، وتنبيه صوتي عند كشف حريق.</td><td>288 اختبارا للوحة (كانت 245) واختبارا متصفح جديدان</td><td>100%</td></tr>
+<tr><td>—</td><td>المحاكاة</td><td>خدمة <code>stream-sim</code> تبث مقطعا مرخصا بشكل متكرر لتجربة السلسلة كاملة دون هاتف، بالعلامات المعتمدة (┏━━ SIMULATION، [SIM]، شريط «وضع المحاكاة»).</td><td>اختبار الدخان في CI يسجل بثا حقيقيا من البداية إلى النهاية</td><td>100%</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>2. نموذج كشف الحرائق والدخان</h2>
+<p>لم نجد نموذجا جاهزا لكشف الحرائق والدخان تكون شيفرته وأوزانه معا برخصة متساهلة: أغلب النماذج المنشورة مبنية على Ultralytics (رخصة AGPL) أو بلا رخصة. لذلك دُرّب نموذج خاص بالمشروع من مكونات متساهلة فقط:</p>
+<ul>
+<li>القاعدة: YOLOX-Tiny من Megvii (Apache-2.0).</li>
+<li>البيانات: صور Open Images V7 التي تحقق فيها بشر من وجود حريق أو دخان (الصور CC BY 2.0 والتسميات CC BY 4.0).</li>
+<li>الصناديق رسمها Grounding DINO (Apache-2.0) أثناء التدريب فقط.</li>
+<li>النتيجة: النموذج <span class="ltr">ehimaya-fire-smoke-yolox-tiny 1.0.0</span> برخصة Apache-2.0، يعمل على المعالج عبر ONNX Runtime، ومحفوظ في المستودع مع شيفرة التدريب لإعادة إنتاجه.</li>
+</ul>
+<div class="tbl"><table>
+<tr><th>الفئة</th><th>العتبة</th><th>الدقة (Precision)</th><th>الاستدعاء (Recall)</th></tr>
+<tr><td>حريق</td><td>0.45</td><td>0.70</td><td>0.87</td></tr>
+<tr><td>حريق</td><td>0.6</td><td>0.78</td><td>0.73</td></tr>
+<tr><td>دخان</td><td>0.45</td><td>—</td><td>0.07</td></tr>
+<tr><td>أشخاص</td><td>0.45</td><td>0.87</td><td>0.80</td></tr>
+</table></div>
+<p class="note">قيس على 383 صورة لم تُستعمل في التدريب. زمن المعالجة نحو 125 ملي ثانية للإطار على معالج من 4 أنوية، أي نحو 8 إطارات في الثانية لكل عامل، فيكفي خادم واحد لعدة بثوث في وقت واحد. كشف الدخان ضعيف في هذه النسخة لقلة صور التدريب (167 صندوقا فقط).</p>
+</section>
+
+<section>
+<h2>3. قرارات تحتاج علمك</h2>
+<div class="tbl"><table>
+<tr><th>القرار</th><th>السبب</th></tr>
+<tr><td>تدريب نموذج خاص بدل نموذج جاهز</td><td>كل النماذج الجاهزة المفحوصة إما AGPL أو بلا رخصة، وهذا يتعارض مع ملاحظة الرخص في وثيقة البنية.</td></tr>
+<tr><td>حفظ أوزان النموذج (20 ميغابايت) داخل المستودع</td><td>المستودع خاص، فلا يمكن تنزيل الأوزان من إصدار GitHub دون رمز. الملف مثبت ببصمته.</td></tr>
+<tr><td>إنذار الحريق يرفع الأولوية وينبه اللوحة فقط</td><td>لا يُرسل أي تنبيه عام آليا (FR-C-11): القرار النهائي للمشغل.</td></tr>
+<tr><td>رمز نشر لجلسة واحدة</td><td>عند انقطاع الشبكة يفتح التطبيق بثا جديدا على البلاغ نفسه، فقد تظهر عدة بثوث لبلاغ واحد في اللوحة.</td></tr>
+<tr><td>مقطع المحاكاة يعرض أشخاصا لا حريقا</td><td>لم نجد مقطع حريق برخصة إعادة نشر واضحة. يمكن توجيه المحاكي إلى أي مقطع حريق تتأكد من رخصته لعرض الإنذار في المناقشة.</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>4. حدود معروفة</h2>
+<ul>
+<li>كشف الدخان غير موثوق بعد، والمشاهد الشبيهة بالنار (غروب، شموع) تعطي إنذارات خاطئة في ثلث الحالات؛ الحماية هي شرط التكرار في 3 من 5 إطارات ومراجعة المشغل. تحسينه ممكن بإضافة مجموعة D-Fire (CC0) والتدريب على GPU.</li>
+<li>لم يُجرَّب النموذج على لقطات الدرونات والكاميرات الليلية.</li>
+<li>لا خادم TURN: الهواتف على شبكات تحجب UDP لا تستطيع البث بـ WebRTC، ويبقى لها بديل رفع المقطع.</li>
+<li>البث من التطبيق يتطلب بقاء التطبيق مفتوحا (لا خدمة في الخلفية).</li>
+<li>استقبال RTSP و RTMP من الدرونات والكاميرات غير مشفر، ويجب حصره بجدار الحماية في شبكات الكاميرات (موثق في دليل النشر).</li>
+<li>لم يُبنَ تطبيق الهاتف لأندرويد و iOS في بيئة العمل؛ يُبنى APK في CI، والبث الحقيقي من هاتف لم يُجرَّب بعد.</li>
+<li>مكتبة PyAV في صورة خدمة الرؤية تتضمن FFmpeg بمكونات GPL (للفك فقط، ولا شيء AGPL)؛ موثق في <span class="ltr">services/vision/README.md</span>.</li>
+</ul>
+</section>
+
+<section>
+<h2>5. الاختبارات</h2>
+<div class="tbl"><table>
+<tr><th>المكون</th><th>قبل</th><th>بعد</th></tr>
+<tr><td>الخلفية</td><td>241</td><td>277</td></tr>
+<tr><td>خدمة الرؤية (جديدة)</td><td>—</td><td>65، و 6 على النموذج الحقيقي</td></tr>
+<tr><td>لوحة التحكم</td><td>245</td><td>288، و 3 اختبارات متصفح</td></tr>
+<tr><td>البوابة</td><td>82</td><td>82</td></tr>
+<tr><td>محاكي القنوات</td><td>109</td><td>109</td></tr>
+<tr><td>تطبيق الهاتف</td><td>192</td><td>260</td></tr>
+</table></div>
+<p class="note">أُصلح خلل قديم في اللوحة: الاتصال المباشر (WebSocket) لم يكن يُفتح في نسخة الإنتاج وتبقى اللوحة في حالة «إعادة الاتصال». أُضيف اختبار يمنع عودته.</p>
+</section>
+
+<footer>ء-حماية · تقرير المرحلة 6</footer>
+</div>
+</body>
+</html>
