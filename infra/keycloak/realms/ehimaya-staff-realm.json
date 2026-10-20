@@ -22,7 +22,8 @@
   "internationalizationEnabled": true,
   "supportedLocales": [
     "ar",
-    "fr"
+    "fr",
+    "en"
   ],
   "defaultLocale": "ar",
   "accessTokenLifespan": 300,
@@ -79,6 +80,18 @@
         "description": "مدير النظام"
       },
       {
+        "name": "security_admin",
+        "description": "مسؤول أمن المنصة"
+      },
+      {
+        "name": "ai_admin",
+        "description": "مسؤول نماذج الذكاء الاصطناعي"
+      },
+      {
+        "name": "regional_account_admin",
+        "description": "مسؤول حسابات جهوي"
+      },
+      {
         "name": "default-roles-ehimaya-staff",
         "description": "Default roles",
         "composite": true,
@@ -107,6 +120,14 @@
       "enabled": true,
       "defaultAction": true,
       "priority": 20
+    },
+    {
+      "alias": "VERIFY_EMAIL",
+      "name": "Verify Email",
+      "providerId": "VERIFY_EMAIL",
+      "enabled": true,
+      "defaultAction": false,
+      "priority": 30
     }
   ],
   "clients": [
@@ -120,6 +141,25 @@
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": false,
       "protocol": "openid-connect"
+    },
+    {
+      "clientId": "ehimaya-account-admin",
+      "name": "e-Himaya API · staff account administration (phase 9)",
+      "description": "Confidential client of the API's regional account administration proxy: client credentials only, its service account may only view and manage the users of this realm.",
+      "enabled": true,
+      "publicClient": false,
+      "bearerOnly": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "${KEYCLOAK_ADMIN_CLIENT_SECRET}",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "fullScopeAllowed": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "access.token.lifespan": "300"
+      }
     },
     {
       "clientId": "ehimaya-dashboard",
@@ -200,5 +240,19 @@
     "name": "default-roles-ehimaya-staff",
     "description": "Default roles",
     "composite": true
-  }
+  },
+  "users": [
+    {
+      "username": "service-account-ehimaya-account-admin",
+      "enabled": true,
+      "serviceAccountClientId": "ehimaya-account-admin",
+      "realmRoles": [],
+      "clientRoles": {
+        "realm-management": [
+          "manage-users",
+          "view-users"
+        ]
+      }
+    }
+  ]
 }

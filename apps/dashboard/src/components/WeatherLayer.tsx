@@ -25,6 +25,7 @@ import {
 import { ErrorBox, Loading } from "./Feedback";
 import type { MapWeather } from "./MapView";
 import { SimTag, SimulationBand } from "./StreamBits";
+import { localized } from "../lib/localized";
 
 export interface WeatherViews {
   fire: boolean;
@@ -298,7 +299,7 @@ export function WeatherPointCard({ lat, lon, hour }: { lat: number; lon: number;
               <span className={`chip chip--severity-${a.severity ?? "low"}`}>
                 {t(`ops.map.severity.${a.severity ?? "low"}`)}
               </span>{" "}
-              <span dir="auto">{(lang === "ar" ? a.title?.ar : a.title?.fr || a.title?.ar) ?? ""}</span>
+              <span dir="auto">{localized(a.title, lang)}</span>
             </li>
           ))}
         </ul>

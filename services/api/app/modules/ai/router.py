@@ -15,9 +15,9 @@ from app.modules.reports.staff_router import READ_ROLES
 
 router = APIRouter(prefix="/api/v1/staff/ai", tags=["ai"])
 
-StaffReader = Annotated[Principal, Depends(require_roles(*READ_ROLES))]
-# National decision: the central committee (and system administrators) tune the weights.
-SettingsEditor = Annotated[Principal, Depends(require_roles(Role.CENTRAL_COMMITTEE, Role.SYSADMIN))]
+StaffReader = Annotated[Principal, Depends(require_roles(*READ_ROLES, Role.AI_ADMIN))]
+# National decision: the central committee or the AI administrator tune the weights (phase 9 §2; not sysadmin).
+SettingsEditor = Annotated[Principal, Depends(require_roles(Role.CENTRAL_COMMITTEE, Role.AI_ADMIN))]
 Session = Annotated[AsyncSession, Depends(get_session)]
 
 

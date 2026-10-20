@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useParams } from "react-router";
 import { PriorityBadge, VerificationBadge } from "../components/AiBadges";
 import { AnalysisPanel } from "../components/AnalysisPanel";
+import { ReporterSection } from "../components/BreakGlass";
 import { CategoryLabel } from "../components/CategoryIcon";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { GroupingSection } from "../components/GroupingSection";
@@ -11,8 +12,9 @@ import { LazyMapView } from "../components/LazyMap";
 import { LinkedStreams } from "../components/LinkedStreams";
 import { VisionImage, VisionSummary, visionDetections } from "../components/VisionResults";
 import { OrganizationCardPanel } from "../components/OrganizationCardPanel";
+import { ClaimBadge, EscalationTag, GeoStateTag } from "../components/Phase9Bits";
+import { ReportHandling } from "../components/ReportHandling";
 import { featureKindLabel, MapLegend, orgKindLabel, orgPois, pointsBounds, useLegendItems } from "../components/OrgBits";
-import { CallButton } from "../components/Softphone";
 import { StatusChip } from "../components/StatusChip";
 import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
@@ -244,7 +246,6 @@ export function ReportDetailPage() {
 
   const r = query.data;
   const { lon, lat, accuracy_m } = r.location;
-  const reporter = r.reporter;
   const delta = 0.01;
   const withOrg = pointsBounds([{ lon, lat }, ...pois], 0.004);
   const bounds = withOrg && pois.length > 0 ? withOrg : ([lon - delta, lat - delta, lon + delta, lat + delta] as const);
@@ -261,6 +262,9 @@ export function ReportDetailPage() {
         <StatusChip status={r.status} />
         <PriorityBadge score={r.priority_score} />
         <VerificationBadge report={r} />
+        <ClaimBadge report={r} />
+        <EscalationTag state={r.escalation_state} />
+        <GeoStateTag state={r.geo_state} />
         {r.organization && (
           <Link to={`/orgs/${encodeURIComponent(r.organization.id)}`} className="tag tag--org">
             {t("orgs.reportOnBehalf", { name: r.organization.name })}
@@ -351,32 +355,9 @@ export function ReportDetailPage() {
           )}
         </section>
 
-        <section className="card" aria-labelledby="sec-reporter">
-          <h2 id="sec-reporter">{t("detail.reporter")}</h2>
-          {reporter.kind === "anonymous" ? (
-            <p>{t("detail.anonymous")}</p>
-          ) : (
-            <dl className="fields">
-              <dt>{t("detail.name")}</dt>
-              <dd dir="auto">
-                {[reporter.first_name, reporter.last_name].filter(Boolean).join(" ") || t("common.notAvailable")}
-              </dd>
-              <dt>{t("detail.phone")}</dt>
-              <dd>
-                {reporter.phone ? (
-                  <>
-                    <a href={`tel:${reporter.phone}`} dir="ltr">
-                      {reporter.phone}
-                    </a>{" "}
-                    <CallButton body={{ report_id: r.id }} label={t("phone.callReporter")} />
-                  </>
-                ) : (
-                  t("common.notAvailable")
-                )}
-              </dd>
-            </dl>
-          )}
-        </section>
+        <ReporterSection report={r} />
+
+        <ReportHandling report={r} />
 
         <section className="card" aria-labelledby="sec-status">
           <h2 id="sec-status">{t("detail.statusChange")}</h2>

@@ -2106,4 +2106,48 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get trackPointsOpenRewards => 'See my rewards';
+
+  @override
+  String get anonQuotaCardTitle => 'Reports without an account';
+
+  @override
+  String anonQuotaRemaining(int remaining, int limit) {
+    return '$remaining of $limit left';
+  }
+
+  @override
+  String anonQuotaRemainingShort(int remaining) {
+    return '$remaining left';
+  }
+
+  @override
+  String get anonQuotaExhaustedHint =>
+      'Limit reached: create an account to keep reporting. SOS and 198 always work.';
+
+  @override
+  String get anonQuotaTitle => 'Reporting without an account';
+
+  @override
+  String get anonQuotaExplanation =>
+      'To prevent abuse, each installation of the app can send a limited number of reports without an account. With a free account you can keep reporting, follow your reports on any device, and your reports carry more weight.';
+
+  @override
+  String get anonQuotaEmergencyNote =>
+      'In an emergency, the SOS button and a call to 198 always work, with or without an account.';
+
+  @override
+  String anonQuotaDraftKept(String code) {
+    return 'Your report $code is kept on this phone. It will be sent as soon as you create an account or sign in.';
+  }
+
+  @override
+  String get anonQuotaReportKeptBody =>
+      'The limit of reports without an account is reached. This report is kept on this phone and will be sent as soon as you create an account or sign in.';
+
+  @override
+  String get anonQuotaOpen => 'Why a limit?';
+
+  @override
+  String get errorAnonQuotaExhausted =>
+      'The limit of reports without an account is reached on this device. Please create an account.';
 }

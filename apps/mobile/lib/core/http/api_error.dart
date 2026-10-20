@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 
+import '../quota/anon_quota.dart';
+
 /// Stable machine codes of the phase-2, phase-4, phase-5 and phase-6 contracts (plus client-side categories).
 enum ApiErrorCode {
   authenticationRequired('authentication_required'),
@@ -42,6 +44,8 @@ enum ApiErrorCode {
   streamAlreadyActive('stream_already_active'),
   reportClosed('report_closed'),
   streamNotActive('stream_not_active'),
+  // Phase 9 §3: anonymous report quota of this installation reached (non-SOS reports only).
+  anonQuotaExhausted('anon_quota_exhausted'),
   // Local: checksum mismatch detected by the server after upload.
   mediaRejected('media_rejected'),
   validation('validation_error'),
@@ -61,13 +65,21 @@ enum ApiErrorCode {
 }
 
 class ApiException implements Exception {
-  const ApiException(this.code, {this.statusCode, this.retryAfter});
+  const ApiException(
+    this.code, {
+    this.statusCode,
+    this.retryAfter,
+    this.anonQuota,
+  });
 
   final ApiErrorCode code;
   final int? statusCode;
 
   /// From `Retry-After` on 429/503.
   final Duration? retryAfter;
+
+  /// From `X-Anon-Quota-*` (phase 9 §3), sent to anonymous callers, also on the 403.
+  final AnonQuota? anonQuota;
 
   /// Errors worth retrying later without user action.
   bool get isTransient =>
@@ -94,8 +106,14 @@ class ApiException implements Exception {
     final detail = data is Map ? data['detail'] : null;
     final code = ApiErrorCode.fromWire(detail is String ? detail : null);
     final retryAfter = _parseRetryAfter(headers.value('retry-after'));
+    final quota = AnonQuota.fromHeaders(headers);
     if (code != null) {
-      return ApiException(code, statusCode: status, retryAfter: retryAfter);
+      return ApiException(
+        code,
+        statusCode: status,
+        retryAfter: retryAfter,
+        anonQuota: quota,
+      );
     }
     final fallback = switch (status) {
       401 => ApiErrorCode.authenticationRequired,
@@ -108,7 +126,12 @@ class ApiException implements Exception {
       408 => ApiErrorCode.network,
       _ => ApiErrorCode.unknown,
     };
-    return ApiException(fallback, statusCode: status, retryAfter: retryAfter);
+    return ApiException(
+      fallback,
+      statusCode: status,
+      retryAfter: retryAfter,
+      anonQuota: quota,
+    );
   }
 
   static Duration? _parseRetryAfter(String? value) {

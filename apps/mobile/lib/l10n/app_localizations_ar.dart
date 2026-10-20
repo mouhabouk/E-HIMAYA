@@ -2083,4 +2083,48 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get trackPointsOpenRewards => 'عرض مكافآتي';
+
+  @override
+  String get anonQuotaCardTitle => 'البلاغات دون حساب';
+
+  @override
+  String anonQuotaRemaining(int remaining, int limit) {
+    return 'تبقّى $remaining من $limit';
+  }
+
+  @override
+  String anonQuotaRemainingShort(int remaining) {
+    return 'تبقّى $remaining';
+  }
+
+  @override
+  String get anonQuotaExhaustedHint =>
+      'تمّ بلوغ الحدّ: أنشئ حسابا لمواصلة التبليغ. زرّ النجدة والرقم 198 متاحان دائما.';
+
+  @override
+  String get anonQuotaTitle => 'التبليغ دون حساب';
+
+  @override
+  String get anonQuotaExplanation =>
+      'لتفادي الاستعمال المسيء، يمكن لكل تثبيت للتطبيق إرسال عدد محدود من البلاغات دون حساب. بحساب مجاني تواصل التبليغ وتتابع بلاغاتك من أي جهاز ويكون لبلاغاتك وزن أكبر.';
+
+  @override
+  String get anonQuotaEmergencyNote =>
+      'في حالة الطوارئ، يعمل زرّ النجدة والاتصال بالرقم 198 دائما، بحساب أو دونه.';
+
+  @override
+  String anonQuotaDraftKept(String code) {
+    return 'بلاغك $code محفوظ على هذا الهاتف. سيُرسل فور إنشاء حساب أو تسجيل الدخول.';
+  }
+
+  @override
+  String get anonQuotaReportKeptBody =>
+      'تمّ بلوغ حدّ البلاغات دون حساب. هذا البلاغ محفوظ على هذا الهاتف وسيُرسل فور إنشاء حساب أو تسجيل الدخول.';
+
+  @override
+  String get anonQuotaOpen => 'لماذا هذا الحدّ؟';
+
+  @override
+  String get errorAnonQuotaExhausted =>
+      'تمّ بلوغ حدّ البلاغات دون حساب على هذا الجهاز. يُرجى إنشاء حساب.';
 }

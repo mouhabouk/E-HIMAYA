@@ -1,6 +1,6 @@
 import { fireEvent, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { LanguageSwitch } from "../components/Layout";
+import { LanguageMenu } from "../components/Layout";
 import { fakeAuth, OPERATOR_CLAIMS, renderApp } from "../test/render";
 import { RequireAuth } from "./RequireAuth";
 
@@ -39,12 +39,15 @@ describe("RequireAuth", () => {
 
 describe("language switch", () => {
   it("flips the document direction between RTL and LTR", async () => {
-    renderApp(<LanguageSwitch />);
+    renderApp(<LanguageMenu />);
     expect(document.documentElement.dir).toBe("rtl");
-    fireEvent.click(await screen.findByRole("button", { name: "التبديل إلى الفرنسية" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Français" }));
     expect(document.documentElement.dir).toBe("ltr");
     expect(document.documentElement.lang).toBe("fr");
-    fireEvent.click(screen.getByRole("button", { name: "Passer à l’arabe" }));
+    fireEvent.click(screen.getByRole("button", { name: "English" }));
+    expect(document.documentElement.dir).toBe("ltr");
+    expect(document.documentElement.lang).toBe("en");
+    fireEvent.click(screen.getByRole("button", { name: "العربية" }));
     expect(document.documentElement.dir).toBe("rtl");
   });
 });

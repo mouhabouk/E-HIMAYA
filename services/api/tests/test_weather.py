@@ -399,6 +399,9 @@ async def test_staff_grid_and_point(client: httpx.AsyncClient, sim_grid: dict[st
     citizen_like = {"Authorization": staff()["Authorization"]}
     assert (await client.get("/api/v1/staff/weather/grid", headers=citizen_like)).status_code == 200
     assert (await client.get("/api/v1/staff/weather/grid")).status_code == 401
+    # Phase 9 §1.1: technical roles hold no operational picture.
+    sysadmin = staff(roles=["sysadmin"], gouvernorat=None)
+    assert (await client.get("/api/v1/staff/weather/grid", headers=sysadmin)).status_code == 403
 
 
 # ---------------------------------------------------------------- suggested alerts

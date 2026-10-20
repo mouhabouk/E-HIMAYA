@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useFormat } from "../lib/hooks";
+import { useSlaBands } from "../lib/phase9";
 import { analysisFlag, priorityBand } from "../lib/priority";
 import type { IncidentStatus, StaffReport } from "../lib/types";
 
@@ -7,7 +8,8 @@ import type { IncidentStatus, StaffReport } from "../lib/types";
 export function PriorityBadge({ score }: { score: number | null | undefined }) {
   const { t } = useTranslation();
   const fmt = useFormat();
-  const band = priorityBand(score);
+  const bounds = useSlaBands();
+  const band = priorityBand(score, bounds);
   if (band === null || score === null || score === undefined) {
     return (
       <span className="prio prio--none" title={t("priority.none")}>

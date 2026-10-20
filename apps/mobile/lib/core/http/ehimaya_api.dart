@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../quota/anon_quota.dart';
 import 'api_client.dart';
 import 'api_error.dart';
 import 'models.dart';
@@ -16,9 +17,13 @@ import 'weather_models.dart';
 /// Result of `POST /api/v1/reports`: 201 (new) and 200 (same `client_uuid` replayed) are
 /// handled the same way by the sync engine.
 class CreateReportResult {
-  const CreateReportResult(this.report, {required this.created});
+  const CreateReportResult(this.report, {required this.created, this.quota});
   final ServerReport report;
   final bool created;
+
+  /// Quota left to this anonymous installation after the report (phase 9 §3); null for
+  /// registered accounts.
+  final AnonQuota? quota;
 }
 
 /// `GET /api/v1/safety-tips` answer: [tips] is null when the copy identified by the sent ETag is
@@ -73,8 +78,15 @@ class EHimayaApi {
         return CreateReportResult(
           ServerReport.fromJson(r.data!),
           created: r.statusCode == 201,
+          quota: AnonQuota.fromHeaders(r.headers),
         );
       });
+
+  /// `GET /api/v1/reports/quota` (phase 9 §3): null for a registered account (no quota).
+  Future<AnonQuota?> reportQuota() => guardApi(() async {
+    final r = await _dio.get<Map<String, Object?>>('/api/v1/reports/quota');
+    return AnonQuota.fromJson(r.data!);
+  });
 
   Future<ReportsPage> myReports({int limit = 50, String? before}) =>
       guardApi(() async {

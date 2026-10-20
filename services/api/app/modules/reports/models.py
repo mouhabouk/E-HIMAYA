@@ -65,6 +65,24 @@ class Report(Base):
     verification_reason: Mapped[str | None] = mapped_column(Text)
     # Set by the retention job: reporter detached, free text and media gone, point coarsened (§5.3).
     anonymised_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Jurisdiction (phase 9 §4): the location decides who handles the report, only once it is trusted or verified;
+    # pending/contradictory reports keep gouvernorat_code NULL and wait in the central geo-verification queue.
+    geo_state: Mapped[str] = mapped_column(Text, server_default="trusted")
+    geo_candidates: Mapped[list[int]] = mapped_column(ARRAY(SmallInteger), server_default="{}")
+    geo_reason: Mapped[str | None] = mapped_column(Text)
+    geo_verified_by: Mapped[str | None] = mapped_column(Text)
+    geo_verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Room handling the report: "central" or "g:<code>".
+    claimed_room: Mapped[str | None] = mapped_column(Text)
+    claimed_by: Mapped[str | None] = mapped_column(Text)
+    claimed_by_name: Mapped[str | None] = mapped_column(Text)
+    claimed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Claim deadline from the priority band (national settings); the SLA worker marks unclaimed reports late.
+    sla_band: Mapped[str | None] = mapped_column(Text)
+    sla_due_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    escalation_state: Mapped[str] = mapped_column(Text, server_default="none")
+    escalated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    referred_to: Mapped[int | None] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
 
 
 def report_search_tokens(text_original: str | None, text_ar: str | None) -> list[bytes]:
@@ -126,3 +144,37 @@ class Media(Base):
     rejection_reason: Mapped[str | None] = mapped_column(Text)
     stored_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class Escalation(Base):
+    """One step of a report's escalation (late, central claim, referral, answer, verification, release)."""
+
+    __tablename__ = "escalation"
+    __table_args__ = {"schema": "reports"}
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    report_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("reports.report.id", ondelete="CASCADE")
+    )
+    incident_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True))
+    kind: Mapped[str] = mapped_column(Text)
+    from_room: Mapped[str | None] = mapped_column(Text)
+    to_room: Mapped[str | None] = mapped_column(Text)
+    actor: Mapped[str] = mapped_column(Text)
+    actor_name: Mapped[str | None] = mapped_column(Text)
+    at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    reason: Mapped[str | None] = mapped_column(Text)
+    payload: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default="{}")
+
+
+class ReporterContext(Base):
+    """Reporter's residence gouvernorat at creation. Restricted (§1.3): never used to decide who handles a report."""
+
+    __tablename__ = "reporter_context"
+    __table_args__ = {"schema": "reports"}
+
+    report_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("reports.report.id", ondelete="CASCADE"), primary_key=True
+    )
+    reporter_gouvernorat_code: Mapped[int | None] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
+    source: Mapped[str] = mapped_column(Text)

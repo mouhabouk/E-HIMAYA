@@ -443,18 +443,22 @@ def simulate(
     return out
 
 
-# ---------------------------------------------------------------- texts (ar/fr)
+# ---------------------------------------------------------------- texts (ar/fr/en)
 
 DISCLAIMER = {
     "ar": "أداة مساعدة على التخطيط مبنية على المعطيات التاريخية للمنصة، وليست تنبؤًا: الأرقام تقديرات احتمالية "
     "(النسب المئوية 10/50/90) ولا تعوّض تقدير القيادة الميدانية.",
     "fr": "Outil d'aide à la planification fondé sur l'historique de la plateforme, pas une prévision : les chiffres "
     "sont des estimations probabilistes (percentiles 10/50/90) et ne remplacent pas l'appréciation du commandement.",
+    "en": "A planning aid built on the platform's history, not a forecast: the figures are probabilistic estimates "
+    "(10/50/90 percentiles) and do not replace the judgement of the command.",
 }
 CALIBRATION_NOTE = {
     "ar": "النموذج غير معايَر: لم تتم مقارنة نتائجه بنتائج حقيقية بعد، فلا ينبغي اعتماد أرقامه كقيم دقيقة.",
     "fr": "Modèle non calibré : ses résultats n'ont pas encore été validés par comparaison avec des issues réelles ; "
     "ses chiffres ne doivent pas être lus comme des valeurs exactes.",
+    "en": "Uncalibrated model: its results have not yet been validated against real outcomes; its figures must not "
+    "be read as exact values.",
 }
 
 
@@ -479,6 +483,7 @@ def assumptions(
     kinds = kinds_for(params.category.value if params.category else None)
     kinds_ar = "، ".join(domain.RESOURCE_LABELS[k]["ar"] for k in kinds)
     kinds_fr = ", ".join(domain.RESOURCE_LABELS[k]["fr"] for k in kinds)
+    kinds_en = ", ".join(domain.RESOURCE_LABELS[k]["en"] for k in kinds)
     measured_ratio = history.linked_reports >= MIN_INCIDENT_LINKS
     window = f"{history.window_from} → {history.window_to}" if history.window_from else "—"
     items = [
@@ -490,17 +495,24 @@ def assumptions(
             f"{_places(params.gouvernorats, names, 'fr')}) de la même saison (±{SEASON_DAYS} jours, {HISTORY_YEARS} "
             f"dernières années, {len(history.days)} jours couverts : {window}), "
             f"multipliée par ×{params.demand_factor:g}.",
+            "en": f"Demand replays the hourly distribution of {history.events} past reports ({cat['en']}, "
+            f"{_places(params.gouvernorats, names, 'en')}) from the same season (±{SEASON_DAYS} days, last "
+            f"{HISTORY_YEARS} years, {len(history.days)} days covered: {window}), "
+            f"multiplied by ×{params.demand_factor:g}.",
         },
         {
             "ar": f"{history.gap_days} يومًا بدون أي بلاغ على المستوى الوطني اعتُبرت انقطاعًا في المعطيات واستُبعدت.",
             "fr": f"{history.gap_days} jours sans aucun signalement au niveau national sont traités comme des lacunes "
             "de données et exclus.",
+            "en": f"{history.gap_days} days without any report nationwide are treated as data gaps and excluded.",
         },
         {
             "ar": f"كل بلاغ يتطلب تدخلًا بنسبة {history.job_ratio:.0%} (نسبة الحوادث إلى البلاغات"
             f"{' التاريخية' if measured_ratio else '، قيمة افتراضية'}).",
             "fr": f"Chaque signalement demande une intervention avec une probabilité de {history.job_ratio:.0%} "
             f"(rapport incidents / signalements {'historique' if measured_ratio else 'par défaut'}).",
+            "en": f"Each report requires an intervention with a probability of {history.job_ratio:.0%} "
+            f"({'historical' if measured_ratio else 'default'} incidents / reports ratio).",
         },
         {
             "ar": f"كل تدخل يشغل وسيلة واحدة لمدة متوسطها {round(mean_service / 5) * 5:.0f} دقيقة "
@@ -515,33 +527,45 @@ def assumptions(
                 if history.service
                 else "(valeur par défaut : historique des durées insuffisant)."
             ),
+            "en": f"Each intervention keeps one resource busy for {round(mean_service / 5) * 5:.0f} min on average "
+            + (
+                f"(taken from {len(history.service)} past commitments)."
+                if history.service
+                else "(default value: not enough history of durations)."
+            ),
         },
         {
             "ar": f"الوسائل المتاحة: {capacity} ({kinds_ar}) بعد سحب {removed}؛ الأولوية حسب ترتيب الوصول، "
             "دون تعزيزات من ولايات أخرى.",
             "fr": f"Moyens disponibles : {capacity} ({kinds_fr}) après retrait de {removed} ; premier arrivé, premier "
             "servi, sans renfort d'autres gouvernorats.",
+            "en": f"Available resources: {capacity} ({kinds_en}) after withdrawing {removed}; first come, first "
+            "served, without reinforcement from other governorates.",
         },
     ]
     weather_text = {
         "none": (
             "لا يوجد عامل طقس مطبق (لا توقعات أو لا تأثير على هذا الصنف).",
             "Aucun facteur météo appliqué (pas de prévision ou pas d'effet sur cette catégorie).",
+            "No weather factor applied (no forecast, or no effect on this category).",
         ),
         "forecast": (
             f"عامل الطقس حسب التوقعات (المرحلة 7): حتى ×{effect.factor:.1f} في الساعات المعنية.",
             f"Facteur météo selon les prévisions (phase 7) : jusqu'à ×{effect.factor:.1f} aux heures concernées.",
+            f"Weather factor from the forecasts (phase 7): up to ×{effect.factor:.1f} in the hours concerned.",
         ),
         "history": (
             f"عامل الطقس ×{effect.factor:.1f} مقاس من التاريخ (الأيام المماثلة مقابل الأيام الأخرى).",
             f"Facteur météo ×{effect.factor:.1f} mesuré sur l'historique (jours comparables contre autres jours).",
+            f"Weather factor ×{effect.factor:.1f} measured on the history (comparable days against other days).",
         ),
         "default": (
             f"عامل الطقس ×{effect.factor:.1f} قيمة افتراضية (التاريخ غير كافٍ لقياسه).",
             f"Facteur météo ×{effect.factor:.1f} par défaut (historique insuffisant pour le mesurer).",
+            f"Weather factor ×{effect.factor:.1f} by default (not enough history to measure it).",
         ),
     }[effect.source]
-    items.append({"ar": weather_text[0], "fr": weather_text[1]})
+    items.append({"ar": weather_text[0], "fr": weather_text[1], "en": weather_text[2]})
     return items
 
 
@@ -553,6 +577,7 @@ def confidence(history: History) -> tuple[str, list[dict[str, str]]]:
                 "ar": f"عدد الأحداث السابقة لهذا الصنف والمكان ({history.events}) أقل من {MIN_EVENTS}.",
                 "fr": "Trop peu d'événements passés pour cette catégorie et ce lieu "
                 f"({history.events} < {MIN_EVENTS}).",
+                "en": f"Too few past events for this category and place ({history.events} < {MIN_EVENTS}).",
             }
         )
     if len(history.days) < MIN_DAYS:
@@ -560,6 +585,7 @@ def confidence(history: History) -> tuple[str, list[dict[str, str]]]:
             {
                 "ar": f"الأيام المغطاة بالمعطيات ({len(history.days)}) أقل من {MIN_DAYS}.",
                 "fr": f"Trop peu de jours couverts par les données ({len(history.days)} < {MIN_DAYS}).",
+                "en": f"Too few days covered by the data ({len(history.days)} < {MIN_DAYS}).",
             }
         )
     if not history.service:
@@ -567,6 +593,7 @@ def confidence(history: History) -> tuple[str, list[dict[str, str]]]:
             {
                 "ar": "مدد التدخل افتراضية لغياب تاريخ كافٍ.",
                 "fr": "Durées d'intervention par défaut, faute d'historique suffisant.",
+                "en": "Default intervention durations, for lack of sufficient history.",
             }
         )
     return ("low" if reasons else "normal"), reasons

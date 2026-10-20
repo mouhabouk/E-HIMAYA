@@ -96,13 +96,26 @@ async def test_detail_shows_reporter_and_is_audited(
     report = await _report(client, citizen)
     operator = staff(gouvernorat=61)
 
+    # Phase 9 §1.3: the identity is masked until the operator's room handles (claims) the report.
     detail = (await client.get(f"/api/v1/staff/reports/{report['id']}", headers=operator)).json()
     assert detail["reporter"] == {
         "kind": "citizen",
+        "masked": True,
+        "first_name": None,
+        "last_name": None,
+        "phone": "+216••••••56",
+    }
+    assert detail["reporter_context"] is None
+    assert (await client.post(f"/api/v1/staff/reports/{report['id']}/claim", headers=operator)).status_code == 200
+    detail = (await client.get(f"/api/v1/staff/reports/{report['id']}", headers=operator)).json()
+    assert detail["reporter"] == {
+        "kind": "citizen",
+        "masked": False,
         "first_name": "Amira",
         "last_name": "Ben Salah",
         "phone": "+21698123456",
     }
+    assert detail["reporter_context"] == {"reporter_gouvernorat_code": 61, "source": "profile"}
     assert [h["status"] for h in detail["history"]] == ["received"]
     assert detail["allowed_transitions"] == ["in_progress", "rejected"]
     assert detail["location"] == SFAX
@@ -111,13 +124,19 @@ async def test_detail_shows_reporter_and_is_audited(
         text("SELECT count(*) FROM audit.log WHERE action = 'report.view' AND target = :t"),
         {"t": f"report:{report['id']}"},
     )
-    assert audited == 1
+    assert audited == 2
 
     device = device_headers()
     await accept_charter(client, device)
     anonymous = await _report(client, device)
     detail = (await client.get(f"/api/v1/staff/reports/{anonymous['id']}", headers=operator)).json()
-    assert detail["reporter"] == {"kind": "anonymous", "first_name": None, "last_name": None, "phone": None}
+    assert detail["reporter"] == {
+        "kind": "anonymous",
+        "masked": True,
+        "first_name": None,
+        "last_name": None,
+        "phone": None,
+    }
 
 
 async def test_status_lifecycle(

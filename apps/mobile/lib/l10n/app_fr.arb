@@ -601,5 +601,16 @@
   "rewardsHowTitle": "Comment gagner des points",
   "rewardsHowBody": "Des points sont ajoutés quand un de vos signalements est vérifié puis clôturé, davantage s’il a aidé un sauvetage ou si vous avez choisi la bonne catégorie, et pour chaque mission bénévole accomplie. Aucun point pour un signalement faux ou rejeté.",
   "trackPointsEarned": "Points obtenus grâce à ce signalement : {points}",
-  "trackPointsOpenRewards": "Voir mes récompenses"
+  "trackPointsOpenRewards": "Voir mes récompenses",
+  "anonQuotaCardTitle": "Signalements sans compte",
+  "anonQuotaRemaining": "Encore {remaining} sur {limit}",
+  "anonQuotaRemainingShort": "Encore {remaining}",
+  "anonQuotaExhaustedHint": "Limite atteinte : créez un compte pour continuer à signaler. Le SOS et le 198 fonctionnent toujours.",
+  "anonQuotaTitle": "Signaler sans compte",
+  "anonQuotaExplanation": "Pour éviter les abus, chaque installation de l’application peut envoyer un nombre limité de signalements sans compte. Avec un compte gratuit, vous continuez à signaler, vous suivez vos signalements sur tout appareil et ils ont plus de poids.",
+  "anonQuotaEmergencyNote": "En cas d’urgence, le bouton SOS et l’appel au 198 fonctionnent toujours, avec ou sans compte.",
+  "anonQuotaDraftKept": "Votre signalement {code} est conservé sur ce téléphone. Il sera envoyé dès que vous créerez un compte ou vous connecterez.",
+  "anonQuotaReportKeptBody": "La limite de signalements sans compte est atteinte. Ce signalement est conservé sur ce téléphone et sera envoyé dès que vous créerez un compte ou vous connecterez.",
+  "anonQuotaOpen": "Pourquoi une limite ?",
+  "errorAnonQuotaExhausted": "La limite de signalements sans compte est atteinte sur cet appareil. Veuillez créer un compte."
 }

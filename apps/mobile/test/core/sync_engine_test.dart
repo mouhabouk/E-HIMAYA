@@ -9,8 +9,10 @@ import 'package:ehimaya/core/auth/identity.dart';
 import 'package:ehimaya/core/consent/consent_service.dart';
 import 'package:ehimaya/core/db/app_database.dart';
 import 'package:ehimaya/core/db/open_database.dart';
+import 'package:ehimaya/core/http/api_error.dart';
 import 'package:ehimaya/core/http/ehimaya_api.dart';
 import 'package:ehimaya/core/http/models.dart';
+import 'package:ehimaya/core/quota/anon_quota.dart';
 import 'package:ehimaya/core/sync/backoff.dart';
 import 'package:ehimaya/core/sync/report_queue.dart';
 import 'package:ehimaya/core/sync/sync_engine.dart';
@@ -71,6 +73,7 @@ void main() {
   late SyncEngine engine;
   late RecordingConsent consent;
   var blockedCalls = 0;
+  var quotas = <AnonQuota>[];
   var identity = const IdentityState(
     mode: IdentityMode.anonymous,
     role: UserRole.citizen,
@@ -88,6 +91,7 @@ void main() {
     final api = EHimayaApi(apiDio);
     consent = RecordingConsent(api);
     blockedCalls = 0;
+    quotas = <AnonQuota>[];
     identity = const IdentityState(
       mode: IdentityMode.anonymous,
       role: UserRole.citizen,
@@ -106,6 +110,7 @@ void main() {
       clock: () => now,
       identity: () => identity,
       onAnonBlocked: () => blockedCalls++,
+      onAnonQuota: quotas.add,
       random: Random(7),
     );
   });
@@ -683,6 +688,148 @@ void main() {
         isEmpty,
       );
       expect((await db.reportByUuid(q.clientUuid))!.state, ReportState.queued);
+    });
+  });
+  group('anonymous quota (phase 9 §3)', () {
+    const registered = IdentityState(
+      mode: IdentityMode.registered,
+      role: UserRole.citizen,
+    );
+    IdentityState signedIn() => IdentityState(
+      mode: registered.mode,
+      role: registered.role,
+      session: AuthSession(accessToken: 'a.b.c', expiresAt: DateTime(2100)),
+    );
+
+    test('accepted report stores X-Anon-Quota-Remaining', () async {
+      final q = await enqueue();
+      adapter.handler = (_) => FakeResponse(
+        201,
+        json: serverReport(q.clientUuid),
+        headers: const {
+          'x-anon-quota-limit': '5',
+          'x-anon-quota-remaining': '2',
+        },
+      );
+      await engine.runOnce();
+      expect((await db.reportByUuid(q.clientUuid))!.state, ReportState.synced);
+      expect(quotas, [const AnonQuota(limit: 5, remaining: 2)]);
+    });
+
+    test('no quota headers (registered account): nothing stored', () async {
+      final q = await enqueue();
+      adapter.handler = (_) =>
+          FakeResponse(201, json: serverReport(q.clientUuid));
+      await engine.runOnce();
+      expect(quotas, isEmpty);
+    });
+
+    test(
+      'quota_exhausted_keeps_report_blocked_and_resends_after_login',
+      () async {
+        final q = await enqueue();
+        adapter.handler = (_) => const FakeResponse(
+          403,
+          json: {'detail': 'anon_quota_exhausted'},
+          headers: {'x-anon-quota-limit': '5', 'x-anon-quota-remaining': '0'},
+        );
+        await engine.runOnce();
+        var row = (await db.reportByUuid(q.clientUuid))!;
+        // Kept (never failed for good), with its payload, and the UI learns the quota is 0.
+        expect(row.state, ReportState.blocked);
+        expect(row.lastError, ApiErrorCode.anonQuotaExhausted.wire);
+        expect(row.nextAttemptAt, isNull);
+        expect(row.payload, contains('Feu de forêt'));
+        expect(quotas, [const AnonQuota(limit: 5, remaining: 0)]);
+        // Quarantine (anon_blocked) is a different situation: its banner is not raised.
+        expect(blockedCalls, 0);
+
+        // Still anonymous: not retried.
+        adapter.requests.clear();
+        await engine.runOnce();
+        expect(adapter.requests, isEmpty);
+
+        // After registration the same report (same client_uuid) is sent.
+        identity = signedIn();
+        adapter.handler = (r) {
+          expect((r.json! as Map)['client_uuid'], q.clientUuid);
+          return FakeResponse(201, json: serverReport(q.clientUuid));
+        };
+        await engine.runOnce();
+        row = (await db.reportByUuid(q.clientUuid))!;
+        expect(row.state, ReportState.synced);
+        expect(row.serverTrackingCode, 'EH-26-61-0004821');
+        expect(row.lastError, isNull);
+      },
+    );
+
+    test('a 403 without quota headers still records 0 left', () async {
+      await enqueue();
+      adapter.handler = (_) =>
+          const FakeResponse(403, json: {'detail': 'anon_quota_exhausted'});
+      await engine.runOnce();
+      expect(quotas, [const AnonQuota(limit: null, remaining: 0)]);
+    });
+
+    test('a report kept on the device (quota known exhausted) waits for an '
+        'account, then goes', () async {
+      final q = await queue.enqueue(
+        const ReportDraft(
+          category: ReportCategory.fire,
+          location: point,
+          text: 'Feu de forêt',
+        ),
+        blocked: true,
+      );
+      var row = (await db.reportByUuid(q.clientUuid))!;
+      expect(row.state, ReportState.blocked);
+      expect(row.lastError, ApiErrorCode.anonQuotaExhausted.wire);
+      expect(row.lastError, anonQuotaExhaustedWire);
+      adapter.handler = (_) =>
+          FakeResponse(201, json: serverReport(q.clientUuid));
+      await engine.runOnce();
+      expect(adapter.requests, isEmpty);
+
+      identity = signedIn();
+      await engine.runOnce();
+      row = (await db.reportByUuid(q.clientUuid))!;
+      expect(row.state, ReportState.synced);
+    });
+
+    test('SOS beyond the quota is sent at once and accepted', () async {
+      final q = await queue.enqueue(
+        const ReportDraft(category: ReportCategory.sos, location: point),
+      );
+      final other = await enqueue();
+      adapter.handler = (r) {
+        final body = r.json! as Map;
+        if (body['category'] == 'sos') {
+          return FakeResponse(
+            201,
+            json: serverReport(q.clientUuid, category: 'sos'),
+            headers: const {
+              'x-anon-quota-limit': '5',
+              'x-anon-quota-remaining': '0',
+            },
+          );
+        }
+        return const FakeResponse(
+          403,
+          json: {'detail': 'anon_quota_exhausted'},
+          headers: {'x-anon-quota-limit': '5', 'x-anon-quota-remaining': '0'},
+        );
+      };
+      await engine.runOnce();
+      // SOS first, accepted; the ordinary report is kept for later.
+      expect(
+        (jsonDecode(adapter.requests.first.text) as Map)['category'],
+        'sos',
+      );
+      expect((await db.reportByUuid(q.clientUuid))!.state, ReportState.synced);
+      expect(
+        (await db.reportByUuid(other.clientUuid))!.state,
+        ReportState.blocked,
+      );
     });
   });
 }

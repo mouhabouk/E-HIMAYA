@@ -1,16 +1,30 @@
 import type { AiStatus, StaffReport } from "./types";
 
-/** Priority bands of BR-20 as shown to operators: ≥ 70 high, 40–69 medium, < 40 low. */
+/**
+ * Priority bands of BR-20 as shown to operators. Phase 9 §2: the national settings (`sla.bands`) add `critical`
+ * (≥ 85 by default) above high (≥ 70) and normal (≥ 40, labelled "normal" instead of "medium"); below is low.
+ * The code `medium` is kept; only its label changed.
+ */
+export const PRIORITY_CRITICAL = 85;
 export const PRIORITY_HIGH = 70;
 export const PRIORITY_MEDIUM = 40;
 
-export type PriorityBand = "high" | "medium" | "low";
+export type PriorityBand = "critical" | "high" | "medium" | "low";
+
+export interface PriorityBounds {
+  critical: number;
+  high: number;
+  normal: number;
+}
+
+const DEFAULT_BOUNDS: PriorityBounds = { critical: PRIORITY_CRITICAL, high: PRIORITY_HIGH, normal: PRIORITY_MEDIUM };
 
 /** Band of a 0..100 priority score; null when the report has no score yet. */
-export function priorityBand(score: number | null | undefined): PriorityBand | null {
+export function priorityBand(score: number | null | undefined, bounds: PriorityBounds = DEFAULT_BOUNDS): PriorityBand | null {
   if (score === null || score === undefined || !Number.isFinite(score)) return null;
-  if (score >= PRIORITY_HIGH) return "high";
-  if (score >= PRIORITY_MEDIUM) return "medium";
+  if (score >= bounds.critical) return "critical";
+  if (score >= bounds.high) return "high";
+  if (score >= bounds.normal) return "medium";
   return "low";
 }
 

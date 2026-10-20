@@ -7,6 +7,7 @@ from typing import Annotated, Literal
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.access import Action, authorize, require
 from app.core.db import get_session
 from app.core.events import emit
 from app.core.security import Principal, Role, require_roles
@@ -18,9 +19,9 @@ from app.modules.identity.models import Profile
 from app.modules.ops import service as ops
 from app.modules.orgs import service as orgs
 from app.modules.orgs.models import Organization
-from app.modules.reports import schemas, service
+from app.modules.reports import jurisdiction, schemas, service
 from app.modules.reports.domain import TRANSITIONS, Category, Status
-from app.modules.reports.models import Media
+from app.modules.reports.models import Media, ReporterContext
 from app.modules.reports.uploads import media_url
 
 router = APIRouter(prefix="/api/v1/staff", tags=["staff"])
@@ -30,7 +31,20 @@ WRITE_ROLES = (Role.OPERATOR, Role.OPS_MANAGER, Role.FIELD_COMMANDER)
 
 StaffReader = Annotated[Principal, Depends(require_roles(*READ_ROLES))]
 StaffWriter = Annotated[Principal, Depends(require_roles(*WRITE_ROLES))]
+# Coarse first gates of the phase 9 actions; core.access decides on the loaded report.
+Referrer = Annotated[Principal, Depends(require_roles(Role.OPERATOR, Role.OPS_MANAGER, Role.CENTRAL_COMMITTEE))]
+ReferralDecider = Annotated[Principal, Depends(require_roles(Role.OPERATOR, Role.OPS_MANAGER, Role.LOCAL_COMMITTEE))]
+GEO_STATES = ("trusted", "pending", "contradictory", "verified")
+ESCALATION_STATES = ("none", "late", "central_responding", "referred", "referral_accepted", "referral_refused")
+SLA_BANDS = ("critical", "high", "normal", "low")
 Session = Annotated[AsyncSession, Depends(get_session)]
+
+
+def _csv(raw: str | None, allowed: tuple[str, ...], code: str) -> list[str]:
+    values = [item.strip() for item in (raw or "").split(",") if item.strip()]
+    if any(v not in allowed for v in values):
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, code)
+    return values
 
 
 def _csv_enum[E: (Status, Category)](raw: str | None, enum: type[E]) -> list[E]:
@@ -73,6 +87,10 @@ async def list_reports(
     sort: Annotated[Literal["received", "priority"], Query()] = "received",
     incident_id: uuid.UUID | None = None,
     needs_verification: bool | None = None,
+    geo_state: str | None = None,
+    escalation_state: str | None = None,
+    claimed: bool | None = None,
+    sla_band: str | None = None,
     limit: Annotated[int, Query(ge=1, le=500)] = 50,
     cursor: str | None = None,
 ) -> schemas.StaffReportPage:
@@ -87,17 +105,58 @@ async def list_reports(
         sort=sort,
         incident_id=incident_id,
         needs_verification=needs_verification,
+        geo_states=_csv(geo_state, GEO_STATES, "invalid_geo_state"),
+        escalation_states=_csv(escalation_state, ESCALATION_STATES, "invalid_escalation_state"),
+        claimed=claimed,
+        sla_bands=_csv(sla_band, SLA_BANDS, "invalid_sla_band"),
     )
     items, next_cursor = await service.staff_list(session, principal, filters, limit, cursor)
     return schemas.StaffReportPage(items=items, next_cursor=next_cursor)
 
 
-async def detail_of(session: AsyncSession, principal: Principal, report_id: uuid.UUID) -> schemas.StaffReportDetail:
+@router.get("/reports/late", response_model=schemas.StaffReportPage)
+async def late_reports(
+    principal: StaffReader,
+    session: Session,
+    gouvernorat: int | None = None,
+    limit: Annotated[int, Query(ge=1, le=500)] = 50,
+    cursor: str | None = None,
+) -> schemas.StaffReportPage:
+    """Reports past their claim deadline, for the central room (phase 9 §4.4)."""
+    items, next_cursor = await jurisdiction.late_list(session, principal, gouvernorat, limit, cursor)
+    return schemas.StaffReportPage(items=items, next_cursor=next_cursor)
+
+
+@router.get("/reports/geo-queue", response_model=schemas.StaffReportPage)
+async def geo_queue(
+    principal: StaffReader,
+    session: Session,
+    limit: Annotated[int, Query(ge=1, le=500)] = 50,
+    cursor: str | None = None,
+) -> schemas.StaffReportPage:
+    """Open reports whose location waits for a verifier (phase 9 §4.5)."""
+    items, next_cursor = await jurisdiction.geo_queue(session, principal, limit, cursor)
+    return schemas.StaffReportPage(items=items, next_cursor=next_cursor)
+
+
+def masked_phone(phone: str | None) -> str | None:
+    """``+216••••••12``: enough to recognise a call-back, not to dial (§1.3)."""
+    return f"{phone[:4]}••••••{phone[-2:]}" if phone and len(phone) > 6 else None
+
+
+async def detail_of(
+    session: AsyncSession, principal: Principal, report_id: uuid.UUID, *, just_handed_back: bool = False
+) -> schemas.StaffReportDetail:
+    """The staff view of one report. `just_handed_back`: the caller was in scope for the write it just made (a
+    refused referral) and has lost the read since; it gets this one masked answer to its own request."""
     found = await service.staff_summary(session, report_id)
     # Out-of-scope reports answer 404, not 403, so their existence is not disclosed.
-    if found is None or not service.in_scope(principal, found[1].gouvernorat_code):
+    if found is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
     summary, report = found
+    ctx = await service.report_ctx(session, report)
+    if not just_handed_back:
+        require(await authorize(session, principal, Action.REPORT_READ, ctx))
 
     store = get_store()
     media = (await service.media_for(session, [report.id]))[report.id]
@@ -109,16 +168,40 @@ async def detail_of(session: AsyncSession, principal: Principal, report_id: uuid
         )
         for m in media
     ]
-    reporter = schemas.Reporter(kind=summary.reporter_kind)
-    if summary.reporter_kind != "anonymous":
-        profile = await session.get(Profile, report.user_id)
-        if profile is not None:
-            reporter = schemas.Reporter(
-                kind=summary.reporter_kind,
-                first_name=profile.first_name,
-                last_name=profile.last_name,
-                phone=profile.phone,
+    # Reporter identity and residence only for the handling operations room or under break-glass (§1.3).
+    sensitive = await authorize(session, principal, Action.REPORT_READ_SENSITIVE, ctx)
+    profile = await session.get(Profile, report.user_id) if summary.reporter_kind != "anonymous" else None
+    if sensitive.allowed:
+        reporter = schemas.Reporter(
+            kind=summary.reporter_kind,
+            first_name=profile.first_name if profile else None,
+            last_name=profile.last_name if profile else None,
+            phone=profile.phone if profile else None,
+        )
+        context = await session.get(ReporterContext, report.id)
+        reporter_context = (
+            schemas.ReporterContextOut(
+                reporter_gouvernorat_code=context.reporter_gouvernorat_code,
+                source=context.source,
             )
+            if context is not None
+            else None
+        )
+        if sensitive.grant_id is not None:
+            await audit.record(
+                session,
+                actor=actor_of(principal),
+                action="report.view_sensitive",
+                target=f"report:{report.id}",
+                details={"grant_id": str(sensitive.grant_id)},
+                gouvernorats=await service.gouvernorat_codes(session, report),
+            )
+            await session.commit()
+    else:
+        reporter = schemas.Reporter(
+            kind=summary.reporter_kind, masked=True, phone=masked_phone(profile.phone if profile else None)
+        )
+        reporter_context = None
     analysis = await session.get(Analysis, report.id)
     org = await session.get(Organization, report.organization_id) if report.organization_id else None
     return schemas.StaffReportDetail(
@@ -129,6 +212,8 @@ async def detail_of(session: AsyncSession, principal: Principal, report_id: uuid
         allowed_transitions=sorted(TRANSITIONS[Status(report.status)]),
         analysis=analysis_out(analysis, media) if analysis is not None else None,
         organization_card=await orgs.organization_card(session, org) if org is not None else None,
+        escalations=await jurisdiction.escalations_of(session, report.id),
+        reporter_context=reporter_context,
     )
 
 
@@ -166,8 +251,14 @@ def analysis_out(analysis: Analysis, media: list[Media]) -> schemas.AnalysisOut:
 @router.get("/reports/{report_id}", response_model=schemas.StaffReportDetail)
 async def get_report(principal: StaffReader, session: Session, report_id: uuid.UUID) -> schemas.StaffReportDetail:
     detail = await detail_of(session, principal, report_id)
-    # NFR-06: opening a report shows personal data (reporter identity, location, media) and is audited.
-    await audit.record(session, actor=actor_of(principal), action="report.view", target=f"report:{report_id}")
+    # NFR-06: opening a report shows personal data (location, media, reporter when allowed) and is audited.
+    await audit.record(
+        session,
+        actor=actor_of(principal),
+        action="report.view",
+        target=f"report:{report_id}",
+        details={"reporter_masked": detail.reporter.masked},
+    )
     await session.commit()
     return detail
 
@@ -176,10 +267,9 @@ async def get_report(principal: StaffReader, session: Session, report_id: uuid.U
 async def change_status(
     principal: StaffWriter, session: Session, report_id: uuid.UUID, body: schemas.StatusChangeIn
 ) -> schemas.StaffReportDetail:
-    found = await service.staff_summary(session, report_id)
-    if found is None or not service.in_scope(principal, found[1].gouvernorat_code):
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
-    report = found[1]
+    report, ctx = await jurisdiction.load(session, principal, report_id)
+    # The caller's room must hold the claim; an unclaimed report is claimed on the way (phase 9 §4.3).
+    await jurisdiction.before_status_change(session, principal, report, ctx)
     previous = report.status
     actor = actor_of(principal)
     await service.change_status(session, report, body.status, actor, body.note)
@@ -190,10 +280,75 @@ async def change_status(
         target=f"report:{report_id}",
         reason=body.note,
         details={"from": previous, "to": body.status.value},
+        gouvernorats=await service.gouvernorat_codes(session, report),
     )
     await ops.after_status_change(session, report, actor)
     summary = await service.staff_summary(session, report_id)
     assert summary is not None
-    await emit(session, "report.status_changed", {"report": summary[0].model_dump(mode="json")})
+    await emit(
+        session,
+        "report.status_changed",
+        {
+            "report": summary[0].model_dump(mode="json"),
+            "gouvernorat_codes": await service.gouvernorat_codes(session, report),
+        },
+    )
+    await session.commit()
+    return await detail_of(session, principal, report_id)
+
+
+# ---------------------------------------------------------------- claim, referral, geo-verification (phase 9 §4)
+
+
+@router.post("/reports/{report_id}/claim", response_model=schemas.StaffReportDetail)
+async def claim_report(principal: StaffWriter, session: Session, report_id: uuid.UUID) -> schemas.StaffReportDetail:
+    report, ctx = await jurisdiction.load(session, principal, report_id)
+    await jurisdiction.claim(session, principal, report, ctx)
+    await session.commit()
+    return await detail_of(session, principal, report_id)
+
+
+@router.delete("/reports/{report_id}/claim", response_model=schemas.StaffReportDetail)
+async def release_claim(
+    principal: StaffWriter, session: Session, report_id: uuid.UUID, body: schemas.ReleaseIn
+) -> schemas.StaffReportDetail:
+    await jurisdiction.release(session, principal, report_id, body.reason)
+    await session.commit()
+    return await detail_of(session, principal, report_id)
+
+
+@router.post("/reports/{report_id}/refer", response_model=schemas.StaffReportDetail)
+async def refer_report(
+    principal: Referrer, session: Session, report_id: uuid.UUID, body: schemas.ReferIn
+) -> schemas.StaffReportDetail:
+    await jurisdiction.refer(session, principal, report_id, body)
+    await session.commit()
+    return await detail_of(session, principal, report_id)
+
+
+@router.post("/reports/{report_id}/referral/accept", response_model=schemas.StaffReportDetail)
+async def accept_referral(
+    principal: ReferralDecider, session: Session, report_id: uuid.UUID, body: schemas.ReferralAcceptIn
+) -> schemas.StaffReportDetail:
+    await jurisdiction.decide_referral(session, principal, report_id, accept=True, text_=body.note)
+    await session.commit()
+    return await detail_of(session, principal, report_id)
+
+
+@router.post("/reports/{report_id}/referral/refuse", response_model=schemas.StaffReportDetail)
+async def refuse_referral(
+    principal: ReferralDecider, session: Session, report_id: uuid.UUID, body: schemas.ReferralRefuseIn
+) -> schemas.StaffReportDetail:
+    await jurisdiction.decide_referral(session, principal, report_id, accept=False, text_=body.reason)
+    await session.commit()
+    # The refusing region no longer sees the report (it returns to the central late list).
+    return await detail_of(session, principal, report_id, just_handed_back=True)
+
+
+@router.post("/reports/{report_id}/geo-verify", response_model=schemas.StaffReportDetail)
+async def geo_verify(
+    principal: Referrer, session: Session, report_id: uuid.UUID, body: schemas.GeoVerifyIn
+) -> schemas.StaffReportDetail:
+    await jurisdiction.geo_verify(session, principal, report_id, body)
     await session.commit()
     return await detail_of(session, principal, report_id)

@@ -1,4 +1,5 @@
-"""Documents of the reports repository (FR-C-21): content, PDF (WeasyPrint, Arabic RTL or French) and XLSX (openpyxl).
+"""Documents of the reports repository (FR-C-21): content, PDF (WeasyPrint, Arabic RTL, French or English LTR) and
+XLSX (openpyxl).
 
 A document is a cover (title, kind, period, gouvernorats, filters used, the k-anonymity rule) followed by sections of
 tables. Count cells under ``ANALYTICS_MIN_CELL`` are printed "<N" in every export, and the durations computed on fewer
@@ -54,8 +55,13 @@ class ContentError(Exception):
     """The document cannot be built (its incident or scenario is gone): the report fails with this code."""
 
 
-def _l(ar: str, fr: str) -> dict[str, str]:
-    return {"ar": ar, "fr": fr}
+def _l(ar: str, fr: str, en: str) -> dict[str, str]:
+    return {"ar": ar, "fr": fr, "en": en}
+
+
+def _text(texts: dict[str, str], lang: str) -> str:
+    """A stored text in the document language; scenarios run before English existed fall back to French."""
+    return texts.get(lang) or texts.get("fr") or texts.get("ar", "")
 
 
 def _minutes(seconds: float | None, n: int, min_cell: int) -> Cell:
@@ -66,7 +72,9 @@ def _minutes(seconds: float | None, n: int, min_cell: int) -> Cell:
 
 
 def _counts(title: dict[str, str], key_label: dict[str, str], rows: list[tuple[Any, int]]) -> Section:
-    return Section(title, [Column(key_label), Column(_l("العدد", "Nombre"), count=True)], [list(r) for r in rows])
+    return Section(
+        title, [Column(key_label), Column(_l("العدد", "Nombre", "Count"), count=True)], [list(r) for r in rows]
+    )
 
 
 async def _period_sections(
@@ -80,68 +88,79 @@ async def _period_sections(
     rt = data.response_time
     sections = [
         Section(
-            _l("المؤشرات الرئيسية", "Indicateurs clés"),
-            [Column(_l("المؤشر", "Indicateur")), Column(_l("القيمة", "Valeur"), count=True)],
+            _l("المؤشرات الرئيسية", "Indicateurs clés", "Key indicators"),
+            [Column(_l("المؤشر", "Indicateur", "Indicator")), Column(_l("القيمة", "Valeur", "Value"), count=True)],
             [
-                [_l("البلاغات المستلمة", "Signalements reçus")[lang], t.received],
-                [_l("البلاغات المؤكدة", "Signalements vérifiés")[lang], t.verified],
-                [_l("قيد المعالجة", "En cours")[lang], t.in_progress],
-                [_l("مغلقة", "Clôturés")[lang], t.closed],
-                [_l("مرفوضة", "Rejetés")[lang], t.rejected],
+                [_l("البلاغات المستلمة", "Signalements reçus", "Reports received")[lang], t.received],
+                [_l("البلاغات المؤكدة", "Signalements vérifiés", "Reports verified")[lang], t.verified],
+                [_l("قيد المعالجة", "En cours", "In progress")[lang], t.in_progress],
+                [_l("مغلقة", "Clôturés", "Closed")[lang], t.closed],
+                [_l("مرفوضة", "Rejetés", "Rejected")[lang], t.rejected],
             ],
         ),
         Section(
-            _l("آجال الاستجابة (بالدقائق)", "Délais de réponse (minutes)"),
+            _l("آجال الاستجابة (بالدقائق)", "Délais de réponse (minutes)", "Response times (minutes)"),
             [
-                Column(_l("المرحلة", "Étape")),
-                Column(_l("المتوسط", "Moyenne")),
-                Column(_l("المئين 90", "90e percentile")),
-                Column(_l("عدد البلاغات", "Signalements"), count=True),
+                Column(_l("المرحلة", "Étape", "Stage")),
+                Column(_l("المتوسط", "Moyenne", "Mean")),
+                Column(_l("المئين 90", "90e percentile", "90th percentile")),
+                Column(_l("عدد البلاغات", "Signalements", "Reports"), count=True),
             ],
             [
                 [label[lang], _minutes(s.mean_s, s.n, min_cell), _minutes(s.p90_s, s.n, min_cell), s.n]
                 for label, s in (
-                    (_l("الاستلام ← أول تكليف", "Réception → première affectation"), rt.to_assignment),
-                    (_l("الاستلام ← الوصول إلى المكان", "Réception → arrivée sur les lieux"), rt.to_on_scene),
-                    (_l("الاستلام ← الإغلاق", "Réception → clôture"), rt.to_closed),
+                    (
+                        _l("الاستلام ← أول تكليف", "Réception → première affectation", "Received → first assignment"),
+                        rt.to_assignment,
+                    ),
+                    (
+                        _l(
+                            "الاستلام ← الوصول إلى المكان",
+                            "Réception → arrivée sur les lieux",
+                            "Received → arrival on scene",
+                        ),
+                        rt.to_on_scene,
+                    ),
+                    (_l("الاستلام ← الإغلاق", "Réception → clôture", "Received → closure"), rt.to_closed),
                 )
             ],
             note=_l(
                 f"لا تُعرض المدد المحسوبة على أقل من {min_cell} بلاغات.",
                 f"Les durées calculées sur moins de {min_cell} signalements ne sont pas affichées.",
+                f"Durations computed on fewer than {min_cell} reports are not shown.",
             ),
         ),
         _counts(
-            _l("حسب الصنف", "Par catégorie"),
-            _l("الصنف", "Catégorie"),
+            _l("حسب الصنف", "Par catégorie", "By category"),
+            _l("الصنف", "Catégorie", "Category"),
             [(domain.category_label(str(g.key))[lang], g.count) for g in data.by_category],
         ),
         _counts(
-            _l("حسب الحالة", "Par statut"),
-            _l("الحالة", "Statut"),
+            _l("حسب الحالة", "Par statut", "By status"),
+            _l("الحالة", "Statut", "Status"),
             [(domain.label(domain.STATUS_LABELS, str(g.key))[lang], g.count) for g in data.by_status],
         ),
         _counts(
-            _l("حسب المصدر", "Par source"),
-            _l("المصدر", "Source"),
+            _l("حسب المصدر", "Par source", "By source"),
+            _l("المصدر", "Source", "Source"),
             [(domain.label(domain.SOURCE_LABELS, str(g.key))[lang], g.count) for g in data.by_source],
         ),
         _counts(
-            _l("حسب الولاية", "Par gouvernorat"),
-            _l("الولاية", "Gouvernorat"),
+            _l("حسب الولاية", "Par gouvernorat", "By governorate"),
+            _l("الولاية", "Gouvernorat", "Governorate"),
             [
-                (names.get(int(g.key), {}).get(lang, "—") if g.key != "unknown" else "—", g.count)
+                (names.get(int(g.key), {}).get(lang, "—") if g.key not in ("unknown", "unverified") else "—", g.count)
                 for g in data.by_gouvernorat
             ],
         ),
         _counts(
-            _l("حسب ساعة اليوم", "Par heure"),
-            _l("الساعة", "Heure"),
+            _l("حسب ساعة اليوم", "Par heure", "By hour"),
+            _l("الساعة", "Heure", "Hour"),
             [(f"{int(g.key):02d}:00", g.count) for g in data.by_hour],
         ),
         _counts(
-            _l("حسب يوم الأسبوع", "Par jour de la semaine"),
-            _l("اليوم", "Jour"),
+            _l("حسب يوم الأسبوع", "Par jour de la semaine", "By day of the week"),
+            _l("اليوم", "Jour", "Day"),
             [(domain.WEEKDAY_LABELS[int(g.key)][lang], g.count) for g in data.by_weekday],
         ),
     ]
@@ -176,10 +195,14 @@ async def _gouvernorat_matrix(session: AsyncSession, report: Report, names: dict
         matrix.setdefault(code, {})[cat] = int(n)
     lang = report.lang
     return Section(
-        _l("البلاغات حسب الولاية والصنف", "Signalements par gouvernorat et catégorie"),
-        [Column(_l("الولاية", "Gouvernorat"))]
+        _l(
+            "البلاغات حسب الولاية والصنف",
+            "Signalements par gouvernorat et catégorie",
+            "Reports by governorate and category",
+        ),
+        [Column(_l("الولاية", "Gouvernorat", "Governorate"))]
         + [Column(domain.category_label(c), count=True) for c in categories]
-        + [Column(_l("المجموع", "Total"), count=True)],
+        + [Column(_l("المجموع", "Total", "Total"), count=True)],
         [
             [names.get(code, {}).get(lang, "—") if code is not None else "—"]
             + [cats.get(c, 0) for c in categories]
@@ -208,17 +231,20 @@ async def _incident_sections(
     category, code, severity, level, state, opened, closed, classification, evaluation = row
     fmt = "%Y-%m-%d %H:%M"
     card = Section(
-        _l("بطاقة التدخل", "Fiche d'intervention"),
-        [Column(_l("البند", "Élément")), Column(_l("القيمة", "Valeur"))],
+        _l("بطاقة التدخل", "Fiche d'intervention", "Intervention record"),
+        [Column(_l("البند", "Élément", "Item")), Column(_l("القيمة", "Valeur", "Value"))],
         [
-            [_l("الصنف", "Catégorie")[lang], domain.category_label(category)[lang]],
-            [_l("الولاية", "Gouvernorat")[lang], names.get(code, {}).get(lang, "—") if code else "—"],
-            [_l("الخطورة", "Gravité")[lang], severity],
-            [_l("المستوى العملياتي", "Niveau opérationnel")[lang], level],
-            [_l("التصنيف", "Classification")[lang], classification or "—"],
-            [_l("الحالة", "Statut")[lang], state],
-            [_l("الفتح", "Ouverture")[lang], opened.astimezone(domain.TUNIS_TZ).strftime(fmt)],
-            [_l("الإغلاق", "Clôture")[lang], closed.astimezone(domain.TUNIS_TZ).strftime(fmt) if closed else "—"],
+            [_l("الصنف", "Catégorie", "Category")[lang], domain.category_label(category)[lang]],
+            [_l("الولاية", "Gouvernorat", "Governorate")[lang], names.get(code, {}).get(lang, "—") if code else "—"],
+            [_l("الخطورة", "Gravité", "Severity")[lang], severity],
+            [_l("المستوى العملياتي", "Niveau opérationnel", "Operational level")[lang], level],
+            [_l("التصنيف", "Classification", "Classification")[lang], classification or "—"],
+            [_l("الحالة", "Statut", "Status")[lang], state],
+            [_l("الفتح", "Ouverture", "Opened")[lang], opened.astimezone(domain.TUNIS_TZ).strftime(fmt)],
+            [
+                _l("الإغلاق", "Clôture", "Closed")[lang],
+                closed.astimezone(domain.TUNIS_TZ).strftime(fmt) if closed else "—",
+            ],
         ],
     )
     params = {"id": incident_id}
@@ -235,15 +261,22 @@ async def _incident_sections(
         for key, value in (("category", cat), ("status", st), ("source", src)):
             by[key][value] = by[key].get(value, 0) + int(n)
     reports_section = Section(
-        _l("البلاغات المرتبطة", "Signalements rattachés"),
-        [Column(_l("البعد", "Dimension")), Column(_l("القيمة", "Valeur")), Column(_l("العدد", "Nombre"), count=True)],
-        [[_l("الصنف", "Catégorie")[lang], domain.category_label(k)[lang], n] for k, n in sorted(by["category"].items())]
+        _l("البلاغات المرتبطة", "Signalements rattachés", "Linked reports"),
+        [
+            Column(_l("البعد", "Dimension", "Dimension")),
+            Column(_l("القيمة", "Valeur", "Value")),
+            Column(_l("العدد", "Nombre", "Count"), count=True),
+        ],
+        [
+            [_l("الصنف", "Catégorie", "Category")[lang], domain.category_label(k)[lang], n]
+            for k, n in sorted(by["category"].items())
+        ]
         + [
-            [_l("الحالة", "Statut")[lang], domain.label(domain.STATUS_LABELS, k)[lang], n]
+            [_l("الحالة", "Statut", "Status")[lang], domain.label(domain.STATUS_LABELS, k)[lang], n]
             for k, n in sorted(by["status"].items())
         ]
         + [
-            [_l("المصدر", "Source")[lang], domain.label(domain.SOURCE_LABELS, k)[lang], n]
+            [_l("المصدر", "Source", "Source")[lang], domain.label(domain.SOURCE_LABELS, k)[lang], n]
             for k, n in sorted(by["source"].items())
         ],
     )
@@ -267,18 +300,18 @@ async def _incident_sections(
         params,
     )
     resources_section = Section(
-        _l("الوسائل المسخرة", "Moyens engagés"),
+        _l("الوسائل المسخرة", "Moyens engagés", "Resources committed"),
         [
-            Column(_l("النوع", "Type")),
-            Column(_l("العدد", "Nombre"), count=True),
-            Column(_l("متوسط الوصول (دقيقة)", "Arrivée moyenne (min)")),
-            Column(_l("متوسط مدة التسخير (دقيقة)", "Engagement moyen (min)")),
+            Column(_l("النوع", "Type", "Type")),
+            Column(_l("العدد", "Nombre", "Count"), count=True),
+            Column(_l("متوسط الوصول (دقيقة)", "Arrivée moyenne (min)", "Mean arrival (min)")),
+            Column(_l("متوسط مدة التسخير (دقيقة)", "Engagement moyen (min)", "Mean commitment (min)")),
         ],
         [
             [domain.label(domain.RESOURCE_LABELS, kind)[lang], int(n), _rnd(arrive), _rnd(engaged)]
             for kind, n, arrive, engaged in resources
         ]
-        + [[_l("متطوعون", "Bénévoles")[lang], int(volunteers or 0), None, None]],
+        + [[_l("متطوعون", "Bénévoles", "Volunteers")[lang], int(volunteers or 0), None, None]],
     )
     sections = [card, reports_section, resources_section]
     if after_action:
@@ -293,12 +326,12 @@ async def _incident_sections(
         ).all()
         sections.append(
             Section(
-                _l("الخط الزمني (حسب نوع الحدث)", "Chronologie (par type d'événement)"),
+                _l("الخط الزمني (حسب نوع الحدث)", "Chronologie (par type d'événement)", "Timeline (by event type)"),
                 [
-                    Column(_l("النوع", "Type")),
-                    Column(_l("العدد", "Nombre"), count=True),
-                    Column(_l("الأول", "Premier")),
-                    Column(_l("الأخير", "Dernier")),
+                    Column(_l("النوع", "Type", "Type")),
+                    Column(_l("العدد", "Nombre", "Count"), count=True),
+                    Column(_l("الأول", "Premier", "First")),
+                    Column(_l("الأخير", "Dernier", "Last")),
                 ],
                 [
                     [
@@ -315,14 +348,15 @@ async def _incident_sections(
         casualties = ev.get("casualties") or {}
         sections.append(
             Section(
-                _l("التقييم عند الإغلاق", "Évaluation à la clôture"),
-                [Column(_l("البند", "Élément")), Column(_l("القيمة", "Valeur"), count=True)],
-                [[_l("النتيجة", "Issue")[lang], ev.get("outcome") or "—"]]
+                _l("التقييم عند الإغلاق", "Évaluation à la clôture", "Closing assessment"),
+                [Column(_l("البند", "Élément", "Item")), Column(_l("القيمة", "Valeur", "Value"), count=True)],
+                [[_l("النتيجة", "Issue", "Outcome")[lang], ev.get("outcome") or "—"]]
                 + [[str(k), int(v)] for k, v in sorted(casualties.items()) if isinstance(v, int)],
                 note=_l(
                     "النصوص الحرة للتقييم (الملخص، الدروس) تبقى في ملف التدخل ولا تُنسخ هنا.",
                     "Les textes libres de l'évaluation (synthèse, leçons) restent dans le dossier "
                     "et ne sont pas repris ici.",
+                    "The free texts of the assessment (summary, lessons) stay in the file and are not reproduced here.",
                 ),
             )
         )
@@ -342,44 +376,47 @@ async def _scenario_sections(session: AsyncSession, report: Report) -> list[Sect
     summary = result["summary"]
     prov = result["provenance"]
     band_cols = [
-        Column(_l("المؤشر", "Indicateur")),
-        Column(_l("م10", "P10")),
-        Column(_l("م50", "P50")),
-        Column(_l("م90", "P90")),
+        Column(_l("المؤشر", "Indicateur", "Indicator")),
+        Column(_l("م10", "P10", "P10")),
+        Column(_l("م50", "P50", "P50")),
+        Column(_l("م90", "P90", "P90")),
     ]
     sections = [
         Section(
-            _l("المعطيات", "Paramètres"),
-            [Column(_l("البند", "Élément")), Column(_l("القيمة", "Valeur"))],
+            _l("المعطيات", "Paramètres", "Parameters"),
+            [Column(_l("البند", "Élément", "Item")), Column(_l("القيمة", "Valeur", "Value"))],
             [
-                [_l("الاسم", "Nom")[lang], scenario.name],
-                [_l("الصنف", "Catégorie")[lang], domain.category_label(scenario.category)[lang]],
-                [_l("معامل الطلب", "Facteur de demande")[lang], p.get("demand_factor")],
-                [_l("المدى (ساعات)", "Horizon (heures)")[lang], p.get("horizon_hours")],
-                [_l("الطقس", "Météo")[lang], p.get("weather")],
-                [_l("البذرة", "Graine")[lang], str(scenario.seed)],
-                [_l("عدد المحاكاة", "Tirages")[lang], scenario.runs],
-                [_l("الثقة", "Confiance")[lang], result.get("confidence")],
-                [_l("المعايرة", "Calibration")[lang], result.get("calibration")],
+                [_l("الاسم", "Nom", "Name")[lang], scenario.name],
+                [_l("الصنف", "Catégorie", "Category")[lang], domain.category_label(scenario.category)[lang]],
+                [_l("معامل الطلب", "Facteur de demande", "Demand factor")[lang], p.get("demand_factor")],
+                [_l("المدى (ساعات)", "Horizon (heures)", "Horizon (hours)")[lang], p.get("horizon_hours")],
+                [_l("الطقس", "Météo", "Weather")[lang], p.get("weather")],
+                [_l("البذرة", "Graine", "Seed")[lang], str(scenario.seed)],
+                [_l("عدد المحاكاة", "Tirages", "Runs")[lang], scenario.runs],
+                [_l("الثقة", "Confiance", "Confidence")[lang], result.get("confidence")],
+                [_l("المعايرة", "Calibration", "Calibration")[lang], result.get("calibration")],
             ],
         ),
         Section(
-            _l("الملخص", "Synthèse"),
+            _l("الملخص", "Synthèse", "Summary"),
             band_cols,
             [
-                [_l("بلاغات في الساعة", "Signalements / heure")[lang], *summary["reports_per_hour"].values()],
-                [_l("الانتظار (دقيقة)", "Attente (min)")[lang], *summary["wait_minutes"].values()],
-                [_l("نسبة الاستعمال", "Utilisation")[lang], *summary["utilisation"].values()],
+                [
+                    _l("بلاغات في الساعة", "Signalements / heure", "Reports / hour")[lang],
+                    *summary["reports_per_hour"].values(),
+                ],
+                [_l("الانتظار (دقيقة)", "Attente (min)", "Wait (min)")[lang], *summary["wait_minutes"].values()],
+                [_l("نسبة الاستعمال", "Utilisation", "Utilisation")[lang], *summary["utilisation"].values()],
             ],
         ),
         Section(
-            _l("حسب الساعة", "Par heure"),
+            _l("حسب الساعة", "Par heure", "By hour"),
             [
-                Column(_l("الساعة", "Heure")),
-                Column(_l("الطلب م50", "Demande P50")),
-                Column(_l("الانتظار م50 (دقيقة)", "Attente P50 (min)")),
-                Column(_l("الاستعمال م50", "Utilisation P50")),
-                Column(_l("تجاوز", "Surcharge")),
+                Column(_l("الساعة", "Heure", "Hour")),
+                Column(_l("الطلب م50", "Demande P50", "Demand P50")),
+                Column(_l("الانتظار م50 (دقيقة)", "Attente P50 (min)", "Wait P50 (min)")),
+                Column(_l("الاستعمال م50", "Utilisation P50", "Utilisation P50")),
+                Column(_l("تجاوز", "Surcharge", "Overload")),
             ],
             [
                 [
@@ -393,16 +430,16 @@ async def _scenario_sections(session: AsyncSession, report: Report) -> list[Sect
             ],
         ),
         Section(
-            _l("مصدر المعطيات", "Provenance des données"),
-            [Column(_l("البند", "Élément")), Column(_l("القيمة", "Valeur"))],
+            _l("مصدر المعطيات", "Provenance des données", "Data sources"),
+            [Column(_l("البند", "Élément", "Item")), Column(_l("القيمة", "Valeur", "Value"))],
             [[k, v] for k, v in prov.items()],
         ),
         Section(
-            _l("الفرضيات والتحفظات", "Hypothèses et réserves"),
-            [Column(_l("النص", "Texte"))],
-            [[a[lang]] for a in result["assumptions"]]
-            + [[r[lang]] for r in result.get("confidence_reasons", [])]
-            + [[result["calibration_note"][lang]], [result["disclaimer"][lang]]],
+            _l("الفرضيات والتحفظات", "Hypothèses et réserves", "Assumptions and caveats"),
+            [Column(_l("النص", "Texte", "Text"))],
+            [[_text(a, lang)] for a in result["assumptions"]]
+            + [[_text(r, lang)] for r in result.get("confidence_reasons", [])]
+            + [[_text(result["calibration_note"], lang)], [_text(result["disclaimer"], lang)]],
         ),
     ]
     return sections
@@ -419,18 +456,18 @@ async def build(session: AsyncSession, report: Report) -> Content:
     lang = report.lang
     filters: list[tuple[dict[str, str], str]] = []
     if report.filters.get("category"):
-        filters.append((_l("الصنف", "Catégorie"), domain.category_label(report.filters["category"])[lang]))
+        filters.append((_l("الصنف", "Catégorie", "Category"), domain.category_label(report.filters["category"])[lang]))
     if report.filters.get("incident_id"):
-        filters.append((_l("التدخل", "Incident"), str(report.filters["incident_id"])))
+        filters.append((_l("التدخل", "Incident", "Incident"), str(report.filters["incident_id"])))
     if report.filters.get("scenario_id"):
-        filters.append((_l("السيناريو", "Scénario"), str(report.filters["scenario_id"])))
+        filters.append((_l("السيناريو", "Scénario", "Scenario"), str(report.filters["scenario_id"])))
     return Content(
         title=report.title,
         kind=report.kind,
         lang=lang,
         period=(report.period_from.isoformat(), report.period_to.isoformat()),
         gouvernorats=[names.get(c, {}).get(lang, str(c)) for c in report.gouvernorats]
-        or [_l("كل الولايات (وطني)", "Tous les gouvernorats (national)")[lang]],
+        or [_l("كل الولايات (وطني)", "Tous les gouvernorats (national)", "All governorates (national)")[lang]],
         filters=filters,
         min_cell=get_settings().analytics_min_cell,
         generated_at=datetime.now(UTC),
@@ -449,19 +486,24 @@ def cell_out(value: Any, column: Column, min_cell: int) -> Cell:
 def _cover_rows(content: Content) -> list[tuple[str, str]]:
     lang = content.lang
     rows = [
-        (_l("نوع التقرير", "Type de document")[lang], domain.KIND_LABELS[content.kind][lang]),
+        (_l("نوع التقرير", "Type de document", "Document type")[lang], domain.KIND_LABELS[content.kind][lang]),
         (
-            _l("الفترة", "Période")[lang],
-            _l(f"من {content.period[0]} إلى {content.period[1]}", f"du {content.period[0]} au {content.period[1]}")[
-                lang
-            ],
+            _l("الفترة", "Période", "Period")[lang],
+            _l(
+                f"من {content.period[0]} إلى {content.period[1]}",
+                f"du {content.period[0]} au {content.period[1]}",
+                f"from {content.period[0]} to {content.period[1]}",
+            )[lang],
         ),
-        (_l("الولايات", "Gouvernorats")[lang], ("، " if lang == "ar" else ", ").join(content.gouvernorats)),
+        (
+            _l("الولايات", "Gouvernorats", "Governorates")[lang],
+            ("، " if lang == "ar" else ", ").join(content.gouvernorats),
+        ),
     ]
     rows += [(k[lang], v) for k, v in content.filters]
     rows.append(
         (
-            _l("تاريخ الإعداد", "Établi le")[lang],
+            _l("تاريخ الإعداد", "Établi le", "Generated on")[lang],
             content.generated_at.astimezone(domain.TUNIS_TZ).strftime("%Y-%m-%d %H:%M") + " (Africa/Tunis)",
         )
     )
@@ -510,7 +552,11 @@ def render_html(content: Content) -> str:
         empty = f'<tr><td colspan="{len(section.columns)}">—</td></tr>'
         note = f'<p class="small">{e(section.note[lang])}</p>' if section.note else ""
         body.append(f"<h2>{e(section.title[lang])}</h2><table><tr>{head}</tr>{''.join(rows) or empty}</table>{note}")
-    brand = "منصة ء-حماية · الحماية المدنية" if lang == "ar" else "e-Himaya · Protection civile"
+    brand = {
+        "ar": "منصة ء-حماية · الحماية المدنية",
+        "fr": "e-Himaya · Protection civile",
+        "en": "e-Himaya · Civil Protection",
+    }.get(lang, "e-Himaya · Protection civile")
     return f"""<!doctype html><html lang="{lang}" dir="{"rtl" if lang == "ar" else "ltr"}"><head><meta charset="utf-8">
 <style>{_CSS}</style></head><body>
 <div class="cover"><div class="brand">{e(brand)}</div><h1>{e(content.title)}</h1>
@@ -541,7 +587,7 @@ def render_xlsx(content: Content) -> bytes:
     head_fill = PatternFill("solid", fgColor="F4F4F4")
     wb = Workbook()
     cover = wb.active
-    cover.title = _l("الغلاف", "Couverture")[lang]
+    cover.title = _l("الغلاف", "Couverture", "Cover")[lang]
     cover.sheet_view.rightToLeft = rtl
     cover.append([content.title])
     cover["A1"].font = Font(bold=True, size=14, color="B71C1C")

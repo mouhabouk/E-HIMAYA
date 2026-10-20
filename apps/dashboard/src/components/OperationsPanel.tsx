@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
 import { errorMessageKey } from "../lib/api";
-import { useFormat, useLanguage } from "../lib/hooks";
+import { useFormat, useGouvernorats } from "../lib/hooks";
 import { opsKeys } from "../lib/opsApi";
 import {
   ACTIVE_ASSIGNMENT_STATUSES,
@@ -811,7 +811,7 @@ function EvaluationView({ incident }: { incident: IncidentDetail }) {
 /** Text of a phase 5 timeline entry's payload (resource, status, skill, ETA, outcome, note text). */
 export function OpsTimelineDetails({ kind, payload }: { kind: string; payload: Record<string, unknown> }) {
   const { t } = useTranslation();
-  const lang = useLanguage();
+  const gouvernorats = useGouvernorats();
   const parts: string[] = [];
   const str = (k: string) => (typeof payload[k] === "string" ? payload[k] : null);
   const num = (k: string) => (typeof payload[k] === "number" ? payload[k] : null);
@@ -831,14 +831,18 @@ export function OpsTimelineDetails({ kind, payload }: { kind: string; payload: R
   if (outcome) parts.push(t(`ops.close.outcomes.${outcome}`));
   const level = str("level");
   if (level && kind === "level_changed") parts.push(t(`levels.name.${level}`));
+  // Phase 9 (§5.5): gouvernorat, command level and the reason of cross-gouvernorat steps.
+  if (kind === "command_level_changed") parts.push(level ? t(`command.level.${level}`) : t("command.auto"));
+  const code = num("gouvernorat_code");
+  if (code !== null) parts.push(gouvernorats.nameOf(code) ?? String(code));
   const title = str("title");
   if (title && kind === "card_updated") parts.push(title);
   const classification = str("classification");
   if (classification) parts.push(t(`ops.classification.${classification}`));
-  const text = str("text");
+  const text = str("text") ?? str("reason");
   return (
     <>
-      {parts.length > 0 && <span className="muted"> {parts.join(lang === "ar" ? "، " : ", ")}</span>}
+      {parts.length > 0 && <span className="muted"> {parts.join(t("common.listSeparator"))}</span>}
       {text && (
         <span className="ops-note" dir="auto">
           {" "}
@@ -855,6 +859,9 @@ export function OperationsPanel({ incident, assignPreset }: { incident: Incident
   const { user } = useAuth();
   const roles = user?.identity.roles ?? [];
   const dispatch = canDispatch(roles);
+  // Phase 9 §5.4: the central room cannot create assignments or call-outs (403 field_action_regional_only).
+  const national = user?.identity.national ?? false;
+  const fieldDispatch = dispatch && !national;
   const closer = canCloseIncidents(roles);
   const open = incident.status === "open";
   return (
@@ -863,8 +870,9 @@ export function OperationsPanel({ incident, assignPreset }: { incident: Incident
         <h2 id="sec-card">{t("ops.card.heading")}</h2>
         <CardForm incident={incident} canEdit={dispatch} />
       </section>
-      <AssignmentsSection incident={incident} canEdit={dispatch && open} preset={assignPreset} />
-      <CalloutsSection incident={incident} canEdit={dispatch && open} />
+      {dispatch && national && open && <p className="alert alert--info">{t("resourceRequests.centralNotice")}</p>}
+      <AssignmentsSection incident={incident} canEdit={fieldDispatch && open} preset={assignPreset} />
+      <CalloutsSection incident={incident} canEdit={fieldDispatch && open} />
       {dispatch && (
         <section className="card" aria-labelledby="sec-note">
           <h2 id="sec-note">{t("ops.note.title")}</h2>

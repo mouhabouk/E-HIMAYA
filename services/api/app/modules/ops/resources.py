@@ -15,6 +15,7 @@ from sqlalchemy import and_, cast, func, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.access import Action, Ctx, authorize, require
 from app.core.events import emit
 from app.core.security import Principal
 from app.modules.ops import schemas
@@ -90,10 +91,16 @@ async def unit_out(session: AsyncSession, unit: Unit) -> schemas.UnitOut:
     return _unit_out(unit, lat, lon, int(n or 0))
 
 
+async def _check_write(session: AsyncSession, principal: Principal, action: Action, gouvernorat_code: int) -> None:
+    """Policy check of a unit or resource write: the ops manager of the object's gouvernorat (national: all)."""
+    require(await authorize(session, principal, action, Ctx(lead=gouvernorat_code)))
+
+
 async def save_unit(
     session: AsyncSession, principal: Principal, body: schemas.UnitIn, unit_id: uuid.UUID | None = None
 ) -> Unit:
     _check_gouvernorat(principal, body.gouvernorat_code)
+    await _check_write(session, principal, Action.UNITS_WRITE, body.gouvernorat_code)
     if unit_id is None:
         unit = Unit()
         session.add(unit)
@@ -116,6 +123,7 @@ async def save_unit(
 
 async def delete_unit(session: AsyncSession, principal: Principal, unit_id: uuid.UUID) -> None:
     unit = await get_unit(session, principal, unit_id, lock=True)
+    await _check_write(session, principal, Action.UNITS_WRITE, unit.gouvernorat_code)
     if await session.scalar(select(func.count()).where(Resource.unit_id == unit.id)):
         raise HTTPException(status.HTTP_409_CONFLICT, "unit_in_use")
     await session.delete(unit)
@@ -233,7 +241,8 @@ async def get_resource(
 async def save_resource(
     session: AsyncSession, principal: Principal, body: schemas.ResourceIn, resource_id: uuid.UUID | None = None
 ) -> Resource:
-    await get_unit(session, principal, body.unit_id)
+    unit = await get_unit(session, principal, body.unit_id)
+    await _check_write(session, principal, Action.RESOURCES_WRITE, unit.gouvernorat_code)
     if resource_id is None:
         resource = Resource(status=body.status)
         session.add(resource)
@@ -260,6 +269,9 @@ async def save_resource(
 
 async def delete_resource(session: AsyncSession, principal: Principal, resource_id: uuid.UUID) -> None:
     resource = await get_resource(session, principal, resource_id, lock=True)
+    unit = await session.get(Unit, resource.unit_id)
+    assert unit is not None
+    await _check_write(session, principal, Action.RESOURCES_WRITE, unit.gouvernorat_code)
     if resource.status == "assigned":
         raise HTTPException(status.HTTP_409_CONFLICT, "resource_busy")
     used = await session.scalar(select(func.count()).where(Assignment.resource_id == resource.id))
@@ -271,8 +283,15 @@ async def delete_resource(session: AsyncSession, principal: Principal, resource_
 
 
 async def announce(session: AsyncSession, resource_id: uuid.UUID) -> None:
+    """``resource.updated`` for the owning gouvernorat and, while engaged, the gouvernorats of its incident."""
+    from app.modules.ops.service import all_gouvernorats
+
+    out = await resource_out(session, resource_id)
+    codes = {out.gouvernorat_code}
+    if out.assignment is not None:
+        codes |= set(await all_gouvernorats(session, out.assignment.incident_id))
     await emit(
-        session, "resource.updated", {"resource": (await resource_out(session, resource_id)).model_dump(mode="json")}
+        session, "resource.updated", {"resource": out.model_dump(mode="json"), "gouvernorat_codes": sorted(codes)}
     )
 
 

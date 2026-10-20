@@ -13,11 +13,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from app.core.access import ApiError
 from app.core.config import get_settings
-from app.core.db import dispose_engine, get_sessionmaker
+from app.core.db import dispose_engine, get_system_sessionmaker
 from app.core.events import relay_forever, start_bus, stop_bus
 from app.core.logging import configure_logging
 from app.modules import models as _models  # noqa: F401  (registers every table for cross-module foreign keys)
+from app.modules.access.router import router as access_router
+from app.modules.access.worker import breakglass_forever
 from app.modules.ai.pipeline import analyze_forever
 from app.modules.ai.router import router as ai_router
 from app.modules.analytics.library import router as analytics_library_router
@@ -44,6 +47,7 @@ from app.modules.orgs.staff_router import router as orgs_staff_router
 from app.modules.privacy.retention import retention_forever
 from app.modules.privacy.router import router as privacy_router
 from app.modules.reports.live import hub
+from app.modules.reports.jurisdiction import sla_forever
 from app.modules.reports.live import router as live_router
 from app.modules.reports.router import router as reports_router
 from app.modules.reports.staff_router import router as staff_router
@@ -52,6 +56,8 @@ from app.modules.reports.uploads import verify_forever
 from app.modules.rewards.consumer import rewards_forever
 from app.modules.rewards.router import router as rewards_router
 from app.modules.rewards.staff_router import router as rewards_staff_router
+from app.modules.settings import service as platform_settings
+from app.modules.settings.router import router as settings_router
 from app.modules.streams.internal import router as streams_internal_router
 from app.modules.streams.router import router as streams_router
 from app.modules.streams.staff_router import router as streams_staff_router
@@ -99,6 +105,8 @@ WORKER_LOOPS: list[tuple[str, WorkerLoop]] = [
     ("knowledge", knowledge_forever),
     ("analytics", analytics_forever),
     ("rewards", rewards_forever),
+    ("sla-escalation", sla_forever),
+    ("breakglass", breakglass_forever),
 ]
 # Paths a worker-role process still serves: probes and the metrics scrape, never SOS traffic.
 _WORKER_PATHS = ("/health/", "/metrics")
@@ -114,9 +122,11 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     log.info("api.start", version=app.version, process_role=settings.process_role)
     bus = await start_bus()
     bus.add_listener(hub.on_event)
+    bus.add_listener(platform_settings.on_event)
     workers: list[asyncio.Task[None]] = []
     if settings.background_workers and settings.process_role in ("worker", "all"):
-        workers = start_worker_loops(get_sessionmaker())
+        # Worker loops act for no principal: system database scope (row-level security, phase 9 §9.1).
+        workers = start_worker_loops(get_system_sessionmaker())
     try:
         yield
     finally:
@@ -152,8 +162,15 @@ def create_app() -> FastAPI:
             allow_origins=settings.api_cors_origins,
             allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
             allow_headers=["Authorization", "Content-Type", "Accept-Language", "X-Request-ID", "X-Device-Key"],
+            # Anonymous report quota (phase 9 §3), read by the app after each report.
+            expose_headers=["X-Anon-Quota-Limit", "X-Anon-Quota-Remaining"],
             max_age=600,
         )
+
+    @app.exception_handler(ApiError)
+    async def api_error(request: Request, exc: ApiError) -> JSONResponse:
+        # Errors naming more than a code, e.g. 409 already_claimed with the claiming room.
+        return JSONResponse({"detail": exc.detail, **exc.extra}, status_code=exc.status_code, headers=exc.headers)
 
     @app.middleware("http")
     async def request_context(request: Request, call_next: Callable[[Request], Awaitable[Response]]) -> Response:
@@ -206,9 +223,18 @@ def create_app() -> FastAPI:
         analytics_library_router,
         rewards_router,
         rewards_staff_router,
+        settings_router,
+        access_router,
     )
     for router in routers:
         app.include_router(router)
+    # TEMP(W1): regional account administration (W2, modules/access/accounts.py) once it exists.
+    import importlib.util
+
+    if importlib.util.find_spec("app.modules.access.accounts") is not None:
+        from app.modules.access import accounts
+
+        app.include_router(accounts.router)
     return app
 
 

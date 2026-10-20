@@ -23,6 +23,7 @@ from app.modules.knowledge import text as kt
 from app.modules.knowledge.domain import MEMORY_ACCESS, SENSITIVE_KINDS, Access, Kind
 from app.modules.knowledge.models import MemoryEntry, MemoryEntryVersion, SearchDoc
 from app.modules.ops.models import Incident, TimelineEvent
+from app.modules.ops.service import all_gouvernorats
 from app.modules.reports.domain import Status
 from app.modules.reports.models import Media, Report
 from app.modules.streams.models import LiveStream
@@ -255,7 +256,8 @@ async def _incident(session: AsyncSession, ref_id: str) -> Doc | None:
         title=_incident_title(incident),
         body="\n".join(line for line in lines if line),
         date=incident.opened_at,
-        gouvernorats=[incident.gouvernorat_code] if incident.gouvernorat_code else [],
+        # Lead and participating gouvernorats (phase 9 §5.6).
+        gouvernorats=await all_gouvernorats(session, incident.id),
         access=Access.GOUVERNORAT,
         categories=[incident.category],
         incident_id=incident.id,
