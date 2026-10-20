@@ -7,6 +7,7 @@ updates:
     directories:
       - /services/api
       - /services/ai
+      - /services/vision
       - /services/notify-sim
     schedule:
       interval: weekly
@@ -46,6 +47,7 @@ updates:
     directories:
       - /services/api
       - /services/ai
+      - /services/vision
       - /services/notify-sim
       - /infra/postgres
       - /apps/dashboard

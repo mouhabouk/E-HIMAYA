@@ -41,6 +41,10 @@ from app.modules.reports.router import router as reports_router
 from app.modules.reports.staff_router import router as staff_router
 from app.modules.reports.uploads import router as uploads_router
 from app.modules.reports.uploads import verify_forever
+from app.modules.streams.internal import router as streams_internal_router
+from app.modules.streams.router import router as streams_router
+from app.modules.streams.staff_router import router as streams_staff_router
+from app.modules.streams.worker import ingest_forever, streams_forever, vision_images_forever
 from app.modules.volunteers.router import router as volunteers_router
 from app.modules.volunteers.staff_router import router as volunteers_staff_router
 
@@ -67,6 +71,9 @@ WORKER_LOOPS: list[tuple[str, WorkerLoop]] = [
     ("ai-analysis", analyze_forever),
     ("notify-delivery", deliver_forever),
     ("retention", retention_forever),
+    ("stream-segments", ingest_forever),
+    ("stream-lifecycle", streams_forever),
+    ("vision-images", vision_images_forever),
 ]
 # Paths a worker-role process still serves: probes and the metrics scrape, never SOS traffic.
 _WORKER_PATHS = ("/health/", "/metrics")
@@ -158,6 +165,9 @@ def create_app() -> FastAPI:
         ai_router,
         live_router,
         uploads_router,
+        streams_router,
+        streams_staff_router,
+        streams_internal_router,
         audit_router,
         privacy_router,
     )

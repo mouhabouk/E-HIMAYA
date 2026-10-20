@@ -21,6 +21,7 @@ import {
   TEAM_ROLES,
   TRAINING_STATUSES,
 } from "../lib/types";
+import { DETECTION_LABELS, STREAM_END_REASONS, STREAM_SOURCES, STREAM_STATUSES } from "../lib/streamTypes";
 import ar from "./ar.json";
 import fr from "./fr.json";
 import { applyDocumentLanguage, createI18n, directionOf } from "./index";
@@ -101,6 +102,27 @@ describe("translation files", () => {
       expect(arKeys.has(key), key).toBe(true);
       expect(frKeys.has(key), key).toBe(true);
     }
+  });
+
+  it("cover every live stream enum of the phase 6 contract", () => {
+    const required = [
+      "nav.streams",
+      "detail.mediaKind.recording",
+      ...STREAM_STATUSES.map((s) => `streams.status.${s}`),
+      ...STREAM_SOURCES.map((s) => `streams.source.${s}`),
+      ...STREAM_END_REASONS.map((r) => `streams.endReason.${r}`),
+      ...DETECTION_LABELS.map((l) => `streams.label.${l}`),
+      ...["fire", "smoke"].map((l) => `streams.alerts.title.${l}`),
+      ...["connecting", "playing", "reconnecting", "suspended", "forbidden", "unavailable", "ended", "idle"].map(
+        (s) => `streams.player.${s}`,
+      ),
+    ];
+    for (const key of required) {
+      expect(arKeys.has(key), key).toBe(true);
+      expect(frKeys.has(key), key).toBe(true);
+    }
+    expect(ar.nav.streams).toBe("البث المباشر");
+    expect(fr.nav.streams).toBe("Diffusion en direct");
   });
 
   it("use the contract's labels for institution kinds and keep «الحوادث» for grouped incidents only", () => {

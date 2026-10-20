@@ -44,6 +44,13 @@ export interface MapPolygon {
   tone: "high" | "medium" | "low";
 }
 
+/** A path drawn as a line (phase 6: the location track of a live stream), also described in text beside the map. */
+export interface MapLine {
+  id: string;
+  /** [lon, lat] positions, oldest first. */
+  coordinates: [number, number][];
+}
+
 /** A point of a density (heat) layer, e.g. ready volunteers. */
 export interface HeatPoint {
   lon: number;
@@ -74,12 +81,15 @@ interface MapViewProps {
   polygons?: MapPolygon[];
   /** Density layer (ready volunteers): a MapLibre heatmap under the markers. */
   heat?: HeatPoint[];
+  /** Paths (stream location tracks). */
+  lines?: MapLine[];
 }
 
 type GeoJsonData = FeatureCollection;
 
 const POLYGON_SOURCE = "ehimaya-polygons";
 const HEAT_SOURCE = "ehimaya-heat";
+const LINE_SOURCE = "ehimaya-lines";
 const TONE_COLOURS: Record<MapPolygon["tone"], string> = { high: "#b91c1c", medium: "#b45309", low: "#4b5563" };
 
 /** Run `fn` now if the style is ready, otherwise once it has loaded. */
@@ -105,6 +115,15 @@ function heatData(points: HeatPoint[]): GeoJsonData {
   return {
     type: "FeatureCollection",
     features: points.map((p) => ({ type: "Feature", properties: {}, geometry: { type: "Point", coordinates: [p.lon, p.lat] } })),
+  };
+}
+
+function lineData(lines: MapLine[]): GeoJsonData {
+  return {
+    type: "FeatureCollection",
+    features: lines
+      .filter((l) => l.coordinates.length >= 2)
+      .map((l) => ({ type: "Feature", id: l.id, properties: {}, geometry: { type: "LineString", coordinates: l.coordinates } })),
   };
 }
 
@@ -229,6 +248,7 @@ export function MapView({
   onOpenPoi,
   polygons,
   heat,
+  lines,
 }: MapViewProps) {
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MlMap | null>(null);
@@ -404,6 +424,28 @@ export function MapView({
       });
     });
   }, [heat]);
+
+  // Location tracks: one line source, created on first use and then only updated.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || lines === undefined) return;
+    const data = lineData(lines);
+    whenStyleReady(map, () => {
+      const source = map.getSource<GeoJSONSource>(LINE_SOURCE);
+      if (source) {
+        void source.setData(data); // resolves once applied; failures are fired as map "error" events
+        return;
+      }
+      map.addSource(LINE_SOURCE, { type: "geojson", data });
+      map.addLayer({
+        id: `${LINE_SOURCE}-layer`,
+        type: "line",
+        source: LINE_SOURCE,
+        layout: { "line-cap": "round", "line-join": "round" },
+        paint: { "line-color": "#1d4ed8", "line-width": 3, "line-opacity": 0.85 },
+      });
+    });
+  }, [lines]);
 
   // Centroid marker (decorative for pointer users, labelled for screen readers).
   const centroidLon = centroid?.lon;

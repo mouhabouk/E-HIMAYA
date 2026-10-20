@@ -12,6 +12,9 @@ at once and a crash leaves at most one batch to redo. Durations come from the se
 | device_locations    | rounded position of push devices not refreshed                         | 30 days  |
 | devices             | push devices not refreshed by the app                                  | 180 days |
 | reports             | closed/rejected reports: anonymised (reporter, text, media, precision) | 5 years  |
+|                     | with their live streams (track, recordings, vision frames, publisher)  |          |
+| streams             | streams without a report (drones, cameras, simulation) once ended:     | 365 days |
+|                     | recordings, vision frames, track and detections                        |          |
 | consents            | acceptances of a superseded charter version                            | 5 years  |
 | anonymous_accounts  | device identities with no report and no device                         | 365 days |
 | erasure_requests    | erasure requests once the identity-provider account was disabled       | 30 days  |
@@ -117,6 +120,25 @@ async def anonymise_reports(session: AsyncSession, settings: Settings, now: date
     keys = list(
         await session.scalars(text("SELECT object_key FROM reports.media WHERE report_id = ANY(:ids)"), {"ids": ids})
     )
+    # Live streams of the report (phase 6): their recordings and vision frames are media of the report (deleted
+    # above with it); the position track goes, the stream keeps only its times, area and peak confidences.
+    await session.execute(
+        text(
+            "DELETE FROM reports.stream_location WHERE stream_id IN "
+            "(SELECT id FROM reports.live_stream WHERE report_id = ANY(:ids))"
+        ),
+        {"ids": ids},
+    )
+    await session.execute(
+        text(
+            "UPDATE reports.live_stream "
+            "SET user_id = CASE WHEN user_id IS NULL THEN NULL ELSE CAST(:detached AS uuid) END, "
+            "publish_token_hash = NULL, vision_frames = '[]', last_location_at = NULL, "
+            "last_location = CAST(ST_SnapToGrid(CAST(last_location AS geometry), :grid) AS geography) "
+            "WHERE report_id = ANY(:ids)"
+        ),
+        {"ids": ids, "detached": DETACHED_ACCOUNT_ID, "grid": COARSE_GRID_DEG},
+    )
     await session.execute(text("DELETE FROM reports.media WHERE report_id = ANY(:ids)"), {"ids": ids})
     await session.execute(
         text(
@@ -141,6 +163,37 @@ async def anonymise_reports(session: AsyncSession, settings: Settings, now: date
         details={"reports": len(ids), "media_objects": len(keys)},
     )
     # Objects first: if the commit then fails, the batch is redone and deleting a missing object is a no-op.
+    if keys:
+        await get_store().delete(*keys)
+    return len(ids)
+
+
+async def purge_streams(session: AsyncSession, settings: Settings, now: datetime) -> int:
+    """Streams without a report (drones, cameras, simulation) ended past retention, with everything they hold."""
+    cutoff = _cutoff(now, settings.retention_stream_days)
+    ids = list(
+        await session.scalars(
+            text(
+                "SELECT id FROM reports.live_stream WHERE report_id IS NULL "
+                "AND status IN ('ended', 'expired', 'rejected') AND ended_at < :cutoff "
+                "ORDER BY ended_at LIMIT :n FOR UPDATE SKIP LOCKED"
+            ),
+            {"cutoff": cutoff, "n": REPORT_BATCH},
+        )
+    )
+    if not ids:
+        return 0
+    keys = list(
+        await session.scalars(text("SELECT object_key FROM reports.media WHERE stream_id = ANY(:ids)"), {"ids": ids})
+    )
+    # Media, track, detections and the segment queue follow the stream (ON DELETE CASCADE).
+    await session.execute(text("DELETE FROM reports.live_stream WHERE id = ANY(:ids)"), {"ids": ids})
+    await audit.record(
+        session,
+        actor=audit.SYSTEM_ACTOR,
+        action="retention.streams",
+        details={"streams": len(ids), "media_objects": len(keys)},
+    )
     if keys:
         await get_store().delete(*keys)
     return len(ids)
@@ -184,6 +237,7 @@ JOBS: list[tuple[str, Job]] = [
     ("device_locations", forget_device_locations),
     ("devices", purge_devices),
     ("reports", anonymise_reports),
+    ("streams", purge_streams),
     ("consents", purge_consents),
     ("anonymous_accounts", purge_anonymous_accounts),
     ("erasure_requests", purge_erasure_requests),

@@ -2,7 +2,8 @@
 
 * ``GET /api/v1/me/export``  — every personal datum held on the caller, decrypted, as one JSON document.
 * ``POST /api/v1/me/delete`` — erasure: the profile is wiped at once; reports are kept for the legal
-  retention period, detached from any identifier (the account keeps only its random id).
+  retention period, detached from any identifier (the account keeps only its random id). Live streams still
+  running are ended (their publisher disconnected); recordings and the position track stay with the report.
 """
 
 import uuid
@@ -25,6 +26,11 @@ from app.modules.notify.models import Device, Message, Outbox
 from app.modules.orgs.domain import OrgRole
 from app.modules.orgs.models import Member
 from app.modules.reports.models import Media, Report, StatusHistory
+from app.modules.streams import mediamtx
+from app.modules.streams import service as streams
+from app.modules.streams.domain import ACTIVE as ACTIVE_STREAMS
+from app.modules.streams.domain import EndReason
+from app.modules.streams.models import LiveStream, StreamLocation
 from app.modules.volunteers import service as volunteers
 from app.modules.volunteers.models import Volunteer
 from app.modules.volunteers.presence import get_presence
@@ -112,6 +118,26 @@ class ExportReport(BaseModel):
     media: list[ExportMedia]
 
 
+class ExportTrackPoint(BaseModel):
+    at: datetime
+    lat: float
+    lon: float
+    accuracy_m: float | None
+
+
+class ExportStream(BaseModel):
+    id: uuid.UUID
+    report_id: uuid.UUID | None
+    status: str
+    created_at: datetime
+    started_at: datetime | None
+    ended_at: datetime | None
+    end_reason: str | None
+    # Recordings are listed with the report's media (kind "recording").
+    recording_media_ids: list[uuid.UUID]
+    track: list[ExportTrackPoint]
+
+
 class ExportDevice(BaseModel):
     platform: str
     locale: str
@@ -137,6 +163,7 @@ class ExportOut(BaseModel):
     profile: ExportProfile | None
     consents: list[ExportConsent]
     reports: list[ExportReport]
+    streams: list[ExportStream]
     volunteer: VolunteerOut | None
     devices: list[ExportDevice]
     messages: list[ExportMessage]
@@ -222,6 +249,54 @@ async def _reports(session: AsyncSession, user_id: uuid.UUID) -> list[ExportRepo
     ]
 
 
+async def _streams(session: AsyncSession, user_id: uuid.UUID) -> list[ExportStream]:
+    rows = list(
+        await session.scalars(select(LiveStream).where(LiveStream.user_id == user_id).order_by(LiveStream.created_at))
+    )
+    ids = [s.id for s in rows]
+    tracks: dict[uuid.UUID, list[ExportTrackPoint]] = {i: [] for i in ids}
+    recordings: dict[uuid.UUID, list[uuid.UUID]] = {i: [] for i in ids}
+    if ids:
+        point = cast(StreamLocation.location, Geometry)
+        for sid, at, lat, lon, accuracy in (
+            await session.execute(
+                select(
+                    StreamLocation.stream_id,
+                    StreamLocation.at,
+                    func.ST_Y(point),
+                    func.ST_X(point),
+                    StreamLocation.accuracy_m,
+                )
+                .where(StreamLocation.stream_id.in_(ids))
+                .order_by(StreamLocation.at, StreamLocation.id)
+            )
+        ).all():
+            tracks[sid].append(ExportTrackPoint(at=at, lat=float(lat), lon=float(lon), accuracy_m=accuracy))
+        for sid, media_id in (
+            await session.execute(
+                select(Media.stream_id, Media.id)
+                .where(Media.stream_id.in_(ids), Media.kind == "recording")
+                .order_by(Media.created_at)
+            )
+        ).all():
+            if sid is not None:
+                recordings[sid].append(media_id)
+    return [
+        ExportStream(
+            id=s.id,
+            report_id=s.report_id,
+            status=s.status,
+            created_at=s.created_at,
+            started_at=s.started_at,
+            ended_at=s.ended_at,
+            end_reason=s.end_reason,
+            recording_media_ids=recordings[s.id],
+            track=tracks[s.id],
+        )
+        for s in rows
+    ]
+
+
 @router.get("/me/export", response_model=ExportOut)
 async def export_my_data(
     request: Request, response: Response, reporter: CurrentReporter, session: Session
@@ -255,6 +330,7 @@ async def export_my_data(
             for c in consents
         ],
         reports=await _reports(session, user_id),
+        streams=await _streams(session, user_id),
         volunteer=volunteers.volunteer_out(volunteer) if volunteer is not None else None,
         devices=[
             ExportDevice(
@@ -278,7 +354,7 @@ async def export_my_data(
         actor=reporter.actor,
         action="user.export",
         target=f"account:{user_id}",
-        details={"reports": len(out.reports)},
+        details={"reports": len(out.reports), "streams": len(out.streams)},
     )
     await session.commit()
     response.headers["Cache-Control"] = "no-store"
@@ -334,6 +410,16 @@ async def delete_my_account(request: Request, body: DeleteIn, reporter: CurrentR
         # No identity-provider admin credentials in the API: the account is disabled from this queue.
         session.add(ErasureRequest(keycloak_sub=account.keycloak_sub))
     details["reports_kept"] = await session.scalar(select(func.count()).where(Report.user_id == user_id))
+    active = list(
+        await session.scalars(
+            select(LiveStream)
+            .where(LiveStream.user_id == user_id, LiveStream.status.in_(ACTIVE_STREAMS))
+            .with_for_update()
+        )
+    )
+    for stream in active:
+        await streams.end(session, stream, EndReason.PUBLISHER_STOPPED, now)
+    details["streams_ended"] = len(active)
     await session.execute(
         update(Account)
         .where(Account.user_id == user_id)
@@ -343,4 +429,6 @@ async def delete_my_account(request: Request, body: DeleteIn, reporter: CurrentR
         session, actor=reporter.actor, action="user.delete", target=f"account:{user_id}", details=details
     )
     await session.commit()
+    for stream in active:
+        await mediamtx.kick(stream.path)
     return DeleteOut(status="deleted")

@@ -7,6 +7,7 @@ import 'api_client.dart';
 import 'api_error.dart';
 import 'models.dart';
 import 'notify_models.dart';
+import 'stream_models.dart';
 import 'volunteer_models.dart';
 
 /// Result of `POST /api/v1/reports`: 201 (new) and 200 (same `client_uuid` replayed) are
@@ -31,7 +32,7 @@ class LastAdminException implements Exception {
 }
 
 /// Typed access to the phase-2 API (plus the phase-4 institution and phase-5 volunteer,
-/// notification and safety-tip endpoints used by the app). Every method throws [ApiException] on failure.
+/// notification and safety-tip endpoints, and the phase-6 live streams used by the app). Every method throws [ApiException] on failure.
 class EHimayaApi {
   EHimayaApi(this._dio);
 
@@ -347,6 +348,48 @@ class EHimayaApi {
       throw ApiException.fromDio(e);
     }
   }
+
+  // ---------------------------------------------------------------- live streams (phase 6 §2)
+
+  /// Opens a live stream on one of the caller's reports (FR-A-050). `409 stream_already_active`
+  /// when the report already has a pending or live stream; `429` past 6 an hour.
+  Future<LiveStreamGrant> startStream(String reportId) => guardApi(() async {
+    final r = await _dio.post<Map<String, Object?>>(
+      '/api/v1/reports/${Uri.encodeComponent(reportId)}/streams',
+    );
+    return LiveStreamGrant.fromJson(r.data!);
+  });
+
+  /// Position while live (FR-A-052). The server ignores calls closer than 3 s (still `204`) and
+  /// answers `409 stream_not_active` once the stream is over.
+  Future<void> postStreamLocation(String streamId, GeoPoint position) =>
+      guardApi(() async {
+        await _dio.post<Object?>(
+          '/api/v1/streams/${Uri.encodeComponent(streamId)}/location',
+          data: {
+            'lat': position.lat,
+            'lon': position.lon,
+            'accuracy_m': ?position.accuracyM,
+          },
+        );
+      });
+
+  /// Idempotent; kicks the publisher through the MediaMTX API.
+  Future<LiveStreamInfo?> stopStream(String streamId) => guardApi(() async {
+    final r = await _dio.post<Object?>(
+      '/api/v1/streams/${Uri.encodeComponent(streamId)}/stop',
+    );
+    final data = r.data;
+    return data is Map<String, Object?> ? LiveStreamInfo.fromJson(data) : null;
+  });
+
+  /// Polled while live to learn that an operator ended the stream.
+  Future<LiveStreamInfo> getStream(String streamId) => guardApi(() async {
+    final r = await _dio.get<Map<String, Object?>>(
+      '/api/v1/streams/${Uri.encodeComponent(streamId)}',
+    );
+    return LiveStreamInfo.fromJson(r.data!);
+  });
 
   // ---------------------------------------------------------------- safety tips (§8)
 

@@ -12,7 +12,7 @@ ARG VITE_API_BASE_URL \
     VITE_OIDC_ISSUER \
     VITE_OIDC_CLIENT_ID \
     VITE_MAP_STYLE_URL
-ARG CSP_MEDIA_SRC= CSP_MAP_SRC=
+ARG CSP_MEDIA_SRC= CSP_MAP_SRC= CSP_STREAM_SRC=
 RUN npm run build && find dist -name '*.map' -delete
 COPY --from=web csp.mjs /tmp/csp.mjs
 RUN node /tmp/csp.mjs dist /tmp/csp.caddy

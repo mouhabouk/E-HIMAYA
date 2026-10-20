@@ -65,6 +65,17 @@ enum DeviceChannel {
         result(false)
       case "requestUnlock":
         result(true)
+      case "keepScreenOn":
+        // Live streaming (phase 6): no auto-lock while the camera is published.
+        let on = (call.arguments as? [String: Any])?["on"] as? Bool ?? false
+        UIApplication.shared.isIdleTimerDisabled = on
+        result(true)
+      case "openAppSettings":
+        guard let url = URL(string: UIApplication.openSettingsURLString) else {
+          result(false)
+          return
+        }
+        UIApplication.shared.open(url) { opened in result(opened) }
       case "requestIgnoreBatteryOptimizations", "openFullScreenIntentSettings",
         "openDndAccessSettings":
         result(false)

@@ -17,7 +17,8 @@
     "volunteers": "Volontaires",
     "notifications": "Notifications et alertes",
     "safetyTips": "Conseils de sécurité",
-    "committee": "Comités"
+    "committee": "Comités",
+    "streams": "Diffusion en direct"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -179,7 +180,8 @@
     "not_draft": "Ce message n’est plus un brouillon.",
     "not_published": "L’élément n’est pas publié.",
     "suspended_by_level": "Les notifications d’information sont suspendues dans un gouvernorat au niveau catastrophe (pas les alertes).",
-    "translation_missing": "Traduction incomplète : titre et au moins un élément en arabe, français et anglais."
+    "translation_missing": "Traduction incomplète : titre et au moins un élément en arabe, français et anglais.",
+    "stream_not_active": "La diffusion n’est pas active."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -279,7 +281,8 @@
     "mediaKind": {
       "image": "Image",
       "video": "Vidéo",
-      "audio": "Enregistrement audio"
+      "audio": "Enregistrement audio",
+      "recording": "Enregistrement de diffusion"
     },
     "mediaStatus": {
       "uploading": "En cours d’envoi",
@@ -371,7 +374,8 @@
       "credibility": "Crédibilité",
       "sensitive_sites": "Sites sensibles à proximité",
       "weather": "Météo",
-      "op_level": "Niveau opérationnel"
+      "op_level": "Niveau opérationnel",
+      "vision_fire": "Feu ou fumée confirmés par l’analyse d’image"
     },
     "livesSource": {
       "model": "modèle de langue",
@@ -459,6 +463,11 @@
         "other": "autre motif ({{key}})"
       },
       "notCounted": "Non compté : il aurait baissé la priorité."
+    },
+    "visionSource": "{{label}} · {{source}}",
+    "visionSourceKind": {
+      "stream": "diffusion en direct",
+      "image": "image envoyée"
     }
   },
   "incidents": {
@@ -1610,6 +1619,193 @@
     "reason": {
       "anonymous_budget": "Signalement anonyme reçu au-delà du volume habituel : vérifier avant d’engager des moyens (priorité abaissée).",
       "limiter_degraded": "Reçu pendant une panne du limiteur de débit : vérifier avant d’engager des moyens (priorité abaissée)."
+    }
+  },
+  "streams": {
+    "title": "Diffusion en direct",
+    "intro": "Vidéos en direct des signalements, drones et caméras de votre périmètre, avec le feu ou la fumée repérés par l’analyse d’image. Mise à jour en direct.",
+    "caption": "Liste des diffusions en cours",
+    "empty": "Aucune diffusion en cours dans votre périmètre.",
+    "noLocation": "Position indisponible",
+    "detectionBadge": "{{label}} {{confidence}}",
+    "showOnWall": "Afficher sur le mur",
+    "showOnWallLabel": "Afficher {{name}} sur le mur d’écrans",
+    "nav": {
+      "label": "Rubriques de la diffusion en direct",
+      "live": "En cours",
+      "wall": "Mur d’écrans",
+      "archive": "Archives"
+    },
+    "filters": {
+      "gouvernorat": "Gouvernorat",
+      "allGouvernorats": "Tous les gouvernorats"
+    },
+    "columns": {
+      "stream": "Diffusion",
+      "source": "Source",
+      "gouvernorat": "Gouvernorat",
+      "started": "Début",
+      "location": "Dernière position",
+      "detections": "Détections",
+      "recordings": "Enregistrements",
+      "actions": "Actions",
+      "duration": "Durée",
+      "report": "Signalement"
+    },
+    "source": {
+      "app": "Application citoyenne",
+      "drone": "Drone",
+      "camera": "Caméra fixe",
+      "sim": "Source simulée"
+    },
+    "status": {
+      "pending": "En attente",
+      "live": "En direct",
+      "ended": "Terminée",
+      "expired": "Expirée",
+      "rejected": "Refusée"
+    },
+    "endReason": {
+      "publisher_stopped": "Arrêtée par l’émetteur",
+      "staff_stopped": "Arrêtée par un agent",
+      "max_duration": "Durée maximale atteinte",
+      "token_expired": "Jeton d’émission expiré",
+      "error": "Erreur technique"
+    },
+    "label": {
+      "fire": "Feu",
+      "smoke": "Fumée",
+      "person": "Personne"
+    },
+    "band": {
+      "high": "Confiance élevée (seuil d’alerte)",
+      "medium": "Confiance moyenne",
+      "low": "Confiance faible"
+    },
+    "legend": {
+      "stream": "Diffusion en direct",
+      "alert": "Diffusion avec feu ou fumée détectés"
+    },
+    "sim": {
+      "band": "Flux de test produit par le simulateur : ce n’est pas une urgence réelle.",
+      "bandLabel": "Mode simulation",
+      "tagTitle": "Diffusion simulée (pas réelle)"
+    },
+    "player": {
+      "label": "Vidéo en direct : {{name}}",
+      "connecting": "Connexion à la diffusion…",
+      "reconnecting": "Diffusion interrompue, reconnexion…",
+      "suspended": "En pause (hors écran)",
+      "forbidden": "Vous n’avez pas accès à cette diffusion.",
+      "unavailable": "Diffusion indisponible pour le moment.",
+      "ended": "Diffusion terminée.",
+      "playing": "En lecture",
+      "idle": "Connexion à la diffusion…",
+      "mute": "Couper le son",
+      "unmute": "Activer le son",
+      "transport": {
+        "whep": "WebRTC",
+        "hls": "HLS (secours)"
+      }
+    },
+    "wall": {
+      "title": "Mur d’écrans",
+      "layout": "Nombre d’écrans",
+      "layoutOption": "{{count}}",
+      "hint": "Les écrans non épinglés affichent les diffusions en cours, les plus préoccupantes d’abord. La vidéo hors écran est mise en pause pour économiser les ressources.",
+      "screen": "Écran {{n}}",
+      "emptyTile": "Aucune diffusion pour cet écran.",
+      "auto": "Automatique (diffusion suivante)",
+      "chooseLabel": "Diffusion affichée sur l’{{screen}}",
+      "open": "Détail de la diffusion",
+      "openLabel": "Détail de la diffusion de l’{{screen}}",
+      "report": "Signalement",
+      "reportLabel": "Signalement de l’{{screen}}",
+      "mapTitle": "Positions des diffusions",
+      "mapLabel": "Carte des positions des diffusions affichées sur le mur",
+      "noPositions": "Aucune position disponible pour les diffusions affichées."
+    },
+    "detail": {
+      "title": "Diffusion",
+      "back": "Retour à la diffusion en direct",
+      "player": "Vidéo",
+      "info": "Informations",
+      "report": "Signalement",
+      "openReport": "Ouvrir le signalement",
+      "noReport": "Source fixe (sans signalement)",
+      "ended": "Fin",
+      "endReason": "Motif de fin",
+      "track": "Trajet",
+      "mapLabel": "Carte du trajet de la diffusion",
+      "lastPosition": "Dernière position : {{name}}",
+      "trackSummary": "Points du trajet : {{count}}",
+      "trackList": "Liste des points du trajet",
+      "detections": "Chronologie des détections",
+      "detectionsNote": "Résultats de l’analyse d’image, à titre d’aide : la décision reste à l’agent.",
+      "noDetections": "Rien de détecté pour l’instant.",
+      "boxes": "Zones : {{count}}",
+      "recordings": "Enregistrements",
+      "recordingsCaption": "Enregistrements de la diffusion avec leur empreinte",
+      "noRecordings": "Aucun enregistrement pour l’instant.",
+      "recordedAt": "Enregistré le",
+      "download": "Télécharger",
+      "downloadLabel": "Télécharger l’enregistrement du {{date}}",
+      "stop": "Arrêter la diffusion",
+      "stopConfirm": "Confirmer l’arrêt",
+      "stopConfirmText": "La diffusion sera arrêtée chez l’émetteur et pour tous les spectateurs. Confirmez-vous ?",
+      "stopping": "Arrêt…"
+    },
+    "archive": {
+      "title": "Archives des diffusions",
+      "filters": "Filtres des archives",
+      "from": "Du",
+      "to": "Au",
+      "detection": "Détection",
+      "detectionOption": {
+        "any": "Toutes",
+        "fire_or_smoke": "Feu ou fumée",
+        "fire": "Feu",
+        "smoke": "Fumée",
+        "none": "Ni feu ni fumée"
+      },
+      "filtersNote": "Les filtres de date et de détection s’appliquent aux pages chargées ; d’autres pages sont chargées automatiquement si nécessaire.",
+      "caption": "Diffusions terminées",
+      "empty": "Aucune diffusion terminée ne correspond aux filtres.",
+      "count": "Résultats : {{count}}",
+      "reportLabel": "Ouvrir le signalement {{code}}"
+    },
+    "alerts": {
+      "region": "Alertes de l’analyse d’image",
+      "title": {
+        "fire": "Feu détecté sur une diffusion en direct",
+        "smoke": "Fumée détectée sur une diffusion en direct"
+      },
+      "body": "Confiance {{confidence}} · {{name}}",
+      "humanDecision": "Alerte automatique d’aide : vérifiez la vidéo avant toute action.",
+      "watch": "Voir la diffusion",
+      "openReport": "Ouvrir le signalement",
+      "dismiss": "Fermer",
+      "dismissLabel": "Fermer l’alerte {{kind}} : {{name}}",
+      "unknownStream": "Diffusion en direct",
+      "soundOn": "Son des alertes : activé",
+      "soundOff": "Son des alertes : désactivé"
+    },
+    "report": {
+      "title": "Diffusion en direct du signalement",
+      "open": "Diffusion ({{source}})",
+      "started": "Début le {{date}}",
+      "recordings": "Enregistrements : {{count}}",
+      "watch": "Regarder",
+      "hide": "Masquer la vidéo",
+      "stream": "Diffusion",
+      "openStream": "Ouvrir la diffusion"
+    },
+    "vision": {
+      "title": "Analyse d’image",
+      "frame": "Image capturée par l’analyse d’image sur une diffusion",
+      "model": "Modèle : {{model}}",
+      "nothing": "Ni feu, ni fumée, ni personne détectés.",
+      "note": "À titre d’aide : la décision reste à l’agent."
     }
   }
 }

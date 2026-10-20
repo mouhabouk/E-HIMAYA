@@ -1,0 +1,148 @@
+# ء-حماية / e-Himaya — MediaMTX 1.21.2 (docs/api/phase-6-contract.md, operator runbook docs/streaming.md).
+# Keys checked against the reference mediamtx.yml of v1.21.2; anything not set here keeps its default.
+# Every key can be overridden by an environment variable MTX_<KEY> (e.g. MTX_WEBRTCADDITIONALHOSTS), which is how
+# infra/compose.prod.yml sets the public address and the trusted proxy.
+#
+# Who may do what is decided by the API (authMethod: http → POST /internal/mediamtx/auth):
+#   publish        live/<id> with that stream's publish token (citizens over WebRTC/WHIP only)
+#   read/playback  live/<id> with a 5-minute viewer token, or user "vision" (the detector, internal RTSP)
+#   api/metrics    user "ehimaya-api" with MEDIAMTX_API_PASSWORD (the API kicks publishers through /v3)
+# Path lifecycle and finished recording segments are posted to the API by /hooks/hook.sh (X-Hook-Token).
+
+###############################################
+# General
+
+logLevel: info
+logDestinations: [stdout]
+logStructured: true
+# Slow or stalled peers are dropped instead of holding memory.
+readTimeout: 10s
+writeTimeout: 10s
+writeQueueSize: 512
+udpMaxPayloadSize: 1452
+
+###############################################
+# Authentication: every action is decided by the API.
+
+authMethod: http
+authHTTPAddress: http://api:8000/internal/mediamtx/auth
+authHTTPExclude: []
+
+###############################################
+# Control API (internal network only: never published, never routed by Caddy)
+
+api: true
+apiAddress: :9997
+apiEncryption: false
+apiAllowOrigins: []
+apiTrustedProxies: []
+
+# Prometheus metrics (scrape with user ehimaya-api), internal only.
+metrics: true
+metricsAddress: :9998
+metricsEncryption: false
+metricsAllowOrigins: []
+metricsTrustedProxies: []
+
+pprof: false
+
+# Recordings are served by the API (S3, pre-signed, audited), not by MediaMTX.
+playback: false
+
+###############################################
+# RTSP: drones, fixed cameras, stream-sim publish here; the vision service reads here (internal rtsp://mediamtx:8554).
+# TCP only: no RTP/RTCP UDP port ranges to open, and the same behaviour behind NAT.
+
+rtsp: true
+rtspTransports: [tcp]
+rtspEncryption: "no"
+rtspAddress: :8554
+rtspAuthMethods: [basic]
+rtspTrustedProxies: []
+
+###############################################
+# RTMP: drones and encoders that only speak RTMP (DJI, OBS). Token in the stream key query: ?token=<token>.
+
+rtmp: true
+rtmpEncryption: "no"
+rtmpAddress: :1935
+rtmpTrustedProxies: []
+
+###############################################
+# HLS: fallback viewer for the dashboard (WebRTC/WHEP is the default). fMP4 segments, no low-latency parts.
+
+hls: true
+hlsAddress: :8888
+hlsEncryption: false
+# Development default; infra/compose.prod.yml sets the dashboard origin (MTX_HLSALLOWORIGINS).
+hlsAllowOrigins: ["*"]
+hlsTrustedProxies: []
+hlsAlwaysRemux: false
+hlsVariant: fmp4
+hlsSegmentCount: 7
+hlsSegmentDuration: 1s
+hlsPartDuration: 200ms
+hlsSegmentMaxSize: 50M
+hlsMuxerCloseAfter: 60s
+
+###############################################
+# WebRTC: citizens publish with WHIP (https://<API_HOST>/live/<id>/whip), the dashboard reads with WHEP.
+# Signalling is HTTP on :8889 (behind Caddy in production); media is ICE over UDP :8189 (published on the host).
+
+webrtc: true
+webrtcAddress: :8889
+webrtcEncryption: false
+webrtcAllowOrigins: ["*"]
+# Production: Caddy's address (MTX_WEBRTCTRUSTEDPROXIES) so the client address passed to the API is the real one.
+webrtcTrustedProxies: []
+webrtcLocalUDPAddress: :8189
+webrtcLocalTCPAddress: ""
+# Container interface addresses are useless to phones: the public address is announced instead
+# (MTX_WEBRTCADDITIONALHOSTS, e.g. the server's public IP or API_HOST).
+webrtcIPsFromInterfaces: true
+webrtcIPsFromInterfacesList: []
+webrtcIPsFromInterfacesExcludeList: []
+webrtcAdditionalHosts: []
+webrtcICEServers2: []
+webrtcSTUNGatherTimeout: 5s
+webrtcHandshakeTimeout: 10s
+webrtcTrackGatherTimeout: 2s
+
+###############################################
+# Protocols not used by e-Himaya
+
+srt: false
+moq: false
+
+###############################################
+# Path defaults
+
+pathDefaults:
+  source: publisher
+  # Operators watching one stream plus the vision reader; caps the uplink a single stream can use.
+  maxReaders: 16
+  # A second publisher on the same path is refused: a leaked token cannot take over a live stream.
+  overridePublisher: false
+  record: false
+
+###############################################
+# Paths: only live/<uuid> exists (the API creates the id); every other path is refused by the API anyway.
+
+paths:
+  "~^live/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$":
+    # Evidence: every stream is recorded as fMP4 segments of at least 60 s (cut on the next keyframe) on the shared
+    # "recordings" volume; the API worker hashes each finished segment, stores it in S3, and deletes the local file.
+    record: true
+    recordPath: /recordings/%path/%Y-%m-%d_%H-%M-%S-%f
+    recordFormat: fmp4
+    recordPartDuration: 1s
+    recordMaxPartSize: 50M
+    recordSegmentDuration: 60s
+    # Never deleted by MediaMTX: the API deletes a segment only once it is safely in S3.
+    recordDeleteAfter: 0s
+    # Lifecycle hooks (exec form, no shell: MediaMTX splits on spaces). runOnAvailable / runOnUnavailable replace the
+    # deprecated runOnReady / runOnNotReady named by the contract.
+    runOnAvailable: sh /hooks/hook.sh ready
+    runOnAvailableRestart: false
+    runOnUnavailable: sh /hooks/hook.sh not_ready
+    runOnRecordSegmentComplete: sh /hooks/hook.sh segment_complete

@@ -9,12 +9,13 @@ import { identityFromClaims } from "../auth/identity";
 import { AuthProvider } from "../context/auth";
 import { FiltersProvider } from "../context/filters";
 import { LiveProvider } from "../context/live";
-import { ServicesProvider } from "../context/services";
+import { ServicesProvider, type Services } from "../context/services";
 import { createI18n, type Language } from "../i18n";
 import type { StaffApi } from "../lib/staffApi";
 import { FakeWebSocket } from "./FakeWebSocket";
 import { AI_STATUS_READY, fakeJwt } from "./fixtures";
 import { fakeOpsApi } from "./opsFixtures";
+import { FakeStreamSession, fakeStreamsApi } from "./streamFixtures";
 
 export function fakeAuth(claims: Record<string, unknown> | null): AuthService {
   const token = claims ? fakeJwt(claims) : null;
@@ -70,6 +71,7 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     certificates: vi.fn(() => Promise.resolve({ items: [], next_cursor: null })),
     reviewCertificate: vi.fn(),
     ...fakeOpsApi(),
+    ...fakeStreamsApi(),
     gouvernorats: vi.fn(() =>
       Promise.resolve([
         { code: 11, iso_code: "TN-11", name: "تونس", name_ar: "تونس", name_fr: "Tunis", delegation_count: 21 },
@@ -88,6 +90,7 @@ export function renderApp(
     lang?: Language;
     path?: string;
     route?: string;
+    createStreamSession?: Services["createStreamSession"];
   } = {},
 ) {
   const i18n = createI18n(options.lang ?? "ar");
@@ -103,6 +106,7 @@ export function renderApp(
           liveUrl: "ws://test/api/v1/staff/live",
           createSocket: (url) => new FakeWebSocket(url),
           mapStyleUrl: null,
+          createStreamSession: options.createStreamSession ?? ((o) => new FakeStreamSession(o)),
         }}
       >
         <QueryClientProvider client={queryClient}>

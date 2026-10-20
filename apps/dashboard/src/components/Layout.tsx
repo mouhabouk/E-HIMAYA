@@ -17,6 +17,7 @@ import {
 import { applyTheme, nextTheme, storedTheme, type Theme } from "../lib/theme";
 import { NoAccessPage } from "../pages/NoAccessPage";
 import { LevelBanner } from "./LevelBanner";
+import { StreamAlertToasts } from "./StreamAlertToasts";
 
 export function LanguageSwitch() {
   const { t, i18n } = useTranslation();
@@ -118,6 +119,7 @@ export function Layout() {
               <NavLink to="/reports">{t("nav.reports")}</NavLink>
               <NavLink to="/incidents">{t("nav.incidents")}</NavLink>
               <NavLink to="/map">{t("nav.map")}</NavLink>
+              <NavLink to="/streams">{t("nav.streams")}</NavLink>
               <NavLink to="/volunteers">{t("nav.volunteers")}</NavLink>
             </>
           )}
@@ -159,6 +161,7 @@ export function Layout() {
       <main id="main" tabIndex={-1} className="main">
         {live === "forbidden" ? <NoAccessPage reason="liveForbidden" embedded /> : <Outlet />}
       </main>
+      {readsReports && <StreamAlertToasts />}
     </div>
   );
 }
