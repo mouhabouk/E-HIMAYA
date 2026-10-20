@@ -128,10 +128,11 @@ class IdentityController extends Notifier<IdentityState> {
     state = const IdentityState(mode: IdentityMode.none);
   }
 
-  /// Data tied to the signed-in account: its institutions (offline copy) and the "report as"
-  /// choices.
+  /// Data tied to the signed-in account: its institutions and rewards (offline copies) and the
+  /// "report as" choices.
   Future<void> _clearAccountData() async {
     await _secure.delete(SecureStoreKeys.orgCache);
+    await _secure.delete(SecureStoreKeys.rewardsCache);
     await _prefs.setReportAsOrgId(null);
     await _prefs.setSosReportAsOrgId(null);
   }

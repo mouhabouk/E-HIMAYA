@@ -18,7 +18,8 @@
 # CADDY_TLS, EHIMAYA_DB_RUNTIME_PASSWORD, SMTP_HOST, real FCM/SMS settings (or empty to skip those channels),
 # MEDIAMTX_HOOK_TOKEN and MEDIAMTX_API_PASSWORD (random), MEDIAMTX_WEBRTC_HOSTS when API_HOST is not this server,
 # TELEPHONY_ARI_PASSWORD (random), TELEPHONY_EXTERNAL_HOST when API_HOST is not this server's public address, the
-# TELEPHONY_TRUNK_* settings of the operator and SMS_INBOUND_SECRET agreed with the SMS gateway (docs/telephony.md).
+# TELEPHONY_TRUNK_* settings of the operator and SMS_INBOUND_SECRET agreed with the SMS gateway (docs/telephony.md),
+# OPENSEARCH_ADMIN_PASSWORD and OPENSEARCH_PASSWORD (random, distinct; events library, phase 8).
 
 # Settings shared by the api, worker and migrate containers in production.
 x-api-prod-env: &api-prod-env
@@ -27,6 +28,8 @@ x-api-prod-env: &api-prod-env
   OIDC_JWKS_BASE_URL: http://keycloak:8080
   S3_PUBLIC_ENDPOINT_URL: https://${MEDIA_HOST:?set MEDIA_HOST}
   PORTAL_PUBLIC_URL: https://${PORTAL_HOST:?set PORTAL_HOST}
+  # QR code of reward certificates (phase 8): public verification on the API host.
+  API_PUBLIC_URL: https://${API_HOST}
   API_CORS_ORIGINS: https://${DASHBOARD_HOST:?set DASHBOARD_HOST},https://${PORTAL_HOST}
   DATABASE_URL: postgresql+asyncpg://${EHIMAYA_DB_RUNTIME_USER:-ehimaya_app}:${EHIMAYA_DB_RUNTIME_PASSWORD:?set EHIMAYA_DB_RUNTIME_PASSWORD}@postgres:5432/${EHIMAYA_DB_NAME:-ehimaya}
   # Only the edge proxy (fixed address below) may set X-Forwarded-For: per-address limits see real clients.
@@ -50,6 +53,9 @@ x-api-prod-env: &api-prod-env
   TELEPHONY_SIM_TOKEN: ""
   # Call recording only once the processing is declared to the INPDP (legal point L04): explicit opt-in.
   TELEPHONY_RECORDING_ENABLED: ${TELEPHONY_RECORDING_ENABLED:-false}
+  # Events library (phase 8): OpenSearch always runs in production; PostgreSQL answers while it is down.
+  OPENSEARCH_URL: https://opensearch:9200
+  OPENSEARCH_PASSWORD: ${OPENSEARCH_PASSWORD:?set OPENSEARCH_PASSWORD}
 
 x-api-prod-deps: &api-prod-deps
   migrate:
@@ -153,6 +159,7 @@ services:
     # No simulator volume and no dependency on notify-sim; the terrain model of the spread forecasts (read-only).
     volumes: !override
       - terrain:/terrain:ro
+      - opensearch-ca:/opensearch-ca:ro
     depends_on: !override
       <<: *api-prod-deps
 
@@ -174,6 +181,8 @@ services:
       # Call recordings written by Asterisk (ingestion runs here).
       - telrecordings:/telephony-recordings
       - ../docs/procedures:/app/procedures:ro
+      # CA of the OpenSearch node (the "knowledge" loop indexes the events library).
+      - opensearch-ca:/opensearch-ca:ro
     depends_on: !override
       <<: *api-prod-deps
 
@@ -262,6 +271,16 @@ services:
     ports: !reset []
   seaweedfs:
     ports: !reset []
+  # Events library search: always on in production (no profile), never published, passwords required.
+  opensearch-init:
+    profiles: !reset []
+  opensearch:
+    profiles: !reset []
+    environment:
+      OPENSEARCH_ADMIN_PASSWORD: ${OPENSEARCH_ADMIN_PASSWORD:?set OPENSEARCH_ADMIN_PASSWORD}
+      OPENSEARCH_PASSWORD: ${OPENSEARCH_PASSWORD:?set OPENSEARCH_PASSWORD}
+      OPENSEARCH_JAVA_OPTS: -Xms${OPENSEARCH_HEAP:-1g} -Xmx${OPENSEARCH_HEAP:-1g}
+    mem_limit: ${OPENSEARCH_MEM_LIMIT:-2g}
 
   # Development helpers, never started in production (no profile "dev-tools" is enabled here).
   mailpit:

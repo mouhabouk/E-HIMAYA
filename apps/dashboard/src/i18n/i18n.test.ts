@@ -1,5 +1,28 @@
 import { describe, expect, it } from "vitest";
 import { ERROR_CODES } from "../lib/api";
+import {
+  BADGE_STATUSES,
+  BADGES,
+  LIBRARY_KINDS,
+  LIBRARY_REPORT_KINDS,
+  LIBRARY_REPORT_STATUSES,
+  MEMORY_ACCESS,
+  MEMORY_SECTIONS,
+  MEMORY_STATUSES,
+  NOMINATION_KINDS,
+  NOMINATION_STATUSES,
+  REPORT_FORMATS,
+  REPORT_SOURCES,
+  RESPONSE_STAGES,
+  REWARD_REASONS,
+  SCENARIO_WEATHERS,
+  SCHEDULE_FREQUENCIES,
+  SUBJECT_KINDS,
+  TREE_AXES,
+  TREND_INTERVALS,
+  TREND_METRICS,
+  VERSION_CHANGES,
+} from "../lib/phase8Types";
 import { STAFF_ROLES } from "../lib/roles";
 import {
   CATEGORIES,
@@ -157,6 +180,46 @@ describe("translation files", () => {
       closed: "Intervention clôturée",
       rejected: "Rejeté",
     });
+  });
+});
+
+describe("phase 8 translations", () => {
+  it("cover every phase 8 enum (analytics, reports, memory, library, rewards)", () => {
+    const required = [
+      "nav.analytics",
+      "nav.reportsLibrary",
+      "nav.memory",
+      "nav.library",
+      "nav.rewards",
+      ...TREND_METRICS.map((m) => `analytics.metric.${m}`),
+      ...TREND_INTERVALS.map((i) => `analytics.interval.${i}`),
+      ...RESPONSE_STAGES.map((s) => `analytics.responseTime.${s}`),
+      ...REPORT_SOURCES.map((s) => `analytics.source.${s}`),
+      ...[1, 2, 3, 4, 5, 6, 7].map((d) => `analytics.weekday.${d}`),
+      ...[1, 2, 3, 4, 5, 6, 7].map((d) => `events.calendar.short.${d}`),
+      ...SCENARIO_WEATHERS.map((w) => `scenarios.weather.${w}`),
+      ...LIBRARY_REPORT_KINDS.map((k) => `library.reports.kinds.${k}`),
+      ...LIBRARY_REPORT_STATUSES.map((s) => `library.reports.status.${s}`),
+      ...REPORT_FORMATS.map((f) => `library.reports.formats.${f}`),
+      ...SCHEDULE_FREQUENCIES.map((f) => `schedules.frequencies.${f}`),
+      ...SCHEDULE_FREQUENCIES.map((f) => `schedules.cron.${f}`),
+      ...MEMORY_STATUSES.map((s) => `memory.status.${s}`),
+      ...MEMORY_ACCESS.map((a) => `memory.access.${a}`),
+      ...MEMORY_SECTIONS.map((s) => `memory.section.${s}`),
+      ...VERSION_CHANGES.map((c) => `memory.versions.change.${c}`),
+      ...LIBRARY_KINDS.map((k) => `events.kind.${k}`),
+      ...TREE_AXES.map((a) => `events.tree.axis.${a}`),
+      ...REWARD_REASONS.map((r) => `rewards.reason.${r}`),
+      ...BADGES.map((b) => `rewards.badge.${b}`),
+      ...BADGE_STATUSES.map((s) => `rewards.badgeStatus.${s}`),
+      ...NOMINATION_KINDS.map((k) => `rewards.nominationKind.${k}`),
+      ...NOMINATION_STATUSES.map((s) => `rewards.nominationStatus.${s}`),
+      ...SUBJECT_KINDS.map((k) => `rewards.nominations.subject.${k}`),
+    ];
+    for (const key of required) {
+      expect(arKeys.has(key), key).toBe(true);
+      expect(frKeys.has(key), key).toBe(true);
+    }
   });
 });
 

@@ -25,6 +25,8 @@ dependencies = [
   "prometheus-client==0.26.0",
   # ARI event stream (phase 7 telephony); already present through uvicorn[standard], pinned as a direct dependency.
   "websockets==17.2",
+  # Spreadsheet exports of the reports repository (phase 8 analytics).
+  "openpyxl==3.1.5",
 ]
 
 [dependency-groups]

@@ -3435,6 +3435,282 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The SMS app could not be opened. Call 198.'**
   String get offlineSmsFailed;
+
+  /// No description provided for @rewardsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My rewards'**
+  String get rewardsTitle;
+
+  /// No description provided for @homeRewardsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Points, badges and certificates earned by useful reports.'**
+  String get homeRewardsDesc;
+
+  /// No description provided for @rewardsBalanceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Points balance'**
+  String get rewardsBalanceLabel;
+
+  /// No description provided for @rewardsNoBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'No badge yet'**
+  String get rewardsNoBadge;
+
+  /// No description provided for @rewardsCurrentBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Current badge: {badge}'**
+  String rewardsCurrentBadge(String badge);
+
+  /// No description provided for @rewardsNextBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Next badge, {badge}: {points} points to go'**
+  String rewardsNextBadge(String badge, int points);
+
+  /// No description provided for @rewardsTopBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'You hold the highest badge. Thank you for your vigilance.'**
+  String get rewardsTopBadge;
+
+  /// No description provided for @rewardsConfirmNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Silver, gold and ambassador badges appear once a civil protection officer has confirmed them.'**
+  String get rewardsConfirmNote;
+
+  /// No description provided for @badgeBronze.
+  ///
+  /// In en, this message translates to:
+  /// **'Bronze'**
+  String get badgeBronze;
+
+  /// No description provided for @badgeSilver.
+  ///
+  /// In en, this message translates to:
+  /// **'Silver'**
+  String get badgeSilver;
+
+  /// No description provided for @badgeGold.
+  ///
+  /// In en, this message translates to:
+  /// **'Gold'**
+  String get badgeGold;
+
+  /// No description provided for @badgeAmbassador.
+  ///
+  /// In en, this message translates to:
+  /// **'Ambassador'**
+  String get badgeAmbassador;
+
+  /// No description provided for @rewardsPausedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Points paused'**
+  String get rewardsPausedTitle;
+
+  /// No description provided for @rewardsPausedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A disaster level is in force. New points are kept and will be added when the level drops.'**
+  String get rewardsPausedBody;
+
+  /// No description provided for @rewardsPendingPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'Points waiting: {points}'**
+  String rewardsPendingPoints(int points);
+
+  /// No description provided for @rewardsHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get rewardsHistoryTitle;
+
+  /// No description provided for @rewardsHistoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No points yet. Points are added when a report you sent is verified and closed.'**
+  String get rewardsHistoryEmpty;
+
+  /// No description provided for @rewardsShowMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Show more'**
+  String get rewardsShowMore;
+
+  /// No description provided for @pointsReasonReportVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified report'**
+  String get pointsReasonReportVerified;
+
+  /// No description provided for @pointsReasonHelpedRescue.
+  ///
+  /// In en, this message translates to:
+  /// **'Report that helped a rescue'**
+  String get pointsReasonHelpedRescue;
+
+  /// No description provided for @pointsReasonAccurateCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Right category chosen'**
+  String get pointsReasonAccurateCategory;
+
+  /// No description provided for @pointsReasonVolunteerMission.
+  ///
+  /// In en, this message translates to:
+  /// **'Volunteer mission completed'**
+  String get pointsReasonVolunteerMission;
+
+  /// No description provided for @pointsReasonManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjustment by the civil protection'**
+  String get pointsReasonManual;
+
+  /// No description provided for @pointsReasonRevocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Points withdrawn'**
+  String get pointsReasonRevocation;
+
+  /// No description provided for @pointsReasonOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get pointsReasonOther;
+
+  /// No description provided for @rewardsCapped.
+  ///
+  /// In en, this message translates to:
+  /// **'daily limit reached'**
+  String get rewardsCapped;
+
+  /// No description provided for @rewardsDailyCap.
+  ///
+  /// In en, this message translates to:
+  /// **'At most {points} points can be earned per day.'**
+  String rewardsDailyCap(int points);
+
+  /// No description provided for @rewardsCertificatesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Certificates'**
+  String get rewardsCertificatesTitle;
+
+  /// No description provided for @rewardsCertificatesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No certificate yet.'**
+  String get rewardsCertificatesEmpty;
+
+  /// No description provided for @rewardsCertificateYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Year {year}'**
+  String rewardsCertificateYear(String year);
+
+  /// No description provided for @distinctionVigilantCitizen.
+  ///
+  /// In en, this message translates to:
+  /// **'Vigilant citizen'**
+  String get distinctionVigilantCitizen;
+
+  /// No description provided for @distinctionBraveVolunteer.
+  ///
+  /// In en, this message translates to:
+  /// **'Brave volunteer'**
+  String get distinctionBraveVolunteer;
+
+  /// No description provided for @distinctionLeadingInstitution.
+  ///
+  /// In en, this message translates to:
+  /// **'Leading institution'**
+  String get distinctionLeadingInstitution;
+
+  /// No description provided for @distinctionBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'{badge} badge'**
+  String distinctionBadge(String badge);
+
+  /// No description provided for @distinctionOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Distinction'**
+  String get distinctionOther;
+
+  /// No description provided for @rewardsOpenPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the PDF certificate'**
+  String get rewardsOpenPdf;
+
+  /// No description provided for @rewardsPdfNoViewer.
+  ///
+  /// In en, this message translates to:
+  /// **'No app on this phone can open the PDF.'**
+  String get rewardsPdfNoViewer;
+
+  /// No description provided for @rewardsAnonymousTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Anonymous reports earn no points'**
+  String get rewardsAnonymousTitle;
+
+  /// No description provided for @rewardsAnonymousBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A report sent without an account cannot be linked to a person, so it earns no points, badges or certificates. Create an account to take part; reports already sent anonymously stay anonymous.'**
+  String get rewardsAnonymousBody;
+
+  /// No description provided for @rewardsSafetyNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Never put yourself in danger to report. Your safety comes first: in an emergency, call 198.'**
+  String get rewardsSafetyNotice;
+
+  /// No description provided for @rewardsPrizesNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Points, badges and certificates are a public recognition, not money. Any annual prize is subject to a decision of the competent authority.'**
+  String get rewardsPrizesNotice;
+
+  /// No description provided for @rewardsOfflineCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline: copy saved on {date}.'**
+  String rewardsOfflineCopy(String date);
+
+  /// No description provided for @rewardsHowTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How to earn points'**
+  String get rewardsHowTitle;
+
+  /// No description provided for @rewardsHowBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Points are added when a report you sent is verified and closed, with more when it helped a rescue or when you chose the right category, and for each volunteer mission completed. No points are given for false or rejected reports.'**
+  String get rewardsHowBody;
+
+  /// No description provided for @trackPointsEarned.
+  ///
+  /// In en, this message translates to:
+  /// **'Points earned by this report: {points}'**
+  String trackPointsEarned(int points);
+
+  /// No description provided for @trackPointsOpenRewards.
+  ///
+  /// In en, this message translates to:
+  /// **'See my rewards'**
+  String get trackPointsOpenRewards;
 }
 
 class _AppLocalizationsDelegate

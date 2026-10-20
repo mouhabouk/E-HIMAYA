@@ -1943,4 +1943,167 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get offlineSmsFailed => 'The SMS app could not be opened. Call 198.';
+
+  @override
+  String get rewardsTitle => 'My rewards';
+
+  @override
+  String get homeRewardsDesc =>
+      'Points, badges and certificates earned by useful reports.';
+
+  @override
+  String get rewardsBalanceLabel => 'Points balance';
+
+  @override
+  String get rewardsNoBadge => 'No badge yet';
+
+  @override
+  String rewardsCurrentBadge(String badge) {
+    return 'Current badge: $badge';
+  }
+
+  @override
+  String rewardsNextBadge(String badge, int points) {
+    return 'Next badge, $badge: $points points to go';
+  }
+
+  @override
+  String get rewardsTopBadge =>
+      'You hold the highest badge. Thank you for your vigilance.';
+
+  @override
+  String get rewardsConfirmNote =>
+      'Silver, gold and ambassador badges appear once a civil protection officer has confirmed them.';
+
+  @override
+  String get badgeBronze => 'Bronze';
+
+  @override
+  String get badgeSilver => 'Silver';
+
+  @override
+  String get badgeGold => 'Gold';
+
+  @override
+  String get badgeAmbassador => 'Ambassador';
+
+  @override
+  String get rewardsPausedTitle => 'Points paused';
+
+  @override
+  String get rewardsPausedBody =>
+      'A disaster level is in force. New points are kept and will be added when the level drops.';
+
+  @override
+  String rewardsPendingPoints(int points) {
+    return 'Points waiting: $points';
+  }
+
+  @override
+  String get rewardsHistoryTitle => 'History';
+
+  @override
+  String get rewardsHistoryEmpty =>
+      'No points yet. Points are added when a report you sent is verified and closed.';
+
+  @override
+  String get rewardsShowMore => 'Show more';
+
+  @override
+  String get pointsReasonReportVerified => 'Verified report';
+
+  @override
+  String get pointsReasonHelpedRescue => 'Report that helped a rescue';
+
+  @override
+  String get pointsReasonAccurateCategory => 'Right category chosen';
+
+  @override
+  String get pointsReasonVolunteerMission => 'Volunteer mission completed';
+
+  @override
+  String get pointsReasonManual => 'Adjustment by the civil protection';
+
+  @override
+  String get pointsReasonRevocation => 'Points withdrawn';
+
+  @override
+  String get pointsReasonOther => 'Other';
+
+  @override
+  String get rewardsCapped => 'daily limit reached';
+
+  @override
+  String rewardsDailyCap(int points) {
+    return 'At most $points points can be earned per day.';
+  }
+
+  @override
+  String get rewardsCertificatesTitle => 'Certificates';
+
+  @override
+  String get rewardsCertificatesEmpty => 'No certificate yet.';
+
+  @override
+  String rewardsCertificateYear(String year) {
+    return 'Year $year';
+  }
+
+  @override
+  String get distinctionVigilantCitizen => 'Vigilant citizen';
+
+  @override
+  String get distinctionBraveVolunteer => 'Brave volunteer';
+
+  @override
+  String get distinctionLeadingInstitution => 'Leading institution';
+
+  @override
+  String distinctionBadge(String badge) {
+    return '$badge badge';
+  }
+
+  @override
+  String get distinctionOther => 'Distinction';
+
+  @override
+  String get rewardsOpenPdf => 'Open the PDF certificate';
+
+  @override
+  String get rewardsPdfNoViewer => 'No app on this phone can open the PDF.';
+
+  @override
+  String get rewardsAnonymousTitle => 'Anonymous reports earn no points';
+
+  @override
+  String get rewardsAnonymousBody =>
+      'A report sent without an account cannot be linked to a person, so it earns no points, badges or certificates. Create an account to take part; reports already sent anonymously stay anonymous.';
+
+  @override
+  String get rewardsSafetyNotice =>
+      'Never put yourself in danger to report. Your safety comes first: in an emergency, call 198.';
+
+  @override
+  String get rewardsPrizesNotice =>
+      'Points, badges and certificates are a public recognition, not money. Any annual prize is subject to a decision of the competent authority.';
+
+  @override
+  String rewardsOfflineCopy(String date) {
+    return 'Offline: copy saved on $date.';
+  }
+
+  @override
+  String get rewardsHowTitle => 'How to earn points';
+
+  @override
+  String get rewardsHowBody =>
+      'Points are added when a report you sent is verified and closed, with more when it helped a rescue or when you chose the right category, and for each volunteer mission completed. No points are given for false or rejected reports.';
+
+  @override
+  String trackPointsEarned(int points) {
+    return 'Points earned by this report: $points';
+  }
+
+  @override
+  String get trackPointsOpenRewards => 'See my rewards';
 }

@@ -34,6 +34,7 @@ class FakeResponse {
     this.status, {
     this.json,
     this.text,
+    this.bytes,
     this.headers = const {},
     this.networkError = false,
   });
@@ -43,6 +44,7 @@ class FakeResponse {
     : status = 0,
       json = null,
       text = null,
+      bytes = null,
       headers = const {},
       networkError = true;
 
@@ -51,6 +53,9 @@ class FakeResponse {
 
   /// Raw body (SDP for WHIP), sent instead of [json].
   final String? text;
+
+  /// Binary body (a PDF), sent instead of [json] and [text].
+  final List<int>? bytes;
   final Map<String, String> headers;
   final bool networkError;
 }
@@ -96,6 +101,9 @@ class FakeAdapter implements HttpClientAdapter {
       for (final e in r.headers.entries) e.key.toLowerCase(): [e.value],
       if (r.json != null) 'content-type': ['application/json'],
     };
+    if (r.bytes != null) {
+      return ResponseBody.fromBytes(r.bytes!, r.status, headers: headers);
+    }
     return ResponseBody.fromString(
       r.text ?? (r.json == null ? '' : jsonEncode(r.json)),
       r.status,

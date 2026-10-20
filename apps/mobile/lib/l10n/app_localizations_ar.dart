@@ -1920,4 +1920,167 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get offlineSmsFailed => 'تعذّر فتح تطبيق الرسائل. اتصل بالرقم 198.';
+
+  @override
+  String get rewardsTitle => 'مكافآتي';
+
+  @override
+  String get homeRewardsDesc =>
+      'النقاط والشارات والشهادات المكتسبة بفضل البلاغات المفيدة.';
+
+  @override
+  String get rewardsBalanceLabel => 'رصيد النقاط';
+
+  @override
+  String get rewardsNoBadge => 'لا شارة بعد';
+
+  @override
+  String rewardsCurrentBadge(String badge) {
+    return 'الشارة الحالية: $badge';
+  }
+
+  @override
+  String rewardsNextBadge(String badge, int points) {
+    return 'الشارة التالية، $badge: بقيت $points نقطة';
+  }
+
+  @override
+  String get rewardsTopBadge => 'لديك أعلى شارة. شكرا على يقظتك.';
+
+  @override
+  String get rewardsConfirmNote =>
+      'تظهر الشارات الفضية والذهبية وشارة السفير بعد أن يؤكدها عون من الحماية المدنية.';
+
+  @override
+  String get badgeBronze => 'برونزية';
+
+  @override
+  String get badgeSilver => 'فضية';
+
+  @override
+  String get badgeGold => 'ذهبية';
+
+  @override
+  String get badgeAmbassador => 'سفير';
+
+  @override
+  String get rewardsPausedTitle => 'النقاط موقوفة مؤقتا';
+
+  @override
+  String get rewardsPausedBody =>
+      'مستوى الكارثة سارٍ حاليا. تُحفظ النقاط الجديدة وتُضاف عند انخفاض المستوى.';
+
+  @override
+  String rewardsPendingPoints(int points) {
+    return 'نقاط في الانتظار: $points';
+  }
+
+  @override
+  String get rewardsHistoryTitle => 'السجل';
+
+  @override
+  String get rewardsHistoryEmpty =>
+      'لا نقاط بعد. تُضاف النقاط عندما يتم التحقق من بلاغ أرسلته ثم غلقه.';
+
+  @override
+  String get rewardsShowMore => 'عرض المزيد';
+
+  @override
+  String get pointsReasonReportVerified => 'بلاغ تم التحقق منه';
+
+  @override
+  String get pointsReasonHelpedRescue => 'بلاغ ساعد في إنقاذ';
+
+  @override
+  String get pointsReasonAccurateCategory => 'اختيار الصنف الصحيح';
+
+  @override
+  String get pointsReasonVolunteerMission => 'مهمة تطوعية منجزة';
+
+  @override
+  String get pointsReasonManual => 'تعديل من الحماية المدنية';
+
+  @override
+  String get pointsReasonRevocation => 'نقاط مسحوبة';
+
+  @override
+  String get pointsReasonOther => 'أخرى';
+
+  @override
+  String get rewardsCapped => 'تم بلوغ الحد اليومي';
+
+  @override
+  String rewardsDailyCap(int points) {
+    return 'الحد الأقصى للنقاط في اليوم الواحد: $points.';
+  }
+
+  @override
+  String get rewardsCertificatesTitle => 'الشهادات';
+
+  @override
+  String get rewardsCertificatesEmpty => 'لا شهادة بعد.';
+
+  @override
+  String rewardsCertificateYear(String year) {
+    return 'سنة $year';
+  }
+
+  @override
+  String get distinctionVigilantCitizen => 'المواطن اليقظ';
+
+  @override
+  String get distinctionBraveVolunteer => 'المتطوع الشجاع';
+
+  @override
+  String get distinctionLeadingInstitution => 'المؤسسة الرائدة';
+
+  @override
+  String distinctionBadge(String badge) {
+    return 'شارة $badge';
+  }
+
+  @override
+  String get distinctionOther => 'تميّز';
+
+  @override
+  String get rewardsOpenPdf => 'فتح الشهادة بصيغة PDF';
+
+  @override
+  String get rewardsPdfNoViewer =>
+      'لا يوجد تطبيق على هذا الهاتف يمكنه فتح ملف PDF.';
+
+  @override
+  String get rewardsAnonymousTitle => 'البلاغات المجهولة لا تمنح نقاطا';
+
+  @override
+  String get rewardsAnonymousBody =>
+      'البلاغ المرسل دون حساب لا يمكن ربطه بأي شخص، لذلك لا يمنح نقاطا ولا شارات ولا شهادات. أنشئ حسابا للمشاركة؛ وتبقى البلاغات المرسلة سابقا دون هوية مجهولة.';
+
+  @override
+  String get rewardsSafetyNotice =>
+      'لا تعرّض نفسك أبدا للخطر من أجل التبليغ. سلامتك أولا: في حالة الطوارئ اتصل بالرقم 198.';
+
+  @override
+  String get rewardsPrizesNotice =>
+      'النقاط والشارات والشهادات اعتراف علني وليست مالا. وتخضع أي جائزة سنوية لقرار من السلطة المختصة.';
+
+  @override
+  String rewardsOfflineCopy(String date) {
+    return 'دون اتصال: نسخة محفوظة بتاريخ $date.';
+  }
+
+  @override
+  String get rewardsHowTitle => 'كيف تكسب النقاط';
+
+  @override
+  String get rewardsHowBody =>
+      'تُضاف النقاط عندما يتم التحقق من بلاغ أرسلته ثم غلقه، وتكون أكثر إذا ساعد في إنقاذ أو إذا اخترت الصنف الصحيح، وعن كل مهمة تطوعية منجزة. لا نقاط للبلاغات الكاذبة أو المرفوضة.';
+
+  @override
+  String trackPointsEarned(int points) {
+    return 'النقاط المكتسبة بفضل هذا البلاغ: $points';
+  }
+
+  @override
+  String get trackPointsOpenRewards => 'عرض مكافآتي';
 }

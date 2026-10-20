@@ -1961,4 +1961,169 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get offlineSmsFailed =>
       'L’application SMS n’a pas pu être ouverte. Appelez le 198.';
+
+  @override
+  String get rewardsTitle => 'Mes récompenses';
+
+  @override
+  String get homeRewardsDesc =>
+      'Points, badges et certificats obtenus grâce aux signalements utiles.';
+
+  @override
+  String get rewardsBalanceLabel => 'Solde de points';
+
+  @override
+  String get rewardsNoBadge => 'Pas encore de badge';
+
+  @override
+  String rewardsCurrentBadge(String badge) {
+    return 'Badge actuel : $badge';
+  }
+
+  @override
+  String rewardsNextBadge(String badge, int points) {
+    return 'Prochain badge, $badge : encore $points points';
+  }
+
+  @override
+  String get rewardsTopBadge =>
+      'Vous avez le badge le plus élevé. Merci pour votre vigilance.';
+
+  @override
+  String get rewardsConfirmNote =>
+      'Les badges argent, or et ambassadeur apparaissent après confirmation par un agent de la protection civile.';
+
+  @override
+  String get badgeBronze => 'Bronze';
+
+  @override
+  String get badgeSilver => 'Argent';
+
+  @override
+  String get badgeGold => 'Or';
+
+  @override
+  String get badgeAmbassador => 'Ambassadeur';
+
+  @override
+  String get rewardsPausedTitle => 'Points suspendus';
+
+  @override
+  String get rewardsPausedBody =>
+      'Un niveau de catastrophe est en vigueur. Les nouveaux points sont conservés et seront ajoutés quand le niveau baissera.';
+
+  @override
+  String rewardsPendingPoints(int points) {
+    return 'Points en attente : $points';
+  }
+
+  @override
+  String get rewardsHistoryTitle => 'Historique';
+
+  @override
+  String get rewardsHistoryEmpty =>
+      'Pas encore de points. Ils sont ajoutés quand un de vos signalements est vérifié puis clôturé.';
+
+  @override
+  String get rewardsShowMore => 'Afficher plus';
+
+  @override
+  String get pointsReasonReportVerified => 'Signalement vérifié';
+
+  @override
+  String get pointsReasonHelpedRescue => 'Signalement ayant aidé un sauvetage';
+
+  @override
+  String get pointsReasonAccurateCategory => 'Bonne catégorie choisie';
+
+  @override
+  String get pointsReasonVolunteerMission => 'Mission bénévole accomplie';
+
+  @override
+  String get pointsReasonManual => 'Ajustement par la protection civile';
+
+  @override
+  String get pointsReasonRevocation => 'Points retirés';
+
+  @override
+  String get pointsReasonOther => 'Autre';
+
+  @override
+  String get rewardsCapped => 'plafond journalier atteint';
+
+  @override
+  String rewardsDailyCap(int points) {
+    return 'Au plus $points points peuvent être gagnés par jour.';
+  }
+
+  @override
+  String get rewardsCertificatesTitle => 'Certificats';
+
+  @override
+  String get rewardsCertificatesEmpty => 'Pas encore de certificat.';
+
+  @override
+  String rewardsCertificateYear(String year) {
+    return 'Année $year';
+  }
+
+  @override
+  String get distinctionVigilantCitizen => 'Citoyen vigilant';
+
+  @override
+  String get distinctionBraveVolunteer => 'Bénévole courageux';
+
+  @override
+  String get distinctionLeadingInstitution => 'Institution exemplaire';
+
+  @override
+  String distinctionBadge(String badge) {
+    return 'Badge $badge';
+  }
+
+  @override
+  String get distinctionOther => 'Distinction';
+
+  @override
+  String get rewardsOpenPdf => 'Ouvrir le certificat PDF';
+
+  @override
+  String get rewardsPdfNoViewer =>
+      'Aucune application de ce téléphone ne peut ouvrir le PDF.';
+
+  @override
+  String get rewardsAnonymousTitle =>
+      'Les signalements anonymes ne rapportent pas de points';
+
+  @override
+  String get rewardsAnonymousBody =>
+      'Un signalement envoyé sans compte ne peut être rattaché à personne : il ne rapporte ni points, ni badges, ni certificats. Créez un compte pour participer ; les signalements déjà envoyés anonymement restent anonymes.';
+
+  @override
+  String get rewardsSafetyNotice =>
+      'Ne vous mettez jamais en danger pour signaler. Votre sécurité passe avant tout : en cas d’urgence, appelez le 198.';
+
+  @override
+  String get rewardsPrizesNotice =>
+      'Les points, badges et certificats sont une reconnaissance publique, pas de l’argent. Tout prix annuel est soumis à une décision de l’autorité compétente.';
+
+  @override
+  String rewardsOfflineCopy(String date) {
+    return 'Hors ligne : copie enregistrée le $date.';
+  }
+
+  @override
+  String get rewardsHowTitle => 'Comment gagner des points';
+
+  @override
+  String get rewardsHowBody =>
+      'Des points sont ajoutés quand un de vos signalements est vérifié puis clôturé, davantage s’il a aidé un sauvetage ou si vous avez choisi la bonne catégorie, et pour chaque mission bénévole accomplie. Aucun point pour un signalement faux ou rejeté.';
+
+  @override
+  String trackPointsEarned(int points) {
+    return 'Points obtenus grâce à ce signalement : $points';
+  }
+
+  @override
+  String get trackPointsOpenRewards => 'Voir mes récompenses';
 }

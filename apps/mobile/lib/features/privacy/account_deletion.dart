@@ -54,6 +54,7 @@ class CitizenRights {
     final secure = _ref.read(secureStoreProvider);
     await secure.delete(SecureStoreKeys.authSession);
     await secure.delete(SecureStoreKeys.orgCache);
+    await secure.delete(SecureStoreKeys.rewardsCache);
     await _ref.read(deviceKeyStoreProvider).forget();
     final notifications = _ref.read(pushNotificationsProvider);
     if (notifications is LocalPushNotifications) {

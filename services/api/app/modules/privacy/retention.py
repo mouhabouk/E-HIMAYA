@@ -20,6 +20,8 @@ at once and a crash leaves at most one batch to redo. Durations come from the se
 | erasure_requests    | erasure requests once the identity-provider account was disabled       | 30 days  |
 | calls, sms_inbound, | telephony (phase 7): calls with their recordings, inbound SMS, retired | 2 years  |
 | operator_endpoints  | operator endpoints (app.modules.telephony.retention)                   |          |
+| rewards_ledger      | points ledger and queued awards lose the link to anonymised reports    | (reports)|
+|                     | (app.modules.rewards.privacy)                                          |          |
 """
 
 import asyncio
@@ -35,6 +37,7 @@ from app.core.config import Settings, get_settings
 from app.core.storage import get_store
 from app.modules.audit import service as audit
 from app.modules.identity.models import DETACHED_ACCOUNT_ID
+from app.modules.rewards import privacy as rewards
 from app.modules.telephony import retention as telephony
 
 log = structlog.get_logger()
@@ -247,6 +250,8 @@ JOBS: list[tuple[str, Job]] = [
     ("calls", telephony.purge_calls),
     ("sms_inbound", telephony.purge_sms_inbound),
     ("operator_endpoints", telephony.purge_endpoints),
+    # After "reports": detaches the ledger from the reports anonymised in this run.
+    ("rewards_ledger", rewards.detach_anonymised),
 ]
 
 

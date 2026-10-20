@@ -196,6 +196,14 @@ class SettingsScreen extends ConsumerWidget {
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.push(Routes.volunteer),
             ),
+          if (identity.hasIdentity && identity.role == UserRole.citizen)
+            ListTile(
+              key: const Key('settings-rewards'),
+              leading: const Icon(Icons.military_tech),
+              title: Text(l10n.rewardsTitle),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push(Routes.rewards),
+            ),
           if (identity.isRegistered && orgs.isNotEmpty)
             ListTile(
               key: const Key('settings-institution'),
