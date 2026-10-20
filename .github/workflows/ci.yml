@@ -378,7 +378,7 @@ jobs:
           python-version: "3.12"
 
       - name: Restore models
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             /home/runner/ai-models
@@ -468,13 +468,13 @@ jobs:
           python-version: "3.12"
 
       - name: Restore models
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: /home/runner/vision-models
           key: vision-models-${{ hashFiles('services/vision/models/fetch_models.py', 'services/vision/models/weights/**') }}
 
       - name: Restore evaluation images
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: services/vision/eval/cache
           key: vision-eval-${{ hashFiles('services/vision/eval/samples.json') }}
