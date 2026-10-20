@@ -215,8 +215,11 @@ export interface BreakGlassGrant {
   justification: string;
   granted_at: string;
   expires_at: string;
+  /** End of the grant: expiry or revocation (null while active). */
+  ended_at?: string | null;
   revoked_at: string | null;
-  revoked_by: string | null;
+  /** Computed by the API; the page falls back to the dates when absent. */
+  state?: "active" | "pending_review" | "reviewed";
   reviewed_by: string | null;
   reviewed_at: string | null;
   review_outcome: ReviewOutcome | null;

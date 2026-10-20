@@ -5,7 +5,7 @@ from typing import Any
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.security import Principal
+from app.core.security import Principal, current_principal
 from app.modules.audit.models import AuditLog
 
 SYSTEM_ACTOR = "system"
@@ -40,6 +40,11 @@ async def record(
     inside the hash chain, and exposed by the generated column ``audit.log.gouvernorats`` to the regional audit view.
     Omitted: a national-only entry."""
     payload = dict(details or {})
+    principal = current_principal.get()
+    if "actor_name" not in payload and principal is not None and actor == actor_of(principal):
+        name = name_of(principal)
+        if name:
+            payload["actor_name"] = name
     if gouvernorats:
         payload["gouvernorats"] = sorted({int(code) for code in gouvernorats})
     entry = AuditLog(actor=actor, action=action, target=target, reason=reason, details=payload)

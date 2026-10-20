@@ -88,7 +88,6 @@ export function makeGrant(overrides: Partial<BreakGlassGrant> = {}): BreakGlassG
     granted_at: "2026-10-20T08:00:00Z",
     expires_at: "2026-10-20T09:00:00Z",
     revoked_at: null,
-    revoked_by: null,
     reviewed_by: null,
     reviewed_at: null,
     review_outcome: null,
