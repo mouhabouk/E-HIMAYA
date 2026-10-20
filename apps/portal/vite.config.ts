@@ -2,6 +2,20 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
+const CHUNKS: Record<string, string[]> = {
+  maplibre: ["maplibre-gl"],
+  react: ["react", "react-dom", "react-router", "scheduler"],
+  vendor: ["@tanstack/react-query", "i18next", "react-i18next", "oidc-client-ts"],
+};
+
+// Vite 8 (Rolldown) only takes the function form of manualChunks.
+function manualChunks(id: string): string | undefined {
+  for (const [chunk, packages] of Object.entries(CHUNKS)) {
+    if (packages.some((name) => id.includes(`/node_modules/${name}/`))) return chunk;
+  }
+  return undefined;
+}
+
 export default defineConfig({
   plugins: [react()],
   server: { port: 5174, strictPort: true },
@@ -12,13 +26,7 @@ export default defineConfig({
     // maplibre-gl is ~1 MB minified; it is split out and only loaded by map screens.
     chunkSizeWarningLimit: 1100,
     rollupOptions: {
-      output: {
-        manualChunks: {
-          maplibre: ["maplibre-gl"],
-          react: ["react", "react-dom", "react-dom/client", "react-router"],
-          vendor: ["@tanstack/react-query", "i18next", "react-i18next", "oidc-client-ts"],
-        },
-      },
+      output: { manualChunks },
     },
   },
   test: {
