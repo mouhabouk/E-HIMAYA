@@ -45,7 +45,22 @@ import {
   TRAINING_STATUSES,
 } from "../lib/types";
 import { DETECTION_LABELS, STREAM_END_REASONS, STREAM_SOURCES, STREAM_STATUSES } from "../lib/streamTypes";
+import {
+  BREAKGLASS_STATUSES,
+  BREAKGLASS_TARGETS,
+  COMMAND_LEVELS,
+  ESCALATION_KINDS,
+  ESCALATION_STATES,
+  GEO_REASONS,
+  GEO_STATES,
+  PHASE9_TIMELINE_KINDS,
+  RESOURCE_REQUEST_STATUSES,
+  REVIEW_OUTCOMES,
+  SCOPE_LEVELS,
+  SLA_BANDS,
+} from "../lib/phase9Types";
 import ar from "./ar.json";
+import en from "./en.json";
 import fr from "./fr.json";
 import { applyDocumentLanguage, createI18n, directionOf } from "./index";
 
@@ -63,26 +78,50 @@ function flatten(obj: unknown, prefix = ""): Map<string, unknown> {
 
 const arKeys = flatten(ar);
 const frKeys = flatten(fr);
+const enKeys = flatten(en);
 
 function placeholders(s: unknown): string[] {
   return typeof s === "string" ? [...s.matchAll(/\{\{(\w+)\}\}/g)].map((m) => m[1] ?? "").sort() : [];
 }
 
 describe("translation files", () => {
-  it("have identical key sets in ar and fr", () => {
+  it("have identical key sets in ar, fr and en", () => {
     expect([...arKeys.keys()].sort()).toEqual([...frKeys.keys()].sort());
+    expect([...enKeys.keys()].sort()).toEqual([...arKeys.keys()].sort());
   });
 
   it("have non-empty string values only", () => {
-    for (const [key, value] of [...arKeys, ...frKeys]) {
+    for (const [key, value] of [...arKeys, ...frKeys, ...enKeys]) {
       expect(typeof value, key).toBe("string");
       expect((value as string).trim(), key).not.toBe("");
     }
   });
 
-  it("use the same interpolation placeholders in both languages", () => {
+  it("use the same interpolation placeholders in the three languages", () => {
     for (const [key, value] of arKeys) {
       expect(placeholders(frKeys.get(key)), key).toEqual(placeholders(value));
+      expect(placeholders(enKeys.get(key)), key).toEqual(placeholders(value));
+    }
+  });
+
+  it("cover every code of the phase 9 contract (rooms, SLA, geography, escalation, break-glass)", () => {
+    const required = [
+      ...SLA_BANDS.map((b) => `sla.band.${b}`),
+      ...GEO_STATES.map((g) => `geo.state.${g}`),
+      ...GEO_REASONS.map((r) => `geo.reasonCode.${r}`),
+      ...ESCALATION_STATES.map((e) => `escalation.state.${e}`),
+      ...ESCALATION_KINDS.map((e) => `escalation.kind.${e}`),
+      ...COMMAND_LEVELS.map((l) => `command.level.${l}`),
+      ...COMMAND_LEVELS.map((l) => `command.levelHelp.${l}`),
+      ...RESOURCE_REQUEST_STATUSES.map((r) => `resourceRequests.status.${r}`),
+      ...BREAKGLASS_TARGETS.map((b) => `breakGlass.target.${b}`),
+      ...BREAKGLASS_STATUSES.map((b) => `breakGlass.status.${b}`),
+      ...REVIEW_OUTCOMES.map((o) => `breakGlass.review.${o}`),
+      ...SCOPE_LEVELS.map((l) => `accounts.scopeLevel.${l}`),
+      ...PHASE9_TIMELINE_KINDS.map((k) => `incidents.timeline.${k}`),
+    ];
+    for (const key of required) {
+      for (const keys of [arKeys, frKeys, enKeys]) expect(keys.has(key), key).toBe(true);
     }
   });
 
@@ -219,6 +258,7 @@ describe("phase 8 translations", () => {
     for (const key of required) {
       expect(arKeys.has(key), key).toBe(true);
       expect(frKeys.has(key), key).toBe(true);
+      expect(enKeys.has(key), key).toBe(true);
     }
   });
 });
@@ -227,6 +267,7 @@ describe("document language and direction", () => {
   it("maps languages to directions", () => {
     expect(directionOf("ar")).toBe("rtl");
     expect(directionOf("fr")).toBe("ltr");
+    expect(directionOf("en")).toBe("ltr");
   });
 
   it("sets <html lang dir> on start and on switch, and persists the choice", async () => {
@@ -239,6 +280,11 @@ describe("document language and direction", () => {
     expect(document.documentElement.dir).toBe("ltr");
     expect(localStorage.getItem("ehimaya.lang")).toBe("fr");
     expect(document.title).toBe(fr.app.documentTitle);
+
+    await i18n.changeLanguage("en");
+    expect(document.documentElement.lang).toBe("en");
+    expect(document.documentElement.dir).toBe("ltr");
+    expect(document.title).toBe(en.app.documentTitle);
 
     await i18n.changeLanguage("ar");
     expect(document.documentElement.dir).toBe("rtl");

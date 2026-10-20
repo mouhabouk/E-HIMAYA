@@ -25,7 +25,14 @@
     "reportsLibrary": "Rapports",
     "memory": "Mémoire nationale",
     "library": "Médiathèque des événements",
-    "rewards": "Récompenses"
+    "rewards": "Récompenses",
+    "settings": "Paramètres nationaux",
+    "late": "En retard",
+    "geoQueue": "Vérification du lieu",
+    "resourceRequests": "Demandes de moyens",
+    "accounts": "Comptes",
+    "audit": "Audit",
+    "breakGlass": "Accès exceptionnels"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -40,7 +47,8 @@
       "system": "système",
       "light": "clair",
       "dark": "sombre"
-    }
+    },
+    "language": "Langue"
   },
   "roles": {
     "operator": "Opérateur",
@@ -50,7 +58,10 @@
     "central_committee": "Comité central",
     "org_auditor": "Auditeur des établissements",
     "content_editor": "Éditeur de contenu",
-    "sysadmin": "Administrateur système"
+    "sysadmin": "Administrateur système",
+    "security_admin": "Administrateur sécurité",
+    "ai_admin": "Administrateur IA",
+    "regional_account_admin": "Administrateur des comptes"
   },
   "status": {
     "received": "Reçu",
@@ -124,7 +135,9 @@
     "yes": "Oui",
     "no": "Non",
     "cancel": "Annuler",
-    "none": "Aucun"
+    "none": "Aucun",
+    "close": "Fermer",
+    "reasonLength": "Entre {{min}} et {{max}} caractères."
   },
   "errors": {
     "authentication_required": "Session expirée. Veuillez vous reconnecter.",
@@ -221,7 +234,30 @@
     "already_revoked": "Déjà révoqué.",
     "invalid_rule": "Valeur de règle invalide (points ou multiplicateur selon le motif).",
     "invalid_evidence": "Un justificatif indiqué est introuvable.",
-    "nothing_to_revoke": "Rien à révoquer."
+    "nothing_to_revoke": "Rien à révoquer.",
+    "action_not_allowed": "Action non autorisée pour votre compte.",
+    "anon_quota_exhausted": "Quota de signalements anonymes atteint ; inscription requise.",
+    "claim_required": "Prenez d’abord le signalement en charge.",
+    "already_claimed": "Signalement déjà pris en charge par une autre salle.",
+    "not_claimable": "Votre salle ne peut pas prendre ce signalement maintenant.",
+    "referral_pending": "Un renvoi est déjà en attente.",
+    "referral_not_pending": "Aucun renvoi en attente.",
+    "geo_not_pending": "Le lieu n’est pas en attente de vérification.",
+    "field_action_regional_only": "L’intervention de terrain relève de la région ; faites une demande de moyens.",
+    "possible_duplicate": "Un incident ouvert semblable existe à proximité.",
+    "participant_active": "Ce gouvernorat a encore des engagements ou signalements actifs.",
+    "request_not_pending": "La demande n’est plus en attente.",
+    "resource_not_owned": "Ce moyen appartient à un autre gouvernorat ; faites une demande.",
+    "invalid_setting": "Valeur de paramètre invalide.",
+    "requires_formal_approval": "Exige une approbation formelle.",
+    "breakglass_justification_required": "Justification requise (20 caractères minimum).",
+    "invalid_target": "Portée invalide.",
+    "breakglass_self_review": "Vous ne pouvez pas revoir votre propre accès.",
+    "already_reviewed": "Déjà revu.",
+    "role_not_grantable": "Vous ne pouvez pas attribuer ce rôle.",
+    "self_edit": "Vous ne pouvez pas modifier votre propre compte.",
+    "identity_provider_error": "Le service d’identité ne répond pas.",
+    "username_taken": "Identifiant déjà utilisé."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -353,8 +389,9 @@
     "badge": "Priorité {{score}} ({{band}})",
     "none": "Priorité non encore évaluée",
     "band": {
+      "critical": "critique",
       "high": "haute",
-      "medium": "moyenne",
+      "medium": "normale",
       "low": "basse"
     }
   },
@@ -552,7 +589,22 @@
       "callout_declined": "Volontaire indisponible",
       "callout_cancelled": "Appel annulé",
       "evaluated": "Clôture et évaluation",
-      "level_changed": "Changement de niveau opérationnel"
+      "level_changed": "Changement de niveau opérationnel",
+      "participant_added": "Gouvernorat participant ajouté",
+      "participant_removed": "Gouvernorat participant retiré",
+      "lead_transferred": "Pilotage transféré",
+      "command_level_changed": "Niveau de commandement modifié",
+      "duplicate_override": "Création malgré un incident proche",
+      "resource_requested": "Moyens demandés",
+      "resource_request_approved": "Demande de moyens acceptée",
+      "resource_request_refused": "Demande de moyens refusée",
+      "resource_request_cancelled": "Demande de moyens annulée",
+      "report_late": "Signalement en retard",
+      "report_central_claim": "Signalement pris par le centre",
+      "report_referred": "Signalement renvoyé",
+      "report_referral_accepted": "Renvoi accepté",
+      "report_referral_refused": "Renvoi refusé",
+      "report_geo_verified": "Lieu d’un signalement vérifié"
     },
     "via": {
       "suggestion": "(suggestion confirmée)",
@@ -2803,5 +2855,357 @@
       "points": "Points",
       "none": "Aucun classement pour cette sélection."
     }
+  },
+  "rooms": {
+    "central": "Salle centrale",
+    "regional": "Salle de {{name}}",
+    "none": "Aucune salle"
+  },
+  "claim": {
+    "title": "Prise en charge",
+    "handledBy": "Pris en charge par",
+    "unclaimed": "Non pris en charge",
+    "claimedBy": "{{name}} ({{room}})",
+    "someone": "un agent",
+    "claim": "Prendre en charge",
+    "claimed": "Signalement pris en charge par votre salle.",
+    "release": "Libérer",
+    "reason": "Motif",
+    "alreadyClaimedBy": "Déjà pris en charge par {{name}} ({{room}}).",
+    "dialog": {
+      "release": "Libérer le signalement",
+      "accept": "Accepter le renvoi",
+      "refuse": "Refuser le renvoi"
+    },
+    "confirm": {
+      "release": "Confirmer la libération",
+      "accept": "Confirmer l’acceptation",
+      "refuse": "Confirmer le refus"
+    },
+    "done": {
+      "release": "Signalement libéré ; le délai ne repart pas à zéro.",
+      "accept": "Renvoi accepté : le signalement est à votre salle.",
+      "refuse": "Renvoi refusé : le signalement revient au centre."
+    }
+  },
+  "sla": {
+    "bandLabel": "Niveau d’urgence",
+    "deadline": "Délai de prise en charge",
+    "remaining": "restant",
+    "overdue": "de retard",
+    "band": {
+      "critical": "Critique",
+      "high": "Élevé",
+      "normal": "Normal",
+      "low": "Faible"
+    }
+  },
+  "escalation": {
+    "label": "Escalade",
+    "trail": "Historique d’escalade et de renvoi",
+    "none": "Aucune escalade.",
+    "by": "par {{actor}}",
+    "fromTo": "de {{from}} vers {{to}}",
+    "state": {
+      "none": "Aucune",
+      "late": "En retard",
+      "central_responding": "Réponse du centre",
+      "referred": "Renvoyé à une région",
+      "referral_accepted": "Renvoi accepté",
+      "referral_refused": "Renvoi refusé"
+    },
+    "kind": {
+      "late": "Délai dépassé",
+      "central_claim": "Prise en charge par le centre",
+      "referral": "Renvoi à une région",
+      "referral_accepted": "Renvoi accepté",
+      "referral_refused": "Renvoi refusé",
+      "geo_verified": "Lieu vérifié",
+      "claim_released": "Prise en charge libérée"
+    }
+  },
+  "referral": {
+    "open": "Renvoyer à une région",
+    "title": "Renvoi vers une salle régionale",
+    "to": "Gouvernorat",
+    "choose": "Choisir…",
+    "reason": "Motif du renvoi",
+    "withDirective": "Joindre une directive",
+    "directive": "Directive",
+    "submit": "Renvoyer",
+    "sent": "Renvoi envoyé.",
+    "accept": "Accepter le renvoi",
+    "refuse": "Refuser le renvoi",
+    "note": "Note (facultative)",
+    "referredTo": "renvoyé à {{name}}"
+  },
+  "geo": {
+    "label": "Lieu de l’incident",
+    "state": {
+      "trusted": "Fiable",
+      "pending": "À vérifier",
+      "contradictory": "Contradictoire",
+      "verified": "Vérifié"
+    },
+    "reasonCode": {
+      "accuracy_crosses_border": "Le cercle de précision déborde sur un autre gouvernorat",
+      "outside_boundaries": "Hors des limites des gouvernorats",
+      "low_accuracy": "Précision insuffisante",
+      "accuracy_missing": "Précision inconnue"
+    },
+    "candidates": "Gouvernorats candidats",
+    "candidatesList": "candidats : {{list}}",
+    "noCandidate": "Aucun candidat",
+    "otherGouvernorats": "Autres gouvernorats",
+    "open": "Vérifier le lieu",
+    "dialogTitle": "Vérification géographique",
+    "verifiedGouvernorat": "Gouvernorat compétent",
+    "reason": "Motif",
+    "verify": "Valider le gouvernorat",
+    "verified": "Gouvernorat compétent enregistré.",
+    "verifiedCode": "Signalement {{code}} vérifié.",
+    "unverified": "Non vérifié",
+    "queueTitle": "File de vérification géographique",
+    "queueIntro": "Signalements dont le lieu est incertain ou contradictoire : aucune attribution avant vérification. Les signalements critiques sont aussi visibles des salles candidates pour ne pas être retardés.",
+    "empty": "Aucun signalement à vérifier.",
+    "mapLabel": "Carte du signalement {{code}}",
+    "selected": "Signalement choisi :",
+    "readOnly": "La vérification relève de la salle centrale."
+  },
+  "late": {
+    "title": "Signalements en retard",
+    "intro": "Signalements dont le délai de prise en charge est dépassé. La salle centrale peut y répondre et orienter la région ; l’intervention sur le terrain reste régionale.",
+    "empty": "Aucun signalement en retard.",
+    "caption": "Liste des signalements en retard",
+    "actions": "Actions",
+    "claim": "Répondre depuis le centre",
+    "claimLabel": "Répondre au signalement {{code}} depuis le centre",
+    "open": "Ouvrir"
+  },
+  "nearby": {
+    "title": "Incidents ouverts à proximité",
+    "warning": "Ce signalement concerne peut-être un incident ouvert, éventuellement dans un autre gouvernorat. Le rattacher ajoute votre gouvernorat comme participant.",
+    "lead": "Pilote : {{name}}",
+    "participants": "participants : {{list}}",
+    "reports": "signalements : {{count}}",
+    "link": "Rattacher à cet incident",
+    "duplicate": "Un incident ouvert semblable existe à proximité. Un incident concurrent n’est créé qu’avec un motif.",
+    "openDuplicate": "Incident {{id}}",
+    "overrideReason": "Motif de création malgré tout",
+    "createAnyway": "Créer quand même"
+  },
+  "command": {
+    "title": "Commandement et participants",
+    "lead": "Gouvernorat pilote",
+    "noLead": "Non défini (centre)",
+    "participants": "Gouvernorats participants",
+    "levelLabel": "Niveau de commandement",
+    "level": {
+      "regional": "Régional",
+      "central": "Central"
+    },
+    "levelHelp": {
+      "regional": "La salle pilote conduit l’incident ; le centre suit.",
+      "central": "Commandement central : le centre coordonne et décide des demandes de moyens ; les régions interviennent."
+    },
+    "auto": "Automatique",
+    "manual": "fixé manuellement",
+    "add": "Ajouter un participant",
+    "remove": "Retirer",
+    "removeLabel": "Retirer {{name}}",
+    "gouvernorat": "Gouvernorat",
+    "transfer": "Transférer le pilotage",
+    "transferHelp": "Le pilote actuel devient participant.",
+    "newLead": "Nouveau pilote",
+    "setLevel": "Changer le niveau de commandement",
+    "apply": "Appliquer",
+    "reason": "Motif",
+    "done": "Enregistré."
+  },
+  "resourceRequests": {
+    "title": "Demandes de moyens entre gouvernorats",
+    "pageTitle": "Demandes de moyens",
+    "intro": "Chaque gouvernorat décide de ses moyens : une demande reçue est acceptée ou refusée par la région qui les possède.",
+    "direction": "Sens",
+    "incoming": "Reçues",
+    "outgoing": "Envoyées",
+    "none": "Aucune demande.",
+    "centralNotice": "La salle centrale n’engage pas directement les moyens régionaux : demandez-les à la région qui les possède.",
+    "newTitle": "Demander des moyens à un autre gouvernorat",
+    "to": "Gouvernorat sollicité",
+    "kind": "Type de moyen",
+    "quantity": "Quantité",
+    "reason": "Motif de la demande",
+    "submit": "Envoyer la demande",
+    "sent": "Demande envoyée.",
+    "specificResource": "Moyen désigné",
+    "summary": "{{quantity}} × {{what}}",
+    "fromTo": "de {{from}} à {{to}}",
+    "openIncident": "Ouvrir l’incident",
+    "requestedBy": "Demandé par {{name}} le {{at}}",
+    "decidedBy": "décidé par {{name}} le {{at}}",
+    "approve": "Accepter",
+    "approveTitle": "Accepter et engager les moyens",
+    "pickResources": "Choisir les moyens (demandés : {{count}})",
+    "note": "Note",
+    "refuse": "Refuser",
+    "refuseTitle": "Refuser la demande",
+    "refuseReason": "Motif du refus",
+    "cancel": "Annuler la demande",
+    "status": {
+      "pending": "En attente",
+      "approved": "Acceptée",
+      "refused": "Refusée",
+      "cancelled": "Annulée"
+    }
+  },
+  "settings": {
+    "title": "Paramètres nationaux",
+    "intro": "Valeurs appliquées à toutes les salles. Chaque modification exige un motif et est tracée.",
+    "readOnly": "Lecture seule : la modification relève du comité central.",
+    "readOnlyItem": "Non modifiable avec votre compte.",
+    "reason": "Motif de la modification",
+    "seconds": "s",
+    "metres": "m",
+    "defaultValue": "Valeur par défaut (jamais modifiée).",
+    "lastChange": "Dernière modification : {{name}}, {{at}} (version {{version}})",
+    "delays": {
+      "title": "Délai de prise en charge par niveau",
+      "help": "Passé ce délai sans prise en charge, le signalement passe en retard et le centre peut y répondre (par défaut 60 s critique, 90 s élevé, 120 s normal, 180 s faible).",
+      "order": "Les délais doivent respecter : critique ≤ élevé ≤ normal ≤ faible."
+    },
+    "bands": {
+      "title": "Seuils des niveaux d’urgence",
+      "help": "Score de priorité minimal (0–100) de chaque niveau ; en dessous de « normal », le niveau est faible.",
+      "order": "Il faut : critique > élevé > normal.",
+      "lowerBound": "Seuil {{band}}"
+    },
+    "quota": {
+      "title": "Quota de signalements anonymes",
+      "help": "Nombre de signalements acceptés par installation avant l’inscription. Les SOS ne sont jamais refusés et le 198 reste toujours accessible.",
+      "label": "Signalements"
+    },
+    "accuracy": {
+      "title": "Précision de lieu fiable",
+      "help": "Un lieu moins précis que cette valeur passe par la vérification géographique.",
+      "label": "Maximum"
+    },
+    "fixed": {
+      "title": "Valeurs fixes",
+      "enforcedSince": "Délais appliqués depuis",
+      "realSend": "Envoi réel des alertes",
+      "realSendNote": "désactivé ; exige une approbation formelle."
+    },
+    "validation": {
+      "integer": "Saisissez des nombres entiers.",
+      "range": "Valeurs entre {{min}} et {{max}}.",
+      "order": "Ordre des valeurs incorrect."
+    }
+  },
+  "accounts": {
+    "title": "Comptes de la salle",
+    "intro": "Comptes du gouvernorat de {{name}} uniquement.",
+    "introNational": "Comptes de tous les gouvernorats et de la salle centrale.",
+    "new": "Nouveau compte",
+    "create": "Créer le compte",
+    "fields": {
+      "username": "Identifiant",
+      "email": "E-mail",
+      "first_name": "Prénom",
+      "last_name": "Nom"
+    },
+    "roles": "Rôles",
+    "role": "Rôle",
+    "lockedRoles": "Rôles que vous ne pouvez pas modifier : {{list}}",
+    "scope": "Périmètre",
+    "scopeLevel": {
+      "gouvernorat": "Gouvernorat",
+      "national": "National"
+    },
+    "ownGouvernorat": "Le compte est créé dans le gouvernorat de {{name}}.",
+    "requiredActions": "À la première connexion : mot de passe, double authentification et confirmation de l’e-mail.",
+    "invalid": "Complétez les champs requis et choisissez au moins un rôle.",
+    "updated": "Compte mis à jour.",
+    "resetDone": "Lien de réinitialisation envoyé.",
+    "enabled": "Actif",
+    "disabled": "Désactivé",
+    "enable": "Activer",
+    "disable": "Désactiver",
+    "editRoles": "Modifier les rôles",
+    "editRolesOf": "Rôles de {{name}}",
+    "save": "Enregistrer",
+    "reset": "Réinitialiser les accès",
+    "self": "Votre compte",
+    "state": "État",
+    "mfa": "Double authentification",
+    "empty": "Aucun compte.",
+    "caption": "Liste des comptes"
+  },
+  "audit": {
+    "title": "Journal d’audit régional",
+    "intro": "Opérations du gouvernorat de {{name}}, données non nécessaires masquées.",
+    "action": "Action",
+    "actor": "Auteur",
+    "at": "Date",
+    "target": "Cible",
+    "details": "Détails",
+    "reason": "Motif",
+    "system": "Système",
+    "empty": "Aucune opération.",
+    "caption": "Journal d’audit"
+  },
+  "breakGlass": {
+    "open": "Accès exceptionnel",
+    "title": "Demande d’accès exceptionnel",
+    "intro": "Lecture seule et limitée dans le temps. Chaque consultation est tracée et revue par la sécurité.",
+    "targetLabel": "Portée",
+    "target": {
+      "report": "Ce signalement",
+      "incident": "Cet incident",
+      "gouvernorat": "Gouvernorat"
+    },
+    "targetGouvernorat": "Gouvernorat de {{name}}",
+    "justification": "Justification (20 caractères minimum)",
+    "duration": "Durée",
+    "minutes": "{{count}} min",
+    "submit": "Ouvrir l’accès",
+    "granted": "Accès exceptionnel actif.",
+    "activeTitle": "Accès exceptionnel actif",
+    "until": "jusqu’à {{time}}",
+    "audited": "Chaque consultation est tracée.",
+    "revoke": "Révoquer",
+    "revoked": "révoqué",
+    "pageTitle": "Accès exceptionnels",
+    "pageIntroOwn": "Vos accès exceptionnels et leur revue.",
+    "pageIntroReviewer": "Tous les accès exceptionnels. Revoyez chacun après son expiration (personne ne revoit le sien).",
+    "period": "du {{from}} au {{to}}",
+    "empty": "Aucun accès.",
+    "status": {
+      "active": "Actif",
+      "expired": "Expiré",
+      "pending_review": "À revoir",
+      "reviewed": "Revu"
+    },
+    "review": {
+      "open": "Revoir",
+      "title": "Revue de l’accès",
+      "outcome": "Conclusion",
+      "outcomeRequired": "Choisissez une conclusion.",
+      "justified": "Justifié",
+      "unjustified": "Injustifié",
+      "note": "Note de revue",
+      "submit": "Enregistrer la revue",
+      "result": "Revue : {{outcome}}",
+      "selfNote": "Vous ne pouvez pas revoir votre propre accès."
+    }
+  },
+  "reporterMask": {
+    "notice": "Identité du déclarant masquée : visible seulement de la salle qui traite le signalement ou par accès exceptionnel.",
+    "hidden": "Masqué",
+    "maskedPhone": "Numéro masqué",
+    "callWithoutNumber": "Appeler sans afficher le numéro",
+    "context": "Gouvernorat du déclarant (contact uniquement)",
+    "contextProfile": "{{name}} (profil)",
+    "contextNone": "Non disponible"
   }
 }

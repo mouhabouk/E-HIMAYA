@@ -31,7 +31,7 @@ describe("ReportsPage (phase 3)", () => {
     await screen.findByRole("link", { name: "EH-26-61-0000001" });
 
     const a = rowOf("EH-26-61-0000001");
-    expect(within(a).getByTitle("Priorité 85 (haute)")).toHaveClass("prio--high");
+    expect(within(a).getByTitle("Priorité 85 (critique)")).toHaveClass("prio--critical");
     expect(within(a).getByText("Vies en danger")).toBeInTheDocument();
     expect(within(a).getByText("Rattaché à un incident")).toBeInTheDocument();
     expect(within(a).getByText("Incendie dans un immeuble")).toBeInTheDocument();
@@ -39,7 +39,7 @@ describe("ReportsPage (phase 3)", () => {
     expect(within(a).getByText(/حريق في عمارة/)).toHaveAttribute("lang", "ar");
 
     const b = rowOf("EH-26-61-0000002");
-    expect(within(b).getByTitle("Priorité 45 (moyenne)")).toHaveClass("prio--medium");
+    expect(within(b).getByTitle("Priorité 45 (normale)")).toHaveClass("prio--medium");
     expect(within(b).getByText("En attente d'analyse")).toBeInTheDocument();
     expect(within(b).getByText("Regroupement suggéré")).toBeInTheDocument();
 
