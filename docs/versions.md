@@ -102,7 +102,7 @@ ruff 0.17.1، mypy 2.4.0. التحويل إلى الإرسال الحقيقي م
 
 | النموذج | الإصدار | الرخصة | المصدر |
 |---|---|---|---|
-| `ehimaya-fire-smoke-yolox-tiny` (حريق ودخان، مدرّب للمشروع) | 1.0.0، SHA-256 `173073b7…aa00` | Apache-2.0 | YOLOX-Tiny (Megvii، Apache-2.0) مضبوط على صور Open Images V7 (CC BY 2.0، التسميات CC BY 4.0)، والصناديق رسمها Grounding DINO (Apache-2.0) أثناء التدريب فقط |
+| `ehimaya-fire-smoke-yolox-tiny` (حريق ودخان، مدرّب للمشروع) | 2.0.0، SHA-256 `3b9f2b5f…39b6` | Apache-2.0 | YOLOX-Tiny (Megvii، Apache-2.0) مضبوط على صور Open Images V7 (CC BY 2.0، التسميات CC BY 4.0) وFireNET (MIT) وFURG fire dataset (CC0-1.0)، وصناديق الدخان الإضافية رسمها Grounding DINO (Apache-2.0) أثناء التدريب فقط |
 | `yolox-tiny-coco-person` (أشخاص) | 0.1.1rc0، SHA-256 `427cc366…b0f7` | Apache-2.0 | <https://github.com/Megvii-BaseDetection/YOLOX> |
 
 | الحزمة | الإصدار |

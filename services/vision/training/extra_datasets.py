@@ -18,7 +18,8 @@ the teacher's smoke boxes (score >= 0.5, the threshold for unverified classes) t
     PYTHONPATH=GroundingDINO python training/pseudo_label.py --data training/work/extra/teacher \\
         --checkpoint groundingdino_swint_ogc.pth --vocab bert-base-uncased-vocab.txt --short-side 512
     python training/extra_datasets.py merge --out training/work/extra
-    # then: train.py ... --yolo training/work/extra/firenet/train:fire,smoke --yolo training/work/extra/furg/train:fire,smoke
+    # then: train.py ... --yolo training/work/extra/firenet/train:fire,smoke \\
+    #                     --yolo training/work/extra/furg/train:fire,smoke
 
 Needs opencv-python (video decoding) besides the training requirements.
 """
@@ -78,7 +79,8 @@ def fetch(url: str, attempts: int = 4) -> bytes:
 
 
 def yolo_line(cls: int, x0: float, y0: float, x1: float, y1: float, width: float, height: float) -> str:
-    return f"{cls} {(x0 + x1) / 2 / width:.6f} {(y0 + y1) / 2 / height:.6f} {(x1 - x0) / width:.6f} {(y1 - y0) / height:.6f}"
+    cx, cy = (x0 + x1) / 2 / width, (y0 + y1) / 2 / height
+    return f"{cls} {cx:.6f} {cy:.6f} {(x1 - x0) / width:.6f} {(y1 - y0) / height:.6f}"
 
 
 def prepare_firenet(out: Path) -> None:
