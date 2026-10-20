@@ -117,6 +117,9 @@ def _route(subject: str, payload: dict[str, Any]) -> tuple[str, Callable[[LiveCl
         return "reports", _in(payload.get("incident", {}).get("gouvernorat_code"))
     if subject == "media.stored":
         return "reports", _in(payload.get("gouvernorat_code"))
+    if subject in ("stream.started", "stream.ended", "stream.location", "stream.alert", "stream.recording"):
+        # Live streams (phase 6) are scoped like the reports they belong to (fixed sources by their gouvernorat).
+        return "reports", _in(payload.get("gouvernorat_code"))
     if subject in ("assignment.updated", "callout.updated"):
         return "reports", _in(payload.get("gouvernorat_code"))
     if subject == "resource.updated":

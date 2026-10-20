@@ -1,6 +1,7 @@
 import type { ApiClient } from "./api";
 import { bboxParam, filtersToQuery, type BBox, type ReportFilters } from "./filters";
 import { opsApi } from "./opsApi";
+import { streamsApi } from "./streamsApi";
 import { normalizeOrgFilters, orgFiltersToQuery, type OrgFilters } from "./orgs";
 import type {
   AiSettings,
@@ -40,7 +41,8 @@ const docPath = (orgId: string, docId: string) => `${orgPath(orgId)}/documents/$
 
 /**
  * Typed calls for contract section 5 (phase 2), sections 2–4 (phase 3), section 9 (phase 4), the geo reference
- * and phase 5 (operations, volunteers, notifications, safety tips: see opsApi.ts).
+ * phase 5 (operations, volunteers, notifications, safety tips: see opsApi.ts) and phase 6 (live streams:
+ * see streamsApi.ts).
  */
 export function staffApi(api: ApiClient) {
   return {
@@ -173,6 +175,7 @@ export function staffApi(api: ApiClient) {
       api.request<Gouvernorat[]>("/api/v1/geo/gouvernorats", { query: { lang: "ar" }, signal }),
 
     ...opsApi(api),
+    ...streamsApi(api),
   };
 }
 

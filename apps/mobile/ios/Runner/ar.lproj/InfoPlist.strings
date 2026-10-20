@@ -1,6 +1,6 @@
 /* Localized Info.plist values (permission prompts and app name). */
 "CFBundleDisplayName" = "ء-حماية";
-"NSCameraUsageDescription" = "تُستعمل الكاميرا لالتقاط صور أو فيديو وإرفاقها ببلاغك.";
+"NSCameraUsageDescription" = "تُستعمل الكاميرا لالتقاط صور أو فيديو وإرفاقها ببلاغك، وللبث المباشر إلى الحماية المدنية عندما تطلقه.";
 "NSLocationWhenInUseUsageDescription" = "يُستعمل موقعك لتحديد مكان البلاغ أو نداء الاستغاثة وإرساله إلى الحماية المدنية.";
-"NSMicrophoneUsageDescription" = "يُستعمل الميكروفون لتسجيل رسالة صوتية وإرفاقها ببلاغك.";
+"NSMicrophoneUsageDescription" = "يُستعمل الميكروفون لتسجيل رسالة صوتية وإرفاقها ببلاغك، ولصوت البث المباشر عندما تطلقه.";
 "NSPhotoLibraryUsageDescription" = "يُستعمل معرض الصور لاختيار صور أو فيديو وإرفاقها ببلاغك.";

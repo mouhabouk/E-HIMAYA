@@ -20,6 +20,12 @@ STRONG: dict[str, Any] = {
     "tusd_hook_secret": secrets.token_hex(24),
     "certificate_signing_key": base64.b64encode(os.urandom(32)).decode(),
     "s3_secret_key": secrets.token_urlsafe(30),
+    # Phase 6 (live streaming): the test environment sets example values of these, replaced here.
+    "mediamtx_api_password": secrets.token_urlsafe(24),
+    "mediamtx_hook_token": secrets.token_urlsafe(24),
+    "vision_callback_token": secrets.token_urlsafe(24),
+    "vision_read_password": secrets.token_urlsafe(24),
+    "stream_sim_token": None,
 }
 
 
@@ -44,6 +50,10 @@ def test_strong_secrets_start() -> None:
         ("s3_secret_key", "short-Secret1", "shorter"),
         ("database_url", "postgresql+asyncpg://ehimaya:change-me-app@postgres:5432/ehimaya", "DATABASE_URL"),
         ("valkey_url", "redis://:change-me-valkey@valkey:6379/0", "VALKEY_URL"),
+        ("mediamtx_hook_token", "change-me-generate-with-openssl-rand-hex-24", "change-me"),
+        ("mediamtx_api_password", "change-me-generate-with-openssl-rand-hex-24", "change-me"),
+        ("vision_callback_token", "change-me-generate-with-openssl-rand-hex-24", "change-me"),
+        ("vision_api_token", "change-me-generate-with-openssl-rand-hex-24", "change-me"),
     ],
 )
 def test_weak_secret_is_refused(setting: str, value: str, reason: str) -> None:
@@ -99,3 +109,8 @@ def test_settings_errors_never_echo_secrets() -> None:
     with pytest.raises(ValidationError) as error:
         production(anon_pseudonym_secret=secret)
     assert secret not in str(error.value)
+
+
+def test_stream_simulator_is_refused_in_production() -> None:
+    with pytest.raises(ValidationError, match="STREAM_SIM_TOKEN"):
+        production(stream_sim_token=secrets.token_urlsafe(24))

@@ -38,6 +38,10 @@ import { ReportDetailPage } from "./pages/ReportDetailPage";
 import { ReportsPage } from "./pages/ReportsPage";
 import { ResourcesPage } from "./pages/ResourcesPage";
 import { SafetyTipsPage } from "./pages/SafetyTipsPage";
+import { StreamArchivePage } from "./pages/StreamArchivePage";
+import { StreamDetailPage } from "./pages/StreamDetailPage";
+import { StreamsPage } from "./pages/StreamsPage";
+import { StreamWallPage } from "./pages/StreamWallPage";
 import { VolunteerDetailPage } from "./pages/VolunteerDetailPage";
 import { VolunteersPage } from "./pages/VolunteersPage";
 
@@ -96,6 +100,10 @@ export function AppRoutes() {
         <Route path="incidents" element={reports(<IncidentsPage />)} />
         <Route path="incidents/:id" element={reports(<IncidentDetailPage />)} />
         <Route path="map" element={reports(<MapPage />)} />
+        <Route path="streams" element={reports(<StreamsPage />)} />
+        <Route path="streams/wall" element={reports(<StreamWallPage />)} />
+        <Route path="streams/archive" element={reports(<StreamArchivePage />)} />
+        <Route path="streams/:id" element={reports(<StreamDetailPage />)} />
         <Route path="settings/ai" element={reports(<AiSettingsPage />)} />
         <Route path="orgs" element={orgs(<OrgsPage />)} />
         <Route path="orgs/certificates" element={orgs(<CertificatesPage />)} />

@@ -1,0 +1,3161 @@
+{
+ "source": "Open Images V7, test split (images CC BY 2.0 by their authors; labels CC BY 4.0 Google LLC)",
+ "labels_url": "https://storage.googleapis.com/openimages/v5/test-annotations-human-imagelabels.csv",
+ "counts": {
+  "fire": 120,
+  "smoke": 0,
+  "hard_negative": 36,
+  "person": 60,
+  "no_person": 40
+ },
+ "samples": [
+  {
+   "id": "9c750c264266ea73",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/9c750c264266ea73.jpg",
+   "sha256": "5e3951ce3d1975afe328f824c885ff545698272ebdc54bb9ca35d6555a334fcb",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Kimberly Vardeman",
+   "page": "https://www.flickr.com/photos/kimberlykv/8905131455"
+  },
+  {
+   "id": "8ef089016df2b3b9",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/8ef089016df2b3b9.jpg",
+   "sha256": "53575e9f9fda9febfa0f2d391976ce95463ccbee48e2a32e54cb1cac1bb9e1ac",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Grégoire Lannoy",
+   "page": "https://www.flickr.com/photos/fulbert05/2430669804"
+  },
+  {
+   "id": "a38cb026a0f665da",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/a38cb026a0f665da.jpg",
+   "sha256": "05c9adcf5ccd29da53a2a4d46c90638434619eee9d9a004f3a618566a0a9b1e5",
+   "labels": {
+    "person": 0,
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "r0bz",
+   "page": "https://www.flickr.com/photos/acci0n/19425441"
+  },
+  {
+   "id": "8eea15dcdefd4a41",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/8eea15dcdefd4a41.jpg",
+   "sha256": "845591f2e5f608673af077b564dc9f29379bde7179b7c80685c83f25ae10ca02",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Daniel Rothamel",
+   "page": "https://www.flickr.com/photos/realestatezebra/9210740407"
+  },
+  {
+   "id": "8fa05f91978fddb6",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/8fa05f91978fddb6.jpg",
+   "sha256": "c49dceeab0b56e1996f6976ce434695f3b3e750837e31cd2e3f0d286d41380d2",
+   "labels": {
+    "person": 1,
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Cam Switzer",
+   "page": "https://www.flickr.com/photos/camswitzer/5320067986"
+  },
+  {
+   "id": "c232e248f05a84c5",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/c232e248f05a84c5.jpg",
+   "sha256": "bffe52c735c6ebc4fa405886d56e4cb45f61950b14f3b3e16c361a18384795c6",
+   "labels": {
+    "fire": 1,
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Jose Mesa",
+   "page": "https://www.flickr.com/photos/liferfe/3317760164"
+  },
+  {
+   "id": "7aa252b07906b2a1",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/7aa252b07906b2a1.jpg",
+   "sha256": "74c99af6eddd7dc62be638e5df02df5f3b4492b426b6f1d089755e27cfea95b2",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Rich Ocampo",
+   "page": "https://www.flickr.com/photos/richocampo/5903694542"
+  },
+  {
+   "id": "8d22a40be24bcfc1",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/8d22a40be24bcfc1.jpg",
+   "sha256": "0ba73785d190beb4e2923a8bd523bb466c5d46c65de4b43b368047519cb8bd4b",
+   "labels": {
+    "fire": 1,
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Emilian Robert Vicol",
+   "page": "https://www.flickr.com/photos/free-stock/4791778263"
+  },
+  {
+   "id": "b59ae754719ed34c",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/b59ae754719ed34c.jpg",
+   "sha256": "65ee2ee8ec070de09e5a58d6380240095e39dcfb2b623ecfa7b674da117f1545",
+   "labels": {
+    "person": 1,
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "James Buck",
+   "page": "https://www.flickr.com/photos/jameskarlbuck/3060756774"
+  },
+  {
+   "id": "ca823be2f384459d",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/ca823be2f384459d.jpg",
+   "sha256": "d0987587d63892bac8abc129c5edd2caa3a5f113a441c92bc375d1e17946ff69",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Morgennebel",
+   "page": "https://www.flickr.com/photos/morgennebel/4500506623"
+  },
+  {
+   "id": "39bb857e8e89215e",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/39bb857e8e89215e.jpg",
+   "sha256": "d08cebda654b32a6587d910c55319907ba99bf3808a6ca396c61b42866bcb5eb",
+   "labels": {
+    "fire": 1,
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Lancaster Litfest",
+   "page": "https://www.flickr.com/photos/litfest/4176782036"
+  },
+  {
+   "id": "caa7a1a4007f560a",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/caa7a1a4007f560a.jpg",
+   "sha256": "420f8a3e1233d45e65362406c199d8d7300b2002859b65e78572f82dec8fa8c0",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Rebecca Wilson",
+   "page": "https://www.flickr.com/photos/saucysalad/7909049478"
+  },
+  {
+   "id": "58c5a5c21bb394ba",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/58c5a5c21bb394ba.jpg",
+   "sha256": "44300ccd9e3c6ee72df2ffb5300bcb566fa7b2441a08af26c98300c456b61f8b",
+   "labels": {
+    "fire": 1,
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Jordi Bernabeu Farrús",
+   "page": "https://www.flickr.com/photos/jordibernabeu/12965699165"
+  },
+  {
+   "id": "172564b12cb0b947",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/172564b12cb0b947.jpg",
+   "sha256": "b9c393e5998128ea97d48b860b1c8f0f9a382cca95f4fed89c319a46bb6c3f4f",
+   "labels": {
+    "person": 1,
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Sol Robayo",
+   "page": "https://www.flickr.com/photos/solrobayo/5428496246"
+  },
+  {
+   "id": "9460329a8d0293c6",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/9460329a8d0293c6.jpg",
+   "sha256": "9e32c58261b7ccfc2acc6ff6a10a3d74bf07ff4595797ad0a811b0a9e3c7516f",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Steve Bozak",
+   "page": "https://www.flickr.com/photos/34513998@N02/10235049485"
+  },
+  {
+   "id": "f82c61de14b2e685",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/f82c61de14b2e685.jpg",
+   "sha256": "32bb73f08dd5838af35b21c5a28870134ce8926245947660d7cc43d66931fc29",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "justinfeed",
+   "page": "https://www.flickr.com/photos/justinfeed/2637526401"
+  },
+  {
+   "id": "be5449dcfcbbd3a1",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/be5449dcfcbbd3a1.jpg",
+   "sha256": "b938c9d4eb2df54515796d942a7f7a3b97743663f145e55b37eddb056197203c",
+   "labels": {
+    "person": 1,
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Pauline Balba",
+   "page": "https://www.flickr.com/photos/paulinebalba/4644427436"
+  },
+  {
+   "id": "2c17b16d29b11b15",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/2c17b16d29b11b15.jpg",
+   "sha256": "40f40a57d67f0f5c0ead1016ed0a70d742aa23497d97b2b2ed22bf9062404c84",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Free Casters",
+   "page": "https://www.flickr.com/photos/127358405@N03/14945088087"
+  },
+  {
+   "id": "575a18b1d28b0e4b",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/575a18b1d28b0e4b.jpg",
+   "sha256": "6f21f592242956775fdeb4cb1c544a6c68699ee94b7f138a77c10706dbac347c",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Stephan Ridgway",
+   "page": "https://www.flickr.com/photos/stephanridgway/5025584796"
+  },
+  {
+   "id": "8ae3fe2f24d9ab78",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/8ae3fe2f24d9ab78.jpg",
+   "sha256": "9bd11696c65f1b063aef0c1b986563e841d04342bf5e881f3f2bf1779bb38289",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Peter Trimming",
+   "page": "https://www.flickr.com/photos/peter-trimming/5358396908"
+  },
+  {
+   "id": "bb8b7f7a51bae9db",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/bb8b7f7a51bae9db.jpg",
+   "sha256": "5b3c40f840ce760aff1694fde739ab030fc32fccf65c7c2be1faf497dd6b2be5",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Arghya Banik",
+   "page": "https://www.flickr.com/photos/arghyabanik/15349041271"
+  },
+  {
+   "id": "960d4f6afd7f6cb2",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/960d4f6afd7f6cb2.jpg",
+   "sha256": "a08cd623359db1bb041c647d50284de01d26b4eecf6dfd896668d37b71158b01",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "David J",
+   "page": "https://www.flickr.com/photos/sebilden/15329747289"
+  },
+  {
+   "id": "a5538f32c76abe34",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/a5538f32c76abe34.jpg",
+   "sha256": "206b14b95b70f418b335106762d9b7be8373fde84607da3e02aa46f04f4a4377",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "José Carlos Nájera Flores",
+   "page": "https://www.flickr.com/photos/55412734@N05/6138625905"
+  },
+  {
+   "id": "6c1998bb221f1b1d",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/6c1998bb221f1b1d.jpg",
+   "sha256": "217806cf7c4b0fa4011a62b7cf9c0158c4ae6eb94772512cede27aa31c310799",
+   "labels": {
+    "person": 1,
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Silly Dennis",
+   "page": "https://www.flickr.com/photos/75189809@N05/15939441695/"
+  },
+  {
+   "id": "bae3c7a3fa8d70cd",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/bae3c7a3fa8d70cd.jpg",
+   "sha256": "b53d220e718c3285e92e940b84a7af5620b00c26d669f92e102fd1058c429273",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Ale Almeida Photos",
+   "page": "https://www.flickr.com/photos/bagagem_fotografica/4924290284"
+  },
+  {
+   "id": "9459903bd7b65513",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/9459903bd7b65513.jpg",
+   "sha256": "1ad11a0679a0049d589b712dcb10053763a19f182448a7bc3cfb8b5b586331ac",
+   "labels": {
+    "fire": 1,
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "iPhone-shoot",
+   "page": "https://www.flickr.com/photos/iphoneshoot/6829263190"
+  },
+  {
+   "id": "54b08e0c7011065c",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/54b08e0c7011065c.jpg",
+   "sha256": "5f45680ba24ce408233205babc4f104b7c2ce5ce9c756ed5e11af24cc8940698",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Patricia H.",
+   "page": "https://www.flickr.com/photos/rocknroll_guitar/2924991409"
+  },
+  {
+   "id": "f044724639fcc0d7",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/f044724639fcc0d7.jpg",
+   "sha256": "ea5854d11a856d58d7d70cf6e1f9d85b10a0107561e57aa6af32c1e2292679c7",
+   "labels": {
+    "smoke": 1,
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "NM Fire Info",
+   "page": "https://www.flickr.com/photos/nmfireinfo/9160212635"
+  },
+  {
+   "id": "005bac2444ae8d68",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/005bac2444ae8d68.jpg",
+   "sha256": "5dce3e85161ed182d2b627bf5432177e22f7adbb62083cdaf6cd4c94e89dc801",
+   "labels": {
+    "fire": 1,
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Raquel Baranow",
+   "page": "https://www.flickr.com/photos/666_is_money/15171665505"
+  },
+  {
+   "id": "55ad6a6ffef9890b",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/55ad6a6ffef9890b.jpg",
+   "sha256": "e4398fea573d77bdf2b60d3398be3d3904f9c8e46d89dad6cd21d05d7ab21253",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Marko Knuutila",
+   "page": "https://www.flickr.com/photos/markoknuutila/16224684365"
+  },
+  {
+   "id": "169fe8aaaa5c9138",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/169fe8aaaa5c9138.jpg",
+   "sha256": "a70090cf49937f643b01fa05e3c5499ed45120684c4f65bea9d8f58431aa679d",
+   "labels": {
+    "fire": 1,
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Peter Bodechtel",
+   "page": "https://www.flickr.com/photos/sweetlikepete/3229622408"
+  },
+  {
+   "id": "fecd67c1a9168b3b",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/fecd67c1a9168b3b.jpg",
+   "sha256": "a9874d50ab9dab71c9416d64f35c5da627502884a0cdcc7abe43a3669513ee87",
+   "labels": {
+    "person": 0,
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Pommiebastards",
+   "page": "https://www.flickr.com/photos/pommiebastards/2500606655"
+  },
+  {
+   "id": "87957bec547b917f",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/87957bec547b917f.jpg",
+   "sha256": "ed9da0c8d9a4e1319801b47c6c2752299f313097f7c2fc065a83fe6f7c0d9d8c",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "John Mosbaugh",
+   "page": "https://www.flickr.com/photos/tirch/5028823136"
+  },
+  {
+   "id": "a78908b0f8127bdd",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/a78908b0f8127bdd.jpg",
+   "sha256": "eb3d5f425edf8d3fe60885dbb7d247fe16ea348fbb39b70e4152dc55451a203c",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Rodrigo Amorim",
+   "page": "https://www.flickr.com/photos/zetotal/3796265684"
+  },
+  {
+   "id": "73dd1cd7aae47312",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/73dd1cd7aae47312.jpg",
+   "sha256": "12d7a301b92df33da9e5f3c6c8d2a862309c613559fd4fe53721dde0ab630b14",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Disaster Resilience Knowledge Hub",
+   "page": "https://www.flickr.com/photos/92340069@N06/9188024823"
+  },
+  {
+   "id": "6ca3c1e2063f6132",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/6ca3c1e2063f6132.jpg",
+   "sha256": "93126afc1d6c7d71b580a4204bd979f1a4ff8c8da58dfdfc52709f00b953a776",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Benjamin Watson",
+   "page": "https://www.flickr.com/photos/schnappischnap/8970226208"
+  },
+  {
+   "id": "0fa2ccbd85752be9",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/0fa2ccbd85752be9.jpg",
+   "sha256": "26ea1ce91feb0a6c23e349c6c60133a0457761ee0da2e9700732b1972449e0c5",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Cameron Strandberg",
+   "page": "https://www.flickr.com/photos/38449766@N03/4347087539"
+  },
+  {
+   "id": "840f1f4e96f4c5ba",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/840f1f4e96f4c5ba.jpg",
+   "sha256": "c4531f79df7187c9968a10c8b74c988bf0522fc0cf4e9194aeffad738e7bbdfc",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Paul. B",
+   "page": "https://www.flickr.com/photos/paulsurfer/6938204475"
+  },
+  {
+   "id": "f2cd574c1cb2e6aa",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/f2cd574c1cb2e6aa.jpg",
+   "sha256": "6895886860375be6d2b2fe6e2ae4b0f37277e439eee6866c82323cac3cdc3b9c",
+   "labels": {
+    "fire": 1,
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Ali Torres",
+   "page": "https://www.flickr.com/photos/artphotography/3519471632"
+  },
+  {
+   "id": "d5c5afe221cf8791",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/d5c5afe221cf8791.jpg",
+   "sha256": "88aa8abf72369e6609ad1a72199b60d82355ae7bc3d0dbfa73e3af6fa1dc0ccb",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Tarek Siala",
+   "page": "https://www.flickr.com/photos/tarksiala/2059651589"
+  },
+  {
+   "id": "4d17d4a7c3c2dbb0",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/4d17d4a7c3c2dbb0.jpg",
+   "sha256": "0347393b581293962e05ce43a020ce1f3375d71a5fa362963ece7faf1f860a05",
+   "labels": {
+    "fire": 1,
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "color line",
+   "page": "https://www.flickr.com/photos/sunrise/9589462"
+  },
+  {
+   "id": "b75321f460455fa7",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/b75321f460455fa7.jpg",
+   "sha256": "d7c58f690b7826e3d9d7671d79e4cb70816862b599b5ccda119f8be1f6e27167",
+   "labels": {
+    "fire": 1,
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Thomas&#x27;s Pics",
+   "page": "https://www.flickr.com/photos/60900612@N08/9289052004/"
+  },
+  {
+   "id": "9aa39e3502c6089e",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/9aa39e3502c6089e.jpg",
+   "sha256": "734300574a748facc3fd3deb5acd764316323531c1b7481ece9719dcd3c8accc",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Harry Vale",
+   "page": "https://www.flickr.com/photos/harryvale/4204427307"
+  },
+  {
+   "id": "c4270503d0c041a7",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/c4270503d0c041a7.jpg",
+   "sha256": "7e2590404080a05ed0385f0364ec8c922b5b5cb83adcf2e81a9e539db7554463",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "woggle",
+   "page": "https://www.flickr.com/photos/woggle/4479606"
+  },
+  {
+   "id": "2d3fe524e22b3222",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/2d3fe524e22b3222.jpg",
+   "sha256": "6c3145c7f2d54b24dcf6b5f49988930afd6935f5d36f80a30071415b5af6f26c",
+   "labels": {
+    "fire": 1,
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "harlandspinksphoto",
+   "page": "https://www.flickr.com/photos/mancake/634136361"
+  },
+  {
+   "id": "5f3e21eb15e51dff",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/5f3e21eb15e51dff.jpg",
+   "sha256": "4bedeed021ed2844e557681e11ee15875166e0f4a92f92b71576de95970f9a47",
+   "labels": {
+    "fire": 1,
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Valdemar  Guimarães",
+   "page": "https://www.flickr.com/photos/54503014@N05/8131864240"
+  },
+  {
+   "id": "3ea32edafdbcf42e",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/3ea32edafdbcf42e.jpg",
+   "sha256": "ec68aed297c266fb12fd28a231ef4c97b78d6095bc0a2d51dff1a002b89cb7fa",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "City of Walnut Creek",
+   "page": "https://www.flickr.com/photos/cityofwalnutcreek/20960827439"
+  },
+  {
+   "id": "63b50428c6aebacd",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/63b50428c6aebacd.jpg",
+   "sha256": "96de52fe8b1435bb355c1b20c5082eb52feb948279aa86d91d29391b3fd3268c",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Iain Watson",
+   "page": "https://www.flickr.com/photos/dagoaty/4337229487"
+  },
+  {
+   "id": "2dc9c256de0c7aca",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/2dc9c256de0c7aca.jpg",
+   "sha256": "8f1bf7b52c6d86cea67e9e1ab049397636be5556edf35cc6f5c3c82fb37aa48c",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "aNdrzej cH.",
+   "page": "https://www.flickr.com/photos/cobraverde/2924281364"
+  },
+  {
+   "id": "4c5d2366df728c42",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/4c5d2366df728c42.jpg",
+   "sha256": "554498cbcecb75723a261dfcf41e1319d756861fa3a5c629f0ce7109f3361496",
+   "labels": {
+    "person": 0,
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Martijn vdS",
+   "page": "https://www.flickr.com/photos/treenaks/5646593554"
+  },
+  {
+   "id": "b2d2102da5d7679b",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/b2d2102da5d7679b.jpg",
+   "sha256": "3c54336bf756df1e44a57404cab3ec5120676f08080239580d3230ccff4ddd99",
+   "labels": {
+    "person": 1,
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "SanGatiche",
+   "page": "https://www.flickr.com/photos/sangatiche/1313462694"
+  },
+  {
+   "id": "9e23d64db537301e",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/9e23d64db537301e.jpg",
+   "sha256": "b73a4eaace4bce759e2d4c108b10701e6c58e39155b93c068675ef534449dd92",
+   "labels": {
+    "fire": 1,
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "hoge asdf",
+   "page": "https://www.flickr.com/photos/9177053@N05/11493044955"
+  },
+  {
+   "id": "2b64af9ff923e47b",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/2b64af9ff923e47b.jpg",
+   "sha256": "2eae69d49ee5724e9a97abf2b1ab17c1ad40d459606eebdedfd105ebc94e0259",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Frank Boston",
+   "page": "https://www.flickr.com/photos/fixersphotos/18999273059"
+  },
+  {
+   "id": "e411026adb681768",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/e411026adb681768.jpg",
+   "sha256": "0954cd3a40fd02b3a2e304ed56cf057b499b582941bf1cf948f54a542f9af412",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Dwayne Madden",
+   "page": "https://www.flickr.com/photos/dj-dwayne/4600355617"
+  },
+  {
+   "id": "d5f0fab20ceebb8c",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/d5f0fab20ceebb8c.jpg",
+   "sha256": "34f0e27701d28418cdb1fa7071ebac99e5e144f2fe528dc001860ff15f3fc8d9",
+   "labels": {
+    "fire": 1,
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Neeta Lind",
+   "page": "https://www.flickr.com/photos/neeta_lind/5097748738"
+  },
+  {
+   "id": "5bc72968a0101de2",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/5bc72968a0101de2.jpg",
+   "sha256": "419ac649ff625263415b33180742dba53e25e4ac56e3e6cf2e58337cf181a1af",
+   "labels": {
+    "fire": 1,
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Helge V. Keitel",
+   "page": "https://www.flickr.com/photos/17088227@N00/16332724234"
+  },
+  {
+   "id": "18ee716513512921",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/18ee716513512921.jpg",
+   "sha256": "4c67e77ec60d85fa3a4e5213b0545bbf812744e1ed3ee4e6a4ef89e54ac6fc40",
+   "labels": {
+    "fire": 1,
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Jake Archibald",
+   "page": "https://www.flickr.com/photos/jaffathecake/5154893617"
+  },
+  {
+   "id": "f3641afe4da700cf",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/f3641afe4da700cf.jpg",
+   "sha256": "157d0ae5fb398e82a3de1303dc53387530c6c85ce1862a6892c866eb91c42a43",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Subramanya Prasad",
+   "page": "https://www.flickr.com/photos/subpra/4332369922"
+  },
+  {
+   "id": "135475ee90a72451",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/135475ee90a72451.jpg",
+   "sha256": "f37c4babaa290a53728f4e033a85e97041785220f4375480f9fbbf868e89f123",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Steenbergs",
+   "page": "https://www.flickr.com/photos/steenbergs/7157123271"
+  },
+  {
+   "id": "7abc81e6e0f13cc9",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/7abc81e6e0f13cc9.jpg",
+   "sha256": "53ac5bab1e1f51c08d1254969c55f949b72bd8c39dd8982e6af16b4f9ea89a41",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Chris Breikss",
+   "page": "https://www.flickr.com/photos/extra_chrisb/180902505"
+  },
+  {
+   "id": "c22d4ec3acfa888d",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/c22d4ec3acfa888d.jpg",
+   "sha256": "a69641a5538728411f4aac0a6f22aadb5286c8e985953c60ece4fac5ef8f26cd",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "John Tuggle",
+   "page": "https://www.flickr.com/photos/22565768@N04/4493361426"
+  },
+  {
+   "id": "942355d8f62e3d8f",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/942355d8f62e3d8f.jpg",
+   "sha256": "bd16501e66d355e2e9ccce551356486daf204091e17f86242f3ee60dbd0d55a4",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "b0jangles",
+   "page": "https://www.flickr.com/photos/b0jangles/5131778827"
+  },
+  {
+   "id": "723cd34e12b9324e",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/723cd34e12b9324e.jpg",
+   "sha256": "69f70335bbafa6531543e05cc7599c5d59d70a719df92a72e8742b2480fa7abd",
+   "labels": {
+    "fire": 1,
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Rachel Haller",
+   "page": "https://www.flickr.com/photos/rachel-amarette/3175458935"
+  },
+  {
+   "id": "ff87bb7f07ebba4f",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/ff87bb7f07ebba4f.jpg",
+   "sha256": "5b33eb49ad834e4073fa1b39f6ed54cc0ebf0c25a517df031e5283d6797c6a03",
+   "labels": {
+    "fire": 1,
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Fimb",
+   "page": "https://www.flickr.com/photos/fimbrethil/756149592"
+  },
+  {
+   "id": "2868081854309bff",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/2868081854309bff.jpg",
+   "sha256": "57351db97e2c8cbb3b31b335d85320b9a06236cf6af42cac0c9d338d610d5867",
+   "labels": {
+    "fire": 1,
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Kalle Gustafsson",
+   "page": "https://www.flickr.com/photos/kallegustafsson/5590385550"
+  },
+  {
+   "id": "e83df0bf53012d56",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/e83df0bf53012d56.jpg",
+   "sha256": "f01e1223949fb7253b5b32e44a31c2d11352937e6ae50341c33c76a9e2785e5e",
+   "labels": {
+    "smoke": 0,
+    "fire": 1,
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Martin Nittala",
+   "page": "https://www.flickr.com/photos/martinnittala/20561682624"
+  },
+  {
+   "id": "e707e5f9c392a106",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/e707e5f9c392a106.jpg",
+   "sha256": "317e0db167674e9ba32963d378eb57c385a97332ce40dce6aa305b1d94e87b32",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Alex Vieira",
+   "page": "https://www.flickr.com/photos/alevieira/3250443511"
+  },
+  {
+   "id": "0b5a656f7b0eed2f",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/0b5a656f7b0eed2f.jpg",
+   "sha256": "f69884311f3667d752bc2df540d9e64d4524a02cff828ceecf73bdbe404ba7ac",
+   "labels": {
+    "fire": 1,
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Thiago A.",
+   "page": "https://www.flickr.com/photos/thiago_avancini/5870605479"
+  },
+  {
+   "id": "8f26f942d7924869",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/8f26f942d7924869.jpg",
+   "sha256": "af0c77105f0f2a6e7ddce5a6dc8100156d9364617dcc833dada816dc4684b963",
+   "labels": {
+    "person": 0,
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Marc Lacoste",
+   "page": "https://www.flickr.com/photos/croco/6890180684"
+  },
+  {
+   "id": "5fd04d2b17e177bf",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/5fd04d2b17e177bf.jpg",
+   "sha256": "cc3fd2a6b743e5a5e27d43587bd4a5bb2f93ef9202dfee6c51d3bf55f20bf21c",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Josué Goge",
+   "page": "https://www.flickr.com/photos/jgoge123/6000975330"
+  },
+  {
+   "id": "12c10203f7f93d96",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/12c10203f7f93d96.jpg",
+   "sha256": "4fd0dcee0fa3c64aee7e19ee555dcfc62203b8db88e3840cbbd5df3b76ba1183",
+   "labels": {
+    "person": 0,
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Peter Galvin",
+   "page": "https://www.flickr.com/photos/p_x_g/3901145602"
+  },
+  {
+   "id": "8bb9cee99a898aef",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/8bb9cee99a898aef.jpg",
+   "sha256": "c44d2e777a3048ccf6ee59cc2643fae4e5a2fd93508ee4ccb8024023e3c30036",
+   "labels": {
+    "fire": 1,
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Derek Hatfield",
+   "page": "https://www.flickr.com/photos/loimere/4760906002/"
+  },
+  {
+   "id": "c08c240cded9c858",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/c08c240cded9c858.jpg",
+   "sha256": "d10a04fa4b86e95da13853f9f9034ac712c480e3e38c3067f9f5fd9fb40a84cf",
+   "labels": {
+    "fire": 1,
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "sam tao",
+   "page": "https://www.flickr.com/photos/34750184@N04/6730867771"
+  },
+  {
+   "id": "6f4cfc365cf4c564",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/6f4cfc365cf4c564.jpg",
+   "sha256": "f1c26aa36bc7269886ea7c78dff78c35ab9be16ce18aafbc2a10a745e35f3621",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Vasile Cotovanu",
+   "page": "https://www.flickr.com/photos/vasile23/10328073906"
+  },
+  {
+   "id": "05624c7346d8ef94",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/05624c7346d8ef94.jpg",
+   "sha256": "29ee16b2d5a90984670c9f49fb9695f77fc711c71c4a522c402c5f193eb2b1c0",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Mike DelGaudio",
+   "page": "https://www.flickr.com/photos/mydailycommute/69102951"
+  },
+  {
+   "id": "4cbb8ee1df099de9",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/4cbb8ee1df099de9.jpg",
+   "sha256": "85378d2f03313e28dca156452a714fd727f0eb419eec308a10dd2f02c10e68b5",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "tudor-rose",
+   "page": "https://www.flickr.com/photos/smileeyface1993/9738656241/"
+  },
+  {
+   "id": "6ff6a72939a1a710",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/6ff6a72939a1a710.jpg",
+   "sha256": "5b14c9c261fa86c3b418d4d2e4a7e7034a5fda1ebc73f5490dc1600d99385966",
+   "labels": {
+    "person": 0,
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Brandon Morse",
+   "page": "https://www.flickr.com/photos/ebmorse/8939339"
+  },
+  {
+   "id": "5780d14efec22077",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/5780d14efec22077.jpg",
+   "sha256": "e94d298114ba454e7f8fcaa238eafa81a32fc6673b59ecf9555318a20d478de8",
+   "labels": {
+    "fire": 1,
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "sylvar",
+   "page": "https://www.flickr.com/photos/sylvar/16394409219"
+  },
+  {
+   "id": "5da1007fb1ded1b2",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/5da1007fb1ded1b2.jpg",
+   "sha256": "58ac094fe461126d883fa30c312c1270cffaec321fe2cbf537d4b1e205c89b5f",
+   "labels": {
+    "person": 1,
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Gavin Schaefer",
+   "page": "https://www.flickr.com/photos/uxud/1261411879"
+  },
+  {
+   "id": "1e4224b56a0c9ef0",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/1e4224b56a0c9ef0.jpg",
+   "sha256": "0c4716f794c4135b3f13e19f8a91d6632752b83b04a74960cc2b2bfa57d9d569",
+   "labels": {
+    "fire": 1,
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "m01229",
+   "page": "https://www.flickr.com/photos/39908901@N06/9340455006"
+  },
+  {
+   "id": "c2ef382868837928",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/c2ef382868837928.jpg",
+   "sha256": "f88856adefe425a0e56f1261fe233d315a3041dcc5fa6979c5370818f1eba070",
+   "labels": {
+    "fire": 1,
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Lars Verket",
+   "page": "https://www.flickr.com/photos/larsverket/15352165834/"
+  },
+  {
+   "id": "8c13a4129d556da5",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/8c13a4129d556da5.jpg",
+   "sha256": "7ec8b405b112e550f1876323f7c162a251f0c8662aff22fa73175f0873aa92e6",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "imanka",
+   "page": "https://www.flickr.com/photos/31331191@N07/8790097980"
+  },
+  {
+   "id": "ad683f8140cafc1b",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/ad683f8140cafc1b.jpg",
+   "sha256": "67e9d57b05c514c9199f4a3d2063b64303269a59b125c195a59e454d2cef2874",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Max Stanworth",
+   "page": "https://www.flickr.com/photos/designshard/3020150844"
+  },
+  {
+   "id": "5e441bb7f72fdade",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/5e441bb7f72fdade.jpg",
+   "sha256": "788c29123355eca4d455e656852314647d9a0d1e1a2106e34e9515c70155e15b",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "James Abbott",
+   "page": "https://www.flickr.com/photos/jamesabbott1963/15754654056"
+  },
+  {
+   "id": "a11e57990c6d2aa7",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/a11e57990c6d2aa7.jpg",
+   "sha256": "582de8a61f30a3a79f341ad93e51f10e33d9e188ba18da16b50a351432f790f0",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "tunnuz",
+   "page": "https://www.flickr.com/photos/tunnuz/315645676"
+  },
+  {
+   "id": "5698f052a4ec27dd",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/5698f052a4ec27dd.jpg",
+   "sha256": "5b37e0a713b814480b1ba21d25b48a69a6ad9bdf2effec67f642feb25098172e",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Luz Adriana Villa",
+   "page": "https://www.flickr.com/photos/luchilu/2402424932"
+  },
+  {
+   "id": "70b6f0821bed6ea4",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/70b6f0821bed6ea4.jpg",
+   "sha256": "3331b82b4485af33c027f0fbe46a69347c22ba1d74530d22348599b83888fe53",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "IH",
+   "page": "https://www.flickr.com/photos/9289838@N06/6332999386"
+  },
+  {
+   "id": "287338af2fd1c37b",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/287338af2fd1c37b.jpg",
+   "sha256": "81366c32b5335cf7224642ded2206b36f5ed558c26cfc89e434f43b5ee94e0a4",
+   "labels": {
+    "fire": 1,
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Jasoninbklyn",
+   "page": "https://www.flickr.com/photos/jreif/4088946600"
+  },
+  {
+   "id": "cc717206f2ef26b3",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/cc717206f2ef26b3.jpg",
+   "sha256": "44c710f14077932f5424df16c7d20e517bfe617be69851a175a27961d7654495",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Hajime NAKANO",
+   "page": "https://www.flickr.com/photos/jetalone/300690332"
+  },
+  {
+   "id": "dd44f93f2cc659d1",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/dd44f93f2cc659d1.jpg",
+   "sha256": "92f14cf414ce23f6b40c22f59882ca5d1e1af674ad424754a5b72fccbf4059d1",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "chichacha",
+   "page": "https://www.flickr.com/photos/chichacha/2410233100"
+  },
+  {
+   "id": "0a996230035e437e",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/0a996230035e437e.jpg",
+   "sha256": "7d3c6508b5939857d5258ef236a014bc30d2e5cd9bc38af3d5c71f794dd077ec",
+   "labels": {
+    "fire": 1,
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Ulverytternes Venner",
+   "page": "https://www.flickr.com/photos/ulverytterne/5726596854/"
+  },
+  {
+   "id": "011798b32d4ebf79",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/011798b32d4ebf79.jpg",
+   "sha256": "e849aa33990f96b418a0047aae4b42ce0e9b228bd0e91a2cc37ddaee65aee0af",
+   "labels": {
+    "person": 1,
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "David Stanley",
+   "page": "https://www.flickr.com/photos/davidstanleytravel/5915537603"
+  },
+  {
+   "id": "dbe473f9dbb89ff2",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/dbe473f9dbb89ff2.jpg",
+   "sha256": "94233057ab6c4c17483ac257da8c39b5f8dfe3e4dd7a774ab06ff4f4d3fae33e",
+   "labels": {
+    "person": 1,
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Ben Sutherland",
+   "page": "https://www.flickr.com/photos/bensutherland/5801467588"
+  },
+  {
+   "id": "245c5ee3d6b6610f",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/245c5ee3d6b6610f.jpg",
+   "sha256": "82eab4ffa8dac414df29e273198f3a93268a51c4e231d4664df9b8d2ce217dc6",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Diego Correa",
+   "page": "https://www.flickr.com/photos/pitzyper/1806236351"
+  },
+  {
+   "id": "31f292426be9d8d7",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/31f292426be9d8d7.jpg",
+   "sha256": "ceb3eb95de47078f1a3fb0b169445edc5f6690ab0af8eb514f89876be324d75e",
+   "labels": {
+    "fire": 1,
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Ben Sutherland",
+   "page": "https://www.flickr.com/photos/bensutherland/3841846638"
+  },
+  {
+   "id": "b41987c1ba3f5646",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/b41987c1ba3f5646.jpg",
+   "sha256": "4e695396ef33acb08cefe8dfdc1de613f5f64df008bec4b960ec57e3ea36ed12",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Sandeep Matanavar",
+   "page": "https://www.flickr.com/photos/sandeepcm/6019166006"
+  },
+  {
+   "id": "9b06d2281a6909e4",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/9b06d2281a6909e4.jpg",
+   "sha256": "d1b9d50d767ce5a48c9a119a3c4420f93c4c7ba92d1c84884c29975bc98b10de",
+   "labels": {
+    "fire": 1,
+    "smoke": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Oregon National Guard",
+   "page": "https://www.flickr.com/photos/oregonmildep/19734071834"
+  },
+  {
+   "id": "b2aaaad16749b611",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/b2aaaad16749b611.jpg",
+   "sha256": "f897ed7e97eda175a803bbc2797b9f8361baefbc9e255c625b862539cf5dc988",
+   "labels": {
+    "fire": 1,
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Rikki&#x27;s  Refuge",
+   "page": "https://www.flickr.com/photos/rikkis_refuge/4132938167"
+  },
+  {
+   "id": "770b78989c338897",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/770b78989c338897.jpg",
+   "sha256": "c0da1f8821c887c7700dab04a36378fea8e5a90c4cc3c2cd94313688f976b5d7",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Duncan Verrall",
+   "page": "https://www.flickr.com/photos/dunkv/100543093/"
+  },
+  {
+   "id": "9c5d4780b3f281a9",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/9c5d4780b3f281a9.jpg",
+   "sha256": "bbb008721462b7700d825608ef1b1402ca76556e4b56e99b7d00e2846b7f3e0a",
+   "labels": {
+    "person": 1,
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "StooMathiesen",
+   "page": "https://www.flickr.com/photos/stoo57/5993639700"
+  },
+  {
+   "id": "6f2289201fd86083",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/6f2289201fd86083.jpg",
+   "sha256": "95d99b01c85cc50622bfd30d820e111aaec56f3038dd6f60d1f801482cbe22eb",
+   "labels": {
+    "fire": 1,
+    "smoke": 1,
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Jason Bolonski",
+   "page": "https://www.flickr.com/photos/bolonski/5207859419"
+  },
+  {
+   "id": "1d5b4479a8f305fc",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/1d5b4479a8f305fc.jpg",
+   "sha256": "0d1acd19f7b35d2dd5f5765ee2db6df8c4d14edecad0eb73043669db584a8463",
+   "labels": {
+    "fire": 1,
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Bart Everson",
+   "page": "https://www.flickr.com/photos/editor/8628881821"
+  },
+  {
+   "id": "cbf8235e89284c1a",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/cbf8235e89284c1a.jpg",
+   "sha256": "518a3c13e4f250b2be7e01836f0ce5141a1e5d43960784f0e0dc126d2b6a8b8a",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Max Goldberg",
+   "page": "https://www.flickr.com/photos/max-goldberg/16638315888"
+  },
+  {
+   "id": "1f84ddf8ead38633",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/1f84ddf8ead38633.jpg",
+   "sha256": "b5fe375d1ef3e2cd59b366e36eea09d75e1f01dc058bd300a14b05b8994297b7",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Martin Irwin",
+   "page": "https://www.flickr.com/photos/alys1um/276428657"
+  },
+  {
+   "id": "54efd771da0b4c65",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/54efd771da0b4c65.jpg",
+   "sha256": "639147ef276e2d07a6f834dd9f7deb89b7ccf97595bbc6a74fea080d9bfb2e11",
+   "labels": {
+    "fire": 1,
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Wayne National Forest",
+   "page": "https://www.flickr.com/photos/waynenf/3619607543/"
+  },
+  {
+   "id": "d9e9653b6e5d755f",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/d9e9653b6e5d755f.jpg",
+   "sha256": "ab37a15ce1e6e486d46aa66706ebb0dc9c05625e9853392e0b617b5d465429e2",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Pierroleblog",
+   "page": "https://www.flickr.com/photos/miramaxlife/4837126721"
+  },
+  {
+   "id": "2901aead98d09e94",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/2901aead98d09e94.jpg",
+   "sha256": "8b35d5d2abfe49936780be20dbfbcca28826462ac2998fc459437d3c3754b488",
+   "labels": {
+    "fire": 1,
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Gorupka",
+   "page": "https://www.flickr.com/photos/gorupka/2330806489"
+  },
+  {
+   "id": "dd80a2ed9c4a656f",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/dd80a2ed9c4a656f.jpg",
+   "sha256": "0443491bff448640412d12bb3ba439fce048724d2638a07a5c08bed45564e3d2",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Alisha Vargas",
+   "page": "https://www.flickr.com/photos/alishav/3262213561"
+  },
+  {
+   "id": "b0f166acb22eb78e",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/b0f166acb22eb78e.jpg",
+   "sha256": "11465c373f905b5764dc81b9ad02a6f9a32df00206d42e2976a3810e3797b17e",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Roberto Cacho Toca",
+   "page": "https://www.flickr.com/photos/mploco/5586056577"
+  },
+  {
+   "id": "82ed562839fb86e9",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/82ed562839fb86e9.jpg",
+   "sha256": "dcd08f138190305a98b50c29b2da9231407dc07a7cfc55daa035e1f09aefccd7",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Dennis Hill",
+   "page": "https://www.flickr.com/photos/fontplaydotcom/3288349373"
+  },
+  {
+   "id": "437a9432e3bab7b5",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/437a9432e3bab7b5.jpg",
+   "sha256": "cefa4f3838efeb74c6b8af0cf599318e2900f36d884bd2a951a977f04094f253",
+   "labels": {
+    "fire": 1,
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Raquel Baranow",
+   "page": "https://www.flickr.com/photos/666_is_money/14985097397"
+  },
+  {
+   "id": "f30a02ce7bfb2a23",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/f30a02ce7bfb2a23.jpg",
+   "sha256": "66ca0d270dfea2855f74df02581062d98cb0817ffb57788ef93542cfedb8569d",
+   "labels": {
+    "fire": 1,
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Shehal Joseph",
+   "page": "https://www.flickr.com/photos/shehal/1167585170"
+  },
+  {
+   "id": "f2daa55ee3104987",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/f2daa55ee3104987.jpg",
+   "sha256": "c62cc950df23c2bc29d66cd27196d5621759b238ff2ef48f1d514eb708724157",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Clint Budd",
+   "page": "https://www.flickr.com/photos/58827557@N06/15001475025"
+  },
+  {
+   "id": "7ff64b55e176c872",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/7ff64b55e176c872.jpg",
+   "sha256": "7def6b833149efa80e5d6f064f78dbdcce53b38fd0d22026f21068149f7e3fe4",
+   "labels": {
+    "person": 0,
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "USFWS Endangered Species",
+   "page": "https://www.flickr.com/photos/usfwsendsp/6353334939"
+  },
+  {
+   "id": "3732025890afd2e7",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/3732025890afd2e7.jpg",
+   "sha256": "b14151a9fa32d3e36dad470dff2660c86463029a09c888331c697f81e7669491",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Sergio Jordá Gregori",
+   "page": "https://www.flickr.com/photos/sergiojorda/14151114155"
+  },
+  {
+   "id": "adc54934dd3994fe",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/adc54934dd3994fe.jpg",
+   "sha256": "a89fe1d79512bb7c7e50366659a206032fb71d725f8614ce23aff3bb842cdf32",
+   "labels": {
+    "person": 1,
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Dan Zen",
+   "page": "https://www.flickr.com/photos/danzen/2379288666"
+  },
+  {
+   "id": "e323726244496e0b",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/e323726244496e0b.jpg",
+   "sha256": "fbc57a143653529e9ee8e9307aacbcf49c4350ab81198eba01405199afb44617",
+   "labels": {
+    "person": 1,
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Keng Susumpow",
+   "page": "https://www.flickr.com/photos/kengz/4636054941"
+  },
+  {
+   "id": "f0ec03803fc36653",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/f0ec03803fc36653.jpg",
+   "sha256": "41b2368bdbd35d71c5cafd3f9ef88da9f6e60e488e7dbe7965087fcd9009dca9",
+   "labels": {
+    "person": 1,
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "raphaelthelen",
+   "page": "https://www.flickr.com/photos/58614987@N08/5372752748"
+  },
+  {
+   "id": "02018995730f71e9",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/02018995730f71e9.jpg",
+   "sha256": "472d03db446f70d814ebe12ad77604bd151dbd718e4459066aa79bbd02bbe8ef",
+   "labels": {
+    "fire": 1,
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Felix  Huth",
+   "page": "https://www.flickr.com/photos/felixhuth/15754751554"
+  },
+  {
+   "id": "95139e6a7420eb95",
+   "group": "fire",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/95139e6a7420eb95.jpg",
+   "sha256": "137dc2eb7d2c2966055f3e2eccb0a2a1c6e009e60eee2df900c7da367056f874",
+   "labels": {
+    "fire": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Rod Herrea",
+   "page": "https://www.flickr.com/photos/herrea/4607219936"
+  },
+  {
+   "id": "bd632e6db3537397",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/bd632e6db3537397.jpg",
+   "sha256": "e5c7377c850122b7ea3dfda9eb8d1a2e850b3aebd11b7d911e5574683d75ac17",
+   "labels": {
+    "smoke": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "dev Moore",
+   "page": "https://www.flickr.com/photos/devinmoore/182376682"
+  },
+  {
+   "id": "fb1cd1f471c749b0",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/fb1cd1f471c749b0.jpg",
+   "sha256": "6dfd570a8cc774518a6d901d299852492bed8dfa19ea469db8e13cee1398ab0b",
+   "labels": {
+    "fire": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Tim Parkinson",
+   "page": "https://www.flickr.com/photos/timparkinson/3678829529"
+  },
+  {
+   "id": "a9adc6d78e500baa",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/a9adc6d78e500baa.jpg",
+   "sha256": "176d42ac2e2b373e02d10150bcb70f05b067ab71261f1293d90919dc65633477",
+   "labels": {
+    "fire": 0,
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Anna",
+   "page": "https://www.flickr.com/photos/art_es_anna/1478720585"
+  },
+  {
+   "id": "82062842412b2256",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/82062842412b2256.jpg",
+   "sha256": "e1555a638177177b023f59c56c3f4a5c15edf814e287d61aa308a2e6c6c3394a",
+   "labels": {
+    "fire": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Kyla Duhamel",
+   "page": "https://www.flickr.com/photos/curacumba/16357255838"
+  },
+  {
+   "id": "0138e3eab4473aa4",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/0138e3eab4473aa4.jpg",
+   "sha256": "bd06dca48b6aac37f1e2943526e3599322517c5addda7f467622e8b4639e943b",
+   "labels": {
+    "fire": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "david__jones",
+   "page": "https://www.flickr.com/photos/cloudsoup/219311896"
+  },
+  {
+   "id": "0d68cf7a476f6ae2",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/0d68cf7a476f6ae2.jpg",
+   "sha256": "4fda2f96be02da91f1b84d72d58ef643161692911d3fb3d5cab13fb1ae82ec83",
+   "labels": {
+    "fire": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Langfia Ayeona",
+   "page": "https://www.flickr.com/photos/ayeona/3023978075"
+  },
+  {
+   "id": "3121c845329f7276",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/3121c845329f7276.jpg",
+   "sha256": "3447d10e6e6ec9041da51ad4d4bd7deec77a7278ca50e8ed13c786e0b4dedff0",
+   "labels": {
+    "person": 0,
+    "smoke": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Mushabab Al-Murayeh",
+   "page": "https://www.flickr.com/photos/53905292@N02/4989275336"
+  },
+  {
+   "id": "34dac7b159016357",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/34dac7b159016357.jpg",
+   "sha256": "3c18effbecc1211e88dbfcf6b89be5a78dbea61d6463f865a710941cbf614ced",
+   "labels": {
+    "fire": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Don Relyea",
+   "page": "https://www.flickr.com/photos/donrelyea/10395336396"
+  },
+  {
+   "id": "e183f1be1539aad2",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/e183f1be1539aad2.jpg",
+   "sha256": "eb653dae75a84dc89b591545eeac242ff3d93f1654c18245ab74261be70c6aaf",
+   "labels": {
+    "fire": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Irina",
+   "page": "https://www.flickr.com/photos/repolco/15167271032"
+  },
+  {
+   "id": "e0dfef1d8f5dc0d3",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/e0dfef1d8f5dc0d3.jpg",
+   "sha256": "91d1fb141ab30ce06d76066542011ce10fac2c753d3740b53085f09c0b115ac6",
+   "labels": {
+    "fire": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Erasmushogeschool Brussel",
+   "page": "https://www.flickr.com/photos/erasmushogeschool/3178533749"
+  },
+  {
+   "id": "c2948fef12194995",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/c2948fef12194995.jpg",
+   "sha256": "a69ceb48659870d6beae09963c9295cbfb149f27de86e74d0a86fe7d098e4079",
+   "labels": {
+    "fire": 0,
+    "smoke": 0,
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Rosa y Dani",
+   "page": "https://www.flickr.com/photos/rosaydani/312736408"
+  },
+  {
+   "id": "31f460ec1cfc7464",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/31f460ec1cfc7464.jpg",
+   "sha256": "71af84e2f08d01b7d0d2295ec4467c4adabcf85e77e995723dcd107a5367ce01",
+   "labels": {
+    "smoke": 0,
+    "fire": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Alfred Brumm",
+   "page": "https://www.flickr.com/photos/snaky34/5564885841"
+  },
+  {
+   "id": "a866f05e72b09cf4",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/a866f05e72b09cf4.jpg",
+   "sha256": "e6390b516d3807af523c1c6874a2987ee568f8a3b8ed38c8bbe39c99520203ef",
+   "labels": {
+    "fire": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Gordon Tarpley",
+   "page": "https://www.flickr.com/photos/gordontarpley/5020072257"
+  },
+  {
+   "id": "455585332fff34d0",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/455585332fff34d0.jpg",
+   "sha256": "3549ee08a47a06ea77a998a11058ff4e79c6544b3853a7cc38653826b1bdffff",
+   "labels": {
+    "fire": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Jonas Bengtsson",
+   "page": "https://www.flickr.com/photos/jonasb/1469124953"
+  },
+  {
+   "id": "71d262609fa81fb4",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/71d262609fa81fb4.jpg",
+   "sha256": "22272cb0baf9cd5c8f610e6f579c990d8560b897be839ab749d98e5d9848a02a",
+   "labels": {
+    "fire": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "amanderson2",
+   "page": "https://www.flickr.com/photos/amanderson/12673175753"
+  },
+  {
+   "id": "fc9315edc02ceb1e",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/fc9315edc02ceb1e.jpg",
+   "sha256": "e829106292e37235aad496f5e459a3405f27a8c238c9f6bb156b5e4c107a5f0f",
+   "labels": {
+    "fire": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "MattysFlicks",
+   "page": "https://www.flickr.com/photos/68397968@N07/14432046954"
+  },
+  {
+   "id": "5431739d6c1cfeee",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/5431739d6c1cfeee.jpg",
+   "sha256": "70ad2605c60fc452e11b8d36f9067f8ed1d2a90fa89d15d2292ec4a73532d8d0",
+   "labels": {
+    "fire": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "mark Phu",
+   "page": "https://www.flickr.com/photos/markphustudio/6832450542"
+  },
+  {
+   "id": "ba6ef5189a5a110e",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/ba6ef5189a5a110e.jpg",
+   "sha256": "9e420ca44516c46c1ee96fe2a7efe529d83c011ca87d12a6f497b329e1b02d92",
+   "labels": {
+    "fire": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Edi Susanto",
+   "page": "https://www.flickr.com/photos/edysoesanto/5863495999"
+  },
+  {
+   "id": "5e3e352e8976a339",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/5e3e352e8976a339.jpg",
+   "sha256": "2e22abe39dadc7069b1ce73fd9953ee79922c20ff9a381fcbeb648e35632ed76",
+   "labels": {
+    "fire": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Leon Brocard",
+   "page": "https://www.flickr.com/photos/acme/8532867"
+  },
+  {
+   "id": "b2e41473d126737d",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/b2e41473d126737d.jpg",
+   "sha256": "172bdc30622f00a3be113e81043e6a158d59bc80e625f7b922e6a38f1a90b85a",
+   "labels": {
+    "smoke": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Jo Naylor",
+   "page": "https://www.flickr.com/photos/pandora_6666/1704956090"
+  },
+  {
+   "id": "085801a888180779",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/085801a888180779.jpg",
+   "sha256": "e897a9d465372067722580ee09050bc4c91bedaa0bb3aa59812a05022d768f05",
+   "labels": {
+    "person": 0,
+    "smoke": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "CNBP",
+   "page": "https://www.flickr.com/photos/cnbp/15372833024"
+  },
+  {
+   "id": "ca4ab4f0ae7fe552",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/ca4ab4f0ae7fe552.jpg",
+   "sha256": "2c67d8ae879ef9f1765adaae663f9027abdcc1dac0c7277a42334ebdc19e991c",
+   "labels": {
+    "fire": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Jörg Weingrill",
+   "page": "https://www.flickr.com/photos/joerg73/3362931361"
+  },
+  {
+   "id": "0822d58bd241804e",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/0822d58bd241804e.jpg",
+   "sha256": "48707ee2080655201a1079edf31d76a8287507e34fd811c8f5bb0a268f2384f7",
+   "labels": {
+    "fire": 0,
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Jérôme Decq",
+   "page": "https://www.flickr.com/photos/lesphotosdejerome/5327695195"
+  },
+  {
+   "id": "c943565858c588b2",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/c943565858c588b2.jpg",
+   "sha256": "1929be14c7b863178da018498bd8b388fd3aae9a421cbea12b440a1a9bf97468",
+   "labels": {
+    "person": 0,
+    "smoke": 0,
+    "fire": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Diet Munhoz",
+   "page": "https://www.flickr.com/photos/dietmunhoz/5964279707"
+  },
+  {
+   "id": "6d54fe2224249997",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/6d54fe2224249997.jpg",
+   "sha256": "b2a101e824129939db1ae2ace0b64631e0f2e8be9ffde8c937ce4a1c41e5e0b1",
+   "labels": {
+    "fire": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Irish Defence Forces",
+   "page": "https://www.flickr.com/photos/dfmagazine/11797499684/"
+  },
+  {
+   "id": "a977387c1201525d",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/a977387c1201525d.jpg",
+   "sha256": "1709cf6614206321517767c123938cf72420d9c3f51be2a3475f77327382842b",
+   "labels": {
+    "fire": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Jacob Munk-Stander",
+   "page": "https://www.flickr.com/photos/jacobms/374708728"
+  },
+  {
+   "id": "5ca7a35111dea32a",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/5ca7a35111dea32a.jpg",
+   "sha256": "6e3f86d417d653ae17a9426666d084a69a47108437eb36fa7d37de9fc601bbbe",
+   "labels": {
+    "fire": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Steve Drolet",
+   "page": "https://www.flickr.com/photos/tasitch/58759247"
+  },
+  {
+   "id": "bd51aa309326c5f2",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/bd51aa309326c5f2.jpg",
+   "sha256": "497085442f9637e95b169a1b3ab36db3d037abbaa2895bc139dc9e84590ea7f6",
+   "labels": {
+    "fire": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Alice Popkorn",
+   "page": "https://www.flickr.com/photos/alicepopkorn/3630446682"
+  },
+  {
+   "id": "8ff34bfe87fce974",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/8ff34bfe87fce974.jpg",
+   "sha256": "b30cbb0eb3001551906279af6aa6e5e5f2d9c71f079d5794bc4b8c52584d725f",
+   "labels": {
+    "person": 0,
+    "smoke": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Abhisit Vejjajiva",
+   "page": "https://www.flickr.com/photos/thaigov/5504427591"
+  },
+  {
+   "id": "5b565b52c51aec7d",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/5b565b52c51aec7d.jpg",
+   "sha256": "b3ae30f23b133bf33d65176346cda4d460173ceebbbb7e82c917773de1b0b001",
+   "labels": {
+    "person": 1,
+    "fire": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "jim simonson",
+   "page": "https://www.flickr.com/photos/rocketjim54/451757393"
+  },
+  {
+   "id": "eca833650f7d5db0",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/eca833650f7d5db0.jpg",
+   "sha256": "15f0f4523582c8419d4afc9590477cb23a2ce0a067049624331f49a713a4e00f",
+   "labels": {
+    "person": 1,
+    "fire": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Ed",
+   "page": "https://www.flickr.com/photos/gooseotter/5797625500"
+  },
+  {
+   "id": "5caefa7e102526dd",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/5caefa7e102526dd.jpg",
+   "sha256": "14f09920761e788e049c9479109a235741a47b127d828ace48f06fba40d079ac",
+   "labels": {
+    "fire": 0,
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "BenGrantham",
+   "page": "https://www.flickr.com/photos/ijammin/4639793249"
+  },
+  {
+   "id": "56e041b89d9a9838",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/56e041b89d9a9838.jpg",
+   "sha256": "94a5b3fc6be85290e8268f5d858e94d3e9cbfc60f7b50202134e030a24f3b2c8",
+   "labels": {
+    "fire": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Mike Boehmer",
+   "page": "https://www.flickr.com/photos/mikeboehmer/3924232947"
+  },
+  {
+   "id": "73b9867cbfbb807f",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/73b9867cbfbb807f.jpg",
+   "sha256": "cc97165388a0dea824bf00b93617763b9c4e3c4faa61e4536195a9b43fcc227f",
+   "labels": {
+    "person": 1,
+    "fire": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Secretaría de Movilidad de Medellín",
+   "page": "https://www.flickr.com/photos/transitomedellin/7381160290/"
+  },
+  {
+   "id": "ab4cb2e897eaddde",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/ab4cb2e897eaddde.jpg",
+   "sha256": "8e6e3c785b5481477da6a52c183ee5fde1754ed93c1427b11d1f712457581653",
+   "labels": {
+    "fire": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "maria zerihoun",
+   "page": "https://www.flickr.com/photos/zerihoun/2330970805"
+  },
+  {
+   "id": "9759b326cfd6759a",
+   "group": "hard_negative",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/9759b326cfd6759a.jpg",
+   "sha256": "830260249e77f49b5fe6c9d187d5d9b89e7d487f2d3e0f1072390aaf94408cc3",
+   "labels": {
+    "fire": 0,
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "bilderheld",
+   "page": "https://www.flickr.com/photos/superzelle/4233600714"
+  },
+  {
+   "id": "ea6b3774f0c80335",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/ea6b3774f0c80335.jpg",
+   "sha256": "3d7ea432caf87ec66e2e834031d0a935410ff1c4a1194e5da624d1721851b52a",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Aero Pixels",
+   "page": "https://www.flickr.com/photos/levien66/18772743545"
+  },
+  {
+   "id": "e6950958fd666dd9",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/e6950958fd666dd9.jpg",
+   "sha256": "5152d646d3fe479a5dcbc23d79b564b7818250fe7001d630cfaff21c7e782acb",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Jacques",
+   "page": "https://www.flickr.com/photos/alternativeroute/8205447826"
+  },
+  {
+   "id": "bedc8dc91232a1d6",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/bedc8dc91232a1d6.jpg",
+   "sha256": "163ea1d1894f2db1c85b56a0afbb1e77a03e49a136fa478e1be59faf2b34de53",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "kykyru2",
+   "page": "https://www.flickr.com/photos/7237754@N02/3630306673"
+  },
+  {
+   "id": "f69fa604921a6c2c",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/f69fa604921a6c2c.jpg",
+   "sha256": "b49214f233425fe3e7a8716557282473f7f148284a541b663b0f3ae1c9c65c27",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Juan Andres Martinez",
+   "page": "https://www.flickr.com/photos/juanmaiz/177431677"
+  },
+  {
+   "id": "322b9574f9c4d46c",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/322b9574f9c4d46c.jpg",
+   "sha256": "277dbc8a20ba61be3523b6a3efec7550a53860226cc7c5bb459d269dc1e6d3b3",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Aaron &quot;tango&quot; Tang",
+   "page": "https://www.flickr.com/photos/hahatango/7001440145"
+  },
+  {
+   "id": "a5cf958f4092e698",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/a5cf958f4092e698.jpg",
+   "sha256": "04d6d0a3f305a01172ca652af2021b1b424371e5c23ec36adae59d81b451c908",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "dfbphotos",
+   "page": "https://www.flickr.com/photos/dfb_photos/5619810901"
+  },
+  {
+   "id": "e29638854bb9abbb",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/e29638854bb9abbb.jpg",
+   "sha256": "8b4ea341b477ce18e1340855daa9b9f8d96f70aaf8abdf754a8ca660c2f60d3d",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Audrey",
+   "page": "https://www.flickr.com/photos/audreyjm529/180721214"
+  },
+  {
+   "id": "7ab27cdba72b2e86",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/7ab27cdba72b2e86.jpg",
+   "sha256": "f9e40ed44f8165e42e12401a7d4851272f13710c30df47a849d269c568dd17bd",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Casey Fleser",
+   "page": "https://www.flickr.com/photos/somegeekintn/3540891235"
+  },
+  {
+   "id": "5df55f1b1d2f0607",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/5df55f1b1d2f0607.jpg",
+   "sha256": "5e15ddd881025e405d2aac859ef51614d6ace6fe186b232829a6760af31a695d",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Dick Thomas Johnson",
+   "page": "https://www.flickr.com/photos/31029865@N06/14997184402"
+  },
+  {
+   "id": "6459e868d4214c5c",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/6459e868d4214c5c.jpg",
+   "sha256": "2a85905cab43479e69dbe0b2fcad7848810b1bda725eb863312445fd599016cb",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Jason Cartwright",
+   "page": "https://www.flickr.com/photos/jasoncartwright/13573657"
+  },
+  {
+   "id": "52ae7e28296af990",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/52ae7e28296af990.jpg",
+   "sha256": "93aa5b097dfab95be00d8c43dcecb285581cfd73c226f9553951bf0d815b99d0",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Newtown grafitti",
+   "page": "https://www.flickr.com/photos/newtown_grafitti/5501679949"
+  },
+  {
+   "id": "48eafc8da062d9d1",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/48eafc8da062d9d1.jpg",
+   "sha256": "038f3fca10585bcebb4cfdc4ce2b3a0e8eb6ee3f1c036cf57eba782861a18d1d",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Ana_Cotta",
+   "page": "https://www.flickr.com/photos/ana_cotta/2067573782/"
+  },
+  {
+   "id": "013e75c696c928e8",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/013e75c696c928e8.jpg",
+   "sha256": "5a0699a54da7bcd6ceb30ea3437086857a01b4b30f32ee5bb2d3614883c13ca7",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Steven Depolo",
+   "page": "https://www.flickr.com/photos/stevendepolo/3014271067"
+  },
+  {
+   "id": "78098ed9d6246d5a",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/78098ed9d6246d5a.jpg",
+   "sha256": "18f9959308eadd84f5b42729b963dd16d79b35cc341b8d678893862530c6d048",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Marcin Wichary",
+   "page": "https://www.flickr.com/photos/mwichary/4110230891"
+  },
+  {
+   "id": "ed8d2c4dbad14177",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/ed8d2c4dbad14177.jpg",
+   "sha256": "3528098236126d72fbb3ad4296cc2357e270d94a7a4f93657335432fe8c07a4a",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Winter_1983",
+   "page": "https://www.flickr.com/photos/winter83/15007186478"
+  },
+  {
+   "id": "87274659b3cccf09",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/87274659b3cccf09.jpg",
+   "sha256": "30346994515b7d95eed9e07e595f74954446e20928db15e88d9353b923156050",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "floodllama",
+   "page": "https://www.flickr.com/photos/38446022@N00/2397120497"
+  },
+  {
+   "id": "e683486c0d1edf77",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/e683486c0d1edf77.jpg",
+   "sha256": "1b14a5f34e5547b9948e4d01ff0c648f929abb29708f7d63bd8462726a5912a3",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Stefan Krasowski",
+   "page": "https://www.flickr.com/photos/rapidtravelchai/14685634444"
+  },
+  {
+   "id": "a9f268bc3baedefe",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/a9f268bc3baedefe.jpg",
+   "sha256": "52d7d70adb136fe4ae11b73a1b8de5fd5edbab99cd084b7ec46ecb6b2ee447ba",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Dornenwolf",
+   "page": "https://www.flickr.com/photos/gartenfreuden/14349127959"
+  },
+  {
+   "id": "02f3bbf1da724ef6",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/02f3bbf1da724ef6.jpg",
+   "sha256": "99303f76d738f976e3ae80cc71fc9b348637cf39912464a00913a4a2b7c4a5de",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "kevin ryder",
+   "page": "https://www.flickr.com/photos/labdog2010/4831419550"
+  },
+  {
+   "id": "a20b97704a4a4551",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/a20b97704a4a4551.jpg",
+   "sha256": "0ee428355093a9953f65fd8aeb679ed7bc36d1fceef942b926a795b1a4b226ef",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Robert Couse-Baker",
+   "page": "https://www.flickr.com/photos/29233640@N07/4545124722"
+  },
+  {
+   "id": "6bd0310b1fac352d",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/6bd0310b1fac352d.jpg",
+   "sha256": "fda9561b6b943580298dd6292a10ab6e7ac24a3f3f45138f8abb87734bfe10a1",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Kitmondo Marketplace",
+   "page": "https://www.flickr.com/photos/kitmondo/16580263642"
+  },
+  {
+   "id": "3e1c0d1859a07508",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/3e1c0d1859a07508.jpg",
+   "sha256": "1d712fdfd989e42f0c5e70954df5f94b44dab75453b7ef9ba010e661d88f506b",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Ana María Guardia",
+   "page": "https://www.flickr.com/photos/palabrerio/455632601"
+  },
+  {
+   "id": "59c5603789d2a764",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/59c5603789d2a764.jpg",
+   "sha256": "db66717a9ad1bb0882e7b6be16c4e882f5edd5d8c9083e013a05e8db013f4736",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Enokson",
+   "page": "https://www.flickr.com/photos/vblibrary/6124465878"
+  },
+  {
+   "id": "d4c6d785e2dca193",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/d4c6d785e2dca193.jpg",
+   "sha256": "9a177882a50c74d96913c94ad6653e75e442211b9d67fef6153343ad47cb94c5",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Wrote",
+   "page": "https://www.flickr.com/photos/wrote/2284535436/"
+  },
+  {
+   "id": "26912ba548456bd8",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/26912ba548456bd8.jpg",
+   "sha256": "583d38fcaff6981c18578347e07cc8cd9de2129b25c2d1a82e39ed01326ed5c9",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Rick González",
+   "page": "https://www.flickr.com/photos/ricardogz10/9613840952"
+  },
+  {
+   "id": "f17da02c65f01d7e",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/f17da02c65f01d7e.jpg",
+   "sha256": "ad1e2940c9073be691576cfe87e592924b54fd93e38a9e7ff54da1db29ab99c8",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Sheffield Tiger",
+   "page": "https://www.flickr.com/photos/sheffield_tiger/3508143549"
+  },
+  {
+   "id": "7447ee801a6ef4db",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/7447ee801a6ef4db.jpg",
+   "sha256": "e57a5c686b81c2ab13c2f599d6682bdc1a698c63f1b0973f3314294cfab8174d",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Jeremy Keith",
+   "page": "https://www.flickr.com/photos/adactio/14038798368"
+  },
+  {
+   "id": "545edffd179b3285",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/545edffd179b3285.jpg",
+   "sha256": "c964151e601ef97ded951d9af93881a307729c4587384501b326e616f3497242",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Jeremy Thompson",
+   "page": "https://www.flickr.com/photos/rollercoasterphilosophy/16433405420"
+  },
+  {
+   "id": "e26188643cba7f18",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/e26188643cba7f18.jpg",
+   "sha256": "de3e9e775c4b8f990085307c15b0332af319e78f59c0d781306f0f3741ae3014",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Yuichiro MASUI",
+   "page": "https://www.flickr.com/photos/masuidrive/22277637672"
+  },
+  {
+   "id": "3c57382ff8bbd289",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/3c57382ff8bbd289.jpg",
+   "sha256": "d0961f84606e8cc1d894ff4026218e76dc0ccabab08581498d95e61d1282fd0d",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "E Magnuson",
+   "page": "https://www.flickr.com/photos/maderik/4754217517"
+  },
+  {
+   "id": "76e6fd8d1273af7e",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/76e6fd8d1273af7e.jpg",
+   "sha256": "ba69ff42b62dc9150cac6c3912c8a8bfce541e20a72da97f897abc82d3c8e27f",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Mark Richardson",
+   "page": "https://www.flickr.com/photos/kalooz/3856569824"
+  },
+  {
+   "id": "5a733eb92334b37a",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/5a733eb92334b37a.jpg",
+   "sha256": "6dd2fa3373a68bb0d62338b31e09f77de1fa62d07f535406fb7b23750457ba0a",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Niklas Hellerstedt",
+   "page": "https://www.flickr.com/photos/niklashellerstedt/5694089814"
+  },
+  {
+   "id": "87e0a553c5c8f525",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/87e0a553c5c8f525.jpg",
+   "sha256": "fa1ba8bf93fcb991f89f57b54f95280368462f613215366f87a0b53681c9164c",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Scott Calleja",
+   "page": "https://www.flickr.com/photos/scottcalleja/5459711477"
+  },
+  {
+   "id": "b491969d4342df84",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/b491969d4342df84.jpg",
+   "sha256": "87816fac1b2d26a150b2da9e99088ce2c74d94d94cc1e1bf88640098d57427d3",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "arifm",
+   "page": "https://www.flickr.com/photos/arifm/335910996"
+  },
+  {
+   "id": "e4ef43a126d3f5d0",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/e4ef43a126d3f5d0.jpg",
+   "sha256": "0c2393d801fd5fc28597f5e861f6d27ca6c2704ebd930eaddf0daa6472a6b371",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Mike Bogle",
+   "page": "https://www.flickr.com/photos/acousticdad/5944830833"
+  },
+  {
+   "id": "eb3f49468460323e",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/eb3f49468460323e.jpg",
+   "sha256": "efd9d19148340c5a7fcfc1320f8f4ba7a68132a9abdc3b1911913d8c0925fbf0",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Eric Golub",
+   "page": "https://www.flickr.com/photos/sirqitous/13489944025/"
+  },
+  {
+   "id": "1f60b3da9413c839",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/1f60b3da9413c839.jpg",
+   "sha256": "a3e74d4f7bf03ccd2a693c944c4187174d3f5c2e6f5d1e88fed6087a895eb7a2",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Daniel Hargrave",
+   "page": "https://www.flickr.com/photos/danielhargrave/9473722455"
+  },
+  {
+   "id": "8c4b004b197ec9d2",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/8c4b004b197ec9d2.jpg",
+   "sha256": "ca22379824f8830118c4a10e0e50cad11e4f599b05bb8faeb76d7fba7ffbf50d",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Guilhem Vellut",
+   "page": "https://www.flickr.com/photos/o_0/10621596593"
+  },
+  {
+   "id": "c1da50c98197cfb8",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/c1da50c98197cfb8.jpg",
+   "sha256": "cf6c8266641cf4c1afde9555f48fea8c43b5e13e64b84e9baac9503c0d556c06",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "Roland Tanglao",
+   "page": "https://www.flickr.com/photos/roland/7246718692"
+  },
+  {
+   "id": "ad799175c70fd47e",
+   "group": "no_person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/ad799175c70fd47e.jpg",
+   "sha256": "cc6f3d33695e065096de28d397ae6e2cf1f84cd3140f4f35edfa32e47829794b",
+   "labels": {
+    "person": 0
+   },
+   "license": "CC-BY-2.0",
+   "author": "jlcebollada",
+   "page": "https://www.flickr.com/photos/jlcebollada/5655624740"
+  },
+  {
+   "id": "448a3b6f36dcc893",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/448a3b6f36dcc893.jpg",
+   "sha256": "336a33376b554fd5aa324acdf5bd508d6c8bdd1adef1f046d10a403f48c67348",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Lets Go Out Bournemouth and Poole",
+   "page": "https://www.flickr.com/photos/letsgoout-bournemouthandpoole/8706644833"
+  },
+  {
+   "id": "b1c1e38370446170",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/b1c1e38370446170.jpg",
+   "sha256": "a31061e7c6ddb43d15e6e71c51f53b36a57f9943d61da737fdac33ab5bff7b12",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "alberto ge punto hache",
+   "page": "https://www.flickr.com/photos/festom/16074279905"
+  },
+  {
+   "id": "e51772787bb18bbe",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/e51772787bb18bbe.jpg",
+   "sha256": "cd659f2b034bdfe532b44b7083950aa368c263256a197dcf42e1fa20f0301913",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Andy Karmy",
+   "page": "https://www.flickr.com/photos/akarmy/2384027212"
+  },
+  {
+   "id": "0183cf2e08e5e56a",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/0183cf2e08e5e56a.jpg",
+   "sha256": "d32abbf9f29bb85b8cc7f414e99021aebaa8e09fb13c7a03396856edad1ada4b",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Moto &quot;Club4AG&quot; Miwa",
+   "page": "https://www.flickr.com/photos/moto_club4ag/11097541966"
+  },
+  {
+   "id": "6a4a00cd47ebdf13",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/6a4a00cd47ebdf13.jpg",
+   "sha256": "775067cb7883cc50d0b0c26006c001cf5041eb7ed1c21f63aa36f8cd9f6c68d2",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "U.S. Army",
+   "page": "https://www.flickr.com/photos/familymwr/5281190652"
+  },
+  {
+   "id": "7059c16a1c41f888",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/7059c16a1c41f888.jpg",
+   "sha256": "55541fd181975174dc4b2f93262192522564615209d0317af1c259fe0748fcc3",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Angel Ramos G",
+   "page": "https://www.flickr.com/photos/angelramosg/7463682740"
+  },
+  {
+   "id": "8b6adcb8b7307261",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/8b6adcb8b7307261.jpg",
+   "sha256": "c0b367473307396dd43623a1acbc2b4e72516af18195299274f0334dc7306fd7",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Fashionby He",
+   "page": "https://www.flickr.com/photos/fashionbyhe/12654362823"
+  },
+  {
+   "id": "f2bb08b61468124a",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/f2bb08b61468124a.jpg",
+   "sha256": "f44868caed4af9fd7ee9836f5b8ac35a6d83bd43d49f31423e7521eff3992eca",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Umberto Rotundo",
+   "page": "https://www.flickr.com/photos/40553543@N00/4447051895"
+  },
+  {
+   "id": "e25994556fc5a07d",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/e25994556fc5a07d.jpg",
+   "sha256": "2c79bb367e97dfbf8826a9d0ee6d6dc757d8861a1b159539f0ba06b1b0e77eb2",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "fasteddy760",
+   "page": "https://www.flickr.com/photos/fasteddy760/2097142128"
+  },
+  {
+   "id": "8ae8bfa88847aaeb",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/8ae8bfa88847aaeb.jpg",
+   "sha256": "b9f6aa122d2d73ad1642db2df36893bb0c3f65fffba2c35ebe70532a2fb51d5a",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Daisyree Bakker",
+   "page": "https://www.flickr.com/photos/27875041@N02/3461756943"
+  },
+  {
+   "id": "18d59a3090c68870",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/18d59a3090c68870.jpg",
+   "sha256": "90744701d462d6f42e763034123ba29a3a713453c49974b42c04b80acad646ee",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Florida Keys--Public Libraries",
+   "page": "https://www.flickr.com/photos/keyslibraries/5711055027/"
+  },
+  {
+   "id": "888bd696631f81a0",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/888bd696631f81a0.jpg",
+   "sha256": "0206754f00c51dcbfd7f28f7c3a566e29ba42e479192a40e734abb5c06a0f33c",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Mr. Stabile",
+   "page": "https://www.flickr.com/photos/erikstabile/3339943830"
+  },
+  {
+   "id": "ca5df0d44a961832",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/ca5df0d44a961832.jpg",
+   "sha256": "075a4bb11a25ae8d6b8daa95b4603fc3597daf68d2888ee5da7d27800b2c85b5",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Swiss Tchoukball",
+   "page": "https://www.flickr.com/photos/swisstchoukball/17677389753"
+  },
+  {
+   "id": "8b8199969c3ea53f",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/8b8199969c3ea53f.jpg",
+   "sha256": "19c8de4b54d0ce20310489736af2adf3b1bbbab83b18c6e4936b1a593e106d46",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Larry Lamsa",
+   "page": "https://www.flickr.com/photos/larry1732/5215177079"
+  },
+  {
+   "id": "11051240239ce83f",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/11051240239ce83f.jpg",
+   "sha256": "eed1e0c4cffc0b988ea5cdf7865e277df5a3bd378e6712ec716cfd8de373226e",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Partidul Social Democrat",
+   "page": "https://www.flickr.com/photos/psdbiroupresa/11188838914"
+  },
+  {
+   "id": "87a2c4a7e664e85f",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/87a2c4a7e664e85f.jpg",
+   "sha256": "33e5f565b24614c17ce3d8ec4768977bff4ae4bdc6d025525b5d694197c2934e",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "SergioDelgado",
+   "page": "https://www.flickr.com/photos/sdelgado/2868300099"
+  },
+  {
+   "id": "59f46976c43cbeab",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/59f46976c43cbeab.jpg",
+   "sha256": "45b0610cee82117514341ad5b61cc45248b02548aca8cb5d2f32954443c9fb07",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "The U.S. Army",
+   "page": "https://www.flickr.com/photos/soldiersmediacenter/2560389409"
+  },
+  {
+   "id": "d3a3990204779f8e",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/d3a3990204779f8e.jpg",
+   "sha256": "0a25c21e087c1a88b8b3779508218a484ab098e36d1c2e1c23d68c5023486efb",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "alisdair",
+   "page": "https://www.flickr.com/photos/alisdair/3749085189"
+  },
+  {
+   "id": "9d099c3013244a52",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/9d099c3013244a52.jpg",
+   "sha256": "095c183b42b9c3ac640104843834ce32acc15270543f72d6b8f754548ca3325e",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Michael Costanza",
+   "page": "https://www.flickr.com/photos/mccpics/15747229737"
+  },
+  {
+   "id": "170112ac1a34dd80",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/170112ac1a34dd80.jpg",
+   "sha256": "19bc9b31b489330994be21d5e47987a7bacf9ed8c5b56d110decf823135c75db",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Bob n Renee",
+   "page": "https://www.flickr.com/photos/bobnrenee/12398522765/"
+  },
+  {
+   "id": "f5369d9cf3e4915f",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/f5369d9cf3e4915f.jpg",
+   "sha256": "74adf316ae2cc00db2927fa112969057490f320e34e67a29645e1e81077b2578",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Kieran White",
+   "page": "https://www.flickr.com/photos/117096107@N03/20129189971"
+  },
+  {
+   "id": "4b09edb7ad068305",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/4b09edb7ad068305.jpg",
+   "sha256": "7b26d0c44789a72cce9a7af848cc7401cd0e7e669b527438d7d4e50d58c727e9",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Simone Graziano Panetto",
+   "page": "https://www.flickr.com/photos/8482460@N06/9405632118"
+  },
+  {
+   "id": "3a33dddee5dcc364",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/3a33dddee5dcc364.jpg",
+   "sha256": "b0889c9d1551897974d168a509cc2ca2894a8be5dec69110763cef592e1bef33",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Sutton Coldfield Local",
+   "page": "https://www.flickr.com/photos/suttoncoldfieldlocal/14450742139/"
+  },
+  {
+   "id": "d3dc5678a8a28f95",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/d3dc5678a8a28f95.jpg",
+   "sha256": "9ec0415fc2ae16d7551ca5ba0507e726a2a4894b579a8392e9a1a7708e2a3483",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "COD Newsroom",
+   "page": "https://www.flickr.com/photos/codnewsroom/7024699891"
+  },
+  {
+   "id": "c116ad814b1227c0",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/c116ad814b1227c0.jpg",
+   "sha256": "4c23b697c41a820c7bd6a499fc894fcbc7689f561a15ab3f618cdb33e4af105c",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "the_moment",
+   "page": "https://www.flickr.com/photos/fotomaker/747123418"
+  },
+  {
+   "id": "c91df33dde17f8ab",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/c91df33dde17f8ab.jpg",
+   "sha256": "d7cf571761cd4e4c38033ee663a8a6f7be595e337a904d09de77dce3d04de325",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "pedrik",
+   "page": "https://www.flickr.com/photos/pedrik/15861858771"
+  },
+  {
+   "id": "fbb83f8ce30d9d03",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/fbb83f8ce30d9d03.jpg",
+   "sha256": "26c2e06d5abdd62d17f6422f9d962a8fb731a7b87c2cf1384d1d1a26e55a3142",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Dawn Ellner",
+   "page": "https://www.flickr.com/photos/naturesdawn/2147943727"
+  },
+  {
+   "id": "68e4cbb8bb60d80c",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/68e4cbb8bb60d80c.jpg",
+   "sha256": "95f1f9cee2da24457de947f7ad1020ff5c1ad0c7a0b61c609cf1d72e1c811c1d",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Emmanuel Rodriguez",
+   "page": "https://www.flickr.com/photos/coklu/15648314953"
+  },
+  {
+   "id": "51cd761c44ec0a20",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/51cd761c44ec0a20.jpg",
+   "sha256": "90a79ea333c49b0f7724de96c0115b395dc580e704ceaab54a3a2fa1b5488511",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "The Angry Photographer",
+   "page": "https://www.flickr.com/photos/seanknight/5115976124/"
+  },
+  {
+   "id": "532eabb4eaae9564",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/532eabb4eaae9564.jpg",
+   "sha256": "66661f18d720e2ceb4fc12d317071cacb84408d48d376bbdd9c6756d6c8878c8",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Jill Robidoux",
+   "page": "https://www.flickr.com/photos/jylcat/562867117"
+  },
+  {
+   "id": "a92962728712731d",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/a92962728712731d.jpg",
+   "sha256": "f1c3fc13e7a53d97ae394d5e5a6e3d852002002f0e5a8bf524e19baf84c783c5",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Eben Selker",
+   "page": "https://www.flickr.com/photos/eben-frostey/6355347643"
+  },
+  {
+   "id": "90bae7641abe5b5b",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/90bae7641abe5b5b.jpg",
+   "sha256": "a0e43539cdf2e2a87f23d488cf7e77e9807f48c87b7a7ba64861f228092d29ee",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Yzukerman",
+   "page": "https://www.flickr.com/photos/yzukerman/4569931830"
+  },
+  {
+   "id": "e6b341909bc3d414",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/e6b341909bc3d414.jpg",
+   "sha256": "a6f7909f9e97e48f6f24044f7f2430ed3d1ac81153e32bd3d4e68044218989da",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "National Museum of  Health and Medicine",
+   "page": "https://www.flickr.com/photos/medicalmuseum/3402264685"
+  },
+  {
+   "id": "3178df3d83cab337",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/3178df3d83cab337.jpg",
+   "sha256": "e959da467ac56c089caffe4087f2c982d24be0643282036d8cae3125ab671581",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "E M",
+   "page": "https://www.flickr.com/photos/emutree/250843837"
+  },
+  {
+   "id": "7f6bf2a0b494a15b",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/7f6bf2a0b494a15b.jpg",
+   "sha256": "38d2b8a4a0ce051c6631fce32d8a8adc9e50f501218316f4eeabcd3367bedc64",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Michael Eisenriegler",
+   "page": "https://www.flickr.com/photos/mikeemesser/6239133032"
+  },
+  {
+   "id": "9bf0f5eeaf384367",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/9bf0f5eeaf384367.jpg",
+   "sha256": "0907c18fa16e843e3feec46db696063ca15080c0582a6af2e5feef434f258c44",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "woodleywonderworks",
+   "page": "https://www.flickr.com/photos/wwworks/9533297007"
+  },
+  {
+   "id": "620f6a895ef070b7",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/620f6a895ef070b7.jpg",
+   "sha256": "b7328a30ec3fcc9ba3ff8af2a88621249c0c96362f084df5612d02671e3039af",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Lorenzo Tlacaelel",
+   "page": "https://www.flickr.com/photos/queerdood/14944778149"
+  },
+  {
+   "id": "e67ca60647a9d5ac",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/e67ca60647a9d5ac.jpg",
+   "sha256": "4ed969d39e94e3211fd6c2f291858827926d448917809a26f67a64578c808d37",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Rene Schwietzke",
+   "page": "https://www.flickr.com/photos/rene-germany/2177913990"
+  },
+  {
+   "id": "e06eadf570c9043d",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/e06eadf570c9043d.jpg",
+   "sha256": "5426b323f834c101171ff8d18c524872d65ff0b6fb9d4779f13f032d61ca2eb2",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Steve Jurvetson",
+   "page": "https://www.flickr.com/photos/jurvetson/142556533"
+  },
+  {
+   "id": "f6fd415b912e0335",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/f6fd415b912e0335.jpg",
+   "sha256": "5105f1da4d8f2e708be9387166590fbecada71b072530724590e388a738e5968",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Stevie Rocco",
+   "page": "https://www.flickr.com/photos/stevier/3816383570"
+  },
+  {
+   "id": "394161d072604c3f",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/394161d072604c3f.jpg",
+   "sha256": "20bedece52c4af461487730b7e892b346f1a2631bb07afc4c65bd4570ebf7061",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "UC Davis College of Engineering",
+   "page": "https://www.flickr.com/photos/ucdaviscoe/6419944209"
+  },
+  {
+   "id": "0af5ba2fbc9fe829",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/0af5ba2fbc9fe829.jpg",
+   "sha256": "9c45c66727c25b6432265c5fbed99028e7b881f0b48cb8e45d51c66105dbd05a",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Nguyen Hung Vu",
+   "page": "https://www.flickr.com/photos/vuhung/8581086529/"
+  },
+  {
+   "id": "bcb6ba64346d1045",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/bcb6ba64346d1045.jpg",
+   "sha256": "a717350cad9889919b7aa0474ff1d68fab46914c8cbe914da0751d185892ff62",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Manuel Martín",
+   "page": "https://www.flickr.com/photos/draxus/2171638422"
+  },
+  {
+   "id": "eaf164bc49df99e3",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/eaf164bc49df99e3.jpg",
+   "sha256": "2d393ed8c07841a679bfb9cdbfde887179d45a9bc58a462c30bb65e1eb60ae41",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Marina Silva",
+   "page": "https://www.flickr.com/photos/marina-silva/5046808096"
+  },
+  {
+   "id": "ec3f33b50590ce6c",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/ec3f33b50590ce6c.jpg",
+   "sha256": "538ef4c281232cba04b791881d11e0066a5326757eb09632f1b7fe78ba3ec995",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Dave Proffer",
+   "page": "https://www.flickr.com/photos/deepphoto/3020097716"
+  },
+  {
+   "id": "6e33c2c2e5b862b6",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/6e33c2c2e5b862b6.jpg",
+   "sha256": "d4f9529b1aee550e8d41bb12a2d8f44e2a89401c7f86332bf0aee08b70eebfa6",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Paul Hoch",
+   "page": "https://www.flickr.com/photos/phoch98/17321402690"
+  },
+  {
+   "id": "58e51d11ee20bb54",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/58e51d11ee20bb54.jpg",
+   "sha256": "bd15a69b62bfe0cfe55c6ef36f743690da5e246cc7ca96e963ddedd82dce7cb9",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "TedsBlog",
+   "page": "https://www.flickr.com/photos/tedsblog/11710229"
+  },
+  {
+   "id": "45a71f7547f5b605",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/45a71f7547f5b605.jpg",
+   "sha256": "d45342ad0bdb7aad4aab688faa5f93bef4a042b521f6deaae35fc4e767585c18",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Mark Warner",
+   "page": "https://www.flickr.com/photos/senatormarkwarner/19945447032"
+  },
+  {
+   "id": "77ed741a16419617",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/77ed741a16419617.jpg",
+   "sha256": "4b38fce63a624250b82c451bdcde60f63600e3596ae3e10d4fb0e71ac78ccbed",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Jeremy Bradford",
+   "page": "https://www.flickr.com/photos/jtbradford/4964423265"
+  },
+  {
+   "id": "57c36ad1fbed4f6d",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/57c36ad1fbed4f6d.jpg",
+   "sha256": "ca62fafd25fad79a6c86c40f35eb586f12bb310c68ec39d02ca360284e44324d",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Noli Fernan &quot;Dudut&quot; Perez",
+   "page": "https://www.flickr.com/photos/kidperez/3204302506"
+  },
+  {
+   "id": "cd43cf652e106d57",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/cd43cf652e106d57.jpg",
+   "sha256": "c9a7cb57f152d7cc832aa853050610474ecce5d08018daec7d752155cb418bd7",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Bernt Rostad",
+   "page": "https://www.flickr.com/photos/brostad/3658609397"
+  },
+  {
+   "id": "f981c793fe4901c7",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/f981c793fe4901c7.jpg",
+   "sha256": "d9b0092369fad356fc2023af7c85d1306e8394235da38ea2f207114eeb705d22",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Treefort Music Fest",
+   "page": "https://www.flickr.com/photos/treefortphoto/13414978883"
+  },
+  {
+   "id": "ab352d44241455fb",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/ab352d44241455fb.jpg",
+   "sha256": "dab00c40af5656e9ebe746e1b220211789b94915f4f78319e664f077a9350c89",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Cold War Warrior Follow Me on Ipernity",
+   "page": "https://www.flickr.com/photos/16498755@N07/5053471915"
+  },
+  {
+   "id": "90db0ce931bee833",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/90db0ce931bee833.jpg",
+   "sha256": "ec3c98828a149410ee69ffd954bfc6b35d8a95a60b955ff11acede61e2f11367",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Greg Morgan",
+   "page": "https://www.flickr.com/photos/gmmail/3471859681"
+  },
+  {
+   "id": "5b7b58b5eab43e92",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/5b7b58b5eab43e92.jpg",
+   "sha256": "1da14b34f939fdd16e480b0530b5497a5d3825bc7d826915fdd554acd0051456",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Alison Pope",
+   "page": "https://www.flickr.com/photos/ajpope/5564897464"
+  },
+  {
+   "id": "b8d3b12c66e8840a",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/b8d3b12c66e8840a.jpg",
+   "sha256": "8b54746b17d388fbb587fad2b793cfcdc6f8816ac6f87561c55c170b810ac8e8",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Paul Simpson",
+   "page": "https://www.flickr.com/photos/paulsimpson1976/4609427897"
+  },
+  {
+   "id": "34eb402804268fc9",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/34eb402804268fc9.jpg",
+   "sha256": "eb20f29e905c2c4b0beb5939d57512e40b9cec047f537250df07363ac677bd0c",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Waiting For The Word",
+   "page": "https://www.flickr.com/photos/waitingfortheword/5546102051"
+  },
+  {
+   "id": "6013cfd4cbff9746",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/6013cfd4cbff9746.jpg",
+   "sha256": "ab9e6951dbfabd45bccd36f00f2281b30fc6637d224b3a55f9feac6e7eb3cb00",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Mardoqueo Charuc",
+   "page": "https://www.flickr.com/photos/mardoqueo_charuc/14826046764"
+  },
+  {
+   "id": "9fe6c47df5dd7118",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/9fe6c47df5dd7118.jpg",
+   "sha256": "f71a0fbf43c2bb3487194bef09f4cfeac74800ed3a238ca46d1c38d88ea3e128",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Jeremy Keith",
+   "page": "https://www.flickr.com/photos/adactio/12149855126"
+  },
+  {
+   "id": "3f1c31579831e4b8",
+   "group": "person",
+   "url": "https://open-images-dataset.s3.amazonaws.com/test/3f1c31579831e4b8.jpg",
+   "sha256": "609abbd3f2fb4613c49bce6295177a7e0e9e2aeb512995c1140eb2bdb3f10dd2",
+   "labels": {
+    "person": 1
+   },
+   "license": "CC-BY-2.0",
+   "author": "Sara D.",
+   "page": "https://www.flickr.com/photos/absolutsara/5931757498"
+  }
+ ]
+}

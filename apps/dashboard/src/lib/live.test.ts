@@ -262,3 +262,26 @@ describe("LiveClient", () => {
     expect(FakeWebSocket.instances).toHaveLength(2);
   });
 });
+
+describe("LiveClient default socket", () => {
+  it("uses the browser WebSocket when the factory is passed as undefined (production wiring)", () => {
+    FakeWebSocket.reset();
+    vi.stubGlobal("WebSocket", FakeWebSocket);
+    try {
+      const client = new LiveClient({
+        url: "ws://test/live",
+        getToken: () => "t",
+        renewToken: () => Promise.resolve("t"),
+        onEvent: () => undefined,
+        createSocket: undefined,
+      });
+      client.start();
+      expect(FakeWebSocket.instances).toHaveLength(1);
+      expect(FakeWebSocket.last().url).toBe("ws://test/live");
+      expect(client.state).toBe("connecting");
+      client.stop();
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+});

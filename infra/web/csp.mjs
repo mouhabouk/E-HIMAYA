@@ -9,6 +9,8 @@
 // Environment: VITE_API_BASE_URL, VITE_OIDC_ISSUER, VITE_TUS_ENDPOINT, VITE_MAP_STYLE_URL (all optional),
 //   CSP_MEDIA_SRC  space-separated origins of pre-signed media links (S3_PUBLIC_ENDPOINT_URL)
 //   CSP_MAP_SRC    space-separated origins of tiles, glyphs and sprites of a custom map style
+//   CSP_STREAM_SRC space-separated origins of the live stream viewers (MediaMTX WHEP and HLS, phase 6); the WebRTC
+//                  media itself is not governed by the CSP, only the WHEP/HLS HTTP requests are
 import { createHash } from "node:crypto";
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -53,6 +55,7 @@ const tus = origin(env("VITE_TUS_ENDPOINT"));
 const styleUrl = env("VITE_MAP_STYLE_URL");
 const map = styleUrl ? [origin(styleUrl), ...list("CSP_MAP_SRC")] : [OSM_TILES];
 const media = list("CSP_MEDIA_SRC");
+const streams = list("CSP_STREAM_SRC");
 
 // Inline scripts of index.html (the pre-paint language/theme script), allowed by hash.
 const html = readFileSync(join(dist, "index.html"), "utf8");
@@ -66,9 +69,12 @@ const directives = {
   "script-src": unique(["'self'", ...hashes]),
   "style-src": "'self'",
   "img-src": unique(["'self'", "data:", "blob:", ...map, ...media]),
-  "media-src": unique(["'self'", "blob:", ...media]),
+  // blob: = hls.js (MediaSource); stream origins = native HLS playback.
+  "media-src": unique(["'self'", "blob:", ...media, ...streams]),
   "font-src": "'self'",
-  "connect-src": unique(["'self'", api, ws, issuer, tus, ...map]),
+  // Media origins: a stream recording download follows the API's redirect to its pre-signed link (fetch).
+  // Stream origins: WHEP offers / session teardown and hls.js playlist and segment requests.
+  "connect-src": unique(["'self'", api, ws, issuer, tus, ...map, ...media, ...streams]),
   // MapLibre's worker is a same-origin chunk (src/lib/maplibre.ts).
   "worker-src": "'self'",
   "frame-src": "'none'",

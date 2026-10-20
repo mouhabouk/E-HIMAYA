@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-/// Stable machine codes of the phase-2, phase-4 and phase-5 contracts (plus client-side categories).
+/// Stable machine codes of the phase-2, phase-4, phase-5 and phase-6 contracts (plus client-side categories).
 enum ApiErrorCode {
   authenticationRequired('authentication_required'),
   invalidDeviceKey('invalid_device_key'),
@@ -38,6 +38,10 @@ enum ApiErrorCode {
   unsupportedMediaType('unsupported_media_type'),
   tooManyMedia('too_many_media'),
   uploadWindowClosed('upload_window_closed'),
+  // Phase 6 §2: live streams.
+  streamAlreadyActive('stream_already_active'),
+  reportClosed('report_closed'),
+  streamNotActive('stream_not_active'),
   // Local: checksum mismatch detected by the server after upload.
   mediaRejected('media_rejected'),
   validation('validation_error'),

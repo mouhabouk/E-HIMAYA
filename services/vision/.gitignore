@@ -1,0 +1,6 @@
+# Downloaded weights and evaluation images are fetched with pinned SHA-256, never committed (our own weights excepted).
+*.onnx
+!/models/weights/*.onnx
+*.pth
+/eval/cache/
+/training/work/

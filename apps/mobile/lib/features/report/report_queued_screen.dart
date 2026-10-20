@@ -5,8 +5,10 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/db/app_database.dart';
 import '../../core/http/api_error.dart';
+import '../../core/http/models.dart';
 import '../../core/routing/app_router.dart';
 import '../../core/sync/report_queue.dart';
+import '../../core/ui/theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../emergency/dialer.dart';
 import '../emergency/emergency_numbers.dart';
@@ -16,6 +18,17 @@ import '../reports/reports_providers.dart';
 
 /// Shown right after submit: the temporary code is available instantly, offline. It switches to
 /// the server tracking code as soon as the sync engine gets it.
+/// A stream can be opened while the report is queued (it is sent first) or on the server and
+/// not closed.
+bool _canGoLive(PendingReport row) {
+  if (!ReportState.pendingStates.contains(row.state) &&
+      row.state != ReportState.synced) {
+    return false;
+  }
+  final status = ReportStatus.fromWire(row.serverStatus);
+  return status != ReportStatus.closed && status != ReportStatus.rejected;
+}
+
 class ReportQueuedScreen extends ConsumerWidget {
   const ReportQueuedScreen({
     super.key,
@@ -126,6 +139,28 @@ class ReportQueuedScreen extends ConsumerWidget {
                 onPressed: () => ref.read(dialerProvider)(civil.telUri),
                 icon: const Icon(Icons.call),
                 label: Text(l10n.callNumber(civil.number)),
+              ),
+            ],
+            if (row != null && _canGoLive(row)) ...[
+              const SizedBox(height: 16),
+              // FR-A-031: go live on the report that was just created.
+              OutlinedButton.icon(
+                key: const Key('queued-go-live'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: sosRed,
+                  side: const BorderSide(color: sosRed, width: 2),
+                  minimumSize: const Size.fromHeight(56),
+                ),
+                onPressed: () => context.push(
+                  Routes.liveFor(
+                    clientUuid: row.clientUuid,
+                    serverId: row.serverId,
+                    trackingCode: code,
+                    category: ReportCategory.fromWire(row.category),
+                  ),
+                ),
+                icon: const Icon(Icons.videocam),
+                label: Text(l10n.reportGoLive),
               ),
             ],
             const SizedBox(height: 24),

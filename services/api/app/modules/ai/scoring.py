@@ -31,6 +31,9 @@ class Facts:
     sensitive_site: tuple[float, dict[str, Any]] | None = None
     # Operational level of the report's gouvernorat (requirements §6.4): normal | crisis | disaster.
     op_level: str = "normal"
+    # Strongest confirmed fire or smoke seen by the vision detector on the report's live stream or images (phase 6):
+    # (confidence, detail); None = nothing confirmed.
+    vision_fire: tuple[float, dict[str, Any]] | None = None
 
 
 def _component(key: str, value: float | None, detail: dict[str, Any]) -> dict[str, Any]:
@@ -115,7 +118,7 @@ def _reporters(facts: Facts) -> tuple[float, dict[str, Any]]:
 
 # Components that can only raise the priority: the context around a report (a hazardous site nearby, a
 # crisis declared in the zone) must never make an emergency rank lower than the same emergency elsewhere.
-BONUS_COMPONENTS = frozenset({"sensitive_sites", "op_level"})
+BONUS_COMPONENTS = frozenset({"sensitive_sites", "op_level", "vision_fire"})
 LEVEL_VALUES = {"crisis": 0.7, "disaster": 1.0}
 
 
@@ -138,6 +141,8 @@ def priority(facts: Facts, credibility_score: int, settings: PrioritySettings) -
         "sensitive_sites": facts.sensitive_site or (None, {"reason": "no_site_nearby"}),
         # Crisis or disaster declared in the gouvernorat (phase 5); normal level = left out.
         "op_level": _op_level(facts),
+        # Confirmed fire or smoke on the report's live stream or images (phase 6); none = left out.
+        "vision_fire": facts.vision_fire or (None, {"reason": "no_confirmed_detection"}),
         # No data source yet: weather layer (FR-C-08, later phase).
         "weather": (None, {"reason": "no_data_yet"}),
     }
