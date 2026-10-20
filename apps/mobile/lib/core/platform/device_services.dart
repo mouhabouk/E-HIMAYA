@@ -81,6 +81,13 @@ abstract class DeviceServices {
   /// Asks the user to unlock the phone. True once unlocked (the app then stops showing over the
   /// lock screen), false when cancelled.
   Future<bool> requestUnlock();
+
+  /// Keeps the screen on (and the activity in front) while live streaming (phase 6); off again
+  /// when the stream ends.
+  Future<void> keepScreenOn(bool on);
+
+  /// The app's page in the system settings (camera or microphone refused for good).
+  Future<bool> openAppSettings();
 }
 
 class PlatformDeviceServices implements DeviceServices {
@@ -148,6 +155,15 @@ class PlatformDeviceServices implements DeviceServices {
   @override
   Future<bool> requestUnlock() async =>
       await _call<bool>('requestUnlock') ?? false;
+
+  @override
+  Future<void> keepScreenOn(bool on) async {
+    await _call<bool>('keepScreenOn', {'on': on});
+  }
+
+  @override
+  Future<bool> openAppSettings() async =>
+      await _call<bool>('openAppSettings') ?? false;
 }
 
 final deviceServicesProvider = Provider<DeviceServices>(

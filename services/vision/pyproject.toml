@@ -1,0 +1,56 @@
+[project]
+name = "ehimaya-vision"
+version = "0.1.0"
+description = "ء-حماية / e-Himaya — computer vision service (fire, smoke and person detection on images and live streams)"
+requires-python = ">=3.12"
+# Every dependency and every model is under a permissive licence (README.md, "Licences"): no Ultralytics/AGPL code.
+dependencies = [
+  "fastapi==0.146.0",
+  "uvicorn[standard]==0.54.0",
+  "pydantic-settings==2.16.0",
+  "python-multipart==0.0.32",
+  "httpx==0.28.1",
+  "structlog==26.1.0",
+  "numpy==2.5.4",
+  "onnxruntime==1.30.0",
+  "pillow==12.3.0",
+  "av==19.0.1",
+  "prometheus-client==0.26.0",
+]
+
+[dependency-groups]
+dev = [
+  "pytest==9.1.1",
+  "pytest-asyncio==1.4.0",
+  "ruff==0.17.1",
+  "mypy==2.4.0",
+]
+
+[tool.uv]
+default-groups = ["dev"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "ASYNC", "RUF"]
+ignore = ["S101", "RUF001", "RUF002", "RUF003"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S105", "S106", "S108"]
+"training/*" = ["S311", "S603", "S607"]
+"eval/*" = ["S311"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+markers = ["models: needs the real models in VISION_MODELS_DIR (CI job 'Vision · real models')"]
+addopts = "-m 'not models'"
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]
+ignore_missing_imports = true
+exclude = ["tests/", "training/"]

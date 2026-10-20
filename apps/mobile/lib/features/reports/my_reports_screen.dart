@@ -13,6 +13,7 @@ import '../../core/routing/app_router.dart';
 import '../../core/sync/report_queue.dart';
 import '../../core/sync/sync_scheduler.dart';
 import '../../core/ui/emergency_action.dart';
+import '../../core/ui/theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../institution/org_labels.dart';
 import '../report/category_labels.dart';
@@ -180,6 +181,24 @@ class ReportTile extends ConsumerWidget {
                   OrgChip(name: item.organizationName ?? ''),
               ],
             ),
+            if (item.canGoLive)
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: TextButton.icon(
+                  key: Key('go-live-${item.trackingCode}'),
+                  style: TextButton.styleFrom(foregroundColor: sosRed),
+                  onPressed: () => context.push(
+                    Routes.liveFor(
+                      clientUuid: item.clientUuid,
+                      serverId: item.serverId,
+                      trackingCode: item.trackingCode,
+                      category: item.category,
+                    ),
+                  ),
+                  icon: const Icon(Icons.videocam),
+                  label: Text(l10n.reportGoLive),
+                ),
+              ),
             if (item.localState == ReportState.orgRefused) ...[
               const SizedBox(height: 8),
               Padding(

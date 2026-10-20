@@ -7,9 +7,13 @@
 #   - builds the dashboard and the portal as static images with their CSP;
 #   - runs the API as two processes (api: HTTP only, worker: background loops) with APP_ENV=production, which hides
 #     /docs and refuses example secrets at start-up;
-#   - leaves out the development helpers mailpit and notify-sim (profile "dev-tools", never started here).
+#   - leaves out the development helpers mailpit and notify-sim (profile "dev-tools", never started here);
+#   - live streaming: WHIP/WHEP and HLS through Caddy on API_HOST (/live/<id>/...), WebRTC media on 8189/udp, and
+#     RTSP 8554 / RTMP 1935 for registered drones and cameras: the only ports published besides Caddy's
+#     (docs/streaming.md: restrict 8554/1935 to the camera networks in the host firewall).
 # Required in .env on top of the development ones: API_HOST, DASHBOARD_HOST, PORTAL_HOST, AUTH_HOST, MEDIA_HOST,
-# CADDY_TLS, EHIMAYA_DB_RUNTIME_PASSWORD, SMTP_HOST, real FCM/SMS settings (or empty to skip those channels).
+# CADDY_TLS, EHIMAYA_DB_RUNTIME_PASSWORD, SMTP_HOST, real FCM/SMS settings (or empty to skip those channels),
+# MEDIAMTX_HOOK_TOKEN and MEDIAMTX_API_PASSWORD (random), MEDIAMTX_WEBRTC_HOSTS when API_HOST is not this server.
 
 # Settings shared by the api, worker and migrate containers in production.
 x-api-prod-env: &api-prod-env
@@ -30,6 +34,12 @@ x-api-prod-env: &api-prod-env
   FCM_API_URL: ${FCM_API_URL:-https://fcm.googleapis.com}
   SMS_HTTP_URL: ${SMS_HTTP_URL:-}
   SMS_HTTP_TOKEN: ${SMS_HTTP_TOKEN:-}
+  # Live streaming: phones and the dashboard reach MediaMTX through Caddy; drones and cameras on STREAM_INGEST_HOST.
+  STREAM_WEBRTC_PUBLIC_URL: https://${API_HOST}
+  STREAM_HLS_PUBLIC_URL: https://${API_HOST}
+  STREAM_INGEST_HOST: ${STREAM_INGEST_HOST:-${API_HOST}}
+  # SIMULATION never runs in production (the API refuses to start with a sim token).
+  STREAM_SIM_TOKEN: ""
 
 x-api-prod-deps: &api-prod-deps
   migrate:
@@ -76,6 +86,8 @@ services:
         condition: service_healthy
       keycloak:
         condition: service_healthy
+      mediamtx:
+        condition: service_healthy
 
   dashboard:
     build:
@@ -89,6 +101,8 @@ services:
         VITE_MAP_STYLE_URL: ${MAP_STYLE_URL:-}
         CSP_MAP_SRC: ${CSP_MAP_SRC:-}
         CSP_MEDIA_SRC: https://${MEDIA_HOST}
+        # WHEP/HLS playback of live streams, served by Caddy on the API host (infra/caddy/Caddyfile, /live/*).
+        CSP_STREAM_SRC: https://${API_HOST}
     image: ehimaya/dashboard:prod
     restart: unless-stopped
     read_only: true
@@ -136,7 +150,9 @@ services:
       PROCESS_ROLE: worker
       WEB_CONCURRENCY: "1"
     ports: !reset []
-    volumes: !reset []
+    # Only the recordings volume (segment ingestion runs here); no simulator volume.
+    volumes: !override
+      - recordings:/recordings
     depends_on: !override
       <<: *api-prod-deps
 
@@ -183,6 +199,24 @@ services:
       - -cors-allow-headers=Authorization,X-Device-Key
     ports: !reset []
 
+  mediamtx:
+    environment:
+      # ICE candidates announced to phones and browsers: the public IP (or a name resolving to it) of this server.
+      MTX_WEBRTCADDITIONALHOSTS: ${MEDIAMTX_WEBRTC_HOSTS:-${API_HOST}}
+      MTX_WEBRTCIPSFROMINTERFACES: "false"
+      # Signalling and HLS arrive through Caddy: its address is trusted for X-Forwarded-For (client address in the
+      # auth log), and only the dashboard origin may call WHEP/HLS from a browser (phones use WHIP natively).
+      MTX_WEBRTCTRUSTEDPROXIES: ${EDGE_PROXY_IP:-172.31.250.10}
+      MTX_HLSTRUSTEDPROXIES: ${EDGE_PROXY_IP:-172.31.250.10}
+      MTX_WEBRTCALLOWORIGINS: https://${DASHBOARD_HOST}
+      MTX_HLSALLOWORIGINS: https://${DASHBOARD_HOST}
+    ports: !override
+      # WebRTC media (ICE over UDP) from phones and to the dashboard.
+      - "8189:8189/udp"
+      # Ingest of registered drones and fixed cameras (token per source). Firewall these to the camera networks.
+      - "8554:8554"
+      - "1935:1935"
+
   # No published port: data services are reached only on the internal network.
   postgres:
     ports: !reset []
@@ -200,6 +234,9 @@ services:
   notify-sim:
     profiles: ["dev-tools"]
     ports: !reset []
+  # SIMULATION: the simulated camera is development-only (the API refuses its token in production anyway).
+  stream-sim:
+    profiles: !override ["dev-tools"]
 
 networks:
   default:

@@ -1,4 +1,4 @@
-# الإصدارات المثبتة (المراحل 1 إلى 5.5)
+# الإصدارات المثبتة (المراحل 1 إلى 6)
 
 تُحدَّث هذه القائمة مع كل مرحلة. تُعتمد الإصدارات الدقيقة أدناه في الكود والحاويات.
 
@@ -18,6 +18,8 @@
 | التقاط البريد في التطوير (المرحلة 5) | `axllent/mailpit:v1.31.3` | MIT |
 | محاكي Firebase وبوابة SMS في التطوير (`services/notify-sim`، **محاكاة**) | `python:3.12-slim` | — |
 | الوكيل العكسي و TLS (الإنتاج) وخادم ملفات لوحة التحكم والبوابة (المرحلة 5.5) | `caddy:2.11-alpine` (2.11.7) | Apache-2.0 |
+| خادم البث المباشر (المرحلة 6: WHIP/WHEP و RTSP و RTMP و HLS والتسجيل fMP4)، ويستعمله أيضا `stream-sim` | `bluenviron/mediamtx:1.21.2-ffmpeg` | MIT |
+| خدمة الرؤية الحاسوبية (`services/vision`، المرحلة 6) | `python:3.12-slim` | PSF |
 | بناء لوحة التحكم والبوابة (مرحلة البناء فقط) | `node:22-alpine` | MIT |
 | تثبيت حزم Python من `uv.lock` (مرحلة البناء فقط) | `ghcr.io/astral-sh/uv:0.11.32` | MIT / Apache-2.0 |
 | اختبار الحمل (خارج المنظومة) | `grafana/k6:2.3.0` | AGPL-3.0 |
@@ -88,6 +90,29 @@ ruff 0.17.1، mypy 2.4.0. التحويل إلى الإرسال الحقيقي م
 | تحويل النماذج فقط: transformers / torch (CPU) / huggingface-hub | 5.20.1 / 2.14.1 / 2.2.0 | لا تُثبت في صورة التشغيل |
 | خادم GPU فقط: nvidia-cublas-cu12 / nvidia-cudnn-cu12 | 12.9.2.10 / 9.27.0.42 | مكتبات CUDA لـ CTranslate2 |
 
+## الرؤية الحاسوبية (`services/vision`، المرحلة 6)
+
+كشف الحرائق والدخان والأشخاص في الصور وفي إطارات البث، على المعالج ودون أي خدمة خارجية. لا شيفرة AGPL: المعالجة
+(letterbox وفك YOLOX و NMS) مكتوبة في الخدمة، والتشغيل عبر ONNX Runtime. التفاصيل والدقة المقاسة في
+`services/vision/README.md` و `services/vision/EVALUATION.md`.
+
+| النموذج | الإصدار | الرخصة | المصدر |
+|---|---|---|---|
+| `ehimaya-fire-smoke-yolox-tiny` (حريق ودخان، مدرّب للمشروع) | 1.0.0، SHA-256 `173073b7…aa00` | Apache-2.0 | YOLOX-Tiny (Megvii، Apache-2.0) مضبوط على صور Open Images V7 (CC BY 2.0، التسميات CC BY 4.0)، والصناديق رسمها Grounding DINO (Apache-2.0) أثناء التدريب فقط |
+| `yolox-tiny-coco-person` (أشخاص) | 0.1.1rc0، SHA-256 `427cc366…b0f7` | Apache-2.0 | <https://github.com/Megvii-BaseDetection/YOLOX> |
+
+| الحزمة | الإصدار |
+|---|---|
+| onnxruntime | 1.30.0 |
+| PyAV (av)، قراءة RTSP | 19.0.1 |
+| numpy / pillow | 2.5.4 / 12.3.0 |
+| fastapi / uvicorn / pydantic-settings / python-multipart | 0.146.0 / 0.54.0 / 2.16.0 / 0.0.32 |
+| httpx / structlog / prometheus-client | 0.28.1 / 26.1.0 / 0.26.0 |
+| التدريب فقط: torch (CPU) / torchvision / transformers | 2.14.1 / 0.29.1 / 4.57.1 |
+
+مقطع المحاكاة لـ `stream-sim`: `intel-iot-devkit/sample-videos/people-detection.mp4` (CC-BY-4.0، SHA-256
+`18ffe867…f693`)، يُنزّل عند التشغيل ولا يُحفظ في المستودع.
+
 ## تطبيق الهاتف (`apps/mobile`)
 
 Flutter 3.47.7 (القناة المستقرة) مع Dart 3.13.5، و Java 17 لبناء أندرويد. التثبيت: <https://docs.flutter.dev/get-started/install>.
@@ -106,6 +131,7 @@ Flutter 3.47.7 (القناة المستقرة) مع Dart 3.13.5، و Java 17 ل�
 | firebase_core / firebase_messaging (المرحلة 5) | 4.15.0 / 16.7.0 | إشعارات الدفع عبر FCM؛ اختيارية عبر `--dart-define` (FIREBASE_API_KEY، FIREBASE_APP_ID، FIREBASE_MESSAGING_SENDER_ID، FIREBASE_PROJECT_ID) |
 | flutter_local_notifications (المرحلة 5) | 22.3.1 | قناتا أندرويد `ehimaya_alerts` و `ehimaya_default` وعرض الإشعار والتطبيق مفتوح |
 | desugar_jdk_libs (Gradle، المرحلة 5) | 2.1.4 | تتطلبه مكتبة الإشعارات المحلية |
+| flutter_webrtc (المرحلة 6) | 1.6.2+hotfix.3 | البث المباشر عبر WHIP (MIT؛ مكتبة WebRTC الأصلية 150.7871.01) |
 
 ## لوحة التحكم (`apps/dashboard`)
 
@@ -122,6 +148,7 @@ Node.js 22 LTS و npm 10 أو أحدث. الحزم مثبتة بإصدارات �
 | vite / typescript | 7.3.6 / 5.9.3 |
 | vitest / eslint | 4.1.11 / 10.12.0 |
 | @playwright/test (اختبار المتصفح) | 1.56.1 |
+| hls.js (المرحلة 6، بديل HLS عند تعذر WHEP، يُحمّل عند الحاجة فقط) | 1.7.3 (Apache-2.0) |
 
 ## بوابة المؤسسات (`apps/portal`)
 

@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
+import android.view.WindowManager
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -121,11 +122,25 @@ class MainActivity : FlutterActivity() {
                     "requestIgnoreBatteryOptimizations" ->
                         result.success(requestIgnoreBatteryOptimizations())
                     "openFullScreenIntentSettings" -> result.success(openFullScreenIntentSettings())
+                    "keepScreenOn" -> {
+                        keepScreenOn(call.argument<Boolean>("on") == true)
+                        result.success(true)
+                    }
+                    "openAppSettings" -> result.success(start(appDetails()))
                     "openDndAccessSettings" ->
                         result.success(start(Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)))
                     else -> result.notImplemented()
                 }
             }
+    }
+
+    /** Live streaming (phase 6): the screen stays on while the camera is published. */
+    private fun keepScreenOn(on: Boolean) {
+        if (on) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
     }
 
     private fun battery(): Map<String, Any?> {

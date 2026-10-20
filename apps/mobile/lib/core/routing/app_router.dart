@@ -9,6 +9,8 @@ import '../../features/emergency/emergency_screen.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/home/main_shell.dart';
 import '../../features/institution/my_institution_screen.dart';
+import '../../features/live/live_controller.dart';
+import '../../features/live/live_screen.dart';
 import '../../features/onboarding/citizen_mode_screen.dart';
 import '../../features/onboarding/institution_screen.dart';
 import '../../features/onboarding/role_screen.dart';
@@ -60,6 +62,23 @@ abstract final class Routes {
   static const myData = '/my-data';
   static const deleteAccount = '/my-data/delete';
 
+  // Phase 6: live streaming (FR-A-031). Without parameters: a new report.
+  static const live = '/live';
+  static String liveFor({
+    String? clientUuid,
+    String? serverId,
+    String? trackingCode,
+    ReportCategory? category,
+  }) => Uri(
+    path: live,
+    queryParameters: {
+      'uuid': ?clientUuid,
+      'report': ?serverId,
+      'code': ?trackingCode,
+      'category': ?category?.wire,
+    },
+  ).toString();
+
   /// The public alert view over a locked phone (see [LockedAlertScreen]).
   static const lockedAlert = '/locked-alert';
   static String tip(String hazard) => '/tips/${Uri.encodeComponent(hazard)}';
@@ -103,6 +122,25 @@ String? guardRedirect({
     return Routes.profile;
   }
   return null;
+}
+
+/// `/live?uuid=&report=&code=&category=`: an existing report when `uuid` or `report` is given,
+/// otherwise a new one.
+LiveTarget liveTargetFromQuery(Uri uri) {
+  final q = uri.queryParameters;
+  final uuid = q['uuid'];
+  final report = q['report'];
+  final category =
+      ReportCategory.fromWire(q['category']) ?? ReportCategory.other;
+  if ((uuid == null || uuid.isEmpty) && (report == null || report.isEmpty)) {
+    return LiveTarget.newReport(category: category);
+  }
+  return LiveTarget.existing(
+    clientUuid: uuid == null || uuid.isEmpty ? null : uuid,
+    serverId: report == null || report.isEmpty ? null : report,
+    trackingCode: q['code'],
+    category: category,
+  );
 }
 
 class _RouterRefresh extends ChangeNotifier {
@@ -185,6 +223,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         ),
       ),
       GoRoute(path: Routes.track, builder: (_, _) => const TrackScreen()),
+      GoRoute(
+        path: Routes.live,
+        builder: (_, state) =>
+            LiveScreen(target: liveTargetFromQuery(state.uri)),
+      ),
       GoRoute(
         path: Routes.institutions,
         builder: (_, _) => const MyInstitutionsScreen(),

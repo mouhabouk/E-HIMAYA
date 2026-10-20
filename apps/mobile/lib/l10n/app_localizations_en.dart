@@ -1597,4 +1597,188 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get lockedAlertOpenApp => 'Unlock to open the app';
+
+  @override
+  String get liveBadge => 'LIVE';
+
+  @override
+  String get homeLive => 'Go live';
+
+  @override
+  String get homeLiveDesc => 'Show the incident live to the Civil Protection.';
+
+  @override
+  String get liveTitle => 'Live stream';
+
+  @override
+  String get liveIntro =>
+      'The camera picture and the microphone sound go live to the Civil Protection operations room, are recorded and linked to your report. Your position is sent for as long as the stream lasts.';
+
+  @override
+  String get livePermissionRationale =>
+      'Streaming needs the camera, the microphone and your location. Your phone asks for permission when you start; they are used only while streaming.';
+
+  @override
+  String get liveCategoryLabel => 'Incident type';
+
+  @override
+  String get liveStart => 'Start live';
+
+  @override
+  String get liveStop => 'Stop live';
+
+  @override
+  String get liveMute => 'Mute microphone';
+
+  @override
+  String get liveUnmute => 'Unmute microphone';
+
+  @override
+  String get liveSwitchCamera => 'Switch camera';
+
+  @override
+  String get livePreparing => 'Preparing the live stream…';
+
+  @override
+  String get liveConnecting => 'Connecting to the video server…';
+
+  @override
+  String liveReconnecting(int attempt, int max) {
+    return 'Connection lost. Attempt $attempt of $max…';
+  }
+
+  @override
+  String get liveWeakNetwork =>
+      'The network is too weak for live video. You can record a short clip and send it instead.';
+
+  @override
+  String get liveLocationOff =>
+      'Location is off: your position is not sent during the stream.';
+
+  @override
+  String get liveLocationOn => 'Position shared while live';
+
+  @override
+  String liveEndsIn(String time) {
+    return 'The stream stops automatically in $time';
+  }
+
+  @override
+  String liveReportCode(String code) {
+    return 'Report $code';
+  }
+
+  @override
+  String liveSemanticsOnAir(String duration) {
+    return 'Live for $duration';
+  }
+
+  @override
+  String get liveEndedTitle => 'Live stream ended';
+
+  @override
+  String get liveEndedByUser =>
+      'You stopped the stream. The recording is kept with your report.';
+
+  @override
+  String get liveEndedByOperator =>
+      'The operator ended the stream. Thank you, the pictures arrived.';
+
+  @override
+  String liveEndedMaxDuration(int minutes) {
+    return 'The stream reached its maximum length ($minutes min).';
+  }
+
+  @override
+  String get liveEndedByServer => 'The platform ended the stream.';
+
+  @override
+  String get liveEndedLocked =>
+      'The stream stopped because the phone went back to the lock screen.';
+
+  @override
+  String liveDuration(String duration) {
+    return 'Duration: $duration';
+  }
+
+  @override
+  String get liveFailedTitle => 'Live stream not possible';
+
+  @override
+  String get liveFailNoLocation =>
+      'Your position could not be found, so the report cannot be created. Call 198.';
+
+  @override
+  String get liveFailReportNotSent =>
+      'Your report is saved on the phone and will be sent when the network is back. You can record a clip to attach to it.';
+
+  @override
+  String get liveFailPermission =>
+      'Camera or microphone access was refused. Allow it in the phone settings to stream.';
+
+  @override
+  String get liveFailCamera =>
+      'The camera is not available (another app may be using it).';
+
+  @override
+  String get liveFailConnection =>
+      'The video server could not be reached after several attempts.';
+
+  @override
+  String get liveFailLocked =>
+      'Live streaming is not available from the alert over the lock screen. Unlock the phone first.';
+
+  @override
+  String get liveFallbackTitle => 'Send a video clip instead';
+
+  @override
+  String get liveFallbackBody =>
+      'Record a clip of up to 60 seconds: it is uploaded automatically with your report, even on a weak network.';
+
+  @override
+  String get liveRecordClip => 'Record a clip (60 s)';
+
+  @override
+  String get liveClipQueued =>
+      'The clip is saved and will be sent with your report.';
+
+  @override
+  String get liveClipFailed => 'The clip could not be saved.';
+
+  @override
+  String get liveRetry => 'Try again';
+
+  @override
+  String get liveOpenSettings => 'Open settings';
+
+  @override
+  String get liveDone => 'Done';
+
+  @override
+  String get liveLeaveTitle => 'Stop the live stream?';
+
+  @override
+  String get liveLeaveBody =>
+      'The stream is on. Leaving stops sending the picture and your position.';
+
+  @override
+  String get liveSimulationBadge => 'Simulation mode';
+
+  @override
+  String get liveSimulationHelp =>
+      'This stream goes through the simulation platform and reaches no real operations room.';
+
+  @override
+  String get reportGoLive => 'Go live for this report';
+
+  @override
+  String get errorStreamAlreadyActive =>
+      'A live stream is already running for this report.';
+
+  @override
+  String get errorStreamNotActive => 'This live stream is over.';
+
+  @override
+  String get errorReportClosed =>
+      'This report is closed: a live stream cannot be opened on it.';
 }

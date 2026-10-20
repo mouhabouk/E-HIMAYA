@@ -6,6 +6,11 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- Phase 6 live streaming (flutter_webrtc): audio routing of the WebRTC microphone and the
+         network callbacks used by libwebrtc to follow Wi-Fi / mobile data changes. CAMERA and
+         RECORD_AUDIO above are asked at run time, after the in-app rationale of the Live screen. -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <!-- Alerts and call-outs (phase 5): asked at run time on Android 13+. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.VIBRATE" />

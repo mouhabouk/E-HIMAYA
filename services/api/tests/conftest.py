@@ -22,6 +22,14 @@ os.environ["OIDC_AUDIENCE"] = "ehimaya-api"
 os.environ.setdefault("ANON_PSEUDONYM_SECRET", "test-secret-test-secret-test-secret-0001")
 os.environ.setdefault("FIELD_ENCRYPTION_KEY", "dGVzdC1rZXktdGVzdC1rZXktdGVzdC1rZXktMzJieXQ=")
 os.environ["TUSD_HOOK_SECRET"] = "test-hook-secret-test-hook-secret"
+# Live streaming (phase 6): MediaMTX hooks and API user, vision callback and read credentials, stream simulator.
+os.environ["MEDIAMTX_HOOK_TOKEN"] = "test-mediamtx-hook-token-0001"
+os.environ["MEDIAMTX_API_PASSWORD"] = "test-mediamtx-api-password-0001"
+os.environ["VISION_CALLBACK_TOKEN"] = "test-vision-callback-token-0001"
+os.environ["VISION_READ_PASSWORD"] = "test-vision-read-password-0001"
+os.environ["STREAM_SIM_TOKEN"] = "test-stream-sim-token-0000001"
+os.environ.pop("MEDIAMTX_API_URL", None)
+os.environ.pop("VISION_SERVICE_URL", None)
 os.environ["BACKGROUND_WORKERS"] = "false"
 os.environ.pop("API_CORS_ORIGINS", None)
 os.environ.pop("VALKEY_URL", None)
@@ -228,10 +236,22 @@ class FakeChannel:
         return Result(ok=True)
 
 
+class FakeMediamtx:
+    """Records the paths whose publisher the API asked MediaMTX to kick."""
+
+    def __init__(self) -> None:
+        self.kicked: list[str] = []
+
+    async def kick(self, path: str) -> bool:
+        self.kicked.append(path)
+        return True
+
+
 @pytest.fixture(autouse=True)
 def _isolated_infra() -> Iterator[FakeStore]:
     from app.core import ratelimit, storage
     from app.modules.notify import providers
+    from app.modules.streams import mediamtx, vision
     from app.modules.volunteers import presence
 
     store = FakeStore()
@@ -239,11 +259,24 @@ def _isolated_infra() -> Iterator[FakeStore]:
     ratelimit.set_limiter(ratelimit.MemoryLimiter())
     presence.set_presence(presence.MemoryPresence())
     providers.set_providers(providers.Providers(push=FakeChannel(), sms=FakeChannel(), email=FakeChannel()))
+    mediamtx.set_mediamtx(FakeMediamtx())
+    vision.set_vision_client(None)
     yield store
     storage.set_store(None)
     ratelimit.set_limiter(None)
     presence.set_presence(None)
     providers.set_providers(None)
+    mediamtx.set_mediamtx(None)
+    vision.set_vision_client(None)
+
+
+@pytest.fixture
+def fake_mediamtx() -> FakeMediamtx:
+    from app.modules.streams.mediamtx import get_mediamtx
+
+    client = get_mediamtx()
+    assert isinstance(client, FakeMediamtx)
+    return client
 
 
 @pytest.fixture

@@ -452,6 +452,18 @@ class SyncEngine {
   };
 }
 
+/// Reports whose media must not wait for Wi-Fi in battery saver (the live fallback clip,
+/// FR-A-051). In memory only: after a restart the usual rule (at most 30 minutes) applies.
+class UrgentMediaReports extends Notifier<Set<String>> {
+  @override
+  Set<String> build() => const {};
+
+  void add(String clientUuid) => state = {...state, clientUuid};
+}
+
+final urgentMediaReportsProvider =
+    NotifierProvider<UrgentMediaReports, Set<String>>(UrgentMediaReports.new);
+
 final syncEngineProvider = Provider<SyncEngine>(
   (ref) => SyncEngine(
     db: ref.watch(databaseProvider),
@@ -465,7 +477,10 @@ final syncEngineProvider = Provider<SyncEngine>(
       final saver = ref.read(batterySaverActiveProvider);
       if (!saver) return true;
       return const MediaUploadPolicy().mayUpload(
-        sos: report.category == ReportCategory.sos.wire,
+        // The clip recorded instead of a live stream is as urgent as an SOS (phase 6).
+        sos:
+            report.category == ReportCategory.sos.wire ||
+            ref.read(urgentMediaReportsProvider).contains(report.clientUuid),
         sizeBytes: media.size,
         network: await ref.read(connectivityProvider).networkKind(),
         batterySaver: saver,

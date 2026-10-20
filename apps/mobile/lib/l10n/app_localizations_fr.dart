@@ -1613,4 +1613,189 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get lockedAlertOpenApp => 'Déverrouiller pour ouvrir l\'application';
+
+  @override
+  String get liveBadge => 'EN DIRECT';
+
+  @override
+  String get homeLive => 'Direct vidéo';
+
+  @override
+  String get homeLiveDesc =>
+      'Filmez l’incident en direct pour la Protection civile.';
+
+  @override
+  String get liveTitle => 'Diffusion en direct';
+
+  @override
+  String get liveIntro =>
+      'L’image de la caméra et le son du micro sont transmis en direct à la salle des opérations de la Protection civile, enregistrés et liés à votre signalement. Votre position est envoyée pendant toute la diffusion.';
+
+  @override
+  String get livePermissionRationale =>
+      'La diffusion a besoin de la caméra, du micro et de votre position. Le téléphone vous demandera l’autorisation au démarrage ; ils ne servent que pendant la diffusion.';
+
+  @override
+  String get liveCategoryLabel => 'Type d’incident';
+
+  @override
+  String get liveStart => 'Démarrer le direct';
+
+  @override
+  String get liveStop => 'Arrêter le direct';
+
+  @override
+  String get liveMute => 'Couper le micro';
+
+  @override
+  String get liveUnmute => 'Activer le micro';
+
+  @override
+  String get liveSwitchCamera => 'Changer de caméra';
+
+  @override
+  String get livePreparing => 'Préparation du direct…';
+
+  @override
+  String get liveConnecting => 'Connexion au serveur vidéo…';
+
+  @override
+  String liveReconnecting(int attempt, int max) {
+    return 'Connexion perdue. Tentative $attempt sur $max…';
+  }
+
+  @override
+  String get liveWeakNetwork =>
+      'Le réseau est trop faible pour le direct. Vous pouvez enregistrer un court clip et l’envoyer à la place.';
+
+  @override
+  String get liveLocationOff =>
+      'Localisation désactivée : votre position n’est pas envoyée pendant le direct.';
+
+  @override
+  String get liveLocationOn => 'Position envoyée pendant le direct';
+
+  @override
+  String liveEndsIn(String time) {
+    return 'Le direct s’arrête automatiquement dans $time';
+  }
+
+  @override
+  String liveReportCode(String code) {
+    return 'Signalement $code';
+  }
+
+  @override
+  String liveSemanticsOnAir(String duration) {
+    return 'Direct en cours depuis $duration';
+  }
+
+  @override
+  String get liveEndedTitle => 'Direct terminé';
+
+  @override
+  String get liveEndedByUser =>
+      'Vous avez arrêté le direct. L’enregistrement est conservé avec votre signalement.';
+
+  @override
+  String get liveEndedByOperator =>
+      'L’opérateur a mis fin au direct. Merci, les images sont bien arrivées.';
+
+  @override
+  String liveEndedMaxDuration(int minutes) {
+    return 'Le direct a atteint sa durée maximale ($minutes min).';
+  }
+
+  @override
+  String get liveEndedByServer => 'La plateforme a mis fin au direct.';
+
+  @override
+  String get liveEndedLocked =>
+      'Le direct s’est arrêté car le téléphone est revenu à l’écran verrouillé.';
+
+  @override
+  String liveDuration(String duration) {
+    return 'Durée : $duration';
+  }
+
+  @override
+  String get liveFailedTitle => 'Direct impossible';
+
+  @override
+  String get liveFailNoLocation =>
+      'Votre position est introuvable, le signalement ne peut pas être créé. Appelez le 198.';
+
+  @override
+  String get liveFailReportNotSent =>
+      'Votre signalement est enregistré sur le téléphone et partira dès le retour du réseau. Vous pouvez enregistrer un clip qui y sera joint.';
+
+  @override
+  String get liveFailPermission =>
+      'L’accès à la caméra ou au micro a été refusé. Autorisez-le dans les réglages du téléphone pour diffuser.';
+
+  @override
+  String get liveFailCamera =>
+      'La caméra n’est pas disponible (une autre application l’utilise peut-être).';
+
+  @override
+  String get liveFailConnection =>
+      'Impossible de joindre le serveur vidéo malgré plusieurs tentatives.';
+
+  @override
+  String get liveFailLocked =>
+      'Le direct n’est pas disponible depuis l’alerte sur écran verrouillé. Déverrouillez d’abord le téléphone.';
+
+  @override
+  String get liveFallbackTitle => 'Envoyer un clip vidéo à la place';
+
+  @override
+  String get liveFallbackBody =>
+      'Enregistrez un clip de 60 secondes au plus : il est envoyé automatiquement avec votre signalement, même sur un réseau faible.';
+
+  @override
+  String get liveRecordClip => 'Enregistrer un clip (60 s)';
+
+  @override
+  String get liveClipQueued =>
+      'Le clip est enregistré et sera envoyé avec votre signalement.';
+
+  @override
+  String get liveClipFailed => 'Le clip n’a pas pu être enregistré.';
+
+  @override
+  String get liveRetry => 'Réessayer';
+
+  @override
+  String get liveOpenSettings => 'Ouvrir les réglages';
+
+  @override
+  String get liveDone => 'Terminé';
+
+  @override
+  String get liveLeaveTitle => 'Arrêter le direct ?';
+
+  @override
+  String get liveLeaveBody =>
+      'Le direct est en cours. Quitter arrête l’envoi de l’image et de la position.';
+
+  @override
+  String get liveSimulationBadge => 'Mode simulation';
+
+  @override
+  String get liveSimulationHelp =>
+      'Ce direct passe par la plateforme de simulation et n’atteint aucune vraie salle des opérations.';
+
+  @override
+  String get reportGoLive => 'Direct pour ce signalement';
+
+  @override
+  String get errorStreamAlreadyActive =>
+      'Un direct est déjà en cours pour ce signalement.';
+
+  @override
+  String get errorStreamNotActive => 'Ce direct est terminé.';
+
+  @override
+  String get errorReportClosed =>
+      'Ce signalement est clôturé : impossible d’y ouvrir un direct.';
 }

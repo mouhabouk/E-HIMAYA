@@ -60,6 +60,8 @@ export const ERROR_CODES = [
   "not_published",
   "suspended_by_level",
   "translation_missing",
+  // Live streams (phase 6 §2, §4).
+  "stream_not_active",
   "rate_limited",
   "validation_error",
   "bad_request",
@@ -160,6 +162,11 @@ export interface TokenSource {
 
 export interface ApiClient {
   request<T>(path: string, options?: RequestOptions): Promise<T>;
+  /**
+   * Same authentication, renewal and error mapping as `request`, but resolves with the successful raw Response
+   * (binary downloads, redirects to pre-signed links).
+   */
+  requestRaw(path: string, options?: RequestOptions & { accept?: string }): Promise<Response>;
 }
 
 export function buildUrl(baseUrl: string, path: string, query?: Record<string, QueryValue>): string {
@@ -201,8 +208,12 @@ export function createApiClient(
   tokens: TokenSource,
   fetchImpl: typeof fetch = (...args) => globalThis.fetch(...args),
 ): ApiClient {
-  async function send(url: string, options: RequestOptions, token: string | null): Promise<Response> {
-    const headers: Record<string, string> = { Accept: "application/json" };
+  async function send(
+    url: string,
+    options: RequestOptions & { accept?: string },
+    token: string | null,
+  ): Promise<Response> {
+    const headers: Record<string, string> = { Accept: options.accept ?? "application/json" };
     if (token && !options.anonymous) headers.Authorization = `Bearer ${token}`;
     let body: string | undefined;
     if (options.body !== undefined) {
@@ -217,23 +228,29 @@ export function createApiClient(
     }
   }
 
+  async function requestRaw(path: string, options: RequestOptions & { accept?: string } = {}): Promise<Response> {
+    const url = buildUrl(baseUrl, path, options.query);
+    let response = await send(url, options, tokens.getAccessToken());
+    if (response.status === 401 && !options.anonymous) {
+      const renewed = await tokens.renew().catch(() => null);
+      if (renewed) response = await send(url, options, renewed);
+    }
+    if (!response.ok) {
+      const detail = await readDetail(response);
+      throw new ApiError(
+        response.status,
+        errorCodeFrom(response.status, detail),
+        detail,
+        parseRetryAfter(response.headers.get("Retry-After")),
+      );
+    }
+    return response;
+  }
+
   return {
+    requestRaw,
     async request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-      const url = buildUrl(baseUrl, path, options.query);
-      let response = await send(url, options, tokens.getAccessToken());
-      if (response.status === 401 && !options.anonymous) {
-        const renewed = await tokens.renew().catch(() => null);
-        if (renewed) response = await send(url, options, renewed);
-      }
-      if (!response.ok) {
-        const detail = await readDetail(response);
-        throw new ApiError(
-          response.status,
-          errorCodeFrom(response.status, detail),
-          detail,
-          parseRetryAfter(response.headers.get("Retry-After")),
-        );
-      }
+      const response = await requestRaw(path, options);
       if (response.status === 204) return undefined as T;
       return (await response.json()) as T;
     },

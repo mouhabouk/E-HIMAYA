@@ -33,6 +33,7 @@ from app.modules.ops import levels
 from app.modules.orgs import sites
 from app.modules.reports.domain import Category, Status
 from app.modules.reports.models import Media, Report, StatusHistory
+from app.modules.streams import signals
 
 log = structlog.get_logger()
 
@@ -129,6 +130,7 @@ async def score(session: AsyncSession, report: Report, analysis: Analysis) -> li
             session, select(Report.location).where(Report.id == report.id).scalar_subquery()
         ),
         op_level=(await levels.level_of(session, report.gouvernorat_code)).value,
+        vision_fire=await signals.vision_signal(session, report.id),
     )
     credibility = scoring.credibility(facts)
     priority = scoring.priority(facts, credibility["score"], settings.priority)

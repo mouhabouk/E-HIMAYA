@@ -86,6 +86,19 @@ function SensitiveSite({ component }: { component: ScoreComponent }) {
   );
 }
 
+/** `vision_fire` (phase 6): which label was confirmed, on a live stream or an uploaded image. */
+function VisionSource({ component }: { component: ScoreComponent }) {
+  const { t } = useTranslation();
+  const { label, source } = component.detail;
+  if (component.value === null || component.value === undefined) return null;
+  if ((label !== "fire" && label !== "smoke") || (source !== "stream" && source !== "image")) return null;
+  return (
+    <span className="muted score-source">
+      {t("ai.visionSource", { label: t(`streams.label.${label}`), source: t(`ai.visionSourceKind.${source}`) })}
+    </span>
+  );
+}
+
 function PriorityBreakdown({ score }: { score: ExplainedScore }) {
   const { t } = useTranslation();
   const fmt = useFormat();
@@ -133,6 +146,7 @@ function PriorityBreakdown({ score }: { score: ExplainedScore }) {
                     </span>
                   )}
                   {c.key === "sensitive_sites" && <SensitiveSite component={c} />}
+                  {c.key === "vision_fire" && <VisionSource component={c} />}
                 </th>
                 <td>{value(c)}</td>
                 <td className="num">{c.value === null || c.value === undefined ? "—" : fmt.decimal(c.points)}</td>

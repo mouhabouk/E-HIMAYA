@@ -25,6 +25,9 @@ export const NOTIFY_ROLES = ["content_editor", "ops_manager", "local_committee",
 export const INFO_ROLES = ["content_editor", "local_committee", "central_committee"] as const;
 export const ALERT_PUBLISH_ROLES = INFO_ROLES;
 export const TIPS_ROLES = ["content_editor"] as const;
+// ---------- Phase 6 (contract §4) ----------
+/** Live streams are read with the report read roles; ending one for everyone is for the dispatch roles. */
+export const STREAM_STOP_ROLES = ["operator", "ops_manager", "field_commander"] as const;
 
 /** Every role the dashboard knows (shown in the header). */
 export const STAFF_ROLES = [...ORG_READ_ROLES, "content_editor", "sysadmin"] as const;
@@ -126,6 +129,11 @@ export function canPublishMessage(roles: readonly string[], kind: "info" | "aler
 
 export function canEditTips(roles: readonly string[]): boolean {
   return any(TIPS_ROLES, roles);
+}
+
+/** Stop a live stream (`POST /api/v1/staff/streams/{id}/stop`). */
+export function canStopStreams(roles: readonly string[]): boolean {
+  return any(STREAM_STOP_ROLES, roles);
 }
 
 /** Pages a user lands on when the KPIs are not theirs: the first area their roles open. */

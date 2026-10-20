@@ -103,7 +103,10 @@ class Media(Base):
     report_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("reports.report.id", ondelete="CASCADE")
     )
-    stream_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True))
+    # Recordings and vision frames of a live stream (phase 6).
+    stream_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("reports.live_stream.id", ondelete="CASCADE")
+    )
     kind: Mapped[str] = mapped_column(Text)
     object_key: Mapped[str] = mapped_column(Text, unique=True)
     sha256: Mapped[str] = mapped_column(String(64))

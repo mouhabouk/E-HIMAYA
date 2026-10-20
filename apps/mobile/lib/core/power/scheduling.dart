@@ -13,6 +13,11 @@ import '../http/models.dart';
 /// - volunteer readiness: about 4 position sends while stationary (was 60), the GPS radio in
 ///   balanced (cell/Wi-Fi) mode with a 100 m filter instead of a high-accuracy fix every minute;
 /// - simulated push (dev only): 5 s while messages arrive, up to 60 s when idle (was 720 polls).
+///
+/// The one deliberate exception is live streaming (phase 6, FR-A-052): while a stream is open the
+/// position is sent at the server's cadence with a high-accuracy fix and the screen stays on,
+/// battery saver or not. It is registered as a high-power session (`high_power.dart`) that ends
+/// with the stream; battery saver only caps the stream's starting video quality.
 
 /// One battery reading from the platform.
 class BatteryReading {

@@ -1,11 +1,12 @@
 import type { InfiniteData, QueryClient } from "@tanstack/react-query";
 import { inBBox, matchesFilters, type BBox, type ReportFilters } from "./filters";
-import type { LiveEvent } from "./live";
+import { isStreamEvent, type LiveEvent } from "./live";
 import { opsKeys } from "./opsApi";
 import type { LevelRow } from "./opsTypes";
 import { compareOrgNames, matchesOrgFilters, type OrgFilters } from "./orgs";
 import { comparePriority } from "./priority";
 import { queryKeys, type IncidentStatusFilter, type ReportSort } from "./staffApi";
+import { applyStreamEvent } from "./streamsCache";
 import { TRANSITIONS } from "./status";
 import type {
   CertificateEvent,
@@ -310,6 +311,10 @@ function applyOpsEvent(qc: QueryClient, event: LiveEvent): boolean {
 
 export function applyLiveEvent(qc: QueryClient, event: LiveEvent, now: number = Date.now()): void {
   if (applyOpsEvent(qc, event)) return;
+  if (isStreamEvent(event)) {
+    applyStreamEvent(qc, event);
+    return;
+  }
   if (event.type === "media.stored") {
     // The detail carries pre-signed URLs, so refetch rather than patch.
     void qc.invalidateQueries({ queryKey: queryKeys.report(event.report_id) });

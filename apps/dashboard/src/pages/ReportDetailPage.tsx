@@ -8,6 +8,8 @@ import { CategoryLabel } from "../components/CategoryIcon";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { GroupingSection } from "../components/GroupingSection";
 import { LazyMapView } from "../components/LazyMap";
+import { LinkedStreams } from "../components/LinkedStreams";
+import { VisionImage, VisionSummary, visionDetections } from "../components/VisionResults";
 import { OrganizationCardPanel } from "../components/OrganizationCardPanel";
 import { featureKindLabel, MapLegend, orgKindLabel, orgPois, pointsBounds, useLegendItems } from "../components/OrgBits";
 import { StatusChip } from "../components/StatusChip";
@@ -32,10 +34,10 @@ function MediaItem({ media, onBroken }: { media: Media; onBroken: () => void }) 
       <div className="media__preview">
         {playable && media.kind === "image" && (
           <a href={media.url ?? undefined} target="_blank" rel="noopener noreferrer">
-            <img src={media.url ?? undefined} alt={label} loading="lazy" onError={onBroken} />
+            <VisionImage src={media.url ?? ""} alt={label} detections={visionDetections(media.analysis)} onError={onBroken} />
           </a>
         )}
-        {playable && media.kind === "video" && (
+        {playable && (media.kind === "video" || media.kind === "recording") && (
           <video controls preload="metadata" aria-label={label} onError={onBroken}>
             <source src={media.url ?? undefined} type={media.content_type ?? undefined} onError={onBroken} />
           </video>
@@ -72,11 +74,26 @@ function MediaItem({ media, onBroken }: { media: Media; onBroken: () => void }) 
         )}
         <dt>{t("detail.size")}</dt>
         <dd>{media.bytes === null ? t("common.notAvailable") : fmt.bytes(media.bytes)}</dd>
+        {typeof media.duration_s === "number" && (
+          <>
+            <dt>{t("streams.columns.duration")}</dt>
+            <dd>{fmt.duration(media.duration_s)}</dd>
+          </>
+        )}
+        {media.stream_id && (
+          <>
+            <dt>{t("streams.report.stream")}</dt>
+            <dd>
+              <Link to={`/streams/${encodeURIComponent(media.stream_id)}`}>{t("streams.report.openStream")}</Link>
+            </dd>
+          </>
+        )}
         <dt>{t("detail.sha256")}</dt>
         <dd className="hash" dir="ltr">
           {media.sha256}
         </dd>
       </dl>
+      <VisionSummary analysis={media.analysis} />
     </li>
   );
 }
@@ -392,6 +409,8 @@ export function ReportDetailPage() {
       </div>
 
       <AnalysisPanel report={r} />
+
+      <LinkedStreams report={r} />
 
       <section className="card" aria-labelledby="sec-media">
         <h2 id="sec-media">

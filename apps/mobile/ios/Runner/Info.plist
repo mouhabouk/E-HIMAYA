@@ -45,11 +45,11 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>تُستعمل الكاميرا لالتقاط صور أو فيديو وإرفاقها ببلاغك.</string>
+	<string>تُستعمل الكاميرا لالتقاط صور أو فيديو وإرفاقها ببلاغك، وللبث المباشر إلى الحماية المدنية عندما تطلقه.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>يُستعمل موقعك لتحديد مكان البلاغ أو نداء الاستغاثة وإرساله إلى الحماية المدنية.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>يُستعمل الميكروفون لتسجيل رسالة صوتية وإرفاقها ببلاغك.</string>
+	<string>يُستعمل الميكروفون لتسجيل رسالة صوتية وإرفاقها ببلاغك، ولصوت البث المباشر عندما تطلقه.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>يُستعمل معرض الصور لاختيار صور أو فيديو وإرفاقها ببلاغك.</string>
 	<key>CFBundlePackageType</key>

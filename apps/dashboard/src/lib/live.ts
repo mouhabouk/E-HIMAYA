@@ -5,12 +5,14 @@
  * the server answers {"type":"ready"} and then pushes report.created, report.status_changed and media.stored
  * (phase 2), report.enriched and incident.updated (phase 3), org.updated and certificate.updated (phase 4),
  * and the operations events of phase 5 (§10): levels, directives, assignments, call-outs, resources, volunteers,
- * notifications and alerts.
+ * notifications and alerts, and the live stream events of phase 6 (§4): stream.started, stream.ended,
+ * stream.location, stream.alert and stream.recording.
  * Close code 4401 = token missing/expired → renew the token, then reconnect. 4403 = no access → stop.
  * Any other close (incl. 4408 "too slow" and 1013 "try later") → reconnect with exponential back-off and jitter.
  * Once ready, a {"type":"ping"} keep-alive is sent periodically (the API answers {"type":"pong"}, ignored).
  */
 import type { Assignment, Callout, Directive, LevelRow, Message, Resource, StaffVolunteer } from "./opsTypes";
+import { isAlertLabel, type AlertLabel, type StaffStream } from "./streamTypes";
 import type { CertificateEvent, IncidentSummary, Media, StaffOrg, StaffReport } from "./types";
 
 export type LiveEvent =
@@ -31,7 +33,30 @@ export type LiveEvent =
   | { type: "resource.updated"; resource: Resource }
   | { type: "volunteer.updated"; volunteer: StaffVolunteer }
   | { type: "notification.updated"; message: Message }
-  | { type: "alert.issued"; message: Message };
+  | { type: "alert.issued"; message: Message }
+  // Phase 6 (§4), normalised by parseStreamEvent: the contract fixes the payload of alert and recording only.
+  /** `stream` is the list row when the API sends it (else only the id is known and lists are reloaded). */
+  | { type: "stream.started" | "stream.ended"; stream_id: string; stream: StaffStream | null }
+  | { type: "stream.location"; stream_id: string; lat: number; lon: number; at: string | null }
+  /** A confirmed fire or smoke (3 of the last 5 analysed frames ≥ the alert confidence). */
+  | {
+      type: "stream.alert";
+      stream_id: string;
+      label: AlertLabel;
+      confidence: number;
+      report_id: string | null;
+      /** Implementation-note supersets: the stored frame, the simulation flag and the time of the frame. */
+      simulated?: boolean;
+      media_id?: string | null;
+      at?: string | null;
+    }
+  | { type: "stream.recording"; stream_id: string; media_id: string; report_id?: string | null };
+
+export type StreamLiveEvent = Extract<LiveEvent, { type: `stream.${string}` }>;
+
+export function isStreamEvent(event: LiveEvent): event is StreamLiveEvent {
+  return event.type.startsWith("stream.");
+}
 
 /** Phase 5 events and the object each one carries (validated as an object with a string `id`, or a level row). */
 const OPS_EVENT_FIELDS: Readonly<Record<string, string>> = {
@@ -94,6 +119,52 @@ export function backoffDelay(attempt: number, baseMs: number, maxMs: number, ran
   return Math.round(cap / 2 + (random() * cap) / 2);
 }
 
+const isObject = (v: unknown): v is Record<string, unknown> => Boolean(v) && typeof v === "object";
+const finite = (v: unknown): v is number => typeof v === "number" && Number.isFinite(v);
+
+/**
+ * Phase 6 events. Accepted shapes: `{"stream": {row}}` or a flat `{"stream_id"}` for started/ended;
+ * `{"stream_id","lat","lon","at"?}` or `{"stream_id","location":{"lat","lon"}}` for location;
+ * alert and recording as fixed by §4. Anything else is dropped.
+ */
+export function parseStreamEvent(m: Record<string, unknown>): StreamLiveEvent | null {
+  const stream = isObject(m.stream) && typeof m.stream.id === "string" ? (m.stream as unknown as StaffStream) : null;
+  const streamId = typeof m.stream_id === "string" ? m.stream_id : (stream?.id ?? null);
+  if (!streamId) return null;
+  switch (m.type) {
+    case "stream.started":
+    case "stream.ended":
+      return { type: m.type, stream_id: streamId, stream };
+    case "stream.location": {
+      const loc = isObject(m.location) ? m.location : isObject(m.last_location) ? m.last_location : m;
+      if (!finite(loc.lat) || !finite(loc.lon)) return null;
+      return { type: "stream.location", stream_id: streamId, lat: loc.lat, lon: loc.lon, at: typeof m.at === "string" ? m.at : null };
+    }
+    case "stream.alert":
+      if (!isAlertLabel(m.label) || !finite(m.confidence)) return null;
+      return {
+        type: "stream.alert",
+        stream_id: streamId,
+        label: m.label,
+        confidence: m.confidence,
+        report_id: typeof m.report_id === "string" ? m.report_id : null,
+        ...(typeof m.simulated === "boolean" ? { simulated: m.simulated } : {}),
+        ...(typeof m.media_id === "string" ? { media_id: m.media_id } : {}),
+        ...(typeof m.at === "string" ? { at: m.at } : {}),
+      };
+    case "stream.recording":
+      if (typeof m.media_id !== "string") return null;
+      return {
+        type: "stream.recording",
+        stream_id: streamId,
+        media_id: m.media_id,
+        ...(typeof m.report_id === "string" ? { report_id: m.report_id } : {}),
+      };
+    default:
+      return null;
+  }
+}
+
 function parseEvent(raw: unknown): LiveEvent | { type: "ready" } | null {
   if (typeof raw !== "string") return null;
   let msg: unknown;
@@ -143,6 +214,12 @@ function parseEvent(raw: unknown): LiveEvent | { type: "ready" } | null {
       return typeof m.report_id === "string" && m.media && typeof m.media === "object"
         ? (m as unknown as LiveEvent)
         : null;
+    case "stream.started":
+    case "stream.ended":
+    case "stream.location":
+    case "stream.alert":
+    case "stream.recording":
+      return parseStreamEvent(m);
     default:
       return null;
   }
@@ -162,13 +239,14 @@ export class LiveClient {
 
   constructor(options: LiveClientOptions) {
     this.opts = {
-      createSocket: (url) => new WebSocket(url),
       random: Math.random,
       baseDelayMs: 1000,
       maxDelayMs: 30000,
       readyTimeoutMs: 15000,
       pingIntervalMs: 25000,
       ...options,
+      // LiveProvider passes `createSocket: undefined` outside tests: an explicit undefined must not erase the default.
+      createSocket: options.createSocket ?? ((url) => new WebSocket(url)),
     };
   }
 

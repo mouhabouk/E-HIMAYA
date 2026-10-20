@@ -70,6 +70,18 @@ class FakeDeviceServices implements DeviceServices {
     opened.add('dnd-access');
     return true;
   }
+
+  /// History of [keepScreenOn] calls (live streaming).
+  final screenOn = <bool>[];
+
+  @override
+  Future<void> keepScreenOn(bool on) async => screenOn.add(on);
+
+  @override
+  Future<bool> openAppSettings() async {
+    opened.add('app-settings');
+    return true;
+  }
 }
 
 class ShownNotification {

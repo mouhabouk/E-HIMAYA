@@ -6,6 +6,7 @@ import '../../core/auth/identity.dart';
 import '../../core/http/models.dart';
 import '../../core/routing/app_router.dart';
 import '../../core/ui/emergency_action.dart';
+import '../../core/ui/theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../alerts/alerts_providers.dart';
 import '../alerts/notifications_screen.dart';
@@ -54,6 +55,30 @@ class HomeScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 24),
             const Center(child: SosButton()),
+            const SizedBox(height: 16),
+            // FR-A-031: the Live button, independent of the SOS and of the report form.
+            OutlinedButton.icon(
+              key: const Key('home-live'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: sosRed,
+                side: const BorderSide(color: sosRed, width: 2),
+                minimumSize: const Size.fromHeight(56),
+                textStyle: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              onPressed: () => context.push(Routes.live),
+              icon: const Icon(Icons.videocam),
+              label: Text(l10n.homeLive),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                l10n.homeLiveDesc,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodySmall,
+              ),
+            ),
             const SizedBox(height: 24),
             if (pending > 0)
               Card(
