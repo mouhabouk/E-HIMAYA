@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useId, useState, type SyntheticEvent } from "react";
+import { useEffect, useId, useRef, useState, type SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
@@ -24,6 +24,13 @@ import {
 import { canCloseIncidents, canDispatch } from "../lib/roles";
 import { queryKeys } from "../lib/staffApi";
 import type { IncidentDetail } from "../lib/types";
+
+/** A recommendation's "open assignment" (phase 7 §3): preselects a resource; the operator still submits. */
+export interface AssignPreset {
+  resourceId: string | null;
+  order: string | null;
+  nonce: number;
+}
 
 const SUMMARY_MIN = 10;
 const SUMMARY_MAX = 5000;
@@ -232,14 +239,22 @@ function AssignmentRow({ assignment, canEdit }: { assignment: Assignment; canEdi
   );
 }
 
-function AssignResourceForm({ incident }: { incident: IncidentDetail }) {
+function AssignResourceForm({ incident, preset }: { incident: IncidentDetail; preset?: AssignPreset | null }) {
   const { t } = useTranslation();
   const { api } = useServices();
   const qc = useQueryClient();
   const refresh = useRefreshIncident(incident.id);
   const ids = { resource: useId(), order: useId() };
-  const [resourceId, setResourceId] = useState("");
-  const [order, setOrder] = useState("");
+  // A preset (recommendation) re-mounts this form with its values (key = nonce, see AssignmentsSection).
+  const [resourceId, setResourceId] = useState(preset?.resourceId ?? "");
+  const [order, setOrder] = useState(preset?.order ?? "");
+  const selectRef = useRef<HTMLSelectElement>(null);
+  const hasPreset = Boolean(preset);
+  useEffect(() => {
+    if (!hasPreset) return;
+    selectRef.current?.scrollIntoView({ block: "center" });
+    selectRef.current?.focus();
+  }, [hasPreset]);
   const available = useQuery({
     queryKey: opsKeys.resources({ status: "available" }),
     queryFn: ({ signal }) => api.resources({ status: "available" }, { limit: 200, signal }),
@@ -268,7 +283,7 @@ function AssignResourceForm({ incident }: { incident: IncidentDetail }) {
       {available.isError && <MutationError error={available.error} />}
       <div className="field">
         <label htmlFor={ids.resource}>{t("ops.assignment.resource")}</label>
-        <select id={ids.resource} value={resourceId} onChange={(e) => setResourceId(e.target.value)}>
+        <select ref={selectRef} id={ids.resource} value={resourceId} onChange={(e) => setResourceId(e.target.value)}>
           <option value="">
             {available.isPending
               ? t("common.loading")
@@ -297,7 +312,15 @@ function AssignResourceForm({ incident }: { incident: IncidentDetail }) {
   );
 }
 
-function AssignmentsSection({ incident, canEdit }: { incident: IncidentDetail; canEdit: boolean }) {
+function AssignmentsSection({
+  incident,
+  canEdit,
+  preset,
+}: {
+  incident: IncidentDetail;
+  canEdit: boolean;
+  preset?: AssignPreset | null;
+}) {
   const { t } = useTranslation();
   const assignments = incident.assignments ?? [];
   const active = assignments.filter((a) => ACTIVE_ASSIGNMENT_STATUSES.includes(a.status));
@@ -334,7 +357,7 @@ function AssignmentsSection({ incident, canEdit }: { incident: IncidentDetail; c
           {table(past, t("ops.assignment.pastCaption"))}
         </details>
       )}
-      {canEdit && incident.status === "open" && <AssignResourceForm incident={incident} />}
+      {canEdit && incident.status === "open" && <AssignResourceForm key={preset?.nonce ?? 0} incident={incident} preset={preset} />}
     </section>
   );
 }
@@ -827,7 +850,7 @@ export function OpsTimelineDetails({ kind, payload }: { kind: string; payload: R
 }
 
 /** FR-C-09: operations of an incident (card, assignments, volunteer call-outs, notes, close and evaluation). */
-export function OperationsPanel({ incident }: { incident: IncidentDetail }) {
+export function OperationsPanel({ incident, assignPreset }: { incident: IncidentDetail; assignPreset?: AssignPreset | null }) {
   const { t } = useTranslation();
   const { user } = useAuth();
   const roles = user?.identity.roles ?? [];
@@ -840,7 +863,7 @@ export function OperationsPanel({ incident }: { incident: IncidentDetail }) {
         <h2 id="sec-card">{t("ops.card.heading")}</h2>
         <CardForm incident={incident} canEdit={dispatch} />
       </section>
-      <AssignmentsSection incident={incident} canEdit={dispatch && open} />
+      <AssignmentsSection incident={incident} canEdit={dispatch && open} preset={assignPreset} />
       <CalloutsSection incident={incident} canEdit={dispatch && open} />
       {dispatch && (
         <section className="card" aria-labelledby="sec-note">

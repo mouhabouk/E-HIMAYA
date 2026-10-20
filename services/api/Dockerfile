@@ -14,6 +14,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PATH=/opt/venv/bin:$PATH
 WORKDIR /app
 
 RUN useradd --system --uid 10001 --home /app ehimaya
+# Mount point of the terrain model volume (filled by the one-shot "terrain" service, docs/weather-forecast.md).
+RUN install -d -o ehimaya -g ehimaya /terrain
 
 # Text shaping and fonts for the certificate PDFs (WeasyPrint): Arabic and Latin from Noto.
 RUN apt-get update \

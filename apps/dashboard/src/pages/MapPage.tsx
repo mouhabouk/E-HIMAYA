@@ -7,7 +7,9 @@ import { FiltersBar } from "../components/FiltersBar";
 import { LazyMapView } from "../components/LazyMap";
 import type { HeatPoint, MapMarker, MapPoi, MapPolygon } from "../components/MapView";
 import { MapLegend, orgKindLabel } from "../components/OrgBits";
+import { useMapWeather, useWeatherGrid, WeatherControls, WeatherPointCard, type WeatherViews } from "../components/WeatherLayer";
 import { useAuth } from "../context/auth";
+import { useSoftphone } from "../context/softphone";
 import { useLiveEvents } from "../context/live";
 import { useServices } from "../context/services";
 import { directionOf } from "../i18n";
@@ -17,7 +19,9 @@ import { mapKey } from "../lib/liveCache";
 import { initialBoundsFor } from "../lib/mapStyle";
 import { opsKeys } from "../lib/opsApi";
 import type { Message } from "../lib/opsTypes";
-import { canReadOrgs, canReadResources } from "../lib/roles";
+import { errorMessageKey } from "../lib/api";
+import { canReadOrgs, canReadResources, canUseTelephony } from "../lib/roles";
+import type { DialBody } from "../lib/telephonyTypes";
 import { queryKeys } from "../lib/staffApi";
 import type { Page, StaffReport } from "../lib/types";
 import { useEffectiveFilters } from "./useEffectiveFilters";
@@ -28,6 +32,21 @@ const ORG_LAYER_KEY = "ehimaya.mapOrgLayer";
 const RESOURCE_LAYER_KEY = "ehimaya.mapResourceLayer";
 const VOLUNTEER_LAYER_KEY = "ehimaya.mapVolunteerLayer";
 const ALERT_LAYER_KEY = "ehimaya.mapAlertLayer";
+const WEATHER_LAYER_KEY = "ehimaya.mapWeatherLayer";
+const WEATHER_VIEWS_KEY = "ehimaya.mapWeatherViews";
+
+function storedViews(): WeatherViews {
+  try {
+    const raw = sessionStorage.getItem(WEATHER_VIEWS_KEY);
+    if (raw) {
+      const v = JSON.parse(raw) as Partial<WeatherViews>;
+      return { fire: v.fire !== false, wind: v.wind !== false, rain: v.rain !== false };
+    }
+  } catch {
+    /* ignore */
+  }
+  return { fire: true, wind: true, rain: true };
+}
 
 function storedLayer(key: string): boolean {
   try {
@@ -96,6 +115,68 @@ export function MapPage() {
   const [showVolunteers, setVolunteerLayer] = useLayer(VOLUNTEER_LAYER_KEY);
   const [showAlerts, setAlertLayer] = useLayer(ALERT_LAYER_KEY);
   const gouvernorats = useGouvernorats();
+
+  // Outbound call from a map point (phase 7 §4, FR-C-10): reporter, volunteer or unit, through the softphone.
+  const phone = useSoftphone();
+  const [callNotice, setCallNotice] = useState<{ ok: boolean; text: string } | null>(null);
+  const onCall = useMemo(
+    () =>
+      phone && canUseTelephony(user?.identity.roles ?? [])
+        ? (body: DialBody) => {
+            setCallNotice({ ok: true, text: t("phone.dialing") });
+            phone.dial(body).then(
+              () => setCallNotice({ ok: true, text: t("phone.dialStarted") }),
+              (e: unknown) =>
+                setCallNotice({
+                  ok: false,
+                  text:
+                    e instanceof Error && e.message === "softphone_not_registered"
+                      ? t("errors.softphone_not_registered")
+                      : t(errorMessageKey(e)),
+                }),
+            );
+          }
+        : undefined,
+    [phone, user, t],
+  );
+
+  // Weather layer (phase 7 §1, FR-C-08 / FR-C-10): fire danger field, wind arrows, rain level, 48 h slider.
+  const [showWeather, setWeatherLayer] = useLayer(WEATHER_LAYER_KEY);
+  const [weatherViews, setWeatherViewsState] = useState<WeatherViews>(storedViews);
+  const setWeatherViews = (v: WeatherViews) => {
+    setWeatherViewsState(v);
+    try {
+      sessionStorage.setItem(WEATHER_VIEWS_KEY, JSON.stringify(v));
+    } catch {
+      /* ignore */
+    }
+  };
+  const [weatherHour, setWeatherHour] = useState(0);
+  const [weatherPoint, setWeatherPoint] = useState<{ lat: number; lon: number } | null>(null);
+  const weatherGrid = useWeatherGrid(showWeather, bbox, weatherHour);
+  const mapWeather = useMapWeather(weatherGrid, weatherViews, showWeather);
+  const onMapClick = useCallback(
+    (lon: number, lat: number) => {
+      if (showWeather) setWeatherPoint({ lat, lon });
+    },
+    [showWeather],
+  );
+  const onWeatherCentre = () => {
+    if (!rawBBox) return;
+    setWeatherPoint({ lon: (rawBBox[0] + rawBBox[2]) / 2, lat: (rawBBox[1] + rawBBox[3]) / 2 });
+  };
+  const weatherPopup = useMemo(
+    () =>
+      showWeather && weatherPoint
+        ? {
+            lat: weatherPoint.lat,
+            lon: weatherPoint.lon,
+            key: `${weatherPoint.lat},${weatherPoint.lon}`,
+            node: <WeatherPointCard lat={weatherPoint.lat} lon={weatherPoint.lon} hour={weatherHour} />,
+          }
+        : null,
+    [showWeather, weatherPoint, weatherHour],
+  );
 
   // Operations layers (phase 5, FR-C-06 / FR-C-10): resources and units, ready volunteers, active alerts.
   const resourcesQuery = useQuery({
@@ -213,6 +294,7 @@ export function MapPage() {
             title: lang === "ar" ? p.name : p.name_fr,
             subtitle: [t(`resources.units.kind.${p.kind}`), p.phone].filter(Boolean).join(" · "),
             href: "/resources",
+            ...(p.phone ? { call: { number: p.phone } } : {}),
           });
         } else {
           out.push({
@@ -238,6 +320,7 @@ export function MapPage() {
           title: p.full_name ?? t("ops.volunteer"),
           subtitle: p.skills.map((sk) => t(`volunteers.skill.${sk}`)).join(t("common.listSeparator")),
           href: `/volunteers/${encodeURIComponent(p.id)}`,
+          call: { volunteer_id: p.id },
         });
       }
     }
@@ -300,6 +383,14 @@ export function MapPage() {
         )}
         <LayerToggle checked={showVolunteers} onChange={setVolunteerLayer} label={t("ops.map.volunteersToggle")} />
         <LayerToggle checked={showAlerts} onChange={setAlertLayer} label={t("ops.map.alertsToggle")} />
+        <LayerToggle
+          checked={showWeather}
+          onChange={(on) => {
+            setWeatherLayer(on);
+            if (!on) setWeatherPoint(null);
+          }}
+          label={t("weather.toggle")}
+        />
         {showOrgs && (
           <span className="muted" role="status" aria-live="polite">
             {orgsQuery.isFetching ? t("common.loading") : t("orgs.layer.count", { count: fmt.number(pois.length) })}
@@ -307,6 +398,16 @@ export function MapPage() {
         )}
         {legend.length > 0 && <MapLegend items={legend} />}
       </div>
+      {showWeather && (
+        <WeatherControls
+          views={weatherViews}
+          onViews={setWeatherViews}
+          hour={weatherHour}
+          onHour={setWeatherHour}
+          grid={weatherGrid}
+          onCentre={onWeatherCentre}
+        />
+      )}
       {showAlerts && (
         <section className="card map-alerts" aria-label={t("ops.map.alertsTitle")}>
           {alertsQuery.isError && <ErrorBox error={alertsQuery.error} onRetry={() => void alertsQuery.refetch()} />}
@@ -346,6 +447,9 @@ export function MapPage() {
       {showOrgs && orgsQuery.isError && (
         <ErrorBox error={orgsQuery.error} onRetry={() => void orgsQuery.refetch()} />
       )}
+      <div role="status" aria-live="polite">
+        {callNotice && <p className={`alert ${callNotice.ok ? "alert--info" : "alert--error"}`}>{callNotice.text}</p>}
+      </div>
       <Suspense fallback={<Loading />}>
         <LazyMapView
           className="map map--full"
@@ -362,6 +466,12 @@ export function MapPage() {
           onOpenPoi={onOpenPoi}
           polygons={polygons}
           heat={heat}
+          weather={mapWeather}
+          onMapClick={onMapClick}
+          popup={weatherPopup}
+          onPopupClose={() => setWeatherPoint(null)}
+          onCall={onCall}
+          callLabel={t("phone.call")}
         />
       </Suspense>
       <details className="card map-list">

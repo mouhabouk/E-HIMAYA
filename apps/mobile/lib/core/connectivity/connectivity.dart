@@ -44,3 +44,11 @@ class PlatformConnectivityMonitor implements ConnectivityMonitor {
 final connectivityProvider = Provider<ConnectivityMonitor>(
   (ref) => PlatformConnectivityMonitor(),
 );
+
+/// Whether any network interface is up, for the UI (the offline SMS / 198 fallback). Starts
+/// from the current state and follows the changes.
+final onlineProvider = StreamProvider<bool>((ref) async* {
+  final monitor = ref.watch(connectivityProvider);
+  yield await monitor.isOnline();
+  yield* monitor.onlineChanges;
+});

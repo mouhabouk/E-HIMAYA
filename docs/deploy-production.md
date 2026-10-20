@@ -158,3 +158,31 @@ docker compose --env-file .env -f infra/compose.yml run --rm migrate
 اختبار الحمل (`infra/loadtest/`): على 4 vCPU تستوعب المنظومة بتشكيل الإنتاج ~16 بلاغ SOS/ث (≈ 58 000/ساعة) مع
 p95 = 328 ms. للتوسع: `API_WORKERS` (عمليات لكل حاوية)، ثم حاويات `api` إضافية، ثم قاعدة البيانات على خادمها. يبقى
 `worker` نسخة واحدة.
+
+## 9. الهاتف والرسائل القصيرة (المرحلة 7)
+
+التفاصيل في `docs/telephony.md`. ما يضيفه الملف الإضافي:
+
+| المجال | التطوير | الإنتاج |
+|---|---|---|
+| Asterisk 22 | منافذ SIP و ARI على `127.0.0.1` | SIP على 5060/udp و 5060/tcp و 5061/tcp، ونطاق RTP (افتراضيًا 10000–10099/udp)؛ ARI داخلي فقط |
+| الهاتف في اللوحة | `ws://localhost:8088/ws` | `wss://API_HOST/telephony/ws` عبر Caddy (هذا المسار وحده من Asterisk)، و `CSP_TELEPHONY_SRC` و `CSP_MICROPHONE=self` في صورة اللوحة |
+| تسجيل المكالمات | مفعّل | **معطّل افتراضيًا** (`TELEPHONY_RECORDING_ENABLED=false`) إلى أن يُصرَّح بالمعالجة لدى الهيئة الوطنية لحماية المعطيات الشخصية |
+| محاكي المكالمات `call-sim` | ملف التعريف `sim` | غير مشغّل (`dev-tools`) |
+| بوابة الرسائل القصيرة | — | `POST https://API_HOST/internal/sms/inbound` موقّع بـ `SMS_INBOUND_SECRET` (المسار الوحيد من `/internal` المفتوح في Caddy) |
+
+- جدار ناري: افتح نطاق RTP بـ UDP، وقيّد 5060 و 5061 بعناوين SBC المشغّل فقط.
+- أسرار جديدة في `.env`: `TELEPHONY_ARI_PASSWORD` (`openssl rand -hex 24`)، و `SMS_INBOUND_SECRET`
+  (`openssl rand -hex 32`، يُسلَّم لمزوّد الرسائل)، وإعدادات `TELEPHONY_TRUNK_*` من عقد المشغّل، و `TELEPHONY_EXTERNAL_HOST`
+  إذا لم يكن `API_HOST` هو العنوان العمومي للخادم. اترك `TELEPHONY_SIM_PASSWORD` و `TELEPHONY_SIM_TOKEN` فارغين.
+- كل مكالمة إلى 8000 تسمع إشعار التسجيل بالعربية ثم بالفرنسية قبل التسجيل والطابور؛ استبدل الملفات المولّدة بتسجيلات
+  احترافية كما في `docs/telephony.md` (الفقرة 3).
+- التحويل إلى 198 (السيناريو 2) يبقى معطّلًا (`TELEPHONY_TRANSFER_198_ENABLED=false`) إلى حين توقيع اتفاقية مع المشغّل
+  والحماية المدنية ومراجعة تنظيمية. أرقام النجدة في التطبيق تبقى دائمًا مكالمة عادية عبر الشريحة (السيناريو 0).
+- فحص بعد النشر:
+
+  ```bash
+  docker compose --env-file .env -f infra/compose.yml -f infra/compose.prod.yml exec telephony \
+    asterisk -C /run/asterisk/etc/asterisk.conf -rx "core show version"
+  docker compose --env-file .env -f infra/compose.yml -f infra/compose.prod.yml logs worker | grep telephony.ari_connected
+  ```

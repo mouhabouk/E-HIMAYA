@@ -5,15 +5,28 @@ import { Link, useParams } from "react-router";
 import { IncidentStatusChip, PriorityBadge, ReportMarkers } from "../components/AiBadges";
 import { CategoryLabel } from "../components/CategoryIcon";
 import { ErrorBox, Loading } from "../components/Feedback";
+import {
+  AssistantPanel,
+  ConferencePanel,
+  ForecastLegend,
+  ForecastPanel,
+  RecommendationsPanel,
+  RespondersPanel,
+  type ForecastState,
+} from "../components/IncidentDecision";
 import { LazyMapView } from "../components/LazyMap";
-import { LevelTag, OperationsPanel, OpsTimelineDetails } from "../components/OperationsPanel";
-import type { MapMarker } from "../components/MapView";
+import { LevelTag, OperationsPanel, OpsTimelineDetails, type AssignPreset } from "../components/OperationsPanel";
+import type { MapLine, MapMarker, MapPolygon } from "../components/MapView";
+import { SimTag } from "../components/StreamBits";
 import { StatusChip } from "../components/StatusChip";
 import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
 import { directionOf } from "../i18n";
 import { errorMessageKey, isApiError } from "../lib/api";
+import type { RouteProfile } from "../lib/decisionTypes";
 import type { BBox } from "../lib/filters";
+import { boundsOfPositions, forecastBounds, forecastMapPolygons } from "../lib/forecast";
+import { p7Keys } from "../lib/phase7Api";
 import { useFormat, useGouvernorats, useLanguage } from "../lib/hooks";
 import { canManageIncidents } from "../lib/roles";
 import { queryKeys } from "../lib/staffApi";
@@ -186,6 +199,42 @@ export function IncidentDetailPage() {
   const lang = useLanguage();
   const gouvernorats = useGouvernorats();
   const canWrite = canManageIncidents(user?.identity.roles ?? []);
+  // Phase 7: spread forecast and vehicle route drawn on the incident map; recommendation → assignment form.
+  const [forecast, setForecast] = useState<ForecastState | null>(null);
+  const [forecastShown, setForecastShown] = useState(true);
+  const [routeRequest, setRouteRequest] = useState<{
+    from: { lat: number; lon: number };
+    to: { lat: number; lon: number };
+    profile: RouteProfile;
+  } | null>(null);
+  const [assignPreset, setAssignPreset] = useState<AssignPreset | null>(null);
+  const route = useQuery({
+    queryKey: routeRequest
+      ? p7Keys.route(
+          `${routeRequest.from.lat},${routeRequest.from.lon}`,
+          `${routeRequest.to.lat},${routeRequest.to.lon}`,
+          routeRequest.profile,
+        )
+      : ["route", "none"],
+    enabled: routeRequest !== null,
+    queryFn: ({ signal }) => {
+      if (!routeRequest) throw new Error("no route");
+      return api.route(routeRequest.from, routeRequest.to, routeRequest.profile, signal);
+    },
+  });
+  const forecastPolygons = useMemo<MapPolygon[]>(
+    () => (forecast && forecastShown ? forecastMapPolygons(forecast.kind, forecast.run) : []),
+    [forecast, forecastShown],
+  );
+  const routeLines = useMemo<MapLine[]>(
+    () => (route.data ? [{ id: "route", coordinates: route.data.geometry.coordinates, colour: "#1d4ed8" }] : []),
+    [route.data],
+  );
+  const focusBounds = useMemo<BBox | null>(() => {
+    if (route.data) return boundsOfPositions(route.data.geometry.coordinates);
+    if (forecastPolygons.length > 0) return forecastBounds(forecastPolygons);
+    return null;
+  }, [route.data, forecastPolygons]);
 
   const query = useQuery({
     queryKey: queryKeys.incident(id),
@@ -293,7 +342,10 @@ export function IncidentDetailPage() {
           {bounds ? (
             <Suspense fallback={<Loading />}>
               <LazyMapView
-                className="map map--mini"
+                className={forecast || routeRequest ? "map map--incident" : "map map--mini"}
+                polygons={forecastPolygons}
+                lines={routeLines}
+                focusBounds={focusBounds}
                 markers={markers}
                 bounds={bounds}
                 zoom={15}
@@ -309,6 +361,36 @@ export function IncidentDetailPage() {
             </Suspense>
           ) : (
             <p className="muted">{t("common.notAvailable")}</p>
+          )}
+          {forecast && forecastShown && <ForecastLegend forecast={forecast} />}
+          {routeRequest && (
+            <div className="route-summary" aria-live="polite">
+              <h3>{t("route.title")}</h3>
+              {route.isPending && <Loading />}
+              {route.isError && <ErrorBox error={route.error} onRetry={() => void route.refetch()} />}
+              {route.data && (
+                <>
+                  <p>
+                    <span className="route-swatch" aria-hidden="true" />
+                    {t("route.summary", {
+                      distance: fmt.meters(route.data.distance_m),
+                      duration: fmt.duration(route.data.duration_s),
+                    })}{" "}
+                    · {t(`route.profile.${routeRequest.profile}`)} {route.data.simulated && <SimTag />}
+                  </p>
+                  {route.data.engine === "fallback" && <p className="alert alert--warn">{t("route.fallback")}</p>}
+                  <p className="muted">
+                    {t("route.engine", { engine: route.data.engine })} ·{" "}
+                    <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">
+                      {t("route.attribution")}
+                    </a>
+                  </p>
+                </>
+              )}
+              <button type="button" className="btn btn--small" onClick={() => setRouteRequest(null)}>
+                {t("route.clear")}
+              </button>
+            </div>
           )}
         </section>
       </div>
@@ -361,7 +443,29 @@ export function IncidentDetailPage() {
         )}
       </section>
 
-      <OperationsPanel incident={incident} />
+      <div className="detail__grid">
+        <ForecastPanel
+          incident={incident}
+          forecast={forecast}
+          onForecast={setForecast}
+          shown={forecastShown}
+          onShown={setForecastShown}
+        />
+        <RecommendationsPanel
+          incident={incident}
+          onAssign={(resourceId, order) => setAssignPreset({ resourceId, order, nonce: Date.now() })}
+          onRoute={(from, to, profile) => setRouteRequest({ from, to, profile })}
+        />
+      </div>
+
+      <OperationsPanel incident={incident} assignPreset={assignPreset} />
+
+      <div className="detail__grid">
+        <RespondersPanel incident={incident} />
+        <ConferencePanel incident={incident} />
+      </div>
+
+      <AssistantPanel incident={incident} />
 
       <div className="detail__grid">
         <section className="card" aria-labelledby="sec-timeline">

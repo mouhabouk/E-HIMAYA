@@ -10,11 +10,13 @@ import { AuthProvider } from "../context/auth";
 import { FiltersProvider } from "../context/filters";
 import { LiveProvider } from "../context/live";
 import { ServicesProvider, type Services } from "../context/services";
+import { SoftphoneProvider } from "../context/softphone";
 import { createI18n, type Language } from "../i18n";
 import type { StaffApi } from "../lib/staffApi";
 import { FakeWebSocket } from "./FakeWebSocket";
 import { AI_STATUS_READY, fakeJwt } from "./fixtures";
 import { fakeOpsApi } from "./opsFixtures";
+import { FakeSipEngine, fakePhase7Api } from "./phase7Fixtures";
 import { FakeStreamSession, fakeStreamsApi } from "./streamFixtures";
 
 export function fakeAuth(claims: Record<string, unknown> | null): AuthService {
@@ -72,6 +74,7 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     reviewCertificate: vi.fn(),
     ...fakeOpsApi(),
     ...fakeStreamsApi(),
+    ...fakePhase7Api(),
     gouvernorats: vi.fn(() =>
       Promise.resolve([
         { code: 11, iso_code: "TN-11", name: "تونس", name_ar: "تونس", name_fr: "Tunis", delegation_count: 21 },
@@ -91,12 +94,14 @@ export function renderApp(
     path?: string;
     route?: string;
     createStreamSession?: Services["createStreamSession"];
+    sipEngine?: FakeSipEngine;
   } = {},
 ) {
   const i18n = createI18n(options.lang ?? "ar");
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
   const api = options.api ?? fakeApi();
   const auth = options.auth ?? fakeAuth(OPERATOR_CLAIMS);
+  const sipEngine = options.sipEngine ?? new FakeSipEngine();
   const utils = render(
     <I18nextProvider i18n={i18n}>
       <ServicesProvider
@@ -107,23 +112,26 @@ export function renderApp(
           createSocket: (url) => new FakeWebSocket(url),
           mapStyleUrl: null,
           createStreamSession: options.createStreamSession ?? ((o) => new FakeStreamSession(o)),
+          createSipEngine: () => Promise.resolve(sipEngine),
         }}
       >
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
             <LiveProvider>
-              <FiltersProvider>
-                <MemoryRouter initialEntries={[options.path ?? "/"]}>
-                  <Routes>
-                    <Route path={options.route ?? "*"} element={ui} />
-                  </Routes>
-                </MemoryRouter>
-              </FiltersProvider>
+              <SoftphoneProvider>
+                <FiltersProvider>
+                  <MemoryRouter initialEntries={[options.path ?? "/"]}>
+                    <Routes>
+                      <Route path={options.route ?? "*"} element={ui} />
+                    </Routes>
+                  </MemoryRouter>
+                </FiltersProvider>
+              </SoftphoneProvider>
             </LiveProvider>
           </AuthProvider>
         </QueryClientProvider>
       </ServicesProvider>
     </I18nextProvider>,
   );
-  return { ...utils, api, auth, i18n, queryClient };
+  return { ...utils, api, auth, i18n, queryClient, sipEngine };
 }

@@ -22,6 +22,9 @@ from app.modules.ai.pipeline import analyze_forever
 from app.modules.ai.router import router as ai_router
 from app.modules.audit.router import router as audit_router
 from app.modules.content.router import router as content_router
+from app.modules.decision.procedures import procedures_forever
+from app.modules.decision.router import router as decision_router
+from app.modules.forecast.router import router as forecast_router
 from app.modules.geo.router import router as geo_router
 from app.modules.health.router import metrics_router
 from app.modules.health.router import router as health_router
@@ -45,8 +48,14 @@ from app.modules.streams.internal import router as streams_internal_router
 from app.modules.streams.router import router as streams_router
 from app.modules.streams.staff_router import router as streams_staff_router
 from app.modules.streams.worker import ingest_forever, streams_forever, vision_images_forever
+from app.modules.telephony.internal import router as telephony_internal_router
+from app.modules.telephony.staff_router import router as telephony_staff_router
+from app.modules.telephony.worker import ari_events_forever, endpoints_forever, recordings_forever
 from app.modules.volunteers.router import router as volunteers_router
 from app.modules.volunteers.staff_router import router as volunteers_staff_router
+from app.modules.weather.router import router as weather_router
+from app.modules.weather.staff_router import router as weather_staff_router
+from app.modules.weather.worker import weather_forever
 
 log = structlog.get_logger()
 _REQUEST_ID = re.compile(r"^[A-Za-z0-9-]{8,64}$")
@@ -74,6 +83,11 @@ WORKER_LOOPS: list[tuple[str, WorkerLoop]] = [
     ("stream-segments", ingest_forever),
     ("stream-lifecycle", streams_forever),
     ("vision-images", vision_images_forever),
+    ("weather-grid", weather_forever),
+    ("procedures-index", procedures_forever),
+    ("telephony-events", ari_events_forever),
+    ("telephony-recordings", recordings_forever),
+    ("telephony-endpoints", endpoints_forever),
 ]
 # Paths a worker-role process still serves: probes and the metrics scrape, never SOS traffic.
 _WORKER_PATHS = ("/health/", "/metrics")
@@ -170,6 +184,12 @@ def create_app() -> FastAPI:
         streams_internal_router,
         audit_router,
         privacy_router,
+        weather_router,
+        weather_staff_router,
+        forecast_router,
+        decision_router,
+        telephony_staff_router,
+        telephony_internal_router,
     )
     for router in routers:
         app.include_router(router)

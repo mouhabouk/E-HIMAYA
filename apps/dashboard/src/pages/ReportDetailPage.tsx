@@ -12,6 +12,7 @@ import { LinkedStreams } from "../components/LinkedStreams";
 import { VisionImage, VisionSummary, visionDetections } from "../components/VisionResults";
 import { OrganizationCardPanel } from "../components/OrganizationCardPanel";
 import { featureKindLabel, MapLegend, orgKindLabel, orgPois, pointsBounds, useLegendItems } from "../components/OrgBits";
+import { CallButton } from "../components/Softphone";
 import { StatusChip } from "../components/StatusChip";
 import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
@@ -363,9 +364,12 @@ export function ReportDetailPage() {
               <dt>{t("detail.phone")}</dt>
               <dd>
                 {reporter.phone ? (
-                  <a href={`tel:${reporter.phone}`} dir="ltr">
-                    {reporter.phone}
-                  </a>
+                  <>
+                    <a href={`tel:${reporter.phone}`} dir="ltr">
+                      {reporter.phone}
+                    </a>{" "}
+                    <CallButton body={{ report_id: r.id }} label={t("phone.callReporter")} />
+                  </>
                 ) : (
                   t("common.notAvailable")
                 )}

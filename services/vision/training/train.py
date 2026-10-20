@@ -1,28 +1,37 @@
 """Step 3/4: fine-tune YOLOX-Tiny (Megvii, Apache-2.0) from its COCO weights into a fire and smoke detector.
 
 Pure PyTorch training loop around the YOLOX model and loss (no YOLOX trainer: it assumes CUDA). Runs on a CPU
-(hours) or a GPU (minutes): --device cuda. Augmentations: mosaic (first 85 % of the epochs), random scale and
-placement, horizontal flip, HSV jitter; EMA of the weights; L1 box loss for the last epochs, as in YOLOX.
+(hours) or a GPU (minutes): --device cuda. Augmentations: mosaic and mixup (first 85 % of the epochs), random
+scale and placement, horizontal flip, HSV jitter, occasional blur; EMA of the weights; L1 box loss for the last
+epochs, as in YOLOX.
 
-Each epoch sees every positive image and as many negatives (verified absent, ordinary scenes) drawn at random.
-Extra datasets in YOLO format (one ``.txt`` per image: ``class cx cy w h`` normalised) can be added with
---yolo DIR:MAP, e.g. D-Fire (CC0, classes 0 = smoke, 1 = fire): ``--yolo /data/D-Fire/train:smoke,fire``.
+Each epoch sees every positive image (images with smoke repeated --smoke-repeat times, smoke being the rare
+class) and a share of negatives (verified absent, ordinary scenes) drawn at random. A fixed --val-fraction of the
+images (grouped, so that frames of one video stay together) is held out; the EMA model is scored on it after every
+epoch (image-level average precision per class) and the best epoch is kept in ``best.pth``.
+
+Several pseudo-labelled sets can be given (--data, repeated). Extra datasets in YOLO format (one ``.txt`` per
+image: ``class cx cy w h`` normalised) can be added with --yolo DIR:MAP, e.g. D-Fire (CC0, classes 0 = smoke,
+1 = fire): ``--yolo /data/D-Fire/train:smoke,fire``. --exclude takes a JSON list or object of image file names to
+leave out (near-duplicates of the evaluation images, see dedupe.py).
 
     PYTHONPATH=<YOLOX checkout> python training/train.py --data training/work/data --weights yolox_tiny.pth \
         --out training/work/run --epochs 30
 """
 
 import argparse
+import hashlib
 import json
 import math
 import random
+import re
 import time
 from copy import deepcopy
 from pathlib import Path
 
 import numpy as np
 import torch
-from PIL import Image
+from PIL import Image, ImageFilter
 from torch.utils.data import DataLoader, Dataset
 
 CLASSES = ("fire", "smoke")
@@ -58,12 +67,15 @@ def load_coco(model: torch.nn.Module, weights: Path) -> None:
 class Samples:
     """(image path, boxes N x 5 [class, x1, y1, x2, y2] normalised)."""
 
-    def __init__(self) -> None:
+    def __init__(self, exclude: set[str] | None = None) -> None:
         self.items: list[tuple[Path, np.ndarray]] = []
+        self.exclude = exclude or set()
 
     def add_pseudo_labels(self, data: Path) -> None:
         for line in (data / "labels.jsonl").open():
             item = json.loads(line)
+            if f"{item['id']}.jpg" in self.exclude:
+                continue
             boxes = [[CLASSES.index(name), *box] for name, _score, box in item["boxes"]]
             array = np.array(boxes, dtype=np.float32).reshape(-1, 5)
             self.items.append((data / "images" / f"{item['id']}.jpg", array))
@@ -73,6 +85,8 @@ class Samples:
         mapping = [CLASSES.index(n) if n in CLASSES else -1 for n in names.split(",")]
         root = Path(directory)
         for image in sorted((root / "images").glob("*.jpg")):
+            if image.name in self.exclude:
+                continue
             label = root / "labels" / f"{image.stem}.txt"
             rows = []
             if label.exists():
@@ -95,24 +109,48 @@ def load(path: Path, boxes: np.ndarray, size: int) -> tuple[np.ndarray, np.ndarr
     return np.asarray(image), pixels
 
 
+def group_of(path: Path) -> str:
+    """Frames of one video (``name_000123``) share a group, so that they all fall on the same side of the split."""
+    return re.sub(r"_\d+$", "", path.stem)
+
+
+def is_validation(path: Path, fraction: float) -> bool:
+    # Salted: build_dataset.py already picks its negatives by the unsalted SHA-256 of the image id.
+    digest = hashlib.sha256(f"validation:{group_of(path)}".encode()).digest()
+    return int.from_bytes(digest[:4], "big") / 2**32 < fraction
+
+
 class Train(Dataset):
-    def __init__(self, samples: list[tuple[Path, np.ndarray]], mosaic: bool) -> None:
+    def __init__(self, samples: list[tuple[Path, np.ndarray]], mosaic: bool, mixup: float = 0.0) -> None:
         self.samples = samples
         self.mosaic = mosaic
+        self.mixup = mixup if mosaic else 0.0
 
     def __len__(self) -> int:
         return len(self.samples)
 
-    def __getitem__(self, index: int) -> tuple[torch.Tensor, torch.Tensor]:
+    def _one(self, index: int) -> tuple[np.ndarray, np.ndarray]:
         if self.mosaic and random.random() < 0.5:
             image, boxes = self._mosaic(index)
         else:
             image, boxes = load(*self.samples[index], SIZE)
-        image, boxes = place(image, boxes)
+        return place(image, boxes)
+
+    def __getitem__(self, index: int) -> tuple[torch.Tensor, torch.Tensor]:
+        image, boxes = self._one(index)
+        if random.random() < self.mixup:
+            # Mixup (YOLOX): blend with another random sample; both sets of boxes are kept.
+            other, other_boxes = self._one(random.randrange(len(self.samples)))
+            image = (image.astype(np.float32) * 0.5 + other.astype(np.float32) * 0.5).astype(np.uint8)
+            boxes = np.concatenate([boxes, other_boxes])
         if random.random() < 0.5:
             image = image[:, ::-1]
             boxes[:, [1, 3]] = SIZE - boxes[:, [3, 1]]
         image = hsv_jitter(image)
+        if random.random() < 0.1:
+            # Mild blur: out-of-focus CCTV, compression, haze (smoke edges are soft).
+            radius = random.uniform(0.5, 1.5)
+            image = np.asarray(Image.fromarray(np.ascontiguousarray(image)).filter(ImageFilter.GaussianBlur(radius)))
         boxes = boxes[((boxes[:, 3] - boxes[:, 1]) > 3) & ((boxes[:, 4] - boxes[:, 2]) > 3)][:MAX_LABELS]
         targets = np.zeros((MAX_LABELS, 5), dtype=np.float32)
         if len(boxes):
@@ -186,6 +224,38 @@ def hsv_jitter(image: np.ndarray) -> np.ndarray:
     return np.asarray(Image.fromarray(hsv.astype(np.uint8), "HSV").convert("RGB"))
 
 
+@torch.no_grad()
+def validate(model: torch.nn.Module, samples: list[tuple[Path, np.ndarray]], device: str) -> dict[str, float]:
+    """Image-level average precision per class on held-out images: the score of an image is its best box score
+    (objectness x class), the decision the service takes on each frame."""
+    was_training = model.training
+    model.eval()
+    model.head.decode_in_inference = True
+    best = np.zeros((len(samples), len(CLASSES)), dtype=np.float32)
+    truth = np.zeros_like(best, dtype=bool)
+    for start in range(0, len(samples), 16):
+        chunk = samples[start : start + 16]
+        batch = np.full((len(chunk), 3, SIZE, SIZE), 114, dtype=np.float32)
+        for i, (path, boxes) in enumerate(chunk):
+            image, _ = load(path, boxes, SIZE)  # longest side = SIZE, top-left letterbox like app/processing.py
+            batch[i, :, : image.shape[0], : image.shape[1]] = image[:, :, ::-1].transpose(2, 0, 1)
+            for c in range(len(CLASSES)):
+                truth[start + i, c] = bool((boxes[:, 0] == c).any())
+        output = model(torch.from_numpy(batch).to(device)).cpu().numpy()  # B x N x (5 + C)
+        best[start : start + len(chunk)] = (output[:, :, 4:5] * output[:, :, 5:]).max(axis=1)
+    model.train(was_training)
+    result = {}
+    for c, name in enumerate(CLASSES):
+        order = np.argsort(-best[:, c])
+        hits = truth[order, c]
+        if not hits.any():
+            continue
+        precision = np.cumsum(hits) / np.arange(1, len(hits) + 1)
+        result[f"ap_{name}"] = round(float((precision * hits).sum() / hits.sum()), 4)
+    result["map"] = round(float(np.mean([v for k, v in result.items() if k.startswith("ap_")])), 4)
+    return result
+
+
 class EMA:
     def __init__(self, model: torch.nn.Module, decay: float = 0.9998) -> None:
         self.model = deepcopy(model).eval()
@@ -205,7 +275,9 @@ class EMA:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--data", type=Path, required=True, help="output of build_dataset.py + pseudo_label.py")
+    parser.add_argument(
+        "--data", type=Path, action="append", required=True, help="output of build_dataset.py + pseudo_label.py"
+    )
     parser.add_argument("--yolo", action="append", default=[], help="extra YOLO-format dataset DIR:class,names")
     parser.add_argument("--weights", type=Path, required=True, help="yolox_tiny.pth (COCO)")
     parser.add_argument("--out", type=Path, required=True)
@@ -213,6 +285,10 @@ def main() -> None:
     parser.add_argument("--batch", type=int, default=16)
     parser.add_argument("--lr", type=float, default=0.005)
     parser.add_argument("--negatives-per-positive", type=float, default=1.0)
+    parser.add_argument("--smoke-repeat", type=int, default=1, help="times each image with smoke is seen per epoch")
+    parser.add_argument("--mixup", type=float, default=0.0, help="mixup probability during the mosaic epochs")
+    parser.add_argument("--val-fraction", type=float, default=0.0, help="held-out share for picking the best epoch")
+    parser.add_argument("--exclude", type=Path, help="JSON list/object of image file names to leave out")
     parser.add_argument("--workers", type=int, default=2)
     parser.add_argument("--threads", type=int, default=4)
     parser.add_argument("--device", default="cpu")
@@ -225,13 +301,21 @@ def main() -> None:
     torch.set_num_threads(args.threads)
     args.out.mkdir(parents=True, exist_ok=True)
 
-    samples = Samples()
-    samples.add_pseudo_labels(args.data)
+    exclude = set(json.loads(args.exclude.read_text())) if args.exclude else set()
+    samples = Samples(exclude)
+    for data in args.data:
+        samples.add_pseudo_labels(data)
     for spec in args.yolo:
         samples.add_yolo(spec)
-    positives = [s for s in samples.items if len(s[1])]
-    negatives = [s for s in samples.items if not len(s[1])]
-    print(f"{len(positives)} images with boxes, {len(negatives)} without")
+    held_out = [s for s in samples.items if is_validation(s[0], args.val_fraction)]
+    training = [s for s in samples.items if not is_validation(s[0], args.val_fraction)]
+    positives = [s for s in training if len(s[1])]
+    negatives = [s for s in training if not len(s[1])]
+    smoky = [s for s in positives if (s[1][:, 0] == CLASSES.index("smoke")).any()]
+    print(
+        f"{len(positives)} training images with boxes ({len(smoky)} with smoke), {len(negatives)} without; "
+        f"{len(held_out)} held out for validation"
+    )
 
     model = build_model(len(CLASSES))
     load_coco(model, args.weights)
@@ -244,7 +328,7 @@ def main() -> None:
     optimiser = torch.optim.SGD(no_decay, lr=args.lr, momentum=0.9, nesterov=True)
     optimiser.add_param_group({"params": decay, "weight_decay": 5e-4})
 
-    start_epoch = 0
+    start_epoch, best_map = 0, -1.0
     checkpoint = args.out / "last.pth"
     if checkpoint.exists():  # resume
         state = torch.load(checkpoint, map_location="cpu", weights_only=False)
@@ -253,9 +337,11 @@ def main() -> None:
         ema.updates = state["ema_updates"]
         optimiser.load_state_dict(state["optimiser"])
         start_epoch = state["epoch"] + 1
+        best_map = state.get("best_map", -1.0)
         print(f"resumed after epoch {state['epoch']}")
 
-    per_epoch = len(positives) + min(len(negatives), int(len(positives) * args.negatives_per_positive))
+    repeated = positives + smoky * (args.smoke_repeat - 1)
+    per_epoch = len(repeated) + min(len(negatives), int(len(positives) * args.negatives_per_positive))
     steps_per_epoch = per_epoch // args.batch
     total_steps = steps_per_epoch * args.epochs
     warmup = steps_per_epoch  # one epoch
@@ -263,11 +349,11 @@ def main() -> None:
 
     for epoch in range(start_epoch, args.epochs):
         rng = random.Random(args.seed + epoch)
-        chosen = positives + rng.sample(negatives, per_epoch - len(positives))
+        chosen = repeated + rng.sample(negatives, per_epoch - len(repeated))
         mosaic = epoch < no_aug_from
         model.head.use_l1 = not mosaic
         loader = DataLoader(
-            Train(chosen, mosaic),
+            Train(chosen, mosaic, args.mixup),
             batch_size=args.batch,
             shuffle=True,
             num_workers=args.workers,
@@ -301,6 +387,15 @@ def main() -> None:
                     flush=True,
                 )
         means = {k: round(v / max(1, step + 1), 4) for k, v in totals.items()}
+        if held_out:
+            means.update(validate(ema.model, held_out, args.device))
+            if means["map"] > best_map:
+                best_map = means["map"]
+                torch.save(
+                    {"model": ema.model.state_dict(), "classes": CLASSES, "size": SIZE, "epoch": epoch},
+                    args.out / "best.pth",
+                )
+                means["best"] = True
         print(f"epoch {epoch} done in {time.perf_counter() - started:.0f} s: {means}", flush=True)
         torch.save(
             {
@@ -309,6 +404,7 @@ def main() -> None:
                 "ema_updates": ema.updates,
                 "optimiser": optimiser.state_dict(),
                 "epoch": epoch,
+                "best_map": best_map,
             },
             checkpoint,
         )

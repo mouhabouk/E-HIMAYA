@@ -49,6 +49,9 @@ updates:
       - /services/ai
       - /services/vision
       - /services/notify-sim
+      # Telephony base image (Ubuntu); Asterisk itself is a pinned tarball (version + SHA-256 in the Dockerfile),
+      # updated by hand from the Asterisk 22 LTS releases (docs/telephony.md).
+      - /services/telephony
       - /infra/postgres
       - /apps/dashboard
       - /apps/portal

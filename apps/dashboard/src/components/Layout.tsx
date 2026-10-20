@@ -9,6 +9,7 @@ import {
   canMonitorPerformance,
   canReadOrgs,
   canReadResources,
+  canReviewWeatherSuggestions,
   canUseNotifications,
   hasReadAccess,
   isCommittee,
@@ -17,6 +18,7 @@ import {
 import { applyTheme, nextTheme, storedTheme, type Theme } from "../lib/theme";
 import { NoAccessPage } from "../pages/NoAccessPage";
 import { LevelBanner } from "./LevelBanner";
+import { SoftphoneDock } from "./Softphone";
 import { StreamAlertToasts } from "./StreamAlertToasts";
 
 export function LanguageSwitch() {
@@ -95,6 +97,7 @@ export function Layout() {
   const readsResources = canReadResources(identity.roles);
   const notifies = canUseNotifications(identity.roles);
   const editsTips = canEditTips(identity.roles);
+  const reviewsWeather = canReviewWeatherSuggestions(identity.roles);
   const committee = isCommittee(identity.roles) || canMonitorPerformance(identity.roles);
   const roles = staffRoles(identity.roles)
     .map((r) => t(`roles.${r}`))
@@ -121,10 +124,12 @@ export function Layout() {
               <NavLink to="/map">{t("nav.map")}</NavLink>
               <NavLink to="/streams">{t("nav.streams")}</NavLink>
               <NavLink to="/volunteers">{t("nav.volunteers")}</NavLink>
+              <NavLink to="/calls">{t("nav.calls")}</NavLink>
             </>
           )}
           {readsResources && <NavLink to="/resources">{t("nav.resources")}</NavLink>}
           {notifies && <NavLink to="/notifications">{t("nav.notifications")}</NavLink>}
+          {reviewsWeather && <NavLink to="/weather/suggestions">{t("nav.weatherSuggestions")}</NavLink>}
           {committee && <NavLink to="/committee">{t("nav.committee")}</NavLink>}
           {readsOrgs && (
             <>
@@ -162,6 +167,7 @@ export function Layout() {
         {live === "forbidden" ? <NoAccessPage reason="liveForbidden" embedded /> : <Outlet />}
       </main>
       {readsReports && <StreamAlertToasts />}
+      <SoftphoneDock />
     </div>
   );
 }
