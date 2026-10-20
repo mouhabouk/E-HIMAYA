@@ -131,7 +131,7 @@ services:
   # Resumable uploads (tus 1.0) straight to S3; every upload is authorized by the API through hooks.
   tusd:
     <<: *restart
-    image: tusproject/tusd:v2.8.0@sha256:060f117d224d057a5f25be79b4a4535168a0901515cc20cd02f62d0b8e623f5f
+    image: tusproject/tusd:v2.10.1@sha256:7b1c552a8b42f4b36cb01f2a3bd49f82ab078b2eefd191459e716141dd50376c
     command:
       - -host=0.0.0.0
       - -port=1080
