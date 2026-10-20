@@ -21,7 +21,7 @@ concurrency:
 jobs:
   mobile:
     name: Mobile · analyze, test, build
-    runs-on: ubuntu-24.04
+    runs-on: ${{ vars.RUNNER || 'ubuntu-24.04' }}
     timeout-minutes: 40
     defaults:
       run:
@@ -58,7 +58,9 @@ jobs:
         run: flutter test
 
       - name: Free runner disk space
-        # The hosted image ships ~30 GB of toolchains the APK build never uses.
+        # The hosted image ships ~30 GB of toolchains the APK build never uses. Hosted runners only: on a
+        # self-hosted runner (vars.RUNNER) these are the owner's own directories.
+        if: runner.environment == 'github-hosted'
         run: |
           sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL /usr/local/share/boost /usr/share/swift /usr/local/share/powershell
           df -h /

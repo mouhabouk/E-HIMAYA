@@ -15,7 +15,7 @@ concurrency:
 jobs:
   api:
     name: API · lint, types, migrations, tests
-    runs-on: ubuntu-24.04
+    runs-on: ${{ vars.RUNNER || 'ubuntu-24.04' }}
     defaults:
       run:
         working-directory: services/api
@@ -139,7 +139,7 @@ jobs:
 
   api-image:
     name: API · container image
-    runs-on: ubuntu-24.04
+    runs-on: ${{ vars.RUNNER || 'ubuntu-24.04' }}
     steps:
       - uses: actions/checkout@v4
       - run: docker build -t ehimaya/api:ci services/api
@@ -147,7 +147,7 @@ jobs:
   # Supply chain (A9): every image we build is scanned; a CRITICAL vulnerability with a fix available fails CI.
   image-scan:
     name: Images · build and Trivy scan
-    runs-on: ubuntu-24.04
+    runs-on: ${{ vars.RUNNER || 'ubuntu-24.04' }}
     strategy:
       fail-fast: false
       matrix:
@@ -191,7 +191,7 @@ jobs:
   # ARI password, and a simulated call reaches the operators queue.
   telephony:
     name: Telephony · Asterisk image
-    runs-on: ubuntu-24.04
+    runs-on: ${{ vars.RUNNER || 'ubuntu-24.04' }}
     steps:
       - uses: actions/checkout@v4
       - name: Build (runtime and call-sim)
@@ -267,7 +267,7 @@ jobs:
   # ┗━━━━━━━━━━━━━━━━
   notify-sim:
     name: Notify simulator · lint, types, tests
-    runs-on: ubuntu-24.04
+    runs-on: ${{ vars.RUNNER || 'ubuntu-24.04' }}
     defaults:
       run:
         working-directory: services/notify-sim
@@ -288,7 +288,7 @@ jobs:
 
   notify-sim-image:
     name: Notify simulator · container image
-    runs-on: ubuntu-24.04
+    runs-on: ${{ vars.RUNNER || 'ubuntu-24.04' }}
     steps:
       - uses: actions/checkout@v4
       - run: docker build -t ehimaya/notify-sim:ci services/notify-sim
@@ -304,7 +304,7 @@ jobs:
 
   keycloak-realms:
     name: Keycloak · realm import
-    runs-on: ubuntu-24.04
+    runs-on: ${{ vars.RUNNER || 'ubuntu-24.04' }}
     steps:
       - uses: actions/checkout@v4
       - name: Import both realms into a throwaway Keycloak
@@ -323,7 +323,7 @@ jobs:
 
   ai:
     name: AI · lint, types, tests
-    runs-on: ubuntu-24.04
+    runs-on: ${{ vars.RUNNER || 'ubuntu-24.04' }}
     defaults:
       run:
         working-directory: services/ai
@@ -346,7 +346,7 @@ jobs:
 
   ai-images:
     name: AI · container images
-    runs-on: ubuntu-24.04
+    runs-on: ${{ vars.RUNNER || 'ubuntu-24.04' }}
     steps:
       - uses: actions/checkout@v4
       - run: docker build --target runtime -t ehimaya/ai:ci services/ai
@@ -354,7 +354,7 @@ jobs:
 
   ai-models:
     name: AI · real models
-    runs-on: ubuntu-24.04
+    runs-on: ${{ vars.RUNNER || 'ubuntu-24.04' }}
     env:
       MODELS: /home/runner/ai-models
       OLLAMA_DIR: /home/runner/ollama
@@ -365,6 +365,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Free disk space for the models
+        # Hosted runners only: on a self-hosted runner (vars.RUNNER) these are the owner's own directories.
+        if: runner.environment == 'github-hosted'
         run: |
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL
           df -h /
@@ -428,7 +430,7 @@ jobs:
 
   vision:
     name: Vision · lint, types, tests
-    runs-on: ubuntu-24.04
+    runs-on: ${{ vars.RUNNER || 'ubuntu-24.04' }}
     defaults:
       run:
         working-directory: services/vision
@@ -454,7 +456,7 @@ jobs:
   # the two container images working together: models job fills a volume, the service starts healthy on it.
   vision-models:
     name: Vision · real models
-    runs-on: ubuntu-24.04
+    runs-on: ${{ vars.RUNNER || 'ubuntu-24.04' }}
     env:
       MODELS: /home/runner/vision-models
       VISION_API_TOKEN: ci-only-token-ci-only-token-0001
@@ -515,7 +517,7 @@ jobs:
 
   stack:
     name: Stack · compose smoke test
-    runs-on: ubuntu-24.04
+    runs-on: ${{ vars.RUNNER || 'ubuntu-24.04' }}
     steps:
       - uses: actions/checkout@v4
       - name: Generate a throwaway .env
