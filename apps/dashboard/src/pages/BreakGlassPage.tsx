@@ -22,6 +22,7 @@ import { canReviewBreakGlass } from "../lib/roles";
 
 /** Status of a grant as the list shows it (the API filters by the same four states). */
 export function grantStatus(grant: BreakGlassGrant, now: number = Date.now()): BreakGlassStatus {
+  if (grant.state) return grant.state;
   if (grant.reviewed_at) return "reviewed";
   if (!grant.revoked_at && Date.parse(grant.expires_at) > now) return "active";
   return "pending_review";

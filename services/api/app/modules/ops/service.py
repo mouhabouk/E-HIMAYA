@@ -129,6 +129,7 @@ async def summary(session: AsyncSession, incident: Incident) -> schemas.Incident
         lead_gouvernorat_code=incident.gouvernorat_code,
         participating_gouvernorats=sorted(participants),
         command_level=incident.command_level,
+        command_level_manual=incident.command_level_manual,
         centroid=point,
         severity=incident.severity,
         report_count=len(members),

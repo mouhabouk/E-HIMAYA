@@ -8,6 +8,7 @@ realm can never carry a staff role even if such a role were created there by mis
 """
 
 from collections.abc import Awaitable, Callable
+from contextvars import ContextVar
 from dataclasses import dataclass, field
 from enum import StrEnum
 from typing import Annotated, Any, Literal, Protocol
@@ -115,6 +116,11 @@ class Principal:
     def room(self) -> Literal["central", "regional"]:
         """Operations room the staff member works in: central (national scope) or regional."""
         return "central" if self.is_national else "regional"
+
+
+#: The signed-in principal of the current request (set by ``get_principal``); the audit log reads the actor's display
+#: name from it so the regional audit view can show who acted without exposing the account id (phase 9 §7.3).
+current_principal: ContextVar[Principal | None] = ContextVar("ehimaya_principal", default=None)
 
 
 class KeyResolver(Protocol):
@@ -234,6 +240,7 @@ async def get_principal(principal: Annotated[Principal | None, Depends(get_optio
     from app.core.access import scope_of_principal, set_db_scope
 
     set_db_scope(scope_of_principal(principal))
+    current_principal.set(principal)
     return principal
 
 
