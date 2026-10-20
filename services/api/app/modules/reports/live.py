@@ -159,6 +159,10 @@ def _route(subject: str, payload: dict[str, Any]) -> tuple[str, Callable[[LiveCl
     if subject == "weather.suggestion":
         # Suggested weather alerts (phase 7) go to those who write alerts, scoped to the suggestion's gouvernorats.
         return "editors", _among(payload.get("suggestion", {}).get("gouvernorat_codes"))
+    if subject in ("analytics.report_ready", "analytics.report_failed"):
+        # Reports repository (phase 8): only the creator and the recipients of the document are told.
+        recipients = set(payload.get("recipients") or [])
+        return "staff", lambda client: client.principal.subject in recipients
     if subject in ("notification.updated", "alert.issued"):
         area = payload.get("message", {}).get("area", {})
         if area.get("polygon"):

@@ -186,3 +186,36 @@ p95 = 328 ms. للتوسع: `API_WORKERS` (عمليات لكل حاوية)، ث�
     asterisk -C /run/asterisk/etc/asterisk.conf -rx "core show version"
   docker compose --env-file .env -f infra/compose.yml -f infra/compose.prod.yml logs worker | grep telephony.ari_connected
   ```
+
+## 10. الذاكرة الوطنية ومكتبة الأحداث (المرحلة 8)
+
+التفاصيل في `docs/api/phase-8-contract.md` (الفقرة 2). البحث في مكتبة الأحداث يمر عبر OpenSearch 2.19 (عقدة واحدة)،
+ويجيب PostgreSQL (البحث النصي و pg_trgm) بالشكل نفسه ما دام OpenSearch متوقفًا أو غير مهيأ.
+
+| المجال | التطوير | الإنتاج |
+|---|---|---|
+| OpenSearch | ملف التعريف `search` (اختياري)؛ دونه `OPENSEARCH_URL` فارغ = PostgreSQL | يعمل دائمًا، بلا منفذ منشور، `OPENSEARCH_URL=https://opensearch:9200` |
+| الذاكرة | `OPENSEARCH_HEAP=512m`، `OPENSEARCH_MEM_LIMIT=1g` | `1g` / `2g` افتراضيًا (الكومة نصف ذاكرة الحاوية على الأكثر) |
+| الأمان | إضافة الأمان مفعلة دائمًا: TLS بسلطة شهادات خاصة بالتثبيت تُنشأ عند أول تشغيل، ومستخدمان فقط | كذلك |
+
+- أسرار جديدة في `.env`: `OPENSEARCH_ADMIN_PASSWORD` و `OPENSEARCH_PASSWORD` (`openssl rand -hex 24` لكل منهما، مختلفتان،
+  16 حرفًا على الأقل). لا كلمة مرور افتراضية: `infra/opensearch/ehimaya-entrypoint.sh` يرفض الإقلاع دونهما أو بقيمة
+  المثال، ولا يستعمل أبدًا إعداد العرض (demo) الخاص بالصورة. `admin` للتشغيل فقط؛ مستخدم الـ API (`OPENSEARCH_USER`)
+  محصور في الفهارس `OPENSEARCH_INDEX_PREFIX-*`. تغيير كلمة مرور في `.env` يسري عند إعادة تشغيل `opensearch` و `api`
+  و `worker`.
+- المجلدات: `opensearch-certs` يحمل المفاتيح الخاصة للعقدة ولشهادة المشرف (لا يُنسخ)، و `opensearch-ca` شهادة السلطة
+  التي يقرؤها الـ API للتحقق من العقدة، و `opensearch-data` الفهارس. **الفهارس تحمل نص البلاغات والتفريغات صريحًا**
+  (المشفرة في PostgreSQL): عاملها بسرية قاعدة البيانات نفسها، ولا تنسخها احتياطيًا؛ تُعاد بناؤها من PostgreSQL.
+- الفهرسة: حلقة الخلفية `knowledge` في `worker` تتبع الأحداث وترسل التغييرات. بعد أول تشغيل، أو بعد ضياع
+  `opensearch-data`، أو بعد تغيير المخطط (`INDEX_VERSION`):
+
+  ```bash
+  docker compose --env-file .env -f infra/compose.yml -f infra/compose.prod.yml run --rm worker \
+    python -m app.modules.knowledge.cli backfill --rebuild
+  docker compose --env-file .env -f infra/compose.yml -f infra/compose.prod.yml run --rm worker \
+    python -m app.modules.knowledge.cli status
+  ```
+
+- القرص: يتوقف OpenSearch عن الكتابة فوق 95 % من امتلاء القرص (ويرفض توزيع الفهارس الجديدة فوق 90 %)؛ راقب القرص.
+  حين يتعذر OpenSearch يستمر البحث عبر PostgreSQL (`"backend": "postgres"` في الإجابة).
+- تحديث الصورة: الصورة مثبتة بالبصمة (digest)؛ بعد الترقية شغّل `backfill --rebuild` إن تغيّر المخطط.

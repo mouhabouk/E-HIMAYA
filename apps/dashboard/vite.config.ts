@@ -17,6 +17,8 @@ export default defineConfig({
           maplibre: ["maplibre-gl"],
           react: ["react", "react-dom", "react-dom/client", "react-router"],
           vendor: ["@tanstack/react-query", "i18next", "react-i18next", "oidc-client-ts"],
+          // Phase 8, loaded only by the memory and library screens (lazy routes).
+          markdown: ["markdown-it", "dompurify"],
         },
       },
     },

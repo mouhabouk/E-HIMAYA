@@ -240,7 +240,8 @@ export function makeMessage(overrides: Partial<Message> = {}): Message {
     severity: "high",
     category: "weather",
     hazard: "heavy_rain",
-    expires_at: "2026-10-20T08:00:00Z",
+    // Always in the future: a fixed date made the editor tests fail once it passed.
+    expires_at: new Date(Date.now() + 24 * 3_600_000).toISOString(),
     area: { gouvernorat_codes: [61], polygon: null },
     created_by: "Rim Editor",
     created_at: NOW,

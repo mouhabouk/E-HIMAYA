@@ -1,9 +1,10 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { i18n } from "i18next";
-import { useState, type ReactNode } from "react";
+import { lazy, Suspense, useState, type ComponentType, type ReactNode } from "react";
 import { I18nextProvider } from "react-i18next";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import { RequireAuth } from "./auth/RequireAuth";
+import { Loading } from "./components/Feedback";
 import { Layout } from "./components/Layout";
 import { AuthProvider, useAuth } from "./context/auth";
 import { FiltersProvider } from "./context/filters";
@@ -13,7 +14,13 @@ import { SoftphoneProvider } from "./context/softphone";
 import { isApiError } from "./lib/api";
 import {
   canEditTips,
+  canManageSchedules,
   canMonitorPerformance,
+  canReadAnalytics,
+  canReadKnowledge,
+  canReadRewards,
+  canRunScenarios,
+  canSeeRewardActivity,
   canReadOrgs,
   canReadResources,
   canReviewWeatherSuggestions,
@@ -48,6 +55,24 @@ import { StreamWallPage } from "./pages/StreamWallPage";
 import { VolunteerDetailPage } from "./pages/VolunteerDetailPage";
 import { VolunteersPage } from "./pages/VolunteersPage";
 import { WeatherSuggestionsPage } from "./pages/WeatherSuggestionsPage";
+
+// Phase 8 screens are loaded on demand: they bring the chart (uPlot) and Markdown (markdown-it, DOMPurify) code.
+const page = <K extends string>(load: () => Promise<Record<K, ComponentType>>, name: K) =>
+  lazy(() => load().then((m) => ({ default: m[name] })));
+const AnalyticsPage = page(() => import("./pages/AnalyticsPage"), "AnalyticsPage");
+const ScenariosPage = page(() => import("./pages/ScenariosPage"), "ScenariosPage");
+const ScenarioDetailPage = page(() => import("./pages/ScenariosPage"), "ScenarioDetailPage");
+const ReportsLibraryPage = page(() => import("./pages/ReportsLibraryPage"), "ReportsLibraryPage");
+const ReportSchedulesPage = page(() => import("./pages/ReportSchedulesPage"), "ReportSchedulesPage");
+const MemoryListPage = page(() => import("./pages/MemoryListPage"), "MemoryListPage");
+const MemoryEntryPage = page(() => import("./pages/MemoryEntryPage"), "MemoryEntryPage");
+const EventsLibraryPage = page(() => import("./pages/EventsLibraryPage"), "EventsLibraryPage");
+const LibraryItemPage = page(() => import("./pages/EventsLibraryPage"), "LibraryItemPage");
+const RewardRulesPage = page(() => import("./pages/RewardsPages"), "RewardRulesPage");
+const RewardConfirmationsPage = page(() => import("./pages/RewardsPages"), "RewardConfirmationsPage");
+const RewardNominationsPage = page(() => import("./pages/RewardsPages"), "RewardNominationsPage");
+const RewardCertificatesPage = page(() => import("./pages/RewardsPages"), "RewardCertificatesPage");
+const RewardLeaderboardPage = page(() => import("./pages/RewardsPages"), "RewardLeaderboardPage");
 
 export function createQueryClient(): QueryClient {
   return new QueryClient({
@@ -84,6 +109,12 @@ const resources = (page: ReactNode) => <Gate allow={canReadResources}>{page}</Ga
 const notifications = (page: ReactNode) => <Gate allow={canUseNotifications}>{page}</Gate>;
 const tips = (page: ReactNode) => <Gate allow={canEditTips}>{page}</Gate>;
 const weather = (page: ReactNode) => <Gate allow={canReviewWeatherSuggestions}>{page}</Gate>;
+/** A lazily loaded screen behind its role gate. */
+const gated = (allow: (roles: readonly string[]) => boolean, el: ReactNode) => (
+  <Gate allow={allow}>
+    <Suspense fallback={<Loading />}>{el}</Suspense>
+  </Gate>
+);
 const committee = (page: ReactNode) => (
   <Gate allow={(roles) => isCommittee(roles) || canMonitorPerformance(roles)}>{page}</Gate>
 );
@@ -123,6 +154,21 @@ export function AppRoutes() {
         <Route path="notifications/:id" element={notifications(<NotificationEditorPage />)} />
         <Route path="safety-tips" element={tips(<SafetyTipsPage />)} />
         <Route path="committee" element={committee(<CommitteePage />)} />
+        <Route path="analytics" element={gated(canReadAnalytics, <AnalyticsPage />)} />
+        <Route path="analytics/scenarios" element={gated(canRunScenarios, <ScenariosPage />)} />
+        <Route path="analytics/scenarios/:id" element={gated(canRunScenarios, <ScenarioDetailPage />)} />
+        <Route path="reports-library" element={gated(canReadAnalytics, <ReportsLibraryPage />)} />
+        <Route path="reports-library/schedules" element={gated(canManageSchedules, <ReportSchedulesPage />)} />
+        <Route path="memory" element={gated(canReadKnowledge, <MemoryListPage />)} />
+        <Route path="memory/new" element={gated(canReadKnowledge, <MemoryEntryPage />)} />
+        <Route path="memory/:id" element={gated(canReadKnowledge, <MemoryEntryPage />)} />
+        <Route path="library" element={gated(canReadKnowledge, <EventsLibraryPage />)} />
+        <Route path="library/items/:kind/:id" element={gated(canReadKnowledge, <LibraryItemPage />)} />
+        <Route path="rewards" element={gated(canReadRewards, <RewardRulesPage />)} />
+        <Route path="rewards/confirmations" element={gated(canSeeRewardActivity, <RewardConfirmationsPage />)} />
+        <Route path="rewards/nominations" element={gated(canSeeRewardActivity, <RewardNominationsPage />)} />
+        <Route path="rewards/certificates" element={gated(canSeeRewardActivity, <RewardCertificatesPage />)} />
+        <Route path="rewards/leaderboard" element={gated(canSeeRewardActivity, <RewardLeaderboardPage />)} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>

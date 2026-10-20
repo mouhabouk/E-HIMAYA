@@ -104,6 +104,39 @@ jobs:
       - name: Tests
         run: uv run pytest -q
 
+      # Events library (phase 8): the knowledge tests again, against a real OpenSearch node started with the
+      # production entrypoint (own CA, security plugin, generated passwords). Disk watermarks off: CI runner disks are
+      # often fuller than the 85 % OpenSearch allows.
+      - name: Events library tests against OpenSearch
+        env:
+          OPENSEARCH_URL: https://localhost:9200
+          OPENSEARCH_USER: ehimaya
+          OPENSEARCH_CA_FILE: ${{ runner.temp }}/opensearch-ca/ca.pem
+        run: |
+          OPENSEARCH_ADMIN_PASSWORD=$(openssl rand -hex 24); export OPENSEARCH_PASSWORD=$(openssl rand -hex 24)
+          IMAGE=opensearchproject/opensearch:2.19.6@sha256:be67c71b8d0e5edf1e9825145501c0136c3b8221206e1ce782ce17b04d0280b5
+          docker volume create os-certs && docker volume create os-ca
+          docker run --rm --user 0:0 -v os-certs:/certs -v os-ca:/ca --entrypoint /bin/sh "$IMAGE" \
+            -c "chown 1000:1000 /certs /ca && chmod 0700 /certs"
+          docker run -d --name opensearch -p 127.0.0.1:9200:9200 \
+            -v "$GITHUB_WORKSPACE/infra/opensearch/ehimaya-entrypoint.sh:/usr/local/bin/ehimaya-entrypoint.sh:ro" \
+            -v os-certs:/usr/share/opensearch/config/certs -v os-ca:/opensearch-ca \
+            -e OPENSEARCH_ADMIN_PASSWORD="$OPENSEARCH_ADMIN_PASSWORD" -e OPENSEARCH_PASSWORD="$OPENSEARCH_PASSWORD" \
+            -e OPENSEARCH_USER=ehimaya -e OPENSEARCH_JAVA_OPTS="-Xms512m -Xmx512m" \
+            -e DISABLE_PERFORMANCE_ANALYZER_AGENT_CLI=true -e cluster.routing.allocation.disk.threshold_enabled=false \
+            --entrypoint /bin/bash "$IMAGE" /usr/local/bin/ehimaya-entrypoint.sh
+          mkdir -p "$(dirname "$OPENSEARCH_CA_FILE")"
+          for i in $(seq 1 60); do
+            if docker cp opensearch:/opensearch-ca/ca.pem "$OPENSEARCH_CA_FILE" 2>/dev/null \
+              && curl -fs --cacert "$OPENSEARCH_CA_FILE" -u "ehimaya:$OPENSEARCH_PASSWORD" \
+                "$OPENSEARCH_URL/_cluster/health?wait_for_status=yellow&timeout=4s" >/dev/null; then
+              echo "opensearch ready"; break
+            fi
+            if [ "$i" = 60 ]; then docker logs opensearch | tail -50; exit 1; fi
+            sleep 5
+          done
+          uv run pytest -q tests/test_knowledge.py
+
   api-image:
     name: API · container image
     runs-on: ubuntu-24.04

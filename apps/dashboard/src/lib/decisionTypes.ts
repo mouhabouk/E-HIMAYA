@@ -121,7 +121,7 @@ export interface RespondersResult {
   items: Responder[];
 }
 
-export const SOURCE_KINDS = ["procedure", "incident", "report"] as const;
+export const SOURCE_KINDS = ["procedure", "incident", "report", "memory"] as const;
 export type SourceKind = (typeof SOURCE_KINDS)[number];
 
 export interface AssistantSource {

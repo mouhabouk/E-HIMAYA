@@ -276,6 +276,48 @@ class Settings(BaseSettings):
     # Terrain model (Copernicus DEM GLO-90) installed by the one-shot "terrain" job; absent: slope 0, stated.
     terrain_dir: Path = Path("/terrain")
 
+    # Analytics and reports (phase 8, docs/api/phase-8-contract.md §1). k-anonymity floor of exported documents: a
+    # count below it is printed "<N" (never the exact value) in PDF and XLSX exports.
+    analytics_min_cell: int = Field(default=5, ge=2, le=100)
+    # Monte Carlo runs of a what-if scenario (at least 200, FR-C-12).
+    analytics_scenario_runs: int = Field(default=200, ge=200, le=5000)
+    # Worker loop "analytics": due scheduled reports and the generation queue are checked at this interval.
+    analytics_interval_s: int = Field(default=60, ge=5, le=3600)
+    # Longest period an overview, a trend or a document may cover.
+    analytics_max_period_days: int = Field(default=1830, ge=31, le=7400)
+    # Scenario runs per staff member per hour (each one replays hundreds of simulated days).
+    analytics_scenarios_per_hour: int = Field(default=20, ge=1)
+
+    # Rewards (phase 8, docs/api/phase-8-contract.md §3). Points per citizen and day (Africa/Tunis) from automatic
+    # awards; rescues designated by staff and manual adjustments are not counted (safety rule T25).
+    rewards_daily_cap: int = Field(default=200, ge=0, le=100_000)
+    # Badge thresholds in points (FR-A-071); bronze shows at once, the others after a staff confirmation.
+    rewards_badge_bronze: int = Field(default=100, ge=1)
+    rewards_badge_silver: int = Field(default=500, ge=1)
+    rewards_badge_gold: int = Field(default=2000, ge=1)
+    rewards_badge_ambassador: int = Field(default=10000, ge=1)
+    # Worker loop "rewards": outbox events and awards queued at level disaster are processed at this interval.
+    rewards_interval_s: float = Field(default=5.0, ge=0.5, le=3600)
+    # Public base of the API (QR of reward certificates → <base>/api/v1/rewards/certificates/<code>).
+    # Production (compose.prod.yml): https://API_HOST.
+    api_public_url: str = "http://localhost:8000"
+
+    # Knowledge (phase 8, docs/api/phase-8-contract.md §2): events library search. OpenSearch 2 (security plugin on,
+    # HTTPS with the installation's own CA, infra/opensearch) when SEARCH_BACKEND=opensearch and OPENSEARCH_URL is set;
+    # otherwise, and whenever OpenSearch does not answer, PostgreSQL full-text search + pg_trgm (same response shape,
+    # "backend": "postgres"). The worker loop "knowledge" keeps both indexes in line with the platform's data.
+    search_backend: Literal["opensearch", "postgres"] = "opensearch"
+    opensearch_url: str | None = None
+    opensearch_user: str = "ehimaya"
+    opensearch_password: SecretStr | None = Field(default=None, min_length=16)
+    # CA certificate of the node (generated on first start into the opensearch-ca volume); unset: system CAs.
+    opensearch_ca_file: Path | None = None
+    # Indices are "<prefix>-<kind>-v<n>" behind the aliases "<prefix>-<kind>" and "<prefix>-library".
+    opensearch_index_prefix: str = Field(default="ehimaya", pattern=r"^[a-z][a-z0-9-]{0,30}$")
+    opensearch_timeout_s: float = Field(default=5.0, gt=0, le=60)
+    # Library searches per staff member per minute.
+    library_search_per_minute: int = Field(default=60, ge=1)
+
     api_cors_origins: Annotated[list[str], NoDecode] = Field(default_factory=list)
     api_log_level: str = "INFO"
     db_pool_size: int = 10
@@ -371,6 +413,9 @@ class Settings(BaseSettings):
         "procedures_dir",
         "weather_provider",
         "weather_api_key",
+        "opensearch_url",
+        "opensearch_password",
+        "opensearch_ca_file",
         mode="before",
     )
     @classmethod
@@ -394,6 +439,7 @@ class Settings(BaseSettings):
 
     @field_validator(
         "portal_public_url",
+        "api_public_url",
         "fcm_api_url",
         "stream_webrtc_public_url",
         "stream_hls_public_url",
@@ -405,10 +451,23 @@ class Settings(BaseSettings):
         "telephony_ari_url",
         "telephony_ws_public_url",
         "weather_api_url",
+        "opensearch_url",
     )
     @classmethod
     def _strip_slash(cls, value: str | None) -> str | None:
         return value.rstrip("/") if value else value
+
+    @model_validator(mode="after")
+    def _check_badge_thresholds(self) -> "Settings":
+        levels = (
+            self.rewards_badge_bronze,
+            self.rewards_badge_silver,
+            self.rewards_badge_gold,
+            self.rewards_badge_ambassador,
+        )
+        if list(levels) != sorted(set(levels)):
+            raise ValueError("REWARDS_BADGE_* thresholds must increase from bronze to ambassador")
+        return self
 
     @model_validator(mode="after")
     def _check_vision_thresholds(self) -> "Settings":
@@ -422,6 +481,13 @@ class Settings(BaseSettings):
         if isinstance(value, str):
             return [item.strip().rstrip("/") for item in value.split(",") if item.strip()]
         return value
+
+    @property
+    def search_engine(self) -> Literal["opensearch", "postgres"]:
+        """The configured library search backend (PostgreSQL when OpenSearch is disabled or not configured)."""
+        if self.search_backend == "opensearch" and self.opensearch_url and self.opensearch_password is not None:
+            return "opensearch"
+        return "postgres"
 
     @property
     def weather_source(self) -> Literal["open-meteo", "sim"]:

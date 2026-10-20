@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
 import '../../core/http/ehimaya_api.dart';
 import '../../core/http/error_messages.dart';
 import '../../core/http/models.dart';
+import '../../core/routing/app_router.dart';
 import '../../core/ui/emergency_action.dart';
 import '../../l10n/app_localizations.dart';
+import '../rewards/rewards_providers.dart';
 import 'status_chip.dart';
 
 /// Public tracking by code (`GET /api/v1/reports/track/{code}`), works for anonymous users and
-/// sends no identity header.
+/// sends no identity header. For a signed-in citizen, the points the report earned (phase 8)
+/// come from the caller's own rewards history, never from the public answer.
 class TrackScreen extends ConsumerStatefulWidget {
   const TrackScreen({super.key});
 
@@ -45,7 +49,11 @@ class _TrackScreenState extends ConsumerState<TrackScreen> {
       final r = await ref
           .read(apiProvider)
           .track(_controller.text.trim().toUpperCase());
-      if (mounted) setState(() => _result = r);
+      if (mounted) {
+        setState(() => _result = r);
+        // Points arrive when a report is closed: read them again for each lookup.
+        ref.invalidate(rewardsProvider);
+      }
     } on Object catch (e) {
       if (mounted) setState(() => _error = errorMessageFor(l10n, e));
     } finally {
@@ -120,6 +128,7 @@ class _TrackScreenState extends ConsumerState<TrackScreen> {
                 ),
               if (result.receivedAt != null)
                 Text(l10n.receivedAt(fmt.format(result.receivedAt!.toLocal()))),
+              _PointsEarned(trackingCode: result.trackingCode),
               const SizedBox(height: 16),
               Text(l10n.trackHistory, style: theme.textTheme.titleMedium),
               for (final h in result.history)
@@ -135,6 +144,51 @@ class _TrackScreenState extends ConsumerState<TrackScreen> {
                 ),
             ],
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Points the tracked report earned the signed-in citizen (matched on the tracking code in
+/// the latest rewards history). Nothing is shown to anonymous users, for another person's
+/// report, or before the report earned anything.
+class _PointsEarned extends ConsumerWidget {
+  const _PointsEarned({required this.trackingCode});
+
+  final String trackingCode;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final view = ref.watch(rewardsProvider).value;
+    final points = view?.summary.pointsForReport(trackingCode: trackingCode);
+    if (points == null) return const SizedBox.shrink();
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: Card(
+        key: const Key('track-points'),
+        color: theme.colorScheme.primaryContainer,
+        child: ListTile(
+          leading: Icon(
+            Icons.military_tech,
+            color: theme.colorScheme.onPrimaryContainer,
+          ),
+          title: Text(
+            l10n.trackPointsEarned(points),
+            style: TextStyle(color: theme.colorScheme.onPrimaryContainer),
+          ),
+          subtitle: view!.summary.paused
+              ? Text(
+                  l10n.rewardsPausedTitle,
+                  style: TextStyle(color: theme.colorScheme.onPrimaryContainer),
+                )
+              : null,
+          trailing: TextButton(
+            onPressed: () => context.push(Routes.rewards),
+            child: Text(l10n.trackPointsOpenRewards),
+          ),
         ),
       ),
     );

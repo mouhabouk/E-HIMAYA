@@ -523,6 +523,7 @@ export function RespondersPanel({ incident }: { incident: IncidentDetail }) {
 function sourceHref(s: AssistantAnswer["sources"][number]): string | null {
   if (s.kind === "incident") return `/incidents/${encodeURIComponent(s.id)}`;
   if (s.kind === "report") return `/reports/${encodeURIComponent(s.id)}`;
+  if (s.kind === "memory") return `/memory/${encodeURIComponent(s.id)}`;
   return null;
 }
 

@@ -17,6 +17,7 @@ import { FakeWebSocket } from "./FakeWebSocket";
 import { AI_STATUS_READY, fakeJwt } from "./fixtures";
 import { fakeOpsApi } from "./opsFixtures";
 import { FakeSipEngine, fakePhase7Api } from "./phase7Fixtures";
+import { fakePhase8Api } from "./phase8Fixtures";
 import { FakeStreamSession, fakeStreamsApi } from "./streamFixtures";
 
 export function fakeAuth(claims: Record<string, unknown> | null): AuthService {
@@ -75,6 +76,7 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     ...fakeOpsApi(),
     ...fakeStreamsApi(),
     ...fakePhase7Api(),
+    ...fakePhase8Api(),
     gouvernorats: vi.fn(() =>
       Promise.resolve([
         { code: 11, iso_code: "TN-11", name: "تونس", name_ar: "تونس", name_fr: "Tunis", delegation_count: 21 },
