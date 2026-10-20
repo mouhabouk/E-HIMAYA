@@ -72,6 +72,9 @@ async def credentials(principal: Caller, session: Session, response: Response) -
         password=password,
         expires_at=row.expires_at,
         ice_servers=service.ice_servers(),
+        display_name=row.display_name,
+        transfer_198_enabled=service.transfer_available(),
+        simulated=not settings.telephony_trunk_enabled,
     )
 
 
@@ -258,6 +261,7 @@ async def open_conference(
 
 
 @router.get("/incidents/{incident_id}/conferences", response_model=schemas.ConferenceList)
+@router.get("/incidents/{incident_id}/conference", response_model=schemas.ConferenceList)
 async def list_conferences(principal: StaffReader, session: Session, incident_id: uuid.UUID) -> schemas.ConferenceList:
     await ops.get_in_scope(session, principal, incident_id)
     rows = await session.scalars(
@@ -276,10 +280,8 @@ async def _conference_in_scope(
     return conference
 
 
-@router.post("/conferences/{conference_id}/end", response_model=schemas.ConferenceOut)
-async def end_conference(principal: Caller, session: Session, conference_id: uuid.UUID) -> schemas.ConferenceOut:
+async def _end(session: AsyncSession, principal: Principal, conference: Conference) -> schemas.ConferenceOut:
     client = service.require_ari()
-    conference = await _conference_in_scope(session, principal, conference_id, lock=True)
     if conference.ended_at is None:
         actor = actor_of(principal)
         now = datetime.now(UTC)
@@ -293,7 +295,7 @@ async def end_conference(principal: Caller, session: Session, conference_id: uui
             )
         )
         await audit.record(
-            session, actor=actor, action="conference.end", target=f"conference:{conference_id}", details={}
+            session, actor=actor, action="conference.end", target=f"conference:{conference.id}", details={}
         )
         await session.flush()
         try:
@@ -304,6 +306,32 @@ async def end_conference(principal: Caller, session: Session, conference_id: uui
     out = _conference_out(conference)
     await session.commit()
     return out
+
+
+@router.post("/conferences/{conference_id}/end", response_model=schemas.ConferenceOut)
+async def end_conference(principal: Caller, session: Session, conference_id: uuid.UUID) -> schemas.ConferenceOut:
+    service.require_ari()
+    conference = await _conference_in_scope(session, principal, conference_id, lock=True)
+    return await _end(session, principal, conference)
+
+
+@router.delete("/incidents/{incident_id}/conference/{room}", response_model=schemas.ConferenceOut)
+async def end_incident_conference(
+    principal: Caller, session: Session, incident_id: uuid.UUID, room: str
+) -> schemas.ConferenceOut:
+    """End the incident's crisis room by its number (the dashboard's form of POST /conferences/{id}/end)."""
+    service.require_ari()
+    await ops.get_in_scope(session, principal, incident_id)
+    conference = await session.scalar(
+        select(Conference)
+        .where(Conference.incident_id == incident_id, Conference.room == room)
+        .order_by(Conference.created_at.desc())
+        .limit(1)
+        .with_for_update()
+    )
+    if conference is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
+    return await _end(session, principal, conference)
 
 
 @router.post(

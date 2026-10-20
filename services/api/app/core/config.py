@@ -6,7 +6,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Annotated, Literal
 
-from pydantic import Field, SecretStr, field_validator, model_validator
+from pydantic import Field, SecretStr, ValidationInfo, field_validator, model_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 from app.core.secrets_policy import production_problems
@@ -217,8 +217,11 @@ class Settings(BaseSettings):
     telephony_transfer_198_enabled: bool = False
     # Outbound calls per staff member per hour (contact from the map, invitations to a crisis room).
     telephony_dial_per_hour: int = Field(default=60, ge=1)
-    # Call records and their recordings are deleted this long after the call ended (2 years).
-    retention_call_days: int = Field(default=730, ge=1)
+    # Calls are recorded (after the recorded-call notice) only when true; must match TELEPHONY_RECORDING_ENABLED of the
+    # telephony container. Production: only once the processing is declared to the INPDP (legal point L04).
+    telephony_recording_enabled: bool = True
+    # Call records (metadata) and their recordings are deleted this long after the call ended: at most 2 years (L04).
+    retention_call_days: int = Field(default=730, ge=1, le=730)
     # ┏━━ SIMULATION ━━ token of the smoke test / call-sim checks on GET /internal/sim/calls (calls with source=sim).
     # ┃ PRODUCTION: leave TELEPHONY_SIM_TOKEN empty (APP_ENV=production refuses it); the endpoint then answers 404.
     # ┗━━━━━━━━━━━━━━━━
@@ -374,6 +377,14 @@ class Settings(BaseSettings):
     def _empty_is_unset(cls, value: object) -> object:
         # Compose passes "" when the optional AI profile is not configured.
         return None if value == "" else value
+
+    @field_validator("telephony_recording_enabled", mode="before")
+    @classmethod
+    def _recording_default(cls, value: object, info: ValidationInfo) -> object:
+        # Empty in .env = the environment's default: recorded in development, not in production (INPDP, L04).
+        if value == "" or value is None:
+            return info.data.get("app_env") != "production"
+        return value
 
     @field_validator("fcm_api_url", mode="before")
     @classmethod

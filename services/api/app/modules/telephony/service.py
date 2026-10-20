@@ -235,8 +235,20 @@ async def _locked(session: AsyncSession, channel_id: str) -> Call | None:
     return await session.scalar(select(Call).where(Call.channel_id == channel_id).with_for_update())
 
 
+def _recorded(body: dict[str, Any]) -> bool:
+    """Whether Asterisk records this call (``recording: 0|1`` of the dialplan event; the setting when absent)."""
+    flag = str(body.get("recording") or "").strip()
+    return flag == "1" if flag in ("0", "1") else get_settings().telephony_recording_enabled
+
+
 async def upsert_inbound(
-    session: AsyncSession, channel_id: str, number: str | None, source: str, started_at: datetime
+    session: AsyncSession,
+    channel_id: str,
+    number: str | None,
+    source: str,
+    started_at: datetime,
+    *,
+    recorded: bool = True,
 ) -> tuple[Call, bool]:
     """The call of an inbound channel, created on first sight. Returns (call, created)."""
     normalized = normalize_caller(number)
@@ -252,7 +264,7 @@ async def upsert_inbound(
             started_at=started_at,
             queue=QUEUE,
             status=CallStatus.RINGING.value,
-            recording_state="pending",
+            recording_state="pending" if recorded else "none",
         )
         .on_conflict_do_nothing(index_elements=["channel_id"])
         .returning(Call.id)
@@ -261,6 +273,19 @@ async def upsert_inbound(
     call = await _locked(session, channel_id)
     assert call is not None
     return call, created
+
+
+async def _tag_channel(channel_id: str, call_id: uuid.UUID) -> None:
+    """Hand calls.id to Asterisk while the caller hears the notice: the queue's pre-dial handler puts it in the
+    X-EHimaya-Call-Id header of the INVITE to each operator (best effort: the softphone otherwise pairs the INVITE
+    with the latest call.ringing event)."""
+    client = get_ari()
+    if client is None:
+        return
+    try:
+        await client.set_variable(channel_id, "__EH_CALL_UUID", str(call_id))
+    except AriUnavailable as exc:
+        log.info("telephony.tag_failed", error=str(exc)[:120])
 
 
 async def _on_call_event(session: AsyncSession, event: dict[str, Any]) -> None:
@@ -274,10 +299,16 @@ async def _on_call_event(session: AsyncSession, event: dict[str, Any]) -> None:
     if state == "ringing":
         caller = channel.get("caller") or {}
         new_call, created = await upsert_inbound(
-            session, call_channel, caller.get("number"), _source(body.get("source")), _time(channel.get("creationtime"))
+            session,
+            call_channel,
+            caller.get("number"),
+            _source(body.get("source")),
+            _time(channel.get("creationtime")),
+            recorded=_recorded(body),
         )
         if created:
             await emit_call(session, "call.ringing", new_call)
+            await _tag_channel(call_channel, new_call.id)
         return
     call = await _locked(session, call_channel)
     if call is None:
@@ -294,7 +325,7 @@ async def _on_call_event(session: AsyncSession, event: dict[str, Any]) -> None:
                 call.gouvernorat_code = operator.gouvernorat_code
         await emit_call(session, "call.answered", call)
     elif state == "dialing":
-        call.recording_state, call.updated_at = "pending", now
+        call.recording_state, call.updated_at = ("pending" if _recorded(body) else "none"), now
     elif state == "remote_answered" and call.status == CallStatus.RINGING:
         call.status, call.answered_at, call.updated_at = CallStatus.ANSWERED.value, now, now
         await emit_call(session, "call.answered", call)

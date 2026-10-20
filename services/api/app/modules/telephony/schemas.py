@@ -18,6 +18,12 @@ class CredentialsOut(BaseModel):
     password: str
     expires_at: datetime
     ice_servers: list[IceServer]
+    display_name: str | None = None
+    # Scenario 2 available (TELEPHONY_TRANSFER_198_ENABLED and a trunk): the dashboard shows "Transfer to 198",
+    # otherwise the scenario 1 instruction (the operator calls 198 from their own phone).
+    transfer_198_enabled: bool = False
+    # No trunk: calls come from and go to the call-sim service (development).
+    simulated: bool = False
 
 
 class CallOut(BaseModel):

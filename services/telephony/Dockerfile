@@ -82,17 +82,28 @@ RUN ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --libdir=/u
 # /var/run is a symbolic link to /run in the runtime image; sample configuration is never shipped.
 RUN rm -rf /out/var/run /out/etc/asterisk
 
-# ┏━━ SIMULATION ━━ the prompt the simulated caller plays: Arabic and French text-to-speech, 8 kHz mono WAV.
-# ┃ PRODUCTION: this stage is used by the call-sim target only; the runtime image never contains it.
-# ┗━━━━━━━━━━━━━━━━
-FROM ubuntu:26.04@sha256:c098726dd9b9733f3e885f8de0ef375206a311b0a317eadc40d347b1115fb944 AS sim-prompt
+# Voice prompts generated with text-to-speech (espeak-ng GPL-3.0 and sox GPL-2.0 run only in this build stage; only
+# the generated audio is copied, no binary). 8 kHz mono 16-bit WAV, the format Asterisk plays without transcoding.
+# - notice-ar.wav / notice-fr.wav: the recorded-call notice every caller hears before recording and queueing (legal
+#   point L04). Replace them with professional recordings (same names and format) in production (docs/telephony.md).
+# - prompt.wav: ┏━━ SIMULATION ━━ what the simulated caller says (call-sim target only).
+#               ┃ PRODUCTION: the runtime image never contains it.
+#               ┗━━━━━━━━━━━━━━━━
+FROM ubuntu:26.04@sha256:c098726dd9b9733f3e885f8de0ef375206a311b0a317eadc40d347b1115fb944 AS prompts
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
  && apt-get install -y --no-install-recommends espeak-ng sox \
  && rm -rf /var/lib/apt/lists/*
-RUN espeak-ng -v ar -s 130 -w /tmp/ar.wav "هذه مكالمة تجريبية من محاكي منظومة الحماية. يوجد حريق قرب الطريق." \
+RUN mkdir /prompts \
+ && espeak-ng -v ar -s 140 -w /tmp/notice-ar.wav \
+      "مرحبا بكم في منظومة الحماية. هذه المكالمة مسجلة لأغراض الطوارئ. ابقوا على الخط، سيرد عليكم عون في أقرب وقت." \
+ && espeak-ng -v fr -s 150 -w /tmp/notice-fr.wav \
+      "Bienvenue sur e-Himaya. Cet appel est enregistré pour le traitement de l'urgence. Restez en ligne, un opérateur va vous répondre." \
+ && sox /tmp/notice-ar.wav -r 8000 -c 1 -b 16 /prompts/notice-ar.wav \
+ && sox /tmp/notice-fr.wav -r 8000 -c 1 -b 16 /prompts/notice-fr.wav \
+ && espeak-ng -v ar -s 130 -w /tmp/ar.wav "هذه مكالمة تجريبية من محاكي منظومة الحماية. يوجد حريق قرب الطريق." \
  && espeak-ng -v fr -s 130 -w /tmp/fr.wav "Ceci est un appel simulé. Un incendie est signalé près de la route." \
- && sox /tmp/ar.wav /tmp/fr.wav -r 8000 -c 1 -b 16 /prompt.wav
+ && sox /tmp/ar.wav /tmp/fr.wav -r 8000 -c 1 -b 16 /prompts/prompt.wav
 
 FROM ubuntu:26.04@sha256:c098726dd9b9733f3e885f8de0ef375206a311b0a317eadc40d347b1115fb944 AS runtime
 ENV DEBIAN_FRONTEND=noninteractive
@@ -105,6 +116,7 @@ RUN apt-get update \
  && useradd --system --uid 10001 --home /var/lib/asterisk --shell /usr/sbin/nologin ehimaya
 COPY --from=build /out/ /
 COPY config/ /etc/ehimaya-asterisk/templates/
+COPY --from=prompts /prompts/notice-ar.wav /prompts/notice-fr.wav /var/lib/asterisk/sounds/ehimaya/
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod 0755 /usr/local/bin/docker-entrypoint.sh \
  && rm -rf /etc/asterisk \
@@ -129,7 +141,7 @@ RUN rm -rf /etc/ehimaya-asterisk/templates \
  && mkdir -p /var/lib/asterisk/sounds/ehimaya-sim
 COPY sim/config/ /etc/ehimaya-asterisk/templates/
 COPY sim/call-sim.sh /usr/local/bin/call-sim.sh
-COPY --from=sim-prompt /prompt.wav /var/lib/asterisk/sounds/ehimaya-sim/prompt.wav
+COPY --from=prompts /prompts/prompt.wav /var/lib/asterisk/sounds/ehimaya-sim/prompt.wav
 RUN chmod 0755 /usr/local/bin/call-sim.sh && chown -R ehimaya:ehimaya /var/lib/asterisk/sounds
 USER ehimaya
 HEALTHCHECK --interval=10s --timeout=5s --retries=12 \

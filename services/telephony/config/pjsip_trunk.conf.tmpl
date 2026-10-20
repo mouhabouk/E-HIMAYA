@@ -14,6 +14,8 @@ qualify_frequency = 60
 
 [trunk]
 type = endpoint
+; A call whose media stopped (network lost, no BYE) is hung up instead of staying in the queue.
+rtp_timeout = 60
 context = ehimaya-trunk-in
 disallow = all
 allow = @@TELEPHONY_TRUNK_CODECS@@

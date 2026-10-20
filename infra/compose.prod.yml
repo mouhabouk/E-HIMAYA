@@ -48,6 +48,8 @@ x-api-prod-env: &api-prod-env
   # Telephony: the dashboard softphone registers over WSS through Caddy; no call simulator.
   TELEPHONY_WS_PUBLIC_URL: wss://${API_HOST}/telephony/ws
   TELEPHONY_SIM_TOKEN: ""
+  # Call recording only once the processing is declared to the INPDP (legal point L04): explicit opt-in.
+  TELEPHONY_RECORDING_ENABLED: ${TELEPHONY_RECORDING_ENABLED:-false}
 
 x-api-prod-deps: &api-prod-deps
   migrate:
@@ -115,6 +117,8 @@ services:
         CSP_STREAM_SRC: https://${API_HOST}
         # Softphone (SIP over WebSocket to Asterisk), served by Caddy on the API host (/telephony/ws).
         CSP_TELEPHONY_SRC: wss://${API_HOST}
+        # Permissions-Policy microphone=(self): the softphone's microphone, on the dashboard origin only.
+        CSP_MICROPHONE: self
     image: ehimaya/dashboard:prod
     restart: unless-stopped
     read_only: true
@@ -146,8 +150,9 @@ services:
       # uvicorn processes per api container (one Python process saturates one core; infra/loadtest/RESULTS.md).
       WEB_CONCURRENCY: ${API_WORKERS:-4}
     ports: !reset []
-    # No simulator volume and no dependency on notify-sim.
-    volumes: !reset []
+    # No simulator volume and no dependency on notify-sim; the terrain model of the spread forecasts (read-only).
+    volumes: !override
+      - terrain:/terrain:ro
     depends_on: !override
       <<: *api-prod-deps
 
@@ -239,6 +244,7 @@ services:
       TELEPHONY_EXTERNAL_HOST: ${TELEPHONY_EXTERNAL_HOST:-${API_HOST}}
       # No simulator endpoint in production.
       TELEPHONY_SIM_PASSWORD: ""
+      TELEPHONY_RECORDING_ENABLED: ${TELEPHONY_RECORDING_ENABLED:-false}
     ports: !override
       # SIP trunk of the operator (UDP/TCP, TLS on 5061). Firewall these to the operator's SBC addresses.
       - "5060:5060/udp"

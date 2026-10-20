@@ -5,8 +5,9 @@ Standard library only, so it runs anywhere:  python3 infra/smoke/smoke_test.py  
 Environment: API_URL (default http://localhost:8000), TUS_URL (default http://localhost:1080/api/v1/uploads/),
 NOTIFY_SIM_URL (default http://localhost:8090; empty to skip, e.g. when real FCM/SMS providers are configured),
 MEDIAMTX_HLS_URL (default http://localhost:8888; empty to skip the streaming checks), STREAM_SIM_TOKEN (default: read
-from ./.env; empty to skip the recorded sim stream), SMOKE_COMPOSE (default
-"docker compose --env-file .env -f infra/compose.yml", used to run ffmpeg inside the mediamtx container).
+from ./.env; empty to skip the recorded sim stream), TELEPHONY_SIM_TOKEN (default: read from ./.env; empty to skip
+the simulated call), SMOKE_COMPOSE (default "docker compose --env-file .env -f infra/compose.yml", used to run ffmpeg
+inside the mediamtx container and to place a call inside the telephony container).
 """
 
 import base64
@@ -130,6 +131,44 @@ def check_streams(report_id: str) -> None:
     sys.exit(f"sim stream recording never stored: {state}")
 
 
+def check_telephony() -> None:
+    """SIMULATION: one call into 8000 placed inside the telephony container (source=sim): the API sees it ringing
+    (ARI events), then ended, then its recording hashed and stored in S3 (reports.media kind=call_recording)."""
+    token = env_file_value("TELEPHONY_SIM_TOKEN")
+    if not token:
+        print("TELEPHONY_SIM_TOKEN not set: simulated call skipped")
+        return
+    headers = {"X-Sim-Token": token}
+
+    def sim_calls() -> list[dict[str, Any]]:
+        status, _, raw = call("GET", f"{API}/internal/sim/calls", None, headers)
+        assert status == 200, (status, raw)
+        return json.loads(raw)["items"]  # type: ignore[no-any-return]
+
+    known = {c["id"] for c in sim_calls()}
+    asterisk = ["asterisk", "-C", "/run/asterisk/etc/asterisk.conf", "-rx"]
+    # The caller stays 25 s: the recorded-call notice (ar, fr), then recording while it waits in the queue.
+    originate = "channel originate Local/8000@ehimaya-sim-in application Wait 25"
+    command = [*COMPOSE, "exec", "-T", "telephony", *asterisk, originate]
+    result = subprocess.run(command, capture_output=True, timeout=60, check=False)  # noqa: S603 (fixed command)
+    assert result.returncode == 0, result.stderr.decode(errors="replace")
+    seen: dict[str, Any] = {}
+    states: list[str] = []
+    for _ in range(90):
+        fresh = [c for c in sim_calls() if c["id"] not in known]
+        if fresh:
+            seen = fresh[0]
+            if not states or states[-1] != seen["status"]:
+                states.append(seen["status"])
+                print("simulated call:", seen["id"], seen["status"])
+            if seen["recording_media_id"]:
+                assert seen["status"] in ("missed", "ended") and states[0] == "ringing", (seen, states)
+                print("simulated call ended and its recording stored:", seen)
+                return
+        time.sleep(1)
+    sys.exit(f"simulated call not seen through to a stored recording: {seen}")
+
+
 def main() -> None:
     wait_ready()
     check_notify_sim()
@@ -186,6 +225,7 @@ def main() -> None:
     status, track = api("GET", f"/api/v1/reports/track/{report['tracking_code']}")
     assert status == 200 and track["status"] == "received"
     check_streams(report["id"])
+    check_telephony()
     print("smoke test passed")
 
 

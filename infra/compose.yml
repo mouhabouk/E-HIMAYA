@@ -303,6 +303,10 @@ services:
       # Scenario 2 (ADR-10): transfer to 198 through the trunk, only once agreed with the Civil Protection.
       TELEPHONY_TRANSFER_198_ENABLED: ${TELEPHONY_TRANSFER_198_ENABLED:-false}
       TELEPHONY_DIAL_PER_HOUR: ${TELEPHONY_DIAL_PER_HOUR:-60}
+      # Calls are recorded after the recorded-call notice (legal point L04). Production: false until the processing is
+      # declared to the INPDP; keep the same value as the telephony service.
+      TELEPHONY_RECORDING_ENABLED: ${TELEPHONY_RECORDING_ENABLED:-true}
+      # Call metadata and recordings: at most 2 years (L04).
       RETENTION_CALL_DAYS: ${RETENTION_CALL_DAYS:-730}
       # SIMULATION: token of the smoke test for /internal/sim/calls. PRODUCTION: empty (refused).
       TELEPHONY_SIM_TOKEN: ${TELEPHONY_SIM_TOKEN:-}
@@ -526,6 +530,7 @@ services:
       TELEPHONY_RTP_END: ${TELEPHONY_RTP_END:-10099}
       TELEPHONY_QUEUE_TIMEOUT_S: ${TELEPHONY_QUEUE_TIMEOUT_S:-300}
       TELEPHONY_TRANSFER_198_ENABLED: ${TELEPHONY_TRANSFER_198_ENABLED:-false}
+      TELEPHONY_RECORDING_ENABLED: ${TELEPHONY_RECORDING_ENABLED:-true}
       # SIP trunk of the operator (Tunisie Telecom, Ooredoo or Orange); empty = no trunk (docs/telephony.md).
       TELEPHONY_TRUNK_HOST: ${TELEPHONY_TRUNK_HOST:-}
       TELEPHONY_TRUNK_PORT: ${TELEPHONY_TRUNK_PORT:-5060}
