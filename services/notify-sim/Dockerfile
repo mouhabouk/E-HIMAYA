@@ -3,7 +3,7 @@
 # ┃   API's FCM_SERVICE_ACCOUNT, FCM_API_URL, SMS_HTTP_URL, SMS_HTTP_TOKEN (docs/api/notify-sim.md).
 # ┗━━━━━━━━━━━━━━━━
 # Base images pinned by digest (tag kept for readability); Dependabot proposes the updates.
-FROM ghcr.io/astral-sh/uv:0.13.3@sha256:bee0a2a458fd956c5df7b8b4c5fed2257b0af34866e3da7b51db0be3acb375d1 AS uv
+FROM ghcr.io/astral-sh/uv:0.13.4@sha256:9f130421e930bfbdc563c00740466603f8723158e90297d07957c2294640262b AS uv
 
 # Dependencies exactly as locked in uv.lock (hashes checked), without the dev group, into /opt/venv.
 FROM python:3.15-slim@sha256:2da676046630d7bf14c6764ae1143dc7fa0377a53f94bf5a642f0b214aca5bce AS deps
