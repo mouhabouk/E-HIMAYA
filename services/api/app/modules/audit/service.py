@@ -32,9 +32,17 @@ async def record(
     target: str | None = None,
     reason: str | None = None,
     details: dict[str, Any] | None = None,
+    gouvernorats: list[int] | None = None,
 ) -> AuditLog:
-    """Append an entry inside the caller's transaction (the caller commits)."""
-    entry = AuditLog(actor=actor, action=action, target=target, reason=reason, details=details or {})
+    """Append an entry inside the caller's transaction (the caller commits).
+
+    ``gouvernorats`` are the gouvernorats the action concerns (phase 9 §7.1): stored as ``details["gouvernorats"]``,
+    inside the hash chain, and exposed by the generated column ``audit.log.gouvernorats`` to the regional audit view.
+    Omitted: a national-only entry."""
+    payload = dict(details or {})
+    if gouvernorats:
+        payload["gouvernorats"] = sorted({int(code) for code in gouvernorats})
+    entry = AuditLog(actor=actor, action=action, target=target, reason=reason, details=payload)
     session.add(entry)
     await session.flush()
     await session.refresh(entry)

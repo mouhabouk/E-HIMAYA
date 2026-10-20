@@ -2126,4 +2126,48 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get trackPointsOpenRewards => 'Voir mes récompenses';
+
+  @override
+  String get anonQuotaCardTitle => 'Signalements sans compte';
+
+  @override
+  String anonQuotaRemaining(int remaining, int limit) {
+    return 'Encore $remaining sur $limit';
+  }
+
+  @override
+  String anonQuotaRemainingShort(int remaining) {
+    return 'Encore $remaining';
+  }
+
+  @override
+  String get anonQuotaExhaustedHint =>
+      'Limite atteinte : créez un compte pour continuer à signaler. Le SOS et le 198 fonctionnent toujours.';
+
+  @override
+  String get anonQuotaTitle => 'Signaler sans compte';
+
+  @override
+  String get anonQuotaExplanation =>
+      'Pour éviter les abus, chaque installation de l’application peut envoyer un nombre limité de signalements sans compte. Avec un compte gratuit, vous continuez à signaler, vous suivez vos signalements sur tout appareil et ils ont plus de poids.';
+
+  @override
+  String get anonQuotaEmergencyNote =>
+      'En cas d’urgence, le bouton SOS et l’appel au 198 fonctionnent toujours, avec ou sans compte.';
+
+  @override
+  String anonQuotaDraftKept(String code) {
+    return 'Votre signalement $code est conservé sur ce téléphone. Il sera envoyé dès que vous créerez un compte ou vous connecterez.';
+  }
+
+  @override
+  String get anonQuotaReportKeptBody =>
+      'La limite de signalements sans compte est atteinte. Ce signalement est conservé sur ce téléphone et sera envoyé dès que vous créerez un compte ou vous connecterez.';
+
+  @override
+  String get anonQuotaOpen => 'Pourquoi une limite ?';
+
+  @override
+  String get errorAnonQuotaExhausted =>
+      'La limite de signalements sans compte est atteinte sur cet appareil. Veuillez créer un compte.';
 }

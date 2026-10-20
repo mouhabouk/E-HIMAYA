@@ -13,6 +13,8 @@ class Gouvernorat(Base):
     iso_code: Mapped[str] = mapped_column(Text, unique=True)
     name_ar: Mapped[str] = mapped_column(Text)
     name_fr: Mapped[str] = mapped_column(Text)
+    # English name (0024_i18n_english): the French one without diacritics where usual ("Gabes", "Beja").
+    name_en: Mapped[str] = mapped_column(Text)
     boundary: Mapped[object | None] = mapped_column(Geometry("MULTIPOLYGON", srid=4326), deferred=True)
 
     delegations: Mapped[list["Delegation"]] = relationship(back_populates="gouvernorat", order_by="Delegation.id")

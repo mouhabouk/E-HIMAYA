@@ -5,7 +5,9 @@ import { Link, useParams } from "react-router";
 import { IncidentStatusChip, PriorityBadge, ReportMarkers } from "../components/AiBadges";
 import { CategoryLabel } from "../components/CategoryIcon";
 import { ErrorBox, Loading } from "../components/Feedback";
+import { CommandLevelTag, IncidentCommandPanel } from "../components/IncidentCommand";
 import { MemoryFromIncidentButton } from "../components/MemoryFromIncident";
+import { ResourceRequestsPanel } from "../components/ResourceRequests";
 import {
   AssistantPanel,
   ConferencePanel,
@@ -287,6 +289,7 @@ export function IncidentDetailPage() {
         <IncidentStatusChip status={incident.status} />
         <PriorityBadge score={incident.severity} />
         {incident.op_level && incident.op_level !== "normal" && <LevelTag level={incident.op_level} />}
+        <CommandLevelTag level={incident.command_level} />
         {incident.status !== "dissolved" && <MemoryFromIncidentButton incidentId={incident.id} />}
       </div>
 
@@ -458,6 +461,11 @@ export function IncidentDetailPage() {
           onAssign={(resourceId, order) => setAssignPreset({ resourceId, order, nonce: Date.now() })}
           onRoute={(from, to, profile) => setRouteRequest({ from, to, profile })}
         />
+      </div>
+
+      <div className="detail__grid">
+        <IncidentCommandPanel incident={incident} />
+        <ResourceRequestsPanel incident={incident} />
       </div>
 
       <OperationsPanel incident={incident} assignPreset={assignPreset} />

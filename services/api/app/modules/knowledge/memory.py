@@ -349,7 +349,7 @@ async def _check_geometry(session: AsyncSession, geometry: s.Geometry | None) ->
 async def _check_references(session: AsyncSession, principal: Principal, fields: s.EntryFields) -> None:
     for incident_id in fields.incident_ids:
         incident = await session.get(Incident, incident_id)
-        if incident is None or not incidents.in_scope(principal, incident):
+        if incident is None or not await incidents.can_read(session, principal, incident):
             raise _invalid("invalid_incident")
     for source in fields.sources:
         if source.media_id is None:
@@ -703,7 +703,8 @@ async def prefill_from_incident(session: AsyncSession, principal: Principal, inc
             "event_type": incident.category,
             "started_at": first_report if first_report < incident.opened_at else incident.opened_at,
             "ended_at": incident.closed_at,
-            "gouvernorats": [incident.gouvernorat_code] if incident.gouvernorat_code else [],
+            # Lead and participating gouvernorats (phase 9 §5.6).
+            "gouvernorats": await incidents.all_gouvernorats(session, incident.id),
             "geometry": json.loads(area) if area else None,
             "incident_ids": [incident.id],
             "summary": summary,

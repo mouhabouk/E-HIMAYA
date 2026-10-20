@@ -6,6 +6,7 @@ import { errorMessageKey } from "../lib/api";
 import { useGouvernorats } from "../lib/hooks";
 import { excerptParts, renderMarkdown } from "../lib/markdown";
 import { CATEGORIES } from "../lib/types";
+import { directionOf, type Language } from "../i18n";
 
 /** Tabs of one area, as links (the current one marked with aria-current by NavLink). */
 export function AreaTabs({ label, tabs }: { label: string; tabs: { to: string; label: string; end?: boolean }[] }) {
@@ -29,13 +30,13 @@ export function AreaTabs({ label, tabs }: { label: string; tabs: { to: string; l
  * Markdown of the national memory, sanitized (lib/markdown.ts: raw HTML escaped, DOMPurify allowlist). This is the
  * only place the phase 8 screens set HTML.
  */
-export function Markdown({ source, lang, className }: { source: string; lang?: "ar" | "fr"; className?: string }) {
+export function Markdown({ source, lang, className }: { source: string; lang?: Language; className?: string }) {
   const html = useMemo(() => renderMarkdown(source), [source]);
   return (
     <div
       className={`markdown${className ? ` ${className}` : ""}`}
       lang={lang}
-      dir={lang === "ar" ? "rtl" : lang === "fr" ? "ltr" : "auto"}
+      dir={lang ? directionOf(lang) : "auto"}
       // Sanitized above: markdown-it with html disabled, then DOMPurify with a tag allowlist.
       dangerouslySetInnerHTML={{ __html: html }}
     />

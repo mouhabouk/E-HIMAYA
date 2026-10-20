@@ -64,6 +64,9 @@ class Account(Base):
         server_default=AccountStatus.ACTIVE.value,
     )
     false_report_count: Mapped[int] = mapped_column(Integer, server_default="0")
+    # Anonymous report quota (phase 9 §3): accepted anonymous reports of this installation, counted from the release.
+    anon_reports_accepted: Mapped[int] = mapped_column(Integer, server_default="0")
+    anon_quota_reached_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     # Set when the person exercised the right to erasure: identifiers and profile are gone.

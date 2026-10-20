@@ -12,14 +12,15 @@ import '../../core/media/media_rules.dart';
 import '../../core/routing/app_router.dart';
 import '../../core/settings/settings_controller.dart';
 import '../../core/sync/report_queue.dart';
-import '../../core/sync/sync_scheduler.dart';
 import '../../core/ui/emergency_action.dart';
 import '../../l10n/app_localizations.dart';
 import '../institution/institution_providers.dart';
 import '../institution/report_as_selector.dart';
+import '../quota/quota_widgets.dart';
 import 'audio_recorder_panel.dart';
 import 'category_labels.dart';
 import 'location_picker.dart';
+import 'report_submit.dart';
 
 final _log = logger('report.new');
 
@@ -127,34 +128,36 @@ class _NewReportScreenState extends ConsumerState<NewReportScreen> {
     final router = GoRouter.of(context);
     try {
       final audio = _audioPath;
-      final queued = await ref
-          .read(reportQueueProvider)
-          .enqueue(
-            ReportDraft(
-              category: widget.category,
-              location: location,
-              text: _text.text,
-              lang: ref.read(localeCodeProvider),
-              organizationId: ref.read(reportAsProvider),
-              attachments: [
-                ..._attachments,
-                if (audio != null)
-                  DraftAttachment(
-                    path: audio,
-                    kind: MediaKind.audio,
-                    mime: 'audio/mp4',
-                    deleteSourceAfterQueue: true,
-                  ),
-              ],
-            ),
-          );
-      unawaited(ref.read(requestSyncProvider)());
+      // Phase 9 §3: with the anonymous quota known to be exhausted, the report is kept on the
+      // phone (blocked) until the user signs in, and the quota screen explains why.
+      final outcome = await ref.read(reportSubmitterProvider)(
+        ReportDraft(
+          category: widget.category,
+          location: location,
+          text: _text.text,
+          lang: ref.read(localeCodeProvider),
+          organizationId: ref.read(reportAsProvider),
+          attachments: [
+            ..._attachments,
+            if (audio != null)
+              DraftAttachment(
+                path: audio,
+                kind: MediaKind.audio,
+                mime: 'audio/mp4',
+                deleteSourceAfterQueue: true,
+              ),
+          ],
+        ),
+      );
+      final code = outcome.queued.tempCode;
       unawaited(
         router.pushReplacement(
-          Uri(
-            path: Routes.reportQueued,
-            queryParameters: {'code': queued.tempCode},
-          ).toString(),
+          outcome.keptForAccount
+              ? Routes.quotaFor(code)
+              : Uri(
+                  path: Routes.reportQueued,
+                  queryParameters: {'code': code},
+                ).toString(),
         ),
       );
     } on Exception catch (e) {
@@ -182,6 +185,10 @@ class _NewReportScreenState extends ConsumerState<NewReportScreen> {
           child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              if (widget.category != ReportCategory.sos) ...[
+                const AnonQuotaCard(),
+                const SizedBox(height: 8),
+              ],
               Text(l10n.reportLocation, style: theme.textTheme.titleMedium),
               const SizedBox(height: 8),
               LocationPicker(onChanged: (p) => _location = p),

@@ -7,6 +7,7 @@ String apiErrorMessage(AppLocalizations l10n, ApiErrorCode code) =>
       ApiErrorCode.authenticationRequired => l10n.errorAuthenticationRequired,
       ApiErrorCode.invalidDeviceKey => l10n.errorInvalidDeviceKey,
       ApiErrorCode.anonBlocked => l10n.errorAnonBlocked,
+      ApiErrorCode.anonQuotaExhausted => l10n.errorAnonQuotaExhausted,
       ApiErrorCode.accountSuspended => l10n.errorAccountSuspended,
       ApiErrorCode.consentRequired => l10n.errorConsentRequired,
       ApiErrorCode.rateLimited => l10n.errorRateLimited,

@@ -180,9 +180,9 @@ def citizen(make_token: TokenFactory) -> dict[str, str]:
 
 @pytest.fixture
 def staff(make_token: TokenFactory) -> Callable[..., dict[str, str]]:
-    def _staff(roles: list[str] | None = None, gouvernorat: int | None = 61) -> dict[str, str]:
+    def _staff(roles: list[str] | None = None, gouvernorat: int | None = 61, **claims: Any) -> dict[str, str]:
         scope: dict[str, Any] = {"gouvernorat_code": str(gouvernorat)} if gouvernorat else {"scope_level": "national"}
-        return bearer(make_token(issuer=STAFF_ISS, roles=roles or ["operator"], **scope))
+        return bearer(make_token(issuer=STAFF_ISS, roles=roles or ["operator"], **scope, **claims))
 
     return _staff
 

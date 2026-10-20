@@ -132,10 +132,21 @@ class ReportQueuedScreen extends ConsumerWidget {
             if (row?.state == ReportState.blocked) ...[
               const SizedBox(height: 8),
               Text(
-                l10n.anonBlockedBody,
+                row?.lastError == ApiErrorCode.anonQuotaExhausted.wire
+                    ? l10n.anonQuotaReportKeptBody
+                    : l10n.anonBlockedBody,
+                key: const Key('queued-blocked'),
                 textAlign: TextAlign.center,
                 style: TextStyle(color: theme.colorScheme.error),
               ),
+              if (row?.lastError == ApiErrorCode.anonQuotaExhausted.wire)
+                Center(
+                  child: TextButton(
+                    key: const Key('queued-quota'),
+                    onPressed: () => context.push(Routes.quota),
+                    child: Text(l10n.anonQuotaOpen),
+                  ),
+                ),
             ],
             if (offlineFallback) ...[
               const SizedBox(height: 16),

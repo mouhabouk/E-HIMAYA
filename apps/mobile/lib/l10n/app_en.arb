@@ -1075,5 +1075,40 @@
       }
     }
   },
-  "trackPointsOpenRewards": "See my rewards"
+  "trackPointsOpenRewards": "See my rewards",
+  "anonQuotaCardTitle": "Reports without an account",
+  "anonQuotaRemaining": "{remaining} of {limit} left",
+  "@anonQuotaRemaining": {
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "anonQuotaRemainingShort": "{remaining} left",
+  "@anonQuotaRemainingShort": {
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+  "anonQuotaExhaustedHint": "Limit reached: create an account to keep reporting. SOS and 198 always work.",
+  "anonQuotaTitle": "Reporting without an account",
+  "anonQuotaExplanation": "To prevent abuse, each installation of the app can send a limited number of reports without an account. With a free account you can keep reporting, follow your reports on any device, and your reports carry more weight.",
+  "anonQuotaEmergencyNote": "In an emergency, the SOS button and a call to 198 always work, with or without an account.",
+  "anonQuotaDraftKept": "Your report {code} is kept on this phone. It will be sent as soon as you create an account or sign in.",
+  "@anonQuotaDraftKept": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "anonQuotaReportKeptBody": "The limit of reports without an account is reached. This report is kept on this phone and will be sent as soon as you create an account or sign in.",
+  "anonQuotaOpen": "Why a limit?",
+  "errorAnonQuotaExhausted": "The limit of reports without an account is reached on this device. Please create an account."
 }

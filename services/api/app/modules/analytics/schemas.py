@@ -44,6 +44,14 @@ class Totals(BaseModel):
     rejected: int
 
 
+class IncidentCount(BaseModel):
+    """Incidents opened in the period (phase 9 §5.6): attributed to their lead; ``participating`` marks those where
+    the gouvernorats queried take part without leading."""
+
+    participating: bool
+    count: int
+
+
 class Overview(BaseModel):
     from_: date = Field(serialization_alias="from")
     to: date
@@ -57,6 +65,7 @@ class Overview(BaseModel):
     by_source: list[KeyCount]
     by_hour: list[KeyCount]
     by_weekday: list[KeyCount]
+    incidents: list[IncidentCount] = Field(default_factory=list)
     min_cell: int
 
 

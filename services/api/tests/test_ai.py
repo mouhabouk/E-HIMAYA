@@ -251,6 +251,16 @@ async def test_settings_are_tunable_by_the_central_committee_only(
     r = await client.put("/api/v1/staff/ai/settings", json=changed, headers=local)
     assert (r.status_code, r.json()["detail"]) == (403, "national_scope_required")
     central = staff(roles=["central_committee"], gouvernorat=None)
+    # Phase 9 §2: the AI administrator (national) may tune them too; sysadmin no longer may.
+    sysadmin = staff(roles=["sysadmin"], gouvernorat=None)
+    assert (await client.put("/api/v1/staff/ai/settings", json=settings, headers=sysadmin)).status_code == 403
+    regional_ai_admin = staff(roles=["ai_admin"], gouvernorat=61)
+    r = await client.put("/api/v1/staff/ai/settings", json=settings, headers=regional_ai_admin)
+    assert (r.status_code, r.json()["detail"]) == (403, "national_scope_required")
+    ai_admin = staff(roles=["ai_admin"], gouvernorat=None)
+    assert (await client.get("/api/v1/staff/ai/settings", headers=ai_admin)).status_code == 200
+    r = await client.put("/api/v1/staff/ai/settings", json=settings, headers=ai_admin)
+    assert r.status_code == 200, r.text
     broken = {**settings, "priority": {**settings["priority"], "weights": {"severity": 10}}}
     assert (await client.put("/api/v1/staff/ai/settings", json=broken, headers=central)).status_code == 422
     try:

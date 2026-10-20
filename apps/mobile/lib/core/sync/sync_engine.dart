@@ -20,6 +20,8 @@ import '../http/models.dart';
 import '../logging/log.dart';
 import '../power/battery_saver.dart';
 import '../power/scheduling.dart';
+import '../quota/anon_quota.dart';
+import '../quota/anon_quota_controller.dart';
 import '../tus/tus_client.dart';
 import 'backoff.dart';
 import 'report_queue.dart';
@@ -53,6 +55,9 @@ class SyncSummary {
 /// kept and flagged. A report sent on behalf of an institution that the server refuses
 /// (`org_not_found`, `org_not_active`) is kept as [ReportState.orgRefused] for the user to
 /// resend as themselves; it is never dropped nor silently sent without the institution.
+/// `403 anon_quota_exhausted` (phase 9 §3) keeps the report as [ReportState.blocked], exactly
+/// like `anon_blocked`: it is sent again as soon as the user signs in. The quota announced in
+/// `X-Anon-Quota-Remaining` is handed to [onAnonQuota] after every answer that carries it.
 class SyncEngine {
   SyncEngine({
     required this.db,
@@ -62,6 +67,7 @@ class SyncEngine {
     required this.clock,
     required this.identity,
     required this.onAnonBlocked,
+    this.onAnonQuota,
     this.mediaGate,
     Random? random,
   }) : _random = random ?? Random();
@@ -73,6 +79,9 @@ class SyncEngine {
   final DateTime Function() clock;
   final IdentityState Function() identity;
   final void Function() onAnonBlocked;
+
+  /// Receives the anonymous quota the server announced (phase 9 §3). Null: ignored.
+  final void Function(AnonQuota quota)? onAnonQuota;
 
   /// Whether a media file may be uploaded now (battery saver keeps large files of non-SOS
   /// reports for Wi-Fi for a while, see [MediaUploadPolicy]). Null: always. A deferred file is
@@ -141,6 +150,8 @@ class SyncEngine {
     while (true) {
       try {
         final result = await api.createReport(body);
+        final quota = result.quota;
+        if (quota != null) onAnonQuota?.call(quota);
         final server = result.report;
         final hasMedia = (await db.mediaForReport(report.clientUuid))
             .isNotEmpty;
@@ -186,6 +197,12 @@ class SyncEngine {
       case ApiErrorCode.anonBlocked:
         state = ReportState.blocked;
         onAnonBlocked();
+      case ApiErrorCode.anonQuotaExhausted:
+        // Kept, never dropped: sent again once the user has an account.
+        state = ReportState.blocked;
+        onAnonQuota?.call(
+          e.anonQuota ?? const AnonQuota(limit: null, remaining: 0),
+        );
       case ApiErrorCode.clientUuidConflict:
         state = ReportState.conflict;
       case ApiErrorCode.orgNotFound || ApiErrorCode.orgNotActive:
@@ -473,6 +490,8 @@ final syncEngineProvider = Provider<SyncEngine>(
     clock: ref.watch(clockProvider),
     identity: () => ref.read(identityProvider),
     onAnonBlocked: () => ref.read(anonBlockedProvider.notifier).set(true),
+    onAnonQuota: (quota) =>
+        unawaited(ref.read(anonQuotaProvider.notifier).record(quota)),
     mediaGate: (report, media) async {
       final saver = ref.read(batterySaverActiveProvider);
       if (!saver) return true;

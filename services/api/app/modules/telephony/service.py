@@ -107,21 +107,21 @@ def call_out(call: Call, tracking_code: str | None, *, full: bool = True) -> sch
 
 
 def scope_filter(principal: Principal) -> Any:
-    """National staff see every call; the others their gouvernorat's, calls not located yet (the shared queue) and
-    the calls they took themselves."""
+    """National staff see every call; the others their gouvernorat's, the ringing calls not located yet (the shared
+    queue) and the calls they took themselves. Once answered or ended an unlocated call is national only (phase 9)."""
     if principal.is_national:
         return True
     return or_(
         Call.gouvernorat_code == principal.gouvernorat_code,
-        Call.gouvernorat_code.is_(None),
+        and_(Call.gouvernorat_code.is_(None), Call.status == CallStatus.RINGING.value),
         Call.operator_user_id == principal.subject,
     )
 
 
 def visible(principal: Principal, call: Call) -> bool:
     return (
-        call.gouvernorat_code is None
-        or in_scope(principal, call.gouvernorat_code)
+        (call.gouvernorat_code is None and (principal.is_national or call.status == CallStatus.RINGING.value))
+        or (call.gouvernorat_code is not None and in_scope(principal, call.gouvernorat_code))
         or call.operator_user_id == principal.subject
     )
 

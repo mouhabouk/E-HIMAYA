@@ -23,6 +23,7 @@ import {
 } from "../lib/phase8Types";
 import { canCreateReports, canManageSchedules } from "../lib/roles";
 import { CATEGORIES, type Category } from "../lib/types";
+import { LANGUAGES, type Language } from "../i18n";
 
 /** Tabs of the reports area (library, schedules). */
 export function ReportsLibraryTabs() {
@@ -52,11 +53,11 @@ export interface ReportFormState {
   incidentId: string;
   scenarioId: string;
   format: ReportFormat;
-  lang: "ar" | "fr";
+  lang: Language;
 }
 
 /** Form state prefilled from the URL (analytics "export", a scenario, an incident). */
-export function reportFormFromParams(params: URLSearchParams, lang: "ar" | "fr", today = new Date()): ReportFormState {
+export function reportFormFromParams(params: URLSearchParams, lang: Language, today = new Date()): ReportFormState {
   const kind = params.get("kind");
   const to = isIsoDate(params.get("to")) ? (params.get("to") as string) : isoDate(today);
   const from = isIsoDate(params.get("from")) ? (params.get("from") as string) : addDays(to, -29);
@@ -226,7 +227,7 @@ function ReportForm({ onClose }: { onClose: () => void }) {
         </fieldset>
         <fieldset className="segmented">
           <legend>{t("library.reports.lang")}</legend>
-          {(["ar", "fr"] as const).map((l) => (
+          {LANGUAGES.map((l) => (
             <label key={l} className="segmented__item">
               <input type="radio" name={`${base}-lang`} checked={form.lang === l} onChange={() => set({ lang: l })} />
               <span lang={l}>{t(`languages.${l}`)}</span>

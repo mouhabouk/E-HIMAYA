@@ -1,8 +1,8 @@
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import BigInteger, DateTime, String, Text
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import BigInteger, Computed, DateTime, SmallInteger, String, Text
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.db import Base
@@ -24,3 +24,7 @@ class AuditLog(Base):
     details: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default="{}")
     prev_hash: Mapped[str | None] = mapped_column(String(64))
     hash: Mapped[str] = mapped_column(String(64), server_default="")
+    # Gouvernorats the entry concerns, derived from details["gouvernorats"] (0023_audit_scope); empty = national only.
+    gouvernorats: Mapped[list[int]] = mapped_column(
+        ARRAY(SmallInteger), Computed("audit.scope_of(details)", persisted=True)
+    )

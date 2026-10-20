@@ -16,6 +16,7 @@ import '../../features/onboarding/institution_screen.dart';
 import '../../features/onboarding/role_screen.dart';
 import '../../features/privacy/my_data_screen.dart';
 import '../../features/profile/profile_screen.dart';
+import '../../features/quota/quota_screen.dart';
 import '../../features/report/category_screen.dart';
 import '../../features/report/new_report_screen.dart';
 import '../../features/report/report_queued_screen.dart';
@@ -86,6 +87,11 @@ abstract final class Routes {
 
   // Phase 8: points, badges and certificates (FR-A-072).
   static const rewards = '/rewards';
+
+  // Phase 9 §3: anonymous report quota; `code`: a report kept until the user signs in.
+  static const quota = '/quota';
+  static String quotaFor(String tempCode) =>
+      Uri(path: quota, queryParameters: {'code': tempCode}).toString();
 }
 
 /// Navigation guard (charter accepted → role chosen → identity → home). Pure function so it can
@@ -228,6 +234,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(path: Routes.track, builder: (_, _) => const TrackScreen()),
       GoRoute(path: Routes.rewards, builder: (_, _) => const RewardsScreen()),
+      GoRoute(
+        path: Routes.quota,
+        builder: (_, state) =>
+            AnonQuotaScreen(tempCode: state.uri.queryParameters['code']),
+      ),
       GoRoute(
         path: Routes.live,
         builder: (_, state) =>

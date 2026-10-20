@@ -13,7 +13,13 @@ import { ServicesProvider, type Services } from "./context/services";
 import { SoftphoneProvider } from "./context/softphone";
 import { isApiError } from "./lib/api";
 import {
+  canEditAiSettings,
   canEditTips,
+  canManageAccounts,
+  canOpenBreakGlass,
+  canReadPlatformSettings,
+  canReadScopedAudit,
+  canSeeNationalQueues,
   canManageSchedules,
   canMonitorPerformance,
   canReadAnalytics,
@@ -29,7 +35,15 @@ import {
   isCommittee,
   landingPath,
 } from "./lib/roles";
+import type { StaffIdentity } from "./auth/identity";
+import { AccountsPage } from "./pages/AccountsPage";
 import { AiSettingsPage } from "./pages/AiSettingsPage";
+import { AuditPage } from "./pages/AuditPage";
+import { BreakGlassPage } from "./pages/BreakGlassPage";
+import { GeoQueuePage } from "./pages/GeoQueuePage";
+import { LateReportsPage } from "./pages/LateReportsPage";
+import { ResourceRequestsPage } from "./pages/ResourceRequestsPage";
+import { SettingsPage } from "./pages/SettingsPage";
 import { CallsPage } from "./pages/CallsPage";
 import { CallbackPage } from "./pages/CallbackPage";
 import { CertificatesPage } from "./pages/CertificatesPage";
@@ -93,6 +107,13 @@ export function Gate({ allow, children }: { allow: (roles: readonly string[]) =>
   return children;
 }
 
+/** A screen whose access depends on the scope (national or regional room) as well as the roles (phase 9). */
+export function ScopeGate({ allow, children }: { allow: (identity: StaffIdentity) => boolean; children: ReactNode }) {
+  const { user } = useAuth();
+  if (!user || !allow(user.identity)) return <NoAccessPage reason="noRole" embedded />;
+  return children;
+}
+
 /** The KPIs need a report read role; other staff start on the first area their roles open. */
 function Home() {
   const { user } = useAuth();
@@ -115,6 +136,7 @@ const gated = (allow: (roles: readonly string[]) => boolean, el: ReactNode) => (
     <Suspense fallback={<Loading />}>{el}</Suspense>
   </Gate>
 );
+const scoped = (allow: (identity: StaffIdentity) => boolean, page: ReactNode) => <ScopeGate allow={allow}>{page}</ScopeGate>;
 const committee = (page: ReactNode) => (
   <Gate allow={(roles) => isCommittee(roles) || canMonitorPerformance(roles)}>{page}</Gate>
 );
@@ -132,6 +154,8 @@ export function AppRoutes() {
       >
         <Route index element={<Home />} />
         <Route path="reports" element={reports(<ReportsPage />)} />
+        <Route path="reports/late" element={scoped(canSeeNationalQueues, <LateReportsPage />)} />
+        <Route path="reports/geo-queue" element={scoped(canSeeNationalQueues, <GeoQueuePage />)} />
         <Route path="reports/:id" element={reports(<ReportDetailPage />)} />
         <Route path="incidents" element={reports(<IncidentsPage />)} />
         <Route path="incidents/:id" element={reports(<IncidentDetailPage />)} />
@@ -140,7 +164,15 @@ export function AppRoutes() {
         <Route path="streams/wall" element={reports(<StreamWallPage />)} />
         <Route path="streams/archive" element={reports(<StreamArchivePage />)} />
         <Route path="streams/:id" element={reports(<StreamDetailPage />)} />
-        <Route path="settings/ai" element={reports(<AiSettingsPage />)} />
+        <Route path="settings" element={<Gate allow={canReadPlatformSettings}><SettingsPage /></Gate>} />
+        <Route
+          path="settings/ai"
+          element={scoped((id) => hasReadAccess(id.roles) || canEditAiSettings(id), <AiSettingsPage />)}
+        />
+        <Route path="resource-requests" element={reports(<ResourceRequestsPage />)} />
+        <Route path="accounts" element={scoped(canManageAccounts, <AccountsPage />)} />
+        <Route path="audit" element={scoped(canReadScopedAudit, <AuditPage />)} />
+        <Route path="break-glass" element={scoped(canOpenBreakGlass, <BreakGlassPage />)} />
         <Route path="calls" element={reports(<CallsPage />)} />
         <Route path="weather/suggestions" element={weather(<WeatherSuggestionsPage />)} />
         <Route path="orgs" element={orgs(<OrgsPage />)} />

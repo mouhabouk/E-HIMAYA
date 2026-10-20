@@ -120,39 +120,88 @@ def _masked_call(message: dict[str, Any]) -> dict[str, Any]:
     return {**message, "call": {**call, "caller_number": mask_number(number), "caller_masked": True}}
 
 
-def _call_scope(payload: dict[str, Any]) -> Callable[[LiveClient], bool]:
-    # Calls not located yet belong to the shared queue every operator sees; operators always see the calls they took.
+def _codes(payload: dict[str, Any], fallback: int | None) -> Callable[[LiveClient], bool]:
+    """Phase 9 §5.6: national, or the client's code in ``gouvernorat_codes`` (lead + participants + critical
+    candidates); an empty list is national only. Events published before phase 9 fall back to one gouvernorat."""
+    if "gouvernorat_codes" in payload:
+        return _among(payload.get("gouvernorat_codes"), everywhere_when_empty=False)
+    return _in(fallback)
+
+
+def _rooms(*rooms: Any) -> Callable[[LiveClient], bool]:
+    """National, or one of the rooms named (``g:<code>``; ``central`` is national)."""
+    codes = []
+    for room in rooms:
+        if isinstance(room, str) and room.startswith("g:") and room[2:].isdigit():
+            codes.append(int(room[2:]))
+    return _among(codes, everywhere_when_empty=False)
+
+
+def _late_scope(payload: dict[str, Any]) -> Callable[[LiveClient], bool]:
+    """``report.late``: national, and the room the report belongs to (its claim, else its gouvernorat)."""
+    report = payload.get("report") or {}
+    code = report.get("gouvernorat_code")
+    return _rooms(report.get("claimed_room"), f"g:{code}" if code is not None else None)
+
+
+def _breakglass_scope(payload: dict[str, Any]) -> Callable[[LiveClient], bool]:
+    holder = payload.get("subject")
+
+    def visible(client: LiveClient) -> bool:
+        principal = client.principal
+        return principal.subject == holder or (Role.SECURITY_ADMIN in principal.roles and principal.is_national)
+
+    return visible
+
+
+def _call_scope(subject: str, payload: dict[str, Any]) -> Callable[[LiveClient], bool]:
+    # A ringing call not located yet is in the shared queue every operator sees; once answered or ended an unlocated
+    # call is national only, plus the operator who took it (phase 9 §5.6). Operators always see the calls they took.
     code = payload.get("gouvernorat_code")
     operator = (payload.get("call") or {}).get("operator_user_id")
-    return lambda client: code is None or client.can_see(code) or client.principal.subject == operator
+    shared = subject == "call.ringing" and code is None
+
+    def visible(client: LiveClient) -> bool:
+        if shared or client.principal.subject == operator:
+            return True
+        return client.can_see(code) if code is not None else client.principal.is_national
+
+    return visible
 
 
 def _route(subject: str, payload: dict[str, Any]) -> tuple[str, Callable[[LiveClient], bool]] | None:
     """Who may receive an event: an audience (``reports``, ``orgs``, ``staff``, ``editors``) and a scope test."""
-    if subject in ("report.created", "report.status_changed", "report.enriched"):
-        return "reports", _in(payload.get("report", {}).get("gouvernorat_code"))
+    if subject in ("report.created", "report.status_changed", "report.enriched", "report.claimed"):
+        return "reports", _codes(payload, payload.get("report", {}).get("gouvernorat_code"))
+    if subject == "report.late":
+        return "reports", _late_scope(payload)
+    if subject == "report.escalation":
+        return "reports", _rooms(payload.get("from_room"), payload.get("to_room"))
     if subject == "incident.updated":
-        return "reports", _in(payload.get("incident", {}).get("gouvernorat_code"))
+        return "reports", _codes(payload, payload.get("incident", {}).get("gouvernorat_code"))
     if subject == "media.stored":
         return "reports", _in(payload.get("gouvernorat_code"))
     if subject in ("stream.started", "stream.ended", "stream.location", "stream.alert", "stream.recording"):
         # Live streams (phase 6) are scoped like the reports they belong to (fixed sources by their gouvernorat).
         return "reports", _in(payload.get("gouvernorat_code"))
     if subject in ("call.ringing", "call.answered", "call.ended", "call.recording"):
-        return "reports", _call_scope(payload)
-    if subject in ("assignment.updated", "callout.updated"):
-        return "reports", _in(payload.get("gouvernorat_code"))
+        return "reports", _call_scope(subject, payload)
+    if subject in ("assignment.updated", "callout.updated", "resource_request.updated"):
+        return "reports", _codes(payload, payload.get("gouvernorat_code"))
     if subject == "resource.updated":
-        return "reports", _in(payload.get("resource", {}).get("gouvernorat_code"))
+        return "reports", _codes(payload, payload.get("resource", {}).get("gouvernorat_code"))
     if subject == "volunteer.updated":
         return "reports", _in(payload.get("volunteer", {}).get("gouvernorat_code"))
     if subject == "org.updated":
         return "orgs", _in(payload.get("org", {}).get("gouvernorat_code"))
     if subject == "certificate.updated":
         return "orgs", _in(payload.get("certificate", {}).get("gouvernorat_code"))
-    if subject == "oplevel.changed":
-        # Every staff member sees the national situation (levels are not personal data).
+    if subject in ("oplevel.changed", "settings.changed"):
+        # Every staff member sees the national situation and the platform settings (not personal data).
         return "staff", lambda client: True
+    if subject.startswith("breakglass."):
+        # Break-glass grants (phase 9 §6.1): the national security admins and the holder only.
+        return "staff", _breakglass_scope(payload)
     if subject == "directive.issued":
         directive = payload.get("directive", {})
         return "staff", _among(directive.get("gouvernorat_codes"))
@@ -166,7 +215,8 @@ def _route(subject: str, payload: dict[str, Any]) -> tuple[str, Callable[[LiveCl
     if subject in ("notification.updated", "alert.issued"):
         area = payload.get("message", {}).get("area", {})
         if area.get("polygon"):
-            return "editors", lambda client: True
+            # Phase 9 §5.6: editors whose gouvernorat the polygon intersects (computed by notify), national always.
+            return "editors", _among(payload.get("gouvernorat_codes"), everywhere_when_empty=False)
         return "editors", _among(area.get("gouvernorat_codes"))
     return None
 

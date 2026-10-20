@@ -17,9 +17,11 @@ Lang = Literal["ar", "fr", "en"]
 CACHE_HEADER = "public, max-age=86400"
 
 
-def _localized(name_ar: str, name_fr: str, lang: Lang) -> str:
-    # English uses the official French transliteration.
-    return name_ar if lang == "ar" else name_fr
+def _localized(name_ar: str, name_fr: str, lang: Lang, name_en: str | None = None) -> str:
+    # English uses geo.gouvernorat.name_en; délégations keep the official French transliteration.
+    if lang == "ar":
+        return name_ar
+    return name_en or name_fr if lang == "en" else name_fr
 
 
 @router.get("/gouvernorats", response_model=list[GouvernoratOut])
@@ -41,9 +43,10 @@ async def list_gouvernorats(
         GouvernoratOut(
             code=g.code,
             iso_code=g.iso_code,
-            name=_localized(g.name_ar, g.name_fr, lang),
+            name=_localized(g.name_ar, g.name_fr, lang, g.name_en),
             name_ar=g.name_ar,
             name_fr=g.name_fr,
+            name_en=g.name_en,
             delegation_count=n,
         )
         for g, n in rows.all()

@@ -69,6 +69,10 @@ class AttachTarget {
   final ReportCategory category;
 }
 
+/// `lastError` of a report kept on the device because the anonymous quota was exhausted
+/// (the wire code of `ApiErrorCode.anonQuotaExhausted`).
+const anonQuotaExhaustedWire = 'anon_quota_exhausted';
+
 class QueuedReport {
   const QueuedReport(this.clientUuid, this.tempCode);
   final String clientUuid;
@@ -100,7 +104,13 @@ class ReportQueue {
   String newTempCode() =>
       'TMP-${List.generate(6, (_) => _alphabet[_random.nextInt(_alphabet.length)]).join()}';
 
-  Future<QueuedReport> enqueue(ReportDraft draft) async {
+  /// Saves [draft] with its temporary code. [blocked]: the anonymous quota of the installation
+  /// is known to be exhausted (phase 9 §3), so the report is kept as [ReportState.blocked] and
+  /// sent once the user signs in instead of being refused by the server now.
+  Future<QueuedReport> enqueue(
+    ReportDraft draft, {
+    bool blocked = false,
+  }) async {
     if (draft.attachments.length > MediaRules.maxFilesPerReport) {
       throw ArgumentError('too many attachments');
     }
@@ -156,6 +166,12 @@ class ReportQueue {
         category: draft.category.wire,
         payload: jsonEncode(payload),
         tempCode: tempCode,
+        state: blocked
+            ? const Value(ReportState.blocked)
+            : const Value.absent(),
+        lastError: blocked
+            ? const Value(anonQuotaExhaustedWire)
+            : const Value.absent(),
         createdAt: now,
         updatedAt: now,
       ),
