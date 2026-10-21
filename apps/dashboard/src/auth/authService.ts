@@ -29,6 +29,10 @@ function toAuthUser(user: User | null): AuthUser | null {
   }
 }
 
+// Set before the one sign-in again that a "mfa_required" answer triggers, cleared by a token that proves the second
+// factor; a second refusal in the same tab is shown instead of looping through the login page.
+const STEP_UP_KEY = "ehimaya.mfaStepUp";
+
 function safeReturnTo(state: unknown): string {
   const path = (state as { returnTo?: unknown } | undefined)?.returnTo;
   // Only same-origin absolute paths; never "//host" (open redirect).
@@ -126,9 +130,32 @@ export function createOidcAuthService({ issuer, clientId, origin = window.locati
       // Guard against double invocation (React StrictMode): the code can only be exchanged once.
       completing ??= manager.signinRedirectCallback().then((user) => {
         current = toAuthUser(user);
+        if (current?.identity.mfa) {
+          try {
+            window.sessionStorage.removeItem(STEP_UP_KEY);
+          } catch {
+            // storage unavailable: nothing to clear
+          }
+        }
         return safeReturnTo(user.state);
       });
       return completing;
+    },
+    rejected(reason) {
+      if (reason === "session_revoked") {
+        // Signed out elsewhere: forget the session; RequireAuth sends the user to the login page.
+        void manager.removeUser().then(() => emit(null));
+        return;
+      }
+      try {
+        if (window.sessionStorage.getItem(STEP_UP_KEY)) return;
+        window.sessionStorage.setItem(STEP_UP_KEY, "1");
+      } catch {
+        return;
+      }
+      // The token was issued while the OTP device was being set up (amr = pwd only): sign in again, with the code.
+      const returnTo = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+      void manager.signinRedirect({ state: { returnTo }, prompt: "login" });
     },
     async signOut() {
       const user = await manager.getUser();
