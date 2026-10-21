@@ -543,9 +543,9 @@ jobs:
       # Phase 10 §2.3: promtool from the pinned Prometheus image.
       - name: Alert rules (promtool check and unit tests)
         run: |
-          docker run --rm -v "$PWD/infra/monitoring:/m:ro" --entrypoint promtool prom/prometheus:v3.5.0 check config /m/prometheus.yml --syntax-only
-          docker run --rm -v "$PWD/infra/monitoring:/m:ro" --entrypoint promtool prom/prometheus:v3.5.0 check rules /m/alerts.yml
-          docker run --rm -v "$PWD/infra/monitoring:/m:ro" -w /m --entrypoint promtool prom/prometheus:v3.5.0 test rules alerts.test.yml
+          docker run --rm -v "$PWD/infra/monitoring:/m:ro" --entrypoint promtool prom/prometheus:v3.5.0@sha256:63805ebb8d2b3920190daf1cb14a60871b16fd38bed42b857a3182bc621f4996 check config /m/prometheus.yml --syntax-only
+          docker run --rm -v "$PWD/infra/monitoring:/m:ro" --entrypoint promtool prom/prometheus:v3.5.0@sha256:63805ebb8d2b3920190daf1cb14a60871b16fd38bed42b857a3182bc621f4996 check rules /m/alerts.yml
+          docker run --rm -v "$PWD/infra/monitoring:/m:ro" -w /m --entrypoint promtool prom/prometheus:v3.5.0@sha256:63805ebb8d2b3920190daf1cb14a60871b16fd38bed42b857a3182bc621f4996 test rules alerts.test.yml
 
   backup-drill:
     name: Backup · restore drill

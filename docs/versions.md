@@ -1,4 +1,4 @@
-# الإصدارات المثبتة (المراحل 1 إلى 9)
+# الإصدارات المثبتة (المراحل 1 إلى 10)
 
 تُحدَّث هذه القائمة مع كل مرحلة. تُعتمد الإصدارات الدقيقة أدناه في الكود والحاويات.
 
@@ -27,6 +27,8 @@
 | تثبيت حزم Python من `uv.lock` (مرحلة البناء فقط) | `ghcr.io/astral-sh/uv:0.11.32` | MIT / Apache-2.0 |
 | اختبار الحمل (خارج المنظومة) | `grafana/k6:2.3.0` | AGPL-3.0 |
 | فحص الثغرات في CI | `aquasecurity/trivy-action` 0.35.0 | Apache-2.0 |
+| المراقبة (المرحلة 10، ملف `monitoring` في الإنتاج) | `prom/prometheus:v3.5.0` و `prom/alertmanager:v0.28.1` و `prom/node-exporter:v1.9.1` (مقاييس النسخ الاحتياطي)، مثبتة بالبصمة | Apache-2.0 |
+| فحص الأمان الديناميكي (المرحلة 10، يدوي قبل الإصدار) | `ghcr.io/zaproxy/zaproxy:2.16.1` (يمكن تغييرها بـ `ZAP_IMAGE`، انظر `infra/security/zap/run.sh`) | Apache-2.0 |
 
 منذ المرحلة 5.5 كل صورة مثبتة بالبصمة في الـ Dockerfile وملفات compose (`image:tag@sha256:…`، الوسم للقراءة فقط)،
 و Dependabot يقترح التحديثات أسبوعيًا (`.github/dependabot.yml`).
@@ -164,7 +166,8 @@ Node.js 22 LTS و npm 10 أو أحدث. الحزم مثبتة بإصدارات �
 | vite / @vitejs/plugin-react | 8.3.4 / 6.1.2 |
 | typescript / typescript-eslint | 5.9.3 / 8.71.0 |
 | vitest / eslint | 5.0.5 / 10.12.0 |
-| @playwright/test (اختبار المتصفح) | 1.56.1 |
+| @playwright/test (اختبار المتصفح) | 1.64.1 |
+| @axe-core/playwright (المرحلة 10، فحص إمكانية الوصول WCAG 2.2 A/AA) | 4.13.0 (MPL-2.0) |
 | jssip (المرحلة 7، الهاتف الشبكي للمشغل، يُحمّل عند تفعيله فقط) | 3.13.8 (MIT) |
 | hls.js (المرحلة 6، بديل HLS عند تعذر WHEP، يُحمّل عند الحاجة فقط) | 1.7.3 (Apache-2.0) |
 | uplot (المرحلة 8، رسوم التحليلات على canvas، تُحمّل عند الحاجة فقط) | 1.6.32 (MIT) |
@@ -197,6 +200,18 @@ vite 8.3.4، typescript 5.9.3، vitest 5.0.5، eslint 10.12.0). البصمة SHA
 `postgres:17-bookworm` (حزم PostGIS و pgvector مبنية لـ 17، والترقية الكبرى تحتاج `pg_upgrade`) و `node:22-alpine`
 (النسخة طويلة الدعم المختبرة). ملف Dependabot يتجاهل الآن القفزات الكبرى لهذه الصور ولـ Keycloak. `firebase_messaging` 17
 يُبقي واجهة رمز FCM (`getToken`) حتى ينتقل الخادم إلى معرّفات التثبيت.
+
+إضافات المرحلة 10:
+
+| الأداة | الإصدار | الاستعمال |
+|---|---|---|
+| certifi (الخلفية والذكاء الاصطناعي والرؤية) | 2026.10.19 | ترقية بعد تدقيق التبعيات |
+| pip-audit (عبر `uvx`) | 2.9.0 | تدقيق ثغرات حزم Python في CI و ci-local |
+| cyclonedx-bom (`cyclonedx-py`) | 7.5.0 | قائمة مكونات SBOM لكل خدمة Python (ملفات CI، لا تُحفظ في المستودع) |
+| @cyclonedx/cyclonedx-npm | 6.0.1 | SBOM للوحة والبوابة |
+| promtool | من صورة Prometheus 3.5.0 | التحقق من قواعد التنبيه واختبارها |
+| PostgreSQL 16 + PostGIS + pgvector (حزم Ubuntu 24.04) | 16 | تمرين الاستعادة في CI فقط (عنقودان مؤقتان)؛ الإنتاج يبقى على 17 |
+| @playwright/test و @axe-core/playwright في البوابة | 1.64.1 / 4.13.0 | اختبارات المتصفح لإمكانية الوصول (أُضيفت للبوابة في هذه المرحلة) |
 
 ## أولوية التنصيب
 

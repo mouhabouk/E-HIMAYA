@@ -39,8 +39,12 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-mkdir -p "$ARCHIVE/wal" "$ARCHIVE/base"
-[ "$(id -u)" = 0 ] && chown -R postgres "$WORK"
+mkdir -p "$ARCHIVE/wal" "$ARCHIVE/base" "$WORK/bin"
+# The clusters run as `postgres` when started by root, and may not be allowed into the checkout (a private
+# directory, e.g. a CI worktree): they use copies of the two scripts.
+cp "$REPO/infra/postgres/ehimaya-archive-wal" "$HERE/restore.sh" "$WORK/bin/"
+chmod 755 "$WORK" "$WORK/bin" "$WORK/bin/ehimaya-archive-wal" "$WORK/bin/restore.sh"
+if [ "$(id -u)" = 0 ]; then chown -R postgres "$WORK"; fi
 
 step "1. primary cluster with WAL archiving"
 as_pg "$PG_BIN/initdb" -D "$DATA_A" -U postgres --auth=trust -E UTF8 --locale=C.UTF-8 >/dev/null
@@ -50,11 +54,21 @@ port = $PORT_A
 unix_socket_directories = '$WORK'
 wal_level = replica
 archive_mode = on
-archive_command = 'WAL_ARCHIVE_DIR=$ARCHIVE/wal $REPO/infra/postgres/ehimaya-archive-wal %p %f'
+archive_command = 'WAL_ARCHIVE_DIR=$ARCHIVE/wal $WORK/bin/ehimaya-archive-wal %p %f'
 archive_timeout = 60
 CONF
 as_pg "$PG_BIN/pg_ctl" -D "$DATA_A" -l "$WORK/primary.log" -w start >/dev/null
 "$PG_BIN/psql" -X -q -h 127.0.0.1 -p "$PORT_A" -U postgres -d postgres -c "CREATE DATABASE ehimaya"
+# Archiving must work before anything else, or pg_basebackup below would wait for it forever.
+wait_archived() {
+  i=0
+  until [ -f "$ARCHIVE/wal/$1" ]; do
+    i=$((i + 1))
+    [ "$i" -le "$2" ] || { tail -5 "$WORK/primary.log" >&2; fail "segment $1 not archived after $2 s"; }
+    sleep 1
+  done
+}
+wait_archived "$(psql_a -c "SELECT pg_walfile_name(pg_switch_wal())")" 60
 
 step "2. schema and first rows"
 if [ "${DRILL_MIGRATE:-1}" = 1 ]; then
@@ -90,19 +104,14 @@ sleep 1
 write_rows after_target
 marker_at=$(date +%s)
 SEGMENT=$(psql_a -c "SELECT pg_walfile_name(pg_switch_wal())")
-i=0
-until [ -f "$ARCHIVE/wal/$SEGMENT" ]; do
-  i=$((i + 1))
-  [ "$i" -le 300 ] || fail "segment $SEGMENT not archived after 300 s"
-  sleep 1
-done
+wait_archived "$SEGMENT" 300
 RPO=$(( $(date +%s) - marker_at ))
 echo "target $TARGET, segment $SEGMENT archived"
 as_pg "$PG_BIN/pg_ctl" -D "$DATA_A" -m fast stop >/dev/null
 
 step "5. restore at the target time"
 started=$(date +%s)
-as_pg env PATH="$PG_BIN:$PATH" "$HERE/restore.sh" "$ARCHIVE/base/drill" "$DATA_B" --target-time "$TARGET" --wal-dir "$ARCHIVE/wal"
+as_pg env PATH="$PG_BIN:$PATH" "$WORK/bin/restore.sh" "$ARCHIVE/base/drill" "$DATA_B" --target-time "$TARGET" --wal-dir "$ARCHIVE/wal"
 cat >> "$DATA_B/postgresql.auto.conf" <<CONF
 port = $PORT_B
 unix_socket_directories = '$WORK'
