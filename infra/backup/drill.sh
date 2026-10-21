@@ -59,8 +59,12 @@ as_pg "$PG_BIN/pg_ctl" -D "$DATA_A" -l "$WORK/primary.log" -w start >/dev/null
 step "2. schema and first rows"
 if [ "${DRILL_MIGRATE:-1}" = 1 ]; then
   for ext in postgis vector pgcrypto pg_trgm; do psql_a -c "CREATE EXTENSION IF NOT EXISTS $ext"; done
+  # The settings the API refuses to start without; throwaway values, the drill cluster is deleted at the end.
   (cd "$REPO/services/api" && DATABASE_URL="postgresql+asyncpg://postgres@127.0.0.1:$PORT_A/ehimaya" \
-    DB_RUNTIME_ROLE="" uv run --frozen alembic upgrade head >"$WORK/migrate.log" 2>&1) \
+    MIGRATION_DATABASE_URL="postgresql+asyncpg://postgres@127.0.0.1:$PORT_A/ehimaya" DB_RUNTIME_ROLE="" \
+    ANON_PSEUDONYM_SECRET="drill-$(head -c 24 /dev/urandom | od -An -tx1 | tr -d ' \n')" \
+    FIELD_ENCRYPTION_KEY="$(head -c 32 /dev/urandom | base64)" \
+    uv run --frozen alembic upgrade head >"$WORK/migrate.log" 2>&1) \
     || { cat "$WORK/migrate.log" >&2; fail "migrations"; }
   audit="INSERT INTO audit.log (actor, action, target, details) VALUES ('drill', 'drill.row', 'PHASE', '{}');"
 else
