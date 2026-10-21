@@ -102,7 +102,9 @@ class Profile(Base):
 
 
 class Consent(Base):
-    """Explicit acceptance of the privacy charter (FR-A-001), one row per accepted version."""
+    """Explicit acceptance of the privacy charter (FR-A-001), one row per accepted version; and, phase 10 §4.2, the
+    separate consent of a volunteer to share their location while ready (``purpose = volunteer_location``, with the
+    version of the location notice in ``charter_version``)."""
 
     __tablename__ = "consent"
     __table_args__ = {"schema": "identity"}
@@ -115,6 +117,8 @@ class Consent(Base):
     locale: Mapped[str] = mapped_column(Text)
     accepted_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     platform: Mapped[str | None] = mapped_column(Text)
+    purpose: Mapped[str] = mapped_column(Text, server_default="charter")
+    withdrawn_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
 class ErasureRequest(Base):

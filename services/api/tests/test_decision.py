@@ -216,6 +216,10 @@ async def ready_volunteer(
     )
     assert r.status_code == 200, r.text
     r = await client.post(
+        "/api/v1/me/consents", json={"purpose": "volunteer_location", "version": "1"}, headers=headers
+    )
+    assert r.status_code == 204, r.text
+    r = await client.post(
         "/api/v1/me/volunteer/readiness",
         json={"ready": True, "lat": location["lat"], "lon": location["lon"], "accuracy_m": 12, "hours": 4},
         headers=headers,

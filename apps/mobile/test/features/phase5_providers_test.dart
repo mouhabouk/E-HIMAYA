@@ -166,9 +166,44 @@ void main() {
                   : null,
             };
             return FakeResponse(200, json: volunteer);
+          case ('POST', '/api/v1/me/consents'):
+            volunteer = {...volunteer, 'location_consent': true};
+            return const FakeResponse(204);
+          case ('DELETE', '/api/v1/me/consents/volunteer_location'):
+            volunteer = {
+              ...volunteer,
+              'location_consent': false,
+              'ready': false,
+              'ready_until': null,
+            };
+            return const FakeResponse(204);
         }
         return const FakeResponse(404, json: {'detail': 'not_found'});
       });
+    });
+
+    test('location consent is recorded, read back and withdrawn', () async {
+      volunteer = volunteerJson(
+        ready: true,
+        readyUntil: '2026-10-19T18:00:00Z',
+      );
+      final c = await phase5Container(adapter, clock: () => now);
+      expect(
+        (await c.read(volunteerProvider.future))!.locationConsent,
+        isFalse,
+      );
+      await c.read(volunteerProvider.notifier).giveLocationConsent('fr');
+      expect(lastTo(adapter, 'POST', '/api/v1/me/consents')!.json, {
+        'purpose': 'volunteer_location',
+        'version': locationNoticeVersion,
+        'locale': 'fr',
+        'platform': 'android',
+      });
+      expect(c.read(volunteerProvider).value!.locationConsent, isTrue);
+      await c.read(volunteerProvider.notifier).withdrawLocationConsent();
+      final v = c.read(volunteerProvider).value!;
+      expect(v.locationConsent, isFalse);
+      expect(v.isReadyAt(now), isFalse);
     });
 
     test('while ready the position is sent; it stops at the end', () async {

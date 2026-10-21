@@ -26,6 +26,7 @@ String apiErrorMessage(AppLocalizations l10n, ApiErrorCode code) =>
       ApiErrorCode.outsidePeriod => l10n.errorOutsidePeriod,
       ApiErrorCode.notReady => l10n.errorNotReady,
       ApiErrorCode.locationRequired => l10n.errorLocationRequired,
+      ApiErrorCode.locationConsentRequired => l10n.errorLocationConsentRequired,
       ApiErrorCode.calloutClosed => l10n.errorCalloutClosed,
       ApiErrorCode.etaRequired => l10n.errorEtaRequired,
       ApiErrorCode.invalidTransition => l10n.errorInvalidTransition,

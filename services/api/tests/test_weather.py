@@ -350,7 +350,9 @@ async def test_public_weather_card_lists_weather_alerts(
     r = await client.post("/api/v1/staff/notifications", json=draft, headers=editor)
     assert r.status_code == 201, r.text
     message_id = r.json()["id"]
-    r = await client.post(f"/api/v1/staff/notifications/{message_id}/publish", headers=editor)
+    # Phase 10 §5: a second publisher publishes the alert (four eyes).
+    publisher = staff(["central_committee"], gouvernorat=None)
+    r = await client.post(f"/api/v1/staff/notifications/{message_id}/publish", headers=publisher)
     assert r.status_code == 200, r.text
     try:
         body = (await client.get("/api/v1/weather", params={"lat": TUNIS["lat"], "lon": TUNIS["lon"]})).json()

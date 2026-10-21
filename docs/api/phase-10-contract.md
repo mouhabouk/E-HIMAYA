@@ -173,10 +173,13 @@ only. CI validates the rules with `promtool check rules` and unit-tests them wit
 * `POST /api/v1/me/consents` `{"purpose": "volunteer_location", "version": "1"}` records it (idempotent) and
   answers `204`. `DELETE /api/v1/me/consents/volunteer_location` withdraws it: the stored position is dropped
   immediately and readiness ends.
-* `PUT /api/v1/me/volunteer/readiness` with a position, and `POST /api/v1/me/volunteer/location`, answer
-  **`409 location_consent_required`** while no consent is on record.
-* What staff see: `distance_m` in suggestions is rounded to 100 m (to 50 m under 500 m). The raw position is never
-  returned to staff.
+* `POST /api/v1/me/volunteer/readiness` with `ready: true`, and `PUT /api/v1/me/volunteer/location`, answer
+  **`409 location_consent_required`** while no consent is in force. The consent row keeps `withdrawn_at` when
+  withdrawn, so the privacy export shows both. The volunteer's own view (`GET /api/v1/me/volunteer`) gains
+  `location_consent: bool`.
+* What staff see: `distance_m` in suggestions is rounded to 100 m (to 50 m under 500 m), and the volunteer map
+  (`GET /api/v1/staff/volunteers/map`) shows positions rounded to 3 decimals (about 100 m). The raw position is
+  never returned to staff. The exact distance is still used to rank the candidates.
 * Mobile: before a volunteer first becomes ready, a dialog explains what is shared, with whom and for how long, and
   records the consent. Withdrawing it is a switch in the volunteer settings.
 

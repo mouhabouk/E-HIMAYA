@@ -215,7 +215,11 @@ async def accept_charter(request: Request, body: ConsentIn, reporter: CurrentRep
     if body.charter_version != get_settings().charter_version:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "unknown_charter_version")
     existing = await session.scalar(
-        select(Consent).where(Consent.user_id == reporter.user_id, Consent.charter_version == body.charter_version)
+        select(Consent).where(
+            Consent.user_id == reporter.user_id,
+            Consent.purpose == "charter",
+            Consent.charter_version == body.charter_version,
+        )
     )
     if existing is not None:
         return ConsentOut(charter_version=existing.charter_version, accepted_at=existing.accepted_at)

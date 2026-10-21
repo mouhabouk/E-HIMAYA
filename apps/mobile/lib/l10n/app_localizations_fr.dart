@@ -1209,6 +1209,32 @@ class AppLocalizationsFr extends AppLocalizations {
       'Votre position n’est partagée que pendant votre disponibilité, est effacée à sa fin et n’est jamais archivée.';
 
   @override
+  String get locationConsentTitle =>
+      'Partager votre position pendant votre disponibilité ?';
+
+  @override
+  String get locationConsentBody =>
+      'Pendant votre disponibilité, votre position est transmise à la Protection civile de votre gouvernorat pour qu’elle appelle les volontaires les plus proches d’un incident.\n\n• Qui la voit : les opérateurs de la Protection civile, sur une carte arrondie à environ 100 m ; les distances sont arrondies aussi.\n• Combien de temps : seulement pendant votre disponibilité. Elle est gardée en mémoire, effacée à la fin de la disponibilité et jamais archivée.\n• Vous pouvez retirer ce consentement à tout moment sur cet écran ; la disponibilité prend alors fin aussitôt.';
+
+  @override
+  String get locationConsentAccept => 'J’accepte';
+
+  @override
+  String get locationConsentSwitch =>
+      'Partager ma position pendant ma disponibilité';
+
+  @override
+  String get locationConsentSwitchOn =>
+      'Consentement donné. Le retirer met fin à la disponibilité et efface votre position.';
+
+  @override
+  String get locationConsentSwitchOff => 'Nécessaire pour être disponible.';
+
+  @override
+  String get locationConsentWithdrawn =>
+      'Consentement retiré : votre position est effacée.';
+
+  @override
   String get volunteerNoFix =>
       'Votre position n’a pas pu être déterminée. Réessayez à l’extérieur.';
 
@@ -1366,6 +1392,10 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get errorLocationRequired =>
       'Votre position est nécessaire pour être disponible.';
+
+  @override
+  String get errorLocationConsentRequired =>
+      'Acceptez de partager votre position avant d’être disponible.';
 
   @override
   String get errorCalloutClosed => 'Cet appel est clos.';

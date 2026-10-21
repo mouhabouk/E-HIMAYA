@@ -211,9 +211,12 @@ async def purge_consents(session: AsyncSession, settings: Settings, now: datetim
         session,
         "identity.consent",
         "id",
-        "accepted_at < :cutoff AND EXISTS (SELECT 1 FROM identity.consent newer WHERE newer.user_id = "
-        "identity.consent.user_id AND newer.charter_version <> identity.consent.charter_version "
-        "AND newer.accepted_at > identity.consent.accepted_at)",
+        # A superseded charter acceptance, or a withdrawn location consent (phase 10 §4.2), past the retention period.
+        "(purpose = 'charter' AND accepted_at < :cutoff AND EXISTS (SELECT 1 FROM identity.consent newer WHERE "
+        "newer.user_id = identity.consent.user_id AND newer.purpose = 'charter' "
+        "AND newer.charter_version <> identity.consent.charter_version "
+        "AND newer.accepted_at > identity.consent.accepted_at)) "
+        "OR (purpose = 'volunteer_location' AND withdrawn_at < :cutoff)",
         {"cutoff": cutoff},
     )
 
