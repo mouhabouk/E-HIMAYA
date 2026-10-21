@@ -92,6 +92,7 @@
     "invalidBody": "Ce certificat existe mais n’est pas valide aujourd’hui :",
     "reasons": {
       "rejected": "il a été rejeté par la Protection civile ;",
+      "revoked": "il a été révoqué par les auditeurs de la plateforme après son approbation ;",
       "not_approved": "il n’a pas encore été approuvé ;",
       "superseded": "un certificat plus récent l’a remplacé ;",
       "expired": "sa validité a expiré ;",
@@ -116,7 +117,11 @@
     "readError": "Le fichier {{name}} n’a pas pu être lu.",
     "keyTitle": "Vérifier la signature vous-même",
     "keyBody": "Algorithme de signature {{algorithm}}. Message signé : {{message}}. Clé publique (base64) :",
-    "keyNone": "Aucune clé publique n’est encore publiée."
+    "keyNone": "Aucune clé publique n’est encore publiée.",
+    "revokedOn": "Révoqué le {{date}}.",
+    "keyId": "Identifiant de la clé : {{id}}",
+    "disclaimerTitle": "Qu’est-ce que ce certificat ?",
+    "disclaimer": "Ce certificat est une auto-évaluation de sécurité enregistrée par l'établissement sur la plateforme e-Himaya et revue par ses auditeurs. Ce n'est pas un certificat officiel de l'Office national de la protection civile ni d'une autre administration, et il ne remplace pas les autorisations et visites prévues par la loi."
   },
   "myOrgs": {
     "title": "Mes établissements",
@@ -611,7 +616,8 @@
     "draft": "Brouillon",
     "submitted": "Soumis",
     "approved": "Approuvé",
-    "rejected": "Rejeté"
+    "rejected": "Rejeté",
+    "revoked": "Révoqué"
   },
   "status": {
     "received": "Reçu",
