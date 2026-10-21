@@ -69,6 +69,7 @@ class Volunteer {
     this.reviewReason,
     this.reviewedAt,
     this.readyUntil,
+    this.locationConsent = false,
   });
 
   final VolunteerStatus status;
@@ -84,6 +85,9 @@ class Volunteer {
   final bool ready;
   final DateTime? readyUntil;
   final int version;
+
+  /// The volunteer agreed to share their position while ready (phase 10 §4.2).
+  final bool locationConsent;
 
   /// Ready and not past `ready_until` (the server ends readiness at that time).
   bool isReadyAt(DateTime now) =>
@@ -117,6 +121,7 @@ class Volunteer {
     ready: json['ready'] == true,
     readyUntil: _date(json['ready_until']),
     version: (json['version'] as num?)?.toInt() ?? 1,
+    locationConsent: json['location_consent'] == true,
   );
 }
 

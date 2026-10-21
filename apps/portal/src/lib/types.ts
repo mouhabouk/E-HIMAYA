@@ -258,7 +258,7 @@ export interface OrgDocument {
 
 // ---------------------------------------------------------------- certificates (§7)
 
-export const CERTIFICATE_STATUSES = ["draft", "submitted", "approved", "rejected"] as const;
+export const CERTIFICATE_STATUSES = ["draft", "submitted", "approved", "rejected", "revoked"] as const;
 export type CertificateStatus = (typeof CERTIFICATE_STATUSES)[number];
 
 export interface Certificate {
@@ -290,6 +290,10 @@ export interface PublicCertificate {
   fingerprint: string;
   pdf_sha256: string | null;
   signature_valid: boolean | null;
+  /** Phase 10 §4.1: the signing key, and the revocation by an auditor (its reason is never public). */
+  key_id?: string | null;
+  revoked?: boolean;
+  revoked_at?: string | null;
 }
 
 // ---------------------------------------------------------------- reports (§8, phase 2 §3)

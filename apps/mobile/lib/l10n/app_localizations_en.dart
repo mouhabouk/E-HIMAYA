@@ -1202,6 +1202,30 @@ class AppLocalizationsEn extends AppLocalizations {
       'Your position is shared only while you are ready, is deleted when readiness ends and is never archived.';
 
   @override
+  String get locationConsentTitle => 'Share your position while ready?';
+
+  @override
+  String get locationConsentBody =>
+      'While you are ready, your position is sent to the Civil Protection of your gouvernorat so that it can call out the volunteers closest to an incident.\n\n• Who sees it: Civil Protection operators, on a map rounded to about 100 m; distances are rounded too.\n• How long: only while you are ready. It is kept in memory, deleted when readiness ends and never archived.\n• You can withdraw this consent at any time in this screen; readiness then ends at once.';
+
+  @override
+  String get locationConsentAccept => 'I agree';
+
+  @override
+  String get locationConsentSwitch => 'Share my position while ready';
+
+  @override
+  String get locationConsentSwitchOn =>
+      'Consent given. Turning it off ends readiness and deletes your position.';
+
+  @override
+  String get locationConsentSwitchOff => 'Required to be ready.';
+
+  @override
+  String get locationConsentWithdrawn =>
+      'Consent withdrawn: your position is deleted.';
+
+  @override
   String get volunteerNoFix =>
       'Your position could not be determined. Try again outdoors.';
 
@@ -1356,6 +1380,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorLocationRequired => 'Your position is needed to be ready.';
+
+  @override
+  String get errorLocationConsentRequired =>
+      'Agree to share your position before being ready.';
 
   @override
   String get errorCalloutClosed => 'This call-out is closed.';

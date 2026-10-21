@@ -58,6 +58,7 @@ export function fakeOpsApi(): OpsApi {
     deleteMessage: vi.fn(() => Promise.resolve(undefined)),
     messageAudience: vi.fn(() => Promise.resolve({ push: 0, sms: 0, email: 0 })),
     publishMessage: vi.fn(),
+    acknowledgeMessage: vi.fn(),
     cancelMessage: vi.fn(),
     activeAlerts: vi.fn(() => Promise.resolve([])),
     lookupUser: vi.fn(),

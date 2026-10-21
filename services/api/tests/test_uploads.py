@@ -1,3 +1,4 @@
+# covers: FR-A-041, NFR-07
 import hashlib
 import os
 import uuid

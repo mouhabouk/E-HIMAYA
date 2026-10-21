@@ -7,7 +7,7 @@ RUN CGO_ENABLED=0 GOBIN=/out go install -trimpath -ldflags '-d -w' \
  && /out/gosu --version
 
 # PostgreSQL 17 + PostGIS 3 + pgvector, from the official image and the PGDG repository it already configures.
-FROM postgres:18-bookworm@sha256:afc7e2d441324c0388fa80c3d24f733b4194a4eb7f47dd8ee2b08eb1a24a647c
+FROM postgres:17-bookworm@sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826
 
 COPY --from=gosu /out/gosu /usr/local/bin/gosu
 RUN gosu nobody true
@@ -17,4 +17,6 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 
 COPY ehimaya-roles.sh /usr/local/bin/ehimaya-roles.sh
+# WAL archiving (phase 10 §2.1), switched on by the production compose file.
+COPY ehimaya-archive-wal /usr/local/bin/ehimaya-archive-wal
 COPY initdb/ /docker-entrypoint-initdb.d/

@@ -20,9 +20,9 @@ concurrency:
 
 jobs:
   portal:
-    name: Portal · lint, types, tests, build
+    name: Portal · lint, types, tests, build, browser tests
     runs-on: ${{ vars.RUNNER || 'ubuntu-24.04' }}
-    timeout-minutes: 15
+    timeout-minutes: 25
     defaults:
       run:
         working-directory: apps/portal
@@ -49,3 +49,20 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      # Phase 10 §6.5: axe-core on the production bundle, Arabic and French.
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Browser tests
+        run: npm run test:e2e
+
+      - name: Upload browser test report
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: portal-playwright-report
+          path: |
+            apps/portal/playwright-report/
+            apps/portal/test-results/
+          retention-days: 7

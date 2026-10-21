@@ -117,15 +117,42 @@ async def message_audience(principal: Editor, session: Session, message_id: uuid
 
 
 @router.post("/notifications/{message_id}/publish", response_model=schemas.MessageOut)
-async def publish_message(principal: Editor, session: Session, message_id: uuid.UUID) -> schemas.MessageOut:
+async def publish_message(
+    principal: Editor, session: Session, message_id: uuid.UUID, body: schemas.PublishIn | None = None
+) -> schemas.MessageOut:
     message = await service.get_in_scope(session, principal, message_id, lock=True)
-    await service.publish(session, principal, message)
+    await service.publish(session, principal, message, body.emergency_reason if body else None)
     await audit.record(
         session,
         actor=audit.actor_of(principal),
         action="notification.publish",
         target=f"notification:{message_id}",
         details={"kind": message.kind, "severity": message.severity, "channels": list(message.channels)},
+    )
+    if message.single_reviewer:
+        await audit.record(
+            session,
+            actor=audit.actor_of(principal),
+            action="alert.publish_single",
+            target=f"notification:{message_id}",
+            reason=message.emergency_reason,
+        )
+    await service.announce(session, message)
+    out = await service.message_out(session, message)
+    await session.commit()
+    return out
+
+
+@router.post("/notifications/{message_id}/acknowledge", response_model=schemas.MessageOut)
+async def acknowledge_message(principal: Editor, session: Session, message_id: uuid.UUID) -> schemas.MessageOut:
+    """Second look at an alert its author published alone in an emergency (phase 10 §5.1)."""
+    message = await service.get_in_scope(session, principal, message_id, lock=True)
+    await service.acknowledge(session, principal, message)
+    await audit.record(
+        session,
+        actor=audit.actor_of(principal),
+        action="alert.review_acknowledge",
+        target=f"notification:{message_id}",
     )
     await service.announce(session, message)
     out = await service.message_out(session, message)

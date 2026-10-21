@@ -3,6 +3,10 @@
 A registered citizen declares skills and a period; staff review the application (human decision, e-mail
 to the volunteer). An approved volunteer within the period switches «جاهز»: the live position is shared
 with the dashboard through ``presence`` (Valkey) until readiness ends, and nowhere else.
+
+Phase 10 §4.2: sharing the position needs its own consent (``identity.consent``, purpose ``volunteer_location``),
+given in the app after reading what is shared, with whom and for how long; withdrawing it drops the position and ends
+readiness at once. Staff see a rounded distance (``coarse_distance``), never the position itself.
 """
 
 import base64
@@ -17,7 +21,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.events import emit
 from app.core.security import Principal
 from app.modules.audit import service as audit
-from app.modules.identity.models import Profile, phone_index
+from app.modules.identity.models import Consent, Profile, phone_index
 from app.modules.identity.service import Reporter
 from app.modules.notify import outbox, templates
 from app.modules.ops.models import Callout, CalloutTarget
@@ -28,6 +32,8 @@ from app.modules.volunteers.presence import Fix, get_presence
 
 MAX_PERIOD_DAYS = 730
 LOCATION_MIN_INTERVAL_S = 20
+# Version of the location notice the app shows before the consent (texts in the app's translations).
+LOCATION_NOTICE_VERSION = "1"
 TUNISIA_BBOX = (7.4, 30.0, 11.7, 37.6)
 
 _DECISIONS: dict[str, tuple[str, str]] = {
@@ -59,7 +65,7 @@ def in_period(volunteer: Volunteer, on: date) -> bool:
     return volunteer.period_from <= on and (volunteer.period_to is None or on <= volunteer.period_to)
 
 
-def volunteer_out(volunteer: Volunteer) -> schemas.VolunteerOut:
+def volunteer_out(volunteer: Volunteer, *, location_consent: bool = False) -> schemas.VolunteerOut:
     ready = is_ready(volunteer)
     return schemas.VolunteerOut(
         status=volunteer.status,
@@ -75,7 +81,14 @@ def volunteer_out(volunteer: Volunteer) -> schemas.VolunteerOut:
         ready=ready,
         ready_until=volunteer.ready_until if ready else None,
         version=volunteer.version,
+        location_consent=location_consent,
     )
+
+
+async def mine_out(session: AsyncSession, volunteer: Volunteer) -> schemas.VolunteerOut:
+    """The volunteer's own view, with whether their location consent is in force (phase 10 §4.2)."""
+    consent = await location_consent(session, volunteer.user_id)
+    return volunteer_out(volunteer, location_consent=consent is not None)
 
 
 def full_name(profile: Profile | None) -> str | None:
@@ -175,6 +188,68 @@ async def withdraw(session: AsyncSession, reporter: Reporter) -> Volunteer:
     return volunteer
 
 
+def coarse_distance(meters: float) -> int:
+    """Distance shown to staff: to 50 m under 500 m, to 100 m beyond (phase 10 §4.2)."""
+    step = 50 if meters < 500 else 100
+    return int(round(meters / step) * step)
+
+
+def coarse_point(lon: float, lat: float) -> list[float]:
+    """Map position shown to staff: rounded to about 100 m, never the raw fix (phase 10 §4.2)."""
+    return [round(lon, 3), round(lat, 3)]
+
+
+async def location_consent(session: AsyncSession, user_id: uuid.UUID) -> Consent | None:
+    """The location consent in force, if any."""
+    return await session.scalar(
+        select(Consent).where(
+            Consent.user_id == user_id, Consent.purpose == "volunteer_location", Consent.withdrawn_at.is_(None)
+        )
+    )
+
+
+async def _require_location_consent(session: AsyncSession, user_id: uuid.UUID) -> None:
+    if await location_consent(session, user_id) is None:
+        raise HTTPException(status.HTTP_409_CONFLICT, "location_consent_required")
+
+
+async def give_location_consent(
+    session: AsyncSession, reporter: Reporter, version: str, locale: str, platform: str
+) -> bool:
+    """Record the consent (idempotent). Returns False when one was already in force."""
+    user_id = require_registered(reporter).user_id
+    if version != LOCATION_NOTICE_VERSION:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "unknown_notice_version")
+    if await location_consent(session, user_id) is not None:
+        return False
+    session.add(
+        Consent(
+            user_id=user_id, purpose="volunteer_location", charter_version=version, locale=locale, platform=platform
+        )
+    )
+    await session.flush()
+    return True
+
+
+async def withdraw_location_consent(session: AsyncSession, reporter: Reporter) -> bool:
+    """Withdraw the consent: the position is dropped and readiness ends now. Returns False when none was in force."""
+    user_id = require_registered(reporter).user_id
+    consent = await location_consent(session, user_id)
+    if consent is None:
+        return False
+    consent.withdrawn_at = now()
+    volunteer = await session.get(Volunteer, user_id, with_for_update=True)
+    if volunteer is not None and volunteer.ready_until is not None:
+        await _end_readiness(session, volunteer)
+        volunteer.updated_at = now()
+        await session.flush()
+        await announce(session, volunteer)
+    else:
+        await get_presence().clear(user_id)
+    await session.flush()
+    return True
+
+
 async def set_readiness(session: AsyncSession, reporter: Reporter, body: schemas.ReadinessIn) -> Volunteer:
     volunteer = await get_mine(session, reporter, lock=True)
     if not body.ready:
@@ -182,6 +257,7 @@ async def set_readiness(session: AsyncSession, reporter: Reporter, body: schemas
     else:
         if volunteer.status != "approved":
             raise HTTPException(status.HTTP_409_CONFLICT, "volunteer_not_approved")
+        await _require_location_consent(session, volunteer.user_id)
         if not in_period(volunteer, now().date()):
             raise HTTPException(status.HTTP_409_CONFLICT, "outside_period")
         if body.lat is None or body.lon is None:
@@ -202,6 +278,7 @@ async def update_location(session: AsyncSession, reporter: Reporter, body: schem
     volunteer = await get_mine(session, reporter)
     if not is_ready(volunteer) or volunteer.ready_until is None:
         raise HTTPException(status.HTTP_409_CONFLICT, "not_ready")
+    await _require_location_consent(session, volunteer.user_id)
     await get_presence().put(volunteer.user_id, Fix(body.lat, body.lon, body.accuracy_m, now()), volunteer.ready_until)
 
 
@@ -385,7 +462,7 @@ async def map_features(
             features.append(
                 {
                     "type": "Feature",
-                    "geometry": {"type": "Point", "coordinates": [fix.lon, fix.lat]},
+                    "geometry": {"type": "Point", "coordinates": coarse_point(fix.lon, fix.lat)},
                     "properties": {
                         "id": str(volunteer.user_id),
                         "full_name": full_name(profile),

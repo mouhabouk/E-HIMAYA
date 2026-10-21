@@ -403,3 +403,15 @@ def test_worker_loops_and_clis_use_the_system_scope() -> None:
     for cli in sorted(root.glob("modules/*/cli.py")):
         source = cli.read_text()
         assert "get_sessionmaker(" not in source, cli
+
+
+async def test_evidence_is_read_by_staff_and_written_by_the_system_only(conn: AsyncConnection) -> None:
+    """Phase 10 §4.3: every staff scope reads the anchors; only the worker (system scope) seals them."""
+    insert = text(
+        "INSERT INTO evidence.anchor (seq, to_at, media_count, anchor_hash) "
+        "VALUES ((SELECT coalesce(max(seq), 0) + 1 FROM evidence.anchor), now(), 0, :h)"
+    )
+    await scoped(conn, BEJA_SCOPE)
+    await conn.scalar(text("SELECT count(*) FROM evidence.anchor"))
+    with pytest.raises(DBAPIError, match="row-level security"):
+        await conn.execute(insert, {"h": secrets.token_hex(32)})

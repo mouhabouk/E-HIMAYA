@@ -1,0 +1,148 @@
+# covers: NFR-13, NFR-12, NFR-01
+# promtool test rules alerts.test.yml
+rule_files:
+  - alerts.yml
+
+evaluation_interval: 1m
+
+tests:
+  - name: slow intake fires after 5 minutes, fast intake never
+    interval: 1m
+    input_series:
+      # Every report in the 5 s bucket: p95 ≈ 4.7 s.
+      - series: 'ehimaya_report_ingest_seconds_bucket{le="2.0",reporter_kind="anonymous"}'
+        values: "0+0x15"
+      - series: 'ehimaya_report_ingest_seconds_bucket{le="5.0",reporter_kind="anonymous"}'
+        values: "0+10x15"
+      - series: 'ehimaya_report_ingest_seconds_bucket{le="+Inf",reporter_kind="anonymous"}'
+        values: "0+10x15"
+    alert_rule_test:
+      - eval_time: 4m
+        alertname: ReportIntakeSlow
+        exp_alerts: []
+      - eval_time: 12m
+        alertname: ReportIntakeSlow
+        exp_alerts:
+          - exp_labels: {severity: critical}
+            exp_annotations:
+              runbook: docs/runbooks/incident-response.md
+              summary: "Report intake p95 above 2 s (4.85s)"
+
+  - name: intake errors
+    interval: 1m
+    input_series:
+      - series: 'ehimaya_http_server_errors_total{area="reports",job="api",instance="api:8000"}'
+        values: "0 0 0 1 2 3 4 5 6"
+      - series: 'ehimaya_http_server_errors_total{area="other",job="api",instance="api:8000"}'
+        values: "0+5x8"
+    alert_rule_test:
+      - eval_time: 2m
+        alertname: ReportIntakeErrors
+        exp_alerts: []
+      - eval_time: 8m
+        alertname: ReportIntakeErrors
+        exp_alerts:
+          - exp_labels: {severity: critical}
+            exp_annotations:
+              runbook: docs/runbooks/incident-response.md
+              summary: "Report intake answers 5xx errors"
+
+  - name: outbox backlog and notification failures
+    interval: 1m
+    input_series:
+      - series: 'ehimaya_outbox_oldest_age_seconds{outbox="events",job="worker",instance="worker:8000"}'
+        values: "0 60 400 460 520 580 640 700 760 820"
+      - series: 'ehimaya_outbox_oldest_age_seconds{outbox="notify",job="worker",instance="worker:8000"}'
+        values: "0x9"
+      - series: 'ehimaya_notify_failures_total{channel="sms",job="worker",instance="worker:8000"}'
+        values: "0+2x20"
+    alert_rule_test:
+      - eval_time: 9m
+        alertname: OutboxBacklog
+        exp_alerts:
+          - exp_labels: {severity: warning, outbox: events}
+            exp_annotations:
+              summary: "events outbox: oldest row waits for 13m 40s"
+      - eval_time: 15m
+        alertname: NotificationFailures
+        exp_alerts:
+          - exp_labels: {severity: warning, channel: sms}
+            exp_annotations:
+              summary: "30 sms sends failed in 15 min"
+
+  - name: degraded dependencies
+    interval: 1m
+    input_series:
+      - series: 'ehimaya_ratelimit_degraded{job="api",instance="api:8000"}'
+        values: "0 1 1 1 1"
+      - series: 'ehimaya_session_check_degraded_total{job="api",instance="api:8000"}'
+        values: "0 0 3 3"
+      - series: 'up{job="api",instance="api:8000"}'
+        values: "1 1 1 1 1 1"
+      - series: 'up{job="mediamtx",instance="mediamtx:9998"}'
+        values: "1 0 0 0 0 0"
+    alert_rule_test:
+      - eval_time: 4m
+        alertname: RateLimiterDegraded
+        exp_alerts:
+          - exp_labels: {severity: warning}
+            exp_annotations:
+              summary: "Valkey unreachable: the rate limiter uses per-process counters"
+      - eval_time: 3m
+        alertname: SessionCheckDegraded
+        exp_alerts:
+          - exp_labels: {severity: warning}
+            exp_annotations:
+              summary: "Session revocation checks skipped (Valkey unreachable): revoked sessions may still work"
+      - eval_time: 4m
+        alertname: InstanceDown
+        exp_alerts:
+          - exp_labels: {severity: warning, job: mediamtx, instance: "mediamtx:9998"}
+            exp_annotations:
+              summary: "mediamtx (mediamtx:9998) is not answering its metrics scrape"
+      - eval_time: 4m
+        alertname: ApiDown
+        exp_alerts: []
+
+  - name: no api at all
+    interval: 1m
+    input_series:
+      - series: 'up{job="api",instance="api:8000"}'
+        values: "0 0 0 0"
+    alert_rule_test:
+      - eval_time: 3m
+        alertname: ApiDown
+        exp_alerts:
+          - exp_labels: {severity: critical}
+            exp_annotations:
+              summary: "No API instance is up: citizens cannot send reports"
+
+  - name: backups
+    interval: 1m
+    input_series:
+      # At t=0 the newest segment is 60 s old and stops moving; the last base backup is 25 h old.
+      - series: 'ehimaya_backup_last_wal_timestamp_seconds{job="backup",instance="backup-metrics:9100"}'
+        values: "-60x20"
+      - series: 'ehimaya_backup_last_base_timestamp_seconds{job="backup",instance="backup-metrics:9100"}'
+        values: "-90000x200"
+    alert_rule_test:
+      - eval_time: 3m
+        alertname: WalArchiveLag
+        exp_alerts: []
+      - eval_time: 10m
+        alertname: WalArchiveLag
+        exp_alerts:
+          - exp_labels: {severity: critical, job: backup, instance: "backup-metrics:9100"}
+            exp_annotations:
+              runbook: docs/runbooks/backup-restore.md
+              summary: "No WAL segment archived for 11m 0s (RPO objective 5 min)"
+      - eval_time: 30m
+        alertname: BaseBackupMissing
+        exp_alerts: []
+      - eval_time: 190m
+        alertname: BaseBackupMissing
+        exp_alerts:
+          - exp_labels: {severity: critical, job: backup, instance: "backup-metrics:9100"}
+            exp_annotations:
+              runbook: docs/runbooks/backup-restore.md
+              summary: "Last base backup is 1d 4h 10m 0s old"

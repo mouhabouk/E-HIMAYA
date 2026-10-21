@@ -29,7 +29,6 @@ from datetime import UTC, datetime, timedelta
 from typing import Annotated, Any
 
 import structlog
-from anyio import to_thread
 from fastapi import APIRouter, Depends, Header, HTTPException
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import func, select
@@ -39,7 +38,7 @@ from app.core import metrics
 from app.core.config import get_settings
 from app.core.db import get_system_session
 from app.core.events import emit
-from app.core.security import Principal, get_token_verifier
+from app.core.security import Principal, authenticate
 from app.core.storage import ObjectStore, get_store
 from app.modules.ai import pipeline
 from app.modules.audit import service as audit
@@ -87,7 +86,7 @@ def _header(event: dict[str, Any], name: str) -> str | None:
 async def _bearer(event: dict[str, Any]) -> Principal | None:
     authorization = _header(event, "Authorization")
     if authorization and authorization.lower().startswith("bearer "):
-        return await to_thread.run_sync(get_token_verifier().verify, authorization[7:].strip())
+        return await authenticate(authorization[7:].strip())
     return None
 
 

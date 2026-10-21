@@ -1,3 +1,4 @@
+# covers: FR-B-002, FR-B-004, FR-B-005, FR-B-006, FR-B-007, FR-B-009, FR-A-080
 """Institutions (phase 4): card, membership, registers, documents, certificate, staff hub, reporting."""
 
 import base64
@@ -584,6 +585,108 @@ async def test_certificate_lifecycle(
     assert old["superseded"] is True and old["valid"] is False
     staff_org = (await client.get(f"/api/v1/staff/orgs/{org_id}", headers=auditor)).json()
     assert [c["status"] for c in staff_org["certificates"]] == ["approved", "approved"]
+
+
+async def _approved_certificate(
+    client: httpx.AsyncClient, user: User, staff: Staff, fake_store: FakeStore
+) -> dict[str, Any]:
+    admin = user()
+    org_id = await active_org(client, staff, admin)
+    await complete(client, admin, fake_store, org_id)
+    cert = (await client.post(f"/api/v1/orgs/{org_id}/certificate", headers=admin)).json()
+    await client.post(f"/api/v1/orgs/{org_id}/certificates/{cert['id']}/submit", headers=admin)
+    body = {"decision": "approve", "valid_until": (date.today() + timedelta(days=365)).isoformat()}
+    r = await client.post(f"/api/v1/staff/certificates/{cert['id']}/review", json=body, headers=staff(["org_auditor"]))
+    assert r.status_code == 200, r.text
+    return dict(r.json())
+
+
+async def test_certificate_revocation(
+    client: httpx.AsyncClient, user: User, staff: Staff, fake_store: FakeStore, signing_key: None, session: AsyncSession
+) -> None:
+    cert = await _approved_certificate(client, user, staff, fake_store)
+    revoke = f"/api/v1/staff/certificates/{cert['id']}/revoke"
+    auditor = staff(["org_auditor"])
+    assert (await client.post(revoke, json={"reason": "x"}, headers=staff(["operator"]))).status_code == 403
+    # Out of scope: another gouvernorat's auditor does not see it.
+    assert (
+        await client.post(revoke, json={"reason": "x"}, headers=staff(["org_auditor"], gouvernorat=11))
+    ).status_code == 404
+    r = await client.post(revoke, json={"reason": "  "}, headers=auditor)
+    assert (r.status_code, r.json()["detail"]) == (422, "reason_required")
+    r = await client.post(revoke, json={"reason": "Accordé par erreur: plan d'évacuation absent"}, headers=auditor)
+    assert r.status_code == 200, r.text
+    revoked = r.json()
+    assert revoked["status"] == "revoked" and revoked["revoked_at"] and revoked["revoke_reason"].startswith("Accordé")
+    assert f"certificates/{cert['id']}/revoked.pdf" in fake_store.objects
+    assert f"certificates/{cert['id']}/approved.pdf" in fake_store.deleted
+    r = await client.post(revoke, json={"reason": "encore"}, headers=auditor)
+    assert (r.status_code, r.json()["detail"]) == (409, "already_revoked")
+
+    public = (await client.get(f"/api/v1/public/certificates/{cert['code']}")).json()
+    assert public["status"] == "revoked" and public["revoked"] is True and public["valid"] is False
+    assert public["revoked_at"] and "reason" not in str(public) and "erreur" not in str(public)
+    assert await session.scalar(
+        text("SELECT count(*) FROM audit.log WHERE action = 'certificate.revoke' AND details->>'code' = :c"),
+        {"c": cert["code"]},
+    )
+    queue = (await client.get("/api/v1/staff/certificates", params={"status": "revoked"}, headers=auditor)).json()
+    assert any(item["id"] == cert["id"] for item in queue["items"])
+
+
+async def test_only_approved_certificates_can_be_revoked(
+    client: httpx.AsyncClient, user: User, staff: Staff, fake_store: FakeStore, signing_key: None
+) -> None:
+    admin = user()
+    org_id = await active_org(client, staff, admin)
+    await complete(client, admin, fake_store, org_id)
+    cert = (await client.post(f"/api/v1/orgs/{org_id}/certificate", headers=admin)).json()
+    await client.post(f"/api/v1/orgs/{org_id}/certificates/{cert['id']}/submit", headers=admin)
+    r = await client.post(
+        f"/api/v1/staff/certificates/{cert['id']}/revoke", json={"reason": "x"}, headers=staff(["org_auditor"])
+    )
+    assert (r.status_code, r.json()["detail"]) == (409, "invalid_transition")
+
+
+async def test_signing_key_rotation(
+    client: httpx.AsyncClient, user: User, staff: Staff, fake_store: FakeStore, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+
+    from app.modules.orgs import certificate
+
+    old_seed = os.urandom(32)
+    settings = get_settings()
+    monkeypatch.setattr(settings, "certificate_signing_key", SecretStr(base64.b64encode(old_seed).decode()))
+    cert = await _approved_certificate(client, user, staff, fake_store)
+    old_public = Ed25519PrivateKey.from_private_bytes(old_seed).public_key()
+    assert cert["key_id"] == certificate.key_id_of(old_public) and len(cert["key_id"]) == 16
+
+    # New key: the old certificate is invalid until the old public key is listed as a previous key.
+    monkeypatch.setattr(settings, "certificate_signing_key", SecretStr(base64.b64encode(os.urandom(32)).decode()))
+    public = (await client.get(f"/api/v1/public/certificates/{cert['code']}")).json()
+    assert public["signature_valid"] is False and public["valid"] is False
+    monkeypatch.setattr(settings, "certificate_previous_public_keys", [certificate.b64(old_public)])
+    public = (await client.get(f"/api/v1/public/certificates/{cert['code']}")).json()
+    assert public["signature_valid"] is True and public["valid"] is True and public["key_id"] == cert["key_id"]
+    key = (await client.get("/api/v1/public/certificate-key")).json()
+    assert key["key_id"] != cert["key_id"] and key["previous_keys"] == {cert["key_id"]: certificate.b64(old_public)}
+    assert set(key["disclaimer"]) == {"ar", "fr", "en"}
+    # A certificate naming an unknown key is not valid, even if another known key would verify it.
+    async with get_system_sessionmaker()() as s, s.begin():
+        await s.execute(
+            text("UPDATE org.certificate SET key_id = 'ffffffffffffffff' WHERE code = :c"), {"c": cert["code"]}
+        )
+    assert (await client.get(f"/api/v1/public/certificates/{cert['code']}")).json()["valid"] is False
+
+
+def test_certificate_says_it_is_not_official() -> None:
+    from app.modules.orgs import certificate
+
+    for lang, text_ in certificate.DISCLAIMER.items():
+        assert text_, lang
+    assert "ليست شهادة رسمية" in certificate.DISCLAIMER["ar"]
+    assert "not an official certificate" in certificate.DISCLAIMER["en"]
 
 
 async def test_approval_needs_the_signing_key(

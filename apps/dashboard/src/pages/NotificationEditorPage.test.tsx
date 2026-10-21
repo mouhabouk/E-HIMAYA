@@ -132,9 +132,59 @@ describe("NotificationEditorPage", () => {
     expect(confirm).toHaveTextContent("environ 12 appareils (notification), 3 numéros (SMS) et 4 adresses (e-mail)");
     expect(publishMessage).not.toHaveBeenCalled();
     fireEvent.click(within(confirm).getByRole("button", { name: "Confirmer la publication" }));
-    await waitFor(() => expect(publishMessage).toHaveBeenCalledWith("m-1"));
+    await waitFor(() => expect(publishMessage).toHaveBeenCalledWith("m-1", undefined));
     // The published message is no longer editable: the delivery view replaces the composer.
     expect(await screen.findByRole("heading", { name: "Distribution par canal" })).toBeInTheDocument();
+  });
+
+  it("lets the author publish an alert alone only with an emergency reason (four eyes)", async () => {
+    const draft = makeMessage();
+    const publishMessage = vi
+      .fn()
+      .mockRejectedValueOnce(new ApiError(403, "second_reviewer_required", "second_reviewer_required"))
+      .mockResolvedValueOnce({ ...draft, status: "published", version: 2, single_reviewer: true, emergency_reason: "Crue soudaine en cours" });
+    setup("/notifications/m-1", { ...EDITOR, realm_access: { roles: ["central_committee"] } }, {
+      message: vi.fn(() => Promise.resolve(draft)),
+      messageAudience: vi.fn(() => Promise.resolve({ push: 12, sms: 3, email: 4 })),
+      publishMessage,
+    });
+    const publish = await screen.findByRole("button", { name: "Publier l’alerte" });
+    await waitFor(() => expect(publish).toBeEnabled());
+    fireEvent.click(publish);
+    fireEvent.click(within(screen.getByRole("alert")).getByRole("button", { name: "Confirmer la publication" }));
+    expect(await screen.findByText(/principe des quatre yeux/)).toBeInTheDocument();
+    const alone = screen.getByRole("button", { name: "Publier seul (urgence)" });
+    expect(alone).toBeDisabled();
+    fireEvent.change(screen.getByLabelText("Motif de la publication seule (urgence)"), {
+      target: { value: "Crue soudaine en cours" },
+    });
+    fireEvent.click(alone);
+    await waitFor(() => expect(publishMessage).toHaveBeenLastCalledWith("m-1", "Crue soudaine en cours"));
+  });
+
+  it("shows an emergency publication and lets another publisher acknowledge it", async () => {
+    const published = makeMessage({
+      status: "published",
+      published_by: "Rim Editor",
+      published_at: "2026-10-19T08:05:00Z",
+      single_reviewer: true,
+      emergency_reason: "Crue soudaine en cours",
+    });
+    const acknowledgeMessage = vi.fn(() =>
+      Promise.resolve({ ...published, reviewed_by: "Second Regard", reviewed_at: "2026-10-19T09:00:00Z" }),
+    );
+    setup("/notifications/m-1", { ...EDITOR, realm_access: { roles: ["central_committee"] } }, {
+      message: vi.fn(() => Promise.resolve(published)),
+      acknowledgeMessage,
+    });
+    const section = (await screen.findByRole("heading", { name: "Publiée par un seul responsable (urgence)" })).closest(
+      "section",
+    ) as HTMLElement;
+    expect(within(section).getByText("Crue soudaine en cours")).toBeInTheDocument();
+    expect(within(section).getByText("En attente du regard d’un second responsable")).toBeInTheDocument();
+    fireEvent.click(within(section).getByRole("button", { name: "J’ai revu cette alerte" }));
+    await waitFor(() => expect(acknowledgeMessage).toHaveBeenCalledWith("m-1"));
+    expect(await within(section).findByText(/Second Regard/)).toBeInTheDocument();
   });
 
   it("asks to save before publishing an edited draft and reports a version conflict", async () => {

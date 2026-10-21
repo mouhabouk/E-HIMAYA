@@ -79,6 +79,8 @@ class ExportConsent(BaseModel):
     locale: str
     platform: str | None
     accepted_at: datetime
+    purpose: str = "charter"
+    withdrawn_at: datetime | None = None
 
 
 class ExportLocation(BaseModel):
@@ -335,7 +337,12 @@ async def export_my_data(
         profile=_profile(profile) if profile is not None else None,
         consents=[
             ExportConsent(
-                charter_version=c.charter_version, locale=c.locale, platform=c.platform, accepted_at=c.accepted_at
+                charter_version=c.charter_version,
+                locale=c.locale,
+                platform=c.platform,
+                accepted_at=c.accepted_at,
+                purpose=c.purpose,
+                withdrawn_at=c.withdrawn_at,
             )
             for c in consents
         ],

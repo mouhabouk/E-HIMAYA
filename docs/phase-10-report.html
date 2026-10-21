@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ء-حماية | تقرير المرحلة 10</title>
+<style>
+:root{--bg:#f7f8fa;--paper:#fff;--ink:#1b2430;--muted:#5b6675;--line:#dfe3e8;--accent:#b3261e;--accent2:#0b5cad;--ok:#1e7d3a;--warn:#a15c00;--chip:#eef1f5;--head:#f1f3f6}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1318;--paper:#161b22;--ink:#e6eaef;--muted:#9aa5b1;--line:#2a313b;--accent:#ff6b5e;--accent2:#5aa9ff;--ok:#5cc97a;--warn:#e0a24a;--chip:#1f2630;--head:#1c222b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Naskh Arabic","Segoe UI",Tahoma,Arial,sans-serif;line-height:1.75;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header.cover{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:10px;padding:28px 24px;margin-bottom:20px}
+header.cover h1{margin:0 0 6px;font-size:30px}
+header.cover .sub{color:var(--muted);margin:0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:16px}
+.meta div{background:var(--chip);border-radius:6px;padding:8px 12px;font-size:14px}
+.meta b{display:block;color:var(--muted);font-weight:600;font-size:12px}
+a{color:var(--accent2);text-decoration:none}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:20px}
+h2{margin-top:0;font-size:23px;border-bottom:2px solid var(--line);padding-bottom:8px}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:start;vertical-align:top}
+th{background:var(--head);font-weight:700;white-space:nowrap}
+td code,p code,li code{direction:ltr;unicode-bidi:isolate;background:var(--chip);padding:1px 5px;border-radius:4px;font-size:13px}
+.note{border-inline-start:4px solid var(--accent2);background:var(--chip);padding:10px 14px;border-radius:6px;margin:12px 0}
+.warn{border-inline-start:4px solid var(--warn)}
+.sim{display:inline-block;background:#f59e0b;color:#1f1300;font-weight:700;font-size:12px;padding:1px 8px;border-radius:999px;margin-inline-end:6px}
+.ltr{direction:ltr;unicode-bidi:isolate}
+ul,ol{padding-inline-start:22px}
+footer{color:var(--muted);text-align:center;font-size:13px}
+@media print{body{background:#fff}section,header.cover{border:none;break-inside:avoid-page}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="cover">
+  <h1>ء-حماية <span class="ltr">e-Himaya</span></h1>
+  <p class="sub">تقرير المرحلة 10: التحصين (الأمن، الصمود، حماية البيانات، الجودة)</p>
+  <div class="meta">
+    <div><b>التاريخ</b>2026-10-21</div>
+    <div><b>الفرع</b><span class="ltr">claude/project-thread-yzwsn2</span></div>
+    <div><b>الحالة</b>منجزة، بانتظار الدمج وموافقتك</div>
+    <div><b>المراجع</b><a href="api/phase-10-contract.md">عقد الواجهة البرمجية</a> · <a href="phase-10/review.md">المراجعة</a> · <a href="versions.md">الإصدارات</a></div>
+  </div>
+</header>
+
+<section>
+<h2>1. جدول التقدم</h2>
+<div class="tbl"><table>
+<tr><th>البند</th><th>ما أُنجز</th><th>التحقق</th><th>التقدم</th></tr>
+<tr><td>إصلاح دمج التبعيات</td><td>45 تحديثا آليا دُمجت في <span class="ltr">main</span> دون أي فحص. أُعيدت الصور الأساسية إلى الإصدارات المختبرة (<span class="ltr">python:3.12-slim</span> و<span class="ltr">postgres:17</span> و<span class="ltr">node:22</span>)، وبقي Keycloak 26.8 بعد التأكد من استيراد النطاقين. Dependabot صار يتجاهل القفزات الكبرى لهذه الصور.</td><td>بناء الصور واختبارات الخدمات</td><td>100%</td></tr>
+<tr><td>التحقق بخطوتين للموظفين</td><td>الخلفية ترفض رمز موظف لا يثبت الخطوة الثانية (<code>mfa_required</code>)، والإنتاج يرفض الإقلاع إذا عُطّل هذا الشرط. لوحة القيادة تعيد الدخول تلقائيا.</td><td class="ltr"><code>test_auth.py</code> <code>check_mfa.py</code></td><td>100%</td></tr>
+<tr><td>إلغاء الجلسات</td><td>تسجيل الخروج وتعطيل الحساب وتغيير الأدوار تُسقط الجلسة من الطلب التالي، لا عند انتهاء الرمز.</td><td class="ltr"><code>test_sessions.py</code> <code>test_accounts.py</code></td><td>100%</td></tr>
+<tr><td>إلغاء الشهادات وتدوير المفتاح</td><td>شهادة ملغاة تظهر للعموم «غير صالحة، ملغاة». المفتاح القديم يبقى صالحا للتحقق بعد التدوير. البوابة تشرح ما لا تعنيه الشهادة.</td><td class="ltr"><code>test_orgs.py</code></td><td>100%</td></tr>
+<tr><td>العينان الأربع في الإنذارات</td><td>منشئ الإنذار لا ينشره بنفسه. النشر الطارئ ممكن لكنه مسجل ويؤكده شخص آخر. فشل الإرسال يصل إلى شخص.</td><td class="ltr"><code>test_four_eyes.py</code></td><td>100%</td></tr>
+<tr><td>موافقة المتطوع على الموقع</td><td>لا يُرسل موقع المتطوع دون موافقة منفصلة. سحب الموافقة يحذف الموقع، وخريطة الموظفين تعرضه مقربا (نحو 100 م). في التطبيق: نافذة موافقة ومفتاح سحب.</td><td class="ltr"><code>test_location_consent.py</code> واختبارات التطبيق</td><td>100%</td></tr>
+<tr><td>ختم الأدلة</td><td>كل ساعة تُختم بصمات الوسائط ورأس سجل التدقيق في شجرة Merkle موقعة ومتسلسلة، مع طابع زمني خارجي اختياري (RFC 3161). لكل وسيط إثبات يمكن التحقق منه، والتلاعب ببصمة يُكشف.</td><td class="ltr"><code>test_evidence.py</code></td><td>100%</td></tr>
+<tr><td>النسخ الاحتياطي والاستعادة</td><td>أرشفة WAL كل دقيقة، ونسخة كاملة كل ليلة (7 نسخ). تمرين الاستعادة يبني عنقودين مؤقتين ويستعيد إلى لحظة محددة: الصفوف قبلها موجودة وبعدها غائبة، وسلسلة التدقيق سليمة.</td><td>التمرين محليا: <b>RTO ثانيتان، RPO ثانية</b> (الهدف ساعة و5 دقائق)</td><td>100%</td></tr>
+<tr><td>الصمود</td><td>بلاغ SOS يُقبل وValkey أو NATS أو الذكاء الاصطناعي متوقف، وعند تعطل Keycloak يبقى البلاغ المجهول يعمل والموظف يتلقى 503 لا 500.</td><td class="ltr"><code>test_resilience.py</code></td><td>100%</td></tr>
+<tr><td>المراقبة والتنبيهات</td><td>Prometheus وAlertmanager (ملف <code>monitoring</code>): 10 قواعد (بطء أو أخطاء استقبال البلاغات، تراكم الأحداث، فشل الإشعارات، تأخر الأرشفة، غياب النسخة الليلية...). كل تنبيه يشير إلى دليل التشغيل.</td><td>promtool: فحص القواعد واختبارها</td><td>100%</td></tr>
+<tr><td>الجودة</td><td>وثيقة OpenAPI ومخطط ERD يُولَّدان من الكود ويُفحص تطابقهما. جدول تتبع المتطلبات (81 متطلبا، 60 لها اختبار، والفجوات مذكورة). فحص الرخص وتدقيق الثغرات وقوائم SBOM.</td><td>كلها نظيفة</td><td>100%</td></tr>
+<tr><td>إمكانية الوصول</td><td>فحص axe (WCAG 2.2 A/AA) على 10 شاشات في لوحة القيادة و12 في البوابة، بالعربية والفرنسية.</td><td>0 مخالفة جسيمة أو حرجة (56 اختبار متصفح)</td><td>100%</td></tr>
+<tr><td>الوثائق</td><td>نموذج التهديدات STRIDE، تقييم ASVS المستوى 2، تقييم الأثر على حماية البيانات DPIA، سجل المعالجات (القانون 2004-63)، دليل الاستجابة للحوادث، دليل النسخ والاستعادة، سياسة إصدارات الواجهة.</td><td class="ltr"><code>docs/security</code> <code>docs/privacy</code> <code>docs/runbooks</code></td><td>100%</td></tr>
+<tr><td>التكامل المستمر</td><td>3 مهام جديدة (الجودة، تمرين الاستعادة، سلسلة التوريد) واختبارات متصفح البوابة، في GitHub Actions وفي <code>ci-local.sh</code>.</td><td>شُغّلت محليا، انظر القسم 4</td><td>100%</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>2. قرارات تحتاج علمك</h2>
+<div class="tbl"><table>
+<tr><th>القرار</th><th>السبب</th></tr>
+<tr><td>طول كلمة المرور 8 أحرف بقي كما هو</td><td>ASVS المستوى 2 يطلب 12 حرفا وفحص كلمات المرور المسربة. التغيير يمس كل المستعملين، فهو قرارك. مذكور في <code>docs/security/asvs-l2.md</code>.</td></tr>
+<tr><td>نقل الإشعارات عبر Firebase (Google)</td><td>رمز الجهاز ونص الإنذار فقط يغادران تونس. يلزم ترخيص من الهيئة الوطنية لحماية المعطيات الشخصية أو قناة محلية. مذكور في DPIA.</td></tr>
+<tr><td>مدة حفظ ملفات المتطوعين والمؤسسات وسجل التدقيق</td><td>لا توجد مهمة حذف لها بعد لأن المدة قرار قانوني. تحددونها مع المحامي، ثم نبرمجها.</td></tr>
+<tr><td>كل جواب من الخلفية لا يُخزَّن في المتصفح (<code>Cache-Control: no-store</code>)</td><td>ظهر أثناء تقييم ASVS: الأجوبة تحمل بيانات شخصية. نقطة النهاية التي تحدد تخزينها (الإنذارات العامة) تحتفظ به.</td></tr>
+<tr><td>أدلة التشغيل في <code>docs/runbooks</code></td><td><code>docs/procedures</code> هو مكتبة الإجراءات الميدانية التي يقرؤها المساعد، وتحليلها يرفض أي ملف آخر.</td></tr>
+<tr><td>تمرين الاستعادة في CI على PostgreSQL 16</td><td>متوفر مباشرة في Ubuntu 24.04 مع PostGIS وpgvector. الإنتاج يبقى على 17، والتمرين ربع السنوي على النسخ الحقيقية مكتوب في الدليل.</td></tr>
+<tr><td>صور المراقبة مثبتة بالبصمة</td><td>كبقية الصور منذ المرحلة 5.5.</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>3. حدود معروفة</h2>
+<ul>
+<li>GitHub Actions لا يعمل على المستودع الخاص، لذلك شُغّلت الفحوص بـ <code>scripts/ci-local.sh</code>. المهام التي تحتاج Docker (بناء الصور، Trivy، Keycloak الحقيقي، البنية الكاملة) لم تُشغَّل هنا لأن Docker غير متوفر في بيئة العمل؛ تعمل على جهازك أو على مشغل خاص.</li>
+<li>فحص ZAP الديناميكي يُشغَّل يدويا على بيئة تجريبية كاملة قبل الإصدار، ولم يُشغَّل بعد.</li>
+<li><span class="sim">محاكاة</span> اختبارات المتصفح تستعمل واجهة برمجية مزيفة ورمز دخول غير موقّع، كما في المراحل السابقة.</li>
+<li>هذا تقييم ذاتي للأمن. يلزم اختبار اختراق خارجي قبل الإطلاق الوطني.</li>
+<li>21 متطلبا من 81 ليس لها اختبار مسمى بعد؛ القائمة في <code>docs/traceability.md</code>.</li>
+</ul>
+</section>
+
+<section>
+<h2>4. الاختبارات</h2>
+<div class="tbl"><table>
+<tr><th>المكون</th><th>بعد المرحلة 9</th><th>الآن</th></tr>
+<tr><td>الخلفية</td><td>660</td><td>701 (وتجاوز 2 يحتاجان OpenSearch)، كلها خضراء على قاعدة جديدة</td></tr>
+<tr><td>لوحة التحكم</td><td>373</td><td>379، و32 اختبار متصفح (منها 20 لإمكانية الوصول)</td></tr>
+<tr><td>البوابة</td><td>82</td><td>83، و24 اختبار متصفح لإمكانية الوصول (جديدة)</td></tr>
+<tr><td>تطبيق الهاتف</td><td>310</td><td>332 (شُغّلت هنا هذه المرة، دون أي ملاحظة من المحلل)</td></tr>
+<tr><td>الخدمات</td><td>—</td><td>الإشعارات 109، الذكاء الاصطناعي 13، الرؤية 65</td></tr>
+</table></div>
+<p>شُغّل محليا: التنسيق والأنواع الصارمة، الترحيلات صعودا ونزولا ثم صعودا على قاعدة جديدة (حتى <code>0030</code>)، وتطابق OpenAPI وERD وجدول التتبع، وpromtool، وتمرين الاستعادة، وتدقيق الثغرات والرخص وSBOM.</p>
+<div class="tbl"><table>
+<tr><th>مهمة <code>ci-local</code></th><th>النتيجة</th></tr>
+<tr><td>quality، backup-drill، supply-chain</td><td>ناجحة (التمرين: RTO ثانيتان، RPO ثانية؛ 0 ثغرة؛ 0 رخصة مرفوضة)</td></tr>
+<tr><td>dashboard، portal، notify-sim، ai، vision</td><td>ناجحة</td></tr>
+<tr><td>mobile</td><td>ناجحة عند التشغيل المباشر بـ Flutter 3.47.7</td></tr>
+<tr><td>api</td><td>نفس الخطوات شُغّلت يدويا لأن المهمة تبني قاعدة البيانات في Docker: ناجحة</td></tr>
+<tr><td>مهام الصور وKeycloak والبنية الكاملة</td><td>لم تُشغَّل: Docker غير متوفر هنا</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>5. معايير القبول</h2>
+<div class="tbl"><table>
+<tr><th>#</th><th>المعيار</th><th>الاختبار</th><th>الحالة</th></tr>
+<tr><td>1</td><td>رمز موظف دون الخطوة الثانية مرفوض، والمواطن غير متأثر</td><td class="ltr"><code>test_auth.py::test_staff_mfa_*</code></td><td>✓</td></tr>
+<tr><td>2</td><td>Keycloak 26.8 الحقيقي يضع الخطوة الثانية في الرمز</td><td class="ltr"><code>infra/keycloak/check_mfa.py</code></td><td>يحتاج Docker (مهمة keycloak-realms)</td></tr>
+<tr><td>3</td><td>جلسة ملغاة مرفوضة، ورمز لاحق يعمل</td><td class="ltr"><code>test_sessions.py</code></td><td>✓</td></tr>
+<tr><td>4</td><td>تعطيل الحساب أو تغيير أدواره يلغي جلساته</td><td class="ltr"><code>test_accounts.py</code></td><td>✓</td></tr>
+<tr><td>5</td><td>تمرين الاستعادة إلى لحظة محددة مع سلسلة تدقيق سليمة</td><td class="ltr"><code>infra/backup/drill.sh</code></td><td>✓</td></tr>
+<tr><td>6</td><td>SOS مقبول وValkey وNATS والذكاء الاصطناعي متوقفة</td><td class="ltr"><code>test_resilience.py</code></td><td>✓</td></tr>
+<tr><td>7</td><td>قواعد التنبيه صحيحة ومختبرة</td><td class="ltr"><code>promtool check/test rules</code></td><td>✓</td></tr>
+<tr><td>8</td><td>شهادة ملغاة غير صالحة للعموم، والمفتاح القديم يتحقق بعد التدوير</td><td class="ltr"><code>test_orgs.py</code></td><td>✓</td></tr>
+<tr><td>9</td><td>الموقع دون موافقة: 409، والسحب يحذفه، والمسافة مقربة</td><td class="ltr"><code>test_location_consent.py</code></td><td>✓</td></tr>
+<tr><td>10</td><td>الأختام متسلسلة وقابلة للتحقق، والتلاعب يُكشف</td><td class="ltr"><code>test_evidence.py</code></td><td>✓</td></tr>
+<tr><td>11</td><td>منشئ الإنذار لا ينشره؛ النشر الطارئ مسجل ويؤكده آخر</td><td class="ltr"><code>test_four_eyes.py</code></td><td>✓</td></tr>
+<tr><td>12</td><td>فشل الإرسال يرفع <code>alert.delivery_degraded</code></td><td class="ltr"><code>test_four_eyes.py</code></td><td>✓</td></tr>
+<tr><td>13</td><td>OpenAPI وERD محدّثان</td><td>خطوات التطابق</td><td>✓</td></tr>
+<tr><td>14</td><td>لا مخالفة جسيمة أو حرجة في إمكانية الوصول</td><td>اختبارات المتصفح للوحة والبوابة</td><td>✓</td></tr>
+<tr><td>15</td><td>تدقيق الثغرات نظيف</td><td>مهمة سلسلة التوريد</td><td>✓</td></tr>
+<tr><td>16</td><td>الصور الأربع تُبنى على الإصدارات المختبرة</td><td>مهام الصور</td><td>يحتاج Docker</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>6. الخطوة التالية</h2>
+<p>بعد موافقتك على هذه المرحلة: العودة إلى تدريب نموذج كشف الحرائق والدخان من الملفات في <span class="ltr">D:\E-HIMAYA</span> على جهازك، كما اتفقنا.</p>
+<p class="note warn">إذا كان المستودع ما زال عاما، يُرجى جعله خاصا.</p>
+</section>
+
+<footer>ء-حماية · تقرير المرحلة 10</footer>
+</div>
+</body>
+</html>

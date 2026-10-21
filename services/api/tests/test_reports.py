@@ -1,3 +1,4 @@
+# covers: FR-A-040, FR-A-042, FR-A-046, BR-01, BR-04, UC-01, UC-02
 import re
 from datetime import UTC, datetime, timedelta
 from itertools import pairwise

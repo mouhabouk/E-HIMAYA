@@ -5,6 +5,9 @@ accounts of g only (403 ``out_of_scope``) and grants the operational roles only 
 national one manages every gouvernorat and may also grant central_committee and org_auditor; the technical roles are
 granted only by a national ``security_admin``. Nobody edits their own account. Every change is written to
 ``access.account_admin_log`` and to the audit log with the account's gouvernorat.
+
+Disabling an account, changing its roles, resetting its credentials or signing it out also revokes the access tokens
+it already holds (phase 10 §1.2): they stop at the next request instead of when they expire.
 """
 
 import uuid
@@ -15,6 +18,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core import sessions
 from app.core.access import Action, Ctx, authorize, require
 from app.core.db import get_session
 from app.core.security import REALM_ROLES, Principal, Realm, Role, require_roles
@@ -269,6 +273,8 @@ async def update_account(
     if details:
         await _log(session, principal, "account.update", account, details)
         await session.commit()
+        if "enabled" in details or "added" in details:
+            await sessions.revoke(account.id)
     return account_out(account)
 
 
@@ -278,3 +284,14 @@ async def reset_credentials(principal: Admin, session: Session, account_id: uuid
     await _call(directory().reset_credentials(account.id))
     await _log(session, principal, "account.reset", account, {})
     await session.commit()
+    await sessions.revoke(account.id)
+
+
+@router.post("/{account_id}/sign-out", status_code=status.HTTP_204_NO_CONTENT)
+async def sign_out(principal: Admin, session: Session, account_id: uuid.UUID) -> None:
+    """End every session of the account now: Keycloak sessions and the access tokens already issued."""
+    account = await _visible_account(session, principal, str(account_id))
+    await _call(directory().sign_out(account.id))
+    await _log(session, principal, "account.sign_out", account, {})
+    await session.commit()
+    await sessions.revoke(account.id)

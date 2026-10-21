@@ -6,6 +6,9 @@
 /** Machine codes the dashboard knows how to translate (`errors.<code>` in the i18n files). */
 export const ERROR_CODES = [
   "authentication_required",
+  // Phase 10 §1: the token does not prove a second factor, or its session was revoked.
+  "mfa_required",
+  "session_revoked",
   "account_suspended",
   "forbidden",
   "no_scope",
@@ -35,6 +38,8 @@ export const ERROR_CODES = [
   "level_not_allowed",
   "out_of_scope",
   "already_acknowledged",
+  // Phase 10 §5.1: an alert is published by a second person (or alone with an emergency reason).
+  "second_reviewer_required",
   "unit_in_use",
   "label_taken",
   "resource_in_history",
@@ -226,6 +231,11 @@ export interface TokenSource {
   getAccessToken(): string | null;
   /** Renew the access token; resolves with the new token or null when renewal is impossible. */
   renew(): Promise<string | null>;
+  /**
+   * The API refused the session itself (phase 10 §1): `mfa_required` (sign in again with the second factor) or
+   * `session_revoked` (signed out by an administrator or from another device). Renewing the token cannot help.
+   */
+  rejected?(reason: "mfa_required" | "session_revoked"): void;
 }
 
 export interface ApiClient {
@@ -299,8 +309,13 @@ export function createApiClient(
     const url = buildUrl(baseUrl, path, options.query);
     let response = await send(url, options, tokens.getAccessToken());
     if (response.status === 401 && !options.anonymous) {
-      const renewed = await tokens.renew().catch(() => null);
-      if (renewed) response = await send(url, options, renewed);
+      const detail = (await readBody(response.clone()))?.detail;
+      if (detail === "mfa_required" || detail === "session_revoked") {
+        tokens.rejected?.(detail);
+      } else {
+        const renewed = await tokens.renew().catch(() => null);
+        if (renewed) response = await send(url, options, renewed);
+      }
     }
     if (!response.ok) {
       const body = await readBody(response);

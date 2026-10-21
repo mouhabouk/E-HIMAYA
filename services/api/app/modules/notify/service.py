@@ -27,6 +27,8 @@ from app.modules.notify.models import Dispatch, Message
 from app.modules.ops.levels import levels_of
 from app.modules.ops.models import OpLevel
 from app.modules.reports.domain import LAT_MAX, LAT_MIN, LON_MAX, LON_MIN
+from app.modules.settings import domain as settings_domain
+from app.modules.settings import service as settings_service
 
 MAX_ALERT_DAYS = 7
 MAX_POLYGON_POINTS = 500
@@ -195,6 +197,11 @@ async def message_out(session: AsyncSession, message: Message) -> schemas.Messag
         published_at=message.published_at,
         cancelled_at=message.cancelled_at,
         version=message.version,
+        updated_by=message.updated_by_name,
+        single_reviewer=message.single_reviewer,
+        emergency_reason=message.emergency_reason,
+        reviewed_by=message.reviewed_by_name,
+        reviewed_at=message.reviewed_at,
         stats={j.channel: schemas.ChannelStats(status=j.status, sent=j.sent, failed=j.failed) for j in jobs},
     )
 
@@ -328,6 +335,7 @@ async def update(session: AsyncSession, principal: Principal, message: Message, 
         raise HTTPException(status.HTTP_409_CONFLICT, "version_conflict")
     await _apply(session, message, body)
     message.version += 1
+    message.updated_by, message.updated_by_name = audit.actor_of(principal), audit.name_of(principal)
     await session.flush()
     await check_scope(session, principal, message)
     await session.refresh(message)
@@ -354,7 +362,32 @@ async def _targets_disaster(session: AsyncSession, message: Message) -> bool:
     return not codes or bool(codes & disaster)
 
 
-async def publish(session: AsyncSession, principal: Principal, message: Message) -> None:
+#: Shortest emergency reason that lets the author of an alert publish it alone (phase 10 §5.1).
+EMERGENCY_REASON_MIN = 10
+
+
+async def _four_eyes(
+    session: AsyncSession, principal: Principal, message: Message, emergency_reason: str | None
+) -> str | None:
+    """The emergency reason to record when the author publishes alone, None when a second person publishes.
+
+    Raises ``403 second_reviewer_required`` when the publisher wrote or last edited the alert and gave no reason."""
+    if message.kind != "alert" or not await settings_service.get(session, settings_domain.ALERTS_FOUR_EYES):
+        return None
+    actor = audit.actor_of(principal)
+    if actor not in (message.created_by, message.updated_by):
+        return None
+    reason = (emergency_reason or "").strip()
+    if not reason:
+        raise _forbid("second_reviewer_required")
+    if len(reason) < EMERGENCY_REASON_MIN:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "reason_required")
+    return reason
+
+
+async def publish(
+    session: AsyncSession, principal: Principal, message: Message, emergency_reason: str | None = None
+) -> None:
     if not can_publish(principal, message.kind):
         raise _forbid()
     if message.status != "draft":
@@ -365,6 +398,9 @@ async def publish(session: AsyncSession, principal: Principal, message: Message)
         raise HTTPException(status.HTTP_409_CONFLICT, "suspended_by_level")
     if message.kind == "alert" and (message.expires_at is None or message.expires_at <= _now()):
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "invalid_expiry")
+    single = await _four_eyes(session, principal, message, emergency_reason)
+    if single is not None:
+        message.single_reviewer, message.emergency_reason = True, single
     message.status, message.published_at = "published", _now()
     message.published_by, message.published_by_name = audit.actor_of(principal), audit.name_of(principal)
     message.version += 1
@@ -373,11 +409,27 @@ async def publish(session: AsyncSession, principal: Principal, message: Message)
     await session.flush()
     if message.kind == "alert":
         out = await message_out(session, message)
-        await emit(
-            session,
-            "alert.issued",
-            {"message": out.model_dump(mode="json"), "gouvernorat_codes": await area_codes(session, message)},
-        )
+        payload = {"message": out.model_dump(mode="json"), "gouvernorat_codes": await area_codes(session, message)}
+        await emit(session, "alert.issued", payload)
+        if message.single_reviewer:
+            # Published alone in an emergency: a second publisher looks at it afterwards.
+            await emit(session, "alert.review_needed", payload)
+
+
+async def acknowledge(session: AsyncSession, principal: Principal, message: Message) -> None:
+    """A second publisher has looked at an alert published alone under the emergency override (phase 10 §5.1)."""
+    if not can_publish(principal, message.kind):
+        raise _forbid()
+    await check_scope(session, principal, message)
+    if not message.single_reviewer:
+        raise HTTPException(status.HTTP_409_CONFLICT, "invalid_transition")
+    if message.reviewed_at is not None:
+        raise HTTPException(status.HTTP_409_CONFLICT, "already_acknowledged")
+    if audit.actor_of(principal) in (message.published_by, message.created_by, message.updated_by):
+        raise _forbid("second_reviewer_required")
+    message.reviewed_by, message.reviewed_by_name = audit.actor_of(principal), audit.name_of(principal)
+    message.reviewed_at = _now()
+    await session.flush()
 
 
 async def cancel(session: AsyncSession, principal: Principal, message: Message) -> None:

@@ -26,7 +26,7 @@ ORG_READ_ROLES = (*READ_ROLES, Role.ORG_AUDITOR)
 OrgReader = Annotated[Principal, Depends(require_roles(*ORG_READ_ROLES))]
 Auditor = Annotated[Principal, Depends(require_roles(Role.ORG_AUDITOR))]
 Session = Annotated[AsyncSession, Depends(get_session)]
-CertificateState = Literal["none", "draft", "submitted", "approved", "rejected", "expired"]
+CertificateState = Literal["none", "draft", "submitted", "approved", "rejected", "revoked", "expired"]
 
 
 def _csv[E: (OrgStatus, OrgKind)](raw: str | None, enum: type[E], code: str) -> list[str]:
@@ -199,7 +199,7 @@ async def review_org(
 async def certificate_queue(
     principal: OrgReader,
     session: Session,
-    status_: Annotated[Literal["submitted", "approved", "rejected"], Query(alias="status")] = "submitted",
+    status_: Annotated[Literal["submitted", "approved", "rejected", "revoked"], Query(alias="status")] = "submitted",
     limit: Annotated[int, Query(ge=1, le=200)] = 50,
     cursor: str | None = None,
 ) -> schemas.CertificateQueuePage:
@@ -224,6 +224,32 @@ async def review_certificate(
         target=f"org:{org.id}",
         reason=cert.review_reason,
         details={"code": cert.code, "decision": body.decision, "valid_until": str(cert.valid_until or "")},
+    )
+    await certificate.certificate_event(session, cert)
+    await service.org_event(session, org.id)
+    await session.commit()
+    await delete_objects(*stale)
+    return certificate.certificate_out(cert)
+
+
+@router.post("/certificates/{cert_id}/revoke", response_model=schemas.CertificateOut)
+async def revoke_certificate(
+    principal: Auditor, session: Session, cert_id: uuid.UUID, body: schemas.CertificateRevokeIn
+) -> schemas.CertificateOut:
+    """Revoke an approved certificate (phase 10 §4.1): the public verification answers ``valid: false`` at once."""
+    cert = await session.get(Certificate, cert_id, with_for_update=True)
+    org = await session.get(Organization, cert.org_id) if cert is not None else None
+    if cert is None or org is None or not service.in_scope(principal, org) or cert.status == "draft":
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
+    actor = actor_of(principal)
+    stale = await certificate.revoke(session, cert, body.reason, actor)
+    await audit.record(
+        session,
+        actor=actor,
+        action="certificate.revoke",
+        target=f"org:{org.id}",
+        reason=cert.revoke_reason,
+        details={"code": cert.code},
     )
     await certificate.certificate_event(session, cert)
     await service.org_event(session, org.id)

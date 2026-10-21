@@ -37,6 +37,9 @@ class Settings(BaseSettings):
     # from inside the cluster (e.g. issuer http://localhost:8080, internal http://keycloak:8080).
     oidc_jwks_base_url: str | None = None
     oidc_audience: str = "ehimaya-api"
+    # A staff-realm token must prove a second factor in its ``amr`` claim (otp, hwk or mfa), phase 10 §1.1.
+    # Turn off only for a staff realm whose flow does not set authentication references yet.
+    staff_mfa_required: bool = True
 
     anon_pseudonym_secret: SecretStr = Field(min_length=32)
     # AES-256-GCM key for field-level encryption (personal data at rest): base64 of 32 random bytes. It is key
@@ -87,6 +90,15 @@ class Settings(BaseSettings):
     # Ed25519 private key (base64 of the 32-byte seed) signing approved safety certificates (FR-B-008).
     # Without it certificates can be generated and submitted but not approved.
     certificate_signing_key: SecretStr | None = None
+    # Key rotation (phase 10 §4.1): comma-separated base64 raw public keys of earlier signing keys. Certificates they
+    # signed stay verifiable; nothing new is signed with them.
+    certificate_previous_public_keys: Annotated[list[str], NoDecode] = Field(default_factory=list)
+    # Evidence anchoring (phase 10 §4.3): Ed25519 key (base64 seed) signing the hourly anchors. Unset: the
+    # certificate key signs them (with a warning); neither: anchors are sealed unsigned.
+    evidence_signing_key: SecretStr | None = None
+    # Optional RFC 3161 time-stamping authority asked to time-stamp each anchor hash. Its failures never block sealing.
+    tsa_url: str | None = None
+    tsa_timeout_s: float = Field(default=10.0, gt=0, le=60)
 
     # Notification channels (phase 5). Each one is optional: without its settings the channel is recorded
     # as "skipped" and the other channels still go out.
@@ -369,6 +381,9 @@ class Settings(BaseSettings):
             if self.telephony_sim_token is not None:
                 # SIMULATION: the call simulator checks never run in production.
                 problems.append("TELEPHONY_SIM_TOKEN must be empty (simulation only)")
+            if not self.staff_mfa_required:
+                # Phase 10 §1.1: staff accounts always prove a second factor in production.
+                problems.append("STAFF_MFA_REQUIRED must be true")
             if self.notify_real_send and not (self.notify_real_send_approval_ref or "").strip():
                 # Real alert sending needs a formal approval (phase 9 §7.4).
                 problems.append("NOTIFY_REAL_SEND=true requires NOTIFY_REAL_SEND_APPROVAL_REF")
@@ -384,17 +399,18 @@ class Settings(BaseSettings):
                 raise ValueError("FIELD_ENCRYPTION_ACTIVE_VERSION names a key version that is not configured")
         return self
 
-    @field_validator("certificate_signing_key")
+    @field_validator("certificate_signing_key", "evidence_signing_key")
     @classmethod
-    def _check_signing_key(cls, value: SecretStr | None) -> SecretStr | None:
+    def _check_signing_key(cls, value: SecretStr | None, info: ValidationInfo) -> SecretStr | None:
         if value is None:
             return None
+        name = (info.field_name or "").upper()
         try:
             raw = base64.b64decode(value.get_secret_value(), validate=True)
         except binascii.Error as exc:
-            raise ValueError("CERTIFICATE_SIGNING_KEY must be base64 (openssl rand -base64 32)") from exc
+            raise ValueError(f"{name} must be base64 (openssl rand -base64 32)") from exc
         if len(raw) != 32:
-            raise ValueError("CERTIFICATE_SIGNING_KEY must decode to 32 bytes (openssl rand -base64 32)")
+            raise ValueError(f"{name} must decode to 32 bytes (openssl rand -base64 32)")
         return value
 
     @field_validator(
@@ -403,6 +419,8 @@ class Settings(BaseSettings):
         "metrics_token",
         "tusd_hook_secret",
         "certificate_signing_key",
+        "evidence_signing_key",
+        "tsa_url",
         "field_encryption_keys",
         "field_encryption_active_version",
         "fcm_service_account",
@@ -500,6 +518,13 @@ class Settings(BaseSettings):
     def _split_csv(cls, value: object) -> object:
         if isinstance(value, str):
             return [item.strip().rstrip("/") for item in value.split(",") if item.strip()]
+        return value
+
+    @field_validator("certificate_previous_public_keys", mode="before")
+    @classmethod
+    def _split_keys(cls, value: object) -> object:
+        if isinstance(value, str):
+            return [item.strip() for item in value.split(",") if item.strip()]
         return value
 
     @property

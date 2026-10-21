@@ -13,6 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from app.core import metrics
 from app.core.access import ApiError
 from app.core.config import get_settings
 from app.core.db import dispose_engine, get_system_sessionmaker
@@ -31,6 +32,8 @@ from app.modules.audit.router import router as audit_router
 from app.modules.content.router import router as content_router
 from app.modules.decision.procedures import procedures_forever
 from app.modules.decision.router import router as decision_router
+from app.modules.evidence.router import router as evidence_router
+from app.modules.evidence.worker import evidence_forever
 from app.modules.forecast.router import router as forecast_router
 from app.modules.geo.router import router as geo_router
 from app.modules.health.router import metrics_router
@@ -108,6 +111,7 @@ WORKER_LOOPS: list[tuple[str, WorkerLoop]] = [
     ("rewards", rewards_forever),
     ("sla-escalation", sla_forever),
     ("breakglass", breakglass_forever),
+    ("evidence", evidence_forever),
 ]
 # Paths a worker-role process still serves: probes and the metrics scrape, never SOS traffic.
 _WORKER_PATHS = ("/health/", "/metrics")
@@ -139,6 +143,10 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         log.info("api.stop")
 
 
+# Version of the HTTP contract (docs/api/README.md): /api/v1 only grows; the minor number follows the phase.
+API_VERSION = "1.10.0"
+
+
 def create_app() -> FastAPI:
     settings = get_settings()
     configure_logging(settings.api_log_level)
@@ -146,7 +154,7 @@ def create_app() -> FastAPI:
     production = settings.app_env == "production"
     app = FastAPI(
         title="ء-حماية / e-Himaya API",
-        version="0.1.0",
+        version=API_VERSION,
         lifespan=lifespan,
         # Interactive documentation and the schema are development aids; production does not publish them.
         docs_url=None if production else "/docs",
@@ -182,9 +190,18 @@ def create_app() -> FastAPI:
         if settings.process_role == "worker" and not request.url.path.startswith(_WORKER_PATHS):
             response: Response = JSONResponse({"detail": "worker_process"}, status_code=503)
         else:
-            response = await call_next(request)
+            area = "reports" if request.url.path.startswith("/api/v1/reports") else "other"
+            try:
+                response = await call_next(request)
+            except Exception:
+                metrics.HTTP_SERVER_ERRORS.labels(area=area).inc()
+                raise
+            if response.status_code >= 500:
+                metrics.HTTP_SERVER_ERRORS.labels(area=area).inc()
         response.headers["X-Request-ID"] = request_id
         response.headers.update(headers)
+        # Answers carry personal data: no browser or proxy keeps them unless an endpoint says otherwise (ASVS V8.2.1).
+        response.headers.setdefault("Cache-Control", "no-store")
         if not request.url.path.startswith(_DOCS_PATHS) or production:
             response.headers["Content-Security-Policy"] = _API_CSP
         return response
@@ -226,6 +243,7 @@ def create_app() -> FastAPI:
         rewards_staff_router,
         settings_router,
         access_router,
+        evidence_router,
     )
     for router in routers:
         app.include_router(router)
