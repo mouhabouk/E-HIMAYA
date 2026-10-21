@@ -13,6 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from app.core import metrics
 from app.core.access import ApiError
 from app.core.config import get_settings
 from app.core.db import dispose_engine, get_system_sessionmaker
@@ -185,7 +186,14 @@ def create_app() -> FastAPI:
         if settings.process_role == "worker" and not request.url.path.startswith(_WORKER_PATHS):
             response: Response = JSONResponse({"detail": "worker_process"}, status_code=503)
         else:
-            response = await call_next(request)
+            area = "reports" if request.url.path.startswith("/api/v1/reports") else "other"
+            try:
+                response = await call_next(request)
+            except Exception:
+                metrics.HTTP_SERVER_ERRORS.labels(area=area).inc()
+                raise
+            if response.status_code >= 500:
+                metrics.HTTP_SERVER_ERRORS.labels(area=area).inc()
         response.headers["X-Request-ID"] = request_id
         response.headers.update(headers)
         if not request.url.path.startswith(_DOCS_PATHS) or production:
