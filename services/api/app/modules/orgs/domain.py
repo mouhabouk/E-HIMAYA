@@ -58,7 +58,7 @@ EquipmentKind = Literal[
 ]
 FeatureKind = Literal["evacuation_point", "water_point", "alarm"]
 DocumentKind = Literal["safety_file", "safety_plan", "sds", "other"]
-CertificateStatus = Literal["draft", "submitted", "approved", "rejected"]
+CertificateStatus = Literal["draft", "submitted", "approved", "rejected", "revoked"]
 
 # Registration review by the institutions auditor (FR-B-001): decision → (allowed from, result).
 REVIEW_TRANSITIONS: dict[str, tuple[OrgStatus, OrgStatus]] = {

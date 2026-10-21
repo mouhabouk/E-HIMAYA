@@ -141,6 +141,8 @@
   },
   "errors": {
     "authentication_required": "Session expirée. Veuillez vous reconnecter.",
+    "mfa_required": "La connexion doit être confirmée par le code à usage unique (double authentification). Reconnectez-vous et saisissez le code de l’application d’authentification.",
+    "session_revoked": "Votre session a été fermée (depuis un autre appareil ou par un administrateur). Reconnectez-vous.",
     "account_suspended": "Ce compte est suspendu.",
     "forbidden": "Vous n’avez pas le droit d’effectuer cette action.",
     "no_scope": "Votre compte n’a pas de périmètre géographique.",
@@ -257,7 +259,8 @@
     "role_not_grantable": "Vous ne pouvez pas attribuer ce rôle.",
     "self_edit": "Vous ne pouvez pas modifier votre propre compte.",
     "identity_provider_error": "Le service d’identité ne répond pas.",
-    "username_taken": "Identifiant déjà utilisé."
+    "username_taken": "Identifiant déjà utilisé.",
+    "second_reviewer_required": "L’alerte est publiée par une autre personne que celle qui l’a rédigée ou modifiée en dernier."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -755,6 +758,7 @@
       "submitted": "Soumis",
       "approved": "Approuvé",
       "rejected": "Rejeté",
+      "revoked": "Révoqué",
       "expired": "Expiré"
     },
     "validUntil": "valable jusqu’au {{date}}",
@@ -994,7 +998,13 @@
       },
       "invalidTransition": "Le certificat a déjà été examiné ou n’est plus soumis. La liste a été actualisée.",
       "statusFilter": "Statut",
-      "emptyDecided": "Aucun certificat dans cet état."
+      "emptyDecided": "Aucun certificat dans cet état.",
+      "revoke": "Révoquer le certificat",
+      "revokeReason": "Motif de la révocation (reste interne)",
+      "confirmRevoke": "Confirmez-vous la révocation du certificat {{code}} ? Il apparaîtra aussitôt comme non valable sur la page publique de vérification.",
+      "revokedDone": "Certificat {{code}} révoqué.",
+      "alreadyRevoked": "Ce certificat est déjà révoqué. La liste a été actualisée.",
+      "revokeReasonRequired": "Le motif de la révocation est obligatoire."
     },
     "card": {
       "title": "Fiche de l’établissement déclarant",
@@ -1562,6 +1572,27 @@
     "prefilled": {
       "weather_suggestion": "Formulaire prérempli à partir d’une alerte météo suggérée. Vérifiez chaque champ : rien n’est envoyé avant votre publication.",
       "recommendation": "Formulaire prérempli à partir d’une recommandation. Vérifiez chaque champ : rien n’est envoyé avant votre publication."
+    },
+    "fourEyes": {
+      "explain": "Vous avez rédigé ou modifié en dernier cette alerte : un second responsable la publie (principe des quatre yeux). En urgence, si aucun second responsable n’est joignable, indiquez le motif pour la publier seul : il est inscrit au journal d’audit et un second responsable devra la revoir après publication.",
+      "reasonLabel": "Motif de la publication seule (urgence)",
+      "reasonHelp": "10 caractères au moins.",
+      "publishAlone": "Publier seul (urgence)",
+      "title": "Publiée par un seul responsable (urgence)",
+      "reason": "Motif de l’urgence",
+      "reviewed": "Second regard",
+      "notReviewed": "En attente du regard d’un second responsable",
+      "acknowledge": "J’ai revu cette alerte"
+    },
+    "followUp": {
+      "region": "Suivi des alertes",
+      "degradedTitle": "Alerte mal diffusée",
+      "reviewTitle": "Alerte publiée par un seul responsable",
+      "notConfigured": "Le canal {{channel}} n’est pas configuré : l’alerte n’est pas partie par ce canal.",
+      "failures": "Canal {{channel}} : {{failed}} échecs pour {{sent}} envois réussis.",
+      "reviewBody": "Motif de l’urgence : {{reason}}. Un second responsable doit la revoir.",
+      "open": "Ouvrir l’alerte",
+      "dismiss": "Masquer"
     }
   },
   "tips": {

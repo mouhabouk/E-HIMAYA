@@ -1,3 +1,4 @@
+# covers: FR-A-020, FR-A-022, FR-A-023, UC-05
 """Phase 5: levels and committees, units and resources, interventions, volunteers and call-outs."""
 
 import secrets
@@ -381,6 +382,10 @@ async def approved_volunteer(
     )
     assert r.status_code == 200, r.text
     r = await client.post(
+        "/api/v1/me/consents", json={"purpose": "volunteer_location", "version": "1"}, headers=headers
+    )
+    assert r.status_code == 204, r.text
+    r = await client.post(
         "/api/v1/me/volunteer/readiness",
         json={"ready": True, "lat": location["lat"], "lon": location["lon"], "accuracy_m": 12, "hours": 4},
         headers=headers,
@@ -450,16 +455,25 @@ async def test_volunteer_application_and_review(
     assert (
         await client.post(review, json={"decision": "approve"}, headers=staff(["local_committee"]))
     ).status_code == 200
+    # Phase 10 §4.2: no readiness without the volunteer's consent to share their position.
+    r = await client.post(
+        "/api/v1/me/volunteer/readiness", json={"ready": True, "lat": 34.74, "lon": 10.76, "hours": 2}, headers=headers
+    )
+    assert (r.status_code, r.json()["detail"]) == (409, "location_consent_required")
+    r = await client.post(
+        "/api/v1/me/consents", json={"purpose": "volunteer_location", "version": "1"}, headers=headers
+    )
+    assert r.status_code == 204, r.text
     r = await client.post(
         "/api/v1/me/volunteer/readiness", json={"ready": True, "lat": 34.74, "lon": 10.76, "hours": 2}, headers=headers
     )
     assert r.status_code == 200 and r.json()["ready"]
     assert (
-        await client.put("/api/v1/me/volunteer/location", json={"lat": 34.75, "lon": 10.77}, headers=headers)
+        await client.put("/api/v1/me/volunteer/location", json={"lat": 34.75012, "lon": 10.77031}, headers=headers)
     ).status_code == 204
     geo = (await client.get("/api/v1/staff/volunteers/map?skill=diving", headers=staff())).json()
     point = next(f for f in geo["features"] if f["properties"]["id"] == volunteer_id)
-    assert point["geometry"]["coordinates"] == [10.77, 34.75]
+    assert point["geometry"]["coordinates"] == [10.77, 34.75]  # rounded to about 100 m, never the raw fix
     detail = (await client.get(f"/api/v1/staff/volunteers/{volunteer_id}", headers=staff())).json()
     assert detail["ready"] and detail["email"].endswith("@example.tn")
 

@@ -10,7 +10,11 @@ export interface StaffIdentity {
   national: boolean;
   /** False when the account has neither a gouvernorat nor national scope (the API refuses it). */
   hasScope: boolean;
+  /** The token proves a second factor (`amr` contains otp, hwk or mfa); the API refuses it otherwise. */
+  mfa: boolean;
 }
+
+const SECOND_FACTORS = new Set(["otp", "hwk", "mfa"]);
 
 function base64UrlDecode(input: string): string {
   const b64 = input.replace(/-/g, "+").replace(/_/g, "/").padEnd(Math.ceil(input.length / 4) * 4, "=");
@@ -51,6 +55,7 @@ export function identityFromClaims(claims: Record<string, unknown>): StaffIdenti
     gouvernoratCode,
     national,
     hasScope: national || gouvernoratCode !== null,
+    mfa: Array.isArray(claims.amr) && claims.amr.some((m) => typeof m === "string" && SECOND_FACTORS.has(m)),
   };
 }
 

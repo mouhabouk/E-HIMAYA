@@ -1,0 +1,9 @@
+# ZAP rule configuration for the API scan (id	action	name). Actions: IGNORE, INFO, WARN, FAIL.
+# Every IGNORE needs a reason in docs/security/asvs-l2.md.
+10021	WARN	X-Content-Type-Options Header Missing
+10038	WARN	Content Security Policy (CSP) Header Not Set
+40018	FAIL	SQL Injection
+40012	FAIL	Cross Site Scripting (Reflected)
+90019	FAIL	Server Side Code Injection
+90020	FAIL	Remote OS Command Injection
+6	FAIL	Path Traversal

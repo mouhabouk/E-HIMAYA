@@ -447,12 +447,13 @@ async def suggestions(
             full_name=volunteers.full_name(p),
             phone=p.phone if p else None,
             skills=list(v.skills),
-            distance_m=round(distances[v.user_id]),
+            distance_m=volunteers.coarse_distance(distances[v.user_id]),
             busy=v.user_id in busy,
         )
         for v, p in rows
     ]
-    return sorted(found, key=lambda s: (s.busy, s.distance_m))[:limit]
+    # Ordered by the exact distance; staff only see it rounded (phase 10 §4.2).
+    return sorted(found, key=lambda s: (s.busy, distances[s.volunteer_id]))[:limit]
 
 
 def _callout_push(session: AsyncSession, user_id: uuid.UUID, callout: Callout) -> None:

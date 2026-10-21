@@ -1,3 +1,4 @@
+# covers: NFR-06
 import httpx
 import pytest
 from sqlalchemy import text

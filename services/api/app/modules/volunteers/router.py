@@ -20,7 +20,7 @@ Session = Annotated[AsyncSession, Depends(get_session)]
 
 @router.get("/volunteer", response_model=schemas.VolunteerOut)
 async def get_volunteer(reporter: CurrentReporter, session: Session) -> schemas.VolunteerOut:
-    return service.volunteer_out(await service.get_mine(session, reporter))
+    return await service.mine_out(session, await service.get_mine(session, reporter))
 
 
 @router.put("/volunteer", response_model=schemas.VolunteerOut)
@@ -33,7 +33,7 @@ async def put_volunteer(reporter: CurrentReporter, session: Session, body: schem
         target=f"volunteer:{volunteer.user_id}",
         details={"skills": list(volunteer.skills), "status": volunteer.status},
     )
-    out = service.volunteer_out(volunteer)
+    out = await service.mine_out(session, volunteer)
     await session.commit()
     return out
 
@@ -48,10 +48,39 @@ async def withdraw(reporter: CurrentReporter, session: Session) -> Response:
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
+@router.post("/consents", status_code=status.HTTP_204_NO_CONTENT)
+async def give_consent(reporter: CurrentReporter, session: Session, body: schemas.LocationConsentIn) -> Response:
+    """Consent to share the position while ready (phase 10 §4.2); idempotent."""
+    if await service.give_location_consent(session, reporter, body.version, body.locale, body.platform):
+        await audit.record(
+            session,
+            actor=reporter.actor,
+            action="consent.volunteer_location",
+            target=f"volunteer:{reporter.user_id}",
+            details={"version": body.version},
+        )
+    await session.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.delete("/consents/volunteer_location", status_code=status.HTTP_204_NO_CONTENT)
+async def withdraw_consent(reporter: CurrentReporter, session: Session) -> Response:
+    """Withdraw it: the stored position is dropped and readiness ends at once."""
+    if await service.withdraw_location_consent(session, reporter):
+        await audit.record(
+            session,
+            actor=reporter.actor,
+            action="consent.volunteer_location_withdraw",
+            target=f"volunteer:{reporter.user_id}",
+        )
+    await session.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
 @router.post("/volunteer/readiness", response_model=schemas.VolunteerOut)
 async def readiness(reporter: CurrentReporter, session: Session, body: schemas.ReadinessIn) -> schemas.VolunteerOut:
     volunteer = await service.set_readiness(session, reporter, body)
-    out = service.volunteer_out(volunteer)
+    out = await service.mine_out(session, volunteer)
     await session.commit()
     return out
 

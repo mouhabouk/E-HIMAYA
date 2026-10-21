@@ -121,3 +121,13 @@ def test_settings_errors_never_echo_secrets() -> None:
 def test_stream_simulator_is_refused_in_production() -> None:
     with pytest.raises(ValidationError, match="STREAM_SIM_TOKEN"):
         production(stream_sim_token=secrets.token_urlsafe(24))
+
+
+def test_staff_second_factor_is_required_in_production() -> None:
+    with pytest.raises(ValidationError, match="STAFF_MFA_REQUIRED"):
+        production(staff_mfa_required=False)
+
+
+def test_evidence_signing_key_is_checked() -> None:
+    with pytest.raises(ValidationError, match="EVIDENCE_SIGNING_KEY must decode to 32 bytes"):
+        production(evidence_signing_key="c2hvcnQ=")

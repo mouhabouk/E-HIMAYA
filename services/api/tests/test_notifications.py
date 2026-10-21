@@ -1,3 +1,4 @@
+# covers: FR-A-060, FR-A-061, FR-A-062
 """Phase 5: push devices, informational notifications, geographic alerts, the app inbox and safety tips."""
 
 import secrets
@@ -489,9 +490,9 @@ async def test_disaster_level_suspends_information_not_alerts(client: httpx.Asyn
             "/api/v1/staff/notifications", json=alert_body(area={"gouvernorat_codes": [61]}), headers=committee
         )
     ).json()
-    assert (
-        await client.post(f"/api/v1/staff/notifications/{alert['id']}/publish", headers=committee)
-    ).status_code == 200
+    # Four eyes (phase 10 §5.1): another member of the committee publishes it.
+    second = staff(["central_committee"], gouvernorat=None)
+    assert (await client.post(f"/api/v1/staff/notifications/{alert['id']}/publish", headers=second)).status_code == 200
 
 
 # ---------------------------------------------------------------- safety tips

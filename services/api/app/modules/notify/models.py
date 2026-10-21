@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Any
 
 from geoalchemy2 import Geography, Geometry
-from sqlalchemy import BigInteger, DateTime, ForeignKey, Integer, SmallInteger, Text, func
+from sqlalchemy import BigInteger, Boolean, DateTime, ForeignKey, Integer, SmallInteger, Text, func
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -63,6 +63,14 @@ class Message(Base):
     published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     cancelled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     version: Mapped[int] = mapped_column(Integer, server_default="1")
+    # Four eyes (phase 10 §5.1): last editor, emergency override and the acknowledgement afterwards.
+    updated_by: Mapped[str | None] = mapped_column(Text)
+    updated_by_name: Mapped[str | None] = mapped_column(Text)
+    single_reviewer: Mapped[bool] = mapped_column(Boolean, server_default="false")
+    emergency_reason: Mapped[str | None] = mapped_column(Text)
+    reviewed_by: Mapped[str | None] = mapped_column(Text)
+    reviewed_by_name: Mapped[str | None] = mapped_column(Text)
+    reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
 class Dispatch(Base):

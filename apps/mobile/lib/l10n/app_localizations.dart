@@ -2164,6 +2164,48 @@ abstract class AppLocalizations {
   /// **'Your position is shared only while you are ready, is deleted when readiness ends and is never archived.'**
   String get volunteerLocationPrivacy;
 
+  /// No description provided for @locationConsentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share your position while ready?'**
+  String get locationConsentTitle;
+
+  /// No description provided for @locationConsentBody.
+  ///
+  /// In en, this message translates to:
+  /// **'While you are ready, your position is sent to the Civil Protection of your gouvernorat so that it can call out the volunteers closest to an incident.\n\n• Who sees it: Civil Protection operators, on a map rounded to about 100 m; distances are rounded too.\n• How long: only while you are ready. It is kept in memory, deleted when readiness ends and never archived.\n• You can withdraw this consent at any time in this screen; readiness then ends at once.'**
+  String get locationConsentBody;
+
+  /// No description provided for @locationConsentAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'I agree'**
+  String get locationConsentAccept;
+
+  /// No description provided for @locationConsentSwitch.
+  ///
+  /// In en, this message translates to:
+  /// **'Share my position while ready'**
+  String get locationConsentSwitch;
+
+  /// No description provided for @locationConsentSwitchOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Consent given. Turning it off ends readiness and deletes your position.'**
+  String get locationConsentSwitchOn;
+
+  /// No description provided for @locationConsentSwitchOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Required to be ready.'**
+  String get locationConsentSwitchOff;
+
+  /// No description provided for @locationConsentWithdrawn.
+  ///
+  /// In en, this message translates to:
+  /// **'Consent withdrawn: your position is deleted.'**
+  String get locationConsentWithdrawn;
+
   /// No description provided for @volunteerNoFix.
   ///
   /// In en, this message translates to:
@@ -2445,6 +2487,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your position is needed to be ready.'**
   String get errorLocationRequired;
+
+  /// No description provided for @errorLocationConsentRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Agree to share your position before being ready.'**
+  String get errorLocationConsentRequired;
 
   /// No description provided for @errorCalloutClosed.
   ///

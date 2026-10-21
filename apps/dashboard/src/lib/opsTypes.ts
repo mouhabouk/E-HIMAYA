@@ -440,6 +440,12 @@ export interface Message {
   cancelled_at: string | null;
   version: number;
   stats: Partial<Record<Channel, { status: string; sent: number; failed: number }>>;
+  /** Four eyes (phase 10 §5.1): last editor, emergency override and the second look afterwards. */
+  updated_by?: string | null;
+  single_reviewer?: boolean;
+  emergency_reason?: string | null;
+  reviewed_by?: string | null;
+  reviewed_at?: string | null;
 }
 
 export interface MessageBody {

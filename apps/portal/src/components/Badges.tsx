@@ -50,7 +50,13 @@ export function VersionStatusBadge({ status }: { status: VersionStatus }) {
   return <Badge tone={VERSION_TONE[status]}>{t(`versionStatus.${status}`)}</Badge>;
 }
 
-const CERT_TONE: Record<CertificateStatus, Tone> = { draft: "neutral", submitted: "info", approved: "ok", rejected: "danger" };
+const CERT_TONE: Record<CertificateStatus, Tone> = {
+  draft: "neutral",
+  submitted: "info",
+  approved: "ok",
+  rejected: "danger",
+  revoked: "danger",
+};
 export function CertificateStatusBadge({ status }: { status: CertificateStatus }) {
   const { t } = useTranslation();
   return <Badge tone={CERT_TONE[status]}>{t(`certificateStatus.${status}`)}</Badge>;

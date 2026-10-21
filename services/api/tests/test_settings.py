@@ -64,7 +64,7 @@ async def test_defaults_present(client: httpx.AsyncClient, staff: Staff) -> None
         "geo.max_trusted_accuracy_m",
     }
     security = _items((await client.get(URL, headers=staff(["security_admin"], gouvernorat=None))).json())
-    assert {k for k, v in security.items() if v["editable"]} == {"anonymous.report_quota"}
+    assert {k for k, v in security.items() if v["editable"]} == {"anonymous.report_quota", "alerts.four_eyes"}
 
 
 async def test_readers_and_anonymous_callers(client: httpx.AsyncClient, citizen: dict[str, str]) -> None:

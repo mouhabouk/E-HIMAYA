@@ -1,3 +1,4 @@
+// covers: FR-A-001, FR-A-030, FR-A-033, NFR-08
 import 'package:ehimaya/core/routing/app_router.dart';
 import 'package:ehimaya/features/charter/charter_screen.dart';
 import 'package:ehimaya/features/home/home_screen.dart';

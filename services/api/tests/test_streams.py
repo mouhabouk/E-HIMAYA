@@ -1,3 +1,4 @@
+# covers: FR-A-050, FR-A-052, UC-06
 """Live streaming and vision (phase 6, docs/api/phase-6-contract.md): citizen and staff endpoints, MediaMTX auth and
 hooks, recording-segment ingestion, detection confirmation, the stream life cycle, privacy and retention."""
 

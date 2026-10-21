@@ -1,0 +1,23 @@
+#!/bin/sh
+# archive_command of PostgreSQL (phase 10 §2.1): ehimaya-archive-wal %p %f
+# Copies a finished WAL segment into $WAL_ARCHIVE_DIR (default /archive/wal, a separate volume) atomically:
+# written to a temporary name, flushed, then renamed. A segment already archived with the same bytes is accepted
+# (PostgreSQL may retry after a crash); one with different bytes is refused, so an archive is never overwritten.
+set -eu
+src="$1"
+name="$2"
+dir="${WAL_ARCHIVE_DIR:-/archive/wal}"
+dest="$dir/$name"
+
+mkdir -p "$dir"
+if [ -f "$dest" ]; then
+  if cmp -s "$src" "$dest"; then
+    exit 0
+  fi
+  echo "ehimaya-archive-wal: $name already archived with different contents" >&2
+  exit 1
+fi
+tmp="$dir/.$name.$$"
+cp "$src" "$tmp"
+sync "$tmp" 2>/dev/null || sync
+mv "$tmp" "$dest"

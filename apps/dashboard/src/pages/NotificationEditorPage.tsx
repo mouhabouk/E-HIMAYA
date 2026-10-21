@@ -355,6 +355,8 @@ function Composer({ message, kind }: { message: Message | null; kind: MessageKin
   const [errors, setErrors] = useState<FormErrors>({});
   const [confirm, setConfirm] = useState<"publish" | "delete" | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  // Phase 10 §5.1: the author of an alert publishes it alone only with an emergency reason.
+  const [emergencyReason, setEmergencyReason] = useState("");
   const setForm = (patch: Partial<MessageForm>) => {
     setFormState((f) => ({ ...f, ...patch }));
     setConfirm(null);
@@ -395,7 +397,7 @@ function Composer({ message, kind }: { message: Message | null; kind: MessageKin
     },
   });
   const publish = useMutation({
-    mutationFn: (id: string) => api.publishMessage(id),
+    mutationFn: ({ id, reason }: { id: string; reason?: string }) => api.publishMessage(id, reason),
     onSuccess: (m) => {
       remember(m);
       if (m.kind === "alert") void qc.invalidateQueries({ queryKey: opsKeys.activeAlerts });
@@ -414,7 +416,8 @@ function Composer({ message, kind }: { message: Message | null; kind: MessageKin
     onError: () => setConfirm(null),
   });
   const busy = save.isPending || publish.isPending || remove.isPending;
-  const error = save.error ?? publish.error ?? remove.error;
+  const needsSecond = isApiError(publish.error) && publish.error.code === "second_reviewer_required";
+  const error = save.error ?? (needsSecond ? null : publish.error) ?? remove.error;
 
   const submit = (e: SyntheticEvent) => {
     e.preventDefault();
@@ -591,10 +594,43 @@ function Composer({ message, kind }: { message: Message | null; kind: MessageKin
             })}
           </p>
           <div className="actions">
-            <button type="button" className="btn btn--primary" disabled={busy} onClick={() => publish.mutate(message.id)}>
+            <button type="button" className="btn btn--primary" disabled={busy} onClick={() => publish.mutate({ id: message.id })}>
               {t("notify.confirmPublish")}
             </button>
             <button type="button" className="btn" onClick={() => setConfirm(null)}>
+              {t("common.cancel")}
+            </button>
+          </div>
+        </div>
+      )}
+      {needsSecond && message && (
+        <div className="alert alert--warn" role="alert">
+          <p>{t("notify.fourEyes.explain")}</p>
+          <div className="field">
+            <label htmlFor={id("emergency")}>{t("notify.fourEyes.reasonLabel")}</label>
+            <textarea
+              id={id("emergency")}
+              rows={2}
+              maxLength={500}
+              dir="auto"
+              value={emergencyReason}
+              aria-describedby={id("emergency-help")}
+              onChange={(e) => setEmergencyReason(e.target.value)}
+            />
+            <span id={id("emergency-help")} className="muted">
+              {t("notify.fourEyes.reasonHelp")}
+            </span>
+          </div>
+          <div className="actions">
+            <button
+              type="button"
+              className="btn btn--danger"
+              disabled={busy || emergencyReason.trim().length < 10}
+              onClick={() => publish.mutate({ id: message.id, reason: emergencyReason.trim() })}
+            >
+              {t("notify.fourEyes.publishAlone")}
+            </button>
+            <button type="button" className="btn" onClick={() => publish.reset()}>
               {t("common.cancel")}
             </button>
           </div>
@@ -793,6 +829,7 @@ function SentMessage({ message }: { message: Message }) {
         </div>
         <p className="muted">{t("notify.deliveryLive")}</p>
       </section>
+      {message.single_reviewer && <SecondLook message={message} />}
       {canCancel && (
         <section className="card" aria-labelledby="sec-cancel">
           <h2 id="sec-cancel">{t(message.kind === "alert" ? "notify.cancelAlert" : "notify.cancelInfo")}</h2>
@@ -822,6 +859,48 @@ function SentMessage({ message }: { message: Message }) {
         </section>
       )}
     </div>
+  );
+}
+
+/** Phase 10 §5.1: an alert its author published alone in an emergency, and the second look another publisher gives. */
+function SecondLook({ message }: { message: Message }) {
+  const { t } = useTranslation();
+  const { api } = useServices();
+  const { user } = useAuth();
+  const qc = useQueryClient();
+  const fmt = useFormat();
+  const canAcknowledge = !message.reviewed_at && canPublishMessage(user?.identity.roles ?? [], message.kind);
+  const acknowledge = useMutation({
+    mutationFn: () => api.acknowledgeMessage(message.id),
+    onSuccess: (m) => {
+      qc.setQueryData(opsKeys.message(m.id), m);
+      void qc.invalidateQueries({ queryKey: opsKeys.messagesAll });
+    },
+  });
+  return (
+    <section className="card" aria-labelledby="sec-second-look">
+      <h2 id="sec-second-look">{t("notify.fourEyes.title")}</h2>
+      <dl className="fields">
+        <dt>{t("notify.fourEyes.reason")}</dt>
+        <dd dir="auto">{message.emergency_reason ?? "—"}</dd>
+        <dt>{t("notify.fourEyes.reviewed")}</dt>
+        <dd>
+          {message.reviewed_at
+            ? `${message.reviewed_by ?? "—"} · ${fmt.dateTime(message.reviewed_at)}`
+            : t("notify.fourEyes.notReviewed")}
+        </dd>
+      </dl>
+      {canAcknowledge && (
+        <button type="button" className="btn" disabled={acknowledge.isPending} onClick={() => acknowledge.mutate()}>
+          {t("notify.fourEyes.acknowledge")}
+        </button>
+      )}
+      {acknowledge.isError && (
+        <p className="alert alert--error" role="alert">
+          {t(errorMessageKey(acknowledge.error))}
+        </p>
+      )}
+    </section>
   );
 }
 

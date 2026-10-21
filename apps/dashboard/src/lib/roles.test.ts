@@ -139,6 +139,12 @@ describe("identity from the access token", () => {
     expect(id).toMatchObject({ national: true, gouvernoratCode: null, hasScope: true });
   });
 
+  it("tells whether the token proves a second factor", () => {
+    expect(identityFromClaims({ sub: "x", amr: ["pwd", "otp"] }).mfa).toBe(true);
+    expect(identityFromClaims({ sub: "x", amr: ["pwd"] }).mfa).toBe(false);
+    expect(identityFromClaims({ sub: "x" }).mfa).toBe(false);
+  });
+
   it("flags accounts without any scope", () => {
     const id = identityFromClaims({ sub: "x", realm_access: { roles: ["operator"] } });
     expect(id.hasScope).toBe(false);

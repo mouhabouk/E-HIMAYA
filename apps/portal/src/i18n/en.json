@@ -92,6 +92,7 @@
     "invalidBody": "This certificate exists but is not valid today:",
     "reasons": {
       "rejected": "it was rejected by the Civil Protection;",
+      "revoked": "it was revoked by the platform auditors after its approval;",
       "not_approved": "it has not been approved yet;",
       "superseded": "a newer certificate replaced it;",
       "expired": "its validity has expired;",
@@ -116,7 +117,11 @@
     "readError": "The file {{name}} could not be read.",
     "keyTitle": "Check the signature yourself",
     "keyBody": "Signature algorithm {{algorithm}}. Signed message: {{message}}. Public key (base64):",
-    "keyNone": "No public key is published yet."
+    "keyNone": "No public key is published yet.",
+    "revokedOn": "Revoked on {{date}}.",
+    "keyId": "Key identifier: {{id}}",
+    "disclaimerTitle": "What is this certificate?",
+    "disclaimer": "This certificate is a safety self-assessment recorded by the institution on the e-Himaya platform and reviewed by its auditors. It is not an official certificate of the National Office of Civil Protection or of any other administration, and it does not replace the permits and inspections required by law."
   },
   "myOrgs": {
     "title": "My institutions",
@@ -611,7 +616,8 @@
     "draft": "Draft",
     "submitted": "Submitted",
     "approved": "Approved",
-    "rejected": "Rejected"
+    "rejected": "Rejected",
+    "revoked": "Revoked"
   },
   "status": {
     "received": "Received",

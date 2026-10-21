@@ -10,11 +10,10 @@ from collections.abc import Callable
 from typing import Any
 
 import structlog
-from anyio import to_thread
 from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect, status
 
 from app.core.config import get_settings
-from app.core.security import Principal, Role, get_token_verifier
+from app.core.security import Principal, Role, authenticate
 from app.modules.reports.staff_router import READ_ROLES
 from app.modules.telephony.domain import CALL_ROLES, mask_number
 
@@ -212,7 +211,7 @@ def _route(subject: str, payload: dict[str, Any]) -> tuple[str, Callable[[LiveCl
         # Reports repository (phase 8): only the creator and the recipients of the document are told.
         recipients = set(payload.get("recipients") or [])
         return "staff", lambda client: client.principal.subject in recipients
-    if subject in ("notification.updated", "alert.issued"):
+    if subject in ("notification.updated", "alert.issued", "alert.review_needed", "alert.delivery_degraded"):
         area = payload.get("message", {}).get("area", {})
         if area.get("polygon"):
             # Phase 9 §5.6: editors whose gouvernorat the polygon intersects (computed by notify), national always.
@@ -235,7 +234,7 @@ async def _authenticate(message: Any) -> tuple[Principal, float]:
     if not isinstance(message, dict) or message.get("type") != "auth" or not isinstance(message.get("token"), str):
         raise _Rejected(CLOSE_UNAUTHORIZED)
     try:
-        principal = await to_thread.run_sync(get_token_verifier().verify, message["token"])
+        principal = await authenticate(message["token"])
     except HTTPException as exc:
         codes = {status.HTTP_403_FORBIDDEN: CLOSE_FORBIDDEN, status.HTTP_503_SERVICE_UNAVAILABLE: CLOSE_TRY_LATER}
         raise _Rejected(codes.get(exc.status_code, CLOSE_UNAUTHORIZED)) from exc

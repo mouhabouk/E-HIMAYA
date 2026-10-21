@@ -20,6 +20,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from app.core.config import get_settings
+from app.core.sessions import is_revoked
 
 
 class Realm(StrEnum):
@@ -147,11 +148,18 @@ class JwksKeyResolver:
         return client.get_signing_key_from_jwt(token).key
 
 
+#: Authentication methods (RFC 8176 ``amr`` values) that prove a second factor.
+SECOND_FACTORS = frozenset({"otp", "hwk", "mfa"})
+
+
 class TokenVerifier:
-    def __init__(self, issuers: list[str], audience: str, key_resolver: KeyResolver) -> None:
+    def __init__(
+        self, issuers: list[str], audience: str, key_resolver: KeyResolver, *, staff_mfa_required: bool = True
+    ) -> None:
         self._issuers = {iss.rstrip("/"): Realm(urlsplit(iss).path.rsplit("/", 1)[-1]) for iss in issuers}
         self._audience = audience
         self._key_resolver = key_resolver
+        self._staff_mfa_required = staff_mfa_required
 
     def verify(self, token: str) -> Principal:
         try:
@@ -177,6 +185,16 @@ class TokenVerifier:
             raise _unauthorized("invalid_token") from exc
         except Exception as exc:  # JWKS unreachable, etc.
             raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "identity_provider_unavailable") from exc
+
+        if realm is Realm.STAFF and self._staff_mfa_required:
+            amr = claims.get("amr")
+            if not isinstance(amr, list) or not SECOND_FACTORS & {str(m) for m in amr}:
+                # RFC 9470: the client signs in again with a stronger method.
+                raise HTTPException(
+                    status.HTTP_401_UNAUTHORIZED,
+                    "mfa_required",
+                    headers={"WWW-Authenticate": 'Bearer error="insufficient_user_authentication"'},
+                )
 
         raw_roles = set(claims.get("realm_access", {}).get("roles", []))
         allowed = REALM_ROLES[realm]
@@ -211,7 +229,10 @@ def get_token_verifier() -> TokenVerifier:
     if _verifier is None:
         settings = get_settings()
         _verifier = TokenVerifier(
-            settings.oidc_issuers, settings.oidc_audience, JwksKeyResolver(settings.oidc_jwks_base_url)
+            settings.oidc_issuers,
+            settings.oidc_audience,
+            JwksKeyResolver(settings.oidc_jwks_base_url),
+            staff_mfa_required=settings.staff_mfa_required,
         )
     return _verifier
 
@@ -225,12 +246,20 @@ def set_token_verifier(verifier: TokenVerifier | None) -> None:
 _bearer = HTTPBearer(auto_error=False)
 
 
+async def authenticate(token: str) -> Principal:
+    """Verify a bearer token and refuse it when its session was revoked (phase 10 §1.2)."""
+    principal = await to_thread.run_sync(get_token_verifier().verify, token)
+    if await is_revoked(principal.subject, int(principal.claims["iat"])):
+        raise _unauthorized("session_revoked")
+    return principal
+
+
 async def get_optional_principal(
     credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(_bearer)],
 ) -> Principal | None:
     if credentials is None:
         return None
-    return await to_thread.run_sync(get_token_verifier().verify, credentials.credentials)
+    return await authenticate(credentials.credentials)
 
 
 async def get_principal(principal: Annotated[Principal | None, Depends(get_optional_principal)]) -> Principal:

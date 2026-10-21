@@ -1193,6 +1193,30 @@ class AppLocalizationsAr extends AppLocalizations {
       'لا تتم مشاركة موقعك إلا خلال فترة الجاهزية، ويُحذف عند انتهائها ولا يُؤرشف أبدا.';
 
   @override
+  String get locationConsentTitle =>
+      'هل توافق على مشاركة موقعك خلال فترة الجاهزية؟';
+
+  @override
+  String get locationConsentBody =>
+      'خلال فترة جاهزيتك، يُرسل موقعك إلى الحماية المدنية في ولايتك لتستنفر المتطوعين الأقرب إلى الحادث.\n\n• من يراه: أعوان الحماية المدنية، على خريطة مقرّبة إلى حوالي 100 متر، والمسافات مقرّبة أيضا.\n• إلى متى: خلال فترة الجاهزية فقط. يُحفظ في الذاكرة ويُحذف عند انتهائها ولا يُؤرشف أبدا.\n• يمكنك سحب هذه الموافقة في أي وقت من هذه الشاشة، وتنتهي الجاهزية فورا.';
+
+  @override
+  String get locationConsentAccept => 'أوافق';
+
+  @override
+  String get locationConsentSwitch => 'مشاركة موقعي خلال الجاهزية';
+
+  @override
+  String get locationConsentSwitchOn =>
+      'الموافقة مسجّلة. سحبها يُنهي الجاهزية ويحذف موقعك.';
+
+  @override
+  String get locationConsentSwitchOff => 'ضرورية للتصريح بالجاهزية.';
+
+  @override
+  String get locationConsentWithdrawn => 'سُحبت الموافقة وحُذف موقعك.';
+
+  @override
   String get volunteerNoFix => 'تعذر تحديد موقعك. أعد المحاولة في مكان مفتوح.';
 
   @override
@@ -1345,6 +1369,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get errorLocationRequired => 'موقعك ضروري للتصريح بالجاهزية.';
+
+  @override
+  String get errorLocationConsentRequired =>
+      'وافق على مشاركة موقعك قبل التصريح بالجاهزية.';
 
   @override
   String get errorCalloutClosed => 'تم إغلاق هذا الاستنفار.';

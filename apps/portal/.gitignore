@@ -3,3 +3,6 @@ dist/
 coverage/
 .env.local
 *.tsbuildinfo
+dist-e2e/
+test-results/
+playwright-report/

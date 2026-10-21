@@ -109,6 +109,60 @@ void main() {
     await unmountApp(tester);
   });
 
+  testWidgets('first readiness asks for the location consent', (tester) async {
+    var volunteer = volunteerJson();
+    final posted = <String>[];
+    await pumpApp(
+      tester,
+      prefs: registeredPrefs(locale: 'fr'),
+      session: testSession,
+      overrides: [noPush],
+      api: (r) {
+        switch ((r.method, r.path)) {
+          case ('GET', '/api/v1/me/volunteer'):
+            return FakeResponse(200, json: volunteer);
+          case ('GET', '/api/v1/me/callouts'):
+            return const FakeResponse(200, json: <Object?>[]);
+          case ('POST', '/api/v1/me/consents'):
+            posted.add(r.path);
+            volunteer = {...volunteer, 'location_consent': true};
+            return const FakeResponse(204);
+          case ('POST', '/api/v1/me/volunteer/readiness'):
+            posted.add(r.path);
+            volunteer = {
+              ...volunteer,
+              'ready': true,
+              'ready_until': '2100-01-01T00:00:00Z',
+            };
+            return FakeResponse(200, json: volunteer);
+        }
+        return defaultApiResponse(r);
+      },
+    );
+    await scrollTo(tester, 'home-volunteer');
+    await tester.tap(find.byKey(const Key('home-volunteer')));
+    await tester.pumpAndSettle();
+
+    // Declining the notice leaves the volunteer not ready, and nothing is sent.
+    await tester.tap(find.byKey(const Key('volunteer-ready')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('location-consent-dialog')), findsOneWidget);
+    await tester.tap(find.text('Annuler'));
+    await tester.pumpAndSettle();
+    expect(posted, isEmpty);
+
+    await tester.tap(find.byKey(const Key('volunteer-ready')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('location-consent-accept')));
+    await tester.pumpAndSettle();
+    expect(posted, ['/api/v1/me/consents', '/api/v1/me/volunteer/readiness']);
+    final consent = tester.widget<SwitchListTile>(
+      find.byKey(const Key('volunteer-location-consent')),
+    );
+    expect(consent.value, isTrue);
+    await unmountApp(tester);
+  });
+
   testWidgets(
     'approved volunteer accepts a call-out with an ETA, then arrives',
     (tester) async {
@@ -145,8 +199,7 @@ void main() {
       expect(find.text('Acceptée'), findsOneWidget);
       expect(find.byKey(const Key('volunteer-ready')), findsOneWidget);
 
-      await tester.ensureVisible(find.byKey(const Key('volunteer-callouts')));
-      await tester.pumpAndSettle();
+      await scrollTo(tester, 'volunteer-callouts');
       await tester.tap(find.byKey(const Key('volunteer-callouts')));
       await tester.pumpAndSettle();
       final id = callout['id']! as String;

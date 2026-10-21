@@ -1,3 +1,4 @@
+# covers: FR-A-070, FR-A-071, FR-A-072
 """Phase 8 rewards (docs/api/phase-8-contract.md §3): points from outbox events (idempotent), no points for anonymous,
 rejected or false reports, once per incident, daily cap, pause at level disaster, badges and their confirmation,
 revocation, nominations and certificates with a minimal public verification, citizen erasure, staff scope."""

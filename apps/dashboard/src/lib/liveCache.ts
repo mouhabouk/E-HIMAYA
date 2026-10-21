@@ -301,6 +301,8 @@ function applyOpsEvent(qc: QueryClient, event: LiveEvent): boolean {
       return true;
     case "notification.updated":
     case "alert.issued":
+    case "alert.review_needed":
+    case "alert.delivery_degraded":
       qc.setQueryData(opsKeys.message(event.message.id), event.message);
       void qc.invalidateQueries({ queryKey: opsKeys.messagesAll });
       if (event.message.kind === "alert") void qc.invalidateQueries({ queryKey: opsKeys.activeAlerts });
