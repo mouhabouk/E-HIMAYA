@@ -15,6 +15,7 @@ from sqlalchemy import any_, cast, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.access import Action
+from app.core.db import as_system, system_scoped
 from app.core.events import emit
 from app.core.security import Principal
 from app.modules.audit import service as audit
@@ -50,6 +51,7 @@ def _timeline(session: AsyncSession, incident_id: uuid.UUID, kind: str, actor: s
     session.add(TimelineEvent(incident_id=incident_id, kind=kind, actor=actor, payload=payload))
 
 
+@system_scoped
 async def announce_incident(session: AsyncSession, incident: Incident) -> None:
     incident.updated_at = _now()
     await session.flush()
@@ -75,6 +77,7 @@ async def _move_report(session: AsyncSession, report: Report, path: list[Status]
     return moved
 
 
+@system_scoped
 async def advance_reports(
     session: AsyncSession, incident_id: uuid.UUID, stage: Status, actor: str = SYSTEM_ACTOR
 ) -> None:
@@ -211,6 +214,7 @@ async def callouts_of(session: AsyncSession, incident_id: uuid.UUID) -> list[sch
     return [await callout_out(session, c) for c in rows]
 
 
+@system_scoped
 async def announce_callout(session: AsyncSession, callout: Callout, _gouvernorat_code: int | None = None) -> None:
     """``callout.updated`` routed to every gouvernorat of the incident (lead and participants). The third argument
     of the phase 5 signature is ignored (kept for the volunteers module)."""
@@ -223,6 +227,7 @@ async def announce_callout(session: AsyncSession, callout: Callout, _gouvernorat
     )
 
 
+@system_scoped
 async def announce_assignment(session: AsyncSession, assignment: Assignment) -> None:
     """``assignment.updated`` routed to every gouvernorat of the incident (lead and participants)."""
     out = await assignment_out(session, assignment.id)
@@ -235,11 +240,15 @@ async def announce_assignment(session: AsyncSession, assignment: Assignment) -> 
 
 
 async def _owned_resource(session: AsyncSession, own: int, resource_id: uuid.UUID, lock: bool = False) -> Resource:
-    """A resource of the caller's gouvernorat; another gouvernorat's resource is engaged through a request."""
-    resource = await session.get(Resource, resource_id, with_for_update=lock)
+    """A resource of the caller's gouvernorat; another gouvernorat's resource is engaged through a request.
+
+    Another gouvernorat's resource is found with the system scope (row-level security) so the answer says why
+    (``403 resource_not_owned``, §5.4) instead of a bare 404; nothing of it is returned."""
+    async with as_system(session):
+        resource = await session.get(Resource, resource_id, with_for_update=lock)
+        unit = await session.get(Unit, resource.unit_id) if resource is not None else None
     if resource is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
-    unit = await session.get(Unit, resource.unit_id)
     if unit is None or unit.gouvernorat_code != own:
         raise scope.forbidden("resource_not_owned")
     return resource

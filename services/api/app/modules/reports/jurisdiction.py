@@ -25,6 +25,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.core.access import ACTION_NOT_ALLOWED, CENTRAL_ROOM, Action, ApiError, Ctx, authorize, require, room_of
 from app.core.config import get_settings
+from app.core.db import as_system
 from app.core.events import emit
 from app.core.security import Principal, Role
 from app.modules.audit import service as audit
@@ -235,24 +236,26 @@ async def release(session: AsyncSession, principal: Principal, report_id: uuid.U
     national = principal.is_national and bool(principal.roles & _RELEASERS)
     if not (own_manager or national):
         raise HTTPException(status.HTTP_403_FORBIDDEN, ACTION_NOT_ALLOWED)
-    actor, name = audit.actor_of(principal), audit.name_of(principal)
-    report.claimed_room = report.claimed_by = report.claimed_by_name = None
-    report.claimed_at = None
-    if report.escalation_state in ("central_responding", "referral_accepted"):
-        report.escalation_state = "late"
-    await _step(
-        session, report, "claim_released", actor=actor, actor_name=name, from_room=room, to_room=None, reason=reason
-    )
-    await _audit(
-        session,
-        principal,
-        "report.release",
-        report,
-        await _gouvernorats(session, report),
-        reason=reason,
-        details={"room": room},
-    )
-    await _announce(session, "report.escalation", report, kind="claim_released", from_room=room, to_room=None)
+    # Releasing may take the report out of the releasing room's view (a candidate room's claim): system scope.
+    async with as_system(session):
+        actor, name = audit.actor_of(principal), audit.name_of(principal)
+        report.claimed_room = report.claimed_by = report.claimed_by_name = None
+        report.claimed_at = None
+        if report.escalation_state in ("central_responding", "referral_accepted"):
+            report.escalation_state = "late"
+        await _step(
+            session, report, "claim_released", actor=actor, actor_name=name, from_room=room, to_room=None, reason=reason
+        )
+        await _audit(
+            session,
+            principal,
+            "report.release",
+            report,
+            await _gouvernorats(session, report),
+            reason=reason,
+            details={"room": room},
+        )
+        await _announce(session, "report.escalation", report, kind="claim_released", from_room=room, to_room=None)
 
 
 async def before_status_change(session: AsyncSession, principal: Principal, report: Report, ctx: Ctx) -> None:
@@ -367,27 +370,30 @@ async def decide_referral(
     if report.escalation_state != "referred" or report.referred_to is None:
         raise HTTPException(status.HTTP_409_CONFLICT, "referral_not_pending")
     require(await authorize(session, principal, Action.REPORT_REFERRAL_DECIDE, ctx))
-    room = _room(report.referred_to)
-    actor, name = audit.actor_of(principal), audit.name_of(principal)
-    gouvernorats = await _gouvernorats(session, report, report.referred_to)
-    if accept:
-        kind = "referral_accepted"
-        from_room = report.claimed_room or _room(report.gouvernorat_code)
-        report.escalation_state = kind
-        report.claimed_room, report.claimed_by, report.claimed_by_name = room, actor, name
-        report.claimed_at = datetime.now(UTC)
-        await _step(
-            session, report, kind, actor=actor, actor_name=name, from_room=from_room, to_room=room, reason=text_
-        )
-    else:
-        kind = "referral_refused"
-        report.escalation_state = kind
-        report.referred_to = None
-        await _step(
-            session, report, kind, actor=actor, actor_name=name, from_room=room, to_room=CENTRAL_ROOM, reason=text_
-        )
-    await _audit(session, principal, f"report.{kind}", report, gouvernorats, reason=text_, details={"room": room})
-    await _announce(session, "report.escalation", report, kind=kind, from_room=room, to_room=report.claimed_room)
+    # A refusal hands the report back to central: written with the system scope (row-level security), the row
+    # leaving the refusing room's view on purpose.
+    async with as_system(session):
+        room = _room(report.referred_to)
+        actor, name = audit.actor_of(principal), audit.name_of(principal)
+        gouvernorats = await _gouvernorats(session, report, report.referred_to)
+        if accept:
+            kind = "referral_accepted"
+            from_room = report.claimed_room or _room(report.gouvernorat_code)
+            report.escalation_state = kind
+            report.claimed_room, report.claimed_by, report.claimed_by_name = room, actor, name
+            report.claimed_at = datetime.now(UTC)
+            await _step(
+                session, report, kind, actor=actor, actor_name=name, from_room=from_room, to_room=room, reason=text_
+            )
+        else:
+            kind = "referral_refused"
+            report.escalation_state = kind
+            report.referred_to = None
+            await _step(
+                session, report, kind, actor=actor, actor_name=name, from_room=room, to_room=CENTRAL_ROOM, reason=text_
+            )
+        await _audit(session, principal, f"report.{kind}", report, gouvernorats, reason=text_, details={"room": room})
+        await _announce(session, "report.escalation", report, kind=kind, from_room=room, to_room=report.claimed_room)
 
 
 # ---------------------------------------------------------------- geo-verification

@@ -10,7 +10,7 @@ import pytest
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.db import get_sessionmaker
+from app.core.db import get_system_sessionmaker
 from app.modules.settings import service as settings_service
 from tests.conftest import accept_charter, device_headers, report_body
 
@@ -28,7 +28,7 @@ async def device(client: httpx.AsyncClient) -> dict[str, str]:
 @pytest.fixture
 async def restore_quota() -> AsyncIterator[None]:
     yield
-    async with get_sessionmaker()() as s, s.begin():
+    async with get_system_sessionmaker()() as s, s.begin():
         await s.execute(text("UPDATE platform.setting SET value = '5', version = 1 WHERE key = :k"), {"k": QUOTA})
     settings_service.invalidate()
 

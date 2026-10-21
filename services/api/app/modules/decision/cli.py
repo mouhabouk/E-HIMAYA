@@ -9,7 +9,7 @@ import asyncio
 import json
 from pathlib import Path
 
-from app.core.db import dispose_engine, get_sessionmaker
+from app.core.db import dispose_engine, get_system_sessionmaker
 from app.modules.decision import procedures
 
 
@@ -17,7 +17,7 @@ async def _index(embed: bool) -> dict[str, object]:
     try:
         return {
             "directory": str(procedures.default_directory()),
-            **await procedures.index_once(get_sessionmaker(), embed=embed),
+            **await procedures.index_once(get_system_sessionmaker(), embed=embed),
         }
     finally:
         await dispose_engine()

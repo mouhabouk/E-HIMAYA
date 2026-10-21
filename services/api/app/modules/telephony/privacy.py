@@ -7,6 +7,9 @@ verified (an unverified number proves nothing), and by the SMS that created thei
   the authority, like stream recordings).
 * Erasure: the number is removed from the calls and SMS (encrypted value and blind index). Calls, recordings and
   reports stay for their legal retention period without any link to the person.
+
+Calls are staff data under row-level security; both steps reach the person's own calls with the system scope (the
+match on their verified number being the check).
 """
 
 import uuid
@@ -16,6 +19,7 @@ from pydantic import BaseModel
 from sqlalchemy import ColumnElement, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.db import as_system
 from app.modules.identity.models import Profile
 from app.modules.reports.models import Report
 from app.modules.telephony.domain import caller_index, normalize_caller
@@ -56,9 +60,12 @@ async def export(session: AsyncSession, user_id: uuid.UUID) -> tuple[list[Export
     number = _verified_number(await session.get(Profile, user_id))
     calls: list[ExportCall] = []
     if number is not None:
-        rows = await session.scalars(
-            select(Call).where(Call.caller_hash == caller_index(number)).order_by(Call.started_at)
-        )
+        async with as_system(session):
+            rows = (
+                await session.scalars(
+                    select(Call).where(Call.caller_hash == caller_index(number)).order_by(Call.started_at)
+                )
+            ).all()
         calls = [
             ExportCall(
                 id=c.id,
@@ -84,12 +91,13 @@ async def forget(session: AsyncSession, user_id: uuid.UUID) -> dict[str, int]:
     number = _verified_number(await session.get(Profile, user_id))
     calls = 0
     if number is not None:
-        result = await session.execute(
-            update(Call)
-            .where(Call.caller_hash == caller_index(number))
-            .values(caller_number=None, caller_hash=None)
-            .execution_options(synchronize_session=False)
-        )
+        async with as_system(session):
+            result = await session.execute(
+                update(Call)
+                .where(Call.caller_hash == caller_index(number))
+                .values(caller_number=None, caller_hash=None)
+                .execution_options(synchronize_session=False)
+            )
         calls = int(result.rowcount or 0)  # type: ignore[attr-defined]
     result = await session.execute(
         update(SmsInbound)

@@ -26,8 +26,7 @@ class AuditEntryOut(BaseModel):
 
     seq: int
     at: datetime
-    # The actor's display name, "system" for the platform's own steps, null when no name was recorded (§7.3).
-    actor_name: str | None
+    actor: str
     action: str
     target: str | None
     reason: str | None

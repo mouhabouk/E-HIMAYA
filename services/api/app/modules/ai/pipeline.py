@@ -9,6 +9,9 @@ The queue is a table, written in the same transaction as the report or media tha
 model or bus outage never loses work: the report stays visible as "awaiting analysis" and is retried
 with back-off. Inference runs outside any database transaction; results are written only if no newer
 input arrived meanwhile (generation check).
+
+Scores and grouping suggestions compare a report with every other report, whoever asked for them: they run with the
+system scope of row-level security (``core.db.system_scoped``), never with the caller's.
 """
 
 import asyncio
@@ -23,6 +26,7 @@ from sqlalchemy import cast, func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.core.config import get_settings
+from app.core.db import system_scoped
 from app.core.events import emit
 from app.core.storage import ObjectStore, get_store
 from app.modules.ai import grouping, lexicon, scoring
@@ -122,6 +126,7 @@ async def _weather(session: AsyncSession, report: Report, category: Category) ->
     return await weather_signal(session, category, position[0], position[1])
 
 
+@system_scoped
 async def score(session: AsyncSession, report: Report, analysis: Analysis) -> list[grouping.Match]:
     """Recompute credibility, priority and the grouping suggestion of a report from what is known now."""
     settings = await ai_settings.load(session)
@@ -161,6 +166,7 @@ async def score(session: AsyncSession, report: Report, analysis: Analysis) -> li
     return matches
 
 
+@system_scoped
 async def baseline(session: AsyncSession, report: Report) -> None:
     """Immediate rules-only scores of a new report, so it is ranked on the dashboard at once (NFR-01)."""
     analysis = Analysis(report_id=report.id, state="pending", steps={}, dismissed=[], models={})
@@ -171,6 +177,7 @@ async def baseline(session: AsyncSession, report: Report) -> None:
     await auto_group(session, report)
 
 
+@system_scoped
 async def auto_group(session: AsyncSession, report: Report) -> None:
     """At disaster level the grouping suggestion is applied at once (BR-11); never blocks a report."""
     from fastapi import HTTPException
@@ -180,10 +187,11 @@ async def auto_group(session: AsyncSession, report: Report) -> None:
     try:
         async with session.begin_nested():
             await incidents.auto_group(session, report)
-    except HTTPException:
-        log.info("ai.auto_group_skipped", report_id=str(report.id))
+    except HTTPException as exc:
+        log.info("ai.auto_group_skipped", report_id=str(report.id), reason=str(exc.detail))
 
 
+@system_scoped
 async def emit_enriched(session: AsyncSession, report_ids: list[uuid.UUID]) -> None:
     from app.modules.reports import service as reports
 
@@ -193,6 +201,7 @@ async def emit_enriched(session: AsyncSession, report_ids: list[uuid.UUID]) -> N
             await emit(session, "report.enriched", {"report": found[0].model_dump(mode="json")})
 
 
+@system_scoped
 async def rescore(session: AsyncSession, report_ids: list[uuid.UUID], *, wait: bool = True) -> None:
     """Re-apply the rules to reports whose context changed (new corroborating report, incident change).
 

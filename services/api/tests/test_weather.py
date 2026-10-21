@@ -11,7 +11,7 @@ import pytest
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.db import get_sessionmaker
+from app.core.db import get_system_sessionmaker
 from app.modules.ai import scoring
 from app.modules.ai.settings import PrioritySettings
 from app.modules.notify.schemas import MessageIn
@@ -278,7 +278,7 @@ async def test_refresh_fills_the_grid_and_spins_up(sim_grid: dict[str, int], ses
     now = datetime.now(UTC)
     assert span[0] >= now - timedelta(hours=31) and span[1] >= now + timedelta(hours=47)
     # Nothing is due again before WEATHER_FETCH_MIN_AGE_S.
-    assert (await service.refresh(get_sessionmaker(), SimProvider()))["fetched"] == 0
+    assert (await service.refresh(get_system_sessionmaker(), SimProvider()))["fetched"] == 0
 
 
 async def test_refresh_survives_provider_failures(weather_env: None, session: AsyncSession) -> None:
@@ -505,7 +505,7 @@ async def test_rules_per_gouvernorat(client: httpx.AsyncClient, weather_env: Non
 
     # Sfax's own threshold (120 km/h) wins over the national 70 km/h: a 95 km/h gale is suggested elsewhere only.
     await refresh(ScriptedProvider(_gale))
-    async with get_sessionmaker()() as s:
+    async with get_system_sessionmaker()() as s:
         codes = (await s.execute(text("SELECT gouvernorat_codes FROM weather.alert_suggestion"))).scalar_one()
     assert 61 not in codes and 11 in codes
 

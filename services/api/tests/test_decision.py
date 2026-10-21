@@ -16,7 +16,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
-from app.core.db import get_sessionmaker
+from app.core.db import get_system_sessionmaker
 from app.modules.decision import assistant, context, llm, procedures, routing
 from app.modules.decision.context import SpreadForecast, WeatherAtPoint
 from app.modules.decision.llm import LlmUnavailable, OllamaClient
@@ -123,10 +123,10 @@ def fake_llm() -> Iterator[FakeLlm]:
 @pytest.fixture
 async def library() -> AsyncIterator[None]:
     """The real procedures library, indexed (full text only), restored after tests that index other sheets."""
-    async with get_sessionmaker()() as s, s.begin():
+    async with get_system_sessionmaker()() as s, s.begin():
         await procedures.sync(s, REPO_PROCEDURES)
     yield
-    async with get_sessionmaker()() as s, s.begin():
+    async with get_system_sessionmaker()() as s, s.begin():
         await procedures.sync(s, REPO_PROCEDURES)
         await s.execute(text("UPDATE decision.procedure_chunk SET embedding = NULL, embedding_model = NULL"))
 
@@ -193,7 +193,7 @@ async def make_resource(
 
 async def clear_units(code: int) -> None:
     """Units and resources left in the gouvernorat by earlier runs would compete with this test's."""
-    async with get_sessionmaker()() as s, s.begin():
+    async with get_system_sessionmaker()() as s, s.begin():
         await s.execute(
             text("DELETE FROM ops.resource WHERE unit_id IN (SELECT id FROM ops.unit WHERE gouvernorat_code = :c)"),
             {"c": code},
@@ -281,15 +281,15 @@ async def test_index_is_incremental_and_embeds(library: None, tmp_path: Path, fa
         "## أول\nنص أول.\n\n## ثان\nنص ثان.\n"
     )
     (tmp_path / "demo.ar.md").write_text(sheet, encoding="utf-8")
-    async with get_sessionmaker()() as s, s.begin():
+    async with get_system_sessionmaker()() as s, s.begin():
         counts = await procedures.sync(s, tmp_path)
     assert counts["added"] == 2 and counts["removed"] >= 80
-    async with get_sessionmaker()() as s, s.begin():
+    async with get_system_sessionmaker()() as s, s.begin():
         assert (await procedures.sync(s, tmp_path))["added"] == 0
         assert await procedures.embed_pending(s, fake_ai) == 2
         assert await procedures.embed_pending(s, fake_ai) == 0
     (tmp_path / "demo.ar.md").write_text(sheet.replace("نص ثان.", "نص معدل."), encoding="utf-8")
-    async with get_sessionmaker()() as s, s.begin():
+    async with get_system_sessionmaker()() as s, s.begin():
         assert (await procedures.sync(s, tmp_path))["updated"] == 1
         pending = await s.scalar(text("SELECT count(*) FROM decision.procedure_chunk WHERE embedding IS NULL"))
         assert pending == 1  # only the changed passage is embedded again
@@ -558,7 +558,7 @@ async def test_responders_by_type_and_level(
         body = (await client.get(url, headers=reader)).json()
         assert f"committee:{TOZEUR}" in [i["id"] for i in body["items"]]
     finally:
-        async with get_sessionmaker()() as s, s.begin():
+        async with get_system_sessionmaker()() as s, s.begin():
             await s.execute(text("UPDATE ops.level_state SET level = 'normal', reason = NULL"))
 
 
@@ -671,7 +671,7 @@ async def test_assistant_recalls_similar_closed_incident(
     assert r.status_code == 200, r.text
     current = await new_incident(client, staff, TOZEUR_POINT, TOZEUR, category="flood")
     vector = "[" + ",".join(["1"] + ["0"] * 767) + "]"
-    async with get_sessionmaker()() as s, s.begin():
+    async with get_system_sessionmaker()() as s, s.begin():
         await s.execute(
             text("UPDATE reports.report SET embedding = CAST(:v AS vector) WHERE incident_id IN (:a, :b)"),
             {"v": vector, "a": past, "b": current},
@@ -750,7 +750,7 @@ async def test_platform_environment_feeds_the_rules(client: httpx.AsyncClient, s
     )
     now = datetime.now(UTC).replace(minute=0, second=0, microsecond=0)
     polygon = {"type": "Polygon", "coordinates": [[[lon, lat], [lon + 0.01, lat], [lon, lat + 0.01], [lon, lat]]]}
-    async with get_sessionmaker()() as s, s.begin():
+    async with get_system_sessionmaker()() as s, s.begin():
         point_id = 900_000 + secrets.randbelow(99_999)
         s.add(
             GridPoint(
@@ -808,7 +808,7 @@ async def test_platform_environment_feeds_the_rules(client: httpx.AsyncClient, s
         )
 
     environment = PlatformEnvironment()
-    async with get_sessionmaker()() as s:
+    async with get_system_sessionmaker()() as s:
         weather = await environment.weather_at(s, lat, lon)
         assert weather is not None and weather.simulated and weather.wind_kmh == 40.0
         # The day's danger class and the heavy rain expected within six hours.
@@ -830,7 +830,7 @@ async def test_platform_environment_feeds_the_rules(client: httpx.AsyncClient, s
 async def test_assistant_semantic_retrieval_with_e5(
     client: httpx.AsyncClient, staff: Staff, fake_llm: FakeLlm, fake_ai: FakeAi, library: None, session: AsyncSession
 ) -> None:
-    counts = await procedures.index_once(get_sessionmaker())
+    counts = await procedures.index_once(get_system_sessionmaker())
     assert counts["embedded"] >= 80
     incident_id = await new_incident(client, staff, TOZEUR_POINT, TOZEUR, category="drowning")
     body = (
