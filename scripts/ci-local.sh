@@ -783,7 +783,9 @@ npm_checks() {
 job_dashboard() {
   npm_checks apps/dashboard
   step "Install Playwright Chromium"
-  if have_root; then
+  if [ -n "${PLAYWRIGHT_CHROMIUM_EXECUTABLE:-}" ]; then
+    echo "using the preinstalled Chromium $PLAYWRIGHT_CHROMIUM_EXECUTABLE (PLAYWRIGHT_CHROMIUM_EXECUTABLE)"
+  elif have_root; then
     npx playwright install --with-deps chromium
   else
     echo "no root/passwordless sudo: browser system libraries (--with-deps) are assumed to be installed"
@@ -796,7 +798,9 @@ job_dashboard() {
 job_portal() {
   npm_checks apps/portal
   step "Install Playwright Chromium"
-  if have_root; then
+  if [ -n "${PLAYWRIGHT_CHROMIUM_EXECUTABLE:-}" ]; then
+    echo "using the preinstalled Chromium $PLAYWRIGHT_CHROMIUM_EXECUTABLE (PLAYWRIGHT_CHROMIUM_EXECUTABLE)"
+  elif have_root; then
     npx playwright install --with-deps chromium
   else
     echo "no root/passwordless sudo: browser system libraries (--with-deps) are assumed to be installed"
