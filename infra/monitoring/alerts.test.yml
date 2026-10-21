@@ -1,3 +1,4 @@
+# covers: NFR-13, NFR-12, NFR-01
 # promtool test rules alerts.test.yml
 rule_files:
   - alerts.yml

@@ -143,6 +143,10 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         log.info("api.stop")
 
 
+# Version of the HTTP contract (docs/api/README.md): /api/v1 only grows; the minor number follows the phase.
+API_VERSION = "1.10.0"
+
+
 def create_app() -> FastAPI:
     settings = get_settings()
     configure_logging(settings.api_log_level)
@@ -150,7 +154,7 @@ def create_app() -> FastAPI:
     production = settings.app_env == "production"
     app = FastAPI(
         title="ء-حماية / e-Himaya API",
-        version="0.1.0",
+        version=API_VERSION,
         lifespan=lifespan,
         # Interactive documentation and the schema are development aids; production does not publish them.
         docs_url=None if production else "/docs",

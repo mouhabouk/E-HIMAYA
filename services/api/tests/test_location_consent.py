@@ -1,3 +1,4 @@
+# covers: FR-A-022
 """Phase 10 §4.2: a volunteer shares their position only with their consent, and staff see it coarsened."""
 
 import uuid

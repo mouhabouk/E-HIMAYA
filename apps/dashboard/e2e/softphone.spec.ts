@@ -19,6 +19,7 @@ const SIP_DOMAIN = "ehimaya.test";
 // Headless Chromium: plain host candidates for the in-page peer, and a fake microphone without a prompt.
 test.use({
   launchOptions: {
+    executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE || undefined,
     args: [
       "--use-angle=swiftshader",
       "--enable-unsafe-swiftshader",

@@ -1,3 +1,4 @@
+# covers: NFR-07
 """Phase 10 §4.3: evidence anchors — Merkle proofs, chained signed anchors, the time stamp and the chain check."""
 
 import base64
