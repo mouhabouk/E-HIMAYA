@@ -523,8 +523,15 @@ async def submit_certificate(
 @router.get("/public/certificate-key", response_model=schemas.SigningKeyOut, tags=["public"])
 async def signing_key() -> schemas.SigningKeyOut:
     """Public key that signs approved certificates, for independent verification."""
+    current = certificate.current_key_id()
+    keys = {key_id: certificate.b64(public) for key_id, public in certificate.known_public_keys().items()}
     return schemas.SigningKeyOut(
-        algorithm="Ed25519", public_key=certificate.public_key_b64(), signed_message=certificate.SIGNED_MESSAGE
+        algorithm="Ed25519",
+        public_key=keys.get(current) if current else None,
+        signed_message=certificate.SIGNED_MESSAGE,
+        key_id=current,
+        previous_keys={key_id: raw for key_id, raw in keys.items() if key_id != current},
+        disclaimer=certificate.DISCLAIMER,
     )
 
 

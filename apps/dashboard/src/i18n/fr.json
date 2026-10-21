@@ -141,6 +141,8 @@
   },
   "errors": {
     "authentication_required": "Session expirée. Veuillez vous reconnecter.",
+    "mfa_required": "La connexion doit être confirmée par le code à usage unique (double authentification). Reconnectez-vous et saisissez le code de l'application d'authentification.",
+    "session_revoked": "Votre session a été fermée (depuis un autre appareil ou par un administrateur). Reconnectez-vous.",
     "account_suspended": "Ce compte est suspendu.",
     "forbidden": "Vous n’avez pas le droit d’effectuer cette action.",
     "no_scope": "Votre compte n’a pas de périmètre géographique.",
@@ -755,6 +757,7 @@
       "submitted": "Soumis",
       "approved": "Approuvé",
       "rejected": "Rejeté",
+      "revoked": "Révoqué",
       "expired": "Expiré"
     },
     "validUntil": "valable jusqu’au {{date}}",
@@ -994,7 +997,13 @@
       },
       "invalidTransition": "Le certificat a déjà été examiné ou n’est plus soumis. La liste a été actualisée.",
       "statusFilter": "Statut",
-      "emptyDecided": "Aucun certificat dans cet état."
+      "emptyDecided": "Aucun certificat dans cet état.",
+      "revoke": "Révoquer le certificat",
+      "revokeReason": "Motif de la révocation (reste interne)",
+      "confirmRevoke": "Confirmez-vous la révocation du certificat {{code}} ? Il apparaîtra aussitôt comme non valable sur la page publique de vérification.",
+      "revokedDone": "Certificat {{code}} révoqué.",
+      "alreadyRevoked": "Ce certificat est déjà révoqué. La liste a été actualisée.",
+      "revokeReasonRequired": "Le motif de la révocation est obligatoire."
     },
     "card": {
       "title": "Fiche de l’établissement déclarant",

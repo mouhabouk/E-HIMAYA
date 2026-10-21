@@ -151,6 +151,29 @@ describe("CertificatesPage (review queue)", () => {
     expect(within(li).queryByRole("button", { name: "Approuver" })).not.toBeInTheDocument();
   });
 
+  it("revokes an approved certificate with a reason, after confirmation", async () => {
+    const approved = makeQueueCertificate({ id: "c-9", code: "EHC-26-61-000099", status: "approved" });
+    const certificates = vi.fn((opts?: { status?: string }) =>
+      Promise.resolve({ items: opts?.status === "approved" ? [approved] : QUEUE, next_cursor: null }),
+    );
+    const revokeCertificate = vi.fn(() => Promise.resolve(makeCertificate({ status: "revoked" })));
+    setup({ certificates, revokeCertificate });
+    await item("EHC-26-61-000123");
+    fireEvent.change(screen.getByLabelText("Statut"), { target: { value: "approved" } });
+    const li = await item("EHC-26-61-000099");
+    fireEvent.click(within(li).getByRole("button", { name: "Révoquer le certificat" }));
+    const reason = within(li).getByLabelText("Motif de la révocation (reste interne)");
+    fireEvent.submit(reason.closest("form") as HTMLFormElement);
+    expect(within(li).getByText("Le motif de la révocation est obligatoire.")).toBeInTheDocument();
+    fireEvent.change(reason, { target: { value: "Accordé par erreur" } });
+    fireEvent.submit(reason.closest("form") as HTMLFormElement);
+    expect(within(li).getByRole("alert")).toHaveTextContent("Confirmez-vous la révocation du certificat EHC-26-61-000099");
+    expect(revokeCertificate).not.toHaveBeenCalled();
+    fireEvent.click(within(li).getByRole("button", { name: "Confirmer" }));
+    await waitFor(() => expect(revokeCertificate).toHaveBeenCalledWith("c-9", "Accordé par erreur"));
+    expect(await screen.findByText("Certificat EHC-26-61-000099 révoqué.")).toBeInTheDocument();
+  });
+
   it("is read-only for other roles", async () => {
     setup({}, { sub: "u", realm_access: { roles: ["operator"] }, gouvernorat_code: "61" });
     await item("EHC-26-61-000123");

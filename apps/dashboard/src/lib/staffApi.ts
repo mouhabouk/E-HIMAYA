@@ -176,6 +176,13 @@ export function staffApi(api: ApiClient) {
         body,
       }),
 
+    /** Revoke an approved certificate (`org_auditor`, phase 10 §4.1); the reason stays internal. */
+    revokeCertificate: (certId: string, reason: string) =>
+      api.request<Certificate>(`/api/v1/staff/certificates/${encodeURIComponent(certId)}/revoke`, {
+        method: "POST",
+        body: { reason },
+      }),
+
     gouvernorats: (signal?: AbortSignal) =>
       api.request<Gouvernorat[]>("/api/v1/geo/gouvernorats", { query: { lang: "ar" }, signal }),
 

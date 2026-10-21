@@ -74,6 +74,7 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     reviewOrg: vi.fn(),
     certificates: vi.fn(() => Promise.resolve({ items: [], next_cursor: null })),
     reviewCertificate: vi.fn(),
+    revokeCertificate: vi.fn(),
     ...fakeOpsApi(),
     ...fakeStreamsApi(),
     ...fakePhase7Api(),
