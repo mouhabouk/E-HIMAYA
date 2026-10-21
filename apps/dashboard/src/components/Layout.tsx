@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { NavLink, Outlet } from "react-router";
 import { useAuth } from "../context/auth";
@@ -107,11 +107,30 @@ function LiveIndicator() {
   );
 }
 
+/**
+ * Publishes the sticky header's height as `--header-h`, which the page uses as scroll padding: scrolling to an
+ * anchor or moving the keyboard focus never leaves the target under the header (WCAG 2.4.11), however many rows
+ * the navigation wraps to.
+ */
+function useHeaderHeight() {
+  return useCallback((header: HTMLElement | null) => {
+    if (!header || typeof ResizeObserver === "undefined") return;
+    const root = document.documentElement;
+    const observer = new ResizeObserver(() => root.style.setProperty("--header-h", `${header.offsetHeight}px`));
+    observer.observe(header);
+    return () => {
+      observer.disconnect();
+      root.style.removeProperty("--header-h");
+    };
+  }, []);
+}
+
 export function Layout() {
   const { t } = useTranslation();
   const { user, signOut } = useAuth();
   const live = useLiveState();
   const gouvernorats = useGouvernorats();
+  const headerRef = useHeaderHeight();
   if (!user) return null;
   const { identity } = user;
   const scope = identity.national
@@ -139,7 +158,7 @@ export function Layout() {
       <a className="skip-link" href="#main">
         {t("app.skipToContent")}
       </a>
-      <header className="header">
+      <header className="header" ref={headerRef}>
         <div className="header__brand">
           <img src="/favicon.svg" alt="" width="28" height="28" />
           <span>{t("app.name")}</span>
