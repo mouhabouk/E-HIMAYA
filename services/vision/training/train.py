@@ -12,7 +12,8 @@ epoch (image-level average precision per class) and the best epoch is kept in ``
 
 Several pseudo-labelled sets can be given (--data, repeated). Extra datasets in YOLO format (one ``.txt`` per
 image: ``class cx cy w h`` normalised) can be added with --yolo DIR:MAP, e.g. D-Fire (CC0, classes 0 = smoke,
-1 = fire): ``--yolo /data/D-Fire/train:smoke,fire``. --exclude takes a JSON list or object of image file names to
+1 = fire): ``--yolo /data/D-Fire/train:smoke,fire``; --yolo alone (no --data) trains on human boxes only, as the
+Colab notebook (training/colab/) does with D-Fire. --exclude takes a JSON list or object of image file names to
 leave out (near-duplicates of the evaluation images, see dedupe.py).
 
     PYTHONPATH=<YOLOX checkout> python training/train.py --data training/work/data --weights yolox_tiny.pth \
@@ -84,8 +85,16 @@ class Samples:
         directory, names = spec.rsplit(":", 1)
         mapping = [CLASSES.index(n) if n in CLASSES else -1 for n in names.split(",")]
         root = Path(directory)
+        unreadable = 0
         for image in sorted((root / "images").glob("*.jpg")):
             if image.name in self.exclude:
+                continue
+            # Copies of D-Fire can hold empty or truncated files (an interrupted download): skip them, not the run.
+            try:
+                with Image.open(image) as probe:
+                    probe.verify()
+            except (OSError, SyntaxError):
+                unreadable += 1
                 continue
             label = root / "labels" / f"{image.stem}.txt"
             rows = []
@@ -96,6 +105,8 @@ class Samples:
                         if mapping[int(cls)] >= 0:
                             rows.append([mapping[int(cls)], cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2])
             self.items.append((image, np.array(rows, dtype=np.float32).reshape(-1, 5)))
+        if unreadable:
+            print(f"{root}: {unreadable} unreadable images skipped")
 
 
 def load(path: Path, boxes: np.ndarray, size: int) -> tuple[np.ndarray, np.ndarray]:
@@ -276,7 +287,7 @@ class EMA:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument(
-        "--data", type=Path, action="append", required=True, help="output of build_dataset.py + pseudo_label.py"
+        "--data", type=Path, action="append", default=[], help="output of build_dataset.py + pseudo_label.py"
     )
     parser.add_argument("--yolo", action="append", default=[], help="extra YOLO-format dataset DIR:class,names")
     parser.add_argument("--weights", type=Path, required=True, help="yolox_tiny.pth (COCO)")
@@ -307,6 +318,8 @@ def main() -> None:
         samples.add_pseudo_labels(data)
     for spec in args.yolo:
         samples.add_yolo(spec)
+    if not samples.items:
+        parser.error("no training images: give --data and/or --yolo")
     held_out = [s for s in samples.items if is_validation(s[0], args.val_fraction)]
     training = [s for s in samples.items if not is_validation(s[0], args.val_fraction)]
     positives = [s for s in training if len(s[1])]

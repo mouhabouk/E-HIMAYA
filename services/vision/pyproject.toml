@@ -32,6 +32,8 @@ default-groups = ["dev"]
 [tool.ruff]
 line-length = 120
 target-version = "py312"
+# Generated from training/*.py by training/colab/build_notebook.py (checked for drift instead).
+extend-exclude = ["training/colab/*.ipynb"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP", "S", "ASYNC", "RUF"]

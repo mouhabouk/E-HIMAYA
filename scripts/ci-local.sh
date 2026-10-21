@@ -641,6 +641,8 @@ job_vision() {
   export VISION_API_TOKEN=ci-only-token-ci-only-token-0001
   export VISION_CALLBACK_TOKEN=ci-only-callback-ci-only-callback-01
   uv_checks services/vision
+  step "Colab training notebook up to date"
+  python3 training/colab/build_notebook.py --check
 }
 
 job_vision_models() {
