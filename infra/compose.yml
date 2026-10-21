@@ -238,6 +238,11 @@ services:
       # Institutions portal (phase 4): invitation and certificate verification links, certificate signing.
       PORTAL_PUBLIC_URL: ${PORTAL_PUBLIC_URL:-http://localhost:5174}
       CERTIFICATE_SIGNING_KEY: ${CERTIFICATE_SIGNING_KEY:-}
+      # Phase 10: certificate key rotation, evidence anchoring and the staff second factor.
+      CERTIFICATE_PREVIOUS_PUBLIC_KEYS: ${CERTIFICATE_PREVIOUS_PUBLIC_KEYS:-}
+      EVIDENCE_SIGNING_KEY: ${EVIDENCE_SIGNING_KEY:-}
+      TSA_URL: ${TSA_URL:-}
+      STAFF_MFA_REQUIRED: ${STAFF_MFA_REQUIRED:-true}
       # Rewards (phase 8): QR base of reward certificates, daily cap and badge thresholds.
       API_PUBLIC_URL: ${API_PUBLIC_URL:-http://localhost:8000}
       REWARDS_DAILY_CAP: ${REWARDS_DAILY_CAP:-200}
