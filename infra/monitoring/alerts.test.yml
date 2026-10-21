@@ -25,7 +25,7 @@ tests:
         exp_alerts:
           - exp_labels: {severity: critical}
             exp_annotations:
-              runbook: docs/procedures/incident-response.md
+              runbook: docs/runbooks/incident-response.md
               summary: "Report intake p95 above 2 s (4.85s)"
 
   - name: intake errors
@@ -44,7 +44,7 @@ tests:
         exp_alerts:
           - exp_labels: {severity: critical}
             exp_annotations:
-              runbook: docs/procedures/incident-response.md
+              runbook: docs/runbooks/incident-response.md
               summary: "Report intake answers 5xx errors"
 
   - name: outbox backlog and notification failures
@@ -134,7 +134,7 @@ tests:
         exp_alerts:
           - exp_labels: {severity: critical, job: backup, instance: "backup-metrics:9100"}
             exp_annotations:
-              runbook: docs/procedures/backup-restore.md
+              runbook: docs/runbooks/backup-restore.md
               summary: "No WAL segment archived for 11m 0s (RPO objective 5 min)"
       - eval_time: 30m
         alertname: BaseBackupMissing
@@ -144,5 +144,5 @@ tests:
         exp_alerts:
           - exp_labels: {severity: critical, job: backup, instance: "backup-metrics:9100"}
             exp_annotations:
-              runbook: docs/procedures/backup-restore.md
+              runbook: docs/runbooks/backup-restore.md
               summary: "Last base backup is 1d 4h 10m 0s old"

@@ -12,7 +12,7 @@ groups:
           severity: critical
         annotations:
           summary: "Report intake p95 above 2 s ({{ $value | humanizeDuration }})"
-          runbook: docs/procedures/incident-response.md
+          runbook: docs/runbooks/incident-response.md
       - alert: ReportIntakeErrors
         expr: sum(rate(ehimaya_http_server_errors_total{area="reports"}[5m])) > 0
         for: 2m
@@ -20,7 +20,7 @@ groups:
           severity: critical
         annotations:
           summary: "Report intake answers 5xx errors"
-          runbook: docs/procedures/incident-response.md
+          runbook: docs/runbooks/incident-response.md
 
   - name: queues
     rules:
@@ -78,11 +78,11 @@ groups:
           severity: critical
         annotations:
           summary: "No WAL segment archived for {{ $value | humanizeDuration }} (RPO objective 5 min)"
-          runbook: docs/procedures/backup-restore.md
+          runbook: docs/runbooks/backup-restore.md
       - alert: BaseBackupMissing
         expr: time() - ehimaya_backup_last_base_timestamp_seconds > 26 * 3600
         labels:
           severity: critical
         annotations:
           summary: "Last base backup is {{ $value | humanizeDuration }} old"
-          runbook: docs/procedures/backup-restore.md
+          runbook: docs/runbooks/backup-restore.md

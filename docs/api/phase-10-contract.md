@@ -105,7 +105,7 @@ through the browser flow (password, OTP enrolment, then a second sign-in with OT
      `audit.verify_chain()` is intact;
   7. print the elapsed restore time (RTO) and the archive lag (RPO).
   It runs in CI (job "Backup · restore drill") and in ci-local, and the docs ask for it once a quarter on the real
-  backups (`docs/procedures/backup-restore.md`).
+  backups (`docs/runbooks/backup-restore.md`).
 
 ### 2.2 Failure behaviour (NFR-02)
 
@@ -278,9 +278,12 @@ phase.
   a lawyer.
 * `docs/privacy/processing-register.md`: record of processing activities per purpose (Law 63-2004, INPDP), with
   legal basis, data, recipients and retention as coded in `privacy/retention.py`.
-* `docs/procedures/incident-response.md`: severity levels, roles, the first hour, notification of INPDP and of the
+* `docs/runbooks/incident-response.md`: severity levels, roles, the first hour, notification of INPDP and of the
   people concerned, the post-mortem.
-* `docs/procedures/backup-restore.md`: daily checks, the quarterly drill, restoring after a loss.
+* `docs/runbooks/backup-restore.md`: daily checks, the quarterly drill, restoring after a loss.
+
+The runbooks live in `docs/runbooks/`, not `docs/procedures/`: that folder is the library of field procedures read
+by the knowledge module, whose parser accepts only procedure files.
 
 ## 8. Acceptance
 
