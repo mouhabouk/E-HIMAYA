@@ -298,11 +298,68 @@ class _ReadinessCardState extends ConsumerState<_ReadinessCard> {
   int _hours = 8;
   bool _busy = false;
 
+  /// The notice of phase 10 §4.2: what is shared, with whom and for how long. True when accepted.
+  Future<bool> _askLocationConsent() async {
+    final l10n = AppLocalizations.of(context);
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        key: const Key('location-consent-dialog'),
+        title: Text(l10n.locationConsentTitle),
+        content: SingleChildScrollView(child: Text(l10n.locationConsentBody)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l10n.actionCancel),
+          ),
+          FilledButton(
+            key: const Key('location-consent-accept'),
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(l10n.locationConsentAccept),
+          ),
+        ],
+      ),
+    );
+    if (ok != true || !mounted) return false;
+    await ref
+        .read(volunteerProvider.notifier)
+        .giveLocationConsent(Localizations.localeOf(context).languageCode);
+    return true;
+  }
+
+  Future<void> _consent(bool give) async {
+    setState(() => _busy = true);
+    try {
+      if (give) {
+        await _askLocationConsent();
+      } else {
+        await ref.read(volunteerProvider.notifier).withdrawLocationConsent();
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                AppLocalizations.of(context).locationConsentWithdrawn,
+              ),
+            ),
+          );
+        }
+      }
+    } on Object catch (e) {
+      if (mounted) showVolunteerError(context, e);
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
   Future<void> _toggle(bool ready) async {
     setState(() => _busy = true);
     try {
       final controller = ref.read(volunteerProvider.notifier);
       if (ready) {
+        // Phase 10 §4.2: the first readiness asks for the consent to share the position.
+        if (!widget.volunteer.locationConsent && !await _askLocationConsent()) {
+          return;
+        }
         await controller.setReady(_hours);
         // On call: the one case where the app asks to leave battery optimisation.
         if (mounted) await maybeAskBatteryExemption(context, ref);
@@ -366,6 +423,18 @@ class _ReadinessCardState extends ConsumerState<_ReadinessCard> {
                   ],
                 ),
               ),
+            SwitchListTile(
+              key: const Key('volunteer-location-consent'),
+              secondary: const Icon(Icons.share_location, size: 32),
+              title: Text(l10n.locationConsentSwitch),
+              subtitle: Text(
+                v.locationConsent
+                    ? l10n.locationConsentSwitchOn
+                    : l10n.locationConsentSwitchOff,
+              ),
+              value: v.locationConsent,
+              onChanged: _busy ? null : _consent,
+            ),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
               child: Text(

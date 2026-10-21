@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -15,6 +16,9 @@ import '../../core/power/battery_saver.dart';
 import '../../core/power/scheduling.dart';
 
 final _log = logger('volunteer');
+
+/// Version of the location notice shown before the first readiness (server `LOCATION_NOTICE_VERSION`).
+const locationNoticeVersion = '1';
 
 /// Readiness needs a position: the phone could not give one.
 class LocationUnavailable implements Exception {
@@ -66,6 +70,26 @@ class VolunteerController extends AsyncNotifier<Volunteer?> {
         .read(apiProvider)
         .setReadiness(ready: true, position: position, hours: hours);
     if (ref.mounted) state = AsyncData(v);
+  }
+
+  /// Records the consent to share the position while ready (the notice the dialog showed).
+  Future<void> giveLocationConsent(String locale) async {
+    await ref
+        .read(apiProvider)
+        .giveLocationConsent(
+          version: locationNoticeVersion,
+          locale: locale,
+          platform: defaultTargetPlatform == TargetPlatform.iOS
+              ? 'ios'
+              : 'android',
+        );
+    await reload();
+  }
+
+  /// Withdraws it: the server drops the position and readiness ends now.
+  Future<void> withdrawLocationConsent() async {
+    await ref.read(apiProvider).withdrawLocationConsent();
+    await reload();
   }
 
   Future<void> setNotReady() async {

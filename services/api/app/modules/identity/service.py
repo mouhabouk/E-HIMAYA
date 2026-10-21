@@ -123,7 +123,9 @@ CurrentReporter = Annotated[Reporter, Depends(get_reporter)]
 
 async def has_consented(session: AsyncSession, user_id: uuid.UUID, version: str) -> bool:
     found = await session.scalar(
-        select(Consent.id).where(Consent.user_id == user_id, Consent.charter_version == version).limit(1)
+        select(Consent.id)
+        .where(Consent.user_id == user_id, Consent.purpose == "charter", Consent.charter_version == version)
+        .limit(1)
     )
     return found is not None
 

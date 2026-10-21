@@ -26,6 +26,8 @@ enum ApiErrorCode {
   outsidePeriod('outside_period'),
   notReady('not_ready'),
   locationRequired('location_required'),
+  // Phase 10 §4.2: no readiness without the location consent.
+  locationConsentRequired('location_consent_required'),
   calloutClosed('callout_closed'),
   etaRequired('eta_required'),
   invalidTransition('invalid_transition'),

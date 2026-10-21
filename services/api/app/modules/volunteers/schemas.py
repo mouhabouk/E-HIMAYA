@@ -36,6 +36,16 @@ class VolunteerOut(BaseModel):
     ready: bool
     ready_until: datetime | None
     version: int
+    location_consent: bool = False
+
+
+class LocationConsentIn(BaseModel):
+    """Consent to share the position while ready (phase 10 §4.2), after reading the notice of this version."""
+
+    purpose: Literal["volunteer_location"]
+    version: str = Field(max_length=16)
+    locale: Literal["ar", "fr", "en"] = "ar"
+    platform: Literal["android", "ios", "web"] = "android"
 
 
 class ReadinessIn(BaseModel):

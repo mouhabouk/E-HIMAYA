@@ -206,6 +206,28 @@ class EHimayaApi {
     await _dio.delete<Object?>('/api/v1/me/volunteer');
   });
 
+  /// Consent to share the position while ready, after reading notice [version] (phase 10 §4.2).
+  Future<void> giveLocationConsent({
+    required String version,
+    required String locale,
+    required String platform,
+  }) => guardApi(() async {
+    await _dio.post<Object?>(
+      '/api/v1/me/consents',
+      data: {
+        'purpose': 'volunteer_location',
+        'version': version,
+        'locale': locale,
+        'platform': platform,
+      },
+    );
+  });
+
+  /// Withdraws it: the server drops the position and ends readiness at once.
+  Future<void> withdrawLocationConsent() => guardApi(() async {
+    await _dio.delete<Object?>('/api/v1/me/consents/volunteer_location');
+  });
+
   /// Readiness on (with the current position and a duration in hours) or off.
   Future<Volunteer> setReadiness({
     required bool ready,
