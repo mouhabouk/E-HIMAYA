@@ -11,7 +11,7 @@ import pytest
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.db import get_sessionmaker
+from app.core.db import get_system_sessionmaker
 from app.modules.ai import scoring
 from app.modules.ai.settings import PrioritySettings
 from app.modules.notify import delivery
@@ -25,7 +25,7 @@ SFAX = {"lat": 34.7406, "lon": 10.7603, "accuracy_m": 8.0}
 @pytest.fixture(autouse=True)
 async def _normal_levels() -> AsyncIterator[None]:
     yield
-    async with get_sessionmaker()() as s, s.begin():
+    async with get_system_sessionmaker()() as s, s.begin():
         await s.execute(text("UPDATE ops.level_state SET level = 'normal', reason = NULL"))
 
 
@@ -548,7 +548,7 @@ async def test_callout_flow(
     await client.put(
         "/api/v1/devices", json={"token": "tok-" + "v" * 30, "platform": "android", "locale": "fr"}, headers=second
     )
-    while await delivery.run_outbox(get_sessionmaker()):
+    while await delivery.run_outbox(get_system_sessionmaker()):
         pass
     callout_pushes = [p for (p,) in channels.push.sent if p.data.get("type") == "callout"]
     # Content-free (A8): generic text in the device's language, ids only; the app reads /me/callouts.

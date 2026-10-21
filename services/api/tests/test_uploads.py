@@ -9,7 +9,7 @@ import httpx
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.db import get_sessionmaker
+from app.core.db import get_system_sessionmaker
 from app.modules.reports.uploads import verify_one
 from tests.conftest import (
     HOOK_AUTH,
@@ -100,7 +100,7 @@ async def test_full_upload_flow(
     finished["Storage"] = {"Type": "s3store", "Bucket": "ehimaya-media", "Key": key}
     assert (await client.post(HOOK, headers=HOOK_AUTH, json=_hook("post-finish", citizen, finished))).status_code == 200
 
-    assert await verify_one(get_sessionmaker(), fake_store) is True
+    assert await verify_one(get_system_sessionmaker(), fake_store) is True
     media = (await client.get("/api/v1/reports/mine", headers=citizen)).json()["items"][0]["media"][0]
     assert media["status"] == "stored" and media["bytes"] == len(data)
     assert media["sha256"] == hashlib.sha256(data).hexdigest()
@@ -127,7 +127,7 @@ async def test_hash_mismatch_rejects_and_deletes(
     finished = {**_upload(report_id, declared), "ID": upload_id, "Storage": {"Key": key}}
     await client.post(HOOK, headers=HOOK_AUTH, json=_hook("post-finish", device, finished))
 
-    assert await verify_one(get_sessionmaker(), fake_store) is True
+    assert await verify_one(get_system_sessionmaker(), fake_store) is True
     assert key in fake_store.deleted and f"{key}.info" in fake_store.deleted
     status = await session.scalar(text("SELECT status FROM reports.media WHERE upload_id = :u"), {"u": upload_id})
     assert status == "rejected"
@@ -138,9 +138,9 @@ async def test_hash_mismatch_rejects_and_deletes(
 
 
 async def test_nothing_to_verify(fake_store: FakeStore) -> None:
-    while await verify_one(get_sessionmaker(), fake_store):  # drain leftovers from other tests
+    while await verify_one(get_system_sessionmaker(), fake_store):  # drain leftovers from other tests
         pass
-    assert await verify_one(get_sessionmaker(), fake_store) is False
+    assert await verify_one(get_system_sessionmaker(), fake_store) is False
 
 
 async def test_pre_create_rejections(
@@ -200,7 +200,7 @@ async def _finished_upload(
     fake_store.objects[key] = data
     finished = {**_upload(report_id, data, **meta), "ID": upload_id, "Storage": {"Key": key}}
     await client.post(HOOK, headers=HOOK_AUTH, json=_hook("post-finish", headers, finished))
-    while await verify_one(get_sessionmaker(), fake_store):
+    while await verify_one(get_system_sessionmaker(), fake_store):
         pass
     return report_id, upload_id
 

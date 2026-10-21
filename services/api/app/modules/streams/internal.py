@@ -33,7 +33,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
-from app.core.db import get_session
+from app.core.db import get_system_session
 from app.core.ratelimit import opaque
 from app.modules.reports.models import Media
 from app.modules.streams import detections, mediamtx, schemas, service
@@ -50,7 +50,7 @@ from app.modules.streams.models import LiveStream
 
 log = structlog.get_logger()
 router = APIRouter(include_in_schema=False)
-Session = Annotated[AsyncSession, Depends(get_session)]
+Session = Annotated[AsyncSession, Depends(get_system_session)]
 
 VISION_USER = "vision"
 SIM_LABEL_PREFIX = "[SIM] "

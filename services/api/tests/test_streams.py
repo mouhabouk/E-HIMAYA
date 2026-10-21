@@ -15,7 +15,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
-from app.core.db import get_sessionmaker
+from app.core.db import get_system_sessionmaker
 from app.modules.privacy import retention
 from app.modules.streams import internal, worker
 from app.modules.streams.domain import viewer_token
@@ -381,7 +381,7 @@ def segment(recordings: Path, path: str, name: str, data: bytes) -> Path:
 
 
 async def drain(store: FakeStore) -> int:
-    sessionmaker = get_sessionmaker()
+    sessionmaker = get_system_sessionmaker()
     count = 0
     while await worker.ingest_one(sessionmaker, store):
         count += 1
@@ -485,8 +485,8 @@ async def test_orphan_segments_are_picked_up(
     segment(recordings, f"live/{uuid.uuid4()}", "unknown.mp4", b"no stream")
     segment(recordings, "live/not-a-stream", "junk.mp4", b"junk")
     monkeypatch.setattr(get_settings(), "stream_segment_orphan_after_s", 0)
-    assert await worker.queue_orphans(get_sessionmaker()) == 1
-    assert await worker.queue_orphans(get_sessionmaker()) == 0
+    assert await worker.queue_orphans(get_system_sessionmaker()) == 1
+    assert await worker.queue_orphans(get_system_sessionmaker()) == 0
     assert await drain(fake_store) == 1
     assert not old.exists() and f"recordings/{stream['stream_id']}/1.mp4" in fake_store.objects
 
@@ -502,7 +502,7 @@ async def test_upload_failure_is_retried(
         async def put(self, key: str, data: bytes, content_type: str) -> None:
             raise ConnectionError("s3 down")
 
-    assert await worker.ingest_one(get_sessionmaker(), Down()) is True
+    assert await worker.ingest_one(get_system_sessionmaker(), Down()) is True
     state = (
         await session.execute(
             text("SELECT state, attempts, last_error FROM reports.stream_segment WHERE segment_path = :p"),
@@ -752,7 +752,7 @@ async def test_sweep_expires_and_ends_streams(
         {"id": long["stream_id"]},
     )
     await session.commit()
-    kicked = await worker.sweep(get_sessionmaker())
+    kicked = await worker.sweep(get_system_sessionmaker())
     assert long["path"] in kicked and long["path"] in fake_mediamtx.kicked
     expired = await row(session, unused["stream_id"])
     assert expired.status == "expired" and expired.end_reason == "token_expired"
@@ -813,7 +813,7 @@ async def test_vision_watch_list_follows_live_streams(
     await session.commit()
     vision = FakeVision()
     vision.fail = VisionBusy("busy")
-    await worker.sync_vision(get_sessionmaker(), vision)
+    await worker.sync_vision(get_system_sessionmaker(), vision)
     busy = await row(session, sid)
     assert busy.vision_state == "requested" and busy.vision_attempts == 1
     assert busy.vision_next_attempt_at > datetime.now(UTC)
@@ -823,14 +823,14 @@ async def test_vision_watch_list_follows_live_streams(
         text("UPDATE reports.live_stream SET vision_next_attempt_at = now() WHERE id = :id"), {"id": sid}
     )
     await session.commit()
-    await worker.sync_vision(get_sessionmaker(), vision)
+    await worker.sync_vision(get_system_sessionmaker(), vision)
     assert vision.watching[sid] == (
         f"rtsp://mediamtx:8554/live/{sid}",
         "http://api:8000/internal/vision/detections",
     )
     assert (await row(session, sid)).vision_state == "watching"
     await hook(client, "not_ready", stream["path"])
-    await worker.sync_vision(get_sessionmaker(), vision)
+    await worker.sync_vision(get_system_sessionmaker(), vision)
     assert sid not in vision.watching and (await row(session, sid)).vision_state == "idle"
 
 
@@ -839,7 +839,7 @@ async def test_without_vision_service_nothing_waits(
 ) -> None:
     _, stream = await citizen_stream(client, make_token)
     await go_live(client, stream["path"])
-    await worker.sync_vision(get_sessionmaker(), None)
+    await worker.sync_vision(get_system_sessionmaker(), None)
     assert (await row(session, stream["stream_id"])).vision_state == "disabled"
 
 
@@ -872,7 +872,7 @@ async def test_uploaded_images_are_analysed(
     )
     await session.commit()
     vision = FakeVision()
-    sessionmaker = get_sessionmaker()
+    sessionmaker = get_system_sessionmaker()
 
     # Service down: retried later, nothing else waits.
     vision.fail = VisionUnavailable("ConnectError")
@@ -987,7 +987,7 @@ async def test_retention_of_streams(
         text("UPDATE reports.live_stream SET ended_at = :t WHERE id = :id"), {"t": long_ago, "id": drone["id"]}
     )
     await session.commit()
-    sessionmaker = get_sessionmaker()
+    sessionmaker = get_system_sessionmaker()
     assert await retention.run_job(sessionmaker, "reports", retention.anonymise_reports) >= 1
     assert await retention.run_job(sessionmaker, "streams", retention.purge_streams) >= 1
 

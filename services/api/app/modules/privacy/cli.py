@@ -13,18 +13,18 @@ from datetime import UTC, datetime
 from sqlalchemy import select, update
 
 from app.core.crypto import get_cipher
-from app.core.db import dispose_engine, get_sessionmaker
+from app.core.db import dispose_engine, get_system_sessionmaker
 from app.modules.identity.models import ErasureRequest
 from app.modules.privacy import retention, rotation
 
 
 async def _reencrypt(batch: int, dry_run: bool) -> dict[str, object]:
-    counts = await rotation.reencrypt(get_sessionmaker(), batch=batch, dry_run=dry_run)
+    counts = await rotation.reencrypt(get_system_sessionmaker(), batch=batch, dry_run=dry_run)
     return {"active_version": get_cipher().active, "dry_run": dry_run, "rows": counts}
 
 
 async def _erasures(done: list[int]) -> dict[str, object]:
-    async with get_sessionmaker()() as session, session.begin():
+    async with get_system_sessionmaker()() as session, session.begin():
         if done:
             await session.execute(
                 update(ErasureRequest)
@@ -45,7 +45,7 @@ async def _main(args: argparse.Namespace) -> dict[str, object]:
         if args.command == "reencrypt":
             return await _reencrypt(args.batch, args.dry_run)
         if args.command == "retention":
-            return {"rows": await retention.run_all(get_sessionmaker())}
+            return {"rows": await retention.run_all(get_system_sessionmaker())}
         return await _erasures(args.done or [])
     finally:
         await dispose_engine()

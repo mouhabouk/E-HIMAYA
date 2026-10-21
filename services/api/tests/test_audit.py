@@ -22,7 +22,7 @@ async def test_entries_are_chained(session: AsyncSession) -> None:
 async def test_log_is_append_only(session: AsyncSession, statement: str) -> None:
     await service.record(session, actor="system", action="test.immutable")
     await session.commit()
-    with pytest.raises(DBAPIError, match="append-only"):
+    with pytest.raises(DBAPIError, match=r"append-only|permission denied"):
         await session.execute(text(statement))
     await session.rollback()
 

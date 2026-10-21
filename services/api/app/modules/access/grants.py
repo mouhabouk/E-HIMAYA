@@ -16,6 +16,7 @@ from fastapi import HTTPException, status
 from sqlalchemy import and_, or_, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.db import as_system
 from app.core.events import emit
 from app.core.security import Principal, Role
 from app.modules.access import schemas
@@ -116,15 +117,15 @@ async def _target_gouvernorat(session: AsyncSession, body: schemas.GrantIn) -> i
         return body.gouvernorat_code
     if body.target_id is None or body.gouvernorat_code is not None:
         raise invalid
-    if body.target_kind == "report":
-        report = await session.get(Report, body.target_id)
-        if report is None:
-            raise invalid
-        return report.gouvernorat_code
-    incident = await session.get(Incident, body.target_id)
-    if incident is None:
+    # The target is outside the caller's scope by definition: looked up with the system scope (row-level security),
+    # and only its existence and gouvernorat are used.
+    model = Report if body.target_kind == "report" else Incident
+    async with as_system(session):
+        found = (await session.execute(select(model.gouvernorat_code).where(model.id == body.target_id))).first()
+    if found is None:
         raise invalid
-    return incident.gouvernorat_code
+    code: int | None = found.gouvernorat_code
+    return code
 
 
 async def request(session: AsyncSession, principal: Principal, body: schemas.GrantIn) -> BreakGlassGrant:

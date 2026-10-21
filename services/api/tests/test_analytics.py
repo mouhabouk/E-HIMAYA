@@ -20,7 +20,7 @@ from openpyxl import load_workbook
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.db import get_sessionmaker
+from app.core.db import get_system_sessionmaker
 from app.modules.analytics import domain, scenario, worker
 from app.modules.reports.live import _route
 from tests.conftest import STAFF_ISS, FakeStore, TokenFactory, bearer, outbox_events
@@ -535,7 +535,7 @@ async def test_scenario_low_confidence_overload_and_capacity(
 
 
 async def _generate_all() -> None:
-    sessionmaker = get_sessionmaker()
+    sessionmaker = get_system_sessionmaker()
     while await worker.generate_next(sessionmaker):
         pass
 
@@ -599,7 +599,7 @@ async def test_report_pdf_generated_stored_and_downloaded(
     from app.modules.analytics import documents
     from app.modules.analytics.models import Report
 
-    async with get_sessionmaker()() as s:
+    async with get_system_sessionmaker()() as s:
         row = await s.get(Report, uuid.UUID(created["id"]))
         assert row is not None
         content = await documents.build(s, row)
@@ -691,7 +691,7 @@ async def test_report_library_scope_search_and_targets(
         json=body | {"filters": {"incident_id": str(march_2019["incident"])}},
         headers=staff(["local_committee"], KEF),
     )
-    assert r.status_code == 403
+    assert (r.status_code, r.json()["detail"]) == (404, "not_found")  # another gouvernorat's incident: not disclosed
     r = await client.post("/api/v1/staff/reports-library", json=body | {"kind": "scenario"}, headers=regional)
     assert r.status_code == 422 and r.json() == {"detail": "scenario_required"}
     r = await client.post(
@@ -796,7 +796,7 @@ async def test_schedule_crud_and_firing(
         text("UPDATE analytics.schedule SET next_run_at = :d WHERE id = :i"), {"d": due, "i": schedule["id"]}
     )
     await session.commit()
-    await worker.cycle(get_sessionmaker())
+    await worker.cycle(get_system_sessionmaker())
     r = await client.get(f"/api/v1/staff/report-schedules/{schedule['id']}", headers=headers)
     fired = r.json()
     assert fired["last_run_at"] and fired["last_report_id"]
@@ -824,7 +824,7 @@ async def test_schedule_crud_and_firing(
     )
     assert run_audit == 1
     # A second cycle does not fire again before the next run.
-    await worker.cycle(get_sessionmaker())
+    await worker.cycle(get_system_sessionmaker())
     count = await session.scalar(
         text("SELECT count(*) FROM analytics.report WHERE schedule_id = :i"), {"i": schedule["id"]}
     )
@@ -862,7 +862,7 @@ async def test_document_in_english(
     from app.modules.analytics import documents
     from app.modules.analytics.models import Report
 
-    async with get_sessionmaker()() as s:
+    async with get_system_sessionmaker()() as s:
         row = await s.get(Report, uuid.UUID(created["id"]))
         assert row is not None
         page = documents.render_html(await documents.build(s, row))

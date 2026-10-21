@@ -103,6 +103,9 @@ async def resolve_reporter(
             raise HTTPException(status.HTTP_403_FORBIDDEN, "anon_blocked")
         raise HTTPException(status.HTTP_403_FORBIDDEN, "account_suspended")
     await session.commit()
+    # Database scope (row-level security, phase 9 §9.1): from here on the request sees the reporter's own rows only
+    # (every caller acting for a citizen or a device resolves it here: reports, portal, rewards, privacy).
+    set_db_scope(DbScope.public(account.user_id))
     return Reporter(user_id=account.user_id, kind=account.kind, principal=principal)
 
 
@@ -112,10 +115,7 @@ async def get_reporter(
     session: Annotated[AsyncSession, Depends(get_session)],
     x_device_key: Annotated[str | None, Header(max_length=64)] = None,
 ) -> Reporter:
-    reporter = await resolve_reporter(session, principal, x_device_key, client_key(request))
-    # Database scope (row-level security, phase 9 §9.1): a reporter sees its own rows only.
-    set_db_scope(DbScope.public(reporter.user_id))
-    return reporter
+    return await resolve_reporter(session, principal, x_device_key, client_key(request))
 
 
 CurrentReporter = Annotated[Reporter, Depends(get_reporter)]
