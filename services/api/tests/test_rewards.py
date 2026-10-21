@@ -18,7 +18,7 @@ from sqlalchemy.exc import DBAPIError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
-from app.core.db import get_sessionmaker
+from app.core.db import get_system_sessionmaker
 from app.modules.privacy import retention
 from app.modules.rewards import consumer, service
 from tests.conftest import (
@@ -41,7 +41,7 @@ def sfax_place() -> dict[str, float]:
 @pytest.fixture(autouse=True)
 async def _normal_levels() -> AsyncIterator[None]:
     yield
-    async with get_sessionmaker()() as s, s.begin():
+    async with get_system_sessionmaker()() as s, s.begin():
         await s.execute(text("UPDATE ops.level_state SET level = 'normal', reason = NULL"))
 
 
@@ -51,7 +51,7 @@ def signing_key(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 async def drain() -> None:
-    await consumer.run_until_idle(get_sessionmaker(), gap_grace=timedelta(0))
+    await consumer.run_until_idle(get_system_sessionmaker(), gap_grace=timedelta(0))
 
 
 async def new_citizen(
@@ -78,7 +78,7 @@ async def new_citizen(
 
 async def citizen_id(client: httpx.AsyncClient, headers: dict[str, str]) -> str:
     subject = (await client.get("/api/v1/me", headers=headers)).json()["subject"]
-    async with get_sessionmaker()() as s:
+    async with get_system_sessionmaker()() as s:
         user_id = await s.scalar(text("SELECT user_id FROM identity.account WHERE keycloak_sub = :s"), {"s": subject})
     return str(user_id)
 
@@ -94,7 +94,11 @@ async def report(
 
 
 async def incident_of(client: httpx.AsyncClient, staff: Staff, report_id: str, incident_id: str | None = None) -> str:
-    body = {"action": "new"} if incident_id is None else {"action": "link", "incident_id": incident_id}
+    body = (
+        {"action": "new", "override_reason": "independent test incident"}
+        if incident_id is None
+        else {"action": "link", "incident_id": incident_id}
+    )
     r = await client.post(f"/api/v1/staff/reports/{report_id}/incident", json=body, headers=staff(["operator"]))
     assert r.status_code == 200, r.text
     return r.json()["incident_id"]  # type: ignore[no-any-return]
@@ -151,7 +155,7 @@ async def test_verified_points_are_idempotent(
     await session.execute(text("UPDATE rewards.consumer_cursor SET last_id = 0"))
     await session.commit()
     await drain()
-    async with get_sessionmaker()() as s, s.begin():
+    async with get_system_sessionmaker()() as s, s.begin():
         assert await service.award_report(s, uuid.UUID(rep["id"])) == ["duplicate", "duplicate"]
     assert (await mine(client, headers))["balance"] == 75
 
@@ -666,8 +670,8 @@ async def test_retention_detaches_anonymised_reports(
         text("UPDATE reports.report SET updated_at = now() - interval '6 years' WHERE id = :id"), {"id": rep["id"]}
     )
     await session.commit()
-    await retention.run_job(get_sessionmaker(), "reports", retention.anonymise_reports)
-    await retention.run_job(get_sessionmaker(), "rewards_ledger", dict(retention.JOBS)["rewards_ledger"])
+    await retention.run_job(get_system_sessionmaker(), "reports", retention.anonymise_reports)
+    await retention.run_job(get_system_sessionmaker(), "rewards_ledger", dict(retention.JOBS)["rewards_ledger"])
     linked = await session.scalar(
         text("SELECT count(*) FROM rewards.points_ledger WHERE report_id = :id"), {"id": uuid.UUID(rep["id"])}
     )

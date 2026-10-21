@@ -21,7 +21,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core import ratelimit
 from app.core.config import get_settings
-from app.core.db import get_session
+from app.core.db import get_system_session
 from app.modules.notify.providers import get_providers
 from app.modules.streams.internal import _secret_matches
 from app.modules.telephony import schemas, sms
@@ -30,7 +30,7 @@ from app.modules.telephony.models import Call
 
 log = structlog.get_logger()
 router = APIRouter(include_in_schema=False)
-Session = Annotated[AsyncSession, Depends(get_session)]
+Session = Annotated[AsyncSession, Depends(get_system_session)]
 
 SIGNATURE_MAX_AGE_S = 300
 MAX_BODY_BYTES = 16 * 1024

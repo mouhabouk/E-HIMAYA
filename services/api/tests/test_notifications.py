@@ -10,7 +10,7 @@ import httpx
 import pytest
 from sqlalchemy import text
 
-from app.core.db import get_sessionmaker
+from app.core.db import get_system_sessionmaker
 from app.modules.notify import delivery, service
 from app.modules.notify.providers import Providers, Push, set_providers
 from tests.conftest import FakeChannel, TokenFactory, bearer
@@ -28,7 +28,7 @@ SFAX_SQUARE = {
 @pytest.fixture(autouse=True)
 async def _normal_levels() -> AsyncIterator[None]:
     yield
-    async with get_sessionmaker()() as s, s.begin():
+    async with get_system_sessionmaker()() as s, s.begin():
         await s.execute(text("UPDATE ops.level_state SET level = 'normal', reason = NULL"))
 
 
@@ -54,7 +54,7 @@ async def register(
 
 
 async def user_of(token: str) -> str:
-    async with get_sessionmaker()() as s:
+    async with get_system_sessionmaker()() as s:
         return str(await s.scalar(text("SELECT user_id FROM notify.device WHERE token = :t"), {"t": token}))
 
 
@@ -88,7 +88,7 @@ def info_body(**overrides: Any) -> dict[str, Any]:
 
 async def drain() -> None:
     """Run every waiting fan-out job to the end, as the delivery worker would."""
-    sessionmaker = get_sessionmaker()
+    sessionmaker = get_system_sessionmaker()
     for _ in range(200):
         if not await delivery.run_job(sessionmaker):
             return
@@ -124,7 +124,7 @@ async def inbox_ids(client: httpx.AsyncClient, headers: dict[str, str]) -> dict[
 async def test_device_registration(client: httpx.AsyncClient, make_token: TokenFactory) -> None:
     headers = citizen_headers(make_token)
     token = await register(client, headers, SFAX)
-    async with get_sessionmaker()() as s:
+    async with get_system_sessionmaker()() as s:
         row = (
             await s.execute(
                 text(
@@ -144,7 +144,7 @@ async def test_device_registration(client: httpx.AsyncClient, make_token: TokenF
         headers=headers,
     )
     assert r.status_code == 204
-    async with get_sessionmaker()() as s:
+    async with get_system_sessionmaker()() as s:
         row = (
             await s.execute(
                 text("SELECT locale, gouvernorat_code, location FROM notify.device WHERE token = :t"), {"t": token}
@@ -161,10 +161,10 @@ async def test_device_registration(client: httpx.AsyncClient, make_token: TokenF
     # Another account cannot forget someone else's device.
     other = citizen_headers(make_token)
     assert (await client.delete(f"/api/v1/devices/{token}", headers=other)).status_code == 204
-    async with get_sessionmaker()() as s:
+    async with get_system_sessionmaker()() as s:
         assert await s.scalar(text("SELECT count(*) FROM notify.device WHERE token = :t"), {"t": token}) == 1
     assert (await client.delete(f"/api/v1/devices/{token}", headers=headers)).status_code == 204
-    async with get_sessionmaker()() as s:
+    async with get_system_sessionmaker()() as s:
         assert await s.scalar(text("SELECT count(*) FROM notify.device WHERE token = :t"), {"t": token}) == 0
 
 
@@ -211,7 +211,7 @@ async def test_alert_lifecycle(
     [push] = pushes_to(channels.push, sfax_token, alert["id"])
     assert push.alert and push.title == "Alerte pluies abondantes" and push.data["severity"] == "high"
     assert pushes_to(channels.push, tunis_token, alert["id"]) == []
-    async with get_sessionmaker()() as s:
+    async with get_system_sessionmaker()() as s:
         assert await s.scalar(text("SELECT count(*) FROM notify.device WHERE token = :t"), {"t": stale_token}) == 0
     stats = (await client.get(f"/api/v1/staff/notifications/{alert['id']}", headers=local)).json()["stats"]["push"]
     assert stats["status"] == "done" and stats["sent"] >= 1 and stats["failed"] >= 1
@@ -288,7 +288,7 @@ async def test_alert_area_validation_and_scope(client: httpx.AsyncClient, staff:
     assert (r.status_code, r.json()["detail"]) == (403, "out_of_scope")
 
     # Expiry ends the alert.
-    async with get_sessionmaker()() as s, s.begin():
+    async with get_system_sessionmaker()() as s, s.begin():
         await s.execute(
             text("UPDATE notify.message SET expires_at = now() - interval '1 second' WHERE id = :id"),
             {"id": alert["id"]},
@@ -397,8 +397,23 @@ async def test_user_lookup_by_email(client: httpx.AsyncClient, staff: Staff, mak
     )
     assert r.status_code == 201, r.text
 
+    # Phase 9 §5.6: a regional editor resolves and targets the accounts of its own gouvernorat only.
+    gabes_editor = staff(["content_editor"], gouvernorat=81)
+    r = await lookup(address, gabes_editor)
+    assert (r.status_code, r.json()["detail"]) == (404, "not_found")
+    r = await client.post(
+        "/api/v1/staff/notifications", json=info_body(audience="user", user_id=user_id), headers=gabes_editor
+    )
+    assert (r.status_code, r.json()["detail"]) == (403, "out_of_scope")
+    sfax_editor = staff(["content_editor"], gouvernorat=61)
+    assert (await lookup(address, sfax_editor)).status_code == 200
+    r = await client.post(
+        "/api/v1/staff/notifications", json=info_body(audience="user", user_id=user_id), headers=sfax_editor
+    )
+    assert r.status_code == 201, r.text
+
     # Every lookup is audited, without the searched address.
-    async with get_sessionmaker()() as s:
+    async with get_system_sessionmaker()() as s:
         rows = (
             await s.execute(
                 text("SELECT target, details FROM audit.log WHERE action = 'user.lookup' ORDER BY seq DESC LIMIT 6")
@@ -451,7 +466,7 @@ async def test_sms_and_email_channels(client: httpx.AsyncClient, staff: Staff, m
 
 
 async def test_disaster_level_suspends_information_not_alerts(client: httpx.AsyncClient, staff: Staff) -> None:
-    async with get_sessionmaker()() as s, s.begin():
+    async with get_system_sessionmaker()() as s, s.begin():
         await s.execute(text("UPDATE ops.level_state SET level = 'disaster' WHERE gouvernorat_code = 61"))
     editor = staff(["content_editor"], gouvernorat=None)
     committee = staff(["central_committee"], gouvernorat=None)

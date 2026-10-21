@@ -17,7 +17,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
-from app.core.db import get_sessionmaker
+from app.core.db import get_system_sessionmaker
 from app.modules.orgs import documents
 from tests.conftest import (
     HOOK_AUTH,
@@ -144,7 +144,7 @@ async def upload_document(
     store.objects[key] = data
     finished = {**_upload(document_id, data), "ID": f"{upload_id}+mp", "Storage": {"Key": key}}
     assert (await client.post(HOOK, headers=HOOK_AUTH, json=_hook("post-finish", headers, finished))).status_code == 200
-    assert await documents.verify_one(get_sessionmaker(), store) is True
+    assert await documents.verify_one(get_system_sessionmaker(), store) is True
     return answer  # type: ignore[no-any-return]
 
 
@@ -508,7 +508,7 @@ async def test_document_upload_rejections(
     fake_store.objects[f"uploads/{upload_id}"] = b"tampered"
     finished = {**_upload(doc["id"], data), "ID": upload_id, "Storage": {"Key": f"uploads/{upload_id}"}}
     await client.post(HOOK, headers=HOOK_AUTH, json=_hook("post-finish", admin, finished))
-    assert await documents.verify_one(get_sessionmaker(), fake_store) is True
+    assert await documents.verify_one(get_system_sessionmaker(), fake_store) is True
     state = await session.scalar(text("SELECT status FROM org.document_version WHERE upload_id = :u"), {"u": upload_id})
     assert state == "rejected"
 
@@ -688,7 +688,8 @@ async def test_report_on_behalf_of_an_institution(
 ) -> None:
     admin = user()
     # A spot of its own, so institutions left by earlier runs are not the nearest sensitive site.
-    spot = {"lat": round(random.uniform(34.55, 34.70), 5), "lon": round(random.uniform(10.55, 10.70), 5)}
+    # Inland: points off the coast south of Sfax fall outside every boundary and wait for geo-verification (§4).
+    spot = {"lat": round(random.uniform(34.55, 34.70), 5), "lon": round(random.uniform(10.40, 10.52), 5)}
     org_id = await active_org(client, staff, admin, kind="industrial", location=spot)
     await client.post(
         f"/api/v1/orgs/{org_id}/hazmat",
@@ -735,7 +736,7 @@ async def test_report_on_behalf_of_an_institution(
     portal = bearer(make_token(roles=["citizen"], azp="ehimaya-portal"))
     await accept_charter(client, portal)
     created = (await client.post("/api/v1/reports", json=report_body(), headers=portal)).json()
-    async with get_sessionmaker()() as s:
+    async with get_system_sessionmaker()() as s:
         source = await s.scalar(text("SELECT source FROM reports.report WHERE id = :id"), {"id": created["id"]})
     assert source == "portal"
 

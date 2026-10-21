@@ -20,12 +20,15 @@ The owner role (migrations, tests) is not subject to the policies (``FORCE ROW L
 runtime role is ``NOBYPASSRLS`` (``core/db_roles.py``), so every API and worker query goes through them.
 """
 
-from collections.abc import AsyncIterator
+import functools
+from collections.abc import AsyncIterator, Awaitable, Callable
+from contextlib import asynccontextmanager
 from contextvars import ContextVar
 from dataclasses import dataclass
-from typing import Any, Literal
+from typing import Any, Concatenate, Literal
 
 from sqlalchemy import Connection, MetaData, event, text
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, Session, SessionTransaction
 
@@ -101,6 +104,7 @@ SYSTEM_SCOPE = DbScope("system")
 db_scope: ContextVar[DbScope | None] = ContextVar("ehimaya_db_scope", default=None)
 
 _INFO_KEY = "db_scope"
+_ELEVATED_KEY = "db_scope.elevated"
 _SET_SCOPE = text(
     "SELECT set_config('ehimaya.scope', :scope, true), set_config('ehimaya.gouvernorat', :gouvernorat, true), "
     "set_config('ehimaya.subject', :subject, true)"
@@ -112,21 +116,7 @@ def current_scope(session: Session) -> DbScope:
     pinned = session.info.get(_INFO_KEY)
     if isinstance(pinned, DbScope):
         return pinned
-    scope = db_scope.get()
-    if scope is None:
-        scope = _access_scope()
-    return scope if isinstance(scope, DbScope) else NO_SCOPE
-
-
-def _access_scope() -> object:
-    """``core.access.db_scope`` when it is a separate variable from :data:`db_scope` (it should be the same one)."""
-    import sys
-
-    module = sys.modules.get("app.core.access")
-    var = getattr(module, "db_scope", None) if module is not None else None
-    if isinstance(var, ContextVar) and var is not db_scope:
-        return var.get(None)
-    return None
+    return db_scope.get() or NO_SCOPE
 
 
 class ScopedSession(Session):
@@ -135,7 +125,53 @@ class ScopedSession(Session):
 
 @event.listens_for(ScopedSession, "after_begin")
 def _apply_scope(session: Session, transaction: SessionTransaction, connection: Connection) -> None:
-    connection.execute(_SET_SCOPE, current_scope(session).settings())
+    # Also fires for savepoints (begin_nested): inside an as_system block the scope stays system.
+    scope = SYSTEM_SCOPE if session.info.get(_ELEVATED_KEY) else current_scope(session)
+    connection.execute(_SET_SCOPE, scope.settings())
+
+
+@asynccontextmanager
+async def as_system(session: AsyncSession) -> AsyncIterator[AsyncSession]:
+    """Run a block of the session's current transaction with the ``system`` scope, then go back to its own scope.
+
+    Only for the steps a request takes across scopes on purpose, after the API's own check: a citizen's app adopting
+    the SMS report it sent, a citizen's export or erasure reaching their calls, the target of a break-glass request,
+    the grouping of reports across a border (an incident's figures come from all its reports, §5). Blocks nest; the
+    outermost one flushes before the scope returns, since rows it loaded may be invisible afterwards."""
+    depth = int(session.info.get(_ELEVATED_KEY, 0))
+    if depth == 0:
+        await session.execute(_SET_SCOPE, SYSTEM_SCOPE.settings())
+    session.info[_ELEVATED_KEY] = depth + 1
+    failed = False
+    try:
+        yield session
+        if depth == 0:
+            await session.flush()
+    except BaseException:
+        failed = True
+        raise
+    finally:
+        session.info[_ELEVATED_KEY] = depth
+        if depth == 0:
+            try:
+                await session.execute(_SET_SCOPE, current_scope(session.sync_session).settings())
+            except SQLAlchemyError:
+                # An aborted transaction is rolled back; the next one starts with the session's own scope.
+                if not failed:
+                    raise
+
+
+def system_scoped[**P, R](
+    fn: Callable[Concatenate[AsyncSession, P], Awaitable[R]],
+) -> Callable[Concatenate[AsyncSession, P], Awaitable[R]]:
+    """Decorator: the whole call runs inside :func:`as_system` (its first argument is the session)."""
+
+    @functools.wraps(fn)
+    async def wrapper(session: AsyncSession, /, *args: P.args, **kwargs: P.kwargs) -> R:
+        async with as_system(session):
+            return await fn(session, *args, **kwargs)
+
+    return wrapper
 
 
 def make_sessionmaker(engine: AsyncEngine, *, scope: DbScope | None = None) -> async_sessionmaker[AsyncSession]:

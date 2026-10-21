@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ء-حماية | تقرير المرحلة 9</title>
+<style>
+:root{--bg:#f7f8fa;--paper:#fff;--ink:#1b2430;--muted:#5b6675;--line:#dfe3e8;--accent:#b3261e;--accent2:#0b5cad;--ok:#1e7d3a;--warn:#a15c00;--chip:#eef1f5;--head:#f1f3f6}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1318;--paper:#161b22;--ink:#e6eaef;--muted:#9aa5b1;--line:#2a313b;--accent:#ff6b5e;--accent2:#5aa9ff;--ok:#5cc97a;--warn:#e0a24a;--chip:#1f2630;--head:#1c222b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Naskh Arabic","Segoe UI",Tahoma,Arial,sans-serif;line-height:1.75;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header.cover{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:10px;padding:28px 24px;margin-bottom:20px}
+header.cover h1{margin:0 0 6px;font-size:30px}
+header.cover .sub{color:var(--muted);margin:0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:16px}
+.meta div{background:var(--chip);border-radius:6px;padding:8px 12px;font-size:14px}
+.meta b{display:block;color:var(--muted);font-weight:600;font-size:12px}
+nav.toc{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px 24px;margin-bottom:20px}
+nav.toc ol{margin:0;padding-inline-start:20px;columns:2;column-gap:32px}
+@media (max-width:700px){nav.toc ol{columns:1}}
+nav.toc a,a{color:var(--accent2);text-decoration:none}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:20px}
+h2{margin-top:0;font-size:23px;border-bottom:2px solid var(--line);padding-bottom:8px}
+h3{font-size:19px;margin-top:28px;color:var(--accent2)}
+h4{font-size:16px;margin-bottom:4px}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:start;vertical-align:top}
+th{background:var(--head);font-weight:700;white-space:nowrap}
+td code,p code,li code{direction:ltr;unicode-bidi:isolate;background:var(--chip);padding:1px 5px;border-radius:4px;font-size:13px}
+.id{font-family:Consolas,monospace;direction:ltr;unicode-bidi:isolate;white-space:nowrap;font-size:13px;color:var(--muted)}
+.p{display:inline-block;border-radius:10px;padding:0 8px;font-size:12px;font-weight:700;white-space:nowrap}
+.M{background:#fde2e0;color:#8c1d16}.S{background:#fff1d6;color:#7a4a00}.C{background:#e1efff;color:#0a4a8c}.W{background:#e8e8e8;color:#444}
+@media (prefers-color-scheme:dark){.M{background:#4a1d1a;color:#ffb4ad}.S{background:#4a3510;color:#ffd38a}.C{background:#14304f;color:#a8d1ff}.W{background:#333;color:#ccc}}
+.note{border-inline-start:4px solid var(--accent2);background:var(--chip);padding:10px 14px;border-radius:6px;margin:12px 0}
+.warn{border-inline-start:4px solid var(--warn)}
+.sim{display:inline-block;background:#f59e0b;color:#1f1300;font-weight:700;font-size:12px;padding:1px 8px;border-radius:999px;margin-inline-end:6px}
+tr.simrow td{background:color-mix(in srgb,#f59e0b 12%,transparent)}
+.ltr{direction:ltr;unicode-bidi:isolate}
+ul,ol{padding-inline-start:22px}
+footer{color:var(--muted);text-align:center;font-size:13px}
+@media print{body{background:#fff}section,header.cover,nav.toc{border:none;break-inside:avoid-page}nav.toc{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="cover">
+  <h1>ء-حماية <span class="ltr">e-Himaya</span></h1>
+  <p class="sub">تقرير المرحلة 9: فصل صلاحيات القاعة المركزية والقاعات الجهوية، الحصة المجهولة، واللغة الإنجليزية</p>
+  <div class="meta">
+    <div><b>التاريخ</b>2026-10-21</div>
+    <div><b>الفرع</b><span class="ltr">claude/project-thread-yzwsn2</span></div>
+    <div><b>الحالة</b>منجزة، بانتظار الدمج وموافقتك</div>
+    <div><b>المراجع</b><a href="api/phase-9-contract.md">عقد الواجهة البرمجية</a> · <a href="phase-9/review.md">مراجعة البنية</a> · <a href="versions.md">الإصدارات</a></div>
+  </div>
+</header>
+
+<section>
+<h2>1. جدول التقدم</h2>
+<div class="tbl"><table>
+<tr><th>البند</th><th>ما أُنجز</th><th>التحقق</th><th>التقدم</th></tr>
+<tr><td>إصلاح الفرع الرئيسي</td><td>عمل المرحلة 9 كان قد دُمج في <span class="ltr">main</span> قبل اكتماله: البناء متوقف، 10 اختبارات فاشلة، وأخطاء أنواع. أُصلح كل ذلك أولا (بينها خطأ في دمج الحوادث، وثغرة تسمح بتعديل وحدة ولاية أخرى بمعرّفها).</td><td>كل الفحوص خضراء</td><td>100%</td></tr>
+<tr><td>الحصة المجهولة</td><td>5 بلاغات مقبولة لكل تثبيت مجهول، ثم يُطلب إنشاء حساب. لا تُحسب إلا البلاغات التي قبلها الخادم، والإعادة لا تُحسب مرتين. بلاغ النجدة SOS لا يُرفض أبدا، و198 متاح دائما. في التطبيق: البلاغ يبقى محفوظا على الهاتف ويُرسل بعد الدخول، وشاشة تشرح السبب مع زر الاتصال بـ198.</td><td>اختبارات الخلفية والتطبيق</td><td>100%</td></tr>
+<tr><td>الإنجليزية</td><td>لوحة القيادة بثلاث لغات: العربية من اليمين إلى اليسار، والفرنسية والإنجليزية من اليسار إلى اليمين (نحو 260 نصا جديدا). رموز الحالات ثابتة وتُترجم تسمياتها فقط، ونص المواطن الأصلي لا يُستبدل بترجمة آلية. تقارير PDF وExcel بالإنجليزية أيضا.</td><td>اختبار تطابق المفاتيح في اللغات الثلاث، وقائمة اللغة</td><td>100%</td></tr>
+<tr><td>الأدوار والمصفوفة</td><td>دالة صلاحيات واحدة تجمع الدور والنطاق (RBAC+ABAC). خارج النطاق: 404 دون كشف الوجود. داخل النطاق وممنوع: 403 برمز واضح. أدوار تقنية جديدة (مدير الأمن، مدير الذكاء الاصطناعي، مدير الحسابات الجهوي) لا تلمس العمليات.</td><td>98 حالة في اختبار المصفوفة و IDOR على 26 مسارا</td><td>100%</td></tr>
+<tr><td>الاختصاص والتحقق الجغرافي</td><td>الاختصاص يتبع موقع الحادث الموثوق لا موقع المبلّغ. الموقع غير الموثوق يذهب إلى طابور تحقق مركزي، والبلاغ الحرج يظهر للولايات المرشحة حتى لا يتأخر.</td><td>اختبارات</td><td>100%</td></tr>
+<tr><td>التصعيد</td><td>مهلة التكفل حسب الخطورة تُضبط من نافذة الإعدادات (60 ث للحرج، 90 ث، 120 ث...). بعد المهلة يمكن للمركز الرد والتوجيه، والتدخل الميداني يبقى للجهة. كل خطوة مسجلة بمن ومتى ولماذا.</td><td>اختبارات</td><td>100%</td></tr>
+<tr><td>الحوادث العابرة للحدود</td><td>حادثة واحدة بولاية قائدة واحدة وولايات مشاركة. القيادة لا تتبدل تلقائيا، تُنقل فقط. الموارد بين الولايات بطلب يوافق عليه صاحبها، والمركز لا يأمر الموارد مباشرة.</td><td>اختبارات</td><td>100%</td></tr>
+<tr><td>الوصول الاستثنائي</td><td>قراءة فقط، بمبرر مكتوب ومدة محددة (4 ساعات أقصى)، تنتهي تلقائيا، وتُراجع بعدها من مدير أمن غير صاحبها. كل قراءة لبيانات حساسة تحت هذا الوصول مسجلة.</td><td>اختبارات</td><td>100%</td></tr>
+<tr><td>إدارة الحسابات الجهوية</td><td>مدير الحسابات الجهوي ينشئ ويعدل حسابات ولايته فقط عبر Keycloak، ولا يمنح الأدوار التقنية أو الوطنية، ولا يعدل حسابه.</td><td>اختبارات على دليل حسابات مزيف</td><td>100%</td></tr>
+<tr><td>السجل الجهوي</td><td>المدير الجهوي يقرأ سجل التدقيق الخاص بولايته فقط، بالأسماء دون المعرفات أو البصمات، وقراءته نفسها مسجلة. سلسلة البصمات سليمة.</td><td>اختبارات</td><td>100%</td></tr>
+<tr><td>أمن مستوى الصفوف في قاعدة البيانات</td><td>طبقة ثانية بعد الواجهة: كل معاملة تحمل نطاقها، وقاعدة البيانات نفسها ترفض صفوف الولايات الأخرى حتى لو نسي استعلام شرطه. دون نطاق لا يُقرأ شيء. انظر القسم 2.</td><td>26 اختبارا مباشرا بـ SQL، وكل اختبارات الخلفية تعمل الآن بدور التشغيل الفعلي</td><td>100%</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>2. قرارات تحتاج علمك</h2>
+<p>طبقت قاعدتك: مراجعة ثم إعادة تصميم ثم تطوير. تشغيل كل الاختبارات بدور قاعدة البيانات الفعلي كشف 62 حالة كانت ستتعطل في الإنتاج. أهمها:</p>
+<div class="tbl"><table>
+<tr><th>القرار</th><th>السبب</th></tr>
+<tr><td>سلسلة بصمات سجل التدقيق تُكتب بصلاحية المالك</td><td>تحت أمن الصفوف كان المستعمل الجهوي سيرى جزءا من السجل فقط، فتنكسر السلسلة. صار التسجيل يمر عبر دالة واحدة <code>audit.append</code> ترى السجل كله.</td></tr>
+<tr><td>خطوات محددة تعمل بنطاق «النظام»</td><td>بعض الخطوات تعبر الولايات عن قصد بعد تحقق الواجهة: ربط البلاغات عبر الحدود، حساب الأولوية بالذكاء الاصطناعي، رفض الإحالة، تصدير المواطن لمكالماته، وتبني بلاغ SMS. كل خطوة منها مسماة في الكود، ولا تتجاوز الخطوة نفسها.</td></tr>
+<tr><td>المتطوع وعضو المؤسسة في قواعد قاعدة البيانات</td><td>المتطوع يرى الحوادث التي استُدعي إليها فقط، وعضو المؤسسة يرى بلاغات مؤسسته.</td></tr>
+<tr><td>تقرير حادثة من ولاية أخرى: 404 بدل 403</td><td>تطبيقا لقاعدة المرحلة 9 (عدم كشف الوجود). الولاية المشاركة صار بإمكانها إعداد تقرير الحادثة.</td></tr>
+<tr><td>اختبارات CI تعمل بدور التشغيل</td><td>حتى يُختبر أمن الصفوف فعليا في كل تعديل قادم.</td></tr>
+<tr><td>المساعد في القرار بالعربية والفرنسية فقط</td><td>مكتبة الإجراءات بهاتين اللغتين. في الواجهة الإنجليزية تُعرض الإجراءات بالفرنسية.</td></tr>
+<tr><td>TypeScript بقي 5.9.3</td><td>أدوات الفحص (typescript-eslint 8) لا تدعم الإصدار 7 بعد.</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>3. حدود معروفة</h2>
+<ul>
+<li>Flutter غير متوفر في بيئة العمل: اختبارات التطبيق لم تُشغَّل هنا. راجعتها مراجعة ساكنة وهي مطابقة للعقد، وتُشغَّل في CI عند طلب الدمج.</li>
+<li>اختبارات المتصفح (Playwright) للوحة لم تُشغَّل محليا.</li>
+<li>إدارة الحسابات اختُبرت على دليل حسابات مزيف، لا على Keycloak حقيقي.</li>
+<li>قبل الإنتاج يلزم تشغيل تجريبي كامل مع كل العمال واختبار الدخان، كما يطلب العقد. الرجوع عن أمن الصفوف يكون بالنزول عن الترحيل <code>0025</code>.</li>
+</ul>
+</section>
+
+<section>
+<h2>4. الاختبارات</h2>
+<div class="tbl"><table>
+<tr><th>المكون</th><th>بعد المرحلة 8</th><th>الآن</th></tr>
+<tr><td>الخلفية</td><td>441</td><td>660 (كلها خضراء بدور التشغيل على قاعدة جديدة)</td></tr>
+<tr><td>لوحة التحكم</td><td>370</td><td>373</td></tr>
+<tr><td>البوابة</td><td>82</td><td>82</td></tr>
+<tr><td>تطبيق الهاتف</td><td>310</td><td>تُشغَّل في CI (أُضيفت اختبارات الحصة)</td></tr>
+</table></div>
+<p>شُغّل محليا: التنسيق، الأنواع الصارمة (207 ملفات)، الترحيلات صعودا ونزولا ثم صعودا على قاعدة جديدة، ولوحة التحكم والبوابة (الفحص، الأنواع، الاختبارات، البناء).</p>
+</section>
+
+<section>
+<h2>5. معايير القبول العشرون</h2>
+<div class="tbl"><table>
+<tr><th>#</th><th>المعيار</th><th>الاختبار</th><th>الحالة</th></tr>
+<tr><td>1</td><td>الحصة المجهولة: 5 بلاغات مقبولة ثم التسجيل، والإعادة لا تُحسب</td><td class="ltr"><code>test_anon_quota.py::test_five_then_refused</code> <code>::test_replay_not_counted</code> <code>::test_concurrent_replay_counts_once</code></td><td>✓</td></tr>
+<tr><td>2</td><td>198 متاح دائما</td><td class="ltr"><code>quota_screen_test.dart::shows_call_198</code> <code>test_anon_quota.py::test_sos_beyond_quota_accepted_flagged</code></td><td>✓</td></tr>
+<tr><td>3</td><td>حفظ المسودة عند بلوغ الحصة</td><td class="ltr"><code>sync_engine_test.dart::quota_exhausted_keeps_report_blocked_and_resends_after_login</code></td><td>✓</td></tr>
+<tr><td>4</td><td>لوحة القيادة بثلاث لغات</td><td class="ltr"><code>i18n.test.ts</code> <code>Layout.test.tsx::language_menu</code> <code>test_analytics.py::test_document_in_english</code></td><td>✓</td></tr>
+<tr><td>5</td><td>النطاق حسب الحساب</td><td class="ltr"><code>test_access.py (المصفوفة)</code> <code>test_auth.py</code></td><td>✓</td></tr>
+<tr><td>6</td><td>الاختصاص لموقع الحادث</td><td class="ltr"><code>test_jurisdiction.py::test_reporter_elsewhere_location_decides</code></td><td>✓</td></tr>
+<tr><td>7</td><td>طابور التحقق الجغرافي</td><td class="ltr"><code>test_jurisdiction.py::test_pending_goes_to_queue</code> <code>::test_geo_verify_refers</code> <code>::test_critical_pending_visible_to_candidates</code></td><td>✓</td></tr>
+<tr><td>8</td><td>المركز يرى الكل دون بيانات حساسة زائدة</td><td class="ltr"><code>test_access.py::test_national_reads_all_masked_reporter</code> <code>test_audit_scoped.py</code></td><td>✓</td></tr>
+<tr><td>9</td><td>حدود الجهة</td><td class="ltr"><code>test_access.py::test_regional_404_other_gouvernorat</code></td><td>✓</td></tr>
+<tr><td>10</td><td>التصعيد عند التأخر</td><td class="ltr"><code>test_sla.py::test_late_after_band_delay</code> <code>::test_settings_delay_applies</code> <code>::test_central_claim_only_when_late</code></td><td>✓</td></tr>
+<tr><td>11</td><td>حادثة واحدة عابرة للحدود بولاية قائدة واحدة</td><td class="ltr"><code>test_cross_border.py::test_one_incident_one_lead</code> <code>::test_possible_duplicate</code> <code>::test_lead_does_not_flip</code></td><td>✓</td></tr>
+<tr><td>12</td><td>سجل التصعيد (من، متى، لماذا)</td><td class="ltr"><code>test_sla.py::test_escalations_listed</code> <code>test_cross_border.py::test_timeline_entries_have_actor_reason</code></td><td>✓</td></tr>
+<tr><td>13</td><td>فصل القراءة والتعديل والقيادة</td><td class="ltr"><code>test_access.py::test_technical_roles_no_ops</code> <code>::test_committee_cannot_triage</code> <code>test_cross_border.py::test_national_cannot_dispatch</code></td><td>✓</td></tr>
+<tr><td>14</td><td>الإعدادات الوطنية للمركز فقط</td><td class="ltr"><code>test_settings.py::test_regional_refused</code> <code>test_ai.py</code> <code>test_rewards.py</code></td><td>✓</td></tr>
+<tr><td>15</td><td>مدير الحسابات الجهوي لولايته فقط</td><td class="ltr"><code>test_accounts.py::test_idor_path_and_body</code> <code>::test_role_grant_limits</code></td><td>✓</td></tr>
+<tr><td>16</td><td>حماية البيانات الحساسة</td><td class="ltr"><code>test_access.py::test_reporter_masked_unless_handling_room</code> <code>test_break_glass.py::test_reveal_audited</code></td><td>✓</td></tr>
+<tr><td>17</td><td>تقارير وتحليلات محصورة بالنطاق</td><td class="ltr"><code>test_analytics.py::test_overview_scope_filtering</code> <code>::test_participating_breakdown</code> <code>::test_leaderboard_national_refused</code></td><td>✓</td></tr>
+<tr><td>18</td><td>العمليات الممنوعة مرفوضة</td><td class="ltr"><code>test_cross_border.py::test_resource_not_owned</code> <code>test_settings.py</code> <code>test_audit.py::test_sysadmin_refused_raw</code></td><td>✓</td></tr>
+<tr><td>19</td><td>النطاق في الواجهة وفي قاعدة البيانات، واختبارات IDOR</td><td class="ltr"><code>test_access.py::test_idor_*</code> <code>test_rls.py</code></td><td>✓</td></tr>
+<tr><td>20</td><td>موقع المبلّغ مقابل موقع الحادث</td><td class="ltr"><code>test_jurisdiction.py::test_reporter_context_restricted</code> <code>test_rls.py::test_reporter_context_other_gouvernorat</code></td><td>✓</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>6. تذكير</h2>
+<p class="note warn">إذا كان المستودع ما زال عاما، يُرجى جعله خاصا.</p>
+</section>
+
+<footer>ء-حماية · تقرير المرحلة 9</footer>
+</div>
+</body>
+</html>

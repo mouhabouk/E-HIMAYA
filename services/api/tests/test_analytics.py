@@ -20,7 +20,7 @@ from openpyxl import load_workbook
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.db import get_sessionmaker
+from app.core.db import get_system_sessionmaker
 from app.modules.analytics import domain, scenario, worker
 from app.modules.reports.live import _route
 from tests.conftest import STAFF_ISS, FakeStore, TokenFactory, bearer, outbox_events
@@ -465,12 +465,12 @@ async def test_scenario_seeded_determinism_and_provenance(
     assert prov["history_from"] and prov["history_to"]
     assert prov["weather_factor"] == 2.5 and prov["weather_factor_source"] == "default"
     assert prov["service_time_source"] == "default"
-    assert res1["calibration"] == "uncalibrated" and set(res1["calibration_note"]) == {"ar", "fr"}
+    assert res1["calibration"] == "uncalibrated" and set(res1["calibration_note"]) == {"ar", "fr", "en"}
     assert res1["confidence"] == "low"  # default engagement times (and few days of history)
     assert any("Durées" in reason["fr"] for reason in res1["confidence_reasons"])
     if prov["days_covered"] < scenario.MIN_DAYS:
         assert any("jours" in reason["fr"] for reason in res1["confidence_reasons"])
-    assert all(set(a) == {"ar", "fr"} for a in res1["assumptions"]) and len(res1["assumptions"]) >= 5
+    assert all(set(a) == {"ar", "fr", "en"} for a in res1["assumptions"]) and len(res1["assumptions"]) >= 5
     assert "historique" in res1["disclaimer"]["fr"]
     # Stored, listed (without the hourly detail), readable, audited.
     r = await client.get(f"/api/v1/staff/analytics/scenarios/{one['id']}", headers=headers)
@@ -535,7 +535,7 @@ async def test_scenario_low_confidence_overload_and_capacity(
 
 
 async def _generate_all() -> None:
-    sessionmaker = get_sessionmaker()
+    sessionmaker = get_system_sessionmaker()
     while await worker.generate_next(sessionmaker):
         pass
 
@@ -599,7 +599,7 @@ async def test_report_pdf_generated_stored_and_downloaded(
     from app.modules.analytics import documents
     from app.modules.analytics.models import Report
 
-    async with get_sessionmaker()() as s:
+    async with get_system_sessionmaker()() as s:
         row = await s.get(Report, uuid.UUID(created["id"]))
         assert row is not None
         content = await documents.build(s, row)
@@ -691,7 +691,7 @@ async def test_report_library_scope_search_and_targets(
         json=body | {"filters": {"incident_id": str(march_2019["incident"])}},
         headers=staff(["local_committee"], KEF),
     )
-    assert r.status_code == 403
+    assert (r.status_code, r.json()["detail"]) == (404, "not_found")  # another gouvernorat's incident: not disclosed
     r = await client.post("/api/v1/staff/reports-library", json=body | {"kind": "scenario"}, headers=regional)
     assert r.status_code == 422 and r.json() == {"detail": "scenario_required"}
     r = await client.post(
@@ -796,7 +796,7 @@ async def test_schedule_crud_and_firing(
         text("UPDATE analytics.schedule SET next_run_at = :d WHERE id = :i"), {"d": due, "i": schedule["id"]}
     )
     await session.commit()
-    await worker.cycle(get_sessionmaker())
+    await worker.cycle(get_system_sessionmaker())
     r = await client.get(f"/api/v1/staff/report-schedules/{schedule['id']}", headers=headers)
     fired = r.json()
     assert fired["last_run_at"] and fired["last_report_id"]
@@ -824,7 +824,7 @@ async def test_schedule_crud_and_firing(
     )
     assert run_audit == 1
     # A second cycle does not fire again before the next run.
-    await worker.cycle(get_sessionmaker())
+    await worker.cycle(get_system_sessionmaker())
     count = await session.scalar(
         text("SELECT count(*) FROM analytics.report WHERE schedule_id = :i"), {"i": schedule["id"]}
     )
@@ -846,3 +846,66 @@ async def test_schedule_crud_and_firing(
         )
     )
     assert {"analytics.schedule.create", "analytics.schedule.update", "analytics.schedule.delete"} <= actions
+
+
+# ---------------------------------------------------------------- phase 9: English, participation, national ranking
+
+
+async def test_document_in_english(
+    client: httpx.AsyncClient, staff: Staff, march_2019: dict[str, Any], fake_store: FakeStore
+) -> None:
+    created = await _create(client, national(staff, ["ops_manager"]), lang="en", title="March 2019 summary")
+    await _generate_all()
+    r = await client.get(f"/api/v1/staff/reports-library/{created['id']}", headers=national(staff, ["ops_manager"]))
+    assert r.json()["status"] == "ready", r.json()
+    assert fake_store.objects[f"analytics/reports/{created['id']}.pdf"].startswith(b"%PDF")
+    from app.modules.analytics import documents
+    from app.modules.analytics.models import Report
+
+    async with get_system_sessionmaker()() as s:
+        row = await s.get(Report, uuid.UUID(created["id"]))
+        assert row is not None
+        page = documents.render_html(await documents.build(s, row))
+    assert 'dir="ltr"' in page and 'lang="en"' in page
+    assert "Reports received" in page and "Signalements reçus" not in page
+
+
+async def test_participating_breakdown(
+    client: httpx.AsyncClient, staff: Staff, march_2019: dict[str, Any], session: AsyncSession
+) -> None:
+    """An incident led by Kef with Siliana participating counts once for Kef (lead) and once, as participating, for
+    Siliana; the Siliana-led incident of the fixture is not participating."""
+    shared = await seed_incident(session, KEF, "fire", local(date(2019, 3, 20), 8))
+    await session.execute(
+        text(
+            "INSERT INTO ops.incident_gouvernorat (incident_id, gouvernorat_code, role, added_by, reason) "
+            "VALUES (:i, :g, 'participating', 'test', 'renfort')"
+        ),
+        {"i": shared, "g": SILIANA},
+    )
+    await session.commit()
+    params = march_2019["params"]
+    siliana = (
+        await client.get("/api/v1/staff/analytics/overview", params=params, headers=staff(["operator"], SILIANA))
+    ).json()
+    assert {(i["participating"], i["count"]) for i in siliana["incidents"]} == {(False, 1), (True, 1)}
+    kef = (await client.get("/api/v1/staff/analytics/overview", params=params, headers=staff(["operator"], KEF))).json()
+    assert {(i["participating"], i["count"]) for i in kef["incidents"]} == {(False, 1)}
+    # The national room reads the same split per gouvernorat.
+    national_kef = (
+        await client.get(
+            "/api/v1/staff/analytics/overview", params=params | {"gouvernorat": KEF}, headers=national(staff)
+        )
+    ).json()
+    assert national_kef["incidents"] == kef["incidents"]
+
+
+async def test_leaderboard_national_refused(client: httpx.AsyncClient, staff: Staff) -> None:
+    url = "/api/v1/staff/rewards/leaderboard"
+    r = await client.get(url, params={"scope": "national"}, headers=staff(["ops_manager"], SILIANA))
+    assert (r.status_code, r.json()["detail"]) == (403, "out_of_scope")
+    r = await client.get(url, params={"gouvernorat": KEF}, headers=staff(["ops_manager"], SILIANA))
+    assert (r.status_code, r.json()["detail"]) == (403, "out_of_scope")
+    assert (await client.get(url, headers=staff(["ops_manager"], SILIANA))).status_code == 200
+    r = await client.get(url, params={"scope": "national"}, headers=national(staff, ["ops_manager"]))
+    assert r.status_code == 200 and r.json()["scope"] == "national"

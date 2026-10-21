@@ -23,7 +23,6 @@ from app.core.storage import get_store
 from app.modules.analytics import domain, schemas, service
 from app.modules.analytics.models import Report, Scenario, Schedule
 from app.modules.audit import service as audit
-from app.modules.ops.models import Incident
 from app.modules.reports.models import Media
 
 log = structlog.get_logger()
@@ -69,16 +68,12 @@ async def _check_targets(
     if kind in domain.INCIDENT_KINDS:
         if filters.incident_id is None:
             raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "incident_required")
-        incident = await session.get(Incident, filters.incident_id)
-        if incident is None:
-            raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
-        if incident.gouvernorat_code is None:
-            if not principal.is_national:
-                raise HTTPException(status.HTTP_403_FORBIDDEN, "out_of_scope")
-            return []
-        if not principal.can_access_gouvernorat(incident.gouvernorat_code):
-            raise HTTPException(status.HTTP_403_FORBIDDEN, "out_of_scope")
-        return [incident.gouvernorat_code]
+        from app.modules.ops import service as incidents
+
+        # Phase 9 §1: an incident out of scope is not disclosed (404); a participating gouvernorat may document it,
+        # and the document belongs to the lead and every participant.
+        incident = await incidents.get_in_scope(session, principal, filters.incident_id)
+        return await incidents.all_gouvernorats(session, incident.id)
     if kind == "scenario":
         if filters.scenario_id is None:
             raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "scenario_required")

@@ -297,7 +297,8 @@ describe("IncidentDetailPage decision support", () => {
       </Routes>,
       {
         api,
-        auth: fakeAuth({ ...NATIONAL_OPERATOR, realm_access: { roles: ["ops_manager"] } }),
+        // The lead room's manager: assignments are regional (phase 9 §5.4), the centre requests resources instead.
+        auth: fakeAuth({ ...OPERATOR_CLAIMS, realm_access: { roles: ["ops_manager"] } }),
         lang: "fr",
         path: "/incidents/i-1",
       },

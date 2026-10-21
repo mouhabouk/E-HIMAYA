@@ -84,10 +84,11 @@ async def test_runtime_role_reads_and_appends_audit(owner: AsyncConnection) -> N
     async with owner.begin() as tx:
         await owner.execute(text(f'SET LOCAL ROLE "{RUNTIME_ROLE}"'))
         await owner.execute(text("INSERT INTO audit.log (actor, action) VALUES ('system', 'test.runtime_role')"))
-        found = (
-            await owner.execute(text("SELECT count(*) FROM audit.log WHERE action = 'test.runtime_role'"))
-        ).scalar()
-        assert found
+        count = text("SELECT count(*) FROM audit.log WHERE action = 'test.runtime_role'")
+        # Row-level security (0025): without a scope the runtime role reads nothing, with ``system`` everything.
+        assert (await owner.execute(count)).scalar() == 0
+        await owner.execute(text("SELECT set_config('ehimaya.scope', 'system', true)"))
+        assert (await owner.execute(count)).scalar()
         # Ordinary application tables: full DML (checked without changing data).
         await owner.execute(text("UPDATE reports.report SET status = status WHERE false"))
         await owner.execute(text("DELETE FROM reports.report WHERE false"))

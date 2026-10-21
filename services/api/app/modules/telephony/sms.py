@@ -33,6 +33,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
 from app.core.crypto import get_cipher, pseudonym
+from app.core.db import as_system
 from app.core.events import emit
 from app.modules.ai import pipeline
 from app.modules.ai.models import Analysis
@@ -311,6 +312,16 @@ async def adopt_sms_report(
         query = query.where(
             func.ST_DWithin(Report.location, _point(body.location.lat, body.location.lon), MATCH_DISTANCE_M)
         )
+    # The SMS report is not the reporter's yet: found and taken over with the system scope (row-level security), the
+    # ownership rule below being the check.
+    async with as_system(session):
+        adopted = await _adopt(session, reporter, body, query, now)
+    return await get_report_row(session, adopted) if adopted is not None else None
+
+
+async def _adopt(
+    session: AsyncSession, reporter: Reporter, body: report_schemas.ReportIn, query: Any, now: datetime
+) -> uuid.UUID | None:
     found = (await session.execute(query.order_by(SmsInbound.received_at.desc()).limit(1).with_for_update())).first()
     if found is None:
         return None
@@ -333,4 +344,5 @@ async def adopt_sms_report(
     sms.merged_at = now
     await session.flush()
     log.info("sms.report_adopted", report_id=str(report.id))
-    return await get_report_row(session, report.id)
+    adopted: uuid.UUID = report.id
+    return adopted

@@ -1,4 +1,4 @@
-# الإصدارات المثبتة (المراحل 1 إلى 8)
+# الإصدارات المثبتة (المراحل 1 إلى 9)
 
 تُحدَّث هذه القائمة مع كل مرحلة. تُعتمد الإصدارات الدقيقة أدناه في الكود والحاويات.
 
@@ -156,13 +156,14 @@ Node.js 22 LTS و npm 10 أو أحدث. الحزم مثبتة بإصدارات �
 | الحزمة | الإصدار |
 |---|---|
 | react / react-dom | 19.3.0 |
-| react-router | 7.18.4 |
+| react-router | 8.4.0 |
 | @tanstack/react-query | 5.104.1 |
 | oidc-client-ts | 3.5.0 |
 | i18next / react-i18next | 26.4.2 / 17.0.15 |
 | maplibre-gl | 6.12.0 |
-| vite / typescript | 7.3.6 / 5.9.3 |
-| vitest / eslint | 4.1.11 / 10.12.0 |
+| vite / @vitejs/plugin-react | 8.3.4 / 6.1.2 |
+| typescript / typescript-eslint | 5.9.3 / 8.71.0 |
+| vitest / eslint | 5.0.5 / 10.12.0 |
 | @playwright/test (اختبار المتصفح) | 1.56.1 |
 | jssip (المرحلة 7، الهاتف الشبكي للمشغل، يُحمّل عند تفعيله فقط) | 3.13.8 (MIT) |
 | hls.js (المرحلة 6، بديل HLS عند تعذر WHEP، يُحمّل عند الحاجة فقط) | 1.7.3 (Apache-2.0) |
@@ -170,16 +171,24 @@ Node.js 22 LTS و npm 10 أو أحدث. الحزم مثبتة بإصدارات �
 | markdown-it (المرحلة 8، عرض Markdown للذاكرة الوطنية، `html: false`) | 15.0.2 (MIT) |
 | dompurify (المرحلة 8، تعقيم HTML الناتج قبل عرضه) | 3.4.16 (MPL-2.0 OR Apache-2.0، مستعملة بترخيص Apache-2.0) |
 
+> المرحلة 9: بقيت typescript على 5.9.3 لأن typescript-eslint 8 لا يدعم TypeScript 7 بعد؛ و Vite 8 (Rolldown) يقبل
+> `manualChunks` في صيغة الدالة فقط. اللوحة بثلاث لغات: العربية (من اليمين إلى اليسار) والفرنسية والإنجليزية.
+
 ## بوابة المؤسسات (`apps/portal`)
 
 نفس أدوات لوحة التحكم (Node.js 22 و npm 10 أو أحدث، `npm ci`)، بثلاث لغات (ar/fr/en) وعلى المنفذ 5174.
 الحزم مثبتة بإصدارات دقيقة في `apps/portal/package.json` و `package-lock.json`؛ الإصدارات نفسها المعتمدة في لوحة التحكم
-(react 19.3.0، react-router 7.18.4، react-query 5.104.1، oidc-client-ts 3.5.0، i18next 26.4.2، maplibre-gl 6.12.0،
-vite 7.3.6، typescript 5.9.3، vitest 4.1.11، eslint 10.12.0). البصمة SHA-256 تُحسب في المتصفح (WebCrypto) ولا يغادر
+(react 19.3.0، react-router 8.4.0، react-query 5.104.1، oidc-client-ts 3.5.0، i18next 26.4.2، maplibre-gl 6.12.0،
+vite 8.3.4، typescript 5.9.3، vitest 5.0.5، eslint 10.12.0). البصمة SHA-256 تُحسب في المتصفح (WebCrypto) ولا يغادر
 الملف جهاز الزائر عند التحقق من شهادة.
 
 > رُقّيت `maplibre-gl` من 5.24.0 إلى 6.12.0 في اللوحة والبوابة لإزالة التنبيه الأمني GHSA-jrc7-96c5-q579
 > (يشمل الإصدارات حتى 6.4.0)؛ `npm audit` نظيف في التطبيقين.
+
+## المرحلة 9 (فصل الصلاحيات المركزية والجهوية)
+
+لا حزمة جديدة. أمن مستوى الصفوف (Row-Level Security) من PostgreSQL 17 نفسه (الترحيل `0025_rls_policies`)، ودور
+التشغيل `ehimaya_app` بلا `BYPASSRLS`؛ إدارة الحسابات الجهوية عبر واجهة Keycloak 26.3 الإدارية الموجودة.
 
 ## أولوية التنصيب
 

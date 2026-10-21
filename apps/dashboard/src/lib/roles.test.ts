@@ -48,11 +48,12 @@ describe("role gating (contract §5)", () => {
     for (const r of ["local_committee", "central_committee", "sysadmin"]) expect(canManageIncidents([r]), r).toBe(false);
   });
 
-  it("allows AI settings changes to the central committee or sysadmin with national scope", () => {
+  it("allows AI settings changes to the central committee or the AI administrator with national scope (phase 9)", () => {
     expect(canEditAiSettings({ roles: ["central_committee"], national: true })).toBe(true);
     expect(canEditAiSettings({ roles: ["central_committee"], national: false })).toBe(false);
-    expect(canEditAiSettings({ roles: ["sysadmin", "operator"], national: true })).toBe(true);
-    expect(canEditAiSettings({ roles: ["sysadmin"], national: false })).toBe(false);
+    expect(canEditAiSettings({ roles: ["ai_admin"], national: true })).toBe(true);
+    expect(canEditAiSettings({ roles: ["ai_admin"], national: false })).toBe(false);
+    expect(canEditAiSettings({ roles: ["sysadmin", "operator"], national: true })).toBe(false);
     expect(canEditAiSettings({ roles: ["ops_manager", "local_committee"], national: true })).toBe(false);
   });
 
@@ -83,10 +84,12 @@ describe("role gating (contract §5)", () => {
 });
 
 describe("phase 5 permissions (contract §0)", () => {
-  it("opens logistics to sysadmin and content pages to content_editor", () => {
+  it("opens logistics read-only to sysadmin and content pages to content_editor", () => {
     expect(hasDashboardAccess(["sysadmin"])).toBe(true);
     expect(canReadResources(["sysadmin"])).toBe(true);
-    expect(canManageResources(["sysadmin"])).toBe(true);
+    // Phase 9: units and resources are written by the gouvernorat's ops manager only.
+    expect(canManageResources(["sysadmin"])).toBe(false);
+    expect(canManageResources(["ops_manager"])).toBe(true);
     expect(canManageResources(["operator"])).toBe(false);
     expect(hasDashboardAccess(["content_editor"])).toBe(true);
     expect(canEditTips(["content_editor"])).toBe(true);

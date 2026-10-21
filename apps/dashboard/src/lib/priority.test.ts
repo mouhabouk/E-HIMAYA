@@ -3,14 +3,23 @@ import { AI_STATUS_READY, makeReport } from "../test/fixtures";
 import { aiDegraded, analysisFlag, comparePriority, priorityBand } from "./priority";
 
 describe("priorityBand (BR-20 display bands)", () => {
-  it("maps ≥ 70 to high, 40–69 to medium and < 40 to low", () => {
-    expect(priorityBand(100)).toBe("high");
+  it("maps ≥ 85 to critical, 70–84 to high, 40–69 to medium (labelled normal) and < 40 to low", () => {
+    expect(priorityBand(100)).toBe("critical");
+    expect(priorityBand(85)).toBe("critical");
+    expect(priorityBand(84)).toBe("high");
     expect(priorityBand(70)).toBe("high");
     expect(priorityBand(69)).toBe("medium");
     expect(priorityBand(69.9)).toBe("medium");
     expect(priorityBand(40)).toBe("medium");
     expect(priorityBand(39)).toBe("low");
     expect(priorityBand(0)).toBe("low");
+  });
+
+  it("follows the national band settings", () => {
+    const bounds = { critical: 90, high: 60, normal: 30 };
+    expect(priorityBand(89, bounds)).toBe("high");
+    expect(priorityBand(59, bounds)).toBe("medium");
+    expect(priorityBand(29, bounds)).toBe("low");
   });
 
   it("has no band without a score", () => {

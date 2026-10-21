@@ -2,10 +2,11 @@
 
 from typing import Any
 
-from sqlalchemy import func, select
+from sqlalchemy import bindparam, func, select, text
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.security import Principal
+from app.core.security import Principal, current_principal
 from app.modules.audit.models import AuditLog
 
 SYSTEM_ACTOR = "system"
@@ -40,13 +41,27 @@ async def record(
     inside the hash chain, and exposed by the generated column ``audit.log.gouvernorats`` to the regional audit view.
     Omitted: a national-only entry."""
     payload = dict(details or {})
+    principal = current_principal.get()
+    if "actor_name" not in payload and principal is not None and actor == actor_of(principal):
+        name = name_of(principal)
+        if name:
+            payload["actor_name"] = name
     if gouvernorats:
         payload["gouvernorats"] = sorted({int(code) for code in gouvernorats})
-    entry = AuditLog(actor=actor, action=action, target=target, reason=reason, details=payload)
-    session.add(entry)
-    await session.flush()
-    await session.refresh(entry)
-    return entry
+    # audit.append (0025) inserts with the owner's rights: the chain trigger sees the whole log and the entry comes
+    # back even when row-level security hides it from the caller (a national-only entry written by a regional user).
+    row: AuditLog = (
+        await session.execute(
+            select(AuditLog).from_statement(
+                text(
+                    "SELECT * FROM audit.append(:actor, :action, :target, :reason, CAST(:details AS jsonb))"
+                ).bindparams(bindparam("details", type_=JSONB))
+            ),
+            {"actor": actor, "action": action, "target": target, "reason": reason, "details": payload},
+            execution_options={"populate_existing": True},
+        )
+    ).scalar_one()
+    return row
 
 
 async def verify_chain(session: AsyncSession) -> int | None:

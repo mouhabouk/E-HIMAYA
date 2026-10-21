@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.access import Action, authorize, require
-from app.core.db import get_session
+from app.core.db import as_system, get_session
 from app.core.events import emit
 from app.core.security import Principal, Role, require_roles
 from app.core.storage import get_store
@@ -148,7 +148,17 @@ async def detail_of(
     session: AsyncSession, principal: Principal, report_id: uuid.UUID, *, just_handed_back: bool = False
 ) -> schemas.StaffReportDetail:
     """The staff view of one report. `just_handed_back`: the caller was in scope for the write it just made (a
-    refused referral) and has lost the read since; it gets this one masked answer to its own request."""
+    refused referral) and has lost the read since; it gets this one masked answer to its own request, read with the
+    system scope since row-level security no longer shows it the row."""
+    if just_handed_back:
+        async with as_system(session):
+            return await _detail(session, principal, report_id, just_handed_back=True)
+    return await _detail(session, principal, report_id, just_handed_back=False)
+
+
+async def _detail(
+    session: AsyncSession, principal: Principal, report_id: uuid.UUID, *, just_handed_back: bool
+) -> schemas.StaffReportDetail:
     found = await service.staff_summary(session, report_id)
     # Out-of-scope reports answer 404, not 403, so their existence is not disclosed.
     if found is None:

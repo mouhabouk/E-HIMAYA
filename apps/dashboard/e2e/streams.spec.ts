@@ -158,6 +158,7 @@ async function mock(page: Page, streams: StaffStream[]): Promise<Mock> {
       return json(route, [{ code: 11, iso_code: "TN-11", name: "تونس", name_ar: "تونس", name_fr: "Tunis", delegation_count: 21 }]);
     }
     if (method === "GET" && pathname === "/api/v1/staff/levels") return json(route, []);
+    if (method === "GET" && pathname === "/api/v1/staff/break-glass") return json(route, { items: [], next_cursor: null });
     if (method === "GET" && pathname === "/api/v1/staff/streams") {
       const status = searchParams.get("status");
       return json(route, { items: m.streams.filter((s) => status !== "live" || s.status === "live"), next_cursor: null });

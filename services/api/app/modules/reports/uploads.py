@@ -37,7 +37,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.core import metrics
 from app.core.config import get_settings
-from app.core.db import get_session
+from app.core.db import get_system_session
 from app.core.events import emit
 from app.core.security import Principal, get_token_verifier
 from app.core.storage import ObjectStore, get_store
@@ -219,7 +219,7 @@ def _presented_secret(authorization: str | None) -> str:
 @router.post("/internal/tusd/hooks")
 async def tusd_hook(
     body: HookRequest,
-    session: Annotated[AsyncSession, Depends(get_session)],
+    session: Annotated[AsyncSession, Depends(get_system_session)],
     authorization: Annotated[str | None, Header(max_length=512)] = None,
 ) -> dict[str, Any]:
     expected = get_settings().tusd_hook_secret

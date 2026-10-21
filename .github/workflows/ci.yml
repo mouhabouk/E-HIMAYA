@@ -101,7 +101,12 @@ jobs:
             -d "{\"client_uuid\":\"$(cat /proc/sys/kernel/random/uuid)\",\"category\":\"sos\",\"location\":{\"lat\":36.8,\"lon\":10.18},\"created_at\":\"$(date -u +%FT%TZ)\"}"
           kill $API_PID; tail -20 api.log
 
+      # As the runtime role (row-level security applies, phase 9 §9); the owner seeds and checks through
+      # MIGRATION_DATABASE_URL (test_db_roles, test_rls).
       - name: Tests
+        env:
+          MIGRATION_DATABASE_URL: ${{ env.DATABASE_URL }}
+          DATABASE_URL: ${{ env.RUNTIME_DATABASE_URL }}
         run: uv run pytest -q
 
       # Events library (phase 8): the knowledge tests again, against a real OpenSearch node started with the

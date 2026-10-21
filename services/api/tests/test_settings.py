@@ -8,7 +8,7 @@ import pytest
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.db import get_sessionmaker
+from app.core.db import get_system_sessionmaker
 from app.modules.settings import service as settings_service
 from tests.conftest import outbox_events
 
@@ -19,10 +19,10 @@ URL = "/api/v1/staff/settings"
 @pytest.fixture
 async def restore_settings() -> AsyncIterator[None]:
     """Put every national setting back as it was after the test (other tests rely on the defaults)."""
-    async with get_sessionmaker()() as s:
+    async with get_system_sessionmaker()() as s:
         saved = (await s.execute(text("SELECT key, value::text, version FROM platform.setting"))).all()
     yield
-    async with get_sessionmaker()() as s, s.begin():
+    async with get_system_sessionmaker()() as s, s.begin():
         for key, value, version in saved:
             await s.execute(
                 text("UPDATE platform.setting SET value = CAST(:v AS jsonb), version = :n WHERE key = :k"),
@@ -152,7 +152,8 @@ async def test_audit_before_after_and_event(
     row = (
         await session.execute(
             text(
-                "SELECT reason, details FROM audit.log WHERE action = 'settings.update' AND target = 'setting:sla.bands' "
+                "SELECT reason, details FROM audit.log "
+                "WHERE action = 'settings.update' AND target = 'setting:sla.bands' "
                 "ORDER BY seq DESC LIMIT 1"
             )
         )

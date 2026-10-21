@@ -9,7 +9,7 @@ import pytest
 from sqlalchemy import text
 
 from app.core.config import get_settings
-from app.core.db import get_sessionmaker
+from app.core.db import get_system_sessionmaker
 from app.modules.forecast import terrain
 from app.modules.weather import provider, router
 from app.modules.weather.provider import Hour, Series, SimProvider
@@ -58,7 +58,7 @@ class ScriptedProvider:
 
 
 async def clear_weather() -> None:
-    async with get_sessionmaker()() as s, s.begin():
+    async with get_system_sessionmaker()() as s, s.begin():
         await s.execute(text("DELETE FROM weather.alert_suggestion"))
         await s.execute(text("DELETE FROM weather.observation"))
         await s.execute(text("DELETE FROM weather.grid_point"))
@@ -90,7 +90,7 @@ async def seed_grid(*, keep: tuple[float, float, float, float] = (34.5, 9.8, 37.
     """Lay the grid, then keep only the points in (min_lat, min_lon, max_lat, max_lon) (Tunis to Sfax) to stay fast."""
     from app.modules.weather import service
 
-    async with get_sessionmaker()() as s, s.begin():
+    async with get_system_sessionmaker()() as s, s.begin():
         await service.ensure_grid(s)
         min_lat, min_lon, max_lat, max_lon = keep
         await s.execute(
@@ -104,7 +104,7 @@ async def refresh(source: Any = None) -> dict[str, int]:
     from app.modules.weather import service
 
     await seed_grid()
-    return await service.refresh(get_sessionmaker(), source or SimProvider())
+    return await service.refresh(get_system_sessionmaker(), source or SimProvider())
 
 
 @pytest.fixture

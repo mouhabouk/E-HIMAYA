@@ -48,7 +48,7 @@ from sqlalchemy import text  # noqa: E402
 from sqlalchemy.ext.asyncio import AsyncSession  # noqa: E402
 
 from app.core import security  # noqa: E402
-from app.core.db import dispose_engine, get_sessionmaker  # noqa: E402
+from app.core.db import dispose_engine, get_system_sessionmaker  # noqa: E402
 from app.main import app  # noqa: E402
 
 _PRIVATE_KEY = rsa.generate_private_key(public_exponent=65537, key_size=2048)
@@ -112,13 +112,13 @@ async def client() -> AsyncIterator[httpx.AsyncClient]:
 @pytest.fixture
 async def isolated_window() -> None:
     """Move earlier tests' reports out of every grouping window, so suggestions only see this test's reports."""
-    async with get_sessionmaker()() as s, s.begin():
+    async with get_system_sessionmaker()() as s, s.begin():
         await s.execute(text("UPDATE reports.report SET received_at = received_at - interval '30 days'"))
 
 
 @pytest.fixture
 async def session() -> AsyncIterator[AsyncSession]:
-    async with get_sessionmaker()() as s:
+    async with get_system_sessionmaker()() as s:
         yield s
 
 

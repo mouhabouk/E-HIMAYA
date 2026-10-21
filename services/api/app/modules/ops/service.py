@@ -25,6 +25,7 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.access import Action, ApiError
+from app.core.db import system_scoped
 from app.core.events import emit
 from app.core.security import Principal
 from app.modules.access.grants import active_grants
@@ -129,6 +130,7 @@ async def summary(session: AsyncSession, incident: Incident) -> schemas.Incident
         lead_gouvernorat_code=incident.gouvernorat_code,
         participating_gouvernorats=sorted(participants),
         command_level=incident.command_level,
+        command_level_manual=incident.command_level_manual,
         centroid=point,
         severity=incident.severity,
         report_count=len(members),
@@ -145,6 +147,7 @@ def add_timeline(
     incident_id: uuid.UUID,
     kind: str,
     actor: str,
+    /,
     actor_name: str | None = None,
     **payload: Any,
 ) -> TimelineEvent:
@@ -157,7 +160,7 @@ def add_timeline(
     return event
 
 
-async def _timeline(session: AsyncSession, incident: Incident, kind: str, actor: str, **payload: Any) -> None:
+async def _timeline(session: AsyncSession, incident: Incident, kind: str, actor: str, /, **payload: Any) -> None:
     add_timeline(session, incident.id, kind, actor, **payload)
 
 
@@ -325,6 +328,7 @@ async def after_geo_verified(session: AsyncSession, report: Report, actor: str) 
 # ---------------------------------------------------------------- grouping
 
 
+@system_scoped
 async def refresh(session: AsyncSession, incident: Incident, actor: str = "system") -> None:
     """Recompute what derives from the member reports: place, type, severity, open or closed; participants.
 
@@ -371,6 +375,7 @@ async def refresh(session: AsyncSession, incident: Incident, actor: str = "syste
     await update_command_level(session, incident, actor)
 
 
+@system_scoped
 async def announce_incident(session: AsyncSession, incident: Incident) -> None:
     """``incident.updated`` with the gouvernorats of the incident (lead and participants) for live routing."""
     out = await summary(session, incident)
@@ -381,6 +386,7 @@ async def announce_incident(session: AsyncSession, incident: Incident) -> None:
     )
 
 
+@system_scoped
 async def _announce(session: AsyncSession, incidents: list[Incident], report_ids: list[uuid.UUID]) -> None:
     # Scores depend on the reporters grouped together: refresh them, then tell the dashboards.
     await pipeline.rescore(session, report_ids)
@@ -456,6 +462,7 @@ async def _attach(session: AsyncSession, report: Report, incident: Incident, act
     return changed
 
 
+@system_scoped
 async def nearby_incident_ids(session: AsyncSession, report: Report) -> list[uuid.UUID]:
     """Open incidents a report could belong to (duplicate guard and cross-border linking, §5.2)."""
     settings = (await load_ai_settings(session)).grouping
@@ -488,6 +495,7 @@ async def nearby_incident_ids(session: AsyncSession, report: Report) -> list[uui
     ]
 
 
+@system_scoped
 async def nearby(session: AsyncSession, report: Report) -> list[schemas.NearbyIncident]:
     ids = await nearby_incident_ids(session, report)
     incidents = {i.id: i for i in await session.scalars(select(Incident).where(Incident.id.in_(ids)))}
@@ -531,6 +539,7 @@ async def link_target(session: AsyncSession, principal: Principal, report: Repor
     raise _not_found()
 
 
+@system_scoped
 async def link(
     session: AsyncSession, principal: Principal, report: Report, body: schemas.IncidentLinkIn, actor: str
 ) -> list[uuid.UUID]:
@@ -593,6 +602,7 @@ async def _accept(session: AsyncSession, report: Report, actor: str, via: str = 
     return list({i.id: i for i in changed}.values())
 
 
+@system_scoped
 async def detach(session: AsyncSession, report: Report, actor: str) -> None:
     """Split: take a report out of its incident (it can then be grouped again)."""
     if report.incident_id is None:
@@ -618,6 +628,7 @@ async def dismiss(session: AsyncSession, report: Report) -> None:
     await pipeline.rescore(session, [report.id])
 
 
+@system_scoped
 async def merge(session: AsyncSession, target: Incident, source: Incident, actor: str) -> None:
     """The source's reports move to the target; its lead and participants become participants of the target."""
     if target.id == source.id:
@@ -639,6 +650,7 @@ async def merge(session: AsyncSession, target: Incident, source: Incident, actor
     await _announce(session, [target, source], affected)
 
 
+@system_scoped
 async def after_status_change(session: AsyncSession, report: Report, actor: str) -> None:
     """A member closed or rejected: close the incident when all its reports are final."""
     if report.incident_id is None:
@@ -694,6 +706,7 @@ async def timeline(session: AsyncSession, incident_id: uuid.UUID) -> list[schema
 AUTO_ACTOR = "system:auto_grouping"
 
 
+@system_scoped
 async def auto_group(session: AsyncSession, report: Report) -> bool:
     """BR-11: at disaster level the AI grouping suggestion is applied without waiting for an operator.
 

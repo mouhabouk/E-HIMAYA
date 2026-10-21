@@ -15,7 +15,7 @@ from typing import Any
 from sqlalchemy import text
 
 from app.core.config import get_settings
-from app.core.db import dispose_engine, get_sessionmaker
+from app.core.db import dispose_engine, get_system_sessionmaker
 from app.modules.knowledge import indexer
 from app.modules.knowledge.domain import Kind
 from app.modules.knowledge.opensearch import get_engine
@@ -23,7 +23,7 @@ from app.modules.knowledge.opensearch import get_engine
 
 async def _backfill(kinds: list[Kind] | None, rebuild: bool) -> dict[str, Any]:
     try:
-        counts = await indexer.backfill(get_sessionmaker(), kinds, rebuild=rebuild)
+        counts = await indexer.backfill(get_system_sessionmaker(), kinds, rebuild=rebuild)
         return {"backend": get_settings().search_engine, **counts}
     finally:
         await dispose_engine()
@@ -31,7 +31,7 @@ async def _backfill(kinds: list[Kind] | None, rebuild: bool) -> dict[str, Any]:
 
 async def _status() -> dict[str, Any]:
     try:
-        async with get_sessionmaker()() as session:
+        async with get_system_sessionmaker()() as session:
             rows = await session.execute(
                 text(
                     "SELECT kind, count(*) FILTER (WHERE NOT deleted) AS items, count(*) FILTER (WHERE os_dirty) AS "

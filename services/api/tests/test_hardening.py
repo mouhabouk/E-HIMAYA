@@ -14,7 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from app import main
 from app.core import metrics, ratelimit
 from app.core.config import get_settings
-from app.core.db import get_sessionmaker
+from app.core.db import get_system_sessionmaker
 from app.modules.notify import delivery
 from app.modules.notify.providers import Push
 from app.modules.reports import router as reports_router
@@ -232,7 +232,7 @@ async def test_personal_pushes_carry_no_personal_text(
         headers=staff(["operator"]),
     )
     assert r.status_code == 200, r.text
-    while await delivery.run_outbox(get_sessionmaker()):
+    while await delivery.run_outbox(get_system_sessionmaker()):
         pass
     push = next(p for (p,) in channels.push.sent if isinstance(p, Push) and p.token == token)
     assert (push.title, push.body) == ("ء-حماية", "لديك تحديث جديد")
@@ -358,5 +358,5 @@ async def test_notify_failures_are_counted_by_channel(
     await accept_charter(client, citizen)
     report = (await client.post("/api/v1/reports", json=report_body(), headers=citizen)).json()
     await client.post(f"/api/v1/staff/reports/{report['id']}/status", json={"status": "in_progress"}, headers=staff())
-    await delivery.run_outbox(get_sessionmaker())
+    await delivery.run_outbox(get_system_sessionmaker())
     assert metric("ehimaya_notify_failures_total", {"channel": "push"}) >= before + 1

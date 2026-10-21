@@ -24,7 +24,7 @@ from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
-from app.core.db import get_sessionmaker
+from app.core.db import get_system_sessionmaker
 from app.modules.identity.models import Account, Profile, phone_index
 from app.modules.ops.models import Incident
 from app.modules.privacy import retention
@@ -121,7 +121,7 @@ def channel() -> str:
 
 
 async def event(body: dict[str, Any]) -> None:
-    await worker.process(get_sessionmaker(), json.dumps(body))
+    await worker.process(get_system_sessionmaker(), json.dumps(body))
 
 
 async def call_event(channel_id: str, state: str, **fields: str) -> None:
@@ -319,14 +319,14 @@ async def test_unanswered_call_is_missed(session: AsyncSession) -> None:
     assert call.status == "missed" and call.end_reason == "abandoned"
     # Events of unknown channels and junk are ignored.
     await destroyed("unknown.1")
-    await worker.process(get_sessionmaker(), "not json")
+    await worker.process(get_system_sessionmaker(), "not json")
     await call_event("../etc", "answered")
 
 
 async def test_reconcile_ends_calls_whose_channel_vanished(fake_ari: FakeAri, session: AsyncSession) -> None:
     alive, gone = await ringing(), await ringing()
     fake_ari.live = {alive}
-    await worker._reconcile(get_sessionmaker())
+    await worker._reconcile(get_system_sessionmaker())
     assert (await call_row(session, gone)).status == "missed"
     assert (await call_row(session, alive)).status == "ringing"
     await destroyed(alive)
@@ -397,7 +397,7 @@ async def test_credentials(client: httpx.AsyncClient, staff: Staff, fake_ari: Fa
     assert again["password"] not in stored
 
     # Expired credentials leave the queue and Asterisk.
-    removed = await worker.retire_expired(get_sessionmaker(), datetime.now(UTC) + timedelta(days=1))
+    removed = await worker.retire_expired(get_system_sessionmaker(), datetime.now(UTC) + timedelta(days=1))
     assert removed >= 1 and endpoint in fake_ari.removed and f"member-del-{endpoint}" in fake_ari.controls
 
     fake_ari.fail = True
@@ -619,7 +619,7 @@ async def test_recording_ingestion(
     for _ in range(100):
         if (await call_row(session, call.channel_id)).recording_state != "pending":
             break
-        assert await worker.ingest_one(get_sessionmaker(), fake_store)
+        assert await worker.ingest_one(get_system_sessionmaker(), fake_store)
     ingested = await call_row(session, call.channel_id)
     assert ingested.recording_state == "done" and ingested.recording_media_id is not None
     key = f"calls/{call.id}.wav"
@@ -645,7 +645,7 @@ async def test_orphan_recording_becomes_untracked_call(
     for name, data in ((f"{channel_id}.wav", wav_bytes(0.5)), ("..evil.wav", b"x")):
         (tmp_path / name).write_bytes(data)
         os.utime(tmp_path / name, (old, old))
-    assert await worker.queue_orphans(get_sessionmaker()) == 1
+    assert await worker.queue_orphans(get_system_sessionmaker()) == 1
     call = await call_row(session, channel_id)
     assert call.end_reason == "untracked" and call.source == "unknown" and call.recording_state == "pending"
     assert worker.recording_file("../x") is None
@@ -877,7 +877,7 @@ async def test_retention_purges_old_calls(session: AsyncSession, fake_store: Fak
     )
     await session.commit()
     assert ("calls", telephony_retention.purge_calls) in retention.JOBS
-    assert await retention.run_job(get_sessionmaker(), "calls", telephony_retention.purge_calls) >= 1
+    assert await retention.run_job(get_system_sessionmaker(), "calls", telephony_retention.purge_calls) >= 1
     remaining = set(
         await session.scalars(
             text("SELECT channel_id FROM telephony.call WHERE channel_id IN (:a, :b)"), {"a": old, "b": recent}

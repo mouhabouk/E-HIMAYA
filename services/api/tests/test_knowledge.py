@@ -16,7 +16,7 @@ import pytest
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.db import get_sessionmaker
+from app.core.db import get_system_sessionmaker
 from app.modules.decision import llm
 from app.modules.knowledge import documents, indexer, opensearch, search
 from app.modules.knowledge import text as kt
@@ -45,7 +45,7 @@ def postgres_backend() -> Iterator[None]:
 
 async def index_all() -> None:
     """Drive the indexer as the worker would: outbox, sweep (everything settled), prune, push/drop."""
-    sessionmaker = get_sessionmaker()
+    sessionmaker = get_system_sessionmaker()
     async with sessionmaker() as s, s.begin():
         await indexer.consume_outbox(s)
         while await indexer.sweep(s, settle=__import__("datetime").timedelta(0)):
@@ -67,7 +67,9 @@ async def new_incident(
 ) -> tuple[str, str]:
     report = await new_report(client, location, **overrides)
     r = await client.post(
-        f"/api/v1/staff/reports/{report['id']}/incident", json={"action": "new"}, headers=staff(gouvernorat=code)
+        f"/api/v1/staff/reports/{report['id']}/incident",
+        json={"action": "new", "override_reason": "independent test incident"},
+        headers=staff(gouvernorat=code),
     )
     assert r.status_code == 200, r.text
     return r.json()["incident_id"], report["id"]
@@ -392,7 +394,7 @@ async def test_library_search_scope_and_highlight(client: httpx.AsyncClient, sta
     assert r.status_code == 422 and r.json()["detail"] == "invalid_kind"
 
     # Encrypted at the source, encrypted in the index: no clear text, blind-index tokens only.
-    async with get_sessionmaker()() as s:
+    async with get_system_sessionmaker()() as s:
         raw = (
             await s.execute(
                 text(
@@ -492,7 +494,7 @@ async def test_library_calendar_tree_and_item(
 
 
 async def test_indexer_follows_events_and_wipes_rejected_reports(client: httpx.AsyncClient, staff: Staff) -> None:
-    sessionmaker = get_sessionmaker()
+    sessionmaker = get_system_sessionmaker()
     await index_all()  # cursor initialised, everything settled indexed
     word = unique_word()
     report = await new_report(client, ZAGHOUAN_POINT, text=f"تسرب غاز {word}")
@@ -516,10 +518,16 @@ async def test_indexer_follows_events_and_wipes_rejected_reports(client: httpx.A
 
 
 async def test_outbox_cursor_waits_for_gaps(session: AsyncSession) -> None:
-    sessionmaker = get_sessionmaker()
+    sessionmaker = get_system_sessionmaker()
     async with sessionmaker() as s, s.begin():
         await indexer.consume_outbox(s)
-        base = int(await s.scalar(text("SELECT coalesce(max(id), 0) FROM events.outbox")) or 0)
+        # The cursor on a row of this test (the runtime role cannot set the sequence back).
+        base = int(
+            await s.scalar(
+                text("INSERT INTO events.outbox (subject, payload) VALUES ('test.noop', '{}'::jsonb) RETURNING id")
+            )
+            or 0
+        )
         await s.execute(
             text(
                 "INSERT INTO knowledge.index_state (key, value) VALUES ('outbox', '{}') "
@@ -529,7 +537,7 @@ async def test_outbox_cursor_waits_for_gaps(session: AsyncSession) -> None:
         )
     # A row two ids ahead (the one in between belongs to an open or rolled-back transaction).
     async with sessionmaker() as s, s.begin():
-        await s.execute(text("SELECT setval('events.outbox_id_seq', :v)"), {"v": base + 1})
+        assert await s.scalar(text("SELECT nextval('events.outbox_id_seq')")) == base + 1
         await s.execute(text("INSERT INTO events.outbox (subject, payload) VALUES ('test.noop', '{}'::jsonb)"))
     async with sessionmaker() as s, s.begin():
         await indexer.consume_outbox(s)
@@ -554,7 +562,7 @@ async def test_semantic_part_is_fused(client: httpx.AsyncClient, staff: Staff, f
     word, year = unique_word(), random_year()
     eid = await publish(client, staff, entry_body(word, started_at=f"{year}-07-14T10:00:00+01:00", ended_at=None))
     await index_all()
-    sessionmaker = get_sessionmaker()
+    sessionmaker = get_system_sessionmaker()
     async with sessionmaker() as s, s.begin():
         while await indexer.embed_pending(s, fake_ai):
             pass
@@ -684,7 +692,7 @@ async def test_search_ids_for_other_modules(staff: Staff, session: AsyncSession,
 async def test_backfill_command_rebuilds_rows(client: httpx.AsyncClient, staff: Staff) -> None:
     word = unique_word()
     eid = await publish(client, staff, entry_body(word))
-    sessionmaker = get_sessionmaker()
+    sessionmaker = get_system_sessionmaker()
     async with sessionmaker() as s, s.begin():
         await s.execute(text("DELETE FROM knowledge.search_doc WHERE kind = 'memory' AND ref_id = :id"), {"id": eid})
     counts = await indexer.backfill(sessionmaker, [Kind.MEMORY])
@@ -734,7 +742,7 @@ async def test_opensearch_arabic_french_scope_and_highlight(
     beja = await new_report(client, BEJA_POINT, text=f"حريق كبير في الغابة {word}")
     hostile = await new_report(client, ZAGHOUAN_POINT, text=f"<b>حريق</b> {word}")
     await index_all()
-    sessionmaker = get_sessionmaker()
+    sessionmaker = get_system_sessionmaker()
     async with sessionmaker() as s, s.begin():
         while await indexer.push(s, real_engine):
             pass
@@ -770,7 +778,7 @@ async def test_opensearch_rebuild_switches_aliases(
 ) -> None:
     word = unique_word()
     eid = await publish(client, staff, entry_body(word, access="national"))
-    await indexer.backfill(get_sessionmaker(), [Kind.MEMORY], rebuild=True)
+    await indexer.backfill(get_system_sessionmaker(), [Kind.MEMORY], rebuild=True)
     await _refresh(real_engine)
     alias = real_engine.alias("memory")
     aliases = (await real_engine._request("GET", f"/{alias}/_alias/{alias}")).json()
