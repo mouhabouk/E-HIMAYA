@@ -312,6 +312,28 @@ async def test_public_scope_own_reports(conn: AsyncConnection, seed: Seed) -> No
     assert await conn.scalar(text("SELECT count(*) FROM reports.reporter_context")) == 0
 
 
+async def test_reporter_context_other_gouvernorat(conn: AsyncConnection, seed: Seed) -> None:
+    """Acceptance 20: where the reporter lives is never readable by another gouvernorat, nor by the reporter's own
+    public scope; the room of the incident's location reads it (the API then decides whether to show it)."""
+    ids = seed.ids
+    for report_id in (ids["rep_beja"], ids["rep_jendouba"]):
+        await conn.execute(
+            text(
+                "INSERT INTO reports.reporter_context (report_id, reporter_gouvernorat_code, source) "
+                "VALUES (:r, :g, 'profile')"
+            ),
+            {"r": report_id, "g": JENDOUBA},
+        )
+    query = text("SELECT report_id FROM reports.reporter_context WHERE report_id = ANY(:r)")
+    params = {"r": [ids["rep_beja"], ids["rep_jendouba"]]}
+    await scoped(conn, BEJA_SCOPE)
+    assert {r[0] for r in await conn.execute(query, params)} == {ids["rep_beja"]}
+    await scoped(conn, DbScope("gouvernorat", gouvernorat=JENDOUBA, subject="jendouba"))
+    assert {r[0] for r in await conn.execute(query, params)} == {ids["rep_jendouba"]}
+    await scoped(conn, DbScope.public(seed.user))
+    assert {r[0] for r in await conn.execute(query, params)} == set()
+
+
 async def test_audit_scope_append_and_immutability(conn: AsyncConnection, seed: Seed) -> None:
     beja, jendouba, national = await _audit(conn, [BEJA]), await _audit(conn, [JENDOUBA]), await _audit(conn, [])
     await scoped(conn, BEJA_SCOPE)

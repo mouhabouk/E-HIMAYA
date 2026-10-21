@@ -12,8 +12,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_system_sessionmaker
 from app.modules.access import worker
-from tests.conftest import SFAX, outbox_events
+from tests.conftest import SFAX, TokenFactory, outbox_events
 from tests.scopehelpers import Staff, new_report
+from tests.test_access import citizen_report
 
 URL = "/api/v1/staff/break-glass"
 JUSTIFICATION = "Victime transférée depuis Gabès, besoin du dossier pour guider les secours."
@@ -179,3 +180,26 @@ async def test_grant_targets(client: httpx.AsyncClient, staff: Staff, kind: str)
     assert (await client.get(url, headers=gabes)).status_code == 404
     assert (await grant(client, gabes, **body)).status_code == 201
     assert (await client.get(url, headers=gabes)).status_code == 200
+
+
+async def test_reveal_audited(
+    client: httpx.AsyncClient, staff: Staff, make_token: TokenFactory, session: AsyncSession
+) -> None:
+    """Acceptance 16: the reporter's identity shows under a grant, and every such reading is audited with the grant."""
+    report = await citizen_report(client, make_token)
+    gabes = holder(staff, str(uuid.uuid4()))
+    grant_id = (await grant(client, gabes, target_kind="report", target_id=report["id"])).json()["id"]
+    url = f"/api/v1/staff/reports/{report['id']}"
+    for _ in range(2):
+        body = (await client.get(url, headers=gabes)).json()
+        assert body["reporter"]["masked"] is False
+    readings = await session.scalar(
+        text(
+            "SELECT count(*) FROM audit.log WHERE action = 'report.view_sensitive' AND target = :t "
+            "AND details->>'grant_id' = :g"
+        ),
+        {"t": f"report:{report['id']}", "g": grant_id},
+    )
+    assert readings == 2
+    # Another regional user without a grant: not even the report.
+    assert (await client.get(url, headers=staff(gouvernorat=GABES))).status_code == 404
