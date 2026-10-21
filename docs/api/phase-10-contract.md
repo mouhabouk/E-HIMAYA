@@ -18,10 +18,11 @@ Migrations (each `down_revision` is the previous number):
 
 | Migration | Content |
 |---|---|
-| `0026_orgs_certificate_revocation` | certificate `revoked` state, `key_id` (§4.1) |
-| `0027_notify_four_eyes` | alert reviewer and emergency override (§5.1) |
-| `0028_identity_consent_purpose` | consent purpose (§4.2) |
-| `0029_evidence_anchor` | schema `evidence`, anchors (§4.3) + RLS |
+| `0026_access_sign_out` | account log action `account.sign_out` (§1.2) |
+| `0027_orgs_certificate_revocation` | certificate `revoked` state, `key_id` (§4.1) |
+| `0028_notify_four_eyes` | alert reviewer and emergency override (§5.1) |
+| `0029_identity_consent_purpose` | consent purpose (§4.2) |
+| `0030_evidence_anchor` | schema `evidence`, anchors (§4.3) + RLS |
 
 ---
 

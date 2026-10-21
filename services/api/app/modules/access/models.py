@@ -46,7 +46,7 @@ class AccountAdminLog(Base):
     at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     actor: Mapped[str] = mapped_column(Text)
     actor_name: Mapped[str | None] = mapped_column(Text)
-    # account.create | account.update | account.reset
+    # account.create | account.update | account.reset | account.sign_out
     action: Mapped[str] = mapped_column(Text)
     account_id: Mapped[str] = mapped_column(Text)
     username: Mapped[str | None] = mapped_column(Text)

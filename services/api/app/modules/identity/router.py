@@ -7,6 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core import sessions
 from app.core.config import get_settings
 from app.core.crypto import get_cipher
 from app.core.db import get_session
@@ -41,6 +42,12 @@ async def me(principal: CurrentPrincipal) -> MeOut:
         gouvernorat_code=principal.gouvernorat_code,
         is_staff=principal.is_staff,
     )
+
+
+@router.post("/me/sign-out-everywhere", status_code=status.HTTP_204_NO_CONTENT)
+async def sign_out_everywhere(principal: CurrentPrincipal) -> None:
+    """Refuse every token issued to the caller until now, on every device (phase 10 §1.2)."""
+    await sessions.revoke(principal.subject)
 
 
 # ---------------------------------------------------------------- profile (FR-A-005)

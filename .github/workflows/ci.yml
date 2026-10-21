@@ -314,7 +314,7 @@ jobs:
       - uses: actions/checkout@v7
       - name: Import both realms into a throwaway Keycloak
         run: |
-          docker run -d --name kc -p 9000:9000 \
+          docker run -d --name kc -p 8080:8080 -p 9000:9000 \
             -e KC_HEALTH_ENABLED=true -e KC_BOOTSTRAP_ADMIN_USERNAME=admin -e KC_BOOTSTRAP_ADMIN_PASSWORD=admin \
             -v "$PWD/infra/keycloak/realms:/opt/keycloak/data/import:ro" \
             keycloak/keycloak:26.8@sha256:79c623a22abacf3fe6c00a5fb30f5b7843d717b234033b80995891c06116d244 start-dev --import-realm
@@ -325,6 +325,8 @@ jobs:
           docker logs kc 2>&1 | tee kc.log | tail -20
           grep -q "Realm 'ehimaya-public' imported" kc.log
           grep -q "Realm 'ehimaya-staff' imported" kc.log
+      - name: Staff tokens prove the second factor (amr)
+        run: python3 infra/keycloak/check_mfa.py http://localhost:8080
 
   ai:
     name: AI · lint, types, tests

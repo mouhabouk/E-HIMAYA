@@ -254,7 +254,7 @@ skip_reason() {
     telephony)        need_cmds curl && need_docker && need_disk 4 && need_container_net ;;
     notify-sim|ai|vision) need_cmds uv ;;
     notify-sim-image) need_docker && need_disk 2 && need_container_net ;;
-    keycloak-realms)  need_cmds curl && need_docker && need_disk 2 ;;
+    keycloak-realms)  need_cmds curl python3 && need_docker && need_disk 2 ;;
     ai-images)        need_docker && need_disk 8 && need_container_net ;;
     ai-models)        need_cmds uv curl python3 && need_docker && need_espeak && need_disk 25 && need_container_net ;;
     vision-models)    need_cmds uv curl python3 && need_docker && need_disk 6 && need_container_net ;;
@@ -518,10 +518,11 @@ job_notify_sim_image() {
 }
 
 job_keycloak_realms() {
-  local kc=$RUN_ID-kc port i
+  local kc=$RUN_ID-kc port http_port i
   port=$(free_port)
+  http_port=$(free_port)
   step "Import both realms into a throwaway Keycloak"
-  docker run -d --name "$kc" --label "$LABEL" -p "127.0.0.1:$port:9000" \
+  docker run -d --name "$kc" --label "$LABEL" -p "127.0.0.1:$port:9000" -p "127.0.0.1:$http_port:8080" \
     -e KC_HEALTH_ENABLED=true -e KC_BOOTSTRAP_ADMIN_USERNAME=admin -e KC_BOOTSTRAP_ADMIN_PASSWORD=admin \
     -v "$PWD/infra/keycloak/realms:/opt/keycloak/data/import:ro" \
     "$KEYCLOAK_IMAGE" start-dev --import-realm
@@ -532,6 +533,8 @@ job_keycloak_realms() {
   docker logs "$kc" 2>&1 | tee kc.log | tail -20
   grep -q "Realm 'ehimaya-public' imported" kc.log
   grep -q "Realm 'ehimaya-staff' imported" kc.log
+  step "Staff tokens prove the second factor (amr)"
+  python3 infra/keycloak/check_mfa.py "http://localhost:$http_port"
 }
 
 job_ai() {

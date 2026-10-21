@@ -37,6 +37,9 @@ class Settings(BaseSettings):
     # from inside the cluster (e.g. issuer http://localhost:8080, internal http://keycloak:8080).
     oidc_jwks_base_url: str | None = None
     oidc_audience: str = "ehimaya-api"
+    # A staff-realm token must prove a second factor in its ``amr`` claim (otp, hwk or mfa), phase 10 §1.1.
+    # Turn off only for a staff realm whose flow does not set authentication references yet.
+    staff_mfa_required: bool = True
 
     anon_pseudonym_secret: SecretStr = Field(min_length=32)
     # AES-256-GCM key for field-level encryption (personal data at rest): base64 of 32 random bytes. It is key

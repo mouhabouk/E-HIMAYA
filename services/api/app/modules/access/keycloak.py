@@ -60,6 +60,8 @@ class Directory(Protocol):
 
     async def reset_credentials(self, account_id: str) -> None: ...
 
+    async def sign_out(self, account_id: str) -> None: ...
+
 
 def _attribute(user: dict[str, Any], name: str) -> str | None:
     values = (user.get("attributes") or {}).get(name) or []
@@ -216,7 +218,13 @@ class KeycloakDirectory:
             if credential.get("type") == "otp":
                 await self._call("DELETE", f"/users/{account_id}/credentials/{credential['id']}")
         await self._update(account_id, {"requiredActions": ["UPDATE_PASSWORD", "CONFIGURE_TOTP"]})
-        await self._call("POST", f"/users/{account_id}/logout")
+        await self.sign_out(account_id)
+
+    async def sign_out(self, account_id: str) -> None:
+        """End every Keycloak session of the account (its refresh tokens stop working)."""
+        response = await self._call("POST", f"/users/{account_id}/logout")
+        if response.status_code not in (200, 204):
+            raise DirectoryError(f"logout_{response.status_code}")
 
 
 _directory: Directory | None = None
