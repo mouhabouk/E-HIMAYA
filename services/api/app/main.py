@@ -31,6 +31,8 @@ from app.modules.audit.router import router as audit_router
 from app.modules.content.router import router as content_router
 from app.modules.decision.procedures import procedures_forever
 from app.modules.decision.router import router as decision_router
+from app.modules.evidence.router import router as evidence_router
+from app.modules.evidence.worker import evidence_forever
 from app.modules.forecast.router import router as forecast_router
 from app.modules.geo.router import router as geo_router
 from app.modules.health.router import metrics_router
@@ -108,6 +110,7 @@ WORKER_LOOPS: list[tuple[str, WorkerLoop]] = [
     ("rewards", rewards_forever),
     ("sla-escalation", sla_forever),
     ("breakglass", breakglass_forever),
+    ("evidence", evidence_forever),
 ]
 # Paths a worker-role process still serves: probes and the metrics scrape, never SOS traffic.
 _WORKER_PATHS = ("/health/", "/metrics")
@@ -226,6 +229,7 @@ def create_app() -> FastAPI:
         rewards_staff_router,
         settings_router,
         access_router,
+        evidence_router,
     )
     for router in routers:
         app.include_router(router)

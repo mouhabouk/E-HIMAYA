@@ -185,21 +185,37 @@ only. CI validates the rules with `promtool check rules` and unit-tests them wit
 
 ### 4.3 Evidence anchoring (D11)
 
-* Table `evidence.anchor`:
-  `id, seq, from_at, to_at, media_count, media_root (sha256 Merkle root of media.sha256 ordered by id),
-  audit_seq, audit_hash, prev_anchor_hash, anchor_hash, signature (Ed25519), key_id, tsa_token (bytea, nullable),
-  tsa_url, created_at`.
-* The worker job `evidence.seal` runs every hour, and once more when the worker stops. It covers the media rows
-  received since the previous anchor and the current head of the audit chain. The anchor is chained by
-  `prev_anchor_hash` and signed with `EVIDENCE_SIGNING_KEY` (Ed25519, base64; falls back to
-  `CERTIFICATE_SIGNING_KEY` with a warning).
-* If `TSA_URL` is set, an RFC 3161 request for `anchor_hash` is sent, and the time-stamp token is stored as
-  received. TSA errors never block sealing; the job retries later.
-* `GET /api/v1/staff/evidence/anchors` (security_admin, sysadmin) lists the anchors.
-  `GET /api/v1/staff/media/{id}/proof` (anyone who can read the report) returns the Merkle path, the anchor and its
-  signature, so a third party can recompute the root. The CLI `python -m app.modules.evidence verify` re-checks the
-  whole chain.
-* RLS: `evidence.anchor` is readable by every staff scope and writable by the system scope only.
+* Schema `evidence` (migration `0030_evidence_anchor`):
+  * `evidence.anchor`: `id, seq, from_at, to_at, media_count, media_root, audit_seq, audit_hash, prev_anchor_hash,
+    anchor_hash, signature (Ed25519, base64), key_id, tsa_url, tsa_token (bytea, as received), tsa_error,
+    created_at`.
+  * `evidence.leaf`: `anchor_id, idx, media_id (unique), sha256`. The leaves are kept when a media row is erased, so
+    an earlier proof stays checkable.
+  * A trigger refuses every change to both tables except filling in `tsa_token`/`tsa_error`, and every deletion.
+* The worker loop `evidence` seals an anchor every hour, and once more when the worker stops. An anchor covers the
+  stored media not anchored yet (ordered by `created_at, id`, at most 10,000 per anchor) and the current head of the
+  audit chain (`audit_seq`, `audit_hash`). Nothing new (no media, same audit head) means no anchor. One sealer at a
+  time (advisory lock).
+* Method, so that a third party can recompute everything with any SHA-256 tool:
+  * leaf = `sha256(0x00 || media_id (16 bytes) || sha256 (32 bytes))`;
+  * node = `sha256(0x01 || left || right)`; on a level with an odd count the last node goes up unchanged;
+  * `anchor_hash` = `sha256` of the line
+    `e-himaya-anchor-v1|seq|from_at|to_at|media_count|media_root|audit_seq|audit_hash|prev_anchor_hash`
+    (UTC ISO 8601 timestamps with microseconds, empty fields for nulls);
+  * the signature is Ed25519 over the ASCII of `anchor_hash`, by `EVIDENCE_SIGNING_KEY` (falls back to
+    `CERTIFICATE_SIGNING_KEY` with a warning; with neither, anchors are sealed unsigned and the check lists them).
+    `key_id` is computed like the certificates' one.
+* If `TSA_URL` is set, an RFC 3161 request is sent with `anchor_hash` as the SHA-256 message imprint, and the
+  response is stored as received (`openssl ts -verify -digest <anchor_hash>`). TSA errors are recorded in
+  `tsa_error` and never block sealing; the next run retries.
+* `GET /api/v1/staff/evidence/anchors?limit=&before_seq=` (security_admin, sysadmin) lists the anchors, newest first.
+* `GET /api/v1/staff/media/{id}/proof` (staff who may read the report or the live stream's report; `404` otherwise)
+  returns the leaf, the Merkle path (`[{side, hash}]`), the anchor, its canonical line, the public key and the method.
+  `409 not_anchored_yet` before the next sealing.
+* `python -m app.modules.evidence verify` re-checks the whole chain (sequence, chaining, hash, signature, Merkle root,
+  the audit entry it names, and media rows whose hash changed since) and exits 1 on any problem;
+  `python -m app.modules.evidence seal` seals at once.
+* RLS: every staff scope reads, only the system scope writes.
 
 ## 5. Alerts
 
