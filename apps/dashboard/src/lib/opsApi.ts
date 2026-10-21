@@ -186,7 +186,14 @@ export function opsApi(api: ApiClient) {
     deleteMessage: (id: string) => api.request<undefined>(messagePath(id), { method: "DELETE" }),
     messageAudience: (id: string, signal?: AbortSignal) =>
       api.request<AudienceEstimate>(`${messagePath(id)}/audience`, { signal }),
-    publishMessage: (id: string) => api.request<Message>(`${messagePath(id)}/publish`, { method: "POST" }),
+    /** Phase 10 §5.1: the author of an alert publishes it alone only with an emergency reason. */
+    publishMessage: (id: string, emergencyReason?: string) =>
+      api.request<Message>(`${messagePath(id)}/publish`, {
+        method: "POST",
+        ...(emergencyReason ? { body: { emergency_reason: emergencyReason } } : {}),
+      }),
+    /** Second look at an alert published alone in an emergency (another publisher). */
+    acknowledgeMessage: (id: string) => api.request<Message>(`${messagePath(id)}/acknowledge`, { method: "POST" }),
     cancelMessage: (id: string) => api.request<Message>(`${messagePath(id)}/cancel`, { method: "POST" }),
     activeAlerts: (signal?: AbortSignal) => api.request<Message[]>("/api/v1/staff/alerts/active", { signal }),
     /** Exact e-mail match only; the address goes in the body so it stays out of URLs and logs. */

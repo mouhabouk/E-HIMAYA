@@ -274,7 +274,8 @@ async def test_one_user_notification_is_redacted_but_public_alerts_are_not(
             "/api/v1/staff/notifications", json=alert_body(area={"gouvernorat_codes": [61]}), headers=publisher
         )
     ).json()
-    await client.post(f"/api/v1/staff/notifications/{alert['id']}/publish", headers=publisher)
+    second = staff(["local_committee"], gouvernorat=61)
+    await client.post(f"/api/v1/staff/notifications/{alert['id']}/publish", headers=second)
     await drain()
     (public,) = pushes_to(channels.push, token, alert["id"])
     assert (public.title, public.body) == ("Alerte pluies abondantes", "Évitez les oueds")

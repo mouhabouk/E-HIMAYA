@@ -38,6 +38,16 @@ export type LiveEvent =
   | { type: "volunteer.updated"; volunteer: StaffVolunteer }
   | { type: "notification.updated"; message: Message }
   | { type: "alert.issued"; message: Message }
+  // Phase 10 §5: an alert published alone in an emergency, and an alert channel that did not deliver.
+  | { type: "alert.review_needed"; message: Message }
+  | {
+      type: "alert.delivery_degraded";
+      message: Message;
+      channel: string;
+      reason: "failures" | "not_configured";
+      sent: number;
+      failed: number;
+    }
   // Phase 6 (§4), normalised by parseStreamEvent: the contract fixes the payload of alert and recording only.
   /** `stream` is the list row when the API sends it (else only the id is known and lists are reloaded). */
   | { type: "stream.started" | "stream.ended"; stream_id: string; stream: StaffStream | null }
@@ -83,6 +93,8 @@ const OPS_EVENT_FIELDS: Readonly<Record<string, string>> = {
   "volunteer.updated": "volunteer",
   "notification.updated": "message",
   "alert.issued": "message",
+  "alert.review_needed": "message",
+  "alert.delivery_degraded": "message",
 };
 
 export type LiveState =
@@ -252,7 +264,9 @@ function parseEvent(raw: unknown): LiveEvent | { type: "ready" } | null {
     case "resource.updated":
     case "volunteer.updated":
     case "notification.updated":
-    case "alert.issued": {
+    case "alert.issued":
+    case "alert.review_needed":
+    case "alert.delivery_degraded": {
       const field = m[OPS_EVENT_FIELDS[m.type] ?? ""];
       return field && typeof field === "object" && typeof (field as { id?: unknown }).id === "string"
         ? (m as unknown as LiveEvent)

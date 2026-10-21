@@ -211,7 +211,7 @@ def _route(subject: str, payload: dict[str, Any]) -> tuple[str, Callable[[LiveCl
         # Reports repository (phase 8): only the creator and the recipients of the document are told.
         recipients = set(payload.get("recipients") or [])
         return "staff", lambda client: client.principal.subject in recipients
-    if subject in ("notification.updated", "alert.issued"):
+    if subject in ("notification.updated", "alert.issued", "alert.review_needed", "alert.delivery_degraded"):
         area = payload.get("message", {}).get("area", {})
         if area.get("polygon"):
             # Phase 9 §5.6: editors whose gouvernorat the polygon intersects (computed by notify), national always.

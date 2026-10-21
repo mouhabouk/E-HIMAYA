@@ -121,7 +121,7 @@
     "revokedOn": "Révoqué le {{date}}.",
     "keyId": "Identifiant de la clé : {{id}}",
     "disclaimerTitle": "Qu’est-ce que ce certificat ?",
-    "disclaimer": "Ce certificat est une auto-évaluation de sécurité enregistrée par l'établissement sur la plateforme e-Himaya et revue par ses auditeurs. Ce n'est pas un certificat officiel de l'Office national de la protection civile ni d'une autre administration, et il ne remplace pas les autorisations et visites prévues par la loi."
+    "disclaimer": "Ce certificat est une auto-évaluation de sécurité enregistrée par l’établissement sur la plateforme e-Himaya et revue par ses auditeurs. Ce n’est pas un certificat officiel de l’Office national de la protection civile ni d’une autre administration, et il ne remplace pas les autorisations et visites prévues par la loi."
   },
   "myOrgs": {
     "title": "Mes établissements",

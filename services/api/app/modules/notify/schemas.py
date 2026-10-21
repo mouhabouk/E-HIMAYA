@@ -87,6 +87,18 @@ class MessageOut(BaseModel):
     cancelled_at: datetime | None
     version: int
     stats: dict[str, ChannelStats]
+    # Four eyes (phase 10 §5.1).
+    updated_by: str | None = None
+    single_reviewer: bool = False
+    emergency_reason: str | None = None
+    reviewed_by: str | None = None
+    reviewed_at: datetime | None = None
+
+
+class PublishIn(BaseModel):
+    """Optional body of a publication: the author of an alert publishes it alone only with an emergency reason."""
+
+    emergency_reason: str | None = Field(default=None, max_length=500)
 
 
 class MessagePage(BaseModel):

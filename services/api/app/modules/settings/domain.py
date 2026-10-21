@@ -17,6 +17,8 @@ SLA_ENFORCED_SINCE = "sla.enforced_since"
 ANON_QUOTA = "anonymous.report_quota"
 GEO_MAX_ACCURACY = "geo.max_trusted_accuracy_m"
 NOTIFY_REAL_SEND = "notify.real_send_enabled"
+# Phase 10 §5.1: an alert is published by someone other than its author (emergency override aside).
+ALERTS_FOUR_EYES = "alerts.four_eyes"
 
 BANDS = ("critical", "high", "normal", "low")
 
@@ -63,6 +65,12 @@ def _int_between(low: int, high: int) -> Callable[[Any], Any]:
     return check
 
 
+def _boolean(value: Any) -> Any:
+    if not isinstance(value, bool):
+        raise ValueError("expected true or false")
+    return value
+
+
 def _model(model: type[BaseModel]) -> Callable[[Any], Any]:
     def check(value: Any) -> Any:
         return model.model_validate(value).model_dump()
@@ -77,6 +85,7 @@ DEFAULTS: dict[str, Any] = {
     ANON_QUOTA: 5,
     GEO_MAX_ACCURACY: 1000,
     NOTIFY_REAL_SEND: False,
+    ALERTS_FOUR_EYES: True,
 }
 
 # Roles allowed to change each key (national scope required). Missing = read-only.
@@ -85,6 +94,7 @@ EDITORS: dict[str, frozenset[Role]] = {
     SLA_CLAIM_DELAY: frozenset({Role.CENTRAL_COMMITTEE}),
     ANON_QUOTA: frozenset({Role.CENTRAL_COMMITTEE, Role.SECURITY_ADMIN}),
     GEO_MAX_ACCURACY: frozenset({Role.CENTRAL_COMMITTEE}),
+    ALERTS_FOUR_EYES: frozenset({Role.SECURITY_ADMIN}),
 }
 # Keys no one may change in phase 9: enabling them needs a formal approval outside the platform (§7.4).
 FORMAL_APPROVAL = frozenset({NOTIFY_REAL_SEND})
@@ -94,6 +104,7 @@ VALIDATORS: dict[str, Callable[[Any], Any]] = {
     SLA_CLAIM_DELAY: _model(ClaimDelays),
     ANON_QUOTA: _int_between(1, 100),
     GEO_MAX_ACCURACY: _int_between(50, 20_000),
+    ALERTS_FOUR_EYES: _boolean,
 }
 
 
