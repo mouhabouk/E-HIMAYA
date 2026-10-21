@@ -11,7 +11,7 @@
 | Valkey | `valkey/valkey:8.1-alpine` | BSD-3 |
 | NATS | `nats:2.10-alpine` | Apache-2.0 |
 | SeaweedFS (S3) | `chrislusf/seaweedfs:3.97` | Apache-2.0 |
-| Keycloak | `keycloak/keycloak:26.3` (اختُبر 26.3.5) | Apache-2.0 |
+| Keycloak | `keycloak/keycloak:26.8` (اختُبر 26.8؛ المرحلة 10: انتقل التحقق في CI وci-local من 26.3 إلى 26.8 بعد دمج Dependabot #56) | Apache-2.0 |
 | رفع الوسائط بالاستئناف (tus) | `tusproject/tusd:v2.8.0` | MIT |
 | الخلفية وخدمة الذكاء الاصطناعي | `python:3.12-slim` | PSF |
 | خادم النموذج اللغوي المحلي | `ollama/ollama:0.40.1` | MIT |
@@ -189,6 +189,14 @@ vite 8.3.4، typescript 5.9.3، vitest 5.0.5، eslint 10.12.0). البصمة SHA
 
 لا حزمة جديدة. أمن مستوى الصفوف (Row-Level Security) من PostgreSQL 17 نفسه (الترحيل `0025_rls_policies`)، ودور
 التشغيل `ehimaya_app` بلا `BYPASSRLS`؛ إدارة الحسابات الجهوية عبر واجهة Keycloak 26.3 الإدارية الموجودة.
+
+## المرحلة 10 (التحصين)
+
+إصلاح دمج Dependabot الذي لم يمر بأي فحص (`docs/phase-10/review.md` §1): أُعيدت الصور الأساسية إلى
+`python:3.12-slim` (لا عجلات cp315 لـ brotli و pyyaml و onnxruntime و ctranslate2 و sentencepiece) و
+`postgres:17-bookworm` (حزم PostGIS و pgvector مبنية لـ 17، والترقية الكبرى تحتاج `pg_upgrade`) و `node:22-alpine`
+(النسخة طويلة الدعم المختبرة). ملف Dependabot يتجاهل الآن القفزات الكبرى لهذه الصور ولـ Keycloak. `firebase_messaging` 17
+يُبقي واجهة رمز FCM (`getToken`) حتى ينتقل الخادم إلى معرّفات التثبيت.
 
 ## أولوية التنصيب
 

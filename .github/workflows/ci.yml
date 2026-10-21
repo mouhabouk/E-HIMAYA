@@ -317,7 +317,7 @@ jobs:
           docker run -d --name kc -p 9000:9000 \
             -e KC_HEALTH_ENABLED=true -e KC_BOOTSTRAP_ADMIN_USERNAME=admin -e KC_BOOTSTRAP_ADMIN_PASSWORD=admin \
             -v "$PWD/infra/keycloak/realms:/opt/keycloak/data/import:ro" \
-            keycloak/keycloak:26.3@sha256:357829ec7c4693397533035092ad13b0644bcc95ded311f33a3738c4d9e9bdba start-dev --import-realm
+            keycloak/keycloak:26.8@sha256:79c623a22abacf3fe6c00a5fb30f5b7843d717b234033b80995891c06116d244 start-dev --import-realm
           for i in $(seq 1 60); do
             if curl -fs http://localhost:9000/health/ready >/dev/null; then break; fi
             sleep 3

@@ -240,6 +240,10 @@ class FirebasePushMessaging implements PushMessaging {
   @override
   Future<String?> token() async {
     try {
+      // firebase_messaging 17 deprecates FCM tokens in favour of register()/onRegistered, which hand out a
+      // Firebase Installation ID instead. The API's FCM provider sends to registration tokens, so both sides
+      // move together (planned with the server change); until then the token API is kept on purpose.
+      // ignore: deprecated_member_use
       return await _messaging?.getToken();
     } on Object catch (e) {
       _log.info('no push token: ${e.runtimeType}');
@@ -249,6 +253,8 @@ class FirebasePushMessaging implements PushMessaging {
 
   @override
   Stream<String> get onTokenRefresh =>
+      // Kept with getToken() above until the API sends to Installation IDs.
+      // ignore: deprecated_member_use
       _messaging?.onTokenRefresh ?? const Stream.empty();
 
   @override
