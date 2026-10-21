@@ -8,7 +8,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
-from app.core.db import get_sessionmaker
+from app.core.db import get_system_sessionmaker
 from app.modules.ai import lexicon, pipeline, scoring
 from app.modules.ai.client import AiRejected, AiUnavailable
 from app.modules.ai.settings import PrioritySettings
@@ -184,7 +184,7 @@ async def test_media_arriving_during_analysis_triggers_another_pass(
     report = await create(client, citizen, location=spot())
 
     async def new_media() -> None:
-        async with get_sessionmaker()() as other, other.begin():
+        async with get_system_sessionmaker()() as other, other.begin():
             await pipeline.enqueue(other, uuid.UUID(report["id"]))
 
     fake_ai.on_extract = new_media

@@ -12,7 +12,7 @@ import pytest
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.db import get_sessionmaker
+from app.core.db import get_system_sessionmaker
 from app.main import WORKER_LOOPS
 from app.modules.reports import jurisdiction
 from app.modules.settings import service as settings_service
@@ -35,7 +35,7 @@ async def _row(session: AsyncSession, report_id: str) -> Any:
 
 
 async def _tick(at: datetime) -> int:
-    async with get_sessionmaker()() as s, s.begin():
+    async with get_system_sessionmaker()() as s, s.begin():
         return await jurisdiction.escalate_due(s, now=at)
 
 
@@ -50,7 +50,7 @@ async def _late_report(client: httpx.AsyncClient, session: AsyncSession, **overr
 
 
 async def _late_ids(client: httpx.AsyncClient, headers: dict[str, str], **params: Any) -> set[str]:
-    """Every id on the late list, following the cursor (the shared test database keeps late reports of earlier tests)."""
+    """Every id on the late list, following the cursor (the shared test database keeps earlier tests' late reports)."""
     ids: set[str] = set()
     cursor: str | None = None
     while True:
@@ -65,10 +65,10 @@ async def _late_ids(client: httpx.AsyncClient, headers: dict[str, str], **params
 
 @pytest.fixture
 async def restore_sla() -> AsyncIterator[None]:
-    async with get_sessionmaker()() as s:
+    async with get_system_sessionmaker()() as s:
         saved = (await s.execute(text("SELECT key, value::text, version FROM platform.setting"))).all()
     yield
-    async with get_sessionmaker()() as s, s.begin():
+    async with get_system_sessionmaker()() as s, s.begin():
         for key, value, version in saved:
             await s.execute(
                 text("UPDATE platform.setting SET value = CAST(:v AS jsonb), version = :n WHERE key = :k"),

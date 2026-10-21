@@ -19,6 +19,7 @@ from app.core.db import dispose_engine, get_system_sessionmaker
 from app.core.events import relay_forever, start_bus, stop_bus
 from app.core.logging import configure_logging
 from app.modules import models as _models  # noqa: F401  (registers every table for cross-module foreign keys)
+from app.modules.access import accounts
 from app.modules.access.router import router as access_router
 from app.modules.access.worker import breakglass_forever
 from app.modules.ai.pipeline import analyze_forever
@@ -46,8 +47,8 @@ from app.modules.orgs.router import router as orgs_router
 from app.modules.orgs.staff_router import router as orgs_staff_router
 from app.modules.privacy.retention import retention_forever
 from app.modules.privacy.router import router as privacy_router
-from app.modules.reports.live import hub
 from app.modules.reports.jurisdiction import sla_forever
+from app.modules.reports.live import hub
 from app.modules.reports.live import router as live_router
 from app.modules.reports.router import router as reports_router
 from app.modules.reports.staff_router import router as staff_router
@@ -228,13 +229,7 @@ def create_app() -> FastAPI:
     )
     for router in routers:
         app.include_router(router)
-    # TEMP(W1): regional account administration (W2, modules/access/accounts.py) once it exists.
-    import importlib.util
-
-    if importlib.util.find_spec("app.modules.access.accounts") is not None:
-        from app.modules.access import accounts
-
-        app.include_router(accounts.router)
+    app.include_router(accounts.router)
     return app
 
 

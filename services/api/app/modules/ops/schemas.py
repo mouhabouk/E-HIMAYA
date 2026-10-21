@@ -52,6 +52,8 @@ class IncidentSummary(BaseModel):
     lead_gouvernorat_code: int | None = None
     participating_gouvernorats: list[int] = Field(default_factory=list)
     command_level: CommandLevel = "regional"
+    # True while the national room has fixed the level by hand (``POST …/command-level``).
+    command_level_manual: bool = False
 
 
 class NearbyIncident(BaseModel):

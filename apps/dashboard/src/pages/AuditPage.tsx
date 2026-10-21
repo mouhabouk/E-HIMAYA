@@ -27,7 +27,9 @@ function EntryRow({ entry }: { entry: ScopedAuditEntry }) {
       <td dir="ltr" className="code">
         {entry.action}
       </td>
-      <td dir="auto">{entry.actor_name ?? t("audit.system")}</td>
+      <td dir="auto">
+        {entry.actor_name === "system" ? t("audit.system") : (entry.actor_name ?? t("common.notAvailable"))}
+      </td>
       <td dir="ltr" className="code">
         {entry.target ?? "—"}
       </td>

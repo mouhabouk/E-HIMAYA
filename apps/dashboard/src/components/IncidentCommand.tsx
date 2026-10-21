@@ -119,7 +119,7 @@ export function IncidentCommandPanel({ incident }: { incident: IncidentDetail })
       <h2 id="sec-command">{t("command.title")}</h2>
       <dl className="fields">
         <dt>{t("command.lead")}</dt>
-        <dd>{lead !== null && lead !== undefined ? gouvernorats.nameOf(lead) : t("command.noLead")}</dd>
+        <dd>{lead !== null ? gouvernorats.nameOf(lead) : t("command.noLead")}</dd>
         <dt>{t("command.participants")}</dt>
         <dd>
           {participants.length === 0 ? (

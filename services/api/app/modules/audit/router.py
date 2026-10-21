@@ -87,7 +87,8 @@ _REASONED = ("report.escalation", "report.refer", "report.referral", "breakglass
 class ScopedEntryOut(BaseModel):
     seq: int
     at: datetime
-    actor: str
+    # The actor's display name, "system" for the platform's own steps, null when no name was recorded (§7.3).
+    actor_name: str | None
     action: str
     target: str | None
     reason: str | None
@@ -111,7 +112,7 @@ def redact(entry: AuditLog) -> ScopedEntryOut:
     return ScopedEntryOut(
         seq=entry.seq,
         at=entry.at,
-        actor=str(actor_name) if actor_name else "system" if entry.actor == service.SYSTEM_ACTOR else "staff",
+        actor_name=str(actor_name) if actor_name else "system" if entry.actor == service.SYSTEM_ACTOR else None,
         action=entry.action,
         target=entry.target if entry.target and not entry.target.startswith(("user:", "account:")) else None,
         reason=entry.reason if entry.action.startswith(_REASONED) else None,

@@ -16,7 +16,7 @@ from fastapi import HTTPException, status
 from sqlalchemy import and_, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.access import Action, Ctx
+from app.core.access import Action, Ctx, room_code
 from app.core.events import emit
 from app.core.security import Principal
 from app.modules.audit import service as audit
@@ -236,9 +236,11 @@ async def _decidable(session: AsyncSession, principal: Principal, row: ResourceR
     """Owning region (ops manager, local committee), or the central committee at central command level."""
     incident = await session.get(Incident, row.incident_id, with_for_update=True)
     assert incident is not None
+    requester = room_code(row.from_room)
     ctx = Ctx(
         lead=row.to_gouvernorat_code,
-        participants=frozenset(),
+        # The requesting room sees its request (403 rather than 404 when it tries to decide it).
+        participants=frozenset({requester}) if requester is not None else frozenset(),
         candidates=frozenset(),
         claimed_room=None,
         critical=False,

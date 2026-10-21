@@ -88,5 +88,9 @@ export function commonAnswer(method: string, pathname: string, route: Route): Pr
   }
   if (method === "GET" && pathname === "/api/v1/staff/levels") return json(route, []);
   if (method === "GET" && pathname === "/api/v1/staff/streams") return json(route, { items: [], next_cursor: null });
+  // Active break-glass grants of the signed-in user (banner in the layout, phase 9).
+  // National settings (priority bands, phase 9); an empty list keeps the built-in defaults.
+  if (method === "GET" && pathname === "/api/v1/staff/settings") return json(route, { items: [] });
+  if (method === "GET" && pathname === "/api/v1/staff/break-glass") return json(route, { items: [], next_cursor: null });
   return null;
 }

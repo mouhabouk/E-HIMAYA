@@ -25,7 +25,14 @@
     "reportsLibrary": "Reports",
     "memory": "National memory",
     "library": "Events library",
-    "rewards": "Rewards"
+    "rewards": "Rewards",
+    "settings": "National settings",
+    "late": "Late reports",
+    "geoQueue": "Location checks",
+    "resourceRequests": "Resource requests",
+    "accounts": "Accounts",
+    "audit": "Audit",
+    "breakGlass": "Break-glass"
   },
   "header": {
     "scope": "Geographic scope",
@@ -40,7 +47,8 @@
       "system": "system",
       "light": "light",
       "dark": "dark"
-    }
+    },
+    "language": "Language"
   },
   "roles": {
     "operator": "Operator",
@@ -50,7 +58,10 @@
     "central_committee": "Central committee",
     "org_auditor": "Establishments auditor",
     "content_editor": "Content editor",
-    "sysadmin": "System administrator"
+    "sysadmin": "System administrator",
+    "security_admin": "Security administrator",
+    "ai_admin": "AI administrator",
+    "regional_account_admin": "Account administrator"
   },
   "status": {
     "received": "Received",
@@ -124,7 +135,9 @@
     "yes": "Yes",
     "no": "No",
     "cancel": "Cancel",
-    "none": "None"
+    "none": "None",
+    "close": "Close",
+    "reasonLength": "Between {{min}} and {{max}} characters."
   },
   "errors": {
     "authentication_required": "Session expired. Please sign in again.",
@@ -221,7 +234,30 @@
     "already_revoked": "Already revoked.",
     "invalid_rule": "Invalid rule value (points or multiplier depending on the reason).",
     "invalid_evidence": "One of the referenced items of evidence cannot be found.",
-    "nothing_to_revoke": "Nothing to revoke."
+    "nothing_to_revoke": "Nothing to revoke.",
+    "action_not_allowed": "This action is not allowed for your account.",
+    "anon_quota_exhausted": "Anonymous report quota reached; registration required.",
+    "claim_required": "Claim the report first.",
+    "already_claimed": "Another room has already claimed this report.",
+    "not_claimable": "Your room cannot claim this report now.",
+    "referral_pending": "A referral is already pending.",
+    "referral_not_pending": "No referral is pending.",
+    "geo_not_pending": "The location is not awaiting verification.",
+    "field_action_regional_only": "Field action belongs to the regional room; use a resource request.",
+    "possible_duplicate": "A similar open incident exists nearby.",
+    "participant_active": "This gouvernorat still has active assignments or reports here.",
+    "request_not_pending": "The request is no longer pending.",
+    "resource_not_owned": "This resource belongs to another gouvernorat; send a request.",
+    "invalid_setting": "Invalid setting value.",
+    "requires_formal_approval": "Requires formal approval.",
+    "breakglass_justification_required": "A justification is required (at least 20 characters).",
+    "invalid_target": "Invalid target.",
+    "breakglass_self_review": "You cannot review your own grant.",
+    "already_reviewed": "Already reviewed.",
+    "role_not_grantable": "You cannot grant this role.",
+    "self_edit": "You cannot edit your own account.",
+    "identity_provider_error": "The identity service did not respond.",
+    "username_taken": "Username already taken."
   },
   "kpi": {
     "title": "Key indicators",
@@ -353,8 +389,9 @@
     "badge": "Priority {{score}} ({{band}})",
     "none": "Priority not yet assessed",
     "band": {
+      "critical": "critical",
       "high": "high",
-      "medium": "medium",
+      "medium": "normal",
       "low": "low"
     }
   },
@@ -552,7 +589,22 @@
       "callout_declined": "Volunteer unavailable",
       "callout_cancelled": "Call-out cancelled",
       "evaluated": "Closure and evaluation",
-      "level_changed": "Operational level changed"
+      "level_changed": "Operational level changed",
+      "participant_added": "Participant added",
+      "participant_removed": "Participant removed",
+      "lead_transferred": "Lead transferred",
+      "command_level_changed": "Command level changed",
+      "duplicate_override": "Created despite a nearby incident",
+      "resource_requested": "Resources requested",
+      "resource_request_approved": "Resource request approved",
+      "resource_request_refused": "Resource request refused",
+      "resource_request_cancelled": "Resource request cancelled",
+      "report_late": "Report late",
+      "report_central_claim": "Report claimed by the centre",
+      "report_referred": "Report referred",
+      "report_referral_accepted": "Referral accepted",
+      "report_referral_refused": "Referral refused",
+      "report_geo_verified": "Report location verified"
     },
     "via": {
       "suggestion": "(suggestion confirmed)",
@@ -2803,5 +2855,357 @@
       "points": "Points",
       "none": "No leaderboard for this selection."
     }
+  },
+  "rooms": {
+    "central": "Central room",
+    "regional": "{{name}} room",
+    "none": "No room"
+  },
+  "claim": {
+    "title": "Handling",
+    "handledBy": "Handled by",
+    "unclaimed": "Not claimed",
+    "claimedBy": "{{name}} ({{room}})",
+    "someone": "a staff member",
+    "claim": "Claim",
+    "claimed": "Report claimed for your room.",
+    "release": "Release",
+    "reason": "Reason",
+    "alreadyClaimedBy": "Already claimed by {{name}} ({{room}}).",
+    "dialog": {
+      "release": "Release the report",
+      "accept": "Accept the referral",
+      "refuse": "Refuse the referral"
+    },
+    "confirm": {
+      "release": "Confirm release",
+      "accept": "Confirm acceptance",
+      "refuse": "Confirm refusal"
+    },
+    "done": {
+      "release": "Report released; the deadline does not restart.",
+      "accept": "Referral accepted: the report is now your room's.",
+      "refuse": "Referral refused: the report goes back to the centre."
+    }
+  },
+  "sla": {
+    "bandLabel": "Urgency band",
+    "deadline": "Claim deadline",
+    "remaining": "left",
+    "overdue": "overdue",
+    "band": {
+      "critical": "Critical",
+      "high": "High",
+      "normal": "Normal",
+      "low": "Low"
+    }
+  },
+  "escalation": {
+    "label": "Escalation",
+    "trail": "Escalation and referral trail",
+    "none": "No escalation.",
+    "by": "by {{actor}}",
+    "fromTo": "from {{from}} to {{to}}",
+    "state": {
+      "none": "None",
+      "late": "Late",
+      "central_responding": "Centre responding",
+      "referred": "Referred",
+      "referral_accepted": "Referral accepted",
+      "referral_refused": "Referral refused"
+    },
+    "kind": {
+      "late": "Deadline missed",
+      "central_claim": "Claimed by the centre",
+      "referral": "Referral",
+      "referral_accepted": "Referral accepted",
+      "referral_refused": "Referral refused",
+      "geo_verified": "Location verified",
+      "claim_released": "Claim released"
+    }
+  },
+  "referral": {
+    "open": "Refer to a region",
+    "title": "Refer to a regional room",
+    "to": "Gouvernorat",
+    "choose": "Choose…",
+    "reason": "Reason for the referral",
+    "withDirective": "Attach a directive",
+    "directive": "Directive",
+    "submit": "Refer",
+    "sent": "Referral sent.",
+    "accept": "Accept referral",
+    "refuse": "Refuse referral",
+    "note": "Note (optional)",
+    "referredTo": "referred to {{name}}"
+  },
+  "geo": {
+    "label": "Incident location",
+    "state": {
+      "trusted": "Trusted",
+      "pending": "To verify",
+      "contradictory": "Contradictory",
+      "verified": "Verified"
+    },
+    "reasonCode": {
+      "accuracy_crosses_border": "The accuracy circle crosses into another gouvernorat",
+      "outside_boundaries": "Outside the gouvernorat boundaries",
+      "low_accuracy": "Low accuracy",
+      "accuracy_missing": "Accuracy unknown"
+    },
+    "candidates": "Candidate gouvernorats",
+    "candidatesList": "candidates: {{list}}",
+    "noCandidate": "No candidate",
+    "otherGouvernorats": "Other gouvernorats",
+    "open": "Verify the location",
+    "dialogTitle": "Geographic verification",
+    "verifiedGouvernorat": "Competent gouvernorat",
+    "reason": "Reason",
+    "verify": "Confirm the gouvernorat",
+    "verified": "Competent gouvernorat recorded.",
+    "verifiedCode": "Report {{code}} verified.",
+    "unverified": "Unverified",
+    "queueTitle": "Geographic verification queue",
+    "queueIntro": "Reports whose location is uncertain or contradictory: no room is assigned before verification. Critical reports are also shown to the candidate rooms so they are not delayed.",
+    "empty": "No report to verify.",
+    "mapLabel": "Map of report {{code}}",
+    "selected": "Selected report:",
+    "readOnly": "Verification is done by the central room."
+  },
+  "late": {
+    "title": "Late reports",
+    "intro": "Reports past their claim deadline. The central room may answer them and direct the region; field intervention stays with the regional room.",
+    "empty": "No late report.",
+    "caption": "Late reports list",
+    "actions": "Actions",
+    "claim": "Answer from the centre",
+    "claimLabel": "Answer report {{code}} from the centre",
+    "open": "Open"
+  },
+  "nearby": {
+    "title": "Open incidents nearby",
+    "warning": "This report may belong to an open incident, possibly in another gouvernorat. Linking it adds your gouvernorat as a participant.",
+    "lead": "Lead: {{name}}",
+    "participants": "participants: {{list}}",
+    "reports": "reports: {{count}}",
+    "link": "Link to this incident",
+    "duplicate": "A similar open incident exists nearby. A competing incident is only created with a reason.",
+    "openDuplicate": "Incident {{id}}",
+    "overrideReason": "Reason for creating a new incident anyway",
+    "createAnyway": "Create anyway"
+  },
+  "command": {
+    "title": "Command and participants",
+    "lead": "Lead gouvernorat",
+    "noLead": "Not set (centre)",
+    "participants": "Participating gouvernorats",
+    "levelLabel": "Command level",
+    "level": {
+      "regional": "Regional",
+      "central": "Central"
+    },
+    "levelHelp": {
+      "regional": "The lead room runs the incident; the centre follows it.",
+      "central": "Central command: the centre coordinates and decides resource requests; regions carry out the intervention."
+    },
+    "auto": "Automatic",
+    "manual": "set manually",
+    "add": "Add a participant",
+    "remove": "Remove",
+    "removeLabel": "Remove {{name}}",
+    "gouvernorat": "Gouvernorat",
+    "transfer": "Transfer the lead",
+    "transferHelp": "The current lead becomes a participant.",
+    "newLead": "New lead",
+    "setLevel": "Change the command level",
+    "apply": "Apply",
+    "reason": "Reason",
+    "done": "Saved."
+  },
+  "resourceRequests": {
+    "title": "Resource requests between gouvernorats",
+    "pageTitle": "Resource requests",
+    "intro": "Each gouvernorat decides on its own resources: an incoming request is approved or refused by the owning region.",
+    "direction": "Direction",
+    "incoming": "Incoming",
+    "outgoing": "Outgoing",
+    "none": "No request.",
+    "centralNotice": "The central room does not dispatch regional resources directly: request them from the owning region.",
+    "newTitle": "Request resources from another gouvernorat",
+    "to": "Requested gouvernorat",
+    "kind": "Resource type",
+    "quantity": "Quantity",
+    "reason": "Reason for the request",
+    "submit": "Send the request",
+    "sent": "Request sent.",
+    "specificResource": "Specific resource",
+    "summary": "{{quantity}} × {{what}}",
+    "fromTo": "from {{from}} to {{to}}",
+    "openIncident": "Open the incident",
+    "requestedBy": "Requested by {{name}} on {{at}}",
+    "decidedBy": "decided by {{name}} on {{at}}",
+    "approve": "Approve",
+    "approveTitle": "Approve and assign resources",
+    "pickResources": "Choose the resources (requested: {{count}})",
+    "note": "Note",
+    "refuse": "Refuse",
+    "refuseTitle": "Refuse the request",
+    "refuseReason": "Reason for refusal",
+    "cancel": "Cancel the request",
+    "status": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "refused": "Refused",
+      "cancelled": "Cancelled"
+    }
+  },
+  "settings": {
+    "title": "National settings",
+    "intro": "Values applied to every room. Each change needs a reason and is audited.",
+    "readOnly": "Read-only: changes are made by the central committee.",
+    "readOnlyItem": "Not editable with your account.",
+    "reason": "Reason for the change",
+    "seconds": "s",
+    "metres": "m",
+    "defaultValue": "Default value (never changed).",
+    "lastChange": "Last change: {{name}}, {{at}} (version {{version}})",
+    "delays": {
+      "title": "Claim delay per band",
+      "help": "After this delay without a claim the report becomes late and the centre may answer it (defaults: 60 s critical, 90 s high, 120 s normal, 180 s low).",
+      "order": "Delays must satisfy critical ≤ high ≤ normal ≤ low."
+    },
+    "bands": {
+      "title": "Urgency band thresholds",
+      "help": "Minimum priority score (0–100) of each band; below “normal” the band is low.",
+      "order": "Must satisfy critical > high > normal.",
+      "lowerBound": "{{band}} threshold"
+    },
+    "quota": {
+      "title": "Anonymous report quota",
+      "help": "Accepted reports per installation before registration is required. SOS is never refused and 198 is always available.",
+      "label": "Reports"
+    },
+    "accuracy": {
+      "title": "Trusted location accuracy",
+      "help": "A location less accurate than this goes to geographic verification.",
+      "label": "Maximum"
+    },
+    "fixed": {
+      "title": "Fixed values",
+      "enforcedSince": "Deadlines enforced since",
+      "realSend": "Real alert sending",
+      "realSendNote": "disabled; requires formal approval."
+    },
+    "validation": {
+      "integer": "Enter whole numbers.",
+      "range": "Values between {{min}} and {{max}}.",
+      "order": "The values are in the wrong order."
+    }
+  },
+  "accounts": {
+    "title": "Room accounts",
+    "intro": "Accounts of {{name}} only.",
+    "introNational": "Accounts of every gouvernorat and the central room.",
+    "new": "New account",
+    "create": "Create the account",
+    "fields": {
+      "username": "Username",
+      "email": "Email",
+      "first_name": "First name",
+      "last_name": "Last name"
+    },
+    "roles": "Roles",
+    "role": "Role",
+    "lockedRoles": "Roles you cannot change: {{list}}",
+    "scope": "Scope",
+    "scopeLevel": {
+      "gouvernorat": "Gouvernorat",
+      "national": "National"
+    },
+    "ownGouvernorat": "The account is created in {{name}}.",
+    "requiredActions": "At first sign-in: password, two-factor authentication and email confirmation.",
+    "invalid": "Fill in the required fields and choose at least one role.",
+    "updated": "Account updated.",
+    "resetDone": "Reset link sent.",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "enable": "Enable",
+    "disable": "Disable",
+    "editRoles": "Edit roles",
+    "editRolesOf": "Roles of {{name}}",
+    "save": "Save",
+    "reset": "Reset credentials",
+    "self": "Your account",
+    "state": "State",
+    "mfa": "Two-factor",
+    "empty": "No account.",
+    "caption": "Accounts list"
+  },
+  "audit": {
+    "title": "Regional audit log",
+    "intro": "Operations of {{name}}, with unnecessary data redacted.",
+    "action": "Action",
+    "actor": "Actor",
+    "at": "Date",
+    "target": "Target",
+    "details": "Details",
+    "reason": "Reason",
+    "system": "System",
+    "empty": "No entry.",
+    "caption": "Audit log"
+  },
+  "breakGlass": {
+    "open": "Break-glass access",
+    "title": "Break-glass request",
+    "intro": "Read-only and time-limited. Every view is audited and reviewed by security.",
+    "targetLabel": "Scope",
+    "target": {
+      "report": "This report",
+      "incident": "This incident",
+      "gouvernorat": "Gouvernorat"
+    },
+    "targetGouvernorat": "Gouvernorat of {{name}}",
+    "justification": "Justification (at least 20 characters)",
+    "duration": "Duration",
+    "minutes": "{{count}} min",
+    "submit": "Open access",
+    "granted": "Break-glass access active.",
+    "activeTitle": "Active break-glass access",
+    "until": "until {{time}}",
+    "audited": "Every view is audited.",
+    "revoke": "Revoke",
+    "revoked": "revoked",
+    "pageTitle": "Break-glass access",
+    "pageIntroOwn": "Your break-glass grants and their review.",
+    "pageIntroReviewer": "Every break-glass grant. Review each one after it ends (nobody reviews their own).",
+    "period": "from {{from}} to {{to}}",
+    "empty": "No grant.",
+    "status": {
+      "active": "Active",
+      "expired": "Expired",
+      "pending_review": "Pending review",
+      "reviewed": "Reviewed"
+    },
+    "review": {
+      "open": "Review",
+      "title": "Review the grant",
+      "outcome": "Outcome",
+      "outcomeRequired": "Choose an outcome.",
+      "justified": "Justified",
+      "unjustified": "Unjustified",
+      "note": "Review note",
+      "submit": "Save the review",
+      "result": "Review: {{outcome}}",
+      "selfNote": "You cannot review your own grant."
+    }
+  },
+  "reporterMask": {
+    "notice": "The reporter's identity is masked: only the handling room, or break-glass access, can see it.",
+    "hidden": "Hidden",
+    "maskedPhone": "Masked phone number",
+    "callWithoutNumber": "Call without revealing the number",
+    "context": "Reporter's gouvernorat (contact only)",
+    "contextProfile": "{{name}} (profile)",
+    "contextNone": "Not available"
   }
 }

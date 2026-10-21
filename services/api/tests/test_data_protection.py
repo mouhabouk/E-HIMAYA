@@ -16,7 +16,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core import crypto
 from app.core.config import Settings, get_settings, parse_keyring
 from app.core.crypto import FieldCipher, get_cipher, search_terms
-from app.core.db import get_sessionmaker
+from app.core.db import get_system_sessionmaker
 from app.modules.identity.models import DETACHED_ACCOUNT_ID, phone_index
 from app.modules.privacy import cli, retention, rotation
 from tests.conftest import (
@@ -297,7 +297,7 @@ async def test_reencrypt_moves_every_row_to_the_active_key(
     await accept_charter(client, headers)
     report = (await client.post("/api/v1/reports", json=report_body(), headers=headers)).json()
 
-    sessionmaker = get_sessionmaker()
+    sessionmaker = get_system_sessionmaker()
 
     settings = get_settings()  # patched in place: the app keeps its reference to this object
 
@@ -342,7 +342,7 @@ async def test_reencrypt_moves_every_row_to_the_active_key(
 async def test_retention_jobs(
     client: httpx.AsyncClient, make_token: TokenFactory, session: AsyncSession, fake_store: FakeStore
 ) -> None:
-    sessionmaker = get_sessionmaker()
+    sessionmaker = get_system_sessionmaker()
     long_ago = datetime.now(UTC) - timedelta(days=6 * 365)
     headers = citizen_headers(make_token)
     await accept_charter(client, headers)
@@ -472,7 +472,7 @@ async def test_retention_jobs(
 
 
 async def test_retention_job_skips_when_another_process_holds_it() -> None:
-    sessionmaker = get_sessionmaker()
+    sessionmaker = get_system_sessionmaker()
     async with sessionmaker() as holder, holder.begin():
         await holder.execute(text("SELECT pg_advisory_xact_lock(:k)"), {"k": retention._lock_key("events")})
         assert await retention.run_job(sessionmaker, "events", retention.purge_events) == 0

@@ -99,13 +99,16 @@ async def _check_write(session: AsyncSession, principal: Principal, action: Acti
 async def save_unit(
     session: AsyncSession, principal: Principal, body: schemas.UnitIn, unit_id: uuid.UUID | None = None
 ) -> Unit:
+    if unit_id is not None:
+        # Another gouvernorat's unit is not disclosed (404) whatever the body says (IDOR, phase 9 §12).
+        unit = await get_unit(session, principal, unit_id, lock=True)
+        await _check_write(session, principal, Action.UNITS_WRITE, unit.gouvernorat_code)
     _check_gouvernorat(principal, body.gouvernorat_code)
     await _check_write(session, principal, Action.UNITS_WRITE, body.gouvernorat_code)
     if unit_id is None:
         unit = Unit()
         session.add(unit)
     else:
-        unit = await get_unit(session, principal, unit_id, lock=True)
         if body.version is not None and body.version != unit.version:
             raise HTTPException(status.HTTP_409_CONFLICT, "version_conflict")
         unit.version += 1

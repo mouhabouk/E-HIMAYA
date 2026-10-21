@@ -10,7 +10,7 @@ import httpx
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.db import get_sessionmaker
+from app.core.db import get_system_sessionmaker
 from app.modules.ai import pipeline
 from tests.conftest import FakeStore, report_body
 
@@ -92,7 +92,7 @@ async def create(client: httpx.AsyncClient, headers: dict[str, str], **kwargs: A
 
 
 async def analyse(report_id: str, ai: Any, store: FakeStore | None = None) -> bool:
-    return await pipeline.analyze_one(get_sessionmaker(), ai, store or FakeStore(), only=uuid.UUID(report_id))
+    return await pipeline.analyze_one(get_system_sessionmaker(), ai, store or FakeStore(), only=uuid.UUID(report_id))
 
 
 async def detail(client: httpx.AsyncClient, staff: Staff, report_id: str) -> dict[str, Any]:

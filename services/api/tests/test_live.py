@@ -7,7 +7,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.websockets import WebSocketDisconnect
 
-from app.core.db import get_sessionmaker
+from app.core.db import get_system_sessionmaker
 from app.core.events import LocalBus, relay_pending
 from app.main import app
 from app.modules.reports.live import hub
@@ -109,13 +109,13 @@ async def test_outbox_relay_publishes_once(
 
     bus = LocalBus()
     bus.add_listener(listener)
-    while await relay_pending(get_sessionmaker(), bus):
+    while await relay_pending(get_system_sessionmaker(), bus):
         pass
     ours = [p for s, p in received if s == "report.created" and p["report"]["id"] == report_id]
     assert len(ours) == 1
     pending = await session.scalar(text("SELECT count(*) FROM events.outbox WHERE published_at IS NULL"))
     assert pending == 0
-    assert await relay_pending(get_sessionmaker(), bus) == 0
+    assert await relay_pending(get_system_sessionmaker(), bus) == 0
 
 
 async def test_failed_publish_is_retried(client: httpx.AsyncClient, citizen: dict[str, str]) -> None:
@@ -126,5 +126,5 @@ async def test_failed_publish_is_retried(client: httpx.AsyncClient, citizen: dic
         async def publish(self, subject: str, payload: dict[str, Any], msg_id: str) -> None:
             raise ConnectionError("nats down")
 
-    assert await relay_pending(get_sessionmaker(), DownBus()) == 0
-    assert await relay_pending(get_sessionmaker(), LocalBus()) >= 1
+    assert await relay_pending(get_system_sessionmaker(), DownBus()) == 0
+    assert await relay_pending(get_system_sessionmaker(), LocalBus()) >= 1

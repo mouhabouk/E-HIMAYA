@@ -320,9 +320,12 @@ export function roomGouvernorat(room: string | null | undefined): number | null 
   return Number.isInteger(n) ? n : null;
 }
 
-/** National settings page (§2): every staff member reads it; `editable` from the API decides the form. */
+/**
+ * National settings page (§2): the API lets every staff member read it and `editable` decides the form; the menu
+ * shows it to the operations and command roles and to the technical roles (not to institution or content roles).
+ */
 export function canReadPlatformSettings(roles: readonly string[]): boolean {
-  return hasDashboardAccess(roles);
+  return hasReadAccess(roles) || TECHNICAL_ROLES.some((r) => roles.includes(r));
 }
 
 /** Claim, release and status changes come from the operations function (§1.2). */
