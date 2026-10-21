@@ -14,7 +14,7 @@ import { queryKeys } from "../lib/staffApi";
 import { isOneOf, type CertificateReviewBody, type Page, type QueueCertificate } from "../lib/types";
 
 /** Statuses the staff queue accepts (§9): the review queue itself, then decided certificates. */
-export const QUEUE_STATUSES = ["submitted", "approved", "rejected"] as const;
+export const QUEUE_STATUSES = ["submitted", "approved", "rejected", "revoked"] as const;
 type QueueStatus = (typeof QUEUE_STATUSES)[number];
 
 type QueueData = InfiniteData<Page<QueueCertificate>, string | null>;
@@ -209,6 +209,100 @@ function CertificateReview({ cert, onDone }: { cert: QueueCertificate; onDone: (
   );
 }
 
+/** Revoke an approved certificate (phase 10 §4.1): a reason, then a confirmation. Invalid at once on the public page. */
+function CertificateRevoke({ cert, onDone }: { cert: QueueCertificate; onDone: (message: string) => void }) {
+  const { t } = useTranslation();
+  const { api } = useServices();
+  const qc = useQueryClient();
+  const reasonId = useId();
+  const [open, setOpen] = useState(false);
+  const [reason, setReason] = useState("");
+  const [reasonError, setReasonError] = useState(false);
+  const [confirming, setConfirming] = useState(false);
+
+  const mutation = useMutation({
+    mutationFn: (text: string) => api.revokeCertificate(cert.id, text),
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: queryKeys.certificatesAll });
+      void qc.invalidateQueries({ queryKey: queryKeys.org(cert.org_id), exact: true, refetchType: "active" });
+      void qc.invalidateQueries({ queryKey: queryKeys.orgsAll });
+      onDone(t("orgs.certs.revokedDone", { code: cert.code }));
+    },
+    onError: () => setConfirming(false),
+  });
+
+  const submit = (e: SyntheticEvent) => {
+    e.preventDefault();
+    if (!reason.trim()) {
+      setReasonError(true);
+      return;
+    }
+    if (!confirming) {
+      setConfirming(true);
+      return;
+    }
+    mutation.mutate(reason.trim());
+  };
+
+  if (!open) {
+    return (
+      <div className="actions">
+        <button type="button" className="btn btn--danger" onClick={() => setOpen(true)}>
+          {t("orgs.certs.revoke")}
+        </button>
+      </div>
+    );
+  }
+  return (
+    <form onSubmit={submit} noValidate className="review__confirm">
+      <div className={`field${reasonError ? " field--invalid" : ""}`}>
+        <label htmlFor={reasonId}>{t("orgs.certs.revokeReason")}</label>
+        <textarea
+          id={reasonId}
+          value={reason}
+          rows={3}
+          maxLength={1000}
+          dir="auto"
+          required
+          aria-invalid={reasonError || undefined}
+          aria-describedby={reasonError ? `${reasonId}-error` : undefined}
+          disabled={mutation.isPending}
+          onChange={(e) => {
+            setReason(e.target.value);
+            setReasonError(false);
+            setConfirming(false);
+          }}
+        />
+        {reasonError && (
+          <span id={`${reasonId}-error`} className="field__error">
+            {t("orgs.certs.revokeReasonRequired")}
+          </span>
+        )}
+      </div>
+      {confirming && (
+        <p className="alert alert--warn" role="alert">
+          {t("orgs.certs.confirmRevoke", { code: cert.code })}
+        </p>
+      )}
+      <div className="actions">
+        <button type="submit" className="btn btn--danger" disabled={mutation.isPending}>
+          {mutation.isPending ? t("orgs.certs.working") : confirming ? t("orgs.certs.confirm") : t("orgs.certs.revoke")}
+        </button>
+        <button type="button" className="btn" disabled={mutation.isPending} onClick={() => setOpen(false)}>
+          {t("common.cancel")}
+        </button>
+      </div>
+      {mutation.isError && (
+        <p className="alert alert--error" role="alert">
+          {isApiError(mutation.error) && mutation.error.code === "already_revoked"
+            ? t("orgs.certs.alreadyRevoked")
+            : reviewErrorText(t, mutation.error)}
+        </p>
+      )}
+    </form>
+  );
+}
+
 /** Certificate review queue (FR-B-008): oldest submission first; decisions for `org_auditor` only. */
 export function CertificatesPage() {
   const { t } = useTranslation();
@@ -322,6 +416,7 @@ export function CertificatesPage() {
                     }}
                   />
                 )}
+                {canReview && c.status === "approved" && <CertificateRevoke cert={c} onDone={setMessage} />}
               </li>
             );
           })}

@@ -217,3 +217,8 @@ class Certificate(Base):
     review_reason: Mapped[str | None] = mapped_column(Text)
     valid_until: Mapped[date | None] = mapped_column(Date)
     superseded_by: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("org.certificate.id"))
+    # Phase 10 §4.1: signing key identifier and revocation.
+    key_id: Mapped[str | None] = mapped_column(Text)
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    revoked_by: Mapped[str | None] = mapped_column(Text)
+    revoke_reason: Mapped[str | None] = mapped_column(Text)

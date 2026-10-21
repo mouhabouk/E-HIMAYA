@@ -141,6 +141,8 @@
   },
   "errors": {
     "authentication_required": "Session expired. Please sign in again.",
+    "mfa_required": "Sign-in must be confirmed with the one-time code (two-factor authentication). Sign in again and enter the code from your authenticator app.",
+    "session_revoked": "Your session was ended (from another device or by an administrator). Sign in again.",
     "account_suspended": "This account is suspended.",
     "forbidden": "You are not allowed to perform this action.",
     "no_scope": "Your account has no geographic scope.",
@@ -755,6 +757,7 @@
       "submitted": "Submitted",
       "approved": "Approved",
       "rejected": "Rejected",
+      "revoked": "Revoked",
       "expired": "Expired"
     },
     "validUntil": "valid until {{date}}",
@@ -994,7 +997,13 @@
       },
       "invalidTransition": "The certificate has already been reviewed or is no longer submitted. The list has been refreshed.",
       "statusFilter": "Status",
-      "emptyDecided": "No certificate in this state."
+      "emptyDecided": "No certificate in this state.",
+      "revoke": "Revoke certificate",
+      "revokeReason": "Reason for revocation (kept internal)",
+      "confirmRevoke": "Do you confirm the revocation of certificate {{code}}? It will show as not valid on the public verification page at once.",
+      "revokedDone": "Certificate {{code}} revoked.",
+      "alreadyRevoked": "This certificate is already revoked. The list has been refreshed.",
+      "revokeReasonRequired": "A reason for the revocation is required."
     },
     "card": {
       "title": "Profile of the reporting establishment",

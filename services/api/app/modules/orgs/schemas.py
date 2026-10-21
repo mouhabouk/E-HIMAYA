@@ -276,11 +276,14 @@ class CertificateOut(BaseModel):
     fingerprint: str
     pdf_sha256: str
     verify_url: str
+    key_id: str | None = None
+    revoked_at: datetime | None = None
+    revoke_reason: str | None = None
 
 
 class PublicCertificate(BaseModel):
     code: str
-    status: Literal["submitted", "approved", "rejected"]
+    status: Literal["submitted", "approved", "rejected", "revoked"]
     valid: bool
     superseded: bool
     org_name: str
@@ -292,12 +295,21 @@ class PublicCertificate(BaseModel):
     fingerprint: str
     pdf_sha256: str
     signature_valid: bool
+    # Phase 10 §4.1: the signing key, and the revocation (its reason is never public).
+    key_id: str | None = None
+    revoked: bool = False
+    revoked_at: datetime | None = None
 
 
 class SigningKeyOut(BaseModel):
     algorithm: Literal["Ed25519"]
     public_key: str | None  # base64 of the raw 32-byte public key; null when signing is not configured
     signed_message: str  # how the signed message is built from the certificate fields
+    key_id: str | None = None  # first 16 hex characters of the SHA-256 of public_key
+    # Earlier keys whose certificates stay verifiable (phase 10 §4.1): {key_id: base64 raw public key}.
+    previous_keys: dict[str, str] = {}
+    # Printed on every certificate: what it is and what it is not, in ar/fr/en.
+    disclaimer: dict[str, str] = {}
 
 
 # ---------------------------------------------------------------- reports of the institution
@@ -366,7 +378,7 @@ class StaffOrg(BaseModel):
     classification: ClassificationOut
     hazmat_count: int
     alerts_count: int
-    certificate_status: Literal["none", "draft", "submitted", "approved", "rejected", "expired"]
+    certificate_status: Literal["none", "draft", "submitted", "approved", "rejected", "revoked", "expired"]
     certificate_valid_until: date | None
     created_at: datetime
 
@@ -401,6 +413,10 @@ class CertificateReviewIn(BaseModel):
     decision: Literal["approve", "reject"]
     reason: str | None = Field(default=None, max_length=1000)
     valid_until: date | None = None
+
+
+class CertificateRevokeIn(BaseModel):
+    reason: str | None = Field(default=None, max_length=1000)
 
 
 class CertificateQueueItem(BaseModel):

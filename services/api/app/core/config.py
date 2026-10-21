@@ -90,6 +90,9 @@ class Settings(BaseSettings):
     # Ed25519 private key (base64 of the 32-byte seed) signing approved safety certificates (FR-B-008).
     # Without it certificates can be generated and submitted but not approved.
     certificate_signing_key: SecretStr | None = None
+    # Key rotation (phase 10 §4.1): comma-separated base64 raw public keys of earlier signing keys. Certificates they
+    # signed stay verifiable; nothing new is signed with them.
+    certificate_previous_public_keys: Annotated[list[str], NoDecode] = Field(default_factory=list)
 
     # Notification channels (phase 5). Each one is optional: without its settings the channel is recorded
     # as "skipped" and the other channels still go out.
@@ -503,6 +506,13 @@ class Settings(BaseSettings):
     def _split_csv(cls, value: object) -> object:
         if isinstance(value, str):
             return [item.strip().rstrip("/") for item in value.split(",") if item.strip()]
+        return value
+
+    @field_validator("certificate_previous_public_keys", mode="before")
+    @classmethod
+    def _split_keys(cls, value: object) -> object:
+        if isinstance(value, str):
+            return [item.strip() for item in value.split(",") if item.strip()]
         return value
 
     @property

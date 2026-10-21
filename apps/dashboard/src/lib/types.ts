@@ -456,7 +456,7 @@ export type Requirement = (typeof REQUIREMENTS)[number];
 /** Alert kinds named by the contract example; others are shown with a generic label. */
 export const ORG_ALERT_KINDS = ["training_expired", "maintenance_overdue"] as const;
 
-export const CERTIFICATE_STATUSES = ["draft", "submitted", "approved", "rejected"] as const;
+export const CERTIFICATE_STATUSES = ["draft", "submitted", "approved", "rejected", "revoked"] as const;
 export type CertificateStatus = (typeof CERTIFICATE_STATUSES)[number];
 /** `certificate_status` of a StaffOrg and the `certificate=` list filter. */
 export const ORG_CERTIFICATE_STATES = ["none", ...CERTIFICATE_STATUSES, "expired"] as const;
@@ -598,6 +598,10 @@ export interface Certificate {
   valid_until: string | null;
   fingerprint: string | null;
   pdf_sha256: string | null;
+  /** Phase 10 §4.1: signing key, and the revocation by an auditor. */
+  key_id?: string | null;
+  revoked_at?: string | null;
+  revoke_reason?: string | null;
   verify_url: string | null;
 }
 

@@ -5,6 +5,9 @@
 * ``fingerprint`` = SHA-256 of the canonical JSON of that snapshot; it never changes afterwards.
 * On approval the server signs ``<code>|<fingerprint>|<valid_until>`` with Ed25519 and re-renders the PDF
   without the draft mark. Anyone can check a code on the public verification page.
+* Phase 10 §4.1: the certificate records the ``key_id`` of the key that signed it, so the signing key can be rotated
+  (earlier public keys stay in ``CERTIFICATE_PREVIOUS_PUBLIC_KEYS``); an auditor can revoke an approved certificate,
+  which makes it invalid at once. The document says it is a self-assessment, not an official certificate.
 """
 
 import base64
@@ -46,11 +49,34 @@ def _private_key() -> Ed25519PrivateKey | None:
     return Ed25519PrivateKey.from_private_bytes(base64.b64decode(secret.get_secret_value()))
 
 
-def public_key_b64() -> str | None:
+def _raw(public: Ed25519PublicKey) -> bytes:
+    return public.public_bytes(Encoding.Raw, PublicFormat.Raw)
+
+
+def key_id_of(public: Ed25519PublicKey) -> str:
+    """First 16 hex characters of the SHA-256 of the raw public key."""
+    return hashlib.sha256(_raw(public)).hexdigest()[:16]
+
+
+def b64(public: Ed25519PublicKey) -> str:
+    return base64.b64encode(_raw(public)).decode()
+
+
+def current_key_id() -> str | None:
     key = _private_key()
-    if key is None:
-        return None
-    return base64.b64encode(key.public_key().public_bytes(Encoding.Raw, PublicFormat.Raw)).decode()
+    return key_id_of(key.public_key()) if key is not None else None
+
+
+def known_public_keys() -> dict[str, Ed25519PublicKey]:
+    """Every key whose signatures are still accepted: the current one and the previous ones, by key id."""
+    keys: dict[str, Ed25519PublicKey] = {}
+    for raw in get_settings().certificate_previous_public_keys:
+        public = Ed25519PublicKey.from_public_bytes(base64.b64decode(raw))
+        keys[key_id_of(public)] = public
+    current = _private_key()
+    if current is not None:
+        keys[key_id_of(current.public_key())] = current.public_key()
+    return keys
 
 
 def signed_message(code: str, fingerprint: str, valid_until: date) -> bytes:
@@ -58,15 +84,20 @@ def signed_message(code: str, fingerprint: str, valid_until: date) -> bytes:
 
 
 def signature_valid(cert: Certificate) -> bool:
-    key = _private_key()
-    if key is None or cert.signature is None or cert.valid_until is None:
+    """The signature checks out with the key named by ``key_id`` (an unknown key id is not valid). Certificates signed
+    before key ids existed are checked against every known key."""
+    if cert.signature is None or cert.valid_until is None:
         return False
-    public: Ed25519PublicKey = key.public_key()
-    try:
-        public.verify(cert.signature, signed_message(cert.code, cert.fingerprint, cert.valid_until))
-    except InvalidSignature:
-        return False
-    return True
+    keys = known_public_keys()
+    candidates = [keys[cert.key_id]] if cert.key_id in keys else [] if cert.key_id else list(keys.values())
+    message = signed_message(cert.code, cert.fingerprint, cert.valid_until)
+    for public in candidates:
+        try:
+            public.verify(cert.signature, message)
+        except InvalidSignature:
+            continue
+        return True
+    return False
 
 
 # ---------------------------------------------------------------- snapshot
@@ -241,10 +272,16 @@ def render_html(cert: Certificate, verify_url: str) -> str:
     fam_ar, fam_fr = _pair(_FAMILY, cls["family"])
     category = f" — {cls['category']}" if cls.get("category") else ""
     qr = segno.make(verify_url, error="m").svg_data_uri(scale=4, border=1)
-    approved = cert.status == "approved" and cert.valid_until is not None
+    approved = cert.status in ("approved", "revoked") and cert.valid_until is not None
 
     approved_on = cert.reviewed_at.astimezone(TUNIS_TZ).date() if cert.reviewed_at else None
-    if approved:
+    if cert.status == "revoked":
+        revoked_on = cert.revoked_at.astimezone(TUNIS_TZ).date() if cert.revoked_at else None
+        state = (
+            '<div class="status ko">شهادة ملغاة / Certificat révoqué</div>'
+            f"<p>أُلغيت في / Révoqué le : <b>{_e(revoked_on)}</b></p>"
+        )
+    elif approved:
         state = (
             f'<div class="status ok">شهادة مصادق عليها / Certificat approuvé</div>'
             f"<p>صالحة إلى غاية / Valable jusqu'au : <b>{_e(cert.valid_until)}</b><br>"
@@ -337,7 +374,32 @@ def render_html(cert: Certificate, verify_url: str) -> str:
     <p class="small">Établi le / حُرّر في : {_e(snap["generated_on"])}</p>
   </div>
 </div>
+<h2>تنبيه / Avertissement / Notice</h2>
+<p class="ar small">{DISCLAIMER["ar"]}</p>
+<p class="fr small">{DISCLAIMER["fr"]}</p>
+<p class="fr small">{DISCLAIMER["en"]}</p>
 </body></html>"""
+
+
+#: What the certificate is and is not (phase 10 §4.1), printed on the PDF; the portal shows the same text.
+DISCLAIMER = {
+    "ar": (
+        "هذه الشهادة تقييم ذاتي للسلامة سجّلته المؤسسة على منصة ء-حماية وراجعه مدققو المنصة. "
+        "ليست شهادة رسمية صادرة عن الديوان الوطني للحماية المدنية ولا عن أي إدارة أخرى، "
+        "ولا تعوّض التراخيص والمعاينات التي يفرضها القانون."
+    ),
+    "fr": (
+        "Ce certificat est une auto-évaluation de sécurité enregistrée par l'établissement sur la plateforme "
+        "e-Himaya et revue par ses auditeurs. Ce n'est pas un certificat officiel de l'Office national de la "
+        "protection civile ni d'une autre administration, et il ne remplace pas les autorisations et visites "
+        "prévues par la loi."
+    ),
+    "en": (
+        "This certificate is a safety self-assessment recorded by the institution on the e-Himaya platform and "
+        "reviewed by its auditors. It is not an official certificate of the National Office of Civil Protection "
+        "or of any other administration, and it does not replace the permits and inspections required by law."
+    ),
+}
 
 
 def _render_pdf_sync(document: str) -> bytes:
@@ -393,6 +455,9 @@ def certificate_out(cert: Certificate) -> schemas.CertificateOut:
         fingerprint=cert.fingerprint,
         pdf_sha256=cert.pdf_sha256,
         verify_url=verify_url(cert.code),
+        key_id=cert.key_id,
+        revoked_at=cert.revoked_at,
+        revoke_reason=cert.revoke_reason,
     )
 
 
@@ -494,6 +559,7 @@ async def review(session: AsyncSession, cert: Certificate, body: schemas.Certifi
         cert.valid_until = valid_until
         cert.reviewed_at = now
         cert.signature = key.sign(signed_message(cert.code, cert.fingerprint, valid_until))
+        cert.key_id = key_id_of(key.public_key())
         stale.append(cert.pdf_object_key)
         await _store_pdf(cert, "approved")
         await session.execute(
@@ -509,6 +575,26 @@ async def review(session: AsyncSession, cert: Certificate, body: schemas.Certifi
     cert.reviewed_at = now
     cert.reviewed_by = actor
     cert.review_reason = reason
+    await session.flush()
+    return stale
+
+
+async def revoke(session: AsyncSession, cert: Certificate, reason: str | None, actor: str) -> list[str]:
+    """Revoke an approved certificate (granted in error, or the institution no longer meets it). Returns the object
+    keys to delete after commit: the PDF is rendered again with the revocation."""
+    reason = reason.strip() if reason else None
+    if not reason:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "reason_required")
+    if cert.status == "revoked":
+        raise HTTPException(status.HTTP_409_CONFLICT, "already_revoked")
+    if cert.status != "approved":
+        raise HTTPException(status.HTTP_409_CONFLICT, "invalid_transition")
+    cert.status = "revoked"
+    cert.revoked_at = datetime.now(UTC)
+    cert.revoked_by = actor
+    cert.revoke_reason = reason
+    stale = [cert.pdf_object_key]
+    await _store_pdf(cert, "revoked")
     await session.flush()
     return stale
 
@@ -543,9 +629,11 @@ async def public_view(session: AsyncSession, code: str) -> schemas.PublicCertifi
     if found is None:
         return None
     cert, org = found
-    signed = cert.status == "approved" and signature_valid(cert)
+    revoked = cert.status == "revoked"
+    signed = cert.status in ("approved", "revoked") and signature_valid(cert)
     valid = (
         signed
+        and not revoked
         and cert.superseded_by is None
         and cert.valid_until is not None
         and cert.valid_until >= service.today()
@@ -561,11 +649,14 @@ async def public_view(session: AsyncSession, code: str) -> schemas.PublicCertifi
         org_kind=org.kind,
         gouvernorat_code=org.gouvernorat_code,
         classification={"family": cls.get("family"), "category": cls.get("category")},
-        issued_at=cert.reviewed_at if cert.status == "approved" else None,
+        issued_at=cert.reviewed_at if cert.status in ("approved", "revoked") else None,
         valid_until=cert.valid_until,
         fingerprint=cert.fingerprint,
         pdf_sha256=cert.pdf_sha256,
         signature_valid=signed,
+        key_id=cert.key_id,
+        revoked=revoked,
+        revoked_at=cert.revoked_at,
     )
 
 

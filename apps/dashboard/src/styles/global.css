@@ -1461,6 +1461,7 @@ legend {
 }
 .tag--level-bad,
 .tag--cert-rejected,
+.tag--cert-revoked,
 .tag--cert-expired {
   background: var(--error-bg);
   color: var(--error-text);
