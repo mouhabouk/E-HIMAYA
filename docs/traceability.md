@@ -60,7 +60,7 @@ tests (`# covers: FR-…` comments, docstrings, names). Do not edit by hand. A r
 | NFR-01 | الأداء | استلام البلاغ النصي وإسناد رقم تتبع في أقل من ثانيتين (المئين 95). ظهور البلاغ في اللوحة في أقل من 3 ثوان. تح… | `infra/monitoring/alerts.test.yml` |
 | NFR-02 | التوفر | 99.9% لخدمة استقبال البلاغات (حوالي 8.7 ساعات توقف في السنة)، و99.5% لباقي الوحدات. لا نقطة فشل وحيدة في مسار… | `services/api/tests/test_resilience.py` |
 | NFR-04 | العمل دون اتصال | التطبيق يحفظ البلاغات والوسائط محليا مشفرة، ويزامن آليا، ويحلّ التعارض لصالح الخادم مع الحفاظ على نسخة المستخ… | `apps/mobile/test/core/sync_engine_test.dart` |
-| NFR-05 | الأمن | TLS 1.3 لكل الاتصالات؛ تشفير قواعد البيانات والملفات (AES-256)؛ تشفير على مستوى الحقل للمعطيات الحساسة (الطبي… | `services/api/tests/test_data_protection.py` |
+| NFR-05 | الأمن | TLS 1.3 لكل الاتصالات؛ تشفير قواعد البيانات والملفات (AES-256)؛ تشفير على مستوى الحقل للمعطيات الحساسة (الطبي… | `services/api/tests/test_data_protection.py`<br>`services/api/tests/test_health.py` |
 | NFR-06 | التدقيق | كل اطلاع على معطيات شخصية أو تعديل أو قرار يُسجل (من، متى، ماذا، لماذا) في سجل غير قابل للتعديل يُحفظ 5 سنوات. | `services/api/tests/test_audit.py` |
 | NFR-07 | سلامة الأدلة | كل وسيط (صورة، فيديو، تسجيل) يُحسب له بصمة SHA-256 عند الاستلام، ويُحفظ الأصل دون تعديل، وأي معالجة تُنتج نسخ… | `services/api/tests/test_evidence.py`<br>`services/api/tests/test_uploads.py` |
 | NFR-08 | اللغات والاتجاه | التطبيق والبوابة: العربية والفرنسية والإنجليزية؛ اللوحة: العربية والفرنسية. دعم كامل لـ RTL و LTR (التخطيط، ا… | `apps/mobile/test/widgets/app_flow_test.dart` |

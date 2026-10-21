@@ -200,6 +200,8 @@ def create_app() -> FastAPI:
                 metrics.HTTP_SERVER_ERRORS.labels(area=area).inc()
         response.headers["X-Request-ID"] = request_id
         response.headers.update(headers)
+        # Answers carry personal data: no browser or proxy keeps them unless an endpoint says otherwise (ASVS V8.2.1).
+        response.headers.setdefault("Cache-Control", "no-store")
         if not request.url.path.startswith(_DOCS_PATHS) or production:
             response.headers["Content-Security-Policy"] = _API_CSP
         return response
