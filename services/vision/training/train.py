@@ -89,10 +89,11 @@ class Samples:
         for image in sorted((root / "images").glob("*.jpg")):
             if image.name in self.exclude:
                 continue
-            # Copies of D-Fire can hold empty or truncated files (an interrupted download): skip them, not the run.
+            # D-Fire holds empty and truncated JPEGs: skip them, not the run. verify() reads only the headers and lets
+            # a truncated file through, so decode the whole image.
             try:
                 with Image.open(image) as probe:
-                    probe.verify()
+                    probe.load()
             except (OSError, SyntaxError):
                 unreadable += 1
                 continue
