@@ -104,7 +104,7 @@ export function portalApi(api: ApiClient) {
       api.request<PublicCertificate>(`/api/v1/public/certificates/${enc(code)}`, { signal, anonymous: true }),
 
     certificateKey: (signal?: AbortSignal) =>
-      api.request<{ algorithm: string; public_key: string | null; signed_message: string }>(
+      api.request<{ algorithm: string; public_key: string | null; signed_message: string; key_id?: string | null }>(
         "/api/v1/public/certificate-key",
         { signal, anonymous: true },
       ),

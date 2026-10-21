@@ -41,6 +41,23 @@ describe("VerifyPage (public, §7)", () => {
     expect(screen.getByText("sa validité a expiré ;")).toBeInTheDocument();
   });
 
+  it("says a revoked certificate is not valid, and what the certificate is", async () => {
+    renderApp(<VerifyPage />, {
+      path,
+      route,
+      lang: "en",
+      routes: {
+        [KEY]: {
+          body: makePublicCertificate({ status: "revoked", valid: false, revoked: true, revoked_at: "2026-10-20T09:00:00Z" }),
+        },
+      },
+    });
+    expect(await screen.findByRole("heading", { name: "Certificate not valid" })).toBeInTheDocument();
+    expect(screen.getByText("it was revoked by the platform auditors after its approval;")).toBeInTheDocument();
+    expect(screen.getByText(/^Revoked on /)).toBeInTheDocument();
+    expect(screen.getByText(/It is not an official certificate of the National Office of Civil Protection/)).toBeInTheDocument();
+  });
+
   it("shows the suspended institution reason", async () => {
     renderApp(<VerifyPage />, { path, route, lang: "en", routes: { [KEY]: { body: makePublicCertificate({ valid: false }) } } });
     expect(await screen.findByText("the institution is suspended;")).toBeInTheDocument();

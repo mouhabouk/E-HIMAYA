@@ -88,6 +88,7 @@ function SigningKey() {
         <>
           <p>{t("verify.keyBody", { algorithm: key.data.algorithm, message: key.data.signed_message })}</p>
           <p className="hash">{key.data.public_key}</p>
+          {key.data.key_id && <p className="muted">{t("verify.keyId", { id: key.data.key_id })}</p>}
         </>
       ) : (
         <p className="muted">{t("verify.keyNone")}</p>
@@ -111,6 +112,7 @@ function CertificateResult({ cert }: { cert: PublicCertificate }) {
         ) : (
           <>
             <p>{t("verify.invalidBody")}</p>
+            {cert.revoked_at && <p>{t("verify.revokedOn", { date: fmt.date(cert.revoked_at) })}</p>}
             <ul>
               {reasons.map((r) => (
                 <li key={r}>{t(`verify.reasons.${r}`)}</li>
@@ -158,6 +160,10 @@ function CertificateResult({ cert }: { cert: PublicCertificate }) {
       </section>
       {cert.pdf_sha256 ? <PdfCompare expected={cert.pdf_sha256} /> : null}
       <SigningKey />
+      <section className="card" aria-labelledby="disclaimer-title">
+        <h2 id="disclaimer-title">{t("verify.disclaimerTitle")}</h2>
+        <p>{t("verify.disclaimer")}</p>
+      </section>
     </>
   );
 }
