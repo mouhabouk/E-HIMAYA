@@ -57,8 +57,8 @@ API (`core/security.py`):
   `hwk` or `mfa` is refused with **`401 mfa_required`** (`WWW-Authenticate: Bearer error="insufficient_user_authentication"`).
 * Public-realm tokens are not affected.
 
-Dashboard: on `401 mfa_required` it calls `signinRedirect({ prompt: "login" })` once and shows
-`auth.mfaRequired`. Only the first sign-in after enrolment needs this: the token issued during the enrolment
+Dashboard: on `401 mfa_required` it calls `signinRedirect({ prompt: "login" })` once per tab and otherwise shows
+`errors.mfa_required`; on `401 session_revoked` it forgets the session and goes back to the login page. Only the first sign-in after enrolment needs this: the token issued during the enrolment
 carries `amr: ["pwd"]`, which was checked with Keycloak 26.8.
 
 CI and ci-local: `infra/keycloak/check_mfa.py` imports the realms into Keycloak 26.8, creates a staff user, signs in

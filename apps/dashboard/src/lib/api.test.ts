@@ -98,6 +98,19 @@ describe("createApiClient", () => {
     expect(src.renew).toHaveBeenCalledTimes(1);
   });
 
+  it("hands mfa_required and session_revoked to the token source instead of renewing", async () => {
+    for (const detail of ["mfa_required", "session_revoked"] as const) {
+      const fetchImpl = vi.fn(() => Promise.resolve(json(401, { detail })));
+      const src = tokens();
+      const rejected = vi.fn();
+      const api = createApiClient("http://api", { ...src.source, rejected }, fetchImpl);
+      await expect(api.request("/x")).rejects.toMatchObject({ status: 401, code: detail });
+      expect(rejected).toHaveBeenCalledWith(detail);
+      expect(src.renew).not.toHaveBeenCalled();
+      expect(fetchImpl).toHaveBeenCalledTimes(1);
+    }
+  });
+
   it("does not retry when renewal fails", async () => {
     const fetchImpl = vi.fn(() => Promise.resolve(json(401, {})));
     const api = createApiClient("http://api", tokens("t1", null).source, fetchImpl);
