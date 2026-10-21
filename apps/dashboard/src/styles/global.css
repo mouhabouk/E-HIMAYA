@@ -143,6 +143,8 @@
 }
 
 html {
+  /* Keeps scrolled-to and focused elements clear of the sticky header (its height is set by the layout). */
+  scroll-padding-block-start: calc(var(--header-h, 0px) + 0.5rem);
   font-family: var(--font);
   font-size: 100%;
   line-height: 1.5;
@@ -226,6 +228,17 @@ a {
   position: sticky;
   inset-block-start: 0;
   z-index: 10;
+}
+
+/* On short screens the wrapped navigation would take too much of the page: the header scrolls away instead. */
+@media (max-height: 720px) {
+  .header {
+    position: static;
+  }
+
+  html {
+    scroll-padding-block-start: 0;
+  }
 }
 
 .header__brand {
