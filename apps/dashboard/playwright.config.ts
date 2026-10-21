@@ -41,7 +41,11 @@ export default defineConfig({
         ...devices["Desktop Chrome"],
         viewport: { width: 1280, height: 900 },
         // Software WebGL2 in headless Chromium (CI runners have no GPU).
-        launchOptions: { args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] },
+        launchOptions: {
+          args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"],
+          // A preinstalled Chromium of another Playwright release (e.g. a sandbox image): its path, else the bundled one.
+          executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE || undefined,
+        },
       },
     },
   ],

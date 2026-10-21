@@ -1,3 +1,4 @@
+# covers: UC-04
 """Phase 7 §1: weather layer — FWI System against its published reference values, derived levels, Open-Meteo client,
 simulator, grid refresh, public card, staff layer, suggested alerts, rules and the weather priority component."""
 

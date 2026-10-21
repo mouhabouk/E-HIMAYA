@@ -1,3 +1,4 @@
+# covers: FR-A-060, FR-A-061, FR-A-062
 """Phase 5: push devices, informational notifications, geographic alerts, the app inbox and safety tips."""
 
 import secrets

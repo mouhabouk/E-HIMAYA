@@ -1,4 +1,5 @@
 #!/bin/sh
+# covers: NFR-12
 # Restore drill (phase 10 §2.1, NFR-12: RPO < 5 min, RTO < 1 h). Self-contained: two throwaway clusters.
 #
 #   1. start a cluster with WAL archiving (infra/postgres/ehimaya-archive-wal);

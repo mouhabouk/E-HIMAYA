@@ -1,0 +1,6 @@
+# Dependencies accepted with a licence outside the allow list of scripts/licences.py (phase 10 §6.4).
+# Each entry: the package and why its licence is acceptable here. Tools outside the product (e.g. k6, AGPL, used only
+# for load tests) are recorded in docs/versions.md and are not shipped, so they are not listed.
+#
+# - package: example
+#   reason: dual licensed; we use it under MPL-2.0

@@ -1,3 +1,4 @@
+# covers: FR-B-002, FR-B-004, FR-B-005, FR-B-006, FR-B-007, FR-B-009, FR-A-080
 """Institutions (phase 4): card, membership, registers, documents, certificate, staff hub, reporting."""
 
 import base64

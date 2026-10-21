@@ -18,6 +18,7 @@ const MEDIA = "http://media.e2e.test";
 // Headless Chromium hides host candidates behind mDNS names; the in-page answerer needs plain ones to connect.
 test.use({
   launchOptions: {
+    executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE || undefined,
     args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--disable-features=WebRtcHideLocalIpsWithMdns"],
   },
 });

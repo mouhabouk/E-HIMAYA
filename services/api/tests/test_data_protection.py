@@ -1,3 +1,4 @@
+# covers: NFR-05, FR-A-011
 """Phase 5.5 data protection: field encryption at rest (A5), retention jobs and citizen rights (A6)."""
 
 import base64

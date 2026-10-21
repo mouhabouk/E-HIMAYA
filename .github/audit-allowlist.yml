@@ -1,0 +1,8 @@
+# Known vulnerabilities accepted for a limited time (phase 10 §3), read by scripts/dep_audit.py.
+# Each entry: the advisory id (PYSEC-…, GHSA-…, CVE-…), the package, why it does not apply or cannot be fixed yet,
+# and an expiry date (YYYY-MM-DD) after which the finding fails the job again. Keep this list short.
+#
+# - id: GHSA-xxxx-xxxx-xxxx
+#   package: example
+#   reason: the vulnerable function is not used; upstream fix expected in 2.1
+#   expires: 2026-12-31

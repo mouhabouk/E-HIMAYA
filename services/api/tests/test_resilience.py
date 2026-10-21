@@ -1,3 +1,4 @@
+# covers: NFR-02, NFR-12
 """Phase 10 §2.2 (NFR-02): the paths an SOS takes keep working when a dependency is down.
 
 * Valkey unreachable: the report is accepted, the limiter falls back to local counters, the session check fails open
