@@ -60,9 +60,12 @@ CC0-1.0)، ثم يصدّره بصيغة ONNX لخدمة الرؤية.
 """),
         code("""
 # 1. GPU and Google Drive
+import shutil
 import subprocess
-gpu = subprocess.run(["nvidia-smi", "-L"], capture_output=True, text=True).stdout
-print(gpu or "NO GPU: Runtime > Change runtime type > T4 GPU")
+
+if not shutil.which("nvidia-smi"):
+    raise SystemExit("No GPU in this session. Runtime > Change runtime type > T4 GPU, then Runtime > Run all.")
+print(subprocess.run(["nvidia-smi", "-L"], capture_output=True, text=True).stdout)
 from google.colab import drive
 drive.mount("/content/drive")
 """),
