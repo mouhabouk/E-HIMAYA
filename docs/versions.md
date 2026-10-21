@@ -168,7 +168,7 @@ Node.js 22 LTS و npm 10 أو أحدث. الحزم مثبتة بإصدارات �
 | jssip (المرحلة 7، الهاتف الشبكي للمشغل، يُحمّل عند تفعيله فقط) | 3.13.8 (MIT) |
 | hls.js (المرحلة 6، بديل HLS عند تعذر WHEP، يُحمّل عند الحاجة فقط) | 1.7.3 (Apache-2.0) |
 | uplot (المرحلة 8، رسوم التحليلات على canvas، تُحمّل عند الحاجة فقط) | 1.6.32 (MIT) |
-| markdown-it (المرحلة 8، عرض Markdown للذاكرة الوطنية، `html: false`) | 15.0.2 (MIT) |
+| markdown-it (المرحلة 8، عرض Markdown للذاكرة الوطنية، `html: false`) | 15.0.3 (MIT، يعالج GHSA-gfr2-rv44-r23c وGHSA-vfgh-jcmw-g37q) |
 | dompurify (المرحلة 8، تعقيم HTML الناتج قبل عرضه) | 3.4.16 (MPL-2.0 OR Apache-2.0، مستعملة بترخيص Apache-2.0) |
 
 > المرحلة 9: بقيت typescript على 5.9.3 لأن typescript-eslint 8 لا يدعم TypeScript 7 بعد؛ و Vite 8 (Rolldown) يقبل

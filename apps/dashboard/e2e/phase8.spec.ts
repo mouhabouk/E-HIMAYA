@@ -182,8 +182,10 @@ test.describe("phase 8 screens", () => {
     await page.getByRole("combobox", { name: "Taille des cellules" }).selectOption("10");
     await expect.poll(() => api.calls.some((c) => c.includes("/hotspots") && c.includes("size_km=10"))).toBe(true);
 
-    // Filters live in the URL.
-    await page.getByRole("radio", { name: "Mois" }).check();
+    // Filters live in the URL. They are controlled by the search params, which react-router 8 updates in a
+    // transition: click, then wait for the new state (check() reads the state right after the click).
+    await page.getByRole("radio", { name: "Mois" }).click();
+    await expect(page.getByRole("radio", { name: "Mois" })).toBeChecked();
     await expect(page).toHaveURL(/interval=month/);
     await expect(page).toHaveURL(/category=fire/);
     await expect.poll(() => api.calls.some((c) => c.includes("/trends") && c.includes("interval=month"))).toBe(true);
@@ -246,7 +248,8 @@ test.describe("phase 8 screens", () => {
     await expect(hit.locator("img")).toHaveCount(0);
     await expect(hit).toContainText("<img src=x onerror=alert(1)>");
 
-    await page.getByRole("checkbox", { name: /Mémoire nationale/ }).check();
+    await page.getByRole("checkbox", { name: /Mémoire nationale/ }).click();
+    await expect(page.getByRole("checkbox", { name: /Mémoire nationale/ })).toBeChecked();
     await expect(page).toHaveURL(/kinds=memory/);
 
     await page.getByRole("button", { name: "Calendrier" }).click();
