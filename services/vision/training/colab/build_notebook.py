@@ -115,6 +115,19 @@ if not COCO.exists():
 assert hashlib.sha256(COCO.read_bytes()).hexdigest() == "{COCO_SHA256}", "unexpected COCO weights"
 os.makedirs("/content/ehimaya", exist_ok=True)
 os.environ["PYTHONPATH"] = "/content/YOLOX"
+
+
+def run(*args):
+    # Run a script in /content/ehimaya, show its output live, and stop the notebook if it fails.
+    process = subprocess.Popen(
+        ["python", *map(str, args)], cwd="/content/ehimaya", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
+    )
+    for line in process.stdout:
+        print(line, end="")
+    if process.wait():
+        raise SystemExit(f"{{args[0]}} failed (exit {{process.returncode}}): see the lines above")
+
+
 print("ready")
 """),
         md("The two cells below are the repository's `training/train.py` and `training/export_onnx.py`, unchanged."),
@@ -122,9 +135,9 @@ print("ready")
         writefile("export_onnx.py"),
         code("""
 # 5. Training (about 10 minutes per epoch on a T4; resumes from RUN/last.pth after a disconnect)
-ARGS = f"--yolo {TRAIN}:smoke,fire --weights {COCO} --out {RUN} --epochs {EPOCHS} --batch {BATCH} --lr 0.01"
-ARGS += " --mixup 0.15 --val-fraction 0.08 --negatives-per-positive 0.5 --workers 2 --device cuda"
-!cd /content/ehimaya && python train.py {ARGS}
+run("train.py", "--yolo", f"{TRAIN}:smoke,fire", "--weights", COCO, "--out", RUN, "--epochs", EPOCHS,
+    "--batch", BATCH, "--lr", 0.01, "--mixup", 0.15, "--val-fraction", 0.08, "--negatives-per-positive", 0.5,
+    "--workers", 2, "--device", "cuda")
 """),
         code("""
 # 6. Learning curve (validation: image-level average precision per class)
@@ -136,7 +149,7 @@ for line in (RUN / "history.jsonl").read_text().splitlines():
 """),
         code("""
 # 7. Export the best epoch to ONNX (checked against PyTorch) and print its SHA-256
-!cd /content/ehimaya && python export_onnx.py --checkpoint {RUN}/best.pth --out {RUN}/fire-smoke-yolox-tiny-v3.onnx
+run("export_onnx.py", "--checkpoint", RUN / "best.pth", "--out", RUN / "fire-smoke-yolox-tiny-v3.onnx")
 print("Send these two files:", RUN / "fire-smoke-yolox-tiny-v3.onnx", RUN / "history.jsonl")
 """),
     ]
