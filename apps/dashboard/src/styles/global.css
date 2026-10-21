@@ -2682,6 +2682,14 @@ button.map-poi {
   border-inline-start-color: var(--det-smoke);
   border-inline-start-style: dashed;
 }
+/* Phase 10 §5: alert follow-ups (delivery failure, emergency publication) sit on the other side of the stream alerts. */
+.toasts--follow-up {
+  inset-inline-end: auto;
+  inset-inline-start: 1rem;
+}
+.toast--follow-up {
+  border-inline-start-color: var(--warn-text);
+}
 .toast p {
   margin: 0 0 0.4rem;
 }

@@ -38,6 +38,8 @@ export const ERROR_CODES = [
   "level_not_allowed",
   "out_of_scope",
   "already_acknowledged",
+  // Phase 10 §5.1: an alert is published by a second person (or alone with an emergency reason).
+  "second_reviewer_required",
   "unit_in_use",
   "label_taken",
   "resource_in_history",

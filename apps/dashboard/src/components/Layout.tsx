@@ -7,6 +7,7 @@ import { directionOf, LANGUAGES, type Language } from "../i18n";
 import { useGouvernorats, useLanguage } from "../lib/hooks";
 import {
   canEditAiSettings,
+  canDraftMessage,
   canEditTips,
   canManageAccounts,
   canOpenBreakGlass,
@@ -28,6 +29,7 @@ import {
 } from "../lib/roles";
 import { applyTheme, nextTheme, storedTheme, type Theme } from "../lib/theme";
 import { NoAccessPage } from "../pages/NoAccessPage";
+import { AlertFollowUpToasts } from "./AlertFollowUpToasts";
 import { ActiveGrantBanner } from "./BreakGlass";
 import { LevelBanner } from "./LevelBanner";
 import { SoftphoneDock } from "./Softphone";
@@ -250,6 +252,7 @@ export function Layout() {
         {live === "forbidden" ? <NoAccessPage reason="liveForbidden" embedded /> : <Outlet />}
       </main>
       {readsReports && <StreamAlertToasts />}
+      {canDraftMessage(identity.roles, "alert") && <AlertFollowUpToasts />}
       <SoftphoneDock />
     </div>
   );

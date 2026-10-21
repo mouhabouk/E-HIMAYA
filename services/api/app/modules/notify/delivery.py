@@ -17,6 +17,8 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.core import metrics
 from app.core.config import get_settings
+from app.core.events import emit
+from app.modules.audit import service as audit
 from app.modules.notify import service, templates
 from app.modules.notify.models import Device, Dispatch, Message, OrgDigest, Outbox
 from app.modules.notify.providers import Push, Result, get_providers
@@ -31,6 +33,9 @@ LEASE = timedelta(seconds=120)
 OUTBOX_MAX_ATTEMPTS = 8
 SMS_MAX_CHARS = 300
 DIGEST_EVERY = timedelta(days=7)
+# Phase 10 §5.2: an alert channel that failed for this share of its recipients, or could not send at all, is
+# reported to the people who publish alerts.
+DEGRADED_FAILURE_RATE = 0.10
 
 
 def _now() -> datetime:
@@ -168,6 +173,38 @@ async def real_send_allowed(sessionmaker: async_sessionmaker[AsyncSession]) -> b
         return bool(await settings_service.get(session, settings_domain.NOTIFY_REAL_SEND))
 
 
+def degraded(row: Dispatch, message: Message) -> str | None:
+    """Why a finished alert dispatch needs a person's attention, or None."""
+    if message.kind != "alert" or row.purpose != "publish" or row.status not in ("done", "skipped"):
+        return None
+    if row.status == "skipped" and row.error == "not_configured":
+        return "not_configured"
+    total = row.sent + row.failed
+    if total and row.failed / total >= DEGRADED_FAILURE_RATE:
+        return "failures"
+    return None
+
+
+async def _report_degraded(session: AsyncSession, row: Dispatch, message: Message, reason: str) -> None:
+    out = await service.message_out(session, message)
+    codes = await service.area_codes(session, message)
+    details = {"channel": row.channel, "reason": reason, "sent": row.sent, "failed": row.failed}
+    await emit(
+        session,
+        "alert.delivery_degraded",
+        {"message": out.model_dump(mode="json"), "gouvernorat_codes": codes, **details},
+    )
+    await audit.record(
+        session,
+        actor="system",
+        action="alert.delivery_degraded",
+        target=f"notification:{message.id}",
+        details=details,
+        gouvernorats=codes or None,
+    )
+    log.warning("notify.delivery_degraded", message_id=str(message.id), **details)
+
+
 async def run_job(sessionmaker: async_sessionmaker[AsyncSession]) -> bool:
     """Advance one fan-out job by one batch. Returns False when nothing was waiting."""
     claimed = await _claim_job(sessionmaker)
@@ -205,6 +242,9 @@ async def run_job(sessionmaker: async_sessionmaker[AsyncSession]) -> bool:
         current = await session.get(Message, job.message_id)
         if current is not None:
             await service.announce(session, current)
+            reason = degraded(row, current)
+            if reason is not None:
+                await _report_degraded(session, row, current, reason)
     return True
 
 

@@ -259,7 +259,8 @@
     "role_not_grantable": "You cannot grant this role.",
     "self_edit": "You cannot edit your own account.",
     "identity_provider_error": "The identity service did not respond.",
-    "username_taken": "Username already taken."
+    "username_taken": "Username already taken.",
+    "second_reviewer_required": "The alert is published by someone other than the person who wrote or last edited it."
   },
   "kpi": {
     "title": "Key indicators",
@@ -1571,6 +1572,27 @@
     "prefilled": {
       "weather_suggestion": "Form prefilled from a suggested weather alert. Check every field: nothing is sent before you publish.",
       "recommendation": "Form prefilled from a recommendation. Check every field: nothing is sent before you publish."
+    },
+    "fourEyes": {
+      "explain": "You wrote or last edited this alert, so a second person publishes it (four-eyes principle). In an emergency, when no second person can be reached, give the reason to publish it alone: it is written to the audit log and a second person must review it afterwards.",
+      "reasonLabel": "Reason for publishing alone (emergency)",
+      "reasonHelp": "At least 10 characters.",
+      "publishAlone": "Publish alone (emergency)",
+      "title": "Published by one person (emergency)",
+      "reason": "Emergency reason",
+      "reviewed": "Second look",
+      "notReviewed": "Waiting for a second person to review it",
+      "acknowledge": "I have reviewed this alert"
+    },
+    "followUp": {
+      "region": "Alert follow-up",
+      "degradedTitle": "Alert not delivered as it should be",
+      "reviewTitle": "Alert published by one person",
+      "notConfigured": "The {{channel}} channel is not configured: the alert did not go out through it.",
+      "failures": "{{channel}} channel: {{failed}} failures for {{sent}} successful sends.",
+      "reviewBody": "Emergency reason: {{reason}}. A second person must review it.",
+      "open": "Open the alert",
+      "dismiss": "Dismiss"
     }
   },
   "tips": {
