@@ -46,6 +46,11 @@ RATELIMIT_DEGRADED = Gauge(
     "1 while Valkey is unreachable and the in-process fallback limiter is used.",
     registry=REGISTRY,
 )
+SESSION_CHECK_DEGRADED = Counter(
+    "ehimaya_session_check_degraded_total",
+    "Authenticated requests whose session revocation check was skipped because Valkey was unreachable.",
+    registry=REGISTRY,
+)
 RATELIMIT_BACKEND_ERRORS = Counter(
     "ehimaya_ratelimit_backend_errors_total",
     "Valkey errors seen by the rate limiter.",

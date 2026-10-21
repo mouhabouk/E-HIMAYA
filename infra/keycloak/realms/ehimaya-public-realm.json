@@ -27,6 +27,8 @@
   ],
   "defaultLocale": "ar",
   "accessTokenLifespan": 300,
+  "revokeRefreshToken": true,
+  "refreshTokenMaxReuse": 0,
   "ssoSessionIdleTimeout": 1800,
   "ssoSessionMaxLifespan": 36000,
   "eventsEnabled": true,

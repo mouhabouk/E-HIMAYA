@@ -83,6 +83,9 @@ def make_token() -> TokenFactory:
         **extra: Any,
     ) -> str:
         now = int(time.time())
+        if issuer == STAFF_ISS:
+            # Staff sign in with a second factor (phase 10 §1.1); tests of the MFA check pass amr themselves.
+            extra.setdefault("amr", ["pwd", "otp"])
         claims = {
             "iss": issuer,
             "sub": str(uuid.uuid4()),
@@ -254,7 +257,7 @@ class FakeMediamtx:
 
 @pytest.fixture(autouse=True)
 def _isolated_infra() -> Iterator[FakeStore]:
-    from app.core import ratelimit, storage
+    from app.core import ratelimit, sessions, storage
     from app.modules.notify import providers
     from app.modules.streams import mediamtx, vision
     from app.modules.volunteers import presence
@@ -262,6 +265,7 @@ def _isolated_infra() -> Iterator[FakeStore]:
     store = FakeStore()
     storage.set_store(store)
     ratelimit.set_limiter(ratelimit.MemoryLimiter())
+    sessions.set_store(sessions.MemoryRevocations())
     presence.set_presence(presence.MemoryPresence())
     providers.set_providers(providers.Providers(push=FakeChannel(), sms=FakeChannel(), email=FakeChannel()))
     mediamtx.set_mediamtx(FakeMediamtx())
@@ -269,6 +273,7 @@ def _isolated_infra() -> Iterator[FakeStore]:
     yield store
     storage.set_store(None)
     ratelimit.set_limiter(None)
+    sessions.set_store(None)
     presence.set_presence(None)
     providers.set_providers(None)
     mediamtx.set_mediamtx(None)

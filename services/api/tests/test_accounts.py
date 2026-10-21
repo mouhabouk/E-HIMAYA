@@ -24,6 +24,7 @@ class FakeDirectory:
         self.accounts: dict[str, StaffAccount] = {}
         self.required_actions: dict[str, list[str]] = {}
         self.resets: list[str] = []
+        self.sign_outs: list[str] = []
         self.down = False
 
     def add(self, username: str, gouvernorat: int | None, roles: set[str], account_id: str | None = None) -> str:
@@ -76,6 +77,10 @@ class FakeDirectory:
     async def reset_credentials(self, account_id: str) -> None:
         self._check()
         self.resets.append(account_id)
+
+    async def sign_out(self, account_id: str) -> None:
+        self._check()
+        self.sign_outs.append(account_id)
 
 
 @pytest.fixture
