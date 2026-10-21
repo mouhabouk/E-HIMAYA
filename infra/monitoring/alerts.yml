@@ -1,0 +1,88 @@
+# Alert rules (phase 10 §2.3, NFR-13). Checked by `promtool check rules` and unit-tested by alerts.test.yml
+# (`promtool test rules alerts.test.yml`), in CI and in scripts/ci-local.sh.
+groups:
+  - name: intake
+    rules:
+      # NFR-01: a report is received and stored within 2 s at p95.
+      - alert: ReportIntakeSlow
+        expr: |
+          histogram_quantile(0.95, sum by (le) (rate(ehimaya_report_ingest_seconds_bucket[5m]))) > 2
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Report intake p95 above 2 s ({{ $value | humanizeDuration }})"
+          runbook: docs/procedures/incident-response.md
+      - alert: ReportIntakeErrors
+        expr: sum(rate(ehimaya_http_server_errors_total{area="reports"}[5m])) > 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Report intake answers 5xx errors"
+          runbook: docs/procedures/incident-response.md
+
+  - name: queues
+    rules:
+      - alert: OutboxBacklog
+        expr: max by (outbox) (ehimaya_outbox_oldest_age_seconds) > 300
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $labels.outbox }} outbox: oldest row waits for {{ $value | humanizeDuration }}"
+      - alert: NotificationFailures
+        expr: sum by (channel) (increase(ehimaya_notify_failures_total[15m])) > 10
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $value | humanize }} {{ $labels.channel }} sends failed in 15 min"
+
+  - name: degraded
+    rules:
+      - alert: RateLimiterDegraded
+        expr: max(ehimaya_ratelimit_degraded) == 1
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Valkey unreachable: the rate limiter uses per-process counters"
+      - alert: SessionCheckDegraded
+        expr: sum(increase(ehimaya_session_check_degraded_total[5m])) > 0
+        labels:
+          severity: warning
+        annotations:
+          summary: "Session revocation checks skipped (Valkey unreachable): revoked sessions may still work"
+      - alert: InstanceDown
+        expr: up == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $labels.job }} ({{ $labels.instance }}) is not answering its metrics scrape"
+      - alert: ApiDown
+        expr: absent(up{job="api"} == 1)
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "No API instance is up: citizens cannot send reports"
+
+  - name: backup
+    rules:
+      # NFR-12: RPO < 5 min. archive_timeout=60 forces a segment at least every minute.
+      - alert: WalArchiveLag
+        expr: time() - ehimaya_backup_last_wal_timestamp_seconds > 300
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "No WAL segment archived for {{ $value | humanizeDuration }} (RPO objective 5 min)"
+          runbook: docs/procedures/backup-restore.md
+      - alert: BaseBackupMissing
+        expr: time() - ehimaya_backup_last_base_timestamp_seconds > 26 * 3600
+        labels:
+          severity: critical
+        annotations:
+          summary: "Last base backup is {{ $value | humanizeDuration }} old"
+          runbook: docs/procedures/backup-restore.md

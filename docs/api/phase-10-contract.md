@@ -294,10 +294,10 @@ phase.
 | 6 | SOS accepted with Valkey, NATS and AI down | `test_resilience.py` |
 | 7 | Alert rules valid and unit-tested | `promtool check/test rules` |
 | 8 | Revoked certificate → public `valid: false, revoked: true`; old key still verifies after rotation | `test_orgs.py` |
-| 9 | Location without consent → 409; withdrawal drops the position; distance rounded | `test_volunteers_consent.py` |
+| 9 | Location without consent → 409; withdrawal drops the position; distance rounded | `test_location_consent.py` |
 | 10 | Anchors chain, verify, and give a media proof; a tampered media hash is detected | `test_evidence.py` |
-| 11 | Alert published by its creator → 403; emergency override audited and acknowledged by another person | `test_notifications.py` |
-| 12 | Failed alert delivery raises `alert.delivery_degraded` | `test_notifications.py` |
+| 11 | Alert published by its creator → 403; emergency override audited and acknowledged by another person | `test_four_eyes.py` |
+| 12 | Failed alert delivery raises `alert.delivery_degraded` | `test_four_eyes.py` |
 | 13 | OpenAPI and ERD up to date | drift steps |
 | 14 | No serious/critical axe violation on the main screens | dashboard and portal e2e |
 | 15 | pip-audit and npm audit clean (or allow-listed with an expiry) | supply-chain job |

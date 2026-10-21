@@ -51,6 +51,12 @@ SESSION_CHECK_DEGRADED = Counter(
     "Authenticated requests whose session revocation check was skipped because Valkey was unreachable.",
     registry=REGISTRY,
 )
+HTTP_SERVER_ERRORS = Counter(
+    "ehimaya_http_server_errors_total",
+    "Responses with a 5xx status (or an unhandled exception), by area: reports (citizen intake) or other.",
+    ["area"],
+    registry=REGISTRY,
+)
 RATELIMIT_BACKEND_ERRORS = Counter(
     "ehimaya_ratelimit_backend_errors_total",
     "Valkey errors seen by the rate limiter.",

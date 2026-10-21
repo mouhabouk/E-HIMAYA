@@ -17,4 +17,6 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 
 COPY ehimaya-roles.sh /usr/local/bin/ehimaya-roles.sh
+# WAL archiving (phase 10 §2.1), switched on by the production compose file.
+COPY ehimaya-archive-wal /usr/local/bin/ehimaya-archive-wal
 COPY initdb/ /docker-entrypoint-initdb.d/
