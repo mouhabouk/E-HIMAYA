@@ -45,9 +45,12 @@ JOB_TABLE=(
   "ai-models|ci.yml|AI · real models"
   "vision|ci.yml|Vision · lint, types, tests"
   "vision-models|ci.yml|Vision · real models"
+  "quality|ci.yml|Quality · traceability and alert rules"
+  "backup-drill|ci.yml|Backup · restore drill"
+  "supply-chain|ci.yml|Supply chain · audit, SBOM and licences"
   "stack|ci.yml|Stack · compose smoke test"
   "dashboard|dashboard.yml|Dashboard · lint, types, tests, build, browser tests"
-  "portal|portal.yml|Portal · lint, types, tests, build"
+  "portal|portal.yml|Portal · lint, types, tests, build, browser tests"
   "mobile|mobile.yml|Mobile · analyze, test, build"
 )
 # image-scan matrix (ci.yml): <name>|<context>|<docker build args>.
@@ -230,6 +233,23 @@ need_espeak() {
     || { echo "espeak-ng is not installed (and no root/passwordless sudo to apt-get it like CI)"; return 1; }
 }
 
+# promtool on PATH, or Docker to run it from the pinned Prometheus image (as the workflow does).
+need_promtool() {
+  command -v promtool >/dev/null && return 0
+  docker info >/dev/null 2>&1 && return 0
+  echo "neither promtool nor Docker is available"
+  return 1
+}
+# The restore drill starts its own clusters: PostgreSQL 16 server binaries with PostGIS and pgvector, run as root
+# (or as the user owning them).
+need_pg_server() {
+  local bin=${PG_BIN:-/usr/lib/postgresql/16/bin} share
+  [ -x "$bin/postgres" ] || { echo "no PostgreSQL 16 server in $bin (set PG_BIN)"; return 1; }
+  share=$("$bin/pg_config" --sharedir 2>/dev/null || echo /usr/share/postgresql/16)
+  [ -f "$share/extension/postgis.control" ] || { echo "PostGIS is not installed for $bin"; return 1; }
+  [ -f "$share/extension/vector.control" ] || { echo "pgvector is not installed for $bin"; return 1; }
+}
+
 need_flutter() {
   need_cmds flutter dart java || return 1
   local version java_major
@@ -260,7 +280,10 @@ skip_reason() {
     vision-models)    need_cmds uv curl python3 && need_docker && need_disk 6 && need_container_net ;;
     stack)            need_cmds openssl python3 && need_pyyaml && need_docker && need_disk 10 && need_container_net ;;
     dashboard)        need_node && need_disk 3 ;;
-    portal)           need_node && need_disk 2 ;;
+    portal)           need_node && need_disk 3 ;;
+    quality)          need_cmds python3 && need_promtool ;;
+    backup-drill)     need_cmds uv && need_pg_server ;;
+    supply-chain)     need_cmds uv python3 && need_node && need_disk 3 ;;
     mobile)           need_flutter && need_disk 15 ;;
   esac
 }
@@ -316,6 +339,12 @@ job_api() {
 
   step "Type check"
   uv run mypy app
+
+  step "OpenAPI drift"
+  uv run python -m app.openapi --check
+
+  step "ERD drift"
+  uv run python -m app.erd --check
 
   step "Validate procedures library"
   uv run python -m app.modules.decision.cli check ../../docs/procedures
@@ -764,7 +793,69 @@ job_dashboard() {
   npm run test:e2e
 }
 
-job_portal() { npm_checks apps/portal; }
+job_portal() {
+  npm_checks apps/portal
+  step "Install Playwright Chromium"
+  if have_root; then
+    npx playwright install --with-deps chromium
+  else
+    echo "no root/passwordless sudo: browser system libraries (--with-deps) are assumed to be installed"
+    npx playwright install chromium
+  fi
+  step "Browser tests"
+  npm run test:e2e
+}
+
+promtool_run() {
+  if command -v promtool >/dev/null; then
+    (cd infra/monitoring && promtool "$@")
+  else
+    docker run --rm -v "$PWD/infra/monitoring:/m:ro" -w /m --entrypoint promtool prom/prometheus:v3.5.0 "$@"
+  fi
+}
+
+job_quality() {
+  step "Traceability up to date"
+  python3 scripts/traceability.py --check
+  step "Alert rules (promtool check and unit tests)"
+  promtool_run check config prometheus.yml --syntax-only
+  promtool_run check rules alerts.yml
+  promtool_run test rules alerts.test.yml
+}
+
+job_backup_drill() {
+  setup_uv
+  step "Install API dependencies (migrations)"
+  (cd services/api && uv sync --locked)
+  step "Restore drill"
+  PG_BIN=${PG_BIN:-/usr/lib/postgresql/16/bin} sh infra/backup/drill.sh
+}
+
+job_supply_chain() {
+  setup_uv
+  step "Install web dependencies"
+  (cd apps/dashboard && npm ci --ignore-scripts)
+  (cd apps/portal && npm ci --ignore-scripts)
+  step "Dependency audit (pip-audit, npm audit)"
+  python3 scripts/dep_audit.py
+  step "Licences"
+  mkdir -p "$WORK/sbom"
+  local svc app
+  for svc in api ai vision notify-sim; do
+    (cd "services/$svc" && uv export --frozen --no-dev --no-hashes --no-emit-project -o "$WORK/sbom/$svc-requirements.txt" >/dev/null)
+  done
+  python3 scripts/licences.py python "$WORK"/sbom/*-requirements.txt
+  python3 scripts/licences.py npm apps/dashboard apps/portal
+  step "SBOMs (CycloneDX)"
+  for svc in api ai vision notify-sim; do
+    uvx --from cyclonedx-bom==7.5.0 cyclonedx-py requirements "$WORK/sbom/$svc-requirements.txt" -o "$WORK/sbom/$svc.cdx.json"
+  done
+  for app in dashboard portal; do
+    (cd "apps/$app" && npx --yes @cyclonedx/cyclonedx-npm@6.0.1 --omit dev --output-file "$WORK/sbom/$app.cdx.json")
+  done
+  mkdir -p "$LOGS/sbom" && cp "$WORK"/sbom/*.cdx.json "$LOGS/sbom/"
+  echo "SBOMs in ${LOGS#"$ROOT"/}/sbom/"
+}
 
 job_mobile() {
   cd apps/mobile

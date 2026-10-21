@@ -65,6 +65,13 @@ jobs:
       - name: Type check
         run: uv run mypy app
 
+      # Phase 10 §6.1–6.2: the committed OpenAPI document and ERD match the code.
+      - name: OpenAPI drift
+        run: uv run python -m app.openapi --check
+
+      - name: ERD drift
+        run: uv run python -m app.erd --check
+
       - name: Validate procedures library
         working-directory: services/api
         run: uv run python -m app.modules.decision.cli check ../../docs/procedures
@@ -521,6 +528,99 @@ jobs:
       - name: Logs on failure
         if: failure()
         run: docker logs vision || true
+
+  quality:
+    name: Quality · traceability and alert rules
+    runs-on: ${{ vars.RUNNER || 'ubuntu-24.04' }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      # Phase 10 §6.3: docs/traceability.md is current (the gaps are listed in it, they do not fail the job).
+      - name: Traceability up to date
+        run: python3 scripts/traceability.py --check
+
+      # Phase 10 §2.3: promtool from the pinned Prometheus image.
+      - name: Alert rules (promtool check and unit tests)
+        run: |
+          docker run --rm -v "$PWD/infra/monitoring:/m:ro" --entrypoint promtool prom/prometheus:v3.5.0 check config /m/prometheus.yml --syntax-only
+          docker run --rm -v "$PWD/infra/monitoring:/m:ro" --entrypoint promtool prom/prometheus:v3.5.0 check rules /m/alerts.yml
+          docker run --rm -v "$PWD/infra/monitoring:/m:ro" -w /m --entrypoint promtool prom/prometheus:v3.5.0 test rules alerts.test.yml
+
+  backup-drill:
+    name: Backup · restore drill
+    runs-on: ${{ vars.RUNNER || 'ubuntu-24.04' }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: "3.12"
+
+      # Ubuntu 24.04 ships PostgreSQL 16 with PostGIS and pgvector; the drill starts its own throwaway clusters.
+      - name: PostgreSQL 16, PostGIS, pgvector
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -yq --no-install-recommends postgresql-16 postgresql-16-postgis-3 postgresql-16-pgvector
+          sudo systemctl stop postgresql || true
+
+      - name: Install API dependencies (migrations)
+        working-directory: services/api
+        run: uv sync --locked
+
+      # Phase 10 §2.1: PITR keeps exactly the rows before the target, the audit chain is intact, RTO and RPO printed.
+      - name: Restore drill
+        run: sudo env "PATH=$PATH" PG_BIN=/usr/lib/postgresql/16/bin sh infra/backup/drill.sh
+
+  supply-chain:
+    name: Supply chain · audit, SBOM and licences
+    runs-on: ${{ vars.RUNNER || 'ubuntu-24.04' }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+
+      - name: Install web dependencies
+        run: |
+          (cd apps/dashboard && npm ci --ignore-scripts)
+          (cd apps/portal && npm ci --ignore-scripts)
+
+      # Phase 10 §3: a finding fails unless .github/audit-allowlist.yml lists it with a reason and an expiry.
+      - name: Dependency audit (pip-audit, npm audit)
+        run: python3 scripts/dep_audit.py
+
+      # Phase 10 §6.4: shipped (non-dev) dependencies only.
+      - name: Licences
+        run: |
+          mkdir -p sbom
+          for svc in api ai vision notify-sim; do
+            (cd services/$svc && uv export --frozen --no-dev --no-hashes --no-emit-project -o "../../sbom/$svc-requirements.txt" >/dev/null)
+          done
+          python3 scripts/licences.py python sbom/*-requirements.txt
+          python3 scripts/licences.py npm apps/dashboard apps/portal
+
+      - name: SBOMs (CycloneDX)
+        run: |
+          for svc in api ai vision notify-sim; do
+            uvx --from cyclonedx-bom==7.5.0 cyclonedx-py requirements "sbom/$svc-requirements.txt" -o "sbom/$svc.cdx.json"
+          done
+          for app in dashboard portal; do
+            (cd apps/$app && npx --yes @cyclonedx/cyclonedx-npm@6.0.1 --omit dev --output-file "../../sbom/$app.cdx.json")
+          done
+
+      - name: Upload SBOMs
+        uses: actions/upload-artifact@v7
+        with:
+          name: sbom
+          path: sbom/*.cdx.json
 
   stack:
     name: Stack · compose smoke test
