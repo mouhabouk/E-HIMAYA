@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ء-حماية | الملف التقني للمراحل 1 إلى 10</title>
+<style>
+<style>
+:root{--bg:#f7f8fa;--paper:#fff;--ink:#1b2430;--muted:#5b6675;--line:#dfe3e8;--accent:#b3261e;--accent2:#0b5cad;--ok:#1e7d3a;--warn:#a15c00;--chip:#eef1f5;--head:#f1f3f6}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1318;--paper:#161b22;--ink:#e6eaef;--muted:#9aa5b1;--line:#2a313b;--accent:#ff6b5e;--accent2:#5aa9ff;--ok:#5cc97a;--warn:#e0a24a;--chip:#1f2630;--head:#1c222b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Naskh Arabic","Segoe UI",Tahoma,Arial,sans-serif;line-height:1.75;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header.cover{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:10px;padding:28px 24px;margin-bottom:20px}
+header.cover h1{margin:0 0 6px;font-size:30px}
+header.cover .sub{color:var(--muted);margin:0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:16px}
+.meta div{background:var(--chip);border-radius:6px;padding:8px 12px;font-size:14px}
+.meta b{display:block;color:var(--muted);font-weight:600;font-size:12px}
+a{color:var(--accent2);text-decoration:none}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:20px}
+h2{margin-top:0;font-size:23px;border-bottom:2px solid var(--line);padding-bottom:8px}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:start;vertical-align:top}
+th{background:var(--head);font-weight:700;white-space:nowrap}
+td code,p code,li code{direction:ltr;unicode-bidi:isolate;background:var(--chip);padding:1px 5px;border-radius:4px;font-size:13px}
+.note{border-inline-start:4px solid var(--accent2);background:var(--chip);padding:10px 14px;border-radius:6px;margin:12px 0}
+.warn{border-inline-start:4px solid var(--warn)}
+.sim{display:inline-block;background:#f59e0b;color:#1f1300;font-weight:700;font-size:12px;padding:1px 8px;border-radius:999px;margin-inline-end:6px}
+.ltr{direction:ltr;unicode-bidi:isolate}
+ul,ol{padding-inline-start:22px}
+footer{color:var(--muted);text-align:center;font-size:13px}
+@media print{body{background:#fff}section,header.cover{border:none;break-inside:avoid-page}}
+.fill{min-width:160px}
+pre{direction:ltr;text-align:left;background:var(--chip);border:1px solid var(--line);border-radius:6px;padding:10px 12px;overflow-x:auto;font-size:13px;line-height:1.55;margin:8px 0}
+.step{border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin:12px 0}
+.step h3{margin:0 0 6px;font-size:18px}
+.prio{display:inline-block;background:var(--accent);color:#fff;border-radius:999px;font-size:12px;padding:1px 9px;margin-inline-end:6px}
+.opt{background:var(--accent2)}
+.bar{background:var(--chip);border-radius:4px;height:8px;width:70px;display:inline-block;vertical-align:middle;margin-inline-start:6px}
+.bar i{display:block;height:8px;border-radius:4px;background:var(--ok)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="cover">
+  <h1>ء-حماية <span class="ltr">e-Himaya</span></h1>
+  <p class="sub">الملف التقني الجامع: ملخص المراحل من 1 إلى 10، الاختبارات، الأدوات والإصدارات، وأوامر التثبيت حسب أولوية التنصيب</p>
+  <div class="meta">
+    <div><b>التاريخ</b>2026-10-22</div>
+    <div><b>المرجع في المستودع</b><span class="ltr">main @ 10b83a2</span> (بعد دمج المرحلة 10، طلب الدمج #63)</div>
+    <div><b>الغرض</b>مراجعة ما طُوّر ورفع الملاحظات مرحلة بمرحلة</div>
+    <div><b>المؤجل</b>المرحلة 11 (التجربة الميدانية) وتدريب كاشف الحرائق والدخان v3</div>
+  </div>
+</header>
+
+<section>
+<h2>1. الخلاصة</h2>
+<ul>
+  <li><b>المنجز:</b> عشر مراحل، ومعها مرحلة تصحيحية هي 5.5. كل بنود المخطط منجزة بنسبة 100% ومدموجة في <span class="ltr">main</span>.</li>
+  <li><b>الاختبارات:</b> زادت من 22 اختبارا في المرحلة 1 إلى نحو 1,700 اختبار آلي في المرحلة 10:
+    <ul>
+      <li>الخلفية 701؛</li>
+      <li>لوحة التحكم 379، ومعها 32 اختبار متصفح؛</li>
+      <li>البوابة 83، ومعها 24 اختبار متصفح؛</li>
+      <li>تطبيق الهاتف 332؛</li>
+      <li>الخدمات المساعدة 187.</li>
+    </ul>
+  </li>
+  <li><b>تتبع المتطلبات:</b> 60 من 81 متطلبا لها اختبار مسمى (<code>docs/traceability.md</code>).</li>
+  <li><b>ما لم يُتحقق منه بعد:</b> التكامل المستمر في GitHub لا يعمل منذ صار المستودع خاصا، فشُغّلت الفحوص محليا. المهام التي تحتاج Docker لم تُشغَّل بعد على النسخة الأخيرة:
+    <ul>
+      <li>بناء الصور؛</li>
+      <li>Trivy؛</li>
+      <li>Keycloak الحقيقي؛</li>
+      <li>النماذج الحقيقية؛</li>
+      <li>اختبار المنظومة كاملة.</li>
+    </ul>
+    التفاصيل في القسم 4.
+  </li>
+</ul>
+<div class="note">العمود الأخير في جدول المراحل (القسم 2) فارغ عمدا لتدوين ملاحظاتك عند المراجعة.</div>
+</section>
+
+<section>
+<h2>2. جدول المراحل</h2>
+<div class="tbl"><table>
+<tr><th>#</th><th>المرحلة والتاريخ</th><th>أهم ما طُوّر</th><th>الاختبارات عند نهايتها</th><th>التقدم</th><th>الدمج والتقرير</th><th class="fill">ملاحظاتك</th></tr>
+
+<tr><td>1</td><td><b>الأساس التقني</b><br>2026-10-19</td>
+<td>
+<ul>
+  <li>البنية بالحاويات: PostgreSQL مع PostGIS وpgvector، وValkey، وNATS JetStream، وSeaweedFS (S3)، وKeycloak.</li>
+  <li>قاعدة البيانات: 5 مخططات و11 جدولا.</li>
+  <li>المرجع الإداري: 24 ولاية و279 معتمدية بالعربية والفرنسية.</li>
+  <li>سجل تدقيق إلحاقي مسلسل ببصمات SHA-256.</li>
+  <li>فضاءا هوية: عام وإداري (8 أدوار، TOTP إجباري).</li>
+  <li>خلفية FastAPI.</li>
+  <li>التكامل المستمر.</li>
+</ul>
+</td>
+<td>الخلفية 22</td><td>100%<span class="bar"><i style="width:100%"></i></span></td><td>مدموجة · <a href="phase-1-report.html">التقرير</a></td><td></td></tr>
+
+<tr><td>2</td><td><b>مسار البلاغ الأساسي</b><br>2026-10-19</td>
+<td>
+<ul>
+  <li>البلاغ دون تكرار، برقم تتبع، وتُحدَّد ولايته آليا.</li>
+  <li>التبليغ المجهول بمعرّف مستعار.</li>
+  <li>الميثاق ورقم بطاقة التعريف المشفر (AES-256-GCM).</li>
+  <li>رفع الوسائط بالاستئناف (tus) مع التحقق من البصمة.</li>
+  <li>6 حالات للبلاغ، والمتابعة برقم التتبع.</li>
+  <li>الزمن الحقيقي: البلاغ يظهر في اللوحة خلال 0.45 ث.</li>
+  <li>تطبيق الهاتف: SOS وأرقام النجدة والعمل دون اتصال.</li>
+  <li>لوحة التحكم.</li>
+</ul>
+</td>
+<td>اللوحة 70 · التطبيق 54 · اختبار شامل على المنظومة الحقيقية</td><td>100%<span class="bar"><i style="width:100%"></i></span></td><td>مدموجة · <a href="phase-2-report.html">التقرير</a></td><td></td></tr>
+
+<tr><td>3</td><td><b>طبقة الذكاء الاصطناعي 1</b><br>2026-10-19</td>
+<td>
+<ul>
+  <li>خدمة استدلال محلية دون إنترنت.</li>
+  <li>تحويل الصوت إلى نص (Whisper).</li>
+  <li>الترجمة إلى العربية (Opus-MT).</li>
+  <li>التصنيف والاستخراج (Qwen3)، مع قاموس للدارجة.</li>
+  <li>أولوية مفسَّرة من 0 إلى 100 (BR-20)، ودرجة مصداقية.</li>
+  <li>اقتراح تجميع البلاغات في حوادث بالتشابه الدلالي.</li>
+  <li>طابور تحليل متين.</li>
+</ul>
+</td>
+<td>الخلفية 97 · اللوحة 125 · خدمة الذكاء الاصطناعي 12، و9 على النماذج الحقيقية</td><td>100%<span class="bar"><i style="width:100%"></i></span></td><td>مدموجة · <a href="phase-3-report.html">التقرير</a></td><td></td></tr>
+
+<tr><td>4</td><td><b>المؤسسات</b><br>2026-10-19</td>
+<td>
+<ul>
+  <li>بطاقة المؤسسة والتسجيل والتصنيف.</li>
+  <li>الوثائق بالإصدارات، وفريق السلامة والسجلات.</li>
+  <li>شهادة سلامة رقمية: PDF موقّع Ed25519 مع رمز QR.</li>
+  <li>التبليغ باسم مؤسسة، والمواقع الحساسة في حساب الأولوية.</li>
+  <li>بوابة المؤسسات بثلاث لغات، ومحور المؤسسات في اللوحة.</li>
+</ul>
+</td>
+<td>الخلفية 123 · اللوحة 186 · البوابة 82 · التطبيق 85</td><td>100%<span class="bar"><i style="width:100%"></i></span></td><td>مدموجة · <a href="phase-4-report.html">التقرير</a></td><td></td></tr>
+
+<tr><td>5</td><td><b>العمليات والمتطوعون والتنبيهات</b><br>2026-10-19</td>
+<td>
+<ul>
+  <li>المستويات العملياتية: عادي، أزمة، كارثة.</li>
+  <li>اللجان والوحدات والموارد والتدخلات وأوامر التكليف.</li>
+  <li>المتطوعون والاستنفار.</li>
+  <li>الإشعارات والتنبيهات الجغرافية: دفع وSMS وبريد.</li>
+  <li>نصائح السلامة.</li>
+</ul>
+<span class="sim">[SIM]</span> محاكي Firebase وبوابة SMS (<code>notify-sim</code>).
+</td>
+<td>الخلفية 151 · اللوحة 242 · البوابة 82 · التطبيق 134 · المحاكي 109</td><td>100%<span class="bar"><i style="width:100%"></i></span></td><td>مدموجة · <a href="phase-5-report.html">التقرير</a></td><td></td></tr>
+
+<tr><td>5.5</td><td><b>رفع الإخلالات الأمنية</b> (تصحيحية)<br>2026-10-19</td>
+<td>
+<ul>
+  <li>حدود الاستعمال المجهول.</li>
+  <li>نشر إنتاج مصلّب: Caddy وTLS وCSP، ورفض الأسرار الضعيفة.</li>
+  <li>فصل أدوار قاعدة البيانات، وتشفير الحقول الحساسة.</li>
+  <li>مدة الحفظ وحقوق المواطن، وأمن الملفات المرفوعة.</li>
+  <li>إشعارات شخصية دون محتوى.</li>
+  <li>سلسلة التوريد: الصور مثبتة بالبصمة.</li>
+  <li>فصل العمّال، ومقاييس المراقبة.</li>
+  <li>اختبار الحمل: نحو 16 بلاغ SOS في الثانية، وp95 = 328 ms.</li>
+  <li>تقليل استهلاك البطارية.</li>
+</ul>
+</td>
+<td>الخلفية 241 · اللوحة 245 · التطبيق 192</td><td>100%<span class="bar"><i style="width:100%"></i></span></td><td>مدموجة · <a href="phase-5-5-report.html">التقرير</a></td><td></td></tr>
+
+<tr><td>6</td><td><b>البث المباشر والرؤية الحاسوبية</b><br>2026-10-20</td>
+<td>
+<ul>
+  <li>خادم البث MediaMTX: WHIP وWHEP وRTSP وRTMP وHLS.</li>
+  <li>زر البث في التطبيق، مع بديل عند ضعف الشبكة.</li>
+  <li>كشف الحرائق والدخان والأشخاص (YOLOX عبر ONNX).</li>
+  <li>حائط شاشات وأرشيف ببصمات في اللوحة.</li>
+</ul>
+<span class="sim">[SIM]</span> كاميرا محاكاة (<code>stream-sim</code>).
+</td>
+<td>الخلفية 277 · اللوحة 288، و3 متصفح · التطبيق 260</td><td>100%<span class="bar"><i style="width:100%"></i></span></td><td>مدموجة · <a href="phase-6-report.html">التقرير</a></td><td></td></tr>
+
+<tr><td>7</td><td><b>الطقس والتنبؤ ودعم القرار والاتصالات</b><br>2026-10-20</td>
+<td>
+<ul>
+  <li>طبقة الطقس (Open-Meteo)، واقتراح التنبيهات الجوية، والطقس في حساب الأولوية.</li>
+  <li>نماذج انتشار الحريق: FWI وRothermel على نموذج الارتفاعات (DEM).</li>
+  <li>دعم القرار، والتوجيه (Valhalla)، والمساعد الذكي.</li>
+  <li>المقسم الهاتفي Asterisk 22 والهاتف الشبكي في اللوحة.</li>
+  <li>البلاغ بالرسائل القصيرة.</li>
+</ul>
+<span class="sim">[SIM]</span> طقس محاكى في التطوير، ومحاكي مكالمات (<code>call-sim</code>).
+</td>
+<td>الخلفية 396 · اللوحة 323، و7 متصفح · التطبيق 295</td><td>100%<span class="bar"><i style="width:100%"></i></span></td><td>مدموجة (#53) · <a href="phase-7-report.html">التقرير</a></td><td></td></tr>
+
+<tr><td>8</td><td><b>المعرفة والتحليلات</b><br>2026-10-20</td>
+<td>
+<ul>
+  <li>التحليلات والاتجاهات والبؤر.</li>
+  <li>محاكاة «ماذا لو».</li>
+  <li>مستودع التقارير: PDF وExcel وتقارير دورية.</li>
+  <li>الذاكرة الوطنية، ومكتبة الأحداث (OpenSearch مع البحث الدلالي).</li>
+  <li>المكافآت والشارات.</li>
+  <li>إغلاق بنود تدقيق R1.</li>
+</ul>
+</td>
+<td>الخلفية 441، و2 على OpenSearch · اللوحة 370، و12 متصفح · التطبيق 310</td><td>100%<span class="bar"><i style="width:100%"></i></span></td><td>مدموجة · <a href="phase-8-report.html">التقرير</a></td><td></td></tr>
+
+<tr><td>9</td><td><b>فصل صلاحيات القاعة المركزية والقاعات الجهوية</b><br>2026-10-21</td>
+<td>
+<ul>
+  <li>صلاحيات تجمع الدور والنطاق (RBAC وABAC).</li>
+  <li>الاختصاص بموقع الحادث، مع التحقق الجغرافي.</li>
+  <li>مهلة التكفل والتصعيد إلى المركز.</li>
+  <li>الحوادث العابرة للولايات، والوصول الاستثنائي المؤقت.</li>
+  <li>إدارة الحسابات الجهوية، والسجل الجهوي.</li>
+  <li>أمن مستوى الصفوف (RLS) في قاعدة البيانات.</li>
+  <li>الحصة المجهولة: 5 بلاغات، وSOS لا يُمنع أبدا.</li>
+  <li>اللغة الإنجليزية.</li>
+</ul>
+</td>
+<td>الخلفية 660 · اللوحة 373 · البوابة 82 · RLS: 26 اختبارا بـ SQL</td><td>100%<span class="bar"><i style="width:100%"></i></span></td><td>مدموجة · <a href="phase-9-report.html">التقرير</a></td><td></td></tr>
+
+<tr><td>10</td><td><b>التحصين</b><br>2026-10-21</td>
+<td>
+<ul>
+  <li>إصلاح تحديثات Dependabot غير المفحوصة.</li>
+  <li>التحقق بخطوتين مفروض في الخلفية، وإلغاء الجلسات والشهادات.</li>
+  <li>العينان الأربع في الإنذارات.</li>
+  <li>موافقة المتطوع على مشاركة موقعه.</li>
+  <li>ختم الأدلة بشجرة Merkle.</li>
+  <li>النسخ الاحتياطي والاستعادة: RTO ثانيتان وRPO ثانية في التمرين.</li>
+  <li>الصمود عند تعطل الخدمات المساعدة.</li>
+  <li>المراقبة بـ Prometheus مع 10 قواعد تنبيه.</li>
+  <li>OpenAPI وERD وجدول التتبع وSBOM.</li>
+  <li>إمكانية الوصول (WCAG 2.2).</li>
+  <li>وثائق الأمن وحماية المعطيات: STRIDE وASVS وDPIA.</li>
+</ul>
+</td>
+<td>الخلفية 701 · اللوحة 379، و32 متصفح · البوابة 83، و24 متصفح · التطبيق 332</td><td>100%<span class="bar"><i style="width:100%"></i></span><br><small>4 معايير قبول من 16 تنتظر Docker</small></td><td>مدموجة (#63) · <a href="phase-10-report.html">التقرير</a></td><td></td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>3. تطور عدد الاختبارات</h2>
+<p>الأرقام كما وردت في تقرير كل مرحلة. «—» تعني أن المكوّن لم يكن موجودا بعد أو أن التقرير لم يذكر العدد.</p>
+<div class="tbl"><table>
+<tr><th>المكوّن</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>5.5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th></tr>
+<tr><td>الخلفية (pytest)</td><td>22</td><td>—</td><td>97</td><td>123</td><td>151</td><td>241</td><td>277</td><td>396</td><td>441</td><td>660</td><td><b>701</b></td></tr>
+<tr><td>لوحة التحكم (vitest)</td><td>—</td><td>70</td><td>125</td><td>186</td><td>242</td><td>245</td><td>288</td><td>323</td><td>370</td><td>373</td><td><b>379</b></td></tr>
+<tr><td>لوحة التحكم (متصفح Playwright)</td><td>—</td><td>—</td><td>—</td><td>—</td><td>1</td><td>1</td><td>3</td><td>7</td><td>12</td><td>12</td><td><b>32</b></td></tr>
+<tr><td>البوابة (vitest)</td><td>—</td><td>—</td><td>—</td><td>82</td><td>82</td><td>82</td><td>82</td><td>82</td><td>82</td><td>82</td><td><b>83</b></td></tr>
+<tr><td>البوابة (متصفح Playwright)</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td><b>24</b></td></tr>
+<tr><td>تطبيق الهاتف (flutter test)</td><td>—</td><td>54</td><td>—</td><td>85</td><td>134</td><td>192</td><td>260</td><td>295</td><td>310</td><td>310</td><td><b>332</b></td></tr>
+<tr><td>محاكي القنوات <span class="sim">[SIM]</span></td><td>—</td><td>—</td><td>—</td><td>—</td><td>109</td><td>109</td><td>109</td><td>109</td><td>109</td><td>109</td><td><b>109</b></td></tr>
+<tr><td>خدمة الذكاء الاصطناعي</td><td>—</td><td>—</td><td>12</td><td>12</td><td>12</td><td>12</td><td>12</td><td>12</td><td>12</td><td>12</td><td><b>13</b></td></tr>
+<tr><td>خدمة الرؤية</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td><b>65</b></td></tr>
+</table></div>
+<p><b>اختبارات غير عددية شُغّلت أيضا:</b></p>
+<ul>
+  <li>الترحيلات صعودا ونزولا ثم صعودا على قاعدة جديدة (30 ترحيلا).</li>
+  <li>الأنواع الصارمة: mypy على الخلفية، وTypeScript.</li>
+  <li><code>flutter analyze</code>.</li>
+  <li>promtool لقواعد التنبيه.</li>
+  <li>تمرين الاستعادة.</li>
+  <li>تدقيق الثغرات والرخص وقوائم SBOM.</li>
+  <li>اختبار الحمل بـ k6.</li>
+</ul>
+</section>
+
+<section>
+<h2>4. ما يجب أن تعرفه قبل المراجعة</h2>
+<div class="tbl"><table>
+<tr><th>الموضوع</th><th>الحالة</th></tr>
+<tr><td>التكامل المستمر</td><td>GitHub Actions لا يشغّل أي مهمة منذ صار المستودع خاصا، فكل المهام تفشل خلال ثوان دون سجل. البديل المستعمل هو <code>scripts/ci-local.sh</code>، الذي يشغّل المهام نفسها على جهاز فيه Docker. الحل الدائم مشغّل خاص (<code>docs/self-hosted-runner.md</code>) أو دقائق Actions مدفوعة.</td></tr>
+<tr><td>فحوص لم تُشغَّل على النسخة الأخيرة</td><td>بناء الصور الأربع وفحص Trivy، والتحقق من الخطوة الثانية على Keycloak 26.8 الحقيقي، واختبار المنظومة كاملة، والنماذج الحقيقية للذكاء الاصطناعي والرؤية. كلها تحتاج Docker.</td></tr>
+<tr><td class="warn">ملاحظة جديدة: مكتبة PyAV في خدمة الذكاء الاصطناعي</td><td>ثبّت الالتزام <code>0f0c549</code> مكتبة PyAV على الإصدار 17.0.0 «حتى يستطيع faster-whisper فك الصوت». بعده رفعها Dependabot إلى 19.0.1 (<code>7b77269</code>)، وبقي التعليق في <code>services/ai/pyproject.toml:13</code> يقول إن الإصدار 19 أزال معاملا يمرّره faster-whisper 1.2.1. اختبارات الوحدة لا تفك صوتا حقيقيا، فلم تكشف ذلك. يُرجَّح أن تحويل الصوت إلى نص معطّل حاليا حتى تُشغَّل مهمة «النماذج الحقيقية». الإصلاح المقترح: العودة إلى 17.0.0 ومنع Dependabot من رفعها.</td></tr>
+<tr><td>المحاكاة <span class="sim">[SIM]</span></td><td>
+<ul>
+  <li><code>notify-sim</code>: إشعارات الدفع والرسائل القصيرة.</li>
+  <li><code>stream-sim</code>: كاميرا.</li>
+  <li><code>call-sim</code>: مكالمات.</li>
+  <li>طقس محاكى في التطوير.</li>
+</ul>
+الإنتاج يرفض الإقلاع بأي منها (<code>APP_ENV=production</code>).</td></tr>
+<tr><td>نموذج كشف الحرائق والدخان 2.0.0</td><td>دقته على اختبار D-Fire ضعيفة: AP50 تبلغ 0.26 للدخان و0.10 للحريق. الإصدار v3 قيد التدريب على Kaggle، وهو مؤجل بطلبك.</td></tr>
+<tr><td>قرارات معلقة عندك</td><td>
+<ul>
+  <li>طول كلمة المرور: 8 أحرف حاليا، ومستوى ASVS L2 يطلب 12.</li>
+  <li>نقل الإشعارات عبر Firebase إلى خارج تونس: يلزم ترخيص من الهيئة الوطنية لحماية المعطيات الشخصية.</li>
+  <li>مدة حفظ ملفات المتطوعين والمؤسسات وسجل التدقيق.</li>
+  <li>تسجيل المكالمات: معطّل حتى الترخيص.</li>
+</ul>
+</td></tr>
+<tr><td>الأمن</td><td>التقييم الحالي ذاتي (STRIDE وASVS L2). فحص ZAP الديناميكي واختبار الاختراق الخارجي لم يُجريا بعد.</td></tr>
+<tr><td>تتبع المتطلبات</td><td>21 متطلبا من 81 بلا اختبار مسمى، والقائمة في <code>docs/traceability.md</code>.</td></tr>
+<tr><td>ملف الإصدارات</td><td>بعض أرقام <code>docs/versions.md</code> سبقتها تحديثات Dependabot. الجدول التالي (القسم 5) مأخوذ من الملفات الفعلية في <code>main</code>.</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>5. الأدوات والمصادر والإصدارات المعتمدة</h2>
+<p>الإصدارات كما هي مثبتة في <span class="ltr">main @ 10b83a2</span>: في ملفات compose وDockerfile و<code>pyproject.toml</code> و<code>package.json</code> و<code>pubspec.yaml</code>. كل صورة مثبتة أيضا بالبصمة <code>@sha256</code>.</p>
+
+<h3>5.1 البنية (حاويات)</h3>
+<div class="tbl"><table>
+<tr><th>المكوّن</th><th>الإصدار</th><th>الدور</th><th>الرخصة</th><th>المصدر</th></tr>
+<tr><td>PostgreSQL + PostGIS + pgvector</td><td class="ltr">postgres:17-bookworm + postgresql-17-postgis-3 + pgvector (PGDG)</td><td>قاعدة البيانات الجغرافية والمتجهات</td><td>PostgreSQL / GPL-2.0</td><td class="ltr">hub.docker.com/_/postgres</td></tr>
+<tr><td>Valkey</td><td class="ltr">9.1-alpine</td><td>الحدود والجلسات والذاكرة المؤقتة</td><td>BSD-3</td><td class="ltr">valkey.io</td></tr>
+<tr><td>NATS JetStream</td><td class="ltr">2.15-alpine</td><td>الأحداث والزمن الحقيقي</td><td>Apache-2.0</td><td class="ltr">nats.io</td></tr>
+<tr><td>SeaweedFS (S3)</td><td class="ltr">4.48</td><td>تخزين الوسائط</td><td>Apache-2.0</td><td class="ltr">github.com/seaweedfs/seaweedfs</td></tr>
+<tr><td>tusd</td><td class="ltr">v2.10.1</td><td>رفع الوسائط بالاستئناف</td><td>MIT</td><td class="ltr">github.com/tus/tusd</td></tr>
+<tr><td>Keycloak</td><td class="ltr">26.8</td><td>الهوية (فضاءان)، TOTP</td><td>Apache-2.0</td><td class="ltr">keycloak.org</td></tr>
+<tr><td>Caddy</td><td class="ltr">2.11-alpine</td><td>TLS والوكيل العكسي (الإنتاج) وملفات الواجهتين</td><td>Apache-2.0</td><td class="ltr">caddyserver.com</td></tr>
+<tr><td>MediaMTX</td><td class="ltr">1.21.2-ffmpeg</td><td>البث المباشر</td><td>MIT</td><td class="ltr">github.com/bluenviron/mediamtx</td></tr>
+<tr><td>Asterisk</td><td class="ltr">22.11.0 LTS + pjproject 2.17 (على ubuntu:26.04)</td><td>المقسم الهاتفي</td><td>GPL-2.0 (عملية مستقلة)</td><td class="ltr">asterisk.org</td></tr>
+<tr><td>OpenSearch</td><td class="ltr">2.19.6</td><td>مكتبة الأحداث (ملف <code>search</code>)</td><td>Apache-2.0</td><td class="ltr">opensearch.org</td></tr>
+<tr><td>Valhalla</td><td class="ltr">3.9.1</td><td>التوجيه على خريطة تونس (ملف <code>routing</code>)</td><td>MIT / البيانات ODbL</td><td class="ltr">github.com/valhalla/valhalla</td></tr>
+<tr><td>Ollama</td><td class="ltr">0.40.6</td><td>النموذج اللغوي المحلي (ملف <code>ai</code>)</td><td>MIT</td><td class="ltr">ollama.com</td></tr>
+<tr><td>Prometheus / Alertmanager / node-exporter</td><td class="ltr">v3.5.0 / v0.28.1 / v1.9.1</td><td>المراقبة (ملف <code>monitoring</code>)</td><td>Apache-2.0</td><td class="ltr">prometheus.io</td></tr>
+<tr><td>Mailpit <span class="sim">[SIM]</span></td><td class="ltr">v1.31.6</td><td>التقاط البريد في التطوير</td><td>MIT</td><td class="ltr">mailpit.axllent.org</td></tr>
+<tr><td>صور البناء</td><td class="ltr">python:3.12-slim · node:22-alpine · uv 0.13.4 · golang:1.27-bookworm (gosu)</td><td>بناء الخدمات والواجهات</td><td>PSF / MIT</td><td>—</td></tr>
+</table></div>
+
+<h3>5.2 الخلفية (<code>services/api</code>، Python 3.12)</h3>
+<div class="tbl"><table>
+<tr><th>الحزمة</th><th>الإصدار</th><th>الحزمة</th><th>الإصدار</th></tr>
+<tr><td>fastapi</td><td>0.146.0</td><td>uvicorn</td><td>0.54.0</td></tr>
+<tr><td>sqlalchemy</td><td>2.1.5</td><td>asyncpg</td><td>0.32.0</td></tr>
+<tr><td>alembic</td><td>1.20.0</td><td>pydantic-settings</td><td>2.16.0</td></tr>
+<tr><td>geoalchemy2</td><td>0.20.0</td><td>pyjwt</td><td>2.15.1</td></tr>
+<tr><td>redis</td><td>8.1.0</td><td>nats-py</td><td>2.16.0</td></tr>
+<tr><td>boto3</td><td>1.43.114</td><td>cryptography</td><td>50.0.2</td></tr>
+<tr><td>weasyprint (PDF)</td><td>70.0</td><td>structlog</td><td>26.1.0</td></tr>
+<tr><td>pytest / ruff / mypy</td><td>9.1.1 / 0.17.1 / 2.4.0</td><td>pip-audit / cyclonedx-py</td><td>2.9.0 / 7.5.0</td></tr>
+</table></div>
+
+<h3>5.3 الذكاء الاصطناعي والرؤية</h3>
+<div class="tbl"><table>
+<tr><th>القدرة</th><th>النموذج أو الحزمة</th><th>الرخصة</th></tr>
+<tr><td>تحويل الصوت إلى نص</td><td>Whisper large-v3 (خادم GPU)، medium (CPU)، small (CI)، عبر faster-whisper 1.2.1 وctranslate2 4.8.3</td><td>MIT</td></tr>
+<tr><td>الترجمة إلى العربية</td><td>Opus-MT (fr→ar، en→ar)</td><td>Apache-2.0 / CC-BY-4.0</td></tr>
+<tr><td>التضمين الدلالي</td><td>multilingual-e5-base (768 بعدا)</td><td>MIT</td></tr>
+<tr><td>القراءة المهيكلة للبلاغ</td><td>Qwen3: 8B (GPU)، 4B (CPU)، 1.7B (CI)</td><td>Apache-2.0</td></tr>
+<tr><td>كشف الحرائق والدخان</td><td><code>ehimaya-fire-smoke-yolox-tiny</code> 2.0.0، عبر onnxruntime 1.30.0</td><td>Apache-2.0</td></tr>
+<tr><td>كشف الأشخاص</td><td>YOLOX-Tiny COCO 0.1.1rc0</td><td>Apache-2.0</td></tr>
+<tr><td>مصادر البيانات</td><td>
+<ul>
+  <li>Open-Meteo: الطقس، والبيانات بترخيص CC BY 4.0.</li>
+  <li>Copernicus DEM GLO-90: الارتفاعات.</li>
+  <li>OpenStreetMap عبر Geofabrik: الخرائط والتوجيه، بترخيص ODbL.</li>
+  <li>geoBoundaries: حدود الولايات، بترخيص ODbL.</li>
+</ul>
+</td><td>متنوعة</td></tr>
+</table></div>
+
+<h3>5.4 الواجهات وتطبيق الهاتف</h3>
+<div class="tbl"><table>
+<tr><th>التطبيق</th><th>الأساس</th><th>أهم الحزم</th></tr>
+<tr><td>لوحة التحكم والبوابة</td><td>Node.js 22 LTS، npm 10+</td><td>
+<ul>
+  <li>react 19.3.1، react-router 8.4.0، @tanstack/react-query 5.104.4.</li>
+  <li>oidc-client-ts 3.5.0، i18next 26.5.2، maplibre-gl 6.14.0.</li>
+  <li>vite 8.3.4، typescript 5.9.3، vitest 5.0.5، eslint 10.13.0.</li>
+  <li>@playwright/test 1.64.1، @axe-core/playwright 4.13.0.</li>
+  <li>jssip 3.13.8، hls.js 1.7.3، uplot 1.6.32.</li>
+</ul>
+</td></tr>
+<tr><td>تطبيق الهاتف</td><td>Flutter 3.47.7، Dart 3.13.5، Java 17</td><td>
+<ul>
+  <li>flutter_riverpod 3.4.3، go_router 18.1.0، dio 5.11.1.</li>
+  <li>drift 2.35.2، sqlite3 3.7.1 (SQLCipher).</li>
+  <li>flutter_appauth 12.1.0، flutter_secure_storage 11.2.0.</li>
+  <li>geolocator 14.0.1، flutter_map 8.3.2.</li>
+  <li>firebase_core 5.0.0، firebase_messaging 17.0.0، flutter_local_notifications 22.3.1.</li>
+  <li>flutter_webrtc 1.6.2+hotfix.3، open_filex 5.0.0.</li>
+</ul>
+</td></tr>
+</table></div>
+
+<h3>5.5 أدوات الجودة والأمن</h3>
+<div class="tbl"><table>
+<tr><th>الأداة</th><th>الإصدار</th><th>الاستعمال</th></tr>
+<tr><td>Trivy (trivy-action)</td><td>0.36.0</td><td>فحص ثغرات الصور</td></tr>
+<tr><td>OWASP ZAP</td><td>2.16.1</td><td>فحص ديناميكي يدوي قبل الإصدار (<code>infra/security/zap/run.sh</code>)</td></tr>
+<tr><td>k6</td><td>2.3.0</td><td>اختبار الحمل (<code>infra/loadtest</code>)</td></tr>
+<tr><td>promtool</td><td>من Prometheus 3.5.0</td><td>فحص قواعد التنبيه</td></tr>
+<tr><td>@cyclonedx/cyclonedx-npm</td><td>6.0.1</td><td>قوائم SBOM للواجهتين</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>6. أولوية التنصيب وأوامر التثبيت</h2>
+<p>الترتيب من الأساسي إلى الاختياري. الأوامر لنظام Linux (Ubuntu 24.04)، وعلى Windows تُنفَّذ داخل WSL2، ومعه Docker Desktop.</p>
+
+<div class="step"><h3><span class="prio">1</span> Git وOpenSSL</h3>
+<pre>sudo apt update && sudo apt install -y git openssl curl
+git clone https://github.com/mouhabouk/E-HIMAYA.git && cd E-HIMAYA</pre></div>
+
+<div class="step"><h3><span class="prio">2</span> Docker Engine 27+ مع Compose v2.24+ (إلزامي: يشغّل المنظومة كلها)</h3>
+<pre>curl -fsSL https://get.docker.com | sh
+sudo usermod -aG docker $USER      # ثم أعد فتح الجلسة
+docker --version && docker compose version</pre>
+<p>على Windows: ثبّت Docker Desktop وفعّل التكامل مع WSL2.</p></div>
+
+<div class="step"><h3><span class="prio">3</span> إعداد الأسرار وتشغيل المنظومة الأساسية</h3>
+<pre>cp .env.example .env
+sed -i "s|^ANON_PSEUDONYM_SECRET=.*|ANON_PSEUDONYM_SECRET=$(openssl rand -hex 32)|" .env
+sed -i "s|^FIELD_ENCRYPTION_KEY=.*|FIELD_ENCRYPTION_KEY=$(openssl rand -base64 32)|" .env
+sed -i "s|^TUSD_HOOK_SECRET=.*|TUSD_HOOK_SECRET=$(openssl rand -hex 24)|" .env
+# غيّر كل كلمات المرور الأخرى في .env
+docker compose --env-file .env -f infra/compose.yml up -d --build
+docker compose --env-file .env -f infra/compose.yml ps
+python3 infra/smoke/smoke_test.py      # بلاغ مجهول + رفع بالاستئناف + تحقق البصمة</pre>
+<p>الخلفية تطبّق الترحيلات آليا، وKeycloak يستورد الفضاءين. الواجهة البرمجية على <span class="ltr">http://localhost:8000/docs</span>، وإدارة Keycloak على <span class="ltr">http://localhost:8080/admin</span>.</p></div>
+
+<div class="step"><h3><span class="prio">4</span> أول مستخدم إداري (يدوي في Keycloak)</h3>
+<ol>
+  <li>ادخل إلى <span class="ltr">http://localhost:8080/admin</span> بحساب <code>KEYCLOAK_ADMIN</code>.</li>
+  <li>افتح الفضاء <code>ehimaya-staff</code>، ثم Users، ثم Add user.</li>
+  <li>حدّد السمة <code>gouvernorat_code</code>، أو <code>scope_level=national</code> للنطاق الوطني.</li>
+  <li>أسند الدور، ثم عيّن كلمة مرور مؤقتة من تبويب Credentials.</li>
+  <li>عند أول دخول يغيّر المستخدم كلمة المرور ويفعّل TOTP.</li>
+</ol></div>
+
+<div class="step"><h3><span class="prio">5</span> Python 3.12 وuv (تطوير الخلفية والخدمات)</h3>
+<pre>curl -LsSf https://astral.sh/uv/install.sh | sh
+uv python install 3.12
+cd services/api && uv sync
+uv run alembic upgrade head
+uv run pytest -q
+uv run ruff check . && uv run ruff format --check . && uv run mypy app</pre></div>
+
+<div class="step"><h3><span class="prio">6</span> Node.js 22 LTS (لوحة التحكم والبوابة)</h3>
+<pre>curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+nvm install 22
+cd apps/dashboard && npm ci && npm run dev          # http://localhost:5173
+cd apps/portal    && npm ci && npm run dev          # http://localhost:5174
+npm run lint && npm run typecheck && npm test && npm run build
+npx playwright install chromium && npm run test:e2e   # اختبارات المتصفح</pre></div>
+
+<div class="step"><h3><span class="prio">7</span> Flutter 3.47.7 وJava 17 وAndroid SDK (تطبيق الهاتف)</h3>
+<pre>sudo apt install -y openjdk-17-jdk
+# Flutter: https://docs.flutter.dev/get-started/install (القناة المستقرة 3.47.7)
+flutter doctor
+cd apps/mobile && flutter pub get && flutter analyze && flutter test
+adb reverse tcp:8000 tcp:8000 && adb reverse tcp:8080 tcp:8080 && adb reverse tcp:1080 tcp:1080
+flutter run --dart-define=API_BASE_URL=http://localhost:8000 \
+  --dart-define=TUS_URL=http://localhost:1080/api/v1/uploads/ \
+  --dart-define=OIDC_ISSUER=http://localhost:8080/realms/ehimaya-public</pre></div>
+
+<div class="step"><h3><span class="prio opt">8</span> الملفات الاختيارية (حسب الحاجة)</h3>
+<pre># الذكاء الاصطناعي (ينزّل النماذج مرة واحدة، نحو 6 GB في ملف cpu)
+docker compose --env-file .env -f infra/compose.yml --profile ai up -d
+# الرؤية الحاسوبية
+docker compose --env-file .env -f infra/compose.yml --profile vision up -d
+# مكتبة الأحداث (OpenSearch)، التوجيه (Valhalla)، التضاريس، المحاكاة [SIM]
+docker compose --env-file .env -f infra/compose.yml --profile search --profile routing --profile terrain up -d
+docker compose --env-file .env -f infra/compose.yml --profile sim up -d</pre></div>
+
+<div class="step"><h3><span class="prio opt">9</span> خادم GPU (النماذج الكبيرة)</h3>
+<pre># مشغّل NVIDIA ثم NVIDIA Container Toolkit:
+# https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html
+sudo nvidia-ctk runtime configure --runtime=docker && sudo systemctl restart docker
+docker compose --env-file .env -f infra/compose.yml -f infra/compose.gpu.yml --profile ai up -d</pre></div>
+
+<div class="step"><h3><span class="prio opt">10</span> الإنتاج (دليل كامل في <code>docs/deploy-production.md</code>)</h3>
+<pre>docker compose --env-file .env -f infra/compose.yml -f infra/compose.prod.yml up -d --build --wait
+docker compose --env-file .env -f infra/compose.yml -f infra/compose.prod.yml --profile monitoring up -d
+curl -fsS https://API_HOST/health/ready</pre>
+<p>النسخ الاحتياطي والاستعادة في <code>docs/runbooks/backup-restore.md</code>.</p></div>
+
+<div class="step"><h3><span class="prio opt">11</span> فحوص الجودة محليا (بديل GitHub Actions)</h3>
+<pre>scripts/ci-local.sh --list        # المهام المتاحة
+scripts/ci-local.sh --keep-going  # كل المهام، مع تقرير ci-local-report.md
+infra/security/zap/run.sh         # فحص ZAP على بيئة تجريبية كاملة
+k6 run infra/loadtest/sos-surge.js</pre></div>
+</section>
+
+<section>
+<h2>7. المؤجل إلى جلسات لاحقة</h2>
+<ul>
+  <li><b>تدريب كاشف الحرائق والدخان v3:</b>
+    <ul>
+      <li>دفترا التدريب لـ Colab وKaggle جاهزان (<code>services/vision/training/colab/</code>).</li>
+      <li>الدفعة القادمة: تشغيل التدريب، ثم تقييم v3 مقارنة بـ v2.</li>
+    </ul>
+  </li>
+  <li><b>المرحلة 11، التجربة الميدانية في ولاية واحدة:</b>
+    <ul>
+      <li>مراجعتها مكتوبة في <code>docs/phase-11/review.md</code>، مع 7 قرارات تنتظرك.</li>
+      <li>لا تطوير قبل موافقتك.</li>
+    </ul>
+  </li>
+</ul>
+</section>
+
+<footer>ء-حماية · الملف التقني للمراحل 1 إلى 10 · 2026-10-22</footer>
+</div>
+</body>
+</html>

@@ -80,8 +80,9 @@ the owner (§8, D2). The redesign has to keep SOS from ever being refused, as de
   once per operator.
 - The same is true after `reset_credentials` (`keycloak.py:213-221`): the password is kept, but the required action
   `VERIFY_EMAIL` cannot be completed without e-mail.
-- The very first national administrator also has to be created by hand in the Keycloak console. No documented
-  bootstrap exists (grep for `bootstrap` finds nothing in `app/`).
+- The very first national administrator is created by hand in the Keycloak console (`README.md`, "إنشاء أول مستخدم
+  إداري"). Those steps never set a password either, so the administrator also has to set a temporary one in the
+  Credentials tab, a step the README leaves out.
 
 ### 2.4 Reference content written by us, not by the Civil Protection
 
@@ -233,7 +234,7 @@ Code work, to be detailed in `docs/api/phase-11-contract.md` once the decisions 
    - CSV import of units and resources (dry run, then apply, audited);
    - first-sign-in delivery for staff, either by an e-mail invitation through Keycloak with SMTP configured, or a
      one-time temporary password shown once to the creating administrator and audited;
-   - a documented bootstrap for the first national administrator;
+   - complete the README steps for the first national administrator (temporary password);
    - production redirect URIs set by the deployment, not by hand.
 4. **Two-server deployment:** compose files and a guide for the GPU server, a private link with TLS and tokens, and
    firewall rules.
