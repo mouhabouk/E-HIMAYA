@@ -10,7 +10,7 @@ dependencies = [
   "httpx==0.28.1",
   "structlog==26.1.0",
   "faster-whisper==1.2.1",
-  "av==19.0.1",  # PyAV 19 dropped the metadata_errors argument that faster-whisper 1.2.1 passes
+  "av==17.0.0",  # PyAV 19 dropped the metadata_errors argument that faster-whisper 1.2.1 passes
   "ctranslate2==4.8.3",
   "sentencepiece==0.2.2",
   "tokenizers==0.23.3",
