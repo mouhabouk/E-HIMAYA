@@ -155,11 +155,13 @@ VISION_MODELS_DIR=/models python eval/evaluate_yolo.py --dir training/work/extra
 
 For a run from the COCO weights, pass `--weights yolox_tiny.pth` and about 30 epochs.
 
-**D-Fire on a GPU (Google Colab).** `training/colab/dfire.ipynb` trains YOLOX-Tiny from the COCO weights on the
-D-Fire train split (human boxes only, no teacher), keeps its checkpoints on Google Drive so that a new session
-resumes, and exports the ONNX file. It is generated from `train.py` and `export_onnx.py` by
-`training/colab/build_notebook.py` (checked for drift in CI). Some copies of the D-Fire archive hold empty image
-files (203 of the 17,222 train images in the copy used here); `train.py` skips unreadable images. The D-Fire test
+**D-Fire on a GPU (Google Colab or Kaggle).** `training/colab/dfire.ipynb` trains YOLOX-Tiny from the COCO weights
+on the D-Fire train split (human boxes only, no teacher), keeps its checkpoints on Google Drive so that a new session
+resumes, and exports the ONNX file. `training/colab/dfire-kaggle.ipynb` does the same on Kaggle (free GPU, sessions of
+up to 12 hours, run in the background with *Save & Run All*), reading D-Fire from an attached dataset, unzipped or
+not. Both are generated from `train.py` and `export_onnx.py` by `training/colab/build_notebook.py` (checked for drift
+in CI). Some copies of the D-Fire archive hold empty or truncated image files (203 of the 17,222 train images in the
+copy used here are empty); `train.py` decodes every image once and skips those it cannot read. The D-Fire test
 split (4,306 images) is the held-out set:
 `VISION_MODELS_DIR=/models python eval/evaluate_yolo.py --dir D-Fire/test --classes smoke,fire`.
 
