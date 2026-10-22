@@ -72,9 +72,9 @@ python3 infra/smoke/smoke_test.py   # بلاغ مجهول + رفع ملف بال
 
 1. ادخل إلى http://localhost:8080/admin بحساب `KEYCLOAK_ADMIN`.
 2. اختر الفضاء `ehimaya-staff` ثم Users ثم Add user.
-4. في تبويب Credentials عيّن كلمة مرور مؤقتة (Temporary = On).
 3. حدّد السمة `gouvernorat_code` (مثلا `61` لصفاقس) أو `scope_level = national` للنطاق الوطني، ثم أسند الدور المناسب (`operator`، `sysadmin`...).
-4. عند أول دخول يُطلب من المستخدم تغيير كلمة المرور وتفعيل التحقق الثنائي (TOTP).
+4. في تبويب Credentials عيّن كلمة مرور مؤقتة (Temporary = On).
+5. عند أول دخول يُطلب من المستخدم تغيير كلمة المرور وتفعيل التحقق الثنائي (TOTP).
 
 ## تطوير الخلفية واختبارها
 
