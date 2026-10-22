@@ -42,7 +42,7 @@ docs/                    الوثائق وتقارير المراحل
 المتطلبات: Docker Engine 27 أو أحدث مع Compose v2. لتطوير الخلفية خارج الحاويات: Python 3.12 و [uv](https://docs.astral.sh/uv/).
 
 ```bash
-git clone https://github.com/YaamenMegdiche/E-HIMAYA.git && cd E-HIMAYA
+git clone https://github.com/mouhabouk/E-HIMAYA.git && cd E-HIMAYA
 cp .env.example .env
 # غيّر كل كلمات المرور في .env، وولّد الأسرار الثلاثة:
 sed -i "s|^ANON_PSEUDONYM_SECRET=.*|ANON_PSEUDONYM_SECRET=$(openssl rand -hex 32)|" .env
@@ -72,6 +72,7 @@ python3 infra/smoke/smoke_test.py   # بلاغ مجهول + رفع ملف بال
 
 1. ادخل إلى http://localhost:8080/admin بحساب `KEYCLOAK_ADMIN`.
 2. اختر الفضاء `ehimaya-staff` ثم Users ثم Add user.
+4. في تبويب Credentials عيّن كلمة مرور مؤقتة (Temporary = On).
 3. حدّد السمة `gouvernorat_code` (مثلا `61` لصفاقس) أو `scope_level = national` للنطاق الوطني، ثم أسند الدور المناسب (`operator`، `sysadmin`...).
 4. عند أول دخول يُطلب من المستخدم تغيير كلمة المرور وتفعيل التحقق الثنائي (TOTP).
 
