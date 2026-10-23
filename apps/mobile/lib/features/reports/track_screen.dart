@@ -72,7 +72,7 @@ class _TrackScreenState extends ConsumerState<TrackScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.trackTitle),
-        actions: const [EmergencyNumbersAction()],
+        actions: const [StandardAppBarActions()],
       ),
       body: SafeArea(
         child: ListView(

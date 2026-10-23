@@ -6,6 +6,7 @@ import '../../core/auth/identity.dart';
 import '../../l10n/app_localizations.dart';
 import '../onboarding/login_actions.dart';
 import '../sos/sos_widgets.dart';
+import '../update/update_sheet.dart';
 
 /// Main screens (home, my reports, settings) with the SOS action always one tap away.
 class MainShell extends ConsumerWidget {
@@ -30,13 +31,14 @@ class MainShell extends ConsumerWidget {
                 content: Text(l10n.anonBlockedBody),
                 actions: [
                   TextButton(
-                    onPressed: () => runLogin(context, ref, register: true),
+                    onPressed: () => runLogin(context, ref),
                     child: Text(l10n.citizenRegister),
                   ),
                 ],
               ),
             ),
-          Expanded(child: shell),
+          // Addition 3: "what's new" / mandatory update, checked at start and once a day.
+          Expanded(child: UpdateGate(child: shell)),
         ],
       ),
       // The home screen has its own big SOS button.

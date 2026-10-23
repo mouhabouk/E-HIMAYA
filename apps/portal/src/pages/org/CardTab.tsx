@@ -19,6 +19,7 @@ import { queryKeys } from "../../lib/portalApi";
 import type { Organization } from "../../lib/types";
 import { normalizeIdentifier } from "../../lib/validators";
 import { BlockedNote, useOrg } from "./OrgWorkspace";
+import { RequiredNote } from "./RegisterParts";
 
 /** Card editor (FR-B-002) with optimistic concurrency on `version` (`409 version_conflict`). */
 export function CardTab() {
@@ -77,6 +78,7 @@ export function CardTab() {
   return (
     <form className="stack" onSubmit={submit} noValidate>
       <BlockedNote action="editCard" />
+      <RequiredNote />
       {CARD_SECTIONS.map((section) => (
         <section key={section} className="card" aria-labelledby={`card-${section}-title`}>
           <h2 id={`card-${section}-title`}>{t(`register.steps.${section}`)}</h2>

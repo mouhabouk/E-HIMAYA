@@ -36,9 +36,24 @@ class AppPrefs {
   static const _batteryOptAskedAt = 'power.battery_opt_asked_at';
   static const _anonQuotaLimit = 'quota.anon_limit';
   static const _anonQuotaRemaining = 'quota.anon_remaining';
+  // Phase A: first-launch steps and the colour palette.
+  static const _languageChosen = 'welcome.language_chosen';
+  static const _introSeen = 'welcome.intro_seen';
+  static const _permissionsSeen = 'welcome.permissions_seen';
+  static const _palette = 'settings.palette';
+  static const _releaseJson = 'update.release';
+  static const _releaseCheckedAt = 'update.checked_at';
+  static const _updatePostponedBuild = 'update.postponed_build';
 
   /// Kept when the account is deleted: interface choices, not personal data.
-  static const _keptOnWipe = {_locale, _theme, _batterySaver};
+  static const _keptOnWipe = {
+    _locale,
+    _theme,
+    _palette,
+    _batterySaver,
+    _languageChosen,
+    _introSeen,
+  };
 
   String? get charterAcceptedVersion => _prefs.getString(_charterVersion);
   DateTime? get charterAcceptedAt {
@@ -174,6 +189,40 @@ class AppPrefs {
       await _prefs.setInt(_anonQuotaRemaining, remaining);
     }
   }
+
+  /// Users who already used the app before phase A (a role is stored) skip the language and
+  /// introduction screens and the permissions step; they only accept the new terms.
+  bool get _existingUser => role != null;
+
+  bool get languageChosen =>
+      _prefs.getBool(_languageChosen) ?? (_existingUser || localeCode != null);
+  Future<void> setLanguageChosen() => _prefs.setBool(_languageChosen, true);
+
+  bool get introSeen => _prefs.getBool(_introSeen) ?? _existingUser;
+  Future<void> setIntroSeen() => _prefs.setBool(_introSeen, true);
+
+  bool get permissionsSeen => _prefs.getBool(_permissionsSeen) ?? _existingUser;
+  Future<void> setPermissionsSeen() => _prefs.setBool(_permissionsSeen, true);
+
+  String? get palette => _prefs.getString(_palette);
+  Future<void> setPalette(String value) => _prefs.setString(_palette, value);
+
+  /// Last answer of `GET /api/v1/app/version` (JSON) and when it was fetched.
+  String? get releaseJson => _prefs.getString(_releaseJson);
+  DateTime? get releaseCheckedAt {
+    final raw = _prefs.getString(_releaseCheckedAt);
+    return raw == null ? null : DateTime.tryParse(raw);
+  }
+
+  Future<void> setRelease(String json, DateTime at) async {
+    await _prefs.setString(_releaseJson, json);
+    await _prefs.setString(_releaseCheckedAt, at.toUtc().toIso8601String());
+  }
+
+  /// "Later" on an optional update: not offered again for that build.
+  int? get updatePostponedBuild => _prefs.getInt(_updatePostponedBuild);
+  Future<void> setUpdatePostponedBuild(int build) =>
+      _prefs.setInt(_updatePostponedBuild, build);
 
   /// Account deletion: forgets everything except the language, theme and battery saver choice
   /// (the app then starts again from the charter).

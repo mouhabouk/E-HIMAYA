@@ -25,7 +25,7 @@ class CalloutsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.calloutsTitle),
-        actions: const [EmergencyNumbersAction()],
+        actions: const [StandardAppBarActions()],
       ),
       body: RefreshIndicator(
         onRefresh: () => ref.refresh(myCalloutsProvider.future),

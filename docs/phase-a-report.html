@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ء-حماية | تقرير المرحلة A</title>
+<style>
+:root{--bg:#f7f8fa;--paper:#fff;--ink:#1b2430;--muted:#5b6675;--line:#dfe3e8;--accent:#b3261e;--accent2:#0b5cad;--ok:#1e7d3a;--warn:#a15c00;--chip:#eef1f5;--head:#f1f3f6;--navy:#1f3d99;--orange:#e07b00}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1318;--paper:#161b22;--ink:#e6eaef;--muted:#9aa5b1;--line:#2a313b;--accent:#ff6b5e;--accent2:#5aa9ff;--ok:#5cc97a;--warn:#e0a24a;--chip:#1f2630;--head:#1c222b;--navy:#8fa8ff;--orange:#ffb35c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Naskh Arabic","Segoe UI",Tahoma,Arial,sans-serif;line-height:1.75;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header.cover{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:10px;padding:28px 24px;margin-bottom:20px}
+header.cover h1{margin:0 0 6px;font-size:30px}
+header.cover .sub{color:var(--muted);margin:0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:16px}
+.meta div{background:var(--chip);border-radius:6px;padding:8px 12px;font-size:14px}
+.meta b{display:block;color:var(--muted);font-weight:600;font-size:12px}
+a{color:var(--accent2);text-decoration:none}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:20px}
+h2{margin-top:0;font-size:23px;border-bottom:2px solid var(--line);padding-bottom:8px}
+h3{font-size:18px;margin:18px 0 8px}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:start;vertical-align:top}
+th{background:var(--head);font-weight:700;white-space:nowrap}
+code{direction:ltr;unicode-bidi:isolate;background:var(--chip);padding:1px 5px;border-radius:4px;font-size:13px}
+pre{direction:ltr;text-align:left;background:var(--chip);padding:10px 12px;border-radius:6px;overflow-x:auto;font-size:13px;margin:6px 0}
+.note{border-inline-start:4px solid var(--accent2);background:var(--chip);padding:10px 14px;border-radius:6px;margin:12px 0}
+.warn{border-inline-start:4px solid var(--warn)}
+.sim{display:inline-block;background:#ffb300;color:#1f1300;font-weight:700;font-size:12px;padding:1px 8px;border-radius:999px;margin-inline-end:6px}
+.simbox{border:2px dashed #ffb300;background:rgba(255,179,0,.10);border-radius:8px;padding:12px 16px;margin:12px 0}
+.ltr{direction:ltr;unicode-bidi:isolate}
+ul,ol{padding-inline-start:22px}
+.bar{height:10px;background:var(--chip);border-radius:6px;overflow:hidden;min-width:90px}
+.bar span{display:block;height:100%;background:var(--ok)}
+.pipeline{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0}
+.pipeline div{border:1px solid var(--line);border-radius:8px;padding:6px 12px;background:var(--chip);font-weight:600}
+.pipeline div.now{border-color:var(--accent);background:rgba(179,38,30,.08)}
+.pipeline i{color:var(--muted);font-style:normal}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--paper)}
+.card h3{margin:0 0 4px;font-size:17px}
+.card .v{color:var(--muted);font-size:13px;margin:0 0 6px}
+.card dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:6px 0;font-size:14px}
+.card dt{color:var(--muted);font-weight:600}
+.card dd{margin:0}
+.prio{display:inline-block;border-radius:999px;padding:0 8px;font-size:12px;font-weight:700;color:#fff}
+.p1{background:#b3261e}.p2{background:#a15c00}.p3{background:#0b5cad}.p4{background:#5b6675}
+footer{color:var(--muted);text-align:center;font-size:13px}
+@media print{body{background:#fff}section,header.cover,.card{border:none;break-inside:avoid-page}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="cover">
+  <h1>ء-حماية <span class="ltr">e-Himaya</span></h1>
+  <p class="sub">تقرير المرحلة A: الاستقبال الأول، الدخول برقم الهاتف ورمز SMS، الواجهة الرئيسية، التحديث داخل التطبيق</p>
+  <div class="meta">
+    <div><b>التاريخ</b>2026-10-23</div>
+    <div><b>الفرع</b><span class="ltr">claude/project-thread-yzwsn2</span></div>
+    <div><b>الحالة</b>منجزة، بانتظار المراجعة والدمج وموافقتك قبل المرحلة B</div>
+    <div><b>المراجع</b><a href="phase-a/design.md">التصميم</a> · <a href="versions.md">الإصدارات</a> · <a href="#tools">بطاقات الأدوات</a></div>
+  </div>
+</header>
+
+<section>
+<h2>1. أين تقع هذه المرحلة من مسار المشروع</h2>
+<p>عنوان المشروع يقوم على سلسلة واحدة. المرحلة A تقوّي أول حلقة فيها: أن يصل المواطن إلى التطبيق ويعرّف بنفسه ويبلّغ دون عوائق، لأن جودة كل ما بعده (المعالجة والتحليل والمؤشرات والتنبؤ والقرار) تبدأ من بلاغ موثوق ورقم هاتف مؤكد.</p>
+<div class="pipeline">
+  <div class="now">التبليغ (المرحلة A)</div><i>←</i>
+  <div>المعالجة</div><i>←</i>
+  <div>التحليل</div><i>←</i>
+  <div>مؤشرات الأداء KPI</div><i>←</i>
+  <div>التنبؤ بالذكاء الاصطناعي</div><i>←</i>
+  <div>اتخاذ القرار</div>
+</div>
+<ul>
+  <li><b>رقم هاتف مؤكد</b>: يرفع موثوقية البلاغ (مؤشر المصداقية في التحليل) ويسمح بمعاودة الاتصال بالمبلّغ.</li>
+  <li><b>تحديد الموقع ظاهر في الواجهة الرئيسية</b>: بلاغات بإحداثيات أدق، أي خرائط حرارية وتنبؤات أدق لاحقا.</li>
+  <li><b>تنقية الألفاظ المسيئة</b>: لا تمس البلاغات ولا الاستغاثة أبدا، فلا تضيع معلومة طارئة بسبب لفظ.</li>
+  <li><b>التحديث داخل التطبيق</b>: كل الهواتف على نفس قواعد التحقق، فتبقى البيانات متجانسة للتحليل.</li>
+</ul>
+</section>
+
+<section>
+<h2>2. التقدم لكل نافذة</h2>
+<div class="tbl"><table>
+<tr><th>النافذة</th><th>ما أُنجز</th><th>الاختبارات</th><th>التقدم</th></tr>
+<tr><td>اختيار اللغة (أول تشغيل)</td><td>العربية والفرنسية والإنجليزية، شريط اللغة وزر الأرقام الطارئة وزر «اتصل بـ 198» حاضرة من أول شاشة.</td><td>اختبار المسار الكامل + ترتيب الحارس</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+<tr><td>بطاقات التعريف (5)</td><td>نصوص الإضافات المعتمدة، قابلة للتخطي، شعار الديوان.</td><td>المسار الكامل + اكتمال الترجمات</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+<tr><td>الشروط والأحكام (10 أقسام، الإصدار <code>2026-11</code>)</td><td>زر القبول لا يعمل قبل القراءة حتى النهاية ووضع العلامة. «لا أوافق» يشرح أن 198 يبقى متاحا. المستعملون الحاليون يقبلون الإصدار الجديد مرة واحدة.</td><td>اختباران في الواجهة + الخلفية ترفض الإصدار القديم</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+<tr><td>الأذونات</td><td>بطاقة لكل إذن (الموقع، الإشعارات، الرسائل، جهات الاتصال) مع سبب الطلب، ويمكن المتابعة دون منح أي إذن.</td><td>المسار الكامل</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+<tr><td>الدخول برقم الهاتف ورمز SMS</td><td>علم تونس و<code>+216</code> ثابت، فحص البادئات 2 و3 و4 و5 و9، رمز من 6 أرقام يُتحقق منه تلقائيا، عداد إعادة الإرسال 60 ثانية، رسالة بعدد المحاولات الباقية، «المتابعة كزائر» و«حساب مؤسسة» و«الدخول بالبريد» للحسابات القديمة.</td><td>2 في الواجهة، 4 للعميل، 36 JUnit، 15 فحصا على Keycloak 26.8 حقيقي</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+<tr><td>الواجهة الرئيسية</td><td>الشعار والعنوان، شريط اللغة، الوضع الليلي، شريط الموقع، زر الاستغاثة، بطاقة «بلّغ عن حادث»، الأرقام 198 و190 و197 و193 (198 مميز بالشعار)، الاختصارات، الطقس، شريط ثابت «اتصل بـ 198 / رسالة استغاثة».</td><td>الاتصال بـ 198 و197 ورسالة الاستغاثة، نص بحجم 200% دون تجاوز</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+<tr><td>شريط الموقع</td><td>أخضر «الموقع مفعّل» أو كهرماني «الموقع غير مفعّل» مع زر يفتح الإعدادات. الشكل والنص لا اللون وحده.</td><td>حالتان</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+<tr><td>نافذة التحديث</td><td>«الجديد» مع «تحديث» و«لاحقا»؛ تحت الحد الأدنى لا يمكن تأجيلها ويبقى 198 متاحا. فحص عند التشغيل ومرة في اليوم، مع آخر جواب محفوظ دون إنترنت.</td><td>اختياري وإجباري + 6 لنموذج الإصدار</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+<tr><td>الإعدادات: الألوان</td><td>لوحة الديوان (كحلي، برتقالي، أخضر، أحمر) ولوحات حمراء وزرقاء وخضراء، وزر نهار/ليل في كل شريط علوي.</td><td>التبديل والحفظ</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+<tr><td>الملف الشخصي</td><td>نجمة حمراء وقراءة «إجباري» لقارئ الشاشة على الحقول الإجبارية، والرقم المؤكد يُعرض تلقائيا. الأسماء والعنوان تمر بمرشح الألفاظ.</td><td>دلالات الحقل الإجباري + 3 في الخلفية</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+<tr><td>كل الشاشات الأخرى</td><td>قائمة اللغة وزر الأرقام الطارئة في كل شريط علوي (فحص آلي للمصدر يفشل إن غاب).</td><td>فحص المصدر</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+<tr><td>صفحات Keycloak (الدخول بالبريد، الموظفون)</td><td>واجهة <code>ehimaya</code>: الشعار، ألوان الديوان، نجمة الحقول الإجبارية، أهداف لمس 48 بكسل، بالعربية والفرنسية والإنجليزية.</td><td>الصفحة تجيب 200 على Keycloak حقيقي (لم تُلتقط صورة، انظر القسم 8)</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+<tr><td>لوحة القيادة: الإعدادات الوطنية</td><td>بطاقة «إصدار تطبيق الهاتف» (الإصدار، البناء الأخير، الحد الأدنى، القناة، رابط التنزيل، الجديد بثلاث لغات) وبطاقة «الكلمات المرفوضة»، بنفس قواعد الخلفية، مع سبب لكل تعديل وتدقيق. الشعار في الترويسة.</td><td>5 للصفحة + 15 للتحقق</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+<tr><td>البوابة: نماذج المؤسسات</td><td>النجمة الحمراء وملاحظة «الحقول المعلمة بـ * إجبارية» في التسجيل والبطاقة والفريق والمعدات والمواد الخطرة والمرافق والوثائق والبلاغات. الشعار في الترويسة.</td><td>1</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+<tr><td>أيقونة التطبيق</td><td>من شعار الديوان: 5 مقاسات أندرويد و15 مقاسا لـ iOS.</td><td>بناء APK في CI</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+</table></div>
+<p><b>التقدم العام للمرحلة A: 100%</b> من البنود المعتمدة في التصميم. المراحل B إلى F لم تبدأ (0%) وتنتظر موافقتك.</p>
+</section>
+
+<section>
+<h2>3. الخادم وقاعدة البيانات</h2>
+<ul>
+  <li><code>GET /api/v1/app/version</code>: آخر إصدار، الحد الأدنى، الجديد بثلاث لغات، القناة، <code>update_available</code> و<code>mandatory</code>، و<code>sms_simulated</code>. مخزنة مؤقتا 10 دقائق.</li>
+  <li><code>POST /internal/auth/otp-sms</code>: يستدعيه Keycloak فقط بتوقيع HMAC (<code>OTP_SMS_SECRET</code>). يرسل الرمز بلغة المستعمل عبر مزود SMS الحالي، 6 رموز في الساعة لكل رقم على الأكثر. غير مفعّل دون السر (404).</li>
+  <li>وحدة <code>moderation</code>: مطابقة بعد التطبيع (التشكيل والتطويل، أشكال الألف والياء والتاء المربوطة والهمزة، الدارجة بالحروف اللاتينية والأرقام، الحروف المكررة، الفواصل) مع قائمة مدمجة من 78 لفظا وكلمات يضيفها مدير النظام. ترجع <code>422 offensive_text</code>، <b>ولا تُطبَّق أبدا على البلاغات ولا الاستغاثة</b>.</li>
+  <li>قاعدة البيانات: لا جدول جديد. الترحيل <code>0031_phase_a_settings</code> يضيف إعدادين وطنيين: <code>app.release</code> (مدير النظام) و<code>moderation.extra_terms</code> (مدير النظام ومحرر المحتوى).</li>
+  <li>Keycloak: مزود <code>ehimaya-phone-otp</code> على تدفق «direct grant» لعميل <code>ehimaya-mobile</code> وحده. حالة الرمز في المخزن المؤقت لـ Keycloak (لا في قاعدة البيانات). <b>لا يُنشأ أي حساب قبل إدخال الرمز الصحيح</b>. الرمز صالح 5 دقائق، 3 محاولات، رمز كل 60 ثانية، 5 رموز في الساعة.</li>
+</ul>
+<div class="note">تغيير عن التصميم المكتوب أولا: كان مقررا حفظ الرمز في خصائص المستعمل وإنشاء الحساب من الخطوة الأولى. بعد المراجعة نُقل الرمز إلى المخزن المؤقت وصار الحساب يُنشأ بعد التأكيد فقط، حتى لا تبقى حسابات لأرقام خاطئة. حُدّث <a href="phase-a/design.md">التصميم</a> بذلك.</div>
+</section>
+
+<section>
+<h2>4. المحاكاة <span class="sim">[SIM]</span></h2>
+<div class="simbox">
+<p><span class="sim">[SIM]</span> <b>رسائل SMS في التطوير</b>: لا بوابة SMS حقيقية بعد. الرمز يذهب إلى <code>notify-sim</code> ويظهر في صندوقه. الخادم يعلن ذلك (<code>sms_simulated: true</code>) والتطبيق يعرض شريطا كهرمانيا <code>[SIM]</code> فوق حقل الرمز. الإنتاج يرفض الإقلاع ببوابة محاكاة، فلا يظهر الشريط هناك أبدا.</p>
+<p>الكود: الكشف في <code>services/api/app/modules/notify/providers.py</code> (<code>sms_simulated()</code>)، والشريط في <code>apps/mobile/lib/core/ui/sim_banner.dart</code> بترويسة <code>SIMULATION</code> ولون <code>#FFB300</code> مختلف عن ألوان التطبيق، مفصول عن الكود الأساسي.</p>
+<p>لا محاكاة أخرى في هذه المرحلة. المعطيات الناقصة (بوابة SMS الرسمية، رابط تنزيل APK على خادم الديوان) لها قيم إعداد فارغة حتى تصل.</p>
+</div>
+</section>
+
+<section>
+<h2>5. الاختبارات المطبقة</h2>
+<div class="tbl"><table>
+<tr><th>الجزء</th><th>اختبارات جديدة في المرحلة A</th><th>المجموع بعد المرحلة</th><th>النتيجة</th></tr>
+<tr><td>الخلفية (pytest)</td><td>37</td><td>740</td><td>737 ناجحة، 2 متخطاة، 1 فشل سابق غير مرتبط (القسم 8). <code>ruff</code> و<code>mypy</code> وتطابق OpenAPI وERD نظيفة</td></tr>
+<tr><td>مزود Keycloak (JUnit)</td><td>36</td><td>36</td><td>كلها ناجحة</td></tr>
+<tr><td>تكامل Keycloak 26.8 حقيقي (<code>check_phone_otp.py</code>)</td><td>15 فحصا</td><td>15 + <code>check_mfa.py</code></td><td>كلها ناجحة</td></tr>
+<tr><td>تطبيق الهاتف (flutter test)</td><td>24 (10 مسارات واجهة، 14 وحدة)</td><td>356</td><td>كلها ناجحة، <code>flutter analyze</code> نظيف</td></tr>
+<tr><td>لوحة القيادة (vitest)</td><td>20</td><td>399</td><td>كلها ناجحة، eslint وtsc نظيفان</td></tr>
+<tr><td>البوابة (vitest)</td><td>1</td><td>84</td><td>كلها ناجحة، eslint وtsc نظيفان</td></tr>
+</table></div>
+<p>أنواع الفحوص: ترتيب شاشات أول تشغيل، الطوارئ متاحة في كل خطوة، القراءة قبل القبول، الدخول بالرمز (مرسل، خاطئ، منتهٍ، حد، بوابة معطلة)، التوقيع المشترك بين Java وPython (متجه اختبار واحد)، المطابقة مع الألفاظ المسيئة وعدم المساس بالنصوص العادية، النص بحجم 200%، دلالات الحقل الإجباري، غياب حزم الإعلانات والتتبع في ملفات القفل الأربعة.</p>
+</section>
+
+<section id="tools">
+<h2>6. التقنيات والأدوات والمصادر والإصدارات</h2>
+<p>الأولوية: <span class="prio p1">1</span> لازمة للتشغيل · <span class="prio p2">2</span> لازمة للبناء · <span class="prio p3">3</span> للتطوير والاختبار · <span class="prio p4">4</span> اختيارية. الأدوات السابقة دون تغيير في <a href="versions.md">versions.md</a>.</p>
+<div class="cards">
+
+<div class="card"><h3>Keycloak مع مزودات ء-حماية</h3><p class="v">صورة <code>ehimaya/keycloak</code> مبنية على <code>keycloak/keycloak:26.8</code> (مثبتة بالبصمة) · <span class="prio p1">1</span></p>
+<dl><dt>الدور</dt><dd>مصدر الرموز الوحيد؛ صار يحمل مزود الدخول بالهاتف وواجهة الدخول.</dd>
+<dt>المصدر</dt><dd><a class="ltr" href="https://www.keycloak.org">keycloak.org</a> · <code>infra/keycloak/Dockerfile</code></dd>
+<dt>الرخصة</dt><dd>Apache-2.0</dd></dl>
+<pre>docker compose -f infra/compose.yml build keycloak
+docker compose -f infra/compose.yml up -d keycloak</pre></div>
+
+<div class="card"><h3>مزود الدخول بالهاتف <code>ehimaya-phone-otp</code></h3><p class="v">0.1.0 · Java 21 · <span class="prio p1">1</span></p>
+<dl><dt>الدور</dt><dd>إرسال الرمز والتحقق منه وإنشاء الحساب بعد التأكيد.</dd>
+<dt>المصدر</dt><dd><code>infra/keycloak/providers/phone-otp</code></dd>
+<dt>الإعداد</dt><dd><code>EHIMAYA_API_INTERNAL_URL</code>، <code>OTP_SMS_SECRET</code> (24 حرفا على الأقل، نفس القيمة في الخلفية)</dd></dl>
+<pre>openssl rand -hex 32   # قيمة OTP_SMS_SECRET في .env</pre></div>
+
+<div class="card"><h3>Keycloak SPI</h3><p class="v"><code>keycloak-server-spi</code>، <code>-private</code>، <code>keycloak-services</code> 26.8.1 (provided) · <span class="prio p2">2</span></p>
+<dl><dt>الدور</dt><dd>واجهات بناء المزود؛ لا تُضمَّن في الملف.</dd>
+<dt>المصدر</dt><dd><a class="ltr" href="https://central.sonatype.com/artifact/org.keycloak/keycloak-services">Maven Central</a></dd>
+<dt>الرخصة</dt><dd>Apache-2.0</dd></dl></div>
+
+<div class="card"><h3>Maven</h3><p class="v">3.9.11 على Eclipse Temurin 21 (صورة البناء مثبتة بالبصمة) · <span class="prio p2">2</span></p>
+<dl><dt>الدور</dt><dd>بناء المزود وتشغيل اختباراته داخل <code>docker build</code>.</dd>
+<dt>المصدر</dt><dd><a class="ltr" href="https://maven.apache.org">maven.apache.org</a></dd>
+<dt>الرخصة</dt><dd>Apache-2.0</dd></dl>
+<pre>mvn -f infra/keycloak/providers/phone-otp/pom.xml verify</pre></div>
+
+<div class="card"><h3>JDK (Eclipse Temurin)</h3><p class="v">21 LTS · <span class="prio p3">3</span></p>
+<dl><dt>الدور</dt><dd>تطوير المزود خارج Docker فقط.</dd>
+<dt>المصدر</dt><dd><a class="ltr" href="https://adoptium.net">adoptium.net</a></dd>
+<dt>الرخصة</dt><dd>GPL-2.0 + Classpath Exception</dd></dl>
+<pre>sudo apt install openjdk-21-jdk maven</pre></div>
+
+<div class="card"><h3>JUnit Jupiter و Surefire</h3><p class="v">5.13.4 و 3.5.4 · <span class="prio p3">3</span></p>
+<dl><dt>الدور</dt><dd>36 اختبارا للمزود (الرموز، الصلاحية، المحاولات، الحدود، الأرقام، التوقيع).</dd>
+<dt>المصدر</dt><dd><a class="ltr" href="https://junit.org">junit.org</a></dd>
+<dt>الرخصة</dt><dd>EPL-2.0 / Apache-2.0</dd></dl></div>
+
+<div class="card"><h3>تطبيق الهاتف</h3><p class="v">0.3.0 (البناء 2) · Flutter 3.47.7 · <span class="prio p1">1</span></p>
+<dl><dt>الدور</dt><dd>كل نوافذ المرحلة A. لا حزمة جديدة.</dd>
+<dt>المصدر</dt><dd><code>apps/mobile</code></dd>
+<dt>التحقق</dt><dd><code>flutter analyze</code> و<code>flutter test</code></dd></dl>
+<pre>cd apps/mobile && flutter pub get && flutter test
+flutter build apk --release   # يحتاج android/key.properties، القسم 7</pre></div>
+
+<div class="card"><h3>الخلفية</h3><p class="v">FastAPI 0.146.0 · Python 3.12 · <span class="prio p1">1</span></p>
+<dl><dt>الدور</dt><dd>إصدار التطبيق، إرسال الرمز، مرشح الألفاظ، الإعدادات. لا حزمة جديدة.</dd>
+<dt>المصدر</dt><dd><code>services/api</code></dd></dl>
+<pre>cd services/api && uv run alembic upgrade head && uv run pytest -q</pre></div>
+
+<div class="card"><h3>لوحة القيادة والبوابة</h3><p class="v">React 19.3.1 · Vite · Node 22 · <span class="prio p1">1</span></p>
+<dl><dt>الدور</dt><dd>بطاقتا الإعداد الجديدتان، النجمة الحمراء، الشعار. لا حزمة جديدة.</dd>
+<dt>المصدر</dt><dd><code>apps/dashboard</code> · <code>apps/portal</code></dd></dl>
+<pre>cd apps/dashboard && npm ci && npm test && npm run lint</pre></div>
+
+<div class="card"><h3>notify-sim <span class="sim">[SIM]</span></h3><p class="v">الحالي · <span class="prio p3">3</span></p>
+<dl><dt>الدور</dt><dd>بوابة SMS للتطوير؛ يعرض رموز الدخول في صندوقه.</dd>
+<dt>المصدر</dt><dd><code>services/notify-sim</code></dd></dl>
+<pre>docker compose -f infra/compose.yml up -d notify-sim</pre></div>
+
+<div class="card"><h3>Pillow</h3><p class="v">أداة محلية لمرة واحدة · <span class="prio p4">4</span></p>
+<dl><dt>الدور</dt><dd>توليد أيقونات أندرويد وiOS من الشعار. ليست من تبعيات المشروع.</dd>
+<dt>المصدر</dt><dd><a class="ltr" href="https://python-pillow.org">python-pillow.org</a></dd>
+<dt>الرخصة</dt><dd>MIT-CMU</dd></dl>
+<pre>pip install pillow</pre></div>
+
+</div>
+<h3>ترتيب التنصيب لهذه المرحلة</h3>
+<ol>
+  <li>إضافة <code>OTP_SMS_SECRET</code> إلى <code>.env</code> (نفس القيمة يقرؤها الخادم وKeycloak).</li>
+  <li><code>docker compose -f infra/compose.yml build keycloak</code> ثم إعادة تشغيل Keycloak (النطاقان يُستوردان مع التدفق الجديد).</li>
+  <li>ترحيل قاعدة البيانات: <code>uv run alembic upgrade head</code> (يضيف الإعدادين).</li>
+  <li>نشر لوحة القيادة والبوابة، ثم تعبئة «إصدار تطبيق الهاتف» من الإعدادات الوطنية عند نشر أول APK.</li>
+</ol>
+</section>
+
+<section>
+<h2>7. دليل التوقيع والإصدار (التحديث مع بقاء البيانات)</h2>
+<p>يثبت الإصدار الجديد فوق القديم ويحتفظ بالبيانات بثلاثة شروط: نفس اسم الحزمة <code>tn.ehimaya.app</code>، ونفس مفتاح التوقيع، ورقم بناء أكبر. قاعدة البيانات المحلية تُرحَّل إلى الأمام (<code>schemaVersion</code> في drift).</p>
+<ol>
+  <li><b>إنشاء مفتاح الإصدار مرة واحدة</b> على جهاز الديوان، وحفظه مع كلمتي المرور في خزنة (نسختان منفصلتان). ضياعه يعني أن الهواتف لن تقبل أي تحديث.
+<pre>keytool -genkeypair -v -keystore ehimaya-release.jks -alias ehimaya \
+  -keyalg RSA -keysize 4096 -validity 10000</pre></li>
+  <li><b>ملف <code>apps/mobile/android/key.properties</code></b> على جهاز البناء فقط (مستبعد من Git):
+<pre>storeFile=/secure/ehimaya-release.jks
+storePassword=…
+keyAlias=ehimaya
+keyPassword=…</pre>
+  دون هذا الملف يوقَّع البناء بمفتاح التطوير، ولا يُنشر أبدا.</li>
+  <li><b>رفع رقم البناء</b> في <code>pubspec.yaml</code> (مثلا <code>0.3.0+2</code> ثم <code>0.3.1+3</code>) وفي <code>AppConfig.appVersion</code> و<code>appBuild</code> (اختبار يفشل إن اختلفا).</li>
+  <li><b>البناء</b>: <code>flutter build apk --release</code> ثم حساب البصمة <code>sha256sum</code> ونشر الملف على خادم الديوان (https).</li>
+  <li><b>الإعلان</b> من لوحة القيادة: الإعدادات الوطنية ← «إصدار تطبيق الهاتف»: الإصدار، رقم البناء، رابط التنزيل، الجديد بثلاث لغات، وسبب التعديل. خلال 24 ساعة يرى كل هاتف «الجديد».</li>
+  <li><b>التحديث الإجباري</b>: ارفع «أدنى بناء مسموح به» فقط لإصلاح أمني أو إصلاح بيانات.</li>
+  <li><b>المرحلة 2 (Google Play)</b>: نفس المفتاح يُسجَّل في «Play App Signing»، ثم تُغيَّر القناة إلى «Google Play».</li>
+</ol>
+</section>
+
+<section>
+<h2>8. قرارات وملاحظات تحتاج علمك</h2>
+<div class="tbl"><table>
+<tr><th>البند</th><th>التفصيل</th></tr>
+<tr><td>إصدار الشروط صار <code>2026-11</code></td><td>كل مستعمل حالي يقرأ الشروط الجديدة ويقبلها مرة واحدة عند فتح التطبيق، ولا يرى شاشات اللغة والتعريف والأذونات من جديد.</td></tr>
+<tr><td>الحسابات القديمة بالبريد</td><td>بقي «الدخول بالبريد» في شاشة الدخول حتى لا يُحرم أحد من حسابه.</td></tr>
+<tr><td>كلمات حُذفت من القائمة المدمجة</td><td>زامل، طحان، Dick، Isis، retard وأمثالها لأنها أسماء أو كلمات عادية أيضا، فتمنع أسماء حقيقية. يمكن إضافتها من اللوحة إن رأيتم ذلك.</td></tr>
+<tr><td>مفتاح توقيع الإصدار</td><td>حتى الآن كانت نسخ الإصدار توقَّع بمفتاح التطوير. صار البناء يقرأ المفتاح من <code>key.properties</code>. يلزم إنشاء المفتاح وحفظه لدى الديوان قبل أول نشر (القسم 7).</td></tr>
+<tr><td>نجمة الحقول في البوابة</td><td>النجمة والملاحظة موجودتان، والحقول المبنية بـ <code>TextField</code> تعلن «إجباري» لقارئ الشاشة. بعض الحقول الأخرى تُظهر النجمة دون الخاصية <code>required</code> على العنصر نفسه؛ إكمالها مقترح أدناه.</td></tr>
+<tr><td>اختبار سابق فاشل</td><td><code>test_sla.py::test_rescore_never_due_before_now</code> يفشل أيضا على <code>main</code> دون تغييراتي (مرتبط بالوقت). لم ألمسه وأذكره للعلم. واختباران في <code>test_knowledge.py</code> يفشلان محليا فقط بسبب بيانات متراكمة من تشغيلات سابقة في نفس قاعدة البيانات (سنة عشوائية مكررة)؛ ينجحان على قاعدة نظيفة ولا علاقة لهما بهذه المرحلة.</td></tr>
+<tr><td>حدود بيئة العمل</td><td>لم تُلتقط صورة لواجهة Keycloak (المتصفح المدمج لا يصل إلى المنافذ المحلية)، وبناء Maven داخل Docker محليا لا يصل إلى الإنترنت؛ الملف نفسه جُرّب على Keycloak 26.8 حقيقي، والبناء الكامل يجري في CI.</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>9. مقترحات فنية ووظيفية (للنقاش، لم تُنفَّذ)</h2>
+<ol>
+  <li><b>قراءة الرمز تلقائيا من الرسالة (Android SMS Retriever)</b>: يضيف بصمة التطبيق في آخر نص الرسالة فيُملأ الرمز دون إذن قراءة الرسائل. يقلل الأخطاء ووقت الدخول.</li>
+  <li><b>مؤشرات جديدة للوحة KPI</b>: نسبة إتمام شاشات أول تشغيل، نسبة الدخول بالهاتف مقابل الزوار، زمن وصول الرمز، نسبة الهواتف على آخر إصدار. تخدم حلقة «المؤشرات ثم القرار».</li>
+  <li><b>وزن المصداقية</b>: إدخال «رقم مؤكد» عاملا في نموذج أولوية البلاغ (قسم الذكاء الاصطناعي)، مع إبقاء البلاغ المجهول مقبولا دائما.</li>
+  <li><b>رسالة SMS بديلة للاستغاثة دون إنترنت</b> تتضمن الإحداثيات بصيغة قصيرة، تُحلَّل آليا في الخادم.</li>
+  <li><b>إكمال <code>aria-required</code></b> على كل حقول البوابة واللوحة الإجبارية (عمل آلي صغير).</li>
+  <li><b>بوابة SMS الرسمية</b>: نحتاج من الديوان المزوّد (اتصالات تونس، أوريدو، أورنج) والاسم المرسل المعتمد لإيقاف المحاكاة.</li>
+</ol>
+</section>
+
+<section>
+<h2>10. ما يلي</h2>
+<p>المرحلة A جاهزة للمراجعة. لن أبدأ المرحلة B قبل موافقتك. القرارات المفتوحة من قبل: نوع حساب الفرق الميدانية، سلم الفرز، إشعار المواطن بوصول الفريق، ومعطيات الديوان (بوابة SMS، خادم التنزيل).</p>
+</section>
+
+<footer>ء-حماية · تقرير المرحلة A · 2026-10-23</footer>
+</div>
+</body>
+</html>

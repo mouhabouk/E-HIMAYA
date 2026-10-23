@@ -11,7 +11,7 @@ import { queryKeys } from "../../lib/portalApi";
 import { DOCUMENT_KINDS, type DocumentKind, type DocumentVersion, type OrgDocument } from "../../lib/types";
 import { NOTE_MAX_LENGTH, acceptFor } from "../../lib/validators";
 import { BlockedNote, useOrg } from "./OrgWorkspace";
-import { Field } from "./RegisterParts";
+import { Field, RequiredNote } from "./RegisterParts";
 import { useDocumentUpload } from "./useDocumentUpload";
 
 const PENDING = new Set(["uploading", "verifying"]);
@@ -332,6 +332,7 @@ function NewDocumentForm({ onClose }: { onClose: () => void }) {
         }}
       >
         <p className="muted">{t("documents.newHelp")}</p>
+        <RequiredNote />
         <div className="form-grid">
           <Field id="doc-kind" label={t("documents.kind")}>
             <select id="doc-kind" value={kind} onChange={(e) => setKind(e.target.value as DocumentKind)}>

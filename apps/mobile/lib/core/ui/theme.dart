@@ -1,14 +1,52 @@
 import 'package:flutter/material.dart';
 
-/// Civil-protection orange/red seed. Contrast of text on surfaces is handled by Material 3
-/// tonal palettes (WCAG AA for body text in both brightnesses).
-const _seed = Color(0xFFB3261E);
+/// Colour palettes of the app (phase A, addition 1). [office] is the default: the colours of the
+/// Civil Protection logo, darkened to reach WCAG AA contrast on light surfaces.
+enum AppPalette { office, red, blue, green }
 
-/// The SOS colour stays the same red in light and dark themes, white label (contrast 5.9:1).
+/// Colours of the Office's logo.
+abstract final class BrandColors {
+  static const blue = Color(0xFF1F3D99);
+  static const orange = Color(0xFFE07B00);
+  static const green = Color(0xFF1B7F2A);
+  static const red = Color(0xFFC62828);
+}
+
+/// The SOS colour stays the same red in every palette and brightness, white label (5.9:1).
 const sosRed = Color(0xFFC62828);
 
-ThemeData buildTheme(Brightness brightness) {
-  final scheme = ColorScheme.fromSeed(seedColor: _seed, brightness: brightness);
+ColorScheme _scheme(AppPalette palette, Brightness brightness) =>
+    switch (palette) {
+      AppPalette.office => ColorScheme.fromSeed(
+        seedColor: BrandColors.blue,
+        brightness: brightness,
+        secondary: brightness == Brightness.light
+            ? const Color(0xFF8A4B00)
+            : const Color(0xFFFFB86B),
+        tertiary: brightness == Brightness.light
+            ? BrandColors.green
+            : const Color(0xFF8BD88F),
+      ),
+      AppPalette.red => ColorScheme.fromSeed(
+        seedColor: const Color(0xFFB3261E),
+        brightness: brightness,
+      ),
+      AppPalette.blue => ColorScheme.fromSeed(
+        seedColor: const Color(0xFF1565C0),
+        brightness: brightness,
+      ),
+      AppPalette.green => ColorScheme.fromSeed(
+        seedColor: const Color(0xFF2E7D32),
+        brightness: brightness,
+      ),
+    };
+
+ThemeData buildTheme(
+  Brightness brightness, [
+  AppPalette palette = AppPalette.office,
+]) {
+  // Material 3 tonal palettes keep body text at WCAG AA in both brightnesses.
+  final scheme = _scheme(palette, brightness);
   return ThemeData(
     useMaterial3: true,
     colorScheme: scheme,

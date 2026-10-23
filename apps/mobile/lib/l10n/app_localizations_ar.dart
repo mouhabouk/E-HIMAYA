@@ -39,7 +39,7 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get charterTitle => 'ميثاق الخصوصية وحماية المعطيات الشخصية';
+  String get charterTitle => 'شروط الاستخدام';
 
   @override
   String charterVersionLabel(String version) {
@@ -51,50 +51,8 @@ class AppLocalizationsAr extends AppLocalizations {
       'ء-حماية هي المنصة الوطنية للتبليغ عن حالات الطوارئ لدى الحماية المدنية. قبل استعمالها، يُرجى الاطلاع على كيفية معالجة معطياتك وعلى التزاماتك.';
 
   @override
-  String get charterDataTitle => 'المعطيات التي نجمعها والغاية منها';
-
-  @override
-  String get charterDataBody =>
-      'لكل بلاغ: صنفه، والوصف الذي تكتبه، وموقع الحادثة، والصور أو مقاطع الفيديو أو الرسائل الصوتية المرفقة. وإن أنشأت حسابا: اسمك ولقبك، ورقم بطاقة التعريف الوطنية، ورقم الهاتف، والجهة. تُستعمل هذه المعطيات حصريا لمعالجة حالات الطوارئ ولإعلامك بمآل بلاغاتك.';
-
-  @override
-  String get charterLawTitle => 'الإطار القانوني';
-
-  @override
-  String get charterLawBody =>
-      'تُعالَج معطياتك الشخصية طبقا للقانون الأساسي عدد 63 لسنة 2004 المؤرخ في 27 جويلية 2004 المتعلق بحماية المعطيات الشخصية ونصوصه التطبيقية، وتحت رقابة الهيئة الوطنية لحماية المعطيات الشخصية.';
-
-  @override
-  String get charterAnonymousTitle => 'التبليغ دون حساب';
-
-  @override
-  String get charterAnonymousBody =>
-      'يمكنك التبليغ دون حساب. يستعمل التطبيق عندها مفتاحا عشوائيا يُنشأ على هذا الهاتف، ولا تحتفظ المنصة إلا باسم مستعار مشتق منه ولا تسجّل عنوان IP الخاص بك. يمكن تعليق التبليغ دون حساب من جهاز ما بعد ثبوت بلاغات كاذبة.';
-
-  @override
-  String get charterRightsTitle => 'حقوقك';
-
-  @override
-  String get charterRightsBody =>
-      'لك حق النفاذ إلى معطياتك وتصحيحها والاعتراض على معالجتها وفق الشروط التي يضبطها القانون. يمكنك ممارسة هذه الحقوق لدى مستغل المنصة واللجوء إلى الهيئة الوطنية لحماية المعطيات الشخصية.';
-
-  @override
-  String get charterRetentionTitle => 'التأمين ومدة الحفظ';
-
-  @override
-  String get charterRetentionBody =>
-      'تُحفظ البلاغات التي لم تُرسل بعد مشفّرة على هاتفك. وعلى المنصة، لا تُحفظ المعطيات إلا للمدة اللازمة لمعالجة الحالة الطارئة والوفاء بالالتزامات القانونية، ولا يطّلع عليها إلا الأعوان المرخّص لهم.';
-
-  @override
-  String get charterLiabilityTitle => 'المسؤولية عن البلاغات الكاذبة';
-
-  @override
-  String get charterLiabilityBody =>
-      'كل بلاغ يُسخّر فرق نجدة قد تكون في حاجة إليها حالات أخرى. إن تقديم بلاغ كاذب أو إنذار زائف عن قصد يُرتّب مسؤوليتك القانونية ويعرّضك للتتبعات طبقا للقانون التونسي.';
-
-  @override
   String get charterCheckbox =>
-      'اطّلعت على الميثاق وأوافق عليه، وأدرك أن البلاغ الكاذب عن قصد يُرتّب مسؤوليتي القانونية.';
+      'اطّلعت على شروط الاستخدام وأوافق عليها، وأدرك أن البلاغ الكاذب عن قصد يُرتّب مسؤوليتي القانونية.';
 
   @override
   String charterAcceptedOn(String date) {
@@ -646,7 +604,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'تبقى البلاغات غير المرسلة على هذا الهاتف وتُرسل بعد الدخول مجددا أو عند اختيار المواصلة دون حساب.';
 
   @override
-  String get settingsCharter => 'إعادة قراءة الميثاق';
+  String get settingsCharter => 'شروط الاستخدام';
 
   @override
   String get errorAuthenticationRequired =>
@@ -664,13 +622,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get errorAccountSuspended => 'حسابك معلّق.';
 
   @override
-  String get errorConsentRequired => 'يُرجى الموافقة على الميثاق قبل التبليغ.';
+  String get errorConsentRequired =>
+      'يرجى الموافقة على شروط الاستخدام قبل التبليغ.';
 
   @override
   String get errorRateLimited => 'طلبات كثيرة جدا. يُرجى الانتظار قليلا.';
 
   @override
-  String get errorUnknownCharterVersion => 'تغيّر الميثاق. يُرجى قراءته مجددا.';
+  String get errorUnknownCharterVersion =>
+      'تغيّرت شروط الاستخدام. يرجى قراءتها من جديد.';
 
   @override
   String get errorClientUuidConflict =>
@@ -2155,4 +2115,377 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get errorAnonQuotaExhausted =>
       'تمّ بلوغ حدّ البلاغات دون حساب على هذا الجهاز. يُرجى إنشاء حساب.';
+
+  @override
+  String get intro1Title => 'مرحبا بكم في ء-حماية';
+
+  @override
+  String get intro1Body =>
+      'تطبيق ء-حماية يحدّد موقعك من هاتفك، وعند الطارئ يرسله مع بلاغك مباشرة إلى قاعة العمليات المختصة بالحماية المدنية، لتصلك النجدة أسرع وبالوسائل المناسبة.';
+
+  @override
+  String get intro2Title => 'بإشراف الديوان الوطني للحماية المدنية';
+
+  @override
+  String get intro2Body =>
+      'يقدّم هذا التطبيقَ الديوانُ الوطني للحماية المدنية، المؤسسة العمومية المكلفة بالنجدة والإنقاذ ومجابهة الحرائق والكوارث على كامل التراب التونسي، والمستقبِلة لنداءات الرقم 198.';
+
+  @override
+  String get intro3Title => 'متى أستعمله؟';
+
+  @override
+  String get intro3Body =>
+      'عند حريق، أو حادث مرور، أو شخص في خطر أو مصاب، أو غرق، أو انهيار، أو تسرب غاز، أو فيضان، أو أي وضع يهدّد الأرواح والممتلكات ويستوجب تدخل الحماية المدنية.';
+
+  @override
+  String get intro4Title => 'كيف يعمل؟';
+
+  @override
+  String get intro4Body =>
+      'اختر نوع الحادث، والتقط صورة أو فيديو أو رسالة صوتية إن أمكن دون أن تعرّض نفسك للخطر، ثم أرسل. يصل بلاغك وموقعك فورا إلى المشغّل، وتتابع مآله خطوة بخطوة، وقد يتصل بك المشغّل لاستكمال المعطيات. وإن انقطع الإنترنت يُرسل البلاغ برسالة قصيرة، ويبقى الاتصال بالرقم 198 متاحا في كل لحظة.';
+
+  @override
+  String get intro5Title => 'أين يعمل؟';
+
+  @override
+  String get intro5Body =>
+      'على كامل تراب الجمهورية التونسية، في الولايات الأربع والعشرين، ويُوجَّه بلاغك آليا إلى الإدارة الجهوية المختصة بمكان الحادث. خارج تونس اتصل برقم الطوارئ المحلي (112 في أغلب الدول).';
+
+  @override
+  String get terms1Title => '1. التعريف';
+
+  @override
+  String get terms1Body =>
+      'ء-حماية منصة رقمية للديوان الوطني للحماية المدنية (يُشار إليه بـ «الديوان») للتبليغ عن حالات الطوارئ ومتابعتها. تضبط هذه الشروط العلاقة بين الديوان ومستعملي تطبيق الهاتف وبوابة المؤسسات.';
+
+  @override
+  String get terms2Title => '2. غايتنا';
+
+  @override
+  String get terms2Body =>
+      'الغاية السامية لهذه المنصة حماية الأرواح والممتلكات، وإعادة بناء جسور الثقة بين المواطن والحماية المدنية عبر تواصل مباشر وشفاف. وصفُ الحادث بدقة ونقلُ المشهد كما هو يقلّصان زمن الاستجابة ويرفعان نجاعة التدخل.';
+
+  @override
+  String get terms3Title => '3. طبيعة الخدمة وحدودها';
+
+  @override
+  String get terms3Body =>
+      '3.1 التطبيق وسيلة مكمّلة للرقم 198 ولا يعوّضه. في الخطر الداهم اتصل بالرقم 198 مباشرة.\n3.2 لا يقدّم التطبيق استشارة طبية، والإرشادات المعروضة فيه للتوعية العامة ولا تعوّض تعليمات أعوان الحماية المدنية.\n3.3 يتوقف عمل التطبيق على عوامل خارجة عن سيطرة الديوان: تغطية شبكة الهاتف والإنترنت، وإشارة تحديد الموقع، وشحن البطارية، وسلامة الهاتف. يعمل الديوان على أعلى درجات التوفر وإصلاح الأعطال في أقرب الآجال.';
+
+  @override
+  String get terms4Title => '4. التزامات المستعمل';
+
+  @override
+  String get terms4Body =>
+      '4.1 استعمال التطبيق بحسن نية وللطوارئ الحقيقية فقط، وتقديم معطيات صحيحة ومحيّنة، خاصة رقم الهاتف.\n4.2 إبقاء خدمة تحديد الموقع مفعّلة واستعمال آخر إصدار من التطبيق.\n4.3 عدم تعريض النفس للخطر من أجل التصوير، واحترام تعليمات أعوان التدخل.\n4.4 عدم المساس بسلامة التطبيق أو تعطيله أو محاولة تجاوز وسائل حمايته أو إعادة هندسته.';
+
+  @override
+  String get terms5Title => '5. البلاغات الكاذبة وسوء الاستعمال';
+
+  @override
+  String get terms5Body =>
+      'كل بلاغ يُسخّر فرق نجدة قد تحتاجها أرواح أخرى في اللحظة نفسها. إن تقديم بلاغ كاذب أو إنذار زائف عن قصد، أو أي استعمال تعسفي للتطبيق، يعرّض صاحبه للمساءلة والتتبعات طبقا للتشريع التونسي الجاري به العمل، ويمكن أن يؤدي إلى تعليق الحساب أو التبليغ من الجهاز المعني مؤقتا أو نهائيا.';
+
+  @override
+  String get terms6Title => '6. التزامات المؤسسات';
+
+  @override
+  String get terms6Body =>
+      'تلتزم المؤسسة المسجلة بتقديم معطيات صحيحة ومحيّنة عن هويتها ونشاطها ومبانيها والمسؤولين عنها، وتتحمّل مسؤولية صحتها. إيداع مخطط الإخلاء ومخططات المبنى وتحيينها يسهّل التدخل ويختصر زمن البحث والإنقاذ. لا يُفعَّل حساب المؤسسة إلا بعد مصادقة الديوان.';
+
+  @override
+  String get terms7Title => '7. المتطوعون';
+
+  @override
+  String get terms7Body =>
+      'لا تُمنح صفة المتطوع إلا بعد مصادقة الديوان. يلتزم المتطوع بتعليمات قاعة العمليات ولا يتدخل إلا في حدود المهمة المسندة إليه.';
+
+  @override
+  String get terms8Title => '8. حماية المعطيات الشخصية';
+
+  @override
+  String get terms8Body =>
+      '8.1 تُعالَج المعطيات الشخصية طبقا للقانون الأساسي عدد 63 لسنة 2004 المؤرخ في 27 جويلية 2004 المتعلق بحماية المعطيات الشخصية، وتحت رقابة الهيئة الوطنية لحماية المعطيات الشخصية، وللغاية الوحيدة المتمثلة في معالجة حالات الطوارئ وإعلامك بمآل بلاغاتك.\n8.2 عند إرسال بلاغ تُنقل إلى الديوان: موقعك، ونوع الحادث، والوصف والوسائط المرفقة، ومعطيات حسابك إن وُجد.\n8.3 جهات اتصال الطوارئ ونص رسالة النجدة تُحفظ مشفّرة على هاتفك فقط ولا تُرسل إلى الديوان.\n8.4 يمكن التبليغ دون حساب باسم مستعار، دون تسجيل عنوان IP.\n8.5 لا يطّلع على المعطيات إلا الأعوان المرخّص لهم، وتُحفظ للمدة اللازمة لمعالجة الحالة والوفاء بالالتزامات القانونية. ولك حق النفاذ إليها وتصحيحها والاعتراض على معالجتها.';
+
+  @override
+  String get terms9Title => '9. تحديث التطبيق والشروط';
+
+  @override
+  String get terms9Body =>
+      'يمكن للديوان تطوير التطبيق أو تعديل هذه الشروط. يُعلَم المستعمل بكل إصدار جديد وبما يتضمنه، ويُطلب منه الموافقة من جديد عند تغيير الشروط.';
+
+  @override
+  String get terms10Title => '10. القانون المنطبق';
+
+  @override
+  String get terms10Body =>
+      'تخضع هذه الشروط للقانون التونسي، وتختص المحاكم التونسية بالنظر في كل نزاع يتعلق بها.';
+
+  @override
+  String get languageTitle => 'اختر لغتك';
+
+  @override
+  String get languageSubtitle =>
+      'يمكنك تغييرها في أي وقت من شريط اللغة أعلى كل شاشة.';
+
+  @override
+  String get languageMenuTooltip => 'اللغة';
+
+  @override
+  String get introSkip => 'تخطٍّ';
+
+  @override
+  String introPage(int current, int total) {
+    return 'الصفحة $current من $total';
+  }
+
+  @override
+  String get call198 => 'اتصل بالرقم 198';
+
+  @override
+  String get termsScrollHint => 'مرّر حتى نهاية الشروط لتتمكن من الموافقة.';
+
+  @override
+  String get termsAccept => 'أوافق';
+
+  @override
+  String get termsDecline => 'لا أوافق';
+
+  @override
+  String get termsDeclinedTitle => 'لم تتم الموافقة على الشروط';
+
+  @override
+  String get termsDeclinedBody =>
+      'لا يمكنك استعمال التطبيق دون الموافقة على الشروط، لكن الاتصال بالرقم 198 متاح دائما.';
+
+  @override
+  String get termsReadAgain => 'قراءة الشروط';
+
+  @override
+  String get permissionsTitle => 'الأذونات';
+
+  @override
+  String get permissionsIntro =>
+      'لا يطلب ء-حماية إلا ما يحتاجه لمساعدتك. يمكنك تغيير هذه الاختيارات لاحقا من إعدادات الهاتف.';
+
+  @override
+  String get permLocationTitle => 'الموقع';
+
+  @override
+  String get permLocationBody =>
+      'يُرسل مع بلاغك لتصل إليك النجدة. بدونه يجب أن تصف المكان وقد يتأخر الوصول إليك.';
+
+  @override
+  String get permNotificationsTitle => 'الإشعارات';
+
+  @override
+  String get permNotificationsBody =>
+      'متابعة بلاغاتك والتنبيهات العامة قربك. بدونها لن تُنبَّه إلى خطر في منطقتك.';
+
+  @override
+  String get permSmsTitle => 'الرسائل القصيرة';
+
+  @override
+  String get permSmsBody =>
+      'دون إنترنت يُرسل بلاغك برسالة قصيرة. لا حاجة لأي إذن: يفتح التطبيق رسالة جاهزة ترسلها بنفسك.';
+
+  @override
+  String get permContactsTitle => 'جهات الاتصال';
+
+  @override
+  String get permContactsBody =>
+      'يُطلب فقط عندما تختار جهة اتصال للطوارئ، لاحقا.';
+
+  @override
+  String get permAllow => 'السماح';
+
+  @override
+  String get permAllowed => 'مسموح';
+
+  @override
+  String get permRefused => 'مرفوض: يمكنك السماح به من إعدادات الهاتف';
+
+  @override
+  String get permNoneNeeded => 'لا حاجة لإذن';
+
+  @override
+  String get permLater => 'لاحقا';
+
+  @override
+  String get signInTitle => 'الدخول';
+
+  @override
+  String get signInIntro =>
+      'ادخل برقم هاتفك الجوال: نرسل لك رمزا برسالة قصيرة. دون كلمة سر.';
+
+  @override
+  String get signInPhoneLabel => 'رقم الهاتف الجوال';
+
+  @override
+  String get signInPhoneHint => '8 أرقام';
+
+  @override
+  String get signInPhoneInvalid =>
+      'أدخل رقما جوالا تونسيا: 8 أرقام تبدأ بـ 2 أو 3 أو 4 أو 5 أو 9.';
+
+  @override
+  String get signInSendCode => 'أرسل الرمز';
+
+  @override
+  String get signInCodeLabel => 'الرمز الوارد في الرسالة';
+
+  @override
+  String signInCodeSentTo(String phone) {
+    return 'أُرسل رمز من 6 أرقام إلى $phone.';
+  }
+
+  @override
+  String get signInVerify => 'دخول';
+
+  @override
+  String signInResendIn(int seconds) {
+    return 'إعادة إرسال الرمز بعد $seconds ث';
+  }
+
+  @override
+  String get signInResend => 'أعد إرسال الرمز';
+
+  @override
+  String get signInChangeNumber => 'تغيير الرقم';
+
+  @override
+  String signInWrongCode(int tries) {
+    return 'رمز خاطئ. المحاولات المتبقية: $tries.';
+  }
+
+  @override
+  String get signInCodeExpired =>
+      'انتهت صلاحية الرمز أو استُنفدت محاولاته. اطلب رمزا جديدا.';
+
+  @override
+  String get signInTooSoon => 'انتظر دقيقة قبل طلب رمز جديد.';
+
+  @override
+  String get signInLimit => 'طلبات كثيرة لهذا الرقم. أعد المحاولة بعد ساعة.';
+
+  @override
+  String get signInSmsUnavailable =>
+      'تعذّر إرسال الرسالة. أعد المحاولة أو واصل كزائر.';
+
+  @override
+  String get signInNetworkError =>
+      'لا يوجد اتصال. تحقّق من الإنترنت وأعد المحاولة.';
+
+  @override
+  String get signInGuest => 'المواصلة كزائر';
+
+  @override
+  String get signInGuestDesc => 'التبليغ دون حساب (عدد محدود من البلاغات).';
+
+  @override
+  String get signInInstitution => 'حساب مؤسسة';
+
+  @override
+  String get signInInstitutionDesc => 'للشركات والمدارس والنزل والإدارات.';
+
+  @override
+  String get signInEmail => 'الدخول بالبريد الإلكتروني وكلمة السر';
+
+  @override
+  String get signInPrivacyNote => 'يُستعمل رقمك فقط للاتصال بك بخصوص بلاغاتك.';
+
+  @override
+  String get simBanner =>
+      '[SIM] محاكاة: تذهب الرسالة إلى بوابة الاختبار (notify-sim) لا إلى هاتف حقيقي.';
+
+  @override
+  String get homeSubtitle => 'الحماية المدنية التونسية';
+
+  @override
+  String get homeReportCardTitle => 'أبلغ عن حادث';
+
+  @override
+  String get homeReportCardDesc => 'صورة أو صوت أو نص، مع موقعك آليا';
+
+  @override
+  String get homeNumbersOffline => 'تعمل دون إنترنت';
+
+  @override
+  String get homeShortcuts => 'اختصارات';
+
+  @override
+  String get homeMyReports => 'بلاغاتي';
+
+  @override
+  String get homeSosMessage => 'رسالة النجدة';
+
+  @override
+  String get homeCall198 => 'مكالمة النجدة 198';
+
+  @override
+  String get locationOn => 'الموقع مفعّل';
+
+  @override
+  String get locationOff => 'الموقع غير مفعّل: قد يتأخر وصول النجدة إليك.';
+
+  @override
+  String get locationTurnOn => 'تفعيل';
+
+  @override
+  String get locationChecking => 'جارٍ التحقق من الموقع…';
+
+  @override
+  String get themeToggleTooltip => 'فاتح أو داكن';
+
+  @override
+  String get settingsColors => 'الألوان';
+
+  @override
+  String get colorOffice => 'الحماية المدنية (الشعار)';
+
+  @override
+  String get colorRed => 'أحمر';
+
+  @override
+  String get colorBlue => 'أزرق';
+
+  @override
+  String get colorGreen => 'أخضر';
+
+  @override
+  String get updateTitle => 'إصدار جديد متاح';
+
+  @override
+  String get updateMandatoryTitle => 'التحديث ضروري';
+
+  @override
+  String get updateMandatoryBody =>
+      'هذا الإصدار لم يعد مدعوما. حدّث التطبيق لمواصلة استعمال ء-حماية. تبقى أرقام الطوارئ متاحة.';
+
+  @override
+  String updateWhatsNew(String version) {
+    return 'الجديد في الإصدار $version';
+  }
+
+  @override
+  String get updateDataKept => 'تُحفظ بلاغاتك وإعداداتك.';
+
+  @override
+  String get updateNow => 'تحديث';
+
+  @override
+  String get updateLater => 'لاحقا';
+
+  @override
+  String get updateOpenFailed => 'تعذّر فتح صفحة التنزيل.';
+
+  @override
+  String get requiredNote => 'الحقول المعلّمة بـ * إجبارية.';
+
+  @override
+  String get requiredSemantics => 'إجباري';
+
+  @override
+  String get errorOffensiveText =>
+      'يحتوي النص على ألفاظ غير مسموح بها. يرجى إعادة صياغته.';
 }

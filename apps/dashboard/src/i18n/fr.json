@@ -48,7 +48,8 @@
       "light": "clair",
       "dark": "sombre"
     },
-    "language": "Langue"
+    "language": "Langue",
+    "logoAlt": "Office National de la Protection Civile"
   },
   "roles": {
     "operator": "Opérateur",
@@ -137,7 +138,8 @@
     "cancel": "Annuler",
     "none": "Aucun",
     "close": "Fermer",
-    "reasonLength": "Entre {{min}} et {{max}} caractères."
+    "reasonLength": "Entre {{min}} et {{max}} caractères.",
+    "requiredNote": "Les champs marqués * sont obligatoires."
   },
   "errors": {
     "authentication_required": "Session expirée. Veuillez vous reconnecter.",
@@ -3131,6 +3133,39 @@
       "integer": "Saisissez des nombres entiers.",
       "range": "Valeurs entre {{min}} et {{max}}.",
       "order": "Ordre des valeurs incorrect."
+    },
+    "release": {
+      "title": "Version de l’application mobile",
+      "help": "Version proposée aux téléphones. Sous la dernière version, l’application affiche « Nouveautés » avec « Mettre à jour » et « Plus tard » ; sous la version minimale, la mise à jour est obligatoire (SOS et 198 restent accessibles).",
+      "version": "Dernière version",
+      "latestBuild": "Numéro de build le plus récent",
+      "minBuild": "Build minimal autorisé",
+      "channel": "Canal de téléchargement",
+      "channels": {
+        "server": "Notre serveur (étape 1)",
+        "play": "Google Play (étape 2)"
+      },
+      "downloadUrl": "Adresse de téléchargement (https)",
+      "notes": "Nouveautés ({{lang}})",
+      "mandatoryNote": "Ne relevez le build minimal que pour un correctif de sécurité ou de données : les téléphones plus anciens devront alors se mettre à jour.",
+      "errors": {
+        "version": "La version s’écrit en trois nombres : 0.3.0.",
+        "build": "Les numéros de build sont des entiers entre {{min}} et {{max}}.",
+        "order": "Le build minimal ne peut pas dépasser le build le plus récent.",
+        "url": "L’adresse de téléchargement doit commencer par https://.",
+        "urlMissing": "Une version sur notre serveur a besoin de son adresse de téléchargement.",
+        "notes": "Chaque texte compte au plus {{notes}} caractères."
+      }
+    },
+    "moderation": {
+      "title": "Mots refusés dans les noms et commentaires",
+      "help": "Ajoutés à la liste intégrée. Appliqués aux noms du profil et aux autres textes non urgents ; jamais aux signalements, au SOS ni aux descriptions.",
+      "label": "Un mot ou une expression par ligne",
+      "hint": "{{count}} mots sur {{max}}.",
+      "errors": {
+        "length": "Chaque ligne compte de {{min}} à {{max}} caractères.",
+        "count": "Au plus {{count}} mots."
+      }
     }
   },
   "accounts": {

@@ -13,7 +13,7 @@ import { queryKeys } from "../../lib/portalApi";
 import { CATEGORIES, TEXT_LANGS, type Category, type GeoPoint, type Report, type TextLang } from "../../lib/types";
 import { isInTunisia } from "../../lib/validators";
 import { BlockedNote, useOrg } from "./OrgWorkspace";
-import { Field } from "./RegisterParts";
+import { Field, RequiredNote } from "./RegisterParts";
 
 export const TEXT_MAX_LENGTH = 4000;
 
@@ -260,6 +260,7 @@ export function NewReportPage() {
         </p>
         <h2 id="new-report-title">{t("reports.newTitle", { name: org.name })}</h2>
         <p className="alert alert--warn">{t("reports.emergencyNote")}</p>
+        <RequiredNote />
         <BlockedNote action="report" />
         <div className="form-grid">
           <Field id="rp-category" label={t("reports.category")} required>

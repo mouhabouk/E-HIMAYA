@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../routing/app_router.dart';
+import 'language_bar.dart';
 
 /// App-bar action present on every screen: opens the emergency numbers (offline, no API).
 class EmergencyNumbersAction extends StatelessWidget {
@@ -18,4 +19,15 @@ class EmergencyNumbersAction extends StatelessWidget {
       onPressed: () => context.push(Routes.emergency),
     );
   }
+}
+
+/// Actions every app bar carries (phase A rule 1): the language switch and the emergency numbers.
+class StandardAppBarActions extends StatelessWidget {
+  const StandardAppBarActions({super.key});
+
+  @override
+  Widget build(BuildContext context) => const Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [LanguageMenuAction(), EmergencyNumbersAction()],
+  );
 }

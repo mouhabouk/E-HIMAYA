@@ -202,7 +202,8 @@
     "months120": "Entre 1 et 120 mois.",
     "unNumber": "Numéro ONU : exactement 4 chiffres (ou laisser vide).",
     "hazardClass": "8 caractères au maximum (ex. 3 ou 2.1).",
-    "coordinates": "Coordonnées invalides."
+    "coordinates": "Coordonnées invalides.",
+    "requiredNote": "Les champs marqués * sont obligatoires."
   },
   "workspace": {
     "sections": "Rubriques de l’établissement",

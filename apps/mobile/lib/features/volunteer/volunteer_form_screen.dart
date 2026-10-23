@@ -123,7 +123,7 @@ class _VolunteerFormScreenState extends ConsumerState<VolunteerFormScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.volunteerApply),
-        actions: const [EmergencyNumbersAction()],
+        actions: const [StandardAppBarActions()],
       ),
       body: SafeArea(
         child: ListView(

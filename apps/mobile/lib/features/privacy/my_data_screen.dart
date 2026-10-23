@@ -11,6 +11,7 @@ import '../../core/auth/identity.dart';
 import '../../core/http/ehimaya_api.dart' show LastAdminException;
 import '../../core/http/error_messages.dart';
 import '../../core/routing/app_router.dart';
+import '../../core/ui/emergency_action.dart';
 import '../../l10n/app_localizations.dart';
 import 'account_deletion.dart';
 
@@ -76,7 +77,10 @@ class _MyDataScreenState extends ConsumerState<MyDataScreen> {
     final theme = Theme.of(context);
     final json = _json;
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.myDataTitle)),
+      appBar: AppBar(
+        title: Text(l10n.myDataTitle),
+        actions: const [StandardAppBarActions()],
+      ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
         children: [
@@ -213,7 +217,10 @@ class _DeleteAccountScreenState extends ConsumerState<DeleteAccountScreen> {
     final registered = ref.watch(identityProvider).isRegistered;
     final word = l10n.deleteAccountWord;
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.deleteAccountTitle)),
+      appBar: AppBar(
+        title: Text(l10n.deleteAccountTitle),
+        actions: const [StandardAppBarActions()],
+      ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
         children: [

@@ -1,4 +1,4 @@
-# الإصدارات المثبتة (المراحل 1 إلى 10)
+# الإصدارات المثبتة (المراحل 1 إلى 10 والمرحلة A)
 
 تُحدَّث هذه القائمة مع كل مرحلة. تُعتمد الإصدارات الدقيقة أدناه في الكود والحاويات.
 
@@ -213,6 +213,24 @@ vite 8.3.4، typescript 5.9.3، vitest 5.0.5، eslint 10.13.0). البصمة SHA
 | PostgreSQL 16 + PostGIS + pgvector (حزم Ubuntu 24.04) | 16 | تمرين الاستعادة في CI فقط (عنقودان مؤقتان)؛ الإنتاج يبقى على 17 |
 | @playwright/test و @axe-core/playwright في البوابة | 1.64.1 / 4.13.0 | اختبارات المتصفح لإمكانية الوصول (أُضيفت للبوابة في هذه المرحلة) |
 
+## المرحلة A (الاستقبال والدخول بالهاتف والواجهة الرئيسية)
+
+تفاصيل كل أداة (بطاقة وصفية، المصدر، أمر التثبيت، الأولوية) في [تقرير المرحلة A](phase-a-report.html#tools).
+
+| الأداة | الإصدار | الاستعمال | الرخصة |
+|---|---|---|---|
+| تطبيق الهاتف | 0.3.0 (البناء 2) | رقم الإصدار في `pubspec.yaml` و `AppConfig.appVersion` / `appBuild` | — |
+| صورة Keycloak الخاصة `ehimaya/keycloak` | مبنية من `keycloak/keycloak:26.8@sha256:79c623a2…d244` | تضيف مزود الدخول بالهاتف (`ehimaya-phone-otp`) وواجهة الدخول `ehimaya` | Apache-2.0 |
+| واجهة Keycloak البرمجية للمزودات (`keycloak-server-spi`، `keycloak-server-spi-private`، `keycloak-services`) | 26.8.1 (نطاق `provided`) | بناء المزود فقط، لا تُضمَّن في الملف | Apache-2.0 |
+| Maven (مرحلة البناء فقط) | `maven:3.9.11-eclipse-temurin-21@sha256:6fdc855a…d237` | بناء المزود وتشغيل اختباراته داخل `docker build` | Apache-2.0 |
+| Java (Eclipse Temurin) | 21 | لغة المزود (`maven.compiler.release` 21) | GPL-2.0 + CE |
+| JUnit Jupiter | 5.13.4 | 36 اختبارا لمزود Keycloak | EPL-2.0 |
+| maven-surefire-plugin | 3.5.4 | تشغيل اختبارات JUnit | Apache-2.0 |
+| Pillow (أداة محلية، خارج المستودع) | — | توليد أيقونات التطبيق من شعار الديوان مرة واحدة | MIT-CMU |
+
+لا حزمة جديدة في Python ولا في Flutter ولا في npm في هذه المرحلة. اختبار جديد يُفشل البناء إذا ظهرت حزمة إعلانات أو
+تتبع في `pubspec.lock` أو `uv.lock` أو `package-lock.json` (القاعدة 4).
+
 ## أولوية التنصيب
 
 1. Docker Engine 27+ مع Compose v2 (البنية كاملة بأمر واحد).
@@ -221,3 +239,6 @@ vite 8.3.4، typescript 5.9.3، vitest 5.0.5، eslint 10.13.0). البصمة SHA
 4. Flutter 3.47.7 و Android Studio أو Xcode (تطبيق الهاتف).
 5. طبقة الذكاء الاصطناعي: `docker compose ... --profile ai up -d` (ينزّل النماذج مرة واحدة، حوالي 6 غيغابايت في ملف cpu).
    على خادم GPU: مشغّل NVIDIA و NVIDIA Container Toolkit، ثم إضافة `-f infra/compose.gpu.yml`.
+6. المرحلة A: لا شيء يُثبَّت يدويا. `docker compose -f infra/compose.yml build keycloak` يبني صورة Keycloak مع المزود
+   (يحتاج اتصالا بمستودع Maven المركزي عند أول بناء). لاختبار المزود دون Docker: JDK 21 و Maven 3.9 ثم
+   `mvn -f infra/keycloak/providers/phone-otp/pom.xml verify`.
