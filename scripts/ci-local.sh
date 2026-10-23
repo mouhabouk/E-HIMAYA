@@ -371,7 +371,7 @@ job_api() {
     for i in $(seq 1 30); do curl -fs "http://127.0.0.1:$api_port/health/ready" && break; sleep 1; done
     KEY=$(openssl rand -base64 32 | tr '+/' '-_' | tr -d '=')
     curl -fsS -X POST "http://127.0.0.1:$api_port/api/v1/consents" -H "X-Device-Key: $KEY" -H 'Content-Type: application/json' \
-      -d '{"charter_version":"2026-10","locale":"ar","platform":"android"}'
+      -d '{"charter_version":"2026-11","locale":"ar","platform":"android"}'
     curl -fsS -X POST "http://127.0.0.1:$api_port/api/v1/reports" -H "X-Device-Key: $KEY" -H 'Content-Type: application/json' \
       -d "{\"client_uuid\":\"$(cat /proc/sys/kernel/random/uuid)\",\"category\":\"sos\",\"location\":{\"lat\":36.8,\"lon\":10.18},\"created_at\":\"$(date -u +%FT%TZ)\"}"
     kill $API_PID; tail -20 api.log

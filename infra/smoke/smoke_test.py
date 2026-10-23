@@ -172,7 +172,7 @@ def check_telephony() -> None:
 def main() -> None:
     wait_ready()
     check_notify_sim()
-    status, _ = api("POST", "/api/v1/consents", {"charter_version": "2026-10", "locale": "ar", "platform": "android"})
+    status, _ = api("POST", "/api/v1/consents", {"charter_version": "2026-11", "locale": "ar", "platform": "android"})
     assert status == 201, status
     body = {
         "client_uuid": str(uuid.uuid4()),
