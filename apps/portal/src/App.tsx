@@ -14,6 +14,7 @@ import { LandingPage } from "./pages/LandingPage";
 import { MyOrgsPage } from "./pages/MyOrgsPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { RegisterOrgPage } from "./pages/RegisterOrgPage";
+import { LivePage } from "./pages/LivePage";
 import { VerifyPage } from "./pages/VerifyPage";
 import { CardTab } from "./pages/org/CardTab";
 import { CertificatesTab } from "./pages/org/CertificatesTab";
@@ -47,6 +48,7 @@ export function AppRoutes() {
         <Route index element={<LandingPage />} />
         <Route path="verify" element={<VerifyPage />} />
         <Route path="verify/:code" element={<VerifyPage />} />
+        <Route path="live" element={<LivePage />} />
         <Route
           path="invite/:token"
           element={

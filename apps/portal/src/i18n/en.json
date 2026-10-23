@@ -734,5 +734,32 @@
     "certificate_outdated": "This draft was generated before the file was complete: generate a new draft, then submit it.",
     "signing_key_missing": "The platform cannot sign certificates at the moment. Try again later.",
     "invalid_note": "The note is too long (200 characters at most)."
+  },
+  "live": {
+    "title": "Live location",
+    "badLinkTitle": "Incomplete link",
+    "badLinkBody": "This link is not complete. Ask the person who sent it to share it again from the e-Himaya app.",
+    "notFoundTitle": "Link not found",
+    "notFoundBody": "This live location link does not exist or was removed.",
+    "errorTitle": "The location could not be loaded",
+    "activeTitle": "Location shared now",
+    "activeBody": "The person is sharing their location until {{until}}. This page refreshes every 30 seconds.",
+    "endedTitle": "Sharing has ended",
+    "stoppedBody": "The person stopped sharing on {{at}}. The last known position is shown below.",
+    "expiredBody": "The share ended on {{at}}. The last known position is shown below.",
+    "updated": "Last update: {{count}} min ago.",
+    "battery": "Phone battery: {{level}}%",
+    "lastPosition": "Last known position",
+    "mapLabel": "Map of the last known position",
+    "at": "Time",
+    "coordinates": "Coordinates",
+    "accuracy": "Accuracy",
+    "meters": "± {{count}} m",
+    "openMap": "Open in a map",
+    "noPosition": "No position has been received yet.",
+    "helpTitle": "If the person needs help",
+    "helpBody": "Call the Civil Protection on 198 and give them the position shown on this page.",
+    "call198": "Call 198",
+    "privacy": "This page shows no name or account. The link works only while the person shares it, and stops when they end it."
   }
 }
