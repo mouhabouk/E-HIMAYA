@@ -1,5 +1,6 @@
 // covers: phase A (docs/phase-a/design.md): first launch, phone sign-in, home, location strip,
 // colours, update sheet, large text, required fields.
+import 'package:ehimaya/core/config/app_config.dart';
 import 'package:ehimaya/core/location/location_service.dart';
 import 'package:ehimaya/core/ui/required_label.dart';
 import 'package:ehimaya/features/charter/charter_screen.dart';
@@ -34,12 +35,12 @@ FakeHandler _release({required int latest, required int min}) =>
     ? FakeResponse(
         200,
         json: {
-          'latest_version': '0.5.0',
+          'latest_version': '9.0.0',
           'latest_build': latest,
           'min_build': min,
           'notes': {'fr': 'Nouveautés de test', 'ar': 'جديد', 'en': 'New'},
           'channel': 'server',
-          'download_url': 'https://apk.test/ehimaya-0.5.0.apk',
+          'download_url': 'https://apk.test/ehimaya-9.0.0.apk',
           'update_available': true,
           'mandatory': min > latest,
           'sms_simulated': true,
@@ -258,7 +259,7 @@ void main() {
     await pumpApp(
       tester,
       prefs: onboardedPrefs(locale: 'fr'),
-      api: _release(latest: 4, min: 1),
+      api: _release(latest: AppConfig.appBuild + 1, min: 1),
       opened: opened,
     );
     expect(find.byKey(const Key('update-optional')), findsOneWidget);
@@ -277,7 +278,10 @@ void main() {
     final h = await pumpApp(
       tester,
       prefs: onboardedPrefs(locale: 'fr'),
-      api: _release(latest: 4, min: 4),
+      api: _release(
+        latest: AppConfig.appBuild + 1,
+        min: AppConfig.appBuild + 1,
+      ),
       opened: opened,
     );
     expect(find.byKey(const Key('update-mandatory')), findsOneWidget);
@@ -287,7 +291,7 @@ void main() {
     expect(h.dialled, [Uri.parse('tel:198')]);
     await tester.tap(find.byKey(const Key('update-now')));
     await tester.pumpAndSettle();
-    expect(opened, [Uri.parse('https://apk.test/ehimaya-0.5.0.apk')]);
+    expect(opened, [Uri.parse('https://apk.test/ehimaya-9.0.0.apk')]);
     await unmountApp(tester);
   });
 
