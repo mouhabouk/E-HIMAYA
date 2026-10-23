@@ -1,6 +1,7 @@
 # Phase B: the citizen's personal safety, and map data layers. Review and redesign
 
-Status: **draft for Yamen's review (2026-10-23). No code is written before approval.**
+Status: **approved by Yamen on 2026-10-23** ("I agree with this methodology"), including the four decisions of
+section 7. B1 is being developed.
 
 Scope from the roadmap (vision page, step B): additions 5, 7b, 8, 10 and 11. Yamen's request of 2026-10-23 adds
 **map data layers loaded from files** (section 2): hospitals first, then any other layer (category-1 institutions,
@@ -171,9 +172,11 @@ medical attachment to a report (encrypted, deleted with the case).
 * Mobile: layer drop-down with several layers, offline list and distances, call and route intents.
 * Security: CSV injection on export, oversized file, malformed XLSX.
 
-## 7. Decisions for Yamen
+## 7. Decisions (approved by Yamen, 2026-10-23)
 
-1. Split phase B into B1 then B2 (section 5)?
-2. First load from OpenStreetMap while waiting for the Office's lists (section 2.8)?
-3. The `manager` name hidden from the public by default (section 2.5)?
-4. Who may import layers: system administrator and content editors (proposed); regional administrators later?
+1. Phase B is split into **B1 then B2** (section 5).
+2. **First load from OpenStreetMap** while waiting for the Office's lists, marked "to be verified" (section 2.8).
+3. The `manager` name is **hidden from the public by default** (section 2.5); the administrator may change it per
+   column.
+4. **Who imports**: the system administrator and content editors (for the layers they are given). Regional
+   administrators: later, to decide.

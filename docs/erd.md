@@ -256,7 +256,72 @@ erDiagram
         text name_en
         geometry_multipolygon_4326 boundary
     }
+    geo__layer {
+        uuid id PK
+        text key
+        jsonb name
+        text icon
+        text colour
+        text audience
+        text source
+        text licence
+        boolean to_verify
+        array staff_only
+        boolean editors_allowed
+        boolean enabled
+        integer version
+        integer data_version
+        text created_by
+        datetime created_at
+        text updated_by
+        text updated_by_name
+        datetime updated_at
+    }
+    geo__layer_feature {
+        uuid id PK
+        uuid layer_id FK
+        text ref
+        text name
+        text kind
+        text phone
+        geography_point_4326 location
+        smallint gouvernorat_code FK
+        integer delegation_id FK
+        jsonb props
+        boolean hidden
+        uuid import_id FK
+        integer version
+        text updated_by
+        datetime updated_at
+    }
+    geo__layer_import {
+        uuid id PK
+        uuid layer_id FK
+        text file_name
+        text sha256
+        text format
+        text mode
+        text status
+        jsonb counts
+        jsonb rejected
+        jsonb warnings
+        jsonb rows
+        jsonb undo
+        integer base_version
+        integer result_version
+        text reason
+        text created_by
+        text created_by_name
+        datetime created_at
+        datetime applied_at
+        datetime undone_at
+    }
+    geo__delegation ||--o{ geo__layer_feature : "delegation_id"
     geo__gouvernorat ||--o{ geo__delegation : "gouvernorat_code"
+    geo__gouvernorat ||--o{ geo__layer_feature : "gouvernorat_code"
+    geo__layer ||--o{ geo__layer_feature : "layer_id"
+    geo__layer ||--o{ geo__layer_import : "layer_id"
+    geo__layer_import ||--o{ geo__layer_feature : "import_id"
 ```
 
 ## identity

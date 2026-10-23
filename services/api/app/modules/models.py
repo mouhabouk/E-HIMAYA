@@ -8,7 +8,7 @@ from app.modules.content.models import Revision, SafetyTip
 from app.modules.decision.models import ProcedureChunk
 from app.modules.evidence.models import Anchor, Leaf
 from app.modules.forecast.models import ForecastRun
-from app.modules.geo.models import Delegation, Gouvernorat
+from app.modules.geo.models import Delegation, Gouvernorat, Layer, LayerFeature, LayerImport
 from app.modules.identity.models import Account, Consent, ErasureRequest, Profile
 from app.modules.knowledge.models import IndexState, MemoryEntry, MemoryEntryVersion, SearchDoc
 from app.modules.notify.models import Device, Dispatch, Message, OrgDigest, Outbox
@@ -84,6 +84,9 @@ __all__ = [
     "Incident",
     "IndexState",
     "Invitation",
+    "Layer",
+    "LayerFeature",
+    "LayerImport",
     "Leaf",
     "LedgerEntry",
     "LevelState",

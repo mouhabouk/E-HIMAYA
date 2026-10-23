@@ -6026,78 +6026,134 @@
         "title": "Facets",
         "type": "object"
       },
-      "FeatureIn": {
+      "FeaturePatch": {
+        "additionalProperties": false,
         "properties": {
-          "kind": {
-            "enum": [
-              "evacuation_point",
-              "water_point",
-              "alarm"
-            ],
-            "title": "Kind",
-            "type": "string"
-          },
-          "label": {
+          "hidden": {
             "anyOf": [
               {
-                "maxLength": 120,
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hidden"
+          },
+          "kind": {
+            "anyOf": [
+              {
+                "maxLength": 64,
                 "type": "string"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Label"
+            "title": "Kind"
           },
-          "location": {
-            "$ref": "#/components/schemas/Point-Input"
+          "lat": {
+            "anyOf": [
+              {
+                "maximum": 37.6,
+                "minimum": 30.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lat"
+          },
+          "lon": {
+            "anyOf": [
+              {
+                "maximum": 11.7,
+                "minimum": 7.4,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lon"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "props": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Props"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          },
+          "version": {
+            "minimum": 1.0,
+            "title": "Version",
+            "type": "integer"
           }
         },
         "required": [
-          "kind",
-          "location"
+          "version",
+          "reason"
         ],
-        "title": "FeatureIn",
+        "title": "FeaturePatch",
         "type": "object"
       },
-      "FeatureOut": {
+      "FeaturesOut": {
         "properties": {
-          "id": {
-            "format": "uuid",
-            "title": "Id",
-            "type": "string"
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__layers__schemas__FeatureOut"
+            },
+            "title": "Items",
+            "type": "array"
           },
-          "kind": {
-            "enum": [
-              "evacuation_point",
-              "water_point",
-              "alarm"
-            ],
-            "title": "Kind",
-            "type": "string"
-          },
-          "label": {
-            "anyOf": [
-              {
-                "maxLength": 120,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Label"
-          },
-          "location": {
-            "$ref": "#/components/schemas/app__modules__orgs__schemas__Point"
+          "truncated": {
+            "title": "Truncated",
+            "type": "boolean"
           }
         },
         "required": [
-          "kind",
-          "location",
-          "id"
+          "items",
+          "truncated"
         ],
-        "title": "FeatureOut",
+        "title": "FeaturesOut",
         "type": "object"
       },
       "FireDangerOut": {
@@ -7579,6 +7635,300 @@
         "title": "IceServer",
         "type": "object"
       },
+      "ImportDetail": {
+        "properties": {
+          "applied_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Applied At"
+          },
+          "can_apply": {
+            "title": "Can Apply",
+            "type": "boolean"
+          },
+          "can_undo": {
+            "title": "Can Undo",
+            "type": "boolean"
+          },
+          "counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Counts",
+            "type": "object"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "expired": {
+            "title": "Expired",
+            "type": "boolean"
+          },
+          "file_name": {
+            "title": "File Name",
+            "type": "string"
+          },
+          "format": {
+            "title": "Format",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "mode": {
+            "enum": [
+              "merge",
+              "replace"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/PreviewPoint"
+            },
+            "title": "Points",
+            "type": "array"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "rejected": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Rejected",
+            "type": "array"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "undone_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Undone At"
+          },
+          "warnings": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "file_name",
+          "format",
+          "mode",
+          "status",
+          "counts",
+          "rejected",
+          "warnings",
+          "reason",
+          "created_by_name",
+          "created_at",
+          "applied_at",
+          "undone_at",
+          "expired",
+          "can_apply",
+          "can_undo",
+          "points"
+        ],
+        "title": "ImportDetail",
+        "type": "object"
+      },
+      "ImportOut": {
+        "properties": {
+          "applied_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Applied At"
+          },
+          "can_apply": {
+            "title": "Can Apply",
+            "type": "boolean"
+          },
+          "can_undo": {
+            "title": "Can Undo",
+            "type": "boolean"
+          },
+          "counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Counts",
+            "type": "object"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "expired": {
+            "title": "Expired",
+            "type": "boolean"
+          },
+          "file_name": {
+            "title": "File Name",
+            "type": "string"
+          },
+          "format": {
+            "title": "Format",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "mode": {
+            "enum": [
+              "merge",
+              "replace"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "rejected": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Rejected",
+            "type": "array"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "undone_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Undone At"
+          },
+          "warnings": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "file_name",
+          "format",
+          "mode",
+          "status",
+          "counts",
+          "rejected",
+          "warnings",
+          "reason",
+          "created_by_name",
+          "created_at",
+          "applied_at",
+          "undone_at",
+          "expired",
+          "can_apply",
+          "can_undo"
+        ],
+        "title": "ImportOut",
+        "type": "object"
+      },
+      "ImportsOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ImportOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "ImportsOut",
+        "type": "object"
+      },
       "InboxItem": {
         "properties": {
           "active": {
@@ -8646,6 +8996,43 @@
         "title": "Kpis",
         "type": "object"
       },
+      "LastImport": {
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "By"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "at",
+          "by"
+        ],
+        "title": "LastImport",
+        "type": "object"
+      },
       "LatLon-Input": {
         "properties": {
           "lat": {
@@ -8684,6 +9071,394 @@
           "lon"
         ],
         "title": "LatLon",
+        "type": "object"
+      },
+      "LayerIn": {
+        "additionalProperties": false,
+        "properties": {
+          "audience": {
+            "default": "staff",
+            "enum": [
+              "public",
+              "staff"
+            ],
+            "title": "Audience",
+            "type": "string"
+          },
+          "colour": {
+            "title": "Colour",
+            "type": "string"
+          },
+          "editors_allowed": {
+            "default": false,
+            "title": "Editors Allowed",
+            "type": "boolean"
+          },
+          "icon": {
+            "title": "Icon",
+            "type": "string"
+          },
+          "key": {
+            "pattern": "^[a-z][a-z0-9_]{1,39}$",
+            "title": "Key",
+            "type": "string"
+          },
+          "licence": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Licence",
+            "type": "string"
+          },
+          "name": {
+            "$ref": "#/components/schemas/Names"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          },
+          "source": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Source",
+            "type": "string"
+          },
+          "staff_only": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Staff Only",
+            "type": "array"
+          },
+          "to_verify": {
+            "default": true,
+            "title": "To Verify",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "icon",
+          "colour",
+          "reason"
+        ],
+        "title": "LayerIn",
+        "type": "object"
+      },
+      "LayerOut": {
+        "properties": {
+          "audience": {
+            "enum": [
+              "public",
+              "staff"
+            ],
+            "title": "Audience",
+            "type": "string"
+          },
+          "can_import": {
+            "title": "Can Import",
+            "type": "boolean"
+          },
+          "can_manage": {
+            "title": "Can Manage",
+            "type": "boolean"
+          },
+          "colour": {
+            "title": "Colour",
+            "type": "string"
+          },
+          "data_version": {
+            "title": "Data Version",
+            "type": "integer"
+          },
+          "editors_allowed": {
+            "title": "Editors Allowed",
+            "type": "boolean"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "feature_count": {
+            "title": "Feature Count",
+            "type": "integer"
+          },
+          "hidden_count": {
+            "title": "Hidden Count",
+            "type": "integer"
+          },
+          "icon": {
+            "title": "Icon",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "last_import": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LastImport"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "licence": {
+            "title": "Licence",
+            "type": "string"
+          },
+          "name": {
+            "$ref": "#/components/schemas/Names"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "staff_only": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Staff Only",
+            "type": "array"
+          },
+          "to_verify": {
+            "title": "To Verify",
+            "type": "boolean"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "updated_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By Name"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "key",
+          "name",
+          "icon",
+          "colour",
+          "audience",
+          "source",
+          "licence",
+          "to_verify",
+          "staff_only",
+          "editors_allowed",
+          "enabled",
+          "version",
+          "data_version",
+          "feature_count",
+          "hidden_count",
+          "updated_by_name",
+          "updated_at",
+          "last_import",
+          "can_manage",
+          "can_import"
+        ],
+        "title": "LayerOut",
+        "type": "object"
+      },
+      "LayerPatch": {
+        "additionalProperties": false,
+        "properties": {
+          "audience": {
+            "anyOf": [
+              {
+                "enum": [
+                  "public",
+                  "staff"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Audience"
+          },
+          "colour": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Colour"
+          },
+          "editors_allowed": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Editors Allowed"
+          },
+          "enabled": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enabled"
+          },
+          "icon": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icon"
+          },
+          "licence": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Licence"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Names"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
+          "staff_only": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Staff Only"
+          },
+          "to_verify": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To Verify"
+          },
+          "version": {
+            "minimum": 1.0,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version",
+          "reason"
+        ],
+        "title": "LayerPatch",
+        "type": "object"
+      },
+      "LayersOut": {
+        "properties": {
+          "icons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Icons",
+            "type": "array"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/LayerOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "limits": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Limits",
+            "type": "object"
+          },
+          "palette": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Palette",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items",
+          "icons",
+          "palette",
+          "limits"
+        ],
+        "title": "LayersOut",
         "type": "object"
       },
       "LeadIn": {
@@ -10210,6 +10985,36 @@
         "title": "MyRewards",
         "type": "object"
       },
+      "Names": {
+        "additionalProperties": false,
+        "properties": {
+          "ar": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Ar",
+            "type": "string"
+          },
+          "en": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "En",
+            "type": "string"
+          },
+          "fr": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Fr",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ar",
+          "fr",
+          "en"
+        ],
+        "title": "Names",
+        "type": "object"
+      },
       "NearbyIncident": {
         "description": "Summary of an open incident near a report, whatever its gouvernorat (no reporter data).",
         "properties": {
@@ -11504,7 +12309,7 @@
           },
           "features": {
             "items": {
-              "$ref": "#/components/schemas/FeatureOut"
+              "$ref": "#/components/schemas/app__modules__orgs__schemas__FeatureOut"
             },
             "title": "Features",
             "type": "array"
@@ -12023,6 +12828,45 @@
         "title": "Position",
         "type": "object"
       },
+      "PreviewPoint": {
+        "properties": {
+          "change": {
+            "enum": [
+              "new",
+              "updated",
+              "unchanged",
+              "removed"
+            ],
+            "title": "Change",
+            "type": "string"
+          },
+          "lat": {
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "title": "Lon",
+            "type": "number"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "ref": {
+            "title": "Ref",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ref",
+          "name",
+          "lat",
+          "lon",
+          "change"
+        ],
+        "title": "PreviewPoint",
+        "type": "object"
+      },
       "PrioritySettings": {
         "properties": {
           "category_severity": {
@@ -12426,6 +13270,201 @@
           "expires_at"
         ],
         "title": "PublicAlert",
+        "type": "object"
+      },
+      "PublicFeature": {
+        "properties": {
+          "distance_m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Distance M"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kind"
+          },
+          "lat": {
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "title": "Lon",
+            "type": "number"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "props": {
+            "additionalProperties": true,
+            "title": "Props",
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "kind",
+          "phone",
+          "lat",
+          "lon",
+          "gouvernorat_code",
+          "props"
+        ],
+        "title": "PublicFeature",
+        "type": "object"
+      },
+      "PublicFeatures": {
+        "properties": {
+          "data_version": {
+            "title": "Data Version",
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/PublicFeature"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "layer": {
+            "title": "Layer",
+            "type": "string"
+          },
+          "truncated": {
+            "default": false,
+            "title": "Truncated",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "layer",
+          "data_version",
+          "items"
+        ],
+        "title": "PublicFeatures",
+        "type": "object"
+      },
+      "PublicLayer": {
+        "properties": {
+          "colour": {
+            "title": "Colour",
+            "type": "string"
+          },
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "data_version": {
+            "title": "Data Version",
+            "type": "integer"
+          },
+          "icon": {
+            "title": "Icon",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "licence": {
+            "title": "Licence",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "names": {
+            "$ref": "#/components/schemas/Names"
+          },
+          "origin": {
+            "enum": [
+              "file",
+              "units"
+            ],
+            "title": "Origin",
+            "type": "string"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "to_verify": {
+            "title": "To Verify",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "names",
+          "icon",
+          "colour",
+          "source",
+          "licence",
+          "to_verify",
+          "count",
+          "data_version",
+          "origin"
+        ],
+        "title": "PublicLayer",
+        "type": "object"
+      },
+      "PublicLayers": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/PublicLayer"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "PublicLayers",
         "type": "object"
       },
       "PublicTip": {
@@ -15486,7 +16525,7 @@
           },
           "features": {
             "items": {
-              "$ref": "#/components/schemas/FeatureOut"
+              "$ref": "#/components/schemas/app__modules__orgs__schemas__FeatureOut"
             },
             "title": "Features",
             "type": "array"
@@ -19783,6 +20822,206 @@
         "title": "Review",
         "type": "object"
       },
+      "app__modules__layers__schemas__FeatureIn": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kind"
+          },
+          "lat": {
+            "maximum": 37.6,
+            "minimum": 30.0,
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "maximum": 11.7,
+            "minimum": 7.4,
+            "title": "Lon",
+            "type": "number"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "props": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Props",
+            "type": "object"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          },
+          "ref": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ref"
+          }
+        },
+        "required": [
+          "name",
+          "lat",
+          "lon",
+          "reason"
+        ],
+        "title": "FeatureIn",
+        "type": "object"
+      },
+      "app__modules__layers__schemas__FeatureOut": {
+        "properties": {
+          "delegation_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delegation Id"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "hidden": {
+            "title": "Hidden",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kind"
+          },
+          "lat": {
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "title": "Lon",
+            "type": "number"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "props": {
+            "additionalProperties": true,
+            "title": "Props",
+            "type": "object"
+          },
+          "ref": {
+            "title": "Ref",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "ref",
+          "name",
+          "kind",
+          "phone",
+          "lat",
+          "lon",
+          "gouvernorat_code",
+          "delegation_id",
+          "props",
+          "hidden",
+          "version",
+          "updated_at"
+        ],
+        "title": "FeatureOut",
+        "type": "object"
+      },
+      "app__modules__layers__schemas__ReasonIn": {
+        "additionalProperties": false,
+        "properties": {
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "ReasonIn",
+        "type": "object"
+      },
       "app__modules__ops__schemas__Point": {
         "properties": {
           "lat": {
@@ -19956,6 +21195,80 @@
           "verify_url"
         ],
         "title": "CertificateOut",
+        "type": "object"
+      },
+      "app__modules__orgs__schemas__FeatureIn": {
+        "properties": {
+          "kind": {
+            "enum": [
+              "evacuation_point",
+              "water_point",
+              "alarm"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "label": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          },
+          "location": {
+            "$ref": "#/components/schemas/Point-Input"
+          }
+        },
+        "required": [
+          "kind",
+          "location"
+        ],
+        "title": "FeatureIn",
+        "type": "object"
+      },
+      "app__modules__orgs__schemas__FeatureOut": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "evacuation_point",
+              "water_point",
+              "alarm"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "label": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          },
+          "location": {
+            "$ref": "#/components/schemas/app__modules__orgs__schemas__Point"
+          }
+        },
+        "required": [
+          "kind",
+          "location",
+          "id"
+        ],
+        "title": "FeatureOut",
         "type": "object"
       },
       "app__modules__orgs__schemas__Person": {
@@ -21598,6 +22911,280 @@
         "summary": "Accept Invitation",
         "tags": [
           "institutions"
+        ]
+      }
+    },
+    "/api/v1/layers": {
+      "get": {
+        "operationId": "public_layers_api_v1_layers_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "default": "ar",
+              "enum": [
+                "ar",
+                "fr",
+                "en"
+              ],
+              "title": "Lang",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "if-none-match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-None-Match"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicLayers"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Public Layers",
+        "tags": [
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/layers/{key}/features": {
+      "get": {
+        "description": "Either the nearest places to ``near`` (with their distance) or the places in a map area (``bbox``).",
+        "operationId": "public_features_api_v1_layers__key__features_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "description": "lat,lon",
+            "in": "query",
+            "name": "near",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "lat,lon",
+              "title": "Near"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 3,
+              "maximum": 50,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "radius_km",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 300,
+              "minimum": 1,
+              "title": "Radius Km",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "minLon,minLat,maxLon,maxLat",
+            "in": "query",
+            "name": "bbox",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "minLon,minLat,maxLon,maxLat",
+              "title": "Bbox"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "default": "ar",
+              "enum": [
+                "ar",
+                "fr",
+                "en"
+              ],
+              "title": "Lang",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicFeatures"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Public Features",
+        "tags": [
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/layers/{key}/package": {
+      "get": {
+        "description": "Offline copy of a layer (one gouvernorat, or the whole country): the app keeps it and asks again with\n``If-None-Match``; an unchanged layer answers 304 without a body.",
+        "operationId": "public_package_api_v1_layers__key__package_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 99,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "default": "ar",
+              "enum": [
+                "ar",
+                "fr",
+                "en"
+              ],
+              "title": "Lang",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "if-none-match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-None-Match"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicFeatures"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Public Package",
+        "tags": [
+          "layers"
         ]
       }
     },
@@ -23794,7 +25381,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/FeatureOut"
+                    "$ref": "#/components/schemas/app__modules__orgs__schemas__FeatureOut"
                   },
                   "title": "Response List Features Api V1 Orgs  Org Id  Features Get",
                   "type": "array"
@@ -23842,7 +25429,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/FeatureIn"
+                "$ref": "#/components/schemas/app__modules__orgs__schemas__FeatureIn"
               }
             }
           },
@@ -23853,7 +25440,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FeatureOut"
+                  "$ref": "#/components/schemas/app__modules__orgs__schemas__FeatureOut"
                 }
               }
             },
@@ -23959,7 +25546,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/FeatureIn"
+                "$ref": "#/components/schemas/app__modules__orgs__schemas__FeatureIn"
               }
             }
           },
@@ -23970,7 +25557,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FeatureOut"
+                  "$ref": "#/components/schemas/app__modules__orgs__schemas__FeatureOut"
                 }
               }
             },
@@ -29509,6 +31096,860 @@
         "summary": "Kpis",
         "tags": [
           "staff"
+        ]
+      }
+    },
+    "/api/v1/staff/layers": {
+      "get": {
+        "operationId": "list_layers_api_v1_staff_layers_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LayersOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Layers",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      },
+      "post": {
+        "operationId": "create_layer_api_v1_staff_layers_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LayerIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LayerOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Layer",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/staff/layers/template": {
+      "get": {
+        "description": "Empty file with the standard columns in the chosen language (the extra columns are free).",
+        "operationId": "template_api_v1_staff_layers_template_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "format",
+            "required": false,
+            "schema": {
+              "default": "csv",
+              "enum": [
+                "csv",
+                "xlsx"
+              ],
+              "title": "Format",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "default": "fr",
+              "enum": [
+                "ar",
+                "fr",
+                "en"
+              ],
+              "title": "Lang",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Template",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/staff/layers/{key}": {
+      "patch": {
+        "operationId": "update_layer_api_v1_staff_layers__key__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LayerPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LayerOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Layer",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/staff/layers/{key}/export": {
+      "get": {
+        "description": "The whole layer with every column (staff-only ones included): edit it and import it again.",
+        "operationId": "export_layer_api_v1_staff_layers__key__export_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "format",
+            "required": false,
+            "schema": {
+              "default": "csv",
+              "enum": [
+                "csv",
+                "xlsx",
+                "geojson"
+              ],
+              "title": "Format",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "default": "fr",
+              "enum": [
+                "ar",
+                "fr",
+                "en"
+              ],
+              "title": "Lang",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Export Layer",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/staff/layers/{key}/features": {
+      "get": {
+        "operationId": "staff_features_api_v1_staff_layers__key__features_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "description": "minLon,minLat,maxLon,maxLat",
+            "in": "query",
+            "name": "bbox",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "minLon,minLat,maxLon,maxLat",
+              "title": "Bbox"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 99,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeaturesOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Staff Features",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      },
+      "post": {
+        "operationId": "create_feature_api_v1_staff_layers__key__features_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__layers__schemas__FeatureIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__layers__schemas__FeatureOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Feature",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/staff/layers/{key}/features/{feature_id}": {
+      "patch": {
+        "operationId": "update_feature_api_v1_staff_layers__key__features__feature_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "feature_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Feature Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FeaturePatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__layers__schemas__FeatureOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Feature",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/staff/layers/{key}/imports": {
+      "get": {
+        "operationId": "list_imports_api_v1_staff_layers__key__imports_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Imports",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      },
+      "post": {
+        "description": "The file is the request body (any content type). Nothing changes on the map until it is applied.",
+        "operationId": "preview_import_api_v1_staff_layers__key__imports_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "file_name",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 1,
+              "title": "File Name",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "mode",
+            "required": false,
+            "schema": {
+              "default": "merge",
+              "enum": [
+                "merge",
+                "replace"
+              ],
+              "title": "Mode",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Preview Import",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/staff/layers/{key}/imports/{import_id}": {
+      "get": {
+        "operationId": "get_import_api_v1_staff_layers__key__imports__import_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "import_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Import Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Import",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/staff/layers/{key}/imports/{import_id}/apply": {
+      "post": {
+        "operationId": "apply_import_api_v1_staff_layers__key__imports__import_id__apply_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "import_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Import Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__layers__schemas__ReasonIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Apply Import",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/staff/layers/{key}/imports/{import_id}/discard": {
+      "post": {
+        "operationId": "discard_import_api_v1_staff_layers__key__imports__import_id__discard_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "import_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Import Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Discard Import",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/staff/layers/{key}/imports/{import_id}/undo": {
+      "post": {
+        "operationId": "undo_import_api_v1_staff_layers__key__imports__import_id__undo_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "import_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Import Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__layers__schemas__ReasonIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Undo Import",
+        "tags": [
+          "staff",
+          "layers"
         ]
       }
     },
