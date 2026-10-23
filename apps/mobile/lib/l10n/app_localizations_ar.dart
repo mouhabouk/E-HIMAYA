@@ -2594,4 +2594,111 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get nearestRoute => 'المسار';
+
+  @override
+  String get contactTitle => 'اتصل بنا';
+
+  @override
+  String get contactMineTitle => 'طلباتي';
+
+  @override
+  String get contactEmergencyBanner =>
+      'ليست للطوارئ. في حالة الطوارئ، اتصل بالرقم 198.';
+
+  @override
+  String get contactIntro =>
+      'اطرح سؤالا، اطلب معلومة لدى الحماية المدنية، أبلغ عن خطر غير عاجل، اقترح فكرة أو أبلغ عن مشكلة في التطبيق. ستحصل على رقم لمتابعة طلبك.';
+
+  @override
+  String get contactKind => 'نوع الطلب';
+
+  @override
+  String get contactKindAccessInfo => 'النفاذ إلى المعلومة (القانون 2016-22)';
+
+  @override
+  String get contactKindHazard => 'خطر غير عاجل';
+
+  @override
+  String get contactKindQuestion => 'سؤال';
+
+  @override
+  String get contactKindSuggestion => 'مقترح';
+
+  @override
+  String get contactKindAppProblem => 'مشكلة في التطبيق';
+
+  @override
+  String get contactKindPartnership => 'شراكة';
+
+  @override
+  String get contactAccessInfoHint =>
+      'يشترط القانون ذكر اسمك. يرد الديوان في الأجل القانوني (20 يوما).';
+
+  @override
+  String get contactNoGouvernorat => 'غير مرتبط بولاية';
+
+  @override
+  String get contactSubject => 'الموضوع';
+
+  @override
+  String get contactMessage => 'رسالتك';
+
+  @override
+  String get contactDetailsHint =>
+      'معطيات الاتصال اختيارية: بدونها يظهر الرد هنا فقط في «طلباتي».';
+
+  @override
+  String get contactName => 'الاسم واللقب';
+
+  @override
+  String get contactEmail => 'البريد الإلكتروني';
+
+  @override
+  String get contactEmailInvalid => 'أدخل بريدا إلكترونيا صحيحا.';
+
+  @override
+  String contactLength(int min, int max) {
+    return 'بين $min و$max حرفا.';
+  }
+
+  @override
+  String get contactSend => 'إرسال';
+
+  @override
+  String get contactSentTitle => 'تمّ إرسال الطلب';
+
+  @override
+  String get contactSentBody => 'احتفظ بهذا الرقم لمتابعة طلبك:';
+
+  @override
+  String get contactSeeMine => 'عرض طلباتي';
+
+  @override
+  String get contactMineEmpty => 'لم ترسل أي طلب بعد.';
+
+  @override
+  String get contactStatusReceived => 'وارد';
+
+  @override
+  String get contactStatusInProgress => 'قيد المعالجة';
+
+  @override
+  String get contactStatusAnswered => 'تمّ الرد';
+
+  @override
+  String get contactStatusClosed => 'مغلق';
+
+  @override
+  String get contactStatusRejected => 'مرفوض';
+
+  @override
+  String contactDue(String date) {
+    return 'الرد متوقع قبل $date';
+  }
+
+  @override
+  String get contactAnswer => 'رد الديوان';
+
+  @override
+  String get contactRejectReason => 'السبب المبلّغ من الديوان';
 }

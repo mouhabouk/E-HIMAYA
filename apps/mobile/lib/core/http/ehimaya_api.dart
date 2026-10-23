@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../features/contact/contact_models.dart';
 import '../../features/guide/guide_models.dart';
 import '../../features/places/places_models.dart';
 import '../quota/anon_quota.dart';
@@ -537,6 +538,25 @@ class EHimayaApi {
       PlacePackage.fromJson(r.data! as Map<String, Object?>, etag: newEtag),
       newEtag,
     );
+  });
+
+  /// "Contact us" (phase B1): sends a request; the answer carries its number.
+  Future<MyContactRequest> sendContact(Map<String, Object?> body) =>
+      guardApi(() async {
+        final r = await _dio.post<Map<String, Object?>>(
+          '/api/v1/contact',
+          data: body,
+        );
+        return MyContactRequest.fromJson(r.data!);
+      });
+
+  /// The caller's own requests, newest first, with their status and the Office's answer.
+  Future<List<MyContactRequest>> myContactRequests() => guardApi(() async {
+    final r = await _dio.get<Map<String, Object?>>('/api/v1/me/contact');
+    return [
+      for (final i in r.data!['items']! as List)
+        MyContactRequest.fromJson(i as Map<String, Object?>),
+    ];
   });
 
   // ---------------------------------------------------------------- rewards (phase 8 §3)

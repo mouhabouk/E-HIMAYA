@@ -1310,5 +1310,55 @@
       }
     }
   },
-  "nearestRoute": "Route"
+  "nearestRoute": "Route",
+  "contactTitle": "Contact us",
+  "contactMineTitle": "My requests",
+  "contactEmergencyBanner": "Not for emergencies. For an emergency, call 198.",
+  "contactIntro": "Ask a question, request information held by the Civil Protection, report a non-urgent hazard, suggest an idea or report a problem with the app. You get a number to follow your request.",
+  "contactKind": "Kind of request",
+  "contactKindAccessInfo": "Access to information (law 2016-22)",
+  "contactKindHazard": "Non-urgent hazard",
+  "contactKindQuestion": "Question",
+  "contactKindSuggestion": "Suggestion",
+  "contactKindAppProblem": "Problem with the app",
+  "contactKindPartnership": "Partnership",
+  "contactAccessInfoHint": "The law asks for your name. The Office answers within the legal deadline (20 days).",
+  "contactNoGouvernorat": "Not specific to a gouvernorat",
+  "contactSubject": "Subject",
+  "contactMessage": "Your message",
+  "contactDetailsHint": "Contact details are optional: without them, the answer is only shown here in “My requests”.",
+  "contactName": "Full name",
+  "contactEmail": "E-mail",
+  "contactEmailInvalid": "Enter a valid e-mail address.",
+  "contactLength": "Between {min} and {max} characters.",
+  "@contactLength": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "contactSend": "Send",
+  "contactSentTitle": "Request sent",
+  "contactSentBody": "Keep this number to follow your request:",
+  "contactSeeMine": "See my requests",
+  "contactMineEmpty": "You have not sent any request yet.",
+  "contactStatusReceived": "Received",
+  "contactStatusInProgress": "In progress",
+  "contactStatusAnswered": "Answered",
+  "contactStatusClosed": "Closed",
+  "contactStatusRejected": "Rejected",
+  "contactDue": "Answer due by {date}",
+  "@contactDue": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "contactAnswer": "Answer of the Office",
+  "contactRejectReason": "Reason given by the Office"
 }
