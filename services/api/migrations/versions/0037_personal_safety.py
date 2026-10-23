@@ -159,6 +159,8 @@ ON CONFLICT (key) DO NOTHING;
 DOWNGRADE = r"""
 DELETE FROM platform.setting WHERE key IN ('safety.live_max_minutes', 'safety.check_max_hours');
 DROP TABLE safety.safety_check;
+-- This policy reads safety.alert_recipient, so the table cannot go before it.
+DROP POLICY safety_alert_select ON safety.alert;
 DROP TABLE safety.alert_recipient;
 DROP TABLE safety.alert;
 DROP TABLE safety.live_share;
