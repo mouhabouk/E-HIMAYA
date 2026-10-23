@@ -1292,6 +1292,8 @@
     }
   },
   "nearestToVerify": "To be verified",
+  "nearestSimBanner": "[SIM] Some of these places are approximate and invented for a trial: they are not real places. In an emergency, call 198.",
+  "nearestSimChip": "[SIM] Trial",
   "nearestNeedPosition": "Waiting for your position.",
   "nearestNone": "No place of this kind is listed yet.",
   "nearestSource": "Source: {source}",

@@ -2577,6 +2577,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get nearestToVerify => 'للتثبت';
 
   @override
+  String get nearestSimBanner =>
+      '[SIM] بعض هذه الأماكن وهمية تقريبية للتجربة وليست أماكن حقيقية. في الطوارئ اتصل بـ 198.';
+
+  @override
+  String get nearestSimChip => '[SIM] تجربة';
+
+  @override
   String get nearestNeedPosition => 'في انتظار تحديد موقعك.';
 
   @override
