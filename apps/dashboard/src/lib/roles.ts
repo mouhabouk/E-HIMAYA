@@ -224,6 +224,16 @@ export function canHandleContact(roles: readonly string[]): boolean {
   return any(CONTACT_ROLES, roles);
 }
 
+/**
+ * Missing-person search in the 72-hour location history (phase B2): the operations rooms, and only while the national
+ * setting turns the feature on. The API checks the report is theirs and audits every search.
+ */
+export const LOCATION_HISTORY_ROLES = ["operator", "ops_manager"] as const;
+
+export function canSearchLocationHistory(roles: readonly string[]): boolean {
+  return any(LOCATION_HISTORY_ROLES, roles);
+}
+
 /** Stop a live stream (`POST /api/v1/staff/streams/{id}/stop`). */
 export function canStopStreams(roles: readonly string[]): boolean {
   return any(STREAM_STOP_ROLES, roles);

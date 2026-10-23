@@ -284,7 +284,10 @@
     "duplicate_id": "A place already has this identifier.",
     "outside_tunisia": "Position outside Tunisia.",
     "cannot_move": "Cannot move that way.",
-    "text_required": "A note, an answer or a reason is needed."
+    "text_required": "A note, an answer or a reason is needed.",
+    "feature_off": "This feature is turned off on the platform.",
+    "no_medical_file": "No medical file is attached to this report.",
+    "invalid_phone": "This phone number is not valid."
   },
   "kpi": {
     "title": "Key indicators",
@@ -3194,6 +3197,24 @@
       "help": "Days the Office has to answer a request for access to information sent through “Contact us” (law 2016-22, art. 14: 20 days). To be confirmed by the legal service.",
       "label": "Deadline",
       "unit": "days"
+    },
+    "minutes": "minutes",
+    "hours": "hours",
+    "liveMax": {
+      "title": "Live location: longest share",
+      "help": "How long a citizen can share their live location with their contacts in one go.",
+      "label": "Longest share"
+    },
+    "checkMax": {
+      "title": "Safety check: longest duration",
+      "help": "The longest time a citizen can set before their contacts are alerted if they do not answer.",
+      "label": "Longest duration"
+    },
+    "locationHistory": {
+      "title": "72-hour location history",
+      "help": "Lets citizens who opt in keep their positions for 72 hours, so an operations room can find a missing person. Off by default.",
+      "label": "Turn on the location history",
+      "note": "While off, the app hides the feature and the missing-person search does not appear. Turning it off later stops collection; points already kept are erased after 72 hours."
     }
   },
   "accounts": {
@@ -3608,6 +3629,49 @@
       "answer": "Answered",
       "note": "Note",
       "move": "Moved"
+    }
+  },
+  "safety": {
+    "medical": {
+      "title": "Medical file attached",
+      "intro": "The reporter chose to attach their medical file to this report. It is shown only on request, and each opening is recorded in the audit log.",
+      "open": "Open the medical file",
+      "close": "Hide",
+      "attachedAt": "Attached on {{at}}",
+      "empty": "The file is empty.",
+      "audited": "This opening has been recorded in the audit log.",
+      "sex": {
+        "female": "Female",
+        "male": "Male"
+      },
+      "fields": {
+        "blood_group": "Blood group",
+        "allergies": "Allergies",
+        "conditions": "Conditions",
+        "medications": "Medications",
+        "treatment_card": "Treatment card",
+        "other": "Other information",
+        "sex": "Sex",
+        "birth_date": "Date of birth",
+        "contact_name": "Contact person",
+        "contact_phone": "Contact phone"
+      }
+    },
+    "history": {
+      "title": "Missing person: location history",
+      "intro": "Search the last 72 hours of positions of a person linked to this report, if they turned the history on. The person is told through the app.",
+      "phone": "Person's phone number",
+      "phoneInvalid": "Enter a phone number (8 to 20 digits).",
+      "reason": "Reason for the search",
+      "submit": "Search",
+      "audited": "Each search is recorded in the audit log, even when nothing is found.",
+      "noAccount": "No account uses this number.",
+      "noPoints": "The history is on, but no position was kept in the last 72 hours.",
+      "notEnabled": "This person has not turned the location history on.",
+      "points": "Positions found: {{count}}",
+      "at": "Time",
+      "position": "Position",
+      "accuracy": "Accuracy"
     }
   }
 }
