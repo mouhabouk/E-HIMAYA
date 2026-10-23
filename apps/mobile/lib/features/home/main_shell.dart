@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/auth/identity.dart';
 import '../../l10n/app_localizations.dart';
 import '../onboarding/login_actions.dart';
+import '../safety/safety_gate.dart';
 import '../sos/sos_widgets.dart';
 import '../update/update_sheet.dart';
 
@@ -38,7 +39,10 @@ class MainShell extends ConsumerWidget {
               ),
             ),
           // Addition 3: "what's new" / mandatory update, checked at start and once a day.
-          Expanded(child: UpdateGate(child: shell)),
+          // Phase B2: app shortcuts, and a live share or location history resumed.
+          Expanded(
+            child: SafetyGate(child: UpdateGate(child: shell)),
+          ),
         ],
       ),
       // The home screen has its own big SOS button.

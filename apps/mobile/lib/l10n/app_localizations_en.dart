@@ -2735,4 +2735,830 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get contactRejectReason => 'Reason given by the Office';
+
+  @override
+  String get errorFeatureOff => 'This feature is not available yet.';
+
+  @override
+  String get errorAlreadyLinked => 'You are already linked with this person.';
+
+  @override
+  String get errorOwnInvitation =>
+      'This is your own code: give it to the other person.';
+
+  @override
+  String get errorTooManyLinks =>
+      'You reached the maximum number of linked contacts.';
+
+  @override
+  String get errorTooManyInvitations =>
+      'Too many open invitations. Use or let one expire first.';
+
+  @override
+  String get errorNoLinkedContact => 'No linked contact to alert in the app.';
+
+  @override
+  String get errorCheckActive => 'A safety check is already running.';
+
+  @override
+  String get errorHistoryOff => 'The location history is off.';
+
+  @override
+  String get errorDurationTooLong => 'This duration is longer than allowed.';
+
+  @override
+  String get safetyTitle => 'Personal safety';
+
+  @override
+  String get safetySettingsHint =>
+      'Emergency contacts, SOS message, medical file';
+
+  @override
+  String get safetyIntro =>
+      'Prepare who to warn and what to send if something happens to you. Your contacts, your message and your medical file stay on this phone.';
+
+  @override
+  String get safetySendSos => 'Send my SOS message';
+
+  @override
+  String get safetySomeone => 'A contact';
+
+  @override
+  String get safetyDelete => 'Delete';
+
+  @override
+  String get safetyEdit => 'Edit';
+
+  @override
+  String get safetyCopy => 'Copy';
+
+  @override
+  String get safetyCopied => 'Copied.';
+
+  @override
+  String get safetyDone => 'Done';
+
+  @override
+  String get safetySaved => 'Saved.';
+
+  @override
+  String get safetyBySms => 'SMS';
+
+  @override
+  String safetyAccuracy(int meters) {
+    return '± $meters m';
+  }
+
+  @override
+  String safetyMinutes(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String safetyHours(int hours) {
+    return '$hours h';
+  }
+
+  @override
+  String safetyHoursMinutes(int hours, int minutes) {
+    return '$hours h $minutes min';
+  }
+
+  @override
+  String get safetyContactsTitle => 'Emergency contacts';
+
+  @override
+  String safetyContactsCount(int count) {
+    return 'Contacts: $count';
+  }
+
+  @override
+  String get safetyContactsIntro =>
+      'Up to 10 people who receive your SOS message by SMS or WhatsApp.';
+
+  @override
+  String get safetyContactsPrivacy =>
+      'Kept on this phone only. The app never reads or uploads your address book: you choose each number.';
+
+  @override
+  String safetyContactsFull(int max) {
+    return 'You reached $max contacts.';
+  }
+
+  @override
+  String get safetyContactsEmpty => 'No emergency contact yet.';
+
+  @override
+  String get safetyContactAdd => 'Add a contact';
+
+  @override
+  String get safetyContactPick => 'Choose from my contacts';
+
+  @override
+  String get safetyContactPickHint =>
+      'Only the number you choose reaches the app.';
+
+  @override
+  String get safetyContactType => 'Type a number';
+
+  @override
+  String get safetyContactTitle => 'Emergency contact';
+
+  @override
+  String get safetyContactName => 'Name';
+
+  @override
+  String get safetyContactNameRequired => 'Enter a name.';
+
+  @override
+  String get safetyContactPhone => 'Phone number';
+
+  @override
+  String get safetyContactExists => 'This number is already in your list.';
+
+  @override
+  String get safetyContactLinked => 'Linked: receives the alert in the app';
+
+  @override
+  String get safetyContactGroups => 'Groups';
+
+  @override
+  String safetyContactDeleteTitle(String name) {
+    return 'Delete $name?';
+  }
+
+  @override
+  String get safetyGroupsTitle => 'Groups';
+
+  @override
+  String get safetyGroupsEmpty =>
+      'Groups let you warn only some people (family, neighbours…).';
+
+  @override
+  String get safetyGroupAdd => 'New group';
+
+  @override
+  String get safetyGroupName => 'Group name';
+
+  @override
+  String get safetyGroupNameHint => 'Family, neighbours, work…';
+
+  @override
+  String safetyGroupDeleteTitle(String name) {
+    return 'Delete the group $name?';
+  }
+
+  @override
+  String get safetyGroupDeleteBody => 'The contacts stay in your list.';
+
+  @override
+  String get safetyMessageTitle => 'SOS message';
+
+  @override
+  String get safetyMessageHint =>
+      'Your text, and the 5-second window to cancel';
+
+  @override
+  String get safetyMessageText => 'Your message';
+
+  @override
+  String get safetyMessageAdded =>
+      'The app adds the link to your position, its accuracy, the time and your battery level.';
+
+  @override
+  String get safetyCancelWindow => '5 seconds to cancel';
+
+  @override
+  String get safetyCancelWindowHint =>
+      'Avoids a message sent by mistake. Turn it off to send at once.';
+
+  @override
+  String get safetyPreview => 'Preview';
+
+  @override
+  String get sosDefaultTemplate => 'I need help. This is my position.';
+
+  @override
+  String get sosLabelPosition => 'Position';
+
+  @override
+  String get sosLabelAccuracy => 'Accuracy';
+
+  @override
+  String get sosLabelTime => 'Time';
+
+  @override
+  String get sosLabelBattery => 'Battery';
+
+  @override
+  String get sosLabelNoPosition => 'Position not available.';
+
+  @override
+  String get safetySendIntro =>
+      'Your contacts receive your message with your position. Linked contacts are alerted in the app; the SMS app opens with every number, and you press Send.';
+
+  @override
+  String get safetyNoContacts => 'Add at least one emergency contact first.';
+
+  @override
+  String get safetySendTo => 'Send to';
+
+  @override
+  String safetySendToAll(int count) {
+    return 'Everyone ($count)';
+  }
+
+  @override
+  String safetySendChannels(int count) {
+    return 'Linked contacts alerted in the app: $count. Then SMS, then WhatsApp.';
+  }
+
+  @override
+  String get safetySendSmsOnly =>
+      'Without an account, the message goes by SMS and WhatsApp only.';
+
+  @override
+  String get safetySendNow => 'Send now';
+
+  @override
+  String safetySendingIn(int seconds) {
+    return 'Sending in $seconds s…';
+  }
+
+  @override
+  String get safetySending => 'Getting your position and sending…';
+
+  @override
+  String safetySentApp(int count) {
+    return 'Alert received in the app by $count linked contact(s).';
+  }
+
+  @override
+  String get safetySentAppFailed =>
+      'The alert in the app could not be sent (no network?). The SMS still opened.';
+
+  @override
+  String safetySentSms(int count) {
+    return 'SMS ready for $count number(s): press Send in the SMS app.';
+  }
+
+  @override
+  String get safetyWhatsApp => 'Also by WhatsApp';
+
+  @override
+  String get safetyWhatsAppChoose => 'Choose a WhatsApp chat or group';
+
+  @override
+  String get safetyLinkedTitle => 'Linked contacts';
+
+  @override
+  String safetyLinkedCount(int count) {
+    return 'Linked: $count';
+  }
+
+  @override
+  String get safetyLinkedIntro =>
+      'A relative who also uses e-Himaya can be linked to you. Your SOS message then rings on their phone, even in silent mode.';
+
+  @override
+  String get safetyLinkedNeedsAccount =>
+      'Links need an e-Himaya account on both phones.';
+
+  @override
+  String get safetyLinkedEmpty => 'Nobody is linked yet.';
+
+  @override
+  String get safetyLinkedPrivacy =>
+      'A linked person sees your first name and number, and your alerts. Either of you can remove the link at any time.';
+
+  @override
+  String get safetyLinkedDone => 'You are now linked.';
+
+  @override
+  String safetyLinkedPush(String name) {
+    return 'You are now linked with $name.';
+  }
+
+  @override
+  String get safetyInvite => 'Invite';
+
+  @override
+  String get safetyInviteTitle => 'Your invitation code';
+
+  @override
+  String get safetyInviteBody =>
+      'Give this code to the person. They enter it in e-Himaya, Personal safety, Linked contacts.';
+
+  @override
+  String safetyInviteExpires(String time) {
+    return 'Valid until $time, once.';
+  }
+
+  @override
+  String safetyInviteText(String code) {
+    return 'Link with me in e-Himaya so we can alert each other in an emergency. My code: $code';
+  }
+
+  @override
+  String get safetyEnterCode => 'Enter a code';
+
+  @override
+  String get safetyCodeInvalid => 'This code is wrong, used or expired.';
+
+  @override
+  String get safetyLinkConfirmTitle => 'Link with this person?';
+
+  @override
+  String safetyLinkConfirmBody(String who) {
+    return '$who will receive your alerts and you will receive theirs.';
+  }
+
+  @override
+  String get safetyLinkAccept => 'Link';
+
+  @override
+  String get safetyUnlink => 'Remove the link';
+
+  @override
+  String safetyUnlinkTitle(String name) {
+    return 'Remove the link with $name?';
+  }
+
+  @override
+  String get safetyUnlinkBody =>
+      'Neither of you will receive the other’s alerts.';
+
+  @override
+  String get safetyAlertTitle => 'Distress alert';
+
+  @override
+  String safetyAlertFrom(String name) {
+    return '$name needs help';
+  }
+
+  @override
+  String safetyAlertCheckFrom(String name) {
+    return '$name did not confirm being safe';
+  }
+
+  @override
+  String get safetyAlertMine => 'Your alert';
+
+  @override
+  String safetyAlertAt(String time) {
+    return 'Sent at $time';
+  }
+
+  @override
+  String safetyAlertBattery(int level) {
+    return 'battery $level%';
+  }
+
+  @override
+  String safetyAlertSeenBy(int seen, int total) {
+    return 'Opened by $seen of $total';
+  }
+
+  @override
+  String get safetyAlertNoPosition => 'No position was sent.';
+
+  @override
+  String safetyAlertLive(String time) {
+    return 'Live position, updated $time';
+  }
+
+  @override
+  String safetyAlertPositionAt(String time) {
+    return 'Position at $time';
+  }
+
+  @override
+  String safetyAlertCall(String name) {
+    return 'Call $name';
+  }
+
+  @override
+  String get safetyAlertRoute => 'Route';
+
+  @override
+  String get safetyAlertReportHint =>
+      'If they are in danger, call the Civil Protection and give the position shown above.';
+
+  @override
+  String get safetyAlertCall198 => 'Call 198 for them';
+
+  @override
+  String get safetyAlertReport => 'Report it in the app';
+
+  @override
+  String get safetyLiveTitle => 'Live location';
+
+  @override
+  String get safetyLiveHint =>
+      'A link that shows where you are, for a limited time';
+
+  @override
+  String get safetyLiveRunning => 'Your location is being shared';
+
+  @override
+  String get safetyLiveIntro =>
+      'Create a link that shows your position as you move. It stops by itself at the end, or when you press Stop. Whoever has the link sees the point on a map, not your name.';
+
+  @override
+  String get safetyLiveNeedsAccount =>
+      'Live location needs an e-Himaya account.';
+
+  @override
+  String get safetyLiveFor => 'Share for';
+
+  @override
+  String get safetyLiveStart => 'Start sharing';
+
+  @override
+  String get safetyLiveStop => 'Stop sharing';
+
+  @override
+  String get safetyLivePrivacy =>
+      'The positions are deleted 24 hours after the share ends. A notification stays visible while it runs.';
+
+  @override
+  String safetyLiveLeft(String duration) {
+    return '$duration left';
+  }
+
+  @override
+  String safetyLiveLastSent(String time) {
+    return 'last sent $time';
+  }
+
+  @override
+  String safetyLiveShareText(String link) {
+    return 'Follow my position live: $link';
+  }
+
+  @override
+  String get safetyLiveSmsContacts => 'SMS to my contacts';
+
+  @override
+  String get safetyLiveNoticeTitle => 'e-Himaya: location shared';
+
+  @override
+  String get safetyLiveNoticeText =>
+      'Your position is sent while the share or the safety check runs.';
+
+  @override
+  String get safetyCheckTitle => 'Safety check';
+
+  @override
+  String get safetyCheckHint =>
+      'Linked contacts alerted if you do not confirm in time';
+
+  @override
+  String get safetyCheckRunning => 'A safety check is running';
+
+  @override
+  String get safetyCheckIntro =>
+      'Going out alone, walking at night, a trip? Set a time. If you have not pressed “I am fine” by then, your linked contacts receive an alert with your last position, even if your phone is off. The Civil Protection is not alerted.';
+
+  @override
+  String get safetyCheckNeedsAccount =>
+      'The safety check needs an e-Himaya account and linked contacts.';
+
+  @override
+  String get safetyCheckNoLinks =>
+      'Link at least one contact first: the alert goes to linked contacts.';
+
+  @override
+  String get safetyCheckIn => 'Check in after';
+
+  @override
+  String get safetyCheckMessage => 'Message for your contacts';
+
+  @override
+  String get safetyCheckMessageHint =>
+      'I did not confirm that I arrived safely.';
+
+  @override
+  String get safetyCheckStart => 'Start the check';
+
+  @override
+  String get safetyCheckPrivacy =>
+      'Reminders 10 minutes and 1 minute before. The check and its position are deleted 7 days after it ends.';
+
+  @override
+  String safetyCheckDue(String time) {
+    return 'Confirm before $time';
+  }
+
+  @override
+  String safetyCheckContacts(int count) {
+    return 'linked contacts: $count';
+  }
+
+  @override
+  String get safetyCheckOk => 'I am fine';
+
+  @override
+  String safetyCheckExtend(int minutes) {
+    return 'Add $minutes minutes';
+  }
+
+  @override
+  String get safetyCheckFired => 'Your contacts were alerted';
+
+  @override
+  String get safetyCheckFiredHint =>
+      'You did not confirm in time. If you are fine, tell them; otherwise send your SOS message.';
+
+  @override
+  String get safetyCheckReminder10 =>
+      'Your safety check ends in 10 minutes. Open e-Himaya to confirm.';
+
+  @override
+  String get safetyCheckReminder1 =>
+      'One minute left: confirm now or your contacts will be alerted.';
+
+  @override
+  String get safetyTestTitle => 'Self-test';
+
+  @override
+  String get safetyTestHint =>
+      'Check that everything works, without sending anything';
+
+  @override
+  String get safetyTestIntro =>
+      'Checks this phone: alarm sound, position, network, notifications and battery.';
+
+  @override
+  String get safetyTestAlarm => 'Play the alarm';
+
+  @override
+  String get safetyTestAlarmTitle => 'Test: distress alert';
+
+  @override
+  String get safetyTestAlarmBody =>
+      'This is how an alert from a linked contact sounds. Nothing was sent.';
+
+  @override
+  String get safetyTestAlarmSent => 'Test alarm shown.';
+
+  @override
+  String get safetyTestRunning => 'Checking…';
+
+  @override
+  String get safetyTestNotificationsOn => 'Notifications allowed';
+
+  @override
+  String get safetyTestNotificationsOff =>
+      'Notifications are blocked: alerts cannot reach you';
+
+  @override
+  String get safetyTestCriticalOn => 'Alerts ring even in silent mode';
+
+  @override
+  String get safetyTestCriticalOff => 'Alerts do not ring in silent mode';
+
+  @override
+  String get safetyTestCriticalFix => 'Turn on';
+
+  @override
+  String get safetyTestDnd => 'Do Not Disturb is on right now';
+
+  @override
+  String get safetyTestOnline => 'Network available';
+
+  @override
+  String get safetyTestOffline => 'No network: only SMS and calls work';
+
+  @override
+  String get safetyTestPosition => 'Position found';
+
+  @override
+  String get safetyTestNoPosition => 'No position: turn on location';
+
+  @override
+  String safetyTestBattery(int level) {
+    return 'Battery $level%';
+  }
+
+  @override
+  String get safetyTestBatteryUnknown => 'Battery level unknown';
+
+  @override
+  String get safetyTestPowerSave =>
+      'Battery saver is on: alerts may arrive late';
+
+  @override
+  String safetyTestContacts(int contacts, int links) {
+    return 'Emergency contacts: $contacts · linked: $links';
+  }
+
+  @override
+  String get safetyTestAgain => 'Test again';
+
+  @override
+  String get safetyTestNothingSent =>
+      'Nothing is sent to anyone during the self-test.';
+
+  @override
+  String get safetyRecentTitle => 'Recent alerts';
+
+  @override
+  String get safetyRecentReceived => 'Received (last 24 hours)';
+
+  @override
+  String get safetyRecentSentTitle => 'Sent from this phone';
+
+  @override
+  String get safetyRecentClear => 'Clear';
+
+  @override
+  String get safetyRecentEmpty => 'Nothing yet.';
+
+  @override
+  String get safetyRecentSos => 'SOS message';
+
+  @override
+  String get safetyRecentSent => 'sent';
+
+  @override
+  String get safetyRecentCancelled => 'cancelled';
+
+  @override
+  String get safetyRecentOk => 'done';
+
+  @override
+  String get safetyRecentFailed => 'not sent';
+
+  @override
+  String safetyRecentRecipients(int count) {
+    return '$count recipient(s)';
+  }
+
+  @override
+  String get safetyChannelApp => 'app';
+
+  @override
+  String get safetyRecentPrivacy => 'This list stays on this phone.';
+
+  @override
+  String get safetyMedicalTitle => 'Medical file';
+
+  @override
+  String get safetyMedicalHint =>
+      'Useful information for rescuers, on this phone only';
+
+  @override
+  String get safetyMedicalSaved => 'Saved on this phone';
+
+  @override
+  String get medicalConsentTitle => 'Before you start';
+
+  @override
+  String get medicalConsentBody =>
+      'Your medical file is health data. It stays encrypted on this phone. It is sent to the Civil Protection only with a report for which you tick “Attach my medical file”, and is then deleted 30 days after the report is closed. You can change or delete it at any time. Every field is optional.';
+
+  @override
+  String get medicalConsentCheck =>
+      'I agree to keep my medical file on this phone under these conditions';
+
+  @override
+  String get medicalCreate => 'Create my medical file';
+
+  @override
+  String get medicalIntro =>
+      'Fill in only what you want. Kept encrypted on this phone.';
+
+  @override
+  String get medicalSex => 'Sex';
+
+  @override
+  String get medicalSexFemale => 'Female';
+
+  @override
+  String get medicalSexMale => 'Male';
+
+  @override
+  String get medicalNotSaid => 'Not given';
+
+  @override
+  String get medicalBirthDate => 'Date of birth';
+
+  @override
+  String get medicalBloodGroup => 'Blood group';
+
+  @override
+  String get medicalAllergies => 'Allergies';
+
+  @override
+  String get medicalConditions => 'Chronic conditions';
+
+  @override
+  String get medicalMedications => 'Regular medicines';
+
+  @override
+  String get medicalOther => 'Other (pregnancy, device, disability…)';
+
+  @override
+  String get medicalTreatmentCard => 'Treatment card number';
+
+  @override
+  String get medicalContactName => 'Person to contact';
+
+  @override
+  String get medicalContactPhone => 'Their phone number';
+
+  @override
+  String get medicalContact => 'Contact';
+
+  @override
+  String get medicalLock => 'Ask for the phone lock';
+
+  @override
+  String get medicalLockHint =>
+      'Your PIN, pattern or fingerprint before the file opens.';
+
+  @override
+  String get medicalLocked => 'Your medical file is locked.';
+
+  @override
+  String get medicalUnlock => 'Unlock';
+
+  @override
+  String get medicalUnlockHint => 'Confirm it is you to open the medical file.';
+
+  @override
+  String get medicalNoPhoneLock =>
+      'This phone has no screen lock, so the file cannot be locked.';
+
+  @override
+  String get medicalForRescuer => 'Show to a rescuer';
+
+  @override
+  String get medicalCopy => 'Copy as text';
+
+  @override
+  String get medicalEmpty => 'The medical file is empty.';
+
+  @override
+  String get medicalAttachHint =>
+      'In a report, tick “Attach my medical file” to send it with that report only.';
+
+  @override
+  String get medicalDelete => 'Delete my medical file';
+
+  @override
+  String get medicalDeleteTitle => 'Delete the medical file?';
+
+  @override
+  String get medicalDeleteBody =>
+      'It is erased from this phone. Copies already attached to reports are deleted 30 days after each report is closed.';
+
+  @override
+  String get medicalDeleted => 'Medical file deleted.';
+
+  @override
+  String get reportAttachMedical => 'Attach my medical file to this report';
+
+  @override
+  String get reportAttachMedicalHint =>
+      'Only the team handling this report can open it, and each opening is recorded.';
+
+  @override
+  String get safetyHistoryTitle => 'Location history (72 h)';
+
+  @override
+  String get safetyHistoryOn => 'On';
+
+  @override
+  String get safetyHistoryOff => 'Off';
+
+  @override
+  String get safetyHistoryNotice =>
+      'If you go missing, the Civil Protection can see where your phone was during the last 72 hours. They read it only for a report they handle, with a reason, and you are told. Each position is deleted after 72 hours, and all of them at once when you turn it off.';
+
+  @override
+  String get safetyHistoryUnavailable => 'Not available yet.';
+
+  @override
+  String get safetyHistoryConsent =>
+      'I agree that my positions are kept for 72 hours under these conditions';
+
+  @override
+  String get safetyHistoryTurnOn => 'Turn on';
+
+  @override
+  String get safetyHistoryTurnOff => 'Turn off and delete';
+
+  @override
+  String safetyHistoryUntil(String time) {
+    return 'Until $time';
+  }
+
+  @override
+  String get safetyHistoryViewedTitle => 'Your location history was consulted';
+
+  @override
+  String get safetyHistoryViewedBody =>
+      'The Civil Protection consulted it for a report. Open e-Himaya for details.';
 }

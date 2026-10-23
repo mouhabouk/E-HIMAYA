@@ -24,6 +24,16 @@
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <!-- Phase B2: a live location share or a safety check keeps sending the position while the
+         phone is in a pocket, through geolocator's foreground service with its visible
+         notification. Started from the app only, never in the background (no
+         ACCESS_BACKGROUND_LOCATION). -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <!-- Phase B2: the safety-check reminders (10 min and 1 min before) are scheduled local
+         notifications, rescheduled after a restart. Inexact (no exact-alarm permission): the
+         alert itself is sent by the server at the time. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <!-- Phase 8: open_filex only opens certificate PDFs the app wrote in its own cache folder
          (its FileProvider), so the media and storage read permissions its manifest declares
          are not needed: removed from the merged manifest. -->
@@ -61,10 +71,27 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <!-- Phase B2 (8.2): "Call 198", "SOS message" and "Quick report" on a long press of
+                 the icon (Android 7.1+). -->
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
         </activity>
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <!-- Phase B2: scheduled safety-check reminders (flutter_local_notifications). -->
+        <receiver
+            android:exported="false"
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
+        <receiver
+            android:exported="false"
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
         <!-- FCM uses this channel when a push names one that does not exist on the phone: the
              legacy "ehimaya_alerts" (replaced by the versioned id) and "ehimaya_critical_v2"
              before the user opted in. Both are alerts, so they land on the official alerts
@@ -100,6 +127,16 @@
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.BROWSABLE" />
             <data android:scheme="https" />
+        </intent>
+        <!-- Phase B2: the SOS message opens in the SMS app with every recipient, and the system
+             contact picker chooses an emergency contact. -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="geo" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.PICK" />
+            <data android:mimeType="vnd.android.cursor.dir/phone_v2" />
         </intent>
         <intent>
             <action android:name="android.support.customtabs.action.CustomTabsService" />

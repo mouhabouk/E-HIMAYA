@@ -5,6 +5,7 @@ import 'package:ehimaya/core/ui/required_label.dart';
 import 'package:ehimaya/features/charter/charter_screen.dart';
 import 'package:ehimaya/features/home/home_screen.dart';
 import 'package:ehimaya/features/onboarding/sign_in_screen.dart';
+import 'package:ehimaya/features/safety/sos_message_screens.dart';
 import 'package:ehimaya/features/welcome/intro_screen.dart';
 import 'package:ehimaya/features/welcome/language_screen.dart';
 import 'package:ehimaya/features/welcome/permissions_screen.dart';
@@ -195,9 +196,12 @@ void main() {
     await tester.pumpAndSettle();
     expect(h.dialled, [Uri.parse('tel:198'), Uri.parse('tel:197')]);
 
+    // Phase B2: the SOS message goes to the user's own contacts (the Civil Protection SOS
+    // stays on the big button).
     await tester.tap(find.byKey(const Key('home-sos-message')));
     await tester.pumpAndSettle();
-    expect(find.byKey(const Key('sos-confirm')), findsOneWidget);
+    expect(find.byType(SosSendScreen), findsOneWidget);
+    expect(find.byKey(const Key('sos-no-contacts')), findsOneWidget);
     await unmountApp(tester);
   });
 

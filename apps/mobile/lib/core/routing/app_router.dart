@@ -25,6 +25,17 @@ import '../../features/report/report_queued_screen.dart';
 import '../../features/reports/my_reports_screen.dart';
 import '../../features/reports/track_screen.dart';
 import '../../features/rewards/rewards_screen.dart';
+import '../../features/safety/contacts_screen.dart';
+import '../../features/safety/linked_screen.dart';
+import '../../features/safety/live_share_screen.dart';
+import '../../features/safety/location_history_screen.dart';
+import '../../features/safety/medical_screen.dart';
+import '../../features/safety/received_alert_screen.dart';
+import '../../features/safety/recent_screen.dart';
+import '../../features/safety/safety_check_screen.dart';
+import '../../features/safety/safety_hub_screen.dart';
+import '../../features/safety/self_test_screen.dart';
+import '../../features/safety/sos_message_screens.dart';
 import '../../features/settings/alert_check.dart';
 import '../../features/settings/settings_screen.dart';
 import '../../features/tips/tips_screen.dart';
@@ -106,6 +117,21 @@ abstract final class Routes {
 
   // Phase 8: points, badges and certificates (FR-A-072).
   static const rewards = '/rewards';
+
+  // Phase B2: personal safety.
+  static const safety = '/safety';
+  static const safetyContacts = '/safety/contacts';
+  static const safetyMessage = '/safety/message';
+  static const safetySend = '/safety/send';
+  static const safetyLinked = '/safety/linked';
+  static const safetyLive = '/safety/live';
+  static const safetyCheck = '/safety/check';
+  static const safetyTest = '/safety/test';
+  static const safetyRecent = '/safety/recent';
+  static const safetyMedical = '/safety/medical';
+  static const safetyLocationHistory = '/safety/location-history';
+  static String safetyAlert(String id) =>
+      '/safety/alerts/${Uri.encodeComponent(id)}';
 
   // Phase 9 §3: anonymous report quota; `code`: a report kept until the user signs in.
   static const quota = '/quota';
@@ -302,6 +328,42 @@ final routerProvider = Provider<GoRouter>((ref) {
         ),
       ),
       GoRoute(path: Routes.track, builder: (_, _) => const TrackScreen()),
+      GoRoute(
+        path: Routes.safety,
+        builder: (_, _) => const SafetyHubScreen(),
+        routes: [
+          GoRoute(
+            path: 'contacts',
+            builder: (_, _) => const EmergencyContactsScreen(),
+          ),
+          GoRoute(
+            path: 'message',
+            builder: (_, _) => const SosMessageSettingsScreen(),
+          ),
+          GoRoute(path: 'send', builder: (_, _) => const SosSendScreen()),
+          GoRoute(
+            path: 'linked',
+            builder: (_, _) => const LinkedContactsScreen(),
+          ),
+          GoRoute(path: 'live', builder: (_, _) => const LiveShareScreen()),
+          GoRoute(path: 'check', builder: (_, _) => const SafetyCheckScreen()),
+          GoRoute(path: 'test', builder: (_, _) => const SelfTestScreen()),
+          GoRoute(
+            path: 'recent',
+            builder: (_, _) => const SafetyRecentScreen(),
+          ),
+          GoRoute(path: 'medical', builder: (_, _) => const MedicalScreen()),
+          GoRoute(
+            path: 'location-history',
+            builder: (_, _) => const LocationHistoryScreen(),
+          ),
+          GoRoute(
+            path: 'alerts/:id',
+            builder: (_, state) =>
+                SafetyAlertScreen(alertId: state.pathParameters['id'] ?? ''),
+          ),
+        ],
+      ),
       GoRoute(path: Routes.rewards, builder: (_, _) => const RewardsScreen()),
       GoRoute(
         path: Routes.quota,

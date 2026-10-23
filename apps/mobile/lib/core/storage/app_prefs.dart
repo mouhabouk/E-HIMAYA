@@ -51,6 +51,7 @@ class AppPrefs {
   static const _sosTemplate = 'safety.sos_template';
   static const _sosCancelWindow = 'safety.sos_cancel_window';
   static const _liveShare = 'safety.live_share';
+  static const _locationHistoryOn = 'safety.location_history_on';
 
   /// Kept when the account is deleted: interface choices, not personal data.
   static const _keptOnWipe = {
@@ -264,6 +265,11 @@ class AppPrefs {
   Future<void> setLiveShareJson(String? value) => value == null
       ? _prefs.remove(_liveShare)
       : _prefs.setString(_liveShare, value);
+
+  /// The user turned the 72-hour location history on (the recorder restarts with the app).
+  bool get locationHistoryOn => _prefs.getBool(_locationHistoryOn) ?? false;
+  Future<void> setLocationHistoryOn(bool value) =>
+      _prefs.setBool(_locationHistoryOn, value);
 
   /// Account deletion: forgets everything except the language, theme and battery saver choice
   /// (the app then starts again from the charter).

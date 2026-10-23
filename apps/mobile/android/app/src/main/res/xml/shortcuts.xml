@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Phase B2 (8.2): static shortcuts on a long press of the icon. "Call 198" opens the dialer
+     with the number (the user presses call); the other two open a screen of the app through the
+     extra "shortcut", which MainActivity accepts only for these names. -->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="call_198"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_call"
+        android:shortcutShortLabel="@string/shortcut_call_short"
+        android:shortcutLongLabel="@string/shortcut_call_long">
+        <intent
+            android:action="android.intent.action.DIAL"
+            android:data="tel:198" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="sos_message"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_sos"
+        android:shortcutShortLabel="@string/shortcut_sos_short"
+        android:shortcutLongLabel="@string/shortcut_sos_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="tn.ehimaya.app"
+            android:targetClass="tn.ehimaya.app.MainActivity">
+            <extra android:name="shortcut" android:value="sos_message" />
+        </intent>
+    </shortcut>
+    <shortcut
+        android:shortcutId="report"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_report"
+        android:shortcutShortLabel="@string/shortcut_report_short"
+        android:shortcutLongLabel="@string/shortcut_report_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="tn.ehimaya.app"
+            android:targetClass="tn.ehimaya.app.MainActivity">
+            <extra android:name="shortcut" android:value="report" />
+        </intent>
+    </shortcut>
+</shortcuts>

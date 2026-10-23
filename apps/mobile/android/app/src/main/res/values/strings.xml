@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ء-حماية</string>
+    <!-- Phase B2: app shortcuts (res/xml/shortcuts.xml). -->
+    <string name="shortcut_call_short">اتصل بـ 198</string>
+    <string name="shortcut_call_long">اتصل بالحماية المدنية 198</string>
+    <string name="shortcut_sos_short">رسالة استغاثة</string>
+    <string name="shortcut_sos_long">أرسل رسالة الاستغاثة</string>
+    <string name="shortcut_report_short">بلاغ سريع</string>
+    <string name="shortcut_report_long">بلاغ سريع للحماية المدنية</string>
 </resources>

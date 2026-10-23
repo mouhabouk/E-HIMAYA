@@ -51,6 +51,18 @@ enum ApiErrorCode {
   streamAlreadyActive('stream_already_active'),
   reportClosed('report_closed'),
   streamNotActive('stream_not_active'),
+  // Phase B2: personal safety.
+  featureOff('feature_off'),
+  alreadyLinked('already_linked'),
+  ownInvitation('own_invitation'),
+  tooManyLinks('too_many_links'),
+  tooManyInvitations('too_many_invitations'),
+  noLinkedContact('no_linked_contact'),
+  unknownLink('unknown_link'),
+  unknownLiveShare('unknown_live_share'),
+  checkActive('check_active'),
+  historyOff('history_off'),
+  durationTooLong('duration_too_long'),
   // Phase 9 §3: anonymous report quota of this installation reached (non-SOS reports only).
   anonQuotaExhausted('anon_quota_exhausted'),
   // Local: checksum mismatch detected by the server after upload.
