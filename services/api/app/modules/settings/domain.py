@@ -23,6 +23,9 @@ ALERTS_FOUR_EYES = "alerts.four_eyes"
 # system administrator adds to the built-in list of the respectful-language filter.
 APP_RELEASE = "app.release"
 MODERATION_EXTRA_TERMS = "moderation.extra_terms"
+# Phase B1: days to answer a request for access to information (law 2016-22, art. 14), to be confirmed by the
+# Office's legal service.
+CONTACT_ACCESS_INFO_DAYS = "contact.access_info_days"
 
 BANDS = ("critical", "high", "normal", "low")
 
@@ -141,6 +144,7 @@ DEFAULTS: dict[str, Any] = {
         "download_url": None,
     },
     MODERATION_EXTRA_TERMS: [],
+    CONTACT_ACCESS_INFO_DAYS: 20,
 }
 
 # Roles allowed to change each key (national scope required). Missing = read-only.
@@ -152,6 +156,7 @@ EDITORS: dict[str, frozenset[Role]] = {
     ALERTS_FOUR_EYES: frozenset({Role.SECURITY_ADMIN}),
     APP_RELEASE: frozenset({Role.SYSADMIN}),
     MODERATION_EXTRA_TERMS: frozenset({Role.SYSADMIN, Role.CONTENT_EDITOR}),
+    CONTACT_ACCESS_INFO_DAYS: frozenset({Role.CENTRAL_COMMITTEE}),
 }
 # Keys no one may change in phase 9: enabling them needs a formal approval outside the platform (§7.4).
 FORMAL_APPROVAL = frozenset({NOTIFY_REAL_SEND})
@@ -164,6 +169,7 @@ VALIDATORS: dict[str, Callable[[Any], Any]] = {
     ALERTS_FOUR_EYES: _boolean,
     APP_RELEASE: _model(AppRelease),
     MODERATION_EXTRA_TERMS: _terms,
+    CONTACT_ACCESS_INFO_DAYS: _int_between(1, 60),
 }
 
 

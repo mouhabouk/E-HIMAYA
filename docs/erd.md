@@ -140,6 +140,51 @@ erDiagram
     }
 ```
 
+## contact
+
+```mermaid
+erDiagram
+    contact__request {
+        uuid id PK
+        text number
+        text kind
+        text status
+        uuid user_id FK
+        smallint gouvernorat_code FK
+        text subject
+        blob name_enc
+        blob phone_enc
+        blob email_enc
+        blob message_enc
+        blob answer_enc
+        text locale
+        text platform
+        datetime due_at
+        datetime answered_at
+        datetime closed_at
+        text assigned_to
+        text assigned_name
+        integer version
+        datetime created_at
+        datetime updated_at
+    }
+    contact__request_event {
+        uuid id PK
+        uuid request_id FK
+        text action
+        text status
+        smallint gouvernorat_code
+        blob note_enc
+        boolean visible
+        text actor
+        text actor_name
+        datetime at
+    }
+    contact__request ||--o{ contact__request_event : "request_id"
+    geo__gouvernorat ||--o{ contact__request : "gouvernorat_code"
+    identity__account ||--o{ contact__request : "user_id"
+```
+
 ## content
 
 ```mermaid

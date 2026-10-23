@@ -217,6 +217,13 @@ export function canOpenLayers(roles: readonly string[]): boolean {
   return any(LAYERS_PAGE_ROLES, roles);
 }
 
+/** Contact us inbox (phase B1): operations manager, both committees and content editors, in their scope. */
+export const CONTACT_ROLES = ["ops_manager", "local_committee", "central_committee", "content_editor"] as const;
+
+export function canHandleContact(roles: readonly string[]): boolean {
+  return any(CONTACT_ROLES, roles);
+}
+
 /** Stop a live stream (`POST /api/v1/staff/streams/{id}/stop`). */
 export function canStopStreams(roles: readonly string[]): boolean {
   return any(STREAM_STOP_ROLES, roles);

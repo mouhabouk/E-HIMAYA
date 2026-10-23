@@ -34,7 +34,8 @@
     "audit": "Audit",
     "breakGlass": "Break-glass",
     "layers": "Map layers",
-    "emergencyGuide": "Emergency hub"
+    "emergencyGuide": "Emergency hub",
+    "contact": "Contact us"
   },
   "header": {
     "scope": "Geographic scope",
@@ -282,7 +283,8 @@
     "not_last_import": "Only the last published import can be undone.",
     "duplicate_id": "A place already has this identifier.",
     "outside_tunisia": "Position outside Tunisia.",
-    "cannot_move": "Cannot move that way."
+    "cannot_move": "Cannot move that way.",
+    "text_required": "A note, an answer or a reason is needed."
   },
   "kpi": {
     "title": "Key indicators",
@@ -3186,6 +3188,12 @@
         "length": "Each line has {{min}} to {{max}} characters.",
         "count": "At most {{count}} words."
       }
+    },
+    "accessInfoDays": {
+      "title": "Deadline for access to information",
+      "help": "Days the Office has to answer a request for access to information sent through “Contact us” (law 2016-22, art. 14: 20 days). To be confirmed by the legal service.",
+      "label": "Deadline",
+      "unit": "days"
     }
   },
   "accounts": {
@@ -3529,6 +3537,75 @@
       "electric": "Electricity",
       "poison": "Poisoning",
       "pin": "Other"
+    }
+  },
+  "contact": {
+    "title": "Contact us: requests",
+    "intro": "Requests sent from the app: access to information (law 2016-22, with its legal deadline), non-urgent hazards, questions, suggestions, app problems and partnerships. This is not an emergency channel: the app tells citizens to call 198.",
+    "kind": "Kind",
+    "allKinds": "All kinds",
+    "status": "Status",
+    "openOnly": "Open (received, in progress)",
+    "allStatuses": "All statuses",
+    "gouvernorat": "Gouvernorat",
+    "allGouvernorats": "All",
+    "national": "National (no gouvernorat)",
+    "overdueOnly": "Overdue only ({{count}})",
+    "overdue": "Overdue",
+    "dueOn": "Due on {{date}}",
+    "number": "Number",
+    "subject": "Subject",
+    "received": "Received",
+    "due": "Due",
+    "empty": "No request matches these filters.",
+    "truncated": "Only the first 500 requests are listed: narrow the filters.",
+    "requester": "Requester",
+    "anonymous": "No contact details (answer in the app only)",
+    "assigned": "Handled by",
+    "answer": "Answer sent",
+    "rejectReason": "Reason given",
+    "history": "History",
+    "internal": "internal",
+    "moveTo": "Move to",
+    "confirm": "Confirm",
+    "noteHint": "Internal note: never shown to the requester.",
+    "visibleHint": "This text is shown to the requester in the app.",
+    "textRange": "Between {{min}} and {{max}} characters.",
+    "kinds": {
+      "access_info": "Access to information",
+      "hazard": "Non-urgent hazard",
+      "question": "Question",
+      "suggestion": "Suggestion",
+      "app_problem": "App problem",
+      "partnership": "Partnership"
+    },
+    "statuses": {
+      "received": "Received",
+      "in_progress": "In progress",
+      "answered": "Answered",
+      "closed": "Closed",
+      "rejected": "Rejected"
+    },
+    "actions": {
+      "take": "Take",
+      "answer": "Answer",
+      "note": "Add a note",
+      "move": "Move",
+      "close": "Close",
+      "reject": "Reject",
+      "reopen": "Reopen"
+    },
+    "textLabel": {
+      "answer": "Answer to the requester",
+      "note": "Internal note",
+      "reject": "Reason given to the requester"
+    },
+    "events": {
+      "created": "Received",
+      "status": "Status",
+      "answer": "Answered",
+      "note": "Note",
+      "move": "Moved"
     }
   }
 }

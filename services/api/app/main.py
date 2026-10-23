@@ -30,6 +30,8 @@ from app.modules.analytics.router import router as analytics_router
 from app.modules.analytics.worker import analytics_forever
 from app.modules.appinfo.router import router as appinfo_router
 from app.modules.audit.router import router as audit_router
+from app.modules.contact.router import router as contact_router
+from app.modules.contact.router import staff_router as contact_staff_router
 from app.modules.content.guide import router as guide_router
 from app.modules.content.router import router as content_router
 from app.modules.decision.procedures import procedures_forever
@@ -226,6 +228,8 @@ def create_app() -> FastAPI:
         notify_staff_router,
         content_router,
         guide_router,
+        contact_router,
+        contact_staff_router,
         orgs_router,
         orgs_staff_router,
         ai_router,

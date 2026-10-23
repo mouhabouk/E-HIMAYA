@@ -480,3 +480,51 @@ async def test_map_layers_written_by_central_staff(conn: AsyncConnection) -> Non
     await scoped(conn, DbScope("national", subject=SUBJECT))
     change = text("UPDATE geo.layer SET source = 'x' WHERE id = :i")
     assert (await conn.execute(change, {"i": layer})).rowcount == 1
+
+
+async def test_contact_requests_by_scope(conn: AsyncConnection, seed: Seed) -> None:
+    """Phase B1 (migration 0034): national reads every request, a gouvernorat its own, the citizen their own and only
+    the visible events; only staff scopes update."""
+    await owner(conn)
+    ids: dict[str, uuid.UUID] = {}
+    for name, user, code in (
+        ("beja", seed.user, BEJA),
+        ("jendouba", seed.other_user, JENDOUBA),
+        ("national", seed.user, None),
+    ):
+        ids[name] = await conn.scalar(
+            text(
+                "INSERT INTO contact.request (kind, user_id, gouvernorat_code, subject, message_enc) "
+                "VALUES ('question', :u, :g, 's', 'x') RETURNING id"
+            ),
+            {"u": user, "g": code},
+        )
+        for visible in (True, False):
+            await conn.execute(
+                text(
+                    "INSERT INTO contact.request_event (request_id, action, visible, actor) "
+                    "VALUES (:r, 'note', :v, 'x')"
+                ),
+                {"r": ids[name], "v": visible},
+            )
+    mine = list(ids.values())
+
+    async def seen() -> tuple[set[uuid.UUID], int]:
+        requests = await _visible(conn, "contact.request", mine)
+        events = await conn.scalar(
+            text("SELECT count(*) FROM contact.request_event WHERE request_id = ANY(:i)"), {"i": mine}
+        )
+        return requests, events or 0
+
+    await scoped(conn, None)
+    assert await seen() == (set(), 0)
+    await scoped(conn, DbScope("public", subject=str(seed.user)))
+    assert await seen() == ({ids["beja"], ids["national"]}, 2)
+    change = text("UPDATE contact.request SET status = 'closed' WHERE id = :i")
+    assert (await conn.execute(change, {"i": ids["beja"]})).rowcount == 0
+    await scoped(conn, BEJA_SCOPE)
+    assert await seen() == ({ids["beja"]}, 2)
+    assert (await conn.execute(change, {"i": ids["jendouba"]})).rowcount == 0
+    assert (await conn.execute(change, {"i": ids["beja"]})).rowcount == 1
+    await scoped(conn, DbScope("national", subject=SUBJECT))
+    assert await seen() == (set(mine), 6)

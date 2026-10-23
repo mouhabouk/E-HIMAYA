@@ -1,3 +1,4 @@
+import type { ContactDetail, ContactInbox } from "../lib/contact";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render } from "@testing-library/react";
 import type { ReactNode } from "react";
@@ -63,6 +64,22 @@ export function fakeGuideApi() {
   };
 }
 
+/** Contact us inbox (phase B1): empty unless a test gives requests. */
+export function fakeContactApi() {
+  return {
+    contactInbox: vi.fn(() =>
+      Promise.resolve<ContactInbox>({
+        items: [],
+        truncated: false,
+        open_by_kind: { access_info: 0, hazard: 0, question: 0, suggestion: 0, app_problem: 0, partnership: 0 },
+        overdue: 0,
+      }),
+    ),
+    contactRequest: vi.fn<(id: string) => Promise<ContactDetail>>(),
+    contactAct: vi.fn<(id: string, body: unknown) => Promise<ContactDetail>>(),
+  };
+}
+
 /** Map data layers (phase B1): no layer unless a test gives some. */
 export function fakeLayersApi() {
   return {
@@ -123,6 +140,7 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     ...fakePhase9Api(),
     ...fakeLayersApi(),
     ...fakeGuideApi(),
+    ...fakeContactApi(),
     gouvernorats: vi.fn(() =>
       Promise.resolve([
         { code: 11, iso_code: "TN-11", name: "تونس", name_ar: "تونس", name_fr: "Tunis", delegation_count: 21 },

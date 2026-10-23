@@ -147,6 +147,33 @@ don't), with no grouping and no "hidden" state. Redesign: two tables in schema `
 * First load: topics fires, fractures, first aid, breathing problems, burns, bleeding, with a few items each, all
   **not validated** until the Office's medical staff checks them.
 
+## 2ter. Contact us: requests with a number and a status (B1, detail of section 3)
+
+Review: nothing exists today; the only way to write to the Office is a report (wrong for a question) or the phone.
+
+Redesign:
+
+* **Kinds**: access to information (organic law 2016-22), non-urgent hazard, question, suggestion, app problem,
+  partnership. The form always shows the banner "For an emergency call 198" with a call button.
+* **Number** `CT-2026-000123` given at once; the citizen follows the status and reads the answer in "My requests".
+* **Deadline**: access to information gets a due date, **20 days** by default (law 2016-22, art. 14), kept as the
+  setting `contact.access_info_days` so the Office's legal service can confirm or change it. Other kinds have none.
+  The inbox flags overdue requests.
+* **Status**: received → in progress → answered → closed, or rejected (with a reason). The answer is visible to the
+  citizen; internal notes are not.
+* **Personal data**: name, phone, e-mail and message are encrypted (as the profile). Name is required for access to
+  information (the law asks for it), optional otherwise; a phone or e-mail is needed to be answered outside the app.
+  The respectful-language filter applies (not emergency text). Rate limit: 5 requests a day per account, 10 per
+  address for anonymous identities. Included in "export my data"; on account deletion the requests stay for the
+  Office's records without the link to the account or the contact details.
+* **Database**: `contact.request` (number, kind, status, gouvernorat, subject, encrypted name / phone / e-mail /
+  message / answer, due date, version) and `contact.request_event` (history: status changes, answer, internal
+  notes encrypted). Row-level security: national scope reads all; a gouvernorat reads its own requests; the citizen
+  reads their own; requests without a gouvernorat go to the national inbox.
+* **Dashboard**: one inbox, filters by kind, status, gouvernorat and overdue; detail with history; actions take,
+  answer, note, move to another gouvernorat, close, reject. Roles: operations manager, local and central committee,
+  content editor. Every change and every opening of a request is audited.
+
 ## 3. Personal safety (additions 5, 7b, 8, 10, 11)
 
 As reviewed and approved in the addition files; summary of the design:
