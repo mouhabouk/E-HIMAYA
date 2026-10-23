@@ -31,7 +31,7 @@ Yamen (section 9). Every database change follows review, then redesign, then dev
 | 8.5 | **Self-test**: the alarm sound on the critical channel, the position on the map, network, permissions and battery. Nothing is sent to anyone. | Phone. |
 | 8.7 | **Recent alerts**: time, channels and recipients of each SOS message or safety check. | Phone only. |
 | 8.2 | **App shortcuts** on a long press of the icon: "Call 198", "SOS message" and "Quick report". | Phone. |
-| 7b | **Medical file**: optional fields, its own consent, and an optional fingerprint lock. It can be deleted in one tap. It is **attached to a report only when the user ticks the box for that report**, shared as a QR code or text, or shown in the hub. | Phone only. When attached: `reports.medical_attachment`, encrypted, deleted 30 days after the report closes. |
+| 7b | **Medical file**: optional fields, its own consent, and an optional fingerprint lock. It can be deleted in one tap. It is **attached to a report only when the user ticks the box for that report**, shared as text, or shown full screen to a rescuer. (QR sharing moved to the proposals, see the B2 report.) | Phone only. When attached: `reports.medical_attachment`, encrypted, deleted 30 days after the report closes. |
 | 7b | **Location history, 72 h**: off by default, with a visible notification while on. An operator may read it only after a missing-person report, with a reason; each access is audited and the user is notified. | Server, encrypted, deleted after 72 h. **Platform switch off until the legal decision (section 9).** |
 
 Kept for later (proposals): a home-screen widget (8.2: needs a native widget), a choice of alarm sound (8.8: needs
@@ -108,8 +108,8 @@ Rules:
   `identity.consent`, with the version of the 7b text.
 - `PUT /api/v1/safety/history` turns it on (hours ≤ 72) or off. Turning it off deletes every point at once.
   `POST /api/v1/safety/history/points` adds points in batches.
-- Staff: `POST /api/v1/staff/safety/history/search` takes the person's phone, a missing-person report the operator
-  can see, and a reason. It returns the points of the last 72 h. It is audited, and the person gets a push and an
+- Staff: `POST /api/v1/staff/safety/history/search` takes the person's phone, a report the operator can read (the
+  report of the disappearance), and a reason. It returns the points of the last 72 h. It is audited, and the person gets a push and an
   inbox message ("your location history was consulted by Civil Protection for report …").
 - Allowed roles: operations manager and dispatcher, in the report's scope.
 - **The platform setting `safety.location_history` is `off` by default.** The API refuses with
@@ -142,9 +142,10 @@ A worker in the existing delivery loop fires due safety checks and purges expire
   - the receiver's full-screen alert;
   - in the report form, the box "Attach my medical file to this report", unticked by default.
 - **Dashboard:**
-  - "Medical file attached" with its audited opening in the incident detail;
-  - the location-history search page (hidden while the feature is off);
-  - the two new settings.
+  - "Medical file attached" in the report detail, opened only on request (each opening audited);
+  - the location-history search, in the report detail of that report (hidden while the feature is off, and only for
+    the operations rooms);
+  - three new settings: longest live share, longest safety check, location history on or off.
 - **Portal:** `/live#<token>` shows the map with the moving point, its accuracy, the last update, the end time, and
   "for an emergency call 198". No name is shown.
 
