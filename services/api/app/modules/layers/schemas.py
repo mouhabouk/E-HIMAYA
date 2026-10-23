@@ -116,6 +116,7 @@ class LayerOut(BaseModel):
 
 class LayersOut(BaseModel):
     items: list[LayerOut]
+    can_manage: bool
     icons: list[str]
     palette: list[str]
     limits: dict[str, int]

@@ -9,6 +9,7 @@ import {
   canEditAiSettings,
   canDraftMessage,
   canEditTips,
+  canOpenLayers,
   canManageAccounts,
   canOpenBreakGlass,
   canReadPlatformSettings,
@@ -213,6 +214,7 @@ export function Layout() {
             </>
           )}
           {editsTips && <NavLink to="/safety-tips">{t("nav.safetyTips")}</NavLink>}
+          {canOpenLayers(identity.roles) && <NavLink to="/layers">{t("nav.layers")}</NavLink>}
           {canReadPlatformSettings(identity.roles) && (
             <NavLink to="/settings" end>
               {t("nav.settings")}
