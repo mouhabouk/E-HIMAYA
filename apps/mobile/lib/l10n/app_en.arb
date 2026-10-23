@@ -1362,5 +1362,506 @@
     }
   },
   "contactAnswer": "Answer of the Office",
-  "contactRejectReason": "Reason given by the Office"
+  "contactRejectReason": "Reason given by the Office",
+  "errorFeatureOff": "This feature is not available yet.",
+  "errorAlreadyLinked": "You are already linked with this person.",
+  "errorOwnInvitation": "This is your own code: give it to the other person.",
+  "errorTooManyLinks": "You reached the maximum number of linked contacts.",
+  "errorTooManyInvitations": "Too many open invitations. Use or let one expire first.",
+  "errorNoLinkedContact": "No linked contact to alert in the app.",
+  "errorCheckActive": "A safety check is already running.",
+  "errorHistoryOff": "The location history is off.",
+  "errorDurationTooLong": "This duration is longer than allowed.",
+  "safetyTitle": "Personal safety",
+  "safetySettingsHint": "Emergency contacts, SOS message, medical file",
+  "safetyIntro": "Prepare who to warn and what to send if something happens to you. Your contacts, your message and your medical file stay on this phone.",
+  "safetySendSos": "Send my SOS message",
+  "safetySomeone": "A contact",
+  "safetyDelete": "Delete",
+  "safetyEdit": "Edit",
+  "safetyCopy": "Copy",
+  "safetyCopied": "Copied.",
+  "safetyDone": "Done",
+  "safetySaved": "Saved.",
+  "safetyBySms": "SMS",
+  "safetyAccuracy": "± {meters} m",
+  "@safetyAccuracy": {
+    "placeholders": {
+      "meters": {
+        "type": "int"
+      }
+    }
+  },
+  "safetyMinutes": "{minutes} min",
+  "@safetyMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "safetyHours": "{hours} h",
+  "@safetyHours": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "safetyHoursMinutes": "{hours} h {minutes} min",
+  "@safetyHoursMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "safetyContactsTitle": "Emergency contacts",
+  "safetyContactsCount": "Contacts: {count}",
+  "@safetyContactsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "safetyContactsIntro": "Up to 10 people who receive your SOS message by SMS or WhatsApp.",
+  "safetyContactsPrivacy": "Kept on this phone only. The app never reads or uploads your address book: you choose each number.",
+  "safetyContactsFull": "You reached {max} contacts.",
+  "@safetyContactsFull": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "safetyContactsEmpty": "No emergency contact yet.",
+  "safetyContactAdd": "Add a contact",
+  "safetyContactPick": "Choose from my contacts",
+  "safetyContactPickHint": "Only the number you choose reaches the app.",
+  "safetyContactType": "Type a number",
+  "safetyContactTitle": "Emergency contact",
+  "safetyContactName": "Name",
+  "safetyContactNameRequired": "Enter a name.",
+  "safetyContactPhone": "Phone number",
+  "safetyContactExists": "This number is already in your list.",
+  "safetyContactLinked": "Linked: receives the alert in the app",
+  "safetyContactGroups": "Groups",
+  "safetyContactDeleteTitle": "Delete {name}?",
+  "@safetyContactDeleteTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "safetyGroupsTitle": "Groups",
+  "safetyGroupsEmpty": "Groups let you warn only some people (family, neighbours…).",
+  "safetyGroupAdd": "New group",
+  "safetyGroupName": "Group name",
+  "safetyGroupNameHint": "Family, neighbours, work…",
+  "safetyGroupDeleteTitle": "Delete the group {name}?",
+  "@safetyGroupDeleteTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "safetyGroupDeleteBody": "The contacts stay in your list.",
+  "safetyMessageTitle": "SOS message",
+  "safetyMessageHint": "Your text, and the 5-second window to cancel",
+  "safetyMessageText": "Your message",
+  "safetyMessageAdded": "The app adds the link to your position, its accuracy, the time and your battery level.",
+  "safetyCancelWindow": "5 seconds to cancel",
+  "safetyCancelWindowHint": "Avoids a message sent by mistake. Turn it off to send at once.",
+  "safetyPreview": "Preview",
+  "sosDefaultTemplate": "I need help. This is my position.",
+  "sosLabelPosition": "Position",
+  "sosLabelAccuracy": "Accuracy",
+  "sosLabelTime": "Time",
+  "sosLabelBattery": "Battery",
+  "sosLabelNoPosition": "Position not available.",
+  "safetySendIntro": "Your contacts receive your message with your position. Linked contacts are alerted in the app; the SMS app opens with every number, and you press Send.",
+  "safetyNoContacts": "Add at least one emergency contact first.",
+  "safetySendTo": "Send to",
+  "safetySendToAll": "Everyone ({count})",
+  "@safetySendToAll": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "safetySendChannels": "Linked contacts alerted in the app: {count}. Then SMS, then WhatsApp.",
+  "@safetySendChannels": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "safetySendSmsOnly": "Without an account, the message goes by SMS and WhatsApp only.",
+  "safetySendNow": "Send now",
+  "safetySendingIn": "Sending in {seconds} s…",
+  "@safetySendingIn": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "safetySending": "Getting your position and sending…",
+  "safetySentApp": "Alert received in the app by {count} linked contact(s).",
+  "@safetySentApp": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "safetySentAppFailed": "The alert in the app could not be sent (no network?). The SMS still opened.",
+  "safetySentSms": "SMS ready for {count} number(s): press Send in the SMS app.",
+  "@safetySentSms": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "safetyWhatsApp": "Also by WhatsApp",
+  "safetyWhatsAppChoose": "Choose a WhatsApp chat or group",
+  "safetyLinkedTitle": "Linked contacts",
+  "safetyLinkedCount": "Linked: {count}",
+  "@safetyLinkedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "safetyLinkedIntro": "A relative who also uses e-Himaya can be linked to you. Your SOS message then rings on their phone, even in silent mode.",
+  "safetyLinkedNeedsAccount": "Links need an e-Himaya account on both phones.",
+  "safetyLinkedEmpty": "Nobody is linked yet.",
+  "safetyLinkedPrivacy": "A linked person sees your first name and number, and your alerts. Either of you can remove the link at any time.",
+  "safetyLinkedDone": "You are now linked.",
+  "safetyLinkedPush": "You are now linked with {name}.",
+  "@safetyLinkedPush": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "safetyInvite": "Invite",
+  "safetyInviteTitle": "Your invitation code",
+  "safetyInviteBody": "Give this code to the person. They enter it in e-Himaya, Personal safety, Linked contacts.",
+  "safetyInviteExpires": "Valid until {time}, once.",
+  "@safetyInviteExpires": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "safetyInviteText": "Link with me in e-Himaya so we can alert each other in an emergency. My code: {code}",
+  "@safetyInviteText": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "safetyEnterCode": "Enter a code",
+  "safetyCodeInvalid": "This code is wrong, used or expired.",
+  "safetyLinkConfirmTitle": "Link with this person?",
+  "safetyLinkConfirmBody": "{who} will receive your alerts and you will receive theirs.",
+  "@safetyLinkConfirmBody": {
+    "placeholders": {
+      "who": {
+        "type": "String"
+      }
+    }
+  },
+  "safetyLinkAccept": "Link",
+  "safetyUnlink": "Remove the link",
+  "safetyUnlinkTitle": "Remove the link with {name}?",
+  "@safetyUnlinkTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "safetyUnlinkBody": "Neither of you will receive the other’s alerts.",
+  "safetyAlertTitle": "Distress alert",
+  "safetyAlertFrom": "{name} needs help",
+  "@safetyAlertFrom": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "safetyAlertCheckFrom": "{name} did not confirm being safe",
+  "@safetyAlertCheckFrom": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "safetyAlertMine": "Your alert",
+  "safetyAlertAt": "Sent at {time}",
+  "@safetyAlertAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "safetyAlertBattery": "battery {level}%",
+  "@safetyAlertBattery": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "safetyAlertSeenBy": "Opened by {seen} of {total}",
+  "@safetyAlertSeenBy": {
+    "placeholders": {
+      "seen": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "safetyAlertNoPosition": "No position was sent.",
+  "safetyAlertLive": "Live position, updated {time}",
+  "@safetyAlertLive": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "safetyAlertPositionAt": "Position at {time}",
+  "@safetyAlertPositionAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "safetyAlertCall": "Call {name}",
+  "@safetyAlertCall": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "safetyAlertRoute": "Route",
+  "safetyAlertReportHint": "If they are in danger, call the Civil Protection and give the position shown above.",
+  "safetyAlertCall198": "Call 198 for them",
+  "safetyAlertReport": "Report it in the app",
+  "safetyLiveTitle": "Live location",
+  "safetyLiveHint": "A link that shows where you are, for a limited time",
+  "safetyLiveRunning": "Your location is being shared",
+  "safetyLiveIntro": "Create a link that shows your position as you move. It stops by itself at the end, or when you press Stop. Whoever has the link sees the point on a map, not your name.",
+  "safetyLiveNeedsAccount": "Live location needs an e-Himaya account.",
+  "safetyLiveFor": "Share for",
+  "safetyLiveStart": "Start sharing",
+  "safetyLiveStop": "Stop sharing",
+  "safetyLivePrivacy": "The positions are deleted 24 hours after the share ends. A notification stays visible while it runs.",
+  "safetyLiveLeft": "{duration} left",
+  "@safetyLiveLeft": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "safetyLiveLastSent": "last sent {time}",
+  "@safetyLiveLastSent": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "safetyLiveShareText": "Follow my position live: {link}",
+  "@safetyLiveShareText": {
+    "placeholders": {
+      "link": {
+        "type": "String"
+      }
+    }
+  },
+  "safetyLiveSmsContacts": "SMS to my contacts",
+  "safetyLiveNoticeTitle": "e-Himaya: location shared",
+  "safetyLiveNoticeText": "Your position is sent while the share or the safety check runs.",
+  "safetyCheckTitle": "Safety check",
+  "safetyCheckHint": "Linked contacts alerted if you do not confirm in time",
+  "safetyCheckRunning": "A safety check is running",
+  "safetyCheckIntro": "Going out alone, walking at night, a trip? Set a time. If you have not pressed “I am fine” by then, your linked contacts receive an alert with your last position, even if your phone is off. The Civil Protection is not alerted.",
+  "safetyCheckNeedsAccount": "The safety check needs an e-Himaya account and linked contacts.",
+  "safetyCheckNoLinks": "Link at least one contact first: the alert goes to linked contacts.",
+  "safetyCheckIn": "Check in after",
+  "safetyCheckMessage": "Message for your contacts",
+  "safetyCheckMessageHint": "I did not confirm that I arrived safely.",
+  "safetyCheckStart": "Start the check",
+  "safetyCheckPrivacy": "Reminders 10 minutes and 1 minute before. The check and its position are deleted 7 days after it ends.",
+  "safetyCheckDue": "Confirm before {time}",
+  "@safetyCheckDue": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "safetyCheckContacts": "linked contacts: {count}",
+  "@safetyCheckContacts": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "safetyCheckOk": "I am fine",
+  "safetyCheckExtend": "Add {minutes} minutes",
+  "@safetyCheckExtend": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "safetyCheckFired": "Your contacts were alerted",
+  "safetyCheckFiredHint": "You did not confirm in time. If you are fine, tell them; otherwise send your SOS message.",
+  "safetyCheckReminder10": "Your safety check ends in 10 minutes. Open e-Himaya to confirm.",
+  "safetyCheckReminder1": "One minute left: confirm now or your contacts will be alerted.",
+  "safetyTestTitle": "Self-test",
+  "safetyTestHint": "Check that everything works, without sending anything",
+  "safetyTestIntro": "Checks this phone: alarm sound, position, network, notifications and battery.",
+  "safetyTestAlarm": "Play the alarm",
+  "safetyTestAlarmTitle": "Test: distress alert",
+  "safetyTestAlarmBody": "This is how an alert from a linked contact sounds. Nothing was sent.",
+  "safetyTestAlarmSent": "Test alarm shown.",
+  "safetyTestRunning": "Checking…",
+  "safetyTestNotificationsOn": "Notifications allowed",
+  "safetyTestNotificationsOff": "Notifications are blocked: alerts cannot reach you",
+  "safetyTestCriticalOn": "Alerts ring even in silent mode",
+  "safetyTestCriticalOff": "Alerts do not ring in silent mode",
+  "safetyTestCriticalFix": "Turn on",
+  "safetyTestDnd": "Do Not Disturb is on right now",
+  "safetyTestOnline": "Network available",
+  "safetyTestOffline": "No network: only SMS and calls work",
+  "safetyTestPosition": "Position found",
+  "safetyTestNoPosition": "No position: turn on location",
+  "safetyTestBattery": "Battery {level}%",
+  "@safetyTestBattery": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "safetyTestBatteryUnknown": "Battery level unknown",
+  "safetyTestPowerSave": "Battery saver is on: alerts may arrive late",
+  "safetyTestContacts": "Emergency contacts: {contacts} · linked: {links}",
+  "@safetyTestContacts": {
+    "placeholders": {
+      "contacts": {
+        "type": "int"
+      },
+      "links": {
+        "type": "int"
+      }
+    }
+  },
+  "safetyTestAgain": "Test again",
+  "safetyTestNothingSent": "Nothing is sent to anyone during the self-test.",
+  "safetyRecentTitle": "Recent alerts",
+  "safetyRecentReceived": "Received (last 24 hours)",
+  "safetyRecentSentTitle": "Sent from this phone",
+  "safetyRecentClear": "Clear",
+  "safetyRecentEmpty": "Nothing yet.",
+  "safetyRecentSos": "SOS message",
+  "safetyRecentSent": "sent",
+  "safetyRecentCancelled": "cancelled",
+  "safetyRecentOk": "done",
+  "safetyRecentFailed": "not sent",
+  "safetyRecentRecipients": "{count} recipient(s)",
+  "@safetyRecentRecipients": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "safetyChannelApp": "app",
+  "safetyRecentPrivacy": "This list stays on this phone.",
+  "safetyMedicalTitle": "Medical file",
+  "safetyMedicalHint": "Useful information for rescuers, on this phone only",
+  "safetyMedicalSaved": "Saved on this phone",
+  "medicalConsentTitle": "Before you start",
+  "medicalConsentBody": "Your medical file is health data. It stays encrypted on this phone. It is sent to the Civil Protection only with a report for which you tick “Attach my medical file”, and is then deleted 30 days after the report is closed. You can change or delete it at any time. Every field is optional.",
+  "medicalConsentCheck": "I agree to keep my medical file on this phone under these conditions",
+  "medicalCreate": "Create my medical file",
+  "medicalIntro": "Fill in only what you want. Kept encrypted on this phone.",
+  "medicalSex": "Sex",
+  "medicalSexFemale": "Female",
+  "medicalSexMale": "Male",
+  "medicalNotSaid": "Not given",
+  "medicalBirthDate": "Date of birth",
+  "medicalBloodGroup": "Blood group",
+  "medicalAllergies": "Allergies",
+  "medicalConditions": "Chronic conditions",
+  "medicalMedications": "Regular medicines",
+  "medicalOther": "Other (pregnancy, device, disability…)",
+  "medicalTreatmentCard": "Treatment card number",
+  "medicalContactName": "Person to contact",
+  "medicalContactPhone": "Their phone number",
+  "medicalContact": "Contact",
+  "medicalLock": "Ask for the phone lock",
+  "medicalLockHint": "Your PIN, pattern or fingerprint before the file opens.",
+  "medicalLocked": "Your medical file is locked.",
+  "medicalUnlock": "Unlock",
+  "medicalUnlockHint": "Confirm it is you to open the medical file.",
+  "medicalNoPhoneLock": "This phone has no screen lock, so the file cannot be locked.",
+  "medicalForRescuer": "Show to a rescuer",
+  "medicalCopy": "Copy as text",
+  "medicalEmpty": "The medical file is empty.",
+  "medicalAttachHint": "In a report, tick “Attach my medical file” to send it with that report only.",
+  "medicalDelete": "Delete my medical file",
+  "medicalDeleteTitle": "Delete the medical file?",
+  "medicalDeleteBody": "It is erased from this phone. Copies already attached to reports are deleted 30 days after each report is closed.",
+  "medicalDeleted": "Medical file deleted.",
+  "reportAttachMedical": "Attach my medical file to this report",
+  "reportAttachMedicalHint": "Only the team handling this report can open it, and each opening is recorded.",
+  "safetyHistoryTitle": "Location history (72 h)",
+  "safetyHistoryOn": "On",
+  "safetyHistoryOff": "Off",
+  "safetyHistoryNotice": "If you go missing, the Civil Protection can see where your phone was during the last 72 hours. They read it only for a report they handle, with a reason, and you are told. Each position is deleted after 72 hours, and all of them at once when you turn it off.",
+  "safetyHistoryUnavailable": "Not available yet.",
+  "safetyHistoryConsent": "I agree that my positions are kept for 72 hours under these conditions",
+  "safetyHistoryTurnOn": "Turn on",
+  "safetyHistoryTurnOff": "Turn off and delete",
+  "safetyHistoryUntil": "Until {time}",
+  "@safetyHistoryUntil": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "safetyHistoryViewedTitle": "Your location history was consulted",
+  "safetyHistoryViewedBody": "The Civil Protection consulted it for a report. Open e-Himaya for details."
 }

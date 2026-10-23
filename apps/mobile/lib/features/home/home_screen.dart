@@ -457,7 +457,7 @@ class _ShortcutTile extends StatelessWidget {
   }
 }
 
-/// Fixed bar above the navigation: call 198, or send the SOS message (confirmation first).
+/// Fixed bar above the navigation: call 198, or send the SOS message to the user's contacts.
 class _CallBar extends ConsumerWidget {
   const _CallBar();
 
@@ -491,7 +491,9 @@ class _CallBar extends ConsumerWidget {
                   backgroundColor: BrandColors.blue,
                   foregroundColor: Colors.white,
                 ),
-                onPressed: () => showSosConfirmSheet(context, ref),
+                // Phase B2 (addition 5): the SOS message to the user's own contacts. The
+                // Civil Protection SOS stays on the big button above.
+                onPressed: () => context.push(Routes.safetySend),
                 icon: const Icon(Icons.sms),
                 label: Text(l10n.homeSosMessage, textAlign: TextAlign.center),
               ),

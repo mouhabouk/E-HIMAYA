@@ -2708,4 +2708,819 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get contactRejectReason => 'السبب المبلّغ من الديوان';
+
+  @override
+  String get errorFeatureOff => 'هذه الخدمة غير متاحة بعد.';
+
+  @override
+  String get errorAlreadyLinked => 'أنت مرتبط بهذا الشخص مسبقًا.';
+
+  @override
+  String get errorOwnInvitation => 'هذا رمزك أنت: أعطه للشخص الآخر.';
+
+  @override
+  String get errorTooManyLinks => 'بلغت العدد الأقصى للأشخاص المرتبطين.';
+
+  @override
+  String get errorTooManyInvitations =>
+      'دعوات مفتوحة كثيرة. استعمل إحداها أو انتظر انتهاء صلاحيتها.';
+
+  @override
+  String get errorNoLinkedContact => 'لا يوجد شخص مرتبط لتنبيهه داخل التطبيق.';
+
+  @override
+  String get errorCheckActive => 'يوجد فحص سلامة جارٍ بالفعل.';
+
+  @override
+  String get errorHistoryOff => 'سجل المواقع مُطفأ.';
+
+  @override
+  String get errorDurationTooLong => 'هذه المدة أطول من المسموح به.';
+
+  @override
+  String get safetyTitle => 'السلامة الشخصية';
+
+  @override
+  String get safetySettingsHint =>
+      'جهات الاتصال للطوارئ، رسالة الاستغاثة، الملف الطبي';
+
+  @override
+  String get safetyIntro =>
+      'حضّر من تُنبّه وماذا تُرسل إذا حدث لك مكروه. جهات اتصالك ورسالتك وملفك الطبي تبقى على هذا الهاتف.';
+
+  @override
+  String get safetySendSos => 'أرسل رسالة الاستغاثة';
+
+  @override
+  String get safetySomeone => 'أحد معارفك';
+
+  @override
+  String get safetyDelete => 'حذف';
+
+  @override
+  String get safetyEdit => 'تعديل';
+
+  @override
+  String get safetyCopy => 'نسخ';
+
+  @override
+  String get safetyCopied => 'تم النسخ.';
+
+  @override
+  String get safetyDone => 'تم';
+
+  @override
+  String get safetySaved => 'تم الحفظ.';
+
+  @override
+  String get safetyBySms => 'رسالة نصية';
+
+  @override
+  String safetyAccuracy(int meters) {
+    return '± $meters م';
+  }
+
+  @override
+  String safetyMinutes(int minutes) {
+    return '$minutes دق';
+  }
+
+  @override
+  String safetyHours(int hours) {
+    return '$hours س';
+  }
+
+  @override
+  String safetyHoursMinutes(int hours, int minutes) {
+    return '$hours س $minutes دق';
+  }
+
+  @override
+  String get safetyContactsTitle => 'جهات الاتصال للطوارئ';
+
+  @override
+  String safetyContactsCount(int count) {
+    return 'عدد جهات الاتصال: $count';
+  }
+
+  @override
+  String get safetyContactsIntro =>
+      'حتى 10 أشخاص يتلقّون رسالة الاستغاثة عبر الرسائل النصية أو واتساب.';
+
+  @override
+  String get safetyContactsPrivacy =>
+      'تُحفظ على هذا الهاتف فقط. لا يقرأ التطبيق دفتر عناوينك ولا يرسله أبدًا: أنت تختار كل رقم.';
+
+  @override
+  String safetyContactsFull(int max) {
+    return 'بلغت $max جهات اتصال.';
+  }
+
+  @override
+  String get safetyContactsEmpty => 'لا توجد جهة اتصال للطوارئ بعد.';
+
+  @override
+  String get safetyContactAdd => 'إضافة جهة اتصال';
+
+  @override
+  String get safetyContactPick => 'اختيار من جهات اتصالي';
+
+  @override
+  String get safetyContactPickHint =>
+      'لا يصل إلى التطبيق إلا الرقم الذي تختاره.';
+
+  @override
+  String get safetyContactType => 'كتابة رقم';
+
+  @override
+  String get safetyContactTitle => 'جهة اتصال للطوارئ';
+
+  @override
+  String get safetyContactName => 'الاسم';
+
+  @override
+  String get safetyContactNameRequired => 'أدخل اسمًا.';
+
+  @override
+  String get safetyContactPhone => 'رقم الهاتف';
+
+  @override
+  String get safetyContactExists => 'هذا الرقم موجود في قائمتك.';
+
+  @override
+  String get safetyContactLinked => 'مرتبط: يتلقى التنبيه داخل التطبيق';
+
+  @override
+  String get safetyContactGroups => 'المجموعات';
+
+  @override
+  String safetyContactDeleteTitle(String name) {
+    return 'حذف $name؟';
+  }
+
+  @override
+  String get safetyGroupsTitle => 'المجموعات';
+
+  @override
+  String get safetyGroupsEmpty =>
+      'تسمح المجموعات بتنبيه بعض الأشخاص فقط (العائلة، الجيران…).';
+
+  @override
+  String get safetyGroupAdd => 'مجموعة جديدة';
+
+  @override
+  String get safetyGroupName => 'اسم المجموعة';
+
+  @override
+  String get safetyGroupNameHint => 'العائلة، الجيران، العمل…';
+
+  @override
+  String safetyGroupDeleteTitle(String name) {
+    return 'حذف مجموعة $name؟';
+  }
+
+  @override
+  String get safetyGroupDeleteBody => 'تبقى جهات الاتصال في قائمتك.';
+
+  @override
+  String get safetyMessageTitle => 'رسالة الاستغاثة';
+
+  @override
+  String get safetyMessageHint => 'نصّك، ومهلة 5 ثوانٍ للإلغاء';
+
+  @override
+  String get safetyMessageText => 'رسالتك';
+
+  @override
+  String get safetyMessageAdded =>
+      'يضيف التطبيق رابط موقعك ودقّته والوقت ومستوى البطارية.';
+
+  @override
+  String get safetyCancelWindow => '5 ثوانٍ للإلغاء';
+
+  @override
+  String get safetyCancelWindowHint =>
+      'يتجنّب الإرسال عن طريق الخطأ. أطفئه للإرسال فورًا.';
+
+  @override
+  String get safetyPreview => 'معاينة';
+
+  @override
+  String get sosDefaultTemplate => 'أحتاج إلى مساعدة. هذا موقعي.';
+
+  @override
+  String get sosLabelPosition => 'الموقع';
+
+  @override
+  String get sosLabelAccuracy => 'الدقة';
+
+  @override
+  String get sosLabelTime => 'الساعة';
+
+  @override
+  String get sosLabelBattery => 'البطارية';
+
+  @override
+  String get sosLabelNoPosition => 'الموقع غير متوفر.';
+
+  @override
+  String get safetySendIntro =>
+      'يتلقى معارفك رسالتك مع موقعك. يُنبَّه المرتبطون داخل التطبيق، ويُفتح تطبيق الرسائل بكل الأرقام وتضغط أنت على إرسال.';
+
+  @override
+  String get safetyNoContacts => 'أضف أولًا جهة اتصال واحدة على الأقل.';
+
+  @override
+  String get safetySendTo => 'إرسال إلى';
+
+  @override
+  String safetySendToAll(int count) {
+    return 'الجميع ($count)';
+  }
+
+  @override
+  String safetySendChannels(int count) {
+    return 'الأشخاص المرتبطون الذين يُنبَّهون داخل التطبيق: $count. ثم الرسائل النصية، ثم واتساب.';
+  }
+
+  @override
+  String get safetySendSmsOnly =>
+      'دون حساب، تُرسل الرسالة عبر الرسائل النصية وواتساب فقط.';
+
+  @override
+  String get safetySendNow => 'أرسل الآن';
+
+  @override
+  String safetySendingIn(int seconds) {
+    return 'الإرسال بعد $seconds ث…';
+  }
+
+  @override
+  String get safetySending => 'جارٍ تحديد موقعك والإرسال…';
+
+  @override
+  String safetySentApp(int count) {
+    return 'وصل التنبيه داخل التطبيق إلى $count من المرتبطين.';
+  }
+
+  @override
+  String get safetySentAppFailed =>
+      'تعذّر إرسال التنبيه داخل التطبيق (لا توجد شبكة؟). فُتحت الرسالة النصية مع ذلك.';
+
+  @override
+  String safetySentSms(int count) {
+    return 'الرسالة النصية جاهزة لـ $count رقم: اضغط إرسال في تطبيق الرسائل.';
+  }
+
+  @override
+  String get safetyWhatsApp => 'عبر واتساب أيضًا';
+
+  @override
+  String get safetyWhatsAppChoose => 'اختر محادثة أو مجموعة واتساب';
+
+  @override
+  String get safetyLinkedTitle => 'الأشخاص المرتبطون';
+
+  @override
+  String safetyLinkedCount(int count) {
+    return 'المرتبطون: $count';
+  }
+
+  @override
+  String get safetyLinkedIntro =>
+      'يمكن ربط قريب يستعمل ء-حماية أيضًا بك. عندها يرنّ تنبيه استغاثتك على هاتفه حتى في الوضع الصامت.';
+
+  @override
+  String get safetyLinkedNeedsAccount =>
+      'يتطلب الربط حسابًا في ء-حماية على الهاتفين.';
+
+  @override
+  String get safetyLinkedEmpty => 'لا يوجد أي شخص مرتبط بعد.';
+
+  @override
+  String get safetyLinkedPrivacy =>
+      'يرى الشخص المرتبط اسمك ورقمك وتنبيهاتك. يمكن لأيّ منكما إلغاء الربط في أي وقت.';
+
+  @override
+  String get safetyLinkedDone => 'تم الربط.';
+
+  @override
+  String safetyLinkedPush(String name) {
+    return 'أنت الآن مرتبط بـ $name.';
+  }
+
+  @override
+  String get safetyInvite => 'دعوة';
+
+  @override
+  String get safetyInviteTitle => 'رمز دعوتك';
+
+  @override
+  String get safetyInviteBody =>
+      'أعطِ هذا الرمز للشخص. يُدخله في ء-حماية، السلامة الشخصية، الأشخاص المرتبطون.';
+
+  @override
+  String safetyInviteExpires(String time) {
+    return 'صالح حتى $time، لمرة واحدة.';
+  }
+
+  @override
+  String safetyInviteText(String code) {
+    return 'ارتبط بي في ء-حماية لننبّه بعضنا في حالات الطوارئ. رمزي: $code';
+  }
+
+  @override
+  String get safetyEnterCode => 'إدخال رمز';
+
+  @override
+  String get safetyCodeInvalid => 'هذا الرمز خاطئ أو مستعمل أو منتهي الصلاحية.';
+
+  @override
+  String get safetyLinkConfirmTitle => 'الارتباط بهذا الشخص؟';
+
+  @override
+  String safetyLinkConfirmBody(String who) {
+    return 'سيتلقى $who تنبيهاتك وستتلقى تنبيهاته.';
+  }
+
+  @override
+  String get safetyLinkAccept => 'ربط';
+
+  @override
+  String get safetyUnlink => 'إلغاء الربط';
+
+  @override
+  String safetyUnlinkTitle(String name) {
+    return 'إلغاء الربط مع $name؟';
+  }
+
+  @override
+  String get safetyUnlinkBody => 'لن يتلقى أيّ منكما تنبيهات الآخر.';
+
+  @override
+  String get safetyAlertTitle => 'تنبيه استغاثة';
+
+  @override
+  String safetyAlertFrom(String name) {
+    return '$name يحتاج إلى مساعدة';
+  }
+
+  @override
+  String safetyAlertCheckFrom(String name) {
+    return 'لم يؤكّد $name أنه بخير';
+  }
+
+  @override
+  String get safetyAlertMine => 'تنبيهك';
+
+  @override
+  String safetyAlertAt(String time) {
+    return 'أُرسل على الساعة $time';
+  }
+
+  @override
+  String safetyAlertBattery(int level) {
+    return 'البطارية $level%';
+  }
+
+  @override
+  String safetyAlertSeenBy(int seen, int total) {
+    return 'فتحه $seen من $total';
+  }
+
+  @override
+  String get safetyAlertNoPosition => 'لم يُرسل أي موقع.';
+
+  @override
+  String safetyAlertLive(String time) {
+    return 'موقع مباشر، حُدّث على الساعة $time';
+  }
+
+  @override
+  String safetyAlertPositionAt(String time) {
+    return 'الموقع على الساعة $time';
+  }
+
+  @override
+  String safetyAlertCall(String name) {
+    return 'اتصل بـ $name';
+  }
+
+  @override
+  String get safetyAlertRoute => 'المسار';
+
+  @override
+  String get safetyAlertReportHint =>
+      'إذا كان في خطر، اتصل بالحماية المدنية وأعطهم الموقع المبيّن أعلاه.';
+
+  @override
+  String get safetyAlertCall198 => 'اتصل بـ 198 نيابة عنه';
+
+  @override
+  String get safetyAlertReport => 'بلّغ عنه في التطبيق';
+
+  @override
+  String get safetyLiveTitle => 'الموقع المباشر';
+
+  @override
+  String get safetyLiveHint => 'رابط يُظهر مكانك لمدة محدودة';
+
+  @override
+  String get safetyLiveRunning => 'موقعك قيد المشاركة';
+
+  @override
+  String get safetyLiveIntro =>
+      'أنشئ رابطًا يُظهر موقعك أثناء تنقلك. يتوقف وحده في نهاية المدة أو عند ضغطك على إيقاف. من لديه الرابط يرى النقطة على الخريطة دون اسمك.';
+
+  @override
+  String get safetyLiveNeedsAccount =>
+      'يتطلب الموقع المباشر حسابًا في ء-حماية.';
+
+  @override
+  String get safetyLiveFor => 'المشاركة لمدة';
+
+  @override
+  String get safetyLiveStart => 'ابدأ المشاركة';
+
+  @override
+  String get safetyLiveStop => 'أوقف المشاركة';
+
+  @override
+  String get safetyLivePrivacy =>
+      'تُحذف المواقع بعد 24 ساعة من انتهاء المشاركة. يبقى إشعار ظاهرًا طوال المشاركة.';
+
+  @override
+  String safetyLiveLeft(String duration) {
+    return 'المتبقي $duration';
+  }
+
+  @override
+  String safetyLiveLastSent(String time) {
+    return 'آخر إرسال على الساعة $time';
+  }
+
+  @override
+  String safetyLiveShareText(String link) {
+    return 'تابع موقعي مباشرة: $link';
+  }
+
+  @override
+  String get safetyLiveSmsContacts => 'رسالة نصية لجهات اتصالي';
+
+  @override
+  String get safetyLiveNoticeTitle => 'ء-حماية: الموقع قيد المشاركة';
+
+  @override
+  String get safetyLiveNoticeText =>
+      'يُرسل موقعك طوال المشاركة أو فحص السلامة.';
+
+  @override
+  String get safetyCheckTitle => 'فحص السلامة';
+
+  @override
+  String get safetyCheckHint => 'يُنبَّه المرتبطون إن لم تؤكّد في الوقت';
+
+  @override
+  String get safetyCheckRunning => 'فحص سلامة جارٍ';
+
+  @override
+  String get safetyCheckIntro =>
+      'خروج بمفردك، مشي ليلًا، سفر؟ حدّد وقتًا. إن لم تضغط «أنا بخير» قبل انتهائه، يتلقى المرتبطون بك تنبيهًا بآخر موقع لك حتى لو كان هاتفك مطفأ. لا تُنبَّه الحماية المدنية.';
+
+  @override
+  String get safetyCheckNeedsAccount =>
+      'يتطلب فحص السلامة حسابًا في ء-حماية وأشخاصًا مرتبطين.';
+
+  @override
+  String get safetyCheckNoLinks =>
+      'اربط شخصًا واحدًا على الأقل أولًا: يذهب التنبيه إلى المرتبطين.';
+
+  @override
+  String get safetyCheckIn => 'التأكيد بعد';
+
+  @override
+  String get safetyCheckMessage => 'رسالة لمعارفك';
+
+  @override
+  String get safetyCheckMessageHint => 'لم أؤكّد أنني وصلت بسلام.';
+
+  @override
+  String get safetyCheckStart => 'ابدأ الفحص';
+
+  @override
+  String get safetyCheckPrivacy =>
+      'تذكير قبل 10 دقائق وقبل دقيقة. يُحذف الفحص وموقعه بعد 7 أيام من انتهائه.';
+
+  @override
+  String safetyCheckDue(String time) {
+    return 'أكّد قبل الساعة $time';
+  }
+
+  @override
+  String safetyCheckContacts(int count) {
+    return 'المرتبطون: $count';
+  }
+
+  @override
+  String get safetyCheckOk => 'أنا بخير';
+
+  @override
+  String safetyCheckExtend(int minutes) {
+    return 'أضف $minutes دقيقة';
+  }
+
+  @override
+  String get safetyCheckFired => 'تم تنبيه معارفك';
+
+  @override
+  String get safetyCheckFiredHint =>
+      'لم تؤكّد في الوقت. إن كنت بخير فأخبرهم، وإلا فأرسل رسالة الاستغاثة.';
+
+  @override
+  String get safetyCheckReminder10 =>
+      'ينتهي فحص السلامة بعد 10 دقائق. افتح ء-حماية للتأكيد.';
+
+  @override
+  String get safetyCheckReminder1 =>
+      'بقيت دقيقة: أكّد الآن وإلا سيُنبَّه معارفك.';
+
+  @override
+  String get safetyTestTitle => 'الفحص الذاتي';
+
+  @override
+  String get safetyTestHint => 'تحقّق أن كل شيء يعمل دون إرسال أي شيء';
+
+  @override
+  String get safetyTestIntro =>
+      'يفحص هذا الهاتف: صوت الإنذار، الموقع، الشبكة، الإشعارات والبطارية.';
+
+  @override
+  String get safetyTestAlarm => 'شغّل الإنذار';
+
+  @override
+  String get safetyTestAlarmTitle => 'تجربة: تنبيه استغاثة';
+
+  @override
+  String get safetyTestAlarmBody =>
+      'هكذا يرنّ تنبيه من شخص مرتبط. لم يُرسل أي شيء.';
+
+  @override
+  String get safetyTestAlarmSent => 'عُرض إنذار التجربة.';
+
+  @override
+  String get safetyTestRunning => 'جارٍ الفحص…';
+
+  @override
+  String get safetyTestNotificationsOn => 'الإشعارات مسموح بها';
+
+  @override
+  String get safetyTestNotificationsOff =>
+      'الإشعارات محظورة: لا تصلك التنبيهات';
+
+  @override
+  String get safetyTestCriticalOn => 'التنبيهات ترنّ حتى في الوضع الصامت';
+
+  @override
+  String get safetyTestCriticalOff => 'التنبيهات لا ترنّ في الوضع الصامت';
+
+  @override
+  String get safetyTestCriticalFix => 'تفعيل';
+
+  @override
+  String get safetyTestDnd => 'وضع عدم الإزعاج مفعّل الآن';
+
+  @override
+  String get safetyTestOnline => 'الشبكة متوفرة';
+
+  @override
+  String get safetyTestOffline =>
+      'لا توجد شبكة: تعمل الرسائل النصية والمكالمات فقط';
+
+  @override
+  String get safetyTestPosition => 'تم تحديد الموقع';
+
+  @override
+  String get safetyTestNoPosition => 'لا يوجد موقع: فعّل تحديد الموقع';
+
+  @override
+  String safetyTestBattery(int level) {
+    return 'البطارية $level%';
+  }
+
+  @override
+  String get safetyTestBatteryUnknown => 'مستوى البطارية غير معروف';
+
+  @override
+  String get safetyTestPowerSave => 'موفّر البطارية مفعّل: قد تتأخر التنبيهات';
+
+  @override
+  String safetyTestContacts(int contacts, int links) {
+    return 'جهات الطوارئ: $contacts · المرتبطون: $links';
+  }
+
+  @override
+  String get safetyTestAgain => 'أعد الفحص';
+
+  @override
+  String get safetyTestNothingSent =>
+      'لا يُرسل أي شيء لأي أحد أثناء الفحص الذاتي.';
+
+  @override
+  String get safetyRecentTitle => 'التنبيهات الأخيرة';
+
+  @override
+  String get safetyRecentReceived => 'الواردة (آخر 24 ساعة)';
+
+  @override
+  String get safetyRecentSentTitle => 'المُرسلة من هذا الهاتف';
+
+  @override
+  String get safetyRecentClear => 'مسح';
+
+  @override
+  String get safetyRecentEmpty => 'لا شيء بعد.';
+
+  @override
+  String get safetyRecentSos => 'رسالة الاستغاثة';
+
+  @override
+  String get safetyRecentSent => 'أُرسل';
+
+  @override
+  String get safetyRecentCancelled => 'أُلغي';
+
+  @override
+  String get safetyRecentOk => 'تم';
+
+  @override
+  String get safetyRecentFailed => 'لم يُرسل';
+
+  @override
+  String safetyRecentRecipients(int count) {
+    return '$count مستلم';
+  }
+
+  @override
+  String get safetyChannelApp => 'التطبيق';
+
+  @override
+  String get safetyRecentPrivacy => 'تبقى هذه القائمة على هذا الهاتف.';
+
+  @override
+  String get safetyMedicalTitle => 'الملف الطبي';
+
+  @override
+  String get safetyMedicalHint => 'معلومات مفيدة للمسعفين، على هذا الهاتف فقط';
+
+  @override
+  String get safetyMedicalSaved => 'محفوظ على هذا الهاتف';
+
+  @override
+  String get medicalConsentTitle => 'قبل البدء';
+
+  @override
+  String get medicalConsentBody =>
+      'ملفك الطبي بيانات صحية. يبقى مشفّرًا على هذا الهاتف. لا يُرسل إلى الحماية المدنية إلا مع بلاغ تختار فيه «إرفاق ملفي الطبي»، ثم يُحذف بعد 30 يومًا من غلق البلاغ. يمكنك تعديله أو حذفه في أي وقت. كل الحقول اختيارية.';
+
+  @override
+  String get medicalConsentCheck =>
+      'أوافق على حفظ ملفي الطبي على هذا الهاتف وفق هذه الشروط';
+
+  @override
+  String get medicalCreate => 'أنشئ ملفي الطبي';
+
+  @override
+  String get medicalIntro => 'املأ ما تريد فقط. يُحفظ مشفّرًا على هذا الهاتف.';
+
+  @override
+  String get medicalSex => 'الجنس';
+
+  @override
+  String get medicalSexFemale => 'أنثى';
+
+  @override
+  String get medicalSexMale => 'ذكر';
+
+  @override
+  String get medicalNotSaid => 'غير محدد';
+
+  @override
+  String get medicalBirthDate => 'تاريخ الولادة';
+
+  @override
+  String get medicalBloodGroup => 'فصيلة الدم';
+
+  @override
+  String get medicalAllergies => 'الحساسية';
+
+  @override
+  String get medicalConditions => 'الأمراض المزمنة';
+
+  @override
+  String get medicalMedications => 'الأدوية المعتادة';
+
+  @override
+  String get medicalOther => 'أخرى (حمل، جهاز طبي، إعاقة…)';
+
+  @override
+  String get medicalTreatmentCard => 'رقم بطاقة العلاج';
+
+  @override
+  String get medicalContactName => 'الشخص الذي يُتصل به';
+
+  @override
+  String get medicalContactPhone => 'رقم هاتفه';
+
+  @override
+  String get medicalContact => 'جهة الاتصال';
+
+  @override
+  String get medicalLock => 'طلب قفل الهاتف';
+
+  @override
+  String get medicalLockHint => 'رمزك أو نمطك أو بصمتك قبل فتح الملف.';
+
+  @override
+  String get medicalLocked => 'ملفك الطبي مقفل.';
+
+  @override
+  String get medicalUnlock => 'فتح القفل';
+
+  @override
+  String get medicalUnlockHint => 'أكّد هويتك لفتح الملف الطبي.';
+
+  @override
+  String get medicalNoPhoneLock =>
+      'لا يوجد قفل شاشة على هذا الهاتف، لذلك لا يمكن قفل الملف.';
+
+  @override
+  String get medicalForRescuer => 'اعرضه على المسعف';
+
+  @override
+  String get medicalCopy => 'نسخه كنص';
+
+  @override
+  String get medicalEmpty => 'الملف الطبي فارغ.';
+
+  @override
+  String get medicalAttachHint =>
+      'في البلاغ، اختر «إرفاق ملفي الطبي» لإرساله مع ذلك البلاغ فقط.';
+
+  @override
+  String get medicalDelete => 'احذف ملفي الطبي';
+
+  @override
+  String get medicalDeleteTitle => 'حذف الملف الطبي؟';
+
+  @override
+  String get medicalDeleteBody =>
+      'يُمحى من هذا الهاتف. النسخ المرفقة سابقًا ببلاغات تُحذف بعد 30 يومًا من غلقها.';
+
+  @override
+  String get medicalDeleted => 'تم حذف الملف الطبي.';
+
+  @override
+  String get reportAttachMedical => 'إرفاق ملفي الطبي بهذا البلاغ';
+
+  @override
+  String get reportAttachMedicalHint =>
+      'لا يفتحه إلا الفريق الذي يعالج هذا البلاغ، وتُسجَّل كل عملية فتح.';
+
+  @override
+  String get safetyHistoryTitle => 'سجل المواقع (72 ساعة)';
+
+  @override
+  String get safetyHistoryOn => 'مفعّل';
+
+  @override
+  String get safetyHistoryOff => 'مُطفأ';
+
+  @override
+  String get safetyHistoryNotice =>
+      'إذا فُقدت، يمكن للحماية المدنية معرفة أين كان هاتفك خلال آخر 72 ساعة. لا تطّلع عليه إلا لبلاغ تعالجه، مع ذكر السبب، ويتم إعلامك. يُحذف كل موقع بعد 72 ساعة، وكلها دفعة واحدة عند الإطفاء.';
+
+  @override
+  String get safetyHistoryUnavailable => 'غير متاح بعد.';
+
+  @override
+  String get safetyHistoryConsent =>
+      'أوافق على حفظ مواقعي لمدة 72 ساعة وفق هذه الشروط';
+
+  @override
+  String get safetyHistoryTurnOn => 'تفعيل';
+
+  @override
+  String get safetyHistoryTurnOff => 'إطفاء وحذف';
+
+  @override
+  String safetyHistoryUntil(String time) {
+    return 'حتى $time';
+  }
+
+  @override
+  String get safetyHistoryViewedTitle => 'تم الاطلاع على سجل مواقعك';
+
+  @override
+  String get safetyHistoryViewedBody =>
+      'اطّلعت عليه الحماية المدنية في إطار بلاغ. افتح ء-حماية للتفاصيل.';
 }

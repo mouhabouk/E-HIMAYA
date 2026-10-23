@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../core/http/models.dart';
 import '../../core/logging/log.dart';
 import '../../core/media/media_rules.dart';
+import '../../core/platform/device_services.dart';
 import '../../core/routing/app_router.dart';
 import '../../core/settings/settings_controller.dart';
 import '../../core/sync/report_queue.dart';
@@ -17,6 +18,7 @@ import '../../l10n/app_localizations.dart';
 import '../institution/institution_providers.dart';
 import '../institution/report_as_selector.dart';
 import '../quota/quota_widgets.dart';
+import '../safety/safety_providers.dart';
 import 'audio_recorder_panel.dart';
 import 'category_labels.dart';
 import 'location_picker.dart';
@@ -44,6 +46,9 @@ class _NewReportScreenState extends ConsumerState<NewReportScreen> {
   GeoPoint? _location;
   String? _audioPath;
   bool _submitting = false;
+
+  /// Phase B2 (addition 7b): the medical file goes with this report only when ticked.
+  bool _attachMedical = false;
 
   static const _maxTextLength = 4000;
 
@@ -113,6 +118,22 @@ class _NewReportScreenState extends ConsumerState<NewReportScreen> {
     }
   }
 
+  /// A locked medical file asks for the phone's lock before it can go with the report.
+  Future<void> _tickMedical(bool on) async {
+    final row = ref.read(medicalRowProvider).value;
+    if (on && row != null && row.locked) {
+      final l10n = AppLocalizations.of(context);
+      final ok = await ref
+          .read(deviceServicesProvider)
+          .confirmCredential(
+            title: l10n.reportAttachMedical,
+            description: l10n.medicalUnlockHint,
+          );
+      if (ok == false) return;
+    }
+    if (mounted) setState(() => _attachMedical = on);
+  }
+
   Future<void> _submit() async {
     final l10n = AppLocalizations.of(context);
     final location = _location;
@@ -137,6 +158,9 @@ class _NewReportScreenState extends ConsumerState<NewReportScreen> {
           text: _text.text,
           lang: ref.read(localeCodeProvider),
           organizationId: ref.read(reportAsProvider),
+          medical: _attachMedical
+              ? medicalOf(ref.read(medicalRowProvider).value)?.toJson()
+              : null,
           attachments: [
             ..._attachments,
             if (audio != null)
@@ -271,6 +295,18 @@ class _NewReportScreenState extends ConsumerState<NewReportScreen> {
                 onChanged: (path) => setState(() => _audioPath = path),
               ),
               const SizedBox(height: 24),
+              if (medicalOf(ref.watch(medicalRowProvider).value)
+                  case final medical? when !medical.isEmpty) ...[
+                CheckboxListTile(
+                  key: const Key('report-attach-medical'),
+                  contentPadding: EdgeInsets.zero,
+                  value: _attachMedical,
+                  onChanged: (v) => _tickMedical(v == true),
+                  title: Text(l10n.reportAttachMedical),
+                  subtitle: Text(l10n.reportAttachMedicalHint),
+                ),
+                const SizedBox(height: 8),
+              ],
               if (activeOrgs.isNotEmpty) ...[
                 ReportAsSelector(
                   orgs: activeOrgs,

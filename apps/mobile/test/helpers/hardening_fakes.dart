@@ -71,6 +71,28 @@ class FakeDeviceServices implements DeviceServices {
     return true;
   }
 
+  /// Phase B2: what the contact picker returns, the phone lock answer, the pending shortcut.
+  PickedContact? picked;
+  bool? credential = true;
+  int credentialRequests = 0;
+  String? shortcut;
+
+  @override
+  Future<PickedContact?> pickContact() async => picked;
+
+  @override
+  Future<bool?> confirmCredential({String? title, String? description}) async {
+    credentialRequests++;
+    return credential;
+  }
+
+  @override
+  Future<String?> takeShortcut() async {
+    final s = shortcut;
+    shortcut = null;
+    return s;
+  }
+
   /// History of [keepScreenOn] calls (live streaming).
   final screenOn = <bool>[];
 
