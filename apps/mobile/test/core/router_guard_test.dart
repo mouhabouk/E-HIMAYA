@@ -82,6 +82,10 @@ void main() {
       permissionsSeen: false,
     );
     expect(go(Routes.emergency, charter: false, welcome: fresh), isNull);
+    // Phase B1: the emergency guide too.
+    expect(go(Routes.guide, charter: false, welcome: fresh), isNull);
+    expect(go(Routes.guideItem('fire', 'x'), charter: false), isNull);
+    expect(go('/emergencyx', charter: false), Routes.charter);
   });
 
   test('over a locked phone only the public alert view exists', () {
@@ -93,6 +97,7 @@ void main() {
       Routes.myData,
       Routes.deleteAccount,
       Routes.emergency,
+      Routes.guide,
       Routes.alert('a1'),
       Routes.callouts,
       // Phase 6: live streaming is never reachable from the locked alert view.

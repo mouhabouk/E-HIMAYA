@@ -26,6 +26,8 @@ class AppPrefs {
   static const _simPushSeq = 'push.sim_last_seq';
   static const _tipsEtag = 'tips.etag';
   static const _tipsJson = 'tips.json';
+  static const _guideEtag = 'guide.etag';
+  static const _guideJson = 'guide.json';
   static const _alertsJson = 'alerts.last';
   static const _weatherJson = 'weather.last';
   static const _batterySaver = 'power.battery_saver';
@@ -138,6 +140,18 @@ class AppPrefs {
       await _prefs.remove(_tipsEtag);
     } else {
       await _prefs.setString(_tipsEtag, etag);
+    }
+  }
+
+  /// Offline copy of the emergency guide (public content, phase B1) and its ETag.
+  String? get guideEtag => _prefs.getString(_guideEtag);
+  String? get guideJson => _prefs.getString(_guideJson);
+  Future<void> setGuide(String json, String? etag) async {
+    await _prefs.setString(_guideJson, json);
+    if (etag == null) {
+      await _prefs.remove(_guideEtag);
+    } else {
+      await _prefs.setString(_guideEtag, etag);
     }
   }
 

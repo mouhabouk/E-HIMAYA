@@ -4419,6 +4419,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This text contains words that are not allowed. Please rephrase it.'**
   String get errorOffensiveText;
+
+  /// No description provided for @guideTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency guide'**
+  String get guideTitle;
+
+  /// No description provided for @guideHubHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Fires, fractures, first aid, breathing problems… Available without connection.'**
+  String get guideHubHint;
+
+  /// No description provided for @guideIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a topic, then the situation. While waiting for help, follow the steps in order.'**
+  String get guideIntro;
+
+  /// No description provided for @guideItemsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No item} =1{1 item} other{{count} items}}'**
+  String guideItemsCount(int count);
+
+  /// No description provided for @guideEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing is published here at the moment.'**
+  String get guideEmpty;
+
+  /// No description provided for @guideCallNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Call 198 at once if'**
+  String get guideCallNow;
+
+  /// No description provided for @guideSteps.
+  ///
+  /// In en, this message translates to:
+  /// **'What to do'**
+  String get guideSteps;
+
+  /// No description provided for @guideDont.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not'**
+  String get guideDont;
+
+  /// No description provided for @guideCall198.
+  ///
+  /// In en, this message translates to:
+  /// **'Call Civil Protection, 198'**
+  String get guideCall198;
+
+  /// No description provided for @guideSimBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'[SIM] Content awaiting validation by the medical staff of the Civil Protection. Call 198 first.'**
+  String get guideSimBanner;
+
+  /// No description provided for @guideSimTag.
+  ///
+  /// In en, this message translates to:
+  /// **'[SIM] awaiting medical validation'**
+  String get guideSimTag;
 }
 
 class _AppLocalizationsDelegate

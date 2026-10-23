@@ -1255,5 +1255,23 @@
   "updateOpenFailed": "The download page could not be opened.",
   "requiredNote": "Fields marked * are required.",
   "requiredSemantics": "required",
-  "errorOffensiveText": "This text contains words that are not allowed. Please rephrase it."
+  "errorOffensiveText": "This text contains words that are not allowed. Please rephrase it.",
+  "guideTitle": "Emergency guide",
+  "guideHubHint": "Fires, fractures, first aid, breathing problems… Available without connection.",
+  "guideIntro": "Choose a topic, then the situation. While waiting for help, follow the steps in order.",
+  "guideItemsCount": "{count, plural, =0{No item} =1{1 item} other{{count} items}}",
+  "@guideItemsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "guideEmpty": "Nothing is published here at the moment.",
+  "guideCallNow": "Call 198 at once if",
+  "guideSteps": "What to do",
+  "guideDont": "Do not",
+  "guideCall198": "Call Civil Protection, 198",
+  "guideSimBanner": "[SIM] Content awaiting validation by the medical staff of the Civil Protection. Call 198 first.",
+  "guideSimTag": "[SIM] awaiting medical validation"
 }

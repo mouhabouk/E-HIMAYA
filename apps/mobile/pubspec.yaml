@@ -60,6 +60,8 @@ flutter:
   assets:
     # Safety tips shipped for the first, possibly offline, launch (copy of services/api/seed).
     - assets/safety_tips.json
+    # Emergency hub topics and items for the first offline launch (scripts/guide_seed.py, phase B1).
+    - assets/emergency_guide.json
     # Logo of the Office (phase A, addition 1): intro, sign-in and home screens.
     - assets/brand/logo.png
 

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../core/routing/app_router.dart';
 import '../../core/ui/language_bar.dart';
 import '../../l10n/app_localizations.dart';
 import 'dialer.dart';
@@ -8,8 +10,13 @@ import 'emergency_numbers.dart';
 
 /// Scenario 0: dial an emergency service over the SIM. Works offline, never calls the API, and
 /// is reachable even before the charter is accepted.
+///
+/// Phase B1 makes it the emergency hub: below the numbers, the guide (topics and items) kept
+/// offline. [showHub] is false in the degraded mode, which has neither router nor storage.
 class EmergencyScreen extends ConsumerWidget {
-  const EmergencyScreen({super.key});
+  const EmergencyScreen({super.key, this.showHub = true});
+
+  final bool showHub;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -68,6 +75,24 @@ class EmergencyScreen extends ConsumerWidget {
                   ),
                 ),
               ),
+            if (showHub) ...[
+              const SizedBox(height: 16),
+              Card(
+                child: ListTile(
+                  key: const Key('hub-guide'),
+                  minTileHeight: 72,
+                  leading: Icon(
+                    Icons.medical_services,
+                    size: 32,
+                    color: theme.colorScheme.primary,
+                  ),
+                  title: Text(l10n.guideTitle),
+                  subtitle: Text(l10n.guideHubHint),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.push(Routes.guide),
+                ),
+              ),
+            ],
           ],
         ),
       ),

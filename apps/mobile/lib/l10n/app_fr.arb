@@ -719,5 +719,16 @@
   "updateOpenFailed": "La page de téléchargement n'a pas pu être ouverte.",
   "requiredNote": "Les champs marqués * sont obligatoires.",
   "requiredSemantics": "obligatoire",
-  "errorOffensiveText": "Ce texte contient des mots interdits. Merci de le reformuler."
+  "errorOffensiveText": "Ce texte contient des mots interdits. Merci de le reformuler.",
+  "guideTitle": "Guide des urgences",
+  "guideHubHint": "Incendies, fractures, premiers secours, problèmes respiratoires… Disponible sans connexion.",
+  "guideIntro": "Choisissez un thème, puis la situation. En attendant les secours, suivez les étapes dans l’ordre.",
+  "guideItemsCount": "{count, plural, =0{Aucun élément} =1{1 élément} other{{count} éléments}}",
+  "guideEmpty": "Rien n’est publié ici pour le moment.",
+  "guideCallNow": "Appelez tout de suite le 198 si",
+  "guideSteps": "Que faire",
+  "guideDont": "À ne pas faire",
+  "guideCall198": "Appeler la Protection civile, 198",
+  "guideSimBanner": "[SIM] Contenu en attente de validation par le service médical de la Protection civile. Appelez d’abord le 198.",
+  "guideSimTag": "[SIM] en attente de validation médicale"
 }

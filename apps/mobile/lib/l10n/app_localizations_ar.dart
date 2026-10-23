@@ -2488,4 +2488,51 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get errorOffensiveText =>
       'يحتوي النص على ألفاظ غير مسموح بها. يرجى إعادة صياغته.';
+
+  @override
+  String get guideTitle => 'دليل الطوارئ';
+
+  @override
+  String get guideHubHint =>
+      'الحرائق، الكسور، الإسعافات الأولية، مشاكل التنفس… متوفر دون اتصال.';
+
+  @override
+  String get guideIntro =>
+      'اختر المحور ثم الحالة. في انتظار وصول النجدة، اتبع الخطوات بالترتيب.';
+
+  @override
+  String guideItemsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count عنصرا',
+      few: '$count عناصر',
+      two: 'عنصران',
+      one: 'عنصر واحد',
+      zero: 'لا عناصر',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get guideEmpty => 'لا يوجد محتوى منشور هنا حاليا.';
+
+  @override
+  String get guideCallNow => 'اتصل فورا بالرقم 198 إذا';
+
+  @override
+  String get guideSteps => 'ماذا تفعل';
+
+  @override
+  String get guideDont => 'لا تفعل';
+
+  @override
+  String get guideCall198 => 'اتصل بالحماية المدنية، 198';
+
+  @override
+  String get guideSimBanner =>
+      '[SIM] محتوى في انتظار المصادقة من الإطار الطبي للحماية المدنية. اتصل أولا بالرقم 198.';
+
+  @override
+  String get guideSimTag => '[SIM] في انتظار المصادقة الطبية';
 }

@@ -2540,4 +2540,49 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get errorOffensiveText =>
       'Ce texte contient des mots interdits. Merci de le reformuler.';
+
+  @override
+  String get guideTitle => 'Guide des urgences';
+
+  @override
+  String get guideHubHint =>
+      'Incendies, fractures, premiers secours, problèmes respiratoires… Disponible sans connexion.';
+
+  @override
+  String get guideIntro =>
+      'Choisissez un thème, puis la situation. En attendant les secours, suivez les étapes dans l’ordre.';
+
+  @override
+  String guideItemsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count éléments',
+      one: '1 élément',
+      zero: 'Aucun élément',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get guideEmpty => 'Rien n’est publié ici pour le moment.';
+
+  @override
+  String get guideCallNow => 'Appelez tout de suite le 198 si';
+
+  @override
+  String get guideSteps => 'Que faire';
+
+  @override
+  String get guideDont => 'À ne pas faire';
+
+  @override
+  String get guideCall198 => 'Appeler la Protection civile, 198';
+
+  @override
+  String get guideSimBanner =>
+      '[SIM] Contenu en attente de validation par le service médical de la Protection civile. Appelez d’abord le 198.';
+
+  @override
+  String get guideSimTag => '[SIM] en attente de validation médicale';
 }
