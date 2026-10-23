@@ -98,11 +98,12 @@ void main() {
     });
   });
 
-  test('bundled first load: six topics, all awaiting validation', () {
+  test('bundled first load: seven topics, all awaiting validation', () {
     final g = EmergencyGuide.fromJson(
       jsonDecode(File('assets/emergency_guide.json').readAsStringSync()),
     );
-    expect(g.topics, hasLength(6));
+    expect(g.topics, hasLength(7));
+    expect(g.topics.last.key, 'other');
     for (final t in g.topics) {
       expect(t.items, isNotEmpty, reason: t.key);
       for (final i in t.items) {

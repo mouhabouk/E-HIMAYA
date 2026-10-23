@@ -52,6 +52,14 @@ async def test_first_load_is_public_and_awaits_validation(client: httpx.AsyncCli
     assert cpr["call_198"] is True and cpr["content"]["fr"]["steps"]
     assert topics["fire"]["title"]["ar"] == "الحرائق"
     assert all(not i["validated"] for t in topics.values() if t["key"] == "fire" for i in t["items"])
+    # Migration 0036: "other emergencies" after the first six, more items, in three languages, awaiting validation.
+    assert keys.index("bleeding") < keys.index("other")
+    other = [i["content"]["fr"]["title"] for i in topics["other"]["items"]]
+    assert "Piqûre de scorpion" in other and "Noyade" in other
+    assert len(topics["first_aid"]["items"]) >= 7 and len(topics["fire"]["items"]) >= 5
+    for item in topics["other"]["items"]:
+        assert not item["validated"]
+        assert all(item["content"][lang]["steps"] for lang in ("ar", "fr", "en"))
     again = await client.get("/api/v1/emergency-guide", headers={"If-None-Match": r.headers["etag"]})
     assert again.status_code == 304
 
