@@ -282,7 +282,9 @@ test.describe("alert area drawn on the map", () => {
     const local = new Date(expires.getTime() - expires.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
     await page.getByLabel("Fin de validité").fill(local);
 
-    await page.getByRole("radio", { name: "Zone dessinée" }).check();
+    // The radio is visually hidden under its label (segmented control): click the visible label, as a user does.
+    await page.locator(".segmented__item", { hasText: "Zone dessinée" }).click();
+    await expect(page.getByRole("radio", { name: "Zone dessinée" })).toBeChecked();
     const { map, at, positionAt: toPosition, tolerance } = await drawingMap(page, TUNISIA);
     const points = page.getByRole("status").filter({ hasText: "Sommets" });
     const finish = page.getByRole("button", { name: "Terminer la zone" });
