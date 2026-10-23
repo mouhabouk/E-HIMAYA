@@ -1284,6 +1284,79 @@ erDiagram
     rewards__rule ||--o{ rewards__points_ledger : "rule_id"
 ```
 
+## safety
+
+```mermaid
+erDiagram
+    safety__alert {
+        uuid id PK
+        uuid client_uuid
+        uuid sender_id FK
+        text kind
+        blob message_enc
+        blob position_enc
+        smallint battery
+        uuid live_share_id FK
+        datetime created_at
+        datetime expires_at
+    }
+    safety__alert_recipient {
+        uuid alert_id PK,FK
+        uuid recipient_id PK,FK
+        datetime seen_at
+    }
+    safety__invitation {
+        uuid id PK
+        uuid inviter_id FK
+        blob code_hash
+        datetime expires_at
+        uuid accepted_by FK
+        datetime accepted_at
+        datetime cancelled_at
+        datetime created_at
+    }
+    safety__link {
+        uuid id PK
+        uuid user_a FK
+        uuid user_b FK
+        datetime created_at
+    }
+    safety__live_share {
+        uuid id PK
+        uuid owner_id FK
+        blob token_hash
+        datetime started_at
+        datetime expires_at
+        datetime stopped_at
+        blob points_enc
+        smallint battery
+        datetime updated_at
+    }
+    safety__safety_check {
+        uuid id PK
+        uuid owner_id FK
+        datetime due_at
+        blob message_enc
+        blob position_enc
+        smallint battery
+        text status
+        uuid alert_id FK
+        datetime created_at
+        datetime ended_at
+    }
+    identity__account ||--o{ safety__alert : "sender_id"
+    identity__account ||--o{ safety__alert_recipient : "recipient_id"
+    identity__account ||--o{ safety__invitation : "accepted_by"
+    identity__account ||--o{ safety__invitation : "inviter_id"
+    identity__account ||--o{ safety__link : "user_a"
+    identity__account ||--o{ safety__link : "user_b"
+    identity__account ||--o{ safety__live_share : "owner_id"
+    identity__account ||--o{ safety__safety_check : "owner_id"
+    safety__alert ||--o{ safety__alert_recipient : "alert_id"
+    safety__alert ||--o{ safety__safety_check : "alert_id"
+    safety__live_share ||--o{ safety__alert : "live_share_id"
+```
+
 ## telephony
 
 ```mermaid
