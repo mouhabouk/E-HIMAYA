@@ -90,6 +90,7 @@ const RewardCertificatesPage = page(() => import("./pages/RewardsPages"), "Rewar
 const RewardLeaderboardPage = page(() => import("./pages/RewardsPages"), "RewardLeaderboardPage");
 // Phase B1: map data layers (file import, preview map).
 const LayersPage = page(() => import("./pages/LayersPage"), "LayersPage");
+const EmergencyGuidePage = page(() => import("./pages/EmergencyGuidePage"), "EmergencyGuidePage");
 
 export function createQueryClient(): QueryClient {
   return new QueryClient({
@@ -189,6 +190,7 @@ export function AppRoutes() {
         <Route path="notifications/:id" element={notifications(<NotificationEditorPage />)} />
         <Route path="safety-tips" element={tips(<SafetyTipsPage />)} />
         <Route path="layers" element={gated(canOpenLayers, <LayersPage />)} />
+        <Route path="emergency-guide" element={gated(canEditTips, <EmergencyGuidePage />)} />
         <Route path="committee" element={committee(<CommitteePage />)} />
         <Route path="analytics" element={gated(canReadAnalytics, <AnalyticsPage />)} />
         <Route path="analytics/scenarios" element={gated(canRunScenarios, <ScenariosPage />)} />

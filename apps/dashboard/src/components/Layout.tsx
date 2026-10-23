@@ -214,6 +214,7 @@ export function Layout() {
             </>
           )}
           {editsTips && <NavLink to="/safety-tips">{t("nav.safetyTips")}</NavLink>}
+          {editsTips && <NavLink to="/emergency-guide">{t("nav.emergencyGuide")}</NavLink>}
           {canOpenLayers(identity.roles) && <NavLink to="/layers">{t("nav.layers")}</NavLink>}
           {canReadPlatformSettings(identity.roles) && (
             <NavLink to="/settings" end>
