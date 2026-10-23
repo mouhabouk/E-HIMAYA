@@ -14,6 +14,7 @@ import '../../features/live/live_controller.dart';
 import '../../features/live/live_screen.dart';
 import '../../features/onboarding/institution_screen.dart';
 import '../../features/onboarding/sign_in_screen.dart';
+import '../../features/places/nearest_screen.dart';
 import '../../features/privacy/my_data_screen.dart';
 import '../../features/profile/profile_screen.dart';
 import '../../features/quota/quota_screen.dart';
@@ -54,6 +55,7 @@ abstract final class Routes {
   static const emergency = '/emergency';
   // Phase B1: emergency hub guide, reachable before the terms like the numbers.
   static const guide = '/emergency/guide';
+  static const nearest = '/emergency/nearest';
   static String guideTopic(String key) =>
       '/emergency/guide/${Uri.encodeComponent(key)}';
   static String guideItem(String key, String item) =>
@@ -244,6 +246,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: Routes.emergency,
         builder: (_, _) => const EmergencyScreen(),
         routes: [
+          GoRoute(path: 'nearest', builder: (_, _) => const NearestScreen()),
           GoRoute(
             path: 'guide',
             builder: (_, _) => const GuideTopicsScreen(),

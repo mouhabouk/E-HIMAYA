@@ -28,6 +28,7 @@ class AppPrefs {
   static const _tipsJson = 'tips.json';
   static const _guideEtag = 'guide.etag';
   static const _guideJson = 'guide.json';
+  static const _placesOff = 'places.off';
   static const _alertsJson = 'alerts.last';
   static const _weatherJson = 'weather.last';
   static const _batterySaver = 'power.battery_saver';
@@ -154,6 +155,11 @@ class AppPrefs {
       await _prefs.setString(_guideEtag, etag);
     }
   }
+
+  /// Layers the user turned off in "nearest to me" (every public layer is shown otherwise).
+  List<String> get placesOff => _prefs.getStringList(_placesOff) ?? const [];
+  Future<void> setPlacesOff(List<String> keys) =>
+      _prefs.setStringList(_placesOff, keys);
 
   /// Last active alerts seen (public content), shown when offline until they expire.
   String? get lastAlertsJson => _prefs.getString(_alertsJson);

@@ -2562,4 +2562,63 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get guideSimTag => '[SIM] awaiting medical validation';
+
+  @override
+  String get nearestTitle => 'Nearest to me';
+
+  @override
+  String get nearestHint =>
+      'Civil Protection centres, hospitals, pharmacies… and your coordinates. Works without connection once downloaded.';
+
+  @override
+  String get nearestMyPosition => 'My position';
+
+  @override
+  String get nearestNoLocation =>
+      'Location is off or not allowed. Turn it on to see the nearest places.';
+
+  @override
+  String get nearestCopy => 'Copy';
+
+  @override
+  String get nearestCopied =>
+      'Coordinates copied. You can read them to the operator.';
+
+  @override
+  String get nearestOffline =>
+      'No connection: showing the copy saved on this phone.';
+
+  @override
+  String get nearestEmpty =>
+      'Nothing saved on this phone yet. Connect once to download the places.';
+
+  @override
+  String get nearestLoading => 'Downloading the places for offline use…';
+
+  @override
+  String nearestUpdated(String date) {
+    return 'Places updated on $date';
+  }
+
+  @override
+  String get nearestToVerify => 'To be verified';
+
+  @override
+  String get nearestNeedPosition => 'Waiting for your position.';
+
+  @override
+  String get nearestNone => 'No place of this kind is listed yet.';
+
+  @override
+  String nearestSource(String source) {
+    return 'Source: $source';
+  }
+
+  @override
+  String nearestCall(String phone) {
+    return 'Call $phone';
+  }
+
+  @override
+  String get nearestRoute => 'Route';
 }

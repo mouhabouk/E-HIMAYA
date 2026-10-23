@@ -72,6 +72,10 @@ jobs:
       - name: ERD drift
         run: uv run python -m app.erd --check
 
+      # Phase B1: the app's bundled emergency guide matches the seed of migration 0033.
+      - name: Bundled emergency guide drift
+        run: uv run python ../../scripts/guide_seed.py --check
+
       - name: Validate procedures library
         working-directory: services/api
         run: uv run python -m app.modules.decision.cli check ../../docs/procedures

@@ -2535,4 +2535,63 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get guideSimTag => '[SIM] في انتظار المصادقة الطبية';
+
+  @override
+  String get nearestTitle => 'الأقرب إليّ';
+
+  @override
+  String get nearestHint =>
+      'مراكز الحماية المدنية، المستشفيات، الصيدليات… وإحداثياتك. يعمل دون اتصال بعد التنزيل.';
+
+  @override
+  String get nearestMyPosition => 'موقعي';
+
+  @override
+  String get nearestNoLocation =>
+      'تحديد الموقع متوقف أو غير مسموح. فعّله لترى الأماكن الأقرب.';
+
+  @override
+  String get nearestCopy => 'نسخ';
+
+  @override
+  String get nearestCopied =>
+      'نُسخت الإحداثيات. يمكنك قراءتها على عون الاستقبال.';
+
+  @override
+  String get nearestOffline =>
+      'لا يوجد اتصال: تُعرض النسخة المحفوظة على هذا الهاتف.';
+
+  @override
+  String get nearestEmpty =>
+      'لا شيء محفوظ على هذا الهاتف بعد. اتصل بالإنترنت مرة واحدة لتنزيل الأماكن.';
+
+  @override
+  String get nearestLoading => 'جارٍ تنزيل الأماكن للاستعمال دون اتصال…';
+
+  @override
+  String nearestUpdated(String date) {
+    return 'حُدّثت الأماكن في $date';
+  }
+
+  @override
+  String get nearestToVerify => 'للتثبت';
+
+  @override
+  String get nearestNeedPosition => 'في انتظار تحديد موقعك.';
+
+  @override
+  String get nearestNone => 'لا يوجد مكان من هذا النوع مسجل بعد.';
+
+  @override
+  String nearestSource(String source) {
+    return 'المصدر: $source';
+  }
+
+  @override
+  String nearestCall(String phone) {
+    return 'اتصل بالرقم $phone';
+  }
+
+  @override
+  String get nearestRoute => 'المسار';
 }

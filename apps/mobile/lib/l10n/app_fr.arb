@@ -730,5 +730,21 @@
   "guideDont": "À ne pas faire",
   "guideCall198": "Appeler la Protection civile, 198",
   "guideSimBanner": "[SIM] Contenu en attente de validation par le service médical de la Protection civile. Appelez d’abord le 198.",
-  "guideSimTag": "[SIM] en attente de validation médicale"
+  "guideSimTag": "[SIM] en attente de validation médicale",
+  "nearestTitle": "Le plus proche de moi",
+  "nearestHint": "Centres de la Protection civile, hôpitaux, pharmacies… et vos coordonnées. Fonctionne sans connexion une fois téléchargé.",
+  "nearestMyPosition": "Ma position",
+  "nearestNoLocation": "La localisation est coupée ou refusée. Activez-la pour voir les lieux les plus proches.",
+  "nearestCopy": "Copier",
+  "nearestCopied": "Coordonnées copiées. Vous pouvez les lire à l’opérateur.",
+  "nearestOffline": "Pas de connexion : copie enregistrée sur ce téléphone.",
+  "nearestEmpty": "Rien n’est encore enregistré sur ce téléphone. Connectez-vous une fois pour télécharger les lieux.",
+  "nearestLoading": "Téléchargement des lieux pour l’usage hors connexion…",
+  "nearestUpdated": "Lieux mis à jour le {date}",
+  "nearestToVerify": "À vérifier",
+  "nearestNeedPosition": "En attente de votre position.",
+  "nearestNone": "Aucun lieu de ce type n’est encore répertorié.",
+  "nearestSource": "Source : {source}",
+  "nearestCall": "Appeler le {phone}",
+  "nearestRoute": "Itinéraire"
 }
