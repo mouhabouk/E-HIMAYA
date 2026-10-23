@@ -6,6 +6,7 @@ import '../../features/alerts/notifications_screen.dart';
 import '../../features/charter/charter_controller.dart';
 import '../../features/charter/charter_screen.dart';
 import '../../features/emergency/emergency_screen.dart';
+import '../../features/guide/guide_screens.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/home/main_shell.dart';
 import '../../features/institution/my_institution_screen.dart';
@@ -51,6 +52,12 @@ abstract final class Routes {
   static const reports = '/reports';
   static const settings = '/settings';
   static const emergency = '/emergency';
+  // Phase B1: emergency hub guide, reachable before the terms like the numbers.
+  static const guide = '/emergency/guide';
+  static String guideTopic(String key) =>
+      '/emergency/guide/${Uri.encodeComponent(key)}';
+  static String guideItem(String key, String item) =>
+      '/emergency/guide/${Uri.encodeComponent(key)}/${Uri.encodeComponent(item)}';
   static const newReport = '/report/new';
   static String newReportFor(ReportCategory c) => '/report/new/${c.wire}';
   static const reportQueued = '/report/queued';
@@ -118,7 +125,10 @@ String? guardRedirect({
     return location == Routes.lockedAlert ? null : Routes.lockedAlert;
   }
   if (location == Routes.lockedAlert) return Routes.home;
-  if (location == Routes.emergency) return null;
+  if (location == Routes.emergency ||
+      location.startsWith('${Routes.emergency}/')) {
+    return null;
+  }
   String? only(String target) => location == target ? null : target;
   if (!welcome.languageChosen) return only(Routes.welcomeLanguage);
   if (!welcome.introSeen) return only(Routes.welcomeIntro);
@@ -233,6 +243,28 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: Routes.emergency,
         builder: (_, _) => const EmergencyScreen(),
+        routes: [
+          GoRoute(
+            path: 'guide',
+            builder: (_, _) => const GuideTopicsScreen(),
+            routes: [
+              GoRoute(
+                path: ':topic',
+                builder: (_, state) =>
+                    GuideTopicScreen(topicKey: state.pathParameters['topic']!),
+                routes: [
+                  GoRoute(
+                    path: ':item',
+                    builder: (_, state) => GuideItemScreen(
+                      topicKey: state.pathParameters['topic']!,
+                      itemId: state.pathParameters['item']!,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
       ),
       GoRoute(
         path: Routes.newReport,

@@ -4,6 +4,8 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../features/guide/guide_models.dart';
+import '../../features/places/places_models.dart';
 import '../quota/anon_quota.dart';
 import 'api_client.dart';
 import 'api_error.dart';
@@ -31,6 +33,26 @@ class CreateReportResult {
 class TipsFetch {
   const TipsFetch(this.tips, this.etag);
   final SafetyTips? tips;
+  final String? etag;
+}
+
+/// Result of a conditional fetch of the emergency guide: [guide] is null when unchanged (`304`).
+class GuideFetch {
+  const GuideFetch(this.guide, this.etag);
+  final EmergencyGuide? guide;
+  final String? etag;
+}
+
+/// Conditional fetch of the public layers or of one layer's package: null body when unchanged.
+class LayersFetch {
+  const LayersFetch(this.layers, this.etag);
+  final List<PlaceLayer>? layers;
+  final String? etag;
+}
+
+class PackageFetch {
+  const PackageFetch(this.package, this.etag);
+  final PlacePackage? package;
   final String? etag;
 }
 
@@ -459,6 +481,62 @@ class EHimayaApi {
     final newEtag = r.headers.value('etag') ?? etag;
     if (r.statusCode == 304) return TipsFetch(null, newEtag);
     return TipsFetch(SafetyTips.fromJson(r.data), newEtag);
+  });
+
+  /// Emergency hub topics and items (phase B1), public and kept offline like the tips.
+  Future<GuideFetch> emergencyGuide({String? etag}) => guardApi(() async {
+    final r = await _dio.get<Object?>(
+      '/api/v1/emergency-guide',
+      options: Options(
+        extra: {kPublicEndpoint: true},
+        headers: {'If-None-Match': ?etag},
+        validateStatus: (s) => s == 200 || s == 304,
+      ),
+    );
+    final newEtag = r.headers.value('etag') ?? etag;
+    if (r.statusCode == 304) return GuideFetch(null, newEtag);
+    return GuideFetch(EmergencyGuide.fromJson(r.data), newEtag);
+  });
+
+  /// Public map layers (phase B1): their names in every language, so one copy serves all.
+  Future<LayersFetch> publicLayers({String? etag}) => guardApi(() async {
+    final r = await _dio.get<Object?>(
+      '/api/v1/layers',
+      options: Options(
+        extra: {kPublicEndpoint: true},
+        headers: {'If-None-Match': ?etag},
+        validateStatus: (s) => s == 200 || s == 304,
+      ),
+    );
+    final newEtag = r.headers.value('etag') ?? etag;
+    if (r.statusCode == 304) return LayersFetch(null, newEtag);
+    final items = (r.data! as Map)['items']! as List;
+    return LayersFetch([
+      for (final i in items) PlaceLayer.fromJson(i as Map<String, Object?>),
+    ], newEtag);
+  });
+
+  /// The whole country's places of a layer, kept offline for "nearest to me".
+  Future<PackageFetch> layerPackage(
+    String key, {
+    required String lang,
+    String? etag,
+  }) => guardApi(() async {
+    final r = await _dio.get<Object?>(
+      '/api/v1/layers/${Uri.encodeComponent(key)}/package',
+      queryParameters: {'lang': lang},
+      options: Options(
+        extra: {kPublicEndpoint: true},
+        headers: {'If-None-Match': ?etag},
+        validateStatus: (s) => s == 200 || s == 304,
+      ),
+    );
+    final newEtag = r.headers.value('etag') ?? etag;
+    if (r.statusCode == 304) return PackageFetch(null, newEtag);
+    return PackageFetch(
+      PlacePackage.fromJson(r.data! as Map<String, Object?>, etag: newEtag),
+      newEtag,
+    );
   });
 
   // ---------------------------------------------------------------- rewards (phase 8 §3)

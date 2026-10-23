@@ -2517,4 +2517,49 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get errorOffensiveText =>
       'This text contains words that are not allowed. Please rephrase it.';
+
+  @override
+  String get guideTitle => 'Emergency guide';
+
+  @override
+  String get guideHubHint =>
+      'Fires, fractures, first aid, breathing problems… Available without connection.';
+
+  @override
+  String get guideIntro =>
+      'Choose a topic, then the situation. While waiting for help, follow the steps in order.';
+
+  @override
+  String guideItemsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items',
+      one: '1 item',
+      zero: 'No item',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get guideEmpty => 'Nothing is published here at the moment.';
+
+  @override
+  String get guideCallNow => 'Call 198 at once if';
+
+  @override
+  String get guideSteps => 'What to do';
+
+  @override
+  String get guideDont => 'Do not';
+
+  @override
+  String get guideCall198 => 'Call Civil Protection, 198';
+
+  @override
+  String get guideSimBanner =>
+      '[SIM] Content awaiting validation by the medical staff of the Civil Protection. Call 198 first.';
+
+  @override
+  String get guideSimTag => '[SIM] awaiting medical validation';
 }
