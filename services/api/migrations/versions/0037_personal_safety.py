@@ -136,6 +136,8 @@ CREATE POLICY safety_alert_select ON safety.alert FOR SELECT USING (
     OR EXISTS (SELECT 1 FROM safety.alert_recipient r WHERE r.alert_id = id AND {_mine("r.recipient_id")}));
 CREATE POLICY safety_alert_insert ON safety.alert FOR INSERT WITH CHECK ({_SYSTEM} OR {_mine("sender_id")});
 CREATE POLICY safety_alert_delete ON safety.alert FOR DELETE USING ({_SYSTEM} OR {_mine("sender_id")});
+-- Alerts never change once sent: only the system scope (maintenance, tests) may correct one.
+CREATE POLICY safety_alert_update ON safety.alert FOR UPDATE USING ({_SYSTEM}) WITH CHECK ({_SYSTEM});
 
 -- No reference back to safety.alert (policies referring to each other recurse): the API inserts recipients and reads
 -- the sender's read receipts with the system scope, after checking the sender itself.
