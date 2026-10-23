@@ -1,4 +1,4 @@
-import { fireEvent, screen } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { LanguageMenu } from "../components/Layout";
 import { fakeAuth, OPERATOR_CLAIMS, renderApp } from "../test/render";
@@ -33,7 +33,8 @@ describe("RequireAuth", () => {
     const signIn = vi.fn(() => Promise.resolve());
     renderApp(<Protected />, { auth: { ...fakeAuth(null), signIn }, path: "/reports?x=1" });
     await screen.findByText("جارٍ التحويل إلى صفحة الدخول…");
-    expect(signIn).toHaveBeenCalledWith("/reports?x=1", "ar");
+    // The redirect starts in an effect, after the message is on screen.
+    await waitFor(() => expect(signIn).toHaveBeenCalledWith("/reports?x=1", "ar"));
   });
 });
 
