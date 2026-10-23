@@ -11,7 +11,7 @@ import { queryKeys } from "../../lib/portalApi";
 import { HAZMAT_UNITS, type Hazmat, type HazmatInput, type HazmatUnit, type OrgDocument } from "../../lib/types";
 import { isValidUnNumber, parseNumber } from "../../lib/validators";
 import { BlockedNote, useOrg } from "./OrgWorkspace";
-import { Field, RowActions, describedBy } from "./RegisterParts";
+import { describedBy, Field, RequiredNote, RowActions } from "./RegisterParts";
 import { useRegister } from "./useRegister";
 
 interface Draft {
@@ -87,6 +87,7 @@ function HazmatDialog({
   return (
     <Dialog title={item ? t("hazmat.editTitle") : t("hazmat.addTitle")} onClose={onClose}>
       <form className="form" onSubmit={submit} noValidate>
+        <RequiredNote />
         <div className="form-grid">
           <Field id="hz-name" label={t("hazmat.name")} required error={err("name")}>
             <input id="hz-name" value={draft.name} aria-invalid={!!errors.name} aria-describedby={describedBy("hz-name", null, errors.name)} onChange={(e) => set({ name: e.target.value })} />

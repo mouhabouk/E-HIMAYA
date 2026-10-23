@@ -1,0 +1,50 @@
+/* e-Himaya colours, taken from the Office's logo and darkened to reach WCAG AA on white (addition 1). */
+:root {
+  --ehimaya-blue: #1f3d99;
+  --ehimaya-blue-dark: #142a6e;
+  --ehimaya-orange: #e07b00;
+  --ehimaya-green: #1b7f2a;
+  --ehimaya-red: #c62828;
+  --pf-v5-global--primary-color--100: var(--ehimaya-blue);
+  --pf-v5-global--primary-color--200: var(--ehimaya-blue-dark);
+  --pf-v5-global--link--Color: var(--ehimaya-blue);
+  --pf-v5-global--link--Color--hover: var(--ehimaya-blue-dark);
+  --pf-v5-global--danger-color--100: var(--ehimaya-red);
+}
+
+.pf-v5-theme-dark {
+  --pf-v5-global--primary-color--100: #8fa8ff;
+  --pf-v5-global--link--Color: #8fa8ff;
+}
+
+/* Logo above the realm name, and a thin band in the logo's colours. */
+#kc-header-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+}
+
+#kc-header-wrapper::before {
+  content: "";
+  width: 96px;
+  height: 96px;
+  background: url("../img/logo.png") center / contain no-repeat;
+}
+
+.pf-v5-c-login__main {
+  border-top: 6px solid transparent;
+  border-image: linear-gradient(90deg, var(--ehimaya-red) 0 33%, var(--ehimaya-orange) 33% 66%, var(--ehimaya-green) 66%) 1;
+}
+
+/* Rule 2: a required field shows a red asterisk. */
+.pf-v5-c-form__label-required {
+  color: var(--ehimaya-red);
+}
+
+/* Rule 3: large enough targets for every hand. */
+.pf-v5-c-button,
+.pf-v5-c-form-control > input {
+  min-height: 48px;
+}

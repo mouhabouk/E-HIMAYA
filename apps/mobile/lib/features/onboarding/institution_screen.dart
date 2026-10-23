@@ -22,7 +22,7 @@ class _InstitutionScreenState extends ConsumerState<InstitutionScreen> {
 
   Future<void> _login() async {
     setState(() => _busy = true);
-    await runLogin(context, ref);
+    await runBrowserLogin(context, ref);
     if (mounted) setState(() => _busy = false);
   }
 
@@ -34,7 +34,7 @@ class _InstitutionScreenState extends ConsumerState<InstitutionScreen> {
       appBar: AppBar(
         title: Text(l10n.institutionTitle),
         leading: BackButton(onPressed: () => context.go(Routes.onboarding)),
-        actions: const [EmergencyNumbersAction()],
+        actions: const [StandardAppBarActions()],
       ),
       body: SafeArea(
         child: ListView(

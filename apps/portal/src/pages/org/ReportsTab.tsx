@@ -13,7 +13,7 @@ import { queryKeys } from "../../lib/portalApi";
 import { CATEGORIES, TEXT_LANGS, type Category, type GeoPoint, type Report, type TextLang } from "../../lib/types";
 import { isInTunisia } from "../../lib/validators";
 import { BlockedNote, useOrg } from "./OrgWorkspace";
-import { Field } from "./RegisterParts";
+import { Field, RequiredNote } from "./RegisterParts";
 
 export const TEXT_MAX_LENGTH = 4000;
 
@@ -119,7 +119,11 @@ function CharterDialog({ onAccepted, onClose }: { onAccepted: () => void; onClos
   });
   const version = charter.data?.version;
   const key = version ? `charter.versions.${version}` : null;
-  const known = !!key && i18n.exists(`${key}.body`);
+  const known = !!key && i18n.exists(`${key}.checkbox`);
+  // From 2026-11 (phase A) the charter is the ten sections of the terms of use, as in the mobile app.
+  const sections = known
+    ? (t(`${key}.sections`, { returnObjects: true, defaultValue: [] }) as { title: string; body: string }[])
+    : [];
 
   return (
     <Dialog title={t("charter.title")} onClose={onClose} wide>
@@ -144,10 +148,21 @@ function CharterDialog({ onAccepted, onClose }: { onAccepted: () => void; onClos
           <p className="muted">{t("charter.why")}</p>
           <p className="muted">{t("charter.version", { version })}</p>
           <div className="charter-text" tabIndex={0} aria-label={t("charter.textLabel")}>
-            <p className="alert alert--warn">{t(`${key}.placeholderNotice`)}</p>
+            {i18n.exists(`${key}.placeholderNotice`) && <p className="alert alert--warn">{t(`${key}.placeholderNotice`)}</p>}
             <p>{t(`${key}.intro`)}</p>
-            <p>{t(`${key}.body`)}</p>
-            <p>{t(`${key}.liability`)}</p>
+            {Array.isArray(sections) && sections.length > 0 ? (
+              sections.map((s) => (
+                <section key={s.title}>
+                  <h3>{s.title}</h3>
+                  <p>{s.body}</p>
+                </section>
+              ))
+            ) : (
+              <>
+                <p>{t(`${key}.body`)}</p>
+                <p>{t(`${key}.liability`)}</p>
+              </>
+            )}
           </div>
           <label className="radio">
             <input type="checkbox" checked={checked} onChange={(e) => setChecked(e.target.checked)} />
@@ -260,6 +275,7 @@ export function NewReportPage() {
         </p>
         <h2 id="new-report-title">{t("reports.newTitle", { name: org.name })}</h2>
         <p className="alert alert--warn">{t("reports.emergencyNote")}</p>
+        <RequiredNote />
         <BlockedNote action="report" />
         <div className="form-grid">
           <Field id="rp-category" label={t("reports.category")} required>

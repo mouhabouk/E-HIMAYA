@@ -69,6 +69,7 @@ void main() {
         h.adapter.requests.where((r) => r.path == '/api/v1/reports/quota'),
         hasLength(1),
       );
+      await scrollHomeTo(tester, 'anon-quota-card');
       expect(find.byKey(const Key('anon-quota-card')), findsOneWidget);
       expect(find.text('2 of 5 left'), findsOneWidget);
       await unmountApp(tester);
@@ -86,6 +87,7 @@ void main() {
         h.adapter.requests.where((r) => r.path == '/api/v1/reports/quota'),
         isEmpty,
       );
+      await scrollHomeTo(tester, 'anon-quota-card');
       expect(find.text('3 of 5 left'), findsOneWidget);
       await unmountApp(tester);
     });
@@ -94,6 +96,7 @@ void main() {
       tester,
     ) async {
       await pumpApp(tester, prefs: quotaPrefs());
+      await scrollHomeTo(tester, 'anon-quota-card');
       expect(find.textContaining('0 of 5 left'), findsOneWidget);
       await tester.ensureVisible(find.byKey(const Key('anon-quota-card')));
       await tester.pumpAndSettle();

@@ -21,10 +21,14 @@ class AuthSession {
   /// verifies the signature).
   String? get subject => _claims(accessToken)?['sub'] as String?;
 
-  /// Display hint for the settings screen (`preferred_username` or `email`).
+  /// Display hint for the settings screen: the verified phone number (phase A sign-in), else
+  /// `preferred_username` or `email`.
   String? get displayName {
     final claims = _claims(idToken ?? accessToken);
-    return (claims?['preferred_username'] ?? claims?['email']) as String?;
+    return (claims?['phone_number'] ??
+            claims?['preferred_username'] ??
+            claims?['email'])
+        as String?;
   }
 
   Map<String, Object?> toJson() => {

@@ -66,9 +66,15 @@ class FakeOidc implements OidcClient {
       throw const OidcSessionExpired();
 }
 
+/// Language chosen and introduction seen: the next first-launch step is the terms.
+const languageAndIntroDone = <String, Object>{
+  'welcome.language_chosen': true,
+  'welcome.intro_seen': true,
+};
+
 /// Preferences of a user who accepted the charter and continues anonymously.
 Map<String, Object> onboardedPrefs({String locale = 'ar'}) => {
-  'charter.accepted_version': '2026-10',
+  'charter.accepted_version': '2026-11',
   'charter.accepted_at': '2026-10-19T10:00:00Z',
   'onboarding.role': 'citizen',
   'onboarding.identity_mode': 'anonymous',
@@ -85,7 +91,7 @@ class AppHarness {
 
 /// Preferences of a signed-in citizen (the profile form was already offered).
 Map<String, Object> registeredPrefs({String locale = 'ar'}) => {
-  'charter.accepted_version': '2026-10',
+  'charter.accepted_version': '2026-11',
   'charter.accepted_at': '2026-10-19T10:00:00Z',
   'onboarding.role': 'citizen',
   'onboarding.identity_mode': 'registered',
@@ -163,4 +169,15 @@ Future<AppHarness> pumpApp(
 Future<void> unmountApp(WidgetTester tester) async {
   await tester.pumpWidget(const SizedBox());
   await tester.pump(Duration.zero);
+}
+
+/// Brings an entry of the home list into view (phase A home: SOS and the report card come first).
+Future<void> scrollHomeTo(WidgetTester tester, String key) async {
+  final finder = find.byKey(Key(key));
+  await tester.scrollUntilVisible(
+    finder,
+    200,
+    scrollable: find.byType(Scrollable).first,
+  );
+  await tester.pumpAndSettle();
 }

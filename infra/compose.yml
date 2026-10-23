@@ -159,7 +159,10 @@ services:
 
   keycloak:
     <<: *restart
-    image: keycloak/keycloak:26.8@sha256:79c623a22abacf3fe6c00a5fb30f5b7843d717b234033b80995891c06116d244
+    # Keycloak 26.8 (pinned by digest in the Dockerfile) with the provider ehimaya-phone-otp (phase A).
+    build:
+      context: ./keycloak
+    image: ehimaya/keycloak:dev
     command: ["start-dev", "--import-realm"]
     environment:
       KC_DB: postgres
@@ -171,6 +174,9 @@ services:
       KC_HOSTNAME: ${KEYCLOAK_HOSTNAME:-http://localhost:8080}
       KC_HEALTH_ENABLED: "true"
       KC_HTTP_ENABLED: "true"
+      # Phase A sign-in by phone: the provider asks the API to send the SMS code (same secret as the API's).
+      EHIMAYA_API_INTERNAL_URL: http://api:8000
+      OTP_SMS_SECRET: ${OTP_SMS_SECRET:-}
     volumes:
       - ./keycloak/realms:/opt/keycloak/data/import:ro
     ports:
@@ -325,6 +331,8 @@ services:
       # SMS reports (FR-A-048): HMAC secret of the SMS gateway's webhook POST /internal/sms/inbound; empty = 404.
       SMS_INBOUND_SECRET: ${SMS_INBOUND_SECRET:-}
       SMS_DEDUP_WINDOW_H: ${SMS_DEDUP_WINDOW_H:-48}
+      # Phase A: Keycloak (provider ehimaya-phone-otp) asks for the SMS sign-in code here; empty = 404.
+      OTP_SMS_SECRET: ${OTP_SMS_SECRET:-}
       # Weather layer and spread forecasts (phase 7, docs/weather-forecast.md).
       # ┏━━ SIMULATION ━━ weather: empty WEATHER_PROVIDER = "sim" in development (deterministic simulated grid, every
       # ┃   value flagged "simulated": true), "open-meteo" in production (which refuses "sim").

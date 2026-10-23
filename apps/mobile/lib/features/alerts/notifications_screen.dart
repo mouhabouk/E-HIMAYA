@@ -12,6 +12,7 @@ import '../../core/routing/app_router.dart';
 import '../../core/security/locked_alert.dart';
 import '../../core/settings/settings_controller.dart';
 import '../../core/ui/emergency_action.dart';
+import '../../core/ui/language_bar.dart';
 import '../../l10n/app_localizations.dart';
 import '../weather/weather_providers.dart';
 import 'alert_labels.dart';
@@ -43,7 +44,7 @@ class NotificationsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.notificationsTitle),
-        actions: const [EmergencyNumbersAction()],
+        actions: const [StandardAppBarActions()],
       ),
       body: RefreshIndicator(
         onRefresh: refresh,
@@ -240,7 +241,7 @@ class AlertDetailScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.alertTitle),
-        actions: const [EmergencyNumbersAction()],
+        actions: const [StandardAppBarActions()],
       ),
       body: SafeArea(
         child: switch ((alert, state.isLoading)) {
@@ -305,6 +306,8 @@ class LockedAlertScreen extends ConsumerWidget {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: Text(l10n.alertTitle),
+          // Over a locked phone: only the language, no navigation away from the alert.
+          actions: const [LanguageMenuAction()],
         ),
         body: SafeArea(
           child: Column(

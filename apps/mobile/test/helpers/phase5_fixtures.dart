@@ -53,7 +53,7 @@ Future<ProviderContainer> phase5Container(
   List<Override> overrides = const [],
 }) async {
   SharedPreferences.setMockInitialValues({
-    'charter.accepted_version': '2026-10',
+    'charter.accepted_version': '2026-11',
     'onboarding.role': 'citizen',
     'onboarding.identity_mode': registered ? 'registered' : 'anonymous',
     ...prefs,

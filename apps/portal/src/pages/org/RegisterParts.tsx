@@ -49,6 +49,12 @@ export function RowActions({
   );
 }
 
+/** "Fields marked * are required." at the top of a form with required fields (phase A, rule 2). */
+export function RequiredNote() {
+  const { t } = useTranslation();
+  return <p className="field__hint required-note">{t("validation.requiredNote")}</p>;
+}
+
 /** Labelled input/select wrapper with optional hint and error (ids derived from `id`). */
 export function Field({
   id,
@@ -69,7 +75,7 @@ export function Field({
     <div className={`field${error ? " field--invalid" : ""}`}>
       <label htmlFor={id}>
         {label}
-        {required && <span aria-hidden="true"> *</span>}
+        {required && <span className="required-mark" aria-hidden="true"> *</span>}
       </label>
       {children}
       {hint && (

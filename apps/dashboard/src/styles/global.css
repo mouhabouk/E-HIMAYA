@@ -248,6 +248,11 @@ a {
   font-weight: 700;
 }
 
+.header__logo {
+  border-radius: 50%;
+  background: #fff;
+}
+
 .header__nav {
   display: flex;
   flex-wrap: wrap;
@@ -435,6 +440,16 @@ a {
 .field label {
   font-weight: 600;
   font-size: 0.9rem;
+}
+
+/*
+ * Phase A, rule 2: a required field shows a red asterisk after its label. Screen readers already hear "required"
+ * from `required` / `aria-required` on the control; the asterisk is decoration for sighted users.
+ */
+.field:has(> :is(input, select, textarea):is([required], [aria-required="true"])) > label::after {
+  content: " *";
+  color: var(--error-text);
+  font-weight: 700;
 }
 
 input[type="search"],

@@ -35,6 +35,14 @@ abstract class LocationService {
   /// targeting): null unless location was already granted.
   Future<GeoPoint?> withoutPrompt() => lastKnown();
 
+  /// Whether location works now, without any prompt (status strip of the home screen,
+  /// addition 4).
+  Future<LocationAvailability> status() async => LocationAvailability.granted;
+
+  /// Opens the system page that turns location on (service off) or the app's settings
+  /// (permission refused for good).
+  Future<bool> openSettings() async => false;
+
   /// Position updates for the volunteer's readiness, in the foreground only and without a
   /// permission prompt. Battery: balanced (cell/Wi-Fi) accuracy and a 100 m distance filter
   /// ([lowPower]: low-power accuracy, 250 m), so a stationary phone produces no updates and the
@@ -43,6 +51,41 @@ abstract class LocationService {
 }
 
 class GeolocatorLocationService extends LocationService {
+  @override
+  Future<LocationAvailability> status() async {
+    try {
+      if (!await Geolocator.isLocationServiceEnabled()) {
+        return LocationAvailability.serviceDisabled;
+      }
+      return switch (await Geolocator.checkPermission()) {
+        LocationPermission.always ||
+        LocationPermission.whileInUse => LocationAvailability.granted,
+        LocationPermission.deniedForever => LocationAvailability.deniedForever,
+        _ => LocationAvailability.denied,
+      };
+    } on Exception {
+      return LocationAvailability.denied;
+    }
+  }
+
+  @override
+  Future<bool> openSettings() async {
+    try {
+      final available = await status();
+      return switch (available) {
+        LocationAvailability.serviceDisabled =>
+          await Geolocator.openLocationSettings(),
+        LocationAvailability.deniedForever =>
+          await Geolocator.openAppSettings(),
+        LocationAvailability.denied =>
+          await ensurePermission() == LocationAvailability.granted,
+        LocationAvailability.granted => true,
+      };
+    } on Exception {
+      return false;
+    }
+  }
+
   @override
   Future<LocationAvailability> ensurePermission() async {
     if (!await Geolocator.isLocationServiceEnabled()) {

@@ -232,6 +232,17 @@ a {
   font-weight: 700;
 }
 
+.header__logo {
+  border-radius: 50%;
+  background: #fff;
+}
+
+/* Phase A, rule 2: the asterisk of a required field is red (the field and its label also say it). */
+.required-mark {
+  color: var(--error-text);
+  font-weight: 700;
+}
+
 .header__nav {
   display: flex;
   flex-wrap: wrap;

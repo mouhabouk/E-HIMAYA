@@ -48,7 +48,8 @@
       "light": "light",
       "dark": "dark"
     },
-    "language": "Language"
+    "language": "Language",
+    "logoAlt": "Office National de la Protection Civile"
   },
   "roles": {
     "operator": "Operator",
@@ -137,7 +138,8 @@
     "cancel": "Cancel",
     "none": "None",
     "close": "Close",
-    "reasonLength": "Between {{min}} and {{max}} characters."
+    "reasonLength": "Between {{min}} and {{max}} characters.",
+    "requiredNote": "Fields marked * are required."
   },
   "errors": {
     "authentication_required": "Session expired. Please sign in again.",
@@ -3131,6 +3133,39 @@
       "integer": "Enter whole numbers.",
       "range": "Values between {{min}} and {{max}}.",
       "order": "The values are in the wrong order."
+    },
+    "release": {
+      "title": "Mobile app release",
+      "help": "Version offered to the phones. Below the latest build the app shows “What's new” with “Update” and “Later”; below the minimum build the update cannot be skipped (SOS and 198 stay reachable).",
+      "version": "Latest version",
+      "latestBuild": "Latest build number",
+      "minBuild": "Minimum allowed build",
+      "channel": "Download channel",
+      "channels": {
+        "server": "Our server (stage 1)",
+        "play": "Google Play (stage 2)"
+      },
+      "downloadUrl": "Download address (https)",
+      "notes": "What's new ({{lang}})",
+      "mandatoryNote": "Raise the minimum build only for a security or data fix: older phones then must update before going on.",
+      "errors": {
+        "version": "The version is written as three numbers: 0.3.0.",
+        "build": "Build numbers are whole numbers between {{min}} and {{max}}.",
+        "order": "The minimum build cannot be above the latest build.",
+        "url": "The download address must start with https://.",
+        "urlMissing": "A release on our server needs its download address.",
+        "notes": "Each text has at most {{notes}} characters."
+      }
+    },
+    "moderation": {
+      "title": "Words refused in names and comments",
+      "help": "Added to the built-in list. Applied to profile names and other non-emergency text; never to reports, SOS or descriptions.",
+      "label": "One word or expression per line",
+      "hint": "{{count}} of {{max}} words.",
+      "errors": {
+        "length": "Each line has {{min}} to {{max}} characters.",
+        "count": "At most {{count}} words."
+      }
     }
   },
   "accounts": {

@@ -23,7 +23,7 @@ class TipsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.tipsTitle),
-        actions: const [EmergencyNumbersAction()],
+        actions: const [StandardAppBarActions()],
       ),
       body: RefreshIndicator(
         onRefresh: () => ref.read(safetyTipsProvider.notifier).refresh(),
@@ -76,7 +76,10 @@ class TipDetailScreen extends ConsumerWidget {
     final tip = tips?.items.where((t) => t.hazard.wire == hazard).firstOrNull;
     if (tip == null) {
       return Scaffold(
-        appBar: AppBar(title: Text(l10n.tipsTitle)),
+        appBar: AppBar(
+          title: Text(l10n.tipsTitle),
+          actions: const [StandardAppBarActions()],
+        ),
         body: Center(
           child: tips == null
               ? const CircularProgressIndicator()
@@ -88,7 +91,7 @@ class TipDetailScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(_title(l10n, tip, lang)),
-        actions: const [EmergencyNumbersAction()],
+        actions: const [StandardAppBarActions()],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),

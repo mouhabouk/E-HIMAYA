@@ -220,20 +220,23 @@ describe("reports on behalf of the institution (FR-B-011)", () => {
         { status: 428, body: { detail: "consent_required" } },
         { status: 201, body: { id: "r-1", tracking_code: "EH-26-61-0004822", client_uuid: "x", category: "fire", status: "received", received_at: "2026-10-19T10:00:00Z", organization: { id: "o-1", name: "Société X" } } },
       ],
-      "GET /api/v1/charter": { body: { version: "2026-10" } },
-      "POST /api/v1/consents": { status: 201, body: { charter_version: "2026-10", accepted_at: "2026-10-19T10:00:00Z" } },
+      "GET /api/v1/charter": { body: { version: "2026-11" } },
+      "POST /api/v1/consents": { status: 201, body: { charter_version: "2026-11", accepted_at: "2026-10-19T10:00:00Z" } },
     });
     fireEvent.change(await screen.findByLabelText("Description"), { target: { value: "Fumée dans le dépôt B" } });
     fireEvent.click(screen.getByRole("button", { name: "Send the report" }));
     const dialog = await screen.findByRole("dialog", { name: "Charter" });
-    expect(await within(dialog).findByText(/PLACEHOLDER/)).toBeInTheDocument();
+    // Version 2026-11 (phase A): the ten sections of the terms, no placeholder notice.
+    expect(await within(dialog).findAllByRole("heading", { level: 3 })).toHaveLength(10);
+    expect(within(dialog).getByText(/2004-63/)).toBeInTheDocument();
+    expect(within(dialog).queryByText(/PLACEHOLDER/)).not.toBeInTheDocument();
     const accept = within(dialog).getByRole("button", { name: "I accept" });
     expect(accept).toBeDisabled();
     fireEvent.click(within(dialog).getByRole("checkbox"));
     fireEvent.click(accept);
     expect(await screen.findByText("EH-26-61-0004822")).toBeInTheDocument();
 
-    expect(calls("POST /api/v1/consents")[0]?.body).toEqual({ charter_version: "2026-10", locale: "en", platform: "web" });
+    expect(calls("POST /api/v1/consents")[0]?.body).toEqual({ charter_version: "2026-11", locale: "en", platform: "web" });
     const posts = calls("POST /api/v1/reports").map((c) => c.body as Record<string, unknown>);
     expect(posts).toHaveLength(2);
     expect(posts[0]).toMatchObject({ category: "fire", text: "Fumée dans le dépôt B", lang: "en", organization_id: "o-1", location: { lat: 34.7, lon: 10.72 } });

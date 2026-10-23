@@ -202,7 +202,8 @@
     "months120": "Between 1 and 120 months.",
     "unNumber": "UN number: exactly 4 digits (or leave empty).",
     "hazardClass": "8 characters at most (e.g. 3 or 2.1).",
-    "coordinates": "Invalid coordinates."
+    "coordinates": "Invalid coordinates.",
+    "requiredNote": "Fields marked * are required."
   },
   "workspace": {
     "sections": "Sections of the institution",
@@ -563,6 +564,52 @@
         "body": "Reports (category, description, location and attachments) and the identity of your account are processed only to handle emergencies, in accordance with Organic Law No. 2004-63 on the protection of personal data, under the supervision of the INPDP. You have the right to access, rectify and object.",
         "liability": "Knowingly making a false report engages your legal liability.",
         "checkbox": "I have read and accept the charter, and I understand that a knowingly false report engages my legal liability."
+      },
+      "2026-11": {
+        "intro": "e-Himaya is the national platform for reporting emergencies to the Civil Protection.",
+        "sections": [
+          {
+            "title": "1. Purpose",
+            "body": "e-Himaya is a digital platform of the National Civil Protection Office (\"the Office\") for reporting emergencies and following them up. These terms govern the relationship between the Office and the users of the mobile app and the institutions portal."
+          },
+          {
+            "title": "2. Our mission",
+            "body": "To protect lives and property, and to rebuild trust between citizens and Civil Protection through direct and open communication. Describing the incident accurately and showing the scene as it is shortens response time and makes the intervention more effective."
+          },
+          {
+            "title": "3. Nature and limits of the service",
+            "body": "3.1 The app complements 198 and does not replace it. In immediate danger, call 198 directly.\n3.2 The app gives no medical advice; its safety tips are for general awareness and do not replace the instructions of Civil Protection staff.\n3.3 It depends on factors outside the Office's control: mobile network and internet coverage, location signal, battery and the condition of the phone. The Office aims for the highest availability and fixes faults as fast as possible."
+          },
+          {
+            "title": "4. User obligations",
+            "body": "4.1 Use the app in good faith and only for real emergencies; give accurate, up-to-date information, especially your phone number.\n4.2 Keep location turned on and use the latest version of the app.\n4.3 Do not put yourself in danger to film, and follow the instructions of responders.\n4.4 Do not harm, disrupt, bypass the protections of, or reverse-engineer the app."
+          },
+          {
+            "title": "5. False alarms and misuse",
+            "body": "Every report sends out rescue teams that other lives may need at the same moment. A deliberate false report or any misuse of the app exposes its author to prosecution under Tunisian law, and may lead to temporary or permanent suspension of the account or of reporting from the device concerned."
+          },
+          {
+            "title": "6. Institutions' obligations",
+            "body": "A registered institution provides accurate, up-to-date information on its identity, activity, buildings and managers, and is responsible for it. Filing and updating the evacuation plan and building plans makes the intervention easier and shortens search and rescue inside the building. The account is activated only after the Office approves it."
+          },
+          {
+            "title": "7. Volunteers",
+            "body": "Volunteer status is granted only after the Office approves it. Volunteers follow the operations room's instructions and act only within the task assigned to them."
+          },
+          {
+            "title": "8. Personal data protection",
+            "body": "8.1 Personal data is processed under Organic Law No. 2004-63 of 27 July 2004 on the protection of personal data, under the supervision of the National Authority for the Protection of Personal Data (INPDP), solely to handle emergencies and to keep you informed about your reports.\n8.2 When you send a report, the Office receives your position, the type of incident, the description and attached media, and your account details if you have an account.\n8.3 Emergency contacts and the text of your SOS message are stored encrypted on your phone only and are never sent to the Office.\n8.4 You can report without an account under a pseudonym; your IP address is not recorded.\n8.5 Only authorised staff can access the data, which is kept as long as needed to handle the case and meet legal obligations. You have the right to access, correct and object to the processing of your data."
+          },
+          {
+            "title": "9. Changes to the app and these terms",
+            "body": "The Office may improve the app or change these terms. You are told about each new version and what it contains, and asked to accept again when the terms change."
+          },
+          {
+            "title": "10. Applicable law",
+            "body": "These terms are governed by Tunisian law; Tunisian courts have jurisdiction over any dispute."
+          }
+        ],
+        "checkbox": "I have read and accept the terms of use, and I understand that a deliberate false report makes me legally liable."
       }
     }
   },

@@ -9,6 +9,7 @@ import '../../core/http/models.dart';
 import '../../core/routing/app_router.dart';
 import '../../core/settings/settings_controller.dart';
 import '../../core/ui/emergency_action.dart';
+import '../../core/ui/required_label.dart';
 import '../../l10n/app_localizations.dart';
 import '../charter/charter_controller.dart';
 
@@ -139,7 +140,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.profileTitle),
-        actions: const [EmergencyNumbersAction()],
+        actions: const [StandardAppBarActions()],
       ),
       body: SafeArea(
         child: Form(
@@ -150,11 +151,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               Text(l10n.profileIntro),
               if (profile.isLoading) const LinearProgressIndicator(),
               const SizedBox(height: 16),
+              const RequiredNote(),
               TextFormField(
                 controller: _first,
                 textCapitalization: TextCapitalization.words,
                 autofillHints: const [AutofillHints.givenName],
-                decoration: InputDecoration(labelText: l10n.profileFirstName),
+                decoration: InputDecoration(
+                  label: RequiredLabel(l10n.profileFirstName),
+                ),
                 validator: _required,
               ),
               const SizedBox(height: 12),
@@ -162,7 +166,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 controller: _last,
                 textCapitalization: TextCapitalization.words,
                 autofillHints: const [AutofillHints.familyName],
-                decoration: InputDecoration(labelText: l10n.profileLastName),
+                decoration: InputDecoration(
+                  label: RequiredLabel(l10n.profileLastName),
+                ),
                 validator: _required,
               ),
               const SizedBox(height: 12),
@@ -175,7 +181,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   LengthLimitingTextInputFormatter(8),
                 ],
                 decoration: InputDecoration(
-                  labelText: l10n.profileCin,
+                  label: RequiredLabel(l10n.profileCin),
                   helperText: _cinLast4 == null
                       ? l10n.profileCinHint
                       : l10n.profileCinStored(_cinLast4!),
@@ -195,7 +201,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   LengthLimitingTextInputFormatter(8),
                 ],
                 decoration: InputDecoration(
-                  labelText: l10n.profilePhone,
+                  label: RequiredLabel(l10n.profilePhone),
                   prefixText: '${ProfileRules.phonePrefix} ',
                 ),
                 validator: (v) =>
@@ -217,7 +223,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       : null,
                   isExpanded: true,
                   decoration: InputDecoration(
-                    labelText: l10n.profileGouvernorat,
+                    label: RequiredLabel(l10n.profileGouvernorat),
                   ),
                   items: [
                     for (final g in list)
@@ -246,7 +252,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         : null,
                     isExpanded: true,
                     decoration: InputDecoration(
-                      labelText: l10n.profileDelegation,
+                      label: RequiredLabel(l10n.profileDelegation),
                     ),
                     items: [
                       for (final d in list)

@@ -39,8 +39,7 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get charterTitle =>
-      'Charte de confidentialité et des données personnelles';
+  String get charterTitle => 'Conditions d\'utilisation';
 
   @override
   String charterVersionLabel(String version) {
@@ -52,51 +51,8 @@ class AppLocalizationsFr extends AppLocalizations {
       'e-Himaya est la plateforme nationale de signalement des urgences à la Protection civile. Avant de l’utiliser, lisez comment vos données sont traitées et quelles sont vos obligations.';
 
   @override
-  String get charterDataTitle => 'Données collectées et finalité';
-
-  @override
-  String get charterDataBody =>
-      'Pour chaque signalement : sa catégorie, votre description, la position de l’incident et les photos, vidéos ou messages vocaux joints. Si vous créez un compte : vos nom et prénom, numéro de CIN, numéro de téléphone et région. Ces données servent uniquement au traitement des urgences et à vous informer du suivi de vos signalements.';
-
-  @override
-  String get charterLawTitle => 'Cadre légal';
-
-  @override
-  String get charterLawBody =>
-      'Vos données personnelles sont traitées conformément à la loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel et à ses textes d’application, sous le contrôle de l’Instance nationale de protection des données personnelles (INPDP).';
-
-  @override
-  String get charterAnonymousTitle => 'Signaler sans compte';
-
-  @override
-  String get charterAnonymousBody =>
-      'Vous pouvez signaler sans compte. L’application utilise alors une clé aléatoire créée sur ce téléphone ; la plateforme n’en conserve qu’un pseudonyme et n’enregistre pas votre adresse IP. Le signalement anonyme depuis un appareil peut être suspendu après des faux signalements avérés.';
-
-  @override
-  String get charterRightsTitle => 'Vos droits';
-
-  @override
-  String get charterRightsBody =>
-      'Vous disposez d’un droit d’accès, de rectification et d’opposition au traitement de vos données dans les conditions prévues par la loi. Vous pouvez les exercer auprès de l’exploitant de la plateforme et saisir l’INPDP.';
-
-  @override
-  String get charterRetentionTitle => 'Sécurité et conservation';
-
-  @override
-  String get charterRetentionBody =>
-      'Les signalements en attente d’envoi sont stockés chiffrés sur votre téléphone. Sur la plateforme, les données ne sont conservées que le temps nécessaire au traitement de l’urgence et au respect des obligations légales, et ne sont accessibles qu’aux agents habilités.';
-
-  @override
-  String get charterLiabilityTitle =>
-      'Responsabilité en cas de faux signalement';
-
-  @override
-  String get charterLiabilityBody =>
-      'Chaque signalement mobilise des équipes de secours qui peuvent manquer ailleurs. Faire sciemment un faux signalement ou une fausse alerte engage votre responsabilité légale et vous expose à des poursuites conformément à la loi tunisienne.';
-
-  @override
   String get charterCheckbox =>
-      'J’ai lu et j’accepte la charte, et je comprends qu’un faux signalement volontaire engage ma responsabilité légale.';
+      'J\'ai lu les conditions d\'utilisation et je les accepte ; je sais qu\'une fausse alerte volontaire engage ma responsabilité.';
 
   @override
   String charterAcceptedOn(String date) {
@@ -650,7 +606,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Les signalements en attente restent sur ce téléphone et seront envoyés après une nouvelle connexion ou si vous continuez sans compte.';
 
   @override
-  String get settingsCharter => 'Relire la charte';
+  String get settingsCharter => 'Conditions d\'utilisation';
 
   @override
   String get errorAuthenticationRequired =>
@@ -669,14 +625,14 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get errorConsentRequired =>
-      'Veuillez accepter la charte avant de signaler.';
+      'Veuillez accepter les conditions d\'utilisation avant de signaler.';
 
   @override
   String get errorRateLimited => 'Trop de requêtes. Patientez un instant.';
 
   @override
   String get errorUnknownCharterVersion =>
-      'La charte a changé. Veuillez la relire.';
+      'Les conditions d\'utilisation ont changé. Merci de les relire.';
 
   @override
   String get errorClientUuidConflict =>
@@ -2200,4 +2156,388 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get errorAnonQuotaExhausted =>
       'La limite de signalements sans compte est atteinte sur cet appareil. Veuillez créer un compte.';
+
+  @override
+  String get intro1Title => 'Bienvenue sur e-Himaya';
+
+  @override
+  String get intro1Body =>
+      'e-Himaya détermine votre position grâce à votre téléphone. En cas d\'urgence, il l\'envoie avec votre signalement directement à la salle des opérations compétente de la Protection civile, pour que les secours arrivent plus vite et avec les moyens adaptés.';
+
+  @override
+  String get intro2Title =>
+      'Sous l\'égide de l\'Office National de la Protection Civile';
+
+  @override
+  String get intro2Body =>
+      'Cette application est fournie par l\'Office National de la Protection Civile, établissement public chargé du secours, du sauvetage, de la lutte contre les incendies et de la gestion des catastrophes sur tout le territoire tunisien, qui reçoit les appels du 198.';
+
+  @override
+  String get intro3Title => 'Quand l\'utiliser ?';
+
+  @override
+  String get intro3Body =>
+      'Incendie, accident de la circulation, personne en danger ou blessée, noyade, effondrement, fuite de gaz, inondation, ou toute situation menaçant des vies ou des biens et nécessitant l\'intervention de la Protection civile.';
+
+  @override
+  String get intro4Title => 'Comment ça marche ?';
+
+  @override
+  String get intro4Body =>
+      'Choisissez le type d\'incident, prenez si possible une photo, une vidéo ou un message vocal sans vous mettre en danger, puis envoyez. Votre signalement et votre position parviennent immédiatement à l\'opérateur ; vous suivez son traitement étape par étape et l\'opérateur peut vous rappeler. Sans Internet, le signalement part par SMS, et l\'appel au 198 reste disponible à tout moment.';
+
+  @override
+  String get intro5Title => 'Où fonctionne-t-elle ?';
+
+  @override
+  String get intro5Body =>
+      'Sur tout le territoire de la République tunisienne, dans les 24 gouvernorats ; votre signalement est orienté automatiquement vers la direction régionale compétente. Hors de Tunisie, appelez le numéro d\'urgence local (le 112 dans la plupart des pays).';
+
+  @override
+  String get terms1Title => '1. Objet';
+
+  @override
+  String get terms1Body =>
+      'e-Himaya est une plateforme numérique de l\'Office National de la Protection Civile (« l\'Office ») pour signaler les situations d\'urgence et en suivre le traitement. Les présentes conditions régissent la relation entre l\'Office et les utilisateurs de l\'application mobile et du portail des établissements.';
+
+  @override
+  String get terms2Title => '2. Notre mission';
+
+  @override
+  String get terms2Body =>
+      'Protéger les vies et les biens, et rétablir la confiance entre les citoyens et la Protection civile par une communication directe et transparente. Décrire l\'incident avec précision et montrer la scène telle qu\'elle est réduit le délai d\'intervention et en améliore l\'efficacité.';
+
+  @override
+  String get terms3Title => '3. Nature et limites du service';
+
+  @override
+  String get terms3Body =>
+      '3.1 L\'application complète le 198 et ne le remplace pas. En cas de danger immédiat, appelez directement le 198.\n3.2 L\'application ne fournit aucun avis médical ; ses conseils sont donnés à titre de sensibilisation et ne remplacent pas les consignes des agents de la Protection civile.\n3.3 Son fonctionnement dépend de facteurs hors du contrôle de l\'Office : couverture du réseau mobile et d\'Internet, signal de localisation, batterie et état du téléphone. L\'Office s\'efforce d\'assurer la meilleure disponibilité et de corriger les dysfonctionnements dans les meilleurs délais.';
+
+  @override
+  String get terms4Title => '4. Obligations de l\'utilisateur';
+
+  @override
+  String get terms4Body =>
+      '4.1 Utiliser l\'application de bonne foi et uniquement pour de vraies urgences ; fournir des informations exactes et à jour, notamment le numéro de téléphone.\n4.2 Laisser la localisation activée et utiliser la dernière version de l\'application.\n4.3 Ne pas se mettre en danger pour filmer et respecter les consignes des intervenants.\n4.4 Ne pas porter atteinte à l\'application, la perturber, contourner ses protections ni en faire de l\'ingénierie inverse.';
+
+  @override
+  String get terms5Title => '5. Fausses alertes et usage abusif';
+
+  @override
+  String get terms5Body =>
+      'Chaque signalement mobilise des équipes de secours dont d\'autres vies peuvent avoir besoin au même moment. Toute fausse alerte volontaire ou tout usage abusif expose son auteur à des poursuites conformément à la législation tunisienne en vigueur, et peut entraîner la suspension temporaire ou définitive du compte ou du signalement depuis l\'appareil concerné.';
+
+  @override
+  String get terms6Title => '6. Obligations des établissements';
+
+  @override
+  String get terms6Body =>
+      'L\'établissement inscrit fournit des informations exactes et à jour sur son identité, son activité, ses bâtiments et ses responsables, et en répond. Le dépôt et la mise à jour du plan d\'évacuation et des plans du bâtiment facilitent l\'intervention et réduisent le temps de recherche et de sauvetage. Le compte n\'est activé qu\'après validation par l\'Office.';
+
+  @override
+  String get terms7Title => '7. Volontaires';
+
+  @override
+  String get terms7Body =>
+      'Le statut de volontaire n\'est accordé qu\'après validation par l\'Office. Le volontaire suit les instructions de la salle des opérations et n\'intervient que dans la limite de la mission confiée.';
+
+  @override
+  String get terms8Title => '8. Protection des données personnelles';
+
+  @override
+  String get terms8Body =>
+      '8.1 Les données personnelles sont traitées conformément à la loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel, sous le contrôle de l\'Instance Nationale de Protection des Données Personnelles (INPDP), dans le seul but de traiter les urgences et de vous informer du suivi de vos signalements.\n8.2 Lors d\'un signalement sont transmis à l\'Office : votre position, le type d\'incident, la description et les médias joints, et les données de votre compte le cas échéant.\n8.3 Les contacts d\'urgence et le texte du message de détresse sont conservés chiffrés sur votre téléphone uniquement et ne sont pas transmis à l\'Office.\n8.4 Le signalement sans compte est possible sous pseudonyme, sans enregistrement de l\'adresse IP.\n8.5 Seuls les agents habilités accèdent aux données, conservées pendant la durée nécessaire au traitement et aux obligations légales. Vous disposez d\'un droit d\'accès, de rectification et d\'opposition.';
+
+  @override
+  String get terms9Title => '9. Évolution de l\'application et des conditions';
+
+  @override
+  String get terms9Body =>
+      'L\'Office peut faire évoluer l\'application ou modifier ces conditions. L\'utilisateur est informé de chaque nouvelle version et de son contenu, et son accord est de nouveau demandé lorsque les conditions changent.';
+
+  @override
+  String get terms10Title => '10. Droit applicable';
+
+  @override
+  String get terms10Body =>
+      'Les présentes conditions sont régies par le droit tunisien ; les tribunaux tunisiens sont compétents pour tout litige.';
+
+  @override
+  String get languageTitle => 'Choisissez votre langue';
+
+  @override
+  String get languageSubtitle =>
+      'Vous pouvez la changer à tout moment avec la barre de langue en haut de chaque écran.';
+
+  @override
+  String get languageMenuTooltip => 'Langue';
+
+  @override
+  String get introSkip => 'Passer';
+
+  @override
+  String introPage(int current, int total) {
+    return 'Page $current sur $total';
+  }
+
+  @override
+  String get call198 => 'Appeler le 198';
+
+  @override
+  String get termsScrollHint =>
+      'Faites défiler jusqu\'à la fin des conditions pour les accepter.';
+
+  @override
+  String get termsAccept => 'J\'accepte';
+
+  @override
+  String get termsDecline => 'Je refuse';
+
+  @override
+  String get termsDeclinedTitle => 'Conditions non acceptées';
+
+  @override
+  String get termsDeclinedBody =>
+      'Sans accepter les conditions vous ne pouvez pas utiliser l\'application, mais l\'appel au 198 reste toujours disponible.';
+
+  @override
+  String get termsReadAgain => 'Lire les conditions';
+
+  @override
+  String get permissionsTitle => 'Autorisations';
+
+  @override
+  String get permissionsIntro =>
+      'e-Himaya ne demande que ce qui est nécessaire pour vous aider. Vous pourrez changer ces choix dans les réglages du téléphone.';
+
+  @override
+  String get permLocationTitle => 'Localisation';
+
+  @override
+  String get permLocationBody =>
+      'Envoyée avec votre signalement pour que les secours vous trouvent. Sans elle, il faudra décrire le lieu et les secours risquent d\'arriver plus tard.';
+
+  @override
+  String get permNotificationsTitle => 'Notifications';
+
+  @override
+  String get permNotificationsBody =>
+      'Suivi de vos signalements et alertes publiques près de vous. Sans elles, vous ne serez pas prévenu d\'un danger dans votre zone.';
+
+  @override
+  String get permSmsTitle => 'SMS';
+
+  @override
+  String get permSmsBody =>
+      'Sans Internet, votre signalement part par SMS. Aucune autorisation n\'est nécessaire : l\'application ouvre un message prêt que vous envoyez vous-même.';
+
+  @override
+  String get permContactsTitle => 'Contacts';
+
+  @override
+  String get permContactsBody =>
+      'Demandés seulement quand vous choisirez un contact d\'urgence, plus tard.';
+
+  @override
+  String get permAllow => 'Autoriser';
+
+  @override
+  String get permAllowed => 'Autorisé';
+
+  @override
+  String get permRefused =>
+      'Refusé : vous pouvez l\'autoriser dans les réglages';
+
+  @override
+  String get permNoneNeeded => 'Aucune autorisation nécessaire';
+
+  @override
+  String get permLater => 'Plus tard';
+
+  @override
+  String get signInTitle => 'Connexion';
+
+  @override
+  String get signInIntro =>
+      'Connectez-vous avec votre numéro de mobile : nous vous envoyons un code par SMS. Pas de mot de passe.';
+
+  @override
+  String get signInPhoneLabel => 'Numéro de mobile';
+
+  @override
+  String get signInPhoneHint => '8 chiffres';
+
+  @override
+  String get signInPhoneInvalid =>
+      'Saisissez un numéro mobile tunisien : 8 chiffres commençant par 2, 3, 4, 5 ou 9.';
+
+  @override
+  String get signInSendCode => 'Envoyer le code';
+
+  @override
+  String get signInCodeLabel => 'Code reçu par SMS';
+
+  @override
+  String signInCodeSentTo(String phone) {
+    return 'Un code à 6 chiffres a été envoyé au $phone.';
+  }
+
+  @override
+  String get signInVerify => 'Se connecter';
+
+  @override
+  String signInResendIn(int seconds) {
+    return 'Renvoyer le code dans $seconds s';
+  }
+
+  @override
+  String get signInResend => 'Renvoyer le code';
+
+  @override
+  String get signInChangeNumber => 'Changer de numéro';
+
+  @override
+  String signInWrongCode(int tries) {
+    return 'Code erroné. Essais restants : $tries.';
+  }
+
+  @override
+  String get signInCodeExpired =>
+      'Le code a expiré ou est épuisé. Demandez-en un nouveau.';
+
+  @override
+  String get signInTooSoon =>
+      'Patientez une minute avant de demander un nouveau code.';
+
+  @override
+  String get signInLimit =>
+      'Trop de codes pour ce numéro. Réessayez dans une heure.';
+
+  @override
+  String get signInSmsUnavailable =>
+      'Le SMS n\'a pas pu être envoyé. Réessayez ou continuez en invité.';
+
+  @override
+  String get signInNetworkError =>
+      'Pas de connexion. Vérifiez Internet et réessayez.';
+
+  @override
+  String get signInGuest => 'Continuer en invité';
+
+  @override
+  String get signInGuestDesc =>
+      'Signaler sans compte (nombre de signalements limité).';
+
+  @override
+  String get signInInstitution => 'Compte établissement';
+
+  @override
+  String get signInInstitutionDesc =>
+      'Pour les entreprises, écoles, hôtels et administrations.';
+
+  @override
+  String get signInEmail => 'Se connecter avec e-mail et mot de passe';
+
+  @override
+  String get signInPrivacyNote =>
+      'Votre numéro sert uniquement à vous joindre au sujet de vos signalements.';
+
+  @override
+  String get simBanner =>
+      '[SIM] Simulation : le SMS part vers la passerelle de test (notify-sim), pas vers un vrai téléphone.';
+
+  @override
+  String get homeSubtitle => 'Protection civile tunisienne';
+
+  @override
+  String get homeReportCardTitle => 'Signaler un incident';
+
+  @override
+  String get homeReportCardDesc =>
+      'Photo, voix ou texte, avec votre position automatiquement';
+
+  @override
+  String get homeNumbersOffline => 'Fonctionnent sans Internet';
+
+  @override
+  String get homeShortcuts => 'Raccourcis';
+
+  @override
+  String get homeMyReports => 'Mes signalements';
+
+  @override
+  String get homeSosMessage => 'Message de détresse';
+
+  @override
+  String get homeCall198 => 'Appel d\'urgence 198';
+
+  @override
+  String get locationOn => 'Localisation activée';
+
+  @override
+  String get locationOff =>
+      'Localisation désactivée : les secours risquent de mettre plus de temps à vous trouver.';
+
+  @override
+  String get locationTurnOn => 'Activer';
+
+  @override
+  String get locationChecking => 'Vérification de la localisation…';
+
+  @override
+  String get themeToggleTooltip => 'Clair ou sombre';
+
+  @override
+  String get settingsColors => 'Couleurs';
+
+  @override
+  String get colorOffice => 'Protection civile (logo)';
+
+  @override
+  String get colorRed => 'Rouge';
+
+  @override
+  String get colorBlue => 'Bleu';
+
+  @override
+  String get colorGreen => 'Vert';
+
+  @override
+  String get updateTitle => 'Une nouvelle version est disponible';
+
+  @override
+  String get updateMandatoryTitle => 'Mise à jour obligatoire';
+
+  @override
+  String get updateMandatoryBody =>
+      'Cette version n\'est plus prise en charge. Mettez à jour pour continuer à utiliser e-Himaya. Les numéros d\'urgence restent disponibles.';
+
+  @override
+  String updateWhatsNew(String version) {
+    return 'Nouveautés de la version $version';
+  }
+
+  @override
+  String get updateDataKept => 'Vos signalements et réglages sont conservés.';
+
+  @override
+  String get updateNow => 'Mettre à jour';
+
+  @override
+  String get updateLater => 'Plus tard';
+
+  @override
+  String get updateOpenFailed =>
+      'La page de téléchargement n\'a pas pu être ouverte.';
+
+  @override
+  String get requiredNote => 'Les champs marqués * sont obligatoires.';
+
+  @override
+  String get requiredSemantics => 'obligatoire';
+
+  @override
+  String get errorOffensiveText =>
+      'Ce texte contient des mots interdits. Merci de le reformuler.';
 }

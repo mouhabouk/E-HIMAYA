@@ -52,7 +52,7 @@ class Settings(BaseSettings):
     field_encryption_keys: SecretStr | None = None
     field_encryption_active_version: int | None = Field(default=None, ge=1, le=255)
     # Version of the privacy charter every reporter must have accepted (FR-A-001).
-    charter_version: str = "2026-10"
+    charter_version: str = "2026-11"
     # Shared secret tusd sends in the Authorization header of its hook calls (HTTP Basic, user "tusd", or
     # "Bearer <secret>"); the hook endpoint is disabled when unset.
     tusd_hook_secret: SecretStr | None = Field(default=None, min_length=24)
@@ -244,6 +244,9 @@ class Settings(BaseSettings):
     # Window in which an SMS report and the same report synced later by the app are merged (same 8-hex prefix,
     # category and sender), and in which a repeated SMS returns the existing report.
     sms_dedup_window_h: int = Field(default=48, ge=1, le=168)
+    # Phase A sign-in by phone (docs/phase-a/design.md §2.2): HMAC-SHA256 key shared with the Keycloak provider
+    # ehimaya-phone-otp, which signs POST /internal/auth/otp-sms like the SMS gateway does. Unset: 404.
+    otp_sms_secret: SecretStr | None = Field(default=None, min_length=24)
 
     # Decision support (phase 7, docs/decision-support.md). Self-hosted routing engine (Valhalla on OpenStreetMap
     # Tunisia, compose profile "routing"). Unset or down: straight-line estimate answered with "engine": "fallback".
@@ -442,6 +445,7 @@ class Settings(BaseSettings):
         "telephony_ari_password",
         "telephony_sim_token",
         "sms_inbound_secret",
+        "otp_sms_secret",
         "routing_url",
         "ollama_url",
         "procedures_dir",

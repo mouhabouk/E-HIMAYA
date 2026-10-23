@@ -461,7 +461,7 @@ async def test_retention_jobs(
         consents = list(
             await s.scalars(text("SELECT charter_version FROM identity.consent WHERE user_id = :u"), {"u": user_id})
         )
-        assert consents == ["2026-10"]
+        assert consents == ["2026-11"]
         assert await s.scalar(text("SELECT count(*) FROM identity.account WHERE user_id = :u"), {"u": anon_id}) == 0
         assert await s.scalar(text("SELECT count(*) FROM identity.erasure_request WHERE id = :i"), {"i": erasure}) == 0
         audited = await s.scalar(text("SELECT count(*) FROM audit.log WHERE action = 'retention.anonymise'"))
@@ -502,7 +502,7 @@ async def test_export_registered_citizen(
     profile = data["profile"]
     assert profile["cin"] == body["cin"] and profile["phone"] == body["phone"] and profile["address"] == body["address"]
     assert profile["medical"]["allergies"] == "pénicilline"
-    assert [c["charter_version"] for c in data["consents"]] == ["2026-10"]
+    assert [c["charter_version"] for c in data["consents"]] == ["2026-11"]
     [exported] = data["reports"]
     assert exported["id"] == report["id"] and exported["text"] == "Inondation rue 5"
     assert exported["location"]["lat"] == pytest.approx(SFAX["lat"]) and exported["history"][0]["status"] == "received"

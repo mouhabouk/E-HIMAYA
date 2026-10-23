@@ -333,5 +333,6 @@
       }
     }
   ],
-  "browserFlow": "ehimaya browser"
+  "browserFlow": "ehimaya browser",
+  "loginTheme": "ehimaya"
 }
