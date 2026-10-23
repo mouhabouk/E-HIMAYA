@@ -1273,5 +1273,42 @@
   "guideDont": "Do not",
   "guideCall198": "Call Civil Protection, 198",
   "guideSimBanner": "[SIM] Content awaiting validation by the medical staff of the Civil Protection. Call 198 first.",
-  "guideSimTag": "[SIM] awaiting medical validation"
+  "guideSimTag": "[SIM] awaiting medical validation",
+  "nearestTitle": "Nearest to me",
+  "nearestHint": "Civil Protection centres, hospitals, pharmacies… and your coordinates. Works without connection once downloaded.",
+  "nearestMyPosition": "My position",
+  "nearestNoLocation": "Location is off or not allowed. Turn it on to see the nearest places.",
+  "nearestCopy": "Copy",
+  "nearestCopied": "Coordinates copied. You can read them to the operator.",
+  "nearestOffline": "No connection: showing the copy saved on this phone.",
+  "nearestEmpty": "Nothing saved on this phone yet. Connect once to download the places.",
+  "nearestLoading": "Downloading the places for offline use…",
+  "nearestUpdated": "Places updated on {date}",
+  "@nearestUpdated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "nearestToVerify": "To be verified",
+  "nearestNeedPosition": "Waiting for your position.",
+  "nearestNone": "No place of this kind is listed yet.",
+  "nearestSource": "Source: {source}",
+  "@nearestSource": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "nearestCall": "Call {phone}",
+  "@nearestCall": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "nearestRoute": "Route"
 }

@@ -4485,6 +4485,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'[SIM] awaiting medical validation'**
   String get guideSimTag;
+
+  /// No description provided for @nearestTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearest to me'**
+  String get nearestTitle;
+
+  /// No description provided for @nearestHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Civil Protection centres, hospitals, pharmacies… and your coordinates. Works without connection once downloaded.'**
+  String get nearestHint;
+
+  /// No description provided for @nearestMyPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'My position'**
+  String get nearestMyPosition;
+
+  /// No description provided for @nearestNoLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Location is off or not allowed. Turn it on to see the nearest places.'**
+  String get nearestNoLocation;
+
+  /// No description provided for @nearestCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get nearestCopy;
+
+  /// No description provided for @nearestCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Coordinates copied. You can read them to the operator.'**
+  String get nearestCopied;
+
+  /// No description provided for @nearestOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'No connection: showing the copy saved on this phone.'**
+  String get nearestOffline;
+
+  /// No description provided for @nearestEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing saved on this phone yet. Connect once to download the places.'**
+  String get nearestEmpty;
+
+  /// No description provided for @nearestLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading the places for offline use…'**
+  String get nearestLoading;
+
+  /// No description provided for @nearestUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Places updated on {date}'**
+  String nearestUpdated(String date);
+
+  /// No description provided for @nearestToVerify.
+  ///
+  /// In en, this message translates to:
+  /// **'To be verified'**
+  String get nearestToVerify;
+
+  /// No description provided for @nearestNeedPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for your position.'**
+  String get nearestNeedPosition;
+
+  /// No description provided for @nearestNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No place of this kind is listed yet.'**
+  String get nearestNone;
+
+  /// No description provided for @nearestSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Source: {source}'**
+  String nearestSource(String source);
+
+  /// No description provided for @nearestCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Call {phone}'**
+  String nearestCall(String phone);
+
+  /// No description provided for @nearestRoute.
+  ///
+  /// In en, this message translates to:
+  /// **'Route'**
+  String get nearestRoute;
 }
 
 class _AppLocalizationsDelegate

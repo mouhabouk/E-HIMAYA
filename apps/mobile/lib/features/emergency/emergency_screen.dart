@@ -12,7 +12,7 @@ import 'emergency_numbers.dart';
 /// is reachable even before the charter is accepted.
 ///
 /// Phase B1 makes it the emergency hub: below the numbers, the guide (topics and items) kept
-/// offline. [showHub] is false in the degraded mode, which has neither router nor storage.
+/// offline, and the nearest places with the user's coordinates. [showHub] is false in the degraded mode, which has neither router nor storage.
 class EmergencyScreen extends ConsumerWidget {
   const EmergencyScreen({super.key, this.showHub = true});
 
@@ -90,6 +90,21 @@ class EmergencyScreen extends ConsumerWidget {
                   subtitle: Text(l10n.guideHubHint),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => context.push(Routes.guide),
+                ),
+              ),
+              Card(
+                child: ListTile(
+                  key: const Key('hub-nearest'),
+                  minTileHeight: 72,
+                  leading: Icon(
+                    Icons.near_me,
+                    size: 32,
+                    color: theme.colorScheme.primary,
+                  ),
+                  title: Text(l10n.nearestTitle),
+                  subtitle: Text(l10n.nearestHint),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.push(Routes.nearest),
                 ),
               ),
             ],

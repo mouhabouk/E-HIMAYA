@@ -2585,4 +2585,64 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get guideSimTag => '[SIM] en attente de validation médicale';
+
+  @override
+  String get nearestTitle => 'Le plus proche de moi';
+
+  @override
+  String get nearestHint =>
+      'Centres de la Protection civile, hôpitaux, pharmacies… et vos coordonnées. Fonctionne sans connexion une fois téléchargé.';
+
+  @override
+  String get nearestMyPosition => 'Ma position';
+
+  @override
+  String get nearestNoLocation =>
+      'La localisation est coupée ou refusée. Activez-la pour voir les lieux les plus proches.';
+
+  @override
+  String get nearestCopy => 'Copier';
+
+  @override
+  String get nearestCopied =>
+      'Coordonnées copiées. Vous pouvez les lire à l’opérateur.';
+
+  @override
+  String get nearestOffline =>
+      'Pas de connexion : copie enregistrée sur ce téléphone.';
+
+  @override
+  String get nearestEmpty =>
+      'Rien n’est encore enregistré sur ce téléphone. Connectez-vous une fois pour télécharger les lieux.';
+
+  @override
+  String get nearestLoading =>
+      'Téléchargement des lieux pour l’usage hors connexion…';
+
+  @override
+  String nearestUpdated(String date) {
+    return 'Lieux mis à jour le $date';
+  }
+
+  @override
+  String get nearestToVerify => 'À vérifier';
+
+  @override
+  String get nearestNeedPosition => 'En attente de votre position.';
+
+  @override
+  String get nearestNone => 'Aucun lieu de ce type n’est encore répertorié.';
+
+  @override
+  String nearestSource(String source) {
+    return 'Source : $source';
+  }
+
+  @override
+  String nearestCall(String phone) {
+    return 'Appeler le $phone';
+  }
+
+  @override
+  String get nearestRoute => 'Itinéraire';
 }
