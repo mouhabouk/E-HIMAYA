@@ -144,6 +144,31 @@ erDiagram
 
 ```mermaid
 erDiagram
+    content__guide_item {
+        uuid id PK
+        uuid topic_id FK
+        integer position
+        jsonb content
+        boolean call_198
+        boolean hidden
+        text validated_by
+        datetime validated_at
+        integer version
+        text updated_by
+        datetime updated_at
+    }
+    content__guide_topic {
+        uuid id PK
+        text key
+        jsonb title
+        text icon
+        text colour
+        integer position
+        boolean hidden
+        integer version
+        text updated_by
+        datetime updated_at
+    }
     content__revision {
         text name PK
         bigint value
@@ -160,6 +185,7 @@ erDiagram
         text updated_by
         datetime published_at
     }
+    content__guide_topic ||--o{ content__guide_item : "topic_id"
 ```
 
 ## decision

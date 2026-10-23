@@ -7068,6 +7068,43 @@
         "title": "GroupingSettings",
         "type": "object"
       },
+      "GuideOut": {
+        "properties": {
+          "icons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Icons",
+            "type": "array"
+          },
+          "palette": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Palette",
+            "type": "array"
+          },
+          "revision": {
+            "title": "Revision",
+            "type": "integer"
+          },
+          "topics": {
+            "items": {
+              "$ref": "#/components/schemas/TopicOut"
+            },
+            "title": "Topics",
+            "type": "array"
+          }
+        },
+        "required": [
+          "revision",
+          "topics",
+          "icons",
+          "palette"
+        ],
+        "title": "GuideOut",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -8778,63 +8815,94 @@
         "title": "InviteOut",
         "type": "object"
       },
-      "ItemOut": {
+      "ItemContent": {
+        "additionalProperties": false,
         "properties": {
-          "body": {
-            "title": "Body",
+          "ar": {
+            "$ref": "#/components/schemas/ItemText"
+          },
+          "en": {
+            "$ref": "#/components/schemas/ItemText"
+          },
+          "fr": {
+            "$ref": "#/components/schemas/ItemText"
+          }
+        },
+        "required": [
+          "ar",
+          "fr",
+          "en"
+        ],
+        "title": "ItemContent",
+        "type": "object"
+      },
+      "ItemIn": {
+        "additionalProperties": false,
+        "properties": {
+          "call_198": {
+            "default": false,
+            "title": "Call 198",
+            "type": "boolean"
+          },
+          "content": {
+            "$ref": "#/components/schemas/ItemContent"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "content",
+          "reason"
+        ],
+        "title": "ItemIn",
+        "type": "object"
+      },
+      "ItemPatch": {
+        "additionalProperties": false,
+        "properties": {
+          "call_198": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Call 198"
+          },
+          "content": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ItemContent"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "hidden": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hidden"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
             "type": "string"
           },
-          "category": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Category"
-          },
-          "date": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Date"
-          },
-          "fields": {
-            "additionalProperties": true,
-            "title": "Fields",
-            "type": "object"
-          },
-          "gouvernorat": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Gouvernorat"
-          },
-          "gouvernorats": {
-            "items": {
-              "type": "integer"
-            },
-            "title": "Gouvernorats",
-            "type": "array"
-          },
-          "id": {
-            "title": "Id",
-            "type": "string"
-          },
-          "incident_id": {
+          "topic_id": {
             "anyOf": [
               {
                 "format": "uuid",
@@ -8844,44 +8912,67 @@
                 "type": "null"
               }
             ],
-            "title": "Incident Id"
+            "title": "Topic Id"
           },
-          "kind": {
-            "enum": [
-              "memory",
-              "report_doc",
-              "incident",
-              "report",
-              "transcript",
-              "procedure"
-            ],
-            "title": "Kind",
-            "type": "string"
-          },
-          "media": {
+          "version": {
+            "minimum": 1.0,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version",
+          "reason"
+        ],
+        "title": "ItemPatch",
+        "type": "object"
+      },
+      "ItemText": {
+        "additionalProperties": false,
+        "properties": {
+          "call": {
             "items": {
-              "$ref": "#/components/schemas/MediaLink"
+              "maxLength": 300,
+              "minLength": 1,
+              "type": "string"
             },
-            "title": "Media",
+            "maxItems": 5,
+            "title": "Call",
+            "type": "array"
+          },
+          "dont": {
+            "items": {
+              "maxLength": 300,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Dont",
+            "type": "array"
+          },
+          "steps": {
+            "items": {
+              "maxLength": 300,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 15,
+            "minItems": 1,
+            "title": "Steps",
             "type": "array"
           },
           "title": {
+            "maxLength": 120,
+            "minLength": 1,
             "title": "Title",
             "type": "string"
           }
         },
         "required": [
-          "kind",
-          "id",
           "title",
-          "date",
-          "gouvernorat",
-          "gouvernorats",
-          "category",
-          "incident_id",
-          "body"
+          "steps"
         ],
-        "title": "ItemOut",
+        "title": "ItemText",
         "type": "object"
       },
       "KeyCount": {
@@ -10715,6 +10806,24 @@
           "next_cursor"
         ],
         "title": "MessagePage",
+        "type": "object"
+      },
+      "MoveIn": {
+        "additionalProperties": false,
+        "properties": {
+          "direction": {
+            "enum": [
+              "up",
+              "down"
+            ],
+            "title": "Direction",
+            "type": "string"
+          }
+        },
+        "required": [
+          "direction"
+        ],
+        "title": "MoveIn",
         "type": "object"
       },
       "MyCallout": {
@@ -13390,6 +13499,55 @@
         "title": "PublicFeatures",
         "type": "object"
       },
+      "PublicGuide": {
+        "properties": {
+          "revision": {
+            "title": "Revision",
+            "type": "integer"
+          },
+          "topics": {
+            "items": {
+              "$ref": "#/components/schemas/PublicTopic"
+            },
+            "title": "Topics",
+            "type": "array"
+          }
+        },
+        "required": [
+          "revision",
+          "topics"
+        ],
+        "title": "PublicGuide",
+        "type": "object"
+      },
+      "PublicItem": {
+        "properties": {
+          "call_198": {
+            "title": "Call 198",
+            "type": "boolean"
+          },
+          "content": {
+            "$ref": "#/components/schemas/ItemContent"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "validated": {
+            "title": "Validated",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "content",
+          "call_198",
+          "validated"
+        ],
+        "title": "PublicItem",
+        "type": "object"
+      },
       "PublicLayer": {
         "properties": {
           "colour": {
@@ -13538,6 +13696,47 @@
           "items"
         ],
         "title": "PublicTips",
+        "type": "object"
+      },
+      "PublicTopic": {
+        "properties": {
+          "colour": {
+            "title": "Colour",
+            "type": "string"
+          },
+          "icon": {
+            "title": "Icon",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/PublicItem"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "title": {
+            "$ref": "#/components/schemas/Titles"
+          }
+        },
+        "required": [
+          "id",
+          "key",
+          "title",
+          "icon",
+          "colour",
+          "items"
+        ],
+        "title": "PublicTopic",
         "type": "object"
       },
       "PublishIn": {
@@ -19112,6 +19311,199 @@
         "title": "Title",
         "type": "object"
       },
+      "Titles": {
+        "additionalProperties": false,
+        "properties": {
+          "ar": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Ar",
+            "type": "string"
+          },
+          "en": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "En",
+            "type": "string"
+          },
+          "fr": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Fr",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ar",
+          "fr",
+          "en"
+        ],
+        "title": "Titles",
+        "type": "object"
+      },
+      "TopicIn": {
+        "additionalProperties": false,
+        "properties": {
+          "colour": {
+            "title": "Colour",
+            "type": "string"
+          },
+          "icon": {
+            "title": "Icon",
+            "type": "string"
+          },
+          "key": {
+            "pattern": "^[a-z][a-z0-9_]{1,39}$",
+            "title": "Key",
+            "type": "string"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          },
+          "title": {
+            "$ref": "#/components/schemas/Titles"
+          }
+        },
+        "required": [
+          "key",
+          "title",
+          "icon",
+          "colour",
+          "reason"
+        ],
+        "title": "TopicIn",
+        "type": "object"
+      },
+      "TopicOut": {
+        "properties": {
+          "colour": {
+            "title": "Colour",
+            "type": "string"
+          },
+          "hidden": {
+            "title": "Hidden",
+            "type": "boolean"
+          },
+          "icon": {
+            "title": "Icon",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__content__guide__ItemOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "position": {
+            "title": "Position",
+            "type": "integer"
+          },
+          "title": {
+            "$ref": "#/components/schemas/Titles"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "key",
+          "title",
+          "icon",
+          "colour",
+          "position",
+          "hidden",
+          "version",
+          "updated_at",
+          "items"
+        ],
+        "title": "TopicOut",
+        "type": "object"
+      },
+      "TopicPatch": {
+        "additionalProperties": false,
+        "properties": {
+          "colour": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Colour"
+          },
+          "hidden": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hidden"
+          },
+          "icon": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icon"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Titles"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "version": {
+            "minimum": 1.0,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version",
+          "reason"
+        ],
+        "title": "TopicPatch",
+        "type": "object"
+      },
       "Totals": {
         "properties": {
           "closed": {
@@ -19874,6 +20266,28 @@
           "entry"
         ],
         "title": "VersionOut",
+        "type": "object"
+      },
+      "VersionReason": {
+        "additionalProperties": false,
+        "properties": {
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          },
+          "version": {
+            "minimum": 1.0,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version",
+          "reason"
+        ],
+        "title": "VersionReason",
         "type": "object"
       },
       "VersionSummary": {
@@ -20746,6 +21160,192 @@
           "next_cursor"
         ],
         "title": "ReportPage",
+        "type": "object"
+      },
+      "app__modules__content__guide__ItemOut": {
+        "properties": {
+          "call_198": {
+            "title": "Call 198",
+            "type": "boolean"
+          },
+          "content": {
+            "$ref": "#/components/schemas/ItemContent"
+          },
+          "hidden": {
+            "title": "Hidden",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "position": {
+            "title": "Position",
+            "type": "integer"
+          },
+          "topic_id": {
+            "format": "uuid",
+            "title": "Topic Id",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "validated": {
+            "title": "Validated",
+            "type": "boolean"
+          },
+          "validated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Validated At"
+          },
+          "validated_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Validated By"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "topic_id",
+          "position",
+          "content",
+          "call_198",
+          "hidden",
+          "validated",
+          "validated_by",
+          "validated_at",
+          "version",
+          "updated_at"
+        ],
+        "title": "ItemOut",
+        "type": "object"
+      },
+      "app__modules__knowledge__schemas__ItemOut": {
+        "properties": {
+          "body": {
+            "title": "Body",
+            "type": "string"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "date": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date"
+          },
+          "fields": {
+            "additionalProperties": true,
+            "title": "Fields",
+            "type": "object"
+          },
+          "gouvernorat": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat"
+          },
+          "gouvernorats": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Gouvernorats",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "incident_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Incident Id"
+          },
+          "kind": {
+            "enum": [
+              "memory",
+              "report_doc",
+              "incident",
+              "report",
+              "transcript",
+              "procedure"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "media": {
+            "items": {
+              "$ref": "#/components/schemas/MediaLink"
+            },
+            "title": "Media",
+            "type": "array"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "id",
+          "title",
+          "date",
+          "gouvernorat",
+          "gouvernorats",
+          "category",
+          "incident_id",
+          "body"
+        ],
+        "title": "ItemOut",
         "type": "object"
       },
       "app__modules__knowledge__schemas__Person": {
@@ -22705,6 +23305,56 @@
         "summary": "Unregister Device",
         "tags": [
           "notifications"
+        ]
+      }
+    },
+    "/api/v1/emergency-guide": {
+      "get": {
+        "description": "The visible topics and their visible items, in their order; kept offline by the app.",
+        "operationId": "public_guide_api_v1_emergency_guide_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "if-none-match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-None-Match"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicGuide"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Public Guide",
+        "tags": [
+          "emergency-guide"
         ]
       }
     },
@@ -29581,6 +30231,427 @@
         ]
       }
     },
+    "/api/v1/staff/emergency-guide": {
+      "get": {
+        "operationId": "staff_guide_api_v1_staff_emergency_guide_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuideOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Staff Guide",
+        "tags": [
+          "emergency-guide"
+        ]
+      }
+    },
+    "/api/v1/staff/emergency-guide/items/{item_id}": {
+      "patch": {
+        "operationId": "update_item_api_v1_staff_emergency_guide_items__item_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ItemPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuideOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Item",
+        "tags": [
+          "emergency-guide"
+        ]
+      }
+    },
+    "/api/v1/staff/emergency-guide/items/{item_id}/move": {
+      "post": {
+        "operationId": "move_item_api_v1_staff_emergency_guide_items__item_id__move_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MoveIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuideOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Move Item",
+        "tags": [
+          "emergency-guide"
+        ]
+      }
+    },
+    "/api/v1/staff/emergency-guide/items/{item_id}/validate": {
+      "post": {
+        "description": "The content editor records that the Office's medical staff validated this text (named in the reason).",
+        "operationId": "validate_item_api_v1_staff_emergency_guide_items__item_id__validate_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VersionReason"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuideOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Validate Item",
+        "tags": [
+          "emergency-guide"
+        ]
+      }
+    },
+    "/api/v1/staff/emergency-guide/topics": {
+      "post": {
+        "operationId": "create_topic_api_v1_staff_emergency_guide_topics_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TopicIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuideOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Topic",
+        "tags": [
+          "emergency-guide"
+        ]
+      }
+    },
+    "/api/v1/staff/emergency-guide/topics/{topic_id}": {
+      "patch": {
+        "operationId": "update_topic_api_v1_staff_emergency_guide_topics__topic_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "topic_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Topic Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TopicPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuideOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Topic",
+        "tags": [
+          "emergency-guide"
+        ]
+      }
+    },
+    "/api/v1/staff/emergency-guide/topics/{topic_id}/items": {
+      "post": {
+        "operationId": "create_item_api_v1_staff_emergency_guide_topics__topic_id__items_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "topic_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Topic Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ItemIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuideOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Item",
+        "tags": [
+          "emergency-guide"
+        ]
+      }
+    },
+    "/api/v1/staff/emergency-guide/topics/{topic_id}/move": {
+      "post": {
+        "operationId": "move_topic_api_v1_staff_emergency_guide_topics__topic_id__move_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "topic_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Topic Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MoveIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuideOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Move Topic",
+        "tags": [
+          "emergency-guide"
+        ]
+      }
+    },
     "/api/v1/staff/evidence/anchors": {
       "get": {
         "operationId": "list_anchors_api_v1_staff_evidence_anchors_get",
@@ -32174,7 +33245,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ItemOut"
+                  "$ref": "#/components/schemas/app__modules__knowledge__schemas__ItemOut"
                 }
               }
             },

@@ -126,6 +126,27 @@ Proposal: a first load of hospitals, clinics, pharmacies, police and National Gu
 the same import (a GeoJSON file prepared by a script). The Office's official lists then replace it with *replace*
 mode. No simulated places are invented.
 
+## 2bis. Emergency hub: topics and items (Yamen, 2026-10-23)
+
+Yamen's request: the emergency hub is built from **topics** (fires, fractures, first aid, breathing problems,
+others) and each topic holds **several items**; an item can be added, hidden or changed without a new app release.
+
+Review: today the offline safety tips (`content.safety_tip`, FR-A-062) are one flat list per hazard (title, do,
+don't), with no grouping and no "hidden" state. Redesign: two tables in schema `content`, the tips stay as they are.
+
+| Table | Content |
+|---|---|
+| `content.guide_topic` | key, title ar/fr/en, icon, colour (palette of section 2), position, hidden, medically validated (who, when), version |
+| `content.guide_item` | topic, position, title ar/fr/en, per language: "call 198 now if…" list, numbered steps, "do not" list; "call 198" button on or off; hidden; validated; version |
+
+* Dashboard (content editors): add, edit, hide or show, move up or down a topic or an item; every change has a reason
+  and is audited. Marking an item "validated by the Office's medical staff" is a separate action.
+* App: the hub lists the visible topics, then their visible items; the whole guide is kept offline and refreshed
+  with an `ETag` (same as the tips). An item not validated shows the amber `[SIM]` banner "content awaiting medical
+  validation" (section 4).
+* First load: topics fires, fractures, first aid, breathing problems, burns, bleeding, with a few items each, all
+  **not validated** until the Office's medical staff checks them.
+
 ## 3. Personal safety (additions 5, 7b, 8, 10, 11)
 
 As reviewed and approved in the addition files; summary of the design:
