@@ -7,6 +7,7 @@ import { layersApi } from "./layersApi";
 import { phase7Api } from "./phase7Api";
 import { phase8Api } from "./phase8Api";
 import { phase9Api } from "./phase9Api";
+import { safetyApi } from "./safetyApi";
 import { streamsApi } from "./streamsApi";
 import { normalizeOrgFilters, orgFiltersToQuery, type OrgFilters } from "./orgs";
 import type {
@@ -197,6 +198,7 @@ export function staffApi(api: ApiClient) {
     ...layersApi(api),
     ...guideApi(api),
     ...contactApi(api),
+    ...safetyApi(api),
   };
 }
 

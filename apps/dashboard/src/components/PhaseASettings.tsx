@@ -28,7 +28,7 @@ export function RequiredNote() {
 }
 
 /** Card, reason, save button and outcome shared by the phase A settings (same behaviour as the phase 9 cards). */
-function SettingForm({
+export function SettingForm({
   setting,
   title,
   help,

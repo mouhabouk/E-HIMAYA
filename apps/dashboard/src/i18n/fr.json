@@ -284,7 +284,10 @@
     "duplicate_id": "Un lieu a déjà cet identifiant.",
     "outside_tunisia": "Position hors de Tunisie.",
     "cannot_move": "Impossible de déplacer dans ce sens.",
-    "text_required": "Une note, une réponse ou un motif est nécessaire."
+    "text_required": "Une note, une réponse ou un motif est nécessaire.",
+    "feature_off": "Cette fonction est désactivée sur la plateforme.",
+    "no_medical_file": "Aucun dossier médical n'est joint à ce signalement.",
+    "invalid_phone": "Ce numéro de téléphone n'est pas valide."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -3194,6 +3197,24 @@
       "help": "Jours dont dispose l’Office pour répondre à une demande d’accès à l’information envoyée par « Nous contacter » (loi 2016-22, art. 14 : 20 jours). À confirmer par le service juridique.",
       "label": "Délai",
       "unit": "jours"
+    },
+    "minutes": "minutes",
+    "hours": "heures",
+    "liveMax": {
+      "title": "Position en direct : partage le plus long",
+      "help": "Durée maximale pendant laquelle un citoyen peut partager sa position en direct avec ses proches en une fois.",
+      "label": "Partage le plus long"
+    },
+    "checkMax": {
+      "title": "Vérification de sécurité : durée la plus longue",
+      "help": "Délai maximal qu'un citoyen peut choisir avant que ses proches soient alertés s'il ne répond pas.",
+      "label": "Durée la plus longue"
+    },
+    "locationHistory": {
+      "title": "Historique de position sur 72 heures",
+      "help": "Permet aux citoyens qui l'activent de garder leurs positions pendant 72 heures, afin qu'une salle des opérations retrouve une personne disparue. Désactivé par défaut.",
+      "label": "Activer l'historique de position",
+      "note": "Désactivé, l'application masque la fonction et la recherche de personne disparue n'apparaît pas. Le désactiver plus tard arrête la collecte ; les points déjà gardés sont effacés après 72 heures."
     }
   },
   "accounts": {
@@ -3608,6 +3629,49 @@
       "answer": "Répondue",
       "note": "Note",
       "move": "Transférée"
+    }
+  },
+  "safety": {
+    "medical": {
+      "title": "Dossier médical joint",
+      "intro": "La personne qui a signalé a choisi de joindre son dossier médical. Il n'est affiché qu'à la demande, et chaque ouverture est inscrite au journal d'audit.",
+      "open": "Ouvrir le dossier médical",
+      "close": "Masquer",
+      "attachedAt": "Joint le {{at}}",
+      "empty": "Le dossier est vide.",
+      "audited": "Cette ouverture a été inscrite au journal d'audit.",
+      "sex": {
+        "female": "Femme",
+        "male": "Homme"
+      },
+      "fields": {
+        "blood_group": "Groupe sanguin",
+        "allergies": "Allergies",
+        "conditions": "Maladies",
+        "medications": "Médicaments",
+        "treatment_card": "Carte de soins",
+        "other": "Autres informations",
+        "sex": "Sexe",
+        "birth_date": "Date de naissance",
+        "contact_name": "Personne à prévenir",
+        "contact_phone": "Téléphone à prévenir"
+      }
+    },
+    "history": {
+      "title": "Personne disparue : historique de position",
+      "intro": "Rechercher les positions des 72 dernières heures d'une personne liée à ce signalement, si elle a activé l'historique. La personne en est informée dans l'application.",
+      "phone": "Téléphone de la personne",
+      "phoneInvalid": "Saisissez un numéro de téléphone (8 à 20 chiffres).",
+      "reason": "Motif de la recherche",
+      "submit": "Rechercher",
+      "audited": "Chaque recherche est inscrite au journal d'audit, même sans résultat.",
+      "noAccount": "Aucun compte n'utilise ce numéro.",
+      "noPoints": "L'historique est activé, mais aucune position n'a été gardée ces 72 dernières heures.",
+      "notEnabled": "Cette personne n'a pas activé l'historique de position.",
+      "points": "Positions trouvées : {{count}}",
+      "at": "Heure",
+      "position": "Position",
+      "accuracy": "Précision"
     }
   }
 }

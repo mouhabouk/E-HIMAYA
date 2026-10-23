@@ -153,6 +153,10 @@ export const ERROR_CODES = [
   "server_error",
   "idp_unavailable",
   "network_error",
+  // Phase B2: personal safety.
+  "feature_off",
+  "no_medical_file",
+  "invalid_phone",
   "unknown",
 ] as const;
 export type ErrorCode = (typeof ERROR_CODES)[number];
