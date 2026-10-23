@@ -441,10 +441,12 @@ async def act(principal: Handler, session: Session, request_id: uuid.UUID, body:
     session.add(event)
     if body.action == "move":
         # A move out of the caller's gouvernorat takes the request out of their sight (the new row fails their
-        # policy): after the check above, write it and answer from the national view.
-        async with as_system(session) as system:
-            await system.flush()
-            out = await _detail(system, row)
+        # policy): after the check above, write it and answer from the national view. No autoflush while the
+        # scope changes, or the update would be sent with the caller's scope.
+        with session.no_autoflush:
+            async with as_system(session) as system:
+                await system.flush()
+                out = await _detail(system, row)
     else:
         await session.flush()
         out = await _detail(session, row)
