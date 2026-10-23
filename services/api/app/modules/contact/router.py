@@ -439,7 +439,15 @@ async def act(principal: Handler, session: Session, request_id: uuid.UUID, body:
     row.version += 1
     row.updated_at = now
     session.add(event)
-    await session.flush()
+    if body.action == "move":
+        # A move out of the caller's gouvernorat takes the request out of their sight (the new row fails their
+        # policy): after the check above, write it and answer from the national view.
+        async with as_system(session) as system:
+            await system.flush()
+            out = await _detail(system, row)
+    else:
+        await session.flush()
+        out = await _detail(session, row)
     await audit.record(
         session,
         actor=actor,
@@ -447,8 +455,6 @@ async def act(principal: Handler, session: Session, request_id: uuid.UUID, body:
         target=f"contact:{row.number}",
         details={**details, "to": row.status},
     )
-    # A move out of the caller's gouvernorat takes the request out of their sight: answer from the national view.
-    out = await _detail(session, row)
     await session.commit()
     return out
 
