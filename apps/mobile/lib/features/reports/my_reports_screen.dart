@@ -44,7 +44,7 @@ class MyReportsScreen extends ConsumerWidget {
             icon: const Icon(Icons.manage_search),
             onPressed: () => context.push(Routes.track),
           ),
-          const EmergencyNumbersAction(),
+          const StandardAppBarActions(),
         ],
       ),
       body: RefreshIndicator(

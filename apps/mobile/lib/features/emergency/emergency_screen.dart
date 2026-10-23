@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/ui/language_bar.dart';
 import '../../l10n/app_localizations.dart';
 import 'dialer.dart';
 import 'emergency_numbers.dart';
@@ -16,7 +17,10 @@ class EmergencyScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final dial = ref.watch(dialerProvider);
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.emergencyTitle)),
+      appBar: AppBar(
+        title: Text(l10n.emergencyTitle),
+        actions: const [LanguageMenuAction()],
+      ),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(16),

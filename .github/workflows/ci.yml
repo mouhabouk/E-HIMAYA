@@ -103,7 +103,7 @@ jobs:
           for i in $(seq 1 30); do curl -fs http://127.0.0.1:8000/health/ready && break; sleep 1; done
           KEY=$(openssl rand -base64 32 | tr '+/' '-_' | tr -d '=')
           curl -fsS -X POST http://127.0.0.1:8000/api/v1/consents -H "X-Device-Key: $KEY" -H 'Content-Type: application/json' \
-            -d '{"charter_version":"2026-10","locale":"ar","platform":"android"}'
+            -d '{"charter_version":"2026-11","locale":"ar","platform":"android"}'
           curl -fsS -X POST http://127.0.0.1:8000/api/v1/reports -H "X-Device-Key: $KEY" -H 'Content-Type: application/json' \
             -d "{\"client_uuid\":\"$(cat /proc/sys/kernel/random/uuid)\",\"category\":\"sos\",\"location\":{\"lat\":36.8,\"lon\":10.18},\"created_at\":\"$(date -u +%FT%TZ)\"}"
           kill $API_PID; tail -20 api.log
@@ -319,12 +319,17 @@ jobs:
     runs-on: ${{ vars.RUNNER || 'ubuntu-24.04' }}
     steps:
       - uses: actions/checkout@v7
+      # Phase A: the image of infra/keycloak/Dockerfile (Keycloak + provider ehimaya-phone-otp, whose unit tests run
+      # during the build).
+      - name: Build Keycloak with the e-Himaya providers
+        run: docker build -t ehimaya/keycloak:ci infra/keycloak
       - name: Import both realms into a throwaway Keycloak
         run: |
-          docker run -d --name kc -p 8080:8080 -p 9000:9000 \
+          docker run -d --name kc -p 8080:8080 -p 9000:9000 --add-host=host.docker.internal:host-gateway \
             -e KC_HEALTH_ENABLED=true -e KC_BOOTSTRAP_ADMIN_USERNAME=admin -e KC_BOOTSTRAP_ADMIN_PASSWORD=admin \
+            -e OTP_SMS_SECRET=ci-only-otp-secret-ci-only-otp-0001 -e EHIMAYA_API_INTERNAL_URL=http://host.docker.internal:8099 \
             -v "$PWD/infra/keycloak/realms:/opt/keycloak/data/import:ro" \
-            keycloak/keycloak:26.8@sha256:79c623a22abacf3fe6c00a5fb30f5b7843d717b234033b80995891c06116d244 start-dev --import-realm
+            ehimaya/keycloak:ci start-dev --import-realm
           for i in $(seq 1 60); do
             if curl -fs http://localhost:9000/health/ready >/dev/null; then break; fi
             sleep 3
@@ -334,6 +339,10 @@ jobs:
           grep -q "Realm 'ehimaya-staff' imported" kc.log
       - name: Staff tokens prove the second factor (amr)
         run: python3 infra/keycloak/check_mfa.py http://localhost:8080
+      - name: Phone sign-in with an SMS code (phase A)
+        env:
+          OTP_SMS_SECRET: ci-only-otp-secret-ci-only-otp-0001
+        run: python3 infra/keycloak/check_phone_otp.py http://localhost:8080 8099
 
   ai:
     name: AI · lint, types, tests

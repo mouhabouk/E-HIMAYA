@@ -2,6 +2,7 @@ import 'package:ehimaya/core/auth/auth_session.dart';
 import 'package:ehimaya/core/auth/identity.dart';
 import 'package:ehimaya/core/http/models.dart';
 import 'package:ehimaya/core/routing/app_router.dart';
+import 'package:ehimaya/features/welcome/welcome_controller.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -22,13 +23,66 @@ void main() {
     IdentityState identity = none,
     bool prompted = true,
     bool locked = false,
+    WelcomeSteps welcome = WelcomeSteps.done,
   }) => guardRedirect(
     location: location,
     charterAccepted: charter,
     identity: identity,
     profilePrompted: prompted,
     lockedAlert: locked,
+    welcome: welcome,
   );
+
+  // Phase A first launch: language → introduction → terms → permissions → sign-in.
+  test('first launch order', () {
+    const fresh = WelcomeSteps(
+      languageChosen: false,
+      introSeen: false,
+      permissionsSeen: false,
+    );
+    expect(
+      go(Routes.home, charter: false, welcome: fresh),
+      Routes.welcomeLanguage,
+    );
+    expect(
+      go(Routes.charter, charter: false, welcome: fresh),
+      Routes.welcomeLanguage,
+    );
+    expect(go(Routes.welcomeLanguage, charter: false, welcome: fresh), isNull);
+    const language = WelcomeSteps(
+      languageChosen: true,
+      introSeen: false,
+      permissionsSeen: false,
+    );
+    expect(
+      go(Routes.home, charter: false, welcome: language),
+      Routes.welcomeIntro,
+    );
+    const intro = WelcomeSteps(
+      languageChosen: true,
+      introSeen: true,
+      permissionsSeen: false,
+    );
+    expect(
+      go(Routes.welcomeIntro, charter: false, welcome: intro),
+      Routes.charter,
+    );
+    expect(go(Routes.home, welcome: intro), Routes.welcomePermissions);
+    expect(go(Routes.welcomePermissions, welcome: intro), isNull);
+    expect(go(Routes.welcomePermissions), Routes.onboarding);
+    // Once signed in, the first-launch screens are left for home.
+    expect(go(Routes.welcomeLanguage, identity: anon), Routes.home);
+    expect(go(Routes.welcomePermissions, identity: anon), Routes.home);
+  });
+
+  test('emergency numbers reachable at every first-launch step', () {
+    const fresh = WelcomeSteps(
+      languageChosen: false,
+      introSeen: false,
+      permissionsSeen: false,
+    );
+    expect(go(Routes.emergency, charter: false, welcome: fresh), isNull);
+  });
 
   test('over a locked phone only the public alert view exists', () {
     for (final location in [
@@ -70,7 +124,7 @@ void main() {
     expect(go(Routes.emergency, charter: false), isNull);
   });
 
-  test('then role, then identity', () {
+  test('then sign-in (phone, guest or institution), then home', () {
     expect(go(Routes.home), Routes.onboarding);
     expect(
       go(
@@ -80,8 +134,9 @@ void main() {
           role: UserRole.citizen,
         ),
       ),
-      Routes.onboardingCitizen,
+      Routes.onboarding,
     );
+    expect(go(Routes.signIn), isNull);
     expect(
       go(
         Routes.home,
@@ -94,7 +149,9 @@ void main() {
     );
     expect(go(Routes.home, identity: anon), isNull);
     expect(go(Routes.charter, identity: anon), Routes.home);
-    expect(go(Routes.onboardingCitizen, identity: anon), Routes.home);
+    expect(go(Routes.onboarding, identity: anon), Routes.home);
+    // An anonymous citizen may still open the phone sign-in from inside the app.
+    expect(go(Routes.signIn, identity: anon), isNull);
   });
 
   test('profile is offered once after the first login', () {

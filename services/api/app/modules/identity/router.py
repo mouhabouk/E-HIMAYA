@@ -16,6 +16,7 @@ from app.modules.audit import service as audit
 from app.modules.geo.models import Delegation, Gouvernorat
 from app.modules.identity.models import Consent, Profile, phone_index
 from app.modules.identity.service import CurrentReporter, Reporter, limit_reporter
+from app.modules.moderation import service as moderation
 
 router = APIRouter(prefix="/api/v1", tags=["identity"])
 
@@ -99,13 +100,13 @@ def _registered(reporter: Reporter) -> Reporter:
     return reporter
 
 
-def _profile_out(profile: Profile | None, email: str | None) -> ProfileOut:
+def _profile_out(profile: Profile | None, email: str | None, verified_phone: str | None = None) -> ProfileOut:
     if profile is None:
         return ProfileOut(
             first_name=None,
             last_name=None,
             cin_last4=None,
-            phone=None,
+            phone=verified_phone,
             email=email,
             gouvernorat_code=None,
             delegation_id=None,
@@ -117,7 +118,7 @@ def _profile_out(profile: Profile | None, email: str | None) -> ProfileOut:
         first_name=profile.first_name,
         last_name=profile.last_name,
         cin_last4=cin_last4,
-        phone=profile.phone,
+        phone=profile.phone or verified_phone,
         email=profile.email or email,
         gouvernorat_code=profile.gouvernorat_code,
         delegation_id=profile.delegation_id,
@@ -133,11 +134,20 @@ def _token_email(reporter: Reporter) -> str | None:
     return str(email) if email else None
 
 
+def _token_phone(reporter: Reporter) -> str | None:
+    """The phone number Keycloak verified by SMS code (phase A sign-in by phone), if any."""
+    assert reporter.principal is not None
+    claims = reporter.principal.claims
+    phone = claims.get("phone_number")
+    verified = claims.get("phone_number_verified") in (True, "true")
+    return str(phone) if phone and verified else None
+
+
 @router.get("/me/profile", response_model=ProfileOut)
 async def get_profile(reporter: CurrentReporter, session: Session) -> ProfileOut:
     _registered(reporter)
     profile = await session.get(Profile, reporter.user_id)
-    return _profile_out(profile, _token_email(reporter))
+    return _profile_out(profile, _token_email(reporter), _token_phone(reporter))
 
 
 @router.put("/me/profile", response_model=ProfileOut)
@@ -149,6 +159,8 @@ async def put_profile(body: ProfileIn, reporter: CurrentReporter, session: Sessi
     delegation = await session.get(Delegation, body.delegation_id)
     if delegation is None or delegation.gouvernorat_code != body.gouvernorat_code:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "delegation_mismatch")
+    # Rule 4: names and address are not emergency text, the respectful-language filter applies.
+    await moderation.check(session, body.first_name, body.last_name, body.address)
 
     cipher = get_cipher()
     claims = reporter.principal.claims
@@ -159,10 +171,14 @@ async def put_profile(body: ProfileIn, reporter: CurrentReporter, session: Sessi
     profile.last_name = body.last_name.strip()
     profile.cin_enc = cipher.encrypt(body.cin, context=_CIN_CONTEXT)
     profile.cin_hash = cipher.blind_index(body.cin, context=_CIN_CONTEXT)
+    verified_phone = _token_phone(reporter)
     if profile.phone != body.phone:
         profile.phone = body.phone
         profile.phone_hash = phone_index(body.phone)
-        profile.phone_verified_at = None  # SMS verification comes with the SMS gateway
+        profile.phone_verified_at = None
+    if body.phone == verified_phone and profile.phone_verified_at is None:
+        # Signed in with this number and the SMS code (phase A): the number is proven.
+        profile.phone_verified_at = now
     profile.email = email
     profile.email_verified_at = now if email and claims.get("email_verified") else None
     profile.gouvernorat_code = body.gouvernorat_code
@@ -180,7 +196,7 @@ async def put_profile(body: ProfileIn, reporter: CurrentReporter, session: Sessi
     except IntegrityError as exc:
         await session.rollback()
         raise HTTPException(status.HTTP_409_CONFLICT, "cin_already_registered") from exc
-    return _profile_out(profile, email)
+    return _profile_out(profile, email, verified_phone)
 
 
 # ---------------------------------------------------------------- charter consent (FR-A-001)

@@ -32,6 +32,8 @@ enum ApiErrorCode {
   etaRequired('eta_required'),
   invalidTransition('invalid_transition'),
   versionConflict('version_conflict'),
+  // Phase A rule 4: the respectful-language filter refused a non-emergency text.
+  offensiveText('offensive_text'),
   // tus upload creation refusals (contract §4): permanent for that file.
   reportNotFound('report_not_found'),
   invalidSha256('invalid_sha256'),

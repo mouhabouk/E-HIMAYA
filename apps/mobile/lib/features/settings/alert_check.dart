@@ -12,6 +12,7 @@ import '../../core/push/push_notifications.dart';
 import '../../core/push/push_payload.dart';
 import '../../core/routing/app_router.dart';
 import '../../core/storage/app_prefs.dart';
+import '../../core/ui/emergency_action.dart';
 import '../../l10n/app_localizations.dart';
 import '../volunteer/volunteer_providers.dart';
 
@@ -225,7 +226,10 @@ class _AlertCheckScreenState extends ConsumerState<AlertCheckScreen> {
             criticalOptIn: ref.read(appPrefsProvider).criticalAlertsOptIn,
           );
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.alertCheckTitle)),
+      appBar: AppBar(
+        title: Text(l10n.alertCheckTitle),
+        actions: const [StandardAppBarActions()],
+      ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
         children: [
@@ -383,7 +387,10 @@ class _CriticalAlertsScreenState extends ConsumerState<CriticalAlertsScreen> {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.criticalAlertsTitle)),
+      appBar: AppBar(
+        title: Text(l10n.criticalAlertsTitle),
+        actions: const [StandardAppBarActions()],
+      ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
         children: [

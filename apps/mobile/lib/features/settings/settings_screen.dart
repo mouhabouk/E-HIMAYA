@@ -14,6 +14,7 @@ import '../../core/settings/settings_controller.dart';
 import '../../core/storage/app_prefs.dart';
 import '../../core/ui/directional_icons.dart';
 import '../../core/ui/emergency_action.dart';
+import '../../core/ui/theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../alerts/alerts_providers.dart';
 import '../charter/charter_controller.dart';
@@ -84,7 +85,7 @@ class SettingsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.settingsTitle),
-        actions: const [EmergencyNumbersAction()],
+        actions: const [StandardAppBarActions()],
       ),
       body: ListView(
         padding: const EdgeInsets.only(bottom: 96),
@@ -133,6 +134,32 @@ class SettingsScreen extends ConsumerWidget {
               ],
             ),
           ),
+          // Phase A: colour palette (the logo's colours by default).
+          _Header(l10n.settingsColors),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final (palette, label, color) in [
+                  (AppPalette.office, l10n.colorOffice, BrandColors.blue),
+                  (AppPalette.red, l10n.colorRed, const Color(0xFFB3261E)),
+                  (AppPalette.blue, l10n.colorBlue, const Color(0xFF1565C0)),
+                  (AppPalette.green, l10n.colorGreen, const Color(0xFF2E7D32)),
+                ])
+                  ChoiceChip(
+                    key: Key('palette-${palette.name}'),
+                    avatar: CircleAvatar(backgroundColor: color, radius: 8),
+                    label: Text(label),
+                    selected: settings.palette == palette,
+                    onSelected: (_) =>
+                        ref.read(settingsProvider.notifier).setPalette(palette),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
           const Divider(),
           _Header(l10n.settingsAlerts),
           const _LocationAlertsTile(),

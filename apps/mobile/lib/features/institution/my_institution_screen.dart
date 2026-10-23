@@ -35,7 +35,7 @@ class MyInstitutionsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.myInstitutionsTitle),
-        actions: const [EmergencyNumbersAction()],
+        actions: const [StandardAppBarActions()],
       ),
       body: RefreshIndicator(
         onRefresh: () => ref.read(myOrgsProvider.notifier).refresh(),
@@ -107,7 +107,7 @@ class MyInstitutionScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.myInstitutionTitle),
-        actions: const [EmergencyNumbersAction()],
+        actions: const [StandardAppBarActions()],
       ),
       body: RefreshIndicator(
         onRefresh: () => _refresh(ref),

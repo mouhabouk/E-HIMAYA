@@ -67,10 +67,27 @@ void main() {
     expect(langs['en']!['@@locale'], 'en');
   });
 
-  test('the charter cites Organic Law 2004-63 in every language', () {
+  test('the terms cite Organic Law 2004-63 in every language', () {
     for (final entry in langs.entries) {
-      expect(entry.value['charterLawBody'] as String, contains('2004'));
-      expect(entry.value['charterLawBody'] as String, contains('63'));
+      expect(entry.value['terms8Body'] as String, contains('2004'));
+      expect(entry.value['terms8Body'] as String, contains('63'));
+    }
+  });
+
+  // Addition 7: five introduction cards and ten numbered sections in every language.
+  test('five introduction cards and ten terms sections', () {
+    for (final entry in langs.entries) {
+      for (var i = 1; i <= 5; i++) {
+        expect(entry.value['intro${i}Title'], isA<String>(), reason: entry.key);
+      }
+      for (var i = 1; i <= 10; i++) {
+        expect(
+          entry.value['terms${i}Title'] as String,
+          startsWith('$i. '),
+          reason: entry.key,
+        );
+      }
+      expect(entry.value['terms3Body'] as String, contains('198'));
     }
   });
 }

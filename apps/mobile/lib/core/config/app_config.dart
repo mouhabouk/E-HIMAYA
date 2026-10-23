@@ -71,5 +71,10 @@ class AppConfig {
   static const String applicationId = 'tn.ehimaya.app';
 
   /// Version of the privacy & personal-data charter whose text ships in the ARB files.
-  static const String charterVersion = '2026-10';
+  static const String charterVersion = '2026-11';
+
+  /// Version and build of this app, compared with the latest release the server announces
+  /// (phase A, addition 3). Must match `version:` in pubspec.yaml (checked by a test).
+  static const String appVersion = '0.3.0';
+  static const int appBuild = 2;
 }

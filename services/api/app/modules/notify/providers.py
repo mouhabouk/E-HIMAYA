@@ -286,6 +286,12 @@ def _build() -> Providers:
     return Providers(push=push, sms=sms, email=email)
 
 
+def sms_simulated() -> bool:
+    """SIMULATION: true when SMS go to the development gateway notify-sim (shown as [SIM] in the apps)."""
+    url = get_settings().sms_http_url
+    return bool(url) and urlsplit(url).hostname == "notify-sim"
+
+
 def get_providers() -> Providers:
     global _providers
     if _providers is None:

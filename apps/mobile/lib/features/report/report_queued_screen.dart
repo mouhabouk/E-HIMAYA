@@ -9,6 +9,7 @@ import '../../core/http/api_error.dart';
 import '../../core/http/models.dart';
 import '../../core/routing/app_router.dart';
 import '../../core/sync/report_queue.dart';
+import '../../core/ui/emergency_action.dart';
 import '../../core/ui/theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../emergency/dialer.dart';
@@ -62,6 +63,7 @@ class ReportQueuedScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(sos ? l10n.sosQueuedTitle : l10n.reportQueuedTitle),
         automaticallyImplyLeading: false,
+        actions: const [StandardAppBarActions()],
       ),
       body: SafeArea(
         child: ListView(

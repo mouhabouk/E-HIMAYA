@@ -5,7 +5,7 @@ Codes never change with the language; the dashboard translates the keys. Default
 """
 
 from collections.abc import Callable
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
@@ -19,6 +19,10 @@ GEO_MAX_ACCURACY = "geo.max_trusted_accuracy_m"
 NOTIFY_REAL_SEND = "notify.real_send_enabled"
 # Phase 10 §5.1: an alert is published by someone other than its author (emergency override aside).
 ALERTS_FOUR_EYES = "alerts.four_eyes"
+# Phase A (docs/phase-a/design.md §3): the app release the phones compare themselves with, and the words the
+# system administrator adds to the built-in list of the respectful-language filter.
+APP_RELEASE = "app.release"
+MODERATION_EXTRA_TERMS = "moderation.extra_terms"
 
 BANDS = ("critical", "high", "normal", "low")
 
@@ -56,6 +60,48 @@ class ClaimDelays(BaseModel):
         return self
 
 
+class ReleaseNotes(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    ar: str = Field(default="", max_length=2000)
+    fr: str = Field(default="", max_length=2000)
+    en: str = Field(default="", max_length=2000)
+
+
+class AppRelease(BaseModel):
+    """Latest Android build offered to the phones, and the oldest build still allowed to run (addition 3)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    latest_version: str = Field(pattern=r"^\d+\.\d+\.\d+$")
+    latest_build: int = Field(ge=1, le=1_000_000)
+    min_build: int = Field(ge=1, le=1_000_000)
+    notes: ReleaseNotes = Field(default_factory=ReleaseNotes)
+    # server: stage 1, the APK is downloaded from our server; play: stage 2, the store listing.
+    channel: Literal["server", "play"] = "server"
+    download_url: str | None = Field(default=None, pattern=r"^https://", max_length=500)
+
+    @model_validator(mode="after")
+    def _consistent(self) -> "AppRelease":
+        if self.min_build > self.latest_build:
+            raise ValueError("min_build must not exceed latest_build")
+        if self.channel == "server" and self.latest_build > 1 and not self.download_url:
+            raise ValueError("a server release needs its download_url")
+        return self
+
+
+def _terms(value: Any) -> Any:
+    if not isinstance(value, list) or len(value) > 500:
+        raise ValueError("a list of at most 500 words")
+    cleaned: list[str] = []
+    for item in value:
+        if not isinstance(item, str) or not 2 <= len(item.strip()) <= 64:
+            raise ValueError("each word has 2 to 64 characters")
+        if item.strip() not in cleaned:
+            cleaned.append(item.strip())
+    return cleaned
+
+
 def _int_between(low: int, high: int) -> Callable[[Any], Any]:
     def check(value: Any) -> Any:
         if isinstance(value, bool) or not isinstance(value, int) or not low <= value <= high:
@@ -86,6 +132,15 @@ DEFAULTS: dict[str, Any] = {
     GEO_MAX_ACCURACY: 1000,
     NOTIFY_REAL_SEND: False,
     ALERTS_FOUR_EYES: True,
+    APP_RELEASE: {
+        "latest_version": "0.2.0",
+        "latest_build": 1,
+        "min_build": 1,
+        "notes": {"ar": "", "fr": "", "en": ""},
+        "channel": "server",
+        "download_url": None,
+    },
+    MODERATION_EXTRA_TERMS: [],
 }
 
 # Roles allowed to change each key (national scope required). Missing = read-only.
@@ -95,6 +150,8 @@ EDITORS: dict[str, frozenset[Role]] = {
     ANON_QUOTA: frozenset({Role.CENTRAL_COMMITTEE, Role.SECURITY_ADMIN}),
     GEO_MAX_ACCURACY: frozenset({Role.CENTRAL_COMMITTEE}),
     ALERTS_FOUR_EYES: frozenset({Role.SECURITY_ADMIN}),
+    APP_RELEASE: frozenset({Role.SYSADMIN}),
+    MODERATION_EXTRA_TERMS: frozenset({Role.SYSADMIN, Role.CONTENT_EDITOR}),
 }
 # Keys no one may change in phase 9: enabling them needs a formal approval outside the platform (§7.4).
 FORMAL_APPROVAL = frozenset({NOTIFY_REAL_SEND})
@@ -105,6 +162,8 @@ VALIDATORS: dict[str, Callable[[Any], Any]] = {
     ANON_QUOTA: _int_between(1, 100),
     GEO_MAX_ACCURACY: _int_between(50, 20_000),
     ALERTS_FOUR_EYES: _boolean,
+    APP_RELEASE: _model(AppRelease),
+    MODERATION_EXTRA_TERMS: _terms,
 }
 
 

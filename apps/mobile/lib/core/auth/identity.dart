@@ -113,6 +113,18 @@ class IdentityController extends Notifier<IdentityState> {
     state = state.copyWith(mode: IdentityMode.registered, session: session);
   }
 
+  /// Phase A: signed in with a phone number and an SMS code ([PhoneOtpClient.verify]).
+  Future<void> signInWithSession(AuthSession session) async {
+    await _saveSession(session);
+    await _prefs.setRole(UserRole.citizen.name);
+    await _prefs.setIdentityMode(IdentityMode.registered.name);
+    state = IdentityState(
+      role: UserRole.citizen,
+      mode: IdentityMode.registered,
+      session: session,
+    );
+  }
+
   Future<void> logout() async {
     final session = state.session;
     await _secure.delete(SecureStoreKeys.authSession);

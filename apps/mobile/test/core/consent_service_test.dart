@@ -21,7 +21,7 @@ void main() {
     adapter = FakeAdapter(
       (_) => const FakeResponse(
         201,
-        json: {'charter_version': '2026-10', 'accepted_at': 'x'},
+        json: {'charter_version': '2026-11', 'accepted_at': 'x'},
       ),
     );
     identity = const IdentityState(mode: IdentityMode.none);
@@ -41,7 +41,7 @@ void main() {
   test('accepted locally first, sent once an identity exists', () async {
     await consent.acceptLocally();
     expect(consent.acceptedLocally, isTrue);
-    expect(prefs.charterAcceptedVersion, '2026-10');
+    expect(prefs.charterAcceptedVersion, '2026-11');
 
     // No identity yet: nothing is sent.
     expect(await consent.sendIfNeeded(), isTrue);
@@ -54,7 +54,7 @@ void main() {
     expect(consent.needsServerSend, isTrue);
     expect(await consent.sendIfNeeded(), isTrue);
     expect(adapter.requests.single.json, {
-      'charter_version': '2026-10',
+      'charter_version': '2026-11',
       'locale': 'fr',
       'platform': 'android',
     });

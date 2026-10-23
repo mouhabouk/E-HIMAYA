@@ -8,7 +8,7 @@ import { useFormat } from "../../lib/hooks";
 import { FEATURE_KINDS, type FeatureKind, type GeoPoint, type MapFeature } from "../../lib/types";
 import { FEATURE_MAX_DISTANCE_M, distanceMeters, isWithinFeatureRadius, parseNumber } from "../../lib/validators";
 import { BlockedNote, useOrg } from "./OrgWorkspace";
-import { Field, RowActions } from "./RegisterParts";
+import { Field, RequiredNote, RowActions } from "./RegisterParts";
 import { useRegister } from "./useRegister";
 
 type Editing = { feature: MapFeature | null; location: GeoPoint };
@@ -47,6 +47,7 @@ function FeatureDialog({
   return (
     <Dialog title={feature ? t("features.editTitle") : t("features.addTitle")} onClose={onClose}>
       <form className="form" onSubmit={submit} noValidate>
+        <RequiredNote />
         <div className="form-grid">
           <Field id="ft-kind" label={t("features.kind")}>
             <select id="ft-kind" value={kind} onChange={(e) => setKind(e.target.value as FeatureKind)}>

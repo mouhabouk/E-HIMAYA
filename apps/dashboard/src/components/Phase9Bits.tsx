@@ -99,6 +99,7 @@ export function ReasonField({
         maxLength={range.max}
         dir="auto"
         disabled={disabled}
+        aria-required="true"
         aria-invalid={invalid || undefined}
         aria-describedby={`${id}-hint`}
         onChange={(e) => onChange(e.target.value)}

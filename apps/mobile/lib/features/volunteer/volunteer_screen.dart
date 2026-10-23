@@ -54,7 +54,7 @@ class VolunteerScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.volunteerTitle),
-        actions: const [EmergencyNumbersAction()],
+        actions: const [StandardAppBarActions()],
       ),
       body: !identity.isRegistered
           ? _RegistrationNeeded(

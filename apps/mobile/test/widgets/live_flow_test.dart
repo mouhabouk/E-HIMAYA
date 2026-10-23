@@ -71,6 +71,7 @@ void main() {
     tester,
   ) async {
     await pumpLiveApp(tester);
+    await scrollTo(tester, 'home-live');
     expect(find.text('بث مباشر'), findsWidgets);
     await openLive(tester);
 

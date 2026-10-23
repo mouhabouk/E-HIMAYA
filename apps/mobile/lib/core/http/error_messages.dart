@@ -28,6 +28,7 @@ String apiErrorMessage(AppLocalizations l10n, ApiErrorCode code) =>
       ApiErrorCode.locationRequired => l10n.errorLocationRequired,
       ApiErrorCode.locationConsentRequired => l10n.errorLocationConsentRequired,
       ApiErrorCode.calloutClosed => l10n.errorCalloutClosed,
+      ApiErrorCode.offensiveText => l10n.errorOffensiveText,
       ApiErrorCode.etaRequired => l10n.errorEtaRequired,
       ApiErrorCode.invalidTransition => l10n.errorInvalidTransition,
       ApiErrorCode.versionConflict => l10n.errorVersionConflict,

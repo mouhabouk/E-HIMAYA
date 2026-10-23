@@ -25,7 +25,6 @@ CACHE=${CI_LOCAL_CACHE:-${XDG_CACHE_HOME:-$HOME/.cache}/ehimaya-ci-local}
 TRIVY_IMAGE=aquasec/trivy:0.69.3@sha256:bcc376de8d77cfe086a917230e818dc9f8528e3c852f7b1aff648949b6258d1c
 # Same pins as the workflows.
 OPENSEARCH_IMAGE=opensearchproject/opensearch:2.19.6@sha256:be67c71b8d0e5edf1e9825145501c0136c3b8221206e1ce782ce17b04d0280b5
-KEYCLOAK_IMAGE=keycloak/keycloak:26.8@sha256:79c623a22abacf3fe6c00a5fb30f5b7843d717b234033b80995891c06116d244
 OLLAMA_IMAGE=ollama/ollama:0.40.1@sha256:69f27594d8127cb43db1edcafa5e2d3cd8f88bdbc54a2cf3ceb11b8d138a24b1
 FLUTTER_VERSION=3.47.7
 NODE_MAJOR=22
@@ -372,7 +371,7 @@ job_api() {
     for i in $(seq 1 30); do curl -fs "http://127.0.0.1:$api_port/health/ready" && break; sleep 1; done
     KEY=$(openssl rand -base64 32 | tr '+/' '-_' | tr -d '=')
     curl -fsS -X POST "http://127.0.0.1:$api_port/api/v1/consents" -H "X-Device-Key: $KEY" -H 'Content-Type: application/json' \
-      -d '{"charter_version":"2026-10","locale":"ar","platform":"android"}'
+      -d '{"charter_version":"2026-11","locale":"ar","platform":"android"}'
     curl -fsS -X POST "http://127.0.0.1:$api_port/api/v1/reports" -H "X-Device-Key: $KEY" -H 'Content-Type: application/json' \
       -d "{\"client_uuid\":\"$(cat /proc/sys/kernel/random/uuid)\",\"category\":\"sos\",\"location\":{\"lat\":36.8,\"lon\":10.18},\"created_at\":\"$(date -u +%FT%TZ)\"}"
     kill $API_PID; tail -20 api.log
@@ -547,14 +546,19 @@ job_notify_sim_image() {
 }
 
 job_keycloak_realms() {
-  local kc=$RUN_ID-kc port http_port i
+  local kc=$RUN_ID-kc port http_port otp_port i
   port=$(free_port)
   http_port=$(free_port)
+  otp_port=$(free_port)
+  step "Build Keycloak with the e-Himaya providers (phase A: ehimaya-phone-otp and its unit tests)"
+  docker build -t "$(img keycloak)" infra/keycloak
   step "Import both realms into a throwaway Keycloak"
   docker run -d --name "$kc" --label "$LABEL" -p "127.0.0.1:$port:9000" -p "127.0.0.1:$http_port:8080" \
+    --add-host=host.docker.internal:host-gateway \
     -e KC_HEALTH_ENABLED=true -e KC_BOOTSTRAP_ADMIN_USERNAME=admin -e KC_BOOTSTRAP_ADMIN_PASSWORD=admin \
+    -e OTP_SMS_SECRET=ci-only-otp-secret-ci-only-otp-0001 -e EHIMAYA_API_INTERNAL_URL="http://host.docker.internal:$otp_port" \
     -v "$PWD/infra/keycloak/realms:/opt/keycloak/data/import:ro" \
-    "$KEYCLOAK_IMAGE" start-dev --import-realm
+    "$(img keycloak)" start-dev --import-realm
   for i in $(seq 1 60); do
     if curl -fs "http://localhost:$port/health/ready" >/dev/null; then break; fi
     sleep 3
@@ -564,6 +568,8 @@ job_keycloak_realms() {
   grep -q "Realm 'ehimaya-staff' imported" kc.log
   step "Staff tokens prove the second factor (amr)"
   python3 infra/keycloak/check_mfa.py "http://localhost:$http_port"
+  step "Phone sign-in with an SMS code (phase A)"
+  OTP_SMS_SECRET=ci-only-otp-secret-ci-only-otp-0001 python3 infra/keycloak/check_phone_otp.py "http://localhost:$http_port" "$otp_port"
 }
 
 job_ai() {
@@ -705,6 +711,7 @@ job_stack() {
   sed -i "s|^TELEPHONY_SIM_PASSWORD=.*|TELEPHONY_SIM_PASSWORD=$(openssl rand -hex 24)|" .env
   sed -i "s|^TELEPHONY_SIM_TOKEN=.*|TELEPHONY_SIM_TOKEN=$(openssl rand -hex 24)|" .env
   sed -i "s|^SMS_INBOUND_SECRET=.*|SMS_INBOUND_SECRET=$(openssl rand -hex 32)|" .env
+  sed -i "s|^OTP_SMS_SECRET=.*|OTP_SMS_SECRET=$(openssl rand -hex 32)|" .env
 
   step "Production overlay renders (Caddy, Keycloak start, no host ports but 80/443, streaming and telephony)"
   cat > prod.env <<EOF

@@ -81,8 +81,8 @@ async def test_anonymous_has_no_profile(client: httpx.AsyncClient) -> None:
 
 
 async def test_charter_and_consent(client: httpx.AsyncClient, citizen: dict[str, str]) -> None:
-    assert (await client.get("/api/v1/charter")).json() == {"version": "2026-10"}
-    body = {"charter_version": "2026-10", "locale": "fr", "platform": "ios"}
+    assert (await client.get("/api/v1/charter")).json() == {"version": "2026-11"}
+    body = {"charter_version": "2026-11", "locale": "fr", "platform": "ios"}
     first = await client.post("/api/v1/consents", json=body, headers=citizen)
     again = await client.post("/api/v1/consents", json=body, headers=citizen)
     assert first.status_code == again.status_code == 201

@@ -314,7 +314,7 @@ class _PreStart extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.liveTitle),
-        actions: const [EmergencyNumbersAction()],
+        actions: const [StandardAppBarActions()],
       ),
       body: SafeArea(
         child: ListView(
@@ -626,7 +626,7 @@ class _Outcome extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.liveTitle),
-        actions: const [EmergencyNumbersAction()],
+        actions: const [StandardAppBarActions()],
       ),
       body: SafeArea(
         child: ListView(
