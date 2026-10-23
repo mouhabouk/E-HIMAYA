@@ -54,6 +54,8 @@ class Layer(Base):
     source: Mapped[str] = mapped_column(Text, server_default="")
     licence: Mapped[str] = mapped_column(Text, server_default="")
     to_verify: Mapped[bool] = mapped_column(Boolean, server_default="true")
+    # Approximate, invented places for trials ([SIM]), never real ones (migration 0035).
+    simulated: Mapped[bool] = mapped_column(Boolean, server_default="false")
     staff_only: Mapped[list[str]] = mapped_column(ARRAY(Text), server_default="{manager}")
     editors_allowed: Mapped[bool] = mapped_column(Boolean, server_default="false")
     enabled: Mapped[bool] = mapped_column(Boolean, server_default="true")

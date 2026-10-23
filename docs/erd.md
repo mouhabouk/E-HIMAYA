@@ -337,6 +337,7 @@ erDiagram
         text source
         text licence
         boolean to_verify
+        boolean simulated
         array staff_only
         boolean editors_allowed
         boolean enabled

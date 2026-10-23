@@ -1,0 +1,607 @@
+{
+ "type": "FeatureCollection",
+ "simulated": true,
+ "source": "[SIM] Données approximatives d'essai / بيانات تقريبية للتجربة / approximate trial data",
+ "features": [
+  {
+   "type": "Feature",
+   "id": "sim-11-h",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.1775,
+     36.8065
+    ]
+   },
+   "properties": {
+    "id": "sim-11-h",
+    "name": "[SIM] Hôpital régional de Tunis",
+    "name_ar": "[SIM] المستشفى الجهوي بـتونس",
+    "name_fr": "[SIM] Hôpital régional de Tunis",
+    "name_en": "[SIM] Tunis Regional Hospital",
+    "type": "emergency",
+    "hours": "24/7",
+    "address": "تونس / Tunis",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-12-h",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.1926,
+     36.8645
+    ]
+   },
+   "properties": {
+    "id": "sim-12-h",
+    "name": "[SIM] Hôpital régional de Ariana",
+    "name_ar": "[SIM] المستشفى الجهوي بـأريانة",
+    "name_fr": "[SIM] Hôpital régional de Ariana",
+    "name_en": "[SIM] Ariana Regional Hospital",
+    "type": "emergency",
+    "hours": "24/7",
+    "address": "أريانة / Ariana",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-13-h",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.2169,
+     36.7501
+    ]
+   },
+   "properties": {
+    "id": "sim-13-h",
+    "name": "[SIM] Hôpital régional de Ben Arous",
+    "name_ar": "[SIM] المستشفى الجهوي بـبن عروس",
+    "name_fr": "[SIM] Hôpital régional de Ben Arous",
+    "name_en": "[SIM] Ben Arous Regional Hospital",
+    "type": "emergency",
+    "hours": "24/7",
+    "address": "بن عروس / Ben Arous",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-14-h",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.0823,
+     36.8101
+    ]
+   },
+   "properties": {
+    "id": "sim-14-h",
+    "name": "[SIM] Hôpital régional de Manouba",
+    "name_ar": "[SIM] المستشفى الجهوي بـمنوبة",
+    "name_fr": "[SIM] Hôpital régional de Manouba",
+    "name_en": "[SIM] Manouba Regional Hospital",
+    "type": "emergency",
+    "hours": "24/7",
+    "address": "منوبة / Manouba",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-21-h",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.7336,
+     36.4591
+    ]
+   },
+   "properties": {
+    "id": "sim-21-h",
+    "name": "[SIM] Hôpital régional de Nabeul",
+    "name_ar": "[SIM] المستشفى الجهوي بـنابل",
+    "name_fr": "[SIM] Hôpital régional de Nabeul",
+    "name_en": "[SIM] Nabeul Regional Hospital",
+    "type": "emergency",
+    "hours": "24/7",
+    "address": "نابل / Nabeul",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-22-h",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.1399,
+     36.4059
+    ]
+   },
+   "properties": {
+    "id": "sim-22-h",
+    "name": "[SIM] Hôpital régional de Zaghouan",
+    "name_ar": "[SIM] المستشفى الجهوي بـزغوان",
+    "name_fr": "[SIM] Hôpital régional de Zaghouan",
+    "name_en": "[SIM] Zaghouan Regional Hospital",
+    "type": "emergency",
+    "hours": "24/7",
+    "address": "زغوان / Zaghouan",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-23-h",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     9.8699,
+     37.2744
+    ]
+   },
+   "properties": {
+    "id": "sim-23-h",
+    "name": "[SIM] Hôpital régional de Bizerte",
+    "name_ar": "[SIM] المستشفى الجهوي بـبنزرت",
+    "name_fr": "[SIM] Hôpital régional de Bizerte",
+    "name_en": "[SIM] Bizerte Regional Hospital",
+    "type": "emergency",
+    "hours": "24/7",
+    "address": "بنزرت / Bizerte",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-31-h",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     9.1777,
+     36.7256
+    ]
+   },
+   "properties": {
+    "id": "sim-31-h",
+    "name": "[SIM] Hôpital régional de Béja",
+    "name_ar": "[SIM] المستشفى الجهوي بـباجة",
+    "name_fr": "[SIM] Hôpital régional de Béja",
+    "name_en": "[SIM] Beja Regional Hospital",
+    "type": "emergency",
+    "hours": "24/7",
+    "address": "باجة / Béja",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-32-h",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.7842,
+     36.5011
+    ]
+   },
+   "properties": {
+    "id": "sim-32-h",
+    "name": "[SIM] Hôpital régional de Jendouba",
+    "name_ar": "[SIM] المستشفى الجهوي بـجندوبة",
+    "name_fr": "[SIM] Hôpital régional de Jendouba",
+    "name_en": "[SIM] Jendouba Regional Hospital",
+    "type": "emergency",
+    "hours": "24/7",
+    "address": "جندوبة / Jendouba",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-33-h",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.7079,
+     36.1712
+    ]
+   },
+   "properties": {
+    "id": "sim-33-h",
+    "name": "[SIM] Hôpital régional de Le Kef",
+    "name_ar": "[SIM] المستشفى الجهوي بـالكاف",
+    "name_fr": "[SIM] Hôpital régional de Le Kef",
+    "name_en": "[SIM] Kef Regional Hospital",
+    "type": "emergency",
+    "hours": "24/7",
+    "address": "الكاف / Le Kef",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-34-h",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     9.3748,
+     36.0849
+    ]
+   },
+   "properties": {
+    "id": "sim-34-h",
+    "name": "[SIM] Hôpital régional de Siliana",
+    "name_ar": "[SIM] المستشفى الجهوي بـسليانة",
+    "name_fr": "[SIM] Hôpital régional de Siliana",
+    "name_en": "[SIM] Siliana Regional Hospital",
+    "type": "emergency",
+    "hours": "24/7",
+    "address": "سليانة / Siliana",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-41-h",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.0923,
+     35.6781
+    ]
+   },
+   "properties": {
+    "id": "sim-41-h",
+    "name": "[SIM] Hôpital régional de Kairouan",
+    "name_ar": "[SIM] المستشفى الجهوي بـالقيروان",
+    "name_fr": "[SIM] Hôpital régional de Kairouan",
+    "name_en": "[SIM] Kairouan Regional Hospital",
+    "type": "emergency",
+    "hours": "24/7",
+    "address": "القيروان / Kairouan",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-42-h",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.8405,
+     35.1676
+    ]
+   },
+   "properties": {
+    "id": "sim-42-h",
+    "name": "[SIM] Hôpital régional de Kasserine",
+    "name_ar": "[SIM] المستشفى الجهوي بـالقصرين",
+    "name_fr": "[SIM] Hôpital régional de Kasserine",
+    "name_en": "[SIM] Kasserine Regional Hospital",
+    "type": "emergency",
+    "hours": "24/7",
+    "address": "القصرين / Kasserine",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-43-h",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     9.4889,
+     35.0382
+    ]
+   },
+   "properties": {
+    "id": "sim-43-h",
+    "name": "[SIM] Hôpital régional de Sidi Bouzid",
+    "name_ar": "[SIM] المستشفى الجهوي بـسيدي بوزيد",
+    "name_fr": "[SIM] Hôpital régional de Sidi Bouzid",
+    "name_en": "[SIM] Sidi Bouzid Regional Hospital",
+    "type": "emergency",
+    "hours": "24/7",
+    "address": "سيدي بوزيد / Sidi Bouzid",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-51-h",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.6044,
+     35.8236
+    ]
+   },
+   "properties": {
+    "id": "sim-51-h",
+    "name": "[SIM] Hôpital régional de Sousse",
+    "name_ar": "[SIM] المستشفى الجهوي بـسوسة",
+    "name_fr": "[SIM] Hôpital régional de Sousse",
+    "name_en": "[SIM] Sousse Regional Hospital",
+    "type": "emergency",
+    "hours": "24/7",
+    "address": "سوسة / Sousse",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-52-h",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.8083,
+     35.7613
+    ]
+   },
+   "properties": {
+    "id": "sim-52-h",
+    "name": "[SIM] Hôpital régional de Monastir",
+    "name_ar": "[SIM] المستشفى الجهوي بـالمنستير",
+    "name_fr": "[SIM] Hôpital régional de Monastir",
+    "name_en": "[SIM] Monastir Regional Hospital",
+    "type": "emergency",
+    "hours": "24/7",
+    "address": "المنستير / Monastir",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-53-h",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     11.0582,
+     35.5027
+    ]
+   },
+   "properties": {
+    "id": "sim-53-h",
+    "name": "[SIM] Hôpital régional de Mahdia",
+    "name_ar": "[SIM] المستشفى الجهوي بـالمهدية",
+    "name_fr": "[SIM] Hôpital régional de Mahdia",
+    "name_en": "[SIM] Mahdia Regional Hospital",
+    "type": "emergency",
+    "hours": "24/7",
+    "address": "المهدية / Mahdia",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-61-h",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.7563,
+     34.7436
+    ]
+   },
+   "properties": {
+    "id": "sim-61-h",
+    "name": "[SIM] Hôpital régional de Sfax",
+    "name_ar": "[SIM] المستشفى الجهوي بـصفاقس",
+    "name_fr": "[SIM] Hôpital régional de Sfax",
+    "name_en": "[SIM] Sfax Regional Hospital",
+    "type": "emergency",
+    "hours": "24/7",
+    "address": "صفاقس / Sfax",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-71-h",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.7882,
+     34.425
+    ]
+   },
+   "properties": {
+    "id": "sim-71-h",
+    "name": "[SIM] Hôpital régional de Gafsa",
+    "name_ar": "[SIM] المستشفى الجهوي بـقفصة",
+    "name_fr": "[SIM] Hôpital régional de Gafsa",
+    "name_en": "[SIM] Gafsa Regional Hospital",
+    "type": "emergency",
+    "hours": "24/7",
+    "address": "قفصة / Gafsa",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-72-h",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.1375,
+     33.9197
+    ]
+   },
+   "properties": {
+    "id": "sim-72-h",
+    "name": "[SIM] Hôpital régional de Tozeur",
+    "name_ar": "[SIM] المستشفى الجهوي بـتوزر",
+    "name_fr": "[SIM] Hôpital régional de Tozeur",
+    "name_en": "[SIM] Tozeur Regional Hospital",
+    "type": "emergency",
+    "hours": "24/7",
+    "address": "توزر / Tozeur",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-73-h",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.973,
+     33.7044
+    ]
+   },
+   "properties": {
+    "id": "sim-73-h",
+    "name": "[SIM] Hôpital régional de Kébili",
+    "name_ar": "[SIM] المستشفى الجهوي بـقبلي",
+    "name_fr": "[SIM] Hôpital régional de Kébili",
+    "name_en": "[SIM] Kebili Regional Hospital",
+    "type": "emergency",
+    "hours": "24/7",
+    "address": "قبلي / Kébili",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-81-h",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.0942,
+     33.8795
+    ]
+   },
+   "properties": {
+    "id": "sim-81-h",
+    "name": "[SIM] Hôpital régional de Gabès",
+    "name_ar": "[SIM] المستشفى الجهوي بـقابس",
+    "name_fr": "[SIM] Hôpital régional de Gabès",
+    "name_en": "[SIM] Gabes Regional Hospital",
+    "type": "emergency",
+    "hours": "24/7",
+    "address": "قابس / Gabès",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-82-h",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.5015,
+     33.3549
+    ]
+   },
+   "properties": {
+    "id": "sim-82-h",
+    "name": "[SIM] Hôpital régional de Médenine",
+    "name_ar": "[SIM] المستشفى الجهوي بـمدنين",
+    "name_fr": "[SIM] Hôpital régional de Médenine",
+    "name_en": "[SIM] Medenine Regional Hospital",
+    "type": "emergency",
+    "hours": "24/7",
+    "address": "مدنين / Médenine",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-83-h",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.4478,
+     32.9297
+    ]
+   },
+   "properties": {
+    "id": "sim-83-h",
+    "name": "[SIM] Hôpital régional de Tataouine",
+    "name_ar": "[SIM] المستشفى الجهوي بـتطاوين",
+    "name_fr": "[SIM] Hôpital régional de Tataouine",
+    "name_en": "[SIM] Tataouine Regional Hospital",
+    "type": "emergency",
+    "hours": "24/7",
+    "address": "تطاوين / Tataouine",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  }
+ ]
+}

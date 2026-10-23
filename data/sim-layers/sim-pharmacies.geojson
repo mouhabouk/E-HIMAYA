@@ -1,0 +1,1183 @@
+{
+ "type": "FeatureCollection",
+ "simulated": true,
+ "source": "[SIM] Données approximatives d'essai / بيانات تقريبية للتجربة / approximate trial data",
+ "features": [
+  {
+   "type": "Feature",
+   "id": "sim-11-p1",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.1695,
+     36.8065
+    ]
+   },
+   "properties": {
+    "id": "sim-11-p1",
+    "name": "[SIM] Pharmacie de nuit de Tunis",
+    "name_ar": "[SIM] صيدلية الليل بـتونس",
+    "name_fr": "[SIM] Pharmacie de nuit de Tunis",
+    "name_en": "[SIM] Tunis Night Pharmacy",
+    "type": "night",
+    "hours": "24/7",
+    "address": "تونس / Tunis",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-11-p2",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.1655,
+     36.8065
+    ]
+   },
+   "properties": {
+    "id": "sim-11-p2",
+    "name": "[SIM] Pharmacie du centre de Tunis",
+    "name_ar": "[SIM] صيدلية وسط تونس",
+    "name_fr": "[SIM] Pharmacie du centre de Tunis",
+    "name_en": "[SIM] Tunis Central Pharmacy",
+    "hours": "08:00-20:00",
+    "address": "تونس / Tunis",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-12-p1",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.1866,
+     36.8685
+    ]
+   },
+   "properties": {
+    "id": "sim-12-p1",
+    "name": "[SIM] Pharmacie de nuit de Ariana",
+    "name_ar": "[SIM] صيدلية الليل بـأريانة",
+    "name_fr": "[SIM] Pharmacie de nuit de Ariana",
+    "name_en": "[SIM] Ariana Night Pharmacy",
+    "type": "night",
+    "hours": "24/7",
+    "address": "أريانة / Ariana",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-12-p2",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.1836,
+     36.8705
+    ]
+   },
+   "properties": {
+    "id": "sim-12-p2",
+    "name": "[SIM] Pharmacie du centre de Ariana",
+    "name_ar": "[SIM] صيدلية وسط أريانة",
+    "name_fr": "[SIM] Pharmacie du centre de Ariana",
+    "name_en": "[SIM] Ariana Central Pharmacy",
+    "hours": "08:00-20:00",
+    "address": "أريانة / Ariana",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-13-p1",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.2129,
+     36.7441
+    ]
+   },
+   "properties": {
+    "id": "sim-13-p1",
+    "name": "[SIM] Pharmacie de nuit de Ben Arous",
+    "name_ar": "[SIM] صيدلية الليل بـبن عروس",
+    "name_fr": "[SIM] Pharmacie de nuit de Ben Arous",
+    "name_en": "[SIM] Ben Arous Night Pharmacy",
+    "type": "night",
+    "hours": "24/7",
+    "address": "بن عروس / Ben Arous",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-13-p2",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.2109,
+     36.7411
+    ]
+   },
+   "properties": {
+    "id": "sim-13-p2",
+    "name": "[SIM] Pharmacie du centre de Ben Arous",
+    "name_ar": "[SIM] صيدلية وسط بن عروس",
+    "name_fr": "[SIM] Pharmacie du centre de Ben Arous",
+    "name_en": "[SIM] Ben Arous Central Pharmacy",
+    "hours": "08:00-20:00",
+    "address": "بن عروس / Ben Arous",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-14-p1",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.0743,
+     36.8101
+    ]
+   },
+   "properties": {
+    "id": "sim-14-p1",
+    "name": "[SIM] Pharmacie de nuit de Manouba",
+    "name_ar": "[SIM] صيدلية الليل بـمنوبة",
+    "name_fr": "[SIM] Pharmacie de nuit de Manouba",
+    "name_en": "[SIM] Manouba Night Pharmacy",
+    "type": "night",
+    "hours": "24/7",
+    "address": "منوبة / Manouba",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-14-p2",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.0703,
+     36.8101
+    ]
+   },
+   "properties": {
+    "id": "sim-14-p2",
+    "name": "[SIM] Pharmacie du centre de Manouba",
+    "name_ar": "[SIM] صيدلية وسط منوبة",
+    "name_fr": "[SIM] Pharmacie du centre de Manouba",
+    "name_en": "[SIM] Manouba Central Pharmacy",
+    "hours": "08:00-20:00",
+    "address": "منوبة / Manouba",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-21-p1",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.7256,
+     36.4651
+    ]
+   },
+   "properties": {
+    "id": "sim-21-p1",
+    "name": "[SIM] Pharmacie de nuit de Nabeul",
+    "name_ar": "[SIM] صيدلية الليل بـنابل",
+    "name_fr": "[SIM] Pharmacie de nuit de Nabeul",
+    "name_en": "[SIM] Nabeul Night Pharmacy",
+    "type": "night",
+    "hours": "24/7",
+    "address": "نابل / Nabeul",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-21-p2",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.7216,
+     36.4681
+    ]
+   },
+   "properties": {
+    "id": "sim-21-p2",
+    "name": "[SIM] Pharmacie du centre de Nabeul",
+    "name_ar": "[SIM] صيدلية وسط نابل",
+    "name_fr": "[SIM] Pharmacie du centre de Nabeul",
+    "name_en": "[SIM] Nabeul Central Pharmacy",
+    "hours": "08:00-20:00",
+    "address": "نابل / Nabeul",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-22-p1",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.1339,
+     36.4119
+    ]
+   },
+   "properties": {
+    "id": "sim-22-p1",
+    "name": "[SIM] Pharmacie de nuit de Zaghouan",
+    "name_ar": "[SIM] صيدلية الليل بـزغوان",
+    "name_fr": "[SIM] Pharmacie de nuit de Zaghouan",
+    "name_en": "[SIM] Zaghouan Night Pharmacy",
+    "type": "night",
+    "hours": "24/7",
+    "address": "زغوان / Zaghouan",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-22-p2",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.1309,
+     36.4149
+    ]
+   },
+   "properties": {
+    "id": "sim-22-p2",
+    "name": "[SIM] Pharmacie du centre de Zaghouan",
+    "name_ar": "[SIM] صيدلية وسط زغوان",
+    "name_fr": "[SIM] Pharmacie du centre de Zaghouan",
+    "name_en": "[SIM] Zaghouan Central Pharmacy",
+    "hours": "08:00-20:00",
+    "address": "زغوان / Zaghouan",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-23-p1",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     9.8619,
+     37.2744
+    ]
+   },
+   "properties": {
+    "id": "sim-23-p1",
+    "name": "[SIM] Pharmacie de nuit de Bizerte",
+    "name_ar": "[SIM] صيدلية الليل بـبنزرت",
+    "name_fr": "[SIM] Pharmacie de nuit de Bizerte",
+    "name_en": "[SIM] Bizerte Night Pharmacy",
+    "type": "night",
+    "hours": "24/7",
+    "address": "بنزرت / Bizerte",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-23-p2",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     9.8579,
+     37.2744
+    ]
+   },
+   "properties": {
+    "id": "sim-23-p2",
+    "name": "[SIM] Pharmacie du centre de Bizerte",
+    "name_ar": "[SIM] صيدلية وسط بنزرت",
+    "name_fr": "[SIM] Pharmacie du centre de Bizerte",
+    "name_en": "[SIM] Bizerte Central Pharmacy",
+    "hours": "08:00-20:00",
+    "address": "بنزرت / Bizerte",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-31-p1",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     9.1697,
+     36.7256
+    ]
+   },
+   "properties": {
+    "id": "sim-31-p1",
+    "name": "[SIM] Pharmacie de nuit de Béja",
+    "name_ar": "[SIM] صيدلية الليل بـباجة",
+    "name_fr": "[SIM] Pharmacie de nuit de Béja",
+    "name_en": "[SIM] Beja Night Pharmacy",
+    "type": "night",
+    "hours": "24/7",
+    "address": "باجة / Béja",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-31-p2",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     9.1657,
+     36.7256
+    ]
+   },
+   "properties": {
+    "id": "sim-31-p2",
+    "name": "[SIM] Pharmacie du centre de Béja",
+    "name_ar": "[SIM] صيدلية وسط باجة",
+    "name_fr": "[SIM] Pharmacie du centre de Béja",
+    "name_en": "[SIM] Beja Central Pharmacy",
+    "hours": "08:00-20:00",
+    "address": "باجة / Béja",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-32-p1",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.7922,
+     36.5011
+    ]
+   },
+   "properties": {
+    "id": "sim-32-p1",
+    "name": "[SIM] Pharmacie de nuit de Jendouba",
+    "name_ar": "[SIM] صيدلية الليل بـجندوبة",
+    "name_fr": "[SIM] Pharmacie de nuit de Jendouba",
+    "name_en": "[SIM] Jendouba Night Pharmacy",
+    "type": "night",
+    "hours": "24/7",
+    "address": "جندوبة / Jendouba",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-32-p2",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.7962,
+     36.5011
+    ]
+   },
+   "properties": {
+    "id": "sim-32-p2",
+    "name": "[SIM] Pharmacie du centre de Jendouba",
+    "name_ar": "[SIM] صيدلية وسط جندوبة",
+    "name_fr": "[SIM] Pharmacie du centre de Jendouba",
+    "name_en": "[SIM] Jendouba Central Pharmacy",
+    "hours": "08:00-20:00",
+    "address": "جندوبة / Jendouba",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-33-p1",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.7139,
+     36.1652
+    ]
+   },
+   "properties": {
+    "id": "sim-33-p1",
+    "name": "[SIM] Pharmacie de nuit de Le Kef",
+    "name_ar": "[SIM] صيدلية الليل بـالكاف",
+    "name_fr": "[SIM] Pharmacie de nuit de Le Kef",
+    "name_en": "[SIM] Kef Night Pharmacy",
+    "type": "night",
+    "hours": "24/7",
+    "address": "الكاف / Le Kef",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-33-p2",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.7169,
+     36.1622
+    ]
+   },
+   "properties": {
+    "id": "sim-33-p2",
+    "name": "[SIM] Pharmacie du centre de Le Kef",
+    "name_ar": "[SIM] صيدلية وسط الكاف",
+    "name_fr": "[SIM] Pharmacie du centre de Le Kef",
+    "name_en": "[SIM] Kef Central Pharmacy",
+    "hours": "08:00-20:00",
+    "address": "الكاف / Le Kef",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-34-p1",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     9.3828,
+     36.0849
+    ]
+   },
+   "properties": {
+    "id": "sim-34-p1",
+    "name": "[SIM] Pharmacie de nuit de Siliana",
+    "name_ar": "[SIM] صيدلية الليل بـسليانة",
+    "name_fr": "[SIM] Pharmacie de nuit de Siliana",
+    "name_en": "[SIM] Siliana Night Pharmacy",
+    "type": "night",
+    "hours": "24/7",
+    "address": "سليانة / Siliana",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-34-p2",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     9.3868,
+     36.0849
+    ]
+   },
+   "properties": {
+    "id": "sim-34-p2",
+    "name": "[SIM] Pharmacie du centre de Siliana",
+    "name_ar": "[SIM] صيدلية وسط سليانة",
+    "name_fr": "[SIM] Pharmacie du centre de Siliana",
+    "name_en": "[SIM] Siliana Central Pharmacy",
+    "hours": "08:00-20:00",
+    "address": "سليانة / Siliana",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-41-p1",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.0843,
+     35.6781
+    ]
+   },
+   "properties": {
+    "id": "sim-41-p1",
+    "name": "[SIM] Pharmacie de nuit de Kairouan",
+    "name_ar": "[SIM] صيدلية الليل بـالقيروان",
+    "name_fr": "[SIM] Pharmacie de nuit de Kairouan",
+    "name_en": "[SIM] Kairouan Night Pharmacy",
+    "type": "night",
+    "hours": "24/7",
+    "address": "القيروان / Kairouan",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-41-p2",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.0803,
+     35.6781
+    ]
+   },
+   "properties": {
+    "id": "sim-41-p2",
+    "name": "[SIM] Pharmacie du centre de Kairouan",
+    "name_ar": "[SIM] صيدلية وسط القيروان",
+    "name_fr": "[SIM] Pharmacie du centre de Kairouan",
+    "name_en": "[SIM] Kairouan Central Pharmacy",
+    "hours": "08:00-20:00",
+    "address": "القيروان / Kairouan",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-42-p1",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.8485,
+     35.1676
+    ]
+   },
+   "properties": {
+    "id": "sim-42-p1",
+    "name": "[SIM] Pharmacie de nuit de Kasserine",
+    "name_ar": "[SIM] صيدلية الليل بـالقصرين",
+    "name_fr": "[SIM] Pharmacie de nuit de Kasserine",
+    "name_en": "[SIM] Kasserine Night Pharmacy",
+    "type": "night",
+    "hours": "24/7",
+    "address": "القصرين / Kasserine",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-42-p2",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.8525,
+     35.1676
+    ]
+   },
+   "properties": {
+    "id": "sim-42-p2",
+    "name": "[SIM] Pharmacie du centre de Kasserine",
+    "name_ar": "[SIM] صيدلية وسط القصرين",
+    "name_fr": "[SIM] Pharmacie du centre de Kasserine",
+    "name_en": "[SIM] Kasserine Central Pharmacy",
+    "hours": "08:00-20:00",
+    "address": "القصرين / Kasserine",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-43-p1",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     9.4969,
+     35.0382
+    ]
+   },
+   "properties": {
+    "id": "sim-43-p1",
+    "name": "[SIM] Pharmacie de nuit de Sidi Bouzid",
+    "name_ar": "[SIM] صيدلية الليل بـسيدي بوزيد",
+    "name_fr": "[SIM] Pharmacie de nuit de Sidi Bouzid",
+    "name_en": "[SIM] Sidi Bouzid Night Pharmacy",
+    "type": "night",
+    "hours": "24/7",
+    "address": "سيدي بوزيد / Sidi Bouzid",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-43-p2",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     9.5009,
+     35.0382
+    ]
+   },
+   "properties": {
+    "id": "sim-43-p2",
+    "name": "[SIM] Pharmacie du centre de Sidi Bouzid",
+    "name_ar": "[SIM] صيدلية وسط سيدي بوزيد",
+    "name_fr": "[SIM] Pharmacie du centre de Sidi Bouzid",
+    "name_en": "[SIM] Sidi Bouzid Central Pharmacy",
+    "hours": "08:00-20:00",
+    "address": "سيدي بوزيد / Sidi Bouzid",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-51-p1",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.5964,
+     35.8196
+    ]
+   },
+   "properties": {
+    "id": "sim-51-p1",
+    "name": "[SIM] Pharmacie de nuit de Sousse",
+    "name_ar": "[SIM] صيدلية الليل بـسوسة",
+    "name_fr": "[SIM] Pharmacie de nuit de Sousse",
+    "name_en": "[SIM] Sousse Night Pharmacy",
+    "type": "night",
+    "hours": "24/7",
+    "address": "سوسة / Sousse",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-51-p2",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.5924,
+     35.8176
+    ]
+   },
+   "properties": {
+    "id": "sim-51-p2",
+    "name": "[SIM] Pharmacie du centre de Sousse",
+    "name_ar": "[SIM] صيدلية وسط سوسة",
+    "name_fr": "[SIM] Pharmacie du centre de Sousse",
+    "name_en": "[SIM] Sousse Central Pharmacy",
+    "hours": "08:00-20:00",
+    "address": "سوسة / Sousse",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-52-p1",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.8023,
+     35.7553
+    ]
+   },
+   "properties": {
+    "id": "sim-52-p1",
+    "name": "[SIM] Pharmacie de nuit de Monastir",
+    "name_ar": "[SIM] صيدلية الليل بـالمنستير",
+    "name_fr": "[SIM] Pharmacie de nuit de Monastir",
+    "name_en": "[SIM] Monastir Night Pharmacy",
+    "type": "night",
+    "hours": "24/7",
+    "address": "المنستير / Monastir",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-52-p2",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.7993,
+     35.7523
+    ]
+   },
+   "properties": {
+    "id": "sim-52-p2",
+    "name": "[SIM] Pharmacie du centre de Monastir",
+    "name_ar": "[SIM] صيدلية وسط المنستير",
+    "name_fr": "[SIM] Pharmacie du centre de Monastir",
+    "name_en": "[SIM] Monastir Central Pharmacy",
+    "hours": "08:00-20:00",
+    "address": "المنستير / Monastir",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-53-p1",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     11.0502,
+     35.4987
+    ]
+   },
+   "properties": {
+    "id": "sim-53-p1",
+    "name": "[SIM] Pharmacie de nuit de Mahdia",
+    "name_ar": "[SIM] صيدلية الليل بـالمهدية",
+    "name_fr": "[SIM] Pharmacie de nuit de Mahdia",
+    "name_en": "[SIM] Mahdia Night Pharmacy",
+    "type": "night",
+    "hours": "24/7",
+    "address": "المهدية / Mahdia",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-53-p2",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     11.0462,
+     35.4967
+    ]
+   },
+   "properties": {
+    "id": "sim-53-p2",
+    "name": "[SIM] Pharmacie du centre de Mahdia",
+    "name_ar": "[SIM] صيدلية وسط المهدية",
+    "name_fr": "[SIM] Pharmacie du centre de Mahdia",
+    "name_en": "[SIM] Mahdia Central Pharmacy",
+    "hours": "08:00-20:00",
+    "address": "المهدية / Mahdia",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-61-p1",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.7483,
+     34.7496
+    ]
+   },
+   "properties": {
+    "id": "sim-61-p1",
+    "name": "[SIM] Pharmacie de nuit de Sfax",
+    "name_ar": "[SIM] صيدلية الليل بـصفاقس",
+    "name_fr": "[SIM] Pharmacie de nuit de Sfax",
+    "name_en": "[SIM] Sfax Night Pharmacy",
+    "type": "night",
+    "hours": "24/7",
+    "address": "صفاقس / Sfax",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-61-p2",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.7443,
+     34.7526
+    ]
+   },
+   "properties": {
+    "id": "sim-61-p2",
+    "name": "[SIM] Pharmacie du centre de Sfax",
+    "name_ar": "[SIM] صيدلية وسط صفاقس",
+    "name_fr": "[SIM] Pharmacie du centre de Sfax",
+    "name_en": "[SIM] Sfax Central Pharmacy",
+    "hours": "08:00-20:00",
+    "address": "صفاقس / Sfax",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-71-p1",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.7962,
+     34.425
+    ]
+   },
+   "properties": {
+    "id": "sim-71-p1",
+    "name": "[SIM] Pharmacie de nuit de Gafsa",
+    "name_ar": "[SIM] صيدلية الليل بـقفصة",
+    "name_fr": "[SIM] Pharmacie de nuit de Gafsa",
+    "name_en": "[SIM] Gafsa Night Pharmacy",
+    "type": "night",
+    "hours": "24/7",
+    "address": "قفصة / Gafsa",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-71-p2",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.8002,
+     34.425
+    ]
+   },
+   "properties": {
+    "id": "sim-71-p2",
+    "name": "[SIM] Pharmacie du centre de Gafsa",
+    "name_ar": "[SIM] صيدلية وسط قفصة",
+    "name_fr": "[SIM] Pharmacie du centre de Gafsa",
+    "name_en": "[SIM] Gafsa Central Pharmacy",
+    "hours": "08:00-20:00",
+    "address": "قفصة / Gafsa",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-72-p1",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.1455,
+     33.9197
+    ]
+   },
+   "properties": {
+    "id": "sim-72-p1",
+    "name": "[SIM] Pharmacie de nuit de Tozeur",
+    "name_ar": "[SIM] صيدلية الليل بـتوزر",
+    "name_fr": "[SIM] Pharmacie de nuit de Tozeur",
+    "name_en": "[SIM] Tozeur Night Pharmacy",
+    "type": "night",
+    "hours": "24/7",
+    "address": "توزر / Tozeur",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-72-p2",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.1495,
+     33.9197
+    ]
+   },
+   "properties": {
+    "id": "sim-72-p2",
+    "name": "[SIM] Pharmacie du centre de Tozeur",
+    "name_ar": "[SIM] صيدلية وسط توزر",
+    "name_fr": "[SIM] Pharmacie du centre de Tozeur",
+    "name_en": "[SIM] Tozeur Central Pharmacy",
+    "hours": "08:00-20:00",
+    "address": "توزر / Tozeur",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-73-p1",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.981,
+     33.7044
+    ]
+   },
+   "properties": {
+    "id": "sim-73-p1",
+    "name": "[SIM] Pharmacie de nuit de Kébili",
+    "name_ar": "[SIM] صيدلية الليل بـقبلي",
+    "name_fr": "[SIM] Pharmacie de nuit de Kébili",
+    "name_en": "[SIM] Kebili Night Pharmacy",
+    "type": "night",
+    "hours": "24/7",
+    "address": "قبلي / Kébili",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-73-p2",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.985,
+     33.7044
+    ]
+   },
+   "properties": {
+    "id": "sim-73-p2",
+    "name": "[SIM] Pharmacie du centre de Kébili",
+    "name_ar": "[SIM] صيدلية وسط قبلي",
+    "name_fr": "[SIM] Pharmacie du centre de Kébili",
+    "name_en": "[SIM] Kebili Central Pharmacy",
+    "hours": "08:00-20:00",
+    "address": "قبلي / Kébili",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-81-p1",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.0862,
+     33.8755
+    ]
+   },
+   "properties": {
+    "id": "sim-81-p1",
+    "name": "[SIM] Pharmacie de nuit de Gabès",
+    "name_ar": "[SIM] صيدلية الليل بـقابس",
+    "name_fr": "[SIM] Pharmacie de nuit de Gabès",
+    "name_en": "[SIM] Gabes Night Pharmacy",
+    "type": "night",
+    "hours": "24/7",
+    "address": "قابس / Gabès",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-81-p2",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.0822,
+     33.8735
+    ]
+   },
+   "properties": {
+    "id": "sim-81-p2",
+    "name": "[SIM] Pharmacie du centre de Gabès",
+    "name_ar": "[SIM] صيدلية وسط قابس",
+    "name_fr": "[SIM] Pharmacie du centre de Gabès",
+    "name_en": "[SIM] Gabes Central Pharmacy",
+    "hours": "08:00-20:00",
+    "address": "قابس / Gabès",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-82-p1",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.4935,
+     33.3549
+    ]
+   },
+   "properties": {
+    "id": "sim-82-p1",
+    "name": "[SIM] Pharmacie de nuit de Médenine",
+    "name_ar": "[SIM] صيدلية الليل بـمدنين",
+    "name_fr": "[SIM] Pharmacie de nuit de Médenine",
+    "name_en": "[SIM] Medenine Night Pharmacy",
+    "type": "night",
+    "hours": "24/7",
+    "address": "مدنين / Médenine",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-82-p2",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.4895,
+     33.3549
+    ]
+   },
+   "properties": {
+    "id": "sim-82-p2",
+    "name": "[SIM] Pharmacie du centre de Médenine",
+    "name_ar": "[SIM] صيدلية وسط مدنين",
+    "name_fr": "[SIM] Pharmacie du centre de Médenine",
+    "name_en": "[SIM] Medenine Central Pharmacy",
+    "hours": "08:00-20:00",
+    "address": "مدنين / Médenine",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-83-p1",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.4398,
+     32.9297
+    ]
+   },
+   "properties": {
+    "id": "sim-83-p1",
+    "name": "[SIM] Pharmacie de nuit de Tataouine",
+    "name_ar": "[SIM] صيدلية الليل بـتطاوين",
+    "name_fr": "[SIM] Pharmacie de nuit de Tataouine",
+    "name_en": "[SIM] Tataouine Night Pharmacy",
+    "type": "night",
+    "hours": "24/7",
+    "address": "تطاوين / Tataouine",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-83-p2",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.4358,
+     32.9297
+    ]
+   },
+   "properties": {
+    "id": "sim-83-p2",
+    "name": "[SIM] Pharmacie du centre de Tataouine",
+    "name_ar": "[SIM] صيدلية وسط تطاوين",
+    "name_fr": "[SIM] Pharmacie du centre de Tataouine",
+    "name_en": "[SIM] Tataouine Central Pharmacy",
+    "hours": "08:00-20:00",
+    "address": "تطاوين / Tataouine",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  }
+ ]
+}
