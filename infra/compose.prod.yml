@@ -308,7 +308,7 @@ services:
 
   # Monitoring (profile "monitoring", phase 10 §2.3): internal network only, nothing published.
   prometheus:
-    image: prom/prometheus:v3.5.0@sha256:63805ebb8d2b3920190daf1cb14a60871b16fd38bed42b857a3182bc621f4996
+    image: prom/prometheus:v3.15.0@sha256:efd719c99d83b060d9daefdcf00360461adf279f45ef5391f8d111892118753e
     profiles: ["monitoring"]
     restart: unless-stopped
     command:
