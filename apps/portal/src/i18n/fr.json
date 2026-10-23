@@ -564,6 +564,52 @@
         "body": "Les signalements (type, description, localisation et pièces jointes) et l’identité de votre compte sont traités uniquement pour gérer les urgences, conformément à la loi organique n° 2004-63 sur la protection des données personnelles, sous le contrôle de l’INPDP. Vous disposez d’un droit d’accès, de rectification et d’opposition.",
         "liability": "Faire sciemment un faux signalement engage votre responsabilité légale.",
         "checkbox": "J’ai lu et j’accepte la charte, et je comprends qu’un faux signalement volontaire engage ma responsabilité légale."
+      },
+      "2026-11": {
+        "intro": "e-Himaya est la plateforme nationale de signalement des urgences à la Protection civile.",
+        "sections": [
+          {
+            "title": "1. Objet",
+            "body": "e-Himaya est une plateforme numérique de l'Office National de la Protection Civile (« l'Office ») pour signaler les situations d'urgence et en suivre le traitement. Les présentes conditions régissent la relation entre l'Office et les utilisateurs de l'application mobile et du portail des établissements."
+          },
+          {
+            "title": "2. Notre mission",
+            "body": "Protéger les vies et les biens, et rétablir la confiance entre les citoyens et la Protection civile par une communication directe et transparente. Décrire l'incident avec précision et montrer la scène telle qu'elle est réduit le délai d'intervention et en améliore l'efficacité."
+          },
+          {
+            "title": "3. Nature et limites du service",
+            "body": "3.1 L'application complète le 198 et ne le remplace pas. En cas de danger immédiat, appelez directement le 198.\n3.2 L'application ne fournit aucun avis médical ; ses conseils sont donnés à titre de sensibilisation et ne remplacent pas les consignes des agents de la Protection civile.\n3.3 Son fonctionnement dépend de facteurs hors du contrôle de l'Office : couverture du réseau mobile et d'Internet, signal de localisation, batterie et état du téléphone. L'Office s'efforce d'assurer la meilleure disponibilité et de corriger les dysfonctionnements dans les meilleurs délais."
+          },
+          {
+            "title": "4. Obligations de l'utilisateur",
+            "body": "4.1 Utiliser l'application de bonne foi et uniquement pour de vraies urgences ; fournir des informations exactes et à jour, notamment le numéro de téléphone.\n4.2 Laisser la localisation activée et utiliser la dernière version de l'application.\n4.3 Ne pas se mettre en danger pour filmer et respecter les consignes des intervenants.\n4.4 Ne pas porter atteinte à l'application, la perturber, contourner ses protections ni en faire de l'ingénierie inverse."
+          },
+          {
+            "title": "5. Fausses alertes et usage abusif",
+            "body": "Chaque signalement mobilise des équipes de secours dont d'autres vies peuvent avoir besoin au même moment. Toute fausse alerte volontaire ou tout usage abusif expose son auteur à des poursuites conformément à la législation tunisienne en vigueur, et peut entraîner la suspension temporaire ou définitive du compte ou du signalement depuis l'appareil concerné."
+          },
+          {
+            "title": "6. Obligations des établissements",
+            "body": "L'établissement inscrit fournit des informations exactes et à jour sur son identité, son activité, ses bâtiments et ses responsables, et en répond. Le dépôt et la mise à jour du plan d'évacuation et des plans du bâtiment facilitent l'intervention et réduisent le temps de recherche et de sauvetage. Le compte n'est activé qu'après validation par l'Office."
+          },
+          {
+            "title": "7. Volontaires",
+            "body": "Le statut de volontaire n'est accordé qu'après validation par l'Office. Le volontaire suit les instructions de la salle des opérations et n'intervient que dans la limite de la mission confiée."
+          },
+          {
+            "title": "8. Protection des données personnelles",
+            "body": "8.1 Les données personnelles sont traitées conformément à la loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel, sous le contrôle de l'Instance Nationale de Protection des Données Personnelles (INPDP), dans le seul but de traiter les urgences et de vous informer du suivi de vos signalements.\n8.2 Lors d'un signalement sont transmis à l'Office : votre position, le type d'incident, la description et les médias joints, et les données de votre compte le cas échéant.\n8.3 Les contacts d'urgence et le texte du message de détresse sont conservés chiffrés sur votre téléphone uniquement et ne sont pas transmis à l'Office.\n8.4 Le signalement sans compte est possible sous pseudonyme, sans enregistrement de l'adresse IP.\n8.5 Seuls les agents habilités accèdent aux données, conservées pendant la durée nécessaire au traitement et aux obligations légales. Vous disposez d'un droit d'accès, de rectification et d'opposition."
+          },
+          {
+            "title": "9. Évolution de l'application et des conditions",
+            "body": "L'Office peut faire évoluer l'application ou modifier ces conditions. L'utilisateur est informé de chaque nouvelle version et de son contenu, et son accord est de nouveau demandé lorsque les conditions changent."
+          },
+          {
+            "title": "10. Droit applicable",
+            "body": "Les présentes conditions sont régies par le droit tunisien ; les tribunaux tunisiens sont compétents pour tout litige."
+          }
+        ],
+        "checkbox": "J'ai lu les conditions d'utilisation et je les accepte ; je sais qu'une fausse alerte volontaire engage ma responsabilité."
       }
     }
   },
