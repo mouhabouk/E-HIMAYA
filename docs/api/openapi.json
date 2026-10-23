@@ -8233,6 +8233,50 @@
         "title": "HistoryEntry",
         "type": "object"
       },
+      "HistoryIn": {
+        "additionalProperties": false,
+        "properties": {
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "hours": {
+            "default": 72,
+            "maximum": 72.0,
+            "minimum": 1.0,
+            "title": "Hours",
+            "type": "integer"
+          },
+          "locale": {
+            "default": "ar",
+            "pattern": "^(ar|fr|en)$",
+            "title": "Locale",
+            "type": "string"
+          },
+          "notice_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notice Version"
+          },
+          "platform": {
+            "default": "android",
+            "pattern": "^(android|ios)$",
+            "title": "Platform",
+            "type": "string"
+          }
+        },
+        "required": [
+          "enabled"
+        ],
+        "title": "HistoryIn",
+        "type": "object"
+      },
       "HistoryItem": {
         "properties": {
           "capped": {
@@ -8314,6 +8358,42 @@
           "created_at"
         ],
         "title": "HistoryItem",
+        "type": "object"
+      },
+      "HistoryOut": {
+        "properties": {
+          "available": {
+            "title": "Available",
+            "type": "boolean"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "notice_version": {
+            "default": "7b-2026-10",
+            "title": "Notice Version",
+            "type": "string"
+          },
+          "until": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Until"
+          }
+        },
+        "required": [
+          "available",
+          "enabled",
+          "until"
+        ],
+        "title": "HistoryOut",
         "type": "object"
       },
       "HistoryPage": {
@@ -11223,6 +11303,150 @@
         "title": "MediaOut",
         "type": "object"
       },
+      "MedicalFile": {
+        "additionalProperties": false,
+        "description": "The 7b medical file, kept on the phone and attached to one report only when the user ticks it (phase B2).\nEvery field is optional; free texts are short.",
+        "properties": {
+          "allergies": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Allergies"
+          },
+          "birth_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Birth Date"
+          },
+          "blood_group": {
+            "anyOf": [
+              {
+                "enum": [
+                  "A+",
+                  "A-",
+                  "B+",
+                  "B-",
+                  "AB+",
+                  "AB-",
+                  "O+",
+                  "O-"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Blood Group"
+          },
+          "conditions": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Conditions"
+          },
+          "contact_name": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Name"
+          },
+          "contact_phone": {
+            "anyOf": [
+              {
+                "pattern": "^\\+?[0-9]{6,15}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Phone"
+          },
+          "medications": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Medications"
+          },
+          "other": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Other"
+          },
+          "sex": {
+            "anyOf": [
+              {
+                "enum": [
+                  "female",
+                  "male"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sex"
+          },
+          "treatment_card": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Treatment Card"
+          }
+        },
+        "title": "MedicalFile",
+        "type": "object"
+      },
       "MedicalInfo": {
         "description": "Optional data shown to responders (stored encrypted, never searchable).",
         "properties": {
@@ -11309,6 +11533,24 @@
           }
         },
         "title": "MedicalInfo",
+        "type": "object"
+      },
+      "MedicalOut": {
+        "properties": {
+          "attached_at": {
+            "format": "date-time",
+            "title": "Attached At",
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/MedicalFile"
+          }
+        },
+        "required": [
+          "data",
+          "attached_at"
+        ],
+        "title": "MedicalOut",
         "type": "object"
       },
       "MemberOut": {
@@ -14079,6 +14321,25 @@
         "title": "PointDetail",
         "type": "object"
       },
+      "PointIn": {
+        "additionalProperties": false,
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "location": {
+            "$ref": "#/components/schemas/LocationIn"
+          }
+        },
+        "required": [
+          "location",
+          "at"
+        ],
+        "title": "PointIn",
+        "type": "object"
+      },
       "PointInfo": {
         "properties": {
           "distance_km": {
@@ -14153,6 +14414,38 @@
           "at"
         ],
         "title": "PointOut",
+        "type": "object"
+      },
+      "PointsIn": {
+        "additionalProperties": false,
+        "properties": {
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/PointIn"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "title": "Points",
+            "type": "array"
+          }
+        },
+        "required": [
+          "points"
+        ],
+        "title": "PointsIn",
+        "type": "object"
+      },
+      "PointsOut": {
+        "properties": {
+          "stored": {
+            "title": "Stored",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "stored"
+        ],
+        "title": "PointsOut",
         "type": "object"
       },
       "Position": {
@@ -17214,50 +17507,33 @@
         "title": "ScoreComponent",
         "type": "object"
       },
-      "SearchOut": {
+      "SearchIn": {
+        "additionalProperties": false,
         "properties": {
-          "backend": {
-            "enum": [
-              "opensearch",
-              "postgres"
-            ],
-            "title": "Backend",
+          "phone": {
+            "maxLength": 20,
+            "minLength": 8,
+            "title": "Phone",
             "type": "string"
           },
-          "facets": {
-            "$ref": "#/components/schemas/Facets"
+          "reason": {
+            "maxLength": 500,
+            "minLength": 10,
+            "title": "Reason",
+            "type": "string"
           },
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/Hit"
-            },
-            "title": "Items",
-            "type": "array"
-          },
-          "next_cursor": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Next Cursor"
-          },
-          "semantic": {
-            "title": "Semantic",
-            "type": "boolean"
+          "report_id": {
+            "format": "uuid",
+            "title": "Report Id",
+            "type": "string"
           }
         },
         "required": [
-          "items",
-          "facets",
-          "backend",
-          "semantic",
-          "next_cursor"
+          "phone",
+          "report_id",
+          "reason"
         ],
-        "title": "SearchOut",
+        "title": "SearchIn",
         "type": "object"
       },
       "Section": {
@@ -18250,6 +18526,42 @@
         "title": "StaffOrgPage",
         "type": "object"
       },
+      "StaffPoint": {
+        "properties": {
+          "accuracy_m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Accuracy M"
+          },
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "lat": {
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "title": "Lon",
+            "type": "number"
+          }
+        },
+        "required": [
+          "lat",
+          "lon",
+          "accuracy_m",
+          "at"
+        ],
+        "title": "StaffPoint",
+        "type": "object"
+      },
       "StaffReport": {
         "properties": {
           "analysis_state": {
@@ -18798,6 +19110,11 @@
           "media_count": {
             "title": "Media Count",
             "type": "integer"
+          },
+          "medical_attached": {
+            "default": false,
+            "title": "Medical Attached",
+            "type": "boolean"
           },
           "needs_verification": {
             "default": false,
@@ -22871,6 +23188,52 @@
         "title": "Review",
         "type": "object"
       },
+      "app__modules__knowledge__schemas__SearchOut": {
+        "properties": {
+          "backend": {
+            "enum": [
+              "opensearch",
+              "postgres"
+            ],
+            "title": "Backend",
+            "type": "string"
+          },
+          "facets": {
+            "$ref": "#/components/schemas/Facets"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Hit"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          },
+          "semantic": {
+            "title": "Semantic",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "items",
+          "facets",
+          "backend",
+          "semantic",
+          "next_cursor"
+        ],
+        "title": "SearchOut",
+        "type": "object"
+      },
       "app__modules__layers__schemas__FeatureIn": {
         "additionalProperties": false,
         "properties": {
@@ -23644,6 +24007,16 @@
           "location": {
             "$ref": "#/components/schemas/LocationIn"
           },
+          "medical": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MedicalFile"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "organization_id": {
             "anyOf": [
               {
@@ -24164,6 +24537,32 @@
           "paused_gouvernorats"
         ],
         "title": "SettingsOut",
+        "type": "object"
+      },
+      "app__modules__safety__history__SearchOut": {
+        "properties": {
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "found": {
+            "title": "Found",
+            "type": "boolean"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/StaffPoint"
+            },
+            "title": "Points",
+            "type": "array"
+          }
+        },
+        "required": [
+          "found",
+          "enabled",
+          "points"
+        ],
+        "title": "SearchOut",
         "type": "object"
       },
       "app__modules__safety__router__InvitationOut": {
@@ -30036,6 +30435,235 @@
           }
         ],
         "summary": "Check Position",
+        "tags": [
+          "safety"
+        ]
+      }
+    },
+    "/api/v1/safety/history": {
+      "delete": {
+        "operationId": "delete_history_api_v1_safety_history_delete",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete History",
+        "tags": [
+          "safety"
+        ]
+      },
+      "get": {
+        "operationId": "my_history_api_v1_safety_history_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "My History",
+        "tags": [
+          "safety"
+        ]
+      },
+      "put": {
+        "operationId": "set_history_api_v1_safety_history_put",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HistoryIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Set History",
+        "tags": [
+          "safety"
+        ]
+      }
+    },
+    "/api/v1/safety/history/points": {
+      "post": {
+        "operationId": "add_points_api_v1_safety_history_points_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PointsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PointsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Add Points",
         "tags": [
           "safety"
         ]
@@ -36505,7 +37133,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SearchOut"
+                  "$ref": "#/components/schemas/app__modules__knowledge__schemas__SearchOut"
                 }
               }
             },
@@ -39730,6 +40358,55 @@
         ]
       }
     },
+    "/api/v1/staff/reports/{report_id}/medical": {
+      "get": {
+        "description": "The medical file the reporter attached (phase B2, addition 7b): only for the staff allowed to see the reporter's\nidentity (the handling operations room, or break-glass), and every opening is audited.",
+        "operationId": "get_medical_api_v1_staff_reports__report_id__medical_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "report_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Report Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MedicalOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Medical",
+        "tags": [
+          "staff"
+        ]
+      }
+    },
     "/api/v1/staff/reports/{report_id}/nearby-incidents": {
       "get": {
         "description": "Open incidents of a compatible type within the grouping radius and window of the report, in any gouvernorat\n(summaries only): the duplicate warning and the cross-border link targets (§5.2).",
@@ -42648,6 +43325,53 @@
         "summary": "Unpublish Tip",
         "tags": [
           "safety-tips"
+        ]
+      }
+    },
+    "/api/v1/staff/safety/history/search": {
+      "post": {
+        "description": "A missing person: the operator gives their phone, the report they handle and a reason. The search is audited\n(even when nothing is found) and the person is told through the app.",
+        "operationId": "search_history_api_v1_staff_safety_history_search_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__safety__history__SearchOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Search History",
+        "tags": [
+          "safety"
         ]
       }
     },

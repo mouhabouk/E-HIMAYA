@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import DateTime, ForeignKey, LargeBinary, SmallInteger, Text, func
+from sqlalchemy import BigInteger, DateTime, ForeignKey, LargeBinary, SmallInteger, Text, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -114,3 +114,26 @@ class SafetyCheck(Base):
     )
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     ended_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class LocationHistory(Base):
+    """The person turned the 72-hour location history on, until ``until`` (phase B2, addition 7b §2)."""
+
+    __tablename__ = "location_history"
+    __table_args__ = _SCHEMA
+
+    owner_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey(_ACCOUNT, ondelete="CASCADE"), primary_key=True
+    )
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    until: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
+class LocationPoint(Base):
+    __tablename__ = "location_point"
+    __table_args__ = _SCHEMA
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    owner_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey(_ACCOUNT, ondelete="CASCADE"))
+    at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    position: Mapped[dict[str, Any]] = mapped_column("position_enc", EncryptedJSON("safety.location_point.position"))

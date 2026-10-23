@@ -67,6 +67,8 @@ from app.modules.reports.uploads import verify_forever
 from app.modules.rewards.consumer import rewards_forever
 from app.modules.rewards.router import router as rewards_router
 from app.modules.rewards.staff_router import router as rewards_staff_router
+from app.modules.safety.history import router as safety_history_router
+from app.modules.safety.history import staff_router as safety_history_staff_router
 from app.modules.safety.router import router as safety_router
 from app.modules.settings import service as platform_settings
 from app.modules.settings.router import router as settings_router
@@ -232,6 +234,8 @@ def create_app() -> FastAPI:
         contact_router,
         contact_staff_router,
         safety_router,
+        safety_history_router,
+        safety_history_staff_router,
         orgs_router,
         orgs_staff_router,
         ai_router,

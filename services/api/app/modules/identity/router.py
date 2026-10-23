@@ -77,7 +77,7 @@ class ProfileIn(BaseModel):
     delegation_id: int
     address: str | None = Field(default=None, max_length=300)
     locale: Locale = "ar"
-    # Left out: unchanged; null: erased.
+    # Left out: unchanged; null: erased. Phase B2: a non-empty value answers 410 (the medical file is on the phone).
     medical: MedicalInfo | None = None
 
 
@@ -186,8 +186,11 @@ async def put_profile(body: ProfileIn, reporter: CurrentReporter, session: Sessi
     profile.address = body.address.strip() if body.address else None
     profile.locale = body.locale
     if "medical" in body.model_fields_set:
-        medical = body.medical.model_dump(exclude_none=True) if body.medical else None
-        profile.medical = medical or None
+        # Phase B2 (addition 7b): the medical file lives on the phone only. A file stored here before can still be
+        # read (profile, "my data") and erased with ``medical: null``, never written again.
+        if body.medical is not None and body.medical.model_dump(exclude_none=True):
+            raise HTTPException(status.HTTP_410_GONE, "medical_moved_to_phone")
+        profile.medical = None
     profile.updated_at = now
     session.add(profile)
     try:

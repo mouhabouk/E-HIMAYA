@@ -139,6 +139,8 @@ class Settings(BaseSettings):
     retention_device_location_days: int = Field(default=30, ge=1)
     # Closed or rejected reports are anonymised this long after their last change (5 years).
     retention_report_days: int = Field(default=1826, ge=1)
+    # A medical file attached to a report (phase B2, addition 7b) is deleted this long after the report is closed.
+    retention_medical_days: int = Field(default=30, ge=1)
     # Acceptances of a superseded charter, kept as proof while reports made under them are kept.
     retention_consent_days: int = Field(default=1826, ge=1)
     # Anonymous device identities that never reported and have no push device.
