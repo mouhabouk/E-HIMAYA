@@ -147,6 +147,10 @@ export function commonAnswer(
       limits: { file_bytes: 10485760, rows: 50000 },
     });
   }
+  // Map data layers (phase B1): none, so the map shows only its built-in layers.
+  if (method === "GET" && pathname === "/api/v1/staff/layers") {
+    return json(route, { items: [], can_manage: false, icons: [], palette: [], limits: { file_bytes: 10485760, rows: 50000 } });
+  }
   if (method === "GET" && pathname === "/api/v1/staff/break-glass")
     return json(route, { items: [], next_cursor: null });
   return null;
