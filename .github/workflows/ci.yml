@@ -651,6 +651,9 @@ jobs:
           MEDIA_HOST=media.ehimaya.test
           EHIMAYA_DB_RUNTIME_PASSWORD=$(openssl rand -hex 24)
           TUSD_CORS_ORIGIN_REGEX=^https://(dashboard|portal)\.ehimaya\.test\$
+          OPENSEARCH_ADMIN_PASSWORD=$(openssl rand -hex 24)
+          OPENSEARCH_PASSWORD=$(openssl rand -hex 24)
+          ALERT_EMAIL_TO=ops@ehimaya.test
           EOF
           cat .env prod.env > prod-full.env
           docker compose --env-file prod-full.env -f infra/compose.yml -f infra/compose.prod.yml config > prod.yml

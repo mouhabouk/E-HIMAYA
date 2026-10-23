@@ -7,15 +7,15 @@
 | المكون | الصورة | الرخصة |
 |---|---|---|
 | PostgreSQL + PostGIS | `postgres:17-bookworm` + `postgresql-17-postgis-3` + `postgresql-17-pgvector` (PGDG) | PostgreSQL / GPL-2.0 |
-| gosu (داخل صورة قاعدة البيانات) | 1.19، يعاد بناؤه بـ `golang:1.26-bookworm` لسد CVE-2025-68121 | Apache-2.0 |
-| Valkey | `valkey/valkey:8.1-alpine` | BSD-3 |
-| NATS | `nats:2.10-alpine` | Apache-2.0 |
-| SeaweedFS (S3) | `chrislusf/seaweedfs:3.97` | Apache-2.0 |
+| gosu (داخل صورة قاعدة البيانات) | 1.19، يعاد بناؤه بـ `golang:1.27-bookworm` لسد CVE-2025-68121 | Apache-2.0 |
+| Valkey | `valkey/valkey:9.1-alpine` | BSD-3 |
+| NATS | `nats:2.15-alpine` | Apache-2.0 |
+| SeaweedFS (S3) | `chrislusf/seaweedfs:4.48` | Apache-2.0 |
 | Keycloak | `keycloak/keycloak:26.8` (اختُبر 26.8؛ المرحلة 10: انتقل التحقق في CI وci-local من 26.3 إلى 26.8 بعد دمج Dependabot #56) | Apache-2.0 |
-| رفع الوسائط بالاستئناف (tus) | `tusproject/tusd:v2.8.0` | MIT |
+| رفع الوسائط بالاستئناف (tus) | `tusproject/tusd:v2.10.1` | MIT |
 | الخلفية وخدمة الذكاء الاصطناعي | `python:3.12-slim` | PSF |
-| خادم النموذج اللغوي المحلي | `ollama/ollama:0.40.1` | MIT |
-| التقاط البريد في التطوير (المرحلة 5) | `axllent/mailpit:v1.31.3` | MIT |
+| خادم النموذج اللغوي المحلي | `ollama/ollama:0.40.6` | MIT |
+| التقاط البريد في التطوير (المرحلة 5) | `axllent/mailpit:v1.31.6` | MIT |
 | محاكي Firebase وبوابة SMS في التطوير (`services/notify-sim`، **محاكاة**) | `python:3.12-slim` | — |
 | الوكيل العكسي و TLS (الإنتاج) وخادم ملفات لوحة التحكم والبوابة (المرحلة 5.5) | `caddy:2.11-alpine` (2.11.7) | Apache-2.0 |
 | خادم البث المباشر (المرحلة 6: WHIP/WHEP و RTSP و RTMP و HLS والتسجيل fMP4)، ويستعمله أيضا `stream-sim` | `bluenviron/mediamtx:1.21.2-ffmpeg` | MIT |
@@ -24,9 +24,9 @@
 | محرك البحث في مكتبة الأحداث (المرحلة 8، ملف `search`؛ دائم في الإنتاج): عقدة واحدة، إضافة الأمان مفعلة، محللا العربية والفرنسية | `opensearchproject/opensearch:2.19.6` (`sha256:be67c71b…80b5`) | Apache-2.0 |
 | محرك التوجيه (المرحلة 7، ملف `routing`) | `ghcr.io/valhalla/valhalla:3.9.1` على خريطة OpenStreetMap لتونس (Geofabrik) | MIT / البيانات ODbL 1.0 |
 | بناء لوحة التحكم والبوابة (مرحلة البناء فقط) | `node:22-alpine` | MIT |
-| تثبيت حزم Python من `uv.lock` (مرحلة البناء فقط) | `ghcr.io/astral-sh/uv:0.11.32` | MIT / Apache-2.0 |
+| تثبيت حزم Python من `uv.lock` (مرحلة البناء فقط) | `ghcr.io/astral-sh/uv:0.13.4` | MIT / Apache-2.0 |
 | اختبار الحمل (خارج المنظومة) | `grafana/k6:2.3.0` | AGPL-3.0 |
-| فحص الثغرات في CI | `aquasecurity/trivy-action` 0.35.0 | Apache-2.0 |
+| فحص الثغرات في CI | `aquasecurity/trivy-action` 0.36.0 | Apache-2.0 |
 | المراقبة (المرحلة 10، ملف `monitoring` في الإنتاج) | `prom/prometheus:v3.5.0` و `prom/alertmanager:v0.28.1` و `prom/node-exporter:v1.9.1` (مقاييس النسخ الاحتياطي)، مثبتة بالبصمة | Apache-2.0 |
 | فحص الأمان الديناميكي (المرحلة 10، يدوي قبل الإصدار) | `ghcr.io/zaproxy/zaproxy:2.16.1` (يمكن تغييرها بـ `ZAP_IMAGE`، انظر `infra/security/zap/run.sh`) | Apache-2.0 |
 
@@ -145,11 +145,11 @@ Flutter 3.47.7 (القناة المستقرة) مع Dart 3.13.5، و Java 17 ل�
 | image_picker / record / just_audio | 1.2.4 / 7.1.2 / 0.10.6 | الصور والفيديو والتسجيل الصوتي |
 | url_launcher | 6.3.3 | الاتصال بأرقام النجدة عبر الشريحة (السيناريو 0) |
 | connectivity_plus / crypto / uuid | 7.3.2 / 3.0.7 / 4.6.0 | المزامنة، البصمة، معرف البلاغ |
-| firebase_core / firebase_messaging (المرحلة 5) | 4.15.0 / 16.7.0 | إشعارات الدفع عبر FCM؛ اختيارية عبر `--dart-define` (FIREBASE_API_KEY، FIREBASE_APP_ID، FIREBASE_MESSAGING_SENDER_ID، FIREBASE_PROJECT_ID) |
+| firebase_core / firebase_messaging (المرحلة 5) | 5.0.0 / 17.0.0 | إشعارات الدفع عبر FCM؛ اختيارية عبر `--dart-define` (FIREBASE_API_KEY، FIREBASE_APP_ID، FIREBASE_MESSAGING_SENDER_ID، FIREBASE_PROJECT_ID) |
 | flutter_local_notifications (المرحلة 5) | 22.3.1 | قناتا أندرويد `ehimaya_alerts` و `ehimaya_default` وعرض الإشعار والتطبيق مفتوح |
 | desugar_jdk_libs (Gradle، المرحلة 5) | 2.1.4 | تتطلبه مكتبة الإشعارات المحلية |
 | flutter_webrtc (المرحلة 6) | 1.6.2+hotfix.3 | البث المباشر عبر WHIP (MIT؛ مكتبة WebRTC الأصلية 150.7871.01) |
-| open_filex (المرحلة 8) | 4.7.0 | فتح شهادة المكافآت (PDF) في عارض الهاتف عبر FileProvider (BSD-3-Clause)؛ أذونات قراءة الوسائط التي يعلنها محذوفة من بيان التطبيق |
+| open_filex (المرحلة 8) | 5.0.0 | فتح شهادة المكافآت (PDF) في عارض الهاتف عبر FileProvider (BSD-3-Clause)؛ أذونات قراءة الوسائط التي يعلنها محذوفة من بيان التطبيق |
 
 ## لوحة التحكم (`apps/dashboard`)
 
@@ -157,22 +157,22 @@ Node.js 22 LTS و npm 10 أو أحدث. الحزم مثبتة بإصدارات �
 
 | الحزمة | الإصدار |
 |---|---|
-| react / react-dom | 19.3.0 |
+| react / react-dom | 19.3.1 |
 | react-router | 8.4.0 |
-| @tanstack/react-query | 5.104.1 |
+| @tanstack/react-query | 5.104.4 |
 | oidc-client-ts | 3.5.0 |
-| i18next / react-i18next | 26.4.2 / 17.0.15 |
-| maplibre-gl | 6.12.0 |
+| i18next / react-i18next | 26.5.2 / 17.1.0 |
+| maplibre-gl | 6.14.0 |
 | vite / @vitejs/plugin-react | 8.3.4 / 6.1.2 |
-| typescript / typescript-eslint | 5.9.3 / 8.71.0 |
-| vitest / eslint | 5.0.5 / 10.12.0 |
+| typescript / typescript-eslint | 5.9.3 / 8.71.2 |
+| vitest / eslint | 5.0.5 / 10.13.0 |
 | @playwright/test (اختبار المتصفح) | 1.64.1 |
 | @axe-core/playwright (المرحلة 10، فحص إمكانية الوصول WCAG 2.2 A/AA) | 4.13.0 (MPL-2.0) |
 | jssip (المرحلة 7، الهاتف الشبكي للمشغل، يُحمّل عند تفعيله فقط) | 3.13.8 (MIT) |
 | hls.js (المرحلة 6، بديل HLS عند تعذر WHEP، يُحمّل عند الحاجة فقط) | 1.7.3 (Apache-2.0) |
 | uplot (المرحلة 8، رسوم التحليلات على canvas، تُحمّل عند الحاجة فقط) | 1.6.32 (MIT) |
 | markdown-it (المرحلة 8، عرض Markdown للذاكرة الوطنية، `html: false`) | 15.0.3 (MIT، يعالج GHSA-gfr2-rv44-r23c وGHSA-vfgh-jcmw-g37q) |
-| dompurify (المرحلة 8، تعقيم HTML الناتج قبل عرضه) | 3.4.16 (MPL-2.0 OR Apache-2.0، مستعملة بترخيص Apache-2.0) |
+| dompurify (المرحلة 8، تعقيم HTML الناتج قبل عرضه) | 3.4.17 (MPL-2.0 OR Apache-2.0، مستعملة بترخيص Apache-2.0) |
 
 > المرحلة 9: بقيت typescript على 5.9.3 لأن typescript-eslint 8 لا يدعم TypeScript 7 بعد؛ و Vite 8 (Rolldown) يقبل
 > `manualChunks` في صيغة الدالة فقط. اللوحة بثلاث لغات: العربية (من اليمين إلى اليسار) والفرنسية والإنجليزية.
@@ -181,8 +181,8 @@ Node.js 22 LTS و npm 10 أو أحدث. الحزم مثبتة بإصدارات �
 
 نفس أدوات لوحة التحكم (Node.js 22 و npm 10 أو أحدث، `npm ci`)، بثلاث لغات (ar/fr/en) وعلى المنفذ 5174.
 الحزم مثبتة بإصدارات دقيقة في `apps/portal/package.json` و `package-lock.json`؛ الإصدارات نفسها المعتمدة في لوحة التحكم
-(react 19.3.0، react-router 8.4.0، react-query 5.104.1، oidc-client-ts 3.5.0، i18next 26.4.2، maplibre-gl 6.12.0،
-vite 8.3.4، typescript 5.9.3، vitest 5.0.5، eslint 10.12.0). البصمة SHA-256 تُحسب في المتصفح (WebCrypto) ولا يغادر
+(react 19.3.1، react-router 8.4.0، react-query 5.104.4، oidc-client-ts 3.5.0، i18next 26.5.2، maplibre-gl 6.14.0،
+vite 8.3.4، typescript 5.9.3، vitest 5.0.5، eslint 10.13.0). البصمة SHA-256 تُحسب في المتصفح (WebCrypto) ولا يغادر
 الملف جهاز الزائر عند التحقق من شهادة.
 
 > رُقّيت `maplibre-gl` من 5.24.0 إلى 6.12.0 في اللوحة والبوابة لإزالة التنبيه الأمني GHSA-jrc7-96c5-q579

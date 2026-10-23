@@ -147,3 +147,20 @@ def test_split_sentences() -> None:
         "Venez vite؟",
         "شكرا",
     ]
+
+
+def test_installed_pyav_decodes_audio_for_faster_whisper(tmp_path: Any) -> None:
+    # Guards the av pin: a PyAV that drops an argument faster-whisper passes turns every upload into media_undecodable.
+    import wave
+
+    from faster_whisper.audio import decode_audio
+
+    path = tmp_path / "tone.wav"
+    with wave.open(str(path), "wb") as out:
+        out.setnchannels(1)
+        out.setsampwidth(2)
+        out.setframerate(16000)
+        tone = (np.sin(2 * np.pi * 440 * np.arange(16000) / 16000) * 8000).astype("<i2")
+        out.writeframes(tone.tobytes())
+    audio = decode_audio(str(path), sampling_rate=16000)
+    assert 15000 < len(audio) <= 16000

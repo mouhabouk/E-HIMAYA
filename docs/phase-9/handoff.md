@@ -1,4 +1,4 @@
-# Phase 9 — handoff (work in progress)
+# Phase 9 — handoff (superseded: phase 9 was completed and merged; kept for history only)
 
 The owner asked on 2026-10-20 to move the project to a new repository
 (`202500737studentnaussedusa-max/E-Himaya`). Development was stopped mid-way and everything written so far was
