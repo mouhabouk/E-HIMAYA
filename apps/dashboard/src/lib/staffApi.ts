@@ -1,6 +1,7 @@
 import type { ApiClient } from "./api";
 import { bboxParam, filtersToQuery, type BBox, type ReportFilters } from "./filters";
 import { opsApi } from "./opsApi";
+import { guideApi } from "./guide";
 import { layersApi } from "./layersApi";
 import { phase7Api } from "./phase7Api";
 import { phase8Api } from "./phase8Api";
@@ -193,6 +194,7 @@ export function staffApi(api: ApiClient) {
     ...phase8Api(api),
     ...phase9Api(api),
     ...layersApi(api),
+    ...guideApi(api),
   };
 }
 

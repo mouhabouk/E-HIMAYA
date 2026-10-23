@@ -49,6 +49,20 @@ export const AUDITOR_CLAIMS = {
   gouvernorat_code: "61",
 };
 
+/** Emergency hub editor (phase B1). */
+export function fakeGuideApi() {
+  return {
+    guide: vi.fn(() => Promise.resolve({ revision: 1, topics: [], icons: [], palette: [] })),
+    createTopic: vi.fn(),
+    updateTopic: vi.fn(),
+    moveTopic: vi.fn(),
+    createItem: vi.fn(),
+    updateItem: vi.fn(),
+    validateItem: vi.fn(),
+    moveItem: vi.fn(),
+  };
+}
+
 /** Map data layers (phase B1): no layer unless a test gives some. */
 export function fakeLayersApi() {
   return {
@@ -108,6 +122,7 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     ...fakePhase8Api(),
     ...fakePhase9Api(),
     ...fakeLayersApi(),
+    ...fakeGuideApi(),
     gouvernorats: vi.fn(() =>
       Promise.resolve([
         { code: 11, iso_code: "TN-11", name: "تونس", name_ar: "تونس", name_fr: "Tunis", delegation_count: 21 },

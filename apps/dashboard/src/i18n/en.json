@@ -33,7 +33,8 @@
     "accounts": "Accounts",
     "audit": "Audit",
     "breakGlass": "Break-glass",
-    "layers": "Map layers"
+    "layers": "Map layers",
+    "emergencyGuide": "Emergency hub"
   },
   "header": {
     "scope": "Geographic scope",
@@ -280,7 +281,8 @@
     "layer_changed": "The layer changed since the preview: preview again.",
     "not_last_import": "Only the last published import can be undone.",
     "duplicate_id": "A place already has this identifier.",
-    "outside_tunisia": "Position outside Tunisia."
+    "outside_tunisia": "Position outside Tunisia.",
+    "cannot_move": "Cannot move that way."
   },
   "kpi": {
     "title": "Key indicators",
@@ -3469,6 +3471,64 @@
       "lon": "Longitude",
       "empty": "No place.",
       "count": "{{shown}} of {{total}}"
+    }
+  },
+  "guide": {
+    "title": "Emergency hub: topics and items",
+    "intro": "Each topic (fires, fractures, first aid, breathing problems…) holds items. The app shows them in this order and keeps them offline.",
+    "simNotice": "[SIM] The first texts come from published first-aid guidance and are not official: each item not validated shows in the app under the “awaiting medical validation” banner until the Office’s medical staff validates it.",
+    "edit": "Edit",
+    "hide": "Hide",
+    "show": "Show",
+    "hiddenChip": "Hidden",
+    "moveUp": "Move “{{name}}” up",
+    "moveDown": "Move “{{name}}” down",
+    "topic": {
+      "new": "New topic",
+      "edit": "Edit the topic",
+      "create": "Create the topic",
+      "title_ar": "Title in Arabic",
+      "title_fr": "Title in French",
+      "title_en": "Title in English"
+    },
+    "item": {
+      "new": "Add an item",
+      "edit": "Edit the item",
+      "create": "Add the item",
+      "none": "No item in this topic.",
+      "list": "Items of {{name}}",
+      "title": "Title",
+      "call": "Call 198 at once if…",
+      "steps": "Steps, in order",
+      "dont": "Do not",
+      "linesHelp": "One line per entry. Steps are required in each language (15 at most).",
+      "call198": "Show the “Call 198” button on this item",
+      "call198Chip": "198 button",
+      "awaiting": "[SIM] Awaiting medical validation",
+      "validatedBy": "Validated: {{name}}, {{at}}",
+      "validate": "Record the medical validation",
+      "validateConfirm": "Confirm the validation",
+      "validateExplain": "Name in the reason the doctor or service who validated the text.",
+      "revalidate": "Changing the text withdraws the current medical validation."
+    },
+    "errors": {
+      "title": "The title is required ({{lang}}).",
+      "steps": "At least one step ({{lang}}).",
+      "tooMany": "Too many lines ({{lang}}).",
+      "tooLong": "Line too long, 300 characters at most ({{lang}})."
+    },
+    "icons": {
+      "fire": "Fire",
+      "bone": "Fracture",
+      "first_aid": "First aid",
+      "lungs": "Breathing",
+      "burn": "Burn",
+      "drop": "Bleeding",
+      "heart": "Heart",
+      "water": "Drowning",
+      "electric": "Electricity",
+      "poison": "Poisoning",
+      "pin": "Other"
     }
   }
 }

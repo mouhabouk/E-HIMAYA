@@ -3840,3 +3840,38 @@ button.map-poi {
   color: var(--info-text);
   margin-inline-start: 0.5rem;
 }
+
+/* Emergency hub editor (phase B1). */
+.guide-topic h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.guide-items {
+  list-style: none;
+  padding: 0;
+}
+.guide-item {
+  border-block-start: 1px solid var(--border);
+  padding-block: 0.75rem;
+}
+.guide-item__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.guide-item__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+.guide-langs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 1rem;
+}
+.guide-reason {
+  flex-basis: 100%;
+}
