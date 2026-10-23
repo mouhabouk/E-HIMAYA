@@ -136,6 +136,7 @@ async def list_layers(principal: Staff, session: Session) -> schemas.LayersOut:
     layers = await session.scalars(select(Layer).order_by(Layer.created_at, Layer.key))
     return schemas.LayersOut(
         items=[await _layer_out(session, layer, principal) for layer in layers.all()],
+        can_manage=can_manage(principal),
         icons=list(domain.ICONS),
         palette=list(domain.PALETTE),
         limits={"file_bytes": domain.MAX_FILE_BYTES, "rows": domain.MAX_ROWS},

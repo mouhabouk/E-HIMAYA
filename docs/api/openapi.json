@@ -9423,6 +9423,10 @@
       },
       "LayersOut": {
         "properties": {
+          "can_manage": {
+            "title": "Can Manage",
+            "type": "boolean"
+          },
           "icons": {
             "items": {
               "type": "string"
@@ -9454,6 +9458,7 @@
         },
         "required": [
           "items",
+          "can_manage",
           "icons",
           "palette",
           "limits"

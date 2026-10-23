@@ -49,6 +49,33 @@ export const AUDITOR_CLAIMS = {
   gouvernorat_code: "61",
 };
 
+/** Map data layers (phase B1): no layer unless a test gives some. */
+export function fakeLayersApi() {
+  return {
+    layers: vi.fn(() =>
+      Promise.resolve({
+        items: [],
+        can_manage: false,
+        icons: [],
+        palette: ["#C62828", "#2E7D32"],
+        limits: { file_bytes: 10 * 1024 * 1024, rows: 50_000 },
+      }),
+    ),
+    createLayer: vi.fn(),
+    updateLayer: vi.fn(),
+    previewImport: vi.fn(),
+    layerImports: vi.fn(() => Promise.resolve([])),
+    applyImport: vi.fn(),
+    discardImport: vi.fn(),
+    undoImport: vi.fn(),
+    layerFeatures: vi.fn(() => Promise.resolve({ items: [], truncated: false })),
+    createFeature: vi.fn(),
+    updateFeature: vi.fn(),
+    exportLayer: vi.fn(),
+    layerTemplate: vi.fn(),
+  };
+}
+
 export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
   return {
     kpis: vi.fn(),
@@ -80,6 +107,7 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     ...fakePhase7Api(),
     ...fakePhase8Api(),
     ...fakePhase9Api(),
+    ...fakeLayersApi(),
     gouvernorats: vi.fn(() =>
       Promise.resolve([
         { code: 11, iso_code: "TN-11", name: "تونس", name_ar: "تونس", name_fr: "Tunis", delegation_count: 21 },

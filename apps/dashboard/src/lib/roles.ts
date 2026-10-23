@@ -207,6 +207,16 @@ export function canEditTips(roles: readonly string[]): boolean {
   return any(TIPS_ROLES, roles);
 }
 
+/**
+ * Map data layers page (phase B1): the system administrator creates layers; content editors import into the layers
+ * opened to them (the API decides per layer). Every staff member sees the layers on the live map.
+ */
+export const LAYERS_PAGE_ROLES = ["sysadmin", "content_editor"] as const;
+
+export function canOpenLayers(roles: readonly string[]): boolean {
+  return any(LAYERS_PAGE_ROLES, roles);
+}
+
 /** Stop a live stream (`POST /api/v1/staff/streams/{id}/stop`). */
 export function canStopStreams(roles: readonly string[]): boolean {
   return any(STREAM_STOP_ROLES, roles);

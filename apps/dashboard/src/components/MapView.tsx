@@ -38,6 +38,12 @@ export interface MapPoi {
   href?: string;
   /** Outbound call from the popup through the softphone (phase 7, FR-C-10). */
   call?: DialBody;
+  /** Map data layers (phase B1): the layer's own icon path and colour; a cluster shows its count. */
+  iconPath?: string;
+  colour?: string;
+  count?: number;
+  /** Extra lines of the popup (phone, address, hours…). */
+  details?: string[];
 }
 
 /** A filled area drawn under the markers (phase 5: alert polygons), always also named in a list beside the map. */
@@ -276,14 +282,27 @@ function poiLabel(p: MapPoi): string {
   return p.subtitle ? `${p.title} — ${p.subtitle}` : p.title;
 }
 
+/** A point opens a popup when it links somewhere or has details to show (places of a map data layer). */
+function poiInteractive(p: MapPoi): boolean {
+  return Boolean(p.href) || (p.details?.length ?? 0) > 0;
+}
+
 function poiElement(p: MapPoi): HTMLElement {
   // Interactive points are buttons (keyboard-focusable, open a popup); the others are labelled images.
-  const el = p.href ? document.createElement("button") : document.createElement("div");
+  const el = poiInteractive(p) ? document.createElement("button") : document.createElement("div");
   if (el instanceof HTMLButtonElement) el.type = "button";
   else el.setAttribute("role", "img");
   el.className = `map-poi map-poi--${p.kind}`;
   el.setAttribute("aria-label", poiLabel(p));
-  el.appendChild(iconSvg(POI_ICON_PATHS[p.kind]));
+  if (p.colour) el.style.background = p.colour;
+  if (p.count !== undefined) {
+    const count = document.createElement("span");
+    count.textContent = String(p.count);
+    count.setAttribute("aria-hidden", "true");
+    el.appendChild(count);
+  } else {
+    el.appendChild(iconSvg(p.iconPath ?? POI_ICON_PATHS[p.kind]));
+  }
   return el;
 }
 
@@ -302,6 +321,12 @@ function poiPopupContent(
     const sub = document.createElement("div");
     sub.textContent = p.subtitle;
     root.append(sub);
+  }
+  for (const line of p.details ?? []) {
+    const detail = document.createElement("div");
+    detail.dir = "auto";
+    detail.textContent = line;
+    root.append(detail);
   }
   if (p.href) {
     const href = p.href;
@@ -456,12 +481,25 @@ export function MapView({
     for (const p of pois ?? []) {
       const id = `${p.kind}:${p.id}`;
       seen.add(id);
-      const key = JSON.stringify([p.lon, p.lat, p.title, p.subtitle, p.href, poiOpenLabel, p.call, callKey]);
+      const key = JSON.stringify([
+        p.lon,
+        p.lat,
+        p.title,
+        p.subtitle,
+        p.href,
+        poiOpenLabel,
+        p.call,
+        callKey,
+        p.iconPath,
+        p.colour,
+        p.count,
+        p.details,
+      ]);
       const existing = registry.get(id);
       if (existing?.key === key) continue;
       existing?.marker.remove();
       const marker = new maplibregl.Marker({ element: poiElement(p) }).setLngLat([p.lon, p.lat]);
-      if (p.href) {
+      if (poiInteractive(p)) {
         marker.setPopup(
           new maplibregl.Popup({ offset: 14, closeButton: true, focusAfterOpen: true }).setDOMContent(
             poiPopupContent(p, poiOpenLabel ?? "", (href) => callbacks.current.onOpenPoi?.(href), call),
