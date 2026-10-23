@@ -40,6 +40,7 @@ class ReportDraft {
     this.lang,
     this.attachments = const [],
     this.organizationId,
+    this.medical,
   });
 
   final ReportCategory category;
@@ -50,6 +51,10 @@ class ReportDraft {
 
   /// Institution the report is sent for (phase 4 §8); null: the user themselves.
   final String? organizationId;
+
+  /// Phase B2 (addition 7b): the medical file, only when the user ticked "attach my medical file
+  /// to this report". Frozen in the payload, which stays in the encrypted queue until sent.
+  final Map<String, Object?>? medical;
 }
 
 /// A report to attach a file to: its local row and/or its server id.
@@ -127,6 +132,8 @@ class ReportQueue {
       'location': draft.location.toJson(),
       'created_at': now.toIso8601String(),
       organizationIdKey: ?draft.organizationId,
+      if (draft.medical != null && draft.medical!.isNotEmpty)
+        'medical': draft.medical,
     };
 
     final media = <MediaItemsCompanion>[];

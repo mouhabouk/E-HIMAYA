@@ -33,7 +33,8 @@ class CitizenRights {
     await wipeLocalData();
   }
 
-  /// Forgets the user on this phone: the offline queue and its media files, the session, the
+  /// Forgets the user on this phone: the offline queue and its media files, the emergency contacts,
+  /// the alert history and the medical file (phase B2), the session, the
   /// anonymous device key, the cached institutions, notifications already shown, and every
   /// preference except the language, the theme and the battery saver choice. The encrypted
   /// database itself stays (empty) with its key, so the app keeps working.
@@ -42,6 +43,11 @@ class CitizenRights {
     await db.transaction(() async {
       await db.delete(db.mediaItems).go();
       await db.delete(db.pendingReports).go();
+      // Phase B2: emergency contacts and groups, the alert history and the medical file.
+      await db.delete(db.emergencyContacts).go();
+      await db.delete(db.contactGroups).go();
+      await db.delete(db.safetyAlertHistory).go();
+      await db.delete(db.medicalProfiles).go();
     });
     try {
       final dir = await _ref.read(mediaDirProvider)();
