@@ -737,6 +737,92 @@
         "title": "AnchorPage",
         "type": "object"
       },
+      "AppVersionOut": {
+        "properties": {
+          "channel": {
+            "enum": [
+              "server",
+              "play"
+            ],
+            "title": "Channel",
+            "type": "string"
+          },
+          "download_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Download Url"
+          },
+          "latest_build": {
+            "title": "Latest Build",
+            "type": "integer"
+          },
+          "latest_version": {
+            "title": "Latest Version",
+            "type": "string"
+          },
+          "mandatory": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mandatory"
+          },
+          "min_build": {
+            "title": "Min Build",
+            "type": "integer"
+          },
+          "notes": {
+            "$ref": "#/components/schemas/ReleaseNotesOut"
+          },
+          "platform": {
+            "enum": [
+              "android",
+              "ios"
+            ],
+            "title": "Platform",
+            "type": "string"
+          },
+          "sms_simulated": {
+            "title": "Sms Simulated",
+            "type": "boolean"
+          },
+          "update_available": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Update Available"
+          }
+        },
+        "required": [
+          "platform",
+          "latest_version",
+          "latest_build",
+          "min_build",
+          "notes",
+          "channel",
+          "download_url",
+          "update_available",
+          "mandatory",
+          "sms_simulated"
+        ],
+        "title": "AppVersionOut",
+        "type": "object"
+      },
       "ApproveIn": {
         "properties": {
           "note": {
@@ -12761,6 +12847,29 @@
         "title": "ReleaseIn",
         "type": "object"
       },
+      "ReleaseNotesOut": {
+        "properties": {
+          "ar": {
+            "title": "Ar",
+            "type": "string"
+          },
+          "en": {
+            "title": "En",
+            "type": "string"
+          },
+          "fr": {
+            "title": "Fr",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ar",
+          "fr",
+          "en"
+        ],
+        "title": "ReleaseNotesOut",
+        "type": "object"
+      },
       "ReportFilters": {
         "properties": {
           "category": {
@@ -21010,6 +21119,71 @@
         "summary": "Active Alerts",
         "tags": [
           "notifications"
+        ]
+      }
+    },
+    "/api/v1/app/version": {
+      "get": {
+        "operationId": "app_version_api_v1_app_version_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "platform",
+            "required": false,
+            "schema": {
+              "default": "android",
+              "enum": [
+                "android",
+                "ios"
+              ],
+              "title": "Platform",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "build",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 1000000,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Build"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppVersionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "App Version",
+        "tags": [
+          "app"
         ]
       }
     },

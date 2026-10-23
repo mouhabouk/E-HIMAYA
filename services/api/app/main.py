@@ -28,6 +28,7 @@ from app.modules.ai.router import router as ai_router
 from app.modules.analytics.library import router as analytics_library_router
 from app.modules.analytics.router import router as analytics_router
 from app.modules.analytics.worker import analytics_forever
+from app.modules.appinfo.router import router as appinfo_router
 from app.modules.audit.router import router as audit_router
 from app.modules.content.router import router as content_router
 from app.modules.decision.procedures import procedures_forever
@@ -38,6 +39,7 @@ from app.modules.forecast.router import router as forecast_router
 from app.modules.geo.router import router as geo_router
 from app.modules.health.router import metrics_router
 from app.modules.health.router import router as health_router
+from app.modules.identity.internal import router as identity_internal_router
 from app.modules.identity.router import router as identity_router
 from app.modules.knowledge.indexer import knowledge_forever
 from app.modules.knowledge.router import router as knowledge_router
@@ -244,6 +246,8 @@ def create_app() -> FastAPI:
         settings_router,
         access_router,
         evidence_router,
+        appinfo_router,
+        identity_internal_router,
     )
     for router in routers:
         app.include_router(router)

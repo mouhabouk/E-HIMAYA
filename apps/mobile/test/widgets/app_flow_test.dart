@@ -2,7 +2,7 @@
 import 'package:ehimaya/core/routing/app_router.dart';
 import 'package:ehimaya/features/charter/charter_screen.dart';
 import 'package:ehimaya/features/home/home_screen.dart';
-import 'package:ehimaya/features/onboarding/role_screen.dart';
+import 'package:ehimaya/features/welcome/permissions_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -12,7 +12,7 @@ import '../helpers/app_harness.dart';
 
 void main() {
   testWidgets('charter gate blocks everything until accepted', (tester) async {
-    await pumpApp(tester);
+    await pumpApp(tester, prefs: languageAndIntroDone);
     expect(find.byType(CharterScreen), findsOneWidget);
 
     // Continue is disabled while the box is unchecked.
@@ -28,20 +28,24 @@ void main() {
     expect(find.byType(CharterScreen), findsOneWidget);
     expect(find.byType(HomeScreen), findsNothing);
 
-    // Accept → role choice.
-    await tester.ensureVisible(find.byKey(const Key('charter-checkbox')));
+    // Read to the end, tick, accept → permissions.
+    await tester.drag(
+      find.byKey(const Key('terms-text')),
+      const Offset(0, -20000),
+    );
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('charter-checkbox')));
     await tester.pumpAndSettle();
     await tester.tap(button);
     await tester.pumpAndSettle();
-    expect(find.byType(RoleScreen), findsOneWidget);
+    expect(find.byType(PermissionsScreen), findsOneWidget);
     await unmountApp(tester);
   });
 
   testWidgets('emergency numbers are reachable before the charter', (
     tester,
   ) async {
-    final h = await pumpApp(tester);
+    final h = await pumpApp(tester, prefs: languageAndIntroDone);
     await tester.tap(find.byKey(const Key('emergency-numbers-action')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('dial-198')));

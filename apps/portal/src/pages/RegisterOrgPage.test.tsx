@@ -35,6 +35,16 @@ function setup(reply: Handler) {
 }
 
 describe("RegisterOrgPage (FR-B-001)", () => {
+  it("phase A, rule 2: a note explains the red asterisk of required fields", async () => {
+    setup({ status: 201, body: makeOrg() });
+    await screen.findByRole("heading", { name: /Step 1 of 5/ });
+    expect(screen.getByText("Fields marked * are required.")).toBeInTheDocument();
+    const name = screen.getByLabelText(/^Institution name/);
+    expect(name).toBeRequired();
+    const mark = document.querySelector(`label[for="${name.id}"] .required-mark`);
+    expect(mark).toHaveAttribute("aria-hidden", "true");
+  });
+
   it("walks through the wizard, posts the normalised card and shows the pending review screen", async () => {
     const { calls } = setup({ status: 201, body: makeOrg({ status: "pending_review" }) });
     await fillAll();

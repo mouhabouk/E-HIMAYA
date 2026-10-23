@@ -7,7 +7,7 @@ import { useFormat } from "../../lib/hooks";
 import { EQUIPMENT_KINDS, type Equipment, type EquipmentInput, type EquipmentKind } from "../../lib/types";
 import { isIntInRange, parseNumber } from "../../lib/validators";
 import { BlockedNote, useOrg } from "./OrgWorkspace";
-import { Field, RowActions, describedBy } from "./RegisterParts";
+import { describedBy, Field, RequiredNote, RowActions } from "./RegisterParts";
 import { useRegister } from "./useRegister";
 
 interface Draft {
@@ -71,6 +71,7 @@ function EquipmentDialog({
   return (
     <Dialog title={item ? t("equipment.editTitle") : t("equipment.addTitle")} onClose={onClose}>
       <form className="form" onSubmit={submit} noValidate>
+        <RequiredNote />
         <div className="form-grid">
           <Field id="eq-kind" label={t("equipment.kind")}>
             <select id="eq-kind" value={draft.kind} onChange={(e) => set({ kind: e.target.value as EquipmentKind })}>

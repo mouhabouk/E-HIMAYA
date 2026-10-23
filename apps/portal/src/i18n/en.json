@@ -202,7 +202,8 @@
     "months120": "Between 1 and 120 months.",
     "unNumber": "UN number: exactly 4 digits (or leave empty).",
     "hazardClass": "8 characters at most (e.g. 3 or 2.1).",
-    "coordinates": "Invalid coordinates."
+    "coordinates": "Invalid coordinates.",
+    "requiredNote": "Fields marked * are required."
   },
   "workspace": {
     "sections": "Sections of the institution",

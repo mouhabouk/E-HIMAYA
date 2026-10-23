@@ -55,7 +55,7 @@ def metric(name: str, labels: dict[str, str] | None = None) -> float:
 
 async def _consent(client: httpx.AsyncClient, headers: dict[str, str]) -> int:
     r = await client.post(
-        "/api/v1/consents", json={"charter_version": "2026-10", "locale": "ar", "platform": "android"}, headers=headers
+        "/api/v1/consents", json={"charter_version": "2026-11", "locale": "ar", "platform": "android"}, headers=headers
     )
     return r.status_code
 
@@ -71,7 +71,7 @@ async def test_new_anonymous_identities_are_limited_per_address(
     assert [await _consent(client, d) for d in devices[:3]] == [201, 201, 201]
     r = await client.post(
         "/api/v1/consents",
-        json={"charter_version": "2026-10", "locale": "ar", "platform": "android"},
+        json={"charter_version": "2026-11", "locale": "ar", "platform": "android"},
         headers=devices[3],
     )
     assert r.status_code == 429 and r.json()["detail"] == "rate_limited" and int(r.headers["Retry-After"]) >= 1

@@ -170,7 +170,7 @@ def report_body(location: dict[str, float] | None = None, **overrides: Any) -> d
 
 async def accept_charter(client: httpx.AsyncClient, headers: dict[str, str]) -> None:
     r = await client.post(
-        "/api/v1/consents", json={"charter_version": "2026-10", "locale": "ar", "platform": "android"}, headers=headers
+        "/api/v1/consents", json={"charter_version": "2026-11", "locale": "ar", "platform": "android"}, headers=headers
     )
     assert r.status_code == 201, r.text
 

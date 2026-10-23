@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/quota/anon_quota_controller.dart';
 import '../../core/routing/app_router.dart';
 import '../../core/sync/sync_scheduler.dart';
+import '../../core/ui/emergency_action.dart';
 import '../../l10n/app_localizations.dart';
 import '../emergency/dialer.dart';
 import '../emergency/emergency_numbers.dart';
@@ -43,7 +44,10 @@ class AnonQuotaScreen extends ConsumerWidget {
     final civil = emergencyNumbers.first;
     final code = tempCode;
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.anonQuotaTitle)),
+      appBar: AppBar(
+        title: Text(l10n.anonQuotaTitle),
+        actions: const [StandardAppBarActions()],
+      ),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(24),

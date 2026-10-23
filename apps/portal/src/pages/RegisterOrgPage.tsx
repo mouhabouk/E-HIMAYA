@@ -19,6 +19,7 @@ import { useServices } from "../context/services";
 import { useFormat, useGouvernorats } from "../lib/hooks";
 import { queryKeys } from "../lib/portalApi";
 import type { Organization } from "../lib/types";
+import { RequiredNote } from "./org/RegisterParts";
 
 const STEPS = [...CARD_SECTIONS, "review"] as const;
 type Step = (typeof STEPS)[number];
@@ -165,6 +166,7 @@ export function RegisterOrgPage() {
           {t("register.stepTitle", { n: index + 1, total: STEPS.length, title: t(`register.steps.${step}`) })}
         </h2>
         <p className="muted">{t(`register.help.${step}`)}</p>
+        {step !== "review" && <RequiredNote />}
         {step === "review" ? (
           <Review draft={draft} />
         ) : (

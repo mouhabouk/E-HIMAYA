@@ -11,9 +11,8 @@ import '../../features/home/main_shell.dart';
 import '../../features/institution/my_institution_screen.dart';
 import '../../features/live/live_controller.dart';
 import '../../features/live/live_screen.dart';
-import '../../features/onboarding/citizen_mode_screen.dart';
 import '../../features/onboarding/institution_screen.dart';
-import '../../features/onboarding/role_screen.dart';
+import '../../features/onboarding/sign_in_screen.dart';
 import '../../features/privacy/my_data_screen.dart';
 import '../../features/profile/profile_screen.dart';
 import '../../features/quota/quota_screen.dart';
@@ -29,6 +28,10 @@ import '../../features/tips/tips_screen.dart';
 import '../../features/volunteer/callouts_screen.dart';
 import '../../features/volunteer/volunteer_form_screen.dart';
 import '../../features/volunteer/volunteer_screen.dart';
+import '../../features/welcome/intro_screen.dart';
+import '../../features/welcome/language_screen.dart';
+import '../../features/welcome/permissions_screen.dart';
+import '../../features/welcome/welcome_controller.dart';
 import '../auth/identity.dart';
 import '../http/models.dart';
 import '../security/locked_alert.dart';
@@ -37,7 +40,11 @@ abstract final class Routes {
   static const charter = '/charter';
   static const charterRead = '/charter/read';
   static const onboarding = '/onboarding';
-  static const onboardingCitizen = '/onboarding/citizen';
+  // Phase A first launch: language, introduction cards, permissions; sign-in by phone.
+  static const welcomeLanguage = '/welcome/language';
+  static const welcomeIntro = '/welcome/intro';
+  static const welcomePermissions = '/welcome/permissions';
+  static const signIn = '/sign-in';
   static const onboardingInstitution = '/onboarding/institution';
   static const profile = '/profile';
   static const home = '/home';
@@ -94,14 +101,16 @@ abstract final class Routes {
       Uri(path: quota, queryParameters: {'code': tempCode}).toString();
 }
 
-/// Navigation guard (charter accepted → role chosen → identity → home). Pure function so it can
-/// be unit tested. The emergency numbers are always reachable, even before the charter.
+/// Navigation guard (phase A order: language → introduction → terms → permissions → sign-in →
+/// home). Pure function so it can be unit tested. The emergency numbers are always reachable,
+/// even before the terms.
 String? guardRedirect({
   required String location,
   required bool charterAccepted,
   required IdentityState identity,
   required bool profilePrompted,
   bool lockedAlert = false,
+  WelcomeSteps welcome = WelcomeSteps.done,
 }) {
   // Over a locked phone only the public alert view exists: no shell, no other route, no deep
   // link. Checked first, before anything else.
@@ -110,19 +119,20 @@ String? guardRedirect({
   }
   if (location == Routes.lockedAlert) return Routes.home;
   if (location == Routes.emergency) return null;
-  if (!charterAccepted) {
-    return location == Routes.charter ? null : Routes.charter;
-  }
-  if (identity.role == null) {
-    return location == Routes.onboarding ? null : Routes.onboarding;
-  }
+  String? only(String target) => location == target ? null : target;
+  if (!welcome.languageChosen) return only(Routes.welcomeLanguage);
+  if (!welcome.introSeen) return only(Routes.welcomeIntro);
+  if (!charterAccepted) return only(Routes.charter);
+  if (!welcome.permissionsSeen) return only(Routes.welcomePermissions);
   if (!identity.hasIdentity) {
-    final target = identity.role == UserRole.institution
-        ? Routes.onboardingInstitution
-        : Routes.onboardingCitizen;
-    return location == target || location == Routes.onboarding ? null : target;
+    if (location == Routes.onboarding || location == Routes.signIn) return null;
+    return identity.role == UserRole.institution
+        ? only(Routes.onboardingInstitution)
+        : Routes.onboarding;
   }
-  if (location == Routes.charter || location.startsWith(Routes.onboarding)) {
+  if (location == Routes.charter ||
+      location.startsWith(Routes.onboarding) ||
+      location.startsWith('/welcome/')) {
     return Routes.home;
   }
   if (identity.isRegistered &&
@@ -164,6 +174,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   ref.listen(charterAcceptedProvider, (_, _) => refresh.ping());
   ref.listen(identityProvider, (_, _) => refresh.ping());
   ref.listen(profilePromptedProvider, (_, _) => refresh.ping());
+  ref.listen(welcomeProvider, (_, _) => refresh.ping());
   ref.listen(
     lockedAlertProvider.select((s) => s.locked),
     (_, _) => refresh.ping(),
@@ -179,6 +190,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       identity: ref.read(identityProvider),
       profilePrompted: ref.read(profilePromptedProvider),
       lockedAlert: ref.read(lockedAlertProvider).locked,
+      welcome: ref.read(welcomeProvider),
     ),
     routes: [
       GoRoute(
@@ -192,13 +204,25 @@ final routerProvider = Provider<GoRouter>((ref) {
         ],
       ),
       GoRoute(
+        path: Routes.welcomeLanguage,
+        builder: (_, _) => const LanguageScreen(),
+      ),
+      GoRoute(
+        path: Routes.welcomeIntro,
+        builder: (_, _) => const IntroScreen(),
+      ),
+      GoRoute(
+        path: Routes.welcomePermissions,
+        builder: (_, _) => const PermissionsScreen(),
+      ),
+      GoRoute(
+        path: Routes.signIn,
+        builder: (_, _) => const SignInScreen(standalone: true),
+      ),
+      GoRoute(
         path: Routes.onboarding,
-        builder: (_, _) => const RoleScreen(),
+        builder: (_, _) => const SignInScreen(),
         routes: [
-          GoRoute(
-            path: 'citizen',
-            builder: (_, _) => const CitizenModeScreen(),
-          ),
           GoRoute(
             path: 'institution',
             builder: (_, _) => const InstitutionScreen(),

@@ -3,6 +3,7 @@ import { useId, useState, type SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { ErrorBox, Loading } from "../components/Feedback";
+import { AppReleaseCard, ModerationTermsCard } from "../components/PhaseASettings";
 import { ReasonField } from "../components/Phase9Bits";
 import { useServices } from "../context/services";
 import { errorMessageKey, isApiError } from "../lib/api";
@@ -164,7 +165,10 @@ function SettingCard({
 
 const ints = (v: Values, names: readonly string[]) => names.map((n) => Number(v[n] === "" ? Number.NaN : v[n]));
 
-/** National settings (phase 9 §2): SLA delays and bands, anonymous quota, trusted location accuracy. */
+/**
+ * National settings (phase 9 §2): SLA delays and bands, anonymous quota, trusted location accuracy; phase A: the
+ * mobile release and the extra refused words.
+ */
 export function SettingsPage() {
   const { t } = useTranslation();
   const fmt = useFormat();
@@ -180,6 +184,8 @@ export function SettingsPage() {
   const accuracy = settingOf(items, "geo.max_trusted_accuracy_m");
   const since = settingOf(items, "sla.enforced_since");
   const realSend = settingOf(items, "notify.real_send_enabled");
+  const release = settingOf(items, "app.release");
+  const extraTerms = settingOf(items, "moderation.extra_terms");
   const anyEditable = items.some((s) => s.editable);
   const seconds = t("settings.seconds");
 
@@ -255,6 +261,10 @@ export function SettingsPage() {
           validate={(v) => validateIntRange(Number(v.accuracy === "" ? Number.NaN : v.accuracy), ACCURACY_RANGE)}
         />
       )}
+
+      {release && <AppReleaseCard key={`${release.key}-${release.version}`} setting={release} />}
+
+      {extraTerms && <ModerationTermsCard key={`${extraTerms.key}-${extraTerms.version}`} setting={extraTerms} />}
 
       <section className="card" aria-labelledby="settings-fixed">
         <h2 id="settings-fixed">{t("settings.fixed.title")}</h2>

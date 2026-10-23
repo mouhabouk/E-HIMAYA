@@ -264,7 +264,7 @@ function TextField({
     <div className={`field${err ? " field--invalid" : ""}`}>
       <label htmlFor={id}>
         {label}
-        {required && <span aria-hidden="true"> *</span>}
+        {required && <span className="required-mark" aria-hidden="true"> *</span>}
       </label>
       <input
         id={id}

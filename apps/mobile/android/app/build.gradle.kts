@@ -1,7 +1,19 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+}
+
+// Phase A (addition 3, in-place upgrade): every published APK is signed with the same release key, so a new build
+// installs over the old one and keeps its data. The key stays out of the repository: android/key.properties
+// (storeFile, storePassword, keyAlias, keyPassword) is written by the release machine. Without it, release builds
+// fall back to the debug key (local `flutter run --release` only; such an APK must never be published).
+val releaseKeyFile = rootProject.file("key.properties")
+val releaseKey = Properties().apply {
+    if (releaseKeyFile.exists()) FileInputStream(releaseKeyFile).use { load(it) }
 }
 
 android {
@@ -33,11 +45,20 @@ android {
         manifestPlaceholders["appAuthRedirectScheme"] = "tn.ehimaya.app"
     }
 
+    signingConfigs {
+        if (releaseKeyFile.exists()) {
+            create("release") {
+                storeFile = file(releaseKey.getProperty("storeFile"))
+                storePassword = releaseKey.getProperty("storePassword")
+                keyAlias = releaseKey.getProperty("keyAlias")
+                keyPassword = releaseKey.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // Release signing is configured by the release pipeline (phase 7); debug keys keep
-            // `flutter run --release` working locally.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.findByName("release") ?: signingConfigs.getByName("debug")
         }
     }
 }

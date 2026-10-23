@@ -2,7 +2,7 @@ name: ehimaya
 description: "ء-حماية (e-Himaya) — national emergency reporting app for the Tunisian civil protection."
 publish_to: 'none'
 
-version: 0.2.0+1
+version: 0.3.0+2
 
 environment:
   sdk: ">=3.13.5 <4.0.0"
@@ -60,6 +60,8 @@ flutter:
   assets:
     # Safety tips shipped for the first, possibly offline, launch (copy of services/api/seed).
     - assets/safety_tips.json
+    # Logo of the Office (phase A, addition 1): intro, sign-in and home screens.
+    - assets/brand/logo.png
 
 # SQLCipher for the encrypted offline queue (NFR-04). package:sqlite3 3.x bundles SQLite through
 # build hooks; on Android and iOS we select its SQLCipher build. Host builds (flutter test on

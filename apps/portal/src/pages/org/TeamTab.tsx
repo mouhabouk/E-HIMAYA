@@ -7,7 +7,7 @@ import { useFormat } from "../../lib/hooks";
 import { TEAM_ROLES, type TeamMember, type TeamMemberInput, type TeamRole } from "../../lib/types";
 import { isIntInRange, isValidEmail, isValidPhone, normalizePhone, parseNumber } from "../../lib/validators";
 import { BlockedNote, useOrg } from "./OrgWorkspace";
-import { Field, RowActions, describedBy } from "./RegisterParts";
+import { describedBy, Field, RequiredNote, RowActions } from "./RegisterParts";
 import { useRegister } from "./useRegister";
 
 interface Draft {
@@ -81,6 +81,7 @@ function MemberDialog({
   return (
     <Dialog title={member ? t("team.editTitle") : t("team.addTitle")} onClose={onClose}>
       <form className="form" onSubmit={submit} noValidate>
+        <RequiredNote />
         <div className="form-grid">
           <Field id="tm-name" label={t("team.fullName")} required error={err("full_name")}>
             <input id="tm-name" value={draft.full_name} aria-invalid={!!errors.full_name} aria-describedby={describedBy("tm-name", null, errors.full_name)} onChange={(e) => set({ full_name: e.target.value })} />

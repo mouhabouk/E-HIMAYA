@@ -157,7 +157,7 @@ abstract class AppLocalizations {
   /// No description provided for @charterTitle.
   ///
   /// In en, this message translates to:
-  /// **'Privacy & personal data charter'**
+  /// **'Terms of use'**
   String get charterTitle;
 
   /// No description provided for @charterVersionLabel.
@@ -172,82 +172,10 @@ abstract class AppLocalizations {
   /// **'e-Himaya is the national platform for reporting emergencies to the Civil Protection. Before using it, please read how your data is handled and what your obligations are.'**
   String get charterIntro;
 
-  /// No description provided for @charterDataTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Data we collect and why'**
-  String get charterDataTitle;
-
-  /// No description provided for @charterDataBody.
-  ///
-  /// In en, this message translates to:
-  /// **'For each report: its category, your description, the position of the incident and the photos, videos or voice messages you attach. If you create an account: your name, national ID card (CIN) number, phone number and region. This data is used only to handle emergencies and to inform you of the follow-up of your reports.'**
-  String get charterDataBody;
-
-  /// No description provided for @charterLawTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Legal framework'**
-  String get charterLawTitle;
-
-  /// No description provided for @charterLawBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Your personal data is processed in accordance with Organic Law No. 2004-63 of 27 July 2004 on the protection of personal data and its implementing texts, under the supervision of the National Authority for the Protection of Personal Data (INPDP).'**
-  String get charterLawBody;
-
-  /// No description provided for @charterAnonymousTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Reporting without an account'**
-  String get charterAnonymousTitle;
-
-  /// No description provided for @charterAnonymousBody.
-  ///
-  /// In en, this message translates to:
-  /// **'You may report without an account. The app then uses a random key created on this phone; the platform keeps only a pseudonym derived from it and does not store your IP address. Anonymous reporting from a device can be suspended after confirmed false reports.'**
-  String get charterAnonymousBody;
-
-  /// No description provided for @charterRightsTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Your rights'**
-  String get charterRightsTitle;
-
-  /// No description provided for @charterRightsBody.
-  ///
-  /// In en, this message translates to:
-  /// **'You have the right to access, rectify and object to the processing of your data under the conditions set by law. You can exercise these rights with the platform operator and refer the matter to the INPDP.'**
-  String get charterRightsBody;
-
-  /// No description provided for @charterRetentionTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Security and retention'**
-  String get charterRetentionTitle;
-
-  /// No description provided for @charterRetentionBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Reports waiting to be sent are stored encrypted on your phone. On the platform, data is kept only as long as needed to handle the emergency and to meet legal obligations, and is accessible only to authorised staff.'**
-  String get charterRetentionBody;
-
-  /// No description provided for @charterLiabilityTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Responsibility for false reports'**
-  String get charterLiabilityTitle;
-
-  /// No description provided for @charterLiabilityBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Every report mobilises rescue teams that may be needed elsewhere. Knowingly making a false report or a false alert engages your legal liability and exposes you to prosecution under Tunisian law.'**
-  String get charterLiabilityBody;
-
   /// No description provided for @charterCheckbox.
   ///
   /// In en, this message translates to:
-  /// **'I have read and accept the charter, and I understand that a knowingly false report engages my legal liability.'**
+  /// **'I have read and accept the terms of use, and I understand that a deliberate false report makes me legally liable.'**
   String get charterCheckbox;
 
   /// No description provided for @charterAcceptedOn.
@@ -1213,7 +1141,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsCharter.
   ///
   /// In en, this message translates to:
-  /// **'Read the charter again'**
+  /// **'Terms of use'**
   String get settingsCharter;
 
   /// No description provided for @errorAuthenticationRequired.
@@ -1243,7 +1171,7 @@ abstract class AppLocalizations {
   /// No description provided for @errorConsentRequired.
   ///
   /// In en, this message translates to:
-  /// **'Please accept the charter before reporting.'**
+  /// **'Please accept the terms of use before reporting.'**
   String get errorConsentRequired;
 
   /// No description provided for @errorRateLimited.
@@ -1255,7 +1183,7 @@ abstract class AppLocalizations {
   /// No description provided for @errorUnknownCharterVersion.
   ///
   /// In en, this message translates to:
-  /// **'The charter has changed. Please read it again.'**
+  /// **'The terms of use have changed. Please read them again.'**
   String get errorUnknownCharterVersion;
 
   /// No description provided for @errorClientUuidConflict.
@@ -3825,6 +3753,672 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The limit of reports without an account is reached on this device. Please create an account.'**
   String get errorAnonQuotaExhausted;
+
+  /// No description provided for @intro1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to e-Himaya'**
+  String get intro1Title;
+
+  /// No description provided for @intro1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'e-Himaya finds your position from your phone. In an emergency it sends it with your report straight to the competent Civil Protection operations room, so help reaches you faster and with the right resources.'**
+  String get intro1Body;
+
+  /// No description provided for @intro2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Run by the National Civil Protection Office'**
+  String get intro2Title;
+
+  /// No description provided for @intro2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'This app is provided by the National Civil Protection Office, the public body in charge of rescue, firefighting and disaster response across Tunisia, which answers the 198 emergency line.'**
+  String get intro2Body;
+
+  /// No description provided for @intro3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'When should I use it?'**
+  String get intro3Title;
+
+  /// No description provided for @intro3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Fire, road accident, a person in danger or injured, drowning, collapse, gas leak, flood, or any situation that threatens lives or property and needs Civil Protection.'**
+  String get intro3Body;
+
+  /// No description provided for @intro4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'How does it work?'**
+  String get intro4Title;
+
+  /// No description provided for @intro4Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the type of incident, add a photo, video or voice message if you can do so safely, and send. Your report and position reach the operator at once; you can follow it step by step and the operator may call you back. Without internet the report goes by SMS, and calling 198 is always available.'**
+  String get intro4Body;
+
+  /// No description provided for @intro5Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Where does it work?'**
+  String get intro5Title;
+
+  /// No description provided for @intro5Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Throughout the Republic of Tunisia, in all 24 governorates; your report is routed automatically to the competent regional directorate. Outside Tunisia, call the local emergency number (112 in most countries).'**
+  String get intro5Body;
+
+  /// No description provided for @terms1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'1. Purpose'**
+  String get terms1Title;
+
+  /// No description provided for @terms1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'e-Himaya is a digital platform of the National Civil Protection Office (\"the Office\") for reporting emergencies and following them up. These terms govern the relationship between the Office and the users of the mobile app and the institutions portal.'**
+  String get terms1Body;
+
+  /// No description provided for @terms2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'2. Our mission'**
+  String get terms2Title;
+
+  /// No description provided for @terms2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'To protect lives and property, and to rebuild trust between citizens and Civil Protection through direct and open communication. Describing the incident accurately and showing the scene as it is shortens response time and makes the intervention more effective.'**
+  String get terms2Body;
+
+  /// No description provided for @terms3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'3. Nature and limits of the service'**
+  String get terms3Title;
+
+  /// No description provided for @terms3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'3.1 The app complements 198 and does not replace it. In immediate danger, call 198 directly.\n3.2 The app gives no medical advice; its safety tips are for general awareness and do not replace the instructions of Civil Protection staff.\n3.3 It depends on factors outside the Office\'s control: mobile network and internet coverage, location signal, battery and the condition of the phone. The Office aims for the highest availability and fixes faults as fast as possible.'**
+  String get terms3Body;
+
+  /// No description provided for @terms4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'4. User obligations'**
+  String get terms4Title;
+
+  /// No description provided for @terms4Body.
+  ///
+  /// In en, this message translates to:
+  /// **'4.1 Use the app in good faith and only for real emergencies; give accurate, up-to-date information, especially your phone number.\n4.2 Keep location turned on and use the latest version of the app.\n4.3 Do not put yourself in danger to film, and follow the instructions of responders.\n4.4 Do not harm, disrupt, bypass the protections of, or reverse-engineer the app.'**
+  String get terms4Body;
+
+  /// No description provided for @terms5Title.
+  ///
+  /// In en, this message translates to:
+  /// **'5. False alarms and misuse'**
+  String get terms5Title;
+
+  /// No description provided for @terms5Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Every report sends out rescue teams that other lives may need at the same moment. A deliberate false report or any misuse of the app exposes its author to prosecution under Tunisian law, and may lead to temporary or permanent suspension of the account or of reporting from the device concerned.'**
+  String get terms5Body;
+
+  /// No description provided for @terms6Title.
+  ///
+  /// In en, this message translates to:
+  /// **'6. Institutions\' obligations'**
+  String get terms6Title;
+
+  /// No description provided for @terms6Body.
+  ///
+  /// In en, this message translates to:
+  /// **'A registered institution provides accurate, up-to-date information on its identity, activity, buildings and managers, and is responsible for it. Filing and updating the evacuation plan and building plans makes the intervention easier and shortens search and rescue inside the building. The account is activated only after the Office approves it.'**
+  String get terms6Body;
+
+  /// No description provided for @terms7Title.
+  ///
+  /// In en, this message translates to:
+  /// **'7. Volunteers'**
+  String get terms7Title;
+
+  /// No description provided for @terms7Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Volunteer status is granted only after the Office approves it. Volunteers follow the operations room\'s instructions and act only within the task assigned to them.'**
+  String get terms7Body;
+
+  /// No description provided for @terms8Title.
+  ///
+  /// In en, this message translates to:
+  /// **'8. Personal data protection'**
+  String get terms8Title;
+
+  /// No description provided for @terms8Body.
+  ///
+  /// In en, this message translates to:
+  /// **'8.1 Personal data is processed under Organic Law No. 2004-63 of 27 July 2004 on the protection of personal data, under the supervision of the National Authority for the Protection of Personal Data (INPDP), solely to handle emergencies and to keep you informed about your reports.\n8.2 When you send a report, the Office receives your position, the type of incident, the description and attached media, and your account details if you have an account.\n8.3 Emergency contacts and the text of your SOS message are stored encrypted on your phone only and are never sent to the Office.\n8.4 You can report without an account under a pseudonym; your IP address is not recorded.\n8.5 Only authorised staff can access the data, which is kept as long as needed to handle the case and meet legal obligations. You have the right to access, correct and object to the processing of your data.'**
+  String get terms8Body;
+
+  /// No description provided for @terms9Title.
+  ///
+  /// In en, this message translates to:
+  /// **'9. Changes to the app and these terms'**
+  String get terms9Title;
+
+  /// No description provided for @terms9Body.
+  ///
+  /// In en, this message translates to:
+  /// **'The Office may improve the app or change these terms. You are told about each new version and what it contains, and asked to accept again when the terms change.'**
+  String get terms9Body;
+
+  /// No description provided for @terms10Title.
+  ///
+  /// In en, this message translates to:
+  /// **'10. Applicable law'**
+  String get terms10Title;
+
+  /// No description provided for @terms10Body.
+  ///
+  /// In en, this message translates to:
+  /// **'These terms are governed by Tunisian law; Tunisian courts have jurisdiction over any dispute.'**
+  String get terms10Body;
+
+  /// No description provided for @languageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your language'**
+  String get languageTitle;
+
+  /// No description provided for @languageSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You can change it at any time from the language bar at the top of every screen.'**
+  String get languageSubtitle;
+
+  /// No description provided for @languageMenuTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get languageMenuTooltip;
+
+  /// No description provided for @introSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get introSkip;
+
+  /// No description provided for @introPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Page {current} of {total}'**
+  String introPage(int current, int total);
+
+  /// No description provided for @call198.
+  ///
+  /// In en, this message translates to:
+  /// **'Call 198'**
+  String get call198;
+
+  /// No description provided for @termsScrollHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Scroll to the end of the terms to accept them.'**
+  String get termsScrollHint;
+
+  /// No description provided for @termsAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'I accept'**
+  String get termsAccept;
+
+  /// No description provided for @termsDecline.
+  ///
+  /// In en, this message translates to:
+  /// **'I decline'**
+  String get termsDecline;
+
+  /// No description provided for @termsDeclinedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms not accepted'**
+  String get termsDeclinedTitle;
+
+  /// No description provided for @termsDeclinedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Without accepting the terms you cannot use the app, but calling 198 is always available.'**
+  String get termsDeclinedBody;
+
+  /// No description provided for @termsReadAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Read the terms'**
+  String get termsReadAgain;
+
+  /// No description provided for @permissionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Permissions'**
+  String get permissionsTitle;
+
+  /// No description provided for @permissionsIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'e-Himaya asks only for what it needs to help you. You can change these choices later in your phone settings.'**
+  String get permissionsIntro;
+
+  /// No description provided for @permLocationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get permLocationTitle;
+
+  /// No description provided for @permLocationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent with your report so help finds you. Without it you must describe the place and help may take longer.'**
+  String get permLocationBody;
+
+  /// No description provided for @permNotificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get permNotificationsTitle;
+
+  /// No description provided for @permNotificationsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow-up of your reports and public alerts near you. Without them you will not be warned of a danger in your area.'**
+  String get permNotificationsBody;
+
+  /// No description provided for @permSmsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'SMS'**
+  String get permSmsTitle;
+
+  /// No description provided for @permSmsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Without internet your report leaves by SMS. No permission is needed: the app opens a ready message that you send yourself.'**
+  String get permSmsBody;
+
+  /// No description provided for @permContactsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Contacts'**
+  String get permContactsTitle;
+
+  /// No description provided for @permContactsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Asked only when you choose an emergency contact, later.'**
+  String get permContactsBody;
+
+  /// No description provided for @permAllow.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow'**
+  String get permAllow;
+
+  /// No description provided for @permAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Allowed'**
+  String get permAllowed;
+
+  /// No description provided for @permRefused.
+  ///
+  /// In en, this message translates to:
+  /// **'Refused: you can allow it in the phone settings'**
+  String get permRefused;
+
+  /// No description provided for @permNoneNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'No permission needed'**
+  String get permNoneNeeded;
+
+  /// No description provided for @permLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get permLater;
+
+  /// No description provided for @signInTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get signInTitle;
+
+  /// No description provided for @signInIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with your mobile number: we send you a code by SMS. No password.'**
+  String get signInIntro;
+
+  /// No description provided for @signInPhoneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile number'**
+  String get signInPhoneLabel;
+
+  /// No description provided for @signInPhoneHint.
+  ///
+  /// In en, this message translates to:
+  /// **'8 digits'**
+  String get signInPhoneHint;
+
+  /// No description provided for @signInPhoneInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a Tunisian mobile number: 8 digits starting with 2, 3, 4, 5 or 9.'**
+  String get signInPhoneInvalid;
+
+  /// No description provided for @signInSendCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Send the code'**
+  String get signInSendCode;
+
+  /// No description provided for @signInCodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Code received by SMS'**
+  String get signInCodeLabel;
+
+  /// No description provided for @signInCodeSentTo.
+  ///
+  /// In en, this message translates to:
+  /// **'A 6-digit code was sent to {phone}.'**
+  String signInCodeSentTo(String phone);
+
+  /// No description provided for @signInVerify.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get signInVerify;
+
+  /// No description provided for @signInResendIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend the code in {seconds} s'**
+  String signInResendIn(int seconds);
+
+  /// No description provided for @signInResend.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend the code'**
+  String get signInResend;
+
+  /// No description provided for @signInChangeNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Change the number'**
+  String get signInChangeNumber;
+
+  /// No description provided for @signInWrongCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong code. Tries left: {tries}.'**
+  String signInWrongCode(int tries);
+
+  /// No description provided for @signInCodeExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'The code expired or was used up. Ask for a new one.'**
+  String get signInCodeExpired;
+
+  /// No description provided for @signInTooSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait a minute before asking for a new code.'**
+  String get signInTooSoon;
+
+  /// No description provided for @signInLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many codes for this number. Try again in an hour.'**
+  String get signInLimit;
+
+  /// No description provided for @signInSmsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The SMS could not be sent. Try again, or continue as a guest.'**
+  String get signInSmsUnavailable;
+
+  /// No description provided for @signInNetworkError.
+  ///
+  /// In en, this message translates to:
+  /// **'No connection. Check your internet and try again.'**
+  String get signInNetworkError;
+
+  /// No description provided for @signInGuest.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue as a guest'**
+  String get signInGuest;
+
+  /// No description provided for @signInGuestDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Report without an account (a limited number of reports).'**
+  String get signInGuestDesc;
+
+  /// No description provided for @signInInstitution.
+  ///
+  /// In en, this message translates to:
+  /// **'Institution account'**
+  String get signInInstitution;
+
+  /// No description provided for @signInInstitutionDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'For companies, schools, hotels and administrations.'**
+  String get signInInstitutionDesc;
+
+  /// No description provided for @signInEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with e-mail and password'**
+  String get signInEmail;
+
+  /// No description provided for @signInPrivacyNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Your number is used only to reach you about your reports.'**
+  String get signInPrivacyNote;
+
+  /// No description provided for @simBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'[SIM] Simulation: the SMS goes to the test gateway (notify-sim), not to a real phone.'**
+  String get simBanner;
+
+  /// No description provided for @homeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tunisian Civil Protection'**
+  String get homeSubtitle;
+
+  /// No description provided for @homeReportCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report an incident'**
+  String get homeReportCardTitle;
+
+  /// No description provided for @homeReportCardDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo, voice or text, with your position automatically'**
+  String get homeReportCardDesc;
+
+  /// No description provided for @homeNumbersOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Work without internet'**
+  String get homeNumbersOffline;
+
+  /// No description provided for @homeShortcuts.
+  ///
+  /// In en, this message translates to:
+  /// **'Shortcuts'**
+  String get homeShortcuts;
+
+  /// No description provided for @homeMyReports.
+  ///
+  /// In en, this message translates to:
+  /// **'My reports'**
+  String get homeMyReports;
+
+  /// No description provided for @homeSosMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'SOS message'**
+  String get homeSosMessage;
+
+  /// No description provided for @homeCall198.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency call 198'**
+  String get homeCall198;
+
+  /// No description provided for @locationOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Location on'**
+  String get locationOn;
+
+  /// No description provided for @locationOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Location is off: help may take longer to find you.'**
+  String get locationOff;
+
+  /// No description provided for @locationTurnOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on'**
+  String get locationTurnOn;
+
+  /// No description provided for @locationChecking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking location…'**
+  String get locationChecking;
+
+  /// No description provided for @themeToggleTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Light or dark'**
+  String get themeToggleTooltip;
+
+  /// No description provided for @settingsColors.
+  ///
+  /// In en, this message translates to:
+  /// **'Colours'**
+  String get settingsColors;
+
+  /// No description provided for @colorOffice.
+  ///
+  /// In en, this message translates to:
+  /// **'Civil Protection (logo)'**
+  String get colorOffice;
+
+  /// No description provided for @colorRed.
+  ///
+  /// In en, this message translates to:
+  /// **'Red'**
+  String get colorRed;
+
+  /// No description provided for @colorBlue.
+  ///
+  /// In en, this message translates to:
+  /// **'Blue'**
+  String get colorBlue;
+
+  /// No description provided for @colorGreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Green'**
+  String get colorGreen;
+
+  /// No description provided for @updateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A new version is available'**
+  String get updateTitle;
+
+  /// No description provided for @updateMandatoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update required'**
+  String get updateMandatoryTitle;
+
+  /// No description provided for @updateMandatoryBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This version is no longer supported. Update to keep using e-Himaya. Emergency numbers stay available.'**
+  String get updateMandatoryBody;
+
+  /// No description provided for @updateWhatsNew.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s new in {version}'**
+  String updateWhatsNew(String version);
+
+  /// No description provided for @updateDataKept.
+  ///
+  /// In en, this message translates to:
+  /// **'Your reports and settings are kept.'**
+  String get updateDataKept;
+
+  /// No description provided for @updateNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get updateNow;
+
+  /// No description provided for @updateLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get updateLater;
+
+  /// No description provided for @updateOpenFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The download page could not be opened.'**
+  String get updateOpenFailed;
+
+  /// No description provided for @requiredNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Fields marked * are required.'**
+  String get requiredNote;
+
+  /// No description provided for @requiredSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'required'**
+  String get requiredSemantics;
+
+  /// No description provided for @errorOffensiveText.
+  ///
+  /// In en, this message translates to:
+  /// **'This text contains words that are not allowed. Please rephrase it.'**
+  String get errorOffensiveText;
 }
 
 class _AppLocalizationsDelegate

@@ -89,7 +89,8 @@ export function Layout() {
       </a>
       <header className="header">
         <Link to="/" className="header__brand">
-          <img src="/favicon.svg" alt="" width="28" height="28" />
+          {/* Logo of the Office (phase A, §2.5): the name next to it is the accessible text. */}
+          <img src="/brand/logo.png" alt="" width="32" height="32" className="header__logo" />
           <span>{t("app.name")}</span>
         </Link>
         <nav aria-label={t("nav.main")} className="header__nav">

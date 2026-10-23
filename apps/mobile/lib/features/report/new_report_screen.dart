@@ -177,7 +177,7 @@ class _NewReportScreenState extends ConsumerState<NewReportScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(categoryLabel(l10n, widget.category)),
-        actions: const [EmergencyNumbersAction()],
+        actions: const [StandardAppBarActions()],
       ),
       body: SafeArea(
         child: AbsorbPointer(

@@ -32,7 +32,7 @@ class RecordingConsent implements ConsentSender {
     if (!force) return true;
     forced++;
     await api.postConsent(
-      charterVersion: '2026-10',
+      charterVersion: '2026-11',
       locale: 'ar',
       platform: 'android',
     );
@@ -189,13 +189,13 @@ void main() {
     adapter.handler = (r) {
       if (r.path == '/api/v1/consents') {
         expect(r.json, {
-          'charter_version': '2026-10',
+          'charter_version': '2026-11',
           'locale': 'ar',
           'platform': 'android',
         });
         return const FakeResponse(
           201,
-          json: {'charter_version': '2026-10', 'accepted_at': 'x'},
+          json: {'charter_version': '2026-11', 'accepted_at': 'x'},
         );
       }
       reportCalls++;
