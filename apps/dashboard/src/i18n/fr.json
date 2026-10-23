@@ -34,7 +34,8 @@
     "audit": "Audit",
     "breakGlass": "Accès exceptionnels",
     "layers": "Couches de la carte",
-    "emergencyGuide": "Centre d’urgence"
+    "emergencyGuide": "Centre d’urgence",
+    "contact": "Nous contacter"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -282,7 +283,8 @@
     "not_last_import": "Seul le dernier import publié peut être annulé.",
     "duplicate_id": "Un lieu a déjà cet identifiant.",
     "outside_tunisia": "Position hors de Tunisie.",
-    "cannot_move": "Impossible de déplacer dans ce sens."
+    "cannot_move": "Impossible de déplacer dans ce sens.",
+    "text_required": "Une note, une réponse ou un motif est nécessaire."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -3186,6 +3188,12 @@
         "length": "Chaque ligne compte de {{min}} à {{max}} caractères.",
         "count": "Au plus {{count}} mots."
       }
+    },
+    "accessInfoDays": {
+      "title": "Délai d’accès à l’information",
+      "help": "Jours dont dispose l’Office pour répondre à une demande d’accès à l’information envoyée par « Nous contacter » (loi 2016-22, art. 14 : 20 jours). À confirmer par le service juridique.",
+      "label": "Délai",
+      "unit": "jours"
     }
   },
   "accounts": {
@@ -3529,6 +3537,75 @@
       "electric": "Électricité",
       "poison": "Intoxication",
       "pin": "Autre"
+    }
+  },
+  "contact": {
+    "title": "Nous contacter : demandes",
+    "intro": "Demandes envoyées depuis l’application : accès à l’information (loi 2016-22, avec son délai légal), dangers non urgents, questions, suggestions, problèmes de l’application et partenariats. Ce n’est pas un canal d’urgence : l’application invite à appeler le 198.",
+    "kind": "Type",
+    "allKinds": "Tous les types",
+    "status": "Statut",
+    "openOnly": "Ouvertes (reçues, en cours)",
+    "allStatuses": "Tous les statuts",
+    "gouvernorat": "Gouvernorat",
+    "allGouvernorats": "Tous",
+    "national": "National (sans gouvernorat)",
+    "overdueOnly": "En retard uniquement ({{count}})",
+    "overdue": "En retard",
+    "dueOn": "Échéance le {{date}}",
+    "number": "Numéro",
+    "subject": "Objet",
+    "received": "Reçue",
+    "due": "Échéance",
+    "empty": "Aucune demande ne correspond à ces filtres.",
+    "truncated": "Seules les 500 premières demandes sont listées : affinez les filtres.",
+    "requester": "Demandeur",
+    "anonymous": "Sans coordonnées (réponse dans l’application seulement)",
+    "assigned": "Traitée par",
+    "answer": "Réponse envoyée",
+    "rejectReason": "Motif communiqué",
+    "history": "Historique",
+    "internal": "interne",
+    "moveTo": "Transférer vers",
+    "confirm": "Confirmer",
+    "noteHint": "Note interne : jamais montrée au demandeur.",
+    "visibleHint": "Ce texte est montré au demandeur dans l’application.",
+    "textRange": "Entre {{min}} et {{max}} caractères.",
+    "kinds": {
+      "access_info": "Accès à l’information",
+      "hazard": "Danger non urgent",
+      "question": "Question",
+      "suggestion": "Suggestion",
+      "app_problem": "Problème de l’application",
+      "partnership": "Partenariat"
+    },
+    "statuses": {
+      "received": "Reçue",
+      "in_progress": "En cours",
+      "answered": "Répondue",
+      "closed": "Clôturée",
+      "rejected": "Rejetée"
+    },
+    "actions": {
+      "take": "Prendre en charge",
+      "answer": "Répondre",
+      "note": "Ajouter une note",
+      "move": "Transférer",
+      "close": "Clôturer",
+      "reject": "Rejeter",
+      "reopen": "Rouvrir"
+    },
+    "textLabel": {
+      "answer": "Réponse au demandeur",
+      "note": "Note interne",
+      "reject": "Motif communiqué au demandeur"
+    },
+    "events": {
+      "created": "Reçue",
+      "status": "Statut",
+      "answer": "Répondue",
+      "note": "Note",
+      "move": "Transférée"
     }
   }
 }

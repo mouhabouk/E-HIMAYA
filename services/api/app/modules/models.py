@@ -4,6 +4,7 @@ from app.modules.ai.models import AiSettingsRow, Analysis
 from app.modules.analytics.models import Notification, Scenario, Schedule
 from app.modules.analytics.models import Report as AnalyticsReport
 from app.modules.audit.models import AuditLog
+from app.modules.contact.models import ContactEvent, ContactRequest
 from app.modules.content.models import GuideItem, GuideTopic, Revision, SafetyTip
 from app.modules.decision.models import ProcedureChunk
 from app.modules.evidence.models import Anchor, Leaf
@@ -68,6 +69,8 @@ __all__ = [
     "Conference",
     "Consent",
     "ConsumerCursor",
+    "ContactEvent",
+    "ContactRequest",
     "Delegation",
     "Device",
     "Directive",

@@ -21,6 +21,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.crypto import get_cipher
 from app.core.db import get_session
 from app.modules.audit import service as audit
+from app.modules.contact import router as contact
 from app.modules.identity.models import Account, Consent, ErasureRequest, Profile
 from app.modules.identity.router import MedicalInfo
 from app.modules.identity.service import CurrentReporter, limit_reporter
@@ -178,6 +179,8 @@ class ExportOut(BaseModel):
     rewards: rewards.ExportRewards
     devices: list[ExportDevice]
     messages: list[ExportMessage]
+    # Phase B1: "contact us" requests, with the contact details given.
+    contact: list[contact.ExportContact]
 
 
 class DeleteIn(BaseModel):
@@ -368,6 +371,7 @@ async def export_my_data(
             ExportMessage(id=m.id, kind=m.kind, title=m.title, body=m.body, published_at=m.published_at)
             for m in messages
         ],
+        contact=await contact.export(session, user_id),
     )
     await audit.record(
         session,
@@ -416,6 +420,7 @@ async def delete_my_account(request: Request, body: DeleteIn, reporter: CurrentR
     details.update(await telephony.forget(session, user_id))
     # Phase 8: ledger and badges deleted, nominations anonymised, certificates detached (PDF removed).
     details.update(await rewards.forget(session, user_id))
+    details["contact_requests_detached"] = await contact.forget(session, user_id)
     details["profile"] = (await session.execute(delete(Profile).where(Profile.user_id == user_id))).rowcount > 0  # type: ignore[attr-defined]
     details["devices"] = (await session.execute(delete(Device).where(Device.user_id == user_id))).rowcount  # type: ignore[attr-defined]
     await session.execute(delete(Outbox).where(Outbox.user_id == user_id, Outbox.status == "pending"))

@@ -16,6 +16,8 @@ import {
 
 export const QUOTA_RANGE = { min: 1, max: 100 } as const;
 export const ACCURACY_RANGE = { min: 50, max: 20000 } as const;
+/** Days to answer an access-to-information request (phase B1, law 2016-22 art. 14 by default). */
+export const ACCESS_INFO_DAYS_RANGE = { min: 1, max: 60 } as const;
 export const DELAY_RANGE = { min: 15, max: 3600 } as const;
 export const BAND_RANGE = { min: 0, max: 100 } as const;
 export const REASON_RANGE = { min: 5, max: 500 } as const;

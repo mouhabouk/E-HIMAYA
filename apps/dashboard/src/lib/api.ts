@@ -145,6 +145,7 @@ export const ERROR_CODES = [
   "duplicate_id",
   "outside_tunisia",
   "cannot_move",
+  "text_required",
   "rate_limited",
   "validation_error",
   "bad_request",
