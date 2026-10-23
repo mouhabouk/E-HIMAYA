@@ -28,6 +28,7 @@ import {
   type MapLayers,
 } from "../lib/layers";
 import { layerKeys, type Download } from "../lib/layersApi";
+import { SimTag } from "../components/StreamBits";
 import { localized } from "../lib/localized";
 import { TUNISIA_BOUNDS } from "../lib/mapStyle";
 import { reasonValid } from "../lib/phase9";
@@ -67,6 +68,7 @@ function draftOf(layer: MapLayer | null, palette: readonly string[]): Draft {
       source: "",
       licence: "",
       to_verify: true,
+      simulated: false,
       staff_only: ["manager"],
       editors_allowed: false,
       enabled: true,
@@ -81,6 +83,7 @@ function draftOf(layer: MapLayer | null, palette: readonly string[]): Draft {
     source: layer.source,
     licence: layer.licence,
     to_verify: layer.to_verify,
+    simulated: layer.simulated,
     staff_only: [...layer.staff_only],
     editors_allowed: layer.editors_allowed,
     enabled: layer.enabled,
@@ -268,6 +271,14 @@ function LayerForm({
           onChange={(e) => setDraft({ ...draft, to_verify: e.target.checked })}
         />
         <span>{t("layers.form.toVerify")}</span>
+      </label>
+      <label className="checkbox">
+        <input
+          type="checkbox"
+          checked={draft.simulated}
+          onChange={(e) => setDraft({ ...draft, simulated: e.target.checked })}
+        />
+        <span>{t("layers.form.simulated")}</span>
       </label>
       <label className="checkbox">
         <input
@@ -1018,6 +1029,7 @@ function LayerDetail({ layer, meta }: { layer: MapLayer; meta: MapLayers }) {
       <p className="muted">
         {[layer.source, layer.licence].filter(Boolean).join(" · ") || t("layers.list.noSource")}
         {layer.to_verify && <span className="chip chip--to-verify">{t("layers.toVerify")}</span>}
+        {layer.simulated && <SimTag label={t("layers.simulated")} />}
       </p>
       <ExportButtons layer={layer} />
       {layer.can_manage && <LayerForm key={`${layer.key}-${layer.version}`} layer={layer} meta={meta} onDone={() => undefined} />}
@@ -1110,6 +1122,7 @@ export function LayersPage() {
                     <td>
                       <LayerSwatch layer={l} /> <span dir="auto">{localized(l.name, lang)}</span>
                       {l.to_verify && <span className="chip chip--to-verify">{t("layers.toVerify")}</span>}
+                      {l.simulated && <SimTag label={t("layers.simulated")} />}
                     </td>
                     <td>{t(`layers.audience.${l.audience}`)}</td>
                     <td className="num">

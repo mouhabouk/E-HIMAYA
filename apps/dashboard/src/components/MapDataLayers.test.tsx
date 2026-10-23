@@ -30,6 +30,7 @@ const layer = (key: string, fr: string, colour: string): MapLayer =>
     source: "",
     licence: "",
     to_verify: false,
+    simulated: true,
     staff_only: ["manager"],
     editors_allowed: false,
     enabled: true,
@@ -84,6 +85,8 @@ describe("useMapDataLayers", () => {
     });
     renderApp(<Harness />, { api, auth: fakeAuth(OPERATOR_CLAIMS), lang: "fr" });
     fireEvent.click(await screen.findByRole("checkbox", { name: /Hôpitaux/ }));
+    // Approximate trial places carry the [SIM] mark in the switcher.
+    expect(screen.getAllByTitle("Lieux approximatifs inventés (simulation)")).toHaveLength(2);
     fireEvent.click(screen.getByRole("checkbox", { name: /Abris/ }));
     await waitFor(() => expect(screen.getAllByRole("listitem")).toHaveLength(2));
     expect(screen.getByText(/Charles Nicolle \| Téléphone: \+216 71 578 000 ; Responsable: Dr C ; Horaires: 24\/7 \| #C62828/)).toBeInTheDocument();

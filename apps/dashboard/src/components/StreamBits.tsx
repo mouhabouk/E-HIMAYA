@@ -32,13 +32,17 @@ export function SimulationBand({ note }: { note?: string }) {
   );
 }
 
-/** `[SIM]` marker of a simulated stream (the text is the contract's prefix; the accessible name says what it is). */
-export function SimTag() {
+/**
+ * `[SIM]` marker of simulated data (the text is the contract's prefix; the accessible name says what it is): a
+ * simulated stream by default, or what `label` says (e.g. a map layer of approximate trial places, phase B1).
+ */
+export function SimTag({ label }: { label?: string }) {
   const { t } = useTranslation();
+  const title = label ?? t("streams.sim.tagTitle");
   return (
-    <span className="tag tag--sim" title={t("streams.sim.tagTitle")}>
+    <span className="tag tag--sim" title={title}>
       <span aria-hidden="true">[SIM]</span>
-      <span className="visually-hidden">{t("streams.sim.tagTitle")}</span>
+      <span className="visually-hidden">{title}</span>
     </span>
   );
 }

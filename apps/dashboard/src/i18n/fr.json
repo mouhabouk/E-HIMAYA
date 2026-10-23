@@ -3375,7 +3375,8 @@
         "icon": "Choisissez une icône.",
         "colour": "Choisissez une couleur de la liste.",
         "source": "Source ou licence trop longue."
-      }
+      },
+      "simulated": "Données approximatives d'essai [SIM] : lieux inventés, à ne rendre publics que pour un essai"
     },
     "icons": {
       "hospital": "Hôpital",
@@ -3479,7 +3480,8 @@
       "lon": "Longitude",
       "empty": "Aucun lieu.",
       "count": "{{shown}} sur {{total}}"
-    }
+    },
+    "simulated": "Lieux approximatifs inventés (simulation)"
   },
   "guide": {
     "title": "Centre d’urgence : thèmes et fiches",

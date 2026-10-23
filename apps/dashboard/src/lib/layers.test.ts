@@ -12,6 +12,7 @@ const BASE = {
   source: "OpenStreetMap",
   licence: "ODbL",
   to_verify: true,
+  simulated: false,
   staff_only: ["manager"],
   editors_allowed: false,
 };
