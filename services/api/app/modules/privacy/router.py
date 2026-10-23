@@ -19,7 +19,7 @@ from sqlalchemy import cast, delete, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.crypto import get_cipher
-from app.core.db import get_session
+from app.core.db import as_system, get_session
 from app.modules.audit import service as audit
 from app.modules.contact import router as contact
 from app.modules.identity.models import Account, Consent, ErasureRequest, Profile
@@ -28,8 +28,10 @@ from app.modules.identity.service import CurrentReporter, limit_reporter
 from app.modules.notify.models import Device, Message, Outbox
 from app.modules.orgs.domain import OrgRole
 from app.modules.orgs.models import Member
-from app.modules.reports.models import Media, Report, StatusHistory
+from app.modules.reports.models import Media, MedicalAttachment, Report, StatusHistory
 from app.modules.rewards import privacy as rewards
+from app.modules.safety import history as safety_history
+from app.modules.safety import service as safety
 from app.modules.streams import mediamtx
 from app.modules.streams import service as streams
 from app.modules.streams.domain import ACTIVE as ACTIVE_STREAMS
@@ -421,6 +423,18 @@ async def delete_my_account(request: Request, body: DeleteIn, reporter: CurrentR
     # Phase 8: ledger and badges deleted, nominations anonymised, certificates detached (PDF removed).
     details.update(await rewards.forget(session, user_id))
     details["contact_requests_detached"] = await contact.forget(session, user_id)
+    # Phase B2: personal safety rows (system scope: the alerts received and the links have other owners too) and the
+    # medical files attached to the person's reports.
+    async with as_system(session) as system:
+        details.update(await safety.forget(system, user_id))
+        details["location_points"] = await safety_history.forget(system, user_id)
+        details["medical_files"] = (
+            await system.execute(
+                delete(MedicalAttachment).where(
+                    MedicalAttachment.report_id.in_(select(Report.id).where(Report.user_id == user_id))
+                )
+            )
+        ).rowcount  # type: ignore[attr-defined]
     details["profile"] = (await session.execute(delete(Profile).where(Profile.user_id == user_id))).rowcount > 0  # type: ignore[attr-defined]
     details["devices"] = (await session.execute(delete(Device).where(Device.user_id == user_id))).rowcount  # type: ignore[attr-defined]
     await session.execute(delete(Outbox).where(Outbox.user_id == user_id, Outbox.status == "pending"))

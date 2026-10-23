@@ -1057,6 +1057,11 @@ erDiagram
         datetime stored_at
         datetime created_at
     }
+    reports__medical_attachment {
+        uuid report_id PK,FK
+        blob data_enc
+        datetime attached_at
+    }
     reports__report {
         uuid id PK
         text tracking_code
@@ -1163,6 +1168,7 @@ erDiagram
     reports__report ||--o{ reports__escalation : "report_id"
     reports__report ||--o{ reports__live_stream : "report_id"
     reports__report ||--o{ reports__media : "report_id"
+    reports__report ||--o{ reports__medical_attachment : "report_id"
     reports__report ||--o{ reports__reporter_context : "report_id"
     reports__report ||--o{ reports__status_history : "report_id"
 ```
@@ -1332,6 +1338,17 @@ erDiagram
         smallint battery
         datetime updated_at
     }
+    safety__location_history {
+        uuid owner_id PK,FK
+        datetime started_at
+        datetime until
+    }
+    safety__location_point {
+        bigint id PK
+        uuid owner_id FK
+        datetime at
+        blob position_enc
+    }
     safety__safety_check {
         uuid id PK
         uuid owner_id FK
@@ -1351,6 +1368,8 @@ erDiagram
     identity__account ||--o{ safety__link : "user_a"
     identity__account ||--o{ safety__link : "user_b"
     identity__account ||--o{ safety__live_share : "owner_id"
+    identity__account ||--o{ safety__location_history : "owner_id"
+    identity__account ||--o{ safety__location_point : "owner_id"
     identity__account ||--o{ safety__safety_check : "owner_id"
     safety__alert ||--o{ safety__alert_recipient : "alert_id"
     safety__alert ||--o{ safety__safety_check : "alert_id"

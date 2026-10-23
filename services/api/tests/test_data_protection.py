@@ -11,14 +11,14 @@ from typing import Any
 import httpx
 import pytest
 from pydantic import SecretStr
-from sqlalchemy import text
+from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core import crypto
 from app.core.config import Settings, get_settings, parse_keyring
 from app.core.crypto import FieldCipher, get_cipher, search_terms
 from app.core.db import get_system_sessionmaker
-from app.modules.identity.models import DETACHED_ACCOUNT_ID, phone_index
+from app.modules.identity.models import DETACHED_ACCOUNT_ID, Profile, phone_index
 from app.modules.privacy import cli, retention, rotation
 from tests.conftest import (
     SFAX,
@@ -50,7 +50,6 @@ def profile_body(**overrides: Any) -> dict[str, Any]:
         "delegation_id": 6101,
         "address": f"Impasse des Jasmins {secrets.token_hex(3)}",
         "locale": "fr",
-        "medical": {"blood_group": "O-", "allergies": "pénicilline", "emergency_contact_phone": "+21698765432"},
     }
     body.update(overrides)
     return body
@@ -132,32 +131,47 @@ async def test_profile_fields_are_encrypted_at_rest(
     r = await client.put("/api/v1/me/profile", json=body, headers=headers)
     assert r.status_code == 200, r.text
     out = r.json()
-    assert out["phone"] == body["phone"] and out["address"] == body["address"]
-    assert out["medical"] == {
-        "blood_group": "O-",
-        "conditions": None,
-        "allergies": "pénicilline",
-        "medications": None,
-        "emergency_contact_name": None,
-        "emergency_contact_phone": "+21698765432",
-    }
+    assert out["phone"] == body["phone"] and out["address"] == body["address"] and out["medical"] is None
     assert (await client.get("/api/v1/me/profile", headers=headers)).json() == out
 
     row = await raw_row(
         session, "SELECT p::text FROM identity.profile p WHERE phone_hash = :h", h=phone_index(body["phone"])
     )
-    for clear in (body["phone"], body["phone"][4:], body["address"], "pénicilline", "O-", body["cin"]):
+    for clear in (body["phone"], body["phone"][4:], body["address"], body["cin"]):
         assert clear not in row
     assert "Amel" in row  # names stay in clear (partial search of volunteers), by design
 
-    # Omitting "medical" keeps it; null erases it.
-    again = profile_body(cin=body["cin"], phone=body["phone"])
-    del again["medical"]
-    assert (await client.put("/api/v1/me/profile", json=again, headers=headers)).json()["medical"] == out["medical"]
-    erased = (await client.put("/api/v1/me/profile", json={**again, "medical": None}, headers=headers)).json()
-    assert erased["medical"] is None
-    r = await client.put("/api/v1/me/profile", json=profile_body(medical={"blood_group": "Z+"}), headers=headers)
+
+async def test_profile_medical_file_moved_to_the_phone(
+    client: httpx.AsyncClient, make_token: TokenFactory, session: AsyncSession
+) -> None:
+    """Phase B2 (addition 7b): the medical file lives on the phone. The profile no longer stores one; a file stored
+    before stays encrypted, readable by its owner and erasable with null."""
+    headers = citizen_headers(make_token)
+    body = profile_body()
+    assert (await client.put("/api/v1/me/profile", json=body, headers=headers)).status_code == 200
+    medical = {"blood_group": "O-", "allergies": "pénicilline", "emergency_contact_phone": "+21698765432"}
+    r = await client.put("/api/v1/me/profile", json={**body, "medical": medical}, headers=headers)
+    assert r.status_code == 410 and r.json()["detail"] == "medical_moved_to_phone"
+    r = await client.put("/api/v1/me/profile", json={**body, "medical": {"blood_group": "Z+"}}, headers=headers)
     assert r.status_code == 422
+
+    # A file stored before phase B2.
+    profile = await session.scalar(select(Profile).where(Profile.phone_hash == phone_index(body["phone"])))
+    assert profile is not None
+    profile.medical = medical
+    await session.commit()
+    row = await raw_row(
+        session, "SELECT p::text FROM identity.profile p WHERE phone_hash = :h", h=phone_index(body["phone"])
+    )
+    assert "pénicilline" not in row and "O-" not in row
+    out = (await client.get("/api/v1/me/profile", headers=headers)).json()
+    assert out["medical"]["allergies"] == "pénicilline"
+    assert (await client.get("/api/v1/me/export", headers=headers)).json()["profile"]["medical"]["blood_group"] == "O-"
+    # Omitting "medical" keeps it; null erases it.
+    assert (await client.put("/api/v1/me/profile", json=body, headers=headers)).json()["medical"] == out["medical"]
+    erased = (await client.put("/api/v1/me/profile", json={**body, "medical": None}, headers=headers)).json()
+    assert erased["medical"] is None
 
 
 async def test_report_text_is_encrypted_and_still_searchable(
@@ -501,7 +515,7 @@ async def test_export_registered_citizen(
     assert data["account"]["kind"] == "citizen"
     profile = data["profile"]
     assert profile["cin"] == body["cin"] and profile["phone"] == body["phone"] and profile["address"] == body["address"]
-    assert profile["medical"]["allergies"] == "pénicilline"
+    assert profile["medical"] is None
     assert [c["charter_version"] for c in data["consents"]] == ["2026-11"]
     [exported] = data["reports"]
     assert exported["id"] == report["id"] and exported["text"] == "Inondation rue 5"

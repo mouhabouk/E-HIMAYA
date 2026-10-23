@@ -183,6 +183,25 @@ async def fire_due_checks(session: AsyncSession, now: datetime | None = None) ->
     return len(due)
 
 
+# ---------------------------------------------------------------- erasure (POST /me/delete)
+
+
+async def forget(session: AsyncSession, user_id: uuid.UUID) -> dict[str, int]:
+    """Right to erasure: links, invitations, live shares, safety checks and the alerts sent or received go at once
+    (the account row stays as a tombstone, so nothing would cascade)."""
+    counts: dict[str, int] = {}
+    for name, stmt in (
+        ("safety_links", delete(Link).where(or_(Link.user_a == user_id, Link.user_b == user_id))),
+        ("safety_invitations", delete(Invitation).where(Invitation.inviter_id == user_id)),
+        ("safety_checks", delete(SafetyCheck).where(SafetyCheck.owner_id == user_id)),
+        ("safety_alerts", delete(Alert).where(Alert.sender_id == user_id)),
+        ("safety_received", delete(AlertRecipient).where(AlertRecipient.recipient_id == user_id)),
+        ("safety_live_shares", delete(LiveShare).where(LiveShare.owner_id == user_id)),
+    ):
+        counts[name] = (await session.execute(stmt)).rowcount  # type: ignore[attr-defined]
+    return counts
+
+
 # ---------------------------------------------------------------- retention (privacy/retention.py JOBS)
 
 

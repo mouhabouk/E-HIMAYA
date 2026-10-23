@@ -29,6 +29,8 @@ CONTACT_ACCESS_INFO_DAYS = "contact.access_info_days"
 # Phase B2: longest live location share (minutes) and longest safety check (hours).
 SAFETY_LIVE_MAX_MINUTES = "safety.live_max_minutes"
 SAFETY_CHECK_MAX_HOURS = "safety.check_max_hours"
+# Phase B2: the 72-hour location history, off until the Office's legal review (design-b2 §6).
+SAFETY_LOCATION_HISTORY = "safety.location_history"
 
 BANDS = ("critical", "high", "normal", "low")
 
@@ -150,6 +152,7 @@ DEFAULTS: dict[str, Any] = {
     CONTACT_ACCESS_INFO_DAYS: 20,
     SAFETY_LIVE_MAX_MINUTES: 480,
     SAFETY_CHECK_MAX_HOURS: 24,
+    SAFETY_LOCATION_HISTORY: False,
 }
 
 # Roles allowed to change each key (national scope required). Missing = read-only.
@@ -164,6 +167,7 @@ EDITORS: dict[str, frozenset[Role]] = {
     CONTACT_ACCESS_INFO_DAYS: frozenset({Role.CENTRAL_COMMITTEE}),
     SAFETY_LIVE_MAX_MINUTES: frozenset({Role.SYSADMIN}),
     SAFETY_CHECK_MAX_HOURS: frozenset({Role.SYSADMIN}),
+    SAFETY_LOCATION_HISTORY: frozenset({Role.SYSADMIN}),
 }
 # Keys no one may change in phase 9: enabling them needs a formal approval outside the platform (§7.4).
 FORMAL_APPROVAL = frozenset({NOTIFY_REAL_SEND})
@@ -179,6 +183,7 @@ VALIDATORS: dict[str, Callable[[Any], Any]] = {
     CONTACT_ACCESS_INFO_DAYS: _int_between(1, 60),
     SAFETY_LIVE_MAX_MINUTES: _int_between(15, 1440),
     SAFETY_CHECK_MAX_HOURS: _int_between(1, 72),
+    SAFETY_LOCATION_HISTORY: _boolean,
 }
 
 

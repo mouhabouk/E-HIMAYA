@@ -51,7 +51,7 @@ from app.modules.safety.models import Alert as SafetyAlert
 from app.modules.safety.models import AlertRecipient as SafetyAlertRecipient
 from app.modules.safety.models import Invitation as SafetyInvitation
 from app.modules.safety.models import Link as SafetyLink
-from app.modules.safety.models import LiveShare, SafetyCheck
+from app.modules.safety.models import LiveShare, LocationHistory, LocationPoint, SafetyCheck
 from app.modules.streams.models import LiveStream, StreamDetection, StreamLocation, StreamSegment
 from app.modules.telephony.models import Call, Conference, OperatorEndpoint, SmsInbound
 from app.modules.volunteers.models import Volunteer, VolunteerReview
@@ -102,6 +102,8 @@ __all__ = [
     "LevelState",
     "LiveShare",
     "LiveStream",
+    "LocationHistory",
+    "LocationPoint",
     "MapFeature",
     "Media",
     "Member",

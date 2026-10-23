@@ -21,7 +21,7 @@ from app.modules.orgs import service as orgs
 from app.modules.orgs.models import Organization
 from app.modules.reports import jurisdiction, schemas, service
 from app.modules.reports.domain import TRANSITIONS, Category, Status
-from app.modules.reports.models import Media, ReporterContext
+from app.modules.reports.models import Media, MedicalAttachment, ReporterContext
 from app.modules.reports.uploads import media_url
 
 router = APIRouter(prefix="/api/v1/staff", tags=["staff"])
@@ -224,6 +224,7 @@ async def _detail(
         organization_card=await orgs.organization_card(session, org) if org is not None else None,
         escalations=await jurisdiction.escalations_of(session, report.id),
         reporter_context=reporter_context,
+        medical_attached=await session.get(MedicalAttachment, report.id) is not None,
     )
 
 
@@ -271,6 +272,39 @@ async def get_report(principal: StaffReader, session: Session, report_id: uuid.U
     )
     await session.commit()
     return detail
+
+
+@router.get("/reports/{report_id}/medical", response_model=schemas.MedicalOut)
+async def get_medical(principal: StaffReader, session: Session, report_id: uuid.UUID) -> schemas.MedicalOut:
+    """The medical file the reporter attached (phase B2, addition 7b): only for the staff allowed to see the reporter's
+    identity (the handling operations room, or break-glass), and every opening is audited."""
+    found = await service.staff_summary(session, report_id)
+    if found is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
+    _, report = found
+    ctx = await service.report_ctx(session, report)
+    require(await authorize(session, principal, Action.REPORT_READ, ctx))
+    sensitive = await authorize(session, principal, Action.REPORT_READ_SENSITIVE, ctx)
+    require(sensitive)
+    attachment = await session.get(MedicalAttachment, report.id)
+    if attachment is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "no_medical_file")
+    details: dict[str, str] = {}
+    if sensitive.grant_id is not None:
+        details["grant_id"] = str(sensitive.grant_id)
+    await audit.record(
+        session,
+        actor=actor_of(principal),
+        action="report.medical_view",
+        target=f"report:{report.id}",
+        details=details,
+        gouvernorats=await service.gouvernorat_codes(session, report),
+    )
+    out = schemas.MedicalOut(
+        data=schemas.MedicalFile.model_validate(attachment.data), attached_at=attachment.attached_at
+    )
+    await session.commit()
+    return out
 
 
 @router.post("/reports/{report_id}/status", response_model=schemas.StaffReportDetail)

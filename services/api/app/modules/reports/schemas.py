@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 from typing import Annotated, Any, Literal
 
 from pydantic import AwareDatetime, BaseModel, Field, StringConstraints
@@ -20,6 +20,28 @@ class LocationOut(BaseModel):
     accuracy_m: float | None
 
 
+BloodGroup = Literal["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]
+Short = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=300)]
+
+
+class MedicalFile(BaseModel):
+    """The 7b medical file, kept on the phone and attached to one report only when the user ticks it (phase B2).
+    Every field is optional; free texts are short."""
+
+    model_config = {"extra": "forbid"}
+
+    sex: Literal["female", "male"] | None = None
+    birth_date: date | None = None
+    blood_group: BloodGroup | None = None
+    treatment_card: Annotated[str, StringConstraints(strip_whitespace=True, max_length=40)] | None = None
+    allergies: Short | None = None
+    conditions: Short | None = None
+    medications: Short | None = None
+    other: Short | None = None
+    contact_name: Annotated[str, StringConstraints(strip_whitespace=True, max_length=100)] | None = None
+    contact_phone: Annotated[str, StringConstraints(pattern=r"^\+?[0-9]{6,15}$")] | None = None
+
+
 class ReportIn(BaseModel):
     client_uuid: uuid.UUID
     category: Category
@@ -29,6 +51,8 @@ class ReportIn(BaseModel):
     created_at: AwareDatetime
     # Report made on behalf of an institution the caller is a member of (FR-A-080).
     organization_id: uuid.UUID | None = None
+    # Phase B2: the reporter's medical file, only when they ticked "attach my medical file to this report".
+    medical: MedicalFile | None = None
 
 
 class ReportOrganization(BaseModel):
@@ -253,6 +277,13 @@ class StaffReportDetail(StaffReport):
     organization_card: OrganizationCard | None = None
     escalations: list[EscalationOut] = Field(default_factory=list)
     reporter_context: ReporterContextOut | None = None
+    # Phase B2: the reporter attached their medical file (opened with GET …/medical, audited).
+    medical_attached: bool = False
+
+
+class MedicalOut(BaseModel):
+    data: MedicalFile
+    attached_at: datetime
 
 
 class StaffReportPage(BaseModel):
