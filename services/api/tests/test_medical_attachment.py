@@ -2,6 +2,7 @@
 reporter ticks it, encrypted, shown only to the staff who may see the reporter, each opening audited, deleted after
 the case is closed and on erasure."""
 
+import uuid
 from collections.abc import Callable
 from datetime import UTC, datetime, timedelta
 from typing import Any
@@ -97,11 +98,12 @@ async def test_deleted_after_closing_and_on_erasure(
     citizen = bearer(make_token(roles=["citizen"]))
     closed = await _report(client, citizen, medical=MEDICAL)
     still_open = await _report(client, citizen, medical=MEDICAL)
-    await session.execute(
-        text("UPDATE reports.report SET status = 'closed', updated_at = now() - interval '31 days' WHERE id = :i"),
-        {"i": closed["id"]},
+    moved = await session.scalar(
+        text("UPDATE reports.report SET status = 'closed', updated_at = :t WHERE id = :i RETURNING id"),
+        {"t": datetime.now(UTC) - timedelta(days=31), "i": uuid.UUID(closed["id"])},
     )
     await session.commit()
+    assert moved is not None, closed
     async with get_system_sessionmaker()() as s, s.begin():
         while await retention.purge_medical_attachments(s, get_settings(), datetime.now(UTC)):
             pass

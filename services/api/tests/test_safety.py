@@ -238,10 +238,13 @@ async def test_alert_expires_for_the_receiver(
     karim = await _person(client, make_token, "Karim")
     await _link(client, karim, amel)
     sent = (await client.post("/api/v1/safety/alerts", json=_alert(location=None), headers=amel)).json()
-    await session.execute(
-        text("UPDATE safety.alert SET expires_at = now() - interval '1 second' WHERE id = :i"), {"i": sent["id"]}
+    # The app's clock decides expiry: the past is taken from it, not from the database's now().
+    expired = await session.scalar(
+        text("UPDATE safety.alert SET expires_at = :t WHERE id = :i RETURNING id"),
+        {"t": datetime.now(UTC) - timedelta(minutes=1), "i": uuid.UUID(sent["id"])},
     )
     await session.commit()
+    assert expired is not None, sent
     r = await client.get(f"/api/v1/safety/alerts/{sent['id']}", headers=karim)
     assert r.status_code == 410 and r.json()["detail"] == "alert_expired"
     assert (await client.get("/api/v1/safety/alerts", headers=karim)).json()["items"] == []
