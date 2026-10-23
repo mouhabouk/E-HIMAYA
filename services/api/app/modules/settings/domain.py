@@ -26,6 +26,9 @@ MODERATION_EXTRA_TERMS = "moderation.extra_terms"
 # Phase B1: days to answer a request for access to information (law 2016-22, art. 14), to be confirmed by the
 # Office's legal service.
 CONTACT_ACCESS_INFO_DAYS = "contact.access_info_days"
+# Phase B2: longest live location share (minutes) and longest safety check (hours).
+SAFETY_LIVE_MAX_MINUTES = "safety.live_max_minutes"
+SAFETY_CHECK_MAX_HOURS = "safety.check_max_hours"
 
 BANDS = ("critical", "high", "normal", "low")
 
@@ -145,6 +148,8 @@ DEFAULTS: dict[str, Any] = {
     },
     MODERATION_EXTRA_TERMS: [],
     CONTACT_ACCESS_INFO_DAYS: 20,
+    SAFETY_LIVE_MAX_MINUTES: 480,
+    SAFETY_CHECK_MAX_HOURS: 24,
 }
 
 # Roles allowed to change each key (national scope required). Missing = read-only.
@@ -157,6 +162,8 @@ EDITORS: dict[str, frozenset[Role]] = {
     APP_RELEASE: frozenset({Role.SYSADMIN}),
     MODERATION_EXTRA_TERMS: frozenset({Role.SYSADMIN, Role.CONTENT_EDITOR}),
     CONTACT_ACCESS_INFO_DAYS: frozenset({Role.CENTRAL_COMMITTEE}),
+    SAFETY_LIVE_MAX_MINUTES: frozenset({Role.SYSADMIN}),
+    SAFETY_CHECK_MAX_HOURS: frozenset({Role.SYSADMIN}),
 }
 # Keys no one may change in phase 9: enabling them needs a formal approval outside the platform (§7.4).
 FORMAL_APPROVAL = frozenset({NOTIFY_REAL_SEND})
@@ -170,6 +177,8 @@ VALIDATORS: dict[str, Callable[[Any], Any]] = {
     APP_RELEASE: _model(AppRelease),
     MODERATION_EXTRA_TERMS: _terms,
     CONTACT_ACCESS_INFO_DAYS: _int_between(1, 60),
+    SAFETY_LIVE_MAX_MINUTES: _int_between(15, 1440),
+    SAFETY_CHECK_MAX_HOURS: _int_between(1, 72),
 }
 
 

@@ -25,6 +25,19 @@ PERSONAL_PUSH_BODY: Localized = {
 }
 
 
+# Personal safety (phase B2): an alert from a linked contact rings on the critical channel. Still no name or place in
+# the push itself: the app opens the alert over the API.
+SAFETY_ALERT_TITLE: Localized = {
+    "ar": "تنبيه استغاثة من أحد معارفك",
+    "fr": "Alerte de détresse d'un proche",
+    "en": "Distress alert from a contact",
+}
+SAFETY_ALERT_BODY: Localized = {
+    "ar": "افتح ء-حماية لرؤية الرسالة والموقع",
+    "fr": "Ouvrez e-Himaya pour voir le message et la position",
+    "en": "Open e-Himaya to see the message and the location",
+}
+
 ALERT_CANCELLED_TITLE: Localized = {"ar": "رُفع التنبيه", "fr": "Alerte levée", "en": "Alert lifted"}
 
 VOLUNTEER_DECISION_SUBJECT: dict[str, Localized] = {

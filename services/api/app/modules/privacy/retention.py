@@ -22,6 +22,10 @@ at once and a crash leaves at most one batch to redo. Durations come from the se
 | operator_endpoints  | operator endpoints (app.modules.telephony.retention)                   |          |
 | rewards_ledger      | points ledger and queued awards lose the link to anonymised reports    | (reports)|
 |                     | (app.modules.rewards.privacy)                                          |          |
+| safety_alerts       | alerts between linked contacts (phase B2, app.modules.safety.service)  | 7 days   |
+| safety_live_shares  | live location shares, after they end                                   | 24 hours |
+| safety_checks,      | ended safety checks; unused invitations after they expire              | 7 days   |
+| safety_invitations  |                                                                        |          |
 """
 
 import asyncio
@@ -38,6 +42,7 @@ from app.core.storage import get_store
 from app.modules.audit import service as audit
 from app.modules.identity.models import DETACHED_ACCOUNT_ID
 from app.modules.rewards import privacy as rewards
+from app.modules.safety import service as safety
 from app.modules.telephony import retention as telephony
 
 log = structlog.get_logger()
@@ -255,6 +260,11 @@ JOBS: list[tuple[str, Job]] = [
     ("operator_endpoints", telephony.purge_endpoints),
     # After "reports": detaches the ledger from the reports anonymised in this run.
     ("rewards_ledger", rewards.detach_anonymised),
+    # Personal safety (phase B2): alerts after 7 days, live shares 24 h after they end, safety checks and invitations.
+    ("safety_alerts", safety.purge_alerts),
+    ("safety_live_shares", safety.purge_live_shares),
+    ("safety_checks", safety.purge_checks),
+    ("safety_invitations", safety.purge_invitations),
 ]
 
 
