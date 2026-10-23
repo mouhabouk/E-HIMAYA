@@ -36,6 +36,9 @@ CREATE POLICY medical_attachment_insert ON reports.medical_attachment FOR INSERT
     WITH CHECK (ehimaya.scope() <> 'none' AND EXISTS (SELECT 1 FROM reports.report r WHERE r.id = report_id));
 CREATE POLICY medical_attachment_delete ON reports.medical_attachment FOR DELETE
     USING (ehimaya.scope() = 'system');
+-- Retention locks the rows it purges (SELECT ... FOR UPDATE SKIP LOCKED), which needs an UPDATE policy too.
+CREATE POLICY medical_attachment_update ON reports.medical_attachment FOR UPDATE
+    USING (ehimaya.scope() = 'system') WITH CHECK (ehimaya.scope() = 'system');
 """
 
 DOWNGRADE = r"""
