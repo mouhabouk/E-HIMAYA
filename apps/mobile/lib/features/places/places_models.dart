@@ -15,6 +15,7 @@ class PlaceLayer {
     this.source = '',
     this.licence = '',
     this.toVerify = false,
+    this.simulated = false,
     this.count = 0,
     this.dataVersion = 0,
   });
@@ -28,6 +29,9 @@ class PlaceLayer {
 
   /// First load from OpenStreetMap not yet checked by the Office: shown with "to be verified".
   final bool toVerify;
+
+  /// Approximate, invented places for a trial ([SIM]): never presented as real ones.
+  final bool simulated;
   final int count;
   final int dataVersion;
 
@@ -53,6 +57,7 @@ class PlaceLayer {
       source: (json['source'] as String?) ?? '',
       licence: (json['licence'] as String?) ?? '',
       toVerify: json['to_verify'] == true,
+      simulated: json['simulated'] == true,
       count: (json['count'] as num?)?.toInt() ?? 0,
       dataVersion: (json['data_version'] as num?)?.toInt() ?? 0,
     );
@@ -66,6 +71,7 @@ class PlaceLayer {
     'source': source,
     'licence': licence,
     'to_verify': toVerify,
+    'simulated': simulated,
     'count': count,
     'data_version': dataVersion,
   };

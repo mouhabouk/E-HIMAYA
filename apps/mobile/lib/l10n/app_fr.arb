@@ -742,6 +742,8 @@
   "nearestLoading": "Téléchargement des lieux pour l’usage hors connexion…",
   "nearestUpdated": "Lieux mis à jour le {date}",
   "nearestToVerify": "À vérifier",
+  "nearestSimBanner": "[SIM] Certains de ces lieux sont fictifs et approximatifs, pour un essai : ce ne sont pas des lieux réels. En cas d’urgence, appelez le 198.",
+  "nearestSimChip": "[SIM] Essai",
   "nearestNeedPosition": "En attente de votre position.",
   "nearestNone": "Aucun lieu de ce type n’est encore répertorié.",
   "nearestSource": "Source : {source}",

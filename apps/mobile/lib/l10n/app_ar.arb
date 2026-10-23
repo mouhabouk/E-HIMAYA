@@ -742,6 +742,8 @@
   "nearestLoading": "جارٍ تنزيل الأماكن للاستعمال دون اتصال…",
   "nearestUpdated": "حُدّثت الأماكن في {date}",
   "nearestToVerify": "للتثبت",
+  "nearestSimBanner": "[SIM] بعض هذه الأماكن وهمية تقريبية للتجربة وليست أماكن حقيقية. في الطوارئ اتصل بـ 198.",
+  "nearestSimChip": "[SIM] تجربة",
   "nearestNeedPosition": "في انتظار تحديد موقعك.",
   "nearestNone": "لا يوجد مكان من هذا النوع مسجل بعد.",
   "nearestSource": "المصدر: {source}",

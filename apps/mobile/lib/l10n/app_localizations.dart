@@ -4552,6 +4552,18 @@ abstract class AppLocalizations {
   /// **'To be verified'**
   String get nearestToVerify;
 
+  /// No description provided for @nearestSimBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'[SIM] Some of these places are approximate and invented for a trial: they are not real places. In an emergency, call 198.'**
+  String get nearestSimBanner;
+
+  /// No description provided for @nearestSimChip.
+  ///
+  /// In en, this message translates to:
+  /// **'[SIM] Trial'**
+  String get nearestSimChip;
+
   /// No description provided for @nearestNeedPosition.
   ///
   /// In en, this message translates to:

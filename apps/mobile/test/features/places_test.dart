@@ -12,7 +12,11 @@ import '../helpers/app_harness.dart';
 import '../helpers/fake_http.dart';
 import '../helpers/phase5_fixtures.dart';
 
-Map<String, Object?> _layer(String key, {bool toVerify = false}) => {
+Map<String, Object?> _layer(
+  String key, {
+  bool toVerify = false,
+  bool simulated = false,
+}) => {
   'key': key,
   'name': key,
   'names': {'ar': 'ع $key', 'fr': 'F $key', 'en': 'E $key'},
@@ -21,6 +25,7 @@ Map<String, Object?> _layer(String key, {bool toVerify = false}) => {
   'source': 'OpenStreetMap',
   'licence': 'ODbL',
   'to_verify': toVerify,
+  'simulated': simulated,
   'count': 2,
   'data_version': 1,
   'origin': key == 'civil_protection' ? 'units' : 'file',
@@ -88,7 +93,7 @@ void main() {
     setUp(() {
       layers = [
         _layer('civil_protection'),
-        _layer('hospitals', toVerify: true),
+        _layer('hospitals', toVerify: true, simulated: true),
       ];
       layersEtag = '"layers-1"';
       adapter = FakeAdapter((r) {
@@ -138,6 +143,7 @@ void main() {
         final local = await repo.local();
         expect(local.packages['civil_protection']!.places.first.phone, '198');
         expect(local.layers.last.toVerify, isTrue);
+        expect(local.layers.last.simulated, isTrue);
 
         // Unchanged: every request is conditional and answered 304.
         adapter.requests.clear();
@@ -197,7 +203,7 @@ void main() {
             json: {
               'items': [
                 _layer('civil_protection'),
-                _layer('hospitals', toVerify: true),
+                _layer('hospitals', toVerify: true, simulated: true),
               ],
             },
           );
@@ -224,6 +230,10 @@ void main() {
     expect(copied, '36.80000, 10.18000');
 
     expect(find.byKey(const Key('to-verify-hospitals')), findsOneWidget);
+    // Approximate trial places: amber banner and [SIM] chip on their layer only.
+    expect(find.byKey(const Key('sim-banner')), findsOneWidget);
+    expect(find.byKey(const Key('sim-layer-hospitals')), findsOneWidget);
+    expect(find.byKey(const Key('sim-layer-civil_protection')), findsNothing);
     await tester.scrollUntilVisible(
       find.byKey(const Key('call-h-near')),
       200,
@@ -249,6 +259,8 @@ void main() {
     await tester.tap(find.byKey(const Key('layer-chip-hospitals')));
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('nearest-layer-hospitals')), findsNothing);
+    // No simulated layer shown any more: no banner.
+    expect(find.byKey(const Key('sim-banner')), findsNothing);
     await unmountApp(tester);
   });
 

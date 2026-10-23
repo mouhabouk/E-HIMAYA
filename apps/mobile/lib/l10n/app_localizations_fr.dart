@@ -2628,6 +2628,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get nearestToVerify => 'À vérifier';
 
   @override
+  String get nearestSimBanner =>
+      '[SIM] Certains de ces lieux sont fictifs et approximatifs, pour un essai : ce ne sont pas des lieux réels. En cas d’urgence, appelez le 198.';
+
+  @override
+  String get nearestSimChip => '[SIM] Essai';
+
+  @override
   String get nearestNeedPosition => 'En attente de votre position.';
 
   @override

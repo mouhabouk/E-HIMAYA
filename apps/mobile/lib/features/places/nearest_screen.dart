@@ -8,6 +8,7 @@ import '../../core/location/location_service.dart';
 import '../../core/settings/settings_controller.dart';
 import '../../core/storage/app_prefs.dart';
 import '../../core/ui/language_bar.dart';
+import '../../core/ui/sim_banner.dart';
 import '../../l10n/app_localizations.dart';
 import '../emergency/dialer.dart';
 import '../guide/guide_models.dart' show guideColour;
@@ -105,6 +106,10 @@ class NearestScreen extends ConsumerWidget {
     }
     final shown = data.layers.where((l) => !off.contains(l.key)).toList();
     return [
+      // ┏━━ SIMULATION ━━ layers of approximate, invented places (scripts/sim_layers.py)
+      // ┃ PRODUCTION: the Office's lists replace them and the layer loses its "simulated" mark.
+      // ┗━━━━━━━━━━━━━━━━
+      if (shown.any((l) => l.simulated)) SimBanner(text: l10n.nearestSimBanner),
       if (data.refreshFailed)
         Padding(
           padding: const EdgeInsets.only(bottom: 8),
@@ -278,6 +283,16 @@ class _LayerCard extends StatelessWidget {
                     style: theme.textTheme.titleMedium,
                   ),
                 ),
+                if (layer.simulated)
+                  Padding(
+                    padding: const EdgeInsetsDirectional.only(end: 4),
+                    child: Chip(
+                      key: Key('sim-layer-${layer.key}'),
+                      label: Text(l10n.nearestSimChip),
+                      backgroundColor: simAmber,
+                      visualDensity: VisualDensity.compact,
+                    ),
+                  ),
                 if (layer.toVerify)
                   Chip(
                     key: Key('to-verify-${layer.key}'),

@@ -2604,6 +2604,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nearestToVerify => 'To be verified';
 
   @override
+  String get nearestSimBanner =>
+      '[SIM] Some of these places are approximate and invented for a trial: they are not real places. In an emergency, call 198.';
+
+  @override
+  String get nearestSimChip => '[SIM] Trial';
+
+  @override
   String get nearestNeedPosition => 'Waiting for your position.';
 
   @override
