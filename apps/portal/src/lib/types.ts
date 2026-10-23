@@ -276,6 +276,23 @@ export interface Certificate {
   verify_url: string;
 }
 
+/** A live location link (phase B2), public: no name or account, only the points kept for the share. */
+export interface LivePoint {
+  lat: number;
+  lon: number;
+  accuracy_m: number | null;
+  at: string;
+}
+
+export interface LiveView {
+  active: boolean;
+  points: LivePoint[];
+  battery: number | null;
+  updated_at: string | null;
+  expires_at: string;
+  stopped_at: string | null;
+}
+
 export interface PublicCertificate {
   code: string;
   status: CertificateStatus;

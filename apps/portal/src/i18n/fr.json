@@ -734,5 +734,32 @@
     "certificate_outdated": "Ce brouillon a été généré avant que le dossier soit complet : générez un nouveau brouillon, puis soumettez-le.",
     "signing_key_missing": "La plateforme ne peut pas signer de certificats pour le moment. Réessayez plus tard.",
     "invalid_note": "La note est trop longue (200 caractères au maximum)."
+  },
+  "live": {
+    "title": "Position en direct",
+    "badLinkTitle": "Lien incomplet",
+    "badLinkBody": "Ce lien n'est pas complet. Demandez à la personne qui l'a envoyé de le partager à nouveau depuis l'application e-Himaya.",
+    "notFoundTitle": "Lien introuvable",
+    "notFoundBody": "Ce lien de position en direct n'existe pas ou a été supprimé.",
+    "errorTitle": "La position n'a pas pu être chargée",
+    "activeTitle": "Position partagée en ce moment",
+    "activeBody": "La personne partage sa position jusqu'au {{until}}. Cette page se met à jour toutes les 30 secondes.",
+    "endedTitle": "Le partage est terminé",
+    "stoppedBody": "La personne a arrêté le partage le {{at}}. La dernière position connue est affichée ci-dessous.",
+    "expiredBody": "Le partage a pris fin le {{at}}. La dernière position connue est affichée ci-dessous.",
+    "updated": "Dernière mise à jour : il y a {{count}} min.",
+    "battery": "Batterie du téléphone : {{level}} %",
+    "lastPosition": "Dernière position connue",
+    "mapLabel": "Carte de la dernière position connue",
+    "at": "Heure",
+    "coordinates": "Coordonnées",
+    "accuracy": "Précision",
+    "meters": "± {{count}} m",
+    "openMap": "Ouvrir dans une carte",
+    "noPosition": "Aucune position n'a encore été reçue.",
+    "helpTitle": "Si la personne a besoin d'aide",
+    "helpBody": "Appelez la Protection civile au 198 et donnez-leur la position affichée sur cette page.",
+    "call198": "Appeler le 198",
+    "privacy": "Cette page n'affiche ni nom ni compte. Le lien ne fonctionne que tant que la personne le partage, et s'arrête quand elle y met fin."
   }
 }
