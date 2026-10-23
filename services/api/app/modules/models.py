@@ -4,7 +4,7 @@ from app.modules.ai.models import AiSettingsRow, Analysis
 from app.modules.analytics.models import Notification, Scenario, Schedule
 from app.modules.analytics.models import Report as AnalyticsReport
 from app.modules.audit.models import AuditLog
-from app.modules.content.models import Revision, SafetyTip
+from app.modules.content.models import GuideItem, GuideTopic, Revision, SafetyTip
 from app.modules.decision.models import ProcedureChunk
 from app.modules.evidence.models import Anchor, Leaf
 from app.modules.forecast.models import ForecastRun
@@ -80,6 +80,8 @@ __all__ = [
     "ForecastRun",
     "Gouvernorat",
     "GridPoint",
+    "GuideItem",
+    "GuideTopic",
     "Hazmat",
     "Incident",
     "IndexState",
