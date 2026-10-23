@@ -140,10 +140,80 @@ erDiagram
     }
 ```
 
+## contact
+
+```mermaid
+erDiagram
+    contact__request {
+        uuid id PK
+        text number
+        text kind
+        text status
+        uuid user_id FK
+        smallint gouvernorat_code FK
+        text subject
+        blob name_enc
+        blob phone_enc
+        blob email_enc
+        blob message_enc
+        blob answer_enc
+        text locale
+        text platform
+        datetime due_at
+        datetime answered_at
+        datetime closed_at
+        text assigned_to
+        text assigned_name
+        integer version
+        datetime created_at
+        datetime updated_at
+    }
+    contact__request_event {
+        uuid id PK
+        uuid request_id FK
+        text action
+        text status
+        smallint gouvernorat_code
+        blob note_enc
+        boolean visible
+        text actor
+        text actor_name
+        datetime at
+    }
+    contact__request ||--o{ contact__request_event : "request_id"
+    geo__gouvernorat ||--o{ contact__request : "gouvernorat_code"
+    identity__account ||--o{ contact__request : "user_id"
+```
+
 ## content
 
 ```mermaid
 erDiagram
+    content__guide_item {
+        uuid id PK
+        uuid topic_id FK
+        integer position
+        jsonb content
+        boolean call_198
+        boolean hidden
+        text validated_by
+        datetime validated_at
+        integer version
+        text updated_by
+        datetime updated_at
+    }
+    content__guide_topic {
+        uuid id PK
+        text key
+        jsonb title
+        text icon
+        text colour
+        integer position
+        boolean hidden
+        integer version
+        text updated_by
+        datetime updated_at
+    }
     content__revision {
         text name PK
         bigint value
@@ -160,6 +230,7 @@ erDiagram
         text updated_by
         datetime published_at
     }
+    content__guide_topic ||--o{ content__guide_item : "topic_id"
 ```
 
 ## decision
@@ -256,7 +327,73 @@ erDiagram
         text name_en
         geometry_multipolygon_4326 boundary
     }
+    geo__layer {
+        uuid id PK
+        text key
+        jsonb name
+        text icon
+        text colour
+        text audience
+        text source
+        text licence
+        boolean to_verify
+        boolean simulated
+        array staff_only
+        boolean editors_allowed
+        boolean enabled
+        integer version
+        integer data_version
+        text created_by
+        datetime created_at
+        text updated_by
+        text updated_by_name
+        datetime updated_at
+    }
+    geo__layer_feature {
+        uuid id PK
+        uuid layer_id FK
+        text ref
+        text name
+        text kind
+        text phone
+        geography_point_4326 location
+        smallint gouvernorat_code FK
+        integer delegation_id FK
+        jsonb props
+        boolean hidden
+        uuid import_id FK
+        integer version
+        text updated_by
+        datetime updated_at
+    }
+    geo__layer_import {
+        uuid id PK
+        uuid layer_id FK
+        text file_name
+        text sha256
+        text format
+        text mode
+        text status
+        jsonb counts
+        jsonb rejected
+        jsonb warnings
+        jsonb rows
+        jsonb undo
+        integer base_version
+        integer result_version
+        text reason
+        text created_by
+        text created_by_name
+        datetime created_at
+        datetime applied_at
+        datetime undone_at
+    }
+    geo__delegation ||--o{ geo__layer_feature : "delegation_id"
     geo__gouvernorat ||--o{ geo__delegation : "gouvernorat_code"
+    geo__gouvernorat ||--o{ geo__layer_feature : "gouvernorat_code"
+    geo__layer ||--o{ geo__layer_feature : "layer_id"
+    geo__layer ||--o{ geo__layer_import : "layer_id"
+    geo__layer_import ||--o{ geo__layer_feature : "import_id"
 ```
 
 ## identity

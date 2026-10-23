@@ -1,0 +1,1818 @@
+{
+  "revision": 0,
+  "topics": [
+    {
+      "id": "seed-fire",
+      "key": "fire",
+      "title": {
+        "ar": "الحرائق",
+        "fr": "Incendies",
+        "en": "Fires"
+      },
+      "icon": "fire",
+      "colour": "#BF360C",
+      "items": [
+        {
+          "id": "seed-fire-0",
+          "content": {
+            "ar": {
+              "title": "حريق في المنزل",
+              "call": [
+                "دخان أو لهب لا يمكن إطفاؤه في ثوانٍ"
+              ],
+              "steps": [
+                "أخرج الجميع وأغلق الأبواب خلفك",
+                "انخفض تحت الدخان",
+                "اتصل بـ198 من الخارج"
+              ],
+              "dont": [
+                "لا تستعمل المصعد",
+                "لا تعد إلى الداخل"
+              ]
+            },
+            "fr": {
+              "title": "Feu dans la maison",
+              "call": [
+                "Fumée ou flammes impossibles à éteindre en quelques secondes"
+              ],
+              "steps": [
+                "Faites sortir tout le monde, fermez les portes derrière vous",
+                "Baissez-vous sous la fumée",
+                "Appelez le 198 depuis l’extérieur"
+              ],
+              "dont": [
+                "N’utilisez pas l’ascenseur",
+                "Ne retournez pas à l’intérieur"
+              ]
+            },
+            "en": {
+              "title": "Fire at home",
+              "call": [
+                "Smoke or flames you cannot put out within seconds"
+              ],
+              "steps": [
+                "Get everyone out, close the doors behind you",
+                "Stay low under the smoke",
+                "Call 198 from outside"
+              ],
+              "dont": [
+                "Do not use the lift",
+                "Do not go back inside"
+              ]
+            }
+          },
+          "call_198": true,
+          "validated": false
+        },
+        {
+          "id": "seed-fire-1",
+          "content": {
+            "ar": {
+              "title": "اشتعال الملابس",
+              "call": [
+                "حروق واسعة بعد الإطفاء"
+              ],
+              "steps": [
+                "توقف، انبطح أرضًا، غطّ وجهك وتدحرج",
+                "برّد الحرق بماء جارٍ"
+              ],
+              "dont": [
+                "لا تركض"
+              ]
+            },
+            "fr": {
+              "title": "Vêtements en feu",
+              "call": [
+                "Brûlures étendues après l’extinction"
+              ],
+              "steps": [
+                "Arrêtez-vous, couchez-vous, couvrez votre visage et roulez",
+                "Refroidissez la brûlure à l’eau courante"
+              ],
+              "dont": [
+                "Ne courez pas"
+              ]
+            },
+            "en": {
+              "title": "Clothes on fire",
+              "call": [
+                "Large burns once the fire is out"
+              ],
+              "steps": [
+                "Stop, drop to the ground, cover your face and roll",
+                "Cool the burn under running water"
+              ],
+              "dont": [
+                "Do not run"
+              ]
+            }
+          },
+          "call_198": false,
+          "validated": false
+        },
+        {
+          "id": "seed-fire-2",
+          "content": {
+            "ar": {
+              "title": "تسرب الغاز",
+              "call": [
+                "رائحة غاز قوية أو شخص فاقد للوعي"
+              ],
+              "steps": [
+                "افتح النوافذ",
+                "أغلق صمام الغاز إن أمكن دون خطر",
+                "غادر واتصل بـ198 من الخارج"
+              ],
+              "dont": [
+                "لا تشعل نارًا ولا تشغّل أو تطفئ أي مفتاح كهربائي"
+              ]
+            },
+            "fr": {
+              "title": "Fuite de gaz",
+              "call": [
+                "Forte odeur de gaz ou personne inconsciente"
+              ],
+              "steps": [
+                "Ouvrez les fenêtres",
+                "Fermez le robinet de gaz si c’est sans danger",
+                "Sortez et appelez le 198 depuis l’extérieur"
+              ],
+              "dont": [
+                "N’allumez pas de flamme, ne touchez à aucun interrupteur"
+              ]
+            },
+            "en": {
+              "title": "Gas leak",
+              "call": [
+                "Strong smell of gas or someone unconscious"
+              ],
+              "steps": [
+                "Open the windows",
+                "Close the gas valve if it is safe",
+                "Leave and call 198 from outside"
+              ],
+              "dont": [
+                "No flame, do not touch any electric switch"
+              ]
+            }
+          },
+          "call_198": true,
+          "validated": false
+        },
+        {
+          "id": "seed-fire-3",
+          "content": {
+            "ar": {
+              "title": "اشتعال الزيت في المقلاة",
+              "call": [
+                "النار تمتد خارج المقلاة أو إلى الخزائن"
+              ],
+              "steps": [
+                "أطفئ الموقد إن أمكن دون أن تمد يدك فوق اللهب",
+                "غطّ المقلاة بغطاء معدني أو بقطعة قماش مبللة جيدًا (غير مقطرة)",
+                "اتركها مغطاة حتى تبرد تمامًا"
+              ],
+              "dont": [
+                "لا تصب الماء على الزيت المشتعل أبدًا",
+                "لا تحمل المقلاة المشتعلة إلى الخارج"
+              ]
+            },
+            "fr": {
+              "title": "Feu d’huile dans une poêle",
+              "call": [
+                "Le feu dépasse la poêle ou gagne les placards"
+              ],
+              "steps": [
+                "Coupez le feu si vous le pouvez sans passer la main au-dessus des flammes",
+                "Couvrez la poêle avec un couvercle métallique ou un linge bien humide (essoré)",
+                "Laissez couvert jusqu’à refroidissement complet"
+              ],
+              "dont": [
+                "Ne versez jamais d’eau sur de l’huile en feu",
+                "Ne transportez pas la poêle en feu dehors"
+              ]
+            },
+            "en": {
+              "title": "Oil fire in a pan",
+              "call": [
+                "The fire spreads beyond the pan or to the cupboards"
+              ],
+              "steps": [
+                "Turn off the heat if you can do it without reaching over the flames",
+                "Cover the pan with a metal lid or a well-wetted (wrung-out) cloth",
+                "Leave it covered until it has cooled completely"
+              ],
+              "dont": [
+                "Never pour water on burning oil",
+                "Do not carry the burning pan outside"
+              ]
+            }
+          },
+          "call_198": false,
+          "validated": false
+        },
+        {
+          "id": "seed-fire-4",
+          "content": {
+            "ar": {
+              "title": "حريق غابة أو أعشاب قريب",
+              "call": [
+                "دخان أو لهب يقترب من منزلك أو من طريقك"
+              ],
+              "steps": [
+                "اتصل بـ198 وحدّد المكان بدقة",
+                "ابتعد عكس اتجاه الريح ونحو منطقة خالية أو مكان صخري أو طريق معبّد",
+                "إن كنت في المنزل: أغلق النوافذ والأبواب وأبعد ما يشتعل عن الجدران",
+                "اتبع تعليمات الحماية المدنية للإخلاء"
+              ],
+              "dont": [
+                "لا تحاول عبور النار",
+                "لا تصعد نحو أعلى المنحدر أمام النار",
+                "لا تعد لأخذ أغراضك"
+              ]
+            },
+            "fr": {
+              "title": "Feu de forêt ou de broussailles proche",
+              "call": [
+                "Fumée ou flammes qui s’approchent de votre maison ou de votre chemin"
+              ],
+              "steps": [
+                "Appelez le 198 en donnant le lieu exact",
+                "Éloignez-vous dos au vent, vers une zone dégagée, rocheuse ou une route goudronnée",
+                "À la maison : fermez portes et fenêtres, éloignez des murs ce qui peut brûler",
+                "Suivez les consignes d’évacuation de la Protection civile"
+              ],
+              "dont": [
+                "N’essayez pas de traverser le feu",
+                "Ne montez pas une pente devant le feu",
+                "Ne retournez pas chercher vos affaires"
+              ]
+            },
+            "en": {
+              "title": "Forest or brush fire nearby",
+              "call": [
+                "Smoke or flames coming towards your home or your way"
+              ],
+              "steps": [
+                "Call 198 and give the exact place",
+                "Move away with the wind at your back, towards open, rocky ground or a paved road",
+                "At home: close doors and windows, move anything that burns away from the walls",
+                "Follow the Civil Protection's evacuation instructions"
+              ],
+              "dont": [
+                "Do not try to cross the fire",
+                "Do not climb a slope ahead of the fire",
+                "Do not go back for belongings"
+              ]
+            }
+          },
+          "call_198": true,
+          "validated": false
+        }
+      ]
+    },
+    {
+      "id": "seed-fracture",
+      "key": "fracture",
+      "title": {
+        "ar": "الكسور",
+        "fr": "Fractures",
+        "en": "Fractures"
+      },
+      "icon": "bone",
+      "colour": "#5D4037",
+      "items": [
+        {
+          "id": "seed-fracture-0",
+          "content": {
+            "ar": {
+              "title": "اشتباه في كسر",
+              "call": [
+                "عضو مشوَّه أو جرح مفتوح أو عجز عن الحركة"
+              ],
+              "steps": [
+                "ثبّت العضو في وضعه",
+                "اسنده بقطعة قماش",
+                "ضع بردًا ملفوفًا في قماش"
+              ],
+              "dont": [
+                "لا تحاول تقويم العضو"
+              ]
+            },
+            "fr": {
+              "title": "Fracture suspectée",
+              "call": [
+                "Membre déformé, plaie ouverte ou impossibilité de bouger"
+              ],
+              "steps": [
+                "Gardez le membre immobile dans sa position",
+                "Calez-le avec un tissu",
+                "Appliquez du froid enveloppé dans un linge"
+              ],
+              "dont": [
+                "N’essayez pas de remettre le membre droit"
+              ]
+            },
+            "en": {
+              "title": "Suspected fracture",
+              "call": [
+                "Deformed limb, open wound or unable to move"
+              ],
+              "steps": [
+                "Keep the limb still as found",
+                "Support it with padding",
+                "Apply cold wrapped in a cloth"
+              ],
+              "dont": [
+                "Do not try to straighten the limb"
+              ]
+            }
+          },
+          "call_198": false,
+          "validated": false
+        },
+        {
+          "id": "seed-fracture-1",
+          "content": {
+            "ar": {
+              "title": "إصابة الظهر أو الرقبة",
+              "call": [
+                "سقوط من علو أو حادث مرور"
+              ],
+              "steps": [
+                "لا تحرّك المصاب إلا في حالة خطر",
+                "ثبّت الرأس والرقبة",
+                "أبقِه دافئًا وطمئنه"
+              ],
+              "dont": [
+                "لا تعطه أكلًا ولا شربًا"
+              ]
+            },
+            "fr": {
+              "title": "Blessure au dos ou au cou",
+              "call": [
+                "Chute de hauteur ou accident de la route"
+              ],
+              "steps": [
+                "Ne déplacez pas la victime sauf danger",
+                "Maintenez la tête et le cou",
+                "Couvrez-la, rassurez-la"
+              ],
+              "dont": [
+                "Ne lui donnez ni à manger ni à boire"
+              ]
+            },
+            "en": {
+              "title": "Back or neck injury",
+              "call": [
+                "Fall from a height or road accident"
+              ],
+              "steps": [
+                "Do not move the person unless in danger",
+                "Keep the head and neck still",
+                "Keep them warm and reassure them"
+              ],
+              "dont": [
+                "Give no food or drink"
+              ]
+            }
+          },
+          "call_198": true,
+          "validated": false
+        },
+        {
+          "id": "seed-fracture-2",
+          "content": {
+            "ar": {
+              "title": "التواء المفصل",
+              "call": [
+                "ألم شديد، تشوه ظاهر أو عدم القدرة على تحريك الطرف أو الوقوف عليه"
+              ],
+              "steps": [
+                "أرِح المفصل ولا تحمّل عليه",
+                "ضع ثلجًا ملفوفًا في قماش 20 دقيقة كل ساعتين تقريبًا",
+                "ارفع الطرف المصاب فوق مستوى القلب إن أمكن"
+              ],
+              "dont": [
+                "لا تضع الثلج مباشرة على الجلد",
+                "لا تدلّك المفصل المصاب"
+              ]
+            },
+            "fr": {
+              "title": "Entorse",
+              "call": [
+                "Douleur forte, déformation visible ou impossibilité de bouger ou de s’appuyer sur le membre"
+              ],
+              "steps": [
+                "Mettez l’articulation au repos, sans appui",
+                "Appliquez de la glace enveloppée dans un linge 20 minutes environ toutes les deux heures",
+                "Surélevez le membre au-dessus du cœur si possible"
+              ],
+              "dont": [
+                "Ne posez pas la glace directement sur la peau",
+                "Ne massez pas l’articulation blessée"
+              ]
+            },
+            "en": {
+              "title": "Sprain",
+              "call": [
+                "Severe pain, visible deformity, or the limb cannot be moved or bear weight"
+              ],
+              "steps": [
+                "Rest the joint, no weight on it",
+                "Apply ice wrapped in a cloth for 20 minutes about every two hours",
+                "Raise the limb above the heart if possible"
+              ],
+              "dont": [
+                "Do not put ice directly on the skin",
+                "Do not massage the injured joint"
+              ]
+            }
+          },
+          "call_198": false,
+          "validated": false
+        },
+        {
+          "id": "seed-fracture-3",
+          "content": {
+            "ar": {
+              "title": "إصابة في الرأس",
+              "call": [
+                "فقدان الوعي ولو لحظة، أو نعاس غير عادي أو تشوش",
+                "قيء متكرر، صداع يشتد، أو سيلان دم أو سائل من الأنف أو الأذن"
+              ],
+              "steps": [
+                "أبقِ المصاب ساكنًا وراقب وعيه وتنفسه",
+                "اضغط على الجرح النازف بقطعة قماش نظيفة",
+                "ضع كمادة باردة على الكدمة",
+                "إن فقد وعيه وهو يتنفس: ضعه على جنبه مع الحفاظ على استقامة الرأس والرقبة"
+              ],
+              "dont": [
+                "لا تتركه وحده خلال الساعات الأولى",
+                "لا تعطه أكلًا ولا شربًا ولا دواءً منوّمًا"
+              ]
+            },
+            "fr": {
+              "title": "Blessure à la tête",
+              "call": [
+                "Perte de connaissance même brève, somnolence inhabituelle ou confusion",
+                "Vomissements répétés, mal de tête qui augmente, sang ou liquide qui coule du nez ou de l’oreille"
+              ],
+              "steps": [
+                "Gardez la victime immobile, surveillez sa conscience et sa respiration",
+                "Comprimez une plaie qui saigne avec un linge propre",
+                "Posez un linge froid sur la bosse",
+                "Si elle perd connaissance et respire : sur le côté, tête et cou bien alignés"
+              ],
+              "dont": [
+                "Ne la laissez pas seule pendant les premières heures",
+                "Ne lui donnez ni à manger, ni à boire, ni somnifère"
+              ]
+            },
+            "en": {
+              "title": "Head injury",
+              "call": [
+                "Loss of consciousness even briefly, unusual drowsiness or confusion",
+                "Repeated vomiting, worsening headache, blood or fluid from the nose or ear"
+              ],
+              "steps": [
+                "Keep the person still and watch their consciousness and breathing",
+                "Press on a bleeding wound with a clean cloth",
+                "Put a cold cloth on the bump",
+                "If they become unresponsive but breathe: on their side, keeping head and neck in line"
+              ],
+              "dont": [
+                "Do not leave them alone in the first hours",
+                "Do not give food, drink or sleeping pills"
+              ]
+            }
+          },
+          "call_198": true,
+          "validated": false
+        }
+      ]
+    },
+    {
+      "id": "seed-first_aid",
+      "key": "first_aid",
+      "title": {
+        "ar": "الإسعافات الأولية",
+        "fr": "Premiers secours",
+        "en": "First aid"
+      },
+      "icon": "first_aid",
+      "colour": "#C62828",
+      "items": [
+        {
+          "id": "seed-first_aid-0",
+          "content": {
+            "ar": {
+              "title": "شخص لا يستجيب ولا يتنفس",
+              "call": [
+                "دائمًا: اتصل بـ198 فورًا"
+              ],
+              "steps": [
+                "اتصل بـ198 وشغّل مكبر الصوت",
+                "اضغط بقوة وسرعة وسط الصدر (100 إلى 120 في الدقيقة)",
+                "واصل حتى وصول النجدة"
+              ],
+              "dont": [
+                "لا تتوقف إلا إذا تنفس الشخص أو تولى غيرك"
+              ]
+            },
+            "fr": {
+              "title": "Personne qui ne répond pas et ne respire pas",
+              "call": [
+                "Toujours : appelez le 198 immédiatement"
+              ],
+              "steps": [
+                "Appelez le 198, mettez le haut-parleur",
+                "Appuyez fort et vite au centre de la poitrine (100 à 120 par minute)",
+                "Continuez jusqu’à l’arrivée des secours"
+              ],
+              "dont": [
+                "N’arrêtez pas sauf si la personne respire ou qu’on vous relaie"
+              ]
+            },
+            "en": {
+              "title": "Unresponsive and not breathing",
+              "call": [
+                "Always: call 198 at once"
+              ],
+              "steps": [
+                "Call 198, put the phone on speaker",
+                "Push hard and fast in the centre of the chest (100 to 120 a minute)",
+                "Keep going until help arrives"
+              ],
+              "dont": [
+                "Do not stop unless the person breathes or someone takes over"
+              ]
+            }
+          },
+          "call_198": true,
+          "validated": false
+        },
+        {
+          "id": "seed-first_aid-1",
+          "content": {
+            "ar": {
+              "title": "شخص فاقد للوعي يتنفس",
+              "call": [
+                "فقدان الوعي"
+              ],
+              "steps": [
+                "ضعه على جنبه والرأس مائل إلى الخلف",
+                "راقب تنفسه باستمرار"
+              ],
+              "dont": [
+                "لا تتركه وحده"
+              ]
+            },
+            "fr": {
+              "title": "Personne inconsciente qui respire",
+              "call": [
+                "Perte de connaissance"
+              ],
+              "steps": [
+                "Mettez-la sur le côté, tête basculée en arrière",
+                "Surveillez sa respiration"
+              ],
+              "dont": [
+                "Ne la laissez pas seule"
+              ]
+            },
+            "en": {
+              "title": "Unconscious but breathing",
+              "call": [
+                "Loss of consciousness"
+              ],
+              "steps": [
+                "Turn them on their side, head tilted back",
+                "Keep checking their breathing"
+              ],
+              "dont": [
+                "Do not leave them alone"
+              ]
+            }
+          },
+          "call_198": true,
+          "validated": false
+        },
+        {
+          "id": "seed-first_aid-2",
+          "content": {
+            "ar": {
+              "title": "علامات النوبة القلبية",
+              "call": [
+                "ألم أو ضغط في الصدر يدوم أكثر من بضع دقائق، قد يمتد إلى الذراع أو الفك أو الظهر"
+              ],
+              "steps": [
+                "اتصل بـ198 فورًا",
+                "أجلس المصاب في وضعية مريحة وفكّ ملابسه الضيقة",
+                "طمئنه وابقَ معه وراقب تنفسه",
+                "إن توقف عن التنفس: ابدأ الإنعاش القلبي الرئوي"
+              ],
+              "dont": [
+                "لا تدعه يمشي أو يبذل جهدًا",
+                "لا تقله بنفسك إن كان الإسعاف قادمًا"
+              ]
+            },
+            "fr": {
+              "title": "Signes de crise cardiaque",
+              "call": [
+                "Douleur ou serrement dans la poitrine plus de quelques minutes, parfois vers le bras, la mâchoire ou le dos"
+              ],
+              "steps": [
+                "Appelez le 198 immédiatement",
+                "Installez la personne assise confortablement, desserrez ses vêtements",
+                "Rassurez-la, restez avec elle, surveillez sa respiration",
+                "Si elle cesse de respirer : commencez la réanimation cardio-pulmonaire"
+              ],
+              "dont": [
+                "Ne la laissez pas marcher ni faire d’effort",
+                "Ne la transportez pas vous-même si les secours arrivent"
+              ]
+            },
+            "en": {
+              "title": "Signs of a heart attack",
+              "call": [
+                "Chest pain or pressure lasting more than a few minutes, sometimes spreading to the arm, jaw or back"
+              ],
+              "steps": [
+                "Call 198 at once",
+                "Help the person sit comfortably and loosen tight clothing",
+                "Reassure them, stay with them and watch their breathing",
+                "If they stop breathing: start cardiopulmonary resuscitation"
+              ],
+              "dont": [
+                "Do not let them walk or make an effort",
+                "Do not drive them yourself if the ambulance is coming"
+              ]
+            }
+          },
+          "call_198": true,
+          "validated": false
+        },
+        {
+          "id": "seed-first_aid-3",
+          "content": {
+            "ar": {
+              "title": "علامات السكتة الدماغية",
+              "call": [
+                "ميلان الوجه، ضعف ذراع أو ساق، اضطراب مفاجئ في الكلام"
+              ],
+              "steps": [
+                "اتصل بـ198 فورًا: كل دقيقة مهمة",
+                "سجّل ساعة ظهور العلامات الأولى",
+                "أبقِ المصاب مرتاحًا وراقب تنفسه",
+                "إن فقد وعيه وهو يتنفس: ضعه على جنبه"
+              ],
+              "dont": [
+                "لا تعطه أكلًا ولا شربًا ولا دواءً",
+                "لا تنتظر أن تزول العلامات"
+              ]
+            },
+            "fr": {
+              "title": "Signes d’accident vasculaire cérébral (AVC)",
+              "call": [
+                "Visage qui s’affaisse, faiblesse d’un bras ou d’une jambe, trouble soudain de la parole"
+              ],
+              "steps": [
+                "Appelez le 198 immédiatement : chaque minute compte",
+                "Notez l’heure d’apparition des premiers signes",
+                "Gardez la personne au calme, surveillez sa respiration",
+                "Si elle perd connaissance et respire : mettez-la sur le côté"
+              ],
+              "dont": [
+                "Ne lui donnez ni à manger, ni à boire, ni médicament",
+                "N’attendez pas que les signes disparaissent"
+              ]
+            },
+            "en": {
+              "title": "Signs of a stroke",
+              "call": [
+                "Face drooping, weakness of an arm or a leg, sudden trouble speaking"
+              ],
+              "steps": [
+                "Call 198 at once: every minute counts",
+                "Note the time the first signs appeared",
+                "Keep the person calm and watch their breathing",
+                "If they become unresponsive but breathe: put them on their side"
+              ],
+              "dont": [
+                "Do not give food, drink or medicine",
+                "Do not wait for the signs to go away"
+              ]
+            }
+          },
+          "call_198": true,
+          "validated": false
+        },
+        {
+          "id": "seed-first_aid-4",
+          "content": {
+            "ar": {
+              "title": "نوبة صرع (تشنجات)",
+              "call": [
+                "أول نوبة، أو نوبة تدوم أكثر من 5 دقائق، أو نوبات متتالية",
+                "إصابة، صعوبة في التنفس بعد النوبة، أو حدوثها في الماء"
+              ],
+              "steps": [
+                "أبعد الأشياء الصلبة من حوله وضع شيئًا ليّنًا تحت رأسه",
+                "سجّل مدة النوبة",
+                "بعد توقف التشنجات: ضعه على جنبه وابقَ معه حتى يستعيد وعيه"
+              ],
+              "dont": [
+                "لا تمسكه بالقوة",
+                "لا تضع شيئًا في فمه"
+              ]
+            },
+            "fr": {
+              "title": "Crise d’épilepsie (convulsions)",
+              "call": [
+                "Première crise, crise de plus de 5 minutes ou crises qui se suivent",
+                "Blessure, difficulté à respirer après la crise, ou crise dans l’eau"
+              ],
+              "steps": [
+                "Écartez les objets durs et glissez quelque chose de mou sous sa tête",
+                "Notez la durée de la crise",
+                "Quand les secousses s’arrêtent : sur le côté, restez jusqu’à son réveil complet"
+              ],
+              "dont": [
+                "Ne la retenez pas de force",
+                "Ne mettez rien dans sa bouche"
+              ]
+            },
+            "en": {
+              "title": "Seizure (convulsions)",
+              "call": [
+                "A first seizure, one lasting more than 5 minutes, or seizures one after another",
+                "An injury, trouble breathing afterwards, or a seizure in water"
+              ],
+              "steps": [
+                "Move hard objects away and put something soft under their head",
+                "Time the seizure",
+                "When the jerking stops: put them on their side and stay until they are fully awake"
+              ],
+              "dont": [
+                "Do not hold them down",
+                "Do not put anything in their mouth"
+              ]
+            }
+          },
+          "call_198": false,
+          "validated": false
+        },
+        {
+          "id": "seed-first_aid-5",
+          "content": {
+            "ar": {
+              "title": "انخفاض السكر عند مريض السكري",
+              "call": [
+                "لا يستطيع البلع، أو فقد وعيه، أو لم يتحسن بعد 15 دقيقة"
+              ],
+              "steps": [
+                "إن كان واعيًا ويبلع: أعطه سكرًا سريعًا (عصير، مشروب محلّى، قطع سكر)",
+                "أجلسه وانتظر 15 دقيقة ثم أعد إن لم يتحسن",
+                "بعد التحسن: وجبة خفيفة"
+              ],
+              "dont": [
+                "لا تعطِ شيئًا في الفم لشخص فاقد للوعي"
+              ]
+            },
+            "fr": {
+              "title": "Hypoglycémie chez une personne diabétique",
+              "call": [
+                "Ne peut pas avaler, perd connaissance, ou pas d’amélioration après 15 minutes"
+              ],
+              "steps": [
+                "Si elle est consciente et avale : sucre rapide (jus, boisson sucrée, morceaux de sucre)",
+                "Faites-la asseoir, attendez 15 minutes, recommencez si elle ne va pas mieux",
+                "Une fois rétablie : une collation"
+              ],
+              "dont": [
+                "Ne donnez rien par la bouche à une personne inconsciente"
+              ]
+            },
+            "en": {
+              "title": "Low blood sugar in a person with diabetes",
+              "call": [
+                "Cannot swallow, becomes unresponsive, or no better after 15 minutes"
+              ],
+              "steps": [
+                "If they are conscious and can swallow: give fast sugar (juice, sugary drink, sugar cubes)",
+                "Help them sit, wait 15 minutes, repeat if they are not better",
+                "Once better: a snack"
+              ],
+              "dont": [
+                "Do not give anything by mouth to an unresponsive person"
+              ]
+            }
+          },
+          "call_198": false,
+          "validated": false
+        },
+        {
+          "id": "seed-first_aid-6",
+          "content": {
+            "ar": {
+              "title": "حساسية شديدة",
+              "call": [
+                "صعوبة في التنفس، انتفاخ الوجه أو اللسان أو الحلق، دوار أو إغماء"
+              ],
+              "steps": [
+                "اتصل بـ198 فورًا",
+                "إن كان لديه حقنة أدرينالين ذاتية: ساعده على استعمالها في الفخذ",
+                "إن كان يتنفس بصعوبة: أجلسه؛ إن كان دائخًا: مدّده وارفع ساقيه",
+                "يمكن إعادة الحقنة بعد 5 دقائق إن لم يتحسن وتوفرت حقنة ثانية"
+              ],
+              "dont": [
+                "لا تدعه يقف أو يمشي فجأة",
+                "لا تنتظر زوال العلامات وحدها"
+              ]
+            },
+            "fr": {
+              "title": "Réaction allergique grave",
+              "call": [
+                "Difficulté à respirer, gonflement du visage, de la langue ou de la gorge, malaise"
+              ],
+              "steps": [
+                "Appelez le 198 immédiatement",
+                "Si elle a un stylo d’adrénaline : aidez-la à l’utiliser dans la cuisse",
+                "Si elle respire mal : assise ; si elle a un malaise : allongée, jambes surélevées",
+                "Une seconde dose après 5 minutes si pas d’amélioration et qu’un second stylo est disponible"
+              ],
+              "dont": [
+                "Ne la faites pas se lever ni marcher brusquement",
+                "N’attendez pas que cela passe seul"
+              ]
+            },
+            "en": {
+              "title": "Severe allergic reaction",
+              "call": [
+                "Trouble breathing, swelling of the face, tongue or throat, feeling faint"
+              ],
+              "steps": [
+                "Call 198 at once",
+                "If they have an adrenaline auto-injector: help them use it in the thigh",
+                "If breathing is hard: sitting up; if faint: lying down with legs raised",
+                "A second dose after 5 minutes if no better and a second injector is available"
+              ],
+              "dont": [
+                "Do not let them stand up or walk suddenly",
+                "Do not wait for it to pass on its own"
+              ]
+            }
+          },
+          "call_198": true,
+          "validated": false
+        }
+      ]
+    },
+    {
+      "id": "seed-breathing",
+      "key": "breathing",
+      "title": {
+        "ar": "المشاكل التنفسية",
+        "fr": "Problèmes respiratoires",
+        "en": "Breathing problems"
+      },
+      "icon": "lungs",
+      "colour": "#1565C0",
+      "items": [
+        {
+          "id": "seed-breathing-0",
+          "content": {
+            "ar": {
+              "title": "الاختناق بجسم غريب",
+              "call": [
+                "لا يستطيع الكلام ولا السعال"
+              ],
+              "steps": [
+                "شجّعه على السعال",
+                "حتى 5 ضربات بين الكتفين",
+                "حتى 5 ضغطات على البطن"
+              ],
+              "dont": [
+                "لا تُدخل أصابعك في فمه دون رؤية الجسم"
+              ]
+            },
+            "fr": {
+              "title": "Étouffement",
+              "call": [
+                "Ne peut ni parler ni tousser"
+              ],
+              "steps": [
+                "Encouragez-la à tousser",
+                "Jusqu’à 5 tapes dans le dos entre les omoplates",
+                "Jusqu’à 5 compressions abdominales"
+              ],
+              "dont": [
+                "Ne mettez pas les doigts dans la bouche à l’aveugle"
+              ]
+            },
+            "en": {
+              "title": "Choking",
+              "call": [
+                "Cannot speak or cough"
+              ],
+              "steps": [
+                "Encourage them to cough",
+                "Up to 5 back blows between the shoulder blades",
+                "Up to 5 abdominal thrusts"
+              ],
+              "dont": [
+                "Do not sweep the mouth blindly"
+              ]
+            }
+          },
+          "call_198": true,
+          "validated": false
+        },
+        {
+          "id": "seed-breathing-1",
+          "content": {
+            "ar": {
+              "title": "نوبة ربو",
+              "call": [
+                "لا تحسّن بعد البخاخ أو شفاه زرقاء"
+              ],
+              "steps": [
+                "أجلسه مستقيمًا",
+                "استعمل بخاخ الإسعاف",
+                "حافظ على هدوئه"
+              ],
+              "dont": [
+                "لا تجعله يستلقي"
+              ]
+            },
+            "fr": {
+              "title": "Crise d’asthme",
+              "call": [
+                "Pas d’amélioration après l’inhalateur ou lèvres bleues"
+              ],
+              "steps": [
+                "Asseyez-la bien droite",
+                "Utilisez son inhalateur de secours",
+                "Gardez-la calme"
+              ],
+              "dont": [
+                "Ne l’allongez pas"
+              ]
+            },
+            "en": {
+              "title": "Asthma attack",
+              "call": [
+                "No better after the inhaler, or blue lips"
+              ],
+              "steps": [
+                "Sit them upright",
+                "Use their reliever inhaler",
+                "Keep them calm"
+              ],
+              "dont": [
+                "Do not lay them down"
+              ]
+            }
+          },
+          "call_198": false,
+          "validated": false
+        },
+        {
+          "id": "seed-breathing-2",
+          "content": {
+            "ar": {
+              "title": "استنشاق الدخان",
+              "call": [
+                "سعال شديد أو ضيق تنفس أو صداع"
+              ],
+              "steps": [
+                "انقله إلى الهواء الطلق",
+                "أجلسه وراقبه"
+              ],
+              "dont": [
+                "لا تدخل مكانًا مليئًا بالدخان"
+              ]
+            },
+            "fr": {
+              "title": "Inhalation de fumée",
+              "call": [
+                "Toux forte, gêne respiratoire ou maux de tête"
+              ],
+              "steps": [
+                "Amenez-la à l’air libre",
+                "Asseyez-la et surveillez-la"
+              ],
+              "dont": [
+                "N’entrez pas dans un local enfumé"
+              ]
+            },
+            "en": {
+              "title": "Smoke inhalation",
+              "call": [
+                "Heavy cough, short of breath or headache"
+              ],
+              "steps": [
+                "Move them to fresh air",
+                "Sit them down and watch them"
+              ],
+              "dont": [
+                "Do not enter a smoke-filled place"
+              ]
+            }
+          },
+          "call_198": true,
+          "validated": false
+        },
+        {
+          "id": "seed-breathing-3",
+          "content": {
+            "ar": {
+              "title": "اختناق رضيع (أقل من سنة)",
+              "call": [
+                "لا يبكي ولا يسعل ولا يتنفس"
+              ],
+              "steps": [
+                "اطلب من شخص الاتصال بـ198",
+                "ضع الرضيع على ساعدك ووجهه إلى الأسفل والرأس أخفض من الصدر، وأسند الرأس",
+                "اضرب 5 ضربات بين لوحَي الكتف بكعب اليد",
+                "إن لم يخرج الجسم: اقلبه على ظهره واضغط 5 مرات بإصبعين وسط الصدر",
+                "كرر حتى يخرج الجسم أو يصل الإسعاف"
+              ],
+              "dont": [
+                "لا تُدخل إصبعك في فمه بحثًا عن الجسم",
+                "لا تقلبه رأسًا على عقب من قدميه"
+              ]
+            },
+            "fr": {
+              "title": "Étouffement d’un bébé (moins d’un an)",
+              "call": [
+                "Il ne pleure pas, ne tousse pas, ne respire pas"
+              ],
+              "steps": [
+                "Faites appeler le 198",
+                "Couchez le bébé à plat ventre sur votre avant-bras, tête plus basse que la poitrine, tête soutenue",
+                "Donnez 5 claques dans le dos, entre les omoplates, avec le talon de la main",
+                "Si l’objet ne sort pas : sur le dos, 5 compressions avec deux doigts au milieu de la poitrine",
+                "Recommencez jusqu’à la sortie de l’objet ou l’arrivée des secours"
+              ],
+              "dont": [
+                "Ne cherchez pas l’objet avec le doigt dans sa bouche",
+                "Ne le suspendez pas par les pieds"
+              ]
+            },
+            "en": {
+              "title": "Choking baby (under one year)",
+              "call": [
+                "The baby cannot cry, cough or breathe"
+              ],
+              "steps": [
+                "Have someone call 198",
+                "Lay the baby face down along your forearm, head lower than the chest, head supported",
+                "Give 5 back blows between the shoulder blades with the heel of your hand",
+                "If the object does not come out: turn on the back, 5 chest thrusts with two fingers mid-chest",
+                "Repeat until the object comes out or help arrives"
+              ],
+              "dont": [
+                "Do not sweep the mouth blindly with a finger",
+                "Do not hold the baby upside down by the feet"
+              ]
+            }
+          },
+          "call_198": true,
+          "validated": false
+        },
+        {
+          "id": "seed-breathing-4",
+          "content": {
+            "ar": {
+              "title": "التسمم بأحادي أكسيد الكربون (الكانون، المدفأة، سخان الماء)",
+              "call": [
+                "صداع، دوار، غثيان أو نعاس لعدة أشخاص في نفس المكان، أو فقدان الوعي"
+              ],
+              "steps": [
+                "افتح النوافذ والأبواب فورًا",
+                "أطفئ الجهاز إن أمكن واخرج الجميع إلى الهواء الطلق",
+                "اتصل بـ198 من الخارج",
+                "إن فقد أحدهم وعيه وهو يتنفس: ضعه على جنبه؛ إن لم يتنفس: ابدأ الإنعاش"
+              ],
+              "dont": [
+                "لا تعد إلى الداخل قبل التهوية الكاملة",
+                "لا تستعمل الكانون أو الشواية داخل غرفة مغلقة"
+              ]
+            },
+            "fr": {
+              "title": "Intoxication au monoxyde de carbone (kanoun, chauffage, chauffe-eau)",
+              "call": [
+                "Mal de tête, vertiges, nausées ou somnolence chez plusieurs personnes du même lieu, ou perte de connaissance"
+              ],
+              "steps": [
+                "Ouvrez portes et fenêtres immédiatement",
+                "Arrêtez l’appareil si possible et faites sortir tout le monde à l’air libre",
+                "Appelez le 198 depuis l’extérieur",
+                "Victime inconsciente qui respire : sur le côté ; qui ne respire pas : réanimation"
+              ],
+              "dont": [
+                "Ne retournez pas à l’intérieur avant aération complète",
+                "N’utilisez pas de kanoun ou de brasero dans une pièce fermée"
+              ]
+            },
+            "en": {
+              "title": "Carbon monoxide poisoning (kanoun, heater, water heater)",
+              "call": [
+                "Headache, dizziness, nausea or drowsiness in several people in the same place, or unresponsiveness"
+              ],
+              "steps": [
+                "Open doors and windows at once",
+                "Turn the appliance off if you can and get everyone out into fresh air",
+                "Call 198 from outside",
+                "Unresponsive but breathing: on their side; not breathing: start resuscitation"
+              ],
+              "dont": [
+                "Do not go back in before the place is fully aired",
+                "Never use a kanoun or brazier in a closed room"
+              ]
+            }
+          },
+          "call_198": true,
+          "validated": false
+        }
+      ]
+    },
+    {
+      "id": "seed-burns",
+      "key": "burns",
+      "title": {
+        "ar": "الحروق",
+        "fr": "Brûlures",
+        "en": "Burns"
+      },
+      "icon": "burn",
+      "colour": "#AD1457",
+      "items": [
+        {
+          "id": "seed-burns-0",
+          "content": {
+            "ar": {
+              "title": "حرق حراري",
+              "call": [
+                "حرق واسع أو في الوجه أو اليدين أو لدى طفل"
+              ],
+              "steps": [
+                "برّد الحرق بماء جارٍ 20 دقيقة",
+                "انزع الخواتم والملابس غير الملتصقة",
+                "غطّه بقطعة قماش نظيفة"
+              ],
+              "dont": [
+                "لا ثلج ولا معجون ولا زبدة",
+                "لا تفقأ الفقاعات"
+              ]
+            },
+            "fr": {
+              "title": "Brûlure thermique",
+              "call": [
+                "Brûlure étendue, au visage, aux mains ou chez un enfant"
+              ],
+              "steps": [
+                "Refroidissez 20 minutes à l’eau courante",
+                "Retirez bagues et vêtements non collés",
+                "Couvrez d’un linge propre"
+              ],
+              "dont": [
+                "Ni glace, ni dentifrice, ni beurre",
+                "Ne percez pas les cloques"
+              ]
+            },
+            "en": {
+              "title": "Heat burn",
+              "call": [
+                "Large burn, on the face or hands, or a child"
+              ],
+              "steps": [
+                "Cool for 20 minutes under running water",
+                "Remove rings and clothing that is not stuck",
+                "Cover with a clean cloth"
+              ],
+              "dont": [
+                "No ice, toothpaste or butter",
+                "Do not burst blisters"
+              ]
+            }
+          },
+          "call_198": false,
+          "validated": false
+        },
+        {
+          "id": "seed-burns-1",
+          "content": {
+            "ar": {
+              "title": "حرق كيميائي",
+              "call": [
+                "حرق في العين أو الوجه أو مساحة واسعة، أو مادة مجهولة"
+              ],
+              "steps": [
+                "احمِ نفسك (قفازات) ونزع الملابس الملوثة",
+                "اغسل بالماء الجاري 20 دقيقة على الأقل",
+                "للعين: اغسلها بالماء الجاري مع إبقائها مفتوحة، من الداخل إلى الخارج",
+                "احتفظ بعلبة المادة لإعلام الإسعاف"
+              ],
+              "dont": [
+                "لا تحاول تعديل المادة بمادة أخرى",
+                "لا تفرك الجلد أو العين"
+              ]
+            },
+            "fr": {
+              "title": "Brûlure chimique",
+              "call": [
+                "Brûlure à l’œil, au visage ou étendue, ou produit inconnu"
+              ],
+              "steps": [
+                "Protégez-vous (gants) et retirez les vêtements souillés",
+                "Rincez à l’eau courante au moins 20 minutes",
+                "Pour l’œil : rincez à l’eau courante, œil ouvert, du coin interne vers l’extérieur",
+                "Gardez l’emballage du produit pour les secours"
+              ],
+              "dont": [
+                "N’essayez pas de neutraliser avec un autre produit",
+                "Ne frottez ni la peau ni l’œil"
+              ]
+            },
+            "en": {
+              "title": "Chemical burn",
+              "call": [
+                "A burn to the eye or face, a large area, or an unknown product"
+              ],
+              "steps": [
+                "Protect yourself (gloves) and remove contaminated clothing",
+                "Rinse under running water for at least 20 minutes",
+                "For the eye: rinse under running water with the eye open, from the inner corner outwards",
+                "Keep the product's container for the ambulance crew"
+              ],
+              "dont": [
+                "Do not try to neutralise it with another product",
+                "Do not rub the skin or the eye"
+              ]
+            }
+          },
+          "call_198": true,
+          "validated": false
+        },
+        {
+          "id": "seed-burns-2",
+          "content": {
+            "ar": {
+              "title": "حرق كهربائي",
+              "call": [
+                "كل حرق كهربائي يحتاج إلى فحص طبي، حتى لو بدا صغيرًا"
+              ],
+              "steps": [
+                "اقطع التيار الكهربائي قبل لمس المصاب",
+                "راقب تنفسه؛ إن لم يتنفس: ابدأ الإنعاش",
+                "برّد الحروق بالماء الجاري وغطّها بقماش نظيف"
+              ],
+              "dont": [
+                "لا تلمس المصاب ما دام التيار موصولًا",
+                "لا تقترب من خط كهربائي ساقط"
+              ]
+            },
+            "fr": {
+              "title": "Brûlure électrique",
+              "call": [
+                "Toute brûlure électrique doit être vue par un médecin, même petite"
+              ],
+              "steps": [
+                "Coupez le courant avant de toucher la victime",
+                "Surveillez sa respiration ; si elle ne respire pas : réanimation",
+                "Refroidissez les brûlures à l’eau courante puis couvrez d’un linge propre"
+              ],
+              "dont": [
+                "Ne touchez pas la victime tant que le courant passe",
+                "N’approchez pas d’une ligne électrique tombée"
+              ]
+            },
+            "en": {
+              "title": "Electrical burn",
+              "call": [
+                "Every electrical burn needs a doctor, even a small one"
+              ],
+              "steps": [
+                "Switch off the power before touching the person",
+                "Watch their breathing; if they do not breathe: start resuscitation",
+                "Cool the burns under running water, then cover with a clean cloth"
+              ],
+              "dont": [
+                "Do not touch the person while the current is on",
+                "Do not go near a fallen power line"
+              ]
+            }
+          },
+          "call_198": true,
+          "validated": false
+        }
+      ]
+    },
+    {
+      "id": "seed-bleeding",
+      "key": "bleeding",
+      "title": {
+        "ar": "النزيف",
+        "fr": "Saignements",
+        "en": "Bleeding"
+      },
+      "icon": "drop",
+      "colour": "#6A1B9A",
+      "items": [
+        {
+          "id": "seed-bleeding-0",
+          "content": {
+            "ar": {
+              "title": "نزيف حاد",
+              "call": [
+                "دم يتدفق بغزارة"
+              ],
+              "steps": [
+                "اضغط بقوة على الجرح بقماش نظيف",
+                "واصل الضغط دون توقف",
+                "مدّد المصاب"
+              ],
+              "dont": [
+                "لا تنزع جسمًا مغروسًا في الجرح"
+              ]
+            },
+            "fr": {
+              "title": "Saignement abondant",
+              "call": [
+                "Le sang coule en abondance"
+              ],
+              "steps": [
+                "Appuyez fort sur la plaie avec un linge propre",
+                "Maintenez la pression sans relâcher",
+                "Allongez la victime"
+              ],
+              "dont": [
+                "Ne retirez pas un objet planté dans la plaie"
+              ]
+            },
+            "en": {
+              "title": "Severe bleeding",
+              "call": [
+                "Blood is flowing heavily"
+              ],
+              "steps": [
+                "Press hard on the wound with a clean cloth",
+                "Keep pressing without letting go",
+                "Lay the person down"
+              ],
+              "dont": [
+                "Do not remove an object stuck in the wound"
+              ]
+            }
+          },
+          "call_198": true,
+          "validated": false
+        },
+        {
+          "id": "seed-bleeding-1",
+          "content": {
+            "ar": {
+              "title": "نزيف الأنف",
+              "call": [
+                "لا يتوقف بعد 20 دقيقة"
+              ],
+              "steps": [
+                "اجلس وأمِل الرأس إلى الأمام",
+                "اضغط على الجزء اللين من الأنف 10 دقائق"
+              ],
+              "dont": [
+                "لا تُمِل الرأس إلى الخلف"
+              ]
+            },
+            "fr": {
+              "title": "Saignement de nez",
+              "call": [
+                "Ne s’arrête pas après 20 minutes"
+              ],
+              "steps": [
+                "Asseyez-vous, penchez la tête en avant",
+                "Pincez la partie molle du nez 10 minutes"
+              ],
+              "dont": [
+                "Ne basculez pas la tête en arrière"
+              ]
+            },
+            "en": {
+              "title": "Nosebleed",
+              "call": [
+                "Does not stop after 20 minutes"
+              ],
+              "steps": [
+                "Sit down, lean the head forward",
+                "Pinch the soft part of the nose for 10 minutes"
+              ],
+              "dont": [
+                "Do not tilt the head back"
+              ]
+            }
+          },
+          "call_198": false,
+          "validated": false
+        },
+        {
+          "id": "seed-bleeding-2",
+          "content": {
+            "ar": {
+              "title": "جرح صغير أو خدش",
+              "call": [
+                "جرح عميق أو واسع، جسم مغروس، أو جرح ملوث أو ناتج عن عضة"
+              ],
+              "steps": [
+                "اغسل يديك ثم نظّف الجرح بالماء الجاري",
+                "اضغط بقطعة قماش نظيفة حتى يتوقف النزيف",
+                "غطّه بضمادة نظيفة",
+                "استشر طبيبًا بشأن التلقيح ضد الكزاز إن لم يكن محيّنًا"
+              ],
+              "dont": [
+                "لا تنفخ على الجرح",
+                "لا تضع عليه موادًا غير معقّمة (بن، تراب، معجون)"
+              ]
+            },
+            "fr": {
+              "title": "Petite plaie ou écorchure",
+              "call": [
+                "Plaie profonde ou large, objet planté, plaie sale ou due à une morsure"
+              ],
+              "steps": [
+                "Lavez-vous les mains puis nettoyez la plaie à l’eau courante",
+                "Comprimez avec un linge propre jusqu’à l’arrêt du saignement",
+                "Couvrez d’un pansement propre",
+                "Demandez conseil à un médecin pour le vaccin antitétanique s’il n’est pas à jour"
+              ],
+              "dont": [
+                "Ne soufflez pas sur la plaie",
+                "N’y mettez rien de non stérile (café, terre, dentifrice)"
+              ]
+            },
+            "en": {
+              "title": "Small cut or graze",
+              "call": [
+                "A deep or wide wound, an object stuck in it, a dirty wound or a bite"
+              ],
+              "steps": [
+                "Wash your hands, then clean the wound under running water",
+                "Press with a clean cloth until the bleeding stops",
+                "Cover with a clean dressing",
+                "Ask a doctor about a tetanus shot if yours is not up to date"
+              ],
+              "dont": [
+                "Do not blow on the wound",
+                "Do not put anything unsterile on it (coffee, soil, toothpaste)"
+              ]
+            }
+          },
+          "call_198": false,
+          "validated": false
+        }
+      ]
+    },
+    {
+      "id": "seed-other",
+      "key": "other",
+      "title": {
+        "ar": "حالات أخرى",
+        "fr": "Autres situations",
+        "en": "Other emergencies"
+      },
+      "icon": "pin",
+      "colour": "#00695C",
+      "items": [
+        {
+          "id": "seed-other-0",
+          "content": {
+            "ar": {
+              "title": "الغرق",
+              "call": [
+                "كل شخص أُخرج من الماء بعد صعوبة، حتى لو بدا بخير"
+              ],
+              "steps": [
+                "لا تنزل إلى الماء إلا إن كنت قادرًا؛ ارمِ له شيئًا يطفو أو مدّ له عصا",
+                "خارج الماء: إن لم يتنفس، أعطِ 5 نفخات ثم ابدأ الإنعاش القلبي الرئوي",
+                "إن كان يتنفس: ضعه على جنبه وغطّه"
+              ],
+              "dont": [
+                "لا تحاول إخراج الماء من بطنه",
+                "لا تتركه وحده حتى وصول الإسعاف"
+              ]
+            },
+            "fr": {
+              "title": "Noyade",
+              "call": [
+                "Toute personne sortie de l’eau en difficulté, même si elle semble aller bien"
+              ],
+              "steps": [
+                "N’entrez dans l’eau que si vous en êtes capable ; lancez un objet qui flotte ou tendez une perche",
+                "Hors de l’eau : si elle ne respire pas, 5 insufflations puis réanimation cardio-pulmonaire",
+                "Si elle respire : sur le côté, couverte"
+              ],
+              "dont": [
+                "N’essayez pas de lui faire rejeter l’eau",
+                "Ne la laissez pas seule jusqu’à l’arrivée des secours"
+              ]
+            },
+            "en": {
+              "title": "Drowning",
+              "call": [
+                "Anyone taken out of the water after struggling, even if they seem fine"
+              ],
+              "steps": [
+                "Only go into the water if you can; throw something that floats or reach out with a pole",
+                "Out of the water: if they do not breathe, give 5 rescue breaths, then start CPR",
+                "If they breathe: on their side, keep them warm"
+              ],
+              "dont": [
+                "Do not try to get the water out of their stomach",
+                "Do not leave them alone until help arrives"
+              ]
+            }
+          },
+          "call_198": true,
+          "validated": false
+        },
+        {
+          "id": "seed-other-1",
+          "content": {
+            "ar": {
+              "title": "ضربة الشمس",
+              "call": [
+                "تشوش، كلام غير مفهوم، جلد ساخن، أو فقدان الوعي"
+              ],
+              "steps": [
+                "انقله إلى مكان ظليل أو بارد",
+                "برّده بسرعة: ماء بارد على الجسم، كمادات مبللة، تهوية",
+                "إن كان واعيًا ويبلع: اسقه ماءً باردًا على جرعات"
+              ],
+              "dont": [
+                "لا تعطه دواء خافضًا للحرارة",
+                "لا تعطِ شيئًا في الفم لشخص فاقد للوعي"
+              ]
+            },
+            "fr": {
+              "title": "Coup de chaleur",
+              "call": [
+                "Confusion, propos incohérents, peau brûlante, ou perte de connaissance"
+              ],
+              "steps": [
+                "Mettez la personne à l’ombre ou au frais",
+                "Refroidissez-la vite : eau fraîche sur le corps, linges mouillés, ventilation",
+                "Si elle est consciente et avale : de l’eau fraîche par petites gorgées"
+              ],
+              "dont": [
+                "Ne donnez pas de médicament contre la fièvre",
+                "Ne donnez rien par la bouche à une personne inconsciente"
+              ]
+            },
+            "en": {
+              "title": "Heatstroke",
+              "call": [
+                "Confusion, slurred speech, hot skin, or unresponsiveness"
+              ],
+              "steps": [
+                "Move the person to shade or a cool place",
+                "Cool them quickly: cool water on the body, wet cloths, fanning",
+                "If conscious and able to swallow: cool water in small sips"
+              ],
+              "dont": [
+                "Do not give fever medicine",
+                "Do not give anything by mouth to an unresponsive person"
+              ]
+            }
+          },
+          "call_198": true,
+          "validated": false
+        },
+        {
+          "id": "seed-other-2",
+          "content": {
+            "ar": {
+              "title": "لدغة عقرب",
+              "call": [
+                "كل لدغة لطفل أو لمسنّ أو لمريض، أو ظهور تعرق، قيء، صعوبة في التنفس أو تشنجات"
+              ],
+              "steps": [
+                "اتصل بـ198 أو توجه إلى أقرب مركز صحي",
+                "أبقِ المصاب هادئًا والطرف الملدوغ ساكنًا",
+                "نظّف مكان اللدغة وضع عليه كمادة باردة",
+                "انزع الخواتم والأساور قبل الانتفاخ"
+              ],
+              "dont": [
+                "لا تجرح مكان اللدغة ولا تمصّه",
+                "لا تربط الطرف برباط ضاغط",
+                "لا تضع عليه موادًا تقليدية"
+              ]
+            },
+            "fr": {
+              "title": "Piqûre de scorpion",
+              "call": [
+                "Toute piqûre d’un enfant, d’une personne âgée ou malade, ou sueurs, vomissements, gêne respiratoire, convulsions"
+              ],
+              "steps": [
+                "Appelez le 198 ou rendez-vous au centre de santé le plus proche",
+                "Gardez la personne calme et le membre piqué immobile",
+                "Nettoyez la piqûre et posez un linge froid",
+                "Retirez bagues et bracelets avant le gonflement"
+              ],
+              "dont": [
+                "N’incisez pas et ne sucez pas la piqûre",
+                "Ne posez pas de garrot",
+                "Ne mettez pas de produits traditionnels"
+              ]
+            },
+            "en": {
+              "title": "Scorpion sting",
+              "call": [
+                "Any sting in a child, an older or ill person, or sweating, vomiting, trouble breathing, seizures"
+              ],
+              "steps": [
+                "Call 198 or go to the nearest health centre",
+                "Keep the person calm and the stung limb still",
+                "Clean the sting and put a cold cloth on it",
+                "Remove rings and bracelets before swelling starts"
+              ],
+              "dont": [
+                "Do not cut or suck the sting",
+                "Do not put on a tourniquet",
+                "Do not apply traditional remedies"
+              ]
+            }
+          },
+          "call_198": true,
+          "validated": false
+        },
+        {
+          "id": "seed-other-3",
+          "content": {
+            "ar": {
+              "title": "عضة كلب أو قط أو حيوان آخر",
+              "call": [
+                "نزيف قوي أو جرح عميق أو في الوجه"
+              ],
+              "steps": [
+                "اغسل الجرح بالماء والصابون 15 دقيقة",
+                "غطّه بضمادة نظيفة",
+                "توجه في نفس اليوم إلى مركز صحي: قد يلزم التلقيح ضد داء الكلب",
+                "إن أمكن دون خطر: لاحظ الحيوان ولا تقتله"
+              ],
+              "dont": [
+                "لا تهمل العضة ولو كانت صغيرة",
+                "لا تخِط الجرح أو تغلقه بنفسك"
+              ]
+            },
+            "fr": {
+              "title": "Morsure de chien, de chat ou d’un autre animal",
+              "call": [
+                "Saignement important, plaie profonde ou au visage"
+              ],
+              "steps": [
+                "Lavez la plaie à l’eau et au savon pendant 15 minutes",
+                "Couvrez d’un pansement propre",
+                "Allez le jour même dans un centre de santé : la vaccination antirabique peut être nécessaire",
+                "Si possible sans danger : faites surveiller l’animal, ne le tuez pas"
+              ],
+              "dont": [
+                "Ne négligez pas une morsure, même petite",
+                "Ne fermez pas la plaie vous-même"
+              ]
+            },
+            "en": {
+              "title": "Dog, cat or other animal bite",
+              "call": [
+                "Heavy bleeding, a deep wound or a wound on the face"
+              ],
+              "steps": [
+                "Wash the wound with soap and water for 15 minutes",
+                "Cover it with a clean dressing",
+                "Go to a health centre the same day: rabies vaccination may be needed",
+                "If safely possible: have the animal observed, do not kill it"
+              ],
+              "dont": [
+                "Do not ignore a bite, even a small one",
+                "Do not close the wound yourself"
+              ]
+            }
+          },
+          "call_198": false,
+          "validated": false
+        },
+        {
+          "id": "seed-other-4",
+          "content": {
+            "ar": {
+              "title": "تسمم بابتلاع مادة",
+              "call": [
+                "فقدان الوعي، صعوبة في التنفس، تشنجات، أو ابتلاع مادة كاوية (جافيل، مزيل الكلس)"
+              ],
+              "steps": [
+                "اتصل بـ198 أو بالمركز الوطني لمكافحة التسمم والإسعاف الطبي",
+                "احتفظ بالعلبة أو الدواء لمعرفة المادة والكمية",
+                "إن فقد وعيه وهو يتنفس: ضعه على جنبه"
+              ],
+              "dont": [
+                "لا تحاول جعله يتقيأ",
+                "لا تعطه حليبًا ولا ماءً ولا أي شيء دون نصيحة طبية"
+              ]
+            },
+            "fr": {
+              "title": "Intoxication par ingestion",
+              "call": [
+                "Perte de connaissance, gêne respiratoire, convulsions, ou produit corrosif avalé (javel, détartrant)"
+              ],
+              "steps": [
+                "Appelez le 198 ou le Centre national anti-poison",
+                "Gardez l’emballage ou le médicament pour connaître le produit et la quantité",
+                "Si elle perd connaissance et respire : mettez-la sur le côté"
+              ],
+              "dont": [
+                "N’essayez pas de la faire vomir",
+                "Ne donnez ni lait, ni eau, ni rien sans avis médical"
+              ]
+            },
+            "en": {
+              "title": "Swallowed poison",
+              "call": [
+                "Unresponsiveness, trouble breathing, seizures, or a corrosive product swallowed (bleach, descaler)"
+              ],
+              "steps": [
+                "Call 198 or the National Poison Centre",
+                "Keep the container or medicine to know the product and the amount",
+                "If they become unresponsive but breathe: put them on their side"
+              ],
+              "dont": [
+                "Do not try to make them vomit",
+                "Do not give milk, water or anything without medical advice"
+              ]
+            }
+          },
+          "call_198": true,
+          "validated": false
+        },
+        {
+          "id": "seed-other-5",
+          "content": {
+            "ar": {
+              "title": "حادث مرور",
+              "call": [
+                "كل حادث فيه مصاب أو شخص عالق أو تسرب وقود"
+              ],
+              "steps": [
+                "احمِ نفسك: أركن بعيدًا، شغّل أضواء التنبيه، ارتدِ السترة العاكسة وضع المثلث",
+                "أطفئ محرك السيارة المتضررة إن أمكن",
+                "اتصل بـ198: المكان، عدد المصابين، حالتهم",
+                "تحدث إلى المصابين وأبقِهم ساكنين وغطّهم"
+              ],
+              "dont": [
+                "لا تُخرج المصاب من السيارة إلا لخطر مباشر (نار)",
+                "لا تنزع خوذة سائق الدراجة النارية",
+                "لا تدخّن قرب السيارات"
+              ]
+            },
+            "fr": {
+              "title": "Accident de la route",
+              "call": [
+                "Tout accident avec un blessé, une personne coincée ou une fuite de carburant"
+              ],
+              "steps": [
+                "Protégez-vous : garez-vous à distance, feux de détresse, gilet et triangle",
+                "Coupez le contact du véhicule accidenté si possible",
+                "Appelez le 198 : lieu, nombre de blessés, leur état",
+                "Parlez aux blessés, gardez-les immobiles et couverts"
+              ],
+              "dont": [
+                "Ne sortez pas un blessé du véhicule sauf danger immédiat (feu)",
+                "N’enlevez pas le casque d’un motard",
+                "Ne fumez pas près des véhicules"
+              ]
+            },
+            "en": {
+              "title": "Road accident",
+              "call": [
+                "Any accident with an injured person, someone trapped, or leaking fuel"
+              ],
+              "steps": [
+                "Protect yourself: park away, hazard lights on, wear the vest and set the triangle",
+                "Turn off the ignition of the crashed vehicle if possible",
+                "Call 198: place, number of injured, their condition",
+                "Talk to the injured, keep them still and warm"
+              ],
+              "dont": [
+                "Do not move an injured person out of the vehicle unless there is immediate danger (fire)",
+                "Do not remove a motorcyclist's helmet",
+                "Do not smoke near the vehicles"
+              ]
+            }
+          },
+          "call_198": true,
+          "validated": false
+        }
+      ]
+    }
+  ]
+}

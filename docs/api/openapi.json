@@ -402,6 +402,61 @@
         "title": "Action",
         "type": "object"
       },
+      "ActionIn": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "take",
+              "answer",
+              "note",
+              "move",
+              "close",
+              "reject",
+              "reopen"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "maximum": 99.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "maxLength": 3000,
+                "minLength": 5,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          },
+          "version": {
+            "minimum": 1.0,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version",
+          "action"
+        ],
+        "title": "ActionIn",
+        "type": "object"
+      },
       "AdjustIn": {
         "properties": {
           "delta": {
@@ -2943,6 +2998,118 @@
         "title": "Contact",
         "type": "object"
       },
+      "ContactIn": {
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "maximum": 99.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "kind": {
+            "enum": [
+              "access_info",
+              "hazard",
+              "question",
+              "suggestion",
+              "app_problem",
+              "partnership"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "locale": {
+            "default": "ar",
+            "enum": [
+              "ar",
+              "fr",
+              "en"
+            ],
+            "title": "Locale",
+            "type": "string"
+          },
+          "message": {
+            "maxLength": 3000,
+            "minLength": 10,
+            "title": "Message",
+            "type": "string"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "minLength": 2,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "maxLength": 30,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "platform": {
+            "anyOf": [
+              {
+                "enum": [
+                  "android",
+                  "ios",
+                  "web"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Platform"
+          },
+          "subject": {
+            "maxLength": 120,
+            "minLength": 3,
+            "title": "Subject",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "subject",
+          "message"
+        ],
+        "title": "ContactIn",
+        "type": "object"
+      },
       "CredentialsOut": {
         "properties": {
           "display_name": {
@@ -3140,6 +3307,208 @@
           "status"
         ],
         "title": "DeleteOut",
+        "type": "object"
+      },
+      "DetailOut": {
+        "properties": {
+          "anonymous": {
+            "title": "Anonymous",
+            "type": "boolean"
+          },
+          "answer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Answer"
+          },
+          "answered_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Answered At"
+          },
+          "assigned_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assigned Name"
+          },
+          "closed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Closed At"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "due_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due At"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/StaffEventOut"
+            },
+            "title": "Events",
+            "type": "array"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "locale": {
+            "title": "Locale",
+            "type": "string"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "number": {
+            "title": "Number",
+            "type": "string"
+          },
+          "overdue": {
+            "title": "Overdue",
+            "type": "boolean"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "platform": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Platform"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "subject": {
+            "title": "Subject",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "kind",
+          "status",
+          "subject",
+          "gouvernorat_code",
+          "created_at",
+          "updated_at",
+          "due_at",
+          "overdue",
+          "assigned_name",
+          "anonymous",
+          "version",
+          "name",
+          "phone",
+          "email",
+          "message",
+          "answer",
+          "answered_at",
+          "closed_at",
+          "locale",
+          "platform",
+          "events"
+        ],
+        "title": "DetailOut",
         "type": "object"
       },
       "DetectionOut": {
@@ -4682,6 +5051,49 @@
         "title": "Evaluation",
         "type": "object"
       },
+      "EventOut": {
+        "properties": {
+          "action": {
+            "title": "Action",
+            "type": "string"
+          },
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          }
+        },
+        "required": [
+          "action",
+          "status",
+          "gouvernorat_code",
+          "at"
+        ],
+        "title": "EventOut",
+        "type": "object"
+      },
       "Evidence": {
         "properties": {
           "intervention_ids": {
@@ -4961,6 +5373,145 @@
           "accepted_at"
         ],
         "title": "ExportConsent",
+        "type": "object"
+      },
+      "ExportContact": {
+        "properties": {
+          "answer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Answer"
+          },
+          "answered_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Answered At"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "due_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due At"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "history": {
+            "items": {
+              "$ref": "#/components/schemas/EventOut"
+            },
+            "title": "History",
+            "type": "array"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "number": {
+            "title": "Number",
+            "type": "string"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "subject": {
+            "title": "Subject",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "kind",
+          "status",
+          "subject",
+          "message",
+          "gouvernorat_code",
+          "created_at",
+          "due_at",
+          "answer",
+          "answered_at",
+          "history",
+          "name",
+          "phone",
+          "email"
+        ],
+        "title": "ExportContact",
         "type": "object"
       },
       "ExportDevice": {
@@ -5315,6 +5866,13 @@
             "title": "Consents",
             "type": "array"
           },
+          "contact": {
+            "items": {
+              "$ref": "#/components/schemas/ExportContact"
+            },
+            "title": "Contact",
+            "type": "array"
+          },
           "devices": {
             "items": {
               "$ref": "#/components/schemas/ExportDevice"
@@ -5391,7 +5949,8 @@
           "volunteer",
           "rewards",
           "devices",
-          "messages"
+          "messages",
+          "contact"
         ],
         "title": "ExportOut",
         "type": "object"
@@ -6026,78 +6585,134 @@
         "title": "Facets",
         "type": "object"
       },
-      "FeatureIn": {
+      "FeaturePatch": {
+        "additionalProperties": false,
         "properties": {
-          "kind": {
-            "enum": [
-              "evacuation_point",
-              "water_point",
-              "alarm"
-            ],
-            "title": "Kind",
-            "type": "string"
-          },
-          "label": {
+          "hidden": {
             "anyOf": [
               {
-                "maxLength": 120,
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hidden"
+          },
+          "kind": {
+            "anyOf": [
+              {
+                "maxLength": 64,
                 "type": "string"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Label"
+            "title": "Kind"
           },
-          "location": {
-            "$ref": "#/components/schemas/Point-Input"
+          "lat": {
+            "anyOf": [
+              {
+                "maximum": 37.6,
+                "minimum": 30.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lat"
+          },
+          "lon": {
+            "anyOf": [
+              {
+                "maximum": 11.7,
+                "minimum": 7.4,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lon"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "props": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Props"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          },
+          "version": {
+            "minimum": 1.0,
+            "title": "Version",
+            "type": "integer"
           }
         },
         "required": [
-          "kind",
-          "location"
+          "version",
+          "reason"
         ],
-        "title": "FeatureIn",
+        "title": "FeaturePatch",
         "type": "object"
       },
-      "FeatureOut": {
+      "FeaturesOut": {
         "properties": {
-          "id": {
-            "format": "uuid",
-            "title": "Id",
-            "type": "string"
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__layers__schemas__FeatureOut"
+            },
+            "title": "Items",
+            "type": "array"
           },
-          "kind": {
-            "enum": [
-              "evacuation_point",
-              "water_point",
-              "alarm"
-            ],
-            "title": "Kind",
-            "type": "string"
-          },
-          "label": {
-            "anyOf": [
-              {
-                "maxLength": 120,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Label"
-          },
-          "location": {
-            "$ref": "#/components/schemas/app__modules__orgs__schemas__Point"
+          "truncated": {
+            "title": "Truncated",
+            "type": "boolean"
           }
         },
         "required": [
-          "kind",
-          "location",
-          "id"
+          "items",
+          "truncated"
         ],
-        "title": "FeatureOut",
+        "title": "FeaturesOut",
         "type": "object"
       },
       "FireDangerOut": {
@@ -7012,6 +7627,43 @@
         "title": "GroupingSettings",
         "type": "object"
       },
+      "GuideOut": {
+        "properties": {
+          "icons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Icons",
+            "type": "array"
+          },
+          "palette": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Palette",
+            "type": "array"
+          },
+          "revision": {
+            "title": "Revision",
+            "type": "integer"
+          },
+          "topics": {
+            "items": {
+              "$ref": "#/components/schemas/TopicOut"
+            },
+            "title": "Topics",
+            "type": "array"
+          }
+        },
+        "required": [
+          "revision",
+          "topics",
+          "icons",
+          "palette"
+        ],
+        "title": "GuideOut",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -7579,6 +8231,300 @@
         "title": "IceServer",
         "type": "object"
       },
+      "ImportDetail": {
+        "properties": {
+          "applied_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Applied At"
+          },
+          "can_apply": {
+            "title": "Can Apply",
+            "type": "boolean"
+          },
+          "can_undo": {
+            "title": "Can Undo",
+            "type": "boolean"
+          },
+          "counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Counts",
+            "type": "object"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "expired": {
+            "title": "Expired",
+            "type": "boolean"
+          },
+          "file_name": {
+            "title": "File Name",
+            "type": "string"
+          },
+          "format": {
+            "title": "Format",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "mode": {
+            "enum": [
+              "merge",
+              "replace"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/PreviewPoint"
+            },
+            "title": "Points",
+            "type": "array"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "rejected": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Rejected",
+            "type": "array"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "undone_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Undone At"
+          },
+          "warnings": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "file_name",
+          "format",
+          "mode",
+          "status",
+          "counts",
+          "rejected",
+          "warnings",
+          "reason",
+          "created_by_name",
+          "created_at",
+          "applied_at",
+          "undone_at",
+          "expired",
+          "can_apply",
+          "can_undo",
+          "points"
+        ],
+        "title": "ImportDetail",
+        "type": "object"
+      },
+      "ImportOut": {
+        "properties": {
+          "applied_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Applied At"
+          },
+          "can_apply": {
+            "title": "Can Apply",
+            "type": "boolean"
+          },
+          "can_undo": {
+            "title": "Can Undo",
+            "type": "boolean"
+          },
+          "counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Counts",
+            "type": "object"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "expired": {
+            "title": "Expired",
+            "type": "boolean"
+          },
+          "file_name": {
+            "title": "File Name",
+            "type": "string"
+          },
+          "format": {
+            "title": "Format",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "mode": {
+            "enum": [
+              "merge",
+              "replace"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "rejected": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Rejected",
+            "type": "array"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "undone_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Undone At"
+          },
+          "warnings": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "file_name",
+          "format",
+          "mode",
+          "status",
+          "counts",
+          "rejected",
+          "warnings",
+          "reason",
+          "created_by_name",
+          "created_at",
+          "applied_at",
+          "undone_at",
+          "expired",
+          "can_apply",
+          "can_undo"
+        ],
+        "title": "ImportOut",
+        "type": "object"
+      },
+      "ImportsOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ImportOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "ImportsOut",
+        "type": "object"
+      },
       "InboxItem": {
         "properties": {
           "active": {
@@ -7676,6 +8622,40 @@
           "active"
         ],
         "title": "InboxItem",
+        "type": "object"
+      },
+      "InboxOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SummaryOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "open_by_kind": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Open By Kind",
+            "type": "object"
+          },
+          "overdue": {
+            "title": "Overdue",
+            "type": "integer"
+          },
+          "truncated": {
+            "title": "Truncated",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "items",
+          "truncated",
+          "open_by_kind",
+          "overdue"
+        ],
+        "title": "InboxOut",
         "type": "object"
       },
       "InboxPage": {
@@ -8428,63 +9408,94 @@
         "title": "InviteOut",
         "type": "object"
       },
-      "ItemOut": {
+      "ItemContent": {
+        "additionalProperties": false,
         "properties": {
-          "body": {
-            "title": "Body",
+          "ar": {
+            "$ref": "#/components/schemas/ItemText"
+          },
+          "en": {
+            "$ref": "#/components/schemas/ItemText"
+          },
+          "fr": {
+            "$ref": "#/components/schemas/ItemText"
+          }
+        },
+        "required": [
+          "ar",
+          "fr",
+          "en"
+        ],
+        "title": "ItemContent",
+        "type": "object"
+      },
+      "ItemIn": {
+        "additionalProperties": false,
+        "properties": {
+          "call_198": {
+            "default": false,
+            "title": "Call 198",
+            "type": "boolean"
+          },
+          "content": {
+            "$ref": "#/components/schemas/ItemContent"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "content",
+          "reason"
+        ],
+        "title": "ItemIn",
+        "type": "object"
+      },
+      "ItemPatch": {
+        "additionalProperties": false,
+        "properties": {
+          "call_198": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Call 198"
+          },
+          "content": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ItemContent"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "hidden": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hidden"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
             "type": "string"
           },
-          "category": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Category"
-          },
-          "date": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Date"
-          },
-          "fields": {
-            "additionalProperties": true,
-            "title": "Fields",
-            "type": "object"
-          },
-          "gouvernorat": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Gouvernorat"
-          },
-          "gouvernorats": {
-            "items": {
-              "type": "integer"
-            },
-            "title": "Gouvernorats",
-            "type": "array"
-          },
-          "id": {
-            "title": "Id",
-            "type": "string"
-          },
-          "incident_id": {
+          "topic_id": {
             "anyOf": [
               {
                 "format": "uuid",
@@ -8494,44 +9505,67 @@
                 "type": "null"
               }
             ],
-            "title": "Incident Id"
+            "title": "Topic Id"
           },
-          "kind": {
-            "enum": [
-              "memory",
-              "report_doc",
-              "incident",
-              "report",
-              "transcript",
-              "procedure"
-            ],
-            "title": "Kind",
-            "type": "string"
-          },
-          "media": {
+          "version": {
+            "minimum": 1.0,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version",
+          "reason"
+        ],
+        "title": "ItemPatch",
+        "type": "object"
+      },
+      "ItemText": {
+        "additionalProperties": false,
+        "properties": {
+          "call": {
             "items": {
-              "$ref": "#/components/schemas/MediaLink"
+              "maxLength": 300,
+              "minLength": 1,
+              "type": "string"
             },
-            "title": "Media",
+            "maxItems": 5,
+            "title": "Call",
+            "type": "array"
+          },
+          "dont": {
+            "items": {
+              "maxLength": 300,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Dont",
+            "type": "array"
+          },
+          "steps": {
+            "items": {
+              "maxLength": 300,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 15,
+            "minItems": 1,
+            "title": "Steps",
             "type": "array"
           },
           "title": {
+            "maxLength": 120,
+            "minLength": 1,
             "title": "Title",
             "type": "string"
           }
         },
         "required": [
-          "kind",
-          "id",
           "title",
-          "date",
-          "gouvernorat",
-          "gouvernorats",
-          "category",
-          "incident_id",
-          "body"
+          "steps"
         ],
-        "title": "ItemOut",
+        "title": "ItemText",
         "type": "object"
       },
       "KeyCount": {
@@ -8646,6 +9680,43 @@
         "title": "Kpis",
         "type": "object"
       },
+      "LastImport": {
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "By"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "at",
+          "by"
+        ],
+        "title": "LastImport",
+        "type": "object"
+      },
       "LatLon-Input": {
         "properties": {
           "lat": {
@@ -8684,6 +9755,420 @@
           "lon"
         ],
         "title": "LatLon",
+        "type": "object"
+      },
+      "LayerIn": {
+        "additionalProperties": false,
+        "properties": {
+          "audience": {
+            "default": "staff",
+            "enum": [
+              "public",
+              "staff"
+            ],
+            "title": "Audience",
+            "type": "string"
+          },
+          "colour": {
+            "title": "Colour",
+            "type": "string"
+          },
+          "editors_allowed": {
+            "default": false,
+            "title": "Editors Allowed",
+            "type": "boolean"
+          },
+          "icon": {
+            "title": "Icon",
+            "type": "string"
+          },
+          "key": {
+            "pattern": "^[a-z][a-z0-9_]{1,39}$",
+            "title": "Key",
+            "type": "string"
+          },
+          "licence": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Licence",
+            "type": "string"
+          },
+          "name": {
+            "$ref": "#/components/schemas/Names"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          },
+          "simulated": {
+            "default": false,
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "source": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Source",
+            "type": "string"
+          },
+          "staff_only": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Staff Only",
+            "type": "array"
+          },
+          "to_verify": {
+            "default": true,
+            "title": "To Verify",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "icon",
+          "colour",
+          "reason"
+        ],
+        "title": "LayerIn",
+        "type": "object"
+      },
+      "LayerOut": {
+        "properties": {
+          "audience": {
+            "enum": [
+              "public",
+              "staff"
+            ],
+            "title": "Audience",
+            "type": "string"
+          },
+          "can_import": {
+            "title": "Can Import",
+            "type": "boolean"
+          },
+          "can_manage": {
+            "title": "Can Manage",
+            "type": "boolean"
+          },
+          "colour": {
+            "title": "Colour",
+            "type": "string"
+          },
+          "data_version": {
+            "title": "Data Version",
+            "type": "integer"
+          },
+          "editors_allowed": {
+            "title": "Editors Allowed",
+            "type": "boolean"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "feature_count": {
+            "title": "Feature Count",
+            "type": "integer"
+          },
+          "hidden_count": {
+            "title": "Hidden Count",
+            "type": "integer"
+          },
+          "icon": {
+            "title": "Icon",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "last_import": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LastImport"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "licence": {
+            "title": "Licence",
+            "type": "string"
+          },
+          "name": {
+            "$ref": "#/components/schemas/Names"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "staff_only": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Staff Only",
+            "type": "array"
+          },
+          "to_verify": {
+            "title": "To Verify",
+            "type": "boolean"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "updated_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By Name"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "key",
+          "name",
+          "icon",
+          "colour",
+          "audience",
+          "source",
+          "licence",
+          "to_verify",
+          "simulated",
+          "staff_only",
+          "editors_allowed",
+          "enabled",
+          "version",
+          "data_version",
+          "feature_count",
+          "hidden_count",
+          "updated_by_name",
+          "updated_at",
+          "last_import",
+          "can_manage",
+          "can_import"
+        ],
+        "title": "LayerOut",
+        "type": "object"
+      },
+      "LayerPatch": {
+        "additionalProperties": false,
+        "properties": {
+          "audience": {
+            "anyOf": [
+              {
+                "enum": [
+                  "public",
+                  "staff"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Audience"
+          },
+          "colour": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Colour"
+          },
+          "editors_allowed": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Editors Allowed"
+          },
+          "enabled": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enabled"
+          },
+          "icon": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icon"
+          },
+          "licence": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Licence"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Names"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          },
+          "simulated": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Simulated"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
+          "staff_only": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Staff Only"
+          },
+          "to_verify": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To Verify"
+          },
+          "version": {
+            "minimum": 1.0,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version",
+          "reason"
+        ],
+        "title": "LayerPatch",
+        "type": "object"
+      },
+      "LayersOut": {
+        "properties": {
+          "can_manage": {
+            "title": "Can Manage",
+            "type": "boolean"
+          },
+          "icons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Icons",
+            "type": "array"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/LayerOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "limits": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Limits",
+            "type": "object"
+          },
+          "palette": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Palette",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items",
+          "can_manage",
+          "icons",
+          "palette",
+          "limits"
+        ],
+        "title": "LayersOut",
         "type": "object"
       },
       "LeadIn": {
@@ -9937,6 +11422,143 @@
         "title": "MessagePage",
         "type": "object"
       },
+      "MineList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/MineOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "MineList",
+        "type": "object"
+      },
+      "MineOut": {
+        "properties": {
+          "answer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Answer"
+          },
+          "answered_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Answered At"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "due_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due At"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "history": {
+            "items": {
+              "$ref": "#/components/schemas/EventOut"
+            },
+            "title": "History",
+            "type": "array"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "number": {
+            "title": "Number",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "subject": {
+            "title": "Subject",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "kind",
+          "status",
+          "subject",
+          "message",
+          "gouvernorat_code",
+          "created_at",
+          "due_at",
+          "answer",
+          "answered_at",
+          "history"
+        ],
+        "title": "MineOut",
+        "type": "object"
+      },
+      "MoveIn": {
+        "additionalProperties": false,
+        "properties": {
+          "direction": {
+            "enum": [
+              "up",
+              "down"
+            ],
+            "title": "Direction",
+            "type": "string"
+          }
+        },
+        "required": [
+          "direction"
+        ],
+        "title": "MoveIn",
+        "type": "object"
+      },
       "MyCallout": {
         "properties": {
           "created_at": {
@@ -10208,6 +11830,36 @@
           "safety_notice"
         ],
         "title": "MyRewards",
+        "type": "object"
+      },
+      "Names": {
+        "additionalProperties": false,
+        "properties": {
+          "ar": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Ar",
+            "type": "string"
+          },
+          "en": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "En",
+            "type": "string"
+          },
+          "fr": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Fr",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ar",
+          "fr",
+          "en"
+        ],
+        "title": "Names",
         "type": "object"
       },
       "NearbyIncident": {
@@ -11504,7 +13156,7 @@
           },
           "features": {
             "items": {
-              "$ref": "#/components/schemas/FeatureOut"
+              "$ref": "#/components/schemas/app__modules__orgs__schemas__FeatureOut"
             },
             "title": "Features",
             "type": "array"
@@ -12023,6 +13675,45 @@
         "title": "Position",
         "type": "object"
       },
+      "PreviewPoint": {
+        "properties": {
+          "change": {
+            "enum": [
+              "new",
+              "updated",
+              "unchanged",
+              "removed"
+            ],
+            "title": "Change",
+            "type": "string"
+          },
+          "lat": {
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "title": "Lon",
+            "type": "number"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "ref": {
+            "title": "Ref",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ref",
+          "name",
+          "lat",
+          "lon",
+          "change"
+        ],
+        "title": "PreviewPoint",
+        "type": "object"
+      },
       "PrioritySettings": {
         "properties": {
           "category_severity": {
@@ -12428,6 +14119,255 @@
         "title": "PublicAlert",
         "type": "object"
       },
+      "PublicFeature": {
+        "properties": {
+          "distance_m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Distance M"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kind"
+          },
+          "lat": {
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "title": "Lon",
+            "type": "number"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "props": {
+            "additionalProperties": true,
+            "title": "Props",
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "kind",
+          "phone",
+          "lat",
+          "lon",
+          "gouvernorat_code",
+          "props"
+        ],
+        "title": "PublicFeature",
+        "type": "object"
+      },
+      "PublicFeatures": {
+        "properties": {
+          "data_version": {
+            "title": "Data Version",
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/PublicFeature"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "layer": {
+            "title": "Layer",
+            "type": "string"
+          },
+          "truncated": {
+            "default": false,
+            "title": "Truncated",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "layer",
+          "data_version",
+          "items"
+        ],
+        "title": "PublicFeatures",
+        "type": "object"
+      },
+      "PublicGuide": {
+        "properties": {
+          "revision": {
+            "title": "Revision",
+            "type": "integer"
+          },
+          "topics": {
+            "items": {
+              "$ref": "#/components/schemas/PublicTopic"
+            },
+            "title": "Topics",
+            "type": "array"
+          }
+        },
+        "required": [
+          "revision",
+          "topics"
+        ],
+        "title": "PublicGuide",
+        "type": "object"
+      },
+      "PublicItem": {
+        "properties": {
+          "call_198": {
+            "title": "Call 198",
+            "type": "boolean"
+          },
+          "content": {
+            "$ref": "#/components/schemas/ItemContent"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "validated": {
+            "title": "Validated",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "content",
+          "call_198",
+          "validated"
+        ],
+        "title": "PublicItem",
+        "type": "object"
+      },
+      "PublicLayer": {
+        "properties": {
+          "colour": {
+            "title": "Colour",
+            "type": "string"
+          },
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "data_version": {
+            "title": "Data Version",
+            "type": "integer"
+          },
+          "icon": {
+            "title": "Icon",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "licence": {
+            "title": "Licence",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "names": {
+            "$ref": "#/components/schemas/Names"
+          },
+          "origin": {
+            "enum": [
+              "file",
+              "units"
+            ],
+            "title": "Origin",
+            "type": "string"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "to_verify": {
+            "title": "To Verify",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "names",
+          "icon",
+          "colour",
+          "source",
+          "licence",
+          "to_verify",
+          "simulated",
+          "count",
+          "data_version",
+          "origin"
+        ],
+        "title": "PublicLayer",
+        "type": "object"
+      },
+      "PublicLayers": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/PublicLayer"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "PublicLayers",
+        "type": "object"
+      },
       "PublicTip": {
         "properties": {
           "content": {
@@ -12494,6 +14434,47 @@
           "items"
         ],
         "title": "PublicTips",
+        "type": "object"
+      },
+      "PublicTopic": {
+        "properties": {
+          "colour": {
+            "title": "Colour",
+            "type": "string"
+          },
+          "icon": {
+            "title": "Icon",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/PublicItem"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "title": {
+            "$ref": "#/components/schemas/Titles"
+          }
+        },
+        "required": [
+          "id",
+          "key",
+          "title",
+          "icon",
+          "colour",
+          "items"
+        ],
+        "title": "PublicTopic",
         "type": "object"
       },
       "PublishIn": {
@@ -14986,6 +16967,84 @@
         "title": "SourceRef",
         "type": "object"
       },
+      "StaffEventOut": {
+        "properties": {
+          "action": {
+            "title": "Action",
+            "type": "string"
+          },
+          "actor_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actor Name"
+          },
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "visible": {
+            "title": "Visible",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "action",
+          "status",
+          "gouvernorat_code",
+          "at",
+          "id",
+          "note",
+          "visible",
+          "actor_name"
+        ],
+        "title": "StaffEventOut",
+        "type": "object"
+      },
       "StaffHistoryEntry": {
         "properties": {
           "actor": {
@@ -15486,7 +17545,7 @@
           },
           "features": {
             "items": {
-              "$ref": "#/components/schemas/FeatureOut"
+              "$ref": "#/components/schemas/app__modules__orgs__schemas__FeatureOut"
             },
             "title": "Features",
             "type": "array"
@@ -17585,6 +19644,104 @@
         "title": "SummaryHazmat",
         "type": "object"
       },
+      "SummaryOut": {
+        "properties": {
+          "anonymous": {
+            "title": "Anonymous",
+            "type": "boolean"
+          },
+          "assigned_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assigned Name"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "due_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due At"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "number": {
+            "title": "Number",
+            "type": "string"
+          },
+          "overdue": {
+            "title": "Overdue",
+            "type": "boolean"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "subject": {
+            "title": "Subject",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "kind",
+          "status",
+          "subject",
+          "gouvernorat_code",
+          "created_at",
+          "updated_at",
+          "due_at",
+          "overdue",
+          "assigned_name",
+          "anonymous",
+          "version"
+        ],
+        "title": "SummaryOut",
+        "type": "object"
+      },
       "SummaryTeamMember": {
         "properties": {
           "full_name": {
@@ -18066,6 +20223,199 @@
           "fr"
         ],
         "title": "Title",
+        "type": "object"
+      },
+      "Titles": {
+        "additionalProperties": false,
+        "properties": {
+          "ar": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Ar",
+            "type": "string"
+          },
+          "en": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "En",
+            "type": "string"
+          },
+          "fr": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Fr",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ar",
+          "fr",
+          "en"
+        ],
+        "title": "Titles",
+        "type": "object"
+      },
+      "TopicIn": {
+        "additionalProperties": false,
+        "properties": {
+          "colour": {
+            "title": "Colour",
+            "type": "string"
+          },
+          "icon": {
+            "title": "Icon",
+            "type": "string"
+          },
+          "key": {
+            "pattern": "^[a-z][a-z0-9_]{1,39}$",
+            "title": "Key",
+            "type": "string"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          },
+          "title": {
+            "$ref": "#/components/schemas/Titles"
+          }
+        },
+        "required": [
+          "key",
+          "title",
+          "icon",
+          "colour",
+          "reason"
+        ],
+        "title": "TopicIn",
+        "type": "object"
+      },
+      "TopicOut": {
+        "properties": {
+          "colour": {
+            "title": "Colour",
+            "type": "string"
+          },
+          "hidden": {
+            "title": "Hidden",
+            "type": "boolean"
+          },
+          "icon": {
+            "title": "Icon",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__content__guide__ItemOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "position": {
+            "title": "Position",
+            "type": "integer"
+          },
+          "title": {
+            "$ref": "#/components/schemas/Titles"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "key",
+          "title",
+          "icon",
+          "colour",
+          "position",
+          "hidden",
+          "version",
+          "updated_at",
+          "items"
+        ],
+        "title": "TopicOut",
+        "type": "object"
+      },
+      "TopicPatch": {
+        "additionalProperties": false,
+        "properties": {
+          "colour": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Colour"
+          },
+          "hidden": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hidden"
+          },
+          "icon": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icon"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Titles"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "version": {
+            "minimum": 1.0,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version",
+          "reason"
+        ],
+        "title": "TopicPatch",
         "type": "object"
       },
       "Totals": {
@@ -18830,6 +21180,28 @@
           "entry"
         ],
         "title": "VersionOut",
+        "type": "object"
+      },
+      "VersionReason": {
+        "additionalProperties": false,
+        "properties": {
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          },
+          "version": {
+            "minimum": 1.0,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version",
+          "reason"
+        ],
+        "title": "VersionReason",
         "type": "object"
       },
       "VersionSummary": {
@@ -19704,6 +22076,192 @@
         "title": "ReportPage",
         "type": "object"
       },
+      "app__modules__content__guide__ItemOut": {
+        "properties": {
+          "call_198": {
+            "title": "Call 198",
+            "type": "boolean"
+          },
+          "content": {
+            "$ref": "#/components/schemas/ItemContent"
+          },
+          "hidden": {
+            "title": "Hidden",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "position": {
+            "title": "Position",
+            "type": "integer"
+          },
+          "topic_id": {
+            "format": "uuid",
+            "title": "Topic Id",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "validated": {
+            "title": "Validated",
+            "type": "boolean"
+          },
+          "validated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Validated At"
+          },
+          "validated_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Validated By"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "topic_id",
+          "position",
+          "content",
+          "call_198",
+          "hidden",
+          "validated",
+          "validated_by",
+          "validated_at",
+          "version",
+          "updated_at"
+        ],
+        "title": "ItemOut",
+        "type": "object"
+      },
+      "app__modules__knowledge__schemas__ItemOut": {
+        "properties": {
+          "body": {
+            "title": "Body",
+            "type": "string"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "date": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date"
+          },
+          "fields": {
+            "additionalProperties": true,
+            "title": "Fields",
+            "type": "object"
+          },
+          "gouvernorat": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat"
+          },
+          "gouvernorats": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Gouvernorats",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "incident_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Incident Id"
+          },
+          "kind": {
+            "enum": [
+              "memory",
+              "report_doc",
+              "incident",
+              "report",
+              "transcript",
+              "procedure"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "media": {
+            "items": {
+              "$ref": "#/components/schemas/MediaLink"
+            },
+            "title": "Media",
+            "type": "array"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "id",
+          "title",
+          "date",
+          "gouvernorat",
+          "gouvernorats",
+          "category",
+          "incident_id",
+          "body"
+        ],
+        "title": "ItemOut",
+        "type": "object"
+      },
       "app__modules__knowledge__schemas__Person": {
         "properties": {
           "id": {
@@ -19781,6 +22339,206 @@
           "version"
         ],
         "title": "Review",
+        "type": "object"
+      },
+      "app__modules__layers__schemas__FeatureIn": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kind"
+          },
+          "lat": {
+            "maximum": 37.6,
+            "minimum": 30.0,
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "maximum": 11.7,
+            "minimum": 7.4,
+            "title": "Lon",
+            "type": "number"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "props": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Props",
+            "type": "object"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          },
+          "ref": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ref"
+          }
+        },
+        "required": [
+          "name",
+          "lat",
+          "lon",
+          "reason"
+        ],
+        "title": "FeatureIn",
+        "type": "object"
+      },
+      "app__modules__layers__schemas__FeatureOut": {
+        "properties": {
+          "delegation_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delegation Id"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "hidden": {
+            "title": "Hidden",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kind"
+          },
+          "lat": {
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "title": "Lon",
+            "type": "number"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "props": {
+            "additionalProperties": true,
+            "title": "Props",
+            "type": "object"
+          },
+          "ref": {
+            "title": "Ref",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "ref",
+          "name",
+          "kind",
+          "phone",
+          "lat",
+          "lon",
+          "gouvernorat_code",
+          "delegation_id",
+          "props",
+          "hidden",
+          "version",
+          "updated_at"
+        ],
+        "title": "FeatureOut",
+        "type": "object"
+      },
+      "app__modules__layers__schemas__ReasonIn": {
+        "additionalProperties": false,
+        "properties": {
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "ReasonIn",
         "type": "object"
       },
       "app__modules__ops__schemas__Point": {
@@ -19956,6 +22714,80 @@
           "verify_url"
         ],
         "title": "CertificateOut",
+        "type": "object"
+      },
+      "app__modules__orgs__schemas__FeatureIn": {
+        "properties": {
+          "kind": {
+            "enum": [
+              "evacuation_point",
+              "water_point",
+              "alarm"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "label": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          },
+          "location": {
+            "$ref": "#/components/schemas/Point-Input"
+          }
+        },
+        "required": [
+          "kind",
+          "location"
+        ],
+        "title": "FeatureIn",
+        "type": "object"
+      },
+      "app__modules__orgs__schemas__FeatureOut": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "evacuation_point",
+              "water_point",
+              "alarm"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "label": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          },
+          "location": {
+            "$ref": "#/components/schemas/app__modules__orgs__schemas__Point"
+          }
+        },
+        "required": [
+          "kind",
+          "location",
+          "id"
+        ],
+        "title": "FeatureOut",
         "type": "object"
       },
       "app__modules__orgs__schemas__Person": {
@@ -21273,6 +24105,71 @@
         ]
       }
     },
+    "/api/v1/contact": {
+      "post": {
+        "operationId": "send_request_api_v1_contact_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MineOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Send Request",
+        "tags": [
+          "contact"
+        ]
+      }
+    },
     "/api/v1/devices": {
       "put": {
         "operationId": "register_device_api_v1_devices_put",
@@ -21387,6 +24284,56 @@
         "summary": "Unregister Device",
         "tags": [
           "notifications"
+        ]
+      }
+    },
+    "/api/v1/emergency-guide": {
+      "get": {
+        "description": "The visible topics and their visible items, in their order; kept offline by the app.",
+        "operationId": "public_guide_api_v1_emergency_guide_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "if-none-match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-None-Match"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicGuide"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Public Guide",
+        "tags": [
+          "emergency-guide"
         ]
       }
     },
@@ -21598,6 +24545,280 @@
         "summary": "Accept Invitation",
         "tags": [
           "institutions"
+        ]
+      }
+    },
+    "/api/v1/layers": {
+      "get": {
+        "operationId": "public_layers_api_v1_layers_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "default": "ar",
+              "enum": [
+                "ar",
+                "fr",
+                "en"
+              ],
+              "title": "Lang",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "if-none-match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-None-Match"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicLayers"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Public Layers",
+        "tags": [
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/layers/{key}/features": {
+      "get": {
+        "description": "Either the nearest places to ``near`` (with their distance) or the places in a map area (``bbox``).",
+        "operationId": "public_features_api_v1_layers__key__features_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "description": "lat,lon",
+            "in": "query",
+            "name": "near",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "lat,lon",
+              "title": "Near"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 3,
+              "maximum": 50,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "radius_km",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 300,
+              "minimum": 1,
+              "title": "Radius Km",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "minLon,minLat,maxLon,maxLat",
+            "in": "query",
+            "name": "bbox",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "minLon,minLat,maxLon,maxLat",
+              "title": "Bbox"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "default": "ar",
+              "enum": [
+                "ar",
+                "fr",
+                "en"
+              ],
+              "title": "Lang",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicFeatures"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Public Features",
+        "tags": [
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/layers/{key}/package": {
+      "get": {
+        "description": "Offline copy of a layer (one gouvernorat, or the whole country): the app keeps it and asks again with\n``If-None-Match``; an unchanged layer answers 304 without a body.",
+        "operationId": "public_package_api_v1_layers__key__package_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 99,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "default": "ar",
+              "enum": [
+                "ar",
+                "fr",
+                "en"
+              ],
+              "title": "Lang",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "if-none-match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-None-Match"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicFeatures"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Public Package",
+        "tags": [
+          "layers"
         ]
       }
     },
@@ -21942,6 +25163,61 @@
         "summary": "Withdraw Consent",
         "tags": [
           "volunteers"
+        ]
+      }
+    },
+    "/api/v1/me/contact": {
+      "get": {
+        "operationId": "my_requests_api_v1_me_contact_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MineList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "My Requests",
+        "tags": [
+          "contact"
         ]
       }
     },
@@ -23794,7 +27070,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/FeatureOut"
+                    "$ref": "#/components/schemas/app__modules__orgs__schemas__FeatureOut"
                   },
                   "title": "Response List Features Api V1 Orgs  Org Id  Features Get",
                   "type": "array"
@@ -23842,7 +27118,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/FeatureIn"
+                "$ref": "#/components/schemas/app__modules__orgs__schemas__FeatureIn"
               }
             }
           },
@@ -23853,7 +27129,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FeatureOut"
+                  "$ref": "#/components/schemas/app__modules__orgs__schemas__FeatureOut"
                 }
               }
             },
@@ -23959,7 +27235,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/FeatureIn"
+                "$ref": "#/components/schemas/app__modules__orgs__schemas__FeatureIn"
               }
             }
           },
@@ -23970,7 +27246,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FeatureOut"
+                  "$ref": "#/components/schemas/app__modules__orgs__schemas__FeatureOut"
                 }
               }
             },
@@ -27811,6 +31087,224 @@
         ]
       }
     },
+    "/api/v1/staff/contact": {
+      "get": {
+        "operationId": "inbox_api_v1_staff_contact_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "kind",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "access_info",
+                    "hazard",
+                    "question",
+                    "suggestion",
+                    "app_problem",
+                    "partnership"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kind"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "default": "open",
+              "enum": [
+                "open",
+                "all",
+                "received",
+                "in_progress",
+                "answered",
+                "closed",
+                "rejected"
+              ],
+              "title": "Status",
+              "type": "string"
+            }
+          },
+          {
+            "description": "0: requests without a gouvernorat",
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 99,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "0: requests without a gouvernorat",
+              "title": "Gouvernorat"
+            }
+          },
+          {
+            "in": "query",
+            "name": "overdue",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Overdue",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InboxOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Inbox",
+        "tags": [
+          "contact"
+        ]
+      }
+    },
+    "/api/v1/staff/contact/{request_id}": {
+      "get": {
+        "description": "Opening a request shows personal data: audited.",
+        "operationId": "get_request_api_v1_staff_contact__request_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "request_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Request Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DetailOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Request",
+        "tags": [
+          "contact"
+        ]
+      }
+    },
+    "/api/v1/staff/contact/{request_id}/actions": {
+      "post": {
+        "operationId": "act_api_v1_staff_contact__request_id__actions_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "request_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Request Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DetailOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Act",
+        "tags": [
+          "contact"
+        ]
+      }
+    },
     "/api/v1/staff/directives": {
       "get": {
         "operationId": "list_directives_api_v1_staff_directives_get",
@@ -27986,6 +31480,427 @@
         "summary": "Ack Directive",
         "tags": [
           "command"
+        ]
+      }
+    },
+    "/api/v1/staff/emergency-guide": {
+      "get": {
+        "operationId": "staff_guide_api_v1_staff_emergency_guide_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuideOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Staff Guide",
+        "tags": [
+          "emergency-guide"
+        ]
+      }
+    },
+    "/api/v1/staff/emergency-guide/items/{item_id}": {
+      "patch": {
+        "operationId": "update_item_api_v1_staff_emergency_guide_items__item_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ItemPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuideOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Item",
+        "tags": [
+          "emergency-guide"
+        ]
+      }
+    },
+    "/api/v1/staff/emergency-guide/items/{item_id}/move": {
+      "post": {
+        "operationId": "move_item_api_v1_staff_emergency_guide_items__item_id__move_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MoveIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuideOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Move Item",
+        "tags": [
+          "emergency-guide"
+        ]
+      }
+    },
+    "/api/v1/staff/emergency-guide/items/{item_id}/validate": {
+      "post": {
+        "description": "The content editor records that the Office's medical staff validated this text (named in the reason).",
+        "operationId": "validate_item_api_v1_staff_emergency_guide_items__item_id__validate_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VersionReason"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuideOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Validate Item",
+        "tags": [
+          "emergency-guide"
+        ]
+      }
+    },
+    "/api/v1/staff/emergency-guide/topics": {
+      "post": {
+        "operationId": "create_topic_api_v1_staff_emergency_guide_topics_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TopicIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuideOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Topic",
+        "tags": [
+          "emergency-guide"
+        ]
+      }
+    },
+    "/api/v1/staff/emergency-guide/topics/{topic_id}": {
+      "patch": {
+        "operationId": "update_topic_api_v1_staff_emergency_guide_topics__topic_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "topic_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Topic Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TopicPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuideOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Topic",
+        "tags": [
+          "emergency-guide"
+        ]
+      }
+    },
+    "/api/v1/staff/emergency-guide/topics/{topic_id}/items": {
+      "post": {
+        "operationId": "create_item_api_v1_staff_emergency_guide_topics__topic_id__items_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "topic_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Topic Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ItemIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuideOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Item",
+        "tags": [
+          "emergency-guide"
+        ]
+      }
+    },
+    "/api/v1/staff/emergency-guide/topics/{topic_id}/move": {
+      "post": {
+        "operationId": "move_topic_api_v1_staff_emergency_guide_topics__topic_id__move_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "topic_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Topic Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MoveIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuideOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Move Topic",
+        "tags": [
+          "emergency-guide"
         ]
       }
     },
@@ -29512,6 +33427,860 @@
         ]
       }
     },
+    "/api/v1/staff/layers": {
+      "get": {
+        "operationId": "list_layers_api_v1_staff_layers_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LayersOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Layers",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      },
+      "post": {
+        "operationId": "create_layer_api_v1_staff_layers_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LayerIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LayerOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Layer",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/staff/layers/template": {
+      "get": {
+        "description": "Empty file with the standard columns in the chosen language (the extra columns are free).",
+        "operationId": "template_api_v1_staff_layers_template_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "format",
+            "required": false,
+            "schema": {
+              "default": "csv",
+              "enum": [
+                "csv",
+                "xlsx"
+              ],
+              "title": "Format",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "default": "fr",
+              "enum": [
+                "ar",
+                "fr",
+                "en"
+              ],
+              "title": "Lang",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Template",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/staff/layers/{key}": {
+      "patch": {
+        "operationId": "update_layer_api_v1_staff_layers__key__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LayerPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LayerOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Layer",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/staff/layers/{key}/export": {
+      "get": {
+        "description": "The whole layer with every column (staff-only ones included): edit it and import it again.",
+        "operationId": "export_layer_api_v1_staff_layers__key__export_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "format",
+            "required": false,
+            "schema": {
+              "default": "csv",
+              "enum": [
+                "csv",
+                "xlsx",
+                "geojson"
+              ],
+              "title": "Format",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "default": "fr",
+              "enum": [
+                "ar",
+                "fr",
+                "en"
+              ],
+              "title": "Lang",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Export Layer",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/staff/layers/{key}/features": {
+      "get": {
+        "operationId": "staff_features_api_v1_staff_layers__key__features_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "description": "minLon,minLat,maxLon,maxLat",
+            "in": "query",
+            "name": "bbox",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "minLon,minLat,maxLon,maxLat",
+              "title": "Bbox"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 99,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeaturesOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Staff Features",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      },
+      "post": {
+        "operationId": "create_feature_api_v1_staff_layers__key__features_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__layers__schemas__FeatureIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__layers__schemas__FeatureOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Feature",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/staff/layers/{key}/features/{feature_id}": {
+      "patch": {
+        "operationId": "update_feature_api_v1_staff_layers__key__features__feature_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "feature_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Feature Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FeaturePatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__layers__schemas__FeatureOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Feature",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/staff/layers/{key}/imports": {
+      "get": {
+        "operationId": "list_imports_api_v1_staff_layers__key__imports_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Imports",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      },
+      "post": {
+        "description": "The file is the request body (any content type). Nothing changes on the map until it is applied.",
+        "operationId": "preview_import_api_v1_staff_layers__key__imports_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "file_name",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 1,
+              "title": "File Name",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "mode",
+            "required": false,
+            "schema": {
+              "default": "merge",
+              "enum": [
+                "merge",
+                "replace"
+              ],
+              "title": "Mode",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Preview Import",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/staff/layers/{key}/imports/{import_id}": {
+      "get": {
+        "operationId": "get_import_api_v1_staff_layers__key__imports__import_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "import_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Import Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Import",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/staff/layers/{key}/imports/{import_id}/apply": {
+      "post": {
+        "operationId": "apply_import_api_v1_staff_layers__key__imports__import_id__apply_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "import_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Import Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__layers__schemas__ReasonIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Apply Import",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/staff/layers/{key}/imports/{import_id}/discard": {
+      "post": {
+        "operationId": "discard_import_api_v1_staff_layers__key__imports__import_id__discard_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "import_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Import Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Discard Import",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/staff/layers/{key}/imports/{import_id}/undo": {
+      "post": {
+        "operationId": "undo_import_api_v1_staff_layers__key__imports__import_id__undo_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "import_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Import Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__layers__schemas__ReasonIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Undo Import",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      }
+    },
     "/api/v1/staff/levels": {
       "get": {
         "operationId": "get_levels_api_v1_staff_levels_get",
@@ -29728,7 +34497,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ItemOut"
+                  "$ref": "#/components/schemas/app__modules__knowledge__schemas__ItemOut"
                 }
               }
             },

@@ -30,6 +30,9 @@ from app.modules.analytics.router import router as analytics_router
 from app.modules.analytics.worker import analytics_forever
 from app.modules.appinfo.router import router as appinfo_router
 from app.modules.audit.router import router as audit_router
+from app.modules.contact.router import router as contact_router
+from app.modules.contact.router import staff_router as contact_staff_router
+from app.modules.content.guide import router as guide_router
 from app.modules.content.router import router as content_router
 from app.modules.decision.procedures import procedures_forever
 from app.modules.decision.router import router as decision_router
@@ -43,6 +46,8 @@ from app.modules.identity.internal import router as identity_internal_router
 from app.modules.identity.router import router as identity_router
 from app.modules.knowledge.indexer import knowledge_forever
 from app.modules.knowledge.router import router as knowledge_router
+from app.modules.layers.router import public_router as layers_router
+from app.modules.layers.router import router as layers_staff_router
 from app.modules.notify.delivery import deliver_forever
 from app.modules.notify.router import router as notify_router
 from app.modules.notify.staff_router import router as notify_staff_router
@@ -222,6 +227,9 @@ def create_app() -> FastAPI:
         notify_router,
         notify_staff_router,
         content_router,
+        guide_router,
+        contact_router,
+        contact_staff_router,
         orgs_router,
         orgs_staff_router,
         ai_router,
@@ -247,6 +255,8 @@ def create_app() -> FastAPI:
         access_router,
         evidence_router,
         appinfo_router,
+        layers_router,
+        layers_staff_router,
         identity_internal_router,
     )
     for router in routers:

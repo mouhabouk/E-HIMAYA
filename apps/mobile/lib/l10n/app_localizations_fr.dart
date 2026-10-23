@@ -2540,4 +2540,223 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get errorOffensiveText =>
       'Ce texte contient des mots interdits. Merci de le reformuler.';
+
+  @override
+  String get guideTitle => 'Guide des urgences';
+
+  @override
+  String get guideHubHint =>
+      'Incendies, fractures, premiers secours, problèmes respiratoires… Disponible sans connexion.';
+
+  @override
+  String get guideIntro =>
+      'Choisissez un thème, puis la situation. En attendant les secours, suivez les étapes dans l’ordre.';
+
+  @override
+  String guideItemsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count éléments',
+      one: '1 élément',
+      zero: 'Aucun élément',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get guideEmpty => 'Rien n’est publié ici pour le moment.';
+
+  @override
+  String get guideCallNow => 'Appelez tout de suite le 198 si';
+
+  @override
+  String get guideSteps => 'Que faire';
+
+  @override
+  String get guideDont => 'À ne pas faire';
+
+  @override
+  String get guideCall198 => 'Appeler la Protection civile, 198';
+
+  @override
+  String get guideSimBanner =>
+      '[SIM] Contenu en attente de validation par le service médical de la Protection civile. Appelez d’abord le 198.';
+
+  @override
+  String get guideSimTag => '[SIM] en attente de validation médicale';
+
+  @override
+  String get nearestTitle => 'Le plus proche de moi';
+
+  @override
+  String get nearestHint =>
+      'Centres de la Protection civile, hôpitaux, pharmacies… et vos coordonnées. Fonctionne sans connexion une fois téléchargé.';
+
+  @override
+  String get nearestMyPosition => 'Ma position';
+
+  @override
+  String get nearestNoLocation =>
+      'La localisation est coupée ou refusée. Activez-la pour voir les lieux les plus proches.';
+
+  @override
+  String get nearestCopy => 'Copier';
+
+  @override
+  String get nearestCopied =>
+      'Coordonnées copiées. Vous pouvez les lire à l’opérateur.';
+
+  @override
+  String get nearestOffline =>
+      'Pas de connexion : copie enregistrée sur ce téléphone.';
+
+  @override
+  String get nearestEmpty =>
+      'Rien n’est encore enregistré sur ce téléphone. Connectez-vous une fois pour télécharger les lieux.';
+
+  @override
+  String get nearestLoading =>
+      'Téléchargement des lieux pour l’usage hors connexion…';
+
+  @override
+  String nearestUpdated(String date) {
+    return 'Lieux mis à jour le $date';
+  }
+
+  @override
+  String get nearestToVerify => 'À vérifier';
+
+  @override
+  String get nearestSimBanner =>
+      '[SIM] Certains de ces lieux sont fictifs et approximatifs, pour un essai : ce ne sont pas des lieux réels. En cas d’urgence, appelez le 198.';
+
+  @override
+  String get nearestSimChip => '[SIM] Essai';
+
+  @override
+  String get nearestNeedPosition => 'En attente de votre position.';
+
+  @override
+  String get nearestNone => 'Aucun lieu de ce type n’est encore répertorié.';
+
+  @override
+  String nearestSource(String source) {
+    return 'Source : $source';
+  }
+
+  @override
+  String nearestCall(String phone) {
+    return 'Appeler le $phone';
+  }
+
+  @override
+  String get nearestRoute => 'Itinéraire';
+
+  @override
+  String get contactTitle => 'Nous contacter';
+
+  @override
+  String get contactMineTitle => 'Mes demandes';
+
+  @override
+  String get contactEmergencyBanner =>
+      'Pas pour les urgences. En cas d’urgence, appelez le 198.';
+
+  @override
+  String get contactIntro =>
+      'Posez une question, demandez une information détenue par la Protection civile, signalez un danger non urgent, proposez une idée ou signalez un problème de l’application. Vous recevez un numéro pour suivre votre demande.';
+
+  @override
+  String get contactKind => 'Type de demande';
+
+  @override
+  String get contactKindAccessInfo => 'Accès à l’information (loi 2016-22)';
+
+  @override
+  String get contactKindHazard => 'Danger non urgent';
+
+  @override
+  String get contactKindQuestion => 'Question';
+
+  @override
+  String get contactKindSuggestion => 'Suggestion';
+
+  @override
+  String get contactKindAppProblem => 'Problème de l’application';
+
+  @override
+  String get contactKindPartnership => 'Partenariat';
+
+  @override
+  String get contactAccessInfoHint =>
+      'La loi demande votre nom. L’Office répond dans le délai légal (20 jours).';
+
+  @override
+  String get contactNoGouvernorat => 'Pas lié à un gouvernorat';
+
+  @override
+  String get contactSubject => 'Objet';
+
+  @override
+  String get contactMessage => 'Votre message';
+
+  @override
+  String get contactDetailsHint =>
+      'Les coordonnées sont facultatives : sans elles, la réponse s’affiche seulement ici, dans « Mes demandes ».';
+
+  @override
+  String get contactName => 'Nom et prénom';
+
+  @override
+  String get contactEmail => 'E-mail';
+
+  @override
+  String get contactEmailInvalid => 'Saisissez une adresse e-mail valide.';
+
+  @override
+  String contactLength(int min, int max) {
+    return 'Entre $min et $max caractères.';
+  }
+
+  @override
+  String get contactSend => 'Envoyer';
+
+  @override
+  String get contactSentTitle => 'Demande envoyée';
+
+  @override
+  String get contactSentBody => 'Gardez ce numéro pour suivre votre demande :';
+
+  @override
+  String get contactSeeMine => 'Voir mes demandes';
+
+  @override
+  String get contactMineEmpty => 'Vous n’avez encore envoyé aucune demande.';
+
+  @override
+  String get contactStatusReceived => 'Reçue';
+
+  @override
+  String get contactStatusInProgress => 'En cours';
+
+  @override
+  String get contactStatusAnswered => 'Répondue';
+
+  @override
+  String get contactStatusClosed => 'Clôturée';
+
+  @override
+  String get contactStatusRejected => 'Rejetée';
+
+  @override
+  String contactDue(String date) {
+    return 'Réponse attendue avant le $date';
+  }
+
+  @override
+  String get contactAnswer => 'Réponse de l’Office';
+
+  @override
+  String get contactRejectReason => 'Motif communiqué par l’Office';
 }

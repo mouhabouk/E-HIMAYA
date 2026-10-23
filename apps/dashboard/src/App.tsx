@@ -15,6 +15,8 @@ import { isApiError } from "./lib/api";
 import {
   canEditAiSettings,
   canEditTips,
+  canHandleContact,
+  canOpenLayers,
   canManageAccounts,
   canOpenBreakGlass,
   canReadPlatformSettings,
@@ -87,6 +89,10 @@ const RewardConfirmationsPage = page(() => import("./pages/RewardsPages"), "Rewa
 const RewardNominationsPage = page(() => import("./pages/RewardsPages"), "RewardNominationsPage");
 const RewardCertificatesPage = page(() => import("./pages/RewardsPages"), "RewardCertificatesPage");
 const RewardLeaderboardPage = page(() => import("./pages/RewardsPages"), "RewardLeaderboardPage");
+// Phase B1: map data layers (file import, preview map).
+const LayersPage = page(() => import("./pages/LayersPage"), "LayersPage");
+const EmergencyGuidePage = page(() => import("./pages/EmergencyGuidePage"), "EmergencyGuidePage");
+const ContactInboxPage = page(() => import("./pages/ContactInboxPage"), "ContactInboxPage");
 
 export function createQueryClient(): QueryClient {
   return new QueryClient({
@@ -185,6 +191,9 @@ export function AppRoutes() {
         <Route path="notifications/new" element={notifications(<NotificationEditorPage />)} />
         <Route path="notifications/:id" element={notifications(<NotificationEditorPage />)} />
         <Route path="safety-tips" element={tips(<SafetyTipsPage />)} />
+        <Route path="layers" element={gated(canOpenLayers, <LayersPage />)} />
+        <Route path="emergency-guide" element={gated(canEditTips, <EmergencyGuidePage />)} />
+        <Route path="contact" element={gated(canHandleContact, <ContactInboxPage />)} />
         <Route path="committee" element={committee(<CommitteePage />)} />
         <Route path="analytics" element={gated(canReadAnalytics, <AnalyticsPage />)} />
         <Route path="analytics/scenarios" element={gated(canRunScenarios, <ScenariosPage />)} />

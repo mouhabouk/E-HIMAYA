@@ -2517,4 +2517,222 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get errorOffensiveText =>
       'This text contains words that are not allowed. Please rephrase it.';
+
+  @override
+  String get guideTitle => 'Emergency guide';
+
+  @override
+  String get guideHubHint =>
+      'Fires, fractures, first aid, breathing problems… Available without connection.';
+
+  @override
+  String get guideIntro =>
+      'Choose a topic, then the situation. While waiting for help, follow the steps in order.';
+
+  @override
+  String guideItemsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items',
+      one: '1 item',
+      zero: 'No item',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get guideEmpty => 'Nothing is published here at the moment.';
+
+  @override
+  String get guideCallNow => 'Call 198 at once if';
+
+  @override
+  String get guideSteps => 'What to do';
+
+  @override
+  String get guideDont => 'Do not';
+
+  @override
+  String get guideCall198 => 'Call Civil Protection, 198';
+
+  @override
+  String get guideSimBanner =>
+      '[SIM] Content awaiting validation by the medical staff of the Civil Protection. Call 198 first.';
+
+  @override
+  String get guideSimTag => '[SIM] awaiting medical validation';
+
+  @override
+  String get nearestTitle => 'Nearest to me';
+
+  @override
+  String get nearestHint =>
+      'Civil Protection centres, hospitals, pharmacies… and your coordinates. Works without connection once downloaded.';
+
+  @override
+  String get nearestMyPosition => 'My position';
+
+  @override
+  String get nearestNoLocation =>
+      'Location is off or not allowed. Turn it on to see the nearest places.';
+
+  @override
+  String get nearestCopy => 'Copy';
+
+  @override
+  String get nearestCopied =>
+      'Coordinates copied. You can read them to the operator.';
+
+  @override
+  String get nearestOffline =>
+      'No connection: showing the copy saved on this phone.';
+
+  @override
+  String get nearestEmpty =>
+      'Nothing saved on this phone yet. Connect once to download the places.';
+
+  @override
+  String get nearestLoading => 'Downloading the places for offline use…';
+
+  @override
+  String nearestUpdated(String date) {
+    return 'Places updated on $date';
+  }
+
+  @override
+  String get nearestToVerify => 'To be verified';
+
+  @override
+  String get nearestSimBanner =>
+      '[SIM] Some of these places are approximate and invented for a trial: they are not real places. In an emergency, call 198.';
+
+  @override
+  String get nearestSimChip => '[SIM] Trial';
+
+  @override
+  String get nearestNeedPosition => 'Waiting for your position.';
+
+  @override
+  String get nearestNone => 'No place of this kind is listed yet.';
+
+  @override
+  String nearestSource(String source) {
+    return 'Source: $source';
+  }
+
+  @override
+  String nearestCall(String phone) {
+    return 'Call $phone';
+  }
+
+  @override
+  String get nearestRoute => 'Route';
+
+  @override
+  String get contactTitle => 'Contact us';
+
+  @override
+  String get contactMineTitle => 'My requests';
+
+  @override
+  String get contactEmergencyBanner =>
+      'Not for emergencies. For an emergency, call 198.';
+
+  @override
+  String get contactIntro =>
+      'Ask a question, request information held by the Civil Protection, report a non-urgent hazard, suggest an idea or report a problem with the app. You get a number to follow your request.';
+
+  @override
+  String get contactKind => 'Kind of request';
+
+  @override
+  String get contactKindAccessInfo => 'Access to information (law 2016-22)';
+
+  @override
+  String get contactKindHazard => 'Non-urgent hazard';
+
+  @override
+  String get contactKindQuestion => 'Question';
+
+  @override
+  String get contactKindSuggestion => 'Suggestion';
+
+  @override
+  String get contactKindAppProblem => 'Problem with the app';
+
+  @override
+  String get contactKindPartnership => 'Partnership';
+
+  @override
+  String get contactAccessInfoHint =>
+      'The law asks for your name. The Office answers within the legal deadline (20 days).';
+
+  @override
+  String get contactNoGouvernorat => 'Not specific to a gouvernorat';
+
+  @override
+  String get contactSubject => 'Subject';
+
+  @override
+  String get contactMessage => 'Your message';
+
+  @override
+  String get contactDetailsHint =>
+      'Contact details are optional: without them, the answer is only shown here in “My requests”.';
+
+  @override
+  String get contactName => 'Full name';
+
+  @override
+  String get contactEmail => 'E-mail';
+
+  @override
+  String get contactEmailInvalid => 'Enter a valid e-mail address.';
+
+  @override
+  String contactLength(int min, int max) {
+    return 'Between $min and $max characters.';
+  }
+
+  @override
+  String get contactSend => 'Send';
+
+  @override
+  String get contactSentTitle => 'Request sent';
+
+  @override
+  String get contactSentBody => 'Keep this number to follow your request:';
+
+  @override
+  String get contactSeeMine => 'See my requests';
+
+  @override
+  String get contactMineEmpty => 'You have not sent any request yet.';
+
+  @override
+  String get contactStatusReceived => 'Received';
+
+  @override
+  String get contactStatusInProgress => 'In progress';
+
+  @override
+  String get contactStatusAnswered => 'Answered';
+
+  @override
+  String get contactStatusClosed => 'Closed';
+
+  @override
+  String get contactStatusRejected => 'Rejected';
+
+  @override
+  String contactDue(String date) {
+    return 'Answer due by $date';
+  }
+
+  @override
+  String get contactAnswer => 'Answer of the Office';
+
+  @override
+  String get contactRejectReason => 'Reason given by the Office';
 }

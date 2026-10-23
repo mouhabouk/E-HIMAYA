@@ -1,0 +1,583 @@
+{
+ "type": "FeatureCollection",
+ "simulated": true,
+ "source": "[SIM] Données approximatives d'essai / بيانات تقريبية للتجربة / approximate trial data",
+ "features": [
+  {
+   "type": "Feature",
+   "id": "sim-11-g",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.1575,
+     36.8065
+    ]
+   },
+   "properties": {
+    "id": "sim-11-g",
+    "name": "[SIM] Poste de la Garde nationale de Tunis",
+    "name_ar": "[SIM] مركز الحرس الوطني بـتونس",
+    "name_fr": "[SIM] Poste de la Garde nationale de Tunis",
+    "name_en": "[SIM] Tunis National Guard Post",
+    "hours": "24/7",
+    "address": "تونس / Tunis",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-12-g",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.1776,
+     36.8745
+    ]
+   },
+   "properties": {
+    "id": "sim-12-g",
+    "name": "[SIM] Poste de la Garde nationale de Ariana",
+    "name_ar": "[SIM] مركز الحرس الوطني بـأريانة",
+    "name_fr": "[SIM] Poste de la Garde nationale de Ariana",
+    "name_en": "[SIM] Ariana National Guard Post",
+    "hours": "24/7",
+    "address": "أريانة / Ariana",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-13-g",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.2069,
+     36.7351
+    ]
+   },
+   "properties": {
+    "id": "sim-13-g",
+    "name": "[SIM] Poste de la Garde nationale de Ben Arous",
+    "name_ar": "[SIM] مركز الحرس الوطني بـبن عروس",
+    "name_fr": "[SIM] Poste de la Garde nationale de Ben Arous",
+    "name_en": "[SIM] Ben Arous National Guard Post",
+    "hours": "24/7",
+    "address": "بن عروس / Ben Arous",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-14-g",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.0623,
+     36.8101
+    ]
+   },
+   "properties": {
+    "id": "sim-14-g",
+    "name": "[SIM] Poste de la Garde nationale de Manouba",
+    "name_ar": "[SIM] مركز الحرس الوطني بـمنوبة",
+    "name_fr": "[SIM] Poste de la Garde nationale de Manouba",
+    "name_en": "[SIM] Manouba National Guard Post",
+    "hours": "24/7",
+    "address": "منوبة / Manouba",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-21-g",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.7136,
+     36.4741
+    ]
+   },
+   "properties": {
+    "id": "sim-21-g",
+    "name": "[SIM] Poste de la Garde nationale de Nabeul",
+    "name_ar": "[SIM] مركز الحرس الوطني بـنابل",
+    "name_fr": "[SIM] Poste de la Garde nationale de Nabeul",
+    "name_en": "[SIM] Nabeul National Guard Post",
+    "hours": "24/7",
+    "address": "نابل / Nabeul",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-22-g",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.1249,
+     36.4209
+    ]
+   },
+   "properties": {
+    "id": "sim-22-g",
+    "name": "[SIM] Poste de la Garde nationale de Zaghouan",
+    "name_ar": "[SIM] مركز الحرس الوطني بـزغوان",
+    "name_fr": "[SIM] Poste de la Garde nationale de Zaghouan",
+    "name_en": "[SIM] Zaghouan National Guard Post",
+    "hours": "24/7",
+    "address": "زغوان / Zaghouan",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-23-g",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     9.8499,
+     37.2744
+    ]
+   },
+   "properties": {
+    "id": "sim-23-g",
+    "name": "[SIM] Poste de la Garde nationale de Bizerte",
+    "name_ar": "[SIM] مركز الحرس الوطني بـبنزرت",
+    "name_fr": "[SIM] Poste de la Garde nationale de Bizerte",
+    "name_en": "[SIM] Bizerte National Guard Post",
+    "hours": "24/7",
+    "address": "بنزرت / Bizerte",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-31-g",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     9.1577,
+     36.7256
+    ]
+   },
+   "properties": {
+    "id": "sim-31-g",
+    "name": "[SIM] Poste de la Garde nationale de Béja",
+    "name_ar": "[SIM] مركز الحرس الوطني بـباجة",
+    "name_fr": "[SIM] Poste de la Garde nationale de Béja",
+    "name_en": "[SIM] Beja National Guard Post",
+    "hours": "24/7",
+    "address": "باجة / Béja",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-32-g",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.8042,
+     36.5011
+    ]
+   },
+   "properties": {
+    "id": "sim-32-g",
+    "name": "[SIM] Poste de la Garde nationale de Jendouba",
+    "name_ar": "[SIM] مركز الحرس الوطني بـجندوبة",
+    "name_fr": "[SIM] Poste de la Garde nationale de Jendouba",
+    "name_en": "[SIM] Jendouba National Guard Post",
+    "hours": "24/7",
+    "address": "جندوبة / Jendouba",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-33-g",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.7229,
+     36.1562
+    ]
+   },
+   "properties": {
+    "id": "sim-33-g",
+    "name": "[SIM] Poste de la Garde nationale de Le Kef",
+    "name_ar": "[SIM] مركز الحرس الوطني بـالكاف",
+    "name_fr": "[SIM] Poste de la Garde nationale de Le Kef",
+    "name_en": "[SIM] Kef National Guard Post",
+    "hours": "24/7",
+    "address": "الكاف / Le Kef",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-34-g",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     9.3948,
+     36.0849
+    ]
+   },
+   "properties": {
+    "id": "sim-34-g",
+    "name": "[SIM] Poste de la Garde nationale de Siliana",
+    "name_ar": "[SIM] مركز الحرس الوطني بـسليانة",
+    "name_fr": "[SIM] Poste de la Garde nationale de Siliana",
+    "name_en": "[SIM] Siliana National Guard Post",
+    "hours": "24/7",
+    "address": "سليانة / Siliana",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-41-g",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.0723,
+     35.6781
+    ]
+   },
+   "properties": {
+    "id": "sim-41-g",
+    "name": "[SIM] Poste de la Garde nationale de Kairouan",
+    "name_ar": "[SIM] مركز الحرس الوطني بـالقيروان",
+    "name_fr": "[SIM] Poste de la Garde nationale de Kairouan",
+    "name_en": "[SIM] Kairouan National Guard Post",
+    "hours": "24/7",
+    "address": "القيروان / Kairouan",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-42-g",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.8605,
+     35.1676
+    ]
+   },
+   "properties": {
+    "id": "sim-42-g",
+    "name": "[SIM] Poste de la Garde nationale de Kasserine",
+    "name_ar": "[SIM] مركز الحرس الوطني بـالقصرين",
+    "name_fr": "[SIM] Poste de la Garde nationale de Kasserine",
+    "name_en": "[SIM] Kasserine National Guard Post",
+    "hours": "24/7",
+    "address": "القصرين / Kasserine",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-43-g",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     9.5089,
+     35.0382
+    ]
+   },
+   "properties": {
+    "id": "sim-43-g",
+    "name": "[SIM] Poste de la Garde nationale de Sidi Bouzid",
+    "name_ar": "[SIM] مركز الحرس الوطني بـسيدي بوزيد",
+    "name_fr": "[SIM] Poste de la Garde nationale de Sidi Bouzid",
+    "name_en": "[SIM] Sidi Bouzid National Guard Post",
+    "hours": "24/7",
+    "address": "سيدي بوزيد / Sidi Bouzid",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-51-g",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.5844,
+     35.8136
+    ]
+   },
+   "properties": {
+    "id": "sim-51-g",
+    "name": "[SIM] Poste de la Garde nationale de Sousse",
+    "name_ar": "[SIM] مركز الحرس الوطني بـسوسة",
+    "name_fr": "[SIM] Poste de la Garde nationale de Sousse",
+    "name_en": "[SIM] Sousse National Guard Post",
+    "hours": "24/7",
+    "address": "سوسة / Sousse",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-52-g",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.7933,
+     35.7463
+    ]
+   },
+   "properties": {
+    "id": "sim-52-g",
+    "name": "[SIM] Poste de la Garde nationale de Monastir",
+    "name_ar": "[SIM] مركز الحرس الوطني بـالمنستير",
+    "name_fr": "[SIM] Poste de la Garde nationale de Monastir",
+    "name_en": "[SIM] Monastir National Guard Post",
+    "hours": "24/7",
+    "address": "المنستير / Monastir",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-53-g",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     11.0382,
+     35.4927
+    ]
+   },
+   "properties": {
+    "id": "sim-53-g",
+    "name": "[SIM] Poste de la Garde nationale de Mahdia",
+    "name_ar": "[SIM] مركز الحرس الوطني بـالمهدية",
+    "name_fr": "[SIM] Poste de la Garde nationale de Mahdia",
+    "name_en": "[SIM] Mahdia National Guard Post",
+    "hours": "24/7",
+    "address": "المهدية / Mahdia",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-61-g",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.7363,
+     34.7586
+    ]
+   },
+   "properties": {
+    "id": "sim-61-g",
+    "name": "[SIM] Poste de la Garde nationale de Sfax",
+    "name_ar": "[SIM] مركز الحرس الوطني بـصفاقس",
+    "name_fr": "[SIM] Poste de la Garde nationale de Sfax",
+    "name_en": "[SIM] Sfax National Guard Post",
+    "hours": "24/7",
+    "address": "صفاقس / Sfax",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-71-g",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.8082,
+     34.425
+    ]
+   },
+   "properties": {
+    "id": "sim-71-g",
+    "name": "[SIM] Poste de la Garde nationale de Gafsa",
+    "name_ar": "[SIM] مركز الحرس الوطني بـقفصة",
+    "name_fr": "[SIM] Poste de la Garde nationale de Gafsa",
+    "name_en": "[SIM] Gafsa National Guard Post",
+    "hours": "24/7",
+    "address": "قفصة / Gafsa",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-72-g",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.1575,
+     33.9197
+    ]
+   },
+   "properties": {
+    "id": "sim-72-g",
+    "name": "[SIM] Poste de la Garde nationale de Tozeur",
+    "name_ar": "[SIM] مركز الحرس الوطني بـتوزر",
+    "name_fr": "[SIM] Poste de la Garde nationale de Tozeur",
+    "name_en": "[SIM] Tozeur National Guard Post",
+    "hours": "24/7",
+    "address": "توزر / Tozeur",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-73-g",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.993,
+     33.7044
+    ]
+   },
+   "properties": {
+    "id": "sim-73-g",
+    "name": "[SIM] Poste de la Garde nationale de Kébili",
+    "name_ar": "[SIM] مركز الحرس الوطني بـقبلي",
+    "name_fr": "[SIM] Poste de la Garde nationale de Kébili",
+    "name_en": "[SIM] Kebili National Guard Post",
+    "hours": "24/7",
+    "address": "قبلي / Kébili",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-81-g",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.0742,
+     33.8695
+    ]
+   },
+   "properties": {
+    "id": "sim-81-g",
+    "name": "[SIM] Poste de la Garde nationale de Gabès",
+    "name_ar": "[SIM] مركز الحرس الوطني بـقابس",
+    "name_fr": "[SIM] Poste de la Garde nationale de Gabès",
+    "name_en": "[SIM] Gabes National Guard Post",
+    "hours": "24/7",
+    "address": "قابس / Gabès",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-82-g",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.4815,
+     33.3549
+    ]
+   },
+   "properties": {
+    "id": "sim-82-g",
+    "name": "[SIM] Poste de la Garde nationale de Médenine",
+    "name_ar": "[SIM] مركز الحرس الوطني بـمدنين",
+    "name_fr": "[SIM] Poste de la Garde nationale de Médenine",
+    "name_en": "[SIM] Medenine National Guard Post",
+    "hours": "24/7",
+    "address": "مدنين / Médenine",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-83-g",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.4278,
+     32.9297
+    ]
+   },
+   "properties": {
+    "id": "sim-83-g",
+    "name": "[SIM] Poste de la Garde nationale de Tataouine",
+    "name_ar": "[SIM] مركز الحرس الوطني بـتطاوين",
+    "name_fr": "[SIM] Poste de la Garde nationale de Tataouine",
+    "name_en": "[SIM] Tataouine National Guard Post",
+    "hours": "24/7",
+    "address": "تطاوين / Tataouine",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  }
+ ]
+}

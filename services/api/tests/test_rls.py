@@ -415,3 +415,116 @@ async def test_evidence_is_read_by_staff_and_written_by_the_system_only(conn: As
     await conn.scalar(text("SELECT count(*) FROM evidence.anchor"))
     with pytest.raises(DBAPIError, match="row-level security"):
         await conn.execute(insert, {"h": secrets.token_hex(32)})
+
+
+async def test_map_layers_public_and_staff(conn: AsyncConnection) -> None:
+    """Phase B1 (migration 0032): the app reads public, enabled layers and their visible places without a scope;
+    staff layers, hidden places and imports need a staff scope; writes need the national or system scope."""
+    await owner(conn)
+    ids: dict[str, uuid.UUID] = {}
+    for name, audience, enabled in (("pub", "public", True), ("staff", "staff", True), ("off", "public", False)):
+        ids[name] = await conn.scalar(
+            text(
+                "INSERT INTO geo.layer (key, name, icon, colour, audience, enabled, created_by, updated_by) "
+                "VALUES (:k, '{}', 'pin', '#2E7D32', :a, :e, 'x', 'x') RETURNING id"
+            ),
+            {"k": f"rls_{name}_{secrets.token_hex(4)}", "a": audience, "e": enabled},
+        )
+        for hidden in (False, True):
+            await conn.execute(
+                text(
+                    "INSERT INTO geo.layer_feature (layer_id, ref, name, location, hidden) "
+                    "VALUES (:l, :r, 'p', 'SRID=4326;POINT(9.18 36.72)', :h)"
+                ),
+                {"l": ids[name], "r": f"r{hidden}", "h": hidden},
+            )
+        await conn.execute(
+            text(
+                "INSERT INTO geo.layer_import (layer_id, file_name, sha256, format, mode, counts, base_version, "
+                "created_by) VALUES (:l, 'f.csv', 'x', 'csv', 'merge', '{}', 0, 'x')"
+            ),
+            {"l": ids[name]},
+        )
+    mine = list(ids.values())
+
+    async def counts() -> tuple[int, int, int]:
+        layers = await conn.scalar(text("SELECT count(*) FROM geo.layer WHERE id = ANY(:i)"), {"i": mine})
+        places = await conn.scalar(text("SELECT count(*) FROM geo.layer_feature WHERE layer_id = ANY(:i)"), {"i": mine})
+        imports = await conn.scalar(text("SELECT count(*) FROM geo.layer_import WHERE layer_id = ANY(:i)"), {"i": mine})
+        return layers or 0, places or 0, imports or 0
+
+    await scoped(conn, None)
+    assert await counts() == (1, 1, 0)
+    await scoped(conn, DbScope("public", subject=str(uuid.uuid4())))
+    assert await counts() == (1, 1, 0)
+    await scoped(conn, BEJA_SCOPE)
+    assert await counts() == (3, 6, 3)
+    change = text("UPDATE geo.layer SET source = 'x' WHERE id = :i")
+    assert (await conn.execute(change, {"i": ids["pub"]})).rowcount == 0
+    with pytest.raises(DBAPIError, match="row-level security"):
+        await conn.execute(
+            text("INSERT INTO geo.layer_feature (layer_id, ref, name, location) VALUES (:l, 'n', 'n', 'POINT(9 36)')"),
+            {"l": ids["pub"]},
+        )
+
+
+async def test_map_layers_written_by_central_staff(conn: AsyncConnection) -> None:
+    await owner(conn)
+    layer = await conn.scalar(
+        text(
+            "INSERT INTO geo.layer (key, name, icon, colour, created_by, updated_by) "
+            "VALUES (:k, '{}', 'pin', '#2E7D32', 'x', 'x') RETURNING id"
+        ),
+        {"k": f"rls_w_{secrets.token_hex(4)}"},
+    )
+    await scoped(conn, DbScope("national", subject=SUBJECT))
+    change = text("UPDATE geo.layer SET source = 'x' WHERE id = :i")
+    assert (await conn.execute(change, {"i": layer})).rowcount == 1
+
+
+async def test_contact_requests_by_scope(conn: AsyncConnection, seed: Seed) -> None:
+    """Phase B1 (migration 0034): national reads every request, a gouvernorat its own, the citizen their own and only
+    the visible events; only staff scopes update."""
+    await owner(conn)
+    ids: dict[str, uuid.UUID] = {}
+    for name, user, code in (
+        ("beja", seed.user, BEJA),
+        ("jendouba", seed.other_user, JENDOUBA),
+        ("national", seed.user, None),
+    ):
+        ids[name] = await conn.scalar(
+            text(
+                "INSERT INTO contact.request (kind, user_id, gouvernorat_code, subject, message_enc) "
+                "VALUES ('question', :u, :g, 's', 'x') RETURNING id"
+            ),
+            {"u": user, "g": code},
+        )
+        for visible in (True, False):
+            await conn.execute(
+                text(
+                    "INSERT INTO contact.request_event (request_id, action, visible, actor) "
+                    "VALUES (:r, 'note', :v, 'x')"
+                ),
+                {"r": ids[name], "v": visible},
+            )
+    mine = list(ids.values())
+
+    async def seen() -> tuple[set[uuid.UUID], int]:
+        requests = await _visible(conn, "contact.request", mine)
+        events = await conn.scalar(
+            text("SELECT count(*) FROM contact.request_event WHERE request_id = ANY(:i)"), {"i": mine}
+        )
+        return requests, events or 0
+
+    await scoped(conn, None)
+    assert await seen() == (set(), 0)
+    await scoped(conn, DbScope("public", subject=str(seed.user)))
+    assert await seen() == ({ids["beja"], ids["national"]}, 2)
+    change = text("UPDATE contact.request SET status = 'closed' WHERE id = :i")
+    assert (await conn.execute(change, {"i": ids["beja"]})).rowcount == 0
+    await scoped(conn, BEJA_SCOPE)
+    assert await seen() == ({ids["beja"]}, 2)
+    assert (await conn.execute(change, {"i": ids["jendouba"]})).rowcount == 0
+    assert (await conn.execute(change, {"i": ids["beja"]})).rowcount == 1
+    await scoped(conn, DbScope("national", subject=SUBJECT))
+    assert await seen() == (set(mine), 6)

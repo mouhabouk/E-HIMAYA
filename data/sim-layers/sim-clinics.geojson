@@ -1,0 +1,583 @@
+{
+ "type": "FeatureCollection",
+ "simulated": true,
+ "source": "[SIM] Données approximatives d'essai / بيانات تقريبية للتجربة / approximate trial data",
+ "features": [
+  {
+   "type": "Feature",
+   "id": "sim-11-c",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.1735,
+     36.8065
+    ]
+   },
+   "properties": {
+    "id": "sim-11-c",
+    "name": "[SIM] Centre de santé de base de Tunis",
+    "name_ar": "[SIM] مركز الصحة الأساسية بـتونس",
+    "name_fr": "[SIM] Centre de santé de base de Tunis",
+    "name_en": "[SIM] Tunis Primary Health Centre",
+    "hours": "08:00-17:00",
+    "address": "تونس / Tunis",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-12-c",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.1896,
+     36.8665
+    ]
+   },
+   "properties": {
+    "id": "sim-12-c",
+    "name": "[SIM] Centre de santé de base de Ariana",
+    "name_ar": "[SIM] مركز الصحة الأساسية بـأريانة",
+    "name_fr": "[SIM] Centre de santé de base de Ariana",
+    "name_en": "[SIM] Ariana Primary Health Centre",
+    "hours": "08:00-17:00",
+    "address": "أريانة / Ariana",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-13-c",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.2149,
+     36.7471
+    ]
+   },
+   "properties": {
+    "id": "sim-13-c",
+    "name": "[SIM] Centre de santé de base de Ben Arous",
+    "name_ar": "[SIM] مركز الصحة الأساسية بـبن عروس",
+    "name_fr": "[SIM] Centre de santé de base de Ben Arous",
+    "name_en": "[SIM] Ben Arous Primary Health Centre",
+    "hours": "08:00-17:00",
+    "address": "بن عروس / Ben Arous",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-14-c",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.0783,
+     36.8101
+    ]
+   },
+   "properties": {
+    "id": "sim-14-c",
+    "name": "[SIM] Centre de santé de base de Manouba",
+    "name_ar": "[SIM] مركز الصحة الأساسية بـمنوبة",
+    "name_fr": "[SIM] Centre de santé de base de Manouba",
+    "name_en": "[SIM] Manouba Primary Health Centre",
+    "hours": "08:00-17:00",
+    "address": "منوبة / Manouba",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-21-c",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.7296,
+     36.4621
+    ]
+   },
+   "properties": {
+    "id": "sim-21-c",
+    "name": "[SIM] Centre de santé de base de Nabeul",
+    "name_ar": "[SIM] مركز الصحة الأساسية بـنابل",
+    "name_fr": "[SIM] Centre de santé de base de Nabeul",
+    "name_en": "[SIM] Nabeul Primary Health Centre",
+    "hours": "08:00-17:00",
+    "address": "نابل / Nabeul",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-22-c",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.1369,
+     36.4089
+    ]
+   },
+   "properties": {
+    "id": "sim-22-c",
+    "name": "[SIM] Centre de santé de base de Zaghouan",
+    "name_ar": "[SIM] مركز الصحة الأساسية بـزغوان",
+    "name_fr": "[SIM] Centre de santé de base de Zaghouan",
+    "name_en": "[SIM] Zaghouan Primary Health Centre",
+    "hours": "08:00-17:00",
+    "address": "زغوان / Zaghouan",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-23-c",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     9.8659,
+     37.2744
+    ]
+   },
+   "properties": {
+    "id": "sim-23-c",
+    "name": "[SIM] Centre de santé de base de Bizerte",
+    "name_ar": "[SIM] مركز الصحة الأساسية بـبنزرت",
+    "name_fr": "[SIM] Centre de santé de base de Bizerte",
+    "name_en": "[SIM] Bizerte Primary Health Centre",
+    "hours": "08:00-17:00",
+    "address": "بنزرت / Bizerte",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-31-c",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     9.1737,
+     36.7256
+    ]
+   },
+   "properties": {
+    "id": "sim-31-c",
+    "name": "[SIM] Centre de santé de base de Béja",
+    "name_ar": "[SIM] مركز الصحة الأساسية بـباجة",
+    "name_fr": "[SIM] Centre de santé de base de Béja",
+    "name_en": "[SIM] Beja Primary Health Centre",
+    "hours": "08:00-17:00",
+    "address": "باجة / Béja",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-32-c",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.7882,
+     36.5011
+    ]
+   },
+   "properties": {
+    "id": "sim-32-c",
+    "name": "[SIM] Centre de santé de base de Jendouba",
+    "name_ar": "[SIM] مركز الصحة الأساسية بـجندوبة",
+    "name_fr": "[SIM] Centre de santé de base de Jendouba",
+    "name_en": "[SIM] Jendouba Primary Health Centre",
+    "hours": "08:00-17:00",
+    "address": "جندوبة / Jendouba",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-33-c",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.7109,
+     36.1682
+    ]
+   },
+   "properties": {
+    "id": "sim-33-c",
+    "name": "[SIM] Centre de santé de base de Le Kef",
+    "name_ar": "[SIM] مركز الصحة الأساسية بـالكاف",
+    "name_fr": "[SIM] Centre de santé de base de Le Kef",
+    "name_en": "[SIM] Kef Primary Health Centre",
+    "hours": "08:00-17:00",
+    "address": "الكاف / Le Kef",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-34-c",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     9.3788,
+     36.0849
+    ]
+   },
+   "properties": {
+    "id": "sim-34-c",
+    "name": "[SIM] Centre de santé de base de Siliana",
+    "name_ar": "[SIM] مركز الصحة الأساسية بـسليانة",
+    "name_fr": "[SIM] Centre de santé de base de Siliana",
+    "name_en": "[SIM] Siliana Primary Health Centre",
+    "hours": "08:00-17:00",
+    "address": "سليانة / Siliana",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-41-c",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.0883,
+     35.6781
+    ]
+   },
+   "properties": {
+    "id": "sim-41-c",
+    "name": "[SIM] Centre de santé de base de Kairouan",
+    "name_ar": "[SIM] مركز الصحة الأساسية بـالقيروان",
+    "name_fr": "[SIM] Centre de santé de base de Kairouan",
+    "name_en": "[SIM] Kairouan Primary Health Centre",
+    "hours": "08:00-17:00",
+    "address": "القيروان / Kairouan",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-42-c",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.8445,
+     35.1676
+    ]
+   },
+   "properties": {
+    "id": "sim-42-c",
+    "name": "[SIM] Centre de santé de base de Kasserine",
+    "name_ar": "[SIM] مركز الصحة الأساسية بـالقصرين",
+    "name_fr": "[SIM] Centre de santé de base de Kasserine",
+    "name_en": "[SIM] Kasserine Primary Health Centre",
+    "hours": "08:00-17:00",
+    "address": "القصرين / Kasserine",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-43-c",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     9.4929,
+     35.0382
+    ]
+   },
+   "properties": {
+    "id": "sim-43-c",
+    "name": "[SIM] Centre de santé de base de Sidi Bouzid",
+    "name_ar": "[SIM] مركز الصحة الأساسية بـسيدي بوزيد",
+    "name_fr": "[SIM] Centre de santé de base de Sidi Bouzid",
+    "name_en": "[SIM] Sidi Bouzid Primary Health Centre",
+    "hours": "08:00-17:00",
+    "address": "سيدي بوزيد / Sidi Bouzid",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-51-c",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.6004,
+     35.8216
+    ]
+   },
+   "properties": {
+    "id": "sim-51-c",
+    "name": "[SIM] Centre de santé de base de Sousse",
+    "name_ar": "[SIM] مركز الصحة الأساسية بـسوسة",
+    "name_fr": "[SIM] Centre de santé de base de Sousse",
+    "name_en": "[SIM] Sousse Primary Health Centre",
+    "hours": "08:00-17:00",
+    "address": "سوسة / Sousse",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-52-c",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.8053,
+     35.7583
+    ]
+   },
+   "properties": {
+    "id": "sim-52-c",
+    "name": "[SIM] Centre de santé de base de Monastir",
+    "name_ar": "[SIM] مركز الصحة الأساسية بـالمنستير",
+    "name_fr": "[SIM] Centre de santé de base de Monastir",
+    "name_en": "[SIM] Monastir Primary Health Centre",
+    "hours": "08:00-17:00",
+    "address": "المنستير / Monastir",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-53-c",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     11.0542,
+     35.5007
+    ]
+   },
+   "properties": {
+    "id": "sim-53-c",
+    "name": "[SIM] Centre de santé de base de Mahdia",
+    "name_ar": "[SIM] مركز الصحة الأساسية بـالمهدية",
+    "name_fr": "[SIM] Centre de santé de base de Mahdia",
+    "name_en": "[SIM] Mahdia Primary Health Centre",
+    "hours": "08:00-17:00",
+    "address": "المهدية / Mahdia",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-61-c",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.7523,
+     34.7466
+    ]
+   },
+   "properties": {
+    "id": "sim-61-c",
+    "name": "[SIM] Centre de santé de base de Sfax",
+    "name_ar": "[SIM] مركز الصحة الأساسية بـصفاقس",
+    "name_fr": "[SIM] Centre de santé de base de Sfax",
+    "name_en": "[SIM] Sfax Primary Health Centre",
+    "hours": "08:00-17:00",
+    "address": "صفاقس / Sfax",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-71-c",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.7922,
+     34.425
+    ]
+   },
+   "properties": {
+    "id": "sim-71-c",
+    "name": "[SIM] Centre de santé de base de Gafsa",
+    "name_ar": "[SIM] مركز الصحة الأساسية بـقفصة",
+    "name_fr": "[SIM] Centre de santé de base de Gafsa",
+    "name_en": "[SIM] Gafsa Primary Health Centre",
+    "hours": "08:00-17:00",
+    "address": "قفصة / Gafsa",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-72-c",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.1415,
+     33.9197
+    ]
+   },
+   "properties": {
+    "id": "sim-72-c",
+    "name": "[SIM] Centre de santé de base de Tozeur",
+    "name_ar": "[SIM] مركز الصحة الأساسية بـتوزر",
+    "name_fr": "[SIM] Centre de santé de base de Tozeur",
+    "name_en": "[SIM] Tozeur Primary Health Centre",
+    "hours": "08:00-17:00",
+    "address": "توزر / Tozeur",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-73-c",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.977,
+     33.7044
+    ]
+   },
+   "properties": {
+    "id": "sim-73-c",
+    "name": "[SIM] Centre de santé de base de Kébili",
+    "name_ar": "[SIM] مركز الصحة الأساسية بـقبلي",
+    "name_fr": "[SIM] Centre de santé de base de Kébili",
+    "name_en": "[SIM] Kebili Primary Health Centre",
+    "hours": "08:00-17:00",
+    "address": "قبلي / Kébili",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-81-c",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.0902,
+     33.8775
+    ]
+   },
+   "properties": {
+    "id": "sim-81-c",
+    "name": "[SIM] Centre de santé de base de Gabès",
+    "name_ar": "[SIM] مركز الصحة الأساسية بـقابس",
+    "name_fr": "[SIM] Centre de santé de base de Gabès",
+    "name_en": "[SIM] Gabes Primary Health Centre",
+    "hours": "08:00-17:00",
+    "address": "قابس / Gabès",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-82-c",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.4975,
+     33.3549
+    ]
+   },
+   "properties": {
+    "id": "sim-82-c",
+    "name": "[SIM] Centre de santé de base de Médenine",
+    "name_ar": "[SIM] مركز الصحة الأساسية بـمدنين",
+    "name_fr": "[SIM] Centre de santé de base de Médenine",
+    "name_en": "[SIM] Medenine Primary Health Centre",
+    "hours": "08:00-17:00",
+    "address": "مدنين / Médenine",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-83-c",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.4438,
+     32.9297
+    ]
+   },
+   "properties": {
+    "id": "sim-83-c",
+    "name": "[SIM] Centre de santé de base de Tataouine",
+    "name_ar": "[SIM] مركز الصحة الأساسية بـتطاوين",
+    "name_fr": "[SIM] Centre de santé de base de Tataouine",
+    "name_en": "[SIM] Tataouine Primary Health Centre",
+    "hours": "08:00-17:00",
+    "address": "تطاوين / Tataouine",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  }
+ ]
+}

@@ -4419,6 +4419,378 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This text contains words that are not allowed. Please rephrase it.'**
   String get errorOffensiveText;
+
+  /// No description provided for @guideTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency guide'**
+  String get guideTitle;
+
+  /// No description provided for @guideHubHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Fires, fractures, first aid, breathing problems… Available without connection.'**
+  String get guideHubHint;
+
+  /// No description provided for @guideIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a topic, then the situation. While waiting for help, follow the steps in order.'**
+  String get guideIntro;
+
+  /// No description provided for @guideItemsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No item} =1{1 item} other{{count} items}}'**
+  String guideItemsCount(int count);
+
+  /// No description provided for @guideEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing is published here at the moment.'**
+  String get guideEmpty;
+
+  /// No description provided for @guideCallNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Call 198 at once if'**
+  String get guideCallNow;
+
+  /// No description provided for @guideSteps.
+  ///
+  /// In en, this message translates to:
+  /// **'What to do'**
+  String get guideSteps;
+
+  /// No description provided for @guideDont.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not'**
+  String get guideDont;
+
+  /// No description provided for @guideCall198.
+  ///
+  /// In en, this message translates to:
+  /// **'Call Civil Protection, 198'**
+  String get guideCall198;
+
+  /// No description provided for @guideSimBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'[SIM] Content awaiting validation by the medical staff of the Civil Protection. Call 198 first.'**
+  String get guideSimBanner;
+
+  /// No description provided for @guideSimTag.
+  ///
+  /// In en, this message translates to:
+  /// **'[SIM] awaiting medical validation'**
+  String get guideSimTag;
+
+  /// No description provided for @nearestTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearest to me'**
+  String get nearestTitle;
+
+  /// No description provided for @nearestHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Civil Protection centres, hospitals, pharmacies… and your coordinates. Works without connection once downloaded.'**
+  String get nearestHint;
+
+  /// No description provided for @nearestMyPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'My position'**
+  String get nearestMyPosition;
+
+  /// No description provided for @nearestNoLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Location is off or not allowed. Turn it on to see the nearest places.'**
+  String get nearestNoLocation;
+
+  /// No description provided for @nearestCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get nearestCopy;
+
+  /// No description provided for @nearestCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Coordinates copied. You can read them to the operator.'**
+  String get nearestCopied;
+
+  /// No description provided for @nearestOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'No connection: showing the copy saved on this phone.'**
+  String get nearestOffline;
+
+  /// No description provided for @nearestEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing saved on this phone yet. Connect once to download the places.'**
+  String get nearestEmpty;
+
+  /// No description provided for @nearestLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading the places for offline use…'**
+  String get nearestLoading;
+
+  /// No description provided for @nearestUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Places updated on {date}'**
+  String nearestUpdated(String date);
+
+  /// No description provided for @nearestToVerify.
+  ///
+  /// In en, this message translates to:
+  /// **'To be verified'**
+  String get nearestToVerify;
+
+  /// No description provided for @nearestSimBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'[SIM] Some of these places are approximate and invented for a trial: they are not real places. In an emergency, call 198.'**
+  String get nearestSimBanner;
+
+  /// No description provided for @nearestSimChip.
+  ///
+  /// In en, this message translates to:
+  /// **'[SIM] Trial'**
+  String get nearestSimChip;
+
+  /// No description provided for @nearestNeedPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for your position.'**
+  String get nearestNeedPosition;
+
+  /// No description provided for @nearestNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No place of this kind is listed yet.'**
+  String get nearestNone;
+
+  /// No description provided for @nearestSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Source: {source}'**
+  String nearestSource(String source);
+
+  /// No description provided for @nearestCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Call {phone}'**
+  String nearestCall(String phone);
+
+  /// No description provided for @nearestRoute.
+  ///
+  /// In en, this message translates to:
+  /// **'Route'**
+  String get nearestRoute;
+
+  /// No description provided for @contactTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact us'**
+  String get contactTitle;
+
+  /// No description provided for @contactMineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My requests'**
+  String get contactMineTitle;
+
+  /// No description provided for @contactEmergencyBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Not for emergencies. For an emergency, call 198.'**
+  String get contactEmergencyBanner;
+
+  /// No description provided for @contactIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask a question, request information held by the Civil Protection, report a non-urgent hazard, suggest an idea or report a problem with the app. You get a number to follow your request.'**
+  String get contactIntro;
+
+  /// No description provided for @contactKind.
+  ///
+  /// In en, this message translates to:
+  /// **'Kind of request'**
+  String get contactKind;
+
+  /// No description provided for @contactKindAccessInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Access to information (law 2016-22)'**
+  String get contactKindAccessInfo;
+
+  /// No description provided for @contactKindHazard.
+  ///
+  /// In en, this message translates to:
+  /// **'Non-urgent hazard'**
+  String get contactKindHazard;
+
+  /// No description provided for @contactKindQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Question'**
+  String get contactKindQuestion;
+
+  /// No description provided for @contactKindSuggestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggestion'**
+  String get contactKindSuggestion;
+
+  /// No description provided for @contactKindAppProblem.
+  ///
+  /// In en, this message translates to:
+  /// **'Problem with the app'**
+  String get contactKindAppProblem;
+
+  /// No description provided for @contactKindPartnership.
+  ///
+  /// In en, this message translates to:
+  /// **'Partnership'**
+  String get contactKindPartnership;
+
+  /// No description provided for @contactAccessInfoHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The law asks for your name. The Office answers within the legal deadline (20 days).'**
+  String get contactAccessInfoHint;
+
+  /// No description provided for @contactNoGouvernorat.
+  ///
+  /// In en, this message translates to:
+  /// **'Not specific to a gouvernorat'**
+  String get contactNoGouvernorat;
+
+  /// No description provided for @contactSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Subject'**
+  String get contactSubject;
+
+  /// No description provided for @contactMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your message'**
+  String get contactMessage;
+
+  /// No description provided for @contactDetailsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact details are optional: without them, the answer is only shown here in “My requests”.'**
+  String get contactDetailsHint;
+
+  /// No description provided for @contactName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full name'**
+  String get contactName;
+
+  /// No description provided for @contactEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'E-mail'**
+  String get contactEmail;
+
+  /// No description provided for @contactEmailInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid e-mail address.'**
+  String get contactEmailInvalid;
+
+  /// No description provided for @contactLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Between {min} and {max} characters.'**
+  String contactLength(int min, int max);
+
+  /// No description provided for @contactSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get contactSend;
+
+  /// No description provided for @contactSentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Request sent'**
+  String get contactSentTitle;
+
+  /// No description provided for @contactSentBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep this number to follow your request:'**
+  String get contactSentBody;
+
+  /// No description provided for @contactSeeMine.
+  ///
+  /// In en, this message translates to:
+  /// **'See my requests'**
+  String get contactSeeMine;
+
+  /// No description provided for @contactMineEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You have not sent any request yet.'**
+  String get contactMineEmpty;
+
+  /// No description provided for @contactStatusReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Received'**
+  String get contactStatusReceived;
+
+  /// No description provided for @contactStatusInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get contactStatusInProgress;
+
+  /// No description provided for @contactStatusAnswered.
+  ///
+  /// In en, this message translates to:
+  /// **'Answered'**
+  String get contactStatusAnswered;
+
+  /// No description provided for @contactStatusClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get contactStatusClosed;
+
+  /// No description provided for @contactStatusRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get contactStatusRejected;
+
+  /// No description provided for @contactDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer due by {date}'**
+  String contactDue(String date);
+
+  /// No description provided for @contactAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer of the Office'**
+  String get contactAnswer;
+
+  /// No description provided for @contactRejectReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason given by the Office'**
+  String get contactRejectReason;
 }
 
 class _AppLocalizationsDelegate
