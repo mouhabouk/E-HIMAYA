@@ -2488,4 +2488,224 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get errorOffensiveText =>
       'يحتوي النص على ألفاظ غير مسموح بها. يرجى إعادة صياغته.';
+
+  @override
+  String get guideTitle => 'دليل الطوارئ';
+
+  @override
+  String get guideHubHint =>
+      'الحرائق، الكسور، الإسعافات الأولية، مشاكل التنفس… متوفر دون اتصال.';
+
+  @override
+  String get guideIntro =>
+      'اختر المحور ثم الحالة. في انتظار وصول النجدة، اتبع الخطوات بالترتيب.';
+
+  @override
+  String guideItemsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count عنصرا',
+      few: '$count عناصر',
+      two: 'عنصران',
+      one: 'عنصر واحد',
+      zero: 'لا عناصر',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get guideEmpty => 'لا يوجد محتوى منشور هنا حاليا.';
+
+  @override
+  String get guideCallNow => 'اتصل فورا بالرقم 198 إذا';
+
+  @override
+  String get guideSteps => 'ماذا تفعل';
+
+  @override
+  String get guideDont => 'لا تفعل';
+
+  @override
+  String get guideCall198 => 'اتصل بالحماية المدنية، 198';
+
+  @override
+  String get guideSimBanner =>
+      '[SIM] محتوى في انتظار المصادقة من الإطار الطبي للحماية المدنية. اتصل أولا بالرقم 198.';
+
+  @override
+  String get guideSimTag => '[SIM] في انتظار المصادقة الطبية';
+
+  @override
+  String get nearestTitle => 'الأقرب إليّ';
+
+  @override
+  String get nearestHint =>
+      'مراكز الحماية المدنية، المستشفيات، الصيدليات… وإحداثياتك. يعمل دون اتصال بعد التنزيل.';
+
+  @override
+  String get nearestMyPosition => 'موقعي';
+
+  @override
+  String get nearestNoLocation =>
+      'تحديد الموقع متوقف أو غير مسموح. فعّله لترى الأماكن الأقرب.';
+
+  @override
+  String get nearestCopy => 'نسخ';
+
+  @override
+  String get nearestCopied =>
+      'نُسخت الإحداثيات. يمكنك قراءتها على عون الاستقبال.';
+
+  @override
+  String get nearestOffline =>
+      'لا يوجد اتصال: تُعرض النسخة المحفوظة على هذا الهاتف.';
+
+  @override
+  String get nearestEmpty =>
+      'لا شيء محفوظ على هذا الهاتف بعد. اتصل بالإنترنت مرة واحدة لتنزيل الأماكن.';
+
+  @override
+  String get nearestLoading => 'جارٍ تنزيل الأماكن للاستعمال دون اتصال…';
+
+  @override
+  String nearestUpdated(String date) {
+    return 'حُدّثت الأماكن في $date';
+  }
+
+  @override
+  String get nearestToVerify => 'للتثبت';
+
+  @override
+  String get nearestSimBanner =>
+      '[SIM] بعض هذه الأماكن وهمية تقريبية للتجربة وليست أماكن حقيقية. في الطوارئ اتصل بـ 198.';
+
+  @override
+  String get nearestSimChip => '[SIM] تجربة';
+
+  @override
+  String get nearestNeedPosition => 'في انتظار تحديد موقعك.';
+
+  @override
+  String get nearestNone => 'لا يوجد مكان من هذا النوع مسجل بعد.';
+
+  @override
+  String nearestSource(String source) {
+    return 'المصدر: $source';
+  }
+
+  @override
+  String nearestCall(String phone) {
+    return 'اتصل بالرقم $phone';
+  }
+
+  @override
+  String get nearestRoute => 'المسار';
+
+  @override
+  String get contactTitle => 'اتصل بنا';
+
+  @override
+  String get contactMineTitle => 'طلباتي';
+
+  @override
+  String get contactEmergencyBanner =>
+      'ليست للطوارئ. في حالة الطوارئ، اتصل بالرقم 198.';
+
+  @override
+  String get contactIntro =>
+      'اطرح سؤالا، اطلب معلومة لدى الحماية المدنية، أبلغ عن خطر غير عاجل، اقترح فكرة أو أبلغ عن مشكلة في التطبيق. ستحصل على رقم لمتابعة طلبك.';
+
+  @override
+  String get contactKind => 'نوع الطلب';
+
+  @override
+  String get contactKindAccessInfo => 'النفاذ إلى المعلومة (القانون 2016-22)';
+
+  @override
+  String get contactKindHazard => 'خطر غير عاجل';
+
+  @override
+  String get contactKindQuestion => 'سؤال';
+
+  @override
+  String get contactKindSuggestion => 'مقترح';
+
+  @override
+  String get contactKindAppProblem => 'مشكلة في التطبيق';
+
+  @override
+  String get contactKindPartnership => 'شراكة';
+
+  @override
+  String get contactAccessInfoHint =>
+      'يشترط القانون ذكر اسمك. يرد الديوان في الأجل القانوني (20 يوما).';
+
+  @override
+  String get contactNoGouvernorat => 'غير مرتبط بولاية';
+
+  @override
+  String get contactSubject => 'الموضوع';
+
+  @override
+  String get contactMessage => 'رسالتك';
+
+  @override
+  String get contactDetailsHint =>
+      'معطيات الاتصال اختيارية: بدونها يظهر الرد هنا فقط في «طلباتي».';
+
+  @override
+  String get contactName => 'الاسم واللقب';
+
+  @override
+  String get contactEmail => 'البريد الإلكتروني';
+
+  @override
+  String get contactEmailInvalid => 'أدخل بريدا إلكترونيا صحيحا.';
+
+  @override
+  String contactLength(int min, int max) {
+    return 'بين $min و$max حرفا.';
+  }
+
+  @override
+  String get contactSend => 'إرسال';
+
+  @override
+  String get contactSentTitle => 'تمّ إرسال الطلب';
+
+  @override
+  String get contactSentBody => 'احتفظ بهذا الرقم لمتابعة طلبك:';
+
+  @override
+  String get contactSeeMine => 'عرض طلباتي';
+
+  @override
+  String get contactMineEmpty => 'لم ترسل أي طلب بعد.';
+
+  @override
+  String get contactStatusReceived => 'وارد';
+
+  @override
+  String get contactStatusInProgress => 'قيد المعالجة';
+
+  @override
+  String get contactStatusAnswered => 'تمّ الرد';
+
+  @override
+  String get contactStatusClosed => 'مغلق';
+
+  @override
+  String get contactStatusRejected => 'مرفوض';
+
+  @override
+  String contactDue(String date) {
+    return 'الرد متوقع قبل $date';
+  }
+
+  @override
+  String get contactAnswer => 'رد الديوان';
+
+  @override
+  String get contactRejectReason => 'السبب المبلّغ من الديوان';
 }

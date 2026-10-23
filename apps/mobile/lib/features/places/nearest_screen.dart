@@ -1,0 +1,393 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart' show DateFormat;
+
+import '../../core/http/models.dart';
+import '../../core/location/location_service.dart';
+import '../../core/settings/settings_controller.dart';
+import '../../core/storage/app_prefs.dart';
+import '../../core/ui/language_bar.dart';
+import '../../core/ui/sim_banner.dart';
+import '../../l10n/app_localizations.dart';
+import '../emergency/dialer.dart';
+import '../guide/guide_models.dart' show guideColour;
+import '../institution/institution_providers.dart';
+import 'places_models.dart';
+import 'places_providers.dart';
+
+/// The user's position for "nearest to me": asked when the screen opens (prompting once if
+/// needed), null when location is off or refused.
+final myPositionProvider = FutureProvider.autoDispose<GeoPoint?>(
+  (ref) => ref.read(locationServiceProvider).bestEffort(),
+  retry: (_, _) => null,
+);
+
+/// Layers the user turned off, kept between visits.
+class PlacesOffController extends Notifier<Set<String>> {
+  @override
+  Set<String> build() => ref.read(appPrefsProvider).placesOff.toSet();
+
+  Future<void> toggle(String key) async {
+    final next = {...state};
+    if (!next.remove(key)) next.add(key);
+    state = next;
+    await ref.read(appPrefsProvider).setPlacesOff(next.toList()..sort());
+  }
+}
+
+final placesOffProvider = NotifierProvider<PlacesOffController, Set<String>>(
+  PlacesOffController.new,
+);
+
+/// Emergency hub, phase B1: my coordinates (to read to the operator), then the three nearest
+/// places of each public layer, computed on the phone from the copy kept offline.
+class NearestScreen extends ConsumerWidget {
+  const NearestScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final lang = ref.watch(localeCodeProvider);
+    final places = ref.watch(placesProvider);
+    final position = ref.watch(myPositionProvider);
+    final off = ref.watch(placesOffProvider);
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l10n.nearestTitle),
+        actions: const [LanguageMenuAction()],
+      ),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          ref.invalidate(myPositionProvider);
+          await ref.read(placesProvider.notifier).refresh();
+        },
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(16),
+          children: [
+            _PositionCard(position: position),
+            const SizedBox(height: 12),
+            ...switch (places) {
+              AsyncData(:final value) => _layers(
+                context,
+                l10n,
+                lang,
+                value,
+                position.value,
+                off,
+                ref,
+              ),
+              AsyncError() => [Text(l10n.nearestEmpty)],
+              _ => [const Center(child: CircularProgressIndicator())],
+            },
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _layers(
+    BuildContext context,
+    AppLocalizations l10n,
+    String lang,
+    PlacesData data,
+    GeoPoint? here,
+    Set<String> off,
+    WidgetRef ref,
+  ) {
+    if (data.isEmpty) {
+      return [
+        Text(
+          data.refreshFailed ? l10n.nearestEmpty : l10n.nearestLoading,
+          key: const Key('nearest-empty'),
+        ),
+      ];
+    }
+    final shown = data.layers.where((l) => !off.contains(l.key)).toList();
+    return [
+      // ┏━━ SIMULATION ━━ layers of approximate, invented places (scripts/sim_layers.py)
+      // ┃ PRODUCTION: the Office's lists replace them and the layer loses its "simulated" mark.
+      // ┗━━━━━━━━━━━━━━━━
+      if (shown.any((l) => l.simulated)) SimBanner(text: l10n.nearestSimBanner),
+      if (data.refreshFailed)
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Text(
+            l10n.nearestOffline,
+            key: const Key('nearest-offline'),
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
+        ),
+      Wrap(
+        spacing: 8,
+        runSpacing: 4,
+        children: [
+          for (final layer in data.layers)
+            FilterChip(
+              key: Key('layer-chip-${layer.key}'),
+              avatar: Icon(
+                layerIcon(layer.icon),
+                size: 18,
+                color: guideColour(layer.colour),
+              ),
+              label: Text(layer.nameFor(lang)),
+              selected: !off.contains(layer.key),
+              onSelected: (_) =>
+                  ref.read(placesOffProvider.notifier).toggle(layer.key),
+            ),
+        ],
+      ),
+      const SizedBox(height: 12),
+      for (final layer in shown)
+        _LayerCard(
+          layer: layer,
+          lang: lang,
+          near: here == null
+              ? null
+              : nearest(data.packages[layer.key]?.places ?? const [], here),
+        ),
+      if (data.updatedAt != null)
+        Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: Text(
+            l10n.nearestUpdated(
+              DateFormat.yMMMd(lang).add_Hm().format(data.updatedAt!),
+            ),
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        ),
+    ];
+  }
+}
+
+class _PositionCard extends ConsumerWidget {
+  const _PositionCard({required this.position});
+
+  final AsyncValue<GeoPoint?> position;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final here = position.value;
+    final coords = here == null
+        ? null
+        : '${here.lat.toStringAsFixed(5)}, ${here.lon.toStringAsFixed(5)}';
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.nearestMyPosition, style: theme.textTheme.titleMedium),
+            const SizedBox(height: 8),
+            if (position.isLoading)
+              Text(l10n.locationLocating)
+            else if (coords == null) ...[
+              Text(
+                l10n.nearestNoLocation,
+                key: const Key('nearest-no-location'),
+              ),
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                icon: const Icon(Icons.my_location),
+                label: Text(l10n.locationRefresh),
+                onPressed: () async {
+                  final service = ref.read(locationServiceProvider);
+                  if (await service.status() != LocationAvailability.granted) {
+                    await service.openSettings();
+                  }
+                  ref.invalidate(myPositionProvider);
+                },
+              ),
+            ] else ...[
+              Text(
+                coords,
+                key: const Key('nearest-coords'),
+                textDirection: TextDirection.ltr,
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              if (here!.accuracyM != null)
+                Text(l10n.locationAccuracy(here.accuracyM!.round())),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                children: [
+                  OutlinedButton.icon(
+                    key: const Key('nearest-copy'),
+                    icon: const Icon(Icons.copy),
+                    label: Text(l10n.nearestCopy),
+                    onPressed: () async {
+                      await Clipboard.setData(ClipboardData(text: coords));
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(l10n.nearestCopied)),
+                        );
+                      }
+                    },
+                  ),
+                  OutlinedButton.icon(
+                    icon: const Icon(Icons.my_location),
+                    label: Text(l10n.locationRefresh),
+                    onPressed: () => ref.invalidate(myPositionProvider),
+                  ),
+                ],
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LayerCard extends StatelessWidget {
+  const _LayerCard({required this.layer, required this.lang, this.near});
+
+  final PlaceLayer layer;
+  final String lang;
+
+  /// Null while the position is unknown.
+  final List<NearPlace>? near;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final colour = guideColour(layer.colour);
+    return Card(
+      key: Key('nearest-layer-${layer.key}'),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 16,
+                  backgroundColor: colour,
+                  child: Icon(
+                    layerIcon(layer.icon),
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    layer.nameFor(lang),
+                    style: theme.textTheme.titleMedium,
+                  ),
+                ),
+                if (layer.simulated)
+                  Padding(
+                    padding: const EdgeInsetsDirectional.only(end: 4),
+                    child: Chip(
+                      key: Key('sim-layer-${layer.key}'),
+                      label: Text(l10n.nearestSimChip),
+                      backgroundColor: simAmber,
+                      visualDensity: VisualDensity.compact,
+                    ),
+                  ),
+                if (layer.toVerify)
+                  Chip(
+                    key: Key('to-verify-${layer.key}'),
+                    label: Text(l10n.nearestToVerify),
+                    visualDensity: VisualDensity.compact,
+                  ),
+              ],
+            ),
+            if (near == null)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text(l10n.nearestNeedPosition),
+              )
+            else if (near!.isEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text(l10n.nearestNone),
+              )
+            else
+              for (final p in near!) _PlaceTile(near: p),
+            if (layer.source.isNotEmpty)
+              Text(
+                l10n.nearestSource(
+                  [
+                    layer.source,
+                    layer.licence,
+                  ].where((s) => s.isNotEmpty).join(' · '),
+                ),
+                style: theme.textTheme.bodySmall,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PlaceTile extends ConsumerWidget {
+  const _PlaceTile({required this.near});
+
+  final NearPlace near;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final place = near.place;
+    final details = [
+      place.kind,
+      place.prop('address'),
+      place.prop('hours'),
+    ].whereType<String>().where((s) => s.trim().isNotEmpty).join(' · ');
+    final phone = place.phone;
+    return ListTile(
+      key: Key('place-${place.id}'),
+      contentPadding: EdgeInsets.zero,
+      title: Text(place.name),
+      subtitle: Text(
+        [
+          formatDistance(near.distanceM),
+          if (details.isNotEmpty) details,
+        ].join(' · '),
+      ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (phone != null && phone.isNotEmpty)
+            IconButton(
+              key: Key('call-${place.id}'),
+              tooltip: l10n.nearestCall(phone),
+              icon: const Icon(Icons.call),
+              onPressed: () async {
+                final ok = await ref.read(dialerProvider)(
+                  Uri(scheme: 'tel', path: phone),
+                );
+                if (!ok && context.mounted) {
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text(l10n.dialFailed)));
+                }
+              },
+            ),
+          IconButton(
+            key: Key('route-${place.id}'),
+            tooltip: l10n.nearestRoute,
+            icon: const Icon(Icons.directions),
+            onPressed: () => ref.read(urlOpenerProvider)(routeUri(place)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Opens the phone's own maps app on the place (`geo:` URI, understood by Android and by the
+/// usual map apps), with the name as label.
+Uri routeUri(Place place) => Uri.parse(
+  'geo:${place.lat},${place.lon}?q=${place.lat},${place.lon}'
+  '(${Uri.encodeComponent(place.name)})',
+);

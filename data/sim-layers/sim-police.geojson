@@ -1,0 +1,583 @@
+{
+ "type": "FeatureCollection",
+ "simulated": true,
+ "source": "[SIM] Données approximatives d'essai / بيانات تقريبية للتجربة / approximate trial data",
+ "features": [
+  {
+   "type": "Feature",
+   "id": "sim-11-s",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.1615,
+     36.8065
+    ]
+   },
+   "properties": {
+    "id": "sim-11-s",
+    "name": "[SIM] Poste de police de Tunis",
+    "name_ar": "[SIM] مركز الأمن بـتونس",
+    "name_fr": "[SIM] Poste de police de Tunis",
+    "name_en": "[SIM] Tunis Police Station",
+    "hours": "24/7",
+    "address": "تونس / Tunis",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-12-s",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.1806,
+     36.8725
+    ]
+   },
+   "properties": {
+    "id": "sim-12-s",
+    "name": "[SIM] Poste de police de Ariana",
+    "name_ar": "[SIM] مركز الأمن بـأريانة",
+    "name_fr": "[SIM] Poste de police de Ariana",
+    "name_en": "[SIM] Ariana Police Station",
+    "hours": "24/7",
+    "address": "أريانة / Ariana",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-13-s",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.2089,
+     36.7381
+    ]
+   },
+   "properties": {
+    "id": "sim-13-s",
+    "name": "[SIM] Poste de police de Ben Arous",
+    "name_ar": "[SIM] مركز الأمن بـبن عروس",
+    "name_fr": "[SIM] Poste de police de Ben Arous",
+    "name_en": "[SIM] Ben Arous Police Station",
+    "hours": "24/7",
+    "address": "بن عروس / Ben Arous",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-14-s",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.0663,
+     36.8101
+    ]
+   },
+   "properties": {
+    "id": "sim-14-s",
+    "name": "[SIM] Poste de police de Manouba",
+    "name_ar": "[SIM] مركز الأمن بـمنوبة",
+    "name_fr": "[SIM] Poste de police de Manouba",
+    "name_en": "[SIM] Manouba Police Station",
+    "hours": "24/7",
+    "address": "منوبة / Manouba",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-21-s",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.7176,
+     36.4711
+    ]
+   },
+   "properties": {
+    "id": "sim-21-s",
+    "name": "[SIM] Poste de police de Nabeul",
+    "name_ar": "[SIM] مركز الأمن بـنابل",
+    "name_fr": "[SIM] Poste de police de Nabeul",
+    "name_en": "[SIM] Nabeul Police Station",
+    "hours": "24/7",
+    "address": "نابل / Nabeul",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-22-s",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.1279,
+     36.4179
+    ]
+   },
+   "properties": {
+    "id": "sim-22-s",
+    "name": "[SIM] Poste de police de Zaghouan",
+    "name_ar": "[SIM] مركز الأمن بـزغوان",
+    "name_fr": "[SIM] Poste de police de Zaghouan",
+    "name_en": "[SIM] Zaghouan Police Station",
+    "hours": "24/7",
+    "address": "زغوان / Zaghouan",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-23-s",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     9.8539,
+     37.2744
+    ]
+   },
+   "properties": {
+    "id": "sim-23-s",
+    "name": "[SIM] Poste de police de Bizerte",
+    "name_ar": "[SIM] مركز الأمن بـبنزرت",
+    "name_fr": "[SIM] Poste de police de Bizerte",
+    "name_en": "[SIM] Bizerte Police Station",
+    "hours": "24/7",
+    "address": "بنزرت / Bizerte",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-31-s",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     9.1617,
+     36.7256
+    ]
+   },
+   "properties": {
+    "id": "sim-31-s",
+    "name": "[SIM] Poste de police de Béja",
+    "name_ar": "[SIM] مركز الأمن بـباجة",
+    "name_fr": "[SIM] Poste de police de Béja",
+    "name_en": "[SIM] Beja Police Station",
+    "hours": "24/7",
+    "address": "باجة / Béja",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-32-s",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.8002,
+     36.5011
+    ]
+   },
+   "properties": {
+    "id": "sim-32-s",
+    "name": "[SIM] Poste de police de Jendouba",
+    "name_ar": "[SIM] مركز الأمن بـجندوبة",
+    "name_fr": "[SIM] Poste de police de Jendouba",
+    "name_en": "[SIM] Jendouba Police Station",
+    "hours": "24/7",
+    "address": "جندوبة / Jendouba",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-33-s",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.7199,
+     36.1592
+    ]
+   },
+   "properties": {
+    "id": "sim-33-s",
+    "name": "[SIM] Poste de police de Le Kef",
+    "name_ar": "[SIM] مركز الأمن بـالكاف",
+    "name_fr": "[SIM] Poste de police de Le Kef",
+    "name_en": "[SIM] Kef Police Station",
+    "hours": "24/7",
+    "address": "الكاف / Le Kef",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-34-s",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     9.3908,
+     36.0849
+    ]
+   },
+   "properties": {
+    "id": "sim-34-s",
+    "name": "[SIM] Poste de police de Siliana",
+    "name_ar": "[SIM] مركز الأمن بـسليانة",
+    "name_fr": "[SIM] Poste de police de Siliana",
+    "name_en": "[SIM] Siliana Police Station",
+    "hours": "24/7",
+    "address": "سليانة / Siliana",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-41-s",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.0763,
+     35.6781
+    ]
+   },
+   "properties": {
+    "id": "sim-41-s",
+    "name": "[SIM] Poste de police de Kairouan",
+    "name_ar": "[SIM] مركز الأمن بـالقيروان",
+    "name_fr": "[SIM] Poste de police de Kairouan",
+    "name_en": "[SIM] Kairouan Police Station",
+    "hours": "24/7",
+    "address": "القيروان / Kairouan",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-42-s",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.8565,
+     35.1676
+    ]
+   },
+   "properties": {
+    "id": "sim-42-s",
+    "name": "[SIM] Poste de police de Kasserine",
+    "name_ar": "[SIM] مركز الأمن بـالقصرين",
+    "name_fr": "[SIM] Poste de police de Kasserine",
+    "name_en": "[SIM] Kasserine Police Station",
+    "hours": "24/7",
+    "address": "القصرين / Kasserine",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-43-s",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     9.5049,
+     35.0382
+    ]
+   },
+   "properties": {
+    "id": "sim-43-s",
+    "name": "[SIM] Poste de police de Sidi Bouzid",
+    "name_ar": "[SIM] مركز الأمن بـسيدي بوزيد",
+    "name_fr": "[SIM] Poste de police de Sidi Bouzid",
+    "name_en": "[SIM] Sidi Bouzid Police Station",
+    "hours": "24/7",
+    "address": "سيدي بوزيد / Sidi Bouzid",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-51-s",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.5884,
+     35.8156
+    ]
+   },
+   "properties": {
+    "id": "sim-51-s",
+    "name": "[SIM] Poste de police de Sousse",
+    "name_ar": "[SIM] مركز الأمن بـسوسة",
+    "name_fr": "[SIM] Poste de police de Sousse",
+    "name_en": "[SIM] Sousse Police Station",
+    "hours": "24/7",
+    "address": "سوسة / Sousse",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-52-s",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.7963,
+     35.7493
+    ]
+   },
+   "properties": {
+    "id": "sim-52-s",
+    "name": "[SIM] Poste de police de Monastir",
+    "name_ar": "[SIM] مركز الأمن بـالمنستير",
+    "name_fr": "[SIM] Poste de police de Monastir",
+    "name_en": "[SIM] Monastir Police Station",
+    "hours": "24/7",
+    "address": "المنستير / Monastir",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-53-s",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     11.0422,
+     35.4947
+    ]
+   },
+   "properties": {
+    "id": "sim-53-s",
+    "name": "[SIM] Poste de police de Mahdia",
+    "name_ar": "[SIM] مركز الأمن بـالمهدية",
+    "name_fr": "[SIM] Poste de police de Mahdia",
+    "name_en": "[SIM] Mahdia Police Station",
+    "hours": "24/7",
+    "address": "المهدية / Mahdia",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-61-s",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.7403,
+     34.7556
+    ]
+   },
+   "properties": {
+    "id": "sim-61-s",
+    "name": "[SIM] Poste de police de Sfax",
+    "name_ar": "[SIM] مركز الأمن بـصفاقس",
+    "name_fr": "[SIM] Poste de police de Sfax",
+    "name_en": "[SIM] Sfax Police Station",
+    "hours": "24/7",
+    "address": "صفاقس / Sfax",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-71-s",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.8042,
+     34.425
+    ]
+   },
+   "properties": {
+    "id": "sim-71-s",
+    "name": "[SIM] Poste de police de Gafsa",
+    "name_ar": "[SIM] مركز الأمن بـقفصة",
+    "name_fr": "[SIM] Poste de police de Gafsa",
+    "name_en": "[SIM] Gafsa Police Station",
+    "hours": "24/7",
+    "address": "قفصة / Gafsa",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-72-s",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.1535,
+     33.9197
+    ]
+   },
+   "properties": {
+    "id": "sim-72-s",
+    "name": "[SIM] Poste de police de Tozeur",
+    "name_ar": "[SIM] مركز الأمن بـتوزر",
+    "name_fr": "[SIM] Poste de police de Tozeur",
+    "name_en": "[SIM] Tozeur Police Station",
+    "hours": "24/7",
+    "address": "توزر / Tozeur",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-73-s",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     8.989,
+     33.7044
+    ]
+   },
+   "properties": {
+    "id": "sim-73-s",
+    "name": "[SIM] Poste de police de Kébili",
+    "name_ar": "[SIM] مركز الأمن بـقبلي",
+    "name_fr": "[SIM] Poste de police de Kébili",
+    "name_en": "[SIM] Kebili Police Station",
+    "hours": "24/7",
+    "address": "قبلي / Kébili",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-81-s",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.0782,
+     33.8715
+    ]
+   },
+   "properties": {
+    "id": "sim-81-s",
+    "name": "[SIM] Poste de police de Gabès",
+    "name_ar": "[SIM] مركز الأمن بـقابس",
+    "name_fr": "[SIM] Poste de police de Gabès",
+    "name_en": "[SIM] Gabes Police Station",
+    "hours": "24/7",
+    "address": "قابس / Gabès",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-82-s",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.4855,
+     33.3549
+    ]
+   },
+   "properties": {
+    "id": "sim-82-s",
+    "name": "[SIM] Poste de police de Médenine",
+    "name_ar": "[SIM] مركز الأمن بـمدنين",
+    "name_fr": "[SIM] Poste de police de Médenine",
+    "name_en": "[SIM] Medenine Police Station",
+    "hours": "24/7",
+    "address": "مدنين / Médenine",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "sim-83-s",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.4318,
+     32.9297
+    ]
+   },
+   "properties": {
+    "id": "sim-83-s",
+    "name": "[SIM] Poste de police de Tataouine",
+    "name_ar": "[SIM] مركز الأمن بـتطاوين",
+    "name_fr": "[SIM] Poste de police de Tataouine",
+    "name_en": "[SIM] Tataouine Police Station",
+    "hours": "24/7",
+    "address": "تطاوين / Tataouine",
+    "simulated": "yes",
+    "note_ar": "مكان وهمي تقريبي للتجربة، ليس مكانا حقيقيا",
+    "note_fr": "Lieu fictif approximatif d'essai, pas un lieu réel",
+    "note_en": "Approximate invented place for trials, not a real place"
+   }
+  }
+ ]
+}

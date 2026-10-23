@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { FiltersBar } from "../components/FiltersBar";
 import { LazyMapView } from "../components/LazyMap";
+import { useMapDataLayers } from "../components/MapDataLayers";
 import type { HeatPoint, MapMarker, MapPoi, MapPolygon } from "../components/MapView";
 import { MapLegend, orgKindLabel } from "../components/OrgBits";
 import { useMapWeather, useWeatherGrid, WeatherControls, WeatherPointCard, type WeatherViews } from "../components/WeatherLayer";
@@ -327,7 +328,9 @@ export function MapPage() {
     }
     return out;
   }, [showResources, resourcesQuery.data, showVolunteers, volunteersQuery.data, lang, t]);
-  const allPois = useMemo(() => [...pois, ...opsPois], [pois, opsPois]);
+  // Map data layers loaded from files (phase B1): hospitals, shelters… any number at once.
+  const dataLayers = useMapDataLayers(bbox);
+  const allPois = useMemo(() => [...pois, ...opsPois, ...dataLayers.pois], [pois, opsPois, dataLayers.pois]);
   const heat = useMemo<HeatPoint[]>(
     () =>
       showVolunteers
@@ -399,6 +402,7 @@ export function MapPage() {
         )}
         {legend.length > 0 && <MapLegend items={legend} />}
       </div>
+      {dataLayers.controls}
       {showWeather && (
         <WeatherControls
           views={weatherViews}
@@ -487,9 +491,17 @@ export function MapPage() {
           ))}
           {allPois.map((p) => (
             <li key={`poi-${p.id}`}>
-              <Link to={p.href ?? "/orgs"}>
-                <span dir="auto">{p.title}</span> — {p.subtitle}
-              </Link>
+              {p.href ? (
+                <Link to={p.href}>
+                  <span dir="auto">{p.title}</span> — {p.subtitle}
+                </Link>
+              ) : (
+                <span>
+                  <span dir="auto">{p.title}</span>
+                  {p.subtitle && ` — ${p.subtitle}`}
+                  {p.details && p.details.length > 0 && ` — ${p.details.join(" · ")}`}
+                </span>
+              )}
             </li>
           ))}
         </ul>

@@ -4,11 +4,12 @@ from app.modules.ai.models import AiSettingsRow, Analysis
 from app.modules.analytics.models import Notification, Scenario, Schedule
 from app.modules.analytics.models import Report as AnalyticsReport
 from app.modules.audit.models import AuditLog
-from app.modules.content.models import Revision, SafetyTip
+from app.modules.contact.models import ContactEvent, ContactRequest
+from app.modules.content.models import GuideItem, GuideTopic, Revision, SafetyTip
 from app.modules.decision.models import ProcedureChunk
 from app.modules.evidence.models import Anchor, Leaf
 from app.modules.forecast.models import ForecastRun
-from app.modules.geo.models import Delegation, Gouvernorat
+from app.modules.geo.models import Delegation, Gouvernorat, Layer, LayerFeature, LayerImport
 from app.modules.identity.models import Account, Consent, ErasureRequest, Profile
 from app.modules.knowledge.models import IndexState, MemoryEntry, MemoryEntryVersion, SearchDoc
 from app.modules.notify.models import Device, Dispatch, Message, OrgDigest, Outbox
@@ -68,6 +69,8 @@ __all__ = [
     "Conference",
     "Consent",
     "ConsumerCursor",
+    "ContactEvent",
+    "ContactRequest",
     "Delegation",
     "Device",
     "Directive",
@@ -80,10 +83,15 @@ __all__ = [
     "ForecastRun",
     "Gouvernorat",
     "GridPoint",
+    "GuideItem",
+    "GuideTopic",
     "Hazmat",
     "Incident",
     "IndexState",
     "Invitation",
+    "Layer",
+    "LayerFeature",
+    "LayerImport",
     "Leaf",
     "LedgerEntry",
     "LevelState",

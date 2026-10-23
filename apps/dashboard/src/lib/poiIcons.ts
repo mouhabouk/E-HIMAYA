@@ -15,6 +15,9 @@ export const POI_KINDS = [
   "volunteer",
   "stream",
   "stream_alert",
+  // Map data layers loaded from files (phase B1): the icon and colour come from the layer (lib/layers.ts).
+  "place",
+  "place_cluster",
 ] as const;
 export type PoiKind = (typeof POI_KINDS)[number];
 
@@ -41,6 +44,9 @@ export const POI_ICON_PATHS: Record<PoiKind, string> = {
   stream: "M3 6h12a2 2 0 0 1 2 2v1.5l4-2.5v10l-4-2.5V16a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z",
   // Flame (live stream with a fire or smoke detection).
   stream_alert: "M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-6 0 2 1 3 2 3 0-4-1-6 1-9z",
+  // Map pin (a place whose layer icon is unknown); clusters show their count instead.
+  place: "M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 4.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5z",
+  place_cluster: "M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z",
 };
 
 export function isPoiKind(v: unknown): v is PoiKind {

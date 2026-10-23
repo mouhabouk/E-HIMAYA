@@ -32,7 +32,10 @@
     "resourceRequests": "Resource requests",
     "accounts": "Accounts",
     "audit": "Audit",
-    "breakGlass": "Break-glass"
+    "breakGlass": "Break-glass",
+    "layers": "Map layers",
+    "emergencyGuide": "Emergency hub",
+    "contact": "Contact us"
   },
   "header": {
     "scope": "Geographic scope",
@@ -262,7 +265,26 @@
     "self_edit": "You cannot edit your own account.",
     "identity_provider_error": "The identity service did not respond.",
     "username_taken": "Username already taken.",
-    "second_reviewer_required": "The alert is published by someone other than the person who wrote or last edited it."
+    "second_reviewer_required": "The alert is published by someone other than the person who wrote or last edited it.",
+    "key_taken": "This key is already taken.",
+    "file_too_large": "File too large (10 MB at most).",
+    "empty_file": "The file is empty.",
+    "format_unknown": "Unsupported format: CSV, Excel, JSON or GeoJSON.",
+    "required_columns_missing": "Required columns missing: name, latitude, longitude.",
+    "too_many_rows": "Too many rows.",
+    "too_many_columns": "Too many columns.",
+    "json_invalid": "Invalid JSON file.",
+    "json_not_array": "The JSON must be a list of objects.",
+    "geojson_not_collection": "The file must be a FeatureCollection.",
+    "xlsx_unreadable": "Unreadable Excel file.",
+    "not_a_preview": "This import is no longer a preview.",
+    "preview_expired": "Preview expired: upload the file again.",
+    "layer_changed": "The layer changed since the preview: preview again.",
+    "not_last_import": "Only the last published import can be undone.",
+    "duplicate_id": "A place already has this identifier.",
+    "outside_tunisia": "Position outside Tunisia.",
+    "cannot_move": "Cannot move that way.",
+    "text_required": "A note, an answer or a reason is needed."
   },
   "kpi": {
     "title": "Key indicators",
@@ -3166,6 +3188,12 @@
         "length": "Each line has {{min}} to {{max}} characters.",
         "count": "At most {{count}} words."
       }
+    },
+    "accessInfoDays": {
+      "title": "Deadline for access to information",
+      "help": "Days the Office has to answer a request for access to information sent through “Contact us” (law 2016-22, art. 14: 20 days). To be confirmed by the legal service.",
+      "label": "Deadline",
+      "unit": "days"
     }
   },
   "accounts": {
@@ -3273,5 +3301,313 @@
     "context": "Reporter's gouvernorat (contact only)",
     "contextProfile": "{{name}} (profile)",
     "contextNone": "Not available"
+  },
+  "layers": {
+    "title": "Map data layers",
+    "intro": "Each layer is a set of places loaded from a file (CSV, Excel, JSON or GeoJSON): hospitals, pharmacies, shelters… Check the preview before publishing; the last import can be undone.",
+    "mapGroup": "Data layers",
+    "cluster": "{{count}} places · {{layer}} (zoom in to see them)",
+    "truncated": "Too many places in this area, zoom in: {{names}}",
+    "toVerify": "To be verified",
+    "reasonLabel": "Reason for the change",
+    "audience": {
+      "public": "Public (shown in the app)",
+      "staff": "Staff only"
+    },
+    "place": {
+      "phone": "Phone",
+      "hiddenNote": "Hidden from the public map"
+    },
+    "columns": {
+      "address": "Address",
+      "delegation": "Delegation",
+      "manager": "Person in charge",
+      "hours": "Opening hours",
+      "email": "E-mail",
+      "website": "Website",
+      "phone2": "Phone 2"
+    },
+    "template": {
+      "title": "Empty template with the recognised columns:"
+    },
+    "export": {
+      "title": "Export the layer",
+      "csv": "CSV",
+      "xlsx": "Excel",
+      "geojson": "GeoJSON"
+    },
+    "list": {
+      "name": "Layer",
+      "places": "Places",
+      "lastImport": "Last import",
+      "state": "State",
+      "none": "None",
+      "open": "Open",
+      "enabled": "On",
+      "disabled": "Off",
+      "empty": "No layer yet.",
+      "noSource": "Source not given",
+      "hiddenCount": "{{count}} hidden"
+    },
+    "form": {
+      "newTitle": "New layer",
+      "editTitle": "Layer settings",
+      "name_ar": "Name in Arabic",
+      "name_fr": "Name in French",
+      "name_en": "Name in English",
+      "key": "Technical key",
+      "keyHelp": "Lower-case Latin letters, digits and _; cannot change after creation.",
+      "audience": "Audience",
+      "icon": "Icon",
+      "colour": "Colour",
+      "colourN": "Colour {{n}} ({{colour}})",
+      "source": "Source",
+      "licence": "Licence",
+      "staffOnly": "Columns never sent to the app",
+      "staffOnlyHelp": "Comma-separated. Default: manager (name of the person in charge).",
+      "toVerify": "Data to be verified (shown with “To be verified”)",
+      "editorsAllowed": "Content editors may import into this layer",
+      "enabled": "Layer on",
+      "create": "Create the layer",
+      "errors": {
+        "key": "Invalid technical key.",
+        "name": "The name is required in the three languages.",
+        "icon": "Choose an icon.",
+        "colour": "Choose a colour from the list.",
+        "source": "Source or licence too long."
+      },
+      "simulated": "Approximate trial data [SIM]: invented places, public only for a trial"
+    },
+    "icons": {
+      "hospital": "Hospital",
+      "clinic": "Clinic",
+      "pharmacy": "Pharmacy",
+      "police": "Police",
+      "guard": "National Guard",
+      "civil_protection": "Civil Protection",
+      "shelter": "Shelter",
+      "school": "School",
+      "factory": "Industrial site",
+      "water": "Water point",
+      "fuel": "Fuel station",
+      "pin": "Place"
+    },
+    "import": {
+      "title": "Import a file",
+      "file": "File",
+      "fileHelp": "CSV, Excel, JSON or GeoJSON, at most {{size}} and {{rows}} rows. First row: column names (name, latitude and longitude required).",
+      "mode": "Mode",
+      "merge": "Merge",
+      "mergeHelp": "adds new places, updates existing ones by identifier, keeps the others.",
+      "replace": "Replace",
+      "replaceHelp": "the file becomes the whole layer: places missing from it are removed.",
+      "preview": "Preview",
+      "previewing": "Checking…",
+      "previewTitle": "Preview of {{file}} (nothing changed on the map yet)",
+      "counts": {
+        "new": "New",
+        "updated": "Updated",
+        "unchanged": "Unchanged",
+        "removed": "Removed",
+        "rejected": "Rejected",
+        "warnings": "Warnings"
+      },
+      "rejectedTitle": "Rejected rows",
+      "warningsTitle": "Warnings ({{count}}): the place is kept without the field",
+      "warningLine": "Line {{line}}: {{reason}}",
+      "line": "Line",
+      "reason": "Reason",
+      "moreRows": "And {{count}} more rows.",
+      "mapLabel": "Preview map: new, updated and removed places",
+      "replaceWarning": "{{count}} places missing from the file will be removed.",
+      "apply": "Publish on the map",
+      "applying": "Publishing…",
+      "applied": "Import published.",
+      "discard": "Discard the preview"
+    },
+    "reasons": {
+      "name_missing": "Name missing",
+      "coordinates_missing": "Coordinates missing or unreadable",
+      "coordinates_swapped": "Latitude and longitude swapped",
+      "outside_tunisia": "Position outside Tunisia",
+      "duplicate_id": "Duplicate identifier in the file",
+      "not_a_point": "The geometry is not a point",
+      "phone_invalid": "Invalid phone number",
+      "email_invalid": "Invalid e-mail",
+      "website_invalid": "Invalid link"
+    },
+    "changes": {
+      "new": "New",
+      "updated": "Updated",
+      "unchanged": "Unchanged",
+      "removed": "Will be removed"
+    },
+    "history": {
+      "title": "Import history",
+      "empty": "No import yet.",
+      "when": "When",
+      "file": "File",
+      "status": "Status",
+      "counts": "Counts",
+      "countsLine": "+{{new}} / ~{{updated}} / −{{removed}} / rejected {{rejected}}",
+      "by": "By",
+      "actions": "Actions",
+      "undo": "Undo",
+      "undoExplain": "The layer goes back to how it was before this import.",
+      "undoConfirm": "Confirm the undo",
+      "statuses": {
+        "preview": "Preview",
+        "applied": "Published",
+        "undone": "Undone",
+        "discarded": "Discarded"
+      }
+    },
+    "places": {
+      "title": "Places ({{count}})",
+      "filter": "Search by name or type",
+      "name": "Name",
+      "type": "Type",
+      "phone": "Phone",
+      "gouvernorat": "Gouvernorat",
+      "state": "Visibility",
+      "hidden": "Hidden",
+      "visible": "Visible",
+      "hide": "Hide from the public map",
+      "edit": "Correct",
+      "add": "Add a place by hand",
+      "addConfirm": "Add",
+      "lat": "Latitude",
+      "lon": "Longitude",
+      "empty": "No place.",
+      "count": "{{shown}} of {{total}}"
+    },
+    "simulated": "Approximate invented places (simulation)"
+  },
+  "guide": {
+    "title": "Emergency hub: topics and items",
+    "intro": "Each topic (fires, fractures, first aid, breathing problems…) holds items. The app shows them in this order and keeps them offline.",
+    "simNotice": "[SIM] The first texts come from published first-aid guidance and are not official: each item not validated shows in the app under the “awaiting medical validation” banner until the Office’s medical staff validates it.",
+    "edit": "Edit",
+    "hide": "Hide",
+    "show": "Show",
+    "hiddenChip": "Hidden",
+    "moveUp": "Move “{{name}}” up",
+    "moveDown": "Move “{{name}}” down",
+    "topic": {
+      "new": "New topic",
+      "edit": "Edit the topic",
+      "create": "Create the topic",
+      "title_ar": "Title in Arabic",
+      "title_fr": "Title in French",
+      "title_en": "Title in English"
+    },
+    "item": {
+      "new": "Add an item",
+      "edit": "Edit the item",
+      "create": "Add the item",
+      "none": "No item in this topic.",
+      "list": "Items of {{name}}",
+      "title": "Title",
+      "call": "Call 198 at once if…",
+      "steps": "Steps, in order",
+      "dont": "Do not",
+      "linesHelp": "One line per entry. Steps are required in each language (15 at most).",
+      "call198": "Show the “Call 198” button on this item",
+      "call198Chip": "198 button",
+      "awaiting": "[SIM] Awaiting medical validation",
+      "validatedBy": "Validated: {{name}}, {{at}}",
+      "validate": "Record the medical validation",
+      "validateConfirm": "Confirm the validation",
+      "validateExplain": "Name in the reason the doctor or service who validated the text.",
+      "revalidate": "Changing the text withdraws the current medical validation."
+    },
+    "errors": {
+      "title": "The title is required ({{lang}}).",
+      "steps": "At least one step ({{lang}}).",
+      "tooMany": "Too many lines ({{lang}}).",
+      "tooLong": "Line too long, 300 characters at most ({{lang}})."
+    },
+    "icons": {
+      "fire": "Fire",
+      "bone": "Fracture",
+      "first_aid": "First aid",
+      "lungs": "Breathing",
+      "burn": "Burn",
+      "drop": "Bleeding",
+      "heart": "Heart",
+      "water": "Drowning",
+      "electric": "Electricity",
+      "poison": "Poisoning",
+      "pin": "Other"
+    }
+  },
+  "contact": {
+    "title": "Contact us: requests",
+    "intro": "Requests sent from the app: access to information (law 2016-22, with its legal deadline), non-urgent hazards, questions, suggestions, app problems and partnerships. This is not an emergency channel: the app tells citizens to call 198.",
+    "kind": "Kind",
+    "allKinds": "All kinds",
+    "status": "Status",
+    "openOnly": "Open (received, in progress)",
+    "allStatuses": "All statuses",
+    "gouvernorat": "Gouvernorat",
+    "allGouvernorats": "All",
+    "national": "National (no gouvernorat)",
+    "overdueOnly": "Overdue only ({{count}})",
+    "overdue": "Overdue",
+    "dueOn": "Due on {{date}}",
+    "number": "Number",
+    "subject": "Subject",
+    "received": "Received",
+    "due": "Due",
+    "empty": "No request matches these filters.",
+    "truncated": "Only the first 500 requests are listed: narrow the filters.",
+    "requester": "Requester",
+    "anonymous": "No contact details (answer in the app only)",
+    "assigned": "Handled by",
+    "answer": "Answer sent",
+    "rejectReason": "Reason given",
+    "history": "History",
+    "internal": "internal",
+    "moveTo": "Move to",
+    "confirm": "Confirm",
+    "noteHint": "Internal note: never shown to the requester.",
+    "visibleHint": "This text is shown to the requester in the app.",
+    "textRange": "Between {{min}} and {{max}} characters.",
+    "kinds": {
+      "access_info": "Access to information",
+      "hazard": "Non-urgent hazard",
+      "question": "Question",
+      "suggestion": "Suggestion",
+      "app_problem": "App problem",
+      "partnership": "Partnership"
+    },
+    "statuses": {
+      "received": "Received",
+      "in_progress": "In progress",
+      "answered": "Answered",
+      "closed": "Closed",
+      "rejected": "Rejected"
+    },
+    "actions": {
+      "take": "Take",
+      "answer": "Answer",
+      "note": "Add a note",
+      "move": "Move",
+      "close": "Close",
+      "reject": "Reject",
+      "reopen": "Reopen"
+    },
+    "textLabel": {
+      "answer": "Answer to the requester",
+      "note": "Internal note",
+      "reject": "Reason given to the requester"
+    },
+    "events": {
+      "created": "Received",
+      "status": "Status",
+      "answer": "Answered",
+      "note": "Note",
+      "move": "Moved"
+    }
   }
 }

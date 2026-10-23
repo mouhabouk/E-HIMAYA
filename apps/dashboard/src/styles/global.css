@@ -3753,3 +3753,156 @@ button.map-poi {
     grid-template-columns: 1fr;
   }
 }
+
+/* Map data layers loaded from files (phase B1): the layer's colour is set inline, white icon on it. */
+.map-poi--place {
+  border-radius: 50%;
+  inline-size: 24px;
+  block-size: 24px;
+}
+.map-poi--place_cluster {
+  border-radius: 50%;
+  inline-size: 34px;
+  block-size: 34px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  border-width: 3px;
+}
+.layer-swatch {
+  display: inline-grid;
+  place-items: center;
+  inline-size: 22px;
+  block-size: 22px;
+  border-radius: 50%;
+  color: #fff;
+  vertical-align: middle;
+}
+.layer-swatch svg {
+  inline-size: 14px;
+  block-size: 14px;
+}
+.map-data-layers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  align-items: center;
+  margin-block: 0.5rem;
+}
+.map-data-layers legend {
+  font-weight: 600;
+}
+.layer-icons,
+.layer-colours {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+}
+.layer-choice {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.layer-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0.5rem 0;
+}
+.layer-counts__item {
+  border: 1px solid var(--border, #ccc);
+  border-radius: 6px;
+  padding: 0.35rem 0.75rem;
+  min-inline-size: 7rem;
+}
+.layer-counts__item dt {
+  font-size: 0.85rem;
+}
+.layer-counts__item dd {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+.layer-counts__item--rejected dd {
+  color: var(--error-text);
+}
+.map--preview {
+  block-size: 320px;
+  margin-block: 0.75rem;
+}
+.layer-detail {
+  margin-block-start: 1.5rem;
+}
+.row--muted td {
+  opacity: 0.7;
+}
+.chip--to-verify {
+  background: var(--info-bg);
+  color: var(--info-text);
+  margin-inline-start: 0.5rem;
+}
+
+/* Emergency hub editor (phase B1). */
+.guide-topic h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.guide-items {
+  list-style: none;
+  padding: 0;
+}
+.guide-item {
+  border-block-start: 1px solid var(--border);
+  padding-block: 0.75rem;
+}
+.guide-item__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.guide-item__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+.guide-langs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 1rem;
+}
+.guide-reason {
+  flex-basis: 100%;
+}
+
+/* Contact us inbox (phase B1) */
+.contact-layout {
+  display: grid;
+  gap: 1rem;
+}
+@media (min-width: 1100px) {
+  .contact-layout {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    align-items: start;
+  }
+}
+.contact-message {
+  white-space: pre-wrap;
+}
+.contact-facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.25rem 1rem;
+}
+.contact-history {
+  padding-inline-start: 1.25rem;
+}
+.contact-history .tag {
+  margin-inline-start: 0.5rem;
+}
+.chip--overdue {
+  background: var(--danger-bg, #fdecea);
+  color: var(--danger, #b71c1c);
+  margin-inline-start: 0.25rem;
+}

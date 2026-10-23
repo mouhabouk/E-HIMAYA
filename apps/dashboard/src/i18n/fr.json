@@ -32,7 +32,10 @@
     "resourceRequests": "Demandes de moyens",
     "accounts": "Comptes",
     "audit": "Audit",
-    "breakGlass": "Accès exceptionnels"
+    "breakGlass": "Accès exceptionnels",
+    "layers": "Couches de la carte",
+    "emergencyGuide": "Centre d’urgence",
+    "contact": "Nous contacter"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -262,7 +265,26 @@
     "self_edit": "Vous ne pouvez pas modifier votre propre compte.",
     "identity_provider_error": "Le service d’identité ne répond pas.",
     "username_taken": "Identifiant déjà utilisé.",
-    "second_reviewer_required": "L’alerte est publiée par une autre personne que celle qui l’a rédigée ou modifiée en dernier."
+    "second_reviewer_required": "L’alerte est publiée par une autre personne que celle qui l’a rédigée ou modifiée en dernier.",
+    "key_taken": "Cet identifiant est déjà pris.",
+    "file_too_large": "Fichier trop volumineux (10 Mo au plus).",
+    "empty_file": "Le fichier est vide.",
+    "format_unknown": "Format non pris en charge : CSV, Excel, JSON ou GeoJSON.",
+    "required_columns_missing": "Colonnes obligatoires manquantes : nom, latitude, longitude.",
+    "too_many_rows": "Trop de lignes.",
+    "too_many_columns": "Trop de colonnes.",
+    "json_invalid": "Fichier JSON invalide.",
+    "json_not_array": "Le JSON doit être une liste d’objets.",
+    "geojson_not_collection": "Le fichier doit être une FeatureCollection.",
+    "xlsx_unreadable": "Fichier Excel illisible.",
+    "not_a_preview": "Cet import n’est plus un aperçu.",
+    "preview_expired": "Aperçu expiré : chargez le fichier à nouveau.",
+    "layer_changed": "La couche a changé depuis l’aperçu : refaites l’aperçu.",
+    "not_last_import": "Seul le dernier import publié peut être annulé.",
+    "duplicate_id": "Un lieu a déjà cet identifiant.",
+    "outside_tunisia": "Position hors de Tunisie.",
+    "cannot_move": "Impossible de déplacer dans ce sens.",
+    "text_required": "Une note, une réponse ou un motif est nécessaire."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -3166,6 +3188,12 @@
         "length": "Chaque ligne compte de {{min}} à {{max}} caractères.",
         "count": "Au plus {{count}} mots."
       }
+    },
+    "accessInfoDays": {
+      "title": "Délai d’accès à l’information",
+      "help": "Jours dont dispose l’Office pour répondre à une demande d’accès à l’information envoyée par « Nous contacter » (loi 2016-22, art. 14 : 20 jours). À confirmer par le service juridique.",
+      "label": "Délai",
+      "unit": "jours"
     }
   },
   "accounts": {
@@ -3273,5 +3301,313 @@
     "context": "Gouvernorat du déclarant (contact uniquement)",
     "contextProfile": "{{name}} (profil)",
     "contextNone": "Non disponible"
+  },
+  "layers": {
+    "title": "Couches de données de la carte",
+    "intro": "Chaque couche est un ensemble de lieux chargé depuis un fichier (CSV, Excel, JSON ou GeoJSON) : hôpitaux, pharmacies, centres d’hébergement… Vérifiez l’aperçu avant de publier ; le dernier import peut être annulé.",
+    "mapGroup": "Couches de données",
+    "cluster": "{{count}} lieux · {{layer}} (zoomez pour les voir)",
+    "truncated": "Trop de lieux dans cette zone, zoomez : {{names}}",
+    "toVerify": "À vérifier",
+    "reasonLabel": "Motif de la modification",
+    "audience": {
+      "public": "Publique (visible dans l’application)",
+      "staff": "Agents seulement"
+    },
+    "place": {
+      "phone": "Téléphone",
+      "hiddenNote": "Masqué sur la carte publique"
+    },
+    "columns": {
+      "address": "Adresse",
+      "delegation": "Délégation",
+      "manager": "Responsable",
+      "hours": "Horaires",
+      "email": "E-mail",
+      "website": "Site web",
+      "phone2": "Téléphone 2"
+    },
+    "template": {
+      "title": "Modèle vide avec les colonnes reconnues :"
+    },
+    "export": {
+      "title": "Exporter la couche",
+      "csv": "CSV",
+      "xlsx": "Excel",
+      "geojson": "GeoJSON"
+    },
+    "list": {
+      "name": "Couche",
+      "places": "Lieux",
+      "lastImport": "Dernier import",
+      "state": "État",
+      "none": "Aucun",
+      "open": "Ouvrir",
+      "enabled": "Active",
+      "disabled": "Désactivée",
+      "empty": "Aucune couche pour l’instant.",
+      "noSource": "Source non précisée",
+      "hiddenCount": "{{count}} masqué(s)"
+    },
+    "form": {
+      "newTitle": "Nouvelle couche",
+      "editTitle": "Réglages de la couche",
+      "name_ar": "Nom en arabe",
+      "name_fr": "Nom en français",
+      "name_en": "Nom en anglais",
+      "key": "Identifiant technique",
+      "keyHelp": "Minuscules latines, chiffres et _ ; ne change plus après la création.",
+      "audience": "Public visé",
+      "icon": "Icône",
+      "colour": "Couleur",
+      "colourN": "Couleur {{n}} ({{colour}})",
+      "source": "Source",
+      "licence": "Licence",
+      "staffOnly": "Colonnes jamais envoyées à l’application",
+      "staffOnlyHelp": "Séparées par des virgules. Par défaut : manager (nom du responsable).",
+      "toVerify": "Données à vérifier (affichées avec « À vérifier »)",
+      "editorsAllowed": "Les éditeurs de contenu peuvent importer dans cette couche",
+      "enabled": "Couche active",
+      "create": "Créer la couche",
+      "errors": {
+        "key": "Identifiant technique invalide.",
+        "name": "Le nom est requis dans les trois langues.",
+        "icon": "Choisissez une icône.",
+        "colour": "Choisissez une couleur de la liste.",
+        "source": "Source ou licence trop longue."
+      },
+      "simulated": "Données approximatives d'essai [SIM] : lieux inventés, à ne rendre publics que pour un essai"
+    },
+    "icons": {
+      "hospital": "Hôpital",
+      "clinic": "Clinique",
+      "pharmacy": "Pharmacie",
+      "police": "Police",
+      "guard": "Garde nationale",
+      "civil_protection": "Protection civile",
+      "shelter": "Hébergement",
+      "school": "Établissement scolaire",
+      "factory": "Établissement industriel",
+      "water": "Point d’eau",
+      "fuel": "Station-service",
+      "pin": "Lieu"
+    },
+    "import": {
+      "title": "Importer un fichier",
+      "file": "Fichier",
+      "fileHelp": "CSV, Excel, JSON ou GeoJSON, {{size}} et {{rows}} lignes au plus. Première ligne : noms des colonnes (nom, latitude et longitude obligatoires).",
+      "mode": "Mode",
+      "merge": "Fusionner",
+      "mergeHelp": "ajoute les nouveaux lieux, met à jour les existants par identifiant, garde les autres.",
+      "replace": "Remplacer",
+      "replaceHelp": "le fichier devient toute la couche : les lieux absents sont supprimés.",
+      "preview": "Aperçu",
+      "previewing": "Vérification…",
+      "previewTitle": "Aperçu de {{file}} (rien n’a encore changé sur la carte)",
+      "counts": {
+        "new": "Nouveaux",
+        "updated": "Mis à jour",
+        "unchanged": "Inchangés",
+        "removed": "Supprimés",
+        "rejected": "Rejetés",
+        "warnings": "Avertissements"
+      },
+      "rejectedTitle": "Lignes rejetées",
+      "warningsTitle": "Avertissements ({{count}}) : le lieu est gardé sans le champ concerné",
+      "warningLine": "Ligne {{line}} : {{reason}}",
+      "line": "Ligne",
+      "reason": "Motif",
+      "moreRows": "Et {{count}} autres lignes.",
+      "mapLabel": "Carte de l’aperçu : lieux nouveaux, mis à jour et supprimés",
+      "replaceWarning": "{{count}} lieux absents du fichier seront supprimés.",
+      "apply": "Publier sur la carte",
+      "applying": "Publication…",
+      "applied": "Import publié.",
+      "discard": "Abandonner l’aperçu"
+    },
+    "reasons": {
+      "name_missing": "Nom manquant",
+      "coordinates_missing": "Coordonnées manquantes ou illisibles",
+      "coordinates_swapped": "Latitude et longitude inversées",
+      "outside_tunisia": "Position hors de Tunisie",
+      "duplicate_id": "Identifiant en double dans le fichier",
+      "not_a_point": "La géométrie n’est pas un point",
+      "phone_invalid": "Numéro de téléphone invalide",
+      "email_invalid": "E-mail invalide",
+      "website_invalid": "Lien invalide"
+    },
+    "changes": {
+      "new": "Nouveau",
+      "updated": "Mis à jour",
+      "unchanged": "Inchangé",
+      "removed": "Sera supprimé"
+    },
+    "history": {
+      "title": "Historique des imports",
+      "empty": "Aucun import pour l’instant.",
+      "when": "Date",
+      "file": "Fichier",
+      "status": "État",
+      "counts": "Comptes",
+      "countsLine": "+{{new}} / ~{{updated}} / −{{removed}} / rejetés {{rejected}}",
+      "by": "Par",
+      "actions": "Actions",
+      "undo": "Annuler",
+      "undoExplain": "La couche revient à son état d’avant cet import.",
+      "undoConfirm": "Confirmer l’annulation",
+      "statuses": {
+        "preview": "Aperçu",
+        "applied": "Publié",
+        "undone": "Annulé",
+        "discarded": "Abandonné"
+      }
+    },
+    "places": {
+      "title": "Lieux ({{count}})",
+      "filter": "Rechercher par nom ou type",
+      "name": "Nom",
+      "type": "Type",
+      "phone": "Téléphone",
+      "gouvernorat": "Gouvernorat",
+      "state": "Visibilité",
+      "hidden": "Masqué",
+      "visible": "Visible",
+      "hide": "Masquer sur la carte publique",
+      "edit": "Corriger",
+      "add": "Ajouter un lieu à la main",
+      "addConfirm": "Ajouter",
+      "lat": "Latitude",
+      "lon": "Longitude",
+      "empty": "Aucun lieu.",
+      "count": "{{shown}} sur {{total}}"
+    },
+    "simulated": "Lieux approximatifs inventés (simulation)"
+  },
+  "guide": {
+    "title": "Centre d’urgence : thèmes et fiches",
+    "intro": "Chaque thème (incendies, fractures, premiers secours, problèmes respiratoires…) regroupe des fiches. L’application les montre dans cet ordre et les garde hors connexion.",
+    "simNotice": "[SIM] Les textes initiaux viennent de consignes de secourisme publiées et ne sont pas officiels : chaque fiche non validée s’affiche dans l’application avec le bandeau « en attente de validation médicale » jusqu’à sa validation par le service médical de l’Office.",
+    "edit": "Modifier",
+    "hide": "Masquer",
+    "show": "Afficher",
+    "hiddenChip": "Masqué",
+    "moveUp": "Monter « {{name}} »",
+    "moveDown": "Descendre « {{name}} »",
+    "topic": {
+      "new": "Nouveau thème",
+      "edit": "Modifier le thème",
+      "create": "Créer le thème",
+      "title_ar": "Titre en arabe",
+      "title_fr": "Titre en français",
+      "title_en": "Titre en anglais"
+    },
+    "item": {
+      "new": "Ajouter une fiche",
+      "edit": "Modifier la fiche",
+      "create": "Ajouter la fiche",
+      "none": "Aucune fiche dans ce thème.",
+      "list": "Fiches de {{name}}",
+      "title": "Titre",
+      "call": "Appelez le 198 tout de suite si…",
+      "steps": "Étapes, dans l’ordre",
+      "dont": "À ne pas faire",
+      "linesHelp": "Une ligne par élément. Les étapes sont obligatoires dans chaque langue (15 au plus).",
+      "call198": "Afficher le bouton « Appeler le 198 » sur cette fiche",
+      "call198Chip": "Bouton 198",
+      "awaiting": "[SIM] En attente de validation médicale",
+      "validatedBy": "Validé : {{name}}, {{at}}",
+      "validate": "Enregistrer la validation médicale",
+      "validateConfirm": "Confirmer la validation",
+      "validateExplain": "Indiquez dans le motif le médecin ou le service qui a validé le texte.",
+      "revalidate": "Modifier le texte retire la validation médicale actuelle."
+    },
+    "errors": {
+      "title": "Le titre est requis ({{lang}}).",
+      "steps": "Au moins une étape ({{lang}}).",
+      "tooMany": "Trop de lignes ({{lang}}).",
+      "tooLong": "Ligne trop longue, 300 caractères au plus ({{lang}})."
+    },
+    "icons": {
+      "fire": "Feu",
+      "bone": "Fracture",
+      "first_aid": "Secours",
+      "lungs": "Respiration",
+      "burn": "Brûlure",
+      "drop": "Saignement",
+      "heart": "Cœur",
+      "water": "Noyade",
+      "electric": "Électricité",
+      "poison": "Intoxication",
+      "pin": "Autre"
+    }
+  },
+  "contact": {
+    "title": "Nous contacter : demandes",
+    "intro": "Demandes envoyées depuis l’application : accès à l’information (loi 2016-22, avec son délai légal), dangers non urgents, questions, suggestions, problèmes de l’application et partenariats. Ce n’est pas un canal d’urgence : l’application invite à appeler le 198.",
+    "kind": "Type",
+    "allKinds": "Tous les types",
+    "status": "Statut",
+    "openOnly": "Ouvertes (reçues, en cours)",
+    "allStatuses": "Tous les statuts",
+    "gouvernorat": "Gouvernorat",
+    "allGouvernorats": "Tous",
+    "national": "National (sans gouvernorat)",
+    "overdueOnly": "En retard uniquement ({{count}})",
+    "overdue": "En retard",
+    "dueOn": "Échéance le {{date}}",
+    "number": "Numéro",
+    "subject": "Objet",
+    "received": "Reçue",
+    "due": "Échéance",
+    "empty": "Aucune demande ne correspond à ces filtres.",
+    "truncated": "Seules les 500 premières demandes sont listées : affinez les filtres.",
+    "requester": "Demandeur",
+    "anonymous": "Sans coordonnées (réponse dans l’application seulement)",
+    "assigned": "Traitée par",
+    "answer": "Réponse envoyée",
+    "rejectReason": "Motif communiqué",
+    "history": "Historique",
+    "internal": "interne",
+    "moveTo": "Transférer vers",
+    "confirm": "Confirmer",
+    "noteHint": "Note interne : jamais montrée au demandeur.",
+    "visibleHint": "Ce texte est montré au demandeur dans l’application.",
+    "textRange": "Entre {{min}} et {{max}} caractères.",
+    "kinds": {
+      "access_info": "Accès à l’information",
+      "hazard": "Danger non urgent",
+      "question": "Question",
+      "suggestion": "Suggestion",
+      "app_problem": "Problème de l’application",
+      "partnership": "Partenariat"
+    },
+    "statuses": {
+      "received": "Reçue",
+      "in_progress": "En cours",
+      "answered": "Répondue",
+      "closed": "Clôturée",
+      "rejected": "Rejetée"
+    },
+    "actions": {
+      "take": "Prendre en charge",
+      "answer": "Répondre",
+      "note": "Ajouter une note",
+      "move": "Transférer",
+      "close": "Clôturer",
+      "reject": "Rejeter",
+      "reopen": "Rouvrir"
+    },
+    "textLabel": {
+      "answer": "Réponse au demandeur",
+      "note": "Note interne",
+      "reject": "Motif communiqué au demandeur"
+    },
+    "events": {
+      "created": "Reçue",
+      "status": "Statut",
+      "answer": "Répondue",
+      "note": "Note",
+      "move": "Transférée"
+    }
   }
 }

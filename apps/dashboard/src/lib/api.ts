@@ -126,6 +126,26 @@ export const ERROR_CODES = [
   "self_edit",
   "identity_provider_error",
   "username_taken",
+  // Map data layers (phase B1).
+  "key_taken",
+  "file_too_large",
+  "empty_file",
+  "format_unknown",
+  "required_columns_missing",
+  "too_many_rows",
+  "too_many_columns",
+  "json_invalid",
+  "json_not_array",
+  "geojson_not_collection",
+  "xlsx_unreadable",
+  "not_a_preview",
+  "preview_expired",
+  "layer_changed",
+  "not_last_import",
+  "duplicate_id",
+  "outside_tunisia",
+  "cannot_move",
+  "text_required",
   "rate_limited",
   "validation_error",
   "bad_request",
@@ -221,6 +241,8 @@ export interface RequestOptions {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   query?: Record<string, QueryValue>;
   body?: unknown;
+  /** A file sent as the request body as it is (map layer imports); `body` is ignored. */
+  rawBody?: Blob;
   signal?: AbortSignal;
   /** Skip the Authorization header (public endpoints). */
   anonymous?: boolean;
@@ -292,8 +314,11 @@ export function createApiClient(
   ): Promise<Response> {
     const headers: Record<string, string> = { Accept: options.accept ?? "application/json" };
     if (token && !options.anonymous) headers.Authorization = `Bearer ${token}`;
-    let body: string | undefined;
-    if (options.body !== undefined) {
+    let body: string | Blob | undefined;
+    if (options.rawBody !== undefined) {
+      headers["Content-Type"] = "application/octet-stream";
+      body = options.rawBody;
+    } else if (options.body !== undefined) {
       headers["Content-Type"] = "application/json";
       body = JSON.stringify(options.body);
     }

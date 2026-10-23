@@ -26,6 +26,9 @@ class AppPrefs {
   static const _simPushSeq = 'push.sim_last_seq';
   static const _tipsEtag = 'tips.etag';
   static const _tipsJson = 'tips.json';
+  static const _guideEtag = 'guide.etag';
+  static const _guideJson = 'guide.json';
+  static const _placesOff = 'places.off';
   static const _alertsJson = 'alerts.last';
   static const _weatherJson = 'weather.last';
   static const _batterySaver = 'power.battery_saver';
@@ -140,6 +143,23 @@ class AppPrefs {
       await _prefs.setString(_tipsEtag, etag);
     }
   }
+
+  /// Offline copy of the emergency guide (public content, phase B1) and its ETag.
+  String? get guideEtag => _prefs.getString(_guideEtag);
+  String? get guideJson => _prefs.getString(_guideJson);
+  Future<void> setGuide(String json, String? etag) async {
+    await _prefs.setString(_guideJson, json);
+    if (etag == null) {
+      await _prefs.remove(_guideEtag);
+    } else {
+      await _prefs.setString(_guideEtag, etag);
+    }
+  }
+
+  /// Layers the user turned off in "nearest to me" (every public layer is shown otherwise).
+  List<String> get placesOff => _prefs.getStringList(_placesOff) ?? const [];
+  Future<void> setPlacesOff(List<String> keys) =>
+      _prefs.setStringList(_placesOff, keys);
 
   /// Last active alerts seen (public content), shown when offline until they expire.
   String? get lastAlertsJson => _prefs.getString(_alertsJson);

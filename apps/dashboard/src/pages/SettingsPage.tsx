@@ -9,6 +9,7 @@ import { useServices } from "../context/services";
 import { errorMessageKey, isApiError } from "../lib/api";
 import { useFormat } from "../lib/hooks";
 import {
+  ACCESS_INFO_DAYS_RANGE,
   ACCURACY_RANGE,
   BAND_RANGE,
   bandsFrom,
@@ -186,6 +187,7 @@ export function SettingsPage() {
   const realSend = settingOf(items, "notify.real_send_enabled");
   const release = settingOf(items, "app.release");
   const extraTerms = settingOf(items, "moderation.extra_terms");
+  const accessInfoDays = settingOf(items, "contact.access_info_days");
   const anyEditable = items.some((s) => s.editable);
   const seconds = t("settings.seconds");
 
@@ -259,6 +261,26 @@ export function SettingsPage() {
           initial={{ accuracy: String(typeof accuracy.value === "number" ? accuracy.value : 1000) }}
           toValue={(v) => Number(v.accuracy)}
           validate={(v) => validateIntRange(Number(v.accuracy === "" ? Number.NaN : v.accuracy), ACCURACY_RANGE)}
+        />
+      )}
+
+      {accessInfoDays && (
+        <SettingCard
+          key={`${accessInfoDays.key}-${accessInfoDays.version}`}
+          setting={accessInfoDays}
+          title={t("settings.accessInfoDays.title")}
+          help={t("settings.accessInfoDays.help")}
+          fields={[
+            {
+              name: "days",
+              label: t("settings.accessInfoDays.label"),
+              unit: t("settings.accessInfoDays.unit"),
+              ...ACCESS_INFO_DAYS_RANGE,
+            },
+          ]}
+          initial={{ days: String(typeof accessInfoDays.value === "number" ? accessInfoDays.value : 20) }}
+          toValue={(v) => Number(v.days)}
+          validate={(v) => validateIntRange(Number(v.days === "" ? Number.NaN : v.days), ACCESS_INFO_DAYS_RANGE)}
         />
       )}
 

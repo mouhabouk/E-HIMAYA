@@ -1,3 +1,4 @@
+import type { ContactDetail, ContactInbox } from "../lib/contact";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render } from "@testing-library/react";
 import type { ReactNode } from "react";
@@ -49,6 +50,63 @@ export const AUDITOR_CLAIMS = {
   gouvernorat_code: "61",
 };
 
+/** Emergency hub editor (phase B1). */
+export function fakeGuideApi() {
+  return {
+    guide: vi.fn(() => Promise.resolve({ revision: 1, topics: [], icons: [], palette: [] })),
+    createTopic: vi.fn(),
+    updateTopic: vi.fn(),
+    moveTopic: vi.fn(),
+    createItem: vi.fn(),
+    updateItem: vi.fn(),
+    validateItem: vi.fn(),
+    moveItem: vi.fn(),
+  };
+}
+
+/** Contact us inbox (phase B1): empty unless a test gives requests. */
+export function fakeContactApi() {
+  return {
+    contactInbox: vi.fn(() =>
+      Promise.resolve<ContactInbox>({
+        items: [],
+        truncated: false,
+        open_by_kind: { access_info: 0, hazard: 0, question: 0, suggestion: 0, app_problem: 0, partnership: 0 },
+        overdue: 0,
+      }),
+    ),
+    contactRequest: vi.fn<(id: string) => Promise<ContactDetail>>(),
+    contactAct: vi.fn<(id: string, body: unknown) => Promise<ContactDetail>>(),
+  };
+}
+
+/** Map data layers (phase B1): no layer unless a test gives some. */
+export function fakeLayersApi() {
+  return {
+    layers: vi.fn(() =>
+      Promise.resolve({
+        items: [],
+        can_manage: false,
+        icons: [],
+        palette: ["#C62828", "#2E7D32"],
+        limits: { file_bytes: 10 * 1024 * 1024, rows: 50_000 },
+      }),
+    ),
+    createLayer: vi.fn(),
+    updateLayer: vi.fn(),
+    previewImport: vi.fn(),
+    layerImports: vi.fn(() => Promise.resolve([])),
+    applyImport: vi.fn(),
+    discardImport: vi.fn(),
+    undoImport: vi.fn(),
+    layerFeatures: vi.fn(() => Promise.resolve({ items: [], truncated: false })),
+    createFeature: vi.fn(),
+    updateFeature: vi.fn(),
+    exportLayer: vi.fn(),
+    layerTemplate: vi.fn(),
+  };
+}
+
 export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
   return {
     kpis: vi.fn(),
@@ -80,6 +138,9 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     ...fakePhase7Api(),
     ...fakePhase8Api(),
     ...fakePhase9Api(),
+    ...fakeLayersApi(),
+    ...fakeGuideApi(),
+    ...fakeContactApi(),
     gouvernorats: vi.fn(() =>
       Promise.resolve([
         { code: 11, iso_code: "TN-11", name: "تونس", name_ar: "تونس", name_fr: "Tunis", delegation_count: 21 },

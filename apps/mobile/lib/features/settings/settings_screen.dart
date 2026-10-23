@@ -185,6 +185,14 @@ class SettingsScreen extends ConsumerWidget {
             trailing: const Icon(Icons.chevron_right),
             onTap: () => context.push(Routes.tips),
           ),
+          ListTile(
+            key: const Key('settings-contact'),
+            leading: const Icon(Icons.mail_outline),
+            title: Text(l10n.contactTitle),
+            subtitle: Text(l10n.contactMineTitle),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.push(Routes.contact),
+          ),
           const Divider(),
           _Header(l10n.settingsIdentity),
           ListTile(

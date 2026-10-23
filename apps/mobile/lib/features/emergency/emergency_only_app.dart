@@ -17,6 +17,6 @@ class EmergencyOnlyApp extends StatelessWidget {
     localizationsDelegates: AppLocalizations.localizationsDelegates,
     theme: buildTheme(Brightness.light),
     darkTheme: buildTheme(Brightness.dark),
-    home: const EmergencyScreen(),
+    home: const EmergencyScreen(showHub: false),
   );
 }

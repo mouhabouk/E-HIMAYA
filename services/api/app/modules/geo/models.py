@@ -1,5 +1,10 @@
-from geoalchemy2 import Geometry
-from sqlalchemy import ForeignKey, Integer, SmallInteger, Text, UniqueConstraint
+import uuid
+from datetime import datetime
+from typing import Any
+
+from geoalchemy2 import Geography, Geometry
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, SmallInteger, Text, UniqueConstraint, func
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.db import Base
@@ -32,3 +37,85 @@ class Delegation(Base):
     boundary: Mapped[object | None] = mapped_column(Geometry("MULTIPOLYGON", srid=4326), deferred=True)
 
     gouvernorat: Mapped[Gouvernorat] = relationship(back_populates="delegations")
+
+
+class Layer(Base):
+    """A map data layer loaded from files (phase B1, docs/phase-b/design.md §2): hospitals, shelters…"""
+
+    __tablename__ = "layer"
+    __table_args__ = {"schema": "geo"}
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
+    key: Mapped[str] = mapped_column(Text, unique=True)
+    name: Mapped[dict[str, str]] = mapped_column(JSONB)
+    icon: Mapped[str] = mapped_column(Text)
+    colour: Mapped[str] = mapped_column(Text)
+    audience: Mapped[str] = mapped_column(Text, server_default="staff")
+    source: Mapped[str] = mapped_column(Text, server_default="")
+    licence: Mapped[str] = mapped_column(Text, server_default="")
+    to_verify: Mapped[bool] = mapped_column(Boolean, server_default="true")
+    # Approximate, invented places for trials ([SIM]), never real ones (migration 0035).
+    simulated: Mapped[bool] = mapped_column(Boolean, server_default="false")
+    staff_only: Mapped[list[str]] = mapped_column(ARRAY(Text), server_default="{manager}")
+    editors_allowed: Mapped[bool] = mapped_column(Boolean, server_default="false")
+    enabled: Mapped[bool] = mapped_column(Boolean, server_default="true")
+    version: Mapped[int] = mapped_column(Integer, server_default="1")
+    data_version: Mapped[int] = mapped_column(Integer, server_default="0")
+    created_by: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_by: Mapped[str] = mapped_column(Text)
+    updated_by_name: Mapped[str | None] = mapped_column(Text)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class LayerImport(Base):
+    """One uploaded file: preview, then applied (or discarded), then possibly undone."""
+
+    __tablename__ = "layer_import"
+    __table_args__ = {"schema": "geo"}
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
+    layer_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("geo.layer.id", ondelete="CASCADE"))
+    file_name: Mapped[str] = mapped_column(Text)
+    sha256: Mapped[str] = mapped_column(Text)
+    format: Mapped[str] = mapped_column(Text)
+    mode: Mapped[str] = mapped_column(Text)
+    status: Mapped[str] = mapped_column(Text, server_default="preview")
+    counts: Mapped[dict[str, int]] = mapped_column(JSONB)
+    rejected: Mapped[list[dict[str, Any]]] = mapped_column(JSONB, server_default="[]")
+    warnings: Mapped[list[dict[str, Any]]] = mapped_column(JSONB, server_default="[]")
+    rows: Mapped[list[dict[str, Any]] | None] = mapped_column(JSONB)
+    undo: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    base_version: Mapped[int] = mapped_column(Integer)
+    result_version: Mapped[int | None] = mapped_column(Integer)
+    reason: Mapped[str | None] = mapped_column(Text)
+    created_by: Mapped[str] = mapped_column(Text)
+    created_by_name: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    applied_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    undone_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class LayerFeature(Base):
+    """One place of a layer. ``props`` holds every column but the name, sub-type, phone and position."""
+
+    __tablename__ = "layer_feature"
+    __table_args__ = (UniqueConstraint("layer_id", "ref", name="uq_layer_feature_ref"), {"schema": "geo"})
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
+    layer_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("geo.layer.id", ondelete="CASCADE"))
+    ref: Mapped[str] = mapped_column(Text)
+    name: Mapped[str] = mapped_column(Text)
+    kind: Mapped[str | None] = mapped_column(Text)
+    phone: Mapped[str | None] = mapped_column(Text)
+    location: Mapped[object] = mapped_column(Geography("POINT", srid=4326))
+    gouvernorat_code: Mapped[int | None] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
+    delegation_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("geo.delegation.id"))
+    props: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default="{}")
+    hidden: Mapped[bool] = mapped_column(Boolean, server_default="false")
+    import_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("geo.layer_import.id", ondelete="SET NULL")
+    )
+    version: Mapped[int] = mapped_column(Integer, server_default="1")
+    updated_by: Mapped[str | None] = mapped_column(Text)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

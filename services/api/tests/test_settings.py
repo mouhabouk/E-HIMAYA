@@ -53,6 +53,7 @@ async def test_defaults_present(client: httpx.AsyncClient, staff: Staff) -> None
     assert items["geo.max_trusted_accuracy_m"]["value"] == 1000
     assert items["notify.real_send_enabled"]["value"] is False
     assert isinstance(items["sla.enforced_since"]["value"], str)
+    assert items["contact.access_info_days"]["value"] == 20
     # A regional operator reads everything and may change nothing.
     assert not any(item["editable"] for item in items.values())
 
@@ -62,6 +63,7 @@ async def test_defaults_present(client: httpx.AsyncClient, staff: Staff) -> None
         "sla.claim_delay_s",
         "anonymous.report_quota",
         "geo.max_trusted_accuracy_m",
+        "contact.access_info_days",
     }
     security = _items((await client.get(URL, headers=staff(["security_admin"], gouvernorat=None))).json())
     assert {k for k, v in security.items() if v["editable"]} == {"anonymous.report_quota", "alerts.four_eyes"}
