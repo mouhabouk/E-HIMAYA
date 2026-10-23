@@ -9802,6 +9802,11 @@
             "title": "Reason",
             "type": "string"
           },
+          "simulated": {
+            "default": false,
+            "title": "Simulated",
+            "type": "boolean"
+          },
           "source": {
             "default": "",
             "maxLength": 200,
@@ -9903,6 +9908,10 @@
           "name": {
             "$ref": "#/components/schemas/Names"
           },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          },
           "source": {
             "title": "Source",
             "type": "string"
@@ -9949,6 +9958,7 @@
           "source",
           "licence",
           "to_verify",
+          "simulated",
           "staff_only",
           "editors_allowed",
           "enabled",
@@ -10054,6 +10064,17 @@
             "minLength": 5,
             "title": "Reason",
             "type": "string"
+          },
+          "simulated": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Simulated"
           },
           "source": {
             "anyOf": [
@@ -14301,6 +14322,10 @@
             "title": "Origin",
             "type": "string"
           },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          },
           "source": {
             "title": "Source",
             "type": "string"
@@ -14319,6 +14344,7 @@
           "source",
           "licence",
           "to_verify",
+          "simulated",
           "count",
           "data_version",
           "origin"

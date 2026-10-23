@@ -110,6 +110,7 @@ async def _layer_out(session: AsyncSession, layer: Layer, principal: Principal) 
         source=layer.source,
         licence=layer.licence,
         to_verify=layer.to_verify,
+        simulated=layer.simulated,
         staff_only=list(layer.staff_only),
         editors_allowed=layer.editors_allowed,
         enabled=layer.enabled,
@@ -170,6 +171,7 @@ async def create_layer(principal: Staff, session: Session, body: schemas.LayerIn
         source=body.source.strip(),
         licence=body.licence.strip(),
         to_verify=body.to_verify,
+        simulated=body.simulated,
         staff_only=body.staff_only,
         editors_allowed=body.editors_allowed,
         created_by=actor,
@@ -200,7 +202,7 @@ async def update_layer(principal: Staff, session: Session, key: str, body: schem
         setattr(layer, field, value.strip() if isinstance(value, str) and field in ("source", "licence") else value)
     layer.version += 1
     # What the app shows changes with the audience, the staff-only columns or the switch: new offline package.
-    if changes.keys() & {"audience", "staff_only", "enabled"}:
+    if changes.keys() & {"audience", "staff_only", "enabled", "simulated"}:
         layer.data_version += 1
     layer.updated_by, layer.updated_by_name = audit.actor_of(principal), audit.name_of(principal)
     layer.updated_at = datetime.now(UTC)
@@ -729,6 +731,7 @@ async def public_layers(
             source=UNITS_SOURCE[lang],
             licence="",
             to_verify=False,
+            simulated=False,
             count=unit_count,
             data_version=unit_version,
             origin="units",
@@ -744,6 +747,7 @@ async def public_layers(
             source=layer.source,
             licence=layer.licence,
             to_verify=layer.to_verify,
+            simulated=layer.simulated,
             count=counts.get(layer.id, 0),
             data_version=layer.data_version,
             origin="file",
@@ -763,11 +767,13 @@ async def _public_layer(session: AsyncSession, key: str) -> Layer:
 
 
 def _public_feature(
-    layer: Layer, f: LayerFeature, lat: float, lon: float, distance: float | None = None
+    layer: Layer, f: LayerFeature, lat: float, lon: float, lang: Lang, distance: float | None = None
 ) -> schemas.PublicFeature:
+    # A file may name a place in each language (columns name_ar, name_fr, name_en): the app gets its own.
+    localized = f.props.get(f"name_{lang}")
     return schemas.PublicFeature(
         id=f.id,
-        name=f.name,
+        name=localized.strip() if isinstance(localized, str) and localized.strip() else f.name,
         kind=f.kind,
         phone=f.phone,
         lat=float(lat),
@@ -855,13 +861,13 @@ async def public_features(
     layer = await _public_layer(session, key)
     if position is not None:
         found = await service.nearest(session, layer, position[0], position[1], limit, radius_km * 1000)
-        items = [_public_feature(layer, f, la, lo, float(d)) for f, la, lo, d in found]
+        items = [_public_feature(layer, f, la, lo, lang, float(d)) for f, la, lo, d in found]
         return schemas.PublicFeatures(layer=key, data_version=layer.data_version, items=items)
     rows = await service.features_in(session, layer, bbox=area, limit=MAX_PUBLIC_BBOX + 1)
     return schemas.PublicFeatures(
         layer=key,
         data_version=layer.data_version,
-        items=[_public_feature(layer, f, la, lo) for f, la, lo in rows[:MAX_PUBLIC_BBOX]],
+        items=[_public_feature(layer, f, la, lo, lang) for f, la, lo in rows[:MAX_PUBLIC_BBOX]],
         truncated=len(rows) > MAX_PUBLIC_BBOX,
     )
 
@@ -894,6 +900,6 @@ async def public_package(
     return schemas.PublicFeatures(
         layer=key,
         data_version=layer.data_version,
-        items=[_public_feature(layer, f, la, lo) for f, la, lo in rows[:MAX_PACKAGE]],
+        items=[_public_feature(layer, f, la, lo, lang) for f, la, lo in rows[:MAX_PACKAGE]],
         truncated=len(rows) > MAX_PACKAGE,
     )

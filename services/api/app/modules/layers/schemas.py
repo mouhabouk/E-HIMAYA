@@ -53,6 +53,8 @@ class LayerIn(BaseModel):
     source: str = Field(default="", max_length=200)
     licence: str = Field(default="", max_length=200)
     to_verify: bool = True
+    # Approximate, invented places for trials: shown with the amber [SIM] mark (migration 0035).
+    simulated: bool = False
     staff_only: StaffOnly = Field(default_factory=lambda: ["manager"])
     editors_allowed: bool = False
     reason: str = Field(min_length=5, max_length=500)
@@ -74,6 +76,7 @@ class LayerPatch(BaseModel):
     source: str | None = Field(default=None, max_length=200)
     licence: str | None = Field(default=None, max_length=200)
     to_verify: bool | None = None
+    simulated: bool | None = None
     staff_only: StaffOnly | None = None
     editors_allowed: bool | None = None
     enabled: bool | None = None
@@ -100,6 +103,7 @@ class LayerOut(BaseModel):
     source: str
     licence: str
     to_verify: bool
+    simulated: bool
     staff_only: list[str]
     editors_allowed: bool
     enabled: bool
@@ -251,6 +255,7 @@ class PublicLayer(BaseModel):
     source: str
     licence: str
     to_verify: bool
+    simulated: bool
     count: int
     data_version: int
     # "units": Civil Protection centres, from the units directory (phase 5), always in step with operations.

@@ -1,0 +1,92 @@
+[
+ {
+  "key": "hospitals",
+  "name": {
+   "ar": "المستشفيات وأقسام الاستعجالي",
+   "fr": "Hôpitaux et urgences",
+   "en": "Hospitals and A&E"
+  },
+  "icon": "hospital",
+  "colour": "#C62828",
+  "audience": "public",
+  "source": "[SIM] Données approximatives d'essai / بيانات تقريبية للتجربة / approximate trial data",
+  "licence": "",
+  "to_verify": true,
+  "simulated": true,
+  "staff_only": [
+   "manager"
+  ]
+ },
+ {
+  "key": "clinics",
+  "name": {
+   "ar": "مراكز الصحة الأساسية",
+   "fr": "Centres de santé de base",
+   "en": "Primary health centres"
+  },
+  "icon": "clinic",
+  "colour": "#AD1457",
+  "audience": "public",
+  "source": "[SIM] Données approximatives d'essai / بيانات تقريبية للتجربة / approximate trial data",
+  "licence": "",
+  "to_verify": true,
+  "simulated": true,
+  "staff_only": [
+   "manager"
+  ]
+ },
+ {
+  "key": "pharmacies",
+  "name": {
+   "ar": "الصيدليات",
+   "fr": "Pharmacies",
+   "en": "Pharmacies"
+  },
+  "icon": "pharmacy",
+  "colour": "#2E7D32",
+  "audience": "public",
+  "source": "[SIM] Données approximatives d'essai / بيانات تقريبية للتجربة / approximate trial data",
+  "licence": "",
+  "to_verify": true,
+  "simulated": true,
+  "staff_only": [
+   "manager"
+  ]
+ },
+ {
+  "key": "police",
+  "name": {
+   "ar": "مراكز الأمن",
+   "fr": "Postes de police",
+   "en": "Police stations"
+  },
+  "icon": "police",
+  "colour": "#283593",
+  "audience": "public",
+  "source": "[SIM] Données approximatives d'essai / بيانات تقريبية للتجربة / approximate trial data",
+  "licence": "",
+  "to_verify": true,
+  "simulated": true,
+  "staff_only": [
+   "manager"
+  ]
+ },
+ {
+  "key": "national_guard",
+  "name": {
+   "ar": "مراكز الحرس الوطني",
+   "fr": "Postes de la Garde nationale",
+   "en": "National Guard posts"
+  },
+  "icon": "guard",
+  "colour": "#37474F",
+  "audience": "public",
+  "source": "[SIM] Données approximatives d'essai / بيانات تقريبية للتجربة / approximate trial data",
+  "licence": "",
+  "to_verify": true,
+  "simulated": true,
+  "staff_only": [
+   "manager"
+  ]
+ }
+]
