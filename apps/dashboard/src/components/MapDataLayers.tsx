@@ -14,6 +14,7 @@ import {
 } from "../lib/layers";
 import { layerKeys } from "../lib/layersApi";
 import { localized } from "../lib/localized";
+import { SimTag } from "./StreamBits";
 import { ErrorBox } from "./Feedback";
 import type { MapPoi } from "./MapView";
 
@@ -68,7 +69,9 @@ function featurePoi(layer: MapLayer, f: LayerFeature, t: (k: string, o?: Record<
     lat: f.lat,
     kind: "place",
     title: f.name,
-    subtitle: [f.kind, layer.to_verify ? t("layers.toVerify") : null].filter(Boolean).join(" · "),
+    subtitle: [f.kind, layer.simulated ? `[SIM] ${t("layers.simulated")}` : null, layer.to_verify ? t("layers.toVerify") : null]
+      .filter(Boolean)
+      .join(" · "),
     iconPath: iconPathOf(layer.icon),
     colour: layer.colour,
     details: details.slice(0, 12),
@@ -144,6 +147,7 @@ export function useMapDataLayers(bbox: BBox | null) {
             <LayerSwatch layer={layer} />
             <span dir="auto">{localized(layer.name, lang)}</span>
             {layer.audience === "staff" && <span className="chip">{t("layers.audience.staff")}</span>}
+            {layer.simulated && <SimTag label={t("layers.simulated")} />}
           </label>
         ))}
         {truncated.length > 0 && (

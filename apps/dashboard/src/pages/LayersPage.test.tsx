@@ -18,6 +18,7 @@ function layer(extra: Partial<MapLayer> = {}): MapLayer {
     source: "OpenStreetMap",
     licence: "ODbL",
     to_verify: true,
+    simulated: false,
     staff_only: ["manager"],
     editors_allowed: false,
     enabled: true,
@@ -79,6 +80,7 @@ describe("LayersPage", () => {
     fireEvent.change(screen.getByLabelText("Nom en anglais"), { target: { value: "Shelters" } });
     expect(screen.getByLabelText("Identifiant technique")).toHaveValue("centres_d_hebergement");
     fireEvent.click(screen.getByRole("radio", { name: "Hébergement" }));
+    fireEvent.click(screen.getByRole("checkbox", { name: /Données approximatives d'essai \[SIM\]/ }));
     fireEvent.click(screen.getByRole("button", { name: "Créer la couche" }));
     expect(createLayer).not.toHaveBeenCalled();
     fireEvent.change(screen.getByLabelText("Motif de la modification"), { target: { value: "Liste du ministère" } });
@@ -88,9 +90,22 @@ describe("LayersPage", () => {
       key: "centres_d_hebergement",
       icon: "shelter",
       audience: "staff",
+      simulated: true,
       staff_only: ["manager"],
       reason: "Liste du ministère",
     });
+  });
+
+  it("marks a layer of approximate trial places with [SIM]", async () => {
+    const api = fakeApi({
+      ...fakeLayersApi(),
+      layers: vi.fn(() => Promise.resolve(list([layer({ simulated: true }), layer({ key: "abris", id: "l2" })]))),
+    });
+    renderApp(<LayersPage />, { api, auth: fakeAuth(SYSADMIN), lang: "fr" });
+    const rows = await screen.findAllByRole("row");
+    const hopitaux = rows.find((r) => within(r).queryByText("Hôpitaux") && r.textContent.includes("[SIM]"));
+    expect(hopitaux).toBeDefined();
+    expect(screen.getAllByTitle("Lieux approximatifs inventés (simulation)").length).toBeGreaterThanOrEqual(1);
   });
 
   it("previews a file, shows the rejected rows, publishes with a reason", async () => {

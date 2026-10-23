@@ -3375,7 +3375,8 @@
         "icon": "Choose an icon.",
         "colour": "Choose a colour from the list.",
         "source": "Source or licence too long."
-      }
+      },
+      "simulated": "Approximate trial data [SIM]: invented places, public only for a trial"
     },
     "icons": {
       "hospital": "Hospital",
@@ -3479,7 +3480,8 @@
       "lon": "Longitude",
       "empty": "No place.",
       "count": "{{shown}} of {{total}}"
-    }
+    },
+    "simulated": "Approximate invented places (simulation)"
   },
   "guide": {
     "title": "Emergency hub: topics and items",

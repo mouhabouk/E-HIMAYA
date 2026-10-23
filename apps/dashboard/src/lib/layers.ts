@@ -71,6 +71,8 @@ export interface MapLayer {
   source: string;
   licence: string;
   to_verify: boolean;
+  /** Approximate, invented places for trials, shown with the amber [SIM] mark (migration 0035). */
+  simulated: boolean;
   staff_only: string[];
   editors_allowed: boolean;
   enabled: boolean;
@@ -167,6 +169,7 @@ export interface LayerBody {
   source: string;
   licence: string;
   to_verify: boolean;
+  simulated: boolean;
   staff_only: string[];
   editors_allowed: boolean;
   reason: string;
