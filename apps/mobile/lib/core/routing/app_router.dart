@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/alerts/notifications_screen.dart';
 import '../../features/charter/charter_controller.dart';
 import '../../features/charter/charter_screen.dart';
+import '../../features/contact/contact_screens.dart';
 import '../../features/emergency/emergency_screen.dart';
 import '../../features/guide/guide_screens.dart';
 import '../../features/home/home_screen.dart';
@@ -56,6 +57,8 @@ abstract final class Routes {
   // Phase B1: emergency hub guide, reachable before the terms like the numbers.
   static const guide = '/emergency/guide';
   static const nearest = '/emergency/nearest';
+  static const contact = '/contact';
+  static const contactMine = '/contact/mine';
   static String guideTopic(String key) =>
       '/emergency/guide/${Uri.encodeComponent(key)}';
   static String guideItem(String key, String item) =>
@@ -242,6 +245,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         ],
       ),
       GoRoute(path: Routes.profile, builder: (_, _) => const ProfileScreen()),
+      GoRoute(
+        path: Routes.contact,
+        builder: (_, _) => const ContactScreen(),
+        routes: [
+          GoRoute(path: 'mine', builder: (_, _) => const MyContactScreen()),
+        ],
+      ),
       GoRoute(
         path: Routes.emergency,
         builder: (_, _) => const EmergencyScreen(),

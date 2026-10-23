@@ -34,6 +34,9 @@ enum ApiErrorCode {
   versionConflict('version_conflict'),
   // Phase A rule 4: the respectful-language filter refused a non-emergency text.
   offensiveText('offensive_text'),
+  // Phase B1 "contact us": contact details refused by the API.
+  invalidPhone('invalid_phone'),
+  invalidEmail('invalid_email'),
   // tus upload creation refusals (contract §4): permanent for that file.
   reportNotFound('report_not_found'),
   invalidSha256('invalid_sha256'),

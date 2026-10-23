@@ -2645,4 +2645,111 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get nearestRoute => 'Itinéraire';
+
+  @override
+  String get contactTitle => 'Nous contacter';
+
+  @override
+  String get contactMineTitle => 'Mes demandes';
+
+  @override
+  String get contactEmergencyBanner =>
+      'Pas pour les urgences. En cas d’urgence, appelez le 198.';
+
+  @override
+  String get contactIntro =>
+      'Posez une question, demandez une information détenue par la Protection civile, signalez un danger non urgent, proposez une idée ou signalez un problème de l’application. Vous recevez un numéro pour suivre votre demande.';
+
+  @override
+  String get contactKind => 'Type de demande';
+
+  @override
+  String get contactKindAccessInfo => 'Accès à l’information (loi 2016-22)';
+
+  @override
+  String get contactKindHazard => 'Danger non urgent';
+
+  @override
+  String get contactKindQuestion => 'Question';
+
+  @override
+  String get contactKindSuggestion => 'Suggestion';
+
+  @override
+  String get contactKindAppProblem => 'Problème de l’application';
+
+  @override
+  String get contactKindPartnership => 'Partenariat';
+
+  @override
+  String get contactAccessInfoHint =>
+      'La loi demande votre nom. L’Office répond dans le délai légal (20 jours).';
+
+  @override
+  String get contactNoGouvernorat => 'Pas lié à un gouvernorat';
+
+  @override
+  String get contactSubject => 'Objet';
+
+  @override
+  String get contactMessage => 'Votre message';
+
+  @override
+  String get contactDetailsHint =>
+      'Les coordonnées sont facultatives : sans elles, la réponse s’affiche seulement ici, dans « Mes demandes ».';
+
+  @override
+  String get contactName => 'Nom et prénom';
+
+  @override
+  String get contactEmail => 'E-mail';
+
+  @override
+  String get contactEmailInvalid => 'Saisissez une adresse e-mail valide.';
+
+  @override
+  String contactLength(int min, int max) {
+    return 'Entre $min et $max caractères.';
+  }
+
+  @override
+  String get contactSend => 'Envoyer';
+
+  @override
+  String get contactSentTitle => 'Demande envoyée';
+
+  @override
+  String get contactSentBody => 'Gardez ce numéro pour suivre votre demande :';
+
+  @override
+  String get contactSeeMine => 'Voir mes demandes';
+
+  @override
+  String get contactMineEmpty => 'Vous n’avez encore envoyé aucune demande.';
+
+  @override
+  String get contactStatusReceived => 'Reçue';
+
+  @override
+  String get contactStatusInProgress => 'En cours';
+
+  @override
+  String get contactStatusAnswered => 'Répondue';
+
+  @override
+  String get contactStatusClosed => 'Clôturée';
+
+  @override
+  String get contactStatusRejected => 'Rejetée';
+
+  @override
+  String contactDue(String date) {
+    return 'Réponse attendue avant le $date';
+  }
+
+  @override
+  String get contactAnswer => 'Réponse de l’Office';
+
+  @override
+  String get contactRejectReason => 'Motif communiqué par l’Office';
 }
