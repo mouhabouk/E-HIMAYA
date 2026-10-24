@@ -28,7 +28,19 @@ class RedactedPushResolver {
         PushKind.callout => await _callout(p),
         PushKind.reportStatus => await _report(p),
         PushKind.info => await _info(p),
-        PushKind.alert || PushKind.alertCancelled => null,
+        PushKind.safetyAlert => await _safetyAlert(p),
+        PushKind.safetyLink => await _safetyLink(p),
+        PushKind.safetyCheckFired => p.withText(
+          title: _l10n.safetyCheckFired,
+          body: _l10n.safetyCheckFiredHint,
+        ),
+        PushKind.safetyHistoryViewed => p.withText(
+          title: _l10n.safetyHistoryViewedTitle,
+          body: _l10n.safetyHistoryViewedBody,
+        ),
+        PushKind.alert ||
+        PushKind.alertCancelled ||
+        PushKind.safetyCheckReminder => null,
       };
     } on ApiException catch (e) {
       _log.info('redacted push not resolved: ${e.code.wire}');
@@ -80,6 +92,32 @@ class RedactedPushResolver {
       body: parsed == null
           ? _l10n.pushOpenToSee
           : reportStatusLabel(_l10n, parsed),
+    );
+  }
+
+  /// Phase B2: who is in distress and their message (shown on the phone only, never on a locked
+  /// screen: personal pushes are private).
+  Future<PushPayload?> _safetyAlert(PushPayload p) async {
+    final id = p.id;
+    if (id == null) return null;
+    final a = await _api.safetyAlert(id);
+    final who = a.senderFirstName ?? _l10n.safetySomeone;
+    return p.withText(
+      title: a.isCheck
+          ? _l10n.safetyAlertCheckFrom(who)
+          : _l10n.safetyAlertFrom(who),
+      body: a.message,
+    );
+  }
+
+  Future<PushPayload?> _safetyLink(PushPayload p) async {
+    final id = p.id;
+    final links = await _api.safetyLinks();
+    final link = links.where((l) => l.id == id).firstOrNull;
+    if (link == null) return null;
+    return p.withText(
+      title: _l10n.safetyLinkedTitle,
+      body: _l10n.safetyLinkedPush(link.firstName ?? _l10n.safetySomeone),
     );
   }
 

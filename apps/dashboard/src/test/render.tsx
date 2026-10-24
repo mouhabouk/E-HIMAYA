@@ -80,6 +80,27 @@ export function fakeContactApi() {
   };
 }
 
+/** Personal safety (phase B2): nothing attached, nothing found, unless a test says so. */
+export function fakeSafetyApi() {
+  return {
+    reportMedical: vi.fn(),
+    searchLocationHistory: vi.fn(() => Promise.resolve({ found: false, enabled: false, points: [] })),
+  };
+}
+
+/** Doctors (phase C1-a): no registration unless a test gives some. */
+export function fakeDoctorsApi() {
+  return {
+    doctors: vi.fn(() => Promise.resolve({ items: [], next_cursor: null })),
+    doctor: vi.fn(),
+    reviewDoctor: vi.fn(),
+    medicalCommittee: vi.fn(() => Promise.resolve({ members: [], max_members: 7 })),
+    committeeCandidates: vi.fn(() => Promise.resolve([])),
+    appointMember: vi.fn(),
+    revokeMember: vi.fn(),
+  };
+}
+
 /** Map data layers (phase B1): no layer unless a test gives some. */
 export function fakeLayersApi() {
   return {
@@ -141,6 +162,8 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     ...fakeLayersApi(),
     ...fakeGuideApi(),
     ...fakeContactApi(),
+    ...fakeSafetyApi(),
+    ...fakeDoctorsApi(),
     gouvernorats: vi.fn(() =>
       Promise.resolve([
         { code: 11, iso_code: "TN-11", name: "تونس", name_ar: "تونس", name_fr: "Tunis", delegation_count: 21 },

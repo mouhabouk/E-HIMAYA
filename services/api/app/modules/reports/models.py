@@ -21,7 +21,7 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.core.crypto import EncryptedText, search_tokens
+from app.core.crypto import EncryptedJSON, EncryptedText, search_tokens
 from app.core.db import Base
 
 SEARCH_CONTEXT = "reports.report.search"
@@ -178,3 +178,19 @@ class ReporterContext(Base):
     )
     reporter_gouvernorat_code: Mapped[int | None] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
     source: Mapped[str] = mapped_column(Text)
+
+
+class MedicalAttachment(Base):
+    """The reporter's medical file, attached to this report only because they ticked it (phase B2, addition 7b).
+
+    Encrypted; read only by staff allowed to see the reporter (each opening audited); deleted 30 days after the report
+    is closed, at anonymisation and on erasure."""
+
+    __tablename__ = "medical_attachment"
+    __table_args__ = {"schema": "reports"}
+
+    report_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("reports.report.id", ondelete="CASCADE"), primary_key=True
+    )
+    data: Mapped[dict[str, Any]] = mapped_column("data_enc", EncryptedJSON("reports.medical_attachment.data"))
+    attached_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

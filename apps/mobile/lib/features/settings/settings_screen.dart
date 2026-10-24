@@ -180,6 +180,14 @@ class SettingsScreen extends ConsumerWidget {
           ),
           const _BatterySaverTile(),
           ListTile(
+            key: const Key('settings-safety'),
+            leading: const Icon(Icons.shield_outlined),
+            title: Text(l10n.safetyTitle),
+            subtitle: Text(l10n.safetySettingsHint),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.push(Routes.safety),
+          ),
+          ListTile(
             leading: const Icon(Icons.health_and_safety),
             title: Text(l10n.tipsTitle),
             trailing: const Icon(Icons.chevron_right),
@@ -230,6 +238,14 @@ class SettingsScreen extends ConsumerWidget {
               title: Text(l10n.volunteerTitle),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.push(Routes.volunteer),
+            ),
+          if (identity.isRegistered && identity.role == UserRole.citizen)
+            ListTile(
+              key: const Key('settings-doctor'),
+              leading: const Icon(Icons.medical_services),
+              title: Text(l10n.doctorTitle),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push(Routes.doctor),
             ),
           if (identity.hasIdentity && identity.role == UserRole.citizen)
             ListTile(

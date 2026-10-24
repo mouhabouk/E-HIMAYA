@@ -11,6 +11,7 @@ at once and a crash leaves at most one batch to redo. Durations come from the se
 | notify_dispatch     | finished fan-out jobs (notify.dispatch)                                | 180 days |
 | device_locations    | rounded position of push devices not refreshed                         | 30 days  |
 | devices             | push devices not refreshed by the app                                  | 180 days |
+| medical_attachments | medical file attached to a closed/rejected report (phase B2)           | 30 days  |
 | reports             | closed/rejected reports: anonymised (reporter, text, media, precision) | 5 years  |
 |                     | with their live streams (track, recordings, vision frames, publisher)  |          |
 | streams             | streams without a report (drones, cameras, simulation) once ended:     | 365 days |
@@ -22,6 +23,12 @@ at once and a crash leaves at most one batch to redo. Durations come from the se
 | operator_endpoints  | operator endpoints (app.modules.telephony.retention)                   |          |
 | rewards_ledger      | points ledger and queued awards lose the link to anonymised reports    | (reports)|
 |                     | (app.modules.rewards.privacy)                                          |          |
+| safety_alerts       | alerts between linked contacts (phase B2, app.modules.safety.service)  | 7 days   |
+| safety_live_shares  | live location shares, after they end                                   | 24 hours |
+| safety_checks,      | ended safety checks; unused invitations after they expire              | 7 days   |
+| safety_invitations  |                                                                        |          |
+| safety_location_    | 72-hour location history points (off until the legal review)           | 72 hours |
+| points              |                                                                        |          |
 """
 
 import asyncio
@@ -38,6 +45,8 @@ from app.core.storage import get_store
 from app.modules.audit import service as audit
 from app.modules.identity.models import DETACHED_ACCOUNT_ID
 from app.modules.rewards import privacy as rewards
+from app.modules.safety import history as safety_history
+from app.modules.safety import service as safety
 from app.modules.telephony import retention as telephony
 
 log = structlog.get_logger()
@@ -109,6 +118,18 @@ async def purge_devices(session: AsyncSession, settings: Settings, now: datetime
     return await _delete(session, "notify.device", "token", "updated_at < :cutoff", {"cutoff": cutoff})
 
 
+async def purge_medical_attachments(session: AsyncSession, settings: Settings, now: datetime) -> int:
+    """The medical file a reporter attached (phase B2, addition 7b) goes once the case is closed."""
+    cutoff = _cutoff(now, settings.retention_medical_days)
+    return await _delete(
+        session,
+        "reports.medical_attachment",
+        "report_id",
+        "report_id IN (SELECT id FROM reports.report WHERE status IN ('closed', 'rejected') AND updated_at < :cutoff)",
+        {"cutoff": cutoff},
+    )
+
+
 async def anonymise_reports(session: AsyncSession, settings: Settings, now: datetime) -> int:
     """Closed/rejected reports past retention keep category, times, status, scores and a coarse area only."""
     cutoff = _cutoff(now, settings.retention_report_days)
@@ -146,6 +167,7 @@ async def anonymise_reports(session: AsyncSession, settings: Settings, now: date
         {"ids": ids, "detached": DETACHED_ACCOUNT_ID, "grid": COARSE_GRID_DEG},
     )
     await session.execute(text("DELETE FROM reports.media WHERE report_id = ANY(:ids)"), {"ids": ids})
+    await session.execute(text("DELETE FROM reports.medical_attachment WHERE report_id = ANY(:ids)"), {"ids": ids})
     await session.execute(
         text(
             "UPDATE reports.report SET user_id = :detached, client_uuid = NULL, text_original_enc = NULL, "
@@ -245,6 +267,7 @@ JOBS: list[tuple[str, Job]] = [
     ("notify_dispatch", purge_notify_dispatch),
     ("device_locations", forget_device_locations),
     ("devices", purge_devices),
+    ("medical_attachments", purge_medical_attachments),
     ("reports", anonymise_reports),
     ("streams", purge_streams),
     ("consents", purge_consents),
@@ -255,6 +278,12 @@ JOBS: list[tuple[str, Job]] = [
     ("operator_endpoints", telephony.purge_endpoints),
     # After "reports": detaches the ledger from the reports anonymised in this run.
     ("rewards_ledger", rewards.detach_anonymised),
+    # Personal safety (phase B2): alerts after 7 days, live shares 24 h after they end, safety checks and invitations.
+    ("safety_alerts", safety.purge_alerts),
+    ("safety_live_shares", safety.purge_live_shares),
+    ("safety_checks", safety.purge_checks),
+    ("safety_invitations", safety.purge_invitations),
+    ("safety_location_points", safety_history.purge_points),
 ]
 
 

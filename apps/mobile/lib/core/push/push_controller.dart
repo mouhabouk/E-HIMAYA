@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../features/alerts/alerts_providers.dart';
 import '../../features/reports/reports_providers.dart';
+import '../../features/safety/safety_providers.dart';
 import '../../features/volunteer/volunteer_providers.dart';
 import '../../l10n/app_localizations.dart';
 import '../auth/identity.dart';
@@ -165,6 +166,16 @@ class PushController {
         _ref.invalidate(myCalloutsProvider);
       case PushKind.reportStatus:
         _ref.invalidate(serverReportsProvider);
+      case PushKind.safetyAlert:
+        _ref.invalidate(safetyAlertsProvider);
+        final id = p.id;
+        if (id != null) _ref.invalidate(safetyAlertProvider(id));
+      case PushKind.safetyLink:
+        _ref.invalidate(safetyLinksProvider);
+      case PushKind.safetyCheckFired || PushKind.safetyCheckReminder:
+        _ref.invalidate(safetyCheckProvider);
+      case PushKind.safetyHistoryViewed:
+        break;
     }
   }
 

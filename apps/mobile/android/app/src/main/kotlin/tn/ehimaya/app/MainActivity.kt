@@ -1,5 +1,6 @@
 package tn.ehimaya.app
 
+import android.app.Activity
 import android.app.KeyguardManager
 import android.app.NotificationManager
 import android.content.Context
@@ -9,6 +10,7 @@ import android.os.BatteryManager
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
+import android.provider.ContactsContract
 import android.provider.Settings
 import android.view.WindowManager
 import io.flutter.embedding.android.FlutterActivity
@@ -21,19 +23,121 @@ import org.json.JSONObject
  * Hosts Flutter, plus the small `tn.ehimaya.app/device` bridge used by the battery saver and the
  * alert delivery check (battery level, Do Not Disturb, battery optimisation, channel settings).
  * No extra plugin is needed for these.
+ *
+ * Phase B2 adds: the system contact picker (one number, no contacts permission), the phone's own
+ * lock check before the medical file opens, and the app shortcuts (res/xml/shortcuts.xml).
  */
 class MainActivity : FlutterActivity() {
     /** The activity is currently allowed over the lock screen (severe alert only). */
     private var shownOverLockScreen = false
 
+    /** Shortcut chosen on a long press of the icon, until Flutter takes it. */
+    private var pendingShortcut: String? = null
+    private var pickContactResult: MethodChannel.Result? = null
+    private var confirmCredentialResult: MethodChannel.Result? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         showOverLockScreenForAlert(intent)
+        keepShortcut(intent)
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         showOverLockScreenForAlert(intent)
+        keepShortcut(intent)
+    }
+
+    /**
+     * Static shortcuts start this activity with the extra `shortcut`. Only the known names are
+     * kept: another app sending this activity an intent can at most open one of these screens.
+     */
+    private fun keepShortcut(intent: Intent?) {
+        val name = intent?.getStringExtra(SHORTCUT_EXTRA) ?: return
+        if (name in SHORTCUTS) pendingShortcut = name
+    }
+
+    /**
+     * The system contact picker: the user chooses one phone number, and only that one reaches
+     * the app (temporary read grant of the picked row). No READ_CONTACTS permission.
+     */
+    private fun pickContact(result: MethodChannel.Result) {
+        if (pickContactResult != null) {
+            result.success(null)
+            return
+        }
+        val intent = Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI)
+        try {
+            pickContactResult = result
+            @Suppress("DEPRECATION")
+            startActivityForResult(intent, PICK_CONTACT)
+        } catch (e: Exception) {
+            pickContactResult = null
+            result.success(null)
+        }
+    }
+
+    private fun pickedContact(data: Intent?): Map<String, String?>? {
+        val uri = data?.data ?: return null
+        return try {
+            contentResolver.query(
+                uri,
+                arrayOf(
+                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                    ContactsContract.CommonDataKinds.Phone.NUMBER,
+                ),
+                null,
+                null,
+                null,
+            )?.use { c ->
+                if (!c.moveToFirst()) return null
+                mapOf("name" to c.getString(0), "phone" to c.getString(1))
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    /**
+     * The phone's own lock (PIN, pattern, fingerprint) before the medical file is shown. Null when
+     * the phone has no secure lock: the app then explains that the lock cannot protect the file.
+     */
+    private fun confirmCredential(title: String?, description: String?, result: MethodChannel.Result) {
+        val keyguard = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+        if (!keyguard.isDeviceSecure || confirmCredentialResult != null) {
+            result.success(null)
+            return
+        }
+        @Suppress("DEPRECATION")
+        val intent = keyguard.createConfirmDeviceCredentialIntent(title, description)
+        if (intent == null) {
+            result.success(null)
+            return
+        }
+        try {
+            confirmCredentialResult = result
+            @Suppress("DEPRECATION")
+            startActivityForResult(intent, CONFIRM_CREDENTIAL)
+        } catch (e: Exception) {
+            confirmCredentialResult = null
+            result.success(null)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            PICK_CONTACT -> {
+                val result = pickContactResult
+                pickContactResult = null
+                result?.success(if (resultCode == Activity.RESULT_OK) pickedContact(data) else null)
+            }
+            CONFIRM_CREDENTIAL -> {
+                val result = confirmCredentialResult
+                confirmCredentialResult = null
+                result?.success(resultCode == Activity.RESULT_OK)
+            }
+            else -> super.onActivityResult(requestCode, resultCode, data)
+        }
     }
 
     override fun onStop() {
@@ -129,6 +233,19 @@ class MainActivity : FlutterActivity() {
                     "openAppSettings" -> result.success(start(appDetails()))
                     "openDndAccessSettings" ->
                         result.success(start(Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)))
+                    "pickContact" -> pickContact(result)
+                    "confirmCredential" -> confirmCredential(
+                        call.argument<String>("title"),
+                        call.argument<String>("description"),
+                        result,
+                    )
+                    "deviceSecure" -> result.success(
+                        (getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager).isDeviceSecure,
+                    )
+                    "takeShortcut" -> {
+                        result.success(pendingShortcut)
+                        pendingShortcut = null
+                    }
                     else -> result.notImplemented()
                 }
             }
@@ -219,5 +336,12 @@ class MainActivity : FlutterActivity() {
         true
     } catch (e: Exception) {
         false
+    }
+
+    private companion object {
+        const val PICK_CONTACT = 4201
+        const val CONFIRM_CREDENTIAL = 4202
+        const val SHORTCUT_EXTRA = "shortcut"
+        val SHORTCUTS = setOf("sos_message", "report")
     }
 }

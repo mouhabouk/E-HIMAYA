@@ -160,6 +160,8 @@ export interface StaffReportDetail extends StaffReport {
   escalations?: Escalation[];
   /** Restricted (§1.3): null unless the caller may read sensitive data. */
   reporter_context?: ReporterContext | null;
+  /** Phase B2: the reporter attached their medical file (opened on request, audited). */
+  medical_attached?: boolean;
 }
 
 /** Priority components (BR-20), in the order of the settings. */

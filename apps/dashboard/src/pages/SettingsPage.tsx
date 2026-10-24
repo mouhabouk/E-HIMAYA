@@ -5,6 +5,7 @@ import { Link } from "react-router";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { AppReleaseCard, ModerationTermsCard } from "../components/PhaseASettings";
 import { ReasonField } from "../components/Phase9Bits";
+import { LocationHistoryCard } from "../components/SafetySettings";
 import { useServices } from "../context/services";
 import { errorMessageKey, isApiError } from "../lib/api";
 import { useFormat } from "../lib/hooks";
@@ -26,6 +27,7 @@ import {
 } from "../lib/phase9";
 import { p9Keys } from "../lib/phase9Api";
 import { SLA_BANDS, type PlatformSetting } from "../lib/phase9Types";
+import { CHECK_MAX_HOURS_RANGE, LIVE_MAX_MINUTES_RANGE } from "../lib/safetyApi";
 
 type Values = Record<string, string>;
 
@@ -188,6 +190,9 @@ export function SettingsPage() {
   const release = settingOf(items, "app.release");
   const extraTerms = settingOf(items, "moderation.extra_terms");
   const accessInfoDays = settingOf(items, "contact.access_info_days");
+  const liveMax = settingOf(items, "safety.live_max_minutes");
+  const checkMax = settingOf(items, "safety.check_max_hours");
+  const locationHistory = settingOf(items, "safety.location_history");
   const anyEditable = items.some((s) => s.editable);
   const seconds = t("settings.seconds");
 
@@ -287,6 +292,36 @@ export function SettingsPage() {
       {release && <AppReleaseCard key={`${release.key}-${release.version}`} setting={release} />}
 
       {extraTerms && <ModerationTermsCard key={`${extraTerms.key}-${extraTerms.version}`} setting={extraTerms} />}
+
+      {liveMax && (
+        <SettingCard
+          key={`${liveMax.key}-${liveMax.version}`}
+          setting={liveMax}
+          title={t("settings.liveMax.title")}
+          help={t("settings.liveMax.help")}
+          fields={[{ name: "minutes", label: t("settings.liveMax.label"), unit: t("settings.minutes"), ...LIVE_MAX_MINUTES_RANGE }]}
+          initial={{ minutes: String(typeof liveMax.value === "number" ? liveMax.value : 480) }}
+          toValue={(v) => Number(v.minutes)}
+          validate={(v) => validateIntRange(Number(v.minutes === "" ? Number.NaN : v.minutes), LIVE_MAX_MINUTES_RANGE)}
+        />
+      )}
+
+      {checkMax && (
+        <SettingCard
+          key={`${checkMax.key}-${checkMax.version}`}
+          setting={checkMax}
+          title={t("settings.checkMax.title")}
+          help={t("settings.checkMax.help")}
+          fields={[{ name: "hours", label: t("settings.checkMax.label"), unit: t("settings.hours"), ...CHECK_MAX_HOURS_RANGE }]}
+          initial={{ hours: String(typeof checkMax.value === "number" ? checkMax.value : 24) }}
+          toValue={(v) => Number(v.hours)}
+          validate={(v) => validateIntRange(Number(v.hours === "" ? Number.NaN : v.hours), CHECK_MAX_HOURS_RANGE)}
+        />
+      )}
+
+      {locationHistory && (
+        <LocationHistoryCard key={`${locationHistory.key}-${locationHistory.version}`} setting={locationHistory} />
+      )}
 
       <section className="card" aria-labelledby="settings-fixed">
         <h2 id="settings-fixed">{t("settings.fixed.title")}</h2>

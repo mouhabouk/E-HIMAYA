@@ -9,6 +9,8 @@ import {
   canEditAiSettings,
   canDraftMessage,
   canEditTips,
+  canManageMedicalCommittee,
+  canReviewDoctors,
   canHandleContact,
   canOpenLayers,
   canManageAccounts,
@@ -146,6 +148,7 @@ export function Layout() {
   const readsResources = canReadResources(identity.roles);
   const notifies = canUseNotifications(identity.roles);
   const editsTips = canEditTips(identity.roles);
+  const reviewsDoctors = canReviewDoctors(identity.roles);
   const reviewsWeather = canReviewWeatherSuggestions(identity.roles);
   const committee = isCommittee(identity.roles) || canMonitorPerformance(identity.roles);
   const analytics = canReadAnalytics(identity.roles);
@@ -188,6 +191,10 @@ export function Layout() {
               <NavLink to="/reports/late">{t("nav.late")}</NavLink>
               <NavLink to="/reports/geo-queue">{t("nav.geoQueue")}</NavLink>
             </>
+          )}
+          {reviewsDoctors && <NavLink to="/doctors">{t("nav.doctors")}</NavLink>}
+          {canManageMedicalCommittee(identity) && (
+            <NavLink to="/medical-committee">{t("nav.medicalCommittee")}</NavLink>
           )}
           {readsResources && <NavLink to="/resources">{t("nav.resources")}</NavLink>}
           {notifies && <NavLink to="/notifications">{t("nav.notifications")}</NavLink>}

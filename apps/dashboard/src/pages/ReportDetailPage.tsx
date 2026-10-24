@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from "react-router";
 import { PriorityBadge, VerificationBadge } from "../components/AiBadges";
 import { AnalysisPanel } from "../components/AnalysisPanel";
 import { ReporterSection } from "../components/BreakGlass";
+import { LocationHistorySearch, MedicalSection } from "../components/SafetyReportBits";
 import { CategoryLabel } from "../components/CategoryIcon";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { GroupingSection } from "../components/GroupingSection";
@@ -356,6 +357,8 @@ export function ReportDetailPage() {
         </section>
 
         <ReporterSection report={r} />
+        <MedicalSection report={r} />
+        <LocationHistorySearch report={r} />
 
         <ReportHandling report={r} />
 

@@ -88,6 +88,25 @@ abstract class DeviceServices {
 
   /// The app's page in the system settings (camera or microphone refused for good).
   Future<bool> openAppSettings();
+
+  /// Phase B2: the system contact picker. Only the chosen number reaches the app (no contacts
+  /// permission). Null when cancelled or unavailable.
+  Future<PickedContact?> pickContact();
+
+  /// Phase B2: the phone's own lock (PIN, pattern, fingerprint) before the medical file opens.
+  /// True when confirmed, false when cancelled, null when the phone has no secure lock.
+  Future<bool?> confirmCredential({String? title, String? description});
+
+  /// Phase B2: the shortcut chosen on a long press of the icon (`sos_message`, `report`), once.
+  Future<String?> takeShortcut();
+}
+
+/// One number chosen in the system contact picker.
+class PickedContact {
+  const PickedContact({required this.name, required this.phone});
+
+  final String name;
+  final String phone;
 }
 
 class PlatformDeviceServices implements DeviceServices {
@@ -164,6 +183,37 @@ class PlatformDeviceServices implements DeviceServices {
   @override
   Future<bool> openAppSettings() async =>
       await _call<bool>('openAppSettings') ?? false;
+
+  @override
+  Future<PickedContact?> pickContact() async {
+    final m = await _call<Map<Object?, Object?>>('pickContact');
+    final phone = m?['phone'];
+    if (phone is! String || phone.trim().isEmpty) return null;
+    final name = m?['name'];
+    return PickedContact(
+      name: name is String && name.trim().isNotEmpty ? name.trim() : phone,
+      phone: phone.trim(),
+    );
+  }
+
+  /// A failed call counts as cancelled (never as "no lock", which would open the file).
+  @override
+  Future<bool?> confirmCredential({String? title, String? description}) async {
+    try {
+      return await _channel.invokeMethod<bool>('confirmCredential', {
+        'title': title,
+        'description': description,
+      });
+    } on MissingPluginException {
+      return null;
+    } on PlatformException catch (e) {
+      _log.info('confirmCredential failed: ${e.code}');
+      return false;
+    }
+  }
+
+  @override
+  Future<String?> takeShortcut() => _call<String>('takeShortcut');
 }
 
 final deviceServicesProvider = Provider<DeviceServices>(

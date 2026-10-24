@@ -2,7 +2,7 @@ name: ehimaya
 description: "ء-حماية (e-Himaya) — national emergency reporting app for the Tunisian civil protection."
 publish_to: 'none'
 
-version: 0.4.0+3
+version: 0.6.0+5
 
 environment:
   sdk: ">=3.13.5 <4.0.0"
@@ -42,6 +42,9 @@ dependencies:
   record: 7.1.2
   shared_preferences: 2.5.6
   sqlite3: 3.7.1
+  # Phase B2: the safety-check reminders are scheduled local notifications (already used by
+  # flutter_local_notifications; pinned here because the app names the UTC zone). BSD-2-Clause.
+  timezone: 0.11.2
   url_launcher: 6.3.3
   uuid: 4.6.0
 

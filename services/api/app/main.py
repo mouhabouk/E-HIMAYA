@@ -36,6 +36,9 @@ from app.modules.content.guide import router as guide_router
 from app.modules.content.router import router as content_router
 from app.modules.decision.procedures import procedures_forever
 from app.modules.decision.router import router as decision_router
+from app.modules.doctors.committee_router import router as medical_committee_router
+from app.modules.doctors.router import router as doctors_router
+from app.modules.doctors.staff_router import router as doctors_staff_router
 from app.modules.evidence.router import router as evidence_router
 from app.modules.evidence.worker import evidence_forever
 from app.modules.forecast.router import router as forecast_router
@@ -67,6 +70,9 @@ from app.modules.reports.uploads import verify_forever
 from app.modules.rewards.consumer import rewards_forever
 from app.modules.rewards.router import router as rewards_router
 from app.modules.rewards.staff_router import router as rewards_staff_router
+from app.modules.safety.history import router as safety_history_router
+from app.modules.safety.history import staff_router as safety_history_staff_router
+from app.modules.safety.router import router as safety_router
 from app.modules.settings import service as platform_settings
 from app.modules.settings.router import router as settings_router
 from app.modules.streams.internal import router as streams_internal_router
@@ -224,12 +230,18 @@ def create_app() -> FastAPI:
         command_router,
         volunteers_router,
         volunteers_staff_router,
+        doctors_router,
+        doctors_staff_router,
+        medical_committee_router,
         notify_router,
         notify_staff_router,
         content_router,
         guide_router,
         contact_router,
         contact_staff_router,
+        safety_router,
+        safety_history_router,
+        safety_history_staff_router,
         orgs_router,
         orgs_staff_router,
         ai_router,

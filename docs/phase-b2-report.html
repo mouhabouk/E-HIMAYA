@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ء-حماية | تقرير المرحلة B2</title>
+<style>
+:root{--bg:#f7f8fa;--paper:#fff;--ink:#1b2430;--muted:#5b6675;--line:#dfe3e8;--accent:#b3261e;--accent2:#0b5cad;--ok:#1e7d3a;--warn:#a15c00;--chip:#eef1f5;--head:#f1f3f6;--navy:#1f3d99;--orange:#e07b00}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1318;--paper:#161b22;--ink:#e6eaef;--muted:#9aa5b1;--line:#2a313b;--accent:#ff6b5e;--accent2:#5aa9ff;--ok:#5cc97a;--warn:#e0a24a;--chip:#1f2630;--head:#1c222b;--navy:#8fa8ff;--orange:#ffb35c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Naskh Arabic","Segoe UI",Tahoma,Arial,sans-serif;line-height:1.75;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header.cover{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:10px;padding:28px 24px;margin-bottom:20px}
+header.cover h1{margin:0 0 6px;font-size:30px}
+header.cover .sub{color:var(--muted);margin:0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:16px}
+.meta div{background:var(--chip);border-radius:6px;padding:8px 12px;font-size:14px}
+.meta b{display:block;color:var(--muted);font-weight:600;font-size:12px}
+a{color:var(--accent2);text-decoration:none}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:20px}
+h2{margin-top:0;font-size:23px;border-bottom:2px solid var(--line);padding-bottom:8px}
+h3{font-size:18px;margin:18px 0 8px}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:start;vertical-align:top}
+th{background:var(--head);font-weight:700;white-space:nowrap}
+code{direction:ltr;unicode-bidi:isolate;background:var(--chip);padding:1px 5px;border-radius:4px;font-size:13px}
+pre{direction:ltr;text-align:left;background:var(--chip);padding:10px 12px;border-radius:6px;overflow-x:auto;font-size:13px;margin:6px 0}
+.note{border-inline-start:4px solid var(--accent2);background:var(--chip);padding:10px 14px;border-radius:6px;margin:12px 0}
+.warn{border-inline-start:4px solid var(--warn)}
+.sim{display:inline-block;background:#ffb300;color:#1f1300;font-weight:700;font-size:12px;padding:1px 8px;border-radius:999px;margin-inline-end:6px}
+.simbox{border:2px dashed #ffb300;background:rgba(255,179,0,.10);border-radius:8px;padding:12px 16px;margin:12px 0}
+.ltr{direction:ltr;unicode-bidi:isolate}
+ul,ol{padding-inline-start:22px}
+.bar{height:10px;background:var(--chip);border-radius:6px;overflow:hidden;min-width:90px}
+.bar span{display:block;height:100%;background:var(--ok)}
+.pipeline{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0}
+.pipeline div{border:1px solid var(--line);border-radius:8px;padding:6px 12px;background:var(--chip);font-weight:600}
+.pipeline div.now{border-color:var(--accent);background:rgba(179,38,30,.08)}
+.pipeline i{color:var(--muted);font-style:normal}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--paper)}
+.card h3{margin:0 0 4px;font-size:17px}
+.card .v{color:var(--muted);font-size:13px;margin:0 0 6px}
+.card dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:6px 0;font-size:14px}
+.card dt{color:var(--muted);font-weight:600}
+.card dd{margin:0}
+.prio{display:inline-block;border-radius:999px;padding:0 8px;font-size:12px;font-weight:700;color:#fff}
+.p1{background:#b3261e}.p2{background:#a15c00}.p3{background:#0b5cad}.p4{background:#5b6675}
+footer{color:var(--muted);text-align:center;font-size:13px}
+@media print{body{background:#fff}section,header.cover,.card{border:none;break-inside:avoid-page}}
+</style>
+<body>
+<div class="wrap">
+<header class="cover">
+  <h1>ء-حماية <span class="ltr">e-Himaya</span></h1>
+  <p class="sub">تقرير المرحلة B2: السلامة الشخصية. جهات الطوارئ والمجموعات، رسالة الاستغاثة، الجهات المرتبطة والتنبيه الحرج، الموقع المباشر، فحص السلامة، الملف الطبي، سجل المواقع 72 ساعة</p>
+  <div class="meta">
+    <div><b>التاريخ</b>2026-10-23</div>
+    <div><b>الفرع</b><span class="ltr">claude/project-thread-yzwsn2</span> · PR #74</div>
+    <div><b>الحالة</b>منجزة، بانتظار المراجعة والدمج</div>
+    <div><b>المراجع</b><a href="phase-b/design-b2.md">التصميم</a> · <a href="versions.md">الإصدارات</a> · <a href="#tools">بطاقات الأدوات</a></div>
+  </div>
+</header>
+
+<section>
+<h2>1. أين تقع هذه المرحلة من مسار المشروع</h2>
+<div class="pipeline">
+  <div class="now">التبليغ</div><i>←</i>
+  <div class="now">المعالجة</div><i>←</i>
+  <div>التحليل</div><i>←</i>
+  <div>مؤشرات الأداء KPI</div><i>←</i>
+  <div>التنبؤ بالذكاء الاصطناعي</div><i>←</i>
+  <div class="now">اتخاذ القرار</div>
+</div>
+<ul>
+  <li><b>التبليغ</b>: رسالة الاستغاثة تصل في ثوان إلى المقربين (داخل التطبيق ثم SMS ثم واتساب) مع الموقع والدقة والبطارية، وفحص السلامة ينبّههم تلقائيا إن لم يردّ الشخص.</li>
+  <li><b>المعالجة</b>: الملف الطبي المرفق بالبلاغ (حساسية، أدوية، فصيلة الدم) يصل إلى قاعة العمليات التي تعالج البلاغ، ولا يُفتح إلا عند الطلب وكل فتح مسجَّل.</li>
+  <li><b>اتخاذ القرار</b>: في حالة شخص مفقود، يمكن لقاعة العمليات (عند تفعيل الخاصية قانونيا) معرفة آخر مواقعه في 72 ساعة، بسبب مكتوب ومسجَّل وإعلام الشخص.</li>
+</ul>
+</section>
+
+<section>
+<h2>2. التقدم لكل جزء</h2>
+<div class="tbl"><table>
+<tr><th>الجزء</th><th>ما أُنجز</th><th>الاختبارات</th><th>التقدم</th></tr>
+<tr><td>جهات الطوارئ والمجموعات</td><td>إضافة من منتقي جهات الاتصال في النظام (دون إذن قراءة جهات الاتصال) أو يدويا؛ مجموعات (عائلة، عمل…)؛ كلها على الهاتف في قاعدة مشفّرة.</td><td>تطبيق 3</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+<tr><td>رسالة الاستغاثة</td><td>نص قابل للتعديل + رابط الموقع + الدقة + الوقت + البطارية؛ مهلة إلغاء 5 ثوان؛ القنوات بالترتيب: تنبيه داخل التطبيق للجهات المرتبطة، ثم تطبيق SMS بكل الأرقام دفعة واحدة، ثم واتساب؛ زر 198 دائما ظاهر؛ سجل الرسائل.</td><td>خادم 3 · تطبيق 6</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+<tr><td>الجهات المرتبطة والتنبيه الحرج</td><td>دعوة برمز <code>XXXX-XXXX</code> صالح 48 ساعة، معاينة ثم قبول؛ التنبيه على قناة الإنذار الحرج (يرنّ رغم وضع عدم الإزعاج إذا وافق المستلم)؛ شاشة المستلم: الرسالة، الموقع على الخريطة، البطارية، اتصال، 198، المسار، «بلّغ»؛ إيصال «شوهد».</td><td>خادم 4 · تطبيق 3</td><td><div class="bar"><span style="width:95%"></span></div>95% (آيفون: يحتاج ترخيص Apple للتنبيه الحرج)</td></tr>
+<tr><td>الموقع المباشر</td><td>مشاركة بمدة محددة (الحد الأقصى إعداد وطني، افتراضيا 8 ساعات) بخدمة أمامية ظاهرة؛ رابط عمومي <code>/live#…</code> في البوابة دون حساب ودون اسم، يتحدّث كل 30 ثانية؛ الرمز في الجزء بعد # فلا يصل إلى سجلات الخوادم.</td><td>خادم 1 · تطبيق 1 · بوابة 5</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+<tr><td>فحص السلامة</td><td>«نبّهوا مقربيّ إن لم أردّ خلال…»؛ تذكيران على الهاتف (قبل 10 دقائق ودقيقة)؛ «أنا بخير»، «تمديد»؛ التنبيه يرسله الخادم حتى لو انطفأ الهاتف.</td><td>خادم 2 · تطبيق 2</td><td><div class="bar"><span style="width:95%"></span></div>95% (التذكير قد يتأخر قليلا على هاتف نائم)</td></tr>
+<tr><td>الاختبار الذاتي، التنبيهات الأخيرة، البطارية، الاختصارات</td><td>اختبار يرنّ الإنذار ويتحقق من الإشعارات والشبكة والموقع والبطارية والجهات دون إرسال شيء لأحد؛ قائمة التنبيهات المرسلة والمستلمة؛ نصائح وضع توفير الطاقة؛ اختصارات الأيقونة: اتصل بـ 198، رسالة استغاثة، بلاغ سريع.</td><td>تطبيق 1</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+<tr><td>الملف الطبي</td><td>على الهاتف فقط، بموافقة مستقلة؛ قفل بقفل الهاتف (بصمة أو رمز)؛ عرض بملء الشاشة للمسعف ونسخ؛ حذف بنقرة؛ خانة «أرفق ملفي الطبي بهذا البلاغ» غير مؤشرة افتراضيا؛ في لوحة القيادة: «ملف طبي مرفق» يُفتح عند الطلب فقط وكل فتح في سجل التدقيق؛ يُحذف بعد 30 يوما من إغلاق البلاغ ومع حذف الحساب.</td><td>خادم 3 · لوحة 3 · تطبيق 4</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+<tr><td>سجل المواقع 72 ساعة</td><td>مبني و<b>معطّل</b> بإعداد وطني (كما أوصيت، بانتظار قرارك والمراجعة القانونية)؛ موافقة بنص 7b؛ حذف كل النقاط فور الإيقاف؛ البحث في لوحة القيادة لقاعات العمليات فقط، بالهاتف وبلاغ وسبب، مسجَّل، والشخص يُعلَم في التطبيق.</td><td>خادم 4 · لوحة 3</td><td><div class="bar"><span style="width:75%"></span></div>75% (معطّل؛ الجمع حاليا والتطبيق مفتوح فقط)</td></tr>
+<tr><td>الإعدادات الوطنية الجديدة</td><td>أطول مشاركة للموقع المباشر، أطول فحص سلامة، تشغيل سجل المواقع أو إيقافه؛ كل تغيير بسبب ومسجَّل، لمدير النظام.</td><td>لوحة 1</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+</table></div>
+<p><b>تقدم المرحلة B2 الإجمالي: حوالي 95%.</b> ما تبقى ليس برمجة في معظمه: ترخيص Apple للتنبيه الحرج على آيفون، والمراجعة القانونية لسجل المواقع (الديوان والهيئة الوطنية لحماية المعطيات الشخصية) قبل تشغيله.</p>
+</section>
+
+<section>
+<h2>3. الخادم وقاعدة البيانات (مراجعة ← إعادة تصميم ← تطوير)</h2>
+<div class="tbl"><table>
+<tr><th>الترحيل</th><th>الجداول</th><th>الحماية</th></tr>
+<tr><td><code>0037</code></td><td>مخطط <code>safety</code>: <code>invitation</code>، <code>link</code>، <code>alert</code>، <code>alert_recipient</code>، <code>live_share</code>، <code>safety_check</code>؛ إعدادا <code>safety.live_max_minutes</code> و <code>safety.check_max_hours</code></td><td>RLS: كل شخص يرى صفوفه فقط، والمستلم يرى التنبيه عبر صف استلامه؛ الموظفون لا يقرؤون مخطط السلامة إطلاقا؛ رمز الرابط المباشر مخزّن ببصمته فقط؛ حدود: 10 تنبيهات في الساعة، 12 تحديثا للموقع في الدقيقة؛ ينتهي التنبيه بعد 24 ساعة</td></tr>
+<tr><td><code>0038</code></td><td><code>reports.medical_attachment</code></td><td>مشفّر؛ يقرؤه فقط من يحق له رؤية هوية المبلّغ (قاعة المعالجة أو صلاحية الطوارئ)؛ كل فتح في سجل التدقيق؛ حذف بعد 30 يوما من الإغلاق ومع حذف الحساب؛ <code>identity.profile.medical_enc</code> متقاعد (لا يُخزَّن بعد الآن)</td></tr>
+<tr><td><code>0039</code></td><td><code>safety.location_history</code>، <code>safety.location_point</code>؛ غرض الموافقة <code>location_history</code>؛ إعداد <code>safety.location_history</code> = معطّل</td><td>الموقع مشفّر؛ حذف بعد 72 ساعة؛ الإيقاف يحذف كل النقاط فورا؛ البحث مسجّل حتى إن لم يجد شيئا، مع إشعار ورسالة للشخص</td></tr>
+</table></div>
+<p>تصحيح أثناء المرحلة: التراجع عن الترحيل 0037 كان يفشل لأن سياسة قراءة التنبيه تعتمد على جدول المستلمين؛ صار يحذف السياسة أولا، وجُرّبت سلسلة الترقية والتراجع والترقية كاملة على قاعدة جديدة.</p>
+</section>
+
+<section>
+<h2>4. المحاكاة <span class="sim">[SIM]</span></h2>
+<div class="simbox">
+<ul>
+  <li>لا بيانات وهمية جديدة في هذه المرحلة: لا جهات اتصال ولا مواقع مخترعة في التطبيق؛ الاختبارات تنشئ بياناتها بنفسها.</li>
+  <li><span class="sim">[SIM]</span> دون Firebase (نسخ التجربة) تمر الإشعارات بالإشعار المحاكى الموجود، والشريط الكهرماني ظاهر من قبل.</li>
+  <li>ردود الخادم المحاكاة في اختبارات اللوحة والبوابة والتطبيق معزولة في ملفات الاختبار، بإطار <code>SIMULATION / PRODUCTION</code> حيث يلزم.</li>
+</ul>
+</div>
+</section>
+
+<section>
+<h2>5. الاختبارات المطبقة</h2>
+<div class="tbl"><table>
+<tr><th>الطبقة</th><th>جديدة في B2</th><th>المجموع الآن</th></tr>
+<tr><td>الخادم (pytest)</td><td>18 (السلامة 11، الملف الطبي المرفق 3، سجل المواقع 4)، منها RLS والاحتفاظ والتدقيق</td><td>808 (806 ناجحة + 2 متجاوزة محليا على قاعدة جديدة)</td></tr>
+<tr><td>لوحة القيادة (vitest)</td><td>7</td><td>423 في 49 ملفا</td></tr>
+<tr><td>البوابة (vitest)</td><td>5</td><td>89 في 12 ملفا</td></tr>
+<tr><td>التطبيق (flutter test)</td><td>23 (12 وحدة، منها ترحيل القاعدة المحلية 1 ← 2، و11 مسارا كاملا)</td><td>393</td></tr>
+<tr><th>المجموع B2</th><th>53</th><th>حوالي 1713</th></tr>
+</table></div>
+<p>التحليل الثابت نظيف في الطبقات الأربع (ruff و mypy، eslint و tsc، flutter analyze). يُبنى APK في CI فيتحقق من شيفرة Kotlin الجديدة (المنتقي، قفل الهاتف، الاختصارات).</p>
+</section>
+
+<section id="tools">
+<h2>6. التقنيات والأدوات والمصادر والإصدارات</h2>
+<p>حزمة واحدة صارت تبعية مباشرة (<code>timezone</code>، كانت موجودة بشكل غير مباشر). لا حزمة جديدة في Python ولا في npm. القائمة الكاملة في <a href="versions.md">versions.md</a>.</p>
+<div class="cards">
+<div class="card"><h3>تطبيق الهاتف</h3><p class="v">0.5.0 (البناء 4) · Flutter 3.47.7 · <span class="prio p1">1</span></p>
+<dl><dt>الاستعمال</dt><dd>كل شاشات السلامة الشخصية</dd><dt>التثبيت</dt><dd><code>cd apps/mobile && flutter pub get && flutter build apk</code></dd></dl></div>
+<div class="card"><h3>ترحيلات قاعدة البيانات</h3><p class="v">Alembic · 0037 إلى 0039 · <span class="prio p1">1</span></p>
+<dl><dt>الاستعمال</dt><dd>مخطط السلامة، الملف الطبي المرفق، سجل المواقع (معطّل)</dd><dt>الأمر</dt><dd><code>cd services/api && uv run alembic upgrade head</code></dd></dl></div>
+<div class="card"><h3>timezone</h3><p class="v">0.11.2 · BSD-2-Clause · <span class="prio p2">2</span></p>
+<dl><dt>الاستعمال</dt><dd>توقيت تذكيرَي فحص السلامة بتوقيت UTC</dd><dt>المصدر</dt><dd><a class="ltr" href="https://pub.dev/packages/timezone">pub.dev/packages/timezone</a></dd></dl></div>
+<div class="card"><h3>flutter_local_notifications</h3><p class="v">22.3.1 · BSD-3 · <span class="prio p2">2</span> (موجودة)</p>
+<dl><dt>الاستعمال</dt><dd>التذكيرات المجدولة (منبّه غير دقيق، دون إذن خاص)، وقناة الإنذار الحرج</dd></dl></div>
+<div class="card"><h3>geolocator</h3><p class="v">14.0.1 · MIT · <span class="prio p2">2</span> (موجودة)</p>
+<dl><dt>الاستعمال</dt><dd>الموقع المباشر بخدمة أمامية وإشعار دائم أثناء المشاركة</dd></dl></div>
+<div class="card"><h3>url_launcher</h3><p class="v">6.3.3 · BSD-3 · <span class="prio p3">3</span> (موجودة)</p>
+<dl><dt>الاستعمال</dt><dd><code>sms:</code> لكل الأرقام، <code>https://wa.me/</code>، <code>tel:198</code></dd></dl></div>
+<div class="card"><h3>واجهات أندرويد الأصلية</h3><p class="v">Android SDK · Apache-2.0 · <span class="prio p3">3</span></p>
+<dl><dt>الاستعمال</dt><dd>منتقي جهات الاتصال (<code>ACTION_PICK</code>)، قفل الهاتف (<code>KeyguardManager</code>)، الاختصارات الثابتة؛ أيقونات الاختصارات رسومنا الخاصة</dd></dl></div>
+<div class="card"><h3>PostgreSQL مع RLS</h3><p class="v">17 · PostgreSQL License · <span class="prio p1">1</span> (موجودة)</p>
+<dl><dt>الاستعمال</dt><dd>عزل صفوف كل مواطن في مخطط <code>safety</code></dd></dl></div>
+</div>
+</section>
+
+<section>
+<h2>7. ملاحظات وانحرافات عن التصميم</h2>
+<ul>
+  <li>رسالة SMS تفتح تطبيق الرسائل بكل الأرقام والنص جاهزين، والمستخدم يضغط «إرسال»: الإرسال الصامت يتطلب إذن <code>SEND_SMS</code> الذي يقيّده متجر Google Play. التنبيه داخل التطبيق للجهات المرتبطة يُرسل تلقائيا.</li>
+  <li>مشاركة الملف الطبي برمز QR نُقلت إلى المقترحات؛ تبقى المشاركة نصا والعرض بملء الشاشة للمسعف.</li>
+  <li>البحث في سجل المواقع صار داخل صفحة البلاغ نفسه (لا صفحة مستقلة)، ويقبل أي بلاغ يحق للمشغّل قراءته، لأن بلاغ الاختفاء قد يُسجَّل بأي فئة.</li>
+  <li>تذكيرات فحص السلامة غير دقيقة التوقيت على هاتف نائم (دون إذن المنبّهات الدقيقة)؛ التنبيه نفسه يرسله الخادم في وقته.</li>
+  <li>سجل المواقع يجمع النقاط والتطبيق مفتوح فقط في هذه النسخة؛ الجمع في الخلفية مقترح أدناه.</li>
+</ul>
+</section>
+
+<section>
+<h2>8. مقترحات (للنقاش، لم تُنفَّذ)</h2>
+<ul>
+  <li>منبّهات دقيقة لتذكيرَي فحص السلامة (إذن <code>SCHEDULE_EXACT_ALARM</code> يطلبه المستخدم بنفسه).</li>
+  <li>جمع سجل المواقع في الخلفية بإشعار ظاهر، بعد المراجعة القانونية وقياس استهلاك البطارية.</li>
+  <li>مشاركة الملف الطبي برمز QR يقرؤه المسعف.</li>
+  <li>أداة على الشاشة الرئيسية (Widget): اتصل بـ 198 ورسالة الاستغاثة بنقرة.</li>
+  <li>اختيار صوت الإنذار للتنبيه الحرج.</li>
+  <li>إرسال SMS من الخادم عبر بوابة مشغّل اتصالات، لمن لا رصيد له أو لا يملك تطبيق رسائل مهيّأ.</li>
+  <li>طلب ترخيص Apple للتنبيهات الحرجة باسم الديوان قبل إصدار آيفون.</li>
+</ul>
+</section>
+
+<section>
+<h2>9. ما يلي</h2>
+<p>بانتظار قرارك في بطاقة سجل المواقع (بُني معطّلا كما أوصيت). بعد مراجعة PR #74 ودمجه، تبدأ المرحلة التالية بموافقتك.</p>
+</section>
+
+<footer>ء-حماية · تقرير المرحلة B2 · 2026-10-23</footer>
+</div>
+</body>
+</html>

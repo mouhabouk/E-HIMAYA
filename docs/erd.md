@@ -423,6 +423,36 @@ erDiagram
         text purpose
         datetime withdrawn_at
     }
+    identity__doctor {
+        uuid user_id PK,FK
+        text kind
+        text status
+        array specialties
+        blob licence_no_enc
+        text workplace
+        smallint gouvernorat_code FK
+        text cp_unit
+        blob cp_staff_no_enc
+        text terms_version
+        datetime submitted_at
+        datetime reviewed_at
+        text reviewed_by
+        text review_reason
+        datetime available_until
+        datetime committee_since
+        datetime committee_until
+        text committee_by
+        integer version
+        datetime updated_at
+    }
+    identity__doctor_review {
+        bigint id PK
+        uuid user_id FK
+        text decision
+        text reason
+        text actor
+        datetime at
+    }
     identity__erasure_request {
         bigint id PK
         text keycloak_sub
@@ -474,11 +504,14 @@ erDiagram
         datetime at
     }
     geo__delegation ||--o{ identity__profile : "delegation_id"
+    geo__gouvernorat ||--o{ identity__doctor : "gouvernorat_code"
     geo__gouvernorat ||--o{ identity__profile : "gouvernorat_code"
     geo__gouvernorat ||--o{ identity__volunteer : "gouvernorat_code"
     identity__account ||--o{ identity__consent : "user_id"
+    identity__account ||--o{ identity__doctor : "user_id"
     identity__account ||--o{ identity__profile : "user_id"
     identity__account ||--o{ identity__volunteer : "user_id"
+    identity__doctor ||--o{ identity__doctor_review : "user_id"
     identity__volunteer ||--o{ identity__volunteer_review : "user_id"
 ```
 
@@ -1057,6 +1090,11 @@ erDiagram
         datetime stored_at
         datetime created_at
     }
+    reports__medical_attachment {
+        uuid report_id PK,FK
+        blob data_enc
+        datetime attached_at
+    }
     reports__report {
         uuid id PK
         text tracking_code
@@ -1163,6 +1201,7 @@ erDiagram
     reports__report ||--o{ reports__escalation : "report_id"
     reports__report ||--o{ reports__live_stream : "report_id"
     reports__report ||--o{ reports__media : "report_id"
+    reports__report ||--o{ reports__medical_attachment : "report_id"
     reports__report ||--o{ reports__reporter_context : "report_id"
     reports__report ||--o{ reports__status_history : "report_id"
 ```
@@ -1282,6 +1321,92 @@ erDiagram
     rewards__points_ledger ||--o{ rewards__points_ledger : "revokes_id"
     rewards__rule ||--o{ rewards__pending_award : "rule_id"
     rewards__rule ||--o{ rewards__points_ledger : "rule_id"
+```
+
+## safety
+
+```mermaid
+erDiagram
+    safety__alert {
+        uuid id PK
+        uuid client_uuid
+        uuid sender_id FK
+        text kind
+        blob message_enc
+        blob position_enc
+        smallint battery
+        uuid live_share_id FK
+        datetime created_at
+        datetime expires_at
+    }
+    safety__alert_recipient {
+        uuid alert_id PK,FK
+        uuid recipient_id PK,FK
+        datetime seen_at
+    }
+    safety__invitation {
+        uuid id PK
+        uuid inviter_id FK
+        blob code_hash
+        datetime expires_at
+        uuid accepted_by FK
+        datetime accepted_at
+        datetime cancelled_at
+        datetime created_at
+    }
+    safety__link {
+        uuid id PK
+        uuid user_a FK
+        uuid user_b FK
+        datetime created_at
+    }
+    safety__live_share {
+        uuid id PK
+        uuid owner_id FK
+        blob token_hash
+        datetime started_at
+        datetime expires_at
+        datetime stopped_at
+        blob points_enc
+        smallint battery
+        datetime updated_at
+    }
+    safety__location_history {
+        uuid owner_id PK,FK
+        datetime started_at
+        datetime until
+    }
+    safety__location_point {
+        bigint id PK
+        uuid owner_id FK
+        datetime at
+        blob position_enc
+    }
+    safety__safety_check {
+        uuid id PK
+        uuid owner_id FK
+        datetime due_at
+        blob message_enc
+        blob position_enc
+        smallint battery
+        text status
+        uuid alert_id FK
+        datetime created_at
+        datetime ended_at
+    }
+    identity__account ||--o{ safety__alert : "sender_id"
+    identity__account ||--o{ safety__alert_recipient : "recipient_id"
+    identity__account ||--o{ safety__invitation : "accepted_by"
+    identity__account ||--o{ safety__invitation : "inviter_id"
+    identity__account ||--o{ safety__link : "user_a"
+    identity__account ||--o{ safety__link : "user_b"
+    identity__account ||--o{ safety__live_share : "owner_id"
+    identity__account ||--o{ safety__location_history : "owner_id"
+    identity__account ||--o{ safety__location_point : "owner_id"
+    identity__account ||--o{ safety__safety_check : "owner_id"
+    safety__alert ||--o{ safety__alert_recipient : "alert_id"
+    safety__alert ||--o{ safety__safety_check : "alert_id"
+    safety__live_share ||--o{ safety__alert : "live_share_id"
 ```
 
 ## telephony

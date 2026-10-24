@@ -31,7 +31,14 @@ from app.modules.orgs.models import Organization
 from app.modules.orgs.schemas import OrgRef
 from app.modules.reports import geo, schemas, sla
 from app.modules.reports.domain import NEAREST_GOUVERNORAT_MAX_M, Category, Status, can_transition
-from app.modules.reports.models import Media, Report, ReporterContext, StatusHistory, report_search_tokens
+from app.modules.reports.models import (
+    Media,
+    MedicalAttachment,
+    Report,
+    ReporterContext,
+    StatusHistory,
+    report_search_tokens,
+)
 from app.modules.settings import domain as settings_domain
 from app.modules.settings import service as settings
 
@@ -250,6 +257,10 @@ async def create_report(
 
     session.add(StatusHistory(report_id=report.id, status=Status.RECEIVED.value, at=received_at, actor="reporter"))
     session.add(await _reporter_context(session, reporter, report.id))
+    medical = body.medical.model_dump(mode="json", exclude_none=True) if body.medical else None
+    if medical:
+        # Phase B2 (addition 7b): attached by the reporter's own choice for this report only.
+        session.add(MedicalAttachment(report_id=report.id, data=medical))
     # Rules-only priority at once; the models refine it in the background (ai.pipeline).
     await pipeline.baseline(session, report)
     await sla.assign(session, report)

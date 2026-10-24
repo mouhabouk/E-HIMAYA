@@ -2759,4 +2759,1084 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get contactRejectReason => 'Motif communiqué par l’Office';
+
+  @override
+  String get errorFeatureOff => 'Cette fonction n\'est pas encore disponible.';
+
+  @override
+  String get errorAlreadyLinked => 'Vous êtes déjà lié(e) à cette personne.';
+
+  @override
+  String get errorOwnInvitation =>
+      'C\'est votre propre code : donnez-le à l\'autre personne.';
+
+  @override
+  String get errorTooManyLinks =>
+      'Vous avez atteint le nombre maximal de contacts liés.';
+
+  @override
+  String get errorTooManyInvitations =>
+      'Trop d\'invitations en cours. Utilisez-en une ou attendez qu\'elle expire.';
+
+  @override
+  String get errorNoLinkedContact =>
+      'Aucun contact lié à alerter dans l\'application.';
+
+  @override
+  String get errorCheckActive =>
+      'Une vérification de sécurité est déjà en cours.';
+
+  @override
+  String get errorHistoryOff => 'L\'historique des positions est désactivé.';
+
+  @override
+  String get errorDurationTooLong => 'Cette durée dépasse le maximum autorisé.';
+
+  @override
+  String get safetyTitle => 'Sécurité personnelle';
+
+  @override
+  String get safetySettingsHint =>
+      'Contacts d’urgence, message SOS, fiche médicale';
+
+  @override
+  String get safetyIntro =>
+      'Préparez qui prévenir et quoi envoyer s’il vous arrive quelque chose. Vos contacts, votre message et votre fiche médicale restent sur ce téléphone.';
+
+  @override
+  String get safetySendSos => 'Envoyer mon message SOS';
+
+  @override
+  String get safetySomeone => 'Un proche';
+
+  @override
+  String get safetyDelete => 'Supprimer';
+
+  @override
+  String get safetyEdit => 'Modifier';
+
+  @override
+  String get safetyCopy => 'Copier';
+
+  @override
+  String get safetyCopied => 'Copié.';
+
+  @override
+  String get safetyDone => 'Terminé';
+
+  @override
+  String get safetySaved => 'Enregistré.';
+
+  @override
+  String get safetyBySms => 'SMS';
+
+  @override
+  String safetyAccuracy(int meters) {
+    return '± $meters m';
+  }
+
+  @override
+  String safetyMinutes(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String safetyHours(int hours) {
+    return '$hours h';
+  }
+
+  @override
+  String safetyHoursMinutes(int hours, int minutes) {
+    return '$hours h $minutes min';
+  }
+
+  @override
+  String get safetyContactsTitle => 'Contacts d’urgence';
+
+  @override
+  String safetyContactsCount(int count) {
+    return 'Contacts : $count';
+  }
+
+  @override
+  String get safetyContactsIntro =>
+      'Jusqu’à 10 personnes qui reçoivent votre message SOS par SMS ou WhatsApp.';
+
+  @override
+  String get safetyContactsPrivacy =>
+      'Gardés sur ce téléphone uniquement. L’application ne lit ni n’envoie jamais votre répertoire : vous choisissez chaque numéro.';
+
+  @override
+  String safetyContactsFull(int max) {
+    return 'Vous avez atteint $max contacts.';
+  }
+
+  @override
+  String get safetyContactsEmpty => 'Aucun contact d’urgence pour l’instant.';
+
+  @override
+  String get safetyContactAdd => 'Ajouter un contact';
+
+  @override
+  String get safetyContactPick => 'Choisir dans mes contacts';
+
+  @override
+  String get safetyContactPickHint =>
+      'Seul le numéro choisi arrive dans l’application.';
+
+  @override
+  String get safetyContactType => 'Saisir un numéro';
+
+  @override
+  String get safetyContactTitle => 'Contact d’urgence';
+
+  @override
+  String get safetyContactName => 'Nom';
+
+  @override
+  String get safetyContactNameRequired => 'Saisissez un nom.';
+
+  @override
+  String get safetyContactPhone => 'Numéro de téléphone';
+
+  @override
+  String get safetyContactExists => 'Ce numéro est déjà dans votre liste.';
+
+  @override
+  String get safetyContactLinked => 'Lié : reçoit l’alerte dans l’application';
+
+  @override
+  String get safetyContactGroups => 'Groupes';
+
+  @override
+  String safetyContactDeleteTitle(String name) {
+    return 'Supprimer $name ?';
+  }
+
+  @override
+  String get safetyGroupsTitle => 'Groupes';
+
+  @override
+  String get safetyGroupsEmpty =>
+      'Les groupes permettent de prévenir seulement certaines personnes (famille, voisins…).';
+
+  @override
+  String get safetyGroupAdd => 'Nouveau groupe';
+
+  @override
+  String get safetyGroupName => 'Nom du groupe';
+
+  @override
+  String get safetyGroupNameHint => 'Famille, voisins, travail…';
+
+  @override
+  String safetyGroupDeleteTitle(String name) {
+    return 'Supprimer le groupe $name ?';
+  }
+
+  @override
+  String get safetyGroupDeleteBody => 'Les contacts restent dans votre liste.';
+
+  @override
+  String get safetyMessageTitle => 'Message SOS';
+
+  @override
+  String get safetyMessageHint => 'Votre texte, et les 5 secondes pour annuler';
+
+  @override
+  String get safetyMessageText => 'Votre message';
+
+  @override
+  String get safetyMessageAdded =>
+      'L’application ajoute le lien de votre position, sa précision, l’heure et le niveau de batterie.';
+
+  @override
+  String get safetyCancelWindow => '5 secondes pour annuler';
+
+  @override
+  String get safetyCancelWindowHint =>
+      'Évite un envoi par erreur. Désactivez-le pour envoyer tout de suite.';
+
+  @override
+  String get safetyPreview => 'Aperçu';
+
+  @override
+  String get sosDefaultTemplate => 'J’ai besoin d’aide. Voici ma position.';
+
+  @override
+  String get sosLabelPosition => 'Position';
+
+  @override
+  String get sosLabelAccuracy => 'Précision';
+
+  @override
+  String get sosLabelTime => 'Heure';
+
+  @override
+  String get sosLabelBattery => 'Batterie';
+
+  @override
+  String get sosLabelNoPosition => 'Position indisponible.';
+
+  @override
+  String get safetySendIntro =>
+      'Vos contacts reçoivent votre message avec votre position. Les contacts liés sont alertés dans l’application ; l’application SMS s’ouvre avec tous les numéros et vous appuyez sur Envoyer.';
+
+  @override
+  String get safetyNoContacts =>
+      'Ajoutez d’abord au moins un contact d’urgence.';
+
+  @override
+  String get safetySendTo => 'Envoyer à';
+
+  @override
+  String safetySendToAll(int count) {
+    return 'Tout le monde ($count)';
+  }
+
+  @override
+  String safetySendChannels(int count) {
+    return 'Contacts liés alertés dans l’application : $count. Puis SMS, puis WhatsApp.';
+  }
+
+  @override
+  String get safetySendSmsOnly =>
+      'Sans compte, le message part uniquement par SMS et WhatsApp.';
+
+  @override
+  String get safetySendNow => 'Envoyer maintenant';
+
+  @override
+  String safetySendingIn(int seconds) {
+    return 'Envoi dans $seconds s…';
+  }
+
+  @override
+  String get safetySending => 'Récupération de la position et envoi…';
+
+  @override
+  String safetySentApp(int count) {
+    return 'Alerte reçue dans l’application par $count contact(s) lié(s).';
+  }
+
+  @override
+  String get safetySentAppFailed =>
+      'L’alerte dans l’application n’a pas pu partir (pas de réseau ?). Le SMS s’est quand même ouvert.';
+
+  @override
+  String safetySentSms(int count) {
+    return 'SMS prêt pour $count numéro(s) : appuyez sur Envoyer dans l’application SMS.';
+  }
+
+  @override
+  String get safetyWhatsApp => 'Aussi par WhatsApp';
+
+  @override
+  String get safetyWhatsAppChoose =>
+      'Choisir une discussion ou un groupe WhatsApp';
+
+  @override
+  String get safetyLinkedTitle => 'Contacts liés';
+
+  @override
+  String safetyLinkedCount(int count) {
+    return 'Liés : $count';
+  }
+
+  @override
+  String get safetyLinkedIntro =>
+      'Un proche qui utilise aussi e-Himaya peut être lié à vous. Votre message SOS sonne alors sur son téléphone, même en mode silencieux.';
+
+  @override
+  String get safetyLinkedNeedsAccount =>
+      'Les liens nécessitent un compte e-Himaya sur les deux téléphones.';
+
+  @override
+  String get safetyLinkedEmpty => 'Personne n’est encore lié.';
+
+  @override
+  String get safetyLinkedPrivacy =>
+      'Une personne liée voit votre prénom, votre numéro et vos alertes. Chacun peut supprimer le lien à tout moment.';
+
+  @override
+  String get safetyLinkedDone => 'Vous êtes maintenant liés.';
+
+  @override
+  String safetyLinkedPush(String name) {
+    return 'Vous êtes maintenant lié(e) à $name.';
+  }
+
+  @override
+  String get safetyInvite => 'Inviter';
+
+  @override
+  String get safetyInviteTitle => 'Votre code d’invitation';
+
+  @override
+  String get safetyInviteBody =>
+      'Donnez ce code à la personne. Elle le saisit dans e-Himaya, Sécurité personnelle, Contacts liés.';
+
+  @override
+  String safetyInviteExpires(String time) {
+    return 'Valable jusqu’à $time, une seule fois.';
+  }
+
+  @override
+  String safetyInviteText(String code) {
+    return 'Liez-vous à moi dans e-Himaya pour qu’on puisse s’alerter en cas d’urgence. Mon code : $code';
+  }
+
+  @override
+  String get safetyEnterCode => 'Saisir un code';
+
+  @override
+  String get safetyCodeInvalid => 'Ce code est faux, déjà utilisé ou expiré.';
+
+  @override
+  String get safetyLinkConfirmTitle => 'Se lier à cette personne ?';
+
+  @override
+  String safetyLinkConfirmBody(String who) {
+    return '$who recevra vos alertes et vous recevrez les siennes.';
+  }
+
+  @override
+  String get safetyLinkAccept => 'Lier';
+
+  @override
+  String get safetyUnlink => 'Supprimer le lien';
+
+  @override
+  String safetyUnlinkTitle(String name) {
+    return 'Supprimer le lien avec $name ?';
+  }
+
+  @override
+  String get safetyUnlinkBody =>
+      'Aucun de vous ne recevra plus les alertes de l’autre.';
+
+  @override
+  String get safetyAlertTitle => 'Alerte de détresse';
+
+  @override
+  String safetyAlertFrom(String name) {
+    return '$name a besoin d’aide';
+  }
+
+  @override
+  String safetyAlertCheckFrom(String name) {
+    return '$name n’a pas confirmé être en sécurité';
+  }
+
+  @override
+  String get safetyAlertMine => 'Votre alerte';
+
+  @override
+  String safetyAlertAt(String time) {
+    return 'Envoyée à $time';
+  }
+
+  @override
+  String safetyAlertBattery(int level) {
+    return 'batterie $level %';
+  }
+
+  @override
+  String safetyAlertSeenBy(int seen, int total) {
+    return 'Ouverte par $seen sur $total';
+  }
+
+  @override
+  String get safetyAlertNoPosition => 'Aucune position n’a été envoyée.';
+
+  @override
+  String safetyAlertLive(String time) {
+    return 'Position en direct, mise à jour à $time';
+  }
+
+  @override
+  String safetyAlertPositionAt(String time) {
+    return 'Position à $time';
+  }
+
+  @override
+  String safetyAlertCall(String name) {
+    return 'Appeler $name';
+  }
+
+  @override
+  String get safetyAlertRoute => 'Itinéraire';
+
+  @override
+  String get safetyAlertReportHint =>
+      'S’il ou elle est en danger, appelez la Protection civile et donnez la position ci-dessus.';
+
+  @override
+  String get safetyAlertCall198 => 'Appeler le 198 pour lui ou elle';
+
+  @override
+  String get safetyAlertReport => 'Le signaler dans l’application';
+
+  @override
+  String get safetyLiveTitle => 'Position en direct';
+
+  @override
+  String get safetyLiveHint =>
+      'Un lien qui montre où vous êtes, pour une durée limitée';
+
+  @override
+  String get safetyLiveRunning => 'Votre position est partagée';
+
+  @override
+  String get safetyLiveIntro =>
+      'Créez un lien qui montre votre position pendant vos déplacements. Il s’arrête tout seul à la fin, ou quand vous appuyez sur Arrêter. Qui a le lien voit le point sur une carte, pas votre nom.';
+
+  @override
+  String get safetyLiveNeedsAccount =>
+      'La position en direct nécessite un compte e-Himaya.';
+
+  @override
+  String get safetyLiveFor => 'Partager pendant';
+
+  @override
+  String get safetyLiveStart => 'Commencer le partage';
+
+  @override
+  String get safetyLiveStop => 'Arrêter le partage';
+
+  @override
+  String get safetyLivePrivacy =>
+      'Les positions sont effacées 24 heures après la fin du partage. Une notification reste visible pendant le partage.';
+
+  @override
+  String safetyLiveLeft(String duration) {
+    return 'Encore $duration';
+  }
+
+  @override
+  String safetyLiveLastSent(String time) {
+    return 'dernier envoi à $time';
+  }
+
+  @override
+  String safetyLiveShareText(String link) {
+    return 'Suivez ma position en direct : $link';
+  }
+
+  @override
+  String get safetyLiveSmsContacts => 'SMS à mes contacts';
+
+  @override
+  String get safetyLiveNoticeTitle => 'e-Himaya : position partagée';
+
+  @override
+  String get safetyLiveNoticeText =>
+      'Votre position est envoyée pendant le partage ou la vérification.';
+
+  @override
+  String get safetyCheckTitle => 'Vérification de sécurité';
+
+  @override
+  String get safetyCheckHint =>
+      'Contacts liés alertés si vous ne confirmez pas à temps';
+
+  @override
+  String get safetyCheckRunning => 'Une vérification est en cours';
+
+  @override
+  String get safetyCheckIntro =>
+      'Sortie seul(e), marche de nuit, trajet ? Fixez une heure. Si vous n’avez pas appuyé sur « Je vais bien » à temps, vos contacts liés reçoivent une alerte avec votre dernière position, même si votre téléphone est éteint. La Protection civile n’est pas alertée.';
+
+  @override
+  String get safetyCheckNeedsAccount =>
+      'La vérification nécessite un compte e-Himaya et des contacts liés.';
+
+  @override
+  String get safetyCheckNoLinks =>
+      'Liez d’abord au moins un contact : l’alerte part vers les contacts liés.';
+
+  @override
+  String get safetyCheckIn => 'Confirmer dans';
+
+  @override
+  String get safetyCheckMessage => 'Message pour vos contacts';
+
+  @override
+  String get safetyCheckMessageHint =>
+      'Je n’ai pas confirmé être bien arrivé(e).';
+
+  @override
+  String get safetyCheckStart => 'Lancer la vérification';
+
+  @override
+  String get safetyCheckPrivacy =>
+      'Rappels 10 minutes et 1 minute avant. La vérification et sa position sont effacées 7 jours après la fin.';
+
+  @override
+  String safetyCheckDue(String time) {
+    return 'À confirmer avant $time';
+  }
+
+  @override
+  String safetyCheckContacts(int count) {
+    return 'contacts liés : $count';
+  }
+
+  @override
+  String get safetyCheckOk => 'Je vais bien';
+
+  @override
+  String safetyCheckExtend(int minutes) {
+    return 'Ajouter $minutes minutes';
+  }
+
+  @override
+  String get safetyCheckFired => 'Vos contacts ont été alertés';
+
+  @override
+  String get safetyCheckFiredHint =>
+      'Vous n’avez pas confirmé à temps. Si tout va bien, dites-le-leur ; sinon envoyez votre message SOS.';
+
+  @override
+  String get safetyCheckReminder10 =>
+      'Votre vérification se termine dans 10 minutes. Ouvrez e-Himaya pour confirmer.';
+
+  @override
+  String get safetyCheckReminder1 =>
+      'Plus qu’une minute : confirmez maintenant ou vos contacts seront alertés.';
+
+  @override
+  String get safetyTestTitle => 'Autotest';
+
+  @override
+  String get safetyTestHint =>
+      'Vérifier que tout fonctionne, sans rien envoyer';
+
+  @override
+  String get safetyTestIntro =>
+      'Vérifie ce téléphone : son d’alarme, position, réseau, notifications et batterie.';
+
+  @override
+  String get safetyTestAlarm => 'Faire sonner l’alarme';
+
+  @override
+  String get safetyTestAlarmTitle => 'Test : alerte de détresse';
+
+  @override
+  String get safetyTestAlarmBody =>
+      'Voici le son d’une alerte d’un contact lié. Rien n’a été envoyé.';
+
+  @override
+  String get safetyTestAlarmSent => 'Alarme de test affichée.';
+
+  @override
+  String get safetyTestRunning => 'Vérification…';
+
+  @override
+  String get safetyTestNotificationsOn => 'Notifications autorisées';
+
+  @override
+  String get safetyTestNotificationsOff =>
+      'Notifications bloquées : les alertes ne vous parviennent pas';
+
+  @override
+  String get safetyTestCriticalOn =>
+      'Les alertes sonnent même en mode silencieux';
+
+  @override
+  String get safetyTestCriticalOff =>
+      'Les alertes ne sonnent pas en mode silencieux';
+
+  @override
+  String get safetyTestCriticalFix => 'Activer';
+
+  @override
+  String get safetyTestDnd => 'Ne pas déranger est activé en ce moment';
+
+  @override
+  String get safetyTestOnline => 'Réseau disponible';
+
+  @override
+  String get safetyTestOffline =>
+      'Pas de réseau : seuls les SMS et appels fonctionnent';
+
+  @override
+  String get safetyTestPosition => 'Position trouvée';
+
+  @override
+  String get safetyTestNoPosition =>
+      'Pas de position : activez la localisation';
+
+  @override
+  String safetyTestBattery(int level) {
+    return 'Batterie $level %';
+  }
+
+  @override
+  String get safetyTestBatteryUnknown => 'Niveau de batterie inconnu';
+
+  @override
+  String get safetyTestPowerSave =>
+      'Économiseur de batterie activé : les alertes peuvent arriver en retard';
+
+  @override
+  String safetyTestContacts(int contacts, int links) {
+    return 'Contacts d’urgence : $contacts · liés : $links';
+  }
+
+  @override
+  String get safetyTestAgain => 'Refaire le test';
+
+  @override
+  String get safetyTestNothingSent =>
+      'Rien n’est envoyé à personne pendant l’autotest.';
+
+  @override
+  String get safetyRecentTitle => 'Alertes récentes';
+
+  @override
+  String get safetyRecentReceived => 'Reçues (dernières 24 heures)';
+
+  @override
+  String get safetyRecentSentTitle => 'Envoyées depuis ce téléphone';
+
+  @override
+  String get safetyRecentClear => 'Effacer';
+
+  @override
+  String get safetyRecentEmpty => 'Rien pour l’instant.';
+
+  @override
+  String get safetyRecentSos => 'Message SOS';
+
+  @override
+  String get safetyRecentSent => 'envoyé';
+
+  @override
+  String get safetyRecentCancelled => 'annulé';
+
+  @override
+  String get safetyRecentOk => 'terminé';
+
+  @override
+  String get safetyRecentFailed => 'non envoyé';
+
+  @override
+  String safetyRecentRecipients(int count) {
+    return '$count destinataire(s)';
+  }
+
+  @override
+  String get safetyChannelApp => 'application';
+
+  @override
+  String get safetyRecentPrivacy => 'Cette liste reste sur ce téléphone.';
+
+  @override
+  String get safetyMedicalTitle => 'Fiche médicale';
+
+  @override
+  String get safetyMedicalHint =>
+      'Informations utiles aux secours, sur ce téléphone uniquement';
+
+  @override
+  String get safetyMedicalSaved => 'Enregistrée sur ce téléphone';
+
+  @override
+  String get medicalConsentTitle => 'Avant de commencer';
+
+  @override
+  String get medicalConsentBody =>
+      'Votre fiche médicale contient des données de santé. Elle reste chiffrée sur ce téléphone. Elle n’est envoyée à la Protection civile qu’avec un signalement pour lequel vous cochez « Joindre ma fiche médicale », puis effacée 30 jours après la clôture du signalement. Vous pouvez la modifier ou la supprimer à tout moment. Tous les champs sont facultatifs.';
+
+  @override
+  String get medicalConsentCheck =>
+      'J’accepte de garder ma fiche médicale sur ce téléphone dans ces conditions';
+
+  @override
+  String get medicalCreate => 'Créer ma fiche médicale';
+
+  @override
+  String get medicalIntro =>
+      'Remplissez seulement ce que vous voulez. Gardée chiffrée sur ce téléphone.';
+
+  @override
+  String get medicalSex => 'Sexe';
+
+  @override
+  String get medicalSexFemale => 'Femme';
+
+  @override
+  String get medicalSexMale => 'Homme';
+
+  @override
+  String get medicalNotSaid => 'Non renseigné';
+
+  @override
+  String get medicalBirthDate => 'Date de naissance';
+
+  @override
+  String get medicalBloodGroup => 'Groupe sanguin';
+
+  @override
+  String get medicalAllergies => 'Allergies';
+
+  @override
+  String get medicalConditions => 'Maladies chroniques';
+
+  @override
+  String get medicalMedications => 'Médicaments habituels';
+
+  @override
+  String get medicalOther => 'Autre (grossesse, appareil, handicap…)';
+
+  @override
+  String get medicalTreatmentCard => 'Numéro de carte de soins';
+
+  @override
+  String get medicalContactName => 'Personne à prévenir';
+
+  @override
+  String get medicalContactPhone => 'Son numéro de téléphone';
+
+  @override
+  String get medicalContact => 'À prévenir';
+
+  @override
+  String get medicalLock => 'Demander le verrouillage du téléphone';
+
+  @override
+  String get medicalLockHint =>
+      'Votre code, schéma ou empreinte avant d’ouvrir la fiche.';
+
+  @override
+  String get medicalLocked => 'Votre fiche médicale est verrouillée.';
+
+  @override
+  String get medicalUnlock => 'Déverrouiller';
+
+  @override
+  String get medicalUnlockHint =>
+      'Confirmez que c’est vous pour ouvrir la fiche médicale.';
+
+  @override
+  String get medicalNoPhoneLock =>
+      'Ce téléphone n’a pas de verrouillage d’écran : la fiche ne peut pas être verrouillée.';
+
+  @override
+  String get medicalForRescuer => 'Montrer aux secours';
+
+  @override
+  String get medicalCopy => 'Copier en texte';
+
+  @override
+  String get medicalEmpty => 'La fiche médicale est vide.';
+
+  @override
+  String get medicalAttachHint =>
+      'Dans un signalement, cochez « Joindre ma fiche médicale » pour l’envoyer avec ce signalement seulement.';
+
+  @override
+  String get medicalDelete => 'Supprimer ma fiche médicale';
+
+  @override
+  String get medicalDeleteTitle => 'Supprimer la fiche médicale ?';
+
+  @override
+  String get medicalDeleteBody =>
+      'Elle est effacée de ce téléphone. Les copies déjà jointes à des signalements sont effacées 30 jours après leur clôture.';
+
+  @override
+  String get medicalDeleted => 'Fiche médicale supprimée.';
+
+  @override
+  String get reportAttachMedical =>
+      'Joindre ma fiche médicale à ce signalement';
+
+  @override
+  String get reportAttachMedicalHint =>
+      'Seule l’équipe qui traite ce signalement peut l’ouvrir, et chaque ouverture est enregistrée.';
+
+  @override
+  String get safetyHistoryTitle => 'Historique des positions (72 h)';
+
+  @override
+  String get safetyHistoryOn => 'Activé';
+
+  @override
+  String get safetyHistoryOff => 'Désactivé';
+
+  @override
+  String get safetyHistoryNotice =>
+      'Si vous disparaissez, la Protection civile peut voir où était votre téléphone pendant les 72 dernières heures. Elle ne le consulte que pour un signalement qu’elle traite, avec un motif, et vous êtes prévenu(e). Chaque position est effacée après 72 heures, et toutes d’un coup quand vous désactivez.';
+
+  @override
+  String get safetyHistoryUnavailable => 'Pas encore disponible.';
+
+  @override
+  String get safetyHistoryConsent =>
+      'J’accepte que mes positions soient gardées 72 heures dans ces conditions';
+
+  @override
+  String get safetyHistoryTurnOn => 'Activer';
+
+  @override
+  String get safetyHistoryTurnOff => 'Désactiver et effacer';
+
+  @override
+  String safetyHistoryUntil(String time) {
+    return 'Jusqu’à $time';
+  }
+
+  @override
+  String get safetyHistoryViewedTitle =>
+      'Votre historique de positions a été consulté';
+
+  @override
+  String get safetyHistoryViewedBody =>
+      'La Protection civile l’a consulté pour un signalement. Ouvrez e-Himaya pour en savoir plus.';
+
+  @override
+  String get doctorTitle => 'Espace médecins';
+
+  @override
+  String get doctorIntro =>
+      'Vous êtes médecin ? Déclarez-vous pour recevoir les dossiers médicaux joints aux signalements, verrouillés et lisibles uniquement par les médecins vérifiés. La Protection civile vérifie votre numéro d\'inscription avant tout dossier.';
+
+  @override
+  String get doctorChoose => 'Choisissez votre statut';
+
+  @override
+  String get doctorKindVolunteer => 'Médecin volontaire';
+
+  @override
+  String get doctorKindVolunteerHelp =>
+      'Médecin spécialiste qui accepte de recevoir des dossiers médicaux pour donner son avis, quand un confrère les lui adresse.';
+
+  @override
+  String get doctorKindCivilProtection => 'Médecin de la Protection civile';
+
+  @override
+  String get doctorKindCivilProtectionHelp =>
+      'Médecin de la Protection civile : reçoit les dossiers médicaux des signalements de son gouvernorat et les adresse aux spécialistes.';
+
+  @override
+  String get doctorApply => 'S\'inscrire comme médecin';
+
+  @override
+  String get doctorKind => 'Statut';
+
+  @override
+  String get doctorSpecialties => 'Spécialités (1 à 4)';
+
+  @override
+  String get doctorSpecialtiesRequired => 'Choisissez de 1 à 4 spécialités.';
+
+  @override
+  String get doctorLicence => 'N° d\'inscription au Conseil de l\'Ordre';
+
+  @override
+  String get doctorNumberInvalid =>
+      'De 3 à 30 caractères : chiffres, lettres latines, - et /.';
+
+  @override
+  String get doctorWorkplace => 'Lieu d\'exercice (établissement)';
+
+  @override
+  String get doctorGouvernorat => 'Gouvernorat du lieu d\'exercice';
+
+  @override
+  String get doctorGouvernoratHelp =>
+      'Elle détermine votre groupe de médecins.';
+
+  @override
+  String get doctorCpUnit => 'Unité ou direction régionale';
+
+  @override
+  String get doctorCpStaffNo => 'Matricule';
+
+  @override
+  String get doctorTermsTitle => 'Conditions du statut de médecin';
+
+  @override
+  String get doctorTermsBody =>
+      'Les dossiers médicaux sont confidentiels : ils ne s\'ouvrent que pour secourir la personne, ne se copient ni ne se partagent hors du système, et chaque ouverture est enregistrée. Un avis donné à distance est consultatif et ne remplace pas l\'examen. La Protection civile peut suspendre votre statut en cas de manquement.';
+
+  @override
+  String get doctorTermsAccept => 'J\'ai lu et j\'accepte ces conditions';
+
+  @override
+  String get doctorTermsRequired => 'Vous devez accepter les conditions.';
+
+  @override
+  String get doctorRecheckNote =>
+      'Changer de statut, de spécialités, de numéros ou de gouvernorat renvoie votre demande en vérification.';
+
+  @override
+  String get doctorSubmit => 'Envoyer pour vérification';
+
+  @override
+  String get doctorSubmitted =>
+      'Demande envoyée. La Protection civile va vérifier votre numéro d\'inscription.';
+
+  @override
+  String get doctorHelpPending =>
+      'Votre demande est en cours de vérification. Aucun dossier médical avant la vérification.';
+
+  @override
+  String get doctorHelpApproved =>
+      'Votre statut est vérifié : vous faites partie du groupe de médecins de votre gouvernorat.';
+
+  @override
+  String get doctorHelpRejected =>
+      'Votre demande n\'a pas été retenue. Vous pouvez la corriger et la renvoyer.';
+
+  @override
+  String get doctorHelpSuspended =>
+      'Votre statut est suspendu : vous ne recevez plus de dossiers médicaux.';
+
+  @override
+  String get doctorHelpWithdrawn =>
+      'Vous avez renoncé au statut de médecin ; vos numéros sont supprimés.';
+
+  @override
+  String get doctorAvailable => 'Disponible pour les demandes';
+
+  @override
+  String doctorAvailableUntil(String time) {
+    return 'Disponible jusqu\'à $time';
+  }
+
+  @override
+  String doctorCommitteeMember(String date) {
+    return 'Membre du comité médical jusqu\'au $date';
+  }
+
+  @override
+  String get doctorCommitteeHelp =>
+      'Nommé(e) par l\'administrateur système. Depuis ce compte, vous consulterez les dossiers médicaux et les avis des spécialistes de tous les gouvernorats. Chaque ouverture demande un motif et est journalisée ; le citoyen voit « Comité médical », pas votre nom.';
+
+  @override
+  String get doctorAvailableHelp =>
+      'Les médecins disponibles apparaissent en premier dans la liste. La disponibilité s\'arrête seule après 8 heures.';
+
+  @override
+  String get doctorAvailableBadge => 'Disponible';
+
+  @override
+  String get doctorFilesSoon =>
+      'La réception des dossiers médicaux verrouillés arrive dans la prochaine mise à jour.';
+
+  @override
+  String get doctorDirectory => 'Annuaire des médecins';
+
+  @override
+  String get doctorSpecialty => 'Spécialité';
+
+  @override
+  String get doctorRegion => 'Région';
+
+  @override
+  String get doctorAllSpecialties => 'Toutes les spécialités';
+
+  @override
+  String get doctorAllGouvernorats => 'Tous les gouvernorats';
+
+  @override
+  String get doctorDirectoryEmpty => 'Aucun médecin vérifié pour ces critères.';
+
+  @override
+  String get doctorEdit => 'Modifier mes informations';
+
+  @override
+  String get doctorWithdraw => 'Renoncer au statut de médecin';
+
+  @override
+  String get doctorWithdrawConfirm =>
+      'Votre numéro d\'inscription sera supprimé et vous ne recevrez plus de dossiers. Vous pourrez vous réinscrire.';
+
+  @override
+  String get doctorJoinTitle => 'Vous êtes médecin ?';
+
+  @override
+  String get doctorJoinBody =>
+      'Inscrivez-vous comme médecin volontaire ou de la Protection civile.';
+
+  @override
+  String get errorNotDoctor => 'Vous n\'êtes pas inscrit comme médecin.';
+
+  @override
+  String get errorDoctorNotApproved =>
+      'Votre statut de médecin n\'est pas encore vérifié.';
+
+  @override
+  String get errorCpDetailsRequired =>
+      'Indiquez l\'unité et le matricule du médecin de la Protection civile.';
+
+  @override
+  String get errorUnknownTermsVersion =>
+      'Les conditions ont changé. Mettez l\'application à jour puis réessayez.';
+
+  @override
+  String get specialtyGeneralPractice => 'Médecine générale';
+
+  @override
+  String get specialtyEmergencyMedicine => 'Médecine d\'urgence';
+
+  @override
+  String get specialtyAnesthesiaIcu => 'Anesthésie-réanimation';
+
+  @override
+  String get specialtyCardiology => 'Cardiologie';
+
+  @override
+  String get specialtyPulmonology => 'Pneumologie';
+
+  @override
+  String get specialtyNeurology => 'Neurologie';
+
+  @override
+  String get specialtyPediatrics => 'Pédiatrie';
+
+  @override
+  String get specialtyObstetricsGynecology => 'Gynécologie-obstétrique';
+
+  @override
+  String get specialtyInternalMedicine => 'Médecine interne';
+
+  @override
+  String get specialtyEndocrinology => 'Endocrinologie-diabétologie';
+
+  @override
+  String get specialtyNephrology => 'Néphrologie';
+
+  @override
+  String get specialtyGastroenterology => 'Gastro-entérologie';
+
+  @override
+  String get specialtyAllergyImmunology => 'Allergologie-immunologie';
+
+  @override
+  String get specialtyInfectiousDiseases => 'Maladies infectieuses';
+
+  @override
+  String get specialtyDermatologyBurns => 'Dermatologie et brûlures';
+
+  @override
+  String get specialtyOrthopedics => 'Orthopédie-traumatologie';
+
+  @override
+  String get specialtyGeneralSurgery => 'Chirurgie générale';
+
+  @override
+  String get specialtyPsychiatry => 'Psychiatrie';
+
+  @override
+  String get specialtyToxicology => 'Toxicologie';
+
+  @override
+  String get specialtyOphthalmology => 'Ophtalmologie';
+
+  @override
+  String get specialtyEnt => 'ORL';
 }

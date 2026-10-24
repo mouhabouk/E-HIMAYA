@@ -6,7 +6,15 @@ enum PushKind {
   alertCancelled('alert_cancelled'),
   info,
   callout,
-  reportStatus('report_status');
+  reportStatus('report_status'),
+  // Phase B2: a linked contact's SOS message or fired safety check (critical channel), a new
+  // link, the owner's own fired check, a staff search of the location history, and the local
+  // safety-check reminders (never sent by the server).
+  safetyAlert('safety_alert'),
+  safetyLink('safety_link'),
+  safetyCheckFired('safety_check_fired'),
+  safetyHistoryViewed('safety_history_viewed'),
+  safetyCheckReminder('safety_check_reminder');
 
   const PushKind([this._wire]);
   final String? _wire;
@@ -20,7 +28,12 @@ enum PushKind {
   }
 
   /// Shown on the high-importance Android channel (sound, heads-up).
-  bool get urgent => this == alert || this == callout;
+  bool get urgent =>
+      this == alert ||
+      this == callout ||
+      this == safetyAlert ||
+      this == safetyCheckFired ||
+      this == safetyCheckReminder;
 }
 
 /// A push as the app sees it: its kind and data, plus the title and body to display.
@@ -85,5 +98,11 @@ class PushPayload {
     PushKind.info => Routes.notifications,
     PushKind.callout => Routes.callouts,
     PushKind.reportStatus => Routes.reports,
+    PushKind.safetyAlert when (id ?? '').isNotEmpty => Routes.safetyAlert(id!),
+    PushKind.safetyAlert => Routes.safety,
+    PushKind.safetyLink => Routes.safetyLinked,
+    PushKind.safetyCheckFired ||
+    PushKind.safetyCheckReminder => Routes.safetyCheck,
+    PushKind.safetyHistoryViewed => Routes.safetyLocationHistory,
   };
 }

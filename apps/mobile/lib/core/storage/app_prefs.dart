@@ -47,6 +47,11 @@ class AppPrefs {
   static const _releaseJson = 'update.release';
   static const _releaseCheckedAt = 'update.checked_at';
   static const _updatePostponedBuild = 'update.postponed_build';
+  // Phase B2: SOS message template and cancel window, the live share in progress.
+  static const _sosTemplate = 'safety.sos_template';
+  static const _sosCancelWindow = 'safety.sos_cancel_window';
+  static const _liveShare = 'safety.live_share';
+  static const _locationHistoryOn = 'safety.location_history_on';
 
   /// Kept when the account is deleted: interface choices, not personal data.
   static const _keptOnWipe = {
@@ -243,6 +248,28 @@ class AppPrefs {
   int? get updatePostponedBuild => _prefs.getInt(_updatePostponedBuild);
   Future<void> setUpdatePostponedBuild(int build) =>
       _prefs.setInt(_updatePostponedBuild, build);
+
+  /// Phase B2 (addition 5): the user's own SOS text (null: the default text of the language).
+  String? get sosTemplate => _prefs.getString(_sosTemplate);
+  Future<void> setSosTemplate(String? value) => value == null
+      ? _prefs.remove(_sosTemplate)
+      : _prefs.setString(_sosTemplate, value);
+
+  /// The 5-second window to cancel an SOS message before it goes (on by default).
+  bool get sosCancelWindow => _prefs.getBool(_sosCancelWindow) ?? true;
+  Future<void> setSosCancelWindow(bool value) =>
+      _prefs.setBool(_sosCancelWindow, value);
+
+  /// The live location share in progress (JSON: id, token, expires_at), so a restart resumes it.
+  String? get liveShareJson => _prefs.getString(_liveShare);
+  Future<void> setLiveShareJson(String? value) => value == null
+      ? _prefs.remove(_liveShare)
+      : _prefs.setString(_liveShare, value);
+
+  /// The user turned the 72-hour location history on (the recorder restarts with the app).
+  bool get locationHistoryOn => _prefs.getBool(_locationHistoryOn) ?? false;
+  Future<void> setLocationHistoryOn(bool value) =>
+      _prefs.setBool(_locationHistoryOn, value);
 
   /// Account deletion: forgets everything except the language, theme and battery saver choice
   /// (the app then starts again from the charter).
