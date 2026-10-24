@@ -1,0 +1,32 @@
+@startuml
+!include style.iuml
+title Séquence : orientation vers un spécialiste, avis verrouillé et transparence
+autonumber
+actor "Médecin PC\n(gouvernorat)" as D
+participant "Application\ndu médecin PC" as DAPP
+participant "API e-Himaya" as API
+database "PostgreSQL" as DB
+participant "Application\ndu spécialiste" as SAPP
+actor "Médecin\nspécialiste" as SP
+actor "Citoyen" as C
+== Orientation ==
+D -> DAPP : dossier ouvert : « orienter vers un spécialiste »
+DAPP -> API : GET /doctors?spécialité&gouvernorat
+API --> DAPP : médecins + clés publiques
+D -> DAPP : choisir 1 à 5 médecins, saisir le motif
+DAPP -> DAPP : reverrouiller la clé du dossier\npour chaque spécialiste (X25519)
+DAPP -> API : POST /medical/files/{id}/referrals
+API -> DB : orientation + clés enveloppées + audit
+API -> SAPP : notification sans contenu (medical_referral)
+== Avis ==
+SP -> SAPP : ouvrir le dossier, « rédiger un avis »
+SAPP -> API : GET /medical/files/{id}/opinion-recipients
+API --> SAPP : clés publiques : médecins du dossier,\ncomité, orienteur, auteur
+SAPP -> SAPP : chiffrer l'avis avec une nouvelle clé\net l'envelopper pour chaque lecteur
+SAPP -> API : POST /medical/files/{id}/opinions
+API -> DB : avis chiffré + clés (refus de tout autre lecteur)
+API -> DAPP : notification sans contenu (medical_opinion)
+== Transparence ==
+C -> API : GET /me/medical/openings
+API --> C : qualité et date seulement\n(médecin PC, spécialiste, comité), sans nom
+@enduml

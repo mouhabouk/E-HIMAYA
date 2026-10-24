@@ -1,0 +1,51 @@
+@startuml
+!include style.iuml
+title Cas d'utilisation : citoyen (application mobile)
+left to right direction
+actor "Visiteur anonyme" as ANO
+actor "Citoyen enregistré" as CIT
+actor "Proche lié" as REL
+actor "Salle des opérations" as OPS <<système>>
+CIT -|> ANO
+rectangle "Application mobile e-Himaya" {
+  usecase "Choisir la langue,\naccepter les conditions" as A1
+  usecase "S'identifier par téléphone\n(code SMS)" as A2
+  usecase "Signaler un incident" as A3
+  usecase "Joindre photo, vidéo, audio" as A4
+  usecase "Envoyer hors ligne\n(file d'attente, SMS de secours)" as A5
+  usecase "Diffuser en direct" as A6
+  usecase "Suivre par code de suivi" as A7
+  usecase "Appeler le 198" as A8
+  usecase "Consulter guide et\n« le plus proche »" as A9
+  usecase "Recevoir les alertes\n(y compris critiques)" as A10
+  usecase "Gérer contacts d'urgence\net message SOS" as A11
+  usecase "Partager sa position en direct" as A12
+  usecase "Lancer un contrôle de sécurité" as A13
+  usecase "Créer le dossier médical\net la carte d'urgence" as A14
+  usecase "Joindre le dossier médical\nau signalement" as A15
+  usecase "Consulter points et badges" as A16
+  usecase "Contacter l'ONPC (non urgent)" as A17
+  usecase "Exporter / supprimer\nses données" as A18
+}
+ANO --> A1
+ANO --> A3
+ANO --> A7
+ANO --> A8
+ANO --> A9
+ANO --> A10
+CIT --> A2
+CIT --> A11
+CIT --> A12
+CIT --> A13
+CIT --> A14
+CIT --> A16
+CIT --> A17
+CIT --> A18
+A3 <.. A4 : <<extend>>
+A3 <.. A5 : <<extend>>
+A3 <.. A6 : <<extend>>
+A3 <.. A15 : <<extend>>
+A15 ..> A14 : <<include>>
+A3 --> OPS
+A12 --> REL
+@enduml

@@ -1,0 +1,51 @@
+@startuml
+!include style.iuml
+title Architecture technique et flux entre composants
+skinparam nodesep 30
+skinparam ranksep 45
+node "Téléphone Android" {
+  component "Application e-Himaya\n(Flutter, SQLite chiffré,\nfile d'attente hors ligne)" as APP
+}
+node "Navigateur" {
+  component "Tableau de bord\n(React + MapLibre)" as DSH
+  component "Portail établissements\n(React)" as POR
+}
+node "Centre de données ONPC" {
+  component "Reverse proxy\n(TLS)" as RP
+  component "API e-Himaya\n(FastAPI, Python 3.13)" as API
+  component "Workers\n(IA, notifications,\nrapports, météo, preuves)" as WK
+  component "Keycloak\n(royaumes public / staff)" as KC
+  component "MediaMTX\n(WHIP, WHEP, HLS)" as MTX
+  component "Asterisk 22\n(ARI, SIP/WebRTC)" as PBX
+  component "Services IA\n(Whisper, Qwen3,\nYOLOX ONNX)" as AI
+  database "PostgreSQL 16\nPostGIS, pgvector,\nRLS par gouvernorat" as DB
+  database "Stockage objets\n(médias, documents,\npreuves)" as S3
+  component "tusd\n(téléversement\nreprenable)" as TUS
+}
+cloud "FCM" as FCM
+cloud "Passerelle SMS" as SMS
+cloud "Open-Meteo" as MET
+cloud "Horodatage RFC 3161" as TSA
+
+APP --> RP : HTTPS / REST
+DSH --> RP : HTTPS + WebSocket
+POR --> RP : HTTPS
+APP --> TUS : médias (tus)
+APP --> MTX : vidéo en direct (WHIP)
+DSH --> MTX : visionnage (WHEP)
+DSH --> PBX : softphone (SIP/WSS)
+RP --> API
+RP --> KC
+API --> DB
+WK --> DB
+API --> S3
+TUS --> S3
+MTX --> S3 : enregistrements
+WK --> AI
+PBX --> API : événements ARI
+WK --> FCM
+WK --> SMS
+SMS --> API : SMS entrants
+WK --> MET
+WK --> TSA : ancrage des preuves
+@enduml

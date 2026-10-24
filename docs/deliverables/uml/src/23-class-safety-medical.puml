@@ -1,0 +1,88 @@
+@startuml
+!include style.iuml
+title Diagramme de classes : sécurité personnelle et dossier médical
+hide empty methods
+class Compte
+class LienProche {
+  utilisateur A, utilisateur B
+  créé_le
+}
+class InvitationProche {
+  code [haché], expire_le [48 h]
+  acceptée_le
+}
+class AlerteSOS {
+  type : SOS | contrôle expiré
+  message [chiffré]
+  position [chiffrée]
+  batterie, expire_le
+}
+class DestinataireAlerte {
+  vu_le
+}
+class PartagePosition {
+  jeton [haché]
+  début, expiration
+  points [chiffrés]
+}
+class ContrôleSécurité {
+  échéance
+  message, position [chiffrés]
+  statut : actif | ok | expiré
+}
+class HistoriquePositions {
+  activé du / jusqu'au [72 h]
+}
+class DossierMédicalVerrouillé {
+  nonce
+  texte chiffré [XChaCha20]
+}
+class CléFichier {
+  via : groupe | comité
+  clé éphémère
+  clé enveloppée
+}
+class OuvertureDossier {
+  en tant que comité
+  motif, date
+}
+class Orientation {
+  motif, créée_le
+  [5 au plus par dossier]
+}
+class AvisMédical {
+  spécialité
+  texte chiffré [≤ 4000 car.]
+}
+class CléAvis {
+  clé enveloppée
+}
+class Médecin
+class Signalement
+Compte "1" -- "*" LienProche
+Compte "1" -- "*" InvitationProche
+Compte "1" -- "*" AlerteSOS
+AlerteSOS "1" *-- "*" DestinataireAlerte
+DestinataireAlerte "*" --> "1" Compte
+Compte "1" -- "*" PartagePosition
+Compte "1" -- "*" ContrôleSécurité
+ContrôleSécurité "0..1" --> "0..1" AlerteSOS : déclenche
+Compte "1" -- "0..1" HistoriquePositions
+Signalement "1" -- "0..1" DossierMédicalVerrouillé
+DossierMédicalVerrouillé "1" *-- "*" CléFichier
+CléFichier "*" --> "1" Médecin
+DossierMédicalVerrouillé "1" -- "*" OuvertureDossier
+OuvertureDossier "*" --> "1" Médecin
+DossierMédicalVerrouillé "1" -- "*" Orientation
+Orientation "*" --> "1" Médecin : orienteur
+Orientation "*" --> "1" Médecin : spécialiste
+DossierMédicalVerrouillé "1" *-- "*" AvisMédical
+AvisMédical "*" --> "1" Médecin : auteur
+AvisMédical "1" *-- "*" CléAvis
+CléAvis "*" --> "1" Médecin : lecteur
+note bottom of DossierMédicalVerrouillé
+  Le serveur ne peut pas déchiffrer :
+  une copie de la clé par médecin du
+  gouvernorat (X25519 + Argon2id).
+end note
+@enduml
