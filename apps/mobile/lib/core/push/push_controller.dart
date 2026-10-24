@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart' show Locale;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../features/alerts/alerts_providers.dart';
+import '../../features/doctor/doctor_providers.dart';
 import '../../features/reports/reports_providers.dart';
 import '../../features/safety/safety_providers.dart';
 import '../../features/volunteer/volunteer_providers.dart';
@@ -176,6 +177,8 @@ class PushController {
         _ref.invalidate(safetyCheckProvider);
       case PushKind.safetyHistoryViewed:
         break;
+      case PushKind.medicalReferral || PushKind.medicalOpinion:
+        _ref.invalidate(medicalFilesProvider);
     }
   }
 

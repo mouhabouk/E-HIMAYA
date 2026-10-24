@@ -3647,6 +3647,7 @@
       "attachedAt": "Joint le {{at}}",
       "empty": "Le dossier est vide.",
       "locked": "Voici la carte d'urgence choisie par la personne. Le reste de son dossier médical est verrouillé sur son téléphone pour les médecins de la Protection civile et le comité médical ; la salle des opérations ne peut pas l'ouvrir.",
+      "referrals": "Dossier adressé à des spécialistes : {{referrals}} ; avis médicaux verrouillés : {{opinions}}. Leur contenu n'est pas affiché ici.",
       "audited": "Cette ouverture a été inscrite au journal d'audit.",
       "sex": {
         "female": "Femme",

@@ -3903,4 +3903,156 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get specialtyEnt => 'Ear, nose and throat';
+
+  @override
+  String get doctorRefer => 'Refer to a specialist';
+
+  @override
+  String get doctorReferTitle => 'Refer the file';
+
+  @override
+  String get doctorReferHint =>
+      'The file key is locked on your phone for each doctor you choose; the server never sees it. At most five referrals per file.';
+
+  @override
+  String get doctorReferPickSpecialty => 'Choose the specialty first.';
+
+  @override
+  String get doctorReferNoKey => 'Has not set their key yet';
+
+  @override
+  String get doctorReferReason => 'Reason for the referral';
+
+  @override
+  String get doctorReferSend => 'Refer';
+
+  @override
+  String get doctorReferDone =>
+      'File referred. The doctor gets a notification without any content.';
+
+  @override
+  String get doctorReferrals => 'Referrals';
+
+  @override
+  String get doctorReferralsMine => 'Referred by you';
+
+  @override
+  String get doctorOpinions => 'Medical opinions';
+
+  @override
+  String get doctorOpinionsEmpty => 'No opinion yet.';
+
+  @override
+  String get doctorOpinionWrite => 'Write an opinion';
+
+  @override
+  String get doctorOpinionHint =>
+      'An advisory opinion locked on your phone for the gouvernorat and committee doctors holding the file, and for the doctor who referred it.';
+
+  @override
+  String get doctorOpinionSend => 'Send the opinion';
+
+  @override
+  String get doctorOpinionSent => 'Opinion sent, locked.';
+
+  @override
+  String get doctorOpinionMine => 'Your opinion';
+
+  @override
+  String get doctorOpinionCannotOpen =>
+      'This opinion cannot be opened with your key.';
+
+  @override
+  String get doctorPendingTitle => 'Files waiting for a new member';
+
+  @override
+  String get doctorPendingShare => 'Lock for them';
+
+  @override
+  String get doctorPendingReasonHint =>
+      'Your phone opens each file to lock its key for the new member. Each opening is recorded with the reason.';
+
+  @override
+  String get doctorPendingDone =>
+      'The files are now available to the new member.';
+
+  @override
+  String get medicalOpeningsTitle => 'Who saw my medical file';
+
+  @override
+  String get medicalOpeningsEmpty =>
+      'Nobody has opened the locked part of your file.';
+
+  @override
+  String get medicalOpeningsNote =>
+      'Only the role is shown, never the doctors\' names.';
+
+  @override
+  String get medicalOpeningCommittee => 'The medical committee';
+
+  @override
+  String get medicalOpeningOpened => 'Opened the file';
+
+  @override
+  String get pushMedicalReferralTitle => 'A medical file was referred to you';
+
+  @override
+  String get pushMedicalReferralBody => 'Open it in the doctor\'s space.';
+
+  @override
+  String get pushMedicalOpinionTitle => 'New medical opinion';
+
+  @override
+  String get pushMedicalOpinionBody =>
+      'A specialist\'s opinion on a file you follow. Open it in the doctor\'s space.';
+
+  @override
+  String get errorTooManyReferrals =>
+      'The file reached the maximum number of referrals (5).';
+
+  @override
+  String get errorAlreadyHoldsFile =>
+      'One of the chosen doctors already holds the file.';
+
+  @override
+  String get errorReferralNotAllowed =>
+      'A specialist cannot refer the file on.';
+
+  @override
+  String get errorRecipientsChanged =>
+      'The list of readers changed. Try again.';
+
+  @override
+  String get errorInvalidRecipient =>
+      'The file cannot be locked for this doctor.';
+
+  @override
+  String doctorPendingBody(int count, String name) {
+    return '$count item(s) for $name';
+  }
+
+  @override
+  String doctorOpinionBy(String specialty) {
+    return 'Specialist: $specialty';
+  }
+
+  @override
+  String medicalOpeningCp(String gouvernorat) {
+    return 'Civil Protection doctor, gouvernorat of $gouvernorat';
+  }
+
+  @override
+  String medicalOpeningSpecialist(String specialty, String workplace) {
+    return 'Specialist: $specialty, $workplace';
+  }
+
+  @override
+  String medicalOpeningReferral(String specialty) {
+    return 'Your file was referred to a specialist in $specialty';
+  }
+
+  @override
+  String medicalOpeningsCount(int count) {
+    return 'Who saw my medical file ($count)';
+  }
 }

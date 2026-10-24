@@ -3860,4 +3860,148 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get specialtyEnt => 'أمراض الأنف والأذن والحنجرة';
+
+  @override
+  String get doctorRefer => 'إحالة إلى مختص';
+
+  @override
+  String get doctorReferTitle => 'إحالة الملف';
+
+  @override
+  String get doctorReferHint =>
+      'يُقفل مفتاح الملف على هاتفك لكل طبيب تختاره، ولا يراه الخادم. خمس إحالات على الأكثر للملف الواحد.';
+
+  @override
+  String get doctorReferPickSpecialty => 'اختر الاختصاص أولاً.';
+
+  @override
+  String get doctorReferNoKey => 'لم يُنشئ مفتاحه بعد';
+
+  @override
+  String get doctorReferReason => 'سبب الإحالة';
+
+  @override
+  String get doctorReferSend => 'إحالة';
+
+  @override
+  String get doctorReferDone => 'أُحيل الملف. يصل الطبيب إشعار دون أي محتوى.';
+
+  @override
+  String get doctorReferrals => 'الإحالات';
+
+  @override
+  String get doctorReferralsMine => 'أحلتَه أنت';
+
+  @override
+  String get doctorOpinions => 'الآراء الطبية';
+
+  @override
+  String get doctorOpinionsEmpty => 'لا آراء بعد.';
+
+  @override
+  String get doctorOpinionWrite => 'كتابة رأي';
+
+  @override
+  String get doctorOpinionHint =>
+      'رأي استشاري يُقفل على هاتفك لأطباء الولاية واللجنة الذين يملكون الملف، ولمن أحاله إليك.';
+
+  @override
+  String get doctorOpinionSend => 'إرسال الرأي';
+
+  @override
+  String get doctorOpinionSent => 'أُرسل الرأي مقفلاً.';
+
+  @override
+  String get doctorOpinionMine => 'رأيك';
+
+  @override
+  String get doctorOpinionCannotOpen => 'تعذّر فتح هذا الرأي بمفتاحك.';
+
+  @override
+  String get doctorPendingTitle => 'ملفات تنتظر القفل لعضو جديد';
+
+  @override
+  String get doctorPendingShare => 'قفل له';
+
+  @override
+  String get doctorPendingReasonHint =>
+      'يفتح هاتفك كل ملف ليقفل مفتاحه للعضو الجديد. يُسجَّل كل فتح مع السبب.';
+
+  @override
+  String get doctorPendingDone => 'أصبحت الملفات متاحة للعضو الجديد.';
+
+  @override
+  String get medicalOpeningsTitle => 'من اطّلع على ملفي الطبي';
+
+  @override
+  String get medicalOpeningsEmpty => 'لم يطّلع أحد على الجزء المقفل من ملفك.';
+
+  @override
+  String get medicalOpeningsNote => 'تظهر الصفة فقط، دون أسماء الأطباء.';
+
+  @override
+  String get medicalOpeningCommittee => 'اللجنة الطبية';
+
+  @override
+  String get medicalOpeningOpened => 'اطّلع على الملف';
+
+  @override
+  String get pushMedicalReferralTitle => 'ملف طبي أُحيل إليك';
+
+  @override
+  String get pushMedicalReferralBody => 'افتحه في فضاء الطبيب.';
+
+  @override
+  String get pushMedicalOpinionTitle => 'رأي طبي جديد';
+
+  @override
+  String get pushMedicalOpinionBody =>
+      'رأي مختص على ملف تتابعه. افتحه في فضاء الطبيب.';
+
+  @override
+  String get errorTooManyReferrals => 'بلغ الملف الحد الأقصى للإحالات (5).';
+
+  @override
+  String get errorAlreadyHoldsFile =>
+      'أحد الأطباء المختارين يملك الملف بالفعل.';
+
+  @override
+  String get errorReferralNotAllowed => 'لا يمكن للمختص إحالة الملف مرة أخرى.';
+
+  @override
+  String get errorRecipientsChanged =>
+      'تغيّرت قائمة من يُقفل لهم الرأي. أعد المحاولة.';
+
+  @override
+  String get errorInvalidRecipient => 'لا يمكن قفل الملف لهذا الطبيب.';
+
+  @override
+  String doctorPendingBody(int count, String name) {
+    return '$count عنصر لـ $name';
+  }
+
+  @override
+  String doctorOpinionBy(String specialty) {
+    return 'طبيب مختص: $specialty';
+  }
+
+  @override
+  String medicalOpeningCp(String gouvernorat) {
+    return 'طبيب الحماية المدنية، ولاية $gouvernorat';
+  }
+
+  @override
+  String medicalOpeningSpecialist(String specialty, String workplace) {
+    return 'طبيب مختص: $specialty، $workplace';
+  }
+
+  @override
+  String medicalOpeningReferral(String specialty) {
+    return 'أُحيل ملفك إلى طبيب مختص في $specialty';
+  }
+
+  @override
+  String medicalOpeningsCount(int count) {
+    return 'من اطّلع على ملفي الطبي ($count)';
+  }
 }

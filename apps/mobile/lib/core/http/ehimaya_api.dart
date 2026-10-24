@@ -331,6 +331,105 @@ class EHimayaApi {
     return r.data!;
   });
 
+  // ---------------------------------------------------------------- phase C1-c
+
+  /// Who the file went to (the gouvernorat group and the committee only).
+  Future<List<FileReferral>> fileReferrals(String reportId) =>
+      guardApi(() async {
+        final r = await _dio.get<List<Object?>>(
+          '/api/v1/medical/files/$reportId/referrals',
+        );
+        return [
+          for (final x in r.data!)
+            FileReferral.fromJson((x! as Map).cast<String, Object?>()),
+        ];
+      });
+
+  /// Refers the file: its key locked on this phone for each specialist ([keys]).
+  Future<void> referMedicalFile(
+    String reportId, {
+    required String reason,
+    required List<Map<String, Object?>> keys,
+  }) => guardApi(() async {
+    await _dio.post<Object?>(
+      '/api/v1/medical/files/$reportId/referrals',
+      data: {'reason': reason, 'keys': keys},
+    );
+  });
+
+  /// Who a specialist's opinion is locked for (raw public keys).
+  Future<Map<String, List<int>>> opinionRecipients(String reportId) => guardApi(
+    () async {
+      final r = await _dio.get<List<Object?>>(
+        '/api/v1/medical/files/$reportId/opinion-recipients',
+      );
+      return {
+        for (final x in r.data!.cast<Map<String, Object?>>())
+          x['doctor_id']! as String: base64.decode(x['public_key']! as String),
+      };
+    },
+  );
+
+  Future<void> addOpinion(
+    String reportId,
+    Map<String, Object?> locked, {
+    String? specialty,
+  }) => guardApi(() async {
+    await _dio.post<Object?>(
+      '/api/v1/medical/files/$reportId/opinions',
+      data: {...locked, 'specialty': ?specialty},
+    );
+  });
+
+  Future<List<LockedOpinion>> medicalOpinions(String reportId) =>
+      guardApi(() async {
+        final r = await _dio.get<List<Object?>>(
+          '/api/v1/medical/files/$reportId/opinions',
+        );
+        return [
+          for (final x in r.data!)
+            LockedOpinion.fromJson((x! as Map).cast<String, Object?>()),
+        ];
+      });
+
+  Future<List<PendingMember>> committeePending() => guardApi(() async {
+    final r = await _dio.get<List<Object?>>(
+      '/api/v1/medical/committee/pending',
+    );
+    return [
+      for (final x in r.data!)
+        PendingMember.fromJson((x! as Map).cast<String, Object?>()),
+    ];
+  });
+
+  /// A file's ([opinionId] null) or an opinion's key locked for new committee members.
+  Future<void> shareMedicalKey({
+    String? reportId,
+    String? opinionId,
+    required String reason,
+    required List<Map<String, Object?>> keys,
+  }) => guardApi(() async {
+    await _dio.post<Object?>(
+      opinionId != null
+          ? '/api/v1/medical/opinions/$opinionId/keys'
+          : '/api/v1/medical/files/$reportId/keys',
+      data: {'reason': reason, 'keys': keys},
+    );
+  });
+
+  /// Who saw the reporter's locked medical file (by role only).
+  Future<List<MedicalOpening>> myMedicalOpenings({String? reportId}) =>
+      guardApi(() async {
+        final r = await _dio.get<List<Object?>>(
+          '/api/v1/me/medical/openings',
+          queryParameters: {'report_id': ?reportId},
+        );
+        return [
+          for (final x in r.data!)
+            MedicalOpening.fromJson((x! as Map).cast<String, Object?>()),
+        ];
+      });
+
   Future<List<DirectoryDoctor>> doctorDirectory({
     DoctorSpecialty? specialty,
     int? gouvernoratCode,

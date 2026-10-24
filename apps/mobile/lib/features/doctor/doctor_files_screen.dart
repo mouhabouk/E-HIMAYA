@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -7,17 +9,19 @@ import '../../core/http/ehimaya_api.dart';
 import '../../core/http/error_messages.dart';
 import '../../core/http/models.dart';
 import '../../core/ui/emergency_action.dart';
+import '../../core/ui/messenger.dart';
 import '../../l10n/app_localizations.dart';
 import '../alerts/alert_labels.dart';
 import '../report/category_labels.dart';
-import '../safety/medical_screen.dart';
 import '../safety/safety_models.dart';
 import 'doctor_key.dart';
 import 'doctor_providers.dart';
+import 'opened_file_screen.dart';
 
-/// Phase C1-b: the medical files locked for this doctor (their gouvernorat, or the medical
-/// committee). Each file is opened on the phone with the doctor's key; the opening is recorded,
-/// and a committee member gives a reason.
+/// Phase C1-b: the medical files locked for this doctor (their gouvernorat, the medical
+/// committee, or a referral in phase C1-c). Each file is opened on the phone with the doctor's
+/// key; the opening is recorded, and a committee member gives a reason. A committee member also
+/// sees the files waiting to be locked for a newly appointed member.
 class DoctorFilesScreen extends ConsumerWidget {
   const DoctorFilesScreen({super.key});
 
@@ -27,7 +31,7 @@ class DoctorFilesScreen extends ConsumerWidget {
     FileVia.referral => l10n.doctorFileViaReferral,
   };
 
-  Future<String?> _askReason(BuildContext context) {
+  static Future<String?> askReason(BuildContext context, {String? hint}) {
     final l10n = AppLocalizations.of(context);
     final controller = TextEditingController();
     return showDialog<String>(
@@ -39,7 +43,10 @@ class DoctorFilesScreen extends ConsumerWidget {
           controller: controller,
           maxLength: 500,
           autofocus: true,
-          decoration: InputDecoration(helperText: l10n.doctorFileReasonHint),
+          decoration: InputDecoration(
+            helperText: hint ?? l10n.doctorFileReasonHint,
+            helperMaxLines: 3,
+          ),
         ),
         actions: [
           TextButton(
@@ -69,7 +76,7 @@ class DoctorFilesScreen extends ConsumerWidget {
     if (key == null || !context.mounted) return;
     String? reason;
     if (item.via == FileVia.committee) {
-      reason = await _askReason(context);
+      reason = await askReason(context);
       if (reason == null || !context.mounted) return;
     }
     try {
@@ -81,29 +88,14 @@ class DoctorFilesScreen extends ConsumerWidget {
       final file = MedicalFile.fromJson({...card, ...locked});
       ref.invalidate(medicalFilesProvider);
       if (!context.mounted) return;
-      await showDialog<void>(
-        context: context,
-        builder: (context) => Dialog.fullscreen(
-          child: Scaffold(
-            appBar: AppBar(
-              title: Text(item.trackingCode),
-              actions: const [StandardAppBarActions()],
-            ),
-            body: ListView(
-              padding: const EdgeInsets.all(20),
-              children: [
-                Text(
-                  medicalText(l10n, file),
-                  key: const Key('file-text'),
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  l10n.doctorFileConfidential,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-              ],
-            ),
+      await Navigator.of(context).push<void>(
+        MaterialPageRoute(
+          fullscreenDialog: true,
+          builder: (_) => OpenedFileScreen(
+            item: item,
+            file: file,
+            opened: opened,
+            doctorKey: key,
           ),
         ),
       );
@@ -125,6 +117,8 @@ class DoctorFilesScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final files = ref.watch(medicalFilesProvider);
+    final until = ref.watch(doctorProvider).value?.committeeUntil;
+    final member = until != null && until.isAfter(DateTime.now());
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.doctorFiles),
@@ -145,6 +139,7 @@ class DoctorFilesScreen extends ConsumerWidget {
           data: (items) => items.isEmpty
               ? ListView(
                   children: [
+                    if (member) const _PendingMembers(),
                     Padding(
                       key: const Key('files-empty'),
                       padding: const EdgeInsets.all(24),
@@ -153,10 +148,17 @@ class DoctorFilesScreen extends ConsumerWidget {
                   ],
                 )
               : ListView.separated(
-                  itemCount: items.length,
-                  separatorBuilder: (_, _) => const Divider(height: 1),
+                  itemCount: items.length + 1,
+                  separatorBuilder: (_, i) => i == 0
+                      ? const SizedBox.shrink()
+                      : const Divider(height: 1),
                   itemBuilder: (context, i) {
-                    final item = items[i];
+                    if (i == 0) {
+                      return member
+                          ? const _PendingMembers()
+                          : const SizedBox.shrink();
+                    }
+                    final item = items[i - 1];
                     final category = ReportCategory.fromWire(item.category);
                     return ListTile(
                       key: Key('file-${item.reportId}'),
@@ -179,6 +181,103 @@ class DoctorFilesScreen extends ConsumerWidget {
                     );
                   },
                 ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Committee members appointed after files this member holds were locked (design §13.3): one
+/// button opens each file and opinion on this phone and locks its key for them.
+class _PendingMembers extends ConsumerStatefulWidget {
+  const _PendingMembers();
+
+  @override
+  ConsumerState<_PendingMembers> createState() => _PendingMembersState();
+}
+
+class _PendingMembersState extends ConsumerState<_PendingMembers> {
+  String? _busy;
+
+  Future<void> _share(PendingMember m) async {
+    final l10n = AppLocalizations.of(context);
+    final reason = await DoctorFilesScreen.askReason(
+      context,
+      hint: l10n.doctorPendingReasonHint,
+    );
+    if (reason == null || !mounted) return;
+    final key = await ref.read(doctorKeyProvider.future);
+    if (key == null || !mounted) return;
+    setState(() => _busy = m.doctorId);
+    final api = ref.read(apiProvider);
+    final crypto = ref.read(medicalCryptoProvider);
+    final to = {m.doctorId: base64.decode(m.publicKey)};
+    try {
+      for (final reportId in m.files) {
+        final opened = await api.openMedicalFile(reportId, reason: reason);
+        final keys = await crypto.wrap(await crypto.unwrap(opened, key), to);
+        await api.shareMedicalKey(
+          reportId: reportId,
+          reason: reason,
+          keys: keys,
+        );
+      }
+      for (final reportId in {...m.opinions.values}) {
+        for (final o in await api.medicalOpinions(reportId)) {
+          if (!m.opinions.containsKey(o.id)) continue;
+          final keys = await crypto.wrap(await crypto.unwrap(o.copy, key), to);
+          await api.shareMedicalKey(
+            opinionId: o.id,
+            reason: reason,
+            keys: keys,
+          );
+        }
+      }
+      showRootMessage(l10n.doctorPendingDone, null);
+    } on Object catch (e) {
+      showRootMessage(errorMessageFor(l10n, e), null);
+    } finally {
+      ref.invalidate(committeePendingProvider);
+      ref.invalidate(medicalFilesProvider);
+      if (mounted) setState(() => _busy = null);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final pending = ref.watch(committeePendingProvider).value ?? const [];
+    if (pending.isEmpty) return const SizedBox.shrink();
+    return Card(
+      key: const Key('pending-members'),
+      margin: const EdgeInsets.all(12),
+      color: Theme.of(context).colorScheme.secondaryContainer,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.doctorPendingTitle,
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            for (final m in pending)
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.group_add_outlined),
+                title: Text(l10n.doctorPendingBody(m.count, m.fullName ?? '—')),
+                trailing: _busy == m.doctorId
+                    ? const SizedBox.square(
+                        dimension: 24,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : TextButton(
+                        key: Key('pending-share-${m.doctorId}'),
+                        onPressed: _busy == null ? () => _share(m) : null,
+                        child: Text(l10n.doctorPendingShare),
+                      ),
+              ),
+          ],
         ),
       ),
     );

@@ -4,7 +4,8 @@ import 'dart:typed_data';
 import 'package:cryptography/cryptography.dart';
 import 'package:cryptography/dart.dart';
 
-/// Locked medical files (phase C1-b, docs/phase-c/design-medical-axis.md §12). The same format as
+/// Locked medical files (phase C1-b, docs/phase-c/design-medical-axis.md §12; referrals and
+/// opinions, C1-c §13). The same format as
 /// services/api/tests/medical_crypto.py:
 ///
 /// * file: AES-256-GCM with a random 32-byte key (DEK), 12-byte nonce, no associated data;
@@ -30,17 +31,29 @@ class MedicalCrypto {
   static const _info = 'ehimaya-medical-v1';
 
   /// Locks [data] for each recipient (`doctor_id` → raw public key): the body of
-  /// `medical_locked`.
+  /// `medical_locked` (and, phase C1-c, of a specialist's opinion).
   Future<Map<String, Object?>> lock(
     Map<String, Object?> data,
     Map<String, List<int>> recipients,
   ) async {
     final dek = await _aes.newSecretKey();
-    final dekBytes = await dek.extractBytes();
     final box = await _aes.encrypt(
       utf8.encode(jsonEncode(data)),
       secretKey: dek,
     );
+    return {
+      'nonce': base64.encode(box.nonce),
+      'ciphertext': base64.encode([...box.cipherText, ...box.mac.bytes]),
+      'keys': await wrap(await dek.extractBytes(), recipients),
+    };
+  }
+
+  /// The file (or opinion) key locked for each recipient: what a referral, or a copy for a new
+  /// committee member, sends (phase C1-c).
+  Future<List<Map<String, Object?>>> wrap(
+    List<int> dek,
+    Map<String, List<int>> recipients,
+  ) async {
     final keys = <Map<String, Object?>>[];
     for (final MapEntry(key: doctorId, value: doctorPublic)
         in recipients.entries) {
@@ -58,7 +71,7 @@ class MedicalCrypto {
         nonce: [...ephPublic, ...doctorPublic],
         info: utf8.encode(_info),
       );
-      final wrapped = await _aes.encrypt(dekBytes, secretKey: kek);
+      final wrapped = await _aes.encrypt(dek, secretKey: kek);
       keys.add({
         'doctor_id': doctorId,
         'eph_public': base64.encode(ephPublic),
@@ -66,15 +79,11 @@ class MedicalCrypto {
         'wrapped': base64.encode([...wrapped.cipherText, ...wrapped.mac.bytes]),
       });
     }
-    return {
-      'nonce': base64.encode(box.nonce),
-      'ciphertext': base64.encode([...box.cipherText, ...box.mac.bytes]),
-      'keys': keys,
-    };
+    return keys;
   }
 
-  /// Opens the doctor's copy (`POST /api/v1/medical/files/{id}/open`) with their private key.
-  Future<Map<String, Object?>> open(
+  /// The key of the doctor's copy (a file or an opinion), opened with their private key.
+  Future<List<int>> unwrap(
     Map<String, Object?> opened,
     DoctorKeyPair key,
   ) async {
@@ -88,13 +97,21 @@ class MedicalCrypto {
       nonce: [...ephPublic, ...key.publicKey],
       info: utf8.encode(_info),
     );
-    final dek = await _aes.decrypt(
+    return _aes.decrypt(
       _box(opened['key_nonce']! as String, opened['wrapped']! as String),
       secretKey: kek,
     );
+  }
+
+  /// Opens the doctor's copy (`POST /api/v1/medical/files/{id}/open`, or an opinion of
+  /// `GET …/opinions`) with their private key.
+  Future<Map<String, Object?>> open(
+    Map<String, Object?> opened,
+    DoctorKeyPair key,
+  ) async {
     final plain = await _aes.decrypt(
       _box(opened['nonce']! as String, opened['ciphertext']! as String),
-      secretKey: SecretKey(dek),
+      secretKey: SecretKey(await unwrap(opened, key)),
     );
     return (jsonDecode(utf8.decode(plain)) as Map).cast<String, Object?>();
   }

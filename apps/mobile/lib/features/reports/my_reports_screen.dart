@@ -15,8 +15,10 @@ import '../../core/sync/sync_scheduler.dart';
 import '../../core/ui/emergency_action.dart';
 import '../../core/ui/theme.dart';
 import '../../l10n/app_localizations.dart';
+import '../doctor/doctor_providers.dart';
 import '../institution/org_labels.dart';
 import '../report/category_labels.dart';
+import 'medical_openings.dart';
 import 'reports_providers.dart';
 import 'status_chip.dart';
 
@@ -28,6 +30,7 @@ class MyReportsScreen extends ConsumerWidget {
   Future<void> _refresh(WidgetRef ref) async {
     await ref.read(requestSyncProvider)();
     await ref.read(serverReportsProvider.notifier).refresh();
+    ref.invalidate(myMedicalOpeningsProvider);
   }
 
   @override
@@ -181,6 +184,8 @@ class ReportTile extends ConsumerWidget {
                   OrgChip(name: item.organizationName ?? ''),
               ],
             ),
+            if (item.serverId != null)
+              MedicalOpeningsButton(reportId: item.serverId!),
             if (item.canGoLive)
               Align(
                 alignment: AlignmentDirectional.centerEnd,

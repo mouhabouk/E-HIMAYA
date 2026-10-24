@@ -3940,4 +3940,156 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get specialtyEnt => 'ORL';
+
+  @override
+  String get doctorRefer => 'Adresser à un spécialiste';
+
+  @override
+  String get doctorReferTitle => 'Adresser le dossier';
+
+  @override
+  String get doctorReferHint =>
+      'La clé du dossier est verrouillée sur votre téléphone pour chaque médecin choisi ; le serveur ne la voit pas. Cinq adressages au plus par dossier.';
+
+  @override
+  String get doctorReferPickSpecialty => 'Choisissez d’abord la spécialité.';
+
+  @override
+  String get doctorReferNoKey => 'N’a pas encore créé sa clé';
+
+  @override
+  String get doctorReferReason => 'Motif de l’adressage';
+
+  @override
+  String get doctorReferSend => 'Adresser';
+
+  @override
+  String get doctorReferDone =>
+      'Dossier adressé. Le médecin reçoit une notification sans contenu.';
+
+  @override
+  String get doctorReferrals => 'Adressages';
+
+  @override
+  String get doctorReferralsMine => 'Adressé par vous';
+
+  @override
+  String get doctorOpinions => 'Avis médicaux';
+
+  @override
+  String get doctorOpinionsEmpty => 'Aucun avis pour l’instant.';
+
+  @override
+  String get doctorOpinionWrite => 'Rédiger un avis';
+
+  @override
+  String get doctorOpinionHint =>
+      'Avis consultatif verrouillé sur votre téléphone pour les médecins du gouvernorat et du comité qui détiennent le dossier, et pour celui qui vous l’a adressé.';
+
+  @override
+  String get doctorOpinionSend => 'Envoyer l’avis';
+
+  @override
+  String get doctorOpinionSent => 'Avis envoyé, verrouillé.';
+
+  @override
+  String get doctorOpinionMine => 'Votre avis';
+
+  @override
+  String get doctorOpinionCannotOpen =>
+      'Impossible d’ouvrir cet avis avec votre clé.';
+
+  @override
+  String get doctorPendingTitle => 'Dossiers en attente pour un nouveau membre';
+
+  @override
+  String get doctorPendingShare => 'Verrouiller pour lui';
+
+  @override
+  String get doctorPendingReasonHint =>
+      'Votre téléphone ouvre chaque dossier pour en verrouiller la clé pour le nouveau membre. Chaque ouverture est enregistrée avec le motif.';
+
+  @override
+  String get doctorPendingDone =>
+      'Les dossiers sont accessibles au nouveau membre.';
+
+  @override
+  String get medicalOpeningsTitle => 'Qui a consulté mon dossier médical';
+
+  @override
+  String get medicalOpeningsEmpty =>
+      'Personne n’a consulté la partie verrouillée de votre dossier.';
+
+  @override
+  String get medicalOpeningsNote =>
+      'Seule la qualité est affichée, sans le nom des médecins.';
+
+  @override
+  String get medicalOpeningCommittee => 'Le comité médical';
+
+  @override
+  String get medicalOpeningOpened => 'A consulté le dossier';
+
+  @override
+  String get pushMedicalReferralTitle => 'Un dossier médical vous est adressé';
+
+  @override
+  String get pushMedicalReferralBody => 'Ouvrez-le dans l’espace médecin.';
+
+  @override
+  String get pushMedicalOpinionTitle => 'Nouvel avis médical';
+
+  @override
+  String get pushMedicalOpinionBody =>
+      'Avis d’un spécialiste sur un dossier que vous suivez. Ouvrez-le dans l’espace médecin.';
+
+  @override
+  String get errorTooManyReferrals =>
+      'Le dossier a atteint le nombre maximal d’adressages (5).';
+
+  @override
+  String get errorAlreadyHoldsFile =>
+      'Un des médecins choisis détient déjà le dossier.';
+
+  @override
+  String get errorReferralNotAllowed =>
+      'Un spécialiste ne peut pas adresser le dossier à son tour.';
+
+  @override
+  String get errorRecipientsChanged =>
+      'La liste des destinataires a changé. Réessayez.';
+
+  @override
+  String get errorInvalidRecipient =>
+      'Le dossier ne peut pas être verrouillé pour ce médecin.';
+
+  @override
+  String doctorPendingBody(int count, String name) {
+    return '$count élément(s) pour $name';
+  }
+
+  @override
+  String doctorOpinionBy(String specialty) {
+    return 'Médecin spécialiste : $specialty';
+  }
+
+  @override
+  String medicalOpeningCp(String gouvernorat) {
+    return 'Médecin de la Protection civile, gouvernorat de $gouvernorat';
+  }
+
+  @override
+  String medicalOpeningSpecialist(String specialty, String workplace) {
+    return 'Médecin spécialiste : $specialty, $workplace';
+  }
+
+  @override
+  String medicalOpeningReferral(String specialty) {
+    return 'Votre dossier a été adressé à un spécialiste en $specialty';
+  }
+
+  @override
+  String medicalOpeningsCount(int count) {
+    return 'Qui a consulté mon dossier médical ($count)';
+  }
 }

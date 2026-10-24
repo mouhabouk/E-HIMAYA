@@ -1981,5 +1981,95 @@
   "specialtyPsychiatry": "Psychiatry",
   "specialtyToxicology": "Toxicology",
   "specialtyOphthalmology": "Ophthalmology",
-  "specialtyEnt": "Ear, nose and throat"
+  "specialtyEnt": "Ear, nose and throat",
+  "doctorRefer": "Refer to a specialist",
+  "doctorReferTitle": "Refer the file",
+  "doctorReferHint": "The file key is locked on your phone for each doctor you choose; the server never sees it. At most five referrals per file.",
+  "doctorReferPickSpecialty": "Choose the specialty first.",
+  "doctorReferNoKey": "Has not set their key yet",
+  "doctorReferReason": "Reason for the referral",
+  "doctorReferSend": "Refer",
+  "doctorReferDone": "File referred. The doctor gets a notification without any content.",
+  "doctorReferrals": "Referrals",
+  "doctorReferralsMine": "Referred by you",
+  "doctorOpinions": "Medical opinions",
+  "doctorOpinionsEmpty": "No opinion yet.",
+  "doctorOpinionWrite": "Write an opinion",
+  "doctorOpinionHint": "An advisory opinion locked on your phone for the gouvernorat and committee doctors holding the file, and for the doctor who referred it.",
+  "doctorOpinionSend": "Send the opinion",
+  "doctorOpinionSent": "Opinion sent, locked.",
+  "doctorOpinionMine": "Your opinion",
+  "doctorOpinionCannotOpen": "This opinion cannot be opened with your key.",
+  "doctorPendingTitle": "Files waiting for a new member",
+  "doctorPendingShare": "Lock for them",
+  "doctorPendingReasonHint": "Your phone opens each file to lock its key for the new member. Each opening is recorded with the reason.",
+  "doctorPendingDone": "The files are now available to the new member.",
+  "medicalOpeningsTitle": "Who saw my medical file",
+  "medicalOpeningsEmpty": "Nobody has opened the locked part of your file.",
+  "medicalOpeningsNote": "Only the role is shown, never the doctors' names.",
+  "medicalOpeningCommittee": "The medical committee",
+  "medicalOpeningOpened": "Opened the file",
+  "pushMedicalReferralTitle": "A medical file was referred to you",
+  "pushMedicalReferralBody": "Open it in the doctor's space.",
+  "pushMedicalOpinionTitle": "New medical opinion",
+  "pushMedicalOpinionBody": "A specialist's opinion on a file you follow. Open it in the doctor's space.",
+  "errorTooManyReferrals": "The file reached the maximum number of referrals (5).",
+  "errorAlreadyHoldsFile": "One of the chosen doctors already holds the file.",
+  "errorReferralNotAllowed": "A specialist cannot refer the file on.",
+  "errorRecipientsChanged": "The list of readers changed. Try again.",
+  "errorInvalidRecipient": "The file cannot be locked for this doctor.",
+  "doctorPendingBody": "{count} item(s) for {name}",
+  "@doctorPendingBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "doctorOpinionBy": "Specialist: {specialty}",
+  "@doctorOpinionBy": {
+    "placeholders": {
+      "specialty": {
+        "type": "String"
+      }
+    }
+  },
+  "medicalOpeningCp": "Civil Protection doctor, gouvernorat of {gouvernorat}",
+  "@medicalOpeningCp": {
+    "placeholders": {
+      "gouvernorat": {
+        "type": "String"
+      }
+    }
+  },
+  "medicalOpeningSpecialist": "Specialist: {specialty}, {workplace}",
+  "@medicalOpeningSpecialist": {
+    "placeholders": {
+      "specialty": {
+        "type": "String"
+      },
+      "workplace": {
+        "type": "String"
+      }
+    }
+  },
+  "medicalOpeningReferral": "Your file was referred to a specialist in {specialty}",
+  "@medicalOpeningReferral": {
+    "placeholders": {
+      "specialty": {
+        "type": "String"
+      }
+    }
+  },
+  "medicalOpeningsCount": "Who saw my medical file ({count})",
+  "@medicalOpeningsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

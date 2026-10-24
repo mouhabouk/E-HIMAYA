@@ -85,4 +85,28 @@ void main() {
     final saved = await crypto.backup(a, '7391');
     expect((await crypto.restore(saved, '7391')).publicKey, a.publicKey);
   });
+
+  test(
+    'a holder locks the file key again for a specialist (phase C1-c)',
+    () async {
+      final holder = await DoctorKeyPair.fromPrivate(
+        List.generate(32, (i) => i),
+      );
+      final specialist = await crypto.newKey();
+      final dek = await crypto.unwrap(_opened, holder);
+      expect(dek, hasLength(32));
+      final keys = await crypto.wrap(dek, {'s': specialist.publicKey});
+      final theirs = {
+        ..._opened,
+        'eph_public': keys.single['eph_public'],
+        'key_nonce': keys.single['nonce'],
+        'wrapped': keys.single['wrapped'],
+      };
+      expect(
+        await crypto.open(theirs, specialist),
+        await crypto.open(_opened, holder),
+      );
+      await expectLater(crypto.unwrap(theirs, holder), throwsA(anything));
+    },
+  );
 }
