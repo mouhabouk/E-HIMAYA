@@ -7,6 +7,7 @@ import '../../features/charter/charter_controller.dart';
 import '../../features/charter/charter_screen.dart';
 import '../../features/contact/contact_screens.dart';
 import '../../features/doctor/doctor_directory_screen.dart';
+import '../../features/doctor/doctor_files_screen.dart';
 import '../../features/doctor/doctor_form_screen.dart';
 import '../../features/doctor/doctor_screen.dart';
 import '../../features/emergency/emergency_screen.dart';
@@ -93,6 +94,7 @@ abstract final class Routes {
   static const doctor = '/doctor';
   static const doctorApply = '/doctor/apply';
   static const doctorDirectory = '/doctor/directory';
+  static const doctorFiles = '/doctor/files';
   static const notifications = '/notifications';
   static String alert(String id) => '/alerts/${Uri.encodeComponent(id)}';
   static const tips = '/tips';
@@ -421,6 +423,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: 'directory',
             builder: (_, _) => const DoctorDirectoryScreen(),
           ),
+          GoRoute(path: 'files', builder: (_, _) => const DoctorFilesScreen()),
         ],
       ),
       GoRoute(path: Routes.callouts, builder: (_, _) => const CalloutsScreen()),

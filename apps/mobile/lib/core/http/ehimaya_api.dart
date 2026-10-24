@@ -271,6 +271,66 @@ class EHimayaApi {
   });
 
   /// Approved doctors by specialty and gouvernorat: available first, then the caller's group.
+  /// Phase C1-b: the doctors a medical file is locked for at this place (public keys only).
+  Future<Map<String, List<int>>> medicalRecipients(GeoPoint at) =>
+      guardApi(() async {
+        final r = await _dio.get<Map<String, Object?>>(
+          '/api/v1/medical/recipients',
+          queryParameters: {
+            'lat': at.lat,
+            'lon': at.lon,
+            'accuracy_m': ?at.accuracyM,
+          },
+        );
+        return {
+          for (final x in (r.data!['recipients'] as List? ?? const []))
+            (x as Map)['doctor_id'] as String: base64.decode(
+              x['public_key'] as String,
+            ),
+        };
+      });
+
+  Future<DoctorKeyBackup?> doctorKey() async {
+    try {
+      return await guardApi(() async {
+        final r = await _dio.get<Map<String, Object?>>('/api/v1/me/doctor/key');
+        return DoctorKeyBackup.fromJson(r.data!);
+      });
+    } on ApiException catch (e) {
+      if (e.code == ApiErrorCode.doctorKeyMissing) return null;
+      rethrow;
+    }
+  }
+
+  Future<Doctor> putDoctorKey(String publicKey, Map<String, Object?> backup) =>
+      guardApi(() async {
+        final r = await _dio.put<Map<String, Object?>>(
+          '/api/v1/me/doctor/key',
+          data: {'public_key': publicKey, 'backup': backup},
+        );
+        return Doctor.fromJson(r.data!);
+      });
+
+  Future<List<MedicalInboxItem>> medicalFiles() => guardApi(() async {
+    final r = await _dio.get<List<Object?>>('/api/v1/medical/files');
+    return [
+      for (final x in r.data!)
+        MedicalInboxItem.fromJson((x! as Map).cast<String, Object?>()),
+    ];
+  });
+
+  /// The doctor's copy of a locked file (recorded; a committee member gives [reason]).
+  Future<Map<String, Object?>> openMedicalFile(
+    String reportId, {
+    String? reason,
+  }) => guardApi(() async {
+    final r = await _dio.post<Map<String, Object?>>(
+      '/api/v1/medical/files/$reportId/open',
+      data: {'reason': ?reason},
+    );
+    return r.data!;
+  });
+
   Future<List<DirectoryDoctor>> doctorDirectory({
     DoctorSpecialty? specialty,
     int? gouvernoratCode,

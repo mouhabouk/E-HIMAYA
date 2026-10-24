@@ -8,6 +8,7 @@ import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:ehimaya/core/auth/auth_session.dart';
 import 'package:ehimaya/core/auth/identity.dart';
 import 'package:ehimaya/core/consent/consent_service.dart';
+import 'package:ehimaya/core/crypto/medical_crypto.dart';
 import 'package:ehimaya/core/db/app_database.dart';
 import 'package:ehimaya/core/db/open_database.dart';
 import 'package:ehimaya/core/http/api_error.dart';
@@ -831,6 +832,87 @@ void main() {
         (await db.reportByUuid(other.clientUuid))!.state,
         ReportState.blocked,
       );
+    });
+  });
+
+  group('phase C1-b: the medical file is locked before it leaves', () {
+    Future<QueuedReport> withMedical() => queue.enqueue(
+      ReportDraft(
+        category: ReportCategory.medical,
+        location: point,
+        medical: const {'blood_group': 'AB-'},
+        medicalLocked: const {'conditions': 'diabète'},
+      ),
+    );
+
+    test('for the doctors of the place; the clear part never goes', () async {
+      final crypto = MedicalCrypto();
+      final doctor = await crypto.newKey();
+      final q = await withMedical();
+      final stored = jsonDecode((await db.reportByUuid(q.clientUuid))!.payload);
+      expect((stored as Map)[medicalToLockKey], {'conditions': 'diabète'});
+      Map<String, Object?>? sent;
+      adapter.handler = (r) {
+        if (r.path == '/api/v1/medical/recipients') {
+          expect(r.uri.queryParameters['lat'], '34.74');
+          return FakeResponse(
+            200,
+            json: {
+              'gouvernorat_codes': [61],
+              'recipients': [
+                {
+                  'doctor_id': 'doc-1',
+                  'public_key': base64.encode(doctor.publicKey),
+                  'via': 'gouvernorat',
+                },
+              ],
+            },
+          );
+        }
+        sent = (r.json! as Map).cast<String, Object?>();
+        return FakeResponse(
+          201,
+          json: serverReport(q.clientUuid, category: 'medical'),
+        );
+      };
+      await engine.runOnce();
+      expect(sent!['medical'], {'blood_group': 'AB-'});
+      expect(sent!.containsKey(medicalToLockKey), isFalse);
+      expect(jsonEncode(sent), isNot(contains('diab')));
+      final locked = sent!['medical_locked']! as Map<String, Object?>;
+      final key = ((locked['keys']! as List).single as Map)
+          .cast<String, Object?>();
+      expect(key['doctor_id'], 'doc-1');
+      final opened = await crypto.open({
+        'nonce': locked['nonce'],
+        'ciphertext': locked['ciphertext'],
+        'eph_public': key['eph_public'],
+        'key_nonce': key['nonce'],
+        'wrapped': key['wrapped'],
+      }, doctor);
+      expect(opened, {'conditions': 'diabète'});
+    });
+
+    test('with no doctor to lock it for, only the card goes', () async {
+      final q = await withMedical();
+      Map<String, Object?>? sent;
+      adapter.handler = (r) {
+        if (r.path == '/api/v1/medical/recipients') {
+          return const FakeResponse(
+            200,
+            json: {'gouvernorat_codes': [], 'recipients': []},
+          );
+        }
+        sent = (r.json! as Map).cast<String, Object?>();
+        return FakeResponse(
+          201,
+          json: serverReport(q.clientUuid, category: 'medical'),
+        );
+      };
+      await engine.runOnce();
+      expect(sent!['medical'], {'blood_group': 'AB-'});
+      expect(sent!.keys, isNot(contains('medical_locked')));
+      expect(sent!.keys, isNot(contains(medicalToLockKey)));
     });
   });
 }

@@ -359,7 +359,33 @@ class MedicalFile {
     this.other,
     this.contactName,
     this.contactPhone,
+    this.card,
   });
+
+  /// Wire names of the fields, in the order they are shown.
+  static const fieldKeys = [
+    'sex',
+    'birth_date',
+    'blood_group',
+    'treatment_card',
+    'allergies',
+    'conditions',
+    'medications',
+    'other',
+    'contact_name',
+    'contact_phone',
+  ];
+
+  /// Phase C1-b: what the emergency card shows unless the user chose otherwise (readable by the
+  /// operations room and the rescuers; the rest is locked for the doctors).
+  static const defaultCard = {
+    'blood_group',
+    'allergies',
+    'conditions',
+    'medications',
+    'contact_name',
+    'contact_phone',
+  };
 
   static const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
@@ -373,6 +399,11 @@ class MedicalFile {
   final String? other;
   final String? contactName;
   final String? contactPhone;
+
+  /// The fields the user chose for the emergency card; null: [defaultCard].
+  final Set<String>? card;
+
+  Set<String> get cardFields => card ?? defaultCard;
 
   static String? _s(Object? v) =>
       v is String && v.trim().isNotEmpty ? v.trim() : null;
@@ -390,6 +421,12 @@ class MedicalFile {
     other: _s(json['other']),
     contactName: _s(json['contact_name']),
     contactPhone: _s(json['contact_phone']),
+    card: json['_card'] is List
+        ? {
+            for (final k in json['_card']! as List)
+              if (fieldKeys.contains(k)) k as String,
+          }
+        : null,
   );
 
   /// Only the fields filled in (the API refuses unknown keys and stores nothing for an empty file).
@@ -412,4 +449,22 @@ class MedicalFile {
   }
 
   bool get isEmpty => toJson().isEmpty;
+
+  /// As kept in the phone's encrypted database: the fields and the card choice.
+  Map<String, Object?> toStorageJson() => {
+    ...toJson(),
+    if (card != null) '_card': [...card!]..sort(),
+  };
+
+  /// The emergency card sent with a report (`medical`).
+  Map<String, Object?> cardJson() => {
+    for (final e in toJson().entries)
+      if (cardFields.contains(e.key)) e.key: e.value,
+  };
+
+  /// The rest, locked on the phone for the doctors before it leaves (`medical_locked`).
+  Map<String, Object?> lockedJson() => {
+    for (final e in toJson().entries)
+      if (!cardFields.contains(e.key)) e.key: e.value,
+  };
 }

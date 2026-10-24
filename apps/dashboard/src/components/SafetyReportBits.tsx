@@ -67,6 +67,7 @@ export function MedicalSection({ report }: { report: Pick<StaffReportDetail, "id
       ) : (
         <>
           <p className="muted">{t("safety.medical.attachedAt", { at: fmt.dateTime(opened.attached_at) })}</p>
+          {opened.locked && <p className="alert alert--info">{t("safety.medical.locked")}</p>}
           {rows.length === 0 ? (
             <p>{t("safety.medical.empty")}</p>
           ) : (

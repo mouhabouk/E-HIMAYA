@@ -442,6 +442,9 @@ erDiagram
         datetime committee_since
         datetime committee_until
         text committee_by
+        blob public_key
+        jsonb key_backup
+        datetime key_set_at
         integer version
         datetime updated_at
     }
@@ -587,6 +590,40 @@ erDiagram
         datetime updated_at
     }
     knowledge__memory_entry ||--o{ knowledge__memory_entry_version : "entry_id"
+```
+
+## medical
+
+```mermaid
+erDiagram
+    medical__file_key {
+        uuid report_id PK,FK
+        uuid doctor_id PK,FK
+        text via
+        blob eph_public
+        blob nonce
+        blob wrapped
+        datetime created_at
+    }
+    medical__file_opening {
+        bigint id PK
+        uuid report_id FK
+        uuid doctor_id FK
+        boolean as_committee
+        text reason
+        datetime at
+    }
+    medical__locked_file {
+        uuid report_id PK,FK
+        blob nonce
+        blob ciphertext
+        datetime created_at
+    }
+    identity__doctor ||--o{ medical__file_key : "doctor_id"
+    identity__doctor ||--o{ medical__file_opening : "doctor_id"
+    medical__locked_file ||--o{ medical__file_key : "report_id"
+    medical__locked_file ||--o{ medical__file_opening : "report_id"
+    reports__medical_attachment ||--o{ medical__locked_file : "report_id"
 ```
 
 ## notify

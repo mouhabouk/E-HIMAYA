@@ -56,9 +56,11 @@ async def test_sysadmin_appoints_renews_and_revokes(
     # Only a national system administrator manages the committee.
     for headers_ in (staff(["sysadmin"]), staff(["medical_coordinator"], gouvernorat=None), staff(["ops_manager"])):
         assert (await client.get(COMMITTEE, headers=headers_)).status_code == 403
-    candidates = (await client.get(f"{COMMITTEE}/candidates", headers=admin)).json()
-    ids = {c["id"] for c in candidates}
-    assert doctor_id in ids and volunteer_id not in ids
+    workplace = (await client.get(ME, headers=headers)).json()["workplace"]
+    candidates = (await client.get(f"{COMMITTEE}/candidates", params={"q": workplace}, headers=admin)).json()
+    assert [c["id"] for c in candidates] == [doctor_id]
+    everyone = (await client.get(f"{COMMITTEE}/candidates", params={"limit": 100}, headers=admin)).json()
+    assert volunteer_id not in {c["id"] for c in everyone}
     assert all("licence_no" not in c and "phone" not in c for c in candidates)
 
     # A volunteer specialist is never appointed.
@@ -73,7 +75,7 @@ async def test_sysadmin_appoints_renews_and_revokes(
     assert out["members"][0]["committee_until"]
     # The doctor sees it in the app; they are no longer a candidate.
     assert (await client.get(ME, headers=headers)).json()["committee_until"]
-    assert doctor_id not in {c["id"] for c in (await client.get(f"{COMMITTEE}/candidates", headers=admin)).json()}
+    assert (await client.get(f"{COMMITTEE}/candidates", params={"q": workplace}, headers=admin)).json() == []
 
     first_until = out["members"][0]["committee_until"]
     r = await client.put(f"{COMMITTEE}/{doctor_id}", json={"months": 12}, headers=admin)

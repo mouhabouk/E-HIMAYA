@@ -3555,7 +3555,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get reportAttachMedicalHint =>
-      'Seule l’équipe qui traite ce signalement peut l’ouvrir, et chaque ouverture est enregistrée.';
+      'La salle des opérations ne lit que votre carte d’urgence. Le reste est verrouillé sur votre téléphone pour les médecins de la Protection civile de la région et le comité médical ; chaque ouverture est enregistrée et visible dans votre application.';
 
   @override
   String get safetyHistoryTitle => 'Historique des positions (72 h)';
@@ -3724,8 +3724,109 @@ class AppLocalizationsFr extends AppLocalizations {
   String get doctorAvailableBadge => 'Disponible';
 
   @override
-  String get doctorFilesSoon =>
-      'La réception des dossiers médicaux verrouillés arrive dans la prochaine mise à jour.';
+  String get medicalCardTitle => 'Carte d’urgence';
+
+  @override
+  String get medicalCardHint =>
+      'Ce que vous cochez reste lisible par la salle des opérations et les secouristes. Les autres champs sont verrouillés pour les médecins seulement.';
+
+  @override
+  String get errorDoctorKeyMissing => 'Créez d’abord votre clé personnelle.';
+
+  @override
+  String get errorNotCommitteeMember =>
+      'Vous n’êtes plus membre du comité médical.';
+
+  @override
+  String get errorReasonRequired => 'Indiquez un motif.';
+
+  @override
+  String get doctorKeyTitle => 'Ma clé personnelle';
+
+  @override
+  String get doctorKeyCreateHelp =>
+      'Les dossiers médicaux sont verrouillés pour vous avec une clé protégée par un code que vous choisissez. Nous ne connaissons pas votre code et ne pouvons pas le récupérer.';
+
+  @override
+  String get doctorKeyReady => 'Votre clé est prête sur ce téléphone.';
+
+  @override
+  String get doctorKeyRestoreHelp =>
+      'Votre clé n’est pas sur ce téléphone. Saisissez votre code pour la récupérer.';
+
+  @override
+  String get doctorKeyCreate => 'Créer ma clé';
+
+  @override
+  String get doctorKeyRestore => 'Récupérer ma clé';
+
+  @override
+  String get doctorKeyForgot => 'J’ai oublié mon code';
+
+  @override
+  String get doctorKeyResetWarning =>
+      'Une nouvelle clé sera créée. Les dossiers reçus avec l’ancienne ne pourront plus être ouverts, sauf si un confrère vous les transmet à nouveau.';
+
+  @override
+  String get doctorKeyNew => 'Nouvelle clé';
+
+  @override
+  String get doctorKeyChooseCode => 'Choisissez votre code';
+
+  @override
+  String get doctorKeyEnterCode => 'Saisissez votre code';
+
+  @override
+  String get doctorKeyCodeHint =>
+      'De 6 à 12 chiffres. Gardez-le bien : il ne peut pas être récupéré.';
+
+  @override
+  String get doctorKeyCode => 'Code';
+
+  @override
+  String get doctorKeyCodeAgain => 'Confirmez le code';
+
+  @override
+  String get doctorKeyCodeInvalid => 'Le code compte de 6 à 12 chiffres.';
+
+  @override
+  String get doctorKeyCodeMismatch => 'Les deux codes diffèrent.';
+
+  @override
+  String get doctorKeyWrongCode => 'Code incorrect.';
+
+  @override
+  String get doctorFiles => 'Dossiers médicaux';
+
+  @override
+  String get doctorFilesEmpty => 'Aucun dossier médical pour l’instant.';
+
+  @override
+  String get doctorFileViaGouvernorat => 'Votre gouvernorat';
+
+  @override
+  String get doctorFileViaCommittee => 'Comité médical';
+
+  @override
+  String get doctorFileViaReferral => 'Transmis par un confrère';
+
+  @override
+  String get doctorFileReasonTitle => 'Motif de l’ouverture';
+
+  @override
+  String get doctorFileReasonHint =>
+      'Le motif est enregistré. Le citoyen voit « Comité médical », pas votre nom.';
+
+  @override
+  String get doctorFileOpen => 'Ouvrir';
+
+  @override
+  String get doctorFileConfidential =>
+      'Dossier confidentiel : ne le copiez pas, ne le partagez pas. Ouvert sur ce téléphone seulement, et l’ouverture est enregistrée.';
+
+  @override
+  String get doctorFileCannotOpen =>
+      'Impossible d’ouvrir le dossier avec votre clé.';
 
   @override
   String get doctorDirectory => 'Annuaire des médecins';

@@ -458,7 +458,7 @@ async def delete_my_account(request: Request, body: DeleteIn, reporter: CurrentR
         details["volunteer"] = "withdrawn"
     doctor = await session.get(Doctor, user_id, with_for_update=True)
     if doctor is not None and doctor.status != "withdrawn":
-        doctors.clear(doctor)
+        await doctors.clear(session, doctor)
         doctor.workplace = "--"  # the row stays as a tombstone: nothing left to tell who it was
         details["doctor"] = "withdrawn"
     if account.keycloak_sub is not None:

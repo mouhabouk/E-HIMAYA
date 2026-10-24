@@ -69,6 +69,10 @@ enum ApiErrorCode {
   cpDetailsRequired('cp_details_required'),
   unknownTermsVersion('unknown_terms_version'),
   invalidGouvernorat('invalid_gouvernorat'),
+  // Phase C1-b: locked medical files.
+  doctorKeyMissing('doctor_key_missing'),
+  notCommitteeMember('not_committee_member'),
+  reasonRequired('reason_required'),
   // Phase 9 §3: anonymous report quota of this installation reached (non-SOS reports only).
   anonQuotaExhausted('anon_quota_exhausted'),
   // Local: checksum mismatch detected by the server after upload.
