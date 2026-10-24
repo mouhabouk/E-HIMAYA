@@ -247,6 +247,9 @@ void main() {
       200,
       scrollable: find.byType(Scrollable).first,
     );
+    // Fully on screen: the taller design-system cards can leave it at the edge.
+    await tester.ensureVisible(find.byKey(const Key('palette-green')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('palette-green')));
     await tester.pumpAndSettle();
     final prefs = await SharedPreferences.getInstance();

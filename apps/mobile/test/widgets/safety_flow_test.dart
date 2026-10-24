@@ -147,6 +147,9 @@ void main() {
         200,
         scrollable: find.byType(Scrollable).first,
       );
+      // Fully on screen: the taller design-system cards can leave it at the edge.
+      await tester.ensureVisible(find.byKey(const Key('settings-safety')));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('settings-safety')));
       await tester.pumpAndSettle();
       expect(find.text('Personal safety'), findsOneWidget);
@@ -251,6 +254,9 @@ void main() {
         200,
         scrollable: find.byType(Scrollable).first,
       );
+      // Fully on screen: the taller design-system cards can leave it at the edge.
+      await tester.ensureVisible(find.byKey(const Key('sos-whatsapp-share')));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('sos-whatsapp-share')));
       expect(opened.last.host, 'wa.me');
       await unmountApp(tester);
@@ -412,73 +418,78 @@ void main() {
     await unmountApp(tester);
   });
 
-  testWidgets(
-    'medical file: own consent, saved on the phone, locked, deleted',
-    (tester) async {
-      tester.view.physicalSize = const Size(1080, 3200);
-      tester.view.devicePixelRatio = 2;
-      addTearDown(tester.view.reset);
-      final device = FakeDeviceServices();
-      final h = await pumpApp(
-        tester,
-        prefs: onboardedPrefs(locale: 'en'),
-        overrides: [deviceServicesProvider.overrideWithValue(device)],
-      );
-      await go(tester, Routes.safetyMedical);
-      final create = tester.widget<FilledButton>(
-        find.ancestor(
-          of: find.text('Create my medical file'),
-          matching: find.byType(FilledButton),
-        ),
-      );
-      expect(create.onPressed, isNull, reason: 'consent first');
-      await tester.tap(find.byKey(const Key('medical-consent')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('medical-create')));
-      await tester.pumpAndSettle();
-      expect(
-        (await h.db.medical())?.consentVersion,
-        SafetyRules.medicalConsentVersion,
-      );
+  testWidgets('medical file: own consent, saved on the phone, locked, deleted', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1080, 3200);
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.reset);
+    final device = FakeDeviceServices();
+    final h = await pumpApp(
+      tester,
+      prefs: onboardedPrefs(locale: 'en'),
+      overrides: [deviceServicesProvider.overrideWithValue(device)],
+    );
+    await go(tester, Routes.safetyMedical);
+    final create = tester.widget<FilledButton>(
+      find.ancestor(
+        of: find.text('Create my medical file'),
+        matching: find.byType(FilledButton),
+      ),
+    );
+    expect(create.onPressed, isNull, reason: 'consent first');
+    await tester.tap(find.byKey(const Key('medical-consent')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('medical-create')));
+    await tester.pumpAndSettle();
+    expect(
+      (await h.db.medical())?.consentVersion,
+      SafetyRules.medicalConsentVersion,
+    );
 
-      await tester.enterText(
-        find.byKey(const Key('medical-allergies')),
-        'penicillin',
-      );
-      await tester.scrollUntilVisible(
-        find.byKey(const Key('medical-save')),
-        200,
-        scrollable: find.byType(Scrollable).first,
-      );
-      await tester.tap(find.byKey(const Key('medical-save')));
-      await tester.pumpAndSettle();
-      final saved = jsonDecode((await h.db.medical())!.data) as Map;
-      // The emergency card keeps its default fields until the person changes them.
-      expect(saved, {
-        'allergies': 'penicillin',
-        '_card': MedicalFile.defaultCard.toList()..sort(),
-      });
+    await tester.enterText(
+      find.byKey(const Key('medical-allergies')),
+      'penicillin',
+    );
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('medical-save')),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    // Fully on screen: the taller design-system cards can leave it at the edge.
+    await tester.ensureVisible(find.byKey(const Key('medical-save')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('medical-save')));
+    await tester.pumpAndSettle();
+    final saved = jsonDecode((await h.db.medical())!.data) as Map;
+    // The emergency card keeps its default fields until the person changes them.
+    expect(saved, {
+      'allergies': 'penicillin',
+      '_card': MedicalFile.defaultCard.toList()..sort(),
+    });
 
-      // Lock: the phone's own lock is asked first.
-      await tester.tap(find.byKey(const Key('medical-lock')));
-      await tester.pumpAndSettle();
-      expect(device.credentialRequests, 1);
-      expect((await h.db.medical())!.locked, isTrue);
+    // Lock: the phone's own lock is asked first.
+    await tester.tap(find.byKey(const Key('medical-lock')));
+    await tester.pumpAndSettle();
+    expect(device.credentialRequests, 1);
+    expect((await h.db.medical())!.locked, isTrue);
 
-      await tester.scrollUntilVisible(
-        find.byKey(const Key('medical-delete')),
-        200,
-        scrollable: find.byType(Scrollable).first,
-      );
-      await tester.tap(find.byKey(const Key('medical-delete')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('medical-delete-confirm')));
-      await tester.pumpAndSettle();
-      expect(await h.db.medical(), isNull);
-      expect(find.byKey(const Key('medical-consent')), findsOneWidget);
-      await unmountApp(tester);
-    },
-  );
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('medical-delete')),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    // Fully on screen: the taller design-system cards can leave it at the edge.
+    await tester.ensureVisible(find.byKey(const Key('medical-delete')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('medical-delete')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('medical-delete-confirm')));
+    await tester.pumpAndSettle();
+    expect(await h.db.medical(), isNull);
+    expect(find.byKey(const Key('medical-consent')), findsOneWidget);
+    await unmountApp(tester);
+  });
 
   testWidgets('a locked medical file asks for the phone lock before it opens', (
     tester,
@@ -551,6 +562,9 @@ void main() {
       200,
       scrollable: find.byType(Scrollable).first,
     );
+    // Fully on screen: the taller design-system cards can leave it at the edge.
+    await tester.ensureVisible(find.byKey(const Key('report-submit')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('report-submit')));
     await tester.pumpAndSettle();
     final queued = (await h.db.select(h.db.pendingReports).get()).single;

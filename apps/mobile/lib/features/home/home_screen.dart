@@ -6,8 +6,10 @@ import '../../core/auth/identity.dart';
 import '../../core/http/models.dart';
 import '../../core/routing/app_router.dart';
 import '../../core/ui/brand.dart';
+import '../../core/ui/components.dart';
 import '../../core/ui/language_bar.dart';
 import '../../core/ui/theme.dart';
+import '../../core/ui/tokens.dart';
 import '../../l10n/app_localizations.dart';
 import '../alerts/alerts_providers.dart';
 import '../alerts/notifications_screen.dart';
@@ -38,56 +40,63 @@ class HomeScreen extends ConsumerWidget {
     final shortcuts = <_Shortcut>[
       _Shortcut(
         const Key('home-my-reports'),
-        Icons.description_outlined,
+        Icons.description_rounded,
         l10n.homeMyReports,
+        Tone.navy,
         () => context.go(Routes.reports),
       ),
       _Shortcut(
         const Key('home-track'),
-        Icons.manage_search,
+        Icons.manage_search_rounded,
         l10n.trackTitle,
+        Tone.purple,
         () => context.push(Routes.track),
       ),
       // FR-A-031: the Live button, independent of the SOS and of the report form.
       _Shortcut(
         const Key('home-live'),
-        Icons.videocam,
+        Icons.videocam_rounded,
         l10n.homeLive,
+        Tone.red,
         () => context.push(Routes.live),
-        color: sosRed,
       ),
       _Shortcut(
         const Key('home-tips'),
-        Icons.health_and_safety,
+        Icons.health_and_safety_rounded,
         l10n.tipsTitle,
+        Tone.green,
         () => context.push(Routes.tips),
       ),
       _Shortcut(
         const Key('home-alerts'),
-        Icons.campaign_outlined,
+        Icons.campaign_rounded,
         l10n.notificationsTitle,
+        Tone.sky,
         () => context.push(Routes.notifications),
       ),
       if (identity.isRegistered && identity.role == UserRole.citizen)
         _Shortcut(
           const Key('home-volunteer'),
-          Icons.volunteer_activism,
+          Icons.volunteer_activism_rounded,
           l10n.volunteerTitle,
+          Tone.teal,
           () => context.push(Routes.volunteer),
         ),
       // FR-A-072: anonymous citizens see why they earn no points.
       if (identity.role == UserRole.citizen)
         _Shortcut(
           const Key('home-rewards'),
-          Icons.military_tech,
+          Icons.military_tech_rounded,
           l10n.rewardsTitle,
+          Tone.pink,
           () => context.push(Routes.rewards),
         ),
       if (orgs.isNotEmpty)
         _Shortcut(
           const Key('home-institution'),
-          Icons.apartment,
+          Icons.apartment_rounded,
           l10n.myInstitutionTitle,
+          Tone.amber,
           () => openMyInstitution(context, orgs),
         ),
     ];
@@ -324,18 +333,17 @@ class _ReportCard extends StatelessWidget {
 class _NumbersGrid extends ConsumerWidget {
   const _NumbersGrid();
 
-  static const _colors = {
-    EmergencyService.civilProtection: BrandColors.orange,
-    EmergencyService.samu: BrandColors.red,
-    EmergencyService.police: BrandColors.blue,
-    EmergencyService.nationalGuard: BrandColors.green,
+  static const _tones = {
+    EmergencyService.civilProtection: Tone.orange,
+    EmergencyService.samu: Tone.red,
+    EmergencyService.police: Tone.navy,
+    EmergencyService.nationalGuard: Tone.green,
   };
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    final dark = theme.brightness == Brightness.dark;
     final dial = ref.watch(dialerProvider);
     return _TileGrid(
       minTileWidth: 76,
@@ -345,56 +353,40 @@ class _NumbersGrid extends ConsumerWidget {
             button: true,
             label: l10n.emergencyCallSemantics(n.label(l10n), n.number),
             excludeSemantics: true,
-            child: Material(
+            child: AppCard(
               key: Key('home-dial-${n.number}'),
-              color: theme.colorScheme.surfaceContainerLow,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-                side: BorderSide(
-                  color: n.service == EmergencyService.civilProtection
-                      ? BrandColors.orange
-                      : theme.colorScheme.outlineVariant,
-                  width: n.service == EmergencyService.civilProtection ? 2 : 1,
-                ),
-              ),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(16),
-                onTap: () => dial(n.telUri),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 12,
-                    horizontal: 4,
+              onTap: () => dial(n.telUri),
+              borderColor: n.service == EmergencyService.civilProtection
+                  ? _tones[n.service]!.colors(context).fill
+                  : null,
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+              child: Column(
+                children: [
+                  if (n.service == EmergencyService.civilProtection)
+                    const BrandLogo(size: 40)
+                  else
+                    IconTile(
+                      n.icon,
+                      tone: _tones[n.service]!,
+                      soft: true,
+                      size: 40,
+                    ),
+                  const SizedBox(height: 6),
+                  Text(
+                    n.number,
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      // The darker shade reads at AA on the card in both brightnesses.
+                      color: _tones[n.service]!.colors(context).onTint,
+                    ),
                   ),
-                  child: Column(
-                    children: [
-                      if (n.service == EmergencyService.civilProtection)
-                        const BrandLogo(size: 32)
-                      else
-                        Icon(n.icon, size: 32, color: _colors[n.service]),
-                      const SizedBox(height: 4),
-                      Text(
-                        n.number,
-                        style: theme.textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.w800,
-                          // Lighter tones keep the numbers readable on dark surfaces.
-                          color: dark
-                              ? Color.lerp(
-                                  _colors[n.service],
-                                  Colors.white,
-                                  0.35,
-                                )
-                              : _colors[n.service],
-                        ),
-                      ),
-                      Text(
-                        n.label(l10n),
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        style: theme.textTheme.labelSmall,
-                      ),
-                    ],
+                  Text(
+                    n.label(l10n),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    style: theme.textTheme.labelSmall,
                   ),
-                ),
+                ],
               ),
             ),
           ),
@@ -404,12 +396,12 @@ class _NumbersGrid extends ConsumerWidget {
 }
 
 class _Shortcut {
-  const _Shortcut(this.key, this.icon, this.label, this.onTap, {this.color});
+  const _Shortcut(this.key, this.icon, this.label, this.tone, this.onTap);
   final Key key;
   final IconData icon;
   final String label;
+  final Tone tone;
   final VoidCallback onTap;
-  final Color? color;
 }
 
 class _ShortcutTile extends StatelessWidget {
@@ -418,43 +410,13 @@ class _ShortcutTile extends StatelessWidget {
   final _Shortcut shortcut;
 
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Material(
-      key: shortcut.key,
-      color: theme.colorScheme.surfaceContainerLow,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: theme.colorScheme.outlineVariant),
-      ),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: shortcut.onTap,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 88),
-          child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  shortcut.icon,
-                  size: 28,
-                  color: shortcut.color ?? theme.colorScheme.primary,
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  shortcut.label,
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.labelLarge,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => ChoiceTile(
+    key: shortcut.key,
+    icon: shortcut.icon,
+    tone: shortcut.tone,
+    title: shortcut.label,
+    onTap: shortcut.onTap,
+  );
 }
 
 /// Fixed bar above the navigation: call 198, or send the SOS message to the user's contacts.
@@ -465,42 +427,25 @@ class _CallBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final civil = emergencyNumbers.first;
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-        child: Row(
-          children: [
-            Expanded(
-              child: FilledButton.icon(
-                key: const Key('home-call-198'),
-                style: FilledButton.styleFrom(
-                  backgroundColor: sosRed,
-                  foregroundColor: Colors.white,
-                ),
-                onPressed: () => ref.read(dialerProvider)(civil.telUri),
-                icon: const Icon(Icons.phone),
-                label: Text(l10n.homeCall198, textAlign: TextAlign.center),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: FilledButton.icon(
-                key: const Key('home-sos-message'),
-                style: FilledButton.styleFrom(
-                  backgroundColor: BrandColors.blue,
-                  foregroundColor: Colors.white,
-                ),
-                // Phase B2 (addition 5): the SOS message to the user's own contacts. The
-                // Civil Protection SOS stays on the big button above.
-                onPressed: () => context.push(Routes.safetySend),
-                icon: const Icon(Icons.sms),
-                label: Text(l10n.homeSosMessage, textAlign: TextAlign.center),
-              ),
-            ),
-          ],
+    return BottomActionBar(
+      actions: [
+        BarAction(
+          key: const Key('home-call-198'),
+          label: l10n.homeCall198,
+          icon: Icons.phone_rounded,
+          tone: Tone.red,
+          onPressed: () => ref.read(dialerProvider)(civil.telUri),
         ),
-      ),
+        // Phase B2 (addition 5): the SOS message to the user's own contacts. The
+        // Civil Protection SOS stays on the big button above.
+        BarAction(
+          key: const Key('home-sos-message'),
+          label: l10n.homeSosMessage,
+          icon: Icons.sms_rounded,
+          tone: Tone.navy,
+          onPressed: () => context.push(Routes.safetySend),
+        ),
+      ],
     );
   }
 }

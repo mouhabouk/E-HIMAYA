@@ -1,6 +1,7 @@
-import { useCallback, useState } from "react";
+import { type ReactNode, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { NavLink, Outlet } from "react-router";
+import { IconTile, type IconName, type Tone } from "./Icon";
 import { useAuth } from "../context/auth";
 import { useLiveState } from "../context/live";
 import { directionOf, LANGUAGES, type Language } from "../i18n";
@@ -40,7 +41,11 @@ import { SoftphoneDock } from "./Softphone";
 import { StreamAlertToasts } from "./StreamAlertToasts";
 
 /** Native names of the interface languages, shown in their own script whatever the current language. */
-export const LANGUAGE_NAMES: Record<Language, string> = { ar: "العربية", fr: "Français", en: "English" };
+export const LANGUAGE_NAMES: Record<Language, string> = {
+  ar: "العربية",
+  fr: "Français",
+  en: "English",
+};
 
 /**
  * Three-way language menu. Changing the language only re-renders: the route, its query string and the scope stay
@@ -73,7 +78,9 @@ export function LanguageMenu() {
 export function ThemeToggle() {
   const { t } = useTranslation();
   const [theme, setTheme] = useState<Theme>(storedTheme);
-  const label = t("header.themeToggle", { current: t(`header.theme.${theme}`) });
+  const label = t("header.themeToggle", {
+    current: t(`header.theme.${theme}`),
+  });
   return (
     <button
       type="button"
@@ -86,16 +93,28 @@ export function ThemeToggle() {
         setTheme(next);
       }}
     >
-      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+      <svg
+        viewBox="0 0 24 24"
+        width="20"
+        height="20"
+        aria-hidden="true"
+        focusable="false"
+      >
         {theme === "dark" ? (
-          <path fill="currentColor" d="M20 15.5A8.5 8.5 0 0 1 8.5 4a8.5 8.5 0 1 0 11.5 11.5z" />
+          <path
+            fill="currentColor"
+            d="M20 15.5A8.5 8.5 0 0 1 8.5 4a8.5 8.5 0 1 0 11.5 11.5z"
+          />
         ) : theme === "light" ? (
           <path
             fill="currentColor"
             d="M12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm-1-6h2v3h-2zm0 19h2v3h-2zM1 11h3v2H1zm19 0h3v2h-3zM4.2 5.6l1.4-1.4 2.1 2.1-1.4 1.4zm12.1 12.1 1.4-1.4 2.1 2.1-1.4 1.4zM4.2 18.4l2.1-2.1 1.4 1.4-2.1 2.1zM16.3 6.3l2.1-2.1 1.4 1.4-2.1 2.1z"
           />
         ) : (
-          <path fill="currentColor" d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20zm0 2v16a8 8 0 0 0 0-16z" />
+          <path
+            fill="currentColor"
+            d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20zm0 2v16a8 8 0 0 0 0-16z"
+          />
         )}
       </svg>
     </button>
@@ -122,13 +141,37 @@ function useHeaderHeight() {
   return useCallback((header: HTMLElement | null) => {
     if (!header || typeof ResizeObserver === "undefined") return;
     const root = document.documentElement;
-    const observer = new ResizeObserver(() => root.style.setProperty("--header-h", `${header.offsetHeight}px`));
+    const observer = new ResizeObserver(() =>
+      root.style.setProperty("--header-h", `${header.offsetHeight}px`),
+    );
     observer.observe(header);
     return () => {
       observer.disconnect();
       root.style.removeProperty("--header-h");
     };
   }, []);
+}
+
+/** Navigation link with its category icon tile (design system §3): the label carries the meaning. */
+function NavItem({
+  to,
+  end,
+  icon,
+  tone,
+  children,
+}: {
+  to: string;
+  end?: boolean;
+  icon: IconName;
+  tone: Tone;
+  children: ReactNode;
+}) {
+  return (
+    <NavLink to={to} end={end}>
+      <IconTile name={icon} tone={tone} size="sm" />
+      {children}
+    </NavLink>
+  );
 }
 
 export function Layout() {
@@ -141,7 +184,9 @@ export function Layout() {
   const { identity } = user;
   const scope = identity.national
     ? t("header.national")
-    : t("header.gouvernorat", { name: gouvernorats.nameOf(identity.gouvernoratCode) ?? "" });
+    : t("header.gouvernorat", {
+        name: gouvernorats.nameOf(identity.gouvernoratCode) ?? "",
+      });
   // Only the screens the user's roles can use (the API enforces the same rules).
   const readsReports = hasReadAccess(identity.roles);
   const readsOrgs = canReadOrgs(identity.roles);
@@ -150,7 +195,8 @@ export function Layout() {
   const editsTips = canEditTips(identity.roles);
   const reviewsDoctors = canReviewDoctors(identity.roles);
   const reviewsWeather = canReviewWeatherSuggestions(identity.roles);
-  const committee = isCommittee(identity.roles) || canMonitorPerformance(identity.roles);
+  const committee =
+    isCommittee(identity.roles) || canMonitorPerformance(identity.roles);
   const analytics = canReadAnalytics(identity.roles);
   const knowledge = canReadKnowledge(identity.roles);
   const rewards = canReadRewards(identity.roles);
@@ -168,72 +214,176 @@ export function Layout() {
       <header className="header" ref={headerRef}>
         <div className="header__brand">
           {/* Logo of the Office (phase A, §2.5): the name next to it is the accessible text. */}
-          <img src="/brand/logo.png" alt="" width="32" height="32" className="header__logo" />
+          <img
+            src="/brand/logo.png"
+            alt=""
+            width="32"
+            height="32"
+            className="header__logo"
+          />
           <span>{t("app.name")}</span>
         </div>
         <nav aria-label={t("nav.main")} className="header__nav">
           {readsReports && (
             <>
-              <NavLink to="/" end>
+              <NavItem to="/" end icon="home" tone="navy">
                 {t("nav.home")}
-              </NavLink>
-              <NavLink to="/reports">{t("nav.reports")}</NavLink>
-              <NavLink to="/incidents">{t("nav.incidents")}</NavLink>
-              <NavLink to="/map">{t("nav.map")}</NavLink>
-              <NavLink to="/streams">{t("nav.streams")}</NavLink>
-              <NavLink to="/volunteers">{t("nav.volunteers")}</NavLink>
-              <NavLink to="/calls">{t("nav.calls")}</NavLink>
-              <NavLink to="/resource-requests">{t("nav.resourceRequests")}</NavLink>
+              </NavItem>
+              <NavItem to="/reports" icon="description" tone="red">
+                {t("nav.reports")}
+              </NavItem>
+              <NavItem to="/incidents" icon="localFireDepartment" tone="red">
+                {t("nav.incidents")}
+              </NavItem>
+              <NavItem to="/map" icon="map" tone="teal">
+                {t("nav.map")}
+              </NavItem>
+              <NavItem to="/streams" icon="videocam" tone="red">
+                {t("nav.streams")}
+              </NavItem>
+              <NavItem to="/volunteers" icon="volunteerActivism" tone="green">
+                {t("nav.volunteers")}
+              </NavItem>
+              <NavItem to="/calls" icon="call" tone="green">
+                {t("nav.calls")}
+              </NavItem>
+              <NavItem to="/resource-requests" icon="inventory2" tone="amber">
+                {t("nav.resourceRequests")}
+              </NavItem>
             </>
           )}
           {nationalQueues && (
             <>
-              <NavLink to="/reports/late">{t("nav.late")}</NavLink>
-              <NavLink to="/reports/geo-queue">{t("nav.geoQueue")}</NavLink>
+              <NavItem to="/reports/late" icon="schedule" tone="orange">
+                {t("nav.late")}
+              </NavItem>
+              <NavItem
+                to="/reports/geo-queue"
+                icon="wrongLocation"
+                tone="orange"
+              >
+                {t("nav.geoQueue")}
+              </NavItem>
             </>
           )}
-          {reviewsDoctors && <NavLink to="/doctors">{t("nav.doctors")}</NavLink>}
-          {canManageMedicalCommittee(identity) && (
-            <NavLink to="/medical-committee">{t("nav.medicalCommittee")}</NavLink>
+          {reviewsDoctors && (
+            <NavItem to="/doctors" icon="stethoscope" tone="purple">
+              {t("nav.doctors")}
+            </NavItem>
           )}
-          {readsResources && <NavLink to="/resources">{t("nav.resources")}</NavLink>}
-          {notifies && <NavLink to="/notifications">{t("nav.notifications")}</NavLink>}
-          {reviewsWeather && <NavLink to="/weather/suggestions">{t("nav.weatherSuggestions")}</NavLink>}
-          {committee && <NavLink to="/committee">{t("nav.committee")}</NavLink>}
+          {canManageMedicalCommittee(identity) && (
+            <NavItem to="/medical-committee" icon="groups" tone="purple">
+              {t("nav.medicalCommittee")}
+            </NavItem>
+          )}
+          {readsResources && (
+            <NavItem to="/resources" icon="localShipping" tone="amber">
+              {t("nav.resources")}
+            </NavItem>
+          )}
+          {notifies && (
+            <NavItem to="/notifications" icon="campaign" tone="sky">
+              {t("nav.notifications")}
+            </NavItem>
+          )}
+          {reviewsWeather && (
+            <NavItem
+              to="/weather/suggestions"
+              icon="partlyCloudyDay"
+              tone="sky"
+            >
+              {t("nav.weatherSuggestions")}
+            </NavItem>
+          )}
+          {committee && (
+            <NavItem to="/committee" icon="monitoring" tone="navy">
+              {t("nav.committee")}
+            </NavItem>
+          )}
           {analytics && (
             <>
-              <NavLink to="/analytics">{t("nav.analytics")}</NavLink>
-              <NavLink to="/reports-library">{t("nav.reportsLibrary")}</NavLink>
+              <NavItem to="/analytics" icon="analytics" tone="navy">
+                {t("nav.analytics")}
+              </NavItem>
+              <NavItem to="/reports-library" icon="folderOpen" tone="slate">
+                {t("nav.reportsLibrary")}
+              </NavItem>
             </>
           )}
           {knowledge && (
             <>
-              <NavLink to="/memory">{t("nav.memory")}</NavLink>
-              <NavLink to="/library">{t("nav.library")}</NavLink>
+              <NavItem to="/memory" icon="historyEdu" tone="purple">
+                {t("nav.memory")}
+              </NavItem>
+              <NavItem to="/library" icon="menuBook" tone="purple">
+                {t("nav.library")}
+              </NavItem>
             </>
           )}
-          {rewards && <NavLink to="/rewards">{t("nav.rewards")}</NavLink>}
+          {rewards && (
+            <NavItem to="/rewards" icon="militaryTech" tone="pink">
+              {t("nav.rewards")}
+            </NavItem>
+          )}
           {readsOrgs && (
             <>
-              <NavLink to="/orgs" end>
+              <NavItem to="/orgs" end icon="apartment" tone="navy">
                 {t("nav.orgs")}
-              </NavLink>
-              <NavLink to="/orgs/certificates">{t("nav.certificates")}</NavLink>
+              </NavItem>
+              <NavItem
+                to="/orgs/certificates"
+                icon="workspacePremium"
+                tone="amber"
+              >
+                {t("nav.certificates")}
+              </NavItem>
             </>
           )}
-          {editsTips && <NavLink to="/safety-tips">{t("nav.safetyTips")}</NavLink>}
-          {editsTips && <NavLink to="/emergency-guide">{t("nav.emergencyGuide")}</NavLink>}
-          {canOpenLayers(identity.roles) && <NavLink to="/layers">{t("nav.layers")}</NavLink>}
-          {canHandleContact(identity.roles) && <NavLink to="/contact">{t("nav.contact")}</NavLink>}
-          {canReadPlatformSettings(identity.roles) && (
-            <NavLink to="/settings" end>
-              {t("nav.settings")}
-            </NavLink>
+          {editsTips && (
+            <NavItem to="/safety-tips" icon="healthAndSafety" tone="green">
+              {t("nav.safetyTips")}
+            </NavItem>
           )}
-          {aiSettings && <NavLink to="/settings/ai">{t("nav.aiSettings")}</NavLink>}
-          {canManageAccounts(identity) && <NavLink to="/accounts">{t("nav.accounts")}</NavLink>}
-          {canReadScopedAudit(identity) && <NavLink to="/audit">{t("nav.audit")}</NavLink>}
-          {canOpenBreakGlass(identity) && <NavLink to="/break-glass">{t("nav.breakGlass")}</NavLink>}
+          {editsTips && (
+            <NavItem to="/emergency-guide" icon="medicalServices" tone="red">
+              {t("nav.emergencyGuide")}
+            </NavItem>
+          )}
+          {canOpenLayers(identity.roles) && (
+            <NavItem to="/layers" icon="layers" tone="teal">
+              {t("nav.layers")}
+            </NavItem>
+          )}
+          {canHandleContact(identity.roles) && (
+            <NavItem to="/contact" icon="mail" tone="sky">
+              {t("nav.contact")}
+            </NavItem>
+          )}
+          {canReadPlatformSettings(identity.roles) && (
+            <NavItem to="/settings" end icon="settings" tone="slate">
+              {t("nav.settings")}
+            </NavItem>
+          )}
+          {aiSettings && (
+            <NavItem to="/settings/ai" icon="smartToy" tone="slate">
+              {t("nav.aiSettings")}
+            </NavItem>
+          )}
+          {canManageAccounts(identity) && (
+            <NavItem to="/accounts" icon="manageAccounts" tone="slate">
+              {t("nav.accounts")}
+            </NavItem>
+          )}
+          {canReadScopedAudit(identity) && (
+            <NavItem to="/audit" icon="policy" tone="slate">
+              {t("nav.audit")}
+            </NavItem>
+          )}
+          {canOpenBreakGlass(identity) && (
+            <NavItem to="/break-glass" icon="lockOpen" tone="red">
+              {t("nav.breakGlass")}
+            </NavItem>
+          )}
         </nav>
         <div className="header__tools">
           <LiveIndicator />
@@ -262,7 +412,11 @@ export function Layout() {
         </div>
       )}
       <main id="main" tabIndex={-1} className="main">
-        {live === "forbidden" ? <NoAccessPage reason="liveForbidden" embedded /> : <Outlet />}
+        {live === "forbidden" ? (
+          <NoAccessPage reason="liveForbidden" embedded />
+        ) : (
+          <Outlet />
+        )}
       </main>
       {readsReports && <StreamAlertToasts />}
       {canDraftMessage(identity.roles, "alert") && <AlertFollowUpToasts />}
