@@ -7,6 +7,7 @@ from app.modules.audit.models import AuditLog
 from app.modules.contact.models import ContactEvent, ContactRequest
 from app.modules.content.models import GuideItem, GuideTopic, Revision, SafetyTip
 from app.modules.decision.models import ProcedureChunk
+from app.modules.doctors.models import Doctor, DoctorReview
 from app.modules.evidence.models import Anchor, Leaf
 from app.modules.forecast.models import ForecastRun
 from app.modules.geo.models import Delegation, Gouvernorat, Layer, LayerFeature, LayerImport
@@ -81,6 +82,8 @@ __all__ = [
     "Directive",
     "DirectiveAck",
     "Dispatch",
+    "Doctor",
+    "DoctorReview",
     "Document",
     "DocumentVersion",
     "Equipment",

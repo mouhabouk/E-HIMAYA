@@ -10,6 +10,7 @@ import { phase9Api } from "./phase9Api";
 import { safetyApi } from "./safetyApi";
 import { streamsApi } from "./streamsApi";
 import { normalizeOrgFilters, orgFiltersToQuery, type OrgFilters } from "./orgs";
+import { doctorsApi } from "./doctorsApi";
 import type {
   AiSettings,
   AiStatus,
@@ -199,6 +200,7 @@ export function staffApi(api: ApiClient) {
     ...guideApi(api),
     ...contactApi(api),
     ...safetyApi(api),
+    ...doctorsApi(api),
   };
 }
 

@@ -94,6 +94,10 @@
         "description": "مسؤول حسابات جهوي"
       },
       {
+        "name": "medical_coordinator",
+        "description": "منسّق طبي جهوي (توثيق الأطباء)"
+      },
+      {
         "name": "default-roles-ehimaya-staff",
         "description": "Default roles",
         "composite": true,

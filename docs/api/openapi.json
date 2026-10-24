@@ -1541,6 +1541,26 @@
         "title": "AuditEntryOut",
         "type": "object"
       },
+      "AvailabilityIn": {
+        "properties": {
+          "available": {
+            "title": "Available",
+            "type": "boolean"
+          },
+          "hours": {
+            "default": 8,
+            "maximum": 24.0,
+            "minimum": 1.0,
+            "title": "Hours",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "available"
+        ],
+        "title": "AvailabilityIn",
+        "type": "object"
+      },
       "BadgeItem": {
         "properties": {
           "awarded_at": {
@@ -4218,6 +4238,88 @@
         "title": "DirectiveSpec",
         "type": "object"
       },
+      "DirectoryDoctor": {
+        "description": "One line of the referral list: no phone, no registration number.",
+        "properties": {
+          "available": {
+            "title": "Available",
+            "type": "boolean"
+          },
+          "full_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Full Name"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "volunteer",
+              "civil_protection"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "specialties": {
+            "items": {
+              "enum": [
+                "general_practice",
+                "emergency_medicine",
+                "anesthesia_icu",
+                "cardiology",
+                "pulmonology",
+                "neurology",
+                "pediatrics",
+                "obstetrics_gynecology",
+                "internal_medicine",
+                "endocrinology",
+                "nephrology",
+                "gastroenterology",
+                "allergy_immunology",
+                "infectious_diseases",
+                "dermatology_burns",
+                "orthopedics",
+                "general_surgery",
+                "psychiatry",
+                "toxicology",
+                "ophthalmology",
+                "ent"
+              ],
+              "type": "string"
+            },
+            "title": "Specialties",
+            "type": "array"
+          },
+          "workplace": {
+            "title": "Workplace",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "full_name",
+          "kind",
+          "specialties",
+          "workplace",
+          "gouvernorat_code",
+          "available"
+        ],
+        "title": "DirectoryDoctor",
+        "type": "object"
+      },
       "DismissIn": {
         "properties": {
           "reason": {
@@ -4231,6 +4333,344 @@
           "reason"
         ],
         "title": "DismissIn",
+        "type": "object"
+      },
+      "DoctorIn": {
+        "properties": {
+          "cp_staff_no": {
+            "anyOf": [
+              {
+                "maxLength": 30,
+                "minLength": 3,
+                "pattern": "^[A-Za-z0-9/-]+$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cp Staff No"
+          },
+          "cp_unit": {
+            "anyOf": [
+              {
+                "maxLength": 150,
+                "minLength": 2,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cp Unit"
+          },
+          "gouvernorat_code": {
+            "maximum": 83.0,
+            "minimum": 11.0,
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "kind": {
+            "enum": [
+              "volunteer",
+              "civil_protection"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "licence_no": {
+            "maxLength": 30,
+            "minLength": 3,
+            "pattern": "^[A-Za-z0-9/-]+$",
+            "title": "Licence No",
+            "type": "string"
+          },
+          "specialties": {
+            "items": {
+              "enum": [
+                "general_practice",
+                "emergency_medicine",
+                "anesthesia_icu",
+                "cardiology",
+                "pulmonology",
+                "neurology",
+                "pediatrics",
+                "obstetrics_gynecology",
+                "internal_medicine",
+                "endocrinology",
+                "nephrology",
+                "gastroenterology",
+                "allergy_immunology",
+                "infectious_diseases",
+                "dermatology_burns",
+                "orthopedics",
+                "general_surgery",
+                "psychiatry",
+                "toxicology",
+                "ophthalmology",
+                "ent"
+              ],
+              "type": "string"
+            },
+            "maxItems": 4,
+            "minItems": 1,
+            "title": "Specialties",
+            "type": "array"
+          },
+          "terms_version": {
+            "maxLength": 16,
+            "title": "Terms Version",
+            "type": "string"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version"
+          },
+          "workplace": {
+            "maxLength": 150,
+            "minLength": 2,
+            "title": "Workplace",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "specialties",
+          "licence_no",
+          "workplace",
+          "gouvernorat_code",
+          "terms_version"
+        ],
+        "title": "DoctorIn",
+        "type": "object"
+      },
+      "DoctorOut": {
+        "properties": {
+          "available": {
+            "title": "Available",
+            "type": "boolean"
+          },
+          "available_until": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Available Until"
+          },
+          "cp_staff_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cp Staff No"
+          },
+          "cp_unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cp Unit"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "kind": {
+            "enum": [
+              "volunteer",
+              "civil_protection"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "licence_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Licence No"
+          },
+          "review_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Review Reason"
+          },
+          "reviewed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed At"
+          },
+          "specialties": {
+            "items": {
+              "enum": [
+                "general_practice",
+                "emergency_medicine",
+                "anesthesia_icu",
+                "cardiology",
+                "pulmonology",
+                "neurology",
+                "pediatrics",
+                "obstetrics_gynecology",
+                "internal_medicine",
+                "endocrinology",
+                "nephrology",
+                "gastroenterology",
+                "allergy_immunology",
+                "infectious_diseases",
+                "dermatology_burns",
+                "orthopedics",
+                "general_surgery",
+                "psychiatry",
+                "toxicology",
+                "ophthalmology",
+                "ent"
+              ],
+              "type": "string"
+            },
+            "title": "Specialties",
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "approved",
+              "rejected",
+              "suspended",
+              "withdrawn"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "submitted_at": {
+            "format": "date-time",
+            "title": "Submitted At",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          },
+          "workplace": {
+            "title": "Workplace",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "status",
+          "specialties",
+          "licence_no",
+          "workplace",
+          "gouvernorat_code",
+          "cp_unit",
+          "cp_staff_no",
+          "review_reason",
+          "submitted_at",
+          "reviewed_at",
+          "available",
+          "available_until",
+          "version"
+        ],
+        "title": "DoctorOut",
+        "type": "object"
+      },
+      "DoctorReviewIn": {
+        "properties": {
+          "decision": {
+            "enum": [
+              "approve",
+              "reject",
+              "suspend",
+              "reinstate"
+            ],
+            "title": "Decision",
+            "type": "string"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "required": [
+          "decision"
+        ],
+        "title": "DoctorReviewIn",
+        "type": "object"
+      },
+      "DoctorReviewOut": {
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "decision": {
+            "title": "Decision",
+            "type": "string"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "required": [
+          "decision",
+          "reason",
+          "at"
+        ],
+        "title": "DoctorReviewOut",
         "type": "object"
       },
       "DocumentIn": {
@@ -6216,6 +6656,16 @@
             },
             "title": "Devices",
             "type": "array"
+          },
+          "doctor": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DoctorOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "generated_at": {
             "format": "date-time",
@@ -16657,7 +17107,8 @@
           "sysadmin",
           "security_admin",
           "ai_admin",
-          "regional_account_admin"
+          "regional_account_admin",
+          "medical_coordinator"
         ],
         "title": "Role",
         "type": "string"
@@ -17771,6 +18222,324 @@
           "title"
         ],
         "title": "SourceRef",
+        "type": "object"
+      },
+      "StaffDoctor": {
+        "properties": {
+          "available": {
+            "title": "Available",
+            "type": "boolean"
+          },
+          "cp_unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cp Unit"
+          },
+          "full_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Full Name"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "volunteer",
+              "civil_protection"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "specialties": {
+            "items": {
+              "enum": [
+                "general_practice",
+                "emergency_medicine",
+                "anesthesia_icu",
+                "cardiology",
+                "pulmonology",
+                "neurology",
+                "pediatrics",
+                "obstetrics_gynecology",
+                "internal_medicine",
+                "endocrinology",
+                "nephrology",
+                "gastroenterology",
+                "allergy_immunology",
+                "infectious_diseases",
+                "dermatology_burns",
+                "orthopedics",
+                "general_surgery",
+                "psychiatry",
+                "toxicology",
+                "ophthalmology",
+                "ent"
+              ],
+              "type": "string"
+            },
+            "title": "Specialties",
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "approved",
+              "rejected",
+              "suspended",
+              "withdrawn"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "submitted_at": {
+            "format": "date-time",
+            "title": "Submitted At",
+            "type": "string"
+          },
+          "workplace": {
+            "title": "Workplace",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "full_name",
+          "kind",
+          "specialties",
+          "workplace",
+          "gouvernorat_code",
+          "cp_unit",
+          "status",
+          "available",
+          "submitted_at"
+        ],
+        "title": "StaffDoctor",
+        "type": "object"
+      },
+      "StaffDoctorDetail": {
+        "properties": {
+          "available": {
+            "title": "Available",
+            "type": "boolean"
+          },
+          "cp_staff_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cp Staff No"
+          },
+          "cp_unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cp Unit"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "full_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Full Name"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "volunteer",
+              "civil_protection"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "licence_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Licence No"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "review_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Review Reason"
+          },
+          "reviews": {
+            "items": {
+              "$ref": "#/components/schemas/DoctorReviewOut"
+            },
+            "title": "Reviews",
+            "type": "array"
+          },
+          "specialties": {
+            "items": {
+              "enum": [
+                "general_practice",
+                "emergency_medicine",
+                "anesthesia_icu",
+                "cardiology",
+                "pulmonology",
+                "neurology",
+                "pediatrics",
+                "obstetrics_gynecology",
+                "internal_medicine",
+                "endocrinology",
+                "nephrology",
+                "gastroenterology",
+                "allergy_immunology",
+                "infectious_diseases",
+                "dermatology_burns",
+                "orthopedics",
+                "general_surgery",
+                "psychiatry",
+                "toxicology",
+                "ophthalmology",
+                "ent"
+              ],
+              "type": "string"
+            },
+            "title": "Specialties",
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "approved",
+              "rejected",
+              "suspended",
+              "withdrawn"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "submitted_at": {
+            "format": "date-time",
+            "title": "Submitted At",
+            "type": "string"
+          },
+          "workplace": {
+            "title": "Workplace",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "full_name",
+          "kind",
+          "specialties",
+          "workplace",
+          "gouvernorat_code",
+          "cp_unit",
+          "status",
+          "available",
+          "submitted_at",
+          "phone",
+          "email",
+          "licence_no",
+          "cp_staff_no",
+          "review_reason",
+          "reviews"
+        ],
+        "title": "StaffDoctorDetail",
+        "type": "object"
+      },
+      "StaffDoctorPage": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/StaffDoctor"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "StaffDoctorPage",
         "type": "object"
       },
       "StaffEventOut": {
@@ -25336,6 +26105,110 @@
         ]
       }
     },
+    "/api/v1/doctors/directory": {
+      "get": {
+        "description": "The referral list (design §4.3): open to approved doctors only.",
+        "operationId": "directory_api_v1_doctors_directory_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "specialty",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Specialty"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gouvernorat_code",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat Code"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DirectoryDoctor"
+                  },
+                  "title": "Response Directory Api V1 Doctors Directory Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Directory",
+        "tags": [
+          "doctors"
+        ]
+      }
+    },
     "/api/v1/emergency-guide": {
       "get": {
         "description": "The visible topics and their visible items, in their order; kept offline by the app.",
@@ -26375,6 +27248,235 @@
         "summary": "Delete My Account",
         "tags": [
           "privacy"
+        ]
+      }
+    },
+    "/api/v1/me/doctor": {
+      "delete": {
+        "operationId": "withdraw_api_v1_me_doctor_delete",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Withdraw",
+        "tags": [
+          "doctors"
+        ]
+      },
+      "get": {
+        "operationId": "get_doctor_api_v1_me_doctor_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoctorOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Doctor",
+        "tags": [
+          "doctors"
+        ]
+      },
+      "put": {
+        "operationId": "put_doctor_api_v1_me_doctor_put",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DoctorIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoctorOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Put Doctor",
+        "tags": [
+          "doctors"
+        ]
+      }
+    },
+    "/api/v1/me/doctor/availability": {
+      "post": {
+        "operationId": "availability_api_v1_me_doctor_availability_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AvailabilityIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoctorOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Availability",
+        "tags": [
+          "doctors"
         ]
       }
     },
@@ -33952,6 +35054,259 @@
         "summary": "Ack Directive",
         "tags": [
           "command"
+        ]
+      }
+    },
+    "/api/v1/staff/doctors": {
+      "get": {
+        "operationId": "list_doctors_api_v1_staff_doctors_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "kind",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kind"
+            }
+          },
+          {
+            "in": "query",
+            "name": "specialty",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Specialty"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gouvernorat_code",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat Code"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 100,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaffDoctorPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Doctors",
+        "tags": [
+          "staff-doctors"
+        ]
+      }
+    },
+    "/api/v1/staff/doctors/{doctor_id}": {
+      "get": {
+        "operationId": "get_doctor_api_v1_staff_doctors__doctor_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "doctor_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Doctor Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaffDoctorDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Doctor",
+        "tags": [
+          "staff-doctors"
+        ]
+      }
+    },
+    "/api/v1/staff/doctors/{doctor_id}/review": {
+      "post": {
+        "operationId": "review_doctor_api_v1_staff_doctors__doctor_id__review_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "doctor_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Doctor Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DoctorReviewIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaffDoctorDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Review Doctor",
+        "tags": [
+          "staff-doctors"
         ]
       }
     },

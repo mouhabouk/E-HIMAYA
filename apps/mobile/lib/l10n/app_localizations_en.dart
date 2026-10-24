@@ -3561,4 +3561,237 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get safetyHistoryViewedBody =>
       'The Civil Protection consulted it for a report. Open e-Himaya for details.';
+
+  @override
+  String get doctorTitle => 'Doctors\' space';
+
+  @override
+  String get doctorIntro =>
+      'Are you a doctor? Register to receive the medical files attached to reports, locked so that only verified doctors can read them. The Civil Protection checks your registration number before any file reaches you.';
+
+  @override
+  String get doctorChoose => 'Choose your role';
+
+  @override
+  String get doctorKindVolunteer => 'Volunteer doctor';
+
+  @override
+  String get doctorKindVolunteerHelp =>
+      'A specialist who accepts medical files to give an opinion, when a colleague refers them.';
+
+  @override
+  String get doctorKindCivilProtection => 'Civil Protection doctor';
+
+  @override
+  String get doctorKindCivilProtectionHelp =>
+      'A doctor of the Civil Protection: receives the medical files of their gouvernorate\'s reports and refers them to specialists.';
+
+  @override
+  String get doctorApply => 'Register as a doctor';
+
+  @override
+  String get doctorKind => 'Role';
+
+  @override
+  String get doctorSpecialties => 'Specialties (1 to 4)';
+
+  @override
+  String get doctorSpecialtiesRequired => 'Choose 1 to 4 specialties.';
+
+  @override
+  String get doctorLicence => 'Medical council registration number';
+
+  @override
+  String get doctorNumberInvalid =>
+      '3 to 30 characters: digits, Latin letters, - and /.';
+
+  @override
+  String get doctorWorkplace => 'Workplace (institution)';
+
+  @override
+  String get doctorGouvernorat => 'Gouvernorate of the workplace';
+
+  @override
+  String get doctorGouvernoratHelp => 'It sets your doctors\' group.';
+
+  @override
+  String get doctorCpUnit => 'Unit or regional directorate';
+
+  @override
+  String get doctorCpStaffNo => 'Staff number';
+
+  @override
+  String get doctorTermsTitle => 'Terms of the doctor role';
+
+  @override
+  String get doctorTermsBody =>
+      'Medical files are confidential: they are opened only to help the person, never copied or shared outside the system, and every opening is recorded. An opinion given remotely is advisory and does not replace an examination. The Civil Protection may suspend your role if these terms are broken.';
+
+  @override
+  String get doctorTermsAccept => 'I have read and accept these terms';
+
+  @override
+  String get doctorTermsRequired => 'You must accept the terms.';
+
+  @override
+  String get doctorRecheckNote =>
+      'Changing the role, specialties, numbers or gouvernorate sends your registration back for checking.';
+
+  @override
+  String get doctorSubmit => 'Send for checking';
+
+  @override
+  String get doctorSubmitted =>
+      'Sent. The Civil Protection will check your registration number.';
+
+  @override
+  String get doctorHelpPending =>
+      'Your registration is being checked. No medical file reaches you before.';
+
+  @override
+  String get doctorHelpApproved =>
+      'Your role is verified: you are in your gouvernorate\'s doctors\' group.';
+
+  @override
+  String get doctorHelpRejected =>
+      'Your registration was not accepted. You can correct it and send it again.';
+
+  @override
+  String get doctorHelpSuspended =>
+      'Your role is suspended: you will not receive medical files.';
+
+  @override
+  String get doctorHelpWithdrawn =>
+      'You gave up the doctor role; your numbers are deleted.';
+
+  @override
+  String get doctorAvailable => 'Available for requests';
+
+  @override
+  String doctorAvailableUntil(String time) {
+    return 'Available until $time';
+  }
+
+  @override
+  String get doctorAvailableHelp =>
+      'Available doctors come first in the referral list. It ends by itself after 8 hours.';
+
+  @override
+  String get doctorAvailableBadge => 'Available';
+
+  @override
+  String get doctorFilesSoon =>
+      'Receiving locked medical files comes in the next update.';
+
+  @override
+  String get doctorDirectory => 'Doctors\' directory';
+
+  @override
+  String get doctorSpecialty => 'Specialty';
+
+  @override
+  String get doctorRegion => 'Region';
+
+  @override
+  String get doctorAllSpecialties => 'All specialties';
+
+  @override
+  String get doctorAllGouvernorats => 'All gouvernorates';
+
+  @override
+  String get doctorDirectoryEmpty => 'No verified doctor matches.';
+
+  @override
+  String get doctorEdit => 'Edit my details';
+
+  @override
+  String get doctorWithdraw => 'Give up the doctor role';
+
+  @override
+  String get doctorWithdrawConfirm =>
+      'Your registration number will be deleted and no file will reach you. You can register again later.';
+
+  @override
+  String get doctorJoinTitle => 'Are you a doctor?';
+
+  @override
+  String get doctorJoinBody =>
+      'Register as a volunteer or Civil Protection doctor.';
+
+  @override
+  String get errorNotDoctor => 'You have not registered as a doctor.';
+
+  @override
+  String get errorDoctorNotApproved => 'Your doctor role is not verified yet.';
+
+  @override
+  String get errorCpDetailsRequired =>
+      'Enter the unit and staff number of a Civil Protection doctor.';
+
+  @override
+  String get errorUnknownTermsVersion =>
+      'The terms changed. Update the app and try again.';
+
+  @override
+  String get specialtyGeneralPractice => 'General practice';
+
+  @override
+  String get specialtyEmergencyMedicine => 'Emergency medicine';
+
+  @override
+  String get specialtyAnesthesiaIcu => 'Anaesthesia and intensive care';
+
+  @override
+  String get specialtyCardiology => 'Cardiology';
+
+  @override
+  String get specialtyPulmonology => 'Pulmonology';
+
+  @override
+  String get specialtyNeurology => 'Neurology';
+
+  @override
+  String get specialtyPediatrics => 'Paediatrics';
+
+  @override
+  String get specialtyObstetricsGynecology => 'Obstetrics and gynaecology';
+
+  @override
+  String get specialtyInternalMedicine => 'Internal medicine';
+
+  @override
+  String get specialtyEndocrinology => 'Endocrinology and diabetes';
+
+  @override
+  String get specialtyNephrology => 'Nephrology';
+
+  @override
+  String get specialtyGastroenterology => 'Gastroenterology';
+
+  @override
+  String get specialtyAllergyImmunology => 'Allergy and immunology';
+
+  @override
+  String get specialtyInfectiousDiseases => 'Infectious diseases';
+
+  @override
+  String get specialtyDermatologyBurns => 'Dermatology and burns';
+
+  @override
+  String get specialtyOrthopedics => 'Orthopaedics and trauma';
+
+  @override
+  String get specialtyGeneralSurgery => 'General surgery';
+
+  @override
+  String get specialtyPsychiatry => 'Psychiatry';
+
+  @override
+  String get specialtyToxicology => 'Toxicology';
+
+  @override
+  String get specialtyOphthalmology => 'Ophthalmology';
+
+  @override
+  String get specialtyEnt => 'Ear, nose and throat';
 }

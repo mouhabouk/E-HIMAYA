@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ء-حماية | تقرير المرحلة C1-a</title>
+<style>
+:root{--bg:#f7f8fa;--paper:#fff;--ink:#1b2430;--muted:#5b6675;--line:#dfe3e8;--accent:#b3261e;--accent2:#0b5cad;--ok:#1e7d3a;--warn:#a15c00;--chip:#eef1f5;--head:#f1f3f6;--navy:#1f3d99;--orange:#e07b00}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1318;--paper:#161b22;--ink:#e6eaef;--muted:#9aa5b1;--line:#2a313b;--accent:#ff6b5e;--accent2:#5aa9ff;--ok:#5cc97a;--warn:#e0a24a;--chip:#1f2630;--head:#1c222b;--navy:#8fa8ff;--orange:#ffb35c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Naskh Arabic","Segoe UI",Tahoma,Arial,sans-serif;line-height:1.75;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header.cover{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:10px;padding:28px 24px;margin-bottom:20px}
+header.cover h1{margin:0 0 6px;font-size:30px}
+header.cover .sub{color:var(--muted);margin:0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:16px}
+.meta div{background:var(--chip);border-radius:6px;padding:8px 12px;font-size:14px}
+.meta b{display:block;color:var(--muted);font-weight:600;font-size:12px}
+a{color:var(--accent2);text-decoration:none}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:20px}
+h2{margin-top:0;font-size:23px;border-bottom:2px solid var(--line);padding-bottom:8px}
+h3{font-size:18px;margin:18px 0 8px}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:start;vertical-align:top}
+th{background:var(--head);font-weight:700;white-space:nowrap}
+code{direction:ltr;unicode-bidi:isolate;background:var(--chip);padding:1px 5px;border-radius:4px;font-size:13px}
+pre{direction:ltr;text-align:left;background:var(--chip);padding:10px 12px;border-radius:6px;overflow-x:auto;font-size:13px;margin:6px 0}
+.note{border-inline-start:4px solid var(--accent2);background:var(--chip);padding:10px 14px;border-radius:6px;margin:12px 0}
+.warn{border-inline-start:4px solid var(--warn)}
+.sim{display:inline-block;background:#ffb300;color:#1f1300;font-weight:700;font-size:12px;padding:1px 8px;border-radius:999px;margin-inline-end:6px}
+.simbox{border:2px dashed #ffb300;background:rgba(255,179,0,.10);border-radius:8px;padding:12px 16px;margin:12px 0}
+.ltr{direction:ltr;unicode-bidi:isolate}
+ul,ol{padding-inline-start:22px}
+.bar{height:10px;background:var(--chip);border-radius:6px;overflow:hidden;min-width:90px}
+.bar span{display:block;height:100%;background:var(--ok)}
+.pipeline{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0}
+.pipeline div{border:1px solid var(--line);border-radius:8px;padding:6px 12px;background:var(--chip);font-weight:600}
+.pipeline div.now{border-color:var(--accent);background:rgba(179,38,30,.08)}
+.pipeline i{color:var(--muted);font-style:normal}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--paper)}
+.card h3{margin:0 0 4px;font-size:17px}
+.card .v{color:var(--muted);font-size:13px;margin:0 0 6px}
+.card dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:6px 0;font-size:14px}
+.card dt{color:var(--muted);font-weight:600}
+.card dd{margin:0}
+.prio{display:inline-block;border-radius:999px;padding:0 8px;font-size:12px;font-weight:700;color:#fff}
+.p1{background:#b3261e}.p2{background:#a15c00}.p3{background:#0b5cad}.p4{background:#5b6675}
+footer{color:var(--muted);text-align:center;font-size:13px}
+@media print{body{background:#fff}section,header.cover,.card{border:none;break-inside:avoid-page}}
+</style>
+<body>
+<div class="wrap">
+<header class="cover">
+  <h1>ء-حماية <span class="ltr">e-Himaya</span></h1>
+  <p class="sub">تقرير المرحلة C1-a: محور الأطباء، الجزء الأول. الصفات الثلاث في التطبيق، تسجيل الطبيب واختصاصاته ومكان عمله، التوثيق في لوحة القيادة، التوفر، ودليل الأطباء حسب الاختصاص والجهة</p>
+  <div class="meta">
+    <div><b>التاريخ</b>2026-10-24</div>
+    <div><b>الفرع</b><span class="ltr">claude/project-thread-yzwsn2</span> · PR #74</div>
+    <div><b>الحالة</b>منجزة، بانتظار المراجعة والدمج</div>
+    <div><b>المراجع</b><a href="phase-c/design-medical-axis.md">التصميم</a> · <a href="versions.md">الإصدارات</a> · <a href="#tools">بطاقات الأدوات</a></div>
+  </div>
+</header>
+
+<section>
+<h2>1. أين تقع هذه المرحلة من مسار المشروع</h2>
+<div class="pipeline">
+  <div>التبليغ</div><i>←</i>
+  <div class="now">المعالجة</div><i>←</i>
+  <div>التحليل</div><i>←</i>
+  <div>مؤشرات الأداء KPI</div><i>←</i>
+  <div>التنبؤ بالذكاء الاصطناعي</div><i>←</i>
+  <div class="now">اتخاذ القرار</div>
+</div>
+<ul>
+  <li><b>المعالجة</b>: يصبح للمنظومة شبكة أطباء موثَّقين لكل ولاية، يستلمون في الجزء التالي الملف الطبي المقفل المرفق بالبلاغ بدل قاعة العمليات.</li>
+  <li><b>اتخاذ القرار</b>: طبيب الحماية المدنية يجد المختص المناسب (القلب، السموم، الحروق…) في ولايته أو غيرها، والمتاحون أولا، لطلب رأيه.</li>
+</ul>
+<p>محور الأطباء ثلاثة أجزاء: <b>C1-a</b> الصفات والتوثيق (هذا التقرير)، <b>C1-b</b> المفاتيح الشخصية والقفل على الهاتف وصندوق الملفات وبطاقة الطوارئ، <b>C1-c</b> الإحالة والرأي الطبي وشفافية المواطن.</p>
+</section>
+
+<section>
+<h2>2. التقدم لكل جزء</h2>
+<div class="tbl"><table>
+<tr><th>الجزء</th><th>ما أُنجز</th><th>الاختبارات</th><th>التقدم</th></tr>
+<tr><td>الصفات الثلاث في التطبيق</td><td>من فضاء التطوع (بطاقة «هل أنت طبيب؟») ومن الإعدادات: متطوع (موجودة)، طبيب متطوع، طبيب الحماية المدنية. لكل صفة شرح قصير.</td><td>تطبيق 3</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+<tr><td>تسجيل الطبيب</td><td>الاختصاص (1 إلى 4 من 21)، رقم التسجيل بعمادة الأطباء، مكان العمل وولايته (مجموعة الطبيب)، الوحدة والمعرّف المهني لطبيب الحماية المدنية، قبول الشروط (السرّية، الرأي استشاري). تغيير ما تحقّق منه الموظفون يعيد الطلب إلى التحقق.</td><td>خادم 3 · تطبيق 4</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+<tr><td>التوثيق في لوحة القيادة</td><td>صفحة «الأطباء»: الطلبات المعلّقة أولا، تصفية بالحالة والصفة والاختصاص والولاية. صفحة الطبيب: الأرقام للتحقق، والهاتف، والقرار (توثيق، رفض بسبب، تعليق، إعادة تفعيل) مع بريد للطبيب. كل فتح لملف طبيب مسجَّل في سجل التدقيق.</td><td>خادم 2 · لوحة 3</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+<tr><td>دور المنسّق الطبي الجهوي</td><td>دور جديد <code>medical_coordinator</code> في مجال الموظفين، يمنحه مسؤول الحسابات الجهوي، يرى أطباء ولايته فقط ولا يملك أي صلاحية تشغيلية. إلى أن يُعيَّن المنسّقون، يوثّق من يوثّق المتطوعين.</td><td>خادم 1 · لوحة 1</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+<tr><td>التوفر ودليل الأطباء</td><td>زر «متاح» لمدة 8 ساعات ينتهي وحده. دليل للأطباء الموثَّقين فقط بقائمتين منسدلتين (الاختصاص، الجهة): المتاحون أولا ثم مجموعة الطبيب، دون هاتف ودون رقم تسجيل.</td><td>خادم 1 · تطبيق 1</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+<tr><td>حقوق الطبيب</td><td>التخلّي عن الصفة يحذف الأرقام المهنية فورا؛ حذف الحساب يحذفها مع مكان العمل؛ تصدير المعطيات يتضمن تسجيل الطبيب.</td><td>خادم 1</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+</table></div>
+<p><b>تقدم الجزء C1-a: 100%. تقدم محور الأطباء كله: حوالي 35%.</b> الملف الطبي ما زال يصل إلى قاعة العمليات كما في B2 حتى يكتمل الجزء C1-b.</p>
+</section>
+
+<section>
+<h2>3. الخادم وقاعدة البيانات (مراجعة ← إعادة تصميم ← تطوير)</h2>
+<div class="tbl"><table>
+<tr><th>الترحيل</th><th>الجداول</th><th>الحماية</th></tr>
+<tr><td><code>0040</code></td><td><code>identity.doctor</code> (الصفة، الحالة، الاختصاصات، رقم التسجيل، مكان العمل وولايته، الوحدة والمعرّف المهني، نسخة الشروط، التوفر)، <code>identity.doctor_review</code> (كل قرار بسببه)</td><td>رقم التسجيل والمعرّف المهني مشفّران؛ القائمة لا تعرضهما؛ الولاية تحدّ ما يراه المنسّق الجهوي؛ قيود في القاعدة: 1 إلى 4 اختصاصات، الوحدة إلزامية لطبيب الحماية المدنية</td></tr>
+</table></div>
+<p>نقاط جديدة: <code>GET/PUT/DELETE /api/v1/me/doctor</code>، <code>POST /api/v1/me/doctor/availability</code>، <code>GET /api/v1/doctors/directory</code>، <code>GET /api/v1/staff/doctors</code>، <code>GET /api/v1/staff/doctors/{id}</code>، <code>POST /api/v1/staff/doctors/{id}/review</code>. وثيقة OpenAPI محدّثة.</p>
+<p>إصلاح في هذا الفرع قبل هذا الجزء: كشف CI أن حساب التطبيق لم يكن يستطيع حذف الملفات الطبية المرفقة عند انتهاء مدتها (سياسة RLS ناقصة)؛ صُحِّح في الترحيلين 0037 و0038.</p>
+</section>
+
+<section>
+<h2>4. المحاكاة <span class="sim">[SIM]</span></h2>
+<div class="simbox">
+<ul>
+  <li>لا بيانات وهمية في هذا الجزء: لا أطباء مخترعون، والاختبارات تنشئ بياناتها بنفسها.</li>
+  <li><span class="sim">[SIM]</span> حسابات أطباء تجريبية لكل ولاية تأتي مع الجزء C1-b، حين يحتاج الملف المقفل إلى مستلمين، معلَّمة ومعزولة في إطار <code>SIMULATION / PRODUCTION</code>.</li>
+  <li><span class="sim">[SIM]</span> بريد القرار يمر بملتقط البريد في التطوير كما في المتطوعين.</li>
+</ul>
+</div>
+</section>
+
+<section>
+<h2>5. الاختبارات المطبقة</h2>
+<div class="tbl"><table>
+<tr><th>الطبقة</th><th>جديدة في C1-a</th><th>المجموع الآن</th></tr>
+<tr><td>الخادم (pytest)</td><td>5 (التسجيل والتحقق من المدخلات، التوثيق حسب الولاية مع التدقيق والبريد، إعادة التحقق عند التغيير، التوفر والدليل، التخلي وحذف الحساب)</td><td>813، شُغّلت محليا بحساب التطبيق نفسه كما في CI</td></tr>
+<tr><td>لوحة القيادة (vitest)</td><td>3</td><td>426 في 50 ملفا</td></tr>
+<tr><td>التطبيق (flutter test)</td><td>6 (3 وحدة، 3 مسارات كاملة)</td><td>399</td></tr>
+<tr><th>المجموع C1-a</th><th>14</th><th>حوالي 1727</th></tr>
+</table></div>
+<p>التحليل الثابت نظيف: ruff و mypy، eslint و tsc، flutter analyze.</p>
+</section>
+
+<section id="tools">
+<h2>6. التقنيات والأدوات والمصادر والإصدارات</h2>
+<p>لا حزمة جديدة في أي طبقة. القائمة الكاملة في <a href="versions.md">versions.md</a>.</p>
+<div class="cards">
+<div class="card"><h3>تطبيق الهاتف</h3><p class="v">0.6.0 (البناء 5) · Flutter 3.47.7 · <span class="prio p1">1</span></p>
+<dl><dt>الاستعمال</dt><dd>فضاء الأطباء: الصفة، التسجيل، التوفر، الدليل</dd><dt>التثبيت</dt><dd><code>cd apps/mobile && flutter pub get && flutter build apk</code></dd></dl></div>
+<div class="card"><h3>ترحيل قاعدة البيانات</h3><p class="v">Alembic · 0040 · <span class="prio p1">1</span></p>
+<dl><dt>الاستعمال</dt><dd>جدولا الأطباء وقراراتهم</dd><dt>الأمر</dt><dd><code>cd services/api && uv run alembic upgrade head</code></dd></dl></div>
+<div class="card"><h3>Keycloak</h3><p class="v">26.8 · Apache-2.0 · <span class="prio p1">1</span> (موجودة)</p>
+<dl><dt>الاستعمال</dt><dd>الدور <code>medical_coordinator</code> في مجال الموظفين</dd><dt>الأمر</dt><dd>إعادة استيراد <code>infra/keycloak/realms/ehimaya-staff-realm.json</code></dd></dl></div>
+</div>
+</section>
+
+<section>
+<h2>7. ملاحظات وانحرافات عن التصميم</h2>
+<ul>
+  <li>صفة الطبيب في جدول مستقل (<code>identity.doctor</code>) لا امتدادا لجدول المتطوعين: يمكن للشخص أن يكون متطوعا ميدانيا وطبيبا معا، ولكل صفة توثيقها.</li>
+  <li>قائمة الاختصاصات ثابتة (21) بثلاث لغات في هذا الجزء؛ تعديلها من الإعدادات مؤجّل.</li>
+  <li>صورة البطاقة المهنية لم تُضف: التوثيق برقم التسجيل والاتصال بالطبيب يكفي الآن، وتجنّبنا تخزين وثيقة إضافية.</li>
+  <li>لا يرى الطبيب الدليل إلا بعد توثيقه، حتى لا يُستعمل لجمع أسماء الأطباء.</li>
+</ul>
+</section>
+
+<section>
+<h2>8. مقترحات (للنقاش، لم تُنفَّذ)</h2>
+<ul>
+  <li>التحقق الآلي من رقم التسجيل مع عمادة الأطباء إن وفّرت خدمة رسمية لذلك.</li>
+  <li>تذكير المنسّق الجهوي بالطلبات المعلّقة منذ أكثر من 48 ساعة.</li>
+</ul>
+</section>
+
+<section>
+<h2>9. ما يلي</h2>
+<p><b>C1-b</b>: مفتاح شخصي لكل طبيب يحميه رمزه، قفل الملف الطبي على هاتف المواطن لأطباء ولايته، صندوق الملفات وفتحها، بطاقة الطوارئ المقروءة لقاعة العمليات، وحسابات الأطباء التجريبية <span class="sim">[SIM]</span>.</p>
+</section>
+</div>
+</body>
+</html>

@@ -35,7 +35,8 @@
     "breakGlass": "Break-glass",
     "layers": "Map layers",
     "emergencyGuide": "Emergency hub",
-    "contact": "Contact us"
+    "contact": "Contact us",
+    "doctors": "Doctors"
   },
   "header": {
     "scope": "Geographic scope",
@@ -65,7 +66,8 @@
     "sysadmin": "System administrator",
     "security_admin": "Security administrator",
     "ai_admin": "AI administrator",
-    "regional_account_admin": "Account administrator"
+    "regional_account_admin": "Account administrator",
+    "medical_coordinator": "Regional medical coordinator"
   },
   "status": {
     "received": "Received",
@@ -3672,6 +3674,67 @@
       "at": "Time",
       "position": "Position",
       "accuracy": "Accuracy"
+    }
+  },
+  "doctors": {
+    "title": "Doctors",
+    "intro": "Doctors who registered from the app, pending registrations first. Check the medical council registration number (and a Civil Protection doctor's staff number) before verifying: no medical file reaches an unverified doctor.",
+    "filters": "Filter doctors",
+    "search": "Search by name or workplace",
+    "empty": "No doctor matches.",
+    "unnamed": "Doctor",
+    "back": "Back to doctors",
+    "available": "Available",
+    "notAvailable": "Not available",
+    "columns": {
+      "kind": "Role",
+      "specialties": "Specialties",
+      "workplace": "Workplace",
+      "available": "Availability"
+    },
+    "kind": {
+      "volunteer": "Volunteer doctor",
+      "civil_protection": "Civil Protection doctor"
+    },
+    "specialty": {
+      "general_practice": "General practice",
+      "emergency_medicine": "Emergency medicine",
+      "anesthesia_icu": "Anaesthesia and intensive care",
+      "cardiology": "Cardiology",
+      "pulmonology": "Pulmonology",
+      "neurology": "Neurology",
+      "pediatrics": "Paediatrics",
+      "obstetrics_gynecology": "Obstetrics and gynaecology",
+      "internal_medicine": "Internal medicine",
+      "endocrinology": "Endocrinology and diabetes",
+      "nephrology": "Nephrology",
+      "gastroenterology": "Gastroenterology",
+      "allergy_immunology": "Allergy and immunology",
+      "infectious_diseases": "Infectious diseases",
+      "dermatology_burns": "Dermatology and burns",
+      "orthopedics": "Orthopaedics and trauma",
+      "general_surgery": "General surgery",
+      "psychiatry": "Psychiatry",
+      "toxicology": "Toxicology",
+      "ophthalmology": "Ophthalmology",
+      "ent": "Ear, nose and throat"
+    },
+    "detail": {
+      "registration": "Registration",
+      "licence": "Medical council number",
+      "cpUnit": "Unit or regional directorate",
+      "cpStaffNo": "Staff number",
+      "audited": "Opening this file is recorded in the audit log."
+    },
+    "review": {
+      "title": "Verification",
+      "check": "Check the number with the medical council, and call the doctor if needed, before verifying.",
+      "decision": {
+        "approve": "Verify",
+        "reject": "Reject",
+        "suspend": "Suspend",
+        "reinstate": "Reinstate"
+      }
     }
   }
 }

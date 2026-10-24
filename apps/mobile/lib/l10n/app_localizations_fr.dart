@@ -3595,4 +3595,239 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get safetyHistoryViewedBody =>
       'La Protection civile l’a consulté pour un signalement. Ouvrez e-Himaya pour en savoir plus.';
+
+  @override
+  String get doctorTitle => 'Espace médecins';
+
+  @override
+  String get doctorIntro =>
+      'Vous êtes médecin ? Déclarez-vous pour recevoir les dossiers médicaux joints aux signalements, verrouillés et lisibles uniquement par les médecins vérifiés. La Protection civile vérifie votre numéro d\'inscription avant tout dossier.';
+
+  @override
+  String get doctorChoose => 'Choisissez votre statut';
+
+  @override
+  String get doctorKindVolunteer => 'Médecin volontaire';
+
+  @override
+  String get doctorKindVolunteerHelp =>
+      'Médecin spécialiste qui accepte de recevoir des dossiers médicaux pour donner son avis, quand un confrère les lui adresse.';
+
+  @override
+  String get doctorKindCivilProtection => 'Médecin de la Protection civile';
+
+  @override
+  String get doctorKindCivilProtectionHelp =>
+      'Médecin de la Protection civile : reçoit les dossiers médicaux des signalements de son gouvernorat et les adresse aux spécialistes.';
+
+  @override
+  String get doctorApply => 'S\'inscrire comme médecin';
+
+  @override
+  String get doctorKind => 'Statut';
+
+  @override
+  String get doctorSpecialties => 'Spécialités (1 à 4)';
+
+  @override
+  String get doctorSpecialtiesRequired => 'Choisissez de 1 à 4 spécialités.';
+
+  @override
+  String get doctorLicence => 'N° d\'inscription au Conseil de l\'Ordre';
+
+  @override
+  String get doctorNumberInvalid =>
+      'De 3 à 30 caractères : chiffres, lettres latines, - et /.';
+
+  @override
+  String get doctorWorkplace => 'Lieu d\'exercice (établissement)';
+
+  @override
+  String get doctorGouvernorat => 'Gouvernorat du lieu d\'exercice';
+
+  @override
+  String get doctorGouvernoratHelp =>
+      'Elle détermine votre groupe de médecins.';
+
+  @override
+  String get doctorCpUnit => 'Unité ou direction régionale';
+
+  @override
+  String get doctorCpStaffNo => 'Matricule';
+
+  @override
+  String get doctorTermsTitle => 'Conditions du statut de médecin';
+
+  @override
+  String get doctorTermsBody =>
+      'Les dossiers médicaux sont confidentiels : ils ne s\'ouvrent que pour secourir la personne, ne se copient ni ne se partagent hors du système, et chaque ouverture est enregistrée. Un avis donné à distance est consultatif et ne remplace pas l\'examen. La Protection civile peut suspendre votre statut en cas de manquement.';
+
+  @override
+  String get doctorTermsAccept => 'J\'ai lu et j\'accepte ces conditions';
+
+  @override
+  String get doctorTermsRequired => 'Vous devez accepter les conditions.';
+
+  @override
+  String get doctorRecheckNote =>
+      'Changer de statut, de spécialités, de numéros ou de gouvernorat renvoie votre demande en vérification.';
+
+  @override
+  String get doctorSubmit => 'Envoyer pour vérification';
+
+  @override
+  String get doctorSubmitted =>
+      'Demande envoyée. La Protection civile va vérifier votre numéro d\'inscription.';
+
+  @override
+  String get doctorHelpPending =>
+      'Votre demande est en cours de vérification. Aucun dossier médical avant la vérification.';
+
+  @override
+  String get doctorHelpApproved =>
+      'Votre statut est vérifié : vous faites partie du groupe de médecins de votre gouvernorat.';
+
+  @override
+  String get doctorHelpRejected =>
+      'Votre demande n\'a pas été retenue. Vous pouvez la corriger et la renvoyer.';
+
+  @override
+  String get doctorHelpSuspended =>
+      'Votre statut est suspendu : vous ne recevez plus de dossiers médicaux.';
+
+  @override
+  String get doctorHelpWithdrawn =>
+      'Vous avez renoncé au statut de médecin ; vos numéros sont supprimés.';
+
+  @override
+  String get doctorAvailable => 'Disponible pour les demandes';
+
+  @override
+  String doctorAvailableUntil(String time) {
+    return 'Disponible jusqu\'à $time';
+  }
+
+  @override
+  String get doctorAvailableHelp =>
+      'Les médecins disponibles apparaissent en premier dans la liste. La disponibilité s\'arrête seule après 8 heures.';
+
+  @override
+  String get doctorAvailableBadge => 'Disponible';
+
+  @override
+  String get doctorFilesSoon =>
+      'La réception des dossiers médicaux verrouillés arrive dans la prochaine mise à jour.';
+
+  @override
+  String get doctorDirectory => 'Annuaire des médecins';
+
+  @override
+  String get doctorSpecialty => 'Spécialité';
+
+  @override
+  String get doctorRegion => 'Région';
+
+  @override
+  String get doctorAllSpecialties => 'Toutes les spécialités';
+
+  @override
+  String get doctorAllGouvernorats => 'Tous les gouvernorats';
+
+  @override
+  String get doctorDirectoryEmpty => 'Aucun médecin vérifié pour ces critères.';
+
+  @override
+  String get doctorEdit => 'Modifier mes informations';
+
+  @override
+  String get doctorWithdraw => 'Renoncer au statut de médecin';
+
+  @override
+  String get doctorWithdrawConfirm =>
+      'Votre numéro d\'inscription sera supprimé et vous ne recevrez plus de dossiers. Vous pourrez vous réinscrire.';
+
+  @override
+  String get doctorJoinTitle => 'Vous êtes médecin ?';
+
+  @override
+  String get doctorJoinBody =>
+      'Inscrivez-vous comme médecin volontaire ou de la Protection civile.';
+
+  @override
+  String get errorNotDoctor => 'Vous n\'êtes pas inscrit comme médecin.';
+
+  @override
+  String get errorDoctorNotApproved =>
+      'Votre statut de médecin n\'est pas encore vérifié.';
+
+  @override
+  String get errorCpDetailsRequired =>
+      'Indiquez l\'unité et le matricule du médecin de la Protection civile.';
+
+  @override
+  String get errorUnknownTermsVersion =>
+      'Les conditions ont changé. Mettez l\'application à jour puis réessayez.';
+
+  @override
+  String get specialtyGeneralPractice => 'Médecine générale';
+
+  @override
+  String get specialtyEmergencyMedicine => 'Médecine d\'urgence';
+
+  @override
+  String get specialtyAnesthesiaIcu => 'Anesthésie-réanimation';
+
+  @override
+  String get specialtyCardiology => 'Cardiologie';
+
+  @override
+  String get specialtyPulmonology => 'Pneumologie';
+
+  @override
+  String get specialtyNeurology => 'Neurologie';
+
+  @override
+  String get specialtyPediatrics => 'Pédiatrie';
+
+  @override
+  String get specialtyObstetricsGynecology => 'Gynécologie-obstétrique';
+
+  @override
+  String get specialtyInternalMedicine => 'Médecine interne';
+
+  @override
+  String get specialtyEndocrinology => 'Endocrinologie-diabétologie';
+
+  @override
+  String get specialtyNephrology => 'Néphrologie';
+
+  @override
+  String get specialtyGastroenterology => 'Gastro-entérologie';
+
+  @override
+  String get specialtyAllergyImmunology => 'Allergologie-immunologie';
+
+  @override
+  String get specialtyInfectiousDiseases => 'Maladies infectieuses';
+
+  @override
+  String get specialtyDermatologyBurns => 'Dermatologie et brûlures';
+
+  @override
+  String get specialtyOrthopedics => 'Orthopédie-traumatologie';
+
+  @override
+  String get specialtyGeneralSurgery => 'Chirurgie générale';
+
+  @override
+  String get specialtyPsychiatry => 'Psychiatrie';
+
+  @override
+  String get specialtyToxicology => 'Toxicologie';
+
+  @override
+  String get specialtyOphthalmology => 'Ophtalmologie';
+
+  @override
+  String get specialtyEnt => 'ORL';
 }

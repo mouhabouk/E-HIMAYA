@@ -35,7 +35,8 @@
     "breakGlass": "Accès exceptionnels",
     "layers": "Couches de la carte",
     "emergencyGuide": "Centre d’urgence",
-    "contact": "Nous contacter"
+    "contact": "Nous contacter",
+    "doctors": "Médecins"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -65,7 +66,8 @@
     "sysadmin": "Administrateur système",
     "security_admin": "Administrateur sécurité",
     "ai_admin": "Administrateur IA",
-    "regional_account_admin": "Administrateur des comptes"
+    "regional_account_admin": "Administrateur des comptes",
+    "medical_coordinator": "Coordinateur médical régional"
   },
   "status": {
     "received": "Reçu",
@@ -3672,6 +3674,67 @@
       "at": "Heure",
       "position": "Position",
       "accuracy": "Précision"
+    }
+  },
+  "doctors": {
+    "title": "Médecins",
+    "intro": "Les médecins inscrits depuis l'application, demandes en attente d'abord. Vérifiez le numéro d'inscription au Conseil de l'Ordre (et le matricule d'un médecin de la Protection civile) avant de valider : aucun dossier médical n'atteint un médecin non vérifié.",
+    "filters": "Filtrer les médecins",
+    "search": "Rechercher par nom ou lieu d'exercice",
+    "empty": "Aucun médecin pour ces critères.",
+    "unnamed": "Médecin",
+    "back": "Retour aux médecins",
+    "available": "Disponible",
+    "notAvailable": "Non disponible",
+    "columns": {
+      "kind": "Statut",
+      "specialties": "Spécialités",
+      "workplace": "Lieu d'exercice",
+      "available": "Disponibilité"
+    },
+    "kind": {
+      "volunteer": "Médecin volontaire",
+      "civil_protection": "Médecin de la Protection civile"
+    },
+    "specialty": {
+      "general_practice": "Médecine générale",
+      "emergency_medicine": "Médecine d'urgence",
+      "anesthesia_icu": "Anesthésie-réanimation",
+      "cardiology": "Cardiologie",
+      "pulmonology": "Pneumologie",
+      "neurology": "Neurologie",
+      "pediatrics": "Pédiatrie",
+      "obstetrics_gynecology": "Gynécologie-obstétrique",
+      "internal_medicine": "Médecine interne",
+      "endocrinology": "Endocrinologie-diabétologie",
+      "nephrology": "Néphrologie",
+      "gastroenterology": "Gastro-entérologie",
+      "allergy_immunology": "Allergologie-immunologie",
+      "infectious_diseases": "Maladies infectieuses",
+      "dermatology_burns": "Dermatologie et brûlures",
+      "orthopedics": "Orthopédie-traumatologie",
+      "general_surgery": "Chirurgie générale",
+      "psychiatry": "Psychiatrie",
+      "toxicology": "Toxicologie",
+      "ophthalmology": "Ophtalmologie",
+      "ent": "ORL"
+    },
+    "detail": {
+      "registration": "Inscription",
+      "licence": "N° d'inscription à l'Ordre",
+      "cpUnit": "Unité ou direction régionale",
+      "cpStaffNo": "Matricule",
+      "audited": "L'ouverture de cette fiche est inscrite au journal d'audit."
+    },
+    "review": {
+      "title": "Vérification",
+      "check": "Vérifiez le numéro auprès du Conseil de l'Ordre, et appelez le médecin si besoin, avant de valider.",
+      "decision": {
+        "approve": "Vérifier",
+        "reject": "Refuser",
+        "suspend": "Suspendre",
+        "reinstate": "Rétablir"
+      }
     }
   }
 }

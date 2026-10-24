@@ -6189,6 +6189,432 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The Civil Protection consulted it for a report. Open e-Himaya for details.'**
   String get safetyHistoryViewedBody;
+
+  /// No description provided for @doctorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctors\' space'**
+  String get doctorTitle;
+
+  /// No description provided for @doctorIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you a doctor? Register to receive the medical files attached to reports, locked so that only verified doctors can read them. The Civil Protection checks your registration number before any file reaches you.'**
+  String get doctorIntro;
+
+  /// No description provided for @doctorChoose.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your role'**
+  String get doctorChoose;
+
+  /// No description provided for @doctorKindVolunteer.
+  ///
+  /// In en, this message translates to:
+  /// **'Volunteer doctor'**
+  String get doctorKindVolunteer;
+
+  /// No description provided for @doctorKindVolunteerHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'A specialist who accepts medical files to give an opinion, when a colleague refers them.'**
+  String get doctorKindVolunteerHelp;
+
+  /// No description provided for @doctorKindCivilProtection.
+  ///
+  /// In en, this message translates to:
+  /// **'Civil Protection doctor'**
+  String get doctorKindCivilProtection;
+
+  /// No description provided for @doctorKindCivilProtectionHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'A doctor of the Civil Protection: receives the medical files of their gouvernorate\'s reports and refers them to specialists.'**
+  String get doctorKindCivilProtectionHelp;
+
+  /// No description provided for @doctorApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Register as a doctor'**
+  String get doctorApply;
+
+  /// No description provided for @doctorKind.
+  ///
+  /// In en, this message translates to:
+  /// **'Role'**
+  String get doctorKind;
+
+  /// No description provided for @doctorSpecialties.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialties (1 to 4)'**
+  String get doctorSpecialties;
+
+  /// No description provided for @doctorSpecialtiesRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose 1 to 4 specialties.'**
+  String get doctorSpecialtiesRequired;
+
+  /// No description provided for @doctorLicence.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical council registration number'**
+  String get doctorLicence;
+
+  /// No description provided for @doctorNumberInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'3 to 30 characters: digits, Latin letters, - and /.'**
+  String get doctorNumberInvalid;
+
+  /// No description provided for @doctorWorkplace.
+  ///
+  /// In en, this message translates to:
+  /// **'Workplace (institution)'**
+  String get doctorWorkplace;
+
+  /// No description provided for @doctorGouvernorat.
+  ///
+  /// In en, this message translates to:
+  /// **'Gouvernorate of the workplace'**
+  String get doctorGouvernorat;
+
+  /// No description provided for @doctorGouvernoratHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'It sets your doctors\' group.'**
+  String get doctorGouvernoratHelp;
+
+  /// No description provided for @doctorCpUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit or regional directorate'**
+  String get doctorCpUnit;
+
+  /// No description provided for @doctorCpStaffNo.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff number'**
+  String get doctorCpStaffNo;
+
+  /// No description provided for @doctorTermsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of the doctor role'**
+  String get doctorTermsTitle;
+
+  /// No description provided for @doctorTermsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical files are confidential: they are opened only to help the person, never copied or shared outside the system, and every opening is recorded. An opinion given remotely is advisory and does not replace an examination. The Civil Protection may suspend your role if these terms are broken.'**
+  String get doctorTermsBody;
+
+  /// No description provided for @doctorTermsAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'I have read and accept these terms'**
+  String get doctorTermsAccept;
+
+  /// No description provided for @doctorTermsRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'You must accept the terms.'**
+  String get doctorTermsRequired;
+
+  /// No description provided for @doctorRecheckNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Changing the role, specialties, numbers or gouvernorate sends your registration back for checking.'**
+  String get doctorRecheckNote;
+
+  /// No description provided for @doctorSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Send for checking'**
+  String get doctorSubmit;
+
+  /// No description provided for @doctorSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent. The Civil Protection will check your registration number.'**
+  String get doctorSubmitted;
+
+  /// No description provided for @doctorHelpPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Your registration is being checked. No medical file reaches you before.'**
+  String get doctorHelpPending;
+
+  /// No description provided for @doctorHelpApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Your role is verified: you are in your gouvernorate\'s doctors\' group.'**
+  String get doctorHelpApproved;
+
+  /// No description provided for @doctorHelpRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Your registration was not accepted. You can correct it and send it again.'**
+  String get doctorHelpRejected;
+
+  /// No description provided for @doctorHelpSuspended.
+  ///
+  /// In en, this message translates to:
+  /// **'Your role is suspended: you will not receive medical files.'**
+  String get doctorHelpSuspended;
+
+  /// No description provided for @doctorHelpWithdrawn.
+  ///
+  /// In en, this message translates to:
+  /// **'You gave up the doctor role; your numbers are deleted.'**
+  String get doctorHelpWithdrawn;
+
+  /// No description provided for @doctorAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Available for requests'**
+  String get doctorAvailable;
+
+  /// No description provided for @doctorAvailableUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Available until {time}'**
+  String doctorAvailableUntil(String time);
+
+  /// No description provided for @doctorAvailableHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Available doctors come first in the referral list. It ends by itself after 8 hours.'**
+  String get doctorAvailableHelp;
+
+  /// No description provided for @doctorAvailableBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get doctorAvailableBadge;
+
+  /// No description provided for @doctorFilesSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Receiving locked medical files comes in the next update.'**
+  String get doctorFilesSoon;
+
+  /// No description provided for @doctorDirectory.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctors\' directory'**
+  String get doctorDirectory;
+
+  /// No description provided for @doctorSpecialty.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialty'**
+  String get doctorSpecialty;
+
+  /// No description provided for @doctorRegion.
+  ///
+  /// In en, this message translates to:
+  /// **'Region'**
+  String get doctorRegion;
+
+  /// No description provided for @doctorAllSpecialties.
+  ///
+  /// In en, this message translates to:
+  /// **'All specialties'**
+  String get doctorAllSpecialties;
+
+  /// No description provided for @doctorAllGouvernorats.
+  ///
+  /// In en, this message translates to:
+  /// **'All gouvernorates'**
+  String get doctorAllGouvernorats;
+
+  /// No description provided for @doctorDirectoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No verified doctor matches.'**
+  String get doctorDirectoryEmpty;
+
+  /// No description provided for @doctorEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit my details'**
+  String get doctorEdit;
+
+  /// No description provided for @doctorWithdraw.
+  ///
+  /// In en, this message translates to:
+  /// **'Give up the doctor role'**
+  String get doctorWithdraw;
+
+  /// No description provided for @doctorWithdrawConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Your registration number will be deleted and no file will reach you. You can register again later.'**
+  String get doctorWithdrawConfirm;
+
+  /// No description provided for @doctorJoinTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you a doctor?'**
+  String get doctorJoinTitle;
+
+  /// No description provided for @doctorJoinBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Register as a volunteer or Civil Protection doctor.'**
+  String get doctorJoinBody;
+
+  /// No description provided for @errorNotDoctor.
+  ///
+  /// In en, this message translates to:
+  /// **'You have not registered as a doctor.'**
+  String get errorNotDoctor;
+
+  /// No description provided for @errorDoctorNotApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Your doctor role is not verified yet.'**
+  String get errorDoctorNotApproved;
+
+  /// No description provided for @errorCpDetailsRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the unit and staff number of a Civil Protection doctor.'**
+  String get errorCpDetailsRequired;
+
+  /// No description provided for @errorUnknownTermsVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'The terms changed. Update the app and try again.'**
+  String get errorUnknownTermsVersion;
+
+  /// No description provided for @specialtyGeneralPractice.
+  ///
+  /// In en, this message translates to:
+  /// **'General practice'**
+  String get specialtyGeneralPractice;
+
+  /// No description provided for @specialtyEmergencyMedicine.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency medicine'**
+  String get specialtyEmergencyMedicine;
+
+  /// No description provided for @specialtyAnesthesiaIcu.
+  ///
+  /// In en, this message translates to:
+  /// **'Anaesthesia and intensive care'**
+  String get specialtyAnesthesiaIcu;
+
+  /// No description provided for @specialtyCardiology.
+  ///
+  /// In en, this message translates to:
+  /// **'Cardiology'**
+  String get specialtyCardiology;
+
+  /// No description provided for @specialtyPulmonology.
+  ///
+  /// In en, this message translates to:
+  /// **'Pulmonology'**
+  String get specialtyPulmonology;
+
+  /// No description provided for @specialtyNeurology.
+  ///
+  /// In en, this message translates to:
+  /// **'Neurology'**
+  String get specialtyNeurology;
+
+  /// No description provided for @specialtyPediatrics.
+  ///
+  /// In en, this message translates to:
+  /// **'Paediatrics'**
+  String get specialtyPediatrics;
+
+  /// No description provided for @specialtyObstetricsGynecology.
+  ///
+  /// In en, this message translates to:
+  /// **'Obstetrics and gynaecology'**
+  String get specialtyObstetricsGynecology;
+
+  /// No description provided for @specialtyInternalMedicine.
+  ///
+  /// In en, this message translates to:
+  /// **'Internal medicine'**
+  String get specialtyInternalMedicine;
+
+  /// No description provided for @specialtyEndocrinology.
+  ///
+  /// In en, this message translates to:
+  /// **'Endocrinology and diabetes'**
+  String get specialtyEndocrinology;
+
+  /// No description provided for @specialtyNephrology.
+  ///
+  /// In en, this message translates to:
+  /// **'Nephrology'**
+  String get specialtyNephrology;
+
+  /// No description provided for @specialtyGastroenterology.
+  ///
+  /// In en, this message translates to:
+  /// **'Gastroenterology'**
+  String get specialtyGastroenterology;
+
+  /// No description provided for @specialtyAllergyImmunology.
+  ///
+  /// In en, this message translates to:
+  /// **'Allergy and immunology'**
+  String get specialtyAllergyImmunology;
+
+  /// No description provided for @specialtyInfectiousDiseases.
+  ///
+  /// In en, this message translates to:
+  /// **'Infectious diseases'**
+  String get specialtyInfectiousDiseases;
+
+  /// No description provided for @specialtyDermatologyBurns.
+  ///
+  /// In en, this message translates to:
+  /// **'Dermatology and burns'**
+  String get specialtyDermatologyBurns;
+
+  /// No description provided for @specialtyOrthopedics.
+  ///
+  /// In en, this message translates to:
+  /// **'Orthopaedics and trauma'**
+  String get specialtyOrthopedics;
+
+  /// No description provided for @specialtyGeneralSurgery.
+  ///
+  /// In en, this message translates to:
+  /// **'General surgery'**
+  String get specialtyGeneralSurgery;
+
+  /// No description provided for @specialtyPsychiatry.
+  ///
+  /// In en, this message translates to:
+  /// **'Psychiatry'**
+  String get specialtyPsychiatry;
+
+  /// No description provided for @specialtyToxicology.
+  ///
+  /// In en, this message translates to:
+  /// **'Toxicology'**
+  String get specialtyToxicology;
+
+  /// No description provided for @specialtyOphthalmology.
+  ///
+  /// In en, this message translates to:
+  /// **'Ophthalmology'**
+  String get specialtyOphthalmology;
+
+  /// No description provided for @specialtyEnt.
+  ///
+  /// In en, this message translates to:
+  /// **'Ear, nose and throat'**
+  String get specialtyEnt;
 }
 
 class _AppLocalizationsDelegate

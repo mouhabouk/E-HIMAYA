@@ -88,6 +88,15 @@ export function fakeSafetyApi() {
   };
 }
 
+/** Doctors (phase C1-a): no registration unless a test gives some. */
+export function fakeDoctorsApi() {
+  return {
+    doctors: vi.fn(() => Promise.resolve({ items: [], next_cursor: null })),
+    doctor: vi.fn(),
+    reviewDoctor: vi.fn(),
+  };
+}
+
 /** Map data layers (phase B1): no layer unless a test gives some. */
 export function fakeLayersApi() {
   return {
@@ -150,6 +159,7 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     ...fakeGuideApi(),
     ...fakeContactApi(),
     ...fakeSafetyApi(),
+    ...fakeDoctorsApi(),
     gouvernorats: vi.fn(() =>
       Promise.resolve([
         { code: 11, iso_code: "TN-11", name: "تونس", name_ar: "تونس", name_fr: "Tunis", delegation_count: 21 },
