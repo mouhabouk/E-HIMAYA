@@ -38,6 +38,14 @@ class RedactedPushResolver {
           title: _l10n.safetyHistoryViewedTitle,
           body: _l10n.safetyHistoryViewedBody,
         ),
+        PushKind.medicalReferral => p.withText(
+          title: _l10n.pushMedicalReferralTitle,
+          body: _l10n.pushMedicalReferralBody,
+        ),
+        PushKind.medicalOpinion => p.withText(
+          title: _l10n.pushMedicalOpinionTitle,
+          body: _l10n.pushMedicalOpinionBody,
+        ),
         PushKind.alert ||
         PushKind.alertCancelled ||
         PushKind.safetyCheckReminder => null,

@@ -290,6 +290,9 @@ class MedicalOut(BaseModel):
     attached_at: datetime
     # Phase C1-b: the rest of the file is locked for the doctors (the operations room reads the card only).
     locked: bool = False
+    # Phase C1-c: counts only, never content.
+    referrals: int = 0
+    opinions: int = 0
 
 
 class StaffReportPage(BaseModel):

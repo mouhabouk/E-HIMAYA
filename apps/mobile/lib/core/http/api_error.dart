@@ -73,6 +73,12 @@ enum ApiErrorCode {
   doctorKeyMissing('doctor_key_missing'),
   notCommitteeMember('not_committee_member'),
   reasonRequired('reason_required'),
+  // Phase C1-c: referrals and opinions.
+  tooManyReferrals('too_many_referrals'),
+  alreadyHoldsFile('already_holds_file'),
+  referralNotAllowed('referral_not_allowed'),
+  recipientsChanged('recipients_changed'),
+  invalidRecipient('invalid_recipient'),
   // Phase 9 §3: anonymous report quota of this installation reached (non-SOS reports only).
   anonQuotaExhausted('anon_quota_exhausted'),
   // Local: checksum mismatch detected by the server after upload.

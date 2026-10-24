@@ -125,6 +125,8 @@ class DirectoryDoctor(BaseModel):
     workplace: str
     gouvernorat_code: int
     available: bool
+    # Phase C1-c: what a referral locks the file key for; null while the doctor has not set their key (not offered).
+    public_key: str | None = None
 
 
 class CommitteeMember(StaffDoctor):
