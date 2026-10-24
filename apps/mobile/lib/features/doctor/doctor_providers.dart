@@ -71,3 +71,31 @@ final medicalFilesProvider = FutureProvider.autoDispose<List<MedicalInboxItem>>(
   (ref) => ref.watch(apiProvider).medicalFiles(),
   retry: (_, _) => null,
 );
+
+/// Phase C1-c: the specialists a file went to (gouvernorat group and committee only).
+final fileReferralsProvider = FutureProvider.autoDispose
+    .family<List<FileReferral>, String>(
+      (ref, reportId) => ref.watch(apiProvider).fileReferrals(reportId),
+      retry: (_, _) => null,
+    );
+
+/// The opinions on a file locked for this doctor (still locked: opened on the screen).
+final fileOpinionsProvider = FutureProvider.autoDispose
+    .family<List<LockedOpinion>, String>(
+      (ref, reportId) => ref.watch(apiProvider).medicalOpinions(reportId),
+      retry: (_, _) => null,
+    );
+
+/// Committee members waiting for keys this member's phone can lock for them.
+final committeePendingProvider =
+    FutureProvider.autoDispose<List<PendingMember>>(
+      (ref) => ref.watch(apiProvider).committeePending(),
+      retry: (_, _) => null,
+    );
+
+/// The reporter's side: who opened their locked medical files, by role only.
+final myMedicalOpeningsProvider =
+    FutureProvider.autoDispose<List<MedicalOpening>>(
+      (ref) => ref.watch(apiProvider).myMedicalOpenings(),
+      retry: (_, _) => null,
+    );

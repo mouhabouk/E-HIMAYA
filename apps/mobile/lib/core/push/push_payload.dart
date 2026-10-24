@@ -14,7 +14,10 @@ enum PushKind {
   safetyLink('safety_link'),
   safetyCheckFired('safety_check_fired'),
   safetyHistoryViewed('safety_history_viewed'),
-  safetyCheckReminder('safety_check_reminder');
+  safetyCheckReminder('safety_check_reminder'),
+  // Phase C1-c: a medical file referred to this doctor, a specialist's opinion on a file they hold.
+  medicalReferral('medical_referral'),
+  medicalOpinion('medical_opinion');
 
   const PushKind([this._wire]);
   final String? _wire;
@@ -104,5 +107,6 @@ class PushPayload {
     PushKind.safetyCheckFired ||
     PushKind.safetyCheckReminder => Routes.safetyCheck,
     PushKind.safetyHistoryViewed => Routes.safetyLocationHistory,
+    PushKind.medicalReferral || PushKind.medicalOpinion => Routes.doctorFiles,
   };
 }

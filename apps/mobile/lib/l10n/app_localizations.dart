@@ -6813,6 +6813,258 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ear, nose and throat'**
   String get specialtyEnt;
+
+  /// No description provided for @doctorRefer.
+  ///
+  /// In en, this message translates to:
+  /// **'Refer to a specialist'**
+  String get doctorRefer;
+
+  /// No description provided for @doctorReferTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Refer the file'**
+  String get doctorReferTitle;
+
+  /// No description provided for @doctorReferHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The file key is locked on your phone for each doctor you choose; the server never sees it. At most five referrals per file.'**
+  String get doctorReferHint;
+
+  /// No description provided for @doctorReferPickSpecialty.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the specialty first.'**
+  String get doctorReferPickSpecialty;
+
+  /// No description provided for @doctorReferNoKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Has not set their key yet'**
+  String get doctorReferNoKey;
+
+  /// No description provided for @doctorReferReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason for the referral'**
+  String get doctorReferReason;
+
+  /// No description provided for @doctorReferSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Refer'**
+  String get doctorReferSend;
+
+  /// No description provided for @doctorReferDone.
+  ///
+  /// In en, this message translates to:
+  /// **'File referred. The doctor gets a notification without any content.'**
+  String get doctorReferDone;
+
+  /// No description provided for @doctorReferrals.
+  ///
+  /// In en, this message translates to:
+  /// **'Referrals'**
+  String get doctorReferrals;
+
+  /// No description provided for @doctorReferralsMine.
+  ///
+  /// In en, this message translates to:
+  /// **'Referred by you'**
+  String get doctorReferralsMine;
+
+  /// No description provided for @doctorOpinions.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical opinions'**
+  String get doctorOpinions;
+
+  /// No description provided for @doctorOpinionsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No opinion yet.'**
+  String get doctorOpinionsEmpty;
+
+  /// No description provided for @doctorOpinionWrite.
+  ///
+  /// In en, this message translates to:
+  /// **'Write an opinion'**
+  String get doctorOpinionWrite;
+
+  /// No description provided for @doctorOpinionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'An advisory opinion locked on your phone for the gouvernorat and committee doctors holding the file, and for the doctor who referred it.'**
+  String get doctorOpinionHint;
+
+  /// No description provided for @doctorOpinionSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send the opinion'**
+  String get doctorOpinionSend;
+
+  /// No description provided for @doctorOpinionSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Opinion sent, locked.'**
+  String get doctorOpinionSent;
+
+  /// No description provided for @doctorOpinionMine.
+  ///
+  /// In en, this message translates to:
+  /// **'Your opinion'**
+  String get doctorOpinionMine;
+
+  /// No description provided for @doctorOpinionCannotOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'This opinion cannot be opened with your key.'**
+  String get doctorOpinionCannotOpen;
+
+  /// No description provided for @doctorPendingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Files waiting for a new member'**
+  String get doctorPendingTitle;
+
+  /// No description provided for @doctorPendingShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock for them'**
+  String get doctorPendingShare;
+
+  /// No description provided for @doctorPendingReasonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your phone opens each file to lock its key for the new member. Each opening is recorded with the reason.'**
+  String get doctorPendingReasonHint;
+
+  /// No description provided for @doctorPendingDone.
+  ///
+  /// In en, this message translates to:
+  /// **'The files are now available to the new member.'**
+  String get doctorPendingDone;
+
+  /// No description provided for @medicalOpeningsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Who saw my medical file'**
+  String get medicalOpeningsTitle;
+
+  /// No description provided for @medicalOpeningsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody has opened the locked part of your file.'**
+  String get medicalOpeningsEmpty;
+
+  /// No description provided for @medicalOpeningsNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Only the role is shown, never the doctors\' names.'**
+  String get medicalOpeningsNote;
+
+  /// No description provided for @medicalOpeningCommittee.
+  ///
+  /// In en, this message translates to:
+  /// **'The medical committee'**
+  String get medicalOpeningCommittee;
+
+  /// No description provided for @medicalOpeningOpened.
+  ///
+  /// In en, this message translates to:
+  /// **'Opened the file'**
+  String get medicalOpeningOpened;
+
+  /// No description provided for @pushMedicalReferralTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A medical file was referred to you'**
+  String get pushMedicalReferralTitle;
+
+  /// No description provided for @pushMedicalReferralBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Open it in the doctor\'s space.'**
+  String get pushMedicalReferralBody;
+
+  /// No description provided for @pushMedicalOpinionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New medical opinion'**
+  String get pushMedicalOpinionTitle;
+
+  /// No description provided for @pushMedicalOpinionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A specialist\'s opinion on a file you follow. Open it in the doctor\'s space.'**
+  String get pushMedicalOpinionBody;
+
+  /// No description provided for @errorTooManyReferrals.
+  ///
+  /// In en, this message translates to:
+  /// **'The file reached the maximum number of referrals (5).'**
+  String get errorTooManyReferrals;
+
+  /// No description provided for @errorAlreadyHoldsFile.
+  ///
+  /// In en, this message translates to:
+  /// **'One of the chosen doctors already holds the file.'**
+  String get errorAlreadyHoldsFile;
+
+  /// No description provided for @errorReferralNotAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'A specialist cannot refer the file on.'**
+  String get errorReferralNotAllowed;
+
+  /// No description provided for @errorRecipientsChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'The list of readers changed. Try again.'**
+  String get errorRecipientsChanged;
+
+  /// No description provided for @errorInvalidRecipient.
+  ///
+  /// In en, this message translates to:
+  /// **'The file cannot be locked for this doctor.'**
+  String get errorInvalidRecipient;
+
+  /// No description provided for @doctorPendingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} item(s) for {name}'**
+  String doctorPendingBody(int count, String name);
+
+  /// No description provided for @doctorOpinionBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialist: {specialty}'**
+  String doctorOpinionBy(String specialty);
+
+  /// No description provided for @medicalOpeningCp.
+  ///
+  /// In en, this message translates to:
+  /// **'Civil Protection doctor, gouvernorat of {gouvernorat}'**
+  String medicalOpeningCp(String gouvernorat);
+
+  /// No description provided for @medicalOpeningSpecialist.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialist: {specialty}, {workplace}'**
+  String medicalOpeningSpecialist(String specialty, String workplace);
+
+  /// No description provided for @medicalOpeningReferral.
+  ///
+  /// In en, this message translates to:
+  /// **'Your file was referred to a specialist in {specialty}'**
+  String medicalOpeningReferral(String specialty);
+
+  /// No description provided for @medicalOpeningsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Who saw my medical file ({count})'**
+  String medicalOpeningsCount(int count);
 }
 
 class _AppLocalizationsDelegate
