@@ -4,3 +4,8 @@
 #
 # - package: example
 #   reason: dual licensed; we use it under MPL-2.0
+
+- package: "@fontsource/ibm-plex-sans-arabic"
+  reason: >-
+    Font files only (SIL OFL 1.1): free to bundle and serve with the application; the font is not renamed, modified
+    or sold on its own (docs/design-system.md §2.4).
