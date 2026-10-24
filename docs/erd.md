@@ -423,6 +423,33 @@ erDiagram
         text purpose
         datetime withdrawn_at
     }
+    identity__doctor {
+        uuid user_id PK,FK
+        text kind
+        text status
+        array specialties
+        blob licence_no_enc
+        text workplace
+        smallint gouvernorat_code FK
+        text cp_unit
+        blob cp_staff_no_enc
+        text terms_version
+        datetime submitted_at
+        datetime reviewed_at
+        text reviewed_by
+        text review_reason
+        datetime available_until
+        integer version
+        datetime updated_at
+    }
+    identity__doctor_review {
+        bigint id PK
+        uuid user_id FK
+        text decision
+        text reason
+        text actor
+        datetime at
+    }
     identity__erasure_request {
         bigint id PK
         text keycloak_sub
@@ -474,11 +501,14 @@ erDiagram
         datetime at
     }
     geo__delegation ||--o{ identity__profile : "delegation_id"
+    geo__gouvernorat ||--o{ identity__doctor : "gouvernorat_code"
     geo__gouvernorat ||--o{ identity__profile : "gouvernorat_code"
     geo__gouvernorat ||--o{ identity__volunteer : "gouvernorat_code"
     identity__account ||--o{ identity__consent : "user_id"
+    identity__account ||--o{ identity__doctor : "user_id"
     identity__account ||--o{ identity__profile : "user_id"
     identity__account ||--o{ identity__volunteer : "user_id"
+    identity__doctor ||--o{ identity__doctor_review : "user_id"
     identity__volunteer ||--o{ identity__volunteer_review : "user_id"
 ```
 
