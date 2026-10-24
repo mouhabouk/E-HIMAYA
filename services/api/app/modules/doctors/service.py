@@ -244,6 +244,7 @@ async def directory(
             workplace=d.workplace,
             gouvernorat_code=d.gouvernorat_code,
             available=is_available(d),
+            public_key=medical.b64(d.public_key) if d.public_key is not None else None,
         )
         for d, p in rows
     ]

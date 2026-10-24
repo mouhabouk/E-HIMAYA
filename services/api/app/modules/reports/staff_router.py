@@ -301,10 +301,13 @@ async def get_medical(principal: StaffReader, session: Session, report_id: uuid.
         details=details,
         gouvernorats=await service.gouvernorat_codes(session, report),
     )
+    referrals, opinions = await locked_files.counts(session, report.id)
     out = schemas.MedicalOut(
         data=schemas.MedicalFile.model_validate(attachment.data),
         attached_at=attachment.attached_at,
         locked=await locked_files.has_locked(session, report.id),
+        referrals=referrals,
+        opinions=opinions,
     )
     await session.commit()
     return out

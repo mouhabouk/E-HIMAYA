@@ -58,3 +58,53 @@ class FileOpening(Base):
     as_committee: Mapped[bool] = mapped_column(Boolean)
     reason: Mapped[str | None] = mapped_column(Text)
     at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class Referral(Base):
+    """A file sent to a specialist by a doctor holding it (phase C1-c): their phone locked the file key for them."""
+
+    __tablename__ = "referral"
+    __table_args__ = _SCHEMA
+
+    report_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("medical.locked_file.report_id", ondelete="CASCADE"), primary_key=True
+    )
+    doctor_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey(_DOCTOR, ondelete="CASCADE"), primary_key=True
+    )
+    referred_by: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey(_DOCTOR, ondelete="SET NULL"))
+    reason: Mapped[str] = mapped_column(Text)
+    at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class Opinion(Base):
+    """A specialist's advisory opinion, locked on their phone with its own key; the server never opens it."""
+
+    __tablename__ = "opinion"
+    __table_args__ = _SCHEMA
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
+    report_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("medical.locked_file.report_id", ondelete="CASCADE")
+    )
+    author_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey(_DOCTOR, ondelete="SET NULL"))
+    specialty: Mapped[str | None] = mapped_column(Text)
+    nonce: Mapped[bytes] = mapped_column(LargeBinary)
+    ciphertext: Mapped[bytes] = mapped_column(LargeBinary)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class OpinionKey(Base):
+    __tablename__ = "opinion_key"
+    __table_args__ = _SCHEMA
+
+    opinion_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("medical.opinion.id", ondelete="CASCADE"), primary_key=True
+    )
+    doctor_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey(_DOCTOR, ondelete="CASCADE"), primary_key=True
+    )
+    eph_public: Mapped[bytes] = mapped_column(LargeBinary)
+    nonce: Mapped[bytes] = mapped_column(LargeBinary)
+    wrapped: Mapped[bytes] = mapped_column(LargeBinary)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

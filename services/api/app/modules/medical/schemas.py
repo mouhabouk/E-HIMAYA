@@ -89,3 +89,85 @@ class OpenedFile(BaseModel):
     wrapped: str
     # The emergency card the reporter chose to leave readable (also seen by the operations room).
     card: dict[str, Any] | None
+
+
+# ---------------------------------------------------------------- phase C1-c: referrals and opinions
+
+Reason = Annotated[str, StringConstraints(strip_whitespace=True, min_length=3, max_length=500)]
+
+
+class ReferralIn(BaseModel):
+    """The file key locked on the referring doctor's phone for each specialist chosen in the directory."""
+
+    reason: Reason
+    keys: list[WrappedKeyIn] = Field(min_length=1, max_length=5)
+
+
+class ReferralOut(BaseModel):
+    doctor_id: uuid.UUID
+    full_name: str | None
+    specialties: list[str]
+    workplace: str
+    at: datetime
+    mine: bool
+
+
+class OpinionRecipient(BaseModel):
+    doctor_id: uuid.UUID
+    public_key: str
+    role: Literal["gouvernorat", "committee", "referrer", "author"]
+
+
+class OpinionIn(BaseModel):
+    """The opinion (at most 4000 characters once opened) locked with its own key, and that key for each reader."""
+
+    specialty: str | None = None
+    nonce: Annotated[B64, StringConstraints(max_length=24)]
+    ciphertext: Annotated[B64, StringConstraints(max_length=44_000)]
+    keys: list[WrappedKeyIn] = Field(min_length=1, max_length=64)
+
+
+class OpinionOut(BaseModel):
+    id: uuid.UUID
+    report_id: uuid.UUID
+    specialty: str | None
+    mine: bool
+    created_at: datetime
+    nonce: str
+    ciphertext: str
+    eph_public: str
+    key_nonce: str
+    wrapped: str
+
+
+class ShareIn(BaseModel):
+    """A committee member's phone locked a file (or an opinion) key for a newly appointed member."""
+
+    reason: Reason
+    keys: list[WrappedKeyIn] = Field(min_length=1, max_length=16)
+
+
+class PendingOpinion(BaseModel):
+    id: uuid.UUID
+    report_id: uuid.UUID
+
+
+class PendingMember(BaseModel):
+    doctor_id: uuid.UUID
+    full_name: str | None
+    public_key: str
+    files: list[uuid.UUID]
+    opinions: list[PendingOpinion]
+
+
+class Opening(BaseModel):
+    """One line of the reporter's "who saw my medical file": never a name."""
+
+    report_id: uuid.UUID
+    tracking_code: str
+    kind: Literal["open", "referral"]
+    role: Literal["civil_protection", "specialist", "committee"]
+    gouvernorat_code: int | None
+    specialties: list[str]
+    workplace: str | None
+    at: datetime

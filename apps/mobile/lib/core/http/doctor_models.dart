@@ -183,6 +183,7 @@ class DirectoryDoctor {
     required this.gouvernoratCode,
     required this.available,
     this.fullName,
+    this.publicKey,
   });
 
   final String id;
@@ -193,6 +194,10 @@ class DirectoryDoctor {
   final int gouvernoratCode;
   final bool available;
 
+  /// Phase C1-c: what a referral locks the file key for (base64); null while the doctor has not
+  /// set their key, and then they cannot be chosen.
+  final String? publicKey;
+
   factory DirectoryDoctor.fromJson(Map<String, Object?> json) =>
       DirectoryDoctor(
         id: json['id']! as String,
@@ -202,6 +207,7 @@ class DirectoryDoctor {
         workplace: json['workplace'] as String? ?? '',
         gouvernoratCode: (json['gouvernorat_code'] as num?)?.toInt() ?? 0,
         available: json['available'] == true,
+        publicKey: json['public_key'] as String?,
       );
 }
 
@@ -263,4 +269,135 @@ class DoctorKeyBackup {
         publicKey: json['public_key']! as String,
         backup: (json['backup']! as Map).cast<String, Object?>(),
       );
+}
+
+/// A specialist a file was referred to (`GET /api/v1/medical/files/{id}/referrals`, phase C1-c).
+class FileReferral {
+  const FileReferral({
+    required this.doctorId,
+    required this.specialties,
+    required this.workplace,
+    required this.at,
+    required this.mine,
+    this.fullName,
+  });
+
+  final String doctorId;
+  final String? fullName;
+  final List<DoctorSpecialty> specialties;
+  final String workplace;
+  final DateTime at;
+
+  /// Referred by this doctor.
+  final bool mine;
+
+  factory FileReferral.fromJson(Map<String, Object?> json) => FileReferral(
+    doctorId: json['doctor_id']! as String,
+    fullName: json['full_name'] as String?,
+    specialties: _specialties(json['specialties']),
+    workplace: json['workplace'] as String? ?? '',
+    at: _date(json['at']) ?? DateTime(1970),
+    mine: json['mine'] == true,
+  );
+}
+
+/// A specialist's opinion locked for this doctor (`GET …/opinions`): [copy] is opened on the
+/// phone like a file.
+class LockedOpinion {
+  const LockedOpinion({
+    required this.id,
+    required this.createdAt,
+    required this.mine,
+    required this.copy,
+    this.specialty,
+  });
+
+  final String id;
+  final DoctorSpecialty? specialty;
+  final DateTime createdAt;
+  final bool mine;
+  final Map<String, Object?> copy;
+
+  factory LockedOpinion.fromJson(Map<String, Object?> json) => LockedOpinion(
+    id: json['id']! as String,
+    specialty: DoctorSpecialty.fromWire(json['specialty'] as String?),
+    createdAt: _date(json['created_at']) ?? DateTime(1970),
+    mine: json['mine'] == true,
+    copy: json,
+  );
+}
+
+/// A committee member appointed after files (or opinions) this member holds were locked
+/// (`GET /api/v1/medical/committee/pending`).
+class PendingMember {
+  const PendingMember({
+    required this.doctorId,
+    required this.publicKey,
+    required this.files,
+    required this.opinions,
+    this.fullName,
+  });
+
+  final String doctorId;
+  final String? fullName;
+  final String publicKey;
+  final List<String> files;
+
+  /// Opinion id → its file.
+  final Map<String, String> opinions;
+
+  int get count => files.length + opinions.length;
+
+  factory PendingMember.fromJson(Map<String, Object?> json) => PendingMember(
+    doctorId: json['doctor_id']! as String,
+    fullName: json['full_name'] as String?,
+    publicKey: json['public_key']! as String,
+    files: [for (final f in (json['files'] as List? ?? const [])) f as String],
+    opinions: {
+      for (final o in (json['opinions'] as List? ?? const []))
+        (o as Map)['id'] as String: o['report_id'] as String,
+    },
+  );
+}
+
+/// Who saw the reporter's locked medical file, by role only (`GET /api/v1/me/medical/openings`).
+enum OpeningRole { civilProtection, specialist, committee }
+
+class MedicalOpening {
+  const MedicalOpening({
+    required this.reportId,
+    required this.trackingCode,
+    required this.referral,
+    required this.role,
+    required this.specialties,
+    required this.at,
+    this.gouvernoratCode,
+    this.workplace,
+  });
+
+  final String reportId;
+  final String trackingCode;
+
+  /// A referral to a specialist (else an opening).
+  final bool referral;
+  final OpeningRole role;
+  final int? gouvernoratCode;
+  final List<DoctorSpecialty> specialties;
+  final String? workplace;
+  final DateTime at;
+
+  factory MedicalOpening.fromJson(Map<String, Object?> json) => MedicalOpening(
+    reportId: json['report_id']! as String,
+    trackingCode: json['tracking_code'] as String? ?? '',
+    referral: json['kind'] == 'referral',
+    role: switch (json['role']) {
+      'civil_protection' => OpeningRole.civilProtection,
+      'specialist' => OpeningRole.specialist,
+      _ => OpeningRole.committee,
+    },
+    gouvernoratCode: (json['gouvernorat_code'] as num?)?.toInt(),
+    specialties: _specialties(json['specialties']),
+    workplace: json['workplace'] as String?,
+    at: _date(json['at']) ?? DateTime(1970),
+  );
 }

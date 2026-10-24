@@ -36,7 +36,11 @@ function medicalValue(
 }
 
 /** "Medical file attached": opened only on request (audited), closed again in one click. */
-export function MedicalSection({ report }: { report: Pick<StaffReportDetail, "id" | "medical_attached"> }) {
+export function MedicalSection({
+  report,
+}: {
+  report: Pick<StaffReportDetail, "id" | "medical_attached">;
+}) {
   const { t } = useTranslation();
   const { api } = useServices();
   const fmt = useFormat();
@@ -44,9 +48,10 @@ export function MedicalSection({ report }: { report: Pick<StaffReportDetail, "id
   if (!report.medical_attached) return null;
   const opened = open.data;
   const rows = opened
-    ? MEDICAL_FIELDS.map((k) => [k, medicalValue(t, (iso) => fmt.date(iso), opened.data, k)] as const).filter(
-        ([, v]) => v !== null,
-      )
+    ? MEDICAL_FIELDS.map(
+        (k) =>
+          [k, medicalValue(t, (iso) => fmt.date(iso), opened.data, k)] as const,
+      ).filter(([, v]) => v !== null)
     : [];
 
   return (
@@ -55,7 +60,12 @@ export function MedicalSection({ report }: { report: Pick<StaffReportDetail, "id
       {!opened ? (
         <>
           <p className="muted">{t("safety.medical.intro")}</p>
-          <button type="button" className="btn" disabled={open.isPending} onClick={() => open.mutate()}>
+          <button
+            type="button"
+            className="btn"
+            disabled={open.isPending}
+            onClick={() => open.mutate()}
+          >
             {t("safety.medical.open")}
           </button>
           {open.isError && (
@@ -66,8 +76,23 @@ export function MedicalSection({ report }: { report: Pick<StaffReportDetail, "id
         </>
       ) : (
         <>
-          <p className="muted">{t("safety.medical.attachedAt", { at: fmt.dateTime(opened.attached_at) })}</p>
-          {opened.locked && <p className="alert alert--info">{t("safety.medical.locked")}</p>}
+          <p className="muted">
+            {t("safety.medical.attachedAt", {
+              at: fmt.dateTime(opened.attached_at),
+            })}
+          </p>
+          {opened.locked && (
+            <p className="alert alert--info">{t("safety.medical.locked")}</p>
+          )}
+          {opened.locked &&
+            (opened.referrals ?? 0) + (opened.opinions ?? 0) > 0 && (
+              <p className="muted">
+                {t("safety.medical.referrals", {
+                  referrals: opened.referrals ?? 0,
+                  opinions: opened.opinions ?? 0,
+                })}
+              </p>
+            )}
           {rows.length === 0 ? (
             <p>{t("safety.medical.empty")}</p>
           ) : (
@@ -75,13 +100,25 @@ export function MedicalSection({ report }: { report: Pick<StaffReportDetail, "id
               {rows.map(([k, v]) => (
                 <Fragment key={k}>
                   <dt>{t(`safety.medical.fields.${k}`)}</dt>
-                  <dd dir={k === "contact_phone" || k === "blood_group" ? "ltr" : "auto"}>{v}</dd>
+                  <dd
+                    dir={
+                      k === "contact_phone" || k === "blood_group"
+                        ? "ltr"
+                        : "auto"
+                    }
+                  >
+                    {v}
+                  </dd>
                 </Fragment>
               ))}
             </dl>
           )}
           <p className="muted">{t("safety.medical.audited")}</p>
-          <button type="button" className="btn btn--small" onClick={() => open.reset()}>
+          <button
+            type="button"
+            className="btn btn--small"
+            onClick={() => open.reset()}
+          >
             {t("safety.medical.close")}
           </button>
         </>
@@ -94,7 +131,11 @@ const osm = (lat: number, lon: number) =>
   `https://www.openstreetmap.org/?mlat=${lat.toFixed(5)}&mlon=${lon.toFixed(5)}#map=17/${lat.toFixed(5)}/${lon.toFixed(5)}`;
 
 /** Missing person: the operator gives the person's phone and a reason; the person is told through the app. */
-export function LocationHistorySearch({ report }: { report: Pick<StaffReportDetail, "id"> }) {
+export function LocationHistorySearch({
+  report,
+}: {
+  report: Pick<StaffReportDetail, "id">;
+}) {
   const { t } = useTranslation();
   const { api } = useServices();
   const { user } = useAuth();
@@ -106,9 +147,18 @@ export function LocationHistorySearch({ report }: { report: Pick<StaffReportDeta
   const [reason, setReason] = useState("");
   const [tried, setTried] = useState(false);
   const search = useMutation({
-    mutationFn: () => api.searchLocationHistory({ phone: phone.trim(), report_id: report.id, reason: reason.trim() }),
+    mutationFn: () =>
+      api.searchLocationHistory({
+        phone: phone.trim(),
+        report_id: report.id,
+        reason: reason.trim(),
+      }),
   });
-  if (!allowed || settingOf(settings.data, LOCATION_HISTORY_SETTING)?.value !== true) return null;
+  if (
+    !allowed ||
+    settingOf(settings.data, LOCATION_HISTORY_SETTING)?.value !== true
+  )
+    return null;
 
   const phoneOk = HISTORY_PHONE.test(phone.trim());
   const submit = (e: SyntheticEvent) => {
@@ -135,7 +185,9 @@ export function LocationHistorySearch({ report }: { report: Pick<StaffReportDeta
             aria-invalid={tried && !phoneOk ? true : undefined}
             onChange={(e) => setPhone(e.target.value)}
           />
-          {tried && !phoneOk && <p className="field__error">{t("safety.history.phoneInvalid")}</p>}
+          {tried && !phoneOk && (
+            <p className="field__error">{t("safety.history.phoneInvalid")}</p>
+          )}
         </div>
         <ReasonField
           label={t("safety.history.reason")}
@@ -144,7 +196,11 @@ export function LocationHistorySearch({ report }: { report: Pick<StaffReportDeta
           range={HISTORY_REASON_RANGE}
           showError={tried}
         />
-        <button type="submit" className="btn btn--danger" disabled={search.isPending}>
+        <button
+          type="submit"
+          className="btn btn--danger"
+          disabled={search.isPending}
+        >
           {t("safety.history.submit")}
         </button>
         <p className="muted">{t("safety.history.audited")}</p>
@@ -155,14 +211,22 @@ export function LocationHistorySearch({ report }: { report: Pick<StaffReportDeta
         </p>
       )}
       <div role="status" aria-live="polite">
-        {result && !result.found && <p className="alert alert--info">{t("safety.history.noAccount")}</p>}
+        {result && !result.found && (
+          <p className="alert alert--info">{t("safety.history.noAccount")}</p>
+        )}
         {result?.found && result.points.length === 0 && (
-          <p className="alert alert--info">{result.enabled ? t("safety.history.noPoints") : t("safety.history.notEnabled")}</p>
+          <p className="alert alert--info">
+            {result.enabled
+              ? t("safety.history.noPoints")
+              : t("safety.history.notEnabled")}
+          </p>
         )}
       </div>
       {result?.found && result.points.length > 0 && (
         <table className="table">
-          <caption>{t("safety.history.points", { count: result.points.length })}</caption>
+          <caption>
+            {t("safety.history.points", { count: result.points.length })}
+          </caption>
           <thead>
             <tr>
               <th scope="col">{t("safety.history.at")}</th>
@@ -175,11 +239,17 @@ export function LocationHistorySearch({ report }: { report: Pick<StaffReportDeta
               <tr key={p.at}>
                 <td>{fmt.dateTime(p.at)}</td>
                 <td dir="ltr">
-                  <a href={osm(p.lat, p.lon)} target="_blank" rel="noreferrer noopener">
+                  <a
+                    href={osm(p.lat, p.lon)}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
                     {p.lat.toFixed(5)}, {p.lon.toFixed(5)}
                   </a>
                 </td>
-                <td>{p.accuracy_m === null ? "—" : fmt.meters(p.accuracy_m)}</td>
+                <td>
+                  {p.accuracy_m === null ? "—" : fmt.meters(p.accuracy_m)}
+                </td>
               </tr>
             ))}
           </tbody>
