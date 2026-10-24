@@ -17,8 +17,11 @@ export interface MedicalFile {
 }
 
 export interface MedicalOut {
+  /** With a locked part (phase C1-b), only the emergency card the reporter chose. */
   data: MedicalFile;
   attached_at: string;
+  /** The rest of the file is locked on the phone for the doctors; the operations room cannot open it. */
+  locked: boolean;
 }
 
 /** The order the fields are shown in, and their translation keys under `safety.medical.fields`. */

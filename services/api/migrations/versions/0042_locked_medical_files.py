@@ -16,6 +16,7 @@ Revises: 0041_medical_committee
 Create Date: 2026-10-24
 """
 
+# ruff: noqa: S608 (policies are built from the constant SQL fragments below)
 from collections.abc import Sequence
 
 from migrations.sqlutil import run_script

@@ -453,7 +453,11 @@ void main() {
       await tester.tap(find.byKey(const Key('medical-save')));
       await tester.pumpAndSettle();
       final saved = jsonDecode((await h.db.medical())!.data) as Map;
-      expect(saved, {'allergies': 'penicillin'});
+      // The emergency card keeps its default fields until the person changes them.
+      expect(saved, {
+        'allergies': 'penicillin',
+        '_card': MedicalFile.defaultCard.toList()..sort(),
+      });
 
       // Lock: the phone's own lock is asked first.
       await tester.tap(find.byKey(const Key('medical-lock')));
