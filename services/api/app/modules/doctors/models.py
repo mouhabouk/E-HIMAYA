@@ -1,8 +1,9 @@
 import uuid
 from datetime import datetime
+from typing import Any
 
-from sqlalchemy import BigInteger, DateTime, ForeignKey, Integer, SmallInteger, Text, func
-from sqlalchemy.dialects.postgresql import ARRAY, UUID
+from sqlalchemy import BigInteger, DateTime, ForeignKey, Integer, LargeBinary, SmallInteger, Text, func
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.crypto import EncryptedText
@@ -37,6 +38,10 @@ class Doctor(Base):
     committee_since: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     committee_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     committee_by: Mapped[str | None] = mapped_column(Text)
+    # Phase C1-b: the doctor's X25519 public key, and their private key locked by their own code (opened on the phone).
+    public_key: Mapped[bytes | None] = mapped_column(LargeBinary)
+    key_backup: Mapped[dict[str, Any] | None] = mapped_column(JSONB(none_as_null=True))
+    key_set_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     version: Mapped[int] = mapped_column(Integer, server_default="1")
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 

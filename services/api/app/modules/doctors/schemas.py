@@ -66,6 +66,8 @@ class DoctorOut(BaseModel):
     available_until: datetime | None
     # End of the current term on the medical committee; None when not a member.
     committee_until: datetime | None
+    # Phase C1-b: the doctor set their personal key (files can be locked for them).
+    has_key: bool = False
     version: int
 
 

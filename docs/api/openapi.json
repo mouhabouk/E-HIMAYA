@@ -4628,6 +4628,48 @@
         "title": "DoctorIn",
         "type": "object"
       },
+      "DoctorKeyIn": {
+        "properties": {
+          "backup": {
+            "$ref": "#/components/schemas/KeyBackup"
+          },
+          "public_key": {
+            "maxLength": 64,
+            "pattern": "^[A-Za-z0-9+/]*={0,2}$",
+            "title": "Public Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "public_key",
+          "backup"
+        ],
+        "title": "DoctorKeyIn",
+        "type": "object"
+      },
+      "DoctorKeyOut": {
+        "properties": {
+          "backup": {
+            "$ref": "#/components/schemas/KeyBackup"
+          },
+          "public_key": {
+            "title": "Public Key",
+            "type": "string"
+          },
+          "set_at": {
+            "format": "date-time",
+            "title": "Set At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "public_key",
+          "backup",
+          "set_at"
+        ],
+        "title": "DoctorKeyOut",
+        "type": "object"
+      },
       "DoctorOut": {
         "properties": {
           "available": {
@@ -4683,6 +4725,11 @@
           "gouvernorat_code": {
             "title": "Gouvernorat Code",
             "type": "integer"
+          },
+          "has_key": {
+            "default": false,
+            "title": "Has Key",
+            "type": "boolean"
           },
           "kind": {
             "enum": [
@@ -9597,105 +9644,6 @@
         "title": "ImportsOut",
         "type": "object"
       },
-      "InboxItem": {
-        "properties": {
-          "active": {
-            "title": "Active",
-            "type": "boolean"
-          },
-          "body": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "title": "Body",
-            "type": "object"
-          },
-          "expires_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Expires At"
-          },
-          "id": {
-            "format": "uuid",
-            "title": "Id",
-            "type": "string"
-          },
-          "kind": {
-            "enum": [
-              "info",
-              "alert"
-            ],
-            "title": "Kind",
-            "type": "string"
-          },
-          "published_at": {
-            "format": "date-time",
-            "title": "Published At",
-            "type": "string"
-          },
-          "severity": {
-            "anyOf": [
-              {
-                "enum": [
-                  "high",
-                  "medium",
-                  "low"
-                ],
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Severity"
-          },
-          "title": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "title": "Title",
-            "type": "object"
-          },
-          "topic": {
-            "anyOf": [
-              {
-                "enum": [
-                  "activity",
-                  "awareness",
-                  "training",
-                  "world_day",
-                  "other"
-                ],
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Topic"
-          }
-        },
-        "required": [
-          "id",
-          "kind",
-          "topic",
-          "severity",
-          "title",
-          "body",
-          "published_at",
-          "expires_at",
-          "active"
-        ],
-        "title": "InboxItem",
-        "type": "object"
-      },
       "InboxOut": {
         "properties": {
           "items": {
@@ -9734,7 +9682,7 @@
         "properties": {
           "items": {
             "items": {
-              "$ref": "#/components/schemas/InboxItem"
+              "$ref": "#/components/schemas/app__modules__notify__schemas__InboxItem"
             },
             "title": "Items",
             "type": "array"
@@ -10575,6 +10523,63 @@
           "steps"
         ],
         "title": "ItemText",
+        "type": "object"
+      },
+      "KeyBackup": {
+        "description": "The doctor's private key locked by their own code on the phone: Argon2id, then AES-256-GCM.",
+        "properties": {
+          "ciphertext": {
+            "maxLength": 100,
+            "pattern": "^[A-Za-z0-9+/]*={0,2}$",
+            "title": "Ciphertext",
+            "type": "string"
+          },
+          "iterations": {
+            "maximum": 10.0,
+            "minimum": 1.0,
+            "title": "Iterations",
+            "type": "integer"
+          },
+          "kdf": {
+            "const": "argon2id",
+            "title": "Kdf",
+            "type": "string"
+          },
+          "memory_kib": {
+            "maximum": 262144.0,
+            "minimum": 8192.0,
+            "title": "Memory Kib",
+            "type": "integer"
+          },
+          "nonce": {
+            "maxLength": 24,
+            "pattern": "^[A-Za-z0-9+/]*={0,2}$",
+            "title": "Nonce",
+            "type": "string"
+          },
+          "parallelism": {
+            "maximum": 4.0,
+            "minimum": 1.0,
+            "title": "Parallelism",
+            "type": "integer"
+          },
+          "salt": {
+            "maxLength": 64,
+            "pattern": "^[A-Za-z0-9+/]*={0,2}$",
+            "title": "Salt",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kdf",
+          "memory_kib",
+          "iterations",
+          "parallelism",
+          "salt",
+          "nonce",
+          "ciphertext"
+        ],
+        "title": "KeyBackup",
         "type": "object"
       },
       "KeyCount": {
@@ -11786,6 +11791,39 @@
         "title": "LocationOut",
         "type": "object"
       },
+      "LockedFileIn": {
+        "description": "The locked part of the medical file (AES-256-GCM, at most 64 KiB) and its key for each recipient.",
+        "properties": {
+          "ciphertext": {
+            "maxLength": 90000,
+            "pattern": "^[A-Za-z0-9+/]*={0,2}$",
+            "title": "Ciphertext",
+            "type": "string"
+          },
+          "keys": {
+            "items": {
+              "$ref": "#/components/schemas/WrappedKeyIn"
+            },
+            "maxItems": 64,
+            "minItems": 1,
+            "title": "Keys",
+            "type": "array"
+          },
+          "nonce": {
+            "maxLength": 24,
+            "pattern": "^[A-Za-z0-9+/]*={0,2}$",
+            "title": "Nonce",
+            "type": "string"
+          }
+        },
+        "required": [
+          "nonce",
+          "ciphertext",
+          "keys"
+        ],
+        "title": "LockedFileIn",
+        "type": "object"
+      },
       "MeOut": {
         "properties": {
           "gouvernorat_code": {
@@ -12184,6 +12222,11 @@
           },
           "data": {
             "$ref": "#/components/schemas/MedicalFile"
+          },
+          "locked": {
+            "default": false,
+            "title": "Locked",
+            "type": "boolean"
           }
         },
         "required": [
@@ -13679,6 +13722,88 @@
         ],
         "title": "OpLevel",
         "type": "string"
+      },
+      "OpenIn": {
+        "properties": {
+          "reason": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "minLength": 3,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "title": "OpenIn",
+        "type": "object"
+      },
+      "OpenedFile": {
+        "description": "Everything the doctor's phone needs to open the file; the server cannot.",
+        "properties": {
+          "card": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Card"
+          },
+          "ciphertext": {
+            "title": "Ciphertext",
+            "type": "string"
+          },
+          "eph_public": {
+            "title": "Eph Public",
+            "type": "string"
+          },
+          "key_nonce": {
+            "title": "Key Nonce",
+            "type": "string"
+          },
+          "nonce": {
+            "title": "Nonce",
+            "type": "string"
+          },
+          "report_id": {
+            "format": "uuid",
+            "title": "Report Id",
+            "type": "string"
+          },
+          "via": {
+            "enum": [
+              "gouvernorat",
+              "committee",
+              "referral"
+            ],
+            "title": "Via",
+            "type": "string"
+          },
+          "wrapped": {
+            "title": "Wrapped",
+            "type": "string"
+          }
+        },
+        "required": [
+          "report_id",
+          "via",
+          "nonce",
+          "ciphertext",
+          "eph_public",
+          "key_nonce",
+          "wrapped",
+          "card"
+        ],
+        "title": "OpenedFile",
+        "type": "object"
       },
       "OptionalReasonIn": {
         "properties": {
@@ -16074,6 +16199,59 @@
         ],
         "title": "Reason",
         "type": "string"
+      },
+      "Recipient": {
+        "properties": {
+          "doctor_id": {
+            "format": "uuid",
+            "title": "Doctor Id",
+            "type": "string"
+          },
+          "public_key": {
+            "title": "Public Key",
+            "type": "string"
+          },
+          "via": {
+            "enum": [
+              "gouvernorat",
+              "committee"
+            ],
+            "title": "Via",
+            "type": "string"
+          }
+        },
+        "required": [
+          "doctor_id",
+          "public_key",
+          "via"
+        ],
+        "title": "Recipient",
+        "type": "object"
+      },
+      "RecipientsOut": {
+        "description": "Who the phone locks the file for: the Civil Protection doctors of the place's gouvernorat (or of the\ncandidate gouvernorats while the place is uncertain), and the medical committee.",
+        "properties": {
+          "gouvernorat_codes": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Gouvernorat Codes",
+            "type": "array"
+          },
+          "recipients": {
+            "items": {
+              "$ref": "#/components/schemas/Recipient"
+            },
+            "title": "Recipients",
+            "type": "array"
+          }
+        },
+        "required": [
+          "gouvernorat_codes",
+          "recipients"
+        ],
+        "title": "RecipientsOut",
+        "type": "object"
       },
       "Recommendation": {
         "properties": {
@@ -23658,6 +23836,41 @@
         "title": "WeatherOut",
         "type": "object"
       },
+      "WrappedKeyIn": {
+        "properties": {
+          "doctor_id": {
+            "format": "uuid",
+            "title": "Doctor Id",
+            "type": "string"
+          },
+          "eph_public": {
+            "maxLength": 64,
+            "pattern": "^[A-Za-z0-9+/]*={0,2}$",
+            "title": "Eph Public",
+            "type": "string"
+          },
+          "nonce": {
+            "maxLength": 24,
+            "pattern": "^[A-Za-z0-9+/]*={0,2}$",
+            "title": "Nonce",
+            "type": "string"
+          },
+          "wrapped": {
+            "maxLength": 100,
+            "pattern": "^[A-Za-z0-9+/]*={0,2}$",
+            "title": "Wrapped",
+            "type": "string"
+          }
+        },
+        "required": [
+          "doctor_id",
+          "eph_public",
+          "nonce",
+          "wrapped"
+        ],
+        "title": "WrappedKeyIn",
+        "type": "object"
+      },
       "app__modules__analytics__schemas__ReportIn": {
         "properties": {
           "filters": {
@@ -24434,6 +24647,175 @@
         "title": "ReasonIn",
         "type": "object"
       },
+      "app__modules__medical__schemas__InboxItem": {
+        "properties": {
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "opened_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opened At"
+          },
+          "received_at": {
+            "format": "date-time",
+            "title": "Received At",
+            "type": "string"
+          },
+          "report_id": {
+            "format": "uuid",
+            "title": "Report Id",
+            "type": "string"
+          },
+          "report_status": {
+            "title": "Report Status",
+            "type": "string"
+          },
+          "tracking_code": {
+            "title": "Tracking Code",
+            "type": "string"
+          },
+          "via": {
+            "enum": [
+              "gouvernorat",
+              "committee",
+              "referral"
+            ],
+            "title": "Via",
+            "type": "string"
+          }
+        },
+        "required": [
+          "report_id",
+          "tracking_code",
+          "category",
+          "gouvernorat_code",
+          "received_at",
+          "report_status",
+          "via",
+          "opened_at"
+        ],
+        "title": "InboxItem",
+        "type": "object"
+      },
+      "app__modules__notify__schemas__InboxItem": {
+        "properties": {
+          "active": {
+            "title": "Active",
+            "type": "boolean"
+          },
+          "body": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Body",
+            "type": "object"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "info",
+              "alert"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "published_at": {
+            "format": "date-time",
+            "title": "Published At",
+            "type": "string"
+          },
+          "severity": {
+            "anyOf": [
+              {
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Severity"
+          },
+          "title": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Title",
+            "type": "object"
+          },
+          "topic": {
+            "anyOf": [
+              {
+                "enum": [
+                  "activity",
+                  "awareness",
+                  "training",
+                  "world_day",
+                  "other"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Topic"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "topic",
+          "severity",
+          "title",
+          "body",
+          "published_at",
+          "expires_at",
+          "active"
+        ],
+        "title": "InboxItem",
+        "type": "object"
+      },
       "app__modules__ops__schemas__Point": {
         "properties": {
           "lat": {
@@ -25011,6 +25393,16 @@
             "anyOf": [
               {
                 "$ref": "#/components/schemas/MedicalFile"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "medical_locked": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LockedFileIn"
               },
               {
                 "type": "null"
@@ -27711,6 +28103,125 @@
         ]
       }
     },
+    "/api/v1/me/doctor/key": {
+      "get": {
+        "description": "The doctor's locked private key, to open it on a new phone with their code (phase C1-b).",
+        "operationId": "get_key_api_v1_me_doctor_key_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoctorKeyOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Key",
+        "tags": [
+          "doctors"
+        ]
+      },
+      "put": {
+        "operationId": "put_key_api_v1_me_doctor_key_put",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DoctorKeyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoctorOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Put Key",
+        "tags": [
+          "doctors"
+        ]
+      }
+    },
     "/api/v1/me/export": {
       "get": {
         "description": "Right of access: all personal data held on the caller (registered citizen or anonymous device).",
@@ -28411,6 +28922,248 @@
         "summary": "Readiness",
         "tags": [
           "volunteers"
+        ]
+      }
+    },
+    "/api/v1/medical/files": {
+      "get": {
+        "operationId": "inbox_api_v1_medical_files_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/app__modules__medical__schemas__InboxItem"
+                  },
+                  "title": "Response Inbox Api V1 Medical Files Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Inbox",
+        "tags": [
+          "medical"
+        ]
+      }
+    },
+    "/api/v1/medical/files/{report_id}/open": {
+      "post": {
+        "operationId": "open_file_api_v1_medical_files__report_id__open_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "report_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Report Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpenIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenedFile"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Open File",
+        "tags": [
+          "medical"
+        ]
+      }
+    },
+    "/api/v1/medical/recipients": {
+      "get": {
+        "description": "Public keys only: the same place gives the same list when the report is sent.",
+        "operationId": "recipients_api_v1_medical_recipients_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "lat",
+            "required": true,
+            "schema": {
+              "maximum": 90,
+              "minimum": -90,
+              "title": "Lat",
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lon",
+            "required": true,
+            "schema": {
+              "maximum": 180,
+              "minimum": -180,
+              "title": "Lon",
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "accuracy_m",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 100000,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accuracy M"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecipientsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Recipients",
+        "tags": [
+          "medical"
         ]
       }
     },

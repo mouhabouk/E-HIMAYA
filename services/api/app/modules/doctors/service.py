@@ -29,6 +29,7 @@ from app.modules.doctors.models import Doctor, DoctorReview
 from app.modules.geo.models import Gouvernorat
 from app.modules.identity.models import Profile
 from app.modules.identity.service import Reporter
+from app.modules.medical import service as medical
 from app.modules.notify import outbox, templates
 
 # Version of the doctor's terms the app shows before the registration (texts in the app's translations).
@@ -62,7 +63,8 @@ def committee_until(doctor: Doctor, at: datetime | None = None) -> datetime | No
 
 def leave_committee(doctor: Doctor) -> bool:
     """Ends the membership (status or kind changed, term ended, revoked). True when the doctor was a member."""
-    was = committee_until(doctor) is not None
+    # Not ``committee_until(doctor)``: the status may already have changed in this transaction.
+    was = doctor.committee_until is not None and doctor.committee_until > now()
     doctor.committee_since = doctor.committee_until = doctor.committee_by = None
     return was
 
@@ -90,6 +92,7 @@ def doctor_out(doctor: Doctor) -> schemas.DoctorOut:
         available=available,
         available_until=doctor.available_until if available else None,
         committee_until=committee_until(doctor),
+        has_key=doctor.public_key is not None,
         version=doctor.version,
     )
 
@@ -165,6 +168,8 @@ async def declare(session: AsyncSession, reporter: Reporter, body: schemas.Docto
             doctor.status, doctor.submitted_at, doctor.review_reason = "pending", now(), None
             doctor.available_until = None
             leave_committee(doctor)
+            # Files reached them as a checked doctor of a gouvernorat: they stop until the new review.
+            await medical.drop_keys(session, doctor.user_id)
         doctor.version += 1
     doctor.kind = body.kind
     doctor.specialties = specialties
@@ -181,10 +186,13 @@ async def declare(session: AsyncSession, reporter: Reporter, body: schemas.Docto
     return doctor
 
 
-def clear(doctor: Doctor) -> None:
-    """Withdrawn (by the doctor or on erasure): the professional numbers go, the history of decisions stays."""
+async def clear(session: AsyncSession, doctor: Doctor) -> None:
+    """Withdrawn (by the doctor or on erasure): the professional numbers, the key and every copy of a medical file
+    locked for it go; the history of decisions stays."""
     doctor.status, doctor.available_until = "withdrawn", None
     leave_committee(doctor)
+    doctor.public_key = doctor.key_backup = doctor.key_set_at = None
+    await medical.drop_keys(session, doctor.user_id)
     doctor.licence_no = doctor.cp_staff_no = None
     doctor.version += 1
     doctor.updated_at = now()
@@ -192,7 +200,7 @@ def clear(doctor: Doctor) -> None:
 
 async def withdraw(session: AsyncSession, reporter: Reporter) -> Doctor:
     doctor = await get_mine(session, reporter, lock=True)
-    clear(doctor)
+    await clear(session, doctor)
     await session.flush()
     return doctor
 
@@ -354,7 +362,8 @@ async def review(session: AsyncSession, principal: Principal, doctor: Doctor, bo
     doctor.updated_at = now()
     if target != "approved":
         doctor.available_until = None
-        leave_committee(doctor)
+        if leave_committee(doctor):
+            await medical.drop_keys(session, doctor.user_id, ("committee",))
     session.add(DoctorReview(user_id=doctor.user_id, decision=body.decision, reason=body.reason, actor=actor))
     profile = await session.get(Profile, doctor.user_id)
     if profile is not None and profile.email:
@@ -473,6 +482,7 @@ async def revoke(session: AsyncSession, doctor_id: uuid.UUID, reason: str) -> Do
     doctor = await session.get(Doctor, doctor_id, with_for_update=True)
     if doctor is None or not leave_committee(doctor):
         raise HTTPException(status.HTTP_404_NOT_FOUND, "not_committee_member")
+    await medical.drop_keys(session, doctor.user_id, ("committee",))
     doctor.version += 1
     doctor.updated_at = now()
     _notify_committee(session, await session.get(Profile, doctor.user_id), "revoke", reason=reason)
@@ -488,4 +498,7 @@ async def expire_committee(session: AsyncSession) -> int:
         .values(committee_since=None, committee_until=None, committee_by=None)
         .returning(Doctor.user_id)
     )
-    return len(result.all())
+    ended = list(result.scalars())
+    for doctor_id in ended:
+        await medical.drop_keys(session, doctor_id, ("committee",))
+    return len(ended)
