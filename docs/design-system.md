@@ -9,6 +9,9 @@ Office's own.
 
 Every change still follows review → redesign → develop.
 
+A visual reference with every colour code, icon, shape, font and framework, with sources and download links, is in
+[`design-reference.html`](design-reference.html).
+
 ## 1. Review: what exists today
 
 | Area | Today | Gap with the reference |
