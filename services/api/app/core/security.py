@@ -47,6 +47,8 @@ class Role(StrEnum):
     SECURITY_ADMIN = "security_admin"
     AI_ADMIN = "ai_admin"
     REGIONAL_ACCOUNT_ADMIN = "regional_account_admin"
+    # Phase C1-a: checks the doctors' registrations of a gouvernorat (no operational rights).
+    MEDICAL_COORDINATOR = "medical_coordinator"
 
 
 REALM_ROLES: dict[Realm, frozenset[Role]] = {
@@ -64,6 +66,7 @@ REALM_ROLES: dict[Realm, frozenset[Role]] = {
             Role.SECURITY_ADMIN,
             Role.AI_ADMIN,
             Role.REGIONAL_ACCOUNT_ADMIN,
+            Role.MEDICAL_COORDINATOR,
         }
     ),
 }
@@ -82,7 +85,7 @@ FUNCTION_ROLES: dict[Function, frozenset[Role]] = {
     Function.COMMAND: frozenset({Role.CENTRAL_COMMITTEE, Role.LOCAL_COMMITTEE, Role.FIELD_COMMANDER}),
     Function.OPERATIONS: frozenset({Role.OPERATOR, Role.OPS_MANAGER}),
     Function.TECHNICAL: frozenset({Role.SYSADMIN, Role.SECURITY_ADMIN, Role.AI_ADMIN, Role.REGIONAL_ACCOUNT_ADMIN}),
-    Function.SUPPORT: frozenset({Role.CONTENT_EDITOR, Role.ORG_AUDITOR}),
+    Function.SUPPORT: frozenset({Role.CONTENT_EDITOR, Role.ORG_AUDITOR, Role.MEDICAL_COORDINATOR}),
 }
 
 

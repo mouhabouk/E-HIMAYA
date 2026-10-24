@@ -11,6 +11,7 @@ import '../../features/safety/safety_models.dart';
 import '../quota/anon_quota.dart';
 import 'api_client.dart';
 import 'api_error.dart';
+import 'doctor_models.dart';
 import 'models.dart';
 import 'notify_models.dart';
 import 'rewards_models.dart';
@@ -228,6 +229,63 @@ class EHimayaApi {
 
   Future<void> withdrawVolunteer() => guardApi(() async {
     await _dio.delete<Object?>('/api/v1/me/volunteer');
+  });
+
+  // ---------------------------------------------------------------- doctors (phase C1-a)
+
+  /// The account's doctor registration, or null when there is none (`404 not_doctor`).
+  Future<Doctor?> myDoctor() async {
+    try {
+      return await guardApi(() async {
+        final r = await _dio.get<Map<String, Object?>>('/api/v1/me/doctor');
+        return Doctor.fromJson(r.data!);
+      });
+    } on ApiException catch (e) {
+      if (e.code == ApiErrorCode.notDoctor) return null;
+      rethrow;
+    }
+  }
+
+  Future<Doctor> putDoctor(DoctorInput input) => guardApi(() async {
+    final r = await _dio.put<Map<String, Object?>>(
+      '/api/v1/me/doctor',
+      data: input.toJson(),
+    );
+    return Doctor.fromJson(r.data!);
+  });
+
+  Future<void> withdrawDoctor() => guardApi(() async {
+    await _dio.delete<Object?>('/api/v1/me/doctor');
+  });
+
+  /// Available for [hours] (approved doctors only), or not available.
+  Future<Doctor> setDoctorAvailability({
+    required bool available,
+    int hours = 8,
+  }) => guardApi(() async {
+    final r = await _dio.post<Map<String, Object?>>(
+      '/api/v1/me/doctor/availability',
+      data: {'available': available, 'hours': hours},
+    );
+    return Doctor.fromJson(r.data!);
+  });
+
+  /// Approved doctors by specialty and gouvernorat: available first, then the caller's group.
+  Future<List<DirectoryDoctor>> doctorDirectory({
+    DoctorSpecialty? specialty,
+    int? gouvernoratCode,
+  }) => guardApi(() async {
+    final r = await _dio.get<List<Object?>>(
+      '/api/v1/doctors/directory',
+      queryParameters: {
+        'specialty': ?specialty?.wire,
+        'gouvernorat_code': ?gouvernoratCode,
+      },
+    );
+    return [
+      for (final d in r.data!)
+        if (d is Map<String, Object?>) DirectoryDoctor.fromJson(d),
+    ];
   });
 
   /// Consent to share the position while ready, after reading notice [version] (phase 10 §4.2).

@@ -35,7 +35,8 @@
     "breakGlass": "الوصول الاستثنائي",
     "layers": "طبقات الخريطة",
     "emergencyGuide": "مركز الطوارئ",
-    "contact": "اتصل بنا"
+    "contact": "اتصل بنا",
+    "doctors": "الأطباء"
   },
   "header": {
     "scope": "النطاق الجغرافي",
@@ -65,7 +66,8 @@
     "sysadmin": "مدير النظام",
     "security_admin": "مسؤول الأمن",
     "ai_admin": "مسؤول نماذج الذكاء الاصطناعي",
-    "regional_account_admin": "مسؤول حسابات القاعة"
+    "regional_account_admin": "مسؤول حسابات القاعة",
+    "medical_coordinator": "منسّق طبي جهوي"
   },
   "status": {
     "received": "مستلم",
@@ -3672,6 +3674,67 @@
       "at": "الوقت",
       "position": "الموقع",
       "accuracy": "الدقة"
+    }
+  },
+  "doctors": {
+    "title": "الأطباء",
+    "intro": "الأطباء الذين سجّلوا صفتهم من التطبيق، والطلبات المعلّقة أولاً. تحقّق من رقم التسجيل بعمادة الأطباء (والمعرّف المهني لطبيب الحماية المدنية) قبل التوثيق: لن يصل أي ملف طبي إلى طبيب غير موثَّق.",
+    "filters": "تصفية الأطباء",
+    "search": "بحث بالاسم أو مكان العمل",
+    "empty": "لا يوجد طبيب بهذه المعايير.",
+    "unnamed": "طبيب",
+    "back": "رجوع إلى الأطباء",
+    "available": "متاح",
+    "notAvailable": "غير متاح",
+    "columns": {
+      "kind": "الصفة",
+      "specialties": "الاختصاص",
+      "workplace": "مكان العمل",
+      "available": "التوفر"
+    },
+    "kind": {
+      "volunteer": "طبيب متطوع",
+      "civil_protection": "طبيب الحماية المدنية"
+    },
+    "specialty": {
+      "general_practice": "طب عام",
+      "emergency_medicine": "طب الاستعجالي",
+      "anesthesia_icu": "تخدير وإنعاش",
+      "cardiology": "أمراض القلب",
+      "pulmonology": "أمراض الرئة",
+      "neurology": "أمراض الأعصاب",
+      "pediatrics": "طب الأطفال",
+      "obstetrics_gynecology": "أمراض النساء والتوليد",
+      "internal_medicine": "الطب الباطني",
+      "endocrinology": "الغدد والسكري",
+      "nephrology": "أمراض الكلى",
+      "gastroenterology": "أمراض الجهاز الهضمي",
+      "allergy_immunology": "الحساسية والمناعة",
+      "infectious_diseases": "الأمراض الجرثومية",
+      "dermatology_burns": "الجلدية والحروق",
+      "orthopedics": "جراحة العظام",
+      "general_surgery": "الجراحة العامة",
+      "psychiatry": "الطب النفسي",
+      "toxicology": "علم السموم",
+      "ophthalmology": "طب العيون",
+      "ent": "أمراض الأنف والأذن والحنجرة"
+    },
+    "detail": {
+      "registration": "بيانات التسجيل",
+      "licence": "رقم التسجيل بعمادة الأطباء",
+      "cpUnit": "الوحدة أو الإدارة الجهوية",
+      "cpStaffNo": "المعرّف المهني",
+      "audited": "يُسجَّل فتح هذا الملف في سجل التدقيق."
+    },
+    "review": {
+      "title": "التوثيق",
+      "check": "تحقّق من رقم التسجيل لدى عمادة الأطباء، واتصل بالطبيب عند الحاجة، قبل التوثيق.",
+      "decision": {
+        "approve": "توثيق",
+        "reject": "رفض",
+        "suspend": "تعليق",
+        "reinstate": "إعادة التفعيل"
+      }
     }
   }
 }

@@ -36,6 +36,8 @@ from app.modules.content.guide import router as guide_router
 from app.modules.content.router import router as content_router
 from app.modules.decision.procedures import procedures_forever
 from app.modules.decision.router import router as decision_router
+from app.modules.doctors.router import router as doctors_router
+from app.modules.doctors.staff_router import router as doctors_staff_router
 from app.modules.evidence.router import router as evidence_router
 from app.modules.evidence.worker import evidence_forever
 from app.modules.forecast.router import router as forecast_router
@@ -227,6 +229,8 @@ def create_app() -> FastAPI:
         command_router,
         volunteers_router,
         volunteers_staff_router,
+        doctors_router,
+        doctors_staff_router,
         notify_router,
         notify_staff_router,
         content_router,

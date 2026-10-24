@@ -395,6 +395,7 @@ _last_digest: date | None = None
 
 async def housekeeping(sessionmaker: async_sessionmaker[AsyncSession]) -> None:
     global _last_digest
+    from app.modules.doctors import service as doctors
     from app.modules.ops import interventions
     from app.modules.safety import service as safety
     from app.modules.volunteers import service as volunteers
@@ -406,6 +407,7 @@ async def housekeeping(sessionmaker: async_sessionmaker[AsyncSession]) -> None:
                 await service.announce(session, message)
         await interventions.expire_targets(session)
         await volunteers.expire_readiness(session)
+        await doctors.expire_availability(session)
         # Safety checks past their time (phase B2): checked every minute, so a check fires at most a minute late.
         await safety.fire_due_checks(session)
         today = _now().date()

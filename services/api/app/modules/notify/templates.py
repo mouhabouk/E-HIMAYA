@@ -85,6 +85,51 @@ VOLUNTEER_DECISION_BODY: dict[str, Localized] = {
     },
 }
 
+DOCTOR_DECISION_SUBJECT: dict[str, Localized] = {
+    "approve": {
+        "ar": "توثيق صفة الطبيب — ء-حماية",
+        "fr": "Votre statut de médecin est vérifié — e-Himaya",
+        "en": "Your doctor status is verified — e-Himaya",
+    },
+    "reject": {
+        "ar": "طلب صفة الطبيب — ء-حماية",
+        "fr": "Votre demande de statut de médecin — e-Himaya",
+        "en": "Your doctor application — e-Himaya",
+    },
+    "suspend": {
+        "ar": "تعليق صفة الطبيب — ء-حماية",
+        "fr": "Suspension de votre statut de médecin — e-Himaya",
+        "en": "Your doctor status is suspended — e-Himaya",
+    },
+    "reinstate": {
+        "ar": "إعادة تفعيل صفة الطبيب — ء-حماية",
+        "fr": "Votre statut de médecin est rétabli — e-Himaya",
+        "en": "Your doctor status is reinstated — e-Himaya",
+    },
+}
+DOCTOR_DECISION_BODY: dict[str, Localized] = {
+    "approve": {
+        "ar": "مرحبا {name}،\n\nتحققت الحماية المدنية من صفتك كطبيب وأُدرجت في مجموعة أطباء ولايتك. سيصلك إشعار في التطبيق عند تفعيل استقبال الملفات الطبية.\n\nشكرا على التزامك.",
+        "fr": "Bonjour {name},\n\nLa Protection civile a vérifié votre statut de médecin et vous a inscrit(e) dans le groupe des médecins de votre gouvernorat. L'application vous préviendra quand la réception des dossiers médicaux sera ouverte.\n\nMerci pour votre engagement.",
+        "en": "Hello {name},\n\nThe Civil Protection has verified your doctor status and added you to the doctors' group of your gouvernorat. The app will let you know when receiving medical files opens.\n\nThank you for your commitment.",
+    },
+    "reject": {
+        "ar": "مرحبا {name}،\n\nلم يُقبل طلب صفة الطبيب في الوقت الحالي.\nالسبب: {reason}\n\nيمكنك تحيين طلبك وإعادة تقديمه من التطبيق.",
+        "fr": "Bonjour {name},\n\nVotre demande de statut de médecin n'a pas été retenue pour le moment.\nMotif : {reason}\n\nVous pouvez la mettre à jour et la soumettre de nouveau depuis l'application.",
+        "en": "Hello {name},\n\nYour doctor application was not accepted for now.\nReason: {reason}\n\nYou can update it and submit it again from the app.",
+    },
+    "suspend": {
+        "ar": "مرحبا {name}،\n\nعُلّقت صفة الطبيب الخاصة بك، فلن تصلك ملفات طبية.\nالسبب: {reason}",
+        "fr": "Bonjour {name},\n\nVotre statut de médecin est suspendu : vous ne recevrez plus de dossiers médicaux.\nMotif : {reason}",
+        "en": "Hello {name},\n\nYour doctor status is suspended: you will not receive medical files.\nReason: {reason}",
+    },
+    "reinstate": {
+        "ar": "مرحبا {name}،\n\nأُعيد تفعيل صفة الطبيب الخاصة بك.",
+        "fr": "Bonjour {name},\n\nVotre statut de médecin est rétabli.",
+        "en": "Hello {name},\n\nYour doctor status is reinstated.",
+    },
+}
+
 INVITATION_SUBJECT: Localized = {
     "ar": "دعوة للانضمام إلى {org} على ء-حماية",
     "fr": "Invitation à rejoindre {org} sur e-Himaya",

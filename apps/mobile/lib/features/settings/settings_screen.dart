@@ -239,6 +239,14 @@ class SettingsScreen extends ConsumerWidget {
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.push(Routes.volunteer),
             ),
+          if (identity.isRegistered && identity.role == UserRole.citizen)
+            ListTile(
+              key: const Key('settings-doctor'),
+              leading: const Icon(Icons.medical_services),
+              title: Text(l10n.doctorTitle),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push(Routes.doctor),
+            ),
           if (identity.hasIdentity && identity.role == UserRole.citizen)
             ListTile(
               key: const Key('settings-rewards'),

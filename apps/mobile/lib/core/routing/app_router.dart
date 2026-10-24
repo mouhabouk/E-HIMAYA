@@ -6,6 +6,9 @@ import '../../features/alerts/notifications_screen.dart';
 import '../../features/charter/charter_controller.dart';
 import '../../features/charter/charter_screen.dart';
 import '../../features/contact/contact_screens.dart';
+import '../../features/doctor/doctor_directory_screen.dart';
+import '../../features/doctor/doctor_form_screen.dart';
+import '../../features/doctor/doctor_screen.dart';
 import '../../features/emergency/emergency_screen.dart';
 import '../../features/guide/guide_screens.dart';
 import '../../features/home/home_screen.dart';
@@ -47,6 +50,7 @@ import '../../features/welcome/language_screen.dart';
 import '../../features/welcome/permissions_screen.dart';
 import '../../features/welcome/welcome_controller.dart';
 import '../auth/identity.dart';
+import '../http/doctor_models.dart';
 import '../http/models.dart';
 import '../security/locked_alert.dart';
 
@@ -85,6 +89,10 @@ abstract final class Routes {
   static const volunteer = '/volunteer';
   static const volunteerApply = '/volunteer/apply';
   static const callouts = '/callouts';
+  // Phase C1-a: doctors.
+  static const doctor = '/doctor';
+  static const doctorApply = '/doctor/apply';
+  static const doctorDirectory = '/doctor/directory';
   static const notifications = '/notifications';
   static String alert(String id) => '/alerts/${Uri.encodeComponent(id)}';
   static const tips = '/tips';
@@ -393,6 +401,25 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: 'apply',
             builder: (_, _) => const VolunteerFormScreen(),
+          ),
+        ],
+      ),
+      GoRoute(
+        path: Routes.doctor,
+        builder: (_, _) => const DoctorScreen(),
+        routes: [
+          GoRoute(
+            path: 'apply',
+            builder: (_, state) => DoctorFormScreen(
+              kind: switch (state.uri.queryParameters['kind']) {
+                null => null,
+                final k => DoctorKind.fromWire(k),
+              },
+            ),
+          ),
+          GoRoute(
+            path: 'directory',
+            builder: (_, _) => const DoctorDirectoryScreen(),
           ),
         ],
       ),

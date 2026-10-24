@@ -3523,4 +3523,233 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get safetyHistoryViewedBody =>
       'اطّلعت عليه الحماية المدنية في إطار بلاغ. افتح ء-حماية للتفاصيل.';
+
+  @override
+  String get doctorTitle => 'فضاء الأطباء';
+
+  @override
+  String get doctorIntro =>
+      'هل أنت طبيب؟ سجّل صفتك لتستقبل الملفات الطبية المرفقة بالبلاغات، مقفلة ولا يفتحها إلا الأطباء الموثَّقون. تتحقق الحماية المدنية من رقم تسجيلك قبل أن يصلك أي ملف.';
+
+  @override
+  String get doctorChoose => 'اختر صفتك';
+
+  @override
+  String get doctorKindVolunteer => 'طبيب متطوع';
+
+  @override
+  String get doctorKindVolunteerHelp =>
+      'طبيب مختص يقبل استقبال ملفات طبية لإبداء رأيه، عندما يحيلها إليه زميل.';
+
+  @override
+  String get doctorKindCivilProtection => 'طبيب الحماية المدنية';
+
+  @override
+  String get doctorKindCivilProtectionHelp =>
+      'طبيب تابع للحماية المدنية، يستلم الملفات الطبية لبلاغات ولايته ويحيلها إلى المختصين.';
+
+  @override
+  String get doctorApply => 'التسجيل كطبيب';
+
+  @override
+  String get doctorKind => 'الصفة';
+
+  @override
+  String get doctorSpecialties => 'الاختصاص (من 1 إلى 4)';
+
+  @override
+  String get doctorSpecialtiesRequired =>
+      'اختر اختصاصاً واحداً على الأقل وأربعة على الأكثر.';
+
+  @override
+  String get doctorLicence => 'رقم التسجيل بعمادة الأطباء';
+
+  @override
+  String get doctorNumberInvalid =>
+      'من 3 إلى 30 خانة: أرقام وحروف لاتينية و- و/.';
+
+  @override
+  String get doctorWorkplace => 'مكان العمل (المؤسسة)';
+
+  @override
+  String get doctorGouvernorat => 'ولاية مكان العمل';
+
+  @override
+  String get doctorGouvernoratHelp => 'تحدّد مجموعة الأطباء التي تنتمي إليها.';
+
+  @override
+  String get doctorCpUnit => 'الوحدة أو الإدارة الجهوية';
+
+  @override
+  String get doctorCpStaffNo => 'المعرّف المهني';
+
+  @override
+  String get doctorTermsTitle => 'شروط صفة الطبيب';
+
+  @override
+  String get doctorTermsBody =>
+      'الملفات الطبية سرّية: لا تُفتح إلا لغرض إسعاف صاحبها، ولا تُنسخ ولا تُشارك خارج المنظومة، وكل فتح يُسجَّل. الرأي الذي تبديه عن بعد استشاري ولا يعوّض الفحص المباشر. يمكن للحماية المدنية تعليق صفتك عند الإخلال بهذه الشروط.';
+
+  @override
+  String get doctorTermsAccept => 'قرأت الشروط وأقبلها';
+
+  @override
+  String get doctorTermsRequired => 'يجب قبول الشروط.';
+
+  @override
+  String get doctorRecheckNote =>
+      'تغيير الصفة أو الاختصاص أو الأرقام أو الولاية يعيد طلبك إلى التحقق.';
+
+  @override
+  String get doctorSubmit => 'إرسال للتوثيق';
+
+  @override
+  String get doctorSubmitted =>
+      'أُرسل طلبك. ستتحقق الحماية المدنية من رقم تسجيلك.';
+
+  @override
+  String get doctorHelpPending =>
+      'طلبك قيد التحقق. لن يصلك أي ملف طبي قبل التوثيق.';
+
+  @override
+  String get doctorHelpApproved => 'صفتك موثّقة، وأنت ضمن مجموعة أطباء ولايتك.';
+
+  @override
+  String get doctorHelpRejected => 'لم يُقبل طلبك. يمكنك تصحيحه وإعادة إرساله.';
+
+  @override
+  String get doctorHelpSuspended => 'صفتك معلّقة، فلن تصلك ملفات طبية.';
+
+  @override
+  String get doctorHelpWithdrawn => 'تخلّيت عن صفة الطبيب وحُذفت أرقامك.';
+
+  @override
+  String get doctorAvailable => 'متاح لاستقبال الطلبات';
+
+  @override
+  String doctorAvailableUntil(String time) {
+    return 'متاح حتى $time';
+  }
+
+  @override
+  String get doctorAvailableHelp =>
+      'يظهر المتاحون أولاً في قائمة الإحالة. تنتهي الإتاحة تلقائياً بعد 8 ساعات.';
+
+  @override
+  String get doctorAvailableBadge => 'متاح';
+
+  @override
+  String get doctorFilesSoon =>
+      'استقبال الملفات الطبية المقفلة يُفعَّل في التحديث القادم.';
+
+  @override
+  String get doctorDirectory => 'دليل الأطباء';
+
+  @override
+  String get doctorSpecialty => 'الاختصاص';
+
+  @override
+  String get doctorRegion => 'الجهة';
+
+  @override
+  String get doctorAllSpecialties => 'كل الاختصاصات';
+
+  @override
+  String get doctorAllGouvernorats => 'كل الولايات';
+
+  @override
+  String get doctorDirectoryEmpty => 'لا يوجد طبيب موثَّق بهذه المعايير.';
+
+  @override
+  String get doctorEdit => 'تعديل بياناتي';
+
+  @override
+  String get doctorWithdraw => 'التخلّي عن صفة الطبيب';
+
+  @override
+  String get doctorWithdrawConfirm =>
+      'سيُحذف رقم تسجيلك ولن تصلك ملفات طبية. يمكنك التسجيل من جديد لاحقاً.';
+
+  @override
+  String get doctorJoinTitle => 'هل أنت طبيب؟';
+
+  @override
+  String get doctorJoinBody => 'سجّل كطبيب متطوع أو طبيب الحماية المدنية.';
+
+  @override
+  String get errorNotDoctor => 'لم تسجّل كطبيب.';
+
+  @override
+  String get errorDoctorNotApproved => 'صفتك كطبيب غير موثّقة بعد.';
+
+  @override
+  String get errorCpDetailsRequired =>
+      'أدخل الوحدة والمعرّف المهني لطبيب الحماية المدنية.';
+
+  @override
+  String get errorUnknownTermsVersion =>
+      'تغيّرت الشروط. حدّث التطبيق ثم أعد المحاولة.';
+
+  @override
+  String get specialtyGeneralPractice => 'طب عام';
+
+  @override
+  String get specialtyEmergencyMedicine => 'طب الاستعجالي';
+
+  @override
+  String get specialtyAnesthesiaIcu => 'تخدير وإنعاش';
+
+  @override
+  String get specialtyCardiology => 'أمراض القلب';
+
+  @override
+  String get specialtyPulmonology => 'أمراض الرئة';
+
+  @override
+  String get specialtyNeurology => 'أمراض الأعصاب';
+
+  @override
+  String get specialtyPediatrics => 'طب الأطفال';
+
+  @override
+  String get specialtyObstetricsGynecology => 'أمراض النساء والتوليد';
+
+  @override
+  String get specialtyInternalMedicine => 'الطب الباطني';
+
+  @override
+  String get specialtyEndocrinology => 'الغدد والسكري';
+
+  @override
+  String get specialtyNephrology => 'أمراض الكلى';
+
+  @override
+  String get specialtyGastroenterology => 'أمراض الجهاز الهضمي';
+
+  @override
+  String get specialtyAllergyImmunology => 'الحساسية والمناعة';
+
+  @override
+  String get specialtyInfectiousDiseases => 'الأمراض الجرثومية';
+
+  @override
+  String get specialtyDermatologyBurns => 'الجلدية والحروق';
+
+  @override
+  String get specialtyOrthopedics => 'جراحة العظام';
+
+  @override
+  String get specialtyGeneralSurgery => 'الجراحة العامة';
+
+  @override
+  String get specialtyPsychiatry => 'الطب النفسي';
+
+  @override
+  String get specialtyToxicology => 'علم السموم';
+
+  @override
+  String get specialtyOphthalmology => 'طب العيون';
+
+  @override
+  String get specialtyEnt => 'أمراض الأنف والأذن والحنجرة';
 }

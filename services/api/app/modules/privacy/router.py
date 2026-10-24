@@ -22,6 +22,9 @@ from app.core.crypto import get_cipher
 from app.core.db import as_system, get_session
 from app.modules.audit import service as audit
 from app.modules.contact import router as contact
+from app.modules.doctors import service as doctors
+from app.modules.doctors.models import Doctor
+from app.modules.doctors.schemas import DoctorOut
 from app.modules.identity.models import Account, Consent, ErasureRequest, Profile
 from app.modules.identity.router import MedicalInfo
 from app.modules.identity.service import CurrentReporter, limit_reporter
@@ -177,6 +180,8 @@ class ExportOut(BaseModel):
     calls: list[telephony.ExportCall]
     sms: list[telephony.ExportSms]
     volunteer: VolunteerOut | None
+    # Phase C1-a: the doctor's registration (status, specialties, numbers).
+    doctor: DoctorOut | None = None
     # Phase 8: points ledger, badges, certificates and nominations naming the person.
     rewards: rewards.ExportRewards
     devices: list[ExportDevice]
@@ -326,6 +331,7 @@ async def export_my_data(
     assert account is not None
     profile = await session.get(Profile, user_id)
     volunteer = await session.get(Volunteer, user_id)
+    doctor = await session.get(Doctor, user_id)
     consents = await session.scalars(select(Consent).where(Consent.user_id == user_id).order_by(Consent.accepted_at))
     devices = await session.scalars(select(Device).where(Device.user_id == user_id).order_by(Device.created_at))
     messages = await session.scalars(
@@ -356,6 +362,7 @@ async def export_my_data(
         calls=calls,
         sms=sms,
         volunteer=volunteers.volunteer_out(volunteer) if volunteer is not None else None,
+        doctor=doctors.doctor_out(doctor) if doctor is not None else None,
         rewards=await rewards.export(session, user_id),
         devices=[
             ExportDevice(
@@ -449,6 +456,11 @@ async def delete_my_account(request: Request, body: DeleteIn, reporter: CurrentR
         await session.flush()
         await volunteers.announce(session, volunteer)
         details["volunteer"] = "withdrawn"
+    doctor = await session.get(Doctor, user_id, with_for_update=True)
+    if doctor is not None and doctor.status != "withdrawn":
+        doctors.clear(doctor)
+        doctor.workplace = "--"  # the row stays as a tombstone: nothing left to tell who it was
+        details["doctor"] = "withdrawn"
     if account.keycloak_sub is not None:
         # No identity-provider admin credentials in the API: the account is disabled from this queue.
         session.add(ErasureRequest(keycloak_sub=account.keycloak_sub))
