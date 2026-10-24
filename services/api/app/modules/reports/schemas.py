@@ -4,6 +4,7 @@ from typing import Annotated, Any, Literal
 
 from pydantic import AwareDatetime, BaseModel, Field, StringConstraints
 
+from app.modules.medical.schemas import LockedFileIn
 from app.modules.orgs.schemas import OrganizationCard, OrgRef
 from app.modules.reports.domain import LAT_MAX, LAT_MIN, LON_MAX, LON_MIN, Category, Lang, Status
 
@@ -51,8 +52,11 @@ class ReportIn(BaseModel):
     created_at: AwareDatetime
     # Report made on behalf of an institution the caller is a member of (FR-A-080).
     organization_id: uuid.UUID | None = None
-    # Phase B2: the reporter's medical file, only when they ticked "attach my medical file to this report".
+    # Phase B2: the reporter's medical file, only when they ticked "attach my medical file to this report". From phase
+    # C1-b the app sends here only the emergency card (the fields the reporter chose to leave readable)…
     medical: MedicalFile | None = None
+    # …and the rest locked on the phone for the doctors (docs/phase-c/design-medical-axis.md §12).
+    medical_locked: LockedFileIn | None = None
 
 
 class ReportOrganization(BaseModel):
@@ -284,6 +288,8 @@ class StaffReportDetail(StaffReport):
 class MedicalOut(BaseModel):
     data: MedicalFile
     attached_at: datetime
+    # Phase C1-b: the rest of the file is locked for the doctors (the operations room reads the card only).
+    locked: bool = False
 
 
 class StaffReportPage(BaseModel):

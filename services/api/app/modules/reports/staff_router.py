@@ -16,6 +16,7 @@ from app.modules.ai.models import Analysis
 from app.modules.audit import service as audit
 from app.modules.audit.service import actor_of
 from app.modules.identity.models import Profile
+from app.modules.medical import service as locked_files
 from app.modules.ops import service as ops
 from app.modules.orgs import service as orgs
 from app.modules.orgs.models import Organization
@@ -301,7 +302,9 @@ async def get_medical(principal: StaffReader, session: Session, report_id: uuid.
         gouvernorats=await service.gouvernorat_codes(session, report),
     )
     out = schemas.MedicalOut(
-        data=schemas.MedicalFile.model_validate(attachment.data), attached_at=attachment.attached_at
+        data=schemas.MedicalFile.model_validate(attachment.data),
+        attached_at=attachment.attached_at,
+        locked=await locked_files.has_locked(session, report.id),
     )
     await session.commit()
     return out

@@ -9,6 +9,8 @@ from app.core.db import get_session
 from app.modules.audit import service as audit
 from app.modules.doctors import schemas, service
 from app.modules.identity.service import CurrentReporter
+from app.modules.medical import schemas as medical_schemas
+from app.modules.medical import service as medical
 
 router = APIRouter(prefix="/api/v1", tags=["doctors"])
 Session = Annotated[AsyncSession, Depends(get_session)]
@@ -75,3 +77,25 @@ async def directory(
     return await service.directory(
         session, specialty=specialty, gouvernorat_code=gouvernorat_code, near=me.gouvernorat_code, limit=limit
     )
+
+
+@router.get("/me/doctor/key", response_model=medical_schemas.DoctorKeyOut)
+async def get_key(reporter: CurrentReporter, session: Session) -> medical_schemas.DoctorKeyOut:
+    """The doctor's locked private key, to open it on a new phone with their code (phase C1-b)."""
+    return medical.key_out(await service.get_mine(session, reporter))
+
+
+@router.put("/me/doctor/key", response_model=schemas.DoctorOut)
+async def put_key(reporter: CurrentReporter, session: Session, body: medical_schemas.DoctorKeyIn) -> schemas.DoctorOut:
+    doctor = await service.get_mine(session, reporter, lock=True)
+    replaced = await medical.set_key(session, doctor, body)
+    await audit.record(
+        session,
+        actor=reporter.actor,
+        action="doctor.key_replace" if replaced else "doctor.key_set",
+        target=f"doctor:{doctor.user_id}",
+        gouvernorats=[doctor.gouvernorat_code],
+    )
+    out = service.doctor_out(doctor)
+    await session.commit()
+    return out

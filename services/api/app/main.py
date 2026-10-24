@@ -51,6 +51,7 @@ from app.modules.knowledge.indexer import knowledge_forever
 from app.modules.knowledge.router import router as knowledge_router
 from app.modules.layers.router import public_router as layers_router
 from app.modules.layers.router import router as layers_staff_router
+from app.modules.medical.router import router as medical_router
 from app.modules.notify.delivery import deliver_forever
 from app.modules.notify.router import router as notify_router
 from app.modules.notify.staff_router import router as notify_staff_router
@@ -233,6 +234,7 @@ def create_app() -> FastAPI:
         doctors_router,
         doctors_staff_router,
         medical_committee_router,
+        medical_router,
         notify_router,
         notify_staff_router,
         content_router,
