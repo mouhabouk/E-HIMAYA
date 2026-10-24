@@ -6121,7 +6121,7 @@ abstract class AppLocalizations {
   /// No description provided for @reportAttachMedicalHint.
   ///
   /// In en, this message translates to:
-  /// **'Only the team handling this report can open it, and each opening is recorded.'**
+  /// **'The operations room reads your emergency card only. The rest is locked on your phone for the Civil Protection doctors of the area and the medical committee; each opening is recorded and shown in your app.'**
   String get reportAttachMedicalHint;
 
   /// No description provided for @safetyHistoryTitle.
@@ -6406,11 +6406,197 @@ abstract class AppLocalizations {
   /// **'Available'**
   String get doctorAvailableBadge;
 
-  /// No description provided for @doctorFilesSoon.
+  /// No description provided for @medicalCardTitle.
   ///
   /// In en, this message translates to:
-  /// **'Receiving locked medical files comes in the next update.'**
-  String get doctorFilesSoon;
+  /// **'Emergency card'**
+  String get medicalCardTitle;
+
+  /// No description provided for @medicalCardHint.
+  ///
+  /// In en, this message translates to:
+  /// **'What you tick stays readable by the operations room and the rescuers. The other fields are locked for the doctors only.'**
+  String get medicalCardHint;
+
+  /// No description provided for @errorDoctorKeyMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your personal key first.'**
+  String get errorDoctorKeyMissing;
+
+  /// No description provided for @errorNotCommitteeMember.
+  ///
+  /// In en, this message translates to:
+  /// **'You are no longer on the medical committee.'**
+  String get errorNotCommitteeMember;
+
+  /// No description provided for @errorReasonRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Give a reason.'**
+  String get errorReasonRequired;
+
+  /// No description provided for @doctorKeyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My personal key'**
+  String get doctorKeyTitle;
+
+  /// No description provided for @doctorKeyCreateHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical files are locked for you with a key protected by a code you choose. We do not know your code and cannot recover it.'**
+  String get doctorKeyCreateHelp;
+
+  /// No description provided for @doctorKeyReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Your key is ready on this phone.'**
+  String get doctorKeyReady;
+
+  /// No description provided for @doctorKeyRestoreHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Your key is not on this phone. Enter your code to get it back.'**
+  String get doctorKeyRestoreHelp;
+
+  /// No description provided for @doctorKeyCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create my key'**
+  String get doctorKeyCreate;
+
+  /// No description provided for @doctorKeyRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Get my key back'**
+  String get doctorKeyRestore;
+
+  /// No description provided for @doctorKeyForgot.
+  ///
+  /// In en, this message translates to:
+  /// **'I forgot my code'**
+  String get doctorKeyForgot;
+
+  /// No description provided for @doctorKeyResetWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'A new key will be created. Files received with the old one can no longer be opened unless a colleague refers them to you again.'**
+  String get doctorKeyResetWarning;
+
+  /// No description provided for @doctorKeyNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New key'**
+  String get doctorKeyNew;
+
+  /// No description provided for @doctorKeyChooseCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your code'**
+  String get doctorKeyChooseCode;
+
+  /// No description provided for @doctorKeyEnterCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your code'**
+  String get doctorKeyEnterCode;
+
+  /// No description provided for @doctorKeyCodeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'6 to 12 digits. Keep it safe: it cannot be recovered.'**
+  String get doctorKeyCodeHint;
+
+  /// No description provided for @doctorKeyCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get doctorKeyCode;
+
+  /// No description provided for @doctorKeyCodeAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat the code'**
+  String get doctorKeyCodeAgain;
+
+  /// No description provided for @doctorKeyCodeInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'The code has 6 to 12 digits.'**
+  String get doctorKeyCodeInvalid;
+
+  /// No description provided for @doctorKeyCodeMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'The two codes differ.'**
+  String get doctorKeyCodeMismatch;
+
+  /// No description provided for @doctorKeyWrongCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong code.'**
+  String get doctorKeyWrongCode;
+
+  /// No description provided for @doctorFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical files'**
+  String get doctorFiles;
+
+  /// No description provided for @doctorFilesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No medical files yet.'**
+  String get doctorFilesEmpty;
+
+  /// No description provided for @doctorFileViaGouvernorat.
+  ///
+  /// In en, this message translates to:
+  /// **'Your gouvernorat'**
+  String get doctorFileViaGouvernorat;
+
+  /// No description provided for @doctorFileViaCommittee.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical committee'**
+  String get doctorFileViaCommittee;
+
+  /// No description provided for @doctorFileViaReferral.
+  ///
+  /// In en, this message translates to:
+  /// **'Referral'**
+  String get doctorFileViaReferral;
+
+  /// No description provided for @doctorFileReasonTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason for opening'**
+  String get doctorFileReasonTitle;
+
+  /// No description provided for @doctorFileReasonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The reason is recorded. The citizen sees “Medical committee”, not your name.'**
+  String get doctorFileReasonHint;
+
+  /// No description provided for @doctorFileOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get doctorFileOpen;
+
+  /// No description provided for @doctorFileConfidential.
+  ///
+  /// In en, this message translates to:
+  /// **'Confidential file: do not copy or share it. Opened on this phone only, and the opening is recorded.'**
+  String get doctorFileConfidential;
+
+  /// No description provided for @doctorFileCannotOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'The file cannot be opened with your key.'**
+  String get doctorFileCannotOpen;
 
   /// No description provided for @doctorDirectory.
   ///

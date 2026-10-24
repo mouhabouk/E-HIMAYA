@@ -2,7 +2,7 @@ name: ehimaya
 description: "ء-حماية (e-Himaya) — national emergency reporting app for the Tunisian civil protection."
 publish_to: 'none'
 
-version: 0.6.0+5
+version: 0.7.0+6
 
 environment:
   sdk: ">=3.13.5 <4.0.0"
@@ -17,6 +17,8 @@ dependencies:
 
   connectivity_plus: 7.3.2
   crypto: 3.0.7
+  # Phase C1-b: locked medical files (X25519, HKDF, AES-256-GCM, Argon2id), pure Dart. Apache-2.0.
+  cryptography: 2.9.0
   dio: 5.11.1
   drift: 2.35.2
   firebase_core: 5.0.0

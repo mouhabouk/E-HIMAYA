@@ -3522,7 +3522,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reportAttachMedicalHint =>
-      'Only the team handling this report can open it, and each opening is recorded.';
+      'The operations room reads your emergency card only. The rest is locked on your phone for the Civil Protection doctors of the area and the medical committee; each opening is recorded and shown in your app.';
 
   @override
   String get safetyHistoryTitle => 'Location history (72 h)';
@@ -3689,8 +3689,108 @@ class AppLocalizationsEn extends AppLocalizations {
   String get doctorAvailableBadge => 'Available';
 
   @override
-  String get doctorFilesSoon =>
-      'Receiving locked medical files comes in the next update.';
+  String get medicalCardTitle => 'Emergency card';
+
+  @override
+  String get medicalCardHint =>
+      'What you tick stays readable by the operations room and the rescuers. The other fields are locked for the doctors only.';
+
+  @override
+  String get errorDoctorKeyMissing => 'Create your personal key first.';
+
+  @override
+  String get errorNotCommitteeMember =>
+      'You are no longer on the medical committee.';
+
+  @override
+  String get errorReasonRequired => 'Give a reason.';
+
+  @override
+  String get doctorKeyTitle => 'My personal key';
+
+  @override
+  String get doctorKeyCreateHelp =>
+      'Medical files are locked for you with a key protected by a code you choose. We do not know your code and cannot recover it.';
+
+  @override
+  String get doctorKeyReady => 'Your key is ready on this phone.';
+
+  @override
+  String get doctorKeyRestoreHelp =>
+      'Your key is not on this phone. Enter your code to get it back.';
+
+  @override
+  String get doctorKeyCreate => 'Create my key';
+
+  @override
+  String get doctorKeyRestore => 'Get my key back';
+
+  @override
+  String get doctorKeyForgot => 'I forgot my code';
+
+  @override
+  String get doctorKeyResetWarning =>
+      'A new key will be created. Files received with the old one can no longer be opened unless a colleague refers them to you again.';
+
+  @override
+  String get doctorKeyNew => 'New key';
+
+  @override
+  String get doctorKeyChooseCode => 'Choose your code';
+
+  @override
+  String get doctorKeyEnterCode => 'Enter your code';
+
+  @override
+  String get doctorKeyCodeHint =>
+      '6 to 12 digits. Keep it safe: it cannot be recovered.';
+
+  @override
+  String get doctorKeyCode => 'Code';
+
+  @override
+  String get doctorKeyCodeAgain => 'Repeat the code';
+
+  @override
+  String get doctorKeyCodeInvalid => 'The code has 6 to 12 digits.';
+
+  @override
+  String get doctorKeyCodeMismatch => 'The two codes differ.';
+
+  @override
+  String get doctorKeyWrongCode => 'Wrong code.';
+
+  @override
+  String get doctorFiles => 'Medical files';
+
+  @override
+  String get doctorFilesEmpty => 'No medical files yet.';
+
+  @override
+  String get doctorFileViaGouvernorat => 'Your gouvernorat';
+
+  @override
+  String get doctorFileViaCommittee => 'Medical committee';
+
+  @override
+  String get doctorFileViaReferral => 'Referral';
+
+  @override
+  String get doctorFileReasonTitle => 'Reason for opening';
+
+  @override
+  String get doctorFileReasonHint =>
+      'The reason is recorded. The citizen sees “Medical committee”, not your name.';
+
+  @override
+  String get doctorFileOpen => 'Open';
+
+  @override
+  String get doctorFileConfidential =>
+      'Confidential file: do not copy or share it. Opened on this phone only, and the opening is recorded.';
+
+  @override
+  String get doctorFileCannotOpen => 'The file cannot be opened with your key.';
 
   @override
   String get doctorDirectory => 'Doctors\' directory';

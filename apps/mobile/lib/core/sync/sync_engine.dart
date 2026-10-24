@@ -11,6 +11,7 @@ import '../auth/identity.dart';
 import '../config/providers.dart';
 import '../connectivity/connectivity.dart';
 import '../consent/consent_service.dart';
+import '../crypto/medical_crypto.dart';
 import '../db/app_database.dart';
 import '../db/open_database.dart';
 import '../http/api_client.dart';
@@ -69,8 +70,10 @@ class SyncEngine {
     required this.onAnonBlocked,
     this.onAnonQuota,
     this.mediaGate,
+    MedicalCrypto? medicalCrypto,
     Random? random,
-  }) : _random = random ?? Random();
+  }) : _random = random ?? Random(),
+       _medicalCrypto = medicalCrypto ?? MedicalCrypto();
 
   final AppDatabase db;
   final EHimayaApi api;
@@ -88,6 +91,7 @@ class SyncEngine {
   /// not a failure: it is simply tried again on a later pass.
   final Future<bool> Function(PendingReport report, MediaItem media)? mediaGate;
   final Random _random;
+  final MedicalCrypto _medicalCrypto;
 
   /// Reconcile passes an uploaded file may be missing from `/reports/mine` before it is
   /// considered rejected (rejected media are hidden from lists).
@@ -145,10 +149,11 @@ class SyncEngine {
     PendingReport report,
     SyncSummary summary,
   ) async {
-    final body = jsonDecode(report.payload) as Map<String, Object?>;
+    final stored = jsonDecode(report.payload) as Map<String, Object?>;
     var consentRetried = false;
     while (true) {
       try {
+        final body = await _lockMedical(stored);
         final result = await api.createReport(body);
         final quota = result.quota;
         if (quota != null) onAnonQuota?.call(quota);
@@ -184,6 +189,24 @@ class SyncEngine {
         return null;
       }
     }
+  }
+
+  /// Phase C1-b: locks the medical file's private part for the doctors of the place (and the
+  /// medical committee) right before sending. With no doctor to lock it for, only the emergency
+  /// card goes; the clear part never leaves the phone.
+  Future<Map<String, Object?>> _lockMedical(Map<String, Object?> stored) async {
+    final plain = stored[medicalToLockKey];
+    if (plain is! Map) return stored;
+    final body = {...stored}..remove(medicalToLockKey);
+    final at = GeoPoint.fromJson(stored['location']);
+    if (at == null) return body;
+    final recipients = await api.medicalRecipients(at);
+    if (recipients.isEmpty) return body;
+    body['medical_locked'] = await _medicalCrypto.lock(
+      plain.cast<String, Object?>(),
+      recipients,
+    );
+    return body;
   }
 
   Future<void> _recordReportFailure(

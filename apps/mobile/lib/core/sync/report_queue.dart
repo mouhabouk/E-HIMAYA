@@ -41,6 +41,7 @@ class ReportDraft {
     this.attachments = const [],
     this.organizationId,
     this.medical,
+    this.medicalLocked,
   });
 
   final ReportCategory category;
@@ -55,7 +56,14 @@ class ReportDraft {
   /// Phase B2 (addition 7b): the medical file, only when the user ticked "attach my medical file
   /// to this report". Frozen in the payload, which stays in the encrypted queue until sent.
   final Map<String, Object?>? medical;
+
+  /// Phase C1-b: the rest of the medical file. Kept in clear in the encrypted queue, then locked
+  /// for the doctors just before sending (the recipients depend on the place, fetched online).
+  final Map<String, Object?>? medicalLocked;
 }
+
+/// Payload key of the medical file part waiting to be locked (never sent as such).
+const medicalToLockKey = 'medical_to_lock';
 
 /// A report to attach a file to: its local row and/or its server id.
 class AttachTarget {
@@ -134,6 +142,8 @@ class ReportQueue {
       organizationIdKey: ?draft.organizationId,
       if (draft.medical != null && draft.medical!.isNotEmpty)
         'medical': draft.medical,
+      if (draft.medicalLocked != null && draft.medicalLocked!.isNotEmpty)
+        medicalToLockKey: draft.medicalLocked,
     };
 
     final media = <MediaItemsCompanion>[];

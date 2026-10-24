@@ -3484,7 +3484,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get reportAttachMedicalHint =>
-      'لا يفتحه إلا الفريق الذي يعالج هذا البلاغ، وتُسجَّل كل عملية فتح.';
+      'تقرأ قاعة العمليات بطاقة الطوارئ فقط. بقية ملفك تُقفل على هاتفك لأطباء الحماية المدنية في الجهة وللّجنة الطبية، وكل فتح يُسجَّل وتراه في تطبيقك.';
 
   @override
   String get safetyHistoryTitle => 'سجل المواقع (72 ساعة)';
@@ -3648,8 +3648,107 @@ class AppLocalizationsAr extends AppLocalizations {
   String get doctorAvailableBadge => 'متاح';
 
   @override
-  String get doctorFilesSoon =>
-      'استقبال الملفات الطبية المقفلة يُفعَّل في التحديث القادم.';
+  String get medicalCardTitle => 'بطاقة الطوارئ';
+
+  @override
+  String get medicalCardHint =>
+      'ما تختاره هنا يبقى مقروءًا لقاعة العمليات وأعوان الإنقاذ. بقية الحقول تُقفل للأطباء فقط.';
+
+  @override
+  String get errorDoctorKeyMissing => 'أنشئ مفتاحك الشخصي أولًا.';
+
+  @override
+  String get errorNotCommitteeMember => 'لم تعد عضوًا في اللجنة الطبية.';
+
+  @override
+  String get errorReasonRequired => 'اذكر سببًا.';
+
+  @override
+  String get doctorKeyTitle => 'مفتاحي الشخصي';
+
+  @override
+  String get doctorKeyCreateHelp =>
+      'تُقفل الملفات الطبية لك بمفتاح يحميه رمز تختاره أنت. لا نعرف رمزك ولا نستطيع استرجاعه.';
+
+  @override
+  String get doctorKeyReady => 'مفتاحك جاهز على هذا الهاتف.';
+
+  @override
+  String get doctorKeyRestoreHelp =>
+      'مفتاحك غير موجود على هذا الهاتف. أدخل رمزك لاستعادته.';
+
+  @override
+  String get doctorKeyCreate => 'إنشاء مفتاحي';
+
+  @override
+  String get doctorKeyRestore => 'استعادة مفتاحي';
+
+  @override
+  String get doctorKeyForgot => 'نسيت رمزي';
+
+  @override
+  String get doctorKeyResetWarning =>
+      'سيُنشأ مفتاح جديد. الملفات التي وصلتك بالمفتاح القديم لن تُفتح بعد الآن، إلا إذا أحالها إليك زميل.';
+
+  @override
+  String get doctorKeyNew => 'مفتاح جديد';
+
+  @override
+  String get doctorKeyChooseCode => 'اختر رمزك';
+
+  @override
+  String get doctorKeyEnterCode => 'أدخل رمزك';
+
+  @override
+  String get doctorKeyCodeHint =>
+      'من 6 إلى 12 رقمًا. احفظه جيدًا: لا يمكن استرجاعه.';
+
+  @override
+  String get doctorKeyCode => 'الرمز';
+
+  @override
+  String get doctorKeyCodeAgain => 'أعد كتابة الرمز';
+
+  @override
+  String get doctorKeyCodeInvalid => 'الرمز من 6 إلى 12 رقمًا.';
+
+  @override
+  String get doctorKeyCodeMismatch => 'الرمزان مختلفان.';
+
+  @override
+  String get doctorKeyWrongCode => 'الرمز غير صحيح.';
+
+  @override
+  String get doctorFiles => 'الملفات الطبية';
+
+  @override
+  String get doctorFilesEmpty => 'لا ملفات طبية حاليًا.';
+
+  @override
+  String get doctorFileViaGouvernorat => 'ولايتك';
+
+  @override
+  String get doctorFileViaCommittee => 'اللجنة الطبية';
+
+  @override
+  String get doctorFileViaReferral => 'إحالة';
+
+  @override
+  String get doctorFileReasonTitle => 'سبب الفتح';
+
+  @override
+  String get doctorFileReasonHint =>
+      'يُسجَّل السبب. يرى المواطن «اللجنة الطبية» دون اسمك.';
+
+  @override
+  String get doctorFileOpen => 'فتح';
+
+  @override
+  String get doctorFileConfidential =>
+      'ملف سرّي: لا تنسخه ولا تشاركه. فُتح على هذا الهاتف فقط وسُجّل الفتح.';
+
+  @override
+  String get doctorFileCannotOpen => 'تعذّر فتح الملف بمفتاحك.';
 
   @override
   String get doctorDirectory => 'دليل الأطباء';

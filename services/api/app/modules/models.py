@@ -13,6 +13,7 @@ from app.modules.forecast.models import ForecastRun
 from app.modules.geo.models import Delegation, Gouvernorat, Layer, LayerFeature, LayerImport
 from app.modules.identity.models import Account, Consent, ErasureRequest, Profile
 from app.modules.knowledge.models import IndexState, MemoryEntry, MemoryEntryVersion, SearchDoc
+from app.modules.medical.models import FileKey, FileOpening, LockedFile
 from app.modules.notify.models import Device, Dispatch, Message, OrgDigest, Outbox
 from app.modules.ops.models import (
     Assignment,
@@ -88,6 +89,8 @@ __all__ = [
     "DocumentVersion",
     "Equipment",
     "ErasureRequest",
+    "FileKey",
+    "FileOpening",
     "ForecastRun",
     "Gouvernorat",
     "GridPoint",
@@ -107,6 +110,7 @@ __all__ = [
     "LiveStream",
     "LocationHistory",
     "LocationPoint",
+    "LockedFile",
     "MapFeature",
     "Media",
     "Member",

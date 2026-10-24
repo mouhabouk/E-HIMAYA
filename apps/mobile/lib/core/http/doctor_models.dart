@@ -82,6 +82,7 @@ class Doctor {
     this.reviewedAt,
     this.availableUntil,
     this.committeeUntil,
+    this.hasKey = false,
   });
 
   final DoctorKind kind;
@@ -100,6 +101,9 @@ class Doctor {
 
   /// End of the term on the national medical committee; null when not a member.
   final DateTime? committeeUntil;
+
+  /// Phase C1-b: the doctor set their personal key (medical files can be locked for them).
+  final bool hasKey;
   final int version;
 
   bool isAvailableAt(DateTime now) =>
@@ -120,6 +124,7 @@ class Doctor {
     available: json['available'] == true,
     availableUntil: _date(json['available_until']),
     committeeUntil: _date(json['committee_until']),
+    hasKey: json['has_key'] == true,
     version: (json['version'] as num?)?.toInt() ?? 1,
   );
 }
@@ -197,5 +202,65 @@ class DirectoryDoctor {
         workplace: json['workplace'] as String? ?? '',
         gouvernoratCode: (json['gouvernorat_code'] as num?)?.toInt() ?? 0,
         available: json['available'] == true,
+      );
+}
+
+/// Why a locked medical file reached the doctor (phase C1-b).
+enum FileVia {
+  gouvernorat('gouvernorat'),
+  committee('committee'),
+  referral('referral');
+
+  const FileVia(this.wire);
+  final String wire;
+
+  static FileVia fromWire(String? v) =>
+      values.firstWhere((e) => e.wire == v, orElse: () => gouvernorat);
+}
+
+/// One line of the doctor's inbox (`GET /api/v1/medical/files`).
+class MedicalInboxItem {
+  const MedicalInboxItem({
+    required this.reportId,
+    required this.trackingCode,
+    required this.category,
+    required this.receivedAt,
+    required this.via,
+    this.gouvernoratCode,
+    this.openedAt,
+  });
+
+  final String reportId;
+  final String trackingCode;
+  final String category;
+  final int? gouvernoratCode;
+  final DateTime receivedAt;
+  final FileVia via;
+  final DateTime? openedAt;
+
+  factory MedicalInboxItem.fromJson(Map<String, Object?> json) =>
+      MedicalInboxItem(
+        reportId: json['report_id']! as String,
+        trackingCode: json['tracking_code'] as String? ?? '',
+        category: json['category'] as String? ?? 'other',
+        gouvernoratCode: (json['gouvernorat_code'] as num?)?.toInt(),
+        receivedAt: _date(json['received_at']) ?? DateTime(1970),
+        via: FileVia.fromWire(json['via'] as String?),
+        openedAt: _date(json['opened_at']),
+      );
+}
+
+/// A doctor's personal key as kept by the server: the public key and the private key locked by
+/// the doctor's code (`GET /api/v1/me/doctor/key`).
+class DoctorKeyBackup {
+  const DoctorKeyBackup({required this.publicKey, required this.backup});
+
+  final String publicKey;
+  final Map<String, Object?> backup;
+
+  factory DoctorKeyBackup.fromJson(Map<String, Object?> json) =>
+      DoctorKeyBackup(
+        publicKey: json['public_key']! as String,
+        backup: (json['backup']! as Map).cast<String, Object?>(),
       );
 }
