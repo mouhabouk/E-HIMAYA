@@ -94,6 +94,10 @@ export function fakeDoctorsApi() {
     doctors: vi.fn(() => Promise.resolve({ items: [], next_cursor: null })),
     doctor: vi.fn(),
     reviewDoctor: vi.fn(),
+    medicalCommittee: vi.fn(() => Promise.resolve({ members: [], max_members: 7 })),
+    committeeCandidates: vi.fn(() => Promise.resolve([])),
+    appointMember: vi.fn(),
+    revokeMember: vi.fn(),
   };
 }
 

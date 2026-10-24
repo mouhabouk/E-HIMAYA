@@ -29,6 +29,7 @@ Map<String, Object?> doctorJson({
   String status = 'pending',
   String kind = 'civil_protection',
   bool available = false,
+  String? committeeUntil,
 }) => {
   'kind': kind,
   'status': status,
@@ -43,6 +44,7 @@ Map<String, Object?> doctorJson({
   'reviewed_at': null,
   'available': available,
   'available_until': available ? '2100-01-01T00:00:00Z' : null,
+  'committee_until': committeeUntil,
   'version': 1,
 };
 
@@ -170,7 +172,11 @@ void main() {
         ),
         ('GET', '/api/v1/me/doctor') => FakeResponse(
           200,
-          json: doctorJson(status: 'approved', available: available),
+          json: doctorJson(
+            status: 'approved',
+            available: available,
+            committeeUntil: '2027-10-19T08:00:00Z',
+          ),
         ),
         ('POST', '/api/v1/me/doctor/availability') => () {
           availability.add(r.json);
@@ -212,6 +218,12 @@ void main() {
     await tester.tap(find.byKey(const Key('doctor-join')));
     await tester.pumpAndSettle();
     expect(find.text('Civil Protection doctor'), findsOneWidget);
+    // Appointed to the medical committee by the system administrator.
+    expect(find.byKey(const Key('doctor-committee')), findsOneWidget);
+    expect(
+      find.textContaining('Member of the medical committee until'),
+      findsOneWidget,
+    );
     expect(
       find.textContaining('Hôpital Habib Bourguiba · Sfax'),
       findsOneWidget,

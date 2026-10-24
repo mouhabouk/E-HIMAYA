@@ -33,6 +33,10 @@ class Doctor(Base):
     reviewed_by: Mapped[str | None] = mapped_column(Text)
     review_reason: Mapped[str | None] = mapped_column(Text)
     available_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Member of the national medical committee while ``committee_until`` is in the future (appointed by the sysadmin).
+    committee_since: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    committee_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    committee_by: Mapped[str | None] = mapped_column(Text)
     version: Mapped[int] = mapped_column(Integer, server_default="1")
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 

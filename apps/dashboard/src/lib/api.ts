@@ -158,6 +158,11 @@ export const ERROR_CODES = [
   "no_medical_file",
   "invalid_phone",
   "unknown",
+  // The medical committee (design §11).
+  "self_appointment",
+  "committee_full",
+  "not_civil_protection_doctor",
+  "not_committee_member",
 ] as const;
 export type ErrorCode = (typeof ERROR_CODES)[number];
 

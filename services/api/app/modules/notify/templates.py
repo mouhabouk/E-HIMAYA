@@ -130,6 +130,41 @@ DOCTOR_DECISION_BODY: dict[str, Localized] = {
     },
 }
 
+COMMITTEE_SUBJECT: dict[str, Localized] = {
+    "appoint": {
+        "ar": "تعيينك في اللجنة الطبية — ء-حماية",
+        "fr": "Votre nomination au comité médical — e-Himaya",
+        "en": "Your appointment to the medical committee — e-Himaya",
+    },
+    "renew": {
+        "ar": "تجديد عضويتك في اللجنة الطبية — ء-حماية",
+        "fr": "Renouvellement au comité médical — e-Himaya",
+        "en": "Your medical committee term is renewed — e-Himaya",
+    },
+    "revoke": {
+        "ar": "انتهاء عضويتك في اللجنة الطبية — ء-حماية",
+        "fr": "Fin de votre mandat au comité médical — e-Himaya",
+        "en": "Your medical committee term has ended — e-Himaya",
+    },
+}
+COMMITTEE_BODY: dict[str, Localized] = {
+    "appoint": {
+        "ar": "مرحبا {name}،\n\nعُيّنت عضواً في اللجنة الطبية إلى غاية {until}. ستطّلع من حساب طبيب الحماية المدنية على الملفات الطبية وآراء الأطباء المختصين في كل الولايات. كل فتح يتطلب سبباً ويُسجَّل، ويراه المواطن.",
+        "fr": "Bonjour {name},\n\nVous êtes nommé(e) membre du comité médical jusqu'au {until}. Depuis votre compte de médecin de la Protection civile, vous consulterez les dossiers médicaux et les avis des spécialistes de tous les gouvernorats. Chaque ouverture demande un motif, est journalisée et visible par le citoyen.",
+        "en": "Hello {name},\n\nYou are appointed to the medical committee until {until}. From your Civil Protection doctor account you will consult the medical files and the specialists' opinions of every gouvernorat. Each opening needs a reason, is logged and is shown to the citizen.",
+    },
+    "renew": {
+        "ar": "مرحبا {name}،\n\nجُدّدت عضويتك في اللجنة الطبية إلى غاية {until}.",
+        "fr": "Bonjour {name},\n\nVotre mandat au comité médical est renouvelé jusqu'au {until}.",
+        "en": "Hello {name},\n\nYour medical committee term is renewed until {until}.",
+    },
+    "revoke": {
+        "ar": "مرحبا {name}،\n\nانتهت عضويتك في اللجنة الطبية.\nالسبب: {reason}",
+        "fr": "Bonjour {name},\n\nVotre mandat au comité médical a pris fin.\nMotif : {reason}",
+        "en": "Hello {name},\n\nYour medical committee term has ended.\nReason: {reason}",
+    },
+}
+
 INVITATION_SUBJECT: Localized = {
     "ar": "دعوة للانضمام إلى {org} على ء-حماية",
     "fr": "Invitation à rejoindre {org} sur e-Himaya",

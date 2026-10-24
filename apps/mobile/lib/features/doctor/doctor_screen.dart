@@ -224,6 +224,21 @@ class _Space extends ConsumerWidget {
             ),
           ),
         ),
+        if (approved && d.committeeUntil != null) ...[
+          const SizedBox(height: 8),
+          Card(
+            key: const Key('doctor-committee'),
+            child: ListTile(
+              leading: const Icon(Icons.verified_user),
+              title: Text(
+                l10n.doctorCommitteeMember(
+                  dateTimeLabel(context, d.committeeUntil!),
+                ),
+              ),
+              subtitle: Text(l10n.doctorCommitteeHelp),
+            ),
+          ),
+        ],
         if (approved) ...[
           const SizedBox(height: 8),
           _AvailabilityCard(doctor: d),

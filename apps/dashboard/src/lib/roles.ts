@@ -177,6 +177,11 @@ export function canReviewVolunteers(roles: readonly string[]): boolean {
 }
 
 /** Doctors' registrations (phase C1-a): the list shows registration numbers, so only those who decide see it. */
+/** The medical committee is appointed by a national system administrator (the API answers 403 otherwise). */
+export function canManageMedicalCommittee(identity: { roles: readonly string[]; national: boolean }): boolean {
+  return identity.national && identity.roles.includes("sysadmin");
+}
+
 export function canReviewDoctors(roles: readonly string[]): boolean {
   return any(DOCTOR_REVIEW_ROLES, roles);
 }

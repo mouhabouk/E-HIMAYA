@@ -408,6 +408,7 @@ async def housekeeping(sessionmaker: async_sessionmaker[AsyncSession]) -> None:
         await interventions.expire_targets(session)
         await volunteers.expire_readiness(session)
         await doctors.expire_availability(session)
+        await doctors.expire_committee(session)
         # Safety checks past their time (phase B2): checked every minute, so a check fires at most a minute late.
         await safety.fire_due_checks(session)
         today = _now().date()

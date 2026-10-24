@@ -81,6 +81,7 @@ class Doctor {
     this.reviewReason,
     this.reviewedAt,
     this.availableUntil,
+    this.committeeUntil,
   });
 
   final DoctorKind kind;
@@ -96,6 +97,9 @@ class Doctor {
   final DateTime? reviewedAt;
   final bool available;
   final DateTime? availableUntil;
+
+  /// End of the term on the national medical committee; null when not a member.
+  final DateTime? committeeUntil;
   final int version;
 
   bool isAvailableAt(DateTime now) =>
@@ -115,6 +119,7 @@ class Doctor {
     reviewedAt: _date(json['reviewed_at']),
     available: json['available'] == true,
     availableUntil: _date(json['available_until']),
+    committeeUntil: _date(json['committee_until']),
     version: (json['version'] as num?)?.toInt() ?? 1,
   );
 }

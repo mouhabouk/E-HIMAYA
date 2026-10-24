@@ -6382,6 +6382,18 @@ abstract class AppLocalizations {
   /// **'Available until {time}'**
   String doctorAvailableUntil(String time);
 
+  /// No description provided for @doctorCommitteeMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Member of the medical committee until {date}'**
+  String doctorCommitteeMember(String date);
+
+  /// No description provided for @doctorCommitteeHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointed by the system administrator. From this account you will consult the medical files and the specialists\' opinions of every gouvernorat. Each opening needs a reason and is logged; the citizen sees “Medical committee”, not your name.'**
+  String get doctorCommitteeHelp;
+
   /// No description provided for @doctorAvailableHelp.
   ///
   /// In en, this message translates to:

@@ -24,6 +24,7 @@ function doctor(overrides: Partial<StaffDoctorDetail> = {}): StaffDoctorDetail {
     status: "pending",
     available: false,
     submitted_at: "2026-10-24T08:00:00Z",
+    committee_until: null,
     phone: "+21698123456",
     email: "salma@example.tn",
     licence_no: "TN-12345",

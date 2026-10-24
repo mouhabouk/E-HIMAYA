@@ -9,6 +9,7 @@ import {
   canEditAiSettings,
   canDraftMessage,
   canEditTips,
+  canManageMedicalCommittee,
   canReviewDoctors,
   canHandleContact,
   canOpenLayers,
@@ -192,6 +193,9 @@ export function Layout() {
             </>
           )}
           {reviewsDoctors && <NavLink to="/doctors">{t("nav.doctors")}</NavLink>}
+          {canManageMedicalCommittee(identity) && (
+            <NavLink to="/medical-committee">{t("nav.medicalCommittee")}</NavLink>
+          )}
           {readsResources && <NavLink to="/resources">{t("nav.resources")}</NavLink>}
           {notifies && <NavLink to="/notifications">{t("nav.notifications")}</NavLink>}
           {reviewsWeather && <NavLink to="/weather/suggestions">{t("nav.weatherSuggestions")}</NavLink>}
