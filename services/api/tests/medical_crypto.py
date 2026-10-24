@@ -37,9 +37,8 @@ def _kek(shared: bytes, eph_public: bytes, doctor_public: bytes) -> bytes:
     return HKDF(algorithm=hashes.SHA256(), length=32, salt=eph_public + doctor_public, info=INFO).derive(shared)
 
 
-def lock(data: dict[str, Any], doctors: list[tuple[uuid.UUID | str, bytes]]) -> dict[str, Any]:
-    dek = AESGCM.generate_key(bit_length=256)
-    nonce = os.urandom(12)
+def wrap(dek: bytes, doctors: list[tuple[uuid.UUID | str, bytes]]) -> list[dict[str, str]]:
+    """The key locked for each doctor (also what a referral or a new committee member's copy sends, phase C1-c)."""
     keys = []
     for doctor_id, doctor_public in doctors:
         eph = X25519PrivateKey.generate()
@@ -54,14 +53,25 @@ def lock(data: dict[str, Any], doctors: list[tuple[uuid.UUID | str, bytes]]) -> 
                 "wrapped": b64(AESGCM(kek).encrypt(key_nonce, dek, None)),
             }
         )
+    return keys
+
+
+def lock(data: dict[str, Any], doctors: list[tuple[uuid.UUID | str, bytes]]) -> dict[str, Any]:
+    dek = AESGCM.generate_key(bit_length=256)
+    nonce = os.urandom(12)
     ciphertext = AESGCM(dek).encrypt(nonce, json.dumps(data).encode(), None)
-    return {"nonce": b64(nonce), "ciphertext": b64(ciphertext), "keys": keys}
+    return {"nonce": b64(nonce), "ciphertext": b64(ciphertext), "keys": wrap(dek, doctors)}
+
+
+def dek_of(opened: dict[str, Any], private: X25519PrivateKey) -> bytes:
+    eph_public = base64.b64decode(opened["eph_public"])
+    kek = _kek(private.exchange(X25519PublicKey.from_public_bytes(eph_public)), eph_public, raw_public(private))
+    return AESGCM(kek).decrypt(base64.b64decode(opened["key_nonce"]), base64.b64decode(opened["wrapped"]), None)
 
 
 def open_file(opened: dict[str, Any], private: X25519PrivateKey) -> dict[str, Any]:
-    eph_public = base64.b64decode(opened["eph_public"])
-    kek = _kek(private.exchange(X25519PublicKey.from_public_bytes(eph_public)), eph_public, raw_public(private))
-    dek = AESGCM(kek).decrypt(base64.b64decode(opened["key_nonce"]), base64.b64decode(opened["wrapped"]), None)
+    """Opens a file (or an opinion: same fields)."""
+    dek = dek_of(opened, private)
     plain = AESGCM(dek).decrypt(base64.b64decode(opened["nonce"]), base64.b64decode(opened["ciphertext"]), None)
     return json.loads(plain)  # type: ignore[no-any-return]
 
