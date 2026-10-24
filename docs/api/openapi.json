@@ -4450,6 +4450,17 @@
             "title": "Kind",
             "type": "string"
           },
+          "public_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Public Key"
+          },
           "specialties": {
             "items": {
               "enum": [
@@ -12227,6 +12238,16 @@
             "default": false,
             "title": "Locked",
             "type": "boolean"
+          },
+          "opinions": {
+            "default": 0,
+            "title": "Opinions",
+            "type": "integer"
+          },
+          "referrals": {
+            "default": 0,
+            "title": "Referrals",
+            "type": "integer"
           }
         },
         "required": [
@@ -13805,6 +13826,225 @@
         "title": "OpenedFile",
         "type": "object"
       },
+      "Opening": {
+        "description": "One line of the reporter's \"who saw my medical file\": never a name.",
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "kind": {
+            "enum": [
+              "open",
+              "referral"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "report_id": {
+            "format": "uuid",
+            "title": "Report Id",
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "civil_protection",
+              "specialist",
+              "committee"
+            ],
+            "title": "Role",
+            "type": "string"
+          },
+          "specialties": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Specialties",
+            "type": "array"
+          },
+          "tracking_code": {
+            "title": "Tracking Code",
+            "type": "string"
+          },
+          "workplace": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Workplace"
+          }
+        },
+        "required": [
+          "report_id",
+          "tracking_code",
+          "kind",
+          "role",
+          "gouvernorat_code",
+          "specialties",
+          "workplace",
+          "at"
+        ],
+        "title": "Opening",
+        "type": "object"
+      },
+      "OpinionIn": {
+        "description": "The opinion (at most 4000 characters once opened) locked with its own key, and that key for each reader.",
+        "properties": {
+          "ciphertext": {
+            "maxLength": 44000,
+            "pattern": "^[A-Za-z0-9+/]*={0,2}$",
+            "title": "Ciphertext",
+            "type": "string"
+          },
+          "keys": {
+            "items": {
+              "$ref": "#/components/schemas/WrappedKeyIn"
+            },
+            "maxItems": 64,
+            "minItems": 1,
+            "title": "Keys",
+            "type": "array"
+          },
+          "nonce": {
+            "maxLength": 24,
+            "pattern": "^[A-Za-z0-9+/]*={0,2}$",
+            "title": "Nonce",
+            "type": "string"
+          },
+          "specialty": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Specialty"
+          }
+        },
+        "required": [
+          "nonce",
+          "ciphertext",
+          "keys"
+        ],
+        "title": "OpinionIn",
+        "type": "object"
+      },
+      "OpinionOut": {
+        "properties": {
+          "ciphertext": {
+            "title": "Ciphertext",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "eph_public": {
+            "title": "Eph Public",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "key_nonce": {
+            "title": "Key Nonce",
+            "type": "string"
+          },
+          "mine": {
+            "title": "Mine",
+            "type": "boolean"
+          },
+          "nonce": {
+            "title": "Nonce",
+            "type": "string"
+          },
+          "report_id": {
+            "format": "uuid",
+            "title": "Report Id",
+            "type": "string"
+          },
+          "specialty": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Specialty"
+          },
+          "wrapped": {
+            "title": "Wrapped",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "report_id",
+          "specialty",
+          "mine",
+          "created_at",
+          "nonce",
+          "ciphertext",
+          "eph_public",
+          "key_nonce",
+          "wrapped"
+        ],
+        "title": "OpinionOut",
+        "type": "object"
+      },
+      "OpinionRecipient": {
+        "properties": {
+          "doctor_id": {
+            "format": "uuid",
+            "title": "Doctor Id",
+            "type": "string"
+          },
+          "public_key": {
+            "title": "Public Key",
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "gouvernorat",
+              "committee",
+              "referrer",
+              "author"
+            ],
+            "title": "Role",
+            "type": "string"
+          }
+        },
+        "required": [
+          "doctor_id",
+          "public_key",
+          "role"
+        ],
+        "title": "OpinionRecipient",
+        "type": "object"
+      },
       "OptionalReasonIn": {
         "properties": {
           "reason": {
@@ -14810,6 +15050,74 @@
           "reason"
         ],
         "title": "ParticipantIn",
+        "type": "object"
+      },
+      "PendingMember": {
+        "properties": {
+          "doctor_id": {
+            "format": "uuid",
+            "title": "Doctor Id",
+            "type": "string"
+          },
+          "files": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Files",
+            "type": "array"
+          },
+          "full_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Full Name"
+          },
+          "opinions": {
+            "items": {
+              "$ref": "#/components/schemas/PendingOpinion"
+            },
+            "title": "Opinions",
+            "type": "array"
+          },
+          "public_key": {
+            "title": "Public Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "doctor_id",
+          "full_name",
+          "public_key",
+          "files",
+          "opinions"
+        ],
+        "title": "PendingMember",
+        "type": "object"
+      },
+      "PendingOpinion": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "report_id": {
+            "format": "uuid",
+            "title": "Report Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "report_id"
+        ],
+        "title": "PendingOpinion",
         "type": "object"
       },
       "PerformanceOut": {
@@ -16437,6 +16745,82 @@
           }
         },
         "title": "ReferralAcceptIn",
+        "type": "object"
+      },
+      "ReferralIn": {
+        "description": "The file key locked on the referring doctor's phone for each specialist chosen in the directory.",
+        "properties": {
+          "keys": {
+            "items": {
+              "$ref": "#/components/schemas/WrappedKeyIn"
+            },
+            "maxItems": 5,
+            "minItems": 1,
+            "title": "Keys",
+            "type": "array"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 3,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason",
+          "keys"
+        ],
+        "title": "ReferralIn",
+        "type": "object"
+      },
+      "ReferralOut": {
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "doctor_id": {
+            "format": "uuid",
+            "title": "Doctor Id",
+            "type": "string"
+          },
+          "full_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Full Name"
+          },
+          "mine": {
+            "title": "Mine",
+            "type": "boolean"
+          },
+          "specialties": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Specialties",
+            "type": "array"
+          },
+          "workplace": {
+            "title": "Workplace",
+            "type": "string"
+          }
+        },
+        "required": [
+          "doctor_id",
+          "full_name",
+          "specialties",
+          "workplace",
+          "at",
+          "mine"
+        ],
+        "title": "ReferralOut",
         "type": "object"
       },
       "ReferralRefuseIn": {
@@ -18464,6 +18848,32 @@
           "editable"
         ],
         "title": "SettingOut",
+        "type": "object"
+      },
+      "ShareIn": {
+        "description": "A committee member's phone locked a file (or an opinion) key for a newly appointed member.",
+        "properties": {
+          "keys": {
+            "items": {
+              "$ref": "#/components/schemas/WrappedKeyIn"
+            },
+            "maxItems": 16,
+            "minItems": 1,
+            "title": "Keys",
+            "type": "array"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 3,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason",
+          "keys"
+        ],
+        "title": "ShareIn",
         "type": "object"
       },
       "SigningKeyOut": {
@@ -28278,6 +28688,95 @@
         ]
       }
     },
+    "/api/v1/me/medical/openings": {
+      "get": {
+        "description": "Who saw the reporter's locked medical file, by role only (design §13.4).",
+        "operationId": "my_openings_api_v1_me_medical_openings_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "report_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Report Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Opening"
+                  },
+                  "title": "Response My Openings Api V1 Me Medical Openings Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "My Openings",
+        "tags": [
+          "medical"
+        ]
+      }
+    },
     "/api/v1/me/profile": {
       "get": {
         "operationId": "get_profile_api_v1_me_profile_get",
@@ -28925,6 +29424,66 @@
         ]
       }
     },
+    "/api/v1/medical/committee/pending": {
+      "get": {
+        "description": "Files and opinions a newly appointed committee member does not hold yet (design §13.3).",
+        "operationId": "pending_api_v1_medical_committee_pending_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PendingMember"
+                  },
+                  "title": "Response Pending Api V1 Medical Committee Pending Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Pending",
+        "tags": [
+          "medical"
+        ]
+      }
+    },
     "/api/v1/medical/files": {
       "get": {
         "operationId": "inbox_api_v1_medical_files_get",
@@ -28991,6 +29550,74 @@
           }
         ],
         "summary": "Inbox",
+        "tags": [
+          "medical"
+        ]
+      }
+    },
+    "/api/v1/medical/files/{report_id}/keys": {
+      "post": {
+        "operationId": "share_file_api_v1_medical_files__report_id__keys_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "report_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Report Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShareIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Share File",
         "tags": [
           "medical"
         ]
@@ -29066,6 +29693,426 @@
           }
         ],
         "summary": "Open File",
+        "tags": [
+          "medical"
+        ]
+      }
+    },
+    "/api/v1/medical/files/{report_id}/opinion-recipients": {
+      "get": {
+        "operationId": "opinion_recipients_api_v1_medical_files__report_id__opinion_recipients_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "report_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Report Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/OpinionRecipient"
+                  },
+                  "title": "Response Opinion Recipients Api V1 Medical Files  Report Id  Opinion Recipients Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Opinion Recipients",
+        "tags": [
+          "medical"
+        ]
+      }
+    },
+    "/api/v1/medical/files/{report_id}/opinions": {
+      "get": {
+        "operationId": "opinions_api_v1_medical_files__report_id__opinions_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "report_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Report Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/OpinionOut"
+                  },
+                  "title": "Response Opinions Api V1 Medical Files  Report Id  Opinions Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Opinions",
+        "tags": [
+          "medical"
+        ]
+      },
+      "post": {
+        "description": "A referred specialist's opinion, locked on their phone (design §13.2).",
+        "operationId": "add_opinion_api_v1_medical_files__report_id__opinions_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "report_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Report Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpinionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Add Opinion Api V1 Medical Files  Report Id  Opinions Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Add Opinion",
+        "tags": [
+          "medical"
+        ]
+      }
+    },
+    "/api/v1/medical/files/{report_id}/referrals": {
+      "get": {
+        "operationId": "referrals_api_v1_medical_files__report_id__referrals_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "report_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Report Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ReferralOut"
+                  },
+                  "title": "Response Referrals Api V1 Medical Files  Report Id  Referrals Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Referrals",
+        "tags": [
+          "medical"
+        ]
+      },
+      "post": {
+        "description": "The referring doctor's phone opened the file and locked its key for each specialist (design §13.1).",
+        "operationId": "refer_api_v1_medical_files__report_id__referrals_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "report_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Report Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReferralIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Refer",
+        "tags": [
+          "medical"
+        ]
+      }
+    },
+    "/api/v1/medical/opinions/{opinion_id}/keys": {
+      "post": {
+        "operationId": "share_opinion_api_v1_medical_opinions__opinion_id__keys_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "opinion_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Opinion Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShareIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Share Opinion",
         "tags": [
           "medical"
         ]

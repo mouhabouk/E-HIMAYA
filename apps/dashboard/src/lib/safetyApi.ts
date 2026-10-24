@@ -22,6 +22,9 @@ export interface MedicalOut {
   attached_at: string;
   /** The rest of the file is locked on the phone for the doctors; the operations room cannot open it. */
   locked: boolean;
+  /** Phase C1-c: referrals to specialists and their opinions, counted (never their content). */
+  referrals?: number;
+  opinions?: number;
 }
 
 /** The order the fields are shown in, and their translation keys under `safety.medical.fields`. */
@@ -71,9 +74,13 @@ export const HISTORY_PHONE = /^[+0-9 ]{8,20}$/;
 export function safetyApi(api: ApiClient) {
   return {
     /** Audited on the server; only for the room handling the report or a break-glass grant. */
-    reportMedical: (reportId: string) => api.request<MedicalOut>(`/api/v1/staff/reports/${enc(reportId)}/medical`),
+    reportMedical: (reportId: string) =>
+      api.request<MedicalOut>(`/api/v1/staff/reports/${enc(reportId)}/medical`),
 
     searchLocationHistory: (body: HistorySearchBody) =>
-      api.request<HistorySearchOut>("/api/v1/staff/safety/history/search", { method: "POST", body }),
+      api.request<HistorySearchOut>("/api/v1/staff/safety/history/search", {
+        method: "POST",
+        body,
+      }),
   };
 }

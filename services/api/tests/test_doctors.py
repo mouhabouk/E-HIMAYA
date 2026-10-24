@@ -185,6 +185,7 @@ async def test_availability_and_referral_directory(
         "workplace",
         "gouvernorat_code",
         "available",
+        "public_key",
     }
     only_gabes = (await client.get(DIRECTORY, params={"gouvernorat_code": GABES}, headers=cardio)).json()
     assert {d["gouvernorat_code"] for d in only_gabes} == {GABES}
