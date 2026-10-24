@@ -619,10 +619,41 @@ erDiagram
         blob ciphertext
         datetime created_at
     }
+    medical__opinion {
+        uuid id PK
+        uuid report_id FK
+        uuid author_id FK
+        text specialty
+        blob nonce
+        blob ciphertext
+        datetime created_at
+    }
+    medical__opinion_key {
+        uuid opinion_id PK,FK
+        uuid doctor_id PK,FK
+        blob eph_public
+        blob nonce
+        blob wrapped
+        datetime created_at
+    }
+    medical__referral {
+        uuid report_id PK,FK
+        uuid doctor_id PK,FK
+        uuid referred_by FK
+        text reason
+        datetime at
+    }
     identity__doctor ||--o{ medical__file_key : "doctor_id"
     identity__doctor ||--o{ medical__file_opening : "doctor_id"
+    identity__doctor ||--o{ medical__opinion : "author_id"
+    identity__doctor ||--o{ medical__opinion_key : "doctor_id"
+    identity__doctor ||--o{ medical__referral : "doctor_id"
+    identity__doctor ||--o{ medical__referral : "referred_by"
     medical__locked_file ||--o{ medical__file_key : "report_id"
     medical__locked_file ||--o{ medical__file_opening : "report_id"
+    medical__locked_file ||--o{ medical__opinion : "report_id"
+    medical__locked_file ||--o{ medical__referral : "report_id"
+    medical__opinion ||--o{ medical__opinion_key : "opinion_id"
     reports__medical_attachment ||--o{ medical__locked_file : "report_id"
 ```
 
