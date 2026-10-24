@@ -1047,6 +1047,8 @@
   "doctorHelpWithdrawn": "Vous avez renoncé au statut de médecin ; vos numéros sont supprimés.",
   "doctorAvailable": "Disponible pour les demandes",
   "doctorAvailableUntil": "Disponible jusqu'à {time}",
+  "doctorCommitteeMember": "Membre du comité médical jusqu'au {date}",
+  "doctorCommitteeHelp": "Nommé(e) par l'administrateur système. Depuis ce compte, vous consulterez les dossiers médicaux et les avis des spécialistes de tous les gouvernorats. Chaque ouverture demande un motif et est journalisée ; le citoyen voit « Comité médical », pas votre nom.",
   "doctorAvailableHelp": "Les médecins disponibles apparaissent en premier dans la liste. La disponibilité s'arrête seule après 8 heures.",
   "doctorAvailableBadge": "Disponible",
   "doctorFilesSoon": "La réception des dossiers médicaux verrouillés arrive dans la prochaine mise à jour.",

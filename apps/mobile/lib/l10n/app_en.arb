@@ -1903,6 +1903,15 @@
       }
     }
   },
+  "doctorCommitteeMember": "Member of the medical committee until {date}",
+  "@doctorCommitteeMember": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "doctorCommitteeHelp": "Appointed by the system administrator. From this account you will consult the medical files and the specialists' opinions of every gouvernorat. Each opening needs a reason and is logged; the citizen sees “Medical committee”, not your name.",
   "doctorAvailableHelp": "Available doctors come first in the referral list. It ends by itself after 8 hours.",
   "doctorAvailableBadge": "Available",
   "doctorFilesSoon": "Receiving locked medical files comes in the next update.",

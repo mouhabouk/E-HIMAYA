@@ -439,6 +439,9 @@ erDiagram
         text reviewed_by
         text review_reason
         datetime available_until
+        datetime committee_since
+        datetime committee_until
+        text committee_by
         integer version
         datetime updated_at
     }

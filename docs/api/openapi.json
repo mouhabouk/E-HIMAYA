@@ -1121,6 +1121,32 @@
         "title": "AppVersionOut",
         "type": "object"
       },
+      "AppointmentIn": {
+        "description": "Appoint (or renew) for ``months`` from now.",
+        "properties": {
+          "months": {
+            "default": 12,
+            "maximum": 24.0,
+            "minimum": 1.0,
+            "title": "Months",
+            "type": "integer"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "title": "AppointmentIn",
+        "type": "object"
+      },
       "ApproveIn": {
         "properties": {
           "note": {
@@ -3167,6 +3193,157 @@
         "title": "CommandLevelIn",
         "type": "object"
       },
+      "CommitteeMember": {
+        "properties": {
+          "available": {
+            "title": "Available",
+            "type": "boolean"
+          },
+          "committee_since": {
+            "format": "date-time",
+            "title": "Committee Since",
+            "type": "string"
+          },
+          "committee_until": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Committee Until"
+          },
+          "cp_unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cp Unit"
+          },
+          "full_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Full Name"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "volunteer",
+              "civil_protection"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "specialties": {
+            "items": {
+              "enum": [
+                "general_practice",
+                "emergency_medicine",
+                "anesthesia_icu",
+                "cardiology",
+                "pulmonology",
+                "neurology",
+                "pediatrics",
+                "obstetrics_gynecology",
+                "internal_medicine",
+                "endocrinology",
+                "nephrology",
+                "gastroenterology",
+                "allergy_immunology",
+                "infectious_diseases",
+                "dermatology_burns",
+                "orthopedics",
+                "general_surgery",
+                "psychiatry",
+                "toxicology",
+                "ophthalmology",
+                "ent"
+              ],
+              "type": "string"
+            },
+            "title": "Specialties",
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "approved",
+              "rejected",
+              "suspended",
+              "withdrawn"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "submitted_at": {
+            "format": "date-time",
+            "title": "Submitted At",
+            "type": "string"
+          },
+          "workplace": {
+            "title": "Workplace",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "full_name",
+          "kind",
+          "specialties",
+          "workplace",
+          "gouvernorat_code",
+          "cp_unit",
+          "status",
+          "available",
+          "submitted_at",
+          "committee_until",
+          "committee_since"
+        ],
+        "title": "CommitteeMember",
+        "type": "object"
+      },
+      "CommitteeOut": {
+        "properties": {
+          "max_members": {
+            "title": "Max Members",
+            "type": "integer"
+          },
+          "members": {
+            "items": {
+              "$ref": "#/components/schemas/CommitteeMember"
+            },
+            "title": "Members",
+            "type": "array"
+          }
+        },
+        "required": [
+          "members",
+          "max_members"
+        ],
+        "title": "CommitteeOut",
+        "type": "object"
+      },
       "Completeness": {
         "properties": {
           "missing": {
@@ -4469,6 +4646,18 @@
             ],
             "title": "Available Until"
           },
+          "committee_until": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Committee Until"
+          },
           "cp_staff_no": {
             "anyOf": [
               {
@@ -4606,6 +4795,7 @@
           "reviewed_at",
           "available",
           "available_until",
+          "committee_until",
           "version"
         ],
         "title": "DoctorOut",
@@ -17091,6 +17281,21 @@
         "title": "ReviewIn",
         "type": "object"
       },
+      "RevocationIn": {
+        "properties": {
+          "reason": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "RevocationIn",
+        "type": "object"
+      },
       "Role": {
         "enum": [
           "citizen",
@@ -18230,6 +18435,18 @@
             "title": "Available",
             "type": "boolean"
           },
+          "committee_until": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Committee Until"
+          },
           "cp_unit": {
             "anyOf": [
               {
@@ -18330,7 +18547,8 @@
           "cp_unit",
           "status",
           "available",
-          "submitted_at"
+          "submitted_at",
+          "committee_until"
         ],
         "title": "StaffDoctor",
         "type": "object"
@@ -18340,6 +18558,18 @@
           "available": {
             "title": "Available",
             "type": "boolean"
+          },
+          "committee_until": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Committee Until"
           },
           "cp_staff_no": {
             "anyOf": [
@@ -18504,6 +18734,7 @@
           "status",
           "available",
           "submitted_at",
+          "committee_until",
           "phone",
           "email",
           "licence_no",
@@ -38701,6 +38932,219 @@
         "summary": "Media Proof",
         "tags": [
           "evidence"
+        ]
+      }
+    },
+    "/api/v1/staff/medical-committee": {
+      "get": {
+        "operationId": "get_committee_api_v1_staff_medical_committee_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommitteeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Committee",
+        "tags": [
+          "staff-medical-committee"
+        ]
+      }
+    },
+    "/api/v1/staff/medical-committee/candidates": {
+      "get": {
+        "operationId": "candidates_api_v1_staff_medical_committee_candidates_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 100,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/StaffDoctor"
+                  },
+                  "title": "Response Candidates Api V1 Staff Medical Committee Candidates Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Candidates",
+        "tags": [
+          "staff-medical-committee"
+        ]
+      }
+    },
+    "/api/v1/staff/medical-committee/{doctor_id}": {
+      "put": {
+        "operationId": "appoint_api_v1_staff_medical_committee__doctor_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "doctor_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Doctor Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppointmentIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommitteeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Appoint",
+        "tags": [
+          "staff-medical-committee"
+        ]
+      }
+    },
+    "/api/v1/staff/medical-committee/{doctor_id}/revoke": {
+      "post": {
+        "operationId": "revoke_api_v1_staff_medical_committee__doctor_id__revoke_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "doctor_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Doctor Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevocationIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommitteeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Revoke",
+        "tags": [
+          "staff-medical-committee"
         ]
       }
     },

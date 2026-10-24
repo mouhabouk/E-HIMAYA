@@ -36,7 +36,8 @@
     "layers": "Couches de la carte",
     "emergencyGuide": "Centre d’urgence",
     "contact": "Nous contacter",
-    "doctors": "Médecins"
+    "doctors": "Médecins",
+    "medicalCommittee": "Comité médical"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -289,7 +290,11 @@
     "text_required": "Une note, une réponse ou un motif est nécessaire.",
     "feature_off": "Cette fonction est désactivée sur la plateforme.",
     "no_medical_file": "Aucun dossier médical n'est joint à ce signalement.",
-    "invalid_phone": "Ce numéro de téléphone n'est pas valide."
+    "invalid_phone": "Ce numéro de téléphone n'est pas valide.",
+    "self_appointment": "L'administrateur ne peut pas se nommer lui-même au comité médical.",
+    "committee_full": "Tous les sièges du comité médical sont occupés : mettez fin à un mandat avant de nommer un nouveau membre.",
+    "not_civil_protection_doctor": "Seul un médecin de la Protection civile vérifié peut être nommé.",
+    "not_committee_member": "Ce médecin n'est pas membre du comité médical."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -3735,6 +3740,38 @@
         "suspend": "Suspendre",
         "reinstate": "Rétablir"
       }
+    }
+  },
+  "medicalCommittee": {
+    "title": "Comité médical",
+    "intro": "L'administrateur système nomme des médecins de la Protection civile pour une durée fixée. Depuis leur compte de médecin de la Protection civile, les membres consultent les dossiers médicaux et les avis des spécialistes de tous les gouvernorats.",
+    "rules": {
+      "who": "Seul un médecin de la Protection civile vérifié par le coordinateur médical peut être nommé, jamais l'administrateur lui-même. Le mandat prend fin seul en cas de suspension, de retrait ou de changement de statut.",
+      "keys": "Aucun mot de passe commun : le téléphone du citoyen verrouille le dossier pour chaque membre avec sa clé personnelle ; l'administrateur ne lit aucun dossier.",
+      "audit": "Chaque nomination, renouvellement ou fin de mandat est journalisé et envoyé au médecin ; chaque ouverture d'un dossier par le comité demande un motif et est visible par le citoyen."
+    },
+    "members": "Membres",
+    "seats": "({{count}} sur {{max}})",
+    "noMember": "Aucun membre pour l'instant.",
+    "since": "Depuis le",
+    "until": "Jusqu'au",
+    "actions": "Actions",
+    "term": "Durée",
+    "renew": "Renouveler",
+    "revoke": "Mettre fin au mandat",
+    "revokeReason": "Motif (envoyé au médecin)",
+    "confirmRevoke": "Confirmer la fin du mandat",
+    "candidates": "Médecins de la Protection civile vérifiés",
+    "candidatesHelp": "Choisissez la durée, puis nommez le médecin. Il en est informé par e-mail.",
+    "full": "Tous les sièges sont occupés : mettez fin à un mandat avant de nommer un nouveau membre.",
+    "noCandidate": "Aucun médecin de la Protection civile vérifié hors du comité.",
+    "appoint": "Nommer",
+    "appointName": "Nommer {{name}} au comité médical",
+    "badge": "Comité médical",
+    "months": {
+      "6": "6 mois",
+      "12": "12 mois",
+      "24": "24 mois"
     }
   }
 }

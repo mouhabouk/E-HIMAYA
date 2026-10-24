@@ -36,7 +36,8 @@
     "layers": "Map layers",
     "emergencyGuide": "Emergency hub",
     "contact": "Contact us",
-    "doctors": "Doctors"
+    "doctors": "Doctors",
+    "medicalCommittee": "Medical committee"
   },
   "header": {
     "scope": "Geographic scope",
@@ -289,7 +290,11 @@
     "text_required": "A note, an answer or a reason is needed.",
     "feature_off": "This feature is turned off on the platform.",
     "no_medical_file": "No medical file is attached to this report.",
-    "invalid_phone": "This phone number is not valid."
+    "invalid_phone": "This phone number is not valid.",
+    "self_appointment": "The administrator cannot appoint themselves to the medical committee.",
+    "committee_full": "All medical committee seats are taken: end a term before appointing a new member.",
+    "not_civil_protection_doctor": "Only a verified Civil Protection doctor can be appointed.",
+    "not_committee_member": "This doctor is not on the medical committee."
   },
   "kpi": {
     "title": "Key indicators",
@@ -3735,6 +3740,38 @@
         "suspend": "Suspend",
         "reinstate": "Reinstate"
       }
+    }
+  },
+  "medicalCommittee": {
+    "title": "Medical committee",
+    "intro": "The system administrator appoints Civil Protection doctors for a fixed term. From their Civil Protection doctor account, members consult the medical files and the specialists' opinions of every gouvernorat.",
+    "rules": {
+      "who": "Only a Civil Protection doctor verified by the medical coordinator can be appointed, never the administrator themselves. The term ends on its own on suspension, withdrawal or a change of status.",
+      "keys": "No shared password: the citizen's phone locks the file for each member with their personal key; the administrator reads no file.",
+      "audit": "Every appointment, renewal and revocation is logged and e-mailed to the doctor; every opening of a file by the committee needs a reason and is shown to the citizen."
+    },
+    "members": "Members",
+    "seats": "({{count}} of {{max}})",
+    "noMember": "No member yet.",
+    "since": "Since",
+    "until": "Until",
+    "actions": "Actions",
+    "term": "Term",
+    "renew": "Renew",
+    "revoke": "End the term",
+    "revokeReason": "Reason (sent to the doctor)",
+    "confirmRevoke": "Confirm the end of the term",
+    "candidates": "Verified Civil Protection doctors",
+    "candidatesHelp": "Choose the term, then appoint the doctor. They are told by e-mail.",
+    "full": "All seats are taken: end a term before appointing a new member.",
+    "noCandidate": "No verified Civil Protection doctor outside the committee.",
+    "appoint": "Appoint",
+    "appointName": "Appoint {{name}} to the medical committee",
+    "badge": "Medical committee",
+    "months": {
+      "6": "6 months",
+      "12": "12 months",
+      "24": "24 months"
     }
   }
 }

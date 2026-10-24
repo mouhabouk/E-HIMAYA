@@ -3708,6 +3708,15 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String doctorCommitteeMember(String date) {
+    return 'Membre du comité médical jusqu\'au $date';
+  }
+
+  @override
+  String get doctorCommitteeHelp =>
+      'Nommé(e) par l\'administrateur système. Depuis ce compte, vous consulterez les dossiers médicaux et les avis des spécialistes de tous les gouvernorats. Chaque ouverture demande un motif et est journalisée ; le citoyen voit « Comité médical », pas votre nom.';
+
+  @override
   String get doctorAvailableHelp =>
       'Les médecins disponibles apparaissent en premier dans la liste. La disponibilité s\'arrête seule après 8 heures.';
 

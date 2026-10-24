@@ -198,6 +198,7 @@ export function DoctorsPage() {
                     <Link to={`/doctors/${encodeURIComponent(d.id)}`} dir="auto">
                       {d.full_name ?? t("doctors.unnamed")}
                     </Link>
+                    {d.committee_until && <div className="tag">{t("medicalCommittee.badge")}</div>}
                   </td>
                   <td>
                     <VolunteerStatusChip status={d.status} />

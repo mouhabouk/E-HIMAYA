@@ -64,6 +64,8 @@ class DoctorOut(BaseModel):
     reviewed_at: datetime | None
     available: bool
     available_until: datetime | None
+    # End of the current term on the medical committee; None when not a member.
+    committee_until: datetime | None
     version: int
 
 
@@ -83,6 +85,7 @@ class StaffDoctor(BaseModel):
     status: DoctorStatus
     available: bool
     submitted_at: datetime
+    committee_until: datetime | None
 
 
 class StaffDoctorPage(BaseModel):
@@ -120,3 +123,23 @@ class DirectoryDoctor(BaseModel):
     workplace: str
     gouvernorat_code: int
     available: bool
+
+
+class CommitteeMember(StaffDoctor):
+    committee_since: datetime
+
+
+class CommitteeOut(BaseModel):
+    members: list[CommitteeMember]
+    max_members: int
+
+
+class AppointmentIn(BaseModel):
+    """Appoint (or renew) for ``months`` from now."""
+
+    months: int = Field(default=12, ge=1, le=24)
+    reason: Annotated[Text, StringConstraints(max_length=1000)] | None = None
+
+
+class RevocationIn(BaseModel):
+    reason: Annotated[Text, StringConstraints(min_length=1, max_length=1000)]

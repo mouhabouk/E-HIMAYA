@@ -3632,6 +3632,15 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String doctorCommitteeMember(String date) {
+    return 'عضو اللجنة الطبية إلى غاية $date';
+  }
+
+  @override
+  String get doctorCommitteeHelp =>
+      'عيّنك مدير النظام. من هذا الحساب ستطّلع على الملفات الطبية وآراء الأطباء المختصين في كل الولايات. كل فتح يتطلب سبباً ويُسجَّل، ويرى المواطن «اللجنة الطبية» دون اسمك.';
+
+  @override
   String get doctorAvailableHelp =>
       'يظهر المتاحون أولاً في قائمة الإحالة. تنتهي الإتاحة تلقائياً بعد 8 ساعات.';
 

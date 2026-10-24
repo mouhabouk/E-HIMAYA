@@ -3673,6 +3673,15 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String doctorCommitteeMember(String date) {
+    return 'Member of the medical committee until $date';
+  }
+
+  @override
+  String get doctorCommitteeHelp =>
+      'Appointed by the system administrator. From this account you will consult the medical files and the specialists\' opinions of every gouvernorat. Each opening needs a reason and is logged; the citizen sees “Medical committee”, not your name.';
+
+  @override
   String get doctorAvailableHelp =>
       'Available doctors come first in the referral list. It ends by itself after 8 hours.';
 

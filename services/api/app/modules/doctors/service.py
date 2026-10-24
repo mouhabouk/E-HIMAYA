@@ -5,6 +5,10 @@ opinion) or a **Civil Protection doctor** (who will receive the medical files of
 specialties, registration number and workplace. Staff (a regional medical coordinator, or the volunteer reviewers)
 check the registration before the doctor receives anything; the decision is e-mailed like a volunteer's.
 
+The system administrator appoints approved Civil Protection doctors to the national **medical committee** for a fixed
+term (§11): at most ``COMMITTEE_MAX`` members, never themselves; the membership ends on its own when the doctor stops
+being an approved Civil Protection doctor.
+
 The workplace's gouvernorat is the doctor's group. Approved doctors find one another by specialty and gouvernorat for
 referrals (``directory``): name, workplace and availability only, never the phone or the registration number.
 """
@@ -29,6 +33,8 @@ from app.modules.notify import outbox, templates
 
 # Version of the doctor's terms the app shows before the registration (texts in the app's translations).
 TERMS_VERSION = "1"
+# Each member gets a copy of the key of every medical file in the country (phase C1-b): keep the committee small.
+COMMITTEE_MAX = 7
 
 _DECISIONS: dict[str, tuple[str, str]] = {
     # decision: (required current status, new status)
@@ -45,6 +51,20 @@ def now() -> datetime:
 
 def is_available(doctor: Doctor, at: datetime | None = None) -> bool:
     return doctor.status == "approved" and doctor.available_until is not None and doctor.available_until > (at or now())
+
+
+def committee_until(doctor: Doctor, at: datetime | None = None) -> datetime | None:
+    """End of the current term, or None when the doctor is not (or no longer) on the medical committee."""
+    if doctor.status != "approved" or doctor.committee_until is None or doctor.committee_until <= (at or now()):
+        return None
+    return doctor.committee_until
+
+
+def leave_committee(doctor: Doctor) -> bool:
+    """Ends the membership (status or kind changed, term ended, revoked). True when the doctor was a member."""
+    was = committee_until(doctor) is not None
+    doctor.committee_since = doctor.committee_until = doctor.committee_by = None
+    return was
 
 
 def full_name(profile: Profile | None) -> str | None:
@@ -69,6 +89,7 @@ def doctor_out(doctor: Doctor) -> schemas.DoctorOut:
         reviewed_at=doctor.reviewed_at,
         available=available,
         available_until=doctor.available_until if available else None,
+        committee_until=committee_until(doctor),
         version=doctor.version,
     )
 
@@ -85,6 +106,7 @@ def staff_item(doctor: Doctor, profile: Profile | None) -> schemas.StaffDoctor:
         status=doctor.status,
         available=is_available(doctor),
         submitted_at=doctor.submitted_at,
+        committee_until=committee_until(doctor),
     )
 
 
@@ -142,6 +164,7 @@ async def declare(session: AsyncSession, reporter: Reporter, body: schemas.Docto
             # What staff checked changed: the doctor is reviewed again before receiving anything.
             doctor.status, doctor.submitted_at, doctor.review_reason = "pending", now(), None
             doctor.available_until = None
+            leave_committee(doctor)
         doctor.version += 1
     doctor.kind = body.kind
     doctor.specialties = specialties
@@ -161,6 +184,7 @@ async def declare(session: AsyncSession, reporter: Reporter, body: schemas.Docto
 def clear(doctor: Doctor) -> None:
     """Withdrawn (by the doctor or on erasure): the professional numbers go, the history of decisions stays."""
     doctor.status, doctor.available_until = "withdrawn", None
+    leave_committee(doctor)
     doctor.licence_no = doctor.cp_staff_no = None
     doctor.version += 1
     doctor.updated_at = now()
@@ -330,6 +354,7 @@ async def review(session: AsyncSession, principal: Principal, doctor: Doctor, bo
     doctor.updated_at = now()
     if target != "approved":
         doctor.available_until = None
+        leave_committee(doctor)
     session.add(DoctorReview(user_id=doctor.user_id, decision=body.decision, reason=body.reason, actor=actor))
     profile = await session.get(Profile, doctor.user_id)
     if profile is not None and profile.email:
@@ -351,6 +376,116 @@ async def expire_availability(session: AsyncSession) -> int:
         update(Doctor)
         .where(Doctor.available_until.is_not(None), Doctor.available_until <= func.now())
         .values(available_until=None)
+        .returning(Doctor.user_id)
+    )
+    return len(result.all())
+
+
+# ---------------------------------------------------------------- the medical committee (system administrator)
+
+
+async def committee(session: AsyncSession) -> list[schemas.CommitteeMember]:
+    rows = (
+        await session.execute(
+            select(Doctor, Profile)
+            .outerjoin(Profile, Profile.user_id == Doctor.user_id)
+            .where(Doctor.status == "approved", Doctor.committee_until > func.now())
+            .order_by(Doctor.committee_since, Doctor.user_id)
+        )
+    ).all()
+    return [
+        schemas.CommitteeMember(**staff_item(d, p).model_dump(), committee_since=d.committee_since)
+        for d, p in rows
+        if d.committee_since is not None
+    ]
+
+
+async def committee_candidates(session: AsyncSession, q: str | None, limit: int) -> list[schemas.StaffDoctor]:
+    """Approved Civil Protection doctors who are not members (name and workplace only)."""
+    query = (
+        select(Doctor, Profile)
+        .outerjoin(Profile, Profile.user_id == Doctor.user_id)
+        .where(
+            Doctor.status == "approved",
+            Doctor.kind == "civil_protection",
+            or_(Doctor.committee_until.is_(None), Doctor.committee_until <= func.now()),
+        )
+    )
+    if q:
+        pattern = f"%{q.replace('%', '').replace('_', '')}%"
+        query = query.where(
+            or_(
+                func.concat(Profile.first_name, " ", Profile.last_name).ilike(pattern),
+                Doctor.workplace.ilike(pattern),
+                Doctor.cp_unit.ilike(pattern),
+            )
+        )
+    order = (Doctor.gouvernorat_code, Profile.last_name, Profile.first_name, Doctor.user_id)
+    rows = (await session.execute(query.order_by(*order).limit(limit))).all()
+    return [staff_item(d, p) for d, p in rows]
+
+
+def _notify_committee(session: AsyncSession, profile: Profile | None, event: str, **values: str) -> None:
+    if profile is None or not profile.email:
+        return
+    lang = profile.locale if profile.locale in ("ar", "fr", "en") else "ar"
+    body = templates.pick(templates.COMMITTEE_BODY[event], lang).format(name=full_name(profile) or "", **values)
+    text = f"{body}\n\n{templates.pick(templates.SIGNATURE, lang)}"
+    outbox.email(session, profile.email, templates.pick(templates.COMMITTEE_SUBJECT[event], lang), text)
+
+
+async def appoint(
+    session: AsyncSession, principal: Principal, doctor_id: uuid.UUID, body: schemas.AppointmentIn
+) -> tuple[Doctor, bool]:
+    """Appoints (or renews) a member until ``months`` from now. Returns the doctor and whether it was a renewal."""
+    # One appointment at a time, so two administrators cannot both take the last seat.
+    await session.execute(select(func.pg_advisory_xact_lock(func.hashtext("identity.medical_committee"))))
+    doctor = await session.get(Doctor, doctor_id, with_for_update=True)
+    if doctor is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
+    if doctor.status != "approved" or doctor.kind != "civil_protection":
+        raise HTTPException(status.HTTP_409_CONFLICT, "not_civil_protection_doctor")
+    profile = await session.get(Profile, doctor.user_id)
+    own = str(principal.claims.get("email") or "").strip().lower()
+    if own and profile is not None and profile.email and profile.email.strip().lower() == own:
+        # The administrator appoints, never themselves: the access to every file needs a second person.
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "self_appointment")
+    renewal = committee_until(doctor) is not None
+    if not renewal:
+        members = await session.scalar(
+            select(func.count())
+            .select_from(Doctor)
+            .where(Doctor.status == "approved", Doctor.committee_until > func.now())
+        )
+        if (members or 0) >= COMMITTEE_MAX:
+            raise HTTPException(status.HTTP_409_CONFLICT, "committee_full")
+        doctor.committee_since = now()
+    until = now() + timedelta(days=30 * body.months)
+    doctor.committee_until, doctor.committee_by = until, audit.actor_of(principal)
+    doctor.version += 1
+    doctor.updated_at = now()
+    _notify_committee(session, profile, "renew" if renewal else "appoint", until=until.date().isoformat())
+    await session.flush()
+    return doctor, renewal
+
+
+async def revoke(session: AsyncSession, doctor_id: uuid.UUID, reason: str) -> Doctor:
+    doctor = await session.get(Doctor, doctor_id, with_for_update=True)
+    if doctor is None or not leave_committee(doctor):
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "not_committee_member")
+    doctor.version += 1
+    doctor.updated_at = now()
+    _notify_committee(session, await session.get(Profile, doctor.user_id), "revoke", reason=reason)
+    await session.flush()
+    return doctor
+
+
+async def expire_committee(session: AsyncSession) -> int:
+    """Terms that ended: clear them (the worker runs it with the availability)."""
+    result = await session.execute(
+        update(Doctor)
+        .where(Doctor.committee_until.is_not(None), Doctor.committee_until <= func.now())
+        .values(committee_since=None, committee_until=None, committee_by=None)
         .returning(Doctor.user_id)
     )
     return len(result.all())

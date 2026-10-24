@@ -31,6 +31,7 @@ import {
   canSeeRewardActivity,
   canReadOrgs,
   canReadResources,
+  canManageMedicalCommittee,
   canReviewDoctors,
   canReviewWeatherSuggestions,
   canUseNotifications,
@@ -53,6 +54,7 @@ import { CertificatesPage } from "./pages/CertificatesPage";
 import { CommitteePage } from "./pages/CommitteePage";
 import { DoctorDetailPage } from "./pages/DoctorDetailPage";
 import { DoctorsPage } from "./pages/DoctorsPage";
+import { MedicalCommitteePage } from "./pages/MedicalCommitteePage";
 import { HomePage } from "./pages/HomePage";
 import { IncidentDetailPage } from "./pages/IncidentDetailPage";
 import { IncidentsPage } from "./pages/IncidentsPage";
@@ -192,6 +194,7 @@ export function AppRoutes() {
         <Route path="volunteers/:id" element={reports(<VolunteerDetailPage />)} />
         <Route path="doctors" element={gated(canReviewDoctors, <DoctorsPage />)} />
         <Route path="doctors/:id" element={gated(canReviewDoctors, <DoctorDetailPage />)} />
+        <Route path="medical-committee" element={scoped(canManageMedicalCommittee, <MedicalCommitteePage />)} />
         <Route path="notifications" element={notifications(<NotificationsPage />)} />
         <Route path="notifications/new" element={notifications(<NotificationEditorPage />)} />
         <Route path="notifications/:id" element={notifications(<NotificationEditorPage />)} />
