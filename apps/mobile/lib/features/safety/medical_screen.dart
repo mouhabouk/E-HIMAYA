@@ -34,6 +34,22 @@ String medicalText(AppLocalizations l10n, MedicalFile f) {
   ].join('\n');
 }
 
+/// The label of a field of the file, by its wire name.
+String medicalFieldLabel(AppLocalizations l10n, String field) =>
+    switch (field) {
+      'sex' => l10n.medicalSex,
+      'birth_date' => l10n.medicalBirthDate,
+      'blood_group' => l10n.medicalBloodGroup,
+      'treatment_card' => l10n.medicalTreatmentCard,
+      'allergies' => l10n.medicalAllergies,
+      'conditions' => l10n.medicalConditions,
+      'medications' => l10n.medicalMedications,
+      'other' => l10n.medicalOther,
+      'contact_name' => l10n.medicalContactName,
+      'contact_phone' => l10n.medicalContactPhone,
+      _ => field,
+    };
+
 String _sexLabel(AppLocalizations l10n, String sex) => switch (sex) {
   'female' => l10n.medicalSexFemale,
   'male' => l10n.medicalSexMale,
@@ -207,6 +223,7 @@ class _MedicalFormState extends ConsumerState<_MedicalForm> {
   String? _sex;
   String? _blood;
   DateTime? _birth;
+  late Set<String> _card;
 
   static const _keys = [
     'allergies',
@@ -230,6 +247,7 @@ class _MedicalFormState extends ConsumerState<_MedicalForm> {
     _sex = _file.sex;
     _blood = _file.bloodGroup;
     _birth = _file.birthDate;
+    _card = {..._file.cardFields};
   }
 
   @override
@@ -245,6 +263,7 @@ class _MedicalFormState extends ConsumerState<_MedicalForm> {
     if (_birth != null) 'birth_date': _birth!.toIso8601String(),
     'blood_group': _blood,
     for (final k in _keys) k: _fields[k]!.text,
+    '_card': [..._card],
   });
 
   Future<void> _save({bool? locked}) async {
@@ -255,7 +274,7 @@ class _MedicalFormState extends ConsumerState<_MedicalForm> {
         .saveMedical(
           MedicalProfilesCompanion.insert(
             id: const Value(1),
-            data: jsonEncode(file.toJson()),
+            data: jsonEncode(file.toStorageJson()),
             consentVersion: widget.row.consentVersion,
             consentAt: widget.row.consentAt,
             locked: Value(locked ?? widget.row.locked),
@@ -425,6 +444,21 @@ class _MedicalFormState extends ConsumerState<_MedicalForm> {
           l10n.medicalContactPhone,
           type: TextInputType.phone,
         ),
+        const SizedBox(height: 8),
+        Text(l10n.medicalCardTitle, style: theme.textTheme.titleMedium),
+        Text(l10n.medicalCardHint, style: theme.textTheme.bodySmall),
+        for (final field in MedicalFile.fieldKeys)
+          CheckboxListTile(
+            key: Key('medical-card-$field'),
+            contentPadding: EdgeInsets.zero,
+            dense: true,
+            value: _card.contains(field),
+            onChanged: (v) => setState(
+              () => v == true ? _card.add(field) : _card.remove(field),
+            ),
+            title: Text(medicalFieldLabel(l10n, field)),
+          ),
+        const SizedBox(height: 8),
         FilledButton.icon(
           key: const Key('medical-save'),
           onPressed: _save,
@@ -469,6 +503,8 @@ class _MedicalFormState extends ConsumerState<_MedicalForm> {
           icon: const Icon(Icons.delete_forever),
           label: Text(l10n.medicalDelete),
         ),
+        // Room below the last button, so a message at the bottom never covers it.
+        const SizedBox(height: 72),
       ],
     );
   }

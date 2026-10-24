@@ -11,6 +11,7 @@ import '../../core/storage/app_prefs.dart';
 import '../../core/storage/secure_store.dart';
 import '../../core/sync/report_queue.dart';
 import '../charter/charter_controller.dart';
+import '../doctor/doctor_key.dart';
 
 final _log = logger('privacy');
 
@@ -61,6 +62,7 @@ class CitizenRights {
     await secure.delete(SecureStoreKeys.authSession);
     await secure.delete(SecureStoreKeys.orgCache);
     await secure.delete(SecureStoreKeys.rewardsCache);
+    await secure.delete(doctorKeyStoreKey);
     await _ref.read(deviceKeyStoreProvider).forget();
     final notifications = _ref.read(pushNotificationsProvider);
     if (notifications is LocalPushNotifications) {

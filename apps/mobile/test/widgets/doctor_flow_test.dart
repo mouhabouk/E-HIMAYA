@@ -1,5 +1,10 @@
 // covers: phase C1-a (docs/phase-c/design-medical-axis.md §2): doctors register from the app.
+import 'dart:convert';
+
+import 'package:ehimaya/core/crypto/medical_crypto.dart';
 import 'package:ehimaya/core/push/push_messaging.dart';
+import 'package:ehimaya/core/storage/secure_store.dart';
+import 'package:ehimaya/features/doctor/doctor_key.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -30,6 +35,7 @@ Map<String, Object?> doctorJson({
   String kind = 'civil_protection',
   bool available = false,
   String? committeeUntil,
+  bool hasKey = false,
 }) => {
   'kind': kind,
   'status': status,
@@ -45,6 +51,7 @@ Map<String, Object?> doctorJson({
   'available': available,
   'available_until': available ? '2100-01-01T00:00:00Z' : null,
   'committee_until': committeeUntil,
+  'has_key': hasKey,
   'version': 1,
 };
 
@@ -277,6 +284,187 @@ void main() {
     expect(find.text('طبيب متطوع'), findsOneWidget);
     expect(find.byKey(const Key('doctor-reapply')), findsOneWidget);
     expect(find.byKey(const Key('doctor-withdraw')), findsNothing);
+    await unmountApp(tester);
+  });
+
+  // Phase C1-b (design §12): a cheap code derivation keeps the tests fast.
+  final cheapCrypto = medicalCryptoProvider.overrideWithValue(
+    MedicalCrypto(
+      kdf: const KdfParams(memoryKib: 8192, iterations: 1),
+      isolates: false,
+    ),
+  );
+
+  testWidgets('a verified doctor creates their key with a code they choose', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1080, 3200);
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.reset);
+    final secure = MemorySecureStore();
+    Map<String, Object?>? sent;
+    await pumpApp(
+      tester,
+      prefs: registeredPrefs(locale: 'en'),
+      session: testSession,
+      secure: secure,
+      overrides: [noPush, cheapCrypto],
+      api: (r) => switch ((r.method, r.path)) {
+        ('GET', '/api/v1/me/volunteer') => const FakeResponse(
+          404,
+          json: {'detail': 'not_volunteer'},
+        ),
+        ('GET', '/api/v1/me/doctor') => FakeResponse(
+          200,
+          json: doctorJson(status: 'approved', hasKey: sent != null),
+        ),
+        ('PUT', '/api/v1/me/doctor/key') => () {
+          sent = (r.json! as Map).cast<String, Object?>();
+          return FakeResponse(
+            200,
+            json: doctorJson(status: 'approved', hasKey: true),
+          );
+        }(),
+        _ => defaultApiResponse(r),
+      },
+    );
+    await scrollTo(tester, 'home-volunteer');
+    await tester.tap(find.byKey(const Key('home-volunteer')));
+    await tester.pumpAndSettle();
+    await scrollTo(tester, 'doctor-join');
+    await tester.tap(find.byKey(const Key('doctor-join')));
+    await tester.pumpAndSettle();
+    await scrollTo(tester, 'doctor-key-create');
+    await tester.tap(find.byKey(const Key('doctor-key-create')));
+    await tester.pumpAndSettle();
+
+    // Too short, then two different codes: refused before anything is made.
+    await tester.enterText(find.byKey(const Key('doctor-code')), '123');
+    await tester.tap(find.byKey(const Key('doctor-code-ok')));
+    await tester.pump();
+    expect(find.text('The code has 6 to 12 digits.'), findsOneWidget);
+    await tester.enterText(find.byKey(const Key('doctor-code')), '482916');
+    await tester.enterText(
+      find.byKey(const Key('doctor-code-again')),
+      '482917',
+    );
+    await tester.tap(find.byKey(const Key('doctor-code-ok')));
+    await tester.pump();
+    expect(find.text('The two codes differ.'), findsOneWidget);
+    await tester.enterText(
+      find.byKey(const Key('doctor-code-again')),
+      '482916',
+    );
+    await tester.tap(find.byKey(const Key('doctor-code-ok')));
+    await tester.pumpAndSettle();
+
+    // The server got the public key and the backup only; the private key stays on the phone.
+    final publicKey = base64.decode(sent!['public_key']! as String);
+    expect(publicKey, hasLength(32));
+    final local = secure.values[doctorKeyStoreKey]!;
+    expect(jsonEncode(sent), isNot(contains(local)));
+    final restored = await tester.runAsync(
+      () => MedicalCrypto(isolates: false)
+          .restore((sent!['backup']! as Map).cast<String, Object?>(), '482916'),
+    );
+    expect(restored!.publicKey, publicKey);
+    expect(find.byKey(const Key('doctor-files')), findsOneWidget);
+    await unmountApp(tester);
+  });
+
+  testWidgets('a committee member opens a locked file with a reason', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1080, 3200);
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.reset);
+    // The private key 00 01 … 1f, for which test/core/medical_crypto_test.dart has a locked file.
+    final secure = MemorySecureStore({
+      doctorKeyStoreKey: base64.encode(List.generate(32, (i) => i)),
+    });
+    final reasons = <Object?>[];
+    await pumpApp(
+      tester,
+      prefs: registeredPrefs(locale: 'en'),
+      session: testSession,
+      secure: secure,
+      overrides: [noPush, cheapCrypto],
+      api: (r) => switch ((r.method, r.path)) {
+        ('GET', '/api/v1/me/volunteer') => const FakeResponse(
+          404,
+          json: {'detail': 'not_volunteer'},
+        ),
+        ('GET', '/api/v1/me/doctor') => FakeResponse(
+          200,
+          json: doctorJson(
+            status: 'approved',
+            hasKey: true,
+            committeeUntil: '2027-10-19T08:00:00Z',
+          ),
+        ),
+        ('GET', '/api/v1/medical/files') => const FakeResponse(
+          200,
+          json: [
+            {
+              'report_id': 'r-1',
+              'tracking_code': 'EH-26-61-0004821',
+              'category': 'medical',
+              'gouvernorat_code': 61,
+              'received_at': '2026-10-24T08:00:00Z',
+              'report_status': 'received',
+              'via': 'committee',
+              'opened_at': null,
+            },
+          ],
+        ),
+        ('POST', '/api/v1/medical/files/r-1/open') => () {
+          reasons.add((r.json! as Map)['reason']);
+          return const FakeResponse(
+            200,
+            json: {
+              'report_id': 'r-1',
+              'via': 'committee',
+              'nonce': 'YXEwdh0uwmwCycUO',
+              'ciphertext': 'ZysKJHcjre7NuqlKJHQOJt918tE6eNcYl2VyiMkxvR8lVL8/C7tuPCBxwwmmO9pWduJi5J4sICjl5ePXHGL5sczmtTftppBc0A==',
+              'eph_public': '/e4H227C6kwXS3cybUy4NFwPyfJpBghhzIvkSIXD1Bo=',
+              'key_nonce': 'lEcmkiYvK/AGhpNl',
+              'wrapped': 'FhEubSLgukgMHXgurNN2z7T0rownMe/YKPwTf50cdquwZR5AVj9RnSkpO9U1VfC0',
+              'card': {'blood_group': 'AB-'},
+            },
+          );
+        }(),
+        _ => defaultApiResponse(r),
+      },
+    );
+    await scrollTo(tester, 'home-volunteer');
+    await tester.tap(find.byKey(const Key('home-volunteer')));
+    await tester.pumpAndSettle();
+    await scrollTo(tester, 'doctor-join');
+    await tester.tap(find.byKey(const Key('doctor-join')));
+    await tester.pumpAndSettle();
+    await scrollTo(tester, 'doctor-files');
+    await tester.tap(find.byKey(const Key('doctor-files')));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('EH-26-61-0004821'), findsOneWidget);
+    expect(find.textContaining('Medical committee'), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('file-r-1')));
+    await tester.pumpAndSettle();
+    // No reason, no opening.
+    await tester.tap(find.byKey(const Key('file-reason-ok')));
+    await tester.pumpAndSettle();
+    expect(reasons, isEmpty);
+    await tester.enterText(
+      find.byKey(const Key('file-reason')),
+      'Quality review',
+    );
+    await tester.tap(find.byKey(const Key('file-reason-ok')));
+    await tester.pumpAndSettle();
+    expect(reasons, ['Quality review']);
+    final text = tester.widget<Text>(find.byKey(const Key('file-text'))).data!;
+    expect(text, contains('AB-'));
+    expect(text, contains('insuline'));
+    expect(text, contains('diabète'));
     await unmountApp(tester);
   });
 }

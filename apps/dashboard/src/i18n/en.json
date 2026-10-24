@@ -3646,6 +3646,7 @@
       "close": "Hide",
       "attachedAt": "Attached on {{at}}",
       "empty": "The file is empty.",
+      "locked": "This is the emergency card the reporter chose. The rest of their medical file is locked on their phone for the Civil Protection doctors and the medical committee; the operations room cannot open it.",
       "audited": "This opening has been recorded in the audit log.",
       "sex": {
         "female": "Female",

@@ -158,8 +158,13 @@ class _NewReportScreenState extends ConsumerState<NewReportScreen> {
           text: _text.text,
           lang: ref.read(localeCodeProvider),
           organizationId: ref.read(reportAsProvider),
+          // Phase C1-b: the card stays readable for the operations room; the rest is locked
+          // for the doctors before it leaves the phone.
           medical: _attachMedical
-              ? medicalOf(ref.read(medicalRowProvider).value)?.toJson()
+              ? medicalOf(ref.read(medicalRowProvider).value)?.cardJson()
+              : null,
+          medicalLocked: _attachMedical
+              ? medicalOf(ref.read(medicalRowProvider).value)?.lockedJson()
               : null,
           attachments: [
             ..._attachments,

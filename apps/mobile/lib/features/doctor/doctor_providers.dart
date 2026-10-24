@@ -32,6 +32,12 @@ class DoctorController extends AsyncNotifier<Doctor?> {
     await reload();
   }
 
+  /// Phase C1-b: the doctor's public key and its code-locked backup.
+  Future<void> applyKey(String publicKey, Map<String, Object?> backup) async {
+    final d = await ref.read(apiProvider).putDoctorKey(publicKey, backup);
+    if (ref.mounted) state = AsyncData(d);
+  }
+
   /// Available for the next [hours] (shown first in the referral list), or not.
   Future<void> setAvailable(bool available, {int hours = 8}) async {
     final d = await ref
@@ -59,3 +65,9 @@ final doctorDirectoryProvider = FutureProvider.autoDispose
           ),
       retry: (_, _) => null,
     );
+
+/// The doctor's locked medical files (phase C1-b).
+final medicalFilesProvider = FutureProvider.autoDispose<List<MedicalInboxItem>>(
+  (ref) => ref.watch(apiProvider).medicalFiles(),
+  retry: (_, _) => null,
+);

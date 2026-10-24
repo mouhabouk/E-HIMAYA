@@ -29,6 +29,7 @@ describe("Report detail, phase B2", () => {
       Promise.resolve({
         data: { blood_group: "AB-", allergies: "Pénicilline", sex: "female" as const },
         attached_at: "2026-10-23T09:00:00Z",
+        locked: false,
       }),
     );
     const api = fakeApi({
@@ -49,6 +50,23 @@ describe("Report detail, phase B2", () => {
     expect(within(section).getByText(/inscrite au journal d'audit/)).toBeInTheDocument();
     fireEvent.click(within(section).getByRole("button", { name: "Masquer" }));
     await waitFor(() => expect(within(section).queryByText("Pénicilline")).not.toBeInTheDocument());
+    expect(within(section).queryByText(/verrouillé sur son téléphone/)).not.toBeInTheDocument();
+  });
+
+  it("shows the emergency card and says the rest is locked for the doctors", async () => {
+    const api = fakeApi({
+      report: vi.fn(() => Promise.resolve(makeDetail({ id: "r1", medical_attached: true }))),
+      reportMedical: vi.fn(() =>
+        Promise.resolve({ data: { blood_group: "AB-" }, attached_at: "2026-10-23T09:00:00Z", locked: true }),
+      ),
+    });
+    renderApp(<ReportDetailPage />, { api, path: "/reports/r1", route, lang: "fr" });
+
+    const section = (await screen.findByRole("heading", { name: "Dossier médical joint" })).closest("section");
+    if (!section) throw new Error("no section");
+    fireEvent.click(within(section).getByRole("button", { name: "Ouvrir le dossier médical" }));
+    expect(await within(section).findByText("AB-")).toBeInTheDocument();
+    expect(within(section).getByText(/verrouillé sur son téléphone pour les médecins/)).toBeInTheDocument();
   });
 
   it("explains a refused opening and shows nothing without an attached file", async () => {
