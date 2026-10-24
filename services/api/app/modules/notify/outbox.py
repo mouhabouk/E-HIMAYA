@@ -26,18 +26,23 @@ def push(
     data: dict[str, Any] | None = None,
     *,
     alert: bool = False,
+    critical: bool = False,
+    title: Localized | None = None,
+    body: Localized | None = None,
 ) -> None:
     """Queue a content-free push to every device of ``user_id`` (A8).
 
     The title and body are the generic "you have an update" text in the device's language; ``data`` holds
     only identifiers (never names, addresses or free text) plus ``redacted: "1"``, and the app fetches the
-    content over the authenticated API."""
+    content over the authenticated API. ``critical`` rings on the Android critical channel (an alert from a linked
+    contact, phase B2); ``title`` and ``body`` replace the generic text with another fixed, content-free text."""
     payload = {
         "type": kind,
-        "title": templates.PERSONAL_PUSH_TITLE,
-        "body": templates.PERSONAL_PUSH_BODY,
+        "title": title or templates.PERSONAL_PUSH_TITLE,
+        "body": body or templates.PERSONAL_PUSH_BODY,
         "data": {**(data or {}), "redacted": "1"},
-        "alert": alert,
+        "alert": alert or critical,
+        "critical": critical,
     }
     session.add(Outbox(channel="push", user_id=user_id, payload=payload))
 

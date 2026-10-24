@@ -34,7 +34,14 @@ Session = Annotated[AsyncSession, Depends(get_session)]
 Admin = Annotated[Principal, Depends(require_roles(Role.REGIONAL_ACCOUNT_ADMIN, Role.SECURITY_ADMIN))]
 
 REGIONAL_GRANTABLE = frozenset(
-    {Role.OPERATOR, Role.OPS_MANAGER, Role.FIELD_COMMANDER, Role.LOCAL_COMMITTEE, Role.CONTENT_EDITOR}
+    {
+        Role.OPERATOR,
+        Role.OPS_MANAGER,
+        Role.FIELD_COMMANDER,
+        Role.LOCAL_COMMITTEE,
+        Role.CONTENT_EDITOR,
+        Role.MEDICAL_COORDINATOR,
+    }
 )
 NATIONAL_GRANTABLE = REGIONAL_GRANTABLE | {Role.CENTRAL_COMMITTEE, Role.ORG_AUDITOR}
 ALL_STAFF_ROLES = REALM_ROLES[Realm.STAFF]

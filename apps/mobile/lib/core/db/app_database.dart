@@ -92,15 +92,92 @@ class MediaItems extends Table {
   DateTimeColumn get nextAttemptAt => dateTime().nullable()();
 }
 
-@DriftDatabase(tables: [PendingReports, MediaItems])
+/// Phase B2 (addition 5): personal emergency contacts. Kept on the phone only (this encrypted
+/// database), never sent to the server. [linkId] is the server link when the contact also uses
+/// e-Himaya and accepted an invitation (in-app alert).
+@DataClassName('EmergencyContact')
+class EmergencyContacts extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get name => text()();
+
+  /// `+216XXXXXXXX`, or an international number with `+`.
+  TextColumn get phone => text()();
+
+  /// Comma-separated ids of [ContactGroups] (`,3,7,`), so a contact can sit in several groups.
+  TextColumn get groups => text().withDefault(const Constant(','))();
+  TextColumn get linkId => text().nullable()();
+  IntColumn get position => integer().withDefault(const Constant(0))();
+  DateTimeColumn get createdAt => dateTime()();
+}
+
+@DataClassName('ContactGroup')
+class ContactGroups extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get name => text()();
+  IntColumn get position => integer().withDefault(const Constant(0))();
+}
+
+/// Phase B2 (8.7): what the phone sent, kept on the phone only.
+@DataClassName('SafetyAlertEntry')
+class SafetyAlertHistory extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  /// `sos_message` | `safety_check` | `live_share`.
+  TextColumn get kind => text()();
+  DateTimeColumn get at => dateTime()();
+
+  /// Comma-separated: `app`, `sms`, `whatsapp`.
+  TextColumn get channels => text().withDefault(const Constant(''))();
+  IntColumn get recipients => integer().withDefault(const Constant(0))();
+  TextColumn get serverId => text().nullable()();
+
+  /// `sent` | `cancelled` | `failed` | `ok` (a safety check answered).
+  TextColumn get status => text()();
+}
+
+/// Phase B2 (addition 7b): the medical file, one row, kept on the phone only. [data] is the JSON
+/// of the fields; [consentVersion] the 7b text the user accepted (no row without consent).
+@DataClassName('MedicalProfileRow')
+class MedicalProfiles extends Table {
+  IntColumn get id => integer()();
+  TextColumn get data => text()();
+  TextColumn get consentVersion => text()();
+  DateTimeColumn get consentAt => dateTime()();
+  BoolColumn get locked => boolean().withDefault(const Constant(false))();
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
+@DriftDatabase(
+  tables: [
+    PendingReports,
+    MediaItems,
+    EmergencyContacts,
+    ContactGroups,
+    SafetyAlertHistory,
+    MedicalProfiles,
+  ],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
+  /// 2 (phase B2): emergency contacts and groups, alert history, medical file.
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
+    onUpgrade: (m, from, to) async {
+      // Each step only adds: the queued reports and media of version 1 are kept as they are.
+      if (from < 2) {
+        await m.createTable(emergencyContacts);
+        await m.createTable(contactGroups);
+        await m.createTable(safetyAlertHistory);
+        await m.createTable(medicalProfiles);
+      }
+    },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
     },
@@ -150,4 +227,76 @@ class AppDatabase extends _$AppDatabase {
 
   Future<void> updateMedia(int id, MediaItemsCompanion changes) =>
       (update(mediaItems)..where((m) => m.id.equals(id))).write(changes);
+
+  // ---- personal safety (phase B2) ------------------------------------------------------------
+
+  Stream<List<EmergencyContact>> watchContacts() =>
+      (select(emergencyContacts)..orderBy([
+            (c) => OrderingTerm.asc(c.position),
+            (c) => OrderingTerm.asc(c.id),
+          ]))
+          .watch();
+
+  Future<List<EmergencyContact>> allContacts() =>
+      (select(emergencyContacts)..orderBy([
+            (c) => OrderingTerm.asc(c.position),
+            (c) => OrderingTerm.asc(c.id),
+          ]))
+          .get();
+
+  Future<int> addContact(EmergencyContactsCompanion c) =>
+      into(emergencyContacts).insert(c);
+
+  Future<void> updateContact(int id, EmergencyContactsCompanion c) =>
+      (update(emergencyContacts)..where((r) => r.id.equals(id))).write(c);
+
+  Future<void> deleteContact(int id) =>
+      (delete(emergencyContacts)..where((r) => r.id.equals(id))).go();
+
+  Stream<List<ContactGroup>> watchGroups() =>
+      (select(contactGroups)..orderBy([
+            (g) => OrderingTerm.asc(g.position),
+            (g) => OrderingTerm.asc(g.id),
+          ]))
+          .watch();
+
+  Future<int> addGroup(String name) =>
+      into(contactGroups).insert(ContactGroupsCompanion.insert(name: name));
+
+  /// Removes the group and takes it off every contact.
+  Future<void> deleteGroup(int id) => transaction(() async {
+    await (delete(contactGroups)..where((g) => g.id.equals(id))).go();
+    for (final c in await allContacts()) {
+      if (c.groups.contains(',$id,')) {
+        await updateContact(
+          c.id,
+          EmergencyContactsCompanion(
+            groups: Value(c.groups.replaceAll(',$id,', ',')),
+          ),
+        );
+      }
+    }
+  });
+
+  Future<int> addAlertHistory(SafetyAlertHistoryCompanion e) =>
+      into(safetyAlertHistory).insert(e);
+
+  Stream<List<SafetyAlertEntry>> watchAlertHistory() => (select(
+    safetyAlertHistory,
+  )..orderBy([(e) => OrderingTerm.desc(e.at)])).watch();
+
+  Future<void> clearAlertHistory() => delete(safetyAlertHistory).go();
+
+  Stream<MedicalProfileRow?> watchMedical() => (select(
+    medicalProfiles,
+  )..where((m) => m.id.equals(1))).watchSingleOrNull();
+
+  Future<MedicalProfileRow?> medical() =>
+      (select(medicalProfiles)..where((m) => m.id.equals(1))).getSingleOrNull();
+
+  Future<void> saveMedical(MedicalProfilesCompanion m) =>
+      into(medicalProfiles)
+          .insertOnConflictUpdate(m.copyWith(id: const Value(1)));
+
+  Future<void> deleteMedical() => delete(medicalProfiles).go();
 }

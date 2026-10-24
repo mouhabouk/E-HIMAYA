@@ -31,6 +31,8 @@ import {
   canSeeRewardActivity,
   canReadOrgs,
   canReadResources,
+  canManageMedicalCommittee,
+  canReviewDoctors,
   canReviewWeatherSuggestions,
   canUseNotifications,
   hasReadAccess,
@@ -50,6 +52,9 @@ import { CallsPage } from "./pages/CallsPage";
 import { CallbackPage } from "./pages/CallbackPage";
 import { CertificatesPage } from "./pages/CertificatesPage";
 import { CommitteePage } from "./pages/CommitteePage";
+import { DoctorDetailPage } from "./pages/DoctorDetailPage";
+import { DoctorsPage } from "./pages/DoctorsPage";
+import { MedicalCommitteePage } from "./pages/MedicalCommitteePage";
 import { HomePage } from "./pages/HomePage";
 import { IncidentDetailPage } from "./pages/IncidentDetailPage";
 import { IncidentsPage } from "./pages/IncidentsPage";
@@ -187,6 +192,9 @@ export function AppRoutes() {
         <Route path="resources" element={resources(<ResourcesPage />)} />
         <Route path="volunteers" element={reports(<VolunteersPage />)} />
         <Route path="volunteers/:id" element={reports(<VolunteerDetailPage />)} />
+        <Route path="doctors" element={gated(canReviewDoctors, <DoctorsPage />)} />
+        <Route path="doctors/:id" element={gated(canReviewDoctors, <DoctorDetailPage />)} />
+        <Route path="medical-committee" element={scoped(canManageMedicalCommittee, <MedicalCommitteePage />)} />
         <Route path="notifications" element={notifications(<NotificationsPage />)} />
         <Route path="notifications/new" element={notifications(<NotificationEditorPage />)} />
         <Route path="notifications/:id" element={notifications(<NotificationEditorPage />)} />

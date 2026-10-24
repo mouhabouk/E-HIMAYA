@@ -48,6 +48,12 @@ abstract class LocationService {
   /// ([lowPower]: low-power accuracy, 250 m), so a stationary phone produces no updates and the
   /// GPS chip stays off. Empty when location is not granted. Cancel the subscription to stop.
   Stream<GeoPoint> watch({bool lowPower = false}) => const Stream.empty();
+
+  /// Phase B2: precise updates while a live location share or a safety check runs, kept going in
+  /// a pocket by a foreground service with its visible notification ([title], [text]; Android).
+  /// Started from the app only; no background location permission. Cancel to stop.
+  Stream<GeoPoint> follow({required String title, required String text}) =>
+      watch();
 }
 
 class GeolocatorLocationService extends LocationService {
@@ -202,6 +208,46 @@ class GeolocatorLocationService extends LocationService {
     ).map(_toPoint).handleError((Object e) {
       _log.info('position updates stopped: ${e.runtimeType}');
     });
+  }
+
+  @override
+  Stream<GeoPoint> follow({
+    required String title,
+    required String text,
+  }) async* {
+    if (!await _grantedWithoutPrompt()) return;
+    final LocationSettings settings;
+    if (!kIsWeb && Platform.isAndroid) {
+      settings = AndroidSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 20,
+        intervalDuration: const Duration(seconds: 30),
+        foregroundNotificationConfig: ForegroundNotificationConfig(
+          notificationTitle: title,
+          notificationText: text,
+          setOngoing: true,
+          enableWakeLock: false,
+        ),
+      );
+    } else if (!kIsWeb && Platform.isIOS) {
+      settings = AppleSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 20,
+        pauseLocationUpdatesAutomatically: false,
+        showBackgroundLocationIndicator: true,
+        allowBackgroundLocationUpdates: false,
+      );
+    } else {
+      settings = const LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 20,
+      );
+    }
+    yield* Geolocator.getPositionStream(locationSettings: settings)
+        .map(_toPoint)
+        .handleError((Object e) {
+          _log.info('shared position updates stopped: ${e.runtimeType}');
+        });
   }
 
   static GeoPoint _toPoint(Position p) =>

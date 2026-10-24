@@ -25,6 +25,19 @@ PERSONAL_PUSH_BODY: Localized = {
 }
 
 
+# Personal safety (phase B2): an alert from a linked contact rings on the critical channel. Still no name or place in
+# the push itself: the app opens the alert over the API.
+SAFETY_ALERT_TITLE: Localized = {
+    "ar": "تنبيه استغاثة من أحد معارفك",
+    "fr": "Alerte de détresse d'un proche",
+    "en": "Distress alert from a contact",
+}
+SAFETY_ALERT_BODY: Localized = {
+    "ar": "افتح ء-حماية لرؤية الرسالة والموقع",
+    "fr": "Ouvrez e-Himaya pour voir le message et la position",
+    "en": "Open e-Himaya to see the message and the location",
+}
+
 ALERT_CANCELLED_TITLE: Localized = {"ar": "رُفع التنبيه", "fr": "Alerte levée", "en": "Alert lifted"}
 
 VOLUNTEER_DECISION_SUBJECT: dict[str, Localized] = {
@@ -69,6 +82,86 @@ VOLUNTEER_DECISION_BODY: dict[str, Localized] = {
         "ar": "مرحبا {name}،\n\nأُعيد تفعيل صفة التطوع الخاصة بك. يمكنك من جديد تلقي الاستدعاءات.",
         "fr": "Bonjour {name},\n\nVotre statut de volontaire est rétabli. Vous pouvez de nouveau recevoir des appels.",
         "en": "Hello {name},\n\nYour volunteer status is reinstated. You can receive call-outs again.",
+    },
+}
+
+DOCTOR_DECISION_SUBJECT: dict[str, Localized] = {
+    "approve": {
+        "ar": "توثيق صفة الطبيب — ء-حماية",
+        "fr": "Votre statut de médecin est vérifié — e-Himaya",
+        "en": "Your doctor status is verified — e-Himaya",
+    },
+    "reject": {
+        "ar": "طلب صفة الطبيب — ء-حماية",
+        "fr": "Votre demande de statut de médecin — e-Himaya",
+        "en": "Your doctor application — e-Himaya",
+    },
+    "suspend": {
+        "ar": "تعليق صفة الطبيب — ء-حماية",
+        "fr": "Suspension de votre statut de médecin — e-Himaya",
+        "en": "Your doctor status is suspended — e-Himaya",
+    },
+    "reinstate": {
+        "ar": "إعادة تفعيل صفة الطبيب — ء-حماية",
+        "fr": "Votre statut de médecin est rétabli — e-Himaya",
+        "en": "Your doctor status is reinstated — e-Himaya",
+    },
+}
+DOCTOR_DECISION_BODY: dict[str, Localized] = {
+    "approve": {
+        "ar": "مرحبا {name}،\n\nتحققت الحماية المدنية من صفتك كطبيب وأُدرجت في مجموعة أطباء ولايتك. سيصلك إشعار في التطبيق عند تفعيل استقبال الملفات الطبية.\n\nشكرا على التزامك.",
+        "fr": "Bonjour {name},\n\nLa Protection civile a vérifié votre statut de médecin et vous a inscrit(e) dans le groupe des médecins de votre gouvernorat. L'application vous préviendra quand la réception des dossiers médicaux sera ouverte.\n\nMerci pour votre engagement.",
+        "en": "Hello {name},\n\nThe Civil Protection has verified your doctor status and added you to the doctors' group of your gouvernorat. The app will let you know when receiving medical files opens.\n\nThank you for your commitment.",
+    },
+    "reject": {
+        "ar": "مرحبا {name}،\n\nلم يُقبل طلب صفة الطبيب في الوقت الحالي.\nالسبب: {reason}\n\nيمكنك تحيين طلبك وإعادة تقديمه من التطبيق.",
+        "fr": "Bonjour {name},\n\nVotre demande de statut de médecin n'a pas été retenue pour le moment.\nMotif : {reason}\n\nVous pouvez la mettre à jour et la soumettre de nouveau depuis l'application.",
+        "en": "Hello {name},\n\nYour doctor application was not accepted for now.\nReason: {reason}\n\nYou can update it and submit it again from the app.",
+    },
+    "suspend": {
+        "ar": "مرحبا {name}،\n\nعُلّقت صفة الطبيب الخاصة بك، فلن تصلك ملفات طبية.\nالسبب: {reason}",
+        "fr": "Bonjour {name},\n\nVotre statut de médecin est suspendu : vous ne recevrez plus de dossiers médicaux.\nMotif : {reason}",
+        "en": "Hello {name},\n\nYour doctor status is suspended: you will not receive medical files.\nReason: {reason}",
+    },
+    "reinstate": {
+        "ar": "مرحبا {name}،\n\nأُعيد تفعيل صفة الطبيب الخاصة بك.",
+        "fr": "Bonjour {name},\n\nVotre statut de médecin est rétabli.",
+        "en": "Hello {name},\n\nYour doctor status is reinstated.",
+    },
+}
+
+COMMITTEE_SUBJECT: dict[str, Localized] = {
+    "appoint": {
+        "ar": "تعيينك في اللجنة الطبية — ء-حماية",
+        "fr": "Votre nomination au comité médical — e-Himaya",
+        "en": "Your appointment to the medical committee — e-Himaya",
+    },
+    "renew": {
+        "ar": "تجديد عضويتك في اللجنة الطبية — ء-حماية",
+        "fr": "Renouvellement au comité médical — e-Himaya",
+        "en": "Your medical committee term is renewed — e-Himaya",
+    },
+    "revoke": {
+        "ar": "انتهاء عضويتك في اللجنة الطبية — ء-حماية",
+        "fr": "Fin de votre mandat au comité médical — e-Himaya",
+        "en": "Your medical committee term has ended — e-Himaya",
+    },
+}
+COMMITTEE_BODY: dict[str, Localized] = {
+    "appoint": {
+        "ar": "مرحبا {name}،\n\nعُيّنت عضواً في اللجنة الطبية إلى غاية {until}. ستطّلع من حساب طبيب الحماية المدنية على الملفات الطبية وآراء الأطباء المختصين في كل الولايات. كل فتح يتطلب سبباً ويُسجَّل، ويراه المواطن.",
+        "fr": "Bonjour {name},\n\nVous êtes nommé(e) membre du comité médical jusqu'au {until}. Depuis votre compte de médecin de la Protection civile, vous consulterez les dossiers médicaux et les avis des spécialistes de tous les gouvernorats. Chaque ouverture demande un motif, est journalisée et visible par le citoyen.",
+        "en": "Hello {name},\n\nYou are appointed to the medical committee until {until}. From your Civil Protection doctor account you will consult the medical files and the specialists' opinions of every gouvernorat. Each opening needs a reason, is logged and is shown to the citizen.",
+    },
+    "renew": {
+        "ar": "مرحبا {name}،\n\nجُدّدت عضويتك في اللجنة الطبية إلى غاية {until}.",
+        "fr": "Bonjour {name},\n\nVotre mandat au comité médical est renouvelé jusqu'au {until}.",
+        "en": "Hello {name},\n\nYour medical committee term is renewed until {until}.",
+    },
+    "revoke": {
+        "ar": "مرحبا {name}،\n\nانتهت عضويتك في اللجنة الطبية.\nالسبب: {reason}",
+        "fr": "Bonjour {name},\n\nVotre mandat au comité médical a pris fin.\nMotif : {reason}",
+        "en": "Hello {name},\n\nYour medical committee term has ended.\nReason: {reason}",
     },
 }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/auth/identity.dart';
 import '../../core/routing/app_router.dart';
 import '../../core/ui/language_bar.dart';
 import '../../l10n/app_localizations.dart';
@@ -107,6 +108,24 @@ class EmergencyScreen extends ConsumerWidget {
                   onTap: () => context.push(Routes.nearest),
                 ),
               ),
+              // Phase B2: personal safety (contacts, SOS message, medical file), once the
+              // first-launch steps are done (before them the hub shows only what needs no setup).
+              if (ref.watch(identityProvider).hasIdentity)
+                Card(
+                  child: ListTile(
+                    key: const Key('hub-safety'),
+                    minTileHeight: 72,
+                    leading: Icon(
+                      Icons.shield_outlined,
+                      size: 32,
+                      color: theme.colorScheme.primary,
+                    ),
+                    title: Text(l10n.safetyTitle),
+                    subtitle: Text(l10n.safetySettingsHint),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => context.push(Routes.safety),
+                  ),
+                ),
             ],
           ],
         ),

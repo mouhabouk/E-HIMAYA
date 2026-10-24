@@ -35,7 +35,9 @@
     "breakGlass": "Break-glass",
     "layers": "Map layers",
     "emergencyGuide": "Emergency hub",
-    "contact": "Contact us"
+    "contact": "Contact us",
+    "doctors": "Doctors",
+    "medicalCommittee": "Medical committee"
   },
   "header": {
     "scope": "Geographic scope",
@@ -65,7 +67,8 @@
     "sysadmin": "System administrator",
     "security_admin": "Security administrator",
     "ai_admin": "AI administrator",
-    "regional_account_admin": "Account administrator"
+    "regional_account_admin": "Account administrator",
+    "medical_coordinator": "Regional medical coordinator"
   },
   "status": {
     "received": "Received",
@@ -284,7 +287,14 @@
     "duplicate_id": "A place already has this identifier.",
     "outside_tunisia": "Position outside Tunisia.",
     "cannot_move": "Cannot move that way.",
-    "text_required": "A note, an answer or a reason is needed."
+    "text_required": "A note, an answer or a reason is needed.",
+    "feature_off": "This feature is turned off on the platform.",
+    "no_medical_file": "No medical file is attached to this report.",
+    "invalid_phone": "This phone number is not valid.",
+    "self_appointment": "The administrator cannot appoint themselves to the medical committee.",
+    "committee_full": "All medical committee seats are taken: end a term before appointing a new member.",
+    "not_civil_protection_doctor": "Only a verified Civil Protection doctor can be appointed.",
+    "not_committee_member": "This doctor is not on the medical committee."
   },
   "kpi": {
     "title": "Key indicators",
@@ -3194,6 +3204,24 @@
       "help": "Days the Office has to answer a request for access to information sent through “Contact us” (law 2016-22, art. 14: 20 days). To be confirmed by the legal service.",
       "label": "Deadline",
       "unit": "days"
+    },
+    "minutes": "minutes",
+    "hours": "hours",
+    "liveMax": {
+      "title": "Live location: longest share",
+      "help": "How long a citizen can share their live location with their contacts in one go.",
+      "label": "Longest share"
+    },
+    "checkMax": {
+      "title": "Safety check: longest duration",
+      "help": "The longest time a citizen can set before their contacts are alerted if they do not answer.",
+      "label": "Longest duration"
+    },
+    "locationHistory": {
+      "title": "72-hour location history",
+      "help": "Lets citizens who opt in keep their positions for 72 hours, so an operations room can find a missing person. Off by default.",
+      "label": "Turn on the location history",
+      "note": "While off, the app hides the feature and the missing-person search does not appear. Turning it off later stops collection; points already kept are erased after 72 hours."
     }
   },
   "accounts": {
@@ -3608,6 +3636,142 @@
       "answer": "Answered",
       "note": "Note",
       "move": "Moved"
+    }
+  },
+  "safety": {
+    "medical": {
+      "title": "Medical file attached",
+      "intro": "The reporter chose to attach their medical file to this report. It is shown only on request, and each opening is recorded in the audit log.",
+      "open": "Open the medical file",
+      "close": "Hide",
+      "attachedAt": "Attached on {{at}}",
+      "empty": "The file is empty.",
+      "audited": "This opening has been recorded in the audit log.",
+      "sex": {
+        "female": "Female",
+        "male": "Male"
+      },
+      "fields": {
+        "blood_group": "Blood group",
+        "allergies": "Allergies",
+        "conditions": "Conditions",
+        "medications": "Medications",
+        "treatment_card": "Treatment card",
+        "other": "Other information",
+        "sex": "Sex",
+        "birth_date": "Date of birth",
+        "contact_name": "Contact person",
+        "contact_phone": "Contact phone"
+      }
+    },
+    "history": {
+      "title": "Missing person: location history",
+      "intro": "Search the last 72 hours of positions of a person linked to this report, if they turned the history on. The person is told through the app.",
+      "phone": "Person's phone number",
+      "phoneInvalid": "Enter a phone number (8 to 20 digits).",
+      "reason": "Reason for the search",
+      "submit": "Search",
+      "audited": "Each search is recorded in the audit log, even when nothing is found.",
+      "noAccount": "No account uses this number.",
+      "noPoints": "The history is on, but no position was kept in the last 72 hours.",
+      "notEnabled": "This person has not turned the location history on.",
+      "points": "Positions found: {{count}}",
+      "at": "Time",
+      "position": "Position",
+      "accuracy": "Accuracy"
+    }
+  },
+  "doctors": {
+    "title": "Doctors",
+    "intro": "Doctors who registered from the app, pending registrations first. Check the medical council registration number (and a Civil Protection doctor's staff number) before verifying: no medical file reaches an unverified doctor.",
+    "filters": "Filter doctors",
+    "search": "Search by name or workplace",
+    "empty": "No doctor matches.",
+    "unnamed": "Doctor",
+    "back": "Back to doctors",
+    "available": "Available",
+    "notAvailable": "Not available",
+    "columns": {
+      "kind": "Role",
+      "specialties": "Specialties",
+      "workplace": "Workplace",
+      "available": "Availability"
+    },
+    "kind": {
+      "volunteer": "Volunteer doctor",
+      "civil_protection": "Civil Protection doctor"
+    },
+    "specialty": {
+      "general_practice": "General practice",
+      "emergency_medicine": "Emergency medicine",
+      "anesthesia_icu": "Anaesthesia and intensive care",
+      "cardiology": "Cardiology",
+      "pulmonology": "Pulmonology",
+      "neurology": "Neurology",
+      "pediatrics": "Paediatrics",
+      "obstetrics_gynecology": "Obstetrics and gynaecology",
+      "internal_medicine": "Internal medicine",
+      "endocrinology": "Endocrinology and diabetes",
+      "nephrology": "Nephrology",
+      "gastroenterology": "Gastroenterology",
+      "allergy_immunology": "Allergy and immunology",
+      "infectious_diseases": "Infectious diseases",
+      "dermatology_burns": "Dermatology and burns",
+      "orthopedics": "Orthopaedics and trauma",
+      "general_surgery": "General surgery",
+      "psychiatry": "Psychiatry",
+      "toxicology": "Toxicology",
+      "ophthalmology": "Ophthalmology",
+      "ent": "Ear, nose and throat"
+    },
+    "detail": {
+      "registration": "Registration",
+      "licence": "Medical council number",
+      "cpUnit": "Unit or regional directorate",
+      "cpStaffNo": "Staff number",
+      "audited": "Opening this file is recorded in the audit log."
+    },
+    "review": {
+      "title": "Verification",
+      "check": "Check the number with the medical council, and call the doctor if needed, before verifying.",
+      "decision": {
+        "approve": "Verify",
+        "reject": "Reject",
+        "suspend": "Suspend",
+        "reinstate": "Reinstate"
+      }
+    }
+  },
+  "medicalCommittee": {
+    "title": "Medical committee",
+    "intro": "The system administrator appoints Civil Protection doctors for a fixed term. From their Civil Protection doctor account, members consult the medical files and the specialists' opinions of every gouvernorat.",
+    "rules": {
+      "who": "Only a Civil Protection doctor verified by the medical coordinator can be appointed, never the administrator themselves. The term ends on its own on suspension, withdrawal or a change of status.",
+      "keys": "No shared password: the citizen's phone locks the file for each member with their personal key; the administrator reads no file.",
+      "audit": "Every appointment, renewal and revocation is logged and e-mailed to the doctor; every opening of a file by the committee needs a reason and is shown to the citizen."
+    },
+    "members": "Members",
+    "seats": "({{count}} of {{max}})",
+    "noMember": "No member yet.",
+    "since": "Since",
+    "until": "Until",
+    "actions": "Actions",
+    "term": "Term",
+    "renew": "Renew",
+    "revoke": "End the term",
+    "revokeReason": "Reason (sent to the doctor)",
+    "confirmRevoke": "Confirm the end of the term",
+    "candidates": "Verified Civil Protection doctors",
+    "candidatesHelp": "Choose the term, then appoint the doctor. They are told by e-mail.",
+    "full": "All seats are taken: end a term before appointing a new member.",
+    "noCandidate": "No verified Civil Protection doctor outside the committee.",
+    "appoint": "Appoint",
+    "appointName": "Appoint {{name}} to the medical committee",
+    "badge": "Medical committee",
+    "months": {
+      "6": "6 months",
+      "12": "12 months",
+      "24": "24 months"
     }
   }
 }

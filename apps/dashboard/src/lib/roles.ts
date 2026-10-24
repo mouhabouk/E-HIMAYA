@@ -23,6 +23,8 @@ export const LOGISTICS_READ_ROLES = [...READ_ROLES, "sysadmin"] as const;
 /** Closing and evaluating an incident. */
 export const CLOSE_ROLES = ["ops_manager", "field_commander"] as const;
 export const VOLUNTEER_REVIEW_ROLES = ["ops_manager", "local_committee", "central_committee"] as const;
+/** Phase C1-a: who checks the doctors' registrations (the medical coordinator, and the volunteer reviewers). */
+export const DOCTOR_REVIEW_ROLES = ["medical_coordinator", ...VOLUNTEER_REVIEW_ROLES] as const;
 export const COMMITTEE_ROLES = ["local_committee", "central_committee"] as const;
 /** Committee performance: the committees and the operations manager. */
 export const MONITOR_ROLES = [...COMMITTEE_ROLES, "ops_manager"] as const;
@@ -73,7 +75,7 @@ export const FUNCTION_ROLES = {
   command: ["central_committee", "local_committee", "field_commander"],
   operations: ["operator", "ops_manager"],
   technical: TECHNICAL_ROLES,
-  support: ["content_editor", "org_auditor"],
+  support: ["content_editor", "org_auditor", "medical_coordinator"],
 } as const;
 export type StaffFunction = keyof typeof FUNCTION_ROLES;
 /** `report.claim`, `report.status`, `report.link` (§1.2). */
@@ -95,12 +97,19 @@ export const BREAKGLASS_REQUEST_ROLES = READ_ROLES;
 /** `audit.read_scoped`: regional ops_manager, local_committee and security_admin. */
 export const SCOPED_AUDIT_ROLES = ["ops_manager", "local_committee", "security_admin"] as const;
 /** Roles a regional account administrator may grant (§6.2). */
-export const REGIONAL_GRANTABLE_ROLES = ["operator", "ops_manager", "field_commander", "local_committee", "content_editor"] as const;
+export const REGIONAL_GRANTABLE_ROLES = [
+  "operator",
+  "ops_manager",
+  "field_commander",
+  "local_committee",
+  "content_editor",
+  "medical_coordinator",
+] as const;
 /** Added for a national regional account administrator. */
 export const NATIONAL_GRANTABLE_ROLES = [...REGIONAL_GRANTABLE_ROLES, "central_committee", "org_auditor"] as const;
 
 /** Every role the dashboard knows (shown in the header). */
-export const STAFF_ROLES = [...ORG_READ_ROLES, "content_editor", ...TECHNICAL_ROLES] as const;
+export const STAFF_ROLES = [...ORG_READ_ROLES, "content_editor", "medical_coordinator", ...TECHNICAL_ROLES] as const;
 export type StaffRole = (typeof STAFF_ROLES)[number];
 
 export function staffRoles(roles: readonly string[]): StaffRole[] {
@@ -167,6 +176,16 @@ export function canReviewVolunteers(roles: readonly string[]): boolean {
   return any(VOLUNTEER_REVIEW_ROLES, roles);
 }
 
+/** Doctors' registrations (phase C1-a): the list shows registration numbers, so only those who decide see it. */
+/** The medical committee is appointed by a national system administrator (the API answers 403 otherwise). */
+export function canManageMedicalCommittee(identity: { roles: readonly string[]; national: boolean }): boolean {
+  return identity.national && identity.roles.includes("sysadmin");
+}
+
+export function canReviewDoctors(roles: readonly string[]): boolean {
+  return any(DOCTOR_REVIEW_ROLES, roles);
+}
+
 export function isCommittee(roles: readonly string[]): boolean {
   return any(COMMITTEE_ROLES, roles);
 }
@@ -224,6 +243,16 @@ export function canHandleContact(roles: readonly string[]): boolean {
   return any(CONTACT_ROLES, roles);
 }
 
+/**
+ * Missing-person search in the 72-hour location history (phase B2): the operations rooms, and only while the national
+ * setting turns the feature on. The API checks the report is theirs and audits every search.
+ */
+export const LOCATION_HISTORY_ROLES = ["operator", "ops_manager"] as const;
+
+export function canSearchLocationHistory(roles: readonly string[]): boolean {
+  return any(LOCATION_HISTORY_ROLES, roles);
+}
+
 /** Stop a live stream (`POST /api/v1/staff/streams/{id}/stop`). */
 export function canStopStreams(roles: readonly string[]): boolean {
   return any(STREAM_STOP_ROLES, roles);
@@ -258,6 +287,7 @@ export function landingPath(roles: readonly string[]): string {
   if (roles.includes("regional_account_admin")) return "/accounts";
   if (roles.includes("security_admin")) return "/break-glass";
   if (roles.includes("ai_admin")) return "/settings/ai";
+  if (roles.includes("medical_coordinator")) return "/doctors";
   if (canReadOrgs(roles)) return "/orgs";
   if (canUseNotifications(roles)) return "/notifications";
   if (canEditTips(roles)) return "/safety-tips";

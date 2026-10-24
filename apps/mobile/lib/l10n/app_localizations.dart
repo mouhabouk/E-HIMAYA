@@ -4791,6 +4791,1842 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reason given by the Office'**
   String get contactRejectReason;
+
+  /// No description provided for @errorFeatureOff.
+  ///
+  /// In en, this message translates to:
+  /// **'This feature is not available yet.'**
+  String get errorFeatureOff;
+
+  /// No description provided for @errorAlreadyLinked.
+  ///
+  /// In en, this message translates to:
+  /// **'You are already linked with this person.'**
+  String get errorAlreadyLinked;
+
+  /// No description provided for @errorOwnInvitation.
+  ///
+  /// In en, this message translates to:
+  /// **'This is your own code: give it to the other person.'**
+  String get errorOwnInvitation;
+
+  /// No description provided for @errorTooManyLinks.
+  ///
+  /// In en, this message translates to:
+  /// **'You reached the maximum number of linked contacts.'**
+  String get errorTooManyLinks;
+
+  /// No description provided for @errorTooManyInvitations.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many open invitations. Use or let one expire first.'**
+  String get errorTooManyInvitations;
+
+  /// No description provided for @errorNoLinkedContact.
+  ///
+  /// In en, this message translates to:
+  /// **'No linked contact to alert in the app.'**
+  String get errorNoLinkedContact;
+
+  /// No description provided for @errorCheckActive.
+  ///
+  /// In en, this message translates to:
+  /// **'A safety check is already running.'**
+  String get errorCheckActive;
+
+  /// No description provided for @errorHistoryOff.
+  ///
+  /// In en, this message translates to:
+  /// **'The location history is off.'**
+  String get errorHistoryOff;
+
+  /// No description provided for @errorDurationTooLong.
+  ///
+  /// In en, this message translates to:
+  /// **'This duration is longer than allowed.'**
+  String get errorDurationTooLong;
+
+  /// No description provided for @safetyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal safety'**
+  String get safetyTitle;
+
+  /// No description provided for @safetySettingsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency contacts, SOS message, medical file'**
+  String get safetySettingsHint;
+
+  /// No description provided for @safetyIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Prepare who to warn and what to send if something happens to you. Your contacts, your message and your medical file stay on this phone.'**
+  String get safetyIntro;
+
+  /// No description provided for @safetySendSos.
+  ///
+  /// In en, this message translates to:
+  /// **'Send my SOS message'**
+  String get safetySendSos;
+
+  /// No description provided for @safetySomeone.
+  ///
+  /// In en, this message translates to:
+  /// **'A contact'**
+  String get safetySomeone;
+
+  /// No description provided for @safetyDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get safetyDelete;
+
+  /// No description provided for @safetyEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get safetyEdit;
+
+  /// No description provided for @safetyCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get safetyCopy;
+
+  /// No description provided for @safetyCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied.'**
+  String get safetyCopied;
+
+  /// No description provided for @safetyDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get safetyDone;
+
+  /// No description provided for @safetySaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved.'**
+  String get safetySaved;
+
+  /// No description provided for @safetyBySms.
+  ///
+  /// In en, this message translates to:
+  /// **'SMS'**
+  String get safetyBySms;
+
+  /// No description provided for @safetyAccuracy.
+  ///
+  /// In en, this message translates to:
+  /// **'± {meters} m'**
+  String safetyAccuracy(int meters);
+
+  /// No description provided for @safetyMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String safetyMinutes(int minutes);
+
+  /// No description provided for @safetyHours.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} h'**
+  String safetyHours(int hours);
+
+  /// No description provided for @safetyHoursMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} h {minutes} min'**
+  String safetyHoursMinutes(int hours, int minutes);
+
+  /// No description provided for @safetyContactsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency contacts'**
+  String get safetyContactsTitle;
+
+  /// No description provided for @safetyContactsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Contacts: {count}'**
+  String safetyContactsCount(int count);
+
+  /// No description provided for @safetyContactsIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to 10 people who receive your SOS message by SMS or WhatsApp.'**
+  String get safetyContactsIntro;
+
+  /// No description provided for @safetyContactsPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Kept on this phone only. The app never reads or uploads your address book: you choose each number.'**
+  String get safetyContactsPrivacy;
+
+  /// No description provided for @safetyContactsFull.
+  ///
+  /// In en, this message translates to:
+  /// **'You reached {max} contacts.'**
+  String safetyContactsFull(int max);
+
+  /// No description provided for @safetyContactsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No emergency contact yet.'**
+  String get safetyContactsEmpty;
+
+  /// No description provided for @safetyContactAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a contact'**
+  String get safetyContactAdd;
+
+  /// No description provided for @safetyContactPick.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from my contacts'**
+  String get safetyContactPick;
+
+  /// No description provided for @safetyContactPickHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Only the number you choose reaches the app.'**
+  String get safetyContactPickHint;
+
+  /// No description provided for @safetyContactType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type a number'**
+  String get safetyContactType;
+
+  /// No description provided for @safetyContactTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency contact'**
+  String get safetyContactTitle;
+
+  /// No description provided for @safetyContactName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get safetyContactName;
+
+  /// No description provided for @safetyContactNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a name.'**
+  String get safetyContactNameRequired;
+
+  /// No description provided for @safetyContactPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number'**
+  String get safetyContactPhone;
+
+  /// No description provided for @safetyContactExists.
+  ///
+  /// In en, this message translates to:
+  /// **'This number is already in your list.'**
+  String get safetyContactExists;
+
+  /// No description provided for @safetyContactLinked.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked: receives the alert in the app'**
+  String get safetyContactLinked;
+
+  /// No description provided for @safetyContactGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'Groups'**
+  String get safetyContactGroups;
+
+  /// No description provided for @safetyContactDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {name}?'**
+  String safetyContactDeleteTitle(String name);
+
+  /// No description provided for @safetyGroupsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Groups'**
+  String get safetyGroupsTitle;
+
+  /// No description provided for @safetyGroupsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Groups let you warn only some people (family, neighbours…).'**
+  String get safetyGroupsEmpty;
+
+  /// No description provided for @safetyGroupAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'New group'**
+  String get safetyGroupAdd;
+
+  /// No description provided for @safetyGroupName.
+  ///
+  /// In en, this message translates to:
+  /// **'Group name'**
+  String get safetyGroupName;
+
+  /// No description provided for @safetyGroupNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Family, neighbours, work…'**
+  String get safetyGroupNameHint;
+
+  /// No description provided for @safetyGroupDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete the group {name}?'**
+  String safetyGroupDeleteTitle(String name);
+
+  /// No description provided for @safetyGroupDeleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The contacts stay in your list.'**
+  String get safetyGroupDeleteBody;
+
+  /// No description provided for @safetyMessageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'SOS message'**
+  String get safetyMessageTitle;
+
+  /// No description provided for @safetyMessageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your text, and the 5-second window to cancel'**
+  String get safetyMessageHint;
+
+  /// No description provided for @safetyMessageText.
+  ///
+  /// In en, this message translates to:
+  /// **'Your message'**
+  String get safetyMessageText;
+
+  /// No description provided for @safetyMessageAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'The app adds the link to your position, its accuracy, the time and your battery level.'**
+  String get safetyMessageAdded;
+
+  /// No description provided for @safetyCancelWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'5 seconds to cancel'**
+  String get safetyCancelWindow;
+
+  /// No description provided for @safetyCancelWindowHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoids a message sent by mistake. Turn it off to send at once.'**
+  String get safetyCancelWindowHint;
+
+  /// No description provided for @safetyPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview'**
+  String get safetyPreview;
+
+  /// No description provided for @sosDefaultTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'I need help. This is my position.'**
+  String get sosDefaultTemplate;
+
+  /// No description provided for @sosLabelPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'Position'**
+  String get sosLabelPosition;
+
+  /// No description provided for @sosLabelAccuracy.
+  ///
+  /// In en, this message translates to:
+  /// **'Accuracy'**
+  String get sosLabelAccuracy;
+
+  /// No description provided for @sosLabelTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get sosLabelTime;
+
+  /// No description provided for @sosLabelBattery.
+  ///
+  /// In en, this message translates to:
+  /// **'Battery'**
+  String get sosLabelBattery;
+
+  /// No description provided for @sosLabelNoPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'Position not available.'**
+  String get sosLabelNoPosition;
+
+  /// No description provided for @safetySendIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Your contacts receive your message with your position. Linked contacts are alerted in the app; the SMS app opens with every number, and you press Send.'**
+  String get safetySendIntro;
+
+  /// No description provided for @safetyNoContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'Add at least one emergency contact first.'**
+  String get safetyNoContacts;
+
+  /// No description provided for @safetySendTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Send to'**
+  String get safetySendTo;
+
+  /// No description provided for @safetySendToAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Everyone ({count})'**
+  String safetySendToAll(int count);
+
+  /// No description provided for @safetySendChannels.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked contacts alerted in the app: {count}. Then SMS, then WhatsApp.'**
+  String safetySendChannels(int count);
+
+  /// No description provided for @safetySendSmsOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Without an account, the message goes by SMS and WhatsApp only.'**
+  String get safetySendSmsOnly;
+
+  /// No description provided for @safetySendNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Send now'**
+  String get safetySendNow;
+
+  /// No description provided for @safetySendingIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending in {seconds} s…'**
+  String safetySendingIn(int seconds);
+
+  /// No description provided for @safetySending.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting your position and sending…'**
+  String get safetySending;
+
+  /// No description provided for @safetySentApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert received in the app by {count} linked contact(s).'**
+  String safetySentApp(int count);
+
+  /// No description provided for @safetySentAppFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The alert in the app could not be sent (no network?). The SMS still opened.'**
+  String get safetySentAppFailed;
+
+  /// No description provided for @safetySentSms.
+  ///
+  /// In en, this message translates to:
+  /// **'SMS ready for {count} number(s): press Send in the SMS app.'**
+  String safetySentSms(int count);
+
+  /// No description provided for @safetyWhatsApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Also by WhatsApp'**
+  String get safetyWhatsApp;
+
+  /// No description provided for @safetyWhatsAppChoose.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a WhatsApp chat or group'**
+  String get safetyWhatsAppChoose;
+
+  /// No description provided for @safetyLinkedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked contacts'**
+  String get safetyLinkedTitle;
+
+  /// No description provided for @safetyLinkedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked: {count}'**
+  String safetyLinkedCount(int count);
+
+  /// No description provided for @safetyLinkedIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'A relative who also uses e-Himaya can be linked to you. Your SOS message then rings on their phone, even in silent mode.'**
+  String get safetyLinkedIntro;
+
+  /// No description provided for @safetyLinkedNeedsAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Links need an e-Himaya account on both phones.'**
+  String get safetyLinkedNeedsAccount;
+
+  /// No description provided for @safetyLinkedEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody is linked yet.'**
+  String get safetyLinkedEmpty;
+
+  /// No description provided for @safetyLinkedPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'A linked person sees your first name and number, and your alerts. Either of you can remove the link at any time.'**
+  String get safetyLinkedPrivacy;
+
+  /// No description provided for @safetyLinkedDone.
+  ///
+  /// In en, this message translates to:
+  /// **'You are now linked.'**
+  String get safetyLinkedDone;
+
+  /// No description provided for @safetyLinkedPush.
+  ///
+  /// In en, this message translates to:
+  /// **'You are now linked with {name}.'**
+  String safetyLinkedPush(String name);
+
+  /// No description provided for @safetyInvite.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite'**
+  String get safetyInvite;
+
+  /// No description provided for @safetyInviteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your invitation code'**
+  String get safetyInviteTitle;
+
+  /// No description provided for @safetyInviteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Give this code to the person. They enter it in e-Himaya, Personal safety, Linked contacts.'**
+  String get safetyInviteBody;
+
+  /// No description provided for @safetyInviteExpires.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid until {time}, once.'**
+  String safetyInviteExpires(String time);
+
+  /// No description provided for @safetyInviteText.
+  ///
+  /// In en, this message translates to:
+  /// **'Link with me in e-Himaya so we can alert each other in an emergency. My code: {code}'**
+  String safetyInviteText(String code);
+
+  /// No description provided for @safetyEnterCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a code'**
+  String get safetyEnterCode;
+
+  /// No description provided for @safetyCodeInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'This code is wrong, used or expired.'**
+  String get safetyCodeInvalid;
+
+  /// No description provided for @safetyLinkConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Link with this person?'**
+  String get safetyLinkConfirmTitle;
+
+  /// No description provided for @safetyLinkConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{who} will receive your alerts and you will receive theirs.'**
+  String safetyLinkConfirmBody(String who);
+
+  /// No description provided for @safetyLinkAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Link'**
+  String get safetyLinkAccept;
+
+  /// No description provided for @safetyUnlink.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove the link'**
+  String get safetyUnlink;
+
+  /// No description provided for @safetyUnlinkTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove the link with {name}?'**
+  String safetyUnlinkTitle(String name);
+
+  /// No description provided for @safetyUnlinkBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Neither of you will receive the other’s alerts.'**
+  String get safetyUnlinkBody;
+
+  /// No description provided for @safetyAlertTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Distress alert'**
+  String get safetyAlertTitle;
+
+  /// No description provided for @safetyAlertFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} needs help'**
+  String safetyAlertFrom(String name);
+
+  /// No description provided for @safetyAlertCheckFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} did not confirm being safe'**
+  String safetyAlertCheckFrom(String name);
+
+  /// No description provided for @safetyAlertMine.
+  ///
+  /// In en, this message translates to:
+  /// **'Your alert'**
+  String get safetyAlertMine;
+
+  /// No description provided for @safetyAlertAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent at {time}'**
+  String safetyAlertAt(String time);
+
+  /// No description provided for @safetyAlertBattery.
+  ///
+  /// In en, this message translates to:
+  /// **'battery {level}%'**
+  String safetyAlertBattery(int level);
+
+  /// No description provided for @safetyAlertSeenBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Opened by {seen} of {total}'**
+  String safetyAlertSeenBy(int seen, int total);
+
+  /// No description provided for @safetyAlertNoPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'No position was sent.'**
+  String get safetyAlertNoPosition;
+
+  /// No description provided for @safetyAlertLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Live position, updated {time}'**
+  String safetyAlertLive(String time);
+
+  /// No description provided for @safetyAlertPositionAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Position at {time}'**
+  String safetyAlertPositionAt(String time);
+
+  /// No description provided for @safetyAlertCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Call {name}'**
+  String safetyAlertCall(String name);
+
+  /// No description provided for @safetyAlertRoute.
+  ///
+  /// In en, this message translates to:
+  /// **'Route'**
+  String get safetyAlertRoute;
+
+  /// No description provided for @safetyAlertReportHint.
+  ///
+  /// In en, this message translates to:
+  /// **'If they are in danger, call the Civil Protection and give the position shown above.'**
+  String get safetyAlertReportHint;
+
+  /// No description provided for @safetyAlertCall198.
+  ///
+  /// In en, this message translates to:
+  /// **'Call 198 for them'**
+  String get safetyAlertCall198;
+
+  /// No description provided for @safetyAlertReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Report it in the app'**
+  String get safetyAlertReport;
+
+  /// No description provided for @safetyLiveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Live location'**
+  String get safetyLiveTitle;
+
+  /// No description provided for @safetyLiveHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A link that shows where you are, for a limited time'**
+  String get safetyLiveHint;
+
+  /// No description provided for @safetyLiveRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'Your location is being shared'**
+  String get safetyLiveRunning;
+
+  /// No description provided for @safetyLiveIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a link that shows your position as you move. It stops by itself at the end, or when you press Stop. Whoever has the link sees the point on a map, not your name.'**
+  String get safetyLiveIntro;
+
+  /// No description provided for @safetyLiveNeedsAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Live location needs an e-Himaya account.'**
+  String get safetyLiveNeedsAccount;
+
+  /// No description provided for @safetyLiveFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Share for'**
+  String get safetyLiveFor;
+
+  /// No description provided for @safetyLiveStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start sharing'**
+  String get safetyLiveStart;
+
+  /// No description provided for @safetyLiveStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop sharing'**
+  String get safetyLiveStop;
+
+  /// No description provided for @safetyLivePrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'The positions are deleted 24 hours after the share ends. A notification stays visible while it runs.'**
+  String get safetyLivePrivacy;
+
+  /// No description provided for @safetyLiveLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{duration} left'**
+  String safetyLiveLeft(String duration);
+
+  /// No description provided for @safetyLiveLastSent.
+  ///
+  /// In en, this message translates to:
+  /// **'last sent {time}'**
+  String safetyLiveLastSent(String time);
+
+  /// No description provided for @safetyLiveShareText.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow my position live: {link}'**
+  String safetyLiveShareText(String link);
+
+  /// No description provided for @safetyLiveSmsContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'SMS to my contacts'**
+  String get safetyLiveSmsContacts;
+
+  /// No description provided for @safetyLiveNoticeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'e-Himaya: location shared'**
+  String get safetyLiveNoticeTitle;
+
+  /// No description provided for @safetyLiveNoticeText.
+  ///
+  /// In en, this message translates to:
+  /// **'Your position is sent while the share or the safety check runs.'**
+  String get safetyLiveNoticeText;
+
+  /// No description provided for @safetyCheckTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety check'**
+  String get safetyCheckTitle;
+
+  /// No description provided for @safetyCheckHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked contacts alerted if you do not confirm in time'**
+  String get safetyCheckHint;
+
+  /// No description provided for @safetyCheckRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'A safety check is running'**
+  String get safetyCheckRunning;
+
+  /// No description provided for @safetyCheckIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Going out alone, walking at night, a trip? Set a time. If you have not pressed “I am fine” by then, your linked contacts receive an alert with your last position, even if your phone is off. The Civil Protection is not alerted.'**
+  String get safetyCheckIntro;
+
+  /// No description provided for @safetyCheckNeedsAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'The safety check needs an e-Himaya account and linked contacts.'**
+  String get safetyCheckNeedsAccount;
+
+  /// No description provided for @safetyCheckNoLinks.
+  ///
+  /// In en, this message translates to:
+  /// **'Link at least one contact first: the alert goes to linked contacts.'**
+  String get safetyCheckNoLinks;
+
+  /// No description provided for @safetyCheckIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in after'**
+  String get safetyCheckIn;
+
+  /// No description provided for @safetyCheckMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Message for your contacts'**
+  String get safetyCheckMessage;
+
+  /// No description provided for @safetyCheckMessageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'I did not confirm that I arrived safely.'**
+  String get safetyCheckMessageHint;
+
+  /// No description provided for @safetyCheckStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start the check'**
+  String get safetyCheckStart;
+
+  /// No description provided for @safetyCheckPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders 10 minutes and 1 minute before. The check and its position are deleted 7 days after it ends.'**
+  String get safetyCheckPrivacy;
+
+  /// No description provided for @safetyCheckDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm before {time}'**
+  String safetyCheckDue(String time);
+
+  /// No description provided for @safetyCheckContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'linked contacts: {count}'**
+  String safetyCheckContacts(int count);
+
+  /// No description provided for @safetyCheckOk.
+  ///
+  /// In en, this message translates to:
+  /// **'I am fine'**
+  String get safetyCheckOk;
+
+  /// No description provided for @safetyCheckExtend.
+  ///
+  /// In en, this message translates to:
+  /// **'Add {minutes} minutes'**
+  String safetyCheckExtend(int minutes);
+
+  /// No description provided for @safetyCheckFired.
+  ///
+  /// In en, this message translates to:
+  /// **'Your contacts were alerted'**
+  String get safetyCheckFired;
+
+  /// No description provided for @safetyCheckFiredHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You did not confirm in time. If you are fine, tell them; otherwise send your SOS message.'**
+  String get safetyCheckFiredHint;
+
+  /// No description provided for @safetyCheckReminder10.
+  ///
+  /// In en, this message translates to:
+  /// **'Your safety check ends in 10 minutes. Open e-Himaya to confirm.'**
+  String get safetyCheckReminder10;
+
+  /// No description provided for @safetyCheckReminder1.
+  ///
+  /// In en, this message translates to:
+  /// **'One minute left: confirm now or your contacts will be alerted.'**
+  String get safetyCheckReminder1;
+
+  /// No description provided for @safetyTestTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-test'**
+  String get safetyTestTitle;
+
+  /// No description provided for @safetyTestHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Check that everything works, without sending anything'**
+  String get safetyTestHint;
+
+  /// No description provided for @safetyTestIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Checks this phone: alarm sound, position, network, notifications and battery.'**
+  String get safetyTestIntro;
+
+  /// No description provided for @safetyTestAlarm.
+  ///
+  /// In en, this message translates to:
+  /// **'Play the alarm'**
+  String get safetyTestAlarm;
+
+  /// No description provided for @safetyTestAlarmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Test: distress alert'**
+  String get safetyTestAlarmTitle;
+
+  /// No description provided for @safetyTestAlarmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This is how an alert from a linked contact sounds. Nothing was sent.'**
+  String get safetyTestAlarmBody;
+
+  /// No description provided for @safetyTestAlarmSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Test alarm shown.'**
+  String get safetyTestAlarmSent;
+
+  /// No description provided for @safetyTestRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking…'**
+  String get safetyTestRunning;
+
+  /// No description provided for @safetyTestNotificationsOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications allowed'**
+  String get safetyTestNotificationsOn;
+
+  /// No description provided for @safetyTestNotificationsOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are blocked: alerts cannot reach you'**
+  String get safetyTestNotificationsOff;
+
+  /// No description provided for @safetyTestCriticalOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts ring even in silent mode'**
+  String get safetyTestCriticalOn;
+
+  /// No description provided for @safetyTestCriticalOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts do not ring in silent mode'**
+  String get safetyTestCriticalOff;
+
+  /// No description provided for @safetyTestCriticalFix.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on'**
+  String get safetyTestCriticalFix;
+
+  /// No description provided for @safetyTestDnd.
+  ///
+  /// In en, this message translates to:
+  /// **'Do Not Disturb is on right now'**
+  String get safetyTestDnd;
+
+  /// No description provided for @safetyTestOnline.
+  ///
+  /// In en, this message translates to:
+  /// **'Network available'**
+  String get safetyTestOnline;
+
+  /// No description provided for @safetyTestOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'No network: only SMS and calls work'**
+  String get safetyTestOffline;
+
+  /// No description provided for @safetyTestPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'Position found'**
+  String get safetyTestPosition;
+
+  /// No description provided for @safetyTestNoPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'No position: turn on location'**
+  String get safetyTestNoPosition;
+
+  /// No description provided for @safetyTestBattery.
+  ///
+  /// In en, this message translates to:
+  /// **'Battery {level}%'**
+  String safetyTestBattery(int level);
+
+  /// No description provided for @safetyTestBatteryUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Battery level unknown'**
+  String get safetyTestBatteryUnknown;
+
+  /// No description provided for @safetyTestPowerSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Battery saver is on: alerts may arrive late'**
+  String get safetyTestPowerSave;
+
+  /// No description provided for @safetyTestContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency contacts: {contacts} · linked: {links}'**
+  String safetyTestContacts(int contacts, int links);
+
+  /// No description provided for @safetyTestAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Test again'**
+  String get safetyTestAgain;
+
+  /// No description provided for @safetyTestNothingSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing is sent to anyone during the self-test.'**
+  String get safetyTestNothingSent;
+
+  /// No description provided for @safetyRecentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent alerts'**
+  String get safetyRecentTitle;
+
+  /// No description provided for @safetyRecentReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Received (last 24 hours)'**
+  String get safetyRecentReceived;
+
+  /// No description provided for @safetyRecentSentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent from this phone'**
+  String get safetyRecentSentTitle;
+
+  /// No description provided for @safetyRecentClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get safetyRecentClear;
+
+  /// No description provided for @safetyRecentEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing yet.'**
+  String get safetyRecentEmpty;
+
+  /// No description provided for @safetyRecentSos.
+  ///
+  /// In en, this message translates to:
+  /// **'SOS message'**
+  String get safetyRecentSos;
+
+  /// No description provided for @safetyRecentSent.
+  ///
+  /// In en, this message translates to:
+  /// **'sent'**
+  String get safetyRecentSent;
+
+  /// No description provided for @safetyRecentCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'cancelled'**
+  String get safetyRecentCancelled;
+
+  /// No description provided for @safetyRecentOk.
+  ///
+  /// In en, this message translates to:
+  /// **'done'**
+  String get safetyRecentOk;
+
+  /// No description provided for @safetyRecentFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'not sent'**
+  String get safetyRecentFailed;
+
+  /// No description provided for @safetyRecentRecipients.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} recipient(s)'**
+  String safetyRecentRecipients(int count);
+
+  /// No description provided for @safetyChannelApp.
+  ///
+  /// In en, this message translates to:
+  /// **'app'**
+  String get safetyChannelApp;
+
+  /// No description provided for @safetyRecentPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'This list stays on this phone.'**
+  String get safetyRecentPrivacy;
+
+  /// No description provided for @safetyMedicalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical file'**
+  String get safetyMedicalTitle;
+
+  /// No description provided for @safetyMedicalHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Useful information for rescuers, on this phone only'**
+  String get safetyMedicalHint;
+
+  /// No description provided for @safetyMedicalSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved on this phone'**
+  String get safetyMedicalSaved;
+
+  /// No description provided for @medicalConsentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Before you start'**
+  String get medicalConsentTitle;
+
+  /// No description provided for @medicalConsentBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your medical file is health data. It stays encrypted on this phone. It is sent to the Civil Protection only with a report for which you tick “Attach my medical file”, and is then deleted 30 days after the report is closed. You can change or delete it at any time. Every field is optional.'**
+  String get medicalConsentBody;
+
+  /// No description provided for @medicalConsentCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'I agree to keep my medical file on this phone under these conditions'**
+  String get medicalConsentCheck;
+
+  /// No description provided for @medicalCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create my medical file'**
+  String get medicalCreate;
+
+  /// No description provided for @medicalIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill in only what you want. Kept encrypted on this phone.'**
+  String get medicalIntro;
+
+  /// No description provided for @medicalSex.
+  ///
+  /// In en, this message translates to:
+  /// **'Sex'**
+  String get medicalSex;
+
+  /// No description provided for @medicalSexFemale.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get medicalSexFemale;
+
+  /// No description provided for @medicalSexMale.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get medicalSexMale;
+
+  /// No description provided for @medicalNotSaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Not given'**
+  String get medicalNotSaid;
+
+  /// No description provided for @medicalBirthDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of birth'**
+  String get medicalBirthDate;
+
+  /// No description provided for @medicalBloodGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Blood group'**
+  String get medicalBloodGroup;
+
+  /// No description provided for @medicalAllergies.
+  ///
+  /// In en, this message translates to:
+  /// **'Allergies'**
+  String get medicalAllergies;
+
+  /// No description provided for @medicalConditions.
+  ///
+  /// In en, this message translates to:
+  /// **'Chronic conditions'**
+  String get medicalConditions;
+
+  /// No description provided for @medicalMedications.
+  ///
+  /// In en, this message translates to:
+  /// **'Regular medicines'**
+  String get medicalMedications;
+
+  /// No description provided for @medicalOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other (pregnancy, device, disability…)'**
+  String get medicalOther;
+
+  /// No description provided for @medicalTreatmentCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Treatment card number'**
+  String get medicalTreatmentCard;
+
+  /// No description provided for @medicalContactName.
+  ///
+  /// In en, this message translates to:
+  /// **'Person to contact'**
+  String get medicalContactName;
+
+  /// No description provided for @medicalContactPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Their phone number'**
+  String get medicalContactPhone;
+
+  /// No description provided for @medicalContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get medicalContact;
+
+  /// No description provided for @medicalLock.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask for the phone lock'**
+  String get medicalLock;
+
+  /// No description provided for @medicalLockHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your PIN, pattern or fingerprint before the file opens.'**
+  String get medicalLockHint;
+
+  /// No description provided for @medicalLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Your medical file is locked.'**
+  String get medicalLocked;
+
+  /// No description provided for @medicalUnlock.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock'**
+  String get medicalUnlock;
+
+  /// No description provided for @medicalUnlockHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm it is you to open the medical file.'**
+  String get medicalUnlockHint;
+
+  /// No description provided for @medicalNoPhoneLock.
+  ///
+  /// In en, this message translates to:
+  /// **'This phone has no screen lock, so the file cannot be locked.'**
+  String get medicalNoPhoneLock;
+
+  /// No description provided for @medicalForRescuer.
+  ///
+  /// In en, this message translates to:
+  /// **'Show to a rescuer'**
+  String get medicalForRescuer;
+
+  /// No description provided for @medicalCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy as text'**
+  String get medicalCopy;
+
+  /// No description provided for @medicalEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'The medical file is empty.'**
+  String get medicalEmpty;
+
+  /// No description provided for @medicalAttachHint.
+  ///
+  /// In en, this message translates to:
+  /// **'In a report, tick “Attach my medical file” to send it with that report only.'**
+  String get medicalAttachHint;
+
+  /// No description provided for @medicalDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete my medical file'**
+  String get medicalDelete;
+
+  /// No description provided for @medicalDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete the medical file?'**
+  String get medicalDeleteTitle;
+
+  /// No description provided for @medicalDeleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'It is erased from this phone. Copies already attached to reports are deleted 30 days after each report is closed.'**
+  String get medicalDeleteBody;
+
+  /// No description provided for @medicalDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical file deleted.'**
+  String get medicalDeleted;
+
+  /// No description provided for @reportAttachMedical.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach my medical file to this report'**
+  String get reportAttachMedical;
+
+  /// No description provided for @reportAttachMedicalHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Only the team handling this report can open it, and each opening is recorded.'**
+  String get reportAttachMedicalHint;
+
+  /// No description provided for @safetyHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Location history (72 h)'**
+  String get safetyHistoryTitle;
+
+  /// No description provided for @safetyHistoryOn.
+  ///
+  /// In en, this message translates to:
+  /// **'On'**
+  String get safetyHistoryOn;
+
+  /// No description provided for @safetyHistoryOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get safetyHistoryOff;
+
+  /// No description provided for @safetyHistoryNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'If you go missing, the Civil Protection can see where your phone was during the last 72 hours. They read it only for a report they handle, with a reason, and you are told. Each position is deleted after 72 hours, and all of them at once when you turn it off.'**
+  String get safetyHistoryNotice;
+
+  /// No description provided for @safetyHistoryUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available yet.'**
+  String get safetyHistoryUnavailable;
+
+  /// No description provided for @safetyHistoryConsent.
+  ///
+  /// In en, this message translates to:
+  /// **'I agree that my positions are kept for 72 hours under these conditions'**
+  String get safetyHistoryConsent;
+
+  /// No description provided for @safetyHistoryTurnOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on'**
+  String get safetyHistoryTurnOn;
+
+  /// No description provided for @safetyHistoryTurnOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off and delete'**
+  String get safetyHistoryTurnOff;
+
+  /// No description provided for @safetyHistoryUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Until {time}'**
+  String safetyHistoryUntil(String time);
+
+  /// No description provided for @safetyHistoryViewedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your location history was consulted'**
+  String get safetyHistoryViewedTitle;
+
+  /// No description provided for @safetyHistoryViewedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The Civil Protection consulted it for a report. Open e-Himaya for details.'**
+  String get safetyHistoryViewedBody;
+
+  /// No description provided for @doctorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctors\' space'**
+  String get doctorTitle;
+
+  /// No description provided for @doctorIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you a doctor? Register to receive the medical files attached to reports, locked so that only verified doctors can read them. The Civil Protection checks your registration number before any file reaches you.'**
+  String get doctorIntro;
+
+  /// No description provided for @doctorChoose.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your role'**
+  String get doctorChoose;
+
+  /// No description provided for @doctorKindVolunteer.
+  ///
+  /// In en, this message translates to:
+  /// **'Volunteer doctor'**
+  String get doctorKindVolunteer;
+
+  /// No description provided for @doctorKindVolunteerHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'A specialist who accepts medical files to give an opinion, when a colleague refers them.'**
+  String get doctorKindVolunteerHelp;
+
+  /// No description provided for @doctorKindCivilProtection.
+  ///
+  /// In en, this message translates to:
+  /// **'Civil Protection doctor'**
+  String get doctorKindCivilProtection;
+
+  /// No description provided for @doctorKindCivilProtectionHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'A doctor of the Civil Protection: receives the medical files of their gouvernorate\'s reports and refers them to specialists.'**
+  String get doctorKindCivilProtectionHelp;
+
+  /// No description provided for @doctorApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Register as a doctor'**
+  String get doctorApply;
+
+  /// No description provided for @doctorKind.
+  ///
+  /// In en, this message translates to:
+  /// **'Role'**
+  String get doctorKind;
+
+  /// No description provided for @doctorSpecialties.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialties (1 to 4)'**
+  String get doctorSpecialties;
+
+  /// No description provided for @doctorSpecialtiesRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose 1 to 4 specialties.'**
+  String get doctorSpecialtiesRequired;
+
+  /// No description provided for @doctorLicence.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical council registration number'**
+  String get doctorLicence;
+
+  /// No description provided for @doctorNumberInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'3 to 30 characters: digits, Latin letters, - and /.'**
+  String get doctorNumberInvalid;
+
+  /// No description provided for @doctorWorkplace.
+  ///
+  /// In en, this message translates to:
+  /// **'Workplace (institution)'**
+  String get doctorWorkplace;
+
+  /// No description provided for @doctorGouvernorat.
+  ///
+  /// In en, this message translates to:
+  /// **'Gouvernorate of the workplace'**
+  String get doctorGouvernorat;
+
+  /// No description provided for @doctorGouvernoratHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'It sets your doctors\' group.'**
+  String get doctorGouvernoratHelp;
+
+  /// No description provided for @doctorCpUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit or regional directorate'**
+  String get doctorCpUnit;
+
+  /// No description provided for @doctorCpStaffNo.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff number'**
+  String get doctorCpStaffNo;
+
+  /// No description provided for @doctorTermsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of the doctor role'**
+  String get doctorTermsTitle;
+
+  /// No description provided for @doctorTermsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical files are confidential: they are opened only to help the person, never copied or shared outside the system, and every opening is recorded. An opinion given remotely is advisory and does not replace an examination. The Civil Protection may suspend your role if these terms are broken.'**
+  String get doctorTermsBody;
+
+  /// No description provided for @doctorTermsAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'I have read and accept these terms'**
+  String get doctorTermsAccept;
+
+  /// No description provided for @doctorTermsRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'You must accept the terms.'**
+  String get doctorTermsRequired;
+
+  /// No description provided for @doctorRecheckNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Changing the role, specialties, numbers or gouvernorate sends your registration back for checking.'**
+  String get doctorRecheckNote;
+
+  /// No description provided for @doctorSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Send for checking'**
+  String get doctorSubmit;
+
+  /// No description provided for @doctorSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent. The Civil Protection will check your registration number.'**
+  String get doctorSubmitted;
+
+  /// No description provided for @doctorHelpPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Your registration is being checked. No medical file reaches you before.'**
+  String get doctorHelpPending;
+
+  /// No description provided for @doctorHelpApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Your role is verified: you are in your gouvernorate\'s doctors\' group.'**
+  String get doctorHelpApproved;
+
+  /// No description provided for @doctorHelpRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Your registration was not accepted. You can correct it and send it again.'**
+  String get doctorHelpRejected;
+
+  /// No description provided for @doctorHelpSuspended.
+  ///
+  /// In en, this message translates to:
+  /// **'Your role is suspended: you will not receive medical files.'**
+  String get doctorHelpSuspended;
+
+  /// No description provided for @doctorHelpWithdrawn.
+  ///
+  /// In en, this message translates to:
+  /// **'You gave up the doctor role; your numbers are deleted.'**
+  String get doctorHelpWithdrawn;
+
+  /// No description provided for @doctorAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Available for requests'**
+  String get doctorAvailable;
+
+  /// No description provided for @doctorAvailableUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Available until {time}'**
+  String doctorAvailableUntil(String time);
+
+  /// No description provided for @doctorCommitteeMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Member of the medical committee until {date}'**
+  String doctorCommitteeMember(String date);
+
+  /// No description provided for @doctorCommitteeHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointed by the system administrator. From this account you will consult the medical files and the specialists\' opinions of every gouvernorat. Each opening needs a reason and is logged; the citizen sees “Medical committee”, not your name.'**
+  String get doctorCommitteeHelp;
+
+  /// No description provided for @doctorAvailableHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Available doctors come first in the referral list. It ends by itself after 8 hours.'**
+  String get doctorAvailableHelp;
+
+  /// No description provided for @doctorAvailableBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get doctorAvailableBadge;
+
+  /// No description provided for @doctorFilesSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Receiving locked medical files comes in the next update.'**
+  String get doctorFilesSoon;
+
+  /// No description provided for @doctorDirectory.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctors\' directory'**
+  String get doctorDirectory;
+
+  /// No description provided for @doctorSpecialty.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialty'**
+  String get doctorSpecialty;
+
+  /// No description provided for @doctorRegion.
+  ///
+  /// In en, this message translates to:
+  /// **'Region'**
+  String get doctorRegion;
+
+  /// No description provided for @doctorAllSpecialties.
+  ///
+  /// In en, this message translates to:
+  /// **'All specialties'**
+  String get doctorAllSpecialties;
+
+  /// No description provided for @doctorAllGouvernorats.
+  ///
+  /// In en, this message translates to:
+  /// **'All gouvernorates'**
+  String get doctorAllGouvernorats;
+
+  /// No description provided for @doctorDirectoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No verified doctor matches.'**
+  String get doctorDirectoryEmpty;
+
+  /// No description provided for @doctorEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit my details'**
+  String get doctorEdit;
+
+  /// No description provided for @doctorWithdraw.
+  ///
+  /// In en, this message translates to:
+  /// **'Give up the doctor role'**
+  String get doctorWithdraw;
+
+  /// No description provided for @doctorWithdrawConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Your registration number will be deleted and no file will reach you. You can register again later.'**
+  String get doctorWithdrawConfirm;
+
+  /// No description provided for @doctorJoinTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you a doctor?'**
+  String get doctorJoinTitle;
+
+  /// No description provided for @doctorJoinBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Register as a volunteer or Civil Protection doctor.'**
+  String get doctorJoinBody;
+
+  /// No description provided for @errorNotDoctor.
+  ///
+  /// In en, this message translates to:
+  /// **'You have not registered as a doctor.'**
+  String get errorNotDoctor;
+
+  /// No description provided for @errorDoctorNotApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Your doctor role is not verified yet.'**
+  String get errorDoctorNotApproved;
+
+  /// No description provided for @errorCpDetailsRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the unit and staff number of a Civil Protection doctor.'**
+  String get errorCpDetailsRequired;
+
+  /// No description provided for @errorUnknownTermsVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'The terms changed. Update the app and try again.'**
+  String get errorUnknownTermsVersion;
+
+  /// No description provided for @specialtyGeneralPractice.
+  ///
+  /// In en, this message translates to:
+  /// **'General practice'**
+  String get specialtyGeneralPractice;
+
+  /// No description provided for @specialtyEmergencyMedicine.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency medicine'**
+  String get specialtyEmergencyMedicine;
+
+  /// No description provided for @specialtyAnesthesiaIcu.
+  ///
+  /// In en, this message translates to:
+  /// **'Anaesthesia and intensive care'**
+  String get specialtyAnesthesiaIcu;
+
+  /// No description provided for @specialtyCardiology.
+  ///
+  /// In en, this message translates to:
+  /// **'Cardiology'**
+  String get specialtyCardiology;
+
+  /// No description provided for @specialtyPulmonology.
+  ///
+  /// In en, this message translates to:
+  /// **'Pulmonology'**
+  String get specialtyPulmonology;
+
+  /// No description provided for @specialtyNeurology.
+  ///
+  /// In en, this message translates to:
+  /// **'Neurology'**
+  String get specialtyNeurology;
+
+  /// No description provided for @specialtyPediatrics.
+  ///
+  /// In en, this message translates to:
+  /// **'Paediatrics'**
+  String get specialtyPediatrics;
+
+  /// No description provided for @specialtyObstetricsGynecology.
+  ///
+  /// In en, this message translates to:
+  /// **'Obstetrics and gynaecology'**
+  String get specialtyObstetricsGynecology;
+
+  /// No description provided for @specialtyInternalMedicine.
+  ///
+  /// In en, this message translates to:
+  /// **'Internal medicine'**
+  String get specialtyInternalMedicine;
+
+  /// No description provided for @specialtyEndocrinology.
+  ///
+  /// In en, this message translates to:
+  /// **'Endocrinology and diabetes'**
+  String get specialtyEndocrinology;
+
+  /// No description provided for @specialtyNephrology.
+  ///
+  /// In en, this message translates to:
+  /// **'Nephrology'**
+  String get specialtyNephrology;
+
+  /// No description provided for @specialtyGastroenterology.
+  ///
+  /// In en, this message translates to:
+  /// **'Gastroenterology'**
+  String get specialtyGastroenterology;
+
+  /// No description provided for @specialtyAllergyImmunology.
+  ///
+  /// In en, this message translates to:
+  /// **'Allergy and immunology'**
+  String get specialtyAllergyImmunology;
+
+  /// No description provided for @specialtyInfectiousDiseases.
+  ///
+  /// In en, this message translates to:
+  /// **'Infectious diseases'**
+  String get specialtyInfectiousDiseases;
+
+  /// No description provided for @specialtyDermatologyBurns.
+  ///
+  /// In en, this message translates to:
+  /// **'Dermatology and burns'**
+  String get specialtyDermatologyBurns;
+
+  /// No description provided for @specialtyOrthopedics.
+  ///
+  /// In en, this message translates to:
+  /// **'Orthopaedics and trauma'**
+  String get specialtyOrthopedics;
+
+  /// No description provided for @specialtyGeneralSurgery.
+  ///
+  /// In en, this message translates to:
+  /// **'General surgery'**
+  String get specialtyGeneralSurgery;
+
+  /// No description provided for @specialtyPsychiatry.
+  ///
+  /// In en, this message translates to:
+  /// **'Psychiatry'**
+  String get specialtyPsychiatry;
+
+  /// No description provided for @specialtyToxicology.
+  ///
+  /// In en, this message translates to:
+  /// **'Toxicology'**
+  String get specialtyToxicology;
+
+  /// No description provided for @specialtyOphthalmology.
+  ///
+  /// In en, this message translates to:
+  /// **'Ophthalmology'**
+  String get specialtyOphthalmology;
+
+  /// No description provided for @specialtyEnt.
+  ///
+  /// In en, this message translates to:
+  /// **'Ear, nose and throat'**
+  String get specialtyEnt;
 }
 
 class _AppLocalizationsDelegate

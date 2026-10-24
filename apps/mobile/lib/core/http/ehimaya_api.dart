@@ -7,9 +7,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/contact/contact_models.dart';
 import '../../features/guide/guide_models.dart';
 import '../../features/places/places_models.dart';
+import '../../features/safety/safety_models.dart';
 import '../quota/anon_quota.dart';
 import 'api_client.dart';
 import 'api_error.dart';
+import 'doctor_models.dart';
 import 'models.dart';
 import 'notify_models.dart';
 import 'rewards_models.dart';
@@ -227,6 +229,63 @@ class EHimayaApi {
 
   Future<void> withdrawVolunteer() => guardApi(() async {
     await _dio.delete<Object?>('/api/v1/me/volunteer');
+  });
+
+  // ---------------------------------------------------------------- doctors (phase C1-a)
+
+  /// The account's doctor registration, or null when there is none (`404 not_doctor`).
+  Future<Doctor?> myDoctor() async {
+    try {
+      return await guardApi(() async {
+        final r = await _dio.get<Map<String, Object?>>('/api/v1/me/doctor');
+        return Doctor.fromJson(r.data!);
+      });
+    } on ApiException catch (e) {
+      if (e.code == ApiErrorCode.notDoctor) return null;
+      rethrow;
+    }
+  }
+
+  Future<Doctor> putDoctor(DoctorInput input) => guardApi(() async {
+    final r = await _dio.put<Map<String, Object?>>(
+      '/api/v1/me/doctor',
+      data: input.toJson(),
+    );
+    return Doctor.fromJson(r.data!);
+  });
+
+  Future<void> withdrawDoctor() => guardApi(() async {
+    await _dio.delete<Object?>('/api/v1/me/doctor');
+  });
+
+  /// Available for [hours] (approved doctors only), or not available.
+  Future<Doctor> setDoctorAvailability({
+    required bool available,
+    int hours = 8,
+  }) => guardApi(() async {
+    final r = await _dio.post<Map<String, Object?>>(
+      '/api/v1/me/doctor/availability',
+      data: {'available': available, 'hours': hours},
+    );
+    return Doctor.fromJson(r.data!);
+  });
+
+  /// Approved doctors by specialty and gouvernorat: available first, then the caller's group.
+  Future<List<DirectoryDoctor>> doctorDirectory({
+    DoctorSpecialty? specialty,
+    int? gouvernoratCode,
+  }) => guardApi(() async {
+    final r = await _dio.get<List<Object?>>(
+      '/api/v1/doctors/directory',
+      queryParameters: {
+        'specialty': ?specialty?.wire,
+        'gouvernorat_code': ?gouvernoratCode,
+      },
+    );
+    return [
+      for (final d in r.data!)
+        if (d is Map<String, Object?>) DirectoryDoctor.fromJson(d),
+    ];
   });
 
   /// Consent to share the position while ready, after reading notice [version] (phase 10 §4.2).
@@ -557,6 +616,223 @@ class EHimayaApi {
       for (final i in r.data!['items']! as List)
         MyContactRequest.fromJson(i as Map<String, Object?>),
     ];
+  });
+
+  // ---------------------------------------------------------------- personal safety (phase B2)
+
+  /// A code (`ABCD-EFGH`, 48 h, single use) the user gives a relative who also uses e-Himaya.
+  Future<InvitationCode> createInvitation() => guardApi(() async {
+    final r = await _dio.post<Map<String, Object?>>(
+      '/api/v1/safety/invitations',
+    );
+    return InvitationCode.fromJson(r.data!);
+  });
+
+  /// Who invited (first name and the last two digits of their phone), before accepting.
+  Future<InvitationPreview> previewInvitation(String code) =>
+      guardApi(() async {
+        final r = await _dio.get<Map<String, Object?>>(
+          '/api/v1/safety/invitations/${Uri.encodeComponent(code)}',
+        );
+        return InvitationPreview.fromJson(r.data!);
+      });
+
+  Future<SafetyLink> acceptInvitation(String code) => guardApi(() async {
+    final r = await _dio.post<Map<String, Object?>>(
+      '/api/v1/safety/invitations/${Uri.encodeComponent(code)}/accept',
+    );
+    return SafetyLink.fromJson(r.data!);
+  });
+
+  Future<List<SafetyLink>> safetyLinks() => guardApi(() async {
+    final r = await _dio.get<Map<String, Object?>>('/api/v1/safety/links');
+    return [
+      for (final i in r.data!['items']! as List)
+        SafetyLink.fromJson(i as Map<String, Object?>),
+    ];
+  });
+
+  Future<void> removeSafetyLink(String id) => guardApi(() async {
+    await _dio.delete<Object?>(
+      '/api/v1/safety/links/${Uri.encodeComponent(id)}',
+    );
+  });
+
+  /// Rings the linked contacts ([linkIds] null: all of them). Returns the alert id and how many
+  /// were reached. Idempotent by [clientUuid].
+  Future<({String id, int recipients})> sendSafetyAlert({
+    required String clientUuid,
+    required String message,
+    GeoPoint? location,
+    int? battery,
+    List<String>? linkIds,
+    String? liveShareId,
+  }) => guardApi(() async {
+    final r = await _dio.post<Map<String, Object?>>(
+      '/api/v1/safety/alerts',
+      data: {
+        'client_uuid': clientUuid,
+        'message': message,
+        if (location != null && location.isInTunisiaBox)
+          'location': location.toJson(),
+        'battery': ?battery,
+        'link_ids': ?linkIds,
+        'live_share_id': ?liveShareId,
+      },
+    );
+    return (
+      id: r.data!['id']! as String,
+      recipients: r.data!['recipients']! as int,
+    );
+  });
+
+  Future<List<SafetyAlertView>> safetyAlerts() => guardApi(() async {
+    final r = await _dio.get<Map<String, Object?>>('/api/v1/safety/alerts');
+    return [
+      for (final i in r.data!['items']! as List)
+        SafetyAlertView.fromJson(i as Map<String, Object?>),
+    ];
+  });
+
+  Future<SafetyAlertView> safetyAlert(String id) => guardApi(() async {
+    final r = await _dio.get<Map<String, Object?>>(
+      '/api/v1/safety/alerts/${Uri.encodeComponent(id)}',
+    );
+    return SafetyAlertView.fromJson(r.data!);
+  });
+
+  Future<void> markSafetyAlertSeen(String id) => guardApi(() async {
+    await _dio.post<Object?>(
+      '/api/v1/safety/alerts/${Uri.encodeComponent(id)}/seen',
+    );
+  });
+
+  Future<LiveShareStart> startLiveShare(int minutes) => guardApi(() async {
+    final r = await _dio.post<Map<String, Object?>>(
+      '/api/v1/safety/live',
+      data: {'minutes': minutes},
+    );
+    return LiveShareStart.fromJson(r.data!);
+  });
+
+  Future<LiveState> putLivePosition(
+    String id,
+    GeoPoint position, {
+    int? battery,
+  }) => guardApi(() async {
+    final r = await _dio.put<Map<String, Object?>>(
+      '/api/v1/safety/live/${Uri.encodeComponent(id)}',
+      data: {'location': position.toJson(), 'battery': ?battery},
+    );
+    return LiveState.fromJson(r.data!);
+  });
+
+  Future<LiveState> stopLiveShare(String id) => guardApi(() async {
+    final r = await _dio.post<Map<String, Object?>>(
+      '/api/v1/safety/live/${Uri.encodeComponent(id)}/stop',
+    );
+    return LiveState.fromJson(r.data!);
+  });
+
+  /// A share the user owns, or one attached to an alert they received.
+  Future<LiveState> liveShare(String id) => guardApi(() async {
+    final r = await _dio.get<Map<String, Object?>>(
+      '/api/v1/safety/live/${Uri.encodeComponent(id)}',
+    );
+    return LiveState.fromJson(r.data!);
+  });
+
+  Future<SafetyCheckState> startSafetyCheck({
+    required int minutes,
+    required String message,
+    GeoPoint? location,
+    int? battery,
+  }) => guardApi(() async {
+    final r = await _dio.post<Map<String, Object?>>(
+      '/api/v1/safety/checks',
+      data: {
+        'minutes': minutes,
+        'message': message,
+        if (location != null && location.isInTunisiaBox)
+          'location': location.toJson(),
+        'battery': ?battery,
+      },
+    );
+    return SafetyCheckState.fromJson(r.data!);
+  });
+
+  Future<SafetyCheckState?> currentSafetyCheck() => guardApi(() async {
+    final r = await _dio.get<Object?>('/api/v1/safety/checks/current');
+    final data = r.data;
+    return data is Map<String, Object?>
+        ? SafetyCheckState.fromJson(data)
+        : null;
+  });
+
+  Future<SafetyCheckState> safetyCheckOk(String id) => guardApi(() async {
+    final r = await _dio.post<Map<String, Object?>>(
+      '/api/v1/safety/checks/${Uri.encodeComponent(id)}/ok',
+    );
+    return SafetyCheckState.fromJson(r.data!);
+  });
+
+  Future<SafetyCheckState> extendSafetyCheck(String id, int minutes) =>
+      guardApi(() async {
+        final r = await _dio.post<Map<String, Object?>>(
+          '/api/v1/safety/checks/${Uri.encodeComponent(id)}/extend',
+          data: {'minutes': minutes},
+        );
+        return SafetyCheckState.fromJson(r.data!);
+      });
+
+  Future<void> putSafetyCheckPosition(
+    String id,
+    GeoPoint position, {
+    int? battery,
+  }) => guardApi(() async {
+    await _dio.put<Object?>(
+      '/api/v1/safety/checks/${Uri.encodeComponent(id)}/position',
+      data: {'location': position.toJson(), 'battery': ?battery},
+    );
+  });
+
+  Future<HistoryState> locationHistory() => guardApi(() async {
+    final r = await _dio.get<Map<String, Object?>>('/api/v1/safety/history');
+    return HistoryState.fromJson(r.data!);
+  });
+
+  Future<HistoryState> setLocationHistory({
+    required bool enabled,
+    int hours = 72,
+    String? noticeVersion,
+    String locale = 'ar',
+  }) => guardApi(() async {
+    final r = await _dio.put<Map<String, Object?>>(
+      '/api/v1/safety/history',
+      data: {
+        'enabled': enabled,
+        'hours': hours,
+        'notice_version': ?noticeVersion,
+        'locale': locale,
+      },
+    );
+    return HistoryState.fromJson(r.data!);
+  });
+
+  Future<int> postHistoryPoints(List<SafetyPoint> points) => guardApi(() async {
+    final r = await _dio.post<Map<String, Object?>>(
+      '/api/v1/safety/history/points',
+      data: {
+        'points': [
+          for (final p in points)
+            {
+              'location': p.point.toJson(),
+              'at': p.at.toUtc().toIso8601String(),
+            },
+        ],
+      },
+    );
+    return r.data!['stored']! as int;
   });
 
   // ---------------------------------------------------------------- rewards (phase 8 §3)

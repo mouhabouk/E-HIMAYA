@@ -1,5 +1,6 @@
 import type { ApiClient } from "./api";
 import type {
+  LiveView,
   Certificate,
   CreatedInvitation,
   Equipment,
@@ -103,6 +104,10 @@ export function portalApi(api: ApiClient) {
     publicCertificate: (code: string, signal?: AbortSignal) =>
       api.request<PublicCertificate>(`/api/v1/public/certificates/${enc(code)}`, { signal, anonymous: true }),
 
+    /** Public live location (phase B2): the token comes from the link's fragment and travels in the body only. */
+    liveView: (token: string, signal?: AbortSignal) =>
+      api.request<LiveView>("/api/v1/live/view", { method: "POST", body: { token }, signal, anonymous: true }),
+
     certificateKey: (signal?: AbortSignal) =>
       api.request<{ algorithm: string; public_key: string | null; signed_message: string; key_id?: string | null }>(
         "/api/v1/public/certificate-key",
@@ -141,5 +146,6 @@ export const queryKeys = {
   invitation: (token: string) => ["invitation", token] as const,
   publicCertificate: (code: string) => ["public-certificate", code] as const,
   certificateKey: ["certificate-key"] as const,
+  liveView: (token: string) => ["live-view", token] as const,
   gouvernorats: ["gouvernorats"] as const,
 };

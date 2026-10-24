@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">e-Himaya</string>
+    <!-- Phase B2: app shortcuts (res/xml/shortcuts.xml). -->
+    <string name="shortcut_call_short">Call 198</string>
+    <string name="shortcut_call_long">Call Civil Protection (198)</string>
+    <string name="shortcut_sos_short">SOS message</string>
+    <string name="shortcut_sos_long">Send the SOS message</string>
+    <string name="shortcut_report_short">Quick report</string>
+    <string name="shortcut_report_long">Quick report to Civil Protection</string>
 </resources>

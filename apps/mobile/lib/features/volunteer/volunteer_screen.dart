@@ -124,6 +124,8 @@ class _Intro extends StatelessWidget {
           label: Text(l10n.volunteerApply),
           onPressed: () => context.push(Routes.volunteerApply),
         ),
+        const SizedBox(height: 16),
+        const DoctorJoinCard(),
       ],
     );
   }
@@ -270,6 +272,8 @@ class _Space extends ConsumerWidget {
             ),
             onPressed: () => _withdraw(context, ref),
           ),
+        const SizedBox(height: 16),
+        const DoctorJoinCard(),
       ],
     );
   }
@@ -444,6 +448,26 @@ class _ReadinessCardState extends ConsumerState<_ReadinessCard> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// "Are you a doctor?": the doctors' space, next to the volunteer application (phase C1-a).
+class DoctorJoinCard extends StatelessWidget {
+  const DoctorJoinCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Card(
+      child: ListTile(
+        key: const Key('doctor-join'),
+        leading: const Icon(Icons.medical_services),
+        title: Text(l10n.doctorJoinTitle),
+        subtitle: Text(l10n.doctorJoinBody),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () => context.push(Routes.doctor),
       ),
     );
   }
