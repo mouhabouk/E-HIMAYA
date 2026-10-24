@@ -1,0 +1,41 @@
+@startuml
+!include style.iuml
+title Carte des interactions entre intervenants (via la plateforme e-Himaya)
+left to right direction
+skinparam nodesep 40
+skinparam ranksep 90
+skinparam ArrowFontSize 11
+skinparam ArrowFontColor #5B6675
+actor "Citoyen" as CIT
+actor "Proches liés" as REL
+actor "Bénévole" as VOL
+actor "Médecin PC /\ncomité médical" as DOC
+actor "Établissement" as ORG
+actor "Salle régionale\n(opérateur, chef ops)" as OPS
+actor "Commandant\nde terrain" as FC
+actor "Comité local" as CL
+actor "Comité central" as CC
+actor "Auditeur" as AUD
+actor "Éditeur de contenu" as ED
+actor "Coordinateur médical" as MC
+actor "Administrateurs" as ADM
+
+CIT --> OPS : signalement, médias, direct, appel 198
+OPS --> CIT : statut du signalement
+CIT --> REL : SOS, position en direct,\ncontrôle de sécurité
+CIT --> DOC : dossier médical verrouillé
+ORG --> OPS : signalement au nom\nde l'établissement
+ORG --> AUD : dossier + demande de certificat
+AUD --> ORG : approbation / révocation
+OPS --> VOL : mobilisation
+VOL --> OPS : réponse, ETA, arrivée
+OPS --> FC : affectation, ordres
+FC --> OPS : situation, prévision
+OPS --> CL : remontée des incidents
+CL --> CC : niveau vigilance / crise
+CC --> CL : directives
+CC --> OPS : directives, renforts
+ED --> CIT : alertes géociblées, conseils, guide
+MC --> DOC : vérification, nomination du comité
+ADM --> OPS : comptes, paramètres, audit
+@enduml

@@ -1,0 +1,74 @@
+@startuml
+!include style.iuml
+title Diagramme de classes : établissements et certificat de sécurité
+hide empty methods
+class Établissement {
+  nom, type
+  identifiant [MF / RNE]
+  secteur, capacité
+  étages, hauteur
+  reçoit du public
+  adresse, position
+  statut : brouillon | soumis | actif | suspendu
+}
+class Membre {
+  rôle : admin | gestionnaire | membre
+  rejoint_le
+}
+class Invitation {
+  email, rôle
+  expire_le, acceptée_le
+}
+class MembreÉquipeSécurité {
+  nom, rôle, poste
+  téléphone
+  dernière formation
+}
+class MatièreDangereuse {
+  nom, n° ONU
+  classe, quantité, unité
+  lieu de stockage
+}
+class Équipement {
+  type, nombre
+  emplacement
+  dernière maintenance
+}
+class PointCarte {
+  type : rassemblement | sortie | prise d'eau
+  position
+}
+class Document {
+  type : dossier sécurité | plan | FDS
+  titre
+}
+class VersionDocument {
+  version, fichier
+  sha256, statut
+}
+class Certificat {
+  code
+  statut : brouillon | soumis | approuvé | rejeté | révoqué
+  instantané, empreinte
+  signature Ed25519
+  PDF sha256
+  valide jusqu'au
+}
+class Classement <<calculé>> {
+  famille : IGH | industriel | ERP | travail
+  catégorie
+  exigences manquantes
+}
+Établissement "1" *-- "1..*" Membre
+Établissement "1" *-- "*" Invitation
+Établissement "1" *-- "*" MembreÉquipeSécurité
+Établissement "1" *-- "*" MatièreDangereuse
+Établissement "1" *-- "*" Équipement
+Établissement "1" *-- "*" PointCarte
+Établissement "1" *-- "*" Document
+Document "1" *-- "1..*" VersionDocument
+MatièreDangereuse "*" --> "0..1" Document : FDS
+Établissement "1" -- "*" Certificat
+Établissement ..> Classement
+Membre "*" --> "1" "Compte"
+@enduml

@@ -1,0 +1,40 @@
+@startuml
+!include style.iuml
+title Séquence : signalement d'un incident par un citoyen (hors ligne puis synchronisé)
+autonumber
+actor "Citoyen" as C
+participant "Application\nmobile" as APP
+database "File locale\n(SQLite chiffré)" as Q
+participant "API e-Himaya" as API
+participant "Workers IA" as AI
+database "PostgreSQL" as DB
+participant "Tableau de bord\n(salle régionale)" as DSH
+actor "Opérateur" as OP
+C -> APP : « Signaler » + catégorie
+APP -> APP : position GPS + précision
+C -> APP : texte / photos / vidéo / audio
+APP -> Q : enregistrer (client_uuid)
+APP --> C : code provisoire
+alt réseau disponible
+  Q -> API : POST /reports (jeton ou clé appareil)
+  API -> API : filtre injures, quota anonyme
+  API -> DB : gouvernorat depuis la position (PostGIS)
+  API -> DB : insérer signalement (texte chiffré)
+  API --> APP : code de suivi EH-AA-GG-NNNNNNN
+  APP -> API : médias (tus, reprenable)
+else pas d'internet
+  APP -> APP : SMS préparé vers le numéro court
+  note right : SMS entrant transformé\nen signalement par l'API
+end
+API ->> AI : analyse asynchrone
+AI -> AI : transcription, traduction arabe,\nextraction, priorité 0..10, regroupement
+AI -> DB : analyse + priorité
+API ->> DSH : WebSocket « nouveau signalement »
+OP -> DSH : prendre en charge
+DSH -> API : claim + statut « en cours »
+API -> DB : historique de statut + journal d'audit
+API ->> APP : notification de statut (sans contenu sensible)
+C -> APP : suivre le signalement
+APP -> API : GET /reports/track/{code}
+API --> APP : statut : reçu → en cours → intervention → clôturé
+@enduml

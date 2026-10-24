@@ -1,0 +1,33 @@
+@startuml
+!include style.iuml
+title Séquence : mobilisation de bénévoles sur un incident
+autonumber
+actor "Chef des opérations" as OPM
+participant "Tableau de bord" as DSH
+participant "API e-Himaya" as API
+database "PostgreSQL" as DB
+participant "Notifications\n(FCM / SMS)" as N
+participant "Application\ndu bénévole" as APP
+actor "Bénévole" as V
+V -> APP : « prêt » pour 8 h + partage de position
+APP -> API : PUT /me/volunteer/readiness
+OPM -> DSH : mobiliser (compétence, rayon, message)
+DSH -> API : POST /incidents/{id}/callouts
+API -> DB : bénévoles approuvés, prêts,\ndans le rayon (PostGIS)
+API -> DB : créer mobilisation + cibles
+API ->> N : notification « mobilisation »
+N ->> APP : push
+APP --> V : demande + distance
+alt accepte
+  V -> APP : « J'y vais » (ETA)
+  APP -> API : respond(accepted, eta)
+  API -> DB : affectation du bénévole
+  API ->> DSH : mise à jour temps réel
+  V -> APP : « Arrivé »
+  APP -> API : arrived
+else refuse / sans réponse
+  V -> APP : « Indisponible »
+  APP -> API : respond(declined)
+end
+API -> DB : journal d'audit
+@enduml

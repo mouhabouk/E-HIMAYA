@@ -1,0 +1,107 @@
+@startuml
+!include style.iuml
+title Diagramme de classes : signalements, incidents et opérations
+hide empty methods
+class Signalement {
+  id, code_suivi
+  catégorie
+  texte original [chiffré], langue
+  traduction arabe [chiffrée]
+  position, précision
+  gouvernorat
+  statut
+  priorité 0..10, crédibilité
+  créé_le, reçu_le
+}
+class Média {
+  type : photo | vidéo | audio
+  sha256, taille
+  transcription [chiffrée]
+  analyse
+}
+class HistoriqueStatut {
+  statut, date
+  acteur, note
+}
+class AnalyseIA {
+  extraction, priorité
+  crédibilité, suggestion
+}
+class FluxDirect {
+  source, chemin
+  statut, position
+}
+class Détection {
+  libellé, confiance
+  boîtes, confirmée
+}
+class Incident {
+  catégorie, gravité
+  centroïde, zone
+  niveau opérationnel
+  statut, titre
+}
+class ÉvénementChronologie {
+  type, date, acteur
+}
+class Unité {
+  nom, type
+  gouvernorat, téléphone
+}
+class Moyen {
+  type, libellé
+  statut
+}
+class Affectation {
+  type, ordre
+  statut
+  en route, sur place, libéré
+}
+class Mobilisation {
+  compétence, rayon_km
+  message, statut
+}
+class CibleMobilisation {
+  distance, statut
+  ETA, arrivé_le
+}
+class DemandeRenfort {
+  de / vers gouvernorat
+  type, quantité
+  statut, motif
+}
+class NiveauGouvernorat {
+  niveau : normal | vigilance | crise
+  depuis, motif
+}
+class Directive {
+  titre, urgence
+  gouvernorats
+}
+class Prévision {
+  type, modèle
+  résultat, simulé
+}
+class Appel {
+  direction, numéro [chiffré]
+  opérateur, statut
+}
+Signalement "1" *-- "*" Média
+Signalement "1" *-- "*" HistoriqueStatut
+Signalement "1" -- "0..1" AnalyseIA
+Signalement "1" -- "*" FluxDirect
+FluxDirect "1" *-- "*" Détection
+Incident "1" o-- "1..*" Signalement : regroupe
+Incident "1" *-- "*" ÉvénementChronologie
+Incident "1" -- "*" Affectation
+Incident "1" -- "*" Mobilisation
+Incident "1" -- "*" DemandeRenfort
+Incident "1" -- "*" Prévision
+Unité "1" *-- "*" Moyen
+Affectation "*" --> "0..1" Moyen
+Mobilisation "1" *-- "*" CibleMobilisation
+CibleMobilisation "*" --> "1" "Bénévole"
+Affectation "*" --> "0..1" "Bénévole"
+Directive "*" --> "*" NiveauGouvernorat
+Appel "*" --> "0..1" Signalement : rattaché à
+@enduml

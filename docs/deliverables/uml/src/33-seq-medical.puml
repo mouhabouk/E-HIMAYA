@@ -1,0 +1,31 @@
+@startuml
+!include style.iuml
+title Séquence : dossier médical verrouillé joint à un signalement
+autonumber
+actor "Citoyen" as C
+participant "Application\ndu citoyen" as APP
+participant "API e-Himaya" as API
+database "PostgreSQL" as DB
+participant "Application\ndu médecin PC" as DAPP
+actor "Médecin PC\n(gouvernorat)" as D
+== Préparation (une fois) ==
+D -> DAPP : créer la clé personnelle (code 6 à 12 chiffres)
+DAPP -> DAPP : X25519 ; clé privée protégée par Argon2id
+DAPP -> API : PUT /me/doctor/key (clé publique + sauvegarde chiffrée)
+== Signalement ==
+C -> APP : cocher « joindre mon dossier médical »
+APP -> API : GET /medical/recipients?gouvernorat
+API --> APP : clés publiques des médecins PC + comité
+APP -> APP : chiffrer le dossier (XChaCha20)\net envelopper la clé pour chaque médecin
+APP -> API : signalement + dossier verrouillé
+API -> DB : texte chiffré + clés enveloppées
+note right of API : le serveur ne peut pas lire le dossier ;\nla salle ne voit que la carte d'urgence choisie
+== Consultation ==
+D -> DAPP : ouvrir le dossier du signalement
+DAPP -> API : POST /medical/files/{id}/open (motif)
+API -> DB : journaliser l'ouverture
+API --> DAPP : texte chiffré + clé enveloppée
+D -> DAPP : saisir son code
+DAPP -> DAPP : déchiffrer localement
+DAPP --> D : dossier médical
+@enduml
