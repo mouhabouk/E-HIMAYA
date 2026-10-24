@@ -6,6 +6,11 @@ import { config } from "./config";
 import { createI18n } from "./i18n";
 import { createApiClient } from "./lib/api";
 import { portalApi } from "./lib/portalApi";
+// Design system font (docs/design-system.md §2.4), self-hosted: IBM Plex Sans Arabic, SIL OFL 1.1.
+import "@fontsource/ibm-plex-sans-arabic/400.css";
+import "@fontsource/ibm-plex-sans-arabic/500.css";
+import "@fontsource/ibm-plex-sans-arabic/600.css";
+import "@fontsource/ibm-plex-sans-arabic/700.css";
 import "./styles/global.css";
 
 const auth = createOidcAuthService({ issuer: config.oidcIssuer, clientId: config.oidcClientId });

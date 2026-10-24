@@ -6,6 +6,7 @@
 |---|---|
 | وثيقة المتطلبات (معتمدة، الإصدار 1.0) | [`docs/01-requirements.html`](docs/01-requirements.html) |
 | وثيقة هيكلة النظام (معتمدة، الإصدار 1.0) | [`docs/02-architecture.html`](docs/02-architecture.html) |
+| نظام التصميم (قاعدة إلزامية لكل الواجهات: التطبيق والبوابة واللوحات) | [`docs/design-system.md`](docs/design-system.md) |
 | الإصدارات المثبتة للأدوات | [`docs/versions.md`](docs/versions.md) |
 | تقرير المرحلة 1 | [`docs/phase-1-report.html`](docs/phase-1-report.html) |
 | تقرير المرحلة 2 | [`docs/phase-2-report.html`](docs/phase-2-report.html) |

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ء-حماية | تقرير مرحلة نظام التصميم</title>
+<style>
+:root{--page:#f3f5fa;--card:#fff;--ink:#182038;--muted:#5b6478;--line:#e3e7ef;
+--navy:#1f3fa0;--red:#d7141a;--orange:#f08c00;--green:#188038;--purple:#7838a0;--teal:#00806a;--amber:#f5b400;--pink:#c2185b;--slate:#5b6478;--sky:#1976d2}
+@media (prefers-color-scheme:dark){:root{--page:#0e1426;--card:#161e35;--ink:#e8ecf5;--muted:#a6afc4;--line:#26304d;--navy:#8fa8ff}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font-family:"IBM Plex Sans Arabic","Segoe UI",Tahoma,Arial,sans-serif;line-height:1.75;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header.cover{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px 24px;margin-bottom:20px;border-top:6px solid var(--navy)}
+header.cover h1{margin:0 0 6px;font-size:30px}
+.sub{color:var(--muted);margin:0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:16px}
+.meta div{background:var(--page);border-radius:12px;padding:8px 12px;font-size:14px}
+.meta b{display:block;color:var(--muted);font-weight:600;font-size:12px}
+section{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 24px;margin-bottom:20px}
+h2{margin-top:0;font-size:23px}
+h3{font-size:18px;margin:18px 0 8px}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:start;vertical-align:top}
+th{font-weight:700;color:var(--muted);font-size:13px}
+code{direction:ltr;unicode-bidi:isolate;background:var(--page);padding:1px 6px;border-radius:6px;font-size:13px}
+.ltr{direction:ltr;unicode-bidi:isolate}
+.sw{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.sw div{border:1px solid var(--line);border-radius:14px;overflow:hidden;font-size:13px}
+.sw i{display:block;height:56px}
+.sw span{display:block;padding:6px 10px}
+.tiles{display:flex;flex-wrap:wrap;gap:10px}
+.tile{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:16px;padding:10px 14px;min-width:230px;flex:1}
+.tile b{display:block}.tile small{color:var(--muted)}
+.ic{inline-size:44px;block-size:44px;border-radius:12px;display:grid;place-items:center;color:#fff;font-weight:700;font-size:20px;flex:none}
+.pill{display:inline-block;border-radius:999px;padding:2px 12px;font-size:13px;font-weight:700;margin:2px}
+.bar{height:10px;background:var(--line);border-radius:6px;overflow:hidden;min-width:90px}
+.bar span{display:block;height:100%;background:var(--green)}
+.shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.shots figure{margin:0;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.shots img{display:block;width:100%;height:auto}
+.shots figcaption{padding:6px 10px;font-size:13px;color:var(--muted)}
+.note{border-inline-start:4px solid var(--navy);background:var(--page);padding:10px 14px;border-radius:10px;margin:12px 0}
+footer{color:var(--muted);text-align:center;font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="cover">
+  <h1>ء-حماية <span class="ltr">e-Himaya</span></h1>
+  <p class="sub">تقرير مرحلة نظام التصميم الموحّد: ألوان زاهية، أيقونات في مربعات ملونة، بطاقات بيضاء مستديرة، شارات، وخط عربي واحد للتطبيق والبوابة ولوحة القيادة</p>
+  <div class="meta">
+    <div><b>التاريخ</b>2026-10-24</div>
+    <div><b>الفرع</b><span class="ltr">claude/project-thread-yzwsn2</span></div>
+    <div><b>المرجع</b><a href="design-system.md">docs/design-system.md</a></div>
+    <div><b>الحالة</b>منجزة، بانتظار المراجعة والدمج</div>
+  </div>
+</header>
+
+<section>
+  <h2>1. القاعدة الجديدة</h2>
+  <p>بطلب يامن (2026-10-24): كل واجهات المشروع تتبع أسلوب نموذجي الإضافتين 11 و12. القاعدة مكتوبة في <code>docs/design-system.md</code> حتى تلتزم بها كل مرحلة قادمة: كل شاشة جديدة تُصمَّم بهذا الأسلوب، وكل شاشة قديمة تُنقل إليه عند تعديلها.</p>
+  <p>الأسلوب خاص بالمشروع: لا شعار ولا أيقونات ولا تصميم منقول من تطبيق آخر. الشعار الوحيد هو شعار الديوان. الأيقونات من Material Symbols (رخصة Apache 2.0) والخط IBM Plex Sans Arabic (رخصة SIL OFL).</p>
+</section>
+
+<section>
+  <h2>2. مراجعة ← إعادة تصميم ← تطوير</h2>
+  <div class="tbl"><table>
+    <tr><th>المجال</th><th>قبل</th><th>بعد</th></tr>
+    <tr><td>الألوان</td><td>ألوان باهتة مشتقة آليا من لون واحد. اللون الأساسي في اللوحة والبوابة أحمر.</td><td>كحلي أساسي، والأحمر للطوارئ فقط، وعشرة ألوان فئات ثابتة في التطبيقات الثلاثة. خلفية رمادية فاتحة وبطاقات بيضاء.</td></tr>
+    <tr><td>الخط</td><td>خط النظام. اللوحة تذكر Noto Sans Arabic ولا تحمّله.</td><td>IBM Plex Sans Arabic مضمَّن في التطبيق ومستضاف في الويب (مسموح في سياسة CSP لأنه من نفس المصدر).</td></tr>
+    <tr><td>الأيقونات</td><td>أيقونات بلا خلفية، وقائمة اللوحة نص فقط.</td><td>مربعات أيقونات ملونة في القوائم والاختصارات وقائمة اللوحة (32 عنصرا) والبوابة.</td></tr>
+    <tr><td>المكونات</td><td>عناصر Material الافتراضية.</td><td>مكونات مشتركة: مربع الأيقونة، بطاقة التنقل، بطاقة الاختيار، الشارة، شريط الأزرار السفلي، الشريط الأحمر للتنبيه، شريط الخطوات، حلقة النسبة.</td></tr>
+  </table></div>
+</section>
+
+<section>
+  <h2>3. الألوان</h2>
+  <p>كل لون مفحوص بمعيار WCAG 2.2 AA. البرتقالي لا يُستعمل لنص ولا يكون العلامة الوحيدة لأي حالة.</p>
+  <div class="sw">
+    <div><i style="background:#1f3fa0"></i><span><b>كحلي</b> #1F3FA0 · الأساسي، المتابعة</span></div>
+    <div><i style="background:#d7141a"></i><span><b>أحمر</b> #D7141A · الطوارئ، 198</span></div>
+    <div><i style="background:#f08c00"></i><span><b>برتقالي</b> #F08C00 · التمييز والخطوات</span></div>
+    <div><i style="background:#188038"></i><span><b>أخضر</b> #188038 · الاتصال، السلامة</span></div>
+    <div><i style="background:#7838a0"></i><span><b>بنفسجي</b> #7838A0 · المعلومة، الأطباء</span></div>
+    <div><i style="background:#00806a"></i><span><b>أخضر مزرق</b> #00806A · الشراكات، الخرائط</span></div>
+    <div><i style="background:#f5b400"></i><span><b>كهرماني</b> #F5B400 · المقترحات، التنبيهات</span></div>
+    <div><i style="background:#c2185b"></i><span><b>وردي</b> #C2185B · المكافآت</span></div>
+    <div><i style="background:#1976d2"></i><span><b>سماوي</b> #1976D2 · الطقس، الإشعارات</span></div>
+    <div><i style="background:#5b6478"></i><span><b>رمادي</b> #5B6478 · الإعدادات</span></div>
+  </div>
+  <h3>الشارات</h3>
+  <p>
+    <span class="pill" style="background:#e6f4ea;color:#166b2e">عام</span>
+    <span class="pill" style="background:#e8edfa;color:#1f3fa0">المؤسسة والديوان</span>
+    <span class="pill" style="background:#fde8e8;color:#b3121a">عند حادث</span>
+    <span class="pill" style="background:#fff3d6;color:#7a4b00">سجل الصيانة</span>
+    <span class="pill" style="background:#f2eaf8;color:#5e2a80">طلب معلومة</span>
+  </p>
+  <h3>بطاقات التنقل</h3>
+  <div class="tiles">
+    <div class="tile"><span class="ic" style="background:#1f3fa0">✓</span><div><b>متابعة طلب أو بلاغ</b><small>حالة بلاغك أو طلبك برقمه</small></div></div>
+    <div class="tile"><span class="ic" style="background:#d7141a">!</span><div><b>التبليغ عن مشكل</b><small>خطر غير عاجل</small></div></div>
+    <div class="tile"><span class="ic" style="background:#188038">?</span><div><b>طرح سؤال</b><small>يجيبك مختص من الديوان</small></div></div>
+  </div>
+</section>
+
+<section>
+  <h2>4. التقدم لكل جزء</h2>
+  <div class="tbl"><table>
+    <tr><th>الجزء</th><th>ما أُنجز</th><th>الاختبارات</th><th>التقدم</th></tr>
+    <tr><td>وثيقة نظام التصميم</td><td>الألوان (فاتح وداكن)، ألوان الفئات، الخط، الأشكال، المكونات، جدول التباين.</td><td>تباين محسوب لكل زوج</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+    <tr><td>تطبيق الهاتف</td><td><code>tokens.dart</code> و<code>theme.dart</code> و<code>components.dart</code>، الخط مضمَّن، الواجهة الرئيسية بالمكونات الجديدة (الاختصارات، أرقام الطوارئ، شريط 198 ورسالة النجدة، هالة زر النجدة).</td><td>411، كلها ناجحة</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+    <tr><td>لوحة القيادة</td><td>الرموز والخط ومربعات الأيقونات لكل عناصر القائمة (32)، الأزرار، البطاقات، الاختيار المقسّم، مبدّل اللغة.</td><td>430 + axe على 10 شاشات بلغتين: 0 مخالفة</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+    <tr><td>بوابة المؤسسات</td><td>نفس الرموز والخط والمكونات، وأيقونات القائمة.</td><td>89</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+    <tr><td>باقي الشاشات</td><td>تأخذ الألوان والخط والبطاقات والأزرار تلقائيا من الثيم. تحويل كل قائمة إلى بطاقات بأيقونات يتم عند تعديل الشاشة في مرحلتها.</td><td>—</td><td><div class="bar"><span style="width:70%"></span></div>تلقائي</td></tr>
+  </table></div>
+</section>
+
+<section>
+  <h2>5. صور الشاشات</h2>
+  <div class="shots">
+    <figure><img src="phase-ui/mobile-home-light.jpg" alt="الواجهة الرئيسية للتطبيق، الوضع الفاتح"><figcaption>التطبيق: الواجهة الرئيسية، فاتح</figcaption></figure>
+    <figure><img src="phase-ui/mobile-home-dark.jpg" alt="الواجهة الرئيسية للتطبيق، الوضع الداكن"><figcaption>التطبيق: الواجهة الرئيسية، داكن</figcaption></figure>
+    <figure><img src="phase-ui/dash-ar-light.jpg" alt="لوحة القيادة، الوضع الفاتح"><figcaption>لوحة القيادة: المؤشرات، فاتح</figcaption></figure>
+    <figure><img src="phase-ui/dash-ar-dark.jpg" alt="لوحة القيادة، الوضع الداكن"><figcaption>لوحة القيادة: المؤشرات، داكن</figcaption></figure>
+  </div>
+  <p class="note">صور التطبيق مولّدة في بيئة الاختبار، فلا يظهر شعار الديوان داخل مربع 198 فيها، ويظهر على الهاتف.</p>
+</section>
+
+<section>
+  <h2>6. ما بقي</h2>
+  <ul>
+    <li>تحويل القوائم القديمة (الإعدادات، الملف، فضاء التطوع، صفحات اللوحة) إلى بطاقات بأيقونات ملونة، شاشة شاشة عند تعديلها.</li>
+    <li>شاشة «تواصل معنا» الموحّدة (الإضافة 11) وفضاء المؤسسات (الإضافة 12) تُبنى مباشرة بهذه المكونات في المرحلة ج.</li>
+  </ul>
+</section>
+
+<footer>ء-حماية · نظام التصميم · 2026-10-24</footer>
+</div>
+</body>
+</html>

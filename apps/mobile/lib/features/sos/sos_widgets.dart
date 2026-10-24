@@ -120,32 +120,40 @@ class _SosButtonState extends ConsumerState<SosButton> {
           button: true,
           label: '${l10n.sosButtonLabel}. $label',
           excludeSemantics: true,
-          child: SizedBox.square(
-            dimension: 200,
-            child: Material(
-              key: const Key('sos-button'),
-              color: _armed ? const Color(0xFF8E0000) : sosRed,
-              shape: CircleBorder(
-                side: BorderSide(
-                  color: _armed ? Colors.amber : Colors.transparent,
-                  width: 8,
+          // Design system: a soft red halo around the button instead of a grey shadow.
+          child: Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: sosRed.withValues(alpha: 0.12),
+            ),
+            child: SizedBox.square(
+              dimension: 200,
+              child: Material(
+                key: const Key('sos-button'),
+                color: _armed ? const Color(0xFF8E0000) : sosRed,
+                shape: CircleBorder(
+                  side: BorderSide(
+                    color: _armed ? Colors.amber : Colors.transparent,
+                    width: 8,
+                  ),
                 ),
-              ),
-              elevation: 6,
-              clipBehavior: Clip.antiAlias,
-              child: InkWell(
-                onTap: _tap,
-                onLongPress: _sending ? null : _send,
-                child: Center(
-                  child: _sending
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : Text(
-                          l10n.sosButtonLabel,
-                          style: theme.textTheme.displayMedium?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w800,
+                elevation: 0,
+                clipBehavior: Clip.antiAlias,
+                child: InkWell(
+                  onTap: _tap,
+                  onLongPress: _sending ? null : _send,
+                  child: Center(
+                    child: _sending
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : Text(
+                            l10n.sosButtonLabel,
+                            style: theme.textTheme.displayMedium?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w800,
+                            ),
                           ),
-                        ),
+                  ),
                 ),
               ),
             ),

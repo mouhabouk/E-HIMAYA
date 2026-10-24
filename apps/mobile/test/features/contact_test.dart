@@ -118,6 +118,9 @@ void main() {
       300,
       scrollable: find.byType(Scrollable).first,
     );
+    // Fully on screen: the taller design-system cards can leave it at the edge.
+    await tester.ensureVisible(find.byKey(const Key('contact-send')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('contact-send')));
     await tester.pumpAndSettle();
     expect(sent, isNull);
@@ -133,6 +136,9 @@ void main() {
       300,
       scrollable: find.byType(Scrollable).first,
     );
+    // Fully on screen: the taller design-system cards can leave it at the edge.
+    await tester.ensureVisible(find.byKey(const Key('contact-send')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('contact-send')));
     await tester.pumpAndSettle();
     expect(sent!['kind'], 'access_info');
@@ -160,6 +166,9 @@ void main() {
       find.byKey(const Key('settings-contact')),
       200,
     );
+    // Fully on screen: the taller design-system cards can leave it at the edge.
+    await tester.ensureVisible(find.byKey(const Key('settings-contact')));
+    await tester.pumpAndSettle();
     expect(find.byKey(const Key('settings-contact')), findsOneWidget);
     await unmountApp(tester);
   });
