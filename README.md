@@ -8,7 +8,7 @@
 | وثيقة هيكلة النظام (معتمدة، الإصدار 1.0) | [`docs/02-architecture.html`](docs/02-architecture.html) |
 | نظام التصميم (قاعدة إلزامية لكل الواجهات: التطبيق والبوابة واللوحات) | [`docs/design-system.md`](docs/design-system.md) |
 | مرجع التصميم: جداول الألوان ورموزها والأيقونات والإطارات ومصادرها وروابط التحميل | [`docs/design-reference.html`](docs/design-reference.html) |
-| قاعدة نهاية المرحلة: تحيين مرجع التصميم والمخططات والملف الوصفي وكراس الشروط | [`docs/phase-end.md`](docs/phase-end.md) |
+| قاعدة نهاية المرحلة: تحيين مرجع التصميم والمخططات والملف الوصفي وكراس الشروط والعرض التقديمي | [`docs/phase-end.md`](docs/phase-end.md) |
 | الإصدارات المثبتة للأدوات | [`docs/versions.md`](docs/versions.md) |
 | تقرير المرحلة 1 | [`docs/phase-1-report.html`](docs/phase-1-report.html) |
 | تقرير المرحلة 2 | [`docs/phase-2-report.html`](docs/phase-2-report.html) |
