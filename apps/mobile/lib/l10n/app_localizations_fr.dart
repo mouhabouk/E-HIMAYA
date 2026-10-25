@@ -738,18 +738,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get orgKindIndustrial => 'Industrielle';
 
   @override
-  String get orgKindEducational => 'Éducative';
-
-  @override
-  String get orgKindHotel => 'Hôtel';
-
-  @override
-  String get orgKindGovernment => 'Administration publique';
-
-  @override
-  String get orgKindPrivate => 'Privée';
-
-  @override
   String get orgKindOther => 'Autre';
 
   @override
@@ -4103,4 +4091,512 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get envBannerTraining =>
       '[SIM] Exercice : données fictives, pas de vrais signalements';
+
+  @override
+  String get orgReadiness => 'Préparation';
+
+  @override
+  String orgReadinessMissing(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count exigences manquantes',
+      one: '1 exigence manquante',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get orgReadinessDone => 'Toutes les exigences sont remplies';
+
+  @override
+  String get orgMissingTitle => 'Exigences manquantes';
+
+  @override
+  String get orgSectionsTitle => 'Rubriques';
+
+  @override
+  String get orgSectionCard => 'Fiche';
+
+  @override
+  String get orgSectionEquipment => 'Équipements et maintenance';
+
+  @override
+  String get orgSectionHazmat => 'Matières dangereuses';
+
+  @override
+  String get orgSectionEvacuation => 'Évacuation';
+
+  @override
+  String get orgSectionReports => 'Signalements';
+
+  @override
+  String get orgSectionCertificates => 'Certificats';
+
+  @override
+  String get orgSectionMembers => 'Membres et rôles';
+
+  @override
+  String get orgSectionPortal => 'Portail';
+
+  @override
+  String get orgReportAs => 'Signaler pour l’établissement';
+
+  @override
+  String get orgPendingNote =>
+      'En cours d’examen : le signalement au nom de l’établissement sera possible après validation par l’Office.';
+
+  @override
+  String get orgRegister => 'Enregistrer un établissement';
+
+  @override
+  String orgRegisterStep(int current, int total) {
+    return 'Étape $current sur $total';
+  }
+
+  @override
+  String get orgRegisterKindTitle =>
+      'Quel est le type de votre établissement ?';
+
+  @override
+  String get orgRegisterIdentityTitle => 'Identifiant et contact';
+
+  @override
+  String get orgRegisterLocationTitle => 'Emplacement et bâtiment';
+
+  @override
+  String get orgRegisterReviewTitle => 'Vérification';
+
+  @override
+  String get orgName => 'Nom de l’établissement';
+
+  @override
+  String get orgIdentifierType => 'Type d’identifiant';
+
+  @override
+  String get orgIdentifierMf => 'Matricule fiscal';
+
+  @override
+  String get orgIdentifierRne => 'Registre national des entreprises';
+
+  @override
+  String get orgIdentifier => 'Identifiant';
+
+  @override
+  String get orgManagerName => 'Responsable : nom complet';
+
+  @override
+  String get orgManagerPhone => 'Responsable : téléphone';
+
+  @override
+  String get orgContactEmail => 'E-mail de l’établissement';
+
+  @override
+  String get orgUseMyLocation => 'Utiliser ma position';
+
+  @override
+  String orgLocationSet(String lat, String lon) {
+    return 'Position : $lat, $lon';
+  }
+
+  @override
+  String get orgLocationUnavailable =>
+      'Position indisponible. Activez la localisation puis réessayez.';
+
+  @override
+  String get orgLocationRequired =>
+      'Indiquez l’emplacement de l’établissement.';
+
+  @override
+  String get orgReceivesPublic => 'Reçoit du public';
+
+  @override
+  String get orgFloors => 'Étages';
+
+  @override
+  String get orgHeight => 'Hauteur (m)';
+
+  @override
+  String get orgNext => 'Suivant';
+
+  @override
+  String get orgBack => 'Retour';
+
+  @override
+  String get orgSubmit => 'Envoyer l’enregistrement';
+
+  @override
+  String get orgRegisteredTitle => 'Enregistrement envoyé';
+
+  @override
+  String get orgRegisteredBody =>
+      'L’établissement reste « en cours d’examen » jusqu’à sa validation par l’Office.';
+
+  @override
+  String get orgOpenInstitution => 'Ouvrir « Mon établissement »';
+
+  @override
+  String get orgInvalidIdentifier =>
+      'Identifiant invalide : 7 chiffres et une lettre.';
+
+  @override
+  String get orgInvalidPhone =>
+      'Téléphone : 8 chiffres, ou +216 suivi de 8 chiffres.';
+
+  @override
+  String get orgInvalidNumber => 'Saisissez un nombre entier dans les limites.';
+
+  @override
+  String get orgInvalidEmail => 'E-mail invalide.';
+
+  @override
+  String get orgEmailNotVerified =>
+      'Confirmez votre e-mail avant d’enregistrer un établissement.';
+
+  @override
+  String get orgIdentifierTaken => 'Cet identifiant est déjà enregistré.';
+
+  @override
+  String get orgKindFieldsTitle => 'Propre au type';
+
+  @override
+  String get orgKindFieldsSim =>
+      'Liste de travail [SIM] en attente de validation par l’Office';
+
+  @override
+  String get orgKindFieldsEmpty => 'Aucun champ propre à ce type.';
+
+  @override
+  String get orgCardTabIdentity => 'Identité';
+
+  @override
+  String get orgCardTabBuilding => 'Bâtiment';
+
+  @override
+  String get orgEdit => 'Modifier';
+
+  @override
+  String get orgSave => 'Enregistrer';
+
+  @override
+  String get orgCancel => 'Annuler';
+
+  @override
+  String get orgSaved => 'Enregistré.';
+
+  @override
+  String get orgVersionConflict =>
+      'La fiche a été modifiée entre-temps. Rechargez puis réessayez.';
+
+  @override
+  String get orgYes => 'Oui';
+
+  @override
+  String get orgNo => 'Non';
+
+  @override
+  String get orgNotSet => 'Non renseigné';
+
+  @override
+  String get orgEquipmentEmpty => 'Aucun équipement enregistré.';
+
+  @override
+  String orgEquipmentCount(int count) {
+    return 'Nombre : $count';
+  }
+
+  @override
+  String get orgMaintenanceOk => 'Maintenance à jour';
+
+  @override
+  String get orgMaintenanceDueSoon => 'Maintenance bientôt due';
+
+  @override
+  String get orgMaintenanceOverdue => 'Maintenance en retard';
+
+  @override
+  String get orgMaintenanceUnknown => 'Pas de date de maintenance';
+
+  @override
+  String orgMaintenanceNext(String date) {
+    return 'Prochaine maintenance : $date';
+  }
+
+  @override
+  String get orgLogMaintenance => 'Noter une maintenance aujourd’hui';
+
+  @override
+  String get orgMaintenanceLogged => 'Maintenance notée.';
+
+  @override
+  String get orgEvacuationEmpty =>
+      'Aucun point sur la carte. Les points s’ajoutent sur le portail.';
+
+  @override
+  String get orgCertificatesEmpty => 'Aucun certificat pour l’instant.';
+
+  @override
+  String orgCertificateValidUntil(String date) {
+    return 'Valable jusqu’au $date';
+  }
+
+  @override
+  String get orgMembersEmpty => 'Aucun membre.';
+
+  @override
+  String get orgInvite => 'Inviter un membre';
+
+  @override
+  String get orgInviteEmail => 'E-mail';
+
+  @override
+  String get orgInviteRole => 'Rôle';
+
+  @override
+  String get orgInviteSend => 'Envoyer l’invitation';
+
+  @override
+  String orgInviteSent(String email) {
+    return 'Invitation envoyée à $email.';
+  }
+
+  @override
+  String get orgAdminOnly => 'Réservé à l’administrateur.';
+
+  @override
+  String get orgKindHealth => 'Santé';
+
+  @override
+  String get orgKindEnergy => 'Énergie et carburants';
+
+  @override
+  String get orgKindTourism => 'Tourisme';
+
+  @override
+  String get orgKindEducation => 'Éducation';
+
+  @override
+  String get orgKindSocialCare => 'Action sociale';
+
+  @override
+  String get orgKindPublicAdmin => 'Administration publique';
+
+  @override
+  String get orgKindCultureSport => 'Culture et sport';
+
+  @override
+  String get orgKindCommercial => 'Commerce';
+
+  @override
+  String get orgKindTransport => 'Transport';
+
+  @override
+  String get orgKindReligious => 'Culte';
+
+  @override
+  String get kindFieldReceptionPhone => 'Numéro d\'accueil';
+
+  @override
+  String get kindFieldBeds => 'Lits';
+
+  @override
+  String get kindFieldIcu => 'Réanimation';
+
+  @override
+  String get kindFieldOxygenHours => 'Réserve d\'oxygène (heures)';
+
+  @override
+  String get kindFieldGenerator => 'Groupe électrogène';
+
+  @override
+  String get kindFieldHelipad => 'Hélisurface';
+
+  @override
+  String get kindFieldNonAmbulatory => 'Personnes non mobiles';
+
+  @override
+  String get kindFieldWorkersPerShift => 'Ouvriers par poste';
+
+  @override
+  String get kindFieldSelfFireFighting => 'Moyens propres d\'extinction';
+
+  @override
+  String get kindFieldTanks => 'Réservoirs';
+
+  @override
+  String get kindFieldFuelTypes => 'Types de carburant';
+
+  @override
+  String get kindFieldStorageM3 => 'Stockage (m³)';
+
+  @override
+  String get kindFieldShutoffValves => 'Vannes de coupure';
+
+  @override
+  String get kindFieldRooms => 'Chambres';
+
+  @override
+  String get kindFieldGuestLanguages => 'Langues des clients';
+
+  @override
+  String get kindFieldPoolOrBeach => 'Piscine ou plage';
+
+  @override
+  String get kindFieldOccupancyPct => 'Taux d\'occupation (%)';
+
+  @override
+  String get kindFieldStudents => 'Élèves';
+
+  @override
+  String get kindFieldAgeRange => 'Tranche d\'âge';
+
+  @override
+  String get kindFieldBoarding => 'Internat';
+
+  @override
+  String get kindFieldStudentsSpecialNeeds => 'Élèves à besoins spécifiques';
+
+  @override
+  String get kindFieldResidents => 'Résidents';
+
+  @override
+  String get kindFieldNightWatch => 'Veille de nuit';
+
+  @override
+  String get kindFieldStaff => 'Agents';
+
+  @override
+  String get kindFieldArchive => 'Archives';
+
+  @override
+  String get kindFieldSeatedCapacity => 'Places assises';
+
+  @override
+  String get kindFieldStands => 'Tribunes';
+
+  @override
+  String get kindFieldShops => 'Boutiques';
+
+  @override
+  String get kindFieldUndergroundParking => 'Parking souterrain';
+
+  @override
+  String get kindFieldDailyPassengers => 'Voyageurs par jour';
+
+  @override
+  String get kindFieldEmergencyExits => 'Issues de secours';
+
+  @override
+  String get kindFieldPeakTimes => 'Heures d\'affluence';
+
+  @override
+  String get orgVisibilityPublic => 'Public';
+
+  @override
+  String get orgVisibilityOrgOffice => 'Établissement et Office';
+
+  @override
+  String get orgVisibilityIncident => 'Lors d\'un signalement proche';
+
+  @override
+  String get orgReqSafetyFile => 'Dossier de sécurité (enregistré)';
+
+  @override
+  String get orgReqSafetyPlan => 'Plan de sécurité (enregistré)';
+
+  @override
+  String get orgReqSafetyTeam =>
+      'Équipe de sécurité : un représentant et au moins un membre';
+
+  @override
+  String get orgReqTraining =>
+      'Chaque membre de l’équipe a une date de formation, aucune expirée';
+
+  @override
+  String get orgReqHazmatSds =>
+      'Une fiche de données de sécurité pour chaque matière dangereuse';
+
+  @override
+  String get orgReqEquipment =>
+      'Au moins un équipement, aucun en retard de maintenance';
+
+  @override
+  String get orgReqEvacuationPoints =>
+      'Au moins un point d’évacuation sur la carte';
+
+  @override
+  String get orgEquipExtinguisher => 'Extincteur';
+
+  @override
+  String get orgEquipFireHoseReel => 'Robinet d’incendie armé';
+
+  @override
+  String get orgEquipSprinkler => 'Sprinkler';
+
+  @override
+  String get orgEquipSmokeDetector => 'Détecteur de fumée';
+
+  @override
+  String get orgEquipAlarmPanel => 'Centrale d’alarme';
+
+  @override
+  String get orgEquipEmergencyLighting => 'Éclairage de sécurité';
+
+  @override
+  String get orgEquipFireDoor => 'Porte coupe-feu';
+
+  @override
+  String get orgEquipOther => 'Autre';
+
+  @override
+  String get orgFeatureEvacuationPoint =>
+      'Point d’évacuation et de rassemblement';
+
+  @override
+  String get orgFeatureWaterPoint => 'Point d’eau';
+
+  @override
+  String get orgFeatureAlarm => 'Alarme';
+
+  @override
+  String get orgRoleAdmin => 'Administrateur';
+
+  @override
+  String get orgRoleEditor => 'Éditeur';
+
+  @override
+  String get orgRoleMember => 'Membre';
+
+  @override
+  String get orgCertDraft => 'Brouillon';
+
+  @override
+  String get orgCertSubmitted => 'Soumis';
+
+  @override
+  String get orgCertApproved => 'Approuvé';
+
+  @override
+  String get orgCertRejected => 'Rejeté';
+
+  @override
+  String get orgCertRevoked => 'Révoqué';
+
+  @override
+  String get orgAlertTrainingExpired =>
+      'Formation expirée dans l’équipe de sécurité';
+
+  @override
+  String get orgAlertTrainingExpiring =>
+      'Formation bientôt expirée dans l’équipe de sécurité';
+
+  @override
+  String get orgAlertMaintenanceOverdue => 'Maintenance d’équipement en retard';
+
+  @override
+  String get orgAlertMaintenanceDueSoon =>
+      'Maintenance d’équipement bientôt due';
+
+  @override
+  String get orgKindLabelTitle => 'Type';
 }

@@ -771,11 +771,17 @@
       "suspended": "Suspended"
     },
     "kind": {
+      "health": "Health",
       "industrial": "Industrial",
-      "educational": "Educational",
-      "hotel": "Hotel",
-      "government": "Public administration",
-      "private": "Private",
+      "energy": "Energy and fuel",
+      "tourism": "Tourism",
+      "education": "Education",
+      "social_care": "Social care",
+      "public_admin": "Public administration",
+      "culture_sport": "Culture and sport",
+      "commercial": "Commercial",
+      "transport": "Transport",
+      "religious": "Religious",
       "other": "Other"
     },
     "family": {
@@ -1064,6 +1070,54 @@
       "open": "Open the profile",
       "legend": "Legend",
       "report": "Report location"
+    },
+    "kindField": {
+      "reception_phone": "Reception number",
+      "beds": "Beds",
+      "icu": "Intensive care",
+      "oxygen_hours": "Oxygen reserve (hours)",
+      "generator": "Generator",
+      "helipad": "Helipad",
+      "non_ambulatory": "Non-ambulatory people",
+      "workers_per_shift": "Workers per shift",
+      "self_fire_fighting": "Own fire-fighting means",
+      "tanks": "Tanks",
+      "fuel_types": "Fuel types",
+      "storage_m3": "Storage (m³)",
+      "shutoff_valves": "Shut-off valves",
+      "rooms": "Rooms",
+      "guest_languages": "Guest languages",
+      "pool_or_beach": "Pool or beach",
+      "occupancy_pct": "Occupancy (%)",
+      "students": "Students",
+      "age_range": "Age range",
+      "boarding": "Boarding",
+      "students_special_needs": "Students with special needs",
+      "residents": "Residents",
+      "night_watch": "Night watch",
+      "staff": "Staff",
+      "archive": "Archive",
+      "seated_capacity": "Seats",
+      "stands": "Stands",
+      "shops": "Shops",
+      "underground_parking": "Underground parking",
+      "daily_passengers": "Daily passengers",
+      "emergency_exits": "Emergency exits",
+      "peak_times": "Peak times"
+    },
+    "visibility": {
+      "public": "Public",
+      "org_office": "Institution and Office",
+      "incident": "On a nearby report"
+    },
+    "kindExtra": {
+      "kindFieldsTitle": "Kind-specific",
+      "kindReview": "Kind to review",
+      "kindOnApproval": "Kind on approval",
+      "readiness": "Readiness",
+      "yes": "Yes",
+      "no": "No",
+      "sim": "Working list [SIM] pending the Office's approval"
     }
   },
   "levels": {

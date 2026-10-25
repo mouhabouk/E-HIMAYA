@@ -305,6 +305,44 @@ final orgReportsProvider = FutureProvider.autoDispose
       retry: (_, _) => null,
     );
 
+/// `GET /api/v1/orgs/{id}`: the full card with its version (online only).
+final orgCardProvider = FutureProvider.autoDispose.family<OrgCardData, String>(
+  (ref, orgId) => ref.watch(apiProvider).orgCard(orgId),
+  retry: (_, _) => null,
+);
+
+final orgEquipmentProvider = FutureProvider.autoDispose
+    .family<List<OrgEquipment>, String>(
+      (ref, orgId) => ref.watch(apiProvider).orgEquipment(orgId),
+      retry: (_, _) => null,
+    );
+
+final orgFeaturesProvider = FutureProvider.autoDispose
+    .family<List<OrgFeature>, String>(
+      (ref, orgId) => ref.watch(apiProvider).orgFeatures(orgId),
+      retry: (_, _) => null,
+    );
+
+final orgCertificatesProvider = FutureProvider.autoDispose
+    .family<List<OrgCertificate>, String>(
+      (ref, orgId) => ref.watch(apiProvider).orgCertificates(orgId),
+      retry: (_, _) => null,
+    );
+
+final orgMembersProvider = FutureProvider.autoDispose
+    .family<List<OrgMember>, String>(
+      (ref, orgId) => ref.watch(apiProvider).orgMembers(orgId),
+      retry: (_, _) => null,
+    );
+
+/// The account's role in an institution, from the cached list (null: unknown).
+final myOrgRoleProvider = Provider.family<String?, String>((ref, orgId) {
+  for (final o in ref.watch(myOrgsProvider).value ?? const <MyOrg>[]) {
+    if (o.id == orgId) return o.myRole;
+  }
+  return null;
+});
+
 /// Opens a web page outside the app (institutions portal). Returns false when it cannot.
 typedef UrlOpener = Future<bool> Function(Uri url);
 

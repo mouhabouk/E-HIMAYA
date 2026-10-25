@@ -192,11 +192,17 @@ async def snapshot_of(session: AsyncSession, org: Organization) -> dict[str, Any
 # ---------------------------------------------------------------- PDF
 
 _KIND = {
+    "health": ("صحية", "Santé"),
     "industrial": ("صناعية", "Industrielle"),
-    "educational": ("تعليمية", "Éducative"),
-    "hotel": ("نزل", "Hôtel"),
-    "government": ("حكومية", "Administration publique"),
-    "private": ("خاصة", "Privée"),
+    "energy": ("طاقة ومحروقات", "Énergie et carburants"),
+    "tourism": ("سياحية", "Tourisme"),
+    "education": ("تربوية", "Éducation"),
+    "social_care": ("رعاية اجتماعية", "Action sociale"),
+    "public_admin": ("عمومية وإدارية", "Administration publique"),
+    "culture_sport": ("ثقافية ورياضية", "Culture et sport"),
+    "commercial": ("تجارية", "Commerce"),
+    "transport": ("نقل", "Transport"),
+    "religious": ("دينية", "Culte"),
     "other": ("أخرى", "Autre"),
 }
 _FAMILY = {

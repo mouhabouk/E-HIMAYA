@@ -7,7 +7,7 @@ working model to validate against the official text (مجلة السلامة و�
 
 import calendar
 import re
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from datetime import date, timedelta
 from enum import StrEnum
@@ -22,11 +22,19 @@ class OrgStatus(StrEnum):
 
 
 class OrgKind(StrEnum):
+    """Activity of the institution (addition 12): a working list until the Office validates it [SIM]."""
+
+    HEALTH = "health"
     INDUSTRIAL = "industrial"
-    EDUCATIONAL = "educational"
-    HOTEL = "hotel"
-    GOVERNMENT = "government"
-    PRIVATE = "private"
+    ENERGY = "energy"
+    TOURISM = "tourism"
+    EDUCATION = "education"
+    SOCIAL_CARE = "social_care"
+    PUBLIC_ADMIN = "public_admin"
+    CULTURE_SPORT = "culture_sport"
+    COMMERCIAL = "commercial"
+    TRANSPORT = "transport"
+    RELIGIOUS = "religious"
     OTHER = "other"
 
 
@@ -231,9 +239,129 @@ def missing(required: Iterable[Requirement], facts: Facts) -> list[Requirement]:
     return [item for item in required if not checks[item]]
 
 
+# ---------------------------------------------------------------- kind fields (addition 12, design P2 §2.2)
+
+# Who sees a field: the public (nearest places), the institution and the Office's institutions auditor, or the
+# operations room only on a report near the institution (always logged). Members always see their own fields.
+Visibility = Literal["public", "org_office", "incident"]
+FieldType = Literal["int", "bool", "text"]
+
+
+@dataclass(frozen=True, slots=True)
+class KindField:
+    key: str
+    type: FieldType
+    visibility: Visibility
+    maximum: int = 1_000_000  # int: largest value; text: longest length
+
+
+# Working model [SIM]: the fields of each kind and their visibility, to validate with the Office. Nothing is
+# required yet; the classification keeps deciding the safety requirements.
+KIND_FIELDS: dict[OrgKind, tuple[KindField, ...]] = {
+    OrgKind.HEALTH: (
+        KindField("reception_phone", "text", "public", 20),
+        KindField("beds", "int", "org_office", 10_000),
+        KindField("icu", "bool", "org_office"),
+        KindField("oxygen_hours", "int", "org_office", 10_000),
+        KindField("generator", "bool", "org_office"),
+        KindField("helipad", "bool", "org_office"),
+        KindField("non_ambulatory", "int", "incident", 10_000),
+    ),
+    OrgKind.INDUSTRIAL: (
+        KindField("workers_per_shift", "int", "org_office", 100_000),
+        KindField("self_fire_fighting", "bool", "org_office"),
+        KindField("tanks", "int", "incident", 1_000),
+    ),
+    OrgKind.ENERGY: (
+        KindField("fuel_types", "text", "org_office", 200),
+        KindField("storage_m3", "int", "incident", 10_000_000),
+        KindField("shutoff_valves", "bool", "incident"),
+    ),
+    OrgKind.TOURISM: (
+        KindField("rooms", "int", "org_office", 10_000),
+        KindField("guest_languages", "text", "org_office", 200),
+        KindField("pool_or_beach", "bool", "org_office"),
+        KindField("occupancy_pct", "int", "incident", 100),
+    ),
+    OrgKind.EDUCATION: (
+        KindField("students", "int", "org_office", 100_000),
+        KindField("age_range", "text", "org_office", 50),
+        KindField("boarding", "bool", "org_office"),
+        KindField("students_special_needs", "int", "incident", 10_000),
+    ),
+    OrgKind.SOCIAL_CARE: (
+        KindField("residents", "int", "org_office", 10_000),
+        KindField("night_watch", "bool", "org_office"),
+        KindField("non_ambulatory", "int", "incident", 10_000),
+    ),
+    OrgKind.PUBLIC_ADMIN: (
+        KindField("staff", "int", "org_office", 100_000),
+        KindField("archive", "bool", "org_office"),
+    ),
+    OrgKind.CULTURE_SPORT: (
+        KindField("seated_capacity", "int", "org_office", 200_000),
+        KindField("stands", "bool", "org_office"),
+    ),
+    OrgKind.COMMERCIAL: (
+        KindField("shops", "int", "org_office", 10_000),
+        KindField("underground_parking", "bool", "incident"),
+    ),
+    OrgKind.TRANSPORT: (
+        KindField("daily_passengers", "int", "org_office", 10_000_000),
+        KindField("emergency_exits", "int", "org_office", 1_000),
+    ),
+    OrgKind.RELIGIOUS: (KindField("peak_times", "text", "org_office", 200),),
+    OrgKind.OTHER: (),
+}
+
+# What each kind of reader may see, beyond the institution's own members who see everything.
+VISIBLE_TO: dict[str, frozenset[Visibility]] = {
+    "public": frozenset({"public"}),
+    "auditor": frozenset({"public", "org_office"}),
+    "member": frozenset({"public", "org_office", "incident"}),
+    "incident": frozenset({"public", "org_office", "incident"}),
+}
+
+
+def clean_kind_fields(kind: OrgKind, raw: Mapping[str, object]) -> dict[str, object] | str:
+    """The answers kept for ``kind`` (unknown keys and empty values dropped), or the key of the first bad value."""
+    specs = {f.key: f for f in KIND_FIELDS[kind]}
+    kept: dict[str, object] = {}
+    for key, value in raw.items():
+        spec = specs.get(key)
+        if spec is None or value is None or value == "":
+            continue
+        if spec.type == "bool":
+            if not isinstance(value, bool):
+                return key
+        elif spec.type == "int":
+            if isinstance(value, bool) or not isinstance(value, int) or not 0 <= value <= spec.maximum:
+                return key
+        elif not isinstance(value, str) or len(value.strip()) > spec.maximum:
+            return key
+        kept[key] = value.strip() if isinstance(value, str) else value
+    return kept
+
+
+def visible_kind_fields(kind: str, values: dict[str, object], reader: str) -> dict[str, object]:
+    allowed = VISIBLE_TO[reader]
+    specs = KIND_FIELDS.get(OrgKind(kind), ())
+    return {f.key: values[f.key] for f in specs if f.key in values and f.visibility in allowed}
+
+
+def readiness(required: Iterable[str], missing_items: Iterable[str]) -> int:
+    """Share of the safety requirements met, in percent (the ring on «My institution»)."""
+    wanted = list(required)
+    if not wanted:
+        return 100
+    return round(100 * (len(wanted) - len(set(missing_items))) / len(wanted))
+
+
 # ---------------------------------------------------------------- sensitive sites (BR-20)
 
 SENSITIVE_RADIUS_M = 300.0
+# Kinds whose occupants need help to leave: a report nearby weighs as much as a building open to the public.
+_VULNERABLE_KINDS = frozenset({OrgKind.EDUCATION, OrgKind.HEALTH, OrgKind.SOCIAL_CARE})
 
 
 def sensitivity(classification: Classification, kind: str, hazmat_count: int) -> tuple[float, str]:
@@ -244,6 +372,6 @@ def sensitivity(classification: Classification, kind: str, hazmat_count: int) ->
         return 0.8, "high_rise"
     if classification.family == "erp" and classification.category is not None and classification.category <= 2:
         return 0.8, "large_public"
-    if classification.family == "erp" or kind == OrgKind.EDUCATIONAL:
+    if classification.family == "erp" or kind in _VULNERABLE_KINDS:
         return 0.6, "public"
     return 0.4, "nearby"

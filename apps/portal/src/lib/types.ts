@@ -1,5 +1,7 @@
 /** Types mirroring docs/api/phase-4-contract.md (institutions) and phase-2-contract.md (reports, consents). */
 
+import type { KindFieldValue } from "./kindFields";
+
 export const REPORT_STATUSES = ["received", "in_progress", "intervened", "ongoing", "closed", "rejected"] as const;
 export type ReportStatus = (typeof REPORT_STATUSES)[number];
 
@@ -29,7 +31,20 @@ export interface GeoPoint {
 export const ORG_STATUSES = ["pending_review", "active", "rejected", "suspended"] as const;
 export type OrgStatus = (typeof ORG_STATUSES)[number];
 
-export const ORG_KINDS = ["industrial", "educational", "hotel", "government", "private", "other"] as const;
+export const ORG_KINDS = [
+  "health",
+  "industrial",
+  "energy",
+  "tourism",
+  "education",
+  "social_care",
+  "public_admin",
+  "culture_sport",
+  "commercial",
+  "transport",
+  "religious",
+  "other",
+] as const;
 export type OrgKind = (typeof ORG_KINDS)[number];
 
 export const ORG_ROLES = ["admin", "editor", "member"] as const;
@@ -93,6 +108,8 @@ export interface OrgCard {
   manager: Person;
   contact_email: string | null;
   contact_phone: string | null;
+  /** P2a: answers to the fields of the kind (lib/kindFields.ts); the server drops other kinds' keys. */
+  kind_fields?: Record<string, KindFieldValue | null>;
 }
 
 export interface Organization extends OrgCard {
@@ -108,6 +125,9 @@ export interface Organization extends OrgCard {
   review: { reason: string | null; at: string | null };
   created_at: string;
   updated_at: string;
+  /** P2a: share of the safety requirements met, in percent. */
+  readiness?: number;
+  kind_review?: boolean;
 }
 
 export interface MyOrg {

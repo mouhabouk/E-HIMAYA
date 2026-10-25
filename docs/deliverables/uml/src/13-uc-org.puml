@@ -1,13 +1,13 @@
 @startuml
 !include style.iuml
-title Cas d'utilisation : établissements (portail)
+title Cas d'utilisation : établissements (portail et application, P2a)
 left to right direction
 actor "Responsable\nd'établissement" as ADM
 actor "Membre d'équipe\nde sécurité" as MEM
 actor "Public" as PUB
 actor "Auditeur\nd'établissements" as AUD
 ADM -|> MEM
-rectangle "Portail des établissements" {
+rectangle "Portail et application" {
   usecase "Enregistrer l'établissement\n(5 étapes)" as O1
   usecase "Classement automatique\net éléments manquants" as O2
   usecase "Gérer l'équipe de sécurité\net les formations" as O3
@@ -19,10 +19,18 @@ rectangle "Portail des établissements" {
   usecase "Signaler au nom\nde l'établissement" as O9
   usecase "Demander le certificat\nde sécurité" as O10
   usecase "Vérifier un certificat\n(code / QR)" as O11
-  usecase "Approuver l'établissement" as O12
+  usecase "Approuver l'établissement\n(et corriger le type)" as O12
+  usecase "S'enregistrer depuis le téléphone\n(4 étapes, champs du type)" as O14
+  usecase "Suivre la préparation\net les alertes" as O15
+  usecase "Noter une maintenance\n(application)" as O16
   usecase "Valider / révoquer\nle certificat (Ed25519)" as O13
 }
 ADM --> O1
+ADM --> O14
+O14 ..> O2 : <<include>>
+MEM --> O15
+MEM --> O16
+O16 ..> O5 : <<extend>>
 O1 ..> O2 : <<include>>
 MEM --> O3
 MEM --> O4

@@ -24,6 +24,7 @@ import {
   VERSION_CHANGES,
 } from "../lib/phase8Types";
 import { STAFF_ROLES } from "../lib/roles";
+import { KIND_FIELDS } from "../lib/kindFields";
 import {
   CATEGORIES,
   DOCUMENT_KINDS,
@@ -188,15 +189,15 @@ describe("translation files", () => {
   });
 
   it("use the contract's labels for institution kinds and keep «الحوادث» for grouped incidents only", () => {
-    expect(ar.orgs.kind).toMatchObject({ industrial: "صناعية", educational: "تعليمية", hotel: "نزل", government: "حكومية", private: "خاصة", other: "أخرى" });
-    expect(fr.orgs.kind).toMatchObject({
-      industrial: "Industrielle",
-      educational: "Éducative",
-      hotel: "Hôtel",
-      government: "Administration publique",
-      private: "Privée",
-      other: "Autre",
-    });
+    // Twelve kinds since P2a (addition 12), each labelled in the three languages, with the labels of their fields.
+    for (const dict of [ar, fr, en]) {
+      expect(Object.keys(dict.orgs.kind)).toEqual([...ORG_KINDS]);
+      for (const specs of Object.values(KIND_FIELDS)) {
+        for (const s of specs) expect(dict.orgs.kindField).toHaveProperty(s.key);
+      }
+    }
+    expect(ar.orgs.kind).toMatchObject({ industrial: "صناعية", education: "تربوية", tourism: "سياحية", other: "أخرى" });
+    expect(fr.orgs.kind).toMatchObject({ industrial: "Industrielle", public_admin: "Administration publique", other: "Autre" });
     expect(ar.nav.orgs).toBe("المؤسسات");
     expect(ar.nav.incidents).toBe("الحوادث");
     expect(ar.nav.orgs).not.toBe(ar.nav.incidents);

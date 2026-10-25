@@ -48,6 +48,8 @@ class OrgIn(BaseModel):
     manager: Person = Field(default_factory=Person)
     contact_email: EmailStr | None = None
     contact_phone: str | None = Field(default=None, max_length=20)
+    # Answers to the fields of the kind (``GET /public/org-kinds``); unknown keys are dropped.
+    kind_fields: dict[str, int | bool | str | None] = Field(default_factory=dict, max_length=40)
 
 
 class OrgUpdate(OrgIn):
@@ -103,6 +105,12 @@ class OrgCard(BaseModel):
     contact_phone: str | None
     classification: ClassificationOut
     completeness: Completeness
+    # Share of the safety requirements met, in percent (addition 12).
+    readiness: int
+    # Only the fields this reader may see (members: all; auditor: public and institution-and-Office).
+    kind_fields: dict[str, int | bool | str]
+    # Migrated from a kind with no equivalent: the auditor picks the right one.
+    kind_review: bool
     alerts: list[Alert]
     review: Review
     created_at: datetime
@@ -356,10 +364,14 @@ class OrgSummary(BaseModel):
     address: str | None
     location: Point
     classification: ClassificationOut
+    readiness: int
+    missing: list[str]
+    kind_fields: dict[str, int | bool | str]
     team: list[SummaryTeamMember]
     hazmat_count: int
     hazmat: list[SummaryHazmat]
     alerts_count: int
+    alerts: list[Alert]
 
 
 # ---------------------------------------------------------------- staff
@@ -376,6 +388,7 @@ class StaffOrg(BaseModel):
     capacity: int | None
     location: Point
     classification: ClassificationOut
+    kind_review: bool
     hazmat_count: int
     alerts_count: int
     certificate_status: Literal["none", "draft", "submitted", "approved", "rejected", "revoked", "expired"]
@@ -407,6 +420,20 @@ class StaffOrgDetail(OrgCard):
 class OrgReviewIn(BaseModel):
     decision: Literal["approve", "reject", "suspend", "reinstate"]
     reason: str | None = Field(default=None, max_length=1000)
+    # On approval the auditor may correct the kind (addition 6 bis); fields of the old kind not in the new are dropped.
+    kind: OrgKind | None = None
+
+
+class KindFieldOut(BaseModel):
+    key: str
+    type: Literal["int", "bool", "text"]
+    visibility: Literal["public", "org_office", "incident"]
+    maximum: int
+
+
+class KindOut(BaseModel):
+    kind: OrgKind
+    fields: list[KindFieldOut]
 
 
 class CertificateReviewIn(BaseModel):
@@ -454,3 +481,5 @@ class OrganizationCard(BaseModel):
     representative: Person | None
     hazmat: list[HazmatIn]
     features: list[FeatureOut]
+    # All the fields of the kind, including those shown only on a report near the institution.
+    kind_fields: dict[str, int | bool | str]

@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { useFormat } from "../lib/hooks";
 import type { OrganizationCard } from "../lib/types";
-import { classificationText, featureKindLabel, hazmatQuantity, InlineIcon, orgKindLabel } from "./OrgBits";
+import { classificationText, featureKindLabel, hazmatQuantity, InlineIcon, KindFieldsList, orgKindLabel } from "./OrgBits";
 
 /**
  * "Institution card" of a report made on behalf of an institution (phase 4 §9): what responders need on the
@@ -52,6 +52,13 @@ export function OrganizationCardPanel({ card }: { card: OrganizationCard }) {
           )}
         </dd>
       </dl>
+
+      {card.kind_fields && Object.keys(card.kind_fields).length > 0 && (
+        <>
+          <h3 className="subhead">{t("orgs.kindExtra.kindFieldsTitle")}</h3>
+          <KindFieldsList kind={card.kind} values={card.kind_fields} />
+        </>
+      )}
 
       {card.hazmat.length === 0 ? (
         <p className="muted">{t("orgs.card.noHazmat")}</p>

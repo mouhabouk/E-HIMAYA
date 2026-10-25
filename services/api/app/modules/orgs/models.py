@@ -58,6 +58,8 @@ class Organization(Base):
     manager: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default="{}")
     contact_email: Mapped[str | None] = mapped_column(Text)
     contact_phone: Mapped[str | None] = mapped_column(Text)
+    kind_fields: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default="{}")
+    kind_review: Mapped[bool] = mapped_column(Boolean, server_default="false")
     review_reason: Mapped[str | None] = mapped_column(Text)
     reviewed_by: Mapped[str | None] = mapped_column(Text)
     reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

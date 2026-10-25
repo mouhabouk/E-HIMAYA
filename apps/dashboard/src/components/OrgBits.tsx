@@ -1,5 +1,5 @@
 import type { TFunction } from "i18next";
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { errorMessageKey } from "../lib/api";
 import type { BBox } from "../lib/filters";
@@ -25,6 +25,8 @@ import {
   type Hazmat,
   type MapFeature,
 } from "../lib/types";
+import { kindFieldRows, VISIBILITY_TONE, type KindFieldValue } from "../lib/kindFields";
+import { Pill } from "./Icon";
 import type { MapPoi } from "./MapView";
 
 // ---------- Labels with a translated fallback for values added later by the API ----------
@@ -259,3 +261,35 @@ export function useLegendItems(withHazmat: boolean, withOrg = true): { kind: Poi
   }, [t, withHazmat, withOrg]);
 }
 
+
+/**
+ * The answers to the kind's fields (P2a), each with the badge of who may see it. The API already left out what this
+ * reader may not see. Working list [SIM] until the Office approves it.
+ */
+export function KindFieldsList({ kind, values }: { kind: string; values: Readonly<Record<string, KindFieldValue>> | undefined }) {
+  const { t } = useTranslation();
+  const fmt = useFormat();
+  const rows = kindFieldRows(kind, values);
+  if (rows.length === 0) return <p className="muted">{t("common.notAvailable")}</p>;
+  return (
+    <dl className="fields kind-fields">
+      {rows.map(({ spec, value }) => (
+        <Fragment key={spec.key}>
+          <dt>
+            {t(`orgs.kindField.${spec.key}`, { defaultValue: spec.key })}{" "}
+            <Pill tone={VISIBILITY_TONE[spec.visibility]}>{t(`orgs.visibility.${spec.visibility}`)}</Pill>
+          </dt>
+          <dd dir={spec.key === "reception_phone" ? "ltr" : "auto"}>
+            {typeof value === "boolean"
+              ? value
+                ? t("common.yes")
+                : t("common.no")
+              : typeof value === "number"
+                ? fmt.number(value)
+                : value}
+          </dd>
+        </Fragment>
+      ))}
+    </dl>
+  );
+}

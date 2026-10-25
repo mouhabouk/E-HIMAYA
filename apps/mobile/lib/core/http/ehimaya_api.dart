@@ -187,6 +187,86 @@ class EHimayaApi {
     return OrgSummary.fromJson(r.data!);
   });
 
+  /// Registers an institution (phase 4 §1, from the app since P2a): it stays under review.
+  Future<OrgCardData> registerOrg(Map<String, Object?> card) =>
+      guardApi(() async {
+        final r = await _dio.post<Map<String, Object?>>(
+          '/api/v1/orgs',
+          data: card,
+        );
+        return OrgCardData(r.data!);
+      });
+
+  /// The full card (any member), with `version` for the next edit.
+  Future<OrgCardData> orgCard(String orgId) => guardApi(() async {
+    final r = await _dio.get<Map<String, Object?>>(_org(orgId));
+    return OrgCardData(r.data!);
+  });
+
+  /// Saves the card (admin or editor); `409 version_conflict` when someone saved in between.
+  Future<OrgCardData> updateOrg(String orgId, Map<String, Object?> body) =>
+      guardApi(() async {
+        final r = await _dio.put<Map<String, Object?>>(_org(orgId), data: body);
+        return OrgCardData(r.data!);
+      });
+
+  Future<List<OrgEquipment>> orgEquipment(String orgId) => guardApi(() async {
+    final r = await _dio.get<List<Object?>>('${_org(orgId)}/equipment');
+    return [
+      for (final e in r.data!)
+        if (e is Map<String, Object?>) OrgEquipment(e),
+    ];
+  });
+
+  Future<OrgEquipment> updateEquipment(
+    String orgId,
+    String itemId,
+    Map<String, Object?> body,
+  ) => guardApi(() async {
+    final r = await _dio.put<Map<String, Object?>>(
+      '${_org(orgId)}/equipment/${Uri.encodeComponent(itemId)}',
+      data: body,
+    );
+    return OrgEquipment(r.data!);
+  });
+
+  Future<List<OrgFeature>> orgFeatures(String orgId) => guardApi(() async {
+    final r = await _dio.get<List<Object?>>('${_org(orgId)}/features');
+    return [
+      for (final f in r.data!)
+        if (f is Map<String, Object?>) OrgFeature.fromJson(f),
+    ];
+  });
+
+  Future<List<OrgCertificate>> orgCertificates(String orgId) =>
+      guardApi(() async {
+        final r = await _dio.get<List<Object?>>('${_org(orgId)}/certificates');
+        return [
+          for (final c in r.data!)
+            if (c is Map<String, Object?>) OrgCertificate.fromJson(c),
+        ];
+      });
+
+  Future<List<OrgMember>> orgMembers(String orgId) => guardApi(() async {
+    final r = await _dio.get<List<Object?>>('${_org(orgId)}/members');
+    return [
+      for (final m in r.data!)
+        if (m is Map<String, Object?>) OrgMember.fromJson(m),
+    ];
+  });
+
+  /// Invites a member by e-mail (admin only).
+  Future<void> inviteOrgMember(String orgId, String email, String role) =>
+      guardApi(() async {
+        await _dio.post<Object?>(
+          '${_org(orgId)}/invitations',
+          data: {'email': email, 'role': role},
+        );
+      });
+
+  static String _org(String orgId) =>
+      '/api/v1/orgs/${Uri.encodeComponent(orgId)}';
+
   /// Reports sent on behalf of an institution, newest first (phase 4 §8).
   Future<OrgReportsPage> orgReports(
     String orgId, {

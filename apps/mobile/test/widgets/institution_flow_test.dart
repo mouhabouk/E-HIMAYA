@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:drift/drift.dart' show Value;
@@ -16,11 +17,83 @@ import '../helpers/app_harness.dart';
 import '../helpers/fake_http.dart';
 import '../helpers/org_fixtures.dart';
 
-FakeResponse api(SeenRequest r, {bool offline = false}) {
+FakeResponse api(
+  SeenRequest r, {
+  bool offline = false,
+  String role = 'member',
+}) {
   if (offline) return const FakeResponse.network();
+  switch ((r.method, r.path)) {
+    case ('PUT', '/api/v1/orgs/$orgId'):
+      final body = r.json! as Map<String, Object?>;
+      return FakeResponse(
+        200,
+        json: {
+          ...cardJson(role: role, version: 4),
+          ...body,
+        },
+      );
+    case ('POST', '/api/v1/orgs'):
+      return FakeResponse(
+        201,
+        json: {...cardJson(), 'id': 'new-org', 'status': 'pending_review'},
+      );
+    case ('PUT', '/api/v1/orgs/$orgId/equipment/e1'):
+      return FakeResponse(
+        200,
+        json: {...equipmentJson(), 'maintenance_status': 'ok'},
+      );
+    case ('POST', '/api/v1/orgs/$orgId/invitations'):
+      return const FakeResponse(201, json: {});
+  }
   switch (r.path) {
     case '/api/v1/orgs/mine':
-      return FakeResponse(200, json: [orgRow(orgId, 'Société X', 'active')]);
+      return FakeResponse(
+        200,
+        json: [orgRow(orgId, 'Société X', 'active', role: role)],
+      );
+    case '/api/v1/orgs/$orgId':
+      return FakeResponse(200, json: cardJson(role: role));
+    case '/api/v1/orgs/$orgId/equipment':
+      return FakeResponse(200, json: [equipmentJson()]);
+    case '/api/v1/orgs/$orgId/features':
+      return const FakeResponse(
+        200,
+        json: [
+          {
+            'id': 'f1',
+            'kind': 'evacuation_point',
+            'label': 'Parking nord',
+            'location': {'lat': 34.701, 'lon': 10.72},
+          },
+        ],
+      );
+    case '/api/v1/orgs/$orgId/certificates':
+      return const FakeResponse(
+        200,
+        json: [
+          {
+            'id': 'c1',
+            'code': 'EH-CERT-0001',
+            'status': 'approved',
+            'superseded': false,
+            'valid_until': '2027-06-30',
+          },
+        ],
+      );
+    case '/api/v1/orgs/$orgId/members':
+      return const FakeResponse(
+        200,
+        json: [
+          {
+            'user_id': 'u1',
+            'display_name': 'Amel',
+            'email': 'amel@societe-x.tn',
+            'role': 'admin',
+            'joined_at': '2026-01-01T00:00:00Z',
+          },
+        ],
+      );
     case '/api/v1/orgs/$orgId/summary':
       return FakeResponse(200, json: summaryJson());
     case '/api/v1/orgs/$orgId/reports':
@@ -81,7 +154,9 @@ void main() {
     await unmountApp(tester);
   });
 
-  testWidgets('"My institution" summary card (FR-A-081)', (tester) async {
+  testWidgets('"My institution" home: readiness, alerts, sections (P2a)', (
+    tester,
+  ) async {
     await tallScreen(tester);
     final opened = <Uri>[];
     final h = await pumpApp(
@@ -99,12 +174,25 @@ void main() {
     expect(find.text('Société X'), findsOneWidget);
     expect(find.text('Industrielle'), findsOneWidget);
     expect(find.text('Active'), findsOneWidget);
-    expect(find.text('420'), findsOneWidget);
-    expect(find.text('Route de Gabès km 4'), findsOneWidget);
-    expect(find.text('Établissement industriel'), findsOneWidget);
-    expect(find.textContaining('Provisoire'), findsOneWidget);
-    expect(find.text('2 alertes'), findsOneWidget);
-    // Safety team with training status and tap-to-call.
+    // Readiness ring and what is missing.
+    expect(find.text('50%'), findsOneWidget);
+    expect(find.text('1 exigence manquante'), findsOneWidget);
+    expect(find.textContaining('Dossier de sécurité'), findsOneWidget);
+    // Alerts with their wording.
+    expect(
+      find.text('Formation expirée dans l’équipe de sécurité'),
+      findsOneWidget,
+    );
+    expect(find.text('Maintenance d’équipement en retard'), findsOneWidget);
+    // Recent reports of the institution with their status.
+    await tester.ensureVisible(find.text('EH-26-61-0000099'));
+    expect(find.text('En cours de traitement'), findsOneWidget);
+    expect(find.text('Par amel'), findsOneWidget);
+
+    // Safety team section with training status and tap-to-call.
+    await tester.ensureVisible(find.byKey(const Key('org-section-team')));
+    await tester.tap(find.byKey(const Key('org-section-team')));
+    await tester.pumpAndSettle();
     expect(find.text('Amel Ben Salah'), findsOneWidget);
     expect(find.text('Représentant'), findsOneWidget);
     expect(find.text('Formation : valide'), findsOneWidget);
@@ -112,25 +200,230 @@ void main() {
     await tester.tap(find.byKey(const Key('call-+21698123456')));
     await tester.pumpAndSettle();
     expect(h.dialled, [Uri(scheme: 'tel', path: '+21698123456')]);
-    // Hazardous materials.
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+
+    // Hazardous materials section.
+    await tester.ensureVisible(find.byKey(const Key('org-section-hazmat')));
+    await tester.tap(find.byKey(const Key('org-section-hazmat')));
+    await tester.pumpAndSettle();
     expect(find.text('Matières dangereuses (1)'), findsOneWidget);
     expect(find.text('Acétone'), findsOneWidget);
     expect(find.textContaining('ONU 1090'), findsOneWidget);
-    // Detailed editing is on the portal.
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+
+    // Large files and full editing stay on the portal.
     await tester.ensureVisible(find.byKey(const Key('open-portal')));
     await tester.tap(find.byKey(const Key('open-portal')));
     await tester.pumpAndSettle();
     expect(opened, [Uri.parse('http://localhost:5174')]);
-    // Recent reports of the institution with their status.
-    expect(find.text('EH-26-61-0000099'), findsOneWidget);
-    expect(find.text('En cours de traitement'), findsOneWidget);
-    expect(find.text('Par amel'), findsOneWidget);
 
-    // The summary is cached for offline viewing.
-    expect(
-      h.adapter.requests.map((r) => r.path),
-      contains('/api/v1/orgs/mine'),
+    // The bottom bar: 198 first, then reporting for the institution.
+    await tester.tap(find.byKey(const Key('org-call-198')));
+    await tester.pumpAndSettle();
+    expect(h.dialled.last, Uri(scheme: 'tel', path: '198'));
+    expect(find.byKey(const Key('org-report-as')), findsOneWidget);
+    await unmountApp(tester);
+  });
+
+  testWidgets('card tabs show who sees each field; an admin edits them (P2a)', (
+    tester,
+  ) async {
+    await tallScreen(tester);
+    final h = await pumpApp(
+      tester,
+      prefs: registeredPrefs(locale: 'fr'),
+      session: testSession,
+      api: (r) => api(r, role: 'admin'),
     );
+    await tester.tap(find.byKey(const Key('home-institution')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('org-section-card')));
+    await tester.pumpAndSettle();
+    // Identity tab.
+    expect(find.text('1234567A'), findsOneWidget);
+    expect(find.text('Public'), findsWidgets);
+    expect(find.text('Établissement et Office'), findsWidgets);
+    // Kind tab: the working list and the field only the operations room sees on a report.
+    await tester.tap(find.text('Propre au type').first);
+    await tester.pumpAndSettle();
+    expect(find.textContaining('[SIM]'), findsOneWidget);
+    expect(find.text('Ouvriers par poste'), findsOneWidget);
+    expect(find.text('35'), findsOneWidget);
+    expect(find.text('Réservoirs'), findsOneWidget);
+    expect(find.text("Lors d'un signalement proche"), findsOneWidget);
+
+    // Edit: a bad number is caught, then the card is saved with its version.
+    await tester.tap(find.byKey(const Key('org-card-edit')));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byKey(const Key('kf-tanks')), 'beaucoup');
+    await tester.tap(find.byKey(const Key('org-card-save')));
+    await tester.pumpAndSettle();
+    expect(
+      find.text('Saisissez un nombre entier dans les limites.'),
+      findsWidgets,
+    );
+    await tester.enterText(find.byKey(const Key('kf-tanks')), '3');
+    await tester.enterText(find.byKey(const Key('edit-capacity')), '450');
+    await tester.tap(find.byKey(const Key('org-card-save')));
+    await tester.pumpAndSettle();
+    final put = h.adapter.requests.lastWhere((r) => r.method == 'PUT');
+    final body = put.json! as Map<String, Object?>;
+    expect(body['version'], 3);
+    expect(body['capacity'], 450);
+    expect(body['kind_fields'], {'workers_per_shift': 35, 'tanks': 3});
+    expect(body['identifier'], '1234567A');
+    expect(find.text('Enregistré.'), findsOneWidget);
+    await unmountApp(tester);
+  });
+
+  testWidgets(
+    'sections: maintenance logged, evacuation, certificates, invite',
+    (tester) async {
+      await tallScreen(tester);
+      final h = await pumpApp(
+        tester,
+        prefs: registeredPrefs(locale: 'fr'),
+        session: testSession,
+        api: (r) => api(r, role: 'admin'),
+      );
+      await tester.tap(find.byKey(const Key('home-institution')));
+      await tester.pumpAndSettle();
+      Future<void> open(String section) async {
+        await tester.ensureVisible(find.byKey(Key('org-section-$section')));
+        await tester.tap(find.byKey(Key('org-section-$section')));
+        await tester.pumpAndSettle();
+      }
+
+      await open('equipment');
+      expect(find.text('Extincteur'), findsOneWidget);
+      expect(find.text('Maintenance en retard'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('log-maintenance-e1')));
+      await tester.pumpAndSettle();
+      final put = h.adapter.requests.lastWhere((r) => r.method == 'PUT');
+      expect(put.path, '/api/v1/orgs/$orgId/equipment/e1');
+      expect((put.json! as Map)['last_maintenance_on'], isA<String>());
+      expect(find.text('Maintenance notée.'), findsOneWidget);
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+
+      await open('evacuation');
+      expect(find.text('Parking nord'), findsOneWidget);
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+
+      await open('certificates');
+      expect(find.text('EH-CERT-0001'), findsOneWidget);
+      expect(find.textContaining('Approuvé'), findsOneWidget);
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+
+      await open('members');
+      expect(find.text('Amel'), findsOneWidget);
+      await tester.enterText(
+        find.byKey(const Key('invite-email')),
+        'nouveau@societe-x.tn',
+      );
+      await tester.tap(find.byKey(const Key('invite-send')));
+      await tester.pumpAndSettle();
+      final invite = h.adapter.requests.lastWhere((r) => r.method == 'POST');
+      expect(invite.json, {'email': 'nouveau@societe-x.tn', 'role': 'member'});
+      expect(
+        find.text('Invitation envoyée à nouveau@societe-x.tn.'),
+        findsOneWidget,
+      );
+      await unmountApp(tester);
+    },
+  );
+
+  testWidgets('registration from the phone in four steps (P2a)', (
+    tester,
+  ) async {
+    await tallScreen(tester);
+    final h = await pumpApp(
+      tester,
+      prefs: registeredPrefs(locale: 'fr'),
+      session: testSession,
+      api: api,
+    );
+    unawaited(
+      GoRouter.of(tester.element(find.byType(HomeScreen)))
+          .push(Routes.institutions),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('org-register')));
+    await tester.pumpAndSettle();
+    expect(find.text('Étape 1 sur 4'), findsOneWidget);
+    // Step 1: the kind is required.
+    await tester.tap(find.byKey(const Key('org-register-next')));
+    await tester.pumpAndSettle();
+    expect(find.text('Étape 1 sur 4'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('kind-health')));
+    await tester.tap(find.byKey(const Key('org-register-next')));
+    await tester.pumpAndSettle();
+    // Step 2: identifier checked on the phone.
+    await tester.enterText(find.byKey(const Key('org-name')), 'Clinique X');
+    await tester.enterText(find.byKey(const Key('org-identifier')), '12345A');
+    await tester.enterText(
+      find.byKey(const Key('org-manager_name')),
+      'Karim Trabelsi',
+    );
+    await tester.enterText(
+      find.byKey(const Key('org-manager_phone')),
+      '20 123 456',
+    );
+    await tester.tap(find.byKey(const Key('org-register-next')));
+    await tester.pumpAndSettle();
+    expect(
+      find.text('Identifiant invalide : 7 chiffres et une lettre.'),
+      findsOneWidget,
+    );
+    await tester.enterText(
+      find.byKey(const Key('org-identifier')),
+      ' 1234567a ',
+    );
+    await tester.tap(find.byKey(const Key('org-register-next')));
+    await tester.pumpAndSettle();
+    // Step 3: location from the phone, building and the kind's fields.
+    expect(find.text('Étape 3 sur 4'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('org-locate')));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('36.80000'), findsWidgets);
+    await tester.enterText(
+      find.byKey(const Key('org-address')),
+      'Avenue Habib Bourguiba',
+    );
+    await tester.enterText(find.byKey(const Key('org-capacity')), '80');
+    await tester.enterText(find.byKey(const Key('kf-beds')), '40');
+    await tester.ensureVisible(find.byKey(const Key('kf-generator')));
+    await tester.tap(find.byKey(const Key('kf-generator')));
+    await tester.tap(find.byKey(const Key('org-register-next')));
+    await tester.pumpAndSettle();
+    // Step 4: review, then send.
+    expect(find.text('Étape 4 sur 4'), findsOneWidget);
+    expect(find.text('Santé'), findsOneWidget);
+    expect(find.text('1234567A'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('org-register-next')));
+    await tester.pumpAndSettle();
+    final post = h.adapter.requests.lastWhere((r) => r.method == 'POST');
+    expect(post.path, '/api/v1/orgs');
+    expect(post.json, {
+      'name': 'Clinique X',
+      'kind': 'health',
+      'identifier_type': 'mf',
+      'identifier': '1234567A',
+      'capacity': 80,
+      'floors': null,
+      'receives_public': false,
+      'address': 'Avenue Habib Bourguiba',
+      'location': {'lat': 36.8, 'lon': 10.18},
+      'manager': {'full_name': 'Karim Trabelsi', 'phone': '+21620123456'},
+      'contact_email': null,
+      'kind_fields': {'beds': 40, 'generator': true},
+    });
+    expect(find.text('Enregistrement envoyé'), findsOneWidget);
+    expect(find.text('En cours d’examen'), findsWidgets);
     await unmountApp(tester);
   });
 
@@ -159,7 +452,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.textContaining('Offline: copy saved on'), findsOneWidget);
     expect(find.text('Société X'), findsOneWidget);
-    expect(find.text('Amel Ben Salah'), findsOneWidget);
+    expect(find.text('Expired training in the safety team'), findsOneWidget);
     await unmountApp(tester);
   });
 
@@ -178,6 +471,9 @@ void main() {
     final context = tester.element(find.byType(MyInstitutionScreen));
     expect(Directionality.of(context), TextDirection.rtl);
     expect(find.text('صناعية'), findsOneWidget);
+    await tester.ensureVisible(find.byKey(const Key('org-section-team')));
+    await tester.tap(find.byKey(const Key('org-section-team')));
+    await tester.pumpAndSettle();
     final phone = tester.widget<Text>(find.text('+21698123456'));
     expect(phone.textDirection, TextDirection.ltr);
     await unmountApp(tester);
@@ -292,34 +588,19 @@ void main() {
     await unmountApp(tester);
   });
 
-  test('kind labels fixed by the contract (§1)', () {
+  test('kind labels: twelve since P2a (addition 12)', () {
     const expected = {
-      'ar': ['صناعية', 'تعليمية', 'نزل', 'حكومية', 'خاصة', 'أخرى'],
-      'fr': [
-        'Industrielle',
-        'Éducative',
-        'Hôtel',
-        'Administration publique',
-        'Privée',
-        'Autre',
-      ],
-      'en': [
-        'Industrial',
-        'Educational',
-        'Hotel',
-        'Government',
-        'Private',
-        'Other',
-      ],
+      'ar': ['صحية', 'صناعية', 'تربوية', 'سياحية', 'أخرى'],
+      'fr': ['Santé', 'Industrielle', 'Éducation', 'Tourisme', 'Autre'],
+      'en': ['Health', 'Industrial', 'Education', 'Tourism', 'Other'],
     };
     for (final entry in expected.entries) {
       final l10n = lookupAppLocalizations(Locale(entry.key));
       expect([
+        l10n.orgKindHealth,
         l10n.orgKindIndustrial,
-        l10n.orgKindEducational,
-        l10n.orgKindHotel,
-        l10n.orgKindGovernment,
-        l10n.orgKindPrivate,
+        l10n.orgKindEducation,
+        l10n.orgKindTourism,
         l10n.orgKindOther,
       ], entry.value);
     }
