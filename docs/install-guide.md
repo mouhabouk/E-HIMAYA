@@ -373,7 +373,11 @@ KEYCLOAK_ADMIN_ALLOW=10.20.0.0/16             # الشبكات التي تفتح
 STREAM_SIM_TOKEN=                             # المحاكاة ممنوعة في الإنتاج
 TELEPHONY_SIM_PASSWORD=
 TELEPHONY_SIM_TOKEN=
+ENVIRONMENT_BANNER=auto                       # لا شريط في الإنتاج؛ pilot لخادم التجربة، training للتدريب
 ```
+
+`ENVIRONMENT_BANNER` يُظهر شريطا كهرمانيا **[SIM]** أعلى اللوحة والبوابة والتطبيق يسمّي البيئة، حتى لا يخلط المشغّل
+بين بيانات التجربة والبيانات الحقيقية. على خادم التجربة الميدانية ضع `pilot`، وعلى خادم التدريب `training`.
 
 في Keycloak حدّث Valid redirect URIs و Web origins للعميلين `ehimaya-dashboard` و `ehimaya-portal` إلى
 `https://DASHBOARD_HOST/*` و `https://PORTAL_HOST/*`.

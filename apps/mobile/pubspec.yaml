@@ -2,7 +2,7 @@ name: ehimaya
 description: "ء-حماية (e-Himaya) — national emergency reporting app for the Tunisian civil protection."
 publish_to: 'none'
 
-version: 0.9.0+8
+version: 0.10.0+9
 
 environment:
   sdk: ">=3.13.5 <4.0.0"
