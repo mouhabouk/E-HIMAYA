@@ -3,25 +3,25 @@
 
 :root {
   color-scheme: light;
-  --font: "Noto Sans Arabic", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font: "IBM Plex Sans Arabic", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
   --mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
-  --bg: #f4f6f8;
+  --bg: #f3f5fa;
   --surface: #ffffff;
-  --surface-2: #eef1f4;
-  --text: #16202a;
-  --muted: #55606c;
-  --border: #d3d9df;
-  --primary: #b71c1c;
+  --surface-2: #edf0f6;
+  --text: #182038;
+  --muted: #5b6478;
+  --border: #e3e7ef;
+  --primary: #1f3fa0;
   --primary-text: #ffffff;
   --focus: #1a56db;
-  --link: #0b4fb3;
+  --link: #1f3fa0;
   --ok-bg: #e5f4ea;
   --ok-text: #14532d;
   --error-bg: #fdecec;
   --error-text: #8a1111;
   --new-bg: #fff4d6;
-  --radius: 10px;
-  --shadow: 0 1px 2px rgb(0 0 0 / 6%), 0 1px 6px rgb(0 0 0 / 5%);
+  --radius: 16px;
+  --shadow: 0 1px 3px rgb(24 32 56 / 6%), 0 4px 12px rgb(24 32 56 / 4%);
 
   /* Status palette (always paired with a text label, never colour alone). */
   --status-received: #c62828;
@@ -50,21 +50,63 @@
   --poi-evac: #15803d;
   --poi-water: #0369a1;
   --poi-alarm: #b91c1c;
+
+  /* Design system (docs/design-system.md §2.3): category colours, the same in the three apps. */
+  --tone-red: #d7141a;
+  --tone-red-on: #ffffff;
+  --tone-red-tint: #fde8e8;
+  --tone-red-ink: #b3121a;
+  --tone-navy: #1f3fa0;
+  --tone-navy-on: #ffffff;
+  --tone-navy-tint: #e8edfa;
+  --tone-navy-ink: #1f3fa0;
+  --tone-purple: #7838a0;
+  --tone-purple-on: #ffffff;
+  --tone-purple-tint: #f2eaf8;
+  --tone-purple-ink: #5e2a80;
+  --tone-green: #188038;
+  --tone-green-on: #ffffff;
+  --tone-green-tint: #e6f4ea;
+  --tone-green-ink: #166b2e;
+  --tone-amber: #f5b400;
+  --tone-amber-on: #182038;
+  --tone-amber-tint: #fff3d6;
+  --tone-amber-ink: #7a4b00;
+  --tone-teal: #00806a;
+  --tone-teal-on: #ffffff;
+  --tone-teal-tint: #e0f3ef;
+  --tone-teal-ink: #00695a;
+  --tone-slate: #5b6478;
+  --tone-slate-on: #ffffff;
+  --tone-slate-tint: #eef0f4;
+  --tone-slate-ink: #3e4657;
+  --tone-pink: #c2185b;
+  --tone-pink-on: #ffffff;
+  --tone-pink-tint: #fce7ef;
+  --tone-pink-ink: #9c1248;
+  --tone-sky: #1976d2;
+  --tone-sky-on: #ffffff;
+  --tone-sky-tint: #e3f0fc;
+  --tone-sky-ink: #0d5aa7;
+  --tone-orange: #f08c00;
+  --tone-orange-on: #182038;
+  --tone-orange-tint: #fff0dc;
+  --tone-orange-ink: #8a4600;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --bg: #0f1418;
-    --surface: #182027;
-    --surface-2: #212b33;
-    --text: #e7ecf0;
-    --muted: #a3afba;
-    --border: #33414c;
-    --primary: #ef5350;
-    --primary-text: #1a0000;
+    --bg: #0e1426;
+    --surface: #161e35;
+    --surface-2: #1c2541;
+    --text: #e8ecf5;
+    --muted: #a6afc4;
+    --border: #26304d;
+    --primary: #8fa8ff;
+    --primary-text: #0e1426;
     --focus: #8ab4ff;
-    --link: #8ab4ff;
+    --link: #8fa8ff;
     --ok-bg: #12301f;
     --ok-text: #b7ebc6;
     --error-bg: #3a1414;
@@ -92,21 +134,62 @@
     --poi-evac: #4ade80;
     --poi-water: #38bdf8;
     --poi-alarm: #f87171;
+    /* Design system (docs/design-system.md §2.3): category colours, the same in the three apps. */
+    --tone-red: #ff6b6b;
+    --tone-red-on: #0e1426;
+    --tone-red-tint: rgb(255 107 107 / 18%);
+    --tone-red-ink: #ffb3b3;
+    --tone-navy: #8fa8ff;
+    --tone-navy-on: #0e1426;
+    --tone-navy-tint: rgb(143 168 255 / 18%);
+    --tone-navy-ink: #c7d3ff;
+    --tone-purple: #c49be6;
+    --tone-purple-on: #0e1426;
+    --tone-purple-tint: rgb(196 155 230 / 18%);
+    --tone-purple-ink: #e2ccf3;
+    --tone-green: #4cc772;
+    --tone-green-on: #0e1426;
+    --tone-green-tint: rgb(76 199 114 / 18%);
+    --tone-green-ink: #a9e8bc;
+    --tone-amber: #ffc933;
+    --tone-amber-on: #0e1426;
+    --tone-amber-tint: rgb(255 201 51 / 18%);
+    --tone-amber-ink: #ffe08a;
+    --tone-teal: #4dd0b8;
+    --tone-teal-on: #0e1426;
+    --tone-teal-tint: rgb(77 208 184 / 18%);
+    --tone-teal-ink: #a6eadd;
+    --tone-slate: #a6afc4;
+    --tone-slate-on: #0e1426;
+    --tone-slate-tint: rgb(166 175 196 / 18%);
+    --tone-slate-ink: #d5dae5;
+    --tone-pink: #f06292;
+    --tone-pink-on: #0e1426;
+    --tone-pink-tint: rgb(240 98 146 / 18%);
+    --tone-pink-ink: #f8b4cb;
+    --tone-sky: #64b5f6;
+    --tone-sky-on: #0e1426;
+    --tone-sky-tint: rgb(100 181 246 / 18%);
+    --tone-sky-ink: #b5dafa;
+    --tone-orange: #ffa733;
+    --tone-orange-on: #0e1426;
+    --tone-orange-tint: rgb(255 167 51 / 18%);
+    --tone-orange-ink: #ffd199;
   }
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0f1418;
-  --surface: #182027;
-  --surface-2: #212b33;
-  --text: #e7ecf0;
-  --muted: #a3afba;
-  --border: #33414c;
-  --primary: #ef5350;
-  --primary-text: #1a0000;
+  --bg: #0e1426;
+  --surface: #161e35;
+  --surface-2: #1c2541;
+  --text: #e8ecf5;
+  --muted: #a6afc4;
+  --border: #26304d;
+  --primary: #8fa8ff;
+  --primary-text: #0e1426;
   --focus: #8ab4ff;
-  --link: #8ab4ff;
+  --link: #8fa8ff;
   --ok-bg: #12301f;
   --ok-text: #b7ebc6;
   --error-bg: #3a1414;
@@ -134,6 +217,47 @@
   --poi-evac: #4ade80;
   --poi-water: #38bdf8;
   --poi-alarm: #f87171;
+  /* Design system (docs/design-system.md §2.3): category colours, the same in the three apps. */
+  --tone-red: #ff6b6b;
+  --tone-red-on: #0e1426;
+  --tone-red-tint: rgb(255 107 107 / 18%);
+  --tone-red-ink: #ffb3b3;
+  --tone-navy: #8fa8ff;
+  --tone-navy-on: #0e1426;
+  --tone-navy-tint: rgb(143 168 255 / 18%);
+  --tone-navy-ink: #c7d3ff;
+  --tone-purple: #c49be6;
+  --tone-purple-on: #0e1426;
+  --tone-purple-tint: rgb(196 155 230 / 18%);
+  --tone-purple-ink: #e2ccf3;
+  --tone-green: #4cc772;
+  --tone-green-on: #0e1426;
+  --tone-green-tint: rgb(76 199 114 / 18%);
+  --tone-green-ink: #a9e8bc;
+  --tone-amber: #ffc933;
+  --tone-amber-on: #0e1426;
+  --tone-amber-tint: rgb(255 201 51 / 18%);
+  --tone-amber-ink: #ffe08a;
+  --tone-teal: #4dd0b8;
+  --tone-teal-on: #0e1426;
+  --tone-teal-tint: rgb(77 208 184 / 18%);
+  --tone-teal-ink: #a6eadd;
+  --tone-slate: #a6afc4;
+  --tone-slate-on: #0e1426;
+  --tone-slate-tint: rgb(166 175 196 / 18%);
+  --tone-slate-ink: #d5dae5;
+  --tone-pink: #f06292;
+  --tone-pink-on: #0e1426;
+  --tone-pink-tint: rgb(240 98 146 / 18%);
+  --tone-pink-ink: #f8b4cb;
+  --tone-sky: #64b5f6;
+  --tone-sky-on: #0e1426;
+  --tone-sky-tint: rgb(100 181 246 / 18%);
+  --tone-sky-ink: #b5dafa;
+  --tone-orange: #ffa733;
+  --tone-orange-on: #0e1426;
+  --tone-orange-tint: rgb(255 167 51 / 18%);
+  --tone-orange-ink: #ffd199;
 }
 
 *,
@@ -3905,4 +4029,228 @@ button.map-poi {
   background: var(--danger-bg, #fdecea);
   color: var(--danger, #b71c1c);
   margin-inline-start: 0.25rem;
+}
+
+/* ---------- Design system (docs/design-system.md, phase UI) ----------
+   Vivid category colours, coloured icon tiles, rounded white cards, pill badges, bold type.
+   The same components exist in the citizen app (apps/mobile/lib/core/ui/components.dart). */
+
+h1,
+h2,
+h3 {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.btn {
+  min-block-size: 2.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.btn--primary,
+.btn--danger {
+  font-weight: 700;
+}
+
+.btn--danger {
+  background: var(--tone-red);
+  border-color: var(--tone-red);
+  color: var(--tone-red-on);
+}
+
+.btn--success {
+  background: var(--tone-green);
+  border-color: var(--tone-green);
+  color: var(--tone-green-on);
+}
+
+.card {
+  border-radius: var(--radius);
+}
+
+.header {
+  box-shadow: 0 1px 0 var(--border);
+}
+
+.header__brand {
+  font-size: 1.15rem;
+}
+
+.header__nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem 0.35rem 0.6rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+
+.header__nav a:hover {
+  background: var(--surface-2);
+}
+
+.header__nav a[aria-current="page"] {
+  background: var(--tone-navy-tint);
+  border-color: var(--tone-navy-tint);
+  color: var(--tone-navy-ink);
+}
+
+/* Coloured rounded square holding a glyph. Decorative: the label next to it carries the meaning. */
+.icon-tile {
+  --tile: 2.75rem;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  inline-size: var(--tile);
+  block-size: var(--tile);
+  border-radius: 12px;
+  background: var(--tone-fill);
+  color: var(--tone-on);
+}
+
+.icon-tile svg {
+  inline-size: 55%;
+  block-size: 55%;
+}
+
+.icon-tile--soft {
+  background: var(--tone-tint);
+  color: var(--tone-fill);
+}
+
+.icon-tile--sm {
+  --tile: 1.6rem;
+  border-radius: 8px;
+}
+
+.icon-tile--lg {
+  --tile: 3.25rem;
+}
+
+.tone-red { --tone-fill: var(--tone-red); --tone-on: var(--tone-red-on); --tone-tint: var(--tone-red-tint); --tone-ink: var(--tone-red-ink); }
+.tone-navy { --tone-fill: var(--tone-navy); --tone-on: var(--tone-navy-on); --tone-tint: var(--tone-navy-tint); --tone-ink: var(--tone-navy-ink); }
+.tone-purple { --tone-fill: var(--tone-purple); --tone-on: var(--tone-purple-on); --tone-tint: var(--tone-purple-tint); --tone-ink: var(--tone-purple-ink); }
+.tone-green { --tone-fill: var(--tone-green); --tone-on: var(--tone-green-on); --tone-tint: var(--tone-green-tint); --tone-ink: var(--tone-green-ink); }
+.tone-amber { --tone-fill: var(--tone-amber); --tone-on: var(--tone-amber-on); --tone-tint: var(--tone-amber-tint); --tone-ink: var(--tone-amber-ink); }
+.tone-teal { --tone-fill: var(--tone-teal); --tone-on: var(--tone-teal-on); --tone-tint: var(--tone-teal-tint); --tone-ink: var(--tone-teal-ink); }
+.tone-slate { --tone-fill: var(--tone-slate); --tone-on: var(--tone-slate-on); --tone-tint: var(--tone-slate-tint); --tone-ink: var(--tone-slate-ink); }
+.tone-pink { --tone-fill: var(--tone-pink); --tone-on: var(--tone-pink-on); --tone-tint: var(--tone-pink-tint); --tone-ink: var(--tone-pink-ink); }
+.tone-sky { --tone-fill: var(--tone-sky); --tone-on: var(--tone-sky-on); --tone-tint: var(--tone-sky-tint); --tone-ink: var(--tone-sky-ink); }
+.tone-orange { --tone-fill: var(--tone-orange); --tone-on: var(--tone-orange-on); --tone-tint: var(--tone-orange-tint); --tone-ink: var(--tone-orange-ink); }
+
+/* Card row: icon tile, bold title, muted subtitle, chevron at the end. */
+.nav-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  text-decoration: none;
+}
+
+a.nav-card:hover,
+button.nav-card:hover {
+  border-color: var(--tone-navy);
+}
+
+.nav-card__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-inline-size: 0;
+}
+
+.nav-card__title {
+  font-weight: 700;
+}
+
+.nav-card__subtitle {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.nav-card__chevron {
+  color: var(--muted);
+}
+
+[dir="rtl"] .nav-card__chevron {
+  transform: scaleX(-1);
+}
+
+/* Fully rounded tint badge; the word always says what the colour says. */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.15rem 0.65rem;
+  border-radius: 999px;
+  background: var(--tone-tint, var(--surface-2));
+  color: var(--tone-ink, var(--text));
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Segmented choice (radio items): grey track, the selected segment raised in white with the primary text. */
+.segmented__item > span {
+  border: 0;
+  margin-inline-end: 0;
+  padding: 0.4rem 1rem;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.segmented__item:first-of-type > span {
+  border-start-start-radius: 999px;
+  border-end-start-radius: 999px;
+}
+
+.segmented__item:last-of-type > span {
+  border-start-end-radius: 999px;
+  border-end-end-radius: 999px;
+}
+
+.segmented input:checked + span {
+  background: var(--surface);
+  border-color: transparent;
+  color: var(--primary);
+  font-weight: 700;
+  box-shadow: inset 0 0 0 2px var(--primary);
+}
+
+/* KPI card: the coloured edge of each status stays, on a rounded card with an optional icon tile. */
+.kpi {
+  border-radius: var(--radius);
+}
+
+.kpi__value {
+  line-height: 1.1;
+}
+
+.kpi__label {
+  font-weight: 600;
+}
+
+.lang-menu {
+  display: inline-flex;
+  padding: 0.2rem;
+  border-radius: 999px;
+  background: var(--surface-2);
+}
+
+.lang-menu .btn {
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+}
+
+.lang-menu .btn[aria-pressed="true"] {
+  background: var(--primary);
+  color: var(--primary-text);
 }

@@ -1,0 +1,79 @@
+@startuml
+!include style.iuml
+title Diagramme de classes : alertes, contenus, récompenses et traçabilité
+hide empty methods
+class Message {
+  type : info | alerte
+  titre, corps [ar/fr/en]
+  canaux, gravité
+  zone : polygone | gouvernorats
+  expire_le
+}
+class Envoi {
+  canal : push | SMS | email
+  statut, envoyés, échecs
+}
+class SuggestionMétéo {
+  métrique, gravité
+  période, statut, simulé
+}
+class ConseilSécurité {
+  danger, contenu [3 langues]
+  statut
+}
+class ThèmeGuide {
+  clé, titre, icône
+}
+class ÉlémentGuide {
+  contenu, appeler 198 si…
+  validé par / le
+}
+class CoucheCarte {
+  clé, nom, audience
+  licence, simulée
+}
+class ÉlémentCouche {
+  nom, type, téléphone
+  position
+}
+class RègleRécompense {
+  motif, catégorie
+  points, multiplicateur
+}
+class MouvementPoints {
+  delta, motif
+  plafonné
+}
+class Badge {
+  niveau : bronze | argent | or | ambassadeur
+  statut
+}
+class CertificatDistinction {
+  code, distinction
+  signature
+}
+class JournalAudit {
+  seq, date, acteur
+  action, cible, motif
+  hash précédent, hash
+}
+class AncrePreuve {
+  racine Merkle
+  signature, jeton TSA
+}
+class MémoireNationale {
+  titre, période
+  forces, faiblesses
+  leçons, recommandations
+}
+Message "1" *-- "*" Envoi
+SuggestionMétéo ..> Message : devient
+ThèmeGuide "1" *-- "*" ÉlémentGuide
+CoucheCarte "1" *-- "*" ÉlémentCouche
+RègleRécompense "1" -- "*" MouvementPoints
+"Compte" "1" -- "*" MouvementPoints
+"Compte" "1" -- "*" Badge
+Badge "1" -- "0..1" CertificatDistinction
+JournalAudit "*" --> "1" AncrePreuve : ancré par
+MémoireNationale "*" --> "*" "Incident"
+@enduml

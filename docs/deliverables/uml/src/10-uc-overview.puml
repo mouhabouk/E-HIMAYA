@@ -1,0 +1,47 @@
+@startuml
+!include style.iuml
+title Cas d'utilisation : vue d'ensemble par acteur
+left to right direction
+actor "Visiteur anonyme" as ANO
+actor "Citoyen enregistré" as CIT
+actor "Bénévole" as VOL
+actor "Médecin" as DOC
+actor "Responsable\nd'établissement" as ORG
+actor "Personnel de salle" as OPS
+actor "Comités" as COM
+actor "Administrateurs" as ADM
+CIT -|> ANO
+VOL -|> CIT
+DOC -|> CIT
+ORG -|> CIT
+rectangle "e-Himaya" {
+  usecase "Signaler un incident\n(SOS, catégorie, médias)" as U1
+  usecase "Suivre un signalement" as U2
+  usecase "Consulter numéros, guide\net conseils (hors ligne)" as U3
+  usecase "Recevoir alertes\net notifications" as U4
+  usecase "Sécurité personnelle\n(contacts, SOS, suivi)" as U5
+  usecase "Gérer le dossier médical" as U6
+  usecase "Répondre aux mobilisations" as U7
+  usecase "Ouvrir un dossier médical\nverrouillé" as U8
+  usecase "Gérer le dossier\nd'établissement et le certificat" as U9
+  usecase "Traiter signalements\net incidents" as U10
+  usecase "Engager moyens\net bénévoles" as U11
+  usecase "Piloter niveaux\net directives" as U12
+  usecase "Publier alertes\net contenus" as U13
+  usecase "Administrer comptes,\nparamètres et audit" as U14
+}
+ANO --> U1
+ANO --> U2
+ANO --> U3
+ANO --> U4
+CIT --> U5
+CIT --> U6
+VOL --> U7
+DOC --> U8
+ORG --> U9
+OPS --> U10
+OPS --> U11
+COM --> U12
+COM --> U13
+ADM --> U14
+@enduml

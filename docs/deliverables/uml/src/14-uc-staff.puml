@@ -1,0 +1,56 @@
+@startuml
+!include style.iuml
+title Cas d'utilisation : salle des opérations et pilotage
+left to right direction
+actor "Opérateur" as OP
+actor "Chef des opérations" as OPM
+actor "Commandant de terrain" as FC
+actor "Comité local" as CL
+actor "Comité central" as CC
+actor "Éditeur de contenu" as ED
+actor "Administrateur\nde comptes régional" as RAA
+actor "Administrateur\nsécurité / système / IA" as SA
+OPM -|> OP
+rectangle "Tableau de bord central" {
+  usecase "S'authentifier (MFA)" as S0
+  usecase "Prendre en charge\nun signalement" as S1
+  usecase "Changer le statut" as S2
+  usecase "Regrouper en incident" as S3
+  usecase "Ouvrir la carte médicale\n(journalisé)" as S4
+  usecase "Répondre au téléphone (198)" as S5
+  usecase "Affecter unités et moyens" as S6
+  usecase "Demander des renforts\ninter-gouvernorats" as S7
+  usecase "Mobiliser des bénévoles" as S8
+  usecase "Voir la carte, les flux vidéo\net la météo" as S9
+  usecase "Lancer une prévision\n(propagation, crue)" as S10
+  usecase "Fixer le niveau\n(normal, vigilance, crise)" as S11
+  usecase "Émettre des directives" as S12
+  usecase "Publier alertes géociblées" as S13
+  usecase "Gérer conseils, guide,\ncouches cartographiques" as S14
+  usecase "Gérer les comptes\nde la région" as S15
+  usecase "Paramètres nationaux,\nIA, accès exceptionnel, audit" as S16
+  usecase "Analyses, rapports,\nmémoire nationale" as S17
+}
+OP --> S1
+OP --> S2
+OP --> S5
+OP --> S9
+OPM --> S3
+OPM --> S4
+OPM --> S6
+OPM --> S7
+OPM --> S8
+FC --> S6
+FC --> S10
+CL --> S11
+CC --> S11
+CC --> S12
+CC --> S17
+ED --> S13
+ED --> S14
+RAA --> S15
+SA --> S16
+S1 ..> S0 : <<include>>
+S11 ..> S0 : <<include>>
+S16 ..> S0 : <<include>>
+@enduml

@@ -1,0 +1,39 @@
+@startuml
+!include style.iuml
+title Cas d'utilisation : établissements (portail)
+left to right direction
+actor "Responsable\nd'établissement" as ADM
+actor "Membre d'équipe\nde sécurité" as MEM
+actor "Public" as PUB
+actor "Auditeur\nd'établissements" as AUD
+ADM -|> MEM
+rectangle "Portail des établissements" {
+  usecase "Enregistrer l'établissement\n(5 étapes)" as O1
+  usecase "Classement automatique\net éléments manquants" as O2
+  usecase "Gérer l'équipe de sécurité\net les formations" as O3
+  usecase "Déclarer matières dangereuses\n(n° ONU, FDS)" as O4
+  usecase "Déclarer équipements\net maintenance" as O5
+  usecase "Placer points sur la carte\n(rassemblement, sorties)" as O6
+  usecase "Déposer documents\nversionnés" as O7
+  usecase "Inviter des membres" as O8
+  usecase "Signaler au nom\nde l'établissement" as O9
+  usecase "Demander le certificat\nde sécurité" as O10
+  usecase "Vérifier un certificat\n(code / QR)" as O11
+  usecase "Approuver l'établissement" as O12
+  usecase "Valider / révoquer\nle certificat (Ed25519)" as O13
+}
+ADM --> O1
+O1 ..> O2 : <<include>>
+MEM --> O3
+MEM --> O4
+MEM --> O5
+MEM --> O6
+MEM --> O7
+ADM --> O8
+MEM --> O9
+ADM --> O10
+PUB --> O11
+AUD --> O12
+AUD --> O13
+O10 ..> O13 : <<include>>
+@enduml

@@ -1,0 +1,52 @@
+@startuml
+!include style.iuml
+title Diagramme de contexte : intervenants, canaux et systèmes externes
+top to bottom direction
+skinparam nodesep 25
+skinparam ranksep 55
+
+rectangle "Grand public (mobile)" as G1 #FFFFFF {
+  actor "Citoyen\nanonyme" as CIT
+  actor "Citoyen\nenregistré" as REG
+  actor "Bénévole" as VOL
+  actor "Médecin bénévole\n/ médecin PC" as DOC
+}
+rectangle "Portail web" as G2 #FFFFFF {
+  actor "Responsable /\nmembre d'équipe" as ORG
+  actor "Proche lié\n(lien public)" as REL
+}
+rectangle "Protection civile (web, MFA)" as G3 #FFFFFF {
+  actor "Salle régionale\nopérateur, chef ops,\ncommandant terrain" as OPS
+  actor "Comités\nlocal / central" as COM
+  actor "Auditeur, éditeur,\ncoordinateur médical" as FUN
+  actor "Administrateurs\ncomptes, système,\nsécurité, IA" as ADM
+}
+actor "Appelant\n198 / SMS" as TEL
+
+rectangle "Plateforme e-Himaya" as SYS #FFF7E6 {
+  component "Application mobile\nAndroid" as APP
+  component "Portail des\nétablissements" as POR
+  component "Tableau de bord\ncentral" as DSH
+  component "API e-Himaya" as API
+}
+
+cloud "Keycloak\n(identité, MFA)" as KC
+cloud "Passerelle SMS" as SMS
+cloud "Firebase Cloud\nMessaging" as FCM
+cloud "Météo\n(Open-Meteo / INM)" as MET
+cloud "Asterisk 22\n(PBX)" as PBX
+
+G1 --> APP
+G2 --> POR
+G3 --> DSH
+TEL --> PBX
+APP --> API
+POR --> API
+DSH --> API
+PBX --> API
+API --> KC
+API --> SMS
+API --> FCM
+API --> MET
+FCM ..> APP : notifications
+@enduml
