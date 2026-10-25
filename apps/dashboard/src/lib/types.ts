@@ -688,6 +688,43 @@ export interface StaffOrgDetail {
   documents: OrgDocument[];
   members: StaffOrgMember[];
   certificates: Certificate[];
+  /** Phase P2b: drills held and public events declared, latest first. */
+  activities?: OrgActivity[];
+  /** Phase P2b: maintenance log of the equipment, with its photos. */
+  maintenance?: OrgMaintenance[];
+}
+
+/** Phase P2b: a drill held or a public event declared by an institution. */
+export interface OrgActivity {
+  id: string;
+  kind: "drill" | "event";
+  title: string;
+  starts_on: string;
+  ends_on: string | null;
+  participants: number | null;
+  notes: string | null;
+  created_by: string | null;
+  created_at: string;
+}
+
+/** `GET /api/v1/staff/org-events`: public events not over yet, soonest first. */
+export interface StaffOrgEvent extends OrgActivity {
+  org_id: string;
+  org_name: string;
+  org_kind: OrgKind;
+  gouvernorat_code: number | null;
+}
+
+/** Phase P2b: one maintenance of an equipment; `photo_version` once the photo is stored. */
+export interface OrgMaintenance {
+  id: string;
+  equipment_id: string;
+  done_on: string;
+  note: string | null;
+  document_id: string | null;
+  photo_version: number | null;
+  recorded_by: string | null;
+  recorded_at: string;
 }
 
 /** `organization_card` of a StaffReportDetail (§9): what responders need on the way. */

@@ -977,7 +977,17 @@
       "verify": "Public verification page",
       "pdf": "PDF",
       "reports": "Reports of the establishment",
-      "noReports": "No report from this establishment."
+      "noReports": "No report from this establishment.",
+      "noMaintenance": "No maintenance recorded.",
+      "maintenanceDone": "Done on",
+      "maintenanceNote": "Note",
+      "maintenanceBy": "Recorded by",
+      "maintenancePhoto": "Photo",
+      "maintenancePhotoOf": "Photo of the maintenance on {{day}}",
+      "maintenancePhotoChecking": "Being checked",
+      "activities": "Drills and events",
+      "noActivities": "No drill or event recorded.",
+      "maintenanceLog": "Maintenance log"
     },
     "review": {
       "title": "Registration review",
@@ -1118,6 +1128,15 @@
       "yes": "Yes",
       "no": "No",
       "sim": "Working list [SIM] pending the Office's approval"
+    },
+    "activity": {
+      "drill": "Drill",
+      "event": "Public event",
+      "participants": "Participants: {{count}}"
+    },
+    "events": {
+      "title": "Upcoming public events",
+      "empty": "No upcoming event declared."
     }
   },
   "levels": {
@@ -1681,6 +1700,22 @@
       "reviewBody": "Emergency reason: {{reason}}. A second person must review it.",
       "open": "Open the alert",
       "dismiss": "Dismiss"
+    },
+    "orgKinds": "Institution kinds targeted",
+    "orgKindsHint": "None selected: every kind.",
+    "orgKindsAll": "Every kind",
+    "ackRequired": "Ask for a read acknowledgement",
+    "ackRequiredHint": "Each institution confirms reading it from the app or the portal; you follow the acknowledgements here after publishing.",
+    "acks": {
+      "title": "Read acknowledgements",
+      "summary": "{{acked}} of {{targeted}} institutions confirmed reading it.",
+      "none": "No active institution targeted.",
+      "org": "Institution",
+      "kind": "Kind",
+      "gouvernorat": "Gouvernorat",
+      "status": "Status",
+      "acked": "Read on {{at}} ({{by}})",
+      "waiting": "Waiting"
     }
   },
   "tips": {
@@ -1742,7 +1777,10 @@
     "deleteConfirmPublished": "This tip is published: deleting it removes it from the apps. Continue?",
     "deleteConfirmAction": "Confirm deletion",
     "deleted": "Tip deleted.",
-    "close": "Close"
+    "close": "Close",
+    "orgKinds": "Institution awareness by kind",
+    "orgKindsHint": "With kinds selected, the tip becomes awareness for those institutions (app and portal) and no longer shows to citizens.",
+    "forOrgs": "Institutions ({{count}})"
   },
   "committee": {
     "title": "Committees and operational levels",

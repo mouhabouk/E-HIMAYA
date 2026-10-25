@@ -4231,7 +4231,7 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get orgLogMaintenance => 'سجّل صيانة اليوم';
+  String get orgLogMaintenance => 'سجّل صيانة';
 
   @override
   String get orgMaintenanceLogged => 'سُجّلت الصيانة.';
@@ -4500,4 +4500,165 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get orgKindLabelTitle => 'الصبغة';
+
+  @override
+  String get orgSectionMessages => 'رسائل المكتب';
+
+  @override
+  String get orgSectionActivities => 'التمارين والتظاهرات';
+
+  @override
+  String get orgSectionAwareness => 'التوعية';
+
+  @override
+  String orgMessagesPending(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count رسالة من المكتب بانتظار إقرار الاطّلاع',
+      few: '$count رسائل من المكتب بانتظار إقرار الاطّلاع',
+      two: 'رسالتان من المكتب بانتظار إقرار الاطّلاع',
+      one: 'رسالة واحدة من المكتب بانتظار إقرار الاطّلاع',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get orgMessagesPendingHint => 'افتحها وأكّد أنّك اطّلعت عليها.';
+
+  @override
+  String get orgMessagesEmpty => 'لا توجد رسائل من المكتب بعد.';
+
+  @override
+  String get orgMessageAck => 'اطّلعتُ';
+
+  @override
+  String get orgMessageWaiting => 'مطلوب إقرار الاطّلاع';
+
+  @override
+  String orgMessageAcked(String date) {
+    return 'تمّ الإقرار بالاطّلاع في $date';
+  }
+
+  @override
+  String get orgMessageAckDone => 'أُعلِم المكتب باطّلاعكم.';
+
+  @override
+  String get orgMessageAckEditors =>
+      'يؤكّد الاطّلاعَ محرّرٌ أو مسؤولٌ في المؤسسة.';
+
+  @override
+  String get orgAwarenessEmpty => 'لا توجد نصائح توعوية لصنف مؤسستكم بعد.';
+
+  @override
+  String get orgAwarenessIntro => 'نصائح أعدّها المكتب لمؤسسات من صنفكم.';
+
+  @override
+  String get orgActivitiesEmpty => 'لم يُسجَّل أيّ تمرين أو تظاهرة بعد.';
+
+  @override
+  String get orgActivityDrill => 'تمرين';
+
+  @override
+  String get orgActivityEvent => 'تظاهرة عامة';
+
+  @override
+  String get orgActivityAdd => 'أضف تمرينًا أو تظاهرة';
+
+  @override
+  String get orgActivityHint =>
+      'يُسجَّل التمرين بعد إجرائه، وتُعلَن التظاهرة العامة مسبقًا ليستعدّ المكتب.';
+
+  @override
+  String get orgActivityTitle => 'العنوان';
+
+  @override
+  String get orgActivityTitleRequired => 'أدخل عنوانًا.';
+
+  @override
+  String get orgActivityStarts => 'التاريخ';
+
+  @override
+  String get orgActivityEnds => 'تاريخ النهاية (اختياري)';
+
+  @override
+  String get orgActivityParticipants => 'عدد المشاركين (اختياري)';
+
+  @override
+  String orgActivityParticipantsCount(int count) {
+    return '$count مشارك';
+  }
+
+  @override
+  String get orgActivityNotes => 'ملاحظات (اختياري)';
+
+  @override
+  String get orgActivityDelete => 'حذف';
+
+  @override
+  String orgActivityDeleteConfirm(String title) {
+    return 'حذف «$title»؟';
+  }
+
+  @override
+  String get orgActivityDeleted => 'حُذف.';
+
+  @override
+  String get orgMaintenanceSheetTitle => 'تسجيل صيانة';
+
+  @override
+  String get orgMaintenanceDate => 'تاريخ الإنجاز';
+
+  @override
+  String get orgMaintenanceNote => 'ملاحظة (اختياري)';
+
+  @override
+  String get orgMaintenancePhoto => 'التقط صورة';
+
+  @override
+  String get orgMaintenancePhotoRetake => 'أعد الالتقاط';
+
+  @override
+  String get orgMaintenancePhotoReady => 'الصورة مرفقة';
+
+  @override
+  String get orgMaintenancePhotoUnsupported => 'تُقبل صور JPEG أو PNG فقط.';
+
+  @override
+  String get orgMaintenancePhotoTooLarge => 'حجم الصورة يتجاوز 10 ميغابايت.';
+
+  @override
+  String get orgMaintenancePhotoFailed =>
+      'تعذّر إرسال الصورة، فلم تُسجَّل الصيانة.';
+
+  @override
+  String get orgMaintenanceSave => 'سجّل';
+
+  @override
+  String get orgMaintenanceHistory => 'سجلّ الصيانة';
+
+  @override
+  String get orgMaintenanceHistoryEmpty => 'لا توجد صيانة مسجّلة بعد.';
+
+  @override
+  String get orgMaintenancePhotoStored => 'صورة محفوظة';
+
+  @override
+  String get orgMaintenancePhotoChecking => 'الصورة قيد التحقّق';
+
+  @override
+  String get errorAckNotRequired => 'هذه الرسالة لا تطلب إقرارًا بالاطّلاع.';
+
+  @override
+  String get errorDrillInFuture =>
+      'يُسجَّل التمرين بعد إجرائه: اختر اليوم أو تاريخًا سابقًا.';
+
+  @override
+  String get errorInvalidDates => 'يجب أن يلي تاريخُ النهاية تاريخَ البداية.';
+
+  @override
+  String get errorMaintenanceInFuture => 'لا يمكن تأريخ صيانة في المستقبل.';
+
+  @override
+  String get errorInvalidDocument => 'الصورة غير صالحة لهذه الصيانة.';
 }

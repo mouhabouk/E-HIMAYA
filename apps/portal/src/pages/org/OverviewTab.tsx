@@ -7,6 +7,7 @@ import { useServices } from "../../context/services";
 import { useFormat, useGouvernorats } from "../../lib/hooks";
 import { queryKeys } from "../../lib/portalApi";
 import { ALERT_KINDS, REQUIREMENTS, isOneOf, type Requirement } from "../../lib/types";
+import { OfficeMessages } from "./OfficeMessages";
 import { useOrg } from "./OrgWorkspace";
 
 /** Where each completeness item is fixed. */
@@ -68,7 +69,7 @@ function StatusPanel() {
   );
 }
 
-/** Overview: status, classification (FR-B-003), completeness checklist and alerts. */
+/** Overview: status, Office messages (P2b), classification (FR-B-003), completeness checklist and alerts. */
 export function OverviewTab() {
   const { t } = useTranslation();
   const { org } = useOrg();
@@ -82,6 +83,7 @@ export function OverviewTab() {
   return (
     <div className="stack">
       <StatusPanel />
+      <OfficeMessages />
       <div className="grid-2">
         <section className="card" aria-labelledby="class-title">
           <h2 id="class-title">{t("classification.title")}</h2>

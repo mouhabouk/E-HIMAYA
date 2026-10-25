@@ -222,7 +222,8 @@
       "documents": "Documents",
       "members": "Members",
       "reports": "Reports",
-      "certificate": "Certificate"
+      "certificate": "Certificate",
+      "activities": "Drills and events"
     }
   },
   "overview": {
@@ -740,7 +741,11 @@
     "unknown": "An unexpected error occurred.",
     "certificate_outdated": "This draft was generated before the file was complete: generate a new draft, then submit it.",
     "signing_key_missing": "The platform cannot sign certificates at the moment. Try again later.",
-    "invalid_note": "The note is too long (200 characters at most)."
+    "invalid_note": "The note is too long (200 characters at most).",
+    "ack_not_required": "This message does not ask for an acknowledgement.",
+    "message_not_found": "Message not found.",
+    "drill_in_future": "A drill is recorded once held: choose today or an earlier date.",
+    "invalid_dates": "The end date must follow the start date."
   },
   "live": {
     "title": "Live location",
@@ -821,5 +826,38 @@
     "yes": "Yes",
     "no": "No",
     "sim": "Working list [SIM] pending the Office's approval"
+  },
+  "messages": {
+    "title": "Office messages",
+    "none": "No message from the Office yet.",
+    "waitingCount": "Awaiting acknowledgement: {{count}}",
+    "waiting": "Acknowledgement requested",
+    "ack": "I have read it",
+    "acked": "Acknowledged on {{at}} ({{by}})"
+  },
+  "activities": {
+    "title": "Drills and events",
+    "help": "A drill is recorded once held; a public event is declared ahead so the Office can prepare.",
+    "add": "Add",
+    "addTitle": "Drill or event",
+    "empty": "No drill or event recorded yet.",
+    "kind": "Type",
+    "kinds": {
+      "drill": "Drill",
+      "event": "Public event"
+    },
+    "titleLabel": "Title",
+    "startsOn": "Date",
+    "endsOn": "End date",
+    "dates": "Dates",
+    "participants": "Participants",
+    "notes": "Notes",
+    "createdBy": "Recorded by",
+    "deleteOne": "Delete “{{title}}”",
+    "deleteTitle": "Delete the entry",
+    "deleteBody": "“{{title}}” will be removed from the institution’s record.",
+    "drillInFuture": "A drill is recorded once held: choose today or an earlier date.",
+    "endBeforeStart": "The end date must follow the start date.",
+    "participantsInvalid": "Enter a whole number."
   }
 }

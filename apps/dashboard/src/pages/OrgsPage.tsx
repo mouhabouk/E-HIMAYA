@@ -1,10 +1,10 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useSearchParams } from "react-router";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { Pill } from "../components/Icon";
-import { CertificateChip, classificationText, HazmatTag, orgKindLabel, OrgStatusChip } from "../components/OrgBits";
+import { CertificateChip, classificationText, formatDay, HazmatTag, orgKindLabel, OrgStatusChip } from "../components/OrgBits";
 import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
 import { useDebounced, useFormat, useGouvernorats } from "../lib/hooks";
@@ -169,6 +169,46 @@ function CertificateCell({ org }: { org: StaffOrg }) {
   );
 }
 
+/** Phase P2b: public events the institutions in scope declared, soonest first, so the Office can prepare. */
+export function UpcomingOrgEvents() {
+  const { t } = useTranslation();
+  const { api } = useServices();
+  const fmt = useFormat();
+  const gouvernorats = useGouvernorats();
+  const events = useQuery({
+    queryKey: queryKeys.orgEvents,
+    queryFn: ({ signal }) => api.orgEvents(10, signal),
+  });
+  return (
+    <section className="card" aria-labelledby="sec-org-events">
+      <h2 id="sec-org-events">{t("orgs.events.title")}</h2>
+      {events.isPending && <Loading />}
+      {events.isError && <ErrorBox error={events.error} onRetry={() => void events.refetch()} />}
+      {events.data?.length === 0 && <p className="muted">{t("orgs.events.empty")}</p>}
+      {events.data && events.data.length > 0 && (
+        <ul className="org-activities">
+          {events.data.map((e) => (
+            <li key={e.id}>
+              <strong>
+                {formatDay(fmt, e.starts_on, "—")}
+                {e.ends_on && ` – ${formatDay(fmt, e.ends_on, "—")}`}
+              </strong>{" "}
+              <span dir="auto">{e.title}</span>
+              <span className="muted">
+                {" · "}
+                <Link to={`/orgs/${encodeURIComponent(e.org_id)}`}>{e.org_name}</Link>
+                {` · ${orgKindLabel(t, e.org_kind)}`}
+                {e.gouvernorat_code !== null && ` · ${gouvernorats.nameOf(e.gouvernorat_code) ?? ""}`}
+                {e.participants !== null && ` · ${t("orgs.activity.participants", { count: e.participants })}`}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
 /** FR-C-05: institutions of the user's scope, sorted by name, with filters kept in the URL. */
 export function OrgsPage() {
   const { t } = useTranslation();
@@ -205,6 +245,7 @@ export function OrgsPage() {
         </Link>
       </div>
       <p className="muted">{t("orgs.intro")}</p>
+      <UpcomingOrgEvents />
       <OrgFiltersBar
         filters={filters}
         onChange={update}

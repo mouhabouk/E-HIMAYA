@@ -21,6 +21,13 @@ enum ApiErrorCode {
   invalidIdentifier('invalid_identifier'),
   identifierAlreadyRegistered('identifier_already_registered'),
   emailNotVerified('email_not_verified'),
+  // Phase P2b: Office messages, drills and events, maintenance log.
+  messageNotFound('message_not_found'),
+  ackNotRequired('ack_not_required'),
+  invalidDates('invalid_dates'),
+  drillInFuture('drill_in_future'),
+  maintenanceInFuture('maintenance_in_future'),
+  invalidDocument('invalid_document'),
   // Phase 5 §5: volunteers and call-outs.
   registrationRequired('registration_required'),
   notVolunteer('not_volunteer'),

@@ -151,6 +151,7 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     orgDocumentDownload: vi.fn(() => Promise.resolve({ url: "https://s3.example/doc?sig=x" })),
     certificatePdf: vi.fn(() => Promise.resolve({ url: "https://s3.example/cert.pdf?sig=x" })),
     orgsMap: vi.fn(() => Promise.resolve({ type: "FeatureCollection" as const, features: [] })),
+    orgEvents: vi.fn(() => Promise.resolve([])),
     reviewOrg: vi.fn(),
     certificates: vi.fn(() => Promise.resolve({ items: [], next_cursor: null })),
     reviewCertificate: vi.fn(),

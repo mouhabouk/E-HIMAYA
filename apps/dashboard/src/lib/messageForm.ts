@@ -15,6 +15,7 @@ import type {
   Topic,
 } from "./opsTypes";
 import { CHANNELS } from "./opsTypes";
+import type { OrgKind } from "./types";
 import { fromPolygon, toPolygon, validateVertices, type PolygonError, type Vertex } from "./polygon";
 
 export const TITLE_MAX = 120;
@@ -40,6 +41,9 @@ export interface MessageForm {
   expiresAt: string;
   areaMode: AreaMode;
   vertices: Vertex[];
+  /** Phase P2b, audience "organizations": some kinds only (none: every kind) and a read acknowledgement. */
+  orgKinds: OrgKind[];
+  ackRequired: boolean;
 }
 
 export type FormErrors = Partial<
@@ -82,6 +86,8 @@ export function emptyForm(kind: MessageKind, now: Date = new Date()): MessageFor
     expiresAt: toLocalInput(new Date(now.getTime() + 24 * 3_600_000)),
     areaMode: "gouvernorats",
     vertices: [],
+    orgKinds: [],
+    ackRequired: false,
   };
 }
 
@@ -101,6 +107,8 @@ export function formFromMessage(m: Message): MessageForm {
     expiresAt: m.expires_at ? toLocalInput(new Date(m.expires_at)) : toLocalInput(new Date(Date.now() + 86_400_000)),
     areaMode: m.area.polygon ? "polygon" : "gouvernorats",
     vertices: fromPolygon(m.area.polygon),
+    orgKinds: [...(m.org_kinds ?? [])],
+    ackRequired: m.ack_required ?? false,
   };
 }
 
@@ -138,12 +146,15 @@ export function toMessageBody(form: MessageForm, version?: number): MessageBody 
   const base = { kind: form.kind, title: trim(form.title), body: trim(form.body), channels, ...(version ? { version } : {}) };
   if (form.kind === "info") {
     const toUser = form.audience === "user";
+    const toOrgs = form.audience === "organizations";
     return {
       ...base,
       topic: form.topic || null,
       audience: form.audience || null,
       user_id: toUser ? form.userId.trim() : null,
       area: { gouvernorat_codes: toUser ? [] : [...form.gouvernorats] },
+      org_kinds: toOrgs ? [...form.orgKinds].sort() : [],
+      ack_required: toOrgs && form.ackRequired,
     };
   }
   const polygon = form.areaMode === "polygon";

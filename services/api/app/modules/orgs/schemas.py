@@ -5,6 +5,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, EmailStr, Field
 
 from app.modules.orgs.domain import (
+    ActivityKind,
     CertificateStatus,
     DocumentKind,
     EquipmentKind,
@@ -372,6 +373,71 @@ class OrgSummary(BaseModel):
     hazmat: list[SummaryHazmat]
     alerts_count: int
     alerts: list[Alert]
+    # Phase P2b: Office messages waiting for this institution's read acknowledgement.
+    messages_pending: int = 0
+
+
+# ---------------------------------------------------------------- Office messages, awareness, activities (P2b)
+
+
+class OrgMessage(BaseModel):
+    """An Office message addressed to the institution, with its acknowledgement."""
+
+    id: uuid.UUID
+    topic: str | None
+    title: dict[str, str]
+    body: dict[str, str]
+    published_at: datetime
+    ack_required: bool
+    acked_at: datetime | None
+    acked_by: str | None
+
+
+class AwarenessTip(BaseModel):
+    id: uuid.UUID
+    hazard: str
+    content: dict[str, Any]
+    updated_at: datetime
+
+
+class ActivityIn(BaseModel):
+    kind: ActivityKind
+    title: str = Field(min_length=1, max_length=120)
+    starts_on: date
+    ends_on: date | None = None
+    participants: int | None = Field(default=None, ge=0, le=1_000_000)
+    notes: str | None = Field(default=None, max_length=1000)
+
+
+class ActivityOut(ActivityIn):
+    id: uuid.UUID
+    created_by: str | None
+    created_at: datetime
+
+
+class StaffActivity(ActivityOut):
+    org_id: uuid.UUID
+    org_name: str
+    org_kind: OrgKind
+    gouvernorat_code: int | None
+
+
+class MaintenanceIn(BaseModel):
+    done_on: date
+    note: str | None = Field(default=None, max_length=500)
+    document_id: uuid.UUID | None = None
+
+
+class MaintenanceOut(BaseModel):
+    id: uuid.UUID
+    equipment_id: uuid.UUID
+    done_on: date
+    note: str | None
+    document_id: uuid.UUID | None
+    # Stored version of the photo, to download it; None while it is being checked or when there is none.
+    photo_version: int | None
+    recorded_by: str | None
+    recorded_at: datetime
 
 
 # ---------------------------------------------------------------- staff
@@ -415,6 +481,9 @@ class StaffOrgDetail(OrgCard):
     documents: list[DocumentOut]
     members: list[StaffMember]
     certificates: list[CertificateOut]
+    # Phase P2b.
+    activities: list[ActivityOut] = Field(default_factory=list)
+    maintenance: list[MaintenanceOut] = Field(default_factory=list)
 
 
 class OrgReviewIn(BaseModel):

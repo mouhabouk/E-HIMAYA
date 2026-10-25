@@ -47,6 +47,11 @@ export const ERROR_CODES = [
   "signing_key_missing",
   "invalid_note",
   "invalid_transition",
+  // Phase P2b: Office messages, drills and events.
+  "message_not_found",
+  "ack_not_required",
+  "drill_in_future",
+  "invalid_dates",
   "not_found",
   // generic, derived from the HTTP status
   "forbidden",

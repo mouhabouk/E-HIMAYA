@@ -116,6 +116,12 @@ async def message_audience(principal: Editor, session: Session, message_id: uuid
     return await service.audience(session, await service.get_in_scope(session, principal, message_id))
 
 
+@router.get("/notifications/{message_id}/acks", response_model=schemas.OrgAcks)
+async def message_acks(principal: Editor, session: Session, message_id: uuid.UUID) -> schemas.OrgAcks:
+    """Institutions reached by an "organizations" message and their read acknowledgements (phase P2b)."""
+    return await service.org_acks(session, await service.get_in_scope(session, principal, message_id))
+
+
 @router.post("/notifications/{message_id}/publish", response_model=schemas.MessageOut)
 async def publish_message(
     principal: Editor, session: Session, message_id: uuid.UUID, body: schemas.PublishIn | None = None

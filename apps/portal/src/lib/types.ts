@@ -380,3 +380,36 @@ export interface Gouvernorat {
 export function isOneOf<T extends string>(list: readonly T[], v: unknown): v is T {
   return typeof v === "string" && (list as readonly string[]).includes(v);
 }
+
+// ---------- Phase P2b: Office messages, drills and events ----------
+
+/** An Office message addressed to the institution, with its read acknowledgement. */
+export interface OrgMessage {
+  id: string;
+  topic: string | null;
+  title: Partial<Record<TextLang, string>>;
+  body: Partial<Record<TextLang, string>>;
+  published_at: string;
+  ack_required: boolean;
+  acked_at: string | null;
+  acked_by: string | null;
+}
+
+export const ACTIVITY_KINDS = ["drill", "event"] as const;
+export type ActivityKind = (typeof ACTIVITY_KINDS)[number];
+
+export interface ActivityInput {
+  kind: ActivityKind;
+  title: string;
+  starts_on: string;
+  ends_on: string | null;
+  participants: number | null;
+  notes: string | null;
+}
+
+/** A drill held or a public event declared by the institution. */
+export interface OrgActivity extends ActivityInput {
+  id: string;
+  created_by: string | null;
+  created_at: string;
+}

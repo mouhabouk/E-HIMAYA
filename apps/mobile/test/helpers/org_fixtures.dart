@@ -1,7 +1,10 @@
 /// Phase 4 §8 shapes used by the app.
 const orgId = '7b0c6a2e-3d1f-4e55-9a10-1f2d3c4b5a60';
 
-Map<String, Object?> summaryJson({String status = 'active'}) => {
+Map<String, Object?> summaryJson({
+  String status = 'active',
+  int messagesPending = 0,
+}) => {
   'id': orgId,
   'name': 'Société X',
   'kind': 'industrial',
@@ -43,6 +46,8 @@ Map<String, Object?> summaryJson({String status = 'active'}) => {
     {'kind': 'training_expired', 'ref': 't2', 'since': '2026-09-01'},
     {'kind': 'maintenance_overdue', 'ref': 'e1', 'since': '2026-08-15'},
   ],
+  // Phase P2b.
+  'messages_pending': messagesPending,
 };
 
 /// `GET /api/v1/orgs/{id}` (phase 4 §1, P2a fields included).

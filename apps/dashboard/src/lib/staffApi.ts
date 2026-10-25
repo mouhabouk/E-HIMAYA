@@ -32,6 +32,7 @@ import type {
   ReportStatus,
   StaffOrg,
   StaffOrgDetail,
+  StaffOrgEvent,
   StaffReport,
   StaffReportDetail,
 } from "./types";
@@ -153,6 +154,10 @@ export function staffApi(api: ApiClient) {
     orgDocumentDownload: (orgId: string, docId: string, version: number) =>
       api.request<DownloadLink>(`${docPath(orgId, docId)}/versions/${encodeURIComponent(String(version))}/download`),
 
+    /** Phase P2b: public events declared by institutions in scope, not over yet. */
+    orgEvents: (limit = 50, signal?: AbortSignal) =>
+      api.request<StaffOrgEvent[]>("/api/v1/staff/org-events", { query: { limit }, signal }),
+
     /** Pre-signed link (10 minutes) to a certificate's PDF. */
     certificatePdf: (orgId: string, certId: string) =>
       api.request<DownloadLink>(`${orgPath(orgId)}/certificates/${encodeURIComponent(certId)}/pdf`),
@@ -239,6 +244,7 @@ export const queryKeys = {
   orgReportsAll: ["org-reports"] as const,
   orgReports: (id: string) => ["org-reports", id] as const,
   orgDocumentVersions: (orgId: string, docId: string) => ["org-document-versions", orgId, docId] as const,
+  orgEvents: ["org-events"] as const,
   orgsMapAll: ["orgs-map"] as const,
   orgsMap: (bbox: BBox) => ["orgs-map", bbox.map((n) => Number(n.toFixed(3)))] as const,
   certificatesAll: ["certificates"] as const,

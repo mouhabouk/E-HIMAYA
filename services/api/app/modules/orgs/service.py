@@ -16,7 +16,7 @@ from typing import Annotated, Any
 
 from fastapi import Depends, HTTPException, status
 from geoalchemy2 import Geography, Geometry
-from sqlalchemy import Select, and_, case, cast, delete, exists, func, or_, select, update
+from sqlalchemy import Select, and_, case, cast, delete, exists, func, or_, select, text, update
 from sqlalchemy.dialects.postgresql import distinct_on
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -27,6 +27,7 @@ from app.core.events import emit
 from app.core.security import CurrentPrincipal, Principal, Realm
 from app.modules.identity.service import Reporter, resolve_reporter
 from app.modules.notify import outbox, templates
+from app.modules.notify.org_target import ORG_TARGET
 from app.modules.orgs import domain, schemas
 from app.modules.orgs.domain import OrgRole, OrgStatus
 from app.modules.orgs.models import (
@@ -173,7 +174,12 @@ async def load_registers(session: AsyncSession, org_id: uuid.UUID) -> Registers:
 
 async def documents_of(session: AsyncSession, org_id: uuid.UUID) -> list[tuple[Document, DocumentVersion | None, int]]:
     docs = list(
-        await session.scalars(select(Document).where(Document.org_id == org_id).order_by(Document.kind, Document.title))
+        await session.scalars(
+            select(Document)
+            # Maintenance photos are shown with their equipment, not in the documents list (phase P2b).
+            .where(Document.org_id == org_id, Document.kind != "maintenance_photo")
+            .order_by(Document.kind, Document.title)
+        )
     )
     if not docs:
         return []
@@ -904,7 +910,27 @@ async def summary(session: AsyncSession, org: Organization) -> schemas.OrgSummar
         ],
         alerts_count=len(alerts),
         alerts=alerts,
+        messages_pending=await messages_pending(session, org.id),
     )
+
+
+# Office messages addressed to an institution (phase P2b): published "organizations" messages of the last
+# MESSAGE_DAYS days that reach it. ``:oid`` is the institution.
+MESSAGE_DAYS = 180
+ORG_MESSAGES = f"""
+    FROM notify.message m JOIN org.organization o ON o.id = :oid
+    LEFT JOIN notify.org_ack a ON a.message_id = m.id AND a.org_id = o.id
+    WHERE m.status = 'published' AND m.published_at > now() - make_interval(days => {MESSAGE_DAYS})
+      AND {ORG_TARGET}
+"""
+
+
+async def messages_pending(session: AsyncSession, org_id: uuid.UUID) -> int:
+    count = await session.scalar(
+        text(f"SELECT count(*) {ORG_MESSAGES} AND m.ack_required AND a.org_id IS NULL"),
+        {"oid": org_id},
+    )
+    return int(count or 0)
 
 
 async def organization_card(session: AsyncSession, org: Organization) -> schemas.OrganizationCard:
