@@ -761,5 +761,10 @@
     "helpBody": "Call the Civil Protection on 198 and give them the position shown on this page.",
     "call198": "Call 198",
     "privacy": "This page shows no name or account. The link works only while the person shares it, and stops when they end it."
+  },
+  "environment": {
+    "development": "Development environment: all data is test data",
+    "pilot": "Field pilot environment: test data",
+    "training": "Exercise: test data, not real reports"
   }
 }

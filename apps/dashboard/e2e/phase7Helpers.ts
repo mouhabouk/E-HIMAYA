@@ -109,6 +109,8 @@ export function commonAnswer(
   pathname: string,
   route: Route,
 ): Promise<void> | null {
+  // Environment strip (backlog G3): production-like, no strip.
+  if (method === "GET" && pathname === "/api/v1/app/environment") return json(route, { banner: null });
   if (method === "GET" && pathname === "/api/v1/geo/gouvernorats") {
     return json(route, [
       {

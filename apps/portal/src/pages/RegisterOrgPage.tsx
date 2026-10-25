@@ -20,6 +20,7 @@ import { useFormat, useGouvernorats } from "../lib/hooks";
 import { queryKeys } from "../lib/portalApi";
 import type { Organization } from "../lib/types";
 import { RequiredNote } from "./org/RegisterParts";
+import { PageTitle } from "../components/PageTitle";
 
 const STEPS = [...CARD_SECTIONS, "review"] as const;
 type Step = (typeof STEPS)[number];
@@ -149,7 +150,7 @@ export function RegisterOrgPage() {
   return (
     <div className="page page--narrow">
       <div className="page__head">
-        <h1>{t("register.title")}</h1>
+        <PageTitle icon="apartment" tone="orange">{t("register.title")}</PageTitle>
       </div>
       <ol className="steps" aria-label={t("register.progress")}>
         {STEPS.map((s, i) => (

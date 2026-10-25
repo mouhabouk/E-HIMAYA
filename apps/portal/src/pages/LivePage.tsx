@@ -9,6 +9,7 @@ import { errorMessageKey, isApiError } from "../lib/api";
 import { useFormat } from "../lib/hooks";
 import { queryKeys } from "../lib/portalApi";
 import type { LivePoint } from "../lib/types";
+import { PageTitle } from "../components/PageTitle";
 
 /** Refresh while the share is on: the phone sends a position at most every 20 seconds. */
 export const LIVE_REFRESH_MS = 30_000;
@@ -54,7 +55,7 @@ export function LivePage() {
 
   const head = (
     <div className="page__head">
-      <h1>{t("live.title")}</h1>
+      <PageTitle icon="videocam" tone="red">{t("live.title")}</PageTitle>
     </div>
   );
   if (token === null) {

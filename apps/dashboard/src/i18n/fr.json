@@ -3775,5 +3775,14 @@
       "12": "12 mois",
       "24": "24 mois"
     }
+  },
+  "environment": {
+    "development": "Environnement de développement : toutes les données sont fictives",
+    "pilot": "Environnement pilote : données de test",
+    "training": "Exercice : données fictives, pas de vrais signalements"
+  },
+  "drafts": {
+    "changedWhileTyping": "Ce dossier a changé pendant votre saisie. Votre texte est conservé ; vérifiez le nouvel état avant d’envoyer.",
+    "acknowledge": "Compris"
   }
 }

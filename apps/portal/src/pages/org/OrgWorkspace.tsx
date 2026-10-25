@@ -1,3 +1,4 @@
+import { IconTile, type IconName, type Tone } from "../../components/Icon";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { Link, NavLink, Outlet, useOutletContext, useParams } from "react-router";
@@ -8,6 +9,7 @@ import { isApiError } from "../../lib/api";
 import { queryKeys } from "../../lib/portalApi";
 import { blockedReason, can, type OrgAction } from "../../lib/roles";
 import type { Organization } from "../../lib/types";
+import { PageTitle } from "../../components/PageTitle";
 
 export interface OrgContext {
   org: Organization;
@@ -21,18 +23,18 @@ export function useOrg(): OrgContext {
   return useOutletContext<OrgContext>();
 }
 
-export const TABS = [
-  { path: "", key: "overview" },
-  { path: "card", key: "card" },
-  { path: "team", key: "team" },
-  { path: "hazmat", key: "hazmat" },
-  { path: "equipment", key: "equipment" },
-  { path: "map", key: "map" },
-  { path: "documents", key: "documents" },
-  { path: "members", key: "members" },
-  { path: "reports", key: "reports" },
-  { path: "certificate", key: "certificate" },
-] as const;
+export const TABS: readonly { path: string; key: string; icon: IconName; tone: Tone }[] = [
+  { path: "", key: "overview", icon: "home", tone: "navy" },
+  { path: "card", key: "card", icon: "description", tone: "navy" },
+  { path: "team", key: "team", icon: "groups", tone: "green" },
+  { path: "hazmat", key: "hazmat", icon: "warning", tone: "orange" },
+  { path: "equipment", key: "equipment", icon: "localShipping", tone: "amber" },
+  { path: "map", key: "map", icon: "map", tone: "teal" },
+  { path: "documents", key: "documents", icon: "folderOpen", tone: "slate" },
+  { path: "members", key: "members", icon: "manageAccounts", tone: "slate" },
+  { path: "reports", key: "reports", icon: "campaign", tone: "red" },
+  { path: "certificate", key: "certificate", icon: "workspacePremium", tone: "amber" },
+];
 
 /** Workspace of one institution: header, section navigation and the selected section. */
 export function OrgWorkspace() {
@@ -71,7 +73,9 @@ export function OrgWorkspace() {
           <p className="muted breadcrumb">
             <Link to="/orgs/mine">{t("nav.myOrgs")}</Link>
           </p>
-          <h1>{org.name}</h1>
+          <PageTitle icon="apartment" tone="navy">
+            {org.name}
+          </PageTitle>
         </div>
         <div className="org-item__badges">
           <OrgStatusBadge status={org.status} />
@@ -82,6 +86,7 @@ export function OrgWorkspace() {
       <nav className="tabs" aria-label={t("workspace.sections")}>
         {TABS.map((tab) => (
           <NavLink key={tab.key} to={tab.path ? `${base}/${tab.path}` : base} end={tab.path === ""}>
+            <IconTile name={tab.icon} tone={tab.tone} size="sm" />
             {t(`workspace.tabs.${tab.key}`)}
           </NavLink>
         ))}

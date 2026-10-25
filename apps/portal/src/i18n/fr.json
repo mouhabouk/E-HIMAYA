@@ -761,5 +761,10 @@
     "helpBody": "Appelez la Protection civile au 198 et donnez-leur la position affichée sur cette page.",
     "call198": "Appeler le 198",
     "privacy": "Cette page n'affiche ni nom ni compte. Le lien ne fonctionne que tant que la personne le partage, et s'arrête quand elle y met fin."
+  },
+  "environment": {
+    "development": "Environnement de développement : toutes les données sont fictives",
+    "pilot": "Environnement pilote : données de test",
+    "training": "Exercice : données fictives, pas de vrais signalements"
   }
 }

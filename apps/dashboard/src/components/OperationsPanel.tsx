@@ -24,6 +24,7 @@ import {
 import { canCloseIncidents, canDispatch } from "../lib/roles";
 import { queryKeys } from "../lib/staffApi";
 import type { IncidentDetail } from "../lib/types";
+import { useDraft } from "../lib/drafts";
 
 /** A recommendation's "open assignment" (phase 7 §3): preselects a resource; the operator still submits. */
 export interface AssignPreset {
@@ -471,7 +472,7 @@ function CalloutForm({ incident }: { incident: IncidentDetail }) {
   const [skill, setSkill] = useState<Skill>("first_aid");
   const [radiusKm, setRadiusKm] = useState(30);
   const [requested, setRequested] = useState(2);
-  const [message, setMessage] = useState("");
+  const [message, setMessage, clearMessage] = useDraft(`incident:${incident.id}:callout`);
   const [picked, setPicked] = useState<ReadonlySet<string>>(new Set());
   const [sent, setSent] = useState(false);
 
@@ -491,7 +492,7 @@ function CalloutForm({ incident }: { incident: IncidentDetail }) {
       }),
     onSuccess: () => {
       setPicked(new Set());
-      setMessage("");
+      clearMessage();
       setSent(true);
       refresh();
     },
@@ -630,11 +631,11 @@ function NoteForm({ incidentId }: { incidentId: string }) {
   const { api } = useServices();
   const refresh = useRefreshIncident(incidentId);
   const id = useId();
-  const [text, setText] = useState("");
+  const [text, setText, clearText] = useDraft(`incident:${incidentId}:note`);
   const mutation = useMutation({
     mutationFn: () => api.addIncidentNote(incidentId, text.trim()),
     onSuccess: () => {
-      setText("");
+      clearText();
       refresh();
     },
   });
@@ -669,8 +670,9 @@ function CloseForm({ incident }: { incident: IncidentDetail }) {
   const qc = useQueryClient();
   const ids = { outcome: useId(), summary: useId(), lessons: useId(), base: useId() };
   const [outcome, setOutcome] = useState<Outcome>("resolved");
-  const [summary, setSummary] = useState("");
-  const [lessons, setLessons] = useState("");
+  // Backlog G4: a live update can hide this form (an assignment becomes active again); the texts come back with it.
+  const [summary, setSummary, clearSummary] = useDraft(`incident:${incident.id}:close-summary`);
+  const [lessons, setLessons, clearLessons] = useDraft(`incident:${incident.id}:close-lessons`);
   const [casualties, setCasualties] = useState(ZERO);
   const [confirming, setConfirming] = useState(false);
   const [summaryError, setSummaryError] = useState(false);
@@ -681,6 +683,8 @@ function CloseForm({ incident }: { incident: IncidentDetail }) {
     mutationFn: () =>
       api.closeIncident(incident.id, { outcome, summary: summary.trim(), casualties, lessons: lessons.trim() || null }),
     onSuccess: (updated) => {
+      clearSummary();
+      clearLessons();
       refresh(updated);
       void qc.invalidateQueries({ queryKey: queryKeys.reportsAll });
     },

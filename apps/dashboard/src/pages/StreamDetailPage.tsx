@@ -17,6 +17,7 @@ import { initialBoundsFor } from "../lib/mapStyle";
 import { canStopStreams } from "../lib/roles";
 import { streamKeys } from "../lib/streamsApi";
 import { STREAM_END_REASONS, type StaffStreamDetail, type StreamRecording } from "../lib/streamTypes";
+import { PageTitle } from "../components/PageTitle";
 
 /** Save a file or open a pre-signed link through a temporary <a download>. */
 function saveAs(url: string, filename: string): void {
@@ -182,12 +183,12 @@ export function StreamDetailPage() {
         <Link to="/streams">{t("streams.detail.back")}</Link>
       </p>
       <div className="page__head">
-        <h1 id="stream-title">
+        <PageTitle icon="videocam" tone="red" id="stream-title">
           {t("streams.detail.title")}{" "}
           <span dir="auto" className="code">
             {name}
           </span>
-        </h1>
+        </PageTitle>
         <StreamStatusChip status={s.status} />
         {s.simulated && <SimTag />}
         <ConfidenceBadges stream={s} />

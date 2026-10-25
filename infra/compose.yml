@@ -215,6 +215,8 @@ services:
       API_LOG_LEVEL: ${API_LOG_LEVEL:-INFO}
       # development | production (infra/compose.prod.yml): production hides /docs and refuses example secrets.
       APP_ENV: ${APP_ENV:-development}
+      # Environment strip (backlog G3): auto | development | pilot | training | off.
+      ENVIRONMENT_BANNER: ${ENVIRONMENT_BANNER:-auto}
       # all = HTTP + background loops in one container (development); production splits api / worker.
       PROCESS_ROLE: ${PROCESS_ROLE:-all}
       # Proxies whose X-Forwarded-For is trusted (uvicorn). Development: none in front of the API.

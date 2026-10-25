@@ -3775,5 +3775,14 @@
       "12": "12 months",
       "24": "24 months"
     }
+  },
+  "environment": {
+    "development": "Development environment: all data is test data",
+    "pilot": "Field pilot environment: test data",
+    "training": "Exercise: test data, not real reports"
+  },
+  "drafts": {
+    "changedWhileTyping": "This record changed while you were typing. Your text is kept; check the new state before sending.",
+    "acknowledge": "Got it"
   }
 }

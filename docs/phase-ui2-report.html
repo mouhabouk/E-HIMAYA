@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ء-حماية | تقرير مرحلة UI-2</title>
+<style>
+:root{--page:#f3f5fa;--card:#fff;--ink:#182038;--muted:#5b6478;--line:#e3e7ef;
+--navy:#1f3fa0;--red:#d7141a;--orange:#f08c00;--green:#188038;--purple:#7838a0;--teal:#00806a;--amber:#f5b400;--pink:#c2185b;--slate:#5b6478;--sky:#1976d2}
+@media (prefers-color-scheme:dark){:root{--page:#0e1426;--card:#161e35;--ink:#e8ecf5;--muted:#a6afc4;--line:#26304d;--navy:#8fa8ff}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font-family:"IBM Plex Sans Arabic","Segoe UI",Tahoma,Arial,sans-serif;line-height:1.75;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header.cover{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px 24px;margin-bottom:20px;border-top:6px solid var(--navy)}
+header.cover h1{margin:0 0 6px;font-size:30px}
+.sub{color:var(--muted);margin:0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:16px}
+.meta div{background:var(--page);border-radius:12px;padding:8px 12px;font-size:14px}
+.meta b{display:block;color:var(--muted);font-weight:600;font-size:12px}
+section{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 24px;margin-bottom:20px}
+h2{margin-top:0;font-size:23px}
+h3{font-size:18px;margin:18px 0 8px}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:start;vertical-align:top}
+th{font-weight:700;color:var(--muted);font-size:13px}
+code{direction:ltr;unicode-bidi:isolate;background:var(--page);padding:1px 6px;border-radius:6px;font-size:13px}
+.ltr{direction:ltr;unicode-bidi:isolate}
+.sw{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.sw div{border:1px solid var(--line);border-radius:14px;overflow:hidden;font-size:13px}
+.sw i{display:block;height:56px}
+.sw span{display:block;padding:6px 10px}
+.tiles{display:flex;flex-wrap:wrap;gap:10px}
+.tile{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:16px;padding:10px 14px;min-width:230px;flex:1}
+.tile b{display:block}.tile small{color:var(--muted)}
+.ic{inline-size:44px;block-size:44px;border-radius:12px;display:grid;place-items:center;color:#fff;font-weight:700;font-size:20px;flex:none}
+.pill{display:inline-block;border-radius:999px;padding:2px 12px;font-size:13px;font-weight:700;margin:2px}
+.bar{height:10px;background:var(--line);border-radius:6px;overflow:hidden;min-width:90px}
+.bar span{display:block;height:100%;background:var(--green)}
+.shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.shots figure{margin:0;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.shots img{display:block;width:100%;height:auto}
+.shots figcaption{padding:6px 10px;font-size:13px;color:var(--muted)}
+.note{border-inline-start:4px solid var(--navy);background:var(--page);padding:10px 14px;border-radius:10px;margin:12px 0}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}.pair figure{margin:0;border:1px solid var(--line);border-radius:14px;overflow:hidden}.pair img{display:block;width:100%;height:auto}.pair figcaption{padding:6px 10px;font-size:13px;color:var(--muted)}
+.sim{display:inline-block;background:#f5b400;color:#182038;border-radius:6px;padding:0 8px;font-weight:700;font-size:13px}
+footer{color:var(--muted);text-align:center;font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="cover">
+  <h1>ء-حماية <span class="ltr">e-Himaya</span></h1>
+  <p class="sub">تقرير مرحلة UI-2: نظام التصميم في بقية الشاشات، شريط البيئة الدائم (G3)، وحماية المسودات من التحديث الحي (G4)</p>
+  <div class="meta">
+    <div><b>التاريخ</b>2026-10-25</div>
+    <div><b>الفرع</b><span class="ltr">claude/project-thread-yzwsn2</span></div>
+    <div><b>طلب الدمج</b><a href="https://github.com/mouhabouk/E-HIMAYA/pull/79">#79</a></div>
+    <div><b>الشكل السابق محفوظ في</b><span class="ltr">classic/v0.9.0</span></div>
+    <div><b>التطبيق</b>0.10.0 (البناء 9)</div>
+  </div>
+</header>
+
+<section>
+  <h2>1. القرار</h2>
+  <p>اختار يامن (2026-10-25) الخيار A: استكمال نظام التصميم على الشاشات المتبقية (P1)، مع بندين من قائمة الانتظار: شريط البيئة (G3) وحماية المسودات (G4). وطلب الإبقاء على الإصدار الحالي بشكله القديم في كل وقت، فحُفظ كما هو في الفرع <code>classic/v0.9.0</code> الذي يمكن بناؤه وتشغيله متى شاء.</p>
+</section>
+
+<section>
+  <h2>2. مراجعة ← إعادة تصميم ← تطوير</h2>
+  <div class="tbl"><table>
+    <tr><th>المجال</th><th>قبل</th><th>بعد</th></tr>
+    <tr><td>قوائم التطبيق</td><td>صفوف ListTile بأيقونة رمادية بلا خلفية.</td><td>بطاقات بيضاء مستديرة (NavCard) بمربع أيقونة ملون وعنوان عريض ووصف وسهم: الإعدادات، فضاء السلامة، أرقام الطوارئ، الطبيب، التطوع، تحقق السلامة، التنبيهات المستلمة، النصائح، التسجيل.</td></tr>
+    <tr><td>أرقام الطوارئ</td><td>أيقونة حمراء ورقم وسماعة رمادية.</td><td>مربع أحمر للجهة، الرقم بخط عريض، ومربع اتصال أخضر واضح.</td></tr>
+    <tr><td>عناوين اللوحة</td><td>عنوان نصي فقط.</td><td>كل عنوان من 44 صفحة يحمل مربع أيقونة قسمه، بنفس اللون والرمز في القائمة.</td></tr>
+    <tr><td>مؤشرات اللوحة</td><td>رقم وعنوان.</td><td>مربع أيقونة فاتح لكل مؤشر (المجموع، المستلمة، قيد المعالجة، المغلقة، الأولوية العالية، التحليل، زمن الاستجابة، المؤسسات، الشهادات).</td></tr>
+    <tr><td>البوابة</td><td>عناوين وتبويبات نصية.</td><td>عناوين بمربع أيقونة، قائمة «مؤسساتي» بمربع أيقونة لكل مؤسسة، وتبويبات فضاء المؤسسة العشرة بمربعات صغيرة ملونة.</td></tr>
+  </table></div>
+  <p class="note">كل مفاتيح الاختبار ونصوص العناوين ومعرّفاتها بقيت كما هي، فلم يتغيّر أي اختبار قديم. الأيقونات زخرفية مخفية عن قارئ الشاشة، والنص يحمل المعنى.</p>
+</section>
+
+<section>
+  <h2>3. شريط البيئة الدائم (G3)</h2>
+  <p>شريط كهرماني <span class="sim">[SIM]</span> أعلى اللوحة والبوابة والتطبيق يسمّي البيئة، حتى لا يخلط المشغّل بين بيانات التجربة والبيانات الحقيقية.</p>
+  <div class="tbl"><table>
+    <tr><th>قيمة <code>ENVIRONMENT_BANNER</code></th><th>ما يظهر</th></tr>
+    <tr><td><code>auto</code> (الافتراضي)</td><td>«بيئة تطوير» عندما <code>APP_ENV=development</code>، ولا شيء في الإنتاج</td></tr>
+    <tr><td><code>development</code> / <code>pilot</code> / <code>training</code></td><td>بيئة تطوير / تجربة ميدانية / تدريب</td></tr>
+    <tr><td><code>off</code></td><td>لا شريط</td></tr>
+  </table></div>
+  <p>اللوحة والبوابة تقرآن <code>GET /api/v1/app/environment</code>. التطبيق يقرأ الحقل <code>environment</code> من جواب الإصدار المحفوظ، ولا يتصل بالخادم من أجله أبدا: قبل قبول الميثاق لا يخرج أي طلب، وأرقام الطوارئ تعمل دون اتصال كما كانت (اختبار مخصص).</p>
+</section>
+
+<section>
+  <h2>4. حماية المسودات (G4)</h2>
+  <ul>
+    <li>النص الذي يكتبه المشغّل يُحفظ في <code>sessionStorage</code> لكل سجل وحقل: رسالة الاستدعاء، ملاحظة الحادث، ملخص الإغلاق والدروس، ملاحظة تغيير الحالة، الرد على «اتصل بنا». يعود إذا أُعيد رسم النموذج بتحديث حي أو أُعيد تحميل الصفحة، ويُمحى بعد الإرسال الناجح.</li>
+    <li>ما دام نص غير مرسل موجودا، يطلب المتصفح تأكيدا قبل إغلاق التبويب أو إعادة تحميله.</li>
+    <li>إذا تغيّرت حالة البلاغ أثناء الكتابة (مشغّل آخر)، يظهر تنبيه «تغيّرت حالة هذا السجل أثناء كتابتك. نصّك محفوظ؛ راجع الحالة الجديدة قبل الإرسال» مع زر «فهمت»، ولا يُمحى النص.</li>
+    <li>المسودات لا تغادر المتصفح وتزول بإغلاق التبويب.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>5. التقدم والاختبارات</h2>
+  <div class="tbl"><table>
+    <tr><th>الجزء</th><th>الاختبارات</th><th>التقدم</th></tr>
+    <tr><td>تطبيق الهاتف (UI-2a، G3)</td><td>414 ناجحة، التحليل والتنسيق نظيفان</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+    <tr><td>لوحة القيادة (UI-2b، G3، G4)</td><td>436 ناجحة + axe على 10 شاشات بلغتين: 0 مخالفة خطيرة</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+    <tr><td>بوابة المؤسسات (UI-2c، G3)</td><td>91 ناجحة + axe على 12 شاشة بلغتين: 0 مخالفة</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+    <tr><td>الواجهة البرمجية (G3)</td><td>ruff و mypy نظيفان؛ اختبارات <code>test_environment_banner.py</code> تعمل في CI</td><td><div class="bar"><span style="width:100%"></span></div>100%</td></tr>
+    <tr><td>بقية شاشات القوائم في التطبيق (الإشعارات، المؤسسة، عناصر الدليل، جهات الاتصال، الملف الطبي)</td><td>—</td><td><div class="bar"><span style="width:70%"></span></div>عند لمسها</td></tr>
+  </table></div>
+</section>
+
+<section>
+  <h2>6. صور قبل وبعد</h2>
+  <h3>التطبيق: الإعدادات</h3><div class="pair"><figure><img src="phase-ui2/mobile-settings-before.jpg" alt="التطبيق: الإعدادات، قبل"><figcaption>قبل (الإصدار 0.9.0)</figcaption></figure><figure><img src="phase-ui2/mobile-settings-after.jpg" alt="التطبيق: الإعدادات، بعد"><figcaption>بعد (UI-2)</figcaption></figure></div>
+  <h3>التطبيق: أرقام الطوارئ</h3><div class="pair"><figure><img src="phase-ui2/mobile-emergency-before.jpg" alt="التطبيق: أرقام الطوارئ، قبل"><figcaption>قبل (الإصدار 0.9.0)</figcaption></figure><figure><img src="phase-ui2/mobile-emergency-after.jpg" alt="التطبيق: أرقام الطوارئ، بعد"><figcaption>بعد (UI-2)</figcaption></figure></div>
+  <h3>التطبيق: فضاء السلامة</h3><div class="pair"><figure><img src="phase-ui2/mobile-safety-before.jpg" alt="التطبيق: فضاء السلامة، قبل"><figcaption>قبل (الإصدار 0.9.0)</figcaption></figure><figure><img src="phase-ui2/mobile-safety-after.jpg" alt="التطبيق: فضاء السلامة، بعد"><figcaption>بعد (UI-2)</figcaption></figure></div>
+  <h3>لوحة القيادة: المؤشرات</h3><div class="pair"><figure><img src="phase-ui2/dash-home-before.jpg" alt="لوحة القيادة: المؤشرات، قبل"><figcaption>قبل (الإصدار 0.9.0)</figcaption></figure><figure><img src="phase-ui2/dash-home-after.jpg" alt="لوحة القيادة: المؤشرات، بعد"><figcaption>بعد (UI-2)</figcaption></figure></div>
+  <h3>لوحة القيادة: البلاغات</h3><div class="pair"><figure><img src="phase-ui2/dash-reports-before.jpg" alt="لوحة القيادة: البلاغات، قبل"><figcaption>قبل (الإصدار 0.9.0)</figcaption></figure><figure><img src="phase-ui2/dash-reports-after.jpg" alt="لوحة القيادة: البلاغات، بعد"><figcaption>بعد (UI-2)</figcaption></figure></div>
+  <h3>بوابة المؤسسات</h3>
+  <div class="pair"><figure><img src="phase-ui2/portal-myorgs-after.jpg" alt="البوابة: مؤسساتي"><figcaption>مؤسساتي</figcaption></figure><figure><img src="phase-ui2/portal-workspace-after.jpg" alt="البوابة: فضاء المؤسسة"><figcaption>فضاء المؤسسة وتبويباته</figcaption></figure></div>
+  <p class="note">الصور مولّدة في بيئة الاختبار ببيانات <span class="sim">[SIM]</span>. شعار الديوان لا يظهر في صور التطبيق ويظهر على الهاتف.</p>
+</section>
+
+<section>
+  <h2>7. الوثائق المحدّثة في نهاية المرحلة</h2>
+  <div class="tbl"><table>
+    <tr><th>الوثيقة</th><th>ما تغيّر</th><th>الملف في ملفات المشروع</th></tr>
+    <tr><td>مرجع التصميم ونظام التصميم</td><td>المكوّنات الجديدة: عنوان الصفحة بالأيقونة، شريط البيئة، تنبيه المسودة</td><td><code>phase-ui2/design-reference.html</code>، <code>phase-ui2/design-system.md</code></td></tr>
+    <tr><td>المخططات UML</td><td>الإصدار 3: حالتا استعمال للمشغّل (المسودة المحمية، شريط البيئة)</td><td><code>diagrams/e-Himaya_Diagrammes_UML.docx</code> و <code>.pdf</code> والمصادر</td></tr>
+    <tr><td>الملف الوصفي وكراس الشروط</td><td>V4: المتطلبات F-DSH-38 و F-DSH-39 و F-DSH-40 و F-APP-144 منجزة، الأعداد، القرارات، خارطة الطريق</td><td><code>spec/e-Himaya_Description_V4.docx</code> و <code>.pdf</code></td></tr>
+    <tr><td>العرض للمسؤولين</td><td>19 مرحلة، أعداد الاختبارات، خارطة الطريق</td><td><code>presentation/e-Himaya_Presentation.pptx</code> و <code>.pdf</code></td></tr>
+    <tr><td>دليلا التثبيت وقائمة الانتظار</td><td>الإعداد <code>ENVIRONMENT_BANNER</code>؛ G3 و G4 منجزان، P1 منجز جزئيا</td><td><code>guide/</code></td></tr>
+  </table></div>
+</section>
+
+<section>
+  <h2>8. ما بقي</h2>
+  <ul>
+    <li>شاشات القوائم المتبقية في التطبيق تُنقل إلى البطاقات عند تعديلها في مراحلها.</li>
+    <li>على خادم التجربة الميدانية: <code>ENVIRONMENT_BANNER=pilot</code>.</li>
+    <li>بقية بنود قائمة الانتظار (G1، G2، G5، G6، P2 إلى P7) تنتظر قرار صاحب المشروع.</li>
+  </ul>
+</section>
+
+<footer>ء-حماية · مرحلة UI-2 · 2026-10-25</footer>
+</div>
+</body>
+</html>

@@ -2549,6 +2549,19 @@ button.map-poi {
   --poi-stream-alert: #f87171;
 }
 
+/* Backlog G3: environment strip above the header (development, field pilot, exercise). */
+.env-strip {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 1rem;
+  background: var(--sim-band);
+  color: var(--sim-text);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
 .sim-band {
   display: flex;
   flex-wrap: wrap;
@@ -4253,4 +4266,32 @@ button.nav-card:hover {
 .lang-menu .btn[aria-pressed="true"] {
   background: var(--primary);
   color: var(--primary-text);
+}
+
+/* UI-2: page heading with the section's icon tile (components/PageTitle.tsx). */
+.page-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-inline-size: 0;
+}
+
+.page-title h1 {
+  margin: 0;
+}
+
+/* UI-2: KPI card with its icon tile above the number. */
+.kpi--with-icon {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 0.75rem;
+  align-items: center;
+}
+
+.kpi--with-icon > .icon-tile {
+  grid-row: span 2;
+}
+
+.kpi--with-icon > .kpi__link {
+  grid-column: 2;
 }

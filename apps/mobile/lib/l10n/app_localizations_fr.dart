@@ -4092,4 +4092,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String medicalOpeningsCount(int count) {
     return 'Qui a consulté mon dossier médical ($count)';
   }
+
+  @override
+  String get envBannerDevelopment =>
+      '[SIM] Environnement de développement : toutes les données sont fictives';
+
+  @override
+  String get envBannerPilot => '[SIM] Environnement pilote : données de test';
+
+  @override
+  String get envBannerTraining =>
+      '[SIM] Exercice : données fictives, pas de vrais signalements';
 }

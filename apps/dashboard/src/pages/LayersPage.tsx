@@ -32,6 +32,7 @@ import { SimTag } from "../components/StreamBits";
 import { localized } from "../lib/localized";
 import { TUNISIA_BOUNDS } from "../lib/mapStyle";
 import { reasonValid } from "../lib/phase9";
+import { PageTitle } from "../components/PageTitle";
 
 const CHANGE_COLOURS: Record<Change, string> = {
   new: "#2E7D32",
@@ -1076,7 +1077,7 @@ export function LayersPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("layers.title")}</h1>
+        <PageTitle icon="layers" tone="teal">{t("layers.title")}</PageTitle>
         <p className="muted">{t("layers.intro")}</p>
       </div>
       <TemplateLinks />

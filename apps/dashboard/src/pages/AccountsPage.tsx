@@ -10,6 +10,7 @@ import { useDebounced, useGouvernorats } from "../lib/hooks";
 import { p9Keys } from "../lib/phase9Api";
 import type { AccountCreateBody, AccountFilters, ScopeLevel, StaffAccount } from "../lib/phase9Types";
 import { grantableRoles, STAFF_ROLES } from "../lib/roles";
+import { PageTitle } from "../components/PageTitle";
 
 const USERNAME = /^[a-z0-9._-]{3,64}$/;
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -286,7 +287,7 @@ export function AccountsPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("accounts.title")}</h1>
+        <PageTitle icon="manageAccounts" tone="slate">{t("accounts.title")}</PageTitle>
         <button type="button" className="btn btn--primary" onClick={() => setCreating(true)}>
           {t("accounts.new")}
         </button>

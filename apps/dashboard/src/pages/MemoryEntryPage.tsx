@@ -23,6 +23,7 @@ import {
 } from "../lib/phase8Types";
 import { canAuthorMemory } from "../lib/roles";
 import { MemoryStatusTag } from "./MemoryListPage";
+import { PageTitle } from "../components/PageTitle";
 
 const LANGS = ["ar", "fr"] as const;
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -659,7 +660,7 @@ export function MemoryEntryPage() {
         <p>
           <Link to="/memory">{t("memory.back")}</Link>
         </p>
-        <h1>{t("memory.new")}</h1>
+        <PageTitle icon="historyEdu" tone="purple">{t("memory.new")}</PageTitle>
         <Editor entry={null} onSaved={(e) => void navigate(`/memory/${encodeURIComponent(e.id)}`, { replace: true })} />
       </div>
     );
@@ -675,9 +676,9 @@ export function MemoryEntryPage() {
       {entry && (
         <>
           <div className="page__head">
-            <h1 id="memory-title" dir="auto">
+            <PageTitle icon="historyEdu" tone="purple" id="memory-title" dir="auto">
               {localized(entry.title, lang) || t("memory.untitled")}
-            </h1>
+            </PageTitle>
             <MemoryStatusTag status={entry.status} />
             {entry.can_edit && entry.status !== "in_review" && entry.status !== "archived" && (
               <button type="button" className="btn" aria-pressed={editing} onClick={() => setEditing((v) => !v)}>

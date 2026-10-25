@@ -11,6 +11,7 @@ import { CHANNELS, MESSAGE_KINDS, MESSAGE_STATUSES, type Message, type MessageKi
 import { canDraftMessage, hasReadAccess } from "../lib/roles";
 import type { Language } from "../i18n";
 import { localized } from "../lib/localized";
+import { PageTitle } from "../components/PageTitle";
 
 /** Title in the dashboard language, with the fallback order of localized.ts (Arabic is always present). */
 export function localizedTitle(m: Pick<Message, "title">, lang: Language): string {
@@ -120,7 +121,7 @@ export function NotificationsPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("notify.title")}</h1>
+        <PageTitle icon="campaign" tone="sky">{t("notify.title")}</PageTitle>
         <div className="actions">
           {canDraftMessage(roles, "alert") && (
             <Link className="btn btn--primary" to="/notifications/new?kind=alert">

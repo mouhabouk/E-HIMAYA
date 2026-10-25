@@ -9,8 +9,10 @@ import '../../core/config/providers.dart';
 import '../../core/http/api_error.dart';
 import '../../core/http/error_messages.dart';
 import '../../core/routing/app_router.dart';
+import '../../core/ui/components.dart';
 import '../../core/ui/emergency_action.dart';
 import '../../core/ui/theme.dart';
+import '../../core/ui/tokens.dart';
 import '../../l10n/app_localizations.dart';
 import 'safety_models.dart';
 import 'safety_providers.dart';
@@ -160,14 +162,12 @@ class _SafetyCheckScreenState extends ConsumerState<SafetyCheckScreen> {
                   ),
                 ),
               if (links.isEmpty)
-                Card(
-                  child: ListTile(
-                    key: const Key('check-no-links'),
-                    leading: const Icon(Icons.info_outline),
-                    title: Text(l10n.safetyCheckNoLinks),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () => context.push(Routes.safetyLinked),
-                  ),
+                NavCard(
+                  key: const Key('check-no-links'),
+                  icon: Icons.link_rounded,
+                  tone: Tone.teal,
+                  title: l10n.safetyCheckNoLinks,
+                  onTap: () => context.push(Routes.safetyLinked),
                 ),
               const SizedBox(height: 8),
               Text(l10n.safetyCheckIn, style: theme.textTheme.titleSmall),

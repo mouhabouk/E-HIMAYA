@@ -10,8 +10,10 @@ import '../../core/auth/phone_otp.dart';
 import '../../core/routing/app_router.dart';
 import '../../core/settings/settings_controller.dart';
 import '../../core/ui/brand.dart';
+import '../../core/ui/components.dart';
 import '../../core/ui/required_label.dart';
 import '../../core/ui/sim_banner.dart';
+import '../../core/ui/tokens.dart';
 import '../../l10n/app_localizations.dart';
 import '../welcome/welcome_scaffold.dart';
 import 'login_actions.dart';
@@ -271,28 +273,28 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
             Text(l10n.signInPrivacyNote, style: theme.textTheme.bodySmall),
             const Divider(height: 32),
             if (!identity.isAnonymous)
-              ListTile(
+              NavCard(
                 key: const Key('signin-guest'),
-                leading: const Icon(Icons.visibility_off),
-                title: Text(l10n.signInGuest),
-                subtitle: Text(l10n.signInGuestDesc),
-                trailing: const Icon(Icons.chevron_right),
+                icon: Icons.visibility_off_rounded,
+                tone: Tone.slate,
+                title: l10n.signInGuest,
+                subtitle: l10n.signInGuestDesc,
                 onTap: _guest,
               ),
             if (!widget.standalone)
-              ListTile(
+              NavCard(
                 key: const Key('signin-institution'),
-                leading: const Icon(Icons.apartment),
-                title: Text(l10n.signInInstitution),
-                subtitle: Text(l10n.signInInstitutionDesc),
-                trailing: const Icon(Icons.chevron_right),
+                icon: Icons.apartment_rounded,
+                tone: Tone.navy,
+                title: l10n.signInInstitution,
+                subtitle: l10n.signInInstitutionDesc,
                 onTap: _institution,
               ),
-            ListTile(
+            NavCard(
               key: const Key('signin-email'),
-              leading: const Icon(Icons.alternate_email),
-              title: Text(l10n.signInEmail),
-              trailing: const Icon(Icons.chevron_right),
+              icon: Icons.alternate_email_rounded,
+              tone: Tone.navy,
+              title: l10n.signInEmail,
               onTap: _email,
             ),
           ],

@@ -17,6 +17,17 @@ export function useFormat(): Formatters {
   return useMemo(() => createFormatters(lang), [lang]);
 }
 
+/** Backlog G3: the environment strip. A failure shows no strip rather than a false one. */
+export function useEnvironment() {
+  const { api } = useServices();
+  return useQuery({
+    queryKey: queryKeys.environment,
+    queryFn: ({ signal }) => api.environment(signal),
+    staleTime: 10 * 60_000,
+    retry: false,
+  });
+}
+
 /** Gouvernorat names (public reference; English uses the official French transliteration, as the API does). */
 export function useGouvernorats() {
   const { api } = useServices();

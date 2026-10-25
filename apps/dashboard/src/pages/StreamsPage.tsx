@@ -9,6 +9,7 @@ import { useFormat, useGouvernorats } from "../lib/hooks";
 import { useStreamList } from "../lib/streamHooks";
 import type { StaffStream } from "../lib/streamTypes";
 import { byDanger, loadWall, pinToFreeTile, saveWall } from "../lib/wall";
+import { PageTitle } from "../components/PageTitle";
 
 /** Tabs of the «البث المباشر» section. */
 export function StreamsNav() {
@@ -82,7 +83,7 @@ export function StreamsPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("streams.title")}</h1>
+        <PageTitle icon="videocam" tone="red">{t("streams.title")}</PageTitle>
         <StreamsNav />
       </div>
       <p className="muted">{t("streams.intro")}</p>

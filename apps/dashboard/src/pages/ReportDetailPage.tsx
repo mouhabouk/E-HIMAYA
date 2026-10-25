@@ -27,6 +27,8 @@ import { statusChoices, TRANSITIONS } from "../lib/status";
 import { canChangeStatus } from "../lib/roles";
 import { queryKeys } from "../lib/staffApi";
 import type { Media, ReportStatus, StaffReportDetail } from "../lib/types";
+import { useDraft } from "../lib/drafts";
+import { PageTitle } from "../components/PageTitle";
 
 function MediaItem({ media, onBroken }: { media: Media; onBroken: () => void }) {
   const { t } = useTranslation();
@@ -110,8 +112,10 @@ function StatusChangeForm({ report }: { report: StaffReportDetail }) {
   const roles = user?.identity.roles ?? [];
   const options = statusChoices(report, roles);
   const [next, setNext] = useState<ReportStatus | "">("");
-  const [note, setNote] = useState("");
+  const [note, setNote, clearNote] = useDraft(`report:${report.id}:status-note`);
   const [done, setDone] = useState(false);
+  // Backlog G4: the status this operator was looking at when they started writing; a live change shows a notice.
+  const [seenStatus, setSeenStatus] = useState(report.status);
   const noteId = useId();
   const groupName = useId();
   const key = queryKeys.report(report.id);
@@ -144,10 +148,13 @@ function StatusChangeForm({ report }: { report: StaffReportDetail }) {
       applyLiveEvent(qc, { type: "report.status_changed", report: updated });
       void qc.invalidateQueries({ queryKey: ["kpis"] });
       setNext("");
-      setNote("");
+      clearNote();
+      setSeenStatus(updated.status);
       setDone(true);
     },
   });
+  // The optimistic update changes the status while the request runs; only a change from elsewhere counts.
+  const changedUnderneath = !mutation.isPending && note.trim() !== "" && report.status !== seenStatus;
 
   if (!canChangeStatus(roles)) return <p className="muted">{t("detail.readOnly")}</p>;
   if (options.length === 0) return <p className="muted">{t("detail.final")}</p>;
@@ -161,6 +168,14 @@ function StatusChangeForm({ report }: { report: StaffReportDetail }) {
 
   return (
     <form className="status-form" onSubmit={submit}>
+      {changedUnderneath && (
+        <div className="alert alert--warn" role="status" data-testid="draft-changed">
+          <p>{t("drafts.changedWhileTyping")}</p>
+          <button type="button" className="btn" onClick={() => setSeenStatus(report.status)}>
+            {t("drafts.acknowledge")}
+          </button>
+        </div>
+      )}
       <fieldset>
         <legend>{t("detail.newStatus")}</legend>
         {options.map((s) => (
@@ -257,9 +272,9 @@ export function ReportDetailPage() {
         <Link to="/reports">{t("detail.back")}</Link>
       </p>
       <div className="page__head">
-        <h1 id="detail-title">
+        <PageTitle icon="description" tone="red" id="detail-title">
           {t("detail.title")} <span dir="ltr" className="code">{r.tracking_code}</span>
-        </h1>
+        </PageTitle>
         <StatusChip status={r.status} />
         <PriorityBadge score={r.priority_score} />
         <VerificationBadge report={r} />
