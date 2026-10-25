@@ -1,11 +1,13 @@
 @startuml
 !include style.iuml
-title Cas d'utilisation : établissements (portail et application, P2a)
+title Cas d'utilisation : établissements (portail et application, P2a et P2b)
 left to right direction
 actor "Responsable\nd'établissement" as ADM
 actor "Membre d'équipe\nde sécurité" as MEM
 actor "Public" as PUB
 actor "Auditeur\nd'établissements" as AUD
+actor "Rédacteur\n(Office)" as RED
+actor "Opérateur\n(salle)" as OPE
 ADM -|> MEM
 rectangle "Portail et application" {
   usecase "Enregistrer l'établissement\n(5 étapes)" as O1
@@ -22,7 +24,13 @@ rectangle "Portail et application" {
   usecase "Approuver l'établissement\n(et corriger le type)" as O12
   usecase "S'enregistrer depuis le téléphone\n(4 étapes, champs du type)" as O14
   usecase "Suivre la préparation\net les alertes" as O15
-  usecase "Noter une maintenance\n(application)" as O16
+  usecase "Noter une maintenance\navec photo (P2b)" as O16
+  usecase "Confirmer la lecture\nd'un message de l'Office (P2b)" as O17
+  usecase "Lire la sensibilisation\nde son type (P2b)" as O18
+  usecase "Noter un exercice /\ndéclarer un événement (P2b)" as O19
+  usecase "Écrire à des types\nd'établissements, accusé demandé (P2b)" as O20
+  usecase "Suivre les accusés\nde lecture (P2b)" as O21
+  usecase "Voir les événements\npublics à venir (P2b)" as O22
   usecase "Valider / révoquer\nle certificat (Ed25519)" as O13
 }
 ADM --> O1
@@ -43,5 +51,13 @@ ADM --> O10
 PUB --> O11
 AUD --> O12
 AUD --> O13
+MEM --> O17
+MEM --> O18
+MEM --> O19
+RED --> O20
+RED --> O21
+O20 ..> O17 : <<include>>
+OPE --> O22
+O19 ..> O22 : <<extend>>
 O10 ..> O13 : <<include>>
 @enduml
