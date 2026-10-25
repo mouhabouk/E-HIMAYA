@@ -1362,5 +1362,19 @@
   "errorDrillInFuture": "Un exercice s’enregistre une fois réalisé : choisissez aujourd’hui ou une date passée.",
   "errorInvalidDates": "La date de fin doit suivre la date de début.",
   "errorMaintenanceInFuture": "Une maintenance ne peut pas être datée dans le futur.",
-  "errorInvalidDocument": "La photo n’est pas valable pour cette maintenance."
+  "errorInvalidDocument": "La photo n’est pas valable pour cette maintenance.",
+  "orgAlertCertificateExpiring": "Le certificat de sécurité arrive bientôt à échéance",
+  "orgAlertCertificateExpired": "Le certificat de sécurité a expiré",
+  "orgAlertCertificateNeedsUpdate": "Le certificat de sécurité est à mettre à jour",
+  "orgCertNeedsUpdate": "À mettre à jour",
+  "orgCertNeedsUpdateBody": "Changé depuis l’approbation : {sections}. Générez un nouveau certificat sur le portail.",
+  "orgCertUpToDate": "Conforme à l’établissement",
+  "orgCertStamped": "Cacheté",
+  "orgCertSectionIdentity": "Identité",
+  "orgCertSectionBuilding": "Bâtiment",
+  "orgCertSectionClassification": "Classement",
+  "orgCertSectionHazmat": "Matières dangereuses",
+  "orgCertSectionDocuments": "Documents",
+  "orgCertSectionSafetyTeam": "Équipe de sécurité",
+  "orgCertSectionEvacuation": "Évacuation"
 }

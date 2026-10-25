@@ -1,7 +1,7 @@
 import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { ApiError } from "../lib/api";
-import { makeOrgDetail, makeReport } from "../test/fixtures";
+import { makeCertificate, makeOrgDetail, makeReport } from "../test/fixtures";
 import { AUDITOR_CLAIMS, fakeApi, fakeAuth, renderApp } from "../test/render";
 import { OrgDetailPage } from "./OrgDetailPage";
 
@@ -43,6 +43,45 @@ describe("OrgDetailPage", () => {
     expect(within(checklist).getAllByRole("listitem")).toHaveLength(6);
     expect(within(checklist).getByText(/Plan de sécurité/).closest("li")).toHaveClass("checklist__missing");
     expect(within(checklist).getByText(/Dossier de sécurité/).closest("li")).toHaveClass("checklist__ok");
+  });
+
+  it("shows what changed since the approval and the hand stamps with the agent and the photo (P3a)", async () => {
+    const base = makeOrgDetail();
+    const approved = makeCertificate({
+      status: "approved",
+      reviewed_at: "2026-10-03T08:00:00Z",
+      valid_until: "2027-10-03",
+      needs_update: true,
+      changes: [{ section: "evacuation", field: "points", certified: 2, current: 1 }],
+      stamps: [
+        {
+          id: "s-1",
+          place: "Direction régionale de Sfax",
+          gouvernorat_code: 61,
+          stamped_on: "2026-10-20",
+          note: "Présenté sur papier",
+          stamped_by_name: "Leila Auditor",
+          recorded_at: "2026-10-20T09:00:00Z",
+          has_photo: true,
+          changes: [],
+        },
+      ],
+    });
+    const api = fakeApi({
+      org: vi.fn(() => Promise.resolve({ ...base, certificates: [approved] })),
+      stampPhoto: vi.fn(() => Promise.resolve({ url: "https://s3.example/stamp.jpg?sig=x" })),
+    });
+    renderApp(<OrgDetailPage />, { api, path: "/orgs/o-1", route, lang: "fr" });
+    await screen.findByRole("heading", { level: 1 });
+
+    const certs = section(/Certificats de sécurité/);
+    expect(within(certs).getByText("À mettre à jour (écarts : 1)")).toBeInTheDocument();
+    const row = within(certs).getByRole("row", { name: /Évacuation/ });
+    expect(row).toHaveTextContent("Nombre de points d’évacuation");
+    expect(within(certs).getByText("Direction régionale de Sfax")).toBeInTheDocument();
+    expect(within(certs).getByText(/Agent : Leila Auditor/)).toBeInTheDocument();
+    fireEvent.click(within(certs).getByRole("button", { name: /Photo du papier cacheté/ }));
+    await waitFor(() => expect(api.stampPhoto).toHaveBeenCalledWith("c-1", "s-1"));
   });
 
   it("shows alerts, the team with training badges, hazmat (UN, class, quantity, SDS), equipment and the map", async () => {

@@ -125,6 +125,10 @@ export function fakeLayersApi() {
     updateFeature: vi.fn(),
     exportLayer: vi.fn(),
     layerTemplate: vi.fn(),
+    certificateLookup: vi.fn(),
+    addStamp: vi.fn(),
+    putStampPhoto: vi.fn(),
+    stampPhoto: vi.fn(),
   };
 }
 

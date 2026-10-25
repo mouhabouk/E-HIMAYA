@@ -29,6 +29,25 @@ describe("VerifyPage (public, §7)", () => {
     expect(calls(KEY)).toHaveLength(1);
   });
 
+  it("shows the electronic seal [SIM] and where the paper was stamped, never by whom (P3a)", async () => {
+    renderApp(<VerifyPage />, {
+      auth: fakeAuth(null),
+      path,
+      route,
+      lang: "en",
+      routes: {
+        [KEY]: { body: makePublicCertificate({ key_id: "k-2026", stamps: [{ place: "Regional administration of Sfax", stamped_on: "2026-10-20" }] }) },
+      },
+    });
+    const seal = await screen.findByRole("region", { name: "Electronic seal" });
+    expect(seal).toHaveTextContent("[SIM]");
+    expect(seal).toHaveTextContent("Model seal, pending the Office's official seal");
+    expect(seal).toHaveTextContent("k-2026");
+    const stamps = screen.getByRole("region", { name: "Stamps by regional administrations" });
+    expect(stamps).toHaveTextContent("Regional administration of Sfax");
+    expect(stamps).not.toHaveTextContent("Agent");
+  });
+
   it("explains why a certificate is not valid", async () => {
     renderApp(<VerifyPage />, {
       path,

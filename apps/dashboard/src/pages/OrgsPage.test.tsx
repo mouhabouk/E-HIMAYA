@@ -162,6 +162,7 @@ describe("navigation and gates by role", () => {
     expect(within(nav).getAllByRole("link").map((l) => l.textContent)).toEqual([
       "Établissements",
       "Certificats à examiner",
+      "Guichet",
     ]);
     expect(screen.getByText("Auditeur des établissements")).toBeInTheDocument();
   });

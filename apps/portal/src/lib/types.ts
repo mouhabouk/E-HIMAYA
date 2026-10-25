@@ -68,7 +68,16 @@ export const REQUIREMENTS = [
 export type Requirement = (typeof REQUIREMENTS)[number];
 
 /** Alert kinds: the two of the contract's example plus the "soon" variants of the same rules (§3, §4). */
-export const ALERT_KINDS = ["training_expired", "training_expiring", "maintenance_overdue", "maintenance_due_soon"] as const;
+export const ALERT_KINDS = [
+  "training_expired",
+  "training_expiring",
+  "maintenance_overdue",
+  "maintenance_due_soon",
+  // Phase P3a: the current certificate.
+  "certificate_expiring",
+  "certificate_expired",
+  "certificate_needs_update",
+] as const;
 export type AlertKind = (typeof ALERT_KINDS)[number];
 
 export interface Classification {
@@ -294,6 +303,42 @@ export interface Certificate {
   fingerprint: string;
   pdf_sha256: string | null;
   verify_url: string;
+  /** Phase P3a, on the current approved certificate only (null otherwise): substantive changes since approval. */
+  needs_update?: boolean | null;
+  changes?: CertificateChange[];
+  stamps?: CertificateStamp[];
+}
+
+/** The sections compared with the approved certificate (docs/phase-p3/design-certificates.md §3.4). */
+export const CHANGE_SECTIONS = [
+  "identity",
+  "building",
+  "classification",
+  "hazmat",
+  "documents",
+  "safety_team",
+  "evacuation",
+] as const;
+export type ChangeSection = (typeof CHANGE_SECTIONS)[number];
+
+export interface CertificateChange {
+  section: ChangeSection;
+  field: string;
+  certified: unknown;
+  current: unknown;
+}
+
+/** A stamp put by hand on the paper certificate at a regional administration (phase P3a §3.2). */
+export interface CertificateStamp {
+  id: string;
+  place: string;
+  gouvernorat_code: number | null;
+  stamped_on: string;
+  note: string | null;
+  stamped_by_name: string | null;
+  recorded_at: string;
+  has_photo: boolean;
+  changes: CertificateChange[];
 }
 
 /** A live location link (phase B2), public: no name or account, only the points kept for the share. */
@@ -331,6 +376,8 @@ export interface PublicCertificate {
   key_id?: string | null;
   revoked?: boolean;
   revoked_at?: string | null;
+  /** Phase P3a: where and when the paper certificate was stamped (never by whom). */
+  stamps?: { place: string; stamped_on: string }[];
 }
 
 // ---------------------------------------------------------------- reports (§8, phase 2 §3)

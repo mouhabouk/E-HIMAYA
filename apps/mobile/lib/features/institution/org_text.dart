@@ -113,5 +113,21 @@ String orgAlertText(AppLocalizations l10n, String wire) => switch (wire) {
   'training_expiring' => l10n.orgAlertTrainingExpiring,
   'maintenance_overdue' => l10n.orgAlertMaintenanceOverdue,
   'maintenance_due_soon' => l10n.orgAlertMaintenanceDueSoon,
+  'certificate_expiring' => l10n.orgAlertCertificateExpiring,
+  'certificate_expired' => l10n.orgAlertCertificateExpired,
+  'certificate_needs_update' => l10n.orgAlertCertificateNeedsUpdate,
   _ => wire,
 };
+
+/// A section of the comparison with the approved certificate (phase P3a §3.4).
+String certificateSectionText(AppLocalizations l10n, String wire) =>
+    switch (wire) {
+      'identity' => l10n.orgCertSectionIdentity,
+      'building' => l10n.orgCertSectionBuilding,
+      'classification' => l10n.orgCertSectionClassification,
+      'hazmat' => l10n.orgCertSectionHazmat,
+      'documents' => l10n.orgCertSectionDocuments,
+      'safety_team' => l10n.orgCertSectionSafetyTeam,
+      'evacuation' => l10n.orgCertSectionEvacuation,
+      _ => wire,
+    };

@@ -209,6 +209,18 @@ DIGEST_ITEM: dict[str, Localized] = {
     },
 }
 
+# Phase P3a: renewal reminder of the institution's safety certificate, 90 then 30 days before it ends.
+RENEWAL_SUBJECT: Localized = {
+    "ar": "تجديد شهادة السلامة لمؤسستكم {org}",
+    "fr": "Renouvellement du certificat de sécurité de {org}",
+    "en": "Renewal of the safety certificate of {org}",
+}
+RENEWAL_BODY: Localized = {
+    "ar": "مرحبا،\n\nتنتهي صلاحية شهادة السلامة {code} لمؤسستكم «{org}» يوم {valid_until} (بعد {days} يوما).\n\nولّدوا شهادة جديدة وقدّموها للمراجعة من البوابة: {link}",
+    "fr": "Bonjour,\n\nLe certificat de sécurité {code} de votre établissement « {org} » expire le {valid_until} (dans {days} jours).\n\nGénérez un nouveau certificat et soumettez-le depuis le portail : {link}",
+    "en": "Hello,\n\nThe safety certificate {code} of “{org}” expires on {valid_until} (in {days} days).\n\nGenerate a new certificate and submit it from the portal: {link}",
+}
+
 
 def pick(text: Localized, lang: str) -> str:
     return text.get(lang) or text["ar"]

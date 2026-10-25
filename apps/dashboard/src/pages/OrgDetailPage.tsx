@@ -3,6 +3,7 @@ import { Suspense, useId, useMemo, useState, type SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useParams } from "react-router";
 import { CategoryLabel } from "../components/CategoryIcon";
+import { CertificateChanges, CertificateStamps } from "../components/CertificateExtras";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { LazyMapView } from "../components/LazyMap";
 import {
@@ -978,6 +979,13 @@ export function OrgDetailPage() {
                   label={`${t("orgs.detail.pdf")} ${cert.code}`}
                   fetchLink={() => api.certificatePdf(org.id, cert.id)}
                 />
+                {cert.needs_update != null && <CertificateChanges changes={cert.changes ?? []} />}
+                {(cert.stamps?.length ?? 0) > 0 && (
+                  <>
+                    <h3>{t("orgs.counter.stampsTitle")}</h3>
+                    <CertificateStamps certId={cert.id} stamps={cert.stamps ?? []} />
+                  </>
+                )}
               </li>
             ))}
           </ul>
