@@ -19,5 +19,5 @@ Checklist at the end of a phase:
 4. Presentation: phases done, test counts, measured figures, roadmap and what is needed from the Office.
 5. The version history line in each document says what changed and in which phase.
 6. Files copied to the project files and linked in the phase report.
-7. A new tool, version, setting or service: the install guide `docs/install-guide.md` (and its copy in `guide/`),
+7. A new tool, version, setting or service: the install guides `docs/install-guide.md` and `docs/install-guide-wsl.md` (and their copies in `guide/`),
    and deferred items moved in or out of `docs/backlog.md`.
