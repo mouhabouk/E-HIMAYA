@@ -20,6 +20,7 @@ import {
 import type { Category } from "../lib/types";
 import { ReportsLibraryTabs } from "./ReportsLibraryPage";
 import { LANGUAGES, type Language } from "../i18n";
+import { PageTitle } from "../components/PageTitle";
 
 const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 /** Staff subject ids are UUIDs (Keycloak `sub`). */
@@ -339,7 +340,7 @@ export function ReportSchedulesPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("schedules.title")}</h1>
+        <PageTitle icon="schedule" tone="slate">{t("schedules.title")}</PageTitle>
         {editing === null && (
           <button type="button" className="btn btn--primary" onClick={() => setEditing("new")}>
             {t("schedules.new")}

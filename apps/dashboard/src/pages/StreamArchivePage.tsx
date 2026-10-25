@@ -8,6 +8,7 @@ import { useFormat, useGouvernorats } from "../lib/hooks";
 import type { StaffStream } from "../lib/streamTypes";
 import { useStreamList } from "../lib/streamHooks";
 import { GouvernoratFilter, StreamsNav } from "./StreamsPage";
+import { PageTitle } from "../components/PageTitle";
 
 export const DETECTION_FILTERS = ["any", "fire_or_smoke", "fire", "smoke", "none"] as const;
 export type DetectionFilter = (typeof DETECTION_FILTERS)[number];
@@ -82,7 +83,7 @@ export function StreamArchivePage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("streams.archive.title")}</h1>
+        <PageTitle icon="videocam" tone="red">{t("streams.archive.title")}</PageTitle>
         <StreamsNav />
       </div>
       <form className="filters card" onSubmit={(e) => e.preventDefault()} aria-label={t("streams.archive.filters")}>

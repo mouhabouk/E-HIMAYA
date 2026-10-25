@@ -10,6 +10,7 @@ import { useFormat, useGouvernorats } from "../lib/hooks";
 import { VOLUNTEER_DECISIONS_BY_STATUS, type VolunteerDecision } from "../lib/opsTypes";
 import { AvailableTag, SpecialtyList } from "./DoctorsPage";
 import { VolunteerStatusChip } from "./VolunteersPage";
+import { PageTitle } from "../components/PageTitle";
 
 const NEEDS_REASON: readonly VolunteerDecision[] = ["reject", "suspend"];
 
@@ -148,9 +149,9 @@ export function DoctorDetailPage() {
         <Link to="/doctors">{t("doctors.back")}</Link>
       </p>
       <div className="page__head">
-        <h1 id="doctor-title" dir="auto">
+        <PageTitle icon="stethoscope" tone="purple" id="doctor-title" dir="auto">
           {d.full_name ?? t("doctors.unnamed")}
-        </h1>
+        </PageTitle>
         <VolunteerStatusChip status={d.status} />
         <AvailableTag doctor={d} />
       </div>

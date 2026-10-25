@@ -21,6 +21,7 @@ import {
 } from "../lib/phase8Types";
 import { directionOf } from "../i18n";
 import { INTL_LOCALE } from "../lib/format";
+import { PageTitle } from "../components/PageTitle";
 
 const VIEWS = ["results", "calendar", "tree"] as const;
 type View = (typeof VIEWS)[number];
@@ -403,7 +404,7 @@ export function EventsLibraryPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("events.title")}</h1>
+        <PageTitle icon="menuBook" tone="purple">{t("events.title")}</PageTitle>
       </div>
       <p className="muted">{t("events.intro")}</p>
       <form role="search" className="filters" onSubmit={(e) => e.preventDefault()}>
@@ -510,9 +511,9 @@ export function LibraryItemPage() {
       {item && (
         <>
           <div className="page__head">
-            <h1 id="item-title" dir="auto">
+            <PageTitle icon="menuBook" tone="purple" id="item-title" dir="auto">
               {item.title || t("events.untitled")}
-            </h1>
+            </PageTitle>
             <span className="tag">{t(`events.kind.${item.kind}`, { defaultValue: item.kind })}</span>
           </div>
           <dl className="fields fields--compact">

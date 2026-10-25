@@ -27,6 +27,7 @@ import { queryKeys } from "../lib/staffApi";
 import type { Page, StaffReport } from "../lib/types";
 import { useEffectiveFilters } from "./useEffectiveFilters";
 import { localized } from "../lib/localized";
+import { PageTitle } from "../components/PageTitle";
 
 const PAGE_SIZE = 200; // server maximum is 500
 const MAX_PAGES = 2;
@@ -363,7 +364,7 @@ export function MapPage() {
   return (
     <div className="page page--map">
       <div className="page__head">
-        <h1>{t("map.title")}</h1>
+        <PageTitle icon="map" tone="teal">{t("map.title")}</PageTitle>
         <p className="muted" role="status" aria-live="polite">
           {query.isFetching ? t("common.loading") : t("map.count", { count: fmt.number(reports.length) })}
           {truncated && ` · ${t("map.truncated")}`}

@@ -15,6 +15,7 @@ import { p7Keys } from "../lib/phase7Api";
 import { canDraftMessage } from "../lib/roles";
 import type { SuggestionEvidence, WeatherSuggestion } from "../lib/weatherTypes";
 import { localized } from "../lib/localized";
+import { PageTitle } from "../components/PageTitle";
 
 const REASON_MIN = 3;
 const KNOWN_METRICS = [
@@ -275,7 +276,7 @@ export function WeatherSuggestionsPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("weather.suggestions.title")}</h1>
+        <PageTitle icon="partlyCloudyDay" tone="sky">{t("weather.suggestions.title")}</PageTitle>
         <p className="muted">{t("weather.suggestions.count", { count: fmt.number(pending.length) })}</p>
       </div>
       <p className="muted">{t("weather.suggestions.intro")}</p>

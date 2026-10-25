@@ -43,6 +43,7 @@ import {
   type OrgDocument,
   type StaffOrgDetail,
 } from "../lib/types";
+import { PageTitle } from "../components/PageTitle";
 
 function Phone({ phone }: { phone: string | null | undefined }) {
   const { t } = useTranslation();
@@ -456,9 +457,9 @@ export function OrgDetailPage() {
         <Link to="/orgs">{t("orgs.detail.back")}</Link>
       </p>
       <div className="page__head">
-        <h1 id="org-title" dir="auto">
+        <PageTitle icon="apartment" tone="navy" id="org-title" dir="auto">
           {org.name}
-        </h1>
+        </PageTitle>
         <OrgStatusChip status={org.status} />
         <span className="tag">{orgKindLabel(t, org.kind)}</span>
       </div>

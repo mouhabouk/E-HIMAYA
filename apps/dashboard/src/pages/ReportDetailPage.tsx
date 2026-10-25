@@ -28,6 +28,7 @@ import { canChangeStatus } from "../lib/roles";
 import { queryKeys } from "../lib/staffApi";
 import type { Media, ReportStatus, StaffReportDetail } from "../lib/types";
 import { useDraft } from "../lib/drafts";
+import { PageTitle } from "../components/PageTitle";
 
 function MediaItem({ media, onBroken }: { media: Media; onBroken: () => void }) {
   const { t } = useTranslation();
@@ -271,9 +272,9 @@ export function ReportDetailPage() {
         <Link to="/reports">{t("detail.back")}</Link>
       </p>
       <div className="page__head">
-        <h1 id="detail-title">
+        <PageTitle icon="description" tone="red" id="detail-title">
           {t("detail.title")} <span dir="ltr" className="code">{r.tracking_code}</span>
-        </h1>
+        </PageTitle>
         <StatusChip status={r.status} />
         <PriorityBadge score={r.priority_score} />
         <VerificationBadge report={r} />

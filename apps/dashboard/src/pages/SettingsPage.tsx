@@ -28,6 +28,7 @@ import {
 import { p9Keys } from "../lib/phase9Api";
 import { SLA_BANDS, type PlatformSetting } from "../lib/phase9Types";
 import { CHECK_MAX_HOURS_RANGE, LIVE_MAX_MINUTES_RANGE } from "../lib/safetyApi";
+import { PageTitle } from "../components/PageTitle";
 
 type Values = Record<string, string>;
 
@@ -199,7 +200,7 @@ export function SettingsPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("settings.title")}</h1>
+        <PageTitle icon="settings" tone="slate">{t("settings.title")}</PageTitle>
         <Link to="/settings/ai">{t("nav.aiSettings")}</Link>
       </div>
       <p className="muted">{t("settings.intro")}</p>

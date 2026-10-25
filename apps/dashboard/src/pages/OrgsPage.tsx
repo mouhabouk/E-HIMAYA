@@ -15,6 +15,7 @@ import {
 } from "../lib/orgs";
 import { queryKeys } from "../lib/staffApi";
 import { ORG_CERTIFICATE_STATES, ORG_KINDS, ORG_STATUSES, type StaffOrg } from "../lib/types";
+import { PageTitle } from "../components/PageTitle";
 
 function OrgSearch({ value, onChange }: { value: string; onChange: (q: string) => void }) {
   const { t } = useTranslation();
@@ -197,7 +198,7 @@ export function OrgsPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("orgs.title")}</h1>
+        <PageTitle icon="apartment" tone="navy">{t("orgs.title")}</PageTitle>
         <Link to="/orgs/certificates" className="btn">
           {t("orgs.queueLink")}
         </Link>

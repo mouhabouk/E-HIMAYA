@@ -23,6 +23,7 @@ import {
 } from "../lib/guide";
 import { keyFrom } from "../lib/layers";
 import { reasonValid } from "../lib/phase9";
+import { PageTitle } from "../components/PageTitle";
 
 function TopicIcon({ icon, colour }: { icon: string; colour: string }) {
   return (
@@ -512,7 +513,7 @@ export function EmergencyGuidePage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("guide.title")}</h1>
+        <PageTitle icon="medicalServices" tone="red">{t("guide.title")}</PageTitle>
         <p className="muted">{t("guide.intro")}</p>
       </div>
       {/* Simulation notice (amber): first-aid texts are not official until the Office's medical staff validates them. */}

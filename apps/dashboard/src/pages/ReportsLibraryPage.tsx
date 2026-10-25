@@ -24,6 +24,7 @@ import {
 import { canCreateReports, canManageSchedules } from "../lib/roles";
 import { CATEGORIES, type Category } from "../lib/types";
 import { LANGUAGES, type Language } from "../i18n";
+import { PageTitle } from "../components/PageTitle";
 
 /** Tabs of the reports area (library, schedules). */
 export function ReportsLibraryTabs() {
@@ -357,7 +358,7 @@ export function ReportsLibraryPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("library.reports.title")}</h1>
+        <PageTitle icon="folderOpen" tone="slate">{t("library.reports.title")}</PageTitle>
         {canCreate && !creating && (
           <Link className="btn btn--primary" to="/reports-library?new=1">
             {t("library.reports.new")}

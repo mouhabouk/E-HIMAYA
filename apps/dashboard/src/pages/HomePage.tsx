@@ -15,10 +15,18 @@ import { useFormat, useGouvernorats } from "../lib/hooks";
 import { canReadOrgs } from "../lib/roles";
 import { queryKeys } from "../lib/staffApi";
 import { CATEGORIES, REPORT_STATUSES, type Kpis } from "../lib/types";
+import { IconTile, type IconName, type Tone } from "../components/Icon";
+import { PageTitle } from "../components/PageTitle";
 
-function KpiCard({ label, value, tone }: { label: string; value: string; tone?: string }) {
+interface KpiIcon {
+  icon: IconName;
+  iconTone: Tone;
+}
+
+function KpiCard({ label, value, tone, icon, iconTone }: { label: string; value: string; tone?: string } & KpiIcon) {
   return (
-    <div className={`kpi card ${tone ?? ""}`}>
+    <div className={`kpi kpi--with-icon card ${tone ?? ""}`}>
+      <IconTile name={icon} tone={iconTone} soft />
       <dt className="kpi__label">{label}</dt>
       <dd className="kpi__value">{value}</dd>
     </div>
@@ -26,10 +34,18 @@ function KpiCard({ label, value, tone }: { label: string; value: string; tone?: 
 }
 
 /** A KPI that opens the matching list (institutions to review, certificate queue). */
-function KpiLinkCard({ label, value, tone, to }: { label: string; value: string; tone?: string; to: string }) {
+function KpiLinkCard({
+  label,
+  value,
+  tone,
+  to,
+  icon,
+  iconTone,
+}: { label: string; value: string; tone?: string; to: string } & KpiIcon) {
   const { t } = useTranslation();
   return (
-    <div className={`kpi card ${tone ?? ""}`}>
+    <div className={`kpi kpi--with-icon card ${tone ?? ""}`}>
+      <IconTile name={icon} tone={iconTone} soft />
       <dt className="kpi__label">{label}</dt>
       <dd className="kpi__value">{value}</dd>
       <dd className="kpi__link">
@@ -100,7 +116,7 @@ export function HomePage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("kpi.title")}</h1>
+        <PageTitle icon="home" tone="navy">{t("kpi.title")}</PageTitle>
         <PeriodSelector value={period} onChange={setPeriod} />
       </div>
       <AiStatusBanner />
@@ -110,22 +126,22 @@ export function HomePage() {
         <>
           <p className="muted">{t("kpi.since", { date: fmt.dateTime(query.data.since) })}</p>
           <dl className="kpis">
-            <KpiCard label={t("kpi.total")} value={fmt.number(summary.total)} />
-            <KpiCard label={t("kpi.received")} value={fmt.number(summary.received)} tone="kpi--received" />
-            <KpiCard label={t("kpi.inProgress")} value={fmt.number(summary.inProgress)} tone="kpi--in_progress" />
-            <KpiCard label={t("kpi.closed")} value={fmt.number(summary.closed)} tone="kpi--closed" />
+            <KpiCard label={t("kpi.total")} icon="description" iconTone="navy" value={fmt.number(summary.total)} />
+            <KpiCard label={t("kpi.received")} icon="mail" iconTone="sky" value={fmt.number(summary.received)} tone="kpi--received" />
+            <KpiCard label={t("kpi.inProgress")} icon="schedule" iconTone="orange" value={fmt.number(summary.inProgress)} tone="kpi--in_progress" />
+            <KpiCard label={t("kpi.closed")} icon="verified" iconTone="green" value={fmt.number(summary.closed)} tone="kpi--closed" />
             <KpiCard
-              label={t("kpi.highPriority")}
+              label={t("kpi.highPriority")} icon="warning" iconTone="red"
               value={fmt.number(query.data.high_priority)}
               tone="kpi--high-priority"
             />
             <KpiCard
-              label={t("kpi.analysisPending")}
+              label={t("kpi.analysisPending")} icon="smartToy" iconTone="purple"
               value={fmt.number(query.data.analysis_pending)}
               tone="kpi--analysis"
             />
             <KpiCard
-              label={t("kpi.avgFirstResponse")}
+              label={t("kpi.avgFirstResponse")} icon="schedule" iconTone="teal"
               value={
                 query.data.avg_first_response_s === null
                   ? t("common.notAvailable")
@@ -134,7 +150,7 @@ export function HomePage() {
             />
             {showOrgKpis && typeof query.data.orgs_pending_review === "number" && (
               <KpiLinkCard
-                label={t("kpi.orgsPendingReview")}
+                label={t("kpi.orgsPendingReview")} icon="apartment" iconTone="navy"
                 value={fmt.number(query.data.orgs_pending_review)}
                 tone="kpi--orgs"
                 to="/orgs?status=pending_review"
@@ -142,7 +158,7 @@ export function HomePage() {
             )}
             {showOrgKpis && typeof query.data.certificates_submitted === "number" && (
               <KpiLinkCard
-                label={t("kpi.certificatesSubmitted")}
+                label={t("kpi.certificatesSubmitted")} icon="workspacePremium" iconTone="amber"
                 value={fmt.number(query.data.certificates_submitted)}
                 tone="kpi--certs"
                 to="/orgs/certificates"

@@ -16,6 +16,7 @@ import {
 import { canReviewVolunteers } from "../lib/roles";
 import { ReadyTag, SkillList, VolunteerStatusChip } from "./VolunteersPage";
 import { CallButton } from "../components/Softphone";
+import { PageTitle } from "../components/PageTitle";
 
 const NEEDS_REASON: readonly VolunteerDecision[] = ["reject", "suspend"];
 
@@ -153,9 +154,9 @@ export function VolunteerDetailPage() {
         <Link to="/volunteers">{t("volunteers.back")}</Link>
       </p>
       <div className="page__head">
-        <h1 id="volunteer-title" dir="auto">
+        <PageTitle icon="volunteerActivism" tone="green" id="volunteer-title" dir="auto">
           {v.full_name ?? t("ops.volunteer")}
-        </h1>
+        </PageTitle>
         <VolunteerStatusChip status={v.status} />
         <ReadyTag volunteer={v} />
       </div>

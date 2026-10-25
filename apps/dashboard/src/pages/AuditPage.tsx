@@ -7,6 +7,7 @@ import { useServices } from "../context/services";
 import { useDebounced, useFormat, useGouvernorats } from "../lib/hooks";
 import { p9Keys } from "../lib/phase9Api";
 import type { AuditFilters, ScopedAuditEntry } from "../lib/phase9Types";
+import { PageTitle } from "../components/PageTitle";
 
 /** Whitelisted details of a redacted entry, as "key: value" pairs (ids, from, to, status, outcome, kind). */
 function detailsText(details: Record<string, unknown>): string {
@@ -66,7 +67,7 @@ export function AuditPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("audit.title")}</h1>
+        <PageTitle icon="policy" tone="slate">{t("audit.title")}</PageTitle>
       </div>
       <p className="muted">{t("audit.intro", { name: gouvernorats.nameOf(user?.identity.gouvernoratCode) ?? "" })}</p>
       <div className="filters__row">

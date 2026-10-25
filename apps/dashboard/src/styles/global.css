@@ -4267,3 +4267,31 @@ button.nav-card:hover {
   background: var(--primary);
   color: var(--primary-text);
 }
+
+/* UI-2: page heading with the section's icon tile (components/PageTitle.tsx). */
+.page-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-inline-size: 0;
+}
+
+.page-title h1 {
+  margin: 0;
+}
+
+/* UI-2: KPI card with its icon tile above the number. */
+.kpi--with-icon {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 0.75rem;
+  align-items: center;
+}
+
+.kpi--with-icon > .icon-tile {
+  grid-row: span 2;
+}
+
+.kpi--with-icon > .kpi__link {
+  grid-column: 2;
+}
