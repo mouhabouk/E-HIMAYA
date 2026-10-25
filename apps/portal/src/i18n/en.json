@@ -121,7 +121,10 @@
     "revokedOn": "Revoked on {{date}}.",
     "keyId": "Key identifier: {{id}}",
     "disclaimerTitle": "What is this certificate?",
-    "disclaimer": "This certificate is a safety self-assessment recorded by the institution on the e-Himaya platform and reviewed by its auditors. It is not an official certificate of the National Office of Civil Protection or of any other administration, and it does not replace the permits and inspections required by law."
+    "disclaimer": "This certificate is a safety self-assessment recorded by the institution on the e-Himaya platform and reviewed by its auditors. It is not an official certificate of the National Office of Civil Protection or of any other administration, and it does not replace the permits and inspections required by law.",
+    "sealTitle": "Electronic seal",
+    "sealBody": "A picture of the Office's electronic signature above, as printed on the PDF. Its value comes from the signature, not the picture.",
+    "sealNote": "Model seal, pending the Office's official seal"
   },
   "myOrgs": {
     "title": "My institutions",
@@ -294,7 +297,10 @@
       "training_expired": "Expired training in the safety team",
       "training_expiring": "Training expiring soon in the safety team",
       "maintenance_overdue": "Equipment maintenance overdue",
-      "maintenance_due_soon": "Equipment maintenance due soon"
+      "maintenance_due_soon": "Equipment maintenance due soon",
+      "certificate_expiring": "The safety certificate expires soon",
+      "certificate_expired": "The safety certificate has expired",
+      "certificate_needs_update": "The safety certificate needs updating: the institution changed since approval"
     }
   },
   "card": {
@@ -665,7 +671,48 @@
     "copyLink": "Copy the link",
     "openPdf": "Open the PDF",
     "submit": "Submit for review",
-    "regenerate": "Generate a new draft"
+    "regenerate": "Generate a new draft",
+    "generateNew": "Generate a new certificate",
+    "renewSoon": "The certificate expires in {{count}} days. Generate a new one and submit it before then.",
+    "needsUpdate": "Needs updating.",
+    "needsUpdateBody": "The institution changed in substantive ways since approval (differences: {{count}}). Generate a new certificate and submit it.",
+    "upToDate": "Matches the institution",
+    "changesCaption": "Differences between the approved and today",
+    "section": "Section",
+    "certifiedValue": "Approved",
+    "currentValue": "Today",
+    "sections": {
+      "identity": "Identity",
+      "building": "Building",
+      "classification": "Classification",
+      "hazmat": "Hazardous materials",
+      "documents": "Documents",
+      "safety_team": "Safety team",
+      "evacuation": "Evacuation"
+    },
+    "fields": {
+      "name": "Name",
+      "kind": "Kind",
+      "identifier": "Identifier",
+      "capacity": "Capacity",
+      "floors": "Floors",
+      "height_m": "Height (m)",
+      "receives_public": "Receives the public",
+      "address": "Address",
+      "location": "Location",
+      "family": "Family",
+      "category": "Category",
+      "high_rise": "High-rise",
+      "items": "Materials",
+      "files": "Safety file and plan",
+      "representative": "Representative",
+      "members": "Number of members",
+      "points": "Number of evacuation points"
+    },
+    "stampsTitle": "Stamps by regional administrations",
+    "noStamps": "Not stamped by a regional administration yet.",
+    "stamped": "Stamped",
+    "stampedBy": "Agent: {{name}}"
   },
   "certificateStatus": {
     "draft": "Draft",

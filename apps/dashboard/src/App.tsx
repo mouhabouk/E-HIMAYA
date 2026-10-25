@@ -51,6 +51,7 @@ import { SettingsPage } from "./pages/SettingsPage";
 import { CallsPage } from "./pages/CallsPage";
 import { CallbackPage } from "./pages/CallbackPage";
 import { CertificatesPage } from "./pages/CertificatesPage";
+import { CounterPage } from "./pages/CounterPage";
 import { CommitteePage } from "./pages/CommitteePage";
 import { DoctorDetailPage } from "./pages/DoctorDetailPage";
 import { DoctorsPage } from "./pages/DoctorsPage";
@@ -188,6 +189,7 @@ export function AppRoutes() {
         <Route path="weather/suggestions" element={weather(<WeatherSuggestionsPage />)} />
         <Route path="orgs" element={orgs(<OrgsPage />)} />
         <Route path="orgs/certificates" element={orgs(<CertificatesPage />)} />
+        <Route path="orgs/certificates/counter" element={orgs(<CounterPage />)} />
         <Route path="orgs/:id" element={orgs(<OrgDetailPage />)} />
         <Route path="resources" element={resources(<ResourcesPage />)} />
         <Route path="volunteers" element={reports(<VolunteersPage />)} />

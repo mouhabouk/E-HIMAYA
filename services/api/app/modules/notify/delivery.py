@@ -416,6 +416,10 @@ async def housekeeping(sessionmaker: async_sessionmaker[AsyncSession]) -> None:
             # Several API instances may run this; the digest row lock and fingerprint keep it to one e-mail.
             await session.execute(text("SELECT pg_advisory_xact_lock(hashtext('ehimaya.org_digest'))"))
             await institution_digests(session, today)
+            # Phase P3a: certificate renewal reminders, 90 then 30 days before the end of validity.
+            from app.modules.orgs import certificate
+
+            await certificate.renewal_reminders(session, today)
             _last_digest = today
 
 

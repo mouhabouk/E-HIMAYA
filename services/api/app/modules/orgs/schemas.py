@@ -7,6 +7,7 @@ from pydantic import BaseModel, EmailStr, Field
 from app.modules.orgs.domain import (
     ActivityKind,
     CertificateStatus,
+    ChangeSection,
     DocumentKind,
     EquipmentKind,
     FeatureKind,
@@ -71,7 +72,16 @@ class Completeness(BaseModel):
 
 
 class Alert(BaseModel):
-    kind: Literal["training_expired", "training_expiring", "maintenance_overdue", "maintenance_due_soon"]
+    kind: Literal[
+        "training_expired",
+        "training_expiring",
+        "maintenance_overdue",
+        "maintenance_due_soon",
+        # Phase P3a: the current certificate (``ref`` is its id).
+        "certificate_expiring",
+        "certificate_expired",
+        "certificate_needs_update",
+    ]
     ref: uuid.UUID
     since: date | None
 
@@ -272,6 +282,41 @@ class DownloadOut(BaseModel):
 # ---------------------------------------------------------------- certificates
 
 
+class CertificateChange(BaseModel):
+    """A substantive difference between the certified snapshot and the institution today (phase P3a)."""
+
+    section: ChangeSection
+    field: str
+    certified: Any
+    current: Any
+
+
+class StampOut(BaseModel):
+    """A paper certificate stamped by hand at a regional administration (phase P3a)."""
+
+    id: uuid.UUID
+    place: str
+    gouvernorat_code: int | None
+    stamped_on: date
+    note: str | None
+    stamped_by_name: str | None
+    recorded_at: datetime
+    has_photo: bool
+    # The comparison with the institution when it was stamped; empty when it matched.
+    changes: list[CertificateChange] = Field(default_factory=list)
+
+
+class StampIn(BaseModel):
+    place: str = Field(min_length=1, max_length=200)
+    stamped_on: date
+    note: str | None = Field(default=None, max_length=500)
+
+
+class PublicStamp(BaseModel):
+    place: str
+    stamped_on: date
+
+
 class CertificateOut(BaseModel):
     id: uuid.UUID
     code: str
@@ -288,6 +333,10 @@ class CertificateOut(BaseModel):
     key_id: str | None = None
     revoked_at: datetime | None = None
     revoke_reason: str | None = None
+    # Phase P3a, on the current approved certificate only: substantive changes since it was certified.
+    needs_update: bool | None = None
+    changes: list[CertificateChange] = Field(default_factory=list)
+    stamps: list[StampOut] = Field(default_factory=list)
 
 
 class PublicCertificate(BaseModel):
@@ -308,6 +357,8 @@ class PublicCertificate(BaseModel):
     key_id: str | None = None
     revoked: bool = False
     revoked_at: datetime | None = None
+    # Phase P3a: where and when the paper certificate was stamped (never by whom).
+    stamps: list[PublicStamp] = Field(default_factory=list)
 
 
 class SigningKeyOut(BaseModel):
@@ -524,6 +575,25 @@ class CertificateQueueItem(BaseModel):
     gouvernorat_code: int | None
     submitted_at: datetime | None
     completeness: Completeness
+
+
+CounterReason = Literal["not_approved", "revoked", "superseded", "expired", "signature", "org_inactive"]
+
+
+class CounterView(BaseModel):
+    """What the agent at the counter of a regional administration sees after scanning a certificate (phase P3a)."""
+
+    certificate: CertificateOut
+    valid: bool
+    reasons: list[CounterReason]
+    signature_valid: bool
+    can_stamp: bool
+    org_id: uuid.UUID
+    org_name: str
+    org_kind: OrgKind
+    org_status: OrgStatus
+    org_address: str | None
+    gouvernorat_code: int | None
 
 
 class CertificateQueuePage(BaseModel):

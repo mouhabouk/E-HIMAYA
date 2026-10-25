@@ -504,9 +504,10 @@ async def generate_certificate(org_id: OrgId, user: CurrentUser, session: Sessio
 
 @router.get("/orgs/{org_id}/certificates", response_model=list[schemas.CertificateOut])
 async def list_certificates(org_id: OrgId, user: CurrentUser, session: Session) -> list[schemas.CertificateOut]:
-    await service.membership(session, user, org_id)
+    org, _ = await service.membership(session, user, org_id)
+    out = await certificate.certificates_view(session, org)
     await session.commit()
-    return [certificate.certificate_out(c) for c in await certificate.certificates_of(session, org_id)]
+    return out
 
 
 @router.get("/orgs/{org_id}/certificates/{cert_id}/pdf", response_model=schemas.DownloadOut)

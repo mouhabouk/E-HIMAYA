@@ -8277,6 +8277,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The photo is not valid for this maintenance.'**
   String get errorInvalidDocument;
+
+  /// No description provided for @orgAlertCertificateExpiring.
+  ///
+  /// In en, this message translates to:
+  /// **'The safety certificate expires soon'**
+  String get orgAlertCertificateExpiring;
+
+  /// No description provided for @orgAlertCertificateExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'The safety certificate has expired'**
+  String get orgAlertCertificateExpired;
+
+  /// No description provided for @orgAlertCertificateNeedsUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'The safety certificate needs updating'**
+  String get orgAlertCertificateNeedsUpdate;
+
+  /// No description provided for @orgCertNeedsUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs updating'**
+  String get orgCertNeedsUpdate;
+
+  /// No description provided for @orgCertNeedsUpdateBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Changed since approval: {sections}. Generate a new certificate on the portal.'**
+  String orgCertNeedsUpdateBody(String sections);
+
+  /// No description provided for @orgCertUpToDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Matches the institution'**
+  String get orgCertUpToDate;
+
+  /// No description provided for @orgCertStamped.
+  ///
+  /// In en, this message translates to:
+  /// **'Stamped'**
+  String get orgCertStamped;
+
+  /// No description provided for @orgCertSectionIdentity.
+  ///
+  /// In en, this message translates to:
+  /// **'Identity'**
+  String get orgCertSectionIdentity;
+
+  /// No description provided for @orgCertSectionBuilding.
+  ///
+  /// In en, this message translates to:
+  /// **'Building'**
+  String get orgCertSectionBuilding;
+
+  /// No description provided for @orgCertSectionClassification.
+  ///
+  /// In en, this message translates to:
+  /// **'Classification'**
+  String get orgCertSectionClassification;
+
+  /// No description provided for @orgCertSectionHazmat.
+  ///
+  /// In en, this message translates to:
+  /// **'Hazardous materials'**
+  String get orgCertSectionHazmat;
+
+  /// No description provided for @orgCertSectionDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents'**
+  String get orgCertSectionDocuments;
+
+  /// No description provided for @orgCertSectionSafetyTeam.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety team'**
+  String get orgCertSectionSafetyTeam;
+
+  /// No description provided for @orgCertSectionEvacuation.
+  ///
+  /// In en, this message translates to:
+  /// **'Evacuation'**
+  String get orgCertSectionEvacuation;
 }
 
 class _AppLocalizationsDelegate

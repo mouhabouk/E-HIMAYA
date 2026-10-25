@@ -6,12 +6,13 @@ working model to validate against the official text (مجلة السلامة و�
 """
 
 import calendar
+import math
 import re
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from datetime import date, timedelta
 from enum import StrEnum
-from typing import Literal
+from typing import Any, Literal
 
 
 class OrgStatus(StrEnum):
@@ -85,6 +86,10 @@ FEATURE_MAX_DISTANCE_M = 2000
 TRAINING_EXPIRING_DAYS = 60
 MAINTENANCE_DUE_DAYS = 30
 CERTIFICATE_MAX_YEARS = 5
+# Phase P3a: renewal reminders (days before the end of validity) and the comparison with the certified snapshot.
+CERTIFICATE_REMINDER_DAYS = (90, 30)
+CERTIFICATE_MOVE_M = 50
+STAMP_PHOTO_MAX_BYTES = 5 * 1024 * 1024
 
 # ---------------------------------------------------------------- identifiers and contacts
 
@@ -381,3 +386,81 @@ def sensitivity(classification: Classification, kind: str, hazmat_count: int) ->
     if classification.family == "erp" or kind in _VULNERABLE_KINDS:
         return 0.6, "public"
     return 0.4, "nearby"
+
+
+# ---------------------------------------------------------------- certified snapshot comparison (phase P3a)
+
+ChangeSection = Literal["identity", "building", "classification", "hazmat", "documents", "safety_team", "evacuation"]
+
+_IDENTITY = ("name", "kind", "identifier")
+_BUILDING = ("capacity", "floors", "height_m", "receives_public", "address")
+_CLASSIFICATION = ("family", "category", "high_rise")
+_CERTIFIED_DOCUMENTS = ("safety_file", "safety_plan")
+
+
+def _distance_m(a: dict[str, Any], b: dict[str, Any]) -> float:
+    lat1, lon1, lat2, lon2 = (math.radians(float(v)) for v in (a["lat"], a["lon"], b["lat"], b["lon"]))
+    h = math.sin((lat2 - lat1) / 2) ** 2 + math.cos(lat1) * math.cos(lat2) * math.sin((lon2 - lon1) / 2) ** 2
+    return 2 * 6_371_000 * math.asin(math.sqrt(h))
+
+
+def _hazmat_line(h: dict[str, Any]) -> str:
+    un = f" (UN {h['un_number']})" if h.get("un_number") else ""
+    quantity = str(h["quantity"])
+    if "." in quantity:
+        quantity = quantity.rstrip("0").rstrip(".")
+    return f"{h['name']}{un}: {quantity} {h['unit']}"
+
+
+def _documents(snapshot: dict[str, Any]) -> dict[str, str]:
+    """``{kind: "title v<n>"}`` of the certified document kinds, with the hash used for the comparison."""
+    out: dict[str, str] = {}
+    for doc in snapshot.get("documents", []):
+        if doc["kind"] in _CERTIFIED_DOCUMENTS:
+            out[f"{doc['kind']}:{doc['sha256']}"] = f"{doc['title']} v{doc['version']}"
+    return out
+
+
+def _team(snapshot: dict[str, Any]) -> tuple[str | None, int]:
+    team = snapshot.get("team", [])
+    rep = next((m["full_name"] for m in team if m["team_role"] == "representative"), None)
+    return rep, sum(1 for m in team if m["team_role"] == "member")
+
+
+def certificate_changes(certified: dict[str, Any], now: dict[str, Any]) -> list[tuple[str, str, Any, Any]]:
+    """Substantive differences between the certified snapshot and today's (docs/phase-p3/design-certificates.md §3.4).
+
+    Returns ``(section, field, certified value, current value)``; values are plain JSON. Training dates, maintenance,
+    contacts and kind fields change with time or do not affect safety: they are left out.
+    """
+    changes: list[tuple[str, str, Any, Any]] = []
+    old_org, new_org = certified.get("org", {}), now.get("org", {})
+    for section, fields in (("identity", _IDENTITY), ("building", _BUILDING)):
+        for name in fields:
+            if old_org.get(name) != new_org.get(name):
+                changes.append((section, name, old_org.get(name), new_org.get(name)))
+    if old_org.get("location") and new_org.get("location"):
+        moved = _distance_m(old_org["location"], new_org["location"])
+        if moved > CERTIFICATE_MOVE_M:
+            changes.append(("building", "location", old_org["location"], new_org["location"]))
+    old_cls, new_cls = certified.get("classification", {}), now.get("classification", {})
+    for name in _CLASSIFICATION:
+        if old_cls.get(name) != new_cls.get(name):
+            changes.append(("classification", name, old_cls.get(name), new_cls.get(name)))
+    old_hazmat = sorted(_hazmat_line(h) for h in certified.get("hazmat", []))
+    new_hazmat = sorted(_hazmat_line(h) for h in now.get("hazmat", []))
+    if old_hazmat != new_hazmat:
+        changes.append(("hazmat", "items", old_hazmat, new_hazmat))
+    old_docs, new_docs = _documents(certified), _documents(now)
+    if set(old_docs) != set(new_docs):
+        changes.append(("documents", "files", sorted(old_docs.values()), sorted(new_docs.values())))
+    (old_rep, old_members), (new_rep, new_members) = _team(certified), _team(now)
+    if old_rep != new_rep:
+        changes.append(("safety_team", "representative", old_rep, new_rep))
+    if old_members != new_members:
+        changes.append(("safety_team", "members", old_members, new_members))
+    old_evac = sum(1 for f in certified.get("features", []) if f["kind"] == "evacuation_point")
+    new_evac = sum(1 for f in now.get("features", []) if f["kind"] == "evacuation_point")
+    if old_evac != new_evac:
+        changes.append(("evacuation", "points", old_evac, new_evac))
+    return changes

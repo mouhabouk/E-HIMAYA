@@ -17,6 +17,7 @@ const SCREENS: { path: string; ready: string }[] = [
   { path: "/notifications", ready: "main h1" },
   { path: "/notifications/new", ready: "main h1" },
   { path: "/orgs/certificates", ready: "main h1" },
+  { path: "/orgs/certificates/counter", ready: "main h1" },
   { path: "/accounts", ready: "main h1" },
   { path: "/audit", ready: "main h1" },
   { path: "/settings", ready: "main h1" },

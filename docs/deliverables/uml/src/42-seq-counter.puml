@@ -1,0 +1,37 @@
+@startuml
+!include style.iuml
+title Séquence : vérification et cachet au guichet régional (P3a)
+autonumber
+actor "Établissement" as ORG
+actor "Auditeur\n(guichet)" as AUD
+participant "Tableau de bord\n« Guichet »" as DSH
+participant "API" as API
+database "PostgreSQL" as DB
+database "Stockage objet" as S3
+ORG -> AUD : présente le certificat\n(papier ou téléphone)
+AUD -> DSH : code EHC-…, lien lu par\nun lecteur QR ou caméra
+DSH -> DSH : extraire le code (sinon « code invalide »)
+DSH -> API : GET /staff/certificates/lookup?code=
+API -> DB : certificat, établissement, portée de l'agent
+API -> API : signature Ed25519, révocation,\nremplacement, échéance, statut
+API -> API : instantané approuvé comparé à\ncelui d'aujourd'hui (éléments substantiels)
+API -> DB : audit certificate.counter_view
+API --> DSH : validité et raisons, écarts,\ncachets, can_stamp
+DSH --> AUD : verdict, comparaison section par section
+alt certificat valide aujourd'hui et agent org_auditor
+  AUD -> DSH : lieu (gouvernorat de l'agent), date, note, photo
+  DSH -> API : POST /staff/certificates/{id}/stamps
+  API -> DB : cachet + écarts du moment + audit
+  API --> DSH : 201
+  opt photo du papier cacheté
+    DSH -> API : PUT …/stamps/{sid}/photo (JPEG ou PNG ≤ 5 Mo)
+    API -> API : type lu dans le contenu, SHA-256
+    API -> S3 : photo
+    API -> DB : clé et empreinte + audit
+  end
+  DSH --> AUD : « Cachet enregistré »
+else non valide
+  DSH --> AUD : raisons, pas de cachet
+end
+note over API : la page publique de vérification montre\nle lieu et la date du cachet, jamais l'agent
+@enduml

@@ -14,8 +14,10 @@ import base64
 import hashlib
 import html
 import json
+import re
 import uuid
-from datetime import UTC, date, datetime
+from collections.abc import Sequence
+from datetime import UTC, date, datetime, timedelta
 from typing import Any
 from zoneinfo import ZoneInfo
 
@@ -32,7 +34,7 @@ from app.core.config import get_settings
 from app.core.events import emit
 from app.core.storage import get_store
 from app.modules.orgs import domain, schemas, service
-from app.modules.orgs.models import Certificate, Organization
+from app.modules.orgs.models import Certificate, CertificateStamp, Organization
 
 TUNIS_TZ = ZoneInfo("Africa/Tunis")
 PDF_TYPE = "application/pdf"
@@ -111,9 +113,11 @@ def fingerprint_of(snapshot: dict[str, Any]) -> str:
     return hashlib.sha256(canonical(snapshot)).hexdigest()
 
 
-async def snapshot_of(session: AsyncSession, org: Organization) -> dict[str, Any]:
+async def snapshot_of(
+    session: AsyncSession, org: Organization, regs: service.Registers | None = None
+) -> dict[str, Any]:
     """The certified content, in plain JSON types so its canonical form is stable."""
-    regs = await service.load_registers(session, org.id)
+    regs = regs or await service.load_registers(session, org.id)
     on = service.today()
     classification = service.classification_of(org, len(regs.hazmat))
     completeness = service.completeness_of(classification, regs, on)
@@ -260,6 +264,10 @@ th { background: #f4f4f4; font-weight: bold; }
   transform: rotate(-30deg); font-weight: bold; }
 .qr { text-align: center; } .qr img { width: 34mm; height: 34mm; }
 .small { font-size: 8pt; color: #555; }
+.seal { width: 40mm; height: 40mm; box-sizing: border-box; padding: 5mm; border-radius: 50%;
+  border: 2.5px double #1f3d99; color: #1f3d99; text-align: center; display: flex; flex-direction: column;
+  justify-content: center; align-items: center; font-size: 6.5pt; line-height: 1.25; margin: 2mm auto 0; }
+.seal b { font-size: 7pt; } .seal .sim { background: #ffb300; color: #1f1300; padding: 0 4px; font-weight: bold; }
 """
 
 
@@ -334,6 +342,15 @@ def render_html(cert: Certificate, verify_url: str) -> str:
         else ""
     )
     empty = '<tr><td colspan="5">—</td></tr>'
+    # Phase P3a: the Office's electronic seal, a picture of the Ed25519 signature above (it adds no signature).
+    seal = (
+        '<div class="seal"><b>الديوان الوطني للحماية المدنية</b><span>Office national de la protection civile</span>'
+        f"<span>ختم إلكتروني · Cachet électronique</span><span>{_e(approved_on)}</span>"
+        f'<span class="mono">{_e(cert.key_id or "")}</span><span class="sim">[SIM]</span></div>'
+        f'<p class="small" style="text-align:center">{SEAL_NOTE}</p>'
+        if cert.status == "approved" and cert.signature
+        else ""
+    )
     return f"""<!doctype html><html lang="ar"><head><meta charset="utf-8"><style>{_CSS}</style></head><body>
 {"" if approved else '<div class="draft">مسودة · BROUILLON</div>'}
 <div class="head">
@@ -372,7 +389,7 @@ def render_html(cert: Certificate, verify_url: str) -> str:
 <table><tr><th>النوع / Type</th><th>العنوان / Titre</th><th>SHA-256</th></tr>{document_rows or empty}</table>
 <h2>التحقق / Vérification</h2>
 <div class="bi">
-  <div class="qr"><img src="{qr}" alt="QR"></div>
+  <div class="qr"><img src="{qr}" alt="QR">{seal}</div>
   <div class="fr">
     <p class="small">Scannez le code ou ouvrez / امسح الرمز أو افتح :</p><p class="mono">{_e(verify_url)}</p>
     <p class="small">Empreinte du contenu / بصمة المحتوى (SHA-256) :</p><p class="mono">{_e(cert.fingerprint)}</p>
@@ -406,6 +423,10 @@ DISCLAIMER = {
         "or of any other administration, and it does not replace the permits and inspections required by law."
     ),
 }
+
+
+#: Printed under the electronic seal until the Office provides its official seal (docs/phase-p3 §3.1).
+SEAL_NOTE = "نموذج ختم في انتظار الختم الرسمي للديوان / Modèle de cachet, en attente du cachet officiel"
 
 
 def _render_pdf_sync(document: str) -> bytes:
@@ -447,7 +468,13 @@ async def next_code(session: AsyncSession, gouvernorat_code: int | None) -> str:
     return f"EHC-{year % 100:02d}-{gouvernorat_code or 0:02d}-{int(number or 0):06d}"
 
 
-def certificate_out(cert: Certificate) -> schemas.CertificateOut:
+def certificate_out(
+    cert: Certificate,
+    *,
+    changes: list[schemas.CertificateChange] | None = None,
+    stamps: Sequence[CertificateStamp] = (),
+) -> schemas.CertificateOut:
+    """``changes`` is given for the current approved certificate only (``needs_update`` stays null otherwise)."""
     return schemas.CertificateOut(
         id=cert.id,
         code=cert.code,
@@ -464,6 +491,9 @@ def certificate_out(cert: Certificate) -> schemas.CertificateOut:
         key_id=cert.key_id,
         revoked_at=cert.revoked_at,
         revoke_reason=cert.revoke_reason,
+        needs_update=bool(changes) if changes is not None else None,
+        changes=changes or [],
+        stamps=[stamp_out(s) for s in stamps],
     )
 
 
@@ -663,6 +693,10 @@ async def public_view(session: AsyncSession, code: str) -> schemas.PublicCertifi
         key_id=cert.key_id,
         revoked=revoked,
         revoked_at=cert.revoked_at,
+        stamps=[
+            schemas.PublicStamp(place=s.place, stamped_on=s.stamped_on)
+            for s in (await stamps_of(session, [cert.id]))[cert.id]
+        ],
     )
 
 
@@ -699,3 +733,252 @@ async def queue(
     ]
     next_cursor = service.encode_cursor(rows[-1][2], rows[-1][0].id) if len(rows) == limit else None
     return items, next_cursor
+
+
+# ---------------------------------------------------------------- phase P3a: needs update, alerts, renewal
+
+
+def stamp_out(stamp: CertificateStamp) -> schemas.StampOut:
+    return schemas.StampOut(
+        id=stamp.id,
+        place=stamp.place,
+        gouvernorat_code=stamp.gouvernorat_code,
+        stamped_on=stamp.stamped_on,
+        note=stamp.note,
+        stamped_by_name=stamp.stamped_by_name,
+        recorded_at=stamp.recorded_at,
+        has_photo=stamp.photo_object_key is not None,
+        changes=[schemas.CertificateChange.model_validate(c) for c in stamp.changes or []],
+    )
+
+
+def is_current(cert: Certificate) -> bool:
+    """The approved certificate that has not been replaced (it may have expired)."""
+    return cert.status == "approved" and cert.superseded_by is None
+
+
+async def current_of(session: AsyncSession, org_id: uuid.UUID) -> Certificate | None:
+    return await session.scalar(
+        select(Certificate)
+        .where(Certificate.org_id == org_id, Certificate.status == "approved", Certificate.superseded_by.is_(None))
+        .order_by(Certificate.reviewed_at.desc())
+        .limit(1)
+    )
+
+
+async def changes_of(
+    session: AsyncSession, org: Organization, cert: Certificate, regs: service.Registers | None = None
+) -> list[schemas.CertificateChange]:
+    now = await snapshot_of(session, org, regs)
+    return [
+        schemas.CertificateChange(section=section, field=name, certified=old, current=new)
+        for section, name, old, new in domain.certificate_changes(cert.snapshot, now)
+    ]
+
+
+async def stamps_of(session: AsyncSession, cert_ids: Sequence[uuid.UUID]) -> dict[uuid.UUID, list[CertificateStamp]]:
+    found: dict[uuid.UUID, list[CertificateStamp]] = {i: [] for i in cert_ids}
+    if cert_ids:
+        rows = await session.scalars(
+            select(CertificateStamp)
+            .where(CertificateStamp.certificate_id.in_(cert_ids))
+            .order_by(CertificateStamp.stamped_on.desc(), CertificateStamp.recorded_at.desc())
+        )
+        for stamp in rows:
+            found[stamp.certificate_id].append(stamp)
+    return found
+
+
+async def certificates_view(
+    session: AsyncSession, org: Organization, regs: service.Registers | None = None
+) -> list[schemas.CertificateOut]:
+    """Every certificate of the institution, the current one with its comparison, each with its stamps."""
+    certs = await certificates_of(session, org.id)
+    stamps = await stamps_of(session, [c.id for c in certs])
+    out = []
+    for cert in certs:
+        changes = await changes_of(session, org, cert, regs) if is_current(cert) else None
+        out.append(certificate_out(cert, changes=changes, stamps=stamps[cert.id]))
+    return out
+
+
+async def certificate_alerts(
+    session: AsyncSession, org: Organization, regs: service.Registers | None, on: date
+) -> list[schemas.Alert]:
+    """Alerts about the current certificate: ends within 90 days, has ended, or no longer matches the institution."""
+    cert = await current_of(session, org.id)
+    if cert is None or cert.valid_until is None:
+        return []
+    alerts: list[schemas.Alert] = []
+    if cert.valid_until < on:
+        alerts.append(schemas.Alert(kind="certificate_expired", ref=cert.id, since=cert.valid_until))
+    elif (cert.valid_until - on).days <= domain.CERTIFICATE_REMINDER_DAYS[0]:
+        alerts.append(schemas.Alert(kind="certificate_expiring", ref=cert.id, since=cert.valid_until))
+    if await changes_of(session, org, cert, regs):
+        alerts.append(schemas.Alert(kind="certificate_needs_update", ref=cert.id, since=None))
+    return alerts
+
+
+async def renewal_reminders(session: AsyncSession, today: date) -> int:
+    """E-mail the admins of each institution whose current certificate ends within 90, then 30 days (once each)."""
+    from app.modules.notify import outbox, templates
+    from app.modules.orgs.models import Member
+
+    sent = 0
+    first, last = domain.CERTIFICATE_REMINDER_DAYS
+    rows = await session.execute(
+        select(Certificate, Organization)
+        .join(Organization, Organization.id == Certificate.org_id)
+        .where(
+            Certificate.status == "approved",
+            Certificate.superseded_by.is_(None),
+            Organization.status == domain.OrgStatus.ACTIVE,
+            Certificate.valid_until >= today,
+            Certificate.valid_until <= today + timedelta(days=first),
+        )
+        .with_for_update(of=Certificate, skip_locked=True)
+    )
+    for cert, org in rows.all():
+        assert cert.valid_until is not None
+        days = (cert.valid_until - today).days
+        if days <= last and cert.reminded_30_on is None:
+            cert.reminded_30_on = today
+            cert.reminded_90_on = cert.reminded_90_on or today
+        elif cert.reminded_90_on is None:
+            cert.reminded_90_on = today
+        else:
+            continue
+        admins = await session.scalars(
+            select(Member.email).where(Member.org_id == org.id, Member.role == "admin", Member.email.is_not(None))
+        )
+        values = {
+            "org": org.name,
+            "code": cert.code,
+            "valid_until": cert.valid_until.isoformat(),
+            "days": days,
+            "link": f"{get_settings().portal_public_url}/orgs/{org.id}/certificate",
+        }
+        body = templates.multilingual(templates.fill(templates.RENEWAL_BODY, **values))
+        subject = templates.RENEWAL_SUBJECT["ar"].format(**values)
+        for address in admins:
+            if address:
+                outbox.email(session, address, subject, body)
+        sent += 1
+    await session.flush()
+    return sent
+
+
+# ---------------------------------------------------------------- phase P3a: counter of a regional administration
+
+_CODE = re.compile(r"EHC-\d{2}-\d{2}-\d{6}")
+_IMAGE_MAGIC = {b"\xff\xd8\xff": "image/jpeg", b"\x89PNG\r\n\x1a\n": "image/png"}
+
+
+def code_from(raw: str) -> str:
+    """The certificate code typed, or read from the QR code (the whole verification URL)."""
+    found = _CODE.search(raw.strip().upper())
+    if found is None:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "invalid_code")
+    return found.group(0)
+
+
+def counter_reasons(cert: Certificate, org: Organization, on: date) -> list[schemas.CounterReason]:
+    reasons: list[schemas.CounterReason] = []
+    if cert.status == "revoked":
+        reasons.append("revoked")
+    elif cert.status != "approved":
+        reasons.append("not_approved")
+    if cert.superseded_by is not None:
+        reasons.append("superseded")
+    if cert.valid_until is not None and cert.valid_until < on:
+        reasons.append("expired")
+    if cert.status in ("approved", "revoked") and not signature_valid(cert):
+        reasons.append("signature")
+    if org.status != domain.OrgStatus.ACTIVE:
+        reasons.append("org_inactive")
+    return reasons
+
+
+async def counter_view(
+    session: AsyncSession, cert: Certificate, org: Organization, *, may_stamp: bool
+) -> schemas.CounterView:
+    on = service.today()
+    reasons = counter_reasons(cert, org, on)
+    changes = await changes_of(session, org, cert) if is_current(cert) else None
+    stamps = (await stamps_of(session, [cert.id]))[cert.id]
+    return schemas.CounterView(
+        certificate=certificate_out(cert, changes=changes, stamps=stamps),
+        valid=not reasons,
+        reasons=reasons,
+        signature_valid=cert.status in ("approved", "revoked") and signature_valid(cert),
+        can_stamp=may_stamp and not reasons,
+        org_id=org.id,
+        org_name=org.name,
+        org_kind=org.kind,
+        org_status=org.status,
+        org_address=org.address,
+        gouvernorat_code=org.gouvernorat_code,
+    )
+
+
+async def scoped_certificate(
+    session: AsyncSession, principal: Any, *, code: str | None = None, cert_id: uuid.UUID | None = None
+) -> tuple[Certificate, Organization]:
+    """A submitted or later certificate of an institution in the staff member's scope (404 otherwise)."""
+    query = select(Certificate, Organization).join(Organization, Organization.id == Certificate.org_id)
+    query = query.where(Certificate.code == code) if code is not None else query.where(Certificate.id == cert_id)
+    found = (await session.execute(query.where(Certificate.status != "draft"))).first()
+    if found is None or not service.in_scope(principal, found[1]):
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
+    return found[0], found[1]
+
+
+async def add_stamp(
+    session: AsyncSession, cert: Certificate, org: Organization, body: schemas.StampIn, actor: str, name: str | None
+) -> CertificateStamp:
+    on = service.today()
+    if counter_reasons(cert, org, on):
+        raise HTTPException(status.HTTP_409_CONFLICT, "certificate_not_valid")
+    approved_on = cert.reviewed_at.astimezone(TUNIS_TZ).date() if cert.reviewed_at else on
+    if body.stamped_on > on or body.stamped_on < approved_on:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "invalid_stamp_date")
+    changes = await changes_of(session, org, cert)
+    stamp = CertificateStamp(
+        id=uuid.uuid4(),
+        certificate_id=cert.id,
+        place=body.place.strip(),
+        gouvernorat_code=org.gouvernorat_code,
+        stamped_on=body.stamped_on,
+        note=body.note.strip() if body.note and body.note.strip() else None,
+        stamped_by=actor,
+        stamped_by_name=name,
+        changes=[c.model_dump(mode="json") for c in changes],
+    )
+    if not stamp.place:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "place_required")
+    session.add(stamp)
+    await session.flush()
+    await session.refresh(stamp)
+    return stamp
+
+
+def photo_type(data: bytes) -> str:
+    """JPEG or PNG, read from the bytes themselves (the declared type is not trusted)."""
+    if len(data) > domain.STAMP_PHOTO_MAX_BYTES:
+        raise HTTPException(status.HTTP_413_CONTENT_TOO_LARGE, "photo_too_large")
+    for magic, content_type in _IMAGE_MAGIC.items():
+        if data.startswith(magic):
+            return content_type
+    raise HTTPException(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, "unsupported_media_type")
+
+
+async def set_photo(stamp: CertificateStamp, data: bytes) -> str | None:
+    """Store the photo of the stamped paper; returns the replaced object key, to delete after commit."""
+    content_type = photo_type(data)
+    old = stamp.photo_object_key
+    key = f"certificates/{stamp.certificate_id}/stamps/{stamp.id}-{uuid.uuid4().hex[:8]}"
+    await get_store().put(key, data, content_type)
+    stamp.photo_object_key = key
+    stamp.photo_sha256 = hashlib.sha256(data).hexdigest()
+    stamp.photo_content_type = content_type
+    return old

@@ -2365,5 +2365,26 @@
   "errorDrillInFuture": "A drill is recorded once held: choose today or an earlier date.",
   "errorInvalidDates": "The end date must follow the start date.",
   "errorMaintenanceInFuture": "A maintenance cannot be dated in the future.",
-  "errorInvalidDocument": "The photo is not valid for this maintenance."
+  "errorInvalidDocument": "The photo is not valid for this maintenance.",
+  "orgAlertCertificateExpiring": "The safety certificate expires soon",
+  "orgAlertCertificateExpired": "The safety certificate has expired",
+  "orgAlertCertificateNeedsUpdate": "The safety certificate needs updating",
+  "orgCertNeedsUpdate": "Needs updating",
+  "orgCertNeedsUpdateBody": "Changed since approval: {sections}. Generate a new certificate on the portal.",
+  "@orgCertNeedsUpdateBody": {
+    "placeholders": {
+      "sections": {
+        "type": "String"
+      }
+    }
+  },
+  "orgCertUpToDate": "Matches the institution",
+  "orgCertStamped": "Stamped",
+  "orgCertSectionIdentity": "Identity",
+  "orgCertSectionBuilding": "Building",
+  "orgCertSectionClassification": "Classification",
+  "orgCertSectionHazmat": "Hazardous materials",
+  "orgCertSectionDocuments": "Documents",
+  "orgCertSectionSafetyTeam": "Safety team",
+  "orgCertSectionEvacuation": "Evacuation"
 }

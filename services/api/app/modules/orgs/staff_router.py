@@ -3,7 +3,7 @@
 import uuid
 from typing import Annotated, Any, Literal
 
-from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Path, Query, Request, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -13,8 +13,8 @@ from app.core.storage import get_store
 from app.modules.audit import service as audit
 from app.modules.audit.service import actor_of
 from app.modules.orgs import certificate, schemas, service, space
-from app.modules.orgs.domain import OrgKind, OrgRole, OrgStatus
-from app.modules.orgs.models import Certificate, Document, Organization
+from app.modules.orgs.domain import STAMP_PHOTO_MAX_BYTES, OrgKind, OrgRole, OrgStatus
+from app.modules.orgs.models import Certificate, CertificateStamp, Document, Organization
 from app.modules.orgs.router import delete_objects, download_url
 from app.modules.reports import service as reports
 from app.modules.reports.schemas import StaffReportPage
@@ -94,7 +94,7 @@ async def detail_of(session: AsyncSession, org: Organization) -> schemas.StaffOr
             schemas.StaffMember(display_name=m.display_name, email=m.email, role=OrgRole(m.role))
             for m in await service.members(session, org.id)
         ],
-        certificates=[certificate.certificate_out(c) for c in await certificate.certificates_of(session, org.id)],
+        certificates=await certificate.certificates_view(session, org, regs),
         activities=await space.activities_of(session, org.id),
         maintenance=await space.maintenance_of(session, org.id),
     )
@@ -266,3 +266,106 @@ async def revoke_certificate(
     await session.commit()
     await delete_objects(*stale)
     return certificate.certificate_out(cert)
+
+
+# ---------------------------------------------------------------- counter of a regional administration (phase P3a)
+
+
+@router.get("/certificates/lookup", response_model=schemas.CounterView)
+async def counter_lookup(
+    principal: OrgReader, session: Session, code: Annotated[str, Query(min_length=6, max_length=500)]
+) -> schemas.CounterView:
+    """The certificate a visitor shows at the counter: the code, or the verification URL read from its QR code."""
+    cert, org = await certificate.scoped_certificate(session, principal, code=certificate.code_from(code))
+    view = await certificate.counter_view(session, cert, org, may_stamp=Role.ORG_AUDITOR in principal.roles)
+    await audit.record(
+        session,
+        actor=actor_of(principal),
+        action="certificate.counter_view",
+        target=f"org:{org.id}",
+        details={"code": cert.code, "valid": view.valid},
+    )
+    await session.commit()
+    return view
+
+
+@router.post("/certificates/{cert_id}/stamps", response_model=schemas.StampOut, status_code=status.HTTP_201_CREATED)
+async def add_stamp(
+    principal: Auditor, session: Session, cert_id: uuid.UUID, body: schemas.StampIn
+) -> schemas.StampOut:
+    """Record the stamp an agent put by hand on the paper certificate (F-POR-07)."""
+    cert, org = await certificate.scoped_certificate(session, principal, cert_id=cert_id)
+    actor = actor_of(principal)
+    stamp = await certificate.add_stamp(session, cert, org, body, actor, audit.name_of(principal))
+    await audit.record(
+        session,
+        actor=actor,
+        action="certificate.stamp",
+        target=f"org:{org.id}",
+        details={
+            "code": cert.code,
+            "place": stamp.place,
+            "stamped_on": str(stamp.stamped_on),
+            "changes": len(stamp.changes or []),
+        },
+    )
+    await service.org_event(session, org.id)
+    await session.commit()
+    return certificate.stamp_out(stamp)
+
+
+async def _stamp(
+    session: AsyncSession, principal: Principal, cert_id: uuid.UUID, stamp_id: uuid.UUID
+) -> CertificateStamp:
+    await certificate.scoped_certificate(session, principal, cert_id=cert_id)
+    stamp = await session.get(CertificateStamp, stamp_id, with_for_update=True)
+    if stamp is None or stamp.certificate_id != cert_id:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
+    return stamp
+
+
+async def _read_photo(request: Request) -> bytes:
+    declared = request.headers.get("content-length")
+    if declared and declared.isdigit() and int(declared) > STAMP_PHOTO_MAX_BYTES:
+        raise HTTPException(status.HTTP_413_CONTENT_TOO_LARGE, "photo_too_large")
+    chunks: list[bytes] = []
+    size = 0
+    async for chunk in request.stream():
+        size += len(chunk)
+        if size > STAMP_PHOTO_MAX_BYTES:
+            raise HTTPException(status.HTTP_413_CONTENT_TOO_LARGE, "photo_too_large")
+        chunks.append(chunk)
+    return b"".join(chunks)
+
+
+@router.put("/certificates/{cert_id}/stamps/{stamp_id}/photo", response_model=schemas.StampOut)
+async def put_stamp_photo(
+    principal: Auditor, session: Session, request: Request, cert_id: uuid.UUID, stamp_id: uuid.UUID
+) -> schemas.StampOut:
+    """The photo of the stamped paper is the request body: JPEG or PNG, at most 5 MB."""
+    stamp = await _stamp(session, principal, cert_id, stamp_id)
+    stale = await certificate.set_photo(stamp, await _read_photo(request))
+    await audit.record(
+        session,
+        actor=actor_of(principal),
+        action="certificate.stamp_photo",
+        target=f"certificate:{cert_id}",
+        details={"stamp": str(stamp_id), "sha256": stamp.photo_sha256},
+    )
+    await session.commit()
+    if stale:
+        await delete_objects(stale)
+    return certificate.stamp_out(stamp)
+
+
+@router.get("/certificates/{cert_id}/stamps/{stamp_id}/photo", response_model=schemas.DownloadOut)
+async def get_stamp_photo(
+    principal: OrgReader, session: Session, cert_id: uuid.UUID, stamp_id: uuid.UUID
+) -> schemas.DownloadOut:
+    stamp = await _stamp(session, principal, cert_id, stamp_id)
+    await session.commit()
+    if stamp.photo_object_key is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
+    return schemas.DownloadOut(
+        url=get_store().presign_get(stamp.photo_object_key, content_type=stamp.photo_content_type)
+    )

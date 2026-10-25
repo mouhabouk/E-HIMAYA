@@ -139,6 +139,34 @@ FakeResponse api(
             'status': 'approved',
             'superseded': false,
             'valid_until': '2027-06-30',
+            'needs_update': true,
+            'changes': [
+              {
+                'section': 'building',
+                'field': 'capacity',
+                'certified': 300,
+                'current': 420,
+              },
+              {
+                'section': 'hazmat',
+                'field': 'items',
+                'certified': [],
+                'current': ['Chlore (UN 1017): 200 kg'],
+              },
+            ],
+            'stamps': [
+              {
+                'id': 's1',
+                'place': 'Direction régionale de Sfax',
+                'gouvernorat_code': 61,
+                'stamped_on': '2026-10-20',
+                'note': null,
+                'stamped_by_name': 'Leila',
+                'recorded_at': '2026-10-20T09:00:00Z',
+                'has_photo': false,
+                'changes': [],
+              },
+            ],
           },
         ],
       );
@@ -444,6 +472,19 @@ void main() {
       await open('certificates');
       expect(find.text('EH-CERT-0001'), findsOneWidget);
       expect(find.textContaining('Approuvé'), findsOneWidget);
+      // P3a: needs updating with the sections that changed, and the hand stamp.
+      expect(find.text('À mettre à jour'), findsOneWidget);
+      expect(
+        find.text(
+          'Changé depuis l’approbation : Bâtiment, Matières dangereuses. '
+          'Générez un nouveau certificat sur le portail.',
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.textContaining('Cacheté · Direction régionale de Sfax'),
+        findsOneWidget,
+      );
       await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
 

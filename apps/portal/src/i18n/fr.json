@@ -121,7 +121,10 @@
     "revokedOn": "Révoqué le {{date}}.",
     "keyId": "Identifiant de la clé : {{id}}",
     "disclaimerTitle": "Qu’est-ce que ce certificat ?",
-    "disclaimer": "Ce certificat est une auto-évaluation de sécurité enregistrée par l’établissement sur la plateforme e-Himaya et revue par ses auditeurs. Ce n’est pas un certificat officiel de l’Office national de la protection civile ni d’une autre administration, et il ne remplace pas les autorisations et visites prévues par la loi."
+    "disclaimer": "Ce certificat est une auto-évaluation de sécurité enregistrée par l’établissement sur la plateforme e-Himaya et revue par ses auditeurs. Ce n’est pas un certificat officiel de l’Office national de la protection civile ni d’une autre administration, et il ne remplace pas les autorisations et visites prévues par la loi.",
+    "sealTitle": "Cachet électronique",
+    "sealBody": "Image de la signature électronique de l’Office ci-dessus, telle qu’imprimée sur le PDF. Sa valeur vient de la signature, non de l’image.",
+    "sealNote": "Modèle de cachet, en attente du cachet officiel de l’Office"
   },
   "myOrgs": {
     "title": "Mes établissements",
@@ -294,7 +297,10 @@
       "training_expired": "Formation expirée dans l’équipe de sécurité",
       "training_expiring": "Formation bientôt expirée dans l’équipe de sécurité",
       "maintenance_overdue": "Maintenance d’équipement en retard",
-      "maintenance_due_soon": "Maintenance d’équipement bientôt due"
+      "maintenance_due_soon": "Maintenance d’équipement bientôt due",
+      "certificate_expiring": "Le certificat de sécurité arrive bientôt à échéance",
+      "certificate_expired": "Le certificat de sécurité a expiré",
+      "certificate_needs_update": "Le certificat de sécurité est à mettre à jour : l’établissement a changé depuis l’approbation"
     }
   },
   "card": {
@@ -665,7 +671,48 @@
     "copyLink": "Copier le lien",
     "openPdf": "Ouvrir le PDF",
     "submit": "Soumettre pour examen",
-    "regenerate": "Générer un nouveau brouillon"
+    "regenerate": "Générer un nouveau brouillon",
+    "generateNew": "Générer un nouveau certificat",
+    "renewSoon": "Le certificat expire dans {{count}} jours. Générez-en un nouveau et soumettez-le avant.",
+    "needsUpdate": "À mettre à jour.",
+    "needsUpdateBody": "L’établissement a changé sur des points substantiels depuis l’approbation (écarts : {{count}}). Générez un nouveau certificat et soumettez-le.",
+    "upToDate": "Conforme à l’établissement",
+    "changesCaption": "Écarts entre l’approuvé et l’état actuel",
+    "section": "Section",
+    "certifiedValue": "Approuvé",
+    "currentValue": "Actuel",
+    "sections": {
+      "identity": "Identité",
+      "building": "Bâtiment",
+      "classification": "Classement",
+      "hazmat": "Matières dangereuses",
+      "documents": "Documents",
+      "safety_team": "Équipe de sécurité",
+      "evacuation": "Évacuation"
+    },
+    "fields": {
+      "name": "Nom",
+      "kind": "Type",
+      "identifier": "Identifiant",
+      "capacity": "Capacité",
+      "floors": "Étages",
+      "height_m": "Hauteur (m)",
+      "receives_public": "Reçoit du public",
+      "address": "Adresse",
+      "location": "Position",
+      "family": "Famille",
+      "category": "Catégorie",
+      "high_rise": "Immeuble de grande hauteur",
+      "items": "Matières",
+      "files": "Dossier et plan de sécurité",
+      "representative": "Représentant",
+      "members": "Nombre de membres",
+      "points": "Nombre de points d’évacuation"
+    },
+    "stampsTitle": "Cachets des directions régionales",
+    "noStamps": "Pas encore cacheté par une direction régionale.",
+    "stamped": "Cacheté",
+    "stampedBy": "Agent : {{name}}"
   },
   "certificateStatus": {
     "draft": "Brouillon",

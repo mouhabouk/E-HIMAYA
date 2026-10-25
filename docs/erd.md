@@ -971,6 +971,23 @@ erDiagram
         datetime revoked_at
         text revoked_by
         text revoke_reason
+        date reminded_90_on
+        date reminded_30_on
+    }
+    org__certificate_stamp {
+        uuid id PK
+        uuid certificate_id FK
+        text place
+        integer gouvernorat_code
+        date stamped_on
+        text note
+        text stamped_by
+        text stamped_by_name
+        datetime recorded_at
+        jsonb changes
+        text photo_object_key
+        text photo_sha256
+        text photo_content_type
     }
     org__digest {
         uuid org_id PK,FK
@@ -1121,6 +1138,7 @@ erDiagram
     identity__account ||--o{ org__member : "user_id"
     identity__account ||--o{ org__organization : "created_by"
     org__certificate ||--o{ org__certificate : "superseded_by"
+    org__certificate ||--o{ org__certificate_stamp : "certificate_id"
     org__document ||--o{ org__document_version : "document_id"
     org__document ||--o{ org__hazmat : "sds_document_id"
     org__document ||--o{ org__maintenance : "document_id"

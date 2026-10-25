@@ -378,6 +378,57 @@ describe("certificate (FR-B-008)", () => {
     await waitFor(() => expect(calls("POST /api/v1/orgs/o-1/certificate")).toHaveLength(1));
   });
 
+  it("says the approved certificate needs updating, with the differences, the stamps and a new certificate (P3a)", async () => {
+    const soon = new Date(Date.now() + 40 * 86_400_000).toISOString().slice(0, 10);
+    const { calls } = open("/orgs/o-1/certificate", { completeness: { ok: true, missing: [] } }, {
+      "GET /api/v1/orgs/o-1/certificates": {
+        body: [
+          makeCertificate({
+            status: "approved",
+            reviewed_at: "2026-10-03T08:00:00Z",
+            valid_until: soon,
+            needs_update: true,
+            changes: [{ section: "building", field: "capacity", certified: 300, current: 420 }],
+            stamps: [
+              {
+                id: "s-1",
+                place: "Regional administration of Sfax",
+                gouvernorat_code: 61,
+                stamped_on: "2026-10-20",
+                note: null,
+                stamped_by_name: "Leila Auditor",
+                recorded_at: "2026-10-20T09:00:00Z",
+                has_photo: false,
+                changes: [],
+              },
+            ],
+          }),
+        ],
+      },
+      "POST /api/v1/orgs/o-1/certificate": { status: 201, body: makeCertificate({ id: "c-2" }) },
+    });
+    expect(await screen.findByText(/The certificate expires in 40 days/)).toBeInTheDocument();
+    expect(screen.getByText("Needs updating.")).toBeInTheDocument();
+    const row = screen.getByRole("row", { name: /Building/ });
+    expect(row).toHaveTextContent("Capacity");
+    expect(row).toHaveTextContent("300");
+    expect(row).toHaveTextContent("420");
+    expect(screen.getByText("Regional administration of Sfax")).toBeInTheDocument();
+    expect(screen.getByText(/Agent: Leila Auditor/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Generate a new certificate" }));
+    await waitFor(() => expect(calls("POST /api/v1/orgs/o-1/certificate")).toHaveLength(1));
+  });
+
+  it("shows a current certificate that still matches the institution", async () => {
+    open("/orgs/o-1/certificate", {}, {
+      "GET /api/v1/orgs/o-1/certificates": {
+        body: [makeCertificate({ status: "approved", valid_until: "2099-01-01", needs_update: false, changes: [], stamps: [] })],
+      },
+    });
+    expect(await screen.findByText("Matches the institution")).toBeInTheDocument();
+    expect(screen.queryByText(/The certificate expires in/)).not.toBeInTheDocument();
+  });
+
   it("shows the public verification link of a submitted certificate; editors cannot submit", async () => {
     open("/orgs/o-1/certificate", { my_role: "editor" }, {
       "GET /api/v1/orgs/o-1/certificates": { body: [makeCertificate({ id: "c-3", status: "approved", valid_until: "2099-01-01" }), makeCertificate()] },

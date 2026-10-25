@@ -382,7 +382,7 @@ async def card(
         "readiness": domain.readiness(classification.required, completeness.missing),
         "kind_fields": domain.visible_kind_fields(org.kind, org.kind_fields or {}, reader),
         "kind_review": org.kind_review,
-        "alerts": alerts_of(regs.team, regs.equipment, on),
+        "alerts": alerts_of(regs.team, regs.equipment, on) + await _certificate_alerts(session, org, regs, on),
         "review": schemas.Review(reason=org.review_reason, at=org.reviewed_at),
         "created_at": org.created_at,
         "updated_at": org.updated_at,
@@ -540,7 +540,26 @@ async def alerts_counts(session: AsyncSession, org_ids: Sequence[uuid.UUID]) -> 
     for item in await session.scalars(select(Equipment).where(Equipment.org_id.in_(org_ids))):
         equipment[item.org_id].append(item)
     on = today()
-    return {org_id: len(alerts_of(team[org_id], equipment[org_id], on)) for org_id in org_ids}
+    # The certificate's end of validity counts here; "needs update" needs the full comparison and shows on the card.
+    ending = set(
+        await session.scalars(
+            select(Certificate.org_id).where(
+                Certificate.org_id.in_(org_ids),
+                Certificate.status == "approved",
+                Certificate.superseded_by.is_(None),
+                Certificate.valid_until <= on + timedelta(days=domain.CERTIFICATE_REMINDER_DAYS[0]),
+            )
+        )
+    )
+    return {org_id: len(alerts_of(team[org_id], equipment[org_id], on)) + (org_id in ending) for org_id in org_ids}
+
+
+async def _certificate_alerts(
+    session: AsyncSession, org: Organization, regs: Registers, on: date
+) -> list[schemas.Alert]:
+    from app.modules.orgs import certificate  # certificate builds on this module
+
+    return await certificate.certificate_alerts(session, org, regs, on)
 
 
 async def hazmat_counts(session: AsyncSession, org_ids: Sequence[uuid.UUID]) -> dict[uuid.UUID, int]:
@@ -881,7 +900,7 @@ async def summary(session: AsyncSession, org: Organization) -> schemas.OrgSummar
     lat, lon = await coords(session, org.id)
     classification = classification_of(org, len(regs.hazmat))
     completeness = completeness_of(classification, regs, on)
-    alerts = alerts_of(regs.team, regs.equipment, on)
+    alerts = alerts_of(regs.team, regs.equipment, on) + await _certificate_alerts(session, org, regs, on)
     return schemas.OrgSummary(
         id=org.id,
         name=org.name,
