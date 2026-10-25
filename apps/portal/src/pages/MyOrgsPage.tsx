@@ -3,9 +3,11 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { Badge, OrgStatusBadge, RoleBadge } from "../components/Badges";
 import { ErrorBox, ForwardIcon, Loading } from "../components/Feedback";
+import { IconTile } from "../components/Icon";
 import { useServices } from "../context/services";
 import { useFormat } from "../lib/hooks";
 import { queryKeys } from "../lib/portalApi";
+import { PageTitle } from "../components/PageTitle";
 
 /** "My institutions" (`GET /orgs/mine`). */
 export function MyOrgsPage() {
@@ -17,7 +19,7 @@ export function MyOrgsPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("myOrgs.title")}</h1>
+        <PageTitle icon="apartment" tone="navy">{t("myOrgs.title")}</PageTitle>
         <Link className="btn btn--primary" to="/orgs/new">
           {t("myOrgs.register")}
         </Link>
@@ -35,6 +37,7 @@ export function MyOrgsPage() {
         <ul className="org-list">
           {query.data.map((o) => (
             <li key={o.id} className="card org-item">
+              <IconTile name="apartment" tone="navy" soft />
               <div className="org-item__main">
                 <h2>
                   <Link to={`/orgs/${encodeURIComponent(o.id)}`}>{o.name}</Link>

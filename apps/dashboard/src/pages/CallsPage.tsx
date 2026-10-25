@@ -16,6 +16,7 @@ import {
   type CallStatus,
   type StaffCall,
 } from "../lib/telephonyTypes";
+import { PageTitle } from "../components/PageTitle";
 
 type LinkFilter = "" | "linked" | "unlinked";
 
@@ -98,7 +99,7 @@ export function CallsPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("calls.title")}</h1>
+        <PageTitle icon="call" tone="green">{t("calls.title")}</PageTitle>
         <p className="muted" role="status" aria-live="polite">
           {query.isFetching ? t("common.loading") : t("calls.count", { count: fmt.number(rows.length) })}
         </p>

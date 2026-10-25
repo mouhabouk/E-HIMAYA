@@ -6,6 +6,7 @@ import { IconTile } from "./Icon";
 import { LANGUAGES } from "../i18n";
 import { useLanguage } from "../lib/hooks";
 import { applyTheme, nextTheme, storedTheme, type Theme } from "../lib/theme";
+import { EnvironmentStrip } from "./EnvironmentStrip";
 
 /** One button per language, each labelled in its own language (and `lang`), the current one pressed. */
 export function LanguageSwitch() {
@@ -113,6 +114,7 @@ export function Layout() {
       <a className="skip-link" href="#main">
         {t("app.skipToContent")}
       </a>
+      <EnvironmentStrip />
       <header className="header">
         <Link to="/" className="header__brand">
           {/* Logo of the Office (phase A, §2.5): the name next to it is the accessible text. */}

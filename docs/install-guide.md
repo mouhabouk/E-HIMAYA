@@ -10,6 +10,8 @@
 | الجمهور | مهندس النظم الذي يجهّز الخادم، والمطوّر الذي يجهّز جهازه |
 | المرجع الأعلى للإصدارات | [`docs/versions.md`](versions.md): إذا اختلف رقم هنا عن رقم هناك فالمعتمد ما في `versions.md` |
 
+> للعمل على حاسوب Windows عبر WSL2 انظر [`docs/install-guide-wsl.md`](install-guide-wsl.md).
+>
 > الأوامر مكتوبة لـ Ubuntu Server 24.04 LTS. ما يحمل الشارة **[SIM]** محاكاة للتجربة فقط، ولا يُشغَّل في الإنتاج
 > (الواجهة البرمجية ترفض الإقلاع إذا وجدت محاكيا مفعّلا مع `APP_ENV=production`).
 
@@ -371,7 +373,11 @@ KEYCLOAK_ADMIN_ALLOW=10.20.0.0/16             # الشبكات التي تفتح
 STREAM_SIM_TOKEN=                             # المحاكاة ممنوعة في الإنتاج
 TELEPHONY_SIM_PASSWORD=
 TELEPHONY_SIM_TOKEN=
+ENVIRONMENT_BANNER=auto                       # لا شريط في الإنتاج؛ pilot لخادم التجربة، training للتدريب
 ```
+
+`ENVIRONMENT_BANNER` يُظهر شريطا كهرمانيا **[SIM]** أعلى اللوحة والبوابة والتطبيق يسمّي البيئة، حتى لا يخلط المشغّل
+بين بيانات التجربة والبيانات الحقيقية. على خادم التجربة الميدانية ضع `pilot`، وعلى خادم التدريب `training`.
 
 في Keycloak حدّث Valid redirect URIs و Web origins للعميلين `ehimaya-dashboard` و `ehimaya-portal` إلى
 `https://DASHBOARD_HOST/*` و `https://PORTAL_HOST/*`.

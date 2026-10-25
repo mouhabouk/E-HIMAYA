@@ -29,6 +29,7 @@ import {
 } from "../lib/phase8Types";
 import { canEditRewardRules, canManageRewards, canSeeRewardActivity } from "../lib/roles";
 import type { Category } from "../lib/types";
+import { PageTitle } from "../components/PageTitle";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const ids = (text: string) => text.split(/[\s,]+/).filter(Boolean);
@@ -53,7 +54,7 @@ function RewardsFrame({ title, children }: { title: string; children: ReactNode 
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{title}</h1>
+        <PageTitle icon="militaryTech" tone="pink">{title}</PageTitle>
       </div>
       <RewardsTabs />
       <p className="alert alert--info rewards-safety" role="note">

@@ -18,6 +18,7 @@ import { useAiStatus, useFormat } from "../lib/hooks";
 import { canEditAiSettings } from "../lib/roles";
 import { queryKeys } from "../lib/staffApi";
 import { AI_CAPABILITIES, CATEGORIES, PRIORITY_COMPONENTS, type AiSettings } from "../lib/types";
+import { PageTitle } from "../components/PageTitle";
 
 function useFieldError() {
   const { t } = useTranslation();
@@ -330,7 +331,7 @@ export function AiSettingsPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("aiSettings.title")}</h1>
+        <PageTitle icon="smartToy" tone="slate">{t("aiSettings.title")}</PageTitle>
       </div>
       <p className="muted">{t("aiSettings.intro")}</p>
 

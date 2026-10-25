@@ -1160,5 +1160,8 @@
   "medicalOpeningCp": "Médecin de la Protection civile, gouvernorat de {gouvernorat}",
   "medicalOpeningSpecialist": "Médecin spécialiste : {specialty}, {workplace}",
   "medicalOpeningReferral": "Votre dossier a été adressé à un spécialiste en {specialty}",
-  "medicalOpeningsCount": "Qui a consulté mon dossier médical ({count})"
+  "medicalOpeningsCount": "Qui a consulté mon dossier médical ({count})",
+  "envBannerDevelopment": "[SIM] Environnement de développement : toutes les données sont fictives",
+  "envBannerPilot": "[SIM] Environnement pilote : données de test",
+  "envBannerTraining": "[SIM] Exercice : données fictives, pas de vrais signalements"
 }

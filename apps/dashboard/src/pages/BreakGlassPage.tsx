@@ -19,6 +19,7 @@ import {
   type ReviewOutcome,
 } from "../lib/phase9Types";
 import { canReviewBreakGlass } from "../lib/roles";
+import { PageTitle } from "../components/PageTitle";
 
 /** Status of a grant as the list shows it (the API filters by the same four states). */
 export function grantStatus(grant: BreakGlassGrant, now: number = Date.now()): BreakGlassStatus {
@@ -170,7 +171,7 @@ export function BreakGlassPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("breakGlass.pageTitle")}</h1>
+        <PageTitle icon="lockOpen" tone="red">{t("breakGlass.pageTitle")}</PageTitle>
       </div>
       <p className="muted">{reviewer ? t("breakGlass.pageIntroReviewer") : t("breakGlass.pageIntroOwn")}</p>
       <div className="filters__row">

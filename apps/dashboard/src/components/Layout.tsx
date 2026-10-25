@@ -36,6 +36,7 @@ import { applyTheme, nextTheme, storedTheme, type Theme } from "../lib/theme";
 import { NoAccessPage } from "../pages/NoAccessPage";
 import { AlertFollowUpToasts } from "./AlertFollowUpToasts";
 import { ActiveGrantBanner } from "./BreakGlass";
+import { EnvironmentStrip } from "./EnvironmentStrip";
 import { LevelBanner } from "./LevelBanner";
 import { SoftphoneDock } from "./Softphone";
 import { StreamAlertToasts } from "./StreamAlertToasts";
@@ -211,6 +212,7 @@ export function Layout() {
       <a className="skip-link" href="#main">
         {t("app.skipToContent")}
       </a>
+      <EnvironmentStrip />
       <header className="header" ref={headerRef}>
         <div className="header__brand">
           {/* Logo of the Office (phase A, §2.5): the name next to it is the accessible text. */}

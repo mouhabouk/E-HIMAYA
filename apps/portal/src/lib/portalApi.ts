@@ -45,6 +45,9 @@ export interface RegisterTypes {
 /** Typed calls for docs/api/phase-4-contract.md (portal side) and the phase 2 calls the portal needs. */
 export function portalApi(api: ApiClient) {
   return {
+    /** Backlog G3: which environment strip to show (public endpoint, null in production). */
+    environment: (signal?: AbortSignal) => api.request<EnvironmentInfo>("/api/v1/app/environment", { signal }),
+
     // §1 institutions
     myOrgs: (signal?: AbortSignal) => api.request<MyOrg[]>("/api/v1/orgs/mine", { signal }),
     org: (id: string, signal?: AbortSignal) => api.request<Organization>(orgPath(id), { signal }),
@@ -133,7 +136,13 @@ export function portalApi(api: ApiClient) {
 
 export type PortalApi = ReturnType<typeof portalApi>;
 
+/** Environment strip (backlog G3): development, field pilot or exercise; null = production, no strip. */
+export interface EnvironmentInfo {
+  banner: "development" | "pilot" | "training" | null;
+}
+
 export const queryKeys = {
+  environment: ["environment"] as const,
   myOrgs: ["orgs", "mine"] as const,
   org: (id: string) => ["org", id] as const,
   register: (id: string, register: RegisterName) => ["org", id, register] as const,

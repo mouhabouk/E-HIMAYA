@@ -118,6 +118,9 @@ border, shadow `0 1px 3px rgb(24 32 56 / 6%)`. Buttons 52–56 high. Spacing sca
 | `HeroHeader` | Full-width red (or navy) band, white icon, title and one meta line | Alert screens |
 | `StepBar` | Segments, done = orange, to do = line grey | Multi-step forms |
 | `ProgressRing` | Green ring with the percentage in the centre | Readiness, completion |
+| `PageTitle` (UI-2) | Page heading: the section's icon tile (same icon and colour as its navigation entry) next to the bold title | Every dashboard and portal page |
+| `EnvironmentStrip` (UI-2, G3) | Full-width amber band with the [SIM] tag naming the environment (development, pilot, training); absent in production | Top of the dashboard, the portal and the app |
+| Draft notice (UI-2, G4) | Warning alert «the record changed while you typed; your text is kept» with an acknowledge button | Dashboard forms with a draft |
 | Icons | Material Symbols Rounded (Apache 2.0), filled inside tiles | All apps |
 
 Rules kept from phase A: language bar on every screen, red asterisk on required fields, 48 dp targets, no meaning by

@@ -22,6 +22,7 @@ class AppRelease {
     required this.channel,
     this.downloadUrl,
     this.smsSimulated = false,
+    this.environment,
   });
 
   final String latestVersion;
@@ -35,6 +36,9 @@ class AppRelease {
 
   /// SIMULATION: SMS codes go to the development gateway notify-sim.
   final bool smsSimulated;
+
+  /// Environment strip (backlog G3): `development`, `pilot` or `training`; null in production.
+  final String? environment;
 
   static AppRelease? tryParse(Map<String, Object?> json) {
     try {
@@ -50,6 +54,7 @@ class AppRelease {
         channel: json['channel'] as String? ?? 'server',
         downloadUrl: json['download_url'] as String?,
         smsSimulated: json['sms_simulated'] == true,
+        environment: json['environment'] as String?,
       );
     } on Object {
       return null;
@@ -108,6 +113,7 @@ class AppReleaseController extends AsyncNotifier<AppRelease?> {
       final release = body == null ? null : AppRelease.tryParse(body);
       if (release != null) {
         await ref.read(appPrefsProvider).setRelease(jsonEncode(body), now);
+        ref.read(environmentProvider.notifier).set(release.environment);
       }
       return release;
     } on DioException catch (e) {
@@ -125,3 +131,26 @@ final appReleaseProvider =
     AsyncNotifierProvider<AppReleaseController, AppRelease?>(
       AppReleaseController.new,
     );
+
+/// Backlog G3: the environment the server reported last (`development`, `pilot`, `training`, or null
+/// in production). Starts from the cached answer and never calls the network itself, so the screens
+/// that must work offline and before the charter (the emergency numbers) send nothing.
+class EnvironmentController extends Notifier<String?> {
+  @override
+  String? build() {
+    final raw = ref.read(appPrefsProvider).releaseJson;
+    if (raw == null) return null;
+    try {
+      return AppRelease.tryParse(jsonDecode(raw) as Map<String, Object?>)
+          ?.environment;
+    } on FormatException {
+      return null;
+    }
+  }
+
+  void set(String? environment) => state = environment;
+}
+
+final environmentProvider = NotifierProvider<EnvironmentController, String?>(
+  EnvironmentController.new,
+);

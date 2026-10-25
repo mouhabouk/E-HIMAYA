@@ -24,6 +24,7 @@ import {
 import { canManageResources } from "../lib/roles";
 import type { Language } from "../i18n";
 import { localizedName } from "../lib/localized";
+import { PageTitle } from "../components/PageTitle";
 
 const LAT = { min: 30, max: 37.6 };
 const LON = { min: 7.4, max: 11.7 };
@@ -660,7 +661,7 @@ export function ResourcesPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("resources.title")}</h1>
+        <PageTitle icon="localShipping" tone="amber">{t("resources.title")}</PageTitle>
       </div>
       <p className="muted">{t("resources.intro")}</p>
       <section className="card" aria-labelledby="sec-summary">

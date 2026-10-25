@@ -12,6 +12,7 @@ import { validateValidUntil, validUntilBounds, type ValidUntilError } from "../l
 import { canReviewOrgs } from "../lib/roles";
 import { queryKeys } from "../lib/staffApi";
 import { isOneOf, type CertificateReviewBody, type Page, type QueueCertificate } from "../lib/types";
+import { PageTitle } from "../components/PageTitle";
 
 /** Statuses the staff queue accepts (§9): the review queue itself, then decided certificates. */
 export const QUEUE_STATUSES = ["submitted", "approved", "rejected", "revoked"] as const;
@@ -328,7 +329,7 @@ export function CertificatesPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("orgs.certs.title")}</h1>
+        <PageTitle icon="workspacePremium" tone="amber">{t("orgs.certs.title")}</PageTitle>
         <Link to="/orgs">{t("orgs.detail.back")}</Link>
       </div>
       <p className="muted">{t("orgs.certs.intro")}</p>

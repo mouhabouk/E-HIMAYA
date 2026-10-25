@@ -6,6 +6,7 @@ import { ResourceRequestItem } from "../components/ResourceRequests";
 import { useServices } from "../context/services";
 import { p9Keys } from "../lib/phase9Api";
 import { RESOURCE_REQUEST_STATUSES, type ResourceRequestDirection, type ResourceRequestStatus } from "../lib/phase9Types";
+import { PageTitle } from "../components/PageTitle";
 
 /**
  * Resource requests between gouvernorats (phase 9 §5.4): incoming requests (to the user's gouvernorat, decided by
@@ -28,7 +29,7 @@ export function ResourceRequestsPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("resourceRequests.pageTitle")}</h1>
+        <PageTitle icon="inventory2" tone="amber">{t("resourceRequests.pageTitle")}</PageTitle>
       </div>
       <p className="muted">{t("resourceRequests.intro")}</p>
       <div className="filters__row">

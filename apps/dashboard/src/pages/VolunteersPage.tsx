@@ -21,6 +21,7 @@ import {
   type VolunteerFilters,
   type VolunteerStatus,
 } from "../lib/opsTypes";
+import { PageTitle } from "../components/PageTitle";
 
 export function VolunteerStatusChip({ status }: { status: VolunteerStatus }) {
   const { t } = useTranslation();
@@ -168,7 +169,7 @@ export function VolunteersPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("volunteers.title")}</h1>
+        <PageTitle icon="volunteerActivism" tone="green">{t("volunteers.title")}</PageTitle>
       </div>
       <p className="muted">{t("volunteers.intro")}</p>
 

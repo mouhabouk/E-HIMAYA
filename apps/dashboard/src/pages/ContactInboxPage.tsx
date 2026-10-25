@@ -19,6 +19,8 @@ import {
   type StatusFilter,
 } from "../lib/contact";
 import { useFormat, useGouvernorats } from "../lib/hooks";
+import { useDraft } from "../lib/drafts";
+import { PageTitle } from "../components/PageTitle";
 
 const DEFAULT_FILTERS: InboxFilters = { kind: "", status: "open", gouvernorat: "", overdue: false };
 
@@ -104,14 +106,14 @@ function ActionForm({ request, onDone }: { request: ContactDetail; onDone: (d: C
   const gouvernorats = useGouvernorats();
   const id = useId();
   const [action, setAction] = useState<ContactAction | null>(null);
-  const [text, setText] = useState("");
+  const [text, setText, clearText] = useDraft(`contact:${request.id}:text`);
   const [target, setTarget] = useState("");
   const [tried, setTried] = useState(false);
   const mutation = useMutation({
     mutationFn: (body: Parameters<typeof api.contactAct>[1]) => api.contactAct(request.id, body),
     onSuccess: (d) => {
       setAction(null);
-      setText("");
+      clearText();
       setTried(false);
       onDone(d);
     },
@@ -313,7 +315,7 @@ export function ContactInboxPage() {
   });
   return (
     <div className="page contact-page">
-      <h1>{t("contact.title")}</h1>
+      <PageTitle icon="mail" tone="sky">{t("contact.title")}</PageTitle>
       <p>{t("contact.intro")}</p>
       <Filters
         value={filters}

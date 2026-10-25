@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/routing/app_router.dart';
+import '../../core/ui/components.dart';
 import '../../core/ui/emergency_action.dart';
 import '../../core/ui/theme.dart';
+import '../../core/ui/tokens.dart';
 import '../../l10n/app_localizations.dart';
 import 'safety_providers.dart';
 
@@ -30,21 +32,14 @@ class SafetyHubScreen extends ConsumerWidget {
       required String title,
       String? subtitle,
       required String route,
-      Color? color,
-    }) => Card(
-      child: ListTile(
-        key: Key(key),
-        minTileHeight: 64,
-        leading: Icon(
-          icon,
-          size: 30,
-          color: color ?? theme.colorScheme.primary,
-        ),
-        title: Text(title),
-        subtitle: subtitle == null ? null : Text(subtitle),
-        trailing: const Icon(Icons.chevron_right),
-        onTap: () => context.push(route),
-      ),
+      Tone tone = Tone.green,
+    }) => NavCard(
+      key: Key(key),
+      icon: icon,
+      tone: tone,
+      title: title,
+      subtitle: subtitle,
+      onTap: () => context.push(route),
     );
 
     return Scaffold(
@@ -72,48 +67,52 @@ class SafetyHubScreen extends ConsumerWidget {
             const SizedBox(height: 16),
             tile(
               key: 'safety-contacts',
-              icon: Icons.contacts,
+              icon: Icons.contacts_rounded,
+              tone: Tone.navy,
               title: l10n.safetyContactsTitle,
               subtitle: l10n.safetyContactsCount(contacts.length),
               route: Routes.safetyContacts,
             ),
             tile(
               key: 'safety-message',
-              icon: Icons.edit_note,
+              icon: Icons.edit_note_rounded,
+              tone: Tone.slate,
               title: l10n.safetyMessageTitle,
               subtitle: l10n.safetyMessageHint,
               route: Routes.safetyMessage,
             ),
             tile(
               key: 'safety-linked',
-              icon: Icons.link,
+              icon: Icons.link_rounded,
+              tone: Tone.teal,
               title: l10n.safetyLinkedTitle,
               subtitle: l10n.safetyLinkedCount(links.length),
               route: Routes.safetyLinked,
             ),
             tile(
               key: 'safety-live',
-              icon: Icons.share_location,
+              icon: Icons.share_location_rounded,
               title: l10n.safetyLiveTitle,
               subtitle: live == null
                   ? l10n.safetyLiveHint
                   : l10n.safetyLiveRunning,
               route: Routes.safetyLive,
-              color: live == null ? null : sosRed,
+              tone: live == null ? Tone.teal : Tone.red,
             ),
             tile(
               key: 'safety-check',
-              icon: Icons.timer,
+              icon: Icons.timer_rounded,
               title: l10n.safetyCheckTitle,
               subtitle: check?.active == true
                   ? l10n.safetyCheckRunning
                   : l10n.safetyCheckHint,
               route: Routes.safetyCheck,
-              color: check?.active == true ? sosRed : null,
+              tone: check?.active == true ? Tone.red : Tone.amber,
             ),
             tile(
               key: 'safety-medical',
-              icon: Icons.medical_information,
+              icon: Icons.medical_information_rounded,
+              tone: Tone.purple,
               title: l10n.safetyMedicalTitle,
               subtitle: medical == null
                   ? l10n.safetyMedicalHint
@@ -122,14 +121,15 @@ class SafetyHubScreen extends ConsumerWidget {
             ),
             tile(
               key: 'safety-test',
-              icon: Icons.fact_check,
+              icon: Icons.fact_check_rounded,
               title: l10n.safetyTestTitle,
               subtitle: l10n.safetyTestHint,
               route: Routes.safetyTest,
             ),
             tile(
               key: 'safety-recent',
-              icon: Icons.history,
+              icon: Icons.history_rounded,
+              tone: Tone.slate,
               title: l10n.safetyRecentTitle,
               route: Routes.safetyRecent,
             ),
@@ -137,7 +137,8 @@ class SafetyHubScreen extends ConsumerWidget {
             if (history != null && history.available)
               tile(
                 key: 'safety-location-history',
-                icon: Icons.route,
+                icon: Icons.route_rounded,
+                tone: Tone.teal,
                 title: l10n.safetyHistoryTitle,
                 subtitle: history.enabled
                     ? l10n.safetyHistoryOn

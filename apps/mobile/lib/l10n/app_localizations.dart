@@ -7065,6 +7065,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Who saw my medical file ({count})'**
   String medicalOpeningsCount(int count);
+
+  /// Environment strip at the top of every screen (backlog G3).
+  ///
+  /// In en, this message translates to:
+  /// **'[SIM] Development environment: all data is test data'**
+  String get envBannerDevelopment;
+
+  /// Environment strip at the top of every screen (backlog G3).
+  ///
+  /// In en, this message translates to:
+  /// **'[SIM] Field pilot environment: test data'**
+  String get envBannerPilot;
+
+  /// Environment strip at the top of every screen (backlog G3).
+  ///
+  /// In en, this message translates to:
+  /// **'[SIM] Exercise: test data, not real reports'**
+  String get envBannerTraining;
 }
 
 class _AppLocalizationsDelegate

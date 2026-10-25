@@ -6,7 +6,9 @@ import '../../core/http/error_messages.dart';
 import '../../core/http/notify_models.dart';
 import '../../core/routing/app_router.dart';
 import '../../core/settings/settings_controller.dart';
+import '../../core/ui/components.dart';
 import '../../core/ui/emergency_action.dart';
+import '../../core/ui/tokens.dart';
 import '../../l10n/app_localizations.dart';
 import '../alerts/alert_labels.dart';
 import 'tips_providers.dart';
@@ -40,14 +42,12 @@ class TipsScreen extends ConsumerWidget {
               Text(l10n.tipsIntro),
               const SizedBox(height: 12),
               for (final tip in data.items)
-                Card(
-                  child: ListTile(
-                    key: Key('tip-${tip.hazard.wire}'),
-                    leading: Icon(tipHazardIcon(tip.hazard), size: 32),
-                    title: Text(_title(l10n, tip, lang)),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () => context.push(Routes.tip(tip.hazard.wire)),
-                  ),
+                NavCard(
+                  key: Key('tip-${tip.hazard.wire}'),
+                  icon: tipHazardIcon(tip.hazard),
+                  tone: Tone.green,
+                  title: _title(l10n, tip, lang),
+                  onTap: () => context.push(Routes.tip(tip.hazard.wire)),
                 ),
             ],
           ),

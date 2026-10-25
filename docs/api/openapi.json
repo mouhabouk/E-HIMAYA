@@ -1056,6 +1056,22 @@
             ],
             "title": "Download Url"
           },
+          "environment": {
+            "anyOf": [
+              {
+                "enum": [
+                  "development",
+                  "pilot",
+                  "training"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Environment"
+          },
           "latest_build": {
             "title": "Latest Build",
             "type": "integer"
@@ -1116,7 +1132,8 @@
           "download_url",
           "update_available",
           "mandatory",
-          "sms_simulated"
+          "sms_simulated",
+          "environment"
         ],
         "title": "AppVersionOut",
         "type": "object"
@@ -5788,6 +5805,31 @@
           "updated_at"
         ],
         "title": "EntrySummary",
+        "type": "object"
+      },
+      "EnvironmentOut": {
+        "properties": {
+          "banner": {
+            "anyOf": [
+              {
+                "enum": [
+                  "development",
+                  "pilot",
+                  "training"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Banner"
+          }
+        },
+        "required": [
+          "banner"
+        ],
+        "title": "EnvironmentOut",
         "type": "object"
       },
       "EquipmentIn": {
@@ -26802,6 +26844,27 @@
         "summary": "Active Alerts",
         "tags": [
           "notifications"
+        ]
+      }
+    },
+    "/api/v1/app/environment": {
+      "get": {
+        "operationId": "app_environment_api_v1_app_environment_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnvironmentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "App Environment",
+        "tags": [
+          "app"
         ]
       }
     },

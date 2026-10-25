@@ -22,6 +22,7 @@ import {
 import { canCreateReports } from "../lib/roles";
 import type { Category } from "../lib/types";
 import { AnalyticsTabs } from "./AnalyticsPage";
+import { PageTitle } from "../components/PageTitle";
 
 const FACTOR_MIN = 1;
 const FACTOR_MAX = 10;
@@ -280,7 +281,7 @@ export function ScenariosPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("scenarios.title")}</h1>
+        <PageTitle icon="analytics" tone="navy">{t("scenarios.title")}</PageTitle>
       </div>
       <AnalyticsTabs />
       <p className="muted">{t("scenarios.intro")}</p>
@@ -490,9 +491,9 @@ export function ScenarioDetailPage() {
       {query.data && (
         <>
           <div className="page__head">
-            <h1 id="scenario-title" dir="auto">
+            <PageTitle icon="analytics" tone="navy" id="scenario-title" dir="auto">
               {t("scenarios.resultTitle", { name: query.data.name })}
-            </h1>
+            </PageTitle>
             {query.data.simulated && <SimTag />}
           </div>
           <ScenarioResultView run={query.data} />

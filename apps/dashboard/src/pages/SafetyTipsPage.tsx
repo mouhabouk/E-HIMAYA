@@ -15,6 +15,7 @@ import {
   type TipLanguage,
   type TipText,
 } from "../lib/opsTypes";
+import { PageTitle } from "../components/PageTitle";
 
 export const MAX_ITEMS = 15;
 export const MAX_ITEM_CHARS = 300;
@@ -463,7 +464,7 @@ export function SafetyTipsPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("tips.title")}</h1>
+        <PageTitle icon="healthAndSafety" tone="green">{t("tips.title")}</PageTitle>
         <button
           type="button"
           className="btn btn--primary"

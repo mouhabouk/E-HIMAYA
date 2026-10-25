@@ -7,6 +7,7 @@ import { useServices } from "../context/services";
 import { isApiError } from "../lib/api";
 import { useFormat } from "../lib/hooks";
 import { queryKeys } from "../lib/portalApi";
+import { PageTitle } from "../components/PageTitle";
 
 /** Codes that end the invitation flow: shown as a page, not as a retryable error. */
 const TERMINAL = new Set(["invitation_not_found", "invitation_expired", "invitation_email_mismatch", "not_found"]);
@@ -68,7 +69,7 @@ export function InvitePage() {
   const mismatch = !!myEmail && myEmail.toLowerCase() !== inv.email.toLowerCase();
   return (
     <section className="card notice page--narrow">
-      <h1>{t("invite.title")}</h1>
+      <PageTitle icon="groups" tone="navy">{t("invite.title")}</PageTitle>
       <p>{t("invite.body", { org: inv.org_name, role: t(`roles.${inv.role}`) })}</p>
       <dl className="fields">
         <dt>{t("invite.email")}</dt>
