@@ -239,6 +239,7 @@ $ cp .env.example .env && chmod 600 .env
 
 ثم نفّذ كتلة توليد الأسرار كما هي في القسم 6.1 من [دليل الخادم](install-guide.md). محاكيات التطوير **[SIM]** الثلاثة
 (`STREAM_SIM_TOKEN` و `TELEPHONY_SIM_PASSWORD` و `TELEPHONY_SIM_TOKEN`) تبقى بقيمها على هذا الجهاز.
+`ENVIRONMENT_BANNER=auto` يُظهر على هذا الجهاز شريط «بيئة تطوير» الكهرماني **[SIM]** في اللوحة والبوابة والتطبيق.
 
 ### 6.3 التشغيل واختبار الدخان
 
