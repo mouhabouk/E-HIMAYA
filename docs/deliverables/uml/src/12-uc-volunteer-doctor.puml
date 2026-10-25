@@ -1,0 +1,59 @@
+@startuml
+!include style.iuml
+title Cas d'utilisation : bénévoles et médecins
+left to right direction
+actor "Citoyen" as CIT
+actor "Bénévole" as VOL
+actor "Médecin bénévole" as DV
+actor "Médecin de la\nprotection civile" as DPC
+actor "Membre du comité\nmédical régional" as CMR
+actor "Gestionnaire\nde bénévoles" as OPS
+actor "Coordinateur médical" as MC
+actor "Médecin spécialiste\n(orienté)" as SP
+VOL -|> CIT
+DV -|> CIT
+DPC -|> DV
+CMR -|> DPC
+SP -|> DV
+rectangle "e-Himaya" {
+  usecase "Déposer une candidature\nde bénévole" as V1
+  usecase "Déclarer sa disponibilité\n(durée limitée)" as V2
+  usecase "Partager sa position\npendant la disponibilité" as V3
+  usecase "Accepter / refuser\nune mobilisation (ETA)" as V4
+  usecase "Signaler l'arrivée sur place" as V5
+  usecase "Valider ou refuser\nune candidature" as V6
+  usecase "Lancer une mobilisation\nciblée (compétence, rayon)" as V7
+  usecase "Déclarer la qualité de médecin\n(spécialités)" as M1
+  usecase "Créer la clé personnelle\n(code 6 à 12 chiffres)" as M2
+  usecase "Se déclarer disponible (8 h)" as M3
+  usecase "Consulter l'annuaire des médecins" as M4
+  usecase "Ouvrir un dossier médical\n(journalisé)" as M5
+  usecase "Vérifier / suspendre\nun médecin" as M6
+  usecase "Nommer le comité médical\n(6, 12 ou 24 mois)" as M7
+  usecase "Orienter vers un spécialiste\n(5 au plus, motif)" as M8
+  usecase "Rédiger un avis médical\nverrouillé" as M9
+  usecase "Reverrouiller les dossiers\npour un nouveau membre" as M10
+  usecase "Voir qui a consulté\nmon dossier médical" as M11
+}
+CIT --> V1
+VOL --> V2
+VOL --> V4
+VOL --> V5
+V2 ..> V3 : <<include>>
+OPS --> V6
+OPS --> V7
+CIT --> M1
+DV --> M2
+DV --> M3
+DV --> M4
+DPC --> M5
+M5 ..> M2 : <<include>>
+MC --> M6
+MC --> M7
+DPC --> M8
+M8 ..> M5 : <<include>>
+SP --> M9
+M9 ..> M5 : <<include>>
+CMR --> M10
+CIT --> M11
+@enduml

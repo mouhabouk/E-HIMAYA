@@ -1,0 +1,29 @@
+@startuml
+!include style.iuml
+title Séquence : certificat de sécurité d'un établissement
+autonumber
+actor "Responsable" as R
+participant "Portail" as POR
+participant "API e-Himaya" as API
+database "PostgreSQL" as DB
+database "Stockage objets" as S3
+participant "Tableau de bord" as DSH
+actor "Auditeur" as AUD
+actor "Public" as P
+R -> POR : compléter fiche, équipe, matières, documents
+POR -> API : classement + éléments manquants
+R -> POR : créer le brouillon de certificat
+POR -> API : POST /orgs/{id}/certificate
+API -> DB : instantané du dossier + empreinte
+R -> POR : soumettre
+POR -> API : submit
+API ->> DSH : certificat à examiner
+AUD -> DSH : examiner et approuver
+DSH -> API : review(approve)
+API -> API : PDF + signature Ed25519 + QR
+API -> S3 : PDF
+API -> DB : statut « approuvé », validité
+P -> POR : vérifier code / QR
+POR -> API : GET /public/certificates/{code}
+API --> POR : valide, établissement, validité, empreinte
+@enduml

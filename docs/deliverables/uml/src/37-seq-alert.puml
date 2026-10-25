@@ -1,0 +1,21 @@
+@startuml
+!include style.iuml
+title Séquence : alerte géociblée (météo ou manuelle)
+autonumber
+participant "Worker météo" as W
+participant "API e-Himaya" as API
+participant "Tableau de bord" as DSH
+actor "Éditeur / comité" as ED
+participant "Dispatch\nnotifications" as N
+participant "Applications\ndans la zone" as APP
+W -> W : relevés horaires, indices feu (FWI), pluie
+W -> API : suggestion d'alerte (seuils par gouvernorat)
+API ->> DSH : suggestion à revoir
+ED -> DSH : vérifier, ajuster texte ar/fr/en, zone
+DSH -> API : POST /staff/notifications (alerte)
+API -> N : appareils dans les gouvernorats / polygone
+N ->> APP : push (critique si gravité extrême)
+N ->> APP : SMS de secours si nécessaire
+APP -> API : GET /alerts/active
+API --> APP : alerte + conseils hors ligne
+@enduml

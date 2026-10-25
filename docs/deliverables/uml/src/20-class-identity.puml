@@ -1,0 +1,73 @@
+@startuml
+!include style.iuml
+title Diagramme de classes : identité, rôles et engagement citoyen
+hide empty methods
+skinparam linetype ortho
+class Compte {
+  user_id : UUID
+  type : citoyen | anonyme | établissement
+  keycloak_sub : texte
+  pseudonyme_anonyme : octets
+  statut : actif | suspendu | supprimé
+  nb_faux_signalements : entier
+}
+class Profil {
+  prénom, nom
+  cin : chiffré [+ empreinte]
+  téléphone : chiffré, vérifié le
+  gouvernorat, délégation
+  adresse : chiffrée
+}
+class Consentement {
+  version_charte
+  finalité
+  accepté_le / retiré_le
+}
+class Bénévole {
+  statut : en attente | approuvé | refusé
+  compétences[]
+  disponibilité : continue | ponctuelle
+  période_du / au
+  prêt_jusqu'à
+}
+class Médecin {
+  type : bénévole | protection civile
+  statut : en attente | vérifié | refusé | suspendu
+  spécialités[1..4]
+  lieu de travail, gouvernorat
+  matricule PC : chiffré
+}
+class DécisionRevue {
+  décision, motif
+  acteur, date
+}
+class Appareil {
+  jeton push, plateforme
+  langue, gouvernorat
+}
+class AgentStaff <<Keycloak>> {
+  sub, nom
+  rôles[]
+  portée : nationale | gouvernorat
+  MFA
+}
+class Gouvernorat {
+  code, nom ar/fr/en
+  frontière : polygone
+}
+class Délégation {
+  code, nom
+  frontière
+}
+Compte "1" -- "0..1" Profil
+Compte "1" -- "*" Consentement
+Compte "1" -- "0..1" Bénévole
+Compte "1" -- "0..1" Médecin
+Bénévole "1" -- "*" DécisionRevue
+Médecin "1" -- "*" DécisionRevue
+Compte "1" -- "*" Appareil
+Gouvernorat "1" -- "*" Délégation
+Profil "*" --> "1" Gouvernorat
+AgentStaff "*" --> "0..1" Gouvernorat : portée
+DécisionRevue "*" --> "1" AgentStaff : décidée par
+@enduml

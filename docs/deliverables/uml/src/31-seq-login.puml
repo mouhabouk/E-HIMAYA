@@ -1,0 +1,27 @@
+@startuml
+!include style.iuml
+title Séquence : premier lancement et connexion par téléphone
+autonumber
+actor "Citoyen" as C
+participant "Application" as APP
+participant "Keycloak\n(royaume public)" as KC
+participant "Passerelle SMS" as SMS
+participant "API e-Himaya" as API
+C -> APP : langue, cartes d'accueil
+C -> APP : lire et accepter les conditions
+APP -> API : POST /consents (version 2026-11)
+C -> APP : permissions (position, notifications, SMS)
+alt continuer comme visiteur
+  APP -> APP : clé d'appareil (pseudonyme)
+else connexion par téléphone
+  C -> APP : numéro +216
+  APP -> KC : demande de code (grant OTP)
+  KC -> SMS : code à 6 chiffres
+  SMS -> C : SMS
+  C -> APP : saisir le code
+  APP -> KC : vérifier le code
+  KC --> APP : jetons (accès + rafraîchissement)
+  APP -> API : PUT /me/profile (nom, CIN chiffré, gouvernorat)
+end
+APP --> C : écran d'accueil
+@enduml

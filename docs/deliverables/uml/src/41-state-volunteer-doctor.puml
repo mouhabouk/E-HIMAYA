@@ -1,0 +1,30 @@
+@startuml
+!include style.iuml
+title Diagrammes d'états : candidature bénévole / médecin et certificat
+state "Bénévole" as B {
+  [*] --> EnAttente
+  EnAttente --> Approuvé : gestionnaire
+  EnAttente --> Refusé : motif
+  Approuvé --> Prêt : déclare disponibilité
+  Prêt --> Approuvé : fin de la durée
+  Refusé --> EnAttente : nouvelle demande
+}
+state "Médecin" as M {
+  [*] --> MEnAttente
+  MEnAttente --> Vérifié : coordinateur
+  MEnAttente --> MRefusé
+  Vérifié --> Suspendu
+  Suspendu --> Vérifié
+  state MEnAttente : en attente
+  state MRefusé : refusé
+}
+state "Certificat d'établissement" as CE {
+  [*] --> Brouillon
+  Brouillon --> Soumis
+  Soumis --> CApprouvé : auditeur (signé)
+  Soumis --> CRejeté
+  CApprouvé --> Révoqué
+  state CApprouvé : approuvé
+  state CRejeté : rejeté
+}
+@enduml

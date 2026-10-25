@@ -1,0 +1,29 @@
+@startuml
+!include style.iuml
+title Séquence : diffusion vidéo en direct depuis le lieu de l'incident
+autonumber
+actor "Citoyen" as C
+participant "Application" as APP
+participant "API e-Himaya" as API
+participant "MediaMTX" as MTX
+participant "Détection IA\n(YOLOX)" as AI
+participant "Tableau de bord" as DSH
+actor "Opérateur" as OP
+C -> APP : « Démarrer la diffusion » + catégorie
+APP -> API : POST /reports/{id}/streams
+API --> APP : URL WHIP + jeton de publication
+APP -> MTX : WebRTC (WHIP)
+MTX -> API : hook « flux démarré »
+API ->> DSH : flux disponible
+OP -> DSH : regarder
+DSH -> MTX : WebRTC (WHEP)
+loop toutes les quelques secondes
+  APP -> API : position du flux
+  MTX -> AI : images échantillonnées
+  AI -> API : détections (feu, fumée, personnes)
+  API ->> DSH : alerte de détection
+end
+C -> APP : arrêter
+APP -> API : stop
+MTX -> API : segments enregistrés → médias + empreintes
+@enduml

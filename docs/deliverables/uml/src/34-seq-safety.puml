@@ -1,0 +1,27 @@
+@startuml
+!include style.iuml
+title Séquence : contrôle de sécurité et message de détresse
+autonumber
+actor "Citoyen" as C
+participant "Application" as APP
+participant "API e-Himaya" as API
+participant "Notifications\n(FCM / SMS)" as N
+participant "Application\ndu proche lié" as RAPP
+actor "Proche lié" as R
+C -> APP : « Prévenez mes proches si je ne réponds pas dans 1 h »
+APP -> API : POST /safety/checks (échéance, message, position chiffrés)
+API --> APP : contrôle actif
+APP -> C : rappels avant l'échéance
+alt « Je vais bien »
+  C -> APP : OK
+  APP -> API : POST /safety/checks/{id}/ok
+else échéance dépassée
+  API -> API : tâche planifiée : contrôle expiré
+  API -> N : alerte critique aux proches liés
+  N ->> RAPP : push critique (sonne en mode silencieux)
+  RAPP --> R : message, dernière position, batterie
+  R -> RAPP : marquer comme vu
+  RAPP -> API : /safety/alerts/{id}/seen
+end
+note over APP, N : Le message SOS manuel suit la même voie :\n5 s pour annuler, puis SMS aux contacts\net push aux proches liés.
+@enduml

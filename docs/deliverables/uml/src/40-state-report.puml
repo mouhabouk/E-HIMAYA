@@ -1,0 +1,21 @@
+@startuml
+!include style.iuml
+title Diagramme d'états : signalement
+[*] --> FileLocale : créé sur le téléphone
+FileLocale --> Reçu : synchronisé (API ou SMS)
+Reçu --> EnCours : pris en charge par la salle
+Reçu --> Rejeté : faux / hors sujet
+EnCours --> Intervention : équipe sur place
+EnCours --> Continu : intervention prolongée
+EnCours --> Clôturé
+EnCours --> Rejeté
+Intervention --> Continu
+Intervention --> Clôturé
+Continu --> Intervention
+Continu --> Clôturé
+Clôturé --> [*]
+Rejeté --> [*]
+state FileLocale : en attente hors ligne
+state Reçu : regroupement IA, priorité
+state EnCours : affecté à une salle
+@enduml

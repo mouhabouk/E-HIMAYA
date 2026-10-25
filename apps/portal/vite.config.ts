@@ -22,6 +22,8 @@ export default defineConfig({
   preview: { port: 5174, strictPort: true },
   build: {
     target: "es2022",
+    // Fonts stay separate files: the CSP allows `font-src 'self'` only, never `data:` (infra/web/csp.mjs).
+    assetsInlineLimit: (file: string) => (/\.woff2?$/.test(file) ? false : undefined),
     sourcemap: true,
     // maplibre-gl is ~1 MB minified; it is split out and only loaded by map screens.
     chunkSizeWarningLimit: 1100,
