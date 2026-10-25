@@ -11,6 +11,7 @@
 | قاعدة نهاية المرحلة: تحيين مرجع التصميم والمخططات والملف الوصفي وكراس الشروط والعرض التقديمي | [`docs/phase-end.md`](docs/phase-end.md) |
 | الإصدارات المثبتة للأدوات | [`docs/versions.md`](docs/versions.md) |
 | الدليل التقني للتنصيب: من تنزيل Ubuntu إلى التشغيل في الإنتاج | [`docs/install-guide.md`](docs/install-guide.md) |
+| دليل التنصيب على Windows عبر WSL2 (جهاز التطوير والعروض) | [`docs/install-guide-wsl.md`](docs/install-guide-wsl.md) |
 | قائمة الانتظار (البنود المؤجلة) | [`docs/backlog.md`](docs/backlog.md) |
 | تقرير المرحلة 1 | [`docs/phase-1-report.html`](docs/phase-1-report.html) |
 | تقرير المرحلة 2 | [`docs/phase-2-report.html`](docs/phase-2-report.html) |
