@@ -8,7 +8,7 @@ import base64
 import hashlib
 import secrets
 import uuid
-from collections import defaultdict
+from collections import Counter, defaultdict
 from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, timedelta
@@ -40,6 +40,8 @@ from app.modules.orgs.models import (
     MapFeature,
     Member,
     Organization,
+    PreventionReservation,
+    PreventionVisit,
     TeamMember,
 )
 
@@ -540,8 +542,8 @@ async def alerts_counts(session: AsyncSession, org_ids: Sequence[uuid.UUID]) -> 
     for item in await session.scalars(select(Equipment).where(Equipment.org_id.in_(org_ids))):
         equipment[item.org_id].append(item)
     on = today()
-    # The certificate's end of validity counts here; "needs update" needs the full comparison and shows on the card.
-    ending = set(
+    # The certificates' end of validity counts here; "needs update" needs the full comparison and shows on the card.
+    ending = Counter(
         await session.scalars(
             select(Certificate.org_id).where(
                 Certificate.org_id.in_(org_ids),
@@ -551,15 +553,36 @@ async def alerts_counts(session: AsyncSession, org_ids: Sequence[uuid.UUID]) -> 
             )
         )
     )
-    return {org_id: len(alerts_of(team[org_id], equipment[org_id], on)) + (org_id in ending) for org_id in org_ids}
+    # Phase P3b: reservations due within 14 days or overdue, and visits to come.
+    ending.update(
+        await session.scalars(
+            select(PreventionReservation.org_id).where(
+                PreventionReservation.org_id.in_(org_ids),
+                PreventionReservation.lifted_at.is_(None),
+                PreventionReservation.due_on <= on + timedelta(days=domain.RESERVATION_DUE_SOON_DAYS),
+            )
+        )
+    )
+    ending.update(
+        await session.scalars(
+            select(PreventionVisit.org_id).where(
+                PreventionVisit.org_id.in_(org_ids),
+                PreventionVisit.status == "scheduled",
+                PreventionVisit.scheduled_on >= on,
+            )
+        )
+    )
+    return {org_id: len(alerts_of(team[org_id], equipment[org_id], on)) + ending[org_id] for org_id in org_ids}
 
 
 async def _certificate_alerts(
     session: AsyncSession, org: Organization, regs: Registers, on: date
 ) -> list[schemas.Alert]:
-    from app.modules.orgs import certificate  # certificate builds on this module
+    from app.modules.orgs import certificate, prevention  # both build on this module
 
-    return await certificate.certificate_alerts(session, org, regs, on)
+    return await certificate.certificate_alerts(session, org, regs, on) + await prevention.prevention_alerts(
+        session, org.id, on
+    )
 
 
 async def hazmat_counts(session: AsyncSession, org_ids: Sequence[uuid.UUID]) -> dict[uuid.UUID, int]:
@@ -991,6 +1014,7 @@ def in_scope(principal: Principal, org: Organization) -> bool:
 def _latest_certificate() -> Any:
     return (
         select(Certificate.org_id, Certificate.status, Certificate.valid_until)
+        .where(Certificate.kind == "safety")
         .order_by(Certificate.org_id, Certificate.created_at.desc())
         .ext(distinct_on(Certificate.org_id))
         .subquery("latest_certificate")

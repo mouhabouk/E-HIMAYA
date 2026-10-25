@@ -15,7 +15,7 @@ import type { CounterView } from "../lib/types";
 /** Same limits as the API (docs/phase-p3/design-certificates.md §3.2). */
 export const STAMP_PHOTO_TYPES = ["image/jpeg", "image/png"] as const;
 export const STAMP_PHOTO_MAX_BYTES = 5 * 1024 * 1024;
-const CODE = /EHC-\d{2}-\d{2}-\d{6}/i;
+const CODE = /EH[CP]-\d{2}-\d{2}-\d{6}/i;
 
 /** The certificate code typed, scanned by a USB reader (the whole verification URL) or by the camera. */
 export function counterCode(raw: string): string | null {

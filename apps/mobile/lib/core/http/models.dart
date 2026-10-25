@@ -869,6 +869,8 @@ class OrgFeature {
 /// Safety certificate of the institution (phase 4 §7).
 class OrgCertificate {
   const OrgCertificate({
+    this.id = '',
+    this.kind = 'safety',
     required this.code,
     required this.status,
     this.validUntil,
@@ -878,6 +880,10 @@ class OrgCertificate {
     this.stamps = const [],
   });
 
+  final String id;
+
+  /// `safety` (the institution's own) | `prevention` (issued after a prevention visit, phase P3b).
+  final String kind;
   final String code;
 
   /// `draft` | `submitted` | `approved` | `rejected` | `revoked`.
@@ -892,6 +898,8 @@ class OrgCertificate {
   final List<CertificateStamp> stamps;
 
   factory OrgCertificate.fromJson(Map<String, Object?> json) => OrgCertificate(
+    id: json['id'] as String? ?? '',
+    kind: json['kind'] as String? ?? 'safety',
     code: json['code'] as String? ?? '',
     status: json['status'] as String? ?? 'draft',
     validUntil: _date(json['valid_until']),
@@ -992,4 +1000,262 @@ class OrgReportsPage {
   const OrgReportsPage(this.items, this.nextCursor);
   final List<OrgReport> items;
   final String? nextCursor;
+}
+
+// ---- Phase P3b: prevention visits and the annual report ----
+
+/// One line of the comparison report: what the institution declared and what the inspector saw.
+class VisitItem {
+  const VisitItem({
+    required this.key,
+    required this.section,
+    required this.result,
+    this.declared,
+    this.observed,
+    this.note,
+  });
+
+  /// `building.capacity`, `hazmat.0`, `equipment.extinguisher`, `site.exits`...
+  final String key;
+  final String section;
+
+  /// `conform` | `nonconform` | `not_checked`.
+  final String result;
+  final Object? declared;
+  final String? observed;
+  final String? note;
+
+  factory VisitItem.fromJson(Map<String, Object?> json) => VisitItem(
+    key: json['key'] as String? ?? '',
+    section: json['section'] as String? ?? '',
+    result: json['result'] as String? ?? 'not_checked',
+    declared: json['declared'],
+    observed: json['observed'] as String?,
+    note: json['note'] as String?,
+  );
+}
+
+/// The automatic comparison report of a visit (phase P3b §4).
+class VisitComparison {
+  const VisitComparison({
+    this.items = const [],
+    this.conform = 0,
+    this.nonconform = 0,
+    this.notChecked = 0,
+    this.missing = const [],
+  });
+
+  final List<VisitItem> items;
+  final int conform;
+  final int nonconform;
+  final int notChecked;
+
+  /// Requirements of the institution's family still missing (`safety_file`, `training`...).
+  final List<String> missing;
+
+  factory VisitComparison.fromJson(Map<String, Object?> json) =>
+      VisitComparison(
+        items: [
+          for (final i in (json['items'] as List?) ?? const [])
+            if (i is Map) VisitItem.fromJson(i.cast<String, Object?>()),
+        ],
+        conform: (json['conform'] as num?)?.toInt() ?? 0,
+        nonconform: (json['nonconform'] as num?)?.toInt() ?? 0,
+        notChecked: (json['not_checked'] as num?)?.toInt() ?? 0,
+        missing: [
+          for (final m in (json['missing'] as List?) ?? const [])
+            if (m is String) m,
+        ],
+      );
+}
+
+/// A reservation with its deadline, set by the decision of a visit.
+class VisitReservation {
+  const VisitReservation({
+    required this.id,
+    required this.text,
+    required this.dueOn,
+    required this.state,
+    this.itemKey,
+    this.responseNote,
+    this.liftedAt,
+  });
+
+  final String id;
+  final String text;
+  final DateTime dueOn;
+
+  /// `open` | `responded` | `overdue` | `lifted`.
+  final String state;
+  final String? itemKey;
+  final String? responseNote;
+  final DateTime? liftedAt;
+
+  factory VisitReservation.fromJson(Map<String, Object?> json) =>
+      VisitReservation(
+        id: json['id']! as String,
+        text: json['text'] as String? ?? '',
+        dueOn: _date(json['due_on']) ?? DateTime(1970),
+        state: json['state'] as String? ?? 'open',
+        itemKey: json['item_key'] as String?,
+        responseNote: json['response_note'] as String?,
+        liftedAt: _date(json['lifted_at']),
+      );
+}
+
+/// A prevention visit of `GET /api/v1/orgs/{id}/prevention/visits` (phase P3b).
+class PreventionVisit {
+  const PreventionVisit({
+    required this.id,
+    required this.origin,
+    required this.status,
+    this.scheduledOn,
+    this.inspectorName,
+    this.inspectedOn,
+    this.comparison,
+    this.decision,
+    this.decisionReason,
+    this.certificate,
+    this.reservations = const [],
+    this.hasReport = false,
+    this.createdAt,
+  });
+
+  final String id;
+
+  /// `request` (asked by the institution) | `office` (scheduled by the Office).
+  final String origin;
+
+  /// `requested` | `scheduled` | `inspected` | `decided` | `cancelled`.
+  final String status;
+  final DateTime? scheduledOn;
+  final String? inspectorName;
+  final DateTime? inspectedOn;
+  final VisitComparison? comparison;
+
+  /// `approved` | `approved_with_reservations` | `refused`.
+  final String? decision;
+  final String? decisionReason;
+  final OrgCertificate? certificate;
+  final List<VisitReservation> reservations;
+  final bool hasReport;
+  final DateTime? createdAt;
+
+  factory PreventionVisit.fromJson(Map<String, Object?> json) =>
+      PreventionVisit(
+        id: json['id']! as String,
+        origin: json['origin'] as String? ?? 'request',
+        status: json['status'] as String? ?? 'requested',
+        scheduledOn: _date(json['scheduled_on']),
+        inspectorName: json['inspector_name'] as String?,
+        inspectedOn: _date(json['inspected_on']),
+        comparison: switch (json['comparison']) {
+          final Map<Object?, Object?> c => VisitComparison.fromJson(
+            c.cast<String, Object?>(),
+          ),
+          _ => null,
+        },
+        decision: json['decision'] as String?,
+        decisionReason: json['decision_reason'] as String?,
+        certificate: switch (json['certificate']) {
+          final Map<Object?, Object?> c => OrgCertificate.fromJson(
+            c.cast<String, Object?>(),
+          ),
+          _ => null,
+        },
+        reservations: [
+          for (final r in (json['reservations'] as List?) ?? const [])
+            if (r is Map) VisitReservation.fromJson(r.cast<String, Object?>()),
+        ],
+        hasReport: json['has_report'] == true,
+        createdAt: _date(json['created_at']),
+      );
+}
+
+/// Counts of the annual report: `valid` / `expiring` / `expired` / `unknown` trainings.
+class AnnualTraining {
+  const AnnualTraining({
+    this.valid = 0,
+    this.expiring = 0,
+    this.expired = 0,
+    this.unknown = 0,
+  });
+
+  final int valid;
+  final int expiring;
+  final int expired;
+  final int unknown;
+
+  factory AnnualTraining.fromJson(Map<String, Object?> json) => AnnualTraining(
+    valid: (json['valid'] as num?)?.toInt() ?? 0,
+    expiring: (json['expiring'] as num?)?.toInt() ?? 0,
+    expired: (json['expired'] as num?)?.toInt() ?? 0,
+    unknown: (json['unknown'] as num?)?.toInt() ?? 0,
+  );
+}
+
+/// `GET /api/v1/orgs/{id}/annual-report?year=` (phase P3b §7): the year's activity in one place.
+class AnnualReport {
+  const AnnualReport({
+    required this.year,
+    this.drills = const [],
+    this.events = const [],
+    this.participants = 0,
+    this.maintenance = 0,
+    this.training = const AnnualTraining(),
+    this.visits = const [],
+    this.reservationsOpened = 0,
+    this.reservationsLifted = 0,
+    this.reservationsOverdue = 0,
+    this.certificates = const [],
+    this.stamps = 0,
+    this.reports = 0,
+  });
+
+  final int year;
+  final List<OrgActivity> drills;
+  final List<OrgActivity> events;
+  final int participants;
+  final int maintenance;
+  final AnnualTraining training;
+  final List<PreventionVisit> visits;
+  final int reservationsOpened;
+  final int reservationsLifted;
+  final int reservationsOverdue;
+  final List<OrgCertificate> certificates;
+  final int stamps;
+  final int reports;
+
+  factory AnnualReport.fromJson(Map<String, Object?> json) {
+    final reservations =
+        (json['reservations'] as Map?)?.cast<String, Object?>() ?? const {};
+    int count(Object? v) => (v as num?)?.toInt() ?? 0;
+    List<OrgActivity> activities(Object? list) => [
+      for (final a in (list as List?) ?? const [])
+        if (a is Map) OrgActivity.fromJson(a.cast<String, Object?>()),
+    ];
+    return AnnualReport(
+      year: count(json['year']),
+      drills: activities(json['drills']),
+      events: activities(json['events']),
+      participants: count(json['participants']),
+      maintenance: count(json['maintenance']),
+      training: AnnualTraining.fromJson(
+        (json['training'] as Map?)?.cast<String, Object?>() ?? const {},
+      ),
+      visits: [
+        for (final v in (json['visits'] as List?) ?? const [])
+          if (v is Map) PreventionVisit.fromJson(v.cast<String, Object?>()),
+      ],
+      reservationsOpened: count(reservations['opened']),
+      reservationsLifted: count(reservations['lifted']),
+      reservationsOverdue: count(reservations['overdue']),
+      certificates: [
+        for (final c in (json['certificates'] as List?) ?? const [])
+          if (c is Map) OrgCertificate.fromJson(c.cast<String, Object?>()),
+      ],
+      stamps: count(json['stamps']),
+      reports: count(json['reports']),
+    );
+  }
 }

@@ -38,7 +38,8 @@
     "contact": "اتصل بنا",
     "doctors": "الأطباء",
     "medicalCommittee": "اللجنة الطبية",
-    "counter": "الشبّاك"
+    "counter": "الشبّاك",
+    "prevention": "زيارات الوقاية"
   },
   "header": {
     "scope": "النطاق الجغرافي",
@@ -301,7 +302,18 @@
     "place_required": "مكان الختم مطلوب.",
     "certificate_not_valid": "لا يُختم إلا على شهادة صالحة الآن.",
     "photo_too_large": "الصورة أكبر من 5 ميغابايت.",
-    "unsupported_media_type": "نوع الملف غير مقبول."
+    "unsupported_media_type": "نوع الملف غير مقبول.",
+    "visit_open": "للمؤسسة زيارة مفتوحة بعد.",
+    "invalid_scheduled_on": "تاريخ الزيارة غير صالح: من اليوم إلى 12 شهرا.",
+    "invalid_inspected_on": "تاريخ التفقد لا يكون في المستقبل.",
+    "unknown_item": "بند غير موجود في شبكة التفقد.",
+    "finding_detail_required": "كل بند غير مطابق يحتاج القيمة المعاينة أو ملاحظة.",
+    "reservations_required": "أضف تحفظا واحدا على الأقل.",
+    "reservations_not_allowed": "التحفظات لا تكون إلا مع «موافقة بتحفظات».",
+    "invalid_due_on": "أجل التحفظ بين الغد و12 شهرا.",
+    "reservation_text_required": "نص التحفظ مطلوب.",
+    "reservation_lifted": "رُفع هذا التحفظ.",
+    "invalid_year": "سنة غير صالحة."
   },
   "kpi": {
     "title": "المؤشرات الرئيسية",
@@ -828,7 +840,12 @@
       "maintenance_due_soon": "صيانة قريبة",
       "certificate_expiring": "الشهادة تقترب من الانتهاء",
       "certificate_expired": "انتهت صلاحية الشهادة",
-      "certificate_needs_update": "الشهادة تحتاج تحديثا"
+      "certificate_needs_update": "الشهادة تحتاج تحديثا",
+      "visit_scheduled": "زيارة وقاية مبرمجة",
+      "reservation_due_soon": "أجل تحفظ قريب",
+      "reservation_overdue": "تحفظ تجاوز أجله",
+      "prevention_expiring": "شهادة الوقاية تقترب من الانتهاء",
+      "prevention_expired": "انتهت صلاحية شهادة الوقاية"
     },
     "identifierType": {
       "mf": "المعرف الجبائي",
@@ -3965,5 +3982,146 @@
   "drafts": {
     "changedWhileTyping": "تغيّرت حالة هذا السجل أثناء كتابتك. نصّك محفوظ؛ راجع الحالة الجديدة قبل الإرسال.",
     "acknowledge": "فهمت"
+  },
+  "prevention": {
+    "title": "زيارات الوقاية",
+    "intro": "طلبات المؤسسات والزيارات المبرمجة في نطاقك: البرمجة، التفقد في الموقع، تقرير المقارنة الآلي، ثم القرار وشهادة الوقاية.",
+    "filter": "الحالة",
+    "filters": {
+      "open": "المفتوحة",
+      "all": "الكل"
+    },
+    "empty": "لا زيارات.",
+    "overdueCount": "تحفظات متأخرة: {{n}}",
+    "status": {
+      "requested": "مطلوبة",
+      "scheduled": "مبرمجة",
+      "inspected": "تمّ التفقد",
+      "decided": "صدر القرار",
+      "cancelled": "ملغاة"
+    },
+    "decision": {
+      "approved": "موافقة",
+      "approved_with_reservations": "موافقة بتحفظات",
+      "refused": "رفض معلَّل"
+    },
+    "state": {
+      "open": "مفتوح",
+      "responded": "ردّت المؤسسة",
+      "overdue": "تجاوز أجله",
+      "lifted": "مرفوع"
+    },
+    "result": {
+      "conform": "مطابق",
+      "nonconform": "غير مطابق",
+      "not_checked": "لم يُتفقَّد"
+    },
+    "item": {
+      "building": {
+        "capacity": "طاقة الاستيعاب",
+        "floors": "عدد الطوابق",
+        "height_m": "الارتفاع (م)",
+        "address": "العنوان"
+      },
+      "classification": {
+        "family": "عائلة التصنيف",
+        "category": "الصنف"
+      },
+      "evacuation": {
+        "points": "نقاط الإخلاء"
+      },
+      "safety_team": {
+        "representative": "ممثل فريق السلامة",
+        "members": "أعضاء فريق السلامة"
+      },
+      "documents": {
+        "safety_file": "ملف السلامة",
+        "safety_plan": "مخطط السلامة"
+      },
+      "site": {
+        "exits": "المخارج سالكة",
+        "signage": "اللافتات",
+        "emergency_lighting": "إنارة الطوارئ تعمل",
+        "alarm": "تجربة الإنذار",
+        "extinguishers_access": "المطافئ في متناول اليد",
+        "electrical": "التجهيزات الكهربائية"
+      },
+      "hazmat": "مادة خطرة {{n}}"
+    },
+    "counts": {
+      "conform": "مطابق: {{n}}",
+      "nonconform": "غير مطابق: {{n}}",
+      "notChecked": "لم يُتفقَّد: {{n}}"
+    },
+    "suggested": "اقتراح غير ملزم: {{decision}}",
+    "noMissing": "الملف مكتمل حسب التصنيف.",
+    "missing": "عناصر ناقصة: {{items}}",
+    "changesTitle": "فروق منذ شهادة السلامة",
+    "gridCaption": "شبكة التفقد: المصرَّح به والمعاين",
+    "columns": {
+      "item": "البند",
+      "declared": "المصرَّح به",
+      "result": "النتيجة",
+      "observed": "المعاين",
+      "note": "ملاحظة"
+    },
+    "liftNote": "ملاحظة الرفع (اختيارية)",
+    "lift": "رفع التحفظ",
+    "lifted": "رُفع التحفظ.",
+    "noReservations": "لا تحفظات.",
+    "dueOn": "الأجل: {{date}}",
+    "response": "ردّ المؤسسة ({{name}}):",
+    "liftedBy": "رفعه {{name}} في {{date}}",
+    "scheduleNew": "برمجة زيارة",
+    "scheduledOn": "تاريخ الزيارة",
+    "inspector": "المفقِّد",
+    "orgTitle": "زيارات الوقاية",
+    "noVisits": "لا زيارات وقاية بعد.",
+    "origin": {
+      "request": "بطلب من المؤسسة",
+      "scheduled": "برمجها الديوان"
+    },
+    "originLabel": "المصدر",
+    "inspectedOn": "تاريخ التفقد",
+    "schedule": "برمجة الزيارة",
+    "reschedule": "تغيير موعد الزيارة",
+    "saveSchedule": "حفظ الموعد",
+    "inspection": "شبكة التفقد في الموقع",
+    "inspectionHelp": "البنود من تصريح المؤسسة اليوم. لكل بند غير مطابق اكتب القيمة المعاينة أو ملاحظة. بنود «المعاينة» [SIM] في انتظار الشبكة الرسمية.",
+    "attendees": "الحاضرون",
+    "allConform": "اعتبار البنود غير المتفقَّدة مطابقة",
+    "resultFor": "نتيجة: {{item}}",
+    "observedFor": "المعاين: {{item}}",
+    "noteFor": "ملاحظة: {{item}}",
+    "saveInspection": "حفظ التفقد وحساب المقارنة",
+    "decisionTitle": "القرار",
+    "decisionLabel": "القرار",
+    "validUntil": "صالحة إلى غاية",
+    "reasonRequired": "سبب الرفض (إلزامي)",
+    "reasonOptional": "ملاحظة (اختيارية)",
+    "reservationsTitle": "التحفظات وآجالها",
+    "reservationText": "التحفظ {{n}}",
+    "reservationDue": "الأجل",
+    "removeReservation": "حذف",
+    "addReservation": "إضافة تحفظ",
+    "reservationsInvalid": "تحفظ واحد على الأقل، ولكل تحفظ نص وأجل بين الغد و12 شهرا.",
+    "decide": "إصدار القرار",
+    "cancelReason": "سبب الإلغاء",
+    "cancel": "إلغاء الزيارة",
+    "back": "← زيارات الوقاية",
+    "visitTitle": "زيارة وقاية: {{org}}",
+    "readOnly": "القراءة فقط: البرمجة والتفقد والقرار لمراقب المؤسسات.",
+    "facts": "الزيارة",
+    "requestNote": "ملاحظة الطلب",
+    "requestedBy": "طلبها",
+    "report": "محضر الزيارة (PDF)",
+    "cancelled": "أُلغيت الزيارة.",
+    "scheduled": "حُفظ موعد الزيارة وأُعلمت المؤسسة.",
+    "inspected": "حُفظ التفقد وحُسب تقرير المقارنة.",
+    "decided": "صدر القرار وأُعلمت المؤسسة.",
+    "comparisonTitle": "تقرير المقارنة",
+    "reason": "السبب",
+    "decidedBy": "أصدره",
+    "certificate": "شهادة الوقاية"
   }
 }

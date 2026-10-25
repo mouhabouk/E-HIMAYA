@@ -58,6 +58,8 @@ from app.modules.notify.router import router as notify_router
 from app.modules.notify.staff_router import router as notify_staff_router
 from app.modules.ops.command_router import router as command_router
 from app.modules.ops.router import router as ops_router
+from app.modules.orgs.prevention_router import router as orgs_prevention_router
+from app.modules.orgs.prevention_router import staff_router as orgs_prevention_staff_router
 from app.modules.orgs.router import router as orgs_router
 from app.modules.orgs.space import router as orgs_space_router
 from app.modules.orgs.staff_router import router as orgs_staff_router
@@ -250,6 +252,8 @@ def create_app() -> FastAPI:
         orgs_router,
         orgs_space_router,
         orgs_staff_router,
+        orgs_prevention_router,
+        orgs_prevention_staff_router,
         ai_router,
         live_router,
         uploads_router,

@@ -38,7 +38,8 @@
     "contact": "Nous contacter",
     "doctors": "Médecins",
     "medicalCommittee": "Comité médical",
-    "counter": "Guichet"
+    "counter": "Guichet",
+    "prevention": "Visites de prévention"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -301,7 +302,18 @@
     "place_required": "Le lieu du cachet est requis.",
     "certificate_not_valid": "Seul un certificat valide aujourd’hui peut être cacheté.",
     "photo_too_large": "La photo dépasse 5 Mo.",
-    "unsupported_media_type": "Type de fichier non accepté."
+    "unsupported_media_type": "Type de fichier non accepté.",
+    "visit_open": "L’établissement a déjà une visite en cours.",
+    "invalid_scheduled_on": "Date de visite invalide : d’aujourd’hui à 12 mois.",
+    "invalid_inspected_on": "La date d’inspection ne peut pas être future.",
+    "unknown_item": "Point absent de la grille d’inspection.",
+    "finding_detail_required": "Chaque point non conforme demande la valeur constatée ou une remarque.",
+    "reservations_required": "Ajoutez au moins une réserve.",
+    "reservations_not_allowed": "Les réserves ne vont qu’avec « avis favorable avec réserves ».",
+    "invalid_due_on": "Le délai d’une réserve va de demain à 12 mois.",
+    "reservation_text_required": "Le texte de la réserve est requis.",
+    "reservation_lifted": "Cette réserve est levée.",
+    "invalid_year": "Année invalide."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -828,7 +840,12 @@
       "maintenance_due_soon": "Maintenance bientôt due",
       "certificate_expiring": "Certificat bientôt expiré",
       "certificate_expired": "Certificat expiré",
-      "certificate_needs_update": "Certificat à mettre à jour"
+      "certificate_needs_update": "Certificat à mettre à jour",
+      "visit_scheduled": "Visite de prévention programmée",
+      "reservation_due_soon": "Délai de réserve proche",
+      "reservation_overdue": "Réserve en retard",
+      "prevention_expiring": "Certificat de prévention bientôt expiré",
+      "prevention_expired": "Certificat de prévention expiré"
     },
     "identifierType": {
       "mf": "Matricule fiscal",
@@ -3965,5 +3982,146 @@
   "drafts": {
     "changedWhileTyping": "Ce dossier a changé pendant votre saisie. Votre texte est conservé ; vérifiez le nouvel état avant d’envoyer.",
     "acknowledge": "Compris"
+  },
+  "prevention": {
+    "title": "Visites de prévention",
+    "intro": "Demandes des établissements et visites programmées de votre périmètre : programmation, inspection sur site, rapport de comparaison automatique, puis décision et certificat de prévention.",
+    "filter": "État",
+    "filters": {
+      "open": "En cours",
+      "all": "Toutes"
+    },
+    "empty": "Aucune visite.",
+    "overdueCount": "Réserves en retard : {{n}}",
+    "status": {
+      "requested": "Demandée",
+      "scheduled": "Programmée",
+      "inspected": "Inspectée",
+      "decided": "Décidée",
+      "cancelled": "Annulée"
+    },
+    "decision": {
+      "approved": "Avis favorable",
+      "approved_with_reservations": "Avis favorable avec réserves",
+      "refused": "Avis défavorable motivé"
+    },
+    "state": {
+      "open": "Ouverte",
+      "responded": "Réponse reçue",
+      "overdue": "En retard",
+      "lifted": "Levée"
+    },
+    "result": {
+      "conform": "Conforme",
+      "nonconform": "Non conforme",
+      "not_checked": "Non vérifié"
+    },
+    "item": {
+      "building": {
+        "capacity": "Capacité d’accueil",
+        "floors": "Nombre d’étages",
+        "height_m": "Hauteur (m)",
+        "address": "Adresse"
+      },
+      "classification": {
+        "family": "Famille",
+        "category": "Catégorie"
+      },
+      "evacuation": {
+        "points": "Points de rassemblement"
+      },
+      "safety_team": {
+        "representative": "Représentant de l’équipe",
+        "members": "Membres de l’équipe"
+      },
+      "documents": {
+        "safety_file": "Dossier de sécurité",
+        "safety_plan": "Plan de sécurité"
+      },
+      "site": {
+        "exits": "Issues de secours dégagées",
+        "signage": "Signalisation",
+        "emergency_lighting": "Éclairage de secours en état",
+        "alarm": "Essai de l’alarme",
+        "extinguishers_access": "Extincteurs accessibles",
+        "electrical": "Installations électriques"
+      },
+      "hazmat": "Matière dangereuse {{n}}"
+    },
+    "counts": {
+      "conform": "Conformes : {{n}}",
+      "nonconform": "Non conformes : {{n}}",
+      "notChecked": "Non vérifiés : {{n}}"
+    },
+    "suggested": "Suggestion non contraignante : {{decision}}",
+    "noMissing": "Dossier complet selon la classification.",
+    "missing": "Éléments manquants : {{items}}",
+    "changesTitle": "Écarts depuis le certificat de sécurité",
+    "gridCaption": "Grille d’inspection : déclaré et constaté",
+    "columns": {
+      "item": "Point",
+      "declared": "Déclaré",
+      "result": "Résultat",
+      "observed": "Constaté",
+      "note": "Remarque"
+    },
+    "liftNote": "Remarque de levée (facultative)",
+    "lift": "Lever la réserve",
+    "lifted": "Réserve levée.",
+    "noReservations": "Aucune réserve.",
+    "dueOn": "Délai : {{date}}",
+    "response": "Réponse de l’établissement ({{name}}) :",
+    "liftedBy": "Levée par {{name}} le {{date}}",
+    "scheduleNew": "Programmer une visite",
+    "scheduledOn": "Date de visite",
+    "inspector": "Inspecteur",
+    "orgTitle": "Visites de prévention",
+    "noVisits": "Aucune visite de prévention.",
+    "origin": {
+      "request": "Demande de l’établissement",
+      "scheduled": "Programmée par l’Office"
+    },
+    "originLabel": "Origine",
+    "inspectedOn": "Date d’inspection",
+    "schedule": "Programmer la visite",
+    "reschedule": "Reprogrammer la visite",
+    "saveSchedule": "Enregistrer la date",
+    "inspection": "Grille d’inspection sur site",
+    "inspectionHelp": "Les points viennent de la déclaration actuelle de l’établissement. Pour chaque point non conforme, indiquez la valeur constatée ou une remarque. Les points « constat » sont [SIM] en attente de la grille officielle.",
+    "attendees": "Présents",
+    "allConform": "Marquer les points non vérifiés conformes",
+    "resultFor": "Résultat : {{item}}",
+    "observedFor": "Constaté : {{item}}",
+    "noteFor": "Remarque : {{item}}",
+    "saveInspection": "Enregistrer et comparer",
+    "decisionTitle": "Décision",
+    "decisionLabel": "Avis",
+    "validUntil": "Valable jusqu’au",
+    "reasonRequired": "Motif du refus (obligatoire)",
+    "reasonOptional": "Remarque (facultative)",
+    "reservationsTitle": "Réserves et délais",
+    "reservationText": "Réserve {{n}}",
+    "reservationDue": "Délai",
+    "removeReservation": "Retirer",
+    "addReservation": "Ajouter une réserve",
+    "reservationsInvalid": "Au moins une réserve, chacune avec un texte et un délai de demain à 12 mois.",
+    "decide": "Rendre la décision",
+    "cancelReason": "Motif de l’annulation",
+    "cancel": "Annuler la visite",
+    "back": "← Visites de prévention",
+    "visitTitle": "Visite de prévention : {{org}}",
+    "readOnly": "Lecture seule : programmation, inspection et décision reviennent à l’auditeur des établissements.",
+    "facts": "La visite",
+    "requestNote": "Note de la demande",
+    "requestedBy": "Demandée par",
+    "report": "Procès-verbal (PDF)",
+    "cancelled": "Visite annulée.",
+    "scheduled": "Date enregistrée, l’établissement est prévenu.",
+    "inspected": "Inspection enregistrée, rapport de comparaison calculé.",
+    "decided": "Décision rendue, l’établissement est prévenu.",
+    "comparisonTitle": "Rapport de comparaison",
+    "reason": "Motif",
+    "decidedBy": "Rendue par",
+    "certificate": "Certificat de prévention"
   }
 }

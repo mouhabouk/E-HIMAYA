@@ -116,6 +116,11 @@ String orgAlertText(AppLocalizations l10n, String wire) => switch (wire) {
   'certificate_expiring' => l10n.orgAlertCertificateExpiring,
   'certificate_expired' => l10n.orgAlertCertificateExpired,
   'certificate_needs_update' => l10n.orgAlertCertificateNeedsUpdate,
+  'visit_scheduled' => l10n.orgAlertVisitScheduled,
+  'reservation_due_soon' => l10n.orgAlertReservationDueSoon,
+  'reservation_overdue' => l10n.orgAlertReservationOverdue,
+  'prevention_expiring' => l10n.orgAlertPreventionExpiring,
+  'prevention_expired' => l10n.orgAlertPreventionExpired,
   _ => wire,
 };
 
@@ -131,3 +136,36 @@ String certificateSectionText(AppLocalizations l10n, String wire) =>
       'evacuation' => l10n.orgCertSectionEvacuation,
       _ => wire,
     };
+
+// ---- Phase P3b: prevention visits ----
+
+String visitOriginText(AppLocalizations l10n, String wire) =>
+    wire == 'office' ? l10n.orgVisitOriginOffice : l10n.orgVisitOriginRequest;
+
+String visitStatusText(AppLocalizations l10n, String wire) => switch (wire) {
+  'requested' => l10n.orgVisitStatusRequested,
+  'scheduled' => l10n.orgVisitStatusScheduled,
+  'inspected' => l10n.orgVisitStatusInspected,
+  'decided' => l10n.orgVisitStatusDecided,
+  'cancelled' => l10n.orgVisitStatusCancelled,
+  _ => wire,
+};
+
+String visitDecisionText(AppLocalizations l10n, String wire) => switch (wire) {
+  'approved' => l10n.orgVisitDecisionApproved,
+  'approved_with_reservations' => l10n.orgVisitDecisionReservations,
+  'refused' => l10n.orgVisitDecisionRefused,
+  _ => wire,
+};
+
+String reservationStateText(AppLocalizations l10n, String wire) =>
+    switch (wire) {
+      'open' => l10n.orgReservationOpen,
+      'responded' => l10n.orgReservationResponded,
+      'overdue' => l10n.orgReservationOverdue,
+      'lifted' => l10n.orgReservationLifted,
+      _ => wire,
+    };
+
+String certificateKindText(AppLocalizations l10n, String wire) =>
+    wire == 'prevention' ? l10n.orgCertKindPrevention : l10n.orgCertKindSafety;

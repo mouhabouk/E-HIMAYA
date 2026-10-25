@@ -124,7 +124,14 @@
     "disclaimer": "This certificate is a safety self-assessment recorded by the institution on the e-Himaya platform and reviewed by its auditors. It is not an official certificate of the National Office of Civil Protection or of any other administration, and it does not replace the permits and inspections required by law.",
     "sealTitle": "Electronic seal",
     "sealBody": "A picture of the Office's electronic signature above, as printed on the PDF. Its value comes from the signature, not the picture.",
-    "sealNote": "Model seal, pending the Office's official seal"
+    "sealNote": "Model seal, pending the Office's official seal",
+    "kind": "Certificate type",
+    "kinds": {
+      "safety": "Safety certificate (self-assessment)",
+      "prevention": "Prevention certificate after a visit"
+    },
+    "withReservations": "approved with reservations",
+    "preventionDisclaimer": "The prevention certificate is issued by civil protection after an on-site visit. Its text and validity are a model [SIM] until the Office’s official text."
   },
   "myOrgs": {
     "title": "My institutions",
@@ -226,7 +233,8 @@
       "members": "Members",
       "reports": "Reports",
       "certificate": "Certificate",
-      "activities": "Drills and events"
+      "activities": "Drills and events",
+      "prevention": "Prevention and reports"
     }
   },
   "overview": {
@@ -300,7 +308,12 @@
       "maintenance_due_soon": "Equipment maintenance due soon",
       "certificate_expiring": "The safety certificate expires soon",
       "certificate_expired": "The safety certificate has expired",
-      "certificate_needs_update": "The safety certificate needs updating: the institution changed since approval"
+      "certificate_needs_update": "The safety certificate needs updating: the institution changed since approval",
+      "visit_scheduled": "Prevention visit scheduled",
+      "reservation_due_soon": "Reservation deadline soon",
+      "reservation_overdue": "Reservation overdue",
+      "prevention_expiring": "Prevention certificate expiring",
+      "prevention_expired": "Prevention certificate expired"
     }
   },
   "card": {
@@ -792,7 +805,10 @@
     "ack_not_required": "This message does not ask for an acknowledgement.",
     "message_not_found": "Message not found.",
     "drill_in_future": "A drill is recorded once held: choose today or an earlier date.",
-    "invalid_dates": "The end date must follow the start date."
+    "invalid_dates": "The end date must follow the start date.",
+    "visit_open": "The institution already has an open visit.",
+    "reservation_lifted": "This reservation is lifted.",
+    "invalid_year": "Invalid year."
   },
   "live": {
     "title": "Live location",
@@ -906,5 +922,120 @@
     "drillInFuture": "A drill is recorded once held: choose today or an earlier date.",
     "endBeforeStart": "The end date must follow the start date.",
     "participantsInvalid": "Enter a whole number."
+  },
+  "prevention": {
+    "status": {
+      "requested": "Requested",
+      "scheduled": "Scheduled",
+      "inspected": "Inspected",
+      "decided": "Decided",
+      "cancelled": "Cancelled"
+    },
+    "decision": {
+      "approved": "Approved",
+      "approved_with_reservations": "Approved with reservations",
+      "refused": "Refused with reasons"
+    },
+    "state": {
+      "open": "Open",
+      "responded": "Answered",
+      "overdue": "Overdue",
+      "lifted": "Lifted"
+    },
+    "result": {
+      "conform": "Conforming",
+      "nonconform": "Non-conforming",
+      "not_checked": "Not checked"
+    },
+    "item": {
+      "building": {
+        "capacity": "Capacity",
+        "floors": "Floors",
+        "height_m": "Height (m)",
+        "address": "Address"
+      },
+      "classification": {
+        "family": "Family",
+        "category": "Category"
+      },
+      "evacuation": {
+        "points": "Assembly points"
+      },
+      "safety_team": {
+        "representative": "Team representative",
+        "members": "Team members"
+      },
+      "documents": {
+        "safety_file": "Safety file",
+        "safety_plan": "Safety plan"
+      },
+      "site": {
+        "exits": "Exits clear",
+        "signage": "Signage",
+        "emergency_lighting": "Emergency lighting works",
+        "alarm": "Alarm test",
+        "extinguishers_access": "Extinguishers within reach",
+        "electrical": "Electrical installations"
+      },
+      "hazmat": "Hazardous material {{n}}"
+    },
+    "columns": {
+      "item": "Item",
+      "declared": "Declared",
+      "result": "Result",
+      "observed": "Found",
+      "note": "Note"
+    },
+    "origin": {
+      "request": "Requested by the institution",
+      "scheduled": "Scheduled by the Office"
+    },
+    "changesTitle": "Changes since the safety certificate",
+    "gridCaption": "Inspection grid: declared and found",
+    "missing": "Missing: {{items}}",
+    "dueOn": "Due: {{date}}",
+    "scheduledOn": "Visit date",
+    "inspector": "Inspector",
+    "inspectedOn": "Inspection date",
+    "reason": "Reason",
+    "cancelReason": "Reason for cancelling",
+    "certificate": "Prevention certificate",
+    "reservationsTitle": "Reservations and deadlines",
+    "report": "Visit report (PDF)",
+    "requestNote": "Request note",
+    "title": "Prevention visits and certificate",
+    "help": "Ask for a prevention visit: civil protection schedules it, the inspector compares the site with your declaration, then the decision and prevention certificate follow. Update team, materials, equipment and documents before the visit.",
+    "simNote": "The prevention certificate text, its validity and the inspection grid are models until the Office’s official texts.",
+    "empty": "No visits yet.",
+    "request": "Ask for a prevention visit",
+    "withdraw": "Withdraw the request",
+    "waiting": "Waiting for the regional administration to schedule it.",
+    "prepare": "Visit scheduled: update your declaration before the date.",
+    "comparisonSummary": "Comparison report: {{conform}} conforming · {{nonconform}} non-conforming · {{notChecked}} not checked",
+    "answerLabel": "How did you address this reservation?",
+    "answer": "Send the answer",
+    "updateAnswer": "Update the answer",
+    "yourAnswer": "Your answer ({{name}}):",
+    "liftedOn": "Lifted by civil protection on {{date}}",
+    "validUntil": "valid until {{date}}",
+    "superseded": "replaced by a newer one",
+    "certificatePdf": "Prevention certificate (PDF)",
+    "openLink": "Open the file",
+    "annualTitle": "Annual report",
+    "year": "Year",
+    "annual": {
+      "drills": "Drills",
+      "drillsValue": "{{n}} drill(s), {{people}} participant(s)",
+      "events": "Events declared",
+      "maintenance": "Maintenance recorded",
+      "training": "Training at year end",
+      "trainingValue": "{{valid}} valid · {{expiring}} expiring · {{expired}} expired",
+      "visits": "Prevention visits",
+      "reservations": "Reservations",
+      "reservationsValue": "{{opened}} issued · {{lifted}} lifted · {{overdue}} overdue",
+      "certificates": "Certificates issued",
+      "stamps": "Stamps at regional offices",
+      "reports": "Reports by the institution"
+    }
   }
 }

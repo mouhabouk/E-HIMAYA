@@ -20,6 +20,7 @@ import { fakeOpsApi } from "./opsFixtures";
 import { FakeSipEngine, fakePhase7Api } from "./phase7Fixtures";
 import { fakePhase8Api } from "./phase8Fixtures";
 import { fakePhase9Api } from "./phase9Fixtures";
+import { fakePreventionApi } from "./preventionFixtures";
 import { FakeStreamSession, fakeStreamsApi } from "./streamFixtures";
 
 export function fakeAuth(claims: Record<string, unknown> | null): AuthService {
@@ -165,6 +166,7 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     ...fakePhase7Api(),
     ...fakePhase8Api(),
     ...fakePhase9Api(),
+    ...fakePreventionApi(),
     ...fakeLayersApi(),
     ...fakeGuideApi(),
     ...fakeContactApi(),

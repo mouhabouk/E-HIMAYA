@@ -342,6 +342,9 @@ export function Layout() {
               <NavItem to="/orgs/certificates/counter" icon="verified" tone="green">
                 {t("nav.counter")}
               </NavItem>
+              <NavItem to="/orgs/prevention" icon="policy" tone="purple">
+                {t("nav.prevention")}
+              </NavItem>
             </>
           )}
           {editsTips && (

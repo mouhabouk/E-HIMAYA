@@ -4706,4 +4706,181 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get orgCertSectionEvacuation => 'الإخلاء';
+
+  @override
+  String get orgSectionRecords => 'التقارير والمحاضر';
+
+  @override
+  String get orgRecordsHint =>
+      'كل ما سجّله الديوان عن المؤسسة: محاضر الزيارات، التحفظات وآجالها، الشهادات، التمارين والتقرير السنوي. تُقدَّم الطلبات والردود عبر البوابة.';
+
+  @override
+  String get orgRecordsVisits => 'زيارات الوقاية';
+
+  @override
+  String get orgRecordsVisitsEmpty => 'لا توجد زيارة وقاية بعد.';
+
+  @override
+  String get orgVisitOriginRequest => 'بطلب من المؤسسة';
+
+  @override
+  String get orgVisitOriginOffice => 'برمجها الديوان';
+
+  @override
+  String get orgVisitStatusRequested => 'مطلوبة';
+
+  @override
+  String get orgVisitStatusScheduled => 'مبرمجة';
+
+  @override
+  String get orgVisitStatusInspected => 'تمّت المعاينة، القرار منتظر';
+
+  @override
+  String get orgVisitStatusDecided => 'صدر القرار';
+
+  @override
+  String get orgVisitStatusCancelled => 'ملغاة';
+
+  @override
+  String get orgVisitDecisionApproved => 'رأي إيجابي';
+
+  @override
+  String get orgVisitDecisionReservations => 'رأي إيجابي مع تحفظات';
+
+  @override
+  String get orgVisitDecisionRefused => 'رأي سلبي';
+
+  @override
+  String orgVisitOn(String date) {
+    return 'الزيارة يوم $date';
+  }
+
+  @override
+  String orgVisitInspector(String name) {
+    return 'المعاين: $name';
+  }
+
+  @override
+  String orgVisitComparison(int conform, int nonconform, int notChecked) {
+    return 'المقارنة: $conform مطابق · $nonconform غير مطابق · $notChecked لم يُتحقق منه';
+  }
+
+  @override
+  String orgVisitReason(String reason) {
+    return 'السبب: $reason';
+  }
+
+  @override
+  String get orgVisitReport => 'محضر الزيارة (PDF)';
+
+  @override
+  String get orgCertificatePdf => 'الشهادة (PDF)';
+
+  @override
+  String get orgPdfUnavailable => 'تعذّر فتح الوثيقة.';
+
+  @override
+  String get orgRecordsReservations => 'التحفظات والآجال';
+
+  @override
+  String get orgRecordsReservationsEmpty => 'لا توجد تحفظات للمعالجة.';
+
+  @override
+  String orgReservationDue(String date) {
+    return 'الأجل: $date';
+  }
+
+  @override
+  String get orgReservationOpen => 'مفتوح';
+
+  @override
+  String get orgReservationResponded => 'تمّ الرد، في انتظار الديوان';
+
+  @override
+  String get orgReservationOverdue => 'متأخر';
+
+  @override
+  String get orgReservationLifted => 'مرفوع';
+
+  @override
+  String get orgCertKindSafety => 'شهادة السلامة';
+
+  @override
+  String get orgCertKindPrevention => 'شهادة الوقاية';
+
+  @override
+  String get orgCertPreventionSim => '[SIM] نموذج في انتظار الديوان';
+
+  @override
+  String get orgRecordsDrills => 'تقارير التمارين';
+
+  @override
+  String get orgRecordsDrillsEmpty => 'لا يوجد تمرين مسجّل هذه السنة.';
+
+  @override
+  String get orgRecordsAnnual => 'التقرير السنوي';
+
+  @override
+  String get orgRecordsYear => 'السنة';
+
+  @override
+  String orgAnnualDrills(int count, int participants) {
+    return '$count تمرين، $participants مشارك';
+  }
+
+  @override
+  String orgAnnualEvents(int count) {
+    return '$count تظاهرة عامة';
+  }
+
+  @override
+  String orgAnnualMaintenance(int count) {
+    return '$count عملية صيانة';
+  }
+
+  @override
+  String orgAnnualTraining(int valid, int expiring, int expired) {
+    return 'التكوين: $valid صالح · $expiring قارب الانتهاء · $expired منتهٍ';
+  }
+
+  @override
+  String orgAnnualVisits(int count) {
+    return '$count زيارة وقاية';
+  }
+
+  @override
+  String orgAnnualReservations(int opened, int lifted, int overdue) {
+    return 'التحفظات: $opened صادرة · $lifted مرفوعة · $overdue متأخرة';
+  }
+
+  @override
+  String orgAnnualCertificates(int count, int stamps) {
+    return '$count شهادة، $stamps ختم';
+  }
+
+  @override
+  String orgAnnualReports(int count) {
+    return '$count بلاغ أرسلته المؤسسة';
+  }
+
+  @override
+  String get orgRecordsReminders => 'التذكيرات';
+
+  @override
+  String get orgRecordsRemindersEmpty => 'لا شيء للقيام به حاليًا.';
+
+  @override
+  String get orgAlertVisitScheduled => 'زيارة وقاية مبرمجة';
+
+  @override
+  String get orgAlertReservationDueSoon => 'أجل تحفظ يقترب';
+
+  @override
+  String get orgAlertReservationOverdue => 'تحفظ تجاوز أجله';
+
+  @override
+  String get orgAlertPreventionExpiring => 'شهادة الوقاية تقترب من الانتهاء';
+
+  @override
+  String get orgAlertPreventionExpired => 'انتهت صلاحية شهادة الوقاية';
 }

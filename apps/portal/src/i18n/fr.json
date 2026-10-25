@@ -124,7 +124,14 @@
     "disclaimer": "Ce certificat est une auto-évaluation de sécurité enregistrée par l’établissement sur la plateforme e-Himaya et revue par ses auditeurs. Ce n’est pas un certificat officiel de l’Office national de la protection civile ni d’une autre administration, et il ne remplace pas les autorisations et visites prévues par la loi.",
     "sealTitle": "Cachet électronique",
     "sealBody": "Image de la signature électronique de l’Office ci-dessus, telle qu’imprimée sur le PDF. Sa valeur vient de la signature, non de l’image.",
-    "sealNote": "Modèle de cachet, en attente du cachet officiel de l’Office"
+    "sealNote": "Modèle de cachet, en attente du cachet officiel de l’Office",
+    "kind": "Type de certificat",
+    "kinds": {
+      "safety": "Certificat de sécurité (auto-évaluation)",
+      "prevention": "Certificat de prévention après visite"
+    },
+    "withReservations": "avis favorable avec réserves",
+    "preventionDisclaimer": "Le certificat de prévention est délivré par la protection civile après une visite sur site. Son texte et sa validité sont un modèle [SIM] en attente du texte officiel de l’Office."
   },
   "myOrgs": {
     "title": "Mes établissements",
@@ -226,7 +233,8 @@
       "members": "Membres",
       "reports": "Signalements",
       "certificate": "Certificat",
-      "activities": "Exercices et événements"
+      "activities": "Exercices et événements",
+      "prevention": "Prévention et rapports"
     }
   },
   "overview": {
@@ -300,7 +308,12 @@
       "maintenance_due_soon": "Maintenance d’équipement bientôt due",
       "certificate_expiring": "Le certificat de sécurité arrive bientôt à échéance",
       "certificate_expired": "Le certificat de sécurité a expiré",
-      "certificate_needs_update": "Le certificat de sécurité est à mettre à jour : l’établissement a changé depuis l’approbation"
+      "certificate_needs_update": "Le certificat de sécurité est à mettre à jour : l’établissement a changé depuis l’approbation",
+      "visit_scheduled": "Visite de prévention programmée",
+      "reservation_due_soon": "Délai de réserve proche",
+      "reservation_overdue": "Réserve en retard",
+      "prevention_expiring": "Certificat de prévention bientôt expiré",
+      "prevention_expired": "Certificat de prévention expiré"
     }
   },
   "card": {
@@ -792,7 +805,10 @@
     "ack_not_required": "Ce message ne demande pas d’accusé de lecture.",
     "message_not_found": "Message introuvable.",
     "drill_in_future": "Un exercice s’enregistre une fois réalisé : choisissez aujourd’hui ou une date passée.",
-    "invalid_dates": "La date de fin doit suivre la date de début."
+    "invalid_dates": "La date de fin doit suivre la date de début.",
+    "visit_open": "L’établissement a déjà une visite en cours.",
+    "reservation_lifted": "Cette réserve est levée.",
+    "invalid_year": "Année invalide."
   },
   "live": {
     "title": "Position en direct",
@@ -906,5 +922,120 @@
     "drillInFuture": "Un exercice s’enregistre une fois réalisé : choisissez aujourd’hui ou une date passée.",
     "endBeforeStart": "La date de fin doit suivre la date de début.",
     "participantsInvalid": "Saisissez un nombre entier."
+  },
+  "prevention": {
+    "status": {
+      "requested": "Demandée",
+      "scheduled": "Programmée",
+      "inspected": "Inspectée",
+      "decided": "Décidée",
+      "cancelled": "Annulée"
+    },
+    "decision": {
+      "approved": "Avis favorable",
+      "approved_with_reservations": "Avis favorable avec réserves",
+      "refused": "Avis défavorable motivé"
+    },
+    "state": {
+      "open": "Ouverte",
+      "responded": "Réponse reçue",
+      "overdue": "En retard",
+      "lifted": "Levée"
+    },
+    "result": {
+      "conform": "Conforme",
+      "nonconform": "Non conforme",
+      "not_checked": "Non vérifié"
+    },
+    "item": {
+      "building": {
+        "capacity": "Capacité d’accueil",
+        "floors": "Nombre d’étages",
+        "height_m": "Hauteur (m)",
+        "address": "Adresse"
+      },
+      "classification": {
+        "family": "Famille",
+        "category": "Catégorie"
+      },
+      "evacuation": {
+        "points": "Points de rassemblement"
+      },
+      "safety_team": {
+        "representative": "Représentant de l’équipe",
+        "members": "Membres de l’équipe"
+      },
+      "documents": {
+        "safety_file": "Dossier de sécurité",
+        "safety_plan": "Plan de sécurité"
+      },
+      "site": {
+        "exits": "Issues de secours dégagées",
+        "signage": "Signalisation",
+        "emergency_lighting": "Éclairage de secours en état",
+        "alarm": "Essai de l’alarme",
+        "extinguishers_access": "Extincteurs accessibles",
+        "electrical": "Installations électriques"
+      },
+      "hazmat": "Matière dangereuse {{n}}"
+    },
+    "columns": {
+      "item": "Point",
+      "declared": "Déclaré",
+      "result": "Résultat",
+      "observed": "Constaté",
+      "note": "Remarque"
+    },
+    "origin": {
+      "request": "Demande de l’établissement",
+      "scheduled": "Programmée par l’Office"
+    },
+    "changesTitle": "Écarts depuis le certificat de sécurité",
+    "gridCaption": "Grille d’inspection : déclaré et constaté",
+    "missing": "Éléments manquants : {{items}}",
+    "dueOn": "Délai : {{date}}",
+    "scheduledOn": "Date de visite",
+    "inspector": "Inspecteur",
+    "inspectedOn": "Date d’inspection",
+    "reason": "Motif",
+    "cancelReason": "Motif de l’annulation",
+    "certificate": "Certificat de prévention",
+    "reservationsTitle": "Réserves et délais",
+    "report": "Procès-verbal (PDF)",
+    "requestNote": "Note de la demande",
+    "title": "Visites et certificat de prévention",
+    "help": "Demandez une visite de prévention : la protection civile la programme, l’inspecteur compare l’établissement à votre déclaration, puis la décision et le certificat de prévention sont rendus. Mettez à jour équipe, matières, équipements et documents avant la visite.",
+    "simNote": "Le texte du certificat de prévention, sa validité et la grille d’inspection sont des modèles en attente des textes officiels de l’Office.",
+    "empty": "Aucune visite.",
+    "request": "Demander une visite de prévention",
+    "withdraw": "Retirer la demande",
+    "waiting": "En attente de programmation par la direction régionale.",
+    "prepare": "Visite programmée : mettez la déclaration à jour avant la date.",
+    "comparisonSummary": "Rapport de comparaison : {{conform}} conformes · {{nonconform}} non conformes · {{notChecked}} non vérifiés",
+    "answerLabel": "Comment avez-vous levé cette réserve ?",
+    "answer": "Envoyer la réponse",
+    "updateAnswer": "Mettre à jour la réponse",
+    "yourAnswer": "Votre réponse ({{name}}) :",
+    "liftedOn": "Levée par la protection civile le {{date}}",
+    "validUntil": "valable jusqu’au {{date}}",
+    "superseded": "remplacé par un plus récent",
+    "certificatePdf": "Certificat de prévention (PDF)",
+    "openLink": "Ouvrir le fichier",
+    "annualTitle": "Rapport annuel",
+    "year": "Année",
+    "annual": {
+      "drills": "Exercices",
+      "drillsValue": "{{n}} exercice(s), {{people}} participant(s)",
+      "events": "Manifestations déclarées",
+      "maintenance": "Maintenances enregistrées",
+      "training": "Formation en fin d’année",
+      "trainingValue": "{{valid}} valides · {{expiring}} bientôt échues · {{expired}} échues",
+      "visits": "Visites de prévention",
+      "reservations": "Réserves",
+      "reservationsValue": "{{opened}} émises · {{lifted}} levées · {{overdue}} en retard",
+      "certificates": "Certificats délivrés",
+      "stamps": "Cachets en direction régionale",
+      "reports": "Signalements de l’établissement"
+    }
   }
 }

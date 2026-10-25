@@ -128,6 +128,17 @@ function CertificateResult({ cert }: { cert: PublicCertificate }) {
         <dl className="fields">
           <dt>{t("verify.code")}</dt>
           <dd className="code">{cert.code}</dd>
+          <dt>{t("verify.kind")}</dt>
+          <dd>
+            {cert.kind === "prevention" ? (
+              <>
+                {t("verify.kinds.prevention")} <span className="tag tag--sim">[SIM]</span>
+                {cert.with_reservations && <> · {t("verify.withReservations")}</>}
+              </>
+            ) : (
+              t("verify.kinds.safety")
+            )}
+          </dd>
           <dt>{t("verify.org")}</dt>
           <dd>{cert.org_name}</dd>
           <dt>{t("org.kind")}</dt>
@@ -175,7 +186,7 @@ function CertificateResult({ cert }: { cert: PublicCertificate }) {
       <SigningKey />
       <section className="card" aria-labelledby="disclaimer-title">
         <h2 id="disclaimer-title">{t("verify.disclaimerTitle")}</h2>
-        <p>{t("verify.disclaimer")}</p>
+        <p>{cert.kind === "prevention" ? t("verify.preventionDisclaimer") : t("verify.disclaimer")}</p>
       </section>
     </>
   );

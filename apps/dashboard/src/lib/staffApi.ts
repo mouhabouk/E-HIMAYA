@@ -11,6 +11,7 @@ import { safetyApi } from "./safetyApi";
 import { streamsApi } from "./streamsApi";
 import { normalizeOrgFilters, orgFiltersToQuery, type OrgFilters } from "./orgs";
 import { doctorsApi } from "./doctorsApi";
+import { preventionApi } from "./preventionApi";
 import type {
   AiSettings,
   AiStatus,
@@ -228,6 +229,7 @@ export function staffApi(api: ApiClient) {
     ...phase9Api(api),
     ...layersApi(api),
     ...guideApi(api),
+    ...preventionApi(api),
     ...contactApi(api),
     ...safetyApi(api),
     ...doctorsApi(api),
