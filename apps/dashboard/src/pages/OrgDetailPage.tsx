@@ -830,6 +830,86 @@ export function OrgDetailPage() {
         )}
       </section>
 
+      <section className="card" aria-labelledby="sec-org-maintenance">
+        <h2 id="sec-org-maintenance">
+          {t("orgs.detail.maintenanceLog")} ({fmt.number(org.maintenance?.length ?? 0)})
+        </h2>
+        {(org.maintenance?.length ?? 0) === 0 ? (
+          <p className="muted">{t("orgs.detail.noMaintenance")}</p>
+        ) : (
+          <div className="table-wrap">
+            <table className="table">
+              <caption className="visually-hidden">{t("orgs.detail.maintenanceLog")}</caption>
+              <thead>
+                <tr>
+                  <th scope="col">{t("orgs.detail.maintenanceDone")}</th>
+                  <th scope="col">{t("orgs.detail.equipmentKindLabel")}</th>
+                  <th scope="col">{t("orgs.detail.maintenanceNote")}</th>
+                  <th scope="col">{t("orgs.detail.maintenanceBy")}</th>
+                  <th scope="col">{t("orgs.detail.maintenancePhoto")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {org.maintenance?.map((m) => {
+                  const item = org.equipment.find((e) => e.id === m.equipment_id);
+                  const version = m.photo_version;
+                  return (
+                    <tr key={m.id}>
+                      <th scope="row">{formatDay(fmt, m.done_on, "—")}</th>
+                      <td>{item ? equipmentKindLabel(t, item.kind) : "—"}</td>
+                      <td dir="auto">{m.note ?? "—"}</td>
+                      <td>{m.recorded_by ?? "—"}</td>
+                      <td>
+                        {m.document_id && version !== null ? (
+                          <DownloadButton
+                            label={t("orgs.detail.maintenancePhotoOf", { day: formatDay(fmt, m.done_on, "—") })}
+                            fetchLink={() => api.orgDocumentDownload(org.id, m.document_id ?? "", version)}
+                          />
+                        ) : m.document_id ? (
+                          <span className="tag tag--level-warn">{t("orgs.detail.maintenancePhotoChecking")}</span>
+                        ) : (
+                          "—"
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+
+      <section className="card" aria-labelledby="sec-org-activities">
+        <h2 id="sec-org-activities">
+          {t("orgs.detail.activities")} ({fmt.number(org.activities?.length ?? 0)})
+        </h2>
+        {(org.activities?.length ?? 0) === 0 ? (
+          <p className="muted">{t("orgs.detail.noActivities")}</p>
+        ) : (
+          <ul className="org-activities">
+            {org.activities?.map((a) => (
+              <li key={a.id}>
+                <span className={`tag tag--activity-${a.kind}`}>{t(`orgs.activity.${a.kind}`)}</span>{" "}
+                <strong dir="auto">{a.title}</strong>
+                <span className="muted">
+                  {" · "}
+                  {formatDay(fmt, a.starts_on, "—")}
+                  {a.ends_on && ` – ${formatDay(fmt, a.ends_on, "—")}`}
+                  {a.participants !== null && ` · ${t("orgs.activity.participants", { count: a.participants })}`}
+                  {a.created_by && ` · ${a.created_by}`}
+                </span>
+                {a.notes && (
+                  <p dir="auto" className="muted">
+                    {a.notes}
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
       <section className="card" aria-labelledby="sec-org-docs">
         <h2 id="sec-org-docs">
           {t("orgs.detail.documents")} ({fmt.number(org.documents.length)})

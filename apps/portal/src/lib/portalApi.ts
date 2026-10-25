@@ -1,5 +1,8 @@
 import type { ApiClient } from "./api";
 import type {
+  ActivityInput,
+  OrgActivity,
+  OrgMessage,
   LiveView,
   Certificate,
   CreatedInvitation,
@@ -128,6 +131,17 @@ export function portalApi(api: ApiClient) {
         body: { charter_version: version, locale, platform: "web" },
       }),
 
+    // Phase P2b: Office messages with their read acknowledgement, drills and public events
+    messages: (id: string, signal?: AbortSignal) => api.request<OrgMessage[]>(`${orgPath(id)}/messages`, { signal }),
+    ackMessage: (id: string, messageId: string) =>
+      api.request<OrgMessage>(`${orgPath(id)}/messages/${enc(messageId)}/ack`, { method: "POST" }),
+    activities: (id: string, signal?: AbortSignal) =>
+      api.request<OrgActivity[]>(`${orgPath(id)}/activities`, { signal }),
+    addActivity: (id: string, input: ActivityInput) =>
+      api.request<OrgActivity>(`${orgPath(id)}/activities`, { method: "POST", body: input }),
+    deleteActivity: (id: string, activityId: string) =>
+      api.request<undefined>(`${orgPath(id)}/activities/${enc(activityId)}`, { method: "DELETE" }),
+
     // geo reference (public)
     gouvernorats: (signal?: AbortSignal) =>
       api.request<Gouvernorat[]>("/api/v1/geo/gouvernorats", { query: { lang: "ar" }, signal, anonymous: true }),
@@ -152,6 +166,8 @@ export const queryKeys = {
   versions: (id: string, docId: string) => ["org", id, "documents", docId, "versions"] as const,
   certificates: (id: string) => ["org", id, "certificates"] as const,
   reports: (id: string) => ["org", id, "reports"] as const,
+  messages: (id: string) => ["org", id, "messages"] as const,
+  activities: (id: string) => ["org", id, "activities"] as const,
   invitation: (token: string) => ["invitation", token] as const,
   publicCertificate: (code: string) => ["public-certificate", code] as const,
   certificateKey: ["certificate-key"] as const,

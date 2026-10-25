@@ -331,6 +331,58 @@ describe("NotificationEditorPage", () => {
     expect(screen.queryByRole("status", { name: "Compte trouvé" })).not.toBeInTheDocument();
   });
 
+  it("targets some institution kinds and asks for a read acknowledgement (P2b)", async () => {
+    const createMessage = vi.fn(() => Promise.resolve(makeMessage({ id: "m-7", kind: "info" })));
+    setup("/notifications/new?kind=info", EDITOR, { createMessage, message: vi.fn(() => new Promise<Message>(() => undefined)) });
+    fireEvent.change(await screen.findByLabelText("Titre (arabe)"), { target: { value: "موجة حر" } });
+    fireEvent.change(screen.getByLabelText("Texte (arabe)"), { target: { value: "تحققوا من المطافئ" } });
+    fireEvent.change(screen.getByLabelText("Thème"), { target: { value: "training" } });
+    expect(screen.queryByRole("group", { name: "Types d’établissements visés" })).not.toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Public"), { target: { value: "organizations" } });
+    const kinds = screen.getByRole("group", { name: "Types d’établissements visés" });
+    fireEvent.click(within(kinds).getByLabelText("Santé"));
+    fireEvent.click(within(kinds).getByLabelText("Éducation"));
+    fireEvent.click(screen.getByLabelText("Demander un accusé de lecture"));
+    fireEvent.click(screen.getByRole("button", { name: "Enregistrer le brouillon" }));
+    await waitFor(() => expect(createMessage).toHaveBeenCalledTimes(1));
+    expect(lastBody(createMessage)).toMatchObject({
+      audience: "organizations",
+      org_kinds: ["education", "health"],
+      ack_required: true,
+    });
+  });
+
+  it("follows the read acknowledgements of a published message to institutions (P2b)", async () => {
+    const published = makeMessage({
+      kind: "info",
+      status: "published",
+      topic: "training",
+      audience: "organizations",
+      org_kinds: ["health"],
+      ack_required: true,
+      published_at: "2026-10-24T08:00:00Z",
+    });
+    const messageAcks = vi.fn(() =>
+      Promise.resolve({
+        targeted: 2,
+        acked: 1,
+        items: [
+          { org_id: "o-1", name: "Clinique Ennour", kind: "health" as const, gouvernorat_code: 61, acked_at: "2026-10-24T09:00:00Z", acked_by: "Amel" },
+          { org_id: "o-2", name: "Hôpital régional", kind: "health" as const, gouvernorat_code: 61, acked_at: null, acked_by: null },
+        ],
+      }),
+    );
+    setup("/notifications/m-1", EDITOR, { message: vi.fn(() => Promise.resolve(published)), messageAcks });
+    const acks = await screen.findByRole("region", { name: "Accusés de lecture" });
+    expect(await within(acks).findByText("1 établissement(s) sur 2 ont confirmé la lecture.")).toBeInTheDocument();
+    const read = within(acks).getByRole("row", { name: /Clinique Ennour/ });
+    expect(within(read).getByText(/Lu le .*\(Amel\)/)).toHaveClass("tag--level-ok");
+    const waiting = within(acks).getByRole("row", { name: /Hôpital régional/ });
+    expect(within(waiting).getByText("En attente")).toHaveClass("tag--level-warn");
+    expect(within(acks).getByRole("link", { name: "Clinique Ennour" })).toHaveAttribute("href", "/orgs/o-1");
+    expect(messageAcks).toHaveBeenCalledWith("m-1", expect.anything());
+  });
+
   it("shows a published alert's delivery per channel and cancels it after confirmation", async () => {
     const published = makeMessage({
       status: "published",

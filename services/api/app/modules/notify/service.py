@@ -24,6 +24,7 @@ from app.modules.audit import service as audit
 from app.modules.identity.models import PHONE_CONTEXT, Account
 from app.modules.notify import schemas
 from app.modules.notify.models import Dispatch, Message
+from app.modules.notify.org_target import ORG_TARGET
 from app.modules.ops.levels import levels_of
 from app.modules.ops.models import OpLevel
 from app.modules.reports.domain import LAT_MAX, LAT_MIN, LON_MAX, LON_MIN
@@ -135,8 +136,11 @@ async def _apply(session: AsyncSession, message: Message, body: schemas.MessageI
             if body.user_id is None or await session.get(Account, body.user_id) is None:
                 raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "invalid_user")
             codes = []
+        if (body.org_kinds or body.ack_required) and body.audience != "organizations":
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "org_target_requires_organizations")
         message.topic, message.audience = body.topic, body.audience
         message.user_id = body.user_id if body.audience == "user" else None
+        message.org_kinds, message.ack_required = list(body.org_kinds), body.ack_required
         message.severity = message.category = message.hazard = None
         message.expires_at, message.area_polygon = None, None
     else:
@@ -147,8 +151,11 @@ async def _apply(session: AsyncSession, message: Message, body: schemas.MessageI
             raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "invalid_expiry")
         message.severity, message.category, message.hazard = body.severity, body.category, body.hazard
         message.expires_at = expires
+        if body.org_kinds or body.ack_required:
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "org_target_requires_organizations")
         message.topic = message.audience = None
         message.user_id = None
+        message.org_kinds, message.ack_required = [], False
         if body.area.polygon is not None:
             if codes:
                 raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "invalid_area")
@@ -202,6 +209,8 @@ async def message_out(session: AsyncSession, message: Message) -> schemas.Messag
         emergency_reason=message.emergency_reason,
         reviewed_by=message.reviewed_by_name,
         reviewed_at=message.reviewed_at,
+        org_kinds=list(message.org_kinds or []),
+        ack_required=message.ack_required,
         stats={j.channel: schemas.ChannelStats(status=j.status, sent=j.sent, failed=j.failed) for j in jobs},
     )
 
@@ -532,7 +541,8 @@ _AUDIENCE = """
         SELECT 1 FROM identity.volunteer v WHERE v.user_id = {owner} AND v.status = 'approved'))
     OR (m.audience = 'organizations' AND EXISTS (
         SELECT 1 FROM org.member om JOIN org.organization o ON o.id = om.org_id
-        WHERE om.user_id = {owner} AND o.status = 'active'))
+        WHERE om.user_id = {owner} AND o.status = 'active'
+          AND (cardinality(m.org_kinds) = 0 OR o.kind = ANY(m.org_kinds))))
 """
 
 
@@ -578,7 +588,34 @@ _ORG_EMAILS = """
     JOIN notify.message m ON m.id = :mid
     WHERE om.email IS NOT NULL AND m.audience = 'organizations'
       AND (cardinality(m.gouvernorat_codes) = 0 OR o.gouvernorat_code = ANY(m.gouvernorat_codes))
+      AND (cardinality(m.org_kinds) = 0 OR o.kind = ANY(m.org_kinds))
 """
+
+
+async def org_acks(session: AsyncSession, message: Message) -> schemas.OrgAcks:
+    rows = (
+        await session.execute(
+            text(
+                "SELECT o.id, o.name, o.kind, o.gouvernorat_code, a.acked_at, a.acked_by_name "  # noqa: S608 (constant SQL fragments, values are bound)
+                "FROM org.organization o JOIN notify.message m ON m.id = :mid "
+                "LEFT JOIN notify.org_ack a ON a.message_id = m.id AND a.org_id = o.id "
+                f"WHERE {ORG_TARGET} ORDER BY a.acked_at IS NOT NULL, a.acked_at DESC, o.name, o.id"
+            ),
+            {"mid": message.id},
+        )
+    ).all()
+    items = [
+        schemas.OrgAckRow(
+            org_id=r.id,
+            name=r.name,
+            kind=r.kind,
+            gouvernorat_code=r.gouvernorat_code,
+            acked_at=r.acked_at,
+            acked_by=r.acked_by_name,
+        )
+        for r in rows
+    ]
+    return schemas.OrgAcks(targeted=len(items), acked=sum(1 for i in items if i.acked_at), items=items)
 
 
 def profiles_sql(channel: str) -> str:

@@ -4283,7 +4283,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get orgLogMaintenance => 'Log maintenance today';
+  String get orgLogMaintenance => 'Log a maintenance';
 
   @override
   String get orgMaintenanceLogged => 'Maintenance logged.';
@@ -4555,4 +4555,169 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get orgKindLabelTitle => 'Kind';
+
+  @override
+  String get orgSectionMessages => 'Office messages';
+
+  @override
+  String get orgSectionActivities => 'Drills and events';
+
+  @override
+  String get orgSectionAwareness => 'Awareness';
+
+  @override
+  String orgMessagesPending(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Office messages await your acknowledgement',
+      one: '1 Office message awaits your acknowledgement',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get orgMessagesPendingHint =>
+      'Open them and confirm you have read them.';
+
+  @override
+  String get orgMessagesEmpty => 'No message from the Office yet.';
+
+  @override
+  String get orgMessageAck => 'I have read it';
+
+  @override
+  String get orgMessageWaiting => 'Acknowledgement requested';
+
+  @override
+  String orgMessageAcked(String date) {
+    return 'Acknowledged on $date';
+  }
+
+  @override
+  String get orgMessageAckDone => 'The Office knows you have read it.';
+
+  @override
+  String get orgMessageAckEditors =>
+      'An editor or administrator of the institution confirms the reading.';
+
+  @override
+  String get orgAwarenessEmpty =>
+      'No awareness tips for your kind of institution yet.';
+
+  @override
+  String get orgAwarenessIntro =>
+      'Tips the Office prepared for institutions of your kind.';
+
+  @override
+  String get orgActivitiesEmpty => 'No drill or event recorded yet.';
+
+  @override
+  String get orgActivityDrill => 'Drill';
+
+  @override
+  String get orgActivityEvent => 'Public event';
+
+  @override
+  String get orgActivityAdd => 'Add a drill or event';
+
+  @override
+  String get orgActivityHint =>
+      'A drill is recorded once held; a public event is declared ahead so the Office can prepare.';
+
+  @override
+  String get orgActivityTitle => 'Title';
+
+  @override
+  String get orgActivityTitleRequired => 'Enter a title.';
+
+  @override
+  String get orgActivityStarts => 'Date';
+
+  @override
+  String get orgActivityEnds => 'End date (optional)';
+
+  @override
+  String get orgActivityParticipants => 'Participants (optional)';
+
+  @override
+  String orgActivityParticipantsCount(int count) {
+    return '$count participants';
+  }
+
+  @override
+  String get orgActivityNotes => 'Notes (optional)';
+
+  @override
+  String get orgActivityDelete => 'Delete';
+
+  @override
+  String orgActivityDeleteConfirm(String title) {
+    return 'Delete “$title”?';
+  }
+
+  @override
+  String get orgActivityDeleted => 'Deleted.';
+
+  @override
+  String get orgMaintenanceSheetTitle => 'Log a maintenance';
+
+  @override
+  String get orgMaintenanceDate => 'Done on';
+
+  @override
+  String get orgMaintenanceNote => 'Note (optional)';
+
+  @override
+  String get orgMaintenancePhoto => 'Take a photo';
+
+  @override
+  String get orgMaintenancePhotoRetake => 'Retake';
+
+  @override
+  String get orgMaintenancePhotoReady => 'Photo attached';
+
+  @override
+  String get orgMaintenancePhotoUnsupported => 'Only JPEG or PNG photos.';
+
+  @override
+  String get orgMaintenancePhotoTooLarge => 'The photo is larger than 10 MB.';
+
+  @override
+  String get orgMaintenancePhotoFailed =>
+      'The photo could not be sent; the maintenance was not recorded.';
+
+  @override
+  String get orgMaintenanceSave => 'Record';
+
+  @override
+  String get orgMaintenanceHistory => 'Maintenance log';
+
+  @override
+  String get orgMaintenanceHistoryEmpty => 'No maintenance recorded yet.';
+
+  @override
+  String get orgMaintenancePhotoStored => 'Photo kept';
+
+  @override
+  String get orgMaintenancePhotoChecking => 'Photo being checked';
+
+  @override
+  String get errorAckNotRequired =>
+      'This message does not ask for an acknowledgement.';
+
+  @override
+  String get errorDrillInFuture =>
+      'A drill is recorded once held: choose today or an earlier date.';
+
+  @override
+  String get errorInvalidDates => 'The end date must follow the start date.';
+
+  @override
+  String get errorMaintenanceInFuture =>
+      'A maintenance cannot be dated in the future.';
+
+  @override
+  String get errorInvalidDocument =>
+      'The photo is not valid for this maintenance.';
 }

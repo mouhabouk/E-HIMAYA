@@ -9,6 +9,7 @@ import '../../core/config/providers.dart';
 import '../../core/http/api_error.dart';
 import '../../core/http/ehimaya_api.dart';
 import '../../core/http/models.dart';
+import '../../core/http/notify_models.dart';
 import '../../core/logging/log.dart';
 import '../../core/storage/app_prefs.dart';
 import '../../core/storage/secure_store.dart';
@@ -355,3 +356,33 @@ Future<bool> _openExternal(Uri url) async {
 }
 
 final urlOpenerProvider = Provider<UrlOpener>((ref) => _openExternal);
+
+// ---- Phase P2b ----
+
+/// `GET /api/v1/orgs/{id}/messages`: Office messages, newest first.
+final orgMessagesProvider = FutureProvider.autoDispose
+    .family<List<OrgMessage>, String>(
+      (ref, orgId) => ref.watch(apiProvider).orgMessages(orgId),
+      retry: (_, _) => null,
+    );
+
+/// `GET /api/v1/orgs/{id}/awareness`: safety tips for the institution's kind.
+final orgAwarenessProvider = FutureProvider.autoDispose
+    .family<List<SafetyTip>, String>(
+      (ref, orgId) => ref.watch(apiProvider).orgAwareness(orgId),
+      retry: (_, _) => null,
+    );
+
+/// `GET /api/v1/orgs/{id}/activities`: drills and events, latest first.
+final orgActivitiesProvider = FutureProvider.autoDispose
+    .family<List<OrgActivity>, String>(
+      (ref, orgId) => ref.watch(apiProvider).orgActivities(orgId),
+      retry: (_, _) => null,
+    );
+
+/// Maintenance log of one equipment: `(orgId, equipmentId)`.
+final equipmentMaintenanceProvider = FutureProvider.autoDispose
+    .family<List<OrgMaintenance>, (String, String)>(
+      (ref, ids) => ref.watch(apiProvider).equipmentMaintenance(ids.$1, ids.$2),
+      retry: (_, _) => null,
+    );

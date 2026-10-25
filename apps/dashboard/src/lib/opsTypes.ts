@@ -1,3 +1,5 @@
+import type { OrgKind } from "./types";
+
 /**
  * Types mirroring docs/api/phase-5-contract.md: operational levels and committees (§1–2), units and resources
  * (§3), interventions and call-outs (§4–5), volunteers (§5), notifications and alerts (§7), safety tips (§8).
@@ -446,6 +448,25 @@ export interface Message {
   emergency_reason?: string | null;
   reviewed_by?: string | null;
   reviewed_at?: string | null;
+  /** Phase P2b: an "organizations" message for some kinds only (empty: every kind), with a read acknowledgement. */
+  org_kinds?: OrgKind[];
+  ack_required?: boolean;
+}
+
+/** `GET /api/v1/staff/notifications/{id}/acks` (phase P2b): institutions reached and their acknowledgements. */
+export interface OrgAckRow {
+  org_id: string;
+  name: string;
+  kind: OrgKind;
+  gouvernorat_code: number | null;
+  acked_at: string | null;
+  acked_by: string | null;
+}
+
+export interface OrgAcks {
+  targeted: number;
+  acked: number;
+  items: OrgAckRow[];
 }
 
 export interface MessageBody {
@@ -461,6 +482,8 @@ export interface MessageBody {
   hazard?: Hazard | null;
   expires_at?: string | null;
   area: { gouvernorat_codes: number[]; polygon?: Polygon | null };
+  org_kinds?: OrgKind[];
+  ack_required?: boolean;
   version?: number;
 }
 
@@ -509,6 +532,8 @@ export interface SafetyTip {
   position: number;
   status: "draft" | "published";
   content: Record<TipLanguage, TipText>;
+  /** Phase P2b: awareness for these institution kinds instead of a citizen tip. */
+  org_kinds?: OrgKind[];
   version: number;
   updated_at: string;
   published_at: string | null;
@@ -518,6 +543,7 @@ export interface SafetyTipBody {
   hazard: TipHazard;
   position: number;
   content: Record<TipLanguage, TipText>;
+  org_kinds?: OrgKind[];
   version?: number;
 }
 

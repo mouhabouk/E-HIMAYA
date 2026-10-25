@@ -17,6 +17,7 @@ import { RegisterOrgPage } from "./pages/RegisterOrgPage";
 import { LivePage } from "./pages/LivePage";
 import { VerifyPage } from "./pages/VerifyPage";
 import { CardTab } from "./pages/org/CardTab";
+import { ActivitiesTab } from "./pages/org/ActivitiesTab";
 import { CertificatesTab } from "./pages/org/CertificatesTab";
 import { DocumentsTab } from "./pages/org/DocumentsTab";
 import { EquipmentTab } from "./pages/org/EquipmentTab";
@@ -89,6 +90,7 @@ export function AppRoutes() {
           <Route path="map" element={<FeaturesTab />} />
           <Route path="documents" element={<DocumentsTab />} />
           <Route path="members" element={<MembersTab />} />
+          <Route path="activities" element={<ActivitiesTab />} />
           <Route path="reports" element={<ReportsTab />} />
           <Route path="reports/new" element={<NewReportPage />} />
           <Route path="certificate" element={<CertificatesTab />} />

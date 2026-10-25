@@ -2905,3 +2905,28 @@ button.nav-card:hover {
 .kind-fields .pill {
   margin-inline-start: 0.25rem;
 }
+
+/* ---------- Phase P2b: Office messages ---------- */
+.office-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.office-message {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.office-message--waiting {
+  border-inline-start: 4px solid var(--warn-text);
+}
+
+.office-message h3,
+.office-message p {
+  margin: 0 0 0.25rem;
+}

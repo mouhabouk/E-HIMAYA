@@ -203,6 +203,18 @@ class _SummaryBody extends ConsumerWidget {
         ],
         const SizedBox(height: 8),
         _Readiness(summary: s),
+        if (s.messagesPending > 0)
+          NavCard(
+            key: const Key('org-messages-pending'),
+            icon: Icons.mark_email_unread,
+            tone: Tone.red,
+            title: l10n.orgMessagesPending(s.messagesPending),
+            subtitle: l10n.orgMessagesPendingHint,
+            trailing: Pill('${s.messagesPending}', tone: Tone.red),
+            onTap: () => context.push(
+              Routes.institutionSection(s.id, InstitutionSection.messages.name),
+            ),
+          ),
         SectionTitle(l10n.orgAlerts),
         if (s.alerts.isEmpty && s.alertsCount == 0) Text(l10n.orgNoAlerts),
         if (s.alerts.isEmpty && s.alertsCount > 0)
@@ -337,6 +349,12 @@ class _SectionsGrid extends ConsumerWidget {
     void open(String section) =>
         context.push(Routes.institutionSection(id, section));
     final tiles = [
+      (
+        InstitutionSection.messages,
+        Icons.mark_email_unread,
+        Tone.red,
+        l10n.orgSectionMessages,
+      ),
       (InstitutionSection.card, Icons.badge, Tone.navy, l10n.orgSectionCard),
       (InstitutionSection.team, Icons.groups, Tone.green, l10n.orgSafetyTeam),
       (
@@ -368,6 +386,18 @@ class _SectionsGrid extends ConsumerWidget {
         Icons.verified,
         Tone.purple,
         l10n.orgSectionCertificates,
+      ),
+      (
+        InstitutionSection.activities,
+        Icons.event_available,
+        Tone.pink,
+        l10n.orgSectionActivities,
+      ),
+      (
+        InstitutionSection.awareness,
+        Icons.lightbulb,
+        Tone.green,
+        l10n.orgSectionAwareness,
       ),
       (
         InstitutionSection.members,
@@ -412,6 +442,7 @@ Future<void> openPortal(BuildContext context, WidgetRef ref) async {
 
 /// Sections opened from the institution's home (`/institutions/:id/:section`).
 enum InstitutionSection {
+  messages,
   card,
   team,
   equipment,
@@ -419,6 +450,8 @@ enum InstitutionSection {
   evacuation,
   reports,
   certificates,
+  activities,
+  awareness,
   members;
 
   static InstitutionSection? fromName(String? name) {

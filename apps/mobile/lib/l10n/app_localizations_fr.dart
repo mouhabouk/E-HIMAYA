@@ -4323,7 +4323,7 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get orgLogMaintenance => 'Noter une maintenance aujourd’hui';
+  String get orgLogMaintenance => 'Noter une maintenance';
 
   @override
   String get orgMaintenanceLogged => 'Maintenance notée.';
@@ -4599,4 +4599,169 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get orgKindLabelTitle => 'Type';
+
+  @override
+  String get orgSectionMessages => 'Messages du bureau';
+
+  @override
+  String get orgSectionActivities => 'Exercices et événements';
+
+  @override
+  String get orgSectionAwareness => 'Sensibilisation';
+
+  @override
+  String orgMessagesPending(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count messages du bureau attendent votre accusé de lecture',
+      one: '1 message du bureau attend votre accusé de lecture',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get orgMessagesPendingHint => 'Ouvrez-les et confirmez leur lecture.';
+
+  @override
+  String get orgMessagesEmpty => 'Aucun message du bureau pour l’instant.';
+
+  @override
+  String get orgMessageAck => 'J’en ai pris connaissance';
+
+  @override
+  String get orgMessageWaiting => 'Accusé de lecture demandé';
+
+  @override
+  String orgMessageAcked(String date) {
+    return 'Lecture confirmée le $date';
+  }
+
+  @override
+  String get orgMessageAckDone => 'Le bureau sait que vous l’avez lu.';
+
+  @override
+  String get orgMessageAckEditors =>
+      'Un éditeur ou un administrateur de l’établissement confirme la lecture.';
+
+  @override
+  String get orgAwarenessEmpty =>
+      'Pas encore de conseils de sensibilisation pour votre type d’établissement.';
+
+  @override
+  String get orgAwarenessIntro =>
+      'Conseils préparés par le bureau pour les établissements de votre type.';
+
+  @override
+  String get orgActivitiesEmpty => 'Aucun exercice ni événement enregistré.';
+
+  @override
+  String get orgActivityDrill => 'Exercice';
+
+  @override
+  String get orgActivityEvent => 'Événement public';
+
+  @override
+  String get orgActivityAdd => 'Ajouter un exercice ou un événement';
+
+  @override
+  String get orgActivityHint =>
+      'Un exercice s’enregistre une fois réalisé ; un événement public se déclare à l’avance pour que le bureau se prépare.';
+
+  @override
+  String get orgActivityTitle => 'Titre';
+
+  @override
+  String get orgActivityTitleRequired => 'Saisissez un titre.';
+
+  @override
+  String get orgActivityStarts => 'Date';
+
+  @override
+  String get orgActivityEnds => 'Date de fin (facultative)';
+
+  @override
+  String get orgActivityParticipants => 'Participants (facultatif)';
+
+  @override
+  String orgActivityParticipantsCount(int count) {
+    return '$count participants';
+  }
+
+  @override
+  String get orgActivityNotes => 'Notes (facultatives)';
+
+  @override
+  String get orgActivityDelete => 'Supprimer';
+
+  @override
+  String orgActivityDeleteConfirm(String title) {
+    return 'Supprimer « $title » ?';
+  }
+
+  @override
+  String get orgActivityDeleted => 'Supprimé.';
+
+  @override
+  String get orgMaintenanceSheetTitle => 'Noter une maintenance';
+
+  @override
+  String get orgMaintenanceDate => 'Réalisée le';
+
+  @override
+  String get orgMaintenanceNote => 'Note (facultative)';
+
+  @override
+  String get orgMaintenancePhoto => 'Prendre une photo';
+
+  @override
+  String get orgMaintenancePhotoRetake => 'Reprendre';
+
+  @override
+  String get orgMaintenancePhotoReady => 'Photo jointe';
+
+  @override
+  String get orgMaintenancePhotoUnsupported => 'Photos JPEG ou PNG uniquement.';
+
+  @override
+  String get orgMaintenancePhotoTooLarge => 'La photo dépasse 10 Mo.';
+
+  @override
+  String get orgMaintenancePhotoFailed =>
+      'La photo n’a pas pu être envoyée ; la maintenance n’a pas été notée.';
+
+  @override
+  String get orgMaintenanceSave => 'Enregistrer';
+
+  @override
+  String get orgMaintenanceHistory => 'Journal de maintenance';
+
+  @override
+  String get orgMaintenanceHistoryEmpty => 'Aucune maintenance notée.';
+
+  @override
+  String get orgMaintenancePhotoStored => 'Photo conservée';
+
+  @override
+  String get orgMaintenancePhotoChecking => 'Photo en vérification';
+
+  @override
+  String get errorAckNotRequired =>
+      'Ce message ne demande pas d’accusé de lecture.';
+
+  @override
+  String get errorDrillInFuture =>
+      'Un exercice s’enregistre une fois réalisé : choisissez aujourd’hui ou une date passée.';
+
+  @override
+  String get errorInvalidDates =>
+      'La date de fin doit suivre la date de début.';
+
+  @override
+  String get errorMaintenanceInFuture =>
+      'Une maintenance ne peut pas être datée dans le futur.';
+
+  @override
+  String get errorInvalidDocument =>
+      'La photo n’est pas valable pour cette maintenance.';
 }

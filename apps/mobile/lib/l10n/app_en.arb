@@ -2189,7 +2189,7 @@
       }
     }
   },
-  "orgLogMaintenance": "Log maintenance today",
+  "orgLogMaintenance": "Log a maintenance",
   "orgMaintenanceLogged": "Maintenance logged.",
   "orgEvacuationEmpty": "No point on the map. Points are added on the portal.",
   "orgCertificatesEmpty": "No certificate yet.",
@@ -2290,5 +2290,80 @@
   "orgAlertTrainingExpiring": "Training expiring soon in the safety team",
   "orgAlertMaintenanceOverdue": "Equipment maintenance overdue",
   "orgAlertMaintenanceDueSoon": "Equipment maintenance due soon",
-  "orgKindLabelTitle": "Kind"
+  "orgKindLabelTitle": "Kind",
+  "orgSectionMessages": "Office messages",
+  "orgSectionActivities": "Drills and events",
+  "orgSectionAwareness": "Awareness",
+  "orgMessagesPending": "{count, plural, =1{1 Office message awaits your acknowledgement} other{{count} Office messages await your acknowledgement}}",
+  "@orgMessagesPending": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "orgMessagesPendingHint": "Open them and confirm you have read them.",
+  "orgMessagesEmpty": "No message from the Office yet.",
+  "orgMessageAck": "I have read it",
+  "orgMessageWaiting": "Acknowledgement requested",
+  "orgMessageAcked": "Acknowledged on {date}",
+  "@orgMessageAcked": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "orgMessageAckDone": "The Office knows you have read it.",
+  "orgMessageAckEditors": "An editor or administrator of the institution confirms the reading.",
+  "orgAwarenessEmpty": "No awareness tips for your kind of institution yet.",
+  "orgAwarenessIntro": "Tips the Office prepared for institutions of your kind.",
+  "orgActivitiesEmpty": "No drill or event recorded yet.",
+  "orgActivityDrill": "Drill",
+  "orgActivityEvent": "Public event",
+  "orgActivityAdd": "Add a drill or event",
+  "orgActivityHint": "A drill is recorded once held; a public event is declared ahead so the Office can prepare.",
+  "orgActivityTitle": "Title",
+  "orgActivityTitleRequired": "Enter a title.",
+  "orgActivityStarts": "Date",
+  "orgActivityEnds": "End date (optional)",
+  "orgActivityParticipants": "Participants (optional)",
+  "orgActivityParticipantsCount": "{count} participants",
+  "@orgActivityParticipantsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "orgActivityNotes": "Notes (optional)",
+  "orgActivityDelete": "Delete",
+  "orgActivityDeleteConfirm": "Delete “{title}”?",
+  "@orgActivityDeleteConfirm": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "orgActivityDeleted": "Deleted.",
+  "orgMaintenanceSheetTitle": "Log a maintenance",
+  "orgMaintenanceDate": "Done on",
+  "orgMaintenanceNote": "Note (optional)",
+  "orgMaintenancePhoto": "Take a photo",
+  "orgMaintenancePhotoRetake": "Retake",
+  "orgMaintenancePhotoReady": "Photo attached",
+  "orgMaintenancePhotoUnsupported": "Only JPEG or PNG photos.",
+  "orgMaintenancePhotoTooLarge": "The photo is larger than 10 MB.",
+  "orgMaintenancePhotoFailed": "The photo could not be sent; the maintenance was not recorded.",
+  "orgMaintenanceSave": "Record",
+  "orgMaintenanceHistory": "Maintenance log",
+  "orgMaintenanceHistoryEmpty": "No maintenance recorded yet.",
+  "orgMaintenancePhotoStored": "Photo kept",
+  "orgMaintenancePhotoChecking": "Photo being checked",
+  "errorAckNotRequired": "This message does not ask for an acknowledgement.",
+  "errorDrillInFuture": "A drill is recorded once held: choose today or an earlier date.",
+  "errorInvalidDates": "The end date must follow the start date.",
+  "errorMaintenanceInFuture": "A maintenance cannot be dated in the future.",
+  "errorInvalidDocument": "The photo is not valid for this maintenance."
 }

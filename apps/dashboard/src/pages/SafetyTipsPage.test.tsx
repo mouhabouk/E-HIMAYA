@@ -70,6 +70,7 @@ describe("SafetyTipsPage", () => {
           fr: { title: "", do: [], dont: [] },
           en: { title: "", do: [], dont: [] },
         },
+        org_kinds: [],
       }),
     );
     // The saved tip is complete (from the server): publishing is now possible.
@@ -104,6 +105,23 @@ describe("SafetyTipsPage", () => {
     expect(body.version).toBe(1);
     expect(body.content.fr).toEqual({ title: "Incendie", do: ["Sortez", "Appelez le 198"], dont: [] });
     expect(await within(editor).findByText(/Traduction incomplète/)).toBeInTheDocument();
+  });
+
+  it("turns a tip into awareness for some institution kinds (P2b)", async () => {
+    const tip = makeTip();
+    const updateTip = vi.fn((_id: string, body: SafetyTipBody) => Promise.resolve({ ...tip, org_kinds: body.org_kinds, version: 2 }));
+    setup([tip, makeTip({ id: "t-3", hazard: "chemical_leak", position: 30, org_kinds: ["industrial", "energy"] })], { updateTip });
+    const table = await screen.findByRole("table", { name: "Conseils de sécurité" });
+    expect(within(table).getByText("Établissements (2)")).toHaveAttribute("title", "Industrielle, Énergie et carburants");
+
+    fireEvent.click(within(table).getAllByRole("button", { name: /Modifier/ })[0] as HTMLElement);
+    const editor = await screen.findByRole("region", { name: /Modifier/ });
+    const kinds = within(editor).getByRole("group", { name: "Sensibilisation des établissements par type" });
+    fireEvent.click(within(kinds).getByLabelText("Santé"));
+    fireEvent.click(within(kinds).getByLabelText("Éducation"));
+    fireEvent.click(within(editor).getByRole("button", { name: "Enregistrer" }));
+    await waitFor(() => expect(updateTip).toHaveBeenCalledTimes(1));
+    expect(updateTip.mock.calls[0]?.[1]).toMatchObject({ org_kinds: ["education", "health"] });
   });
 
   it("deletes a tip after confirmation", async () => {
