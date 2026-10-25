@@ -10,6 +10,8 @@
 | مرجع التصميم: جداول الألوان ورموزها والأيقونات والإطارات ومصادرها وروابط التحميل | [`docs/design-reference.html`](docs/design-reference.html) |
 | قاعدة نهاية المرحلة: تحيين مرجع التصميم والمخططات والملف الوصفي وكراس الشروط والعرض التقديمي | [`docs/phase-end.md`](docs/phase-end.md) |
 | الإصدارات المثبتة للأدوات | [`docs/versions.md`](docs/versions.md) |
+| الدليل التقني للتنصيب: من تنزيل Ubuntu إلى التشغيل في الإنتاج | [`docs/install-guide.md`](docs/install-guide.md) |
+| قائمة الانتظار (البنود المؤجلة) | [`docs/backlog.md`](docs/backlog.md) |
 | تقرير المرحلة 1 | [`docs/phase-1-report.html`](docs/phase-1-report.html) |
 | تقرير المرحلة 2 | [`docs/phase-2-report.html`](docs/phase-2-report.html) |
 | عقد الواجهة البرمجية لمسار البلاغ | [`docs/api/phase-2-contract.md`](docs/api/phase-2-contract.md) |
