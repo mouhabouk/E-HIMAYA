@@ -77,6 +77,16 @@ class Certificat {
   signature Ed25519
   PDF sha256
   valide jusqu'au
+  {field} rappels 90 / 30 jours (P3a)
+  {field} à mettre à jour <<calculé>> (P3a)
+}
+class CachetManuel {
+  lieu, gouvernorat
+  date du cachet
+  note
+  agent (identifiant, nom)
+  photo sha256 (JPEG ou PNG)
+  écarts au moment du cachet
 }
 class Classement <<calculé>> {
   famille : IGH | industriel | ERP | travail
@@ -104,6 +114,7 @@ AccuséLecture "*" --> "1" Établissement
 Document "1" *-- "1..*" VersionDocument
 MatièreDangereuse "*" --> "0..1" Document : FDS
 Établissement "1" -- "*" Certificat
+Certificat "1" *-- "*" CachetManuel : P3a
 Établissement ..> Classement
 Établissement ..> "*" ChampDuType : selon le type
 Membre "*" --> "1" "Compte"
