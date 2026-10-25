@@ -1,6 +1,6 @@
 @startuml
 !include style.iuml
-title Cas d'utilisation : établissements (portail et application, P2a, P2b et P3a)
+title Cas d'utilisation : établissements (portail et application, P2a, P2b, P3a et P3b)
 left to right direction
 actor "Responsable\nd'établissement" as ADM
 actor "Membre d'équipe\nde sécurité" as MEM
@@ -36,6 +36,14 @@ rectangle "Portail et application" {
   usecase "Cacheter à la main et\nenregistrer le cachet (P3a)" as O24
   usecase "Être rappelé du renouvellement\n(90 et 30 jours) (P3a)" as O25
   usecase "Voir « à mettre à jour »\net régénérer (P3a)" as O26
+  usecase "Demander une visite\nde prévention (P3b)" as O27
+  usecase "Programmer la visite (P3b)" as O28
+  usecase "Remplir la grille d'inspection\nsur site (P3b)" as O29
+  usecase "Rapport de comparaison\nautomatique (P3b)" as O30
+  usecase "Décider : favorable, réserves\navec délais, refus motivé (P3b)" as O31
+  usecase "Répondre à une réserve (P3b)" as O32
+  usecase "Lever une réserve (P3b)" as O33
+  usecase "Consulter rapports et\nprocès-verbaux, rapport annuel (P3b)" as O34
 }
 ADM --> O1
 ADM --> O14
@@ -70,4 +78,15 @@ O24 ..> O23 : <<include>>
 ADM --> O25
 MEM --> O26
 O26 ..> O10 : <<extend>>
+ADM --> O27
+AUD --> O28
+O27 ..> O28 : <<include>>
+AUD --> O29
+O29 ..> O30 : <<include>>
+AUD --> O31
+O31 ..> O13 : <<extend>>
+MEM --> O32
+AUD --> O33
+O33 ..> O32 : <<extend>>
+MEM --> O34
 @enduml
