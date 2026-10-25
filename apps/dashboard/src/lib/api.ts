@@ -170,6 +170,18 @@ export const ERROR_CODES = [
   "certificate_not_valid",
   "photo_too_large",
   "unsupported_media_type",
+  // Prevention visits (phase P3b).
+  "visit_open",
+  "invalid_scheduled_on",
+  "invalid_inspected_on",
+  "unknown_item",
+  "finding_detail_required",
+  "reservations_required",
+  "reservations_not_allowed",
+  "invalid_due_on",
+  "reservation_text_required",
+  "reservation_lifted",
+  "invalid_year",
 ] as const;
 export type ErrorCode = (typeof ERROR_CODES)[number];
 

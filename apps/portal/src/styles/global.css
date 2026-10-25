@@ -2984,3 +2984,75 @@ button.nav-card:hover {
   font-size: 0.8125rem;
   text-align: center;
 }
+
+/* ---------- Prevention visits (phase P3b) ---------- */
+
+.visits {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.visit__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 1.05rem;
+}
+
+.visit .comparison summary {
+  cursor: pointer;
+  font-weight: 600;
+  min-block-size: 2.75rem;
+  display: flex;
+  align-items: center;
+}
+
+.reservations {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reservation {
+  border: 1px solid var(--border);
+  border-inline-start: 4px solid var(--warn-text);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.75rem;
+}
+
+.reservation p {
+  margin: 0.15rem 0;
+}
+
+.reservation--overdue {
+  border-inline-start-color: var(--error-text);
+  background: var(--error-bg);
+}
+
+.reservation--lifted {
+  border-inline-start-color: var(--ok-text);
+}
+
+.reservation__answer {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+  justify-items: start;
+}
+
+.reservation__answer textarea {
+  inline-size: 100%;
+}
+
+.field--inline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.annual {
+  margin-top: 0.5rem;
+}

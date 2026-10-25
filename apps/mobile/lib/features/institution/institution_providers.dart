@@ -386,3 +386,19 @@ final equipmentMaintenanceProvider = FutureProvider.autoDispose
       (ref, ids) => ref.watch(apiProvider).equipmentMaintenance(ids.$1, ids.$2),
       retry: (_, _) => null,
     );
+
+// ---- Phase P3b ----
+
+/// `GET /api/v1/orgs/{id}/prevention/visits`: prevention visits, newest first.
+final orgVisitsProvider = FutureProvider.autoDispose
+    .family<List<PreventionVisit>, String>(
+      (ref, orgId) => ref.watch(apiProvider).orgVisits(orgId),
+      retry: (_, _) => null,
+    );
+
+/// `GET /api/v1/orgs/{id}/annual-report?year=`: `(orgId, year)`.
+final orgAnnualReportProvider = FutureProvider.autoDispose
+    .family<AnnualReport, (String, int)>(
+      (ref, ids) => ref.watch(apiProvider).annualReport(ids.$1, ids.$2),
+      retry: (_, _) => null,
+    );

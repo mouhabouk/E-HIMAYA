@@ -163,6 +163,7 @@ describe("navigation and gates by role", () => {
       "Établissements",
       "Certificats à examiner",
       "Guichet",
+      "Visites de prévention",
     ]);
     expect(screen.getByText("Auditeur des établissements")).toBeInTheDocument();
   });

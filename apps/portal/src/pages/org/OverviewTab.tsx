@@ -22,7 +22,10 @@ export const REQUIREMENT_TAB: Readonly<Record<Requirement, string>> = {
 };
 
 function alertTab(kind: string): string {
-  return kind.startsWith("training") ? "team" : kind.startsWith("maintenance") ? "equipment" : "";
+  if (kind.startsWith("training")) return "team";
+  if (kind.startsWith("maintenance")) return "equipment";
+  if (kind.startsWith("certificate")) return "certificate";
+  return kind.startsWith("visit") || kind.startsWith("reservation") || kind.startsWith("prevention") ? "prevention" : "";
 }
 
 function StatusPanel() {

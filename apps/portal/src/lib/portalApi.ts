@@ -1,7 +1,10 @@
 import type { ApiClient } from "./api";
 import type {
   ActivityInput,
+  AnnualReport,
   OrgActivity,
+  Reservation,
+  Visit,
   OrgMessage,
   LiveView,
   Certificate,
@@ -142,6 +145,22 @@ export function portalApi(api: ApiClient) {
     deleteActivity: (id: string, activityId: string) =>
       api.request<undefined>(`${orgPath(id)}/activities/${enc(activityId)}`, { method: "DELETE" }),
 
+    // Phase P3b: prevention visits, reservations and the annual report
+    visits: (id: string, signal?: AbortSignal) => api.request<Visit[]>(`${orgPath(id)}/prevention/visits`, { signal }),
+    requestVisit: (id: string, note: string | null) =>
+      api.request<Visit>(`${orgPath(id)}/prevention/visits`, { method: "POST", body: { note } }),
+    withdrawVisit: (id: string, visitId: string) =>
+      api.request<Visit>(`${orgPath(id)}/prevention/visits/${enc(visitId)}/cancel`, { method: "POST", body: {} }),
+    visitReport: (id: string, visitId: string) =>
+      api.request<{ url: string }>(`${orgPath(id)}/prevention/visits/${enc(visitId)}/report`),
+    respondReservation: (id: string, reservationId: string, note: string) =>
+      api.request<Reservation>(`${orgPath(id)}/prevention/reservations/${enc(reservationId)}/response`, {
+        method: "POST",
+        body: { note },
+      }),
+    annualReport: (id: string, year: number, signal?: AbortSignal) =>
+      api.request<AnnualReport>(`${orgPath(id)}/annual-report`, { query: { year }, signal }),
+
     // geo reference (public)
     gouvernorats: (signal?: AbortSignal) =>
       api.request<Gouvernorat[]>("/api/v1/geo/gouvernorats", { query: { lang: "ar" }, signal, anonymous: true }),
@@ -168,6 +187,8 @@ export const queryKeys = {
   reports: (id: string) => ["org", id, "reports"] as const,
   messages: (id: string) => ["org", id, "messages"] as const,
   activities: (id: string) => ["org", id, "activities"] as const,
+  visits: (id: string) => ["org", id, "visits"] as const,
+  annual: (id: string, year: number) => ["org", id, "annual", year] as const,
   invitation: (token: string) => ["invitation", token] as const,
   publicCertificate: (code: string) => ["public-certificate", code] as const,
   certificateKey: ["certificate-key"] as const,

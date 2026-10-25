@@ -221,6 +221,37 @@ RENEWAL_BODY: Localized = {
     "en": "Hello,\n\nThe safety certificate {code} of “{org}” expires on {valid_until} (in {days} days).\n\nGenerate a new certificate and submit it from the portal: {link}",
 }
 
+# Phase P3b: prevention visit scheduled, and its decision.
+VISIT_SCHEDULED_SUBJECT: Localized = {
+    "ar": "زيارة وقاية مبرمجة لمؤسستكم {org}",
+    "fr": "Visite de prévention programmée pour {org}",
+    "en": "Prevention visit scheduled for {org}",
+}
+VISIT_SCHEDULED_BODY: Localized = {
+    "ar": "مرحبا،\n\nبرمجت الحماية المدنية زيارة وقاية لمؤسستكم «{org}» يوم {day}.\n\nتأكدوا من تحيين التصريح (الفريق، المواد، التجهيزات، الوثائق) قبل الزيارة: {link}",
+    "fr": "Bonjour,\n\nLa protection civile a programmé une visite de prévention de « {org} » le {day}.\n\nMettez votre déclaration à jour (équipe, matières, équipements, documents) avant la visite : {link}",
+    "en": "Hello,\n\nCivil protection scheduled a prevention visit of “{org}” on {day}.\n\nUpdate your declaration (team, materials, equipment, documents) before the visit: {link}",
+}
+VISIT_DECIDED_SUBJECT: Localized = {
+    "ar": "قرار زيارة الوقاية لمؤسستكم {org}",
+    "fr": "Décision de la visite de prévention de {org}",
+    "en": "Decision of the prevention visit of {org}",
+}
+VISIT_DECIDED_BODY: Localized = {
+    "ar": "مرحبا،\n\nصدر قرار زيارة الوقاية لمؤسستكم «{org}»: {decision_ar}.\n\nالمحضر والتحفظات وآجالها والشهادة في البوابة: {link}",
+    "fr": "Bonjour,\n\nLa décision de la visite de prévention de « {org} » est rendue : {decision_fr}.\n\nLe procès-verbal, les réserves et leurs délais et le certificat sont sur le portail : {link}",
+    "en": "Hello,\n\nThe decision of the prevention visit of “{org}” is out: {decision_en}.\n\nThe report, the reservations and their deadlines and the certificate are on the portal: {link}",
+}
+DECISION_WORDS: dict[str, Localized] = {
+    "approved": {"ar": "موافقة", "fr": "avis favorable", "en": "approved"},
+    "approved_with_reservations": {
+        "ar": "موافقة بتحفظات",
+        "fr": "avis favorable avec réserves",
+        "en": "approved with reservations",
+    },
+    "refused": {"ar": "رفض", "fr": "avis défavorable", "en": "refused"},
+}
+
 
 def pick(text: Localized, lang: str) -> str:
     return text.get(lang) or text["ar"]

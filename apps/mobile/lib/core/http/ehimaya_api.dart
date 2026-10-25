@@ -356,6 +356,41 @@ class EHimayaApi {
         return r.data!['id']! as String;
       });
 
+  /// Prevention visits of the institution, newest first (phase P3b).
+  Future<List<PreventionVisit>> orgVisits(String orgId) => guardApi(() async {
+    final r = await _dio.get<List<Object?>>('${_org(orgId)}/prevention/visits');
+    return [
+      for (final v in r.data!)
+        if (v is Map<String, Object?>) PreventionVisit.fromJson(v),
+    ];
+  });
+
+  /// Short-lived link to the visit report (procès-verbal) PDF.
+  Future<Uri> visitReportUrl(String orgId, String visitId) => _download(
+    '${_org(orgId)}/prevention/visits/${Uri.encodeComponent(visitId)}/report',
+  );
+
+  /// Short-lived link to a certificate PDF (safety or prevention).
+  Future<Uri> certificatePdfUrl(String orgId, String certificateId) =>
+      _download(
+        '${_org(orgId)}/certificates/${Uri.encodeComponent(certificateId)}/pdf',
+      );
+
+  Future<Uri> _download(String path) => guardApi(() async {
+    final r = await _dio.get<Map<String, Object?>>(path);
+    return Uri.parse(_dio.options.baseUrl).resolve(r.data!['url']! as String);
+  });
+
+  /// The year's activity of the institution (phase P3b §7).
+  Future<AnnualReport> annualReport(String orgId, int year) =>
+      guardApi(() async {
+        final r = await _dio.get<Map<String, Object?>>(
+          '${_org(orgId)}/annual-report',
+          queryParameters: {'year': year},
+        );
+        return AnnualReport.fromJson(r.data!);
+      });
+
   static String _org(String orgId) =>
       '/api/v1/orgs/${Uri.encodeComponent(orgId)}';
 

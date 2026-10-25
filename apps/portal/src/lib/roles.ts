@@ -14,7 +14,9 @@ export type OrgAction =
   | "submitCertificate"
   | "resubmit"
   | "acknowledge"
-  | "editActivities";
+  | "editActivities"
+  | "requestVisit"
+  | "answerReservations";
 
 const RANK: Readonly<Record<OrgRole, number>> = { member: 0, editor: 1, admin: 2 };
 
@@ -33,10 +35,13 @@ const NEEDED: Readonly<Record<OrgAction, OrgRole>> = {
   // Phase P2b: confirming an Office message was read, recording drills and declaring events.
   acknowledge: "editor",
   editActivities: "editor",
+  // Phase P3b: asking for a prevention visit, answering a reservation.
+  requestVisit: "admin",
+  answerReservations: "editor",
 };
 
 /** Actions that also need an approved (`active`) institution (`409 org_not_active`). */
-const NEEDS_ACTIVE: ReadonlySet<OrgAction> = new Set<OrgAction>(["report", "invite", "submitCertificate"]);
+const NEEDS_ACTIVE: ReadonlySet<OrgAction> = new Set<OrgAction>(["report", "invite", "submitCertificate", "requestVisit"]);
 
 export function roleAllows(role: OrgRole, action: OrgAction): boolean {
   return RANK[role] >= RANK[NEEDED[action]];

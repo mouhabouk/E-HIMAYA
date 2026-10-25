@@ -479,6 +479,12 @@ export const ORG_ALERT_KINDS = [
   "certificate_expiring",
   "certificate_expired",
   "certificate_needs_update",
+  // Phase P3b: a visit to come, reservations' deadlines, the prevention certificate.
+  "visit_scheduled",
+  "reservation_due_soon",
+  "reservation_overdue",
+  "prevention_expiring",
+  "prevention_expired",
 ] as const;
 
 export const CERTIFICATE_STATUSES = ["draft", "submitted", "approved", "rejected", "revoked"] as const;
@@ -614,6 +620,8 @@ export interface OrgDocument {
 export interface Certificate {
   id: string;
   code: string;
+  /** Phase P3b: the safety self-assessment, or the prevention certificate issued after a visit. */
+  kind?: "safety" | "prevention";
   status: CertificateStatus;
   superseded: boolean;
   created_at: string;

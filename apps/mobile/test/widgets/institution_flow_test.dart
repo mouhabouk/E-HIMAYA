@@ -32,6 +32,72 @@ Map<String, Object?> messageJson() => {
   'acked_by': null,
 };
 
+/// A decided prevention visit with one reservation (phase P3b).
+const visitJson = <String, Object?>{
+  'id': 'v1',
+  'org_id': orgId,
+  'origin': 'request',
+  'status': 'decided',
+  'request_note': null,
+  'requested_by_name': 'Amel',
+  'requested_at': '2026-10-01T08:00:00Z',
+  'scheduled_on': '2026-10-20',
+  'inspector_name': 'Cdt Ben Salah',
+  'inspected_on': '2026-10-20',
+  'attendees': null,
+  'comparison': {
+    'items': [
+      {
+        'key': 'building.capacity',
+        'section': 'building',
+        'declared': 300,
+        'result': 'nonconform',
+        'observed': '420',
+        'note': null,
+      },
+    ],
+    'conform': 14,
+    'nonconform': 1,
+    'not_checked': 2,
+    'missing': [],
+    'changes': [],
+    'suggested': 'approved_with_reservations',
+  },
+  'decision': 'approved_with_reservations',
+  'decision_reason': null,
+  'decided_by_name': 'Cdt Ben Salah',
+  'decided_at': '2026-10-22T10:00:00Z',
+  'certificate': {
+    'id': 'cp1',
+    'kind': 'prevention',
+    'code': 'EHP-26-61-000009',
+    'status': 'approved',
+    'superseded': false,
+    'valid_until': '2027-10-22',
+    'stamps': [],
+  },
+  'reservations': [
+    {
+      'id': 'r1',
+      'visit_id': 'v1',
+      'item_key': 'building.capacity',
+      'text': 'Mettre à jour la capacité déclarée',
+      'due_on': '2026-11-22',
+      'state': 'open',
+      'response_note': null,
+      'responded_by_name': null,
+      'responded_at': null,
+      'lifted_by_name': null,
+      'lift_note': null,
+      'lifted_at': null,
+    },
+  ],
+  'has_report': true,
+  'cancel_reason': null,
+  'cancelled_at': null,
+  'created_at': '2026-10-01T08:00:00Z',
+};
+
 FakeResponse api(
   SeenRequest r, {
   bool offline = false,
@@ -169,6 +235,46 @@ FakeResponse api(
             ],
           },
         ],
+      );
+    case '/api/v1/orgs/$orgId/prevention/visits':
+      return const FakeResponse(200, json: [visitJson]);
+    case '/api/v1/orgs/$orgId/prevention/visits/v1/report':
+    case '/api/v1/orgs/$orgId/certificates/cp1/pdf':
+      return FakeResponse(
+        200,
+        json: {'url': 'https://files.test${r.path}.pdf?sig=1'},
+      );
+    case '/api/v1/orgs/$orgId/annual-report':
+      return FakeResponse(
+        200,
+        json: {
+          'year': int.parse(r.uri.queryParameters['year']!),
+          'org_id': orgId,
+          'org_name': 'Société X',
+          'generated_on': '2026-10-25',
+          'drills': [
+            {
+              'id': 'a1',
+              'kind': 'drill',
+              'title': 'Évacuation générale',
+              'starts_on': '2026-03-12',
+              'ends_on': null,
+              'participants': 120,
+              'notes': 'Évacuation en 4 minutes',
+              'created_by': 'Amel',
+              'created_at': '2026-03-12T09:00:00Z',
+            },
+          ],
+          'events': [],
+          'participants': 120,
+          'maintenance': 3,
+          'training': {'valid': 2, 'expiring': 1, 'expired': 1, 'unknown': 0},
+          'visits': [visitJson],
+          'reservations': {'opened': 1, 'lifted': 0, 'open': 1, 'overdue': 0},
+          'certificates': [visitJson['certificate']],
+          'stamps': 1,
+          'reports': 4,
+        },
       );
     case '/api/v1/orgs/$orgId/members':
       return const FakeResponse(
@@ -505,6 +611,80 @@ void main() {
       await unmountApp(tester);
     },
   );
+
+  testWidgets('P3b: reports and records (F-APP-132)', (tester) async {
+    await tallScreen(tester);
+    final opened = <Uri>[];
+    final h = await pumpApp(
+      tester,
+      prefs: registeredPrefs(locale: 'fr'),
+      session: testSession,
+      opened: opened,
+      api: (r) => api(r, role: 'member'),
+    );
+    await tester.tap(find.byKey(const Key('home-institution')));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byKey(const Key('org-section-records')));
+    await tester.tap(find.byKey(const Key('org-section-records')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Rapports et procès-verbaux'), findsWidgets);
+    // Reminders from the summary.
+    expect(
+      find.text('Formation expirée dans l’équipe de sécurité'),
+      findsOneWidget,
+    );
+    // The visit: decision, comparison, certificate [SIM] and its documents.
+    expect(find.text('Demandée par l’établissement'), findsOneWidget);
+    expect(find.text('Avis favorable avec réserves'), findsOneWidget);
+    expect(
+      find.text(
+        'Comparaison : 14 conformes · 1 non conformes · 2 non vérifiés',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('[SIM] Modèle en attente de l’Office'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('org-visit-report-v1')));
+    await tester.pumpAndSettle();
+    expect(
+      opened.last.toString(),
+      'https://files.test/api/v1/orgs/$orgId/prevention/visits/v1/report.pdf?sig=1',
+    );
+    await tester.tap(find.byKey(const Key('org-visit-certificate-v1')));
+    await tester.pumpAndSettle();
+    expect(opened.last.path, endsWith('/certificates/cp1/pdf.pdf'));
+    // Reservations and deadlines.
+    expect(find.text('Mettre à jour la capacité déclarée'), findsOneWidget);
+    expect(find.textContaining('Ouverte · À lever avant le'), findsOneWidget);
+    // Certificates of both kinds.
+    expect(find.text('Certificat de sécurité · EH-CERT-0001'), findsOneWidget);
+    // Annual report of this year, with the drill reports.
+    final annual = h.adapter.requests.lastWhere(
+      (r) => r.path.endsWith('/annual-report'),
+    );
+    expect(annual.uri.queryParameters['year'], '${DateTime.now().year}');
+    await tester.ensureVisible(find.byKey(const Key('org-annual')));
+    expect(find.text('1 exercice(s), 120 participant(s)'), findsOneWidget);
+    expect(
+      find.text('Réserves : 1 émises · 0 levées · 0 en retard'),
+      findsOneWidget,
+    );
+    expect(find.text('Évacuation générale'), findsOneWidget);
+    // Another year.
+    await tester.ensureVisible(find.byKey(const Key('org-records-year')));
+    await tester.tap(find.byKey(const Key('org-records-year')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('${DateTime.now().year - 1}').last);
+    await tester.pumpAndSettle();
+    expect(
+      h.adapter.requests
+          .lastWhere((r) => r.path.endsWith('/annual-report'))
+          .uri
+          .queryParameters['year'],
+      '${DateTime.now().year - 1}',
+    );
+    await unmountApp(tester);
+  });
 
   testWidgets('P2b: Office message acknowledged, awareness, drills', (
     tester,

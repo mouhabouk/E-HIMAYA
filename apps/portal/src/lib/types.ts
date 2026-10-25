@@ -77,6 +77,12 @@ export const ALERT_KINDS = [
   "certificate_expiring",
   "certificate_expired",
   "certificate_needs_update",
+  // Phase P3b: a visit to come, reservations' deadlines, the prevention certificate.
+  "visit_scheduled",
+  "reservation_due_soon",
+  "reservation_overdue",
+  "prevention_expiring",
+  "prevention_expired",
 ] as const;
 export type AlertKind = (typeof ALERT_KINDS)[number];
 
@@ -293,6 +299,8 @@ export type CertificateStatus = (typeof CERTIFICATE_STATUSES)[number];
 export interface Certificate {
   id: string;
   code: string;
+  /** Phase P3b: the safety self-assessment, or the prevention certificate issued after a visit. */
+  kind?: "safety" | "prevention";
   status: CertificateStatus;
   superseded: boolean;
   created_at: string;
@@ -378,6 +386,93 @@ export interface PublicCertificate {
   revoked_at?: string | null;
   /** Phase P3a: where and when the paper certificate was stamped (never by whom). */
   stamps?: { place: string; stamped_on: string }[];
+  /** Phase P3b: a prevention certificate, granted with reservations or not (their text is not public). */
+  kind?: "safety" | "prevention";
+  with_reservations?: boolean;
+}
+
+// ---------------------------------------------------------------- prevention visits (phase P3b)
+
+export const VISIT_STATUSES = ["requested", "scheduled", "inspected", "decided", "cancelled"] as const;
+export type VisitStatus = (typeof VISIT_STATUSES)[number];
+export type VisitDecision = "approved" | "approved_with_reservations" | "refused";
+export type InspectionResult = "conform" | "nonconform" | "not_checked";
+export type ReservationState = "open" | "responded" | "overdue" | "lifted";
+
+export interface InspectionItem {
+  key: string;
+  section: string;
+  declared: unknown;
+  result: InspectionResult;
+  observed: string | null;
+  note: string | null;
+}
+
+export interface ComparisonReport {
+  items: InspectionItem[];
+  conform: number;
+  nonconform: number;
+  not_checked: number;
+  missing: string[];
+  changes: CertificateChange[];
+  suggested: "approved" | "approved_with_reservations";
+}
+
+export interface Reservation {
+  id: string;
+  visit_id: string;
+  item_key: string | null;
+  text: string;
+  due_on: string;
+  state: ReservationState;
+  response_note: string | null;
+  responded_by_name: string | null;
+  responded_at: string | null;
+  lifted_by_name: string | null;
+  lift_note: string | null;
+  lifted_at: string | null;
+}
+
+export interface Visit {
+  id: string;
+  org_id: string;
+  origin: "request" | "scheduled";
+  status: VisitStatus;
+  request_note: string | null;
+  requested_by_name: string | null;
+  requested_at: string | null;
+  scheduled_on: string | null;
+  inspector_name: string | null;
+  inspected_on: string | null;
+  attendees: string | null;
+  comparison: ComparisonReport | null;
+  decision: VisitDecision | null;
+  decision_reason: string | null;
+  decided_by_name: string | null;
+  decided_at: string | null;
+  certificate: Certificate | null;
+  reservations: Reservation[];
+  has_report: boolean;
+  cancel_reason: string | null;
+  cancelled_at: string | null;
+  created_at: string;
+}
+
+export interface AnnualReport {
+  year: number;
+  org_id: string;
+  org_name: string;
+  generated_on: string;
+  drills: OrgActivity[];
+  events: OrgActivity[];
+  participants: number;
+  maintenance: number;
+  training: { valid: number; expiring: number; expired: number; unknown: number };
+  visits: Visit[];
+  reservations: { opened: number; lifted: number; open: number; overdue: number };
+  certificates: Certificate[];
+  stamps: number;
+  reports: number;
 }
 
 // ---------------------------------------------------------------- reports (§8, phase 2 §3)

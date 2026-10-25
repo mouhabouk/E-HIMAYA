@@ -2386,5 +2386,170 @@
   "orgCertSectionHazmat": "Hazardous materials",
   "orgCertSectionDocuments": "Documents",
   "orgCertSectionSafetyTeam": "Safety team",
-  "orgCertSectionEvacuation": "Evacuation"
+  "orgCertSectionEvacuation": "Evacuation",
+  "orgSectionRecords": "Reports and records",
+  "orgRecordsHint": "Everything the Office recorded about the institution: visit reports, reservations and deadlines, certificates, drills and the annual report. Requests and answers are made on the portal.",
+  "orgRecordsVisits": "Prevention visits",
+  "orgRecordsVisitsEmpty": "No prevention visit yet.",
+  "orgVisitOriginRequest": "Requested by the institution",
+  "orgVisitOriginOffice": "Scheduled by the Office",
+  "orgVisitStatusRequested": "Requested",
+  "orgVisitStatusScheduled": "Scheduled",
+  "orgVisitStatusInspected": "Inspected, decision pending",
+  "orgVisitStatusDecided": "Decided",
+  "orgVisitStatusCancelled": "Cancelled",
+  "orgVisitDecisionApproved": "Approved",
+  "orgVisitDecisionReservations": "Approved with reservations",
+  "orgVisitDecisionRefused": "Refused",
+  "orgVisitOn": "Visit on {date}",
+  "@orgVisitOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "orgVisitInspector": "Inspector: {name}",
+  "@orgVisitInspector": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "orgVisitComparison": "Comparison: {conform} conforming · {nonconform} non-conforming · {notChecked} not checked",
+  "@orgVisitComparison": {
+    "placeholders": {
+      "conform": {
+        "type": "int"
+      },
+      "nonconform": {
+        "type": "int"
+      },
+      "notChecked": {
+        "type": "int"
+      }
+    }
+  },
+  "orgVisitReason": "Reason: {reason}",
+  "@orgVisitReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "orgVisitReport": "Visit report (PDF)",
+  "orgCertificatePdf": "Certificate (PDF)",
+  "orgPdfUnavailable": "The document could not be opened.",
+  "orgRecordsReservations": "Reservations and deadlines",
+  "orgRecordsReservationsEmpty": "No reservation to address.",
+  "orgReservationDue": "Due by {date}",
+  "@orgReservationDue": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "orgReservationOpen": "Open",
+  "orgReservationResponded": "Answered, awaiting the Office",
+  "orgReservationOverdue": "Overdue",
+  "orgReservationLifted": "Lifted",
+  "orgCertKindSafety": "Safety certificate",
+  "orgCertKindPrevention": "Prevention certificate",
+  "orgCertPreventionSim": "[SIM] Model awaiting the Office",
+  "orgRecordsDrills": "Drill reports",
+  "orgRecordsDrillsEmpty": "No drill recorded this year.",
+  "orgRecordsAnnual": "Annual report",
+  "orgRecordsYear": "Year",
+  "orgAnnualDrills": "{count} drill(s), {participants} participant(s)",
+  "@orgAnnualDrills": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "participants": {
+        "type": "int"
+      }
+    }
+  },
+  "orgAnnualEvents": "{count} public event(s)",
+  "@orgAnnualEvents": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "orgAnnualMaintenance": "{count} maintenance operation(s)",
+  "@orgAnnualMaintenance": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "orgAnnualTraining": "Training: {valid} valid · {expiring} expiring · {expired} expired",
+  "@orgAnnualTraining": {
+    "placeholders": {
+      "valid": {
+        "type": "int"
+      },
+      "expiring": {
+        "type": "int"
+      },
+      "expired": {
+        "type": "int"
+      }
+    }
+  },
+  "orgAnnualVisits": "{count} prevention visit(s)",
+  "@orgAnnualVisits": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "orgAnnualReservations": "Reservations: {opened} issued · {lifted} lifted · {overdue} overdue",
+  "@orgAnnualReservations": {
+    "placeholders": {
+      "opened": {
+        "type": "int"
+      },
+      "lifted": {
+        "type": "int"
+      },
+      "overdue": {
+        "type": "int"
+      }
+    }
+  },
+  "orgAnnualCertificates": "{count} certificate(s), {stamps} stamp(s)",
+  "@orgAnnualCertificates": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "stamps": {
+        "type": "int"
+      }
+    }
+  },
+  "orgAnnualReports": "{count} report(s) sent from the institution",
+  "@orgAnnualReports": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "orgRecordsReminders": "Reminders",
+  "orgRecordsRemindersEmpty": "Nothing to do for now.",
+  "orgAlertVisitScheduled": "A prevention visit is scheduled",
+  "orgAlertReservationDueSoon": "A reservation is due soon",
+  "orgAlertReservationOverdue": "A reservation is overdue",
+  "orgAlertPreventionExpiring": "The prevention certificate expires soon",
+  "orgAlertPreventionExpired": "The prevention certificate has expired"
 }

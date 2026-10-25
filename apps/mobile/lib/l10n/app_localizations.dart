@@ -8361,6 +8361,306 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Evacuation'**
   String get orgCertSectionEvacuation;
+
+  /// No description provided for @orgSectionRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports and records'**
+  String get orgSectionRecords;
+
+  /// No description provided for @orgRecordsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything the Office recorded about the institution: visit reports, reservations and deadlines, certificates, drills and the annual report. Requests and answers are made on the portal.'**
+  String get orgRecordsHint;
+
+  /// No description provided for @orgRecordsVisits.
+  ///
+  /// In en, this message translates to:
+  /// **'Prevention visits'**
+  String get orgRecordsVisits;
+
+  /// No description provided for @orgRecordsVisitsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No prevention visit yet.'**
+  String get orgRecordsVisitsEmpty;
+
+  /// No description provided for @orgVisitOriginRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Requested by the institution'**
+  String get orgVisitOriginRequest;
+
+  /// No description provided for @orgVisitOriginOffice.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled by the Office'**
+  String get orgVisitOriginOffice;
+
+  /// No description provided for @orgVisitStatusRequested.
+  ///
+  /// In en, this message translates to:
+  /// **'Requested'**
+  String get orgVisitStatusRequested;
+
+  /// No description provided for @orgVisitStatusScheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled'**
+  String get orgVisitStatusScheduled;
+
+  /// No description provided for @orgVisitStatusInspected.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspected, decision pending'**
+  String get orgVisitStatusInspected;
+
+  /// No description provided for @orgVisitStatusDecided.
+  ///
+  /// In en, this message translates to:
+  /// **'Decided'**
+  String get orgVisitStatusDecided;
+
+  /// No description provided for @orgVisitStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get orgVisitStatusCancelled;
+
+  /// No description provided for @orgVisitDecisionApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get orgVisitDecisionApproved;
+
+  /// No description provided for @orgVisitDecisionReservations.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved with reservations'**
+  String get orgVisitDecisionReservations;
+
+  /// No description provided for @orgVisitDecisionRefused.
+  ///
+  /// In en, this message translates to:
+  /// **'Refused'**
+  String get orgVisitDecisionRefused;
+
+  /// No description provided for @orgVisitOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit on {date}'**
+  String orgVisitOn(String date);
+
+  /// No description provided for @orgVisitInspector.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspector: {name}'**
+  String orgVisitInspector(String name);
+
+  /// No description provided for @orgVisitComparison.
+  ///
+  /// In en, this message translates to:
+  /// **'Comparison: {conform} conforming · {nonconform} non-conforming · {notChecked} not checked'**
+  String orgVisitComparison(int conform, int nonconform, int notChecked);
+
+  /// No description provided for @orgVisitReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason: {reason}'**
+  String orgVisitReason(String reason);
+
+  /// No description provided for @orgVisitReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit report (PDF)'**
+  String get orgVisitReport;
+
+  /// No description provided for @orgCertificatePdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Certificate (PDF)'**
+  String get orgCertificatePdf;
+
+  /// No description provided for @orgPdfUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The document could not be opened.'**
+  String get orgPdfUnavailable;
+
+  /// No description provided for @orgRecordsReservations.
+  ///
+  /// In en, this message translates to:
+  /// **'Reservations and deadlines'**
+  String get orgRecordsReservations;
+
+  /// No description provided for @orgRecordsReservationsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No reservation to address.'**
+  String get orgRecordsReservationsEmpty;
+
+  /// No description provided for @orgReservationDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Due by {date}'**
+  String orgReservationDue(String date);
+
+  /// No description provided for @orgReservationOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get orgReservationOpen;
+
+  /// No description provided for @orgReservationResponded.
+  ///
+  /// In en, this message translates to:
+  /// **'Answered, awaiting the Office'**
+  String get orgReservationResponded;
+
+  /// No description provided for @orgReservationOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get orgReservationOverdue;
+
+  /// No description provided for @orgReservationLifted.
+  ///
+  /// In en, this message translates to:
+  /// **'Lifted'**
+  String get orgReservationLifted;
+
+  /// No description provided for @orgCertKindSafety.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety certificate'**
+  String get orgCertKindSafety;
+
+  /// No description provided for @orgCertKindPrevention.
+  ///
+  /// In en, this message translates to:
+  /// **'Prevention certificate'**
+  String get orgCertKindPrevention;
+
+  /// No description provided for @orgCertPreventionSim.
+  ///
+  /// In en, this message translates to:
+  /// **'[SIM] Model awaiting the Office'**
+  String get orgCertPreventionSim;
+
+  /// No description provided for @orgRecordsDrills.
+  ///
+  /// In en, this message translates to:
+  /// **'Drill reports'**
+  String get orgRecordsDrills;
+
+  /// No description provided for @orgRecordsDrillsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No drill recorded this year.'**
+  String get orgRecordsDrillsEmpty;
+
+  /// No description provided for @orgRecordsAnnual.
+  ///
+  /// In en, this message translates to:
+  /// **'Annual report'**
+  String get orgRecordsAnnual;
+
+  /// No description provided for @orgRecordsYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Year'**
+  String get orgRecordsYear;
+
+  /// No description provided for @orgAnnualDrills.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} drill(s), {participants} participant(s)'**
+  String orgAnnualDrills(int count, int participants);
+
+  /// No description provided for @orgAnnualEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} public event(s)'**
+  String orgAnnualEvents(int count);
+
+  /// No description provided for @orgAnnualMaintenance.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} maintenance operation(s)'**
+  String orgAnnualMaintenance(int count);
+
+  /// No description provided for @orgAnnualTraining.
+  ///
+  /// In en, this message translates to:
+  /// **'Training: {valid} valid · {expiring} expiring · {expired} expired'**
+  String orgAnnualTraining(int valid, int expiring, int expired);
+
+  /// No description provided for @orgAnnualVisits.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} prevention visit(s)'**
+  String orgAnnualVisits(int count);
+
+  /// No description provided for @orgAnnualReservations.
+  ///
+  /// In en, this message translates to:
+  /// **'Reservations: {opened} issued · {lifted} lifted · {overdue} overdue'**
+  String orgAnnualReservations(int opened, int lifted, int overdue);
+
+  /// No description provided for @orgAnnualCertificates.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} certificate(s), {stamps} stamp(s)'**
+  String orgAnnualCertificates(int count, int stamps);
+
+  /// No description provided for @orgAnnualReports.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} report(s) sent from the institution'**
+  String orgAnnualReports(int count);
+
+  /// No description provided for @orgRecordsReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders'**
+  String get orgRecordsReminders;
+
+  /// No description provided for @orgRecordsRemindersEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to do for now.'**
+  String get orgRecordsRemindersEmpty;
+
+  /// No description provided for @orgAlertVisitScheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'A prevention visit is scheduled'**
+  String get orgAlertVisitScheduled;
+
+  /// No description provided for @orgAlertReservationDueSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'A reservation is due soon'**
+  String get orgAlertReservationDueSoon;
+
+  /// No description provided for @orgAlertReservationOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'A reservation is overdue'**
+  String get orgAlertReservationOverdue;
+
+  /// No description provided for @orgAlertPreventionExpiring.
+  ///
+  /// In en, this message translates to:
+  /// **'The prevention certificate expires soon'**
+  String get orgAlertPreventionExpiring;
+
+  /// No description provided for @orgAlertPreventionExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'The prevention certificate has expired'**
+  String get orgAlertPreventionExpired;
 }
 
 class _AppLocalizationsDelegate

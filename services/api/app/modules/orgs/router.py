@@ -22,7 +22,7 @@ router = APIRouter(prefix="/api/v1", tags=["institutions"])
 
 Session = Annotated[AsyncSession, Depends(get_session)]
 OrgId = Annotated[uuid.UUID, Path()]
-CODE_PATTERN = r"^EHC-\d{2}-\d{2}-\d{6}$"
+CODE_PATTERN = r"^EH[CP]-\d{2}-\d{2}-\d{6}$"
 VERIFY_LIMIT, VERIFY_WINDOW_S = 30, 60
 CREATE_LIMIT, CREATE_WINDOW_S = 10, 3600
 

@@ -21,6 +21,7 @@ const SIGNED_IN_SCREENS = [
   "/orgs/o-1/documents",
   "/orgs/o-1/members",
   "/orgs/o-1/certificate",
+  "/orgs/o-1/prevention",
 ];
 
 /** An approved certificate that needs updating, with a hand stamp (phase P3a). */
@@ -44,6 +45,74 @@ const P3A_CERTIFICATE = makeCertificate({
     },
   ],
 });
+
+/** A prevention visit decided with one reservation, and the year's report (phase P3b). */
+const P3B_VISIT = {
+  id: "v-1",
+  org_id: "o-1",
+  origin: "request",
+  status: "decided",
+  request_note: null,
+  requested_by_name: "Amira Ben Salah",
+  requested_at: "2026-10-01T08:00:00Z",
+  scheduled_on: "2026-10-20",
+  inspector_name: "Cdt Ben Salah",
+  inspected_on: "2026-10-20",
+  attendees: null,
+  comparison: {
+    items: [
+      { key: "building.capacity", section: "building", declared: 300, result: "nonconform", observed: "420", note: null },
+      { key: "site.exits", section: "site", declared: null, result: "conform", observed: null, note: null },
+    ],
+    conform: 1,
+    nonconform: 1,
+    not_checked: 0,
+    missing: [],
+    changes: [],
+    suggested: "approved_with_reservations",
+  },
+  decision: "approved_with_reservations",
+  decision_reason: null,
+  decided_by_name: "Cdt Ben Salah",
+  decided_at: "2026-10-22T10:00:00Z",
+  certificate: makeCertificate({ id: "c-9", kind: "prevention", code: "EHP-26-61-000009", status: "approved", valid_until: "2099-10-22" }),
+  reservations: [
+    {
+      id: "r-1",
+      visit_id: "v-1",
+      item_key: "building.capacity",
+      text: "Mettre à jour la capacité déclarée",
+      due_on: "2099-11-22",
+      state: "open",
+      response_note: null,
+      responded_by_name: null,
+      responded_at: null,
+      lifted_by_name: null,
+      lift_note: null,
+      lifted_at: null,
+    },
+  ],
+  has_report: true,
+  cancel_reason: null,
+  cancelled_at: null,
+  created_at: "2026-10-01T08:00:00Z",
+};
+const P3B_ANNUAL = {
+  year: new Date().getFullYear(),
+  org_id: "o-1",
+  org_name: "Société X",
+  generated_on: "2026-10-25",
+  drills: [],
+  events: [],
+  participants: 0,
+  maintenance: 3,
+  training: { valid: 2, expiring: 0, expired: 1, unknown: 0 },
+  visits: [P3B_VISIT],
+  reservations: { opened: 1, lifted: 0, open: 1, overdue: 0 },
+  certificates: [P3B_VISIT.certificate],
+  stamps: 0,
+  reports: 2,
+};
 
 const json = (route: Route, body: unknown, status = 200) =>
   route.fulfill({ status, contentType: "application/json", body: JSON.stringify(body) });
@@ -104,6 +173,8 @@ async function mock(page: Page): Promise<string[]> {
     if (pathname === "/api/v1/public/certificate-key") {
       return json(route, { algorithm: "Ed25519", public_key: "MCowBQYDK2VwAyEA" + "A".repeat(43) + "=", signed_message: "code|fingerprint|pdf_sha256" });
     }
+    if (pathname === "/api/v1/orgs/o-1/prevention/visits") return json(route, [P3B_VISIT]);
+    if (pathname === "/api/v1/orgs/o-1/annual-report") return json(route, P3B_ANNUAL);
     if (pathname.endsWith("/reports")) return json(route, { items: [], next_cursor: null });
     // Registers, documents, members, invitations and certificates of the institution: empty lists.
     return json(route, []);
