@@ -873,6 +873,9 @@ class OrgCertificate {
     required this.status,
     this.validUntil,
     this.superseded = false,
+    this.needsUpdate,
+    this.changes = const [],
+    this.stamps = const [],
   });
 
   final String code;
@@ -882,12 +885,56 @@ class OrgCertificate {
   final DateTime? validUntil;
   final bool superseded;
 
+  /// Phase P3a, on the current approved certificate only (null otherwise): the institution changed
+  /// substantively since approval.
+  final bool? needsUpdate;
+  final List<CertificateChange> changes;
+  final List<CertificateStamp> stamps;
+
   factory OrgCertificate.fromJson(Map<String, Object?> json) => OrgCertificate(
     code: json['code'] as String? ?? '',
     status: json['status'] as String? ?? 'draft',
     validUntil: _date(json['valid_until']),
     superseded: json['superseded'] == true,
+    needsUpdate: json['needs_update'] as bool?,
+    changes: [
+      for (final c in (json['changes'] as List?) ?? const [])
+        if (c is Map) CertificateChange.fromJson(c.cast<String, Object?>()),
+    ],
+    stamps: [
+      for (final s in (json['stamps'] as List?) ?? const [])
+        if (s is Map) CertificateStamp.fromJson(s.cast<String, Object?>()),
+    ],
   );
+}
+
+/// One substantive difference between the approved certificate and the institution today (phase P3a §3.4).
+class CertificateChange {
+  const CertificateChange({required this.section, required this.field});
+
+  /// `identity` | `building` | `classification` | `hazmat` | `documents` | `safety_team` | `evacuation`.
+  final String section;
+  final String field;
+
+  factory CertificateChange.fromJson(Map<String, Object?> json) =>
+      CertificateChange(
+        section: json['section'] as String? ?? '',
+        field: json['field'] as String? ?? '',
+      );
+}
+
+/// A stamp put by hand on the paper certificate at a regional administration (phase P3a §3.2).
+class CertificateStamp {
+  const CertificateStamp({required this.place, this.stampedOn});
+
+  final String place;
+  final DateTime? stampedOn;
+
+  factory CertificateStamp.fromJson(Map<String, Object?> json) =>
+      CertificateStamp(
+        place: json['place'] as String? ?? '',
+        stampedOn: _date(json['stamped_on']),
+      );
 }
 
 /// Member of the institution's account (phase 4 §2).

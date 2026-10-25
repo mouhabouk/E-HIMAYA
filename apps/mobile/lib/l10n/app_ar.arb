@@ -1362,5 +1362,19 @@
   "errorDrillInFuture": "يُسجَّل التمرين بعد إجرائه: اختر اليوم أو تاريخًا سابقًا.",
   "errorInvalidDates": "يجب أن يلي تاريخُ النهاية تاريخَ البداية.",
   "errorMaintenanceInFuture": "لا يمكن تأريخ صيانة في المستقبل.",
-  "errorInvalidDocument": "الصورة غير صالحة لهذه الصيانة."
+  "errorInvalidDocument": "الصورة غير صالحة لهذه الصيانة.",
+  "orgAlertCertificateExpiring": "شهادة السلامة تقترب من نهاية صلاحيتها",
+  "orgAlertCertificateExpired": "انتهت صلاحية شهادة السلامة",
+  "orgAlertCertificateNeedsUpdate": "شهادة السلامة تحتاج تحديثا",
+  "orgCertNeedsUpdate": "تحتاج تحديثا",
+  "orgCertNeedsUpdateBody": "تغيّر منذ المصادقة: {sections}. ولّد شهادة جديدة من البوابة.",
+  "orgCertUpToDate": "مطابقة لحال المؤسسة",
+  "orgCertStamped": "مختومة",
+  "orgCertSectionIdentity": "الهوية",
+  "orgCertSectionBuilding": "البناية",
+  "orgCertSectionClassification": "التصنيف",
+  "orgCertSectionHazmat": "المواد الخطرة",
+  "orgCertSectionDocuments": "الوثائق",
+  "orgCertSectionSafetyTeam": "فريق السلامة",
+  "orgCertSectionEvacuation": "الإخلاء"
 }

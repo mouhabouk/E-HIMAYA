@@ -4661,4 +4661,49 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get errorInvalidDocument => 'الصورة غير صالحة لهذه الصيانة.';
+
+  @override
+  String get orgAlertCertificateExpiring =>
+      'شهادة السلامة تقترب من نهاية صلاحيتها';
+
+  @override
+  String get orgAlertCertificateExpired => 'انتهت صلاحية شهادة السلامة';
+
+  @override
+  String get orgAlertCertificateNeedsUpdate => 'شهادة السلامة تحتاج تحديثا';
+
+  @override
+  String get orgCertNeedsUpdate => 'تحتاج تحديثا';
+
+  @override
+  String orgCertNeedsUpdateBody(String sections) {
+    return 'تغيّر منذ المصادقة: $sections. ولّد شهادة جديدة من البوابة.';
+  }
+
+  @override
+  String get orgCertUpToDate => 'مطابقة لحال المؤسسة';
+
+  @override
+  String get orgCertStamped => 'مختومة';
+
+  @override
+  String get orgCertSectionIdentity => 'الهوية';
+
+  @override
+  String get orgCertSectionBuilding => 'البناية';
+
+  @override
+  String get orgCertSectionClassification => 'التصنيف';
+
+  @override
+  String get orgCertSectionHazmat => 'المواد الخطرة';
+
+  @override
+  String get orgCertSectionDocuments => 'الوثائق';
+
+  @override
+  String get orgCertSectionSafetyTeam => 'فريق السلامة';
+
+  @override
+  String get orgCertSectionEvacuation => 'الإخلاء';
 }

@@ -339,6 +339,9 @@ export function Layout() {
               >
                 {t("nav.certificates")}
               </NavItem>
+              <NavItem to="/orgs/certificates/counter" icon="verified" tone="green">
+                {t("nav.counter")}
+              </NavItem>
             </>
           )}
           {editsTips && (

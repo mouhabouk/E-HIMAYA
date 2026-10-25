@@ -30,3 +30,11 @@ export function invalidReasons(c: PublicCertificate, today: string = todayIso())
   if (c.signature_valid === false) reasons.push("signature");
   return reasons;
 }
+
+/** Renewal reminders start this many days before the end of validity (phase P3a §3.3). */
+export const RENEWAL_NOTICE_DAYS = 90;
+
+/** Whole days from `today` to `day` (both YYYY-MM-DD); negative once past. */
+export function daysUntil(day: string, today: string = todayIso()): number {
+  return Math.round((Date.parse(day.slice(0, 10)) - Date.parse(today)) / 86_400_000);
+}

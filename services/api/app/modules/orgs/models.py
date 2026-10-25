@@ -224,6 +224,32 @@ class Certificate(Base):
     revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     revoked_by: Mapped[str | None] = mapped_column(Text)
     revoke_reason: Mapped[str | None] = mapped_column(Text)
+    # Phase P3a: renewal reminders already e-mailed (90 and 30 days before ``valid_until``).
+    reminded_90_on: Mapped[date | None] = mapped_column(Date)
+    reminded_30_on: Mapped[date | None] = mapped_column(Date)
+
+
+class CertificateStamp(Base):
+    """A paper certificate stamped by hand at the counter of a regional administration (phase P3a)."""
+
+    __tablename__ = "certificate_stamp"
+    __table_args__ = _SCHEMA
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    certificate_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("org.certificate.id", ondelete="CASCADE")
+    )
+    place: Mapped[str] = mapped_column(Text)
+    gouvernorat_code: Mapped[int | None] = mapped_column(Integer)
+    stamped_on: Mapped[date] = mapped_column(Date)
+    note: Mapped[str | None] = mapped_column(Text)
+    stamped_by: Mapped[str] = mapped_column(Text)
+    stamped_by_name: Mapped[str | None] = mapped_column(Text)
+    recorded_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    changes: Mapped[list[dict[str, Any]]] = mapped_column(JSONB, server_default="[]")
+    photo_object_key: Mapped[str | None] = mapped_column(Text)
+    photo_sha256: Mapped[str | None] = mapped_column(Text)
+    photo_content_type: Mapped[str | None] = mapped_column(Text)
 
 
 class Activity(Base):

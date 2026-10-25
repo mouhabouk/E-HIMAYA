@@ -788,11 +788,64 @@ class _Certificates extends ConsumerWidget {
                       ),
                   ].join(' · '),
                 ),
+                if (c.needsUpdate != null || c.stamps.isNotEmpty)
+                  _CertificateExtras(certificate: c),
                 const SizedBox(height: 8),
               ],
             ],
           ),
         );
+  }
+}
+
+/// Phase P3a under the current certificate: "needs updating" with the sections that changed (the new
+/// certificate is generated on the portal), and the stamps put at regional administrations.
+class _CertificateExtras extends StatelessWidget {
+  const _CertificateExtras({required this.certificate});
+
+  final OrgCertificate certificate;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final locale = Localizations.localeOf(context).languageCode;
+    final c = certificate;
+    final sections = {
+      for (final change in c.changes)
+        certificateSectionText(l10n, change.section),
+    };
+    return Padding(
+      padding: const EdgeInsetsDirectional.only(start: 12, top: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (c.needsUpdate == true) ...[
+            Pill(l10n.orgCertNeedsUpdate, tone: Tone.amber, icon: Icons.update),
+            const SizedBox(height: 4),
+            Text(
+              l10n.orgCertNeedsUpdateBody(
+                sections.join(locale == 'ar' ? '، ' : ', '),
+              ),
+              key: Key('cert-changes-${c.code}'),
+            ),
+          ] else if (c.needsUpdate == false)
+            Pill(l10n.orgCertUpToDate, tone: Tone.green, icon: Icons.check),
+          for (final s in c.stamps) ...[
+            const SizedBox(height: 6),
+            Pill(
+              [
+                l10n.orgCertStamped,
+                s.place,
+                if (s.stampedOn case final DateTime on)
+                  DateFormat.yMMMd(locale).format(on),
+              ].join(' · '),
+              tone: Tone.navy,
+              icon: Icons.approval,
+            ),
+          ],
+        ],
+      ),
+    );
   }
 }
 

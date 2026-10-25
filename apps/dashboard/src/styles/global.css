@@ -4320,3 +4320,100 @@ button.nav-card:hover {
 .org-activities p {
   margin: 0.25rem 0 0;
 }
+
+/* ---------- Phase P3a: the counter, certificate changes and hand stamps ---------- */
+.field--grow {
+  flex: 1 1 18rem;
+}
+
+.counter__lookup {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+.counter__lookup input,
+.stamp-form input:not([type="file"]) {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
+  min-block-size: 2.25rem;
+  max-inline-size: 100%;
+}
+
+.stamp-form input[type="date"] {
+  inline-size: 12rem;
+}
+
+.counter__lookup [aria-invalid="true"] {
+  border-color: var(--error-text);
+  outline: 1px solid var(--error-text);
+}
+
+.counter__camera {
+  display: grid;
+  gap: 0.5rem;
+  justify-items: start;
+}
+
+.counter__camera video {
+  width: min(100%, 24rem);
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  object-fit: cover;
+}
+
+.counter__result {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.counter__reasons {
+  margin: 0;
+  padding-inline-start: 1.25rem;
+  color: var(--error-text);
+}
+
+.stamp-form {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 40rem;
+}
+
+.cert-changes {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.cert-changes .tag,
+.cert .tag--level-ok {
+  justify-self: start;
+}
+
+.stamps {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stamp {
+  border-inline-start: 3px solid var(--ok-text);
+  padding-inline-start: 0.75rem;
+}
+
+.stamp p {
+  margin: 0.25rem 0 0;
+}
+
+.tag--stamp {
+  background: var(--ok-bg);
+  color: var(--ok-text);
+}

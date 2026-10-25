@@ -4764,4 +4764,50 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get errorInvalidDocument =>
       'La photo n’est pas valable pour cette maintenance.';
+
+  @override
+  String get orgAlertCertificateExpiring =>
+      'Le certificat de sécurité arrive bientôt à échéance';
+
+  @override
+  String get orgAlertCertificateExpired => 'Le certificat de sécurité a expiré';
+
+  @override
+  String get orgAlertCertificateNeedsUpdate =>
+      'Le certificat de sécurité est à mettre à jour';
+
+  @override
+  String get orgCertNeedsUpdate => 'À mettre à jour';
+
+  @override
+  String orgCertNeedsUpdateBody(String sections) {
+    return 'Changé depuis l’approbation : $sections. Générez un nouveau certificat sur le portail.';
+  }
+
+  @override
+  String get orgCertUpToDate => 'Conforme à l’établissement';
+
+  @override
+  String get orgCertStamped => 'Cacheté';
+
+  @override
+  String get orgCertSectionIdentity => 'Identité';
+
+  @override
+  String get orgCertSectionBuilding => 'Bâtiment';
+
+  @override
+  String get orgCertSectionClassification => 'Classement';
+
+  @override
+  String get orgCertSectionHazmat => 'Matières dangereuses';
+
+  @override
+  String get orgCertSectionDocuments => 'Documents';
+
+  @override
+  String get orgCertSectionSafetyTeam => 'Équipe de sécurité';
+
+  @override
+  String get orgCertSectionEvacuation => 'Évacuation';
 }

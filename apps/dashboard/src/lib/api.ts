@@ -163,6 +163,13 @@ export const ERROR_CODES = [
   "committee_full",
   "not_civil_protection_doctor",
   "not_committee_member",
+  // The counter of a regional administration (phase P3a).
+  "invalid_code",
+  "invalid_stamp_date",
+  "place_required",
+  "certificate_not_valid",
+  "photo_too_large",
+  "unsupported_media_type",
 ] as const;
 export type ErrorCode = (typeof ERROR_CODES)[number];
 

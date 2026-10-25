@@ -37,7 +37,8 @@
     "emergencyGuide": "Centre d’urgence",
     "contact": "Nous contacter",
     "doctors": "Médecins",
-    "medicalCommittee": "Comité médical"
+    "medicalCommittee": "Comité médical",
+    "counter": "Guichet"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -294,7 +295,13 @@
     "self_appointment": "L'administrateur ne peut pas se nommer lui-même au comité médical.",
     "committee_full": "Tous les sièges du comité médical sont occupés : mettez fin à un mandat avant de nommer un nouveau membre.",
     "not_civil_protection_doctor": "Seul un médecin de la Protection civile vérifié peut être nommé.",
-    "not_committee_member": "Ce médecin n'est pas membre du comité médical."
+    "not_committee_member": "Ce médecin n'est pas membre du comité médical.",
+    "invalid_code": "Code invalide. Un code de certificat commence par EHC-.",
+    "invalid_stamp_date": "La date du cachet ne peut être ni future ni antérieure à l’approbation.",
+    "place_required": "Le lieu du cachet est requis.",
+    "certificate_not_valid": "Seul un certificat valide aujourd’hui peut être cacheté.",
+    "photo_too_large": "La photo dépasse 5 Mo.",
+    "unsupported_media_type": "Type de fichier non accepté."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -816,7 +823,12 @@
     "alertKind": {
       "training_expired": "Formation expirée",
       "maintenance_overdue": "Maintenance en retard",
-      "other": "Alerte ({{key}})"
+      "other": "Alerte ({{key}})",
+      "training_expiring": "Formation bientôt expirée",
+      "maintenance_due_soon": "Maintenance bientôt due",
+      "certificate_expiring": "Certificat bientôt expiré",
+      "certificate_expired": "Certificat expiré",
+      "certificate_needs_update": "Certificat à mettre à jour"
     },
     "identifierType": {
       "mf": "Matricule fiscal",
@@ -1137,6 +1149,83 @@
     "events": {
       "title": "Événements publics à venir",
       "empty": "Aucun événement déclaré à venir."
+    },
+    "counter": {
+      "title": "Guichet : vérifier et cacheter un certificat",
+      "toQueue": "File des certificats",
+      "intro": "Lisez le code du certificat présenté par l’établissement (papier ou téléphone), comparez ce qui a été approuvé à l’état actuel, puis enregistrez le cachet manuel.",
+      "codeLabel": "Code du certificat ou lien de vérification",
+      "check": "Vérifier",
+      "scan": "Scanner avec la caméra",
+      "cameraUnavailable": "Ce navigateur ne lit pas les QR codes avec la caméra. Utilisez un lecteur QR ou saisissez le code.",
+      "cameraLabel": "Image de la caméra pour lire le code",
+      "closeCamera": "Fermer la caméra",
+      "valid": "Certificat valide",
+      "invalid": "Certificat non valide",
+      "reasons": {
+        "not_approved": "Non approuvé par l’Office",
+        "revoked": "Révoqué",
+        "superseded": "Remplacé par un certificat plus récent",
+        "expired": "Expiré",
+        "signature": "La signature électronique ne correspond pas",
+        "org_inactive": "Établissement non actif"
+      },
+      "org": "Établissement",
+      "signature": "Signature électronique",
+      "signatureOk": "Conforme",
+      "signatureBad": "Non conforme",
+      "compareTitle": "Comparaison : approuvé et état actuel",
+      "compareHelp": "Éléments substantiels uniquement : identité, bâtiment, classement, matières dangereuses, dossier et plan de sécurité, équipe de sécurité, points d’évacuation.",
+      "noComparison": "Pas de comparaison : ce n’est pas le certificat en vigueur.",
+      "matches": "Conforme à l’état actuel",
+      "needsUpdate": "À mettre à jour (écarts : {{count}})",
+      "changesCaption": "Écarts entre l’approuvé et l’état actuel",
+      "section": "Section",
+      "certified": "Approuvé",
+      "current": "Actuel",
+      "sections": {
+        "identity": "Identité",
+        "building": "Bâtiment",
+        "classification": "Classement",
+        "hazmat": "Matières dangereuses",
+        "documents": "Documents",
+        "safety_team": "Équipe de sécurité",
+        "evacuation": "Évacuation"
+      },
+      "fields": {
+        "name": "Nom",
+        "kind": "Type",
+        "identifier": "Identifiant",
+        "capacity": "Capacité",
+        "floors": "Étages",
+        "height_m": "Hauteur (m)",
+        "receives_public": "Reçoit du public",
+        "address": "Adresse",
+        "location": "Position",
+        "family": "Famille",
+        "category": "Catégorie",
+        "high_rise": "Immeuble de grande hauteur",
+        "items": "Matières",
+        "files": "Dossier et plan de sécurité",
+        "representative": "Représentant",
+        "members": "Nombre de membres",
+        "points": "Nombre de points d’évacuation"
+      },
+      "stampsTitle": "Cachets dans les directions régionales",
+      "noStamps": "Aucun cachet pour l’instant.",
+      "stamped": "Cachetée",
+      "stampedBy": "Agent : {{name}}",
+      "stampedWithChanges": "Cachetée avec écarts ({{count}})",
+      "photo": "Photo du papier cacheté",
+      "stampTitle": "Enregistrer le cachet manuel",
+      "stampHelp": "Enregistrez le cachet après l’avoir apposé. Le lieu et la date apparaissent sur la page publique, sans votre nom.",
+      "place": "Lieu",
+      "defaultPlace": "Direction régionale de la protection civile de {{gouvernorat}}",
+      "stampedOn": "Date du cachet",
+      "note": "Remarque",
+      "photoOptional": "Photo du papier cacheté (facultative, JPEG ou PNG, 5 Mo max.)",
+      "stamp": "Enregistrer le cachet",
+      "stampedOk": "Cachet du certificat {{code}} enregistré."
     }
   },
   "levels": {

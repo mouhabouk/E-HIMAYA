@@ -470,7 +470,16 @@ export const REQUIREMENTS = [
 export type Requirement = (typeof REQUIREMENTS)[number];
 
 /** Alert kinds named by the contract example; others are shown with a generic label. */
-export const ORG_ALERT_KINDS = ["training_expired", "maintenance_overdue"] as const;
+export const ORG_ALERT_KINDS = [
+  "training_expired",
+  "training_expiring",
+  "maintenance_overdue",
+  "maintenance_due_soon",
+  // Phase P3a: the current certificate.
+  "certificate_expiring",
+  "certificate_expired",
+  "certificate_needs_update",
+] as const;
 
 export const CERTIFICATE_STATUSES = ["draft", "submitted", "approved", "rejected", "revoked"] as const;
 export type CertificateStatus = (typeof CERTIFICATE_STATUSES)[number];
@@ -619,6 +628,66 @@ export interface Certificate {
   revoked_at?: string | null;
   revoke_reason?: string | null;
   verify_url: string | null;
+  /** Phase P3a, on the current approved certificate only: substantive changes since it was certified. */
+  needs_update?: boolean | null;
+  changes?: CertificateChange[];
+  stamps?: CertificateStamp[];
+}
+
+/** docs/phase-p3/design-certificates.md §3.4 */
+export const CHANGE_SECTIONS = [
+  "identity",
+  "building",
+  "classification",
+  "hazmat",
+  "documents",
+  "safety_team",
+  "evacuation",
+] as const;
+export type ChangeSection = (typeof CHANGE_SECTIONS)[number];
+
+export interface CertificateChange {
+  section: ChangeSection;
+  field: string;
+  certified: unknown;
+  current: unknown;
+}
+
+/** A paper certificate stamped by hand at a regional administration (phase P3a). */
+export interface CertificateStamp {
+  id: string;
+  place: string;
+  gouvernorat_code: number | null;
+  stamped_on: string;
+  note: string | null;
+  stamped_by_name: string | null;
+  recorded_at: string;
+  has_photo: boolean;
+  changes: CertificateChange[];
+}
+
+export interface StampBody {
+  place: string;
+  stamped_on: string;
+  note?: string | null;
+}
+
+export const COUNTER_REASONS = ["not_approved", "revoked", "superseded", "expired", "signature", "org_inactive"] as const;
+export type CounterReason = (typeof COUNTER_REASONS)[number];
+
+/** GET /staff/certificates/lookup: what the agent at the counter sees. */
+export interface CounterView {
+  certificate: Certificate;
+  valid: boolean;
+  reasons: CounterReason[];
+  signature_valid: boolean;
+  can_stamp: boolean;
+  org_id: string;
+  org_name: string;
+  org_kind: string;
+  org_status: string;
+  org_address: string | null;
+  gouvernorat_code: number | null;
 }
 
 export interface StaffOrgMember {
