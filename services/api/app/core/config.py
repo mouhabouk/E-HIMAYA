@@ -19,6 +19,10 @@ class Settings(BaseSettings):
     # production: no /docs, /redoc or /openapi.json, and start-up refuses weak or example secrets
     # (app/core/secrets_policy.py). development (default): local stacks and tests.
     app_env: Literal["development", "production"] = "development"
+    # Environment strip shown at the top of the app, the dashboard and the portal (backlog G3), so test data is never
+    # taken for real. auto = "development" when APP_ENV=development, no strip in production. pilot and training keep
+    # the strip on a production stack that holds test data (field pilot, tabletop exercise).
+    environment_banner: Literal["auto", "development", "pilot", "training", "off"] = "auto"
     database_url: str = Field(description="postgresql+asyncpg://user:pass@host:5432/db")
     valkey_url: str | None = None
     nats_url: str | None = None

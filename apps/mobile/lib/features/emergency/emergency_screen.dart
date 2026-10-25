@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/auth/identity.dart';
 import '../../core/routing/app_router.dart';
+import '../../core/ui/components.dart';
 import '../../core/ui/language_bar.dart';
+import '../../core/ui/tokens.dart';
 import '../../l10n/app_localizations.dart';
 import 'dialer.dart';
 import 'emergency_numbers.dart';
@@ -36,34 +38,17 @@ class EmergencyScreen extends ConsumerWidget {
             Text(l10n.emergencyIntro, style: theme.textTheme.bodyLarge),
             const SizedBox(height: 16),
             for (final n in emergencyNumbers)
-              Card(
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5),
                 child: Semantics(
                   button: true,
                   label: l10n.emergencyCallSemantics(n.label(l10n), n.number),
                   excludeSemantics: true,
-                  child: ListTile(
+                  child: AppCard(
                     key: Key('dial-${n.number}'),
-                    minTileHeight: 72,
-                    leading: Icon(
-                      n.icon,
-                      size: 32,
-                      color: theme.colorScheme.error,
-                    ),
-                    title: Text(n.label(l10n)),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          n.number,
-                          // Phone numbers always read left-to-right.
-                          textDirection: TextDirection.ltr,
-                          style: theme.textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        const Icon(Icons.call),
-                      ],
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 14,
                     ),
                     onTap: () async {
                       final ok = await dial(n.telUri);
@@ -73,58 +58,65 @@ class EmergencyScreen extends ConsumerWidget {
                         );
                       }
                     },
+                    child: Row(
+                      children: [
+                        IconTile(n.icon, tone: Tone.red),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            n.label(l10n),
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          n.number,
+                          // Phone numbers always read left-to-right.
+                          textDirection: TextDirection.ltr,
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        const IconTile(
+                          Icons.call_rounded,
+                          tone: Tone.green,
+                          size: 40,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             if (showHub) ...[
               const SizedBox(height: 16),
-              Card(
-                child: ListTile(
-                  key: const Key('hub-guide'),
-                  minTileHeight: 72,
-                  leading: Icon(
-                    Icons.medical_services,
-                    size: 32,
-                    color: theme.colorScheme.primary,
-                  ),
-                  title: Text(l10n.guideTitle),
-                  subtitle: Text(l10n.guideHubHint),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => context.push(Routes.guide),
-                ),
+              NavCard(
+                key: const Key('hub-guide'),
+                icon: Icons.medical_services_rounded,
+                tone: Tone.green,
+                title: l10n.guideTitle,
+                subtitle: l10n.guideHubHint,
+                onTap: () => context.push(Routes.guide),
               ),
-              Card(
-                child: ListTile(
-                  key: const Key('hub-nearest'),
-                  minTileHeight: 72,
-                  leading: Icon(
-                    Icons.near_me,
-                    size: 32,
-                    color: theme.colorScheme.primary,
-                  ),
-                  title: Text(l10n.nearestTitle),
-                  subtitle: Text(l10n.nearestHint),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => context.push(Routes.nearest),
-                ),
+              NavCard(
+                key: const Key('hub-nearest'),
+                icon: Icons.near_me_rounded,
+                tone: Tone.teal,
+                title: l10n.nearestTitle,
+                subtitle: l10n.nearestHint,
+                onTap: () => context.push(Routes.nearest),
               ),
               // Phase B2: personal safety (contacts, SOS message, medical file), once the
               // first-launch steps are done (before them the hub shows only what needs no setup).
               if (ref.watch(identityProvider).hasIdentity)
-                Card(
-                  child: ListTile(
-                    key: const Key('hub-safety'),
-                    minTileHeight: 72,
-                    leading: Icon(
-                      Icons.shield_outlined,
-                      size: 32,
-                      color: theme.colorScheme.primary,
-                    ),
-                    title: Text(l10n.safetyTitle),
-                    subtitle: Text(l10n.safetySettingsHint),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () => context.push(Routes.safety),
-                  ),
+                NavCard(
+                  key: const Key('hub-safety'),
+                  icon: Icons.shield_rounded,
+                  tone: Tone.navy,
+                  title: l10n.safetyTitle,
+                  subtitle: l10n.safetySettingsHint,
+                  onTap: () => context.push(Routes.safety),
                 ),
             ],
           ],

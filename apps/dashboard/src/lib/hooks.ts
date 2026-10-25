@@ -50,6 +50,17 @@ export function useDebounced<T>(value: T, delayMs: number): T {
 }
 
 /** AI service status (phase 3 §4): configured or not, and each capability ready or not. */
+/** Backlog G3: the environment strip. Rarely changes; a failure shows no strip rather than a false one. */
+export function useEnvironment() {
+  const { api } = useServices();
+  return useQuery({
+    queryKey: queryKeys.environment,
+    queryFn: ({ signal }) => api.environment(signal),
+    staleTime: 10 * 60_000,
+    retry: 1,
+  });
+}
+
 export function useAiStatus() {
   const { api } = useServices();
   return useQuery({

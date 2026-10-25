@@ -2071,5 +2071,17 @@
         "type": "int"
       }
     }
+  },
+  "envBannerDevelopment": "[SIM] Development environment: all data is test data",
+  "@envBannerDevelopment": {
+    "description": "Environment strip at the top of every screen (backlog G3)."
+  },
+  "envBannerPilot": "[SIM] Field pilot environment: test data",
+  "@envBannerPilot": {
+    "description": "Environment strip at the top of every screen (backlog G3)."
+  },
+  "envBannerTraining": "[SIM] Exercise: test data, not real reports",
+  "@envBannerTraining": {
+    "description": "Environment strip at the top of every screen (backlog G3)."
   }
 }

@@ -4055,4 +4055,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String medicalOpeningsCount(int count) {
     return 'Who saw my medical file ($count)';
   }
+
+  @override
+  String get envBannerDevelopment =>
+      '[SIM] Development environment: all data is test data';
+
+  @override
+  String get envBannerPilot => '[SIM] Field pilot environment: test data';
+
+  @override
+  String get envBannerTraining => '[SIM] Exercise: test data, not real reports';
 }

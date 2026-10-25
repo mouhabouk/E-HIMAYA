@@ -12,9 +12,11 @@ import '../../core/push/push_simulation_banner.dart';
 import '../../core/routing/app_router.dart';
 import '../../core/settings/settings_controller.dart';
 import '../../core/storage/app_prefs.dart';
+import '../../core/ui/components.dart';
 import '../../core/ui/directional_icons.dart';
 import '../../core/ui/emergency_action.dart';
 import '../../core/ui/theme.dart';
+import '../../core/ui/tokens.dart';
 import '../../l10n/app_localizations.dart';
 import '../alerts/alerts_providers.dart';
 import '../charter/charter_controller.dart';
@@ -62,7 +64,6 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final theme = Theme.of(context);
     final settings = ref.watch(settingsProvider);
     final identity = ref.watch(identityProvider);
     final name = identity.session?.displayName;
@@ -88,56 +89,62 @@ class SettingsScreen extends ConsumerWidget {
         actions: const [StandardAppBarActions()],
       ),
       body: ListView(
-        padding: const EdgeInsets.only(bottom: 96),
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 96),
         children: [
           const PushSimulationBanner(),
-          _Header(l10n.settingsLanguage),
-          RadioGroup<String>(
-            groupValue: settings.locale.languageCode,
-            onChanged: (v) {
-              if (v != null) ref.read(settingsProvider.notifier).setLanguage(v);
-            },
-            child: Column(
-              children: [
-                for (final code in supportedLanguageCodes)
-                  RadioListTile<String>(
-                    key: Key('language-$code'),
-                    value: code,
-                    title: Text(languageName(l10n, code)),
-                  ),
-              ],
+          SectionTitle(l10n.settingsLanguage),
+          AppCard(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: RadioGroup<String>(
+              groupValue: settings.locale.languageCode,
+              onChanged: (v) {
+                if (v != null) {
+                  ref.read(settingsProvider.notifier).setLanguage(v);
+                }
+              },
+              child: Column(
+                children: [
+                  for (final code in supportedLanguageCodes)
+                    RadioListTile<String>(
+                      key: Key('language-$code'),
+                      value: code,
+                      title: Text(languageName(l10n, code)),
+                    ),
+                ],
+              ),
             ),
           ),
-          const Divider(),
-          _Header(l10n.settingsTheme),
-          RadioGroup<ThemeMode>(
-            groupValue: settings.themeMode,
-            onChanged: (v) {
-              if (v != null) {
-                ref.read(settingsProvider.notifier).setThemeMode(v);
-              }
-            },
-            child: Column(
-              children: [
-                RadioListTile(
-                  value: ThemeMode.system,
-                  title: Text(l10n.themeSystem),
-                ),
-                RadioListTile(
-                  value: ThemeMode.light,
-                  title: Text(l10n.themeLight),
-                ),
-                RadioListTile(
-                  value: ThemeMode.dark,
-                  title: Text(l10n.themeDark),
-                ),
-              ],
+          SectionTitle(l10n.settingsTheme),
+          AppCard(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: RadioGroup<ThemeMode>(
+              groupValue: settings.themeMode,
+              onChanged: (v) {
+                if (v != null) {
+                  ref.read(settingsProvider.notifier).setThemeMode(v);
+                }
+              },
+              child: Column(
+                children: [
+                  RadioListTile(
+                    value: ThemeMode.system,
+                    title: Text(l10n.themeSystem),
+                  ),
+                  RadioListTile(
+                    value: ThemeMode.light,
+                    title: Text(l10n.themeLight),
+                  ),
+                  RadioListTile(
+                    value: ThemeMode.dark,
+                    title: Text(l10n.themeDark),
+                  ),
+                ],
+              ),
             ),
           ),
           // Phase A: colour palette (the logo's colours by default).
-          _Header(l10n.settingsColors),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+          SectionTitle(l10n.settingsColors),
+          AppCard(
             child: Wrap(
               spacing: 8,
               runSpacing: 8,
@@ -159,133 +166,135 @@ class SettingsScreen extends ConsumerWidget {
               ],
             ),
           ),
-          const SizedBox(height: 8),
-          const Divider(),
-          _Header(l10n.settingsAlerts),
+          SectionTitle(l10n.settingsAlerts),
           const _LocationAlertsTile(),
-          ListTile(
+          NavCard(
             key: const Key('settings-notifications'),
-            leading: const Icon(Icons.notifications_outlined),
-            title: Text(l10n.notificationsTitle),
-            trailing: const Icon(Icons.chevron_right),
+            icon: Icons.notifications_rounded,
+            tone: Tone.sky,
+            title: l10n.notificationsTitle,
             onTap: () => context.push(Routes.notifications),
           ),
-          ListTile(
+          NavCard(
             key: const Key('settings-alert-check'),
-            leading: const Icon(Icons.notifications_active_outlined),
-            title: Text(l10n.alertCheckTitle),
-            subtitle: Text(l10n.alertCheckSubtitle),
-            trailing: const Icon(Icons.chevron_right),
+            icon: Icons.notifications_active_rounded,
+            tone: Tone.sky,
+            title: l10n.alertCheckTitle,
+            subtitle: l10n.alertCheckSubtitle,
             onTap: () => context.push(Routes.alertCheck),
           ),
           const _BatterySaverTile(),
-          ListTile(
+          NavCard(
             key: const Key('settings-safety'),
-            leading: const Icon(Icons.shield_outlined),
-            title: Text(l10n.safetyTitle),
-            subtitle: Text(l10n.safetySettingsHint),
-            trailing: const Icon(Icons.chevron_right),
+            icon: Icons.shield_rounded,
+            tone: Tone.green,
+            title: l10n.safetyTitle,
+            subtitle: l10n.safetySettingsHint,
             onTap: () => context.push(Routes.safety),
           ),
-          ListTile(
-            leading: const Icon(Icons.health_and_safety),
-            title: Text(l10n.tipsTitle),
-            trailing: const Icon(Icons.chevron_right),
+          NavCard(
+            key: const Key('settings-tips'),
+            icon: Icons.health_and_safety_rounded,
+            tone: Tone.green,
+            title: l10n.tipsTitle,
             onTap: () => context.push(Routes.tips),
           ),
-          ListTile(
+          NavCard(
             key: const Key('settings-contact'),
-            leading: const Icon(Icons.mail_outline),
-            title: Text(l10n.contactTitle),
-            subtitle: Text(l10n.contactMineTitle),
-            trailing: const Icon(Icons.chevron_right),
+            icon: Icons.mail_rounded,
+            tone: Tone.navy,
+            title: l10n.contactTitle,
+            subtitle: l10n.contactMineTitle,
             onTap: () => context.push(Routes.contact),
           ),
-          const Divider(),
-          _Header(l10n.settingsIdentity),
-          ListTile(
-            leading: Icon(
-              identity.isAnonymous ? Icons.visibility_off : Icons.verified_user,
-            ),
-            title: Text(identityText),
-            subtitle: Text(roleText),
+          SectionTitle(l10n.settingsIdentity),
+          NavCard(
+            key: const Key('settings-identity'),
+            icon: identity.isAnonymous
+                ? Icons.visibility_off_rounded
+                : Icons.verified_user_rounded,
+            tone: Tone.navy,
+            title: identityText,
+            subtitle: roleText,
           ),
           if (identity.isAnonymous)
-            ListTile(
-              leading: const Icon(Icons.person_add),
-              title: Text(l10n.settingsRegister),
-              trailing: const Icon(Icons.chevron_right),
+            NavCard(
+              key: const Key('settings-register'),
+              icon: Icons.person_add_rounded,
+              tone: Tone.navy,
+              title: l10n.settingsRegister,
               onTap: () => runLogin(context, ref, register: true),
             ),
           if (identity.isAnonymous)
-            ListTile(
-              leading: const Icon(DirectionalIcons.login),
-              title: Text(l10n.citizenLogin),
-              trailing: const Icon(Icons.chevron_right),
+            NavCard(
+              key: const Key('settings-login'),
+              icon: DirectionalIcons.login,
+              tone: Tone.navy,
+              title: l10n.citizenLogin,
               onTap: () => runLogin(context, ref),
             ),
           if (identity.isRegistered && identity.role == UserRole.citizen)
-            ListTile(
-              leading: const Icon(Icons.badge),
-              title: Text(l10n.settingsProfile),
-              trailing: const Icon(Icons.chevron_right),
+            NavCard(
+              key: const Key('settings-profile'),
+              icon: Icons.badge_rounded,
+              tone: Tone.navy,
+              title: l10n.settingsProfile,
               onTap: () => context.push(Routes.profile),
             ),
           if (identity.isRegistered && identity.role == UserRole.citizen)
-            ListTile(
+            NavCard(
               key: const Key('settings-volunteer'),
-              leading: const Icon(Icons.volunteer_activism),
-              title: Text(l10n.volunteerTitle),
-              trailing: const Icon(Icons.chevron_right),
+              icon: Icons.volunteer_activism_rounded,
+              tone: Tone.green,
+              title: l10n.volunteerTitle,
               onTap: () => context.push(Routes.volunteer),
             ),
           if (identity.isRegistered && identity.role == UserRole.citizen)
-            ListTile(
+            NavCard(
               key: const Key('settings-doctor'),
-              leading: const Icon(Icons.medical_services),
-              title: Text(l10n.doctorTitle),
-              trailing: const Icon(Icons.chevron_right),
+              icon: Icons.medical_services_rounded,
+              tone: Tone.purple,
+              title: l10n.doctorTitle,
               onTap: () => context.push(Routes.doctor),
             ),
           if (identity.hasIdentity && identity.role == UserRole.citizen)
-            ListTile(
+            NavCard(
               key: const Key('settings-rewards'),
-              leading: const Icon(Icons.military_tech),
-              title: Text(l10n.rewardsTitle),
-              trailing: const Icon(Icons.chevron_right),
+              icon: Icons.military_tech_rounded,
+              tone: Tone.pink,
+              title: l10n.rewardsTitle,
               onTap: () => context.push(Routes.rewards),
             ),
           if (identity.isRegistered && orgs.isNotEmpty)
-            ListTile(
+            NavCard(
               key: const Key('settings-institution'),
-              leading: const Icon(Icons.apartment),
-              title: Text(l10n.myInstitutionTitle),
-              trailing: const Icon(Icons.chevron_right),
+              icon: Icons.apartment_rounded,
+              tone: Tone.navy,
+              title: l10n.myInstitutionTitle,
               onTap: () => openMyInstitution(context, orgs),
             ),
           if (identity.hasIdentity)
-            ListTile(
+            NavCard(
               key: const Key('settings-my-data'),
-              leading: const Icon(Icons.folder_shared_outlined),
-              title: Text(l10n.myDataTitle),
-              subtitle: Text(l10n.myDataSubtitle),
-              trailing: const Icon(Icons.chevron_right),
+              icon: Icons.folder_shared_rounded,
+              tone: Tone.slate,
+              title: l10n.myDataTitle,
+              subtitle: l10n.myDataSubtitle,
               onTap: () => context.push(Routes.myData),
             ),
           if (identity.isRegistered)
-            ListTile(
+            NavCard(
               key: const Key('settings-logout'),
-              leading: Icon(
-                DirectionalIcons.logout,
-                color: theme.colorScheme.error,
-              ),
-              title: Text(l10n.settingsLogout),
+              icon: DirectionalIcons.logout,
+              tone: Tone.red,
+              title: l10n.settingsLogout,
               onTap: () => _logout(context, ref),
             ),
-          ListTile(
-            leading: const Icon(Icons.swap_horiz),
-            title: Text(l10n.changeRole),
-            trailing: const Icon(Icons.chevron_right),
+          NavCard(
+            key: const Key('settings-change-role'),
+            icon: Icons.swap_horiz_rounded,
+            tone: Tone.slate,
+            title: l10n.changeRole,
             onTap: () async {
               if (identity.isRegistered) {
                 await _logout(context, ref);
@@ -297,10 +306,8 @@ class SettingsScreen extends ConsumerWidget {
             },
           ),
           if (activeOrgs.isNotEmpty) ...[
-            const Divider(),
-            _Header(l10n.settingsSosReportAs),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+            SectionTitle(l10n.settingsSosReportAs),
+            AppCard(
               child: ReportAsSelector(
                 key: const Key('settings-sos-report-as'),
                 title: l10n.settingsSosReportAsHint,
@@ -311,11 +318,12 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ),
           ],
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.privacy_tip),
-            title: Text(l10n.settingsCharter),
-            trailing: const Icon(Icons.chevron_right),
+          const SizedBox(height: 10),
+          NavCard(
+            key: const Key('settings-charter'),
+            icon: Icons.privacy_tip_rounded,
+            tone: Tone.purple,
+            title: l10n.settingsCharter,
             onTap: () => context.push(Routes.charterRead),
           ),
         ],
@@ -351,13 +359,16 @@ class _LocationAlertsTileState extends ConsumerState<_LocationAlertsTile> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return SwitchListTile(
-      key: const Key('settings-location-alerts'),
-      secondary: const Icon(Icons.my_location),
-      title: Text(l10n.settingsLocationAlerts),
-      subtitle: Text(l10n.settingsLocationAlertsHelp),
-      value: _on,
-      onChanged: _set,
+    return NavCard(
+      icon: Icons.my_location_rounded,
+      tone: Tone.sky,
+      title: l10n.settingsLocationAlerts,
+      subtitle: l10n.settingsLocationAlertsHelp,
+      trailing: Switch(
+        key: const Key('settings-location-alerts'),
+        value: _on,
+        onChanged: _set,
+      ),
     );
   }
 }
@@ -419,39 +430,19 @@ class _BatterySaverTile extends ConsumerWidget {
     final status = saver.active
         ? l10n.batterySaverActive
         : l10n.batterySaverInactive;
-    return ListTile(
+    return NavCard(
       key: const Key('settings-battery-saver'),
-      leading: Icon(
-        saver.active ? Icons.battery_saver : Icons.battery_std_outlined,
-      ),
-      title: Text(l10n.batterySaverTitle),
-      subtitle: Text(
-        [
-          modeLabel(l10n, saver.mode),
-          status,
-          if (level != null) l10n.batteryLevel(level),
-        ].join(' · '),
-      ),
-      trailing: const Icon(Icons.chevron_right),
+      icon: saver.active
+          ? Icons.battery_saver_rounded
+          : Icons.battery_std_rounded,
+      tone: saver.active ? Tone.green : Tone.slate,
+      title: l10n.batterySaverTitle,
+      subtitle: [
+        modeLabel(l10n, saver.mode),
+        status,
+        if (level != null) l10n.batteryLevel(level),
+      ].join(' · '),
       onTap: () => _choose(context, ref, saver.mode),
     );
   }
-}
-
-class _Header extends StatelessWidget {
-  const _Header(this.text);
-  final String text;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 4),
-    child: Semantics(
-      header: true,
-      child: Text(
-        text,
-        style: Theme.of(context).textTheme.titleSmall
-            ?.copyWith(color: Theme.of(context).colorScheme.primary),
-      ),
-    ),
-  );
 }

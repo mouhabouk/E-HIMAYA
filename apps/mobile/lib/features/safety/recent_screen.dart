@@ -5,7 +5,9 @@ import 'package:go_router/go_router.dart';
 import '../../core/db/app_database.dart';
 import '../../core/db/open_database.dart';
 import '../../core/routing/app_router.dart';
+import '../../core/ui/components.dart';
 import '../../core/ui/emergency_action.dart';
+import '../../core/ui/tokens.dart';
 import '../../l10n/app_localizations.dart';
 import 'safety_providers.dart';
 import 'safety_widgets.dart';
@@ -64,23 +66,19 @@ class SafetyRecentScreen extends ConsumerWidget {
                 style: theme.textTheme.titleMedium,
               ),
               for (final a in received)
-                Card(
-                  child: ListTile(
-                    key: Key('received-${a.id}'),
-                    leading: const Icon(Icons.sos, color: Colors.red),
-                    title: Text(
-                      a.isCheck
-                          ? l10n.safetyAlertCheckFrom(
-                              a.senderFirstName ?? l10n.safetySomeone,
-                            )
-                          : l10n.safetyAlertFrom(
-                              a.senderFirstName ?? l10n.safetySomeone,
-                            ),
-                    ),
-                    subtitle: Text(safetyTime(context, a.createdAt)),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () => context.push(Routes.safetyAlert(a.id)),
-                  ),
+                NavCard(
+                  key: Key('received-${a.id}'),
+                  icon: Icons.sos_rounded,
+                  tone: Tone.red,
+                  title: a.isCheck
+                      ? l10n.safetyAlertCheckFrom(
+                          a.senderFirstName ?? l10n.safetySomeone,
+                        )
+                      : l10n.safetyAlertFrom(
+                          a.senderFirstName ?? l10n.safetySomeone,
+                        ),
+                  subtitle: safetyTime(context, a.createdAt),
+                  onTap: () => context.push(Routes.safetyAlert(a.id)),
                 ),
               const SizedBox(height: 16),
             ],

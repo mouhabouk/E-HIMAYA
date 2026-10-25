@@ -122,6 +122,9 @@ export function staffApi(api: ApiClient) {
 
     aiStatus: (signal?: AbortSignal) => api.request<AiStatus>("/api/v1/staff/ai/status", { signal }),
 
+    /** Backlog G3: which environment strip to show (public endpoint, null in production). */
+    environment: (signal?: AbortSignal) => api.request<EnvironmentInfo>("/api/v1/app/environment", { signal }),
+
     // ---------- Institutions (phase 4 §9) ----------
 
     orgs: (filters: OrgFilters, opts: { cursor?: string | null; limit?: number; signal?: AbortSignal } = {}) =>
@@ -206,6 +209,11 @@ export function staffApi(api: ApiClient) {
 
 export type StaffApi = ReturnType<typeof staffApi>;
 
+/** Environment strip (backlog G3): development, field pilot or exercise; null = production, no strip. */
+export interface EnvironmentInfo {
+  banner: "development" | "pilot" | "training" | null;
+}
+
 export const queryKeys = {
   kpis: (period: string) => ["kpis", period] as const,
   reportsAll: ["reports"] as const,
@@ -221,6 +229,7 @@ export const queryKeys = {
   incident: (id: string) => ["incident", id] as const,
   aiSettings: ["ai-settings"] as const,
   aiStatus: ["ai-status"] as const,
+  environment: ["environment"] as const,
   gouvernorats: ["gouvernorats"] as const,
   // Institutions (phase 4). "org" (one detail, audited) and "orgs" (lists) are distinct key roots.
   orgsAll: ["orgs"] as const,

@@ -1,4 +1,4 @@
-import { fireEvent, screen, waitFor, within } from "@testing-library/react";
+import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { ApiError } from "../lib/api";
 import type { StaffReportDetail } from "../lib/types";
@@ -90,6 +90,32 @@ describe("ReportDetailPage", () => {
     await waitFor(() => expect(screen.queryByText("équipe envoyée", { selector: ".timeline__note" })).not.toBeInTheDocument());
     // The truth is refetched after a conflict.
     await waitFor(() => expect(vi.mocked(api.report).mock.calls.length).toBeGreaterThan(1));
+  });
+
+  it("keeps the note and warns when the status changes live while typing (backlog G4)", async () => {
+    window.sessionStorage.clear();
+    const detail = makeDetail({ id: "r1", allowed_transitions: ["in_progress", "rejected"] });
+    const api = fakeApi({ report: vi.fn(() => Promise.resolve(detail)) });
+    const { queryClient } = renderApp(<ReportDetailPage />, { api, path: "/reports/r1", route, lang: "fr" });
+
+    fireEvent.change(await screen.findByLabelText("Note (facultative)"), { target: { value: "équipe envoyée" } });
+    expect(screen.queryByTestId("draft-changed")).not.toBeInTheDocument();
+
+    // A live event: another operator moved the report on.
+    act(() => {
+      queryClient.setQueryData(["report", "r1"], {
+        ...detail,
+        status: "in_progress",
+        allowed_transitions: ["intervened"],
+      });
+    });
+    expect(await screen.findByTestId("draft-changed")).toBeInTheDocument();
+    expect(screen.getByLabelText("Note (facultative)")).toHaveValue("équipe envoyée");
+
+    fireEvent.click(within(screen.getByTestId("draft-changed")).getByRole("button"));
+    expect(screen.queryByTestId("draft-changed")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Note (facultative)")).toHaveValue("équipe envoyée");
+    window.sessionStorage.clear();
   });
 
   it("shows the Arabic translation and the AI analysis panel", async () => {

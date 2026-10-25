@@ -143,6 +143,7 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     aiSettings: vi.fn(),
     saveAiSettings: vi.fn(),
     aiStatus: vi.fn(() => Promise.resolve(AI_STATUS_READY)),
+    environment: vi.fn(() => Promise.resolve({ banner: null })),
     orgs: vi.fn(() => Promise.resolve({ items: [], next_cursor: null })),
     org: vi.fn(),
     orgReports: vi.fn(() => Promise.resolve({ items: [], next_cursor: null })),
