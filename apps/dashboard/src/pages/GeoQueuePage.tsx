@@ -19,6 +19,7 @@ import { p9Keys } from "../lib/phase9Api";
 import { GEO_REASONS } from "../lib/phase9Types";
 import { canGeoVerify } from "../lib/roles";
 import type { StaffReport } from "../lib/types";
+import { PageTitle } from "../components/PageTitle";
 
 /** Map of one queued report: its point and accuracy circle, with the candidate gouvernorats listed beside it. */
 function CandidateMap({ report }: { report: StaffReport }) {
@@ -110,7 +111,7 @@ export function GeoQueuePage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("geo.queueTitle")}</h1>
+        <PageTitle icon="wrongLocation" tone="orange">{t("geo.queueTitle")}</PageTitle>
         <Link to="/reports/late">{t("nav.late")}</Link>
       </div>
       <p className="muted">{t("geo.queueIntro")}</p>

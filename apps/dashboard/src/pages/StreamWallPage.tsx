@@ -19,6 +19,7 @@ import type { StaffStream } from "../lib/streamTypes";
 import { arrangeWall, loadWall, pinStream, saveWall, WALL_LAYOUTS, type WallLayout, type WallState } from "../lib/wall";
 import { useStreamList } from "../lib/streamHooks";
 import { Coordinates, StreamsNav } from "./StreamsPage";
+import { PageTitle } from "../components/PageTitle";
 
 /**
  * Detail of a tile's stream, read only when the tile needs it (each read is audited `stream.detail`): for the boxes of
@@ -171,7 +172,7 @@ export function StreamWallPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("streams.wall.title")}</h1>
+        <PageTitle icon="videocam" tone="red">{t("streams.wall.title")}</PageTitle>
         <StreamsNav />
       </div>
       <div className="filters__row list-tools">

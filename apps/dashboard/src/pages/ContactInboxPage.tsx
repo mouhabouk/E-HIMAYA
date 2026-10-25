@@ -20,6 +20,7 @@ import {
 } from "../lib/contact";
 import { useFormat, useGouvernorats } from "../lib/hooks";
 import { useDraft } from "../lib/drafts";
+import { PageTitle } from "../components/PageTitle";
 
 const DEFAULT_FILTERS: InboxFilters = { kind: "", status: "open", gouvernorat: "", overdue: false };
 
@@ -314,7 +315,7 @@ export function ContactInboxPage() {
   });
   return (
     <div className="page contact-page">
-      <h1>{t("contact.title")}</h1>
+      <PageTitle icon="mail" tone="sky">{t("contact.title")}</PageTitle>
       <p>{t("contact.intro")}</p>
       <Filters
         value={filters}

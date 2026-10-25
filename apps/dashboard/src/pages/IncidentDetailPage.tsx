@@ -34,6 +34,7 @@ import { useFormat, useGouvernorats, useLanguage } from "../lib/hooks";
 import { canManageIncidents } from "../lib/roles";
 import { queryKeys } from "../lib/staffApi";
 import { TIMELINE_KINDS, type IncidentDetail, type TimelineEntry } from "../lib/types";
+import { PageTitle } from "../components/PageTitle";
 
 const VIA = ["suggestion", "manual", "new", "auto"] as const;
 
@@ -277,7 +278,7 @@ export function IncidentDetailPage() {
         <Link to="/incidents">{t("incidents.detail.back")}</Link>
       </p>
       <div className="page__head">
-        <h1 id="incident-title">
+        <PageTitle icon="localFireDepartment" tone="red" id="incident-title">
           {t("incidents.detail.title")} · <CategoryLabel category={incident.category} />
           {incident.title && (
             <>
@@ -285,7 +286,7 @@ export function IncidentDetailPage() {
               <span dir="auto">{incident.title}</span>
             </>
           )}
-        </h1>
+        </PageTitle>
         <IncidentStatusChip status={incident.status} />
         <PriorityBadge score={incident.severity} />
         {incident.op_level && incident.op_level !== "normal" && <LevelTag level={incident.op_level} />}

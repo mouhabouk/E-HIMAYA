@@ -14,6 +14,7 @@ import {
 } from "../lib/doctorsApi";
 import { useDebounced, useFormat, useGouvernorats } from "../lib/hooks";
 import { SpecialtyList } from "./DoctorsPage";
+import { PageTitle } from "../components/PageTitle";
 
 function useCommitteeUpdate() {
   const qc = useQueryClient();
@@ -217,7 +218,7 @@ export function MedicalCommitteePage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("medicalCommittee.title")}</h1>
+        <PageTitle icon="groups" tone="purple">{t("medicalCommittee.title")}</PageTitle>
       </div>
       <p className="muted">{t("medicalCommittee.intro")}</p>
       <ul className="muted">

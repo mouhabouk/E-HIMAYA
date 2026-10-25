@@ -36,6 +36,7 @@ import {
 } from "../lib/phase8Types";
 import { canCreateReports, canRunScenarios } from "../lib/roles";
 import { CATEGORIES, REPORT_STATUSES } from "../lib/types";
+import { PageTitle } from "../components/PageTitle";
 
 export const HEX_SIZES_KM = [2, 5, 10, 20] as const;
 
@@ -348,7 +349,7 @@ export function AnalyticsPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("analytics.title")}</h1>
+        <PageTitle icon="analytics" tone="navy">{t("analytics.title")}</PageTitle>
         {exportable && (
           <button type="button" className="btn btn--primary" onClick={() => void navigate(`/reports-library${exportSearch(filters)}`)}>
             {t("analytics.export")}

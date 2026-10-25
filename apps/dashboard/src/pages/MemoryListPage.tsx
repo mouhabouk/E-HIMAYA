@@ -11,6 +11,7 @@ import { localized } from "../lib/localized";
 import { p8Keys } from "../lib/phase8Api";
 import { MEMORY_ACCESS, MEMORY_STATUSES, type MemoryAccess, type MemoryListQuery, type MemoryStatus } from "../lib/phase8Types";
 import { canAuthorMemory } from "../lib/roles";
+import { PageTitle } from "../components/PageTitle";
 
 export function MemoryStatusTag({ status }: { status: MemoryStatus }) {
   const { t } = useTranslation();
@@ -41,7 +42,7 @@ export function MemoryListPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("memory.title")}</h1>
+        <PageTitle icon="historyEdu" tone="purple">{t("memory.title")}</PageTitle>
         {canAuthorMemory(user?.identity.roles ?? []) && (
           <Link className="btn btn--primary" to="/memory/new">
             {t("memory.new")}

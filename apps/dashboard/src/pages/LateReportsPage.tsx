@@ -14,6 +14,7 @@ import { useNow } from "../lib/phase9";
 import { p9Keys } from "../lib/phase9Api";
 import { mayClaim, roomOf } from "../lib/roles";
 import type { StaffReport } from "../lib/types";
+import { PageTitle } from "../components/PageTitle";
 
 function ClaimButton({ report }: { report: StaffReport }) {
   const { t } = useTranslation();
@@ -71,7 +72,7 @@ export function LateReportsPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("late.title")}</h1>
+        <PageTitle icon="schedule" tone="orange">{t("late.title")}</PageTitle>
         <Link to="/reports/geo-queue">{t("nav.geoQueue")}</Link>
       </div>
       <p className="muted">{t("late.intro")}</p>

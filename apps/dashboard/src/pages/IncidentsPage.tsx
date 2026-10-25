@@ -10,6 +10,7 @@ import { useServices } from "../context/services";
 import { useFormat, useGouvernorats } from "../lib/hooks";
 import { queryKeys, type IncidentStatusFilter } from "../lib/staffApi";
 import { INCIDENT_STATUSES } from "../lib/types";
+import { PageTitle } from "../components/PageTitle";
 
 const STATUS_FILTERS: readonly IncidentStatusFilter[] = [...INCIDENT_STATUSES, "all"];
 
@@ -55,7 +56,7 @@ export function IncidentsPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("incidents.title")}</h1>
+        <PageTitle icon="localFireDepartment" tone="red">{t("incidents.title")}</PageTitle>
         <StatusFilter value={status} onChange={setStatus} />
       </div>
       <p className="muted">{t("incidents.intro")}</p>

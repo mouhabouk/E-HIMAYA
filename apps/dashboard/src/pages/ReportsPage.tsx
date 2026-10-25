@@ -17,6 +17,7 @@ import { listKey } from "../lib/liveCache";
 import type { ReportSort } from "../lib/staffApi";
 import type { StaffReport } from "../lib/types";
 import { useEffectiveFilters } from "./useEffectiveFilters";
+import { PageTitle } from "../components/PageTitle";
 
 const SORTS: readonly ReportSort[] = ["received", "priority"];
 const SORT_STORAGE_KEY = "ehimaya.reportsSort";
@@ -114,9 +115,9 @@ export function ReportsPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1 ref={topRef} tabIndex={-1}>
+        <PageTitle icon="description" tone="red" ref={topRef} tabIndex={-1}>
           {t("reports.title")}
-        </h1>
+        </PageTitle>
         {unread > 0 && (
           <button type="button" className="btn btn--primary new-badge" onClick={acknowledge}>
             {t("reports.newCount", { count: unread })}

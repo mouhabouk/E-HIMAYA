@@ -16,6 +16,7 @@ import {
 import { useDebounced, useFormat, useGouvernorats } from "../lib/hooks";
 import { VOLUNTEER_STATUSES } from "../lib/opsTypes";
 import { VolunteerStatusChip } from "./VolunteersPage";
+import { PageTitle } from "../components/PageTitle";
 
 export function SpecialtyList({ specialties }: { specialties: readonly Specialty[] }) {
   const { t } = useTranslation();
@@ -82,7 +83,7 @@ export function DoctorsPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <h1>{t("doctors.title")}</h1>
+        <PageTitle icon="stethoscope" tone="purple">{t("doctors.title")}</PageTitle>
       </div>
       <p className="muted">{t("doctors.intro")}</p>
 

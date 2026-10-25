@@ -38,6 +38,7 @@ import {
 import { addVertex, MAX_VERTICES, undoVertex, verticesBounds } from "../lib/polygon";
 import { canDraftMessage, canPublishMessage } from "../lib/roles";
 import { MessageKindTag, MessageStatusTag, StatsText, TargetText } from "./NotificationsPage";
+import { PageTitle } from "../components/PageTitle";
 
 const LANGS = TIP_LANGUAGES;
 const LANG_DIR = { ar: "rtl", fr: "ltr", en: "ltr" } as const;
@@ -951,7 +952,7 @@ export function NotificationEditorPage() {
       <div className="page">
         {back}
         <div className="page__head">
-          <h1>{t(newKind === "alert" ? "notify.newAlert" : "notify.newInfo")}</h1>
+          <PageTitle icon="campaign" tone="sky">{t(newKind === "alert" ? "notify.newAlert" : "notify.newInfo")}</PageTitle>
         </div>
         <Composer key="new" message={null} kind={newKind} />
       </div>
@@ -971,7 +972,7 @@ export function NotificationEditorPage() {
     <div className="page">
       {back}
       <div className="page__head">
-        <h1 dir="auto">{message.title.ar}</h1>
+        <PageTitle icon="campaign" tone="sky" dir="auto">{message.title.ar}</PageTitle>
         <MessageKindTag message={message} />
         <MessageStatusTag status={message.status} />
       </div>
