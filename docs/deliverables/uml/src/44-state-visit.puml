@@ -1,0 +1,29 @@
+@startuml
+!include style.iuml
+title Diagramme d'états : visite de prévention et réserve (P3b)
+state Visite {
+  [*] --> Demandée : demande de l'établissement
+  [*] --> Programmée : programmée par l'Office
+  Demandée --> Programmée : date et inspecteur
+  Demandée --> Annulée : retrait (établissement)\nou motif (Office)
+  Programmée --> Programmée : nouvelle date
+  Programmée --> Inspectée : grille enregistrée
+  Programmée --> Annulée : motif (Office)
+  Inspectée --> Inspectée : grille corrigée
+  Inspectée --> Décidée : favorable | réserves | refus
+  Décidée --> [*]
+  Annulée --> [*]
+}
+state Réserve {
+  [*] --> Ouverte : décision avec réserves
+  Ouverte --> Répondue : réponse de l'établissement
+  Ouverte --> EnRetard : délai dépassé
+  Répondue --> EnRetard : délai dépassé
+  EnRetard --> Répondue : réponse
+  Ouverte --> Levée : auditeur
+  Répondue --> Levée : auditeur
+  EnRetard --> Levée : auditeur
+  Levée --> [*]
+}
+note right of Visite : une seule visite ouverte\npar établissement
+@enduml
