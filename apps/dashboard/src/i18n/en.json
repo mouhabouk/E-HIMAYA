@@ -37,7 +37,8 @@
     "emergencyGuide": "Emergency hub",
     "contact": "Contact us",
     "doctors": "Doctors",
-    "medicalCommittee": "Medical committee"
+    "medicalCommittee": "Medical committee",
+    "counter": "Counter"
   },
   "header": {
     "scope": "Geographic scope",
@@ -294,7 +295,13 @@
     "self_appointment": "The administrator cannot appoint themselves to the medical committee.",
     "committee_full": "All medical committee seats are taken: end a term before appointing a new member.",
     "not_civil_protection_doctor": "Only a verified Civil Protection doctor can be appointed.",
-    "not_committee_member": "This doctor is not on the medical committee."
+    "not_committee_member": "This doctor is not on the medical committee.",
+    "invalid_code": "Invalid code. A certificate code starts with EHC-.",
+    "invalid_stamp_date": "The stamp date cannot be in the future or before approval.",
+    "place_required": "The stamp place is required.",
+    "certificate_not_valid": "Only a currently valid certificate can be stamped.",
+    "photo_too_large": "The photo is larger than 5 MB.",
+    "unsupported_media_type": "File type not accepted."
   },
   "kpi": {
     "title": "Key indicators",
@@ -816,7 +823,12 @@
     "alertKind": {
       "training_expired": "Training expired",
       "maintenance_overdue": "Maintenance overdue",
-      "other": "Alert ({{key}})"
+      "other": "Alert ({{key}})",
+      "training_expiring": "Training expiring soon",
+      "maintenance_due_soon": "Maintenance due soon",
+      "certificate_expiring": "Certificate expiring soon",
+      "certificate_expired": "Certificate expired",
+      "certificate_needs_update": "Certificate needs updating"
     },
     "identifierType": {
       "mf": "Tax identification number",
@@ -1137,6 +1149,83 @@
     "events": {
       "title": "Upcoming public events",
       "empty": "No upcoming event declared."
+    },
+    "counter": {
+      "title": "Counter: check and stamp a certificate",
+      "toQueue": "Certificate queue",
+      "intro": "Read the code of the certificate the institution brings (paper or phone), compare what was approved with the institution today, then record the hand stamp.",
+      "codeLabel": "Certificate code or verification link",
+      "check": "Check",
+      "scan": "Scan with the camera",
+      "cameraUnavailable": "This browser cannot read QR codes from the camera. Use a QR reader or type the code.",
+      "cameraLabel": "Camera view to read the code",
+      "closeCamera": "Close the camera",
+      "valid": "Valid certificate",
+      "invalid": "Certificate not valid",
+      "reasons": {
+        "not_approved": "Not approved by the Office",
+        "revoked": "Revoked",
+        "superseded": "Replaced by a newer certificate",
+        "expired": "Expired",
+        "signature": "The electronic signature does not match",
+        "org_inactive": "Institution not active"
+      },
+      "org": "Institution",
+      "signature": "Electronic signature",
+      "signatureOk": "Matches",
+      "signatureBad": "Does not match",
+      "compareTitle": "Comparison: approved and today",
+      "compareHelp": "Substantive items only: identity, building, classification, hazardous materials, safety file and plan, safety team, evacuation points.",
+      "noComparison": "No comparison: this is not the current certificate.",
+      "matches": "Matches the institution today",
+      "needsUpdate": "Needs updating (differences: {{count}})",
+      "changesCaption": "Differences between the approved and today",
+      "section": "Section",
+      "certified": "Approved",
+      "current": "Today",
+      "sections": {
+        "identity": "Identity",
+        "building": "Building",
+        "classification": "Classification",
+        "hazmat": "Hazardous materials",
+        "documents": "Documents",
+        "safety_team": "Safety team",
+        "evacuation": "Evacuation"
+      },
+      "fields": {
+        "name": "Name",
+        "kind": "Kind",
+        "identifier": "Identifier",
+        "capacity": "Capacity",
+        "floors": "Floors",
+        "height_m": "Height (m)",
+        "receives_public": "Receives the public",
+        "address": "Address",
+        "location": "Location",
+        "family": "Family",
+        "category": "Category",
+        "high_rise": "High-rise",
+        "items": "Materials",
+        "files": "Safety file and plan",
+        "representative": "Representative",
+        "members": "Number of members",
+        "points": "Number of evacuation points"
+      },
+      "stampsTitle": "Stamps at regional administrations",
+      "noStamps": "No stamp yet.",
+      "stamped": "Stamped",
+      "stampedBy": "Agent: {{name}}",
+      "stampedWithChanges": "Stamped with differences ({{count}})",
+      "photo": "Photo of the stamped paper",
+      "stampTitle": "Record the hand stamp",
+      "stampHelp": "Record the stamp after putting it on the paper. The place and date appear on the public page, without your name.",
+      "place": "Place",
+      "defaultPlace": "Regional civil protection administration of {{gouvernorat}}",
+      "stampedOn": "Stamp date",
+      "note": "Note",
+      "photoOptional": "Photo of the stamped paper (optional, JPEG or PNG, 5 MB max)",
+      "stamp": "Record the stamp",
+      "stampedOk": "Stamp of certificate {{code}} recorded."
     }
   },
   "levels": {

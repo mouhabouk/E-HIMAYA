@@ -1,6 +1,6 @@
 @startuml
 !include style.iuml
-title Cas d'utilisation : établissements (portail et application, P2a et P2b)
+title Cas d'utilisation : établissements (portail et application, P2a, P2b et P3a)
 left to right direction
 actor "Responsable\nd'établissement" as ADM
 actor "Membre d'équipe\nde sécurité" as MEM
@@ -32,6 +32,10 @@ rectangle "Portail et application" {
   usecase "Suivre les accusés\nde lecture (P2b)" as O21
   usecase "Voir les événements\npublics à venir (P2b)" as O22
   usecase "Valider / révoquer\nle certificat (Ed25519)" as O13
+  usecase "Vérifier au guichet régional\n(QR, comparaison) (P3a)" as O23
+  usecase "Cacheter à la main et\nenregistrer le cachet (P3a)" as O24
+  usecase "Être rappelé du renouvellement\n(90 et 30 jours) (P3a)" as O25
+  usecase "Voir « à mettre à jour »\net régénérer (P3a)" as O26
 }
 ADM --> O1
 ADM --> O14
@@ -60,4 +64,10 @@ O20 ..> O17 : <<include>>
 OPE --> O22
 O19 ..> O22 : <<extend>>
 O10 ..> O13 : <<include>>
+AUD --> O23
+AUD --> O24
+O24 ..> O23 : <<include>>
+ADM --> O25
+MEM --> O26
+O26 ..> O10 : <<extend>>
 @enduml

@@ -27,7 +27,7 @@ tests (`# covers: FR-…` comments, docstrings, names). Do not edit by hand. A r
 | FR-A-006 | S | معطيات اختيارية: العمر، فصيلة الدم، معلومات طبية عامة، جهة اتصال للطوارئ. تُشفّر على مستوى الحقل. | `services/api/tests/test_profile.py` |
 | FR-B-006 | M | سجل المواد الخطرة (الاسم، رقم UN، الكمية، مكان التخزين، بطاقة البيانات) وأدوات السلامة (النوع، العدد، تاريخ آ… | `services/api/tests/test_org_space.py`<br>`services/api/tests/test_orgs.py` |
 | FR-B-007 | S | نقاط الإخلاء ومآخذ المياه وأجهزة الإنذار، تُرسم على خريطة المؤسسة. | `services/api/tests/test_orgs.py` |
-| FR-B-008 | M | تصدير شهادة سلامة رقمية (PDF) تجمع كل المعطيات، بها رمز QR للتحقق وبصمة رقمية، للطباعة والمصادقة من الجهات ال… | `apps/portal/src/pages/org/workspace.test.tsx` |
+| FR-B-008 | M | تصدير شهادة سلامة رقمية (PDF) تجمع كل المعطيات، بها رمز QR للتحقق وبصمة رقمية، للطباعة والمصادقة من الجهات ال… | `apps/portal/src/pages/org/workspace.test.tsx`<br>`services/api/tests/test_certificate_counter.py` |
 | FR-B-009 | S | دعوة أعضاء فريق السلامة وتحديد صلاحياتهم داخل حساب المؤسسة. | `services/api/tests/test_orgs.py` |
 | FR-A-011 | M | صفحة الحساب: عرض وتعديل المعطيات القابلة للتحيين، وعرض حالة التطوع، وتنزيل نسخة من معطياتي، وطلب حذف الحساب. | `services/api/tests/test_data_protection.py` |
 | FR-B-011 | M | متابعة بلاغات المؤسسة برقم التتبع وإشعارات حالة التدخل. | `apps/portal/src/pages/org/workspace.test.tsx` |

@@ -3,11 +3,12 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { Badge, CertificateStatusBadge } from "../../components/Badges";
+import { CertificateChanges, StampList } from "../../components/CertificateExtras";
 import { CopyButton } from "../../components/CopyButton";
 import { ErrorBox, Loading } from "../../components/Feedback";
 import { useServices } from "../../context/services";
 import { isApiError } from "../../lib/api";
-import { todayIso } from "../../lib/certificates";
+import { daysUntil, RENEWAL_NOTICE_DAYS, todayIso } from "../../lib/certificates";
 import { useFormat } from "../../lib/hooks";
 import { openPresigned } from "../../lib/openUrl";
 import { queryKeys } from "../../lib/portalApi";
@@ -39,6 +40,45 @@ function MissingList({ missing }: { missing: readonly string[] }) {
         ))}
       </ul>
     </div>
+  );
+}
+
+/**
+ * Phase P3a on the current approved certificate: the renewal reminder (90 days before the end of validity) and
+ * "needs updating" when the institution changed substantively since approval, each with "generate a new certificate".
+ */
+function CurrentCertificate({ cert, onRegenerate }: { cert: Certificate; onRegenerate: (() => void) | null }) {
+  const { t } = useTranslation();
+  const days = cert.valid_until ? daysUntil(cert.valid_until) : null;
+  const renew = days !== null && days >= 0 && days <= RENEWAL_NOTICE_DAYS;
+  const changes = cert.changes ?? [];
+  const regenerate = onRegenerate && (
+    <button type="button" className="btn btn--primary" onClick={onRegenerate}>
+      {t("certificate.generateNew")}
+    </button>
+  );
+  return (
+    <>
+      {renew && (
+        <div className="alert alert--warn">
+          <p>{t("certificate.renewSoon", { count: days })}</p>
+          {!cert.needs_update && regenerate}
+        </div>
+      )}
+      {cert.needs_update ? (
+        <div className="alert alert--warn">
+          <p>
+            <strong>{t("certificate.needsUpdate")}</strong> {t("certificate.needsUpdateBody", { count: changes.length })}
+          </p>
+          <CertificateChanges changes={changes} />
+          {regenerate}
+        </div>
+      ) : (
+        <p>
+          <Badge tone="ok">{t("certificate.upToDate")}</Badge>
+        </p>
+      )}
+    </>
   );
 }
 
@@ -116,6 +156,13 @@ function CertificateItem({ cert, onRegenerate }: { cert: Certificate; onRegenera
           </>
         )}
       </dl>
+      {cert.needs_update != null && <CurrentCertificate cert={cert} onRegenerate={onRegenerate} />}
+      {(cert.stamps?.length ?? 0) > 0 && (
+        <div className="cert__stamps">
+          <h4>{t("certificate.stampsTitle")}</h4>
+          <StampList stamps={cert.stamps ?? []} />
+        </div>
+      )}
       {isDraft && <p className="muted">{t("certificate.draftNote")}</p>}
       {!isDraft && (
         <div className="verify-link">

@@ -231,4 +231,35 @@ void main() {
       ),
     );
   });
+  test(
+    'P3a certificate: needs updating, changes and stamps; older servers',
+    () {
+      final c = OrgCertificate.fromJson({
+        'code': 'EHC-26-61-000123',
+        'status': 'approved',
+        'valid_until': '2027-10-03',
+        'needs_update': true,
+        'changes': [
+          {
+            'section': 'evacuation',
+            'field': 'points',
+            'certified': 2,
+            'current': 1,
+          },
+        ],
+        'stamps': [
+          {'place': 'Direction régionale de Sfax', 'stamped_on': '2026-10-20'},
+        ],
+      });
+      expect(c.needsUpdate, isTrue);
+      expect(c.changes.single.section, 'evacuation');
+      expect(c.changes.single.field, 'points');
+      expect(c.stamps.single.place, 'Direction régionale de Sfax');
+      expect(c.stamps.single.stampedOn, DateTime(2026, 10, 20));
+      final old = OrgCertificate.fromJson({'code': 'X', 'status': 'draft'});
+      expect(old.needsUpdate, isNull);
+      expect(old.changes, isEmpty);
+      expect(old.stamps, isEmpty);
+    },
+  );
 }

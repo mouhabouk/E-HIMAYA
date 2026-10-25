@@ -330,6 +330,9 @@ export function CertificatesPage() {
     <div className="page">
       <div className="page__head">
         <PageTitle icon="workspacePremium" tone="amber">{t("orgs.certs.title")}</PageTitle>
+        <Link to="/orgs/certificates/counter" className="btn">
+          {t("orgs.counter.title")}
+        </Link>
         <Link to="/orgs">{t("orgs.detail.back")}</Link>
       </div>
       <p className="muted">{t("orgs.certs.intro")}</p>

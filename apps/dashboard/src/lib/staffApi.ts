@@ -16,7 +16,9 @@ import type {
   AiStatus,
   Certificate,
   CertificateReviewBody,
+  CertificateStamp,
   CertificateStatus,
+  CounterView,
   DocumentVersion,
   DownloadLink,
   Gouvernorat,
@@ -29,6 +31,7 @@ import type {
   OrgReviewBody,
   Page,
   QueueCertificate,
+  StampBody,
   ReportStatus,
   StaffOrg,
   StaffOrgDetail,
@@ -189,6 +192,25 @@ export function staffApi(api: ApiClient) {
         body,
       }),
 
+    /** Phase P3a: the certificate shown at the counter, by its code or the verification URL of its QR code. */
+    certificateLookup: (code: string, signal?: AbortSignal) =>
+      api.request<CounterView>("/api/v1/staff/certificates/lookup", { query: { code }, signal }),
+    /** Record the stamp put by hand on the paper certificate (`org_auditor`). */
+    addStamp: (certId: string, body: StampBody) =>
+      api.request<CertificateStamp>(`/api/v1/staff/certificates/${encodeURIComponent(certId)}/stamps`, {
+        method: "POST",
+        body,
+      }),
+    /** The photo of the stamped paper, sent as it is (JPEG or PNG, 5 MB at most). */
+    putStampPhoto: (certId: string, stampId: string, file: Blob) =>
+      api.request<CertificateStamp>(
+        `/api/v1/staff/certificates/${encodeURIComponent(certId)}/stamps/${encodeURIComponent(stampId)}/photo`,
+        { method: "PUT", rawBody: file },
+      ),
+    stampPhoto: (certId: string, stampId: string) =>
+      api.request<DownloadLink>(
+        `/api/v1/staff/certificates/${encodeURIComponent(certId)}/stamps/${encodeURIComponent(stampId)}/photo`,
+      ),
     /** Revoke an approved certificate (`org_auditor`, phase 10 §4.1); the reason stays internal. */
     revokeCertificate: (certId: string, reason: string) =>
       api.request<Certificate>(`/api/v1/staff/certificates/${encodeURIComponent(certId)}/revoke`, {

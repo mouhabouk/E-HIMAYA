@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
+import { ElectronicSeal, StampList } from "../components/CertificateExtras";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { FileDrop } from "../components/FileDrop";
 import { useServices } from "../context/services";
@@ -158,6 +159,17 @@ function CertificateResult({ cert }: { cert: PublicCertificate }) {
           <dt>{t("certificate.pdfHash")}</dt>
           <dd className="hash">{cert.pdf_sha256 ?? t("common.notAvailable")}</dd>
         </dl>
+      </section>
+      {cert.status === "approved" && (
+        <section className="card" aria-labelledby="seal-title">
+          <h2 id="seal-title">{t("verify.sealTitle")}</h2>
+          <p>{t("verify.sealBody")}</p>
+          <ElectronicSeal issuedAt={cert.issued_at} keyId={cert.key_id} />
+        </section>
+      )}
+      <section className="card" aria-labelledby="stamps-title">
+        <h2 id="stamps-title">{t("certificate.stampsTitle")}</h2>
+        <StampList stamps={cert.stamps ?? []} />
       </section>
       {cert.pdf_sha256 ? <PdfCompare expected={cert.pdf_sha256} /> : null}
       <SigningKey />

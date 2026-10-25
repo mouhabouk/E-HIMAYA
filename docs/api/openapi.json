@@ -656,7 +656,10 @@
               "training_expired",
               "training_expiring",
               "maintenance_overdue",
-              "maintenance_due_soon"
+              "maintenance_due_soon",
+              "certificate_expiring",
+              "certificate_expired",
+              "certificate_needs_update"
             ],
             "title": "Kind",
             "type": "string"
@@ -2754,6 +2757,42 @@
         "title": "CategoryOut",
         "type": "object"
       },
+      "CertificateChange": {
+        "description": "A substantive difference between the certified snapshot and the institution today (phase P3a).",
+        "properties": {
+          "certified": {
+            "title": "Certified"
+          },
+          "current": {
+            "title": "Current"
+          },
+          "field": {
+            "title": "Field",
+            "type": "string"
+          },
+          "section": {
+            "enum": [
+              "identity",
+              "building",
+              "classification",
+              "hazmat",
+              "documents",
+              "safety_team",
+              "evacuation"
+            ],
+            "title": "Section",
+            "type": "string"
+          }
+        },
+        "required": [
+          "section",
+          "field",
+          "certified",
+          "current"
+        ],
+        "title": "CertificateChange",
+        "type": "object"
+      },
       "CertificateIn": {
         "properties": {
           "badge_award_id": {
@@ -3848,6 +3887,93 @@
           "message"
         ],
         "title": "ContactIn",
+        "type": "object"
+      },
+      "CounterView": {
+        "description": "What the agent at the counter of a regional administration sees after scanning a certificate (phase P3a).",
+        "properties": {
+          "can_stamp": {
+            "title": "Can Stamp",
+            "type": "boolean"
+          },
+          "certificate": {
+            "$ref": "#/components/schemas/app__modules__orgs__schemas__CertificateOut"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "org_address": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Org Address"
+          },
+          "org_id": {
+            "format": "uuid",
+            "title": "Org Id",
+            "type": "string"
+          },
+          "org_kind": {
+            "$ref": "#/components/schemas/OrgKind"
+          },
+          "org_name": {
+            "title": "Org Name",
+            "type": "string"
+          },
+          "org_status": {
+            "$ref": "#/components/schemas/OrgStatus"
+          },
+          "reasons": {
+            "items": {
+              "enum": [
+                "not_approved",
+                "revoked",
+                "superseded",
+                "expired",
+                "signature",
+                "org_inactive"
+              ],
+              "type": "string"
+            },
+            "title": "Reasons",
+            "type": "array"
+          },
+          "signature_valid": {
+            "title": "Signature Valid",
+            "type": "boolean"
+          },
+          "valid": {
+            "title": "Valid",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "certificate",
+          "valid",
+          "reasons",
+          "signature_valid",
+          "can_stamp",
+          "org_id",
+          "org_name",
+          "org_kind",
+          "org_status",
+          "org_address",
+          "gouvernorat_code"
+        ],
+        "title": "CounterView",
         "type": "object"
       },
       "CredentialsOut": {
@@ -17014,6 +17140,25 @@
         "title": "PublicLayers",
         "type": "object"
       },
+      "PublicStamp": {
+        "properties": {
+          "place": {
+            "title": "Place",
+            "type": "string"
+          },
+          "stamped_on": {
+            "format": "date",
+            "title": "Stamped On",
+            "type": "string"
+          }
+        },
+        "required": [
+          "place",
+          "stamped_on"
+        ],
+        "title": "PublicStamp",
+        "type": "object"
+      },
       "PublicTip": {
         "properties": {
           "content": {
@@ -22566,6 +22711,119 @@
         "title": "Stage",
         "type": "object"
       },
+      "StampIn": {
+        "properties": {
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "place": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Place",
+            "type": "string"
+          },
+          "stamped_on": {
+            "format": "date",
+            "title": "Stamped On",
+            "type": "string"
+          }
+        },
+        "required": [
+          "place",
+          "stamped_on"
+        ],
+        "title": "StampIn",
+        "type": "object"
+      },
+      "StampOut": {
+        "description": "A paper certificate stamped by hand at a regional administration (phase P3a).",
+        "properties": {
+          "changes": {
+            "items": {
+              "$ref": "#/components/schemas/CertificateChange"
+            },
+            "title": "Changes",
+            "type": "array"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "has_photo": {
+            "title": "Has Photo",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "place": {
+            "title": "Place",
+            "type": "string"
+          },
+          "recorded_at": {
+            "format": "date-time",
+            "title": "Recorded At",
+            "type": "string"
+          },
+          "stamped_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stamped By Name"
+          },
+          "stamped_on": {
+            "format": "date",
+            "title": "Stamped On",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "place",
+          "gouvernorat_code",
+          "stamped_on",
+          "note",
+          "stamped_by_name",
+          "recorded_at",
+          "has_photo"
+        ],
+        "title": "StampOut",
+        "type": "object"
+      },
       "Status": {
         "enum": [
           "received",
@@ -26191,6 +26449,13 @@
       },
       "app__modules__orgs__schemas__CertificateOut": {
         "properties": {
+          "changes": {
+            "items": {
+              "$ref": "#/components/schemas/CertificateChange"
+            },
+            "title": "Changes",
+            "type": "array"
+          },
           "code": {
             "title": "Code",
             "type": "string"
@@ -26219,6 +26484,17 @@
               }
             ],
             "title": "Key Id"
+          },
+          "needs_update": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Needs Update"
           },
           "pdf_sha256": {
             "title": "Pdf Sha256",
@@ -26269,6 +26545,13 @@
               }
             ],
             "title": "Revoked At"
+          },
+          "stamps": {
+            "items": {
+              "$ref": "#/components/schemas/StampOut"
+            },
+            "title": "Stamps",
+            "type": "array"
           },
           "status": {
             "enum": [
@@ -26612,6 +26895,13 @@
           "signature_valid": {
             "title": "Signature Valid",
             "type": "boolean"
+          },
+          "stamps": {
+            "items": {
+              "$ref": "#/components/schemas/PublicStamp"
+            },
+            "title": "Stamps",
+            "type": "array"
           },
           "status": {
             "enum": [
@@ -37840,6 +38130,56 @@
         ]
       }
     },
+    "/api/v1/staff/certificates/lookup": {
+      "get": {
+        "description": "The certificate a visitor shows at the counter: the code, or the verification URL read from its QR code.",
+        "operationId": "counter_lookup_api_v1_staff_certificates_lookup_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "code",
+            "required": true,
+            "schema": {
+              "maxLength": 500,
+              "minLength": 6,
+              "title": "Code",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CounterView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Counter Lookup",
+        "tags": [
+          "staff-institutions"
+        ]
+      }
+    },
     "/api/v1/staff/certificates/{cert_id}/review": {
       "post": {
         "operationId": "review_certificate_api_v1_staff_certificates__cert_id__review_post",
@@ -37952,6 +38292,180 @@
           }
         ],
         "summary": "Revoke Certificate",
+        "tags": [
+          "staff-institutions"
+        ]
+      }
+    },
+    "/api/v1/staff/certificates/{cert_id}/stamps": {
+      "post": {
+        "description": "Record the stamp an agent put by hand on the paper certificate (F-POR-07).",
+        "operationId": "add_stamp_api_v1_staff_certificates__cert_id__stamps_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cert_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Cert Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StampIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StampOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Add Stamp",
+        "tags": [
+          "staff-institutions"
+        ]
+      }
+    },
+    "/api/v1/staff/certificates/{cert_id}/stamps/{stamp_id}/photo": {
+      "get": {
+        "operationId": "get_stamp_photo_api_v1_staff_certificates__cert_id__stamps__stamp_id__photo_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cert_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Cert Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "stamp_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Stamp Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DownloadOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Stamp Photo",
+        "tags": [
+          "staff-institutions"
+        ]
+      },
+      "put": {
+        "description": "The photo of the stamped paper is the request body: JPEG or PNG, at most 5 MB.",
+        "operationId": "put_stamp_photo_api_v1_staff_certificates__cert_id__stamps__stamp_id__photo_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cert_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Cert Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "stamp_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Stamp Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StampOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Put Stamp Photo",
         "tags": [
           "staff-institutions"
         ]

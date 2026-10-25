@@ -6,7 +6,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page, type Route } from "@playwright/test";
 import { E2E_ENV } from "../playwright.config";
-import { GOUVERNORATS, MY_ORGS, makeOrg, makePublicCertificate } from "../src/test/fixtures";
+import { GOUVERNORATS, MY_ORGS, makeCertificate, makeOrg, makePublicCertificate } from "../src/test/fixtures";
 
 const API = E2E_ENV.VITE_API_BASE_URL;
 const CODE = "EHC-26-61-000123";
@@ -22,6 +22,28 @@ const SIGNED_IN_SCREENS = [
   "/orgs/o-1/members",
   "/orgs/o-1/certificate",
 ];
+
+/** An approved certificate that needs updating, with a hand stamp (phase P3a). */
+const P3A_CERTIFICATE = makeCertificate({
+  status: "approved",
+  reviewed_at: "2026-10-03T08:00:00Z",
+  valid_until: "2099-10-03",
+  needs_update: true,
+  changes: [{ section: "building", field: "capacity", certified: 300, current: 420 }],
+  stamps: [
+    {
+      id: "s-1",
+      place: "Sfax",
+      gouvernorat_code: 61,
+      stamped_on: "2026-10-20",
+      note: null,
+      stamped_by_name: "Leila",
+      recorded_at: "2026-10-20T09:00:00Z",
+      has_photo: false,
+      changes: [],
+    },
+  ],
+});
 
 const json = (route: Route, body: unknown, status = 200) =>
   route.fulfill({ status, contentType: "application/json", body: JSON.stringify(body) });
@@ -71,7 +93,11 @@ async function mock(page: Page): Promise<string[]> {
     if (pathname === "/api/v1/charter") return json(route, { version: "1" });
     if (pathname === "/api/v1/orgs/mine") return json(route, MY_ORGS);
     if (pathname === "/api/v1/orgs/o-1") return json(route, makeOrg());
-    if (pathname === `/api/v1/public/certificates/${CODE}`) return json(route, makePublicCertificate());
+    if (pathname === `/api/v1/public/certificates/${CODE}`) {
+      // Phase P3a: the electronic seal [SIM] and a hand stamp are part of the checked page.
+      return json(route, makePublicCertificate({ key_id: "k-2026", stamps: [{ place: "Sfax", stamped_on: "2026-10-20" }] }));
+    }
+    if (pathname === "/api/v1/orgs/o-1/certificates") return json(route, [P3A_CERTIFICATE]);
     if (pathname.startsWith("/api/v1/public/certificates/")) {
       return json(route, makePublicCertificate({ code: "EHC-26-61-000999", status: "revoked", valid: false }));
     }
