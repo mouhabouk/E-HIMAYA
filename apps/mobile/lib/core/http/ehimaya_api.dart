@@ -264,6 +264,98 @@ class EHimayaApi {
         );
       });
 
+  // ---- Phase P2b: Office messages, awareness, drills and events, maintenance log ----
+
+  Future<List<OrgMessage>> orgMessages(String orgId) => guardApi(() async {
+    final r = await _dio.get<List<Object?>>('${_org(orgId)}/messages');
+    return [
+      for (final m in r.data!)
+        if (m is Map<String, Object?>) OrgMessage.fromJson(m),
+    ];
+  });
+
+  Future<OrgMessage> ackOrgMessage(String orgId, String messageId) =>
+      guardApi(() async {
+        final r = await _dio.post<Map<String, Object?>>(
+          '${_org(orgId)}/messages/${Uri.encodeComponent(messageId)}/ack',
+        );
+        return OrgMessage.fromJson(r.data!);
+      });
+
+  Future<List<SafetyTip>> orgAwareness(String orgId) => guardApi(() async {
+    final r = await _dio.get<List<Object?>>('${_org(orgId)}/awareness');
+    return [
+      for (final t in r.data!)
+        if (t is Map<String, Object?>) SafetyTip.fromJson(t),
+    ];
+  });
+
+  Future<List<OrgActivity>> orgActivities(String orgId) => guardApi(() async {
+    final r = await _dio.get<List<Object?>>('${_org(orgId)}/activities');
+    return [
+      for (final a in r.data!)
+        if (a is Map<String, Object?>) OrgActivity.fromJson(a),
+    ];
+  });
+
+  Future<OrgActivity> addOrgActivity(String orgId, Map<String, Object?> body) =>
+      guardApi(() async {
+        final r = await _dio.post<Map<String, Object?>>(
+          '${_org(orgId)}/activities',
+          data: body,
+        );
+        return OrgActivity.fromJson(r.data!);
+      });
+
+  Future<void> deleteOrgActivity(String orgId, String activityId) =>
+      guardApi(() async {
+        await _dio.delete<Object?>(
+          '${_org(orgId)}/activities/${Uri.encodeComponent(activityId)}',
+        );
+      });
+
+  Future<List<OrgMaintenance>> equipmentMaintenance(
+    String orgId,
+    String itemId,
+  ) => guardApi(() async {
+    final r = await _dio.get<List<Object?>>(
+      '${_org(orgId)}/equipment/${Uri.encodeComponent(itemId)}/maintenance',
+    );
+    return [
+      for (final m in r.data!)
+        if (m is Map<String, Object?>) OrgMaintenance.fromJson(m),
+    ];
+  });
+
+  Future<OrgMaintenance> addMaintenance(
+    String orgId,
+    String itemId, {
+    required DateTime doneOn,
+    String? note,
+    String? documentId,
+  }) => guardApi(() async {
+    final r = await _dio.post<Map<String, Object?>>(
+      '${_org(orgId)}/equipment/${Uri.encodeComponent(itemId)}/maintenance',
+      data: {
+        'done_on': isoDay(doneOn),
+        'note': note,
+        'document_id': documentId,
+      },
+    );
+    return OrgMaintenance.fromJson(r.data!);
+  });
+
+  /// Creates an institution document (here a `maintenance_photo`) and returns its id; the
+  /// file itself goes through tus with `target=org_document`.
+  Future<String> createOrgDocument(String orgId, String kind, String title) =>
+      guardApi(() async {
+        final r = await _dio.post<Map<String, Object?>>(
+          '${_org(orgId)}/documents',
+          data: {'kind': kind, 'title': title},
+        );
+        return r.data!['id']! as String;
+      });
+
   static String _org(String orgId) =>
       '/api/v1/orgs/${Uri.encodeComponent(orgId)}';
 

@@ -5,6 +5,7 @@ import type { Handler } from "../../test/fetch";
 import { makeCertificate, makeOrg } from "../../test/fixtures";
 import { renderApp } from "../../test/render";
 import type { Organization } from "../../lib/types";
+import { ActivitiesTab, validateActivity } from "./ActivitiesTab";
 import { CardTab } from "./CardTab";
 import { CertificatesTab } from "./CertificatesTab";
 import { MembersTab } from "./MembersTab";
@@ -32,6 +33,7 @@ function open(path: string, org: Partial<Organization>, routes: Record<string, H
         <Route path="reports" element={<ReportsTab />} />
         <Route path="reports/new" element={<NewReportPage />} />
         <Route path="certificate" element={<CertificatesTab />} />
+        <Route path="activities" element={<ActivitiesTab />} />
       </>
     ),
   });
@@ -88,6 +90,109 @@ describe("overview", () => {
   it("maps 404 org_not_found (not a member) to a translated page", async () => {
     renderApp(<OrgWorkspace />, { path: "/orgs/o-9", route: "/orgs/:orgId", lang: "en", routes: { "GET /api/v1/orgs/o-9": { status: 404, body: { detail: "org_not_found" } } } });
     expect(await screen.findByRole("heading", { name: "Institution not found" })).toBeInTheDocument();
+  });
+});
+
+const MESSAGE = {
+  id: "msg-1",
+  topic: "other",
+  title: { ar: "موجة حر", fr: "Vigilance canicule", en: "Heat wave watch" },
+  body: { ar: "تحققوا من المطافئ", fr: "", en: "Check your extinguishers and water reserves." },
+  published_at: "2026-10-24T08:00:00Z",
+  ack_required: true,
+  acked_at: null,
+  acked_by: null,
+};
+
+describe("Office messages (P2b)", () => {
+  it("shows the messages in the page language and lets an editor confirm reading one", async () => {
+    const { calls } = open("/orgs/o-1", { my_role: "editor" }, {
+      "GET /api/v1/orgs/o-1/messages": { body: [MESSAGE, { ...MESSAGE, id: "msg-2", ack_required: false, title: { ar: "للعلم" }, body: { ar: "نص" } }] },
+      "POST /api/v1/orgs/o-1/messages/msg-1/ack": { body: { ...MESSAGE, acked_at: "2026-10-24T09:00:00Z", acked_by: "Amira" } },
+    });
+    const section = (await screen.findByRole("heading", { name: "Office messages" })).closest("section") as HTMLElement;
+    expect(await within(section).findByText("Heat wave watch")).toBeInTheDocument();
+    expect(within(section).getByText("Check your extinguishers and water reserves.")).toBeInTheDocument();
+    // An empty language falls back to Arabic.
+    expect(within(section).getByText("للعلم")).toBeInTheDocument();
+    expect(within(section).getByText("Awaiting acknowledgement: 1")).toBeInTheDocument();
+    fireEvent.click(within(section).getByRole("button", { name: "I have read it" }));
+    expect(await within(section).findByText(/Acknowledged on .*\(Amira\)/)).toBeInTheDocument();
+    expect(calls("POST /api/v1/orgs/o-1/messages/msg-1/ack")).toHaveLength(1);
+    expect(within(section).queryByRole("button", { name: "I have read it" })).not.toBeInTheDocument();
+  });
+
+  it("a member sees the request but cannot confirm", async () => {
+    open("/orgs/o-1", { my_role: "member" }, { "GET /api/v1/orgs/o-1/messages": { body: [MESSAGE] } });
+    const section = (await screen.findByRole("heading", { name: "Office messages" })).closest("section") as HTMLElement;
+    expect(await within(section).findByText("Acknowledgement requested")).toBeInTheDocument();
+    expect(within(section).queryByRole("button", { name: "I have read it" })).not.toBeInTheDocument();
+  });
+});
+
+describe("drills and events (P2b)", () => {
+  it("checks dates and participants like the server", () => {
+    const base = { kind: "drill" as const, title: "Évacuation", starts_on: "2026-10-20", ends_on: "", participants: "", notes: "" };
+    expect(validateActivity(base, "2026-10-25")).toEqual({});
+    expect(validateActivity({ ...base, starts_on: "2026-10-30" }, "2026-10-25")).toEqual({ starts_on: "activities.drillInFuture" });
+    expect(validateActivity({ ...base, kind: "event", starts_on: "2026-10-30", ends_on: "2026-10-29" }, "2026-10-25")).toEqual({
+      ends_on: "activities.endBeforeStart",
+    });
+    expect(validateActivity({ ...base, title: " ", participants: "-3" }, "2026-10-25")).toEqual({
+      title: "validation.required",
+      participants: "activities.participantsInvalid",
+    });
+  });
+
+  it("lists, declares an event and deletes an entry", async () => {
+    const DRILL = {
+      id: "a-1",
+      kind: "drill",
+      title: "Workshop evacuation",
+      starts_on: "2026-09-12",
+      ends_on: null,
+      participants: 48,
+      notes: null,
+      created_by: "Amira",
+      created_at: "2026-09-12T10:00:00Z",
+    };
+    const { calls } = open("/orgs/o-1/activities", { my_role: "editor" }, {
+      "GET /api/v1/orgs/o-1/activities": { body: [DRILL] },
+      "POST /api/v1/orgs/o-1/activities": { status: 201, body: { ...DRILL, id: "a-2", kind: "event" } },
+      "DELETE /api/v1/orgs/o-1/activities/a-1": { status: 204 },
+    });
+    const row = (await screen.findByRole("rowheader", { name: "Workshop evacuation" })).closest("tr") as HTMLElement;
+    expect(within(row).getByText("Drill")).toBeInTheDocument();
+    expect(within(row).getByText("48")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Add" }));
+    const dialog = await screen.findByRole("dialog");
+    fireEvent.change(within(dialog).getByLabelText("Type"), { target: { value: "event" } });
+    fireEvent.change(within(dialog).getByLabelText(/Title/), { target: { value: "Open day" } });
+    fireEvent.change(within(dialog).getByLabelText(/^Date/), { target: { value: "2099-05-01" } });
+    fireEvent.change(within(dialog).getByLabelText("End date"), { target: { value: "2099-05-02" } });
+    fireEvent.change(within(dialog).getByLabelText("Participants"), { target: { value: "300" } });
+    fireEvent.click(within(dialog).getByRole("button", { name: "Save" }));
+    await waitFor(() => expect(calls("POST /api/v1/orgs/o-1/activities")).toHaveLength(1));
+    expect(calls("POST /api/v1/orgs/o-1/activities")[0]?.body).toEqual({
+      kind: "event",
+      title: "Open day",
+      starts_on: "2099-05-01",
+      ends_on: "2099-05-02",
+      participants: 300,
+      notes: null,
+    });
+
+    fireEvent.click(await screen.findByRole("button", { name: "Delete “Workshop evacuation”" }));
+    const confirm = await screen.findByRole("dialog");
+    fireEvent.click(within(confirm).getByRole("button", { name: "Delete" }));
+    await waitFor(() => expect(calls("DELETE /api/v1/orgs/o-1/activities/a-1")).toHaveLength(1));
+  });
+
+  it("is read-only for a member", async () => {
+    open("/orgs/o-1/activities", { my_role: "member" }, { "GET /api/v1/orgs/o-1/activities": { body: [] } });
+    expect(await screen.findByText("No drill or event recorded yet.")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Add" })).not.toBeInTheDocument();
   });
 });
 

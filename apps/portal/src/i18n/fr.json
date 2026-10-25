@@ -222,7 +222,8 @@
       "documents": "Documents",
       "members": "Membres",
       "reports": "Signalements",
-      "certificate": "Certificat"
+      "certificate": "Certificat",
+      "activities": "Exercices et événements"
     }
   },
   "overview": {
@@ -740,7 +741,11 @@
     "unknown": "Une erreur inattendue s’est produite.",
     "certificate_outdated": "Ce brouillon a été généré avant que le dossier soit complet : générez un nouveau brouillon, puis soumettez-le.",
     "signing_key_missing": "La plateforme ne peut pas signer de certificats pour le moment. Réessayez plus tard.",
-    "invalid_note": "La note est trop longue (200 caractères au maximum)."
+    "invalid_note": "La note est trop longue (200 caractères au maximum).",
+    "ack_not_required": "Ce message ne demande pas d’accusé de lecture.",
+    "message_not_found": "Message introuvable.",
+    "drill_in_future": "Un exercice s’enregistre une fois réalisé : choisissez aujourd’hui ou une date passée.",
+    "invalid_dates": "La date de fin doit suivre la date de début."
   },
   "live": {
     "title": "Position en direct",
@@ -821,5 +826,38 @@
     "yes": "Oui",
     "no": "Non",
     "sim": "Liste de travail [SIM] en attente de validation par l'Office"
+  },
+  "messages": {
+    "title": "Messages du bureau",
+    "none": "Aucun message du bureau pour l’instant.",
+    "waitingCount": "En attente d’accusé : {{count}}",
+    "waiting": "Accusé de lecture demandé",
+    "ack": "J’en ai pris connaissance",
+    "acked": "Lecture confirmée le {{at}} ({{by}})"
+  },
+  "activities": {
+    "title": "Exercices et événements",
+    "help": "Un exercice s’enregistre une fois réalisé ; un événement public se déclare à l’avance pour que le bureau se prépare.",
+    "add": "Ajouter",
+    "addTitle": "Exercice ou événement",
+    "empty": "Aucun exercice ni événement enregistré.",
+    "kind": "Type",
+    "kinds": {
+      "drill": "Exercice",
+      "event": "Événement public"
+    },
+    "titleLabel": "Titre",
+    "startsOn": "Date",
+    "endsOn": "Date de fin",
+    "dates": "Dates",
+    "participants": "Participants",
+    "notes": "Notes",
+    "createdBy": "Saisi par",
+    "deleteOne": "Supprimer « {{title}} »",
+    "deleteTitle": "Supprimer l’entrée",
+    "deleteBody": "« {{title}} » sera retiré du registre de l’établissement.",
+    "drillInFuture": "Un exercice s’enregistre une fois réalisé : choisissez aujourd’hui ou une date passée.",
+    "endBeforeStart": "La date de fin doit suivre la date de début.",
+    "participantsInvalid": "Saisissez un nombre entier."
   }
 }

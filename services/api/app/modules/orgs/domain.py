@@ -65,7 +65,8 @@ EquipmentKind = Literal[
     "other",
 ]
 FeatureKind = Literal["evacuation_point", "water_point", "alarm"]
-DocumentKind = Literal["safety_file", "safety_plan", "sds", "other"]
+DocumentKind = Literal["safety_file", "safety_plan", "sds", "other", "maintenance_photo"]
+ActivityKind = Literal["drill", "event"]
 CertificateStatus = Literal["draft", "submitted", "approved", "rejected", "revoked"]
 
 # Registration review by the institutions auditor (FR-B-001): decision → (allowed from, result).
@@ -122,14 +123,19 @@ DOCUMENT_TYPES: dict[str, frozenset[str]] = {
     "safety_plan": frozenset({"application/pdf", "image/vnd.dwg", "image/vnd.dxf"}),
     "sds": frozenset({"application/pdf"}),
     "other": frozenset({"application/pdf"}),
+    # Phase P2b: the photo taken on the phone when a maintenance is recorded.
+    "maintenance_photo": frozenset({"image/jpeg", "image/png"}),
 }
 DOCUMENT_MAX_BYTES = 50 * 1024 * 1024
+PHOTO_MAX_BYTES = 10 * 1024 * 1024
 CAD_MAX_BYTES = 100 * 1024 * 1024
 CAD_TYPES = frozenset({"image/vnd.dwg", "image/vnd.dxf"})
 
 
 def document_max_bytes(content_type: str) -> int:
-    return CAD_MAX_BYTES if content_type in CAD_TYPES else DOCUMENT_MAX_BYTES
+    if content_type in CAD_TYPES:
+        return CAD_MAX_BYTES
+    return PHOTO_MAX_BYTES if content_type.startswith("image/") else DOCUMENT_MAX_BYTES
 
 
 # ---------------------------------------------------------------- dates

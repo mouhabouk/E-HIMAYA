@@ -37,6 +37,7 @@ import {
 } from "../lib/opsTypes";
 import { addVertex, MAX_VERTICES, undoVertex, verticesBounds } from "../lib/polygon";
 import { canDraftMessage, canPublishMessage } from "../lib/roles";
+import { ORG_KINDS } from "../lib/types";
 import { MessageKindTag, MessageStatusTag, StatsText, TargetText } from "./NotificationsPage";
 import { PageTitle } from "../components/PageTitle";
 
@@ -208,6 +209,95 @@ function GouvernoratTargets({ form, setForm }: { form: MessageForm; setForm: (pa
         </label>
       ))}
     </fieldset>
+  );
+}
+
+/** Phase P2b: an "organizations" message for some kinds only, and whether each institution confirms reading it. */
+function OrgTargets({ form, setForm }: { form: MessageForm; setForm: (patch: Partial<MessageForm>) => void }) {
+  const { t } = useTranslation();
+  const toggle = (kind: (typeof ORG_KINDS)[number], on: boolean) =>
+    setForm({ orgKinds: on ? [...form.orgKinds, kind] : form.orgKinds.filter((k) => k !== kind) });
+  return (
+    <>
+      <fieldset className="chips">
+        <legend>{t("notify.orgKinds")}</legend>
+        <p className="muted">{t("notify.orgKindsHint")}</p>
+        {ORG_KINDS.map((k) => (
+          <label key={k} className="chip-toggle">
+            <input type="checkbox" checked={form.orgKinds.includes(k)} onChange={(e) => toggle(k, e.target.checked)} />
+            <span>{t(`orgs.kind.${k}`)}</span>
+          </label>
+        ))}
+      </fieldset>
+      <label className="checkbox">
+        <input type="checkbox" checked={form.ackRequired} onChange={(e) => setForm({ ackRequired: e.target.checked })} />
+        <span>{t("notify.ackRequired")}</span>
+      </label>
+      <p className="muted">{t("notify.ackRequiredHint")}</p>
+    </>
+  );
+}
+
+/** Phase P2b: institutions an "organizations" message reached, and who confirmed reading it. */
+function OrgAcksPanel({ message }: { message: Message }) {
+  const { t } = useTranslation();
+  const { api } = useServices();
+  const fmt = useFormat();
+  const gouvernorats = useGouvernorats();
+  const acks = useQuery({
+    queryKey: opsKeys.acks(message.id),
+    queryFn: ({ signal }) => api.messageAcks(message.id, signal),
+  });
+  return (
+    <section className="card" aria-labelledby="sec-acks">
+      <h2 id="sec-acks">{t("notify.acks.title")}</h2>
+      {acks.isPending && <Loading />}
+      {acks.isError && <ErrorBox error={acks.error} onRetry={() => void acks.refetch()} />}
+      {acks.data && (
+        <>
+          <p>
+            {t("notify.acks.summary", { acked: fmt.number(acks.data.acked), targeted: fmt.number(acks.data.targeted) })}
+          </p>
+          {acks.data.items.length === 0 ? (
+            <p className="muted">{t("notify.acks.none")}</p>
+          ) : (
+            <div className="table-wrap">
+              <table className="table">
+                <caption className="visually-hidden">{t("notify.acks.title")}</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">{t("notify.acks.org")}</th>
+                    <th scope="col">{t("notify.acks.kind")}</th>
+                    <th scope="col">{t("notify.acks.gouvernorat")}</th>
+                    <th scope="col">{t("notify.acks.status")}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {acks.data.items.map((row) => (
+                    <tr key={row.org_id}>
+                      <th scope="row">
+                        <Link to={`/orgs/${encodeURIComponent(row.org_id)}`}>{row.name}</Link>
+                      </th>
+                      <td>{t(`orgs.kind.${row.kind}`)}</td>
+                      <td>{gouvernorats.nameOf(row.gouvernorat_code) ?? "—"}</td>
+                      <td>
+                        {row.acked_at ? (
+                          <span className="tag tag--level-ok">
+                            {t("notify.acks.acked", { at: fmt.dateTime(row.acked_at), by: row.acked_by ?? "—" })}
+                          </span>
+                        ) : (
+                          <span className="tag tag--level-warn">{t("notify.acks.waiting")}</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </>
+      )}
+    </section>
   );
 }
 
@@ -536,6 +626,7 @@ function Composer({ message, kind }: { message: Message | null; kind: MessageKin
         ) : (
           form.audience !== "user" && <GouvernoratTargets form={form} setForm={setForm} />
         )}
+        {kind === "info" && form.audience === "organizations" && <OrgTargets form={form} setForm={setForm} />}
 
         <fieldset className="chips">
           <legend>{t("notify.fields.channels")}</legend>
@@ -782,6 +873,18 @@ function SentMessage({ message }: { message: Message }) {
                 <dd>{message.area.gouvernorat_codes.map((c) => gouvernorats.nameOf(c)).join(t("common.listSeparator"))}</dd>
               </>
             )}
+            {message.audience === "organizations" && (
+              <>
+                <dt>{t("notify.orgKinds")}</dt>
+                <dd>
+                  {message.org_kinds?.length
+                    ? message.org_kinds.map((k) => t(`orgs.kind.${k}`)).join(t("common.listSeparator"))
+                    : t("notify.orgKindsAll")}
+                </dd>
+                <dt>{t("notify.ackRequired")}</dt>
+                <dd>{message.ack_required ? t("common.yes") : t("common.no")}</dd>
+              </>
+            )}
           </dl>
         </section>
       </div>
@@ -830,6 +933,7 @@ function SentMessage({ message }: { message: Message }) {
         </div>
         <p className="muted">{t("notify.deliveryLive")}</p>
       </section>
+      {message.ack_required && message.status !== "draft" && <OrgAcksPanel message={message} />}
       {message.single_reviewer && <SecondLook message={message} />}
       {canCancel && (
         <section className="card" aria-labelledby="sec-cancel">

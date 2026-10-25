@@ -9,7 +9,7 @@ from datetime import UTC, datetime
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Response, status
-from sqlalchemy import select, update
+from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_session
@@ -31,6 +31,7 @@ def tip_out(tip: SafetyTip) -> schemas.TipOut:
         position=tip.position,
         status=tip.status,
         content=schemas.TipContent.model_validate(tip.content),
+        org_kinds=list(tip.org_kinds or []),
         version=tip.version,
         updated_at=tip.updated_at,
         published_at=tip.published_at,
@@ -57,7 +58,10 @@ async def public_tips(
     if if_none_match == etag:
         return Response(status_code=status.HTTP_304_NOT_MODIFIED, headers={"ETag": etag})
     rows = await session.scalars(
-        select(SafetyTip).where(SafetyTip.status == "published").order_by(SafetyTip.position, SafetyTip.hazard)
+        # Awareness tagged with institution kinds reaches those institutions only (phase P2b).
+        select(SafetyTip)
+        .where(SafetyTip.status == "published", func.cardinality(SafetyTip.org_kinds) == 0)
+        .order_by(SafetyTip.position, SafetyTip.hazard)
     )
     response.headers["ETag"] = etag
     response.headers["Cache-Control"] = "public, max-age=300"
@@ -89,6 +93,7 @@ async def create_tip(principal: Editor, session: Session, body: schemas.TipIn) -
         position=body.position,
         status="draft",
         content=body.content.model_dump(),
+        org_kinds=list(body.org_kinds),
         updated_by=audit.actor_of(principal),
         version=1,
     )
@@ -112,6 +117,7 @@ async def update_tip(principal: Editor, session: Session, tip_id: uuid.UUID, bod
         # A published tip stays complete in the three languages the app shows.
         raise HTTPException(status.HTTP_409_CONFLICT, "translation_missing")
     tip.hazard, tip.position, tip.content = body.hazard, body.position, body.content.model_dump()
+    tip.org_kinds = list(body.org_kinds)
     tip.version += 1
     tip.updated_at, tip.updated_by = datetime.now(UTC), audit.actor_of(principal)
     if tip.status == "published":

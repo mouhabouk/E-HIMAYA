@@ -7471,7 +7471,7 @@ abstract class AppLocalizations {
   /// No description provided for @orgLogMaintenance.
   ///
   /// In en, this message translates to:
-  /// **'Log maintenance today'**
+  /// **'Log a maintenance'**
   String get orgLogMaintenance;
 
   /// No description provided for @orgMaintenanceLogged.
@@ -7995,6 +7995,288 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Kind'**
   String get orgKindLabelTitle;
+
+  /// No description provided for @orgSectionMessages.
+  ///
+  /// In en, this message translates to:
+  /// **'Office messages'**
+  String get orgSectionMessages;
+
+  /// No description provided for @orgSectionActivities.
+  ///
+  /// In en, this message translates to:
+  /// **'Drills and events'**
+  String get orgSectionActivities;
+
+  /// No description provided for @orgSectionAwareness.
+  ///
+  /// In en, this message translates to:
+  /// **'Awareness'**
+  String get orgSectionAwareness;
+
+  /// No description provided for @orgMessagesPending.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 Office message awaits your acknowledgement} other{{count} Office messages await your acknowledgement}}'**
+  String orgMessagesPending(int count);
+
+  /// No description provided for @orgMessagesPendingHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Open them and confirm you have read them.'**
+  String get orgMessagesPendingHint;
+
+  /// No description provided for @orgMessagesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No message from the Office yet.'**
+  String get orgMessagesEmpty;
+
+  /// No description provided for @orgMessageAck.
+  ///
+  /// In en, this message translates to:
+  /// **'I have read it'**
+  String get orgMessageAck;
+
+  /// No description provided for @orgMessageWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Acknowledgement requested'**
+  String get orgMessageWaiting;
+
+  /// No description provided for @orgMessageAcked.
+  ///
+  /// In en, this message translates to:
+  /// **'Acknowledged on {date}'**
+  String orgMessageAcked(String date);
+
+  /// No description provided for @orgMessageAckDone.
+  ///
+  /// In en, this message translates to:
+  /// **'The Office knows you have read it.'**
+  String get orgMessageAckDone;
+
+  /// No description provided for @orgMessageAckEditors.
+  ///
+  /// In en, this message translates to:
+  /// **'An editor or administrator of the institution confirms the reading.'**
+  String get orgMessageAckEditors;
+
+  /// No description provided for @orgAwarenessEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No awareness tips for your kind of institution yet.'**
+  String get orgAwarenessEmpty;
+
+  /// No description provided for @orgAwarenessIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Tips the Office prepared for institutions of your kind.'**
+  String get orgAwarenessIntro;
+
+  /// No description provided for @orgActivitiesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No drill or event recorded yet.'**
+  String get orgActivitiesEmpty;
+
+  /// No description provided for @orgActivityDrill.
+  ///
+  /// In en, this message translates to:
+  /// **'Drill'**
+  String get orgActivityDrill;
+
+  /// No description provided for @orgActivityEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Public event'**
+  String get orgActivityEvent;
+
+  /// No description provided for @orgActivityAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a drill or event'**
+  String get orgActivityAdd;
+
+  /// No description provided for @orgActivityHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A drill is recorded once held; a public event is declared ahead so the Office can prepare.'**
+  String get orgActivityHint;
+
+  /// No description provided for @orgActivityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get orgActivityTitle;
+
+  /// No description provided for @orgActivityTitleRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a title.'**
+  String get orgActivityTitleRequired;
+
+  /// No description provided for @orgActivityStarts.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get orgActivityStarts;
+
+  /// No description provided for @orgActivityEnds.
+  ///
+  /// In en, this message translates to:
+  /// **'End date (optional)'**
+  String get orgActivityEnds;
+
+  /// No description provided for @orgActivityParticipants.
+  ///
+  /// In en, this message translates to:
+  /// **'Participants (optional)'**
+  String get orgActivityParticipants;
+
+  /// No description provided for @orgActivityParticipantsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} participants'**
+  String orgActivityParticipantsCount(int count);
+
+  /// No description provided for @orgActivityNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes (optional)'**
+  String get orgActivityNotes;
+
+  /// No description provided for @orgActivityDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get orgActivityDelete;
+
+  /// No description provided for @orgActivityDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete “{title}”?'**
+  String orgActivityDeleteConfirm(String title);
+
+  /// No description provided for @orgActivityDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted.'**
+  String get orgActivityDeleted;
+
+  /// No description provided for @orgMaintenanceSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Log a maintenance'**
+  String get orgMaintenanceSheetTitle;
+
+  /// No description provided for @orgMaintenanceDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Done on'**
+  String get orgMaintenanceDate;
+
+  /// No description provided for @orgMaintenanceNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note (optional)'**
+  String get orgMaintenanceNote;
+
+  /// No description provided for @orgMaintenancePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a photo'**
+  String get orgMaintenancePhoto;
+
+  /// No description provided for @orgMaintenancePhotoRetake.
+  ///
+  /// In en, this message translates to:
+  /// **'Retake'**
+  String get orgMaintenancePhotoRetake;
+
+  /// No description provided for @orgMaintenancePhotoReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo attached'**
+  String get orgMaintenancePhotoReady;
+
+  /// No description provided for @orgMaintenancePhotoUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Only JPEG or PNG photos.'**
+  String get orgMaintenancePhotoUnsupported;
+
+  /// No description provided for @orgMaintenancePhotoTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'The photo is larger than 10 MB.'**
+  String get orgMaintenancePhotoTooLarge;
+
+  /// No description provided for @orgMaintenancePhotoFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The photo could not be sent; the maintenance was not recorded.'**
+  String get orgMaintenancePhotoFailed;
+
+  /// No description provided for @orgMaintenanceSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Record'**
+  String get orgMaintenanceSave;
+
+  /// No description provided for @orgMaintenanceHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintenance log'**
+  String get orgMaintenanceHistory;
+
+  /// No description provided for @orgMaintenanceHistoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No maintenance recorded yet.'**
+  String get orgMaintenanceHistoryEmpty;
+
+  /// No description provided for @orgMaintenancePhotoStored.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo kept'**
+  String get orgMaintenancePhotoStored;
+
+  /// No description provided for @orgMaintenancePhotoChecking.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo being checked'**
+  String get orgMaintenancePhotoChecking;
+
+  /// No description provided for @errorAckNotRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'This message does not ask for an acknowledgement.'**
+  String get errorAckNotRequired;
+
+  /// No description provided for @errorDrillInFuture.
+  ///
+  /// In en, this message translates to:
+  /// **'A drill is recorded once held: choose today or an earlier date.'**
+  String get errorDrillInFuture;
+
+  /// No description provided for @errorInvalidDates.
+  ///
+  /// In en, this message translates to:
+  /// **'The end date must follow the start date.'**
+  String get errorInvalidDates;
+
+  /// No description provided for @errorMaintenanceInFuture.
+  ///
+  /// In en, this message translates to:
+  /// **'A maintenance cannot be dated in the future.'**
+  String get errorMaintenanceInFuture;
+
+  /// No description provided for @errorInvalidDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'The photo is not valid for this maintenance.'**
+  String get errorInvalidDocument;
 }
 
 class _AppLocalizationsDelegate

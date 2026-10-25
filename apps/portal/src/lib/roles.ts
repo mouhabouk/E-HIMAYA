@@ -12,7 +12,9 @@ export type OrgAction =
   | "manageMembers"
   | "invite"
   | "submitCertificate"
-  | "resubmit";
+  | "resubmit"
+  | "acknowledge"
+  | "editActivities";
 
 const RANK: Readonly<Record<OrgRole, number>> = { member: 0, editor: 1, admin: 2 };
 
@@ -28,6 +30,9 @@ const NEEDED: Readonly<Record<OrgAction, OrgRole>> = {
   invite: "admin",
   submitCertificate: "admin",
   resubmit: "admin",
+  // Phase P2b: confirming an Office message was read, recording drills and declaring events.
+  acknowledge: "editor",
+  editActivities: "editor",
 };
 
 /** Actions that also need an approved (`active`) institution (`409 org_not_active`). */

@@ -229,6 +229,7 @@ erDiagram
         datetime updated_at
         text updated_by
         datetime published_at
+        array org_kinds
     }
     content__guide_topic ||--o{ content__guide_item : "topic_id"
 ```
@@ -717,6 +718,15 @@ erDiagram
         text reviewed_by
         text reviewed_by_name
         datetime reviewed_at
+        array org_kinds
+        boolean ack_required
+    }
+    notify__org_ack {
+        uuid message_id PK,FK
+        uuid org_id PK,FK
+        uuid acked_by FK
+        text acked_by_name
+        datetime acked_at
     }
     notify__outbox {
         bigint id PK
@@ -735,8 +745,11 @@ erDiagram
     geo__gouvernorat ||--o{ notify__message : "creator_scope"
     identity__account ||--o{ notify__device : "user_id"
     identity__account ||--o{ notify__message : "user_id"
+    identity__account ||--o{ notify__org_ack : "acked_by"
     identity__account ||--o{ notify__outbox : "user_id"
     notify__message ||--o{ notify__dispatch : "message_id"
+    notify__message ||--o{ notify__org_ack : "message_id"
+    org__organization ||--o{ notify__org_ack : "org_id"
 ```
 
 ## ops
@@ -922,6 +935,19 @@ erDiagram
 
 ```mermaid
 erDiagram
+    org__activity {
+        uuid id PK
+        uuid org_id FK
+        text kind
+        text title
+        date starts_on
+        date ends_on
+        integer participants
+        text notes
+        uuid created_by FK
+        text created_by_name
+        datetime created_at
+    }
     org__certificate {
         uuid id PK
         uuid org_id FK
@@ -1013,6 +1039,17 @@ erDiagram
         datetime accepted_at
         datetime revoked_at
     }
+    org__maintenance {
+        uuid id PK
+        uuid org_id FK
+        uuid equipment_id FK
+        date done_on
+        text note
+        uuid document_id FK
+        uuid recorded_by FK
+        text recorded_by_name
+        datetime recorded_at
+    }
     org__map_feature {
         uuid id PK
         uuid org_id FK
@@ -1074,22 +1111,28 @@ erDiagram
     }
     geo__delegation ||--o{ org__organization : "delegation_id"
     geo__gouvernorat ||--o{ org__organization : "gouvernorat_code"
+    identity__account ||--o{ org__activity : "created_by"
     identity__account ||--o{ org__certificate : "created_by"
     identity__account ||--o{ org__certificate : "submitted_by"
     identity__account ||--o{ org__document_version : "uploaded_by"
     identity__account ||--o{ org__invitation : "accepted_by"
     identity__account ||--o{ org__invitation : "created_by"
+    identity__account ||--o{ org__maintenance : "recorded_by"
     identity__account ||--o{ org__member : "user_id"
     identity__account ||--o{ org__organization : "created_by"
     org__certificate ||--o{ org__certificate : "superseded_by"
     org__document ||--o{ org__document_version : "document_id"
     org__document ||--o{ org__hazmat : "sds_document_id"
+    org__document ||--o{ org__maintenance : "document_id"
+    org__equipment ||--o{ org__maintenance : "equipment_id"
+    org__organization ||--o{ org__activity : "org_id"
     org__organization ||--o{ org__certificate : "org_id"
     org__organization ||--o{ org__digest : "org_id"
     org__organization ||--o{ org__document : "org_id"
     org__organization ||--o{ org__equipment : "org_id"
     org__organization ||--o{ org__hazmat : "org_id"
     org__organization ||--o{ org__invitation : "org_id"
+    org__organization ||--o{ org__maintenance : "org_id"
     org__organization ||--o{ org__map_feature : "org_id"
     org__organization ||--o{ org__member : "org_id"
     org__organization ||--o{ org__team_member : "org_id"

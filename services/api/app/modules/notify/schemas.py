@@ -4,6 +4,8 @@ from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, EmailStr, Field, StringConstraints, field_validator
 
+from app.modules.orgs.domain import OrgKind
+
 Kind = Literal["info", "alert"]
 MessageStatus = Literal["draft", "published", "cancelled", "expired"]
 Channel = Literal["push", "sms", "email"]
@@ -49,6 +51,9 @@ class MessageIn(BaseModel):
     category: AlertCategory | None = None
     hazard: Hazard | None = None
     expires_at: datetime | None = None
+    # institutions (phase P2b): some kinds only (empty: every kind), and a read acknowledgement
+    org_kinds: list[OrgKind] = Field(default_factory=list, max_length=12)
+    ack_required: bool = False
     # both
     area: Area = Field(default_factory=Area)
     version: int | None = None
@@ -57,6 +62,11 @@ class MessageIn(BaseModel):
     @classmethod
     def _unique(cls, value: list[Channel]) -> list[Channel]:
         return sorted(set(value), key=["push", "sms", "email"].index)
+
+    @field_validator("org_kinds")
+    @classmethod
+    def _unique_kinds(cls, value: list[OrgKind]) -> list[OrgKind]:
+        return sorted(set(value))
 
 
 class ChannelStats(BaseModel):
@@ -93,6 +103,26 @@ class MessageOut(BaseModel):
     emergency_reason: str | None = None
     reviewed_by: str | None = None
     reviewed_at: datetime | None = None
+    # Phase P2b.
+    org_kinds: list[OrgKind] = Field(default_factory=list)
+    ack_required: bool = False
+
+
+class OrgAckRow(BaseModel):
+    org_id: uuid.UUID
+    name: str
+    kind: OrgKind
+    gouvernorat_code: int | None
+    acked_at: datetime | None
+    acked_by: str | None
+
+
+class OrgAcks(BaseModel):
+    """Institutions a message reaches and those that confirmed reading it (phase P2b)."""
+
+    targeted: int
+    acked: int
+    items: list[OrgAckRow]
 
 
 class PublishIn(BaseModel):

@@ -37,12 +37,33 @@ class Équipement {
   emplacement
   dernière maintenance
 }
+class Maintenance <<P2b>> {
+  réalisée le (pas dans le futur)
+  note
+  notée par, notée le
+}
+class Activité <<P2b>> {
+  type : exercice | événement public
+  titre
+  début, fin (événement)
+  participants, notes
+  saisie par
+}
+class AccuséLecture <<P2b>> {
+  confirmé par
+  confirmé le
+}
+class MessageOffice <<P2b>> {
+  public : établissements
+  {field} types visés (vide : tous)
+  accusé demandé
+}
 class PointCarte {
   type : rassemblement | sortie | prise d'eau
   position
 }
 class Document {
-  type : dossier sécurité | plan | FDS
+  type : dossier sécurité | plan | FDS | photo de maintenance
   titre
 }
 class VersionDocument {
@@ -73,6 +94,11 @@ class ChampDuType <<référence>> {
 Établissement "1" *-- "*" MembreÉquipeSécurité
 Établissement "1" *-- "*" MatièreDangereuse
 Établissement "1" *-- "*" Équipement
+Équipement "1" *-- "*" Maintenance
+Maintenance "*" --> "0..1" Document : photo
+Établissement "1" *-- "*" Activité
+MessageOffice "1" *-- "*" AccuséLecture
+AccuséLecture "*" --> "1" Établissement
 Établissement "1" *-- "*" PointCarte
 Établissement "1" *-- "*" Document
 Document "1" *-- "1..*" VersionDocument

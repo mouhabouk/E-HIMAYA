@@ -1,0 +1,34 @@
+@startuml
+!include style.iuml
+title Séquence : maintenance avec photo (P2b)
+autonumber
+actor "Gestionnaire\n(application)" as U
+participant "Application" as APP
+participant "API" as API
+participant "tusd" as TUS
+participant "Vérification\n(worker)" as W
+database "PostgreSQL" as DB
+database "Stockage objet" as S3
+U -> APP : « Noter une maintenance »\n(date, note, photo de la caméra)
+APP -> APP : JPEG ou PNG, ≤ 10 Mo
+opt photo jointe
+  APP -> API : POST /orgs/{id}/documents\n(type photo de maintenance)
+  API -> DB : document créé
+  API --> APP : document_id
+  APP -> APP : SHA-256 de la photo
+  APP -> TUS : POST + PATCH (target org_document,\ndocument_id, sha256)
+  TUS -> API : crochets pre-create / post-finish\n(rôle, taille, type)
+  TUS -> S3 : fichier
+  API -> W : vérifier la version
+  W -> S3 : relire le fichier
+  W -> DB : version « stored » si l'empreinte\ncorrespond, sinon « rejected »
+end
+alt la photo n'a pas pu partir
+  APP --> U : rien n'est noté, message clair
+else
+  APP -> API : POST /orgs/{id}/equipment/{eid}/maintenance\n(done_on, note, document_id)
+  API -> DB : maintenance + dernière maintenance\nsi la date est plus récente + audit
+  API --> APP : 201 (photo_version vide tant que la vérification n'est pas finie)
+  APP --> U : « Maintenance notée », journal avec\n« photo conservée » ou « en vérification »
+end
+@enduml

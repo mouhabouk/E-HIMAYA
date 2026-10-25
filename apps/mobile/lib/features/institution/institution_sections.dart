@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart' show DateFormat, NumberFormat;
 
-import '../../core/config/providers.dart';
 import '../../core/http/api_error.dart';
 import '../../core/http/ehimaya_api.dart';
 import '../../core/http/error_messages.dart';
@@ -12,14 +11,15 @@ import '../../core/ui/emergency_action.dart';
 import '../../core/ui/tokens.dart';
 import '../../l10n/app_localizations.dart';
 import 'institution_providers.dart';
+import 'institution_space.dart';
 import 'kind_fields.dart';
 import 'my_institution_screen.dart';
 import 'org_labels.dart';
 import 'org_text.dart';
 
-/// One section of "My institution" (phase P2a): the card with its tabs, the safety team, the
-/// equipment with "log maintenance", hazardous materials, evacuation points, reports,
-/// certificates and members. Admins and editors make the quick changes here; the rest stays on
+/// One section of "My institution" (phases P2a and P2b): Office messages, the card with its tabs,
+/// the safety team, the equipment with its maintenance log, hazardous materials, evacuation
+/// points, reports, certificates, drills and events, awareness and members. Admins and editors make the quick changes here; the rest stays on
 /// the institutions portal.
 class InstitutionSectionScreen extends ConsumerWidget {
   const InstitutionSectionScreen({
@@ -36,6 +36,7 @@ class InstitutionSectionScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     if (section == InstitutionSection.card) return _CardScreen(orgId: orgId);
     final title = switch (section) {
+      InstitutionSection.messages => l10n.orgSectionMessages,
       InstitutionSection.card => l10n.orgSectionCard,
       InstitutionSection.team => l10n.orgSafetyTeam,
       InstitutionSection.equipment => l10n.orgSectionEquipment,
@@ -43,9 +44,14 @@ class InstitutionSectionScreen extends ConsumerWidget {
       InstitutionSection.evacuation => l10n.orgSectionEvacuation,
       InstitutionSection.reports => l10n.orgSectionReports,
       InstitutionSection.certificates => l10n.orgSectionCertificates,
+      InstitutionSection.activities => l10n.orgSectionActivities,
+      InstitutionSection.awareness => l10n.orgSectionAwareness,
       InstitutionSection.members => l10n.orgSectionMembers,
     };
     final body = switch (section) {
+      InstitutionSection.messages => OrgMessagesSection(orgId: orgId),
+      InstitutionSection.activities => OrgActivitiesSection(orgId: orgId),
+      InstitutionSection.awareness => OrgAwarenessSection(orgId: orgId),
       InstitutionSection.team ||
       InstitutionSection.hazmat => _FromSummary(orgId: orgId, section: section),
       InstitutionSection.equipment => _Equipment(orgId: orgId),
@@ -623,34 +629,14 @@ class _EquipmentCard extends ConsumerStatefulWidget {
 }
 
 class _EquipmentCardState extends ConsumerState<_EquipmentCard> {
-  bool _busy = false;
+  bool _history = false;
 
-  Future<void> _log() async {
-    final l10n = AppLocalizations.of(context);
-    final messenger = ScaffoldMessenger.of(context);
-    setState(() => _busy = true);
-    try {
-      final today = ref.read(clockProvider)().toLocal();
-      await ref
-          .read(apiProvider)
-          .updateEquipment(
-            widget.orgId,
-            widget.item.id,
-            widget.item.maintainedOn(today),
-          );
-      ref.invalidate(orgEquipmentProvider(widget.orgId));
-      ref.invalidate(orgSummaryProvider(widget.orgId));
-      messenger
-        ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text(l10n.orgMaintenanceLogged)));
-    } on ApiException catch (e) {
-      messenger
-        ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text(apiErrorMessage(l10n, e.code))));
-    } finally {
-      if (mounted) setState(() => _busy = false);
-    }
-  }
+  void _log() => showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    showDragHandle: true,
+    builder: (_) => MaintenanceSheet(orgId: widget.orgId, item: widget.item),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -703,16 +689,26 @@ class _EquipmentCardState extends ConsumerState<_EquipmentCard> {
                 ),
             ],
           ),
-          if (widget.canEdit)
-            Align(
-              alignment: AlignmentDirectional.centerEnd,
-              child: TextButton.icon(
-                key: Key('log-maintenance-${e.id}'),
-                onPressed: _busy ? null : _log,
-                icon: const Icon(Icons.build),
-                label: Text(l10n.orgLogMaintenance),
+          Wrap(
+            alignment: WrapAlignment.end,
+            spacing: 8,
+            children: [
+              TextButton.icon(
+                key: Key('maintenance-history-toggle-${e.id}'),
+                onPressed: () => setState(() => _history = !_history),
+                icon: Icon(_history ? Icons.expand_less : Icons.history),
+                label: Text(l10n.orgMaintenanceHistory),
               ),
-            ),
+              if (widget.canEdit)
+                TextButton.icon(
+                  key: Key('log-maintenance-${e.id}'),
+                  onPressed: _log,
+                  icon: const Icon(Icons.build),
+                  label: Text(l10n.orgLogMaintenance),
+                ),
+            ],
+          ),
+          if (_history) MaintenanceHistory(orgId: widget.orgId, itemId: e.id),
         ],
       ),
     );

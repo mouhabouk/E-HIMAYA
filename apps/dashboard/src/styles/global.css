@@ -4295,3 +4295,28 @@ button.nav-card:hover {
 .kpi--with-icon > .kpi__link {
   grid-column: 2;
 }
+
+/* ---------- Phase P2b: institution awareness, drills and events ---------- */
+.tag--org-awareness,
+.tag--activity-event {
+  background: var(--info-bg);
+  color: var(--info-text);
+}
+
+.tag--activity-drill {
+  background: var(--warn-bg);
+  color: var(--warn-text);
+}
+
+.org-activities {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.org-activities p {
+  margin: 0.25rem 0 0;
+}

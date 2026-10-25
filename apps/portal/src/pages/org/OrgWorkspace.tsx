@@ -32,6 +32,7 @@ export const TABS: readonly { path: string; key: string; icon: IconName; tone: T
   { path: "map", key: "map", icon: "map", tone: "teal" },
   { path: "documents", key: "documents", icon: "folderOpen", tone: "slate" },
   { path: "members", key: "members", icon: "manageAccounts", tone: "slate" },
+  { path: "activities", key: "activities", icon: "schedule", tone: "pink" },
   { path: "reports", key: "reports", icon: "campaign", tone: "red" },
   { path: "certificate", key: "certificate", icon: "workspacePremium", tone: "amber" },
 ];
