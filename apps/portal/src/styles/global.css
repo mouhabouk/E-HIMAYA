@@ -2872,3 +2872,21 @@ button.nav-card:hover {
   border: 1px solid currentcolor;
   border-radius: 999px;
 }
+
+/* UI-2: page heading with its icon tile (components/PageTitle.tsx), tabs with small tiles. */
+.page-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-inline-size: 0;
+}
+
+.page-title h1 {
+  margin: 0;
+}
+
+.tabs a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
