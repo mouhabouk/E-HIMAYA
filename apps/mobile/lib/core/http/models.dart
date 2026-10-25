@@ -553,6 +553,7 @@ class OrgSummary {
     this.missing = const [],
     this.kindFields = const {},
     this.alerts = const [],
+    this.messagesPending = 0,
   });
 
   final String id;
@@ -577,6 +578,9 @@ class OrgSummary {
   /// Answers to the kind's fields; members see them all.
   final Map<String, Object> kindFields;
   final List<OrgAlert> alerts;
+
+  /// P2b: Office messages waiting for the institution's read acknowledgement.
+  final int messagesPending;
   final Map<String, Object?> source;
 
   factory OrgSummary.fromJson(Map<String, Object?> json) {
@@ -610,6 +614,7 @@ class OrgSummary {
         for (final a in (json['alerts'] as List? ?? const []))
           if (a is Map<String, Object?>) OrgAlert.fromJson(a),
       ],
+      messagesPending: (json['messages_pending'] as num?)?.toInt() ?? 0,
       source: json,
     );
   }
@@ -719,13 +724,131 @@ class OrgEquipment {
     'kind': kind,
     'count': count,
     'location': location,
-    'last_maintenance_on':
-        '${day.year.toString().padLeft(4, '0')}-'
-        '${day.month.toString().padLeft(2, '0')}-'
-        '${day.day.toString().padLeft(2, '0')}',
+    'last_maintenance_on': isoDay(day),
     'maintenance_interval_months':
         (json['maintenance_interval_months'] as num?)?.toInt() ?? 12,
   };
+}
+
+/// `YYYY-MM-DD` of a local day, as the API dates are written.
+String isoDay(DateTime day) =>
+    '${day.year.toString().padLeft(4, '0')}-'
+    '${day.month.toString().padLeft(2, '0')}-'
+    '${day.day.toString().padLeft(2, '0')}';
+
+/// One maintenance of an equipment (phase P2b), with its photo once the server checked it.
+class OrgMaintenance {
+  const OrgMaintenance({
+    required this.id,
+    required this.doneOn,
+    this.note,
+    this.documentId,
+    this.photoVersion,
+    this.recordedBy,
+  });
+
+  final String id;
+  final DateTime doneOn;
+  final String? note;
+  final String? documentId;
+
+  /// Stored version of the photo; null while it is checked or when there is none.
+  final int? photoVersion;
+  final String? recordedBy;
+
+  factory OrgMaintenance.fromJson(Map<String, Object?> json) => OrgMaintenance(
+    id: json['id']! as String,
+    doneOn: _date(json['done_on']) ?? DateTime(1970),
+    note: json['note'] as String?,
+    documentId: json['document_id'] as String?,
+    photoVersion: (json['photo_version'] as num?)?.toInt(),
+    recordedBy: json['recorded_by'] as String?,
+  );
+}
+
+/// An Office message addressed to the institution (phase P2b), with its read acknowledgement.
+class OrgMessage {
+  const OrgMessage({
+    required this.id,
+    required this.title,
+    required this.body,
+    required this.publishedAt,
+    this.topic,
+    this.ackRequired = false,
+    this.ackedAt,
+    this.ackedBy,
+  });
+
+  final String id;
+  final String? topic;
+  final Map<String, String> title;
+  final Map<String, String> body;
+  final DateTime publishedAt;
+  final bool ackRequired;
+  final DateTime? ackedAt;
+  final String? ackedBy;
+
+  bool get waiting => ackRequired && ackedAt == null;
+
+  /// The text in [lang], or Arabic when that language is empty.
+  static String pick(Map<String, String> texts, String lang) {
+    final t = texts[lang];
+    return t == null || t.trim().isEmpty ? texts['ar'] ?? '' : t;
+  }
+
+  factory OrgMessage.fromJson(Map<String, Object?> json) {
+    Map<String, String> texts(Object? v) => {
+      if (v is Map)
+        for (final e in v.entries)
+          if (e.value is String) '${e.key}': e.value as String,
+    };
+    return OrgMessage(
+      id: json['id']! as String,
+      topic: json['topic'] as String?,
+      title: texts(json['title']),
+      body: texts(json['body']),
+      publishedAt: _date(json['published_at']) ?? DateTime(1970),
+      ackRequired: json['ack_required'] == true,
+      ackedAt: _date(json['acked_at']),
+      ackedBy: json['acked_by'] as String?,
+    );
+  }
+}
+
+/// A drill held or a public event declared by the institution (phase P2b).
+class OrgActivity {
+  const OrgActivity({
+    required this.id,
+    required this.kind,
+    required this.title,
+    required this.startsOn,
+    this.endsOn,
+    this.participants,
+    this.notes,
+    this.createdBy,
+  });
+
+  final String id;
+
+  /// `drill` | `event`.
+  final String kind;
+  final String title;
+  final DateTime startsOn;
+  final DateTime? endsOn;
+  final int? participants;
+  final String? notes;
+  final String? createdBy;
+
+  factory OrgActivity.fromJson(Map<String, Object?> json) => OrgActivity(
+    id: json['id']! as String,
+    kind: json['kind'] as String? ?? 'drill',
+    title: json['title'] as String? ?? '',
+    startsOn: _date(json['starts_on']) ?? DateTime(1970),
+    endsOn: _date(json['ends_on']),
+    participants: (json['participants'] as num?)?.toInt(),
+    notes: json['notes'] as String?,
+    createdBy: json['created_by'] as String?,
+  );
 }
 
 /// Point on the institution's map: evacuation point, water point or alarm (phase 4 §5).

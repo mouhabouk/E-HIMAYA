@@ -94,6 +94,37 @@ describe("OrgsPage", () => {
     expect(api2.orgs).toHaveBeenLastCalledWith(expect.objectContaining({ gouvernorat: 11 }), expect.anything());
   });
 
+  it("lists the upcoming public events of institutions (P2b)", async () => {
+    const api = fakeApi({
+      orgs: vi.fn(() => Promise.resolve({ items: ORGS, next_cursor: null })),
+      orgEvents: vi.fn(() =>
+        Promise.resolve([
+          {
+            id: "a-7",
+            kind: "event" as const,
+            title: "Festival de la corniche",
+            starts_on: "2026-11-02",
+            ends_on: "2026-11-04",
+            participants: 5000,
+            notes: null,
+            created_by: "Amel",
+            created_at: "2026-10-20T10:00:00Z",
+            org_id: "o-2",
+            org_name: "Hôtel La Corniche",
+            org_kind: "tourism" as const,
+            gouvernorat_code: 61,
+          },
+        ]),
+      ),
+    });
+    renderApp(<OrgsPage />, { api, auth: fakeAuth(OPERATOR_CLAIMS), lang: "fr", path: "/orgs" });
+    const events = await screen.findByRole("region", { name: "Événements publics à venir" });
+    expect(await within(events).findByText("Festival de la corniche")).toBeInTheDocument();
+    expect(within(events).getByRole("link", { name: "Hôtel La Corniche" })).toHaveAttribute("href", "/orgs/o-2");
+    expect(within(events).getByText(/Tourisme/)).toBeInTheDocument();
+    expect(api.orgEvents).toHaveBeenCalledWith(10, expect.anything());
+  });
+
   it("loads more with the cursor", async () => {
     const api = fakeApi({
       orgs: vi

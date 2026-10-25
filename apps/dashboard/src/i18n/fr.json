@@ -977,7 +977,17 @@
       "verify": "Page de vérification publique",
       "pdf": "PDF",
       "reports": "Signalements de l’établissement",
-      "noReports": "Aucun signalement de cet établissement."
+      "noReports": "Aucun signalement de cet établissement.",
+      "noMaintenance": "Aucune maintenance notée.",
+      "maintenanceDone": "Réalisée le",
+      "maintenanceNote": "Note",
+      "maintenanceBy": "Notée par",
+      "maintenancePhoto": "Photo",
+      "maintenancePhotoOf": "Photo de la maintenance du {{day}}",
+      "maintenancePhotoChecking": "En vérification",
+      "activities": "Exercices et événements",
+      "noActivities": "Aucun exercice ni événement déclaré.",
+      "maintenanceLog": "Journal de maintenance"
     },
     "review": {
       "title": "Validation de l’enregistrement",
@@ -1118,6 +1128,15 @@
       "yes": "Oui",
       "no": "Non",
       "sim": "Liste de travail [SIM] en attente de validation par l'Office"
+    },
+    "activity": {
+      "drill": "Exercice",
+      "event": "Événement public",
+      "participants": "Participants : {{count}}"
+    },
+    "events": {
+      "title": "Événements publics à venir",
+      "empty": "Aucun événement déclaré à venir."
     }
   },
   "levels": {
@@ -1681,6 +1700,22 @@
       "reviewBody": "Motif de l’urgence : {{reason}}. Un second responsable doit la revoir.",
       "open": "Ouvrir l’alerte",
       "dismiss": "Masquer"
+    },
+    "orgKinds": "Types d’établissements visés",
+    "orgKindsHint": "Aucun choix : tous les types.",
+    "orgKindsAll": "Tous les types",
+    "ackRequired": "Demander un accusé de lecture",
+    "ackRequiredHint": "Chaque établissement confirme la lecture depuis l’application ou le portail ; vous suivez les accusés ici après la publication.",
+    "acks": {
+      "title": "Accusés de lecture",
+      "summary": "{{acked}} établissement(s) sur {{targeted}} ont confirmé la lecture.",
+      "none": "Aucun établissement actif visé.",
+      "org": "Établissement",
+      "kind": "Type",
+      "gouvernorat": "Gouvernorat",
+      "status": "État",
+      "acked": "Lu le {{at}} ({{by}})",
+      "waiting": "En attente"
     }
   },
   "tips": {
@@ -1742,7 +1777,10 @@
     "deleteConfirmPublished": "Ce conseil est publié : le supprimer le retire des applications. Continuer ?",
     "deleteConfirmAction": "Confirmer la suppression",
     "deleted": "Conseil supprimé.",
-    "close": "Fermer"
+    "close": "Fermer",
+    "orgKinds": "Sensibilisation des établissements par type",
+    "orgKindsHint": "Si vous choisissez des types, le conseil devient une sensibilisation pour ces établissements (application et portail) et n’apparaît plus aux citoyens.",
+    "forOrgs": "Établissements ({{count}})"
   },
   "committee": {
     "title": "Comités et niveaux opérationnels",

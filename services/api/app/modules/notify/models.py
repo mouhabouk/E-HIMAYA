@@ -71,6 +71,28 @@ class Message(Base):
     reviewed_by: Mapped[str | None] = mapped_column(Text)
     reviewed_by_name: Mapped[str | None] = mapped_column(Text)
     reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Phase P2b: an "organizations" message for some kinds only, and the read acknowledgement it asks for.
+    org_kinds: Mapped[list[str]] = mapped_column(ARRAY(Text), server_default="{}")
+    ack_required: Mapped[bool] = mapped_column(Boolean, server_default="false")
+
+
+class OrgAck(Base):
+    """An institution confirms it has read a message that asks for it (phase P2b)."""
+
+    __tablename__ = "org_ack"
+    __table_args__ = _SCHEMA
+
+    message_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("notify.message.id", ondelete="CASCADE"), primary_key=True
+    )
+    org_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("org.organization.id", ondelete="CASCADE"), primary_key=True
+    )
+    acked_by: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("identity.account.user_id", ondelete="SET NULL")
+    )
+    acked_by_name: Mapped[str | None] = mapped_column(Text)
+    acked_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 class Dispatch(Base):

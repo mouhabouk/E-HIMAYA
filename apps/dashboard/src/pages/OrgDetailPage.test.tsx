@@ -120,6 +120,68 @@ describe("OrgDetailPage", () => {
     await waitFor(() => expect(api.certificatePdf).toHaveBeenCalledWith("o-1", "c-1"));
   });
 
+  it("shows the maintenance log with its photos, and the drills and events (P2b)", async () => {
+    const base = makeOrgDetail();
+    const equipmentId = base.equipment[0]?.id ?? "e-1";
+    const api = fakeApi({
+      org: vi.fn(() =>
+        Promise.resolve(
+          makeOrgDetail({
+            maintenance: [
+              {
+                id: "m-2",
+                equipment_id: equipmentId,
+                done_on: "2026-10-20",
+                note: "Recharge annuelle",
+                document_id: "d-9",
+                photo_version: 1,
+                recorded_by: "Amel",
+                recorded_at: "2026-10-20T09:00:00Z",
+              },
+              {
+                id: "m-1",
+                equipment_id: equipmentId,
+                done_on: "2026-10-19",
+                note: null,
+                document_id: "d-8",
+                photo_version: null,
+                recorded_by: "Amel",
+                recorded_at: "2026-10-19T09:00:00Z",
+              },
+            ],
+            activities: [
+              {
+                id: "a-1",
+                kind: "drill",
+                title: "Évacuation de l’atelier",
+                starts_on: "2026-09-12",
+                ends_on: null,
+                participants: 48,
+                notes: "Sortie en 4 minutes",
+                created_by: "Amel",
+                created_at: "2026-09-12T10:00:00Z",
+              },
+            ],
+          }),
+        ),
+      ),
+    });
+    renderApp(<OrgDetailPage />, { api, path: "/orgs/o-1", route, lang: "fr" });
+    await screen.findByRole("heading", { level: 1 });
+
+    const log = section(/Journal de maintenance/);
+    expect(within(log).getByText("Recharge annuelle")).toBeInTheDocument();
+    expect(within(log).getByText("En vérification")).toHaveClass("tag--level-warn");
+    fireEvent.click(within(log).getByRole("button", { name: /Photo de la maintenance du/ }));
+    await waitFor(() => expect(api.orgDocumentDownload).toHaveBeenCalledWith("o-1", "d-9", 1));
+
+    const activities = section(/Exercices et événements/);
+    expect(within(activities).getByText("Exercice")).toHaveClass("tag--activity-drill");
+    expect(within(activities).getByText("Évacuation de l’atelier")).toBeInTheDocument();
+    expect(within(activities).getByText(/Participants : 48/)).toBeInTheDocument();
+    expect(within(activities).getByText("Sortie en 4 minutes")).toBeInTheDocument();
+  });
+
   it("lists members and the institution's reports linking to the report detail", async () => {
     const api = fakeApi({
       org: vi.fn(() => Promise.resolve(makeOrgDetail())),

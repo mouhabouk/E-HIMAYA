@@ -16,6 +16,7 @@ import {
   type TipText,
 } from "../lib/opsTypes";
 import { PageTitle } from "../components/PageTitle";
+import { ORG_KINDS, type OrgKind } from "../lib/types";
 
 export const MAX_ITEMS = 15;
 export const MAX_ITEM_CHARS = 300;
@@ -28,6 +29,8 @@ interface Draft {
   hazard: TipHazard;
   position: number;
   content: Content;
+  /** Phase P2b: awareness for these institution kinds (none: a citizen tip). */
+  orgKinds: OrgKind[];
   version: number | null;
   status: "draft" | "published";
 }
@@ -40,6 +43,7 @@ function newDraft(position: number): Draft {
     hazard: "other",
     position,
     content: { ar: emptyText(), fr: emptyText(), en: emptyText() },
+    orgKinds: [],
     version: null,
     status: "draft",
   };
@@ -55,6 +59,7 @@ function draftOf(tip: SafetyTip): Draft {
       fr: { ...tip.content.fr, do: [...tip.content.fr.do], dont: [...tip.content.fr.dont] },
       en: { ...tip.content.en, do: [...tip.content.en.do], dont: [...tip.content.en.dont] },
     },
+    orgKinds: [...(tip.org_kinds ?? [])],
     version: tip.version,
     status: tip.status,
   };
@@ -244,7 +249,7 @@ function TipEditor({ initial, onClose }: { initial: Draft; onClose: (message?: s
 
   const save = useMutation({
     mutationFn: () => {
-      const body = { hazard: draft.hazard, position: draft.position, content };
+      const body = { hazard: draft.hazard, position: draft.position, content, org_kinds: [...draft.orgKinds].sort() };
       return draft.id
         ? api.updateTip(draft.id, { ...body, version: draft.version ?? undefined })
         : api.createTip(body);
@@ -274,7 +279,8 @@ function TipEditor({ initial, onClose }: { initial: Draft; onClose: (message?: s
   const dirty =
     JSON.stringify(cleanContent(baseline.content)) !== JSON.stringify(content) ||
     baseline.hazard !== draft.hazard ||
-    baseline.position !== draft.position;
+    baseline.position !== draft.position ||
+    [...baseline.orgKinds].sort().join() !== [...draft.orgKinds].sort().join();
 
   const submit = (e: SyntheticEvent) => {
     e.preventDefault();
@@ -325,6 +331,25 @@ function TipEditor({ initial, onClose }: { initial: Draft; onClose: (message?: s
               }
             />
           </div>
+          <fieldset className="chips" disabled={busy}>
+            <legend>{t("tips.orgKinds")}</legend>
+            <p className="muted">{t("tips.orgKindsHint")}</p>
+            {ORG_KINDS.map((k) => (
+              <label key={k} className="chip-toggle">
+                <input
+                  type="checkbox"
+                  checked={draft.orgKinds.includes(k)}
+                  onChange={(e) =>
+                    setDraft((d) => ({
+                      ...d,
+                      orgKinds: e.target.checked ? [...d.orgKinds, k] : d.orgKinds.filter((x) => x !== k),
+                    }))
+                  }
+                />
+                <span>{t(`orgs.kind.${k}`)}</span>
+              </label>
+            ))}
+          </fieldset>
           <div role="tablist" aria-label={t("tips.languages")} className="tabs">
             {TIP_LANGUAGES.map((l) => (
               <button
@@ -511,7 +536,14 @@ export function SafetyTipsPage() {
               {tips.map((tip) => (
                 <tr key={tip.id}>
                   <td>{fmt.number(tip.position)}</td>
-                  <td>{t(`tips.hazard.${tip.hazard}`)}</td>
+                  <td>
+                    {t(`tips.hazard.${tip.hazard}`)}
+                    {(tip.org_kinds?.length ?? 0) > 0 && (
+                      <span className="tag tag--org-awareness" title={tip.org_kinds?.map((k) => t(`orgs.kind.${k}`)).join(", ")}>
+                        {t("tips.forOrgs", { count: tip.org_kinds?.length ?? 0 })}
+                      </span>
+                    )}
+                  </td>
                   <td dir="auto">{tip.content[lang].title || tip.content.ar.title}</td>
                   <td>
                     <span className={`tag tag--tip-${tip.status}`}>{t(`tips.status.${tip.status}`)}</span>

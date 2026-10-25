@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:drift/drift.dart' show Value;
 import 'package:ehimaya/core/db/app_database.dart';
 import 'package:ehimaya/core/routing/app_router.dart';
 import 'package:ehimaya/core/storage/secure_store.dart';
 import 'package:ehimaya/features/home/home_screen.dart';
+import 'package:ehimaya/features/institution/maintenance_photo.dart';
 import 'package:ehimaya/features/institution/my_institution_screen.dart';
 import 'package:ehimaya/features/report/report_queued_screen.dart';
 import 'package:ehimaya/l10n/app_localizations.dart';
@@ -17,10 +19,24 @@ import '../helpers/app_harness.dart';
 import '../helpers/fake_http.dart';
 import '../helpers/org_fixtures.dart';
 
+final photoBytes = List.generate(2048, (i) => i % 251);
+
+Map<String, Object?> messageJson() => {
+  'id': 'msg1',
+  'topic': 'other',
+  'title': {'ar': 'تنبيه', 'fr': 'Vigilance canicule'},
+  'body': {'ar': 'نص', 'fr': 'Vérifiez vos extincteurs et vos réserves d’eau.'},
+  'published_at': '2026-10-24T08:00:00Z',
+  'ack_required': true,
+  'acked_at': null,
+  'acked_by': null,
+};
+
 FakeResponse api(
   SeenRequest r, {
   bool offline = false,
   String role = 'member',
+  int pending = 0,
 }) {
   if (offline) return const FakeResponse.network();
   switch ((r.method, r.path)) {
@@ -38,11 +54,56 @@ FakeResponse api(
         201,
         json: {...cardJson(), 'id': 'new-org', 'status': 'pending_review'},
       );
-    case ('PUT', '/api/v1/orgs/$orgId/equipment/e1'):
+    case ('POST', '/api/v1/orgs/$orgId/equipment/e1/maintenance'):
+      final body = r.json! as Map<String, Object?>;
+      return FakeResponse(
+        201,
+        json: {
+          'id': 'm2',
+          'equipment_id': 'e1',
+          ...body,
+          'photo_version': null,
+          'recorded_by': 'Amel',
+          'recorded_at': '2026-10-25T09:00:00Z',
+        },
+      );
+    case ('POST', '/api/v1/orgs/$orgId/documents'):
+      return const FakeResponse(
+        201,
+        json: {'id': 'd9', 'kind': 'maintenance_photo'},
+      );
+    case ('POST', '/api/v1/uploads/'):
+      return const FakeResponse(
+        201,
+        headers: {'Location': '/api/v1/uploads/t9'},
+      );
+    case ('PATCH', '/api/v1/uploads/t9'):
+      return FakeResponse(
+        204,
+        headers: {'Upload-Offset': '${photoBytes.length}'},
+      );
+    case ('POST', '/api/v1/orgs/$orgId/messages/msg1/ack'):
       return FakeResponse(
         200,
-        json: {...equipmentJson(), 'maintenance_status': 'ok'},
+        json: {
+          ...messageJson(),
+          'acked_at': '2026-10-25T09:00:00Z',
+          'acked_by': 'Amel',
+        },
       );
+    case ('POST', '/api/v1/orgs/$orgId/activities'):
+      final body = r.json! as Map<String, Object?>;
+      return FakeResponse(
+        201,
+        json: {
+          'id': 'a2',
+          ...body,
+          'created_by': 'Amel',
+          'created_at': '2026-10-25T09:00:00Z',
+        },
+      );
+    case ('DELETE', '/api/v1/orgs/$orgId/activities/a1'):
+      return const FakeResponse(204);
     case ('POST', '/api/v1/orgs/$orgId/invitations'):
       return const FakeResponse(201, json: {});
   }
@@ -95,7 +156,60 @@ FakeResponse api(
         ],
       );
     case '/api/v1/orgs/$orgId/summary':
-      return FakeResponse(200, json: summaryJson());
+      return FakeResponse(200, json: summaryJson(messagesPending: pending));
+    case '/api/v1/orgs/$orgId/messages':
+      return FakeResponse(200, json: [messageJson()]);
+    case '/api/v1/orgs/$orgId/awareness':
+      return const FakeResponse(
+        200,
+        json: [
+          {
+            'id': 't1',
+            'hazard': 'chemical_leak',
+            'content': {
+              'fr': {
+                'title': 'Fuite de produit chimique sur le site',
+                'do': ['Couper la ventilation de l’atelier'],
+                'dont': ['Ne pas utiliser d’eau sur l’acide'],
+              },
+            },
+            'updated_at': '2026-10-01T00:00:00Z',
+          },
+        ],
+      );
+    case '/api/v1/orgs/$orgId/activities':
+      return const FakeResponse(
+        200,
+        json: [
+          {
+            'id': 'a1',
+            'kind': 'drill',
+            'title': 'Évacuation de l’atelier',
+            'starts_on': '2026-09-12',
+            'ends_on': null,
+            'participants': 48,
+            'notes': null,
+            'created_by': 'Amel',
+            'created_at': '2026-09-12T10:00:00Z',
+          },
+        ],
+      );
+    case '/api/v1/orgs/$orgId/equipment/e1/maintenance':
+      return const FakeResponse(
+        200,
+        json: [
+          {
+            'id': 'm1',
+            'equipment_id': 'e1',
+            'done_on': '2025-06-01',
+            'note': 'Recharge',
+            'document_id': 'd1',
+            'photo_version': 1,
+            'recorded_by': 'Amel',
+            'recorded_at': '2025-06-01T09:00:00Z',
+          },
+        ],
+      );
     case '/api/v1/orgs/$orgId/reports':
       return const FakeResponse(
         200,
@@ -301,10 +415,24 @@ void main() {
       expect(find.text('Maintenance en retard'), findsOneWidget);
       await tester.tap(find.byKey(const Key('log-maintenance-e1')));
       await tester.pumpAndSettle();
-      final put = h.adapter.requests.lastWhere((r) => r.method == 'PUT');
-      expect(put.path, '/api/v1/orgs/$orgId/equipment/e1');
-      expect((put.json! as Map)['last_maintenance_on'], isA<String>());
+      await tester.enterText(
+        find.byKey(const Key('maintenance-note')),
+        'Recharge annuelle',
+      );
+      await tester.tap(find.byKey(const Key('maintenance-save')));
+      await tester.pumpAndSettle();
+      final post = h.adapter.requests.lastWhere((r) => r.method == 'POST');
+      expect(post.path, '/api/v1/orgs/$orgId/equipment/e1/maintenance');
+      final sent = post.json! as Map;
+      expect(sent['done_on'], matches(RegExp(r'^\d{4}-\d{2}-\d{2}$')));
+      expect(sent['note'], 'Recharge annuelle');
+      expect(sent['document_id'], isNull);
       expect(find.text('Maintenance notée.'), findsOneWidget);
+      // The log, with the state of each photo.
+      await tester.tap(find.byKey(const Key('maintenance-history-toggle-e1')));
+      await tester.pumpAndSettle();
+      expect(find.text('Recharge'), findsOneWidget);
+      expect(find.text('Photo conservée'), findsOneWidget);
       await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
 
@@ -336,6 +464,183 @@ void main() {
       await unmountApp(tester);
     },
   );
+
+  testWidgets('P2b: Office message acknowledged, awareness, drills', (
+    tester,
+  ) async {
+    await tallScreen(tester);
+    final h = await pumpApp(
+      tester,
+      prefs: registeredPrefs(locale: 'fr'),
+      session: testSession,
+      api: (r) => api(r, role: 'editor', pending: 1),
+    );
+    await tester.tap(find.byKey(const Key('home-institution')));
+    await tester.pumpAndSettle();
+
+    // The home says a message waits for the acknowledgement.
+    expect(
+      find.text('1 message du bureau attend votre accusé de lecture'),
+      findsOneWidget,
+    );
+    await tester.tap(find.byKey(const Key('org-messages-pending')));
+    await tester.pumpAndSettle();
+    expect(find.text('Messages du bureau'), findsOneWidget);
+    expect(find.text('Vigilance canicule'), findsOneWidget);
+    expect(find.text('Accusé de lecture demandé'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('org-message-ack-msg1')));
+    await tester.pumpAndSettle();
+    expect(
+      h.adapter.requests.where(
+        (r) =>
+            r.method == 'POST' &&
+            r.path == '/api/v1/orgs/$orgId/messages/msg1/ack',
+      ),
+      hasLength(1),
+    );
+    expect(find.text('Le bureau sait que vous l’avez lu.'), findsOneWidget);
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+
+    Future<void> open(String section) async {
+      await tester.ensureVisible(find.byKey(Key('org-section-$section')));
+      await tester.tap(find.byKey(Key('org-section-$section')));
+      await tester.pumpAndSettle();
+    }
+
+    // Awareness for the institution's kind.
+    await open('awareness');
+    expect(find.text('Fuite de produit chimique sur le site'), findsOneWidget);
+    expect(find.text('Couper la ventilation de l’atelier'), findsOneWidget);
+    expect(find.text('Ne pas utiliser d’eau sur l’acide'), findsOneWidget);
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+
+    // Drills and events: the list, then a new drill held today, then a deletion.
+    await open('activities');
+    expect(find.text('Évacuation de l’atelier'), findsOneWidget);
+    expect(find.text('48 participants'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('org-activity-add')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('org-activity-save')));
+    await tester.pumpAndSettle();
+    expect(find.text('Saisissez un titre.'), findsOneWidget);
+    await tester.enterText(
+      find.byKey(const Key('org-activity-title')),
+      'Exercice incendie',
+    );
+    await tester.enterText(
+      find.byKey(const Key('org-activity-participants')),
+      '60',
+    );
+    await tester.tap(find.byKey(const Key('org-activity-save')));
+    await tester.pumpAndSettle();
+    final added = h.adapter.requests.lastWhere(
+      (r) => r.method == 'POST' && r.path.endsWith('/activities'),
+    );
+    final body = added.json! as Map;
+    expect(body['kind'], 'drill');
+    expect(body['title'], 'Exercice incendie');
+    expect(body['participants'], 60);
+    expect(body['ends_on'], isNull);
+    expect(body['starts_on'], matches(RegExp(r'^\d{4}-\d{2}-\d{2}$')));
+    expect(find.text('Enregistré.'), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('org-activity-delete-a1')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('org-activity-delete-confirm')));
+    await tester.pumpAndSettle();
+    expect(h.adapter.requests.where((r) => r.method == 'DELETE'), hasLength(1));
+    expect(find.text('Supprimé.'), findsOneWidget);
+    await unmountApp(tester);
+  });
+
+  testWidgets('P2b: a maintenance with its photo; members cannot log', (
+    tester,
+  ) async {
+    await tallScreen(tester);
+    final dir = (await tester.runAsync(
+      () => Directory.systemTemp.createTemp('maint'),
+    ))!;
+    addTearDown(() => dir.deleteSync(recursive: true));
+    final photo = File('${dir.path}/photo.jpg')..writeAsBytesSync(photoBytes);
+    var role = 'admin';
+    final h = await pumpApp(
+      tester,
+      prefs: registeredPrefs(locale: 'fr'),
+      session: testSession,
+      api: (r) => api(r, role: role),
+      overrides: [
+        maintenancePhotoPickerProvider.overrideWithValue(() async => photo),
+      ],
+    );
+    await tester.tap(find.byKey(const Key('home-institution')));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byKey(const Key('org-section-equipment')));
+    await tester.tap(find.byKey(const Key('org-section-equipment')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('log-maintenance-e1')));
+    await tester.pumpAndSettle();
+
+    // The photo is checked on the device, then sent before the maintenance.
+    await tester.runAsync(() async {
+      await tester.tap(find.byKey(const Key('maintenance-photo')));
+      await Future<void>.delayed(const Duration(milliseconds: 200));
+    });
+    await tester.pumpAndSettle();
+    expect(find.text('Photo jointe'), findsOneWidget);
+    await tester.runAsync(() async {
+      await tester.tap(find.byKey(const Key('maintenance-save')));
+      await Future<void>.delayed(const Duration(milliseconds: 500));
+    });
+    await tester.pumpAndSettle();
+    final paths = [
+      for (final r in h.adapter.requests)
+        if (r.method != 'GET') '${r.method} ${r.path}',
+    ];
+    expect(paths, [
+      'POST /api/v1/orgs/$orgId/documents',
+      'POST /api/v1/uploads/',
+      'PATCH /api/v1/uploads/t9',
+      'POST /api/v1/orgs/$orgId/equipment/e1/maintenance',
+    ]);
+    final created = h.adapter.requests.firstWhere(
+      (r) => r.path == '/api/v1/uploads/',
+    );
+    final meta = {
+      for (final pair in created.header('Upload-Metadata')!.split(','))
+        pair.split(' ').first: utf8.decode(base64.decode(pair.split(' ').last)),
+    };
+    expect(meta['target'], 'org_document');
+    expect(meta['document_id'], 'd9');
+    expect(meta['filetype'], 'image/jpeg');
+    final recorded = h.adapter.requests.lastWhere(
+      (r) => r.method == 'POST' && r.path.endsWith('/maintenance'),
+    );
+    expect((recorded.json! as Map)['document_id'], 'd9');
+    expect(find.text('Maintenance notée.'), findsOneWidget);
+    await unmountApp(tester);
+
+    // A member sees the log but cannot record.
+    role = 'member';
+    await pumpApp(
+      tester,
+      prefs: registeredPrefs(locale: 'fr'),
+      session: testSession,
+      api: (r) => api(r, role: role),
+    );
+    await tester.tap(find.byKey(const Key('home-institution')));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byKey(const Key('org-section-equipment')));
+    await tester.tap(find.byKey(const Key('org-section-equipment')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('log-maintenance-e1')), findsNothing);
+    expect(
+      find.byKey(const Key('maintenance-history-toggle-e1')),
+      findsOneWidget,
+    );
+    await unmountApp(tester);
+  });
 
   testWidgets('registration from the phone in four steps (P2a)', (
     tester,

@@ -457,6 +457,164 @@
         "title": "ActionIn",
         "type": "object"
       },
+      "ActivityIn": {
+        "properties": {
+          "ends_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ends On"
+          },
+          "kind": {
+            "enum": [
+              "drill",
+              "event"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "participants": {
+            "anyOf": [
+              {
+                "maximum": 1000000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Participants"
+          },
+          "starts_on": {
+            "format": "date",
+            "title": "Starts On",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "title",
+          "starts_on"
+        ],
+        "title": "ActivityIn",
+        "type": "object"
+      },
+      "ActivityOut": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By"
+          },
+          "ends_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ends On"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "drill",
+              "event"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "participants": {
+            "anyOf": [
+              {
+                "maximum": 1000000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Participants"
+          },
+          "starts_on": {
+            "format": "date",
+            "title": "Starts On",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "title",
+          "starts_on",
+          "id",
+          "created_by",
+          "created_at"
+        ],
+        "title": "ActivityOut",
+        "type": "object"
+      },
       "AdjustIn": {
         "properties": {
           "delta": {
@@ -1602,6 +1760,37 @@
           "available"
         ],
         "title": "AvailabilityIn",
+        "type": "object"
+      },
+      "AwarenessTip": {
+        "properties": {
+          "content": {
+            "additionalProperties": true,
+            "title": "Content",
+            "type": "object"
+          },
+          "hazard": {
+            "title": "Hazard",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "hazard",
+          "content",
+          "updated_at"
+        ],
+        "title": "AwarenessTip",
         "type": "object"
       },
       "BadgeItem": {
@@ -4945,7 +5134,8 @@
               "safety_file",
               "safety_plan",
               "sds",
-              "other"
+              "other",
+              "maintenance_photo"
             ],
             "title": "Kind",
             "type": "string"
@@ -4986,7 +5176,8 @@
               "safety_file",
               "safety_plan",
               "sds",
-              "other"
+              "other",
+              "maintenance_photo"
             ],
             "title": "Kind",
             "type": "string"
@@ -11935,6 +12126,125 @@
         "title": "LockedFileIn",
         "type": "object"
       },
+      "MaintenanceIn": {
+        "properties": {
+          "document_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Document Id"
+          },
+          "done_on": {
+            "format": "date",
+            "title": "Done On",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "required": [
+          "done_on"
+        ],
+        "title": "MaintenanceIn",
+        "type": "object"
+      },
+      "MaintenanceOut": {
+        "properties": {
+          "document_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Document Id"
+          },
+          "done_on": {
+            "format": "date",
+            "title": "Done On",
+            "type": "string"
+          },
+          "equipment_id": {
+            "format": "uuid",
+            "title": "Equipment Id",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "photo_version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Photo Version"
+          },
+          "recorded_at": {
+            "format": "date-time",
+            "title": "Recorded At",
+            "type": "string"
+          },
+          "recorded_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recorded By"
+          }
+        },
+        "required": [
+          "id",
+          "equipment_id",
+          "done_on",
+          "note",
+          "document_id",
+          "photo_version",
+          "recorded_by",
+          "recorded_at"
+        ],
+        "title": "MaintenanceOut",
+        "type": "object"
+      },
       "MeOut": {
         "properties": {
           "gouvernorat_code": {
@@ -12433,6 +12743,11 @@
       },
       "MessageIn": {
         "properties": {
+          "ack_required": {
+            "default": false,
+            "title": "Ack Required",
+            "type": "boolean"
+          },
           "area": {
             "$ref": "#/components/schemas/Area"
           },
@@ -12532,6 +12847,14 @@
             "title": "Kind",
             "type": "string"
           },
+          "org_kinds": {
+            "items": {
+              "$ref": "#/components/schemas/OrgKind"
+            },
+            "maxItems": 12,
+            "title": "Org Kinds",
+            "type": "array"
+          },
           "severity": {
             "anyOf": [
               {
@@ -12603,6 +12926,11 @@
       },
       "MessageOut": {
         "properties": {
+          "ack_required": {
+            "default": false,
+            "title": "Ack Required",
+            "type": "boolean"
+          },
           "area": {
             "$ref": "#/components/schemas/Area"
           },
@@ -12744,6 +13072,13 @@
             ],
             "title": "Kind",
             "type": "string"
+          },
+          "org_kinds": {
+            "items": {
+              "$ref": "#/components/schemas/OrgKind"
+            },
+            "title": "Org Kinds",
+            "type": "array"
           },
           "published_at": {
             "anyOf": [
@@ -14164,6 +14499,93 @@
         "title": "OptionalReasonIn",
         "type": "object"
       },
+      "OrgAckRow": {
+        "properties": {
+          "acked_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acked At"
+          },
+          "acked_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acked By"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/OrgKind"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "org_id": {
+            "format": "uuid",
+            "title": "Org Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "org_id",
+          "name",
+          "kind",
+          "gouvernorat_code",
+          "acked_at",
+          "acked_by"
+        ],
+        "title": "OrgAckRow",
+        "type": "object"
+      },
+      "OrgAcks": {
+        "description": "Institutions a message reaches and those that confirmed reading it (phase P2b).",
+        "properties": {
+          "acked": {
+            "title": "Acked",
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/OrgAckRow"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "targeted": {
+            "title": "Targeted",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "targeted",
+          "acked",
+          "items"
+        ],
+        "title": "OrgAcks",
+        "type": "object"
+      },
       "OrgIn": {
         "properties": {
           "activity_sector": {
@@ -14349,6 +14771,85 @@
         ],
         "title": "OrgKind",
         "type": "string"
+      },
+      "OrgMessage": {
+        "description": "An Office message addressed to the institution, with its acknowledgement.",
+        "properties": {
+          "ack_required": {
+            "title": "Ack Required",
+            "type": "boolean"
+          },
+          "acked_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acked At"
+          },
+          "acked_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acked By"
+          },
+          "body": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Body",
+            "type": "object"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "published_at": {
+            "format": "date-time",
+            "title": "Published At",
+            "type": "string"
+          },
+          "title": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Title",
+            "type": "object"
+          },
+          "topic": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Topic"
+          }
+        },
+        "required": [
+          "id",
+          "topic",
+          "title",
+          "body",
+          "published_at",
+          "ack_required",
+          "acked_at",
+          "acked_by"
+        ],
+        "title": "OrgMessage",
+        "type": "object"
       },
       "OrgOut": {
         "properties": {
@@ -14846,6 +15347,11 @@
           },
           "location": {
             "$ref": "#/components/schemas/app__modules__orgs__schemas__Point"
+          },
+          "messages_pending": {
+            "default": 0,
+            "title": "Messages Pending",
+            "type": "integer"
           },
           "missing": {
             "items": {
@@ -19261,6 +19767,124 @@
         "title": "SourceRef",
         "type": "object"
       },
+      "StaffActivity": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By"
+          },
+          "ends_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ends On"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "drill",
+              "event"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "org_id": {
+            "format": "uuid",
+            "title": "Org Id",
+            "type": "string"
+          },
+          "org_kind": {
+            "$ref": "#/components/schemas/OrgKind"
+          },
+          "org_name": {
+            "title": "Org Name",
+            "type": "string"
+          },
+          "participants": {
+            "anyOf": [
+              {
+                "maximum": 1000000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Participants"
+          },
+          "starts_on": {
+            "format": "date",
+            "title": "Starts On",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "title",
+          "starts_on",
+          "id",
+          "created_by",
+          "created_at",
+          "org_id",
+          "org_name",
+          "org_kind",
+          "gouvernorat_code"
+        ],
+        "title": "StaffActivity",
+        "type": "object"
+      },
       "StaffDoctor": {
         "properties": {
           "available": {
@@ -20070,6 +20694,13 @@
       },
       "StaffOrgDetail": {
         "properties": {
+          "activities": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityOut"
+            },
+            "title": "Activities",
+            "type": "array"
+          },
           "activity_sector": {
             "anyOf": [
               {
@@ -20276,6 +20907,13 @@
           },
           "location": {
             "$ref": "#/components/schemas/app__modules__orgs__schemas__Point"
+          },
+          "maintenance": {
+            "items": {
+              "$ref": "#/components/schemas/MaintenanceOut"
+            },
+            "title": "Maintenance",
+            "type": "array"
           },
           "manager": {
             "$ref": "#/components/schemas/app__modules__orgs__schemas__Person"
@@ -22783,6 +23421,14 @@
             "title": "Hazard",
             "type": "string"
           },
+          "org_kinds": {
+            "items": {
+              "$ref": "#/components/schemas/OrgKind"
+            },
+            "maxItems": 12,
+            "title": "Org Kinds",
+            "type": "array"
+          },
           "position": {
             "default": 0,
             "maximum": 1000.0,
@@ -22835,6 +23481,13 @@
             "format": "uuid",
             "title": "Id",
             "type": "string"
+          },
+          "org_kinds": {
+            "items": {
+              "$ref": "#/components/schemas/OrgKind"
+            },
+            "title": "Org Kinds",
+            "type": "array"
           },
           "position": {
             "title": "Position",
@@ -30775,6 +31428,217 @@
         ]
       }
     },
+    "/api/v1/orgs/{org_id}/activities": {
+      "get": {
+        "operationId": "list_activities_api_v1_orgs__org_id__activities_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ActivityOut"
+                  },
+                  "title": "Response List Activities Api V1 Orgs  Org Id  Activities Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Activities",
+        "tags": [
+          "institutions"
+        ]
+      },
+      "post": {
+        "operationId": "add_activity_api_v1_orgs__org_id__activities_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActivityIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Add Activity",
+        "tags": [
+          "institutions"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/activities/{item_id}": {
+      "delete": {
+        "operationId": "delete_activity_api_v1_orgs__org_id__activities__item_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Activity",
+        "tags": [
+          "institutions"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/awareness": {
+      "get": {
+        "operationId": "awareness_api_v1_orgs__org_id__awareness_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AwarenessTip"
+                  },
+                  "title": "Response Awareness Api V1 Orgs  Org Id  Awareness Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Awareness",
+        "tags": [
+          "institutions"
+        ]
+      }
+    },
     "/api/v1/orgs/{org_id}/certificate": {
       "post": {
         "operationId": "generate_certificate_api_v1_orgs__org_id__certificate_post",
@@ -31571,6 +32435,135 @@
         ]
       }
     },
+    "/api/v1/orgs/{org_id}/equipment/{item_id}/maintenance": {
+      "get": {
+        "operationId": "list_maintenance_api_v1_orgs__org_id__equipment__item_id__maintenance_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/MaintenanceOut"
+                  },
+                  "title": "Response List Maintenance Api V1 Orgs  Org Id  Equipment  Item Id  Maintenance Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Maintenance",
+        "tags": [
+          "institutions"
+        ]
+      },
+      "post": {
+        "description": "Records a maintenance; the most recent date becomes the equipment's last maintenance.",
+        "operationId": "add_maintenance_api_v1_orgs__org_id__equipment__item_id__maintenance_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MaintenanceIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MaintenanceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Add Maintenance",
+        "tags": [
+          "institutions"
+        ]
+      }
+    },
     "/api/v1/orgs/{org_id}/features": {
       "get": {
         "operationId": "list_features_api_v1_orgs__org_id__features_get",
@@ -32344,6 +33337,117 @@
           }
         ],
         "summary": "Set Member Role",
+        "tags": [
+          "institutions"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/messages": {
+      "get": {
+        "operationId": "list_messages_api_v1_orgs__org_id__messages_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/OrgMessage"
+                  },
+                  "title": "Response List Messages Api V1 Orgs  Org Id  Messages Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Messages",
+        "tags": [
+          "institutions"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/messages/{message_id}/ack": {
+      "post": {
+        "description": "The institution confirms it has read the message (editor or admin). Repeating it changes nothing.",
+        "operationId": "ack_message_api_v1_orgs__org_id__messages__message_id__ack_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "message_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Message Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrgMessage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Ack Message",
         "tags": [
           "institutions"
         ]
@@ -42171,6 +43275,55 @@
         ]
       }
     },
+    "/api/v1/staff/notifications/{message_id}/acks": {
+      "get": {
+        "description": "Institutions reached by an \"organizations\" message and their read acknowledgements (phase P2b).",
+        "operationId": "message_acks_api_v1_staff_notifications__message_id__acks_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "message_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Message Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrgAcks"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Message Acks",
+        "tags": [
+          "staff-notifications"
+        ]
+      }
+    },
     "/api/v1/staff/notifications/{message_id}/audience": {
       "get": {
         "operationId": "message_audience_api_v1_staff_notifications__message_id__audience_get",
@@ -42329,6 +43482,61 @@
         "summary": "Publish Message",
         "tags": [
           "staff-notifications"
+        ]
+      }
+    },
+    "/api/v1/staff/org-events": {
+      "get": {
+        "description": "Public events declared by institutions in scope that are not over yet (phase P2b).",
+        "operationId": "org_events_api_v1_staff_org_events_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/StaffActivity"
+                  },
+                  "title": "Response Org Events Api V1 Staff Org Events Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Org Events",
+        "tags": [
+          "staff-institutions"
         ]
       }
     },

@@ -12,7 +12,7 @@ from app.core.security import Principal, Role, require_roles
 from app.core.storage import get_store
 from app.modules.audit import service as audit
 from app.modules.audit.service import actor_of
-from app.modules.orgs import certificate, schemas, service
+from app.modules.orgs import certificate, schemas, service, space
 from app.modules.orgs.domain import OrgKind, OrgRole, OrgStatus
 from app.modules.orgs.models import Certificate, Document, Organization
 from app.modules.orgs.router import delete_objects, download_url
@@ -95,7 +95,17 @@ async def detail_of(session: AsyncSession, org: Organization) -> schemas.StaffOr
             for m in await service.members(session, org.id)
         ],
         certificates=[certificate.certificate_out(c) for c in await certificate.certificates_of(session, org.id)],
+        activities=await space.activities_of(session, org.id),
+        maintenance=await space.maintenance_of(session, org.id),
     )
+
+
+@router.get("/org-events", response_model=list[schemas.StaffActivity])
+async def org_events(
+    principal: OrgReader, session: Session, limit: Annotated[int, Query(ge=1, le=200)] = 50
+) -> list[schemas.StaffActivity]:
+    """Public events declared by institutions in scope that are not over yet (phase P2b)."""
+    return await space.upcoming_events(session, service.staff_scope(principal), limit)
 
 
 @router.get("/orgs/{org_id}", response_model=schemas.StaffOrgDetail)

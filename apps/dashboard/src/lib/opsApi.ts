@@ -4,6 +4,7 @@ import type {
   Assignment,
   AssignmentStatus,
   AudienceEstimate,
+  OrgAcks,
   Callout,
   CalloutBody,
   CloseBody,
@@ -186,6 +187,8 @@ export function opsApi(api: ApiClient) {
     deleteMessage: (id: string) => api.request<undefined>(messagePath(id), { method: "DELETE" }),
     messageAudience: (id: string, signal?: AbortSignal) =>
       api.request<AudienceEstimate>(`${messagePath(id)}/audience`, { signal }),
+    /** Phase P2b: institutions reached by an "organizations" message and their read acknowledgements. */
+    messageAcks: (id: string, signal?: AbortSignal) => api.request<OrgAcks>(`${messagePath(id)}/acks`, { signal }),
     /** Phase 10 §5.1: the author of an alert publishes it alone only with an emergency reason. */
     publishMessage: (id: string, emergencyReason?: string) =>
       api.request<Message>(`${messagePath(id)}/publish`, {
@@ -236,6 +239,7 @@ export const opsKeys = {
   messageAll: ["message"] as const,
   message: (id: string) => ["message", id] as const,
   audience: (id: string, version: number) => ["message-audience", id, version] as const,
+  acks: (id: string) => ["message-acks", id] as const,
   activeAlerts: ["active-alerts"] as const,
   tips: ["safety-tips"] as const,
 };
