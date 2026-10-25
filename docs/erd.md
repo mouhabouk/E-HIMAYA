@@ -1050,6 +1050,8 @@ erDiagram
         jsonb manager
         text contact_email
         text contact_phone
+        jsonb kind_fields
+        boolean kind_review
         text review_reason
         text reviewed_by
         datetime reviewed_at
