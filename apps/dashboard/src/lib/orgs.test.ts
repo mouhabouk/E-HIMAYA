@@ -13,9 +13,9 @@ import {
 
 describe("institution list filters", () => {
   it("round-trips through the URL and ignores unknown values", () => {
-    const f = { status: "suspended", kind: "hotel", gouvernorat: 11, certificate: "none", hasHazmat: true, q: "nz" } as const;
+    const f = { status: "suspended", kind: "tourism", gouvernorat: 11, certificate: "none", hasHazmat: true, q: "nz" } as const;
     const params = orgFiltersToSearch(f);
-    expect(params.toString()).toBe("status=suspended&kind=hotel&gouvernorat_code=11&certificate=none&has_hazmat=true&q=nz");
+    expect(params.toString()).toBe("status=suspended&kind=tourism&gouvernorat_code=11&certificate=none&has_hazmat=true&q=nz");
     expect(orgFiltersFromSearch(params)).toEqual(f);
     expect(orgFiltersFromSearch(new URLSearchParams("status=bogus&kind=x&has_hazmat=maybe&certificate=zz"))).toEqual(
       DEFAULT_ORG_FILTERS,
@@ -31,7 +31,7 @@ describe("institution list filters", () => {
     expect(matchesOrgFilters(org, { ...DEFAULT_ORG_FILTERS, hasHazmat: true })).toBe(false);
     expect(matchesOrgFilters(org, { ...DEFAULT_ORG_FILTERS, hasHazmat: false })).toBe(true);
     expect(matchesOrgFilters(org, { ...DEFAULT_ORG_FILTERS, certificate: "none" })).toBe(true);
-    expect(matchesOrgFilters(org, { ...DEFAULT_ORG_FILTERS, kind: "hotel" })).toBe(false);
+    expect(matchesOrgFilters(org, { ...DEFAULT_ORG_FILTERS, kind: "tourism" })).toBe(false);
     expect(matchesOrgFilters(org, { ...DEFAULT_ORG_FILTERS, gouvernorat: 11 })).toBe(false);
     expect(matchesOrgFilters(org, { ...DEFAULT_ORG_FILTERS, q: "chimique" })).toBe(true);
     expect(matchesOrgFilters(org, { ...DEFAULT_ORG_FILTERS, q: "1234567a" })).toBe(true);

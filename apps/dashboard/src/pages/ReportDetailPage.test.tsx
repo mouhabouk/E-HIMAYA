@@ -185,13 +185,13 @@ describe("ReportDetailPage", () => {
     const detail = makeDetail({
       id: "r1",
       organization: { id: "o-1", name: "École X" },
-      organization_card: makeOrganizationCard({ name: "École X", kind: "educational", hazmat: [], representative: null, features: [] }),
+      organization_card: makeOrganizationCard({ name: "École X", kind: "education", hazmat: [], representative: null, features: [] }),
     });
     const api = fakeApi({ report: vi.fn(() => Promise.resolve(detail)) });
     renderApp(<ReportDetailPage />, { api, path: "/reports/r1", route, lang: "ar" });
     const card = await screen.findByRole("region", { name: "بطاقة المؤسسة المُبلِّغة" });
     expect(within(card).getByText("لم تُصرّح المؤسسة بأي مادة خطرة.")).toBeInTheDocument();
     expect(within(card).getByText("لا يوجد ممثل مسجّل.")).toBeInTheDocument();
-    expect(within(card).getByText("تعليمية")).toBeInTheDocument();
+    expect(within(card).getByText("تربوية")).toBeInTheDocument();
   });
 });

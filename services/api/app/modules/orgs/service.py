@@ -341,11 +341,14 @@ def _person(raw: dict[str, Any] | None) -> schemas.Person:
     return schemas.Person.model_validate(raw or {})
 
 
-async def card(session: AsyncSession, org: Organization, regs: Registers | None = None) -> dict[str, Any]:
-    """Fields of ``OrgCard`` (shared by the member and staff views)."""
+async def card(
+    session: AsyncSession, org: Organization, regs: Registers | None = None, reader: str = "member"
+) -> dict[str, Any]:
+    """Fields of ``OrgCard`` (shared by the member and staff views); ``reader`` limits the kind fields."""
     regs = regs or await load_registers(session, org.id)
     on = today()
     classification = classification_of(org, len(regs.hazmat))
+    completeness = completeness_of(classification, regs, on)
     lat, lon = await coords(session, org.id)
     return {
         "id": org.id,
@@ -369,7 +372,10 @@ async def card(session: AsyncSession, org: Organization, regs: Registers | None 
         "contact_email": org.contact_email,
         "contact_phone": org.contact_phone,
         "classification": classification_out(classification),
-        "completeness": completeness_of(classification, regs, on),
+        "completeness": completeness,
+        "readiness": domain.readiness(classification.required, completeness.missing),
+        "kind_fields": domain.visible_kind_fields(org.kind, org.kind_fields or {}, reader),
+        "kind_review": org.kind_review,
         "alerts": alerts_of(regs.team, regs.equipment, on),
         "review": schemas.Review(reason=org.review_reason, at=org.reviewed_at),
         "created_at": org.created_at,
@@ -399,6 +405,15 @@ def _validated_card(body: schemas.OrgIn) -> dict[str, Any]:
             phones[key] = None
     manager = body.manager.model_dump(mode="json")
     manager["phone"] = phones["manager_phone"]
+    kind_fields = domain.clean_kind_fields(body.kind, body.kind_fields)
+    if isinstance(kind_fields, str):
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, f"invalid_kind_field:{kind_fields}")
+    phone = kind_fields.get("reception_phone")
+    if isinstance(phone, str):
+        normalized_reception = domain.normalize_phone(phone)
+        if normalized_reception is None:
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "invalid_phone")
+        kind_fields["reception_phone"] = normalized_reception
     return {
         "name": body.name.strip(),
         "kind": body.kind.value,
@@ -414,6 +429,7 @@ def _validated_card(body: schemas.OrgIn) -> dict[str, Any]:
         "manager": manager,
         "contact_email": str(body.contact_email).lower() if body.contact_email else None,
         "contact_phone": phones["contact_phone"],
+        "kind_fields": kind_fields,
     }
 
 
@@ -470,6 +486,8 @@ async def update_org(session: AsyncSession, org: Organization, body: schemas.Org
     back_to_review = org.status == OrgStatus.ACTIVE and (
         values["identifier"] != org.identifier or values["name"] != org.name
     )
+    if values["kind"] != org.kind:
+        org.kind_review = False  # the institution chose its kind itself
     for key, value in values.items():
         setattr(org, key, value)
     org.location = point(body.location.lat, body.location.lon)
@@ -855,6 +873,9 @@ async def summary(session: AsyncSession, org: Organization) -> schemas.OrgSummar
     regs = await load_registers(session, org.id)
     on = today()
     lat, lon = await coords(session, org.id)
+    classification = classification_of(org, len(regs.hazmat))
+    completeness = completeness_of(classification, regs, on)
+    alerts = alerts_of(regs.team, regs.equipment, on)
     return schemas.OrgSummary(
         id=org.id,
         name=org.name,
@@ -863,7 +884,10 @@ async def summary(session: AsyncSession, org: Organization) -> schemas.OrgSummar
         capacity=org.capacity,
         address=org.address,
         location=schemas.Point(lat=lat, lon=lon),
-        classification=classification_out(classification_of(org, len(regs.hazmat))),
+        classification=classification_out(classification),
+        readiness=domain.readiness(classification.required, completeness.missing),
+        missing=completeness.missing,
+        kind_fields=domain.visible_kind_fields(org.kind, org.kind_fields or {}, "member"),
         team=[
             schemas.SummaryTeamMember(
                 full_name=m.full_name,
@@ -878,7 +902,8 @@ async def summary(session: AsyncSession, org: Organization) -> schemas.OrgSummar
             schemas.SummaryHazmat(name=h.name, un_number=h.un_number, quantity=float(h.quantity), unit=h.unit)
             for h in regs.hazmat
         ],
-        alerts_count=len(alerts_of(regs.team, regs.equipment, on)),
+        alerts_count=len(alerts),
+        alerts=alerts,
     )
 
 
@@ -899,6 +924,7 @@ async def organization_card(session: AsyncSession, org: Organization) -> schemas
         else None,
         hazmat=[schemas.HazmatIn.model_validate(hazmat_out(h).model_dump(exclude={"id"})) for h in regs.hazmat],
         features=[feature_out(f, la, lo) for f, la, lo in regs.features],
+        kind_fields=domain.visible_kind_fields(org.kind, org.kind_fields or {}, "incident"),
     )
 
 
@@ -1008,6 +1034,7 @@ async def staff_orgs(session: AsyncSession, rows: Sequence[Any]) -> list[schemas
             capacity=org.capacity,
             location=schemas.Point(lat=float(lat), lon=float(lon)),
             classification=classification_out(classification_of(org, hazmat.get(org.id, 0))),
+            kind_review=org.kind_review,
             hazmat_count=hazmat.get(org.id, 0),
             alerts_count=alerts.get(org.id, 0),
             certificate_status=cert_state,
@@ -1078,6 +1105,14 @@ async def review_org(session: AsyncSession, org: Organization, body: schemas.Org
     if body.decision in ("reject", "suspend") and reason is None:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "reason_required")
     previous = org.status
+    if body.kind is not None:
+        if body.decision != "approve":
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "kind_only_on_approval")
+        if body.kind.value != org.kind:
+            kept = domain.clean_kind_fields(body.kind, dict(org.kind_fields or {}))
+            org.kind = body.kind.value
+            org.kind_fields = kept if isinstance(kept, dict) else {}
+        org.kind_review = False
     org.status = result.value
     org.review_reason = reason
     org.reviewed_by = actor

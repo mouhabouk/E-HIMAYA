@@ -17,6 +17,8 @@ import {
   normalizePhone,
   parseNumber,
 } from "../lib/validators";
+import { KIND_FIELDS, VISIBILITY_TONE, type KindFieldSpec } from "../lib/kindFields";
+import { Pill } from "./Icon";
 import { LocationField } from "./LocationField";
 
 /** Form state of the institution card (strings as typed; converted by draftToCard). */
@@ -38,6 +40,8 @@ export interface CardDraft {
   manager_email: string;
   contact_email: string;
   contact_phone: string;
+  /** Answers to the kind's fields (P2a): numbers and text as typed, yes/no as booleans. */
+  kind_fields: Record<string, string | boolean>;
 }
 export type DraftField = keyof CardDraft;
 export type DraftErrors = Partial<Record<DraftField, string>>;
@@ -46,7 +50,7 @@ export const CARD_SECTIONS = ["identity", "building", "location", "contacts"] as
 export type CardSection = (typeof CARD_SECTIONS)[number];
 
 export const SECTION_FIELDS: Readonly<Record<CardSection, readonly DraftField[]>> = {
-  identity: ["name", "kind", "identifier_type", "identifier", "activity_sector", "activity_type"],
+  identity: ["name", "kind", "kind_fields", "identifier_type", "identifier", "activity_sector", "activity_type"],
   building: ["capacity", "floors", "height_m", "receives_public", "address"],
   location: ["location"],
   contacts: ["manager_full_name", "manager_phone", "manager_email", "contact_email", "contact_phone"],
@@ -71,6 +75,7 @@ export function emptyDraft(): CardDraft {
     manager_email: "",
     contact_email: "",
     contact_phone: "",
+    kind_fields: {},
   };
 }
 
@@ -95,7 +100,43 @@ export function draftFromCard(o: OrgCard): CardDraft {
     manager_email: str(o.manager.email),
     contact_email: str(o.contact_email),
     contact_phone: str(o.contact_phone),
+    kind_fields: Object.fromEntries(
+      Object.entries(o.kind_fields ?? {})
+        .filter(([, v]) => v !== null)
+        .map(([k, v]) => [k, typeof v === "boolean" ? v : String(v)]),
+    ),
   };
+}
+
+/** The answers of the draft's kind as the API takes them (other kinds' answers and empty ones left out). */
+function kindFieldsToCard(d: CardDraft): Record<string, number | boolean | string> {
+  const out: Record<string, number | boolean | string> = {};
+  for (const spec of KIND_FIELDS[d.kind] ?? []) {
+    const raw = d.kind_fields[spec.key];
+    if (raw === undefined) continue;
+    if (spec.type === "bool") {
+      if (typeof raw === "boolean") out[spec.key] = raw;
+    } else if (typeof raw === "string" && raw.trim()) {
+      if (spec.type === "int") {
+        const n = parseNumber(raw);
+        if (n !== null) out[spec.key] = n;
+      } else {
+        out[spec.key] = spec.key === "reception_phone" ? normalizePhone(raw) : raw.trim();
+      }
+    }
+  }
+  return out;
+}
+
+/** i18n key of what is wrong with one answer, if anything. */
+export function kindFieldError(spec: KindFieldSpec, raw: string | boolean | undefined): string | undefined {
+  if (typeof raw !== "string" || !raw.trim() || spec.type === "bool") return undefined;
+  if (spec.type === "int") {
+    const n = parseNumber(raw);
+    return n !== null && Number.isInteger(n) && n >= 0 && n <= spec.maximum ? undefined : "validation.integer";
+  }
+  if (spec.key === "reception_phone" && !isValidPhone(raw)) return "validation.phone";
+  return raw.trim().length > spec.maximum ? "validation.tooLong" : undefined;
 }
 
 const orNull = (v: string) => (v.trim() === "" ? null : v.trim());
@@ -121,6 +162,7 @@ export function draftToCard(d: CardDraft): OrgCard {
     },
     contact_email: orNull(d.contact_email),
     contact_phone: d.contact_phone.trim() ? normalizePhone(d.contact_phone) : null,
+    kind_fields: kindFieldsToCard(d),
   };
 }
 
@@ -153,6 +195,10 @@ export function validateDraft(d: CardDraft, sections: readonly CardSection[] = C
   if (fields.has("height_m")) {
     const h = parseNumber(d.height_m);
     if (h !== null && !(h >= 0)) e.height_m = "validation.positiveNumber";
+  }
+  if (fields.has("kind_fields")) {
+    const bad = (KIND_FIELDS[d.kind] ?? []).map((s) => kindFieldError(s, d.kind_fields[s.key])).find(Boolean);
+    if (bad) e.kind_fields = bad;
   }
   req("address", d.address);
   if (fields.has("location")) {
@@ -201,7 +247,12 @@ export function fieldOfServerError(error: unknown, draft: CardDraft): { field: D
   if (error.code === "invalid_identifier" || error.code === "identifier_already_registered") {
     return { field: "identifier", key: `errors.${error.code}` };
   }
+  if (typeof error.detail === "string" && error.detail.startsWith("invalid_kind_field:")) return { field: "kind_fields", key: "errors.validation_error" };
   if (error.code === "invalid_phone") {
+    const reception = draft.kind_fields.reception_phone;
+    if (typeof reception === "string" && reception.trim() && !isValidPhone(reception)) {
+      return { field: "kind_fields", key: "errors.invalid_phone" };
+    }
     const field: DraftField = draft.contact_phone.trim() && !isValidPhone(draft.contact_phone) ? "contact_phone" : "manager_phone";
     return { field, key: "errors.invalid_phone" };
   }
@@ -247,7 +298,7 @@ function TextField({
   autoComplete,
   dir,
 }: FieldsProps & {
-  field: Exclude<DraftField, "kind" | "identifier_type" | "receives_public" | "location">;
+  field: Exclude<DraftField, "kind" | "identifier_type" | "receives_public" | "location" | "kind_fields">;
   label: string;
   type?: string;
   inputMode?: "numeric" | "decimal" | "tel" | "email" | "text";
@@ -293,6 +344,71 @@ function TextField({
   );
 }
 
+/** The kind's own fields (P2a), each with the badge of who may see it. Working list [SIM]. */
+function KindFieldInputs({ draft, errors, onChange, disabled }: FieldsProps) {
+  const { t } = useTranslation();
+  const specs = KIND_FIELDS[draft.kind] ?? [];
+  if (specs.length === 0) return null;
+  const set = (key: string, value: string | boolean) => onChange({ kind_fields: { ...draft.kind_fields, [key]: value } });
+  return (
+    <fieldset className="field field--wide kind-fields" aria-describedby="kind-fields-note">
+      <legend>
+        {t("kindExtra.kindFieldsTitle")} <span className="tag tag--sim">[SIM]</span>
+      </legend>
+      <p id="kind-fields-note" className="field__hint">
+        {t("kindExtra.sim")}
+      </p>
+      <div className="form-grid">
+        {specs.map((spec) => {
+          const id = `card-kf-${spec.key}`;
+          const raw = draft.kind_fields[spec.key];
+          const badge = <Pill tone={VISIBILITY_TONE[spec.visibility]}>{t(`visibility.${spec.visibility}`)}</Pill>;
+          if (spec.type === "bool") {
+            return (
+              <div key={spec.key} className="field field--check">
+                <label className="radio">
+                  <input
+                    id={id}
+                    type="checkbox"
+                    checked={raw === true}
+                    disabled={disabled}
+                    onChange={(e) => set(spec.key, e.target.checked)}
+                  />
+                  {t(`kindField.${spec.key}`)} {badge}
+                </label>
+              </div>
+            );
+          }
+          const err = errors.kind_fields ? kindFieldError(spec, raw) : undefined;
+          return (
+            <div key={spec.key} className={`field${err ? " field--invalid" : ""}`}>
+              <label htmlFor={id}>
+                {t(`kindField.${spec.key}`)} {badge}
+              </label>
+              <input
+                id={id}
+                type={spec.key === "reception_phone" ? "tel" : "text"}
+                inputMode={spec.type === "int" ? "numeric" : spec.key === "reception_phone" ? "tel" : "text"}
+                dir={spec.key === "reception_phone" ? "ltr" : undefined}
+                value={typeof raw === "string" ? raw : ""}
+                disabled={disabled}
+                aria-invalid={!!err}
+                aria-describedby={err ? `${id}-error` : undefined}
+                onChange={(e) => set(spec.key, e.target.value)}
+              />
+              {err && (
+                <span id={`${id}-error`} className="field__error">
+                  {t(err)}
+                </span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </fieldset>
+  );
+}
+
 /** Fields of one section of the card (used by the registration wizard and the card editor). */
 export function CardSectionFields({ section, ...props }: FieldsProps & { section: CardSection }) {
   const { t } = useTranslation();
@@ -311,6 +427,7 @@ export function CardSectionFields({ section, ...props }: FieldsProps & { section
             ))}
           </select>
         </div>
+        <KindFieldInputs {...props} />
         <fieldset className="field field--wide">
           <legend>{t("org.identifierType")}</legend>
           <div className="radios">

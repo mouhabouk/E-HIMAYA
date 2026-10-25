@@ -360,16 +360,25 @@ enum OrgStatus {
   }
 }
 
-/// Institution kind (الصبغة, phase 4 §1).
+/// Institution kind (الصبغة): twelve since phase P2a (addition 12), a working list [SIM] until the
+/// Office approves it.
 enum OrgKind {
-  industrial,
-  educational,
-  hotel,
-  government,
-  private,
-  other;
+  health('health'),
+  industrial('industrial'),
+  energy('energy'),
+  tourism('tourism'),
+  education('education'),
+  socialCare('social_care'),
+  publicAdmin('public_admin'),
+  cultureSport('culture_sport'),
+  commercial('commercial'),
+  transport('transport'),
+  religious('religious'),
+  other('other');
 
-  String get wire => name;
+  const OrgKind(this.wire);
+
+  final String wire;
 
   static OrgKind? fromWire(String? value) {
     for (final k in values) {
@@ -540,6 +549,10 @@ class OrgSummary {
     this.classification,
     this.hazmatCount = 0,
     this.alertsCount = 0,
+    this.readiness,
+    this.missing = const [],
+    this.kindFields = const {},
+    this.alerts = const [],
   });
 
   final String id;
@@ -554,6 +567,16 @@ class OrgSummary {
   final int hazmatCount;
   final List<OrgHazmat> hazmat;
   final int alertsCount;
+
+  /// P2a: share of the safety requirements met, in percent (null from an older server).
+  final int? readiness;
+
+  /// Requirement codes still missing (`safety_file`, `safety_team`, ...).
+  final List<String> missing;
+
+  /// Answers to the kind's fields; members see them all.
+  final Map<String, Object> kindFields;
+  final List<OrgAlert> alerts;
   final Map<String, Object?> source;
 
   factory OrgSummary.fromJson(Map<String, Object?> json) {
@@ -577,9 +600,188 @@ class OrgSummary {
       hazmatCount: (json['hazmat_count'] as num?)?.toInt() ?? hazmat.length,
       hazmat: hazmat,
       alertsCount: (json['alerts_count'] as num?)?.toInt() ?? 0,
+      readiness: (json['readiness'] as num?)?.toInt(),
+      missing: [
+        for (final m in (json['missing'] as List? ?? const []))
+          if (m is String) m,
+      ],
+      kindFields: kindFieldsFromJson(json['kind_fields']),
+      alerts: [
+        for (final a in (json['alerts'] as List? ?? const []))
+          if (a is Map<String, Object?>) OrgAlert.fromJson(a),
+      ],
       source: json,
     );
   }
+}
+
+/// `kind_fields` of an institution: numbers, yes/no and text only.
+Map<String, Object> kindFieldsFromJson(Object? json) => {
+  if (json is Map)
+    for (final e in json.entries)
+      if (e.key is String &&
+          (e.value is num || e.value is bool || e.value is String))
+        e.key as String: e.value is num && e.value is! int
+            ? (e.value as num).toInt()
+            : e.value as Object,
+};
+
+/// Alert of an institution (phase 4 §3–4): kind code, the register row it is about, since when.
+class OrgAlert {
+  const OrgAlert({required this.kind, this.ref, this.since});
+
+  final String kind;
+  final String? ref;
+  final DateTime? since;
+
+  factory OrgAlert.fromJson(Map<String, Object?> json) => OrgAlert(
+    kind: json['kind'] as String? ?? '',
+    ref: json['ref'] as String?,
+    since: _date(json['since']),
+  );
+}
+
+/// The full card of `GET /api/v1/orgs/{id}` (phase 4 §1), kept as JSON so an edit sends back
+/// every field the app does not change.
+class OrgCardData {
+  const OrgCardData(this.json);
+
+  final Map<String, Object?> json;
+
+  String get id => json['id']! as String;
+  String get name => json['name'] as String? ?? '';
+  String get kind => json['kind'] as String? ?? OrgKind.other.wire;
+  String get status =>
+      json['status'] as String? ?? OrgStatus.pendingReview.wire;
+  int get version => (json['version'] as num?)?.toInt() ?? 1;
+  String? get myRole => json['my_role'] as String?;
+  bool get canEdit => myRole == 'admin' || myRole == 'editor';
+  String get identifierType => json['identifier_type'] as String? ?? 'mf';
+  String get identifier => json['identifier'] as String? ?? '';
+  String? get activitySector => json['activity_sector'] as String?;
+  int? get capacity => (json['capacity'] as num?)?.toInt();
+  int? get floors => (json['floors'] as num?)?.toInt();
+  double? get heightM => (json['height_m'] as num?)?.toDouble();
+  bool get receivesPublic => json['receives_public'] == true;
+  String? get address => json['address'] as String?;
+  GeoPoint? get location => GeoPoint.fromJson(json['location']);
+  Map<String, Object?> get manager =>
+      (json['manager'] as Map?)?.cast<String, Object?>() ?? const {};
+  String? get contactEmail => json['contact_email'] as String?;
+  String? get contactPhone => json['contact_phone'] as String?;
+  Map<String, Object> get kindFields => kindFieldsFromJson(json['kind_fields']);
+  int? get readiness => (json['readiness'] as num?)?.toInt();
+
+  /// Body of `PUT /api/v1/orgs/{id}`: the card's editable fields, with [changes] applied.
+  Map<String, Object?> toUpdate(Map<String, Object?> changes) => {
+    for (final k in const [
+      'name',
+      'kind',
+      'identifier_type',
+      'identifier',
+      'activity_sector',
+      'activity_type',
+      'capacity',
+      'floors',
+      'height_m',
+      'receives_public',
+      'address',
+      'location',
+      'manager',
+      'contact_email',
+      'contact_phone',
+      'kind_fields',
+    ])
+      k: json[k],
+    ...changes,
+    'version': version,
+  };
+}
+
+/// Safety equipment row (phase 4 §4).
+class OrgEquipment {
+  const OrgEquipment(this.json);
+
+  final Map<String, Object?> json;
+
+  String get id => json['id']! as String;
+  String get kind => json['kind'] as String? ?? 'other';
+  int get count => (json['count'] as num?)?.toInt() ?? 0;
+  String? get location => json['location'] as String?;
+
+  /// `ok` | `due_soon` | `overdue` | `unknown`.
+  String get maintenanceStatus =>
+      json['maintenance_status'] as String? ?? 'unknown';
+  DateTime? get nextMaintenanceOn => _date(json['next_maintenance_on']);
+
+  /// Body of `PUT .../equipment/{id}` recording a maintenance done on [day].
+  Map<String, Object?> maintainedOn(DateTime day) => {
+    'kind': kind,
+    'count': count,
+    'location': location,
+    'last_maintenance_on':
+        '${day.year.toString().padLeft(4, '0')}-'
+        '${day.month.toString().padLeft(2, '0')}-'
+        '${day.day.toString().padLeft(2, '0')}',
+    'maintenance_interval_months':
+        (json['maintenance_interval_months'] as num?)?.toInt() ?? 12,
+  };
+}
+
+/// Point on the institution's map: evacuation point, water point or alarm (phase 4 §5).
+class OrgFeature {
+  const OrgFeature({required this.kind, this.label, this.location});
+
+  final String kind;
+  final String? label;
+  final GeoPoint? location;
+
+  factory OrgFeature.fromJson(Map<String, Object?> json) => OrgFeature(
+    kind: json['kind'] as String? ?? 'evacuation_point',
+    label: json['label'] as String?,
+    location: GeoPoint.fromJson(json['location']),
+  );
+}
+
+/// Safety certificate of the institution (phase 4 §7).
+class OrgCertificate {
+  const OrgCertificate({
+    required this.code,
+    required this.status,
+    this.validUntil,
+    this.superseded = false,
+  });
+
+  final String code;
+
+  /// `draft` | `submitted` | `approved` | `rejected` | `revoked`.
+  final String status;
+  final DateTime? validUntil;
+  final bool superseded;
+
+  factory OrgCertificate.fromJson(Map<String, Object?> json) => OrgCertificate(
+    code: json['code'] as String? ?? '',
+    status: json['status'] as String? ?? 'draft',
+    validUntil: _date(json['valid_until']),
+    superseded: json['superseded'] == true,
+  );
+}
+
+/// Member of the institution's account (phase 4 §2).
+class OrgMember {
+  const OrgMember({required this.role, this.displayName, this.email});
+
+  final String? displayName;
+  final String? email;
+
+  /// `admin` | `editor` | `member`.
+  final String role;
+
+  factory OrgMember.fromJson(Map<String, Object?> json) => OrgMember(
+    displayName: json['display_name'] as String?,
+    email: json['email'] as String?,
+    role: json['role'] as String? ?? 'member',
+  );
 }
 
 /// One row of `GET /api/v1/orgs/{id}/reports`.

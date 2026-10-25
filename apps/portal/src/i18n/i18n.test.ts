@@ -18,6 +18,7 @@ import {
   TRAINING_STATUSES,
   VERSION_STATUSES,
 } from "../lib/types";
+import { KIND_FIELDS } from "../lib/kindFields";
 import ar from "./ar.json";
 import en from "./en.json";
 import fr from "./fr.json";
@@ -101,9 +102,12 @@ describe("translation files", () => {
       rejected: "مرفوض",
     });
     expect(Object.values(en.status)).toEqual(["Received", "Being processed", "Intervened", "Intervention ongoing", "Closed", "Rejected"]);
-    expect(Object.values(ar.kinds)).toEqual(["صناعية", "تعليمية", "نزل", "حكومية", "خاصة", "أخرى"]);
-    expect(Object.values(fr.kinds)).toEqual(["Industrielle", "Éducative", "Hôtel", "Administration publique", "Privée", "Autre"]);
-    expect(Object.values(en.kinds)).toEqual(["Industrial", "Educational", "Hotel", "Government", "Private", "Other"]);
+    // Twelve kinds since P2a (addition 12, working list [SIM]), in the order of ORG_KINDS, with their fields' labels.
+    for (const dict of [ar, fr, en]) {
+      expect(Object.keys(dict.kinds)).toEqual([...ORG_KINDS]);
+      for (const specs of Object.values(KIND_FIELDS)) for (const f of specs) expect(dict.kindField).toHaveProperty(f.key);
+    }
+    expect(ar.kinds).toMatchObject({ health: "صحية", education: "تربوية", tourism: "سياحية", other: "أخرى" });
   });
 
   it("mark the charter text as a placeholder in every language", () => {

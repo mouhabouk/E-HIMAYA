@@ -84,7 +84,7 @@ async def detail_of(session: AsyncSession, org: Organization) -> schemas.StaffOr
     regs = await service.load_registers(session, org.id)
     on = service.today()
     return schemas.StaffOrgDetail(
-        **(await service.card(session, org, regs)),
+        **(await service.card(session, org, regs, reader="auditor")),
         team=[service.team_out(m, on) for m in regs.team],
         hazmat=[service.hazmat_out(h) for h in regs.hazmat],
         equipment=[service.equipment_out(e, on) for e in regs.equipment],
@@ -185,7 +185,7 @@ async def review_org(
         action="org.review",
         target=f"org:{org_id}",
         reason=org.review_reason,
-        details={"decision": body.decision, "from": previous, "to": org.status},
+        details={"decision": body.decision, "from": previous, "to": org.status, "kind": org.kind},
     )
     await service.org_event(session, org_id)
     await session.commit()

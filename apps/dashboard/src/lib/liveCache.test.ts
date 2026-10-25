@@ -301,7 +301,7 @@ describe("applyLiveEvent — certificate.updated (phase 4)", () => {
     const qc = new QueryClient();
     qc.setQueryData(queryKeys.org("o-1"), makeOrgDetail());
     const listKey = queryKeys.orgs(DEFAULT_ORG_FILTERS);
-    const otherKey = queryKeys.orgs({ ...DEFAULT_ORG_FILTERS, kind: "hotel" });
+    const otherKey = queryKeys.orgs({ ...DEFAULT_ORG_FILTERS, kind: "tourism" });
     qc.setQueryData(listKey, { pages: [{ items: [makeStaffOrg()], next_cursor: null }], pageParams: [null] });
     qc.setQueryData(otherKey, { pages: [{ items: [], next_cursor: null }], pageParams: [null] });
 

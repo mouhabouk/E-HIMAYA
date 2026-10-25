@@ -179,7 +179,7 @@ class HomeScreen extends ConsumerWidget {
             const _NumbersGrid(),
             const SizedBox(height: 16),
             _SectionTitle(title: l10n.homeShortcuts),
-            _TileGrid(
+            TileGrid(
               minTileWidth: 104,
               children: [for (final s in shortcuts) _ShortcutTile(s)],
             ),
@@ -242,33 +242,6 @@ class _SectionTitle extends StatelessWidget {
 }
 
 /// Lays out tiles in equal columns: as many as fit [minTileWidth] (fewer with large text).
-class _TileGrid extends StatelessWidget {
-  const _TileGrid({required this.children, required this.minTileWidth});
-
-  final List<Widget> children;
-  final double minTileWidth;
-
-  @override
-  Widget build(BuildContext context) => LayoutBuilder(
-    builder: (context, constraints) {
-      const gap = 8.0;
-      final scale = MediaQuery.textScalerOf(context).scale(1);
-      final min = minTileWidth * (scale > 1.3 ? scale * 0.8 : 1);
-      final columns = ((constraints.maxWidth + gap) / (min + gap))
-          .floor()
-          .clamp(1, children.length.clamp(1, 4));
-      final width = (constraints.maxWidth - gap * (columns - 1)) / columns;
-      return Wrap(
-        spacing: gap,
-        runSpacing: gap,
-        children: [
-          for (final child in children) SizedBox(width: width, child: child),
-        ],
-      );
-    },
-  );
-}
-
 class _ReportCard extends StatelessWidget {
   const _ReportCard({
     required this.title,
@@ -345,7 +318,7 @@ class _NumbersGrid extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final dial = ref.watch(dialerProvider);
-    return _TileGrid(
+    return TileGrid(
       minTileWidth: 76,
       children: [
         for (final n in emergencyNumbers)

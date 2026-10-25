@@ -62,7 +62,7 @@ export function makeOrg(overrides: Partial<Organization> = {}): Organization {
 
 export const MY_ORGS: MyOrg[] = [
   { id: "o-1", name: "Société X", kind: "industrial", status: "active", my_role: "admin", alerts_count: 2 },
-  { id: "o-2", name: "Lycée Y", kind: "educational", status: "pending_review", my_role: "member", alerts_count: 0 },
+  { id: "o-2", name: "Lycée Y", kind: "education", status: "pending_review", my_role: "member", alerts_count: 0 },
 ];
 
 export function makePublicCertificate(overrides: Partial<PublicCertificate> = {}): PublicCertificate {

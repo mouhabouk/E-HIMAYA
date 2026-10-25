@@ -729,18 +729,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get orgKindIndustrial => 'صناعية';
 
   @override
-  String get orgKindEducational => 'تعليمية';
-
-  @override
-  String get orgKindHotel => 'نزل';
-
-  @override
-  String get orgKindGovernment => 'حكومية';
-
-  @override
-  String get orgKindPrivate => 'خاصة';
-
-  @override
   String get orgKindOther => 'أخرى';
 
   @override
@@ -4014,4 +4002,502 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get envBannerTraining =>
       '[SIM] تمرين: البيانات تجريبية وليست بلاغات حقيقية';
+
+  @override
+  String get orgReadiness => 'الجاهزية';
+
+  @override
+  String orgReadinessMissing(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count متطلبا ناقصا',
+      few: '$count متطلبات ناقصة',
+      two: 'متطلبان ناقصان',
+      one: 'متطلب واحد ناقص',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get orgReadinessDone => 'كل المتطلبات مستوفاة';
+
+  @override
+  String get orgMissingTitle => 'المتطلبات الناقصة';
+
+  @override
+  String get orgSectionsTitle => 'الأقسام';
+
+  @override
+  String get orgSectionCard => 'البطاقة';
+
+  @override
+  String get orgSectionEquipment => 'المعدات والصيانة';
+
+  @override
+  String get orgSectionHazmat => 'المواد الخطرة';
+
+  @override
+  String get orgSectionEvacuation => 'الإخلاء';
+
+  @override
+  String get orgSectionReports => 'البلاغات';
+
+  @override
+  String get orgSectionCertificates => 'الشهادات';
+
+  @override
+  String get orgSectionMembers => 'الأعضاء والأدوار';
+
+  @override
+  String get orgSectionPortal => 'البوابة';
+
+  @override
+  String get orgReportAs => 'أبلّغ باسم المؤسسة';
+
+  @override
+  String get orgPendingNote =>
+      'قيد المراجعة: يصبح التبليغ باسم المؤسسة ممكنا بعد مصادقة الديوان.';
+
+  @override
+  String get orgRegister => 'تسجيل مؤسسة';
+
+  @override
+  String orgRegisterStep(int current, int total) {
+    return 'الخطوة $current من $total';
+  }
+
+  @override
+  String get orgRegisterKindTitle => 'ما صبغة مؤسستك؟';
+
+  @override
+  String get orgRegisterIdentityTitle => 'المعرّف والاتصال';
+
+  @override
+  String get orgRegisterLocationTitle => 'الموقع والمبنى';
+
+  @override
+  String get orgRegisterReviewTitle => 'المراجعة';
+
+  @override
+  String get orgName => 'اسم المؤسسة';
+
+  @override
+  String get orgIdentifierType => 'نوع المعرّف';
+
+  @override
+  String get orgIdentifierMf => 'المعرّف الجبائي';
+
+  @override
+  String get orgIdentifierRne => 'السجل الوطني للمؤسسات';
+
+  @override
+  String get orgIdentifier => 'المعرّف';
+
+  @override
+  String get orgManagerName => 'المسؤول: الاسم الكامل';
+
+  @override
+  String get orgManagerPhone => 'المسؤول: الهاتف';
+
+  @override
+  String get orgContactEmail => 'البريد الإلكتروني للمؤسسة';
+
+  @override
+  String get orgUseMyLocation => 'استعمال موقعي الحالي';
+
+  @override
+  String orgLocationSet(String lat, String lon) {
+    return 'الموقع: $lat، $lon';
+  }
+
+  @override
+  String get orgLocationUnavailable =>
+      'تعذّر تحديد الموقع. فعّل تحديد الموقع ثم أعد المحاولة.';
+
+  @override
+  String get orgLocationRequired => 'حدّد موقع المؤسسة.';
+
+  @override
+  String get orgReceivesPublic => 'تستقبل العموم';
+
+  @override
+  String get orgFloors => 'عدد الطوابق';
+
+  @override
+  String get orgHeight => 'الارتفاع (م)';
+
+  @override
+  String get orgNext => 'التالي';
+
+  @override
+  String get orgBack => 'رجوع';
+
+  @override
+  String get orgSubmit => 'إرسال التسجيل';
+
+  @override
+  String get orgRegisteredTitle => 'أُرسل التسجيل';
+
+  @override
+  String get orgRegisteredBody =>
+      'تبقى المؤسسة «قيد المراجعة» إلى أن يصادق عليها مراقب المؤسسات بالديوان.';
+
+  @override
+  String get orgOpenInstitution => 'فتح «مؤسستي»';
+
+  @override
+  String get orgInvalidIdentifier => 'معرّف غير صالح: 7 أرقام وحرف.';
+
+  @override
+  String get orgInvalidPhone =>
+      'رقم الهاتف: 8 أرقام، أو +216 متبوعا بـ8 أرقام.';
+
+  @override
+  String get orgInvalidNumber => 'أدخل عددا صحيحا في الحدود المسموحة.';
+
+  @override
+  String get orgInvalidEmail => 'بريد إلكتروني غير صالح.';
+
+  @override
+  String get orgEmailNotVerified => 'أكّد بريدك الإلكتروني قبل تسجيل مؤسسة.';
+
+  @override
+  String get orgIdentifierTaken => 'هذا المعرّف مسجّل لمؤسسة أخرى.';
+
+  @override
+  String get orgKindFieldsTitle => 'خاص بالصبغة';
+
+  @override
+  String get orgKindFieldsSim => 'قائمة عمل [SIM] في انتظار مصادقة الديوان';
+
+  @override
+  String get orgKindFieldsEmpty => 'لا خانات خاصة بهذه الصبغة.';
+
+  @override
+  String get orgCardTabIdentity => 'الهوية';
+
+  @override
+  String get orgCardTabBuilding => 'المبنى';
+
+  @override
+  String get orgEdit => 'تعديل';
+
+  @override
+  String get orgSave => 'حفظ';
+
+  @override
+  String get orgCancel => 'إلغاء';
+
+  @override
+  String get orgSaved => 'تم الحفظ.';
+
+  @override
+  String get orgVersionConflict =>
+      'قام شخص آخر بتعديل البطاقة في الأثناء. أعد التحميل ثم أعد المحاولة.';
+
+  @override
+  String get orgYes => 'نعم';
+
+  @override
+  String get orgNo => 'لا';
+
+  @override
+  String get orgNotSet => 'غير محدّد';
+
+  @override
+  String get orgEquipmentEmpty => 'لا توجد معدات مسجّلة.';
+
+  @override
+  String orgEquipmentCount(int count) {
+    return 'العدد: $count';
+  }
+
+  @override
+  String get orgMaintenanceOk => 'الصيانة سليمة';
+
+  @override
+  String get orgMaintenanceDueSoon => 'صيانة مستحقة قريبا';
+
+  @override
+  String get orgMaintenanceOverdue => 'صيانة متأخرة';
+
+  @override
+  String get orgMaintenanceUnknown => 'لا تاريخ صيانة';
+
+  @override
+  String orgMaintenanceNext(String date) {
+    return 'الصيانة القادمة: $date';
+  }
+
+  @override
+  String get orgLogMaintenance => 'سجّل صيانة اليوم';
+
+  @override
+  String get orgMaintenanceLogged => 'سُجّلت الصيانة.';
+
+  @override
+  String get orgEvacuationEmpty =>
+      'لا توجد نقاط على الخريطة. تُضاف النقاط من البوابة.';
+
+  @override
+  String get orgCertificatesEmpty => 'لا توجد شهادات بعد.';
+
+  @override
+  String orgCertificateValidUntil(String date) {
+    return 'صالحة إلى $date';
+  }
+
+  @override
+  String get orgMembersEmpty => 'لا أعضاء.';
+
+  @override
+  String get orgInvite => 'دعوة عضو';
+
+  @override
+  String get orgInviteEmail => 'البريد الإلكتروني';
+
+  @override
+  String get orgInviteRole => 'الدور';
+
+  @override
+  String get orgInviteSend => 'إرسال الدعوة';
+
+  @override
+  String orgInviteSent(String email) {
+    return 'أُرسلت الدعوة إلى $email.';
+  }
+
+  @override
+  String get orgAdminOnly => 'للمدير فقط.';
+
+  @override
+  String get orgKindHealth => 'صحية';
+
+  @override
+  String get orgKindEnergy => 'طاقة ومحروقات';
+
+  @override
+  String get orgKindTourism => 'سياحية';
+
+  @override
+  String get orgKindEducation => 'تربوية';
+
+  @override
+  String get orgKindSocialCare => 'رعاية اجتماعية';
+
+  @override
+  String get orgKindPublicAdmin => 'عمومية وإدارية';
+
+  @override
+  String get orgKindCultureSport => 'ثقافية ورياضية';
+
+  @override
+  String get orgKindCommercial => 'تجارية';
+
+  @override
+  String get orgKindTransport => 'نقل';
+
+  @override
+  String get orgKindReligious => 'دينية';
+
+  @override
+  String get kindFieldReceptionPhone => 'رقم الاستقبال';
+
+  @override
+  String get kindFieldBeds => 'عدد الأسرّة';
+
+  @override
+  String get kindFieldIcu => 'قسم إنعاش';
+
+  @override
+  String get kindFieldOxygenHours => 'مخزون الأكسجين (ساعات)';
+
+  @override
+  String get kindFieldGenerator => 'مولّد كهربائي';
+
+  @override
+  String get kindFieldHelipad => 'مهبط مروحية';
+
+  @override
+  String get kindFieldNonAmbulatory => 'غير القادرين على التنقل';
+
+  @override
+  String get kindFieldWorkersPerShift => 'العمال في الحصة';
+
+  @override
+  String get kindFieldSelfFireFighting => 'وسائل إطفاء ذاتية';
+
+  @override
+  String get kindFieldTanks => 'عدد الخزانات';
+
+  @override
+  String get kindFieldFuelTypes => 'أنواع الوقود';
+
+  @override
+  String get kindFieldStorageM3 => 'سعة التخزين (م³)';
+
+  @override
+  String get kindFieldShutoffValves => 'صمامات القطع';
+
+  @override
+  String get kindFieldRooms => 'عدد الغرف';
+
+  @override
+  String get kindFieldGuestLanguages => 'لغات النزلاء';
+
+  @override
+  String get kindFieldPoolOrBeach => 'مسبح أو شاطئ';
+
+  @override
+  String get kindFieldOccupancyPct => 'نسبة الإشغال (%)';
+
+  @override
+  String get kindFieldStudents => 'عدد التلاميذ';
+
+  @override
+  String get kindFieldAgeRange => 'الأعمار';
+
+  @override
+  String get kindFieldBoarding => 'مبيت';
+
+  @override
+  String get kindFieldStudentsSpecialNeeds => 'تلاميذ من ذوي الهمم';
+
+  @override
+  String get kindFieldResidents => 'عدد المقيمين';
+
+  @override
+  String get kindFieldNightWatch => 'حراسة ليلية';
+
+  @override
+  String get kindFieldStaff => 'عدد الأعوان';
+
+  @override
+  String get kindFieldArchive => 'أرشيف';
+
+  @override
+  String get kindFieldSeatedCapacity => 'عدد المقاعد';
+
+  @override
+  String get kindFieldStands => 'مدارج';
+
+  @override
+  String get kindFieldShops => 'عدد المحلات';
+
+  @override
+  String get kindFieldUndergroundParking => 'مأوى سيارات تحت الأرض';
+
+  @override
+  String get kindFieldDailyPassengers => 'المسافرون يوميا';
+
+  @override
+  String get kindFieldEmergencyExits => 'مخارج الطوارئ';
+
+  @override
+  String get kindFieldPeakTimes => 'أوقات الذروة';
+
+  @override
+  String get orgVisibilityPublic => 'للعموم';
+
+  @override
+  String get orgVisibilityOrgOffice => 'المؤسسة والديوان';
+
+  @override
+  String get orgVisibilityIncident => 'عند بلاغ قريب';
+
+  @override
+  String get orgReqSafetyFile => 'ملف السلامة (محفوظ)';
+
+  @override
+  String get orgReqSafetyPlan => 'مخطط السلامة (محفوظ)';
+
+  @override
+  String get orgReqSafetyTeam => 'فريق السلامة: ممثل وعضو واحد على الأقل';
+
+  @override
+  String get orgReqTraining =>
+      'لكل عضو في الفريق تاريخ تكوين، ولا تكوين منتهي الصلاحية';
+
+  @override
+  String get orgReqHazmatSds => 'بطاقة بيانات سلامة لكل مادة خطرة';
+
+  @override
+  String get orgReqEquipment => 'تجهيز واحد على الأقل، دون تأخير في الصيانة';
+
+  @override
+  String get orgReqEvacuationPoints => 'نقطة إخلاء واحدة على الأقل على الخريطة';
+
+  @override
+  String get orgEquipExtinguisher => 'طفاية حريق';
+
+  @override
+  String get orgEquipFireHoseReel => 'بكرة خرطوم الحريق';
+
+  @override
+  String get orgEquipSprinkler => 'مرشّة آلية';
+
+  @override
+  String get orgEquipSmokeDetector => 'كاشف دخان';
+
+  @override
+  String get orgEquipAlarmPanel => 'لوحة إنذار';
+
+  @override
+  String get orgEquipEmergencyLighting => 'إنارة النجدة';
+
+  @override
+  String get orgEquipFireDoor => 'باب مقاوم للحريق';
+
+  @override
+  String get orgEquipOther => 'أخرى';
+
+  @override
+  String get orgFeatureEvacuationPoint => 'نقطة إخلاء وتجمّع';
+
+  @override
+  String get orgFeatureWaterPoint => 'مأخذ مياه';
+
+  @override
+  String get orgFeatureAlarm => 'جهاز إنذار';
+
+  @override
+  String get orgRoleAdmin => 'مشرف';
+
+  @override
+  String get orgRoleEditor => 'محرّر';
+
+  @override
+  String get orgRoleMember => 'عضو';
+
+  @override
+  String get orgCertDraft => 'مسودة';
+
+  @override
+  String get orgCertSubmitted => 'مقدّمة';
+
+  @override
+  String get orgCertApproved => 'مصادق عليها';
+
+  @override
+  String get orgCertRejected => 'مرفوضة';
+
+  @override
+  String get orgCertRevoked => 'ملغاة';
+
+  @override
+  String get orgAlertTrainingExpired => 'تكوين منتهي الصلاحية في فريق السلامة';
+
+  @override
+  String get orgAlertTrainingExpiring =>
+      'تكوين ستنتهي صلاحيته قريبا في فريق السلامة';
+
+  @override
+  String get orgAlertMaintenanceOverdue => 'صيانة تجهيز متأخرة';
+
+  @override
+  String get orgAlertMaintenanceDueSoon => 'صيانة تجهيز مستحقة قريبا';
+
+  @override
+  String get orgKindLabelTitle => 'الصبغة';
 }

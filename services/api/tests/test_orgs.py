@@ -62,7 +62,7 @@ def identifier() -> str:
 def card(**overrides: Any) -> dict[str, Any]:
     body: dict[str, Any] = {
         "name": "Société des Peintures du Sud",
-        "kind": "private",
+        "kind": "commercial",
         "identifier_type": "mf",
         "identifier": identifier().lower(),
         "activity_sector": "Commerce",
@@ -199,7 +199,7 @@ async def test_register_and_read(client: httpx.AsyncClient, user: User) -> None:
         {
             "id": org["id"],
             "name": org["name"],
-            "kind": "private",
+            "kind": "commercial",
             "status": "pending_review",
             "my_role": "admin",
             "alerts_count": 0,
@@ -232,9 +232,9 @@ async def test_classification_follows_the_card(client: httpx.AsyncClient, user: 
     high = await register(client, user(), height_m=31.0)
     assert high["classification"]["family"] == "high_rise"
     assert "evacuation_points" in high["classification"]["required"]
-    erp = await register(client, user(), receives_public=True, capacity=900, kind="hotel")
+    erp = await register(client, user(), receives_public=True, capacity=900, kind="tourism")
     assert (erp["classification"]["family"], erp["classification"]["category"]) == ("erp", 2)
-    small = await register(client, user(), receives_public=True, capacity=50, kind="educational")
+    small = await register(client, user(), receives_public=True, capacity=50, kind="education")
     assert small["classification"]["category"] == 5 and "training" not in small["classification"]["required"]
 
 
@@ -867,3 +867,101 @@ def test_sensitive_sites_only_raise_the_priority() -> None:
     assert result["score"] == base["score"]
     component = next(c for c in result["components"] if c["key"] == "sensitive_sites")
     assert component["detail"]["counted"] is False and component["points"] == 0
+
+
+# ---------------------------------------------------------------- kinds and their fields (phase P2a, addition 12)
+
+
+async def test_kinds_are_listed_with_their_fields(client: httpx.AsyncClient) -> None:
+    r = await client.get("/api/v1/public/org-kinds")
+    assert r.status_code == 200 and "max-age" in r.headers["cache-control"]
+    kinds = {k["kind"]: k["fields"] for k in r.json()}
+    assert len(kinds) == 12 and kinds["other"] == []
+    health = {f["key"]: f for f in kinds["health"]}
+    assert health["reception_phone"]["visibility"] == "public"
+    assert (health["non_ambulatory"]["type"], health["non_ambulatory"]["visibility"]) == ("int", "incident")
+
+
+@pytest.mark.parametrize(
+    ("fields", "code"),
+    [
+        ({"beds": "many"}, "invalid_kind_field:beds"),
+        ({"beds": -1}, "invalid_kind_field:beds"),
+        ({"generator": 1}, "invalid_kind_field:generator"),
+        ({"reception_phone": "+33612345678"}, "invalid_phone"),
+    ],
+)
+async def test_kind_fields_are_validated(
+    client: httpx.AsyncClient, user: User, fields: dict[str, Any], code: str
+) -> None:
+    r = await client.post("/api/v1/orgs", json=card(kind="health", kind_fields=fields), headers=user())
+    assert r.status_code == 422 and r.json()["detail"] == code
+
+
+async def test_kind_fields_follow_their_visibility(client: httpx.AsyncClient, user: User, staff: Staff) -> None:
+    admin = user()
+    fields = {
+        "beds": 120,
+        "generator": True,
+        "non_ambulatory": 14,
+        "reception_phone": "71 000 111",
+        "rooms": 3,
+        "icu": None,
+    }
+    org = await register(client, admin, kind="health", kind_fields=fields)
+    # Fields of other kinds and empty answers are dropped; the phone is normalized.
+    expected = {"beds": 120, "generator": True, "non_ambulatory": 14, "reception_phone": "+21671000111"}
+    assert org["kind_fields"] == expected and org["kind_review"] is False
+    assert 0 <= org["readiness"] < 100
+    summary = (await client.get(f"/api/v1/orgs/{org['id']}/summary", headers=admin)).json()
+    assert summary["kind_fields"] == expected and summary["readiness"] == org["readiness"]
+    assert "safety_file" in summary["missing"]
+    # The institutions auditor does not see what only the operations room sees at an incident.
+    detail = (await client.get(f"/api/v1/staff/orgs/{org['id']}", headers=staff(["org_auditor"]))).json()
+    assert "non_ambulatory" not in detail["kind_fields"] and detail["kind_fields"]["beds"] == 120
+
+
+async def test_readiness_reaches_100_when_nothing_is_missing(
+    client: httpx.AsyncClient, user: User, staff: Staff, fake_store: FakeStore
+) -> None:
+    admin = user()
+    org_id = await active_org(client, staff, admin)
+    before = (await client.get(f"/api/v1/orgs/{org_id}/summary", headers=admin)).json()
+    assert before["readiness"] == 0 and len(before["missing"]) == 3
+    await complete(client, admin, fake_store, org_id)
+    after = (await client.get(f"/api/v1/orgs/{org_id}/summary", headers=admin)).json()
+    assert after["readiness"] == 100 and after["missing"] == [] and after["alerts"] == []
+
+
+async def test_auditor_sets_the_kind_on_approval(client: httpx.AsyncClient, user: User, staff: Staff) -> None:
+    admin = user()
+    name = f"Dar {uuid.uuid4().hex[:8]}"
+    org = await register(
+        client, admin, name=name, kind="social_care", kind_fields={"residents": 30, "non_ambulatory": 6}
+    )
+    async with get_system_sessionmaker()() as s:
+        await s.execute(text("UPDATE org.organization SET kind_review = true WHERE id = :id"), {"id": org["id"]})
+        await s.commit()
+    auditor = staff(["org_auditor"])
+    listed = (await client.get("/api/v1/staff/orgs", params={"q": name}, headers=auditor)).json()
+    assert next(o for o in listed["items"] if o["id"] == org["id"])["kind_review"] is True
+    url = f"/api/v1/staff/orgs/{org['id']}/review"
+    refused = await client.post(url, json={"decision": "reject", "reason": "x", "kind": "health"}, headers=auditor)
+    assert refused.status_code == 422 and refused.json()["detail"] == "kind_only_on_approval"
+    assert (await client.post(url, json={"decision": "approve", "kind": "health"}, headers=auditor)).status_code == 200
+    after = (await client.get(f"/api/v1/orgs/{org['id']}", headers=admin)).json()
+    # Fields both kinds share are kept, the others dropped.
+    assert after["kind"] == "health" and after["kind_review"] is False
+    assert after["kind_fields"] == {"non_ambulatory": 6}
+
+
+def test_kind_field_helpers() -> None:
+    from app.modules.orgs import domain
+
+    assert domain.readiness([], []) == 100 and domain.readiness(["a", "b", "c", "d"], ["a"]) == 75
+    assert domain.clean_kind_fields(domain.OrgKind.TOURISM, {"occupancy_pct": 101}) == "occupancy_pct"
+    assert domain.clean_kind_fields(domain.OrgKind.TOURISM, {"pool_or_beach": True, "x": 1}) == {"pool_or_beach": True}
+    values = {"rooms": 40, "occupancy_pct": 80}
+    assert domain.visible_kind_fields("tourism", values, "public") == {}
+    assert domain.visible_kind_fields("tourism", values, "auditor") == {"rooms": 40}
+    assert domain.visible_kind_fields("tourism", values, "incident") == values

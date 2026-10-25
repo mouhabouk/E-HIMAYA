@@ -99,14 +99,14 @@ describe("staffApi (phase 4 institutions)", () => {
   it("lists institutions with the contract's filters, as strings, and the cursor", async () => {
     const { api, call } = setup({ items: [], next_cursor: null });
     await api.orgs(
-      { status: "pending_review", kind: "hotel", gouvernorat: 61, certificate: "expired", hasHazmat: false, q: " Sfax " },
+      { status: "pending_review", kind: "tourism", gouvernorat: 61, certificate: "expired", hasHazmat: false, q: " Sfax " },
       { cursor: "c2" },
     );
     const p = call().url.searchParams;
     expect(call().url.pathname).toBe("/api/v1/staff/orgs");
     expect(Object.fromEntries(p)).toEqual({
       status: "pending_review",
-      kind: "hotel",
+      kind: "tourism",
       gouvernorat_code: "61",
       certificate: "expired",
       has_hazmat: "false",
