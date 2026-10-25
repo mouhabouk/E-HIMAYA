@@ -30,6 +30,8 @@ rectangle "Tableau de bord central" {
   usecase "Gérer les comptes\nde la région" as S15
   usecase "Paramètres nationaux,\nIA, accès exceptionnel, audit" as S16
   usecase "Analyses, rapports,\nmémoire nationale" as S17
+  usecase "Rédiger une note\n(brouillon protégé, G4)" as S18
+  usecase "Voir l'environnement\n(bandeau [SIM], G3)" as S19
 }
 OP --> S1
 OP --> S2
@@ -50,6 +52,8 @@ ED --> S13
 ED --> S14
 RAA --> S15
 SA --> S16
+S2 <.. S18 : <<extend>>
+OP --> S19
 S1 ..> S0 : <<include>>
 S11 ..> S0 : <<include>>
 S16 ..> S0 : <<include>>
