@@ -229,8 +229,11 @@ sed -i "s|^ANON_PSEUDONYM_SECRET=.*|ANON_PSEUDONYM_SECRET=$(openssl rand -hex 32
 sed -i "s|^FIELD_ENCRYPTION_KEY=.*|FIELD_ENCRYPTION_KEY=$(openssl rand -base64 32)|" .env
 sed -i "s|^CERTIFICATE_SIGNING_KEY=.*|CERTIFICATE_SIGNING_KEY=$(openssl rand -base64 32)|" .env
 sed -i "s|^SMS_INBOUND_SECRET=.*|SMS_INBOUND_SECRET=$(openssl rand -hex 32)|" .env
-grep -n 'change-me' .env || echo "لا قيمة مثال متبقية"
+grep -n 'change-me' .env | grep -v '_SIM_\|STREAM_SIM' || echo "لا قيمة مثال متبقية"
 ```
+
+تبقى ثلاث قيم مثال مقصودة لمحاكيات التطوير **[SIM]**: `STREAM_SIM_TOKEN` و `TELEPHONY_SIM_PASSWORD` و
+`TELEPHONY_SIM_TOKEN`. تُترك في جهاز التطوير، وتُفرَّغ على خادم التجربة والإنتاج (القسم 11.2).
 
 | السر | لماذا هو حرج |
 |---|---|
@@ -366,6 +369,8 @@ CADDY_TLS=ops@ehimaya.tn                     # بريد ACME؛ أو internal ل�
 TUSD_CORS_ORIGIN_REGEX=^https://(dashboard|portal)\.ehimaya\.tn$
 KEYCLOAK_ADMIN_ALLOW=10.20.0.0/16             # الشبكات التي تفتح إدارة Keycloak
 STREAM_SIM_TOKEN=                             # المحاكاة ممنوعة في الإنتاج
+TELEPHONY_SIM_PASSWORD=
+TELEPHONY_SIM_TOKEN=
 ```
 
 في Keycloak حدّث Valid redirect URIs و Web origins للعميلين `ehimaya-dashboard` و `ehimaya-portal` إلى
@@ -641,7 +646,7 @@ JDK 21 و Maven 3.9، ثم `mvn -f infra/keycloak/providers/phone-otp/pom.xml ve
 
 - [ ] Ubuntu 24.04 محدّث، الوقت متزامن، SSH بالمفاتيح فقط، الجدار الناري مفعّل.
 - [ ] `docker compose version` ≥ 2.24، و `hello-world` يعمل.
-- [ ] `.env` بصلاحية 600، ولا قيمة `change-me`، والأسرار الثلاثة محفوظة خارج الخادم.
+- [ ] `.env` بصلاحية 600، ولا قيمة `change-me` (ولا قيمة لمحاكي في الإنتاج)، والأسرار الثلاثة محفوظة خارج الخادم.
 - [ ] `smoke_test.py` ناجح.
 - [ ] أول مدير نظام دخل وفعّل TOTP.
 - [ ] في الإنتاج: `/health/ready` = 200، `/docs` = 404، رؤوس HSTS و CSP حاضرة.
