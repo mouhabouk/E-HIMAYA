@@ -4004,4 +4004,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String medicalOpeningsCount(int count) {
     return 'من اطّلع على ملفي الطبي ($count)';
   }
+
+  @override
+  String get envBannerDevelopment => '[SIM] بيئة تطوير: كل البيانات تجريبية';
+
+  @override
+  String get envBannerPilot => '[SIM] بيئة التجربة الميدانية: البيانات تجريبية';
+
+  @override
+  String get envBannerTraining =>
+      '[SIM] تمرين: البيانات تجريبية وليست بلاغات حقيقية';
 }

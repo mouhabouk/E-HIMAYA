@@ -9,7 +9,9 @@ import '../../core/http/doctor_models.dart';
 import '../../core/http/error_messages.dart';
 import '../../core/http/volunteer_models.dart';
 import '../../core/routing/app_router.dart';
+import '../../core/ui/components.dart';
 import '../../core/ui/emergency_action.dart';
+import '../../core/ui/tokens.dart';
 import '../../l10n/app_localizations.dart';
 import '../alerts/alert_labels.dart';
 import '../onboarding/login_actions.dart';
@@ -84,15 +86,13 @@ class _Intro extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    Widget choice(DoctorKind kind, IconData icon, String help) => Card(
-      child: ListTile(
-        key: Key('doctor-choose-${kind.wire}'),
-        leading: Icon(icon),
-        title: Text(doctorKindLabel(l10n, kind)),
-        subtitle: Text(help),
-        trailing: const Icon(Icons.chevron_right),
-        onTap: () => context.push('${Routes.doctorApply}?kind=${kind.wire}'),
-      ),
+    Widget choice(DoctorKind kind, IconData icon, String help) => NavCard(
+      key: Key('doctor-choose-${kind.wire}'),
+      icon: icon,
+      tone: Tone.purple,
+      title: doctorKindLabel(l10n, kind),
+      subtitle: help,
+      onTap: () => context.push('${Routes.doctorApply}?kind=${kind.wire}'),
     );
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),

@@ -2549,6 +2549,19 @@ button.map-poi {
   --poi-stream-alert: #f87171;
 }
 
+/* Backlog G3: environment strip above the header (development, field pilot, exercise). */
+.env-strip {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 1rem;
+  background: var(--sim-band);
+  color: var(--sim-text);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
 .sim-band {
   display: flex;
   flex-wrap: wrap;

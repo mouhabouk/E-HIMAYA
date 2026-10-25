@@ -1160,5 +1160,8 @@
   "medicalOpeningCp": "طبيب الحماية المدنية، ولاية {gouvernorat}",
   "medicalOpeningSpecialist": "طبيب مختص: {specialty}، {workplace}",
   "medicalOpeningReferral": "أُحيل ملفك إلى طبيب مختص في {specialty}",
-  "medicalOpeningsCount": "من اطّلع على ملفي الطبي ({count})"
+  "medicalOpeningsCount": "من اطّلع على ملفي الطبي ({count})",
+  "envBannerDevelopment": "[SIM] بيئة تطوير: كل البيانات تجريبية",
+  "envBannerPilot": "[SIM] بيئة التجربة الميدانية: البيانات تجريبية",
+  "envBannerTraining": "[SIM] تمرين: البيانات تجريبية وليست بلاغات حقيقية"
 }

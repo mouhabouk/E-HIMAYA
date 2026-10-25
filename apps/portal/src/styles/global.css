@@ -2853,3 +2853,22 @@ button.nav-card:hover {
   background: var(--primary);
   color: var(--primary-text);
 }
+
+/* Backlog G3: environment strip above the header (development, field pilot, exercise). Amber fill, ink text. */
+.env-strip {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 1rem;
+  background: var(--tone-amber);
+  color: var(--tone-amber-on);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.env-strip__tag {
+  padding: 0 0.375rem;
+  border: 1px solid currentcolor;
+  border-radius: 999px;
+}

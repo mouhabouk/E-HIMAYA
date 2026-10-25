@@ -9,7 +9,9 @@ import '../../core/http/error_messages.dart';
 import '../../core/http/volunteer_models.dart';
 import '../../core/location/location_service.dart';
 import '../../core/routing/app_router.dart';
+import '../../core/ui/components.dart';
 import '../../core/ui/emergency_action.dart';
+import '../../core/ui/tokens.dart';
 import '../../l10n/app_localizations.dart';
 import '../alerts/alert_labels.dart';
 import '../onboarding/login_actions.dart';
@@ -242,15 +244,13 @@ class _Space extends ConsumerWidget {
           const SizedBox(height: 8),
           _ReadinessCard(volunteer: v),
           const SizedBox(height: 8),
-          Card(
-            child: ListTile(
-              key: const Key('volunteer-callouts'),
-              leading: const Icon(Icons.campaign, size: 32),
-              title: Text(l10n.calloutsTitle),
-              subtitle: Text(l10n.calloutsDesc),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => context.push(Routes.callouts),
-            ),
+          NavCard(
+            key: const Key('volunteer-callouts'),
+            icon: Icons.campaign_rounded,
+            tone: Tone.red,
+            title: l10n.calloutsTitle,
+            subtitle: l10n.calloutsDesc,
+            onTap: () => context.push(Routes.callouts),
           ),
         ],
         const SizedBox(height: 16),
@@ -392,9 +392,10 @@ class _ReadinessCardState extends ConsumerState<_ReadinessCard> {
           children: [
             SwitchListTile(
               key: const Key('volunteer-ready'),
-              secondary: Icon(
-                ready ? Icons.directions_run : Icons.bedtime,
-                size: 32,
+              secondary: IconTile(
+                ready ? Icons.directions_run_rounded : Icons.bedtime_rounded,
+                tone: ready ? Tone.green : Tone.slate,
+                soft: true,
               ),
               title: Text(l10n.volunteerReady),
               subtitle: Text(
@@ -429,7 +430,11 @@ class _ReadinessCardState extends ConsumerState<_ReadinessCard> {
               ),
             SwitchListTile(
               key: const Key('volunteer-location-consent'),
-              secondary: const Icon(Icons.share_location, size: 32),
+              secondary: const IconTile(
+                Icons.share_location_rounded,
+                tone: Tone.teal,
+                soft: true,
+              ),
               title: Text(l10n.locationConsentSwitch),
               subtitle: Text(
                 v.locationConsent
@@ -460,15 +465,13 @@ class DoctorJoinCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Card(
-      child: ListTile(
-        key: const Key('doctor-join'),
-        leading: const Icon(Icons.medical_services),
-        title: Text(l10n.doctorJoinTitle),
-        subtitle: Text(l10n.doctorJoinBody),
-        trailing: const Icon(Icons.chevron_right),
-        onTap: () => context.push(Routes.doctor),
-      ),
+    return NavCard(
+      key: const Key('doctor-join'),
+      icon: Icons.medical_services_rounded,
+      tone: Tone.purple,
+      title: l10n.doctorJoinTitle,
+      subtitle: l10n.doctorJoinBody,
+      onTap: () => context.push(Routes.doctor),
     );
   }
 }
