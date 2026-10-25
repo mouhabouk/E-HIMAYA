@@ -10672,6 +10672,64 @@
         "title": "Kind",
         "type": "string"
       },
+      "KindFieldOut": {
+        "properties": {
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "maximum": {
+            "title": "Maximum",
+            "type": "integer"
+          },
+          "type": {
+            "enum": [
+              "int",
+              "bool",
+              "text"
+            ],
+            "title": "Type",
+            "type": "string"
+          },
+          "visibility": {
+            "enum": [
+              "public",
+              "org_office",
+              "incident"
+            ],
+            "title": "Visibility",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "type",
+          "visibility",
+          "maximum"
+        ],
+        "title": "KindFieldOut",
+        "type": "object"
+      },
+      "KindOut": {
+        "properties": {
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/KindFieldOut"
+            },
+            "title": "Fields",
+            "type": "array"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/OrgKind"
+          }
+        },
+        "required": [
+          "kind",
+          "fields"
+        ],
+        "title": "KindOut",
+        "type": "object"
+      },
       "Kpis": {
         "properties": {
           "analysis_pending": {
@@ -14224,6 +14282,27 @@
           "kind": {
             "$ref": "#/components/schemas/OrgKind"
           },
+          "kind_fields": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "maxProperties": 40,
+            "title": "Kind Fields",
+            "type": "object"
+          },
           "location": {
             "$ref": "#/components/schemas/Point-Input"
           },
@@ -14253,12 +14332,19 @@
         "type": "object"
       },
       "OrgKind": {
+        "description": "Activity of the institution (addition 12): a working list until the Office validates it [SIM].",
         "enum": [
+          "health",
           "industrial",
-          "educational",
-          "hotel",
-          "government",
-          "private",
+          "energy",
+          "tourism",
+          "education",
+          "social_care",
+          "public_admin",
+          "culture_sport",
+          "commercial",
+          "transport",
+          "religious",
           "other"
         ],
         "title": "OrgKind",
@@ -14414,6 +14500,27 @@
           "kind": {
             "$ref": "#/components/schemas/OrgKind"
           },
+          "kind_fields": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "title": "Kind Fields",
+            "type": "object"
+          },
+          "kind_review": {
+            "title": "Kind Review",
+            "type": "boolean"
+          },
           "location": {
             "$ref": "#/components/schemas/app__modules__orgs__schemas__Point"
           },
@@ -14426,6 +14533,10 @@
           "name": {
             "title": "Name",
             "type": "string"
+          },
+          "readiness": {
+            "title": "Readiness",
+            "type": "integer"
           },
           "receives_public": {
             "title": "Receives Public",
@@ -14470,6 +14581,9 @@
           "contact_phone",
           "classification",
           "completeness",
+          "readiness",
+          "kind_fields",
+          "kind_review",
           "alerts",
           "review",
           "created_at",
@@ -14607,6 +14721,16 @@
             "title": "Decision",
             "type": "string"
           },
+          "kind": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OrgKind"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "reason": {
             "anyOf": [
               {
@@ -14659,6 +14783,13 @@
             ],
             "title": "Address"
           },
+          "alerts": {
+            "items": {
+              "$ref": "#/components/schemas/Alert"
+            },
+            "title": "Alerts",
+            "type": "array"
+          },
           "alerts_count": {
             "title": "Alerts Count",
             "type": "integer"
@@ -14696,12 +14827,40 @@
           "kind": {
             "$ref": "#/components/schemas/OrgKind"
           },
+          "kind_fields": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "title": "Kind Fields",
+            "type": "object"
+          },
           "location": {
             "$ref": "#/components/schemas/app__modules__orgs__schemas__Point"
+          },
+          "missing": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Missing",
+            "type": "array"
           },
           "name": {
             "title": "Name",
             "type": "string"
+          },
+          "readiness": {
+            "title": "Readiness",
+            "type": "integer"
           },
           "status": {
             "$ref": "#/components/schemas/OrgStatus"
@@ -14723,10 +14882,14 @@
           "address",
           "location",
           "classification",
+          "readiness",
+          "missing",
+          "kind_fields",
           "team",
           "hazmat_count",
           "hazmat",
-          "alerts_count"
+          "alerts_count",
+          "alerts"
         ],
         "title": "OrgSummary",
         "type": "object"
@@ -14849,6 +15012,27 @@
           "kind": {
             "$ref": "#/components/schemas/OrgKind"
           },
+          "kind_fields": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "maxProperties": 40,
+            "title": "Kind Fields",
+            "type": "object"
+          },
           "location": {
             "$ref": "#/components/schemas/Point-Input"
           },
@@ -14933,6 +15117,23 @@
           "kind": {
             "$ref": "#/components/schemas/OrgKind"
           },
+          "kind_fields": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "title": "Kind Fields",
+            "type": "object"
+          },
           "location": {
             "$ref": "#/components/schemas/app__modules__orgs__schemas__Point"
           },
@@ -14961,7 +15162,8 @@
           "classification",
           "representative",
           "hazmat",
-          "features"
+          "features",
+          "kind_fields"
         ],
         "title": "OrganizationCard",
         "type": "object"
@@ -19830,6 +20032,10 @@
           "kind": {
             "$ref": "#/components/schemas/OrgKind"
           },
+          "kind_review": {
+            "title": "Kind Review",
+            "type": "boolean"
+          },
           "location": {
             "$ref": "#/components/schemas/app__modules__orgs__schemas__Point"
           },
@@ -19852,6 +20058,7 @@
           "capacity",
           "location",
           "classification",
+          "kind_review",
           "hazmat_count",
           "alerts_count",
           "certificate_status",
@@ -20046,6 +20253,27 @@
           "kind": {
             "$ref": "#/components/schemas/OrgKind"
           },
+          "kind_fields": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "title": "Kind Fields",
+            "type": "object"
+          },
+          "kind_review": {
+            "title": "Kind Review",
+            "type": "boolean"
+          },
           "location": {
             "$ref": "#/components/schemas/app__modules__orgs__schemas__Point"
           },
@@ -20062,6 +20290,10 @@
           "name": {
             "title": "Name",
             "type": "string"
+          },
+          "readiness": {
+            "title": "Readiness",
+            "type": "integer"
           },
           "receives_public": {
             "title": "Receives Public",
@@ -20113,6 +20345,9 @@
           "contact_phone",
           "classification",
           "completeness",
+          "readiness",
+          "kind_fields",
+          "kind_review",
           "alerts",
           "review",
           "created_at",
@@ -32572,6 +32807,33 @@
           }
         },
         "summary": "Verify Certificate",
+        "tags": [
+          "institutions",
+          "public"
+        ]
+      }
+    },
+    "/api/v1/public/org-kinds": {
+      "get": {
+        "description": "The institution kinds and the fields of each, with who may see them (addition 12, working list [SIM]).",
+        "operationId": "org_kinds_api_v1_public_org_kinds_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/KindOut"
+                  },
+                  "title": "Response Org Kinds Api V1 Public Org Kinds Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Org Kinds",
         "tags": [
           "institutions",
           "public"

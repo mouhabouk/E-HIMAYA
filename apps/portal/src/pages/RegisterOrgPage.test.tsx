@@ -68,6 +68,40 @@ describe("RegisterOrgPage (FR-B-001)", () => {
     });
   });
 
+  it("asks the kind's own fields with who sees them, checks them and posts them (P2a)", async () => {
+    const { calls } = setup({ status: 201, body: makeOrg({ status: "pending_review", kind: "health" }) });
+    await screen.findByRole("heading", { name: /Step 1 of 5/ });
+    fireEvent.change(screen.getByLabelText("Kind"), { target: { value: "health" } });
+    expect(screen.getByText("Working list [SIM] pending the Office's approval")).toBeInTheDocument();
+    expect(screen.getByLabelText(/^Reception number/)).toBeInTheDocument();
+    expect(screen.getAllByText("On a nearby report").length).toBeGreaterThan(0);
+    type(/^Institution name/, "Hôpital X");
+    type(/^Identifier/, "1234567A");
+    type(/^Beds/, "beaucoup");
+    next();
+    expect(await screen.findByText(/whole number/i)).toBeInTheDocument();
+    type(/^Beds/, "120");
+    fireEvent.click(screen.getByLabelText(/^Generator/));
+    next();
+    await screen.findByRole("heading", { name: /Step 2 of 5/ });
+    type(/^Capacity/, "420");
+    type(/^Address/, "Route de Gabès km 4");
+    next();
+    await screen.findByRole("heading", { name: /Step 3 of 5/ });
+    type("Latitude", "34.7");
+    type("Longitude", "10.72");
+    next();
+    await screen.findByRole("heading", { name: /Step 4 of 5/ });
+    type(/^Manager — full name/, "Karim Trabelsi");
+    type(/^Manager — phone/, "20 123 456");
+    next();
+    await screen.findByRole("heading", { name: /Step 5 of 5/ });
+    fireEvent.click(screen.getByRole("button", { name: "Send the registration" }));
+    await screen.findByRole("heading", { name: "Registration sent" });
+    const [post] = calls("POST /api/v1/orgs");
+    expect(post?.body).toMatchObject({ kind: "health", kind_fields: { beds: 120, generator: true } });
+  });
+
   it("validates each step on the client before moving on", async () => {
     const { calls } = setup({ status: 201, body: makeOrg() });
     await screen.findByRole("heading", { name: /Step 1 of 5/ });

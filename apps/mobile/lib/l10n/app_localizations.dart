@@ -1366,30 +1366,6 @@ abstract class AppLocalizations {
   /// **'Industrial'**
   String get orgKindIndustrial;
 
-  /// No description provided for @orgKindEducational.
-  ///
-  /// In en, this message translates to:
-  /// **'Educational'**
-  String get orgKindEducational;
-
-  /// No description provided for @orgKindHotel.
-  ///
-  /// In en, this message translates to:
-  /// **'Hotel'**
-  String get orgKindHotel;
-
-  /// No description provided for @orgKindGovernment.
-  ///
-  /// In en, this message translates to:
-  /// **'Government'**
-  String get orgKindGovernment;
-
-  /// No description provided for @orgKindPrivate.
-  ///
-  /// In en, this message translates to:
-  /// **'Private'**
-  String get orgKindPrivate;
-
   /// No description provided for @orgKindOther.
   ///
   /// In en, this message translates to:
@@ -7083,6 +7059,942 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'[SIM] Exercise: test data, not real reports'**
   String get envBannerTraining;
+
+  /// No description provided for @orgReadiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Readiness'**
+  String get orgReadiness;
+
+  /// No description provided for @orgReadinessMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 missing requirement} other{{count} missing requirements}}'**
+  String orgReadinessMissing(int count);
+
+  /// No description provided for @orgReadinessDone.
+  ///
+  /// In en, this message translates to:
+  /// **'All requirements are met'**
+  String get orgReadinessDone;
+
+  /// No description provided for @orgMissingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing requirements'**
+  String get orgMissingTitle;
+
+  /// No description provided for @orgSectionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sections'**
+  String get orgSectionsTitle;
+
+  /// No description provided for @orgSectionCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Card'**
+  String get orgSectionCard;
+
+  /// No description provided for @orgSectionEquipment.
+  ///
+  /// In en, this message translates to:
+  /// **'Equipment and maintenance'**
+  String get orgSectionEquipment;
+
+  /// No description provided for @orgSectionHazmat.
+  ///
+  /// In en, this message translates to:
+  /// **'Hazardous materials'**
+  String get orgSectionHazmat;
+
+  /// No description provided for @orgSectionEvacuation.
+  ///
+  /// In en, this message translates to:
+  /// **'Evacuation'**
+  String get orgSectionEvacuation;
+
+  /// No description provided for @orgSectionReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports'**
+  String get orgSectionReports;
+
+  /// No description provided for @orgSectionCertificates.
+  ///
+  /// In en, this message translates to:
+  /// **'Certificates'**
+  String get orgSectionCertificates;
+
+  /// No description provided for @orgSectionMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'Members and roles'**
+  String get orgSectionMembers;
+
+  /// No description provided for @orgSectionPortal.
+  ///
+  /// In en, this message translates to:
+  /// **'Portal'**
+  String get orgSectionPortal;
+
+  /// No description provided for @orgReportAs.
+  ///
+  /// In en, this message translates to:
+  /// **'Report for the institution'**
+  String get orgReportAs;
+
+  /// No description provided for @orgPendingNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Under review: reporting for the institution becomes possible once the Office approves it.'**
+  String get orgPendingNote;
+
+  /// No description provided for @orgRegister.
+  ///
+  /// In en, this message translates to:
+  /// **'Register an institution'**
+  String get orgRegister;
+
+  /// No description provided for @orgRegisterStep.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {current} of {total}'**
+  String orgRegisterStep(int current, int total);
+
+  /// No description provided for @orgRegisterKindTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What kind is your institution?'**
+  String get orgRegisterKindTitle;
+
+  /// No description provided for @orgRegisterIdentityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Identifier and contact'**
+  String get orgRegisterIdentityTitle;
+
+  /// No description provided for @orgRegisterLocationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Location and building'**
+  String get orgRegisterLocationTitle;
+
+  /// No description provided for @orgRegisterReviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get orgRegisterReviewTitle;
+
+  /// No description provided for @orgName.
+  ///
+  /// In en, this message translates to:
+  /// **'Institution name'**
+  String get orgName;
+
+  /// No description provided for @orgIdentifierType.
+  ///
+  /// In en, this message translates to:
+  /// **'Identifier type'**
+  String get orgIdentifierType;
+
+  /// No description provided for @orgIdentifierMf.
+  ///
+  /// In en, this message translates to:
+  /// **'Tax identifier'**
+  String get orgIdentifierMf;
+
+  /// No description provided for @orgIdentifierRne.
+  ///
+  /// In en, this message translates to:
+  /// **'National business register'**
+  String get orgIdentifierRne;
+
+  /// No description provided for @orgIdentifier.
+  ///
+  /// In en, this message translates to:
+  /// **'Identifier'**
+  String get orgIdentifier;
+
+  /// No description provided for @orgManagerName.
+  ///
+  /// In en, this message translates to:
+  /// **'Manager: full name'**
+  String get orgManagerName;
+
+  /// No description provided for @orgManagerPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Manager: phone'**
+  String get orgManagerPhone;
+
+  /// No description provided for @orgContactEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Institution e-mail'**
+  String get orgContactEmail;
+
+  /// No description provided for @orgUseMyLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Use my current location'**
+  String get orgUseMyLocation;
+
+  /// No description provided for @orgLocationSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Location: {lat}, {lon}'**
+  String orgLocationSet(String lat, String lon);
+
+  /// No description provided for @orgLocationUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Location unavailable. Turn on location and try again.'**
+  String get orgLocationUnavailable;
+
+  /// No description provided for @orgLocationRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Set the institution\'s location.'**
+  String get orgLocationRequired;
+
+  /// No description provided for @orgReceivesPublic.
+  ///
+  /// In en, this message translates to:
+  /// **'Receives the public'**
+  String get orgReceivesPublic;
+
+  /// No description provided for @orgFloors.
+  ///
+  /// In en, this message translates to:
+  /// **'Floors'**
+  String get orgFloors;
+
+  /// No description provided for @orgHeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Height (m)'**
+  String get orgHeight;
+
+  /// No description provided for @orgNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get orgNext;
+
+  /// No description provided for @orgBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get orgBack;
+
+  /// No description provided for @orgSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Send the registration'**
+  String get orgSubmit;
+
+  /// No description provided for @orgRegisteredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration sent'**
+  String get orgRegisteredTitle;
+
+  /// No description provided for @orgRegisteredBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The institution stays “under review” until the Office approves it.'**
+  String get orgRegisteredBody;
+
+  /// No description provided for @orgOpenInstitution.
+  ///
+  /// In en, this message translates to:
+  /// **'Open “My institution”'**
+  String get orgOpenInstitution;
+
+  /// No description provided for @orgInvalidIdentifier.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid identifier: 7 digits and a letter.'**
+  String get orgInvalidIdentifier;
+
+  /// No description provided for @orgInvalidPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone: 8 digits, or +216 followed by 8 digits.'**
+  String get orgInvalidPhone;
+
+  /// No description provided for @orgInvalidNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a whole number within the limits.'**
+  String get orgInvalidNumber;
+
+  /// No description provided for @orgInvalidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid e-mail.'**
+  String get orgInvalidEmail;
+
+  /// No description provided for @orgEmailNotVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm your e-mail before registering an institution.'**
+  String get orgEmailNotVerified;
+
+  /// No description provided for @orgIdentifierTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'This identifier is already registered.'**
+  String get orgIdentifierTaken;
+
+  /// No description provided for @orgKindFieldsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Kind-specific'**
+  String get orgKindFieldsTitle;
+
+  /// No description provided for @orgKindFieldsSim.
+  ///
+  /// In en, this message translates to:
+  /// **'Working list [SIM] pending the Office\'s approval'**
+  String get orgKindFieldsSim;
+
+  /// No description provided for @orgKindFieldsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No field specific to this kind.'**
+  String get orgKindFieldsEmpty;
+
+  /// No description provided for @orgCardTabIdentity.
+  ///
+  /// In en, this message translates to:
+  /// **'Identity'**
+  String get orgCardTabIdentity;
+
+  /// No description provided for @orgCardTabBuilding.
+  ///
+  /// In en, this message translates to:
+  /// **'Building'**
+  String get orgCardTabBuilding;
+
+  /// No description provided for @orgEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get orgEdit;
+
+  /// No description provided for @orgSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get orgSave;
+
+  /// No description provided for @orgCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get orgCancel;
+
+  /// No description provided for @orgSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved.'**
+  String get orgSaved;
+
+  /// No description provided for @orgVersionConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'Someone else changed the card meanwhile. Reload and try again.'**
+  String get orgVersionConflict;
+
+  /// No description provided for @orgYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get orgYes;
+
+  /// No description provided for @orgNo.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get orgNo;
+
+  /// No description provided for @orgNotSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get orgNotSet;
+
+  /// No description provided for @orgEquipmentEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No equipment registered.'**
+  String get orgEquipmentEmpty;
+
+  /// No description provided for @orgEquipmentCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Count: {count}'**
+  String orgEquipmentCount(int count);
+
+  /// No description provided for @orgMaintenanceOk.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintenance up to date'**
+  String get orgMaintenanceOk;
+
+  /// No description provided for @orgMaintenanceDueSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintenance due soon'**
+  String get orgMaintenanceDueSoon;
+
+  /// No description provided for @orgMaintenanceOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintenance overdue'**
+  String get orgMaintenanceOverdue;
+
+  /// No description provided for @orgMaintenanceUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'No maintenance date'**
+  String get orgMaintenanceUnknown;
+
+  /// No description provided for @orgMaintenanceNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next maintenance: {date}'**
+  String orgMaintenanceNext(String date);
+
+  /// No description provided for @orgLogMaintenance.
+  ///
+  /// In en, this message translates to:
+  /// **'Log maintenance today'**
+  String get orgLogMaintenance;
+
+  /// No description provided for @orgMaintenanceLogged.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintenance logged.'**
+  String get orgMaintenanceLogged;
+
+  /// No description provided for @orgEvacuationEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No point on the map. Points are added on the portal.'**
+  String get orgEvacuationEmpty;
+
+  /// No description provided for @orgCertificatesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No certificate yet.'**
+  String get orgCertificatesEmpty;
+
+  /// No description provided for @orgCertificateValidUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid until {date}'**
+  String orgCertificateValidUntil(String date);
+
+  /// No description provided for @orgMembersEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No member.'**
+  String get orgMembersEmpty;
+
+  /// No description provided for @orgInvite.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite a member'**
+  String get orgInvite;
+
+  /// No description provided for @orgInviteEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'E-mail'**
+  String get orgInviteEmail;
+
+  /// No description provided for @orgInviteRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Role'**
+  String get orgInviteRole;
+
+  /// No description provided for @orgInviteSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send the invitation'**
+  String get orgInviteSend;
+
+  /// No description provided for @orgInviteSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation sent to {email}.'**
+  String orgInviteSent(String email);
+
+  /// No description provided for @orgAdminOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Administrator only.'**
+  String get orgAdminOnly;
+
+  /// No description provided for @orgKindHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Health'**
+  String get orgKindHealth;
+
+  /// No description provided for @orgKindEnergy.
+  ///
+  /// In en, this message translates to:
+  /// **'Energy and fuel'**
+  String get orgKindEnergy;
+
+  /// No description provided for @orgKindTourism.
+  ///
+  /// In en, this message translates to:
+  /// **'Tourism'**
+  String get orgKindTourism;
+
+  /// No description provided for @orgKindEducation.
+  ///
+  /// In en, this message translates to:
+  /// **'Education'**
+  String get orgKindEducation;
+
+  /// No description provided for @orgKindSocialCare.
+  ///
+  /// In en, this message translates to:
+  /// **'Social care'**
+  String get orgKindSocialCare;
+
+  /// No description provided for @orgKindPublicAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Public administration'**
+  String get orgKindPublicAdmin;
+
+  /// No description provided for @orgKindCultureSport.
+  ///
+  /// In en, this message translates to:
+  /// **'Culture and sport'**
+  String get orgKindCultureSport;
+
+  /// No description provided for @orgKindCommercial.
+  ///
+  /// In en, this message translates to:
+  /// **'Commercial'**
+  String get orgKindCommercial;
+
+  /// No description provided for @orgKindTransport.
+  ///
+  /// In en, this message translates to:
+  /// **'Transport'**
+  String get orgKindTransport;
+
+  /// No description provided for @orgKindReligious.
+  ///
+  /// In en, this message translates to:
+  /// **'Religious'**
+  String get orgKindReligious;
+
+  /// No description provided for @kindFieldReceptionPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Reception number'**
+  String get kindFieldReceptionPhone;
+
+  /// No description provided for @kindFieldBeds.
+  ///
+  /// In en, this message translates to:
+  /// **'Beds'**
+  String get kindFieldBeds;
+
+  /// No description provided for @kindFieldIcu.
+  ///
+  /// In en, this message translates to:
+  /// **'Intensive care'**
+  String get kindFieldIcu;
+
+  /// No description provided for @kindFieldOxygenHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Oxygen reserve (hours)'**
+  String get kindFieldOxygenHours;
+
+  /// No description provided for @kindFieldGenerator.
+  ///
+  /// In en, this message translates to:
+  /// **'Generator'**
+  String get kindFieldGenerator;
+
+  /// No description provided for @kindFieldHelipad.
+  ///
+  /// In en, this message translates to:
+  /// **'Helipad'**
+  String get kindFieldHelipad;
+
+  /// No description provided for @kindFieldNonAmbulatory.
+  ///
+  /// In en, this message translates to:
+  /// **'Non-ambulatory people'**
+  String get kindFieldNonAmbulatory;
+
+  /// No description provided for @kindFieldWorkersPerShift.
+  ///
+  /// In en, this message translates to:
+  /// **'Workers per shift'**
+  String get kindFieldWorkersPerShift;
+
+  /// No description provided for @kindFieldSelfFireFighting.
+  ///
+  /// In en, this message translates to:
+  /// **'Own fire-fighting means'**
+  String get kindFieldSelfFireFighting;
+
+  /// No description provided for @kindFieldTanks.
+  ///
+  /// In en, this message translates to:
+  /// **'Tanks'**
+  String get kindFieldTanks;
+
+  /// No description provided for @kindFieldFuelTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'Fuel types'**
+  String get kindFieldFuelTypes;
+
+  /// No description provided for @kindFieldStorageM3.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage (m³)'**
+  String get kindFieldStorageM3;
+
+  /// No description provided for @kindFieldShutoffValves.
+  ///
+  /// In en, this message translates to:
+  /// **'Shut-off valves'**
+  String get kindFieldShutoffValves;
+
+  /// No description provided for @kindFieldRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms'**
+  String get kindFieldRooms;
+
+  /// No description provided for @kindFieldGuestLanguages.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest languages'**
+  String get kindFieldGuestLanguages;
+
+  /// No description provided for @kindFieldPoolOrBeach.
+  ///
+  /// In en, this message translates to:
+  /// **'Pool or beach'**
+  String get kindFieldPoolOrBeach;
+
+  /// No description provided for @kindFieldOccupancyPct.
+  ///
+  /// In en, this message translates to:
+  /// **'Occupancy (%)'**
+  String get kindFieldOccupancyPct;
+
+  /// No description provided for @kindFieldStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'Students'**
+  String get kindFieldStudents;
+
+  /// No description provided for @kindFieldAgeRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Age range'**
+  String get kindFieldAgeRange;
+
+  /// No description provided for @kindFieldBoarding.
+  ///
+  /// In en, this message translates to:
+  /// **'Boarding'**
+  String get kindFieldBoarding;
+
+  /// No description provided for @kindFieldStudentsSpecialNeeds.
+  ///
+  /// In en, this message translates to:
+  /// **'Students with special needs'**
+  String get kindFieldStudentsSpecialNeeds;
+
+  /// No description provided for @kindFieldResidents.
+  ///
+  /// In en, this message translates to:
+  /// **'Residents'**
+  String get kindFieldResidents;
+
+  /// No description provided for @kindFieldNightWatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Night watch'**
+  String get kindFieldNightWatch;
+
+  /// No description provided for @kindFieldStaff.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff'**
+  String get kindFieldStaff;
+
+  /// No description provided for @kindFieldArchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive'**
+  String get kindFieldArchive;
+
+  /// No description provided for @kindFieldSeatedCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Seats'**
+  String get kindFieldSeatedCapacity;
+
+  /// No description provided for @kindFieldStands.
+  ///
+  /// In en, this message translates to:
+  /// **'Stands'**
+  String get kindFieldStands;
+
+  /// No description provided for @kindFieldShops.
+  ///
+  /// In en, this message translates to:
+  /// **'Shops'**
+  String get kindFieldShops;
+
+  /// No description provided for @kindFieldUndergroundParking.
+  ///
+  /// In en, this message translates to:
+  /// **'Underground parking'**
+  String get kindFieldUndergroundParking;
+
+  /// No description provided for @kindFieldDailyPassengers.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily passengers'**
+  String get kindFieldDailyPassengers;
+
+  /// No description provided for @kindFieldEmergencyExits.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency exits'**
+  String get kindFieldEmergencyExits;
+
+  /// No description provided for @kindFieldPeakTimes.
+  ///
+  /// In en, this message translates to:
+  /// **'Peak times'**
+  String get kindFieldPeakTimes;
+
+  /// No description provided for @orgVisibilityPublic.
+  ///
+  /// In en, this message translates to:
+  /// **'Public'**
+  String get orgVisibilityPublic;
+
+  /// No description provided for @orgVisibilityOrgOffice.
+  ///
+  /// In en, this message translates to:
+  /// **'Institution and Office'**
+  String get orgVisibilityOrgOffice;
+
+  /// No description provided for @orgVisibilityIncident.
+  ///
+  /// In en, this message translates to:
+  /// **'On a nearby report'**
+  String get orgVisibilityIncident;
+
+  /// No description provided for @orgReqSafetyFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety file (stored)'**
+  String get orgReqSafetyFile;
+
+  /// No description provided for @orgReqSafetyPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety plan (stored)'**
+  String get orgReqSafetyPlan;
+
+  /// No description provided for @orgReqSafetyTeam.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety team: a representative and at least one member'**
+  String get orgReqSafetyTeam;
+
+  /// No description provided for @orgReqTraining.
+  ///
+  /// In en, this message translates to:
+  /// **'Every team member has a training date, none expired'**
+  String get orgReqTraining;
+
+  /// No description provided for @orgReqHazmatSds.
+  ///
+  /// In en, this message translates to:
+  /// **'A safety data sheet for every hazardous material'**
+  String get orgReqHazmatSds;
+
+  /// No description provided for @orgReqEquipment.
+  ///
+  /// In en, this message translates to:
+  /// **'At least one equipment item, none overdue'**
+  String get orgReqEquipment;
+
+  /// No description provided for @orgReqEvacuationPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'At least one evacuation point on the map'**
+  String get orgReqEvacuationPoints;
+
+  /// No description provided for @orgEquipExtinguisher.
+  ///
+  /// In en, this message translates to:
+  /// **'Fire extinguisher'**
+  String get orgEquipExtinguisher;
+
+  /// No description provided for @orgEquipFireHoseReel.
+  ///
+  /// In en, this message translates to:
+  /// **'Fire hose reel'**
+  String get orgEquipFireHoseReel;
+
+  /// No description provided for @orgEquipSprinkler.
+  ///
+  /// In en, this message translates to:
+  /// **'Sprinkler'**
+  String get orgEquipSprinkler;
+
+  /// No description provided for @orgEquipSmokeDetector.
+  ///
+  /// In en, this message translates to:
+  /// **'Smoke detector'**
+  String get orgEquipSmokeDetector;
+
+  /// No description provided for @orgEquipAlarmPanel.
+  ///
+  /// In en, this message translates to:
+  /// **'Alarm panel'**
+  String get orgEquipAlarmPanel;
+
+  /// No description provided for @orgEquipEmergencyLighting.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency lighting'**
+  String get orgEquipEmergencyLighting;
+
+  /// No description provided for @orgEquipFireDoor.
+  ///
+  /// In en, this message translates to:
+  /// **'Fire door'**
+  String get orgEquipFireDoor;
+
+  /// No description provided for @orgEquipOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get orgEquipOther;
+
+  /// No description provided for @orgFeatureEvacuationPoint.
+  ///
+  /// In en, this message translates to:
+  /// **'Evacuation and assembly point'**
+  String get orgFeatureEvacuationPoint;
+
+  /// No description provided for @orgFeatureWaterPoint.
+  ///
+  /// In en, this message translates to:
+  /// **'Water point'**
+  String get orgFeatureWaterPoint;
+
+  /// No description provided for @orgFeatureAlarm.
+  ///
+  /// In en, this message translates to:
+  /// **'Alarm'**
+  String get orgFeatureAlarm;
+
+  /// No description provided for @orgRoleAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Administrator'**
+  String get orgRoleAdmin;
+
+  /// No description provided for @orgRoleEditor.
+  ///
+  /// In en, this message translates to:
+  /// **'Editor'**
+  String get orgRoleEditor;
+
+  /// No description provided for @orgRoleMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Member'**
+  String get orgRoleMember;
+
+  /// No description provided for @orgCertDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft'**
+  String get orgCertDraft;
+
+  /// No description provided for @orgCertSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted'**
+  String get orgCertSubmitted;
+
+  /// No description provided for @orgCertApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get orgCertApproved;
+
+  /// No description provided for @orgCertRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get orgCertRejected;
+
+  /// No description provided for @orgCertRevoked.
+  ///
+  /// In en, this message translates to:
+  /// **'Revoked'**
+  String get orgCertRevoked;
+
+  /// No description provided for @orgAlertTrainingExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired training in the safety team'**
+  String get orgAlertTrainingExpired;
+
+  /// No description provided for @orgAlertTrainingExpiring.
+  ///
+  /// In en, this message translates to:
+  /// **'Training expiring soon in the safety team'**
+  String get orgAlertTrainingExpiring;
+
+  /// No description provided for @orgAlertMaintenanceOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Equipment maintenance overdue'**
+  String get orgAlertMaintenanceOverdue;
+
+  /// No description provided for @orgAlertMaintenanceDueSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Equipment maintenance due soon'**
+  String get orgAlertMaintenanceDueSoon;
+
+  /// No description provided for @orgKindLabelTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Kind'**
+  String get orgKindLabelTitle;
 }
 
 class _AppLocalizationsDelegate

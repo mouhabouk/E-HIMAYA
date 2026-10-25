@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../../core/http/models.dart';
+import '../../core/ui/components.dart';
+import '../../core/ui/tokens.dart';
 import '../../l10n/app_localizations.dart';
+import 'org_text.dart';
 
-/// Kind labels fixed by the phase-4 contract (§1).
+/// Kind labels (twelve since phase P2a); an unknown kind reads «other».
 String orgKindLabel(AppLocalizations l10n, String kind) =>
-    switch (OrgKind.fromWire(kind)) {
-      OrgKind.industrial => l10n.orgKindIndustrial,
-      OrgKind.educational => l10n.orgKindEducational,
-      OrgKind.hotel => l10n.orgKindHotel,
-      OrgKind.government => l10n.orgKindGovernment,
-      OrgKind.private => l10n.orgKindPrivate,
-      OrgKind.other || null => l10n.orgKindOther,
-    };
+    orgKindText(l10n, kind);
 
 String orgStatusLabel(AppLocalizations l10n, String status) =>
     switch (OrgStatus.fromWire(status)) {
@@ -115,5 +111,25 @@ class OrgChip extends StatelessWidget {
       side: BorderSide.none,
       backgroundColor: scheme.surfaceContainerHigh,
     );
+  }
+}
+
+/// Status of an institution as a tint badge (design system §3): green active, amber under review,
+/// red refused or suspended. The word always says what the colour says.
+class OrgStatusPill extends StatelessWidget {
+  const OrgStatusPill({super.key, required this.status});
+
+  final String status;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final (tone, icon) = switch (OrgStatus.fromWire(status)) {
+      OrgStatus.active => (Tone.green, Icons.verified),
+      OrgStatus.pendingReview => (Tone.amber, Icons.hourglass_top),
+      OrgStatus.rejected || OrgStatus.suspended => (Tone.red, Icons.block),
+      null => (Tone.slate, Icons.help_outline),
+    };
+    return Pill(orgStatusLabel(l10n, status), tone: tone, icon: icon);
   }
 }

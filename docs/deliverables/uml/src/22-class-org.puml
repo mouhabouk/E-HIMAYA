@@ -3,7 +3,10 @@
 title Diagramme de classes : établissements et certificat de sécurité
 hide empty methods
 class Établissement {
-  nom, type
+  nom
+  {field} type : 12 types (P2a) [SIM]
+  {field} champs du type (kind_fields)
+  {field} type à revoir (kind_review)
   identifiant [MF / RNE]
   secteur, capacité
   étages, hauteur
@@ -58,6 +61,12 @@ class Classement <<calculé>> {
   famille : IGH | industriel | ERP | travail
   catégorie
   exigences manquantes
+  {field} préparation % (P2a)
+}
+class ChampDuType <<référence>> {
+  clé, type : entier | oui/non | texte
+  visibilité : public | établissement et Office | signalement proche
+  maximum
 }
 Établissement "1" *-- "1..*" Membre
 Établissement "1" *-- "*" Invitation
@@ -70,5 +79,6 @@ Document "1" *-- "1..*" VersionDocument
 MatièreDangereuse "*" --> "0..1" Document : FDS
 Établissement "1" -- "*" Certificat
 Établissement ..> Classement
+Établissement ..> "*" ChampDuType : selon le type
 Membre "*" --> "1" "Compte"
 @enduml

@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { ErrorBox } from "../../components/Feedback";
+import { Pill } from "../../components/Icon";
 import { useServices } from "../../context/services";
 import { useFormat, useGouvernorats } from "../../lib/hooks";
 import { queryKeys } from "../../lib/portalApi";
@@ -107,7 +108,17 @@ export function OverviewTab() {
         </section>
 
         <section className="card" aria-labelledby="complete-title">
-          <h2 id="complete-title">{t("completeness.title")}</h2>
+          <h2 id="complete-title">
+            {t("completeness.title")}
+            {typeof org.readiness === "number" && (
+              <>
+                {" "}
+                <Pill tone={org.readiness === 100 ? "green" : "amber"}>
+                  {t("kindExtra.readiness")} {fmt.number(org.readiness)}%
+                </Pill>
+              </>
+            )}
+          </h2>
           <p className={org.completeness.ok ? "ok-text" : "muted"}>
             {org.completeness.ok ? t("completeness.ok") : t("completeness.notOk", { n: org.completeness.missing.length })}
           </p>

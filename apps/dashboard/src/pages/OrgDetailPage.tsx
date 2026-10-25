@@ -14,6 +14,7 @@ import {
   featureKindLabel,
   formatDay,
   hazmatQuantity,
+  KindFieldsList,
   MaintenanceBadge,
   MapLegend,
   orgKindLabel,
@@ -24,7 +25,9 @@ import {
   TrainingBadge,
   useLegendItems,
 } from "../components/OrgBits";
+import { Pill } from "../components/Icon";
 import { StatusChip } from "../components/StatusChip";
+import { SimTag } from "../components/StreamBits";
 import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
 import { directionOf } from "../i18n";
@@ -37,10 +40,12 @@ import {
   DOCUMENT_KINDS,
   isOneOf,
   MEMBER_ROLES,
+  ORG_KINDS,
   TEAM_ROLES,
   type DocumentVersion,
   type OrgDecision,
   type OrgDocument,
+  type OrgKind,
   type StaffOrgDetail,
 } from "../lib/types";
 import { PageTitle } from "../components/PageTitle";
@@ -80,10 +85,12 @@ function OrgReviewSection({ org }: { org: StaffOrgDetail }) {
   const [reason, setReason] = useState("");
   const [reasonError, setReasonError] = useState(false);
   const [done, setDone] = useState(false);
+  const [kind, setKind] = useState<OrgKind>(org.kind);
+  const kindId = useId();
   const key = queryKeys.org(org.id);
 
   const mutation = useMutation({
-    mutationFn: (v: { decision: OrgDecision; reason: string }) => api.reviewOrg(org.id, v),
+    mutationFn: (v: { decision: OrgDecision; reason: string; kind?: OrgKind }) => api.reviewOrg(org.id, v),
     onSuccess: (updated) => {
       qc.setQueryData(key, updated);
       void qc.invalidateQueries({ queryKey: queryKeys.orgsAll });
@@ -125,7 +132,9 @@ function OrgReviewSection({ org }: { org: StaffOrgDetail }) {
       setReasonError(true);
       return;
     }
-    mutation.mutate({ decision, reason: reason.trim() });
+    // P2a: the auditor may set the right kind when approving (always sent when the kind is to review).
+    const withKind = decision === "approve" && (kind !== org.kind || org.kind_review);
+    mutation.mutate({ decision, reason: reason.trim(), ...(withKind ? { kind } : {}) });
   };
   const errorText = mutation.isError
     ? isApiError(mutation.error) && mutation.error.code === "invalid_transition"
@@ -164,6 +173,18 @@ function OrgReviewSection({ org }: { org: StaffOrgDetail }) {
           <p className="alert alert--warn" role="alert">
             {t(`orgs.review.confirmText.${decision}`)}
           </p>
+          {decision === "approve" && (
+            <div className="field">
+              <label htmlFor={kindId}>{t("orgs.kindExtra.kindOnApproval")}</label>
+              <select id={kindId} value={kind} disabled={mutation.isPending} onChange={(e) => setKind(e.target.value as OrgKind)}>
+                {ORG_KINDS.map((k) => (
+                  <option key={k} value={k}>
+                    {t(`orgs.kind.${k}`)}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
           <div className={`field${reasonError ? " field--invalid" : ""}`}>
             <label htmlFor={reasonId}>{needsReason ? t("orgs.review.reason") : t("orgs.review.reasonOptional")}</label>
             <textarea
@@ -462,6 +483,7 @@ export function OrgDetailPage() {
         </PageTitle>
         <OrgStatusChip status={org.status} />
         <span className="tag">{orgKindLabel(t, org.kind)}</span>
+        {org.kind_review && <Pill tone="amber">{t("orgs.kindExtra.kindReview")}</Pill>}
       </div>
 
       <div className="detail__grid">
@@ -511,6 +533,13 @@ export function OrgDetailPage() {
             <dt>{t("orgs.detail.updatedAt")}</dt>
             <dd>{fmt.dateTime(org.updated_at)}</dd>
           </dl>
+        </section>
+
+        <section className="card" aria-labelledby="sec-org-kind-fields">
+          <h2 id="sec-org-kind-fields">
+            {t("orgs.kindExtra.kindFieldsTitle")} <SimTag label={t("orgs.kindExtra.sim")} />
+          </h2>
+          <KindFieldsList kind={org.kind} values={org.kind_fields} />
         </section>
 
         <section className="card" aria-labelledby="sec-org-contacts">
@@ -569,6 +598,14 @@ export function OrgDetailPage() {
             <span className={`tag ${org.completeness?.ok ? "tag--level-ok" : "tag--level-bad"}`}>
               {org.completeness?.ok ? t("orgs.detail.complete") : t("orgs.detail.incomplete")}
             </span>
+            {typeof org.readiness === "number" && (
+              <>
+                {" "}
+                <Pill tone={org.readiness === 100 ? "green" : "amber"}>
+                  {t("orgs.kindExtra.readiness")} {fmt.number(org.readiness)}%
+                </Pill>
+              </>
+            )}
           </h3>
           <ul className="checklist" aria-label={t("orgs.detail.required")}>
             {checklist.map((code) => {

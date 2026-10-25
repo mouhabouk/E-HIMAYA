@@ -29,7 +29,7 @@ void main() {
       MyOrg.fromJson({
         'id': 'x',
         'name': 'Y',
-        'kind': 'hotel',
+        'kind': 'tourism',
         'status': 'pending_review',
       }).isActive,
       isFalse,
@@ -43,12 +43,19 @@ void main() {
       'rejected',
       'suspended',
     ]);
+    // Twelve kinds since phase P2a (addition 12).
     expect(OrgKind.values.map((k) => k.wire).toList(), [
+      'health',
       'industrial',
-      'educational',
-      'hotel',
-      'government',
-      'private',
+      'energy',
+      'tourism',
+      'education',
+      'social_care',
+      'public_admin',
+      'culture_sport',
+      'commercial',
+      'transport',
+      'religious',
       'other',
     ]);
     expect(OrgStatus.fromWire('pending_review'), OrgStatus.pendingReview);
@@ -74,7 +81,40 @@ void main() {
     expect(s.hazmat.single.quantity, 2.5);
     expect(s.hazmat.single.unit, 't');
     expect(s.alertsCount, 2);
+    // Phase P2a.
+    expect(s.readiness, 50);
+    expect(s.missing, ['safety_file']);
+    expect(s.kindFields, {'workers_per_shift': 35, 'tanks': 2});
+    expect(s.alerts.map((a) => a.kind), [
+      'training_expired',
+      'maintenance_overdue',
+    ]);
+    expect(s.alerts.first.since, DateTime(2026, 9));
     expect(OrgSummary.fromJson(s.source).name, 'Société X');
+    // An older server without the P2a fields.
+    final old = OrgSummary.fromJson({'id': orgId, 'name': 'Y'});
+    expect(old.readiness, isNull);
+    expect(old.kindFields, isEmpty);
+  });
+
+  test('P2a card: edit body keeps every field and the version', () {
+    final c = OrgCardData(cardJson());
+    expect(c.canEdit, isTrue);
+    expect(OrgCardData(cardJson(role: 'member')).canEdit, isFalse);
+    final body = c.toUpdate({'capacity': 500});
+    expect(body['capacity'], 500);
+    expect(body['version'], 3);
+    expect(body['identifier'], '1234567A');
+    expect(body['kind_fields'], {'workers_per_shift': 35, 'tanks': 2});
+    expect(body.containsKey('my_role'), isFalse);
+    final e = OrgEquipment(equipmentJson());
+    expect(e.maintainedOn(DateTime(2026, 10, 5)), {
+      'kind': 'extinguisher',
+      'count': 12,
+      'location': 'Atelier',
+      'last_maintenance_on': '2026-10-05',
+      'maintenance_interval_months': 12,
+    });
   });
 
   test('erp classification has a category', () {

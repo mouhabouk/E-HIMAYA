@@ -14,7 +14,9 @@ import '../../features/emergency/emergency_screen.dart';
 import '../../features/guide/guide_screens.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/home/main_shell.dart';
+import '../../features/institution/institution_sections.dart';
 import '../../features/institution/my_institution_screen.dart';
+import '../../features/institution/register_institution_screen.dart';
 import '../../features/live/live_controller.dart';
 import '../../features/live/live_screen.dart';
 import '../../features/onboarding/institution_screen.dart';
@@ -84,8 +86,11 @@ abstract final class Routes {
   static const reportQueued = '/report/queued';
   static const track = '/track';
   static const institutions = '/institutions';
+  static const institutionRegister = '/institutions/new';
   static String institution(String id) =>
       '/institutions/${Uri.encodeComponent(id)}';
+  static String institutionSection(String id, String section) =>
+      '/institutions/${Uri.encodeComponent(id)}/$section';
   // Phase 5: volunteers, notifications and alerts, safety tips.
   static const volunteer = '/volunteer';
   static const volunteerApply = '/volunteer/apply';
@@ -389,10 +394,28 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: Routes.institutions,
         builder: (_, _) => const MyInstitutionsScreen(),
         routes: [
+          // Before ':id', so "new" is never read as an institution id.
+          GoRoute(
+            path: 'new',
+            builder: (_, _) => const RegisterInstitutionScreen(),
+          ),
           GoRoute(
             path: ':id',
             builder: (_, state) =>
                 MyInstitutionScreen(orgId: state.pathParameters['id'] ?? ''),
+            routes: [
+              GoRoute(
+                path: ':section',
+                builder: (_, state) => InstitutionSectionScreen(
+                  orgId: state.pathParameters['id'] ?? '',
+                  section:
+                      InstitutionSection.fromName(
+                        state.pathParameters['section'],
+                      ) ??
+                      InstitutionSection.card,
+                ),
+              ),
+            ],
           ),
         ],
       ),

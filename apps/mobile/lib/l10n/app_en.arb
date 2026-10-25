@@ -326,10 +326,6 @@
   "myInstitutionsEmpty": "You do not belong to any institution.",
   "homeInstitutionDesc": "Safety card, team and reports of your institution",
   "orgKindIndustrial": "Industrial",
-  "orgKindEducational": "Educational",
-  "orgKindHotel": "Hotel",
-  "orgKindGovernment": "Government",
-  "orgKindPrivate": "Private",
   "orgKindOther": "Other",
   "orgStatusPendingReview": "Under review",
   "orgStatusActive": "Active",
@@ -2083,5 +2079,216 @@
   "envBannerTraining": "[SIM] Exercise: test data, not real reports",
   "@envBannerTraining": {
     "description": "Environment strip at the top of every screen (backlog G3)."
-  }
+  },
+  "orgReadiness": "Readiness",
+  "orgReadinessMissing": "{count, plural, =1{1 missing requirement} other{{count} missing requirements}}",
+  "@orgReadinessMissing": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "orgReadinessDone": "All requirements are met",
+  "orgMissingTitle": "Missing requirements",
+  "orgSectionsTitle": "Sections",
+  "orgSectionCard": "Card",
+  "orgSectionEquipment": "Equipment and maintenance",
+  "orgSectionHazmat": "Hazardous materials",
+  "orgSectionEvacuation": "Evacuation",
+  "orgSectionReports": "Reports",
+  "orgSectionCertificates": "Certificates",
+  "orgSectionMembers": "Members and roles",
+  "orgSectionPortal": "Portal",
+  "orgReportAs": "Report for the institution",
+  "orgPendingNote": "Under review: reporting for the institution becomes possible once the Office approves it.",
+  "orgRegister": "Register an institution",
+  "orgRegisterStep": "Step {current} of {total}",
+  "@orgRegisterStep": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "orgRegisterKindTitle": "What kind is your institution?",
+  "orgRegisterIdentityTitle": "Identifier and contact",
+  "orgRegisterLocationTitle": "Location and building",
+  "orgRegisterReviewTitle": "Review",
+  "orgName": "Institution name",
+  "orgIdentifierType": "Identifier type",
+  "orgIdentifierMf": "Tax identifier",
+  "orgIdentifierRne": "National business register",
+  "orgIdentifier": "Identifier",
+  "orgManagerName": "Manager: full name",
+  "orgManagerPhone": "Manager: phone",
+  "orgContactEmail": "Institution e-mail",
+  "orgUseMyLocation": "Use my current location",
+  "orgLocationSet": "Location: {lat}, {lon}",
+  "@orgLocationSet": {
+    "placeholders": {
+      "lat": {
+        "type": "String"
+      },
+      "lon": {
+        "type": "String"
+      }
+    }
+  },
+  "orgLocationUnavailable": "Location unavailable. Turn on location and try again.",
+  "orgLocationRequired": "Set the institution's location.",
+  "orgReceivesPublic": "Receives the public",
+  "orgFloors": "Floors",
+  "orgHeight": "Height (m)",
+  "orgNext": "Next",
+  "orgBack": "Back",
+  "orgSubmit": "Send the registration",
+  "orgRegisteredTitle": "Registration sent",
+  "orgRegisteredBody": "The institution stays “under review” until the Office approves it.",
+  "orgOpenInstitution": "Open “My institution”",
+  "orgInvalidIdentifier": "Invalid identifier: 7 digits and a letter.",
+  "orgInvalidPhone": "Phone: 8 digits, or +216 followed by 8 digits.",
+  "orgInvalidNumber": "Enter a whole number within the limits.",
+  "orgInvalidEmail": "Invalid e-mail.",
+  "orgEmailNotVerified": "Confirm your e-mail before registering an institution.",
+  "orgIdentifierTaken": "This identifier is already registered.",
+  "orgKindFieldsTitle": "Kind-specific",
+  "orgKindFieldsSim": "Working list [SIM] pending the Office's approval",
+  "orgKindFieldsEmpty": "No field specific to this kind.",
+  "orgCardTabIdentity": "Identity",
+  "orgCardTabBuilding": "Building",
+  "orgEdit": "Edit",
+  "orgSave": "Save",
+  "orgCancel": "Cancel",
+  "orgSaved": "Saved.",
+  "orgVersionConflict": "Someone else changed the card meanwhile. Reload and try again.",
+  "orgYes": "Yes",
+  "orgNo": "No",
+  "orgNotSet": "Not set",
+  "orgEquipmentEmpty": "No equipment registered.",
+  "orgEquipmentCount": "Count: {count}",
+  "@orgEquipmentCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "orgMaintenanceOk": "Maintenance up to date",
+  "orgMaintenanceDueSoon": "Maintenance due soon",
+  "orgMaintenanceOverdue": "Maintenance overdue",
+  "orgMaintenanceUnknown": "No maintenance date",
+  "orgMaintenanceNext": "Next maintenance: {date}",
+  "@orgMaintenanceNext": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "orgLogMaintenance": "Log maintenance today",
+  "orgMaintenanceLogged": "Maintenance logged.",
+  "orgEvacuationEmpty": "No point on the map. Points are added on the portal.",
+  "orgCertificatesEmpty": "No certificate yet.",
+  "orgCertificateValidUntil": "Valid until {date}",
+  "@orgCertificateValidUntil": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "orgMembersEmpty": "No member.",
+  "orgInvite": "Invite a member",
+  "orgInviteEmail": "E-mail",
+  "orgInviteRole": "Role",
+  "orgInviteSend": "Send the invitation",
+  "orgInviteSent": "Invitation sent to {email}.",
+  "@orgInviteSent": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "orgAdminOnly": "Administrator only.",
+  "orgKindHealth": "Health",
+  "orgKindEnergy": "Energy and fuel",
+  "orgKindTourism": "Tourism",
+  "orgKindEducation": "Education",
+  "orgKindSocialCare": "Social care",
+  "orgKindPublicAdmin": "Public administration",
+  "orgKindCultureSport": "Culture and sport",
+  "orgKindCommercial": "Commercial",
+  "orgKindTransport": "Transport",
+  "orgKindReligious": "Religious",
+  "kindFieldReceptionPhone": "Reception number",
+  "kindFieldBeds": "Beds",
+  "kindFieldIcu": "Intensive care",
+  "kindFieldOxygenHours": "Oxygen reserve (hours)",
+  "kindFieldGenerator": "Generator",
+  "kindFieldHelipad": "Helipad",
+  "kindFieldNonAmbulatory": "Non-ambulatory people",
+  "kindFieldWorkersPerShift": "Workers per shift",
+  "kindFieldSelfFireFighting": "Own fire-fighting means",
+  "kindFieldTanks": "Tanks",
+  "kindFieldFuelTypes": "Fuel types",
+  "kindFieldStorageM3": "Storage (m³)",
+  "kindFieldShutoffValves": "Shut-off valves",
+  "kindFieldRooms": "Rooms",
+  "kindFieldGuestLanguages": "Guest languages",
+  "kindFieldPoolOrBeach": "Pool or beach",
+  "kindFieldOccupancyPct": "Occupancy (%)",
+  "kindFieldStudents": "Students",
+  "kindFieldAgeRange": "Age range",
+  "kindFieldBoarding": "Boarding",
+  "kindFieldStudentsSpecialNeeds": "Students with special needs",
+  "kindFieldResidents": "Residents",
+  "kindFieldNightWatch": "Night watch",
+  "kindFieldStaff": "Staff",
+  "kindFieldArchive": "Archive",
+  "kindFieldSeatedCapacity": "Seats",
+  "kindFieldStands": "Stands",
+  "kindFieldShops": "Shops",
+  "kindFieldUndergroundParking": "Underground parking",
+  "kindFieldDailyPassengers": "Daily passengers",
+  "kindFieldEmergencyExits": "Emergency exits",
+  "kindFieldPeakTimes": "Peak times",
+  "orgVisibilityPublic": "Public",
+  "orgVisibilityOrgOffice": "Institution and Office",
+  "orgVisibilityIncident": "On a nearby report",
+  "orgReqSafetyFile": "Safety file (stored)",
+  "orgReqSafetyPlan": "Safety plan (stored)",
+  "orgReqSafetyTeam": "Safety team: a representative and at least one member",
+  "orgReqTraining": "Every team member has a training date, none expired",
+  "orgReqHazmatSds": "A safety data sheet for every hazardous material",
+  "orgReqEquipment": "At least one equipment item, none overdue",
+  "orgReqEvacuationPoints": "At least one evacuation point on the map",
+  "orgEquipExtinguisher": "Fire extinguisher",
+  "orgEquipFireHoseReel": "Fire hose reel",
+  "orgEquipSprinkler": "Sprinkler",
+  "orgEquipSmokeDetector": "Smoke detector",
+  "orgEquipAlarmPanel": "Alarm panel",
+  "orgEquipEmergencyLighting": "Emergency lighting",
+  "orgEquipFireDoor": "Fire door",
+  "orgEquipOther": "Other",
+  "orgFeatureEvacuationPoint": "Evacuation and assembly point",
+  "orgFeatureWaterPoint": "Water point",
+  "orgFeatureAlarm": "Alarm",
+  "orgRoleAdmin": "Administrator",
+  "orgRoleEditor": "Editor",
+  "orgRoleMember": "Member",
+  "orgCertDraft": "Draft",
+  "orgCertSubmitted": "Submitted",
+  "orgCertApproved": "Approved",
+  "orgCertRejected": "Rejected",
+  "orgCertRevoked": "Revoked",
+  "orgAlertTrainingExpired": "Expired training in the safety team",
+  "orgAlertTrainingExpiring": "Training expiring soon in the safety team",
+  "orgAlertMaintenanceOverdue": "Equipment maintenance overdue",
+  "orgAlertMaintenanceDueSoon": "Equipment maintenance due soon",
+  "orgKindLabelTitle": "Kind"
 }

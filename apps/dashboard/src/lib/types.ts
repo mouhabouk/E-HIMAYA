@@ -15,6 +15,7 @@ import type {
   SlaBand,
 } from "./phase9Types";
 import type { MediaAnalysis } from "./streamTypes";
+import type { KindFieldValue } from "./kindFields";
 
 export const REPORT_STATUSES = ["received", "in_progress", "intervened", "ongoing", "closed", "rejected"] as const;
 export type ReportStatus = (typeof REPORT_STATUSES)[number];
@@ -437,7 +438,20 @@ export function isOneOf<T extends string>(list: readonly T[], v: unknown): v is 
 export const ORG_STATUSES = ["pending_review", "active", "rejected", "suspended"] as const;
 export type OrgStatus = (typeof ORG_STATUSES)[number];
 
-export const ORG_KINDS = ["industrial", "educational", "hotel", "government", "private", "other"] as const;
+export const ORG_KINDS = [
+  "health",
+  "industrial",
+  "energy",
+  "tourism",
+  "education",
+  "social_care",
+  "public_admin",
+  "culture_sport",
+  "commercial",
+  "transport",
+  "religious",
+  "other",
+] as const;
 export type OrgKind = (typeof ORG_KINDS)[number];
 
 export const ORG_FAMILIES = ["high_rise", "industrial", "erp", "workplace"] as const;
@@ -630,6 +644,8 @@ export interface StaffOrg {
   certificate_status: OrgCertificateState;
   certificate_valid_until: string | null;
   created_at: string;
+  /** Migrated from a kind with no match (P2a): the auditor picks the right kind on approval. */
+  kind_review?: boolean;
 }
 
 /** `GET /api/v1/staff/orgs/{id}`: the Organization card (without my_role) and its registers. Audited. */
@@ -660,6 +676,11 @@ export interface StaffOrgDetail {
   review: { reason: string | null; at: string | null } | null;
   created_at: string;
   updated_at: string;
+  /** P2a: share of the safety requirements met, in percent. */
+  readiness?: number;
+  /** P2a: the answers to the kind's fields the auditor may see (public and institution/Office). */
+  kind_fields?: Record<string, KindFieldValue>;
+  kind_review?: boolean;
   team: TeamMember[];
   hazmat: Hazmat[];
   equipment: Equipment[];
@@ -681,6 +702,8 @@ export interface OrganizationCard {
   representative: { full_name: string | null; phone: string | null } | null;
   hazmat: Hazmat[];
   features: MapFeature[];
+  /** P2a: every answer to the kind's fields, those for a nearby report included (the view is logged). */
+  kind_fields?: Record<string, KindFieldValue>;
 }
 
 /** Row of the certificate review queue `GET /api/v1/staff/certificates` (oldest submission first). */
@@ -705,7 +728,8 @@ export interface CertificateEvent {
   gouvernorat_code: number | null;
 }
 
-export type OrgReviewBody = { decision: OrgDecision; reason?: string };
+/** `kind` (P2a): the auditor sets the right kind, on approval only. */
+export type OrgReviewBody = { decision: OrgDecision; reason?: string; kind?: OrgKind };
 export type CertificateReviewBody =
   | { decision: "approve"; valid_until: string; reason?: string }
   | { decision: "reject"; reason: string };

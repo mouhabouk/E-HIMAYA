@@ -17,6 +17,10 @@ enum ApiErrorCode {
   orgNotFound('org_not_found'),
   orgNotActive('org_not_active'),
   orgRoleRequired('org_role_required'),
+  // Phase P2a: registering an institution from the app.
+  invalidIdentifier('invalid_identifier'),
+  identifierAlreadyRegistered('identifier_already_registered'),
+  emailNotVerified('email_not_verified'),
   // Phase 5 §5: volunteers and call-outs.
   registrationRequired('registration_required'),
   notVolunteer('not_volunteer'),

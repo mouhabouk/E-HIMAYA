@@ -771,11 +771,17 @@
       "suspended": "Suspendue"
     },
     "kind": {
+      "health": "Santé",
       "industrial": "Industrielle",
-      "educational": "Éducative",
-      "hotel": "Hôtel",
-      "government": "Administration publique",
-      "private": "Privée",
+      "energy": "Énergie et carburants",
+      "tourism": "Tourisme",
+      "education": "Éducation",
+      "social_care": "Action sociale",
+      "public_admin": "Administration publique",
+      "culture_sport": "Culture et sport",
+      "commercial": "Commerce",
+      "transport": "Transport",
+      "religious": "Culte",
       "other": "Autre"
     },
     "family": {
@@ -1064,6 +1070,54 @@
       "open": "Ouvrir la fiche",
       "legend": "Légende",
       "report": "Position du signalement"
+    },
+    "kindField": {
+      "reception_phone": "Numéro d'accueil",
+      "beds": "Lits",
+      "icu": "Réanimation",
+      "oxygen_hours": "Réserve d'oxygène (heures)",
+      "generator": "Groupe électrogène",
+      "helipad": "Hélisurface",
+      "non_ambulatory": "Personnes non mobiles",
+      "workers_per_shift": "Ouvriers par poste",
+      "self_fire_fighting": "Moyens propres d'extinction",
+      "tanks": "Réservoirs",
+      "fuel_types": "Types de carburant",
+      "storage_m3": "Stockage (m³)",
+      "shutoff_valves": "Vannes de coupure",
+      "rooms": "Chambres",
+      "guest_languages": "Langues des clients",
+      "pool_or_beach": "Piscine ou plage",
+      "occupancy_pct": "Taux d'occupation (%)",
+      "students": "Élèves",
+      "age_range": "Tranche d'âge",
+      "boarding": "Internat",
+      "students_special_needs": "Élèves à besoins spécifiques",
+      "residents": "Résidents",
+      "night_watch": "Veille de nuit",
+      "staff": "Agents",
+      "archive": "Archives",
+      "seated_capacity": "Places assises",
+      "stands": "Tribunes",
+      "shops": "Boutiques",
+      "underground_parking": "Parking souterrain",
+      "daily_passengers": "Voyageurs par jour",
+      "emergency_exits": "Issues de secours",
+      "peak_times": "Heures d'affluence"
+    },
+    "visibility": {
+      "public": "Public",
+      "org_office": "Établissement et Office",
+      "incident": "Lors d'un signalement proche"
+    },
+    "kindExtra": {
+      "kindFieldsTitle": "Propre au type",
+      "kindReview": "Type à revoir",
+      "kindOnApproval": "Type à l'approbation",
+      "readiness": "Préparation",
+      "yes": "Oui",
+      "no": "Non",
+      "sim": "Liste de travail [SIM] en attente de validation par l'Office"
     }
   },
   "levels": {
