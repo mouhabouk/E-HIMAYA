@@ -164,6 +164,40 @@ describe("OrgDetailPage", () => {
     expect(screen.getAllByText("Active").length).toBeGreaterThan(0);
   });
 
+  it("shows the kind's fields with who sees them, the readiness, and lets the auditor set the kind on approval (P2a)", async () => {
+    const api = fakeApi({
+      org: vi.fn(() =>
+        Promise.resolve(makeOrgDetail({ kind: "other", kind_review: true, readiness: 67, kind_fields: {} })),
+      ),
+      reviewOrg: vi.fn(() => Promise.resolve(makeOrgDetail({ status: "active", kind: "health" }))),
+    });
+    renderApp(<OrgDetailPage />, { api, auth: auditor(), path: "/orgs/o-1", route, lang: "fr" });
+    expect(await screen.findByText("Type à revoir")).toBeInTheDocument();
+    expect(screen.getByText("Préparation 67%")).toBeInTheDocument();
+    const review = screen.getByRole("region", { name: "Validation de l’enregistrement" });
+    fireEvent.click(await within(review).findByRole("button", { name: "Approuver" }));
+    fireEvent.change(within(review).getByLabelText("Type à l'approbation"), { target: { value: "health" } });
+    fireEvent.click(within(review).getByRole("button", { name: "Confirmer la décision" }));
+    await waitFor(() =>
+      expect(api.reviewOrg).toHaveBeenCalledWith("o-1", { decision: "approve", reason: "", kind: "health" }),
+    );
+  });
+
+  it("lists the answers to the kind's fields with a visibility badge", async () => {
+    const api = fakeApi({
+      org: vi.fn(() =>
+        Promise.resolve(makeOrgDetail({ kind: "health", kind_fields: { beds: 120, generator: true, reception_phone: "+21671000111" } })),
+      ),
+    });
+    renderApp(<OrgDetailPage />, { api, auth: auditor(), path: "/orgs/o-1", route, lang: "fr" });
+    const kind = await screen.findByRole("region", { name: /Propre au type/ });
+    expect(within(kind).getByText("Lits")).toBeInTheDocument();
+    expect(within(kind).getByText("120")).toBeInTheDocument();
+    expect(within(kind).getByText("Oui")).toBeInTheDocument();
+    expect(within(kind).getByText("Public")).toBeInTheDocument();
+    expect(within(kind).getAllByText("Établissement et Office")).toHaveLength(2);
+  });
+
   it("requires a reason to reject, then sends it", async () => {
     const api = fakeApi({
       org: vi.fn(() => Promise.resolve(makeOrgDetail())),

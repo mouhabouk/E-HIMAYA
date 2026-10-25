@@ -13,7 +13,7 @@ const ORGS = [
   makeStaffOrg({
     id: "o-2",
     name: "Hôtel La Corniche",
-    kind: "hotel",
+    kind: "tourism",
     status: "pending_review",
     identifier_type: "rne",
     identifier: "7654321B",
@@ -63,9 +63,9 @@ describe("OrgsPage", () => {
       { ...DEFAULT_ORG_FILTERS, status: "pending_review", hasHazmat: true },
       expect.anything(),
     );
-    fireEvent.change(screen.getByLabelText("Type"), { target: { value: "educational" } });
+    fireEvent.change(screen.getByLabelText("Type"), { target: { value: "education" } });
     await waitFor(() =>
-      expect(api.orgs).toHaveBeenLastCalledWith(expect.objectContaining({ kind: "educational" }), expect.anything()),
+      expect(api.orgs).toHaveBeenLastCalledWith(expect.objectContaining({ kind: "education" }), expect.anything()),
     );
     fireEvent.change(screen.getByLabelText("Certificat de sécurité"), { target: { value: "expired" } });
     await waitFor(() =>

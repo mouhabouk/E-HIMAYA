@@ -250,19 +250,53 @@ class Pill extends StatelessWidget {
             Icon(icon, size: 14, color: c.onTint),
             const SizedBox(width: 4),
           ],
-          Text(
-            label,
-            style: TextStyle(
-              fontFamily: appFontFamily,
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: c.onTint,
+          Flexible(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontFamily: appFontFamily,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: c.onTint,
+              ),
             ),
           ),
         ],
       ),
     );
   }
+}
+
+/// Grid of square tiles: as many columns as fit [minTileWidth] (up to four), wider with large text.
+class TileGrid extends StatelessWidget {
+  const TileGrid({
+    super.key,
+    required this.children,
+    required this.minTileWidth,
+  });
+
+  final List<Widget> children;
+  final double minTileWidth;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      const gap = 8.0;
+      final scale = MediaQuery.textScalerOf(context).scale(1);
+      final min = minTileWidth * (scale > 1.3 ? scale * 0.8 : 1);
+      final columns = ((constraints.maxWidth + gap) / (min + gap))
+          .floor()
+          .clamp(1, children.length.clamp(1, 4));
+      final width = (constraints.maxWidth - gap * (columns - 1)) / columns;
+      return Wrap(
+        spacing: gap,
+        runSpacing: gap,
+        children: [
+          for (final child in children) SizedBox(width: width, child: child),
+        ],
+      );
+    },
+  );
 }
 
 /// Bold section title between groups of cards.

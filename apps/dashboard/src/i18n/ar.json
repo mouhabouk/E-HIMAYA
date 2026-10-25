@@ -771,11 +771,17 @@
       "suspended": "معلّقة"
     },
     "kind": {
+      "health": "صحية",
       "industrial": "صناعية",
-      "educational": "تعليمية",
-      "hotel": "نزل",
-      "government": "حكومية",
-      "private": "خاصة",
+      "energy": "طاقة ومحروقات",
+      "tourism": "سياحية",
+      "education": "تربوية",
+      "social_care": "رعاية اجتماعية",
+      "public_admin": "عمومية وإدارية",
+      "culture_sport": "ثقافية ورياضية",
+      "commercial": "تجارية",
+      "transport": "نقل",
+      "religious": "دينية",
       "other": "أخرى"
     },
     "family": {
@@ -1064,6 +1070,54 @@
       "open": "فتح بطاقة المؤسسة",
       "legend": "مفتاح الخريطة",
       "report": "موقع البلاغ"
+    },
+    "kindField": {
+      "reception_phone": "رقم الاستقبال",
+      "beds": "عدد الأسرّة",
+      "icu": "قسم إنعاش",
+      "oxygen_hours": "مخزون الأكسجين (ساعات)",
+      "generator": "مولّد كهربائي",
+      "helipad": "مهبط مروحية",
+      "non_ambulatory": "غير القادرين على التنقل",
+      "workers_per_shift": "العمال في الحصة",
+      "self_fire_fighting": "وسائل إطفاء ذاتية",
+      "tanks": "عدد الخزانات",
+      "fuel_types": "أنواع الوقود",
+      "storage_m3": "سعة التخزين (م³)",
+      "shutoff_valves": "صمامات القطع",
+      "rooms": "عدد الغرف",
+      "guest_languages": "لغات النزلاء",
+      "pool_or_beach": "مسبح أو شاطئ",
+      "occupancy_pct": "نسبة الإشغال (%)",
+      "students": "عدد التلاميذ",
+      "age_range": "الأعمار",
+      "boarding": "مبيت",
+      "students_special_needs": "تلاميذ من ذوي الهمم",
+      "residents": "عدد المقيمين",
+      "night_watch": "حراسة ليلية",
+      "staff": "عدد الأعوان",
+      "archive": "أرشيف",
+      "seated_capacity": "عدد المقاعد",
+      "stands": "مدارج",
+      "shops": "عدد المحلات",
+      "underground_parking": "مأوى سيارات تحت الأرض",
+      "daily_passengers": "المسافرون يوميا",
+      "emergency_exits": "مخارج الطوارئ",
+      "peak_times": "أوقات الذروة"
+    },
+    "visibility": {
+      "public": "للعموم",
+      "org_office": "المؤسسة والديوان",
+      "incident": "عند بلاغ قريب"
+    },
+    "kindExtra": {
+      "kindFieldsTitle": "خاص بالصبغة",
+      "kindReview": "تحتاج مراجعة الصبغة",
+      "kindOnApproval": "الصبغة عند المصادقة",
+      "readiness": "الجاهزية",
+      "yes": "نعم",
+      "no": "لا",
+      "sim": "قائمة عمل [SIM] في انتظار مصادقة الديوان"
     }
   },
   "levels": {

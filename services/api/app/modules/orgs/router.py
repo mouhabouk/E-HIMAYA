@@ -48,6 +48,21 @@ async def delete_objects(*keys: str) -> None:
 # ---------------------------------------------------------------- institution card (§1)
 
 
+@router.get("/public/org-kinds", response_model=list[schemas.KindOut], tags=["public"])
+async def org_kinds(response: Response) -> list[schemas.KindOut]:
+    """The institution kinds and the fields of each, with who may see them (addition 12, working list [SIM])."""
+    response.headers["Cache-Control"] = "public, max-age=3600"
+    return [
+        schemas.KindOut(
+            kind=kind,
+            fields=[
+                schemas.KindFieldOut(key=f.key, type=f.type, visibility=f.visibility, maximum=f.maximum) for f in fields
+            ],
+        )
+        for kind, fields in domain.KIND_FIELDS.items()
+    ]
+
+
 @router.post("/orgs", response_model=schemas.OrgOut, status_code=status.HTTP_201_CREATED)
 async def create_org(body: schemas.OrgIn, user: CurrentUser, session: Session) -> schemas.OrgOut:
     await enforce(f"org-create:{user.user_id}", CREATE_LIMIT, CREATE_WINDOW_S)

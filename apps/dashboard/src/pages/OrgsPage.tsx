@@ -3,6 +3,7 @@ import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useSearchParams } from "react-router";
 import { ErrorBox, Loading } from "../components/Feedback";
+import { Pill } from "../components/Icon";
 import { CertificateChip, classificationText, HazmatTag, orgKindLabel, OrgStatusChip } from "../components/OrgBits";
 import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
@@ -246,7 +247,15 @@ export function OrgsPage() {
                       {o.identifier}
                     </span>
                   </td>
-                  <td>{orgKindLabel(t, o.kind)}</td>
+                  <td>
+                    {orgKindLabel(t, o.kind)}
+                    {o.kind_review && (
+                      <>
+                        {" "}
+                        <Pill tone="amber">{t("orgs.kindExtra.kindReview")}</Pill>
+                      </>
+                    )}
+                  </td>
                   <td>
                     <OrgStatusChip status={o.status} />
                   </td>
