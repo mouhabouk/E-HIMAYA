@@ -12,6 +12,7 @@ import { queryKeys } from "../lib/portalApi";
 import { sameHash, sha256Hex } from "../lib/sha256";
 import type { PublicCertificate } from "../lib/types";
 import { VerifyCodeForm } from "./LandingPage";
+import { PageTitle } from "../components/PageTitle";
 
 type Comparison =
   | { state: "idle" }
@@ -183,7 +184,7 @@ export function VerifyPage() {
   return (
     <div className="page page--narrow">
       <div className="page__head">
-        <h1>{t("verify.title")}</h1>
+        <PageTitle icon="verified" tone="green">{t("verify.title")}</PageTitle>
       </div>
       <section className="card">
         <p>{t("verify.intro")}</p>
