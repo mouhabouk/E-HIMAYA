@@ -44,6 +44,7 @@ void main() {
     Routes.safetyContacts,
     Routes.rewards,
     Routes.myData,
+    Routes.accessibility,
     Routes.institutions,
     Routes.institution(orgId),
     Routes.institutionSection(orgId, 'records'),

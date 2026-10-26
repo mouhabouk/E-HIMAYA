@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/a11y/listen_action.dart';
 import '../../core/http/error_messages.dart';
 import '../../core/http/notify_models.dart';
 import '../../core/routing/app_router.dart';
@@ -88,10 +89,19 @@ class TipDetailScreen extends ConsumerWidget {
       );
     }
     final text = tip.textFor(lang);
+    final title = _title(l10n, tip, lang);
+    final spoken = [
+      title,
+      if (text.doItems.isNotEmpty) ...[l10n.tipsDo, ...text.doItems],
+      if (text.dontItems.isNotEmpty) ...[l10n.tipsDont, ...text.dontItems],
+    ].join('\n');
     return Scaffold(
       appBar: AppBar(
-        title: Text(_title(l10n, tip, lang)),
-        actions: const [StandardAppBarActions()],
+        title: Text(title),
+        actions: [
+          ListenAction(id: 'tip-$hazard-$lang', text: spoken),
+          const StandardAppBarActions(),
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),

@@ -42,6 +42,7 @@ import '../../features/safety/safety_check_screen.dart';
 import '../../features/safety/safety_hub_screen.dart';
 import '../../features/safety/self_test_screen.dart';
 import '../../features/safety/sos_message_screens.dart';
+import '../../features/settings/accessibility_screen.dart';
 import '../../features/settings/alert_check.dart';
 import '../../features/settings/settings_screen.dart';
 import '../../features/tips/tips_screen.dart';
@@ -106,6 +107,8 @@ abstract final class Routes {
   // Phase 5.5: alert delivery, citizen rights.
   static const alertCheck = '/alert-check';
   static const criticalAlerts = '/alert-check/critical';
+  // Phase P5a: reading aloud and flashes (NFR-10).
+  static const accessibility = '/accessibility';
   static const myData = '/my-data';
   static const deleteAccount = '/my-data/delete';
 
@@ -453,6 +456,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: Routes.lockedAlert,
         builder: (_, _) => const LockedAlertScreen(),
+      ),
+      GoRoute(
+        path: Routes.accessibility,
+        builder: (_, _) => const AccessibilityScreen(),
       ),
       GoRoute(
         path: Routes.alertCheck,

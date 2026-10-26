@@ -73,7 +73,7 @@ for (const [kind, v] of blocks) {
 console.log(counts, total);
 
 const doc = new Document({
-  creator: 'e-Himaya', title: 'e-Himaya: الملف الوصفي V9', description: 'الملف الوصفي للمشروع، الإصدار التاسع',
+  creator: 'e-Himaya', title: 'e-Himaya: الملف الوصفي V10', description: 'الملف الوصفي للمشروع، الإصدار العاشر',
   styles: {
     default: { document: { run: { font: FONT, size: 22, rightToLeft: true } } },
     paragraphStyles: [
@@ -87,7 +87,7 @@ const doc = new Document({
   features: { updateFields: true },
   sections: [{
     properties: { page: { size: { width: 11906, height: 16838 }, margin: { top: 1134, bottom: 1134, left: 1134, right: 1134 } } },
-    headers: { default: new Header({ children: [para('ء-حماية e-Himaya · الملف الوصفي V9', { size: 16, color: GREY, align: AlignmentType.END })] }) },
+    headers: { default: new Header({ children: [para('ء-حماية e-Himaya · الملف الوصفي V10', { size: 16, color: GREY, align: AlignmentType.END })] }) },
     footers: { default: new Footer({ children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ children: [PageNumber.CURRENT], font: FONT, size: 18, color: GREY })] })] }) },
     children: out,
   }],

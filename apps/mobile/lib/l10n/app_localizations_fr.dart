@@ -4992,4 +4992,71 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get orgAlertPreventionExpired =>
       'Le certificat de prévention a expiré';
+
+  @override
+  String get listenAction => 'Écouter';
+
+  @override
+  String get listenStop => 'Arrêter la lecture';
+
+  @override
+  String get listenNoVoice =>
+      'Aucune voix pour cette langue sur votre téléphone. Installez-la dans les réglages du téléphone : Accessibilité, puis « Synthèse vocale ».';
+
+  @override
+  String get listenFailed => 'Lecture vocale impossible.';
+
+  @override
+  String get a11yTitle => 'Accessibilité';
+
+  @override
+  String get a11ySubtitle =>
+      'Lecture vocale et flashs pour les personnes sourdes';
+
+  @override
+  String get a11yUrgentSection =>
+      'Quand une alerte urgente arrive, application ouverte';
+
+  @override
+  String get a11yScreenFlash => 'Flash de l’écran';
+
+  @override
+  String get a11yScreenFlashHelp => 'Trois flashs rouges, un par seconde';
+
+  @override
+  String get a11yTorchFlash => 'Flash de la lampe';
+
+  @override
+  String get a11yTorchFlashHelp => 'Trois flashs, un par seconde';
+
+  @override
+  String get a11yTorchUnavailable => 'Pas de lampe sur ce téléphone';
+
+  @override
+  String get a11yReadAlerts => 'Lire l’alerte à voix haute';
+
+  @override
+  String get a11yReadAlertsHelp =>
+      'Le titre et le texte, dans la langue de l’application';
+
+  @override
+  String get a11yTry => 'Essayer';
+
+  @override
+  String get a11yTrySample =>
+      'Alerte d’essai d’e-Himaya. Il n’y a aucun danger.';
+
+  @override
+  String get a11yTryNothing => 'Choisissez au moins un moyen.';
+
+  @override
+  String get a11yAlwaysNote =>
+      'La notification urgente vibre toujours (long-court-long) et allume le voyant. Application fermée, activez « Notifications flash » dans les réglages d’accessibilité du téléphone s’ils existent.';
+
+  @override
+  String get a11yPhoneSection => 'Dans les réglages du téléphone';
+
+  @override
+  String get a11yPhoneNote =>
+      'La taille du texte et le lecteur d’écran (TalkBack ou VoiceOver) se règlent dans le téléphone ; l’application les suit jusqu’à 200 %. Les guides, conseils et alertes ont un bouton « Écouter ».';
 }

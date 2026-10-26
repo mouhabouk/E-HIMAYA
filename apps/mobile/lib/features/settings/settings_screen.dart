@@ -183,6 +183,14 @@ class SettingsScreen extends ConsumerWidget {
             subtitle: l10n.alertCheckSubtitle,
             onTap: () => context.push(Routes.alertCheck),
           ),
+          NavCard(
+            key: const Key('settings-accessibility'),
+            icon: Icons.accessibility_new_rounded,
+            tone: Tone.navy,
+            title: l10n.a11yTitle,
+            subtitle: l10n.a11ySubtitle,
+            onTap: () => context.push(Routes.accessibility),
+          ),
           const _BatterySaverTile(),
           NavCard(
             key: const Key('settings-safety'),

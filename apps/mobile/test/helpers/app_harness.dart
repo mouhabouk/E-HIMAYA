@@ -1,5 +1,7 @@
 import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:ehimaya/app.dart';
+import 'package:ehimaya/core/a11y/speech.dart';
+import 'package:ehimaya/core/a11y/torch.dart';
 import 'package:ehimaya/core/auth/auth_session.dart';
 import 'package:ehimaya/core/auth/identity.dart';
 import 'package:ehimaya/core/auth/oidc_client.dart';
@@ -23,6 +25,55 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'fake_http.dart';
+
+/// The phone's voice, recorded instead of spoken (phase P5a).
+class FakeSpeech implements Speech {
+  FakeSpeech({this.result = SpeechStart.started});
+
+  SpeechStart result;
+  final spoken = <(String, String)>[];
+  int stops = 0;
+  void Function()? _onDone;
+
+  /// Ends the current reading as the engine would.
+  void finish() {
+    final f = _onDone;
+    _onDone = null;
+    f?.call();
+  }
+
+  @override
+  Future<SpeechStart> speak(
+    String text,
+    String lang, {
+    required void Function() onDone,
+  }) async {
+    if (result != SpeechStart.started) return result;
+    spoken.add((text, lang));
+    _onDone = onDone;
+    return result;
+  }
+
+  @override
+  Future<void> stop() async {
+    stops++;
+    finish();
+  }
+}
+
+/// The camera light, counted instead of lit (phase P5a).
+class FakeTorch implements Torch {
+  FakeTorch({this.present = true});
+
+  final bool present;
+  int flashes = 0;
+
+  @override
+  Future<bool> available() async => present;
+
+  @override
+  Future<void> flash({int times = 3}) async => flashes++;
+}
 
 class FakeSosService implements SosService {
   int calls = 0;
@@ -121,6 +172,8 @@ Future<AppHarness> pumpApp(
   List<Uri>? opened,
   LocationService? location,
   ConnectivityMonitor? connectivity,
+  Speech? speech,
+  Torch? torch,
   List<Override> overrides = const [],
 }) async {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
@@ -156,6 +209,8 @@ Future<AppHarness> pumpApp(
           return true;
         }),
         requestSyncProvider.overrideWithValue(() async {}),
+        speechProvider.overrideWithValue(speech ?? FakeSpeech()),
+        torchProvider.overrideWithValue(torch ?? FakeTorch()),
         ...overrides,
       ],
       child: const EHimayaApp(),
