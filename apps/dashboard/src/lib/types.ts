@@ -3,6 +3,7 @@
  * phase-4-contract.md (institutions, sections 8–10). Phase 5 types live in opsTypes.ts.
  */
 import type { Assignment, Callout, Evaluation, OpLevel } from "./opsTypes";
+import { CREW_TIMELINE_KINDS, type Casualties, type FieldReport, type Transport } from "./crewTypes";
 import { PHASE9_TIMELINE_KINDS } from "./phase9Types";
 import type {
   CommandLevel,
@@ -290,6 +291,8 @@ export const TIMELINE_KINDS = [
   "level_changed",
   // Phase 9 (§5.5)
   ...PHASE9_TIMELINE_KINDS,
+  // Phase P4a (staff app)
+  ...CREW_TIMELINE_KINDS,
 ] as const;
 
 export interface IncidentSummary {
@@ -337,6 +340,10 @@ export interface IncidentDetail extends IncidentSummary {
   evaluation?: Evaluation | null;
   // Phase 9 (§5.5).
   resource_requests?: ResourceRequest[];
+  // Phase P4a: written from the team leaders' phones.
+  field_reports?: FieldReport[];
+  casualties?: Casualties;
+  transports?: Transport[];
 }
 
 export type IncidentLinkBody =

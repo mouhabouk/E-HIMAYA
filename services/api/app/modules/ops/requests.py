@@ -20,7 +20,7 @@ from app.core.access import Action, Ctx, room_code
 from app.core.events import emit
 from app.core.security import Principal
 from app.modules.audit import service as audit
-from app.modules.ops import interventions, resources, schemas, scope
+from app.modules.ops import interventions, resources, schemas, scope, shifts
 from app.modules.ops import service as incidents
 from app.modules.ops.models import Assignment, Incident, Resource, ResourceRequest, Unit
 from app.modules.reports.domain import Status
@@ -285,6 +285,8 @@ async def approve(
         )
         session.add(assignment)
         resource.status, resource.updated_at = "assigned", _now()
+        await session.flush()
+        await shifts.attach(session, assignment)
         await session.flush()
         await session.refresh(assignment)
         incidents.add_timeline(

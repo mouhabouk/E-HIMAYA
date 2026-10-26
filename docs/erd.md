@@ -800,6 +800,8 @@ erDiagram
         datetime on_scene_at
         datetime released_at
         datetime cancelled_at
+        uuid shift_id FK
+        datetime acknowledged_at
     }
     ops__callout {
         uuid id PK
@@ -824,6 +826,38 @@ erDiagram
         datetime arrived_at
         uuid assignment_id FK
     }
+    ops__casualty_count {
+        uuid incident_id PK,FK
+        integer injured
+        integer deceased
+        integer rescued
+        integer trapped
+        text updated_by
+        datetime updated_at
+    }
+    ops__casualty_transport {
+        uuid id PK
+        uuid incident_id FK
+        uuid assignment_id FK
+        text triage
+        text age_band
+        text sex
+        text hospital
+        text created_by
+        text created_by_name
+        datetime device_at
+        datetime created_at
+    }
+    ops__crew_event {
+        uuid client_id PK
+        uuid assignment_id FK
+        uuid shift_id FK
+        text kind
+        jsonb payload
+        text subject
+        datetime device_at
+        datetime received_at
+    }
     ops__directive {
         uuid id PK
         text title
@@ -843,6 +877,22 @@ erDiagram
         text acked_by_name
         datetime acked_at
         text note
+    }
+    ops__field_report {
+        uuid id PK
+        uuid incident_id FK
+        uuid assignment_id FK
+        text kind
+        text category
+        text classification
+        smallint severity
+        boolean backup_needed
+        text backup_note
+        boolean crew_danger
+        text author
+        text author_name
+        datetime device_at
+        datetime created_at
     }
     ops__incident {
         uuid id PK
@@ -913,6 +963,32 @@ erDiagram
         datetime decided_at
         text decision_note
     }
+    ops__shift {
+        uuid id PK
+        text subject
+        text leader_name
+        uuid device_id FK
+        uuid resource_id FK
+        smallint gouvernorat_code FK
+        smallint crew_size
+        text crew_names
+        datetime started_at
+        datetime ended_at
+    }
+    ops__staff_device {
+        uuid id PK
+        text subject
+        text holder_name
+        smallint gouvernorat_code FK
+        text label
+        text platform
+        integer app_build
+        text push_token
+        datetime created_at
+        datetime last_seen_at
+        datetime revoked_at
+        text revoked_by
+    }
     ops__timeline_event {
         integer id PK
         uuid incident_id FK
@@ -940,22 +1016,34 @@ erDiagram
     geo__gouvernorat ||--o{ ops__incident_gouvernorat : "gouvernorat_code"
     geo__gouvernorat ||--o{ ops__level_state : "gouvernorat_code"
     geo__gouvernorat ||--o{ ops__resource_request : "to_gouvernorat_code"
+    geo__gouvernorat ||--o{ ops__shift : "gouvernorat_code"
+    geo__gouvernorat ||--o{ ops__staff_device : "gouvernorat_code"
     geo__gouvernorat ||--o{ ops__unit : "gouvernorat_code"
     identity__volunteer ||--o{ ops__assignment : "volunteer_id"
     identity__volunteer ||--o{ ops__callout_target : "volunteer_id"
     ops__assignment ||--o{ ops__callout_target : "assignment_id"
+    ops__assignment ||--o{ ops__casualty_transport : "assignment_id"
+    ops__assignment ||--o{ ops__crew_event : "assignment_id"
+    ops__assignment ||--o{ ops__field_report : "assignment_id"
     ops__callout ||--o{ ops__assignment : "callout_id"
     ops__callout ||--o{ ops__callout_target : "callout_id"
     ops__directive ||--o{ ops__directive_ack : "directive_id"
     ops__incident ||--o{ ops__assignment : "incident_id"
     ops__incident ||--o{ ops__callout : "incident_id"
+    ops__incident ||--o{ ops__casualty_count : "incident_id"
+    ops__incident ||--o{ ops__casualty_transport : "incident_id"
+    ops__incident ||--o{ ops__field_report : "incident_id"
     ops__incident ||--o{ ops__incident : "merged_into"
     ops__incident ||--o{ ops__incident_gouvernorat : "incident_id"
     ops__incident ||--o{ ops__resource_request : "incident_id"
     ops__incident ||--o{ ops__timeline_event : "incident_id"
     ops__resource ||--o{ ops__assignment : "resource_id"
     ops__resource ||--o{ ops__resource_request : "resource_id"
+    ops__resource ||--o{ ops__shift : "resource_id"
     ops__resource_request ||--o{ ops__assignment : "request_id"
+    ops__shift ||--o{ ops__assignment : "shift_id"
+    ops__shift ||--o{ ops__crew_event : "shift_id"
+    ops__staff_device ||--o{ ops__shift : "device_id"
     ops__unit ||--o{ ops__resource : "unit_id"
 ```
 

@@ -17,7 +17,7 @@ from app.core.db import get_session
 from app.core.security import Principal, Role, require_roles
 from app.modules.audit import service as audit
 from app.modules.audit.service import actor_of
-from app.modules.ops import interventions, requests, schemas, scope, service
+from app.modules.ops import crew, interventions, requests, schemas, scope, service
 from app.modules.ops.models import Incident
 from app.modules.reports import service as reports
 from app.modules.reports.models import Report
@@ -83,6 +83,7 @@ async def list_incidents(
 async def incident_detail(session: AsyncSession, principal: Principal, incident: Incident) -> schemas.IncidentDetail:
     filters = reports.StaffFilters([], [], None, None, None, None, None, incident_id=incident.id)
     members, _ = await reports.staff_list(session, principal, filters, 500, None)
+    field_reports, casualties, transports = await crew.incident_field(session, incident.id)
     return schemas.IncidentDetail(
         **(await service.summary(session, incident)).model_dump(),
         reports=members,
@@ -91,6 +92,9 @@ async def incident_detail(session: AsyncSession, principal: Principal, incident:
         callouts=await interventions.callouts_of(session, incident.id),
         evaluation=interventions.evaluation_of(incident),
         resource_requests=await requests.requests_of(session, incident.id),
+        field_reports=field_reports,
+        casualties=casualties,
+        transports=transports,
     )
 
 

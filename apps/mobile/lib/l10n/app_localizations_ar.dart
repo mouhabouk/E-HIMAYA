@@ -5053,4 +5053,332 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get emailCodeExpired => 'انتهت صلاحية الرمز. اطلب رمزا جديدا.';
+
+  @override
+  String get staffAppTitle => 'ء-حماية الأعوان';
+
+  @override
+  String get staffSignInTitle => 'دخول قائد الفريق';
+
+  @override
+  String get staffSignInBody =>
+      'تدخل من متصفح هذا الهاتف بحسابك المهني والعامل الثاني. لا تكتب أي كلمة سر في هذا التطبيق.';
+
+  @override
+  String get staffSignIn => 'دخول';
+
+  @override
+  String get staffCodeIntro => 'تأكد أن صفحة الدخول تعرض هذا الرمز:';
+
+  @override
+  String staffCodeSemantics(String code) {
+    return 'رمز الدخول $code';
+  }
+
+  @override
+  String get staffOpenSignInPage => 'افتح صفحة الدخول';
+
+  @override
+  String get staffWaitingSignIn => 'في انتظار الدخول…';
+
+  @override
+  String get staffSignInRefused =>
+      'رُفض الدخول. تأكد أن لحسابك دور قائد الفريق.';
+
+  @override
+  String get staffSignInExpired => 'انتهت صلاحية الرمز. أعد الدخول.';
+
+  @override
+  String get staffWiped =>
+      'سُحب هذا الهاتف من هواتف قادة الفرق، ومُسحت بياناته.';
+
+  @override
+  String get staffPinWiped =>
+      'خمسة رموز خاطئة: مُسحت البيانات على هذا الهاتف. أعد الدخول.';
+
+  @override
+  String get staffOffline => 'لا اتصال بقاعة العمليات. ما تراه هو آخر نسخة.';
+
+  @override
+  String get staffPinCreate => 'اختر رمزا من 6 أرقام';
+
+  @override
+  String get staffPinConfirm => 'اكتب الرمز مرة أخرى';
+
+  @override
+  String get staffPinEnter => 'أدخل رمزك';
+
+  @override
+  String get staffPinHelp =>
+      'يُطلب بعد 5 دقائق خارج التطبيق. خمسة رموز خاطئة تمسح الهاتف.';
+
+  @override
+  String get staffPinLabel => 'الرمز';
+
+  @override
+  String get staffPinMismatch => 'الرمزان مختلفان. أعد من البداية.';
+
+  @override
+  String staffPinWrong(int left) {
+    return 'رمز خاطئ. بقيت $left محاولات.';
+  }
+
+  @override
+  String get staffSignOut => 'خروج ومسح';
+
+  @override
+  String get staffShiftTitle => 'بداية المناوبة';
+
+  @override
+  String staffHello(String name) {
+    return 'مرحبا $name';
+  }
+
+  @override
+  String get staffChooseVehicle => 'آليتك';
+
+  @override
+  String get staffNoVehicles => 'لا توجد آلية في ولايتك. اسأل قاعة العمليات.';
+
+  @override
+  String get staffVehicleTaken => 'في مناوبة';
+
+  @override
+  String get staffCrewSize => 'عدد الطاقم';
+
+  @override
+  String staffCrewCount(int count) {
+    return '$count أعوان';
+  }
+
+  @override
+  String get staffLess => 'أقل';
+
+  @override
+  String get staffMore => 'أكثر';
+
+  @override
+  String get staffCrewNames => 'أسماء الطاقم';
+
+  @override
+  String get staffOptional => 'اختياري';
+
+  @override
+  String get staffStartShift => 'ابدأ المناوبة';
+
+  @override
+  String get staffEndShift => 'أنهِ المناوبة';
+
+  @override
+  String get staffEndShiftConfirm =>
+      'لن تصل مهام الآلية إلى هذا الهاتف بعد الآن.';
+
+  @override
+  String get staffOnShift => 'في المناوبة';
+
+  @override
+  String get staffActiveMissions => 'المهام';
+
+  @override
+  String get staffRecentMissions => 'انتهت في الساعات الأخيرة';
+
+  @override
+  String get staffNoMission => 'لا مهمة. يرن الهاتف حين تكلف القاعة الآلية.';
+
+  @override
+  String get staffNewMission => 'مهمة جديدة';
+
+  @override
+  String get staffOrder => 'أمر التكليف';
+
+  @override
+  String get staffAcknowledge => 'تم الاستلام';
+
+  @override
+  String get staffMissionGone => 'لم تعد هذه المهمة على الآلية.';
+
+  @override
+  String get staffStatusOrdered => 'مكلّفة';
+
+  @override
+  String get staffStatusEnRoute => 'في الطريق';
+
+  @override
+  String get staffStatusOnScene => 'في المكان';
+
+  @override
+  String get staffStatusReleased => 'انتهت';
+
+  @override
+  String get staffStatusCancelled => 'أُلغيت';
+
+  @override
+  String get staffStepEnRoute => 'انطلقنا';
+
+  @override
+  String get staffStepOnScene => 'وصلنا إلى المكان';
+
+  @override
+  String get staffStepReleased => 'انتهت المهمة';
+
+  @override
+  String staffNearScene(int meters) {
+    return 'أنت على بعد $meters م من الحادث. هل وصلتم؟';
+  }
+
+  @override
+  String get staffFirstReport => 'التقرير الأول';
+
+  @override
+  String get staffFirstReportDue => 'يُرسل الآن: أقل من 30 ثانية';
+
+  @override
+  String get staffNature => 'طبيعة الحادث';
+
+  @override
+  String get staffSeverity => 'الخطورة';
+
+  @override
+  String get staffSeverity1 => '1 · طفيفة';
+
+  @override
+  String get staffSeverity2 => '2 · متوسطة';
+
+  @override
+  String get staffSeverity3 => '3 · خطيرة';
+
+  @override
+  String get staffSeverity4 => '4 · حرجة';
+
+  @override
+  String get staffBackupNeeded => 'نحتاج تعزيزا';
+
+  @override
+  String get staffBackupNote => 'أي تعزيز؟';
+
+  @override
+  String get staffCrewDanger => 'خطر على الطاقم';
+
+  @override
+  String get staffSend => 'أرسل';
+
+  @override
+  String get staffCasualties => 'الضحايا';
+
+  @override
+  String staffCasualtySummary(int injured, int deceased, int transports) {
+    return '$injured مصاب · $deceased متوفى · $transports نُقلوا';
+  }
+
+  @override
+  String get staffInjured => 'مصابون';
+
+  @override
+  String get staffDeceased => 'متوفون';
+
+  @override
+  String get staffRescued => 'تم إنقاذهم';
+
+  @override
+  String get staffTrapped => 'محاصرون';
+
+  @override
+  String get staffTransports => 'نُقلوا إلى المستشفى';
+
+  @override
+  String get staffNoTransport => 'لم يُنقل أحد بعد.';
+
+  @override
+  String get staffAddTransport => 'نقل إلى مستشفى';
+
+  @override
+  String get staffTriage => 'الفرز';
+
+  @override
+  String get staffTriageRed => 'أحمر · فوري';
+
+  @override
+  String get staffTriageYellow => 'أصفر · عاجل';
+
+  @override
+  String get staffTriageGreen => 'أخضر · طفيف';
+
+  @override
+  String get staffTriageBlack => 'أسود · متوفى';
+
+  @override
+  String get staffAge => 'العمر';
+
+  @override
+  String get staffAgeChild => 'طفل';
+
+  @override
+  String get staffAgeAdult => 'بالغ';
+
+  @override
+  String get staffAgeElderly => 'مسن';
+
+  @override
+  String get staffSex => 'الجنس';
+
+  @override
+  String get staffSexFemale => 'أنثى';
+
+  @override
+  String get staffSexMale => 'ذكر';
+
+  @override
+  String get staffUnknown => 'غير معروف';
+
+  @override
+  String get staffHospital => 'المستشفى';
+
+  @override
+  String get staffKindFireEngine => 'شاحنة إطفاء';
+
+  @override
+  String get staffKindWaterTanker => 'صهريج ماء';
+
+  @override
+  String get staffKindAmbulance => 'سيارة إسعاف';
+
+  @override
+  String get staffKindRescue => 'آلية إنقاذ';
+
+  @override
+  String get staffKindHeavy => 'معدات ثقيلة';
+
+  @override
+  String get staffKindDrone => 'طائرة مسيرة';
+
+  @override
+  String get staffKindExtinguisher => 'مطفأة كبيرة';
+
+  @override
+  String get staffKindBoat => 'زورق';
+
+  @override
+  String get staffKindCommand => 'سيارة قيادة';
+
+  @override
+  String get staffKindOther => 'أخرى';
+
+  @override
+  String get staffErrVehicleTaken => 'قائد آخر يمسك هذه الآلية.';
+
+  @override
+  String get staffErrShiftOpen => 'لديك مناوبة مفتوحة.';
+
+  @override
+  String get staffErrMissionActive => 'مهمة ما زالت جارية: أنهِها أولا.';
+
+  @override
+  String get staffErrNotOnScene => 'سجّل الوصول إلى المكان أولا.';
+
+  @override
+  String get staffErrNoShift => 'لا مناوبة مفتوحة على هذا الهاتف.';
+
+  @override
+  String get staffErrGeneric =>
+      'رفضت القاعة هذا الإجراء. أعد المحاولة أو اتصل بالقاعة.';
 }

@@ -15,6 +15,7 @@ import {
   canHandleContact,
   canOpenLayers,
   canManageAccounts,
+  canOpenCrew,
   canOpenBreakGlass,
   canReadPlatformSettings,
   canReadScopedAudit,
@@ -375,6 +376,11 @@ export function Layout() {
           {aiSettings && (
             <NavItem to="/settings/ai" icon="smartToy" tone="slate">
               {t("nav.aiSettings")}
+            </NavItem>
+          )}
+          {canOpenCrew(identity.roles) && (
+            <NavItem to="/crew" icon="groups" tone="green">
+              {t("nav.crew")}
             </NavItem>
           )}
           {canManageAccounts(identity) && (

@@ -18,6 +18,7 @@ import {
   canHandleContact,
   canOpenLayers,
   canManageAccounts,
+  canOpenCrew,
   canOpenBreakGlass,
   canReadPlatformSettings,
   canReadScopedAudit,
@@ -47,6 +48,7 @@ import { BreakGlassPage } from "./pages/BreakGlassPage";
 import { GeoQueuePage } from "./pages/GeoQueuePage";
 import { LateReportsPage } from "./pages/LateReportsPage";
 import { ResourceRequestsPage } from "./pages/ResourceRequestsPage";
+import { CrewPage } from "./pages/CrewPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { CallsPage } from "./pages/CallsPage";
 import { CallbackPage } from "./pages/CallbackPage";
@@ -183,6 +185,7 @@ export function AppRoutes() {
           element={scoped((id) => hasReadAccess(id.roles) || canEditAiSettings(id), <AiSettingsPage />)}
         />
         <Route path="resource-requests" element={reports(<ResourceRequestsPage />)} />
+        <Route path="crew" element={<Gate allow={canOpenCrew}><CrewPage /></Gate>} />
         <Route path="accounts" element={scoped(canManageAccounts, <AccountsPage />)} />
         <Route path="audit" element={scoped(canReadScopedAudit, <AuditPage />)} />
         <Route path="break-glass" element={scoped(canOpenBreakGlass, <BreakGlassPage />)} />

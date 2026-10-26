@@ -304,6 +304,29 @@ async def run_outbox(sessionmaker: async_sessionmaker[AsyncSession], limit: int 
             gone += [targets[i][0] for i, r in enumerate(results) if r.unregistered]
             ok = any(r.ok for r in results)
             outcomes[row.id] = ("sent", None) if ok else ("retry", results[0].error if results else None)
+        elif row.channel == "staff_push":
+            # Phase P4a: the mission alert to one team leader's phone (content-free, the app fetches the mission).
+            if not providers.push.configured:
+                outcomes[row.id] = ("skipped", "not_configured")
+                continue
+            assert row.address is not None
+            p = row.payload
+            loc = p.get("locale", "ar")
+            data = {k: str(v) for k, v in (p.get("data") or {}).items()} | {"type": p["type"]}
+            push = Push(
+                row.address,
+                p.get("platform", "android"),
+                _localized(p["title"], loc),
+                _localized(p["body"], loc),
+                data,
+                True,
+                True,
+            )
+            result = await providers.push.send(push)
+            _count_failures("push", [result])
+            outcomes[row.id] = ("sent", None) if result.ok else ("retry", result.error)
+            if result.unregistered:
+                outcomes[row.id] = ("skipped", "unregistered")
         else:
             if not providers.email.configured:
                 outcomes[row.id] = ("skipped", "not_configured")
