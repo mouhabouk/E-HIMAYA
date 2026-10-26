@@ -2,7 +2,7 @@ name: ehimaya
 description: "ء-حماية (e-Himaya) — national emergency reporting app for the Tunisian civil protection."
 publish_to: 'none'
 
-version: 0.15.0+14
+version: 0.16.0+15
 
 environment:
   sdk: ">=3.13.5 <4.0.0"
@@ -28,6 +28,9 @@ dependencies:
   flutter_map: 8.3.2
   flutter_riverpod: 3.4.3
   flutter_secure_storage: 11.2.0
+  # Phase P5a: reads the guides, tips and alerts aloud with the phone's own speech engine
+  # (nothing leaves the phone). MIT.
+  flutter_tts: 4.2.5
   # Phase 6 live streaming (WebRTC publisher; WHIP itself is implemented in lib/core/webrtc). MIT.
   flutter_webrtc: 1.6.2+hotfix.3
   geolocator: 14.0.1
@@ -47,6 +50,8 @@ dependencies:
   # Phase B2: the safety-check reminders are scheduled local notifications (already used by
   # flutter_local_notifications; pinned here because the app names the UTC zone). BSD-2-Clause.
   timezone: 0.11.2
+  # Phase P5a: camera-light flashes for deaf users when an urgent alert arrives. Apache-2.0.
+  torch_light: 2.0.0
   url_launcher: 6.3.3
   uuid: 4.6.0
 

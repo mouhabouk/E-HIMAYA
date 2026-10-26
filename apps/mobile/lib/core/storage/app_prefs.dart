@@ -52,6 +52,9 @@ class AppPrefs {
   static const _sosCancelWindow = 'safety.sos_cancel_window';
   static const _liveShare = 'safety.live_share';
   static const _locationHistoryOn = 'safety.location_history_on';
+  static const _a11yScreenFlash = 'a11y.screen_flash';
+  static const _a11yTorchFlash = 'a11y.torch_flash';
+  static const _a11yReadAlerts = 'a11y.read_alerts';
 
   /// Kept when the account is deleted: interface choices, not personal data.
   static const _keptOnWipe = {
@@ -61,6 +64,9 @@ class AppPrefs {
     _batterySaver,
     _languageChosen,
     _introSeen,
+    _a11yScreenFlash,
+    _a11yTorchFlash,
+    _a11yReadAlerts,
   };
 
   String? get charterAcceptedVersion => _prefs.getString(_charterVersion);
@@ -259,6 +265,21 @@ class AppPrefs {
   bool get sosCancelWindow => _prefs.getBool(_sosCancelWindow) ?? true;
   Future<void> setSosCancelWindow(bool value) =>
       _prefs.setBool(_sosCancelWindow, value);
+
+  /// Phase P5a (accessibility): flash the screen when an urgent alert arrives (off by default).
+  bool get a11yScreenFlash => _prefs.getBool(_a11yScreenFlash) ?? false;
+  Future<void> setA11yScreenFlash(bool value) =>
+      _prefs.setBool(_a11yScreenFlash, value);
+
+  /// Phase P5a: flash the camera light when an urgent alert arrives (off by default).
+  bool get a11yTorchFlash => _prefs.getBool(_a11yTorchFlash) ?? false;
+  Future<void> setA11yTorchFlash(bool value) =>
+      _prefs.setBool(_a11yTorchFlash, value);
+
+  /// Phase P5a: read an urgent alert aloud when it arrives (off by default).
+  bool get a11yReadAlerts => _prefs.getBool(_a11yReadAlerts) ?? false;
+  Future<void> setA11yReadAlerts(bool value) =>
+      _prefs.setBool(_a11yReadAlerts, value);
 
   /// The live location share in progress (JSON: id, token, expires_at), so a restart resumes it.
   String? get liveShareJson => _prefs.getString(_liveShare);

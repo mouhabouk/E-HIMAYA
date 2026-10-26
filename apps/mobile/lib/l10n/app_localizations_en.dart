@@ -4945,4 +4945,68 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get orgAlertPreventionExpired =>
       'The prevention certificate has expired';
+
+  @override
+  String get listenAction => 'Listen';
+
+  @override
+  String get listenStop => 'Stop reading';
+
+  @override
+  String get listenNoVoice =>
+      'No voice for this language on your phone. Install one in the phone settings: Accessibility, then “Text-to-speech”.';
+
+  @override
+  String get listenFailed => 'Could not read aloud.';
+
+  @override
+  String get a11yTitle => 'Accessibility';
+
+  @override
+  String get a11ySubtitle => 'Read aloud and flashes for deaf users';
+
+  @override
+  String get a11yUrgentSection =>
+      'When an urgent alert arrives while the app is open';
+
+  @override
+  String get a11yScreenFlash => 'Screen flash';
+
+  @override
+  String get a11yScreenFlashHelp => 'Three red flashes, one per second';
+
+  @override
+  String get a11yTorchFlash => 'Camera light flash';
+
+  @override
+  String get a11yTorchFlashHelp => 'Three flashes, one per second';
+
+  @override
+  String get a11yTorchUnavailable => 'No light on this phone';
+
+  @override
+  String get a11yReadAlerts => 'Read the alert aloud';
+
+  @override
+  String get a11yReadAlertsHelp => 'The title and text, in the app’s language';
+
+  @override
+  String get a11yTry => 'Try';
+
+  @override
+  String get a11yTrySample => 'Test alert from e-Himaya. There is no danger.';
+
+  @override
+  String get a11yTryNothing => 'Choose at least one cue.';
+
+  @override
+  String get a11yAlwaysNote =>
+      'An urgent notification always vibrates (long-short-long) and lights the LED. When the app is closed, turn on “Flash notifications” in the phone’s accessibility settings if it has them.';
+
+  @override
+  String get a11yPhoneSection => 'In the phone settings';
+
+  @override
+  String get a11yPhoneNote =>
+      'Text size and the screen reader (TalkBack or VoiceOver) are set in the phone; the app follows them up to 200%. Guides, tips and alerts have a “Listen” button.';
 }

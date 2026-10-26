@@ -1,0 +1,33 @@
+@startuml
+!include style.iuml
+title Séquence : alerte urgente, lecture vocale et flashs (P5a)
+autonumber
+participant "API" as API
+participant "FCM / APNs" as FCM
+participant "Application\n(PushController)" as APP
+participant "AlertCuesRunner" as CUES
+participant "Préférences\n(a11y.*)" as PREF
+participant "Écran\n(ScreenFlash)" as SCR
+participant "Lampe\n(torch_light)" as TORCH
+participant "Voix du téléphone\n(flutter_tts)" as TTS
+actor "Citoyen" as U
+API -> FCM : alerte (type alert, canal urgent)
+FCM -> APP : message au premier plan
+APP -> APP : notification locale : son, vibration\nlong-court-long, voyant (inchangé)
+APP -> CUES : onUrgent(payload)
+CUES -> PREF : flash écran ? lampe ? lecture ?
+alt flash écran choisi
+  CUES -> SCR : 3 impulsions rouges, 1 par seconde\n(WCAG 2.3.1), sans prise de tap
+end
+alt lampe choisie et présente
+  CUES -> TORCH : 3 éclairs, 1 par seconde
+end
+alt lecture choisie
+  CUES -> TTS : titre + texte, langue de l'application
+  note right of TTS : moteur local du téléphone,\nrien n'est envoyé
+end
+U -> APP : « Écouter » sur un guide, un conseil ou une alerte
+APP -> TTS : texte de la page (ou arrêt)
+U -> APP : quitte la page
+APP -> TTS : arrêt
+@enduml
