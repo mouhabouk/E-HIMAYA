@@ -178,29 +178,54 @@ class KindFieldRow extends StatelessWidget {
     };
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  kindFieldText(l10n, field.key),
-                  style: theme.textTheme.bodySmall,
-                ),
-                Text(
-                  text,
-                  style: theme.textTheme.bodyLarge,
-                  textDirection: field.key == 'reception_phone'
-                      ? TextDirection.ltr
-                      : null,
-                ),
-              ],
+      child: PillBeside(
+        pill: VisibilityPill(field.visibility),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              kindFieldText(l10n, field.key),
+              style: theme.textTheme.bodySmall,
             ),
-          ),
-          VisibilityPill(field.visibility),
-        ],
+            Text(
+              text,
+              style: theme.textTheme.bodyLarge,
+              textDirection: field.key == 'reception_phone'
+                  ? TextDirection.ltr
+                  : null,
+            ),
+          ],
+        ),
       ),
+    );
+  }
+}
+
+/// A value with its badge at the end of the line; at large text sizes the badge
+/// moves under the value so neither is clipped.
+class PillBeside extends StatelessWidget {
+  const PillBeside({super.key, required this.child, required this.pill});
+
+  final Widget child;
+  final Widget pill;
+
+  @override
+  Widget build(BuildContext context) {
+    if (MediaQuery.textScalerOf(context).scale(10) > 13) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          child,
+          const SizedBox(height: 4),
+          Align(alignment: AlignmentDirectional.centerStart, child: pill),
+        ],
+      );
+    }
+    return Row(
+      children: [
+        Expanded(child: child),
+        pill,
+      ],
     );
   }
 }
