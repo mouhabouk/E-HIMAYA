@@ -49,10 +49,12 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
     return WelcomeScaffold(
       bottom: Row(
         children: [
-          TextButton(
-            key: const Key('intro-skip'),
-            onPressed: _done,
-            child: Text(l10n.introSkip),
+          Flexible(
+            child: TextButton(
+              key: const Key('intro-skip'),
+              onPressed: _done,
+              child: Text(l10n.introSkip),
+            ),
           ),
           Expanded(
             child: Semantics(
@@ -77,15 +79,17 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
               ),
             ),
           ),
-          FilledButton(
-            key: const Key('intro-next'),
-            onPressed: last
-                ? _done
-                : () => _pages.nextPage(
-                    duration: const Duration(milliseconds: 250),
-                    curve: Curves.easeOut,
-                  ),
-            child: Text(l10n.actionContinue),
+          Flexible(
+            child: FilledButton(
+              key: const Key('intro-next'),
+              onPressed: last
+                  ? _done
+                  : () => _pages.nextPage(
+                      duration: const Duration(milliseconds: 250),
+                      curve: Curves.easeOut,
+                    ),
+              child: Text(l10n.actionContinue),
+            ),
           ),
         ],
       ),

@@ -336,26 +336,20 @@ class _Line extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final text = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: theme.textTheme.bodySmall),
+        Text(
+          value,
+          style: theme.textTheme.bodyLarge,
+          textDirection: ltr ? TextDirection.ltr : null,
+        ),
+      ],
+    );
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(label, style: theme.textTheme.bodySmall),
-                Text(
-                  value,
-                  style: theme.textTheme.bodyLarge,
-                  textDirection: ltr ? TextDirection.ltr : null,
-                ),
-              ],
-            ),
-          ),
-          VisibilityPill(visibility),
-        ],
-      ),
+      child: PillBeside(pill: VisibilityPill(visibility), child: text),
     );
   }
 }
