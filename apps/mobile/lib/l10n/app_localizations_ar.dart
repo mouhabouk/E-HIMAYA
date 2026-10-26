@@ -4883,4 +4883,67 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get orgAlertPreventionExpired => 'انتهت صلاحية شهادة الوقاية';
+
+  @override
+  String get listenAction => 'استمع';
+
+  @override
+  String get listenStop => 'إيقاف القراءة';
+
+  @override
+  String get listenNoVoice =>
+      'لا يوجد صوت لهذه اللغة في هاتفك. ثبّته من إعدادات الهاتف: النفاذ ثم «تحويل النص إلى كلام».';
+
+  @override
+  String get listenFailed => 'تعذّرت القراءة الصوتية.';
+
+  @override
+  String get a11yTitle => 'النفاذ';
+
+  @override
+  String get a11ySubtitle => 'القراءة الصوتية والوميض لضعاف السمع';
+
+  @override
+  String get a11yUrgentSection => 'عند وصول تنبيه عاجل والتطبيق مفتوح';
+
+  @override
+  String get a11yScreenFlash => 'وميض الشاشة';
+
+  @override
+  String get a11yScreenFlashHelp => 'ثلاث ومضات حمراء، ومضة في الثانية';
+
+  @override
+  String get a11yTorchFlash => 'وميض مصباح الكاميرا';
+
+  @override
+  String get a11yTorchFlashHelp => 'ثلاث ومضات، ومضة في الثانية';
+
+  @override
+  String get a11yTorchUnavailable => 'لا يوجد مصباح في هذا الهاتف';
+
+  @override
+  String get a11yReadAlerts => 'قراءة التنبيه بصوت عالٍ';
+
+  @override
+  String get a11yReadAlertsHelp => 'العنوان والنص بلغة التطبيق';
+
+  @override
+  String get a11yTry => 'جرّب';
+
+  @override
+  String get a11yTrySample => 'تنبيه تجريبي من ء-حماية. لا يوجد أي خطر.';
+
+  @override
+  String get a11yTryNothing => 'اختر وسيلة واحدة على الأقل.';
+
+  @override
+  String get a11yAlwaysNote =>
+      'الإشعار العاجل يهتز دائمًا بنمط طويل-قصير-طويل ويضيء ضوء الإشعار. والتطبيق مغلق، فعّل «إشعارات الوميض» من إعدادات النفاذ في هاتفك إن وُجدت.';
+
+  @override
+  String get a11yPhoneSection => 'من إعدادات الهاتف';
+
+  @override
+  String get a11yPhoneNote =>
+      'حجم الخط وقارئ الشاشة (TalkBack أو VoiceOver) يُضبطان في الهاتف، والتطبيق يتبعهما حتى تكبير 200%. في الأدلة والنصائح والتنبيهات زر «استمع» يقرأ النص.';
 }
