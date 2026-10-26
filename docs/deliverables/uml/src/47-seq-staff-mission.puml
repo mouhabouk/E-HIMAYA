@@ -1,0 +1,47 @@
+@startuml
+!include style.iuml
+title Séquence : mission d'une équipe sur l'application des équipes (P4a)
+autonumber
+actor "Chef d'agrès" as TL
+participant "Application\ndes équipes" as APP
+participant "Keycloak\n(royaume staff)" as KC
+participant "API\n/crew" as CREW
+participant "API\n/staff (salle)" as ROOM
+actor "Opérateur" as OP
+== Connexion (une fois par téléphone) ==
+TL -> APP : « Se connecter »
+APP -> KC : demande de code d'appareil (RFC 8628)
+KC --> APP : code utilisateur + lien
+APP --> TL : affiche le code
+TL -> KC : lien dans le navigateur : mot de passe + code TOTP
+APP -> KC : interroge toutes les 5 s
+KC --> APP : jetons (amr = pwd, otp ; session hors ligne)
+APP -> CREW : POST /devices
+CREW --> APP : identifiant du téléphone
+TL -> APP : PIN de 6 chiffres (empreinte salée sur le téléphone)
+== Prise de garde ==
+TL -> APP : engin + équipage
+APP -> CREW : POST /shifts {client_id}
+note right of CREW : une garde ouverte par chef\net par engin (409 resource_on_shift)
+== Mission ==
+OP -> ROOM : affecter l'engin à l'incident
+ROOM -> ROOM : rattacher la garde ; notification urgente\nsans contenu (assignment_id seulement)
+APP -> CREW : GET /missions (et toutes les 15 s)
+CREW --> APP : mission non accusée
+APP --> TL : alerte plein écran + vibrations
+TL -> APP : « Reçu »
+APP -> CREW : POST /missions/{id}/ack
+TL -> APP : « En route », puis « Sur place » (proposé à 150 m)
+APP -> CREW : POST /status {client_id, heure du téléphone, position}
+CREW -> ROOM : statut de l'affectation, chronologie,\nsignalements « intervenu »
+TL -> APP : premier bilan (gravité, renfort, danger)
+APP -> CREW : POST /first-report
+CREW -> ROOM : chronologie ; renfort et danger mis en évidence
+TL -> APP : +1 blessé, évacuation (triage, hôpital)
+APP -> CREW : POST /casualties, /transports
+== Retrait à distance ==
+ROOM -> ROOM : l'administrateur retire le téléphone\n(la garde se termine)
+APP -> CREW : appel suivant
+CREW --> APP : 410 device_revoked
+APP -> APP : efface jetons, PIN et identifiant
+@enduml

@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ء-حماية | تقرير المرحلة P4a</title>
+<style>
+:root{--bg:#f7f8fa;--paper:#fff;--ink:#1b2430;--muted:#5b6675;--line:#dfe3e8;--accent:#b3261e;--accent2:#0b5cad;--ok:#1e7d3a;--warn:#a15c00;--chip:#eef1f5;--head:#f1f3f6;--navy:#1f3d99;--orange:#e07b00}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1318;--paper:#161b22;--ink:#e6eaef;--muted:#9aa5b1;--line:#2a313b;--accent:#ff6b5e;--accent2:#5aa9ff;--ok:#5cc97a;--warn:#e0a24a;--chip:#1f2630;--head:#1c222b;--navy:#8fa8ff;--orange:#ffb35c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Naskh Arabic","Segoe UI",Tahoma,Arial,sans-serif;line-height:1.75;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header.cover{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:10px;padding:28px 24px;margin-bottom:20px}
+header.cover h1{margin:0 0 6px;font-size:30px}
+header.cover .sub{color:var(--muted);margin:0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:16px}
+.meta div{background:var(--chip);border-radius:6px;padding:8px 12px;font-size:14px}
+.meta b{display:block;color:var(--muted);font-weight:600;font-size:12px}
+a{color:var(--accent2);text-decoration:none}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:20px}
+h2{margin-top:0;font-size:23px;border-bottom:2px solid var(--line);padding-bottom:8px}
+h3{font-size:18px;margin:18px 0 8px}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:start;vertical-align:top}
+th{background:var(--head);font-weight:700;white-space:nowrap}
+code{direction:ltr;unicode-bidi:isolate;background:var(--chip);padding:1px 5px;border-radius:4px;font-size:13px}
+pre{direction:ltr;text-align:left;background:var(--chip);padding:10px 12px;border-radius:6px;overflow-x:auto;font-size:13px;margin:6px 0}
+.note{border-inline-start:4px solid var(--accent2);background:var(--chip);padding:10px 14px;border-radius:6px;margin:12px 0}
+.warn{border-inline-start:4px solid var(--warn)}
+.sim{display:inline-block;background:#ffb300;color:#1f1300;font-weight:700;font-size:12px;padding:1px 8px;border-radius:999px;margin-inline-end:6px}
+.simbox{border:2px dashed #ffb300;background:rgba(255,179,0,.10);border-radius:8px;padding:12px 16px;margin:12px 0}
+.ltr{direction:ltr;unicode-bidi:isolate}
+ul,ol{padding-inline-start:22px}
+.bar{height:10px;background:var(--chip);border-radius:6px;overflow:hidden;min-width:90px}
+.bar span{display:block;height:100%;background:var(--ok)}
+.pipeline{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0}
+.pipeline div{border:1px solid var(--line);border-radius:8px;padding:6px 12px;background:var(--chip);font-weight:600}
+.pipeline div.now{border-color:var(--accent);background:rgba(179,38,30,.08)}
+.pipeline i{color:var(--muted);font-style:normal}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--paper)}
+.card h3{margin:0 0 4px;font-size:17px}
+.card .v{color:var(--muted);font-size:13px;margin:0 0 6px}
+.card dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:6px 0;font-size:14px}
+.card dt{color:var(--muted);font-weight:600}
+.card dd{margin:0}
+.prio{display:inline-block;border-radius:999px;padding:0 8px;font-size:12px;font-weight:700;color:#fff}
+.p1{background:#b3261e}.p2{background:#a15c00}.p3{background:#0b5cad}.p4{background:#5b6675}
+footer{color:var(--muted);text-align:center;font-size:13px}
+@media print{body{background:#fff}section,header.cover,.card{border:none;break-inside:avoid-page}}
+</style>
+<body>
+<div class="wrap">
+<header class="cover">
+  <h1>ء-حماية <span class="ltr">e-Himaya</span></h1>
+  <p class="sub">تقرير المرحلة P4a: تطبيق قادة فرق التدخل (الجزء الأول): الدخول بربط الجهاز ورمز PIN والمسح عن بعد، المناوبة، تنبيه المهمة، أزرار الخطوات، التقرير الأول، الإصابات، وفرق المناوبة في لوحة القيادة</p>
+  <div class="meta">
+    <div><b>التاريخ</b>2026-10-26</div>
+    <div><b>الفرع</b><span class="ltr">claude/project-thread-yzwsn2</span></div>
+    <div><b>الحالة</b>منجزة، بانتظار المراجعة والدمج</div>
+    <div><b>المراجع</b><a href="phase-p4/design-staff.md">التصميم</a> · <a href="versions.md">الإصدارات</a> · <a href="backlog.md">القائمة المؤجلة</a></div>
+  </div>
+</header>
+
+<section>
+<h2>1. أين تقع هذه المرحلة من مسار المشروع</h2>
+<div class="pipeline">
+  <div>التبليغ</div><i>←</i>
+  <div class="now">المعالجة</div><i>←</i>
+  <div class="now">التحليل</div><i>←</i>
+  <div>مؤشرات الأداء KPI</div><i>←</i>
+  <div>التنبؤ بالذكاء الاصطناعي</div><i>←</i>
+  <div class="now">اتخاذ القرار</div>
+</div>
+<ul>
+  <li><b>المعالجة</b>: التكليف لم يعد ينتهي عند القاعة. يصل إلى هاتف قائد الآلية فيرنّ، ويعود منه الاستلام والخطوات بتوقيت الهاتف.</li>
+  <li><b>التحليل</b>: التقرير الأول وعدد الضحايا والمنقولون يصلون من الميدان في ثوانٍ، على بطاقة الحادث وفي الخط الزمني.</li>
+  <li><b>اتخاذ القرار</b>: طلب التعزيز والخطر على الطاقم يظهران في أعلى قسم «من الميدان» بلون الإنذار.</li>
+</ul>
+</section>
+
+<section>
+<h2>2. مراجعة ← تصميم ← تطوير</h2>
+<div class="note"><b>ما وجدته:</b> التكليف موجود في اللوحة منذ المرحلة 5 بحالاته (صدر الأمر، في الطريق، في المكان، انتهى)، لكن القاعة هي التي تغيّر الحالة بناء على اللاسلكي. لا دور لقائد الفريق، ولا تطبيق له، ولا مكان للتقرير الأول أو لعدد الضحايا. التفاصيل في <a href="phase-p4/design-staff.md">design-staff.md</a>.</div>
+<div class="note warn"><b>قرار ينتظر تأكيدك:</b> نفّذت الدخول بحساب شخصي لكل قائد فريق (التوصية)، لأن كل خطوة وكل تقرير يُنسبان بذلك إلى شخص مسمّى في سجل التدقيق، والهاتف يبقى في الآلية ويغيّر قائد المناوبة التالية الحساب فقط. البديل حساب لكل آلية.</div>
+<ol>
+  <li><b>الدخول</b>: تطبيق ثانٍ من نفس قاعدة الكود (<code>lib/main_staff.dart</code>). يعرض الهاتف رمزا قصيرا، ويؤكّده القائد في صفحة Keycloak بكلمة السر والرمز الثاني (منح الجهاز RFC 8628، عميل <code>ehimaya-staff-app</code>). لا كلمة سر تُكتب في التطبيق ولا حزمة جديدة. ثم رمز PIN من 6 أرقام يُحفظ ببصمة مملّحة، ويُطلب بعد 5 دقائق في الخلفية، وخمس محاولات خاطئة تمسح الهاتف.</li>
+  <li><b>المسح عن بعد</b>: الهاتف يُسجَّل في الخادم. من صفحة «فرق المناوبة» يسحبه مسؤول الحسابات الجهوي أو مسؤول الأمن بعد تأكيد، فتنتهي مناوبته، ويجيب الخادم <code>410 device_revoked</code> عند الاتصال التالي فيمسح التطبيق كل شيء.</li>
+  <li><b>المناوبة (F-STF-01)</b>: آلية من وحدات الولاية، عدد الطاقم وأسماؤهم. مناوبة واحدة لكل قائد ولكل آلية. لا تنتهي المناوبة ومهمة جارية.</li>
+  <li><b>تنبيه المهمة (F-STF-01)</b>: حين تكلّف القاعة الآلية تُربط المهمة بالمناوبة، ويخرج إشعار عاجل دون محتوى (معرّف التكليف فقط). التطبيق يسأل كل 15 ثانية، ويعرض المهمة بملء الشاشة مع اهتزاز متكرر حتى «تم الاستلام».</li>
+  <li><b>الخطوات (F-STF-02)</b>: زر واحد كبير بعرض الشاشة للخطوة التالية، بتوقيت الهاتف وموقعه. «وصلنا» يُقترح حين يكون الهاتف داخل 150 م من الحادث. الخطوة تمر بنفس قواعد اللوحة، وتنقل بلاغات المواطنين إلى «تم التدخل». كل كتابة تحمل معرّفا يولّده الهاتف، فإعادة إرسالها لا تكرّرها.</li>
+  <li><b>التقرير الأول (F-STF-03)</b>: شاشة واحدة: النوع (مملوء من القاعة)، الخطورة من 1 إلى 4، «نحتاج تعزيزا» بملاحظة، «خطر على الطاقم».</li>
+  <li><b>الإصابات (F-STF-04)</b>: أربعة عدادات حية (+ و −)، والمنقولون بلون الفرز والفئة العمرية والجنس والمستشفى، دون اسم.</li>
+  <li><b>لوحة القيادة (جزء من F-DSH-35)</b>: تحت كل تكليف قائد المناوبة والطاقم و«استُلم» أو «لم يُستلم بعد»؛ قسم «من الميدان» في بطاقة الحادث؛ أربعة أحداث جديدة في الخط الزمني؛ وصفحة «فرق المناوبة».</li>
+</ol>
+</section>
+
+<section>
+<h2>3. لقطات</h2>
+<p>تطبيق الأعوان بالعربية: الدخول بالرمز، بداية المناوبة، تنبيه المهمة، المهمة في الطريق مع اقتراح «وصلنا»، التقرير الأول، والإصابات:</p>
+<div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:flex-start">
+  <img src="phase-p4a/p4a-signin.png" alt="الدخول برمز يظهر على الهاتف" style="width:230px;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-p4a/p4a-shift.png" alt="بداية المناوبة: الآلية وعدد الطاقم" style="width:230px;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-p4a/p4a-alert.png" alt="تنبيه مهمة جديدة بملء الشاشة" style="width:230px;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-p4a/p4a-mission.png" alt="المهمة في الطريق مع اقتراح الوصول" style="width:230px;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-p4a/p4a-first-report.png" alt="التقرير الأول: النوع والخطورة والتعزيز" style="width:230px;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-p4a/p4a-casualties.png" alt="عدادات الضحايا والمنقولون" style="width:230px;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+</div>
+<p>وفي لوحة القيادة: التكليفات بقائد كل فريق وحالة الاستلام، ثم قسم «من الميدان»؛ وصفحة «فرق المناوبة» مع هواتف القادة:</p>
+<div style="display:flex;flex-direction:column;gap:12px;align-items:center">
+  <img src="phase-p4a/p4a-dash-incident.png" alt="بطاقة الحادث: الطاقم وقسم من الميدان" style="width:900px;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-p4a/p4a-dash-crew.png" alt="صفحة فرق المناوبة وهواتف القادة" style="width:900px;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+</div>
+</section>
+
+<section>
+<h2>4. التقدم لكل جزء</h2>
+<div class="tbl"><table>
+<tr><th>البند</th><th>الحالة</th><th>التقدم</th></tr>
+<tr><td>الدخول بربط الجهاز، PIN، المسح عن بعد</td><td>منجز (P4a)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-STF-01 المناوبة وتنبيه المهمة</td><td>منجز (P4a)؛ التنبيه فوق شاشة القفل في P4c</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-STF-02 أزرار الخطوات</td><td>منجز (P4a)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-STF-03 التقرير الأول</td><td>منجز (P4a)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-STF-04 الإصابات والمنقولون</td><td>منجز (P4a)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-DSH-35 متابعة الفرق في اللوحة</td><td>منجز جزئيا؛ التقارير المفصّلة في P4b</td><td><div class="bar"><span style="width:50%"></span></div></td></tr>
+<tr><td>F-STF-05 و 06 (P4b)، F-STF-07 و F-APP-38 (P4c)</td><td>معتمدة</td><td><div class="bar"><span style="width:0%"></span></div></td></tr>
+</table></div>
+<p><b>تقدم P4a: 100%. تطبيق الأعوان كله (P4a و P4b و P4c): حوالي 40%.</b></p>
+</section>
+
+<section>
+<h2>5. المحاكاة <span class="sim">[SIM]</span></h2>
+<div class="simbox"><ul>
+  <li><span class="sim">[SIM]</span> الآليات والأسماء والمستشفيات في اللقطات بيانات اختبار، ولقطات اللوحة مأخوذة بواجهة برمجية محاكاة.</li>
+  <li><span class="sim">[SIM]</span> الإشعار العاجل يمر في بيئة التجربة بمحاكي الإشعارات كما في المراحل السابقة؛ الإرسال الحقيقي يحتاج Firebase (قرار نقل الإشعارات معلّق).</li>
+</ul></div>
+</section>
+
+<section>
+<h2>6. الاختبارات المطبقة</h2>
+<div class="tbl"><table>
+<tr><th>المكوّن</th><th>العدد</th><th>النتيجة</th></tr>
+<tr><td>الخلفية (pytest)</td><td>871، منها 4 مسارات جديدة في <code>test_crew.py</code></td><td>870 ناجحة؛ اختبار واحد من مرحلة سابقة يفشل أحيانا حسب الترتيب وينجح منفردا (مرة <code>test_knowledge</code> ومرة <code>test_rewards</code>)</td></tr>
+<tr><td>تطبيق الهاتف (flutter test)</td><td>549، منها 9 جديدة في <code>test/staff/</code></td><td>كلها ناجحة</td></tr>
+<tr><td>لوحة القيادة (vitest)</td><td>468، منها 4 جديدة</td><td>كلها ناجحة</td></tr>
+<tr><td>Keycloak الحقيقي (<code>check_mfa.py</code>)</td><td>الدخول بالرمز على Keycloak 26.8</td><td>ناجح: <code>amr</code> = pwd و otp، الجمهور <code>ehimaya-api</code>، جلسة دون اتصال</td></tr>
+<tr><td><code>flutter analyze</code> و <code>ruff</code> و <code>mypy</code> و <code>eslint</code> و <code>tsc</code></td><td>—</td><td>لا ملاحظة</td></tr>
+</table></div>
+<ul>
+  <li>الخادم: الجهاز والمناوبة (آلية محجوزة، مناوبة مفتوحة)، المهمة وخطواتها وتكرارها بنفس المعرّف، التقرير الأول قبل الوصول وبعده، العدادات لا تنزل تحت الصفر، المهام لا يراها إلا قائد الآلية في مناوبته، والمسح عن بعد.</li>
+  <li>التطبيق: الدخول بالرمز ثم PIN مرتين، المناوبة، التنبيه والاستلام، الخطوات بالموقع واقتراح الوصول، التقرير الأول، العدادات والنقل، القفل بعد 5 دقائق وخمسة رموز خاطئة، المسح عن بعد، تجديد الرمز ورفضه، وحالات النفاذ بالعربية بالخط العادي والمضاعف.</li>
+  <li>اللوحة: الطاقم وقسم «من الميدان»، صفحة فرق المناوبة، وسحب الهاتف بتأكيد.</li>
+</ul>
+</section>
+
+<section id="tools">
+<h2>7. التقنيات والأدوات والمصادر والإصدارات</h2>
+<p>لا حزمة جديدة. القائمة الكاملة في <a href="versions.md">versions.md</a>.</p>
+<div class="cards">
+<div class="card"><h3>تطبيق الهاتف (المواطن والأعوان)</h3><p class="v">0.18.0 (البناء 17) · Flutter 3.47.7 · <span class="prio p1">1</span></p>
+<dl><dt>الاستعمال</dt><dd>نقطة دخول ثانية لتطبيق الأعوان</dd><dt>الأمر</dt><dd><code>flutter build apk -t lib/main_staff.dart</code></dd></dl></div>
+<div class="card"><h3>ترحيل قاعدة البيانات</h3><p class="v">0049 · <span class="prio p1">1</span></p>
+<dl><dt>الاستعمال</dt><dd>الهواتف والمناوبات وأحداث الفرق والتقرير الأول والإصابات والنقل، بأمن مستوى الصفوف</dd><dt>الأمر</dt><dd><code>alembic upgrade head</code></dd></dl></div>
+<div class="card"><h3>Keycloak (عالم الأعوان)</h3><p class="v">26.x · <span class="prio p1">1</span></p>
+<dl><dt>الاستعمال</dt><dd>الدور <code>team_leader</code> والعميل <code>ehimaya-staff-app</code> بمنح الجهاز</dd><dt>الأمر</dt><dd>إعادة استيراد العالم</dd></dl></div>
+</div>
+</section>
+
+<section>
+<h2>8. المخرجات المحيَّنة</h2>
+<ul>
+  <li>الملف الوصفي V12 (docx و pdf) في <code>spec/</code>: F-STF-01 إلى 04 منجزة، F-DSH-35 منجز جزئيا، الدور الجديد، 347 مسارا و414 عملية، الاختبارات، القرار المعلّق، وخارطة الطريق بـ P4a و P4b و P4c.</li>
+  <li>مخططات UML في <code>diagrams/</code>: مخطط تسلسل جديد «مهمة فريق على تطبيق الأعوان» (47)، وأصناف المناوبة وهاتف الفريق والتقرير الأول والإصابات في مخطط العمليات، وقائد الفريق في مخطط قاعة العمليات.</li>
+  <li>العرض للمسؤولين: 27 مرحلة، الاختبارات، وخطوة «تطبيق الأعوان» في خارطة الطريق، في <code>presentation/</code>.</li>
+  <li>مرجع التصميم مُعاد توليده: <a href="design-reference.html">design-reference.html</a>.</li>
+  <li>سجل الإصدارات، القائمة المؤجلة (البند P4)، ودليل التنصيب (بناء تطبيق الأعوان والدور الجديد).</li>
+</ul>
+</section>
+
+<section>
+<h2>9. ملاحظات وانحرافات</h2>
+<ul>
+  <li>التنبيه بملء الشاشة يعمل والتطبيق مفتوح أو عند العودة إليه. التنبيه فوق شاشة القفل، وتسجيل رمز الدفع من التطبيق، ونسخة الأندرويد المنفصلة بمعرّف Firebase خاص، نُقلت إلى P4c مع العمل دون اتصال، لأنها تحتاج نسخة توزيع خاصة.</li>
+  <li>بعد الدخول بالرمز يطلب Keycloak مرة واحدة الموافقة على «الوصول دون اتصال»؛ هذا ما يسمح للمناوبة أن تتجاوز مهلة الخمول (15 دقيقة) في عالم الأعوان، والـ PIN يحرس الهاتف بينهما.</li>
+  <li>صفحة «فرق المناوبة» جديدة بدل إضافة القائمة إلى صفحة الموارد وإدارة الحسابات كما في التصميم الأول، لأن الهواتف تخص مسؤول الحسابات والفرق تخص القاعة، فصارتا قسمين في صفحة واحدة حسب الدور.</li>
+  <li>قائد الفريق لا يفتح لوحة القيادة.</li>
+</ul>
+</section>
+
+<section>
+<h2>10. ما يلي</h2>
+<p>P4b: التقرير الميداني المفصّل حسب النوع بقوالب يصادق عليها الديوان، ووحدة الوقاية في الموقع. ثم P4c: العمل دون اتصال، بديل SMS، تتبع الموقع، التنبيه فوق شاشة القفل، النسخة المنفصلة، وإعلام المواطن بوصول الفريق.</p>
+</section>
+</div>
+</body>
+</html>
