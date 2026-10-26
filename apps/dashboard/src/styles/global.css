@@ -4417,3 +4417,166 @@ button.nav-card:hover {
   background: var(--ok-bg);
   color: var(--ok-text);
 }
+
+/* ---------- Prevention visits (phase P3b) ---------- */
+
+.visit-form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.visit-form--inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.visit-form__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.visit-form input:not([type="file"], [type="radio"]),
+.reservation__lift input {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
+  min-block-size: 2.25rem;
+  max-inline-size: 100%;
+}
+
+.visit-form input[type="date"] {
+  inline-size: 12rem;
+}
+
+.visit-form [aria-invalid="true"] {
+  border-color: var(--error-text);
+  outline: 1px solid var(--error-text);
+}
+
+.visit-form__choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.75rem;
+}
+
+.visit-form__choices label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-block-size: 2.25rem;
+}
+
+.inspection-grid {
+  inline-size: 100%;
+}
+
+.inspection-grid th[scope="row"] {
+  font-weight: 600;
+}
+
+.inspection-grid th[scope="row"] .tag--sim {
+  margin-inline-start: 0.35rem;
+}
+
+.inspection-grid--edit input,
+.inspection-grid--edit select {
+  inline-size: 100%;
+  min-inline-size: 8rem;
+}
+
+.inspection-grid tr.is-nonconform {
+  background: var(--error-bg);
+}
+
+@media (max-width: 760px) {
+  .inspection-grid--edit thead {
+    display: none;
+  }
+
+  .inspection-grid--edit tr {
+    display: grid;
+    gap: 0.35rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .inspection-grid--edit td,
+  .inspection-grid--edit th {
+    border: 0;
+  }
+}
+
+.comparison {
+  display: grid;
+  gap: 0.5rem;
+  overflow-x: auto;
+}
+
+.comparison__counts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.reservations,
+.visits {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reservation {
+  border: 1px solid var(--border);
+  border-inline-start: 4px solid var(--warn-text, #8a5a00);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.75rem;
+}
+
+.reservation p {
+  margin: 0.15rem 0;
+}
+
+.reservation--overdue {
+  border-inline-start-color: var(--error-text);
+  background: var(--error-bg);
+}
+
+.reservation--lifted {
+  border-inline-start-color: var(--ok-text, #1b5e20);
+}
+
+.reservation__lift {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+}
+
+.reservation-drafts {
+  display: grid;
+  gap: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.75rem;
+}
+
+.reservation-draft {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+}

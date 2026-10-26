@@ -1,0 +1,40 @@
+@startuml
+!include style.iuml
+title Séquence : visite de prévention et certificat de prévention (P3b)
+autonumber
+actor "Établissement\n(admin)" as ORG
+participant "Portail" as POR
+actor "Auditeur\n(Office)" as AUD
+participant "Tableau de bord" as DSH
+participant "API" as API
+database "PostgreSQL" as DB
+database "Stockage objet" as S3
+ORG -> POR : demander une visite (note)
+POR -> API : POST /orgs/{id}/prevention/visits
+API -> DB : visite « demandée » (une seule ouverte) + audit
+AUD -> DSH : file des visites de prévention
+DSH -> API : POST /staff/prevention/visits/{vid}/schedule
+API -> DB : date, inspecteur
+API -> ORG : courriel « visite programmée »
+AUD -> DSH : grille sur site : conforme / non conforme /\nnon vérifié, valeur observée ou remarque
+DSH -> API : POST …/{vid}/inspection
+API -> DB : déclaration du jour (instantané)
+API -> API : rapport de comparaison : comptes, manquants,\nécarts depuis le certificat de sécurité, suggestion
+API -> S3 : procès-verbal PDF
+API --> DSH : rapport
+AUD -> DSH : décision, validité, réserves et délais
+DSH -> API : POST …/{vid}/decision
+alt favorable ou avec réserves
+  API -> API : signature Ed25519, code EHP-…,\nsceau électronique [SIM]
+  API -> S3 : certificat de prévention PDF
+  API -> DB : certificat (type prévention) remplace l'ancien,\nréserves + audit
+else refus motivé
+  API -> DB : motif + audit
+end
+API -> ORG : courriel « décision rendue »
+ORG -> POR : réponse à une réserve
+POR -> API : POST /orgs/{id}/prevention/reservations/{rid}/response
+AUD -> DSH : lever la réserve
+DSH -> API : POST /staff/prevention/reservations/{rid}/lift
+note over API : une réserve non levée après son délai\napparaît « en retard » dans les alertes
+@enduml

@@ -388,6 +388,12 @@ class _SectionsGrid extends ConsumerWidget {
         l10n.orgSectionCertificates,
       ),
       (
+        InstitutionSection.records,
+        Icons.summarize,
+        Tone.navy,
+        l10n.orgSectionRecords,
+      ),
+      (
         InstitutionSection.activities,
         Icons.event_available,
         Tone.pink,
@@ -450,6 +456,7 @@ enum InstitutionSection {
   evacuation,
   reports,
   certificates,
+  records,
   activities,
   awareness,
   members;

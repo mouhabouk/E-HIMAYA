@@ -50,6 +50,7 @@ import {
   type StaffOrgDetail,
 } from "../lib/types";
 import { PageTitle } from "../components/PageTitle";
+import { OrgVisits } from "../components/PreventionBits";
 
 function Phone({ phone }: { phone: string | null | undefined }) {
   const { t } = useTranslation();
@@ -429,6 +430,7 @@ export function OrgDetailPage() {
   const lang = useLanguage();
   const navigate = useNavigate();
   const gouvernorats = useGouvernorats();
+  const { user } = useAuth();
 
   const query = useQuery({
     queryKey: queryKeys.org(id),
@@ -991,6 +993,8 @@ export function OrgDetailPage() {
           </ul>
         )}
       </section>
+
+      <OrgVisits orgId={org.id} canAct={canReviewOrgs(user?.identity.roles ?? []) && org.status === "active"} />
 
       <div className="detail__grid">
         <section className="card" aria-labelledby="sec-org-members">

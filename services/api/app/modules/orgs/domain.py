@@ -69,6 +69,7 @@ FeatureKind = Literal["evacuation_point", "water_point", "alarm"]
 DocumentKind = Literal["safety_file", "safety_plan", "sds", "other", "maintenance_photo"]
 ActivityKind = Literal["drill", "event"]
 CertificateStatus = Literal["draft", "submitted", "approved", "rejected", "revoked"]
+CertificateKind = Literal["safety", "prevention"]
 
 # Registration review by the institutions auditor (FR-B-001): decision → (allowed from, result).
 REVIEW_TRANSITIONS: dict[str, tuple[OrgStatus, OrgStatus]] = {
@@ -90,6 +91,11 @@ CERTIFICATE_MAX_YEARS = 5
 CERTIFICATE_REMINDER_DAYS = (90, 30)
 CERTIFICATE_MOVE_M = 50
 STAMP_PHOTO_MAX_BYTES = 5 * 1024 * 1024
+# Phase P3b: prevention certificate. The validity is a working value until the Office gives the official one [SIM].
+PREVENTION_DEFAULT_MONTHS = 12
+RESERVATION_MAX_MONTHS = 12
+RESERVATION_DUE_SOON_DAYS = 14
+MAX_RESERVATIONS = 50
 
 # ---------------------------------------------------------------- identifiers and contacts
 
@@ -464,3 +470,110 @@ def certificate_changes(certified: dict[str, Any], now: dict[str, Any]) -> list[
     if old_evac != new_evac:
         changes.append(("evacuation", "points", old_evac, new_evac))
     return changes
+
+
+# ---------------------------------------------------------------- prevention visit (phase P3b)
+
+VisitOrigin = Literal["request", "scheduled"]
+VisitStatus = Literal["requested", "scheduled", "inspected", "decided", "cancelled"]
+VisitDecision = Literal["approved", "approved_with_reservations", "refused"]
+InspectionResult = Literal["conform", "nonconform", "not_checked"]
+InspectionSection = Literal[
+    "building", "classification", "hazmat", "equipment", "evacuation", "safety_team", "documents", "site"
+]
+ReservationState = Literal["open", "responded", "overdue", "lifted"]
+OPEN_VISIT_STATUSES: tuple[VisitStatus, ...] = ("requested", "scheduled", "inspected")
+
+#: On-site checks with nothing declared beforehand: a working grid until the Office gives its official one [SIM].
+SITE_CHECKS = ("exits", "signage", "emergency_lighting", "alarm", "extinguishers_access", "electrical")
+
+
+@dataclass(frozen=True, slots=True)
+class ChecklistItem:
+    key: str
+    section: InspectionSection
+    declared: Any
+
+
+def prevention_checklist(declared: dict[str, Any]) -> list[ChecklistItem]:
+    """The inspection grid built from what the institution declared (its certificate snapshot), then the site checks.
+
+    Keys are stable for a given declaration: ``<section>.<field>``, ``hazmat.<n>`` and ``equipment.<kind>``.
+    """
+    org = declared.get("org", {})
+    items = [
+        ChecklistItem(f"building.{name}", "building", org.get(name)) for name in _BUILDING if name != "receives_public"
+    ]
+    cls = declared.get("classification", {})
+    items.append(ChecklistItem("classification.family", "classification", cls.get("family")))
+    if cls.get("category") is not None:
+        items.append(ChecklistItem("classification.category", "classification", cls.get("category")))
+    items += [
+        ChecklistItem(f"hazmat.{n}", "hazmat", line)
+        for n, line in enumerate(sorted(_hazmat_line(h) for h in declared.get("hazmat", [])))
+    ]
+    counts: dict[str, int] = {}
+    for item in declared.get("equipment", []):
+        counts[item["kind"]] = counts.get(item["kind"], 0) + int(item.get("count") or 0)
+    items += [ChecklistItem(f"equipment.{kind}", "equipment", count) for kind, count in sorted(counts.items())]
+    evacuation = sum(1 for f in declared.get("features", []) if f["kind"] == "evacuation_point")
+    items.append(ChecklistItem("evacuation.points", "evacuation", evacuation))
+    rep, members = _team(declared)
+    items.append(ChecklistItem("safety_team.representative", "safety_team", rep))
+    items.append(ChecklistItem("safety_team.members", "safety_team", members))
+    docs = {d["kind"]: f"{d['title']} v{d['version']}" for d in declared.get("documents", [])}
+    items += [ChecklistItem(f"documents.{kind}", "documents", docs.get(kind)) for kind in _CERTIFIED_DOCUMENTS]
+    items += [ChecklistItem(f"site.{check}", "site", None) for check in SITE_CHECKS]
+    return items
+
+
+@dataclass(frozen=True, slots=True)
+class Finding:
+    result: InspectionResult
+    observed: str | None = None
+    note: str | None = None
+
+
+def comparison_report(
+    declared: dict[str, Any],
+    findings: Mapping[str, Finding],
+    changes: Iterable[tuple[str, str, Any, Any]] = (),
+) -> dict[str, Any]:
+    """The automatic comparison of what was declared with what the inspector found (design-prevention.md §3).
+
+    Items the inspector did not record count as ``not_checked``. The suggested decision does not bind the auditor.
+    """
+    rows = []
+    for item in prevention_checklist(declared):
+        found = findings.get(item.key, Finding("not_checked"))
+        rows.append(
+            {
+                "key": item.key,
+                "section": item.section,
+                "declared": item.declared,
+                "result": found.result,
+                "observed": found.observed,
+                "note": found.note,
+            }
+        )
+    count = {
+        result: sum(1 for r in rows if r["result"] == result) for result in ("conform", "nonconform", "not_checked")
+    }
+    missing = list(declared.get("completeness", {}).get("missing", []))
+    return {
+        "items": rows,
+        **count,
+        "missing": missing,
+        "changes": [
+            {"section": section, "field": name, "certified": old, "current": new} for section, name, old, new in changes
+        ],
+        "suggested": "approved" if count["nonconform"] == 0 and not missing else "approved_with_reservations",
+    }
+
+
+def reservation_state(due_on: date, responded: bool, lifted: bool, today: date) -> ReservationState:
+    if lifted:
+        return "lifted"
+    if due_on < today:
+        return "overdue"
+    return "responded" if responded else "open"

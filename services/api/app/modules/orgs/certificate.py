@@ -343,14 +343,7 @@ def render_html(cert: Certificate, verify_url: str) -> str:
     )
     empty = '<tr><td colspan="5">—</td></tr>'
     # Phase P3a: the Office's electronic seal, a picture of the Ed25519 signature above (it adds no signature).
-    seal = (
-        '<div class="seal"><b>الديوان الوطني للحماية المدنية</b><span>Office national de la protection civile</span>'
-        f"<span>ختم إلكتروني · Cachet électronique</span><span>{_e(approved_on)}</span>"
-        f'<span class="mono">{_e(cert.key_id or "")}</span><span class="sim">[SIM]</span></div>'
-        f'<p class="small" style="text-align:center">{SEAL_NOTE}</p>'
-        if cert.status == "approved" and cert.signature
-        else ""
-    )
+    seal = seal_html(cert, approved_on)
     return f"""<!doctype html><html lang="ar"><head><meta charset="utf-8"><style>{_CSS}</style></head><body>
 {"" if approved else '<div class="draft">مسودة · BROUILLON</div>'}
 <div class="head">
@@ -425,6 +418,18 @@ DISCLAIMER = {
 }
 
 
+def seal_html(cert: Certificate, approved_on: date | None) -> str:
+    """The Office's electronic seal on an approved certificate, a picture of its Ed25519 signature [SIM]."""
+    if cert.status != "approved" or not cert.signature:
+        return ""
+    return (
+        '<div class="seal"><b>الديوان الوطني للحماية المدنية</b><span>Office national de la protection civile</span>'
+        f"<span>ختم إلكتروني · Cachet électronique</span><span>{_e(approved_on)}</span>"
+        f'<span class="mono">{_e(cert.key_id or "")}</span><span class="sim">[SIM]</span></div>'
+        f'<p class="small" style="text-align:center">{SEAL_NOTE}</p>'
+    )
+
+
 #: Printed under the electronic seal until the Office provides its official seal (docs/phase-p3 §3.1).
 SEAL_NOTE = "نموذج ختم في انتظار الختم الرسمي للديوان / Modèle de cachet, en attente du cachet officiel"
 
@@ -437,7 +442,17 @@ def _render_pdf_sync(document: str) -> bytes:
 
 
 async def render_pdf(cert: Certificate) -> bytes:
-    return await to_thread.run_sync(_render_pdf_sync, render_html(cert, verify_url(cert.code)))
+    if cert.kind == "prevention":
+        from app.modules.orgs import prevention  # prevention builds on this module
+
+        document = prevention.render_certificate_html(cert, verify_url(cert.code))
+    else:
+        document = render_html(cert, verify_url(cert.code))
+    return await to_thread.run_sync(_render_pdf_sync, document)
+
+
+async def render_document_pdf(document: str) -> bytes:
+    return await to_thread.run_sync(_render_pdf_sync, document)
 
 
 def verify_url(code: str) -> str:
@@ -455,8 +470,8 @@ async def _store_pdf(cert: Certificate, name: str) -> None:
 # ---------------------------------------------------------------- lifecycle
 
 
-async def next_code(session: AsyncSession, gouvernorat_code: int | None) -> str:
-    """``EHC-<yy>-<gouvernorat>-<6 digits>``, numbered per year."""
+async def next_code(session: AsyncSession, gouvernorat_code: int | None, prefix: str = "EHC") -> str:
+    """``EHC-<yy>-<gouvernorat>-<6 digits>`` (``EHP-`` for a prevention certificate), numbered per year."""
     year = datetime.now(TUNIS_TZ).year
     number = await session.scalar(
         text(
@@ -465,7 +480,7 @@ async def next_code(session: AsyncSession, gouvernorat_code: int | None) -> str:
         ),
         {"year": year},
     )
-    return f"EHC-{year % 100:02d}-{gouvernorat_code or 0:02d}-{int(number or 0):06d}"
+    return f"{prefix}-{year % 100:02d}-{gouvernorat_code or 0:02d}-{int(number or 0):06d}"
 
 
 def certificate_out(
@@ -478,6 +493,7 @@ def certificate_out(
     return schemas.CertificateOut(
         id=cert.id,
         code=cert.code,
+        kind=cert.kind,
         status=cert.status,
         superseded=cert.superseded_by is not None,
         created_at=cert.created_at,
@@ -497,11 +513,11 @@ def certificate_out(
     )
 
 
-async def certificates_of(session: AsyncSession, org_id: uuid.UUID) -> list[Certificate]:
+async def certificates_of(session: AsyncSession, org_id: uuid.UUID, kind: str = "safety") -> list[Certificate]:
     return list(
         await session.scalars(
             select(Certificate)
-            .where(Certificate.org_id == org_id)
+            .where(Certificate.org_id == org_id, Certificate.kind == kind)
             .order_by(Certificate.created_at.desc(), Certificate.id.desc())
         )
     )
@@ -602,6 +618,7 @@ async def review(session: AsyncSession, cert: Certificate, body: schemas.Certifi
             update(Certificate)
             .where(
                 Certificate.org_id == cert.org_id,
+                Certificate.kind == cert.kind,
                 Certificate.id != cert.id,
                 Certificate.status == "approved",
                 Certificate.superseded_by.is_(None),
@@ -678,6 +695,7 @@ async def public_view(session: AsyncSession, code: str) -> schemas.PublicCertifi
     cls = cert.snapshot.get("classification", {})
     return schemas.PublicCertificate(
         code=cert.code,
+        kind=cert.kind,
         status=cert.status,
         valid=valid,
         superseded=cert.superseded_by is not None,
@@ -697,6 +715,7 @@ async def public_view(session: AsyncSession, code: str) -> schemas.PublicCertifi
             schemas.PublicStamp(place=s.place, stamped_on=s.stamped_on)
             for s in (await stamps_of(session, [cert.id]))[cert.id]
         ],
+        with_reservations=cert.snapshot.get("prevention", {}).get("decision") == "approved_with_reservations",
     )
 
 
@@ -710,7 +729,7 @@ async def queue(
     query = (
         select(Certificate, Organization, at)
         .join(Organization, Organization.id == Certificate.org_id)
-        .where(service.staff_scope(principal), Certificate.status == status_)
+        .where(service.staff_scope(principal), Certificate.kind == "safety", Certificate.status == status_)
     )
     if cursor:
         last_at, last_id = service.decode_cursor(cursor)
@@ -757,10 +776,15 @@ def is_current(cert: Certificate) -> bool:
     return cert.status == "approved" and cert.superseded_by is None
 
 
-async def current_of(session: AsyncSession, org_id: uuid.UUID) -> Certificate | None:
+async def current_of(session: AsyncSession, org_id: uuid.UUID, kind: str = "safety") -> Certificate | None:
     return await session.scalar(
         select(Certificate)
-        .where(Certificate.org_id == org_id, Certificate.status == "approved", Certificate.superseded_by.is_(None))
+        .where(
+            Certificate.org_id == org_id,
+            Certificate.kind == kind,
+            Certificate.status == "approved",
+            Certificate.superseded_by.is_(None),
+        )
         .order_by(Certificate.reviewed_at.desc())
         .limit(1)
     )
@@ -805,11 +829,18 @@ async def certificates_view(
 async def certificate_alerts(
     session: AsyncSession, org: Organization, regs: service.Registers | None, on: date
 ) -> list[schemas.Alert]:
-    """Alerts about the current certificate: ends within 90 days, has ended, or no longer matches the institution."""
+    """Alerts about the current certificate: ends within 90 days, has ended, or no longer matches the institution;
+    and about the current prevention certificate (phase P3b): ends within 90 days or has ended."""
+    alerts: list[schemas.Alert] = []
+    prevention = await current_of(session, org.id, "prevention")
+    if prevention is not None and prevention.valid_until is not None:
+        if prevention.valid_until < on:
+            alerts.append(schemas.Alert(kind="prevention_expired", ref=prevention.id, since=prevention.valid_until))
+        elif (prevention.valid_until - on).days <= domain.CERTIFICATE_REMINDER_DAYS[0]:
+            alerts.append(schemas.Alert(kind="prevention_expiring", ref=prevention.id, since=prevention.valid_until))
     cert = await current_of(session, org.id)
     if cert is None or cert.valid_until is None:
-        return []
-    alerts: list[schemas.Alert] = []
+        return alerts
     if cert.valid_until < on:
         alerts.append(schemas.Alert(kind="certificate_expired", ref=cert.id, since=cert.valid_until))
     elif (cert.valid_until - on).days <= domain.CERTIFICATE_REMINDER_DAYS[0]:
@@ -830,6 +861,7 @@ async def renewal_reminders(session: AsyncSession, today: date) -> int:
         select(Certificate, Organization)
         .join(Organization, Organization.id == Certificate.org_id)
         .where(
+            Certificate.kind == "safety",
             Certificate.status == "approved",
             Certificate.superseded_by.is_(None),
             Organization.status == domain.OrgStatus.ACTIVE,
@@ -870,7 +902,7 @@ async def renewal_reminders(session: AsyncSession, today: date) -> int:
 
 # ---------------------------------------------------------------- phase P3a: counter of a regional administration
 
-_CODE = re.compile(r"EHC-\d{2}-\d{2}-\d{6}")
+_CODE = re.compile(r"EH[CP]-\d{2}-\d{2}-\d{6}")
 _IMAGE_MAGIC = {b"\xff\xd8\xff": "image/jpeg", b"\x89PNG\r\n\x1a\n": "image/png"}
 
 

@@ -61,6 +61,10 @@ export const ERROR_CODES = [
   "server_error",
   "network_error",
   "unknown",
+  // Prevention visits (phase P3b).
+  "visit_open",
+  "reservation_lifted",
+  "invalid_year",
 ] as const;
 export type ErrorCode = (typeof ERROR_CODES)[number];
 

@@ -11,6 +11,7 @@ import '../../core/ui/emergency_action.dart';
 import '../../core/ui/tokens.dart';
 import '../../l10n/app_localizations.dart';
 import 'institution_providers.dart';
+import 'institution_records.dart';
 import 'institution_space.dart';
 import 'kind_fields.dart';
 import 'my_institution_screen.dart';
@@ -44,6 +45,7 @@ class InstitutionSectionScreen extends ConsumerWidget {
       InstitutionSection.evacuation => l10n.orgSectionEvacuation,
       InstitutionSection.reports => l10n.orgSectionReports,
       InstitutionSection.certificates => l10n.orgSectionCertificates,
+      InstitutionSection.records => l10n.orgSectionRecords,
       InstitutionSection.activities => l10n.orgSectionActivities,
       InstitutionSection.awareness => l10n.orgSectionAwareness,
       InstitutionSection.members => l10n.orgSectionMembers,
@@ -58,6 +60,7 @@ class InstitutionSectionScreen extends ConsumerWidget {
       InstitutionSection.evacuation => _Evacuation(orgId: orgId),
       InstitutionSection.reports => OrgReportsList(orgId: orgId),
       InstitutionSection.certificates => _Certificates(orgId: orgId),
+      InstitutionSection.records => OrgRecordsSection(orgId: orgId),
       InstitutionSection.members => _Members(orgId: orgId),
       InstitutionSection.card => const SizedBox.shrink(),
     };

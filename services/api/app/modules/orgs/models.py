@@ -210,7 +210,8 @@ class Certificate(Base):
     signature: Mapped[bytes | None] = mapped_column(LargeBinary)
     pdf_object_key: Mapped[str] = mapped_column(Text)
     pdf_sha256: Mapped[str] = mapped_column(Text)
-    created_by: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("identity.account.user_id"))
+    # Empty for a prevention certificate, which the Office issues (phase P3b).
+    created_by: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("identity.account.user_id"))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     submitted_by: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("identity.account.user_id"))
     submitted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
@@ -227,6 +228,11 @@ class Certificate(Base):
     # Phase P3a: renewal reminders already e-mailed (90 and 30 days before ``valid_until``).
     reminded_90_on: Mapped[date | None] = mapped_column(Date)
     reminded_30_on: Mapped[date | None] = mapped_column(Date)
+    # Phase P3b: the safety self-assessment, or the prevention certificate issued after a visit.
+    kind: Mapped[str] = mapped_column(Text, server_default="safety")
+    visit_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("org.prevention_visit.id", ondelete="SET NULL")
+    )
 
 
 class CertificateStamp(Base):
@@ -294,3 +300,66 @@ class Maintenance(Base):
     )
     recorded_by_name: Mapped[str | None] = mapped_column(Text)
     recorded_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class PreventionVisit(Base):
+    """A prevention visit: requested or scheduled, inspected on site, then decided (phase P3b)."""
+
+    __tablename__ = "prevention_visit"
+    __table_args__ = _SCHEMA
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    org_id: Mapped[uuid.UUID] = _org_fk()
+    origin: Mapped[str] = mapped_column(Text)
+    status: Mapped[str] = mapped_column(Text)
+    request_note: Mapped[str | None] = mapped_column(Text)
+    requested_by: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("identity.account.user_id", ondelete="SET NULL")
+    )
+    requested_by_name: Mapped[str | None] = mapped_column(Text)
+    requested_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    scheduled_on: Mapped[date | None] = mapped_column(Date)
+    inspector_name: Mapped[str | None] = mapped_column(Text)
+    scheduled_by: Mapped[str | None] = mapped_column(Text)
+    scheduled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    inspected_on: Mapped[date | None] = mapped_column(Date)
+    attendees: Mapped[str | None] = mapped_column(Text)
+    inspected_by: Mapped[str | None] = mapped_column(Text)
+    inspected_by_name: Mapped[str | None] = mapped_column(Text)
+    declared: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    comparison: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    decision: Mapped[str | None] = mapped_column(Text)
+    decision_reason: Mapped[str | None] = mapped_column(Text)
+    decided_by: Mapped[str | None] = mapped_column(Text)
+    decided_by_name: Mapped[str | None] = mapped_column(Text)
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    report_object_key: Mapped[str | None] = mapped_column(Text)
+    report_sha256: Mapped[str | None] = mapped_column(Text)
+    cancel_reason: Mapped[str | None] = mapped_column(Text)
+    cancelled_by: Mapped[str | None] = mapped_column(Text)
+    cancelled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class PreventionReservation(Base):
+    """A reservation of a prevention decision, with its deadline (phase P3b)."""
+
+    __tablename__ = "prevention_reservation"
+    __table_args__ = _SCHEMA
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    visit_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("org.prevention_visit.id", ondelete="CASCADE")
+    )
+    org_id: Mapped[uuid.UUID] = _org_fk()
+    item_key: Mapped[str | None] = mapped_column(Text)
+    text: Mapped[str] = mapped_column(Text)
+    due_on: Mapped[date] = mapped_column(Date)
+    response_note: Mapped[str | None] = mapped_column(Text)
+    responded_by_name: Mapped[str | None] = mapped_column(Text)
+    responded_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    lifted_by: Mapped[str | None] = mapped_column(Text)
+    lifted_by_name: Mapped[str | None] = mapped_column(Text)
+    lift_note: Mapped[str | None] = mapped_column(Text)
+    lifted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
