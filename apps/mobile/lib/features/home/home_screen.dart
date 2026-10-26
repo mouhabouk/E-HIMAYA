@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/a11y/simple_mode.dart';
 import '../../core/auth/identity.dart';
 import '../../core/http/models.dart';
 import '../../core/routing/app_router.dart';
@@ -22,6 +23,7 @@ import '../reports/reports_providers.dart';
 import '../sos/sos_widgets.dart';
 import '../weather/weather_card.dart';
 import 'location_strip.dart';
+import 'simple_home.dart';
 
 /// Home (phase A, addition 9): SOS and "report an incident" first, the four emergency numbers
 /// (a tap opens the dialler, never an automatic call), shortcuts, weather, and a fixed
@@ -31,6 +33,8 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Phase P5b (F-APP-142): the simplified home replaces this one while it is chosen.
+    if (ref.watch(simpleModeProvider)) return const SimpleHomeScreen();
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final pending = ref.watch(pendingSyncCountProvider).value ?? 0;

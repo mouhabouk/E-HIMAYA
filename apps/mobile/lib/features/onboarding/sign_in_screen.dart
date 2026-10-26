@@ -25,9 +25,16 @@ import 'login_actions.dart';
 /// [standalone]: opened from inside the app (an anonymous citizen signing in): a success pops
 /// the screen with `true`.
 class SignInScreen extends ConsumerStatefulWidget {
-  const SignInScreen({super.key, this.standalone = false});
+  const SignInScreen({
+    super.key,
+    this.standalone = false,
+    this.role = UserRole.citizen,
+  });
 
   final bool standalone;
+
+  /// Phase P5b (F-APP-12): an institution signing in to register goes on to the form.
+  final UserRole role;
 
   @override
   ConsumerState<SignInScreen> createState() => _SignInScreenState();
@@ -115,8 +122,14 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       final session = await ref
           .read(phoneOtpClientProvider)
           .verify(phone, _code.text.trim());
-      await ref.read(identityProvider.notifier).signInWithSession(session);
+      await ref
+          .read(identityProvider.notifier)
+          .signInWithSession(session, role: widget.role);
       ref.read(anonBlockedProvider.notifier).set(false);
+      if (mounted && widget.role == UserRole.institution) {
+        context.go(Routes.institutionRegister);
+        return;
+      }
       if (mounted && widget.standalone && context.canPop()) context.pop(true);
     } on PhoneOtpException catch (e) {
       if (!mounted) return;

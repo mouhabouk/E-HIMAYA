@@ -21,6 +21,9 @@ enum ApiErrorCode {
   invalidIdentifier('invalid_identifier'),
   identifierAlreadyRegistered('identifier_already_registered'),
   emailNotVerified('email_not_verified'),
+  // Phase P5b: the work e-mail confirmed by code.
+  invalidCode('invalid_code'),
+  codeExpired('code_expired'),
   // Phase P2b: Office messages, drills and events, maintenance log.
   messageNotFound('message_not_found'),
   ackNotRequired('ack_not_required'),

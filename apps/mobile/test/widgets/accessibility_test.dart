@@ -10,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
 import '../helpers/app_harness.dart';
+import '../helpers/fake_http.dart';
 import '../helpers/org_fixtures.dart';
 import 'institution_flow_test.dart' show api;
 
@@ -53,6 +54,9 @@ void main() {
     Routes.institutionSection(orgId, 'card'),
     Routes.institutionRegister,
     Routes.live,
+    // Phase P5b.
+    Routes.rateApp,
+    Routes.introReplay,
   ];
   final welcome = <String, Map<String, Object>>{
     'language': {},
@@ -80,6 +84,32 @@ void main() {
           null,
           2.0,
         ),
+    // Phase P5b (F-APP-142): the simplified home, large buttons in plain words.
+    for (final locale in ['ar', 'fr'])
+      (
+        'simple home $locale',
+        {...registeredPrefs(locale: locale), 'a11y.simple_mode': true},
+        Routes.home,
+        2.0,
+      ),
+    (
+      'simple home ar dark',
+      {
+        ...registeredPrefs(locale: 'ar'),
+        'a11y.simple_mode': true,
+        'settings.theme': 'dark',
+      },
+      Routes.home,
+      1.0,
+    ),
+    // Phase P5b (F-APP-12): the work e-mail step before the institution form.
+    for (final locale in ['ar', 'fr'])
+      (
+        'email confirm $locale',
+        {...registeredPrefs(locale: locale), 'test.email_unverified': true},
+        Routes.institutionRegister,
+        2.0,
+      ),
     for (final r in routes) ...[
       ('$r ar', registeredPrefs(locale: 'ar'), r, 2.0),
       ('$r fr', registeredPrefs(locale: 'fr'), r, 2.0),
@@ -107,7 +137,16 @@ void main() {
           tester,
           prefs: prefs,
           session: route == null ? null : testSession,
-          api: (r) => api(r, role: 'admin'),
+          api: (r) => r.path == '/api/v1/me/email'
+              ? FakeResponse(
+                  200,
+                  json: {
+                    'email': null,
+                    'verified': !prefs.containsKey('test.email_unverified'),
+                    'source': null,
+                  },
+                )
+              : api(r, role: 'admin'),
         );
         await _settle(tester);
         if (route != null) {

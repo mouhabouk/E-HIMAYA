@@ -2113,6 +2113,48 @@
         "title": "Bilingual",
         "type": "object"
       },
+      "BuildAverage": {
+        "properties": {
+          "average": {
+            "title": "Average",
+            "type": "number"
+          },
+          "build": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Build"
+          },
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version"
+          }
+        },
+        "required": [
+          "build",
+          "version",
+          "count",
+          "average"
+        ],
+        "title": "BuildAverage",
+        "type": "object"
+      },
       "CalendarOut": {
         "properties": {
           "days": {
@@ -3589,6 +3631,50 @@
           "summary"
         ],
         "title": "CloseIn",
+        "type": "object"
+      },
+      "CodeIn": {
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "format": "email",
+            "title": "Email",
+            "type": "string"
+          },
+          "locale": {
+            "default": "ar",
+            "enum": [
+              "ar",
+              "fr",
+              "en"
+            ],
+            "title": "Locale",
+            "type": "string"
+          }
+        },
+        "required": [
+          "email"
+        ],
+        "title": "CodeIn",
+        "type": "object"
+      },
+      "CodeOut": {
+        "properties": {
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "sent": {
+            "title": "Sent",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "sent",
+          "expires_at"
+        ],
+        "title": "CodeOut",
         "type": "object"
       },
       "CommandLevelIn": {
@@ -5684,6 +5770,47 @@
         "title": "DownloadOut",
         "type": "object"
       },
+      "EmailOut": {
+        "properties": {
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "enum": [
+                  "account",
+                  "code"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
+          "verified": {
+            "title": "Verified",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "email",
+          "verified",
+          "source"
+        ],
+        "title": "EmailOut",
+        "type": "object"
+      },
       "EntryFields": {
         "properties": {
           "access": {
@@ -7477,12 +7604,30 @@
           "account": {
             "$ref": "#/components/schemas/ExportAccount"
           },
+          "app_ratings": {
+            "items": {
+              "$ref": "#/components/schemas/ExportRating"
+            },
+            "title": "App Ratings",
+            "type": "array"
+          },
           "calls": {
             "items": {
               "$ref": "#/components/schemas/ExportCall"
             },
             "title": "Calls",
             "type": "array"
+          },
+          "confirmed_email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confirmed Email"
           },
           "consents": {
             "items": {
@@ -7585,7 +7730,9 @@
           "rewards",
           "devices",
           "messages",
-          "contact"
+          "contact",
+          "app_ratings",
+          "confirmed_email"
         ],
         "title": "ExportOut",
         "type": "object"
@@ -7740,6 +7887,61 @@
           "updated_at"
         ],
         "title": "ExportProfile",
+        "type": "object"
+      },
+      "ExportRating": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "platform": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Platform"
+          },
+          "remark": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Remark"
+          },
+          "stars": {
+            "title": "Stars",
+            "type": "integer"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version"
+          }
+        },
+        "required": [
+          "stars",
+          "remark",
+          "platform",
+          "version",
+          "created_at"
+        ],
+        "title": "ExportRating",
         "type": "object"
       },
       "ExportReport": {
@@ -8363,6 +8565,109 @@
           "truncated"
         ],
         "title": "FeaturesOut",
+        "type": "object"
+      },
+      "FeedbackIn": {
+        "additionalProperties": false,
+        "properties": {
+          "build": {
+            "anyOf": [
+              {
+                "maximum": 1000000.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Build"
+          },
+          "locale": {
+            "default": "ar",
+            "enum": [
+              "ar",
+              "fr",
+              "en"
+            ],
+            "title": "Locale",
+            "type": "string"
+          },
+          "platform": {
+            "anyOf": [
+              {
+                "enum": [
+                  "android",
+                  "ios"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Platform"
+          },
+          "remark": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Remark"
+          },
+          "stars": {
+            "maximum": 5.0,
+            "minimum": 1.0,
+            "title": "Stars",
+            "type": "integer"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "maxLength": 20,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version"
+          }
+        },
+        "required": [
+          "stars"
+        ],
+        "title": "FeedbackIn",
+        "type": "object"
+      },
+      "FeedbackOut": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "stars": {
+            "title": "Stars",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "stars",
+          "created_at"
+        ],
+        "title": "FeedbackOut",
         "type": "object"
       },
       "FireDangerOut": {
@@ -10259,7 +10564,7 @@
         "properties": {
           "items": {
             "items": {
-              "$ref": "#/components/schemas/SummaryOut"
+              "$ref": "#/components/schemas/app__modules__contact__router__SummaryOut"
             },
             "title": "Items",
             "type": "array"
@@ -18161,6 +18466,59 @@
         "title": "ReleaseNotesOut",
         "type": "object"
       },
+      "RemarkOut": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "locale": {
+            "title": "Locale",
+            "type": "string"
+          },
+          "platform": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Platform"
+          },
+          "remark": {
+            "title": "Remark",
+            "type": "string"
+          },
+          "stars": {
+            "title": "Stars",
+            "type": "integer"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version"
+          }
+        },
+        "required": [
+          "stars",
+          "remark",
+          "platform",
+          "version",
+          "locale",
+          "created_at"
+        ],
+        "title": "RemarkOut",
+        "type": "object"
+      },
       "ReportFilters": {
         "properties": {
           "category": {
@@ -24144,104 +24502,6 @@
         "title": "SummaryHazmat",
         "type": "object"
       },
-      "SummaryOut": {
-        "properties": {
-          "anonymous": {
-            "title": "Anonymous",
-            "type": "boolean"
-          },
-          "assigned_name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Assigned Name"
-          },
-          "created_at": {
-            "format": "date-time",
-            "title": "Created At",
-            "type": "string"
-          },
-          "due_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Due At"
-          },
-          "gouvernorat_code": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Gouvernorat Code"
-          },
-          "id": {
-            "format": "uuid",
-            "title": "Id",
-            "type": "string"
-          },
-          "kind": {
-            "title": "Kind",
-            "type": "string"
-          },
-          "number": {
-            "title": "Number",
-            "type": "string"
-          },
-          "overdue": {
-            "title": "Overdue",
-            "type": "boolean"
-          },
-          "status": {
-            "title": "Status",
-            "type": "string"
-          },
-          "subject": {
-            "title": "Subject",
-            "type": "string"
-          },
-          "updated_at": {
-            "format": "date-time",
-            "title": "Updated At",
-            "type": "string"
-          },
-          "version": {
-            "title": "Version",
-            "type": "integer"
-          }
-        },
-        "required": [
-          "id",
-          "number",
-          "kind",
-          "status",
-          "subject",
-          "gouvernorat_code",
-          "created_at",
-          "updated_at",
-          "due_at",
-          "overdue",
-          "assigned_name",
-          "anonymous",
-          "version"
-        ],
-        "title": "SummaryOut",
-        "type": "object"
-      },
       "SummaryTeamMember": {
         "properties": {
           "full_name": {
@@ -25626,6 +25886,21 @@
         "title": "ValidationError",
         "type": "object"
       },
+      "VerifyIn": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "pattern": "^\\d{6}$",
+            "title": "Code",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "title": "VerifyIn",
+        "type": "object"
+      },
       "VersionList": {
         "properties": {
           "items": {
@@ -26984,6 +27259,158 @@
           "next_cursor"
         ],
         "title": "ReportPage",
+        "type": "object"
+      },
+      "app__modules__appinfo__feedback__SummaryOut": {
+        "properties": {
+          "average": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Average"
+          },
+          "by_build": {
+            "items": {
+              "$ref": "#/components/schemas/BuildAverage"
+            },
+            "title": "By Build",
+            "type": "array"
+          },
+          "by_stars": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "By Stars",
+            "type": "object"
+          },
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "days": {
+            "title": "Days",
+            "type": "integer"
+          },
+          "remarks": {
+            "items": {
+              "$ref": "#/components/schemas/RemarkOut"
+            },
+            "title": "Remarks",
+            "type": "array"
+          }
+        },
+        "required": [
+          "days",
+          "count",
+          "average",
+          "by_stars",
+          "by_build",
+          "remarks"
+        ],
+        "title": "SummaryOut",
+        "type": "object"
+      },
+      "app__modules__contact__router__SummaryOut": {
+        "properties": {
+          "anonymous": {
+            "title": "Anonymous",
+            "type": "boolean"
+          },
+          "assigned_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assigned Name"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "due_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due At"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "number": {
+            "title": "Number",
+            "type": "string"
+          },
+          "overdue": {
+            "title": "Overdue",
+            "type": "boolean"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "subject": {
+            "title": "Subject",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "kind",
+          "status",
+          "subject",
+          "gouvernorat_code",
+          "created_at",
+          "updated_at",
+          "due_at",
+          "overdue",
+          "assigned_name",
+          "anonymous",
+          "version"
+        ],
+        "title": "SummaryOut",
         "type": "object"
       },
       "app__modules__content__guide__ItemOut": {
@@ -29321,6 +29748,71 @@
         ]
       }
     },
+    "/api/v1/app/feedback": {
+      "post": {
+        "operationId": "rate_app_api_v1_app_feedback_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FeedbackIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedbackOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Rate App",
+        "tags": [
+          "app"
+        ]
+      }
+    },
     "/api/v1/app/version": {
       "get": {
         "operationId": "app_version_api_v1_app_version_get",
@@ -31145,6 +31637,191 @@
         "summary": "Put Key",
         "tags": [
           "doctors"
+        ]
+      }
+    },
+    "/api/v1/me/email": {
+      "get": {
+        "operationId": "my_email_api_v1_me_email_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmailOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "My Email",
+        "tags": [
+          "identity"
+        ]
+      }
+    },
+    "/api/v1/me/email/code": {
+      "post": {
+        "operationId": "send_code_api_v1_me_email_code_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CodeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Send Code",
+        "tags": [
+          "identity"
+        ]
+      }
+    },
+    "/api/v1/me/email/verify": {
+      "post": {
+        "operationId": "verify_code_api_v1_me_email_verify_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmailOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Verify Code",
+        "tags": [
+          "identity"
         ]
       }
     },
@@ -38776,6 +39453,56 @@
         "tags": [
           "staff",
           "analytics"
+        ]
+      }
+    },
+    "/api/v1/staff/app-feedback": {
+      "get": {
+        "operationId": "summary_api_v1_staff_app_feedback_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "days",
+            "required": false,
+            "schema": {
+              "default": 90,
+              "maximum": 365,
+              "minimum": 1,
+              "title": "Days",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__appinfo__feedback__SummaryOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Summary",
+        "tags": [
+          "app"
         ]
       }
     },

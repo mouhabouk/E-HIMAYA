@@ -45,6 +45,17 @@ class Appareil {
   jeton push, plateforme
   langue, gouvernorat
 }
+class CodeCourriel {
+  adresse : chiffrée
+  code : HMAC, expire en 10 min
+  tentatives restantes : 5
+  confirmé le
+}
+class ÉvaluationApp {
+  étoiles : 1..5
+  remarque : chiffrée
+  plateforme, build, version, langue
+}
 class AgentStaff <<Keycloak>> {
   sub, nom
   rôles[]
@@ -66,6 +77,8 @@ Compte "1" -- "0..1" Médecin
 Bénévole "1" -- "*" DécisionRevue
 Médecin "1" -- "*" DécisionRevue
 Compte "1" -- "*" Appareil
+Compte "1" -- "0..1" CodeCourriel
+Compte "1" -- "*" ÉvaluationApp
 Gouvernorat "1" -- "*" Délégation
 Profil "*" --> "1" Gouvernorat
 AgentStaff "*" --> "0..1" Gouvernorat : portée

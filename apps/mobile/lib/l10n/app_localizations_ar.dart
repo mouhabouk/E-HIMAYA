@@ -80,10 +80,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get institutionBody =>
-      'التسجيل وجوبي بالنسبة إلى المؤسسات ويتم عبر بوابة المؤسسات وليس عبر هذا التطبيق. إن كان لمؤسستك حساب، يمكنك الدخول أسفله.';
+      'سجّل مؤسستك من الهاتف: رقم هاتفك ورمز SMS، ثم بريدك المهني ورمز يصلك عليه، ثم بطاقة المؤسسة بمعرّفها الجبائي أو رقم السجل الوطني. يبقى الحساب «في انتظار المراجعة» حتى تؤكده الإدارة.';
 
   @override
-  String get institutionLogin => 'الدخول';
+  String get institutionLogin => 'لمؤسستي حساب: الدخول';
 
   @override
   String get citizenModeTitle => 'كيف تريد التبليغ؟';
@@ -4946,4 +4946,111 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get a11yPhoneNote =>
       'حجم الخط وقارئ الشاشة (TalkBack أو VoiceOver) يُضبطان في الهاتف، والتطبيق يتبعهما حتى تكبير 200%. في الأدلة والنصائح والتنبيهات زر «استمع» يقرأ النص.';
+
+  @override
+  String get a11ySimpleSection => 'الوضع المبسّط';
+
+  @override
+  String get a11ySimpleMode => 'الوضع المبسّط';
+
+  @override
+  String get a11ySimpleModeHelp =>
+      'رئيسية بخمسة أزرار كبيرة وكلمات بسيطة، قريبة من الإبهام.';
+
+  @override
+  String get simpleCall198 => 'اتصل بالحماية المدنية 198';
+
+  @override
+  String get simpleReport => 'أبلّغ عن خطر';
+
+  @override
+  String get simpleSosMessage => 'أرسل رسالة استغاثة لأقاربي';
+
+  @override
+  String get simpleWhatToDo => 'ماذا أفعل؟';
+
+  @override
+  String get simpleAlerts => 'التنبيهات';
+
+  @override
+  String get simpleSosHint => 'للنجدة: اضغط مطوّلا على الزر الأحمر.';
+
+  @override
+  String get simpleShowAll => 'عرض كل الخيارات';
+
+  @override
+  String get rateTitle => 'قيّم التطبيق';
+
+  @override
+  String get rateSubtitle => 'رأيك يحسّن التطبيق';
+
+  @override
+  String get rateQuestion => 'ما رأيك في التطبيق؟';
+
+  @override
+  String rateStar(int count) {
+    return '$count من 5';
+  }
+
+  @override
+  String get rateRemark => 'ملاحظة (اختيارية)';
+
+  @override
+  String get rateSend => 'أرسل';
+
+  @override
+  String get rateChooseStars => 'اختر عدد النجوم.';
+
+  @override
+  String get rateThanks => 'شكرا، وصل تقييمك.';
+
+  @override
+  String get rateContactNote => 'تحتاج ردا؟ استعمل «اتصل بنا».';
+
+  @override
+  String get introReplayTitle => 'جولة التعريف';
+
+  @override
+  String get introReplaySubtitle => 'البطاقات الخمس من أول تشغيل';
+
+  @override
+  String get institutionRegister => 'سجّل مؤسستك';
+
+  @override
+  String get emailConfirmTitle => 'البريد المهني';
+
+  @override
+  String get emailConfirmBody =>
+      'لتسجيل مؤسسة نحتاج بريدا مؤكَّدا. نرسل إليه رمزا من 6 أرقام.';
+
+  @override
+  String get emailField => 'البريد الإلكتروني';
+
+  @override
+  String get emailSendCode => 'أرسل الرمز';
+
+  @override
+  String emailCodeSent(String email) {
+    return 'أرسلنا رمزا إلى $email. صالح 10 دقائق.';
+  }
+
+  @override
+  String get emailCodeField => 'الرمز';
+
+  @override
+  String get emailVerify => 'تأكيد';
+
+  @override
+  String emailConfirmed(String email) {
+    return 'البريد مؤكَّد: $email';
+  }
+
+  @override
+  String get emailChange => 'تغيير البريد';
+
+  @override
+  String get emailCodeInvalid => 'الرمز غير صحيح.';
+
+  @override
+  String get emailCodeExpired => 'انتهت صلاحية الرمز. اطلب رمزا جديدا.';
 }

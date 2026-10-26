@@ -25,6 +25,7 @@ from app.core.config import get_settings
 from app.core.db import get_session
 from app.core.events import emit
 from app.core.security import CurrentPrincipal, Principal, Realm
+from app.modules.identity.email import confirmed_email
 from app.modules.identity.service import Reporter, resolve_reporter
 from app.modules.notify import outbox, templates
 from app.modules.notify.org_target import ORG_TARGET
@@ -70,6 +71,8 @@ class PortalUser:
 
     reporter: Reporter
     principal: Principal
+    # Work e-mail confirmed by code in the app (phase P5b, F-APP-12), for accounts signed in with a phone number.
+    confirmed_email: str | None = None
 
     @property
     def user_id(self) -> uuid.UUID:
@@ -82,13 +85,23 @@ class PortalUser:
         return str(name or claims.get("preferred_username") or "") or None
 
     @property
-    def email(self) -> str | None:
+    def _token_email(self) -> str | None:
         value = self.principal.claims.get("email")
         return str(value).lower() if value else None
 
     @property
+    def _token_email_verified(self) -> bool:
+        return bool(self.principal.claims.get("email_verified")) and self._token_email is not None
+
+    @property
+    def email(self) -> str | None:
+        if self._token_email_verified or self.confirmed_email is None:
+            return self._token_email
+        return self.confirmed_email
+
+    @property
     def email_verified(self) -> bool:
-        return bool(self.principal.claims.get("email_verified")) and self.email is not None
+        return self._token_email_verified or self.confirmed_email is not None
 
     @property
     def actor(self) -> str:
@@ -101,7 +114,7 @@ async def get_portal_user(
     if principal.realm is not Realm.PUBLIC:
         raise HTTPException(status.HTTP_403_FORBIDDEN, "realm_not_allowed")
     reporter = await resolve_reporter(session, principal, None)
-    return PortalUser(reporter=reporter, principal=principal)
+    return PortalUser(reporter=reporter, principal=principal, confirmed_email=await confirmed_email(session, reporter))
 
 
 CurrentUser = Annotated[PortalUser, Depends(get_portal_user)]
