@@ -7,7 +7,7 @@ RUN CGO_ENABLED=0 GOBIN=/out go install -trimpath -ldflags '-d -w' \
  && /out/gosu --version
 
 # PostgreSQL 17 + PostGIS 3 + pgvector, from the official image and the PGDG repository it already configures.
-FROM postgres:17-bookworm@sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826
+FROM postgres:17-bookworm@sha256:858bb5e98eed02eb8cafbcdc007f9a65d1b613972028944a8ec2133ccaf80d27
 
 COPY --from=gosu /out/gosu /usr/local/bin/gosu
 RUN gosu nobody true
