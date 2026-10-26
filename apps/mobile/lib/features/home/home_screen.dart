@@ -100,36 +100,47 @@ class HomeScreen extends ConsumerWidget {
           () => openMyInstitution(context, orgs),
         ),
     ];
+    final largeText = MediaQuery.textScalerOf(context).scale(10) > 15;
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 8,
-        title: Row(
-          children: [
-            const BrandLogo(size: 36),
-            const SizedBox(width: 8),
-            Flexible(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    l10n.appTitle,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontWeight: FontWeight.w800),
-                  ),
-                  Text(
-                    l10n.homeSubtitle,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.bodySmall,
-                  ),
-                ],
+        // Accessibility: at large text sizes the actions leave little room, so the logo yields
+        // its place to the app's name.
+        title: LayoutBuilder(
+          builder: (context, box) => Row(
+            children: [
+              if (box.maxWidth >= 120) ...[
+                const BrandLogo(size: 36),
+                const SizedBox(width: 8),
+              ],
+              Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      l10n.appTitle,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontWeight: FontWeight.w800),
+                    ),
+                    // Accessibility: at large text sizes the subtitle no longer fits the
+                    // toolbar height, so only the title is kept.
+                    if (MediaQuery.textScalerOf(context).scale(10) <= 13)
+                      Text(
+                        l10n.homeSubtitle,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodySmall,
+                      ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         actions: [
-          const ThemeToggleAction(),
-          const LanguageBar(),
+          // Accessibility: at large text sizes the theme and language switches stay in the
+          // settings, so the app's name keeps room to be read.
+          if (!largeText) ...[const ThemeToggleAction(), const LanguageBar()],
           IconButton(
             key: const Key('home-notifications'),
             tooltip: l10n.notificationsTitle,

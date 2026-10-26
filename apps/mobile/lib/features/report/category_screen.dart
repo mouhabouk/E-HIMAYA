@@ -38,7 +38,13 @@ class CategoryScreen extends StatelessWidget {
                 maxCrossAxisExtent: 200,
                 mainAxisSpacing: 12,
                 crossAxisSpacing: 12,
-                childAspectRatio: 1.15,
+                // Accessibility: taller cards as the text grows, so labels never clip.
+                childAspectRatio:
+                    1.15 /
+                    (MediaQuery.textScalerOf(context).scale(10) / 10).clamp(
+                      1.0,
+                      3.0,
+                    ),
                 children: [
                   for (final c in ReportCategory.grid)
                     Card(
