@@ -4766,4 +4766,183 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get orgCertSectionEvacuation => 'Evacuation';
+
+  @override
+  String get orgSectionRecords => 'Reports and records';
+
+  @override
+  String get orgRecordsHint =>
+      'Everything the Office recorded about the institution: visit reports, reservations and deadlines, certificates, drills and the annual report. Requests and answers are made on the portal.';
+
+  @override
+  String get orgRecordsVisits => 'Prevention visits';
+
+  @override
+  String get orgRecordsVisitsEmpty => 'No prevention visit yet.';
+
+  @override
+  String get orgVisitOriginRequest => 'Requested by the institution';
+
+  @override
+  String get orgVisitOriginOffice => 'Scheduled by the Office';
+
+  @override
+  String get orgVisitStatusRequested => 'Requested';
+
+  @override
+  String get orgVisitStatusScheduled => 'Scheduled';
+
+  @override
+  String get orgVisitStatusInspected => 'Inspected, decision pending';
+
+  @override
+  String get orgVisitStatusDecided => 'Decided';
+
+  @override
+  String get orgVisitStatusCancelled => 'Cancelled';
+
+  @override
+  String get orgVisitDecisionApproved => 'Approved';
+
+  @override
+  String get orgVisitDecisionReservations => 'Approved with reservations';
+
+  @override
+  String get orgVisitDecisionRefused => 'Refused';
+
+  @override
+  String orgVisitOn(String date) {
+    return 'Visit on $date';
+  }
+
+  @override
+  String orgVisitInspector(String name) {
+    return 'Inspector: $name';
+  }
+
+  @override
+  String orgVisitComparison(int conform, int nonconform, int notChecked) {
+    return 'Comparison: $conform conforming · $nonconform non-conforming · $notChecked not checked';
+  }
+
+  @override
+  String orgVisitReason(String reason) {
+    return 'Reason: $reason';
+  }
+
+  @override
+  String get orgVisitReport => 'Visit report (PDF)';
+
+  @override
+  String get orgCertificatePdf => 'Certificate (PDF)';
+
+  @override
+  String get orgPdfUnavailable => 'The document could not be opened.';
+
+  @override
+  String get orgRecordsReservations => 'Reservations and deadlines';
+
+  @override
+  String get orgRecordsReservationsEmpty => 'No reservation to address.';
+
+  @override
+  String orgReservationDue(String date) {
+    return 'Due by $date';
+  }
+
+  @override
+  String get orgReservationOpen => 'Open';
+
+  @override
+  String get orgReservationResponded => 'Answered, awaiting the Office';
+
+  @override
+  String get orgReservationOverdue => 'Overdue';
+
+  @override
+  String get orgReservationLifted => 'Lifted';
+
+  @override
+  String get orgCertKindSafety => 'Safety certificate';
+
+  @override
+  String get orgCertKindPrevention => 'Prevention certificate';
+
+  @override
+  String get orgCertPreventionSim => '[SIM] Model awaiting the Office';
+
+  @override
+  String get orgRecordsDrills => 'Drill reports';
+
+  @override
+  String get orgRecordsDrillsEmpty => 'No drill recorded this year.';
+
+  @override
+  String get orgRecordsAnnual => 'Annual report';
+
+  @override
+  String get orgRecordsYear => 'Year';
+
+  @override
+  String orgAnnualDrills(int count, int participants) {
+    return '$count drill(s), $participants participant(s)';
+  }
+
+  @override
+  String orgAnnualEvents(int count) {
+    return '$count public event(s)';
+  }
+
+  @override
+  String orgAnnualMaintenance(int count) {
+    return '$count maintenance operation(s)';
+  }
+
+  @override
+  String orgAnnualTraining(int valid, int expiring, int expired) {
+    return 'Training: $valid valid · $expiring expiring · $expired expired';
+  }
+
+  @override
+  String orgAnnualVisits(int count) {
+    return '$count prevention visit(s)';
+  }
+
+  @override
+  String orgAnnualReservations(int opened, int lifted, int overdue) {
+    return 'Reservations: $opened issued · $lifted lifted · $overdue overdue';
+  }
+
+  @override
+  String orgAnnualCertificates(int count, int stamps) {
+    return '$count certificate(s), $stamps stamp(s)';
+  }
+
+  @override
+  String orgAnnualReports(int count) {
+    return '$count report(s) sent from the institution';
+  }
+
+  @override
+  String get orgRecordsReminders => 'Reminders';
+
+  @override
+  String get orgRecordsRemindersEmpty => 'Nothing to do for now.';
+
+  @override
+  String get orgAlertVisitScheduled => 'A prevention visit is scheduled';
+
+  @override
+  String get orgAlertReservationDueSoon => 'A reservation is due soon';
+
+  @override
+  String get orgAlertReservationOverdue => 'A reservation is overdue';
+
+  @override
+  String get orgAlertPreventionExpiring =>
+      'The prevention certificate expires soon';
+
+  @override
+  String get orgAlertPreventionExpired =>
+      'The prevention certificate has expired';
 }

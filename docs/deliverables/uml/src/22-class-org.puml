@@ -79,6 +79,24 @@ class Certificat {
   valide jusqu'au
   {field} rappels 90 / 30 jours (P3a)
   {field} à mettre à jour <<calculé>> (P3a)
+  {field} type : sécurité | prévention (P3b)
+}
+class VisitePrévention {
+  origine : demande | Office
+  statut : demandée | programmée | inspectée | décidée | annulée
+  date prévue, inspecteur
+  date d'inspection, présents
+  déclaré (instantané), constats
+  rapport de comparaison <<calculé>>
+  décision : favorable | réserves | refus motivé
+  procès-verbal PDF sha256
+}
+class Réserve {
+  texte, point de la grille
+  délai [≤ 12 mois]
+  réponse de l'établissement
+  levée par, note
+  {field} état : ouverte | répondue | en retard | levée <<calculé>>
 }
 class CachetManuel {
   lieu, gouvernorat
@@ -115,6 +133,9 @@ Document "1" *-- "1..*" VersionDocument
 MatièreDangereuse "*" --> "0..1" Document : FDS
 Établissement "1" -- "*" Certificat
 Certificat "1" *-- "*" CachetManuel : P3a
+Établissement "1" *-- "*" VisitePrévention : P3b
+VisitePrévention "1" *-- "*" Réserve
+VisitePrévention "1" --> "0..1" Certificat : certificat de prévention
 Établissement ..> Classement
 Établissement ..> "*" ChampDuType : selon le type
 Membre "*" --> "1" "Compte"

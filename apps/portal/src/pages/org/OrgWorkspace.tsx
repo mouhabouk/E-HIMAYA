@@ -35,6 +35,7 @@ export const TABS: readonly { path: string; key: string; icon: IconName; tone: T
   { path: "activities", key: "activities", icon: "schedule", tone: "pink" },
   { path: "reports", key: "reports", icon: "campaign", tone: "red" },
   { path: "certificate", key: "certificate", icon: "workspacePremium", tone: "amber" },
+  { path: "prevention", key: "prevention", icon: "policy", tone: "purple" },
 ];
 
 /** Workspace of one institution: header, section navigation and the selected section. */

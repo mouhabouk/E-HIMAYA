@@ -38,7 +38,8 @@
     "contact": "Contact us",
     "doctors": "Doctors",
     "medicalCommittee": "Medical committee",
-    "counter": "Counter"
+    "counter": "Counter",
+    "prevention": "Prevention visits"
   },
   "header": {
     "scope": "Geographic scope",
@@ -301,7 +302,18 @@
     "place_required": "The stamp place is required.",
     "certificate_not_valid": "Only a currently valid certificate can be stamped.",
     "photo_too_large": "The photo is larger than 5 MB.",
-    "unsupported_media_type": "File type not accepted."
+    "unsupported_media_type": "File type not accepted.",
+    "visit_open": "The institution already has an open visit.",
+    "invalid_scheduled_on": "Invalid visit date: from today to 12 months.",
+    "invalid_inspected_on": "The inspection date cannot be in the future.",
+    "unknown_item": "Item not in the inspection grid.",
+    "finding_detail_required": "Each non-conforming item needs the value found or a note.",
+    "reservations_required": "Add at least one reservation.",
+    "reservations_not_allowed": "Reservations only go with “approved with reservations”.",
+    "invalid_due_on": "A reservation deadline runs from tomorrow to 12 months.",
+    "reservation_text_required": "The reservation text is required.",
+    "reservation_lifted": "This reservation is lifted.",
+    "invalid_year": "Invalid year."
   },
   "kpi": {
     "title": "Key indicators",
@@ -828,7 +840,12 @@
       "maintenance_due_soon": "Maintenance due soon",
       "certificate_expiring": "Certificate expiring soon",
       "certificate_expired": "Certificate expired",
-      "certificate_needs_update": "Certificate needs updating"
+      "certificate_needs_update": "Certificate needs updating",
+      "visit_scheduled": "Prevention visit scheduled",
+      "reservation_due_soon": "Reservation deadline soon",
+      "reservation_overdue": "Reservation overdue",
+      "prevention_expiring": "Prevention certificate expiring",
+      "prevention_expired": "Prevention certificate expired"
     },
     "identifierType": {
       "mf": "Tax identification number",
@@ -3965,5 +3982,146 @@
   "drafts": {
     "changedWhileTyping": "This record changed while you were typing. Your text is kept; check the new state before sending.",
     "acknowledge": "Got it"
+  },
+  "prevention": {
+    "title": "Prevention visits",
+    "intro": "Requests and scheduled visits in your scope: schedule, inspect on site, automatic comparison report, then decision and prevention certificate.",
+    "filter": "State",
+    "filters": {
+      "open": "Open",
+      "all": "All"
+    },
+    "empty": "No visits.",
+    "overdueCount": "Overdue reservations: {{n}}",
+    "status": {
+      "requested": "Requested",
+      "scheduled": "Scheduled",
+      "inspected": "Inspected",
+      "decided": "Decided",
+      "cancelled": "Cancelled"
+    },
+    "decision": {
+      "approved": "Approved",
+      "approved_with_reservations": "Approved with reservations",
+      "refused": "Refused with reasons"
+    },
+    "state": {
+      "open": "Open",
+      "responded": "Answered",
+      "overdue": "Overdue",
+      "lifted": "Lifted"
+    },
+    "result": {
+      "conform": "Conforming",
+      "nonconform": "Non-conforming",
+      "not_checked": "Not checked"
+    },
+    "item": {
+      "building": {
+        "capacity": "Capacity",
+        "floors": "Floors",
+        "height_m": "Height (m)",
+        "address": "Address"
+      },
+      "classification": {
+        "family": "Family",
+        "category": "Category"
+      },
+      "evacuation": {
+        "points": "Assembly points"
+      },
+      "safety_team": {
+        "representative": "Team representative",
+        "members": "Team members"
+      },
+      "documents": {
+        "safety_file": "Safety file",
+        "safety_plan": "Safety plan"
+      },
+      "site": {
+        "exits": "Exits clear",
+        "signage": "Signage",
+        "emergency_lighting": "Emergency lighting works",
+        "alarm": "Alarm test",
+        "extinguishers_access": "Extinguishers within reach",
+        "electrical": "Electrical installations"
+      },
+      "hazmat": "Hazardous material {{n}}"
+    },
+    "counts": {
+      "conform": "Conforming: {{n}}",
+      "nonconform": "Non-conforming: {{n}}",
+      "notChecked": "Not checked: {{n}}"
+    },
+    "suggested": "Non-binding suggestion: {{decision}}",
+    "noMissing": "File complete for its classification.",
+    "missing": "Missing: {{items}}",
+    "changesTitle": "Changes since the safety certificate",
+    "gridCaption": "Inspection grid: declared and found",
+    "columns": {
+      "item": "Item",
+      "declared": "Declared",
+      "result": "Result",
+      "observed": "Found",
+      "note": "Note"
+    },
+    "liftNote": "Lifting note (optional)",
+    "lift": "Lift",
+    "lifted": "Reservation lifted.",
+    "noReservations": "No reservations.",
+    "dueOn": "Due: {{date}}",
+    "response": "Institution’s answer ({{name}}):",
+    "liftedBy": "Lifted by {{name}} on {{date}}",
+    "scheduleNew": "Schedule a visit",
+    "scheduledOn": "Visit date",
+    "inspector": "Inspector",
+    "orgTitle": "Prevention visits",
+    "noVisits": "No prevention visits yet.",
+    "origin": {
+      "request": "Requested by the institution",
+      "scheduled": "Scheduled by the Office"
+    },
+    "originLabel": "Origin",
+    "inspectedOn": "Inspection date",
+    "schedule": "Schedule the visit",
+    "reschedule": "Reschedule the visit",
+    "saveSchedule": "Save the date",
+    "inspection": "On-site inspection grid",
+    "inspectionHelp": "Items come from the institution’s current declaration. For each non-conforming item, give the value found or a note. “Site” items are [SIM] until the official grid.",
+    "attendees": "Attendees",
+    "allConform": "Mark unchecked items as conforming",
+    "resultFor": "Result: {{item}}",
+    "observedFor": "Found: {{item}}",
+    "noteFor": "Note: {{item}}",
+    "saveInspection": "Save and compare",
+    "decisionTitle": "Decision",
+    "decisionLabel": "Decision",
+    "validUntil": "Valid until",
+    "reasonRequired": "Reason for refusal (required)",
+    "reasonOptional": "Note (optional)",
+    "reservationsTitle": "Reservations and deadlines",
+    "reservationText": "Reservation {{n}}",
+    "reservationDue": "Deadline",
+    "removeReservation": "Remove",
+    "addReservation": "Add a reservation",
+    "reservationsInvalid": "At least one reservation, each with text and a deadline from tomorrow to 12 months.",
+    "decide": "Decide",
+    "cancelReason": "Reason for cancelling",
+    "cancel": "Cancel the visit",
+    "back": "← Prevention visits",
+    "visitTitle": "Prevention visit: {{org}}",
+    "readOnly": "Read only: scheduling, inspection and decision are for the institutions auditor.",
+    "facts": "The visit",
+    "requestNote": "Request note",
+    "requestedBy": "Requested by",
+    "report": "Visit report (PDF)",
+    "cancelled": "Visit cancelled.",
+    "scheduled": "Date saved; the institution is notified.",
+    "inspected": "Inspection saved; comparison report computed.",
+    "decided": "Decision made; the institution is notified.",
+    "comparisonTitle": "Comparison report",
+    "reason": "Reason",
+    "decidedBy": "Decided by",
+    "certificate": "Prevention certificate"
   }
 }

@@ -973,6 +973,8 @@ erDiagram
         text revoke_reason
         date reminded_90_on
         date reminded_30_on
+        text kind
+        uuid visit_id FK
     }
     org__certificate_stamp {
         uuid id PK
@@ -1113,6 +1115,53 @@ erDiagram
         datetime created_at
         datetime updated_at
     }
+    org__prevention_reservation {
+        uuid id PK
+        uuid visit_id FK
+        uuid org_id FK
+        text item_key
+        text text
+        date due_on
+        text response_note
+        text responded_by_name
+        datetime responded_at
+        text lifted_by
+        text lifted_by_name
+        text lift_note
+        datetime lifted_at
+        datetime created_at
+    }
+    org__prevention_visit {
+        uuid id PK
+        uuid org_id FK
+        text origin
+        text status
+        text request_note
+        uuid requested_by FK
+        text requested_by_name
+        datetime requested_at
+        date scheduled_on
+        text inspector_name
+        text scheduled_by
+        datetime scheduled_at
+        date inspected_on
+        text attendees
+        text inspected_by
+        text inspected_by_name
+        jsonb declared
+        jsonb comparison
+        text decision
+        text decision_reason
+        text decided_by
+        text decided_by_name
+        datetime decided_at
+        text report_object_key
+        text report_sha256
+        text cancel_reason
+        text cancelled_by
+        datetime cancelled_at
+        datetime created_at
+    }
     org__team_member {
         uuid id PK
         uuid org_id FK
@@ -1137,6 +1186,7 @@ erDiagram
     identity__account ||--o{ org__maintenance : "recorded_by"
     identity__account ||--o{ org__member : "user_id"
     identity__account ||--o{ org__organization : "created_by"
+    identity__account ||--o{ org__prevention_visit : "requested_by"
     org__certificate ||--o{ org__certificate : "superseded_by"
     org__certificate ||--o{ org__certificate_stamp : "certificate_id"
     org__document ||--o{ org__document_version : "document_id"
@@ -1153,7 +1203,11 @@ erDiagram
     org__organization ||--o{ org__maintenance : "org_id"
     org__organization ||--o{ org__map_feature : "org_id"
     org__organization ||--o{ org__member : "org_id"
+    org__organization ||--o{ org__prevention_reservation : "org_id"
+    org__organization ||--o{ org__prevention_visit : "org_id"
     org__organization ||--o{ org__team_member : "org_id"
+    org__prevention_visit ||--o{ org__certificate : "visit_id"
+    org__prevention_visit ||--o{ org__prevention_reservation : "visit_id"
 ```
 
 ## reports

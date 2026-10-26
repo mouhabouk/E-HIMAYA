@@ -659,7 +659,12 @@
               "maintenance_due_soon",
               "certificate_expiring",
               "certificate_expired",
-              "certificate_needs_update"
+              "certificate_needs_update",
+              "visit_scheduled",
+              "reservation_due_soon",
+              "reservation_overdue",
+              "prevention_expiring",
+              "prevention_expired"
             ],
             "title": "Kind",
             "type": "string"
@@ -1194,6 +1199,153 @@
           "next_before_seq"
         ],
         "title": "AnchorPage",
+        "type": "object"
+      },
+      "AnnualCount": {
+        "properties": {
+          "expired": {
+            "title": "Expired",
+            "type": "integer"
+          },
+          "expiring": {
+            "title": "Expiring",
+            "type": "integer"
+          },
+          "unknown": {
+            "title": "Unknown",
+            "type": "integer"
+          },
+          "valid": {
+            "title": "Valid",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "valid",
+          "expiring",
+          "expired",
+          "unknown"
+        ],
+        "title": "AnnualCount",
+        "type": "object"
+      },
+      "AnnualReport": {
+        "description": "The institution's year (F-APP-132): drills, maintenance, training, visits, reservations, certificates.",
+        "properties": {
+          "certificates": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__orgs__schemas__CertificateOut"
+            },
+            "title": "Certificates",
+            "type": "array"
+          },
+          "drills": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityOut"
+            },
+            "title": "Drills",
+            "type": "array"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityOut"
+            },
+            "title": "Events",
+            "type": "array"
+          },
+          "generated_on": {
+            "format": "date",
+            "title": "Generated On",
+            "type": "string"
+          },
+          "maintenance": {
+            "title": "Maintenance",
+            "type": "integer"
+          },
+          "org_id": {
+            "format": "uuid",
+            "title": "Org Id",
+            "type": "string"
+          },
+          "org_name": {
+            "title": "Org Name",
+            "type": "string"
+          },
+          "participants": {
+            "title": "Participants",
+            "type": "integer"
+          },
+          "reports": {
+            "title": "Reports",
+            "type": "integer"
+          },
+          "reservations": {
+            "$ref": "#/components/schemas/AnnualReservations"
+          },
+          "stamps": {
+            "title": "Stamps",
+            "type": "integer"
+          },
+          "training": {
+            "$ref": "#/components/schemas/AnnualCount"
+          },
+          "visits": {
+            "items": {
+              "$ref": "#/components/schemas/VisitOut"
+            },
+            "title": "Visits",
+            "type": "array"
+          },
+          "year": {
+            "title": "Year",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "year",
+          "org_id",
+          "org_name",
+          "generated_on",
+          "drills",
+          "events",
+          "participants",
+          "maintenance",
+          "training",
+          "visits",
+          "reservations",
+          "certificates",
+          "stamps",
+          "reports"
+        ],
+        "title": "AnnualReport",
+        "type": "object"
+      },
+      "AnnualReservations": {
+        "properties": {
+          "lifted": {
+            "title": "Lifted",
+            "type": "integer"
+          },
+          "open": {
+            "title": "Open",
+            "type": "integer"
+          },
+          "opened": {
+            "title": "Opened",
+            "type": "integer"
+          },
+          "overdue": {
+            "title": "Overdue",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "opened",
+          "lifted",
+          "open",
+          "overdue"
+        ],
+        "title": "AnnualReservations",
         "type": "object"
       },
       "AppVersionOut": {
@@ -3164,6 +3316,38 @@
         "title": "CheckOut",
         "type": "object"
       },
+      "ChecklistItemOut": {
+        "properties": {
+          "declared": {
+            "title": "Declared"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "section": {
+            "enum": [
+              "building",
+              "classification",
+              "hazmat",
+              "equipment",
+              "evacuation",
+              "safety_team",
+              "documents",
+              "site"
+            ],
+            "title": "Section",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "section",
+          "declared"
+        ],
+        "title": "ChecklistItemOut",
+        "type": "object"
+      },
       "CitizenDetail": {
         "properties": {
           "badges": {
@@ -3587,6 +3771,63 @@
           "max_members"
         ],
         "title": "CommitteeOut",
+        "type": "object"
+      },
+      "ComparisonReport": {
+        "description": "What was declared against what the inspector found, computed by the server (design-prevention.md §3).",
+        "properties": {
+          "changes": {
+            "items": {
+              "$ref": "#/components/schemas/CertificateChange"
+            },
+            "title": "Changes",
+            "type": "array"
+          },
+          "conform": {
+            "title": "Conform",
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/InspectionItemOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "missing": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Missing",
+            "type": "array"
+          },
+          "nonconform": {
+            "title": "Nonconform",
+            "type": "integer"
+          },
+          "not_checked": {
+            "title": "Not Checked",
+            "type": "integer"
+          },
+          "suggested": {
+            "enum": [
+              "approved",
+              "approved_with_reservations"
+            ],
+            "title": "Suggested",
+            "type": "string"
+          }
+        },
+        "required": [
+          "items",
+          "conform",
+          "nonconform",
+          "not_checked",
+          "missing",
+          "changes",
+          "suggested"
+        ],
+        "title": "ComparisonReport",
         "type": "object"
       },
       "Completeness": {
@@ -10601,6 +10842,155 @@
           "merged_into"
         ],
         "title": "IncidentSummary",
+        "type": "object"
+      },
+      "InspectionIn": {
+        "properties": {
+          "attendees": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Attendees"
+          },
+          "inspected_on": {
+            "format": "date",
+            "title": "Inspected On",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/InspectionItemIn"
+            },
+            "maxItems": 300,
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "inspected_on"
+        ],
+        "title": "InspectionIn",
+        "type": "object"
+      },
+      "InspectionItemIn": {
+        "properties": {
+          "key": {
+            "maxLength": 60,
+            "minLength": 1,
+            "title": "Key",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "observed": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observed"
+          },
+          "result": {
+            "enum": [
+              "conform",
+              "nonconform",
+              "not_checked"
+            ],
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "result"
+        ],
+        "title": "InspectionItemIn",
+        "type": "object"
+      },
+      "InspectionItemOut": {
+        "properties": {
+          "declared": {
+            "title": "Declared"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "observed": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observed"
+          },
+          "result": {
+            "enum": [
+              "conform",
+              "nonconform",
+              "not_checked"
+            ],
+            "title": "Result",
+            "type": "string"
+          },
+          "section": {
+            "enum": [
+              "building",
+              "classification",
+              "hazmat",
+              "equipment",
+              "evacuation",
+              "safety_team",
+              "documents",
+              "site"
+            ],
+            "title": "Section",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "section",
+          "declared",
+          "result",
+          "observed",
+          "note"
+        ],
+        "title": "InspectionItemOut",
         "type": "object"
       },
       "InvitationAccepted": {
@@ -17998,6 +18388,200 @@
         "title": "RescueResult",
         "type": "object"
       },
+      "ReservationIn": {
+        "properties": {
+          "due_on": {
+            "format": "date",
+            "title": "Due On",
+            "type": "string"
+          },
+          "item_key": {
+            "anyOf": [
+              {
+                "maxLength": 60,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Item Key"
+          },
+          "text": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "due_on"
+        ],
+        "title": "ReservationIn",
+        "type": "object"
+      },
+      "ReservationLiftIn": {
+        "properties": {
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "title": "ReservationLiftIn",
+        "type": "object"
+      },
+      "ReservationOut": {
+        "properties": {
+          "due_on": {
+            "format": "date",
+            "title": "Due On",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "item_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Item Key"
+          },
+          "lift_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lift Note"
+          },
+          "lifted_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lifted At"
+          },
+          "lifted_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lifted By Name"
+          },
+          "responded_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Responded At"
+          },
+          "responded_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Responded By Name"
+          },
+          "response_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Response Note"
+          },
+          "state": {
+            "enum": [
+              "open",
+              "responded",
+              "overdue",
+              "lifted"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "visit_id": {
+            "format": "uuid",
+            "title": "Visit Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "visit_id",
+          "item_key",
+          "text",
+          "due_on",
+          "state",
+          "response_note",
+          "responded_by_name",
+          "responded_at",
+          "lifted_by_name",
+          "lift_note",
+          "lifted_at"
+        ],
+        "title": "ReservationOut",
+        "type": "object"
+      },
+      "ReservationResponseIn": {
+        "properties": {
+          "note": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Note",
+            "type": "string"
+          }
+        },
+        "required": [
+          "note"
+        ],
+        "title": "ReservationResponseIn",
+        "type": "object"
+      },
       "ResourceAssignmentRef": {
         "properties": {
           "id": {
@@ -22332,6 +22916,314 @@
         "title": "StaffStreamPage",
         "type": "object"
       },
+      "StaffVisit": {
+        "properties": {
+          "attendees": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Attendees"
+          },
+          "cancel_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancel Reason"
+          },
+          "cancelled_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancelled At"
+          },
+          "certificate": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__orgs__schemas__CertificateOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "checklist": {
+            "items": {
+              "$ref": "#/components/schemas/ChecklistItemOut"
+            },
+            "title": "Checklist",
+            "type": "array"
+          },
+          "comparison": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ComparisonReport"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "decided_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided At"
+          },
+          "decided_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided By Name"
+          },
+          "decision": {
+            "anyOf": [
+              {
+                "enum": [
+                  "approved",
+                  "approved_with_reservations",
+                  "refused"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decision"
+          },
+          "decision_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decision Reason"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "has_report": {
+            "title": "Has Report",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "inspected_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inspected On"
+          },
+          "inspector_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inspector Name"
+          },
+          "org_id": {
+            "format": "uuid",
+            "title": "Org Id",
+            "type": "string"
+          },
+          "org_kind": {
+            "$ref": "#/components/schemas/OrgKind"
+          },
+          "org_name": {
+            "title": "Org Name",
+            "type": "string"
+          },
+          "org_status": {
+            "$ref": "#/components/schemas/OrgStatus"
+          },
+          "origin": {
+            "enum": [
+              "request",
+              "scheduled"
+            ],
+            "title": "Origin",
+            "type": "string"
+          },
+          "request_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Request Note"
+          },
+          "requested_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Requested At"
+          },
+          "requested_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Requested By Name"
+          },
+          "reservations": {
+            "items": {
+              "$ref": "#/components/schemas/ReservationOut"
+            },
+            "title": "Reservations",
+            "type": "array"
+          },
+          "scheduled_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scheduled On"
+          },
+          "status": {
+            "enum": [
+              "requested",
+              "scheduled",
+              "inspected",
+              "decided",
+              "cancelled"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "org_id",
+          "origin",
+          "status",
+          "request_note",
+          "requested_by_name",
+          "requested_at",
+          "scheduled_on",
+          "inspector_name",
+          "inspected_on",
+          "attendees",
+          "comparison",
+          "decision",
+          "decision_reason",
+          "decided_by_name",
+          "decided_at",
+          "certificate",
+          "reservations",
+          "has_report",
+          "cancel_reason",
+          "cancelled_at",
+          "created_at",
+          "org_name",
+          "org_kind",
+          "org_status",
+          "gouvernorat_code"
+        ],
+        "title": "StaffVisit",
+        "type": "object"
+      },
+      "StaffVisitPage": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/StaffVisit"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "StaffVisitPage",
+        "type": "object"
+      },
       "StaffVolunteer": {
         "properties": {
           "availability": {
@@ -24907,6 +25799,366 @@
         "title": "ViewerOut",
         "type": "object"
       },
+      "VisitCancelIn": {
+        "properties": {
+          "reason": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "title": "VisitCancelIn",
+        "type": "object"
+      },
+      "VisitDecisionIn": {
+        "properties": {
+          "decision": {
+            "enum": [
+              "approved",
+              "approved_with_reservations",
+              "refused"
+            ],
+            "title": "Decision",
+            "type": "string"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "reservations": {
+            "items": {
+              "$ref": "#/components/schemas/ReservationIn"
+            },
+            "maxItems": 50,
+            "title": "Reservations",
+            "type": "array"
+          },
+          "valid_until": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid Until"
+          }
+        },
+        "required": [
+          "decision"
+        ],
+        "title": "VisitDecisionIn",
+        "type": "object"
+      },
+      "VisitOut": {
+        "properties": {
+          "attendees": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Attendees"
+          },
+          "cancel_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancel Reason"
+          },
+          "cancelled_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancelled At"
+          },
+          "certificate": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__orgs__schemas__CertificateOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "comparison": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ComparisonReport"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "decided_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided At"
+          },
+          "decided_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided By Name"
+          },
+          "decision": {
+            "anyOf": [
+              {
+                "enum": [
+                  "approved",
+                  "approved_with_reservations",
+                  "refused"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decision"
+          },
+          "decision_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decision Reason"
+          },
+          "has_report": {
+            "title": "Has Report",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "inspected_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inspected On"
+          },
+          "inspector_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inspector Name"
+          },
+          "org_id": {
+            "format": "uuid",
+            "title": "Org Id",
+            "type": "string"
+          },
+          "origin": {
+            "enum": [
+              "request",
+              "scheduled"
+            ],
+            "title": "Origin",
+            "type": "string"
+          },
+          "request_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Request Note"
+          },
+          "requested_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Requested At"
+          },
+          "requested_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Requested By Name"
+          },
+          "reservations": {
+            "items": {
+              "$ref": "#/components/schemas/ReservationOut"
+            },
+            "title": "Reservations",
+            "type": "array"
+          },
+          "scheduled_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scheduled On"
+          },
+          "status": {
+            "enum": [
+              "requested",
+              "scheduled",
+              "inspected",
+              "decided",
+              "cancelled"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "org_id",
+          "origin",
+          "status",
+          "request_note",
+          "requested_by_name",
+          "requested_at",
+          "scheduled_on",
+          "inspector_name",
+          "inspected_on",
+          "attendees",
+          "comparison",
+          "decision",
+          "decision_reason",
+          "decided_by_name",
+          "decided_at",
+          "certificate",
+          "reservations",
+          "has_report",
+          "cancel_reason",
+          "cancelled_at",
+          "created_at"
+        ],
+        "title": "VisitOut",
+        "type": "object"
+      },
+      "VisitRequestIn": {
+        "properties": {
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "title": "VisitRequestIn",
+        "type": "object"
+      },
+      "VisitScheduleIn": {
+        "properties": {
+          "inspector_name": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inspector Name"
+          },
+          "scheduled_on": {
+            "format": "date",
+            "title": "Scheduled On",
+            "type": "string"
+          }
+        },
+        "required": [
+          "scheduled_on"
+        ],
+        "title": "VisitScheduleIn",
+        "type": "object"
+      },
       "VolunteerCalloutRef": {
         "properties": {
           "callout_id": {
@@ -26485,6 +27737,15 @@
             ],
             "title": "Key Id"
           },
+          "kind": {
+            "default": "safety",
+            "enum": [
+              "safety",
+              "prevention"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
           "needs_update": {
             "anyOf": [
               {
@@ -26864,6 +28125,15 @@
             ],
             "title": "Key Id"
           },
+          "kind": {
+            "default": "safety",
+            "enum": [
+              "safety",
+              "prevention"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
           "org_kind": {
             "$ref": "#/components/schemas/OrgKind"
           },
@@ -26932,6 +28202,11 @@
               }
             ],
             "title": "Valid Until"
+          },
+          "with_reservations": {
+            "default": false,
+            "title": "With Reservations",
+            "type": "boolean"
           }
         },
         "required": [
@@ -31877,6 +33152,65 @@
         ]
       }
     },
+    "/api/v1/orgs/{org_id}/annual-report": {
+      "get": {
+        "operationId": "annual_report_api_v1_orgs__org_id__annual_report_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "year",
+            "required": true,
+            "schema": {
+              "maximum": 2100,
+              "minimum": 2000,
+              "title": "Year",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnnualReport"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Annual Report",
+        "tags": [
+          "institutions"
+        ]
+      }
+    },
     "/api/v1/orgs/{org_id}/awareness": {
       "get": {
         "operationId": "awareness_api_v1_orgs__org_id__awareness_get",
@@ -33743,6 +35077,310 @@
         ]
       }
     },
+    "/api/v1/orgs/{org_id}/prevention/reservations/{reservation_id}/response": {
+      "post": {
+        "description": "The institution says how it met a reservation; the auditor then lifts it.",
+        "operationId": "respond_reservation_api_v1_orgs__org_id__prevention_reservations__reservation_id__response_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "reservation_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Reservation Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReservationResponseIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Respond Reservation",
+        "tags": [
+          "institutions"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/prevention/visits": {
+      "get": {
+        "operationId": "list_visits_api_v1_orgs__org_id__prevention_visits_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/VisitOut"
+                  },
+                  "title": "Response List Visits Api V1 Orgs  Org Id  Prevention Visits Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Visits",
+        "tags": [
+          "institutions"
+        ]
+      },
+      "post": {
+        "description": "The institution asks for a prevention visit (F-POR-08); the Office schedules it.",
+        "operationId": "request_visit_api_v1_orgs__org_id__prevention_visits_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VisitRequestIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VisitOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Request Visit",
+        "tags": [
+          "institutions"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/prevention/visits/{visit_id}/cancel": {
+      "post": {
+        "operationId": "withdraw_request_api_v1_orgs__org_id__prevention_visits__visit_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "visit_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Visit Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VisitCancelIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VisitOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Withdraw Request",
+        "tags": [
+          "institutions"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/prevention/visits/{visit_id}/report": {
+      "get": {
+        "operationId": "visit_report_api_v1_orgs__org_id__prevention_visits__visit_id__report_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "visit_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Visit Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DownloadOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Visit Report",
+        "tags": [
+          "institutions"
+        ]
+      }
+    },
     "/api/v1/orgs/{org_id}/reports": {
       "get": {
         "operationId": "org_reports_api_v1_orgs__org_id__reports_get",
@@ -34172,7 +35810,7 @@
             "name": "code",
             "required": true,
             "schema": {
-              "pattern": "^EHC-\\d{2}-\\d{2}-\\d{6}$",
+              "pattern": "^EH[CP]-\\d{2}-\\d{2}-\\d{6}$",
               "title": "Code",
               "type": "string"
             }
@@ -44519,6 +46157,115 @@
         ]
       }
     },
+    "/api/v1/staff/orgs/{org_id}/prevention/visits": {
+      "get": {
+        "operationId": "org_visits_api_v1_staff_orgs__org_id__prevention_visits_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/VisitOut"
+                  },
+                  "title": "Response Org Visits Api V1 Staff Orgs  Org Id  Prevention Visits Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Org Visits",
+        "tags": [
+          "staff-institutions"
+        ]
+      },
+      "post": {
+        "description": "The Office schedules a visit without a request (F-POR-08: «زيارة مبرمجة»).",
+        "operationId": "schedule_visit_api_v1_staff_orgs__org_id__prevention_visits_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VisitScheduleIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaffVisit"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Schedule Visit",
+        "tags": [
+          "staff-institutions"
+        ]
+      }
+    },
     "/api/v1/staff/orgs/{org_id}/reports": {
       "get": {
         "operationId": "org_reports_api_v1_staff_orgs__org_id__reports_get",
@@ -44648,6 +46395,476 @@
           }
         ],
         "summary": "Review Org",
+        "tags": [
+          "staff-institutions"
+        ]
+      }
+    },
+    "/api/v1/staff/prevention/reservations/{reservation_id}/lift": {
+      "post": {
+        "operationId": "lift_reservation_api_v1_staff_prevention_reservations__reservation_id__lift_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "reservation_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Reservation Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReservationLiftIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Lift Reservation",
+        "tags": [
+          "staff-institutions"
+        ]
+      }
+    },
+    "/api/v1/staff/prevention/visits": {
+      "get": {
+        "description": "Visits in scope, newest first; ``status`` is a comma-separated list.",
+        "operationId": "visit_queue_api_v1_staff_prevention_visits_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaffVisitPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Visit Queue",
+        "tags": [
+          "staff-institutions"
+        ]
+      }
+    },
+    "/api/v1/staff/prevention/visits/{visit_id}": {
+      "get": {
+        "operationId": "get_visit_api_v1_staff_prevention_visits__visit_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "visit_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Visit Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaffVisit"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Visit",
+        "tags": [
+          "staff-institutions"
+        ]
+      }
+    },
+    "/api/v1/staff/prevention/visits/{visit_id}/cancel": {
+      "post": {
+        "operationId": "cancel_visit_api_v1_staff_prevention_visits__visit_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "visit_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Visit Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VisitCancelIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaffVisit"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Cancel Visit",
+        "tags": [
+          "staff-institutions"
+        ]
+      }
+    },
+    "/api/v1/staff/prevention/visits/{visit_id}/decision": {
+      "post": {
+        "operationId": "decide_visit_api_v1_staff_prevention_visits__visit_id__decision_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "visit_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Visit Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VisitDecisionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaffVisit"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Decide Visit",
+        "tags": [
+          "staff-institutions"
+        ]
+      }
+    },
+    "/api/v1/staff/prevention/visits/{visit_id}/inspection": {
+      "post": {
+        "description": "The grid filled on site; the server computes the comparison report and renders the visit report.",
+        "operationId": "record_inspection_api_v1_staff_prevention_visits__visit_id__inspection_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "visit_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Visit Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InspectionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaffVisit"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Record Inspection",
+        "tags": [
+          "staff-institutions"
+        ]
+      }
+    },
+    "/api/v1/staff/prevention/visits/{visit_id}/report": {
+      "get": {
+        "operationId": "staff_visit_report_api_v1_staff_prevention_visits__visit_id__report_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "visit_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Visit Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DownloadOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Staff Visit Report",
+        "tags": [
+          "staff-institutions"
+        ]
+      }
+    },
+    "/api/v1/staff/prevention/visits/{visit_id}/schedule": {
+      "post": {
+        "operationId": "schedule_request_api_v1_staff_prevention_visits__visit_id__schedule_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "visit_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Visit Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VisitScheduleIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaffVisit"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Schedule Request",
         "tags": [
           "staff-institutions"
         ]

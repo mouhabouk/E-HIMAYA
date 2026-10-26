@@ -6,6 +6,7 @@ from pydantic import BaseModel, EmailStr, Field
 
 from app.modules.orgs.domain import (
     ActivityKind,
+    CertificateKind,
     CertificateStatus,
     ChangeSection,
     DocumentKind,
@@ -13,10 +14,16 @@ from app.modules.orgs.domain import (
     FeatureKind,
     HazmatUnit,
     IdentifierType,
+    InspectionResult,
+    InspectionSection,
     OrgKind,
     OrgRole,
     OrgStatus,
+    ReservationState,
     TeamRole,
+    VisitDecision,
+    VisitOrigin,
+    VisitStatus,
 )
 from app.modules.reports.domain import LAT_MAX, LAT_MIN, LON_MAX, LON_MIN
 
@@ -81,6 +88,13 @@ class Alert(BaseModel):
         "certificate_expiring",
         "certificate_expired",
         "certificate_needs_update",
+        # Phase P3b: a visit to come (``ref`` the visit), a reservation's deadline (``ref`` the reservation) and the
+        # current prevention certificate (``ref`` the certificate).
+        "visit_scheduled",
+        "reservation_due_soon",
+        "reservation_overdue",
+        "prevention_expiring",
+        "prevention_expired",
     ]
     ref: uuid.UUID
     since: date | None
@@ -320,6 +334,7 @@ class PublicStamp(BaseModel):
 class CertificateOut(BaseModel):
     id: uuid.UUID
     code: str
+    kind: CertificateKind = "safety"
     status: CertificateStatus
     superseded: bool
     created_at: datetime
@@ -341,6 +356,7 @@ class CertificateOut(BaseModel):
 
 class PublicCertificate(BaseModel):
     code: str
+    kind: CertificateKind = "safety"
     status: Literal["submitted", "approved", "rejected", "revoked"]
     valid: bool
     superseded: bool
@@ -359,6 +375,8 @@ class PublicCertificate(BaseModel):
     revoked_at: datetime | None = None
     # Phase P3a: where and when the paper certificate was stamped (never by whom).
     stamps: list[PublicStamp] = Field(default_factory=list)
+    # Phase P3b, prevention certificate: granted with reservations (their text is not public).
+    with_reservations: bool = False
 
 
 class SigningKeyOut(BaseModel):
@@ -622,3 +640,164 @@ class OrganizationCard(BaseModel):
     features: list[FeatureOut]
     # All the fields of the kind, including those shown only on a report near the institution.
     kind_fields: dict[str, int | bool | str]
+
+
+# ---------------------------------------------------------------- prevention visit (phase P3b)
+
+
+class ChecklistItemOut(BaseModel):
+    key: str
+    section: InspectionSection
+    declared: Any
+
+
+class InspectionItemIn(BaseModel):
+    key: str = Field(min_length=1, max_length=60)
+    result: InspectionResult
+    observed: str | None = Field(default=None, max_length=200)
+    note: str | None = Field(default=None, max_length=500)
+
+
+class InspectionIn(BaseModel):
+    inspected_on: date
+    attendees: str | None = Field(default=None, max_length=500)
+    items: list[InspectionItemIn] = Field(default_factory=list, max_length=300)
+
+
+class InspectionItemOut(ChecklistItemOut):
+    result: InspectionResult
+    observed: str | None
+    note: str | None
+
+
+class ComparisonReport(BaseModel):
+    """What was declared against what the inspector found, computed by the server (design-prevention.md §3)."""
+
+    items: list[InspectionItemOut]
+    conform: int
+    nonconform: int
+    not_checked: int
+    missing: list[str]
+    changes: list[CertificateChange]
+    suggested: Literal["approved", "approved_with_reservations"]
+
+
+class ReservationIn(BaseModel):
+    text: str = Field(min_length=1, max_length=500)
+    due_on: date
+    item_key: str | None = Field(default=None, max_length=60)
+
+
+class ReservationOut(BaseModel):
+    id: uuid.UUID
+    visit_id: uuid.UUID
+    item_key: str | None
+    text: str
+    due_on: date
+    state: ReservationState
+    response_note: str | None
+    responded_by_name: str | None
+    responded_at: datetime | None
+    lifted_by_name: str | None
+    lift_note: str | None
+    lifted_at: datetime | None
+
+
+class VisitRequestIn(BaseModel):
+    note: str | None = Field(default=None, max_length=500)
+
+
+class VisitScheduleIn(BaseModel):
+    scheduled_on: date
+    inspector_name: str | None = Field(default=None, max_length=120)
+
+
+class VisitDecisionIn(BaseModel):
+    decision: VisitDecision
+    reason: str | None = Field(default=None, max_length=1000)
+    valid_until: date | None = None
+    reservations: list[ReservationIn] = Field(default_factory=list, max_length=50)
+
+
+class VisitCancelIn(BaseModel):
+    reason: str | None = Field(default=None, max_length=500)
+
+
+class ReservationResponseIn(BaseModel):
+    note: str = Field(min_length=1, max_length=1000)
+
+
+class ReservationLiftIn(BaseModel):
+    note: str | None = Field(default=None, max_length=500)
+
+
+class VisitOut(BaseModel):
+    id: uuid.UUID
+    org_id: uuid.UUID
+    origin: VisitOrigin
+    status: VisitStatus
+    request_note: str | None
+    requested_by_name: str | None
+    requested_at: datetime | None
+    scheduled_on: date | None
+    inspector_name: str | None
+    inspected_on: date | None
+    attendees: str | None
+    comparison: ComparisonReport | None
+    decision: VisitDecision | None
+    decision_reason: str | None
+    decided_by_name: str | None
+    decided_at: datetime | None
+    certificate: CertificateOut | None
+    reservations: list[ReservationOut]
+    has_report: bool
+    cancel_reason: str | None
+    cancelled_at: datetime | None
+    created_at: datetime
+
+
+class StaffVisit(VisitOut):
+    org_name: str
+    org_kind: OrgKind
+    org_status: OrgStatus
+    gouvernorat_code: int | None
+    # The grid to fill, from the institution's declaration today; empty once the visit is decided or cancelled.
+    checklist: list[ChecklistItemOut] = Field(default_factory=list)
+
+
+class StaffVisitPage(BaseModel):
+    items: list[StaffVisit]
+    next_cursor: str | None
+
+
+class AnnualCount(BaseModel):
+    valid: int
+    expiring: int
+    expired: int
+    unknown: int
+
+
+class AnnualReservations(BaseModel):
+    opened: int
+    lifted: int
+    open: int
+    overdue: int
+
+
+class AnnualReport(BaseModel):
+    """The institution's year (F-APP-132): drills, maintenance, training, visits, reservations, certificates."""
+
+    year: int
+    org_id: uuid.UUID
+    org_name: str
+    generated_on: date
+    drills: list[ActivityOut]
+    events: list[ActivityOut]
+    participants: int
+    maintenance: int
+    training: AnnualCount
+    visits: list[VisitOut]
+    reservations: AnnualReservations
+    certificates: list[CertificateOut]
+    stamps: int
+    reports: int
