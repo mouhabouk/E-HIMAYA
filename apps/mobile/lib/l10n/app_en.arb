@@ -2625,5 +2625,156 @@
   },
   "emailChange": "Change e-mail",
   "emailCodeInvalid": "Wrong code.",
-  "emailCodeExpired": "The code expired. Ask for a new one."
+  "emailCodeExpired": "The code expired. Ask for a new one.",
+  "staffAppTitle": "e-Himaya Crew",
+  "staffSignInTitle": "Team leader sign-in",
+  "staffSignInBody": "You sign in on this phone's browser with your staff account and your second factor. No password is typed in this app.",
+  "staffSignIn": "Sign in",
+  "staffCodeIntro": "Check that the sign-in page shows this code:",
+  "staffCodeSemantics": "Sign-in code {code}",
+  "@staffCodeSemantics": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "staffOpenSignInPage": "Open the sign-in page",
+  "staffWaitingSignIn": "Waiting for the sign-in…",
+  "staffSignInRefused": "Sign-in refused. Check that your account has the team leader role.",
+  "staffSignInExpired": "The code expired. Sign in again.",
+  "staffWiped": "This phone was withdrawn from the team leaders' phones. Its data was erased.",
+  "staffPinWiped": "Five wrong PINs: the data on this phone was erased. Sign in again.",
+  "staffOffline": "No connection to the operations room. What you see is the last copy.",
+  "staffPinCreate": "Choose a 6-digit PIN",
+  "staffPinConfirm": "Type the PIN again",
+  "staffPinEnter": "Enter your PIN",
+  "staffPinHelp": "It is asked after 5 minutes away from the app. Five wrong PINs erase the phone.",
+  "staffPinLabel": "PIN",
+  "staffPinMismatch": "The two PINs differ. Start again.",
+  "staffPinWrong": "Wrong PIN. {left} tries left.",
+  "@staffPinWrong": {
+    "placeholders": {
+      "left": {
+        "type": "int"
+      }
+    }
+  },
+  "staffSignOut": "Sign out and erase",
+  "staffShiftTitle": "Start of shift",
+  "staffHello": "Hello {name}",
+  "@staffHello": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "staffChooseVehicle": "Your vehicle",
+  "staffNoVehicles": "No vehicle in your gouvernorat. Ask the operations room.",
+  "staffVehicleTaken": "already on shift",
+  "staffCrewSize": "Crew on board",
+  "staffCrewCount": "{count} crew",
+  "@staffCrewCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "staffLess": "Less",
+  "staffMore": "More",
+  "staffCrewNames": "Crew names",
+  "staffOptional": "Optional",
+  "staffStartShift": "Start the shift",
+  "staffEndShift": "End the shift",
+  "staffEndShiftConfirm": "The vehicle will no longer receive missions on this phone.",
+  "staffOnShift": "On shift",
+  "staffActiveMissions": "Missions",
+  "staffRecentMissions": "Finished in the last hours",
+  "staffNoMission": "No mission. The phone rings when the room orders the vehicle.",
+  "staffNewMission": "New mission",
+  "staffOrder": "Order",
+  "staffAcknowledge": "Received",
+  "staffMissionGone": "This mission is no longer on the vehicle.",
+  "staffStatusOrdered": "Ordered",
+  "staffStatusEnRoute": "En route",
+  "staffStatusOnScene": "On scene",
+  "staffStatusReleased": "Released",
+  "staffStatusCancelled": "Cancelled",
+  "staffStepEnRoute": "Leaving now",
+  "staffStepOnScene": "Arrived on scene",
+  "staffStepReleased": "Mission over",
+  "staffNearScene": "You are {meters} m from the incident. Arrived?",
+  "@staffNearScene": {
+    "placeholders": {
+      "meters": {
+        "type": "int"
+      }
+    }
+  },
+  "staffFirstReport": "First report",
+  "staffFirstReportDue": "To send now: under 30 seconds",
+  "staffNature": "Nature",
+  "staffSeverity": "Severity",
+  "staffSeverity1": "1 · Minor",
+  "staffSeverity2": "2 · Moderate",
+  "staffSeverity3": "3 · Serious",
+  "staffSeverity4": "4 · Critical",
+  "staffBackupNeeded": "Backup needed",
+  "staffBackupNote": "What backup?",
+  "staffCrewDanger": "Danger to the crew",
+  "staffSend": "Send",
+  "staffCasualties": "Casualties",
+  "staffCasualtySummary": "{injured} injured · {deceased} deceased · {transports} transported",
+  "@staffCasualtySummary": {
+    "placeholders": {
+      "injured": {
+        "type": "int"
+      },
+      "deceased": {
+        "type": "int"
+      },
+      "transports": {
+        "type": "int"
+      }
+    }
+  },
+  "staffInjured": "Injured",
+  "staffDeceased": "Deceased",
+  "staffRescued": "Rescued",
+  "staffTrapped": "Trapped",
+  "staffTransports": "Taken to hospital",
+  "staffNoTransport": "No one taken to hospital yet.",
+  "staffAddTransport": "Hospital transport",
+  "staffTriage": "Triage",
+  "staffTriageRed": "Red · immediate",
+  "staffTriageYellow": "Yellow · urgent",
+  "staffTriageGreen": "Green · minor",
+  "staffTriageBlack": "Black · deceased",
+  "staffAge": "Age",
+  "staffAgeChild": "Child",
+  "staffAgeAdult": "Adult",
+  "staffAgeElderly": "Elderly",
+  "staffSex": "Sex",
+  "staffSexFemale": "Female",
+  "staffSexMale": "Male",
+  "staffUnknown": "Unknown",
+  "staffHospital": "Hospital",
+  "staffKindFireEngine": "Fire engine",
+  "staffKindWaterTanker": "Water tanker",
+  "staffKindAmbulance": "Ambulance",
+  "staffKindRescue": "Rescue vehicle",
+  "staffKindHeavy": "Heavy equipment",
+  "staffKindDrone": "Drone",
+  "staffKindExtinguisher": "Large extinguisher",
+  "staffKindBoat": "Boat",
+  "staffKindCommand": "Command vehicle",
+  "staffKindOther": "Other",
+  "staffErrVehicleTaken": "Another leader already holds this vehicle.",
+  "staffErrShiftOpen": "You already have a shift open.",
+  "staffErrMissionActive": "A mission is still in progress: finish it first.",
+  "staffErrNotOnScene": "Mark the arrival on scene first.",
+  "staffErrNoShift": "No shift open on this phone.",
+  "staffErrGeneric": "The room refused this action. Try again or call the room."
 }

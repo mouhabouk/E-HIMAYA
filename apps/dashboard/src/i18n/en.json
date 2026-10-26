@@ -39,7 +39,8 @@
     "doctors": "Doctors",
     "medicalCommittee": "Medical committee",
     "counter": "Counter",
-    "prevention": "Prevention visits"
+    "prevention": "Prevention visits",
+    "crew": "Crews on duty"
   },
   "header": {
     "scope": "Geographic scope",
@@ -70,7 +71,8 @@
     "security_admin": "Security administrator",
     "ai_admin": "AI administrator",
     "regional_account_admin": "Account administrator",
-    "medical_coordinator": "Regional medical coordinator"
+    "medical_coordinator": "Regional medical coordinator",
+    "team_leader": "Team leader"
   },
   "status": {
     "received": "Received",
@@ -660,7 +662,11 @@
       "report_referred": "Report referred",
       "report_referral_accepted": "Referral accepted",
       "report_referral_refused": "Referral refused",
-      "report_geo_verified": "Report location verified"
+      "report_geo_verified": "Report location verified",
+      "crew_ack": "Order received by the crew",
+      "field_report": "First report from the scene",
+      "casualties": "Casualty count updated",
+      "transport": "Victim taken to hospital"
     },
     "via": {
       "suggestion": "(suggestion confirmed)",
@@ -4138,5 +4144,73 @@
     "reason": "Reason",
     "decidedBy": "Decided by",
     "certificate": "Prevention certificate"
+  },
+  "crew": {
+    "pageTitle": "Crews on duty",
+    "intro": "Team leaders on the staff app: vehicles on shift and their phones.",
+    "onDuty": "On duty now",
+    "noShift": "No vehicle on shift on the app.",
+    "vehicle": "Vehicle",
+    "leaderCol": "Team leader",
+    "crewCol": "Crew",
+    "since": "Since",
+    "leader": "Leader: {{name}}",
+    "acknowledged": "Received {{time}}",
+    "notAcknowledged": "Not received yet",
+    "fieldTitle": "From the scene",
+    "danger": "Danger to the crew",
+    "backup": "Backup requested",
+    "casualties": "Casualties",
+    "counter": {
+      "injured": "Injured",
+      "deceased": "Deceased",
+      "rescued": "Rescued",
+      "trapped": "Trapped"
+    },
+    "firstReports": "First reports",
+    "severity": {
+      "1": "1 · Minor",
+      "2": "2 · Moderate",
+      "3": "3 · Serious",
+      "4": "4 · Critical"
+    },
+    "transports": "Taken to hospital",
+    "triage": "Triage",
+    "victim": "Victim",
+    "hospital": "Hospital",
+    "at": "Time",
+    "triageName": {
+      "red": "Red · immediate",
+      "yellow": "Yellow · urgent",
+      "green": "Green · minor",
+      "black": "Black · deceased"
+    },
+    "age": {
+      "child": "Child",
+      "adult": "Adult",
+      "elderly": "Elderly",
+      "unknown": "Age unknown"
+    },
+    "sex": {
+      "female": "Female",
+      "male": "Male",
+      "unknown": "Sex unknown"
+    },
+    "devices": "Team leaders' phones",
+    "devicesIntro": "Withdrawing a phone erases everything on it at its next call and ends its shift.",
+    "showRevoked": "Show withdrawn phones",
+    "noDevice": "No phone registered.",
+    "holder": "Holder",
+    "state": "State",
+    "lastSeen": "Last seen",
+    "build": "build {{build}}",
+    "revoked": "Withdrawn",
+    "onShift": "On shift",
+    "idle": "Off shift",
+    "revoke": "Withdraw and wipe",
+    "revokeLabel": "Withdraw and wipe the phone of {{name}}",
+    "revokeConfirm": "Wipe the phone of {{name}} for good?",
+    "revokeYes": "Yes, wipe",
+    "size": "Crew: {{count}}"
   }
 }

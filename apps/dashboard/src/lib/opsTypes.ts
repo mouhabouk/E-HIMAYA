@@ -1,4 +1,5 @@
 import type { OrgKind } from "./types";
+import type { CrewRef } from "./crewTypes";
 
 /**
  * Types mirroring docs/api/phase-5-contract.md: operational levels and committees (§1–2), units and resources
@@ -228,6 +229,8 @@ export interface Assignment {
   on_scene_at: string | null;
   released_at: string | null;
   cancelled_at: string | null;
+  /** Phase P4a: the team leader's shift when the vehicle is on the staff app. */
+  crew?: CrewRef | null;
 }
 
 export const CALLOUT_STATUSES = ["open", "filled", "cancelled", "closed"] as const;

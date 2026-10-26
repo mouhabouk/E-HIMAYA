@@ -1583,6 +1583,16 @@
             "title": "Created By",
             "type": "string"
           },
+          "crew": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CrewRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "en_route_at": {
             "anyOf": [
               {
@@ -2917,6 +2927,110 @@
           }
         },
         "title": "Casualties",
+        "type": "object"
+      },
+      "CasualtiesIn": {
+        "description": "Changes to the live counters (+1, -1, ...); a counter never goes below zero.",
+        "properties": {
+          "client_id": {
+            "format": "uuid",
+            "title": "Client Id",
+            "type": "string"
+          },
+          "deceased": {
+            "default": 0,
+            "maximum": 50.0,
+            "minimum": -50.0,
+            "title": "Deceased",
+            "type": "integer"
+          },
+          "device_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device At"
+          },
+          "injured": {
+            "default": 0,
+            "maximum": 50.0,
+            "minimum": -50.0,
+            "title": "Injured",
+            "type": "integer"
+          },
+          "rescued": {
+            "default": 0,
+            "maximum": 50.0,
+            "minimum": -50.0,
+            "title": "Rescued",
+            "type": "integer"
+          },
+          "trapped": {
+            "default": 0,
+            "maximum": 50.0,
+            "minimum": -50.0,
+            "title": "Trapped",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "client_id"
+        ],
+        "title": "CasualtiesIn",
+        "type": "object"
+      },
+      "CasualtiesOut": {
+        "properties": {
+          "deceased": {
+            "default": 0,
+            "title": "Deceased",
+            "type": "integer"
+          },
+          "injured": {
+            "default": 0,
+            "title": "Injured",
+            "type": "integer"
+          },
+          "rescued": {
+            "default": 0,
+            "title": "Rescued",
+            "type": "integer"
+          },
+          "trapped": {
+            "default": 0,
+            "title": "Trapped",
+            "type": "integer"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
+          "updated_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By"
+          }
+        },
+        "title": "CasualtiesOut",
         "type": "object"
       },
       "Category": {
@@ -4366,6 +4480,174 @@
         "title": "CredentialsOut",
         "type": "object"
       },
+      "CrewMe": {
+        "properties": {
+          "device": {
+            "$ref": "#/components/schemas/DeviceOut"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "shift": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ShiftOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "gouvernorat_code",
+          "device",
+          "shift"
+        ],
+        "title": "CrewMe",
+        "type": "object"
+      },
+      "CrewRef": {
+        "description": "The shift holding the vehicle on the staff app (phase P4a).",
+        "properties": {
+          "acknowledged_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acknowledged At"
+          },
+          "crew_size": {
+            "title": "Crew Size",
+            "type": "integer"
+          },
+          "leader_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Leader Name"
+          },
+          "shift_id": {
+            "format": "uuid",
+            "title": "Shift Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "shift_id",
+          "leader_name",
+          "crew_size",
+          "acknowledged_at"
+        ],
+        "title": "CrewRef",
+        "type": "object"
+      },
+      "CrewResource": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "fire_engine",
+              "water_tanker",
+              "ambulance",
+              "rescue_vehicle",
+              "heavy_equipment",
+              "drone",
+              "large_extinguisher",
+              "boat",
+              "command_vehicle",
+              "other"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "on_shift": {
+            "title": "On Shift",
+            "type": "boolean"
+          },
+          "status": {
+            "enum": [
+              "available",
+              "assigned",
+              "out_of_service"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "unit_name": {
+            "title": "Unit Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "kind",
+          "unit_name",
+          "status",
+          "on_shift"
+        ],
+        "title": "CrewResource",
+        "type": "object"
+      },
+      "CrewWrite": {
+        "description": "Every write from the staff app: the id the phone generated (a write sent twice is applied once) and the\nphone's clock.",
+        "properties": {
+          "client_id": {
+            "format": "uuid",
+            "title": "Client Id",
+            "type": "string"
+          },
+          "device_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device At"
+          }
+        },
+        "required": [
+          "client_id"
+        ],
+        "title": "CrewWrite",
+        "type": "object"
+      },
       "Cron": {
         "properties": {
           "day": {
@@ -4739,69 +5021,210 @@
         "title": "DetectionOut",
         "type": "object"
       },
-      "DeviceIn": {
+      "DeviceOut": {
         "properties": {
-          "lat": {
+          "app_build": {
             "anyOf": [
               {
-                "maximum": 37.6,
-                "minimum": 30.0,
-                "type": "number"
+                "type": "integer"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Lat"
+            "title": "App Build"
           },
-          "locale": {
-            "default": "ar",
-            "enum": [
-              "ar",
-              "fr",
-              "en"
-            ],
-            "title": "Locale",
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
             "type": "string"
           },
-          "location_alerts": {
-            "default": true,
-            "title": "Location Alerts",
-            "type": "boolean"
-          },
-          "lon": {
+          "holder_name": {
             "anyOf": [
               {
-                "maximum": 11.7,
-                "minimum": 7.4,
-                "type": "number"
+                "type": "string"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Lon"
+            "title": "Holder Name"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          },
+          "last_seen_at": {
+            "format": "date-time",
+            "title": "Last Seen At",
+            "type": "string"
+          },
+          "on_shift": {
+            "default": false,
+            "title": "On Shift",
+            "type": "boolean"
           },
           "platform": {
-            "enum": [
-              "android",
-              "ios"
-            ],
             "title": "Platform",
             "type": "string"
           },
-          "token": {
-            "maxLength": 4096,
-            "minLength": 20,
-            "title": "Token",
-            "type": "string"
+          "revoked_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revoked At"
           }
         },
         "required": [
-          "token",
-          "platform"
+          "id",
+          "holder_name",
+          "label",
+          "platform",
+          "app_build",
+          "created_at",
+          "last_seen_at",
+          "revoked_at"
         ],
-        "title": "DeviceIn",
+        "title": "DeviceOut",
+        "type": "object"
+      },
+      "DevicePatch": {
+        "properties": {
+          "app_build": {
+            "anyOf": [
+              {
+                "maximum": 1000000.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "App Build"
+          },
+          "push_token": {
+            "anyOf": [
+              {
+                "maxLength": 4096,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Push Token"
+          }
+        },
+        "title": "DevicePatch",
+        "type": "object"
+      },
+      "DeviceRow": {
+        "properties": {
+          "app_build": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "App Build"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "holder_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Holder Name"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          },
+          "last_seen_at": {
+            "format": "date-time",
+            "title": "Last Seen At",
+            "type": "string"
+          },
+          "on_shift": {
+            "default": false,
+            "title": "On Shift",
+            "type": "boolean"
+          },
+          "platform": {
+            "title": "Platform",
+            "type": "string"
+          },
+          "revoked_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revoked At"
+          }
+        },
+        "required": [
+          "id",
+          "holder_name",
+          "label",
+          "platform",
+          "app_build",
+          "created_at",
+          "last_seen_at",
+          "revoked_at",
+          "gouvernorat_code"
+        ],
+        "title": "DeviceRow",
         "type": "object"
       },
       "DialIn": {
@@ -8670,6 +9093,111 @@
         "title": "FeedbackOut",
         "type": "object"
       },
+      "FieldReportOut": {
+        "properties": {
+          "assignment_id": {
+            "format": "uuid",
+            "title": "Assignment Id",
+            "type": "string"
+          },
+          "author_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Author Name"
+          },
+          "backup_needed": {
+            "title": "Backup Needed",
+            "type": "boolean"
+          },
+          "backup_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Backup Note"
+          },
+          "category": {
+            "$ref": "#/components/schemas/Category"
+          },
+          "classification": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Classification"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "crew_danger": {
+            "title": "Crew Danger",
+            "type": "boolean"
+          },
+          "device_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device At"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "resource_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resource Label"
+          },
+          "severity": {
+            "title": "Severity",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "assignment_id",
+          "category",
+          "classification",
+          "severity",
+          "backup_needed",
+          "backup_note",
+          "crew_danger",
+          "author_name",
+          "device_at",
+          "created_at"
+        ],
+        "title": "FieldReportOut",
+        "type": "object"
+      },
       "FireDangerOut": {
         "description": "Canadian FWI System of the day (noon values) and its class.",
         "properties": {
@@ -8950,6 +9478,80 @@
           "width_m"
         ],
         "title": "FirePolygon",
+        "type": "object"
+      },
+      "FirstReportIn": {
+        "properties": {
+          "backup_needed": {
+            "default": false,
+            "title": "Backup Needed",
+            "type": "boolean"
+          },
+          "backup_note": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Backup Note"
+          },
+          "category": {
+            "$ref": "#/components/schemas/Category"
+          },
+          "classification": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Classification"
+          },
+          "client_id": {
+            "format": "uuid",
+            "title": "Client Id",
+            "type": "string"
+          },
+          "crew_danger": {
+            "default": false,
+            "title": "Crew Danger",
+            "type": "boolean"
+          },
+          "device_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device At"
+          },
+          "severity": {
+            "enum": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "title": "Severity",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "client_id",
+          "category",
+          "severity"
+        ],
+        "title": "FirstReportIn",
         "type": "object"
       },
       "FixedSourceIn": {
@@ -10696,6 +11298,16 @@
             "title": "Callouts Open",
             "type": "integer"
           },
+          "casualties": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CasualtiesOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "category": {
             "$ref": "#/components/schemas/Category"
           },
@@ -10755,6 +11367,13 @@
                 "type": "null"
               }
             ]
+          },
+          "field_reports": {
+            "items": {
+              "$ref": "#/components/schemas/FieldReportOut"
+            },
+            "title": "Field Reports",
+            "type": "array"
           },
           "gouvernorat_code": {
             "anyOf": [
@@ -10871,6 +11490,13 @@
               }
             ],
             "title": "Title"
+          },
+          "transports": {
+            "items": {
+              "$ref": "#/components/schemas/TransportOut"
+            },
+            "title": "Transports",
+            "type": "array"
           },
           "updated_at": {
             "format": "date-time",
@@ -14209,6 +14835,273 @@
           "history"
         ],
         "title": "MineOut",
+        "type": "object"
+      },
+      "MissionIncident": {
+        "properties": {
+          "category": {
+            "$ref": "#/components/schemas/Category"
+          },
+          "classification": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Classification"
+          },
+          "delegation_ar": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delegation Ar"
+          },
+          "delegation_fr": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delegation Fr"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__ops__schemas__Point"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "op_level": {
+            "$ref": "#/components/schemas/OpLevel"
+          },
+          "status": {
+            "enum": [
+              "open",
+              "closed",
+              "merged",
+              "dissolved"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "required": [
+          "id",
+          "category",
+          "classification",
+          "title",
+          "location",
+          "gouvernorat_code",
+          "delegation_ar",
+          "delegation_fr",
+          "op_level",
+          "status"
+        ],
+        "title": "MissionIncident",
+        "type": "object"
+      },
+      "MissionOut": {
+        "properties": {
+          "acknowledged_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acknowledged At"
+          },
+          "cancelled_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancelled At"
+          },
+          "casualties": {
+            "$ref": "#/components/schemas/CasualtiesOut"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "distance_m": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Distance M"
+          },
+          "en_route_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "En Route At"
+          },
+          "field_report": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FieldReportOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "incident": {
+            "$ref": "#/components/schemas/MissionIncident"
+          },
+          "on_scene_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "On Scene At"
+          },
+          "order": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Order"
+          },
+          "released_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Released At"
+          },
+          "status": {
+            "enum": [
+              "ordered",
+              "en_route",
+              "on_scene",
+              "released",
+              "cancelled"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "transports": {
+            "items": {
+              "$ref": "#/components/schemas/TransportOut"
+            },
+            "title": "Transports",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "order",
+          "created_at",
+          "acknowledged_at",
+          "en_route_at",
+          "on_scene_at",
+          "released_at",
+          "cancelled_at",
+          "incident",
+          "field_report",
+          "casualties",
+          "transports"
+        ],
+        "title": "MissionOut",
+        "type": "object"
+      },
+      "MissionPage": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/MissionOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "MissionPage",
         "type": "object"
       },
       "MoveIn": {
@@ -19712,7 +20605,8 @@
           "security_admin",
           "ai_admin",
           "regional_account_admin",
-          "medical_coordinator"
+          "medical_coordinator",
+          "team_leader"
         ],
         "title": "Role",
         "type": "string"
@@ -20711,6 +21605,182 @@
           "keys"
         ],
         "title": "ShareIn",
+        "type": "object"
+      },
+      "ShiftIn": {
+        "properties": {
+          "client_id": {
+            "format": "uuid",
+            "title": "Client Id",
+            "type": "string"
+          },
+          "crew_names": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crew Names"
+          },
+          "crew_size": {
+            "maximum": 20.0,
+            "minimum": 1.0,
+            "title": "Crew Size",
+            "type": "integer"
+          },
+          "device_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device At"
+          },
+          "resource_id": {
+            "format": "uuid",
+            "title": "Resource Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "client_id",
+          "resource_id",
+          "crew_size"
+        ],
+        "title": "ShiftIn",
+        "type": "object"
+      },
+      "ShiftOut": {
+        "properties": {
+          "crew_names": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crew Names"
+          },
+          "crew_size": {
+            "title": "Crew Size",
+            "type": "integer"
+          },
+          "ended_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ended At"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "resource": {
+            "$ref": "#/components/schemas/ResourceRef"
+          },
+          "started_at": {
+            "format": "date-time",
+            "title": "Started At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "resource",
+          "crew_size",
+          "crew_names",
+          "started_at",
+          "ended_at"
+        ],
+        "title": "ShiftOut",
+        "type": "object"
+      },
+      "ShiftRow": {
+        "properties": {
+          "crew_names": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crew Names"
+          },
+          "crew_size": {
+            "title": "Crew Size",
+            "type": "integer"
+          },
+          "ended_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ended At"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "leader_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Leader Name"
+          },
+          "resource": {
+            "$ref": "#/components/schemas/ResourceRef"
+          },
+          "started_at": {
+            "format": "date-time",
+            "title": "Started At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "resource",
+          "crew_size",
+          "crew_names",
+          "started_at",
+          "ended_at",
+          "leader_name",
+          "gouvernorat_code"
+        ],
+        "title": "ShiftRow",
         "type": "object"
       },
       "SigningKeyOut": {
@@ -24110,6 +25180,68 @@
         "title": "StatusChangeIn",
         "type": "object"
       },
+      "StepIn": {
+        "properties": {
+          "client_id": {
+            "format": "uuid",
+            "title": "Client Id",
+            "type": "string"
+          },
+          "device_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device At"
+          },
+          "lat": {
+            "anyOf": [
+              {
+                "maximum": 90.0,
+                "minimum": -90.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lat"
+          },
+          "lon": {
+            "anyOf": [
+              {
+                "maximum": 180.0,
+                "minimum": -180.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lon"
+          },
+          "status": {
+            "enum": [
+              "en_route",
+              "on_scene",
+              "released"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "client_id",
+          "status"
+        ],
+        "title": "StepIn",
+        "type": "object"
+      },
       "StreamCreated": {
         "properties": {
           "expires_at": {
@@ -25425,6 +26557,159 @@
           "version"
         ],
         "title": "TransitionIn",
+        "type": "object"
+      },
+      "TransportIn": {
+        "properties": {
+          "age_band": {
+            "enum": [
+              "child",
+              "adult",
+              "elderly",
+              "unknown"
+            ],
+            "title": "Age Band",
+            "type": "string"
+          },
+          "client_id": {
+            "format": "uuid",
+            "title": "Client Id",
+            "type": "string"
+          },
+          "device_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device At"
+          },
+          "hospital": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Hospital",
+            "type": "string"
+          },
+          "sex": {
+            "enum": [
+              "female",
+              "male",
+              "unknown"
+            ],
+            "title": "Sex",
+            "type": "string"
+          },
+          "triage": {
+            "enum": [
+              "red",
+              "yellow",
+              "green",
+              "black"
+            ],
+            "title": "Triage",
+            "type": "string"
+          }
+        },
+        "required": [
+          "client_id",
+          "triage",
+          "age_band",
+          "sex",
+          "hospital"
+        ],
+        "title": "TransportIn",
+        "type": "object"
+      },
+      "TransportOut": {
+        "properties": {
+          "age_band": {
+            "enum": [
+              "child",
+              "adult",
+              "elderly",
+              "unknown"
+            ],
+            "title": "Age Band",
+            "type": "string"
+          },
+          "assignment_id": {
+            "format": "uuid",
+            "title": "Assignment Id",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "device_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device At"
+          },
+          "hospital": {
+            "title": "Hospital",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "sex": {
+            "enum": [
+              "female",
+              "male",
+              "unknown"
+            ],
+            "title": "Sex",
+            "type": "string"
+          },
+          "triage": {
+            "enum": [
+              "red",
+              "yellow",
+              "green",
+              "black"
+            ],
+            "title": "Triage",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "assignment_id",
+          "triage",
+          "age_band",
+          "sex",
+          "hospital",
+          "created_by_name",
+          "device_at",
+          "created_at"
+        ],
+        "title": "TransportOut",
         "type": "object"
       },
       "TreeNode": {
@@ -27994,6 +29279,71 @@
         "title": "InboxItem",
         "type": "object"
       },
+      "app__modules__notify__schemas__DeviceIn": {
+        "properties": {
+          "lat": {
+            "anyOf": [
+              {
+                "maximum": 37.6,
+                "minimum": 30.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lat"
+          },
+          "locale": {
+            "default": "ar",
+            "enum": [
+              "ar",
+              "fr",
+              "en"
+            ],
+            "title": "Locale",
+            "type": "string"
+          },
+          "location_alerts": {
+            "default": true,
+            "title": "Location Alerts",
+            "type": "boolean"
+          },
+          "lon": {
+            "anyOf": [
+              {
+                "maximum": 11.7,
+                "minimum": 7.4,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lon"
+          },
+          "platform": {
+            "enum": [
+              "android",
+              "ios"
+            ],
+            "title": "Platform",
+            "type": "string"
+          },
+          "token": {
+            "maxLength": 4096,
+            "minLength": 20,
+            "title": "Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "token",
+          "platform"
+        ],
+        "title": "DeviceIn",
+        "type": "object"
+      },
       "app__modules__notify__schemas__InboxItem": {
         "properties": {
           "active": {
@@ -28091,6 +29441,60 @@
           "active"
         ],
         "title": "InboxItem",
+        "type": "object"
+      },
+      "app__modules__ops__schemas__DeviceIn": {
+        "properties": {
+          "app_build": {
+            "anyOf": [
+              {
+                "maximum": 1000000.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "App Build"
+          },
+          "label": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          },
+          "platform": {
+            "enum": [
+              "android",
+              "ios"
+            ],
+            "title": "Platform",
+            "type": "string"
+          },
+          "push_token": {
+            "anyOf": [
+              {
+                "maxLength": 4096,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Push Token"
+          }
+        },
+        "required": [
+          "platform"
+        ],
+        "title": "DeviceIn",
         "type": "object"
       },
       "app__modules__ops__schemas__Point": {
@@ -30029,6 +31433,781 @@
         ]
       }
     },
+    "/api/v1/crew/devices": {
+      "post": {
+        "operationId": "register_device_api_v1_crew_devices_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__ops__schemas__DeviceIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Register Device",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/devices/current": {
+      "patch": {
+        "operationId": "update_device_api_v1_crew_devices_current_patch",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DevicePatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Device",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/me": {
+      "get": {
+        "operationId": "me_api_v1_crew_me_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrewMe"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Me",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/missions": {
+      "get": {
+        "operationId": "missions_api_v1_crew_missions_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Missions",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/missions/{assignment_id}/ack": {
+      "post": {
+        "operationId": "acknowledge_api_v1_crew_missions__assignment_id__ack_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrewWrite"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Acknowledge",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/missions/{assignment_id}/casualties": {
+      "post": {
+        "operationId": "casualties_api_v1_crew_missions__assignment_id__casualties_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CasualtiesIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Casualties",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/missions/{assignment_id}/first-report": {
+      "post": {
+        "operationId": "first_report_api_v1_crew_missions__assignment_id__first_report_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FirstReportIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "First Report",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/missions/{assignment_id}/status": {
+      "post": {
+        "operationId": "step_api_v1_crew_missions__assignment_id__status_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StepIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Step",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/missions/{assignment_id}/transports": {
+      "post": {
+        "operationId": "transport_api_v1_crew_missions__assignment_id__transports_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransportIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Transport",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/resources": {
+      "get": {
+        "operationId": "vehicles_api_v1_crew_resources_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CrewResource"
+                  },
+                  "title": "Response Vehicles Api V1 Crew Resources Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Vehicles",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/shifts": {
+      "post": {
+        "operationId": "start_shift_api_v1_crew_shifts_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShiftIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShiftOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Start Shift",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/shifts/current/end": {
+      "post": {
+        "operationId": "end_shift_api_v1_crew_shifts_current_end_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShiftOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "End Shift",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
     "/api/v1/devices": {
       "put": {
         "operationId": "register_device_api_v1_devices_put",
@@ -30055,7 +32234,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/DeviceIn"
+                "$ref": "#/components/schemas/app__modules__notify__schemas__DeviceIn"
               }
             }
           },
@@ -41218,6 +43397,108 @@
         ]
       }
     },
+    "/api/v1/staff/crew-devices": {
+      "get": {
+        "description": "Team leaders' phones of the caller's gouvernorat (all of them for the national security administrator).",
+        "operationId": "crew_devices_api_v1_staff_crew_devices_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "revoked",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Revoked",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DeviceRow"
+                  },
+                  "title": "Response Crew Devices Api V1 Staff Crew Devices Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Crew Devices",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/staff/crew-devices/{device_id}/revoke": {
+      "post": {
+        "description": "Remote wipe: the phone erases everything at its next call. An open shift on it is ended.",
+        "operationId": "revoke_device_api_v1_staff_crew_devices__device_id__revoke_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "device_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Device Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceRow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Revoke Device",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
     "/api/v1/staff/directives": {
       "get": {
         "operationId": "list_directives_api_v1_staff_directives_get",
@@ -52048,6 +54329,37 @@
         "tags": [
           "staff",
           "settings"
+        ]
+      }
+    },
+    "/api/v1/staff/shifts": {
+      "get": {
+        "description": "Teams on duty (vehicle, leader, crew) in the caller's scope.",
+        "operationId": "open_shifts_api_v1_staff_shifts_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ShiftRow"
+                  },
+                  "title": "Response Open Shifts Api V1 Staff Shifts Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Open Shifts",
+        "tags": [
+          "crew"
         ]
       }
     },

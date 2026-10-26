@@ -25,6 +25,7 @@ import { canCloseIncidents, canDispatch } from "../lib/roles";
 import { queryKeys } from "../lib/staffApi";
 import type { IncidentDetail } from "../lib/types";
 import { useDraft } from "../lib/drafts";
+import { CrewLine, FieldSection, crewTimelineParts } from "./CrewBits";
 
 /** A recommendation's "open assignment" (phase 7 §3): preselects a resource; the operator still submits. */
 export interface AssignPreset {
@@ -196,6 +197,7 @@ function AssignmentRow({ assignment, canEdit }: { assignment: Assignment; canEdi
             ? assignment.resource?.unit_name
             : assignment.volunteer?.phone && <span dir="ltr">{assignment.volunteer.phone}</span>}
         </div>
+        {assignment.crew && <CrewLine crew={assignment.crew} />}
       </td>
       <td>
         <AssignmentStatusChip status={assignment.status} />
@@ -843,6 +845,7 @@ export function OpsTimelineDetails({ kind, payload }: { kind: string; payload: R
   if (title && kind === "card_updated") parts.push(title);
   const classification = str("classification");
   if (classification) parts.push(t(`ops.classification.${classification}`));
+  parts.push(...crewTimelineParts(kind, payload, t));
   const text = str("text") ?? str("reason");
   return (
     <>
@@ -876,6 +879,7 @@ export function OperationsPanel({ incident, assignPreset }: { incident: Incident
       </section>
       {dispatch && national && open && <p className="alert alert--info">{t("resourceRequests.centralNotice")}</p>}
       <AssignmentsSection incident={incident} canEdit={fieldDispatch && open} preset={assignPreset} />
+      <FieldSection incident={incident} />
       <CalloutsSection incident={incident} canEdit={fieldDispatch && open} />
       {dispatch && (
         <section className="card" aria-labelledby="sec-note">

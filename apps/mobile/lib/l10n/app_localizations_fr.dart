@@ -5168,4 +5168,338 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get emailCodeExpired => 'Le code a expiré. Demandez-en un nouveau.';
+
+  @override
+  String get staffAppTitle => 'e-Himaya Équipes';
+
+  @override
+  String get staffSignInTitle => 'Connexion du chef d\'agrès';
+
+  @override
+  String get staffSignInBody =>
+      'Vous vous connectez dans le navigateur du téléphone avec votre compte professionnel et votre second facteur. Aucun mot de passe n\'est saisi dans cette application.';
+
+  @override
+  String get staffSignIn => 'Se connecter';
+
+  @override
+  String get staffCodeIntro =>
+      'Vérifiez que la page de connexion affiche ce code :';
+
+  @override
+  String staffCodeSemantics(String code) {
+    return 'Code de connexion $code';
+  }
+
+  @override
+  String get staffOpenSignInPage => 'Ouvrir la page de connexion';
+
+  @override
+  String get staffWaitingSignIn => 'En attente de la connexion…';
+
+  @override
+  String get staffSignInRefused =>
+      'Connexion refusée. Vérifiez que votre compte a le rôle de chef d\'agrès.';
+
+  @override
+  String get staffSignInExpired => 'Le code a expiré. Reconnectez-vous.';
+
+  @override
+  String get staffWiped =>
+      'Ce téléphone a été retiré des téléphones des chefs d\'agrès. Ses données ont été effacées.';
+
+  @override
+  String get staffPinWiped =>
+      'Cinq codes erronés : les données du téléphone ont été effacées. Reconnectez-vous.';
+
+  @override
+  String get staffOffline =>
+      'Pas de connexion avec la salle des opérations. Vous voyez la dernière copie.';
+
+  @override
+  String get staffPinCreate => 'Choisissez un code à 6 chiffres';
+
+  @override
+  String get staffPinConfirm => 'Saisissez à nouveau le code';
+
+  @override
+  String get staffPinEnter => 'Saisissez votre code';
+
+  @override
+  String get staffPinHelp =>
+      'Il est demandé après 5 minutes hors de l\'application. Cinq codes erronés effacent le téléphone.';
+
+  @override
+  String get staffPinLabel => 'Code';
+
+  @override
+  String get staffPinMismatch => 'Les deux codes diffèrent. Recommencez.';
+
+  @override
+  String staffPinWrong(int left) {
+    return 'Code erroné. $left essais restants.';
+  }
+
+  @override
+  String get staffSignOut => 'Se déconnecter et effacer';
+
+  @override
+  String get staffShiftTitle => 'Prise de garde';
+
+  @override
+  String staffHello(String name) {
+    return 'Bonjour $name';
+  }
+
+  @override
+  String get staffChooseVehicle => 'Votre engin';
+
+  @override
+  String get staffNoVehicles =>
+      'Aucun engin dans votre gouvernorat. Contactez la salle des opérations.';
+
+  @override
+  String get staffVehicleTaken => 'déjà en garde';
+
+  @override
+  String get staffCrewSize => 'Équipage à bord';
+
+  @override
+  String staffCrewCount(int count) {
+    return '$count agents';
+  }
+
+  @override
+  String get staffLess => 'Moins';
+
+  @override
+  String get staffMore => 'Plus';
+
+  @override
+  String get staffCrewNames => 'Noms de l\'équipage';
+
+  @override
+  String get staffOptional => 'Facultatif';
+
+  @override
+  String get staffStartShift => 'Commencer la garde';
+
+  @override
+  String get staffEndShift => 'Terminer la garde';
+
+  @override
+  String get staffEndShiftConfirm =>
+      'L\'engin ne recevra plus de missions sur ce téléphone.';
+
+  @override
+  String get staffOnShift => 'En garde';
+
+  @override
+  String get staffActiveMissions => 'Missions';
+
+  @override
+  String get staffRecentMissions => 'Terminées ces dernières heures';
+
+  @override
+  String get staffNoMission =>
+      'Aucune mission. Le téléphone sonne quand la salle engage l\'engin.';
+
+  @override
+  String get staffNewMission => 'Nouvelle mission';
+
+  @override
+  String get staffOrder => 'Ordre';
+
+  @override
+  String get staffAcknowledge => 'Reçu';
+
+  @override
+  String get staffMissionGone => 'Cette mission n\'est plus sur l\'engin.';
+
+  @override
+  String get staffStatusOrdered => 'Engagée';
+
+  @override
+  String get staffStatusEnRoute => 'En route';
+
+  @override
+  String get staffStatusOnScene => 'Sur place';
+
+  @override
+  String get staffStatusReleased => 'Libérée';
+
+  @override
+  String get staffStatusCancelled => 'Annulée';
+
+  @override
+  String get staffStepEnRoute => 'Départ';
+
+  @override
+  String get staffStepOnScene => 'Arrivés sur place';
+
+  @override
+  String get staffStepReleased => 'Fin de mission';
+
+  @override
+  String staffNearScene(int meters) {
+    return 'Vous êtes à $meters m de l\'intervention. Arrivés ?';
+  }
+
+  @override
+  String get staffFirstReport => 'Premier bilan';
+
+  @override
+  String get staffFirstReportDue =>
+      'À envoyer maintenant : moins de 30 secondes';
+
+  @override
+  String get staffNature => 'Nature';
+
+  @override
+  String get staffSeverity => 'Gravité';
+
+  @override
+  String get staffSeverity1 => '1 · Mineure';
+
+  @override
+  String get staffSeverity2 => '2 · Modérée';
+
+  @override
+  String get staffSeverity3 => '3 · Grave';
+
+  @override
+  String get staffSeverity4 => '4 · Critique';
+
+  @override
+  String get staffBackupNeeded => 'Renfort nécessaire';
+
+  @override
+  String get staffBackupNote => 'Quel renfort ?';
+
+  @override
+  String get staffCrewDanger => 'Danger pour l\'équipage';
+
+  @override
+  String get staffSend => 'Envoyer';
+
+  @override
+  String get staffCasualties => 'Victimes';
+
+  @override
+  String staffCasualtySummary(int injured, int deceased, int transports) {
+    return '$injured blessés · $deceased décédés · $transports évacués';
+  }
+
+  @override
+  String get staffInjured => 'Blessés';
+
+  @override
+  String get staffDeceased => 'Décédés';
+
+  @override
+  String get staffRescued => 'Secourus';
+
+  @override
+  String get staffTrapped => 'Bloqués';
+
+  @override
+  String get staffTransports => 'Évacués vers l\'hôpital';
+
+  @override
+  String get staffNoTransport => 'Aucune évacuation pour l\'instant.';
+
+  @override
+  String get staffAddTransport => 'Évacuation';
+
+  @override
+  String get staffTriage => 'Triage';
+
+  @override
+  String get staffTriageRed => 'Rouge · immédiat';
+
+  @override
+  String get staffTriageYellow => 'Jaune · urgent';
+
+  @override
+  String get staffTriageGreen => 'Vert · léger';
+
+  @override
+  String get staffTriageBlack => 'Noir · décédé';
+
+  @override
+  String get staffAge => 'Âge';
+
+  @override
+  String get staffAgeChild => 'Enfant';
+
+  @override
+  String get staffAgeAdult => 'Adulte';
+
+  @override
+  String get staffAgeElderly => 'Âgé';
+
+  @override
+  String get staffSex => 'Sexe';
+
+  @override
+  String get staffSexFemale => 'Femme';
+
+  @override
+  String get staffSexMale => 'Homme';
+
+  @override
+  String get staffUnknown => 'Inconnu';
+
+  @override
+  String get staffHospital => 'Hôpital';
+
+  @override
+  String get staffKindFireEngine => 'Fourgon incendie';
+
+  @override
+  String get staffKindWaterTanker => 'Camion-citerne';
+
+  @override
+  String get staffKindAmbulance => 'Ambulance';
+
+  @override
+  String get staffKindRescue => 'Véhicule de secours';
+
+  @override
+  String get staffKindHeavy => 'Engin lourd';
+
+  @override
+  String get staffKindDrone => 'Drone';
+
+  @override
+  String get staffKindExtinguisher => 'Grand extincteur';
+
+  @override
+  String get staffKindBoat => 'Embarcation';
+
+  @override
+  String get staffKindCommand => 'Poste de commandement';
+
+  @override
+  String get staffKindOther => 'Autre';
+
+  @override
+  String get staffErrVehicleTaken => 'Un autre chef tient déjà cet engin.';
+
+  @override
+  String get staffErrShiftOpen => 'Vous avez déjà une garde ouverte.';
+
+  @override
+  String get staffErrMissionActive =>
+      'Une mission est en cours : terminez-la d\'abord.';
+
+  @override
+  String get staffErrNotOnScene => 'Signalez d\'abord l\'arrivée sur place.';
+
+  @override
+  String get staffErrNoShift => 'Aucune garde ouverte sur ce téléphone.';
+
+  @override
+  String get staffErrGeneric =>
+      'La salle a refusé cette action. Réessayez ou appelez la salle.';
 }
