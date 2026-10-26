@@ -5,8 +5,8 @@ tests (`# covers: FR-…` comments, docstrings, names). Do not edit by hand. A r
 "Not cited by any test" may still be implemented: it means no test names it yet.
 
 * Requirements: 81
-* Cited by at least one test: 59
-* Not cited by any test: 22
+* Cited by at least one test: 60
+* Not cited by any test: 21
 
 ## Requirement → tests
 
@@ -20,6 +20,7 @@ tests (`# covers: FR-…` comments, docstrings, names). Do not edit by hand. A r
 | BR-20 | rule | درجة الأولوية (0 إلى 100) تجمع: خطورة النوع، مؤشرات وجود أرواح في خطر (كلمات مفتاحية، كشف أشخاص في الصور)، قر… | `apps/dashboard/src/lib/priority.test.ts`<br>`services/api/tests/test_ai.py`<br>`services/api/tests/test_weather.py` |
 | FR-A-001 | M | يعرض التطبيق قبل أي دخول ميثاقا عاما للخصوصية وحماية المعطيات الشخصية، يذكّر بالإطار التشريعي الوطني وبالمسؤو… | `apps/mobile/test/widgets/app_flow_test.dart`<br>`services/api/tests/test_profile.py` |
 | FR-B-001 | M | تسجيل المؤسسة مع تحقق (المعرف الجبائي أو السجل الوطني للمؤسسات، بريد مهني، هاتف) ومراجعة بشرية قبل التفعيل. | `apps/portal/src/pages/RegisterOrgPage.test.tsx` |
+| FR-A-002 | M | عند أول استعمال يختار المستعمل صفته: مواطن أو مؤسسة. | `apps/mobile/test/widgets/simple_mode_flow_test.dart`<br>`services/api/tests/test_email_verification.py` |
 | FR-B-002 | M | بطاقة المؤسسة: الاسم، الصبغة (صناعية، تعليمية، نزل، حكومية، خاصة، غيرها)، مجال النشاط ونوعه، الطاقة الاستيعاب… | `services/api/tests/test_orgs.py` |
 | FR-B-004 | M | رفع ملف السلامة (PDF) ومخطط السلامة (PDF أو CAD)، مع إدارة النسخ وتاريخ كل نسخة. | `services/api/tests/test_orgs.py` |
 | FR-A-005 | M | إنشاء حساب: الاسم، اللقب، رقم بطاقة التعريف، الهاتف، البريد. الولاية من قائمة منسدلة بالولايات الـ24، ثم المع… | `services/api/tests/test_profile.py` |
@@ -63,7 +64,7 @@ tests (`# covers: FR-…` comments, docstrings, names). Do not edit by hand. A r
 | NFR-06 | التدقيق | كل اطلاع على معطيات شخصية أو تعديل أو قرار يُسجل (من، متى، ماذا، لماذا) في سجل غير قابل للتعديل يُحفظ 5 سنوات. | `services/api/tests/test_audit.py` |
 | NFR-07 | سلامة الأدلة | كل وسيط (صورة، فيديو، تسجيل) يُحسب له بصمة SHA-256 عند الاستلام، ويُحفظ الأصل دون تعديل، وأي معالجة تُنتج نسخ… | `services/api/tests/test_evidence.py`<br>`services/api/tests/test_uploads.py` |
 | NFR-08 | اللغات والاتجاه | التطبيق والبوابة: العربية والفرنسية والإنجليزية؛ اللوحة: العربية والفرنسية. دعم كامل لـ RTL و LTR (التخطيط، ا… | `apps/mobile/test/widgets/app_flow_test.dart` |
-| NFR-09 | سهولة الاستخدام والنفاذ | بلوغ إرسال بلاغ SOS في 3 لمسات على الأكثر. احترام WCAG 2.2 المستوى AA. أحجام لمس 48 نقطة على الأقل. وضع داكن. | `apps/mobile/test/widgets/accessibility_test.dart`<br>`apps/mobile/test/widgets/app_flow_test.dart`<br>`apps/mobile/test/widgets/read_aloud_flow_test.dart` |
+| NFR-09 | سهولة الاستخدام والنفاذ | بلوغ إرسال بلاغ SOS في 3 لمسات على الأكثر. احترام WCAG 2.2 المستوى AA. أحجام لمس 48 نقطة على الأقل. وضع داكن. | `apps/mobile/test/widgets/accessibility_test.dart`<br>`apps/mobile/test/widgets/app_flow_test.dart`<br>`apps/mobile/test/widgets/read_aloud_flow_test.dart`<br>`apps/mobile/test/widgets/simple_mode_flow_test.dart` |
 | NFR-12 | الاستعادة | RPO أقل من 5 دقائق و RTO أقل من ساعة لمسار البلاغات. اختبار استعادة فصلي. | `infra/backup/drill.sh`<br>`infra/monitoring/alerts.test.yml`<br>`services/api/tests/test_resilience.py` |
 | NFR-13 | المراقبة | مقاييس وسجلات وتتبع موزع لكل الخدمات، مع تنبيهات تشغيلية للفريق التقني. | `infra/monitoring/alerts.test.yml` |
 | UC-01 | use case | بلاغ مواطن مسجّل عن حريق | `services/api/tests/test_reports.py` |
@@ -80,7 +81,6 @@ tests (`# covers: FR-…` comments, docstrings, names). Do not edit by hand. A r
 | BR-03 | rule | لا عقوبة آلية: كل بلاغ يُوسم «كاذبا» يُراجع بشريا قبل اعتماده. |
 | BR-05 | rule | بعد التسجيل، الإساءة المتكررة فقط تُعاقب، بتدرّج: تنبيه، ثم تعليق مؤقت، ثم إحالة للجهة المختصة. |
 | BR-30 | rule | السيناريو 0 هو المسار الأصلي والافتراضي لكل أرقام النجدة في التطبيق. السيناريوهات 1 إلى 3 تخص الاتصال عبر الم… |
-| FR-A-002 | M | عند أول استعمال يختار المستعمل صفته: مواطن أو مؤسسة. |
 | FR-A-003 | M | المواطن يختار بين التبليغ المجهول أو التسجيل. المؤسسة ملزمة بالتسجيل ولا يُعرض عليها خيار المجهول. |
 | FR-B-003 | M | التصنيف حسب مجلة السلامة والوقاية من أخطار الحريق والانفجار والفزع بالبنايات، ويتحدد المطلوب في ملف السلامة ح… |
 | FR-A-004 | M | كل حساب، بما في ذلك المجهول، يحمل USERID موحدا واحدا تُربط به كل بلاغاته (اسم مستعار أو رقم الهاتف). |

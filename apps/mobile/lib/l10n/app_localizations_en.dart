@@ -81,10 +81,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get institutionBody =>
-      'Registration is mandatory for institutions and is done through the institutions portal, not in this app. If your institution already has an account, sign in below.';
+      'Register your institution from the phone: your number and an SMS code, then your work e-mail and a code sent to it, then the card with the tax ID or the RNE number. The account stays “under review” until the administration confirms it.';
 
   @override
-  String get institutionLogin => 'Sign in';
+  String get institutionLogin => 'My institution has an account: sign in';
 
   @override
   String get citizenModeTitle => 'How do you want to report?';
@@ -5009,4 +5009,111 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get a11yPhoneNote =>
       'Text size and the screen reader (TalkBack or VoiceOver) are set in the phone; the app follows them up to 200%. Guides, tips and alerts have a “Listen” button.';
+
+  @override
+  String get a11ySimpleSection => 'Simplified mode';
+
+  @override
+  String get a11ySimpleMode => 'Simplified mode';
+
+  @override
+  String get a11ySimpleModeHelp =>
+      'A home with five large buttons in plain words, within reach of the thumb.';
+
+  @override
+  String get simpleCall198 => 'Call Civil Protection 198';
+
+  @override
+  String get simpleReport => 'Report a danger';
+
+  @override
+  String get simpleSosMessage => 'Send a help message to my family';
+
+  @override
+  String get simpleWhatToDo => 'What should I do?';
+
+  @override
+  String get simpleAlerts => 'Alerts';
+
+  @override
+  String get simpleSosHint => 'Emergency: press and hold the red button.';
+
+  @override
+  String get simpleShowAll => 'Show all options';
+
+  @override
+  String get rateTitle => 'Rate the app';
+
+  @override
+  String get rateSubtitle => 'Your opinion improves the app';
+
+  @override
+  String get rateQuestion => 'What do you think of the app?';
+
+  @override
+  String rateStar(int count) {
+    return '$count out of 5';
+  }
+
+  @override
+  String get rateRemark => 'Remark (optional)';
+
+  @override
+  String get rateSend => 'Send';
+
+  @override
+  String get rateChooseStars => 'Choose a number of stars.';
+
+  @override
+  String get rateThanks => 'Thank you, your rating was sent.';
+
+  @override
+  String get rateContactNote => 'Need an answer? Use “Contact us”.';
+
+  @override
+  String get introReplayTitle => 'Introduction tour';
+
+  @override
+  String get introReplaySubtitle => 'The five cards from the first launch';
+
+  @override
+  String get institutionRegister => 'Register my institution';
+
+  @override
+  String get emailConfirmTitle => 'Work e-mail';
+
+  @override
+  String get emailConfirmBody =>
+      'To register an institution we need a confirmed e-mail. We send a 6-digit code to it.';
+
+  @override
+  String get emailField => 'E-mail';
+
+  @override
+  String get emailSendCode => 'Send the code';
+
+  @override
+  String emailCodeSent(String email) {
+    return 'A code was sent to $email. Valid for 10 minutes.';
+  }
+
+  @override
+  String get emailCodeField => 'Code';
+
+  @override
+  String get emailVerify => 'Confirm';
+
+  @override
+  String emailConfirmed(String email) {
+    return 'E-mail confirmed: $email';
+  }
+
+  @override
+  String get emailChange => 'Change e-mail';
+
+  @override
+  String get emailCodeInvalid => 'Wrong code.';
+
+  @override
+  String get emailCodeExpired => 'The code expired. Ask for a new one.';
 }

@@ -113,13 +113,17 @@ class IdentityController extends Notifier<IdentityState> {
     state = state.copyWith(mode: IdentityMode.registered, session: session);
   }
 
-  /// Phase A: signed in with a phone number and an SMS code ([PhoneOtpClient.verify]).
-  Future<void> signInWithSession(AuthSession session) async {
+  /// Phase A: signed in with a phone number and an SMS code ([PhoneOtpClient.verify]). Phase
+  /// P5b (F-APP-12): an institution signs in the same way and keeps its [role].
+  Future<void> signInWithSession(
+    AuthSession session, {
+    UserRole role = UserRole.citizen,
+  }) async {
     await _saveSession(session);
-    await _prefs.setRole(UserRole.citizen.name);
+    await _prefs.setRole(role.name);
     await _prefs.setIdentityMode(IdentityMode.registered.name);
     state = IdentityState(
-      role: UserRole.citizen,
+      role: role,
       mode: IdentityMode.registered,
       session: session,
     );

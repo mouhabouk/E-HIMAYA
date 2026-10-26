@@ -8,8 +8,9 @@ import '../../core/ui/emergency_action.dart';
 import '../../l10n/app_localizations.dart';
 import 'login_actions.dart';
 
-/// FR-A-002: institutions must register through the institutions portal (phase 4); the app
-/// only offers login for accounts that already exist.
+/// FR-A-002 / F-APP-12: an institution registers from the phone (phase P5b): the phone number
+/// and an SMS code, then the work e-mail and a code, then the card, which stays under review.
+/// An institution that already has an account in the portal signs in as before.
 class InstitutionScreen extends ConsumerStatefulWidget {
   const InstitutionScreen({super.key});
 
@@ -45,6 +46,15 @@ class _InstitutionScreenState extends ConsumerState<InstitutionScreen> {
             Text(l10n.institutionBody, style: theme.textTheme.bodyLarge),
             const SizedBox(height: 24),
             FilledButton.icon(
+              key: const Key('institution-register'),
+              onPressed: _busy
+                  ? null
+                  : () => context.push(Routes.signInInstitution),
+              icon: const Icon(Icons.add_business_rounded),
+              label: Text(l10n.institutionRegister),
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
               key: const Key('institution-login'),
               onPressed: _busy ? null : _login,
               icon: const Icon(DirectionalIcons.login),

@@ -41,8 +41,8 @@
   "roleInstitution": "Institution",
   "roleInstitutionDesc": "Public or private institution with a registered account.",
   "institutionTitle": "Institutions",
-  "institutionBody": "Registration is mandatory for institutions and is done through the institutions portal, not in this app. If your institution already has an account, sign in below.",
-  "institutionLogin": "Sign in",
+  "institutionBody": "Register your institution from the phone: your number and an SMS code, then your work e-mail and a code sent to it, then the card with the tax ID or the RNE number. The account stays “under review” until the administration confirms it.",
+  "institutionLogin": "My institution has an account: sign in",
   "citizenModeTitle": "How do you want to report?",
   "citizenAnonymous": "Continue without an account",
   "citizenAnonymousDesc": "Fastest. No personal information is asked.",
@@ -2571,5 +2571,59 @@
   "a11yTryNothing": "Choose at least one cue.",
   "a11yAlwaysNote": "An urgent notification always vibrates (long-short-long) and lights the LED. When the app is closed, turn on “Flash notifications” in the phone’s accessibility settings if it has them.",
   "a11yPhoneSection": "In the phone settings",
-  "a11yPhoneNote": "Text size and the screen reader (TalkBack or VoiceOver) are set in the phone; the app follows them up to 200%. Guides, tips and alerts have a “Listen” button."
+  "a11yPhoneNote": "Text size and the screen reader (TalkBack or VoiceOver) are set in the phone; the app follows them up to 200%. Guides, tips and alerts have a “Listen” button.",
+  "a11ySimpleSection": "Simplified mode",
+  "a11ySimpleMode": "Simplified mode",
+  "a11ySimpleModeHelp": "A home with five large buttons in plain words, within reach of the thumb.",
+  "simpleCall198": "Call Civil Protection 198",
+  "simpleReport": "Report a danger",
+  "simpleSosMessage": "Send a help message to my family",
+  "simpleWhatToDo": "What should I do?",
+  "simpleAlerts": "Alerts",
+  "simpleSosHint": "Emergency: press and hold the red button.",
+  "simpleShowAll": "Show all options",
+  "rateTitle": "Rate the app",
+  "rateSubtitle": "Your opinion improves the app",
+  "rateQuestion": "What do you think of the app?",
+  "rateStar": "{count} out of 5",
+  "@rateStar": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rateRemark": "Remark (optional)",
+  "rateSend": "Send",
+  "rateChooseStars": "Choose a number of stars.",
+  "rateThanks": "Thank you, your rating was sent.",
+  "rateContactNote": "Need an answer? Use “Contact us”.",
+  "introReplayTitle": "Introduction tour",
+  "introReplaySubtitle": "The five cards from the first launch",
+  "institutionRegister": "Register my institution",
+  "emailConfirmTitle": "Work e-mail",
+  "emailConfirmBody": "To register an institution we need a confirmed e-mail. We send a 6-digit code to it.",
+  "emailField": "E-mail",
+  "emailSendCode": "Send the code",
+  "emailCodeSent": "A code was sent to {email}. Valid for 10 minutes.",
+  "@emailCodeSent": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "emailCodeField": "Code",
+  "emailVerify": "Confirm",
+  "emailConfirmed": "E-mail confirmed: {email}",
+  "@emailConfirmed": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "emailChange": "Change e-mail",
+  "emailCodeInvalid": "Wrong code.",
+  "emailCodeExpired": "The code expired. Ask for a new one."
 }

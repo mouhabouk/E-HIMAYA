@@ -118,7 +118,8 @@ describe("applyLiveEvent — report.enriched (phase 3)", () => {
   it("re-ranks priority-sorted lists and inserts created reports at their rank", () => {
     const qc = new QueryClient();
     const key = listKey(DEFAULT_FILTERS, "priority");
-    const t0 = "2026-10-19T10:00:00Z";
+    // An hour ago: inside the default 7-day period whatever the day the suite runs.
+    const t0 = new Date(Date.now() - 3_600_000).toISOString();
     qc.setQueryData(
       key,
       page([

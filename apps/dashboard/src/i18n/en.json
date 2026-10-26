@@ -3420,6 +3420,21 @@
       "help": "Lets citizens who opt in keep their positions for 72 hours, so an operations room can find a missing person. Off by default.",
       "label": "Turn on the location history",
       "note": "While off, the app hides the feature and the missing-person search does not appear. Turning it off later stops collection; points already kept are erased after 72 hours."
+    },
+    "appFeedback": {
+      "title": "Mobile app rating",
+      "help": "The citizens’ ratings of the app, from one to five stars, and their remarks. A rating is not a request: for an answer there is “Contact us”. Every reading is logged.",
+      "period": "Period",
+      "days": "Last {{n}} days",
+      "average": "Average",
+      "count": "Number of ratings",
+      "byStars": "Ratings by number of stars",
+      "stars": "{{n}} ★",
+      "empty": "No rating in this period.",
+      "byBuild": "Average by version",
+      "version": "Version",
+      "remarks": "Latest remarks",
+      "noRemarks": "No remark in this period."
     }
   },
   "accounts": {

@@ -12,6 +12,7 @@ import '../quota/anon_quota.dart';
 import 'api_client.dart';
 import 'api_error.dart';
 import 'doctor_models.dart';
+import 'email_status.dart';
 import 'models.dart';
 import 'notify_models.dart';
 import 'rewards_models.dart';
@@ -982,6 +983,53 @@ class EHimayaApi {
       for (final i in r.data!['items']! as List)
         MyContactRequest.fromJson(i as Map<String, Object?>),
     ];
+  });
+
+  // ---------------------------------------------------------------- app rating and work e-mail (phase P5b)
+
+  /// Rates the app from 1 to 5 stars (F-APP-143); any reporter, at most three a day.
+  Future<void> rateApp({
+    required int stars,
+    String? remark,
+    String? platform,
+    int? build,
+    String? version,
+    required String locale,
+  }) => guardApi(() async {
+    await _dio.post<Object?>(
+      '/api/v1/app/feedback',
+      data: {
+        'stars': stars,
+        if (remark != null && remark.trim().isNotEmpty) 'remark': remark.trim(),
+        'platform': ?platform,
+        'build': ?build,
+        'version': ?version,
+        'locale': locale,
+      },
+    );
+  });
+
+  /// The work e-mail of the signed-in account and whether it is proven (F-APP-12).
+  Future<EmailStatus> myEmail() => guardApi(() async {
+    final r = await _dio.get<Map<String, Object?>>('/api/v1/me/email');
+    return EmailStatus.fromJson(r.data!);
+  });
+
+  /// Sends a 6-digit code to [email], valid 10 minutes.
+  Future<void> sendEmailCode(String email, String locale) => guardApi(() async {
+    await _dio.post<Object?>(
+      '/api/v1/me/email/code',
+      data: {'email': email, 'locale': locale},
+    );
+  });
+
+  /// Confirms the address with the code it received.
+  Future<EmailStatus> verifyEmailCode(String code) => guardApi(() async {
+    final r = await _dio.post<Map<String, Object?>>(
+      '/api/v1/me/email/verify',
+      data: {'code': code},
+    );
+    return EmailStatus.fromJson(r.data!);
   });
 
   // ---------------------------------------------------------------- personal safety (phase B2)

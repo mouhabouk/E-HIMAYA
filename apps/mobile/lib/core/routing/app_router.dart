@@ -44,6 +44,7 @@ import '../../features/safety/self_test_screen.dart';
 import '../../features/safety/sos_message_screens.dart';
 import '../../features/settings/accessibility_screen.dart';
 import '../../features/settings/alert_check.dart';
+import '../../features/settings/rate_app_screen.dart';
 import '../../features/settings/settings_screen.dart';
 import '../../features/tips/tips_screen.dart';
 import '../../features/volunteer/callouts_screen.dart';
@@ -67,6 +68,8 @@ abstract final class Routes {
   static const welcomeIntro = '/welcome/intro';
   static const welcomePermissions = '/welcome/permissions';
   static const signIn = '/sign-in';
+  // Phase P5b (F-APP-12): signing in with the phone number to register an institution.
+  static const signInInstitution = '/sign-in?as=institution';
   static const onboardingInstitution = '/onboarding/institution';
   static const profile = '/profile';
   static const home = '/home';
@@ -109,6 +112,9 @@ abstract final class Routes {
   static const criticalAlerts = '/alert-check/critical';
   // Phase P5a: reading aloud and flashes (NFR-10).
   static const accessibility = '/accessibility';
+  // Phase P5b: rate the app, the introduction cards again (F-APP-143).
+  static const rateApp = '/rate-app';
+  static const introReplay = '/intro';
   static const myData = '/my-data';
   static const deleteAccount = '/my-data/delete';
 
@@ -276,7 +282,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: Routes.signIn,
-        builder: (_, _) => const SignInScreen(standalone: true),
+        builder: (_, state) => SignInScreen(
+          standalone: true,
+          role: state.uri.queryParameters['as'] == UserRole.institution.name
+              ? UserRole.institution
+              : UserRole.citizen,
+        ),
       ),
       GoRoute(
         path: Routes.onboarding,
@@ -460,6 +471,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: Routes.accessibility,
         builder: (_, _) => const AccessibilityScreen(),
+      ),
+      GoRoute(path: Routes.rateApp, builder: (_, _) => const RateAppScreen()),
+      GoRoute(
+        path: Routes.introReplay,
+        builder: (_, _) => const IntroScreen(replay: true),
       ),
       GoRoute(
         path: Routes.alertCheck,
