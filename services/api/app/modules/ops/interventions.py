@@ -22,10 +22,10 @@ from app.modules.audit import service as audit
 from app.modules.identity.models import Profile
 from app.modules.identity.service import Reporter
 from app.modules.notify import outbox
-from app.modules.ops import resources, schemas, scope
+from app.modules.ops import resources, schemas, scope, shifts
 from app.modules.ops import service as incidents
 from app.modules.ops.domain import ACTIVE_ASSIGNMENT, ASSIGNMENT_TRANSITIONS, classification_allowed
-from app.modules.ops.models import Assignment, Callout, CalloutTarget, Incident, Resource, TimelineEvent, Unit
+from app.modules.ops.models import Assignment, Callout, CalloutTarget, Incident, Resource, Shift, TimelineEvent, Unit
 from app.modules.reports import service as reports
 from app.modules.reports.domain import Category, Status, can_transition
 from app.modules.reports.models import Report
@@ -109,11 +109,12 @@ async def advance_reports(
 async def assignments_of(session: AsyncSession, incident_id: uuid.UUID) -> list[schemas.AssignmentOut]:
     rows = (
         await session.execute(
-            select(Assignment, Resource, Unit, Volunteer, Profile)
+            select(Assignment, Resource, Unit, Volunteer, Profile, Shift)
             .outerjoin(Resource, Resource.id == Assignment.resource_id)
             .outerjoin(Unit, Unit.id == Resource.unit_id)
             .outerjoin(Volunteer, Volunteer.user_id == Assignment.volunteer_id)
             .outerjoin(Profile, Profile.user_id == Assignment.volunteer_id)
+            .outerjoin(Shift, Shift.id == Assignment.shift_id)
             .where(Assignment.incident_id == incident_id)
             .order_by(Assignment.created_at)
         )
@@ -122,7 +123,7 @@ async def assignments_of(session: AsyncSession, incident_id: uuid.UUID) -> list[
 
 
 def _assignment_out(
-    a: Assignment, r: Resource | None, u: Unit | None, v: Volunteer | None, p: Profile | None
+    a: Assignment, r: Resource | None, u: Unit | None, v: Volunteer | None, p: Profile | None, sh: Shift | None
 ) -> schemas.AssignmentOut:
     return schemas.AssignmentOut(
         id=a.id,
@@ -148,17 +149,25 @@ def _assignment_out(
         on_scene_at=a.on_scene_at,
         released_at=a.released_at,
         cancelled_at=a.cancelled_at,
+        crew=(
+            schemas.CrewRef(
+                shift_id=sh.id, leader_name=sh.leader_name, crew_size=sh.crew_size, acknowledged_at=a.acknowledged_at
+            )
+            if sh is not None
+            else None
+        ),
     )
 
 
 async def assignment_out(session: AsyncSession, assignment_id: uuid.UUID) -> schemas.AssignmentOut:
     row = (
         await session.execute(
-            select(Assignment, Resource, Unit, Volunteer, Profile)
+            select(Assignment, Resource, Unit, Volunteer, Profile, Shift)
             .outerjoin(Resource, Resource.id == Assignment.resource_id)
             .outerjoin(Unit, Unit.id == Resource.unit_id)
             .outerjoin(Volunteer, Volunteer.user_id == Assignment.volunteer_id)
             .outerjoin(Profile, Profile.user_id == Assignment.volunteer_id)
+            .outerjoin(Shift, Shift.id == Assignment.shift_id)
             .where(Assignment.id == assignment_id)
         )
     ).one()
@@ -313,6 +322,9 @@ async def create_assignment(
     )
     session.add(assignment)
     resource.status, resource.updated_at = "assigned", _now()
+    await session.flush()
+    # Phase P4a: a vehicle on shift rings its team leader's phone.
+    await shifts.attach(session, assignment)
     await session.flush()
     await session.refresh(assignment)
     _timeline(

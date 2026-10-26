@@ -76,6 +76,8 @@ export const FUNCTION_ROLES = {
   operations: ["operator", "ops_manager"],
   technical: TECHNICAL_ROLES,
   support: ["content_editor", "org_auditor", "medical_coordinator"],
+  /** Phase P4a: team leaders use the staff app only, never the dashboard. */
+  field: ["team_leader"],
 } as const;
 export type StaffFunction = keyof typeof FUNCTION_ROLES;
 /** `report.claim`, `report.status`, `report.link` (§1.2). */
@@ -104,12 +106,19 @@ export const REGIONAL_GRANTABLE_ROLES = [
   "local_committee",
   "content_editor",
   "medical_coordinator",
+  "team_leader",
 ] as const;
 /** Added for a national regional account administrator. */
 export const NATIONAL_GRANTABLE_ROLES = [...REGIONAL_GRANTABLE_ROLES, "central_committee", "org_auditor"] as const;
 
 /** Every role the dashboard knows (shown in the header). */
-export const STAFF_ROLES = [...ORG_READ_ROLES, "content_editor", "medical_coordinator", ...TECHNICAL_ROLES] as const;
+export const STAFF_ROLES = [
+  ...ORG_READ_ROLES,
+  "content_editor",
+  "medical_coordinator",
+  ...TECHNICAL_ROLES,
+  "team_leader",
+] as const;
 export type StaffRole = (typeof STAFF_ROLES)[number];
 
 export function staffRoles(roles: readonly string[]): StaffRole[] {
@@ -513,6 +522,17 @@ export function canReadScopedAudit(who: Pick<Who, "roles" | "national">): boolea
 /** Accounts page: regional account administrators, and national security administrators for technical roles. */
 export function canManageAccounts(who: Pick<Who, "roles" | "national">): boolean {
   return who.roles.includes("regional_account_admin") || (who.national && who.roles.includes("security_admin"));
+}
+
+/** Phase P4a: team leaders' phones (list and remote wipe), as the API's `crew-devices` endpoints. */
+export const CREW_DEVICE_ROLES = ["regional_account_admin", "security_admin"] as const;
+export function canManageCrewDevices(roles: readonly string[]): boolean {
+  return any(CREW_DEVICE_ROLES, roles);
+}
+
+/** Teams on duty page: the report read roles see the shifts, the device administrators the phones too. */
+export function canOpenCrew(roles: readonly string[]): boolean {
+  return hasReadAccess(roles) || canManageCrewDevices(roles);
 }
 
 /** Roles the caller may grant in the accounts page (§6.2); the API refuses others with `role_not_grantable`. */

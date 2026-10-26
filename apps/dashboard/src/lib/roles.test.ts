@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { identityFromClaims, identityFromToken } from "../auth/identity";
 import { fakeJwt } from "../test/fixtures";
 import {
+  canManageCrewDevices,
+  canOpenCrew,
   canAcknowledgeDirectives,
   canChangeStatus,
   canCloseIncidents,
@@ -153,5 +155,13 @@ describe("identity from the access token", () => {
   it("decodes a base64url JWT payload with non-ASCII names", () => {
     const id = identityFromToken(fakeJwt({ sub: "u", name: "سامي", realm_access: { roles: [] }, scope_level: "national" }));
     expect(id.name).toBe("سامي");
+  });
+
+  it("keeps team leaders on the staff app (phase P4a)", () => {
+    expect(hasDashboardAccess(["team_leader"])).toBe(false);
+    expect(canOpenCrew(["operator"])).toBe(true);
+    expect(canManageCrewDevices(["operator"])).toBe(false);
+    expect(canManageCrewDevices(["regional_account_admin"])).toBe(true);
+    expect(canOpenCrew(["security_admin"])).toBe(true);
   });
 });

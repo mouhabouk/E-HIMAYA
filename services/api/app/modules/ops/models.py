@@ -211,6 +211,9 @@ class Assignment(Base):
     on_scene_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     released_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     cancelled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Phase P4a: the shift holding the vehicle, and when its leader saw the mission on the staff app.
+    shift_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("ops.shift.id"))
+    acknowledged_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
 class CalloutTarget(Base):
@@ -259,3 +262,127 @@ class ResourceRequest(Base):
     decided_by_name: Mapped[str | None] = mapped_column(Text)
     decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     decision_note: Mapped[str | None] = mapped_column(Text)
+
+
+class StaffDevice(Base):
+    """A team leader's phone bound to their staff account (phase P4a). Revoked = wiped remotely."""
+
+    __tablename__ = "staff_device"
+    __table_args__ = {"schema": "ops"}
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    subject: Mapped[str] = mapped_column(Text)
+    holder_name: Mapped[str | None] = mapped_column(Text)
+    gouvernorat_code: Mapped[int] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
+    label: Mapped[str | None] = mapped_column(Text)
+    platform: Mapped[str] = mapped_column(Text)
+    app_build: Mapped[int | None] = mapped_column(Integer)
+    push_token: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    last_seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    revoked_by: Mapped[str | None] = mapped_column(Text)
+
+
+class Shift(Base):
+    """A team leader on duty with one vehicle and a crew (phase P4a, F-STF-01)."""
+
+    __tablename__ = "shift"
+    __table_args__ = {"schema": "ops"}
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    subject: Mapped[str] = mapped_column(Text)
+    leader_name: Mapped[str | None] = mapped_column(Text)
+    device_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("ops.staff_device.id"))
+    resource_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("ops.resource.id"))
+    gouvernorat_code: Mapped[int] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
+    crew_size: Mapped[int] = mapped_column(SmallInteger)
+    crew_names: Mapped[str | None] = mapped_column(Text)
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    ended_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class CrewEvent(Base):
+    """A write from the staff app, keyed by the id the phone generated: sent twice, applied once."""
+
+    __tablename__ = "crew_event"
+    __table_args__ = {"schema": "ops"}
+
+    client_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True)
+    assignment_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ops.assignment.id", ondelete="CASCADE")
+    )
+    shift_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ops.shift.id", ondelete="CASCADE")
+    )
+    kind: Mapped[str] = mapped_column(Text)
+    payload: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default="{}")
+    subject: Mapped[str] = mapped_column(Text)
+    device_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    received_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class FieldReport(Base):
+    """The first field report of a team on scene (phase P4a, F-STF-03)."""
+
+    __tablename__ = "field_report"
+    __table_args__ = {"schema": "ops"}
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    incident_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ops.incident.id", ondelete="CASCADE")
+    )
+    assignment_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ops.assignment.id", ondelete="CASCADE")
+    )
+    kind: Mapped[str] = mapped_column(Text, server_default="first")
+    category: Mapped[str] = mapped_column(Text)
+    classification: Mapped[str | None] = mapped_column(Text)
+    severity: Mapped[int] = mapped_column(SmallInteger)
+    backup_needed: Mapped[bool] = mapped_column(Boolean, server_default="false")
+    backup_note: Mapped[str | None] = mapped_column(Text)
+    crew_danger: Mapped[bool] = mapped_column(Boolean, server_default="false")
+    author: Mapped[str] = mapped_column(Text)
+    author_name: Mapped[str | None] = mapped_column(Text)
+    device_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class CasualtyCount(Base):
+    """Live casualty counters of an incident (phase P4a, F-STF-04)."""
+
+    __tablename__ = "casualty_count"
+    __table_args__ = {"schema": "ops"}
+
+    incident_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ops.incident.id", ondelete="CASCADE"), primary_key=True
+    )
+    injured: Mapped[int] = mapped_column(Integer, server_default="0")
+    deceased: Mapped[int] = mapped_column(Integer, server_default="0")
+    rescued: Mapped[int] = mapped_column(Integer, server_default="0")
+    trapped: Mapped[int] = mapped_column(Integer, server_default="0")
+    updated_by: Mapped[str | None] = mapped_column(Text)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class CasualtyTransport(Base):
+    """A person taken to hospital, without a name (phase P4a, F-STF-04)."""
+
+    __tablename__ = "casualty_transport"
+    __table_args__ = {"schema": "ops"}
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    incident_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ops.incident.id", ondelete="CASCADE")
+    )
+    assignment_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ops.assignment.id", ondelete="CASCADE")
+    )
+    triage: Mapped[str] = mapped_column(Text)
+    age_band: Mapped[str] = mapped_column(Text)
+    sex: Mapped[str] = mapped_column(Text)
+    hospital: Mapped[str] = mapped_column(Text)
+    created_by: Mapped[str] = mapped_column(Text)
+    created_by_name: Mapped[str | None] = mapped_column(Text)
+    device_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
