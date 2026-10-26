@@ -8661,6 +8661,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The prevention certificate has expired'**
   String get orgAlertPreventionExpired;
+
+  /// No description provided for @listenAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Listen'**
+  String get listenAction;
+
+  /// No description provided for @listenStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop reading'**
+  String get listenStop;
+
+  /// No description provided for @listenNoVoice.
+  ///
+  /// In en, this message translates to:
+  /// **'No voice for this language on your phone. Install one in the phone settings: Accessibility, then “Text-to-speech”.'**
+  String get listenNoVoice;
+
+  /// No description provided for @listenFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not read aloud.'**
+  String get listenFailed;
+
+  /// No description provided for @a11yTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Accessibility'**
+  String get a11yTitle;
+
+  /// No description provided for @a11ySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Read aloud and flashes for deaf users'**
+  String get a11ySubtitle;
+
+  /// No description provided for @a11yUrgentSection.
+  ///
+  /// In en, this message translates to:
+  /// **'When an urgent alert arrives while the app is open'**
+  String get a11yUrgentSection;
+
+  /// No description provided for @a11yScreenFlash.
+  ///
+  /// In en, this message translates to:
+  /// **'Screen flash'**
+  String get a11yScreenFlash;
+
+  /// No description provided for @a11yScreenFlashHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Three red flashes, one per second'**
+  String get a11yScreenFlashHelp;
+
+  /// No description provided for @a11yTorchFlash.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera light flash'**
+  String get a11yTorchFlash;
+
+  /// No description provided for @a11yTorchFlashHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Three flashes, one per second'**
+  String get a11yTorchFlashHelp;
+
+  /// No description provided for @a11yTorchUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No light on this phone'**
+  String get a11yTorchUnavailable;
+
+  /// No description provided for @a11yReadAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Read the alert aloud'**
+  String get a11yReadAlerts;
+
+  /// No description provided for @a11yReadAlertsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The title and text, in the app’s language'**
+  String get a11yReadAlertsHelp;
+
+  /// No description provided for @a11yTry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try'**
+  String get a11yTry;
+
+  /// No description provided for @a11yTrySample.
+  ///
+  /// In en, this message translates to:
+  /// **'Test alert from e-Himaya. There is no danger.'**
+  String get a11yTrySample;
+
+  /// No description provided for @a11yTryNothing.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose at least one cue.'**
+  String get a11yTryNothing;
+
+  /// No description provided for @a11yAlwaysNote.
+  ///
+  /// In en, this message translates to:
+  /// **'An urgent notification always vibrates (long-short-long) and lights the LED. When the app is closed, turn on “Flash notifications” in the phone’s accessibility settings if it has them.'**
+  String get a11yAlwaysNote;
+
+  /// No description provided for @a11yPhoneSection.
+  ///
+  /// In en, this message translates to:
+  /// **'In the phone settings'**
+  String get a11yPhoneSection;
+
+  /// No description provided for @a11yPhoneNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Text size and the screen reader (TalkBack or VoiceOver) are set in the phone; the app follows them up to 200%. Guides, tips and alerts have a “Listen” button.'**
+  String get a11yPhoneNote;
 }
 
 class _AppLocalizationsDelegate

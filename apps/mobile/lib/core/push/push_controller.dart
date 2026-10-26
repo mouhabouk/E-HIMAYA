@@ -9,6 +9,7 @@ import '../../features/reports/reports_providers.dart';
 import '../../features/safety/safety_providers.dart';
 import '../../features/volunteer/volunteer_providers.dart';
 import '../../l10n/app_localizations.dart';
+import '../a11y/alert_cues.dart';
 import '../auth/identity.dart';
 import '../http/api_error.dart';
 import '../http/ehimaya_api.dart';
@@ -153,6 +154,8 @@ class PushController {
   /// Refreshes what the push is about (the user may be looking at it).
   void handleReceived(PushPayload p) {
     if (p.redacted) unawaited(resolveRedacted(p, opened: false));
+    // P5a: the flashes and the voice the user chose (a redacted push has no text to read yet).
+    if (p.kind.urgent) unawaited(_ref.read(alertCuesProvider).onUrgent(p));
     _refresh(p);
   }
 

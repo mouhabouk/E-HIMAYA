@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/a11y/listen_action.dart';
 import '../../core/http/error_messages.dart';
 import '../../core/routing/app_router.dart';
 import '../../core/settings/settings_controller.dart';
@@ -131,10 +132,23 @@ class GuideItemScreen extends ConsumerWidget {
         .firstOrNull;
     if (item == null) return _Missing(loading: guide == null);
     final text = item.textFor(lang);
+    // Read aloud in the order of the page: when to call, the numbered steps, what not to do.
+    final spoken = [
+      text.title,
+      if (text.call.isNotEmpty) ...[l10n.guideCallNow, ...text.call],
+      if (text.steps.isNotEmpty) ...[
+        l10n.guideSteps,
+        for (final (i, s) in text.steps.indexed) '${i + 1}. $s',
+      ],
+      if (text.dont.isNotEmpty) ...[l10n.guideDont, ...text.dont],
+    ].join('\n');
     return Scaffold(
       appBar: AppBar(
         title: Text(text.title),
-        actions: const [LanguageMenuAction()],
+        actions: [
+          ListenAction(id: 'guide-$itemId-$lang', text: spoken),
+          const LanguageMenuAction(),
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),

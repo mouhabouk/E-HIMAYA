@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/a11y/listen_action.dart';
 import '../../core/auth/identity.dart';
 import '../../core/http/error_messages.dart';
 import '../../core/http/notify_models.dart';
@@ -241,7 +242,14 @@ class AlertDetailScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.alertTitle),
-        actions: const [StandardAppBarActions()],
+        actions: [
+          if (alert != null)
+            ListenAction(
+              id: 'alert-${alert.id}-$lang',
+              text: alertSpokenText(l10n, alert, lang),
+            ),
+          const StandardAppBarActions(),
+        ],
       ),
       body: SafeArea(
         child: switch ((alert, state.isLoading)) {
@@ -306,8 +314,19 @@ class LockedAlertScreen extends ConsumerWidget {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: Text(l10n.alertTitle),
-          // Over a locked phone: only the language, no navigation away from the alert.
-          actions: const [LanguageMenuAction()],
+          // Over a locked phone: only the language and reading aloud, no navigation away.
+          actions: [
+            ListenAction(
+              id: 'locked-alert-$lang',
+              text: alert != null
+                  ? alertSpokenText(l10n, alert, lang)
+                  : [
+                      pushed?.title ?? l10n.alertTitle,
+                      pushed?.body ?? '',
+                    ].join('\n'),
+            ),
+            const LanguageMenuAction(),
+          ],
         ),
         body: SafeArea(
           child: Column(
@@ -348,6 +367,13 @@ class LockedAlertScreen extends ConsumerWidget {
     );
   }
 }
+
+/// What «listen» reads: severity and hazard, title, then the text.
+String alertSpokenText(AppLocalizations l10n, ActiveAlert a, String lang) => [
+  '${severityLabel(l10n, a.severity)}, ${hazardLabel(l10n, a.hazard)}',
+  a.title.of(lang),
+  a.body.of(lang),
+].join('\n');
 
 class _AlertDetail extends StatelessWidget {
   const _AlertDetail({

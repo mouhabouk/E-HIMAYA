@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'core/a11y/alert_cues.dart';
 import 'core/routing/app_router.dart';
 import 'core/settings/settings_controller.dart';
 import 'core/ui/environment_strip.dart';
@@ -25,8 +26,9 @@ class EHimayaApp extends ConsumerWidget {
       darkTheme: buildTheme(Brightness.dark, settings.palette),
       themeMode: settings.themeMode,
       routerConfig: router,
-      builder: (context, child) =>
-          EnvironmentStrip(child: child ?? const SizedBox.shrink()),
+      builder: (context, child) => ScreenFlash(
+        child: EnvironmentStrip(child: child ?? const SizedBox.shrink()),
+      ),
       scaffoldMessengerKey: rootMessengerKey,
     );
   }
