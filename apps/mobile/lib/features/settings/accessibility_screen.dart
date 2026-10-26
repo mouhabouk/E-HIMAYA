@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/a11y/alert_cues.dart';
+import '../../core/a11y/simple_mode.dart';
 import '../../core/a11y/torch.dart';
 import '../../core/ui/components.dart';
 import '../../core/ui/emergency_action.dart';
@@ -16,7 +17,7 @@ final torchAvailableProvider = FutureProvider.autoDispose<bool>(
 );
 
 /// Phase P5a (NFR-10): the cues for deaf, hard-of-hearing and blind users, and where the
-/// phone's own settings take over.
+/// phone's own settings take over. Phase P5b: the simplified home.
 class AccessibilityScreen extends ConsumerWidget {
   const AccessibilityScreen({super.key});
 
@@ -27,6 +28,7 @@ class AccessibilityScreen extends ConsumerWidget {
     final cues = ref.watch(a11yCuesProvider);
     final controller = ref.read(a11yCuesProvider.notifier);
     final torch = ref.watch(torchAvailableProvider).value ?? false;
+    final simple = ref.watch(simpleModeProvider);
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.a11yTitle),
@@ -35,6 +37,19 @@ class AccessibilityScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          // Phase P5b (F-APP-142).
+          SectionTitle(l10n.a11ySimpleSection),
+          NavCard(
+            icon: Icons.touch_app_rounded,
+            tone: Tone.green,
+            title: l10n.a11ySimpleMode,
+            subtitle: l10n.a11ySimpleModeHelp,
+            trailing: Switch(
+              key: const Key('a11y-simple-mode'),
+              value: simple,
+              onChanged: ref.read(simpleModeProvider.notifier).set,
+            ),
+          ),
           SectionTitle(l10n.a11yUrgentSection),
           NavCard(
             icon: Icons.flash_on_rounded,

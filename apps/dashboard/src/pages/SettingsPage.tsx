@@ -3,11 +3,14 @@ import { useId, useState, type SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { ErrorBox, Loading } from "../components/Feedback";
+import { AppFeedbackCard } from "../components/AppFeedbackCard";
 import { AppReleaseCard, ModerationTermsCard } from "../components/PhaseASettings";
 import { ReasonField } from "../components/Phase9Bits";
 import { LocationHistoryCard } from "../components/SafetySettings";
+import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
 import { errorMessageKey, isApiError } from "../lib/api";
+import { canReadAppFeedback } from "../lib/appFeedback";
 import { useFormat } from "../lib/hooks";
 import {
   ACCESS_INFO_DAYS_RANGE,
@@ -175,6 +178,7 @@ const ints = (v: Values, names: readonly string[]) => names.map((n) => Number(v[
  */
 export function SettingsPage() {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const fmt = useFormat();
   const query = usePlatformSettings();
 
@@ -291,6 +295,8 @@ export function SettingsPage() {
       )}
 
       {release && <AppReleaseCard key={`${release.key}-${release.version}`} setting={release} />}
+
+      {user && canReadAppFeedback(user.identity.roles) && <AppFeedbackCard />}
 
       {extraTerms && <ModerationTermsCard key={`${extraTerms.key}-${extraTerms.version}`} setting={extraTerms} />}
 

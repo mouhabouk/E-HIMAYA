@@ -20,12 +20,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.crypto import get_cipher
 from app.core.db import as_system, get_session
+from app.modules.appinfo import feedback as app_feedback
 from app.modules.audit import service as audit
 from app.modules.contact import router as contact
 from app.modules.doctors import service as doctors
 from app.modules.doctors.models import Doctor
 from app.modules.doctors.schemas import DoctorOut
-from app.modules.identity.models import Account, Consent, ErasureRequest, Profile
+from app.modules.identity.models import Account, Consent, EmailCode, ErasureRequest, Profile
 from app.modules.identity.router import MedicalInfo
 from app.modules.identity.service import CurrentReporter, limit_reporter
 from app.modules.notify.models import Device, Message, Outbox
@@ -188,6 +189,9 @@ class ExportOut(BaseModel):
     messages: list[ExportMessage]
     # Phase B1: "contact us" requests, with the contact details given.
     contact: list[contact.ExportContact]
+    # Phase P5b: ratings of the app, and the work e-mail confirmed by code.
+    app_ratings: list[app_feedback.ExportRating]
+    confirmed_email: str | None
 
 
 class DeleteIn(BaseModel):
@@ -381,6 +385,8 @@ async def export_my_data(
             for m in messages
         ],
         contact=await contact.export(session, user_id),
+        app_ratings=await app_feedback.export(session, user_id),
+        confirmed_email=email_code.email if (email_code := await session.get(EmailCode, user_id)) else None,
     )
     await audit.record(
         session,
@@ -430,6 +436,10 @@ async def delete_my_account(request: Request, body: DeleteIn, reporter: CurrentR
     # Phase 8: ledger and badges deleted, nominations anonymised, certificates detached (PDF removed).
     details.update(await rewards.forget(session, user_id))
     details["contact_requests_detached"] = await contact.forget(session, user_id)
+    details["app_ratings"] = await app_feedback.forget(session, user_id)
+    details["confirmed_email"] = int(
+        (await session.execute(delete(EmailCode).where(EmailCode.user_id == user_id))).rowcount  # type: ignore[attr-defined]
+    )
     # Phase B2: personal safety rows (system scope: the alerts received and the links have other owners too) and the
     # medical files attached to the person's reports.
     async with as_system(session) as system:

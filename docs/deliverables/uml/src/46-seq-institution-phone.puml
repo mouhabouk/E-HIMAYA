@@ -1,0 +1,37 @@
+@startuml
+!include style.iuml
+title Séquence : compte d'établissement depuis le téléphone (P5b)
+autonumber
+actor "Responsable de\nl'établissement" as U
+participant "Application" as APP
+participant "Keycloak\n(SMS OTP)" as KC
+participant "API\n/me/email" as MAIL
+participant "Boîte d'envoi\n(outbox)" as OUT
+participant "API\n/orgs" as ORG
+U -> APP : « Établissement » puis « Inscrire mon établissement »
+APP -> KC : numéro de téléphone
+KC --> U : code SMS
+U -> APP : code
+APP -> KC : code
+KC --> APP : jeton (rôle : établissement)
+APP -> MAIL : GET /api/v1/me/email
+MAIL --> APP : verified = false
+U -> APP : adresse professionnelle
+APP -> MAIL : POST /code {email, locale}
+note right of MAIL : 5 demandes par heure ;\ncode de 6 chiffres, 10 minutes ;\nHMAC du code, adresse chiffrée
+MAIL -> OUT : courriel (ar / fr / en)
+OUT --> U : code
+U -> APP : code
+APP -> MAIL : POST /verify {code}
+alt code juste
+  MAIL --> APP : verified = true (source : code)
+else code faux
+  MAIL --> APP : 422 invalid_code (une tentative de moins sur 5)
+else expiré ou tentatives épuisées
+  MAIL --> APP : 409 code_expired
+end
+U -> APP : fiche de l'établissement (P2a)
+APP -> ORG : POST /api/v1/orgs
+note right of ORG : l'adresse confirmée vaut\nl'adresse vérifiée de Keycloak
+ORG --> APP : établissement « en attente de vérification »
+@enduml

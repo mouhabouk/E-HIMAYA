@@ -55,6 +55,7 @@ class AppPrefs {
   static const _a11yScreenFlash = 'a11y.screen_flash';
   static const _a11yTorchFlash = 'a11y.torch_flash';
   static const _a11yReadAlerts = 'a11y.read_alerts';
+  static const _a11ySimpleMode = 'a11y.simple_mode';
 
   /// Kept when the account is deleted: interface choices, not personal data.
   static const _keptOnWipe = {
@@ -67,6 +68,7 @@ class AppPrefs {
     _a11yScreenFlash,
     _a11yTorchFlash,
     _a11yReadAlerts,
+    _a11ySimpleMode,
   };
 
   String? get charterAcceptedVersion => _prefs.getString(_charterVersion);
@@ -280,6 +282,11 @@ class AppPrefs {
   bool get a11yReadAlerts => _prefs.getBool(_a11yReadAlerts) ?? false;
   Future<void> setA11yReadAlerts(bool value) =>
       _prefs.setBool(_a11yReadAlerts, value);
+
+  /// Phase P5b: the simplified home, large buttons and plain words (off by default).
+  bool get a11ySimpleMode => _prefs.getBool(_a11ySimpleMode) ?? false;
+  Future<void> setA11ySimpleMode(bool value) =>
+      _prefs.setBool(_a11ySimpleMode, value);
 
   /// The live location share in progress (JSON: id, token, expires_at), so a restart resumes it.
   String? get liveShareJson => _prefs.getString(_liveShare);

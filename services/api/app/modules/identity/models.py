@@ -135,3 +135,21 @@ class ErasureRequest(Base):
     keycloak_sub: Mapped[str] = mapped_column(Text)
     requested_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     disabled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class EmailCode(Base):
+    """A work e-mail confirmed by a 6-digit code (phase P5b, F-APP-12): lets an account signed in with a phone number
+    register an institution. The address is encrypted; only an HMAC of the code is kept, until it is used."""
+
+    __tablename__ = "email_code"
+    __table_args__ = {"schema": "identity"}
+
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("identity.account.user_id", ondelete="CASCADE"), primary_key=True
+    )
+    email: Mapped[str] = mapped_column("email_enc", EncryptedText("identity.email_code.email"))
+    code_hmac: Mapped[bytes | None] = mapped_column(LargeBinary)
+    expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    attempts_left: Mapped[int] = mapped_column(SmallInteger, server_default="5")
+    verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

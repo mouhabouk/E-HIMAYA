@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/ui/brand.dart';
 import '../../l10n/app_localizations.dart';
@@ -7,8 +8,12 @@ import 'welcome_controller.dart';
 import 'welcome_scaffold.dart';
 
 /// Five introduction cards (addition 7): welcome, run by the Office, when, how, where.
+/// [replay] (phase P5b, F-APP-143): shown again from the settings, and "skip" or the last card
+/// goes back there.
 class IntroScreen extends ConsumerStatefulWidget {
-  const IntroScreen({super.key});
+  const IntroScreen({super.key, this.replay = false});
+
+  final bool replay;
 
   @override
   ConsumerState<IntroScreen> createState() => _IntroScreenState();
@@ -32,7 +37,13 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
     super.dispose();
   }
 
-  void _done() => ref.read(welcomeProvider.notifier).introSeen();
+  void _done() {
+    if (widget.replay) {
+      context.pop();
+      return;
+    }
+    ref.read(welcomeProvider.notifier).introSeen();
+  }
 
   @override
   Widget build(BuildContext context) {

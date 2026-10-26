@@ -215,6 +215,23 @@ class SettingsScreen extends ConsumerWidget {
             subtitle: l10n.contactMineTitle,
             onTap: () => context.push(Routes.contact),
           ),
+          // Phase P5b (F-APP-143).
+          NavCard(
+            key: const Key('settings-rate'),
+            icon: Icons.star_rounded,
+            tone: Tone.amber,
+            title: l10n.rateTitle,
+            subtitle: l10n.rateSubtitle,
+            onTap: () => context.push(Routes.rateApp),
+          ),
+          NavCard(
+            key: const Key('settings-intro'),
+            icon: Icons.slideshow_rounded,
+            tone: Tone.purple,
+            title: l10n.introReplayTitle,
+            subtitle: l10n.introReplaySubtitle,
+            onTap: () => context.push(Routes.introReplay),
+          ),
           SectionTitle(l10n.settingsIdentity),
           NavCard(
             key: const Key('settings-identity'),
