@@ -13,6 +13,7 @@ import '../../core/ui/emergency_action.dart';
 import '../../core/ui/required_label.dart';
 import '../../core/ui/tokens.dart';
 import '../../l10n/app_localizations.dart';
+import 'email_confirm.dart';
 import 'institution_providers.dart';
 import 'institution_sections.dart' show KindFieldInputs;
 import 'kind_fields.dart';
@@ -252,12 +253,27 @@ class _RegisterInstitutionScreenState
       3 => l10n.orgRegisterLocationTitle,
       _ => l10n.orgRegisterReviewTitle,
     };
+    // Phase P5b (F-APP-12): an account signed in with a phone number confirms its work e-mail
+    // first. If the check fails the form stays open; the server has the last word.
+    final email = ref.watch(myEmailProvider);
+    final needsEmail = created == null && email.value?.verified == false;
+    if (created == null && email.isLoading && !email.hasValue) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(l10n.orgRegister),
+          actions: const [StandardAppBarActions()],
+        ),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.orgRegister),
         actions: const [StandardAppBarActions()],
       ),
-      body: created != null
+      body: needsEmail
+          ? EmailConfirmPanel(initial: email.value?.email)
+          : created != null
           ? _Done(created: created)
           : ListView(
               key: const Key('org-register-form'),
@@ -289,7 +305,7 @@ class _RegisterInstitutionScreenState
                 },
               ],
             ),
-      bottomNavigationBar: created != null
+      bottomNavigationBar: created != null || needsEmail
           ? null
           : SafeArea(
               child: Padding(

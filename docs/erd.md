@@ -289,6 +289,24 @@ erDiagram
     evidence__anchor ||--o{ evidence__leaf : "anchor_id"
 ```
 
+## feedback
+
+```mermaid
+erDiagram
+    feedback__app_rating {
+        uuid id PK
+        uuid user_id FK
+        smallint stars
+        blob remark_enc
+        text platform
+        integer build
+        text version
+        text locale
+        datetime created_at
+    }
+    identity__account ||--o{ feedback__app_rating : "user_id"
+```
+
 ## forecast
 
 ```mermaid
@@ -457,6 +475,15 @@ erDiagram
         text actor
         datetime at
     }
+    identity__email_code {
+        uuid user_id PK,FK
+        blob email_enc
+        blob code_hmac
+        datetime expires_at
+        smallint attempts_left
+        datetime verified_at
+        datetime updated_at
+    }
     identity__erasure_request {
         bigint id PK
         text keycloak_sub
@@ -513,6 +540,7 @@ erDiagram
     geo__gouvernorat ||--o{ identity__volunteer : "gouvernorat_code"
     identity__account ||--o{ identity__consent : "user_id"
     identity__account ||--o{ identity__doctor : "user_id"
+    identity__account ||--o{ identity__email_code : "user_id"
     identity__account ||--o{ identity__profile : "user_id"
     identity__account ||--o{ identity__volunteer : "user_id"
     identity__doctor ||--o{ identity__doctor_review : "user_id"

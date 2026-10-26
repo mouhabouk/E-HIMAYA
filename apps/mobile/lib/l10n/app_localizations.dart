@@ -223,13 +223,13 @@ abstract class AppLocalizations {
   /// No description provided for @institutionBody.
   ///
   /// In en, this message translates to:
-  /// **'Registration is mandatory for institutions and is done through the institutions portal, not in this app. If your institution already has an account, sign in below.'**
+  /// **'Register your institution from the phone: your number and an SMS code, then your work e-mail and a code sent to it, then the card with the tax ID or the RNE number. The account stays “under review” until the administration confirms it.'**
   String get institutionBody;
 
   /// No description provided for @institutionLogin.
   ///
   /// In en, this message translates to:
-  /// **'Sign in'**
+  /// **'My institution has an account: sign in'**
   String get institutionLogin;
 
   /// No description provided for @citizenModeTitle.
@@ -8781,6 +8781,204 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Text size and the screen reader (TalkBack or VoiceOver) are set in the phone; the app follows them up to 200%. Guides, tips and alerts have a “Listen” button.'**
   String get a11yPhoneNote;
+
+  /// No description provided for @a11ySimpleSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Simplified mode'**
+  String get a11ySimpleSection;
+
+  /// No description provided for @a11ySimpleMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Simplified mode'**
+  String get a11ySimpleMode;
+
+  /// No description provided for @a11ySimpleModeHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'A home with five large buttons in plain words, within reach of the thumb.'**
+  String get a11ySimpleModeHelp;
+
+  /// No description provided for @simpleCall198.
+  ///
+  /// In en, this message translates to:
+  /// **'Call Civil Protection 198'**
+  String get simpleCall198;
+
+  /// No description provided for @simpleReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Report a danger'**
+  String get simpleReport;
+
+  /// No description provided for @simpleSosMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a help message to my family'**
+  String get simpleSosMessage;
+
+  /// No description provided for @simpleWhatToDo.
+  ///
+  /// In en, this message translates to:
+  /// **'What should I do?'**
+  String get simpleWhatToDo;
+
+  /// No description provided for @simpleAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts'**
+  String get simpleAlerts;
+
+  /// No description provided for @simpleSosHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency: press and hold the red button.'**
+  String get simpleSosHint;
+
+  /// No description provided for @simpleShowAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Show all options'**
+  String get simpleShowAll;
+
+  /// No description provided for @rateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate the app'**
+  String get rateTitle;
+
+  /// No description provided for @rateSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your opinion improves the app'**
+  String get rateSubtitle;
+
+  /// No description provided for @rateQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'What do you think of the app?'**
+  String get rateQuestion;
+
+  /// No description provided for @rateStar.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} out of 5'**
+  String rateStar(int count);
+
+  /// No description provided for @rateRemark.
+  ///
+  /// In en, this message translates to:
+  /// **'Remark (optional)'**
+  String get rateRemark;
+
+  /// No description provided for @rateSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get rateSend;
+
+  /// No description provided for @rateChooseStars.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a number of stars.'**
+  String get rateChooseStars;
+
+  /// No description provided for @rateThanks.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you, your rating was sent.'**
+  String get rateThanks;
+
+  /// No description provided for @rateContactNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Need an answer? Use “Contact us”.'**
+  String get rateContactNote;
+
+  /// No description provided for @introReplayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Introduction tour'**
+  String get introReplayTitle;
+
+  /// No description provided for @introReplaySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The five cards from the first launch'**
+  String get introReplaySubtitle;
+
+  /// No description provided for @institutionRegister.
+  ///
+  /// In en, this message translates to:
+  /// **'Register my institution'**
+  String get institutionRegister;
+
+  /// No description provided for @emailConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Work e-mail'**
+  String get emailConfirmTitle;
+
+  /// No description provided for @emailConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'To register an institution we need a confirmed e-mail. We send a 6-digit code to it.'**
+  String get emailConfirmBody;
+
+  /// No description provided for @emailField.
+  ///
+  /// In en, this message translates to:
+  /// **'E-mail'**
+  String get emailField;
+
+  /// No description provided for @emailSendCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Send the code'**
+  String get emailSendCode;
+
+  /// No description provided for @emailCodeSent.
+  ///
+  /// In en, this message translates to:
+  /// **'A code was sent to {email}. Valid for 10 minutes.'**
+  String emailCodeSent(String email);
+
+  /// No description provided for @emailCodeField.
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get emailCodeField;
+
+  /// No description provided for @emailVerify.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get emailVerify;
+
+  /// No description provided for @emailConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'E-mail confirmed: {email}'**
+  String emailConfirmed(String email);
+
+  /// No description provided for @emailChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Change e-mail'**
+  String get emailChange;
+
+  /// No description provided for @emailCodeInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong code.'**
+  String get emailCodeInvalid;
+
+  /// No description provided for @emailCodeExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'The code expired. Ask for a new one.'**
+  String get emailCodeExpired;
 }
 
 class _AppLocalizationsDelegate

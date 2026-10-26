@@ -135,6 +135,10 @@ export function fakeLayersApi() {
 
 export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
   return {
+    // Phase P5b: ratings of the mobile app (settings page).
+    appFeedback: vi.fn(() =>
+      Promise.resolve({ days: 90, count: 0, average: null, by_stars: {}, by_build: [], remarks: [] }),
+    ),
     kpis: vi.fn(),
     reports: vi.fn(() => Promise.resolve({ items: [], next_cursor: null })),
     report: vi.fn(),

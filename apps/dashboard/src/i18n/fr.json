@@ -3420,6 +3420,21 @@
       "help": "Permet aux citoyens qui l'activent de garder leurs positions pendant 72 heures, afin qu'une salle des opérations retrouve une personne disparue. Désactivé par défaut.",
       "label": "Activer l'historique de position",
       "note": "Désactivé, l'application masque la fonction et la recherche de personne disparue n'apparaît pas. Le désactiver plus tard arrête la collecte ; les points déjà gardés sont effacés après 72 heures."
+    },
+    "appFeedback": {
+      "title": "Évaluation de l’application mobile",
+      "help": "Les évaluations de l’application par les citoyens, d’une à cinq étoiles, et leurs remarques. Une évaluation n’est pas une demande : pour une réponse, il y a « Contactez-nous ». Chaque consultation est journalisée.",
+      "period": "Période",
+      "days": "{{n}} derniers jours",
+      "average": "Moyenne",
+      "count": "Nombre d’évaluations",
+      "byStars": "Évaluations par nombre d’étoiles",
+      "stars": "{{n}} ★",
+      "empty": "Aucune évaluation sur cette période.",
+      "byBuild": "Moyenne par version",
+      "version": "Version",
+      "remarks": "Dernières remarques",
+      "noRemarks": "Aucune remarque sur cette période."
     }
   },
   "accounts": {

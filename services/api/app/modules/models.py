@@ -3,6 +3,7 @@
 from app.modules.ai.models import AiSettingsRow, Analysis
 from app.modules.analytics.models import Notification, Scenario, Schedule
 from app.modules.analytics.models import Report as AnalyticsReport
+from app.modules.appinfo.models import AppRating
 from app.modules.audit.models import AuditLog
 from app.modules.contact.models import ContactEvent, ContactRequest
 from app.modules.content.models import GuideItem, GuideTopic, Revision, SafetyTip
@@ -11,7 +12,7 @@ from app.modules.doctors.models import Doctor, DoctorReview
 from app.modules.evidence.models import Anchor, Leaf
 from app.modules.forecast.models import ForecastRun
 from app.modules.geo.models import Delegation, Gouvernorat, Layer, LayerFeature, LayerImport
-from app.modules.identity.models import Account, Consent, ErasureRequest, Profile
+from app.modules.identity.models import Account, Consent, EmailCode, ErasureRequest, Profile
 from app.modules.knowledge.models import IndexState, MemoryEntry, MemoryEntryVersion, SearchDoc
 from app.modules.medical.models import FileKey, FileOpening, LockedFile
 from app.modules.notify.models import Device, Dispatch, Message, OrgDigest, Outbox
@@ -66,6 +67,7 @@ __all__ = [
     "Analysis",
     "AnalyticsReport",
     "Anchor",
+    "AppRating",
     "Assignment",
     "AuditLog",
     "BadgeAward",
@@ -87,6 +89,7 @@ __all__ = [
     "DoctorReview",
     "Document",
     "DocumentVersion",
+    "EmailCode",
     "Equipment",
     "ErasureRequest",
     "FileKey",
