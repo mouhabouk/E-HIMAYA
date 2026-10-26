@@ -63,11 +63,13 @@ class EmergencyContactsScreen extends ConsumerWidget {
                     style: theme.textTheme.titleMedium,
                   ),
                 ),
-                TextButton.icon(
-                  key: const Key('groups-add'),
-                  onPressed: () => _addGroup(context, ref),
-                  icon: const Icon(Icons.add),
-                  label: Text(l10n.safetyGroupAdd),
+                Flexible(
+                  child: TextButton.icon(
+                    key: const Key('groups-add'),
+                    onPressed: () => _addGroup(context, ref),
+                    icon: const Icon(Icons.add),
+                    label: Text(l10n.safetyGroupAdd),
+                  ),
                 ),
               ],
             ),

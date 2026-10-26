@@ -41,32 +41,39 @@ class WelcomeScaffold extends ConsumerWidget {
         ],
       ),
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(child: body),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  ?bottom,
-                  if (bottom != null) const SizedBox(height: 8),
-                  OutlinedButton.icon(
-                    key: const Key('welcome-call-198'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: sosRed,
-                      side: const BorderSide(color: sosRed, width: 1.5),
-                    ),
-                    onPressed: () => ref.read(dialerProvider)(civil.telUri),
-                    icon: const Icon(Icons.phone),
-                    label: Text(l10n.call198),
+        child: LayoutBuilder(
+          builder: (context, box) => Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(child: body),
+              // Accessibility: with enlarged text the actions may be taller than half the
+              // screen; they then scroll instead of pushing the page off.
+              ConstrainedBox(
+                constraints: BoxConstraints(maxHeight: box.maxHeight * 0.6),
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      ?bottom,
+                      if (bottom != null) const SizedBox(height: 8),
+                      OutlinedButton.icon(
+                        key: const Key('welcome-call-198'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: sosRed,
+                          side: const BorderSide(color: sosRed, width: 1.5),
+                        ),
+                        onPressed: () => ref.read(dialerProvider)(civil.telUri),
+                        icon: const Icon(Icons.phone),
+                        label: Text(l10n.call198),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -278,6 +278,8 @@ class _NewReportScreenState extends ConsumerState<NewReportScreen> {
                               height: 56,
                               fit: BoxFit.cover,
                               cacheWidth: 112,
+                              // The tile's title already names the photo.
+                              excludeFromSemantics: true,
                               errorBuilder: (_, _, _) =>
                                   const Icon(Icons.image),
                             ),
