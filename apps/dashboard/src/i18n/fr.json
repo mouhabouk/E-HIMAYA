@@ -39,7 +39,8 @@
     "doctors": "Médecins",
     "medicalCommittee": "Comité médical",
     "counter": "Guichet",
-    "prevention": "Visites de prévention"
+    "prevention": "Visites de prévention",
+    "crew": "Équipes de garde"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -70,7 +71,8 @@
     "security_admin": "Administrateur sécurité",
     "ai_admin": "Administrateur IA",
     "regional_account_admin": "Administrateur des comptes",
-    "medical_coordinator": "Coordinateur médical régional"
+    "medical_coordinator": "Coordinateur médical régional",
+    "team_leader": "Chef d'agrès"
   },
   "status": {
     "received": "Reçu",
@@ -660,7 +662,11 @@
       "report_referred": "Signalement renvoyé",
       "report_referral_accepted": "Renvoi accepté",
       "report_referral_refused": "Renvoi refusé",
-      "report_geo_verified": "Lieu d’un signalement vérifié"
+      "report_geo_verified": "Lieu d’un signalement vérifié",
+      "crew_ack": "Ordre reçu par l'équipe",
+      "field_report": "Premier bilan du terrain",
+      "casualties": "Bilan des victimes mis à jour",
+      "transport": "Victime évacuée"
     },
     "via": {
       "suggestion": "(suggestion confirmée)",
@@ -4138,5 +4144,73 @@
     "reason": "Motif",
     "decidedBy": "Rendue par",
     "certificate": "Certificat de prévention"
+  },
+  "crew": {
+    "pageTitle": "Équipes de garde",
+    "intro": "Les chefs d'agrès sur l'application des équipes : engins en garde et téléphones.",
+    "onDuty": "En garde maintenant",
+    "noShift": "Aucun engin en garde sur l'application.",
+    "vehicle": "Engin",
+    "leaderCol": "Chef d'agrès",
+    "crewCol": "Équipage",
+    "since": "Depuis",
+    "leader": "Chef : {{name}}",
+    "acknowledged": "Reçu {{time}}",
+    "notAcknowledged": "Pas encore reçu",
+    "fieldTitle": "Du terrain",
+    "danger": "Danger pour l'équipage",
+    "backup": "Demande un renfort",
+    "casualties": "Victimes",
+    "counter": {
+      "injured": "Blessés",
+      "deceased": "Décédés",
+      "rescued": "Secourus",
+      "trapped": "Bloqués"
+    },
+    "firstReports": "Premiers bilans",
+    "severity": {
+      "1": "1 · Mineure",
+      "2": "2 · Modérée",
+      "3": "3 · Grave",
+      "4": "4 · Critique"
+    },
+    "transports": "Évacués vers l'hôpital",
+    "triage": "Triage",
+    "victim": "Victime",
+    "hospital": "Hôpital",
+    "at": "Heure",
+    "triageName": {
+      "red": "Rouge · immédiat",
+      "yellow": "Jaune · urgent",
+      "green": "Vert · léger",
+      "black": "Noir · décédé"
+    },
+    "age": {
+      "child": "Enfant",
+      "adult": "Adulte",
+      "elderly": "Âgé",
+      "unknown": "Âge inconnu"
+    },
+    "sex": {
+      "female": "Femme",
+      "male": "Homme",
+      "unknown": "Sexe inconnu"
+    },
+    "devices": "Téléphones des chefs d'agrès",
+    "devicesIntro": "Retirer un téléphone efface tout à sa prochaine connexion et termine sa garde.",
+    "showRevoked": "Afficher les téléphones retirés",
+    "noDevice": "Aucun téléphone enregistré.",
+    "holder": "Titulaire",
+    "state": "État",
+    "lastSeen": "Dernière connexion",
+    "build": "version {{build}}",
+    "revoked": "Retiré",
+    "onShift": "En garde",
+    "idle": "Hors garde",
+    "revoke": "Retirer et effacer",
+    "revokeLabel": "Retirer et effacer le téléphone de {{name}}",
+    "revokeConfirm": "Effacer définitivement le téléphone de {{name}} ?",
+    "revokeYes": "Oui, effacer",
+    "size": "Équipage : {{count}}"
   }
 }

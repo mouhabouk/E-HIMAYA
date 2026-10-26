@@ -39,7 +39,8 @@
     "doctors": "الأطباء",
     "medicalCommittee": "اللجنة الطبية",
     "counter": "الشبّاك",
-    "prevention": "زيارات الوقاية"
+    "prevention": "زيارات الوقاية",
+    "crew": "فرق المناوبة"
   },
   "header": {
     "scope": "النطاق الجغرافي",
@@ -70,7 +71,8 @@
     "security_admin": "مسؤول الأمن",
     "ai_admin": "مسؤول نماذج الذكاء الاصطناعي",
     "regional_account_admin": "مسؤول حسابات القاعة",
-    "medical_coordinator": "منسّق طبي جهوي"
+    "medical_coordinator": "منسّق طبي جهوي",
+    "team_leader": "قائد فريق التدخل"
   },
   "status": {
     "received": "مستلم",
@@ -660,7 +662,11 @@
       "report_referred": "إحالة بلاغ",
       "report_referral_accepted": "قبول إحالة",
       "report_referral_refused": "رفض إحالة",
-      "report_geo_verified": "تحقق من موقع بلاغ"
+      "report_geo_verified": "تحقق من موقع بلاغ",
+      "crew_ack": "استلم الفريق الأمر",
+      "field_report": "التقرير الأول من الميدان",
+      "casualties": "تحديث عدد الضحايا",
+      "transport": "نقل ضحية إلى مستشفى"
     },
     "via": {
       "suggestion": "(اقتراح آلي مؤكَّد)",
@@ -4138,5 +4144,73 @@
     "reason": "السبب",
     "decidedBy": "أصدره",
     "certificate": "شهادة الوقاية"
+  },
+  "crew": {
+    "pageTitle": "فرق المناوبة",
+    "intro": "قادة الفرق على تطبيق الأعوان: الآليات في المناوبة وهواتفهم.",
+    "onDuty": "في المناوبة الآن",
+    "noShift": "لا آلية في المناوبة على التطبيق.",
+    "vehicle": "الآلية",
+    "leaderCol": "قائد الفريق",
+    "crewCol": "الطاقم",
+    "since": "منذ",
+    "leader": "القائد: {{name}}",
+    "acknowledged": "استُلم {{time}}",
+    "notAcknowledged": "لم يُستلم بعد",
+    "fieldTitle": "من الميدان",
+    "danger": "خطر على الطاقم",
+    "backup": "يطلب تعزيزا",
+    "casualties": "الضحايا",
+    "counter": {
+      "injured": "مصابون",
+      "deceased": "متوفون",
+      "rescued": "تم إنقاذهم",
+      "trapped": "محاصرون"
+    },
+    "firstReports": "التقارير الأولى",
+    "severity": {
+      "1": "1 · طفيفة",
+      "2": "2 · متوسطة",
+      "3": "3 · خطيرة",
+      "4": "4 · حرجة"
+    },
+    "transports": "نُقلوا إلى المستشفى",
+    "triage": "الفرز",
+    "victim": "الضحية",
+    "hospital": "المستشفى",
+    "at": "الساعة",
+    "triageName": {
+      "red": "أحمر · فوري",
+      "yellow": "أصفر · عاجل",
+      "green": "أخضر · طفيف",
+      "black": "أسود · متوفى"
+    },
+    "age": {
+      "child": "طفل",
+      "adult": "بالغ",
+      "elderly": "مسن",
+      "unknown": "عمر غير معروف"
+    },
+    "sex": {
+      "female": "أنثى",
+      "male": "ذكر",
+      "unknown": "جنس غير معروف"
+    },
+    "devices": "هواتف قادة الفرق",
+    "devicesIntro": "سحب هاتف يمسح كل ما فيه عند اتصاله التالي، وينهي مناوبته.",
+    "showRevoked": "إظهار الهواتف المسحوبة",
+    "noDevice": "لا هاتف مسجّل.",
+    "holder": "صاحب الهاتف",
+    "state": "الحالة",
+    "lastSeen": "آخر اتصال",
+    "build": "إصدار {{build}}",
+    "revoked": "مسحوب",
+    "onShift": "في المناوبة",
+    "idle": "خارج المناوبة",
+    "revoke": "سحب ومسح",
+    "revokeLabel": "سحب هاتف {{name}} ومسحه",
+    "revokeConfirm": "مسح هاتف {{name}} نهائيا؟",
+    "revokeYes": "نعم، امسح",
+    "size": "الطاقم: {{count}}"
   }
 }

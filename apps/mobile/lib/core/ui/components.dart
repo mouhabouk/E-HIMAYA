@@ -331,7 +331,9 @@ class BarAction {
   final String label;
   final IconData icon;
   final Tone tone;
-  final VoidCallback onPressed;
+
+  /// Null disables the button (greyed out, announced as disabled).
+  final VoidCallback? onPressed;
   final Key? key;
 }
 

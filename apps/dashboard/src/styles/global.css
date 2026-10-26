@@ -4598,3 +4598,58 @@ button.nav-card:hover {
   align-items: flex-end;
   gap: 0.75rem;
 }
+
+/* ---------- Phase P4a: staff app in the room (crew, field reports, casualties) ---------- */
+.crew-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+}
+.chip--crew-ack {
+  background: var(--tone-green-tint);
+  color: var(--tone-green-ink);
+}
+.chip--crew-waiting,
+.chip--crew-revoked {
+  background: var(--tone-red-tint);
+  color: var(--tone-red-ink);
+}
+.crew-counters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+}
+.crew-counter {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.75rem;
+  text-align: center;
+}
+.crew-counter dt {
+  color: var(--muted);
+}
+.crew-counter dd {
+  margin: 0.25rem 0 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+.crew-counter--deceased dd {
+  color: var(--tone-red-ink);
+}
+.crew-reports {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem;
+  display: grid;
+  gap: 0.5rem;
+}
+.chip--severity-1 { background: var(--tone-green-tint); color: var(--tone-green-ink); }
+.chip--severity-2 { background: var(--tone-amber-tint); color: var(--tone-amber-ink); }
+.chip--severity-3 { background: var(--tone-orange-tint); color: var(--tone-orange-ink); }
+.chip--severity-4 { background: var(--tone-red-tint); color: var(--tone-red-ink); }
+.chip--triage-red { background: var(--tone-red); color: var(--tone-red-on); }
+.chip--triage-yellow { background: var(--tone-amber-tint); color: var(--tone-amber-ink); }
+.chip--triage-green { background: var(--tone-green-tint); color: var(--tone-green-ink); }
+.chip--triage-black { background: var(--text); color: var(--surface); }

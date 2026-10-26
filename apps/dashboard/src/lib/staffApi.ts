@@ -3,6 +3,7 @@ import { bboxParam, filtersToQuery, type BBox, type ReportFilters } from "./filt
 import { appFeedbackApi } from "./appFeedback";
 import { contactApi } from "./contact";
 import { opsApi } from "./opsApi";
+import { crewApi } from "./crewApi";
 import { guideApi } from "./guide";
 import { layersApi } from "./layersApi";
 import { phase7Api } from "./phase7Api";
@@ -224,6 +225,7 @@ export function staffApi(api: ApiClient) {
       api.request<Gouvernorat[]>("/api/v1/geo/gouvernorats", { query: { lang: "ar" }, signal }),
 
     ...opsApi(api),
+    ...crewApi(api),
     ...streamsApi(api),
     ...phase7Api(api),
     ...phase8Api(api),

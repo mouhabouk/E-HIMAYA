@@ -49,6 +49,8 @@ class Role(StrEnum):
     REGIONAL_ACCOUNT_ADMIN = "regional_account_admin"
     # Phase C1-a: checks the doctors' registrations of a gouvernorat (no operational rights).
     MEDICAL_COORDINATOR = "medical_coordinator"
+    # Phase P4a: the leader of an intervention team, on the staff app (shift, mission steps, field reports only).
+    TEAM_LEADER = "team_leader"
 
 
 REALM_ROLES: dict[Realm, frozenset[Role]] = {
@@ -67,6 +69,7 @@ REALM_ROLES: dict[Realm, frozenset[Role]] = {
             Role.AI_ADMIN,
             Role.REGIONAL_ACCOUNT_ADMIN,
             Role.MEDICAL_COORDINATOR,
+            Role.TEAM_LEADER,
         }
     ),
 }
@@ -79,6 +82,7 @@ class Function(StrEnum):
     OPERATIONS = "operations"
     TECHNICAL = "technical"
     SUPPORT = "support"
+    FIELD = "field"
 
 
 FUNCTION_ROLES: dict[Function, frozenset[Role]] = {
@@ -86,6 +90,7 @@ FUNCTION_ROLES: dict[Function, frozenset[Role]] = {
     Function.OPERATIONS: frozenset({Role.OPERATOR, Role.OPS_MANAGER}),
     Function.TECHNICAL: frozenset({Role.SYSADMIN, Role.SECURITY_ADMIN, Role.AI_ADMIN, Role.REGIONAL_ACCOUNT_ADMIN}),
     Function.SUPPORT: frozenset({Role.CONTENT_EDITOR, Role.ORG_AUDITOR, Role.MEDICAL_COORDINATOR}),
+    Function.FIELD: frozenset({Role.TEAM_LEADER}),
 }
 
 

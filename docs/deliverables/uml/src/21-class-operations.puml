@@ -78,6 +78,30 @@ class Directive {
   titre, urgence
   gouvernorats
 }
+class Garde <<P4a>> {
+  chef d'agrès, équipage
+  début, fin
+}
+class TéléphoneÉquipe <<P4a>> {
+  titulaire, plateforme
+  dernier contact, retiré_le
+}
+class ÉvénementÉquipe <<P4a>> {
+  client_id (unique), type
+  heure du téléphone
+}
+class PremierBilan <<P4a>> {
+  catégorie, gravité 1..4
+  renfort, danger équipage
+}
+class CompteurVictimes <<P4a>> {
+  blessés, décédés
+  secourus, bloqués
+}
+class Évacuation <<P4a>> {
+  triage, tranche d'âge
+  sexe, hôpital (sans nom)
+}
 class Prévision {
   type, modèle
   résultat, simulé
@@ -104,4 +128,11 @@ CibleMobilisation "*" --> "1" "Bénévole"
 Affectation "*" --> "0..1" "Bénévole"
 Directive "*" --> "*" NiveauGouvernorat
 Appel "*" --> "0..1" Signalement : rattaché à
+Garde "*" --> "1" Moyen
+Garde "*" --> "1" TéléphoneÉquipe
+Affectation "*" --> "0..1" Garde : accusé_le
+Affectation "1" *-- "*" ÉvénementÉquipe
+Affectation "1" -- "0..1" PremierBilan
+Incident "1" -- "0..1" CompteurVictimes
+Affectation "1" *-- "*" Évacuation
 @enduml

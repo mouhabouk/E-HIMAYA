@@ -165,6 +165,10 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     certificates: vi.fn(() => Promise.resolve({ items: [], next_cursor: null })),
     reviewCertificate: vi.fn(),
     revokeCertificate: vi.fn(),
+    // Phase P4a: teams on duty and the leaders' phones.
+    shifts: vi.fn(() => Promise.resolve([])),
+    crewDevices: vi.fn(() => Promise.resolve([])),
+    revokeCrewDevice: vi.fn(),
     ...fakeOpsApi(),
     ...fakeStreamsApi(),
     ...fakePhase7Api(),

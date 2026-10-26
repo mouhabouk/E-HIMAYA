@@ -7,6 +7,9 @@ checks the access token's ``amr`` claim:
 1. first sign-in: password, forced password change, OTP enrolment. The token is issued during the enrolment and
    carries no ``otp`` (the API answers ``401 mfa_required`` and the dashboard signs in again);
 2. second sign-in: password and OTP code. The token carries ``amr`` ⊇ {pwd, otp}.
+3. phase P4a: the staff app signs in with the device grant (RFC 8628, client ``ehimaya-staff-app``): the phone shows
+   a code, the user approves it in a browser with password and OTP, and the phone's token carries the same proof
+   plus an offline session (``offline_access``).
 
 Standard library only. Usage: python3 infra/keycloak/check_mfa.py http://localhost:8080
 """
@@ -27,6 +30,7 @@ import urllib.request
 from typing import Any
 
 REALM, CLIENT, REDIRECT = "ehimaya-staff", "ehimaya-dashboard", "http://localhost:5173/callback"
+DEVICE_CLIENT = "ehimaya-staff-app"
 
 
 class _NoRedirect(urllib.request.HTTPRedirectHandler):
@@ -129,6 +133,47 @@ def sign_in(kc: str, username: str, password: str, new_password: str, otp_key: s
     sys.exit("check_mfa: the sign-in did not finish")
 
 
+def sign_in_device(kc: str, username: str, password: str, otp_key: str) -> dict[str, Any]:
+    """The staff app's sign-in (phase P4a): a device code approved in a browser, then the phone's token."""
+    browser = Browser()
+    _, _, body = browser.request(
+        f"{kc}/realms/{REALM}/protocol/openid-connect/auth/device",
+        {"client_id": DEVICE_CLIENT, "scope": "openid offline_access"},
+    )
+    grant = json.loads(body)
+    status, location, page = browser.request(grant["verification_uri_complete"])
+
+    def submit(form: dict[str, str]) -> tuple[int, str, str]:
+        return browser.request(urllib.parse.urljoin(kc, form_action(page)), form)
+
+    for _ in range(12):
+        if status in (302, 303):
+            status, location, page = browser.request(urllib.parse.urljoin(kc, location))
+        elif 'name="username"' in page:
+            status, location, page = submit({"username": username, "password": password})
+        elif 'name="otp"' in page:
+            status, location, page = submit({"otp": totp(otp_key, time.time())})
+        elif 'name="accept"' in page:
+            hidden = dict(re.findall(r'<input[^>]*type="hidden"[^>]*name="([^"]+)"[^>]*value="([^"]*)"', page))
+            status, location, page = submit({**hidden, "accept": "Yes"})
+        else:
+            break
+    _, _, body = browser.request(
+        f"{kc}/realms/{REALM}/protocol/openid-connect/token",
+        {
+            "grant_type": "urn:ietf:params:oauth:grant-type:device_code",
+            "client_id": DEVICE_CLIENT,
+            "device_code": grant["device_code"],
+        },
+    )
+    tokens = json.loads(body)
+    if "access_token" not in tokens:
+        sys.exit(f"check_mfa: the device grant gave no token: {tokens}\n{page[:2000]}")
+    if claims(tokens["refresh_token"]).get("typ") != "Offline":
+        sys.exit("check_mfa: the staff app did not get an offline session")
+    return claims(tokens["access_token"])
+
+
 def admin_create_user(kc: str, username: str, password: str) -> None:
     browser = Browser()
     _, _, body = browser.request(
@@ -177,6 +222,14 @@ def main() -> None:
         sys.exit("check_mfa: the token does not prove password and OTP")
     if "ehimaya-api" not in (second.get("aud") if isinstance(second.get("aud"), list) else [second.get("aud")]):
         sys.exit("check_mfa: the token is not for ehimaya-api")
+
+    time.sleep(30 - time.time() % 30 + 1)
+    phone = sign_in_device(kc, username, new_password, otp_key)
+    print("staff app (device grant): amr =", phone.get("amr"))
+    if not {"pwd", "otp"} <= set(phone.get("amr") or []):
+        sys.exit("check_mfa: the staff app's token does not prove password and OTP")
+    if "ehimaya-api" not in (phone.get("aud") if isinstance(phone.get("aud"), list) else [phone.get("aud")]):
+        sys.exit("check_mfa: the staff app's token is not for ehimaya-api")
     print("check_mfa: OK")
 
 

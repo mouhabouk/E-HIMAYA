@@ -49,3 +49,28 @@ def push(
 
 def email(session: AsyncSession, address: str, subject: str, text: str) -> None:
     session.add(Outbox(channel="email", address=address, payload={"subject": subject, "text": text}))
+
+
+def staff_push(
+    session: AsyncSession,
+    token: str,
+    platform: str,
+    kind: str,
+    data: dict[str, Any],
+    *,
+    title: Localized,
+    body: Localized,
+    locale: str = "ar",
+) -> None:
+    """Queue a content-free urgent push to one staff device (phase P4a: the mission alert of a team leader).
+
+    ``data`` holds identifiers only; the staff app fetches the mission over the authenticated API."""
+    payload = {
+        "type": kind,
+        "title": title,
+        "body": body,
+        "data": {**data, "redacted": "1"},
+        "platform": platform,
+        "locale": locale,
+    }
+    session.add(Outbox(channel="staff_push", address=token, payload=payload))

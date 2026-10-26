@@ -59,6 +59,8 @@ from app.modules.notify.delivery import deliver_forever
 from app.modules.notify.router import router as notify_router
 from app.modules.notify.staff_router import router as notify_staff_router
 from app.modules.ops.command_router import router as command_router
+from app.modules.ops.crew_router import router as crew_router
+from app.modules.ops.crew_router import staff_router as crew_staff_router
 from app.modules.ops.router import router as ops_router
 from app.modules.orgs.prevention_router import router as orgs_prevention_router
 from app.modules.orgs.prevention_router import staff_router as orgs_prevention_staff_router
@@ -281,6 +283,8 @@ def create_app() -> FastAPI:
         evidence_router,
         appinfo_router,
         appinfo_feedback_router,
+        crew_router,
+        crew_staff_router,
         layers_router,
         layers_staff_router,
         identity_internal_router,

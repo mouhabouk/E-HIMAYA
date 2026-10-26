@@ -109,6 +109,15 @@ class VolunteerRef(BaseModel):
     skills: list[str]
 
 
+class CrewRef(BaseModel):
+    """The shift holding the vehicle on the staff app (phase P4a)."""
+
+    shift_id: uuid.UUID
+    leader_name: str | None
+    crew_size: int
+    acknowledged_at: datetime | None
+
+
 class AssignmentOut(BaseModel):
     id: uuid.UUID
     incident_id: uuid.UUID
@@ -123,6 +132,7 @@ class AssignmentOut(BaseModel):
     on_scene_at: datetime | None
     released_at: datetime | None
     cancelled_at: datetime | None
+    crew: CrewRef | None = None
 
 
 class Position(BaseModel):
@@ -164,6 +174,9 @@ class IncidentDetail(IncidentSummary):
     callouts: list[CalloutOut] = Field(default_factory=list)
     evaluation: Evaluation | None = None
     resource_requests: list["ResourceRequestOut"] = Field(default_factory=list)
+    field_reports: list["FieldReportOut"] = Field(default_factory=list)
+    casualties: "CasualtiesOut | None" = None
+    transports: list["TransportOut"] = Field(default_factory=list)
 
 
 class IncidentCardIn(BaseModel):
@@ -421,6 +434,181 @@ class ApproveIn(BaseModel):
 class MergeIn(BaseModel):
     # The incident absorbed into the one in the path (its reports move, it becomes "merged").
     incident_id: uuid.UUID
+
+
+# ---------------------------------------------------------------- staff app (phase P4a)
+
+Severity = Literal[1, 2, 3, 4]
+Triage = Literal["red", "yellow", "green", "black"]
+AgeBand = Literal["child", "adult", "elderly", "unknown"]
+Sex = Literal["female", "male", "unknown"]
+CrewStep = Literal["en_route", "on_scene", "released"]
+COUNTERS = ("injured", "deceased", "rescued", "trapped")
+
+
+class FieldReportOut(BaseModel):
+    id: uuid.UUID
+    assignment_id: uuid.UUID
+    resource_label: str | None = None
+    category: Category
+    classification: str | None
+    severity: int
+    backup_needed: bool
+    backup_note: str | None
+    crew_danger: bool
+    author_name: str | None
+    device_at: datetime | None
+    created_at: datetime
+
+
+class CasualtiesOut(BaseModel):
+    injured: int = 0
+    deceased: int = 0
+    rescued: int = 0
+    trapped: int = 0
+    updated_by: str | None = None
+    updated_at: datetime | None = None
+
+
+class TransportOut(BaseModel):
+    id: uuid.UUID
+    assignment_id: uuid.UUID
+    triage: Triage
+    age_band: AgeBand
+    sex: Sex
+    hospital: str
+    created_by_name: str | None
+    device_at: datetime | None
+    created_at: datetime
+
+
+class CrewWrite(BaseModel):
+    """Every write from the staff app: the id the phone generated (a write sent twice is applied once) and the
+    phone's clock."""
+
+    client_id: uuid.UUID
+    device_at: datetime | None = None
+
+
+class DeviceIn(BaseModel):
+    platform: Literal["android", "ios"]
+    label: Annotated[Text, StringConstraints(max_length=80)] | None = None
+    app_build: int | None = Field(default=None, ge=1, le=1_000_000)
+    push_token: Annotated[str, StringConstraints(max_length=4096)] | None = None
+
+
+class DevicePatch(BaseModel):
+    push_token: Annotated[str, StringConstraints(max_length=4096)] | None = None
+    app_build: int | None = Field(default=None, ge=1, le=1_000_000)
+
+
+class DeviceOut(BaseModel):
+    id: uuid.UUID
+    holder_name: str | None
+    label: str | None
+    platform: str
+    app_build: int | None
+    created_at: datetime
+    last_seen_at: datetime
+    revoked_at: datetime | None
+    on_shift: bool = False
+
+
+class ShiftIn(CrewWrite):
+    resource_id: uuid.UUID
+    crew_size: int = Field(ge=1, le=20)
+    crew_names: Annotated[Text, StringConstraints(max_length=300)] | None = None
+
+
+class ShiftOut(BaseModel):
+    id: uuid.UUID
+    resource: ResourceRef
+    crew_size: int
+    crew_names: str | None
+    started_at: datetime
+    ended_at: datetime | None
+
+
+class CrewResource(BaseModel):
+    id: uuid.UUID
+    label: str
+    kind: ResourceKind
+    unit_name: str
+    status: ResourceStatus
+    on_shift: bool
+
+
+class CrewMe(BaseModel):
+    name: str | None
+    gouvernorat_code: int
+    device: DeviceOut
+    shift: ShiftOut | None
+
+
+class MissionIncident(BaseModel):
+    id: uuid.UUID
+    category: Category
+    classification: str | None
+    title: str | None
+    location: Point | None
+    gouvernorat_code: int | None
+    delegation_ar: str | None
+    delegation_fr: str | None
+    op_level: OpLevel
+    status: IncidentStatus
+
+
+class MissionOut(BaseModel):
+    id: uuid.UUID
+    status: AssignmentStatus
+    order: str | None
+    created_at: datetime
+    acknowledged_at: datetime | None
+    en_route_at: datetime | None
+    on_scene_at: datetime | None
+    released_at: datetime | None
+    cancelled_at: datetime | None
+    incident: MissionIncident
+    field_report: FieldReportOut | None
+    casualties: CasualtiesOut
+    transports: list[TransportOut]
+    #: Distance in metres between the phone and the incident at the last step that carried a position.
+    distance_m: int | None = None
+
+
+class MissionPage(BaseModel):
+    items: list[MissionOut]
+
+
+class StepIn(CrewWrite):
+    status: CrewStep
+    lat: float | None = Field(default=None, ge=-90, le=90)
+    lon: float | None = Field(default=None, ge=-180, le=180)
+
+
+class FirstReportIn(CrewWrite):
+    category: Category
+    classification: str | None = None
+    severity: Severity
+    backup_needed: bool = False
+    backup_note: Annotated[Text, StringConstraints(max_length=300)] | None = None
+    crew_danger: bool = False
+
+
+class CasualtiesIn(CrewWrite):
+    """Changes to the live counters (+1, -1, ...); a counter never goes below zero."""
+
+    injured: int = Field(default=0, ge=-50, le=50)
+    deceased: int = Field(default=0, ge=-50, le=50)
+    rescued: int = Field(default=0, ge=-50, le=50)
+    trapped: int = Field(default=0, ge=-50, le=50)
+
+
+class TransportIn(CrewWrite):
+    triage: Triage
+    age_band: AgeBand
+    sex: Sex
+    hospital: Annotated[Text, StringConstraints(min_length=1, max_length=120)]
 
 
 IncidentDetail.model_rebuild()
