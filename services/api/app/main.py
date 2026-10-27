@@ -31,6 +31,9 @@ from app.modules.analytics.worker import analytics_forever
 from app.modules.appinfo.feedback import router as appinfo_feedback_router
 from app.modules.appinfo.router import router as appinfo_router
 from app.modules.audit.router import router as audit_router
+from app.modules.coastal.router import public_router as coastal_router
+from app.modules.coastal.router import router as coastal_staff_router
+from app.modules.coastal.worker import coastal_forever
 from app.modules.contact.router import router as contact_router
 from app.modules.contact.router import staff_router as contact_staff_router
 from app.modules.content.guide import router as guide_router
@@ -125,6 +128,7 @@ WORKER_LOOPS: list[tuple[str, WorkerLoop]] = [
     ("stream-lifecycle", streams_forever),
     ("vision-images", vision_images_forever),
     ("weather-grid", weather_forever),
+    ("coastal", coastal_forever),
     ("procedures-index", procedures_forever),
     ("telephony-events", ari_events_forever),
     ("telephony-recordings", recordings_forever),
@@ -289,6 +293,8 @@ def create_app() -> FastAPI:
         crew_staff_router,
         layers_router,
         layers_staff_router,
+        coastal_router,
+        coastal_staff_router,
         identity_internal_router,
     )
     for router in routers:

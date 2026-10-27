@@ -32,6 +32,7 @@ at once and a crash leaves at most one batch to redo. Durations come from the se
 | layers_deleted,     | map layers and places deleted by the administrator (phase L1a)         | 30 days  |
 | layer_features_     |                                                                        |          |
 | deleted             |                                                                        |          |
+| coastal_presence    | anonymous "I am at this beach" counts (phase L1b)                      | 24 hours |
 """
 
 import asyncio
@@ -281,6 +282,12 @@ async def purge_deleted_features(session: AsyncSession, settings: Settings, now:
     return await _delete(session, "geo.layer_feature", "id", "deleted_at < :cutoff", {"cutoff": cutoff})
 
 
+async def purge_coastal_presence(session: AsyncSession, settings: Settings, now: datetime) -> int:
+    """Anonymous "I am at this beach" rows (phase L1b): only the count of the last 30 minutes is ever read."""
+    cutoff = now - timedelta(hours=settings.retention_coastal_presence_hours)
+    return await _delete(session, "coastal.presence", "ctid", "at < :cutoff", {"cutoff": cutoff})
+
+
 JOBS: list[tuple[str, Job]] = [
     ("events", purge_events),
     ("notify_outbox", purge_notify_outbox),
@@ -308,6 +315,7 @@ JOBS: list[tuple[str, Job]] = [
     # Map layers (phase L1a): what the administrator deleted, once it can no longer be restored.
     ("layers_deleted", purge_deleted_layers),
     ("layer_features_deleted", purge_deleted_features),
+    ("coastal_presence", purge_coastal_presence),
 ]
 
 
