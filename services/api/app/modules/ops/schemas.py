@@ -116,6 +116,8 @@ class CrewRef(BaseModel):
     leader_name: str | None
     crew_size: int
     acknowledged_at: datetime | None
+    #: Alerts from this team the room has not marked seen yet (phase P4b).
+    unseen_alerts: int = 0
 
 
 class AssignmentOut(BaseModel):
@@ -133,6 +135,7 @@ class AssignmentOut(BaseModel):
     released_at: datetime | None
     cancelled_at: datetime | None
     crew: CrewRef | None = None
+    contact_phone: str | None = None
 
 
 class Position(BaseModel):
@@ -177,6 +180,8 @@ class IncidentDetail(IncidentSummary):
     field_reports: list["FieldReportOut"] = Field(default_factory=list)
     casualties: "CasualtiesOut | None" = None
     transports: list["TransportOut"] = Field(default_factory=list)
+    alerts: list["AlertOut"] = Field(default_factory=list)
+    attachments: list["AttachmentOut"] = Field(default_factory=list)
 
 
 class IncidentCardIn(BaseModel):
@@ -191,6 +196,8 @@ class NoteIn(BaseModel):
 class AssignmentIn(BaseModel):
     resource_id: uuid.UUID
     order: Annotated[Text, StringConstraints(max_length=1000)] | None = None
+    #: A number the team may call on the scene (phase P4b); the reporter's own number is never sent automatically.
+    contact_phone: Annotated[Text, StringConstraints(pattern=r"^\+?[0-9 ]{6,20}$")] | None = None
 
 
 class AssignmentStatusIn(BaseModel):
@@ -436,36 +443,56 @@ class MergeIn(BaseModel):
     incident_id: uuid.UUID
 
 
-# ---------------------------------------------------------------- staff app (phase P4a)
+# ---------------------------------------------------------------- staff app (phases P4a and P4b)
 
 Severity = Literal[1, 2, 3, 4]
 Triage = Literal["red", "yellow", "green", "black"]
-AgeBand = Literal["child", "adult", "elderly", "unknown"]
+#: Age bands the phone offers (phase P4b); ``child``, ``adult`` and ``elderly`` are the former ones, still read.
+AgeBandIn = Literal["under_12", "12_17", "18_29", "30_44", "45_59", "60_plus", "unknown"]
+AgeBand = Literal["under_12", "12_17", "18_29", "30_44", "45_59", "60_plus", "unknown", "child", "adult", "elderly"]
 Sex = Literal["female", "male", "unknown"]
 CrewStep = Literal["en_route", "on_scene", "released"]
-COUNTERS = ("injured", "deceased", "rescued", "trapped")
+COUNTERS = ("injured_light", "injured_serious", "deceased", "rescued", "trapped")
+#: Chips of "backup" and of "danger to the crew" (design §5.4).
+BackupKind = Literal[
+    "fire_engine", "ambulance", "extrication", "ladder", "water_tanker", "hazmat", "police", "heavy_equipment"
+]
+DangerKind = Literal["fire_spread", "collapse", "gas", "electricity", "violence", "traffic"]
+BACKUP_KINDS: tuple[str, ...] = BackupKind.__args__  # type: ignore[attr-defined]
+DANGER_KINDS: tuple[str, ...] = DangerKind.__args__  # type: ignore[attr-defined]
+ReportKind = Literal["first", "update", "detailed"]
 
 
 class FieldReportOut(BaseModel):
     id: uuid.UUID
     assignment_id: uuid.UUID
     resource_label: str | None = None
+    kind: ReportKind = "first"
     category: Category
     classification: str | None
-    severity: int
+    severity: int | None
     backup_needed: bool
     backup_note: str | None
+    backup_kinds: list[str] = Field(default_factory=list)
     crew_danger: bool
+    #: Detailed report (F-STF-05): the template it answers and the answers by field key.
+    template_id: uuid.UUID | None = None
+    template_version: int | None = None
+    answers: dict[str, Any] | None = None
+    note: str | None = None
     author_name: str | None
     device_at: datetime | None
     created_at: datetime
 
 
 class CasualtiesOut(BaseModel):
-    injured: int = 0
+    injured_light: int = 0
+    injured_serious: int = 0
     deceased: int = 0
     rescued: int = 0
     trapped: int = 0
+    #: People taken to hospital, counted from the transports.
+    transported: int = 0
     updated_by: str | None = None
     updated_at: datetime | None = None
 
@@ -477,9 +504,95 @@ class TransportOut(BaseModel):
     age_band: AgeBand
     sex: Sex
     hospital: str
+    hospital_ref: uuid.UUID | None = None
     created_by_name: str | None
     device_at: datetime | None
     created_at: datetime
+
+
+class AlertOut(BaseModel):
+    id: uuid.UUID
+    assignment_id: uuid.UUID
+    resource_label: str | None = None
+    kind: Literal["backup", "danger"]
+    items: list[str]
+    created_by_name: str | None
+    device_at: datetime | None
+    created_at: datetime
+    seen_by_name: str | None
+    seen_at: datetime | None
+
+
+class AttachmentOut(BaseModel):
+    id: uuid.UUID
+    assignment_id: uuid.UUID
+    kind: Literal["photo", "voice", "text"]
+    body: str | None
+    content_type: str | None
+    bytes: int | None
+    duration_s: float | None
+    created_by_name: str | None
+    device_at: datetime | None
+    created_at: datetime
+    #: Short-lived link to the file, for the room only (never sent to the phone).
+    url: str | None = None
+
+
+Localized = dict[Literal["ar", "fr", "en"], Annotated[Text, StringConstraints(min_length=1, max_length=120)]]
+
+
+class TemplateOption(BaseModel):
+    key: Annotated[str, StringConstraints(pattern=r"^[a-z0-9_]{1,40}$")]
+    label: Localized
+
+
+class TemplateField(BaseModel):
+    """One question of a detailed report: chips (one or several), yes or no, or a number with + and −."""
+
+    key: Annotated[str, StringConstraints(pattern=r"^[a-z0-9_]{1,40}$")]
+    type: Literal["single", "multi", "yesno", "count"]
+    label: Localized
+    options: list[TemplateOption] = Field(default_factory=list, max_length=20)
+    required: bool = False
+    unit: Localized | None = None
+    max: int | None = Field(default=None, ge=1, le=1_000_000)
+
+
+class TemplateOut(BaseModel):
+    id: uuid.UUID
+    category: Category
+    classification: str | None
+    version: int
+    status: Literal["draft", "approved", "retired"]
+    fields: list[TemplateField]
+    simulated: bool
+    created_by_name: str | None
+    created_at: datetime
+    updated_at: datetime
+    approved_by_name: str | None
+    approved_at: datetime | None
+
+
+class TemplateIn(BaseModel):
+    """A draft: a new one for a category (and classification), or the next version of the approved one."""
+
+    category: Category
+    classification: Annotated[str, StringConstraints(max_length=40)] | None = None
+    fields: list[TemplateField] = Field(min_length=1, max_length=30)
+
+
+class TemplatePatch(BaseModel):
+    fields: list[TemplateField] = Field(min_length=1, max_length=30)
+
+
+class Hospital(BaseModel):
+    """A hospital of the map layers near the incident (phase P4b), for the transport chips."""
+
+    id: uuid.UUID
+    name: str
+    phone: str | None
+    distance_m: int
+    simulated: bool
 
 
 class CrewWrite(BaseModel):
@@ -569,9 +682,16 @@ class MissionOut(BaseModel):
     released_at: datetime | None
     cancelled_at: datetime | None
     incident: MissionIncident
+    #: The last situation report (first or update).
     field_report: FieldReportOut | None
+    detailed_report: FieldReportOut | None = None
     casualties: CasualtiesOut
     transports: list[TransportOut]
+    alerts: list[AlertOut] = Field(default_factory=list)
+    attachments: list[AttachmentOut] = Field(default_factory=list)
+    #: The approved detailed-report template of the incident's category (and classification), if any.
+    template: TemplateOut | None = None
+    contact_phone: str | None = None
     #: Distance in metres between the phone and the incident at the last step that carried a position.
     distance_m: int | None = None
 
@@ -587,10 +707,13 @@ class StepIn(CrewWrite):
 
 
 class FirstReportIn(CrewWrite):
+    """A situation report: the first one, then updates (the last one is shown)."""
+
     category: Category
     classification: str | None = None
     severity: Severity
     backup_needed: bool = False
+    backup_kinds: list[BackupKind] = Field(default_factory=list, max_length=8)
     backup_note: Annotated[Text, StringConstraints(max_length=300)] | None = None
     crew_danger: bool = False
 
@@ -598,7 +721,8 @@ class FirstReportIn(CrewWrite):
 class CasualtiesIn(CrewWrite):
     """Changes to the live counters (+1, -1, ...); a counter never goes below zero."""
 
-    injured: int = Field(default=0, ge=-50, le=50)
+    injured_light: int = Field(default=0, ge=-50, le=50)
+    injured_serious: int = Field(default=0, ge=-50, le=50)
     deceased: int = Field(default=0, ge=-50, le=50)
     rescued: int = Field(default=0, ge=-50, le=50)
     trapped: int = Field(default=0, ge=-50, le=50)
@@ -606,9 +730,26 @@ class CasualtiesIn(CrewWrite):
 
 class TransportIn(CrewWrite):
     triage: Triage
-    age_band: AgeBand
+    age_band: AgeBandIn
     sex: Sex
-    hospital: Annotated[Text, StringConstraints(min_length=1, max_length=120)]
+    hospital: Annotated[Text, StringConstraints(min_length=1, max_length=120)] | None = None
+    #: A hospital of ``/missions/{id}/hospitals``; its name is taken from the map, ``hospital`` is then ignored.
+    hospital_ref: uuid.UUID | None = None
+
+
+class AlertIn(CrewWrite):
+    kind: Literal["backup", "danger"]
+    items: list[str] = Field(default_factory=list, max_length=8)
+
+
+class TextNoteIn(CrewWrite):
+    body: Annotated[Text, StringConstraints(min_length=1, max_length=500)]
+
+
+class DetailedReportIn(CrewWrite):
+    template_id: uuid.UUID
+    answers: dict[str, Any] = Field(max_length=30)
+    note: Annotated[Text, StringConstraints(max_length=1000)] | None = None
 
 
 IncidentDetail.model_rebuild()

@@ -2702,9 +2702,6 @@
   "staffStatusOnScene": "On scene",
   "staffStatusReleased": "Released",
   "staffStatusCancelled": "Cancelled",
-  "staffStepEnRoute": "Leaving now",
-  "staffStepOnScene": "Arrived on scene",
-  "staffStepReleased": "Mission over",
   "staffNearScene": "You are {meters} m from the incident. Arrived?",
   "@staffNearScene": {
     "placeholders": {
@@ -2713,49 +2710,23 @@
       }
     }
   },
-  "staffFirstReport": "First report",
-  "staffFirstReportDue": "To send now: under 30 seconds",
-  "staffNature": "Nature",
   "staffSeverity": "Severity",
   "staffSeverity1": "1 · Minor",
   "staffSeverity2": "2 · Moderate",
   "staffSeverity3": "3 · Serious",
   "staffSeverity4": "4 · Critical",
-  "staffBackupNeeded": "Backup needed",
-  "staffBackupNote": "What backup?",
   "staffCrewDanger": "Danger to the crew",
   "staffSend": "Send",
-  "staffCasualties": "Casualties",
-  "staffCasualtySummary": "{injured} injured · {deceased} deceased · {transports} transported",
-  "@staffCasualtySummary": {
-    "placeholders": {
-      "injured": {
-        "type": "int"
-      },
-      "deceased": {
-        "type": "int"
-      },
-      "transports": {
-        "type": "int"
-      }
-    }
-  },
-  "staffInjured": "Injured",
   "staffDeceased": "Deceased",
-  "staffRescued": "Rescued",
+  "staffRescued": "Survivors",
   "staffTrapped": "Trapped",
-  "staffTransports": "Taken to hospital",
-  "staffNoTransport": "No one taken to hospital yet.",
-  "staffAddTransport": "Hospital transport",
+  "staffAddTransport": "Transfer a patient",
   "staffTriage": "Triage",
   "staffTriageRed": "Red · immediate",
   "staffTriageYellow": "Yellow · urgent",
   "staffTriageGreen": "Green · minor",
   "staffTriageBlack": "Black · deceased",
   "staffAge": "Age",
-  "staffAgeChild": "Child",
-  "staffAgeAdult": "Adult",
-  "staffAgeElderly": "Elderly",
   "staffSex": "Sex",
   "staffSexFemale": "Female",
   "staffSexMale": "Male",
@@ -2776,5 +2747,169 @@
   "staffErrMissionActive": "A mission is still in progress: finish it first.",
   "staffErrNotOnScene": "Mark the arrival on scene first.",
   "staffErrNoShift": "No shift open on this phone.",
-  "staffErrGeneric": "The room refused this action. Try again or call the room."
+  "staffErrGeneric": "The room refused this action. Try again or call the room.",
+  "staffOnline": "Connected · updated {seconds} s ago",
+  "@staffOnline": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "staffOnlineMinutes": "Connected · updated {minutes} min ago",
+  "@staffOnlineMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "staffMission": "Mission",
+  "staffHighPriority": "High priority",
+  "staffRoomNote": "Room's note",
+  "staffDistanceKm": "{km} km away",
+  "@staffDistanceKm": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "staffStepReceived": "Mission received",
+  "staffStepLeft": "We left",
+  "staffStepOnTheWay": "On the way",
+  "staffStepArrived": "Arrived",
+  "staffStepOver": "Intervention over",
+  "staffAwayFrom": "You are {meters} m from the scene",
+  "@staffAwayFrom": {
+    "placeholders": {
+      "meters": {
+        "type": "int"
+      }
+    }
+  },
+  "staffRoute": "Route",
+  "staffRoom": "Room",
+  "staffReporter": "Reporter",
+  "staffAskBackup": "Request backup",
+  "staffAlertSent": "Sent to the room.",
+  "staffAlertSeen": "Room saw it at {time}",
+  "@staffAlertSeen": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "staffAlertWaiting": "Waiting for the room",
+  "staffAlertChoose": "Tap what applies, then send.",
+  "staffBackupFireEngine": "Fire engine",
+  "staffBackupAmbulance": "Ambulance",
+  "staffBackupExtrication": "Rescue (cutting)",
+  "staffBackupLadder": "Ladder",
+  "staffBackupWaterTanker": "Water tanker",
+  "staffBackupHazmat": "Hazardous materials",
+  "staffBackupPolice": "Security",
+  "staffBackupHeavy": "Heavy equipment",
+  "staffDangerFireSpread": "Fire spreading",
+  "staffDangerCollapse": "Collapse",
+  "staffDangerGas": "Gas or hazardous materials",
+  "staffDangerElectricity": "Electricity",
+  "staffDangerViolence": "Assault",
+  "staffDangerTraffic": "Traffic",
+  "staffSituation": "Situation report",
+  "staffSituationDue": "First report: under 30 seconds",
+  "staffSituationLast": "Last report {time} · {severity}",
+  "@staffSituationLast": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      },
+      "severity": {
+        "type": "String"
+      }
+    }
+  },
+  "staffType": "Type",
+  "staffConfirmed": "Confirmed: {type}",
+  "@staffConfirmed": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "staffDifferent": "Different",
+  "staffNeedBackup": "Backup needed?",
+  "staffNo": "No",
+  "staffYes": "Yes",
+  "staffLiveCounts": "Live counts",
+  "staffInjuredLight": "Lightly injured",
+  "staffInjuredSerious": "Seriously injured",
+  "staffTransported": "Transported",
+  "staffAttachments": "Attachments",
+  "staffPhoto": "Photo",
+  "staffVoice": "Voice note",
+  "staffText": "Text",
+  "staffSendReport": "Send the report",
+  "staffTransportTitle": "Patients transported (no names)",
+  "staffTransportsCount": "Transported ({count})",
+  "@staffTransportsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "staffHospitalOther": "Other",
+  "staffHospitalName": "Hospital name",
+  "staffTimeAuto": "The time is recorded automatically.",
+  "staffSendNow": "Send now",
+  "staffAgeUnder12": "Under 12",
+  "staffAge12": "12–17",
+  "staffAge18": "18–29",
+  "staffAge30": "30–44",
+  "staffAge45": "45–59",
+  "staffAge60": "60 and over",
+  "staffDetailedReport": "Detailed report",
+  "staffDetailedDue": "Answers by tapping, from the approved template",
+  "staffDetailedSent": "Sent at {time} · template v{version}",
+  "@staffDetailedSent": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      },
+      "version": {
+        "type": "int"
+      }
+    }
+  },
+  "staffTemplateVersion": "Template version {version}",
+  "@staffTemplateVersion": {
+    "placeholders": {
+      "version": {
+        "type": "int"
+      }
+    }
+  },
+  "staffNote": "Note",
+  "staffNoteHint": "500 characters at most",
+  "staffRequired": "Required",
+  "staffRecord": "Record",
+  "staffRecordStop": "Stop",
+  "staffRecordAgain": "Record again",
+  "staffVoiceMax": "60 seconds at most.",
+  "staffSent": "Sent.",
+  "staffErrTooLarge": "The file is too large.",
+  "staffErrTooMany": "This mission already has 20 attachments.",
+  "staffErrBadMedia": "This file type is not accepted.",
+  "staffErrTemplateChanged": "The template changed: open the report again.",
+  "staffSimTemplate": "[SIM] Model template, until the Office approves it",
+  "staffSimHospital": "[SIM]",
+  "staffTriageGreenShort": "Green",
+  "staffTriageYellowShort": "Yellow",
+  "staffTriageRedShort": "Red",
+  "staffTriageBlackShort": "Black",
+  "staffTransportShort": "Patients transported",
+  "staffNoNames": "no names"
 }

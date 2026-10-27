@@ -75,6 +75,6 @@ class AppConfig {
 
   /// Version and build of this app, compared with the latest release the server announces
   /// (phase A, addition 3). Must match `version:` in pubspec.yaml (checked by a test).
-  static const String appVersion = '0.18.0';
-  static const int appBuild = 17;
+  static const String appVersion = '0.19.0';
+  static const int appBuild = 18;
 }

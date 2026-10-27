@@ -23,7 +23,7 @@ describe("OperationsPanel", () => {
     fireEvent.change(select, { target: { value: "res-1" } });
     fireEvent.change(within(form).getByLabelText("Ordre"), { target: { value: "Rejoindre le dépôt" } });
     fireEvent.click(within(form).getByRole("button", { name: "Émettre l’ordre" }));
-    await waitFor(() => expect(api.createAssignment).toHaveBeenCalledWith("i-1", "res-1", "Rejoindre le dépôt"));
+    await waitFor(() => expect(api.createAssignment).toHaveBeenCalledWith("i-1", "res-1", "Rejoindre le dépôt", ""));
     expect(api.resources).toHaveBeenCalledWith({ status: "available" }, expect.objectContaining({ limit: 200 }));
   });
 

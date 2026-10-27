@@ -58,15 +58,14 @@ void main() {
     expect(find.byKey(const Key('no-missions')), findsOneWidget);
   });
 
-  testWidgets('F-STF-03/04: alert, steps, first report and casualties', (
-    tester,
-  ) async {
+  testWidgets('F-STF-03/04: alert, steps, path, quick buttons', (tester) async {
     final server = FakeCrewServer()
       ..shiftOpen = true
       ..missions.add(FakeCrewServer.mission());
     final store = await signedInStore();
     await StaffVault(store).setPin('123456', 'salt');
-    await pumpStaffApp(tester, server, store: store);
+    final launched = <Uri>[];
+    await pumpStaffApp(tester, server, store: store, launched: launched);
     await enterPin(tester, '123456');
 
     // The new order covers the screen until it is acknowledged.
@@ -75,9 +74,20 @@ void main() {
     await tester.tap(find.byKey(const Key('ack-mission')));
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('mission-alert')), findsNothing);
+    expect(find.byKey(const Key('staff-online')), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('mission-m-1')));
     await tester.pumpAndSettle();
+    expect(find.byKey(const Key('mission-card')), findsOneWidget);
+    expect(find.text('High priority'), findsOneWidget);
+    expect(find.byKey(const Key('mission-timeline')), findsOneWidget);
+    // No number given by the room: no "reporter" button.
+    expect(find.byKey(const Key('quick-reporter')), findsNothing);
+    await tester.tap(find.byKey(const Key('quick-room')));
+    expect(launched.last.toString(), 'tel:198');
+    await tester.tap(find.byKey(const Key('quick-route')));
+    expect(launched.last.queryParameters['destination'], '36.8,10.18');
+
     await tester.tap(find.byKey(const Key('step-en_route')));
     await tester.pumpAndSettle();
     final step = server.writes.last.json! as Map<String, dynamic>;
@@ -85,54 +95,180 @@ void main() {
     expect(step['lat'], 36.8);
     // The phone stands at the incident: arrival is suggested.
     expect(find.byKey(const Key('on-scene-hint')), findsOneWidget);
+    expect(find.text('You are 0 m from the scene'), findsNothing);
     await tester.tap(find.byKey(const Key('step-on_scene')));
     await tester.pumpAndSettle();
+    expect(find.byKey(const Key('open-situation')), findsOneWidget);
+    expect(find.byKey(const Key('step-released')), findsOneWidget);
 
-    await tester.tap(find.byKey(const Key('open-first-report')));
+    // Backup is one tap away from the bottom bar.
+    await tester.tap(find.byKey(const Key('alert-backup')));
     await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('backup-ladder')));
+    await tester.tap(find.byKey(const Key('backup-ambulance')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('send-backup')));
+    await tester.pumpAndSettle();
+    final alert = server.writes.last;
+    expect(alert.path, '/api/v1/crew/missions/m-1/alerts');
+    expect(alert.json, containsPair('kind', 'backup'));
+    expect((alert.json! as Map)['items'], ['ambulance', 'ladder']);
+    expect(find.text('Waiting for the room'), findsOneWidget);
+  });
+
+  testWidgets('situation report, counters, attachments, transport, template', (
+    tester,
+  ) async {
+    final server = FakeCrewServer()
+      ..shiftOpen = true
+      ..missions.add(
+        FakeCrewServer.mission(
+          status: 'on_scene',
+          acknowledgedAt: '2026-10-26T09:00:10Z',
+        ),
+      );
+    final store = await signedInStore();
+    await StaffVault(store).setPin('123456', 'salt');
+    await pumpStaffApp(tester, server, store: store);
+    await enterPin(tester, '123456');
+    await tester.tap(find.byKey(const Key('mission-m-1')));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('open-situation')));
+    await tester.pumpAndSettle();
+    // The room's type is offered as confirmed: nothing to type, three taps.
+    expect(find.text('Confirmed: Fire'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('type-confirmed')));
     await tester.tap(find.byKey(const Key('severity-3')));
-    await tester.tap(find.byKey(const Key('backup-needed')));
+    await tester.tap(find.byKey(const Key('backup-yes')));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const Key('send-first-report')));
+    await tester.tap(find.byKey(const Key('backup-extrication')));
     await tester.pumpAndSettle();
-    final report = server.writes.last.json! as Map<String, dynamic>;
-    expect(report['category'], 'fire');
-    expect(report['severity'], 3);
-    expect(report['backup_needed'], isTrue);
-    expect(find.text('3 · Serious'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('send-situation')));
+    await tester.pumpAndSettle();
+    final report = server.writes.last;
+    expect(report.path, '/api/v1/crew/missions/m-1/situation');
+    final body = report.json! as Map<String, dynamic>;
+    expect(body['category'], 'fire');
+    expect(body['severity'], 3);
+    expect(body['backup_needed'], isTrue);
+    expect(body['backup_kinds'], ['extrication']);
+    expect(find.byKey(const Key('situation-last')), findsOneWidget);
 
-    await tester.tap(find.byKey(const Key('open-casualties')));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const Key('injured-plus')));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const Key('injured-plus')));
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('injured_serious-plus')),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    for (var i = 0; i < 2; i++) {
+      await tester.tap(find.byKey(const Key('injured_light-plus')));
+      await tester.pumpAndSettle();
+    }
+    await tester.tap(find.byKey(const Key('injured_serious-plus')));
     await tester.pumpAndSettle();
     expect(
-      tester.widget<Text>(find.byKey(const Key('injured-value'))).data,
+      tester.widget<Text>(find.byKey(const Key('injured_light-value'))).data,
       '2',
     );
+    expect((server.writes.last.json! as Map)['injured_serious'], 1);
+
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('attach-photo')),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(find.byKey(const Key('attach-photo')));
+    await tester.pumpAndSettle();
+    final photo = server.writes.last;
+    expect(photo.path, '/api/v1/crew/missions/m-1/attachments');
+    expect(photo.uri.queryParameters['kind'], 'photo');
+    expect(photo.uri.queryParameters['client_id'], isNotEmpty);
+    expect(photo.header('content-type'), 'image/jpeg');
+    expect(photo.body, [0xFF, 0xD8, 0xFF, 0xE0, 1, 2, 3]);
+    expect(find.text('Photo (1)'), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('attach-voice')));
+    await tester.pumpAndSettle();
+    expect(server.writes.last.uri.queryParameters['duration_s'], '7.5');
+    expect(find.text('Voice note (1)'), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('attach-text')));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byKey(const Key('note-text')), 'Roof unsafe');
+    await tester.tap(find.byKey(const Key('send-note')));
+    await tester.pumpAndSettle();
+    expect(server.writes.last.json, containsPair('body', 'Roof unsafe'));
+
     final ids = {
       for (final w in server.writes)
-        (w.json! as Map<String, dynamic>)['client_id'],
+        w.uri.queryParameters['client_id'] ??
+            (w.json! as Map<String, dynamic>)['client_id'],
     };
     expect(ids, hasLength(server.writes.length));
 
-    await tester.tap(find.byKey(const Key('add-transport')));
+    // Transport: a hospital of the map, no name typed.
+    await tester.tap(find.byKey(const Key('open-transport')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('triage-red')));
-    await tester.tap(find.byKey(const Key('age-child')));
-    await tester.enterText(
-      find.byKey(const Key('hospital')),
-      'Hôpital Charles Nicolle',
-    );
+    await tester.tap(find.byKey(const Key('age-under_12')));
+    await tester.tap(find.byKey(const Key('hospital-h-1')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('send-transport')));
     await tester.pumpAndSettle();
     final t = server.writes.last.json! as Map<String, dynamic>;
     expect(t, containsPair('triage', 'red'));
-    expect(t, containsPair('age_band', 'child'));
+    expect(t, containsPair('age_band', 'under_12'));
     expect(t, containsPair('sex', 'unknown'));
-    expect(find.textContaining('Hôpital Charles Nicolle'), findsOneWidget);
+    expect(t, containsPair('hospital_ref', 'h-1'));
+    expect(t.containsKey('hospital'), isFalse);
+    expect(find.text('Transported (1)'), findsOneWidget);
+    expect(find.textContaining('Hôpital Charles Nicolle ·'), findsWidgets);
+
+    // "Other": the only typed hospital.
+    await tester.tap(find.byKey(const Key('triage-green')));
+    await tester.tap(find.byKey(const Key('hospital-other')));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byKey(const Key('hospital')), 'Clinique X');
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('send-transport')));
+    await tester.pumpAndSettle();
+    expect(server.writes.last.json, containsPair('hospital', 'Clinique X'));
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+
+    // Detailed report from the template: taps only.
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('open-detailed')),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(find.byKey(const Key('open-detailed')));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('[SIM]'), findsOneWidget);
+    expect(
+      tester
+          .widget<FilledButton>(find.byKey(const Key('send-detailed')))
+          .onPressed,
+      isNull,
+    );
+    await tester.tap(find.byKey(const Key('field-place-forest')));
+    await tester.tap(find.byKey(const Key('field-spread_risk-yes')));
+    await tester.tap(find.byKey(const Key('field-area_ha-plus')));
+    await tester.pump();
+    await tester.tap(find.byKey(const Key('field-area_ha-plus')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('send-detailed')));
+    await tester.pumpAndSettle();
+    final detailed = server.writes.last.json! as Map<String, dynamic>;
+    expect(detailed['template_id'], 'tpl-fire');
+    expect(detailed['answers'], {
+      'place': 'forest',
+      'spread_risk': true,
+      'area_ha': 2,
+    });
+    expect(find.textContaining('template v1'), findsOneWidget);
   });
 
   testWidgets(

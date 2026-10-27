@@ -1,4 +1,5 @@
-"""Staff app endpoints (phase P4a, docs/phase-p4/design-staff.md §4) and the room's view of devices and shifts.
+"""Staff app endpoints (phases P4a and P4b, docs/phase-p4/design-staff.md §4 and §5), the room's view of devices,
+shifts and alerts, and the Office's report templates.
 
 ``/api/v1/crew/*`` is for team leaders only (staff realm, second factor, a gouvernorat). Every call but the device
 registration names the phone in ``X-Staff-Device``; a revoked phone gets ``410 device_revoked``.
@@ -8,16 +9,17 @@ import uuid
 from datetime import UTC, datetime
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Query, status
-from sqlalchemy import select
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request, status
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_session
 from app.core.security import Principal, Role, require_roles
 from app.modules.audit import service as audit
-from app.modules.ops import crew, schemas
-from app.modules.ops.models import Assignment, Shift, StaffDevice
-from app.modules.reports.staff_router import READ_ROLES
+from app.modules.ops import crew, schemas, templates
+from app.modules.ops import service as incidents
+from app.modules.ops.models import Assignment, CrewAlert, Shift, StaffDevice
+from app.modules.reports.staff_router import READ_ROLES, WRITE_ROLES
 
 router = APIRouter(prefix="/api/v1/crew", tags=["crew"])
 staff_router = APIRouter(prefix="/api/v1/staff", tags=["crew"])
@@ -25,6 +27,9 @@ staff_router = APIRouter(prefix="/api/v1/staff", tags=["crew"])
 Leader = Annotated[Principal, Depends(require_roles(Role.TEAM_LEADER))]
 Reader = Annotated[Principal, Depends(require_roles(*READ_ROLES))]
 DeviceAdmin = Annotated[Principal, Depends(require_roles(Role.REGIONAL_ACCOUNT_ADMIN, Role.SECURITY_ADMIN))]
+# The room marks a team's alert seen (operations, field command, central command).
+AlertReader = Annotated[Principal, Depends(require_roles(*WRITE_ROLES, Role.CENTRAL_COMMITTEE))]
+TemplateReader = Annotated[Principal, Depends(require_roles(*READ_ROLES, Role.TEAM_LEADER))]
 Session = Annotated[AsyncSession, Depends(get_session)]
 DeviceId = Annotated[uuid.UUID | None, Header(alias="X-Staff-Device")]
 
@@ -149,6 +154,15 @@ async def first_report(
     return await _answer(session, principal, "crew.first_report", assignment)
 
 
+@router.post("/missions/{assignment_id}/situation", response_model=schemas.MissionOut)
+async def situation(
+    principal: Leader, session: Session, _device: Device, assignment_id: uuid.UUID, body: schemas.FirstReportIn
+) -> schemas.MissionOut:
+    """A situation report (phase P4b): the first one, then updates. ``/first-report`` is the same call."""
+    assignment = await crew.first_report(session, principal, assignment_id, body)
+    return await _answer(session, principal, "crew.situation", assignment)
+
+
 @router.post("/missions/{assignment_id}/casualties", response_model=schemas.MissionOut)
 async def casualties(
     principal: Leader, session: Session, _device: Device, assignment_id: uuid.UUID, body: schemas.CasualtiesIn
@@ -165,12 +179,91 @@ async def transport(
     return await _answer(session, principal, "crew.transport", assignment)
 
 
+@router.post("/missions/{assignment_id}/alerts", response_model=schemas.MissionOut)
+async def alert(
+    principal: Leader, session: Session, _device: Device, assignment_id: uuid.UUID, body: schemas.AlertIn
+) -> schemas.MissionOut:
+    assignment = await crew.alert(session, principal, assignment_id, body)
+    return await _answer(session, principal, f"crew.alert_{body.kind}", assignment)
+
+
+@router.post("/missions/{assignment_id}/notes", response_model=schemas.MissionOut)
+async def text_note(
+    principal: Leader, session: Session, _device: Device, assignment_id: uuid.UUID, body: schemas.TextNoteIn
+) -> schemas.MissionOut:
+    assignment = await crew.text_note(session, principal, assignment_id, body)
+    return await _answer(session, principal, "crew.note", assignment)
+
+
+async def _body(request: Request, limit: int) -> bytes:
+    """The request body, refused as soon as it grows past ``limit``."""
+    chunks: list[bytes] = []
+    size = 0
+    async for chunk in request.stream():
+        size += len(chunk)
+        if size > limit:
+            raise HTTPException(status.HTTP_413_CONTENT_TOO_LARGE, "media_too_large")
+        chunks.append(chunk)
+    return b"".join(chunks)
+
+
+@router.post(
+    "/missions/{assignment_id}/attachments",
+    response_model=schemas.MissionOut,
+    openapi_extra={
+        "requestBody": {
+            "required": True,
+            "content": {
+                t: {"schema": {"type": "string", "format": "binary"}}
+                for t in sorted(crew.ATTACHMENT_TYPES["photo"] | crew.ATTACHMENT_TYPES["voice"])
+            },
+        }
+    },
+)
+async def upload(
+    principal: Leader,
+    session: Session,
+    _device: Device,
+    request: Request,
+    assignment_id: uuid.UUID,
+    kind: Annotated[str, Query(pattern="^(photo|voice)$")],
+    client_id: uuid.UUID,
+    device_at: datetime | None = None,
+    duration_s: Annotated[float | None, Query(gt=0, le=crew.VOICE_MAX_S)] = None,
+) -> schemas.MissionOut:
+    """A photo or a voice note as the raw request body, with its type in ``Content-Type`` (phase P4b)."""
+    content_type = (request.headers.get("content-type") or "").split(";", 1)[0].strip().lower()
+    data = await _body(request, crew.ATTACHMENT_MAX_BYTES[kind])
+    write = schemas.CrewWrite(client_id=client_id, device_at=device_at)
+    assignment = await crew.upload(session, principal, assignment_id, write, kind, content_type, data, duration_s)
+    return await _answer(session, principal, f"crew.{kind}", assignment)
+
+
+@router.post("/missions/{assignment_id}/detailed-report", response_model=schemas.MissionOut)
+async def detailed_report(
+    principal: Leader, session: Session, _device: Device, assignment_id: uuid.UUID, body: schemas.DetailedReportIn
+) -> schemas.MissionOut:
+    assignment = await crew.detailed_report(session, principal, assignment_id, body)
+    return await _answer(session, principal, "crew.detailed_report", assignment)
+
+
+@router.get("/missions/{assignment_id}/hospitals", response_model=list[schemas.Hospital])
+async def hospitals(
+    principal: Leader, session: Session, _device: Device, assignment_id: uuid.UUID
+) -> list[schemas.Hospital]:
+    out = await crew.hospitals(session, principal, assignment_id)
+    await session.commit()
+    return out
+
+
 # ---------------------------------------------------------------- the room and the account administrators
 
 
 class ShiftRow(schemas.ShiftOut):
     leader_name: str | None
     gouvernorat_code: int
+    #: Backup and danger alerts of the team the room has not marked as seen yet (phase P4b).
+    unseen_alerts: int = 0
 
 
 @staff_router.get("/shifts", response_model=list[ShiftRow])
@@ -182,8 +275,18 @@ async def open_shifts(principal: Reader, session: Session) -> list[ShiftRow]:
     out = []
     for shift in await session.scalars(query):
         base = await crew.shift_out(session, shift)
+        unseen = await session.scalar(
+            select(func.count(CrewAlert.id))
+            .join(Assignment, Assignment.id == CrewAlert.assignment_id)
+            .where(Assignment.shift_id == shift.id, CrewAlert.seen_at.is_(None))
+        )
         out.append(
-            ShiftRow(**base.model_dump(), leader_name=shift.leader_name, gouvernorat_code=shift.gouvernorat_code)
+            ShiftRow(
+                **base.model_dump(),
+                leader_name=shift.leader_name,
+                gouvernorat_code=shift.gouvernorat_code,
+                unseen_alerts=unseen or 0,
+            )
         )
     return out
 
@@ -228,3 +331,88 @@ async def revoke_device(principal: DeviceAdmin, session: Session, device_id: uui
         )
         await session.commit()
     return DeviceRow(**crew.device_out(device).model_dump(), gouvernorat_code=device.gouvernorat_code)
+
+
+@staff_router.post("/crew-alerts/{alert_id}/seen", response_model=schemas.AlertOut)
+async def alert_seen(principal: AlertReader, session: Session, alert_id: uuid.UUID) -> schemas.AlertOut:
+    row = await crew.mark_seen(session, principal, alert_id)
+    await audit.record(
+        session,
+        actor=audit.actor_of(principal),
+        action="crew.alert_seen",
+        target=f"incident:{row.incident_id}",
+        details={"alert_id": str(row.id), "kind": row.kind},
+        gouvernorats=await incidents.all_gouvernorats(session, row.incident_id),
+    )
+    await session.commit()
+    return crew.alert_out(row)
+
+
+# ---------------------------------------------------------------- report templates (F-STF-05)
+
+
+def _office(
+    principal: Annotated[Principal, Depends(require_roles(Role.CENTRAL_COMMITTEE, Role.OPS_MANAGER))],
+) -> Principal:
+    """Templates are the Office's: central command or a national operations manager."""
+    allowed = Role.CENTRAL_COMMITTEE in principal.roles or (
+        Role.OPS_MANAGER in principal.roles and principal.gouvernorat_code is None
+    )
+    if not allowed:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "office_only")
+    return principal
+
+
+TemplateAdmin = Annotated[Principal, Depends(_office)]
+
+
+@staff_router.get("/report-templates", response_model=list[schemas.TemplateOut])
+async def list_templates(
+    _principal: TemplateReader, session: Session, retired: Annotated[bool, Query()] = False
+) -> list[schemas.TemplateOut]:
+    return [templates.template_out(t) for t in await templates.list_templates(session, retired)]
+
+
+async def _template_audit(session: AsyncSession, principal: Principal, action: str, template_id: uuid.UUID) -> None:
+    await audit.record(session, actor=audit.actor_of(principal), action=action, target=f"report_template:{template_id}")
+
+
+@staff_router.post("/report-templates", response_model=schemas.TemplateOut, status_code=status.HTTP_201_CREATED)
+async def create_template(principal: TemplateAdmin, session: Session, body: schemas.TemplateIn) -> schemas.TemplateOut:
+    t = await templates.create_draft(session, principal, body)
+    await _template_audit(session, principal, "template.draft", t.id)
+    await session.commit()
+    return templates.template_out(t)
+
+
+@staff_router.patch("/report-templates/{template_id}", response_model=schemas.TemplateOut)
+async def edit_template(
+    principal: TemplateAdmin, session: Session, template_id: uuid.UUID, body: schemas.TemplatePatch
+) -> schemas.TemplateOut:
+    t = await templates.edit_draft(session, await templates.get(session, template_id, lock=True), body)
+    await _template_audit(session, principal, "template.edit", t.id)
+    await session.commit()
+    return templates.template_out(t)
+
+
+@staff_router.post("/report-templates/{template_id}/approve", response_model=schemas.TemplateOut)
+async def approve_template(principal: TemplateAdmin, session: Session, template_id: uuid.UUID) -> schemas.TemplateOut:
+    t = await templates.approve(session, principal, await templates.get(session, template_id, lock=True))
+    await _template_audit(session, principal, "template.approve", t.id)
+    await session.commit()
+    return templates.template_out(t)
+
+
+@staff_router.post("/report-templates/{template_id}/retire", response_model=schemas.TemplateOut)
+async def retire_template(principal: TemplateAdmin, session: Session, template_id: uuid.UUID) -> schemas.TemplateOut:
+    t = await templates.retire(session, await templates.get(session, template_id, lock=True))
+    await _template_audit(session, principal, "template.retire", t.id)
+    await session.commit()
+    return templates.template_out(t)
+
+
+@staff_router.delete("/report-templates/{template_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def discard_template(principal: TemplateAdmin, session: Session, template_id: uuid.UUID) -> None:
+    await templates.discard_draft(session, await templates.get(session, template_id, lock=True))
+    await _template_audit(session, principal, "template.discard", template_id)
+    await session.commit()

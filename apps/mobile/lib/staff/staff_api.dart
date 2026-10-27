@@ -60,7 +60,9 @@ class StaffApi {
   Future<Map<String, dynamic>> _call(
     String method,
     String path, {
-    Map<String, dynamic>? body,
+    Object? body,
+    Map<String, dynamic>? query,
+    String? contentType,
     bool withDevice = true,
   }) async {
     final headers = {'Authorization': 'Bearer ${await _token()}'};
@@ -71,9 +73,11 @@ class StaffApi {
     final r = await _dio.request<Object>(
       '$_base/api/v1/crew$path',
       data: body,
+      queryParameters: query,
       options: Options(
         method: method,
         headers: headers,
+        contentType: contentType,
         validateStatus: (_) => true,
       ),
     );
@@ -167,37 +171,82 @@ class StaffApi {
   Future<Mission> step(String id, String status, {double? lat, double? lon}) =>
       _mission(id, 'status', {'status': status, 'lat': ?lat, 'lon': ?lon});
 
-  Future<Mission> firstReport(
+  /// A situation report: the first one, then updates (design §5.5).
+  Future<Mission> situation(
     String id, {
     required String category,
     required int severity,
-    bool backupNeeded = false,
-    String? backupNote,
+    List<String> backupKinds = const [],
     bool crewDanger = false,
-  }) => _mission(id, 'first-report', {
+  }) => _mission(id, 'situation', {
     'category': category,
     'severity': severity,
-    'backup_needed': backupNeeded,
-    if (backupNote != null && backupNote.trim().isNotEmpty)
-      'backup_note': backupNote.trim(),
+    'backup_needed': backupKinds.isNotEmpty,
+    'backup_kinds': backupKinds,
     'crew_danger': crewDanger,
   });
 
   Future<Mission> casualties(String id, Map<CasualtyCounter, int> deltas) =>
       _mission(id, 'casualties', {
-        for (final e in deltas.entries) e.key.name: e.value,
+        for (final e in deltas.entries) e.key.wire: e.value,
       });
 
+  /// One person taken to hospital: a hospital of the map ([hospitalRef]) or a typed name.
   Future<Mission> transport(
     String id, {
     required Triage triage,
     required AgeBand ageBand,
     required Sex sex,
-    required String hospital,
+    String? hospitalRef,
+    String? hospital,
   }) => _mission(id, 'transports', {
     'triage': triage.name,
-    'age_band': ageBand.name,
+    'age_band': ageBand.wire,
     'sex': sex.name,
-    'hospital': hospital.trim(),
+    'hospital_ref': ?hospitalRef,
+    if (hospitalRef == null) 'hospital': hospital?.trim(),
   });
+
+  /// "Backup" or "danger to the crew", with the chips chosen (design §5.4).
+  Future<Mission> alert(String id, String kind, List<String> items) =>
+      _mission(id, 'alerts', {'kind': kind, 'items': items});
+
+  Future<Mission> note(String id, String body) =>
+      _mission(id, 'notes', {'body': body.trim()});
+
+  /// A photo or a voice note, sent as the raw body with its type.
+  Future<Mission> upload(String id, String kind, CapturedMedia media) async =>
+      Mission.fromJson(
+        await _call(
+          'POST',
+          '/missions/$id/attachments',
+          body: media.bytes,
+          contentType: media.contentType,
+          query: {
+            'kind': kind,
+            'client_id': _newId(),
+            'device_at': _clock().toUtc().toIso8601String(),
+            'duration_s': ?media.durationS,
+          },
+        ),
+      );
+
+  Future<Mission> detailedReport(
+    String id,
+    String templateId,
+    Map<String, Object> answers,
+    String? note,
+  ) => _mission(id, 'detailed-report', {
+    'template_id': templateId,
+    'answers': answers,
+    if (note != null && note.trim().isNotEmpty) 'note': note.trim(),
+  });
+
+  Future<List<Hospital>> hospitals(String id) async {
+    final j = await _call('GET', '/missions/$id/hospitals');
+    return [
+      for (final h in j['items'] as List)
+        Hospital.fromJson(h as Map<String, dynamic>),
+    ];
+  }
 }

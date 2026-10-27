@@ -1,7 +1,23 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { COUNTERS, type CrewRef, type Transport } from "../lib/crewTypes";
-import { useFormat } from "../lib/hooks";
+import { useAuth } from "../context/auth";
+import { useServices } from "../context/services";
+import { crewKeys } from "../lib/crewApi";
+import {
+  COUNTERS,
+  type CrewAlert,
+  type CrewRef,
+  type FieldAttachment,
+  type FieldReport,
+  type ReportTemplate,
+  type Transport,
+} from "../lib/crewTypes";
+import { errorMessageKey } from "../lib/api";
+import { useFormat, useLanguage } from "../lib/hooks";
+import { localized } from "../lib/localized";
 import type { Assignment } from "../lib/opsTypes";
+import { queryKeys } from "../lib/staffApi";
+import { canMarkCrewAlerts } from "../lib/roles";
 import type { IncidentDetail } from "../lib/types";
 
 /** Under a vehicle's assignment: the team leader on the staff app, crew size and whether the order was read. */
@@ -20,6 +36,12 @@ export function CrewLine({ crew }: { crew: CrewRef }) {
         </span>
       ) : (
         <span className="chip chip--crew-waiting">{t("crew.notAcknowledged")}</span>
+      )}
+      {(crew.unseen_alerts ?? 0) > 0 && (
+        <>
+          {" · "}
+          <span className="chip chip--crew-waiting">{t("crew.unseenAlerts", { count: crew.unseen_alerts })}</span>
+        </>
       )}
     </div>
   );
@@ -64,35 +86,197 @@ function TransportsTable({ rows, assignments }: { rows: Transport[]; assignments
   );
 }
 
+/** A backup or danger alert: red until an operator marks it as seen, which the leader's phone then shows. */
+function AlertRow({ alert, incidentId, canMark }: { alert: CrewAlert; incidentId: string; canMark: boolean }) {
+  const { t } = useTranslation();
+  const fmt = useFormat();
+  const { api } = useServices();
+  const qc = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: () => api.markAlertSeen(alert.id),
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: queryKeys.incident(incidentId) });
+      void qc.invalidateQueries({ queryKey: crewKeys.shifts });
+    },
+  });
+  const items = alert.items.map((k) => t(`crew.${alert.kind}Kind.${k}`)).join(t("common.listSeparator"));
+  const what = alert.kind === "backup" ? t("crew.backup") : t("crew.danger");
+  const seen = alert.seen_at;
+  return (
+    <li className={`crew-alert crew-alert--${alert.kind}${seen ? " crew-alert--seen" : ""}`} role={seen ? undefined : "alert"}>
+      <div>
+        <strong dir="auto">{alert.resource_label ?? t("crew.vehicle")}</strong>
+        {": "}
+        {what}
+        {items && <span> — {items}</span>}
+        <div className="cell-sub">
+          {alert.created_by_name && <span dir="auto">{alert.created_by_name} · </span>}
+          <time dateTime={alert.created_at}>{fmt.time(alert.created_at)}</time>
+          {seen && (
+            <>
+              {" · "}
+              {t("crew.seenBy", { name: alert.seen_by_name ?? "—", time: fmt.time(seen) })}
+            </>
+          )}
+        </div>
+        {mutation.error ? (
+          <p className="alert alert--error" role="alert">
+            {t(errorMessageKey(mutation.error))}
+          </p>
+        ) : null}
+      </div>
+      {!seen && canMark && (
+        <button
+          type="button"
+          className="btn btn--small btn--primary"
+          disabled={mutation.isPending}
+          onClick={() => mutation.mutate()}
+          aria-label={t("crew.markSeenLabel", { what, vehicle: alert.resource_label ?? "" })}
+        >
+          {t("crew.markSeen")}
+        </button>
+      )}
+    </li>
+  );
+}
+
+/** A detailed report with the template's question labels (the version it answered). */
+function DetailedReport({ report, templates }: { report: FieldReport; templates: ReportTemplate[] }) {
+  const { t } = useTranslation();
+  const lang = useLanguage();
+  const fmt = useFormat();
+  const template = templates.find((x) => x.id === report.template_id);
+  const answers = report.answers ?? {};
+  const label = (key: string) => {
+    const field = template?.fields.find((f) => f.key === key);
+    return field ? localized(field.label, lang) : key;
+  };
+  const value = (key: string, v: unknown): string => {
+    const field = template?.fields.find((f) => f.key === key);
+    const option = (o: unknown) => {
+      const found = field?.options?.find((x) => x.key === o);
+      return found ? localized(found.label, lang) : String(o);
+    };
+    if (typeof v === "boolean") return v ? t("common.yes") : t("common.no");
+    if (Array.isArray(v)) return v.map(option).join(t("common.listSeparator"));
+    if (typeof v === "number") return `${fmt.number(v)}${field?.unit ? ` ${localized(field.unit, lang)}` : ""}`;
+    return option(v);
+  };
+  return (
+    <div className="crew-detailed">
+      <p className="muted">
+        <strong dir="auto">{report.resource_label ?? "—"}</strong> ·{" "}
+        {t("crew.templateVersion", { version: report.template_version ?? "—" })}
+        {template?.simulated && <span className="tag tag--sim">[SIM]</span>}
+        {" · "}
+        {report.author_name && <span dir="auto">{report.author_name} · </span>}
+        <time dateTime={report.created_at}>{fmt.time(report.created_at)}</time>
+      </p>
+      <dl className="crew-answers">
+        {Object.entries(answers).map(([k, v]) => (
+          <div key={k}>
+            <dt>{label(k)}</dt>
+            <dd dir={typeof v === "number" ? undefined : "auto"}>{value(k, v)}</dd>
+          </div>
+        ))}
+      </dl>
+      {report.note && (
+        <p dir="auto">
+          <strong>{t("crew.note")}: </strong>
+          {report.note}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function Attachments({ items }: { items: FieldAttachment[] }) {
+  const { t } = useTranslation();
+  const fmt = useFormat();
+  return (
+    <ul className="crew-attachments">
+      {items.map((a) => (
+        <li key={a.id} className={`crew-attachment crew-attachment--${a.kind}`}>
+          {a.kind === "photo" &&
+            (a.url ? (
+              <a href={a.url} target="_blank" rel="noreferrer">
+                <img src={a.url} alt={t("crew.photoAlt", { time: fmt.time(a.created_at) })} loading="lazy" />
+              </a>
+            ) : (
+              <span className="muted">{t("crew.photo")}</span>
+            ))}
+          {a.kind === "voice" &&
+            (a.url ? (
+              <audio controls preload="none" src={a.url} aria-label={t("crew.voice")} />
+            ) : (
+              <span className="muted">{t("crew.voice")}</span>
+            ))}
+          {a.kind === "text" && <p dir="auto">{a.body}</p>}
+          <div className="cell-sub">
+            {t(`crew.attachment.${a.kind}`)}
+            {a.duration_s ? ` · ${t("crew.seconds", { count: Math.round(a.duration_s) })}` : ""}
+            {" · "}
+            {a.created_by_name && <span dir="auto">{a.created_by_name} · </span>}
+            <time dateTime={a.created_at}>{fmt.time(a.created_at)}</time>
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 /**
- * F-DSH-35 (part, phase P4a): what the team leaders send from the scene — first reports (backup needed and danger to
- * the crew stand out), the live casualty counters and the victims taken to hospital.
+ * F-DSH-35 (part, phases P4a and P4b): what the team leaders send from the scene — backup and danger alerts first
+ * (with "seen" for the operator), the last situation report of each vehicle, the six live counters, the people taken
+ * to hospital, the detailed reports with their template's labels, and the photos, voice notes and texts.
  */
 export function FieldSection({ incident }: { incident: IncidentDetail }) {
   const { t } = useTranslation();
   const fmt = useFormat();
+  const { api } = useServices();
+  const { user } = useAuth();
+  const canMark = canMarkCrewAlerts(user?.identity.roles ?? []);
   const reports = incident.field_reports ?? [];
   const casualties = incident.casualties;
   const transports = incident.transports ?? [];
+  const alerts = incident.alerts ?? [];
+  const attachments = incident.attachments ?? [];
+  const situations = reports.filter((r) => r.kind !== "detailed");
+  const detailed = reports.filter((r) => r.kind === "detailed");
+  const templates = useQuery({
+    queryKey: crewKeys.templates(true),
+    queryFn: ({ signal }) => api.reportTemplates(true, signal),
+    enabled: detailed.length > 0,
+    staleTime: 5 * 60_000,
+  });
   const counted = casualties && COUNTERS.some((c) => casualties[c] > 0);
-  if (reports.length === 0 && !counted && transports.length === 0) return null;
-  const alarms = reports.filter((r) => r.crew_danger || r.backup_needed);
+  if (
+    situations.length === 0 &&
+    detailed.length === 0 &&
+    !counted &&
+    transports.length === 0 &&
+    alerts.length === 0 &&
+    attachments.length === 0
+  )
+    return null;
+  // The last situation report of each vehicle.
+  const latest = new Map<string, FieldReport>();
+  for (const r of situations) {
+    const prev = latest.get(r.assignment_id);
+    if (!prev || prev.created_at < r.created_at) latest.set(r.assignment_id, r);
+  }
+  const unseen = alerts.filter((a) => !a.seen_at);
+  const seen = alerts.filter((a) => a.seen_at);
   return (
     <section className="card" aria-labelledby="sec-field">
       <h2 id="sec-field">{t("crew.fieldTitle")}</h2>
-      {alarms.map((r) => (
-        <p key={`alarm-${r.id}`} className="alert alert--error" role="alert">
-          <strong dir="auto">{r.resource_label ?? t("crew.vehicle")}</strong>
-          {": "}
-          {[r.crew_danger && t("crew.danger"), r.backup_needed && t("crew.backup")].filter(Boolean).join(" · ")}
-          {r.backup_note && (
-            <span dir="auto">
-              {" — "}
-              {r.backup_note}
-            </span>
-          )}
-        </p>
-      ))}
+      {alerts.length > 0 && (
+        <ul className="crew-alerts" aria-label={t("crew.alerts")}>
+          {[...unseen, ...seen].map((a) => (
+            <AlertRow key={a.id} alert={a} incidentId={incident.id} canMark={canMark} />
+          ))}
+        </ul>
+      )}
       {casualties && (
         <dl className="crew-counters" aria-label={t("crew.casualties")}>
           {COUNTERS.map((c) => (
@@ -101,17 +285,30 @@ export function FieldSection({ incident }: { incident: IncidentDetail }) {
               <dd>{fmt.number(casualties[c])}</dd>
             </div>
           ))}
+          <div className="crew-counter crew-counter--transported">
+            <dt>{t("crew.counter.transported")}</dt>
+            <dd>{fmt.number(casualties.transported ?? transports.length)}</dd>
+          </div>
         </dl>
       )}
-      {reports.length > 0 && (
+      {latest.size > 0 && (
         <>
-          <h3>{t("crew.firstReports")}</h3>
+          <h3>{t("crew.situations")}</h3>
           <ul className="crew-reports">
-            {reports.map((r) => (
+            {[...latest.values()].map((r) => (
               <li key={r.id}>
                 <strong dir="auto">{r.resource_label ?? "—"}</strong> · {t(`category.${r.category}`)} ·{" "}
-                <span className={`chip chip--severity-${r.severity}`}>{t(`crew.severity.${r.severity}`)}</span>{" "}
+                {r.severity != null && (
+                  <span className={`chip chip--severity-${r.severity}`}>{t(`crew.severity.${r.severity}`)}</span>
+                )}{" "}
+                {(r.backup_kinds ?? []).length > 0 && (
+                  <span>
+                    {t("crew.backup")}:{" "}
+                    {(r.backup_kinds ?? []).map((k) => t(`crew.backupKind.${k}`)).join(t("common.listSeparator"))}{" "}
+                  </span>
+                )}
                 <span className="muted">
+                  {r.kind === "update" ? t("crew.update") : t("crew.first")} ·{" "}
                   {r.author_name && <span dir="auto">{r.author_name} · </span>}
                   <time dateTime={r.created_at}>{fmt.time(r.created_at)}</time>
                 </span>
@@ -126,6 +323,20 @@ export function FieldSection({ incident }: { incident: IncidentDetail }) {
           <TransportsTable rows={transports} assignments={incident.assignments ?? []} />
         </>
       )}
+      {detailed.length > 0 && (
+        <>
+          <h3>{t("crew.detailed")}</h3>
+          {detailed.map((r) => (
+            <DetailedReport key={r.id} report={r} templates={templates.data ?? []} />
+          ))}
+        </>
+      )}
+      {attachments.length > 0 && (
+        <>
+          <h3>{t("crew.attachments")}</h3>
+          <Attachments items={attachments} />
+        </>
+      )}
     </section>
   );
 }
@@ -138,6 +349,7 @@ export function crewTimelineParts(
 ): string[] {
   const parts: string[] = [];
   if (kind === "field_report") {
+    if (payload.report === "update") parts.push(t("crew.update"));
     if (typeof payload.severity === "number") parts.push(t(`crew.severity.${payload.severity}`));
     if (payload.backup_needed === true) parts.push(t("crew.backup"));
     if (payload.crew_danger === true) parts.push(t("crew.danger"));
@@ -148,6 +360,17 @@ export function crewTimelineParts(
   } else if (kind === "transport") {
     if (typeof payload.triage === "string") parts.push(t(`crew.triageName.${payload.triage}`));
     if (typeof payload.hospital === "string") parts.push(payload.hospital);
+  } else if (kind === "crew_alert" || kind === "crew_alert_seen") {
+    const alert = payload.alert === "danger" ? "danger" : "backup";
+    parts.push(alert === "danger" ? t("crew.danger") : t("crew.backup"));
+    if (Array.isArray(payload.items)) {
+      parts.push(...payload.items.map((k) => t(`crew.${alert}Kind.${String(k)}`)));
+    }
+  } else if (kind === "field_attachment") {
+    if (typeof payload.media === "string") parts.push(t(`crew.attachment.${payload.media}`));
+  } else if (kind === "detailed_report") {
+    if (typeof payload.template_version === "number")
+      parts.push(t("crew.templateVersion", { version: payload.template_version }));
   }
   return parts;
 }

@@ -1,5 +1,5 @@
-"""The staff app of team leaders (phase P4a, docs/phase-p4/design-staff.md §4): device, shift, missions, steps,
-first field report and casualties.
+"""The staff app of team leaders (phases P4a and P4b, docs/phase-p4/design-staff.md §4 and §5): device, shift,
+missions, steps, situation reports, casualties, alerts from the field, attachments, hospitals and detailed reports.
 
 A team leader sees only the assignments of the vehicle they hold on shift. Every write carries the id the phone
 generated (``ops.crew_event``): sent twice, it is applied once and answered with the current state. Steps go through
@@ -7,6 +7,7 @@ the room's own rules (``interventions._set_assignment_status``), so the vehicle 
 tracking moves on («تم التدخل») exactly as when the room presses the button.
 """
 
+import hashlib
 import uuid
 from datetime import UTC, datetime, timedelta
 from typing import Any
@@ -18,16 +19,19 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.security import Principal
+from app.core.storage import get_store
 from app.modules.audit import service as audit
-from app.modules.geo.models import Delegation
-from app.modules.ops import interventions, resources, schemas
+from app.modules.geo.models import Delegation, Layer, LayerFeature
+from app.modules.ops import interventions, resources, schemas, templates
 from app.modules.ops import service as incidents
 from app.modules.ops.domain import ACTIVE_ASSIGNMENT, classification_allowed
 from app.modules.ops.models import (
     Assignment,
     CasualtyCount,
     CasualtyTransport,
+    CrewAlert,
     CrewEvent,
+    FieldAttachment,
     FieldReport,
     Incident,
     Resource,
@@ -36,12 +40,25 @@ from app.modules.ops.models import (
     TimelineEvent,
     Unit,
 )
+from app.modules.reports import sniff
 from app.modules.reports.domain import Status
 
 DEVICE_REVOKED = "device_revoked"
 SEEN_EVERY = timedelta(minutes=1)
 #: Released missions stay on the phone for a while, to add a person taken to hospital after the end.
 RECENT = timedelta(hours=6)
+#: Attachments from the scene (design §5.8): photos compressed on the phone, voice notes of a minute at most.
+ATTACHMENT_TYPES = {
+    "photo": frozenset({"image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"}),
+    "voice": frozenset({"audio/mp4", "audio/aac", "audio/mpeg", "audio/ogg", "audio/wav", "audio/x-wav", "audio/webm"}),
+}
+ATTACHMENT_MAX_BYTES = {"photo": 8 * 1024 * 1024, "voice": 4 * 1024 * 1024}
+VOICE_MAX_S = 60
+ATTACHMENTS_PER_MISSION = 20
+HOSPITALS_NEAR = 6
+SITUATION_KINDS = ("first", "update")
+#: Map layers whose places are offered as hospitals.
+HOSPITAL_ICONS = ("hospital", "clinic")
 
 
 def _now() -> datetime:
@@ -208,13 +225,18 @@ async def end_shift(session: AsyncSession, principal: Principal) -> Shift:
 
 async def _casualties(session: AsyncSession, incident_id: uuid.UUID) -> schemas.CasualtiesOut:
     row = await session.get(CasualtyCount, incident_id)
+    transported = await session.scalar(
+        select(func.count()).select_from(CasualtyTransport).where(CasualtyTransport.incident_id == incident_id)
+    )
     if row is None:
-        return schemas.CasualtiesOut()
+        return schemas.CasualtiesOut(transported=transported or 0)
     return schemas.CasualtiesOut(
-        injured=row.injured,
+        injured_light=row.injured_light,
+        injured_serious=row.injured_serious,
         deceased=row.deceased,
         rescued=row.rescued,
         trapped=row.trapped,
+        transported=transported or 0,
         updated_by=row.updated_by,
         updated_at=row.updated_at,
     )
@@ -225,15 +247,55 @@ def _report_out(r: FieldReport, label: str | None = None) -> schemas.FieldReport
         id=r.id,
         assignment_id=r.assignment_id,
         resource_label=label,
+        kind=r.kind,
         category=r.category,
         classification=r.classification,
         severity=r.severity,
         backup_needed=r.backup_needed,
         backup_note=r.backup_note,
+        backup_kinds=list(r.backup_kinds or []),
         crew_danger=r.crew_danger,
+        template_id=r.template_id,
+        template_version=r.template_version,
+        answers=r.answers,
+        note=r.note,
         author_name=r.author_name,
         device_at=r.device_at,
         created_at=r.created_at,
+    )
+
+
+def alert_out(a: CrewAlert, label: str | None = None) -> schemas.AlertOut:
+    return schemas.AlertOut(
+        id=a.id,
+        assignment_id=a.assignment_id,
+        resource_label=label,
+        kind=a.kind,
+        items=list(a.items or []),
+        created_by_name=a.created_by_name,
+        device_at=a.device_at,
+        created_at=a.created_at,
+        seen_by_name=a.seen_by_name,
+        seen_at=a.seen_at,
+    )
+
+
+def attachment_out(a: FieldAttachment, *, with_url: bool = False) -> schemas.AttachmentOut:
+    url = None
+    if with_url and a.object_key is not None:
+        url = get_store().presign_get(a.object_key, expires_s=600, content_type=a.content_type)
+    return schemas.AttachmentOut(
+        id=a.id,
+        assignment_id=a.assignment_id,
+        kind=a.kind,
+        body=a.body,
+        content_type=a.content_type,
+        bytes=a.bytes,
+        duration_s=a.duration_s,
+        created_by_name=a.created_by_name,
+        device_at=a.device_at,
+        created_at=a.created_at,
+        url=url,
     )
 
 
@@ -245,6 +307,7 @@ def _transport_out(t: CasualtyTransport) -> schemas.TransportOut:
         age_band=t.age_band,
         sex=t.sex,
         hospital=t.hospital,
+        hospital_ref=t.hospital_ref,
         created_by_name=t.created_by_name,
         device_at=t.device_at,
         created_at=t.created_at,
@@ -263,10 +326,25 @@ async def mission_out(session: AsyncSession, assignment: Assignment) -> schemas.
     ).one()
     report = await session.scalar(
         select(FieldReport)
-        .where(FieldReport.assignment_id == assignment.id)
+        .where(FieldReport.assignment_id == assignment.id, FieldReport.kind.in_(SITUATION_KINDS))
         .order_by(FieldReport.created_at.desc())
         .limit(1)
     )
+    detailed = await session.scalar(
+        select(FieldReport)
+        .where(FieldReport.assignment_id == assignment.id, FieldReport.kind == "detailed")
+        .order_by(FieldReport.created_at.desc())
+        .limit(1)
+    )
+    alerts = await session.scalars(
+        select(CrewAlert).where(CrewAlert.assignment_id == assignment.id).order_by(CrewAlert.created_at.desc())
+    )
+    attachments = await session.scalars(
+        select(FieldAttachment)
+        .where(FieldAttachment.assignment_id == assignment.id)
+        .order_by(FieldAttachment.created_at)
+    )
+    template = await templates.approved_for(session, incident.category, incident.classification)
     transports = await session.scalars(
         select(CasualtyTransport)
         .where(CasualtyTransport.assignment_id == assignment.id)
@@ -301,8 +379,13 @@ async def mission_out(session: AsyncSession, assignment: Assignment) -> schemas.
             status=incident.status,
         ),
         field_report=_report_out(report) if report is not None else None,
+        detailed_report=_report_out(detailed) if detailed is not None else None,
         casualties=await _casualties(session, incident.id),
         transports=[_transport_out(t) for t in transports],
+        alerts=[alert_out(a) for a in alerts],
+        attachments=[attachment_out(a) for a in attachments],
+        template=templates.template_out(template) if template is not None else None,
+        contact_phone=assignment.contact_phone,
         distance_m=last_distance,
     )
 
@@ -431,6 +514,7 @@ async def step(
 async def first_report(
     session: AsyncSession, principal: Principal, assignment_id: uuid.UUID, body: schemas.FirstReportIn
 ) -> Assignment:
+    """A situation report: the first one of the team, then updates (design §5.5)."""
     assignment, _ = await _mission(session, principal, assignment_id)
     if await _seen(session, body.client_id) is not None:
         return assignment
@@ -438,16 +522,23 @@ async def first_report(
         raise HTTPException(status.HTTP_409_CONFLICT, "not_on_scene")
     if body.classification is not None and not classification_allowed(body.category, body.classification):
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "invalid_classification")
+    earlier = await session.scalar(
+        select(func.count()).where(FieldReport.assignment_id == assignment.id, FieldReport.kind.in_(SITUATION_KINDS))
+    )
+    kinds = list(dict.fromkeys(body.backup_kinds))
+    backup = body.backup_needed or bool(kinds)
     _event(session, principal, body, "first_report", assignment)
     session.add(
         FieldReport(
             incident_id=assignment.incident_id,
             assignment_id=assignment.id,
+            kind="update" if earlier else "first",
             category=body.category,
             classification=body.classification,
             severity=body.severity,
-            backup_needed=body.backup_needed,
-            backup_note=body.backup_note if body.backup_needed else None,
+            backup_needed=backup,
+            backup_kinds=kinds if backup else [],
+            backup_note=body.backup_note if backup else None,
             crew_danger=body.crew_danger,
             author=principal.subject,
             author_name=audit.name_of(principal),
@@ -459,9 +550,11 @@ async def first_report(
         assignment,
         "field_report",
         _who(principal),
+        report="update" if earlier else "first",
         category=body.category,
         severity=body.severity,
-        backup_needed=body.backup_needed,
+        backup_needed=backup,
+        backup_kinds=kinds if backup else [],
         crew_danger=body.crew_danger,
     )
     await _announce(session, assignment)
@@ -480,7 +573,14 @@ async def casualties(
         return assignment
     row = await session.get(CasualtyCount, assignment.incident_id, with_for_update=True)
     if row is None:
-        row = CasualtyCount(incident_id=assignment.incident_id, injured=0, deceased=0, rescued=0, trapped=0)
+        row = CasualtyCount(
+            incident_id=assignment.incident_id,
+            injured_light=0,
+            injured_serious=0,
+            deceased=0,
+            rescued=0,
+            trapped=0,
+        )
         session.add(row)
     for key, delta in deltas.items():
         setattr(row, key, max(0, min(10_000, getattr(row, key) + delta)))
@@ -498,6 +598,18 @@ async def transport(
         return assignment
     if assignment.status not in ("on_scene", "released"):
         raise HTTPException(status.HTTP_409_CONFLICT, "not_on_scene")
+    hospital = body.hospital
+    if body.hospital_ref is not None:
+        place = await session.scalar(
+            select(LayerFeature.name)
+            .join(Layer, Layer.id == LayerFeature.layer_id)
+            .where(LayerFeature.id == body.hospital_ref, Layer.icon.in_(HOSPITAL_ICONS), Layer.enabled.is_(True))
+        )
+        if place is None:
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "unknown_hospital")
+        hospital = place[:120]
+    if not hospital:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "hospital_required")
     _event(session, principal, body, "transport", assignment)
     session.add(
         CasualtyTransport(
@@ -506,15 +618,203 @@ async def transport(
             triage=body.triage,
             age_band=body.age_band,
             sex=body.sex,
-            hospital=body.hospital,
+            hospital=hospital,
+            hospital_ref=body.hospital_ref,
             created_by=principal.subject,
             created_by_name=audit.name_of(principal),
             device_at=body.device_at,
         )
     )
-    _timeline(session, assignment, "transport", _who(principal), triage=body.triage, hospital=body.hospital)
+    _timeline(session, assignment, "transport", _who(principal), triage=body.triage, hospital=hospital)
     await _announce(session, assignment)
     return assignment
+
+
+async def alert(
+    session: AsyncSession, principal: Principal, assignment_id: uuid.UUID, body: schemas.AlertIn
+) -> Assignment:
+    """ "Backup" or "danger to the crew", at any moment from the order to the end (design §5.4)."""
+    assignment, _ = await _mission(session, principal, assignment_id)
+    if await _seen(session, body.client_id) is not None:
+        return assignment
+    allowed = schemas.BACKUP_KINDS if body.kind == "backup" else schemas.DANGER_KINDS
+    items = list(dict.fromkeys(body.items))
+    if any(i not in allowed for i in items):
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "invalid_item")
+    if assignment.status in ("cancelled",):
+        raise HTTPException(status.HTTP_409_CONFLICT, "mission_cancelled")
+    _event(session, principal, body, "alert", assignment, {"kind": body.kind, "items": items})
+    session.add(
+        CrewAlert(
+            incident_id=assignment.incident_id,
+            assignment_id=assignment.id,
+            kind=body.kind,
+            items=items,
+            created_by=principal.subject,
+            created_by_name=audit.name_of(principal),
+            device_at=body.device_at,
+        )
+    )
+    _timeline(session, assignment, "crew_alert", _who(principal), alert=body.kind, items=items)
+    await _announce(session, assignment)
+    return assignment
+
+
+async def text_note(
+    session: AsyncSession, principal: Principal, assignment_id: uuid.UUID, body: schemas.TextNoteIn
+) -> Assignment:
+    assignment, _ = await _mission(session, principal, assignment_id)
+    if await _seen(session, body.client_id) is not None:
+        return assignment
+    await _room_for_attachment(session, assignment)
+    _event(session, principal, body, "attachment", assignment, {"kind": "text"})
+    session.add(
+        FieldAttachment(
+            incident_id=assignment.incident_id,
+            assignment_id=assignment.id,
+            kind="text",
+            body=body.body,
+            created_by=principal.subject,
+            created_by_name=audit.name_of(principal),
+            device_at=body.device_at,
+        )
+    )
+    _timeline(session, assignment, "field_attachment", _who(principal), media="text")
+    await _announce(session, assignment)
+    return assignment
+
+
+async def _room_for_attachment(session: AsyncSession, assignment: Assignment) -> None:
+    count = await session.scalar(
+        select(func.count()).select_from(FieldAttachment).where(FieldAttachment.assignment_id == assignment.id)
+    )
+    if (count or 0) >= ATTACHMENTS_PER_MISSION:
+        raise HTTPException(status.HTTP_409_CONFLICT, "too_many_attachments")
+
+
+async def upload(
+    session: AsyncSession,
+    principal: Principal,
+    assignment_id: uuid.UUID,
+    write: schemas.CrewWrite,
+    kind: str,
+    content_type: str,
+    data: bytes,
+    duration_s: float | None,
+) -> Assignment:
+    """A photo or a voice note sent as the request body; its type is checked from its bytes (design §5.8)."""
+    assignment, _ = await _mission(session, principal, assignment_id)
+    if await _seen(session, write.client_id) is not None:
+        return assignment
+    if kind not in ATTACHMENT_TYPES or content_type not in ATTACHMENT_TYPES[kind]:
+        raise HTTPException(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, "unsupported_media_type")
+    if not data:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "empty_file")
+    if len(data) > ATTACHMENT_MAX_BYTES[kind]:
+        raise HTTPException(status.HTTP_413_CONTENT_TOO_LARGE, "media_too_large")
+    if kind == "voice" and (duration_s is None or not 0 < duration_s <= VOICE_MAX_S):
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "invalid_duration")
+    if sniff.verify(content_type, data[: sniff.HEAD_BYTES]).reason is not None:
+        raise HTTPException(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, "type_mismatch")
+    await _room_for_attachment(session, assignment)
+    digest = hashlib.sha256(data).hexdigest()
+    key = f"field/{assignment.incident_id}/{uuid.uuid4().hex}{sniff.EXTENSIONS.get(content_type, '')}"
+    await get_store().put(key, data, content_type)
+    _event(session, principal, write, "attachment", assignment, {"kind": kind, "sha256": digest})
+    session.add(
+        FieldAttachment(
+            incident_id=assignment.incident_id,
+            assignment_id=assignment.id,
+            kind=kind,
+            object_key=key,
+            content_type=content_type,
+            sha256=digest,
+            bytes=len(data),
+            duration_s=duration_s if kind == "voice" else None,
+            created_by=principal.subject,
+            created_by_name=audit.name_of(principal),
+            device_at=write.device_at,
+        )
+    )
+    _timeline(session, assignment, "field_attachment", _who(principal), media=kind)
+    await _announce(session, assignment)
+    return assignment
+
+
+async def detailed_report(
+    session: AsyncSession, principal: Principal, assignment_id: uuid.UUID, body: schemas.DetailedReportIn
+) -> Assignment:
+    """F-STF-05: answers to the approved template of the incident; a new one corrects the previous one."""
+    assignment, _ = await _mission(session, principal, assignment_id)
+    if await _seen(session, body.client_id) is not None:
+        return assignment
+    if assignment.status not in ("on_scene", "released"):
+        raise HTTPException(status.HTTP_409_CONFLICT, "not_on_scene")
+    incident = await session.get(Incident, assignment.incident_id)
+    template = await templates.get(session, body.template_id)
+    if incident is None or template.status != "approved" or template.category != incident.category:
+        raise HTTPException(status.HTTP_409_CONFLICT, "template_not_current")
+    answers = templates.check_answers(template.fields, body.answers)
+    _event(session, principal, body, "detailed_report", assignment)
+    session.add(
+        FieldReport(
+            incident_id=assignment.incident_id,
+            assignment_id=assignment.id,
+            kind="detailed",
+            category=template.category,
+            classification=template.classification or incident.classification,
+            template_id=template.id,
+            template_version=template.version,
+            answers=answers,
+            note=body.note,
+            author=principal.subject,
+            author_name=audit.name_of(principal),
+            device_at=body.device_at,
+        )
+    )
+    _timeline(
+        session, assignment, "detailed_report", _who(principal), template_version=template.version, answers=len(answers)
+    )
+    await _announce(session, assignment)
+    return assignment
+
+
+async def hospitals(session: AsyncSession, principal: Principal, assignment_id: uuid.UUID) -> list[schemas.Hospital]:
+    """The hospitals of the map layers nearest to the incident (design §5.6)."""
+    assignment, _ = await _mission(session, principal, assignment_id)
+    incident = await session.get(Incident, assignment.incident_id)
+    if incident is None or incident.centroid is None:
+        return []
+    distance = func.ST_Distance(LayerFeature.location, Incident.centroid)
+    rows = (
+        await session.execute(
+            select(LayerFeature, Layer.simulated, distance)
+            .join(Layer, Layer.id == LayerFeature.layer_id)
+            .join(Incident, Incident.id == assignment.incident_id)
+            .where(Layer.icon.in_(HOSPITAL_ICONS), Layer.enabled.is_(True), LayerFeature.hidden.is_(False))
+            .order_by(distance)
+            .limit(HOSPITALS_NEAR)
+        )
+    ).all()
+    return [
+        schemas.Hospital(id=f.id, name=f.name, phone=f.phone, distance_m=round(d), simulated=bool(sim))
+        for f, sim, d in rows
+    ]
+
+
+async def mark_seen(session: AsyncSession, principal: Principal, alert_id: uuid.UUID) -> CrewAlert:
+    """The room saw a team's alert; the leader's phone shows it."""
+    row = await session.get(CrewAlert, alert_id, with_for_update=True)
+    if row is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
+    await incidents.get_in_scope(session, principal, row.incident_id)
+    if row.seen_at is None:
+        row.seen_at, row.seen_by, row.seen_by_name = _now(), audit.actor_of(principal), audit.name_of(principal)
+        assignment = await session.get(Assignment, row.assignment_id)
+        if assignment is not None:
+            _timeline(session, assignment, "crew_alert_seen", _who(principal), alert=row.kind)
+            await _announce(session, assignment)
+    return row
 
 
 # ---------------------------------------------------------------- the room's view (incident card)
@@ -522,7 +822,13 @@ async def transport(
 
 async def incident_field(
     session: AsyncSession, incident_id: uuid.UUID
-) -> tuple[list[schemas.FieldReportOut], schemas.CasualtiesOut | None, list[schemas.TransportOut]]:
+) -> tuple[
+    list[schemas.FieldReportOut],
+    schemas.CasualtiesOut | None,
+    list[schemas.TransportOut],
+    list[schemas.AlertOut],
+    list[schemas.AttachmentOut],
+]:
     rows = (
         await session.execute(
             select(FieldReport, Resource.label)
@@ -538,10 +844,25 @@ async def incident_field(
         .where(CasualtyTransport.incident_id == incident_id)
         .order_by(CasualtyTransport.created_at)
     )
+    transport_list = [_transport_out(t) for t in transports]
+    alerts = (
+        await session.execute(
+            select(CrewAlert, Resource.label)
+            .join(Assignment, Assignment.id == CrewAlert.assignment_id)
+            .outerjoin(Resource, Resource.id == Assignment.resource_id)
+            .where(CrewAlert.incident_id == incident_id)
+            .order_by(CrewAlert.created_at.desc())
+        )
+    ).all()
+    attachments = await session.scalars(
+        select(FieldAttachment).where(FieldAttachment.incident_id == incident_id).order_by(FieldAttachment.created_at)
+    )
     return (
         [_report_out(r, label) for r, label in rows],
-        await _casualties(session, incident_id) if counts is not None else None,
-        [_transport_out(t) for t in transports],
+        await _casualties(session, incident_id) if counts is not None or transport_list else None,
+        transport_list,
+        [alert_out(a, label) for a, label in alerts],
+        [attachment_out(a, with_url=True) for a in attachments],
     )
 
 

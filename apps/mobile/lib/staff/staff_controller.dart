@@ -77,6 +77,7 @@ class StaffState {
     this.offline = false,
     this.busy = false,
     this.error,
+    this.lastSync,
   });
 
   final StaffPhase phase;
@@ -93,6 +94,9 @@ class StaffState {
 
   /// Error code of the last write the server refused (`not_on_scene`, ...).
   final String? error;
+
+  /// When the server last answered (the connection strip's "updated N s ago").
+  final DateTime? lastSync;
 
   Mission? mission(String id) {
     for (final m in missions) {
@@ -124,6 +128,7 @@ class StaffState {
     bool? offline,
     bool? busy,
     String? error,
+    DateTime? lastSync,
     bool clearError = false,
     bool clearCode = false,
   }) => StaffState(
@@ -137,6 +142,7 @@ class StaffState {
     offline: offline ?? this.offline,
     busy: busy ?? this.busy,
     error: clearError ? null : error ?? this.error,
+    lastSync: lastSync ?? this.lastSync,
   );
 }
 
@@ -317,7 +323,7 @@ class StaffController extends Notifier<StaffState> {
   Future<T?> _guard<T>(Future<T> Function() call) async {
     try {
       final out = await call();
-      if (state.offline) state = state.copyWith(offline: false);
+      state = state.copyWith(offline: false, lastSync: DateTime.now());
       return out;
     } on DeviceRevoked {
       _stop();
@@ -426,21 +432,18 @@ class StaffController extends Notifier<StaffState> {
   Future<bool> step(String id, String status, {GeoPoint? at}) =>
       _write(() => _api.step(id, status, lat: at?.lat, lon: at?.lon));
 
-  Future<bool> firstReport(
+  /// Situation report (design §5.5); backup chips mean "backup needed".
+  Future<bool> situation(
     String id, {
     required ReportCategory category,
     required int severity,
-    bool backupNeeded = false,
-    String? backupNote,
-    bool crewDanger = false,
+    List<String> backupKinds = const [],
   }) => _write(
-    () => _api.firstReport(
+    () => _api.situation(
       id,
       category: category.wire,
       severity: severity,
-      backupNeeded: backupNeeded,
-      backupNote: backupNote,
-      crewDanger: crewDanger,
+      backupKinds: backupKinds,
     ),
   );
 
@@ -452,16 +455,38 @@ class StaffController extends Notifier<StaffState> {
     required Triage triage,
     required AgeBand ageBand,
     required Sex sex,
-    required String hospital,
+    String? hospitalRef,
+    String? hospital,
   }) => _write(
     () => _api.transport(
       id,
       triage: triage,
       ageBand: ageBand,
       sex: sex,
+      hospitalRef: hospitalRef,
       hospital: hospital,
     ),
   );
+
+  Future<bool> alert(String id, String kind, List<String> items) =>
+      _write(() => _api.alert(id, kind, items));
+
+  Future<bool> note(String id, String body) =>
+      _write(() => _api.note(id, body));
+
+  Future<bool> upload(String id, String kind, CapturedMedia media) =>
+      _write(() => _api.upload(id, kind, media));
+
+  Future<bool> detailedReport(
+    String id,
+    String templateId,
+    Map<String, Object> answers,
+    String? note,
+  ) => _write(() => _api.detailedReport(id, templateId, answers, note));
+
+  /// The nearest hospitals of the map, for the transport chips (empty offline).
+  Future<List<Hospital>> hospitals(String id) async =>
+      await _guard(() => _api.hospitals(id)) ?? const [];
 
   void clearError() => state = state.copyWith(clearError: true);
 }
