@@ -64,9 +64,11 @@ class CrewMe {
     required this.deviceId,
     this.shift,
     this.roles = const ['team_leader'],
+    this.json = const {},
   });
 
   factory CrewMe.fromJson(Map<String, dynamic> j) => CrewMe(
+    json: j,
     name: j['name'] as String?,
     gouvernoratCode: j['gouvernorat_code'] as int,
     deviceId: (j['device'] as Map<String, dynamic>)['id'] as String,
@@ -86,6 +88,9 @@ class CrewMe {
   /// `team_leader` and/or `org_auditor` (phase P4c): the app opens the shift, the prevention
   /// visits, or the shift with a button to the visits.
   final List<String> roles;
+
+  /// The server's answer, kept sealed on the phone for a start without network (phase P4d).
+  final Map<String, dynamic> json;
 
   bool get leader => roles.contains('team_leader');
   bool get inspector => roles.contains('org_auditor');
@@ -288,6 +293,7 @@ class CrewAlert {
     required this.createdAt,
     this.seenAt,
     this.seenBy,
+    this.pending = false,
   });
 
   factory CrewAlert.fromJson(Map<String, dynamic> j) => CrewAlert(
@@ -297,6 +303,7 @@ class CrewAlert {
     createdAt: DateTime.parse(j['created_at'] as String),
     seenAt: _date(j['seen_at']),
     seenBy: j['seen_by_name'] as String?,
+    pending: j['pending'] == true,
   );
 
   /// `backup` or `danger`.
@@ -306,6 +313,9 @@ class CrewAlert {
   final DateTime createdAt;
   final DateTime? seenAt;
   final String? seenBy;
+
+  /// Kept on the phone, not yet received by the room (phase P4d).
+  final bool pending;
 }
 
 /// A photo, a voice note or a short text sent from the scene.
@@ -468,6 +478,7 @@ class Mission {
     this.template,
     this.contactPhone,
     this.distanceM,
+    this.json = const {},
   });
 
   factory Mission.fromJson(Map<String, dynamic> j) {
@@ -478,6 +489,7 @@ class Mission {
       for (final x in j[k] as List? ?? const []) x as Map<String, dynamic>,
     ];
     return Mission(
+      json: j,
       id: j['id'] as String,
       status: _status(j['status'] as String),
       order: j['order'] as String?,
@@ -550,6 +562,10 @@ class Mission {
   /// A number the room added to call on the scene (never the citizen's own, automatically).
   final String? contactPhone;
   final int? distanceM;
+
+  /// The server's answer, kept sealed on the phone and changed there by the writes that wait to
+  /// be sent (phase P4d, design §9.1).
+  final Map<String, dynamic> json;
 
   bool get active =>
       status == MissionStatus.ordered ||

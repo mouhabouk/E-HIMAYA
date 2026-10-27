@@ -177,7 +177,22 @@ class StaffVault {
   /// The key of the visits kept on the phone (phase P4c): erased with the rest, nothing stays
   /// readable.
   static const _visits = 'staff_visits_key_v1';
-  static const keys = [_tokens, _device, _pin, _failures, _roles, _visits];
+
+  /// The missions kept on the phone and the writes that wait (phase P4d).
+  static const _box = 'staff_box_key_v1';
+
+  /// The phone's own key that signs its text messages (phase P4d, design §9.3).
+  static const _smsKey = 'staff_sms_key_v1';
+  static const keys = [
+    _tokens,
+    _device,
+    _pin,
+    _failures,
+    _roles,
+    _visits,
+    _box,
+    _smsKey,
+  ];
 
   Future<StaffTokens?> tokens() async {
     final raw = await _store.read(_tokens);
@@ -204,6 +219,9 @@ class StaffVault {
       const [];
   Future<void> saveRoles(List<String> roles) =>
       _store.write(_roles, roles.join(','));
+
+  Future<String?> smsKey() => _store.read(_smsKey);
+  Future<void> saveSmsKey(String key) => _store.write(_smsKey, key);
 
   Future<bool> hasPin() async => await _store.read(_pin) != null;
 

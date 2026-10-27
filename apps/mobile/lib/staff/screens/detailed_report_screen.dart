@@ -11,6 +11,7 @@ import '../../features/report/category_labels.dart';
 import '../../l10n/app_localizations.dart';
 import '../staff_chrome.dart';
 import '../staff_controller.dart';
+import '../staff_labels.dart' show sentLabel;
 import '../staff_models.dart';
 import 'field_widgets.dart';
 
@@ -247,7 +248,13 @@ class _DetailedReportScreenState extends ConsumerState<DetailedReportScreen> {
         .read(staffControllerProvider.notifier)
         .detailedReport(widget.missionId, t.id, _answers, _note.text);
     if (!ok) return;
-    messenger.showSnackBar(SnackBar(content: Text(l10n.staffSent)));
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          sentLabel(l10n, ref.read(staffControllerProvider).pending),
+        ),
+      ),
+    );
     if (mounted) nav.pop();
   }
 }

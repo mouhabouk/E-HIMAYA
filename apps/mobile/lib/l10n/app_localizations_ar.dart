@@ -5960,4 +5960,43 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get prevNo => 'لا';
+
+  @override
+  String staffPending(int count) {
+    return '$count في الانتظار، يُرسل عند عودة الشبكة';
+  }
+
+  @override
+  String get staffSendSms => 'أرسل برسالة قصيرة';
+
+  @override
+  String get staffSmsOpened => 'فُتح تطبيق الرسائل: اضغط «إرسال».';
+
+  @override
+  String get staffTrackingTitle => 'ء-حماية: مهمة جارية';
+
+  @override
+  String get staffTrackingText =>
+      'يُرسل موقع المركبة إلى قاعة العمليات حتى نهاية المهمة.';
+
+  @override
+  String get staffMissionChannel => 'المهام';
+
+  @override
+  String get staffWaitingBadge => 'في الانتظار';
+
+  @override
+  String get teamEnRoute => 'الفريق في الطريق إليك';
+
+  @override
+  String get teamOnScene => 'وصل الفريق إلى المكان';
+
+  @override
+  String get teamNoticesSetting => 'إعلامي بقدوم الفريق';
+
+  @override
+  String get teamNoticesHint => 'إشعار عند انطلاق الفريق ثم عند وصوله.';
+
+  @override
+  String get staffKept => 'حُفظ على الهاتف، يُرسل عند عودة الشبكة.';
 }

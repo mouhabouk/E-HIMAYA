@@ -168,6 +168,7 @@ class SettingsScreen extends ConsumerWidget {
           ),
           SectionTitle(l10n.settingsAlerts),
           const _LocationAlertsTile(),
+          const _TeamNoticesTile(),
           NavCard(
             key: const Key('settings-notifications'),
             icon: Icons.notifications_rounded,
@@ -391,6 +392,41 @@ class _LocationAlertsTileState extends ConsumerState<_LocationAlertsTile> {
       subtitle: l10n.settingsLocationAlertsHelp,
       trailing: Switch(
         key: const Key('settings-location-alerts'),
+        value: _on,
+        onChanged: _set,
+      ),
+    );
+  }
+}
+
+/// Phase P4d (F-APP-38): «الفريق في الطريق إليك» then «وصل الفريق», on by default.
+class _TeamNoticesTile extends ConsumerStatefulWidget {
+  const _TeamNoticesTile();
+
+  @override
+  ConsumerState<_TeamNoticesTile> createState() => _TeamNoticesTileState();
+}
+
+class _TeamNoticesTileState extends ConsumerState<_TeamNoticesTile> {
+  late bool _on = ref.read(appPrefsProvider).teamNotices;
+
+  Future<void> _set(bool on) async {
+    await ref.read(appPrefsProvider).setTeamNotices(on);
+    if (!mounted) return;
+    setState(() => _on = on);
+    await ref.read(deviceRegistrarProvider).register();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return NavCard(
+      icon: Icons.local_shipping_rounded,
+      tone: Tone.green,
+      title: l10n.teamNoticesSetting,
+      subtitle: l10n.teamNoticesHint,
+      trailing: Switch(
+        key: const Key('settings-team-notices'),
         value: _on,
         onChanged: _set,
       ),

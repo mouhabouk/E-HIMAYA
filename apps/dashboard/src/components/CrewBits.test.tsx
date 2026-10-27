@@ -243,6 +243,39 @@ describe("staff app in the room (phases P4a and P4b)", () => {
     expect(within(field).getByText("Toit instable")).toBeInTheDocument();
   });
 
+  it("shows where the vehicle was last seen and the alerts that came by SMS (phase P4d)", () => {
+    const seen = new Date(Date.now() - 4 * 60_000).toISOString();
+    const incident = makeIncidentDetail({
+      assignments: [
+        makeAssignment({
+          crew: { shift_id: "sh-1", leader_name: "Sami Ben Ali", crew_size: 5, acknowledged_at: AT },
+          position: { lat: 36.81, lon: 10.18, at: seen, distance_m: 2400 },
+        }),
+      ],
+      callouts: [],
+      alerts: [
+        {
+          id: "al-3",
+          assignment_id: "a-1",
+          resource_label: "FPT-12",
+          kind: "danger",
+          items: [],
+          created_by_name: "Sami",
+          device_at: AT,
+          created_at: AT,
+          seen_by_name: null,
+          seen_at: null,
+          via: "sms",
+        },
+      ],
+    });
+    renderApp(<OperationsPanel incident={incident} />, { api: fakeApi(), lang: "ar" });
+
+    const table = screen.getByRole("table", { name: /./ });
+    expect(within(table).getByText(/^آخر موقع منذ .+ · على بعد 2[.,]4 كم$/)).toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent("عبر الرسائل القصيرة");
+  });
+
   it("previews the templates for the room, read only", async () => {
     const api = fakeApi({ reportTemplates: vi.fn(() => Promise.resolve([fireTemplate])) });
     renderApp(<ReportTemplatesPage />, { api, lang: "fr" });

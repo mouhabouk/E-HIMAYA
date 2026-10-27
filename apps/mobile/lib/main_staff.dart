@@ -7,8 +7,9 @@ import 'core/storage/app_prefs.dart';
 import 'core/storage/secure_store.dart';
 import 'staff/staff_app.dart';
 
-/// Entry point of the staff app (phase P4a): `flutter run -t lib/main_staff.dart`. Same code base
-/// and design system as the citizen app; its own Android flavor and lock-screen alert come in P4c.
+/// Entry point of the staff app (phase P4a): `flutter run --flavor staff -t lib/main_staff.dart`.
+/// Same code base and design system as the citizen app; since phase P4d its own Android flavor
+/// (tn.ehimaya.staff) with the mission ringing over the lock screen.
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   configureLogging();

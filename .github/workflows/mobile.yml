@@ -65,5 +65,9 @@ jobs:
           sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL /usr/local/share/boost /usr/share/swift /usr/local/share/powershell
           df -h /
 
-      - name: Build debug APK
-        run: flutter build apk --debug
+      - name: Build debug APK (citizen)
+        run: flutter build apk --debug --flavor citizen
+
+      - name: Build debug APK (staff)
+        # Phase P4d: the field app is its own Android flavor (tn.ehimaya.staff).
+        run: flutter build apk --debug --flavor staff -t lib/main_staff.dart

@@ -41,8 +41,29 @@ android {
         // flag during build.
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-        // Redirect scheme of the Keycloak login (flutter_appauth): tn.ehimaya.app:/oauth2redirect
-        manifestPlaceholders["appAuthRedirectScheme"] = "tn.ehimaya.app"
+    }
+
+    // Phase P4d (design-staff §9.5): two apps from one code base. `citizen` is the public app
+    // (`flutter build apk --flavor citizen`, lib/main.dart); `staff` is the field app of the team
+    // leaders and inspectors (`flutter build apk --flavor staff -t lib/main_staff.dart`), installed
+    // next to it under its own id and name, and allowed to open a mission over the lock screen.
+    flavorDimensions += "app"
+    productFlavors {
+        create("citizen") {
+            dimension = "app"
+            applicationId = "tn.ehimaya.app"
+            // Redirect scheme of the Keycloak login (flutter_appauth): tn.ehimaya.app:/oauth2redirect
+            manifestPlaceholders["appAuthRedirectScheme"] = "tn.ehimaya.app"
+            manifestPlaceholders["showWhenLocked"] = "false"
+        }
+        create("staff") {
+            dimension = "app"
+            applicationId = "tn.ehimaya.staff"
+            // The staff app signs in through the browser (device grant); the scheme stays its own.
+            manifestPlaceholders["appAuthRedirectScheme"] = "tn.ehimaya.staff"
+            // A mission rings full screen on a locked phone; the app's own PIN still guards it.
+            manifestPlaceholders["showWhenLocked"] = "true"
+        }
     }
 
     signingConfigs {
