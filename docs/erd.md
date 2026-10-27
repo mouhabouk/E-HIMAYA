@@ -1292,6 +1292,21 @@ erDiagram
         datetime created_at
         datetime updated_at
     }
+    org__prevention_photo {
+        uuid id PK
+        uuid visit_id FK
+        uuid org_id FK
+        text item_key
+        text object_key
+        text sha256
+        integer bytes
+        text content_type
+        uuid client_id
+        text created_by
+        text created_by_name
+        datetime device_at
+        datetime created_at
+    }
     org__prevention_reservation {
         uuid id PK
         uuid visit_id FK
@@ -1337,6 +1352,13 @@ erDiagram
         text cancel_reason
         text cancelled_by
         datetime cancelled_at
+        text inspector_subject
+        uuid inspection_client_id
+        datetime inspected_device_at
+        text inspector_signature_key
+        text representative_name
+        text representative_role
+        text representative_signature_key
         datetime created_at
     }
     org__team_member {
@@ -1380,10 +1402,12 @@ erDiagram
     org__organization ||--o{ org__maintenance : "org_id"
     org__organization ||--o{ org__map_feature : "org_id"
     org__organization ||--o{ org__member : "org_id"
+    org__organization ||--o{ org__prevention_photo : "org_id"
     org__organization ||--o{ org__prevention_reservation : "org_id"
     org__organization ||--o{ org__prevention_visit : "org_id"
     org__organization ||--o{ org__team_member : "org_id"
     org__prevention_visit ||--o{ org__certificate : "visit_id"
+    org__prevention_visit ||--o{ org__prevention_photo : "visit_id"
     org__prevention_visit ||--o{ org__prevention_reservation : "visit_id"
 ```
 

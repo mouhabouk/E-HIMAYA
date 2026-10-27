@@ -1,8 +1,8 @@
 import uuid
 from datetime import date, datetime
-from typing import Any, Literal
+from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, StringConstraints
 
 from app.modules.orgs.domain import (
     ActivityKind,
@@ -756,6 +756,29 @@ class VisitOut(BaseModel):
     created_at: datetime
 
 
+class VisitPhotoOut(BaseModel):
+    """A photo taken on site (phase P4c); ``url`` is a short-lived link."""
+
+    id: uuid.UUID
+    item_key: str | None
+    content_type: str
+    bytes: int
+    created_by_name: str | None
+    device_at: datetime | None
+    created_at: datetime
+    url: str | None = None
+
+
+class VisitSignatures(BaseModel):
+    """The two signatures of an inspection made on a phone (phase P4c); the URLs are short-lived."""
+
+    inspector_name: str | None
+    inspector_url: str | None
+    representative_name: str | None
+    representative_role: str | None
+    representative_url: str | None
+
+
 class StaffVisit(VisitOut):
     org_name: str
     org_kind: OrgKind
@@ -763,6 +786,36 @@ class StaffVisit(VisitOut):
     gouvernorat_code: int | None
     # The grid to fill, from the institution's declaration today; empty once the visit is decided or cancelled.
     checklist: list[ChecklistItemOut] = Field(default_factory=list)
+    # Phase P4c: the inspector who took the visit on a phone, the photos and the signatures from the site.
+    inspector_on_phone: bool = False
+    photos: list[VisitPhotoOut] = Field(default_factory=list)
+    signatures: VisitSignatures | None = None
+
+
+class FieldVisit(StaffVisit):
+    """A visit as the inspector's phone sees it (phase P4c): the institution's address and place, and whether the
+    visit is the inspector's own."""
+
+    org_address: str | None
+    org_location: Point | None
+    mine: bool
+    taken_by_other: bool
+
+
+# A signature drawn on the phone, as a PNG in base64 (a few kilobytes; at most 200 KB once decoded).
+SignaturePng = Annotated[str, StringConstraints(min_length=20, max_length=280_000)]
+
+
+class FieldInspectionIn(InspectionIn):
+    """The grid filled on the phone, with the phone's id for it (a resent inspection is applied once), its clock,
+    and the two signatures (design-staff.md §8.4)."""
+
+    client_id: uuid.UUID
+    device_at: datetime | None = None
+    representative_name: str = Field(min_length=1, max_length=120)
+    representative_role: str | None = Field(default=None, max_length=120)
+    inspector_signature: SignaturePng
+    representative_signature: SignaturePng
 
 
 class StaffVisitPage(BaseModel):

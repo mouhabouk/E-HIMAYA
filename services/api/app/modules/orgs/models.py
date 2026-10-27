@@ -338,6 +338,37 @@ class PreventionVisit(Base):
     cancel_reason: Mapped[str | None] = mapped_column(Text)
     cancelled_by: Mapped[str | None] = mapped_column(Text)
     cancelled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Phase P4c: the visit on the inspector's phone, and the two signatures of the inspection.
+    inspector_subject: Mapped[str | None] = mapped_column(Text)
+    inspection_client_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True))
+    inspected_device_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    inspector_signature_key: Mapped[str | None] = mapped_column(Text)
+    representative_name: Mapped[str | None] = mapped_column(Text)
+    representative_role: Mapped[str | None] = mapped_column(Text)
+    representative_signature_key: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class PreventionPhoto(Base):
+    """A photo taken on site during a prevention visit, for an item of the grid or the visit (phase P4c)."""
+
+    __tablename__ = "prevention_photo"
+    __table_args__ = _SCHEMA
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    visit_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("org.prevention_visit.id", ondelete="CASCADE")
+    )
+    org_id: Mapped[uuid.UUID] = _org_fk()
+    item_key: Mapped[str | None] = mapped_column(Text)
+    object_key: Mapped[str] = mapped_column(Text)
+    sha256: Mapped[str] = mapped_column(Text)
+    bytes: Mapped[int] = mapped_column(Integer)
+    content_type: Mapped[str] = mapped_column(Text)
+    client_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), unique=True)
+    created_by: Mapped[str] = mapped_column(Text)
+    created_by_name: Mapped[str | None] = mapped_column(Text)
+    device_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 

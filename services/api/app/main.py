@@ -62,6 +62,7 @@ from app.modules.ops.command_router import router as command_router
 from app.modules.ops.crew_router import router as crew_router
 from app.modules.ops.crew_router import staff_router as crew_staff_router
 from app.modules.ops.router import router as ops_router
+from app.modules.orgs.field_router import router as orgs_field_router
 from app.modules.orgs.prevention_router import router as orgs_prevention_router
 from app.modules.orgs.prevention_router import staff_router as orgs_prevention_staff_router
 from app.modules.orgs.router import router as orgs_router
@@ -259,6 +260,7 @@ def create_app() -> FastAPI:
         orgs_staff_router,
         orgs_prevention_router,
         orgs_prevention_staff_router,
+        orgs_field_router,
         ai_router,
         live_router,
         uploads_router,
