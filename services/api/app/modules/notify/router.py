@@ -39,6 +39,7 @@ async def register_device(
         "locale": body.locale,
         "location": location,
         "gouvernorat_code": gouvernorat,
+        "team_notices": body.team_notices,
         "updated_at": func.now(),
     }
     await session.execute(

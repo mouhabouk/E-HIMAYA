@@ -26,6 +26,8 @@ class Device(Base):
     locale: Mapped[str] = mapped_column(Text, server_default="ar")
     location: Mapped[object | None] = mapped_column(Geography("POINT", srid=4326))
     gouvernorat_code: Mapped[int | None] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
+    # F-APP-38 (phase P4d): "the team is on its way / has arrived" pushes, which the citizen may turn off.
+    team_notices: Mapped[bool] = mapped_column(Boolean, server_default="true")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 

@@ -156,6 +156,8 @@ def report_out(row: ReportRow, media: list[Media], org: Organization | None = No
         updated_at=r.updated_at,
         media=[media_out(m) for m in media],
         organization=schemas.ReportOrganization(id=org.id, name=org.name) if org is not None else None,
+        team_en_route_at=r.team_en_route_at,
+        team_on_scene_at=r.team_on_scene_at,
     )
 
 
@@ -325,6 +327,8 @@ async def track(session: AsyncSession, tracking_code: str) -> schemas.TrackOut |
         received_at=report.received_at,
         updated_at=report.updated_at,
         history=[schemas.HistoryEntry(status=Status(h.status), at=h.at) for h in history],
+        team_en_route_at=report.team_en_route_at,
+        team_on_scene_at=report.team_on_scene_at,
     )
 
 

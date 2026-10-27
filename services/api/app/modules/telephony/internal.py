@@ -1,6 +1,7 @@
 """Internal endpoints of telephony, never routed by Caddy (``/internal/*`` answers 404 at the edge).
 
-* ``POST /internal/sms/inbound`` — SMS gateway webhook (FR-A-048). Signed: ``X-Timestamp`` (unix seconds, at most
+* ``POST /internal/sms/inbound`` — SMS gateway webhook (FR-A-048, and since phase P4d the staff app's signed ``EH2``
+  messages, ``ops.crew_sms``). Signed: ``X-Timestamp`` (unix seconds, at most
   5 minutes old) and ``X-Signature: sha256=<hex>`` = HMAC-SHA256(SMS_INBOUND_SECRET, "<timestamp>.<raw body>").
   Answers 404 while SMS_INBOUND_SECRET is unset, 401 on a bad signature, and 200 with the outcome otherwise (a
   malformed SMS is "ignored", never an error the gateway would retry forever).
@@ -23,6 +24,7 @@ from app.core import ratelimit
 from app.core.config import get_settings
 from app.core.db import get_system_session
 from app.modules.notify.providers import get_providers
+from app.modules.ops import crew_sms
 from app.modules.streams.internal import _secret_matches
 from app.modules.telephony import schemas, sms
 from app.modules.telephony.domain import Source, normalize_caller
@@ -36,6 +38,8 @@ SIGNATURE_MAX_AGE_S = 300
 MAX_BODY_BYTES = 16 * 1024
 # SMS reports per sender number per hour; beyond, messages are ignored (abuse, loops between gateways).
 SMS_PER_SENDER_PER_HOUR = 10
+# A team leader's phone without internet: a few steps and alerts per mission, a busy shift has many missions.
+CREW_SMS_PER_SENDER_PER_HOUR = 60
 
 
 def signature(secret: str, timestamp: str, body: bytes) -> str:
@@ -73,6 +77,15 @@ async def sms_inbound(
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "invalid_body") from exc
 
     sender_key = sms.sender_hash(message.sender).hex()[:32]
+    if crew_sms.is_crew_sms(message.text):
+        verdict = await ratelimit.check(f"crew-sms-in:{sender_key}", CREW_SMS_PER_SENDER_PER_HOUR, 3600)
+        if verdict.exceeded:
+            log.warning("crew_sms.rate_limited")
+            return schemas.SmsInboundOut(status="ignored", reason="rate_limited")
+        crew_outcome = await crew_sms.receive(session, message.text)
+        await session.commit()
+        log.info("crew_sms.inbound", outcome=crew_outcome.status, reason=crew_outcome.reason)
+        return schemas.SmsInboundOut(status=crew_outcome.status, reason=crew_outcome.reason)
     verdict = await ratelimit.check(f"sms-in:{sender_key}", SMS_PER_SENDER_PER_HOUR, 3600)
     if verdict.exceeded:
         log.warning("sms.rate_limited")

@@ -4,10 +4,11 @@ from datetime import datetime
 from typing import Any
 
 from geoalchemy2 import Geography
-from sqlalchemy import Boolean, DateTime, Enum, Float, ForeignKey, Integer, SmallInteger, Text, func
+from sqlalchemy import BigInteger, Boolean, DateTime, Enum, Float, ForeignKey, Integer, SmallInteger, Text, func
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
+from app.core.crypto import EncryptedText
 from app.core.db import Base
 
 
@@ -163,6 +164,8 @@ class Resource(Base):
     status: Mapped[str] = mapped_column(Text, server_default="available")
     notes: Mapped[str | None] = mapped_column(Text)
     location: Mapped[object | None] = mapped_column(Geography("POINT", srid=4326))
+    # Phase P4d: when the team's phone last gave the position.
+    location_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     version: Mapped[int] = mapped_column(Integer, server_default="1")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
@@ -280,6 +283,8 @@ class StaffDevice(Base):
     platform: Mapped[str] = mapped_column(Text)
     app_build: Mapped[int | None] = mapped_column(Integer)
     push_token: Mapped[str | None] = mapped_column(Text)
+    # Phase P4d: signs the phone's EH2 text messages (design §9.3).
+    sms_key: Mapped[str | None] = mapped_column("sms_key_enc", EncryptedText("ops.staff_device.sms_key"))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     last_seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
@@ -322,6 +327,8 @@ class CrewEvent(Base):
     subject: Mapped[str] = mapped_column(Text)
     device_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     received_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    # Phase P4d: "app", or "sms" for a write that came as a signed text message.
+    via: Mapped[str] = mapped_column(Text, server_default="app")
 
 
 class FieldReport(Base):
@@ -424,6 +431,7 @@ class CrewAlert(Base):
     seen_by: Mapped[str | None] = mapped_column(Text)
     seen_by_name: Mapped[str | None] = mapped_column(Text)
     seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    via: Mapped[str] = mapped_column(Text, server_default="app")
 
 
 class FieldAttachment(Base):
@@ -474,3 +482,25 @@ class ReportTemplate(Base):
     approved_by_name: Mapped[str | None] = mapped_column(Text)
     approved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     retired_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class CrewPosition(Base):
+    """Where the vehicle was during a mission, from the team leader's phone (phase P4d, design §9.2)."""
+
+    __tablename__ = "crew_position"
+    __table_args__ = {"schema": "ops"}
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    assignment_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ops.assignment.id", ondelete="CASCADE")
+    )
+    incident_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ops.incident.id", ondelete="CASCADE")
+    )
+    resource_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ops.resource.id", ondelete="CASCADE")
+    )
+    at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    location: Mapped[object] = mapped_column(Geography("POINT", srid=4326))
+    accuracy_m: Mapped[float | None] = mapped_column(Float(precision=24))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

@@ -141,6 +141,8 @@ class Settings(BaseSettings):
     # Push devices not refreshed by the app for this long are forgotten; their rounded position earlier.
     retention_device_days: int = Field(default=180, ge=1)
     retention_device_location_days: int = Field(default=30, ge=1)
+    # Positions of the vehicles from the team leaders' phones during their missions (phase P4d).
+    retention_crew_position_days: int = Field(default=30, ge=1)
     # Closed or rejected reports are anonymised this long after their last change (5 years).
     retention_report_days: int = Field(default=1826, ge=1)
     # A medical file attached to a report (phase B2, addition 7b) is deleted this long after the report is closed.
