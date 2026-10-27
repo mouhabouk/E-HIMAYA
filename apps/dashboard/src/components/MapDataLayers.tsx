@@ -1,4 +1,5 @@
 import { keepPreviousData, useQueries, useQuery } from "@tanstack/react-query";
+import type { FeatureCollection } from "geojson";
 import { useId, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useServices } from "../context/services";
@@ -22,14 +23,22 @@ const STORE_KEY = "ehimaya.mapDataLayers";
 // Above this many places of one layer in view, neighbours are grouped (MapLibre draws every marker as an element).
 const MAX_SINGLE = 300;
 
-function storedKeys(): string[] {
+/** The layers ticked in this tab; null until the user changes them (the layers "shown by default" then apply). */
+function storedKeys(): string[] | null {
   try {
     const raw = sessionStorage.getItem(STORE_KEY);
-    const v: unknown = raw ? JSON.parse(raw) : [];
-    return Array.isArray(v) ? v.filter((k): k is string => typeof k === "string") : [];
+    if (raw === null) return null;
+    const v: unknown = JSON.parse(raw);
+    return Array.isArray(v) ? v.filter((k): k is string => typeof k === "string") : null;
   } catch {
-    return [];
+    return null;
   }
+}
+
+/** The zoom level that shows this area (the server simplifies the lines and areas for it). */
+export function zoomOf(bbox: BBox): number {
+  const width = Math.max(bbox[2] - bbox[0], 1e-6);
+  return Math.max(0, Math.min(22, Math.round(Math.log2(360 / width) + 1)));
 }
 
 function storeKeys(keys: string[]): void {
@@ -88,10 +97,14 @@ export function useMapDataLayers(bbox: BBox | null) {
   const { api } = useServices();
   const lang = useLanguage();
   const groupId = useId();
-  const [shown, setShown] = useState<string[]>(storedKeys);
+  const [picked, setPicked] = useState<string[] | null>(storedKeys);
   const layersQuery = useQuery({ queryKey: layerKeys.all, queryFn: ({ signal }) => api.layers(signal) });
   const layers = useMemo(() => (layersQuery.data?.items ?? []).filter((l) => l.enabled), [layersQuery.data]);
+  // Phase L1b: until the user ticks a layer, the layers the administrator marked "shown by default" are on.
+  const shown = useMemo(() => picked ?? layers.filter((l) => l.default_on).map((l) => l.key), [picked, layers]);
   const active = useMemo(() => layers.filter((l) => shown.includes(l.key)), [layers, shown]);
+  const withShapes = useMemo(() => active.filter((l) => l.geometry !== "point"), [active]);
+  const zoom = bbox ? zoomOf(bbox) : 0;
 
   const featureQueries = useQueries({
     queries: active.map((layer) => ({
@@ -101,6 +114,29 @@ export function useMapDataLayers(bbox: BBox | null) {
       queryFn: ({ signal }: { signal: AbortSignal }) => api.layerFeatures(layer.key, bbox, signal),
     })),
   });
+  const shapeQueries = useQueries({
+    queries: withShapes.map((layer) => ({
+      queryKey: layerKeys.shapes(layer.key, bbox, zoom, lang),
+      enabled: bbox !== null,
+      placeholderData: keepPreviousData,
+      queryFn: ({ signal }: { signal: AbortSignal }) => api.layerShapes(layer.key, bbox ?? [0, 0, 0, 0], zoom, lang, signal),
+    })),
+  });
+
+  const shapes = useMemo<FeatureCollection>(
+    () => ({
+      type: "FeatureCollection",
+      features: withShapes.flatMap((layer, i) =>
+        (shapeQueries[i]?.data?.features ?? []).map((f) => ({
+          type: "Feature" as const,
+          id: f.id,
+          geometry: f.geometry,
+          properties: { ...f.properties, colour: layer.colour, layer: layer.key },
+        })),
+      ),
+    }),
+    [withShapes, shapeQueries],
+  );
 
   const pois = useMemo<MapPoi[]>(() => {
     if (!bbox) return [];
@@ -126,12 +162,15 @@ export function useMapDataLayers(bbox: BBox | null) {
 
   const toggle = (key: string, on: boolean) => {
     const next = on ? [...shown.filter((k) => k !== key), key] : shown.filter((k) => k !== key);
-    setShown(next);
+    setPicked(next);
     storeKeys(next);
   };
 
-  const truncated = active.filter((_, i) => featureQueries[i]?.data?.truncated);
-  const failed = featureQueries.find((q) => q.isError);
+  const truncated = [
+    ...active.filter((_, i) => featureQueries[i]?.data?.truncated),
+    ...withShapes.filter((_, i) => shapeQueries[i]?.data?.truncated),
+  ];
+  const failed = featureQueries.find((q) => q.isError) ?? shapeQueries.find((q) => q.isError);
 
   const controls =
     layers.length === 0 ? null : (
@@ -152,12 +191,14 @@ export function useMapDataLayers(bbox: BBox | null) {
         ))}
         {truncated.length > 0 && (
           <p className="muted" role="status">
-            {t("layers.truncated", { names: truncated.map((l) => localized(l.name, lang)).join(t("common.listSeparator")) })}
+            {t("layers.truncated", {
+              names: [...new Set(truncated.map((l) => localized(l.name, lang)))].join(t("common.listSeparator")),
+            })}
           </p>
         )}
         {failed && <ErrorBox error={failed.error} onRetry={() => void failed.refetch()} />}
       </fieldset>
     );
 
-  return { controls, pois, activeLayers: active };
+  return { controls, pois, shapes, activeLayers: active };
 }

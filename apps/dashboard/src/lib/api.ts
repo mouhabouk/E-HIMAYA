@@ -195,6 +195,15 @@ export const ERROR_CODES = [
   "reservation_text_required",
   "reservation_lifted",
   "invalid_year",
+  // Coastal safety and incident hospitals (phase L1b).
+  "layer_not_found",
+  "beach_not_found",
+  "alert_not_found",
+  "rule_unknown",
+  "rule_invalid",
+  "national_only",
+  "settings_missing",
+  "hospital_not_offered",
 ] as const;
 export type ErrorCode = (typeof ERROR_CODES)[number];
 

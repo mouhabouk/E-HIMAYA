@@ -68,6 +68,18 @@ export type LiveEvent =
   // Phase 7, normalised by parsePhase7Event (the contract names the events, not their payload).
   /** A threshold rule produced a suggested weather alert (`suggestion` when the API sends the row). */
   | { type: "weather.suggestion"; suggestion_id: string; suggestion: WeatherSuggestion | null }
+  /** Phase L1b: a beach turned yellow or red today (once per beach, day and level). */
+  | {
+      type: "coastal.alert";
+      id: string;
+      feature_id: string;
+      name: string;
+      level: "yellow" | "red";
+      score: number;
+      day: string;
+      gouvernorat_code: number | null;
+      simulated: boolean;
+    }
   | {
       type: "call.ringing" | "call.answered" | "call.ended" | "call.recording";
       call_id: string;
@@ -282,6 +294,13 @@ function parseEvent(raw: unknown): LiveEvent | { type: "ready" } | null {
     case "stream.alert":
     case "stream.recording":
       return parseStreamEvent(m);
+    case "coastal.alert":
+      return typeof m.id === "string" &&
+        typeof m.feature_id === "string" &&
+        (m.level === "yellow" || m.level === "red") &&
+        typeof m.score === "number"
+        ? (m as unknown as LiveEvent)
+        : null;
     case "weather.suggestion":
     case "call.ringing":
     case "call.answered":

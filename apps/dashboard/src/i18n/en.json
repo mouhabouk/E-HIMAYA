@@ -41,7 +41,8 @@
     "counter": "Counter",
     "prevention": "Prevention visits",
     "crew": "Crews on duty",
-    "reportTemplates": "Report templates"
+    "reportTemplates": "Report templates",
+    "coastal": "Coastal safety"
   },
   "header": {
     "scope": "Geographic scope",
@@ -328,7 +329,15 @@
     "not_deleted": "The layer is not deleted.",
     "already_deleted": "The place is already deleted.",
     "merge_target_invalid": "Pick another place, not deleted, to merge into.",
-    "name_required": "The name is required."
+    "name_required": "The name is required.",
+    "layer_not_found": "The beaches layer does not exist or is not open to you.",
+    "beach_not_found": "Beach not found.",
+    "alert_not_found": "Alert not found.",
+    "rule_unknown": "Unknown rule.",
+    "rule_invalid": "Invalid rule values.",
+    "national_only": "This change is for national level only.",
+    "settings_missing": "Risk settings not found.",
+    "hospital_not_offered": "This hospital is not among those offered for this incident."
   },
   "kpi": {
     "title": "Key indicators",
@@ -683,7 +692,8 @@
       "crew_alert": "Backup or danger from the crew",
       "crew_alert_seen": "Alert seen by the room",
       "field_attachment": "Attachment from the scene",
-      "detailed_report": "Detailed report"
+      "detailed_report": "Detailed report",
+      "hospital_chosen": "Hospital chosen"
     },
     "via": {
       "suggestion": "(suggestion confirmed)",
@@ -4512,5 +4522,146 @@
     "classification": "Classification",
     "anyClassification": "All classifications of the type",
     "create": "Create the draft"
+  },
+  "coastal": {
+    "title": "Coastal safety",
+    "intro": "Today's drowning risk of every beach, from declared rules (waves, current, onshore wind, season, lifeguards, past drownings). The index supports a decision: it never alerts the public by itself.",
+    "simBand": "Simulated marine weather: colours and numbers for training only.",
+    "simulated": "Simulated marine weather",
+    "filters": "Filter beaches",
+    "day": "Day",
+    "today": "Today",
+    "gouvernorat": "Gouvernorat",
+    "allGouvernorats": "All gouvernorats",
+    "all": "All",
+    "guarded": "Guarded",
+    "unguarded": "Unguarded",
+    "levelLabel": "Risk level",
+    "level": {
+      "red": "Red: high risk",
+      "yellow": "Yellow: caution",
+      "green": "Green: normal",
+      "unknown": "Not computed"
+    },
+    "kpis": "Beach indicators",
+    "kpi": {
+      "beaches": "Beaches",
+      "average": "Average risk",
+      "guarded": "Guarded beaches",
+      "drownings": "Drownings this season",
+      "present": "Present now (with consent)"
+    },
+    "heat": {
+      "label": "Heat map",
+      "risk": "Today's risk",
+      "drownings": "Drownings (5 years)",
+      "none": "None"
+    },
+    "bulletin": "Download the coastal bulletin (PDF)",
+    "mapLabel": "Map of the beaches coloured by drowning risk",
+    "openCard": "Beach card",
+    "legend": "Legend",
+    "alerts": {
+      "title": "Coastal alerts centre",
+      "note": "A beach that turned yellow or red today, once per level. Red first.",
+      "none": "No alerts for this day.",
+      "was": "was {{level}}",
+      "acked": "Seen by {{name}} at {{at}}",
+      "ack": "Seen",
+      "arrived": "New coastal alert: {{name}} ({{level}})"
+    },
+    "score": "Score {{score}}/100",
+    "beach": "Beach",
+    "why": "Reasons",
+    "present": "Present",
+    "presentNow": "{{count}} present now",
+    "noBeaches": "No beaches.",
+    "topDangerous": "Top 10 most dangerous beaches",
+    "topTouristic": "Top 10 touristic beaches",
+    "byGouvernorat": "Average risk by gouvernorat",
+    "redByGouvernorat": "Yellow and red beaches by gouvernorat",
+    "noGouvernorat": "No gouvernorat",
+    "days": "The next four days",
+    "waves": "Waves",
+    "seaTemp": "Sea temperature",
+    "length": "Length",
+    "source": "Source: {{source}}, {{date}}",
+    "yes": "Yes",
+    "no": "No",
+    "factor": {
+      "waves": "Waves {{value}} m",
+      "onshore_wind": "Onshore wind {{value}} km/h",
+      "current": "Current {{value}} km/h",
+      "season": "Bathing season or heat",
+      "crowd": "High crowd",
+      "unguarded": "Unguarded in season",
+      "past_drownings": "Past drownings nearby ({{value}})"
+    },
+    "card": {
+      "title": "Beach card",
+      "empty": "The card is still empty.",
+      "classification": "Classification",
+      "blue_flag": "Blue Flag",
+      "guarded": "Lifeguards",
+      "guard_hours": "Lifeguard hours",
+      "sand": "Sand",
+      "slope": "Slope",
+      "depth": "Depth",
+      "currents": "Known currents",
+      "crowd": "Crowd",
+      "usage": "Use",
+      "peak_season": "Peak season",
+      "water_quality": "Water quality"
+    },
+    "classification": {
+      "local": "Local",
+      "touristic": "Touristic",
+      "international": "International"
+    },
+    "value": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "rules": {
+      "title": "Risk rules",
+      "note": "The points of each rule and the thresholds. A change applies from the next cycle and is written to the audit log.",
+      "updated": "Last change: {{name}}, {{at}}.",
+      "waves": "Waves (points by height)",
+      "waveBelow": "Height below (m)",
+      "waveAbove": "Above (m)",
+      "points": "Points",
+      "others": "Other rules",
+      "yellow": "Yellow threshold",
+      "red": "Red threshold",
+      "onshore_kmh": "Onshore wind (km/h)",
+      "onshore_points": "Its points",
+      "strong_onshore_kmh": "Strong onshore wind (km/h)",
+      "strong_onshore_points": "Its points",
+      "current_kmh": "Current (km/h)",
+      "current_points": "Its points",
+      "hot_c": "Heat (°C)",
+      "season_points": "Season or heat points",
+      "crowd_high_points": "High crowd points",
+      "unguarded_points": "Unguarded points",
+      "incident_radius_m": "Drowning radius (m)",
+      "incident_years": "Drowning years",
+      "incident_points": "Points per drowning",
+      "incident_max": "Drowning points cap",
+      "season_months": "Season months",
+      "invalid": "The rule \"{{rule}}\" is not valid (red above yellow and at most 100, increasing wave bands).",
+      "reason": "Reason for the change",
+      "save": "Save the rules",
+      "defaults": "Back to the defaults",
+      "readOnly": "The operations manager or the committees change the rules, at national level."
+    }
+  },
+  "hospitals": {
+    "title": "Nearest hospitals by road",
+    "none": "No hospital you may see near this incident.",
+    "road": "{{km}} km, about {{minutes}} min",
+    "estimate": "estimate without routing engine",
+    "add": "Add to the incident",
+    "added": "Added"
   }
 }

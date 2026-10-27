@@ -23,6 +23,8 @@ export function fakeOpsApi(): OpsApi {
   return {
     levels: vi.fn(() => Promise.resolve([makeLevel()])),
     setLevels: vi.fn(),
+    incidentHospitals: vi.fn(() => Promise.resolve([])),
+    chooseHospital: vi.fn(),
     directives: vi.fn(() => Promise.resolve(empty)),
     issueDirective: vi.fn(),
     acknowledgeDirective: vi.fn(),
