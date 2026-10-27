@@ -457,6 +457,23 @@
         "title": "ActionIn",
         "type": "object"
       },
+      "Actions": {
+        "additionalProperties": false,
+        "properties": {
+          "call": {
+            "default": true,
+            "title": "Call",
+            "type": "boolean"
+          },
+          "directions": {
+            "default": true,
+            "title": "Directions",
+            "type": "boolean"
+          }
+        },
+        "title": "Actions",
+        "type": "object"
+      },
       "ActivityIn": {
         "properties": {
           "ends_on": {
@@ -13121,6 +13138,9 @@
       "LayerIn": {
         "additionalProperties": false,
         "properties": {
+          "actions": {
+            "$ref": "#/components/schemas/Actions"
+          },
           "audience": {
             "default": "staff",
             "enum": [
@@ -13130,14 +13150,64 @@
             "title": "Audience",
             "type": "string"
           },
+          "audiences": {
+            "anyOf": [
+              {
+                "items": {
+                  "enum": [
+                    "citizen",
+                    "room",
+                    "field",
+                    "command",
+                    "support"
+                  ],
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Audiences"
+          },
           "colour": {
             "title": "Colour",
             "type": "string"
+          },
+          "default_on": {
+            "default": true,
+            "title": "Default On",
+            "type": "boolean"
           },
           "editors_allowed": {
             "default": false,
             "title": "Editors Allowed",
             "type": "boolean"
+          },
+          "fields": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "items": {
+                    "enum": [
+                      "citizen",
+                      "room",
+                      "field",
+                      "command",
+                      "support"
+                    ],
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fields"
           },
           "icon": {
             "title": "Icon",
@@ -13163,6 +13233,18 @@
             "title": "Reason",
             "type": "string"
           },
+          "scope": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Scope",
+            "type": "array"
+          },
+          "sensitive": {
+            "default": false,
+            "title": "Sensitive",
+            "type": "boolean"
+          },
           "simulated": {
             "default": false,
             "title": "Simulated",
@@ -13180,6 +13262,16 @@
             },
             "title": "Staff Only",
             "type": "array"
+          },
+          "status": {
+            "default": "draft",
+            "enum": [
+              "draft",
+              "published",
+              "paused"
+            ],
+            "title": "Status",
+            "type": "string"
           },
           "to_verify": {
             "default": true,
@@ -13199,6 +13291,9 @@
       },
       "LayerOut": {
         "properties": {
+          "actions": {
+            "$ref": "#/components/schemas/Actions"
+          },
           "audience": {
             "enum": [
               "public",
@@ -13206,6 +13301,20 @@
             ],
             "title": "Audience",
             "type": "string"
+          },
+          "audiences": {
+            "items": {
+              "enum": [
+                "citizen",
+                "room",
+                "field",
+                "command",
+                "support"
+              ],
+              "type": "string"
+            },
+            "title": "Audiences",
+            "type": "array"
           },
           "can_import": {
             "title": "Can Import",
@@ -13223,6 +13332,33 @@
             "title": "Data Version",
             "type": "integer"
           },
+          "default_on": {
+            "title": "Default On",
+            "type": "boolean"
+          },
+          "delete_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delete Reason"
+          },
+          "deleted_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deleted At"
+          },
           "editors_allowed": {
             "title": "Editors Allowed",
             "type": "boolean"
@@ -13234,6 +13370,20 @@
           "feature_count": {
             "title": "Feature Count",
             "type": "integer"
+          },
+          "fields": {
+            "additionalProperties": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "title": "Fields",
+            "type": "object"
+          },
+          "geometry": {
+            "title": "Geometry",
+            "type": "string"
           },
           "hidden_count": {
             "title": "Hidden Count",
@@ -13269,6 +13419,36 @@
           "name": {
             "$ref": "#/components/schemas/Names"
           },
+          "purge_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Purge At"
+          },
+          "quality": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Quality",
+            "type": "object"
+          },
+          "scope": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Scope",
+            "type": "array"
+          },
+          "sensitive": {
+            "title": "Sensitive",
+            "type": "boolean"
+          },
           "simulated": {
             "title": "Simulated",
             "type": "boolean"
@@ -13283,6 +13463,15 @@
             },
             "title": "Staff Only",
             "type": "array"
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "published",
+              "paused"
+            ],
+            "title": "Status",
+            "type": "string"
           },
           "to_verify": {
             "title": "To Verify",
@@ -13331,7 +13520,19 @@
           "updated_at",
           "last_import",
           "can_manage",
-          "can_import"
+          "can_import",
+          "status",
+          "audiences",
+          "scope",
+          "default_on",
+          "sensitive",
+          "fields",
+          "actions",
+          "geometry",
+          "quality",
+          "deleted_at",
+          "delete_reason",
+          "purge_at"
         ],
         "title": "LayerOut",
         "type": "object"
@@ -13339,6 +13540,16 @@
       "LayerPatch": {
         "additionalProperties": false,
         "properties": {
+          "actions": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Actions"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "audience": {
             "anyOf": [
               {
@@ -13354,6 +13565,27 @@
             ],
             "title": "Audience"
           },
+          "audiences": {
+            "anyOf": [
+              {
+                "items": {
+                  "enum": [
+                    "citizen",
+                    "room",
+                    "field",
+                    "command",
+                    "support"
+                  ],
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Audiences"
+          },
           "colour": {
             "anyOf": [
               {
@@ -13364,6 +13596,17 @@
               }
             ],
             "title": "Colour"
+          },
+          "default_on": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Default On"
           },
           "editors_allowed": {
             "anyOf": [
@@ -13386,6 +13629,30 @@
               }
             ],
             "title": "Enabled"
+          },
+          "fields": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "items": {
+                    "enum": [
+                      "citizen",
+                      "room",
+                      "field",
+                      "command",
+                      "support"
+                    ],
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fields"
           },
           "icon": {
             "anyOf": [
@@ -13426,6 +13693,31 @@
             "title": "Reason",
             "type": "string"
           },
+          "scope": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scope"
+          },
+          "sensitive": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sensitive"
+          },
           "simulated": {
             "anyOf": [
               {
@@ -13463,6 +13755,22 @@
             ],
             "title": "Staff Only"
           },
+          "status": {
+            "anyOf": [
+              {
+                "enum": [
+                  "draft",
+                  "published",
+                  "paused"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
           "to_verify": {
             "anyOf": [
               {
@@ -13492,6 +13800,13 @@
           "can_manage": {
             "title": "Can Manage",
             "type": "boolean"
+          },
+          "deleted": {
+            "items": {
+              "$ref": "#/components/schemas/LayerOut"
+            },
+            "title": "Deleted",
+            "type": "array"
           },
           "icons": {
             "items": {
@@ -19292,6 +19607,9 @@
       },
       "PublicLayer": {
         "properties": {
+          "actions": {
+            "$ref": "#/components/schemas/Actions"
+          },
           "colour": {
             "title": "Colour",
             "type": "string"
@@ -19303,6 +19621,11 @@
           "data_version": {
             "title": "Data Version",
             "type": "integer"
+          },
+          "default_on": {
+            "default": true,
+            "title": "Default On",
+            "type": "boolean"
           },
           "icon": {
             "title": "Icon",
@@ -21193,33 +21516,190 @@
         "title": "ResponseTimes",
         "type": "object"
       },
-      "ReviewIn": {
+      "ReviewItem": {
+        "additionalProperties": false,
         "properties": {
-          "note": {
+          "action": {
+            "enum": [
+              "accept",
+              "edit",
+              "reject",
+              "keep",
+              "merge"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "into": {
             "anyOf": [
               {
-                "maxLength": 1000,
+                "format": "uuid",
                 "type": "string"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Note"
+            "title": "Into"
           },
-          "outcome": {
-            "enum": [
-              "justified",
-              "unjustified"
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
             ],
-            "title": "Outcome",
-            "type": "string"
+            "title": "Name"
           }
         },
         "required": [
-          "outcome"
+          "id",
+          "action"
         ],
-        "title": "ReviewIn",
+        "title": "ReviewItem",
+        "type": "object"
+      },
+      "ReviewOut": {
+        "properties": {
+          "accepted": {
+            "title": "Accepted",
+            "type": "integer"
+          },
+          "edited": {
+            "title": "Edited",
+            "type": "integer"
+          },
+          "kept": {
+            "title": "Kept",
+            "type": "integer"
+          },
+          "merged": {
+            "title": "Merged",
+            "type": "integer"
+          },
+          "rejected": {
+            "title": "Rejected",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "accepted",
+          "edited",
+          "rejected",
+          "kept",
+          "merged"
+        ],
+        "title": "ReviewOut",
+        "type": "object"
+      },
+      "ReviewQueue": {
+        "properties": {
+          "counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Counts",
+            "type": "object"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__layers__schemas__FeatureOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "counts",
+          "total"
+        ],
+        "title": "ReviewQueue",
+        "type": "object"
+      },
+      "Revision": {
+        "properties": {
+          "action": {
+            "title": "Action",
+            "type": "string"
+          },
+          "changes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Changes",
+            "type": "array"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "number": {
+            "title": "Number",
+            "type": "integer"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "required": [
+          "number",
+          "action",
+          "reason",
+          "created_by_name",
+          "created_at",
+          "changes"
+        ],
+        "title": "Revision",
+        "type": "object"
+      },
+      "RevisionsOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Revision"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "RevisionsOut",
         "type": "object"
       },
       "RevocationIn": {
@@ -22228,6 +22708,35 @@
           "editable"
         ],
         "title": "SettingOut",
+        "type": "object"
+      },
+      "Shapes": {
+        "description": "A GeoJSON ``FeatureCollection`` of the lines and areas in a map area, simplified for the zoom.",
+        "properties": {
+          "features": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Features",
+            "type": "array"
+          },
+          "truncated": {
+            "default": false,
+            "title": "Truncated",
+            "type": "boolean"
+          },
+          "type": {
+            "const": "FeatureCollection",
+            "default": "FeatureCollection",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "features"
+        ],
+        "title": "Shapes",
         "type": "object"
       },
       "ShareIn": {
@@ -29533,6 +30042,35 @@
         "title": "WrappedKeyIn",
         "type": "object"
       },
+      "app__modules__access__schemas__ReviewIn": {
+        "properties": {
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "outcome": {
+            "enum": [
+              "justified",
+              "unjustified"
+            ],
+            "title": "Outcome",
+            "type": "string"
+          }
+        },
+        "required": [
+          "outcome"
+        ],
+        "title": "ReviewIn",
+        "type": "object"
+      },
       "app__modules__analytics__schemas__ReportIn": {
         "properties": {
           "filters": {
@@ -30354,6 +30892,34 @@
             ],
             "title": "Delegation Id"
           },
+          "delete_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delete Reason"
+          },
+          "deleted_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deleted At"
+          },
+          "geometry": {
+            "default": "point",
+            "title": "Geometry",
+            "type": "string"
+          },
           "gouvernorat_code": {
             "anyOf": [
               {
@@ -30397,6 +30963,33 @@
             "title": "Name",
             "type": "string"
           },
+          "name_confidence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name Confidence"
+          },
+          "name_source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name Source"
+          },
+          "name_status": {
+            "default": "official",
+            "title": "Name Status",
+            "type": "string"
+          },
           "phone": {
             "anyOf": [
               {
@@ -30408,6 +31001,11 @@
             ],
             "title": "Phone"
           },
+          "possible_duplicate": {
+            "default": false,
+            "title": "Possible Duplicate",
+            "type": "boolean"
+          },
           "props": {
             "additionalProperties": true,
             "title": "Props",
@@ -30416,6 +31014,39 @@
           "ref": {
             "title": "Ref",
             "type": "string"
+          },
+          "snapshot_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Snapshot At"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          },
+          "suggested_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suggested Name"
           },
           "updated_at": {
             "format": "date-time",
@@ -30459,6 +31090,44 @@
           "reason"
         ],
         "title": "ReasonIn",
+        "type": "object"
+      },
+      "app__modules__layers__schemas__ReviewIn": {
+        "additionalProperties": false,
+        "properties": {
+          "accept_confidence": {
+            "items": {
+              "enum": [
+                "confirmed",
+                "high",
+                "medium",
+                "low",
+                "review"
+              ],
+              "type": "string"
+            },
+            "title": "Accept Confidence",
+            "type": "array"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ReviewItem"
+            },
+            "maxItems": 500,
+            "title": "Items",
+            "type": "array"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "ReviewIn",
         "type": "object"
       },
       "app__modules__medical__schemas__InboxItem": {
@@ -44883,7 +45552,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ReviewIn"
+                "$ref": "#/components/schemas/app__modules__access__schemas__ReviewIn"
               }
             }
           },
@@ -48939,6 +49608,63 @@
       }
     },
     "/api/v1/staff/layers/{key}": {
+      "delete": {
+        "description": "Off every map and offline package at once; kept 30 days in \"deleted\", where it can be restored as it was.",
+        "operationId": "delete_layer_api_v1_staff_layers__key__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__layers__schemas__ReasonIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LayerOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Layer",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      },
       "patch": {
         "operationId": "update_layer_api_v1_staff_layers__key__patch",
         "parameters": [
@@ -49121,6 +49847,18 @@
               ],
               "title": "Gouvernorat"
             }
+          },
+          {
+            "description": "the deleted places (managers)",
+            "in": "query",
+            "name": "deleted",
+            "required": false,
+            "schema": {
+              "default": false,
+              "description": "the deleted places (managers)",
+              "title": "Deleted",
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -49214,6 +49952,73 @@
       }
     },
     "/api/v1/staff/layers/{key}/features/{feature_id}": {
+      "delete": {
+        "description": "Off the maps at once; the place stays in the layer's \"deleted\" list, where it can be restored.",
+        "operationId": "delete_feature_api_v1_staff_layers__key__features__feature_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "feature_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Feature Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__layers__schemas__ReasonIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__layers__schemas__FeatureOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Feature",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      },
       "patch": {
         "operationId": "update_feature_api_v1_staff_layers__key__features__feature_id__patch",
         "parameters": [
@@ -49275,6 +50080,74 @@
           }
         ],
         "summary": "Update Feature",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/staff/layers/{key}/features/{feature_id}/restore": {
+      "post": {
+        "operationId": "restore_feature_api_v1_staff_layers__key__features__feature_id__restore_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "feature_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Feature Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__layers__schemas__ReasonIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__layers__schemas__FeatureOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Restore Feature",
         "tags": [
           "staff",
           "layers"
@@ -49647,6 +50520,484 @@
           }
         ],
         "summary": "Undo Import",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/staff/layers/{key}/purge": {
+      "delete": {
+        "description": "Erase a deleted layer now, with its places, imports and revisions (otherwise done after 30 days).",
+        "operationId": "purge_layer_api_v1_staff_layers__key__purge_delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__layers__schemas__ReasonIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Purge Layer",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/staff/layers/{key}/restore": {
+      "post": {
+        "description": "A deleted layer comes back as it was, paused: the administrator publishes it again by choice.",
+        "operationId": "restore_layer_api_v1_staff_layers__key__restore_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__layers__schemas__ReasonIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LayerOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Restore Layer",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/staff/layers/{key}/review": {
+      "get": {
+        "description": "The places waiting for the administrator: suggested names (by confidence), or possible duplicates.",
+        "operationId": "review_queue_api_v1_staff_layers__key__review_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "confidence",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "confirmed",
+                    "high",
+                    "medium",
+                    "low",
+                    "review"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Confidence"
+            }
+          },
+          {
+            "description": "the possible duplicates instead of the names",
+            "in": "query",
+            "name": "duplicates",
+            "required": false,
+            "schema": {
+              "default": false,
+              "description": "the possible duplicates instead of the names",
+              "title": "Duplicates",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewQueue"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Review Queue",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      },
+      "post": {
+        "description": "Accept, edit or reject suggested names (one by one, or every name of a confidence at once); keep or merge\npossible duplicates. The citizen's app shows a place only once its name is official or accepted.",
+        "operationId": "review_api_v1_staff_layers__key__review_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__layers__schemas__ReviewIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Review",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/staff/layers/{key}/revisions": {
+      "get": {
+        "operationId": "list_revisions_api_v1_staff_layers__key__revisions_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevisionsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Revisions",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/staff/layers/{key}/revisions/{number}/restore": {
+      "post": {
+        "description": "Back to the settings of a revision (the places themselves come back by undoing imports).",
+        "operationId": "restore_revision_api_v1_staff_layers__key__revisions__number__restore_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "number",
+            "required": true,
+            "schema": {
+              "title": "Number",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__layers__schemas__ReasonIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LayerOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Restore Revision",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/staff/layers/{key}/shapes": {
+      "get": {
+        "description": "The lines and areas of a layer in a map area, simplified for the zoom (rivers, forests, beaches).",
+        "operationId": "staff_shapes_api_v1_staff_layers__key__shapes_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "description": "minLon,minLat,maxLon,maxLat",
+            "in": "query",
+            "name": "bbox",
+            "required": true,
+            "schema": {
+              "description": "minLon,minLat,maxLon,maxLat",
+              "title": "Bbox",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "zoom",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "maximum": 22,
+              "minimum": 0,
+              "title": "Zoom",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "default": "ar",
+              "enum": [
+                "ar",
+                "fr",
+                "en"
+              ],
+              "title": "Lang",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Shapes"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Staff Shapes",
         "tags": [
           "staff",
           "layers"
