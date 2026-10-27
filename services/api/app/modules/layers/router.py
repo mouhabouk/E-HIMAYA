@@ -27,6 +27,7 @@ from app.core.config import get_settings
 from app.core.db import as_system, get_session
 from app.core.security import CurrentPrincipal, Principal, Role
 from app.modules.audit import service as audit
+from app.modules.decision import routing
 from app.modules.geo.models import Layer, LayerFeature, LayerImport, LayerRevision
 from app.modules.layers import access, domain, geoformats, schemas, service
 from app.modules.ops.models import Unit
@@ -1294,6 +1295,10 @@ async def public_layers(
     return schemas.PublicLayers(items=items)
 
 
+# "Nearest on the road": this many times ``limit`` candidates as the crow flies are timed on the road.
+ROAD_CANDIDATES = 3
+
+
 # A layer the citizen's app reads: open to citizens, published, not sensitive, not deleted (RLS says the same).
 _PUBLIC_LAYER = (Layer.audience == "public") & Layer.enabled & Layer.sensitive.is_(False) & Layer.deleted_at.is_(None)
 
@@ -1376,8 +1381,11 @@ async def public_features(
     radius_km: Annotated[int, Query(ge=1, le=300)] = 100,
     bbox: Annotated[str | None, Query(description="minLon,minLat,maxLon,maxLat")] = None,
     lang: Annotated[Lang, Query()] = "ar",
+    road: Annotated[bool, Query(description="order the nearest places by the road (car)")] = False,
 ) -> schemas.PublicFeatures:
-    """Either the nearest places to ``near`` (with their distance) or the places in a map area (``bbox``)."""
+    """Either the nearest places to ``near`` (with their distance) or the places in a map area (``bbox``). With
+    ``road``, the closest candidates as the crow flies are ordered by the distance and time on the road (routing
+    engine, or its estimate when the engine is not there, said in ``road_engine``)."""
     if (near is None) == (bbox is None):
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "near_or_bbox_required")
     position: tuple[float, float] | None = None
@@ -1400,8 +1408,15 @@ async def public_features(
         )
     layer = await _public_layer(session, key)
     if position is not None:
-        found = await service.nearest(session, layer, position[0], position[1], limit, radius_km * 1000)
+        candidates = min(limit * ROAD_CANDIDATES, 50) if road else limit
+        found = await service.nearest(session, layer, position[0], position[1], candidates, radius_km * 1000)
         items = [_public_feature(layer, f, la, lo, lang, float(d)) for f, la, lo, d in found]
+        if road and items:
+            here = routing.Point(position[0], position[1])
+            legs, engine = await routing.travel([routing.Point(i.lat, i.lon) for i in items], here, "car")
+            for item, leg in zip(items, legs, strict=True):
+                item.road_m, item.road_s, item.road_engine = round(leg.distance_m), round(leg.duration_s), engine
+            items = sorted(items, key=lambda i: (i.road_s or 0.0, i.distance_m or 0.0))[:limit]
         return schemas.PublicFeatures(layer=key, data_version=layer.data_version, items=items)
     rows = await service.features_in(session, layer, bbox=area, public=True, limit=MAX_PUBLIC_BBOX + 1)
     return schemas.PublicFeatures(

@@ -789,3 +789,24 @@ class DetailedReportIn(CrewWrite):
 
 
 IncidentDetail.model_rebuild()
+
+
+class NearHospital(BaseModel):
+    """A hospital near an incident, timed on the road (phase L1b)."""
+
+    id: uuid.UUID
+    name: str
+    phone: str | None
+    layer: str
+    lat: float
+    lon: float
+    distance_m: int
+    road_m: int
+    road_s: int
+    # The routing engine, or "fallback" for the estimate.
+    engine: str
+    simulated: bool
+
+
+class HospitalChoice(BaseModel):
+    feature_id: uuid.UUID

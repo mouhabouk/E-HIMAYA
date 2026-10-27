@@ -411,6 +411,10 @@ class PublicFeature(BaseModel):
     gouvernorat_code: int | None
     props: dict[str, Any]
     distance_m: float | None = None
+    # "Nearest to me on the road" (phase L1b): distance and time by car, and the engine ("fallback": an estimate).
+    road_m: float | None = None
+    road_s: float | None = None
+    road_engine: str | None = None
 
 
 class PublicFeatures(BaseModel):

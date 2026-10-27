@@ -17,7 +17,7 @@ from app.core.db import get_session
 from app.core.security import Principal, Role, require_roles
 from app.modules.audit import service as audit
 from app.modules.audit.service import actor_of
-from app.modules.ops import crew, interventions, requests, schemas, scope, service
+from app.modules.ops import crew, hospitals, interventions, requests, schemas, scope, service
 from app.modules.ops.models import Incident
 from app.modules.reports import service as reports
 from app.modules.reports.models import Report
@@ -408,6 +408,29 @@ async def volunteer_suggestions(
 ) -> list[schemas.VolunteerSuggestion]:
     incident = await service.get_in_scope(session, principal, incident_id)
     return await interventions.suggestions(session, principal, incident, skill, radius_km, limit)
+
+
+@router.get("/incidents/{incident_id}/hospitals", response_model=list[schemas.NearHospital])
+async def nearest_hospitals(
+    principal: StaffReader, session: Session, incident_id: uuid.UUID
+) -> list[schemas.NearHospital]:
+    incident = await service.get_in_scope(session, principal, incident_id)
+    return await hospitals.nearest(session, principal, incident)
+
+
+@router.post("/incidents/{incident_id}/hospitals", response_model=schemas.NearHospital)
+async def choose_hospital(
+    principal: StaffWriter, session: Session, incident_id: uuid.UUID, body: schemas.HospitalChoice
+) -> schemas.NearHospital:
+    incident = await service.get_in_scope(session, principal, incident_id, lock=True)
+    chosen = await hospitals.choose(
+        session, principal, incident, body.feature_id, actor_of(principal), audit.name_of(principal)
+    )
+    await _incident_audit(
+        session, principal, "incident.hospital_chosen", incident_id, details={"feature_id": str(chosen.id)}
+    )
+    await session.commit()
+    return chosen
 
 
 @router.post(
