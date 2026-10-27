@@ -22,9 +22,40 @@ const SCREENS: { path: string; ready: string }[] = [
   { path: "/accounts", ready: "main h1" },
   { path: "/audit", ready: "main h1" },
   { path: "/settings", ready: "main h1" },
+  { path: "/coastal", ready: "main h1" },
 ];
 
 const PAGE = { items: [], next_cursor: null, total: 0 };
+const BEACH = {
+  id: "b1",
+  name: "Plage de la Corniche",
+  lat: 37.27,
+  lon: 9.87,
+  gouvernorat_code: 17,
+  level: "red",
+  score: 75,
+  factors: [{ code: "waves", points: 55, value: 2.8 }],
+  wave_height_m: 2.8,
+  sea_temp_c: 24,
+  current_kmh: 2.4,
+  classification: "local",
+  guarded: false,
+  crowd: null,
+  present: 4,
+};
+const COASTAL_OVERVIEW = {
+  day: "2026-07-04",
+  computed_at: "2026-07-04T07:00:00Z",
+  simulated: true,
+  attribution: ["[SIM] Simulated marine weather"],
+  kpis: { beaches: 1, red: 1, yellow: 0, green: 0, unknown: 0, average_score: 75, guarded: 0, drownings_season: 1, present: 4 },
+  top_dangerous: [BEACH],
+  top_touristic: [],
+  by_gouvernorat: [{ code: 17, beaches: 1, red: 1, yellow: 0, green: 0, average_score: 75, crowd_high: 0, crowd_medium: 0, crowd_low: 0 }],
+  beaches: [BEACH],
+  heat_risk: [[37.27, 9.87, 0.75]],
+  heat_drownings: [],
+};
 
 async function mockApi(page: Page): Promise<string[]> {
   const unanswered: string[] = [];
@@ -50,6 +81,12 @@ async function mockApi(page: Page): Promise<string[]> {
     if (pathname === "/api/v1/staff/alerts/active") return json(route, []);
     if (pathname === "/api/v1/staff/volunteers/map") return json(route, { type: "FeatureCollection", features: [] });
     if (pathname === "/api/v1/staff/reports/map") return json(route, { type: "FeatureCollection", features: [] });
+    // Coastal safety (phase L1b): one simulated red beach.
+    if (pathname === "/api/v1/staff/coastal/overview") return json(route, COASTAL_OVERVIEW);
+    if (pathname === "/api/v1/staff/coastal/alerts") return json(route, { items: [] });
+    if (pathname === "/api/v1/staff/coastal/settings") {
+      return json(route, { rules: { yellow: 35, red: 60, waves: [[1, 10], [null, 40]] }, defaults: {}, updated_by: null, updated_at: null });
+    }
     unanswered.push(pathname);
     return json(route, PAGE);
   });

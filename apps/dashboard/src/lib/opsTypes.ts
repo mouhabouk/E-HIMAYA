@@ -565,3 +565,18 @@ export interface SafetyTipBody {
 export function tipLanguageComplete(text: TipText | undefined): boolean {
   return Boolean(text && text.title.trim() && (text.do.length > 0 || text.dont.length > 0));
 }
+
+/** A hospital or clinic near an incident, timed on the road (phase L1b); `engine` "fallback" is an estimate. */
+export interface NearHospital {
+  id: string;
+  name: string;
+  phone: string | null;
+  layer: string;
+  lat: number;
+  lon: number;
+  distance_m: number;
+  road_m: number;
+  road_s: number;
+  engine: string;
+  simulated: boolean;
+}

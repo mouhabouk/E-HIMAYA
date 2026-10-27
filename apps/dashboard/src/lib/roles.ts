@@ -245,6 +245,21 @@ export function canOpenLayers(roles: readonly string[]): boolean {
   return any(LAYERS_PAGE_ROLES, roles);
 }
 
+/**
+ * Coastal safety (phase L1b): every reader of the room sees the beaches of their scope; the operations manager and
+ * the committees, with national scope, change the risk rules.
+ */
+export const COASTAL_ROLES = [...READ_ROLES, "content_editor", "sysadmin"] as const;
+export const COASTAL_RULE_ROLES = ["ops_manager", "local_committee", "central_committee"] as const;
+
+export function canOpenCoastal(roles: readonly string[]): boolean {
+  return any(COASTAL_ROLES, roles);
+}
+
+export function canEditCoastalRules(identity: { roles: readonly string[]; national: boolean }): boolean {
+  return identity.national && any(COASTAL_RULE_ROLES, identity.roles);
+}
+
 /** Contact us inbox (phase B1): operations manager, both committees and content editors, in their scope. */
 export const CONTACT_ROLES = ["ops_manager", "local_committee", "central_committee", "content_editor"] as const;
 

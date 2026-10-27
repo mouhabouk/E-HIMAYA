@@ -872,6 +872,8 @@ export function OpsTimelineDetails({ kind, payload }: { kind: string; payload: R
   const classification = str("classification");
   if (classification) parts.push(t(`ops.classification.${classification}`));
   parts.push(...crewTimelineParts(kind, payload, t));
+  const name = str("name");
+  if (name && kind === "hospital_chosen") parts.push(name);
   const text = str("text") ?? str("reason");
   return (
     <>

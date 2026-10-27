@@ -472,6 +472,7 @@ export function MapPage() {
           onOpenPoi={onOpenPoi}
           polygons={polygons}
           heat={heat}
+          shapes={dataLayers.shapes}
           weather={mapWeather}
           onMapClick={onMapClick}
           popup={weatherPopup}

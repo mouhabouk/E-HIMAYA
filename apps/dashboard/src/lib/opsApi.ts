@@ -35,6 +35,7 @@ import type {
   VolunteerFilters,
   VolunteerMapProperties,
   VolunteerSuggestion,
+  NearHospital,
 } from "./opsTypes";
 import type { IncidentDetail, Page, TimelineEntry } from "./types";
 
@@ -139,6 +140,11 @@ export function opsApi(api: ApiClient) {
         query: { skill: opts.skill || undefined, radius_km: opts.radiusKm ?? 30, limit: opts.limit ?? 20 },
         signal: opts.signal,
       }),
+    // Phase L1b: the nearest hospitals on the road, and the one the room adds to the incident.
+    incidentHospitals: (incidentId: string, signal?: AbortSignal) =>
+      api.request<NearHospital[]>(`${incidentPath(incidentId)}/hospitals`, { signal }),
+    chooseHospital: (incidentId: string, featureId: string) =>
+      api.request<NearHospital>(`${incidentPath(incidentId)}/hospitals`, { method: "POST", body: { feature_id: featureId } }),
     createCallout: (incidentId: string, body: CalloutBody) =>
       api.request<Callout>(`${incidentPath(incidentId)}/callouts`, { method: "POST", body }),
     callout: (id: string, signal?: AbortSignal) => api.request<Callout>(callPath(id), { signal }),
@@ -221,6 +227,7 @@ export type OpsApi = ReturnType<typeof opsApi>;
 
 export const opsKeys = {
   levels: ["levels"] as const,
+  hospitals: (incidentId: string) => ["incident-hospitals", incidentId] as const,
   directivesAll: ["directives"] as const,
   directives: (pending: boolean) => ["directives", pending] as const,
   performance: (since: string) => ["performance", since] as const,
