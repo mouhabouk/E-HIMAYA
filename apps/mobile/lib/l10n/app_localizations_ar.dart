@@ -5999,4 +5999,170 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get staffKept => 'حُفظ على الهاتف، يُرسل عند عودة الشبكة.';
+
+  @override
+  String get beachesTitle => 'الشواطئ اليوم';
+
+  @override
+  String get beachesHint => 'لون كل شاطئ وسببه (خطر الغرق)';
+
+  @override
+  String get beachesSimBanner =>
+      '[SIM] طقس بحري تجريبي: هذه الألوان للتجربة وليست حقيقية. في الطوارئ اتصل بـ 198.';
+
+  @override
+  String get beachesWarnToggle => 'نبّهني عند الاقتراب من شاطئ أصفر أو أحمر';
+
+  @override
+  String get beachesWarnHint => 'يُحسب على هذا الهاتف؛ لا يُرسل موقعك.';
+
+  @override
+  String beachesDanger(String name, String level, String distance) {
+    return 'أنت على بعد $distance من $name: $level';
+  }
+
+  @override
+  String get beachesEmpty => 'لا معطيات عن الشواطئ بعد.';
+
+  @override
+  String get beachesNoPosition => 'الموقع غير مفعّل: الشواطئ مرتبة حسب الاسم.';
+
+  @override
+  String get beachesMapLabel => 'خريطة الشواطئ ملوّنة حسب خطر الغرق';
+
+  @override
+  String get beachLevelRed => 'أحمر: خطر مرتفع';
+
+  @override
+  String get beachLevelYellow => 'أصفر: حذر';
+
+  @override
+  String get beachLevelGreen => 'أخضر: عادي';
+
+  @override
+  String get beachLevelUnknown => 'غير محسوب';
+
+  @override
+  String beachScore(int score) {
+    return 'الدرجة $score/100';
+  }
+
+  @override
+  String beachFactorWaves(String value) {
+    return 'أمواج $value م';
+  }
+
+  @override
+  String beachFactorOnshore(String value) {
+    return 'رياح من البحر $value كم/س';
+  }
+
+  @override
+  String beachFactorCurrent(String value) {
+    return 'تيار $value كم/س';
+  }
+
+  @override
+  String get beachFactorSeason => 'موسم السباحة أو حرارة';
+
+  @override
+  String get beachFactorCrowd => 'اكتظاظ كبير';
+
+  @override
+  String get beachFactorUnguarded => 'دون حراسة';
+
+  @override
+  String beachFactorDrownings(String value) {
+    return 'حوادث غرق سابقة قريبة ($value)';
+  }
+
+  @override
+  String get beachDecisionNote =>
+      'هذا اللون يساعدك على القرار؛ اتبع دائما تعليمات الحراس والرايات على الشاطئ.';
+
+  @override
+  String get beachDays => 'الأيام القادمة';
+
+  @override
+  String beachWaves(String value) {
+    return 'أمواج $value م';
+  }
+
+  @override
+  String beachSeaTemp(String value) {
+    return 'البحر $value °م';
+  }
+
+  @override
+  String get beachCardTitle => 'بطاقة الشاطئ';
+
+  @override
+  String get beachCardClassification => 'التصنيف';
+
+  @override
+  String get beachCardBlueFlag => 'اللواء الأزرق';
+
+  @override
+  String get beachCardGuarded => 'الحراسة';
+
+  @override
+  String get beachCardGuardHours => 'ساعات الحراسة';
+
+  @override
+  String get beachCardSand => 'الرمل';
+
+  @override
+  String get beachCardSlope => 'الانحدار';
+
+  @override
+  String get beachCardDepth => 'العمق';
+
+  @override
+  String get beachCardCurrents => 'التيارات المعروفة';
+
+  @override
+  String get beachCardCrowd => 'الاكتظاظ';
+
+  @override
+  String get beachCardUsage => 'الاستعمال';
+
+  @override
+  String get beachCardPeakSeason => 'ذروة الموسم';
+
+  @override
+  String get beachCardWaterQuality => 'جودة المياه';
+
+  @override
+  String get beachYes => 'نعم';
+
+  @override
+  String get beachNo => 'لا';
+
+  @override
+  String beachSource(String source) {
+    return 'المصدر: $source';
+  }
+
+  @override
+  String get beachPresenceToggle => 'احسبني عندما أقول إني في شاطئ';
+
+  @override
+  String get beachPresenceHint =>
+      'مجهول: رمز عشوائي لليوم، دون حساب ودون موقع. يساعد فرق الإنقاذ على التنظيم.';
+
+  @override
+  String get beachPresenceButton => 'أنا في هذا الشاطئ';
+
+  @override
+  String get beachPresenceSent => 'شكرا، أنت محسوب لمدة 30 دقيقة.';
+
+  @override
+  String nearestByRoad(int minutes) {
+    return '$minutes دقيقة على الطريق';
+  }
+
+  @override
+  String nearestByRoadEstimate(int minutes) {
+    return 'حوالي $minutes دقيقة على الطريق (تقدير)';
+  }
 }

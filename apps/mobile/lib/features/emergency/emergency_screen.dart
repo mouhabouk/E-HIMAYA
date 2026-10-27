@@ -107,6 +107,15 @@ class EmergencyScreen extends ConsumerWidget {
                 subtitle: l10n.nearestHint,
                 onTap: () => context.push(Routes.nearest),
               ),
+              // Phase L1b: today's colour of the beaches (drowning risk) and why.
+              NavCard(
+                key: const Key('hub-beaches'),
+                icon: Icons.beach_access_rounded,
+                tone: Tone.sky,
+                title: l10n.beachesTitle,
+                subtitle: l10n.beachesHint,
+                onTap: () => context.push(Routes.beaches),
+              ),
               // Phase B2: personal safety (contacts, SOS message, medical file), once the
               // first-launch steps are done (before them the hub shows only what needs no setup).
               if (ref.watch(identityProvider).hasIdentity)

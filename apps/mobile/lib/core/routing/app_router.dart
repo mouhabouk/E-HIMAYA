@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/alerts/notifications_screen.dart';
+import '../../features/beaches/beaches_screen.dart';
 import '../../features/charter/charter_controller.dart';
 import '../../features/charter/charter_screen.dart';
 import '../../features/contact/contact_screens.dart';
@@ -79,6 +80,7 @@ abstract final class Routes {
   // Phase B1: emergency hub guide, reachable before the terms like the numbers.
   static const guide = '/emergency/guide';
   static const nearest = '/emergency/nearest';
+  static const beaches = '/emergency/beaches';
   static const contact = '/contact';
   static const contactMine = '/contact/mine';
   static String guideTopic(String key) =>
@@ -312,6 +314,17 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (_, _) => const EmergencyScreen(),
         routes: [
           GoRoute(path: 'nearest', builder: (_, _) => const NearestScreen()),
+          GoRoute(
+            path: 'beaches',
+            builder: (_, _) => const BeachesScreen(),
+            routes: [
+              GoRoute(
+                path: ':id',
+                builder: (_, state) =>
+                    BeachScreen(id: state.pathParameters['id']!),
+              ),
+            ],
+          ),
           GoRoute(
             path: 'guide',
             builder: (_, _) => const GuideTopicsScreen(),

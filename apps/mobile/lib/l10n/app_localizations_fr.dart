@@ -6126,4 +6126,174 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get staffKept =>
       'Gardé sur le téléphone : envoyé dès le retour du réseau.';
+
+  @override
+  String get beachesTitle => 'Plages aujourd\'hui';
+
+  @override
+  String get beachesHint =>
+      'La couleur de chaque plage et pourquoi (risque de noyade)';
+
+  @override
+  String get beachesSimBanner =>
+      '[SIM] Météo marine simulée : couleurs d\'essai, pas réelles. En urgence appelez le 198.';
+
+  @override
+  String get beachesWarnToggle => 'M\'avertir près d\'une plage jaune ou rouge';
+
+  @override
+  String get beachesWarnHint =>
+      'Calculé sur ce téléphone ; votre position n\'est pas envoyée.';
+
+  @override
+  String beachesDanger(String name, String level, String distance) {
+    return 'Vous êtes à $distance de $name : $level';
+  }
+
+  @override
+  String get beachesEmpty => 'Pas encore de données sur les plages.';
+
+  @override
+  String get beachesNoPosition =>
+      'Localisation désactivée : plages par ordre alphabétique.';
+
+  @override
+  String get beachesMapLabel =>
+      'Carte des plages colorées selon le risque de noyade';
+
+  @override
+  String get beachLevelRed => 'Rouge : risque élevé';
+
+  @override
+  String get beachLevelYellow => 'Jaune : vigilance';
+
+  @override
+  String get beachLevelGreen => 'Vert : normal';
+
+  @override
+  String get beachLevelUnknown => 'Non calculé';
+
+  @override
+  String beachScore(int score) {
+    return 'Score $score/100';
+  }
+
+  @override
+  String beachFactorWaves(String value) {
+    return 'Vagues $value m';
+  }
+
+  @override
+  String beachFactorOnshore(String value) {
+    return 'Vent de mer $value km/h';
+  }
+
+  @override
+  String beachFactorCurrent(String value) {
+    return 'Courant $value km/h';
+  }
+
+  @override
+  String get beachFactorSeason => 'Saison balnéaire ou chaleur';
+
+  @override
+  String get beachFactorCrowd => 'Forte affluence';
+
+  @override
+  String get beachFactorUnguarded => 'Pas de surveillance';
+
+  @override
+  String beachFactorDrownings(String value) {
+    return 'Noyades passées proches ($value)';
+  }
+
+  @override
+  String get beachDecisionNote =>
+      'Cette couleur vous aide à décider ; suivez toujours les surveillants et les drapeaux de la plage.';
+
+  @override
+  String get beachDays => 'Prochains jours';
+
+  @override
+  String beachWaves(String value) {
+    return 'Vagues $value m';
+  }
+
+  @override
+  String beachSeaTemp(String value) {
+    return 'Mer $value °C';
+  }
+
+  @override
+  String get beachCardTitle => 'Fiche de la plage';
+
+  @override
+  String get beachCardClassification => 'Classement';
+
+  @override
+  String get beachCardBlueFlag => 'Pavillon bleu';
+
+  @override
+  String get beachCardGuarded => 'Surveillance';
+
+  @override
+  String get beachCardGuardHours => 'Heures de surveillance';
+
+  @override
+  String get beachCardSand => 'Sable';
+
+  @override
+  String get beachCardSlope => 'Pente';
+
+  @override
+  String get beachCardDepth => 'Profondeur';
+
+  @override
+  String get beachCardCurrents => 'Courants connus';
+
+  @override
+  String get beachCardCrowd => 'Affluence';
+
+  @override
+  String get beachCardUsage => 'Usage';
+
+  @override
+  String get beachCardPeakSeason => 'Pic de saison';
+
+  @override
+  String get beachCardWaterQuality => 'Qualité de l\'eau';
+
+  @override
+  String get beachYes => 'Oui';
+
+  @override
+  String get beachNo => 'Non';
+
+  @override
+  String beachSource(String source) {
+    return 'Source : $source';
+  }
+
+  @override
+  String get beachPresenceToggle => 'Me compter quand je dis être à une plage';
+
+  @override
+  String get beachPresenceHint =>
+      'Anonyme : un code aléatoire du jour, sans compte ni position. Cela aide les secours à s\'organiser.';
+
+  @override
+  String get beachPresenceButton => 'Je suis à cette plage';
+
+  @override
+  String get beachPresenceSent => 'Merci, vous êtes compté pendant 30 minutes.';
+
+  @override
+  String nearestByRoad(int minutes) {
+    return '$minutes min par la route';
+  }
+
+  @override
+  String nearestByRoadEstimate(int minutes) {
+    return 'environ $minutes min par la route (estimation)';
+  }
 }
