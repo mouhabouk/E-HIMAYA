@@ -192,6 +192,8 @@ class TrackingResult {
     required this.history,
     this.receivedAt,
     this.updatedAt,
+    this.teamEnRouteAt,
+    this.teamOnSceneAt,
   });
 
   final String trackingCode;
@@ -200,11 +202,17 @@ class TrackingResult {
   final DateTime? updatedAt;
   final List<TrackingHistoryEntry> history;
 
+  /// Phase P4d (F-APP-38): when the team set off, then reached the place.
+  final DateTime? teamEnRouteAt;
+  final DateTime? teamOnSceneAt;
+
   factory TrackingResult.fromJson(Map<String, Object?> json) => TrackingResult(
     trackingCode: json['tracking_code']! as String,
     status: json['status']! as String,
     receivedAt: _date(json['received_at']),
     updatedAt: _date(json['updated_at']),
+    teamEnRouteAt: _date(json['team_en_route_at']),
+    teamOnSceneAt: _date(json['team_on_scene_at']),
     history: [
       for (final h in (json['history'] as List? ?? const []))
         if (h is Map)

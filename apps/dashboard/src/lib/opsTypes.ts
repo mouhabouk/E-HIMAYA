@@ -233,6 +233,15 @@ export interface Assignment {
   crew?: CrewRef | null;
   /** A number the room gave the team to call on the scene (phase P4b). */
   contact_phone?: string | null;
+  /** Phase P4d: the vehicle's last position sent from the leader's phone, and its distance to the incident. */
+  position?: VehiclePosition | null;
+}
+
+export interface VehiclePosition {
+  lat: number;
+  lon: number;
+  at: string;
+  distance_m: number | null;
 }
 
 export const CALLOUT_STATUSES = ["open", "filled", "cancelled", "closed"] as const;

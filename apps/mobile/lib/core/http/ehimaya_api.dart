@@ -745,6 +745,7 @@ class EHimayaApi {
     required String platform,
     required String locale,
     required bool locationAlerts,
+    bool teamNotices = true,
     GeoPoint? position,
   }) => guardApi(() async {
     await _dio.put<Object?>(
@@ -754,6 +755,7 @@ class EHimayaApi {
         'platform': platform,
         'locale': locale,
         'location_alerts': locationAlerts,
+        'team_notices': teamNotices,
         if (locationAlerts && position != null) ...{
           'lat': position.lat,
           'lon': position.lon,

@@ -10635,6 +10635,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No'**
   String get prevNo;
+
+  /// No description provided for @staffPending.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} waiting, sent when the network is back'**
+  String staffPending(int count);
+
+  /// No description provided for @staffSendSms.
+  ///
+  /// In en, this message translates to:
+  /// **'Send by SMS'**
+  String get staffSendSms;
+
+  /// No description provided for @staffSmsOpened.
+  ///
+  /// In en, this message translates to:
+  /// **'The SMS app is open: press Send.'**
+  String get staffSmsOpened;
+
+  /// No description provided for @staffTrackingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'e-Himaya: mission under way'**
+  String get staffTrackingTitle;
+
+  /// No description provided for @staffTrackingText.
+  ///
+  /// In en, this message translates to:
+  /// **'The vehicle\'s position goes to the operations room until the mission ends.'**
+  String get staffTrackingText;
+
+  /// No description provided for @staffMissionChannel.
+  ///
+  /// In en, this message translates to:
+  /// **'Missions'**
+  String get staffMissionChannel;
+
+  /// No description provided for @staffWaitingBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting'**
+  String get staffWaitingBadge;
+
+  /// No description provided for @teamEnRoute.
+  ///
+  /// In en, this message translates to:
+  /// **'The team is on its way'**
+  String get teamEnRoute;
+
+  /// No description provided for @teamOnScene.
+  ///
+  /// In en, this message translates to:
+  /// **'The team has arrived'**
+  String get teamOnScene;
+
+  /// No description provided for @teamNoticesSetting.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell me when the team is coming'**
+  String get teamNoticesSetting;
+
+  /// No description provided for @teamNoticesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A notification when the team leaves, then when it arrives.'**
+  String get teamNoticesHint;
+
+  /// No description provided for @staffKept.
+  ///
+  /// In en, this message translates to:
+  /// **'Kept on the phone: sent when the network is back.'**
+  String get staffKept;
 }
 
 class _AppLocalizationsDelegate

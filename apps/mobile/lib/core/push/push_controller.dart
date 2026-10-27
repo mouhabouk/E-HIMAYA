@@ -54,6 +54,7 @@ class DeviceRegistrar {
             platform: messaging.platform,
             locale: _ref.read(localeCodeProvider),
             locationAlerts: locationAlerts,
+            teamNotices: _prefs.teamNotices,
             position: position != null && position.isInTunisiaBox
                 ? position
                 : null,
@@ -168,7 +169,7 @@ class PushController {
         _ref.invalidate(inboxProvider);
       case PushKind.callout:
         _ref.invalidate(myCalloutsProvider);
-      case PushKind.reportStatus:
+      case PushKind.reportStatus || PushKind.teamStatus:
         _ref.invalidate(serverReportsProvider);
       case PushKind.safetyAlert:
         _ref.invalidate(safetyAlertsProvider);

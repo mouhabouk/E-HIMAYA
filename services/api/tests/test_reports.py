@@ -214,7 +214,16 @@ async def test_public_tracking_exposes_status_only(client: httpx.AsyncClient) ->
     r = await client.get(f"/api/v1/reports/track/{code}")
     assert r.status_code == 200
     body = r.json()
-    assert set(body) == {"tracking_code", "status", "received_at", "updated_at", "history"}
+    # Phase P4d (F-APP-38): the team's two steps are status too, never who or where.
+    assert set(body) == {
+        "tracking_code",
+        "status",
+        "received_at",
+        "updated_at",
+        "history",
+        "team_en_route_at",
+        "team_on_scene_at",
+    }
     assert body["status"] == "received"
     assert [h["status"] for h in body["history"]] == ["received"]
 

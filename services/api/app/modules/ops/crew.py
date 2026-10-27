@@ -7,14 +7,18 @@ the room's own rules (``interventions._set_assignment_status``), so the vehicle 
 tracking moves on («تم التدخل») exactly as when the room presses the button.
 """
 
+import base64
 import hashlib
+import secrets
 import uuid
+from contextvars import ContextVar
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from fastapi import HTTPException, status
 from geoalchemy2 import Geography, Geometry
 from sqlalchemy import cast, func, select
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -31,6 +35,7 @@ from app.modules.ops.models import (
     CasualtyTransport,
     CrewAlert,
     CrewEvent,
+    CrewPosition,
     FieldAttachment,
     FieldReport,
     Incident,
@@ -41,7 +46,7 @@ from app.modules.ops.models import (
     Unit,
 )
 from app.modules.reports import sniff
-from app.modules.reports.domain import Status
+from app.modules.reports.domain import LAT_MAX, LAT_MIN, LON_MAX, LON_MIN, Status
 
 DEVICE_REVOKED = "device_revoked"
 SEEN_EVERY = timedelta(minutes=1)
@@ -59,6 +64,12 @@ HOSPITALS_NEAR = 6
 SITUATION_KINDS = ("first", "update")
 #: Map layers whose places are offered as hospitals.
 HOSPITAL_ICONS = ("hospital", "clinic")
+#: A write kept on the phone without network keeps the phone's time when it arrives this late at most (design §9.1).
+LATE_WRITE = timedelta(hours=12)
+#: Positions of the vehicle from the phone (design §9.2): a little early is the phone's clock, never in the future.
+POSITION_SKEW = timedelta(minutes=2)
+#: How the write reached the server: the app, or a signed text message (``crew_sms``).
+VIA: ContextVar[str] = ContextVar("crew_via", default="app")
 
 
 def _now() -> datetime:
@@ -97,6 +108,13 @@ async def register_device(session: AsyncSession, principal: Principal, body: sch
     await session.flush()
     await session.refresh(device)
     return device
+
+
+def sms_key(device: StaffDevice) -> str:
+    """The phone's key for its EH2 text messages, made the first time it is asked (design §9.3)."""
+    if device.sms_key is None:
+        device.sms_key = base64.urlsafe_b64encode(secrets.token_bytes(32)).decode().rstrip("=")
+    return device.sms_key
 
 
 async def current_device(session: AsyncSession, principal: Principal, device_id: uuid.UUID | None) -> StaffDevice:
@@ -281,6 +299,7 @@ def alert_out(a: CrewAlert, label: str | None = None) -> schemas.AlertOut:
         created_at=a.created_at,
         seen_by_name=a.seen_by_name,
         seen_at=a.seen_at,
+        via=a.via or "app",
     )
 
 
@@ -446,8 +465,25 @@ def _event(
             payload=payload or {},
             subject=principal.subject,
             device_at=body.device_at,
+            via=VIA.get(),
         )
     )
+
+
+def device_time(body: schemas.CrewWrite, assignment: Assignment) -> datetime:
+    """When the step happened: the phone's clock for a write kept on it without network (design §9.1), within
+    ``LATE_WRITE``, never in the future and never before the order or the mission's last step; the server's clock
+    otherwise."""
+    now = _now()
+    at = body.device_at
+    earliest = max(
+        t
+        for t in (assignment.created_at, assignment.acknowledged_at, assignment.en_route_at, assignment.on_scene_at)
+        if t is not None
+    )
+    if at is None or at.tzinfo is None or at > now or now - at > LATE_WRITE or at < earliest:
+        return now
+    return at
 
 
 def _timeline(session: AsyncSession, assignment: Assignment, kind: str, actor: str, **payload: Any) -> None:
@@ -477,7 +513,7 @@ async def acknowledge(
         return assignment
     _event(session, principal, body, "ack", assignment)
     if assignment.acknowledged_at is None:
-        assignment.acknowledged_at = _now()
+        assignment.acknowledged_at = device_time(body, assignment)
         _timeline(session, assignment, "crew_ack", _who(principal))
         await _announce(session, assignment)
     return assignment
@@ -504,9 +540,10 @@ async def step(
         if distance is not None:
             payload["distance_m"] = distance
     _event(session, principal, body, "status", assignment, payload)
+    at = device_time(body, assignment)
     if assignment.acknowledged_at is None:
-        assignment.acknowledged_at = _now()
-    await interventions._set_assignment_status(session, assignment, body.status, _who(principal))
+        assignment.acknowledged_at = at
+    await interventions._set_assignment_status(session, assignment, body.status, _who(principal), at=at)
     if body.status == "on_scene":
         await interventions.advance_reports(session, assignment.incident_id, Status.INTERVENED)
     await _announce(session, assignment)
@@ -657,9 +694,10 @@ async def alert(
             created_by=principal.subject,
             created_by_name=audit.name_of(principal),
             device_at=body.device_at,
+            via=VIA.get(),
         )
     )
-    _timeline(session, assignment, "crew_alert", _who(principal), alert=body.kind, items=items)
+    _timeline(session, assignment, "crew_alert", _who(principal), alert=body.kind, items=items, via=VIA.get())
     await _announce(session, assignment)
     return assignment
 
@@ -781,6 +819,55 @@ async def detailed_report(
     )
     await _announce(session, assignment)
     return assignment
+
+
+async def positions(
+    session: AsyncSession, principal: Principal, assignment_id: uuid.UUID, body: schemas.PositionsIn
+) -> int:
+    """Positions of the vehicle during the mission, from the leader's phone (design §9.2), kept even when they come
+    late; the newest one moves the vehicle on the map. Points outside Tunisia, before the order, after the end or in
+    the future are left out. A point sent twice is kept once. Returns how many were new."""
+    assignment, _ = await _mission(session, principal, assignment_id)
+    if assignment.status == "cancelled":
+        raise HTTPException(status.HTTP_409_CONFLICT, "mission_cancelled")
+    now = _now()
+    start = assignment.created_at - POSITION_SKEW
+    end = min((assignment.released_at or now) + POSITION_SKEW, now + POSITION_SKEW)
+    points = [
+        p for p in body.points if LAT_MIN <= p.lat <= LAT_MAX and LON_MIN <= p.lon <= LON_MAX and start <= p.at <= end
+    ]
+    if not points:
+        return 0
+    inserted = await session.scalars(
+        insert(CrewPosition)
+        .values(
+            [
+                {
+                    "assignment_id": assignment.id,
+                    "incident_id": assignment.incident_id,
+                    "resource_id": assignment.resource_id,
+                    "at": p.at,
+                    "location": f"SRID=4326;POINT({p.lon} {p.lat})",
+                    "accuracy_m": p.accuracy_m,
+                }
+                for p in points
+            ]
+        )
+        .on_conflict_do_nothing(index_elements=["assignment_id", "at"])
+        .returning(CrewPosition.id)
+    )
+    accepted = len(inserted.all())
+    newest = max(points, key=lambda p: p.at)
+    if assignment.resource_id is not None and assignment.status in ("en_route", "on_scene"):
+        resource = await session.get(Resource, assignment.resource_id, with_for_update=True)
+        if resource is not None and (resource.location_at is None or newest.at > resource.location_at):
+            resource.location = f"SRID=4326;POINT({newest.lon} {newest.lat})"
+            resource.location_at = newest.at
+            await session.flush()
+            await resources.announce(session, resource.id)
+            # The incident card's "last position", without touching the incident itself every 30 seconds.
+            await interventions.announce_assignment(session, assignment)
+    return accepted
 
 
 async def hospitals(session: AsyncSession, principal: Principal, assignment_id: uuid.UUID) -> list[schemas.Hospital]:

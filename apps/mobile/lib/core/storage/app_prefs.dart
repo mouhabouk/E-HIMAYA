@@ -21,6 +21,7 @@ class AppPrefs {
   static const _reportAs = 'orgs.report_as';
   static const _sosReportAs = 'orgs.sos_report_as';
   static const _locationAlerts = 'alerts.location';
+  static const _teamNotices = 'reports.team_notices';
   static const _pushToken = 'push.registered_token';
   static const _simPushToken = 'push.sim_token';
   static const _simPushSeq = 'push.sim_last_seq';
@@ -128,6 +129,12 @@ class AppPrefs {
   bool get locationAlerts => _prefs.getBool(_locationAlerts) ?? true;
   Future<void> setLocationAlerts(bool value) =>
       _prefs.setBool(_locationAlerts, value);
+
+  /// Phase P4d (F-APP-38): told when the team sets off for the user's report, then arrives. On
+  /// by default; turned off in settings.
+  bool get teamNotices => _prefs.getBool(_teamNotices) ?? true;
+  Future<void> setTeamNotices(bool value) =>
+      _prefs.setBool(_teamNotices, value);
 
   /// Push token last registered with the server (to unregister it at sign-out).
   String? get pushToken => _prefs.getString(_pushToken);

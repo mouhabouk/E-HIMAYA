@@ -60,6 +60,9 @@ class Report(Base):
     received_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     first_response_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # F-APP-38 (phase P4d): the first team set off, then arrived.
+    team_en_route_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    team_on_scene_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     # Accepted beyond the anonymous budget or while the limiter ran degraded: a human checks it first (A1).
     needs_verification: Mapped[bool] = mapped_column(Boolean, server_default="false")
     verification_reason: Mapped[str | None] = mapped_column(Text)

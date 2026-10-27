@@ -6031,4 +6031,44 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get prevNo => 'No';
+
+  @override
+  String staffPending(int count) {
+    return '$count waiting, sent when the network is back';
+  }
+
+  @override
+  String get staffSendSms => 'Send by SMS';
+
+  @override
+  String get staffSmsOpened => 'The SMS app is open: press Send.';
+
+  @override
+  String get staffTrackingTitle => 'e-Himaya: mission under way';
+
+  @override
+  String get staffTrackingText =>
+      'The vehicle\'s position goes to the operations room until the mission ends.';
+
+  @override
+  String get staffMissionChannel => 'Missions';
+
+  @override
+  String get staffWaitingBadge => 'Waiting';
+
+  @override
+  String get teamEnRoute => 'The team is on its way';
+
+  @override
+  String get teamOnScene => 'The team has arrived';
+
+  @override
+  String get teamNoticesSetting => 'Tell me when the team is coming';
+
+  @override
+  String get teamNoticesHint =>
+      'A notification when the team leaves, then when it arrives.';
+
+  @override
+  String get staffKept => 'Kept on the phone: sent when the network is back.';
 }

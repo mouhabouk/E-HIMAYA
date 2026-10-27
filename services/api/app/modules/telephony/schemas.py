@@ -152,7 +152,8 @@ class SmsInboundIn(BaseModel):
 
 
 class SmsInboundOut(BaseModel):
-    # created: a new report; duplicate: an existing report (gateway retry or repeated SMS); ignored: not a report.
+    # created: a new report; duplicate: an existing report (gateway retry or repeated SMS); ignored: not a report;
+    # applied: a step or an alert of a team leader's phone (EH2, phase P4d).
     status: str
     tracking_code: str | None = None
     reason: str | None = None

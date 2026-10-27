@@ -331,6 +331,32 @@ void main() {
       await unmountApp(tester);
     });
 
+    testWidgets('the team on its way, then there (F-APP-38)', (tester) async {
+      await tallScreen(tester);
+      final base = rewardsApi();
+      await pumpApp(
+        tester,
+        prefs: onboardedPrefs(locale: 'en'),
+        api: (r) => r.path == '/api/v1/reports/track/$_code'
+            ? const FakeResponse(
+                200,
+                json: {
+                  'tracking_code': _code,
+                  'status': 'in_progress',
+                  'received_at': '2026-10-17T10:00:00Z',
+                  'team_en_route_at': '2026-10-17T10:04:00Z',
+                  'team_on_scene_at': '2026-10-17T10:12:00Z',
+                  'history': [],
+                },
+              )
+            : base(r),
+      );
+      await track(tester);
+      expect(find.byKey(const Key('track-team')), findsOneWidget);
+      expect(find.text('The team has arrived'), findsOneWidget);
+      await unmountApp(tester);
+    });
+
     testWidgets('nothing for a report without points', (tester) async {
       await tallScreen(tester);
       await pumpApp(

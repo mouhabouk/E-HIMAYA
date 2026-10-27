@@ -6,12 +6,15 @@ import 'package:ehimaya/core/connectivity/connectivity.dart';
 import 'package:ehimaya/core/location/location_service.dart';
 import 'package:ehimaya/core/storage/app_prefs.dart';
 import 'package:ehimaya/core/storage/secure_store.dart';
+import 'package:ehimaya/staff/mission_box.dart';
 import 'package:ehimaya/staff/prevention/prevention_store.dart';
 import 'package:ehimaya/staff/prevention/sign_screen.dart';
 import 'package:ehimaya/staff/staff_app.dart';
 import 'package:ehimaya/staff/staff_capture.dart';
+import 'package:ehimaya/staff/staff_config.dart';
 import 'package:ehimaya/staff/staff_controller.dart';
 import 'package:ehimaya/staff/staff_models.dart';
+import 'package:ehimaya/staff/staff_push.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -49,7 +52,17 @@ class FakeCrewServer {
   final visits = <Map<String, dynamic>>[];
   final writes = <SeenRequest>[];
 
+  /// Positions received, mission by mission (phase P4d).
+  final positions = <String, List<Map<String, dynamic>>>{};
+
+  /// Writes applied once, by `client_id` (a write sent again answers the mission as it is).
+  final applied = <String>{};
+  String? pushToken;
+
   Dio dio() => Dio()..httpClientAdapter = adapter;
+
+  /// The phone's key for its text messages (phase P4d).
+  static const smsKey = 'test-sms-key-0123456789abcdef';
 
   static const vehicle = {
     'id': 'v-1',
@@ -235,7 +248,13 @@ class FakeCrewServer {
     if (r.method == 'POST') writes.add(r);
     switch ((r.method, sub)) {
       case ('POST', '/devices'):
+        pushToken = (r.json! as Map)['push_token'] as String?;
         return const FakeResponse(201, json: {'id': 'dev-1'});
+      case ('PATCH', '/devices/current'):
+        pushToken = (r.json! as Map)['push_token'] as String?;
+        return const FakeResponse(200, json: {'id': 'dev-1'});
+      case ('POST', '/devices/current/sms-key'):
+        return const FakeResponse(200, json: {'key': smsKey});
       case ('GET', '/me'):
         return FakeResponse(
           200,
@@ -276,6 +295,20 @@ class FakeCrewServer {
     if (m != null && r.method == 'POST') {
       final i = missions.indexWhere((x) => x['id'] == m.group(1));
       if (i < 0) return const FakeResponse(404, json: {'detail': 'not_found'});
+      if (m.group(2) == 'positions') {
+        final points = [
+          for (final p in (r.json! as Map)['points'] as List)
+            p as Map<String, dynamic>,
+        ];
+        positions.putIfAbsent(m.group(1)!, () => []).addAll(points);
+        return FakeResponse(200, json: {'accepted': points.length});
+      }
+      final clientId =
+          r.uri.queryParameters['client_id'] ??
+          (r.json as Map?)?['client_id'] as String?;
+      if (clientId != null && !applied.add(clientId)) {
+        return FakeResponse(200, json: missions[i]);
+      }
       final x = Map<String, dynamic>.of(missions[i]);
       final now = '2026-10-26T09:3${writes.length % 10}:00Z';
       if (m.group(2) == 'attachments') {
@@ -529,7 +562,10 @@ Future<void> pumpStaffApp(
   List<Uri>? launched,
   LocationService? location,
   MemoryBlobStore? blobs,
+  MemoryBlobStore? missionBlobs,
   SignatureEncoder? signature,
+  StaffPush? push,
+  String smsNumber = '',
 }) async {
   // A tall phone: the forms fit without scrolling.
   tester.view.physicalSize = const Size(1080, 2400);
@@ -554,6 +590,19 @@ Future<void> pumpStaffApp(
         }),
         staffCaptureProvider.overrideWithValue(FakeCapture()),
         blobStoreProvider.overrideWithValue(blobs ?? MemoryBlobStore()),
+        missionBlobStoreProvider.overrideWithValue(
+          missionBlobs ?? MemoryBlobStore(),
+        ),
+        staffPushProvider.overrideWithValue(push ?? const NoStaffPush()),
+        if (smsNumber.isNotEmpty)
+          staffConfigProvider.overrideWithValue(
+            StaffConfig(
+              apiBaseUrl: StaffConfig.fromEnvironment().apiBaseUrl,
+              issuer: StaffConfig.fromEnvironment().issuer,
+              clientId: StaffConfig.fromEnvironment().clientId,
+              smsNumber: smsNumber,
+            ),
+          ),
         connectivityProvider.overrideWithValue(FakeConnectivity()),
         signatureEncoderProvider.overrideWithValue(signature ?? fakeSignature),
       ],

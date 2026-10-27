@@ -17,7 +17,10 @@ enum PushKind {
   safetyCheckReminder('safety_check_reminder'),
   // Phase C1-c: a medical file referred to this doctor, a specialist's opinion on a file they hold.
   medicalReferral('medical_referral'),
-  medicalOpinion('medical_opinion');
+  medicalOpinion('medical_opinion'),
+  // Phase P4d (F-APP-38): the reporter's team is on its way, then there (`team`: en_route |
+  // on_scene).
+  teamStatus('team_status');
 
   const PushKind([this._wire]);
   final String? _wire;
@@ -100,7 +103,7 @@ class PushPayload {
     PushKind.alertCancelled ||
     PushKind.info => Routes.notifications,
     PushKind.callout => Routes.callouts,
-    PushKind.reportStatus => Routes.reports,
+    PushKind.reportStatus || PushKind.teamStatus => Routes.reports,
     PushKind.safetyAlert when (id ?? '').isNotEmpty => Routes.safetyAlert(id!),
     PushKind.safetyAlert => Routes.safety,
     PushKind.safetyLink => Routes.safetyLinked,

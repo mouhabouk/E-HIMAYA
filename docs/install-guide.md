@@ -504,28 +504,38 @@ EOF
 
 ```bash
 cd apps/mobile && flutter pub get
-flutter build apk --release \
+flutter build apk --release --flavor citizen \
   --dart-define=API_BASE_URL=https://api.ehimaya.tn \
   --dart-define=TUS_URL=https://api.ehimaya.tn/api/v1/uploads/ \
   --dart-define=OIDC_ISSUER=https://auth.ehimaya.tn/realms/ehimaya-public \
   --dart-define=SMS_REPORT_NUMBER=<رقم البلاغ بالرسائل> \
   --dart-define=FIREBASE_API_KEY=... --dart-define=FIREBASE_APP_ID=... \
   --dart-define=FIREBASE_MESSAGING_SENDER_ID=... --dart-define=FIREBASE_PROJECT_ID=...
-# الملف: build/app/outputs/flutter-apk/app-release.apk
-flutter build appbundle --release ...               # للنشر في Google Play (نفس المعاملات)
+# الملف: build/app/outputs/flutter-apk/app-citizen-release.apk
+flutter build appbundle --release --flavor citizen ...   # للنشر في Google Play (نفس المعاملات)
 ```
 
 لا تمرّر `PUSH_SIMULATOR_URL` في بناء التوزيع (هو محاكي **[SIM]**). للتجربة الميدانية يوزَّع ملف APK على هواتف المشاركين،
 أو عبر مسار الاختبار الداخلي في Google Play.
 
-**تطبيق الأعوان (P4a)** يُبنى من نفس المشروع بنقطة دخوله، ويوزَّع على قادة الفرق ومفقّدي الوقاية (منذ P4c):
+**تطبيق الأعوان (P4a)** يُبنى من نفس المشروع بنقطة دخوله، ويوزَّع على قادة الفرق ومفقّدي الوقاية (منذ P4c). منذ P4d هو
+تطبيق مستقل على أندرويد (النكهة `staff`، المعرّف `tn.ehimaya.staff`، الاسم «ء-حماية الأعوان») يُثبَّت بجانب تطبيق المواطن:
 
 ```bash
-flutter build apk --release -t lib/main_staff.dart \
+flutter build apk --release --flavor staff -t lib/main_staff.dart \
   --dart-define=API_BASE_URL=https://api.ehimaya.tn \
   --dart-define=STAFF_OIDC_ISSUER=https://auth.ehimaya.tn/realms/ehimaya-staff \
-  --dart-define=STAFF_ROOM_PHONE=198
+  --dart-define=STAFF_ROOM_PHONE=198 \
+  --dart-define=STAFF_SMS_NUMBER=<رقم بوابة الرسائل> \
+  --dart-define=FIREBASE_API_KEY=... --dart-define=FIREBASE_APP_ID=<معرّف تطبيق الأعوان في Firebase> \
+  --dart-define=FIREBASE_MESSAGING_SENDER_ID=... --dart-define=FIREBASE_PROJECT_ID=...
+# الملف: build/app/outputs/flutter-apk/app-staff-release.apk
 ```
+
+منذ P4d: `STAFF_SMS_NUMBER` رقم بوابة الرسائل نفسها (إن تُرك فارغًا يُستعمل `SMS_REPORT_NUMBER`، وإن غاب الاثنان يختفي زر
+«أرسل برسالة قصيرة»). يُسجَّل تطبيق الأعوان في مشروع Firebase نفسه كتطبيق أندرويد ثانٍ بالمعرّف `tn.ehimaya.staff`، ويُمرَّر
+`FIREBASE_APP_ID` الخاص به. يطلب التطبيق إذن «الإشعارات بملء الشاشة» لتظهر المهمة على شاشة القفل، ويتابع موقع المركبة أثناء
+المهمة فقط بخدمة أمامية ظاهرة. تحتفظ قاعدة البيانات بمواقع المركبات `RETENTION_CREW_POSITION_DAYS` يومًا (30 افتراضيًا).
 
 `STAFF_ROOM_PHONE` (منذ P4b) هو رقم القاعة الذي يطلبه زر «اتصال بالقاعة» في شاشة المهمة، والقيمة الافتراضية 198.
 يحتاج التطبيق إذنَي الكاميرا والميكروفون للصور والملاحظات الصوتية من الميدان (مصرَّح بهما من قبل في تطبيق المواطن).

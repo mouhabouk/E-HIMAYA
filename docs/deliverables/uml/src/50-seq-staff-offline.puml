@@ -1,0 +1,35 @@
+@startuml
+!include style.iuml
+title Séquence : mission sans réseau, SMS signé, suivi et citoyen informé (P4d)
+autonumber
+actor "Chef d'agrès" as TL
+participant "Application\ndes équipes" as APP
+database "Coffre local\n(AES-256-GCM)" as BOX
+participant "Passerelle SMS" as GW
+participant "API\n/crew" as CREW
+database "PostgreSQL (RLS)" as DB
+actor "Salle (tableau\nde bord)" as ROOM
+actor "Citoyen signalant" as CIT
+== Mission sur un téléphone verrouillé ==
+CREW -> APP : push données seules « mission »
+APP -> TL : plein écran sur l'écran verrouillé
+== Sans réseau ==
+TL -> APP : « Reçu », « En route », renfort
+APP -> BOX : écriture {client_id, heure du téléphone},\naffichée tout de suite, « 2 en attente »
+APP -> BOX : positions (30 s en route, 2 min sur place)
+TL -> APP : « Envoyer par SMS »
+APP -> GW : EH2 téléphone mission en_route heure client_id signature
+GW -> CREW : /internal/sms/inbound
+CREW -> DB : signature HMAC de la clé du téléphone,\n≤ 12 h, même client_id : appliqué une fois (via sms)
+== Retour du réseau (30 s, ou « Envoyer maintenant ») ==
+APP -> CREW : écritures dans l'ordre (client_id)
+CREW -> DB : déjà appliqué : réponse sans doublon ;\nrefus : supprimé du coffre, motif affiché
+APP -> CREW : POST /missions/{id}/positions (≤ 50)
+CREW -> DB : positions (30 jours), position du moyen
+ROOM -> DB : « dernière position il y a N · à X km »,\nalerte « par SMS »
+== Citoyen informé (F-APP-38) ==
+CREW -> CIT : push « L'équipe est en route » puis « arrivée »\n(texte fixe, désactivable)
+CIT -> CREW : suivi du signalement : ligne équipe
+== Effacement à distance ==
+CREW --> APP : 410 : clé effacée, coffre illisible
+@enduml

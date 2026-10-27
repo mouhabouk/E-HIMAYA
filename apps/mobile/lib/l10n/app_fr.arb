@@ -1755,5 +1755,17 @@
   "prevItemElectrical": "Installations électriques",
   "prevDeclaredNone": "Rien",
   "prevYes": "Oui",
-  "prevNo": "Non"
+  "prevNo": "Non",
+  "staffPending": "{count} en attente, envoyé dès le retour du réseau",
+  "staffSendSms": "Envoyer par SMS",
+  "staffSmsOpened": "L'application SMS est ouverte : appuyez sur Envoyer.",
+  "staffTrackingTitle": "e-Himaya : mission en cours",
+  "staffTrackingText": "La position du véhicule est transmise à la salle des opérations jusqu'à la fin de la mission.",
+  "staffMissionChannel": "Missions",
+  "staffWaitingBadge": "En attente",
+  "teamEnRoute": "L'équipe est en route",
+  "teamOnScene": "L'équipe est arrivée",
+  "teamNoticesSetting": "M'informer de l'arrivée de l'équipe",
+  "teamNoticesHint": "Une notification au départ de l'équipe, puis à son arrivée.",
+  "staffKept": "Gardé sur le téléphone : envoyé dès le retour du réseau."
 }

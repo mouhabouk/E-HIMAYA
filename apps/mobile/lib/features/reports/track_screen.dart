@@ -128,6 +128,31 @@ class _TrackScreenState extends ConsumerState<TrackScreen> {
                 ),
               if (result.receivedAt != null)
                 Text(l10n.receivedAt(fmt.format(result.receivedAt!.toLocal()))),
+              if (result.teamOnSceneAt != null || result.teamEnRouteAt != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Card(
+                    key: const Key('track-team'),
+                    child: ListTile(
+                      leading: Icon(
+                        result.teamOnSceneAt != null
+                            ? Icons.where_to_vote
+                            : Icons.local_shipping,
+                      ),
+                      title: Text(
+                        result.teamOnSceneAt != null
+                            ? l10n.teamOnScene
+                            : l10n.teamEnRoute,
+                      ),
+                      subtitle: Text(
+                        fmt.format(
+                          (result.teamOnSceneAt ?? result.teamEnRouteAt)!
+                              .toLocal(),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               _PointsEarned(trackingCode: result.trackingCode),
               const SizedBox(height: 16),
               Text(l10n.trackHistory, style: theme.textTheme.titleMedium),
