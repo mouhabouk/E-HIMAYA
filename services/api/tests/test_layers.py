@@ -115,8 +115,11 @@ def test_json_and_geojson() -> None:
     }
     parsed = domain.parse("osm.geojson", json.dumps(doc).encode())
     assert parsed.format == "geojson"
-    assert [(r.ref, r.lat, r.lon, r.props) for r in parsed.rows] == [("node/1", 36.8, 10.18, {"hours": "24/7"})]
-    assert [r.reason for r in parsed.rejected] == ["not_a_point"]
+    point, line = parsed.rows
+    assert (point.ref, point.lat, point.lon, point.props) == ("node/1", 36.8, 10.18, {"hours": "24/7"})
+    # Since phase L1a a line is kept whole; its point is one on the line.
+    assert line.name == "Route" and line.geometry == "line" and line.shape is not None
+    assert parsed.rejected == []
 
 
 @pytest.mark.parametrize(
@@ -165,6 +168,8 @@ async def _create(client: httpx.AsyncClient, staff: Staff, audience: str = "publ
         "source": "OpenStreetMap",
         "licence": "ODbL",
         "reason": "first load of the layer",
+        # Since phase L1a a new layer starts as a draft; these tests use it published.
+        "status": "published",
         **extra,
     }
     r = await client.post(URL, json=body, headers=_admin(staff))
@@ -413,8 +418,10 @@ async def test_export_then_import_gives_the_same_layer(client: httpx.AsyncClient
     key, admin = layer["key"], _admin(staff)
     rows = [*HOSPITALS, ["F1", "=cmd|' /C calc'!A0", "", *KAIROUAN, "", "", ""]]
     await _import(client, admin, key, _csv(rows))
+    # Since phase L1a the whole file (every column) is for the administrator and the layer's editors only.
+    assert (await client.get(f"{URL}/{key}/export", headers=staff())).status_code == 403
     for fmt, lang in (("csv", "ar"), ("xlsx", "fr"), ("geojson", "en")):
-        r = await client.get(f"{URL}/{key}/export", params={"format": fmt, "lang": lang}, headers=staff())
+        r = await client.get(f"{URL}/{key}/export", params={"format": fmt, "lang": lang}, headers=admin)
         assert r.status_code == 200, r.text
         assert f"{key}-v1.{fmt}" in r.headers["content-disposition"]
         again = await _preview(client, admin, key, r.content, name=f"export.{fmt}")
@@ -425,9 +432,9 @@ async def test_export_then_import_gives_the_same_layer(client: httpx.AsyncClient
         else:
             # The neutralised cell comes back with its leading quote: the one place reported as updated.
             assert (counts["unchanged"], counts["new"], counts["updated"]) == (3, 0, 1)
-    csv_text = (await client.get(f"{URL}/{key}/export", headers=staff())).content.decode("utf-8-sig")
+    csv_text = (await client.get(f"{URL}/{key}/export", headers=admin)).content.decode("utf-8-sig")
     assert "'=cmd" in csv_text and "+21674241511" in csv_text and "'+216" not in csv_text
-    xlsx = await client.get(f"{URL}/{key}/export", params={"format": "xlsx"}, headers=staff())
+    xlsx = await client.get(f"{URL}/{key}/export", params={"format": "xlsx"}, headers=admin)
     sheet = load_workbook(io.BytesIO(xlsx.content)).active
     assert sheet is not None and sheet["A1"].value == "identifiant"
 

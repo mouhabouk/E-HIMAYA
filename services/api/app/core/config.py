@@ -153,6 +153,8 @@ class Settings(BaseSettings):
     retention_anon_account_days: int = Field(default=365, ge=1)
     # Erasure requests once the identity-provider account was disabled.
     retention_erasure_days: int = Field(default=30, ge=1)
+    # Map layers and places deleted by the administrator (phase L1a): restorable for this long, then erased.
+    retention_layer_deleted_days: int = Field(default=30, ge=1)
 
     # Live streaming (phase 6, docs/streaming.md). MediaMTX authenticates every publisher and reader through
     # POST /internal/mediamtx/auth and reports the stream life cycle to POST /internal/mediamtx/hooks.

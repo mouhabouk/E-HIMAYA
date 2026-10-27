@@ -644,7 +644,12 @@ async def transport(
         place = await session.scalar(
             select(LayerFeature.name)
             .join(Layer, Layer.id == LayerFeature.layer_id)
-            .where(LayerFeature.id == body.hospital_ref, Layer.icon.in_(HOSPITAL_ICONS), Layer.enabled.is_(True))
+            .where(
+                LayerFeature.id == body.hospital_ref,
+                Layer.icon.in_(HOSPITAL_ICONS),
+                Layer.enabled.is_(True),
+                LayerFeature.deleted_at.is_(None),
+            )
         )
         if place is None:
             raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "unknown_hospital")
@@ -882,7 +887,12 @@ async def hospitals(session: AsyncSession, principal: Principal, assignment_id: 
             select(LayerFeature, Layer.simulated, distance)
             .join(Layer, Layer.id == LayerFeature.layer_id)
             .join(Incident, Incident.id == assignment.incident_id)
-            .where(Layer.icon.in_(HOSPITAL_ICONS), Layer.enabled.is_(True), LayerFeature.hidden.is_(False))
+            .where(
+                Layer.icon.in_(HOSPITAL_ICONS),
+                Layer.enabled.is_(True),
+                LayerFeature.hidden.is_(False),
+                LayerFeature.deleted_at.is_(None),
+            )
             .order_by(distance)
             .limit(HOSPITALS_NEAR)
         )
