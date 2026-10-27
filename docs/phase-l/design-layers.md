@@ -34,7 +34,9 @@
 
 - العنصر نقطة أو خط أو مساحة (ومتعدداتها). عمود جديد `shape` (geography) يحفظ الهندسة كاملة للخطوط والمساحات،
   ويبقى `location` نقطة تمثيلية (نقطة على السطح) تُستعمل للولاية والمعتمدية و«الأقرب» والتجميع.
-- للطبقة نوع هندسي واحد: `point` أو `line` أو `area`، يُحدَّد عند أول استيراد، ويرفض عنصرا من نوع آخر بسببه.
+- **كما بُني:** لا نوع هندسي ثابت للطبقة؛ تقبل الطبقة الواحدة نقاطا وخطوطا ومساحات معا (ملفات OSM فيها الأنواع
+  الثلاثة في طبقة واحدة، كالمستشفيات نقاطا ومساحات). نوع كل عنصر (`point` أو `line` أو `area`) يُحسب من `shape`
+  ويظهر في صفحة الطبقة. هندسة غير مدعومة (GeometryCollection) أو غير صالحة تُرفض بسببها.
 - الخريطة تطلب الخطوط والمساحات بحدود الشاشة، مبسّطة حسب التكبير على الخادم (`ST_SimplifyPreserveTopology`).
 - حد 20,000 نقطة رأسية للعنصر الواحد.
 
@@ -44,7 +46,7 @@
 |---|---|---|
 | GeoJSON | كل الأنواع الهندسية الآن | WGS84 |
 | KML | Placemark: Point و LineString و Polygon و MultiGeometry، والاسم والوصف و ExtendedData | WGS84 دائما |
-| Shapefile مضغوط (zip) | `.shp` و `.dbf` و `.prj` بمكتبة `pyshp` (MIT) | يُقبل WGS84 فقط؛ غيره يُرفض بسبب «الإسقاط غير مدعوم» |
+| Shapefile مضغوط (zip) | `.shp` و `.dbf` و `.prj` بقارئ داخلي (كما بُني: دون `pyshp`، لتفادي حزمة جديدة) | يُقبل WGS84 فقط؛ غيره يُرفض بسبب «الإسقاط غير مدعوم» |
 | GeoPackage | الجدول الأول بقاعدة SQLite المدمجة، وقراءة WKB | WGS84 (4326) فقط |
 | CSV و XLSX و JSON | كما في B1، نقاط | WGS84 |
 
@@ -66,7 +68,8 @@
 لكل طبقة:
 
 - **الحالة**: مسودة (يراها المدير وحده)، منشورة، موقوفة، محذوفة. كل طبقة مرفوعة تبدأ مسودة.
-- **الفئات** التي تراها، و**النطاق**: وطني أو ولايات بعينها؛ العون الجهوي يرى العناصر داخل ولايته فقط.
+- **الفئات** التي تراها، و**النطاق**: وطني أو ولايات بعينها. كما بُني: النطاق يخص الطبقة كلها؛ العون الجهوي يرى
+  الطبقة إن كانت ولايته في نطاقها (أو كان النطاق وطنيا) فيرى كل عناصرها، والأعوان الوطنيون يرون كل الطبقات.
 - **مفعّلة بالتلقائية** على الخريطة أو يفعّلها المستعمل.
 - **حساسة**: لا يراها إلا الوزير (`central_committee` بنطاق وطني) والمدير لإدارتها؛ لا تُختار لها فئات، ولا يراها
   الوالي حتى أثناء محور مفتوح؛ كل قراءة لعناصرها تُسجَّل في سجل التدقيق.
@@ -104,7 +107,8 @@
 
 الاستيراد يقرأ ملفات `data/osm/layers/*_enriched.geojson` و `data/osm/beaches/` كما هي (`name_suggested`،
 `name_confidence`، `osm_url`، `possible_duplicate`، `osm_snapshot`). وأمر للتطوير والتجربة
-`python -m app.scripts.load_osm_layers data/osm` يحمّل الطبقات الـ24 والشواطئ مسوداتٍ بإعدادات مقترحة:
+`python -m app.modules.layers.cli load-osm data/osm [--only hospitals,beaches] [--dry-run]` يحمّل الطبقات الـ30
+ والشواطئ (31) مسوداتٍ بإعدادات مقترحة، باستيراد عادي بنمط «استبدال» يظهر في سجل الاستيراد ويمكن التراجع عنه:
 
 | الطبقات | الفئات المقترحة عند النشر |
 |---|---|
@@ -128,10 +132,11 @@
 
 ### 3.9 قاعدة البيانات (الترحيل 0053)
 
-- `geo.layer`: `status`، `audiences text[]`، `scope smallint[]`، `default_on`، `sensitive`، `geometry`، `fields jsonb`،
+- `geo.layer`: `status`، `audiences text[]`، `scope smallint[]`، `default_on`، `sensitive`، `fields jsonb`،
   `actions jsonb`، `deleted_at`، `deleted_by`، `delete_reason`؛ `audience` و `staff_only` تُرحَّلان ثم تبقيان للقراءة.
 - `geo.layer_feature`: `shape geography`، `name_status`، `suggested_name`، `name_confidence`، `name_source`،
-  `source_ref`، `source_url`، `snapshot_at`، `duplicate_of`، `deleted_at`.
+  `source_url`، `snapshot_at`، `possible_duplicate`، `deleted_at`، `deleted_by`، `delete_reason` (مرجع OSM يبقى في
+  `ref`، والدمج يحذف المكرر بسبب «مكرر» بدل ربطه بعمود `duplicate_of`).
 - `geo.layer_revision`: الطبقة، الرقم، اللقطة، الفاعل، السبب، الوقت.
 
 ### 3.10 لوحة المدير (L1a)
