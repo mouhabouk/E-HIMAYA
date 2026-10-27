@@ -273,4 +273,68 @@ void main() {
     await c.read(placesOffProvider.notifier).toggle('hospitals');
     expect(prefsOf(c).placesOff, isEmpty);
   });
+
+  testWidgets('online, the nearest places are timed on the road (L1b)', (
+    tester,
+  ) async {
+    await pumpApp(
+      tester,
+      prefs: {...languageAndIntroDone, 'settings.locale': 'en'},
+      api: (r) {
+        if (r.path == '/api/v1/layers') {
+          return FakeResponse(
+            200,
+            json: {
+              'items': [_layer('hospitals')],
+            },
+          );
+        }
+        if (r.path == '/api/v1/layers/hospitals/package') {
+          return FakeResponse(200, json: _packages['hospitals']);
+        }
+        if (r.path == '/api/v1/layers/hospitals/features') {
+          expect(r.uri.queryParameters['road'], 'true');
+          return const FakeResponse(
+            200,
+            json: {
+              'items': [
+                {
+                  'id': 'h-near',
+                  'road_m': 2400,
+                  'road_s': 420,
+                  'road_engine': 'valhalla',
+                },
+                {
+                  'id': 'h-far',
+                  'road_m': 190000,
+                  'road_s': 7200,
+                  'road_engine': 'fallback',
+                },
+              ],
+            },
+          );
+        }
+        return const FakeResponse(404, json: {'detail': 'not_found'});
+      },
+      overrides: [placesStoreProvider.overrideWithValue(MemoryPlacesStore())],
+    );
+    await tester.tap(find.byKey(const Key('emergency-numbers-action')));
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(find.byKey(const Key('hub-nearest')), 200);
+    await tester.ensureVisible(find.byKey(const Key('hub-nearest')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('hub-nearest')));
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('place-h-far')),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(find.textContaining('7 min by road'), findsOneWidget);
+    expect(
+      find.textContaining('about 120 min by road (estimate)'),
+      findsOneWidget,
+    );
+    await unmountApp(tester);
+  });
 }

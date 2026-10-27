@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../features/beaches/beach_models.dart';
 import '../../features/contact/contact_models.dart';
 import '../../features/guide/guide_models.dart';
 import '../../features/places/places_models.dart';
@@ -52,6 +53,16 @@ class LayersFetch {
   const LayersFetch(this.layers, this.etag);
   final List<PlaceLayer>? layers;
   final String? etag;
+}
+
+/// A place timed on the road (phase L1b): metres, seconds and the engine (`fallback`: estimate).
+class RoadTime {
+  const RoadTime(this.metres, this.seconds, this.engine);
+  final int metres;
+  final int seconds;
+  final String? engine;
+
+  bool get estimated => engine == null || engine == 'fallback';
 }
 
 class PackageFetch {
@@ -965,6 +976,61 @@ class EHimayaApi {
     return PackageFetch(
       PlacePackage.fromJson(r.data! as Map<String, Object?>, etag: newEtag),
       newEtag,
+    );
+  });
+
+  /// Phase L1b: the nearest places of a layer timed on the road (`road`: the routing engine, or
+  /// its estimate). Id → (metres, seconds); empty when the server has no road time.
+  Future<Map<String, RoadTime>> roadNearest(
+    String key,
+    GeoPoint from, {
+    int limit = 3,
+  }) => guardApi(() async {
+    final r = await _dio.get<Map<String, Object?>>(
+      '/api/v1/layers/${Uri.encodeComponent(key)}/features',
+      queryParameters: {
+        'near': '${from.lat},${from.lon}',
+        'limit': limit,
+        'road': 'true',
+      },
+      options: Options(extra: {kPublicEndpoint: true}),
+    );
+    return {
+      if (r.data?['items'] case final List<Object?> items)
+        for (final i in items)
+          if (i case {
+            'id': final Object id,
+            'road_m': final num m,
+            'road_s': final num s,
+          })
+            '$id': RoadTime(m.toInt(), s.toInt(), i['road_engine'] as String?),
+    };
+  });
+
+  /// Phase L1b: today's drowning risk of every beach (public, cached 15 minutes by the server).
+  Future<BeachesReport> coastalBeaches() => guardApi(() async {
+    final r = await _dio.get<Map<String, Object?>>(
+      '/api/v1/coastal/beaches',
+      options: Options(extra: {kPublicEndpoint: true}),
+    );
+    return BeachesReport.fromJson(r.data!);
+  });
+
+  /// The four days of a beach and its card.
+  Future<BeachDetail> coastalBeach(String id) => guardApi(() async {
+    final r = await _dio.get<Map<String, Object?>>(
+      '/api/v1/coastal/beaches/${Uri.encodeComponent(id)}',
+      options: Options(extra: {kPublicEndpoint: true}),
+    );
+    return BeachDetail.fromJson(r.data!);
+  });
+
+  /// "I am at this beach": a random code of the day, no account and no position.
+  Future<void> coastalPresence(String id, String token) => guardApi(() async {
+    await _dio.post<void>(
+      '/api/v1/coastal/beaches/${Uri.encodeComponent(id)}/presence',
+      data: {'token': token},
+      options: Options(extra: {kPublicEndpoint: true}),
     );
   });
 

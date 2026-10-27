@@ -6071,4 +6071,172 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get staffKept => 'Kept on the phone: sent when the network is back.';
+
+  @override
+  String get beachesTitle => 'Beaches today';
+
+  @override
+  String get beachesHint => 'The colour of each beach and why (drowning risk)';
+
+  @override
+  String get beachesSimBanner =>
+      '[SIM] Simulated marine weather: these colours are for a trial, not real. In an emergency call 198.';
+
+  @override
+  String get beachesWarnToggle => 'Warn me near a yellow or red beach';
+
+  @override
+  String get beachesWarnHint =>
+      'Computed on this phone; your position is not sent.';
+
+  @override
+  String beachesDanger(String name, String level, String distance) {
+    return 'You are $distance from $name: $level';
+  }
+
+  @override
+  String get beachesEmpty => 'No beach data yet.';
+
+  @override
+  String get beachesNoPosition =>
+      'Location is off: beaches are listed by name.';
+
+  @override
+  String get beachesMapLabel => 'Map of the beaches coloured by drowning risk';
+
+  @override
+  String get beachLevelRed => 'Red: high risk';
+
+  @override
+  String get beachLevelYellow => 'Yellow: caution';
+
+  @override
+  String get beachLevelGreen => 'Green: normal';
+
+  @override
+  String get beachLevelUnknown => 'Not computed';
+
+  @override
+  String beachScore(int score) {
+    return 'Score $score/100';
+  }
+
+  @override
+  String beachFactorWaves(String value) {
+    return 'Waves $value m';
+  }
+
+  @override
+  String beachFactorOnshore(String value) {
+    return 'Wind from the sea $value km/h';
+  }
+
+  @override
+  String beachFactorCurrent(String value) {
+    return 'Current $value km/h';
+  }
+
+  @override
+  String get beachFactorSeason => 'Bathing season or heat';
+
+  @override
+  String get beachFactorCrowd => 'Very crowded';
+
+  @override
+  String get beachFactorUnguarded => 'No lifeguards';
+
+  @override
+  String beachFactorDrownings(String value) {
+    return 'Past drownings nearby ($value)';
+  }
+
+  @override
+  String get beachDecisionNote =>
+      'This colour helps you decide; always follow the lifeguards and the flags on the beach.';
+
+  @override
+  String get beachDays => 'Next days';
+
+  @override
+  String beachWaves(String value) {
+    return 'Waves $value m';
+  }
+
+  @override
+  String beachSeaTemp(String value) {
+    return 'Sea $value °C';
+  }
+
+  @override
+  String get beachCardTitle => 'Beach card';
+
+  @override
+  String get beachCardClassification => 'Classification';
+
+  @override
+  String get beachCardBlueFlag => 'Blue Flag';
+
+  @override
+  String get beachCardGuarded => 'Lifeguards';
+
+  @override
+  String get beachCardGuardHours => 'Lifeguard hours';
+
+  @override
+  String get beachCardSand => 'Sand';
+
+  @override
+  String get beachCardSlope => 'Slope';
+
+  @override
+  String get beachCardDepth => 'Depth';
+
+  @override
+  String get beachCardCurrents => 'Known currents';
+
+  @override
+  String get beachCardCrowd => 'Crowd';
+
+  @override
+  String get beachCardUsage => 'Use';
+
+  @override
+  String get beachCardPeakSeason => 'Peak season';
+
+  @override
+  String get beachCardWaterQuality => 'Water quality';
+
+  @override
+  String get beachYes => 'Yes';
+
+  @override
+  String get beachNo => 'No';
+
+  @override
+  String beachSource(String source) {
+    return 'Source: $source';
+  }
+
+  @override
+  String get beachPresenceToggle => 'Count me when I say I am at a beach';
+
+  @override
+  String get beachPresenceHint =>
+      'Anonymous: a random code of the day, no account and no position. It helps the rescue teams plan.';
+
+  @override
+  String get beachPresenceButton => 'I am at this beach';
+
+  @override
+  String get beachPresenceSent => 'Thank you, you are counted for 30 minutes.';
+
+  @override
+  String nearestByRoad(int minutes) {
+    return '$minutes min by road';
+  }
+
+  @override
+  String nearestByRoadEstimate(int minutes) {
+    return 'about $minutes min by road (estimate)';
+  }
 }
