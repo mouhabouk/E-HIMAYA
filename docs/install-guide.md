@@ -341,6 +341,22 @@ docker compose --env-file .env -f infra/compose.yml run --rm -v "$PWD/data/osm:/
 قابلا للاسترجاع، ثم تمحوه مهمة الاحتفاظ. قبل وصول القوائم الرسمية يمكن استيراد ملفات
 `data/sim-layers` في طبقات معلَّمة «بيانات تقريبية **[SIM]**».
 
+### السلامة الساحلية (المرحلة L1b)
+
+بعد `alembic upgrade head` (0054) ونشر طبقة الشواطئ `osm_beaches`، يحسب العامل خطر الغرق لكل شاطئ كل ساعة من الطقس
+البحري. القيم الافتراضية في `.env.example` تكفي:
+
+```bash
+MARINE_API_URL=https://marine-api.open-meteo.com   # Open-Meteo Marine، دون مفتاح (CC BY 4.0)
+COASTAL_LAYER_KEY=osm_beaches                       # الطبقة التي تُعدّ شواطئ
+COASTAL_REFRESH_INTERVAL_S=3600                     # دورة التحديث
+COASTAL_MAX_BEACHES_PER_CYCLE=300
+RETENTION_COASTAL_PRESENCE_HOURS=24                 # محو «أنا في الشاطئ» المجهول
+```
+
+يحتاج الخادم الوصول إلى `marine-api.open-meteo.com` (HTTPS). دون ذلك، أو مع `WEATHER_PROVIDER=sim`، يعمل المحاكي وتظهر
+الشاشات بشارة **[SIM]**. تُعدَّل قواعد الخطر وعتباتها من صفحة «السلامة الساحلية» في اللوحة (اللجنة المركزية).
+
 ## 10. خادم GPU (اختياري)
 
 | المكون | المصدر |

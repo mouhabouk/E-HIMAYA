@@ -26,6 +26,9 @@ rectangle "Application mobile e-Himaya" {
   usecase "Consulter points et badges" as A16
   usecase "Contacter l'ONPC (non urgent)" as A17
   usecase "Exporter / supprimer\nses données" as A18
+  usecase "Voir les plages du jour\n(couleur et raisons, L1b)" as A19
+  usecase "Être averti près d'une\nplage dangereuse (accord)" as A20
+  usecase "Se compter « à la plage »\n(anonyme, accord)" as A21
 }
 ANO --> A1
 ANO --> A3
@@ -33,6 +36,7 @@ ANO --> A7
 ANO --> A8
 ANO --> A9
 ANO --> A10
+ANO --> A19
 CIT --> A2
 CIT --> A11
 CIT --> A12
@@ -46,6 +50,8 @@ A3 <.. A5 : <<extend>>
 A3 <.. A6 : <<extend>>
 A3 <.. A15 : <<extend>>
 A15 ..> A14 : <<include>>
+A19 <.. A20 : <<extend>>
+A19 <.. A21 : <<extend>>
 A3 --> OPS
 A12 --> REL
 @enduml

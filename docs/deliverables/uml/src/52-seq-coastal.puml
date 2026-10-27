@@ -1,0 +1,37 @@
+@startuml
+!include style.iuml
+title Séquence : risque de noyade du jour, alerte côtière et plages dans l'application (L1b)
+autonumber
+participant "Worker\n(chaque heure)" as WRK
+participant "Open-Meteo Marine\nou simulateur [SIM]" as MAR
+database "PostgreSQL\n(schéma coastal)" as DB
+participant "API" as API
+participant "Tableau de bord\n(Sécurité côtière)" as UI
+actor "Salle régionale" as OPS
+actor "Comité central" as CC
+actor "Citoyen (app)" as CIT
+== Calcul ==
+WRK -> DB : plages publiées dues (≤ 300 par cycle)
+WRK -> MAR : vagues, mer, courant (par lots, 429 = arrêt)
+MAR --> WRK : valeurs horaires
+WRK -> DB : heure marine
+WRK -> WRK : règles déclarées : points et facteurs\n(jour + 3 jours, 10 h à 19 h)
+WRK -> DB : risque du jour (vert | jaune | rouge)
+alt la plage devient jaune ou rouge
+  WRK -> DB : alerte côtière
+  WRK -> UI : événement en direct « coastal.alert »
+end
+== Salle ==
+OPS -> UI : Sécurité côtière (filtres, carte, chaleur)
+UI -> API : GET /staff/coastal/overview (portée du compte)
+API --> UI : indicateurs, top 10, par gouvernorat
+OPS -> API : POST /staff/coastal/alerts/{id}/ack
+OPS -> API : GET /staff/coastal/bulletin.pdf
+CC -> API : PUT /staff/coastal/settings (seuils, audit)
+== Citoyen ==
+CIT -> API : GET /coastal/beaches?day=
+API --> CIT : couleurs, raisons, rayon d'avertissement
+CIT -> CIT : avec accord : position comparée sur le téléphone\n(la position n'est pas envoyée)
+CIT -> API : avec un 2e accord : POST /coastal/beaches/{id}/presence\n{jeton aléatoire du jour}
+API -> DB : présence anonyme (compte 30 min, effacée après 24 h)
+@enduml
