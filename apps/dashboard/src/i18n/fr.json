@@ -4148,7 +4148,18 @@
     "comparisonTitle": "Rapport de comparaison",
     "reason": "Motif",
     "decidedBy": "Rendue par",
-    "certificate": "Certificat de prévention"
+    "certificate": "Certificat de prévention",
+    "onPhone": "Sur le téléphone",
+    "fieldTitle": "Sur site : signatures et photos",
+    "signaturesTitle": "Signatures",
+    "noSignature": "Sans signature",
+    "photosTitle": "Photos ({{count}})",
+    "generalPhotos": "Photos générales",
+    "photoAlt": "Photo prise sur site : {{item}}",
+    "signature": {
+      "inspector": "Signature de l’inspecteur",
+      "representative": "Signature du représentant"
+    }
   },
   "crew": {
     "pageTitle": "Équipes de garde",

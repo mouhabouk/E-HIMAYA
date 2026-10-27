@@ -5738,4 +5738,350 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get staffNoNames => 'sans noms';
+
+  @override
+  String get prevVisitsTitle => 'Visites de prévention';
+
+  @override
+  String get prevVisitsEmpty =>
+      'Aucune visite programmée dans votre gouvernorat.';
+
+  @override
+  String get prevMine => 'À moi';
+
+  @override
+  String get prevTakenByOther => 'Prise par un autre inspecteur';
+
+  @override
+  String get prevOnPhone => 'Sur le téléphone';
+
+  @override
+  String prevScheduledOn(String date) {
+    return 'Le $date';
+  }
+
+  @override
+  String get prevNoDate => 'Sans date';
+
+  @override
+  String get prevTake => 'Je la prends';
+
+  @override
+  String get prevTakeHelp =>
+      'La visite est gardée chiffrée sur votre téléphone : vous travaillez sur site même sans réseau.';
+
+  @override
+  String get prevStartGrid => 'Commencer l’inspection';
+
+  @override
+  String get prevContinueGrid => 'Continuer l’inspection';
+
+  @override
+  String get prevGridTitle => 'Grille d’inspection';
+
+  @override
+  String get prevSignTitle => 'Présents et signatures';
+
+  @override
+  String get prevDecisionTitle => 'Décision';
+
+  @override
+  String prevPending(int count) {
+    return '$count en attente d’envoi';
+  }
+
+  @override
+  String get prevSendNow => 'Envoyer maintenant';
+
+  @override
+  String get prevSavedOffline =>
+      'Gardé sur le téléphone, envoyé au retour du réseau.';
+
+  @override
+  String prevDeclared(String value) {
+    return 'Déclaré : $value';
+  }
+
+  @override
+  String get prevAllConform => 'Tout conforme';
+
+  @override
+  String get prevObserved => 'Constaté';
+
+  @override
+  String get prevResultConform => 'Conforme';
+
+  @override
+  String get prevResultNonconform => 'Non conforme';
+
+  @override
+  String get prevResultNotChecked => 'Non vérifié';
+
+  @override
+  String get prevReasonMissing => 'Absent';
+
+  @override
+  String get prevReasonBroken => 'Hors service';
+
+  @override
+  String get prevReasonExpired => 'Périmé';
+
+  @override
+  String get prevReasonBlocked => 'Obstrué';
+
+  @override
+  String get prevReasonInsufficient => 'Insuffisant';
+
+  @override
+  String get prevReasonNotAsPlan => 'Non conforme au plan';
+
+  @override
+  String get prevNeedsDetail => 'Choisissez un motif ou corrigez le nombre';
+
+  @override
+  String get prevNoteOptional => 'Remarque (facultatif)';
+
+  @override
+  String get prevPhoto => 'Photo';
+
+  @override
+  String prevPhotos(int count) {
+    return 'Photos : $count';
+  }
+
+  @override
+  String get prevPhotoLimit => '20 photos au plus par visite.';
+
+  @override
+  String get prevGeneral => 'Photo générale';
+
+  @override
+  String prevSummary(int conform, int nonconform, int notChecked) {
+    return '$conform conformes · $nonconform non conformes · $notChecked non vérifiés';
+  }
+
+  @override
+  String prevSuggested(String decision) {
+    return 'Décision suggérée : $decision';
+  }
+
+  @override
+  String get prevNextSign => 'Suivant : signatures';
+
+  @override
+  String get prevAttendees => 'Présents';
+
+  @override
+  String get prevRepresentative => 'Représentant de l’établissement';
+
+  @override
+  String get prevRepresentativeName => 'Nom du représentant';
+
+  @override
+  String get prevRoleDirector => 'Directeur';
+
+  @override
+  String get prevRoleSafetyOfficer => 'Responsable sécurité';
+
+  @override
+  String get prevRoleManager => 'Gérant';
+
+  @override
+  String get prevRoleGuard => 'Agent de gardiennage';
+
+  @override
+  String get prevRoleTechnician => 'Technicien';
+
+  @override
+  String get prevSignInspector => 'Signature de l’inspecteur';
+
+  @override
+  String get prevSignRepresentative => 'Signature du représentant';
+
+  @override
+  String get prevSignHere => 'Signez ici avec le doigt';
+
+  @override
+  String get prevClear => 'Effacer';
+
+  @override
+  String get prevSigned => 'Signé';
+
+  @override
+  String get prevSignOff => 'Clore et envoyer l’inspection';
+
+  @override
+  String get prevSignMissing =>
+      'Les deux signatures et le nom du représentant sont requis.';
+
+  @override
+  String prevDetailMissing(int count) {
+    return 'Points non conformes sans motif : $count';
+  }
+
+  @override
+  String get prevInspectionSent => 'Inspection envoyée, procès-verbal établi.';
+
+  @override
+  String get prevInspectionQueued =>
+      'Inspection gardée, envoyée au retour du réseau.';
+
+  @override
+  String get prevValidFor => 'Valable';
+
+  @override
+  String prevYears(int years) {
+    String _temp0 = intl.Intl.pluralLogic(
+      years,
+      locale: localeName,
+      other: '$years ans',
+      one: '1 an',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get prevReservations => 'Réserves';
+
+  @override
+  String get prevReservationsHelp =>
+      'Proposées à partir des points non conformes ; retirez ce qui ne s’applique pas.';
+
+  @override
+  String get prevDueIn => 'Délai';
+
+  @override
+  String prevMonths(int months) {
+    String _temp0 = intl.Intl.pluralLogic(
+      months,
+      locale: localeName,
+      other: '$months mois',
+      one: '1 mois',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get prevRefusalReason => 'Motif du refus';
+
+  @override
+  String get prevRefuseDanger => 'Danger grave pour les personnes';
+
+  @override
+  String get prevRefuseExits => 'Issues inutilisables';
+
+  @override
+  String get prevRefuseEquipment => 'Moyens de secours insuffisants';
+
+  @override
+  String get prevRefuseDocuments => 'Documents de sécurité absents';
+
+  @override
+  String get prevSendDecision => 'Envoyer la décision';
+
+  @override
+  String get prevDecisionSent => 'Décision envoyée.';
+
+  @override
+  String get prevDecisionQueued =>
+      'Décision gardée, envoyée après l’inspection au retour du réseau.';
+
+  @override
+  String get prevDecisionAfterInspection =>
+      'La décision vient après la clôture de l’inspection.';
+
+  @override
+  String prevCertificate(String code) {
+    return 'Certificat $code';
+  }
+
+  @override
+  String get prevErrTaken => 'Un autre inspecteur a pris cette visite.';
+
+  @override
+  String get prevErrTooManyPhotos => 'Cette visite a déjà 20 photos.';
+
+  @override
+  String get prevErrSignature => 'Signature invalide, signez à nouveau.';
+
+  @override
+  String get prevErrValidUntil => 'Durée de validité refusée.';
+
+  @override
+  String get prevErrState => 'L’état de la visite a changé au tableau de bord.';
+
+  @override
+  String get prevSectionEquipment => 'Équipements de sécurité';
+
+  @override
+  String get prevSectionSite => 'Constat sur site';
+
+  @override
+  String get prevSimGrid =>
+      '[SIM] Points de constat : modèle en attente de la grille officielle de l’Office';
+
+  @override
+  String prevItemHazmat(int n) {
+    return 'Matière dangereuse $n';
+  }
+
+  @override
+  String get prevItemCapacity => 'Capacité d’accueil';
+
+  @override
+  String get prevItemFloors => 'Nombre d’étages';
+
+  @override
+  String get prevItemHeight => 'Hauteur (m)';
+
+  @override
+  String get prevItemAddress => 'Adresse';
+
+  @override
+  String get prevItemFamily => 'Famille';
+
+  @override
+  String get prevItemCategory => 'Catégorie';
+
+  @override
+  String get prevItemEvacuation => 'Points de rassemblement';
+
+  @override
+  String get prevItemRepresentative => 'Représentant de l’équipe';
+
+  @override
+  String get prevItemMembers => 'Membres de l’équipe';
+
+  @override
+  String get prevItemSafetyFile => 'Dossier de sécurité';
+
+  @override
+  String get prevItemSafetyPlan => 'Plan de sécurité';
+
+  @override
+  String get prevItemExits => 'Issues de secours dégagées';
+
+  @override
+  String get prevItemSignage => 'Signalisation';
+
+  @override
+  String get prevItemLighting => 'Éclairage de secours en état';
+
+  @override
+  String get prevItemAlarm => 'Essai de l’alarme';
+
+  @override
+  String get prevItemExtinguishers => 'Extincteurs accessibles';
+
+  @override
+  String get prevItemElectrical => 'Installations électriques';
+
+  @override
+  String get prevDeclaredNone => 'Rien';
+
+  @override
+  String get prevYes => 'Oui';
+
+  @override
+  String get prevNo => 'Non';
 }

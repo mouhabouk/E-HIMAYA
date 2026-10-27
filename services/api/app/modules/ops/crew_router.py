@@ -1,8 +1,9 @@
 """Staff app endpoints (phases P4a and P4b, docs/phase-p4/design-staff.md §4 and §5), the room's view of devices,
 shifts and alerts, and the Office's report templates.
 
-``/api/v1/crew/*`` is for team leaders only (staff realm, second factor, a gouvernorat). Every call but the device
-registration names the phone in ``X-Staff-Device``; a revoked phone gets ``410 device_revoked``.
+``/api/v1/crew/*`` is for team leaders (staff realm, second factor, a gouvernorat); since phase P4c inspectors
+(``org_auditor``) register their phone the same way for prevention visits (``/api/v1/crew/prevention/*``). Every call
+but the device registration names the phone in ``X-Staff-Device``; a revoked phone gets ``410 device_revoked``.
 """
 
 import uuid
@@ -25,6 +26,8 @@ router = APIRouter(prefix="/api/v1/crew", tags=["crew"])
 staff_router = APIRouter(prefix="/api/v1/staff", tags=["crew"])
 
 Leader = Annotated[Principal, Depends(require_roles(Role.TEAM_LEADER))]
+# Who may hold a staff phone: team leaders, and inspectors for prevention visits (P4c).
+FieldStaff = Annotated[Principal, Depends(require_roles(*crew.FIELD_ROLES))]
 Reader = Annotated[Principal, Depends(require_roles(*READ_ROLES))]
 DeviceAdmin = Annotated[Principal, Depends(require_roles(Role.REGIONAL_ACCOUNT_ADMIN, Role.SECURITY_ADMIN))]
 # The room marks a team's alert seen (operations, field command, central command).
@@ -38,11 +41,16 @@ async def _device(principal: Leader, session: Session, device_id: DeviceId = Non
     return await crew.current_device(session, principal, device_id)
 
 
+async def _field_device(principal: FieldStaff, session: Session, device_id: DeviceId = None) -> StaffDevice:
+    return await crew.current_device(session, principal, device_id)
+
+
 Device = Annotated[StaffDevice, Depends(_device)]
+FieldDevice = Annotated[StaffDevice, Depends(_field_device)]
 
 
 @router.post("/devices", response_model=schemas.DeviceOut, status_code=status.HTTP_201_CREATED)
-async def register_device(principal: Leader, session: Session, body: schemas.DeviceIn) -> schemas.DeviceOut:
+async def register_device(principal: FieldStaff, session: Session, body: schemas.DeviceIn) -> schemas.DeviceOut:
     device = await crew.register_device(session, principal, body)
     await audit.record(
         session,
@@ -58,7 +66,7 @@ async def register_device(principal: Leader, session: Session, body: schemas.Dev
 
 @router.patch("/devices/current", response_model=schemas.DeviceOut)
 async def update_device(
-    principal: Leader, session: Session, device: Device, body: schemas.DevicePatch
+    principal: FieldStaff, session: Session, device: FieldDevice, body: schemas.DevicePatch
 ) -> schemas.DeviceOut:
     if body.push_token is not None:
         device.push_token = body.push_token
@@ -69,10 +77,11 @@ async def update_device(
 
 
 @router.get("/me", response_model=schemas.CrewMe)
-async def me(principal: Leader, session: Session, device: Device) -> schemas.CrewMe:
+async def me(principal: FieldStaff, session: Session, device: FieldDevice) -> schemas.CrewMe:
     shift = await crew.open_shift(session, principal)
     out = schemas.CrewMe(
         name=audit.name_of(principal),
+        roles=[r.value for r in crew.FIELD_ROLES if r in principal.roles],
         gouvernorat_code=crew.gouvernorat_of(principal),
         device=crew.device_out(device, on_shift=shift is not None and shift.device_id == device.id),
         shift=await crew.shift_out(session, shift) if shift is not None else None,

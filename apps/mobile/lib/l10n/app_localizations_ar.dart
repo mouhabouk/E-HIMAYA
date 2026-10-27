@@ -5615,4 +5615,349 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get staffNoNames => 'دون أسماء';
+
+  @override
+  String get prevVisitsTitle => 'زيارات الوقاية';
+
+  @override
+  String get prevVisitsEmpty => 'لا زيارات مبرمجة في ولايتك.';
+
+  @override
+  String get prevMine => 'لي';
+
+  @override
+  String get prevTakenByOther => 'عند مفقّد آخر';
+
+  @override
+  String get prevOnPhone => 'على الهاتف';
+
+  @override
+  String prevScheduledOn(String date) {
+    return 'يوم $date';
+  }
+
+  @override
+  String get prevNoDate => 'دون تاريخ';
+
+  @override
+  String get prevTake => 'آخذها وأنزّلها';
+
+  @override
+  String get prevTakeHelp =>
+      'تُحفظ الزيارة على هاتفك مشفّرة، فتعمل في الموقع ولو دون اتصال.';
+
+  @override
+  String get prevStartGrid => 'ابدأ التفقد';
+
+  @override
+  String get prevContinueGrid => 'واصل التفقد';
+
+  @override
+  String get prevGridTitle => 'شبكة التفقد';
+
+  @override
+  String get prevSignTitle => 'الحاضرون والتوقيع';
+
+  @override
+  String get prevDecisionTitle => 'القرار';
+
+  @override
+  String prevPending(int count) {
+    return '$count في انتظار الإرسال';
+  }
+
+  @override
+  String get prevSendNow => 'أرسل الآن';
+
+  @override
+  String get prevSavedOffline => 'محفوظ على الهاتف، يُرسل عند عودة الاتصال.';
+
+  @override
+  String prevDeclared(String value) {
+    return 'المصرَّح به: $value';
+  }
+
+  @override
+  String get prevAllConform => 'الكل مطابق';
+
+  @override
+  String get prevObserved => 'المعاين';
+
+  @override
+  String get prevResultConform => 'مطابق';
+
+  @override
+  String get prevResultNonconform => 'غير مطابق';
+
+  @override
+  String get prevResultNotChecked => 'لم يُتفقَّد';
+
+  @override
+  String get prevReasonMissing => 'غير موجود';
+
+  @override
+  String get prevReasonBroken => 'معطّل';
+
+  @override
+  String get prevReasonExpired => 'منتهي الصلاحية';
+
+  @override
+  String get prevReasonBlocked => 'مسدود';
+
+  @override
+  String get prevReasonInsufficient => 'ناقص';
+
+  @override
+  String get prevReasonNotAsPlan => 'غير مطابق للمخطط';
+
+  @override
+  String get prevNeedsDetail => 'اختر سببا أو عدّل العدد';
+
+  @override
+  String get prevNoteOptional => 'ملاحظة (اختياري)';
+
+  @override
+  String get prevPhoto => 'صورة';
+
+  @override
+  String prevPhotos(int count) {
+    return 'الصور: $count';
+  }
+
+  @override
+  String get prevPhotoLimit => '20 صورة على الأكثر لكل زيارة.';
+
+  @override
+  String get prevGeneral => 'صورة عامة';
+
+  @override
+  String prevSummary(int conform, int nonconform, int notChecked) {
+    return '$conform مطابق · $nonconform غير مطابق · $notChecked لم يُتفقَّد';
+  }
+
+  @override
+  String prevSuggested(String decision) {
+    return 'القرار المقترح: $decision';
+  }
+
+  @override
+  String get prevNextSign => 'التالي: التوقيع';
+
+  @override
+  String get prevAttendees => 'الحاضرون';
+
+  @override
+  String get prevRepresentative => 'ممثل المؤسسة';
+
+  @override
+  String get prevRepresentativeName => 'اسم الممثل';
+
+  @override
+  String get prevRoleDirector => 'المدير';
+
+  @override
+  String get prevRoleSafetyOfficer => 'مسؤول السلامة';
+
+  @override
+  String get prevRoleManager => 'المسيّر';
+
+  @override
+  String get prevRoleGuard => 'عون الحراسة';
+
+  @override
+  String get prevRoleTechnician => 'التقني';
+
+  @override
+  String get prevSignInspector => 'توقيع المفقِّد';
+
+  @override
+  String get prevSignRepresentative => 'توقيع ممثل المؤسسة';
+
+  @override
+  String get prevSignHere => 'وقّع هنا بإصبعك';
+
+  @override
+  String get prevClear => 'امسح';
+
+  @override
+  String get prevSigned => 'موقَّع';
+
+  @override
+  String get prevSignOff => 'أغلق التفقد وأرسله';
+
+  @override
+  String get prevSignMissing => 'يلزم التوقيعان واسم الممثل.';
+
+  @override
+  String prevDetailMissing(int count) {
+    return 'بنود غير مطابقة دون سبب: $count';
+  }
+
+  @override
+  String get prevInspectionSent => 'أُرسل التفقد وصدر المحضر.';
+
+  @override
+  String get prevInspectionQueued => 'التفقد محفوظ، يُرسل عند عودة الاتصال.';
+
+  @override
+  String get prevValidFor => 'صالحة لمدة';
+
+  @override
+  String prevYears(int years) {
+    String _temp0 = intl.Intl.pluralLogic(
+      years,
+      locale: localeName,
+      other: '$years سنة',
+      few: '$years سنوات',
+      two: 'سنتان',
+      one: 'سنة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get prevReservations => 'التحفظات';
+
+  @override
+  String get prevReservationsHelp =>
+      'مقترحة من البنود غير المطابقة؛ أزل ما لا يلزم.';
+
+  @override
+  String get prevDueIn => 'الأجل';
+
+  @override
+  String prevMonths(int months) {
+    String _temp0 = intl.Intl.pluralLogic(
+      months,
+      locale: localeName,
+      other: '$months شهرا',
+      few: '$months أشهر',
+      two: 'شهران',
+      one: 'شهر',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get prevRefusalReason => 'سبب الرفض';
+
+  @override
+  String get prevRefuseDanger => 'خطر جسيم على الأشخاص';
+
+  @override
+  String get prevRefuseExits => 'المخارج غير صالحة';
+
+  @override
+  String get prevRefuseEquipment => 'تجهيزات الإطفاء غير كافية';
+
+  @override
+  String get prevRefuseDocuments => 'وثائق السلامة غائبة';
+
+  @override
+  String get prevSendDecision => 'أرسل القرار';
+
+  @override
+  String get prevDecisionSent => 'أُرسل القرار.';
+
+  @override
+  String get prevDecisionQueued =>
+      'القرار محفوظ، يُرسل بعد التفقد عند عودة الاتصال.';
+
+  @override
+  String get prevDecisionAfterInspection => 'القرار بعد إغلاق التفقد.';
+
+  @override
+  String prevCertificate(String code) {
+    return 'الشهادة $code';
+  }
+
+  @override
+  String get prevErrTaken => 'أخذ مفقّد آخر هذه الزيارة.';
+
+  @override
+  String get prevErrTooManyPhotos => 'بلغت هذه الزيارة 20 صورة.';
+
+  @override
+  String get prevErrSignature => 'التوقيع غير صالح، أعد التوقيع.';
+
+  @override
+  String get prevErrValidUntil => 'مدة الصلاحية غير مقبولة.';
+
+  @override
+  String get prevErrState => 'تغيّرت حالة الزيارة في اللوحة.';
+
+  @override
+  String get prevSectionEquipment => 'تجهيزات السلامة';
+
+  @override
+  String get prevSectionSite => 'المعاينة في الموقع';
+
+  @override
+  String get prevSimGrid =>
+      '[SIM] بنود المعاينة نموذج في انتظار شبكة الديوان الرسمية';
+
+  @override
+  String prevItemHazmat(int n) {
+    return 'مادة خطرة $n';
+  }
+
+  @override
+  String get prevItemCapacity => 'طاقة الاستيعاب';
+
+  @override
+  String get prevItemFloors => 'عدد الطوابق';
+
+  @override
+  String get prevItemHeight => 'الارتفاع (م)';
+
+  @override
+  String get prevItemAddress => 'العنوان';
+
+  @override
+  String get prevItemFamily => 'عائلة التصنيف';
+
+  @override
+  String get prevItemCategory => 'الصنف';
+
+  @override
+  String get prevItemEvacuation => 'نقاط الإخلاء';
+
+  @override
+  String get prevItemRepresentative => 'ممثل فريق السلامة';
+
+  @override
+  String get prevItemMembers => 'أعضاء فريق السلامة';
+
+  @override
+  String get prevItemSafetyFile => 'ملف السلامة';
+
+  @override
+  String get prevItemSafetyPlan => 'مخطط السلامة';
+
+  @override
+  String get prevItemExits => 'المخارج سالكة';
+
+  @override
+  String get prevItemSignage => 'اللافتات';
+
+  @override
+  String get prevItemLighting => 'إنارة الطوارئ تعمل';
+
+  @override
+  String get prevItemAlarm => 'تجربة الإنذار';
+
+  @override
+  String get prevItemExtinguishers => 'المطافئ في متناول اليد';
+
+  @override
+  String get prevItemElectrical => 'التجهيزات الكهربائية';
+
+  @override
+  String get prevDeclaredNone => 'لا شيء';
+
+  @override
+  String get prevYes => 'نعم';
+
+  @override
+  String get prevNo => 'لا';
 }

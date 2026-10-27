@@ -10029,6 +10029,612 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'no names'**
   String get staffNoNames;
+
+  /// No description provided for @prevVisitsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Prevention visits'**
+  String get prevVisitsTitle;
+
+  /// No description provided for @prevVisitsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No visit scheduled in your governorate.'**
+  String get prevVisitsEmpty;
+
+  /// No description provided for @prevMine.
+  ///
+  /// In en, this message translates to:
+  /// **'Mine'**
+  String get prevMine;
+
+  /// No description provided for @prevTakenByOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Taken by another inspector'**
+  String get prevTakenByOther;
+
+  /// No description provided for @prevOnPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'On the phone'**
+  String get prevOnPhone;
+
+  /// No description provided for @prevScheduledOn.
+  ///
+  /// In en, this message translates to:
+  /// **'On {date}'**
+  String prevScheduledOn(String date);
+
+  /// No description provided for @prevNoDate.
+  ///
+  /// In en, this message translates to:
+  /// **'No date'**
+  String get prevNoDate;
+
+  /// No description provided for @prevTake.
+  ///
+  /// In en, this message translates to:
+  /// **'I take it'**
+  String get prevTake;
+
+  /// No description provided for @prevTakeHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The visit is kept encrypted on your phone: you can work on site without a network.'**
+  String get prevTakeHelp;
+
+  /// No description provided for @prevStartGrid.
+  ///
+  /// In en, this message translates to:
+  /// **'Start the inspection'**
+  String get prevStartGrid;
+
+  /// No description provided for @prevContinueGrid.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue the inspection'**
+  String get prevContinueGrid;
+
+  /// No description provided for @prevGridTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspection grid'**
+  String get prevGridTitle;
+
+  /// No description provided for @prevSignTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Attendees and signatures'**
+  String get prevSignTitle;
+
+  /// No description provided for @prevDecisionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Decision'**
+  String get prevDecisionTitle;
+
+  /// No description provided for @prevPending.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} waiting to be sent'**
+  String prevPending(int count);
+
+  /// No description provided for @prevSendNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Send now'**
+  String get prevSendNow;
+
+  /// No description provided for @prevSavedOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Kept on the phone, sent when the network is back.'**
+  String get prevSavedOffline;
+
+  /// No description provided for @prevDeclared.
+  ///
+  /// In en, this message translates to:
+  /// **'Declared: {value}'**
+  String prevDeclared(String value);
+
+  /// No description provided for @prevAllConform.
+  ///
+  /// In en, this message translates to:
+  /// **'All conforming'**
+  String get prevAllConform;
+
+  /// No description provided for @prevObserved.
+  ///
+  /// In en, this message translates to:
+  /// **'Observed'**
+  String get prevObserved;
+
+  /// No description provided for @prevResultConform.
+  ///
+  /// In en, this message translates to:
+  /// **'Conforming'**
+  String get prevResultConform;
+
+  /// No description provided for @prevResultNonconform.
+  ///
+  /// In en, this message translates to:
+  /// **'Non-conforming'**
+  String get prevResultNonconform;
+
+  /// No description provided for @prevResultNotChecked.
+  ///
+  /// In en, this message translates to:
+  /// **'Not checked'**
+  String get prevResultNotChecked;
+
+  /// No description provided for @prevReasonMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing'**
+  String get prevReasonMissing;
+
+  /// No description provided for @prevReasonBroken.
+  ///
+  /// In en, this message translates to:
+  /// **'Out of order'**
+  String get prevReasonBroken;
+
+  /// No description provided for @prevReasonExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get prevReasonExpired;
+
+  /// No description provided for @prevReasonBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked'**
+  String get prevReasonBlocked;
+
+  /// No description provided for @prevReasonInsufficient.
+  ///
+  /// In en, this message translates to:
+  /// **'Insufficient'**
+  String get prevReasonInsufficient;
+
+  /// No description provided for @prevReasonNotAsPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Not as on the plan'**
+  String get prevReasonNotAsPlan;
+
+  /// No description provided for @prevNeedsDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a reason or correct the count'**
+  String get prevNeedsDetail;
+
+  /// No description provided for @prevNoteOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Note (optional)'**
+  String get prevNoteOptional;
+
+  /// No description provided for @prevPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo'**
+  String get prevPhoto;
+
+  /// No description provided for @prevPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos: {count}'**
+  String prevPhotos(int count);
+
+  /// No description provided for @prevPhotoLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'20 photos at most per visit.'**
+  String get prevPhotoLimit;
+
+  /// No description provided for @prevGeneral.
+  ///
+  /// In en, this message translates to:
+  /// **'General photo'**
+  String get prevGeneral;
+
+  /// No description provided for @prevSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{conform} conforming · {nonconform} non-conforming · {notChecked} not checked'**
+  String prevSummary(int conform, int nonconform, int notChecked);
+
+  /// No description provided for @prevSuggested.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested decision: {decision}'**
+  String prevSuggested(String decision);
+
+  /// No description provided for @prevNextSign.
+  ///
+  /// In en, this message translates to:
+  /// **'Next: signatures'**
+  String get prevNextSign;
+
+  /// No description provided for @prevAttendees.
+  ///
+  /// In en, this message translates to:
+  /// **'Attendees'**
+  String get prevAttendees;
+
+  /// No description provided for @prevRepresentative.
+  ///
+  /// In en, this message translates to:
+  /// **'Institution’s representative'**
+  String get prevRepresentative;
+
+  /// No description provided for @prevRepresentativeName.
+  ///
+  /// In en, this message translates to:
+  /// **'Representative’s name'**
+  String get prevRepresentativeName;
+
+  /// No description provided for @prevRoleDirector.
+  ///
+  /// In en, this message translates to:
+  /// **'Director'**
+  String get prevRoleDirector;
+
+  /// No description provided for @prevRoleSafetyOfficer.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety officer'**
+  String get prevRoleSafetyOfficer;
+
+  /// No description provided for @prevRoleManager.
+  ///
+  /// In en, this message translates to:
+  /// **'Manager'**
+  String get prevRoleManager;
+
+  /// No description provided for @prevRoleGuard.
+  ///
+  /// In en, this message translates to:
+  /// **'Security guard'**
+  String get prevRoleGuard;
+
+  /// No description provided for @prevRoleTechnician.
+  ///
+  /// In en, this message translates to:
+  /// **'Technician'**
+  String get prevRoleTechnician;
+
+  /// No description provided for @prevSignInspector.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspector’s signature'**
+  String get prevSignInspector;
+
+  /// No description provided for @prevSignRepresentative.
+  ///
+  /// In en, this message translates to:
+  /// **'Representative’s signature'**
+  String get prevSignRepresentative;
+
+  /// No description provided for @prevSignHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign here with your finger'**
+  String get prevSignHere;
+
+  /// No description provided for @prevClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get prevClear;
+
+  /// No description provided for @prevSigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Signed'**
+  String get prevSigned;
+
+  /// No description provided for @prevSignOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Close and send the inspection'**
+  String get prevSignOff;
+
+  /// No description provided for @prevSignMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Both signatures and the representative’s name are needed.'**
+  String get prevSignMissing;
+
+  /// No description provided for @prevDetailMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Non-conforming items without a reason: {count}'**
+  String prevDetailMissing(int count);
+
+  /// No description provided for @prevInspectionSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspection sent, report issued.'**
+  String get prevInspectionSent;
+
+  /// No description provided for @prevInspectionQueued.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspection kept, sent when the network is back.'**
+  String get prevInspectionQueued;
+
+  /// No description provided for @prevValidFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid for'**
+  String get prevValidFor;
+
+  /// No description provided for @prevYears.
+  ///
+  /// In en, this message translates to:
+  /// **'{years, plural, =1{1 year} other{{years} years}}'**
+  String prevYears(int years);
+
+  /// No description provided for @prevReservations.
+  ///
+  /// In en, this message translates to:
+  /// **'Reservations'**
+  String get prevReservations;
+
+  /// No description provided for @prevReservationsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Proposed from the non-conforming items; remove what does not apply.'**
+  String get prevReservationsHelp;
+
+  /// No description provided for @prevDueIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Deadline'**
+  String get prevDueIn;
+
+  /// No description provided for @prevMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'{months, plural, =1{1 month} other{{months} months}}'**
+  String prevMonths(int months);
+
+  /// No description provided for @prevRefusalReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason for refusal'**
+  String get prevRefusalReason;
+
+  /// No description provided for @prevRefuseDanger.
+  ///
+  /// In en, this message translates to:
+  /// **'Serious danger to people'**
+  String get prevRefuseDanger;
+
+  /// No description provided for @prevRefuseExits.
+  ///
+  /// In en, this message translates to:
+  /// **'Exits unusable'**
+  String get prevRefuseExits;
+
+  /// No description provided for @prevRefuseEquipment.
+  ///
+  /// In en, this message translates to:
+  /// **'Fire equipment insufficient'**
+  String get prevRefuseEquipment;
+
+  /// No description provided for @prevRefuseDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety documents missing'**
+  String get prevRefuseDocuments;
+
+  /// No description provided for @prevSendDecision.
+  ///
+  /// In en, this message translates to:
+  /// **'Send the decision'**
+  String get prevSendDecision;
+
+  /// No description provided for @prevDecisionSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Decision sent.'**
+  String get prevDecisionSent;
+
+  /// No description provided for @prevDecisionQueued.
+  ///
+  /// In en, this message translates to:
+  /// **'Decision kept, sent after the inspection when the network is back.'**
+  String get prevDecisionQueued;
+
+  /// No description provided for @prevDecisionAfterInspection.
+  ///
+  /// In en, this message translates to:
+  /// **'The decision comes after the inspection is closed.'**
+  String get prevDecisionAfterInspection;
+
+  /// No description provided for @prevCertificate.
+  ///
+  /// In en, this message translates to:
+  /// **'Certificate {code}'**
+  String prevCertificate(String code);
+
+  /// No description provided for @prevErrTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'Another inspector took this visit.'**
+  String get prevErrTaken;
+
+  /// No description provided for @prevErrTooManyPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'This visit already has 20 photos.'**
+  String get prevErrTooManyPhotos;
+
+  /// No description provided for @prevErrSignature.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid signature, sign again.'**
+  String get prevErrSignature;
+
+  /// No description provided for @prevErrValidUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Validity period refused.'**
+  String get prevErrValidUntil;
+
+  /// No description provided for @prevErrState.
+  ///
+  /// In en, this message translates to:
+  /// **'The visit changed on the dashboard.'**
+  String get prevErrState;
+
+  /// No description provided for @prevSectionEquipment.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety equipment'**
+  String get prevSectionEquipment;
+
+  /// No description provided for @prevSectionSite.
+  ///
+  /// In en, this message translates to:
+  /// **'On-site checks'**
+  String get prevSectionSite;
+
+  /// No description provided for @prevSimGrid.
+  ///
+  /// In en, this message translates to:
+  /// **'[SIM] On-site checks: model until the Office’s official grid'**
+  String get prevSimGrid;
+
+  /// No description provided for @prevItemHazmat.
+  ///
+  /// In en, this message translates to:
+  /// **'Hazardous material {n}'**
+  String prevItemHazmat(int n);
+
+  /// No description provided for @prevItemCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Capacity'**
+  String get prevItemCapacity;
+
+  /// No description provided for @prevItemFloors.
+  ///
+  /// In en, this message translates to:
+  /// **'Floors'**
+  String get prevItemFloors;
+
+  /// No description provided for @prevItemHeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Height (m)'**
+  String get prevItemHeight;
+
+  /// No description provided for @prevItemAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get prevItemAddress;
+
+  /// No description provided for @prevItemFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'Family'**
+  String get prevItemFamily;
+
+  /// No description provided for @prevItemCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get prevItemCategory;
+
+  /// No description provided for @prevItemEvacuation.
+  ///
+  /// In en, this message translates to:
+  /// **'Assembly points'**
+  String get prevItemEvacuation;
+
+  /// No description provided for @prevItemRepresentative.
+  ///
+  /// In en, this message translates to:
+  /// **'Team representative'**
+  String get prevItemRepresentative;
+
+  /// No description provided for @prevItemMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'Team members'**
+  String get prevItemMembers;
+
+  /// No description provided for @prevItemSafetyFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety file'**
+  String get prevItemSafetyFile;
+
+  /// No description provided for @prevItemSafetyPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety plan'**
+  String get prevItemSafetyPlan;
+
+  /// No description provided for @prevItemExits.
+  ///
+  /// In en, this message translates to:
+  /// **'Exits clear'**
+  String get prevItemExits;
+
+  /// No description provided for @prevItemSignage.
+  ///
+  /// In en, this message translates to:
+  /// **'Signage'**
+  String get prevItemSignage;
+
+  /// No description provided for @prevItemLighting.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency lighting works'**
+  String get prevItemLighting;
+
+  /// No description provided for @prevItemAlarm.
+  ///
+  /// In en, this message translates to:
+  /// **'Alarm test'**
+  String get prevItemAlarm;
+
+  /// No description provided for @prevItemExtinguishers.
+  ///
+  /// In en, this message translates to:
+  /// **'Extinguishers within reach'**
+  String get prevItemExtinguishers;
+
+  /// No description provided for @prevItemElectrical.
+  ///
+  /// In en, this message translates to:
+  /// **'Electrical installations'**
+  String get prevItemElectrical;
+
+  /// No description provided for @prevDeclaredNone.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get prevDeclaredNone;
+
+  /// No description provided for @prevYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get prevYes;
+
+  /// No description provided for @prevNo.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get prevNo;
 }
 
 class _AppLocalizationsDelegate
