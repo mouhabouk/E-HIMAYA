@@ -18,7 +18,7 @@ from sqlalchemy import cast, func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.security import Principal
+from app.core.security import Principal, Role
 from app.core.storage import get_store
 from app.modules.audit import service as audit
 from app.modules.geo.models import Delegation, Layer, LayerFeature
@@ -69,8 +69,12 @@ def _who(principal: Principal) -> str:
     return audit.name_of(principal) or audit.actor_of(principal)
 
 
+# Roles that may hold a staff phone: team leaders, and inspectors for prevention visits (phase P4c).
+FIELD_ROLES: tuple[Role, ...] = (Role.TEAM_LEADER, Role.ORG_AUDITOR)
+
+
 def gouvernorat_of(principal: Principal) -> int:
-    """Team leaders work for one gouvernorat; an account without one is refused."""
+    """Team leaders and inspectors on a phone work for one gouvernorat; an account without one is refused."""
     if principal.gouvernorat_code is None:
         raise HTTPException(status.HTTP_403_FORBIDDEN, "regional_account_required")
     return principal.gouvernorat_code

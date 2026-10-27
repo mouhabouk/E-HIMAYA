@@ -653,6 +653,8 @@ class CrewResource(BaseModel):
 
 class CrewMe(BaseModel):
     name: str | None
+    # The field roles of the account: ``team_leader`` (shifts, missions), ``org_auditor`` (prevention visits, P4c).
+    roles: list[str] = Field(default_factory=list)
     gouvernorat_code: int
     device: DeviceOut
     shift: ShiftOut | None
