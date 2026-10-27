@@ -13,6 +13,7 @@ import 'package:ehimaya/core/power/scheduling.dart';
 import 'package:ehimaya/core/push/push_messaging.dart';
 import 'package:ehimaya/core/push/push_payload.dart';
 import 'package:ehimaya/core/push/redacted_push.dart';
+import 'package:ehimaya/core/routing/app_router.dart';
 import 'package:ehimaya/core/storage/app_prefs.dart';
 import 'package:ehimaya/core/storage/secure_store.dart';
 import 'package:ehimaya/core/sync/report_queue.dart';
@@ -235,6 +236,22 @@ void main() {
       expect(resolved.body, contains('حريق في مستودع'));
       expect(resolved.body, contains('2.4 km'));
       expect(resolved.data['callout_id'], 'c1');
+    });
+
+    test('team status: fixed words in the phone language (F-APP-38)', () async {
+      final r = await resolver((req) => const FakeResponse(404));
+      final resolved = await r.resolve(
+        PushPayload.parse({
+          'type': 'team_status',
+          'report_id': 'r1',
+          'tracking_code': 'EH-26-61-0000001',
+          'team': 'on_scene',
+          'redacted': '1',
+        }, title: 'e-Himaya')!,
+      );
+      expect(resolved!.body, 'The team has arrived');
+      expect(resolved.title, contains('EH-26-61-0000001'));
+      expect(resolved.route, Routes.reports);
     });
 
     test('report status: tracking code and status label', () async {

@@ -163,3 +163,11 @@ String triageShort(AppLocalizations l10n, Triage t) => switch (t) {
   Triage.red => l10n.staffTriageRedShort,
   Triage.black => l10n.staffTriageBlackShort,
 };
+
+/// After a write: "sent", or "kept on the phone" while writes wait for the network (phase P4d).
+String sentLabel(AppLocalizations l10n, int pending, {bool alert = false}) =>
+    pending > 0
+    ? l10n.staffKept
+    : alert
+    ? l10n.staffAlertSent
+    : l10n.staffSent;

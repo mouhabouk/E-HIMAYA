@@ -19,16 +19,19 @@ abstract class BlobStore {
 }
 
 class FileBlobStore implements BlobStore {
-  FileBlobStore([Future<Directory> Function()? root])
-    : _root = root ?? getApplicationSupportDirectory;
+  FileBlobStore({
+    Future<Directory> Function()? root,
+    this.folder = 'staff_visits',
+  }) : _root = root ?? getApplicationSupportDirectory;
 
   final Future<Directory> Function() _root;
+
+  /// One folder per box: wiping one never touches the other.
+  final String folder;
   Directory? _dir;
 
   Future<Directory> _folder() async {
-    final dir = _dir ??= Directory(
-      p.join((await _root()).path, 'staff_visits'),
-    );
+    final dir = _dir ??= Directory(p.join((await _root()).path, folder));
     if (!await dir.exists()) await dir.create(recursive: true);
     return dir;
   }
@@ -81,39 +84,46 @@ class MemoryBlobStore implements BlobStore {
   Future<List<String>> names() async => [...values.keys];
 }
 
-/// The visits downloaded on the inspector's phone, their drafts and their photos (design §8.2).
-/// Everything is sealed with AES-256-GCM under a key kept in the keystore; erasing that key (sign-out,
-/// remote wipe, five wrong PINs) leaves nothing readable, and the files are deleted too.
-class PreventionBox {
-  PreventionBox(this._blobs, this._secure);
+/// Blobs sealed with AES-256-GCM under a key kept in the keystore ([keyName], listed in
+/// [StaffVault.keys]): erasing that key (sign-out, remote wipe, five wrong PINs) leaves nothing
+/// readable, and the files are deleted too. The prevention visits (phase P4c) and the missions
+/// (phase P4d) each have their own folder and key.
+class SealedBlobs {
+  SealedBlobs(this._blobs, this._secure, this.keyName);
 
-  /// In [StaffVault.keys]: the vault's wipe erases it with the tokens.
-  static const keyName = 'staff_visits_key_v1';
   static final _aes = AesGcm.with256bits();
 
   final BlobStore _blobs;
   final SecureStore _secure;
+  final String keyName;
   SecretKey? _key;
 
-  Future<SecretKey> _secret({bool create = true}) async {
+  Future<SecretKey> _secret() async {
     final known = _key;
     if (known != null) return known;
     final stored = await _secure.read(keyName);
     if (stored != null) return _key = SecretKey(base64.decode(stored));
-    if (!create) throw StateError('no key');
     // A new key: whatever was sealed under a lost one cannot be opened any more.
-    await _clearFiles();
+    await clear();
     final key = await _aes.newSecretKey();
     await _secure.write(keyName, base64.encode(await key.extractBytes()));
     return _key = key;
   }
 
-  Future<List<int>> _seal(List<int> clear) async {
-    final box = await _aes.encrypt(clear, secretKey: await _secret());
-    return box.concatenation();
+  /// False after a wipe: the files left (if any) cannot be opened and are deleted.
+  Future<bool> opened() async {
+    if (await _secure.read(keyName) != null) return true;
+    _key = null;
+    await clear();
+    return false;
   }
 
-  Future<List<int>?> _open(String name) async {
+  Future<void> write(String name, List<int> clear) async {
+    final box = await _aes.encrypt(clear, secretKey: await _secret());
+    await _blobs.write(name, box.concatenation());
+  }
+
+  Future<List<int>?> read(String name) async {
     final sealed = await _blobs.read(name);
     if (sealed == null) return null;
     try {
@@ -128,69 +138,86 @@ class PreventionBox {
     }
   }
 
-  static String _visit(String id) => 'visit-$id.bin';
-  static String _photo(String visitId, String photoId) =>
-      'photo-$visitId-$photoId.bin';
-
-  Future<Map<String, VisitPack>> load() async {
-    if (await _secure.read(keyName) == null) {
-      await _clearFiles();
-      return {};
-    }
-    final out = <String, VisitPack>{};
-    for (final name in await _blobs.names()) {
-      if (!name.startsWith('visit-')) continue;
-      final clear = await _open(name);
-      if (clear == null) continue;
-      final pack = VisitPack.fromJson(
-        jsonDecode(utf8.decode(clear)) as Map<String, dynamic>,
-      );
-      out[pack.visit.id] = pack;
-    }
-    return out;
+  Future<Object?> readJson(String name) async {
+    final clear = await read(name);
+    return clear == null ? null : jsonDecode(utf8.decode(clear));
   }
 
-  Future<void> save(VisitPack pack) async => _blobs.write(
-    _visit(pack.visit.id),
-    await _seal(utf8.encode(jsonEncode(pack.toJson()))),
-  );
+  Future<void> writeJson(String name, Object? value) =>
+      write(name, utf8.encode(jsonEncode(value)));
 
-  Future<void> savePhoto(
-    String visitId,
-    String photoId,
-    List<int> bytes,
-  ) async => _blobs.write(_photo(visitId, photoId), await _seal(bytes));
+  Future<void> delete(String name) => _blobs.delete(name);
 
-  Future<Uint8List?> photo(String visitId, String photoId) async {
-    final clear = await _open(_photo(visitId, photoId));
-    return clear == null ? null : Uint8List.fromList(clear);
-  }
-
-  Future<void> deletePhoto(String visitId, String photoId) =>
-      _blobs.delete(_photo(visitId, photoId));
-
-  /// The visit, its draft and its photos.
-  Future<void> remove(String visitId) async {
-    for (final name in await _blobs.names()) {
-      if (name == _visit(visitId) || name.startsWith('photo-$visitId-')) {
-        await _blobs.delete(name);
-      }
-    }
-  }
+  Future<List<String>> names() => _blobs.names();
 
   Future<void> wipe() async {
     _key = null;
     await _secure.delete(keyName);
-    await _clearFiles();
+    await clear();
   }
 
-  Future<void> _clearFiles() async {
+  Future<void> clear() async {
     for (final name in await _blobs.names()) {
       await _blobs.delete(name);
     }
   }
 }
 
+/// The visits downloaded on the inspector's phone, their drafts and their photos (design §8.2),
+/// sealed under their own key.
+class PreventionBox {
+  PreventionBox(BlobStore blobs, SecureStore secure)
+    : _sealed = SealedBlobs(blobs, secure, keyName);
+
+  /// In [StaffVault.keys]: the vault's wipe erases it with the tokens.
+  static const keyName = 'staff_visits_key_v1';
+
+  final SealedBlobs _sealed;
+
+  static String _visit(String id) => 'visit-$id.bin';
+  static String _photo(String visitId, String photoId) =>
+      'photo-$visitId-$photoId.bin';
+
+  Future<Map<String, VisitPack>> load() async {
+    if (!await _sealed.opened()) return {};
+    final out = <String, VisitPack>{};
+    for (final name in await _sealed.names()) {
+      if (!name.startsWith('visit-')) continue;
+      final json = await _sealed.readJson(name);
+      if (json == null) continue;
+      final pack = VisitPack.fromJson(json as Map<String, dynamic>);
+      out[pack.visit.id] = pack;
+    }
+    return out;
+  }
+
+  Future<void> save(VisitPack pack) =>
+      _sealed.writeJson(_visit(pack.visit.id), pack.toJson());
+
+  Future<void> savePhoto(String visitId, String photoId, List<int> bytes) =>
+      _sealed.write(_photo(visitId, photoId), bytes);
+
+  Future<Uint8List?> photo(String visitId, String photoId) async {
+    final clear = await _sealed.read(_photo(visitId, photoId));
+    return clear == null ? null : Uint8List.fromList(clear);
+  }
+
+  Future<void> deletePhoto(String visitId, String photoId) =>
+      _sealed.delete(_photo(visitId, photoId));
+
+  /// The visit, its draft and its photos.
+  Future<void> remove(String visitId) async {
+    for (final name in await _sealed.names()) {
+      if (name == _visit(visitId) || name.startsWith('photo-$visitId-')) {
+        await _sealed.delete(name);
+      }
+    }
+  }
+
+  Future<void> wipe() => _sealed.wipe();
+}
+
+/// The visits' folder (phase P4c).
 final blobStoreProvider = Provider<BlobStore>((ref) => FileBlobStore());
 
 final preventionBoxProvider = Provider<PreventionBox>(

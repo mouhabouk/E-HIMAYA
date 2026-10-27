@@ -314,14 +314,28 @@ class _SituationScreenState extends ConsumerState<SituationScreen> {
               if (_kinds.contains(k)) k,
           ],
         );
-    if (ok) messenger.showSnackBar(SnackBar(content: Text(l10n.staffSent)));
+    if (ok) {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            sentLabel(l10n, ref.read(staffControllerProvider).pending),
+          ),
+        ),
+      );
+    }
   }
 
   Future<void> _sent(Future<bool> Function() call) async {
     final l10n = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
     if (await call()) {
-      messenger.showSnackBar(SnackBar(content: Text(l10n.staffSent)));
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            sentLabel(l10n, ref.read(staffControllerProvider).pending),
+          ),
+        ),
+      );
     }
   }
 

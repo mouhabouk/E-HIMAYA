@@ -445,6 +445,7 @@ void main() {
           'platform': 'android',
           'locale': 'ar',
           'location_alerts': true,
+          'team_notices': true,
           'lat': 34.7406,
           'lon': 10.7603,
         });
@@ -480,6 +481,7 @@ void main() {
         'platform': 'android',
         'locale': 'fr',
         'location_alerts': false,
+        'team_notices': true,
       });
       expect(put.header('X-Device-Key'), isNotNull);
       expect(put.header('Authorization'), isNull);

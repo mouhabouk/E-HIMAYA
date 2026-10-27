@@ -143,6 +143,9 @@ class _MissionTile extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final code = ref.watch(localeCodeProvider);
     final cat = m.category ?? ReportCategory.other;
+    final waiting = ref.watch(
+      staffControllerProvider.select((s) => s.waiting(m.id)),
+    );
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: NavCard(
@@ -153,6 +156,7 @@ class _MissionTile extends ConsumerWidget {
         subtitle: [
           missionStatusLabel(l10n, m.status),
           placeOf(m, code),
+          if (waiting) l10n.staffWaitingBadge,
         ].where((x) => x.isNotEmpty).join(' · '),
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute<void>(
@@ -165,7 +169,8 @@ class _MissionTile extends ConsumerWidget {
 }
 
 /// New order: covers the whole screen, vibrates, and stays until the leader acknowledges it.
-/// (P4a: inside the open app; over the lock screen in P4c.)
+/// Inside the open app; on a locked phone the mission push opens it full screen (phase P4d,
+/// design §9.4).
 class MissionAlert extends ConsumerStatefulWidget {
   const MissionAlert({super.key, required this.mission});
 

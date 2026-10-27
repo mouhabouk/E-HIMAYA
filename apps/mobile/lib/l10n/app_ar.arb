@@ -1755,5 +1755,17 @@
   "prevItemElectrical": "التجهيزات الكهربائية",
   "prevDeclaredNone": "لا شيء",
   "prevYes": "نعم",
-  "prevNo": "لا"
+  "prevNo": "لا",
+  "staffPending": "{count} في الانتظار، يُرسل عند عودة الشبكة",
+  "staffSendSms": "أرسل برسالة قصيرة",
+  "staffSmsOpened": "فُتح تطبيق الرسائل: اضغط «إرسال».",
+  "staffTrackingTitle": "ء-حماية: مهمة جارية",
+  "staffTrackingText": "يُرسل موقع المركبة إلى قاعة العمليات حتى نهاية المهمة.",
+  "staffMissionChannel": "المهام",
+  "staffWaitingBadge": "في الانتظار",
+  "teamEnRoute": "الفريق في الطريق إليك",
+  "teamOnScene": "وصل الفريق إلى المكان",
+  "teamNoticesSetting": "إعلامي بقدوم الفريق",
+  "teamNoticesHint": "إشعار عند انطلاق الفريق ثم عند وصوله.",
+  "staffKept": "حُفظ على الهاتف، يُرسل عند عودة الشبكة."
 }

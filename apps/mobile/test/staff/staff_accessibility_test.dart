@@ -132,6 +132,47 @@ void main() {
   }
 
   for (final scale in [1.0, 2.0]) {
+    testWidgets('writes waiting without network, with the SMS button, in '
+        'Arabic x$scale', (tester) async {
+      final handle = tester.ensureSemantics();
+      tester.platformDispatcher.textScaleFactorTestValue = scale;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      final server = FakeCrewServer()
+        ..shiftOpen = true
+        ..missions.add(
+          FakeCrewServer.mission(
+            status: 'en_route',
+            acknowledgedAt: '2026-10-26T09:00:10Z',
+          ),
+        );
+      final store = await signedInStore();
+      await StaffVault(store).setPin('123456', 'salt');
+      await pumpStaffApp(
+        tester,
+        server,
+        store: store,
+        locale: 'ar',
+        smsNumber: '+21671000111',
+      );
+      await enterPin(tester, '123456');
+      server.down = true;
+      await tester.ensureVisible(find.byKey(const Key('mission-m-1')));
+      await tester.tap(find.byKey(const Key('mission-m-1')));
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('step-on_scene')),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.tap(find.byKey(const Key('step-on_scene')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('staff-send-sms')), findsOneWidget);
+      await check(tester, 'pending');
+      handle.dispose();
+    });
+  }
+
+  for (final scale in [1.0, 2.0]) {
     testWidgets('prevention visit, grid, signatures and decision in Arabic '
         'x$scale', (tester) async {
       final handle = tester.ensureSemantics();

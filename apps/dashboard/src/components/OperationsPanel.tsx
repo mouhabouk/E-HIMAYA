@@ -25,7 +25,7 @@ import { canCloseIncidents, canDispatch } from "../lib/roles";
 import { queryKeys } from "../lib/staffApi";
 import type { IncidentDetail } from "../lib/types";
 import { useDraft } from "../lib/drafts";
-import { CrewLine, FieldSection, crewTimelineParts } from "./CrewBits";
+import { CrewLine, FieldSection, PositionLine, crewTimelineParts } from "./CrewBits";
 
 /** A recommendation's "open assignment" (phase 7 §3): preselects a resource; the operator still submits. */
 export interface AssignPreset {
@@ -198,6 +198,7 @@ function AssignmentRow({ assignment, canEdit }: { assignment: Assignment; canEdi
             : assignment.volunteer?.phone && <span dir="ltr">{assignment.volunteer.phone}</span>}
         </div>
         {assignment.crew && <CrewLine crew={assignment.crew} />}
+        {assignment.position && <PositionLine position={assignment.position} />}
       </td>
       <td>
         <AssignmentStatusChip status={assignment.status} />

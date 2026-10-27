@@ -42,6 +42,7 @@ class RedactedPushResolver {
           title: _l10n.pushMedicalReferralTitle,
           body: _l10n.pushMedicalReferralBody,
         ),
+        PushKind.teamStatus => _team(p),
         PushKind.medicalOpinion => p.withText(
           title: _l10n.pushMedicalOpinionTitle,
           body: _l10n.pushMedicalOpinionBody,
@@ -100,6 +101,21 @@ class RedactedPushResolver {
       body: parsed == null
           ? _l10n.pushOpenToSee
           : reportStatusLabel(_l10n, parsed),
+    );
+  }
+
+  /// Phase P4d (F-APP-38): fixed words, in the phone's language; the code names the report.
+  PushPayload? _team(PushPayload p) {
+    final code = p.data['tracking_code'];
+    final body = switch (p.data['team']) {
+      'en_route' => _l10n.teamEnRoute,
+      'on_scene' => _l10n.teamOnScene,
+      _ => null,
+    };
+    if (body == null) return null;
+    return p.withText(
+      title: code == null ? null : _l10n.pushReportTitle(code),
+      body: body,
     );
   }
 
