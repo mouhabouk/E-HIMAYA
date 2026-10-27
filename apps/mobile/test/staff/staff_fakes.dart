@@ -1,9 +1,13 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:ehimaya/core/connectivity/connectivity.dart';
 import 'package:ehimaya/core/location/location_service.dart';
 import 'package:ehimaya/core/storage/app_prefs.dart';
 import 'package:ehimaya/core/storage/secure_store.dart';
+import 'package:ehimaya/staff/prevention/prevention_store.dart';
+import 'package:ehimaya/staff/prevention/sign_screen.dart';
 import 'package:ehimaya/staff/staff_app.dart';
 import 'package:ehimaya/staff/staff_capture.dart';
 import 'package:ehimaya/staff/staff_controller.dart';
@@ -31,6 +35,18 @@ class FakeCrewServer {
   int refreshes = 0;
   bool shiftOpen = false;
   final missions = <Map<String, dynamic>>[];
+
+  /// The account's field roles (phase P4c: `org_auditor` for inspectors).
+  List<String> roles = ['team_leader'];
+
+  /// No network at all: every API call fails as a dropped connection.
+  bool down = false;
+
+  /// The name the server gives the inspector who takes a visit.
+  String inspectorName = 'Leila Inspectrice';
+
+  /// Prevention visits of the inspector's scope.
+  final visits = <Map<String, dynamic>>[];
   final writes = <SeenRequest>[];
 
   Dio dio() => Dio()..httpClientAdapter = adapter;
@@ -211,6 +227,7 @@ class FakeCrewServer {
       );
     }
     if (!p.startsWith('/api/v1/crew')) return const FakeResponse(404);
+    if (down) return const FakeResponse.network();
     if (revoked) {
       return const FakeResponse(410, json: {'detail': 'device_revoked'});
     }
@@ -227,6 +244,7 @@ class FakeCrewServer {
             'gouvernorat_code': 11,
             'device': {'id': 'dev-1'},
             'shift': shiftOpen ? _shift : null,
+            'roles': roles,
           },
         );
       case ('GET', '/resources'):
@@ -239,7 +257,18 @@ class FakeCrewServer {
         return FakeResponse(200, json: _shift);
       case ('GET', '/missions'):
         return FakeResponse(200, json: {'items': missions});
+      case ('GET', '/prevention/visits'):
+        return FakeResponse(
+          200,
+          json: [
+            for (final v in visits)
+              if (v['status'] == 'scheduled' || v['status'] == 'inspected') v,
+          ],
+        );
     }
+    final pv = RegExp(r'^/prevention/visits/([^/]+)(?:/(.+))?$')
+        .firstMatch(sub);
+    if (pv != null) return _visit(r, pv.group(1)!, pv.group(2));
     final m = RegExp(r'^/missions/([^/]+)/(.+)$').firstMatch(sub);
     if (m != null && r.method == 'GET' && m.group(2) == 'hospitals') {
       return const FakeResponse(200, json: hospitals);
@@ -350,6 +379,124 @@ class FakeCrewServer {
   }
 }
 
+extension on FakeCrewServer {
+  FakeResponse _visit(SeenRequest r, String id, String? action) {
+    final i = visits.indexWhere((v) => v['id'] == id);
+    if (i < 0) return const FakeResponse(404, json: {'detail': 'not_found'});
+    final v = Map<String, dynamic>.of(visits[i]);
+    if (action == null) return FakeResponse(200, json: v);
+    if (v['taken_by_other'] == true) {
+      return const FakeResponse(409, json: {'detail': 'visit_taken'});
+    }
+    switch (action) {
+      case 'claim':
+        v['mine'] = true;
+        v['inspector_name'] = inspectorName;
+      case 'photos':
+        final q = r.uri.queryParameters;
+        final photos = [...v['photos'] as List];
+        if (!photos.any((x) => (x as Map)['id'] == q['client_id'])) {
+          photos.add({
+            'id': q['client_id'],
+            'item_key': q['item_key'],
+            'content_type': r.header('content-type'),
+            'bytes': r.body?.length ?? 0,
+          });
+        }
+        v['photos'] = photos;
+      case 'inspection':
+        final body = r.json! as Map<String, dynamic>;
+        final items = [
+          for (final x in body['items'] as List) x as Map<String, dynamic>,
+        ];
+        final bad = items.where((x) => x['result'] == 'nonconform').length;
+        final good = items.where((x) => x['result'] == 'conform').length;
+        v['status'] = 'inspected';
+        v['inspected_on'] = body['inspected_on'];
+        v['attendees'] = body['attendees'];
+        v['comparison'] = {
+          'items': items,
+          'conform': good,
+          'nonconform': bad,
+          'not_checked': (v['checklist'] as List).length - good - bad,
+          'suggested': bad > 0 ? 'approved_with_reservations' : 'approved',
+        };
+        v['signatures'] = {
+          'representative_name': body['representative_name'],
+          'representative_role': body['representative_role'],
+        };
+      case 'decision':
+        if (v['status'] != 'inspected') {
+          return const FakeResponse(
+            409,
+            json: {'detail': 'invalid_transition'},
+          );
+        }
+        final body = r.json! as Map<String, dynamic>;
+        v['status'] = 'decided';
+        v['decision'] = body['decision'];
+        v['checklist'] = <Object>[];
+        v['reservations'] = [
+          for (final x in body['reservations'] as List)
+            {...x as Map<String, dynamic>, 'state': 'open'},
+        ];
+        if (body['decision'] != 'refused') {
+          v['certificate'] = {'code': 'EHP-61-0001'};
+        }
+    }
+    visits[i] = v;
+    return FakeResponse(200, json: v);
+  }
+}
+
+/// A visit the Office scheduled, with a small grid built from the declaration.
+Map<String, dynamic> fakeVisit({
+  String id = 'vis-1',
+  String status = 'scheduled',
+  bool mine = false,
+  bool takenByOther = false,
+}) => {
+  'id': id,
+  'org_id': 'org-1',
+  'origin': 'office',
+  'status': status,
+  'org_name': 'Hôtel Les Palmiers',
+  'org_kind': 'tourism',
+  'org_status': 'active',
+  'org_address': 'Route de la plage, Sfax',
+  'org_location': {'lat': 34.74, 'lon': 10.76},
+  'gouvernorat_code': 61,
+  'scheduled_on': '2026-10-27',
+  'inspector_name': 'Cdt Ben Salah',
+  'mine': mine,
+  'taken_by_other': takenByOther,
+  'inspector_on_phone': mine || takenByOther,
+  'comparison': null,
+  'decision': null,
+  'certificate': null,
+  'reservations': <Object>[],
+  'photos': <Object>[],
+  'signatures': null,
+  'has_report': false,
+  'created_at': '2026-10-20T08:00:00Z',
+  'checklist': [
+    {'key': 'building.capacity', 'section': 'building', 'declared': 120},
+    {'key': 'equipment.extinguisher', 'section': 'equipment', 'declared': 8},
+    {'key': 'evacuation.points', 'section': 'evacuation', 'declared': 1},
+    {
+      'key': 'safety_team.representative',
+      'section': 'safety_team',
+      'declared': 'Sami Trabelsi',
+    },
+    {'key': 'site.exits', 'section': 'site', 'declared': null},
+    {'key': 'site.alarm', 'section': 'site', 'declared': null},
+  ],
+};
+
+/// A signature pad that answers at once with a tiny PNG.
+Future<String> fakeSignature(List<List<Offset>> strokes, Size size) async =>
+    base64.encode([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0, 0]);
+
 /// A camera and a microphone that answer at once.
 class FakeCapture implements StaffCapture {
   @override
@@ -381,6 +528,8 @@ Future<void> pumpStaffApp(
   String locale = 'en',
   List<Uri>? launched,
   LocationService? location,
+  MemoryBlobStore? blobs,
+  SignatureEncoder? signature,
 }) async {
   // A tall phone: the forms fit without scrolling.
   tester.view.physicalSize = const Size(1080, 2400);
@@ -404,6 +553,9 @@ Future<void> pumpStaffApp(
           return true;
         }),
         staffCaptureProvider.overrideWithValue(FakeCapture()),
+        blobStoreProvider.overrideWithValue(blobs ?? MemoryBlobStore()),
+        connectivityProvider.overrideWithValue(FakeConnectivity()),
+        signatureEncoderProvider.overrideWithValue(signature ?? fakeSignature),
       ],
       child: StaffApp(clock: (clock ?? TestClock()).call),
     ),

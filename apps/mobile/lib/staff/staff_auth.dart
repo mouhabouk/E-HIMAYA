@@ -172,7 +172,12 @@ class StaffVault {
   static const _device = 'staff_device_v1';
   static const _pin = 'staff_pin_v1';
   static const _failures = 'staff_pin_failures_v1';
-  static const keys = [_tokens, _device, _pin, _failures];
+  static const _roles = 'staff_roles_v1';
+
+  /// The key of the visits kept on the phone (phase P4c): erased with the rest, nothing stays
+  /// readable.
+  static const _visits = 'staff_visits_key_v1';
+  static const keys = [_tokens, _device, _pin, _failures, _roles, _visits];
 
   Future<StaffTokens?> tokens() async {
     final raw = await _store.read(_tokens);
@@ -189,6 +194,16 @@ class StaffVault {
 
   Future<String?> deviceId() => _store.read(_device);
   Future<void> saveDeviceId(String id) => _store.write(_device, id);
+
+  /// The account's field roles from the last `/me`, to open the right home without network.
+  Future<List<String>> roles() async =>
+      (await _store.read(_roles))
+          ?.split(',')
+          .where((r) => r.isNotEmpty)
+          .toList() ??
+      const [];
+  Future<void> saveRoles(List<String> roles) =>
+      _store.write(_roles, roles.join(','));
 
   Future<bool> hasPin() async => await _store.read(_pin) != null;
 

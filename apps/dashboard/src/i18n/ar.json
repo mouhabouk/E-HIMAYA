@@ -4148,7 +4148,18 @@
     "comparisonTitle": "تقرير المقارنة",
     "reason": "السبب",
     "decidedBy": "أصدره",
-    "certificate": "شهادة الوقاية"
+    "certificate": "شهادة الوقاية",
+    "onPhone": "على الهاتف",
+    "fieldTitle": "من الموقع: التوقيعات والصور",
+    "signaturesTitle": "التوقيعات",
+    "noSignature": "دون توقيع",
+    "photosTitle": "الصور ({{count}})",
+    "generalPhotos": "صور عامة",
+    "photoAlt": "صورة من الموقع: {{item}}",
+    "signature": {
+      "inspector": "توقيع المفقِّد",
+      "representative": "توقيع ممثل المؤسسة"
+    }
   },
   "crew": {
     "pageTitle": "فرق المناوبة",

@@ -42,6 +42,57 @@ describe("PreventionPage", () => {
 });
 
 describe("VisitPage", () => {
+  it("shows the visit on the inspector's phone, its signatures and its photos by item", async () => {
+    const visit = inspectedVisit({
+      inspector_name: "Leila Inspectrice",
+      inspector_on_phone: true,
+      signatures: {
+        inspector_name: "Leila Inspectrice",
+        inspector_url: "https://s3.example/sig-i.png",
+        representative_name: "Sami Trabelsi",
+        representative_role: "Directeur",
+        representative_url: "https://s3.example/sig-r.png",
+      },
+      photos: [
+        {
+          id: "p-1",
+          item_key: "site.exits",
+          content_type: "image/jpeg",
+          bytes: 1200,
+          created_by_name: "Leila Inspectrice",
+          device_at: "2026-10-27T09:30:00Z",
+          created_at: "2026-10-27T10:00:00Z",
+          url: "https://s3.example/p-1.jpg",
+        },
+        {
+          id: "p-2",
+          item_key: null,
+          content_type: "image/jpeg",
+          bytes: 900,
+          created_by_name: "Leila Inspectrice",
+          device_at: null,
+          created_at: "2026-10-27T10:01:00Z",
+          url: "https://s3.example/p-2.jpg",
+        },
+      ],
+    });
+    const api = fakeApi({ preventionVisit: vi.fn(() => Promise.resolve(visit)) });
+    renderApp(<VisitPage />, { api, lang: "fr", path: "/orgs/prevention/v-1", route, auth: auditor() });
+    const field = await screen.findByRole("region", { name: "Sur site : signatures et photos" });
+    expect(screen.getByText("Sur le téléphone")).toBeInTheDocument();
+    expect(within(field).getByRole("img", { name: "Signature du représentant" })).toHaveAttribute(
+      "src",
+      "https://s3.example/sig-r.png",
+    );
+    expect(within(field).getByText("Sami Trabelsi · Directeur")).toBeInTheDocument();
+    expect(within(field).getByRole("heading", { name: "Photos (2)" })).toBeInTheDocument();
+    expect(within(field).getByRole("img", { name: "Photo prise sur site : Issues de secours dégagées" })).toHaveAttribute(
+      "src",
+      "https://s3.example/p-1.jpg",
+    );
+    expect(within(field).getByRole("heading", { name: "Photos générales" })).toBeInTheDocument();
+  });
+
   it("schedules a requested visit", async () => {
     const api = fakeApi({
       preventionVisit: vi.fn(() => Promise.resolve(makeVisit())),

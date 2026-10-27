@@ -59,6 +59,9 @@ enum StaffPhase {
   locked,
   noShift,
   onShift,
+
+  /// An inspector without the team leader role: the prevention visits (phase P4c).
+  prevention,
 }
 
 /// Why the phone came back to the sign-in screen.
@@ -298,7 +301,8 @@ class StaffController extends Notifier<StaffState> {
   /// Called after [StaffConfig.lockAfter] in the background: the PIN is asked again.
   void lock() {
     if (state.phase == StaffPhase.noShift ||
-        state.phase == StaffPhase.onShift) {
+        state.phase == StaffPhase.onShift ||
+        state.phase == StaffPhase.prevention) {
       _poll?.cancel();
       state = state.copyWith(phase: StaffPhase.locked, pinError: false);
     }
@@ -325,20 +329,10 @@ class StaffController extends Notifier<StaffState> {
       final out = await call();
       state = state.copyWith(offline: false, lastSync: DateTime.now());
       return out;
-    } on DeviceRevoked {
-      _stop();
-      await _vault.wipe();
-      state = const StaffState(
-        phase: StaffPhase.signedOut,
-        reason: SignOutReason.wiped,
-      );
-    } on StaffSignedOut {
-      _stop();
-      await _vault.wipe();
-      state = const StaffState(
-        phase: StaffPhase.signedOut,
-        reason: SignOutReason.refused,
-      );
+    } on DeviceRevoked catch (e) {
+      await forceSignOut(e);
+    } on StaffSignedOut catch (e) {
+      await forceSignOut(e);
     } on CrewError catch (e) {
       state = state.copyWith(error: e.code, busy: false);
     } on Object catch (e) {
@@ -348,18 +342,48 @@ class StaffController extends Notifier<StaffState> {
     return null;
   }
 
+  /// A revoked phone ([DeviceRevoked]) or a refused sign-in: everything on the phone is erased.
+  Future<void> forceSignOut(Object why) async {
+    _stop();
+    await _vault.wipe();
+    state = StaffState(
+      phase: StaffPhase.signedOut,
+      reason: why is DeviceRevoked
+          ? SignOutReason.wiped
+          : SignOutReason.refused,
+    );
+  }
+
+  /// Another part of the app reached the server, or did not (the connection strip).
+  void network({required bool ok}) => state = ok
+      ? state.copyWith(offline: false, lastSync: DateTime.now())
+      : state.copyWith(offline: true);
+
+  static bool _inspectorOnly(List<String> roles) =>
+      roles.contains('org_auditor') && !roles.contains('team_leader');
+
   Future<void> refresh() async {
     final me = await _guard(_api.me);
     if (me == null) {
       if (state.phase == StaffPhase.setPin ||
           state.phase == StaffPhase.locked) {
-        // Unlocked without network: the shift screen shows the offline strip.
+        // Unlocked without network: the shift screen (or the visits kept on the phone) with
+        // the offline strip.
+        final roles = state.me?.roles ?? await _vault.roles();
         state = state.copyWith(
-          phase: state.me?.shift == null
+          phase: _inspectorOnly(roles)
+              ? StaffPhase.prevention
+              : state.me?.shift == null
               ? StaffPhase.noShift
               : StaffPhase.onShift,
         );
       }
+      return;
+    }
+    await _vault.saveRoles(me.roles);
+    if (_inspectorOnly(me.roles)) {
+      _poll?.cancel();
+      state = state.copyWith(phase: StaffPhase.prevention, me: me);
       return;
     }
     if (me.shift == null) {
