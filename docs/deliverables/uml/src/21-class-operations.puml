@@ -82,13 +82,19 @@ class Garde <<P4a>> {
   chef d'agrès, équipage
   début, fin
 }
-class TéléphoneÉquipe <<P4a>> {
-  titulaire, plateforme
+class TéléphoneÉquipe <<P4a, P4d>> {
+  titulaire, plateforme, jeton push
+  clé SMS (chiffrée, P4d)
   dernier contact, retiré_le
 }
-class ÉvénementÉquipe <<P4a>> {
+class ÉvénementÉquipe <<P4a, P4d>> {
   client_id (unique), type
-  heure du téléphone
+  heure du téléphone (≤ 12 h)
+  via : app | sms
+}
+class PositionÉquipe <<P4d>> {
+  heure, position, précision
+  conservée 30 jours
 }
 class RapportTerrain <<P4a, P4b>> {
   type : premier, mise à jour, détaillé
@@ -104,8 +110,9 @@ class Évacuation <<P4a, P4b>> {
   triage, tranche d'âge
   sexe, hôpital (couche ou texte, sans nom)
 }
-class AlerteÉquipe <<P4b>> {
+class AlerteÉquipe <<P4b, P4d>> {
   renfort | danger, éléments
+  via : app | sms
   vue_par, vue_le
 }
 class PièceJointe <<P4b>> {
@@ -147,6 +154,7 @@ Garde "*" --> "1" Moyen
 Garde "*" --> "1" TéléphoneÉquipe
 Affectation "*" --> "0..1" Garde : accusé_le
 Affectation "1" *-- "*" ÉvénementÉquipe
+Affectation "1" *-- "*" PositionÉquipe
 Affectation "1" *-- "*" RapportTerrain
 RapportTerrain "*" --> "0..1" ModèleRapport : version
 Affectation "1" *-- "*" AlerteÉquipe
