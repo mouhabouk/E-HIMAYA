@@ -1158,7 +1158,11 @@ export function LayersPage() {
                       {l.to_verify && <span className="chip chip--to-verify">{t("layers.toVerify")}</span>}
                       {l.simulated && <SimTag label={t("layers.simulated")} />}
                     </td>
-                    <td>{t(`layers.audience.${l.audience}`)}</td>
+                    <td>
+                      {l.sensitive
+                        ? t("layers.manage.ministerOnly")
+                        : l.audiences.map((g) => t(`layers.manage.groups.${g}`)).join(t("layers.manage.listSeparator")) || "—"}
+                    </td>
                     <td className="num">
                       {fmt.number(l.feature_count)}
                       {l.hidden_count > 0 && ` (${t("layers.list.hiddenCount", { count: l.hidden_count })})`}

@@ -171,7 +171,7 @@ describe("LayersPage", () => {
     });
     renderApp(<LayersPage />, { api, auth: fakeAuth(SYSADMIN), lang: "fr" });
     expect(await screen.findByText("Brouillon")).toBeInTheDocument();
-    expect(screen.getByText("4 noms à revoir")).toBeInTheDocument();
+    expect(screen.getByText("Noms à revoir : 4")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Ouvrir" }));
     const card = (await screen.findByText("Qui voit la couche")).closest("form");
     expect(card).not.toBeNull();

@@ -3589,7 +3589,8 @@
       "hours": "Horaires",
       "email": "E-mail",
       "website": "Site web",
-      "phone2": "Téléphone 2"
+      "phone2": "Téléphone 2",
+      "phone": "Téléphone"
     },
     "template": {
       "title": "Modèle vide avec les colonnes reconnues :"
@@ -3758,10 +3759,6 @@
         "deleted": "Supprimée"
       },
       "sensitive": "Sensible",
-      "toReview_one": "{{n}} nom à revoir",
-      "toReview_other": "{{n}} noms à revoir",
-      "duplicates_one": "{{n}} doublon possible",
-      "duplicates_other": "{{n}} doublons possibles",
       "duplicate": "Doublon possible",
       "nameStatus": {
         "suggested": "Nom proposé",
@@ -3806,13 +3803,12 @@
         "audiencesHelp": "Salles : opérateurs et chefs de salle. Terrain : commandants d'intervention et chefs d'équipe. Commandement : gouverneur et ministre. Administration et soutien : les autres agents.",
         "national": "Portée : nationale (tous les gouvernorats)",
         "scope": "Gouvernorats",
-        "scopeCount_one": "Portée : un gouvernorat",
-        "scopeCount_other": "Portée : {{count}} gouvernorats",
         "scopeHelp": "Sans choix : les agents de tous les gouvernorats la voient. Avec des gouvernorats : parmi les agents régionaux, seuls les leurs la voient ; les agents nationaux la voient toujours.",
         "defaultOn": "Affichée d'office sur la carte (sinon l'utilisateur l'active)",
         "actions": "Boutons de la fiche du lieu",
         "action_call": "« Appeler »",
-        "action_directions": "« Itinéraire »"
+        "action_directions": "« Itinéraire »",
+        "scopeCount": "Portée : gouvernorats choisis ({{count}})"
       },
       "fields": {
         "title": "Colonnes par public",
@@ -3884,10 +3880,9 @@
         "purgeConfirm": "Effacer définitivement"
       },
       "deletedPlaces": {
-        "title_one": "Un lieu supprimé",
-        "title_other": "Lieux supprimés ({{count}})",
         "empty": "Aucun lieu supprimé.",
-        "restore": "Restaurer"
+        "restore": "Restaurer",
+        "title": "Lieux supprimés ({{count}})"
       },
       "review": {
         "title": "Revue des noms",
@@ -3907,7 +3902,11 @@
         "source": "OSM",
         "empty": "Rien à revoir ici.",
         "done": "{{accepted}} accepté(s), {{edited}} corrigé(s), {{rejected}} rejeté(s), {{kept}} gardé(s), {{merged}} fusionné(s)."
-      }
+      },
+      "toReview": "Noms à revoir : {{n}}",
+      "duplicates": "Doublons possibles : {{n}}",
+      "ministerOnly": "Le ministre seul",
+      "listSeparator": ", "
     }
   },
   "guide": {
