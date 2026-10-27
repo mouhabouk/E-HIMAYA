@@ -90,6 +90,14 @@ class VisitePrévention {
   rapport de comparaison <<calculé>>
   décision : favorable | réserves | refus motivé
   procès-verbal PDF sha256
+  {field} inspecteur sur téléphone, client_id d'inspection (P4c)
+  {field} signatures PNG inspecteur et représentant,\nnom et qualité du représentant (P4c)
+}
+class PhotoVisite {
+  point de la grille
+  clé de stockage, sha256, taille
+  client_id unique
+  prise par, le (téléphone) (P4c)
 }
 class Réserve {
   texte, point de la grille
@@ -135,6 +143,7 @@ MatièreDangereuse "*" --> "0..1" Document : FDS
 Certificat "1" *-- "*" CachetManuel : P3a
 Établissement "1" *-- "*" VisitePrévention : P3b
 VisitePrévention "1" *-- "*" Réserve
+VisitePrévention "1" *-- "0..20" PhotoVisite : P4c
 VisitePrévention "1" --> "0..1" Certificat : certificat de prévention
 Établissement ..> Classement
 Établissement ..> "*" ChampDuType : selon le type

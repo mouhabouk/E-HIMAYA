@@ -1,0 +1,34 @@
+@startuml
+!include style.iuml
+title Séquence : visite de prévention sur site, hors ligne (P4c)
+autonumber
+actor "Auditeur\n(org_auditor)" as AU
+participant "Application\ndes équipes" as APP
+database "Coffre local\n(AES-256-GCM)" as BOX
+participant "API\n/crew/prevention" as CREW
+database "PostgreSQL\n(RLS) + S3" as DB
+actor "Bureau\n(tableau de bord)" as BUR
+== Préparer ==
+AU -> APP : « Mes visites » (gouvernorat)
+APP -> CREW : GET /visits
+AU -> APP : « Je la prends »
+APP -> CREW : POST /visits/{id}/claim
+CREW -> DB : inspecteur = auditeur (409 visit_taken sinon)
+APP -> BOX : visite + grille du déclaré, chiffrées
+== Sur site, sans réseau ==
+AU -> APP : conforme / non conforme / non vérifié,\n« tout conforme », compteur, puces de motif
+AU -> APP : photos par point (20 max)
+AU -> APP : présents (puces), représentant et qualité,\ndeux signatures au doigt
+AU -> APP : décision : favorable, réserves proposées\ndes non-conformités + délai, ou refus motivé
+APP -> BOX : brouillon, photos, signatures, file d'envoi
+== Retour du réseau (auto ou « Envoyer ») ==
+APP -> CREW : POST /photos {client_id, point, heure du téléphone}
+APP -> CREW : POST /inspection {constats, signatures PNG, client_id}
+CREW -> DB : constats, rapport de comparaison, procès-verbal
+APP -> CREW : POST /decision {réserves, délais, client_id}
+CREW -> DB : décision, réserves, certificat de prévention
+CREW --> APP : accepté : copie locale et photos effacées
+BUR -> DB : page de la visite : « sur le téléphone »,\nphotos par point, deux signatures
+== Effacement à distance ==
+CREW --> APP : 410 : la clé est effacée, le coffre devient illisible
+@enduml
