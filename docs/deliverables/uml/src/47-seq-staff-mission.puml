@@ -34,7 +34,7 @@ APP -> CREW : POST /missions/{id}/ack
 TL -> APP : « En route », puis « Sur place » (proposé à 150 m)
 APP -> CREW : POST /status {client_id, heure du téléphone, position}
 CREW -> ROOM : statut de l'affectation, chronologie,\nsignalements « intervenu »
-TL -> APP : premier bilan (gravité, renfort, danger)
+TL -> APP : premier point de situation (gravité, renfort, danger)
 APP -> CREW : POST /first-report
 CREW -> ROOM : chronologie ; renfort et danger mis en évidence
 TL -> APP : +1 blessé, évacuation (triage, hôpital)

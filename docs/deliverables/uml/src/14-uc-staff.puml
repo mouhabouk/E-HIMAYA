@@ -10,7 +10,7 @@ actor "Comité central" as CC
 actor "Éditeur de contenu" as ED
 actor "Administrateur\nde comptes régional" as RAA
 actor "Administrateur\nsécurité / système / IA" as SA
-actor "Chef d'agrès\n(application des équipes, P4a)" as TL
+actor "Chef d'agrès\n(application des équipes, P4a, P4b)" as TL
 OPM -|> OP
 rectangle "Tableau de bord central" {
   usecase "S'authentifier (MFA)" as S0
@@ -35,20 +35,32 @@ rectangle "Tableau de bord central" {
   usecase "Voir l'environnement\n(bandeau [SIM], G3)" as S19
   usecase "Suivre les équipes de garde\net le bilan du terrain" as S20
   usecase "Retirer et effacer\nun téléphone d'équipe" as S21
+  usecase "Marquer « vu » une alerte\nrenfort ou danger (P4b)" as S22
+  usecase "Rédiger et approuver\nles modèles de rapport (P4b)" as S23
 }
-rectangle "Application des équipes (P4a)" {
+rectangle "Application des équipes (P4a, P4b)" {
   usecase "Se connecter par code\n(MFA, PIN 6 chiffres)" as T0
   usecase "Prendre la garde\n(engin, équipage)" as T1
   usecase "Accuser réception\nd'une mission" as T2
   usecase "En route / sur place /\nfin de mission" as T3
   usecase "Premier bilan < 30 s" as T4
   usecase "Compter les victimes,\névacuations" as T5
+  usecase "Point de situation\npar touches (P4b)" as T6
+  usecase "Demander un renfort,\nsignaler un danger (P4b)" as T7
+  usecase "Joindre photo,\nvoix, texte (P4b)" as T8
+  usecase "Rapport détaillé\nselon le modèle (P4b)" as T9
 }
 TL --> T1
 TL --> T2
 TL --> T3
 TL --> T4
 TL --> T5
+TL --> T6
+TL --> T7
+TL --> T8
+TL --> T9
+OP --> S22
+CC --> S23
 T1 ..> T0 : <<include>>
 OP --> S20
 OPM --> S20

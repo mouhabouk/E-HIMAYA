@@ -90,17 +90,32 @@ class ÉvénementÉquipe <<P4a>> {
   client_id (unique), type
   heure du téléphone
 }
-class PremierBilan <<P4a>> {
+class RapportTerrain <<P4a, P4b>> {
+  type : premier, mise à jour, détaillé
   catégorie, gravité 1..4
-  renfort, danger équipage
+  renforts (types), danger équipage
+  réponses au modèle, note
 }
-class CompteurVictimes <<P4a>> {
-  blessés, décédés
-  secourus, bloqués
+class CompteurVictimes <<P4a, P4b>> {
+  blessés légers, blessés graves
+  décédés, secourus, bloqués
 }
-class Évacuation <<P4a>> {
+class Évacuation <<P4a, P4b>> {
   triage, tranche d'âge
-  sexe, hôpital (sans nom)
+  sexe, hôpital (couche ou texte, sans nom)
+}
+class AlerteÉquipe <<P4b>> {
+  renfort | danger, éléments
+  vue_par, vue_le
+}
+class PièceJointe <<P4b>> {
+  photo | voix | texte
+  taille, durée, clé S3
+}
+class ModèleRapport <<P4b>> {
+  catégorie, version
+  brouillon | approuvé | retiré
+  questions (ar, fr, en), simulé
 }
 class Prévision {
   type, modèle
@@ -132,7 +147,10 @@ Garde "*" --> "1" Moyen
 Garde "*" --> "1" TéléphoneÉquipe
 Affectation "*" --> "0..1" Garde : accusé_le
 Affectation "1" *-- "*" ÉvénementÉquipe
-Affectation "1" -- "0..1" PremierBilan
+Affectation "1" *-- "*" RapportTerrain
+RapportTerrain "*" --> "0..1" ModèleRapport : version
+Affectation "1" *-- "*" AlerteÉquipe
+Affectation "1" *-- "*" PièceJointe
 Incident "1" -- "0..1" CompteurVictimes
 Affectation "1" *-- "*" Évacuation
 @enduml

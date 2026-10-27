@@ -523,8 +523,12 @@ flutter build appbundle --release ...               # للنشر في Google Pla
 ```bash
 flutter build apk --release -t lib/main_staff.dart \
   --dart-define=API_BASE_URL=https://api.ehimaya.tn \
-  --dart-define=STAFF_OIDC_ISSUER=https://auth.ehimaya.tn/realms/ehimaya-staff
+  --dart-define=STAFF_OIDC_ISSUER=https://auth.ehimaya.tn/realms/ehimaya-staff \
+  --dart-define=STAFF_ROOM_PHONE=198
 ```
+
+`STAFF_ROOM_PHONE` (منذ P4b) هو رقم القاعة الذي يطلبه زر «اتصال بالقاعة» في شاشة المهمة، والقيمة الافتراضية 198.
+يحتاج التطبيق إذنَي الكاميرا والميكروفون للصور والملاحظات الصوتية من الميدان (مصرَّح بهما من قبل في تطبيق المواطن).
 
 يدخل القائد بالرمز الظاهر على الهاتف من صفحة Keycloak (كلمة السر والرمز الثاني)، ثم يختار رمز PIN. يمنح مسؤول الحسابات
 الجهوي الدور `team_leader`، ويسحب الهاتف عند ضياعه من صفحة «فرق المناوبة» في اللوحة (مسح عن بعد).
@@ -620,11 +624,11 @@ JDK 21 و Maven 3.9، ثم `mvn -f infra/keycloak/providers/phone-otp/pom.xml ve
 | `operator` | مشغّل غرفة العمليات: استقبال البلاغات والمكالمات وفرزها |
 | `ops_manager` | مسؤول العمليات: التوجيه والمتابعة والقرار |
 | `field_commander` | قائد ميداني |
-| `local_committee` / `central_committee` | اللجنة الجهوية / الوطنية |
+| `local_committee` / `central_committee` | اللجنة الجهوية / الوطنية؛ الوطنية (ومسؤول العمليات الوطني) تحرر قوالب التقارير المفصّلة وتعتمدها (P4b) |
 | `org_auditor` | مراجعة المؤسسات وملفاتها |
 | `content_editor` | دليل الطوارئ والمحتوى التوعوي |
 | `medical_coordinator` | المنسّق الطبي الجهوي (محور الأطباء) |
-| `team_leader` | قائد فريق التدخل: تطبيق الأعوان فقط (المناوبة، المهام، التقرير الأول، الإصابات)، لا يفتح اللوحة |
+| `team_leader` | قائد فريق التدخل: تطبيق الأعوان فقط (المناوبة، المهام، تقارير الوضع، النجدة والخطر، الصور والصوت، الإصابات والنقل، التقرير المفصّل)، لا يفتح اللوحة |
 | `regional_account_admin` | مسؤول الحسابات الجهوية |
 | `sysadmin` / `security_admin` / `ai_admin` | إدارة النظام / الأمن / نماذج الذكاء الاصطناعي |
 
