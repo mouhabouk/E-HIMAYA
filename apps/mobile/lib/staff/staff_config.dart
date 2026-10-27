@@ -7,6 +7,7 @@ class StaffConfig {
     required this.apiBaseUrl,
     required this.issuer,
     required this.clientId,
+    this.roomPhone = '198',
   });
 
   factory StaffConfig.fromEnvironment() => const StaffConfig(
@@ -22,11 +23,15 @@ class StaffConfig {
       'STAFF_OIDC_CLIENT_ID',
       defaultValue: 'ehimaya-staff-app',
     ),
+    roomPhone: String.fromEnvironment('STAFF_ROOM_PHONE', defaultValue: '198'),
   );
 
   final String apiBaseUrl;
   final String issuer;
   final String clientId;
+
+  /// The operations room's number, behind the "Room" button of a mission (design §5.3).
+  final String roomPhone;
 
   String get deviceEndpoint => '$issuer/protocol/openid-connect/auth/device';
   String get tokenEndpoint => '$issuer/protocol/openid-connect/token';

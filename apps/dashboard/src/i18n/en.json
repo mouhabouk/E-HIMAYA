@@ -40,7 +40,8 @@
     "medicalCommittee": "Medical committee",
     "counter": "Counter",
     "prevention": "Prevention visits",
-    "crew": "Crews on duty"
+    "crew": "Crews on duty",
+    "reportTemplates": "Report templates"
   },
   "header": {
     "scope": "Geographic scope",
@@ -666,7 +667,11 @@
       "crew_ack": "Order received by the crew",
       "field_report": "First report from the scene",
       "casualties": "Casualty count updated",
-      "transport": "Victim taken to hospital"
+      "transport": "Victim taken to hospital",
+      "crew_alert": "Backup or danger from the crew",
+      "crew_alert_seen": "Alert seen by the room",
+      "field_attachment": "Attachment from the scene",
+      "detailed_report": "Detailed report"
     },
     "via": {
       "suggestion": "(suggestion confirmed)",
@@ -4162,12 +4167,13 @@
     "backup": "Backup requested",
     "casualties": "Casualties",
     "counter": {
-      "injured": "Injured",
       "deceased": "Deceased",
-      "rescued": "Rescued",
-      "trapped": "Trapped"
+      "rescued": "Survivors",
+      "trapped": "Trapped",
+      "injured_light": "Lightly injured",
+      "injured_serious": "Seriously injured",
+      "transported": "Transported"
     },
-    "firstReports": "First reports",
     "severity": {
       "1": "1 · Minor",
       "2": "2 · Moderate",
@@ -4189,7 +4195,13 @@
       "child": "Child",
       "adult": "Adult",
       "elderly": "Elderly",
-      "unknown": "Age unknown"
+      "unknown": "Age unknown",
+      "under_12": "Under 12",
+      "12_17": "12–17",
+      "18_29": "18–29",
+      "30_44": "30–44",
+      "45_59": "45–59",
+      "60_plus": "60 and over"
     },
     "sex": {
       "female": "Female",
@@ -4211,6 +4223,106 @@
     "revokeLabel": "Withdraw and wipe the phone of {{name}}",
     "revokeConfirm": "Wipe the phone of {{name}} for good?",
     "revokeYes": "Yes, wipe",
-    "size": "Crew: {{count}}"
+    "size": "Crew: {{count}}",
+    "alerts": "Alerts",
+    "unseenAlerts": "Unseen alerts: {{count}}",
+    "markSeen": "Seen",
+    "markSeenLabel": "Mark as seen: {{what}}, {{vehicle}}",
+    "seenBy": "seen by {{name}} at {{time}}",
+    "backupKind": {
+      "fire_engine": "Fire engine",
+      "ambulance": "Ambulance",
+      "extrication": "Rescue (cutting)",
+      "ladder": "Ladder",
+      "water_tanker": "Water tanker",
+      "hazmat": "Hazardous materials",
+      "police": "Security",
+      "heavy_equipment": "Heavy equipment"
+    },
+    "dangerKind": {
+      "fire_spread": "Fire spreading",
+      "collapse": "Collapse",
+      "gas": "Gas or hazardous materials",
+      "electricity": "Electricity",
+      "violence": "Assault",
+      "traffic": "Traffic"
+    },
+    "situations": "Last situation reports",
+    "first": "First report",
+    "update": "Situation update",
+    "detailed": "Detailed reports",
+    "templateVersion": "template v{{version}}",
+    "note": "Note",
+    "attachments": "Photos, voice notes and texts",
+    "photo": "Photo",
+    "photoAlt": "Photo from the scene, {{time}}",
+    "voice": "Voice note",
+    "attachment": {
+      "photo": "Photo",
+      "voice": "Voice note",
+      "text": "Text"
+    },
+    "seconds": "{{count}} s",
+    "contactPhone": "Number to call on the scene",
+    "contactPhoneHint": "Optional. The leader's phone shows a «Reporter» button only if you give one; the citizen's number is never passed on automatically."
+  },
+  "templates": {
+    "pageTitle": "Report templates",
+    "intro": "The detailed report of the team leaders' app, by incident type: questions answered with a tap (chips, yes or no, a number). One approved version per type; approving a draft retires the version before.",
+    "readOnly": "Only the Office (central command or a national manager) edits and approves templates.",
+    "showRetired": "Show retired versions",
+    "none": "No template.",
+    "preview": "Preview as on the phone",
+    "simulated": "model template until the Office approves it",
+    "required": "required",
+    "version": "version {{version}}",
+    "status": {
+      "draft": "Draft",
+      "approved": "Approved",
+      "retired": "Retired"
+    },
+    "approvedBy": "Approved by {{name}} on {{date}}",
+    "editedAt": "Edited on {{date}}",
+    "fieldCount": "{{count}} questions",
+    "show": "Show",
+    "hide": "Hide",
+    "newVersion": "New version (draft)",
+    "draftExists": "A draft of this type already exists.",
+    "retire": "Retire",
+    "fieldN": "Question {{n}}",
+    "up": "Up",
+    "down": "Down",
+    "removeField": "Remove",
+    "key": "Key (a–z, 0–9, _)",
+    "type": "Shape",
+    "types": {
+      "single": "One choice (chips)",
+      "multi": "Several choices (chips)",
+      "yesno": "Yes or no",
+      "count": "Number (+ and −)"
+    },
+    "label": "Question",
+    "unit": "Unit",
+    "max": "Maximum",
+    "options": "Chips",
+    "optionKey": "Key of chip {{n}}",
+    "optionLabel": "Chip {{n}}, {{lang}}",
+    "removeOption": "Remove chip",
+    "addOption": "Add a chip",
+    "addField": "Add a question",
+    "save": "Save the draft",
+    "approve": "Approve",
+    "discard": "Discard the draft",
+    "invalid": "Each question needs a key, a label, and at least two chips when it has chips.",
+    "lang": {
+      "ar": "Arabic",
+      "fr": "French",
+      "en": "English"
+    },
+    "newTitle": "New template",
+    "category": "Type",
+    "classification": "Classification",
+    "anyClassification": "All classifications of the type",
+    "create": "Create the draft"
   }
 }

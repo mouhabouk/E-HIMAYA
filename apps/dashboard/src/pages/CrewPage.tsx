@@ -32,6 +32,7 @@ function OnDuty() {
                 <th scope="col">{t("crew.leaderCol")}</th>
                 <th scope="col">{t("crew.crewCol")}</th>
                 <th scope="col">{t("crew.since")}</th>
+                <th scope="col">{t("crew.alerts")}</th>
               </tr>
             </thead>
             <tbody>
@@ -55,6 +56,13 @@ function OnDuty() {
                   </td>
                   <td>
                     <time dateTime={s.started_at}>{fmt.dateTime(s.started_at)}</time>
+                  </td>
+                  <td>
+                    {(s.unseen_alerts ?? 0) > 0 ? (
+                      <span className="chip chip--crew-waiting">{t("crew.unseenAlerts", { count: s.unseen_alerts })}</span>
+                    ) : (
+                      <span className="muted">—</span>
+                    )}
                   </td>
                 </tr>
               ))}

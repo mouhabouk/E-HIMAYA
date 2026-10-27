@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/ui/components.dart';
 import '../../core/ui/tokens.dart';
 import '../../l10n/app_localizations.dart';
-import '../staff_app.dart';
+import '../staff_chrome.dart';
 import '../staff_controller.dart';
 import '../staff_labels.dart';
 import '../staff_models.dart';
@@ -48,10 +48,10 @@ class _ShiftScreenState extends ConsumerState<ShiftScreen> {
     final c = ref.read(staffControllerProvider.notifier);
     final chosen = _chosen;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.staffShiftTitle),
+      appBar: StaffAppBar(
+        title: l10n.staffShiftTitle,
+        subtitle: s.me?.name,
         actions: [
-          ...staffBarActions(),
           PopupMenuButton<String>(
             key: const Key('staff-menu'),
             onSelected: (_) => unawaited(c.signOut()),
@@ -63,7 +63,7 @@ class _ShiftScreenState extends ConsumerState<ShiftScreen> {
       ),
       body: Column(
         children: [
-          const OfflineStrip(),
+          const ConnectionStrip(),
           Expanded(
             child: RefreshIndicator(
               onRefresh: () async => _reload(),

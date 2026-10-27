@@ -205,7 +205,14 @@ function AssignmentRow({ assignment, canEdit }: { assignment: Assignment; canEdi
           <time dateTime={last}>{fmt.time(last)}</time>
         </div>
       </td>
-      <td dir="auto">{assignment.order ?? "—"}</td>
+      <td dir="auto">
+        {assignment.order ?? "—"}
+        {assignment.contact_phone && (
+          <div className="cell-sub">
+            {t("crew.contactPhone")}: <span dir="ltr">{assignment.contact_phone}</span>
+          </div>
+        )}
+      </td>
       <td>
         {canEdit && next.length > 0 ? (
           <div className="ops-row-actions">
@@ -247,10 +254,11 @@ function AssignResourceForm({ incident, preset }: { incident: IncidentDetail; pr
   const { api } = useServices();
   const qc = useQueryClient();
   const refresh = useRefreshIncident(incident.id);
-  const ids = { resource: useId(), order: useId() };
+  const ids = { resource: useId(), order: useId(), phone: useId(), phoneHint: useId() };
   // A preset (recommendation) re-mounts this form with its values (key = nonce, see AssignmentsSection).
   const [resourceId, setResourceId] = useState(preset?.resourceId ?? "");
   const [order, setOrder] = useState(preset?.order ?? "");
+  const [phone, setPhone] = useState("");
   const selectRef = useRef<HTMLSelectElement>(null);
   const hasPreset = Boolean(preset);
   useEffect(() => {
@@ -263,10 +271,11 @@ function AssignResourceForm({ incident, preset }: { incident: IncidentDetail; pr
     queryFn: ({ signal }) => api.resources({ status: "available" }, { limit: 200, signal }),
   });
   const mutation = useMutation({
-    mutationFn: () => api.createAssignment(incident.id, resourceId, order),
+    mutationFn: () => api.createAssignment(incident.id, resourceId, order, phone),
     onSuccess: () => {
       setResourceId("");
       setOrder("");
+      setPhone("");
       refresh();
       void qc.invalidateQueries({ queryKey: opsKeys.resourcesAll });
       void qc.invalidateQueries({ queryKey: opsKeys.resourceSummary });
@@ -304,6 +313,22 @@ function AssignResourceForm({ incident, preset }: { incident: IncidentDetail; pr
       <div className="field">
         <label htmlFor={ids.order}>{t("ops.assignment.order")}</label>
         <textarea id={ids.order} value={order} maxLength={1000} rows={2} dir="auto" onChange={(e) => setOrder(e.target.value)} />
+      </div>
+      <div className="field">
+        <label htmlFor={ids.phone}>{t("crew.contactPhone")}</label>
+        <input
+          id={ids.phone}
+          type="tel"
+          inputMode="tel"
+          dir="ltr"
+          value={phone}
+          maxLength={20}
+          aria-describedby={ids.phoneHint}
+          onChange={(e) => setPhone(e.target.value)}
+        />
+        <p id={ids.phoneHint} className="hint">
+          {t("crew.contactPhoneHint")}
+        </p>
       </div>
       <div className="actions">
         <button type="submit" className="btn btn--primary" disabled={!resourceId || mutation.isPending}>

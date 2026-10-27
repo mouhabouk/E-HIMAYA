@@ -67,4 +67,67 @@ void main() {
       handle.dispose();
     });
   }
+
+  for (final scale in [1.0, 2.0]) {
+    testWidgets('situation, transport and detailed report in Arabic x$scale', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      tester.platformDispatcher.textScaleFactorTestValue = scale;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      final server = FakeCrewServer()
+        ..shiftOpen = true
+        ..missions.add(
+          FakeCrewServer.mission(
+            status: 'on_scene',
+            acknowledgedAt: '2026-10-26T09:00:10Z',
+          ),
+        );
+      final store = await signedInStore();
+      await StaffVault(store).setPin('123456', 'salt');
+      await pumpStaffApp(tester, server, store: store, locale: 'ar');
+      await enterPin(tester, '123456');
+      await tester.tap(find.byKey(const Key('mission-m-1')));
+      await tester.pumpAndSettle();
+      await check(tester, 'mission on scene');
+      Future<void> open(String key, String name) async {
+        await tester.scrollUntilVisible(
+          find.byKey(Key(key)),
+          200,
+          scrollable: find.byType(Scrollable).first,
+        );
+        // Away from the bottom bar.
+        await Scrollable.ensureVisible(
+          tester.element(find.byKey(Key(key))),
+          alignment: 0.5,
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(Key(key)));
+        await tester.pumpAndSettle();
+        await check(tester, name);
+      }
+
+      await open('open-situation', 'situation');
+      await Scrollable.ensureVisible(
+        tester.element(find.byKey(const Key('backup-yes'))),
+        alignment: 0.5,
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('backup-yes')));
+      await tester.pumpAndSettle();
+      await check(tester, 'situation with backup');
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      await open('open-transports', 'transport');
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      await open('open-detailed', 'detailed');
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('alert-danger')));
+      await tester.pumpAndSettle();
+      await check(tester, 'danger sheet');
+      handle.dispose();
+    });
+  }
 }

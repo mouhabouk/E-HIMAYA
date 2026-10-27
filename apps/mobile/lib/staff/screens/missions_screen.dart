@@ -10,7 +10,7 @@ import '../../core/ui/components.dart';
 import '../../core/ui/tokens.dart';
 import '../../features/report/category_labels.dart';
 import '../../l10n/app_localizations.dart';
-import '../staff_app.dart';
+import '../staff_chrome.dart';
 import '../staff_controller.dart';
 import '../staff_labels.dart';
 import '../staff_models.dart';
@@ -37,10 +37,15 @@ class MissionsScreen extends ConsumerWidget {
         if (!m.active) m,
     ];
     return Scaffold(
-      appBar: AppBar(
-        title: Text(shift?.vehicle.label ?? l10n.staffAppTitle),
+      appBar: StaffAppBar(
+        title: shift?.vehicle.label ?? l10n.staffAppTitle,
+        subtitle: shift == null
+            ? null
+            : [
+                shift.vehicle.unitName,
+                l10n.staffCrewCount(shift.crewSize),
+              ].join(' · '),
         actions: [
-          ...staffBarActions(),
           PopupMenuButton<String>(
             key: const Key('staff-menu'),
             onSelected: (v) =>
@@ -58,7 +63,7 @@ class MissionsScreen extends ConsumerWidget {
       ),
       body: Column(
         children: [
-          const OfflineStrip(),
+          const ConnectionStrip(),
           Expanded(
             child: RefreshIndicator(
               onRefresh: c.poll,

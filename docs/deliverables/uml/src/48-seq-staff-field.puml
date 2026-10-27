@@ -1,0 +1,41 @@
+@startuml
+!include style.iuml
+title Séquence : terrain sans saisie (P4b)
+autonumber
+actor "Chef d'agrès" as TL
+participant "Application\ndes équipes" as APP
+participant "API\n/crew" as CREW
+database "PostgreSQL\n(RLS) + S3" as DB
+participant "API\n/staff (salle)" as ROOM
+actor "Opérateur" as OP
+actor "Bureau\n(comité central)" as BUR
+== Modèle de rapport détaillé ==
+BUR -> ROOM : brouillon (questions à puces, oui/non, nombre ; ar, fr, en)
+BUR -> ROOM : « Approuver » (la version précédente est retirée)
+== Point de situation ==
+TL -> APP : touches : type confirmé, gravité 1..4,\nrenfort oui + puces (ambulance, échelle…)
+APP -> CREW : POST /missions/{id}/situation {client_id, heure du téléphone}
+CREW -> DB : rapport « premier » puis « mise à jour »
+TL -> APP : compteurs + / − (blessés légers, graves, décédés,\nsecourus, bloqués)
+APP -> CREW : POST /casualties
+TL -> APP : « Évacuer un blessé » : triage, tranche d'âge,\nsexe, hôpital proche (couche [SIM]) ou autre
+APP -> CREW : GET /hospitals puis POST /transports (sans nom)
+== Renfort ou danger ==
+TL -> APP : bouton rouge « Renfort » ou « Danger » + puces
+APP -> CREW : POST /missions/{id}/alerts
+CREW -> ROOM : alerte en tête de la fiche et compteur\n« alertes non vues » sur la page des équipes
+OP -> ROOM : « Vu »
+ROOM -> DB : vue_par, vue_le
+APP -> CREW : appel suivant
+CREW --> APP : « Vue à 12:33 » sous l'alerte
+== Photo, voix, texte ==
+TL -> APP : photo (caméra) ou voix (60 s max) ou texte court
+APP -> CREW : POST /missions/{id}/attachments (corps brut, type, durée)
+CREW -> DB : fichier dans S3, ligne avec taille et durée
+ROOM -> CREW : lien court signé pour l'afficher
+== Rapport détaillé ==
+APP -> CREW : GET /missions (modèle approuvé de la catégorie)
+TL -> APP : réponses par touches + note facultative
+APP -> CREW : POST /detailed-report {version du modèle}
+CREW --> APP : 409 template_not_current si une version plus récente\na été approuvée entre-temps
+@enduml

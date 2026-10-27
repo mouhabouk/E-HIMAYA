@@ -5332,28 +5332,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get staffStatusCancelled => 'Annulée';
 
   @override
-  String get staffStepEnRoute => 'Départ';
-
-  @override
-  String get staffStepOnScene => 'Arrivés sur place';
-
-  @override
-  String get staffStepReleased => 'Fin de mission';
-
-  @override
   String staffNearScene(int meters) {
     return 'Vous êtes à $meters m de l\'intervention. Arrivés ?';
   }
-
-  @override
-  String get staffFirstReport => 'Premier bilan';
-
-  @override
-  String get staffFirstReportDue =>
-      'À envoyer maintenant : moins de 30 secondes';
-
-  @override
-  String get staffNature => 'Nature';
 
   @override
   String get staffSeverity => 'Gravité';
@@ -5371,45 +5352,22 @@ class AppLocalizationsFr extends AppLocalizations {
   String get staffSeverity4 => '4 · Critique';
 
   @override
-  String get staffBackupNeeded => 'Renfort nécessaire';
-
-  @override
-  String get staffBackupNote => 'Quel renfort ?';
-
-  @override
   String get staffCrewDanger => 'Danger pour l\'équipage';
 
   @override
   String get staffSend => 'Envoyer';
 
   @override
-  String get staffCasualties => 'Victimes';
-
-  @override
-  String staffCasualtySummary(int injured, int deceased, int transports) {
-    return '$injured blessés · $deceased décédés · $transports évacués';
-  }
-
-  @override
-  String get staffInjured => 'Blessés';
-
-  @override
   String get staffDeceased => 'Décédés';
 
   @override
-  String get staffRescued => 'Secourus';
+  String get staffRescued => 'Rescapés';
 
   @override
   String get staffTrapped => 'Bloqués';
 
   @override
-  String get staffTransports => 'Évacués vers l\'hôpital';
-
-  @override
-  String get staffNoTransport => 'Aucune évacuation pour l\'instant.';
-
-  @override
-  String get staffAddTransport => 'Évacuation';
+  String get staffAddTransport => 'Évacuer une victime';
 
   @override
   String get staffTriage => 'Triage';
@@ -5428,15 +5386,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get staffAge => 'Âge';
-
-  @override
-  String get staffAgeChild => 'Enfant';
-
-  @override
-  String get staffAgeAdult => 'Adulte';
-
-  @override
-  String get staffAgeElderly => 'Âgé';
 
   @override
   String get staffSex => 'Sexe';
@@ -5502,4 +5451,291 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get staffErrGeneric =>
       'La salle a refusé cette action. Réessayez ou appelez la salle.';
+
+  @override
+  String staffOnline(int seconds) {
+    return 'Connecté · mis à jour il y a $seconds s';
+  }
+
+  @override
+  String staffOnlineMinutes(int minutes) {
+    return 'Connecté · mis à jour il y a $minutes min';
+  }
+
+  @override
+  String get staffMission => 'Mission';
+
+  @override
+  String get staffHighPriority => 'Priorité haute';
+
+  @override
+  String get staffRoomNote => 'Note de la salle';
+
+  @override
+  String staffDistanceKm(String km) {
+    return 'À $km km';
+  }
+
+  @override
+  String get staffStepReceived => 'Mission reçue';
+
+  @override
+  String get staffStepLeft => 'Départ';
+
+  @override
+  String get staffStepOnTheWay => 'En route';
+
+  @override
+  String get staffStepArrived => 'Arrivés';
+
+  @override
+  String get staffStepOver => 'Intervention terminée';
+
+  @override
+  String staffAwayFrom(int meters) {
+    return 'Vous êtes à $meters m des lieux';
+  }
+
+  @override
+  String get staffRoute => 'Itinéraire';
+
+  @override
+  String get staffRoom => 'Salle';
+
+  @override
+  String get staffReporter => 'Déclarant';
+
+  @override
+  String get staffAskBackup => 'Demander du renfort';
+
+  @override
+  String get staffAlertSent => 'Envoyé à la salle.';
+
+  @override
+  String staffAlertSeen(String time) {
+    return 'Vu par la salle à $time';
+  }
+
+  @override
+  String get staffAlertWaiting => 'En attente de la salle';
+
+  @override
+  String get staffAlertChoose => 'Touchez ce qui s\'applique, puis envoyez.';
+
+  @override
+  String get staffBackupFireEngine => 'Engin incendie';
+
+  @override
+  String get staffBackupAmbulance => 'Ambulance';
+
+  @override
+  String get staffBackupExtrication => 'Désincarcération';
+
+  @override
+  String get staffBackupLadder => 'Échelle';
+
+  @override
+  String get staffBackupWaterTanker => 'Citerne d\'eau';
+
+  @override
+  String get staffBackupHazmat => 'Matières dangereuses';
+
+  @override
+  String get staffBackupPolice => 'Sécurité';
+
+  @override
+  String get staffBackupHeavy => 'Engins lourds';
+
+  @override
+  String get staffDangerFireSpread => 'Propagation du feu';
+
+  @override
+  String get staffDangerCollapse => 'Effondrement';
+
+  @override
+  String get staffDangerGas => 'Gaz ou matières dangereuses';
+
+  @override
+  String get staffDangerElectricity => 'Électricité';
+
+  @override
+  String get staffDangerViolence => 'Agression';
+
+  @override
+  String get staffDangerTraffic => 'Circulation';
+
+  @override
+  String get staffSituation => 'Rapport de situation';
+
+  @override
+  String get staffSituationDue => 'Premier rapport : moins de 30 secondes';
+
+  @override
+  String staffSituationLast(String time, String severity) {
+    return 'Dernier rapport $time · $severity';
+  }
+
+  @override
+  String get staffType => 'Type';
+
+  @override
+  String staffConfirmed(String type) {
+    return 'Confirmé : $type';
+  }
+
+  @override
+  String get staffDifferent => 'Différent';
+
+  @override
+  String get staffNeedBackup => 'Renfort nécessaire ?';
+
+  @override
+  String get staffNo => 'Non';
+
+  @override
+  String get staffYes => 'Oui';
+
+  @override
+  String get staffLiveCounts => 'Bilan en direct';
+
+  @override
+  String get staffInjuredLight => 'Blessé léger';
+
+  @override
+  String get staffInjuredSerious => 'Blessé grave';
+
+  @override
+  String get staffTransported => 'Évacués';
+
+  @override
+  String get staffAttachments => 'Pièces jointes';
+
+  @override
+  String get staffPhoto => 'Photo';
+
+  @override
+  String get staffVoice => 'Note vocale';
+
+  @override
+  String get staffText => 'Texte';
+
+  @override
+  String get staffSendReport => 'Envoyer le rapport';
+
+  @override
+  String get staffTransportTitle => 'Victimes évacuées (sans noms)';
+
+  @override
+  String staffTransportsCount(int count) {
+    return 'Évacués ($count)';
+  }
+
+  @override
+  String get staffHospitalOther => 'Autre';
+
+  @override
+  String get staffHospitalName => 'Nom de l\'hôpital';
+
+  @override
+  String get staffTimeAuto => 'L\'heure est enregistrée automatiquement.';
+
+  @override
+  String get staffSendNow => 'Envoyer maintenant';
+
+  @override
+  String get staffAgeUnder12 => 'Moins de 12';
+
+  @override
+  String get staffAge12 => '12–17';
+
+  @override
+  String get staffAge18 => '18–29';
+
+  @override
+  String get staffAge30 => '30–44';
+
+  @override
+  String get staffAge45 => '45–59';
+
+  @override
+  String get staffAge60 => '60 et plus';
+
+  @override
+  String get staffDetailedReport => 'Rapport détaillé';
+
+  @override
+  String get staffDetailedDue =>
+      'Réponses par toucher, selon le modèle approuvé';
+
+  @override
+  String staffDetailedSent(String time, int version) {
+    return 'Envoyé à $time · modèle v$version';
+  }
+
+  @override
+  String staffTemplateVersion(int version) {
+    return 'Modèle version $version';
+  }
+
+  @override
+  String get staffNote => 'Note';
+
+  @override
+  String get staffNoteHint => '500 caractères au plus';
+
+  @override
+  String get staffRequired => 'Obligatoire';
+
+  @override
+  String get staffRecord => 'Enregistrer';
+
+  @override
+  String get staffRecordStop => 'Arrêter';
+
+  @override
+  String get staffRecordAgain => 'Réenregistrer';
+
+  @override
+  String get staffVoiceMax => '60 secondes au plus.';
+
+  @override
+  String get staffSent => 'Envoyé.';
+
+  @override
+  String get staffErrTooLarge => 'Le fichier est trop lourd.';
+
+  @override
+  String get staffErrTooMany => 'Cette mission a déjà 20 pièces jointes.';
+
+  @override
+  String get staffErrBadMedia => 'Ce type de fichier n\'est pas accepté.';
+
+  @override
+  String get staffErrTemplateChanged =>
+      'Le modèle a changé : rouvrez le rapport.';
+
+  @override
+  String get staffSimTemplate =>
+      '[SIM] Modèle d\'essai, jusqu\'à l\'approbation du Bureau';
+
+  @override
+  String get staffSimHospital => '[SIM]';
+
+  @override
+  String get staffTriageGreenShort => 'Vert';
+
+  @override
+  String get staffTriageYellowShort => 'Jaune';
+
+  @override
+  String get staffTriageRedShort => 'Rouge';
+
+  @override
+  String get staffTriageBlackShort => 'Noir';
+
+  @override
+  String get staffTransportShort => 'Victimes évacuées';
+
+  @override
+  String get staffNoNames => 'sans noms';
 }
