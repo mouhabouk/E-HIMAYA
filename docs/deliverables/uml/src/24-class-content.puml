@@ -29,12 +29,24 @@ class ÉlémentGuide {
   validé par / le
 }
 class CoucheCarte {
-  clé, nom, audience
-  licence, simulée
+  clé, nom, licence, simulée
+  statut : brouillon | publiée | suspendue
+  publics : citoyen, salles, terrain,
+    commandement, soutien
+  portée : gouvernorats, sensible
+  champs : colonne → publics
+  supprimée_le, motif (30 jours)
+}
+class RévisionCouche {
+  numéro, action, instantané
+  motif, auteur, date
 }
 class ÉlémentCouche {
   nom, type, téléphone
-  position
+  position, forme (ligne | surface)
+  statut du nom, nom proposé, confiance
+  lien OSM, doublon possible
+  supprimé_le, motif
 }
 class RègleRécompense {
   motif, catégorie
@@ -70,6 +82,7 @@ Message "1" *-- "*" Envoi
 SuggestionMétéo ..> Message : devient
 ThèmeGuide "1" *-- "*" ÉlémentGuide
 CoucheCarte "1" *-- "*" ÉlémentCouche
+CoucheCarte "1" *-- "*" RévisionCouche
 RègleRécompense "1" -- "*" MouvementPoints
 "Compte" "1" -- "*" MouvementPoints
 "Compte" "1" -- "*" Badge

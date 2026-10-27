@@ -29,6 +29,9 @@ at once and a crash leaves at most one batch to redo. Durations come from the se
 | safety_invitations  |                                                                        |          |
 | safety_location_    | 72-hour location history points (off until the legal review)           | 72 hours |
 | points              |                                                                        |          |
+| layers_deleted,     | map layers and places deleted by the administrator (phase L1a)         | 30 days  |
+| layer_features_     |                                                                        |          |
+| deleted             |                                                                        |          |
 """
 
 import asyncio
@@ -267,6 +270,17 @@ async def purge_erasure_requests(session: AsyncSession, settings: Settings, now:
     return await _delete(session, "identity.erasure_request", "id", "disabled_at < :cutoff", {"cutoff": cutoff})
 
 
+async def purge_deleted_layers(session: AsyncSession, settings: Settings, now: datetime) -> int:
+    """Map layers deleted by the administrator, with their places, imports and revisions (cascade)."""
+    cutoff = _cutoff(now, settings.retention_layer_deleted_days)
+    return await _delete(session, "geo.layer", "id", "deleted_at < :cutoff", {"cutoff": cutoff})
+
+
+async def purge_deleted_features(session: AsyncSession, settings: Settings, now: datetime) -> int:
+    cutoff = _cutoff(now, settings.retention_layer_deleted_days)
+    return await _delete(session, "geo.layer_feature", "id", "deleted_at < :cutoff", {"cutoff": cutoff})
+
+
 JOBS: list[tuple[str, Job]] = [
     ("events", purge_events),
     ("notify_outbox", purge_notify_outbox),
@@ -291,6 +305,9 @@ JOBS: list[tuple[str, Job]] = [
     ("safety_checks", safety.purge_checks),
     ("safety_invitations", safety.purge_invitations),
     ("safety_location_points", safety_history.purge_points),
+    # Map layers (phase L1a): what the administrator deleted, once it can no longer be restored.
+    ("layers_deleted", purge_deleted_layers),
+    ("layer_features_deleted", purge_deleted_features),
 ]
 
 

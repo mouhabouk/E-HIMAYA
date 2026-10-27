@@ -174,6 +174,8 @@ def layer_settings(layer: str) -> dict[str, Any]:
         "to_verify": True,
         "simulated": True,
         "staff_only": ["manager"],
+        # Since phase L1a a new layer starts as a draft; the [SIM] layers are for trials and are published at once.
+        "status": "published",
     }
 
 

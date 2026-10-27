@@ -2,7 +2,7 @@
 import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import type { LayerImportDetail, MapLayer, MapLayers } from "../lib/layers";
-import { fakeApi, fakeAuth, fakeLayersApi, OPERATOR_CLAIMS, renderApp } from "../test/render";
+import { fakeApi, fakeAuth, fakeLayersApi, LAYER_L1A, OPERATOR_CLAIMS, renderApp } from "../test/render";
 import { LayersPage } from "./LayersPage";
 
 const SYSADMIN = { ...OPERATOR_CLAIMS, realm_access: { roles: ["sysadmin"] }, scope_level: "national" };
@@ -31,6 +31,10 @@ function layer(extra: Partial<MapLayer> = {}): MapLayer {
     last_import: null,
     can_manage: true,
     can_import: true,
+    ...LAYER_L1A,
+    audiences: [...LAYER_L1A.audiences],
+    scope: [],
+    fields: { manager: [...LAYER_L1A.fields.manager] },
     ...extra,
   };
 }
@@ -38,6 +42,7 @@ function layer(extra: Partial<MapLayer> = {}): MapLayer {
 function list(items: MapLayer[], canManage = true): MapLayers {
   return {
     items,
+    deleted: [],
     can_manage: canManage,
     icons: [],
     palette: ["#C62828", "#2E7D32"],
@@ -145,9 +150,123 @@ describe("LayersPage", () => {
     });
     renderApp(<LayersPage />, { api, auth: fakeAuth(editor), lang: "fr" });
     fireEvent.click(await screen.findByRole("button", { name: "Ouvrir" }));
-    expect(await screen.findByText("Historique des imports")).toBeInTheDocument();
+    expect(await screen.findByText("Lieux (3)")).toBeInTheDocument();
+    // Since phase L1a the imports, the export and the settings are for the administrator and the layer's editors.
+    expect(screen.queryByText("Historique des imports")).not.toBeInTheDocument();
+    expect(screen.queryByText("Qui voit la couche")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Supprimer la couche" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Nouvelle couche" })).not.toBeInTheDocument();
     expect(screen.queryByLabelText("Fichier")).not.toBeInTheDocument();
     expect(screen.queryByText("Réglages de la couche")).not.toBeInTheDocument();
+  });
+
+  it("publishes a draft for some audiences, with a reason (phase L1a)", async () => {
+    const updateLayer = vi.fn(() => Promise.resolve(layer({ status: "published" })));
+    const api = fakeApi({
+      ...fakeLayersApi(),
+      layers: vi.fn(() =>
+        Promise.resolve(list([layer({ status: "draft", enabled: false, quality: { suggested: 4, duplicates: 0, deleted: 0 } })])),
+      ),
+      updateLayer,
+    });
+    renderApp(<LayersPage />, { api, auth: fakeAuth(SYSADMIN), lang: "fr" });
+    expect(await screen.findByText("Brouillon")).toBeInTheDocument();
+    expect(screen.getByText("Noms à revoir : 4")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Ouvrir" }));
+    const card = (await screen.findByText("Qui voit la couche")).closest("form");
+    expect(card).not.toBeNull();
+    const form = within(card as HTMLElement);
+    fireEvent.click(form.getByRole("radio", { name: "Publiée" }));
+    fireEvent.click(form.getByRole("checkbox", { name: "Citoyen" }));
+    fireEvent.click(form.getByRole("checkbox", { name: "Administration et soutien" }));
+    fireEvent.change(form.getByLabelText("Motif de la modification"), { target: { value: "Liste vérifiée" } });
+    fireEvent.click(form.getByRole("button", { name: "Enregistrer" }));
+    await waitFor(() => expect(updateLayer).toHaveBeenCalledTimes(1));
+    expect(updateLayer.mock.calls[0]).toMatchObject([
+      "hopitaux",
+      { status: "published", audiences: ["room", "field", "command"], version: 1, reason: "Liste vérifiée" },
+    ]);
+  });
+
+  it("a sensitive layer: no audience to choose, the minister alone", async () => {
+    const api = fakeApi({ ...fakeLayersApi(), layers: vi.fn(() => Promise.resolve(list([layer()]))) });
+    renderApp(<LayersPage />, { api, auth: fakeAuth(SYSADMIN), lang: "fr" });
+    fireEvent.click(await screen.findByRole("button", { name: "Ouvrir" }));
+    fireEvent.click(await screen.findByRole("checkbox", { name: "Couche sensible (le ministre seul)" }));
+    expect(screen.getByText(/jamais le gouverneur/)).toBeInTheDocument();
+    expect(screen.getByRole("checkbox", { name: "Citoyen" })).toBeDisabled();
+  });
+
+  it("deletes a layer with a reason chip, then restores it from the deleted tab", async () => {
+    const deleted = layer({ deleted_at: "2026-10-27T08:00:00Z", delete_reason: "En double", purge_at: "2026-11-26T08:00:00Z" });
+    const deleteLayer = vi.fn(() => Promise.resolve(deleted));
+    const restoreLayer = vi.fn(() => Promise.resolve(layer({ status: "paused" })));
+    const api = fakeApi({
+      ...fakeLayersApi(),
+      layers: vi.fn(() => Promise.resolve({ ...list([layer()]), deleted: [{ ...deleted, key: "old", id: "l9" }] })),
+      deleteLayer,
+      restoreLayer,
+    });
+    renderApp(<LayersPage />, { api, auth: fakeAuth(SYSADMIN), lang: "fr" });
+    fireEvent.click(await screen.findByRole("button", { name: "Ouvrir" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Supprimer la couche" }));
+    const confirm = screen.getByRole("button", { name: "Confirmer la suppression de « Hôpitaux »" });
+    fireEvent.click(confirm);
+    expect(await screen.findByText("Choisissez le motif.")).toBeInTheDocument();
+    expect(deleteLayer).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("radio", { name: "En double" }));
+    fireEvent.click(confirm);
+    await waitFor(() => expect(deleteLayer).toHaveBeenCalledWith("hopitaux", "En double"));
+
+    fireEvent.click(screen.getByRole("tab", { name: "Supprimées (1)" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Restaurer" }));
+    fireEvent.change(screen.getByLabelText("Motif de la modification"), { target: { value: "Supprimée par erreur" } });
+    fireEvent.click(screen.getByRole("button", { name: "Restaurer (revient suspendue)" }));
+    await waitFor(() => expect(restoreLayer).toHaveBeenCalledWith("old", "Supprimée par erreur"));
+  });
+
+  it("reviews suggested names: accepts every high one at once", async () => {
+    const suggested = {
+      id: "f1",
+      ref: "osm:node/1",
+      name: "Établissement près de Sahloul",
+      kind: null,
+      phone: null,
+      lat: 35.8,
+      lon: 10.6,
+      gouvernorat_code: 51,
+      delegation_id: null,
+      props: {},
+      hidden: false,
+      version: 1,
+      updated_at: "2026-10-27T08:00:00Z",
+      geometry: "point" as const,
+      name_status: "suggested" as const,
+      suggested_name: "Établissement près de Sahloul",
+      name_confidence: "high" as const,
+      name_source: "localité la plus proche",
+      source_url: "https://www.openstreetmap.org/node/1",
+      snapshot_at: "2026-10-27",
+      possible_duplicate: false,
+      deleted_at: null,
+      delete_reason: null,
+    };
+    const review = vi.fn(() => Promise.resolve({ accepted: 1, edited: 0, rejected: 0, kept: 0, merged: 0 }));
+    const api = fakeApi({
+      ...fakeLayersApi(),
+      layers: vi.fn(() => Promise.resolve(list([layer({ quality: { suggested: 1, duplicates: 0, deleted: 0 } })]))),
+      reviewQueue: vi.fn(() => Promise.resolve({ items: [suggested], counts: { high: 1, duplicates: 0 }, total: 1 })),
+      review,
+    });
+    renderApp(<LayersPage />, { api, auth: fakeAuth(SYSADMIN), lang: "fr" });
+    fireEvent.click(await screen.findByRole("button", { name: "Ouvrir" }));
+    expect(await screen.findByText("Établissement près de Sahloul")).toBeInTheDocument();
+    const section = (await screen.findByText("Revue des noms")).closest("section") as HTMLElement;
+    fireEvent.change(within(section).getByLabelText("Motif de la modification"), { target: { value: "Noms vérifiés" } });
+    fireEvent.click(within(section).getByRole("button", { name: "Accepter les confirmés et élevés (1)" }));
+    await waitFor(() =>
+      expect(review).toHaveBeenCalledWith("hopitaux", { accept_confidence: ["confirmed", "high"], reason: "Noms vérifiés" }),
+    );
+    expect(await within(section).findByText(/1 accepté/)).toBeInTheDocument();
   });
 });

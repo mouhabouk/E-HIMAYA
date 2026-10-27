@@ -1,9 +1,9 @@
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any
 
 from geoalchemy2 import Geography, Geometry
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, SmallInteger, Text, UniqueConstraint, func
+from sqlalchemy import Boolean, Date, DateTime, ForeignKey, Integer, SmallInteger, Text, UniqueConstraint, func
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -66,6 +66,34 @@ class Layer(Base):
     updated_by: Mapped[str] = mapped_column(Text)
     updated_by_name: Mapped[str | None] = mapped_column(Text)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    # Phase L1a (migration 0053, docs/phase-l/design-layers.md §3.3-3.5): who sees the layer and its columns.
+    status: Mapped[str] = mapped_column(Text, server_default="published")
+    audiences: Mapped[list[str]] = mapped_column(ARRAY(Text))
+    scope: Mapped[list[int]] = mapped_column(ARRAY(SmallInteger), server_default="{}")
+    default_on: Mapped[bool] = mapped_column(Boolean, server_default="true")
+    sensitive: Mapped[bool] = mapped_column(Boolean, server_default="false")
+    fields: Mapped[dict[str, list[str]]] = mapped_column(JSONB, server_default="{}")
+    actions: Mapped[dict[str, bool]] = mapped_column(JSONB)
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    deleted_by: Mapped[str | None] = mapped_column(Text)
+    delete_reason: Mapped[str | None] = mapped_column(Text)
+
+
+class LayerRevision(Base):
+    """The settings of a layer after one change: going back to it restores them (phase L1a)."""
+
+    __tablename__ = "layer_revision"
+    __table_args__ = (UniqueConstraint("layer_id", "number", name="uq_layer_revision"), {"schema": "geo"})
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
+    layer_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("geo.layer.id", ondelete="CASCADE"))
+    number: Mapped[int] = mapped_column(Integer)
+    action: Mapped[str] = mapped_column(Text)
+    snapshot: Mapped[dict[str, Any]] = mapped_column(JSONB)
+    reason: Mapped[str | None] = mapped_column(Text)
+    created_by: Mapped[str] = mapped_column(Text)
+    created_by_name: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 class LayerImport(Base):
@@ -119,3 +147,15 @@ class LayerFeature(Base):
     version: Mapped[int] = mapped_column(Integer, server_default="1")
     updated_by: Mapped[str | None] = mapped_column(Text)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    # Phase L1a: the line or area (``location`` is then a point on it), and the quality of the name.
+    shape: Mapped[object | None] = mapped_column(Geography("GEOMETRY", srid=4326))
+    name_status: Mapped[str] = mapped_column(Text, server_default="official")
+    suggested_name: Mapped[str | None] = mapped_column(Text)
+    name_confidence: Mapped[str | None] = mapped_column(Text)
+    name_source: Mapped[str | None] = mapped_column(Text)
+    source_url: Mapped[str | None] = mapped_column(Text)
+    snapshot_at: Mapped[date | None] = mapped_column(Date)
+    possible_duplicate: Mapped[bool] = mapped_column(Boolean, server_default="false")
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    deleted_by: Mapped[str | None] = mapped_column(Text)
+    delete_reason: Mapped[str | None] = mapped_column(Text)

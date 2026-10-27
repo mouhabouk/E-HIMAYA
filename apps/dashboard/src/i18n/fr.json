@@ -316,7 +316,19 @@
     "invalid_due_on": "Le délai d’une réserve va de demain à 12 mois.",
     "reservation_text_required": "Le texte de la réserve est requis.",
     "reservation_lifted": "Cette réserve est levée.",
-    "invalid_year": "Année invalide."
+    "invalid_year": "Année invalide.",
+    "crs_unsupported": "Projection non prise en charge : convertissez le fichier en WGS84 (EPSG:4326) avant l'envoi.",
+    "kml_invalid": "Fichier KML invalide.",
+    "shp_incomplete": "Shapefile incomplet : le .zip doit contenir .shp et .dbf.",
+    "shp_invalid": "Shapefile illisible.",
+    "gpkg_invalid": "Fichier GeoPackage invalide.",
+    "gpkg_no_features": "Le GeoPackage ne contient aucune table d'entités.",
+    "zip_unreadable": "Archive .zip illisible.",
+    "layer_deleted": "La couche est supprimée : restaurez-la d'abord.",
+    "not_deleted": "La couche n'est pas supprimée.",
+    "already_deleted": "Le lieu est déjà supprimé.",
+    "merge_target_invalid": "Choisissez un autre lieu, non supprimé, pour la fusion.",
+    "name_required": "Le nom est obligatoire."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -3577,7 +3589,8 @@
       "hours": "Horaires",
       "email": "E-mail",
       "website": "Site web",
-      "phone2": "Téléphone 2"
+      "phone2": "Téléphone 2",
+      "phone": "Téléphone"
     },
     "template": {
       "title": "Modèle vide avec les colonnes reconnues :"
@@ -3686,7 +3699,10 @@
       "not_a_point": "La géométrie n’est pas un point",
       "phone_invalid": "Numéro de téléphone invalide",
       "email_invalid": "E-mail invalide",
-      "website_invalid": "Lien invalide"
+      "website_invalid": "Lien invalide",
+      "geometry_invalid": "Géométrie invalide",
+      "geometry_unsupported": "Type de géométrie non pris en charge",
+      "too_many_vertices": "Forme trop grande (plus de 20 000 sommets)"
     },
     "changes": {
       "new": "Nouveau",
@@ -3733,7 +3749,165 @@
       "empty": "Aucun lieu.",
       "count": "{{shown}} sur {{total}}"
     },
-    "simulated": "Lieux approximatifs inventés (simulation)"
+    "simulated": "Lieux approximatifs inventés (simulation)",
+    "manage": {
+      "newIsDraft": "Une nouvelle couche commence en brouillon, visible par vous seul. Après la création, choisissez qui la voit puis publiez-la.",
+      "status": {
+        "draft": "Brouillon",
+        "published": "Publiée",
+        "paused": "Suspendue",
+        "deleted": "Supprimée"
+      },
+      "sensitive": "Sensible",
+      "duplicate": "Doublon possible",
+      "nameStatus": {
+        "suggested": "Nom proposé",
+        "rejected": "Nom rejeté"
+      },
+      "geometry": {
+        "point": "point",
+        "line": "ligne",
+        "area": "surface",
+        "mixed": "mixte"
+      },
+      "groups": {
+        "citizen": "Citoyen",
+        "room": "Salles",
+        "field": "Terrain",
+        "command": "Commandement",
+        "support": "Administration et soutien"
+      },
+      "confidence": {
+        "confirmed": "Confirmé",
+        "high": "Élevée",
+        "medium": "Moyenne",
+        "low": "Faible",
+        "review": "À revoir"
+      },
+      "tabs": {
+        "label": "Couches",
+        "layers": "Couches ({{count}})",
+        "deleted": "Supprimées ({{count}})"
+      },
+      "visibility": {
+        "title": "Qui voit la couche",
+        "status": "État",
+        "statusHelp": {
+          "draft": "Brouillon : seul l'administrateur du système la voit.",
+          "published": "Publiée : les publics choisis ci-dessous la voient.",
+          "paused": "Suspendue : retirée de toutes les cartes, ses réglages sont gardés."
+        },
+        "sensitive": "Couche sensible (le ministre seul)",
+        "sensitiveHelp": "Seuls le ministre et l'administrateur la voient, jamais le gouverneur, même pendant un axe ouvert. Chaque lecture de ses lieux est inscrite au journal d'audit.",
+        "audiences": "Publics qui la voient",
+        "audiencesHelp": "Salles : opérateurs et chefs de salle. Terrain : commandants d'intervention et chefs d'équipe. Commandement : gouverneur et ministre. Administration et soutien : les autres agents.",
+        "national": "Portée : nationale (tous les gouvernorats)",
+        "scope": "Gouvernorats",
+        "scopeHelp": "Sans choix : les agents de tous les gouvernorats la voient. Avec des gouvernorats : parmi les agents régionaux, seuls les leurs la voient ; les agents nationaux la voient toujours.",
+        "defaultOn": "Affichée d'office sur la carte (sinon l'utilisateur l'active)",
+        "actions": "Boutons de la fiche du lieu",
+        "action_call": "« Appeler »",
+        "action_directions": "« Itinéraire »",
+        "scopeCount": "Portée : gouvernorats choisis ({{count}})"
+      },
+      "fields": {
+        "title": "Colonnes par public",
+        "help": "Choisissez pour chaque colonne les publics qui la voient. Une colonne non permise ne sort jamais du serveur.",
+        "column": "Colonne",
+        "cell": "{{column}} : {{group}}",
+        "add": "Autre colonne du fichier",
+        "addButton": "Ajouter"
+      },
+      "revisions": {
+        "title": "Historique des réglages",
+        "number": "Version",
+        "action": "Opération",
+        "changes": "Modifié",
+        "restore": "Revenir à cette version",
+        "explain": "Les réglages de la couche reviennent à la version {{n}} (nom, visibilité, colonnes…). Les lieux reviennent en annulant les imports.",
+        "confirm": "Revenir",
+        "actions": {
+          "create": "Création",
+          "update": "Modification",
+          "delete": "Suppression",
+          "restore": "Restauration",
+          "revert": "Retour à une version"
+        },
+        "fields": {
+          "name": "Nom",
+          "icon": "Icône",
+          "colour": "Couleur",
+          "source": "Source",
+          "licence": "Licence",
+          "to_verify": "À vérifier",
+          "simulated": "[SIM]",
+          "editors_allowed": "Éditeurs",
+          "status": "État",
+          "audiences": "Publics",
+          "scope": "Portée",
+          "default_on": "Affichage d'office",
+          "sensitive": "Sensible",
+          "fields": "Colonnes",
+          "actions": "Boutons"
+        }
+      },
+      "delete": {
+        "title": "Supprimer la couche",
+        "explain": "Elle disparaît aussitôt de toutes les cartes et paquets, et reste 30 jours dans « Supprimées », où elle peut être restaurée telle quelle, puis elle est effacée.",
+        "button": "Supprimer la couche",
+        "why": "Motif de la suppression",
+        "reasons": {
+          "duplicate": "En double",
+          "invalid": "Non valable",
+          "replaced": "Remplacée",
+          "other": "Autre"
+        },
+        "pick": "Choisissez le motif.",
+        "more": "Précision (facultatif)",
+        "confirm": "Confirmer la suppression de « {{name}} »",
+        "place": "Supprimer",
+        "placeConfirm": "Confirmer la suppression du lieu"
+      },
+      "deleted": {
+        "title": "Couches supprimées",
+        "empty": "Aucune couche supprimée.",
+        "when": "Supprimée le",
+        "purgeAt": "Effacée le",
+        "restore": "Restaurer",
+        "purge": "Effacer maintenant",
+        "purgeSure": "Je comprends que l'effacement est définitif : la couche, ses lieux, ses imports et son historique.",
+        "restoreConfirm": "Restaurer (revient suspendue)",
+        "purgeConfirm": "Effacer définitivement"
+      },
+      "deletedPlaces": {
+        "empty": "Aucun lieu supprimé.",
+        "restore": "Restaurer",
+        "title": "Lieux supprimés ({{count}})"
+      },
+      "review": {
+        "title": "Revue des noms",
+        "help": "Un lieu au nom proposé n'apparaît pas au citoyen avant que son nom soit accepté. Les agents le voient avec la marque « Nom proposé ».",
+        "views": "Affichage",
+        "all": "Tous les proposés",
+        "duplicatesTab": "Doublons possibles",
+        "acceptHigh": "Accepter les confirmés et élevés ({{n}})",
+        "accept": "Accepter",
+        "edit": "Corriger",
+        "reject": "Rejeter",
+        "keep": "Garder",
+        "merge": "Fusionner avec l'autre",
+        "newName": "Nouveau nom de {{name}}",
+        "confidence": "Confiance",
+        "nameSource": "Origine du nom",
+        "source": "OSM",
+        "empty": "Rien à revoir ici.",
+        "done": "{{accepted}} accepté(s), {{edited}} corrigé(s), {{rejected}} rejeté(s), {{kept}} gardé(s), {{merged}} fusionné(s)."
+      },
+      "toReview": "Noms à revoir : {{n}}",
+      "duplicates": "Doublons possibles : {{n}}",
+      "ministerOnly": "Le ministre seul",
+      "listSeparator": ", "
+    }
   },
   "guide": {
     "title": "Centre d’urgence : thèmes et fiches",

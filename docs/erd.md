@@ -367,6 +367,16 @@ erDiagram
         text updated_by
         text updated_by_name
         datetime updated_at
+        text status
+        array audiences
+        array scope
+        boolean default_on
+        boolean sensitive
+        jsonb fields
+        jsonb actions
+        datetime deleted_at
+        text deleted_by
+        text delete_reason
     }
     geo__layer_feature {
         uuid id PK
@@ -384,6 +394,17 @@ erDiagram
         integer version
         text updated_by
         datetime updated_at
+        geography_geometry_4326 shape
+        text name_status
+        text suggested_name
+        text name_confidence
+        text name_source
+        text source_url
+        date snapshot_at
+        boolean possible_duplicate
+        datetime deleted_at
+        text deleted_by
+        text delete_reason
     }
     geo__layer_import {
         uuid id PK
@@ -407,11 +428,23 @@ erDiagram
         datetime applied_at
         datetime undone_at
     }
+    geo__layer_revision {
+        uuid id PK
+        uuid layer_id FK
+        integer number
+        text action
+        jsonb snapshot
+        text reason
+        text created_by
+        text created_by_name
+        datetime created_at
+    }
     geo__delegation ||--o{ geo__layer_feature : "delegation_id"
     geo__gouvernorat ||--o{ geo__delegation : "gouvernorat_code"
     geo__gouvernorat ||--o{ geo__layer_feature : "gouvernorat_code"
     geo__layer ||--o{ geo__layer_feature : "layer_id"
     geo__layer ||--o{ geo__layer_import : "layer_id"
+    geo__layer ||--o{ geo__layer_revision : "layer_id"
     geo__layer_import ||--o{ geo__layer_feature : "import_id"
 ```
 
