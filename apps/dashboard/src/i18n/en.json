@@ -4148,7 +4148,18 @@
     "comparisonTitle": "Comparison report",
     "reason": "Reason",
     "decidedBy": "Decided by",
-    "certificate": "Prevention certificate"
+    "certificate": "Prevention certificate",
+    "onPhone": "On the phone",
+    "fieldTitle": "From the site: signatures and photos",
+    "signaturesTitle": "Signatures",
+    "noSignature": "No signature",
+    "photosTitle": "Photos ({{count}})",
+    "generalPhotos": "General photos",
+    "photoAlt": "Photo taken on site: {{item}}",
+    "signature": {
+      "inspector": "Inspector’s signature",
+      "representative": "Representative’s signature"
+    }
   },
   "crew": {
     "pageTitle": "Crews on duty",

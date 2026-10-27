@@ -35,12 +35,15 @@ from app.modules.orgs.models import (
     Maintenance,
     Member,
     Organization,
+    PreventionPhoto,
     PreventionReservation,
     PreventionVisit,
     TeamMember,
 )
 
 PDF_TYPE = certificate.PDF_TYPE
+SIGNATURE_TYPE = "image/png"
+SIGNATURE_MAX_BYTES = 200_000
 
 
 # ---------------------------------------------------------------- outputs
@@ -160,6 +163,42 @@ def checklist_out(declared: dict[str, Any]) -> list[schemas.ChecklistItemOut]:
     ]
 
 
+async def photos_of(session: AsyncSession, visit_id: uuid.UUID) -> list[PreventionPhoto]:
+    rows = await session.scalars(
+        select(PreventionPhoto).where(PreventionPhoto.visit_id == visit_id).order_by(PreventionPhoto.created_at)
+    )
+    return list(rows)
+
+
+def _link(key: str | None, content_type: str) -> str | None:
+    return get_store().presign_get(key, expires_s=600, content_type=content_type) if key else None
+
+
+def photo_out(photo: PreventionPhoto) -> schemas.VisitPhotoOut:
+    return schemas.VisitPhotoOut(
+        id=photo.id,
+        item_key=photo.item_key,
+        content_type=photo.content_type,
+        bytes=photo.bytes,
+        created_by_name=photo.created_by_name,
+        device_at=photo.device_at,
+        created_at=photo.created_at,
+        url=_link(photo.object_key, photo.content_type),
+    )
+
+
+def signatures_out(visit: PreventionVisit) -> schemas.VisitSignatures | None:
+    if visit.inspector_signature_key is None and visit.representative_signature_key is None:
+        return None
+    return schemas.VisitSignatures(
+        inspector_name=visit.inspected_by_name,
+        inspector_url=_link(visit.inspector_signature_key, SIGNATURE_TYPE),
+        representative_name=visit.representative_name,
+        representative_role=visit.representative_role,
+        representative_url=_link(visit.representative_signature_key, SIGNATURE_TYPE),
+    )
+
+
 async def staff_view(session: AsyncSession, visit: PreventionVisit, org: Organization) -> schemas.StaffVisit:
     (out,) = await visit_views(session, org, [visit])
     checklist: list[schemas.ChecklistItemOut] = []
@@ -173,6 +212,9 @@ async def staff_view(session: AsyncSession, visit: PreventionVisit, org: Organiz
         org_status=org.status,
         gouvernorat_code=org.gouvernorat_code,
         checklist=checklist,
+        inspector_on_phone=visit.inspector_subject is not None,
+        photos=[photo_out(p) for p in await photos_of(session, visit.id)],
+        signatures=signatures_out(visit),
     )
 
 
@@ -305,7 +347,11 @@ async def schedule_new(
 def _set_schedule(visit: PreventionVisit, body: schemas.VisitScheduleIn, actor: str) -> None:
     visit.status = "scheduled"
     visit.scheduled_on = body.scheduled_on
-    visit.inspector_name = _clean(body.inspector_name)
+    name = _clean(body.inspector_name)
+    if name != visit.inspector_name:
+        # Another inspector named by the Office: the visit leaves the phone that had taken it (P4c).
+        visit.inspector_subject = None
+    visit.inspector_name = name
     visit.scheduled_by = actor
     visit.scheduled_at = datetime.now(UTC)
 
@@ -643,8 +689,36 @@ def _reservation_rows(rows: Sequence[tuple[str, str]]) -> str:
     )
 
 
+def _signature_cell(title: str, png: bytes | None, name: str | None, role: str | None) -> str:
+    image = (
+        f'<img src="data:image/png;base64,{base64.b64encode(png).decode()}" alt="" style="height:70px">' if png else "—"
+    )
+    who = " · ".join(x for x in (name, role) if x)
+    return f"<td><b>{_e(title)}</b><br>{image}<br>{_e(who)}</td>"
+
+
+def _signatures_html(visit: PreventionVisit, signatures: tuple[bytes | None, bytes | None], photos: int) -> str:
+    """The two signatures of an inspection made on the phone, and the number of photos (phase P4c)."""
+    if visit.inspector_signature_key is None and visit.representative_signature_key is None and not photos:
+        return ""
+    inspector, representative = signatures
+    return (
+        "<h2>التوقيعات / Signatures</h2><table><tr>"
+        + _signature_cell("المفقِّد / L'inspecteur", inspector, visit.inspected_by_name, None)
+        + _signature_cell(
+            "ممثل المؤسسة / Le représentant", representative, visit.representative_name, visit.representative_role
+        )
+        + f"</tr></table><p>الصور الملتقطة في الموقع / Photos prises sur site : <b>{photos}</b></p>"
+    )
+
+
 def render_report_html(
-    visit: PreventionVisit, org: Organization, reservations: Sequence[tuple[str, str]], cert_code: str | None
+    visit: PreventionVisit,
+    org: Organization,
+    reservations: Sequence[tuple[str, str]],
+    cert_code: str | None,
+    signatures: tuple[bytes | None, bytes | None] = (None, None),
+    photos: int = 0,
 ) -> str:
     """The visit report (procès-verbal): the visit, the grid, the comparison, the decision and reservations."""
     comparison = visit.comparison or {"items": [], "conform": 0, "nonconform": 0, "not_checked": 0}
@@ -701,18 +775,28 @@ def render_report_html(
    فروق منذ شهادة السلامة / Écarts depuis le certificat de sécurité : {changes}</p>
 <table><tr><th>البند / Point</th><th>المصرَّح به / Déclaré</th><th>النتيجة / Résultat</th>
 <th>المعاين والملاحظة / Constaté et remarque</th></tr>{rows or '<tr><td colspan="4">—</td></tr>'}</table>
+{_signatures_html(visit, signatures, photos)}
 {decision}
 <p class="small">بنود «المعاينة» نموذج [SIM] في انتظار شبكة التفقد الرسمية للديوان /
 Les points « constat sur site » sont un modèle [SIM], en attente de la grille officielle de l'Office.</p>
 </body></html>"""
 
 
+async def _signature(key: str | None) -> bytes | None:
+    return await get_store().head(key, SIGNATURE_MAX_BYTES) if key else None
+
+
 async def store_report(session: AsyncSession, visit: PreventionVisit, org: Organization) -> list[str]:
     """Render and keep the visit report; returns the replaced object key to delete after commit."""
     reservations = [(r.text, r.due_on.isoformat()) for r in (await _reservations(session, [visit.id]))[visit.id]]
     cert = (await _certificates(session, [visit.id])).get(visit.id)
+    signatures = (
+        await _signature(visit.inspector_signature_key),
+        await _signature(visit.representative_signature_key),
+    )
+    photos = len(await photos_of(session, visit.id))
     data = await certificate.render_document_pdf(
-        render_report_html(visit, org, reservations, cert.code if cert else None)
+        render_report_html(visit, org, reservations, cert.code if cert else None, signatures, photos)
     )
     old = visit.report_object_key
     key = f"prevention/{visit.id}/report-{uuid.uuid4().hex[:8]}.pdf"

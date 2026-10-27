@@ -4458,6 +4458,13 @@
             ],
             "title": "Name"
           },
+          "roles": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Roles",
+            "type": "array"
+          },
           "shift": {
             "anyOf": [
               {
@@ -9107,6 +9114,92 @@
         "title": "FeedbackOut",
         "type": "object"
       },
+      "FieldInspectionIn": {
+        "description": "The grid filled on the phone, with the phone's id for it (a resent inspection is applied once), its clock,\nand the two signatures (design-staff.md §8.4).",
+        "properties": {
+          "attendees": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Attendees"
+          },
+          "client_id": {
+            "format": "uuid",
+            "title": "Client Id",
+            "type": "string"
+          },
+          "device_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device At"
+          },
+          "inspected_on": {
+            "format": "date",
+            "title": "Inspected On",
+            "type": "string"
+          },
+          "inspector_signature": {
+            "maxLength": 280000,
+            "minLength": 20,
+            "title": "Inspector Signature",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/InspectionItemIn"
+            },
+            "maxItems": 300,
+            "title": "Items",
+            "type": "array"
+          },
+          "representative_name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Representative Name",
+            "type": "string"
+          },
+          "representative_role": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Representative Role"
+          },
+          "representative_signature": {
+            "maxLength": 280000,
+            "minLength": 20,
+            "title": "Representative Signature",
+            "type": "string"
+          }
+        },
+        "required": [
+          "inspected_on",
+          "client_id",
+          "representative_name",
+          "inspector_signature",
+          "representative_signature"
+        ],
+        "title": "FieldInspectionIn",
+        "type": "object"
+      },
       "FieldReportOut": {
         "properties": {
           "answers": {
@@ -9280,6 +9373,342 @@
           "created_at"
         ],
         "title": "FieldReportOut",
+        "type": "object"
+      },
+      "FieldVisit": {
+        "description": "A visit as the inspector's phone sees it (phase P4c): the institution's address and place, and whether the\nvisit is the inspector's own.",
+        "properties": {
+          "attendees": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Attendees"
+          },
+          "cancel_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancel Reason"
+          },
+          "cancelled_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancelled At"
+          },
+          "certificate": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__orgs__schemas__CertificateOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "checklist": {
+            "items": {
+              "$ref": "#/components/schemas/ChecklistItemOut"
+            },
+            "title": "Checklist",
+            "type": "array"
+          },
+          "comparison": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ComparisonReport"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "decided_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided At"
+          },
+          "decided_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided By Name"
+          },
+          "decision": {
+            "anyOf": [
+              {
+                "enum": [
+                  "approved",
+                  "approved_with_reservations",
+                  "refused"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decision"
+          },
+          "decision_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decision Reason"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "has_report": {
+            "title": "Has Report",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "inspected_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inspected On"
+          },
+          "inspector_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inspector Name"
+          },
+          "inspector_on_phone": {
+            "default": false,
+            "title": "Inspector On Phone",
+            "type": "boolean"
+          },
+          "mine": {
+            "title": "Mine",
+            "type": "boolean"
+          },
+          "org_address": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Org Address"
+          },
+          "org_id": {
+            "format": "uuid",
+            "title": "Org Id",
+            "type": "string"
+          },
+          "org_kind": {
+            "$ref": "#/components/schemas/OrgKind"
+          },
+          "org_location": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__orgs__schemas__Point"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "org_name": {
+            "title": "Org Name",
+            "type": "string"
+          },
+          "org_status": {
+            "$ref": "#/components/schemas/OrgStatus"
+          },
+          "origin": {
+            "enum": [
+              "request",
+              "scheduled"
+            ],
+            "title": "Origin",
+            "type": "string"
+          },
+          "photos": {
+            "items": {
+              "$ref": "#/components/schemas/VisitPhotoOut"
+            },
+            "title": "Photos",
+            "type": "array"
+          },
+          "request_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Request Note"
+          },
+          "requested_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Requested At"
+          },
+          "requested_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Requested By Name"
+          },
+          "reservations": {
+            "items": {
+              "$ref": "#/components/schemas/ReservationOut"
+            },
+            "title": "Reservations",
+            "type": "array"
+          },
+          "scheduled_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scheduled On"
+          },
+          "signatures": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VisitSignatures"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "enum": [
+              "requested",
+              "scheduled",
+              "inspected",
+              "decided",
+              "cancelled"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "taken_by_other": {
+            "title": "Taken By Other",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "org_id",
+          "origin",
+          "status",
+          "request_note",
+          "requested_by_name",
+          "requested_at",
+          "scheduled_on",
+          "inspector_name",
+          "inspected_on",
+          "attendees",
+          "comparison",
+          "decision",
+          "decision_reason",
+          "decided_by_name",
+          "decided_at",
+          "certificate",
+          "reservations",
+          "has_report",
+          "cancel_reason",
+          "cancelled_at",
+          "created_at",
+          "org_name",
+          "org_kind",
+          "org_status",
+          "gouvernorat_code",
+          "org_address",
+          "org_location",
+          "mine",
+          "taken_by_other"
+        ],
+        "title": "FieldVisit",
         "type": "object"
       },
       "FireDangerOut": {
@@ -24714,6 +25143,11 @@
             ],
             "title": "Inspector Name"
           },
+          "inspector_on_phone": {
+            "default": false,
+            "title": "Inspector On Phone",
+            "type": "boolean"
+          },
           "org_id": {
             "format": "uuid",
             "title": "Org Id",
@@ -24736,6 +25170,13 @@
             ],
             "title": "Origin",
             "type": "string"
+          },
+          "photos": {
+            "items": {
+              "$ref": "#/components/schemas/VisitPhotoOut"
+            },
+            "title": "Photos",
+            "type": "array"
           },
           "request_note": {
             "anyOf": [
@@ -24789,6 +25230,16 @@
               }
             ],
             "title": "Scheduled On"
+          },
+          "signatures": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VisitSignatures"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "status": {
             "enum": [
@@ -28239,6 +28690,85 @@
         "title": "VisitOut",
         "type": "object"
       },
+      "VisitPhotoOut": {
+        "description": "A photo taken on site (phase P4c); ``url`` is a short-lived link.",
+        "properties": {
+          "bytes": {
+            "title": "Bytes",
+            "type": "integer"
+          },
+          "content_type": {
+            "title": "Content Type",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "device_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device At"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "item_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Item Key"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url"
+          }
+        },
+        "required": [
+          "id",
+          "item_key",
+          "content_type",
+          "bytes",
+          "created_by_name",
+          "device_at",
+          "created_at"
+        ],
+        "title": "VisitPhotoOut",
+        "type": "object"
+      },
       "VisitRequestIn": {
         "properties": {
           "note": {
@@ -28281,6 +28811,75 @@
           "scheduled_on"
         ],
         "title": "VisitScheduleIn",
+        "type": "object"
+      },
+      "VisitSignatures": {
+        "description": "The two signatures of an inspection made on a phone (phase P4c); the URLs are short-lived.",
+        "properties": {
+          "inspector_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inspector Name"
+          },
+          "inspector_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inspector Url"
+          },
+          "representative_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Representative Name"
+          },
+          "representative_role": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Representative Role"
+          },
+          "representative_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Representative Url"
+          }
+        },
+        "required": [
+          "inspector_name",
+          "inspector_url",
+          "representative_name",
+          "representative_role",
+          "representative_url"
+        ],
+        "title": "VisitSignatures",
         "type": "object"
       },
       "VolunteerCalloutRef": {
@@ -33505,6 +34104,477 @@
           }
         ],
         "summary": "Transport",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/prevention/visits": {
+      "get": {
+        "description": "Scheduled visits, and inspected ones waiting for the decision, in the inspector's scope.",
+        "operationId": "visits_api_v1_crew_prevention_visits_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/FieldVisit"
+                  },
+                  "title": "Response Visits Api V1 Crew Prevention Visits Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Visits",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/prevention/visits/{visit_id}": {
+      "get": {
+        "operationId": "get_visit_api_v1_crew_prevention_visits__visit_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "visit_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Visit Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FieldVisit"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Visit",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/prevention/visits/{visit_id}/claim": {
+      "post": {
+        "description": "«آخذها»: the visit is the inspector's, on this phone.",
+        "operationId": "claim_api_v1_crew_prevention_visits__visit_id__claim_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "visit_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Visit Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FieldVisit"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Claim",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/prevention/visits/{visit_id}/decision": {
+      "post": {
+        "description": "The decision with its reservations and their due dates; sent only online (the certificate is issued now).",
+        "operationId": "decide_api_v1_crew_prevention_visits__visit_id__decision_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "visit_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Visit Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VisitDecisionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FieldVisit"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Decide",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/prevention/visits/{visit_id}/inspection": {
+      "post": {
+        "description": "The grid filled on site, with both signatures; the server renders the visit report.",
+        "operationId": "record_inspection_api_v1_crew_prevention_visits__visit_id__inspection_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "visit_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Visit Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldInspectionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FieldVisit"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Record Inspection",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/prevention/visits/{visit_id}/photos": {
+      "post": {
+        "description": "A photo of the visit (under a grid item, or general) as the raw request body, its type in ``Content-Type``.",
+        "operationId": "add_photo_api_v1_crew_prevention_visits__visit_id__photos_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "visit_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Visit Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "client_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Client Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "item_key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 60,
+                  "pattern": "^[a-z0-9_.]+$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Item Key"
+            }
+          },
+          {
+            "in": "query",
+            "name": "device_at",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Device At"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "image/jpeg": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "image/png": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FieldVisit"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Add Photo",
         "tags": [
           "crew"
         ]

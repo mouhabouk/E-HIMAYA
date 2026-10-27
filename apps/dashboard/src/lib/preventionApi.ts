@@ -87,12 +87,36 @@ export interface Visit {
   created_at: string;
 }
 
+/** A photo taken on site with the inspector's phone (phase P4c); ``url`` is a short-lived link. */
+export interface VisitPhoto {
+  id: string;
+  item_key: string | null;
+  content_type: string;
+  bytes: number;
+  created_by_name: string | null;
+  device_at: string | null;
+  created_at: string;
+  url: string | null;
+}
+
+/** Both signatures of an inspection made on a phone (phase P4c). */
+export interface VisitSignatures {
+  inspector_name: string | null;
+  inspector_url: string | null;
+  representative_name: string | null;
+  representative_role: string | null;
+  representative_url: string | null;
+}
+
 export interface StaffVisit extends Visit {
   org_name: string;
   org_kind: string;
   org_status: string;
   gouvernorat_code: number | null;
   checklist: ChecklistItem[];
+  inspector_on_phone?: boolean;
+  photos?: VisitPhoto[];
+  signatures?: VisitSignatures | null;
 }
 
 export interface ScheduleBody {

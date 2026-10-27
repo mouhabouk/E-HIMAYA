@@ -2911,5 +2911,189 @@
   "staffTriageRedShort": "Red",
   "staffTriageBlackShort": "Black",
   "staffTransportShort": "Patients transported",
-  "staffNoNames": "no names"
+  "staffNoNames": "no names",
+  "prevVisitsTitle": "Prevention visits",
+  "prevVisitsEmpty": "No visit scheduled in your governorate.",
+  "prevMine": "Mine",
+  "prevTakenByOther": "Taken by another inspector",
+  "prevOnPhone": "On the phone",
+  "prevScheduledOn": "On {date}",
+  "@prevScheduledOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "prevNoDate": "No date",
+  "prevTake": "I take it",
+  "prevTakeHelp": "The visit is kept encrypted on your phone: you can work on site without a network.",
+  "prevStartGrid": "Start the inspection",
+  "prevContinueGrid": "Continue the inspection",
+  "prevGridTitle": "Inspection grid",
+  "prevSignTitle": "Attendees and signatures",
+  "prevDecisionTitle": "Decision",
+  "prevPending": "{count} waiting to be sent",
+  "@prevPending": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "prevSendNow": "Send now",
+  "prevSavedOffline": "Kept on the phone, sent when the network is back.",
+  "prevDeclared": "Declared: {value}",
+  "@prevDeclared": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "prevAllConform": "All conforming",
+  "prevObserved": "Observed",
+  "prevResultConform": "Conforming",
+  "prevResultNonconform": "Non-conforming",
+  "prevResultNotChecked": "Not checked",
+  "prevReasonMissing": "Missing",
+  "prevReasonBroken": "Out of order",
+  "prevReasonExpired": "Expired",
+  "prevReasonBlocked": "Blocked",
+  "prevReasonInsufficient": "Insufficient",
+  "prevReasonNotAsPlan": "Not as on the plan",
+  "prevNeedsDetail": "Choose a reason or correct the count",
+  "prevNoteOptional": "Note (optional)",
+  "prevPhoto": "Photo",
+  "prevPhotos": "Photos: {count}",
+  "@prevPhotos": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "prevPhotoLimit": "20 photos at most per visit.",
+  "prevGeneral": "General photo",
+  "prevSummary": "{conform} conforming · {nonconform} non-conforming · {notChecked} not checked",
+  "@prevSummary": {
+    "placeholders": {
+      "conform": {
+        "type": "int"
+      },
+      "nonconform": {
+        "type": "int"
+      },
+      "notChecked": {
+        "type": "int"
+      }
+    }
+  },
+  "prevSuggested": "Suggested decision: {decision}",
+  "@prevSuggested": {
+    "placeholders": {
+      "decision": {
+        "type": "String"
+      }
+    }
+  },
+  "prevNextSign": "Next: signatures",
+  "prevAttendees": "Attendees",
+  "prevRepresentative": "Institution’s representative",
+  "prevRepresentativeName": "Representative’s name",
+  "prevRoleDirector": "Director",
+  "prevRoleSafetyOfficer": "Safety officer",
+  "prevRoleManager": "Manager",
+  "prevRoleGuard": "Security guard",
+  "prevRoleTechnician": "Technician",
+  "prevSignInspector": "Inspector’s signature",
+  "prevSignRepresentative": "Representative’s signature",
+  "prevSignHere": "Sign here with your finger",
+  "prevClear": "Clear",
+  "prevSigned": "Signed",
+  "prevSignOff": "Close and send the inspection",
+  "prevSignMissing": "Both signatures and the representative’s name are needed.",
+  "prevDetailMissing": "Non-conforming items without a reason: {count}",
+  "@prevDetailMissing": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "prevInspectionSent": "Inspection sent, report issued.",
+  "prevInspectionQueued": "Inspection kept, sent when the network is back.",
+  "prevValidFor": "Valid for",
+  "prevYears": "{years, plural, =1{1 year} other{{years} years}}",
+  "@prevYears": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
+  "prevReservations": "Reservations",
+  "prevReservationsHelp": "Proposed from the non-conforming items; remove what does not apply.",
+  "prevDueIn": "Deadline",
+  "prevMonths": "{months, plural, =1{1 month} other{{months} months}}",
+  "@prevMonths": {
+    "placeholders": {
+      "months": {
+        "type": "int"
+      }
+    }
+  },
+  "prevRefusalReason": "Reason for refusal",
+  "prevRefuseDanger": "Serious danger to people",
+  "prevRefuseExits": "Exits unusable",
+  "prevRefuseEquipment": "Fire equipment insufficient",
+  "prevRefuseDocuments": "Safety documents missing",
+  "prevSendDecision": "Send the decision",
+  "prevDecisionSent": "Decision sent.",
+  "prevDecisionQueued": "Decision kept, sent after the inspection when the network is back.",
+  "prevDecisionAfterInspection": "The decision comes after the inspection is closed.",
+  "prevCertificate": "Certificate {code}",
+  "@prevCertificate": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "prevErrTaken": "Another inspector took this visit.",
+  "prevErrTooManyPhotos": "This visit already has 20 photos.",
+  "prevErrSignature": "Invalid signature, sign again.",
+  "prevErrValidUntil": "Validity period refused.",
+  "prevErrState": "The visit changed on the dashboard.",
+  "prevSectionEquipment": "Safety equipment",
+  "prevSectionSite": "On-site checks",
+  "prevSimGrid": "[SIM] On-site checks: model until the Office’s official grid",
+  "prevItemHazmat": "Hazardous material {n}",
+  "@prevItemHazmat": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "prevItemCapacity": "Capacity",
+  "prevItemFloors": "Floors",
+  "prevItemHeight": "Height (m)",
+  "prevItemAddress": "Address",
+  "prevItemFamily": "Family",
+  "prevItemCategory": "Category",
+  "prevItemEvacuation": "Assembly points",
+  "prevItemRepresentative": "Team representative",
+  "prevItemMembers": "Team members",
+  "prevItemSafetyFile": "Safety file",
+  "prevItemSafetyPlan": "Safety plan",
+  "prevItemExits": "Exits clear",
+  "prevItemSignage": "Signage",
+  "prevItemLighting": "Emergency lighting works",
+  "prevItemAlarm": "Alarm test",
+  "prevItemExtinguishers": "Extinguishers within reach",
+  "prevItemElectrical": "Electrical installations",
+  "prevDeclaredNone": "None",
+  "prevYes": "Yes",
+  "prevNo": "No"
 }
