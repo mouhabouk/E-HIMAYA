@@ -3,6 +3,7 @@
 seen by the room, photos, voice notes and texts, hospitals picked from the map, detailed reports from the templates
 the Office approves, and the number the room gives the team."""
 
+import secrets
 import uuid
 from typing import Any
 
@@ -12,11 +13,20 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from tests.conftest import FakeStore
 from tests.test_crew import Leader, Staff, _on_shift, new_incident, write
-from tests.test_operations import random_place
 
 JPEG = b"\xff\xd8\xff\xe0" + b"\x00" * 200
 PNG = b"\x89PNG\r\n\x1a\n" + b"\x00" * 200
 M4A = b"\x00\x00\x00\x20ftypM4A " + b"\x00" * 200
+
+
+def _place() -> dict[str, float]:
+    # Inside Sfax gouvernorat, in an area of its own: the incidents of these tests stay open and must not come
+    # within the duplicate radius of the incidents other tests create with ``random_place``.
+    return {
+        "lat": 34.45 + secrets.randbelow(1000) / 10_000,
+        "lon": 10.30 + secrets.randbelow(1000) / 10_000,
+        "accuracy_m": 10.0,
+    }
 
 
 async def _mission(
@@ -24,7 +34,7 @@ async def _mission(
 ) -> tuple[Leader, str, str, dict[str, float]]:
     """A leader on shift with one mission (on scene unless asked otherwise); returns its path and incident."""
     leader, resource = await _on_shift(client, staff)
-    place = random_place()
+    place = _place()
     incident_id, _ = await new_incident(client, staff, place)
     r = await client.post(
         f"/api/v1/staff/incidents/{incident_id}/assignments",
