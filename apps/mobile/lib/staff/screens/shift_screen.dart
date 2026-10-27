@@ -6,10 +6,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/ui/components.dart';
 import '../../core/ui/tokens.dart';
 import '../../l10n/app_localizations.dart';
+import '../prevention/visits_screen.dart';
 import '../staff_chrome.dart';
 import '../staff_controller.dart';
 import '../staff_labels.dart';
 import '../staff_models.dart';
+import 'field_widgets.dart';
 
 /// F-STF-02: the leader takes a vehicle of the gouvernorat and gives the crew size.
 class ShiftScreen extends ConsumerStatefulWidget {
@@ -74,6 +76,15 @@ class _ShiftScreenState extends ConsumerState<ShiftScreen> {
                     Text(
                       l10n.staffHello(s.me!.name!),
                       style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  if (s.me?.inspector ?? false)
+                    NavCard(
+                      key: const Key('open-visits'),
+                      icon: Icons.fact_check,
+                      tone: Tone.navy,
+                      title: l10n.prevVisitsTitle,
+                      onTap: () =>
+                          push(context, const PreventionVisitsScreen()),
                     ),
                   const SizedBox(height: 8),
                   SectionTitle(l10n.staffChooseVehicle),

@@ -63,6 +63,7 @@ class CrewMe {
     required this.gouvernoratCode,
     required this.deviceId,
     this.shift,
+    this.roles = const ['team_leader'],
   });
 
   factory CrewMe.fromJson(Map<String, dynamic> j) => CrewMe(
@@ -72,12 +73,22 @@ class CrewMe {
     shift: j['shift'] == null
         ? null
         : CrewShift.fromJson(j['shift'] as Map<String, dynamic>),
+    roles: j['roles'] == null
+        ? const ['team_leader']
+        : [for (final r in j['roles'] as List) r as String],
   );
 
   final String? name;
   final int gouvernoratCode;
   final String deviceId;
   final CrewShift? shift;
+
+  /// `team_leader` and/or `org_auditor` (phase P4c): the app opens the shift, the prevention
+  /// visits, or the shift with a button to the visits.
+  final List<String> roles;
+
+  bool get leader => roles.contains('team_leader');
+  bool get inspector => roles.contains('org_auditor');
 }
 
 enum MissionStatus { ordered, enRoute, onScene, released, cancelled }

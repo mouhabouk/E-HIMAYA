@@ -9,6 +9,7 @@ import {
   ComparisonView,
   DecisionTag,
   declaredText,
+  FieldEvidence,
   itemLabel,
   ReservationList,
   VisitStatusTag,
@@ -557,7 +558,15 @@ export function VisitPage() {
           <dt>{t("prevention.scheduledOn")}</dt>
           <dd>{formatDay(fmt, visit.scheduled_on, "—")}</dd>
           <dt>{t("prevention.inspector")}</dt>
-          <dd>{visit.inspector_name ?? "—"}</dd>
+          <dd>
+            {visit.inspector_name ?? "—"}
+            {visit.inspector_on_phone && (
+              <>
+                {" "}
+                <span className="tag tag--level-ok">{t("prevention.onPhone")}</span>
+              </>
+            )}
+          </dd>
           <dt>{t("prevention.inspectedOn")}</dt>
           <dd>{formatDay(fmt, visit.inspected_on, "—")}</dd>
           {visit.attendees && (
@@ -589,6 +598,13 @@ export function VisitPage() {
         <section className="card" aria-labelledby="visit-compare">
           <h2 id="visit-compare">{t("prevention.comparisonTitle")}</h2>
           <ComparisonView report={visit.comparison} />
+        </section>
+      )}
+
+      {((visit.photos?.length ?? 0) > 0 || visit.signatures) && (
+        <section className="card" aria-labelledby="visit-field">
+          <h2 id="visit-field">{t("prevention.fieldTitle")}</h2>
+          <FieldEvidence photos={visit.photos ?? []} signatures={visit.signatures ?? null} />
         </section>
       )}
 

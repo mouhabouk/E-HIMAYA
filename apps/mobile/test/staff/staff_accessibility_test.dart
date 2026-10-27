@@ -130,4 +130,60 @@ void main() {
       handle.dispose();
     });
   }
+
+  for (final scale in [1.0, 2.0]) {
+    testWidgets('prevention visit, grid, signatures and decision in Arabic '
+        'x$scale', (tester) async {
+      final handle = tester.ensureSemantics();
+      Future<void> tap(String key) async {
+        final f = find.byKey(Key(key));
+        await tester.scrollUntilVisible(
+          f,
+          200,
+          scrollable: find.byType(Scrollable).first,
+        );
+        await Scrollable.ensureVisible(tester.element(f), alignment: 0.3);
+        await tester.pumpAndSettle();
+        await tester.tap(f);
+        await tester.pumpAndSettle();
+      }
+
+      tester.platformDispatcher.textScaleFactorTestValue = scale;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      final server = FakeCrewServer()
+        ..roles = ['org_auditor']
+        ..visits.add(fakeVisit());
+      final store = await signedInStore();
+      await StaffVault(store).setPin('123456', 'salt');
+      await pumpStaffApp(tester, server, store: store, locale: 'ar');
+      await enterPin(tester, '123456');
+      await check(tester, 'visits');
+      await tap('visit-vis-1');
+      await check(tester, 'visit');
+      await tap('take-visit');
+      await tap('open-grid');
+      await tap('site.exits-nonconform');
+      await check(tester, 'grid');
+      await tester.tap(find.byKey(const Key('grid-next')));
+      await tester.pumpAndSettle();
+      await check(tester, 'signatures');
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      server.visits[0] = {...server.visits[0], 'status': 'inspected'};
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      await tester.fling(
+        find.byType(ListView).first,
+        const Offset(0, 400),
+        1000,
+      );
+      await tester.pumpAndSettle();
+      await tap('visit-vis-1');
+      await tap('open-decision');
+      await check(tester, 'decision');
+      handle.dispose();
+    });
+  }
 }

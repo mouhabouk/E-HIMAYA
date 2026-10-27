@@ -7,7 +7,16 @@ import { useServices } from "../context/services";
 import type { Formatters } from "../lib/format";
 import { useFormat } from "../lib/hooks";
 import { isoDate } from "../lib/orgs";
-import type { ComparisonReport, Reservation, ReservationState, Visit, VisitDecision, VisitStatus } from "../lib/preventionApi";
+import type {
+  ComparisonReport,
+  Reservation,
+  ReservationState,
+  Visit,
+  VisitDecision,
+  VisitPhoto,
+  VisitSignatures,
+  VisitStatus,
+} from "../lib/preventionApi";
 import { CertificateChanges } from "./CertificateExtras";
 import { ErrorBox, Loading } from "./Feedback";
 import { equipmentKindLabel, familyLabel, formatDay, requirementLabel } from "./OrgBits";
@@ -252,5 +261,76 @@ export function OrgVisits({ orgId, canAct }: { orgId: string; canAct: boolean })
       )}
       {canAct && query.isSuccess && !open && <ScheduleNew orgId={orgId} />}
     </section>
+  );
+}
+
+/** What the inspector brought back from the site on the phone (phase P4c): both signatures, and the photos under
+ * the grid items they show. */
+export function FieldEvidence({ photos, signatures }: { photos: VisitPhoto[]; signatures: VisitSignatures | null }) {
+  const { t } = useTranslation();
+  const fmt = useFormat();
+  const groups = new Map<string, VisitPhoto[]>();
+  for (const p of photos) {
+    const k = p.item_key ?? "";
+    groups.set(k, [...(groups.get(k) ?? []), p]);
+  }
+  return (
+    <>
+      {signatures && (
+        <>
+          <h3>{t("prevention.signaturesTitle")}</h3>
+          <div className="visit-signatures">
+            {(
+              [
+                ["inspector", signatures.inspector_url, signatures.inspector_name, null],
+                ["representative", signatures.representative_url, signatures.representative_name, signatures.representative_role],
+              ] as const
+            ).map(([who, url, name, role]) => (
+              <figure key={who} className="visit-signature">
+                {url ? (
+                  <img src={url} alt={t(`prevention.signature.${who}`)} />
+                ) : (
+                  <span className="muted">{t("prevention.noSignature")}</span>
+                )}
+                <figcaption>
+                  <strong>{t(`prevention.signature.${who}`)}</strong>
+                  <span dir="auto">{[name, role].filter(Boolean).join(" · ") || "—"}</span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </>
+      )}
+      {photos.length > 0 && (
+        <>
+          <h3>{t("prevention.photosTitle", { count: photos.length })}</h3>
+          {[...groups.entries()].map(([key, items]) => (
+            <div key={key || "general"} className="visit-photos">
+              <h4>{key ? itemLabel(t, key) : t("prevention.generalPhotos")}</h4>
+              <ul className="crew-attachments">
+                {items.map((p) => (
+                  <li key={p.id} className="crew-attachment">
+                    {p.url ? (
+                      <a href={p.url} target="_blank" rel="noreferrer">
+                        <img
+                          src={p.url}
+                          alt={t("prevention.photoAlt", { item: key ? itemLabel(t, key) : t("prevention.generalPhotos") })}
+                          loading="lazy"
+                        />
+                      </a>
+                    ) : (
+                      <span className="muted">{t("crew.photo")}</span>
+                    )}
+                    <span className="muted">
+                      {p.created_by_name ?? "—"} · {fmt.time(p.device_at ?? p.created_at)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </>
+      )}
+    </>
   );
 }

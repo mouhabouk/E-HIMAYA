@@ -11,6 +11,7 @@ import '../core/ui/components.dart';
 import '../core/ui/theme.dart';
 import '../core/ui/tokens.dart';
 import '../l10n/app_localizations.dart';
+import 'prevention/visits_screen.dart';
 import 'screens/missions_screen.dart';
 import 'screens/shift_screen.dart';
 import 'staff_chrome.dart';
@@ -23,7 +24,8 @@ final staffLauncherProvider = Provider<Future<bool> Function(Uri)>(
       (uri) => launchUrl(uri, mode: LaunchMode.externalApplication),
 );
 
-/// Staff app of the civil protection's team leaders (phase P4a, F-STF-01..04).
+/// Staff app of the civil protection's team leaders (phase P4a, F-STF-01..05) and of the
+/// prevention inspectors (phase P4c, F-STF-06).
 class StaffApp extends ConsumerStatefulWidget {
   const StaffApp({super.key, this.clock = DateTime.now});
 
@@ -98,6 +100,7 @@ class StaffHome extends ConsumerWidget {
       StaffPhase.locked => const PinScreen(create: false),
       StaffPhase.noShift => const ShiftScreen(),
       StaffPhase.onShift => const MissionsScreen(),
+      StaffPhase.prevention => const PreventionVisitsScreen(home: true),
     };
   }
 }

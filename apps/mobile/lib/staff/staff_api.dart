@@ -1,6 +1,9 @@
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
+import 'prevention/prevention_models.dart';
 import 'staff_auth.dart';
 import 'staff_models.dart';
 
@@ -249,4 +252,54 @@ class StaffApi {
         Hospital.fromJson(h as Map<String, dynamic>),
     ];
   }
+
+  // ---------------------------------------------------------------- prevention (phase P4c)
+
+  Future<List<FieldVisit>> visits() async {
+    final j = await _call('GET', '/prevention/visits');
+    return [
+      for (final v in j['items'] as List) FieldVisit(v as Map<String, dynamic>),
+    ];
+  }
+
+  Future<FieldVisit> visit(String id) async =>
+      FieldVisit(await _call('GET', '/prevention/visits/$id'));
+
+  /// «آخذها»: the visit is the inspector's, on this phone.
+  Future<FieldVisit> claimVisit(String id) async =>
+      FieldVisit(await _call('POST', '/prevention/visits/$id/claim'));
+
+  /// A photo of the visit kept on the phone; [photo]'s id is its `client_id`.
+  Future<FieldVisit> visitPhoto(
+    String id,
+    DraftPhoto photo,
+    Uint8List bytes,
+  ) async => FieldVisit(
+    await _call(
+      'POST',
+      '/prevention/visits/$id/photos',
+      body: bytes,
+      contentType: photo.contentType,
+      query: {
+        'client_id': photo.id,
+        'device_at': photo.takenAt.toUtc().toIso8601String(),
+        'item_key': ?photo.itemKey,
+      },
+    ),
+  );
+
+  /// The inspection with both signatures, built on the phone (it carries its own `client_id`).
+  Future<FieldVisit> visitInspection(
+    String id,
+    Map<String, dynamic> body,
+  ) async => FieldVisit(
+    await _call('POST', '/prevention/visits/$id/inspection', body: body),
+  );
+
+  Future<FieldVisit> visitDecision(
+    String id,
+    Map<String, dynamic> body,
+  ) async => FieldVisit(
+    await _call('POST', '/prevention/visits/$id/decision', body: body),
+  );
 }
