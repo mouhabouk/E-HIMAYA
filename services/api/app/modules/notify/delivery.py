@@ -33,6 +33,8 @@ LEASE = timedelta(seconds=120)
 OUTBOX_MAX_ATTEMPTS = 8
 SMS_MAX_CHARS = 300
 DIGEST_EVERY = timedelta(days=7)
+#: F-APP-38 pushes (phase P4d), which a citizen may turn off per phone.
+TEAM_STATUS = "team_status"
 # Phase 10 §5.2: an alert channel that failed for this share of its recipients, or could not send at all, is
 # reported to the people who publish alerts.
 DEGRADED_FAILURE_RATE = 0.10
@@ -264,11 +266,11 @@ async def run_outbox(sessionmaker: async_sessionmaker[AsyncSession], limit: int 
         )
         for row in rows:
             row.next_attempt_at = _now() + LEASE
-        devices: dict[Any, list[tuple[str, str, str]]] = {}
+        devices: dict[Any, list[tuple[str, str, str, bool]]] = {}
         users = {r.user_id for r in rows if r.channel == "push" and r.user_id is not None}
         if users:
             for d in await session.scalars(select(Device).where(Device.user_id.in_(users))):
-                devices.setdefault(d.user_id, []).append((d.token, d.platform, d.locale))
+                devices.setdefault(d.user_id, []).append((d.token, d.platform, d.locale, d.team_notices))
         await session.flush()
         session.expunge_all()
     if not rows:
@@ -278,7 +280,9 @@ async def run_outbox(sessionmaker: async_sessionmaker[AsyncSession], limit: int 
     gone: list[str] = []
     for row in rows:
         if row.channel == "push":
-            targets = devices.get(row.user_id, [])
+            # F-APP-38: "the team is on its way / has arrived" only to the phones that kept it on.
+            team = row.payload.get("type") == TEAM_STATUS
+            targets = [(t, plat, loc) for t, plat, loc, notices in devices.get(row.user_id, []) if notices or not team]
             if not providers.push.configured or not targets:
                 outcomes[row.id] = ("skipped", "not_configured" if targets else "no_device")
                 continue
@@ -321,6 +325,7 @@ async def run_outbox(sessionmaker: async_sessionmaker[AsyncSession], limit: int 
                 data,
                 True,
                 True,
+                data_only=True,
             )
             result = await providers.push.send(push)
             _count_failures("push", [result])

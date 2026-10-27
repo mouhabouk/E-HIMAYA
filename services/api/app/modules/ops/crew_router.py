@@ -76,6 +76,23 @@ async def update_device(
     return crew.device_out(device)
 
 
+@router.post("/devices/current/sms-key", response_model=schemas.SmsKeyOut)
+async def device_sms_key(principal: Leader, session: Session, device: Device) -> schemas.SmsKeyOut:
+    """The phone's key for its signed EH2 text messages, made on the first call (phase P4d, design §9.3)."""
+    first = device.sms_key is None
+    key = crew.sms_key(device)
+    if first:
+        await audit.record(
+            session,
+            actor=audit.actor_of(principal),
+            action="crew.device_sms_key",
+            target=f"staff_device:{device.id}",
+            gouvernorats=[device.gouvernorat_code],
+        )
+    await session.commit()
+    return schemas.SmsKeyOut(key=key)
+
+
 @router.get("/me", response_model=schemas.CrewMe)
 async def me(principal: FieldStaff, session: Session, device: FieldDevice) -> schemas.CrewMe:
     shift = await crew.open_shift(session, principal)
@@ -254,6 +271,17 @@ async def detailed_report(
 ) -> schemas.MissionOut:
     assignment = await crew.detailed_report(session, principal, assignment_id, body)
     return await _answer(session, principal, "crew.detailed_report", assignment)
+
+
+@router.post("/missions/{assignment_id}/positions", response_model=schemas.PositionsOut)
+async def positions(
+    principal: Leader, session: Session, _device: Device, assignment_id: uuid.UUID, body: schemas.PositionsIn
+) -> schemas.PositionsOut:
+    """The vehicle's positions during the mission (phase P4d, design §9.2). Not audited one by one: the positions
+    are the record, kept 30 days."""
+    accepted = await crew.positions(session, principal, assignment_id, body)
+    await session.commit()
+    return schemas.PositionsOut(accepted=accepted)
 
 
 @router.get("/missions/{assignment_id}/hospitals", response_model=list[schemas.Hospital])

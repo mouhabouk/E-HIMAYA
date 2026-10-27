@@ -1467,6 +1467,16 @@
             ],
             "title": "Order"
           },
+          "position": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VehiclePosition"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "released_at": {
             "anyOf": [
               {
@@ -18642,30 +18652,36 @@
         "title": "Position",
         "type": "object"
       },
-      "PositionIn": {
-        "additionalProperties": false,
+      "PositionsIn": {
+        "description": "Positions of the vehicle kept on the phone and sent together (phase P4d, design §9.2).",
         "properties": {
-          "battery": {
-            "anyOf": [
-              {
-                "maximum": 100.0,
-                "minimum": 0.0,
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Battery"
-          },
-          "location": {
-            "$ref": "#/components/schemas/LocationIn"
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__ops__schemas__PositionIn"
+            },
+            "maxItems": 50,
+            "minItems": 1,
+            "title": "Points",
+            "type": "array"
           }
         },
         "required": [
-          "location"
+          "points"
         ],
-        "title": "PositionIn",
+        "title": "PositionsIn",
+        "type": "object"
+      },
+      "PositionsOut": {
+        "properties": {
+          "accepted": {
+            "title": "Accepted",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "accepted"
+        ],
+        "title": "PositionsOut",
         "type": "object"
       },
       "PreviewPoint": {
@@ -22477,6 +22493,20 @@
           "signed_message"
         ],
         "title": "SigningKeyOut",
+        "type": "object"
+      },
+      "SmsKeyOut": {
+        "description": "The phone's own key for its signed EH2 text messages (design §9.3).",
+        "properties": {
+          "key": {
+            "title": "Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key"
+        ],
+        "title": "SmsKeyOut",
         "type": "object"
       },
       "Source": {
@@ -27351,6 +27381,30 @@
           "status": {
             "$ref": "#/components/schemas/Status"
           },
+          "team_en_route_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Team En Route At"
+          },
+          "team_on_scene_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Team On Scene At"
+          },
           "tracking_code": {
             "title": "Tracking Code",
             "type": "string"
@@ -28184,6 +28238,41 @@
           "type"
         ],
         "title": "ValidationError",
+        "type": "object"
+      },
+      "VehiclePosition": {
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "distance_m": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Distance M"
+          },
+          "lat": {
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "title": "Lon",
+            "type": "number"
+          }
+        },
+        "required": [
+          "lat",
+          "lon",
+          "at"
+        ],
+        "title": "VehiclePosition",
         "type": "object"
       },
       "VerifyIn": {
@@ -30493,6 +30582,11 @@
             "title": "Platform",
             "type": "string"
           },
+          "team_notices": {
+            "default": true,
+            "title": "Team Notices",
+            "type": "boolean"
+          },
           "token": {
             "maxLength": 4096,
             "minLength": 20,
@@ -30737,6 +30831,15 @@
               }
             ],
             "title": "Seen By Name"
+          },
+          "via": {
+            "default": "app",
+            "enum": [
+              "app",
+              "sms"
+            ],
+            "title": "Via",
+            "type": "string"
           }
         },
         "required": [
@@ -30823,6 +30926,47 @@
           "lon"
         ],
         "title": "Point",
+        "type": "object"
+      },
+      "app__modules__ops__schemas__PositionIn": {
+        "properties": {
+          "accuracy_m": {
+            "anyOf": [
+              {
+                "maximum": 100000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Accuracy M"
+          },
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "lat": {
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Lon",
+            "type": "number"
+          }
+        },
+        "required": [
+          "lat",
+          "lon",
+          "at"
+        ],
+        "title": "PositionIn",
         "type": "object"
       },
       "app__modules__ops__schemas__ReasonIn": {
@@ -31566,6 +31710,30 @@
           "status": {
             "$ref": "#/components/schemas/Status"
           },
+          "team_en_route_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Team En Route At"
+          },
+          "team_on_scene_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Team On Scene At"
+          },
           "text": {
             "anyOf": [
               {
@@ -32260,6 +32428,32 @@
           "expires_at"
         ],
         "title": "InvitationPreview",
+        "type": "object"
+      },
+      "app__modules__safety__router__PositionIn": {
+        "additionalProperties": false,
+        "properties": {
+          "battery": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Battery"
+          },
+          "location": {
+            "$ref": "#/components/schemas/LocationIn"
+          }
+        },
+        "required": [
+          "location"
+        ],
+        "title": "PositionIn",
         "type": "object"
       },
       "app__modules__settings__router__SettingsOut": {
@@ -33051,6 +33245,62 @@
           }
         ],
         "summary": "Update Device",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/devices/current/sms-key": {
+      "post": {
+        "description": "The phone's key for its signed EH2 text messages, made on the first call (phase P4d, design §9.3).",
+        "operationId": "device_sms_key_api_v1_crew_devices_current_sms_key_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SmsKeyOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Device Sms Key",
         "tags": [
           "crew"
         ]
@@ -33878,6 +34128,82 @@
           }
         ],
         "summary": "Text Note",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/missions/{assignment_id}/positions": {
+      "post": {
+        "description": "The vehicle's positions during the mission (phase P4d, design §9.2). Not audited one by one: the positions\nare the record, kept 30 days.",
+        "operationId": "positions_api_v1_crew_missions__assignment_id__positions_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PositionsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PositionsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Positions",
         "tags": [
           "crew"
         ]
@@ -42298,7 +42624,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PositionIn"
+                "$ref": "#/components/schemas/app__modules__safety__router__PositionIn"
               }
             }
           },
@@ -43027,7 +43353,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PositionIn"
+                "$ref": "#/components/schemas/app__modules__safety__router__PositionIn"
               }
             }
           },

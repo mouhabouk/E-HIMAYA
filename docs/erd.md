@@ -697,6 +697,7 @@ erDiagram
         text locale
         geography_point_4326 location
         smallint gouvernorat_code FK
+        boolean team_notices
         datetime created_at
         datetime updated_at
     }
@@ -864,6 +865,7 @@ erDiagram
         text seen_by
         text seen_by_name
         datetime seen_at
+        text via
     }
     ops__crew_event {
         uuid client_id PK
@@ -874,6 +876,17 @@ erDiagram
         text subject
         datetime device_at
         datetime received_at
+        text via
+    }
+    ops__crew_position {
+        bigint id PK
+        uuid assignment_id FK
+        uuid incident_id FK
+        uuid resource_id FK
+        datetime at
+        geography_point_4326 location
+        float accuracy_m
+        datetime created_at
     }
     ops__directive {
         uuid id PK
@@ -996,6 +1009,7 @@ erDiagram
         text status
         text notes
         geography_point_4326 location
+        datetime location_at
         integer version
         datetime created_at
         datetime updated_at
@@ -1039,6 +1053,7 @@ erDiagram
         text platform
         integer app_build
         text push_token
+        blob sms_key_enc
         datetime created_at
         datetime last_seen_at
         datetime revoked_at
@@ -1081,6 +1096,7 @@ erDiagram
     ops__assignment ||--o{ ops__casualty_transport : "assignment_id"
     ops__assignment ||--o{ ops__crew_alert : "assignment_id"
     ops__assignment ||--o{ ops__crew_event : "assignment_id"
+    ops__assignment ||--o{ ops__crew_position : "assignment_id"
     ops__assignment ||--o{ ops__field_attachment : "assignment_id"
     ops__assignment ||--o{ ops__field_report : "assignment_id"
     ops__callout ||--o{ ops__assignment : "callout_id"
@@ -1091,6 +1107,7 @@ erDiagram
     ops__incident ||--o{ ops__casualty_count : "incident_id"
     ops__incident ||--o{ ops__casualty_transport : "incident_id"
     ops__incident ||--o{ ops__crew_alert : "incident_id"
+    ops__incident ||--o{ ops__crew_position : "incident_id"
     ops__incident ||--o{ ops__field_attachment : "incident_id"
     ops__incident ||--o{ ops__field_report : "incident_id"
     ops__incident ||--o{ ops__incident : "merged_into"
@@ -1099,6 +1116,7 @@ erDiagram
     ops__incident ||--o{ ops__timeline_event : "incident_id"
     ops__report_template ||--o{ ops__field_report : "template_id"
     ops__resource ||--o{ ops__assignment : "resource_id"
+    ops__resource ||--o{ ops__crew_position : "resource_id"
     ops__resource ||--o{ ops__resource_request : "resource_id"
     ops__resource ||--o{ ops__shift : "resource_id"
     ops__resource_request ||--o{ ops__assignment : "request_id"
@@ -1506,6 +1524,8 @@ erDiagram
         datetime received_at
         datetime updated_at
         datetime first_response_at
+        datetime team_en_route_at
+        datetime team_on_scene_at
         boolean needs_verification
         text verification_reason
         datetime anonymised_at

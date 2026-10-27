@@ -178,6 +178,8 @@ class DeviceIn(BaseModel):
     lat: float | None = Field(default=None, ge=30.0, le=37.6)
     lon: float | None = Field(default=None, ge=7.4, le=11.7)
     location_alerts: bool = True
+    #: F-APP-38 (phase P4d): "the team is on its way / has arrived" on this phone.
+    team_notices: bool = True
 
 
 class UserLookupIn(BaseModel):

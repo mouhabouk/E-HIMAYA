@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, Field, StringConstraints
+from pydantic import AwareDatetime, BaseModel, Field, StringConstraints
 
 from app.modules.ops.domain import (
     AssignmentStatus,
@@ -120,6 +120,13 @@ class CrewRef(BaseModel):
     unseen_alerts: int = 0
 
 
+class VehiclePosition(BaseModel):
+    lat: float
+    lon: float
+    at: datetime
+    distance_m: int | None = None
+
+
 class AssignmentOut(BaseModel):
     id: uuid.UUID
     incident_id: uuid.UUID
@@ -136,6 +143,8 @@ class AssignmentOut(BaseModel):
     cancelled_at: datetime | None
     crew: CrewRef | None = None
     contact_phone: str | None = None
+    #: The vehicle's last position from the team's phone during this mission (phase P4d).
+    position: VehiclePosition | None = None
 
 
 class Position(BaseModel):
@@ -521,6 +530,8 @@ class AlertOut(BaseModel):
     created_at: datetime
     seen_by_name: str | None
     seen_at: datetime | None
+    #: "sms" when it came as a signed text message, without its chips (phase P4d).
+    via: Literal["app", "sms"] = "app"
 
 
 class AttachmentOut(BaseModel):
@@ -742,6 +753,29 @@ class TransportIn(CrewWrite):
 class AlertIn(CrewWrite):
     kind: Literal["backup", "danger"]
     items: list[str] = Field(default_factory=list, max_length=8)
+
+
+class PositionIn(BaseModel):
+    lat: float = Field(ge=-90, le=90)
+    lon: float = Field(ge=-180, le=180)
+    accuracy_m: float | None = Field(default=None, ge=0, le=100_000)
+    at: AwareDatetime
+
+
+class PositionsIn(BaseModel):
+    """Positions of the vehicle kept on the phone and sent together (phase P4d, design §9.2)."""
+
+    points: list[PositionIn] = Field(min_length=1, max_length=50)
+
+
+class PositionsOut(BaseModel):
+    accepted: int
+
+
+class SmsKeyOut(BaseModel):
+    """The phone's own key for its signed EH2 text messages (design §9.3)."""
+
+    key: str
 
 
 class TextNoteIn(CrewWrite):

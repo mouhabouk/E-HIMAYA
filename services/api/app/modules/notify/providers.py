@@ -43,6 +43,9 @@ class Push:
     alert: bool = False
     # Highest-severity public alert: critical channel on Android.
     critical: bool = False
+    # Phase P4d: on Android, data only (title and body inside ``data``), so the app itself shows the mission alert
+    # full screen over the lock screen. iOS still gets the notification.
+    data_only: bool = False
 
 
 @dataclass(frozen=True, slots=True)
@@ -141,6 +144,14 @@ class FcmPush:
         if push.alert:
             # Shown through Focus modes; "critical" would need an Apple entitlement.
             aps["interruption-level"] = "time-sensitive"
+        if push.data_only and push.platform == "android":
+            return {
+                "message": {
+                    "token": push.token,
+                    "data": {**push.data, "title": push.title, "body": push.body},
+                    "android": {"priority": "high", "ttl": "600s"},
+                }
+            }
         return {
             "message": {
                 "token": push.token,
