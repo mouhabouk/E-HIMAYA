@@ -61,6 +61,22 @@ export type Audience = "public" | "staff";
 export type ImportMode = "merge" | "replace";
 export type Change = "new" | "updated" | "unchanged" | "removed";
 
+// Phase L1a (docs/phase-l/design-layers.md §3): the layer's state, who sees it and the quality of its names.
+export type LayerStatus = "draft" | "published" | "paused";
+export const LAYER_STATUSES: readonly LayerStatus[] = ["draft", "published", "paused"];
+/** Five audiences instead of the staff roles (services/api/app/modules/layers/access.py). */
+export type Group = "citizen" | "room" | "field" | "command" | "support";
+export const GROUPS: readonly Group[] = ["citizen", "room", "field", "command", "support"];
+export const STAFF_GROUPS: readonly Group[] = ["room", "field", "command", "support"];
+/** Columns of a place card that the administrator gives to some audiences only (besides the file's own columns). */
+export const CARD_FIELDS = ["phone", "address", "manager", "hours", "email", "website"] as const;
+export type Confidence = "confirmed" | "high" | "medium" | "low" | "review";
+export const CONFIDENCES: readonly Confidence[] = ["confirmed", "high", "medium", "low", "review"];
+export type NameStatus = "official" | "suggested" | "accepted" | "rejected";
+export type Geometry = "point" | "line" | "area" | "mixed";
+/** Reasons offered as chips when deleting (design §3.10); "other" asks for the reason in words. */
+export const DELETE_REASONS = ["duplicate", "invalid", "replaced", "other"] as const;
+
 export interface MapLayer {
   id: string;
   key: string;
@@ -85,10 +101,27 @@ export interface MapLayer {
   last_import: { id: string; status: string; at: string; by: string | null } | null;
   can_manage: boolean;
   can_import: boolean;
+  status: LayerStatus;
+  audiences: Group[];
+  /** Gouvernorat codes whose regional staff see it; empty: national. */
+  scope: number[];
+  default_on: boolean;
+  /** The minister alone (and the administrator); every read of its places is audited. */
+  sensitive: boolean;
+  /** Column → audiences that see it; a column not listed is seen by every audience of the layer. */
+  fields: Record<string, Group[]>;
+  actions: { call: boolean; directions: boolean };
+  geometry: Geometry;
+  quality: { suggested: number; duplicates: number; deleted: number };
+  deleted_at: string | null;
+  delete_reason: string | null;
+  purge_at: string | null;
 }
 
 export interface MapLayers {
   items: MapLayer[];
+  /** Layers deleted less than 30 days ago (administrator only): restorable. */
+  deleted: MapLayer[];
   /** The caller may create layers and change their settings (system administrator, national scope). */
   can_manage: boolean;
   icons: string[];
@@ -153,6 +186,16 @@ export interface LayerFeature {
   hidden: boolean;
   version: number;
   updated_at: string;
+  geometry: Exclude<Geometry, "mixed">;
+  name_status: NameStatus;
+  suggested_name: string | null;
+  name_confidence: Confidence | null;
+  name_source: string | null;
+  source_url: string | null;
+  snapshot_at: string | null;
+  possible_duplicate: boolean;
+  deleted_at: string | null;
+  delete_reason: string | null;
 }
 
 export interface LayerFeatures {
@@ -175,7 +218,18 @@ export interface LayerBody {
   reason: string;
 }
 
-export type LayerPatch = Partial<Omit<LayerBody, "key" | "reason">> & {
+export interface LayerAccess {
+  status: LayerStatus;
+  audiences: Group[];
+  scope: number[];
+  default_on: boolean;
+  sensitive: boolean;
+  fields: Record<string, Group[]>;
+  actions: { call: boolean; directions: boolean };
+}
+
+export type LayerPatch = Partial<Omit<LayerBody, "key" | "reason">> &
+  Partial<LayerAccess> & {
   enabled?: boolean;
   version: number;
   reason: string;
@@ -286,4 +340,43 @@ export function clusterPoints<T extends { lat: number; lon: number }>(
     clusters.push({ id, lat, lon, count: group.length });
   }
   return { singles, clusters };
+}
+
+export interface LayerRevision {
+  number: number;
+  action: string;
+  reason: string | null;
+  created_by_name: string | null;
+  created_at: string;
+  /** The settings this revision changed from the one before. */
+  changes: string[];
+}
+
+export interface ReviewQueue {
+  items: LayerFeature[];
+  /** Suggested names by confidence, and "duplicates". */
+  counts: Record<string, number>;
+  total: number;
+}
+
+export type ReviewAction = "accept" | "edit" | "reject" | "keep" | "merge";
+
+export interface ReviewBody {
+  items?: { id: string; action: ReviewAction; name?: string; into?: string }[];
+  accept_confidence?: Confidence[];
+  reason: string;
+}
+
+export interface ReviewResult {
+  accepted: number;
+  edited: number;
+  rejected: number;
+  kept: number;
+  merged: number;
+}
+
+/** The reason sent for a delete: the chip's words, or what the administrator typed for "other". */
+export function deleteReason(chip: (typeof DELETE_REASONS)[number] | null, words: string, label: (k: string) => string) {
+  if (chip === null) return "";
+  return chip === "other" ? words.trim() : [label(chip), words.trim()].filter(Boolean).join(" — ");
 }

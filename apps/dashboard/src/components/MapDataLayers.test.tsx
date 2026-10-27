@@ -2,7 +2,7 @@
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import type { LayerFeature, MapLayer } from "../lib/layers";
-import { fakeApi, fakeAuth, fakeLayersApi, OPERATOR_CLAIMS, renderApp } from "../test/render";
+import { fakeApi, fakeAuth, fakeLayersApi, FEATURE_L1A, LAYER_L1A, OPERATOR_CLAIMS, renderApp } from "../test/render";
 import { useMapDataLayers } from "./MapDataLayers";
 
 function Harness() {
@@ -43,6 +43,10 @@ const layer = (key: string, fr: string, colour: string): MapLayer =>
     last_import: null,
     can_manage: false,
     can_import: false,
+    ...LAYER_L1A,
+    audiences: [...LAYER_L1A.audiences],
+    scope: [],
+    fields: { manager: [...LAYER_L1A.fields.manager] },
   });
 
 const feature = (name: string, props: Record<string, string> = {}): LayerFeature => ({
@@ -59,6 +63,7 @@ const feature = (name: string, props: Record<string, string> = {}): LayerFeature
   hidden: false,
   version: 1,
   updated_at: "2026-10-23T09:00:00Z",
+  ...FEATURE_L1A,
 });
 
 describe("useMapDataLayers", () => {
@@ -75,6 +80,7 @@ describe("useMapDataLayers", () => {
       layers: vi.fn(() =>
         Promise.resolve({
           items: [layer("hopitaux", "Hôpitaux", "#C62828"), layer("abris", "Abris", "#2E7D32")],
+          deleted: [],
           can_manage: false,
           icons: [],
           palette: [],
