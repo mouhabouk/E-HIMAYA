@@ -192,27 +192,27 @@ async def test_mission_steps_report_and_casualties(
     report = r.json()["field_report"]
     assert report["severity"] == 3 and report["crew_danger"] and report["backup_note"] == "شاحنة مياه إضافية"
 
-    plus = write(injured=2, trapped=1)
-    assert (await leader.post(f"{path}/casualties", plus)).json()["casualties"]["injured"] == 2
-    assert (await leader.post(f"{path}/casualties", plus)).json()["casualties"]["injured"] == 2
-    r = await leader.post(f"{path}/casualties", write(injured=-5, rescued=1, trapped=-1))
+    plus = write(injured_light=2, trapped=1)
+    assert (await leader.post(f"{path}/casualties", plus)).json()["casualties"]["injured_light"] == 2
+    assert (await leader.post(f"{path}/casualties", plus)).json()["casualties"]["injured_light"] == 2
+    r = await leader.post(f"{path}/casualties", write(injured_light=-5, rescued=1, trapped=-1))
     counts = r.json()["casualties"]
-    assert (counts["injured"], counts["rescued"], counts["trapped"], counts["deceased"]) == (0, 1, 0, 0)
-    assert (await leader.post(f"{path}/casualties", write(injured=99))).status_code == 422
+    assert (counts["injured_light"], counts["rescued"], counts["trapped"], counts["deceased"]) == (0, 1, 0, 0)
+    assert (await leader.post(f"{path}/casualties", write(injured_light=99))).status_code == 422
 
     r = await leader.post(
-        f"{path}/transports", write(triage="red", age_band="adult", sex="male", hospital="مستشفى الحبيب بورقيبة")
+        f"{path}/transports", write(triage="red", age_band="30_44", sex="male", hospital="مستشفى الحبيب بورقيبة")
     )
     assert r.status_code == 200 and r.json()["transports"][0]["triage"] == "red"
     assert (
-        await leader.post(f"{path}/transports", write(triage="blue", age_band="adult", sex="male", hospital="x"))
+        await leader.post(f"{path}/transports", write(triage="blue", age_band="30_44", sex="male", hospital="x"))
     ).status_code == 422
 
     # The shift cannot end while the vehicle is on a mission.
     assert (await leader.post("/shifts/current/end")).json()["detail"] == "mission_active"
     r = await leader.post(f"{path}/status", write(status="released"))
     assert r.json()["status"] == "released"
-    vehicles = (await client.get("/api/v1/staff/resources", headers=operator)).json()["items"]
+    vehicles = (await client.get("/api/v1/staff/resources", params={"limit": 500}, headers=operator)).json()["items"]
     assert next(v for v in vehicles if v["id"] == resource["id"])["status"] == "available"
     # The ended mission stays on the phone for a while.
     assert assignment["id"] in [m["id"] for m in (await leader.get("/missions")).json()["items"]]

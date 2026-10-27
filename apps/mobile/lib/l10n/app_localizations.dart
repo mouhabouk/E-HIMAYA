@@ -9268,47 +9268,11 @@ abstract class AppLocalizations {
   /// **'Cancelled'**
   String get staffStatusCancelled;
 
-  /// No description provided for @staffStepEnRoute.
-  ///
-  /// In en, this message translates to:
-  /// **'Leaving now'**
-  String get staffStepEnRoute;
-
-  /// No description provided for @staffStepOnScene.
-  ///
-  /// In en, this message translates to:
-  /// **'Arrived on scene'**
-  String get staffStepOnScene;
-
-  /// No description provided for @staffStepReleased.
-  ///
-  /// In en, this message translates to:
-  /// **'Mission over'**
-  String get staffStepReleased;
-
   /// No description provided for @staffNearScene.
   ///
   /// In en, this message translates to:
   /// **'You are {meters} m from the incident. Arrived?'**
   String staffNearScene(int meters);
-
-  /// No description provided for @staffFirstReport.
-  ///
-  /// In en, this message translates to:
-  /// **'First report'**
-  String get staffFirstReport;
-
-  /// No description provided for @staffFirstReportDue.
-  ///
-  /// In en, this message translates to:
-  /// **'To send now: under 30 seconds'**
-  String get staffFirstReportDue;
-
-  /// No description provided for @staffNature.
-  ///
-  /// In en, this message translates to:
-  /// **'Nature'**
-  String get staffNature;
 
   /// No description provided for @staffSeverity.
   ///
@@ -9340,18 +9304,6 @@ abstract class AppLocalizations {
   /// **'4 · Critical'**
   String get staffSeverity4;
 
-  /// No description provided for @staffBackupNeeded.
-  ///
-  /// In en, this message translates to:
-  /// **'Backup needed'**
-  String get staffBackupNeeded;
-
-  /// No description provided for @staffBackupNote.
-  ///
-  /// In en, this message translates to:
-  /// **'What backup?'**
-  String get staffBackupNote;
-
   /// No description provided for @staffCrewDanger.
   ///
   /// In en, this message translates to:
@@ -9364,24 +9316,6 @@ abstract class AppLocalizations {
   /// **'Send'**
   String get staffSend;
 
-  /// No description provided for @staffCasualties.
-  ///
-  /// In en, this message translates to:
-  /// **'Casualties'**
-  String get staffCasualties;
-
-  /// No description provided for @staffCasualtySummary.
-  ///
-  /// In en, this message translates to:
-  /// **'{injured} injured · {deceased} deceased · {transports} transported'**
-  String staffCasualtySummary(int injured, int deceased, int transports);
-
-  /// No description provided for @staffInjured.
-  ///
-  /// In en, this message translates to:
-  /// **'Injured'**
-  String get staffInjured;
-
   /// No description provided for @staffDeceased.
   ///
   /// In en, this message translates to:
@@ -9391,7 +9325,7 @@ abstract class AppLocalizations {
   /// No description provided for @staffRescued.
   ///
   /// In en, this message translates to:
-  /// **'Rescued'**
+  /// **'Survivors'**
   String get staffRescued;
 
   /// No description provided for @staffTrapped.
@@ -9400,22 +9334,10 @@ abstract class AppLocalizations {
   /// **'Trapped'**
   String get staffTrapped;
 
-  /// No description provided for @staffTransports.
-  ///
-  /// In en, this message translates to:
-  /// **'Taken to hospital'**
-  String get staffTransports;
-
-  /// No description provided for @staffNoTransport.
-  ///
-  /// In en, this message translates to:
-  /// **'No one taken to hospital yet.'**
-  String get staffNoTransport;
-
   /// No description provided for @staffAddTransport.
   ///
   /// In en, this message translates to:
-  /// **'Hospital transport'**
+  /// **'Transfer a patient'**
   String get staffAddTransport;
 
   /// No description provided for @staffTriage.
@@ -9453,24 +9375,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Age'**
   String get staffAge;
-
-  /// No description provided for @staffAgeChild.
-  ///
-  /// In en, this message translates to:
-  /// **'Child'**
-  String get staffAgeChild;
-
-  /// No description provided for @staffAgeAdult.
-  ///
-  /// In en, this message translates to:
-  /// **'Adult'**
-  String get staffAgeAdult;
-
-  /// No description provided for @staffAgeElderly.
-  ///
-  /// In en, this message translates to:
-  /// **'Elderly'**
-  String get staffAgeElderly;
 
   /// No description provided for @staffSex.
   ///
@@ -9597,6 +9501,534 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The room refused this action. Try again or call the room.'**
   String get staffErrGeneric;
+
+  /// No description provided for @staffOnline.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected · updated {seconds} s ago'**
+  String staffOnline(int seconds);
+
+  /// No description provided for @staffOnlineMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected · updated {minutes} min ago'**
+  String staffOnlineMinutes(int minutes);
+
+  /// No description provided for @staffMission.
+  ///
+  /// In en, this message translates to:
+  /// **'Mission'**
+  String get staffMission;
+
+  /// No description provided for @staffHighPriority.
+  ///
+  /// In en, this message translates to:
+  /// **'High priority'**
+  String get staffHighPriority;
+
+  /// No description provided for @staffRoomNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Room\'s note'**
+  String get staffRoomNote;
+
+  /// No description provided for @staffDistanceKm.
+  ///
+  /// In en, this message translates to:
+  /// **'{km} km away'**
+  String staffDistanceKm(String km);
+
+  /// No description provided for @staffStepReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Mission received'**
+  String get staffStepReceived;
+
+  /// No description provided for @staffStepLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'We left'**
+  String get staffStepLeft;
+
+  /// No description provided for @staffStepOnTheWay.
+  ///
+  /// In en, this message translates to:
+  /// **'On the way'**
+  String get staffStepOnTheWay;
+
+  /// No description provided for @staffStepArrived.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrived'**
+  String get staffStepArrived;
+
+  /// No description provided for @staffStepOver.
+  ///
+  /// In en, this message translates to:
+  /// **'Intervention over'**
+  String get staffStepOver;
+
+  /// No description provided for @staffAwayFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'You are {meters} m from the scene'**
+  String staffAwayFrom(int meters);
+
+  /// No description provided for @staffRoute.
+  ///
+  /// In en, this message translates to:
+  /// **'Route'**
+  String get staffRoute;
+
+  /// No description provided for @staffRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Room'**
+  String get staffRoom;
+
+  /// No description provided for @staffReporter.
+  ///
+  /// In en, this message translates to:
+  /// **'Reporter'**
+  String get staffReporter;
+
+  /// No description provided for @staffAskBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Request backup'**
+  String get staffAskBackup;
+
+  /// No description provided for @staffAlertSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent to the room.'**
+  String get staffAlertSent;
+
+  /// No description provided for @staffAlertSeen.
+  ///
+  /// In en, this message translates to:
+  /// **'Room saw it at {time}'**
+  String staffAlertSeen(String time);
+
+  /// No description provided for @staffAlertWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the room'**
+  String get staffAlertWaiting;
+
+  /// No description provided for @staffAlertChoose.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap what applies, then send.'**
+  String get staffAlertChoose;
+
+  /// No description provided for @staffBackupFireEngine.
+  ///
+  /// In en, this message translates to:
+  /// **'Fire engine'**
+  String get staffBackupFireEngine;
+
+  /// No description provided for @staffBackupAmbulance.
+  ///
+  /// In en, this message translates to:
+  /// **'Ambulance'**
+  String get staffBackupAmbulance;
+
+  /// No description provided for @staffBackupExtrication.
+  ///
+  /// In en, this message translates to:
+  /// **'Rescue (cutting)'**
+  String get staffBackupExtrication;
+
+  /// No description provided for @staffBackupLadder.
+  ///
+  /// In en, this message translates to:
+  /// **'Ladder'**
+  String get staffBackupLadder;
+
+  /// No description provided for @staffBackupWaterTanker.
+  ///
+  /// In en, this message translates to:
+  /// **'Water tanker'**
+  String get staffBackupWaterTanker;
+
+  /// No description provided for @staffBackupHazmat.
+  ///
+  /// In en, this message translates to:
+  /// **'Hazardous materials'**
+  String get staffBackupHazmat;
+
+  /// No description provided for @staffBackupPolice.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get staffBackupPolice;
+
+  /// No description provided for @staffBackupHeavy.
+  ///
+  /// In en, this message translates to:
+  /// **'Heavy equipment'**
+  String get staffBackupHeavy;
+
+  /// No description provided for @staffDangerFireSpread.
+  ///
+  /// In en, this message translates to:
+  /// **'Fire spreading'**
+  String get staffDangerFireSpread;
+
+  /// No description provided for @staffDangerCollapse.
+  ///
+  /// In en, this message translates to:
+  /// **'Collapse'**
+  String get staffDangerCollapse;
+
+  /// No description provided for @staffDangerGas.
+  ///
+  /// In en, this message translates to:
+  /// **'Gas or hazardous materials'**
+  String get staffDangerGas;
+
+  /// No description provided for @staffDangerElectricity.
+  ///
+  /// In en, this message translates to:
+  /// **'Electricity'**
+  String get staffDangerElectricity;
+
+  /// No description provided for @staffDangerViolence.
+  ///
+  /// In en, this message translates to:
+  /// **'Assault'**
+  String get staffDangerViolence;
+
+  /// No description provided for @staffDangerTraffic.
+  ///
+  /// In en, this message translates to:
+  /// **'Traffic'**
+  String get staffDangerTraffic;
+
+  /// No description provided for @staffSituation.
+  ///
+  /// In en, this message translates to:
+  /// **'Situation report'**
+  String get staffSituation;
+
+  /// No description provided for @staffSituationDue.
+  ///
+  /// In en, this message translates to:
+  /// **'First report: under 30 seconds'**
+  String get staffSituationDue;
+
+  /// No description provided for @staffSituationLast.
+  ///
+  /// In en, this message translates to:
+  /// **'Last report {time} · {severity}'**
+  String staffSituationLast(String time, String severity);
+
+  /// No description provided for @staffType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get staffType;
+
+  /// No description provided for @staffConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed: {type}'**
+  String staffConfirmed(String type);
+
+  /// No description provided for @staffDifferent.
+  ///
+  /// In en, this message translates to:
+  /// **'Different'**
+  String get staffDifferent;
+
+  /// No description provided for @staffNeedBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup needed?'**
+  String get staffNeedBackup;
+
+  /// No description provided for @staffNo.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get staffNo;
+
+  /// No description provided for @staffYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get staffYes;
+
+  /// No description provided for @staffLiveCounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Live counts'**
+  String get staffLiveCounts;
+
+  /// No description provided for @staffInjuredLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Lightly injured'**
+  String get staffInjuredLight;
+
+  /// No description provided for @staffInjuredSerious.
+  ///
+  /// In en, this message translates to:
+  /// **'Seriously injured'**
+  String get staffInjuredSerious;
+
+  /// No description provided for @staffTransported.
+  ///
+  /// In en, this message translates to:
+  /// **'Transported'**
+  String get staffTransported;
+
+  /// No description provided for @staffAttachments.
+  ///
+  /// In en, this message translates to:
+  /// **'Attachments'**
+  String get staffAttachments;
+
+  /// No description provided for @staffPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo'**
+  String get staffPhoto;
+
+  /// No description provided for @staffVoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice note'**
+  String get staffVoice;
+
+  /// No description provided for @staffText.
+  ///
+  /// In en, this message translates to:
+  /// **'Text'**
+  String get staffText;
+
+  /// No description provided for @staffSendReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Send the report'**
+  String get staffSendReport;
+
+  /// No description provided for @staffTransportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Patients transported (no names)'**
+  String get staffTransportTitle;
+
+  /// No description provided for @staffTransportsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Transported ({count})'**
+  String staffTransportsCount(int count);
+
+  /// No description provided for @staffHospitalOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get staffHospitalOther;
+
+  /// No description provided for @staffHospitalName.
+  ///
+  /// In en, this message translates to:
+  /// **'Hospital name'**
+  String get staffHospitalName;
+
+  /// No description provided for @staffTimeAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'The time is recorded automatically.'**
+  String get staffTimeAuto;
+
+  /// No description provided for @staffSendNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Send now'**
+  String get staffSendNow;
+
+  /// No description provided for @staffAgeUnder12.
+  ///
+  /// In en, this message translates to:
+  /// **'Under 12'**
+  String get staffAgeUnder12;
+
+  /// No description provided for @staffAge12.
+  ///
+  /// In en, this message translates to:
+  /// **'12–17'**
+  String get staffAge12;
+
+  /// No description provided for @staffAge18.
+  ///
+  /// In en, this message translates to:
+  /// **'18–29'**
+  String get staffAge18;
+
+  /// No description provided for @staffAge30.
+  ///
+  /// In en, this message translates to:
+  /// **'30–44'**
+  String get staffAge30;
+
+  /// No description provided for @staffAge45.
+  ///
+  /// In en, this message translates to:
+  /// **'45–59'**
+  String get staffAge45;
+
+  /// No description provided for @staffAge60.
+  ///
+  /// In en, this message translates to:
+  /// **'60 and over'**
+  String get staffAge60;
+
+  /// No description provided for @staffDetailedReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Detailed report'**
+  String get staffDetailedReport;
+
+  /// No description provided for @staffDetailedDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Answers by tapping, from the approved template'**
+  String get staffDetailedDue;
+
+  /// No description provided for @staffDetailedSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent at {time} · template v{version}'**
+  String staffDetailedSent(String time, int version);
+
+  /// No description provided for @staffTemplateVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Template version {version}'**
+  String staffTemplateVersion(int version);
+
+  /// No description provided for @staffNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get staffNote;
+
+  /// No description provided for @staffNoteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'500 characters at most'**
+  String get staffNoteHint;
+
+  /// No description provided for @staffRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get staffRequired;
+
+  /// No description provided for @staffRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Record'**
+  String get staffRecord;
+
+  /// No description provided for @staffRecordStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get staffRecordStop;
+
+  /// No description provided for @staffRecordAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Record again'**
+  String get staffRecordAgain;
+
+  /// No description provided for @staffVoiceMax.
+  ///
+  /// In en, this message translates to:
+  /// **'60 seconds at most.'**
+  String get staffVoiceMax;
+
+  /// No description provided for @staffSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent.'**
+  String get staffSent;
+
+  /// No description provided for @staffErrTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'The file is too large.'**
+  String get staffErrTooLarge;
+
+  /// No description provided for @staffErrTooMany.
+  ///
+  /// In en, this message translates to:
+  /// **'This mission already has 20 attachments.'**
+  String get staffErrTooMany;
+
+  /// No description provided for @staffErrBadMedia.
+  ///
+  /// In en, this message translates to:
+  /// **'This file type is not accepted.'**
+  String get staffErrBadMedia;
+
+  /// No description provided for @staffErrTemplateChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'The template changed: open the report again.'**
+  String get staffErrTemplateChanged;
+
+  /// No description provided for @staffSimTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'[SIM] Model template, until the Office approves it'**
+  String get staffSimTemplate;
+
+  /// No description provided for @staffSimHospital.
+  ///
+  /// In en, this message translates to:
+  /// **'[SIM]'**
+  String get staffSimHospital;
+
+  /// No description provided for @staffTriageGreenShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Green'**
+  String get staffTriageGreenShort;
+
+  /// No description provided for @staffTriageYellowShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Yellow'**
+  String get staffTriageYellowShort;
+
+  /// No description provided for @staffTriageRedShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Red'**
+  String get staffTriageRedShort;
+
+  /// No description provided for @staffTriageBlackShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Black'**
+  String get staffTriageBlackShort;
+
+  /// No description provided for @staffTransportShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Patients transported'**
+  String get staffTransportShort;
+
+  /// No description provided for @staffNoNames.
+  ///
+  /// In en, this message translates to:
+  /// **'no names'**
+  String get staffNoNames;
 }
 
 class _AppLocalizationsDelegate

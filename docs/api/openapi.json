@@ -695,84 +695,11 @@
         "title": "Alert",
         "type": "object"
       },
-      "AlertIn": {
-        "additionalProperties": false,
-        "properties": {
-          "battery": {
-            "anyOf": [
-              {
-                "maximum": 100.0,
-                "minimum": 0.0,
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Battery"
-          },
-          "client_uuid": {
-            "format": "uuid",
-            "title": "Client Uuid",
-            "type": "string"
-          },
-          "link_ids": {
-            "anyOf": [
-              {
-                "items": {
-                  "format": "uuid",
-                  "type": "string"
-                },
-                "maxItems": 50,
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Link Ids"
-          },
-          "live_share_id": {
-            "anyOf": [
-              {
-                "format": "uuid",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Live Share Id"
-          },
-          "location": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/LocationIn"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "message": {
-            "maxLength": 500,
-            "minLength": 1,
-            "title": "Message",
-            "type": "string"
-          }
-        },
-        "required": [
-          "client_uuid",
-          "message"
-        ],
-        "title": "AlertIn",
-        "type": "object"
-      },
       "AlertList": {
         "properties": {
           "items": {
             "items": {
-              "$ref": "#/components/schemas/AlertOut"
+              "$ref": "#/components/schemas/app__modules__safety__router__AlertOut"
             },
             "title": "Items",
             "type": "array"
@@ -782,135 +709,6 @@
           "items"
         ],
         "title": "AlertList",
-        "type": "object"
-      },
-      "AlertOut": {
-        "properties": {
-          "battery": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Battery"
-          },
-          "created_at": {
-            "format": "date-time",
-            "title": "Created At",
-            "type": "string"
-          },
-          "expires_at": {
-            "format": "date-time",
-            "title": "Expires At",
-            "type": "string"
-          },
-          "id": {
-            "format": "uuid",
-            "title": "Id",
-            "type": "string"
-          },
-          "kind": {
-            "enum": [
-              "sos",
-              "check"
-            ],
-            "title": "Kind",
-            "type": "string"
-          },
-          "live": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/LiveOut"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "message": {
-            "title": "Message",
-            "type": "string"
-          },
-          "mine": {
-            "title": "Mine",
-            "type": "boolean"
-          },
-          "position": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/PointOut"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "recipients": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Recipients"
-          },
-          "seen": {
-            "title": "Seen",
-            "type": "boolean"
-          },
-          "seen_by": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Seen By"
-          },
-          "sender_first_name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Sender First Name"
-          },
-          "sender_phone": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Sender Phone"
-          }
-        },
-        "required": [
-          "id",
-          "kind",
-          "mine",
-          "sender_first_name",
-          "sender_phone",
-          "message",
-          "position",
-          "battery",
-          "created_at",
-          "expires_at",
-          "seen"
-        ],
-        "title": "AlertOut",
         "type": "object"
       },
       "AlertSentOut": {
@@ -1536,6 +1334,18 @@
       },
       "AssignmentIn": {
         "properties": {
+          "contact_phone": {
+            "anyOf": [
+              {
+                "pattern": "^\\+?[0-9 ]{6,20}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Phone"
+          },
           "order": {
             "anyOf": [
               {
@@ -1573,6 +1383,17 @@
               }
             ],
             "title": "Cancelled At"
+          },
+          "contact_phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Phone"
           },
           "created_at": {
             "format": "date-time",
@@ -1818,6 +1639,126 @@
           "text"
         ],
         "title": "Assumption",
+        "type": "object"
+      },
+      "AttachmentOut": {
+        "properties": {
+          "assignment_id": {
+            "format": "uuid",
+            "title": "Assignment Id",
+            "type": "string"
+          },
+          "body": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Body"
+          },
+          "bytes": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bytes"
+          },
+          "content_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content Type"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "device_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device At"
+          },
+          "duration_s": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration S"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "photo",
+              "voice",
+              "text"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url"
+          }
+        },
+        "required": [
+          "id",
+          "assignment_id",
+          "kind",
+          "body",
+          "content_type",
+          "bytes",
+          "duration_s",
+          "created_by_name",
+          "device_at",
+          "created_at"
+        ],
+        "title": "AttachmentOut",
         "type": "object"
       },
       "AudienceOut": {
@@ -2956,11 +2897,18 @@
             ],
             "title": "Device At"
           },
-          "injured": {
+          "injured_light": {
             "default": 0,
             "maximum": 50.0,
             "minimum": -50.0,
-            "title": "Injured",
+            "title": "Injured Light",
+            "type": "integer"
+          },
+          "injured_serious": {
+            "default": 0,
+            "maximum": 50.0,
+            "minimum": -50.0,
+            "title": "Injured Serious",
             "type": "integer"
           },
           "rescued": {
@@ -2991,14 +2939,24 @@
             "title": "Deceased",
             "type": "integer"
           },
-          "injured": {
+          "injured_light": {
             "default": 0,
-            "title": "Injured",
+            "title": "Injured Light",
+            "type": "integer"
+          },
+          "injured_serious": {
+            "default": 0,
+            "title": "Injured Serious",
             "type": "integer"
           },
           "rescued": {
             "default": 0,
             "title": "Rescued",
+            "type": "integer"
+          },
+          "transported": {
+            "default": 0,
+            "title": "Transported",
             "type": "integer"
           },
           "trapped": {
@@ -4554,6 +4512,11 @@
             "format": "uuid",
             "title": "Shift Id",
             "type": "string"
+          },
+          "unseen_alerts": {
+            "default": 0,
+            "title": "Unseen Alerts",
+            "type": "integer"
           }
         },
         "required": [
@@ -4984,6 +4947,57 @@
           "events"
         ],
         "title": "DetailOut",
+        "type": "object"
+      },
+      "DetailedReportIn": {
+        "properties": {
+          "answers": {
+            "additionalProperties": true,
+            "maxProperties": 30,
+            "title": "Answers",
+            "type": "object"
+          },
+          "client_id": {
+            "format": "uuid",
+            "title": "Client Id",
+            "type": "string"
+          },
+          "device_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device At"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "template_id": {
+            "format": "uuid",
+            "title": "Template Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "client_id",
+          "template_id",
+          "answers"
+        ],
+        "title": "DetailedReportIn",
         "type": "object"
       },
       "DetectionOut": {
@@ -9095,6 +9109,18 @@
       },
       "FieldReportOut": {
         "properties": {
+          "answers": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Answers"
+          },
           "assignment_id": {
             "format": "uuid",
             "title": "Assignment Id",
@@ -9110,6 +9136,13 @@
               }
             ],
             "title": "Author Name"
+          },
+          "backup_kinds": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Backup Kinds",
+            "type": "array"
           },
           "backup_needed": {
             "title": "Backup Needed",
@@ -9166,6 +9199,27 @@
             "title": "Id",
             "type": "string"
           },
+          "kind": {
+            "default": "first",
+            "enum": [
+              "first",
+              "update",
+              "detailed"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
           "resource_label": {
             "anyOf": [
               {
@@ -9178,8 +9232,38 @@
             "title": "Resource Label"
           },
           "severity": {
-            "title": "Severity",
-            "type": "integer"
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Severity"
+          },
+          "template_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Template Id"
+          },
+          "template_version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Template Version"
           }
         },
         "required": [
@@ -9481,7 +9565,26 @@
         "type": "object"
       },
       "FirstReportIn": {
+        "description": "A situation report: the first one, then updates (the last one is shown).",
         "properties": {
+          "backup_kinds": {
+            "items": {
+              "enum": [
+                "fire_engine",
+                "ambulance",
+                "extrication",
+                "ladder",
+                "water_tanker",
+                "hazmat",
+                "police",
+                "heavy_equipment"
+              ],
+              "type": "string"
+            },
+            "maxItems": 8,
+            "title": "Backup Kinds",
+            "type": "array"
+          },
           "backup_needed": {
             "default": false,
             "title": "Backup Needed",
@@ -10728,6 +10831,48 @@
         "title": "Hit",
         "type": "object"
       },
+      "Hospital": {
+        "description": "A hospital of the map layers near the incident (phase P4b), for the transport chips.",
+        "properties": {
+          "distance_m": {
+            "title": "Distance M",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "phone",
+          "distance_m",
+          "simulated"
+        ],
+        "title": "Hospital",
+        "type": "object"
+      },
       "HourOut": {
         "properties": {
           "fire_danger": {
@@ -11274,6 +11419,13 @@
       },
       "IncidentDetail": {
         "properties": {
+          "alerts": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__ops__schemas__AlertOut"
+            },
+            "title": "Alerts",
+            "type": "array"
+          },
           "assignments": {
             "items": {
               "$ref": "#/components/schemas/AssignmentOut"
@@ -11285,6 +11437,13 @@
             "default": 0,
             "title": "Assignments Active",
             "type": "integer"
+          },
+          "attachments": {
+            "items": {
+              "$ref": "#/components/schemas/AttachmentOut"
+            },
+            "title": "Attachments",
+            "type": "array"
           },
           "callouts": {
             "items": {
@@ -14955,6 +15114,20 @@
             ],
             "title": "Acknowledged At"
           },
+          "alerts": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__ops__schemas__AlertOut"
+            },
+            "title": "Alerts",
+            "type": "array"
+          },
+          "attachments": {
+            "items": {
+              "$ref": "#/components/schemas/AttachmentOut"
+            },
+            "title": "Attachments",
+            "type": "array"
+          },
           "cancelled_at": {
             "anyOf": [
               {
@@ -14970,10 +15143,31 @@
           "casualties": {
             "$ref": "#/components/schemas/CasualtiesOut"
           },
+          "contact_phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Phone"
+          },
           "created_at": {
             "format": "date-time",
             "title": "Created At",
             "type": "string"
+          },
+          "detailed_report": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FieldReportOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "distance_m": {
             "anyOf": [
@@ -15061,6 +15255,16 @@
             ],
             "title": "Status",
             "type": "string"
+          },
+          "template": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TemplateOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "transports": {
             "items": {
@@ -21768,6 +21972,11 @@
             "format": "date-time",
             "title": "Started At",
             "type": "string"
+          },
+          "unseen_alerts": {
+            "default": 0,
+            "title": "Unseen Alerts",
+            "type": "integer"
           }
         },
         "required": [
@@ -25861,6 +26070,322 @@
         "title": "TeamMemberOut",
         "type": "object"
       },
+      "TemplateField": {
+        "description": "One question of a detailed report: chips (one or several), yes or no, or a number with + and −.",
+        "properties": {
+          "key": {
+            "pattern": "^[a-z0-9_]{1,40}$",
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "additionalProperties": {
+              "maxLength": 120,
+              "minLength": 1,
+              "type": "string"
+            },
+            "propertyNames": {
+              "enum": [
+                "ar",
+                "fr",
+                "en"
+              ]
+            },
+            "title": "Label",
+            "type": "object"
+          },
+          "max": {
+            "anyOf": [
+              {
+                "maximum": 1000000.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max"
+          },
+          "options": {
+            "items": {
+              "$ref": "#/components/schemas/TemplateOption"
+            },
+            "maxItems": 20,
+            "title": "Options",
+            "type": "array"
+          },
+          "required": {
+            "default": false,
+            "title": "Required",
+            "type": "boolean"
+          },
+          "type": {
+            "enum": [
+              "single",
+              "multi",
+              "yesno",
+              "count"
+            ],
+            "title": "Type",
+            "type": "string"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "maxLength": 120,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "propertyNames": {
+                  "enum": [
+                    "ar",
+                    "fr",
+                    "en"
+                  ]
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          }
+        },
+        "required": [
+          "key",
+          "type",
+          "label"
+        ],
+        "title": "TemplateField",
+        "type": "object"
+      },
+      "TemplateIn": {
+        "description": "A draft: a new one for a category (and classification), or the next version of the approved one.",
+        "properties": {
+          "category": {
+            "$ref": "#/components/schemas/Category"
+          },
+          "classification": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Classification"
+          },
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/TemplateField"
+            },
+            "maxItems": 30,
+            "minItems": 1,
+            "title": "Fields",
+            "type": "array"
+          }
+        },
+        "required": [
+          "category",
+          "fields"
+        ],
+        "title": "TemplateIn",
+        "type": "object"
+      },
+      "TemplateOption": {
+        "properties": {
+          "key": {
+            "pattern": "^[a-z0-9_]{1,40}$",
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "additionalProperties": {
+              "maxLength": 120,
+              "minLength": 1,
+              "type": "string"
+            },
+            "propertyNames": {
+              "enum": [
+                "ar",
+                "fr",
+                "en"
+              ]
+            },
+            "title": "Label",
+            "type": "object"
+          }
+        },
+        "required": [
+          "key",
+          "label"
+        ],
+        "title": "TemplateOption",
+        "type": "object"
+      },
+      "TemplateOut": {
+        "properties": {
+          "approved_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved At"
+          },
+          "approved_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved By Name"
+          },
+          "category": {
+            "$ref": "#/components/schemas/Category"
+          },
+          "classification": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Classification"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/TemplateField"
+            },
+            "title": "Fields",
+            "type": "array"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "approved",
+              "retired"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "category",
+          "classification",
+          "version",
+          "status",
+          "fields",
+          "simulated",
+          "created_by_name",
+          "created_at",
+          "updated_at",
+          "approved_by_name",
+          "approved_at"
+        ],
+        "title": "TemplateOut",
+        "type": "object"
+      },
+      "TemplatePatch": {
+        "properties": {
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/TemplateField"
+            },
+            "maxItems": 30,
+            "minItems": 1,
+            "title": "Fields",
+            "type": "array"
+          }
+        },
+        "required": [
+          "fields"
+        ],
+        "title": "TemplatePatch",
+        "type": "object"
+      },
+      "TextNoteIn": {
+        "properties": {
+          "body": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Body",
+            "type": "string"
+          },
+          "client_id": {
+            "format": "uuid",
+            "title": "Client Id",
+            "type": "string"
+          },
+          "device_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device At"
+          }
+        },
+        "required": [
+          "client_id",
+          "body"
+        ],
+        "title": "TextNoteIn",
+        "type": "object"
+      },
       "Thresholds": {
         "properties": {
           "ambassador": {
@@ -26563,9 +27088,12 @@
         "properties": {
           "age_band": {
             "enum": [
-              "child",
-              "adult",
-              "elderly",
+              "under_12",
+              "12_17",
+              "18_29",
+              "30_44",
+              "45_59",
+              "60_plus",
               "unknown"
             ],
             "title": "Age Band",
@@ -26589,10 +27117,29 @@
             "title": "Device At"
           },
           "hospital": {
-            "maxLength": 120,
-            "minLength": 1,
-            "title": "Hospital",
-            "type": "string"
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hospital"
+          },
+          "hospital_ref": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hospital Ref"
           },
           "sex": {
             "enum": [
@@ -26618,8 +27165,7 @@
           "client_id",
           "triage",
           "age_band",
-          "sex",
-          "hospital"
+          "sex"
         ],
         "title": "TransportIn",
         "type": "object"
@@ -26628,10 +27174,16 @@
         "properties": {
           "age_band": {
             "enum": [
+              "under_12",
+              "12_17",
+              "18_29",
+              "30_44",
+              "45_59",
+              "60_plus",
+              "unknown",
               "child",
               "adult",
-              "elderly",
-              "unknown"
+              "elderly"
             ],
             "title": "Age Band",
             "type": "string"
@@ -26672,6 +27224,18 @@
           "hospital": {
             "title": "Hospital",
             "type": "string"
+          },
+          "hospital_ref": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hospital Ref"
           },
           "id": {
             "format": "uuid",
@@ -29443,6 +30007,153 @@
         "title": "InboxItem",
         "type": "object"
       },
+      "app__modules__ops__schemas__AlertIn": {
+        "properties": {
+          "client_id": {
+            "format": "uuid",
+            "title": "Client Id",
+            "type": "string"
+          },
+          "device_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device At"
+          },
+          "items": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 8,
+            "title": "Items",
+            "type": "array"
+          },
+          "kind": {
+            "enum": [
+              "backup",
+              "danger"
+            ],
+            "title": "Kind",
+            "type": "string"
+          }
+        },
+        "required": [
+          "client_id",
+          "kind"
+        ],
+        "title": "AlertIn",
+        "type": "object"
+      },
+      "app__modules__ops__schemas__AlertOut": {
+        "properties": {
+          "assignment_id": {
+            "format": "uuid",
+            "title": "Assignment Id",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "device_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device At"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "kind": {
+            "enum": [
+              "backup",
+              "danger"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "resource_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resource Label"
+          },
+          "seen_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seen At"
+          },
+          "seen_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seen By Name"
+          }
+        },
+        "required": [
+          "id",
+          "assignment_id",
+          "kind",
+          "items",
+          "created_by_name",
+          "device_at",
+          "created_at",
+          "seen_by_name",
+          "seen_at"
+        ],
+        "title": "AlertOut",
+        "type": "object"
+      },
       "app__modules__ops__schemas__DeviceIn": {
         "properties": {
           "app_build": {
@@ -30693,6 +31404,208 @@
         "title": "SearchOut",
         "type": "object"
       },
+      "app__modules__safety__router__AlertIn": {
+        "additionalProperties": false,
+        "properties": {
+          "battery": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Battery"
+          },
+          "client_uuid": {
+            "format": "uuid",
+            "title": "Client Uuid",
+            "type": "string"
+          },
+          "link_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "maxItems": 50,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Link Ids"
+          },
+          "live_share_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Live Share Id"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LocationIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "message": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "client_uuid",
+          "message"
+        ],
+        "title": "AlertIn",
+        "type": "object"
+      },
+      "app__modules__safety__router__AlertOut": {
+        "properties": {
+          "battery": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Battery"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "sos",
+              "check"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "live": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LiveOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "mine": {
+            "title": "Mine",
+            "type": "boolean"
+          },
+          "position": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PointOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "recipients": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recipients"
+          },
+          "seen": {
+            "title": "Seen",
+            "type": "boolean"
+          },
+          "seen_by": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seen By"
+          },
+          "sender_first_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sender First Name"
+          },
+          "sender_phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sender Phone"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "mine",
+          "sender_first_name",
+          "sender_phone",
+          "message",
+          "position",
+          "battery",
+          "created_at",
+          "expires_at",
+          "seen"
+        ],
+        "title": "AlertOut",
+        "type": "object"
+      },
       "app__modules__safety__router__InvitationOut": {
         "properties": {
           "code": {
@@ -31729,6 +32642,279 @@
         ]
       }
     },
+    "/api/v1/crew/missions/{assignment_id}/alerts": {
+      "post": {
+        "operationId": "alert_api_v1_crew_missions__assignment_id__alerts_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__ops__schemas__AlertIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Alert",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/missions/{assignment_id}/attachments": {
+      "post": {
+        "description": "A photo or a voice note as the raw request body, with its type in ``Content-Type`` (phase P4b).",
+        "operationId": "upload_api_v1_crew_missions__assignment_id__attachments_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "kind",
+            "required": true,
+            "schema": {
+              "pattern": "^(photo|voice)$",
+              "title": "Kind",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "client_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Client Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "device_at",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Device At"
+            }
+          },
+          {
+            "in": "query",
+            "name": "duration_s",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 60,
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Duration S"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "audio/aac": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "audio/mp4": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "audio/mpeg": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "audio/ogg": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "audio/wav": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "audio/webm": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "audio/x-wav": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "image/heic": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "image/heif": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "image/jpeg": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "image/png": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "image/webp": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Upload",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
     "/api/v1/crew/missions/{assignment_id}/casualties": {
       "post": {
         "operationId": "casualties_api_v1_crew_missions__assignment_id__casualties_post",
@@ -31804,6 +32990,81 @@
         ]
       }
     },
+    "/api/v1/crew/missions/{assignment_id}/detailed-report": {
+      "post": {
+        "operationId": "detailed_report_api_v1_crew_missions__assignment_id__detailed_report_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DetailedReportIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Detailed Report",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
     "/api/v1/crew/missions/{assignment_id}/first-report": {
       "post": {
         "operationId": "first_report_api_v1_crew_missions__assignment_id__first_report_post",
@@ -31874,6 +33135,226 @@
           }
         ],
         "summary": "First Report",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/missions/{assignment_id}/hospitals": {
+      "get": {
+        "operationId": "hospitals_api_v1_crew_missions__assignment_id__hospitals_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Hospital"
+                  },
+                  "title": "Response Hospitals Api V1 Crew Missions  Assignment Id  Hospitals Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Hospitals",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/missions/{assignment_id}/notes": {
+      "post": {
+        "operationId": "text_note_api_v1_crew_missions__assignment_id__notes_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TextNoteIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Text Note",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/missions/{assignment_id}/situation": {
+      "post": {
+        "description": "A situation report (phase P4b): the first one, then updates. ``/first-report`` is the same call.",
+        "operationId": "situation_api_v1_crew_missions__assignment_id__situation_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FirstReportIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Situation",
         "tags": [
           "crew"
         ]
@@ -39279,7 +40760,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AlertIn"
+                "$ref": "#/components/schemas/app__modules__safety__router__AlertIn"
               }
             }
           },
@@ -39355,7 +40836,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AlertOut"
+                  "$ref": "#/components/schemas/app__modules__safety__router__AlertOut"
                 }
               }
             },
@@ -43394,6 +44875,54 @@
         "summary": "Act",
         "tags": [
           "contact"
+        ]
+      }
+    },
+    "/api/v1/staff/crew-alerts/{alert_id}/seen": {
+      "post": {
+        "operationId": "alert_seen_api_v1_staff_crew_alerts__alert_id__seen_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "alert_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Alert Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__AlertOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Alert Seen",
+        "tags": [
+          "crew"
         ]
       }
     },
@@ -50134,6 +51663,295 @@
         "tags": [
           "staff",
           "reports-library"
+        ]
+      }
+    },
+    "/api/v1/staff/report-templates": {
+      "get": {
+        "operationId": "list_templates_api_v1_staff_report_templates_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "retired",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Retired",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TemplateOut"
+                  },
+                  "title": "Response List Templates Api V1 Staff Report Templates Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Templates",
+        "tags": [
+          "crew"
+        ]
+      },
+      "post": {
+        "operationId": "create_template_api_v1_staff_report_templates_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplateOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Template",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/staff/report-templates/{template_id}": {
+      "delete": {
+        "operationId": "discard_template_api_v1_staff_report_templates__template_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "template_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Template Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Discard Template",
+        "tags": [
+          "crew"
+        ]
+      },
+      "patch": {
+        "operationId": "edit_template_api_v1_staff_report_templates__template_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "template_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Template Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplatePatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplateOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Edit Template",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/staff/report-templates/{template_id}/approve": {
+      "post": {
+        "operationId": "approve_template_api_v1_staff_report_templates__template_id__approve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "template_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Template Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplateOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Approve Template",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/staff/report-templates/{template_id}/retire": {
+      "post": {
+        "operationId": "retire_template_api_v1_staff_report_templates__template_id__retire_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "template_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Template Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplateOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Retire Template",
+        "tags": [
+          "crew"
         ]
       }
     },

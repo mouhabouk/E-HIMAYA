@@ -8,20 +8,14 @@ import 'package:url_launcher/url_launcher.dart';
 import '../core/settings/settings_controller.dart';
 import '../core/ui/brand.dart';
 import '../core/ui/components.dart';
-import '../core/ui/language_bar.dart';
 import '../core/ui/theme.dart';
 import '../core/ui/tokens.dart';
 import '../l10n/app_localizations.dart';
 import 'screens/missions_screen.dart';
 import 'screens/shift_screen.dart';
+import 'staff_chrome.dart';
 import 'staff_config.dart';
 import 'staff_controller.dart';
-
-/// Language and theme in every app bar of the staff app (design system rule 1).
-List<Widget> staffBarActions() => const [
-  LanguageMenuAction(),
-  ThemeToggleAction(),
-];
 
 /// Opens a link in the phone's browser (the sign-in page). Overridden in tests.
 final staffLauncherProvider = Provider<Future<bool> Function(Uri)>(
@@ -127,10 +121,7 @@ class SignInScreen extends ConsumerWidget {
       SignOutReason.none => s.offline ? l10n.staffOffline : null,
     };
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.staffAppTitle),
-        actions: staffBarActions(),
-      ),
+      appBar: StaffAppBar(title: l10n.staffAppTitle),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
@@ -277,10 +268,7 @@ class _PinScreenState extends ConsumerState<PinScreen> {
         ? l10n.staffPinWrong(s.pinTriesLeft)
         : null;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.staffAppTitle),
-        actions: staffBarActions(),
-      ),
+      appBar: StaffAppBar(title: l10n.staffAppTitle),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
@@ -327,29 +315,6 @@ class _PinScreenState extends ConsumerState<PinScreen> {
             ),
           ],
         ],
-      ),
-    );
-  }
-}
-
-/// Strip shown while the server cannot be reached: what is on screen is the last copy.
-class OfflineStrip extends ConsumerWidget {
-  const OfflineStrip({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    if (!ref.watch(staffControllerProvider.select((s) => s.offline))) {
-      return const SizedBox.shrink();
-    }
-    final c = Tone.amber.colors(context);
-    return Container(
-      key: const Key('staff-offline'),
-      width: double.infinity,
-      color: c.tint,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Text(
-        AppLocalizations.of(context).staffOffline,
-        style: TextStyle(color: c.onTint),
       ),
     );
   }

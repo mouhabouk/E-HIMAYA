@@ -802,6 +802,7 @@ erDiagram
         datetime cancelled_at
         uuid shift_id FK
         datetime acknowledged_at
+        text contact_phone
     }
     ops__callout {
         uuid id PK
@@ -828,7 +829,8 @@ erDiagram
     }
     ops__casualty_count {
         uuid incident_id PK,FK
-        integer injured
+        integer injured_light
+        integer injured_serious
         integer deceased
         integer rescued
         integer trapped
@@ -843,10 +845,25 @@ erDiagram
         text age_band
         text sex
         text hospital
+        uuid hospital_ref FK
         text created_by
         text created_by_name
         datetime device_at
         datetime created_at
+    }
+    ops__crew_alert {
+        uuid id PK
+        uuid incident_id FK
+        uuid assignment_id FK
+        text kind
+        array items
+        text created_by
+        text created_by_name
+        datetime device_at
+        datetime created_at
+        text seen_by
+        text seen_by_name
+        datetime seen_at
     }
     ops__crew_event {
         uuid client_id PK
@@ -878,6 +895,22 @@ erDiagram
         datetime acked_at
         text note
     }
+    ops__field_attachment {
+        uuid id PK
+        uuid incident_id FK
+        uuid assignment_id FK
+        text kind
+        text body
+        text object_key
+        text content_type
+        text sha256
+        integer bytes
+        float duration_s
+        text created_by
+        text created_by_name
+        datetime device_at
+        datetime created_at
+    }
     ops__field_report {
         uuid id PK
         uuid incident_id FK
@@ -888,7 +921,12 @@ erDiagram
         smallint severity
         boolean backup_needed
         text backup_note
+        array backup_kinds
         boolean crew_danger
+        uuid template_id FK
+        integer template_version
+        jsonb answers
+        text note
         text author
         text author_name
         datetime device_at
@@ -932,6 +970,23 @@ erDiagram
         text reason
         text set_by
         text set_by_name
+    }
+    ops__report_template {
+        uuid id PK
+        text category
+        text classification
+        integer version
+        text status
+        jsonb fields
+        boolean simulated
+        text created_by
+        text created_by_name
+        datetime created_at
+        datetime updated_at
+        text approved_by
+        text approved_by_name
+        datetime approved_at
+        datetime retired_at
     }
     ops__resource {
         uuid id PK
@@ -1019,11 +1074,14 @@ erDiagram
     geo__gouvernorat ||--o{ ops__shift : "gouvernorat_code"
     geo__gouvernorat ||--o{ ops__staff_device : "gouvernorat_code"
     geo__gouvernorat ||--o{ ops__unit : "gouvernorat_code"
+    geo__layer_feature ||--o{ ops__casualty_transport : "hospital_ref"
     identity__volunteer ||--o{ ops__assignment : "volunteer_id"
     identity__volunteer ||--o{ ops__callout_target : "volunteer_id"
     ops__assignment ||--o{ ops__callout_target : "assignment_id"
     ops__assignment ||--o{ ops__casualty_transport : "assignment_id"
+    ops__assignment ||--o{ ops__crew_alert : "assignment_id"
     ops__assignment ||--o{ ops__crew_event : "assignment_id"
+    ops__assignment ||--o{ ops__field_attachment : "assignment_id"
     ops__assignment ||--o{ ops__field_report : "assignment_id"
     ops__callout ||--o{ ops__assignment : "callout_id"
     ops__callout ||--o{ ops__callout_target : "callout_id"
@@ -1032,11 +1090,14 @@ erDiagram
     ops__incident ||--o{ ops__callout : "incident_id"
     ops__incident ||--o{ ops__casualty_count : "incident_id"
     ops__incident ||--o{ ops__casualty_transport : "incident_id"
+    ops__incident ||--o{ ops__crew_alert : "incident_id"
+    ops__incident ||--o{ ops__field_attachment : "incident_id"
     ops__incident ||--o{ ops__field_report : "incident_id"
     ops__incident ||--o{ ops__incident : "merged_into"
     ops__incident ||--o{ ops__incident_gouvernorat : "incident_id"
     ops__incident ||--o{ ops__resource_request : "incident_id"
     ops__incident ||--o{ ops__timeline_event : "incident_id"
+    ops__report_template ||--o{ ops__field_report : "template_id"
     ops__resource ||--o{ ops__assignment : "resource_id"
     ops__resource ||--o{ ops__resource_request : "resource_id"
     ops__resource ||--o{ ops__shift : "resource_id"

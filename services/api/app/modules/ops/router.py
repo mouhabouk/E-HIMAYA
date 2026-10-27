@@ -83,7 +83,7 @@ async def list_incidents(
 async def incident_detail(session: AsyncSession, principal: Principal, incident: Incident) -> schemas.IncidentDetail:
     filters = reports.StaffFilters([], [], None, None, None, None, None, incident_id=incident.id)
     members, _ = await reports.staff_list(session, principal, filters, 500, None)
-    field_reports, casualties, transports = await crew.incident_field(session, incident.id)
+    field_reports, casualties, transports, alerts, attachments = await crew.incident_field(session, incident.id)
     return schemas.IncidentDetail(
         **(await service.summary(session, incident)).model_dump(),
         reports=members,
@@ -95,6 +95,8 @@ async def incident_detail(session: AsyncSession, principal: Principal, incident:
         field_reports=field_reports,
         casualties=casualties,
         transports=transports,
+        alerts=alerts,
+        attachments=attachments,
     )
 
 
