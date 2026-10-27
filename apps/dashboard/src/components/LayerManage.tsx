@@ -68,11 +68,11 @@ export function LayerBadges({ layer }: { layer: MapLayer }) {
       )}
       {layer.sensitive && <Pill tone="purple">{t("layers.manage.sensitive")}</Pill>}
       {layer.quality.suggested > 0 && (
-        <Pill tone="navy">{t("layers.manage.toReview", { count: layer.quality.suggested, n: fmt.number(layer.quality.suggested) })}</Pill>
+        <Pill tone="navy">{t("layers.manage.toReview", { n: fmt.number(layer.quality.suggested) })}</Pill>
       )}
       {layer.quality.duplicates > 0 && (
         <Pill tone="orange">
-          {t("layers.manage.duplicates", { count: layer.quality.duplicates, n: fmt.number(layer.quality.duplicates) })}
+          {t("layers.manage.duplicates", { n: fmt.number(layer.quality.duplicates) })}
         </Pill>
       )}
     </span>
@@ -826,8 +826,7 @@ export function ReviewCard({ layer }: { layer: MapLayer }) {
     <section className="card" aria-labelledby={`${id}-title`}>
       <h3 id={`${id}-title`}>{t("layers.manage.review.title")}</h3>
       <p className="muted">{t("layers.manage.review.help")}</p>
-      <fieldset className="segmented">
-        <legend className="visually-hidden">{t("layers.manage.review.views")}</legend>
+      <fieldset className="segmented" aria-label={t("layers.manage.review.views")}>
         <label className="segmented__item">
           <input
             type="radio"

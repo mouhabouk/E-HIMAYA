@@ -3589,7 +3589,8 @@
       "hours": "Opening hours",
       "email": "E-mail",
       "website": "Website",
-      "phone2": "Phone 2"
+      "phone2": "Phone 2",
+      "phone": "Phone"
     },
     "template": {
       "title": "Empty template with the recognised columns:"
@@ -3758,10 +3759,6 @@
         "deleted": "Deleted"
       },
       "sensitive": "Sensitive",
-      "toReview_one": "{{n}} name to review",
-      "toReview_other": "{{n}} names to review",
-      "duplicates_one": "{{n}} possible duplicate",
-      "duplicates_other": "{{n}} possible duplicates",
       "duplicate": "Possible duplicate",
       "nameStatus": {
         "suggested": "Suggested name",
@@ -3806,13 +3803,12 @@
         "audiencesHelp": "Rooms: operators and room managers. Field: field commanders and team leaders. Command: the governor and the minister. Administration and support: the other staff.",
         "national": "Scope: national (every gouvernorat)",
         "scope": "Gouvernorats",
-        "scopeCount_one": "Scope: one gouvernorat",
-        "scopeCount_other": "Scope: {{count}} gouvernorats",
         "scopeHelp": "None chosen: staff of every gouvernorat see it. With gouvernorats: among regional staff, only theirs see it; national staff always do.",
         "defaultOn": "Shown on the map by default (otherwise the user turns it on)",
         "actions": "Buttons on the place card",
         "action_call": "“Call”",
-        "action_directions": "“Directions”"
+        "action_directions": "“Directions”",
+        "scopeCount": "Scope: chosen gouvernorats ({{count}})"
       },
       "fields": {
         "title": "Columns by audience",
@@ -3884,10 +3880,9 @@
         "purgeConfirm": "Erase for good"
       },
       "deletedPlaces": {
-        "title_one": "One deleted place",
-        "title_other": "Deleted places ({{count}})",
         "empty": "No deleted place.",
-        "restore": "Restore"
+        "restore": "Restore",
+        "title": "Deleted places ({{count}})"
       },
       "review": {
         "title": "Names review",
@@ -3907,7 +3902,11 @@
         "source": "OSM",
         "empty": "Nothing to review here.",
         "done": "{{accepted}} accepted, {{edited}} corrected, {{rejected}} rejected, {{kept}} kept, {{merged}} merged."
-      }
+      },
+      "toReview": "Names to review: {{n}}",
+      "duplicates": "Possible duplicates: {{n}}",
+      "ministerOnly": "The minister alone",
+      "listSeparator": ", "
     }
   },
   "guide": {
