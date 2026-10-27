@@ -38,6 +38,9 @@ rectangle "Tableau de bord central" {
   usecase "Retirer et effacer\nun téléphone d'équipe" as S21
   usecase "Marquer « vu » une alerte\nrenfort ou danger (P4b)" as S22
   usecase "Rédiger et approuver\nles modèles de rapport (P4b)" as S23
+  usecase "Suivre la sécurité côtière,\nalertes et bulletin (L1b)" as S24
+  usecase "Régler les seuils\ndu risque de noyade (L1b)" as S25
+  usecase "Choisir l'hôpital le plus proche\npar la route (L1b)" as S26
 }
 rectangle "Application des équipes (P4a à P4d)" {
   usecase "Se connecter par code\n(MFA, PIN 6 chiffres)" as T0
@@ -112,4 +115,8 @@ OP --> S19
 S1 ..> S0 : <<include>>
 S11 ..> S0 : <<include>>
 S16 ..> S0 : <<include>>
+OP --> S24
+CC --> S24
+CC --> S25
+OP --> S26
 @enduml
