@@ -40,7 +40,8 @@
     "medicalCommittee": "Comité médical",
     "counter": "Guichet",
     "prevention": "Visites de prévention",
-    "crew": "Équipes de garde"
+    "crew": "Équipes de garde",
+    "reportTemplates": "Modèles de rapport"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -666,7 +667,11 @@
       "crew_ack": "Ordre reçu par l'équipe",
       "field_report": "Premier bilan du terrain",
       "casualties": "Bilan des victimes mis à jour",
-      "transport": "Victime évacuée"
+      "transport": "Victime évacuée",
+      "crew_alert": "Renfort ou danger signalé par l'équipe",
+      "crew_alert_seen": "Alerte vue par la salle",
+      "field_attachment": "Pièce jointe des lieux",
+      "detailed_report": "Rapport détaillé"
     },
     "via": {
       "suggestion": "(suggestion confirmée)",
@@ -4162,12 +4167,13 @@
     "backup": "Demande un renfort",
     "casualties": "Victimes",
     "counter": {
-      "injured": "Blessés",
       "deceased": "Décédés",
-      "rescued": "Secourus",
-      "trapped": "Bloqués"
+      "rescued": "Rescapés",
+      "trapped": "Bloqués",
+      "injured_light": "Blessés légers",
+      "injured_serious": "Blessés graves",
+      "transported": "Évacués"
     },
-    "firstReports": "Premiers bilans",
     "severity": {
       "1": "1 · Mineure",
       "2": "2 · Modérée",
@@ -4189,7 +4195,13 @@
       "child": "Enfant",
       "adult": "Adulte",
       "elderly": "Âgé",
-      "unknown": "Âge inconnu"
+      "unknown": "Âge inconnu",
+      "under_12": "Moins de 12 ans",
+      "12_17": "12–17 ans",
+      "18_29": "18–29 ans",
+      "30_44": "30–44 ans",
+      "45_59": "45–59 ans",
+      "60_plus": "60 ans et plus"
     },
     "sex": {
       "female": "Femme",
@@ -4211,6 +4223,106 @@
     "revokeLabel": "Retirer et effacer le téléphone de {{name}}",
     "revokeConfirm": "Effacer définitivement le téléphone de {{name}} ?",
     "revokeYes": "Oui, effacer",
-    "size": "Équipage : {{count}}"
+    "size": "Équipage : {{count}}",
+    "alerts": "Alertes",
+    "unseenAlerts": "Alertes non vues : {{count}}",
+    "markSeen": "Vu",
+    "markSeenLabel": "Marquer comme vu : {{what}}, {{vehicle}}",
+    "seenBy": "vu par {{name}} à {{time}}",
+    "backupKind": {
+      "fire_engine": "Engin incendie",
+      "ambulance": "Ambulance",
+      "extrication": "Désincarcération",
+      "ladder": "Échelle",
+      "water_tanker": "Citerne d'eau",
+      "hazmat": "Matières dangereuses",
+      "police": "Sécurité",
+      "heavy_equipment": "Engins lourds"
+    },
+    "dangerKind": {
+      "fire_spread": "Propagation du feu",
+      "collapse": "Effondrement",
+      "gas": "Gaz ou matières dangereuses",
+      "electricity": "Électricité",
+      "violence": "Agression",
+      "traffic": "Circulation"
+    },
+    "situations": "Derniers rapports de situation",
+    "first": "Premier rapport",
+    "update": "Mise à jour",
+    "detailed": "Rapports détaillés",
+    "templateVersion": "modèle v{{version}}",
+    "note": "Note",
+    "attachments": "Photos, notes vocales et textes",
+    "photo": "Photo",
+    "photoAlt": "Photo des lieux, {{time}}",
+    "voice": "Note vocale",
+    "attachment": {
+      "photo": "Photo",
+      "voice": "Note vocale",
+      "text": "Texte"
+    },
+    "seconds": "{{count}} s",
+    "contactPhone": "Numéro à appeler sur place",
+    "contactPhoneHint": "Facultatif. Le téléphone du chef n'affiche le bouton « Déclarant » que si vous en donnez un ; le numéro du citoyen n'est jamais transmis automatiquement."
+  },
+  "templates": {
+    "pageTitle": "Modèles de rapport",
+    "intro": "Le rapport détaillé de l'application des chefs d'équipe, par type d'incident : des questions auxquelles on répond d'un toucher (puces, oui ou non, un nombre). Une seule version approuvée par type ; approuver un brouillon retire la version précédente.",
+    "readOnly": "Seul le Bureau (commandement central ou un responsable national) modifie et approuve les modèles.",
+    "showRetired": "Afficher les versions retirées",
+    "none": "Aucun modèle.",
+    "preview": "Aperçu comme sur le téléphone",
+    "simulated": "modèle d'essai jusqu'à l'approbation du Bureau",
+    "required": "obligatoire",
+    "version": "version {{version}}",
+    "status": {
+      "draft": "Brouillon",
+      "approved": "Approuvé",
+      "retired": "Retiré"
+    },
+    "approvedBy": "Approuvé par {{name}} le {{date}}",
+    "editedAt": "Modifié le {{date}}",
+    "fieldCount": "{{count}} questions",
+    "show": "Afficher",
+    "hide": "Masquer",
+    "newVersion": "Nouvelle version (brouillon)",
+    "draftExists": "Un brouillon de ce type existe déjà.",
+    "retire": "Retirer",
+    "fieldN": "Question {{n}}",
+    "up": "Monter",
+    "down": "Descendre",
+    "removeField": "Supprimer",
+    "key": "Clé (a–z, 0–9, _)",
+    "type": "Forme",
+    "types": {
+      "single": "Un choix (puces)",
+      "multi": "Plusieurs choix (puces)",
+      "yesno": "Oui ou non",
+      "count": "Nombre (+ et −)"
+    },
+    "label": "Question",
+    "unit": "Unité",
+    "max": "Maximum",
+    "options": "Puces",
+    "optionKey": "Clé de la puce {{n}}",
+    "optionLabel": "Puce {{n}}, {{lang}}",
+    "removeOption": "Supprimer la puce",
+    "addOption": "Ajouter une puce",
+    "addField": "Ajouter une question",
+    "save": "Enregistrer le brouillon",
+    "approve": "Approuver",
+    "discard": "Abandonner le brouillon",
+    "invalid": "Chaque question demande une clé, un libellé et au moins deux puces si elle en a.",
+    "lang": {
+      "ar": "Arabe",
+      "fr": "Français",
+      "en": "Anglais"
+    },
+    "newTitle": "Nouveau modèle",
+    "category": "Type",
+    "classification": "Classification",
+    "anyClassification": "Toutes les classifications du type",
+    "create": "Créer le brouillon"
   }
 }

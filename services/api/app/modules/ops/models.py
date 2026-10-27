@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Any
 
 from geoalchemy2 import Geography
-from sqlalchemy import Boolean, DateTime, Enum, ForeignKey, Integer, SmallInteger, Text, func
+from sqlalchemy import Boolean, DateTime, Enum, Float, ForeignKey, Integer, SmallInteger, Text, func
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -214,6 +214,8 @@ class Assignment(Base):
     # Phase P4a: the shift holding the vehicle, and when its leader saw the mission on the staff app.
     shift_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("ops.shift.id"))
     acknowledged_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Phase P4b: a number the room gives the team for the scene ("المبلّغ" on the phone).
+    contact_phone: Mapped[str | None] = mapped_column(Text)
 
 
 class CalloutTarget(Base):
@@ -323,7 +325,8 @@ class CrewEvent(Base):
 
 
 class FieldReport(Base):
-    """The first field report of a team on scene (phase P4a, F-STF-03)."""
+    """A field report of a team on scene: the first situation report and its updates (phase P4a, F-STF-03), or the
+    detailed report built from a template (phase P4b, F-STF-05: ``answers``, no severity)."""
 
     __tablename__ = "field_report"
     __table_args__ = {"schema": "ops"}
@@ -338,10 +341,15 @@ class FieldReport(Base):
     kind: Mapped[str] = mapped_column(Text, server_default="first")
     category: Mapped[str] = mapped_column(Text)
     classification: Mapped[str | None] = mapped_column(Text)
-    severity: Mapped[int] = mapped_column(SmallInteger)
+    severity: Mapped[int | None] = mapped_column(SmallInteger)
     backup_needed: Mapped[bool] = mapped_column(Boolean, server_default="false")
     backup_note: Mapped[str | None] = mapped_column(Text)
+    backup_kinds: Mapped[list[str]] = mapped_column(ARRAY(Text), server_default="{}")
     crew_danger: Mapped[bool] = mapped_column(Boolean, server_default="false")
+    template_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("ops.report_template.id"))
+    template_version: Mapped[int | None] = mapped_column(Integer)
+    answers: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    note: Mapped[str | None] = mapped_column(Text)
     author: Mapped[str] = mapped_column(Text)
     author_name: Mapped[str | None] = mapped_column(Text)
     device_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
@@ -357,7 +365,8 @@ class CasualtyCount(Base):
     incident_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("ops.incident.id", ondelete="CASCADE"), primary_key=True
     )
-    injured: Mapped[int] = mapped_column(Integer, server_default="0")
+    injured_light: Mapped[int] = mapped_column(Integer, server_default="0")
+    injured_serious: Mapped[int] = mapped_column(Integer, server_default="0")
     deceased: Mapped[int] = mapped_column(Integer, server_default="0")
     rescued: Mapped[int] = mapped_column(Integer, server_default="0")
     trapped: Mapped[int] = mapped_column(Integer, server_default="0")
@@ -382,7 +391,86 @@ class CasualtyTransport(Base):
     age_band: Mapped[str] = mapped_column(Text)
     sex: Mapped[str] = mapped_column(Text)
     hospital: Mapped[str] = mapped_column(Text)
+    # Phase P4b: the place of a map layer the leader picked (null when typed under "other").
+    hospital_ref: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("geo.layer_feature.id", ondelete="SET NULL")
+    )
     created_by: Mapped[str] = mapped_column(Text)
     created_by_name: Mapped[str | None] = mapped_column(Text)
     device_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class CrewAlert(Base):
+    """ "Backup" or "danger to the crew" from a team, at any moment of its mission, until the room has seen it
+    (phase P4b, design §5.4)."""
+
+    __tablename__ = "crew_alert"
+    __table_args__ = {"schema": "ops"}
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    incident_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ops.incident.id", ondelete="CASCADE")
+    )
+    assignment_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ops.assignment.id", ondelete="CASCADE")
+    )
+    kind: Mapped[str] = mapped_column(Text)
+    items: Mapped[list[str]] = mapped_column(ARRAY(Text), server_default="{}")
+    created_by: Mapped[str] = mapped_column(Text)
+    created_by_name: Mapped[str | None] = mapped_column(Text)
+    device_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    seen_by: Mapped[str | None] = mapped_column(Text)
+    seen_by_name: Mapped[str | None] = mapped_column(Text)
+    seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class FieldAttachment(Base):
+    """A photo, a voice note or a short text from the scene (phase P4b, design §5.8)."""
+
+    __tablename__ = "field_attachment"
+    __table_args__ = {"schema": "ops"}
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    incident_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ops.incident.id", ondelete="CASCADE")
+    )
+    assignment_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ops.assignment.id", ondelete="CASCADE")
+    )
+    kind: Mapped[str] = mapped_column(Text)
+    body: Mapped[str | None] = mapped_column(Text)
+    object_key: Mapped[str | None] = mapped_column(Text, unique=True)
+    content_type: Mapped[str | None] = mapped_column(Text)
+    sha256: Mapped[str | None] = mapped_column(Text)
+    bytes: Mapped[int | None] = mapped_column(Integer)
+    duration_s: Mapped[float | None] = mapped_column(Float(precision=24))
+    created_by: Mapped[str] = mapped_column(Text)
+    created_by_name: Mapped[str | None] = mapped_column(Text)
+    device_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class ReportTemplate(Base):
+    """The detailed report of a category (and optionally a classification), versioned; one approved version at a
+    time (phase P4b, F-STF-05, design §5.7)."""
+
+    __tablename__ = "report_template"
+    __table_args__ = {"schema": "ops"}
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    category: Mapped[str] = mapped_column(Text)
+    classification: Mapped[str | None] = mapped_column(Text)
+    version: Mapped[int] = mapped_column(Integer)
+    status: Mapped[str] = mapped_column(Text)
+    fields: Mapped[list[dict[str, Any]]] = mapped_column(JSONB)
+    simulated: Mapped[bool] = mapped_column(Boolean, server_default="false")
+    created_by: Mapped[str] = mapped_column(Text)
+    created_by_name: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    approved_by: Mapped[str | None] = mapped_column(Text)
+    approved_by_name: Mapped[str | None] = mapped_column(Text)
+    approved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    retired_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

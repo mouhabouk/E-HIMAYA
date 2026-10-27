@@ -115,10 +115,14 @@ export function opsApi(api: ApiClient) {
       api.request<IncidentDetail>(incidentPath(id), { method: "PATCH", body }),
     addIncidentNote: (id: string, text: string) =>
       api.request<TimelineEntry>(`${incidentPath(id)}/notes`, { method: "POST", body: { text } }),
-    createAssignment: (incidentId: string, resourceId: string, order: string | null) =>
+    createAssignment: (incidentId: string, resourceId: string, order: string | null, contactPhone?: string | null) =>
       api.request<Assignment>(`${incidentPath(incidentId)}/assignments`, {
         method: "POST",
-        body: { resource_id: resourceId, order: order?.trim() ? order.trim() : null },
+        body: {
+          resource_id: resourceId,
+          order: order?.trim() ? order.trim() : null,
+          ...(contactPhone?.trim() ? { contact_phone: contactPhone.trim() } : {}),
+        },
       }),
     updateAssignment: (id: string, status: AssignmentStatus, note?: string | null) =>
       api.request<Assignment>(`/api/v1/staff/assignments/${enc(id)}/status`, {

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -9,15 +11,18 @@ import '../../core/ui/tokens.dart';
 import '../../features/report/category_labels.dart';
 import '../../l10n/app_localizations.dart';
 import '../staff_app.dart';
+import '../staff_chrome.dart';
 import '../staff_config.dart';
 import '../staff_controller.dart';
 import '../staff_labels.dart';
 import '../staff_models.dart';
-import 'casualties_screen.dart';
-import 'first_report_screen.dart';
+import 'detailed_report_screen.dart';
+import 'field_widgets.dart';
+import 'situation_screen.dart';
+import 'transport_screen.dart';
 
-/// One mission: the order, one large button for the next step (F-STF-03), the first report and
-/// the casualties (F-STF-04).
+/// One mission (phase P4b, design §5.3): the card, the path of the five steps, one big button for
+/// the next step, quick buttons, and "backup" and "danger" always at hand.
 class MissionScreen extends ConsumerWidget {
   const MissionScreen({super.key, required this.missionId});
 
@@ -30,135 +35,390 @@ class MissionScreen extends ConsumerWidget {
     final m = s.mission(missionId);
     if (m == null) {
       return Scaffold(
-        appBar: AppBar(actions: staffBarActions()),
+        appBar: StaffAppBar(title: l10n.staffMission),
         body: Center(child: Text(l10n.staffMissionGone)),
       );
     }
     final code = ref.watch(localeCodeProvider);
-    final cat = m.category ?? ReportCategory.other;
+    final vehicle = s.me?.shift?.vehicle.label;
     final place = placeOf(m, code);
+    final here = ref.watch(staffPositionProvider).value;
+    final away = here == null || m.location == null
+        ? null
+        : distanceM(here, m.location!).round();
+    final onScene =
+        m.status == MissionStatus.onScene || m.status == MissionStatus.released;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(categoryLabel(l10n, cat)),
-        actions: staffBarActions(),
+      appBar: StaffAppBar(
+        title: l10n.staffMission,
+        subtitle: [?vehicle, place].where((x) => x.isNotEmpty).join(' · '),
       ),
       body: Column(
         children: [
-          const OfflineStrip(),
+          const ConnectionStrip(),
           Expanded(
             child: ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                Row(
-                  children: [
-                    Pill(
-                      missionStatusLabel(l10n, m.status),
-                      tone: missionStatusTone(m.status),
-                    ),
-                    const SizedBox(width: 8),
-                    if (place.isNotEmpty) Flexible(child: Text(place)),
-                  ],
-                ),
-                if (m.title != null) ...[
+                _MissionCard(mission: m, away: away),
+                const SizedBox(height: 12),
+                for (final a in m.alerts) AlertLine(alert: a),
+                _Timeline(mission: m, away: away),
+                const SizedBox(height: 12),
+                _NextStep(mission: m, away: away, busy: s.busy),
+                const StaffErrorText(),
+                const SizedBox(height: 12),
+                _QuickActions(mission: m),
+                if (onScene) ...[
                   const SizedBox(height: 12),
-                  Text(m.title!, style: Theme.of(context).textTheme.titleLarge),
-                ],
-                if (m.order != null) ...[
-                  const SizedBox(height: 12),
-                  SectionTitle(l10n.staffOrder),
-                  AppCard(child: Text(m.order!)),
-                ],
-                if (m.status == MissionStatus.enRoute && m.location != null)
-                  _OnSceneHint(mission: m),
-                if (s.error != null) ...[
-                  const SizedBox(height: 12),
-                  Text(
-                    crewErrorLabel(l10n, s.error!),
-                    key: const Key('staff-error'),
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.error,
-                    ),
-                  ),
-                ],
-                const SizedBox(height: 16),
-                if (m.status == MissionStatus.onScene ||
-                    m.status == MissionStatus.released) ...[
                   NavCard(
-                    key: const Key('open-first-report'),
+                    key: const Key('open-situation'),
                     icon: Icons.assignment,
-                    tone: m.fieldReport == null ? Tone.orange : Tone.green,
-                    title: l10n.staffFirstReport,
+                    tone: m.fieldReport == null ? Tone.orange : Tone.navy,
+                    title: l10n.staffSituation,
                     subtitle: m.fieldReport == null
-                        ? l10n.staffFirstReportDue
-                        : severityLabel(l10n, m.fieldReport!.severity),
-                    onTap:
-                        m.status == MissionStatus.onScene &&
-                            m.fieldReport == null
-                        ? () => Navigator.of(context).push(
-                            MaterialPageRoute<void>(
-                              builder: (_) =>
-                                  FirstReportScreen(missionId: m.id),
-                            ),
-                          )
-                        : null,
+                        ? l10n.staffSituationDue
+                        : l10n.staffSituationLast(
+                            hhmm(m.fieldReport!.createdAt ?? m.createdAt),
+                            severityLabel(l10n, m.fieldReport!.severity ?? 1),
+                          ),
+                    onTap: () =>
+                        push(context, SituationScreen(missionId: m.id)),
                   ),
-                  const SizedBox(height: 8),
                   NavCard(
-                    key: const Key('open-casualties'),
-                    icon: Icons.personal_injury,
-                    tone: Tone.red,
-                    title: l10n.staffCasualties,
-                    subtitle: l10n.staffCasualtySummary(
-                      m.casualties.injured,
-                      m.casualties.deceased,
-                      m.transports.length,
-                    ),
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) => CasualtiesScreen(missionId: m.id),
-                      ),
-                    ),
+                    key: const Key('open-transports'),
+                    icon: Icons.local_hospital,
+                    tone: Tone.green,
+                    title: l10n.staffTransportTitle,
+                    subtitle: l10n.staffTransportsCount(m.transports.length),
+                    onTap: () =>
+                        push(context, TransportScreen(missionId: m.id)),
                   ),
+                  if (m.template != null)
+                    NavCard(
+                      key: const Key('open-detailed'),
+                      icon: Icons.fact_check,
+                      tone: m.detailedReport == null ? Tone.purple : Tone.green,
+                      title: l10n.staffDetailedReport,
+                      subtitle: m.detailedReport == null
+                          ? l10n.staffDetailedDue
+                          : l10n.staffDetailedSent(
+                              hhmm(m.detailedReport!.createdAt ?? m.createdAt),
+                              m.detailedReport!.templateVersion ?? 1,
+                            ),
+                      onTap: () =>
+                          push(context, DetailedReportScreen(missionId: m.id)),
+                    ),
                 ],
               ],
             ),
           ),
         ],
       ),
-      bottomNavigationBar: _nextStep(context, ref, m, s.busy),
+      bottomNavigationBar: m.active
+          ? BottomActionBar(
+              actions: [
+                BarAction(
+                  key: const Key('alert-backup'),
+                  label: l10n.staffAskBackup,
+                  icon: Icons.add_alert,
+                  tone: Tone.red,
+                  onPressed: () =>
+                      unawaited(showCrewAlertSheet(context, m.id, 'backup')),
+                ),
+                BarAction(
+                  key: const Key('alert-danger'),
+                  label: l10n.staffCrewDanger,
+                  icon: Icons.warning_amber,
+                  tone: Tone.slate,
+                  onPressed: () =>
+                      unawaited(showCrewAlertSheet(context, m.id, 'danger')),
+                ),
+              ],
+            )
+          : null,
     );
   }
+}
 
-  Widget? _nextStep(BuildContext context, WidgetRef ref, Mission m, bool busy) {
+/// The mission card: red border, type, priority, place and distance, the room's note.
+class _MissionCard extends ConsumerWidget {
+  const _MissionCard({required this.mission, required this.away});
+
+  final Mission mission;
+  final int? away;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final m = mission;
+    final n = Neutrals.of(context);
+    final cat = m.category ?? ReportCategory.other;
+    final place = placeOf(m, ref.watch(localeCodeProvider));
+    final red = Tone.red.colors(context);
+    return AppCard(
+      key: const Key('mission-card'),
+      borderColor: m.highPriority ? red.fill : null,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              IconTile(categoryIcon(cat), tone: Tone.red),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      m.title ?? categoryLabel(l10n, cat),
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    Text(
+                      [
+                        categoryLabel(l10n, cat),
+                        missionStatusLabel(l10n, m.status),
+                      ].join(' · '),
+                      style: TextStyle(color: n.muted),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          if (m.highPriority) ...[
+            const SizedBox(height: 8),
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: Pill(
+                l10n.staffHighPriority,
+                tone: Tone.red,
+                icon: Icons.bolt,
+              ),
+            ),
+          ],
+          if (place.isNotEmpty || away != null) ...[
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Icon(Icons.place, size: 18, color: n.muted),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    [
+                      place,
+                      if (away != null)
+                        l10n.staffDistanceKm((away! / 1000).toStringAsFixed(1)),
+                    ].where((x) => x.isNotEmpty).join(' · '),
+                  ),
+                ),
+              ],
+            ),
+          ],
+          if (m.order != null) ...[
+            const SizedBox(height: 10),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Tone.amber.colors(context).tint,
+                borderRadius: BorderRadius.circular(Radii.tile),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.staffRoomNote,
+                    style: TextStyle(
+                      color: Tone.amber.colors(context).onTint,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                    ),
+                  ),
+                  Text(m.order!),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Five stations and the time of each (design §5.3).
+class _Timeline extends StatelessWidget {
+  const _Timeline({required this.mission, required this.away});
+
+  final Mission mission;
+  final int? away;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final m = mission;
+    final cancelled = m.status == MissionStatus.cancelled;
+    // (label, time, done, current)
+    final steps = <(String, DateTime?, bool, bool)>[
+      (
+        l10n.staffStepReceived,
+        m.acknowledgedAt,
+        m.acknowledgedAt != null,
+        m.status == MissionStatus.ordered,
+      ),
+      (l10n.staffStepLeft, m.enRouteAt, m.enRouteAt != null, false),
+      (
+        m.status == MissionStatus.enRoute && away != null
+            ? '${l10n.staffStepOnTheWay} · ${l10n.staffDistanceKm((away! / 1000).toStringAsFixed(1))}'
+            : l10n.staffStepOnTheWay,
+        null,
+        m.onSceneAt != null,
+        m.status == MissionStatus.enRoute,
+      ),
+      (
+        l10n.staffStepArrived,
+        m.onSceneAt,
+        m.onSceneAt != null,
+        m.status == MissionStatus.onScene,
+      ),
+      (l10n.staffStepOver, m.releasedAt, m.releasedAt != null, false),
+    ];
+    final n = Neutrals.of(context);
+    return AppCard(
+      key: const Key('mission-timeline'),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+      child: Column(
+        children: [
+          for (final (i, (label, at, done, current)) in steps.indexed)
+            IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(
+                    width: 26,
+                    child: Column(
+                      children: [
+                        _Dot(done: done, current: current && !cancelled),
+                        if (i < steps.length - 1)
+                          Expanded(
+                            child: Container(
+                              width: 2,
+                              color: done
+                                  ? Tone.green.colors(context).fill
+                                  : n.line,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 14, top: 1),
+                      child: Text(
+                        label,
+                        style: TextStyle(
+                          fontWeight: current || done
+                              ? FontWeight.w700
+                              : FontWeight.w500,
+                          color: done || current ? n.ink : n.muted,
+                        ),
+                      ),
+                    ),
+                  ),
+                  if (at != null)
+                    Text(hhmm(at), style: TextStyle(color: n.muted)),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Dot extends StatelessWidget {
+  const _Dot({required this.done, required this.current});
+
+  final bool done;
+  final bool current;
+
+  @override
+  Widget build(BuildContext context) {
+    final n = Neutrals.of(context);
+    final green = Tone.green.colors(context).fill;
+    final orange = Tone.orange.colors(context).fill;
+    return Container(
+      width: 22,
+      height: 22,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: done ? green : (current ? orange : n.card),
+        border: Border.all(
+          color: done ? green : (current ? orange : n.line),
+          width: 2,
+        ),
+      ),
+      child: done
+          ? const Icon(Icons.check, size: 14, color: Colors.white)
+          : null,
+    );
+  }
+}
+
+/// The big button of the next step; arriving is suggested within 150 m (F-STF-03).
+class _NextStep extends ConsumerWidget {
+  const _NextStep({
+    required this.mission,
+    required this.away,
+    required this.busy,
+  });
+
+  final Mission mission;
+  final int? away;
+  final bool busy;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final m = mission;
     final (String status, String label, IconData icon, Tone tone)? next =
         switch (m.status) {
           MissionStatus.ordered => (
             'en_route',
-            l10n.staffStepEnRoute,
+            l10n.staffStepLeft,
             Icons.directions_car,
             Tone.orange,
           ),
           MissionStatus.enRoute => (
             'on_scene',
-            l10n.staffStepOnScene,
+            l10n.staffStepArrived,
             Icons.place,
-            Tone.purple,
+            Tone.orange,
           ),
           MissionStatus.onScene => (
             'released',
-            l10n.staffStepReleased,
+            l10n.staffStepOver,
             Icons.flag,
             Tone.green,
           ),
           _ => null,
         };
-    if (next == null) return null;
-    return BottomActionBar(
-      actions: [
-        BarAction(
+    if (next == null) return const SizedBox.shrink();
+    final near =
+        m.status == MissionStatus.enRoute &&
+        away != null &&
+        away! <= StaffConfig.onSceneRadiusM;
+    final caption = m.status == MissionStatus.enRoute && away != null && !near
+        ? l10n.staffAwayFrom(away!)
+        : null;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        BigStepButton(
           key: Key('step-${next.$1}'),
           label: next.$2,
+          caption: caption,
           icon: next.$3,
           tone: next.$4,
           onPressed: busy
@@ -170,35 +430,89 @@ class MissionScreen extends ConsumerWidget {
                   await ref
                       .read(staffControllerProvider.notifier)
                       .step(m.id, next.$1, at: at);
+                  ref.invalidate(staffPositionProvider);
                 },
         ),
+        if (near)
+          Semantics(
+            liveRegion: true,
+            child: Padding(
+              key: const Key('on-scene-hint'),
+              padding: const EdgeInsets.only(top: 6),
+              child: Text(
+                l10n.staffNearScene(away!),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Tone.orange.colors(context).onTint,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ),
       ],
     );
   }
 }
 
-/// Close to the incident while still "en route": arriving is suggested (F-STF-03, 150 m).
-class _OnSceneHint extends ConsumerWidget {
-  const _OnSceneHint({required this.mission});
+/// Route, room, and the reporter when the room gave a number (design §5.3).
+class _QuickActions extends ConsumerWidget {
+  const _QuickActions({required this.mission});
 
   final Mission mission;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final here = ref.watch(staffPositionProvider).value;
-    if (here == null) return const SizedBox.shrink();
-    final d = distanceM(here, mission.location!);
-    if (d > StaffConfig.onSceneRadiusM) return const SizedBox.shrink();
-    return Padding(
-      padding: const EdgeInsets.only(top: 12),
-      child: AppCard(
-        key: const Key('on-scene-hint'),
-        color: Tone.purple.colors(context).tint,
-        child: Semantics(
-          liveRegion: true,
-          child: Text(AppLocalizations.of(context).staffNearScene(d.round())),
+    final l10n = AppLocalizations.of(context);
+    final launch = ref.read(staffLauncherProvider);
+    final room = ref.read(staffConfigProvider).roomPhone;
+    final loc = mission.location;
+    final contact = mission.contactPhone;
+    Widget quick(String key, IconData icon, String label, Uri uri) => Expanded(
+      child: OutlinedButton(
+        key: Key(key),
+        style: OutlinedButton.styleFrom(
+          minimumSize: const Size(0, 64),
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+        ),
+        onPressed: () => unawaited(launch(uri)),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon),
+            const SizedBox(height: 2),
+            Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
+    );
+    return Row(
+      children: [
+        if (loc != null)
+          quick(
+            'quick-route',
+            Icons.navigation,
+            l10n.staffRoute,
+            Uri.parse(
+              'https://www.google.com/maps/dir/?api=1&destination=${loc.lat},${loc.lon}',
+            ),
+          ),
+        if (loc != null) const SizedBox(width: 8),
+        quick('quick-room', Icons.call, l10n.staffRoom, Uri.parse('tel:$room')),
+        if (contact != null) ...[
+          const SizedBox(width: 8),
+          quick(
+            'quick-reporter',
+            Icons.person,
+            l10n.staffReporter,
+            Uri.parse('tel:$contact'),
+          ),
+        ],
+      ],
     );
   }
 }

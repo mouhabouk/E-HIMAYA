@@ -25,7 +25,17 @@ from app.modules.notify import outbox
 from app.modules.ops import resources, schemas, scope, shifts
 from app.modules.ops import service as incidents
 from app.modules.ops.domain import ACTIVE_ASSIGNMENT, ASSIGNMENT_TRANSITIONS, classification_allowed
-from app.modules.ops.models import Assignment, Callout, CalloutTarget, Incident, Resource, Shift, TimelineEvent, Unit
+from app.modules.ops.models import (
+    Assignment,
+    Callout,
+    CalloutTarget,
+    CrewAlert,
+    Incident,
+    Resource,
+    Shift,
+    TimelineEvent,
+    Unit,
+)
 from app.modules.reports import service as reports
 from app.modules.reports.domain import Category, Status, can_transition
 from app.modules.reports.models import Report
@@ -109,7 +119,7 @@ async def advance_reports(
 async def assignments_of(session: AsyncSession, incident_id: uuid.UUID) -> list[schemas.AssignmentOut]:
     rows = (
         await session.execute(
-            select(Assignment, Resource, Unit, Volunteer, Profile, Shift)
+            select(Assignment, Resource, Unit, Volunteer, Profile, Shift, _UNSEEN)
             .outerjoin(Resource, Resource.id == Assignment.resource_id)
             .outerjoin(Unit, Unit.id == Resource.unit_id)
             .outerjoin(Volunteer, Volunteer.user_id == Assignment.volunteer_id)
@@ -122,8 +132,23 @@ async def assignments_of(session: AsyncSession, incident_id: uuid.UUID) -> list[
     return [_assignment_out(*row) for row in rows]
 
 
+# Alerts of the team the room has not marked seen (phase P4b).
+_UNSEEN = (
+    select(func.count(CrewAlert.id))
+    .where(CrewAlert.assignment_id == Assignment.id, CrewAlert.seen_at.is_(None))
+    .correlate(Assignment)
+    .scalar_subquery()
+)
+
+
 def _assignment_out(
-    a: Assignment, r: Resource | None, u: Unit | None, v: Volunteer | None, p: Profile | None, sh: Shift | None
+    a: Assignment,
+    r: Resource | None,
+    u: Unit | None,
+    v: Volunteer | None,
+    p: Profile | None,
+    sh: Shift | None,
+    unseen: int | None = 0,
 ) -> schemas.AssignmentOut:
     return schemas.AssignmentOut(
         id=a.id,
@@ -151,18 +176,23 @@ def _assignment_out(
         cancelled_at=a.cancelled_at,
         crew=(
             schemas.CrewRef(
-                shift_id=sh.id, leader_name=sh.leader_name, crew_size=sh.crew_size, acknowledged_at=a.acknowledged_at
+                shift_id=sh.id,
+                leader_name=sh.leader_name,
+                crew_size=sh.crew_size,
+                acknowledged_at=a.acknowledged_at,
+                unseen_alerts=unseen or 0,
             )
             if sh is not None
             else None
         ),
+        contact_phone=a.contact_phone,
     )
 
 
 async def assignment_out(session: AsyncSession, assignment_id: uuid.UUID) -> schemas.AssignmentOut:
     row = (
         await session.execute(
-            select(Assignment, Resource, Unit, Volunteer, Profile, Shift)
+            select(Assignment, Resource, Unit, Volunteer, Profile, Shift, _UNSEEN)
             .outerjoin(Resource, Resource.id == Assignment.resource_id)
             .outerjoin(Unit, Unit.id == Resource.unit_id)
             .outerjoin(Volunteer, Volunteer.user_id == Assignment.volunteer_id)
@@ -317,6 +347,7 @@ async def create_assignment(
         kind="resource",
         resource_id=resource.id,
         order=body.order,
+        contact_phone=body.contact_phone,
         status="ordered",
         created_by=_who(principal),
     )

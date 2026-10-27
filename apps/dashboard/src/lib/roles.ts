@@ -544,3 +544,13 @@ export function grantableRoles(who: Pick<Who, "roles" | "national">): string[] {
   if (who.national && who.roles.includes("security_admin")) for (const r of TECHNICAL_ROLES) out.add(r);
   return STAFF_ROLES.filter((r) => out.has(r));
 }
+
+/** Phase P4b: marking a team's backup or danger alert as seen (the room and central command). */
+export function canMarkCrewAlerts(roles: readonly string[]): boolean {
+  return canDispatch(roles) || roles.includes("central_committee");
+}
+
+/** Phase P4b: detailed-report templates are edited and approved by the Office (central command or a national manager). */
+export function canEditReportTemplates(identity: { roles: readonly string[]; national: boolean }): boolean {
+  return identity.roles.includes("central_committee") || (identity.national && identity.roles.includes("ops_manager"));
+}

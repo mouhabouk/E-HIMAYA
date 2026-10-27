@@ -1,9 +1,13 @@
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 import 'package:ehimaya/core/location/location_service.dart';
 import 'package:ehimaya/core/storage/app_prefs.dart';
 import 'package:ehimaya/core/storage/secure_store.dart';
 import 'package:ehimaya/staff/staff_app.dart';
+import 'package:ehimaya/staff/staff_capture.dart';
 import 'package:ehimaya/staff/staff_controller.dart';
+import 'package:ehimaya/staff/staff_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -81,10 +85,82 @@ class FakeCrewServer {
       'status': 'open',
     },
     'field_report': null,
-    'casualties': {'injured': 0, 'deceased': 0, 'rescued': 0, 'trapped': 0},
+    'detailed_report': null,
+    'casualties': {
+      'injured_light': 0,
+      'injured_serious': 0,
+      'deceased': 0,
+      'rescued': 0,
+      'trapped': 0,
+      'transported': 0,
+    },
     'transports': <Object>[],
+    'alerts': <Object>[],
+    'attachments': <Object>[],
+    'template': fireTemplate,
+    'contact_phone': null,
     'distance_m': null,
   };
+
+  /// The model fire template [SIM]: one question of each shape.
+  static const fireTemplate = {
+    'id': 'tpl-fire',
+    'category': 'fire',
+    'classification': null,
+    'version': 1,
+    'status': 'approved',
+    'simulated': true,
+    'fields': [
+      {
+        'key': 'place',
+        'type': 'single',
+        'label': {'ar': 'المكان', 'fr': 'Lieu', 'en': 'Place'},
+        'required': true,
+        'options': [
+          {
+            'key': 'home',
+            'label': {'ar': 'مسكن', 'fr': 'Logement', 'en': 'Home'},
+          },
+          {
+            'key': 'forest',
+            'label': {'ar': 'غابة', 'fr': 'Forêt', 'en': 'Forest'},
+          },
+        ],
+      },
+      {
+        'key': 'spread_risk',
+        'type': 'yesno',
+        'label': {
+          'ar': 'خطر الانتشار',
+          'fr': 'Risque de propagation',
+          'en': 'Risk of spreading',
+        },
+      },
+      {
+        'key': 'area_ha',
+        'type': 'count',
+        'label': {'ar': 'المساحة', 'fr': 'Surface', 'en': 'Area'},
+        'unit': {'ar': 'هكتار', 'fr': 'ha', 'en': 'ha'},
+      },
+    ],
+  };
+
+  static const hospitals = [
+    {
+      'id': 'h-1',
+      'name': 'Hôpital Charles Nicolle',
+      'phone': null,
+      'distance_m': 1200,
+      'simulated': true,
+    },
+    {
+      'id': 'h-2',
+      'name': 'Hôpital La Rabta',
+      'phone': null,
+      'distance_m': 2600,
+      'simulated': true,
+    },
+  ];
 
   FakeResponse _handle(SeenRequest r) {
     final p = r.path;
@@ -165,35 +241,60 @@ class FakeCrewServer {
         return FakeResponse(200, json: {'items': missions});
     }
     final m = RegExp(r'^/missions/([^/]+)/(.+)$').firstMatch(sub);
+    if (m != null && r.method == 'GET' && m.group(2) == 'hospitals') {
+      return const FakeResponse(200, json: hospitals);
+    }
     if (m != null && r.method == 'POST') {
       final i = missions.indexWhere((x) => x['id'] == m.group(1));
       if (i < 0) return const FakeResponse(404, json: {'detail': 'not_found'});
       final x = Map<String, dynamic>.of(missions[i]);
+      final now = '2026-10-26T09:3${writes.length % 10}:00Z';
+      if (m.group(2) == 'attachments') {
+        x['attachments'] = [
+          ...x['attachments'] as List,
+          {
+            'id': 'a-${writes.length}',
+            'kind': r.uri.queryParameters['kind'],
+            'body': null,
+            'duration_s': double.tryParse(
+              r.uri.queryParameters['duration_s'] ?? '',
+            ),
+            'created_at': now,
+          },
+        ];
+        missions[i] = x;
+        return FakeResponse(200, json: x);
+      }
       final body = r.json! as Map<String, dynamic>;
       switch (m.group(2)) {
         case 'ack':
           x['acknowledged_at'] = '2026-10-26T09:00:10Z';
         case 'status':
           x['status'] = body['status'];
-        case 'first-report':
+          x['${body['status']}_at'] = now;
+        case 'situation':
           if (x['status'] != 'on_scene') {
             return const FakeResponse(409, json: {'detail': 'not_on_scene'});
           }
           x['field_report'] = {
+            'kind': x['field_report'] == null ? 'first' : 'update',
             'category': body['category'],
             'severity': body['severity'],
             'backup_needed': body['backup_needed'],
+            'backup_kinds': body['backup_kinds'],
             'crew_danger': body['crew_danger'],
+            'created_at': now,
           };
         case 'casualties':
           final c = Map<String, dynamic>.of(
             x['casualties'] as Map<String, dynamic>,
           );
-          for (final k in ['injured', 'deceased', 'rescued', 'trapped']) {
-            c[k] = (c[k] as int) + (body[k] as int? ?? 0);
+          for (final k in CasualtyCounter.values) {
+            c[k.wire] = (c[k.wire] as int) + (body[k.wire] as int? ?? 0);
           }
           x['casualties'] = c;
         case 'transports':
+          final ref = body['hospital_ref'] as String?;
           x['transports'] = [
             ...x['transports'] as List,
             {
@@ -201,15 +302,68 @@ class FakeCrewServer {
               'triage': body['triage'],
               'age_band': body['age_band'],
               'sex': body['sex'],
-              'hospital': body['hospital'],
+              'hospital': ref == null
+                  ? body['hospital']
+                  : hospitals.firstWhere((h) => h['id'] == ref)['name'],
+              'hospital_ref': ref,
+              'created_at': now,
             },
           ];
+        case 'alerts':
+          x['alerts'] = [
+            ...x['alerts'] as List,
+            {
+              'id': 'al-${writes.length}',
+              'kind': body['kind'],
+              'items': body['items'],
+              'created_at': now,
+              'seen_at': null,
+              'seen_by_name': null,
+            },
+          ];
+        case 'notes':
+          x['attachments'] = [
+            ...x['attachments'] as List,
+            {
+              'id': 'a-${writes.length}',
+              'kind': 'text',
+              'body': body['body'],
+              'created_at': now,
+            },
+          ];
+        case 'detailed-report':
+          x['detailed_report'] = {
+            'kind': 'detailed',
+            'category': 'fire',
+            'severity': null,
+            'template_id': body['template_id'],
+            'template_version': 1,
+            'answers': body['answers'],
+            'note': body['note'],
+            'created_at': now,
+          };
       }
       missions[i] = x;
       return FakeResponse(200, json: x);
     }
     return const FakeResponse(404);
   }
+}
+
+/// A camera and a microphone that answer at once.
+class FakeCapture implements StaffCapture {
+  @override
+  Future<CapturedMedia?> photo() async => CapturedMedia(
+    bytes: Uint8List.fromList([0xFF, 0xD8, 0xFF, 0xE0, 1, 2, 3]),
+    contentType: 'image/jpeg',
+  );
+
+  @override
+  Future<CapturedMedia?> voice(BuildContext context) async => CapturedMedia(
+    bytes: Uint8List.fromList([0, 0, 0, 0x20, 0x66, 0x74, 0x79, 0x70]),
+    contentType: 'audio/mp4',
+    durationS: 7.5,
+  );
 }
 
 /// A clock the tests move by hand (the five-minute lock).
@@ -249,6 +403,7 @@ Future<void> pumpStaffApp(
           launched?.add(uri);
           return true;
         }),
+        staffCaptureProvider.overrideWithValue(FakeCapture()),
       ],
       child: StaffApp(clock: (clock ?? TestClock()).call),
     ),

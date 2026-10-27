@@ -5213,27 +5213,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get staffStatusCancelled => 'أُلغيت';
 
   @override
-  String get staffStepEnRoute => 'انطلقنا';
-
-  @override
-  String get staffStepOnScene => 'وصلنا إلى المكان';
-
-  @override
-  String get staffStepReleased => 'انتهت المهمة';
-
-  @override
   String staffNearScene(int meters) {
     return 'أنت على بعد $meters م من الحادث. هل وصلتم؟';
   }
-
-  @override
-  String get staffFirstReport => 'التقرير الأول';
-
-  @override
-  String get staffFirstReportDue => 'يُرسل الآن: أقل من 30 ثانية';
-
-  @override
-  String get staffNature => 'طبيعة الحادث';
 
   @override
   String get staffSeverity => 'الخطورة';
@@ -5251,45 +5233,22 @@ class AppLocalizationsAr extends AppLocalizations {
   String get staffSeverity4 => '4 · حرجة';
 
   @override
-  String get staffBackupNeeded => 'نحتاج تعزيزا';
-
-  @override
-  String get staffBackupNote => 'أي تعزيز؟';
-
-  @override
   String get staffCrewDanger => 'خطر على الطاقم';
 
   @override
   String get staffSend => 'أرسل';
 
   @override
-  String get staffCasualties => 'الضحايا';
-
-  @override
-  String staffCasualtySummary(int injured, int deceased, int transports) {
-    return '$injured مصاب · $deceased متوفى · $transports نُقلوا';
-  }
-
-  @override
-  String get staffInjured => 'مصابون';
-
-  @override
   String get staffDeceased => 'متوفون';
 
   @override
-  String get staffRescued => 'تم إنقاذهم';
+  String get staffRescued => 'ناجون';
 
   @override
   String get staffTrapped => 'محاصرون';
 
   @override
-  String get staffTransports => 'نُقلوا إلى المستشفى';
-
-  @override
-  String get staffNoTransport => 'لم يُنقل أحد بعد.';
-
-  @override
-  String get staffAddTransport => 'نقل إلى مستشفى';
+  String get staffAddTransport => 'نقل مصاب';
 
   @override
   String get staffTriage => 'الفرز';
@@ -5308,15 +5267,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get staffAge => 'العمر';
-
-  @override
-  String get staffAgeChild => 'طفل';
-
-  @override
-  String get staffAgeAdult => 'بالغ';
-
-  @override
-  String get staffAgeElderly => 'مسن';
 
   @override
   String get staffSex => 'الجنس';
@@ -5381,4 +5331,288 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get staffErrGeneric =>
       'رفضت القاعة هذا الإجراء. أعد المحاولة أو اتصل بالقاعة.';
+
+  @override
+  String staffOnline(int seconds) {
+    return 'متصل · آخر تحديث منذ $seconds ث';
+  }
+
+  @override
+  String staffOnlineMinutes(int minutes) {
+    return 'متصل · آخر تحديث منذ $minutes د';
+  }
+
+  @override
+  String get staffMission => 'المهمة';
+
+  @override
+  String get staffHighPriority => 'أولوية عالية';
+
+  @override
+  String get staffRoomNote => 'ملاحظة القاعة';
+
+  @override
+  String staffDistanceKm(String km) {
+    return 'على بعد $km كم';
+  }
+
+  @override
+  String get staffStepReceived => 'استلمت المهمة';
+
+  @override
+  String get staffStepLeft => 'انطلقنا';
+
+  @override
+  String get staffStepOnTheWay => 'في الطريق';
+
+  @override
+  String get staffStepArrived => 'وصلنا';
+
+  @override
+  String get staffStepOver => 'انتهى التدخل';
+
+  @override
+  String staffAwayFrom(int meters) {
+    return 'أنت على بعد $meters م من الموقع';
+  }
+
+  @override
+  String get staffRoute => 'الطريق';
+
+  @override
+  String get staffRoom => 'القاعة';
+
+  @override
+  String get staffReporter => 'المبلّغ';
+
+  @override
+  String get staffAskBackup => 'طلب تعزيز';
+
+  @override
+  String get staffAlertSent => 'أُرسل إلى القاعة.';
+
+  @override
+  String staffAlertSeen(String time) {
+    return 'القاعة اطّلعت $time';
+  }
+
+  @override
+  String get staffAlertWaiting => 'بانتظار اطّلاع القاعة';
+
+  @override
+  String get staffAlertChoose => 'اضغط ما ينطبق ثم أرسل.';
+
+  @override
+  String get staffBackupFireEngine => 'إطفاء';
+
+  @override
+  String get staffBackupAmbulance => 'إسعاف';
+
+  @override
+  String get staffBackupExtrication => 'إنقاذ (قص الحديد)';
+
+  @override
+  String get staffBackupLadder => 'سلّم';
+
+  @override
+  String get staffBackupWaterTanker => 'صهريج ماء';
+
+  @override
+  String get staffBackupHazmat => 'مواد خطرة';
+
+  @override
+  String get staffBackupPolice => 'أمن';
+
+  @override
+  String get staffBackupHeavy => 'معدات ثقيلة';
+
+  @override
+  String get staffDangerFireSpread => 'انتشار النار';
+
+  @override
+  String get staffDangerCollapse => 'انهيار';
+
+  @override
+  String get staffDangerGas => 'غاز أو مواد خطرة';
+
+  @override
+  String get staffDangerElectricity => 'كهرباء';
+
+  @override
+  String get staffDangerViolence => 'اعتداء';
+
+  @override
+  String get staffDangerTraffic => 'حركة مرور';
+
+  @override
+  String get staffSituation => 'تقرير الوضع';
+
+  @override
+  String get staffSituationDue => 'التقرير الأول: أقل من 30 ثانية';
+
+  @override
+  String staffSituationLast(String time, String severity) {
+    return 'آخر تقرير $time · $severity';
+  }
+
+  @override
+  String get staffType => 'النوع';
+
+  @override
+  String staffConfirmed(String type) {
+    return 'مؤكَّد: $type';
+  }
+
+  @override
+  String get staffDifferent => 'مختلف';
+
+  @override
+  String get staffNeedBackup => 'نحتاج تعزيزا؟';
+
+  @override
+  String get staffNo => 'لا';
+
+  @override
+  String get staffYes => 'نعم';
+
+  @override
+  String get staffLiveCounts => 'الحصيلة اللحظية';
+
+  @override
+  String get staffInjuredLight => 'مصاب خفيف';
+
+  @override
+  String get staffInjuredSerious => 'مصاب خطير';
+
+  @override
+  String get staffTransported => 'منقولون';
+
+  @override
+  String get staffAttachments => 'المرفقات';
+
+  @override
+  String get staffPhoto => 'صورة';
+
+  @override
+  String get staffVoice => 'ملاحظة صوتية';
+
+  @override
+  String get staffText => 'نص';
+
+  @override
+  String get staffSendReport => 'إرسال التقرير';
+
+  @override
+  String get staffTransportTitle => 'المصابون المنقولون (دون أسماء)';
+
+  @override
+  String staffTransportsCount(int count) {
+    return 'المنقولون ($count)';
+  }
+
+  @override
+  String get staffHospitalOther => 'أخرى';
+
+  @override
+  String get staffHospitalName => 'اسم المستشفى';
+
+  @override
+  String get staffTimeAuto => 'الوقت يُسجَّل آليا.';
+
+  @override
+  String get staffSendNow => 'إرسال الآن';
+
+  @override
+  String get staffAgeUnder12 => 'أقل من 12';
+
+  @override
+  String get staffAge12 => '12 إلى 17';
+
+  @override
+  String get staffAge18 => '18 إلى 29';
+
+  @override
+  String get staffAge30 => '30 إلى 44';
+
+  @override
+  String get staffAge45 => '45 إلى 59';
+
+  @override
+  String get staffAge60 => '60 فما فوق';
+
+  @override
+  String get staffDetailedReport => 'التقرير المفصّل';
+
+  @override
+  String get staffDetailedDue => 'إجابات بالضغط، من القالب المعتمد';
+
+  @override
+  String staffDetailedSent(String time, int version) {
+    return 'أُرسل $time · القالب الإصدار $version';
+  }
+
+  @override
+  String staffTemplateVersion(int version) {
+    return 'القالب الإصدار $version';
+  }
+
+  @override
+  String get staffNote => 'ملاحظة';
+
+  @override
+  String get staffNoteHint => '500 حرف على الأكثر';
+
+  @override
+  String get staffRequired => 'إلزامي';
+
+  @override
+  String get staffRecord => 'سجّل';
+
+  @override
+  String get staffRecordStop => 'أوقف';
+
+  @override
+  String get staffRecordAgain => 'أعد التسجيل';
+
+  @override
+  String get staffVoiceMax => '60 ثانية على الأكثر.';
+
+  @override
+  String get staffSent => 'أُرسل.';
+
+  @override
+  String get staffErrTooLarge => 'الملف كبير جدا.';
+
+  @override
+  String get staffErrTooMany => 'لهذه المهمة 20 مرفقا بالفعل.';
+
+  @override
+  String get staffErrBadMedia => 'هذا النوع من الملفات غير مقبول.';
+
+  @override
+  String get staffErrTemplateChanged => 'تغيّر القالب: افتح التقرير من جديد.';
+
+  @override
+  String get staffSimTemplate => '[SIM] قالب نموذجي إلى أن يصادق عليه الديوان';
+
+  @override
+  String get staffSimHospital => '[SIM]';
+
+  @override
+  String get staffTriageGreenShort => 'أخضر';
+
+  @override
+  String get staffTriageYellowShort => 'أصفر';
+
+  @override
+  String get staffTriageRedShort => 'أحمر';
+
+  @override
+  String get staffTriageBlackShort => 'أسود';
+
+  @override
+  String get staffTransportShort => 'المصابون المنقولون';
+
+  @override
+  String get staffNoNames => 'دون أسماء';
 }

@@ -383,6 +383,11 @@ export function Layout() {
               {t("nav.crew")}
             </NavItem>
           )}
+          {hasReadAccess(identity.roles) && (
+            <NavItem to="/report-templates" icon="description" tone="purple">
+              {t("nav.reportTemplates")}
+            </NavItem>
+          )}
           {canManageAccounts(identity) && (
             <NavItem to="/accounts" icon="manageAccounts" tone="slate">
               {t("nav.accounts")}

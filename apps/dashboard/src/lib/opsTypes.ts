@@ -231,6 +231,8 @@ export interface Assignment {
   cancelled_at: string | null;
   /** Phase P4a: the team leader's shift when the vehicle is on the staff app. */
   crew?: CrewRef | null;
+  /** A number the room gave the team to call on the scene (phase P4b). */
+  contact_phone?: string | null;
 }
 
 export const CALLOUT_STATUSES = ["open", "filled", "cancelled", "closed"] as const;
