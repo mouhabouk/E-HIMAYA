@@ -95,6 +95,8 @@ export interface CrewAlert {
   created_at: string;
   seen_by_name: string | null;
   seen_at: string | null;
+  /** Phase P4d: "sms" when it came by a signed text message (no chips then). */
+  via?: "app" | "sms";
 }
 
 /** A photo, a voice note or a short text from the scene; `url` is a short-lived link to the file. */

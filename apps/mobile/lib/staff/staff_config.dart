@@ -8,6 +8,7 @@ class StaffConfig {
     required this.issuer,
     required this.clientId,
     this.roomPhone = '198',
+    this.smsNumber = '',
   });
 
   factory StaffConfig.fromEnvironment() => const StaffConfig(
@@ -24,6 +25,10 @@ class StaffConfig {
       defaultValue: 'ehimaya-staff-app',
     ),
     roomPhone: String.fromEnvironment('STAFF_ROOM_PHONE', defaultValue: '198'),
+    smsNumber: String.fromEnvironment(
+      'STAFF_SMS_NUMBER',
+      defaultValue: String.fromEnvironment('SMS_REPORT_NUMBER'),
+    ),
   );
 
   final String apiBaseUrl;
@@ -32,6 +37,10 @@ class StaffConfig {
 
   /// The operations room's number, behind the "Room" button of a mission (design §5.3).
   final String roomPhone;
+
+  /// The platform's SMS gateway, for the signed text messages without internet (phase P4d,
+  /// design §9.3); empty hides «أرسل برسالة قصيرة».
+  final String smsNumber;
 
   String get deviceEndpoint => '$issuer/protocol/openid-connect/auth/device';
   String get tokenEndpoint => '$issuer/protocol/openid-connect/token';
@@ -44,6 +53,13 @@ class StaffConfig {
 
   /// How often the missions are fetched while the app is open (push rings sooner).
   static const pollEvery = Duration(seconds: 15);
+
+  /// How often the phone tries again to send the writes that wait (design §9.1).
+  static const retryEvery = Duration(seconds: 30);
+
+  /// The vehicle's position: every 30 s on the way, every 2 min on scene (design §9.2).
+  static const trackEnRoute = Duration(seconds: 30);
+  static const trackOnScene = Duration(minutes: 2);
 
   /// Distance under which arriving on scene is suggested.
   static const onSceneRadiusM = 150;

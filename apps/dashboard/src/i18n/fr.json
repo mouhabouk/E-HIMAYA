@@ -4275,7 +4275,10 @@
     },
     "seconds": "{{count}} s",
     "contactPhone": "Numéro à appeler sur place",
-    "contactPhoneHint": "Facultatif. Le téléphone du chef n'affiche le bouton « Déclarant » que si vous en donnez un ; le numéro du citoyen n'est jamais transmis automatiquement."
+    "contactPhoneHint": "Facultatif. Le téléphone du chef n'affiche le bouton « Déclarant » que si vous en donnez un ; le numéro du citoyen n'est jamais transmis automatiquement.",
+    "lastPosition": "Dernière position il y a {{ago}}",
+    "lastPositionDistance": "Dernière position il y a {{ago}} · à {{km}} km",
+    "viaSms": "Par SMS"
   },
   "templates": {
     "pageTitle": "Modèles de rapport",

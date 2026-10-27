@@ -91,6 +91,13 @@ class StaffHome extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final phase = ref.watch(staffControllerProvider.select((s) => s.phase));
+    final l10n = AppLocalizations.of(context);
+    // The tracking notification and the mission channel, in the leader's language.
+    ref.read(staffControllerProvider.notifier).labels = (
+      title: l10n.staffTrackingTitle,
+      text: l10n.staffTrackingText,
+      channel: l10n.staffMissionChannel,
+    );
     return switch (phase) {
       StaffPhase.loading => const Scaffold(
         body: Center(child: CircularProgressIndicator()),

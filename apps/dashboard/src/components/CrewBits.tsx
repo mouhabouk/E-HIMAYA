@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
@@ -15,7 +16,7 @@ import {
 import { errorMessageKey } from "../lib/api";
 import { useFormat, useLanguage } from "../lib/hooks";
 import { localized } from "../lib/localized";
-import type { Assignment } from "../lib/opsTypes";
+import type { Assignment, VehiclePosition } from "../lib/opsTypes";
 import { queryKeys } from "../lib/staffApi";
 import { canMarkCrewAlerts } from "../lib/roles";
 import type { IncidentDetail } from "../lib/types";
@@ -43,6 +44,29 @@ export function CrewLine({ crew }: { crew: CrewRef }) {
           <span className="chip chip--crew-waiting">{t("crew.unseenAlerts", { count: crew.unseen_alerts })}</span>
         </>
       )}
+    </div>
+  );
+}
+
+/** Phase P4d: where the vehicle was last seen by the leader's phone, and how far from the incident. */
+export function PositionLine({ position }: { position: VehiclePosition }) {
+  const { t } = useTranslation();
+  const fmt = useFormat();
+  // "N min ago" moves on by itself between two refreshes of the incident.
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 30_000);
+    return () => clearInterval(id);
+  }, []);
+  const seconds = Math.max(0, (now - new Date(position.at).getTime()) / 1000);
+  const ago = fmt.duration(seconds < 60 ? seconds : Math.round(seconds / 60) * 60);
+  return (
+    <div className="cell-sub crew-position">
+      <time dateTime={position.at}>
+        {position.distance_m == null
+          ? t("crew.lastPosition", { ago })
+          : t("crew.lastPositionDistance", { ago, km: fmt.decimal(position.distance_m / 1000) })}
+      </time>
     </div>
   );
 }
@@ -112,6 +136,12 @@ function AlertRow({ alert, incidentId, canMark }: { alert: CrewAlert; incidentId
         <div className="cell-sub">
           {alert.created_by_name && <span dir="auto">{alert.created_by_name} · </span>}
           <time dateTime={alert.created_at}>{fmt.time(alert.created_at)}</time>
+          {alert.via === "sms" && (
+            <>
+              {" · "}
+              <span className="chip chip--crew-waiting">{t("crew.viaSms")}</span>
+            </>
+          )}
           {seen && (
             <>
               {" · "}

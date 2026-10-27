@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
+import 'mission_box.dart';
 import 'prevention/prevention_models.dart';
 import 'staff_auth.dart';
 import 'staff_models.dart';
@@ -161,89 +162,54 @@ class StaffApi {
     ];
   }
 
-  Future<Mission> _mission(
-    String id,
+  /// A write of a mission, stamped now: it keeps its id and time however late it is sent
+  /// (phase P4d, design §9.1).
+  MissionWrite write(
+    String missionId,
     String action,
-    Map<String, dynamic> b,
-  ) async => Mission.fromJson(
-    await _call('POST', '/missions/$id/$action', body: _write(b)),
+    Map<String, dynamic> body, {
+    String? mediaType,
+    Map<String, dynamic> shown = const {},
+  }) => MissionWrite(
+    missionId: missionId,
+    action: action,
+    body: _write(body),
+    mediaType: mediaType,
+    shown: shown,
   );
 
-  Future<Mission> acknowledge(String id) => _mission(id, 'ack', const {});
+  /// Sends a write kept on the phone; an attachment's [media] goes as the raw body with its
+  /// type and the write's fields as the query.
+  Future<Mission> send(MissionWrite w, {Uint8List? media}) async {
+    final path = '/missions/${w.missionId}/${w.action}';
+    return Mission.fromJson(
+      media == null
+          ? await _call('POST', path, body: w.body)
+          : await _call(
+              'POST',
+              path,
+              body: media,
+              contentType: w.mediaType,
+              query: w.body,
+            ),
+    );
+  }
 
-  Future<Mission> step(String id, String status, {double? lat, double? lon}) =>
-      _mission(id, 'status', {'status': status, 'lat': ?lat, 'lon': ?lon});
+  /// The vehicle's positions during a mission (design §9.2); the number the server kept.
+  Future<int> positions(String missionId, List<QueuedPosition> points) async {
+    final j = await _call(
+      'POST',
+      '/missions/$missionId/positions',
+      body: {
+        'points': [for (final p in points) p.wire],
+      },
+    );
+    return j['accepted'] as int? ?? 0;
+  }
 
-  /// A situation report: the first one, then updates (design §5.5).
-  Future<Mission> situation(
-    String id, {
-    required String category,
-    required int severity,
-    List<String> backupKinds = const [],
-    bool crewDanger = false,
-  }) => _mission(id, 'situation', {
-    'category': category,
-    'severity': severity,
-    'backup_needed': backupKinds.isNotEmpty,
-    'backup_kinds': backupKinds,
-    'crew_danger': crewDanger,
-  });
-
-  Future<Mission> casualties(String id, Map<CasualtyCounter, int> deltas) =>
-      _mission(id, 'casualties', {
-        for (final e in deltas.entries) e.key.wire: e.value,
-      });
-
-  /// One person taken to hospital: a hospital of the map ([hospitalRef]) or a typed name.
-  Future<Mission> transport(
-    String id, {
-    required Triage triage,
-    required AgeBand ageBand,
-    required Sex sex,
-    String? hospitalRef,
-    String? hospital,
-  }) => _mission(id, 'transports', {
-    'triage': triage.name,
-    'age_band': ageBand.wire,
-    'sex': sex.name,
-    'hospital_ref': ?hospitalRef,
-    if (hospitalRef == null) 'hospital': hospital?.trim(),
-  });
-
-  /// "Backup" or "danger to the crew", with the chips chosen (design §5.4).
-  Future<Mission> alert(String id, String kind, List<String> items) =>
-      _mission(id, 'alerts', {'kind': kind, 'items': items});
-
-  Future<Mission> note(String id, String body) =>
-      _mission(id, 'notes', {'body': body.trim()});
-
-  /// A photo or a voice note, sent as the raw body with its type.
-  Future<Mission> upload(String id, String kind, CapturedMedia media) async =>
-      Mission.fromJson(
-        await _call(
-          'POST',
-          '/missions/$id/attachments',
-          body: media.bytes,
-          contentType: media.contentType,
-          query: {
-            'kind': kind,
-            'client_id': _newId(),
-            'device_at': _clock().toUtc().toIso8601String(),
-            'duration_s': ?media.durationS,
-          },
-        ),
-      );
-
-  Future<Mission> detailedReport(
-    String id,
-    String templateId,
-    Map<String, Object> answers,
-    String? note,
-  ) => _mission(id, 'detailed-report', {
-    'template_id': templateId,
-    'answers': answers,
-    if (note != null && note.trim().isNotEmpty) 'note': note.trim(),
-  });
+  /// The phone's own key that signs its text messages (design §9.3).
+  Future<String> smsKey() async =>
+      (await _call('POST', '/devices/current/sms-key'))['key'] as String;
 
   Future<List<Hospital>> hospitals(String id) async {
     final j = await _call('GET', '/missions/$id/hospitals');

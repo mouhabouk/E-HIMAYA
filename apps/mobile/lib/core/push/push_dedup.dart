@@ -17,12 +17,8 @@ String pushSubject(PushPayload p) {
 
   final id = switch (p.kind) {
     PushKind.callout => first(['callout_id', 'id']),
-    PushKind.reportStatus => first([
-      'report_id',
-      'id',
-      'tracking_code',
-      'code',
-    ]),
+    PushKind.reportStatus ||
+    PushKind.teamStatus => first(['report_id', 'id', 'tracking_code', 'code']),
     _ => first(['id']),
   };
   return '${p.kind.wire}:${id ?? ''}';
@@ -38,6 +34,7 @@ String pushEventKey(PushPayload p) {
     pushSubject(p),
     d['severity'] ?? '',
     d['status'] ?? '',
+    d['team'] ?? '',
     d['version'] ?? '',
   ].join('|');
 }

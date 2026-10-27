@@ -366,7 +366,11 @@ class _AlertSheetState extends ConsumerState<_AlertSheet> {
                         SnackBar(
                           content: Text(
                             ok
-                                ? l10n.staffAlertSent
+                                ? sentLabel(
+                                    l10n,
+                                    ref.read(staffControllerProvider).pending,
+                                    alert: true,
+                                  )
                                 : crewErrorLabel(
                                     l10n,
                                     ref.read(staffControllerProvider).error ??
@@ -430,11 +434,17 @@ class AlertLine extends StatelessWidget {
               ),
             ),
             Pill(
-              seen == null
+              alert.pending
+                  ? l10n.staffWaitingBadge
+                  : seen == null
                   ? l10n.staffAlertWaiting
                   : l10n.staffAlertSeen(hhmm(seen)),
               tone: seen == null ? Tone.amber : Tone.green,
-              icon: seen == null ? Icons.schedule : Icons.done_all,
+              icon: alert.pending
+                  ? Icons.schedule_send
+                  : seen == null
+                  ? Icons.schedule
+                  : Icons.done_all,
             ),
           ],
         ),

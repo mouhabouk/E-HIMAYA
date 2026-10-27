@@ -95,6 +95,9 @@ class ReportOut(BaseModel):
     updated_at: datetime
     media: list[MediaOut]
     organization: ReportOrganization | None = None
+    #: F-APP-38 (phase P4d): the first team set off, then arrived.
+    team_en_route_at: datetime | None = None
+    team_on_scene_at: datetime | None = None
 
 
 class ReportPage(BaseModel):
@@ -118,6 +121,9 @@ class TrackOut(BaseModel):
     received_at: datetime
     updated_at: datetime
     history: list[HistoryEntry]
+    #: F-APP-38 (phase P4d): the first team set off, then arrived (times only, nothing about the team).
+    team_en_route_at: datetime | None = None
+    team_on_scene_at: datetime | None = None
 
 
 # ---------------------------------------------------------------- staff

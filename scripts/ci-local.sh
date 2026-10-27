@@ -890,7 +890,8 @@ job_mobile() {
   step "Free runner disk space"
   echo "not run locally: it deletes toolchains of the hosted runner image"
   step "Build debug APK"
-  flutter build apk --debug
+  flutter build apk --debug --flavor citizen
+  flutter build apk --debug --flavor staff -t lib/main_staff.dart
 }
 
 # ── Runner ───────────────────────────────────────────────────────────────────────────────────────────────────────

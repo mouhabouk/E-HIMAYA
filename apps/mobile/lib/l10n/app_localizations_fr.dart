@@ -6084,4 +6084,46 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get prevNo => 'Non';
+
+  @override
+  String staffPending(int count) {
+    return '$count en attente, envoyé dès le retour du réseau';
+  }
+
+  @override
+  String get staffSendSms => 'Envoyer par SMS';
+
+  @override
+  String get staffSmsOpened =>
+      'L\'application SMS est ouverte : appuyez sur Envoyer.';
+
+  @override
+  String get staffTrackingTitle => 'e-Himaya : mission en cours';
+
+  @override
+  String get staffTrackingText =>
+      'La position du véhicule est transmise à la salle des opérations jusqu\'à la fin de la mission.';
+
+  @override
+  String get staffMissionChannel => 'Missions';
+
+  @override
+  String get staffWaitingBadge => 'En attente';
+
+  @override
+  String get teamEnRoute => 'L\'équipe est en route';
+
+  @override
+  String get teamOnScene => 'L\'équipe est arrivée';
+
+  @override
+  String get teamNoticesSetting => 'M\'informer de l\'arrivée de l\'équipe';
+
+  @override
+  String get teamNoticesHint =>
+      'Une notification au départ de l\'équipe, puis à son arrivée.';
+
+  @override
+  String get staffKept =>
+      'Gardé sur le téléphone : envoyé dès le retour du réseau.';
 }

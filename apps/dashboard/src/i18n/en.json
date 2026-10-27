@@ -4275,7 +4275,10 @@
     },
     "seconds": "{{count}} s",
     "contactPhone": "Number to call on the scene",
-    "contactPhoneHint": "Optional. The leader's phone shows a «Reporter» button only if you give one; the citizen's number is never passed on automatically."
+    "contactPhoneHint": "Optional. The leader's phone shows a «Reporter» button only if you give one; the citizen's number is never passed on automatically.",
+    "lastPosition": "Last position {{ago}} ago",
+    "lastPositionDistance": "Last position {{ago}} ago · {{km}} km away",
+    "viaSms": "By text message"
   },
   "templates": {
     "pageTitle": "Report templates",

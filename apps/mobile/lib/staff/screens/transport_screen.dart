@@ -231,7 +231,13 @@ class _TransportScreenState extends ConsumerState<TransportScreen> {
           hospital: _other ? _name.text : null,
         );
     if (!ok || !mounted) return;
-    messenger.showSnackBar(SnackBar(content: Text(l10n.staffSent)));
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          sentLabel(l10n, ref.read(staffControllerProvider).pending),
+        ),
+      ),
+    );
     setState(() {
       _triage = null;
       _age = AgeBand.unknown;

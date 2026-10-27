@@ -113,6 +113,12 @@ async def forget_device_locations(session: AsyncSession, settings: Settings, now
     return int(result.rowcount or 0)  # type: ignore[attr-defined]
 
 
+async def purge_crew_positions(session: AsyncSession, settings: Settings, now: datetime) -> int:
+    """Positions of the vehicles during their missions (phase P4d), from the team leaders' phones."""
+    cutoff = _cutoff(now, settings.retention_crew_position_days)
+    return await _delete(session, "ops.crew_position", "id", "created_at < :cutoff", {"cutoff": cutoff})
+
+
 async def purge_devices(session: AsyncSession, settings: Settings, now: datetime) -> int:
     cutoff = _cutoff(now, settings.retention_device_days)
     return await _delete(session, "notify.device", "token", "updated_at < :cutoff", {"cutoff": cutoff})
@@ -267,6 +273,7 @@ JOBS: list[tuple[str, Job]] = [
     ("notify_dispatch", purge_notify_dispatch),
     ("device_locations", forget_device_locations),
     ("devices", purge_devices),
+    ("crew_positions", purge_crew_positions),
     ("medical_attachments", purge_medical_attachments),
     ("reports", anonymise_reports),
     ("streams", purge_streams),

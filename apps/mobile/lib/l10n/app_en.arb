@@ -3095,5 +3095,24 @@
   "prevItemElectrical": "Electrical installations",
   "prevDeclaredNone": "None",
   "prevYes": "Yes",
-  "prevNo": "No"
+  "prevNo": "No",
+  "staffPending": "{count} waiting, sent when the network is back",
+  "@staffPending": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "staffSendSms": "Send by SMS",
+  "staffSmsOpened": "The SMS app is open: press Send.",
+  "staffTrackingTitle": "e-Himaya: mission under way",
+  "staffTrackingText": "The vehicle's position goes to the operations room until the mission ends.",
+  "staffMissionChannel": "Missions",
+  "staffWaitingBadge": "Waiting",
+  "teamEnRoute": "The team is on its way",
+  "teamOnScene": "The team has arrived",
+  "teamNoticesSetting": "Tell me when the team is coming",
+  "teamNoticesHint": "A notification when the team leaves, then when it arrives.",
+  "staffKept": "Kept on the phone: sent when the network is back."
 }

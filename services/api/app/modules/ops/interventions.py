@@ -7,11 +7,12 @@ scene to «تم التدخل», the closing evaluation to «أُغلق التد�
 
 import uuid
 from datetime import UTC, datetime, timedelta
-from typing import Any
+from typing import Any, Literal
 
 from fastapi import HTTPException, status
 from geoalchemy2 import Geometry
 from sqlalchemy import any_, cast, func, select, update
+from sqlalchemy.dialects.postgresql import distinct_on
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.access import Action
@@ -30,6 +31,7 @@ from app.modules.ops.models import (
     Callout,
     CalloutTarget,
     CrewAlert,
+    CrewPosition,
     Incident,
     Resource,
     Shift,
@@ -45,6 +47,12 @@ from app.modules.volunteers.presence import get_presence
 from app.modules.volunteers.schemas import Skill
 
 SYSTEM_ACTOR = "system:operations"
+# F-APP-38 (phase P4d, design §9.6): fixed texts, nothing about the team or where it is.
+TEAM_TITLE = outbox.localized("ء-حماية", "e-Himaya", "e-Himaya")
+TEAM_TEXT = {
+    "en_route": outbox.localized("الفريق في الطريق إليك.", "L'équipe est en route.", "The team is on its way."),
+    "on_scene": outbox.localized("وصل الفريق إلى المكان.", "L'équipe est sur place.", "The team has arrived."),
+}
 TARGET_TIMEOUT = timedelta(minutes=30)
 SKILLS = frozenset(Skill.__args__)  # type: ignore[attr-defined]
 
@@ -85,6 +93,38 @@ async def _move_report(session: AsyncSession, report: Report, path: list[Status]
         if found is not None:
             await emit(session, "report.status_changed", {"report": found[0].model_dump(mode="json")})
     return moved
+
+
+@system_scoped
+async def team_notice(
+    session: AsyncSession, incident_id: uuid.UUID, stage: Literal["en_route", "on_scene"], at: datetime
+) -> None:
+    """The first team of the incident set off, or arrived: each open report records it once and its reporter gets
+    a push with a fixed text (F-APP-38); the citizen may turn these pushes off (``notify.device.team_notices``)."""
+    column = Report.team_en_route_at if stage == "en_route" else Report.team_on_scene_at
+    rows = await session.scalars(
+        select(Report)
+        .where(
+            Report.incident_id == incident_id,
+            column.is_(None),
+            Report.status.not_in((Status.CLOSED.value, Status.REJECTED.value)),
+        )
+        .with_for_update()
+    )
+    for report in rows:
+        if stage == "en_route":
+            report.team_en_route_at = at
+        else:
+            report.team_on_scene_at = at
+            report.team_en_route_at = report.team_en_route_at or at
+        outbox.push(
+            session,
+            report.user_id,
+            "team_status",
+            {"report_id": str(report.id), "tracking_code": report.tracking_code, "team": stage},
+            title=TEAM_TITLE,
+            body=TEAM_TEXT[stage],
+        )
 
 
 @system_scoped
@@ -129,7 +169,34 @@ async def assignments_of(session: AsyncSession, incident_id: uuid.UUID) -> list[
             .order_by(Assignment.created_at)
         )
     ).all()
-    return [_assignment_out(*row) for row in rows]
+    where = await _positions(session, [row[0].id for row in rows])
+    return [_assignment_out(*row, position=where.get(row[0].id)) for row in rows]
+
+
+async def _positions(session: AsyncSession, ids: list[uuid.UUID]) -> dict[uuid.UUID, schemas.VehiclePosition]:
+    """The last position the team's phone gave for each assignment, and how far it is from the incident (P4d)."""
+    if not ids:
+        return {}
+    point = cast(CrewPosition.location, Geometry)
+    rows = (
+        await session.execute(
+            select(
+                CrewPosition.assignment_id,
+                func.ST_Y(point),
+                func.ST_X(point),
+                CrewPosition.at,
+                func.ST_Distance(CrewPosition.location, Incident.centroid),
+            )
+            .join(Incident, Incident.id == CrewPosition.incident_id)
+            .where(CrewPosition.assignment_id.in_(ids))
+            .order_by(CrewPosition.assignment_id, CrewPosition.at.desc())
+            .ext(distinct_on(CrewPosition.assignment_id))
+        )
+    ).all()
+    return {
+        a: schemas.VehiclePosition(lat=y, lon=x, at=at, distance_m=round(d) if d is not None else None)
+        for a, y, x, at, d in rows
+    }
 
 
 # Alerts of the team the room has not marked seen (phase P4b).
@@ -149,6 +216,8 @@ def _assignment_out(
     p: Profile | None,
     sh: Shift | None,
     unseen: int | None = 0,
+    *,
+    position: schemas.VehiclePosition | None = None,
 ) -> schemas.AssignmentOut:
     return schemas.AssignmentOut(
         id=a.id,
@@ -186,6 +255,7 @@ def _assignment_out(
             else None
         ),
         contact_phone=a.contact_phone,
+        position=position,
     )
 
 
@@ -201,7 +271,8 @@ async def assignment_out(session: AsyncSession, assignment_id: uuid.UUID) -> sch
             .where(Assignment.id == assignment_id)
         )
     ).one()
-    return _assignment_out(*row)
+    where = await _positions(session, [assignment_id])
+    return _assignment_out(*row, position=where.get(assignment_id))
 
 
 async def callout_out(session: AsyncSession, callout: Callout) -> schemas.CalloutOut:
@@ -375,10 +446,13 @@ async def create_assignment(
     return assignment
 
 
-async def _set_assignment_status(session: AsyncSession, assignment: Assignment, target: str, actor: str) -> None:
+async def _set_assignment_status(
+    session: AsyncSession, assignment: Assignment, target: str, actor: str, *, at: datetime | None = None
+) -> None:
+    """``at``: when it happened, for a step the team's phone kept without network (phase P4d); now otherwise."""
     if target not in ASSIGNMENT_TRANSITIONS[assignment.status]:
         raise HTTPException(status.HTTP_409_CONFLICT, "invalid_transition")
-    now = _now()
+    now = at or _now()
     assignment.status = target
     if target == "en_route":
         assignment.en_route_at = now
@@ -392,11 +466,15 @@ async def _set_assignment_status(session: AsyncSession, assignment: Assignment, 
     if target in ("released", "cancelled") and assignment.resource_id is not None:
         resource = await session.get(Resource, assignment.resource_id, with_for_update=True)
         if resource is not None and resource.status == "assigned":
-            resource.status, resource.updated_at = "available", now
+            resource.status, resource.updated_at = "available", _now()
     _timeline(
         session, assignment.incident_id, "assignment_status", actor, assignment_id=str(assignment.id), status=target
     )
     await session.flush()
+    if target == "en_route":
+        await team_notice(session, assignment.incident_id, "en_route", now)
+    elif target == "on_scene":
+        await team_notice(session, assignment.incident_id, "on_scene", now)
 
 
 async def update_assignment(
