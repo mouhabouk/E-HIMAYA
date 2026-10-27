@@ -1,0 +1,37 @@
+@startuml
+!include style.iuml
+title Séquence : gérer une couche de la carte, qui la voit, la supprimer et la restaurer (L1a)
+autonumber
+actor "Administrateur\ndu système" as ADM
+participant "Tableau de bord\n(Couches)" as UI
+participant "API\n/staff/layers" as API
+database "PostgreSQL (RLS)" as DB
+participant "Rétention\n(quotidienne)" as RET
+actor "Ministre" as MIN
+actor "Gouverneur" as GOV
+actor "Citoyen (app)" as CIT
+== Import d'une couche OSM enrichie (brouillon) ==
+ADM -> UI : fichier GeoJSON, KML, Shapefile ou GeoPackage
+UI -> API : POST /{clé}/imports (aperçu)
+API -> API : lignes et surfaces, WGS84, noms proposés,\ndoublons à moins de 50 m
+ADM -> API : appliquer, avec motif
+API -> DB : lieux (statut du nom), révision, audit
+== Revue des noms ==
+ADM -> API : POST /{clé}/review : accepter les « élevés »,\ncorriger, rejeter, fusionner un doublon
+API -> DB : statut du nom accepté | rejeté
+== Qui la voit ==
+ADM -> API : PATCH statut publiée, publics, portée,\ncolonnes par public, motif (révision n+1)
+CIT -> API : GET /layers/{clé}/features
+API --> CIT : noms officiels ou acceptés,\nsans les colonnes non permises
+GOV -> API : couche sensible
+API --> GOV : 404
+MIN -> API : couche sensible
+API -> DB : audit « lecture sensible »
+API --> MIN : lieux
+== Supprimer et restaurer ==
+ADM -> API : DELETE /{clé} avec motif (puce « en double »)
+API -> DB : supprimée_le : hors de toutes les cartes
+ADM -> API : POST /{clé}/restore : revient suspendue
+ADM -> API : POST /{clé}/revisions/{n}/restore
+RET -> DB : effacement des couches et lieux\nsupprimés depuis plus de 30 jours
+@enduml
