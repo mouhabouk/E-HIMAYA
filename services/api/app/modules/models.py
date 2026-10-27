@@ -11,7 +11,7 @@ from app.modules.decision.models import ProcedureChunk
 from app.modules.doctors.models import Doctor, DoctorReview
 from app.modules.evidence.models import Anchor, Leaf
 from app.modules.forecast.models import ForecastRun
-from app.modules.geo.models import Delegation, Gouvernorat, Layer, LayerFeature, LayerImport
+from app.modules.geo.models import Delegation, Gouvernorat, Layer, LayerFeature, LayerImport, LayerRevision
 from app.modules.identity.models import Account, Consent, EmailCode, ErasureRequest, Profile
 from app.modules.knowledge.models import IndexState, MemoryEntry, MemoryEntryVersion, SearchDoc
 from app.modules.medical.models import FileKey, FileOpening, LockedFile
@@ -123,6 +123,7 @@ __all__ = [
     "Layer",
     "LayerFeature",
     "LayerImport",
+    "LayerRevision",
     "Leaf",
     "LedgerEntry",
     "LevelState",

@@ -4,9 +4,11 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from app.modules.layers import domain
+from app.modules.layers import access, domain
 
 Audience = Literal["public", "staff"]
+Status = Literal["draft", "published", "paused"]
+Group = Literal["citizen", "room", "field", "command", "support"]
 Mode = Literal["merge", "replace"]
 Change = Literal["new", "updated", "unchanged", "removed"]
 
@@ -42,6 +44,32 @@ def _staff_only(value: StaffOnly | None) -> StaffOnly | None:
     return sorted(set(value))
 
 
+Fields = dict[str, list[Group]]
+
+
+def _fields(value: Fields | None) -> Fields | None:
+    if value is None:
+        return None
+    if len(value) > domain.MAX_EXTRA_COLUMNS + len(access.CARD_FIELDS) or any(not 1 <= len(k) <= 64 for k in value):
+        raise ValueError("invalid columns")
+    return {k: sorted(set(v)) for k, v in value.items()}
+
+
+def _scope(value: list[int] | None) -> list[int] | None:
+    if value is None:
+        return None
+    if len(value) > 24 or any(not 1 <= v <= 99 for v in value):
+        raise ValueError("invalid gouvernorats")
+    return sorted(set(value))
+
+
+class Actions(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    call: bool = True
+    directions: bool = True
+
+
 class LayerIn(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -58,10 +86,21 @@ class LayerIn(BaseModel):
     staff_only: StaffOnly = Field(default_factory=lambda: ["manager"])
     editors_allowed: bool = False
     reason: str = Field(min_length=5, max_length=500)
+    # Phase L1a: a new layer is a draft until the administrator publishes it. Without ``audiences``, the
+    # ``audience`` above decides (public: citizens and staff; staff: staff only); without ``fields``, ``staff_only``.
+    status: Status = "draft"
+    audiences: list[Group] | None = None
+    scope: list[int] = Field(default_factory=list)
+    default_on: bool = True
+    sensitive: bool = False
+    fields: Fields | None = None
+    actions: Actions = Field(default_factory=Actions)
 
     _v_icon = field_validator("icon")(_icon)
     _v_colour = field_validator("colour")(_colour)
     _v_staff_only = field_validator("staff_only")(_staff_only)
+    _v_fields = field_validator("fields")(_fields)
+    _v_scope = field_validator("scope")(_scope)
 
 
 class LayerPatch(BaseModel):
@@ -80,10 +119,19 @@ class LayerPatch(BaseModel):
     staff_only: StaffOnly | None = None
     editors_allowed: bool | None = None
     enabled: bool | None = None
+    status: Status | None = None
+    audiences: list[Group] | None = None
+    scope: list[int] | None = None
+    default_on: bool | None = None
+    sensitive: bool | None = None
+    fields: Fields | None = None
+    actions: Actions | None = None
 
     _v_icon = field_validator("icon")(_icon)
     _v_colour = field_validator("colour")(_colour)
     _v_staff_only = field_validator("staff_only")(_staff_only)
+    _v_fields = field_validator("fields")(_fields)
+    _v_scope = field_validator("scope")(_scope)
 
 
 class LastImport(BaseModel):
@@ -116,10 +164,24 @@ class LayerOut(BaseModel):
     last_import: LastImport | None
     can_manage: bool
     can_import: bool
+    status: Status
+    audiences: list[Group]
+    scope: list[int]
+    default_on: bool
+    sensitive: bool
+    fields: dict[str, list[str]]
+    actions: Actions
+    # "point", "line", "area" or "mixed": what the places are (none yet: "point").
+    geometry: str
+    quality: dict[str, int]
+    deleted_at: datetime | None
+    delete_reason: str | None
+    purge_at: datetime | None
 
 
 class LayersOut(BaseModel):
     items: list[LayerOut]
+    deleted: list[LayerOut] = Field(default_factory=list)
     can_manage: bool
     icons: list[str]
     palette: list[str]
@@ -236,11 +298,81 @@ class FeatureOut(BaseModel):
     hidden: bool
     version: int
     updated_at: datetime
+    geometry: str = "point"
+    name_status: str = "official"
+    suggested_name: str | None = None
+    name_confidence: str | None = None
+    name_source: str | None = None
+    source_url: str | None = None
+    snapshot_at: str | None = None
+    possible_duplicate: bool = False
+    deleted_at: datetime | None = None
+    delete_reason: str | None = None
 
 
 class FeaturesOut(BaseModel):
     items: list[FeatureOut]
     truncated: bool
+
+
+# ---------------------------------------------------------------- phase L1a: deleting, revisions, review
+
+
+class Revision(BaseModel):
+    number: int
+    action: str
+    reason: str | None
+    created_by_name: str | None
+    created_at: datetime
+    changes: list[str]
+
+
+class RevisionsOut(BaseModel):
+    items: list[Revision]
+
+
+ReviewAction = Literal["accept", "edit", "reject", "keep", "merge"]
+
+
+class ReviewItem(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: uuid.UUID
+    action: ReviewAction
+    # "edit": the name to keep; "merge": the place this one duplicates (it is deleted, the other one stays).
+    name: str | None = Field(default=None, min_length=1, max_length=domain.MAX_NAME_LENGTH)
+    into: uuid.UUID | None = None
+
+
+class ReviewIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    items: list[ReviewItem] = Field(default_factory=list, max_length=500)
+    # Accept every suggested name of these confidences at once ("high", "confirmed"…).
+    accept_confidence: list[Literal["confirmed", "high", "medium", "low", "review"]] = Field(default_factory=list)
+    reason: str = Field(min_length=5, max_length=500)
+
+
+class ReviewOut(BaseModel):
+    accepted: int
+    edited: int
+    rejected: int
+    kept: int
+    merged: int
+
+
+class ReviewQueue(BaseModel):
+    items: list[FeatureOut]
+    counts: dict[str, int]
+    total: int
+
+
+class Shapes(BaseModel):
+    """A GeoJSON ``FeatureCollection`` of the lines and areas in a map area, simplified for the zoom."""
+
+    type: Literal["FeatureCollection"] = "FeatureCollection"
+    features: list[dict[str, Any]]
+    truncated: bool = False
 
 
 # ---------------------------------------------------------------- public (the app)
@@ -260,6 +392,9 @@ class PublicLayer(BaseModel):
     data_version: int
     # "units": Civil Protection centres, from the units directory (phase 5), always in step with operations.
     origin: Literal["file", "units"]
+    # Phase L1a: shown at once on the map, and the buttons of a place's card.
+    default_on: bool = True
+    actions: Actions = Field(default_factory=Actions)
 
 
 class PublicLayers(BaseModel):

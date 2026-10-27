@@ -316,7 +316,19 @@
     "invalid_due_on": "A reservation deadline runs from tomorrow to 12 months.",
     "reservation_text_required": "The reservation text is required.",
     "reservation_lifted": "This reservation is lifted.",
-    "invalid_year": "Invalid year."
+    "invalid_year": "Invalid year.",
+    "crs_unsupported": "Projection not supported: convert the file to WGS84 (EPSG:4326) before uploading.",
+    "kml_invalid": "Invalid KML file.",
+    "shp_incomplete": "Incomplete Shapefile: the .zip must hold .shp and .dbf.",
+    "shp_invalid": "Unreadable Shapefile.",
+    "gpkg_invalid": "Invalid GeoPackage file.",
+    "gpkg_no_features": "The GeoPackage has no feature table.",
+    "zip_unreadable": "Unreadable .zip archive.",
+    "layer_deleted": "The layer is deleted: restore it first.",
+    "not_deleted": "The layer is not deleted.",
+    "already_deleted": "The place is already deleted.",
+    "merge_target_invalid": "Pick another place, not deleted, to merge into.",
+    "name_required": "The name is required."
   },
   "kpi": {
     "title": "Key indicators",
@@ -3577,7 +3589,8 @@
       "hours": "Opening hours",
       "email": "E-mail",
       "website": "Website",
-      "phone2": "Phone 2"
+      "phone2": "Phone 2",
+      "phone": "Phone"
     },
     "template": {
       "title": "Empty template with the recognised columns:"
@@ -3686,7 +3699,10 @@
       "not_a_point": "The geometry is not a point",
       "phone_invalid": "Invalid phone number",
       "email_invalid": "Invalid e-mail",
-      "website_invalid": "Invalid link"
+      "website_invalid": "Invalid link",
+      "geometry_invalid": "Invalid geometry",
+      "geometry_unsupported": "Geometry type not supported",
+      "too_many_vertices": "Shape too large (more than 20,000 vertices)"
     },
     "changes": {
       "new": "New",
@@ -3733,7 +3749,165 @@
       "empty": "No place.",
       "count": "{{shown}} of {{total}}"
     },
-    "simulated": "Approximate invented places (simulation)"
+    "simulated": "Approximate invented places (simulation)",
+    "manage": {
+      "newIsDraft": "A new layer starts as a draft that only you see. After creating it, choose who sees it, then publish it.",
+      "status": {
+        "draft": "Draft",
+        "published": "Published",
+        "paused": "Paused",
+        "deleted": "Deleted"
+      },
+      "sensitive": "Sensitive",
+      "duplicate": "Possible duplicate",
+      "nameStatus": {
+        "suggested": "Suggested name",
+        "rejected": "Rejected name"
+      },
+      "geometry": {
+        "point": "point",
+        "line": "line",
+        "area": "area",
+        "mixed": "mixed"
+      },
+      "groups": {
+        "citizen": "Citizens",
+        "room": "Rooms",
+        "field": "Field",
+        "command": "Command",
+        "support": "Administration and support"
+      },
+      "confidence": {
+        "confirmed": "Confirmed",
+        "high": "High",
+        "medium": "Medium",
+        "low": "Low",
+        "review": "To review"
+      },
+      "tabs": {
+        "label": "Layers",
+        "layers": "Layers ({{count}})",
+        "deleted": "Deleted ({{count}})"
+      },
+      "visibility": {
+        "title": "Who sees the layer",
+        "status": "State",
+        "statusHelp": {
+          "draft": "Draft: only the system administrator sees it.",
+          "published": "Published: the audiences chosen below see it.",
+          "paused": "Paused: off every map, its settings are kept."
+        },
+        "sensitive": "Sensitive layer (the minister alone)",
+        "sensitiveHelp": "Only the minister and the administrator see it, never a governor, even during an open crisis axis. Every read of its places is in the audit log.",
+        "audiences": "Audiences that see it",
+        "audiencesHelp": "Rooms: operators and room managers. Field: field commanders and team leaders. Command: the governor and the minister. Administration and support: the other staff.",
+        "national": "Scope: national (every gouvernorat)",
+        "scope": "Gouvernorats",
+        "scopeHelp": "None chosen: staff of every gouvernorat see it. With gouvernorats: among regional staff, only theirs see it; national staff always do.",
+        "defaultOn": "Shown on the map by default (otherwise the user turns it on)",
+        "actions": "Buttons on the place card",
+        "action_call": "“Call”",
+        "action_directions": "“Directions”",
+        "scopeCount": "Scope: chosen gouvernorats ({{count}})"
+      },
+      "fields": {
+        "title": "Columns by audience",
+        "help": "For each column, choose the audiences that see it. A column not allowed never leaves the server.",
+        "column": "Column",
+        "cell": "{{column}}: {{group}}",
+        "add": "Another column of the file",
+        "addButton": "Add"
+      },
+      "revisions": {
+        "title": "Settings history",
+        "number": "Version",
+        "action": "Operation",
+        "changes": "Changed",
+        "restore": "Back to this version",
+        "explain": "The layer's settings go back to version {{n}} (name, visibility, columns…). The places come back by undoing imports.",
+        "confirm": "Go back",
+        "actions": {
+          "create": "Created",
+          "update": "Changed",
+          "delete": "Deleted",
+          "restore": "Restored",
+          "revert": "Back to a version"
+        },
+        "fields": {
+          "name": "Name",
+          "icon": "Icon",
+          "colour": "Colour",
+          "source": "Source",
+          "licence": "Licence",
+          "to_verify": "To verify",
+          "simulated": "[SIM]",
+          "editors_allowed": "Editors",
+          "status": "State",
+          "audiences": "Audiences",
+          "scope": "Scope",
+          "default_on": "Shown by default",
+          "sensitive": "Sensitive",
+          "fields": "Columns",
+          "actions": "Buttons"
+        }
+      },
+      "delete": {
+        "title": "Delete the layer",
+        "explain": "It leaves every map and package at once and stays 30 days in “Deleted”, where it can be restored as it was, then it is erased.",
+        "button": "Delete the layer",
+        "why": "Reason for deleting",
+        "reasons": {
+          "duplicate": "Duplicate",
+          "invalid": "Not valid",
+          "replaced": "Replaced",
+          "other": "Other"
+        },
+        "pick": "Choose the reason.",
+        "more": "Details (optional)",
+        "confirm": "Confirm deleting “{{name}}”",
+        "place": "Delete",
+        "placeConfirm": "Confirm deleting the place"
+      },
+      "deleted": {
+        "title": "Deleted layers",
+        "empty": "No deleted layer.",
+        "when": "Deleted on",
+        "purgeAt": "Erased on",
+        "restore": "Restore",
+        "purge": "Erase now",
+        "purgeSure": "I understand erasing is final: the layer, its places, imports and history.",
+        "restoreConfirm": "Restore (comes back paused)",
+        "purgeConfirm": "Erase for good"
+      },
+      "deletedPlaces": {
+        "empty": "No deleted place.",
+        "restore": "Restore",
+        "title": "Deleted places ({{count}})"
+      },
+      "review": {
+        "title": "Names review",
+        "help": "A place with a suggested name is not shown to citizens until its name is accepted. Staff see it marked “Suggested name”.",
+        "views": "View",
+        "all": "All suggested",
+        "duplicatesTab": "Possible duplicates",
+        "acceptHigh": "Accept every confirmed and high ({{n}})",
+        "accept": "Accept",
+        "edit": "Correct",
+        "reject": "Reject",
+        "keep": "Keep",
+        "merge": "Merge into the other",
+        "newName": "New name for {{name}}",
+        "confidence": "Confidence",
+        "nameSource": "Name source",
+        "source": "OSM",
+        "empty": "Nothing to review here.",
+        "done": "{{accepted}} accepted, {{edited}} corrected, {{rejected}} rejected, {{kept}} kept, {{merged}} merged."
+      },
+      "toReview": "Names to review: {{n}}",
+      "duplicates": "Possible duplicates: {{n}}",
+      "ministerOnly": "The minister alone",
+      "listSeparator": ", "
+    }
   },
   "guide": {
     "title": "Emergency hub: topics and items",

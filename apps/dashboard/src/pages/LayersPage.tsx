@@ -33,6 +33,18 @@ import { localized } from "../lib/localized";
 import { TUNISIA_BOUNDS } from "../lib/mapStyle";
 import { reasonValid } from "../lib/phase9";
 import { PageTitle } from "../components/PageTitle";
+import { Pill } from "../components/Icon";
+import {
+  DeletedLayers,
+  DeletedPlaces,
+  DeleteLayerCard,
+  DeletePlace,
+  FieldsCard,
+  LayerBadges,
+  ReviewCard,
+  RevisionsCard,
+  VisibilityCard,
+} from "../components/LayerManage";
 
 const CHANGE_COLOURS: Record<Change, string> = {
   new: "#2E7D32",
@@ -56,7 +68,9 @@ function save(download: Download): void {
 
 // ---------------------------------------------------------------- layer form
 
-type Draft = Omit<LayerBody, "reason"> & { enabled: boolean };
+// Since phase L1a who sees the layer and its columns are set in their own cards (LayerManage.tsx); the form keeps the
+// layer's identity. A new layer starts as a draft, seen by the administrator alone.
+type Draft = Omit<LayerBody, "reason" | "audience" | "staff_only">;
 
 function draftOf(layer: MapLayer | null, palette: readonly string[]): Draft {
   if (!layer) {
@@ -65,14 +79,11 @@ function draftOf(layer: MapLayer | null, palette: readonly string[]): Draft {
       name: { ar: "", fr: "", en: "" },
       icon: "pin",
       colour: palette[0] ?? "#37474F",
-      audience: "staff",
       source: "",
       licence: "",
       to_verify: true,
       simulated: false,
-      staff_only: ["manager"],
       editors_allowed: false,
-      enabled: true,
     };
   }
   return {
@@ -80,14 +91,11 @@ function draftOf(layer: MapLayer | null, palette: readonly string[]): Draft {
     name: { ...layer.name },
     icon: layer.icon,
     colour: layer.colour,
-    audience: layer.audience,
     source: layer.source,
     licence: layer.licence,
     to_verify: layer.to_verify,
     simulated: layer.simulated,
-    staff_only: [...layer.staff_only],
     editors_allowed: layer.editors_allowed,
-    enabled: layer.enabled,
   };
 }
 
@@ -106,22 +114,17 @@ function LayerForm({
   const id = useId();
   const [draft, setDraft] = useState<Draft>(() => draftOf(layer, meta.palette));
   const [keyTouched, setKeyTouched] = useState(layer !== null);
-  const [staffOnly, setStaffOnly] = useState(() => draft.staff_only.join(", "));
   const [reason, setReason] = useState("");
   const [tried, setTried] = useState(false);
   const [saved, setSaved] = useState(false);
-  const problem = validateLayer(draft, meta.palette);
+  const problem = validateLayer({ ...draft, audience: "staff", staff_only: [] }, meta.palette);
 
   const mutation = useMutation({
     mutationFn: () => {
-      const staff_only = staffOnly
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean);
-      const { key, enabled, ...rest } = draft;
+      const { key, ...rest } = draft;
       return layer
-        ? api.updateLayer(layer.key, { ...rest, staff_only, enabled, version: layer.version, reason: reason.trim() })
-        : api.createLayer({ ...rest, key, staff_only, reason: reason.trim() });
+        ? api.updateLayer(layer.key, { ...rest, version: layer.version, reason: reason.trim() })
+        : api.createLayer({ ...rest, key, audience: "staff", staff_only: ["manager"], reason: reason.trim() });
     },
     onSuccess: (updated) => {
       void qc.invalidateQueries({ queryKey: layerKeys.all });
@@ -148,6 +151,7 @@ function LayerForm({
     <form noValidate onSubmit={submit} className="card" aria-labelledby={`${id}-title`}>
       <h2 id={`${id}-title`}>{layer ? t("layers.form.editTitle") : t("layers.form.newTitle")}</h2>
       <RequiredNote />
+      {!layer && <p className="alert alert--info">{t("layers.manage.newIsDraft")}</p>}
       <div className="settings-grid">
         {(["ar", "fr", "en"] as const).map((lang) => (
           <div className="field" key={lang}>
@@ -182,18 +186,6 @@ function LayerForm({
           <p id={`${id}-key-help`} className="muted">
             {t("layers.form.keyHelp")}
           </p>
-        </div>
-        <div className="field">
-          <label htmlFor={`${id}-audience`}>{t("layers.form.audience")}</label>
-          <select
-            id={`${id}-audience`}
-            aria-required="true"
-            value={draft.audience}
-            onChange={(e) => setDraft({ ...draft, audience: e.target.value === "public" ? "public" : "staff" })}
-          >
-            <option value="staff">{t("layers.audience.staff")}</option>
-            <option value="public">{t("layers.audience.public")}</option>
-          </select>
         </div>
       </div>
       <fieldset className="layer-icons">
@@ -251,19 +243,6 @@ function LayerForm({
             onChange={(e) => setDraft({ ...draft, licence: e.target.value })}
           />
         </div>
-        <div className="field">
-          <label htmlFor={`${id}-staff-only`}>{t("layers.form.staffOnly")}</label>
-          <input
-            id={`${id}-staff-only`}
-            dir="auto"
-            value={staffOnly}
-            aria-describedby={`${id}-staff-only-help`}
-            onChange={(e) => setStaffOnly(e.target.value)}
-          />
-          <p id={`${id}-staff-only-help`} className="muted">
-            {t("layers.form.staffOnlyHelp")}
-          </p>
-        </div>
       </div>
       <label className="checkbox">
         <input
@@ -289,16 +268,6 @@ function LayerForm({
         />
         <span>{t("layers.form.editorsAllowed")}</span>
       </label>
-      {layer && (
-        <label className="checkbox">
-          <input
-            type="checkbox"
-            checked={draft.enabled}
-            onChange={(e) => setDraft({ ...draft, enabled: e.target.checked })}
-          />
-          <span>{t("layers.form.enabled")}</span>
-        </label>
-      )}
       {tried && problem && (
         <p className="field__error" role="alert">
           {t(`layers.form.errors.${problem}`)}
@@ -495,7 +464,7 @@ function ImportPanel({ layer, limits }: { layer: MapLayer; limits: MapLayers["li
           <input
             id={`${id}-file`}
             type="file"
-            accept=".csv,.txt,.xlsx,.json,.geojson"
+            accept=".csv,.txt,.xlsx,.json,.geojson,.kml,.kmz,.zip,.gpkg"
             aria-required="true"
             aria-describedby={`${id}-file-help`}
             aria-invalid={tooLarge || undefined}
@@ -704,6 +673,7 @@ function PlaceRow({ layer, feature }: { layer: MapLayer; feature: LayerFeature }
   const qc = useQueryClient();
   const id = useId();
   const [editing, setEditing] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [name, setName] = useState(feature.name);
   const [kind, setKind] = useState(feature.kind ?? "");
   const [phone, setPhone] = useState(feature.phone ?? "");
@@ -732,7 +702,13 @@ function PlaceRow({ layer, feature }: { layer: MapLayer; feature: LayerFeature }
   return (
     <>
       <tr className={feature.hidden ? "row--muted" : undefined}>
-        <td dir="auto">{feature.name}</td>
+        <td dir="auto">
+          {feature.name}
+          {feature.name_status === "suggested" && <Pill tone="navy">{t("layers.manage.nameStatus.suggested")}</Pill>}
+          {feature.name_status === "rejected" && <Pill tone="red">{t("layers.manage.nameStatus.rejected")}</Pill>}
+          {feature.possible_duplicate && <Pill tone="orange">{t("layers.manage.duplicate")}</Pill>}
+          {feature.geometry !== "point" && <span className="muted"> · {t(`layers.manage.geometry.${feature.geometry}`)}</span>}
+        </td>
         <td dir="auto">{feature.kind ?? "—"}</td>
         <td dir="ltr">{feature.phone ? formatPhone(feature.phone) : "—"}</td>
         <td>{gouvernorats.nameOf(feature.gouvernorat_code) ?? "—"}</td>
@@ -749,8 +725,25 @@ function PlaceRow({ layer, feature }: { layer: MapLayer; feature: LayerFeature }
               {t("layers.places.edit")}
             </button>
           )}
+          {layer.can_import && (
+            <button
+              type="button"
+              className="btn btn--small btn--danger"
+              aria-expanded={deleting}
+              onClick={() => setDeleting(!deleting)}
+            >
+              {t("layers.manage.delete.place")}
+            </button>
+          )}
         </td>
       </tr>
+      {deleting && (
+        <tr>
+          <td colSpan={6}>
+            <DeletePlace layer={layer} feature={feature} onDone={() => setDeleting(false)} />
+          </td>
+        </tr>
+      )}
       {editing && (
         <tr id={`${id}-edit`}>
           <td colSpan={6}>
@@ -950,6 +943,7 @@ function Places({ layer }: { layer: MapLayer }) {
     <section className="card" aria-labelledby={`${id}-title`}>
       <h3 id={`${id}-title`}>{t("layers.places.title", { count: layer.feature_count })}</h3>
       {layer.can_import && <AddPlace layer={layer} />}
+      {layer.can_import && layer.quality.deleted > 0 && <DeletedPlaces layer={layer} />}
       <div className="field">
         <label htmlFor={`${id}-filter`}>{t("layers.places.filter")}</label>
         <input id={`${id}-filter`} type="search" dir="auto" value={filter} onChange={(e) => setFilter(e.target.value)} />
@@ -1019,9 +1013,20 @@ function ExportButtons({ layer }: { layer: MapLayer }) {
   );
 }
 
-function LayerDetail({ layer, meta }: { layer: MapLayer; meta: MapLayers }) {
+function LayerDetail({ layer, meta, onDeleted }: { layer: MapLayer; meta: MapLayers; onDeleted: () => void }) {
   const { t } = useTranslation();
+  const { api } = useServices();
   const lang = useLanguage();
+  // The file's own columns, for the columns-by-audience card.
+  const features = useQuery({
+    queryKey: layerKeys.features(layer.key, null),
+    queryFn: ({ signal }) => api.layerFeatures(layer.key, null, signal),
+    enabled: layer.can_manage,
+  });
+  const columns = useMemo(
+    () => [...new Set((features.data?.items ?? []).flatMap((f) => Object.keys(f.props)))].slice(0, 40),
+    [features.data],
+  );
   return (
     <section className="layer-detail" aria-label={localized(layer.name, lang)}>
       <h2 dir="auto">
@@ -1032,11 +1037,17 @@ function LayerDetail({ layer, meta }: { layer: MapLayer; meta: MapLayers }) {
         {layer.to_verify && <span className="chip chip--to-verify">{t("layers.toVerify")}</span>}
         {layer.simulated && <SimTag label={t("layers.simulated")} />}
       </p>
-      <ExportButtons layer={layer} />
+      <LayerBadges layer={layer} />
+      {(layer.can_import || layer.can_manage) && <ExportButtons layer={layer} />}
+      {layer.can_manage && <VisibilityCard key={`v-${layer.version}`} layer={layer} />}
       {layer.can_manage && <LayerForm key={`${layer.key}-${layer.version}`} layer={layer} meta={meta} onDone={() => undefined} />}
+      {layer.can_manage && <FieldsCard key={`f-${layer.version}-${columns.length}`} layer={layer} columns={columns} />}
       {layer.can_import && <ImportPanel layer={layer} limits={meta.limits} />}
-      <History layer={layer} />
+      {layer.can_import && (layer.quality.suggested > 0 || layer.quality.duplicates > 0) && <ReviewCard layer={layer} />}
+      {(layer.can_import || layer.can_manage) && <History layer={layer} />}
       <Places layer={layer} />
+      {layer.can_manage && <RevisionsCard layer={layer} />}
+      {layer.can_manage && <DeleteLayerCard layer={layer} onDeleted={onDeleted} />}
     </section>
   );
 }
@@ -1061,7 +1072,10 @@ function TemplateLinks() {
   );
 }
 
-/** Map data layers (phase B1, docs/phase-b/design.md §2.3): create, import, check, publish, undo, export. */
+/**
+ * Map data layers (phase B1, docs/phase-b/design.md §2.3): create, import, check, publish, undo, export. Phase L1a
+ * (docs/phase-l/design-layers.md §3.10): state and who sees it, columns by audience, names review, revisions, delete.
+ */
 export function LayersPage() {
   const { t } = useTranslation();
   const { api } = useServices();
@@ -1069,6 +1083,7 @@ export function LayersPage() {
   const lang = useLanguage();
   const [selected, setSelected] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
+  const [tab, setTab] = useState<"layers" | "deleted">("layers");
   const query = useQuery({ queryKey: layerKeys.all, queryFn: ({ signal }) => api.layers(signal) });
   const meta = query.data;
   const layers = meta?.items ?? [];
@@ -1100,7 +1115,25 @@ export function LayersPage() {
               }}
             />
           )}
-          {layers.length === 0 ? (
+          {meta.can_manage && (
+            <div role="tablist" aria-label={t("layers.manage.tabs.label")} className="tabs">
+              {(["layers", "deleted"] as const).map((k) => (
+                <button
+                  key={k}
+                  type="button"
+                  role="tab"
+                  aria-selected={tab === k}
+                  className={`tabs__tab${tab === k ? " tabs__tab--active" : ""}`}
+                  onClick={() => setTab(k)}
+                >
+                  {t(`layers.manage.tabs.${k}`, { count: k === "deleted" ? meta.deleted.length : layers.length })}
+                </button>
+              ))}
+            </div>
+          )}
+          {tab === "deleted" && meta.can_manage ? (
+            <DeletedLayers items={meta.deleted} />
+          ) : layers.length === 0 ? (
             <p className="muted">{t("layers.list.empty")}</p>
           ) : (
             <table className="table">
@@ -1125,7 +1158,11 @@ export function LayersPage() {
                       {l.to_verify && <span className="chip chip--to-verify">{t("layers.toVerify")}</span>}
                       {l.simulated && <SimTag label={t("layers.simulated")} />}
                     </td>
-                    <td>{t(`layers.audience.${l.audience}`)}</td>
+                    <td>
+                      {l.sensitive
+                        ? t("layers.manage.ministerOnly")
+                        : l.audiences.map((g) => t(`layers.manage.groups.${g}`)).join(t("layers.manage.listSeparator")) || "—"}
+                    </td>
                     <td className="num">
                       {fmt.number(l.feature_count)}
                       {l.hidden_count > 0 && ` (${t("layers.list.hiddenCount", { count: l.hidden_count })})`}
@@ -1137,7 +1174,9 @@ export function LayersPage() {
                         t("layers.list.none")
                       )}
                     </td>
-                    <td>{l.enabled ? t("layers.list.enabled") : t("layers.list.disabled")}</td>
+                    <td>
+                      <LayerBadges layer={l} />
+                    </td>
                     <td>
                       <button type="button" className="btn btn--small" onClick={() => setSelected(l.key)}>
                         {t("layers.list.open")}
@@ -1148,7 +1187,9 @@ export function LayersPage() {
               </tbody>
             </table>
           )}
-          {current && <LayerDetail key={current.key} layer={current} meta={meta} />}
+          {current && tab === "layers" && (
+            <LayerDetail key={current.key} layer={current} meta={meta} onDeleted={() => setSelected(null)} />
+          )}
         </>
       )}
     </div>

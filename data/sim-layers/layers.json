@@ -15,7 +15,8 @@
   "simulated": true,
   "staff_only": [
    "manager"
-  ]
+  ],
+  "status": "published"
  },
  {
   "key": "clinics",
@@ -33,7 +34,8 @@
   "simulated": true,
   "staff_only": [
    "manager"
-  ]
+  ],
+  "status": "published"
  },
  {
   "key": "pharmacies",
@@ -51,7 +53,8 @@
   "simulated": true,
   "staff_only": [
    "manager"
-  ]
+  ],
+  "status": "published"
  },
  {
   "key": "police",
@@ -69,7 +72,8 @@
   "simulated": true,
   "staff_only": [
    "manager"
-  ]
+  ],
+  "status": "published"
  },
  {
   "key": "national_guard",
@@ -87,6 +91,7 @@
   "simulated": true,
   "staff_only": [
    "manager"
-  ]
+  ],
+  "status": "published"
  }
 ]

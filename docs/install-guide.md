@@ -324,7 +324,21 @@ docker compose --env-file .env -f infra/compose.yml --profile sim up -d         
 python3 scripts/osm_layers.py --out build/osm      # من OpenStreetMap، يحتاج اتصالا بـ overpass-api.de
 ```
 
-ثم استورد كل ملف في طبقته من لوحة التحكم؛ الأماكن تصل معلَّمة «للتثبت». قبل وصول القوائم الرسمية يمكن استيراد ملفات
+ثم استورد كل ملف في طبقته من لوحة التحكم؛ الأماكن تصل معلَّمة «للتثبت».
+
+منذ المرحلة L1a تُحمَّل طبقات OpenStreetMap المستكملة (`data/osm`، 31 طبقة) دفعة واحدة **مسوداتٍ** لا يراها إلا المدير،
+ثم يراجع المدير أسماءها وينشر كل طبقة من صفحة «الطبقات»:
+
+```bash
+docker compose --env-file .env -f infra/compose.yml run --rm -v "$PWD/data/osm:/data/osm:ro" worker \
+  python -m app.modules.layers.cli load-osm /data/osm --dry-run      # العدّ دون كتابة
+docker compose --env-file .env -f infra/compose.yml run --rm -v "$PWD/data/osm:/data/osm:ro" worker \
+  python -m app.modules.layers.cli load-osm /data/osm                # أو --only hospitals,beaches
+```
+
+الطبقتان الحساستان (الثكنات، النفط والغاز) ليستا في المستودع ولا يحمّلهما الأمر؛ يرفعهما المدير من اللوحة ويوسمهما
+«حساسة» فلا يراهما إلا الوزير. الطبقة أو المكان المحذوف يبقى `RETENTION_LAYER_DELETED_DAYS` يومًا (30 افتراضيًا)
+قابلا للاسترجاع، ثم تمحوه مهمة الاحتفاظ. قبل وصول القوائم الرسمية يمكن استيراد ملفات
 `data/sim-layers` في طبقات معلَّمة «بيانات تقريبية **[SIM]**».
 
 ## 10. خادم GPU (اختياري)

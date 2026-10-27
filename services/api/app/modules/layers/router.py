@@ -15,19 +15,20 @@ import io
 import json
 import uuid
 from collections.abc import Sequence
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request, Response, status
 from geoalchemy2 import Geometry
-from sqlalchemy import cast, func, select
+from sqlalchemy import cast, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import get_settings
 from app.core.db import as_system, get_session
 from app.core.security import CurrentPrincipal, Principal, Role
 from app.modules.audit import service as audit
-from app.modules.geo.models import Layer, LayerFeature, LayerImport
-from app.modules.layers import domain, schemas, service
+from app.modules.geo.models import Layer, LayerFeature, LayerImport, LayerRevision
+from app.modules.layers import access, domain, geoformats, schemas, service
 from app.modules.ops.models import Unit
 
 router = APIRouter(prefix="/api/v1/staff/layers", tags=["staff", "layers"])
@@ -55,13 +56,15 @@ Staff = Annotated[Principal, Depends(_staff)]
 
 
 def can_manage(principal: Principal) -> bool:
-    return principal.is_national and Role.SYSADMIN in principal.roles
+    return access.manages(principal)
 
 
 def can_import(principal: Principal, layer: Layer) -> bool:
-    if not principal.is_national:
+    if not principal.is_national or layer.deleted_at is not None:
         return False
-    return Role.SYSADMIN in principal.roles or (Role.CONTENT_EDITOR in principal.roles and layer.editors_allowed)
+    if access.manages(principal):
+        return True
+    return Role.CONTENT_EDITOR in principal.roles and layer.editors_allowed and not layer.sensitive
 
 
 def _require(allowed: bool, principal: Principal) -> None:
@@ -78,6 +81,14 @@ async def _layer(session: AsyncSession, key: str, *, lock: bool = False) -> Laye
     return layer
 
 
+async def _seen_layer(session: AsyncSession, key: str, principal: Principal, *, lock: bool = False) -> Layer:
+    """A layer the principal sees or works on; any other answers 404, as if it did not exist."""
+    layer = await _layer(session, key, lock=lock)
+    if not (access.sees(principal, layer) or can_import(principal, layer)):
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
+    return layer
+
+
 def _check_reason(reason: str) -> str:
     reason = reason.strip()
     if len(reason) < 5:
@@ -87,13 +98,75 @@ def _check_reason(reason: str) -> str:
 
 # ---------------------------------------------------------------- layers
 
+# The settings a revision keeps (phase L1a, design §3.5); going back to one restores them.
+REVISED = (
+    "name",
+    "icon",
+    "colour",
+    "source",
+    "licence",
+    "to_verify",
+    "simulated",
+    "editors_allowed",
+    "status",
+    "audiences",
+    "scope",
+    "default_on",
+    "sensitive",
+    "fields",
+    "actions",
+)
+
+
+def _settings(layer: Layer) -> dict[str, Any]:
+    return {k: getattr(layer, k) for k in REVISED}
+
+
+async def _revise(session: AsyncSession, layer: Layer, principal: Principal, action: str, reason: str | None) -> None:
+    number = (
+        await session.scalar(select(func.max(LayerRevision.number)).where(LayerRevision.layer_id == layer.id))
+    ) or 0
+    session.add(
+        LayerRevision(
+            layer_id=layer.id,
+            number=number + 1,
+            action=action,
+            snapshot=_settings(layer),
+            reason=reason,
+            created_by=audit.actor_of(principal),
+            created_by_name=audit.name_of(principal),
+        )
+    )
+
+
+def _sync(layer: Layer) -> None:
+    """Keep the B1 columns in step: ``audience`` public when citizens see it, ``enabled`` when it is in use.
+
+    A sensitive layer is never public, and its audiences do not matter (the minister alone sees it)."""
+    if layer.sensitive:
+        layer.audiences = [a for a in layer.audiences if a != "citizen"]
+    layer.audience = "public" if "citizen" in layer.audiences and not layer.sensitive else "staff"
+    layer.enabled = layer.status == "published" and layer.deleted_at is None
+    layer.staff_only = sorted(k for k, allowed in (layer.fields or {}).items() if "citizen" not in allowed)
+
 
 async def _layer_out(session: AsyncSession, layer: Layer, principal: Principal) -> schemas.LayerOut:
-    total, hidden = (
+    live = LayerFeature.deleted_at.is_(None)
+    total, hidden, suggested, duplicates, deleted, lines, areas = (
         await session.execute(
-            select(func.count(), func.count().filter(LayerFeature.hidden)).where(LayerFeature.layer_id == layer.id)
+            select(
+                func.count().filter(live),
+                func.count().filter(live & LayerFeature.hidden),
+                func.count().filter(live & (LayerFeature.name_status == "suggested")),
+                func.count().filter(live & LayerFeature.possible_duplicate),
+                func.count().filter(LayerFeature.deleted_at.is_not(None)),
+                func.count().filter(live & func.GeometryType(cast(LayerFeature.shape, Geometry)).ilike("%LINE%")),
+                func.count().filter(live & func.GeometryType(cast(LayerFeature.shape, Geometry)).ilike("%POLYGON%")),
+            ).where(LayerFeature.layer_id == layer.id)
         )
     ).one()
+    points = total - lines - areas
+    kinds = [k for k, n in (("point", points), ("line", lines), ("area", areas)) if n]
     last = await session.scalar(
         select(LayerImport)
         .where(LayerImport.layer_id == layer.id, LayerImport.status.in_(("applied", "undone")))
@@ -129,14 +202,30 @@ async def _layer_out(session: AsyncSession, layer: Layer, principal: Principal) 
         ),
         can_manage=can_manage(principal),
         can_import=can_import(principal, layer),
+        status=layer.status,
+        audiences=list(layer.audiences),
+        scope=list(layer.scope),
+        default_on=layer.default_on,
+        sensitive=layer.sensitive,
+        fields=dict(layer.fields or {}),
+        actions=schemas.Actions.model_validate(layer.actions or {}),
+        geometry=kinds[0] if len(kinds) == 1 else "mixed" if kinds else "point",
+        quality={"suggested": suggested, "duplicates": duplicates, "deleted": deleted},
+        deleted_at=layer.deleted_at,
+        delete_reason=layer.delete_reason,
+        purge_at=(
+            layer.deleted_at + timedelta(days=get_settings().retention_layer_deleted_days) if layer.deleted_at else None
+        ),
     )
 
 
 @router.get("", response_model=schemas.LayersOut)
 async def list_layers(principal: Staff, session: Session) -> schemas.LayersOut:
-    layers = await session.scalars(select(Layer).order_by(Layer.created_at, Layer.key))
+    layers = (await session.scalars(select(Layer).order_by(Layer.created_at, Layer.key))).all()
+    mine = [layer for layer in layers if access.sees(principal, layer) or can_import(principal, layer)]
     return schemas.LayersOut(
-        items=[await _layer_out(session, layer, principal) for layer in layers.all()],
+        items=[await _layer_out(session, layer, principal) for layer in mine if layer.deleted_at is None],
+        deleted=[await _layer_out(session, layer, principal) for layer in mine if layer.deleted_at is not None],
         can_manage=can_manage(principal),
         icons=list(domain.ICONS),
         palette=list(domain.PALETTE),
@@ -162,6 +251,12 @@ async def create_layer(principal: Staff, session: Session, body: schemas.LayerIn
     if body.key == UNITS_KEY or await session.scalar(select(Layer.id).where(Layer.key == body.key)):
         raise HTTPException(status.HTTP_409_CONFLICT, "key_taken")
     actor = audit.actor_of(principal)
+    audiences = body.audiences
+    if audiences is None:
+        audiences = list(access.AUDIENCES if body.audience == "public" else access.STAFF_AUDIENCES)
+    fields = body.fields
+    if fields is None:
+        fields = {column: list(access.STAFF_AUDIENCES) for column in body.staff_only}
     layer = Layer(
         key=body.key,
         name=body.name.model_dump(),
@@ -177,43 +272,211 @@ async def create_layer(principal: Staff, session: Session, body: schemas.LayerIn
         created_by=actor,
         updated_by=actor,
         updated_by_name=audit.name_of(principal),
+        status=body.status,
+        audiences=sorted(set(audiences)),
+        scope=body.scope,
+        default_on=body.default_on,
+        sensitive=body.sensitive,
+        fields=fields,
+        actions=body.actions.model_dump(),
     )
+    _sync(layer)
     session.add(layer)
     await session.flush()
-    await audit.record(
-        session, actor=actor, action="layer.create", target=f"layer:{layer.key}", reason=_check_reason(body.reason)
-    )
+    reason = _check_reason(body.reason)
+    await audit.record(session, actor=actor, action="layer.create", target=f"layer:{layer.key}", reason=reason)
+    await _revise(session, layer, principal, "create", reason)
     await session.refresh(layer)
     out = await _layer_out(session, layer, principal)
     await session.commit()
     return out
 
 
+# What the app or the maps show changes with these: the offline packages are built again.
+PACKAGED = {"audience", "staff_only", "enabled", "simulated", "status", "audiences", "scope", "sensitive", "fields"}
+
+
 @router.patch("/{key}", response_model=schemas.LayerOut)
 async def update_layer(principal: Staff, session: Session, key: str, body: schemas.LayerPatch) -> schemas.LayerOut:
     _require(can_manage(principal), principal)
     layer = await _layer(session, key, lock=True)
+    if layer.deleted_at is not None:
+        raise HTTPException(status.HTTP_409_CONFLICT, "layer_deleted")
     if body.version != layer.version:
         raise HTTPException(status.HTTP_409_CONFLICT, "version_conflict")
     changes = body.model_dump(exclude_unset=True, exclude={"version", "reason"})
     if "name" in changes and body.name is not None:
         changes["name"] = body.name.model_dump()
+    if "actions" in changes and body.actions is not None:
+        changes["actions"] = body.actions.model_dump()
+    # The B1 switches still work: "enabled" publishes or pauses, "audience" and "staff_only" set the new columns.
+    if "enabled" in changes and "status" not in changes:
+        changes["status"] = "published" if changes["enabled"] else "paused"
+    if "audience" in changes and "audiences" not in changes:
+        others = [a for a in layer.audiences if a != "citizen"] or list(access.STAFF_AUDIENCES)
+        changes["audiences"] = ["citizen", *others] if changes["audience"] == "public" else others
+    if "staff_only" in changes and "fields" not in changes:
+        changes["fields"] = {
+            **{k: v for k, v in (layer.fields or {}).items() if "citizen" in v},
+            **{column: list(access.STAFF_AUDIENCES) for column in changes["staff_only"] or []},
+        }
+    changes.pop("enabled", None)
+    changes.pop("audience", None)
+    changes.pop("staff_only", None)
+    if "audiences" in changes:
+        changes["audiences"] = sorted(set(changes["audiences"] or []))
     for field, value in changes.items():
         setattr(layer, field, value.strip() if isinstance(value, str) and field in ("source", "licence") else value)
+    _sync(layer)
     layer.version += 1
-    # What the app shows changes with the audience, the staff-only columns or the switch: new offline package.
-    if changes.keys() & {"audience", "staff_only", "enabled", "simulated"}:
+    if changes.keys() & PACKAGED or body.model_fields_set & PACKAGED:
         layer.data_version += 1
     layer.updated_by, layer.updated_by_name = audit.actor_of(principal), audit.name_of(principal)
     layer.updated_at = datetime.now(UTC)
+    reason = _check_reason(body.reason)
     await audit.record(
         session,
         actor=audit.actor_of(principal),
         action="layer.update",
         target=f"layer:{layer.key}",
-        reason=_check_reason(body.reason),
-        details={"fields": sorted(changes)},
+        reason=reason,
+        details={"fields": sorted(body.model_fields_set - {"version", "reason"})},
     )
+    await _revise(session, layer, principal, "update", reason)
+    await session.flush()
+    await session.refresh(layer)
+    out = await _layer_out(session, layer, principal)
+    await session.commit()
+    return out
+
+
+@router.delete("/{key}", response_model=schemas.LayerOut)
+async def delete_layer(principal: Staff, session: Session, key: str, body: schemas.ReasonIn) -> schemas.LayerOut:
+    """Off every map and offline package at once; kept 30 days in "deleted", where it can be restored as it was."""
+    _require(can_manage(principal), principal)
+    layer = await _layer(session, key, lock=True)
+    if layer.deleted_at is not None:
+        raise HTTPException(status.HTTP_409_CONFLICT, "layer_deleted")
+    reason = _check_reason(body.reason)
+    layer.deleted_at, layer.deleted_by, layer.delete_reason = datetime.now(UTC), audit.actor_of(principal), reason
+    _sync(layer)
+    layer.version += 1
+    layer.data_version += 1
+    await audit.record(
+        session, actor=audit.actor_of(principal), action="layer.delete", target=f"layer:{layer.key}", reason=reason
+    )
+    await _revise(session, layer, principal, "delete", reason)
+    await session.flush()
+    await session.refresh(layer)
+    out = await _layer_out(session, layer, principal)
+    await session.commit()
+    return out
+
+
+@router.post("/{key}/restore", response_model=schemas.LayerOut)
+async def restore_layer(principal: Staff, session: Session, key: str, body: schemas.ReasonIn) -> schemas.LayerOut:
+    """A deleted layer comes back as it was, paused: the administrator publishes it again by choice."""
+    _require(can_manage(principal), principal)
+    layer = await _layer(session, key, lock=True)
+    if layer.deleted_at is None:
+        raise HTTPException(status.HTTP_409_CONFLICT, "not_deleted")
+    reason = _check_reason(body.reason)
+    layer.deleted_at = layer.deleted_by = layer.delete_reason = None
+    if layer.status == "published":
+        layer.status = "paused"
+    _sync(layer)
+    layer.version += 1
+    layer.data_version += 1
+    await audit.record(
+        session, actor=audit.actor_of(principal), action="layer.restore", target=f"layer:{layer.key}", reason=reason
+    )
+    await _revise(session, layer, principal, "restore", reason)
+    await session.flush()
+    await session.refresh(layer)
+    out = await _layer_out(session, layer, principal)
+    await session.commit()
+    return out
+
+
+@router.delete("/{key}/purge", status_code=status.HTTP_204_NO_CONTENT)
+async def purge_layer(principal: Staff, session: Session, key: str, body: schemas.ReasonIn) -> Response:
+    """Erase a deleted layer now, with its places, imports and revisions (otherwise done after 30 days)."""
+    _require(can_manage(principal), principal)
+    layer = await _layer(session, key, lock=True)
+    if layer.deleted_at is None:
+        raise HTTPException(status.HTTP_409_CONFLICT, "not_deleted")
+    reason = _check_reason(body.reason)
+    await audit.record(
+        session,
+        actor=audit.actor_of(principal),
+        action="layer.purge",
+        target=f"layer:{layer.key}",
+        reason=reason,
+        details={"name": layer.name.get("fr", layer.key)},
+    )
+    await session.delete(layer)
+    await session.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.get("/{key}/revisions", response_model=schemas.RevisionsOut)
+async def list_revisions(principal: Staff, session: Session, key: str) -> schemas.RevisionsOut:
+    _require(can_manage(principal), principal)
+    layer = await _layer(session, key)
+    revisions = (
+        await session.scalars(
+            select(LayerRevision).where(LayerRevision.layer_id == layer.id).order_by(LayerRevision.number.desc())
+        )
+    ).all()
+    items: list[schemas.Revision] = []
+    for i, revision in enumerate(revisions):
+        before = revisions[i + 1].snapshot if i + 1 < len(revisions) else {}
+        changed = sorted(k for k in REVISED if revision.snapshot.get(k) != before.get(k)) if before else []
+        items.append(
+            schemas.Revision(
+                number=revision.number,
+                action=revision.action,
+                reason=revision.reason,
+                created_by_name=revision.created_by_name,
+                created_at=revision.created_at,
+                changes=changed,
+            )
+        )
+    return schemas.RevisionsOut(items=items[:100])
+
+
+@router.post("/{key}/revisions/{number}/restore", response_model=schemas.LayerOut)
+async def restore_revision(
+    principal: Staff, session: Session, key: str, number: int, body: schemas.ReasonIn
+) -> schemas.LayerOut:
+    """Back to the settings of a revision (the places themselves come back by undoing imports)."""
+    _require(can_manage(principal), principal)
+    layer = await _layer(session, key, lock=True)
+    if layer.deleted_at is not None:
+        raise HTTPException(status.HTTP_409_CONFLICT, "layer_deleted")
+    revision = await session.scalar(
+        select(LayerRevision).where(LayerRevision.layer_id == layer.id, LayerRevision.number == number)
+    )
+    if revision is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
+    for field in REVISED:
+        if field in revision.snapshot:
+            setattr(layer, field, revision.snapshot[field])
+    _sync(layer)
+    layer.version += 1
+    layer.data_version += 1
+    layer.updated_by, layer.updated_by_name = audit.actor_of(principal), audit.name_of(principal)
+    layer.updated_at = datetime.now(UTC)
+    reason = _check_reason(body.reason)
+    await audit.record(
+        session,
+        actor=audit.actor_of(principal),
+        action="layer.revision_restore",
+        target=f"layer:{layer.key}",
+        reason=reason,
+        details={"revision": number},
+    )
+    await _revise(session, layer, principal, f"restore:{number}", reason)
     await session.flush()
     await session.refresh(layer)
     out = await _layer_out(session, layer, principal)
@@ -331,6 +594,7 @@ async def preview_import(
 @router.get("/{key}/imports", response_model=schemas.ImportsOut)
 async def list_imports(principal: Staff, session: Session, key: str) -> schemas.ImportsOut:
     layer = await _layer(session, key)
+    _require(can_import(principal, layer) or can_manage(principal), principal)
     latest = await _latest_applied(session, layer)
     jobs = await session.scalars(
         select(LayerImport).where(LayerImport.layer_id == layer.id).order_by(LayerImport.created_at.desc()).limit(50)
@@ -349,6 +613,7 @@ async def _job(session: AsyncSession, layer: Layer, import_id: uuid.UUID, *, loc
 @router.get("/{key}/imports/{import_id}", response_model=schemas.ImportDetail)
 async def get_import(principal: Staff, session: Session, key: str, import_id: uuid.UUID) -> schemas.ImportDetail:
     layer = await _layer(session, key)
+    _require(can_import(principal, layer) or can_manage(principal), principal)
     job = await _job(session, layer, import_id)
     latest = await _latest_applied(session, layer)
     return schemas.ImportDetail(**_import_out(job, layer, principal, latest), points=_points(job.rows or []))
@@ -492,7 +757,17 @@ async def export_layer(
 ) -> Response:
     """The whole layer with every column (staff-only ones included): edit it and import it again."""
     layer = await _layer(session, key)
+    _require(can_import(principal, layer) or can_manage(principal), principal)
     found = await service.features_in(session, layer, include_hidden=True, limit=domain.MAX_ROWS)
+    shapes: dict[uuid.UUID, str] = dict(
+        (
+            await session.execute(
+                select(LayerFeature.id, func.ST_AsGeoJSON(cast(LayerFeature.shape, Geometry), 7)).where(
+                    LayerFeature.layer_id == layer.id, LayerFeature.shape.is_not(None)
+                )
+            )
+        ).all()
+    )
     stem = f"{layer.key}-v{layer.data_version}"
     await audit.record(
         session,
@@ -509,10 +784,16 @@ async def export_layer(
                 {
                     "type": "Feature",
                     "id": f.ref,
-                    "geometry": {"type": "Point", "coordinates": [float(lon), float(lat)]},
+                    "geometry": (
+                        json.loads(shapes[f.id])
+                        if f.id in shapes
+                        else {"type": "Point", "coordinates": [float(lon), float(lat)]}
+                    ),
                     "properties": {
                         "id": f.ref,
                         "name": f.name,
+                        **({"name_suggested": f.suggested_name} if f.name_status == "suggested" else {}),
+                        **({"osm_url": f.source_url} if f.source_url else {}),
                         **({"type": f.kind} if f.kind else {}),
                         **({"phone": f.phone} if f.phone else {}),
                         **({"hidden": True} if f.hidden else {}),
@@ -535,22 +816,45 @@ async def export_layer(
 # ---------------------------------------------------------------- places (staff)
 
 
-def _feature_out(f: LayerFeature, lat: float, lon: float) -> schemas.FeatureOut:
+def _feature_out(f: LayerFeature, lat: float, lon: float, hidden_fields: set[str] | None = None) -> schemas.FeatureOut:
+    shape_kind = geoformats.wkb_kind(f.shape) or "point" if f.shape is not None else "point"
     return schemas.FeatureOut(
         id=f.id,
         ref=f.ref,
         name=f.name,
         kind=f.kind,
-        phone=f.phone,
+        phone=None if hidden_fields and "phone" in hidden_fields else f.phone,
         lat=float(lat),
         lon=float(lon),
         gouvernorat_code=f.gouvernorat_code,
         delegation_id=f.delegation_id,
-        props=f.props,
+        props=access.strip(f.props, hidden_fields),
         hidden=f.hidden,
         version=f.version,
         updated_at=f.updated_at,
+        geometry=shape_kind,
+        name_status=f.name_status,
+        suggested_name=f.suggested_name,
+        name_confidence=f.name_confidence,
+        name_source=f.name_source,
+        source_url=f.source_url,
+        snapshot_at=f.snapshot_at.isoformat() if f.snapshot_at else None,
+        possible_duplicate=f.possible_duplicate,
+        deleted_at=f.deleted_at,
+        delete_reason=f.delete_reason,
     )
+
+
+async def _sensitive_read(session: AsyncSession, principal: Principal, layer: Layer, what: str, count: int) -> None:
+    """Every read of a sensitive layer's places is in the audit log (design §3.3)."""
+    if layer.sensitive:
+        await audit.record(
+            session,
+            actor=audit.actor_of(principal),
+            action="layer.sensitive_read",
+            target=f"layer:{layer.key}",
+            details={"what": what, "count": count},
+        )
 
 
 def _bbox(raw: str | None) -> tuple[float, float, float, float] | None:
@@ -572,13 +876,63 @@ async def staff_features(
     key: str,
     bbox: Annotated[str | None, Query(description="minLon,minLat,maxLon,maxLat")] = None,
     gouvernorat: Annotated[int | None, Query(ge=1, le=99)] = None,
+    deleted: Annotated[bool, Query(description="the deleted places (managers)")] = False,
 ) -> schemas.FeaturesOut:
-    layer = await _layer(session, key)
+    layer = await _seen_layer(session, key, principal)
+    if deleted:
+        _require(can_import(principal, layer) or can_manage(principal), principal)
     found = await service.features_in(
-        session, layer, bbox=_bbox(bbox), gouvernorat=gouvernorat, include_hidden=True, limit=MAX_STAFF_FEATURES + 1
+        session,
+        layer,
+        bbox=_bbox(bbox),
+        gouvernorat=gouvernorat,
+        include_hidden=True,
+        include_deleted=deleted,
+        limit=MAX_STAFF_FEATURES + 1,
     )
+    if deleted:
+        found = [row for row in found if row[0].deleted_at is not None]
+    hidden_fields = access.visible_fields(principal, layer)
+    await _sensitive_read(session, principal, layer, "features", len(found))
+    await session.commit()
     return schemas.FeaturesOut(
-        items=[_feature_out(f, lat, lon) for f, lat, lon in found[:MAX_STAFF_FEATURES]],
+        items=[_feature_out(f, lat, lon, hidden_fields) for f, lat, lon in found[:MAX_STAFF_FEATURES]],
+        truncated=len(found) > MAX_STAFF_FEATURES,
+    )
+
+
+@router.get("/{key}/shapes", response_model=schemas.Shapes)
+async def staff_shapes(
+    principal: Staff,
+    session: Session,
+    key: str,
+    bbox: Annotated[str, Query(description="minLon,minLat,maxLon,maxLat")],
+    zoom: Annotated[int, Query(ge=0, le=22)] = 10,
+    lang: Annotated[Lang, Query()] = "ar",
+) -> schemas.Shapes:
+    """The lines and areas of a layer in a map area, simplified for the zoom (rivers, forests, beaches)."""
+    layer = await _seen_layer(session, key, principal)
+    area = _bbox(bbox)
+    assert area is not None
+    found = await service.shapes_in(session, layer, area, zoom, MAX_STAFF_FEATURES + 1)
+    await _sensitive_read(session, principal, layer, "shapes", len(found))
+    await session.commit()
+    return schemas.Shapes(
+        features=[
+            {
+                "type": "Feature",
+                "id": str(f.id),
+                "geometry": json.loads(geometry),
+                "properties": {
+                    "id": str(f.id),
+                    "name": f.props.get(f"name_{lang}") or f.name,
+                    "name_status": f.name_status,
+                    "kind": f.kind,
+                },
+            }
+            for f, geometry in found[:MAX_STAFF_FEATURES]
+            if geometry
+        ],
         truncated=len(found) > MAX_STAFF_FEATURES,
     )
 
@@ -655,6 +1009,9 @@ async def update_feature(
     for field, value in changes.items():
         if field == "name" and value is not None:
             value = value.strip()
+            # A name typed by the administrator is theirs: no longer a suggestion.
+            if feature.name_status in ("suggested", "rejected"):
+                feature.name_status = "accepted"
         if field == "hidden" and value is None:
             continue
         setattr(feature, field, value)
@@ -676,6 +1033,186 @@ async def update_feature(
     out = _feature_out(*found)
     await session.commit()
     return out
+
+
+async def _feature(session: AsyncSession, layer: Layer, feature_id: uuid.UUID) -> LayerFeature:
+    feature = await session.scalar(
+        select(LayerFeature).where(LayerFeature.id == feature_id, LayerFeature.layer_id == layer.id).with_for_update()
+    )
+    if feature is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
+    return feature
+
+
+@router.delete("/{key}/features/{feature_id}", response_model=schemas.FeatureOut)
+async def delete_feature(
+    principal: Staff, session: Session, key: str, feature_id: uuid.UUID, body: schemas.ReasonIn
+) -> schemas.FeatureOut:
+    """Off the maps at once; the place stays in the layer's "deleted" list, where it can be restored."""
+    layer = await _layer(session, key, lock=True)
+    _require(can_import(principal, layer), principal)
+    feature = await _feature(session, layer, feature_id)
+    if feature.deleted_at is not None:
+        raise HTTPException(status.HTTP_409_CONFLICT, "already_deleted")
+    reason = _check_reason(body.reason)
+    actor = audit.actor_of(principal)
+    feature.deleted_at, feature.deleted_by, feature.delete_reason = datetime.now(UTC), actor, reason
+    feature.version += 1
+    layer.data_version += 1
+    await audit.record(
+        session,
+        actor=actor,
+        action="layer.feature_delete",
+        target=f"layer:{layer.key}",
+        reason=reason,
+        details={"feature": str(feature.id), "ref": feature.ref, "name": feature.name},
+    )
+    await session.flush()
+    row = (
+        await session.execute(select(LayerFeature, service.LAT, service.LON).where(LayerFeature.id == feature.id))
+    ).one()
+    out = _feature_out(*row)
+    await session.commit()
+    return out
+
+
+@router.post("/{key}/features/{feature_id}/restore", response_model=schemas.FeatureOut)
+async def restore_feature(
+    principal: Staff, session: Session, key: str, feature_id: uuid.UUID, body: schemas.ReasonIn
+) -> schemas.FeatureOut:
+    layer = await _layer(session, key, lock=True)
+    _require(can_import(principal, layer), principal)
+    feature = await _feature(session, layer, feature_id)
+    if feature.deleted_at is None:
+        raise HTTPException(status.HTTP_409_CONFLICT, "not_deleted")
+    reason = _check_reason(body.reason)
+    feature.deleted_at = feature.deleted_by = feature.delete_reason = None
+    feature.version += 1
+    layer.data_version += 1
+    await audit.record(
+        session,
+        actor=audit.actor_of(principal),
+        action="layer.feature_restore",
+        target=f"layer:{layer.key}",
+        reason=reason,
+        details={"feature": str(feature.id), "ref": feature.ref},
+    )
+    await session.flush()
+    row = (
+        await session.execute(select(LayerFeature, service.LAT, service.LON).where(LayerFeature.id == feature.id))
+    ).one()
+    out = _feature_out(*row)
+    await session.commit()
+    return out
+
+
+# ---------------------------------------------------------------- reviewing suggested names (design §3.6)
+
+
+@router.get("/{key}/review", response_model=schemas.ReviewQueue)
+async def review_queue(
+    principal: Staff,
+    session: Session,
+    key: str,
+    confidence: Annotated[Literal["confirmed", "high", "medium", "low", "review"] | None, Query()] = None,
+    duplicates: Annotated[bool, Query(description="the possible duplicates instead of the names")] = False,
+    offset: Annotated[int, Query(ge=0)] = 0,
+    limit: Annotated[int, Query(ge=1, le=200)] = 50,
+) -> schemas.ReviewQueue:
+    """The places waiting for the administrator: suggested names (by confidence), or possible duplicates."""
+    layer = await _layer(session, key)
+    _require(can_import(principal, layer), principal)
+    live = (LayerFeature.layer_id == layer.id) & LayerFeature.deleted_at.is_(None)
+    waiting = LayerFeature.possible_duplicate.is_(True) if duplicates else LayerFeature.name_status == "suggested"
+    counts = dict(
+        (
+            await session.execute(
+                select(LayerFeature.name_confidence, func.count())
+                .where(live, LayerFeature.name_status == "suggested")
+                .group_by(LayerFeature.name_confidence)
+            )
+        ).all()
+    )
+    counts = {str(k or "unknown"): int(v) for k, v in counts.items()}
+    counts["duplicates"] = int(
+        await session.scalar(select(func.count()).where(live, LayerFeature.possible_duplicate.is_(True))) or 0
+    )
+    query = select(LayerFeature, service.LAT, service.LON).where(live, waiting)
+    if confidence is not None and not duplicates:
+        query = query.where(LayerFeature.name_confidence == confidence)
+    total = int(await session.scalar(select(func.count()).select_from(query.subquery())) or 0)
+    order = (LayerFeature.name, LayerFeature.id) if duplicates else (LayerFeature.gouvernorat_code, LayerFeature.id)
+    rows = (await session.execute(query.order_by(*order).offset(offset).limit(limit))).all()
+    return schemas.ReviewQueue(items=[_feature_out(f, la, lo) for f, la, lo in rows], counts=counts, total=total)
+
+
+@router.post("/{key}/review", response_model=schemas.ReviewOut)
+async def review(principal: Staff, session: Session, key: str, body: schemas.ReviewIn) -> schemas.ReviewOut:
+    """Accept, edit or reject suggested names (one by one, or every name of a confidence at once); keep or merge
+    possible duplicates. The citizen's app shows a place only once its name is official or accepted."""
+    layer = await _layer(session, key, lock=True)
+    _require(can_import(principal, layer), principal)
+    reason = _check_reason(body.reason)
+    actor = audit.actor_of(principal)
+    now = datetime.now(UTC)
+    done = dict.fromkeys(("accepted", "edited", "rejected", "kept", "merged"), 0)
+    if body.accept_confidence:
+        result = await session.execute(
+            update(LayerFeature)
+            .where(
+                LayerFeature.layer_id == layer.id,
+                LayerFeature.deleted_at.is_(None),
+                LayerFeature.name_status == "suggested",
+                LayerFeature.name_confidence.in_(body.accept_confidence),
+            )
+            .values(name_status="accepted", version=LayerFeature.version + 1, updated_by=actor, updated_at=now)
+        )
+        done["accepted"] += result.rowcount or 0  # type: ignore[attr-defined]
+    ids = [item.id for item in body.items] + [item.into for item in body.items if item.into]
+    found = {
+        f.id: f
+        for f in await session.scalars(
+            select(LayerFeature).where(LayerFeature.layer_id == layer.id, LayerFeature.id.in_(ids)).with_for_update()
+        )
+    }
+    for item in body.items:
+        feature = found.get(item.id)
+        if feature is None or feature.deleted_at is not None:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
+        if item.action == "accept":
+            feature.name_status = "accepted"
+            done["accepted"] += 1
+        elif item.action == "edit":
+            if not item.name or not item.name.strip():
+                raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "name_required")
+            feature.name, feature.name_status = item.name.strip(), "accepted"
+            done["edited"] += 1
+        elif item.action == "reject":
+            feature.name_status = "rejected"
+            done["rejected"] += 1
+        elif item.action == "keep":
+            feature.possible_duplicate = False
+            done["kept"] += 1
+        else:  # merge: this place duplicates ``into``, which stays
+            other = found.get(item.into) if item.into else None
+            if other is None or other.id == feature.id or other.deleted_at is not None:
+                raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "merge_target_invalid")
+            feature.deleted_at, feature.deleted_by, feature.delete_reason = now, actor, f"merge:{other.id}"
+            other.possible_duplicate = False
+            # The kept place takes what only the duplicate had (a phone, a column).
+            other.phone = other.phone or feature.phone
+            other.props = {**feature.props, **other.props}
+            other.version += 1
+            done["merged"] += 1
+        feature.version += 1
+        feature.updated_by, feature.updated_at = actor, now
+    if any(done.values()):
+        layer.data_version += 1
+    await audit.record(
+        session, actor=actor, action="layer.review", target=f"layer:{layer.key}", reason=reason, details=done
+    )
+    await session.commit()
+    return schemas.ReviewOut(**done)
 
 
 # ---------------------------------------------------------------- public (the app)
@@ -703,16 +1240,12 @@ async def public_layers(
     lang: Annotated[Lang, Query()] = "ar",
     if_none_match: Annotated[str | None, Header()] = None,
 ) -> schemas.PublicLayers | Response:
-    layers = (
-        await session.scalars(
-            select(Layer).where(Layer.audience == "public", Layer.enabled).order_by(Layer.created_at, Layer.key)
-        )
-    ).all()
+    layers = (await session.scalars(select(Layer).where(_PUBLIC_LAYER).order_by(Layer.created_at, Layer.key))).all()
     counts = dict(
         (
             await session.execute(
                 select(LayerFeature.layer_id, func.count())
-                .where(LayerFeature.hidden.is_(False))
+                .where(service.public_place())
                 .group_by(LayerFeature.layer_id)
             )
         ).all()
@@ -751,6 +1284,8 @@ async def public_layers(
             count=counts.get(layer.id, 0),
             data_version=layer.data_version,
             origin="file",
+            default_on=layer.default_on,
+            actions=schemas.Actions.model_validate(layer.actions or {}),
         )
         for layer in layers
     ]
@@ -759,8 +1294,12 @@ async def public_layers(
     return schemas.PublicLayers(items=items)
 
 
+# A layer the citizen's app reads: open to citizens, published, not sensitive, not deleted (RLS says the same).
+_PUBLIC_LAYER = (Layer.audience == "public") & Layer.enabled & Layer.sensitive.is_(False) & Layer.deleted_at.is_(None)
+
+
 async def _public_layer(session: AsyncSession, key: str) -> Layer:
-    layer = await session.scalar(select(Layer).where(Layer.key == key, Layer.audience == "public", Layer.enabled))
+    layer = await session.scalar(select(Layer).where(Layer.key == key, _PUBLIC_LAYER))
     if layer is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
     return layer
@@ -771,11 +1310,12 @@ def _public_feature(
 ) -> schemas.PublicFeature:
     # A file may name a place in each language (columns name_ar, name_fr, name_en): the app gets its own.
     localized = f.props.get(f"name_{lang}")
+    hidden = access.visible_fields(None, layer)
     return schemas.PublicFeature(
         id=f.id,
         name=localized.strip() if isinstance(localized, str) and localized.strip() else f.name,
         kind=f.kind,
-        phone=f.phone,
+        phone=None if hidden and "phone" in hidden else f.phone,
         lat=float(lat),
         lon=float(lon),
         gouvernorat_code=f.gouvernorat_code,
@@ -863,7 +1403,7 @@ async def public_features(
         found = await service.nearest(session, layer, position[0], position[1], limit, radius_km * 1000)
         items = [_public_feature(layer, f, la, lo, lang, float(d)) for f, la, lo, d in found]
         return schemas.PublicFeatures(layer=key, data_version=layer.data_version, items=items)
-    rows = await service.features_in(session, layer, bbox=area, limit=MAX_PUBLIC_BBOX + 1)
+    rows = await service.features_in(session, layer, bbox=area, public=True, limit=MAX_PUBLIC_BBOX + 1)
     return schemas.PublicFeatures(
         layer=key,
         data_version=layer.data_version,
@@ -895,7 +1435,7 @@ async def public_package(
     etag = _etag(key, layer.data_version, layer.version, gouvernorat, lang)
     if if_none_match == etag:
         return Response(status_code=status.HTTP_304_NOT_MODIFIED, headers={"ETag": etag})
-    rows = await service.features_in(session, layer, gouvernorat=gouvernorat, limit=MAX_PACKAGE + 1)
+    rows = await service.features_in(session, layer, gouvernorat=gouvernorat, public=True, limit=MAX_PACKAGE + 1)
     response.headers["ETag"], response.headers["Cache-Control"] = etag, PUBLIC_CACHE
     return schemas.PublicFeatures(
         layer=key,

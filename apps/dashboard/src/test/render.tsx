@@ -1,4 +1,5 @@
 import type { ContactDetail, ContactInbox } from "../lib/contact";
+import type { LayerFeature, MapLayer } from "../lib/layers";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render } from "@testing-library/react";
 import type { ReactNode } from "react";
@@ -102,12 +103,43 @@ export function fakeDoctorsApi() {
   };
 }
 
+/** The settings a phase L1a layer has besides those of B1: published, for every audience, nothing to review. */
+export const LAYER_L1A = {
+  status: "published",
+  audiences: ["citizen", "room", "field", "command", "support"],
+  scope: [],
+  default_on: true,
+  sensitive: false,
+  fields: { manager: ["room", "field", "command", "support"] },
+  actions: { call: true, directions: true },
+  geometry: "point",
+  quality: { suggested: 0, duplicates: 0, deleted: 0 },
+  deleted_at: null,
+  delete_reason: null,
+  purge_at: null,
+} as const satisfies Partial<MapLayer>;
+
+/** The quality columns of a phase L1a place: an official name, a point. */
+export const FEATURE_L1A = {
+  geometry: "point",
+  name_status: "official",
+  suggested_name: null,
+  name_confidence: null,
+  name_source: null,
+  source_url: null,
+  snapshot_at: null,
+  possible_duplicate: false,
+  deleted_at: null,
+  delete_reason: null,
+} as const satisfies Partial<LayerFeature>;
+
 /** Map data layers (phase B1): no layer unless a test gives some. */
 export function fakeLayersApi() {
   return {
     layers: vi.fn(() =>
       Promise.resolve({
         items: [],
+        deleted: [],
         can_manage: false,
         icons: [],
         palette: ["#C62828", "#2E7D32"],
@@ -126,6 +158,17 @@ export function fakeLayersApi() {
     updateFeature: vi.fn(),
     exportLayer: vi.fn(),
     layerTemplate: vi.fn(),
+    // Phase L1a.
+    deleteLayer: vi.fn(),
+    restoreLayer: vi.fn(),
+    purgeLayer: vi.fn(),
+    layerRevisions: vi.fn(() => Promise.resolve([])),
+    restoreRevision: vi.fn(),
+    reviewQueue: vi.fn(() => Promise.resolve({ items: [], counts: {}, total: 0 })),
+    review: vi.fn(),
+    deletedFeatures: vi.fn(() => Promise.resolve({ items: [], truncated: false })),
+    deleteFeature: vi.fn(),
+    restoreFeature: vi.fn(),
     certificateLookup: vi.fn(),
     addStamp: vi.fn(),
     putStampPhoto: vi.fn(),

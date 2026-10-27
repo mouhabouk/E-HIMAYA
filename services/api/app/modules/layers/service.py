@@ -6,26 +6,35 @@
 * **Apply** writes the changes, keeps what they replaced in ``undo`` and bumps the layer's ``data_version``. It is
   refused when the layer changed after the preview (another import or a correction by hand): preview again.
 * **Undo** restores what the last applied import replaced, only while nothing changed after it.
+
+Phase L1a (docs/phase-l/design-layers.md §3): places may be lines or areas (``shape``; ``location`` becomes a point on
+their surface), carry a suggested name until the administrator accepts it (the citizen's app reads only official
+or accepted names), and are deleted softly (``deleted_at``) so they can be restored.
 """
 
+import re
 import uuid
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from typing import Any
 
+from geoalchemy2 import Geography as Geography_
 from geoalchemy2 import Geometry
-from sqlalchemy import cast, delete, func, insert, select, text, update
+from sqlalchemy import ColumnElement, cast, delete, func, insert, or_, select, text, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.geo.models import Delegation, Layer, LayerFeature, LayerImport
-from app.modules.layers import domain
+from app.modules.layers import access, domain, geoformats
 
 # Points just outside a simplified boundary (harbours, coastal hospitals) still belong to the nearest gouvernorat.
 COAST_MARGIN_M = 5_000
 # A preview not applied within a day is stale: the file is uploaded again.
 PREVIEW_TTL_S = 24 * 3600
 CHANGES = ("new", "updated", "unchanged", "removed")
+# Names the citizen's app may show (a suggested or rejected name stays with the staff).
+PUBLIC_NAMES = ("official", "accepted")
+SHAPE_WKT = func.ST_AsText(LayerFeature.shape)
 
 
 def point(lat: float, lon: float) -> str:
@@ -95,9 +104,25 @@ async def delegation_index(session: AsyncSession) -> dict[tuple[int, str], int]:
 
 
 def _comparable(
-    name: str, kind: str | None, phone: str | None, lat: float, lon: float, props: dict[str, Any]
+    name: str,
+    kind: str | None,
+    phone: str | None,
+    lat: float,
+    lon: float,
+    props: dict[str, Any],
+    shape: str | None = None,
+    quality: tuple[Any, ...] = (),
 ) -> tuple[Any, ...]:
-    return (name, kind, phone, round(lat, 6), round(lon, 6), sorted(props.items()))
+    return (name, kind, phone, round(lat, 6), round(lon, 6), sorted(props.items()), shape, quality)
+
+
+def _shape_text(shape: dict[str, Any] | None) -> str | None:
+    """The shape as PostGIS writes it back (``ST_AsText``), to compare a file with the layer."""
+    return geoformats.to_wkt(shape).split(";", 1)[1].replace(", ", ",") if shape else None
+
+
+def _quality(source_url: str | None, snapshot: str | None) -> tuple[Any, ...]:
+    return (source_url, snapshot)
 
 
 @dataclass(slots=True)
@@ -111,9 +136,23 @@ class Current:
     lon: float
     props: dict[str, Any]
     hidden: bool
+    shape: str | None
+    name_status: str
+    source_url: str | None
+    snapshot: str | None
+    deleted: bool
 
     def comparable(self) -> tuple[Any, ...]:
-        return _comparable(self.name, self.kind, self.phone, self.lat, self.lon, self.props)
+        return _comparable(
+            self.name,
+            self.kind,
+            self.phone,
+            self.lat,
+            self.lon,
+            self.props,
+            self.shape,
+            _quality(self.source_url, self.snapshot),
+        )
 
 
 async def current_features(session: AsyncSession, layer_id: uuid.UUID) -> dict[str, Current]:
@@ -128,10 +167,30 @@ async def current_features(session: AsyncSession, layer_id: uuid.UUID) -> dict[s
             LON,
             LayerFeature.props,
             LayerFeature.hidden,
+            func.replace(SHAPE_WKT, ", ", ","),
+            LayerFeature.name_status,
+            LayerFeature.source_url,
+            LayerFeature.snapshot_at,
+            LayerFeature.deleted_at,
         ).where(LayerFeature.layer_id == layer_id)
     )
     return {
-        r.ref: Current(r.id, r.ref, r.name, r.kind, r.phone, float(r[5]), float(r[6]), r.props or {}, r.hidden)
+        r.ref: Current(
+            r.id,
+            r.ref,
+            r.name,
+            r.kind,
+            r.phone,
+            float(r[5]),
+            float(r[6]),
+            r.props or {},
+            r.hidden,
+            r[9],
+            r.name_status,
+            r.source_url,
+            r.snapshot_at.isoformat() if r.snapshot_at else None,
+            r.deleted_at is not None,
+        )
         for r in rows.all()
     }
 
@@ -165,7 +224,22 @@ async def build_preview(session: AsyncSession, layer: Layer, parsed: domain.Pars
         if existing is None:
             change = "new"
         else:
-            same = existing.comparable() == _comparable(row.name, row.kind, row.phone, row.lat, row.lon, row.props)
+            # A name the administrator accepted, edited or rejected stays theirs while the file only suggests one.
+            if row.name_status == "suggested" and existing.name_status in ("accepted", "rejected"):
+                item["name"], item["name_status"] = existing.name, existing.name_status
+            file_shape = _shape_text(row.shape)
+            if row.shape is not None and existing.shape is not None:
+                file_shape = existing.shape if _same_shape(existing.shape, file_shape) else file_shape
+            same = existing.comparable() == _comparable(
+                item["name"],
+                row.kind,
+                row.phone,
+                row.lat if row.shape is None else existing.lat,
+                row.lon if row.shape is None else existing.lon,
+                row.props,
+                file_shape,
+                _quality(row.source_url, row.snapshot),
+            )
             same = same and (row.hidden is None or row.hidden == existing.hidden)
             change = "unchanged" if same else "updated"
             item["feature_id"] = str(existing.id)
@@ -174,7 +248,7 @@ async def build_preview(session: AsyncSession, layer: Layer, parsed: domain.Pars
         rows.append(item)
     if mode == "replace":
         for ref, existing in current.items():
-            if ref not in seen:
+            if ref not in seen and not existing.deleted:
                 counts["removed"] += 1
                 rows.append(
                     {
@@ -197,7 +271,16 @@ async def build_preview(session: AsyncSession, layer: Layer, parsed: domain.Pars
 # ---------------------------------------------------------------- applying and undoing
 
 
-def _snapshot(f: LayerFeature, lat: float, lon: float) -> dict[str, Any]:
+def _same_shape(stored: str, from_file: str | None) -> bool:
+    """PostGIS writes numbers back in its own way; two shapes are the same when their numbers agree to 1e-7."""
+    if from_file is None:
+        return False
+    numbers = re.compile(r"-?\d+(?:\.\d+)?(?:e-?\d+)?")
+    a, b = numbers.findall(stored), numbers.findall(from_file)
+    return len(a) == len(b) and all(abs(float(x) - float(y)) < 1e-7 for x, y in zip(a, b, strict=True))
+
+
+def _snapshot(f: LayerFeature, lat: float, lon: float, shape: str | None = None) -> dict[str, Any]:
     return {
         "id": str(f.id),
         "ref": f.ref,
@@ -214,6 +297,17 @@ def _snapshot(f: LayerFeature, lat: float, lon: float) -> dict[str, Any]:
         "version": f.version,
         "updated_by": f.updated_by,
         "updated_at": f.updated_at.isoformat(),
+        "shape": shape,
+        "name_status": f.name_status,
+        "suggested_name": f.suggested_name,
+        "name_confidence": f.name_confidence,
+        "name_source": f.name_source,
+        "source_url": f.source_url,
+        "snapshot_at": f.snapshot_at.isoformat() if f.snapshot_at else None,
+        "possible_duplicate": f.possible_duplicate,
+        "deleted_at": f.deleted_at.isoformat() if f.deleted_at else None,
+        "deleted_by": f.deleted_by,
+        "delete_reason": f.delete_reason,
     }
 
 
@@ -222,13 +316,21 @@ async def _snapshots(session: AsyncSession, ids: Iterable[uuid.UUID]) -> list[di
     out: list[dict[str, Any]] = []
     for start in range(0, len(wanted), 5000):
         found = await session.execute(
-            select(LayerFeature, LAT, LON).where(LayerFeature.id.in_(wanted[start : start + 5000]))
+            select(LayerFeature, LAT, LON, SHAPE_WKT).where(LayerFeature.id.in_(wanted[start : start + 5000]))
         )
-        out += [_snapshot(f, float(lat), float(lon)) for f, lat, lon in found.all()]
+        out += [_snapshot(f, float(lat), float(lon), shape) for f, lat, lon, shape in found.all()]
     return out
 
 
+def _date(value: str | None) -> date | None:
+    try:
+        return date.fromisoformat(value) if value else None
+    except ValueError:
+        return None
+
+
 def _values(item: dict[str, Any], layer_id: uuid.UUID, import_id: uuid.UUID, actor: str) -> dict[str, Any]:
+    shape = item.get("shape")
     return {
         "layer_id": layer_id,
         "ref": item["ref"],
@@ -242,6 +344,17 @@ def _values(item: dict[str, Any], layer_id: uuid.UUID, import_id: uuid.UUID, act
         "hidden": bool(item["hidden"]),
         "import_id": import_id,
         "updated_by": actor,
+        "shape": geoformats.to_wkt(shape) if shape else None,
+        "name_status": item.get("name_status") or "official",
+        "suggested_name": item.get("suggested_name"),
+        "name_confidence": item.get("name_confidence"),
+        "name_source": item.get("name_source"),
+        "source_url": item.get("source_url"),
+        "snapshot_at": _date(item.get("snapshot")),
+        "possible_duplicate": bool(item.get("duplicate")),
+        "deleted_at": None,
+        "deleted_by": None,
+        "delete_reason": None,
     }
 
 
@@ -259,6 +372,9 @@ async def apply(session: AsyncSession, layer: Layer, job: LayerImport, actor: st
         values = _values(item, layer.id, job.id, actor)
         if item["hidden"] is None:
             values.pop("hidden")
+        # A place the administrator deleted stays deleted when a new extract still has it.
+        for key in ("deleted_at", "deleted_by", "delete_reason"):
+            values.pop(key)
         await session.execute(
             update(LayerFeature)
             .where(LayerFeature.id == uuid.UUID(item["feature_id"]))
@@ -275,6 +391,12 @@ async def apply(session: AsyncSession, layer: Layer, job: LayerImport, actor: st
         ids = await session.scalars(insert(LayerFeature).returning(LayerFeature.id), chunk)
         inserted += [str(i) for i in ids]
 
+    # A line or an area stands on the map by a point on its surface (the middle of a river, inside a forest).
+    await session.execute(
+        update(LayerFeature)
+        .where(LayerFeature.import_id == job.id, LayerFeature.shape.is_not(None))
+        .values(location=cast(func.ST_PointOnSurface(cast(LayerFeature.shape, Geometry)), Geography_))
+    )
     layer.data_version += 1
     job.status, job.applied_at, job.result_version = "applied", now, layer.data_version
     job.undo = {"inserted": inserted, "previous": previous}
@@ -308,6 +430,7 @@ async def undo(session: AsyncSession, layer: Layer, job: LayerImport) -> None:
             "version": p["version"],
             "updated_by": p["updated_by"],
             "updated_at": datetime.fromisoformat(p["updated_at"]),
+            **restored_quality(p),
         }
         for p in previous
     ]
@@ -318,13 +441,37 @@ async def undo(session: AsyncSession, layer: Layer, job: LayerImport) -> None:
     job.undo = None
 
 
+def restored_quality(p: dict[str, Any]) -> dict[str, Any]:
+    """The phase L1a columns of a snapshot (older snapshots have none)."""
+    deleted = p.get("deleted_at")
+    return {
+        "shape": f"SRID=4326;{p['shape']}" if p.get("shape") else None,
+        "name_status": p.get("name_status") or "official",
+        "suggested_name": p.get("suggested_name"),
+        "name_confidence": p.get("name_confidence"),
+        "name_source": p.get("name_source"),
+        "source_url": p.get("source_url"),
+        "snapshot_at": _date(p.get("snapshot_at")),
+        "possible_duplicate": bool(p.get("possible_duplicate")),
+        "deleted_at": datetime.fromisoformat(deleted) if deleted else None,
+        "deleted_by": p.get("deleted_by"),
+        "delete_reason": p.get("delete_reason"),
+    }
+
+
 # ---------------------------------------------------------------- reading places
 
 
 def public_props(layer: Layer, props: dict[str, Any]) -> dict[str, Any]:
-    """The place's columns the app may show: never the staff-only ones (``manager`` by default)."""
-    hidden = set(layer.staff_only)
-    return {k: v for k, v in props.items() if k not in hidden}
+    """The place's columns the citizen's app may show: never a column the administrator kept from citizens."""
+    return access.strip(props, access.visible_fields(None, layer))
+
+
+def public_place() -> ColumnElement[bool]:
+    """A place the citizen's app may show: on the map, not deleted, with an official or accepted name."""
+    return (
+        LayerFeature.hidden.is_(False) & LayerFeature.deleted_at.is_(None) & LayerFeature.name_status.in_(PUBLIC_NAMES)
+    )
 
 
 # (LayerFeature, lat, lon) rows; SQLAlchemy's Row typing does not follow geometry expressions.
@@ -338,11 +485,17 @@ async def features_in(
     bbox: tuple[float, float, float, float] | None = None,
     gouvernorat: int | None = None,
     include_hidden: bool = False,
+    include_deleted: bool = False,
+    public: bool = False,
     limit: int,
 ) -> Sequence[FeatureRow]:
     query = select(LayerFeature, LAT, LON).where(LayerFeature.layer_id == layer.id)
-    if not include_hidden:
+    if public:
+        query = query.where(public_place())
+    elif not include_hidden:
         query = query.where(LayerFeature.hidden.is_(False))
+    if not include_deleted:
+        query = query.where(LayerFeature.deleted_at.is_(None))
     if bbox is not None:
         query = query.where(
             func.ST_Intersects(cast(LayerFeature.location, Geometry), func.ST_MakeEnvelope(*bbox, 4326))
@@ -361,13 +514,42 @@ async def nearest(
         select(LayerFeature, LAT, LON, distance)
         .where(
             LayerFeature.layer_id == layer.id,
-            LayerFeature.hidden.is_(False),
+            public_place(),
             func.ST_DWithin(LayerFeature.location, here, radius_m),
         )
         .order_by(distance, LayerFeature.id)
         .limit(limit)
     )
     return (await session.execute(query)).all()
+
+
+async def shapes_in(
+    session: AsyncSession, layer: Layer, bbox: tuple[float, float, float, float], zoom: int, limit: int
+) -> Sequence[Any]:
+    """(place, simplified GeoJSON) of the lines and areas crossing a map area; the tolerance follows the zoom so a
+    whole gouvernorat's rivers stay light (about one screen pixel)."""
+    tolerance = 360 / (256 * 2**zoom)
+    envelope = func.ST_MakeEnvelope(*bbox, 4326)
+    geometry = cast(LayerFeature.shape, Geometry)
+    simplified = func.ST_AsGeoJSON(func.ST_SimplifyPreserveTopology(geometry, tolerance), 6)
+    query = (
+        select(LayerFeature, simplified)
+        .where(
+            LayerFeature.layer_id == layer.id,
+            LayerFeature.shape.is_not(None),
+            LayerFeature.deleted_at.is_(None),
+            LayerFeature.hidden.is_(False),
+            func.ST_Intersects(geometry, envelope),
+        )
+        .order_by(LayerFeature.id)
+        .limit(limit)
+    )
+    return (await session.execute(query)).all()
+
+
+def live_layer() -> ColumnElement[bool]:
+    """A layer in use: published (``enabled`` follows) and not deleted."""
+    return Layer.enabled.is_(True) & Layer.deleted_at.is_(None) & or_(Layer.status == "published")
 
 
 def preview_expired(job: LayerImport, now: datetime | None = None) -> bool:
