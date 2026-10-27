@@ -1,0 +1,188 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "e-HIMAYA deployment programmes",
+ "type": "object",
+ "required": [
+  "programmes"
+ ],
+ "properties": {
+  "programmes": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "program_id",
+     "program_type",
+     "title",
+     "valid_from",
+     "valid_to",
+     "version",
+     "status",
+     "points"
+    ],
+    "properties": {
+     "program_id": {
+      "type": "string",
+      "pattern": "^[A-Z]+-[0-9]{4}(-[A-Z0-9]+)?$"
+     },
+     "program_type": {
+      "enum": [
+       "نقاط النجدة والإسعاف بالطرقات",
+       "المراكز الموسمية",
+       "التركز بالشواطئ",
+       "برنامج آخر"
+      ]
+     },
+     "title": {
+      "type": "string"
+     },
+     "season": {
+      "type": "string"
+     },
+     "valid_from": {
+      "type": "string",
+      "format": "date"
+     },
+     "valid_to": {
+      "type": "string",
+      "format": "date"
+     },
+     "version": {
+      "type": "integer",
+      "minimum": 1
+     },
+     "status": {
+      "enum": [
+       "مسودة",
+       "معتمد",
+       "مُحيَّن",
+       "منتهٍ",
+       "ملغى"
+      ]
+     },
+     "approved_by": {
+      "type": "string"
+     },
+     "approval_date": {
+      "type": "string",
+      "format": "date"
+     },
+     "source_document": {
+      "type": "string"
+     },
+     "points": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "required": [
+        "point_id",
+        "governorate",
+        "place_name"
+       ],
+       "properties": {
+        "point_id": {
+         "type": "string"
+        },
+        "governorate": {
+         "enum": [
+          "أريانة",
+          "باجة",
+          "بن عروس",
+          "بنزرت",
+          "تطاوين",
+          "توزر",
+          "تونس",
+          "جندوبة",
+          "زغوان",
+          "سليانة",
+          "سوسة",
+          "سيدي بوزيد",
+          "صفاقس",
+          "قابس",
+          "قبلي",
+          "القصرين",
+          "قفصة",
+          "القيروان",
+          "الكاف",
+          "مدنين",
+          "المنستير",
+          "المهدية",
+          "منوبة",
+          "نابل"
+         ]
+        },
+        "place_name": {
+         "type": "string"
+        },
+        "sub_points": {
+         "type": "string"
+        },
+        "latitude": {
+         "type": "number",
+         "minimum": 30.0,
+         "maximum": 37.6
+        },
+        "longitude": {
+         "type": "number",
+         "minimum": 7.4,
+         "maximum": 11.7
+        },
+        "staff_count": {
+         "type": "integer",
+         "minimum": 0
+        },
+        "staff_composition": {
+         "type": "string"
+        },
+        "supervisors": {
+         "type": "integer",
+         "minimum": 0
+        },
+        "lifeguards_planned": {
+         "type": "integer",
+         "minimum": 0
+        },
+        "lifeguards_deployed": {
+         "type": "integer",
+         "minimum": 0
+        },
+        "equipment": {
+         "type": "string"
+        },
+        "hours": {
+         "type": "string"
+        },
+        "opening_date": {
+         "type": "string",
+         "format": "date"
+        },
+        "closing_date": {
+         "type": "string",
+         "format": "date"
+        },
+        "point_status": {
+         "enum": [
+          "مبرمجة",
+          "مفتوحة",
+          "مغلقة"
+         ]
+        },
+        "supervisor_name": {
+         "type": "string",
+         "description": "restricted: hall staff only"
+        },
+        "supervisor_phone": {
+         "type": "string",
+         "description": "restricted: hall staff only"
+        },
+        "notes": {
+         "type": "string"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}
