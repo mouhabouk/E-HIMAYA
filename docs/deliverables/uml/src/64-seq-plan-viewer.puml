@@ -1,0 +1,27 @@
+@startuml
+!include style.iuml
+title Séquence : le plan d'intervention d'un risque, déposé une fois et lu à l'écran (PL1)
+autonumber
+actor "Salle centrale" as OPC
+actor "Salle régionale\n(Nabeul)" as OP
+participant "Tableau de bord" as UI
+participant "Visionneuse PDF.js\n(worker, même origine)" as PDF
+participant "API" as API
+database "PostgreSQL" as DB
+OPC -> UI : « Plans d'intervention », carte « Inondations »\n« Nouveau plan pour ce risque »
+UI -> API : POST /staff/register/documents\n(type plan, risque floods)
+UI -> API : PUT /staff/register/documents/{id}/file (PDF)
+API -> DB : document en vigueur, empreinte SHA-256
+OP -> UI : axe « inondation » ouvert à Nabeul
+UI -> API : GET /staff/crisis/axes/{id}
+API -> DB : plans en vigueur du risque floods :\nnational puis annexes des wilayas de l'axe
+API --> UI : hazard_plans
+OP -> UI : « Afficher à l'écran »
+UI -> API : GET /staff/register/documents/{id}/file/content
+API -> DB : journal d'audit (ouverture)
+API --> UI : application/pdf, no-store, nosniff\n(autre type : 415 viewer_pdf_only)
+UI -> PDF : octets du fichier
+PDF --> UI : pages, sommaire, texte
+OP -> UI : chercher « الإيواء », plein écran
+UI --> OP : pages trouvées ; page au mur de la salle
+@enduml

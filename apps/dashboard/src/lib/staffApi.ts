@@ -6,6 +6,8 @@ import { programmesApi } from "./programmes";
 import { crisisApi } from "./crisis";
 import { basemapApi } from "./basemap";
 import { inventoryApi } from "./inventory";
+import { plansApi } from "./plans";
+import { scheduleApi } from "./schedule";
 import { registerApi } from "./register";
 import { contactApi } from "./contact";
 import { opsApi } from "./opsApi";
@@ -243,6 +245,8 @@ export function staffApi(api: ApiClient) {
     ...registerApi(api),
     ...inventoryApi(api),
     ...basemapApi(api),
+    ...plansApi(api),
+    ...scheduleApi(api),
     ...guideApi(api),
     ...preventionApi(api),
     ...contactApi(api),

@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ء-حماية | تقرير المرحلة PL</title>
+<style>
+:root{--bg:#f7f8fa;--paper:#fff;--ink:#1b2430;--muted:#5b6675;--line:#dfe3e8;--accent:#b3261e;--accent2:#0b5cad;--ok:#1e7d3a;--warn:#a15c00;--chip:#eef1f5;--head:#f1f3f6;--navy:#1f3d99;--orange:#e07b00}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1318;--paper:#161b22;--ink:#e6eaef;--muted:#9aa5b1;--line:#2a313b;--accent:#ff6b5e;--accent2:#5aa9ff;--ok:#5cc97a;--warn:#e0a24a;--chip:#1f2630;--head:#1c222b;--navy:#8fa8ff;--orange:#ffb35c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Naskh Arabic","Segoe UI",Tahoma,Arial,sans-serif;line-height:1.75;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header.cover{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:10px;padding:28px 24px;margin-bottom:20px}
+header.cover h1{margin:0 0 6px;font-size:30px}
+header.cover .sub{color:var(--muted);margin:0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:16px}
+.meta div{background:var(--chip);border-radius:6px;padding:8px 12px;font-size:14px}
+.meta b{display:block;color:var(--muted);font-weight:600;font-size:12px}
+a{color:var(--accent2);text-decoration:none}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:20px}
+h2{margin-top:0;font-size:23px;border-bottom:2px solid var(--line);padding-bottom:8px}
+h3{font-size:18px;margin:18px 0 8px}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:start;vertical-align:top}
+th{background:var(--head);font-weight:700;white-space:nowrap}
+code{direction:ltr;unicode-bidi:isolate;background:var(--chip);padding:1px 5px;border-radius:4px;font-size:13px}
+pre{direction:ltr;text-align:left;background:var(--chip);padding:10px 12px;border-radius:6px;overflow-x:auto;font-size:13px;margin:6px 0}
+.note{border-inline-start:4px solid var(--accent2);background:var(--chip);padding:10px 14px;border-radius:6px;margin:12px 0}
+.warn{border-inline-start:4px solid var(--warn)}
+.sim{display:inline-block;background:#ffb300;color:#1f1300;font-weight:700;font-size:12px;padding:1px 8px;border-radius:999px;margin-inline-end:6px}
+.simbox{border:2px dashed #ffb300;background:rgba(255,179,0,.10);border-radius:8px;padding:12px 16px;margin:12px 0}
+.ltr{direction:ltr;unicode-bidi:isolate}
+ul,ol{padding-inline-start:22px}
+.bar{height:10px;background:var(--chip);border-radius:6px;overflow:hidden;min-width:90px}
+.bar span{display:block;height:100%;background:var(--ok)}
+.pipeline{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0}
+.pipeline div{border:1px solid var(--line);border-radius:8px;padding:6px 12px;background:var(--chip);font-weight:600}
+.pipeline div.now{border-color:var(--accent);background:rgba(179,38,30,.08)}
+.pipeline i{color:var(--muted);font-style:normal}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--paper)}
+.card h3{margin:0 0 4px;font-size:17px}
+.card .v{color:var(--muted);font-size:13px;margin:0 0 6px}
+.card dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:6px 0;font-size:14px}
+.card dt{color:var(--muted);font-weight:600}
+.card dd{margin:0}
+.prio{display:inline-block;border-radius:999px;padding:0 8px;font-size:12px;font-weight:700;color:#fff}
+.p1{background:#b3261e}.p2{background:#a15c00}.p3{background:#0b5cad}.p4{background:#5b6675}
+footer{color:var(--muted);text-align:center;font-size:13px}
+@media print{body{background:#fff}section,header.cover,.card{border:none;break-inside:avoid-page}}
+</style>
+<body>
+<div class="wrap">
+<header class="cover">
+  <h1>ء-حماية <span class="ltr">e-Himaya</span></h1>
+  <p class="sub">تقرير المرحلة PL: مخططات التدخل الملوّنة حسب الخطر تُعرض على الشاشة (PL1)، والبرمجة اليومية والأسبوعية والشهرية لكل ولاية بنماذجها واعتمادها (PL2)</p>
+  <div class="meta">
+    <div><b>التاريخ</b>2026-10-28</div>
+    <div><b>الفرع</b><span class="ltr">claude/project-thread-yzwsn2</span></div>
+    <div><b>الحالة</b>منجزة، بانتظار الدمج</div>
+    <div><b>المراجع</b><a href="phase-pl/design-plans.md">تصميم المخططات والبرمجة</a> · <a href="versions.md">الإصدارات</a> · <a href="backlog.md">القائمة المؤجلة (§3.7)</a></div>
+  </div>
+</header>
+
+<section>
+<h2>1. أين تقع هذه المرحلة من مسار المشروع</h2>
+<div class="pipeline">
+  <div>التبليغ</div><i>←</i>
+  <div class="now">المعالجة</div><i>←</i>
+  <div>التحليل</div><i>←</i>
+  <div class="now">مؤشرات الأداء KPI</div><i>←</i>
+  <div>التنبؤ بالذكاء الاصطناعي</div><i>←</i>
+  <div class="now">اتخاذ القرار</div>
+</div>
+<ul>
+  <li><b>المعالجة</b>: كل ولاية تبرمج أنشطتها لليوم والأسبوع والشهر، وتتابعها نشاطا نشاطا.</li>
+  <li><b>مؤشرات الأداء</b>: نسبة إنجاز البرمجة لكل ولاية، يراها المركز والوالي والوزير.</li>
+  <li><b>اتخاذ القرار</b>: المخطط الساري لخطر المحور يُفتح على شاشة القاعة في لحظته، دون بحث ولا تنزيل؛ ومنه تقرأ نافذة أصحاب القرار (L4) المخطط والبرمجة الجارية.</li>
+</ul>
+</section>
+
+<section>
+<h2>2. مراجعة ← تصميم ← تطوير</h2>
+<div class="note"><b>الطلب:</b> «جلب المخططات بصيغة PDF مرة واحدة ويتم عرضه على الشاشة حسب الحاجة إليه ثم صياغة البرمجة باختلاف المدة». وأجاب يامن عن أسئلة التصميم: اللون نوع الخطر (الأزرق للفيضانات)، والبرمجة تشمل كل الأنشطة، و«كل ولاية ولها خصوصيتها» في الاعتماد. ثم: «تسجيل برمجة كموديل نظرا لتكراره عوضا عن إعادة كتابته».</div>
+<div class="note warn"><b>الأمن:</b> المخطط يُقرأ بصلاحيات السجل نفسها (الوطني للقاعات، والملحق لقاعة ولايته والمركز). الملف يأتي من الخادم دون تخزين (<code>no-store</code> و <code>nosniff</code>)، ولا يُعرض على الشاشة إلا PDF (غيره 415)، وكل فتح مسجَّل في التدقيق. يعمل PDF.js في عامل من الموقع نفسه فلا تتغير سياسة أمن المحتوى. البرمجة تقرؤها قاعة ولايتها والمركز وحدهما بأمن مستوى الصفوف، والوالي والوزير يرون نسبة الإنجاز وحدها لأن الأنشطة تحمل أسماء المسؤولين. والطبقات الحساسة لا تمر بأي من الصفحتين.</div>
+<h3>PL1: مخططات التدخل حسب الخطر</h3>
+<ol>
+  <li><b>المخاطر وألوانها</b>: ستة مخاطر أولية، الأزرق للفيضانات من اللجنة والبقية تؤكدها القاعة المركزية أو تغيّرها من تبويب «المخاطر وألوانها» (الأسماء بالعربية والفرنسية والإنجليزية، اللون، الأيقونة، الترتيب، الإيقاف). النص على اللون بالأبيض أو بالأسود حسب التباين.</li>
+  <li><b>صفحة «مخططات التدخل»</b>: بطاقة لكل خطر بلونه، فيها المخطط الوطني الساري وملاحق الولايات، وزر «مخطط جديد لهذا الخطر» يفتح استمارة السجل مملوءة بالنوع والخطر. يُرفع الملف مرة واحدة ويبقى ساريا حتى تلغيه نسخة جديدة.</li>
+  <li><b>العرض على الشاشة</b>: صفحة صفحة على عرض الشاشة، بالتكبير والتصغير، ورقم الصفحة ومفاتيح التنقل، وفهرس المخطط، والبحث في النص بتجاهل التشكيل وأشكال الألف، وملء الشاشة لشاشة القاعة الكبيرة.</li>
+  <li><b>حسب الحاجة</b>: المحور المفتوح يعرض «مخططات التدخل السارية لهذا الخطر»، الوطني ثم ملاحق ولايات المحور، بزر «عرض على الشاشة».</li>
+</ol>
+<h3>PL2: البرمجة باختلاف المدة</h3>
+<ol>
+  <li><b>الفترات</b>: لكل ولاية برمجة يوم وأسبوع (من الاثنين) وشهر، وتقويم بلون نوع النشاط، ونسخة للطباعة.</li>
+  <li><b>الأنشطة العشرة</b>: مناوبة، دورية، تمرين، زيارة وقاية، صيانة، تكوين، تحسيس، تفقد الجاهزية، اجتماع، أخرى؛ بالوحدة والمكان والمسؤول والأعوان والموارد من دليل السجل والمخطط المرتبط.</li>
+  <li><b>دون إعادة كتابة</b>: التكرار كل يوم أو أيام العمل أو كل أسبوع، ونسخ الفترة السابقة، و<b>نماذج البرمجة</b>: تُحفظ أي برمجة نموذجا باسم، وتُطبَّق على برمجة مسودة أو تُنشأ بها برمجة جديدة مباشرة.</li>
+  <li><b>الاعتماد الخاص بكل ولاية</b>: نشر مباشر، أو رئيس القاعة، أو رئيس القاعة ثم المركز؛ تُحفظ الطريقة مع البرمجة عند إرسالها. والرد بسبب في كل مرحلة.</li>
+  <li><b>المتابعة</b>: كل نشاط منجز أو مؤجل أو ملغى بسبب، ومن علّمه ومتى؛ ونسبة الإنجاز لكل ولاية.</li>
+</ol>
+</section>
+
+<section>
+<h2>3. لقطات <span class="sim">[SIM]</span></h2>
+<p>مخططات التدخل لعون القاعة الجهوية نهارا، ثم للقاعة المركزية ليلا، وتبويب المخاطر وألوانها:</p>
+  <img src="phase-pl/pl1-plans-day.png" alt="مخططات التدخل حسب الخطر، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-pl/pl1-plans-room-night.png" alt="مخططات التدخل للقاعة المركزية، ليلا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-pl/pl1-hazards-night.png" alt="المخاطر وألوانها، ليلا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+<p>المخطط الأزرق للفيضانات على الشاشة نهارا، ثم البحث عن «الإيواء» في نصه ليلا:</p>
+  <img src="phase-pl/pl1-viewer-day.png" alt="عرض المخطط على الشاشة، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-pl/pl1-viewer-search-night.png" alt="البحث في نص المخطط، ليلا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+<p>المحور المفتوح بنابل ومخططات خطره السارية:</p>
+  <img src="phase-pl/pl1-axis-day.png" alt="مخططات الخطر في المحور، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+<p>برمجة الأسبوع نهارا، والشهر نهارا، ونشاط مؤجل بسببه ليلا:</p>
+  <img src="phase-pl/pl2-week-day.png" alt="برمجة الأسبوع، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-pl/pl2-month-day.png" alt="برمجة الشهر، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-pl/pl2-activity-night.png" alt="متابعة نشاط، ليلا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+<p>إضافة نشاط متكرر إلى مسودة ليلا، ثم الاعتماد ليلا:</p>
+  <img src="phase-pl/pl2-draft-form-night.png" alt="إضافة نشاط متكرر، ليلا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-pl/pl2-approval-night.png" alt="اعتماد البرمجة، ليلا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+<p>النماذج: إنشاء برمجة جديدة من نموذج نهارا، وقائمة النماذج ليلا:</p>
+  <img src="phase-pl/pl2-template-start-day.png" alt="إنشاء برمجة من نموذج، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-pl/pl2-templates-night.png" alt="نماذج البرمجة، ليلا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+<p>نسبة الإنجاز للقاعة المركزية، ثم للوالي (ولايته فقط، دون الأنشطة):</p>
+  <img src="phase-pl/pl2-progress-central-day.png" alt="نسبة الإنجاز للقاعة المركزية، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-pl/pl2-governor-day.png" alt="نسبة الإنجاز للوالي، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+</section>
+
+<section>
+<h2>4. التقدم لكل جزء</h2>
+<div class="tbl"><table>
+<tr><th>البند</th><th>الحالة</th><th>التقدم</th></tr>
+<tr><td>F-DSH-74 صفحة مخططات التدخل والمخاطر وألوانها</td><td>منجز (PL1)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-DSH-75 عرض المخطط على الشاشة، ومن المحور</td><td>منجز (PL1)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-DSH-76 البرمجة اليومية والأسبوعية والشهرية ومتابعتها</td><td>منجز (PL2)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-DSH-77 نماذج البرمجة</td><td>منجز (PL2)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-DSH-78 الاعتماد الخاص بكل ولاية ونسبة الإنجاز</td><td>منجز (PL2)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-SRV-26 و F-SRV-27 والقاعدة BR-07g</td><td>منجز</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>البرمجة في تطبيق الأعوان والتذكير (PL-1 و PL-2)</td><td>للدراسة</td><td><div class="bar"><span style="width:0%"></span></div></td></tr>
+</table></div>
+<p><b>تقدم المرحلة PL: 100%. التالي: نافذة أصحاب القرار (L4) ثم التمارين (L5).</b></p>
+</section>
+
+<section>
+<h2>5. المحاكاة <span class="sim">[SIM]</span></h2>
+<div class="simbox"><ul>
+  <li><span class="sim">[SIM]</span> «المخطط الأزرق الوطني للتدخل عند الفيضانات» في اللقطات ملف تجريبي من سبع صفحات كُتب للعرض، وليس مخطط الديوان.</li>
+  <li><span class="sim">[SIM]</span> البرمجة والأنشطة والنماذج والأسماء في اللقطات مختلَقة.</li>
+  <li>ألوان المخاطر غير الفيضانات اقتراحات أولية تنتظر تأكيد القاعة المركزية.</li>
+</ul></div>
+</section>
+
+<section>
+<h2>6. الاختبارات المطبقة</h2>
+<div class="tbl"><table>
+<tr><th>المكوّن</th><th>العدد</th><th>النتيجة</th></tr>
+<tr><td>الخلفية (pytest)</td><td>971، منها <code>test_plans.py</code> (3) و <code>test_schedule.py</code> (5)</td><td>ناجحة (2 متخطّاة كالعادة)</td></tr>
+<tr><td>الترحيلات</td><td>صعودا ونزولا ثم صعودا حتى 0062</td><td>ناجحة</td></tr>
+<tr><td>لوحة القيادة (vitest)</td><td>542، منها المخططات والعارض والبحث في النص والبرمجة والنماذج</td><td>كلها ناجحة</td></tr>
+<tr><td>لوحة القيادة (Playwright مع axe)</td><td>74، منها صفحة المخططات والعارض والبرمجة نهارا وليلا</td><td>كلها ناجحة، دون أي مخالفة</td></tr>
+<tr><td><code>ruff</code> و <code>mypy</code> و <code>eslint</code> و <code>tsc</code>، و OpenAPI و ERD</td><td>—</td><td>لا ملاحظة</td></tr>
+</table></div>
+<ul>
+  <li>العارض: غير PDF يُرفض (415)، والخطر لا يوضع إلا على مخطط، والخطر الموقوف لا يُختار لمخطط جديد.</li>
+  <li>البرمجة: كل ولاية ترى برمجتها وحدها والمركز يرى الكل؛ الوالي والوزير لا يصلان إلى الأنشطة؛ مسار الاعتماد بالطرق الثلاث؛ تعديل البرمجة المعتمدة لرئيس القاعة وحده.</li>
+  <li>النماذج: الحفظ بالاسم نفسه يعوّض، والتطبيق يضع كل نشاط في يومه، والوحدة أو المخطط المحذوفان يُتركان فارغين.</li>
+  <li>الكتابة العربية: ملف PDF يطبعه متصفح يحفظ النص حرفا حرفا من اليمين إلى اليسار؛ العارض يرسمه في مكانه ويبحث فيه بالترتيبين.</li>
+</ul>
+</section>
+
+<section id="tools">
+<h2>7. التقنيات والأدوات والمصادر والإصدارات</h2>
+<p>القائمة الكاملة في <a href="versions.md">versions.md</a>.</p>
+<div class="cards">
+<div class="card"><h3>ترحيلا قاعدة البيانات</h3><p class="v">0061 و 0062 · <span class="prio p1">1</span></p>
+<dl><dt>الاستعمال</dt><dd>الجدول <code>register.hazard</code> والحقل <code>hazard_key</code>، والمخطط <code>sched</code></dd><dt>الأمر</dt><dd><code>alembic upgrade head</code></dd></dl></div>
+<div class="card"><h3>PDF.js</h3><p class="v"><code>pdfjs-dist</code> 6.4.299 (legacy) · <span class="prio p1">1</span></p>
+<dl><dt>الرخصة</dt><dd>Apache-2.0</dd><dt>الأمر</dt><dd><code>npm ci</code> في <code>apps/dashboard</code></dd><dt>التحميل</dt><dd><a href="https://github.com/mozilla/pdf.js">github.com/mozilla/pdf.js</a></dd></dl></div>
+<div class="card"><h3>الواجهة البرمجية</h3><p class="v">477 مسارا · 576 عملية · <span class="prio p2">2</span></p>
+<dl><dt>الجديد</dt><dd><code>/api/v1/staff/register/hazards</code> و <code>/plans</code> و <code>/documents/{id}/file/content</code>، و <code>/api/v1/staff/schedule</code></dd></dl></div>
+<div class="card"><h3>تطبيق الهاتف</h3><p class="v">0.22.0 دون تغيير · <span class="prio p4">4</span></p>
+<dl><dt>الأثر</dt><dd>لا شيء؛ المخططات والبرمجة في اللوحة</dd></dl></div>
+</div>
+</section>
+
+<section>
+<h2>8. المخرجات المحيَّنة</h2>
+<ul>
+  <li>الملف الوصفي V23 (docx و pdf) في <code>spec/</code>: F-DSH-74 إلى 78 و F-SRV-26 و 27، القاعدة BR-07g، 477 مسارا و576 عملية، الاختبارات، PDF.js في التقنيات، القرار، خارطة الطريق، ومصطلحات المخطط والبرمجة والنموذج.</li>
+  <li>مخططات UML في <code>diagrams/</code>: مخطط أصناف جديد للمخاطر والبرمجة (26)، وتسلسلا عرض المخطط (64) والبرمجة بنموذجها واعتمادها (65)، وحالات البرمجة والنشاط (66)، وحالات الاستعمال S50 إلى S55 في مخطط القاعة.</li>
+  <li>العرض للمسؤولين في <code>presentation/</code>: 42 مرحلة، الاختبارات، وخارطة الطريق.</li>
+  <li>مرجع التصميم مُعاد توليده بألوان المخاطر وألوان الأنشطة والأيقونات الجديدة: <a href="design-reference.html">design-reference.html</a>.</li>
+  <li>سجل الإصدارات، القائمة المؤجلة (§3.7)، ودليلا التنصيب (الحزمة <code>pdfjs-dist</code> والترحيلان 0061 و 0062)، واللقطات في <code>screens/pl/</code>.</li>
+</ul>
+</section>
+
+<section>
+<h2>9. ملاحظات وانحرافات</h2>
+<ul>
+  <li>اعتُمدت النسخة legacy من PDF.js لأن النسخة الحديثة تحتاج متصفحات أحدث من متصفحات بعض القاعات.</li>
+  <li>العارض يستعمل دائما الخطوط المضمَّنة في الملف، فلا تنفصل الحروف العربية إن كان على الجهاز خط بالاسم نفسه.</li>
+  <li>المخطط بغير صيغة PDF (Word أو Excel) يبقى في السجل للتنزيل، ولا يُعرض على الشاشة (PL-4).</li>
+  <li>البرمجة لا تظهر بعدُ في تطبيق الأعوان (PL-1)، ولا تذكير قبل النشاط (PL-2).</li>
+</ul>
+</section>
+
+<section>
+<h2>10. ما يلي</h2>
+<p>الدمج، ثم نافذة أصحاب القرار (L4) التي تعرض المخطط الساري للمحور والبرمجة الجارية وتبحث في الموارد داخل حيّز المحور، ثم التمارين <span class="sim">[SIM]</span> (L5).</p>
+</section>
+</div>
+</body>
+</html>

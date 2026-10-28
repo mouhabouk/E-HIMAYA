@@ -17,7 +17,8 @@ import {
   VEHICLE,
 } from "../src/test/inventoryData";
 import { BASEMAP, BASEMAP_SETTINGS } from "../src/test/basemapData";
-import { DIRECTIVE_ALL_DETAIL, DISPATCH_PAGE, PLAN_DETAIL, REVISIONS, SEARCH } from "../src/test/registerData";
+import { SCHEDULE_OPTIONS, SCHEDULE_PROGRESS, SCHEDULE_SETTINGS, SCHEDULE_SLOT, SCHEDULE_TEMPLATES } from "../src/test/scheduleData";
+import { DIRECTIVE_ALL_DETAIL, DISPATCH_PAGE, HAZARDS, PLAN_DETAIL, PLANS, REVISIONS, SEARCH } from "../src/test/registerData";
 import { JENDOUBA_AXIS, NABEUL_AXIS, NABEUL_DETAIL, overview, REQUEST, SOUSSE_AXIS, SUGGESTIONS } from "../src/test/crisisData";
 import { API, baseMock, commonAnswer, json, signIn } from "./phase7Helpers";
 
@@ -47,7 +48,26 @@ const SCREENS: { path: string; ready: string }[] = [
   { path: "/register/reg-plan", ready: "main .recommendations" },
   { path: "/register/dispatches", ready: "main .dispatch-card" },
   { path: "/register/dispatches/dsp-all", ready: "main .thread" },
+  // Phase PL1: the plans by hazard, and one read on the screen.
+  { path: "/plans", ready: "main .plan-card" },
+  { path: "/plans/reg-plan", ready: "main .pdf-viewer canvas" },
+  // Phase PL2: the progress of the programmes (the national user lands on it).
+  { path: "/schedule", ready: "main .rate" },
 ];
+
+/** A one-page PDF ([SIM]) for the plan viewer; PDF.js rebuilds the missing cross-reference table. */
+const SAMPLE_PDF = [
+  "%PDF-1.4",
+  "1 0 obj <</Type/Catalog/Pages 2 0 R>> endobj",
+  "2 0 obj <</Type/Pages/Kids[3 0 R]/Count 1>> endobj",
+  "3 0 obj <</Type/Page/Parent 2 0 R/MediaBox[0 0 595 842]/Contents 4 0 R/Resources<</Font<</F1 5 0 R>>>>>> endobj",
+  "4 0 obj <</Length 52>> stream",
+  "BT /F1 24 Tf 72 760 Td ([SIM] Plan bleu - inondations) Tj ET",
+  "endstream endobj",
+  "5 0 obj <</Type/Font/Subtype/Type1/BaseFont/Helvetica>> endobj",
+  "trailer <</Root 1 0 R>>",
+  "%%EOF",
+].join("\n");
 
 const PAGE = { items: [], next_cursor: null, total: 0 };
 const BEACH = {
@@ -188,6 +208,15 @@ async function mockApi(page: Page): Promise<string[]> {
     if (pathname === "/api/v1/staff/register/documents/reg-plan/revisions") return json(route, REVISIONS);
     if (pathname === "/api/v1/staff/register/dispatches") return json(route, DISPATCH_PAGE);
     if (pathname === "/api/v1/staff/register/dispatches/dsp-all") return json(route, DIRECTIVE_ALL_DETAIL);
+    if (pathname === "/api/v1/staff/register/plans") return json(route, PLANS);
+    if (pathname === "/api/v1/staff/schedule/slot") return json(route, SCHEDULE_SLOT);
+    if (pathname === "/api/v1/staff/schedule/progress") return json(route, SCHEDULE_PROGRESS);
+    if (pathname === "/api/v1/staff/schedule/settings") return json(route, SCHEDULE_SETTINGS);
+    if (pathname === "/api/v1/staff/schedule/options") return json(route, SCHEDULE_OPTIONS);
+    if (pathname === "/api/v1/staff/schedule/templates") return json(route, SCHEDULE_TEMPLATES);
+    if (pathname === "/api/v1/staff/register/hazards") return json(route, HAZARDS);
+    if (pathname === "/api/v1/staff/register/documents/reg-plan/file/content")
+      return route.fulfill({ status: 200, contentType: "application/pdf", body: SAMPLE_PDF });
     // Resources register (phase R1).
     const inventory: Record<string, unknown> = {
       "/api/v1/staff/inventory/catalogue": CATALOGUE,
@@ -213,6 +242,11 @@ async function mockApi(page: Page): Promise<string[]> {
 async function audit(page: Page, path: string, ready: string): Promise<void> {
   await page.goto(path);
   await expect(page.locator(ready).first()).toBeVisible();
+  await scan(page, path);
+}
+
+/** The scan of the screen as it stands (after clicks that a fresh navigation would undo). */
+async function scan(page: Page, path: string): Promise<void> {
   // Let pending requests settle so the scan sees the finished screen.
   await page.waitForLoadState("networkidle");
   const results = await new AxeBuilder({ page })
@@ -245,6 +279,34 @@ for (const lang of ["fr", "ar"] as const) {
     }
   });
 }
+
+// Phase PL2: a week of a gouvernorat on the calendar, an activity open and the approval tab, in both modes.
+test.describe("accessibility of the programmes (ar)", () => {
+  for (const theme of ["light", "dark"] as const) {
+    test(`week, activity, templates and approval, ${theme}, have no serious or critical violation`, async ({ page }) => {
+      await signIn(page, ROLES, "Salma Ben Ali");
+      await page.addInitScript((t) => {
+        window.localStorage.setItem("ehimaya.lang", "ar");
+        window.localStorage.setItem("ehimaya.theme", t);
+      }, theme);
+      const fence = await baseMock(page);
+      await mockApi(page);
+      await page.goto("/schedule");
+      await page.getByRole("button", { name: "فتح برمجة نابل" }).click();
+      await expect(page.locator("main .sched-week").first()).toBeVisible();
+      await page.getByRole("button", { name: /دورية الشريط الساحلي/ }).click();
+      await expect(page.locator("main .sched-panel")).toBeVisible();
+      await scan(page, `/schedule week ${theme}`);
+      await page.getByRole("tab", { name: "النماذج" }).click();
+      await expect(page.locator("main #sched-templates")).toBeVisible();
+      await scan(page, `/schedule templates ${theme}`);
+      await page.getByRole("tab", { name: "طريقة الاعتماد" }).click();
+      await expect(page.locator("main #sched-settings")).toBeVisible();
+      await scan(page, `/schedule approval ${theme}`);
+      expect(fence.unexpected).toEqual([]);
+    });
+  }
+});
 
 // Phase UI-3: the main menu in each shape and position, with a group and the account menu open, in both modes.
 const MENUS = [

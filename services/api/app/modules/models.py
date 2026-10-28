@@ -75,6 +75,7 @@ from app.modules.register.models import Counter as RegisterCounter
 from app.modules.register.models import Dispatch as RegisterDispatch
 from app.modules.register.models import DispatchTarget as RegisterDispatchTarget
 from app.modules.register.models import Document as RegisterDocument
+from app.modules.register.models import Hazard as RegisterHazard
 from app.modules.register.models import Link as RegisterLink
 from app.modules.register.models import Recommendation as RegisterRecommendation
 from app.modules.register.models import Reply as RegisterReply
@@ -94,6 +95,10 @@ from app.modules.safety.models import AlertRecipient as SafetyAlertRecipient
 from app.modules.safety.models import Invitation as SafetyInvitation
 from app.modules.safety.models import Link as SafetyLink
 from app.modules.safety.models import LiveShare, LocationHistory, LocationPoint, SafetyCheck
+from app.modules.schedule.models import Item as ScheduleItem
+from app.modules.schedule.models import Period as SchedulePeriod
+from app.modules.schedule.models import Setting as ScheduleSetting
+from app.modules.schedule.models import Template as ScheduleTemplate
 from app.modules.streams.models import LiveStream, StreamDetection, StreamLocation, StreamSegment
 from app.modules.telephony.models import Call, Conference, OperatorEndpoint, SmsInbound
 from app.modules.volunteers.models import Volunteer, VolunteerReview
@@ -206,6 +211,7 @@ __all__ = [
     "RegisterDispatch",
     "RegisterDispatchTarget",
     "RegisterDocument",
+    "RegisterHazard",
     "RegisterLink",
     "RegisterRecommendation",
     "RegisterReply",
@@ -225,6 +231,10 @@ __all__ = [
     "SafetyTip",
     "Scenario",
     "Schedule",
+    "ScheduleItem",
+    "SchedulePeriod",
+    "ScheduleSetting",
+    "ScheduleTemplate",
     "SearchDoc",
     "Shelter",
     "Shift",

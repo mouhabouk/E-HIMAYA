@@ -112,6 +112,8 @@ class AxisOut(BaseModel):
     level: int
     plan: str
     plan_document: DocRef | None = None
+    # The plans in force of the axis' hazard, national then of its gouvernorats (phase PL1), to open on the screen.
+    hazard_plans: list[DocRef] = []
     status: Literal["open", "closed"]
     opened_by_name: str | None
     opened_at: datetime

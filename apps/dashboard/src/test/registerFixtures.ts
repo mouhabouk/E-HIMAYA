@@ -1,14 +1,20 @@
 import { vi } from "vitest";
 import type { registerApi } from "../lib/register";
 import { first } from "./crisisData";
-import { DIRECTIVE_ALL_DETAIL, DISPATCH_PAGE, PLAN_DETAIL, REVISIONS, SEARCH } from "./registerData";
+import type { HazardBody, plansApi } from "../lib/plans";
+import { DIRECTIVE_ALL_DETAIL, DISPATCH_PAGE, HAZARD, HAZARDS, PLAN_DETAIL, PLANS, REVISIONS, SEARCH } from "./registerData";
 
 export * from "./registerData";
 
-type RegisterApi = ReturnType<typeof registerApi>;
+type RegisterApi = ReturnType<typeof registerApi> & ReturnType<typeof plansApi>;
 
 export function fakeRegisterApi(): RegisterApi {
   return {
+    // Phase PL1: plans by hazard.
+    hazards: vi.fn(() => Promise.resolve(HAZARDS)),
+    saveHazard: vi.fn((key: string, body: HazardBody) => Promise.resolve({ ...HAZARD, ...body, key })),
+    plans: vi.fn(() => Promise.resolve(PLANS)),
+    documentFileBytes: vi.fn(() => Promise.resolve(new ArrayBuffer(8))),
     registerSearch: vi.fn(() => Promise.resolve(SEARCH)),
     registerDocument: vi.fn(() => Promise.resolve(PLAN_DETAIL)),
     createDocument: vi.fn(() => Promise.resolve(PLAN_DETAIL)),

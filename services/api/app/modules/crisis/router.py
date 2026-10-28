@@ -32,6 +32,7 @@ from app.modules.crisis.models import (
 )
 from app.modules.geo.models import Gouvernorat
 from app.modules.layers.service import point as wkt_point
+from app.modules.register import plans as register_plans
 from app.modules.register import service as register
 from app.modules.register.models import Document as RegisterDocument
 
@@ -100,6 +101,9 @@ async def _axis_out(
         level=axis.level,
         plan=axis.plan,
         plan_document=await _plan_document(session, principal, axis),
+        hazard_plans=[_doc_ref(d) for d in await register_plans.for_axis(session, principal, axis.kind, codes)]
+        if children
+        else [],
         status=axis.status,
         opened_by_name=axis.opened_by_name if domain.is_room(principal) else None,
         opened_at=axis.opened_at,

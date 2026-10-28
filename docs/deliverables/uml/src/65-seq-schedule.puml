@@ -1,0 +1,37 @@
+@startuml
+!include style.iuml
+title Séquence : programme de la semaine, modèle et approbation propre à la wilaya (PL2)
+autonumber
+actor "Agent de salle\n(Nabeul)" as OP
+actor "Chef de salle\n(Nabeul)" as OPM
+actor "Salle centrale" as CC
+actor "Gouverneur" as GOV
+participant "Tableau de bord" as UI
+participant "API" as API
+database "PostgreSQL" as DB
+OPM -> UI : « Mode d'approbation » : chef de salle puis centre
+UI -> API : PUT /staff/schedule/settings/21
+OP -> UI : semaine du 2 novembre : « Créer depuis le modèle »\n« Semaine ordinaire »
+UI -> API : POST /staff/schedule/periods
+UI -> API : POST /staff/schedule/periods/{id}/apply-template
+API -> DB : activités placées par leur jour,\nunité ou plan disparus laissés vides
+OP -> UI : ajouter une patrouille, jours ouvrables
+UI -> API : POST /staff/schedule/periods/{id}/items (repeat weekdays)
+API -> DB : cinq activités d'une même série
+OP -> UI : « Envoyer pour approbation »
+UI -> API : POST .../submit
+API -> DB : statut envoyé, mode retenu sur le programme
+OPM -> UI : approuver
+UI -> API : POST .../approve
+API -> DB : attente centre
+CC -> UI : approuver (ou renvoyer avec motif)
+UI -> API : POST .../approve
+API -> DB : approuvé
+OP -> UI : activité réalisée, ou reportée avec motif
+UI -> API : POST /staff/schedule/items/{id}/status
+OP -> UI : « Enregistrer ce programme comme modèle »
+UI -> API : POST /staff/schedule/periods/{id}/template
+GOV -> UI : programmes
+UI -> API : GET /staff/schedule/progress
+API --> UI : statut et taux de réalisation de sa wilaya\n(sans les activités ni les noms)
+@enduml

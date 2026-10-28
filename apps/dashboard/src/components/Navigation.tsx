@@ -23,6 +23,7 @@ import {
   canOpenLayers,
   canOpenProgrammes,
   canOpenRegister,
+  canOpenSchedule,
   canReadAnalytics,
   canReadKnowledge,
   canReadOrgs,
@@ -84,6 +85,7 @@ export function navGroups(identity: Identity, t: TFunction): NavGroup[] {
         ...e(canReadResources(roles), "/resources", "localShipping", "amber", "resources"),
         ...e(canOpenInventory(roles), "/inventory", "inventory2", "teal", "inventory"),
         ...e(canOpenCrew(roles), "/crew", "groups", "green", "crew"),
+        ...e(canOpenSchedule(roles), "/schedule", "calendarMonth", "teal", "schedule"),
       ],
     },
     {
@@ -94,6 +96,7 @@ export function navGroups(identity: Identity, t: TFunction): NavGroup[] {
       items: [
         ...e(canOpenCommand(roles), "/command", "militaryTech", "navy", "command"),
         ...e(canOpenAxes(roles), "/axes", "warning", "red", "axes"),
+        ...e(canOpenRegister(roles), "/plans", "menuBook", "sky", "plans"),
         ...e(canOpenRegister(roles), "/register", "folderOpen", "navy", "register", true),
         ...e(canOpenRegister(roles), "/register/dispatches", "campaign", "red", "dispatches"),
         ...e(isCommittee(roles) || canMonitorPerformance(roles), "/committee", "monitoring", "navy", "committee"),
