@@ -1,0 +1,35 @@
+@startuml
+!include style.iuml
+title Séquence : couches de la carte par dossiers, selon ce que chacun voit (UI-3b)
+autonumber
+actor "Administrateur\nsystème" as SA
+actor "Salle régionale" as OP
+actor "Ministre" as MIN
+participant "Tableau de bord" as UI
+participant "API" as API
+database "PostgreSQL" as DB
+SA -> UI : onglet « Dossiers de la carte »\nnouveau dossier « Dépôts », icône, couleur, ordre
+UI -> API : POST /staff/layers/groups
+API -> DB : geo.layer_group + journal d'audit
+SA -> UI : réglages d'une couche : dossier « Transports », motif
+UI -> API : PATCH /staff/layers/{clé} (group_key)
+API -> API : couche sensible ↔ dossier sensible seulement\n(sinon 422)
+API -> DB : couche + révision (le dossier est restauré avec elle)
+OP -> UI : carte en direct
+UI -> API : GET /staff/layers
+API -> DB : couches que la salle voit (publics, portée)
+API -> API : dossier de chaque couche\n(le sien, ou celui que sa clé suggère)
+API --> UI : dossiers qui contiennent une couche visible\n(sans le dossier sensible)
+UI --> OP : dossiers repliables, « tout afficher » à trois états,\ndossiers ouverts gardés dans le navigateur
+MIN -> UI : carte en direct
+UI -> API : GET /staff/layers
+API --> UI : les mêmes dossiers + « Couches sensibles »
+note right of API
+  Un dossier n'accorde aucun droit :
+  un dossier vide pour l'appelant
+  reste inconnu de lui.
+end note
+SA -> UI : supprimer « Dépôts »
+UI -> API : DELETE /staff/layers/groups/depots
+API --> UI : 409 group_not_empty tant qu'il contient une couche
+@enduml

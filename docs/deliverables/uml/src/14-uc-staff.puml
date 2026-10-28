@@ -62,6 +62,9 @@ rectangle "Tableau de bord central" {
   usecase "Envoyer une directive\ngénérale ou ciblée (L3b)" as S41
   usecase "Répondre à une directive\nou lever une notification immédiate (L3b)" as S42
   usecase "Joindre Word, Excel,\nPDF ou image (L3b)" as S43
+  usecase "Choisir la forme et la place\ndu menu principal (UI-3)" as S44
+  usecase "Afficher les couches de la carte\npar dossiers (UI-3b)" as S45
+  usecase "Gérer les dossiers de couches,\nclasser une couche (UI-3b)" as S46
 }
 rectangle "Application des équipes (P4a à P4d)" {
   usecase "Se connecter par code\n(MFA, PIN 6 chiffres)" as T0
@@ -173,4 +176,14 @@ OP --> S42
 CL --> S42
 S41 ..> S43 : <<include>>
 S42 <.. S43 : <<extend>>
+OP --> S44
+OPM --> S44
+GOV --> S44
+MIN --> S44
+OP --> S45
+OPM --> S45
+CMD --> S45
+MIN --> S45
+SA --> S46
+S45 <.. S46 : <<extend>>
 @enduml
