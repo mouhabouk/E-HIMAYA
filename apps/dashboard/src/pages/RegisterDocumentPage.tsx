@@ -12,7 +12,7 @@ import { SimBadge } from "../components/crisis/CrisisBits";
 import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
 import { errorMessageKey } from "../lib/api";
-import { isSimulated } from "../lib/crisisText";
+import { simText } from "../lib/crisisText";
 import { useDebounced, useFormat } from "../lib/hooks";
 import {
   DEFAULT_QUERY,
@@ -298,7 +298,7 @@ function Links({ d }: { d: DocumentDetail }) {
             <li key={`${l.direction}-${l.id}`}>
               <span className="muted">{t(`register.links.rel.${l.relation}.${l.direction}`)}</span>
               <Link to={`/register/${encodeURIComponent(l.id)}`} dir="auto">
-                <bdi dir="ltr">{l.number}</bdi> · {l.title}
+                <bdi dir="ltr">{l.number}</bdi> · {simText(l.title).text}
               </Link>
               <DocStatus status={l.status} />
               {x.can_edit && l.direction === "out" && l.relation !== "repeals" && (
@@ -414,7 +414,7 @@ export function RegisterDocumentPage() {
       </p>
       <div className="page__head">
         <PageTitle icon="folderOpen" tone="navy" id="doc-title" dir="auto">
-          {x.title}
+          {simText(x.title).text}
         </PageTitle>
         <div className="page-head__actions">
           {writer && mode === "view" && (
@@ -441,7 +441,7 @@ export function RegisterDocumentPage() {
         <span>
           <bdi dir="ltr">{x.number}</bdi>
         </span>
-        {isSimulated({ name: x.title }) && <SimBadge />}
+        {simText(x.title).sim && <SimBadge />}
       </p>
       {remove.isError && <p role="alert" className="field__error">{t(errorMessageKey(remove.error))}</p>}
       {mode === "edit" && <DocumentForm existing={d} canCentral={Boolean(user?.identity.national)} onClose={() => setMode("view")} />}
@@ -500,11 +500,11 @@ export function RegisterDocumentPage() {
                   <li key={a.id}>
                     {canOpenAxes(roles) ? (
                       <Link to={`/axes/${encodeURIComponent(a.id)}`}>
-                        <bdi dir="ltr">{a.number}</bdi> · {a.name}
+                        <bdi dir="ltr">{a.number}</bdi> · {simText(a.name).text}
                       </Link>
                     ) : (
                       <span>
-                        <bdi dir="ltr">{a.number}</bdi> · {a.name}
+                        <bdi dir="ltr">{a.number}</bdi> · {simText(a.name).text}
                       </span>
                     )}
                   </li>

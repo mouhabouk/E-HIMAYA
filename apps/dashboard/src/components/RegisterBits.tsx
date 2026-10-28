@@ -7,7 +7,7 @@ import { Link, useNavigate } from "react-router";
 import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
 import { errorMessageKey } from "../lib/api";
-import { isSimulated } from "../lib/crisisText";
+import { simText } from "../lib/crisisText";
 import { useFormat, useGouvernorats } from "../lib/hooks";
 import {
   DOCUMENT_ACCESS,
@@ -48,16 +48,16 @@ export function DocumentCard({ d }: { d: RegisterDocument }) {
         <span className="register-card__no">
           <bdi dir="ltr">{d.number}</bdi>
         </span>
-        {isSimulated({ name: d.title }) && <SimBadge />}
+        {simText(d.title).sim && <SimBadge />}
       </p>
       <h3>
         <Link to={`/register/${encodeURIComponent(d.id)}`} dir="auto">
-          {d.title}
+          {simText(d.title).text}
         </Link>
       </h3>
       {d.reference && (
-        <p className="register-card__ref" dir="auto">
-          {d.reference}
+        <p className="register-card__ref">
+          <bdi>{d.reference}</bdi>
         </p>
       )}
       {d.excerpt ? <Excerpt text={d.excerpt} /> : d.summary && <p className="register-card__summary">{d.summary}</p>}
@@ -80,7 +80,7 @@ export function DocumentRefs({ items }: { items: { id: string; number: string; t
         <li key={d.id}>
           <span className="tag">{t(`register.kind.${d.kind}`)}</span>
           <Link to={`/register/${encodeURIComponent(d.id)}`} dir="auto">
-            {d.title}
+            {simText(d.title).text}
           </Link>
           <DocStatus status={d.status} />
         </li>

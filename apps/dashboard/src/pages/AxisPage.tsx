@@ -10,7 +10,7 @@ import { errorMessageKey } from "../lib/api";
 import { areaBounds, AXIS_LEVELS, crisisKeys, hoursUntil, type Axis, type AxisDetail } from "../lib/crisis";
 import { DEFAULT_QUERY, registerKeys } from "../lib/register";
 import { DocumentRefs } from "../components/RegisterBits";
-import { displayName, isSimulated } from "../lib/crisisText";
+import { displayName, isSimulated, simText } from "../lib/crisisText";
 import { useFormat, useGouvernorats } from "../lib/hooks";
 import { initialBoundsFor } from "../lib/mapStyle";
 
@@ -211,7 +211,7 @@ function PlanBlock({ axis }: { axis: Axis }) {
         <p>
           <span className="muted">{t("register.axis.plan")} </span>
           <Link to={`/register/${encodeURIComponent(doc.id)}`} dir="auto">
-            {doc.title}
+            {simText(doc.title).text}
           </Link>
           {doc.reference && <span className="muted"> · {doc.reference}</span>}
         </p>

@@ -10,3 +10,8 @@ export function isSimulated(axis: Pick<Axis, "name">): boolean {
 export function displayName(axis: Pick<Axis, "name">): string {
   return axis.name.replace(SIM, "");
 }
+
+/** The same for any text (register titles, dispatch subjects, phase L3b). */
+export function simText(text: string): { text: string; sim: boolean } {
+  return { text: text.replace(SIM, ""), sim: SIM.test(text) };
+}

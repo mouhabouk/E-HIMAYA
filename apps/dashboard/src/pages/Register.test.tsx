@@ -45,7 +45,7 @@ describe("RegisterPage", () => {
   it("searches with facets and the advanced filters", async () => {
     const api = fakeRegisterApi();
     renderApp(<RegisterPage />, { api: fakeApi(api), auth: fakeAuth(claims(["ops_manager"], "21")), lang: "ar" });
-    expect(await screen.findByText("[SIM] المخطط الجهوي للنجدة عند الفيضانات بولاية نابل")).toBeInTheDocument();
+    expect(await screen.findByText("المخطط الجهوي للنجدة عند الفيضانات بولاية نابل")).toBeInTheDocument();
     expect(screen.getByText("4 وثيقة")).toBeInTheDocument();
     // In force by default; ticking a kind narrows the search.
     expect(vi.mocked(api.registerSearch).mock.calls[0]?.[0].statuses).toEqual(["in_force"]);
@@ -126,7 +126,7 @@ describe("register in the axis and the command screen", () => {
       path: "/axes/ax-nabeul",
       route: "/axes/:id",
     });
-    const plan = await screen.findByRole("link", { name: "[SIM] المخطط الجهوي للنجدة عند الفيضانات بولاية نابل" });
+    const plan = await screen.findByRole("link", { name: "المخطط الجهوي للنجدة عند الفيضانات بولاية نابل" });
     expect(plan).toHaveAttribute("href", "/register/reg-plan");
     fireEvent.click(screen.getByRole("tab", { name: "الوثائق" }));
     expect(within(screen.getByRole("tabpanel")).getAllByRole("link")).toHaveLength(2);
@@ -138,7 +138,7 @@ describe("register in the axis and the command screen", () => {
     const register = fakeRegisterApi();
     renderApp(<CommandPage />, { api: fakeApi({ ...crisis, ...register }), auth: fakeAuth(claims(["governor"], "21")), lang: "ar" });
     fireEvent.click(await screen.findByRole("tab", { name: "المخططات والتوصيات" }));
-    expect(await screen.findByText("[SIM] منشور حول الاستعداد لموسم الأمطار 2026-2027")).toBeInTheDocument();
+    expect(await screen.findByText("منشور حول الاستعداد لموسم الأمطار 2026-2027")).toBeInTheDocument();
     expect(vi.mocked(register.registerSearch).mock.calls[0]?.[0]).toMatchObject({ sort: "newest", statuses: ["in_force"] });
   });
 });
@@ -188,7 +188,7 @@ describe("directives and replies", () => {
     const api = fakeRegisterApi();
     api.dispatches = vi.fn(() => Promise.resolve({ items: [NOTICE], total: 1, unread: 0, can_direct: false, can_notify: true }));
     renderApp(<DispatchesPage />, { api: fakeApi(api), auth: fakeAuth(claims(["operator"], "21")), lang: "ar" });
-    expect(await screen.findByText("[SIM] انهيار جزئي لجسر وادي الشيوخ على الطريق 27")).toBeInTheDocument();
+    expect(await screen.findByText("انهيار جزئي لجسر وادي الشيوخ على الطريق 27")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "توجيه جديد" })).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "إشعار فوري" }));
     fireEvent.change(screen.getByLabelText("الموضوع"), { target: { value: "تسرب غاز بالمنطقة الصناعية" } });

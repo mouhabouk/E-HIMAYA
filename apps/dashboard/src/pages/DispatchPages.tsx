@@ -9,6 +9,8 @@ import { ErrorBox, Loading } from "../components/Feedback";
 import { PageTitle } from "../components/PageTitle";
 import { useServices } from "../context/services";
 import { errorMessageKey } from "../lib/api";
+import { simText } from "../lib/crisisText";
+import { SimBadge } from "../components/crisis/CrisisBits";
 import { useDebounced, useFormat, useGouvernorats } from "../lib/hooks";
 import {
   ATTACHMENT_ACCEPT,
@@ -262,10 +264,11 @@ function DispatchCard({ d, centre }: { d: Dispatch; centre: boolean }) {
           <bdi dir="ltr">{d.number}</bdi>
         </span>
         <time dateTime={d.created_at}>{fmt.dateTime(d.created_at)}</time>
+        {simText(d.subject).sim && <SimBadge />}
       </p>
       <h3>
         <Link to={`/register/dispatches/${encodeURIComponent(d.id)}`} dir="auto">
-          {d.subject}
+          {simText(d.subject).text}
         </Link>
       </h3>
       <p className="muted">
@@ -504,7 +507,7 @@ export function DispatchPage() {
       </p>
       <div className="page__head">
         <PageTitle icon="campaign" tone="red" id="dispatch-title" dir="auto">
-          {x.subject}
+          {simText(x.subject).text}
         </PageTitle>
         {d.can_close && (
           <button type="button" className="btn" onClick={() => close.mutate()} disabled={close.isPending}>
@@ -531,6 +534,7 @@ export function DispatchPage() {
           {x.created_by_name} · {fmt.dateTime(x.created_at)}
         </span>
         {x.reply_due_at && <span>{t("dispatch.dueOn", { at: fmt.dateTime(x.reply_due_at) })}</span>}
+        {simText(x.subject).sim && <SimBadge />}
       </p>
       {close.isError && <p role="alert" className="field__error">{t(errorMessageKey(close.error))}</p>}
       <section className="card" aria-labelledby={`${fid}-b`}>
