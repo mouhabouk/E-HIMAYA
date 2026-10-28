@@ -12,10 +12,12 @@ import { displayName, isSimulated } from "../lib/crisisText";
 import { useFormat, useGouvernorats } from "../lib/hooks";
 import { initialBoundsFor, TUNISIA_BOUNDS } from "../lib/mapStyle";
 import { isIssuer } from "../lib/roles";
+import { DEFAULT_QUERY, registerKeys } from "../lib/register";
+import { DocumentRefs } from "../components/RegisterBits";
 
 const CommandMap = lazy(() => import("../components/crisis/CommandMap").then((m) => ({ default: m.CommandMap })));
 
-type Tab = "decisions" | "sitreps" | "archive";
+type Tab = "decisions" | "plans" | "sitreps" | "archive";
 
 export function CommandPage() {
   const { t } = useTranslation();
@@ -32,6 +34,11 @@ export function CommandPage() {
     queryKey: crisisKeys.boundaries,
     queryFn: ({ signal }) => api.crisisBoundaries(signal),
     staleTime: Infinity,
+  });
+  const plans = useQuery({
+    queryKey: registerKeys.latest,
+    queryFn: ({ signal }) => api.registerSearch({ ...DEFAULT_QUERY, sort: "newest", limit: 12 }, signal),
+    enabled: tab === "plans",
   });
   const o = overview.data;
   // The reference list's name in the page language, else the name the API gave.
@@ -226,7 +233,7 @@ export function CommandPage() {
 
       <section className="ops-bottom" aria-label={t("crisis.command.follow")}>
         <div role="tablist" className="ops-tabs" aria-label={t("crisis.command.follow")}>
-          {(["decisions", "sitreps", "archive"] as const).map((k) => (
+          {(["decisions", "plans", "sitreps", "archive"] as const).map((k) => (
             <button key={k} type="button" role="tab" aria-selected={tab === k} className="ops-tab" onClick={() => setTab(k)}>
               {t(`crisis.command.tab.${k}`)}
             </button>
@@ -243,6 +250,16 @@ export function CommandPage() {
                 ))}
               </ul>
             ))}
+          {tab === "plans" && (
+            <>
+              {plans.isLoading && <Loading />}
+              {plans.data && plans.data.items.length === 0 && <p className="ops-empty">{t("register.command.none")}</p>}
+              {plans.data && plans.data.items.length > 0 && <DocumentRefs items={plans.data.items} />}
+              <p>
+                <Link to="/register">{t("register.command.all")}</Link>
+              </p>
+            </>
+          )}
           {tab === "sitreps" &&
             (o.sitreps.length === 0 ? (
               <p className="ops-empty">{t("crisis.sitrep.none")}</p>

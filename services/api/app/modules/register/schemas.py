@@ -278,6 +278,8 @@ class DispatchDetail(BaseModel):
     can_reply: bool
     can_close: bool
     can_attach: bool
+    # The caller's side: the centre (every thread) or a gouvernorat (its own thread).
+    viewer_side: Literal["centre", "regional"]
     # The reply just written (its files follow).
     reply_id: str | None = None
 

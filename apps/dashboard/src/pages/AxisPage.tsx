@@ -8,13 +8,15 @@ import { Bars, Clock, DirectiveItem, FigureTiles, LevelPill, Panel, SimBadge } f
 import { useServices } from "../context/services";
 import { errorMessageKey } from "../lib/api";
 import { areaBounds, AXIS_LEVELS, crisisKeys, hoursUntil, type Axis, type AxisDetail } from "../lib/crisis";
+import { DEFAULT_QUERY, registerKeys } from "../lib/register";
+import { DocumentRefs } from "../components/RegisterBits";
 import { displayName, isSimulated } from "../lib/crisisText";
 import { useFormat, useGouvernorats } from "../lib/hooks";
 import { initialBoundsFor } from "../lib/mapStyle";
 
 const CommandMap = lazy(() => import("../components/crisis/CommandMap").then((m) => ({ default: m.CommandMap })));
 
-type Tab = "decisions" | "sitreps" | "timeline";
+type Tab = "decisions" | "documents" | "sitreps" | "timeline";
 
 function useInvalidate() {
   const qc = useQueryClient();
@@ -183,6 +185,81 @@ function Commander({ axis }: { axis: Axis }) {
   );
 }
 
+/** The plan of the axis: a plan of the register in force (phase L3b), else the free text of L3. */
+function PlanBlock({ axis }: { axis: Axis }) {
+  const { t } = useTranslation();
+  const { api } = useServices();
+  const done = useInvalidate();
+  const id = useId();
+  const [picking, setPicking] = useState(false);
+  const [choice, setChoice] = useState("");
+  const query = { ...DEFAULT_QUERY, kinds: ["plan" as const], gouvernorat: null, limit: 50, sort: "newest" as const };
+  const plans = useQuery({
+    queryKey: registerKeys.plans(axis.gouvernorat_code),
+    queryFn: ({ signal }) => api.registerSearch(query, signal),
+    enabled: picking,
+  });
+  const save = useMutation({
+    mutationFn: (clear: boolean) =>
+      api.updateAxis(axis.id, clear ? { version: axis.version, clear_plan_document: true } : { version: axis.version, plan_document_id: choice }),
+    onSuccess: () => (setPicking(false), done()),
+  });
+  const doc = axis.plan_document;
+  return (
+    <div className="ops-plan">
+      {doc ? (
+        <p>
+          <span className="muted">{t("register.axis.plan")} </span>
+          <Link to={`/register/${encodeURIComponent(doc.id)}`} dir="auto">
+            {doc.title}
+          </Link>
+          {doc.reference && <span className="muted"> · {doc.reference}</span>}
+        </p>
+      ) : (
+        axis.plan && <p>{axis.plan}</p>
+      )}
+      {axis.can_manage && axis.status === "open" && !picking && (
+        <button type="button" className="btn btn--small btn--ghost" onClick={() => setPicking(true)}>
+          {doc ? t("register.axis.changePlan") : t("register.axis.pickPlan")}
+        </button>
+      )}
+      {picking && (
+        <form
+          className="directive__actions"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (choice) save.mutate(false);
+          }}
+        >
+          <label htmlFor={`${id}-p`} className="visually-hidden">
+            {t("register.axis.pickPlan")}
+          </label>
+          <select id={`${id}-p`} value={choice} onChange={(e) => setChoice(e.target.value)}>
+            <option value="">{plans.isLoading ? t("common.loading") : "—"}</option>
+            {plans.data?.items.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.title}
+              </option>
+            ))}
+          </select>
+          <button type="submit" className="btn btn--small btn--primary" disabled={!choice || save.isPending}>
+            {t("register.axis.setPlan")}
+          </button>
+          {doc && (
+            <button type="button" className="btn btn--small btn--ghost" onClick={() => save.mutate(true)} disabled={save.isPending}>
+              {t("register.axis.clearPlan")}
+            </button>
+          )}
+          <button type="button" className="btn btn--small btn--ghost" onClick={() => setPicking(false)}>
+            {t("common.cancel")}
+          </button>
+        </form>
+      )}
+      {save.isError && <p role="alert" className="field__error">{t(errorMessageKey(save.error))}</p>}
+    </div>
+  );
+}
+
 function Sitreps({ d }: { d: AxisDetail }) {
   const { t } = useTranslation();
   const fmt = useFormat();
@@ -312,7 +389,7 @@ export function AxisPage() {
       <div className="ops-side ops-side--start">
         <Panel title={t("crisis.axis.situation")}>
           <FigureTiles f={f} />
-          {a.plan && <p className="ops-plan">{a.plan}</p>}
+          <PlanBlock axis={a} />
           {a.can_command && <Commander axis={a} />}
         </Panel>
         {a.status === "open" && a.gouvernorat_code !== null && <Suggestions axis={a} />}
@@ -388,7 +465,7 @@ export function AxisPage() {
 
       <section className="ops-bottom" aria-label={t("crisis.command.follow")}>
         <div role="tablist" className="ops-tabs" aria-label={t("crisis.command.follow")}>
-          {(["decisions", "sitreps", "timeline"] as const).map((k) => (
+          {(["decisions", "documents", "sitreps", "timeline"] as const).map((k) => (
             <button key={k} type="button" role="tab" aria-selected={tab === k} className="ops-tab" onClick={() => setTab(k)}>
               {t(`crisis.command.tab.${k}`)}
             </button>
@@ -404,6 +481,12 @@ export function AxisPage() {
                   <DirectiveItem key={x.id} d={x} />
                 ))}
               </ul>
+            ))}
+          {tab === "documents" &&
+            ((d.documents ?? []).length === 0 ? (
+              <p className="ops-empty">{t("register.axis.noDocuments")}</p>
+            ) : (
+              <DocumentRefs items={d.documents ?? []} />
             ))}
           {tab === "sitreps" && <Sitreps d={d} />}
           {tab === "timeline" && (

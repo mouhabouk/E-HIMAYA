@@ -82,6 +82,18 @@ export interface Axis {
   can_manage: boolean;
   can_command: boolean;
   can_issue: boolean;
+  /** The plan in force on the axis, a document of the register (phase L3b). */
+  plan_document?: DocRef | null;
+}
+
+/** A document of the register (phase L3b) as an axis shows it. */
+export interface DocRef {
+  id: string;
+  number: string;
+  reference: string;
+  title: string;
+  kind: string;
+  status: "draft" | "in_force" | "expired" | "repealed";
 }
 
 export interface AxisIncident {
@@ -188,6 +200,7 @@ export interface AxisDetail {
   directives: Directive[];
   sitreps: Sitrep[];
   timeline: AxisEvent[];
+  documents?: DocRef[];
 }
 
 export interface DeclarationRequest {
@@ -285,7 +298,18 @@ export function crisisApi(api: ApiClient) {
       api.request<{ items: Axis[] }>(`${C}/axes`, { query: { status }, signal }).then((b) => b.items),
     crisisAxis: (id: string, signal?: AbortSignal) => api.request<AxisDetail>(axis(id), { signal }),
     openAxis: (body: AxisBody) => api.request<Axis>(`${C}/axes`, { method: "POST", body }),
-    updateAxis: (id: string, body: { version: number; level?: number; plan?: string; area?: Area; reason?: string }) =>
+    updateAxis: (
+      id: string,
+      body: {
+        version: number;
+        level?: number;
+        plan?: string;
+        area?: Area;
+        reason?: string;
+        plan_document_id?: string;
+        clear_plan_document?: boolean;
+      },
+    ) =>
       api.request<Axis>(axis(id), { method: "PATCH", body }),
     escalateAxis: (id: string, gouvernorats: number[], reason: string) =>
       api.request<Axis>(`${axis(id)}/escalate`, { method: "POST", body: { gouvernorats, reason } }),

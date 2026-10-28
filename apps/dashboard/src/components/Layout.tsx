@@ -17,6 +17,7 @@ import {
   canOpenProgrammes,
   canOpenAxes,
   canOpenCommand,
+  canOpenRegister,
   canOpenLayers,
   canManageAccounts,
   canOpenCrew,
@@ -375,6 +376,16 @@ export function Layout() {
           {canOpenAxes(identity.roles) && (
             <NavItem to="/axes" icon="warning" tone="red">
               {t("nav.axes")}
+            </NavItem>
+          )}
+          {canOpenRegister(identity.roles) && (
+            <NavItem to="/register" end icon="folderOpen" tone="navy">
+              {t("nav.register")}
+            </NavItem>
+          )}
+          {canOpenRegister(identity.roles) && (
+            <NavItem to="/register/dispatches" icon="campaign" tone="red">
+              {t("nav.dispatches")}
             </NavItem>
           )}
           {canOpenProgrammes(identity.roles) && (

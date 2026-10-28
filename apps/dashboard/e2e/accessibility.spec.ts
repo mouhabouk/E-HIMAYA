@@ -5,6 +5,7 @@
  */
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
+import { DIRECTIVE_ALL_DETAIL, DISPATCH_PAGE, PLAN_DETAIL, REVISIONS, SEARCH } from "../src/test/registerData";
 import { JENDOUBA_AXIS, NABEUL_AXIS, NABEUL_DETAIL, overview, REQUEST, SOUSSE_AXIS, SUGGESTIONS } from "../src/test/crisisData";
 import { API, baseMock, commonAnswer, json, signIn } from "./phase7Helpers";
 
@@ -29,6 +30,11 @@ const SCREENS: { path: string; ready: string }[] = [
   { path: "/command", ready: "main .ops-topbar" },
   { path: "/axes", ready: "main .axis-grid li" },
   { path: "/axes/ax-nabeul", ready: "main .ops-topbar" },
+  // Phase L3b: the register of plans and recommendations, and the directives with their replies.
+  { path: "/register", ready: "main .register-card" },
+  { path: "/register/reg-plan", ready: "main .recommendations" },
+  { path: "/register/dispatches", ready: "main .dispatch-card" },
+  { path: "/register/dispatches/dsp-all", ready: "main .thread" },
 ];
 
 const PAGE = { items: [], next_cursor: null, total: 0 };
@@ -162,6 +168,12 @@ async function mockApi(page: Page): Promise<string[]> {
     if (pathname === "/api/v1/staff/crisis/requests") return json(route, { items: [REQUEST] });
     if (pathname === "/api/v1/staff/crisis/axes/ax-nabeul") return json(route, NABEUL_DETAIL);
     if (pathname === "/api/v1/staff/crisis/axes/ax-nabeul/suggestions") return json(route, { items: SUGGESTIONS });
+    // Register of plans and recommendations, directives and replies (phase L3b), [SIM] data.
+    if (pathname === "/api/v1/staff/register/documents") return json(route, SEARCH);
+    if (pathname === "/api/v1/staff/register/documents/reg-plan") return json(route, PLAN_DETAIL);
+    if (pathname === "/api/v1/staff/register/documents/reg-plan/revisions") return json(route, REVISIONS);
+    if (pathname === "/api/v1/staff/register/dispatches") return json(route, DISPATCH_PAGE);
+    if (pathname === "/api/v1/staff/register/dispatches/dsp-all") return json(route, DIRECTIVE_ALL_DETAIL);
     unanswered.push(pathname);
     return json(route, PAGE);
   });

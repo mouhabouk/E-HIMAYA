@@ -366,11 +366,12 @@ async def detail(session: AsyncSession, principal: Principal, d: Dispatch) -> sc
         threads=[
             schemas.ThreadOut(gouvernorat_code=code, gouvernorat_name=names.get(code), replies=items)
             for code, items in sorted(threads.items(), key=lambda kv: (not kv[1], kv[0]))
-            if items or not principal.is_national
+            if items or not principal.is_national or d.kind == "notice"
         ],
         can_reply=can_reply(principal, d),
         can_close=can_close(principal, d),
         can_attach=d.status == "open" and d.created_by == actor,
+        viewer_side=_side(principal),
     )
 
 

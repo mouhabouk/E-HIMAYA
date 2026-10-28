@@ -45,7 +45,9 @@
     "coastal": "Coastal safety",
     "programmes": "Seasonal programmes",
     "command": "Command",
-    "axes": "Crisis axes"
+    "axes": "Crisis axes",
+    "register": "Plans and recommendations",
+    "dispatches": "Directives and replies"
   },
   "header": {
     "scope": "Geographic scope",
@@ -2995,7 +2997,8 @@
       "incident": "Incident",
       "report": "Citizen report",
       "transcript": "Transcript",
-      "procedure": "Procedure"
+      "procedure": "Procedure",
+      "register": "Plans and instructions"
     },
     "results": "Results",
     "count": "Results shown: {{n}}",
@@ -3044,7 +3047,8 @@
         "audio": "Audio",
         "recording": "Recording",
         "document": "Document"
-      }
+      },
+      "openRegister": "Open the document in the register"
     }
   },
   "rewards": {
@@ -5015,7 +5019,9 @@
         "decisions": "Decisions and recommendations",
         "sitreps": "Situation reports",
         "archive": "Archive",
-        "timeline": "Timeline"
+        "timeline": "Timeline",
+        "documents": "Documents",
+        "plans": "Plans and recommendations"
       }
     },
     "axes": {
@@ -5179,5 +5185,283 @@
       "sitrep_drafted": "Report drafted",
       "sitrep_sent": "Report sent"
     }
+  },
+  "register": {
+    "title": "Register of plans and recommendations",
+    "intro": "Plans, decisions, memos, circulars, standing and temporary instructions, central and regional, with their references, dates in force and key recommendations.",
+    "new": "Record a document",
+    "back": "← Register of plans and recommendations",
+    "edit": "Edit",
+    "deleteDraft": "Delete draft",
+    "issuedOn": "issued {{date}}",
+    "hasFile": "file attached",
+    "recommendationsOpen": "open recommendations {{open}} of {{n}}",
+    "fromAxis": "from a crisis axis",
+    "sourceAxisSigned": "decision or recommendation of an axis, electronically signed",
+    "sourceManual": "recorded manually",
+    "facts": "Record",
+    "text": "Summary and text",
+    "noText": "No summary or text.",
+    "axes": "Linked crisis axes",
+    "repealedNote": "Repealed: {{reason}}",
+    "openRepealing": "Open the repealing document",
+    "validity": {
+      "since": "in force since {{from}}",
+      "between": "from {{from}} to {{to}}"
+    },
+    "kind": {
+      "plan": "Plan",
+      "decision": "Decision",
+      "memo": "Memo",
+      "circular": "Circular",
+      "standing_instruction": "Standing instruction",
+      "temporary_instruction": "Temporary instruction",
+      "recommendation": "Recommendation",
+      "minutes": "Minutes",
+      "other": "Other"
+    },
+    "level": {
+      "central": "Central",
+      "regional": "Regional"
+    },
+    "status": {
+      "in_force": "In force",
+      "draft": "Draft",
+      "expired": "Expired",
+      "repealed": "Repealed"
+    },
+    "access": {
+      "all": "All staff",
+      "gouvernorat": "Gouvernorat rooms",
+      "command": "Command",
+      "restricted": "Restricted"
+    },
+    "topic": {
+      "floods": "Floods",
+      "forest_fires": "Forest fires",
+      "beaches": "Beaches",
+      "hazardous_materials": "Hazardous materials",
+      "establishments": "Establishments",
+      "health": "Health",
+      "transport": "Transport",
+      "earthquakes": "Earthquakes",
+      "storms": "Storms",
+      "civil_protection": "Civil protection",
+      "public_information": "Public information",
+      "other": "Other"
+    },
+    "field": {
+      "kind": "Type",
+      "level": "Level",
+      "gouvernorat": "Gouvernorat",
+      "access": "Access",
+      "title": "Title",
+      "reference": "Official reference",
+      "referencePlaceholder": "Decision of the Governor of Nabeul No. 27 of 2026",
+      "issuer": "Issued by",
+      "issuerPlaceholder": "Governor, director general, regional committee…",
+      "signatory": "Signatory",
+      "issuedOn": "Issue date",
+      "effectiveFrom": "In force from",
+      "effectiveTo": "End date",
+      "required": "required",
+      "topics": "Topics",
+      "topic": "Topic",
+      "summary": "Summary",
+      "body": "Text",
+      "bodyHint": "Type the text or its key passages: the search covers the title, reference, summary and text.",
+      "status": "Status",
+      "validity": "In force",
+      "source": "Source",
+      "updated": "Last change"
+    },
+    "form": {
+      "new": "Record a document in the register",
+      "edit": "Edit {{number}}",
+      "reason": "Reason for the change",
+      "publish": "Record and publish",
+      "save": "Save a new version",
+      "saveDraft": "Save as draft",
+      "incomplete": "Complete the marked fields.",
+      "datesOutOfOrder": "The end date is before the start date."
+    },
+    "search": {
+      "label": "Search the register",
+      "placeholder": "Words from the title, reference or text…",
+      "sort": "Sort",
+      "sortBy": {
+        "relevance": "Relevance",
+        "newest": "Newest",
+        "oldest": "Oldest"
+      },
+      "advanced": "Advanced search",
+      "anyGouvernorat": "All gouvernorats",
+      "anyTopic": "All topics",
+      "dateField": "Period on",
+      "byIssued": "issue date",
+      "byEffective": "date in force",
+      "from": "From",
+      "to": "To",
+      "inForceOn": "In force on",
+      "withFile": "With a file only",
+      "results": "Results",
+      "count": "{{n}} document(s)",
+      "inForceOnNote": "what was in force on {{date}}",
+      "none": "No document matches.",
+      "facets": "Filter by status, level and type"
+    },
+    "file": {
+      "title": "File",
+      "none": "No file attached.",
+      "sha": "SHA-256 fingerprint:",
+      "open": "Open the file",
+      "upload": "Attach a file",
+      "replace": "Replace the file",
+      "allowed": "PDF, Word or image, up to 20 MB"
+    },
+    "rec": {
+      "title": "Key recommendations ({{open}} open of {{n}})",
+      "none": "No recommendations.",
+      "due": "due {{date}}",
+      "noDue": "no deadline",
+      "overdue": "overdue",
+      "status": {
+        "proposed": "Proposed",
+        "in_progress": "In progress",
+        "done": "Done",
+        "dropped": "Dropped"
+      },
+      "changeStatus": "Status of recommendation {{n}}",
+      "reason": "Reason for dropping",
+      "apply": "Update",
+      "body": "Recommendation",
+      "responsible": "Responsible",
+      "dueOn": "Deadline",
+      "add": "Add a recommendation"
+    },
+    "links": {
+      "title": "Links to other documents",
+      "none": "No links.",
+      "find": "Find a document",
+      "document": "Document",
+      "relation": "Link",
+      "add": "Link",
+      "remove": "Unlink",
+      "repealsHint": "Repeal is final: the other document becomes repealed by this one.",
+      "rel": {
+        "repeals": {
+          "out": "repeals",
+          "in": "repealed by"
+        },
+        "amends": {
+          "out": "amends",
+          "in": "amended by"
+        },
+        "complements": {
+          "out": "complements",
+          "in": "complemented by"
+        }
+      }
+    },
+    "revisions": {
+      "title": "Versions",
+      "version": "version {{n}}",
+      "change": {
+        "created": "recorded",
+        "updated": "changed",
+        "repealed": "repealed",
+        "file": "file",
+        "recorded_from_axis": "recorded from an axis"
+      }
+    },
+    "repeal": {
+      "action": "Repeal",
+      "reason": "Reason for repeal",
+      "hint": "Repeal is final and stays in the versions and the audit log.",
+      "confirm": "Confirm repeal"
+    },
+    "axis": {
+      "plan": "Plan activated:",
+      "pickPlan": "Choose the plan from the register",
+      "changePlan": "Change plan",
+      "setPlan": "Set",
+      "clearPlan": "Remove",
+      "noDocuments": "No documents linked to the axis."
+    },
+    "command": {
+      "none": "No plan or recommendation in force in your scope.",
+      "all": "Whole register"
+    }
+  },
+  "dispatch": {
+    "title": "Directives and replies",
+    "intro": "Directives of the centre to the gouvernorats (to all or to one) and immediate notices of the regional rooms, with one thread of replies per gouvernorat that only it and the centre read.",
+    "newDirective": "New directive",
+    "newNotice": "Immediate notice",
+    "back": "← Directives and replies",
+    "kind": {
+      "directive": "Directive",
+      "notice": "Notice"
+    },
+    "urgency": {
+      "normal": "Normal",
+      "urgent": "Urgent",
+      "flash": "Immediate"
+    },
+    "urgencyLabel": "Priority",
+    "audience": "Recipients",
+    "audienceOf": {
+      "all": "General, every gouvernorat",
+      "targeted": "For one or more gouvernorats"
+    },
+    "gouvernorats": "Gouvernorats concerned",
+    "dueAt": "Reply due by",
+    "subject": "Subject",
+    "body": "Text",
+    "attach": "Attach files",
+    "attachHint": "Word, Excel, PowerPoint, PDF, image or text; 20 MB per file, 10 files",
+    "removeFile": "Remove {{name}}",
+    "replyRequired": "Reply required (otherwise for information)",
+    "incomplete": "Fill in the subject, write a text or attach a file, and pick the gouvernorats.",
+    "sendDirective": "Send the directive",
+    "sendNotice": "Send the notice",
+    "unread": "New",
+    "closed": "Closed",
+    "open": "Open",
+    "overdue": "Overdue",
+    "fromGouvernorat": "from {{name}}",
+    "toCount": "to {{n}} gouvernorat(s)",
+    "files": "{{n}} file(s)",
+    "repliedOf": "{{replied}} of {{n}} replied",
+    "youReplied": "Replied",
+    "awaitingYou": "Awaiting your reply",
+    "forInfo": "For information",
+    "box": "Box",
+    "boxOf": {
+      "inbox": "Inbox",
+      "sent": "Sent",
+      "all": "All"
+    },
+    "search": "Search the subject and text",
+    "any": "All",
+    "state": "State",
+    "count": "{{n}} message(s)",
+    "none": "No messages.",
+    "sendReply": "Send",
+    "threadOf": "Thread of {{name}}",
+    "noReply": "No reply yet.",
+    "centre": "Central room",
+    "replyTo": "Reply to {{name}}",
+    "yourReply": "Your reply",
+    "close": "Close",
+    "dueOn": "reply due {{at}}",
+    "text": "Text and attachments",
+    "noText": "No text; see the attachments.",
+    "follow": "Follow-up: {{replied}} replied, {{seen}} read of {{n}}",
+    "seen": "Read",
+    "replied": "Replied",
+    "repliesN": "{{n}} reply(ies)",
+    "replies": "Replies",
+    "writeTo": "Write to a gouvernorat that has not replied"
   }
 }

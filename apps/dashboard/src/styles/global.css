@@ -6160,3 +6160,215 @@ button.nav-card:hover {
     animation: none;
   }
 }
+
+/* ---------------------------------------------------------------- register of plans and recommendations (L3b) */
+.register-card {
+  border-inline-start: 4px solid var(--tone-green);
+}
+.register-card--draft {
+  border-inline-start-color: var(--border);
+}
+.register-card--expired {
+  border-inline-start-color: var(--tone-amber);
+}
+.register-card--repealed {
+  border-inline-start-color: var(--tone-red);
+  opacity: 0.85;
+}
+.register-card h3 {
+  margin-block: 0.35rem 0.15rem;
+  font-size: 1.05rem;
+}
+.register-card__ref {
+  margin: 0;
+  font-weight: 600;
+  color: var(--text);
+}
+.register-card__summary {
+  margin: 0.35rem 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.register-card__foot {
+  margin: 0.35rem 0 0;
+  font-size: 0.875rem;
+}
+.register-card__no,
+.register-doc__meta bdi {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+}
+.register-advanced {
+  margin-block-start: 0.75rem;
+  padding-block-start: 0.75rem;
+  border-block-start: 1px dashed var(--border);
+}
+.register-form .chips,
+.ops-form .chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+}
+.register-doc__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 1rem;
+  margin-block: 1rem;
+}
+@media (max-width: 900px) {
+  .register-doc__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.register-doc > .card + .card {
+  margin-block-start: 1rem;
+}
+.register-doc__summary {
+  font-weight: 600;
+}
+.register-sha {
+  font-size: 0.75rem;
+  overflow-wrap: anywhere;
+}
+.doc-refs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.doc-refs li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.recommendations {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.recommendation {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr) auto;
+  gap: 0.5rem 0.75rem;
+  align-items: start;
+  padding: 0.6rem 0;
+  border-block-end: 1px solid var(--border);
+}
+.recommendation__no {
+  display: grid;
+  place-items: center;
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  border-radius: 50%;
+  background: var(--tone-navy-tint);
+  color: var(--tone-navy-ink);
+  font-weight: 700;
+}
+.recommendation__body p {
+  margin: 0;
+}
+.recommendation__late {
+  color: var(--error-text);
+}
+.recommendation__edit {
+  grid-column: 2 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+.register-rec-form,
+.register-link-form {
+  margin-block-start: 0.75rem;
+}
+
+/* Directives and replies */
+.dispatch-card {
+  border-inline-start: 4px solid var(--tone-slate);
+}
+.dispatch-card.is-flash {
+  border-inline-start-color: var(--tone-red);
+}
+.dispatch-card.is-unread h3 a {
+  font-weight: 800;
+}
+.dispatch-card h3 {
+  margin-block: 0.35rem 0.15rem;
+}
+.dispatch-card p {
+  margin: 0.2rem 0 0;
+}
+.dispatch-page > .card,
+.dispatch-page > .thread {
+  margin-block-start: 1rem;
+}
+.thread h3 {
+  margin-block-start: 0;
+}
+.thread__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.thread__msg {
+  max-inline-size: 85%;
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+.thread__msg--centre {
+  align-self: flex-end;
+  background: var(--tone-navy-tint);
+  border-color: transparent;
+}
+.thread__msg p {
+  margin: 0.2rem 0;
+}
+.thread__head {
+  font-size: 0.875rem;
+}
+.reply-box {
+  margin-block-start: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+.reply-box textarea {
+  inline-size: 100%;
+}
+.attachments,
+.file-picker__list {
+  list-style: none;
+  margin: 0.4rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.attachments li,
+.file-picker__list li {
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 0.875rem;
+}
+.file-picker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.file-picker__list {
+  flex-basis: 100%;
+}

@@ -353,6 +353,19 @@ export const SITREPS: Sitrep[] = [
 ];
 
 NABEUL_DETAIL.directives = DIRECTIVES;
+// Phase L3b: the plan of the axis is a document of the register, and the decisions recorded there are listed.
+NABEUL_AXIS.plan_document = {
+  id: "reg-plan",
+  number: "REG-2026-0027",
+  reference: "قرار والي نابل عدد 27 لسنة 2026",
+  title: "[SIM] المخطط الجهوي للنجدة عند الفيضانات بولاية نابل",
+  kind: "plan",
+  status: "in_force",
+};
+NABEUL_DETAIL.documents = [
+  NABEUL_AXIS.plan_document,
+  { id: "reg-axis", number: "REG-2026-0051", reference: "AX-2026-007 · 2", title: "[SIM] فيضانات نابل، أكتوبر 2026 (AX-2026-007) · 2", kind: "decision", status: "in_force" },
+];
 NABEUL_DETAIL.sitreps = SITREPS;
 NABEUL_DETAIL.timeline = [
   { at: H(0.5), actor_name: "القاعة الجهوية بنابل", kind: "shelter_updated", payload: {} },

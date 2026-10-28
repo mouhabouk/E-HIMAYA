@@ -45,7 +45,9 @@
     "coastal": "السلامة الساحلية",
     "programmes": "البرامج الموسمية",
     "command": "القيادة",
-    "axes": "محاور الأزمات"
+    "axes": "محاور الأزمات",
+    "register": "المخططات والتوصيات",
+    "dispatches": "التوجيهات والردود"
   },
   "header": {
     "scope": "النطاق الجغرافي",
@@ -2995,7 +2997,8 @@
       "incident": "حادثة",
       "report": "بلاغ",
       "transcript": "تفريغ نصي",
-      "procedure": "إجراء"
+      "procedure": "إجراء",
+      "register": "المخططات والتعليمات"
     },
     "results": "النتائج",
     "count": "النتائج المعروضة: {{n}}",
@@ -3044,7 +3047,8 @@
         "audio": "صوت",
         "recording": "تسجيل",
         "document": "وثيقة"
-      }
+      },
+      "openRegister": "فتح الوثيقة في السجل"
     }
   },
   "rewards": {
@@ -5015,7 +5019,9 @@
         "decisions": "القرارات والتوصيات",
         "sitreps": "تقارير الوضع",
         "archive": "الأرشيف",
-        "timeline": "الخط الزمني"
+        "timeline": "الخط الزمني",
+        "documents": "الوثائق",
+        "plans": "المخططات والتوصيات"
       }
     },
     "axes": {
@@ -5179,5 +5185,283 @@
       "sitrep_drafted": "مسودة تقرير وضع",
       "sitrep_sent": "إرسال تقرير وضع"
     }
+  },
+  "register": {
+    "title": "سجل المخططات والتوصيات",
+    "intro": "المخططات والقرارات والمذكرات والمناشير والتعليمات الدائمة والوقتية، مركزيا وجهويا، بمراجعها وتواريخ نفاذها وأهم توصياتها.",
+    "new": "تدوين وثيقة",
+    "back": "← سجل المخططات والتوصيات",
+    "edit": "تعديل",
+    "deleteDraft": "حذف المسودة",
+    "issuedOn": "صادرة في {{date}}",
+    "hasFile": "ملف مرفق",
+    "recommendationsOpen": "توصيات مفتوحة {{open}} من {{n}}",
+    "fromAxis": "من محور أزمة",
+    "sourceAxisSigned": "قرار أو توصية محور، موقّع إلكترونيا",
+    "sourceManual": "مدوّنة يدويا",
+    "facts": "البطاقة",
+    "text": "الملخص والنص",
+    "noText": "لا ملخص ولا نص.",
+    "axes": "محاور الأزمات المرتبطة",
+    "repealedNote": "وثيقة ملغاة: {{reason}}",
+    "openRepealing": "فتح الوثيقة الملغية",
+    "validity": {
+      "since": "نافذة منذ {{from}}",
+      "between": "من {{from}} إلى {{to}}"
+    },
+    "kind": {
+      "plan": "مخطط",
+      "decision": "قرار",
+      "memo": "مذكرة",
+      "circular": "منشور",
+      "standing_instruction": "تعليمة دائمة",
+      "temporary_instruction": "تعليمة وقتية",
+      "recommendation": "توصية",
+      "minutes": "محضر",
+      "other": "أخرى"
+    },
+    "level": {
+      "central": "مركزي",
+      "regional": "جهوي"
+    },
+    "status": {
+      "in_force": "نافذة",
+      "draft": "مسودة",
+      "expired": "منتهية",
+      "repealed": "ملغاة"
+    },
+    "access": {
+      "all": "كل الأعوان",
+      "gouvernorat": "قاعات الولاية",
+      "command": "القيادة",
+      "restricted": "محدود"
+    },
+    "topic": {
+      "floods": "الفيضانات",
+      "forest_fires": "حرائق الغابات",
+      "beaches": "الشواطئ",
+      "hazardous_materials": "المواد الخطرة",
+      "establishments": "المؤسسات",
+      "health": "الصحة",
+      "transport": "النقل",
+      "earthquakes": "الزلازل",
+      "storms": "العواصف",
+      "civil_protection": "الحماية المدنية",
+      "public_information": "إعلام العموم",
+      "other": "أخرى"
+    },
+    "field": {
+      "kind": "النوع",
+      "level": "المستوى",
+      "gouvernorat": "الولاية",
+      "access": "الاطلاع",
+      "title": "العنوان",
+      "reference": "المرجع الرسمي",
+      "referencePlaceholder": "قرار والي نابل عدد 27 لسنة 2026",
+      "issuer": "الجهة المصدرة",
+      "issuerPlaceholder": "الوالي، المدير العام، اللجنة الجهوية…",
+      "signatory": "الموقّع",
+      "issuedOn": "تاريخ الإصدار",
+      "effectiveFrom": "تاريخ النفاذ",
+      "effectiveTo": "تاريخ الانتهاء",
+      "required": "إلزامي",
+      "topics": "المواضيع",
+      "topic": "الموضوع",
+      "summary": "الملخص",
+      "body": "النص",
+      "bodyHint": "اكتب هنا النص أو الفقرات المهمة: البحث يجري على العنوان والمرجع والملخص والنص.",
+      "status": "الحالة",
+      "validity": "النفاذ",
+      "source": "المصدر",
+      "updated": "آخر تعديل"
+    },
+    "form": {
+      "new": "تدوين وثيقة في السجل",
+      "edit": "تعديل {{number}}",
+      "reason": "سبب التعديل",
+      "publish": "تدوين ونشر",
+      "save": "حفظ نسخة جديدة",
+      "saveDraft": "حفظ كمسودة",
+      "incomplete": "أكمل الحقول المعلّمة.",
+      "datesOutOfOrder": "تاريخ الانتهاء قبل تاريخ النفاذ."
+    },
+    "search": {
+      "label": "بحث في السجل",
+      "placeholder": "كلمات من العنوان أو المرجع أو النص…",
+      "sort": "الترتيب",
+      "sortBy": {
+        "relevance": "الأقرب",
+        "newest": "الأحدث",
+        "oldest": "الأقدم"
+      },
+      "advanced": "بحث متقدم",
+      "anyGouvernorat": "كل الولايات",
+      "anyTopic": "كل المواضيع",
+      "dateField": "الفترة على",
+      "byIssued": "تاريخ الإصدار",
+      "byEffective": "تاريخ النفاذ",
+      "from": "من",
+      "to": "إلى",
+      "inForceOn": "نافذة في تاريخ",
+      "withFile": "بملف مرفق فقط",
+      "results": "النتائج",
+      "count": "{{n}} وثيقة",
+      "inForceOnNote": "ما كان نافذا يوم {{date}}",
+      "none": "لا وثيقة توافق البحث.",
+      "facets": "تصفية حسب الحالة والمستوى والنوع"
+    },
+    "file": {
+      "title": "الملف",
+      "none": "لا ملف مرفق.",
+      "sha": "البصمة SHA-256:",
+      "open": "فتح الملف",
+      "upload": "إرفاق ملف",
+      "replace": "استبدال الملف",
+      "allowed": "PDF أو Word أو صورة، حتى 20 م.ب"
+    },
+    "rec": {
+      "title": "أهم التوصيات ({{open}} مفتوحة من {{n}})",
+      "none": "لا توصيات مدوّنة.",
+      "due": "الأجل {{date}}",
+      "noDue": "دون أجل",
+      "overdue": "متأخرة",
+      "status": {
+        "proposed": "مقترحة",
+        "in_progress": "قيد الإنجاز",
+        "done": "منجزة",
+        "dropped": "متروكة"
+      },
+      "changeStatus": "حالة التوصية {{n}}",
+      "reason": "سبب الترك",
+      "apply": "تحديث",
+      "body": "التوصية",
+      "responsible": "الجهة المعنية",
+      "dueOn": "الأجل",
+      "add": "إضافة توصية"
+    },
+    "links": {
+      "title": "الصلات بوثائق أخرى",
+      "none": "لا صلات.",
+      "find": "ابحث عن وثيقة",
+      "document": "الوثيقة",
+      "relation": "الصلة",
+      "add": "ربط",
+      "remove": "فك الربط",
+      "repealsHint": "الإلغاء نهائي: تصير الوثيقة الأخرى ملغاة بهذه.",
+      "rel": {
+        "repeals": {
+          "out": "تلغي",
+          "in": "ملغاة بـ"
+        },
+        "amends": {
+          "out": "تعدّل",
+          "in": "معدّلة بـ"
+        },
+        "complements": {
+          "out": "تكمّل",
+          "in": "مكمّلة بـ"
+        }
+      }
+    },
+    "revisions": {
+      "title": "النسخ",
+      "version": "النسخة {{n}}",
+      "change": {
+        "created": "تدوين",
+        "updated": "تعديل",
+        "repealed": "إلغاء",
+        "file": "ملف",
+        "recorded_from_axis": "تدوين آلي من محور"
+      }
+    },
+    "repeal": {
+      "action": "إلغاء الوثيقة",
+      "reason": "سبب الإلغاء",
+      "hint": "الإلغاء نهائي ويبقى في النسخ وفي سجل التدقيق.",
+      "confirm": "تأكيد الإلغاء"
+    },
+    "axis": {
+      "plan": "المخطط المفعّل:",
+      "pickPlan": "اختيار المخطط من السجل",
+      "changePlan": "تغيير المخطط",
+      "setPlan": "اعتماد",
+      "clearPlan": "إزالة",
+      "noDocuments": "لا وثائق مرتبطة بالمحور."
+    },
+    "command": {
+      "none": "لا مخططات ولا توصيات نافذة في نطاقك.",
+      "all": "كل السجل"
+    }
+  },
+  "dispatch": {
+    "title": "التوجيهات والردود",
+    "intro": "توجيهات المركزي نحو الولايات (عامة للكل أو خاصة بولاية) والإشعارات الفورية من القاعات الجهوية، بخيط ردود لكل ولاية لا يطّلع عليه إلا هي والمركزي.",
+    "newDirective": "توجيه جديد",
+    "newNotice": "إشعار فوري",
+    "back": "← التوجيهات والردود",
+    "kind": {
+      "directive": "توجيه",
+      "notice": "إشعار"
+    },
+    "urgency": {
+      "normal": "عادي",
+      "urgent": "عاجل",
+      "flash": "فوري"
+    },
+    "urgencyLabel": "الأولوية",
+    "audience": "الوجهة",
+    "audienceOf": {
+      "all": "عام لكل الولايات",
+      "targeted": "خاص بولاية أو أكثر"
+    },
+    "gouvernorats": "الولايات المعنية",
+    "dueAt": "أجل الرد",
+    "subject": "الموضوع",
+    "body": "النص",
+    "attach": "إرفاق ملفات",
+    "attachHint": "Word أو Excel أو PowerPoint أو PDF أو صورة أو نص، حتى 20 م.ب للملف و10 ملفات",
+    "removeFile": "إزالة {{name}}",
+    "replyRequired": "الرد مطلوب (وإلا فللعلم)",
+    "incomplete": "أكمل الموضوع، واكتب نصا أو أرفق ملفا، واختر الولايات.",
+    "sendDirective": "إرسال التوجيه",
+    "sendNotice": "رفع الإشعار",
+    "unread": "جديد",
+    "closed": "مغلق",
+    "open": "مفتوح",
+    "overdue": "متأخر",
+    "fromGouvernorat": "من ولاية {{name}}",
+    "toCount": "إلى {{n}} ولاية",
+    "files": "{{n}} ملف",
+    "repliedOf": "ردّت {{replied}} من {{n}}",
+    "youReplied": "تم الرد",
+    "awaitingYou": "بانتظار ردكم",
+    "forInfo": "للعلم",
+    "box": "الصندوق",
+    "boxOf": {
+      "inbox": "الوارد",
+      "sent": "الصادر",
+      "all": "الكل"
+    },
+    "search": "بحث في الموضوع والنص",
+    "any": "الكل",
+    "state": "الحالة",
+    "count": "{{n}} مراسلة",
+    "none": "لا مراسلات.",
+    "sendReply": "إرسال",
+    "threadOf": "خيط ولاية {{name}}",
+    "noReply": "لا ردود بعد.",
+    "centre": "القاعة المركزية",
+    "replyTo": "رد إلى ولاية {{name}}",
+    "yourReply": "ردكم",
+    "close": "إغلاق المراسلة",
+    "dueOn": "أجل الرد {{at}}",
+    "text": "النص والمرفقات",
+    "noText": "لا نص، انظر المرفقات.",
+    "follow": "المتابعة: ردّت {{replied}} واطّلعت {{seen}} من {{n}}",
+    "seen": "اطّلعت",
+    "replied": "ردّت",
+    "repliesN": "{{n}} رد",
+    "replies": "الردود",
+    "writeTo": "مراسلة ولاية لم ترد بعد"
   }
 }

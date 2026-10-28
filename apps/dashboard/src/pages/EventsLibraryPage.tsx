@@ -209,7 +209,10 @@ function Results({ search }: { search: ReturnType<typeof useLibrarySearch> }) {
               {h.category && <span>{t(`category.${h.category}`, { defaultValue: h.category })}</span>}
             </p>
             <h3>
-              <Link to={`/library/items/${encodeURIComponent(h.kind)}/${encodeURIComponent(h.id)}`} dir="auto">
+              <Link
+                to={h.kind === "register" ? `/register/${encodeURIComponent(h.id)}` : `/library/items/${encodeURIComponent(h.kind)}/${encodeURIComponent(h.id)}`}
+                dir="auto"
+              >
                 {h.title || t("events.untitled")}
               </Link>
             </h3>
@@ -547,6 +550,11 @@ export function LibraryItemPage() {
           {item.incident_id && (
             <p>
               <Link to={`/incidents/${encodeURIComponent(item.incident_id)}`}>{t("events.openIncident")}</Link>
+            </p>
+          )}
+          {item.kind === "register" && (
+            <p>
+              <Link to={`/register/${encodeURIComponent(item.id)}`}>{t("events.item.openRegister")}</Link>
             </p>
           )}
           {item.kind === "memory" && (

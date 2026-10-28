@@ -45,7 +45,9 @@
     "coastal": "Sécurité côtière",
     "programmes": "Programmes saisonniers",
     "command": "Commandement",
-    "axes": "Axes de crise"
+    "axes": "Axes de crise",
+    "register": "Plans et recommandations",
+    "dispatches": "Directives et réponses"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -2995,7 +2997,8 @@
       "incident": "Incident",
       "report": "Signalement",
       "transcript": "Transcription",
-      "procedure": "Procédure"
+      "procedure": "Procédure",
+      "register": "Plans et instructions"
     },
     "results": "Résultats",
     "count": "Résultats affichés : {{n}}",
@@ -3044,7 +3047,8 @@
         "audio": "Audio",
         "recording": "Enregistrement",
         "document": "Document"
-      }
+      },
+      "openRegister": "Ouvrir le document dans le registre"
     }
   },
   "rewards": {
@@ -5015,7 +5019,9 @@
         "decisions": "Décisions et recommandations",
         "sitreps": "Points de situation",
         "archive": "Archives",
-        "timeline": "Chronologie"
+        "timeline": "Chronologie",
+        "documents": "Documents",
+        "plans": "Plans et recommandations"
       }
     },
     "axes": {
@@ -5179,5 +5185,283 @@
       "sitrep_drafted": "Brouillon de point",
       "sitrep_sent": "Point envoyé"
     }
+  },
+  "register": {
+    "title": "Registre des plans et recommandations",
+    "intro": "Plans, décisions, notes, circulaires, instructions permanentes et temporaires, centraux et régionaux, avec leurs références, leurs dates d'effet et leurs principales recommandations.",
+    "new": "Enregistrer un document",
+    "back": "← Registre des plans et recommandations",
+    "edit": "Modifier",
+    "deleteDraft": "Supprimer le brouillon",
+    "issuedOn": "émis le {{date}}",
+    "hasFile": "fichier joint",
+    "recommendationsOpen": "recommandations ouvertes {{open}} sur {{n}}",
+    "fromAxis": "d'un axe de crise",
+    "sourceAxisSigned": "décision ou recommandation d'un axe, signée électroniquement",
+    "sourceManual": "saisi manuellement",
+    "facts": "Fiche",
+    "text": "Résumé et texte",
+    "noText": "Ni résumé ni texte.",
+    "axes": "Axes de crise liés",
+    "repealedNote": "Document abrogé : {{reason}}",
+    "openRepealing": "Ouvrir le document abrogeant",
+    "validity": {
+      "since": "en vigueur depuis le {{from}}",
+      "between": "du {{from}} au {{to}}"
+    },
+    "kind": {
+      "plan": "Plan",
+      "decision": "Décision",
+      "memo": "Note",
+      "circular": "Circulaire",
+      "standing_instruction": "Instruction permanente",
+      "temporary_instruction": "Instruction temporaire",
+      "recommendation": "Recommandation",
+      "minutes": "Procès-verbal",
+      "other": "Autre"
+    },
+    "level": {
+      "central": "Central",
+      "regional": "Régional"
+    },
+    "status": {
+      "in_force": "En vigueur",
+      "draft": "Brouillon",
+      "expired": "Expiré",
+      "repealed": "Abrogé"
+    },
+    "access": {
+      "all": "Tous les agents",
+      "gouvernorat": "Salles du gouvernorat",
+      "command": "Commandement",
+      "restricted": "Restreint"
+    },
+    "topic": {
+      "floods": "Inondations",
+      "forest_fires": "Feux de forêt",
+      "beaches": "Plages",
+      "hazardous_materials": "Matières dangereuses",
+      "establishments": "Établissements",
+      "health": "Santé",
+      "transport": "Transport",
+      "earthquakes": "Séismes",
+      "storms": "Tempêtes",
+      "civil_protection": "Protection civile",
+      "public_information": "Information du public",
+      "other": "Autre"
+    },
+    "field": {
+      "kind": "Type",
+      "level": "Niveau",
+      "gouvernorat": "Gouvernorat",
+      "access": "Accès",
+      "title": "Titre",
+      "reference": "Référence officielle",
+      "referencePlaceholder": "Arrêté du gouverneur de Nabeul n° 27 de 2026",
+      "issuer": "Émetteur",
+      "issuerPlaceholder": "Gouverneur, directeur général, comité régional…",
+      "signatory": "Signataire",
+      "issuedOn": "Date d'émission",
+      "effectiveFrom": "Date d'effet",
+      "effectiveTo": "Date de fin",
+      "required": "obligatoire",
+      "topics": "Thèmes",
+      "topic": "Thème",
+      "summary": "Résumé",
+      "body": "Texte",
+      "bodyHint": "Saisissez le texte ou les passages importants : la recherche porte sur le titre, la référence, le résumé et le texte.",
+      "status": "Statut",
+      "validity": "Validité",
+      "source": "Origine",
+      "updated": "Dernière modification"
+    },
+    "form": {
+      "new": "Enregistrer un document au registre",
+      "edit": "Modifier {{number}}",
+      "reason": "Motif de la modification",
+      "publish": "Enregistrer et publier",
+      "save": "Enregistrer une nouvelle version",
+      "saveDraft": "Enregistrer en brouillon",
+      "incomplete": "Complétez les champs signalés.",
+      "datesOutOfOrder": "La date de fin précède la date d'effet."
+    },
+    "search": {
+      "label": "Rechercher dans le registre",
+      "placeholder": "Mots du titre, de la référence ou du texte…",
+      "sort": "Tri",
+      "sortBy": {
+        "relevance": "Pertinence",
+        "newest": "Plus récents",
+        "oldest": "Plus anciens"
+      },
+      "advanced": "Recherche avancée",
+      "anyGouvernorat": "Tous les gouvernorats",
+      "anyTopic": "Tous les thèmes",
+      "dateField": "Période sur",
+      "byIssued": "date d'émission",
+      "byEffective": "date d'effet",
+      "from": "Du",
+      "to": "Au",
+      "inForceOn": "En vigueur le",
+      "withFile": "Avec fichier joint seulement",
+      "results": "Résultats",
+      "count": "{{n}} document(s)",
+      "inForceOnNote": "ce qui était en vigueur le {{date}}",
+      "none": "Aucun document ne correspond.",
+      "facets": "Filtrer par statut, niveau et type"
+    },
+    "file": {
+      "title": "Fichier",
+      "none": "Aucun fichier joint.",
+      "sha": "Empreinte SHA-256 :",
+      "open": "Ouvrir le fichier",
+      "upload": "Joindre un fichier",
+      "replace": "Remplacer le fichier",
+      "allowed": "PDF, Word ou image, 20 Mo au plus"
+    },
+    "rec": {
+      "title": "Principales recommandations ({{open}} ouvertes sur {{n}})",
+      "none": "Aucune recommandation.",
+      "due": "échéance {{date}}",
+      "noDue": "sans échéance",
+      "overdue": "en retard",
+      "status": {
+        "proposed": "Proposée",
+        "in_progress": "En cours",
+        "done": "Réalisée",
+        "dropped": "Abandonnée"
+      },
+      "changeStatus": "Statut de la recommandation {{n}}",
+      "reason": "Motif de l'abandon",
+      "apply": "Mettre à jour",
+      "body": "Recommandation",
+      "responsible": "Responsable",
+      "dueOn": "Échéance",
+      "add": "Ajouter une recommandation"
+    },
+    "links": {
+      "title": "Liens avec d'autres documents",
+      "none": "Aucun lien.",
+      "find": "Chercher un document",
+      "document": "Document",
+      "relation": "Lien",
+      "add": "Lier",
+      "remove": "Délier",
+      "repealsHint": "L'abrogation est définitive : l'autre document devient abrogé par celui-ci.",
+      "rel": {
+        "repeals": {
+          "out": "abroge",
+          "in": "abrogé par"
+        },
+        "amends": {
+          "out": "modifie",
+          "in": "modifié par"
+        },
+        "complements": {
+          "out": "complète",
+          "in": "complété par"
+        }
+      }
+    },
+    "revisions": {
+      "title": "Versions",
+      "version": "version {{n}}",
+      "change": {
+        "created": "enregistrement",
+        "updated": "modification",
+        "repealed": "abrogation",
+        "file": "fichier",
+        "recorded_from_axis": "enregistrement automatique d'un axe"
+      }
+    },
+    "repeal": {
+      "action": "Abroger",
+      "reason": "Motif de l'abrogation",
+      "hint": "L'abrogation est définitive et reste dans les versions et le journal d'audit.",
+      "confirm": "Confirmer l'abrogation"
+    },
+    "axis": {
+      "plan": "Plan activé :",
+      "pickPlan": "Choisir le plan dans le registre",
+      "changePlan": "Changer de plan",
+      "setPlan": "Retenir",
+      "clearPlan": "Retirer",
+      "noDocuments": "Aucun document lié à l'axe."
+    },
+    "command": {
+      "none": "Aucun plan ni recommandation en vigueur dans votre périmètre.",
+      "all": "Tout le registre"
+    }
+  },
+  "dispatch": {
+    "title": "Directives et réponses",
+    "intro": "Directives du centre aux gouvernorats (générales ou propres à un gouvernorat) et avis immédiats des salles régionales, avec un fil de réponses par gouvernorat que seuls ce gouvernorat et le centre lisent.",
+    "newDirective": "Nouvelle directive",
+    "newNotice": "Avis immédiat",
+    "back": "← Directives et réponses",
+    "kind": {
+      "directive": "Directive",
+      "notice": "Avis"
+    },
+    "urgency": {
+      "normal": "Normale",
+      "urgent": "Urgente",
+      "flash": "Immédiate"
+    },
+    "urgencyLabel": "Priorité",
+    "audience": "Destinataires",
+    "audienceOf": {
+      "all": "Générale, tous les gouvernorats",
+      "targeted": "Propre à un ou plusieurs gouvernorats"
+    },
+    "gouvernorats": "Gouvernorats concernés",
+    "dueAt": "Réponse attendue avant",
+    "subject": "Objet",
+    "body": "Texte",
+    "attach": "Joindre des fichiers",
+    "attachHint": "Word, Excel, PowerPoint, PDF, image ou texte ; 20 Mo par fichier, 10 fichiers",
+    "removeFile": "Retirer {{name}}",
+    "replyRequired": "Réponse demandée (sinon pour information)",
+    "incomplete": "Complétez l'objet, écrivez un texte ou joignez un fichier, et choisissez les gouvernorats.",
+    "sendDirective": "Envoyer la directive",
+    "sendNotice": "Envoyer l'avis",
+    "unread": "Nouveau",
+    "closed": "Clos",
+    "open": "Ouvert",
+    "overdue": "En retard",
+    "fromGouvernorat": "du gouvernorat de {{name}}",
+    "toCount": "à {{n}} gouvernorat(s)",
+    "files": "{{n}} fichier(s)",
+    "repliedOf": "{{replied}} réponse(s) sur {{n}}",
+    "youReplied": "Répondu",
+    "awaitingYou": "Votre réponse est attendue",
+    "forInfo": "Pour information",
+    "box": "Boîte",
+    "boxOf": {
+      "inbox": "Reçus",
+      "sent": "Envoyés",
+      "all": "Tous"
+    },
+    "search": "Rechercher dans l'objet et le texte",
+    "any": "Tous",
+    "state": "État",
+    "count": "{{n}} message(s)",
+    "none": "Aucun message.",
+    "sendReply": "Envoyer",
+    "threadOf": "Fil du gouvernorat de {{name}}",
+    "noReply": "Pas encore de réponse.",
+    "centre": "Salle centrale",
+    "replyTo": "Répondre au gouvernorat de {{name}}",
+    "yourReply": "Votre réponse",
+    "close": "Clore",
+    "dueOn": "réponse avant le {{at}}",
+    "text": "Texte et pièces jointes",
+    "noText": "Pas de texte, voir les pièces jointes.",
+    "follow": "Suivi : {{replied}} réponse(s), {{seen}} lu(s) sur {{n}}",
+    "seen": "Lu",
+    "replied": "Réponse",
+    "repliesN": "{{n}} réponse(s)",
+    "replies": "Réponses",
+    "writeTo": "Écrire à un gouvernorat qui n'a pas répondu"
   }
 }

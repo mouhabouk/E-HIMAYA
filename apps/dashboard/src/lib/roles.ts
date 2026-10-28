@@ -610,3 +610,24 @@ export function canOpenCommand(roles: readonly string[]): boolean {
 export function isIssuer(roles: readonly string[]): boolean {
   return roles.includes("governor") || roles.includes("minister");
 }
+
+/**
+ * Register of plans, decisions and instructions (phase L3b, docs/phase-l/design-l3b.md §3). Every staff member who works
+ * with the documents reads them (the API applies the scope and the access level); the national and regional managers
+ * and committees record them, the governor and the minister through their signed decisions only.
+ */
+export const REGISTER_READERS = [
+  "operator",
+  "ops_manager",
+  "field_commander",
+  "local_committee",
+  "central_committee",
+  "content_editor",
+  "sysadmin",
+  "governor",
+  "minister",
+] as const;
+
+export function canOpenRegister(roles: readonly string[]): boolean {
+  return any(REGISTER_READERS, roles);
+}

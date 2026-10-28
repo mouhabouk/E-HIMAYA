@@ -426,7 +426,7 @@ export interface MemoryTransition {
 
 // ---------- §2 events library ----------
 
-export const LIBRARY_KINDS = ["memory", "report_doc", "incident", "report", "transcript", "procedure"] as const;
+export const LIBRARY_KINDS = ["memory", "report_doc", "incident", "report", "transcript", "procedure", "register"] as const;
 export type LibraryKind = (typeof LIBRARY_KINDS)[number];
 
 export interface LibraryHit {
