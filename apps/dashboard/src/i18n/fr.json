@@ -6852,6 +6852,14 @@
       "value": "Valeur",
       "none": "Aucune mesure ces dernières 24 h.",
       "thresholds": "Vigilance dès {{watch}}, alarme dès {{alarm}}."
+    },
+    "map": {
+      "toggle": "Capteurs",
+      "normal": "Capteur : normal",
+      "watch": "Capteur : vigilance",
+      "alarm": "Capteur : alarme",
+      "silent": "Capteur : muet ou arrêté",
+      "noReading": "Aucune mesure"
     }
   }
 }

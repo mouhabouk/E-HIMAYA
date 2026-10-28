@@ -6852,6 +6852,14 @@
       "value": "Value",
       "none": "No reading in the last 24 hours.",
       "thresholds": "Watch from {{watch}}, alarm from {{alarm}}."
+    },
+    "map": {
+      "toggle": "Sensors",
+      "normal": "Sensor: normal",
+      "watch": "Sensor: watch",
+      "alarm": "Sensor: alarm",
+      "silent": "Sensor: silent or off",
+      "noReading": "No reading yet"
     }
   }
 }

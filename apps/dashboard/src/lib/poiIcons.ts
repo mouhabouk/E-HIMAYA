@@ -15,6 +15,11 @@ export const POI_KINDS = [
   "volunteer",
   "stream",
   "stream_alert",
+  // Sensors of the local network (L5b): the level is in the shape and the label too, never colour alone.
+  "sensor",
+  "sensor_watch",
+  "sensor_alarm",
+  "sensor_silent",
   // Map data layers loaded from files (phase B1): the icon and colour come from the layer (lib/layers.ts).
   "place",
   "place_cluster",
@@ -44,6 +49,11 @@ export const POI_ICON_PATHS: Record<PoiKind, string> = {
   stream: "M3 6h12a2 2 0 0 1 2 2v1.5l4-2.5v10l-4-2.5V16a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z",
   // Flame (live stream with a fire or smoke detection).
   stream_alert: "M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-6 0 2 1 3 2 3 0-4-1-6 1-9z",
+  // Gauge (a sensor), the same shape at every level; the marker's frame tells the level.
+  sensor: "M12 4a10 10 0 0 0-10 10c0 2 .6 3.9 1.6 5.5l1.7-1A8 8 0 0 1 4 14a8 8 0 0 1 16 0c0 1.7-.5 3.2-1.3 4.5l1.7 1A10 10 0 0 0 22 14 10 10 0 0 0 12 4zm4.2 4.4-5.1 4.2a2 2 0 1 0 2.4 2.4l2.7-6.6z",
+  sensor_watch: "M12 4a10 10 0 0 0-10 10c0 2 .6 3.9 1.6 5.5l1.7-1A8 8 0 0 1 4 14a8 8 0 0 1 16 0c0 1.7-.5 3.2-1.3 4.5l1.7 1A10 10 0 0 0 22 14 10 10 0 0 0 12 4zm4.2 4.4-5.1 4.2a2 2 0 1 0 2.4 2.4l2.7-6.6z",
+  sensor_alarm: "M12 4a10 10 0 0 0-10 10c0 2 .6 3.9 1.6 5.5l1.7-1A8 8 0 0 1 4 14a8 8 0 0 1 16 0c0 1.7-.5 3.2-1.3 4.5l1.7 1A10 10 0 0 0 22 14 10 10 0 0 0 12 4zm4.2 4.4-5.1 4.2a2 2 0 1 0 2.4 2.4l2.7-6.6z",
+  sensor_silent: "M12 4a10 10 0 0 0-10 10c0 2 .6 3.9 1.6 5.5l1.7-1A8 8 0 0 1 4 14a8 8 0 0 1 16 0c0 1.7-.5 3.2-1.3 4.5l1.7 1A10 10 0 0 0 22 14 10 10 0 0 0 12 4zm4.2 4.4-5.1 4.2a2 2 0 1 0 2.4 2.4l2.7-6.6z",
   // Map pin (a place whose layer icon is unknown); clusters show their count instead.
   place: "M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 4.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5z",
   place_cluster: "M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z",

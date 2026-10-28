@@ -2070,6 +2070,10 @@ button.map-poi {
   --poi-resource: #0f766e;
   --poi-resource-busy: #b45309;
   --poi-volunteer: #7e22ce;
+  --poi-sensor: #15803d;
+  --poi-sensor-watch: #b45309;
+  --poi-sensor-alarm: #b91c1c;
+  --poi-sensor-silent: #64748b;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -2078,6 +2082,10 @@ button.map-poi {
     --poi-resource: #5eead4;
     --poi-resource-busy: #fbbf24;
     --poi-volunteer: #d8b4fe;
+    --poi-sensor: #86efac;
+    --poi-sensor-watch: #fbbf24;
+    --poi-sensor-alarm: #fca5a5;
+    --poi-sensor-silent: #cbd5e1;
   }
 }
 
@@ -2086,6 +2094,10 @@ button.map-poi {
   --poi-resource: #5eead4;
   --poi-resource-busy: #fbbf24;
   --poi-volunteer: #d8b4fe;
+  --poi-sensor: #86efac;
+  --poi-sensor-watch: #fbbf24;
+  --poi-sensor-alarm: #fca5a5;
+  --poi-sensor-silent: #cbd5e1;
 }
 
 /* Every chip also carries its label: colour only reinforces the text. */
@@ -2239,6 +2251,31 @@ button.map-poi {
   border-radius: 50% 50% 50% 0;
   inline-size: 22px;
   block-size: 22px;
+}
+
+/* Sensors (L5b): a square gauge; watch adds a dashed frame, alarm a double ring, silent a faded dotted frame. */
+.map-poi--sensor,
+.map-poi--sensor_watch,
+.map-poi--sensor_alarm,
+.map-poi--sensor_silent {
+  border-radius: 4px;
+}
+.map-poi--sensor {
+  background: var(--poi-sensor);
+}
+.map-poi--sensor_watch {
+  background: var(--poi-sensor-watch);
+  border-style: dashed;
+}
+.map-poi--sensor_alarm {
+  background: var(--poi-sensor-alarm);
+  outline: 3px solid var(--poi-sensor-alarm);
+  outline-offset: 2px;
+}
+.map-poi--sensor_silent {
+  background: var(--poi-sensor-silent);
+  border-style: dotted;
+  opacity: 0.8;
 }
 
 /* ---------- Phase 5: committee, notifications, safety tips ---------- */

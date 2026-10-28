@@ -1,4 +1,4 @@
-import { keepPreviousData, useQuery, type InfiniteData } from "@tanstack/react-query";
+import { keepPreviousData, useQuery, useQueryClient, type InfiniteData } from "@tanstack/react-query";
 import { Suspense, useCallback, useId, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router";
@@ -23,7 +23,8 @@ import { initialBoundsFor } from "../lib/mapStyle";
 import { opsKeys } from "../lib/opsApi";
 import type { Message } from "../lib/opsTypes";
 import { errorMessageKey } from "../lib/api";
-import { canReadOrgs, canReadResources, canUseTelephony } from "../lib/roles";
+import { canOpenSensors, canReadOrgs, canReadResources, canUseTelephony } from "../lib/roles";
+import { sensorKeys, type SensorState } from "../lib/sensors";
 import type { DialBody } from "../lib/telephonyTypes";
 import { queryKeys } from "../lib/staffApi";
 import type { Page, StaffReport } from "../lib/types";
@@ -38,6 +39,15 @@ const RESOURCE_LAYER_KEY = "ehimaya.mapResourceLayer";
 const VOLUNTEER_LAYER_KEY = "ehimaya.mapVolunteerLayer";
 const ALERT_LAYER_KEY = "ehimaya.mapAlertLayer";
 const WEATHER_LAYER_KEY = "ehimaya.mapWeatherLayer";
+const SENSOR_LAYER_KEY = "ehimaya.mapSensorLayer";
+
+const SENSOR_POI: Record<SensorState, MapPoi["kind"]> = {
+  normal: "sensor",
+  watch: "sensor_watch",
+  alarm: "sensor_alarm",
+  silent: "sensor_silent",
+  disabled: "sensor_silent",
+};
 const WEATHER_VIEWS_KEY = "ehimaya.mapWeatherViews";
 
 function storedViews(): WeatherViews {
@@ -119,6 +129,10 @@ export function MapPage() {
   const showResources = resourceLayerAllowed && resourceLayer;
   const [showVolunteers, setVolunteerLayer] = useLayer(VOLUNTEER_LAYER_KEY);
   const [showAlerts, setAlertLayer] = useLayer(ALERT_LAYER_KEY);
+  const sensorLayerAllowed = canOpenSensors(user?.identity.roles ?? []);
+  const [sensorLayer, setSensorLayer] = useLayer(SENSOR_LAYER_KEY);
+  const showSensors = sensorLayerAllowed && sensorLayer;
+  const qc = useQueryClient();
   const gouvernorats = useGouvernorats();
   const basemap = useBasemap();
 
@@ -209,6 +223,13 @@ export function MapPage() {
     queryFn: ({ signal }) => api.activeAlerts(signal),
   });
 
+  // Sensors of the local network (L5b, design-l5 §3.1): few points, the room's own; the API keeps the scope.
+  const sensorsQuery = useQuery({
+    queryKey: sensorKeys.all,
+    enabled: showSensors,
+    queryFn: ({ signal }) => api.sensors(signal),
+  });
+
   // Institutions layer «المؤسسات» (FR-C-10): refetched with the same debounced bbox as the reports.
   const orgsQuery = useQuery({
     queryKey: bbox ? queryKeys.orgsMap(bbox) : ["orgs-map", "pending"],
@@ -241,7 +262,8 @@ export function MapPage() {
   useLiveEvents(
     useCallback((event) => {
       if (event.type === "report.created") setFresh((prev) => new Set(prev).add(event.report.id));
-    }, []),
+      if (event.type === "sensor.reading") void qc.invalidateQueries({ queryKey: sensorKeys.all });
+    }, [qc]),
   );
 
   const reports = useMemo(() => query.data?.pages.flatMap((p) => p.items) ?? [], [query.data]);
@@ -330,8 +352,23 @@ export function MapPage() {
         });
       }
     }
+    if (showSensors) {
+      for (const sn of sensorsQuery.data?.items ?? []) {
+        const value =
+          sn.last_value === null ? t("sensors.map.noReading") : `${fmt.decimal(sn.last_value)} ${t(`sensors.unit.${sn.kind}`)}`;
+        out.push({
+          id: `sensor-${sn.id}`,
+          lon: sn.lon,
+          lat: sn.lat,
+          kind: SENSOR_POI[sn.state],
+          title: `${sn.name}${sn.simulated ? " [SIM]" : ""}`,
+          subtitle: [t(`sensors.kind.${sn.kind}`), t(`sensors.state.${sn.state}`), value].join(" · "),
+          href: "/sensors",
+        });
+      }
+    }
     return out;
-  }, [showResources, resourcesQuery.data, showVolunteers, volunteersQuery.data, lang, t]);
+  }, [showResources, resourcesQuery.data, showVolunteers, volunteersQuery.data, showSensors, sensorsQuery.data, lang, t, fmt]);
   // Phase R2: the units and resources of the operations and a resources search sent from the register sit in the
   // «موارد الحماية المدنية» folder of the layer panel, beside the file layers of that folder.
   const resourceSearch = useResourceSearchLayer(bbox);
@@ -380,8 +417,16 @@ export function MapPage() {
       );
     }
     if (showVolunteers) items.push({ kind: "volunteer", label: t("ops.map.volunteer") });
+    if (showSensors) {
+      items.push(
+        { kind: "sensor", label: t("sensors.map.normal") },
+        { kind: "sensor_watch", label: t("sensors.map.watch") },
+        { kind: "sensor_alarm", label: t("sensors.map.alarm") },
+        { kind: "sensor_silent", label: t("sensors.map.silent") },
+      );
+    }
     return items;
-  }, [showOrgs, showResources, showVolunteers, t]);
+  }, [showOrgs, showResources, showVolunteers, showSensors, t]);
 
   return (
     <div className="page page--map">
@@ -407,6 +452,9 @@ export function MapPage() {
         )}
         <LayerToggle checked={showVolunteers} onChange={setVolunteerLayer} label={t("ops.map.volunteersToggle")} />
         <LayerToggle checked={showAlerts} onChange={setAlertLayer} label={t("ops.map.alertsToggle")} />
+        {sensorLayerAllowed && (
+          <LayerToggle checked={sensorLayer} onChange={setSensorLayer} label={t("sensors.map.toggle")} />
+        )}
         <LayerToggle
           checked={showWeather}
           onChange={(on) => {

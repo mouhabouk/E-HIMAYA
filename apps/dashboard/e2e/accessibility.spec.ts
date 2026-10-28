@@ -67,7 +67,35 @@ const SCREENS: { path: string; ready: string }[] = [
   { path: "/plans/reg-plan", ready: "main .pdf-viewer canvas" },
   // Phase PL2: the progress of the programmes (the national user lands on it).
   { path: "/schedule", ready: "main .rate" },
+  // Phase L5b: the sensors of the local network, by urgency.
+  { path: "/sensors", ready: "main table" },
 ];
+
+// ┏━━ SIMULATION ━━ sensors of the local network (phase L5b), one per level
+// ┃ PRODUCTION: services/api (module sensors); tests/test_sensors.py covers it.
+// ┗━━━━━━━━━━━━━━━━
+const SENSORS = (["alarm", "watch", "silent", "normal", "disabled"] as const).map((state, i) => ({
+  id: `s-${i}`,
+  code: `TUN-RAIN-0${i}`,
+  name: `Pluviomètre ${i}`,
+  kind: "rain_1h",
+  unit: "mm/h",
+  gouvernorat_code: 11,
+  lat: 36.8,
+  lon: 10.18,
+  provider: "INM",
+  watch_threshold: 20,
+  alarm_threshold: 40,
+  silent_after_min: 30,
+  enabled: state !== "disabled",
+  simulated: true,
+  last_value: state === "silent" ? null : 10 * i,
+  last_at: state === "silent" ? null : "2026-10-28T20:00:00Z",
+  state,
+  level_since: "2026-10-28T19:00:00Z",
+  created_by_name: null,
+  updated_at: "2026-10-28T19:00:00Z",
+}));
 
 /** A one-page PDF ([SIM]) for the plan viewer; PDF.js rebuilds the missing cross-reference table. */
 const SAMPLE_PDF = [
@@ -280,6 +308,8 @@ async function mockApi(page: Page): Promise<string[]> {
       // Satellite background (phase R).
       "/api/v1/staff/basemap": BASEMAP,
       "/api/v1/staff/basemap/settings": BASEMAP_SETTINGS,
+      // Phase L5b: sensors ([SIM]) at every level.
+      "/api/v1/staff/sensors": { items: SENSORS, can_manage: true },
     };
     if (pathname in inventory) return json(route, inventory[pathname]);
     unanswered.push(pathname);
