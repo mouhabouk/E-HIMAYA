@@ -377,6 +377,9 @@ $ docker compose --env-file .env -f infra/compose.yml --profile vision up -d
 
 القائمة الرئيسية ومجلدات الطبقات (المرحلتان UI-3 و UI-3b) لا تحتاج شيئا في WSL: `alembic upgrade head` (0058).
 
+سجل الموارد وخلفية القمر الصناعي (المرحلة R) لا يحتاجان شيئا في WSL: `alembic upgrade head` (0059 و 0060). تظهر صور
+القمر الصناعي إذا وصل متصفح Windows إلى `tiles.maps.eox.at` و `*.basemaps.cartocdn.com`.
+
 السجل والتوجيهات (المرحلة L3b) لا تحتاج شيئا في WSL: `alembic upgrade head` (0057)، والملفات في MinIO الموجود.
 
 محاور الكوارث (المرحلة L3) لا تحتاج شيئا في WSL: `alembic upgrade head` (0056)، ثم استيراد فضاء الأعوان من جديد ليظهر

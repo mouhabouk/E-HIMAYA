@@ -1,0 +1,34 @@
+@startuml
+!include style.iuml
+title Séquence : chercher un moyen dans les gouvernorats et l'afficher sur la carte (R2)
+autonumber
+actor "Salle centrale" as OPC
+actor "Salle régionale\n(Nabeul)" as OP
+actor "Ministre" as MIN
+participant "Tableau de bord" as UI
+participant "API" as API
+database "PostgreSQL" as DB
+OPC -> UI : registre, onglet « Recherche »\ncamions-citernes ≥ 8 000 L, prêts seulement
+UI -> API : POST /staff/inventory/search
+API -> DB : moyens, stocks ou agents filtrés\n(portée de l'appelant : tous les gouvernorats)
+API -> API : caractéristiques comparées\n(min, max, oui/non)
+API --> UI : total, prêts ; par gouvernorat et par unité
+UI --> OPC : tableau + « Afficher sur la carte »
+OPC -> UI : afficher sur la carte
+UI -> API : GET /staff/inventory/boundaries
+UI --> OPC : dossier « Moyens de la protection civile » :\nchoroplèthe des gouvernorats, bulles de décompte,\nunités à partir du zoom 8, légende
+OPC -> UI : exporter
+UI -> API : POST /staff/inventory/search/export
+API -> DB : journal d'audit « inventory.search_export »\n(la requête, pas le résultat)
+OP -> UI : même recherche, gouvernorat de Sousse
+UI -> API : POST /staff/inventory/search (gouvernorats = Sousse)
+API --> UI : 403 out_of_scope
+note right of API
+  Une salle régionale ne cherche
+  que dans son gouvernorat.
+end note
+MIN -> UI : recherche
+UI -> API : POST /staff/inventory/search
+API --> UI : décomptes seulement\n(sans nom ni téléphone d'agent)
+UI --> MIN : tableau, sans bouton de carte\n(la carte en direct est aux salles)
+@enduml

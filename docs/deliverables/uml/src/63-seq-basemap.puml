@@ -1,0 +1,39 @@
+@startuml
+!include style.iuml
+title Séquence : fond satellite ouvert ou payant selon le choix de l'administration (R-S)
+autonumber
+actor "Administrateur\nsystème national" as SA
+actor "Salle des opérations" as OP
+participant "Tableau de bord" as UI
+participant "API" as API
+database "PostgreSQL" as DB
+participant "Fournisseur payant" as PRV
+participant "Imagerie ouverte\n(EOX Sentinel-2)" as EOX
+OP -> UI : carte : « Satellite » ou « Hybride »\n(choix gardé dans le navigateur)
+UI -> API : GET /staff/basemap
+API -> DB : geo.basemap (activé ?)
+API --> UI : source ouverte : adresse EOX,\nnoms de lieux CARTO
+UI -> EOX : tuiles
+SA -> UI : Couches, onglet « Fond de carte »\nfournisseur, adresse {z}/{x}/{y}, clé de licence
+UI -> API : POST /staff/basemap/settings/test
+API -> PRV : tuile d'essai (clé côté serveur)
+API --> UI : réussi, durée
+SA -> UI : activer, enregistrer
+UI -> API : PUT /staff/basemap/settings
+API -> DB : clé chiffrée + journal d'audit\n« basemap.update » (sans la clé)
+OP -> UI : carte en satellite
+UI -> API : GET /staff/basemap
+API --> UI : /api/v1/basemap/tiles/{z}/{x}/{y}?t=…\n(jeton signé, 12 heures)
+UI -> API : tuile
+API -> PRV : tuile avec la clé
+alt fournisseur en panne
+  API --> UI : 307 vers la tuile ouverte
+  UI -> EOX : tuile
+else réussi
+  API --> UI : image
+end
+note right of API
+  La clé ne quitte jamais le serveur
+  et n'est jamais écrite au journal (BR-07f).
+end note
+@enduml

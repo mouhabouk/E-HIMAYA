@@ -55,6 +55,10 @@ def t_base():
 def t_tone():
   return ''.join(f'<tr><td><code class="ltr">{k}</code></td><td>{sw(f)} <code class="ltr">{f}</code></td><td>{sw(o)} <code class="ltr">{o}</code></td><td>{sw(ti)} <code class="ltr">{ti}</code></td><td>{sw(ink)} <code class="ltr">{ink}</code></td><td><span class="pill" style="background:{ti};color:{ink}">مثال</span></td><td>{u}</td></tr>' for k,f,o,ti,ink,u in tones)
 def t_sem(): return ''.join(f'<tr><td>{sw(h)}</td><td>{ar}</td><td class="ltr"><code>{v}</code></td><td class="ltr"><code>{h}</code></td></tr>' for v,ar,h in sem)
+def t_count():
+  src=open('apps/dashboard/src/lib/inventory.ts').read()
+  cols=re.findall(r'#[0-9A-Fa-f]{6}',re.search(r'COUNT_COLOURS = \[([^\]]*)\]',src).group(1))
+  return ''.join(f'<tr><td>{sw(c)}</td><td>{n}</td><td class="ltr"><code>{c}</code></td></tr>' for c,n in zip(cols,['صفر','قليل','متوسط','كثير','الأكثر']))
 page=f'''<title>مرجع تصميم ء-حماية</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap">
@@ -101,7 +105,9 @@ small{{color:var(--muted)}}
 <p>في الوضع الداكن تُرفع التعبئة إلى درجة أفتح (مثلا الأحمر <code class="ltr">#FF6B6B</code> والأخضر <code class="ltr">#4CC772</code>)، والخلفية الفاتحة تصبح اللون نفسه بشفافية 18%.</p></section>
 
 <section id="semantic"><h2>3. ألوان الحالات في لوحة القيادة</h2><p>كل لون منها مرفوق دائما بكلمة أو شكل، فلا يحمل المعنى وحده.</p>
-<div class="tbl"><table><tr><th></th><th>المعنى</th><th>المتغير</th><th>القيمة</th></tr>{t_sem()}</table></div></section>
+<div class="tbl"><table><tr><th></th><th>المعنى</th><th>المتغير</th><th>القيمة</th></tr>{t_sem()}</table></div>
+<h3>تدرّج العدد على الخريطة (المرحلة R)</h3><p>نتيجة البحث في سجل الموارد تلوّن الولايات بخمس درجات حسب العدد، والرمادي للصفر. العدد مكتوب دائما في فقاعة فوق الولاية أو الوحدة، فاللون لا يحمل المعنى وحده. المصدر: <code class="ltr">COUNT_COLOURS</code> في <code class="ltr">apps/dashboard/src/lib/inventory.ts</code>.</p>
+<div class="tbl"><table><tr><th></th><th>الدرجة</th><th>القيمة</th></tr>{t_count()}</table></div></section>
 
 <section id="type"><h2>4. الخط</h2>
 <div class="tbl"><table><tr><th>الخط</th><th>الأوزان</th><th>أين</th><th>الرخصة</th><th>التحميل</th></tr>
