@@ -4,6 +4,7 @@ import type { FeatureCollection } from "geojson";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { CATEGORY_ICON_PATHS } from "../lib/categoryIcons";
+import type { BasemapView } from "../lib/basemap";
 import type { BBox } from "../lib/filters";
 import { maplibregl } from "../lib/maplibre";
 import { mapStyle } from "../lib/mapStyle";
@@ -139,6 +140,8 @@ interface MapViewProps {
   lines?: MapLine[];
   /** Weather layer (fire danger field, wind arrows, rain level). */
   weather?: MapWeather | null;
+  /** Satellite or hybrid background (phase R); the street map of the style when absent or in "map" mode. */
+  basemap?: BasemapView | null;
   /** A click on the map background (not on a marker): e.g. the weather of that point. */
   onMapClick?: (lon: number, lat: number) => void;
   /** React-rendered popup; `onPopupClose` is called when the user closes it. */
@@ -160,6 +163,8 @@ const LINE_SOURCE = "ehimaya-lines";
 const SHAPE_SOURCE = "ehimaya-shapes";
 const WEATHER_SOURCE = "ehimaya-weather";
 const WIND_ICON = "ehimaya-wind-arrow";
+const BASEMAP_SOURCE = "ehimaya-basemap";
+const LABEL_SOURCE = "ehimaya-basemap-labels";
 const TONE_COLOURS: Record<MapPolygon["tone"], string> = { high: "#b91c1c", medium: "#b45309", low: "#4b5563" };
 
 /** Run `fn` now if the style is ready, otherwise once it has loaded. */
@@ -384,6 +389,7 @@ export function MapView({
   shapes,
   lines,
   weather,
+  basemap,
   onMapClick,
   popup,
   onPopupClose,
@@ -652,6 +658,54 @@ export function MapView({
       });
     });
   }, [shapes]);
+
+  // Satellite background (phase R): imagery under every layer of the application, the style's own layers hidden; in
+  // the hybrid view the place names are drawn over it. The sources are rebuilt when their address changes (the
+  // signed address of a paid provider is renewed).
+  const basemapMode = basemap?.mode ?? "map";
+  const satelliteKey = basemap ? JSON.stringify(basemap.satellite) : "";
+  const labelsKey = basemap ? JSON.stringify(basemap.labels) : "";
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || (basemapMode === "map" && !map.getSource(BASEMAP_SOURCE))) return;
+    whenStyleReady(map, () => {
+      const own = (id: string) => id.startsWith("ehimaya-");
+      const sources: [string, string][] = [
+        [BASEMAP_SOURCE, satelliteKey],
+        [LABEL_SOURCE, labelsKey],
+      ];
+      for (const [id, key] of sources) {
+        if (!key) continue;
+        const spec = JSON.parse(key) as { tiles: string[]; attribution: string; max_zoom: number };
+        const existing = map.getSource(id) as { tiles?: string[] } | undefined;
+        if (existing && JSON.stringify(existing.tiles) !== JSON.stringify(spec.tiles)) {
+          if (map.getLayer(id)) map.removeLayer(id);
+          map.removeSource(id);
+        }
+        if (!map.getSource(id)) {
+          map.addSource(id, {
+            type: "raster",
+            tiles: spec.tiles,
+            tileSize: 256,
+            maxzoom: spec.max_zoom,
+            attribution: spec.attribution,
+          });
+        }
+        if (!map.getLayer(id)) {
+          const above = map.getStyle().layers.find((l) => own(l.id) && l.id !== BASEMAP_SOURCE && l.id !== LABEL_SOURCE);
+          map.addLayer({ id, type: "raster", source: id }, above?.id);
+        }
+      }
+      const show = (id: string, on: boolean) => {
+        if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", on ? "visible" : "none");
+      };
+      for (const layer of map.getStyle().layers) {
+        if (!own(layer.id) && layer.type !== "background") show(layer.id, basemapMode === "map");
+      }
+      show(BASEMAP_SOURCE, basemapMode !== "map");
+      show(LABEL_SOURCE, basemapMode === "hybrid");
+    });
+  }, [basemapMode, satelliteKey, labelsKey]);
 
   // Location tracks: one line source, created on first use and then only updated.
   useEffect(() => {

@@ -574,6 +574,21 @@ erDiagram
 
 ```mermaid
 erDiagram
+    geo__basemap {
+        text key PK
+        text provider
+        text url_template
+        blob api_key
+        text key_header
+        text attribution
+        smallint max_zoom
+        boolean enabled
+        boolean last_test_ok
+        datetime last_test_at
+        text updated_by
+        text updated_by_name
+        datetime updated_at
+    }
     geo__delegation {
         integer id PK
         text code

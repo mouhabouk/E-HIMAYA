@@ -7058,7 +7058,8 @@ button.nav-card:hover {
 }
 
 /* Phase R1: resources register (docs/phase-r/design-resources.md §2). */
-.inventory-page :is(input:not([type="radio"], [type="checkbox"], [type="file"])) {
+.inventory-page :is(input:not([type="radio"], [type="checkbox"], [type="file"])),
+.basemap-settings :is(input:not([type="radio"], [type="checkbox"], [type="file"])) {
   font: inherit;
   color: var(--text);
   background: var(--surface);
@@ -7092,7 +7093,8 @@ button.nav-card:hover {
   flex-wrap: wrap;
 }
 
-.inventory-page .filters__row {
+.inventory-page .filters__row,
+.basemap-settings .filters__row {
   align-items: end;
   margin-block: 0.75rem;
 }
@@ -7258,4 +7260,23 @@ button.nav-card:hover {
 }
 .layer-folder__extra .checkbox > span {
   min-inline-size: 0;
+}
+
+/* Satellite background (docs/phase-r/design-basemap.md): the switch beside the map layers. */
+.basemap-switch {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-inline-start: auto;
+}
+.basemap-switch__source {
+  font-size: 0.8rem;
+}
+.basemap-settings {
+  display: grid;
+  gap: 0.75rem;
+}
+.basemap-settings .field input {
+  inline-size: 100%;
 }

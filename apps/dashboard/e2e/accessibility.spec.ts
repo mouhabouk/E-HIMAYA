@@ -16,6 +16,7 @@ import {
   UNITS,
   VEHICLE,
 } from "../src/test/inventoryData";
+import { BASEMAP, BASEMAP_SETTINGS } from "../src/test/basemapData";
 import { DIRECTIVE_ALL_DETAIL, DISPATCH_PAGE, PLAN_DETAIL, REVISIONS, SEARCH } from "../src/test/registerData";
 import { JENDOUBA_AXIS, NABEUL_AXIS, NABEUL_DETAIL, overview, REQUEST, SOUSSE_AXIS, SUGGESTIONS } from "../src/test/crisisData";
 import { API, baseMock, commonAnswer, json, signIn } from "./phase7Helpers";
@@ -198,6 +199,9 @@ async function mockApi(page: Page): Promise<string[]> {
       // Phase R2: the search across the gouvernorats and the outlines it colours on the map.
       "/api/v1/staff/inventory/search": SEARCH_RESULT,
       "/api/v1/staff/inventory/boundaries": BOUNDARIES,
+      // Satellite background (phase R).
+      "/api/v1/staff/basemap": BASEMAP,
+      "/api/v1/staff/basemap/settings": BASEMAP_SETTINGS,
     };
     if (pathname in inventory) return json(route, inventory[pathname]);
     unanswered.push(pathname);
@@ -416,8 +420,17 @@ test.describe("accessibility of the layer folders (ar)", () => {
       await page.getByRole("button", { name: /موارد الحماية المدنية/ }).click();
       await expect(page.getByRole("checkbox", { name: /نقاط التزود بالماء/ })).toBeVisible();
       await audit(page, "/map", "main .layer-folder");
+      // The satellite background, chosen beside the layers.
+      await page.getByRole("radio", { name: "قمر صناعي" }).check({ force: true });
+      await expect(page.getByText("صور Sentinel‑2 المفتوحة")).toBeVisible();
+      const onMap = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]).analyze();
+      expect(onMap.violations.filter((v) => v.impact === "serious" || v.impact === "critical").map((v) => v.id)).toEqual([]);
 
       await page.goto("/layers");
+      await page.getByRole("tab", { name: "خلفية الخريطة" }).click();
+      await expect(page.getByRole("button", { name: "تجربة الاتصال" })).toBeVisible();
+      const background = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]).analyze();
+      expect(background.violations.filter((v) => v.impact === "serious" || v.impact === "critical").map((v) => v.id)).toEqual([]);
       await page.getByRole("tab", { name: /مجلدات الخريطة/ }).click();
       await expect(page.getByRole("button", { name: "تعديل المجلد المؤسسات الصحية" })).toBeVisible();
       await page.getByRole("button", { name: "مجلد جديد" }).click();

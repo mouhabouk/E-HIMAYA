@@ -435,7 +435,11 @@
     "skill_level_invalid": "Invalid speciality level.",
     "entity_required": "Say what the CSV holds (vehicles, equipment or staff).",
     "import_has_errors": "The file has errors: fix them and check again.",
-    "file_too_many_rows": "The file has more than 5,000 rows."
+    "file_too_many_rows": "The file has more than 5,000 rows.",
+    "basemap_url_https": "The provider address must start with https://.",
+    "basemap_url_placeholders": "The address must contain {z}, {x} and {y}.",
+    "basemap_key_unused": "The key is not used: add {key} to the address or name the header.",
+    "basemap_key_missing": "The address asks for a key ({key}) and none is stored."
   },
   "kpi": {
     "title": "Key indicators",
@@ -3912,6 +3916,7 @@
       "tabs": {
         "label": "Layers",
         "layers": "Layers ({{count}})",
+        "background": "Map background",
         "deleted": "Deleted ({{count}})",
         "folders": "Map folders ({{count}})"
       },
@@ -5815,6 +5820,52 @@
         "agents": "Staff on duty only"
       },
       "mapRoomsOnly": "The live map is for the operations rooms; every count is in the table below."
+    }
+  },
+  "basemap": {
+    "label": "Map background",
+    "mode": {
+      "map": "Map",
+      "satellite": "Satellite",
+      "hybrid": "Hybrid"
+    },
+    "source": {
+      "open": "Open Sentinel‑2 imagery",
+      "paid": "Imagery of the provider chosen by the administration"
+    },
+    "settings": {
+      "title": "Map background: satellite imagery",
+      "open": "Without any setting, the maps use the open Sentinel‑2 imagery (EOX, CC BY-NC-SA 4.0 licence, non-commercial use), with CARTO place names in the hybrid view.",
+      "intro": "If the administration contracts a paid imagery provider (sharper and more recent), enter the service address and licence key here, then test the connection before switching it on. The key stays encrypted on the server and never reaches a browser.",
+      "provider": "Provider",
+      "maxZoom": "Maximum zoom served by the provider",
+      "url": "Imagery address (API)",
+      "urlHelp": "The tile address from the provider's contract, with {z}, {x} and {y}, and {key} where the key goes if it is in the address.",
+      "useExample": "Use this provider's example",
+      "key": "Licence key",
+      "keyKept": "Key stored ({{hint}}). Leave empty to keep it.",
+      "keyNone": "No key stored.",
+      "header": "Header name if the key is sent in one (optional)",
+      "dropKey": "Remove the stored key",
+      "attribution": "Source credit on the map (required by the licence)",
+      "enabled": "Use this provider on every map",
+      "fallback": "If the provider fails or the key expires, the map takes the image from the open source, tile by tile.",
+      "lastTestOk": "Last test succeeded: {{time}}",
+      "lastTestFailed": "Last test failed: {{time}}",
+      "notTested": "The current settings have not been tested yet.",
+      "updated": "Last change: {{name}}, {{time}}",
+      "testOk": "Connection works: an image from the provider arrived in {{ms}} ms.",
+      "testFailed": "Connection failed ({{status}}). Check the address and the key.",
+      "saved": "Settings saved; the change is in the audit log.",
+      "test": "Test the connection",
+      "save": "Save"
+    },
+    "provider": {
+      "esri": "Esri World Imagery",
+      "maxar": "Maxar",
+      "mapbox": "Mapbox Satellite",
+      "google": "Google Maps Platform",
+      "other": "Other provider"
     }
   }
 }

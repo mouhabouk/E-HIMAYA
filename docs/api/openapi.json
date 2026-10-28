@@ -2768,6 +2768,36 @@
         "title": "BadgePage",
         "type": "object"
       },
+      "BasemapOut": {
+        "description": "What a map needs to draw the satellite and hybrid views (no key, ever).",
+        "properties": {
+          "labels": {
+            "$ref": "#/components/schemas/TileSource"
+          },
+          "open": {
+            "$ref": "#/components/schemas/TileSource"
+          },
+          "satellite": {
+            "$ref": "#/components/schemas/TileSource"
+          },
+          "source": {
+            "enum": [
+              "open",
+              "paid"
+            ],
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source",
+          "satellite",
+          "labels",
+          "open"
+        ],
+        "title": "BasemapOut",
+        "type": "object"
+      },
       "BeachDetail": {
         "properties": {
           "attribution": {
@@ -26446,27 +26476,6 @@
         "title": "SettingOut",
         "type": "object"
       },
-      "SettingsIn": {
-        "properties": {
-          "reason": {
-            "maxLength": 500,
-            "minLength": 3,
-            "title": "Reason",
-            "type": "string"
-          },
-          "rules": {
-            "additionalProperties": true,
-            "title": "Rules",
-            "type": "object"
-          }
-        },
-        "required": [
-          "rules",
-          "reason"
-        ],
-        "title": "SettingsIn",
-        "type": "object"
-      },
       "Shapes": {
         "description": "A GeoJSON ``FeatureCollection`` of the lines and areas in a map area, simplified for the zoom.",
         "properties": {
@@ -31729,6 +31738,60 @@
         "title": "TemplatePatch",
         "type": "object"
       },
+      "TestOut": {
+        "properties": {
+          "content_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content Type"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "ms": {
+            "title": "Ms",
+            "type": "integer"
+          },
+          "ok": {
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          }
+        },
+        "required": [
+          "ok",
+          "status",
+          "content_type",
+          "ms",
+          "error"
+        ],
+        "title": "TestOut",
+        "type": "object"
+      },
       "TextNoteIn": {
         "properties": {
           "body": {
@@ -31821,6 +31884,32 @@
           "ambassador"
         ],
         "title": "Thresholds",
+        "type": "object"
+      },
+      "TileSource": {
+        "properties": {
+          "attribution": {
+            "title": "Attribution",
+            "type": "string"
+          },
+          "max_zoom": {
+            "title": "Max Zoom",
+            "type": "integer"
+          },
+          "tiles": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Tiles",
+            "type": "array"
+          }
+        },
+        "required": [
+          "tiles",
+          "attribution",
+          "max_zoom"
+        ],
+        "title": "TileSource",
         "type": "object"
       },
       "TimelineEntry": {
@@ -35277,6 +35366,216 @@
         "title": "SummaryOut",
         "type": "object"
       },
+      "app__modules__basemap__schemas__SettingsIn": {
+        "properties": {
+          "api_key": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Api Key"
+          },
+          "attribution": {
+            "maxLength": 300,
+            "minLength": 2,
+            "title": "Attribution",
+            "type": "string"
+          },
+          "enabled": {
+            "default": false,
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "key_header": {
+            "anyOf": [
+              {
+                "pattern": "^[A-Za-z][A-Za-z0-9-]{1,63}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Key Header"
+          },
+          "max_zoom": {
+            "default": 19,
+            "maximum": 22.0,
+            "minimum": 1.0,
+            "title": "Max Zoom",
+            "type": "integer"
+          },
+          "provider": {
+            "enum": [
+              "esri",
+              "maxar",
+              "mapbox",
+              "google",
+              "other"
+            ],
+            "title": "Provider",
+            "type": "string"
+          },
+          "url_template": {
+            "maxLength": 1000,
+            "minLength": 12,
+            "title": "Url Template",
+            "type": "string"
+          }
+        },
+        "required": [
+          "provider",
+          "url_template",
+          "attribution"
+        ],
+        "title": "SettingsIn",
+        "type": "object"
+      },
+      "app__modules__basemap__schemas__SettingsOut": {
+        "properties": {
+          "attribution": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Attribution"
+          },
+          "configured": {
+            "title": "Configured",
+            "type": "boolean"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "key_header": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Key Header"
+          },
+          "key_hint": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Key Hint"
+          },
+          "last_test_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Test At"
+          },
+          "last_test_ok": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Test Ok"
+          },
+          "max_zoom": {
+            "title": "Max Zoom",
+            "type": "integer"
+          },
+          "provider": {
+            "anyOf": [
+              {
+                "enum": [
+                  "esri",
+                  "maxar",
+                  "mapbox",
+                  "google",
+                  "other"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provider"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
+          "updated_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By Name"
+          },
+          "url_template": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url Template"
+          }
+        },
+        "required": [
+          "configured",
+          "provider",
+          "url_template",
+          "key_hint",
+          "key_header",
+          "attribution",
+          "max_zoom",
+          "enabled",
+          "last_test_ok",
+          "last_test_at",
+          "updated_by_name",
+          "updated_at"
+        ],
+        "title": "SettingsOut",
+        "type": "object"
+      },
       "app__modules__coastal__schemas__AlertOut": {
         "properties": {
           "acked_at": {
@@ -35551,6 +35850,27 @@
           "heat_drownings"
         ],
         "title": "Overview",
+        "type": "object"
+      },
+      "app__modules__coastal__schemas__SettingsIn": {
+        "properties": {
+          "reason": {
+            "maxLength": 500,
+            "minLength": 3,
+            "title": "Reason",
+            "type": "string"
+          },
+          "rules": {
+            "additionalProperties": true,
+            "title": "Rules",
+            "type": "object"
+          }
+        },
+        "required": [
+          "rules",
+          "reason"
+        ],
+        "title": "SettingsIn",
         "type": "object"
       },
       "app__modules__coastal__schemas__SettingsOut": {
@@ -42117,6 +42437,76 @@
         "summary": "App Version",
         "tags": [
           "app"
+        ]
+      }
+    },
+    "/api/v1/basemap/tiles/{z}/{x}/{y}": {
+      "get": {
+        "description": "A tile of the paid provider, or of the open source when the provider is off or fails.",
+        "operationId": "tile_api_v1_basemap_tiles__z___x___y__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "z",
+            "required": true,
+            "schema": {
+              "title": "Z",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "x",
+            "required": true,
+            "schema": {
+              "title": "X",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "y",
+            "required": true,
+            "schema": {
+              "title": "Y",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "t",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 80,
+              "title": "T",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Tile",
+        "tags": [
+          "basemap"
         ]
       }
     },
@@ -54021,6 +54411,153 @@
         ]
       }
     },
+    "/api/v1/staff/basemap": {
+      "get": {
+        "operationId": "basemap_api_v1_staff_basemap_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BasemapOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Basemap",
+        "tags": [
+          "staff",
+          "basemap"
+        ]
+      }
+    },
+    "/api/v1/staff/basemap/settings": {
+      "get": {
+        "operationId": "get_settings_api_v1_staff_basemap_settings_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__basemap__schemas__SettingsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Settings",
+        "tags": [
+          "staff",
+          "basemap"
+        ]
+      },
+      "put": {
+        "operationId": "save_settings_api_v1_staff_basemap_settings_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__basemap__schemas__SettingsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__basemap__schemas__SettingsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Save Settings",
+        "tags": [
+          "staff",
+          "basemap"
+        ]
+      }
+    },
+    "/api/v1/staff/basemap/settings/test": {
+      "post": {
+        "description": "Asks the provider for one tile of Tunisia with these settings (the stored key unless a new one is given).",
+        "operationId": "test_settings_api_v1_staff_basemap_settings_test_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__basemap__schemas__SettingsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TestOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Test Settings",
+        "tags": [
+          "staff",
+          "basemap"
+        ]
+      }
+    },
     "/api/v1/staff/break-glass": {
       "get": {
         "operationId": "list_grants_api_v1_staff_break_glass_get",
@@ -55577,7 +56114,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SettingsIn"
+                "$ref": "#/components/schemas/app__modules__coastal__schemas__SettingsIn"
               }
             }
           },

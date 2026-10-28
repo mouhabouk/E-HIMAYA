@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { FiltersBar } from "../components/FiltersBar";
 import { LazyMapView } from "../components/LazyMap";
+import { useBasemap } from "../components/BasemapSwitch";
 import { useMapDataLayers, type FolderExtra } from "../components/MapDataLayers";
 import { useResourceSearchLayer } from "../components/ResourceSearchLayer";
 import type { HeatPoint, MapMarker, MapPoi, MapPolygon } from "../components/MapView";
@@ -119,6 +120,7 @@ export function MapPage() {
   const [showVolunteers, setVolunteerLayer] = useLayer(VOLUNTEER_LAYER_KEY);
   const [showAlerts, setAlertLayer] = useLayer(ALERT_LAYER_KEY);
   const gouvernorats = useGouvernorats();
+  const basemap = useBasemap();
 
   // Outbound call from a map point (phase 7 §4, FR-C-10): reporter, volunteer or unit, through the softphone.
   const phone = useSoftphone();
@@ -419,6 +421,7 @@ export function MapPage() {
           </span>
         )}
         {legend.length > 0 && <MapLegend items={legend} />}
+        {basemap.control}
       </div>
       {dataLayers.controls}
       {showWeather && (
@@ -491,6 +494,7 @@ export function MapPage() {
           heat={heat}
           shapes={shapes}
           weather={mapWeather}
+          basemap={basemap.view}
           onMapClick={onMapClick}
           popup={weatherPopup}
           onPopupClose={() => setWeatherPoint(null)}

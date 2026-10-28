@@ -435,7 +435,11 @@
     "skill_level_invalid": "Niveau de spécialité invalide.",
     "entity_required": "Indiquez le contenu du CSV (véhicules, matériel ou agents).",
     "import_has_errors": "Le fichier contient des erreurs : corrigez-les puis revérifiez.",
-    "file_too_many_rows": "Le fichier dépasse 5 000 lignes."
+    "file_too_many_rows": "Le fichier dépasse 5 000 lignes.",
+    "basemap_url_https": "L'adresse du fournisseur doit commencer par https://.",
+    "basemap_url_placeholders": "L'adresse doit contenir {z}, {x} et {y}.",
+    "basemap_key_unused": "La clé n'est pas utilisée : ajoutez {key} à l'adresse ou indiquez l'en-tête.",
+    "basemap_key_missing": "L'adresse demande une clé ({key}) et aucune n'est enregistrée."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -3912,6 +3916,7 @@
       "tabs": {
         "label": "Couches",
         "layers": "Couches ({{count}})",
+        "background": "Fond de carte",
         "deleted": "Supprimées ({{count}})",
         "folders": "Dossiers de la carte ({{count}})"
       },
@@ -5815,6 +5820,52 @@
         "agents": "Agents en service seulement"
       },
       "mapRoomsOnly": "La carte en direct est réservée aux salles des opérations ; tous les nombres figurent dans le tableau ci-dessous."
+    }
+  },
+  "basemap": {
+    "label": "Fond de carte",
+    "mode": {
+      "map": "Plan",
+      "satellite": "Satellite",
+      "hybrid": "Hybride"
+    },
+    "source": {
+      "open": "Images ouvertes Sentinel‑2",
+      "paid": "Images du fournisseur retenu par l'administration"
+    },
+    "settings": {
+      "title": "Fond de carte : images satellite",
+      "open": "Sans réglage, les cartes utilisent les images ouvertes Sentinel‑2 (EOX, licence CC BY-NC-SA 4.0, usage non commercial), avec les noms de lieux de CARTO en mode hybride.",
+      "intro": "Si l'administration a un contrat avec un fournisseur d'images payant (plus précis et plus récent), saisissez ici l'adresse du service et la clé de licence, puis testez la connexion avant de l'activer. La clé reste chiffrée sur le serveur et n'atteint aucun navigateur.",
+      "provider": "Fournisseur",
+      "maxZoom": "Zoom maximal servi par le fournisseur",
+      "url": "Adresse des images (API)",
+      "urlHelp": "Adresse des tuiles selon le contrat du fournisseur, avec {z}, {x} et {y}, et {key} à la place de la clé si elle figure dans l'adresse.",
+      "useExample": "Utiliser l'exemple de ce fournisseur",
+      "key": "Clé de licence",
+      "keyKept": "Clé enregistrée ({{hint}}). Laissez vide pour la garder.",
+      "keyNone": "Aucune clé enregistrée.",
+      "header": "Nom de l'en-tête si la clé y est envoyée (facultatif)",
+      "dropKey": "Supprimer la clé enregistrée",
+      "attribution": "Mention de la source sur la carte (exigée par la licence)",
+      "enabled": "Activer ce fournisseur pour toutes les cartes",
+      "fallback": "Si le fournisseur tombe en panne ou si la clé expire, la carte prend l'image de la source ouverte, tuile par tuile.",
+      "lastTestOk": "Dernier test réussi : {{time}}",
+      "lastTestFailed": "Dernier test échoué : {{time}}",
+      "notTested": "Les réglages actuels n'ont pas encore été testés.",
+      "updated": "Dernière modification : {{name}}, {{time}}",
+      "testOk": "Connexion réussie : une image du fournisseur reçue en {{ms}} ms.",
+      "testFailed": "Échec de la connexion ({{status}}). Vérifiez l'adresse et la clé.",
+      "saved": "Réglages enregistrés ; le changement est inscrit au journal d'audit.",
+      "test": "Tester la connexion",
+      "save": "Enregistrer"
+    },
+    "provider": {
+      "esri": "Esri World Imagery",
+      "maxar": "Maxar",
+      "mapbox": "Mapbox Satellite",
+      "google": "Google Maps Platform",
+      "other": "Autre fournisseur"
     }
   }
 }
