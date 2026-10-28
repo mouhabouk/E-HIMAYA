@@ -24,6 +24,7 @@ from app.modules.knowledge.domain import MEMORY_ACCESS, SENSITIVE_KINDS, Access,
 from app.modules.knowledge.models import MemoryEntry, MemoryEntryVersion, SearchDoc
 from app.modules.ops.models import Incident, TimelineEvent
 from app.modules.ops.service import all_gouvernorats
+from app.modules.register.models import Document as RegisterDocument
 from app.modules.reports.domain import Status
 from app.modules.reports.models import Media, Report
 from app.modules.streams.models import LiveStream
@@ -353,6 +354,27 @@ async def _procedure(session: AsyncSession, ref_id: str) -> Doc | None:
     )
 
 
+async def _register(session: AsyncSession, ref_id: str) -> Doc | None:
+    """A document of the register (phase L3b): only those open to every staff member of their scope; the command and
+    restricted ones, and drafts, stay in the register's own search."""
+    doc = await session.get(RegisterDocument, uuid.UUID(ref_id))
+    if doc is None or doc.status == "draft" or doc.access not in ("all", "gouvernorat"):
+        return None
+    regional = doc.gouvernorat_code is not None
+    head = " · ".join(p for p in (doc.number, doc.reference, doc.issuer) if p)
+    return Doc(
+        kind=Kind.REGISTER,
+        ref_id=ref_id,
+        title=f"{doc.title} — {head}",
+        body="\n\n".join(p for p in (doc.summary, doc.body) if p),
+        date=_day(doc.effective_from or doc.issued_on),
+        gouvernorats=[doc.gouvernorat_code] if regional and doc.gouvernorat_code else [],
+        access=Access.GOUVERNORAT if regional else Access.ALL,
+        categories=[doc.kind, *doc.topics],
+        lang="ar",
+    )
+
+
 _BUILDERS = {
     Kind.MEMORY: _memory,
     Kind.REPORT_DOC: _report_doc,
@@ -360,6 +382,7 @@ _BUILDERS = {
     Kind.REPORT: _report,
     Kind.TRANSCRIPT: _transcript,
     Kind.PROCEDURE: _procedure,
+    Kind.REGISTER: _register,
 }
 
 

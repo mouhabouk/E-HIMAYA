@@ -38,6 +38,7 @@ from app.modules.evidence.service import signing_key
 from app.modules.geo.models import Gouvernorat
 from app.modules.ops.models import Assignment, CasualtyCount, Incident, Resource
 from app.modules.orgs.certificate import key_id_of
+from app.modules.register import service as register
 from app.modules.settings import service as settings
 from app.modules.settings.domain import CRISIS_SITREP_HOURS
 
@@ -888,6 +889,27 @@ async def issue(session: AsyncSession, principal: Principal, axis: Axis, body: s
             "status": "issued",
             "overrides": overridden,
         },
+    )
+    # The register of plans and decisions keeps every signed recommendation and decision (phase L3b).
+    await register.record_directive(
+        session,
+        principal,
+        directive_id=directive.id,
+        axis_id=axis.id,
+        axis_number=axis.number,
+        axis_name=axis.name,
+        axis_kind=axis.kind,
+        gouvernorat_code=axis.gouvernorat_code or principal.gouvernorat_code,
+        number=number,
+        kind=body.kind,
+        category=body.category,
+        body=body.body,
+        issuer_role=role,
+        issued_at=issued,
+        due_at=body.due_at,
+        signature=signature,
+        key_id=key_id,
+        overridden=overridden,
     )
     return directive
 

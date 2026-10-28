@@ -32,6 +32,8 @@ from app.modules.crisis.models import (
 )
 from app.modules.geo.models import Gouvernorat
 from app.modules.layers.service import point as wkt_point
+from app.modules.register import service as register
+from app.modules.register.models import Document as RegisterDocument
 
 router = APIRouter(prefix="/api/v1/staff/crisis", tags=["staff", "crisis"])
 Session = Annotated[AsyncSession, Depends(get_session)]
@@ -64,6 +66,19 @@ def _version(axis: Axis, version: int) -> None:
         raise service.conflict("version_conflict")
 
 
+def _doc_ref(doc: RegisterDocument) -> schemas.DocRef:
+    return schemas.DocRef(
+        id=str(doc.id), number=doc.number, reference=doc.reference, title=doc.title, kind=doc.kind, status=doc.status
+    )
+
+
+async def _plan_document(session: AsyncSession, principal: Principal, axis: Axis) -> schemas.DocRef | None:
+    if axis.plan_document_id is None:
+        return None
+    doc = await session.get(RegisterDocument, axis.plan_document_id)
+    return _doc_ref(doc) if doc is not None and register.readable(principal, doc) else None
+
+
 async def _axis_out(
     session: AsyncSession, principal: Principal, axis: Axis, names: dict[int, str], *, children: bool = True
 ) -> schemas.AxisOut:
@@ -84,6 +99,7 @@ async def _axis_out(
         area=areas.get(axis.id),
         level=axis.level,
         plan=axis.plan,
+        plan_document=await _plan_document(session, principal, axis),
         status=axis.status,
         opened_by_name=axis.opened_by_name if domain.is_room(principal) else None,
         opened_at=axis.opened_at,
@@ -233,6 +249,7 @@ async def get_axis(principal: Reader, session: Session, axis_id: uuid.UUID) -> s
             schemas.EventOut(at=e.at, actor_name=e.actor_name if room else None, kind=e.kind, payload=e.payload)
             for e in events
         ],
+        documents=[_doc_ref(d) for d in await register.axis_documents(session, principal, ids)],
     )
 
 
@@ -265,6 +282,15 @@ async def update_axis(
     if body.plan is not None and body.plan != axis.plan:
         changes["plan"] = True
         axis.plan = body.plan
+    if body.clear_plan_document and axis.plan_document_id is not None:
+        changes["plan_document"] = None
+        axis.plan_document_id = None
+    elif body.plan_document_id is not None and body.plan_document_id != axis.plan_document_id:
+        plan_doc = await register.visible(session, principal, body.plan_document_id)
+        if plan_doc.kind != "plan" or plan_doc.status != "in_force":
+            raise service.conflict("not_a_plan_in_force")
+        changes["plan_document"] = plan_doc.number
+        axis.plan_document_id = plan_doc.id
     if body.area is not None:
         await service.check_area(session, body.area)
         axis.area = service.area_value(body.area)

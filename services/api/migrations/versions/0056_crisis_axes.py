@@ -268,7 +268,7 @@ ALTER TABLE crisis.sitrep ENABLE ROW LEVEL SECURITY;
 CREATE POLICY sitrep_all ON crisis.sitrep USING ({_SEES}) WITH CHECK ({_SEES});
 ALTER TABLE crisis.event ENABLE ROW LEVEL SECURITY;
 CREATE POLICY event_all ON crisis.event USING ({_SEES}) WITH CHECK ({_SEES});
-"""
+"""  # noqa: S608 (constant SQL fragments, nothing is interpolated from input)
 
 DOWNGRADE = r"""
 DROP SCHEMA crisis CASCADE;

@@ -77,6 +77,8 @@ from app.modules.privacy.retention import retention_forever
 from app.modules.privacy.router import router as privacy_router
 from app.modules.programmes.router import router as programmes_router
 from app.modules.programmes.worker import programmes_forever
+from app.modules.register.router import router as register_router
+from app.modules.register.worker import register_forever
 from app.modules.reports.jurisdiction import sla_forever
 from app.modules.reports.live import hub
 from app.modules.reports.live import router as live_router
@@ -135,6 +137,7 @@ WORKER_LOOPS: list[tuple[str, WorkerLoop]] = [
     ("coastal", coastal_forever),
     ("programmes", programmes_forever),
     ("crisis", crisis_forever),
+    ("register", register_forever),
     ("procedures-index", procedures_forever),
     ("telephony-events", ari_events_forever),
     ("telephony-recordings", recordings_forever),
@@ -303,6 +306,7 @@ def create_app() -> FastAPI:
         coastal_staff_router,
         programmes_router,
         crisis_router,
+        register_router,
         identity_internal_router,
     )
     for router in routers:

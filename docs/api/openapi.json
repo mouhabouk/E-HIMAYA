@@ -1968,6 +1968,13 @@
             "title": "Directives",
             "type": "array"
           },
+          "documents": {
+            "items": {
+              "$ref": "#/components/schemas/DocRef"
+            },
+            "title": "Documents",
+            "type": "array"
+          },
           "evacuations": {
             "items": {
               "$ref": "#/components/schemas/EvacuationOut"
@@ -2315,6 +2322,16 @@
             "title": "Plan",
             "type": "string"
           },
+          "plan_document": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DocRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "scope": {
             "enum": [
               "gouvernorat",
@@ -2375,6 +2392,11 @@
               }
             ]
           },
+          "clear_plan_document": {
+            "default": false,
+            "title": "Clear Plan Document",
+            "type": "boolean"
+          },
           "level": {
             "anyOf": [
               {
@@ -2413,6 +2435,18 @@
             ],
             "title": "Plan"
           },
+          "plan_document_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plan Document Id"
+          },
           "reason": {
             "default": "",
             "maxLength": 1000,
@@ -2428,6 +2462,34 @@
           "version"
         ],
         "title": "AxisPatch",
+        "type": "object"
+      },
+      "AxisRef": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "number": {
+            "title": "Number",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "name",
+          "status"
+        ],
+        "title": "AxisRef",
         "type": "object"
       },
       "BadgeItem": {
@@ -6674,6 +6736,45 @@
         "title": "DismissIn",
         "type": "object"
       },
+      "DocRef": {
+        "description": "A document of the register (phase L3b) an axis points to.",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "number": {
+            "title": "Number",
+            "type": "string"
+          },
+          "reference": {
+            "title": "Reference",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "reference",
+          "title",
+          "kind",
+          "status"
+        ],
+        "title": "DocRef",
+        "type": "object"
+      },
       "DoctorIn": {
         "properties": {
           "cp_staff_no": {
@@ -7072,78 +7173,224 @@
         "title": "DoctorReviewOut",
         "type": "object"
       },
-      "DocumentIn": {
+      "DocumentDetail": {
         "properties": {
-          "kind": {
-            "enum": [
-              "safety_file",
-              "safety_plan",
-              "sds",
-              "other",
-              "maintenance_photo"
-            ],
-            "title": "Kind",
+          "axes": {
+            "items": {
+              "$ref": "#/components/schemas/AxisRef"
+            },
+            "title": "Axes",
+            "type": "array"
+          },
+          "body": {
+            "title": "Body",
             "type": "string"
           },
-          "title": {
-            "maxLength": 200,
-            "minLength": 1,
-            "title": "Title",
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
             "type": "string"
-          }
-        },
-        "required": [
-          "kind",
-          "title"
-        ],
-        "title": "DocumentIn",
-        "type": "object"
-      },
-      "DocumentOut": {
-        "properties": {
-          "current_version": {
+          },
+          "created_by_name": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/DocumentVersionOut"
+                "type": "string"
               },
               {
                 "type": "null"
               }
-            ]
+            ],
+            "title": "Created By Name"
           },
-          "id": {
-            "format": "uuid",
-            "title": "Id",
+          "document": {
+            "$ref": "#/components/schemas/app__modules__register__schemas__DocumentOut"
+          },
+          "links": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__register__schemas__LinkOut"
+            },
+            "title": "Links",
+            "type": "array"
+          },
+          "recommendations": {
+            "items": {
+              "$ref": "#/components/schemas/RecommendationOut"
+            },
+            "title": "Recommendations",
+            "type": "array"
+          }
+        },
+        "required": [
+          "document",
+          "body",
+          "axes",
+          "links",
+          "recommendations",
+          "created_by_name",
+          "created_at"
+        ],
+        "title": "DocumentDetail",
+        "type": "object"
+      },
+      "DocumentPatch": {
+        "properties": {
+          "access": {
+            "default": "all",
+            "enum": [
+              "all",
+              "gouvernorat",
+              "command",
+              "restricted"
+            ],
+            "title": "Access",
+            "type": "string"
+          },
+          "axis_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 20,
+            "title": "Axis Ids",
+            "type": "array"
+          },
+          "body": {
+            "default": "",
+            "maxLength": 100000,
+            "title": "Body",
+            "type": "string"
+          },
+          "effective_from": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effective From"
+          },
+          "effective_to": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effective To"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "maximum": 83.0,
+                "minimum": 11.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "issued_on": {
+            "format": "date",
+            "title": "Issued On",
+            "type": "string"
+          },
+          "issuer": {
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Issuer",
             "type": "string"
           },
           "kind": {
             "enum": [
-              "safety_file",
-              "safety_plan",
-              "sds",
-              "other",
-              "maintenance_photo"
+              "plan",
+              "decision",
+              "memo",
+              "circular",
+              "standing_instruction",
+              "temporary_instruction",
+              "recommendation",
+              "minutes",
+              "other"
             ],
             "title": "Kind",
             "type": "string"
           },
+          "level": {
+            "enum": [
+              "central",
+              "regional"
+            ],
+            "title": "Level",
+            "type": "string"
+          },
+          "publish": {
+            "default": false,
+            "title": "Publish",
+            "type": "boolean"
+          },
+          "reason": {
+            "maxLength": 1000,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          },
+          "reference": {
+            "default": "",
+            "maxLength": 300,
+            "title": "Reference",
+            "type": "string"
+          },
+          "signatory": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Signatory",
+            "type": "string"
+          },
+          "summary": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Summary",
+            "type": "string"
+          },
           "title": {
+            "maxLength": 300,
+            "minLength": 3,
             "title": "Title",
             "type": "string"
           },
-          "versions_count": {
-            "title": "Versions Count",
+          "topics": {
+            "items": {
+              "maxLength": 60,
+              "minLength": 2,
+              "type": "string"
+            },
+            "maxItems": 12,
+            "title": "Topics",
+            "type": "array"
+          },
+          "version": {
+            "title": "Version",
             "type": "integer"
           }
         },
         "required": [
-          "id",
           "kind",
+          "level",
+          "issuer",
           "title",
-          "current_version",
-          "versions_count"
+          "issued_on",
+          "version",
+          "reason"
         ],
-        "title": "DocumentOut",
+        "title": "DocumentPatch",
         "type": "object"
       },
       "DocumentTitleIn": {
@@ -9947,6 +10194,24 @@
         "title": "Extraction",
         "type": "object"
       },
+      "Facet": {
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "count"
+        ],
+        "title": "Facet",
+        "type": "object"
+      },
       "FacetValue": {
         "properties": {
           "count": {
@@ -10854,6 +11119,19 @@
           "taken_by_other"
         ],
         "title": "FieldVisit",
+        "type": "object"
+      },
+      "FileOut": {
+        "properties": {
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "title": "FileOut",
         "type": "object"
       },
       "FireDangerOut": {
@@ -12515,7 +12793,8 @@
               "incident",
               "report",
               "transcript",
-              "procedure"
+              "procedure",
+              "register"
             ],
             "title": "Kind",
             "type": "string"
@@ -14319,7 +14598,8 @@
           "incident",
           "report",
           "transcript",
-          "procedure"
+          "procedure",
+          "register"
         ],
         "title": "Kind",
         "type": "string"
@@ -15354,54 +15634,11 @@
         "title": "LevelOut",
         "type": "object"
       },
-      "LinkIn": {
-        "additionalProperties": false,
-        "properties": {
-          "incident_id": {
-            "anyOf": [
-              {
-                "format": "uuid",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Incident Id"
-          },
-          "report_id": {
-            "anyOf": [
-              {
-                "format": "uuid",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Report Id"
-          },
-          "tracking_code": {
-            "anyOf": [
-              {
-                "pattern": "^EH-\\d{2}-\\d{2}-\\d{7}$",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Tracking Code"
-          }
-        },
-        "title": "LinkIn",
-        "type": "object"
-      },
       "LinkList": {
         "properties": {
           "items": {
             "items": {
-              "$ref": "#/components/schemas/LinkOut"
+              "$ref": "#/components/schemas/app__modules__safety__router__LinkOut"
             },
             "title": "Items",
             "type": "array"
@@ -15411,50 +15648,6 @@
           "items"
         ],
         "title": "LinkList",
-        "type": "object"
-      },
-      "LinkOut": {
-        "properties": {
-          "created_at": {
-            "format": "date-time",
-            "title": "Created At",
-            "type": "string"
-          },
-          "first_name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "First Name"
-          },
-          "id": {
-            "format": "uuid",
-            "title": "Id",
-            "type": "string"
-          },
-          "phone": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Phone"
-          }
-        },
-        "required": [
-          "id",
-          "first_name",
-          "phone",
-          "created_at"
-        ],
-        "title": "LinkOut",
         "type": "object"
       },
       "LiveIn": {
@@ -22077,6 +22270,151 @@
         "title": "Recommendation",
         "type": "object"
       },
+      "RecommendationIn": {
+        "properties": {
+          "body": {
+            "maxLength": 2000,
+            "minLength": 3,
+            "title": "Body",
+            "type": "string"
+          },
+          "due_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due On"
+          },
+          "responsible": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Responsible",
+            "type": "string"
+          }
+        },
+        "required": [
+          "body"
+        ],
+        "title": "RecommendationIn",
+        "type": "object"
+      },
+      "RecommendationOut": {
+        "properties": {
+          "body": {
+            "title": "Body",
+            "type": "string"
+          },
+          "due_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due On"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "number": {
+            "title": "Number",
+            "type": "integer"
+          },
+          "overdue": {
+            "title": "Overdue",
+            "type": "boolean"
+          },
+          "responsible": {
+            "title": "Responsible",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "proposed",
+              "in_progress",
+              "done",
+              "dropped"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "status_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status Reason"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "updated_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By Name"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "body",
+          "responsible",
+          "due_on",
+          "status",
+          "status_reason",
+          "updated_by_name",
+          "updated_at",
+          "overdue"
+        ],
+        "title": "RecommendationOut",
+        "type": "object"
+      },
+      "RecommendationStatusIn": {
+        "properties": {
+          "reason": {
+            "default": "",
+            "maxLength": 1000,
+            "title": "Reason",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "proposed",
+              "in_progress",
+              "done",
+              "dropped"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "RecommendationStatusIn",
+        "type": "object"
+      },
       "Recommendations": {
         "properties": {
           "generated_at": {
@@ -22391,6 +22729,33 @@
           "created_at"
         ],
         "title": "RemarkOut",
+        "type": "object"
+      },
+      "RepealIn": {
+        "properties": {
+          "by_document_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "By Document Id"
+          },
+          "reason": {
+            "maxLength": 1000,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "RepealIn",
         "type": "object"
       },
       "ReportFilters": {
@@ -23928,59 +24293,6 @@
           "changes"
         ],
         "title": "Revision",
-        "type": "object"
-      },
-      "RevisionOut": {
-        "properties": {
-          "action": {
-            "title": "Action",
-            "type": "string"
-          },
-          "created_at": {
-            "format": "date-time",
-            "title": "Created At",
-            "type": "string"
-          },
-          "created_by_name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Created By Name"
-          },
-          "number": {
-            "title": "Number",
-            "type": "integer"
-          },
-          "points": {
-            "title": "Points",
-            "type": "integer"
-          },
-          "reason": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Reason"
-          }
-        },
-        "required": [
-          "number",
-          "action",
-          "reason",
-          "created_by_name",
-          "created_at",
-          "points"
-        ],
-        "title": "RevisionOut",
         "type": "object"
       },
       "RevocationIn": {
@@ -26666,7 +26978,7 @@
           },
           "documents": {
             "items": {
-              "$ref": "#/components/schemas/DocumentOut"
+              "$ref": "#/components/schemas/app__modules__orgs__schemas__DocumentOut"
             },
             "title": "Documents",
             "type": "array"
@@ -34188,7 +34500,8 @@
               "incident",
               "report",
               "transcript",
-              "procedure"
+              "procedure",
+              "register"
             ],
             "title": "Kind",
             "type": "string"
@@ -35714,6 +36027,80 @@
         "title": "CertificateOut",
         "type": "object"
       },
+      "app__modules__orgs__schemas__DocumentIn": {
+        "properties": {
+          "kind": {
+            "enum": [
+              "safety_file",
+              "safety_plan",
+              "sds",
+              "other",
+              "maintenance_photo"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "title"
+        ],
+        "title": "DocumentIn",
+        "type": "object"
+      },
+      "app__modules__orgs__schemas__DocumentOut": {
+        "properties": {
+          "current_version": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DocumentVersionOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "safety_file",
+              "safety_plan",
+              "sds",
+              "other",
+              "maintenance_photo"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "versions_count": {
+            "title": "Versions Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "title",
+          "current_version",
+          "versions_count"
+        ],
+        "title": "DocumentOut",
+        "type": "object"
+      },
       "app__modules__orgs__schemas__FeatureIn": {
         "properties": {
           "kind": {
@@ -36709,11 +37096,64 @@
         "title": "ReasonIn",
         "type": "object"
       },
+      "app__modules__programmes__schemas__RevisionOut": {
+        "properties": {
+          "action": {
+            "title": "Action",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "number": {
+            "title": "Number",
+            "type": "integer"
+          },
+          "points": {
+            "title": "Points",
+            "type": "integer"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "required": [
+          "number",
+          "action",
+          "reason",
+          "created_by_name",
+          "created_at",
+          "points"
+        ],
+        "title": "RevisionOut",
+        "type": "object"
+      },
       "app__modules__programmes__schemas__RevisionsOut": {
         "properties": {
           "items": {
             "items": {
-              "$ref": "#/components/schemas/RevisionOut"
+              "$ref": "#/components/schemas/app__modules__programmes__schemas__RevisionOut"
             },
             "title": "Items",
             "type": "array"
@@ -36723,6 +37163,633 @@
           "items"
         ],
         "title": "RevisionsOut",
+        "type": "object"
+      },
+      "app__modules__register__schemas__DocumentIn": {
+        "properties": {
+          "access": {
+            "default": "all",
+            "enum": [
+              "all",
+              "gouvernorat",
+              "command",
+              "restricted"
+            ],
+            "title": "Access",
+            "type": "string"
+          },
+          "axis_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 20,
+            "title": "Axis Ids",
+            "type": "array"
+          },
+          "body": {
+            "default": "",
+            "maxLength": 100000,
+            "title": "Body",
+            "type": "string"
+          },
+          "effective_from": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effective From"
+          },
+          "effective_to": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effective To"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "maximum": 83.0,
+                "minimum": 11.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "issued_on": {
+            "format": "date",
+            "title": "Issued On",
+            "type": "string"
+          },
+          "issuer": {
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Issuer",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "plan",
+              "decision",
+              "memo",
+              "circular",
+              "standing_instruction",
+              "temporary_instruction",
+              "recommendation",
+              "minutes",
+              "other"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "level": {
+            "enum": [
+              "central",
+              "regional"
+            ],
+            "title": "Level",
+            "type": "string"
+          },
+          "publish": {
+            "default": true,
+            "title": "Publish",
+            "type": "boolean"
+          },
+          "reference": {
+            "default": "",
+            "maxLength": 300,
+            "title": "Reference",
+            "type": "string"
+          },
+          "signatory": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Signatory",
+            "type": "string"
+          },
+          "summary": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Summary",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 300,
+            "minLength": 3,
+            "title": "Title",
+            "type": "string"
+          },
+          "topics": {
+            "items": {
+              "maxLength": 60,
+              "minLength": 2,
+              "type": "string"
+            },
+            "maxItems": 12,
+            "title": "Topics",
+            "type": "array"
+          }
+        },
+        "required": [
+          "kind",
+          "level",
+          "issuer",
+          "title",
+          "issued_on"
+        ],
+        "title": "DocumentIn",
+        "type": "object"
+      },
+      "app__modules__register__schemas__DocumentOut": {
+        "properties": {
+          "access": {
+            "enum": [
+              "all",
+              "gouvernorat",
+              "command",
+              "restricted"
+            ],
+            "title": "Access",
+            "type": "string"
+          },
+          "can_edit": {
+            "title": "Can Edit",
+            "type": "boolean"
+          },
+          "effective_from": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effective From"
+          },
+          "effective_to": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effective To"
+          },
+          "excerpt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Excerpt"
+          },
+          "file_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File Name"
+          },
+          "file_sha256": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File Sha256"
+          },
+          "file_size": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File Size"
+          },
+          "file_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File Type"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "gouvernorat_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Name"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "issued_on": {
+            "format": "date",
+            "title": "Issued On",
+            "type": "string"
+          },
+          "issuer": {
+            "title": "Issuer",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "plan",
+              "decision",
+              "memo",
+              "circular",
+              "standing_instruction",
+              "temporary_instruction",
+              "recommendation",
+              "minutes",
+              "other"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "level": {
+            "enum": [
+              "central",
+              "regional"
+            ],
+            "title": "Level",
+            "type": "string"
+          },
+          "number": {
+            "title": "Number",
+            "type": "string"
+          },
+          "recommendations": {
+            "title": "Recommendations",
+            "type": "integer"
+          },
+          "recommendations_open": {
+            "title": "Recommendations Open",
+            "type": "integer"
+          },
+          "reference": {
+            "title": "Reference",
+            "type": "string"
+          },
+          "repeal_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Repeal Reason"
+          },
+          "repealed_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Repealed By"
+          },
+          "signatory": {
+            "title": "Signatory",
+            "type": "string"
+          },
+          "signed": {
+            "title": "Signed",
+            "type": "boolean"
+          },
+          "source": {
+            "enum": [
+              "manual",
+              "axis"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "in_force",
+              "expired",
+              "repealed"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "topics": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Topics",
+            "type": "array"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "updated_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By Name"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "reference",
+          "kind",
+          "level",
+          "gouvernorat_code",
+          "gouvernorat_name",
+          "issuer",
+          "signatory",
+          "title",
+          "summary",
+          "topics",
+          "issued_on",
+          "effective_from",
+          "effective_to",
+          "status",
+          "repeal_reason",
+          "repealed_by",
+          "access",
+          "source",
+          "signed",
+          "file_name",
+          "file_type",
+          "file_size",
+          "file_sha256",
+          "recommendations_open",
+          "recommendations",
+          "updated_by_name",
+          "updated_at",
+          "version",
+          "can_edit"
+        ],
+        "title": "DocumentOut",
+        "type": "object"
+      },
+      "app__modules__register__schemas__LinkIn": {
+        "properties": {
+          "relation": {
+            "enum": [
+              "repeals",
+              "amends",
+              "complements"
+            ],
+            "title": "Relation",
+            "type": "string"
+          },
+          "to_id": {
+            "format": "uuid",
+            "title": "To Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "to_id",
+          "relation"
+        ],
+        "title": "LinkIn",
+        "type": "object"
+      },
+      "app__modules__register__schemas__LinkOut": {
+        "properties": {
+          "direction": {
+            "enum": [
+              "out",
+              "in"
+            ],
+            "title": "Direction",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "plan",
+              "decision",
+              "memo",
+              "circular",
+              "standing_instruction",
+              "temporary_instruction",
+              "recommendation",
+              "minutes",
+              "other"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "number": {
+            "title": "Number",
+            "type": "string"
+          },
+          "relation": {
+            "enum": [
+              "repeals",
+              "amends",
+              "complements"
+            ],
+            "title": "Relation",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "in_force",
+              "expired",
+              "repealed"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "title",
+          "kind",
+          "status",
+          "relation",
+          "direction"
+        ],
+        "title": "LinkOut",
+        "type": "object"
+      },
+      "app__modules__register__schemas__RevisionOut": {
+        "properties": {
+          "change": {
+            "title": "Change",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "snapshot": {
+            "additionalProperties": true,
+            "title": "Snapshot",
+            "type": "object"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version",
+          "change",
+          "reason",
+          "created_by_name",
+          "created_at",
+          "snapshot"
+        ],
+        "title": "RevisionOut",
+        "type": "object"
+      },
+      "app__modules__register__schemas__SearchOut": {
+        "properties": {
+          "can_create": {
+            "title": "Can Create",
+            "type": "boolean"
+          },
+          "can_create_central": {
+            "title": "Can Create Central",
+            "type": "boolean"
+          },
+          "facets": {
+            "additionalProperties": {
+              "items": {
+                "$ref": "#/components/schemas/Facet"
+              },
+              "type": "array"
+            },
+            "title": "Facets",
+            "type": "object"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__register__schemas__DocumentOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "facets",
+          "can_create",
+          "can_create_central"
+        ],
+        "title": "SearchOut",
         "type": "object"
       },
       "app__modules__reports__schemas__Kpis": {
@@ -37704,6 +38771,50 @@
         "title": "InvitationPreview",
         "type": "object"
       },
+      "app__modules__safety__router__LinkOut": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "first_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Name"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          }
+        },
+        "required": [
+          "id",
+          "first_name",
+          "phone",
+          "created_at"
+        ],
+        "title": "LinkOut",
+        "type": "object"
+      },
       "app__modules__safety__router__PointOut": {
         "properties": {
           "accuracy_m": {
@@ -37798,6 +38909,49 @@
           "lon"
         ],
         "title": "Point",
+        "type": "object"
+      },
+      "app__modules__telephony__schemas__LinkIn": {
+        "additionalProperties": false,
+        "properties": {
+          "incident_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Incident Id"
+          },
+          "report_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Report Id"
+          },
+          "tracking_code": {
+            "anyOf": [
+              {
+                "pattern": "^EH-\\d{2}-\\d{2}-\\d{7}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tracking Code"
+          }
+        },
+        "title": "LinkIn",
         "type": "object"
       },
       "app__modules__weather__schemas__RuleIn": {
@@ -44695,7 +45849,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/DocumentOut"
+                    "$ref": "#/components/schemas/app__modules__orgs__schemas__DocumentOut"
                   },
                   "title": "Response List Documents Api V1 Orgs  Org Id  Documents Get",
                   "type": "array"
@@ -44743,7 +45897,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/DocumentIn"
+                "$ref": "#/components/schemas/app__modules__orgs__schemas__DocumentIn"
               }
             }
           },
@@ -44754,7 +45908,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DocumentOut"
+                  "$ref": "#/components/schemas/app__modules__orgs__schemas__DocumentOut"
                 }
               }
             },
@@ -44871,7 +46025,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DocumentOut"
+                  "$ref": "#/components/schemas/app__modules__orgs__schemas__DocumentOut"
                 }
               }
             },
@@ -48509,7 +49663,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LinkOut"
+                  "$ref": "#/components/schemas/app__modules__safety__router__LinkOut"
                 }
               }
             },
@@ -50794,7 +51948,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LinkIn"
+                "$ref": "#/components/schemas/app__modules__telephony__schemas__LinkIn"
               }
             }
           },
@@ -61695,6 +62849,915 @@
         "tags": [
           "staff",
           "programmes"
+        ]
+      }
+    },
+    "/api/v1/staff/register/documents": {
+      "get": {
+        "description": "Advanced search. Words match whole words or their starts, in Arabic and French, without diacritics or hamza\nvariants. Without a status filter every status is listed (drafts only to those who may write them).",
+        "operationId": "search_api_v1_staff_register_documents_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 300,
+              "title": "Q",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Comma-separated kinds",
+            "in": "query",
+            "name": "kind",
+            "required": false,
+            "schema": {
+              "default": "",
+              "description": "Comma-separated kinds",
+              "maxLength": 300,
+              "title": "Kind",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Comma-separated levels",
+            "in": "query",
+            "name": "level",
+            "required": false,
+            "schema": {
+              "default": "",
+              "description": "Comma-separated levels",
+              "maxLength": 40,
+              "title": "Level",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Comma-separated statuses",
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "default": "",
+              "description": "Comma-separated statuses",
+              "maxLength": 80,
+              "title": "Status",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 83,
+                  "minimum": 11,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          },
+          {
+            "description": "Comma-separated topics",
+            "in": "query",
+            "name": "topic",
+            "required": false,
+            "schema": {
+              "default": "",
+              "description": "Comma-separated topics",
+              "maxLength": 400,
+              "title": "Topic",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "issuer",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 200,
+              "title": "Issuer",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "From"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "To"
+            }
+          },
+          {
+            "in": "query",
+            "name": "date_field",
+            "required": false,
+            "schema": {
+              "default": "issued",
+              "enum": [
+                "issued",
+                "effective"
+              ],
+              "title": "Date Field",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "in_force_on",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "In Force On"
+            }
+          },
+          {
+            "in": "query",
+            "name": "has_file",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Has File"
+            }
+          },
+          {
+            "in": "query",
+            "name": "axis",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Axis"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "schema": {
+              "default": "relevance",
+              "enum": [
+                "relevance",
+                "newest",
+                "oldest"
+              ],
+              "title": "Sort",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "maximum": 10000,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__register__schemas__SearchOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Search",
+        "tags": [
+          "staff",
+          "register"
+        ]
+      },
+      "post": {
+        "operationId": "create_api_v1_staff_register_documents_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__register__schemas__DocumentIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create",
+        "tags": [
+          "staff",
+          "register"
+        ]
+      }
+    },
+    "/api/v1/staff/register/documents/{document_id}": {
+      "delete": {
+        "operationId": "delete_draft_api_v1_staff_register_documents__document_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Draft",
+        "tags": [
+          "staff",
+          "register"
+        ]
+      },
+      "get": {
+        "operationId": "get_document_api_v1_staff_register_documents__document_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Document",
+        "tags": [
+          "staff",
+          "register"
+        ]
+      },
+      "patch": {
+        "operationId": "update_api_v1_staff_register_documents__document_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update",
+        "tags": [
+          "staff",
+          "register"
+        ]
+      }
+    },
+    "/api/v1/staff/register/documents/{document_id}/file": {
+      "get": {
+        "operationId": "get_file_api_v1_staff_register_documents__document_id__file_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get File",
+        "tags": [
+          "staff",
+          "register"
+        ]
+      },
+      "put": {
+        "description": "The file (PDF, Word, PNG or JPEG, up to 20 MB) is the request body; it replaces the previous one.",
+        "operationId": "put_file_api_v1_staff_register_documents__document_id__file_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "file_name",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 1,
+              "title": "File Name",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Put File",
+        "tags": [
+          "staff",
+          "register"
+        ]
+      }
+    },
+    "/api/v1/staff/register/documents/{document_id}/links": {
+      "post": {
+        "operationId": "add_link_api_v1_staff_register_documents__document_id__links_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__register__schemas__LinkIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Add Link",
+        "tags": [
+          "staff",
+          "register"
+        ]
+      }
+    },
+    "/api/v1/staff/register/documents/{document_id}/links/{other_id}": {
+      "delete": {
+        "operationId": "remove_link_api_v1_staff_register_documents__document_id__links__other_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "other_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Other Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Remove Link",
+        "tags": [
+          "staff",
+          "register"
+        ]
+      }
+    },
+    "/api/v1/staff/register/documents/{document_id}/recommendations": {
+      "post": {
+        "operationId": "add_recommendation_api_v1_staff_register_documents__document_id__recommendations_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecommendationIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Add Recommendation",
+        "tags": [
+          "staff",
+          "register"
+        ]
+      }
+    },
+    "/api/v1/staff/register/documents/{document_id}/repeal": {
+      "post": {
+        "operationId": "repeal_api_v1_staff_register_documents__document_id__repeal_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepealIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Repeal",
+        "tags": [
+          "staff",
+          "register"
+        ]
+      }
+    },
+    "/api/v1/staff/register/documents/{document_id}/revisions": {
+      "get": {
+        "operationId": "revisions_api_v1_staff_register_documents__document_id__revisions_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/app__modules__register__schemas__RevisionOut"
+                  },
+                  "title": "Response Revisions Api V1 Staff Register Documents  Document Id  Revisions Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Revisions",
+        "tags": [
+          "staff",
+          "register"
+        ]
+      }
+    },
+    "/api/v1/staff/register/recommendations/{recommendation_id}/status": {
+      "post": {
+        "operationId": "recommendation_status_api_v1_staff_register_recommendations__recommendation_id__status_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "recommendation_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Recommendation Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecommendationStatusIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecommendationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Recommendation Status",
+        "tags": [
+          "staff",
+          "register"
         ]
       }
     },

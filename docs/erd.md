@@ -316,6 +316,7 @@ erDiagram
         geography_multipolygon_4326 area
         smallint level
         text plan
+        uuid plan_document_id FK
         text status
         uuid request_id
         text opened_by
@@ -474,6 +475,7 @@ erDiagram
     geo__gouvernorat ||--o{ crisis__request : "gouvernorat_code"
     ops__incident ||--o{ crisis__axis_incident : "incident_id"
     ops__incident ||--o{ crisis__dismissal : "incident_id"
+    register__document ||--o{ crisis__axis : "plan_document_id"
 ```
 
 ## decision
@@ -1772,6 +1774,93 @@ erDiagram
     geo__layer ||--o{ programme__programme : "layer_id"
     programme__programme ||--o{ programme__point : "programme_id"
     programme__programme ||--o{ programme__revision : "programme_id"
+```
+
+## register
+
+```mermaid
+erDiagram
+    register__counter {
+        integer year PK
+        integer last
+    }
+    register__document {
+        uuid id PK
+        text number
+        text reference
+        text kind
+        text level
+        smallint gouvernorat_code FK
+        text issuer
+        text signatory
+        text title
+        text summary
+        text body
+        array topics
+        date issued_on
+        date effective_from
+        date effective_to
+        text status
+        uuid repealed_by FK
+        text repeal_reason
+        text access
+        array axis_ids
+        text source
+        uuid directive_id FK
+        text signature
+        text key_id
+        text file_key
+        text file_name
+        text file_type
+        integer file_size
+        text file_sha256
+        text norm
+        tsvector search
+        text created_by
+        text created_by_name
+        datetime created_at
+        text updated_by
+        text updated_by_name
+        datetime updated_at
+        integer version
+    }
+    register__link {
+        uuid from_id PK,FK
+        uuid to_id PK,FK
+        text relation
+        text created_by
+        datetime created_at
+    }
+    register__recommendation {
+        uuid id PK
+        uuid document_id FK
+        integer number
+        text body
+        text responsible
+        date due_on
+        text status
+        text status_reason
+        text updated_by
+        text updated_by_name
+        datetime updated_at
+    }
+    register__revision {
+        uuid document_id PK,FK
+        integer version PK
+        jsonb snapshot
+        text change
+        text reason
+        text created_by
+        text created_by_name
+        datetime created_at
+    }
+    crisis__directive ||--o{ register__document : "directive_id"
+    geo__gouvernorat ||--o{ register__document : "gouvernorat_code"
+    register__document ||--o{ register__document : "repealed_by"
+    register__document ||--o{ register__link : "from_id"
+    register__document ||--o{ register__link : "to_id"
+    register__document ||--o{ register__recommendation : "document_id"
+    register__document ||--o{ register__revision : "document_id"
 ```
 
 ## reports

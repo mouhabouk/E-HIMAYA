@@ -11,7 +11,7 @@ MAX_SECTION = 20_000
 
 AccessLevel = Literal["national", "gouvernorat", "committee"]
 EntryStatus = Literal["draft", "in_review", "published", "archived"]
-LibraryKind = Literal["memory", "report_doc", "incident", "report", "transcript", "procedure"]
+LibraryKind = Literal["memory", "report_doc", "incident", "report", "transcript", "procedure", "register"]
 
 
 class Title(BaseModel):

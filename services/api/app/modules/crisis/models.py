@@ -39,6 +39,10 @@ class Axis(Base):
     area: Mapped[object | None] = mapped_column(Geography("MULTIPOLYGON", srid=4326))
     level: Mapped[int] = mapped_column(SmallInteger)
     plan: Mapped[str] = mapped_column(Text, server_default="")
+    # The plan in force as a document of the register (phase L3b); ``plan`` keeps a plan that is not recorded.
+    plan_document_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("register.document.id", ondelete="SET NULL", use_alter=True)
+    )
     status: Mapped[str] = mapped_column(Text, server_default="open")
     request_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True))
     opened_by: Mapped[str] = mapped_column(Text)

@@ -133,6 +133,9 @@ async def _details(session: AsyncSession, doc: documents.Doc) -> tuple[dict[str,
             "sha256": row["sha256"],
         }
         return fields, await _media(session, [row["media_id"]] if row["media_id"] else [])
+    if doc.kind is Kind.REGISTER:
+        # The register page shows the document; the library links to it.
+        return {"document_id": doc.ref_id, "register_kind": doc.categories[0] if doc.categories else None}, []
     chunk = await session.get(ProcedureChunk, doc.ref_id)
     assert chunk is not None
     return {"procedure_id": chunk.procedure_id, "lang": chunk.lang, "references": chunk.sources}, []

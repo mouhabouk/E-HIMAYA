@@ -49,6 +49,9 @@ class AxisPatch(BaseModel):
     level: Level | None = None
     area: Area | None = None
     plan: Annotated[Text, StringConstraints(max_length=2000)] | None = None
+    # The plan as a document of the register (phase L3b); null leaves it, "" in ``clear_plan_document`` removes it.
+    plan_document_id: uuid.UUID | None = None
+    clear_plan_document: bool = False
     reason: Annotated[Text, StringConstraints(max_length=1000)] = ""
 
 
@@ -84,6 +87,17 @@ class Figures(BaseModel):
     mean_hours_to_done: float | None = None
 
 
+class DocRef(BaseModel):
+    """A document of the register (phase L3b) an axis points to."""
+
+    id: str
+    number: str
+    reference: str
+    title: str
+    kind: str
+    status: str
+
+
 class AxisOut(BaseModel):
     id: str
     number: str
@@ -97,6 +111,7 @@ class AxisOut(BaseModel):
     area: dict[str, Any] | None
     level: int
     plan: str
+    plan_document: DocRef | None = None
     status: Literal["open", "closed"]
     opened_by_name: str | None
     opened_at: datetime
@@ -346,6 +361,8 @@ class AxisDetail(BaseModel):
     directives: list[DirectiveOut]
     sitreps: list[SitrepOut]
     timeline: list[EventOut]
+    # Documents of the register that concern the axis (its decisions recorded there, plans, instructions).
+    documents: list[DocRef] = Field(default_factory=list)
 
 
 # --- Command (governor, minister) -----------------------------------------------------------------------------------

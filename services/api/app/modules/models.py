@@ -68,6 +68,11 @@ from app.modules.orgs.models import (
     TeamMember,
 )
 from app.modules.programmes.models import Programme, ProgrammePoint, ProgrammeRevision
+from app.modules.register.models import Counter as RegisterCounter
+from app.modules.register.models import Document as RegisterDocument
+from app.modules.register.models import Link as RegisterLink
+from app.modules.register.models import Recommendation as RegisterRecommendation
+from app.modules.register.models import Revision as RegisterRevision
 from app.modules.reports.models import Media, Report, StatusHistory
 from app.modules.rewards.models import (
     BadgeAward,
@@ -185,6 +190,11 @@ __all__ = [
     "Programme",
     "ProgrammePoint",
     "ProgrammeRevision",
+    "RegisterCounter",
+    "RegisterDocument",
+    "RegisterLink",
+    "RegisterRecommendation",
+    "RegisterRevision",
     "Report",
     "ReportTemplate",
     "Resource",
