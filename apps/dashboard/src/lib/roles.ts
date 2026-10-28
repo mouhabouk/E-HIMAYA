@@ -631,3 +631,18 @@ export const REGISTER_READERS = [
 export function canOpenRegister(roles: readonly string[]): boolean {
   return any(REGISTER_READERS, roles);
 }
+
+/**
+ * Resources register (phase R1, docs/phase-r/design-resources.md §2.5): the rooms, committees and the system
+ * administrator open the lists; the governor and the minister see the counts only.
+ */
+export const INVENTORY_LIST_ROLES = [...READ_ROLES, "sysadmin"] as const;
+export const INVENTORY_ROLES = [...INVENTORY_LIST_ROLES, "governor", "minister"] as const;
+
+export function canOpenInventory(roles: readonly string[]): boolean {
+  return any(INVENTORY_ROLES, roles);
+}
+
+export function canListInventory(roles: readonly string[]): boolean {
+  return any(INVENTORY_LIST_ROLES, roles);
+}

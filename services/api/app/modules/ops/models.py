@@ -166,6 +166,13 @@ class Resource(Base):
     location: Mapped[object | None] = mapped_column(Geography("POINT", srid=4326))
     # Phase P4d: when the team's phone last gave the position.
     location_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Phase R1: the catalogue type and its specifications (2000 L), internal number, year, why out of service.
+    category_key: Mapped[str | None] = mapped_column(Text, ForeignKey("inv.category.key", onupdate="CASCADE"))
+    specs: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default="{}")
+    code: Mapped[str | None] = mapped_column(Text)
+    year: Mapped[int | None] = mapped_column(SmallInteger)
+    out_reason: Mapped[str | None] = mapped_column(Text)
+    updated_by: Mapped[str | None] = mapped_column(Text)
     version: Mapped[int] = mapped_column(Integer, server_default="1")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

@@ -54,6 +54,7 @@ from app.modules.health.router import router as health_router
 from app.modules.identity.email import router as identity_email_router
 from app.modules.identity.internal import router as identity_internal_router
 from app.modules.identity.router import router as identity_router
+from app.modules.inventory.router import router as inventory_router
 from app.modules.knowledge.indexer import knowledge_forever
 from app.modules.knowledge.router import router as knowledge_router
 from app.modules.layers.router import public_router as layers_router
@@ -307,6 +308,7 @@ def create_app() -> FastAPI:
         programmes_router,
         crisis_router,
         register_router,
+        inventory_router,
         identity_internal_router,
     )
     for router in routers:

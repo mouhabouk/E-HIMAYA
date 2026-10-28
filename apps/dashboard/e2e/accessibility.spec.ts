@@ -5,6 +5,7 @@
  */
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
+import { AGENT, CATALOGUE, IMPORT_PREVIEW, OVERVIEW, STOCK, UNITS, VEHICLE } from "../src/test/inventoryData";
 import { DIRECTIVE_ALL_DETAIL, DISPATCH_PAGE, PLAN_DETAIL, REVISIONS, SEARCH } from "../src/test/registerData";
 import { JENDOUBA_AXIS, NABEUL_AXIS, NABEUL_DETAIL, overview, REQUEST, SOUSSE_AXIS, SUGGESTIONS } from "../src/test/crisisData";
 import { API, baseMock, commonAnswer, json, signIn } from "./phase7Helpers";
@@ -174,6 +175,16 @@ async function mockApi(page: Page): Promise<string[]> {
     if (pathname === "/api/v1/staff/register/documents/reg-plan/revisions") return json(route, REVISIONS);
     if (pathname === "/api/v1/staff/register/dispatches") return json(route, DISPATCH_PAGE);
     if (pathname === "/api/v1/staff/register/dispatches/dsp-all") return json(route, DIRECTIVE_ALL_DETAIL);
+    // Resources register (phase R1).
+    const inventory: Record<string, unknown> = {
+      "/api/v1/staff/inventory/catalogue": CATALOGUE,
+      "/api/v1/staff/inventory/overview": OVERVIEW,
+      "/api/v1/staff/inventory/units": { items: UNITS },
+      "/api/v1/staff/inventory/vehicles": { items: [VEHICLE], can_edit: true },
+      "/api/v1/staff/inventory/stock": { items: [STOCK], can_edit: true },
+      "/api/v1/staff/inventory/agents": { items: [AGENT], can_edit: true, can_see_names: true, can_export_names: true },
+    };
+    if (pathname in inventory) return json(route, inventory[pathname]);
     unanswered.push(pathname);
     return json(route, PAGE);
   });
@@ -320,6 +331,44 @@ const FOLDERED = {
   palette: ["#C62828", "#2E7D32", "#B71C1C"],
   limits: { file_bytes: 10485760, rows: 50000 },
 };
+
+test.describe("accessibility of the resources register (ar)", () => {
+  for (const theme of ["light", "dark"] as const) {
+    test(`overview, vehicles, staff and import, ${theme}, have no serious or critical violation`, async ({ page }) => {
+      await signIn(page, ROLES, "Salma Ben Ali");
+      await page.addInitScript((mode) => {
+        window.localStorage.setItem("ehimaya.lang", "ar");
+        window.localStorage.setItem("ehimaya.theme", mode);
+      }, theme);
+      const fence = await baseMock(page);
+      await mockApi(page);
+      await page.route(`${API}/api/v1/staff/inventory/imports**`, (route) => json(route, IMPORT_PREVIEW));
+      await audit(page, "/inventory", "main table");
+      const scan = async () => {
+        const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]).analyze();
+        expect(results.violations.filter((v) => v.impact === "serious" || v.impact === "critical").map((v) => v.id)).toEqual([]);
+      };
+      await page.getByRole("tab", { name: "الآليات" }).click();
+      await page.getByRole("button", { name: "آلية جديدة" }).click();
+      const form = page.getByRole("form", { name: "آلية جديدة" });
+      await form.getByLabel("الصنف").selectOption("fire_engine");
+      await expect(form.getByLabel(/السعة/)).toBeVisible();
+      await scan();
+      await page.getByRole("tab", { name: "الأعوان" }).click();
+      await page.getByRole("button", { name: "عون جديد" }).click();
+      await page.getByRole("checkbox", { name: "غوص" }).check();
+      await scan();
+      await page.getByRole("tab", { name: "الاستيراد" }).click();
+      // The central room names the gouvernorat it imports for.
+      await page.getByRole("region", { name: "الاستيراد من نموذج الولاية" }).getByLabel("الولاية").selectOption({ index: 1 });
+      await page.getByLabel("الملف (xlsx أو CSV)").setInputFiles({ name: "sfax.xlsx", mimeType: "application/octet-stream", buffer: Buffer.from("PK") });
+      await page.getByRole("button", { name: "معاينة" }).click();
+      await expect(page.getByRole("table", { name: /ما في الملف/ })).toBeVisible();
+      await scan();
+      expect(fence.unexpected).toEqual([]);
+    });
+  }
+});
 
 test.describe("accessibility of the layer folders (ar)", () => {
   for (const theme of ["light", "dark"] as const) {

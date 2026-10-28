@@ -21,6 +21,7 @@ import {
   canOpenAxes,
   canOpenCommand,
   canOpenRegister,
+  canOpenInventory,
   canOpenLayers,
   canManageAccounts,
   canOpenCrew,
@@ -118,6 +119,8 @@ const CoastalPage = page(() => import("./pages/CoastalPage"), "CoastalPage");
 // Phase L2: seasonal programmes.
 const ProgrammesPage = page(() => import("./pages/ProgrammesPage"), "ProgrammesPage");
 const ProgrammeDetailPage = page(() => import("./pages/ProgrammeDetailPage"), "ProgrammeDetailPage");
+// Phase R1: resources register of every gouvernorat.
+const InventoryPage = page(() => import("./pages/InventoryPage"), "InventoryPage");
 const EmergencyGuidePage = page(() => import("./pages/EmergencyGuidePage"), "EmergencyGuidePage");
 const ContactInboxPage = page(() => import("./pages/ContactInboxPage"), "ContactInboxPage");
 
@@ -230,6 +233,7 @@ export function AppRoutes() {
         <Route path="coastal" element={gated(canOpenCoastal, <CoastalPage />)} />
         <Route path="programmes" element={gated(canOpenProgrammes, <ProgrammesPage />)} />
         <Route path="programmes/:id" element={gated(canOpenProgrammes, <ProgrammeDetailPage />)} />
+        <Route path="inventory" element={gated(canOpenInventory, <InventoryPage />)} />
         <Route path="axes" element={gated(canOpenAxes, <AxesPage />)} />
         <Route path="axes/:id" element={gated(canOpenAxes, <AxisPage />)} />
         <Route path="register" element={gated(canOpenRegister, <RegisterPage />)} />

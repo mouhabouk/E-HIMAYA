@@ -7056,3 +7056,134 @@ button.nav-card:hover {
   margin-block: 0.75rem;
   max-inline-size: 28rem;
 }
+
+/* Phase R1: resources register (docs/phase-r/design-resources.md §2). */
+.inventory-page :is(input:not([type="radio"], [type="checkbox"], [type="file"])) {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
+  min-block-size: 2.25rem;
+}
+
+.inventory-kpis {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+}
+
+.inventory-kpis .kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem 1rem;
+  border-inline-start: 5px solid var(--tone-teal);
+}
+
+.inventory-kpis .kpi__label {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.inventory-page .tabs {
+  flex-wrap: wrap;
+}
+
+.inventory-page .filters__row {
+  align-items: end;
+  margin-block: 0.75rem;
+}
+
+.inventory-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+
+.inventory-table caption {
+  text-align: start;
+  font-weight: 700;
+  padding-block-end: 0.4rem;
+}
+
+.inventory-table th[scope="row"] {
+  font-weight: 600;
+}
+
+.inventory-form {
+  margin-block: 0.75rem;
+}
+
+.inventory-specs,
+.inventory-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  align-items: end;
+  margin-block: 0.75rem;
+}
+
+.inventory-specs legend,
+.inventory-skills legend {
+  font-weight: 700;
+  margin-block-end: 0.35rem;
+}
+
+.inventory-skill {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.inventory-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.inventory-delete {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.inventory-revisions {
+  margin-block: 0.5rem;
+}
+
+.inventory-revisions ol {
+  margin: 0.4rem 0 0;
+  padding-inline-start: 1.25rem;
+}
+
+.inventory-table td.num {
+  text-align: start;
+  font-variant-numeric: tabular-nums;
+}
+
+.inventory-sub {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 400;
+  text-align: start;
+}
+
+.inventory-page .programme-problems {
+  margin-block: 0.5rem;
+}
+
+.inventory-page .programme-import .inventory-table {
+  margin-block-start: 0.75rem;
+}

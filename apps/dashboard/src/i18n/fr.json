@@ -56,7 +56,8 @@
       "orgs": "Établissements",
       "knowledge": "Analyse et savoir",
       "system": "Système"
-    }
+    },
+    "inventory": "Registre des moyens"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -416,7 +417,25 @@
     "group_kept": "Ce dossier ne peut pas être supprimé.",
     "group_sensitivity_mismatch": "Les couches sensibles vont dans le dossier sensible, et lui seul les reçoit.",
     "icon_unknown": "Icône inconnue.",
-    "tone_unknown": "Couleur inconnue."
+    "tone_unknown": "Couleur inconnue.",
+    "counts_only": "Vous voyez les effectifs seulement : les listes et les noms sont réservés aux salles d'opérations.",
+    "category_unknown": "Ce type n'existe pas dans le catalogue ou ne convient pas à ce registre.",
+    "category_inactive": "Ce type est désactivé dans le catalogue : aucune nouvelle entrée.",
+    "category_taken": "Un type porte déjà cet identifiant.",
+    "category_not_found": "Type introuvable.",
+    "family_mismatch": "Les véhicules et le matériel ont une famille, les spécialités n'en ont pas.",
+    "spec_unknown": "Caractéristique inconnue pour ce type.",
+    "spec_invalid": "Valeur de caractéristique invalide.",
+    "unit_not_found": "Unité introuvable dans votre périmètre.",
+    "vehicle_not_found": "Véhicule introuvable.",
+    "stock_not_found": "Ligne de matériel introuvable.",
+    "stock_exists": "Ce matériel avec ces caractéristiques existe déjà dans l'unité : modifiez sa quantité.",
+    "agent_not_found": "Agent introuvable.",
+    "matricule_taken": "Ce matricule est déjà attribué à un autre agent.",
+    "skill_level_invalid": "Niveau de spécialité invalide.",
+    "entity_required": "Indiquez le contenu du CSV (véhicules, matériel ou agents).",
+    "import_has_errors": "Le fichier contient des erreurs : corrigez-les puis revérifiez.",
+    "file_too_many_rows": "Le fichier dépasse 5 000 lignes."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -5546,5 +5565,207 @@
     "repliesN": "{{n}} réponse(s)",
     "replies": "Réponses",
     "writeTo": "Écrire à un gouvernorat qui n'a pas répondu"
+  },
+  "inventory": {
+    "title": "Registre des moyens",
+    "introCentral": "Le matériel et les agents de tous les gouvernorats dans un seul registre : les véhicules avec leurs caractéristiques (camion d'incendie 2 000 L), le matériel en quantité, les agents avec leurs spécialités. La salle centrale voit tout et tient le catalogue.",
+    "introRegional": "Le registre de votre gouvernorat : véhicules avec leurs caractéristiques, matériel en quantité, agents avec leurs spécialités. Vous ne voyez que vos unités et confirmez les données de chaque unité une fois par mois.",
+    "countsOnly": "Seuls les effectifs s'affichent ici. Les listes et les noms des agents sont réservés aux salles d'opérations.",
+    "empty": "Rien d'enregistré pour l'instant.",
+    "otherType": "Autre type",
+    "yes": "oui",
+    "anyType": "Tous",
+    "allGouvernorats": "Tous les gouvernorats",
+    "actions": "Actions",
+    "edit": "Modifier",
+    "editNamed": "Modifier {{label}}",
+    "delete": "Supprimer",
+    "deleteNamed": "Supprimer {{label}}",
+    "confirmDelete": "Confirmer la suppression",
+    "export": "Exporter en CSV",
+    "exportWithNames": "Avec les noms et téléphones (salle du gouvernorat) ; l'export est journalisé.",
+    "exportNoNames": "Sans les noms ni les téléphones ; l'export est journalisé.",
+    "tabs": {
+      "label": "Sections du registre",
+      "overview": "Vue d'ensemble",
+      "units": "Unités",
+      "vehicles": "Véhicules",
+      "stock": "Matériel",
+      "agents": "Agents",
+      "import": "Import",
+      "catalogue": "Catalogue"
+    },
+    "kpi": {
+      "vehiclesReady": "véhicules prêts sur {{total}}",
+      "equipmentReady": "matériels prêts ({{broken}} en panne)",
+      "agentsOnDuty": "agents en service sur {{total}}",
+      "units": "unités"
+    },
+    "overview": {
+      "byGouvernorat": "Par gouvernorat",
+      "units": "Unités",
+      "out": "Hors service",
+      "equipment": "Matériel",
+      "agents": "Agents",
+      "stale": "{{n}} non confirmées",
+      "broken": "({{n}} en panne)",
+      "agentsOf": "{{on}} sur {{all}}",
+      "byType": "Par type",
+      "bySkill": "Agents par spécialité",
+      "skillReady": "En service, certificat valide",
+      "expired": "Certificat expiré"
+    },
+    "state": {
+      "ready": "Prêt",
+      "assigned": "En mission",
+      "maintenance": "Entretien",
+      "broken": "En panne"
+    },
+    "availability": {
+      "on_duty": "En service",
+      "rest": "Repos",
+      "leave": "Congé"
+    },
+    "kind": {
+      "vehicle": "Véhicules",
+      "equipment": "Matériel",
+      "skill": "Spécialités"
+    },
+    "family": {
+      "vehicles": "Véhicules",
+      "equipment": "Matériel",
+      "boats": "Embarcations",
+      "air": "Moyens aériens",
+      "ppe": "Équipements de protection individuelle"
+    },
+    "field": {
+      "gouvernorat": "Gouvernorat",
+      "unit": "Unité",
+      "type": "Type",
+      "label": "Désignation",
+      "code": "Numéro interne",
+      "state": "État",
+      "year": "Année",
+      "notes": "Notes",
+      "specs": "Caractéristiques",
+      "qtyReady": "Quantité prête",
+      "qtyBroken": "Quantité en panne",
+      "matricule": "Matricule",
+      "fullName": "Nom et prénom",
+      "rank": "Grade",
+      "phone": "Téléphone",
+      "availability": "Disponibilité",
+      "skills": "Spécialités",
+      "skill": "Spécialité"
+    },
+    "form": {
+      "pickUnit": "Choisir l'unité",
+      "pickType": "Choisir le type",
+      "reason": "Motif du changement",
+      "reasonOptional": "Motif du changement (facultatif)",
+      "reasonHelp": "Conservé avec la version et son auteur (5 caractères au moins pour une modification).",
+      "missing": "Complétez les champs obligatoires.",
+      "deleteReason": "Motif (vente, réforme, retraite…)"
+    },
+    "units": {
+      "intro": "La salle régionale confirme les données de chaque unité une fois par mois. Une unité non confirmée depuis 30 jours est signalée à la salle centrale.",
+      "staleCount": "{{n}} unités à confirmer",
+      "vehicles": "Véhicules prêts",
+      "verified": "Dernière confirmation",
+      "never": "Jamais confirmée",
+      "stale": "À confirmer",
+      "verify": "Confirmer les données",
+      "verifyNamed": "Confirmer les données de {{unit}}",
+      "none": "Aucune unité dans ce périmètre."
+    },
+    "vehicles": {
+      "newTitle": "Nouveau véhicule",
+      "editTitle": "Modifier {{label}}",
+      "assignedNote": "En mission : son état suit l'intervention.",
+      "count": "{{n}} véhicules"
+    },
+    "stock": {
+      "newTitle": "Nouveau matériel",
+      "editTitle": "Modifier le matériel"
+    },
+    "agents": {
+      "newTitle": "Nouvel agent",
+      "editTitle": "Modifier {{name}}",
+      "privacy": "Le nom et le téléphone sont des données personnelles : visibles des seules salles d'opérations, exportés par la salle du gouvernorat uniquement.",
+      "levelOf": "Niveau de {{skill}}",
+      "level": "niveau {{level}}",
+      "expiresOf": "Expiration du certificat {{skill}}",
+      "expiredOn": "expiré le {{date}}",
+      "namesHidden": "Noms et téléphones masqués : réservés aux salles d'opérations.",
+      "count": "{{n}} agents",
+      "hidden": "nom masqué"
+    },
+    "revisions": {
+      "title": "Versions",
+      "none": "Aucune version.",
+      "create": "Création",
+      "update": "Modification",
+      "delete": "Suppression",
+      "import": "Import"
+    },
+    "import": {
+      "title": "Import depuis le modèle du gouvernorat",
+      "intro": "Téléchargez le modèle xlsx (avec les unités du gouvernorat et les types acceptés), remplissez ses trois feuilles : véhicules, matériel et agents, puis vérifiez avant d'enregistrer. Rien n'est supprimé de ce qui manque au fichier.",
+      "pickGouvernorat": "Choisir le gouvernorat",
+      "template": "Télécharger le modèle",
+      "file": "Fichier (xlsx ou CSV)",
+      "fileHelp": "10 Mo au plus, 5 000 lignes.",
+      "tooLarge": "Le fichier dépasse 10 Mo.",
+      "csvOf": "Le CSV contient",
+      "check": "Vérifier",
+      "applied": "Registre enregistré pour {{gouvernorat}}.",
+      "errors": "Erreurs bloquantes",
+      "warnings": "Avertissements",
+      "summary": "Contenu du fichier pour {{gouvernorat}} ({{format}})",
+      "what": "Feuille",
+      "new": "Nouveaux",
+      "changed": "Modifiés",
+      "unchanged": "Inchangés",
+      "fixFirst": "Corrigez les erreurs dans le fichier puis vérifiez à nouveau.",
+      "apply": "Enregistrer dans le registre",
+      "editorsOnly": "L'import est réservé au chef de la salle d'opérations.",
+      "line": "ligne {{line}}",
+      "sheet": {
+        "vehicles": "Véhicules",
+        "stock": "Matériel",
+        "agents": "Agents"
+      },
+      "problem": {
+        "unit_unknown": "unité inconnue dans le gouvernorat",
+        "category_unknown": "type absent du catalogue",
+        "category_inactive": "type désactivé",
+        "spec_invalid": "caractéristique invalide",
+        "label_required": "désignation manquante",
+        "quantity_invalid": "quantité invalide",
+        "quantity_zero": "quantité nulle",
+        "matricule_required": "matricule manquant",
+        "name_required": "nom manquant",
+        "skill_invalid": "spécialité ou niveau invalide",
+        "duplicate_row": "ligne en double",
+        "state_unknown": "état inconnu (considéré prêt)",
+        "year_invalid": "année invalide (ignorée)",
+        "availability_unknown": "disponibilité inconnue (considéré en service)",
+        "matricule_elsewhere": "matricule enregistré dans un autre gouvernorat"
+      }
+    },
+    "catalogue": {
+      "intro": "Un seul catalogue pour tous les gouvernorats, pour additionner les chiffres sans ambiguïté. La salle centrale le tient ; un type ne se supprime pas, il se désactive.",
+      "newTitle": "Nouveau type",
+      "kind": "Nature",
+      "family": "Famille",
+      "key": "Identifiant (latin)",
+      "levels": "Niveaux",
+      "levelsOf": "{{n}} niveaux",
+      "state": "État",
+      "active": "Actif",
+      "inactive": "Désactivé",
+      "switchOff": "Désactiver",
+      "switchOn": "Activer"
+    }
   }
 }

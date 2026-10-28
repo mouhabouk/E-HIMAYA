@@ -56,7 +56,8 @@
       "orgs": "Institutions",
       "knowledge": "Analysis and knowledge",
       "system": "System"
-    }
+    },
+    "inventory": "Resources register"
   },
   "header": {
     "scope": "Geographic scope",
@@ -416,7 +417,25 @@
     "group_kept": "This folder cannot be deleted.",
     "group_sensitivity_mismatch": "Sensitive layers go in the sensitive folder, and only there.",
     "icon_unknown": "Unknown icon.",
-    "tone_unknown": "Unknown colour."
+    "tone_unknown": "Unknown colour.",
+    "counts_only": "You see the counts only: the lists and names are for the operations rooms.",
+    "category_unknown": "This type is not in the catalogue or does not fit this register.",
+    "category_inactive": "This type is switched off in the catalogue: no new entries.",
+    "category_taken": "A type already has this key.",
+    "category_not_found": "Type not found.",
+    "family_mismatch": "Vehicles and equipment need a family; specialities have none.",
+    "spec_unknown": "A specification this type does not have.",
+    "spec_invalid": "Invalid specification value.",
+    "unit_not_found": "Unit not found in your scope.",
+    "vehicle_not_found": "Vehicle not found.",
+    "stock_not_found": "Equipment line not found.",
+    "stock_exists": "This equipment with these specifications is already in the unit: change its quantity.",
+    "agent_not_found": "Staff member not found.",
+    "matricule_taken": "This staff number is already given to someone else.",
+    "skill_level_invalid": "Invalid speciality level.",
+    "entity_required": "Say what the CSV holds (vehicles, equipment or staff).",
+    "import_has_errors": "The file has errors: fix them and check again.",
+    "file_too_many_rows": "The file has more than 5,000 rows."
   },
   "kpi": {
     "title": "Key indicators",
@@ -5546,5 +5565,207 @@
     "repliesN": "{{n}} reply(ies)",
     "replies": "Replies",
     "writeTo": "Write to a gouvernorat that has not replied"
+  },
+  "inventory": {
+    "title": "Resources register",
+    "introCentral": "The equipment and staff of every gouvernorat in one register: vehicles with their specifications (2,000 L fire engine), equipment by quantity, staff with their specialities. The central room sees everything and keeps the catalogue.",
+    "introRegional": "Your gouvernorat's register: vehicles with their specifications, equipment by quantity, staff with their specialities. You see your own units only and confirm each unit's figures once a month.",
+    "countsOnly": "Only the counts show here. The lists and staff names are for the operations rooms.",
+    "empty": "Nothing recorded yet.",
+    "otherType": "Other type",
+    "yes": "yes",
+    "anyType": "All",
+    "allGouvernorats": "All gouvernorats",
+    "actions": "Actions",
+    "edit": "Edit",
+    "editNamed": "Edit {{label}}",
+    "delete": "Delete",
+    "deleteNamed": "Delete {{label}}",
+    "confirmDelete": "Confirm deletion",
+    "export": "Export CSV",
+    "exportWithNames": "With names and phones (the gouvernorat's room); the export is audited.",
+    "exportNoNames": "Without names or phones; the export is audited.",
+    "tabs": {
+      "label": "Register sections",
+      "overview": "Overview",
+      "units": "Units",
+      "vehicles": "Vehicles",
+      "stock": "Equipment",
+      "agents": "Staff",
+      "import": "Import",
+      "catalogue": "Catalogue"
+    },
+    "kpi": {
+      "vehiclesReady": "vehicles ready out of {{total}}",
+      "equipmentReady": "equipment ready ({{broken}} broken)",
+      "agentsOnDuty": "staff on duty out of {{total}}",
+      "units": "units"
+    },
+    "overview": {
+      "byGouvernorat": "By gouvernorat",
+      "units": "Units",
+      "out": "Out of service",
+      "equipment": "Equipment",
+      "agents": "Staff",
+      "stale": "{{n}} not confirmed",
+      "broken": "({{n}} broken)",
+      "agentsOf": "{{on}} of {{all}}",
+      "byType": "By type",
+      "bySkill": "Staff by speciality",
+      "skillReady": "On duty, valid certificate",
+      "expired": "Certificate expired"
+    },
+    "state": {
+      "ready": "Ready",
+      "assigned": "On a mission",
+      "maintenance": "Maintenance",
+      "broken": "Broken"
+    },
+    "availability": {
+      "on_duty": "On duty",
+      "rest": "Rest",
+      "leave": "Leave"
+    },
+    "kind": {
+      "vehicle": "Vehicles",
+      "equipment": "Equipment",
+      "skill": "Specialities"
+    },
+    "family": {
+      "vehicles": "Vehicles",
+      "equipment": "Equipment",
+      "boats": "Boats",
+      "air": "Air",
+      "ppe": "Personal protective equipment"
+    },
+    "field": {
+      "gouvernorat": "Gouvernorat",
+      "unit": "Unit",
+      "type": "Type",
+      "label": "Name",
+      "code": "Internal number",
+      "state": "State",
+      "year": "Year",
+      "notes": "Notes",
+      "specs": "Specifications",
+      "qtyReady": "Ready",
+      "qtyBroken": "Broken",
+      "matricule": "Staff number",
+      "fullName": "Full name",
+      "rank": "Rank",
+      "phone": "Phone",
+      "availability": "Availability",
+      "skills": "Specialities",
+      "skill": "Speciality"
+    },
+    "form": {
+      "pickUnit": "Pick the unit",
+      "pickType": "Pick the type",
+      "reason": "Reason for the change",
+      "reasonOptional": "Reason for the change (optional)",
+      "reasonHelp": "Kept with the version and who made it (at least 5 characters for a change).",
+      "missing": "Fill in the required fields.",
+      "deleteReason": "Reason (sold, scrapped, retired…)"
+    },
+    "units": {
+      "intro": "The regional room confirms each unit's figures once a month. A unit not confirmed for 30 days shows to the central room.",
+      "staleCount": "{{n}} units to confirm",
+      "vehicles": "Vehicles ready",
+      "verified": "Last confirmed",
+      "never": "Never confirmed",
+      "stale": "To confirm",
+      "verify": "Confirm the figures",
+      "verifyNamed": "Confirm the figures of {{unit}}",
+      "none": "No units in this scope."
+    },
+    "vehicles": {
+      "newTitle": "New vehicle",
+      "editTitle": "Edit {{label}}",
+      "assignedNote": "On a mission: its state follows the intervention.",
+      "count": "{{n}} vehicles"
+    },
+    "stock": {
+      "newTitle": "New equipment",
+      "editTitle": "Edit equipment"
+    },
+    "agents": {
+      "newTitle": "New staff member",
+      "editTitle": "Edit {{name}}",
+      "privacy": "The name and phone are personal data: shown to the operations rooms only, and exported by the gouvernorat's room only.",
+      "levelOf": "Level of {{skill}}",
+      "level": "level {{level}}",
+      "expiresOf": "{{skill}} certificate expiry",
+      "expiredOn": "expired {{date}}",
+      "namesHidden": "Names and phones are hidden: they are for the operations rooms only.",
+      "count": "{{n}} staff",
+      "hidden": "name hidden"
+    },
+    "revisions": {
+      "title": "Versions",
+      "none": "No versions.",
+      "create": "Recorded",
+      "update": "Changed",
+      "delete": "Deleted",
+      "import": "Imported"
+    },
+    "import": {
+      "title": "Import from the gouvernorat template",
+      "intro": "Download the xlsx template (with the gouvernorat's units and the accepted types), fill in its three sheets: vehicles, equipment and staff, then check before saving. Nothing missing from the file is deleted.",
+      "pickGouvernorat": "Pick the gouvernorat",
+      "template": "Download the template",
+      "file": "File (xlsx or CSV)",
+      "fileHelp": "10 MB at most, 5,000 rows.",
+      "tooLarge": "The file is over 10 MB.",
+      "csvOf": "The CSV holds",
+      "check": "Check",
+      "applied": "Register saved for {{gouvernorat}}.",
+      "errors": "Errors that block saving",
+      "warnings": "Warnings",
+      "summary": "What the file holds for {{gouvernorat}} ({{format}})",
+      "what": "Sheet",
+      "new": "New",
+      "changed": "Changed",
+      "unchanged": "Unchanged",
+      "fixFirst": "Fix the errors in the file, then check again.",
+      "apply": "Save to the register",
+      "editorsOnly": "Importing is for the head of the operations room.",
+      "line": "line {{line}}",
+      "sheet": {
+        "vehicles": "Vehicles",
+        "stock": "Equipment",
+        "agents": "Staff"
+      },
+      "problem": {
+        "unit_unknown": "unknown unit in the gouvernorat",
+        "category_unknown": "type not in the catalogue",
+        "category_inactive": "type switched off",
+        "spec_invalid": "invalid specification",
+        "label_required": "name missing",
+        "quantity_invalid": "invalid quantity",
+        "quantity_zero": "quantity is zero",
+        "matricule_required": "staff number missing",
+        "name_required": "name missing",
+        "skill_invalid": "invalid speciality or level",
+        "duplicate_row": "duplicate row",
+        "state_unknown": "unknown state (taken as ready)",
+        "year_invalid": "invalid year (ignored)",
+        "availability_unknown": "unknown availability (taken as on duty)",
+        "matricule_elsewhere": "staff number recorded in another gouvernorat"
+      }
+    },
+    "catalogue": {
+      "intro": "One catalogue for every gouvernorat, so the figures add up without ambiguity. The central room keeps it; a type is never deleted, only switched off.",
+      "newTitle": "New type",
+      "kind": "Kind",
+      "family": "Family",
+      "key": "Key (Latin letters)",
+      "levels": "Levels",
+      "levelsOf": "{{n}} levels",
+      "state": "State",
+      "active": "Active",
+      "inactive": "Switched off",
+      "switchOff": "Switch off",
+      "switchOn": "Switch on"
+    }
   }
 }
