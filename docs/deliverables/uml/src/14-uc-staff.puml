@@ -68,6 +68,12 @@ rectangle "Tableau de bord central" {
   usecase "Tenir le registre des moyens\net du personnel de son gouvernorat (R1)" as S47
   usecase "Chercher un moyen dans tous les\ngouvernorats, l'afficher sur la carte (R2)" as S48
   usecase "Passer la carte en satellite ;\nrégler le fournisseur payant (R-S)" as S49
+  usecase "Ouvrir le plan d'intervention\nd'un risque à l'écran (PL1)" as S50
+  usecase "Gérer les risques\net leurs couleurs (PL1)" as S51
+  usecase "Rédiger le programme du jour,\nde la semaine ou du mois (PL2)" as S52
+  usecase "Enregistrer un programme comme\nmodèle, l'appliquer (PL2)" as S53
+  usecase "Approuver le programme ; choisir\nle mode d'approbation (PL2)" as S54
+  usecase "Suivre le taux de réalisation\ndes programmes (PL2)" as S55
 }
 rectangle "Application des équipes (P4a à P4d)" {
   usecase "Se connecter par code\n(MFA, PIN 6 chiffres)" as T0
@@ -199,4 +205,19 @@ OP --> S49
 MIN --> S49
 SA --> S49
 S48 ..> S47 : <<include>>
+OP --> S50
+OPM --> S50
+CMD --> S50
+CC --> S50
+CC --> S51
+OP --> S52
+OPM --> S52
+OP --> S53
+OPM --> S53
+S52 <.. S53 : <<extend>>
+OPM --> S54
+CC --> S54
+CMD --> S55
+GOV --> S55
+MIN --> S55
 @enduml

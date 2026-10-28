@@ -1531,6 +1531,25 @@
         "title": "AppVersionOut",
         "type": "object"
       },
+      "ApplyTemplate": {
+        "properties": {
+          "template_id": {
+            "format": "uuid",
+            "title": "Template Id",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version",
+          "template_id"
+        ],
+        "title": "ApplyTemplate",
+        "type": "object"
+      },
       "AppointmentIn": {
         "description": "Appoint (or renew) for ``months`` from now.",
         "properties": {
@@ -4151,6 +4170,32 @@
         "title": "CategoryIn",
         "type": "object"
       },
+      "CategoryOption": {
+        "properties": {
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "name": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Name",
+            "type": "object"
+          }
+        },
+        "required": [
+          "key",
+          "kind",
+          "name"
+        ],
+        "title": "CategoryOption",
+        "type": "object"
+      },
       "CategoryPatch": {
         "properties": {
           "active": {
@@ -5717,6 +5762,48 @@
           "gouvernorat_code"
         ],
         "title": "CounterView",
+        "type": "object"
+      },
+      "Counts": {
+        "properties": {
+          "cancelled": {
+            "default": 0,
+            "title": "Cancelled",
+            "type": "integer"
+          },
+          "done": {
+            "default": 0,
+            "title": "Done",
+            "type": "integer"
+          },
+          "due": {
+            "default": 0,
+            "title": "Due",
+            "type": "integer"
+          },
+          "items": {
+            "default": 0,
+            "title": "Items",
+            "type": "integer"
+          },
+          "postponed": {
+            "default": 0,
+            "title": "Postponed",
+            "type": "integer"
+          },
+          "rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rate"
+          }
+        },
+        "title": "Counts",
         "type": "object"
       },
       "CredentialsOut": {
@@ -15529,29 +15616,140 @@
         "title": "ItemContent",
         "type": "object"
       },
-      "ItemIn": {
-        "additionalProperties": false,
+      "ItemCreate": {
         "properties": {
-          "call_198": {
-            "default": false,
-            "title": "Call 198",
-            "type": "boolean"
-          },
-          "content": {
-            "$ref": "#/components/schemas/ItemContent"
-          },
-          "reason": {
-            "maxLength": 500,
-            "minLength": 5,
-            "title": "Reason",
+          "activity": {
+            "enum": [
+              "duty",
+              "patrol",
+              "exercise",
+              "prevention_visit",
+              "maintenance",
+              "training",
+              "awareness",
+              "readiness_check",
+              "meeting",
+              "other"
+            ],
+            "title": "Activity",
             "type": "string"
+          },
+          "ends_at": {
+            "anyOf": [
+              {
+                "format": "time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ends At"
+          },
+          "notes": {
+            "default": "",
+            "maxLength": 2000,
+            "title": "Notes",
+            "type": "string"
+          },
+          "on_date": {
+            "format": "date",
+            "title": "On Date",
+            "type": "string"
+          },
+          "place": {
+            "default": "",
+            "maxLength": 300,
+            "title": "Place",
+            "type": "string"
+          },
+          "plan_document_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plan Document Id"
+          },
+          "repeat": {
+            "default": "none",
+            "enum": [
+              "none",
+              "daily",
+              "weekdays",
+              "weekly"
+            ],
+            "title": "Repeat",
+            "type": "string"
+          },
+          "resources": {
+            "items": {
+              "$ref": "#/components/schemas/Resource"
+            },
+            "maxItems": 20,
+            "title": "Resources",
+            "type": "array"
+          },
+          "responsible": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Responsible",
+            "type": "string"
+          },
+          "staff_count": {
+            "anyOf": [
+              {
+                "maximum": 10000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Staff Count"
+          },
+          "starts_at": {
+            "anyOf": [
+              {
+                "format": "time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Starts At"
+          },
+          "title": {
+            "maxLength": 300,
+            "minLength": 2,
+            "title": "Title",
+            "type": "string"
+          },
+          "unit_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Id"
           }
         },
         "required": [
-          "content",
-          "reason"
+          "activity",
+          "title",
+          "on_date"
         ],
-        "title": "ItemIn",
+        "title": "ItemCreate",
         "type": "object"
       },
       "ItemPatch": {
@@ -15618,6 +15816,31 @@
           "reason"
         ],
         "title": "ItemPatch",
+        "type": "object"
+      },
+      "ItemStatusIn": {
+        "properties": {
+          "reason": {
+            "default": "",
+            "maxLength": 1000,
+            "title": "Reason",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "planned",
+              "done",
+              "postponed",
+              "cancelled"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "ItemStatusIn",
         "type": "object"
       },
       "ItemText": {
@@ -18713,7 +18936,7 @@
           "template": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/TemplateOut"
+                "$ref": "#/components/schemas/app__modules__ops__schemas__TemplateOut"
               },
               {
                 "type": "null"
@@ -20001,6 +20224,38 @@
           }
         },
         "title": "OptionalReasonIn",
+        "type": "object"
+      },
+      "Options": {
+        "properties": {
+          "categories": {
+            "items": {
+              "$ref": "#/components/schemas/CategoryOption"
+            },
+            "title": "Categories",
+            "type": "array"
+          },
+          "plans": {
+            "items": {
+              "$ref": "#/components/schemas/PlanOption"
+            },
+            "title": "Plans",
+            "type": "array"
+          },
+          "units": {
+            "items": {
+              "$ref": "#/components/schemas/UnitOption"
+            },
+            "title": "Units",
+            "type": "array"
+          }
+        },
+        "required": [
+          "units",
+          "categories",
+          "plans"
+        ],
+        "title": "Options",
         "type": "object"
       },
       "OrgAckRow": {
@@ -21439,6 +21694,383 @@
         "title": "PerformanceRow",
         "type": "object"
       },
+      "PeriodDetail": {
+        "properties": {
+          "can_approve": {
+            "title": "Can Approve",
+            "type": "boolean"
+          },
+          "can_delete": {
+            "title": "Can Delete",
+            "type": "boolean"
+          },
+          "can_edit": {
+            "title": "Can Edit",
+            "type": "boolean"
+          },
+          "can_follow_up": {
+            "title": "Can Follow Up",
+            "type": "boolean"
+          },
+          "can_return": {
+            "title": "Can Return",
+            "type": "boolean"
+          },
+          "can_submit": {
+            "title": "Can Submit",
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__schedule__schemas__ItemOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "period": {
+            "$ref": "#/components/schemas/PeriodOut"
+          },
+          "previous_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous Id"
+          }
+        },
+        "required": [
+          "period",
+          "items",
+          "can_edit",
+          "can_submit",
+          "can_approve",
+          "can_return",
+          "can_follow_up",
+          "can_delete",
+          "previous_id"
+        ],
+        "title": "PeriodDetail",
+        "type": "object"
+      },
+      "PeriodIn": {
+        "properties": {
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "maximum": 83.0,
+                "minimum": 11.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "on": {
+            "format": "date",
+            "title": "On",
+            "type": "string"
+          },
+          "span": {
+            "enum": [
+              "day",
+              "week",
+              "month"
+            ],
+            "title": "Span",
+            "type": "string"
+          }
+        },
+        "required": [
+          "span",
+          "on"
+        ],
+        "title": "PeriodIn",
+        "type": "object"
+      },
+      "PeriodNotes": {
+        "properties": {
+          "notes": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Notes",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version"
+        ],
+        "title": "PeriodNotes",
+        "type": "object"
+      },
+      "PeriodOut": {
+        "properties": {
+          "approval": {
+            "enum": [
+              "direct",
+              "head",
+              "head_and_centre"
+            ],
+            "title": "Approval",
+            "type": "string"
+          },
+          "approved_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved At"
+          },
+          "approved_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved By Name"
+          },
+          "centre_approved_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Centre Approved At"
+          },
+          "centre_approved_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Centre Approved By Name"
+          },
+          "counts": {
+            "$ref": "#/components/schemas/Counts"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "ends_on": {
+            "format": "date",
+            "title": "Ends On",
+            "type": "string"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "gouvernorat_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Name"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string"
+          },
+          "return_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Return Reason"
+          },
+          "span": {
+            "enum": [
+              "day",
+              "week",
+              "month"
+            ],
+            "title": "Span",
+            "type": "string"
+          },
+          "starts_on": {
+            "format": "date",
+            "title": "Starts On",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "submitted",
+              "awaiting_centre",
+              "approved",
+              "returned"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "submitted_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Submitted At"
+          },
+          "submitted_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Submitted By Name"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "updated_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By Name"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "gouvernorat_code",
+          "gouvernorat_name",
+          "span",
+          "starts_on",
+          "ends_on",
+          "status",
+          "approval",
+          "notes",
+          "return_reason",
+          "submitted_by_name",
+          "submitted_at",
+          "approved_by_name",
+          "approved_at",
+          "centre_approved_by_name",
+          "centre_approved_at",
+          "version",
+          "created_by_name",
+          "updated_by_name",
+          "updated_at",
+          "counts"
+        ],
+        "title": "PeriodOut",
+        "type": "object"
+      },
+      "PeriodSlot": {
+        "description": "The period of a gouvernorat that contains a day, recorded or not yet.",
+        "properties": {
+          "can_create": {
+            "title": "Can Create",
+            "type": "boolean"
+          },
+          "ends_on": {
+            "format": "date",
+            "title": "Ends On",
+            "type": "string"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "period": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PeriodDetail"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "span": {
+            "enum": [
+              "day",
+              "week",
+              "month"
+            ],
+            "title": "Span",
+            "type": "string"
+          },
+          "starts_on": {
+            "format": "date",
+            "title": "Starts On",
+            "type": "string"
+          }
+        },
+        "required": [
+          "gouvernorat_code",
+          "span",
+          "starts_on",
+          "ends_on",
+          "period",
+          "can_create"
+        ],
+        "title": "PeriodSlot",
+        "type": "object"
+      },
       "Person-Input": {
         "properties": {
           "email": {
@@ -21479,6 +22111,37 @@
           }
         },
         "title": "Person",
+        "type": "object"
+      },
+      "PlanOption": {
+        "properties": {
+          "hazard_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hazard Key"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "hazard_key"
+        ],
+        "title": "PlanOption",
         "type": "object"
       },
       "PlanOut": {
@@ -22618,6 +23281,120 @@
           "can_create"
         ],
         "title": "ProgrammesOut",
+        "type": "object"
+      },
+      "ProgressOut": {
+        "properties": {
+          "ends_on": {
+            "format": "date",
+            "title": "Ends On",
+            "type": "string"
+          },
+          "lists": {
+            "title": "Lists",
+            "type": "boolean"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/ProgressRow"
+            },
+            "title": "Rows",
+            "type": "array"
+          },
+          "span": {
+            "enum": [
+              "day",
+              "week",
+              "month"
+            ],
+            "title": "Span",
+            "type": "string"
+          },
+          "starts_on": {
+            "format": "date",
+            "title": "Starts On",
+            "type": "string"
+          }
+        },
+        "required": [
+          "span",
+          "starts_on",
+          "ends_on",
+          "rows",
+          "lists"
+        ],
+        "title": "ProgressOut",
+        "type": "object"
+      },
+      "ProgressRow": {
+        "properties": {
+          "approval": {
+            "enum": [
+              "direct",
+              "head",
+              "head_and_centre"
+            ],
+            "title": "Approval",
+            "type": "string"
+          },
+          "counts": {
+            "$ref": "#/components/schemas/Counts"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "gouvernorat_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Name"
+          },
+          "period_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Period Id"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "enum": [
+                  "draft",
+                  "submitted",
+                  "awaiting_centre",
+                  "approved",
+                  "returned"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          }
+        },
+        "required": [
+          "gouvernorat_code",
+          "gouvernorat_name",
+          "approval",
+          "period_id",
+          "status",
+          "counts"
+        ],
+        "title": "ProgressRow",
         "type": "object"
       },
       "ProofOut": {
@@ -24689,6 +25466,27 @@
         "title": "ReservationResponseIn",
         "type": "object"
       },
+      "Resource": {
+        "properties": {
+          "category_key": {
+            "pattern": "^[a-z][a-z0-9_]{1,39}$",
+            "title": "Category Key",
+            "type": "string"
+          },
+          "qty": {
+            "maximum": 1000.0,
+            "minimum": 1.0,
+            "title": "Qty",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "category_key",
+          "qty"
+        ],
+        "title": "Resource",
+        "type": "object"
+      },
       "ResourceAssignmentRef": {
         "properties": {
           "id": {
@@ -24801,118 +25599,11 @@
         "title": "ResourceIn",
         "type": "object"
       },
-      "ResourceOut": {
-        "properties": {
-          "assignment": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ResourceAssignmentRef"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "gouvernorat_code": {
-            "title": "Gouvernorat Code",
-            "type": "integer"
-          },
-          "id": {
-            "format": "uuid",
-            "title": "Id",
-            "type": "string"
-          },
-          "kind": {
-            "enum": [
-              "fire_engine",
-              "water_tanker",
-              "ambulance",
-              "rescue_vehicle",
-              "heavy_equipment",
-              "drone",
-              "large_extinguisher",
-              "boat",
-              "command_vehicle",
-              "other"
-            ],
-            "title": "Kind",
-            "type": "string"
-          },
-          "label": {
-            "title": "Label",
-            "type": "string"
-          },
-          "location": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/app__modules__ops__schemas__Point"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "notes": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Notes"
-          },
-          "status": {
-            "enum": [
-              "available",
-              "assigned",
-              "out_of_service"
-            ],
-            "title": "Status",
-            "type": "string"
-          },
-          "unit_id": {
-            "format": "uuid",
-            "title": "Unit Id",
-            "type": "string"
-          },
-          "unit_name": {
-            "title": "Unit Name",
-            "type": "string"
-          },
-          "updated_at": {
-            "format": "date-time",
-            "title": "Updated At",
-            "type": "string"
-          },
-          "version": {
-            "title": "Version",
-            "type": "integer"
-          }
-        },
-        "required": [
-          "id",
-          "unit_id",
-          "unit_name",
-          "kind",
-          "label",
-          "status",
-          "notes",
-          "location",
-          "gouvernorat_code",
-          "assignment",
-          "version",
-          "updated_at"
-        ],
-        "title": "ResourceOut",
-        "type": "object"
-      },
       "ResourcePage": {
         "properties": {
           "items": {
             "items": {
-              "$ref": "#/components/schemas/ResourceOut"
+              "$ref": "#/components/schemas/app__modules__ops__schemas__ResourceOut"
             },
             "title": "Items",
             "type": "array"
@@ -25398,6 +26089,26 @@
           "to_closed"
         ],
         "title": "ResponseTimes",
+        "type": "object"
+      },
+      "ReturnIn": {
+        "properties": {
+          "reason": {
+            "maxLength": 1000,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version",
+          "reason"
+        ],
+        "title": "ReturnIn",
         "type": "object"
       },
       "ReviewItem": {
@@ -26600,83 +27311,6 @@
           }
         },
         "title": "Section",
-        "type": "object"
-      },
-      "SettingIn": {
-        "properties": {
-          "reason": {
-            "maxLength": 500,
-            "minLength": 5,
-            "title": "Reason",
-            "type": "string"
-          },
-          "value": {
-            "title": "Value"
-          },
-          "version": {
-            "minimum": 0.0,
-            "title": "Version",
-            "type": "integer"
-          }
-        },
-        "required": [
-          "value",
-          "version",
-          "reason"
-        ],
-        "title": "SettingIn",
-        "type": "object"
-      },
-      "SettingOut": {
-        "properties": {
-          "editable": {
-            "title": "Editable",
-            "type": "boolean"
-          },
-          "key": {
-            "title": "Key",
-            "type": "string"
-          },
-          "updated_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Updated At"
-          },
-          "updated_by_name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Updated By Name"
-          },
-          "value": {
-            "title": "Value"
-          },
-          "version": {
-            "title": "Version",
-            "type": "integer"
-          }
-        },
-        "required": [
-          "key",
-          "value",
-          "version",
-          "updated_by_name",
-          "updated_at",
-          "editable"
-        ],
-        "title": "SettingOut",
         "type": "object"
       },
       "Shapes": {
@@ -30703,6 +31337,19 @@
         "title": "StatusChangeIn",
         "type": "object"
       },
+      "Step": {
+        "properties": {
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version"
+        ],
+        "title": "Step",
+        "type": "object"
+      },
       "StepIn": {
         "properties": {
           "client_id": {
@@ -31750,41 +32397,6 @@
         "title": "TemplateField",
         "type": "object"
       },
-      "TemplateIn": {
-        "description": "A draft: a new one for a category (and classification), or the next version of the approved one.",
-        "properties": {
-          "category": {
-            "$ref": "#/components/schemas/Category"
-          },
-          "classification": {
-            "anyOf": [
-              {
-                "maxLength": 40,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Classification"
-          },
-          "fields": {
-            "items": {
-              "$ref": "#/components/schemas/TemplateField"
-            },
-            "maxItems": 30,
-            "minItems": 1,
-            "title": "Fields",
-            "type": "array"
-          }
-        },
-        "required": [
-          "category",
-          "fields"
-        ],
-        "title": "TemplateIn",
-        "type": "object"
-      },
       "TemplateOption": {
         "properties": {
           "key": {
@@ -31814,113 +32426,6 @@
           "label"
         ],
         "title": "TemplateOption",
-        "type": "object"
-      },
-      "TemplateOut": {
-        "properties": {
-          "approved_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Approved At"
-          },
-          "approved_by_name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Approved By Name"
-          },
-          "category": {
-            "$ref": "#/components/schemas/Category"
-          },
-          "classification": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Classification"
-          },
-          "created_at": {
-            "format": "date-time",
-            "title": "Created At",
-            "type": "string"
-          },
-          "created_by_name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Created By Name"
-          },
-          "fields": {
-            "items": {
-              "$ref": "#/components/schemas/TemplateField"
-            },
-            "title": "Fields",
-            "type": "array"
-          },
-          "id": {
-            "format": "uuid",
-            "title": "Id",
-            "type": "string"
-          },
-          "simulated": {
-            "title": "Simulated",
-            "type": "boolean"
-          },
-          "status": {
-            "enum": [
-              "draft",
-              "approved",
-              "retired"
-            ],
-            "title": "Status",
-            "type": "string"
-          },
-          "updated_at": {
-            "format": "date-time",
-            "title": "Updated At",
-            "type": "string"
-          },
-          "version": {
-            "title": "Version",
-            "type": "integer"
-          }
-        },
-        "required": [
-          "id",
-          "category",
-          "classification",
-          "version",
-          "status",
-          "fields",
-          "simulated",
-          "created_by_name",
-          "created_at",
-          "updated_at",
-          "approved_by_name",
-          "approved_at"
-        ],
-        "title": "TemplateOut",
         "type": "object"
       },
       "TemplatePatch": {
@@ -33279,6 +33784,25 @@
           "location"
         ],
         "title": "UnitIn",
+        "type": "object"
+      },
+      "UnitOption": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "UnitOption",
         "type": "object"
       },
       "UnitOut": {
@@ -36262,6 +36786,31 @@
         "title": "SummaryOut",
         "type": "object"
       },
+      "app__modules__content__guide__ItemIn": {
+        "additionalProperties": false,
+        "properties": {
+          "call_198": {
+            "default": false,
+            "title": "Call 198",
+            "type": "boolean"
+          },
+          "content": {
+            "$ref": "#/components/schemas/ItemContent"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "content",
+          "reason"
+        ],
+        "title": "ItemIn",
+        "type": "object"
+      },
       "app__modules__content__guide__ItemOut": {
         "properties": {
           "call_198": {
@@ -38898,6 +39447,255 @@
           "reason"
         ],
         "title": "ReasonIn",
+        "type": "object"
+      },
+      "app__modules__ops__schemas__ResourceOut": {
+        "properties": {
+          "assignment": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ResourceAssignmentRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "fire_engine",
+              "water_tanker",
+              "ambulance",
+              "rescue_vehicle",
+              "heavy_equipment",
+              "drone",
+              "large_extinguisher",
+              "boat",
+              "command_vehicle",
+              "other"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__ops__schemas__Point"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "status": {
+            "enum": [
+              "available",
+              "assigned",
+              "out_of_service"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "unit_id": {
+            "format": "uuid",
+            "title": "Unit Id",
+            "type": "string"
+          },
+          "unit_name": {
+            "title": "Unit Name",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "unit_id",
+          "unit_name",
+          "kind",
+          "label",
+          "status",
+          "notes",
+          "location",
+          "gouvernorat_code",
+          "assignment",
+          "version",
+          "updated_at"
+        ],
+        "title": "ResourceOut",
+        "type": "object"
+      },
+      "app__modules__ops__schemas__TemplateIn": {
+        "description": "A draft: a new one for a category (and classification), or the next version of the approved one.",
+        "properties": {
+          "category": {
+            "$ref": "#/components/schemas/Category"
+          },
+          "classification": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Classification"
+          },
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/TemplateField"
+            },
+            "maxItems": 30,
+            "minItems": 1,
+            "title": "Fields",
+            "type": "array"
+          }
+        },
+        "required": [
+          "category",
+          "fields"
+        ],
+        "title": "TemplateIn",
+        "type": "object"
+      },
+      "app__modules__ops__schemas__TemplateOut": {
+        "properties": {
+          "approved_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved At"
+          },
+          "approved_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved By Name"
+          },
+          "category": {
+            "$ref": "#/components/schemas/Category"
+          },
+          "classification": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Classification"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/TemplateField"
+            },
+            "title": "Fields",
+            "type": "array"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "approved",
+              "retired"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "category",
+          "classification",
+          "version",
+          "status",
+          "fields",
+          "simulated",
+          "created_by_name",
+          "created_at",
+          "updated_at",
+          "approved_by_name",
+          "approved_at"
+        ],
+        "title": "TemplateOut",
         "type": "object"
       },
       "app__modules__orgs__schemas__CertificateOut": {
@@ -42092,11 +42890,622 @@
         "title": "PositionIn",
         "type": "object"
       },
+      "app__modules__schedule__schemas__ItemIn": {
+        "properties": {
+          "activity": {
+            "enum": [
+              "duty",
+              "patrol",
+              "exercise",
+              "prevention_visit",
+              "maintenance",
+              "training",
+              "awareness",
+              "readiness_check",
+              "meeting",
+              "other"
+            ],
+            "title": "Activity",
+            "type": "string"
+          },
+          "ends_at": {
+            "anyOf": [
+              {
+                "format": "time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ends At"
+          },
+          "notes": {
+            "default": "",
+            "maxLength": 2000,
+            "title": "Notes",
+            "type": "string"
+          },
+          "on_date": {
+            "format": "date",
+            "title": "On Date",
+            "type": "string"
+          },
+          "place": {
+            "default": "",
+            "maxLength": 300,
+            "title": "Place",
+            "type": "string"
+          },
+          "plan_document_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plan Document Id"
+          },
+          "resources": {
+            "items": {
+              "$ref": "#/components/schemas/Resource"
+            },
+            "maxItems": 20,
+            "title": "Resources",
+            "type": "array"
+          },
+          "responsible": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Responsible",
+            "type": "string"
+          },
+          "staff_count": {
+            "anyOf": [
+              {
+                "maximum": 10000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Staff Count"
+          },
+          "starts_at": {
+            "anyOf": [
+              {
+                "format": "time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Starts At"
+          },
+          "title": {
+            "maxLength": 300,
+            "minLength": 2,
+            "title": "Title",
+            "type": "string"
+          },
+          "unit_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Id"
+          }
+        },
+        "required": [
+          "activity",
+          "title",
+          "on_date"
+        ],
+        "title": "ItemIn",
+        "type": "object"
+      },
+      "app__modules__schedule__schemas__ItemOut": {
+        "properties": {
+          "activity": {
+            "title": "Activity",
+            "type": "string"
+          },
+          "ends_at": {
+            "anyOf": [
+              {
+                "format": "time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ends At"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string"
+          },
+          "on_date": {
+            "format": "date",
+            "title": "On Date",
+            "type": "string"
+          },
+          "place": {
+            "title": "Place",
+            "type": "string"
+          },
+          "plan_document_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plan Document Id"
+          },
+          "plan_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plan Title"
+          },
+          "resources": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__schedule__schemas__ResourceOut"
+            },
+            "title": "Resources",
+            "type": "array"
+          },
+          "responsible": {
+            "title": "Responsible",
+            "type": "string"
+          },
+          "series_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Series Id"
+          },
+          "staff_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Staff Count"
+          },
+          "starts_at": {
+            "anyOf": [
+              {
+                "format": "time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Starts At"
+          },
+          "status": {
+            "enum": [
+              "planned",
+              "done",
+              "postponed",
+              "cancelled"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "status_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status At"
+          },
+          "status_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status By Name"
+          },
+          "status_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status Reason"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "unit_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Id"
+          },
+          "unit_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Name"
+          }
+        },
+        "required": [
+          "id",
+          "series_id",
+          "activity",
+          "title",
+          "on_date",
+          "starts_at",
+          "ends_at",
+          "unit_id",
+          "unit_name",
+          "place",
+          "responsible",
+          "staff_count",
+          "resources",
+          "plan_document_id",
+          "plan_title",
+          "notes",
+          "status",
+          "status_reason",
+          "status_by_name",
+          "status_at"
+        ],
+        "title": "ItemOut",
+        "type": "object"
+      },
+      "app__modules__schedule__schemas__ResourceOut": {
+        "properties": {
+          "category_key": {
+            "title": "Category Key",
+            "type": "string"
+          },
+          "name": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Name",
+            "type": "object"
+          },
+          "qty": {
+            "title": "Qty",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "category_key",
+          "name",
+          "qty"
+        ],
+        "title": "ResourceOut",
+        "type": "object"
+      },
+      "app__modules__schedule__schemas__SettingIn": {
+        "properties": {
+          "approval": {
+            "enum": [
+              "direct",
+              "head",
+              "head_and_centre"
+            ],
+            "title": "Approval",
+            "type": "string"
+          }
+        },
+        "required": [
+          "approval"
+        ],
+        "title": "SettingIn",
+        "type": "object"
+      },
+      "app__modules__schedule__schemas__SettingOut": {
+        "properties": {
+          "approval": {
+            "enum": [
+              "direct",
+              "head",
+              "head_and_centre"
+            ],
+            "title": "Approval",
+            "type": "string"
+          },
+          "can_edit": {
+            "title": "Can Edit",
+            "type": "boolean"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "gouvernorat_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Name"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
+          "updated_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By Name"
+          }
+        },
+        "required": [
+          "gouvernorat_code",
+          "gouvernorat_name",
+          "approval",
+          "updated_by_name",
+          "updated_at",
+          "can_edit"
+        ],
+        "title": "SettingOut",
+        "type": "object"
+      },
+      "app__modules__schedule__schemas__TemplateIn": {
+        "properties": {
+          "name": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "TemplateIn",
+        "type": "object"
+      },
+      "app__modules__schedule__schemas__TemplateOut": {
+        "properties": {
+          "activities": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Activities",
+            "type": "object"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "items": {
+            "title": "Items",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "span": {
+            "enum": [
+              "day",
+              "week",
+              "month"
+            ],
+            "title": "Span",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "updated_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By Name"
+          }
+        },
+        "required": [
+          "id",
+          "gouvernorat_code",
+          "span",
+          "name",
+          "items",
+          "activities",
+          "created_by_name",
+          "created_at",
+          "updated_by_name",
+          "updated_at"
+        ],
+        "title": "TemplateOut",
+        "type": "object"
+      },
+      "app__modules__settings__router__SettingIn": {
+        "properties": {
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value"
+          },
+          "version": {
+            "minimum": 0.0,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value",
+          "version",
+          "reason"
+        ],
+        "title": "SettingIn",
+        "type": "object"
+      },
+      "app__modules__settings__router__SettingOut": {
+        "properties": {
+          "editable": {
+            "title": "Editable",
+            "type": "boolean"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
+          "updated_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By Name"
+          },
+          "value": {
+            "title": "Value"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "key",
+          "value",
+          "version",
+          "updated_by_name",
+          "updated_at",
+          "editable"
+        ],
+        "title": "SettingOut",
+        "type": "object"
+      },
       "app__modules__settings__router__SettingsOut": {
         "properties": {
           "items": {
             "items": {
-              "$ref": "#/components/schemas/SettingOut"
+              "$ref": "#/components/schemas/app__modules__settings__router__SettingOut"
             },
             "title": "Items",
             "type": "array"
@@ -59021,7 +60430,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ItemIn"
+                "$ref": "#/components/schemas/app__modules__content__guide__ItemIn"
               }
             }
           },
@@ -69763,7 +71172,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/TemplateOut"
+                    "$ref": "#/components/schemas/app__modules__ops__schemas__TemplateOut"
                   },
                   "title": "Response List Templates Api V1 Staff Report Templates Get",
                   "type": "array"
@@ -69799,7 +71208,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/TemplateIn"
+                "$ref": "#/components/schemas/app__modules__ops__schemas__TemplateIn"
               }
             }
           },
@@ -69810,7 +71219,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TemplateOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__TemplateOut"
                 }
               }
             },
@@ -69907,7 +71316,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TemplateOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__TemplateOut"
                 }
               }
             },
@@ -69955,7 +71364,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TemplateOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__TemplateOut"
                 }
               }
             },
@@ -70003,7 +71412,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TemplateOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__TemplateOut"
                 }
               }
             },
@@ -71963,7 +73372,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ResourceOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__ResourceOut"
                 }
               }
             },
@@ -72142,7 +73551,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ResourceOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__ResourceOut"
                 }
               }
             },
@@ -74140,6 +75549,1273 @@
         ]
       }
     },
+    "/api/v1/staff/schedule/items/{item_id}": {
+      "delete": {
+        "description": "Removes an activity, or every activity of its series.",
+        "operationId": "delete_item_api_v1_staff_schedule_items__item_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "series",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Series",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeriodDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Item",
+        "tags": [
+          "staff",
+          "schedule"
+        ]
+      },
+      "put": {
+        "operationId": "update_item_api_v1_staff_schedule_items__item_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__schedule__schemas__ItemIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeriodDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Item",
+        "tags": [
+          "staff",
+          "schedule"
+        ]
+      }
+    },
+    "/api/v1/staff/schedule/items/{item_id}/status": {
+      "post": {
+        "description": "The follow-up of an approved programme: done, postponed or cancelled (with the reason), or planned again.",
+        "operationId": "item_status_api_v1_staff_schedule_items__item_id__status_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ItemStatusIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeriodDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Item Status",
+        "tags": [
+          "staff",
+          "schedule"
+        ]
+      }
+    },
+    "/api/v1/staff/schedule/options": {
+      "get": {
+        "description": "What an activity may name: the units of the gouvernorat, the resource types, the plans in force.",
+        "operationId": "get_options_api_v1_staff_schedule_options_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 83,
+                  "minimum": 11,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Options"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Options",
+        "tags": [
+          "staff",
+          "schedule"
+        ]
+      }
+    },
+    "/api/v1/staff/schedule/periods": {
+      "post": {
+        "operationId": "create_period_api_v1_staff_schedule_periods_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PeriodIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeriodDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Period",
+        "tags": [
+          "staff",
+          "schedule"
+        ]
+      }
+    },
+    "/api/v1/staff/schedule/periods/{period_id}": {
+      "delete": {
+        "operationId": "delete_period_api_v1_staff_schedule_periods__period_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "period_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Period Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Period",
+        "tags": [
+          "staff",
+          "schedule"
+        ]
+      },
+      "get": {
+        "operationId": "get_period_api_v1_staff_schedule_periods__period_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "period_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Period Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeriodDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Period",
+        "tags": [
+          "staff",
+          "schedule"
+        ]
+      },
+      "patch": {
+        "operationId": "patch_period_api_v1_staff_schedule_periods__period_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "period_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Period Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PeriodNotes"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeriodDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Patch Period",
+        "tags": [
+          "staff",
+          "schedule"
+        ]
+      }
+    },
+    "/api/v1/staff/schedule/periods/{period_id}/apply-template": {
+      "post": {
+        "description": "Adds the activities of a template of the same span to this programme, each on its day of the period.",
+        "operationId": "apply_template_api_v1_staff_schedule_periods__period_id__apply_template_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "period_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Period Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplyTemplate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeriodDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Apply Template",
+        "tags": [
+          "staff",
+          "schedule"
+        ]
+      }
+    },
+    "/api/v1/staff/schedule/periods/{period_id}/approve": {
+      "post": {
+        "operationId": "approve_period_api_v1_staff_schedule_periods__period_id__approve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "period_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Period Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Step"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeriodDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Approve Period",
+        "tags": [
+          "staff",
+          "schedule"
+        ]
+      }
+    },
+    "/api/v1/staff/schedule/periods/{period_id}/copy-previous": {
+      "post": {
+        "description": "Copies the activities of the previous day, week or month into this programme, at the same place in the period;\ntheir follow-up starts again.",
+        "operationId": "copy_previous_api_v1_staff_schedule_periods__period_id__copy_previous_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "period_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Period Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Step"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeriodDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Copy Previous",
+        "tags": [
+          "staff",
+          "schedule"
+        ]
+      }
+    },
+    "/api/v1/staff/schedule/periods/{period_id}/items": {
+      "post": {
+        "description": "Adds an activity, or the same activity every day, every working day or every week until the end of the\nperiod (one series).",
+        "operationId": "add_item_api_v1_staff_schedule_periods__period_id__items_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "period_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Period Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ItemCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeriodDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Add Item",
+        "tags": [
+          "staff",
+          "schedule"
+        ]
+      }
+    },
+    "/api/v1/staff/schedule/periods/{period_id}/return": {
+      "post": {
+        "description": "Sends the programme back to its room with the reason; it can be changed and sent again.",
+        "operationId": "return_period_api_v1_staff_schedule_periods__period_id__return_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "period_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Period Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReturnIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeriodDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Return Period",
+        "tags": [
+          "staff",
+          "schedule"
+        ]
+      }
+    },
+    "/api/v1/staff/schedule/periods/{period_id}/submit": {
+      "post": {
+        "description": "Sends the programme for approval along the path its gouvernorat chose (or publishes it, if it chose so).",
+        "operationId": "submit_period_api_v1_staff_schedule_periods__period_id__submit_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "period_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Period Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Step"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeriodDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Submit Period",
+        "tags": [
+          "staff",
+          "schedule"
+        ]
+      }
+    },
+    "/api/v1/staff/schedule/periods/{period_id}/template": {
+      "post": {
+        "description": "Keeps this programme as a template under a name; a template of the same name and span is replaced.",
+        "operationId": "save_template_api_v1_staff_schedule_periods__period_id__template_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "period_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Period Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__schedule__schemas__TemplateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__schedule__schemas__TemplateOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Save Template",
+        "tags": [
+          "staff",
+          "schedule"
+        ]
+      }
+    },
+    "/api/v1/staff/schedule/progress": {
+      "get": {
+        "description": "For each gouvernorat the reader sees: its programme of the period and the share of activities done.",
+        "operationId": "get_progress_api_v1_staff_schedule_progress_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "span",
+            "required": true,
+            "schema": {
+              "enum": [
+                "day",
+                "week",
+                "month"
+              ],
+              "title": "Span",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "on",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "title": "On",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgressOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Progress",
+        "tags": [
+          "staff",
+          "schedule"
+        ]
+      }
+    },
+    "/api/v1/staff/schedule/settings": {
+      "get": {
+        "description": "How each gouvernorat the reader sees approves its programmes.",
+        "operationId": "list_settings_api_v1_staff_schedule_settings_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/app__modules__schedule__schemas__SettingOut"
+                  },
+                  "title": "Response List Settings Api V1 Staff Schedule Settings Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Settings",
+        "tags": [
+          "staff",
+          "schedule"
+        ]
+      }
+    },
+    "/api/v1/staff/schedule/settings/{gouvernorat_code}": {
+      "put": {
+        "description": "Each gouvernorat chooses how its programmes are approved (the head of its room decides).",
+        "operationId": "put_setting_api_v1_staff_schedule_settings__gouvernorat_code__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "gouvernorat_code",
+            "required": true,
+            "schema": {
+              "maximum": 83,
+              "minimum": 11,
+              "title": "Gouvernorat Code",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__schedule__schemas__SettingIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__schedule__schemas__SettingOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Put Setting",
+        "tags": [
+          "staff",
+          "schedule"
+        ]
+      }
+    },
+    "/api/v1/staff/schedule/slot": {
+      "get": {
+        "description": "The programme of a gouvernorat for the day, week or month that contains ``on``, if it is recorded.",
+        "operationId": "get_slot_api_v1_staff_schedule_slot_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "span",
+            "required": true,
+            "schema": {
+              "enum": [
+                "day",
+                "week",
+                "month"
+              ],
+              "title": "Span",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "on",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "title": "On",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 83,
+                  "minimum": 11,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeriodSlot"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Slot",
+        "tags": [
+          "staff",
+          "schedule"
+        ]
+      }
+    },
+    "/api/v1/staff/schedule/templates": {
+      "get": {
+        "operationId": "list_templates_api_v1_staff_schedule_templates_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "span",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "day",
+                    "week",
+                    "month"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Span"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 83,
+                  "minimum": 11,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/app__modules__schedule__schemas__TemplateOut"
+                  },
+                  "title": "Response List Templates Api V1 Staff Schedule Templates Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Templates",
+        "tags": [
+          "staff",
+          "schedule"
+        ]
+      }
+    },
+    "/api/v1/staff/schedule/templates/{template_id}": {
+      "delete": {
+        "operationId": "delete_template_api_v1_staff_schedule_templates__template_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "template_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Template Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Template",
+        "tags": [
+          "staff",
+          "schedule"
+        ]
+      },
+      "patch": {
+        "operationId": "rename_template_api_v1_staff_schedule_templates__template_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "template_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Template Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__schedule__schemas__TemplateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__schedule__schemas__TemplateOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Rename Template",
+        "tags": [
+          "staff",
+          "schedule"
+        ]
+      }
+    },
     "/api/v1/staff/settings": {
       "get": {
         "operationId": "list_settings_api_v1_staff_settings_get",
@@ -74186,7 +76862,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SettingIn"
+                "$ref": "#/components/schemas/app__modules__settings__router__SettingIn"
               }
             }
           },
@@ -74197,7 +76873,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SettingOut"
+                  "$ref": "#/components/schemas/app__modules__settings__router__SettingOut"
                 }
               }
             },

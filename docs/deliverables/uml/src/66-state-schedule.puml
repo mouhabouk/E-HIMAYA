@@ -1,0 +1,30 @@
+@startuml
+!include style.iuml
+title Diagramme d'états : programme d'une wilaya et suivi d'une activité (PL2)
+state "Programme" as Per {
+  [*] --> Brouillon : créer (vide, copie de la période\nprécédente ou modèle)
+  Brouillon --> [*] : supprimer
+  Brouillon --> Approuvé : envoyer\n[publication directe]
+  Brouillon --> Envoyé : envoyer\n[chef de salle]
+  Envoyé --> Approuvé : approuver (chef de salle)\n[chef de salle]
+  Envoyé --> AttenteCentre : approuver (chef de salle)\n[chef de salle puis centre]
+  AttenteCentre --> Approuvé : approuver (centre)
+  Envoyé --> Renvoyé : renvoyer (motif)
+  AttenteCentre --> Renvoyé : renvoyer (motif)
+  Renvoyé --> Envoyé : corriger et renvoyer
+  Approuvé --> Approuvé : mise à jour par le chef de salle\n(journal d'audit)
+}
+state "Activité" as Itm {
+  [*] --> Prévue
+  Prévue --> Réalisée
+  Prévue --> Reportée : motif
+  Prévue --> Annulée : motif
+  Reportée --> Prévue
+  Annulée --> Prévue
+  Réalisée --> Prévue
+}
+note bottom of Per
+  Le mode d'approbation est retenu à l'envoi :
+  changer le réglage ne touche pas un programme en cours.
+end note
+@enduml

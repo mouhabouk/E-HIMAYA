@@ -1,0 +1,62 @@
+@startuml
+!include style.iuml
+title Diagramme de classes : plans d'intervention par risque et programmes des wilayas (PL)
+class "Risque" as Hz {
+  clé : floods | forest_fires | ...
+  nom ar, fr, en
+  couleur du plan, icône, rang
+  actif
+}
+class "Document" as Doc {
+  type : plan | décision | ...
+  niveau : central | wilaya
+  statut : en vigueur | abrogé | ...
+  fichier PDF, empreinte SHA-256
+}
+class "Axe" as Axe {
+  type : inondation | feu de forêt | ...
+}
+class "Réglage" as Set {
+  wilaya
+  approbation : direct | chef de salle |
+  chef de salle puis centre
+}
+class "Programme" as Per {
+  wilaya, durée : jour | semaine | mois
+  début, fin
+  statut : brouillon | envoyé |
+  attente centre | approuvé | renvoyé
+  approbation retenue à l'envoi
+  motif de renvoi, version
+}
+class "Activité" as Itm {
+  type : garde | patrouille | exercice |
+  visite de prévention | maintenance | ...
+  titre, date, heures ou journée
+  lieu, responsable, effectif
+  moyens [catégorie, nombre]
+  série de répétition
+  suivi : prévue | réalisée |
+  reportée | annulée, motif
+}
+class "Modèle" as Tpl {
+  wilaya, durée, nom unique
+  activités avec leur décalage :
+  jour 0, 1, 2… dans la période
+}
+class "Unité" as Unit
+class "Catégorie de moyens (R1)" as Cat
+Doc "*" --> "0..1" Hz : risque (plans seulement)
+Axe "*" ..> "0..1" Hz : type d'axe -> risque
+Set "1" -- "*" Per : wilaya
+Per "1" *-- "0..2000" Itm
+Itm "*" --> "0..1" Unit
+Itm "*" --> "0..1" Doc : plan lié
+Itm "*" ..> "*" Cat
+Tpl ..> Per : enregistré depuis / appliqué à
+note bottom of Per
+  RLS : une wilaya ne lit que ses programmes ;
+  la salle centrale lit tout. Gouverneur et
+  ministre : taux de réalisation seulement.
+end note
+@enduml

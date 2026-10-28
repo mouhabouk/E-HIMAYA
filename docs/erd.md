@@ -2444,6 +2444,85 @@ erDiagram
     safety__live_share ||--o{ safety__alert : "live_share_id"
 ```
 
+## sched
+
+```mermaid
+erDiagram
+    sched__item {
+        uuid id PK
+        uuid period_id FK
+        smallint gouvernorat_code FK
+        uuid series_id
+        text activity
+        text title
+        date on_date
+        time starts_at
+        time ends_at
+        uuid unit_id FK
+        text place
+        text responsible
+        integer staff_count
+        jsonb resources
+        uuid plan_document_id FK
+        text notes
+        text status
+        text status_reason
+        text status_by_name
+        datetime status_at
+        text created_by_name
+        datetime created_at
+        datetime updated_at
+    }
+    sched__period {
+        uuid id PK
+        smallint gouvernorat_code FK
+        text span
+        date starts_on
+        date ends_on
+        text status
+        text approval
+        text notes
+        text return_reason
+        text submitted_by_name
+        datetime submitted_at
+        text approved_by_name
+        datetime approved_at
+        text centre_approved_by_name
+        datetime centre_approved_at
+        integer version
+        text created_by
+        text created_by_name
+        datetime created_at
+        text updated_by_name
+        datetime updated_at
+    }
+    sched__setting {
+        smallint gouvernorat_code PK,FK
+        text approval
+        text updated_by
+        text updated_by_name
+        datetime updated_at
+    }
+    sched__template {
+        uuid id PK
+        smallint gouvernorat_code FK
+        text span
+        text name
+        jsonb items
+        text created_by_name
+        datetime created_at
+        text updated_by_name
+        datetime updated_at
+    }
+    geo__gouvernorat ||--o{ sched__item : "gouvernorat_code"
+    geo__gouvernorat ||--o{ sched__period : "gouvernorat_code"
+    geo__gouvernorat ||--o{ sched__setting : "gouvernorat_code"
+    geo__gouvernorat ||--o{ sched__template : "gouvernorat_code"
+    ops__unit ||--o{ sched__item : "unit_id"
+    register__document ||--o{ sched__item : "plan_document_id"
+    sched__period ||--o{ sched__item : "period_id"
+```
+
 ## telephony
 
 ```mermaid

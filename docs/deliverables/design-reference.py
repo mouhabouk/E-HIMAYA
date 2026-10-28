@@ -41,7 +41,7 @@ sem=[('--status-received','مستلَم','#C62828'),('--status-in_progress','ق�
 src=open('apps/dashboard/src/components/Icon.tsx').read()
 block=src.split('const PATHS = {')[1].split('\n}')[0]
 paths=dict(re.findall(r'(\w+):\s*"([^"]+)"',block))
-usage={'home':('navy','المؤشرات'),'description':('red','البلاغات'),'localFireDepartment':('red','الحوادث'),'map':('teal','الخريطة الحية'),'videocam':('red','البث المباشر'),'volunteerActivism':('green','المتطوعون'),'call':('green','المكالمات'),'inventory2':('amber','طلبات الموارد'),'schedule':('orange','البلاغات المتأخرة'),'wrongLocation':('orange','التحقق الجغرافي'),'stethoscope':('purple','الأطباء'),'groups':('purple','اللجنة الطبية'),'localShipping':('amber','الموارد'),'campaign':('sky','الإشعارات والتنبيهات'),'partlyCloudyDay':('sky','تنبيهات جوية مقترحة'),'monitoring':('navy','اللجان'),'analytics':('navy','التحليلات'),'folderOpen':('slate','التقارير'),'historyEdu':('purple','الذاكرة الوطنية'),'menuBook':('purple','مكتبة الأحداث'),'militaryTech':('pink','المكافآت'),'apartment':('navy','المؤسسات / مؤسساتي'),'workspacePremium':('amber','مراجعة الشهادات'),'healthAndSafety':('green','نصائح السلامة'),'medicalServices':('red','مركز الطوارئ'),'layers':('teal','طبقات الخريطة'),'mail':('sky','اتصل بنا'),'settings':('slate','الإعدادات الوطنية'),'smartToy':('slate','إعدادات الذكاء الاصطناعي'),'manageAccounts':('slate','الحسابات'),'policy':('slate','سجل التدقيق'),'lockOpen':('red','الوصول الاستثنائي'),'verified':('green','التحقق من شهادة (البوابة)'),'chevronRight':('slate','سهم البطاقة'),'warning':('amber','تحذير')}
+usage={'calendarMonth':('teal','البرمجة (PL2)'),'pictureAsPdf':('red','ملف المخطط PDF'),'print':('slate','طباعة البرمجة'),'water':('sky','خطر الفيضانات'),'science':('amber','خطر المواد الخطرة'),'landslide':('purple','خطر الزلازل'),'thunderstorm':('slate','خطر العواصف'),'zoomIn':('slate','تكبير المخطط'),'zoomOut':('slate','تصغير المخطط'),'fullscreen':('slate','ملء الشاشة'),'search':('slate','البحث في المخطط'),'chevronLeft':('slate','الصفحة التالية'),'home':('navy','المؤشرات'),'description':('red','البلاغات'),'localFireDepartment':('red','الحوادث'),'map':('teal','الخريطة الحية'),'videocam':('red','البث المباشر'),'volunteerActivism':('green','المتطوعون'),'call':('green','المكالمات'),'inventory2':('amber','طلبات الموارد'),'schedule':('orange','البلاغات المتأخرة'),'wrongLocation':('orange','التحقق الجغرافي'),'stethoscope':('purple','الأطباء'),'groups':('purple','اللجنة الطبية'),'localShipping':('amber','الموارد'),'campaign':('sky','الإشعارات والتنبيهات'),'partlyCloudyDay':('sky','تنبيهات جوية مقترحة'),'monitoring':('navy','اللجان'),'analytics':('navy','التحليلات'),'folderOpen':('slate','التقارير'),'historyEdu':('purple','الذاكرة الوطنية'),'menuBook':('purple','مكتبة الأحداث'),'militaryTech':('pink','المكافآت'),'apartment':('navy','المؤسسات / مؤسساتي'),'workspacePremium':('amber','مراجعة الشهادات'),'healthAndSafety':('green','نصائح السلامة'),'medicalServices':('red','مركز الطوارئ'),'layers':('teal','طبقات الخريطة'),'mail':('sky','اتصل بنا'),'settings':('slate','الإعدادات الوطنية'),'smartToy':('slate','إعدادات الذكاء الاصطناعي'),'manageAccounts':('slate','الحسابات'),'policy':('slate','سجل التدقيق'),'lockOpen':('red','الوصول الاستثنائي'),'verified':('green','التحقق من شهادة (البوابة)'),'chevronRight':('slate','سهم البطاقة'),'warning':('amber','تحذير')}
 tonefill={t[0]:t[1] for t in tones}
 def snake(c): return re.sub(r'([A-Z0-9]+)',lambda m:'_'+m.group(1).lower(),c).replace('_2','_2')
 rows=[]
@@ -55,6 +55,17 @@ def t_base():
 def t_tone():
   return ''.join(f'<tr><td><code class="ltr">{k}</code></td><td>{sw(f)} <code class="ltr">{f}</code></td><td>{sw(o)} <code class="ltr">{o}</code></td><td>{sw(ti)} <code class="ltr">{ti}</code></td><td>{sw(ink)} <code class="ltr">{ink}</code></td><td><span class="pill" style="background:{ti};color:{ink}">مثال</span></td><td>{u}</td></tr>' for k,f,o,ti,ink,u in tones)
 def t_sem(): return ''.join(f'<tr><td>{sw(h)}</td><td>{ar}</td><td class="ltr"><code>{v}</code></td><td class="ltr"><code>{h}</code></td></tr>' for v,ar,h in sem)
+def t_hazard():
+  src=open('services/api/migrations/versions/0061_plan_hazards.py').read()
+  rows=re.findall(r'\("(\w+)", "(#[0-9A-Fa-f]{6})", "(\w+)", "([^"]+)"',src)
+  return ''.join(f'<tr><td>{sw(c)}</td><td>{ar}</td><td class="ltr"><code>{c}</code></td><td>{cr(c,W) if L(c)<0.18 else cr(c,I)} مع {"الأبيض" if L(c)<0.18 else "الحبر"}</td><td class="ltr"><code>{ic}</code></td></tr>' for k,c,ic,ar in rows)
+def t_activity():
+  src=open('apps/dashboard/src/lib/schedule.ts').read()
+  body=re.search(r'export const ACTIVITIES = \{([^}]*)\}',src).group(1)
+  pairs=re.findall(r'(\w+): "(\w+)"',body)
+  names={'duty':'مناوبة','patrol':'دورية','exercise':'تمرين','prevention_visit':'زيارة وقاية','maintenance':'صيانة','training':'تكوين','awareness':'تحسيس','readiness_check':'تفقد الجاهزية','meeting':'اجتماع','other':'أخرى'}
+  tone={t[0]:t[1] for t in tones}
+  return ''.join(f'<tr><td>{sw(tone[t])}</td><td>{names[k]}</td><td class="ltr"><code>{k}</code></td><td class="ltr"><code>{t}</code></td></tr>' for k,t in pairs)
 def t_count():
   src=open('apps/dashboard/src/lib/inventory.ts').read()
   cols=re.findall(r'#[0-9A-Fa-f]{6}',re.search(r'COUNT_COLOURS = \[([^\]]*)\]',src).group(1))
@@ -107,7 +118,11 @@ small{{color:var(--muted)}}
 <section id="semantic"><h2>3. ألوان الحالات في لوحة القيادة</h2><p>كل لون منها مرفوق دائما بكلمة أو شكل، فلا يحمل المعنى وحده.</p>
 <div class="tbl"><table><tr><th></th><th>المعنى</th><th>المتغير</th><th>القيمة</th></tr>{t_sem()}</table></div>
 <h3>تدرّج العدد على الخريطة (المرحلة R)</h3><p>نتيجة البحث في سجل الموارد تلوّن الولايات بخمس درجات حسب العدد، والرمادي للصفر. العدد مكتوب دائما في فقاعة فوق الولاية أو الوحدة، فاللون لا يحمل المعنى وحده. المصدر: <code class="ltr">COUNT_COLOURS</code> في <code class="ltr">apps/dashboard/src/lib/inventory.ts</code>.</p>
-<div class="tbl"><table><tr><th></th><th>الدرجة</th><th>القيمة</th></tr>{t_count()}</table></div></section>
+<div class="tbl"><table><tr><th></th><th>الدرجة</th><th>القيمة</th></tr>{t_count()}</table></div>
+<h3>ألوان مخاطر مخططات التدخل (المرحلة PL)</h3><p>لون كل خطر يلوّن بطاقته ورأس مخططه في العارض؛ الأزرق للفيضانات من اللجنة، والبقية تؤكدها القاعة المركزية أو تغيّرها من الصفحة. يُكتب النص على اللون بالأبيض أو بالحبر حسب أيهما أوضح.</p>
+<div class="tbl"><table><tr><th></th><th>الخطر</th><th>اللون</th><th>التباين</th><th>الأيقونة</th></tr>{t_hazard()}</table></div>
+<h3>ألوان أنشطة البرمجة (المرحلة PL)</h3><p>كل نوع نشاط في التقويم بلون من ألوان النظام، مع اسمه دائما، فلا يُعتمد على اللون وحده.</p>
+<div class="tbl"><table><tr><th></th><th>النشاط</th><th>الرمز</th><th>اللون</th></tr>{t_activity()}</table></div></section>
 
 <section id="type"><h2>4. الخط</h2>
 <div class="tbl"><table><tr><th>الخط</th><th>الأوزان</th><th>أين</th><th>الرخصة</th><th>التحميل</th></tr>
