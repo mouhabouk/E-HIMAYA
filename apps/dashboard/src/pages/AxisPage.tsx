@@ -394,7 +394,7 @@ export function AxisPage() {
             </button>
           ))}
         </div>
-        <div role="tabpanel" className="ops-bottom__body">
+        <div role="tabpanel" className="ops-bottom__body" tabIndex={0}>
           {tab === "decisions" &&
             (d.directives.length === 0 ? (
               <p className="ops-empty">{t("crisis.directive.none")}</p>

@@ -5,6 +5,7 @@
  */
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
+import { JENDOUBA_AXIS, NABEUL_AXIS, NABEUL_DETAIL, overview, REQUEST, SOUSSE_AXIS, SUGGESTIONS } from "../src/test/crisisData";
 import { API, baseMock, commonAnswer, json, signIn } from "./phase7Helpers";
 
 const ROLES = ["operator", "ops_manager", "central_committee", "security_admin", "content_editor", "org_auditor"];
@@ -25,6 +26,9 @@ const SCREENS: { path: string; ready: string }[] = [
   { path: "/coastal", ready: "main h1" },
   { path: "/programmes", ready: "main table" },
   { path: "/programmes/p1", ready: "main table" },
+  { path: "/command", ready: "main .ops-topbar" },
+  { path: "/axes", ready: "main .axis-grid li" },
+  { path: "/axes/ax-nabeul", ready: "main .ops-topbar" },
 ];
 
 const PAGE = { items: [], next_cursor: null, total: 0 };
@@ -151,6 +155,13 @@ async function mockApi(page: Page): Promise<string[]> {
       const revision = { action: "approve", reason: null, created_by_name: "Salma", created_at: "2026-06-01T09:00:00Z", points: 1 };
       return json(route, { items: [{ ...revision, number: 2 }, { ...revision, number: 1, action: "import" }] });
     }
+    // Disaster and crisis axes (phase L3): the [SIM] Nabeul floods and two other axes.
+    if (pathname === "/api/v1/staff/crisis/command") return json(route, overview("minister"));
+    if (pathname === "/api/v1/staff/crisis/boundaries") return json(route, { type: "FeatureCollection", features: [] });
+    if (pathname === "/api/v1/staff/crisis/axes") return json(route, { items: [NABEUL_AXIS, JENDOUBA_AXIS, SOUSSE_AXIS] });
+    if (pathname === "/api/v1/staff/crisis/requests") return json(route, { items: [REQUEST] });
+    if (pathname === "/api/v1/staff/crisis/axes/ax-nabeul") return json(route, NABEUL_DETAIL);
+    if (pathname === "/api/v1/staff/crisis/axes/ax-nabeul/suggestions") return json(route, { items: SUGGESTIONS });
     unanswered.push(pathname);
     return json(route, PAGE);
   });
