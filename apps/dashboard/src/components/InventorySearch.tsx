@@ -87,9 +87,11 @@ function SpecConditions({
             </label>
           );
         }
-        const current = Array.isArray(value[d.key]) ? (value[d.key] as [number | null, number | null]) : [null, null];
+        const current: [number | null, number | null] = Array.isArray(value[d.key])
+          ? (value[d.key] as [number | null, number | null])
+          : [null, null];
         const update = (i: 0 | 1, raw: string) => {
-          const next: [number | null, number | null] = [...current];
+          const next: [number | null, number | null] = [current[0], current[1]];
           next[i] = bound(raw);
           set(d.key, next[0] === null && next[1] === null ? null : next);
         };
