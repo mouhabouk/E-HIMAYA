@@ -34,6 +34,7 @@ from app.modules.drill.models import Inject as DrillInject
 from app.modules.drill.models import Participant as DrillParticipant
 from app.modules.drill.models import Response as DrillResponse
 from app.modules.drill.models import StressRun as DrillStressRun
+from app.modules.drones.models import DroneAlert, DroneTelemetry, DroneZone
 from app.modules.evidence.models import Anchor, Leaf
 from app.modules.features.models import FeatureRule
 from app.modules.forecast.models import ForecastRun
@@ -175,6 +176,9 @@ __all__ = [
     "DrillParticipant",
     "DrillResponse",
     "DrillStressRun",
+    "DroneAlert",
+    "DroneTelemetry",
+    "DroneZone",
     "EmailCode",
     "Equipment",
     "ErasureRequest",

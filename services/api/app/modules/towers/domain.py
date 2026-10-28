@@ -63,7 +63,9 @@ def parse_confirmation(hits: str, frames: str) -> tuple[int, int] | None:
     return h, f
 
 
-def wedge(lat: float, lon: float, bearing_deg: int, fov_deg: int, range_m: int, steps: int = 16) -> list[list[float]]:
+def wedge(
+    lat: float, lon: float, bearing_deg: float, fov_deg: float, range_m: float, steps: int = 16
+) -> list[list[float]]:
     """The field of view as a closed GeoJSON ring of [lon, lat] (a full circle when the camera turns all round)."""
     earth = 6_371_000.0
     full = fov_deg >= 360

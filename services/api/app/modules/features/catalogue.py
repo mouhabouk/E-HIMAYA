@@ -292,6 +292,34 @@ CATALOGUE: tuple[Spec, ...] = (
             flags="safety",
         ),
     ),
+    # Phase L5b (design-l5 §3.3): the drones as read-only sources, their position and camera cone on the map, the
+    # work areas and no-fly zones the room draws, and the alerts. Nothing is ever sent to a drone.
+    page(
+        "drones",
+        "ops",
+        "/drones",
+        ("الدرون", "Drones", "Drones"),
+        ("* /drones",),
+        button(
+            "drones.register",
+            ("تسجيل درون", "Enregistrer un drone", "Register a drone"),
+            "POST /drones",
+            act_as=R.OPS_MANAGER,
+        ),
+        button(
+            "drones.zones",
+            ("رسم مناطق العمل والحظر", "Zones de travail et d'exclusion", "Work and no-fly zones"),
+            "POST /drones/zones",
+            "PUT /drones/zones/{zone_id}",
+            act_as=R.OPS_MANAGER,
+        ),
+        button(
+            "drones.ack",
+            ("الإقرار بتنبيه الدرون", "Accuser réception d'une alerte", "Acknowledge an alert"),
+            "POST /drones/alerts/{alert_id}/ack",
+            act_as=R.OPERATOR,
+        ),
+    ),
     page(
         "calls",
         "ops",

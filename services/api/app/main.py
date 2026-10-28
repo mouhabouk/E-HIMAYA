@@ -48,6 +48,8 @@ from app.modules.doctors.committee_router import router as medical_committee_rou
 from app.modules.doctors.router import router as doctors_router
 from app.modules.doctors.staff_router import router as doctors_staff_router
 from app.modules.drill.router import router as drill_router
+from app.modules.drones.router import internal_router as drones_internal_router
+from app.modules.drones.router import router as drones_router
 from app.modules.evidence.router import router as evidence_router
 from app.modules.evidence.worker import evidence_forever
 from app.modules.features import registry as features_registry
@@ -328,6 +330,8 @@ def create_app() -> FastAPI:
         sensors_internal_router,
         towers_router,
         towers_internal_router,
+        drones_router,
+        drones_internal_router,
     )
     for router in routers:
         app.include_router(router)

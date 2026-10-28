@@ -2286,6 +2286,45 @@ erDiagram
         datetime created_at
         datetime updated_at
     }
+    reports__drone_alert {
+        bigint id PK
+        uuid stream_id FK
+        smallint gouvernorat_code FK
+        datetime at
+        text kind
+        uuid zone_id FK
+        jsonb detail
+        text acknowledged_by
+        text acknowledged_by_name
+        datetime acknowledged_at
+    }
+    reports__drone_telemetry {
+        bigint id PK
+        uuid stream_id FK
+        datetime at
+        float lat
+        float lon
+        float alt_m
+        float heading_deg
+        float sensor_az_deg
+        float sensor_hfov_deg
+        float battery_pct
+        text mode
+        datetime received_at
+    }
+    reports__drone_zone {
+        uuid id PK
+        smallint gouvernorat_code FK
+        text kind
+        text name
+        geography_polygon_4326 area
+        integer margin_m
+        boolean active
+        text created_by
+        text created_by_name
+        datetime created_at
+        datetime updated_at
+    }
     reports__escalation {
         bigint id PK
         uuid report_id FK
@@ -2457,6 +2496,8 @@ erDiagram
     }
     geo__delegation ||--o{ reports__report : "delegation_id"
     geo__gouvernorat ||--o{ reports__camera_tower : "gouvernorat_code"
+    geo__gouvernorat ||--o{ reports__drone_alert : "gouvernorat_code"
+    geo__gouvernorat ||--o{ reports__drone_zone : "gouvernorat_code"
     geo__gouvernorat ||--o{ reports__live_stream : "gouvernorat_code"
     geo__gouvernorat ||--o{ reports__report : "gouvernorat_code"
     geo__gouvernorat ||--o{ reports__report : "referred_to"
@@ -2466,7 +2507,10 @@ erDiagram
     ops__incident ||--o{ reports__report : "incident_id"
     org__organization ||--o{ reports__report : "organization_id"
     reports__camera_tower ||--o{ reports__tower_event : "stream_id"
+    reports__drone_zone ||--o{ reports__drone_alert : "zone_id"
     reports__live_stream ||--o{ reports__camera_tower : "stream_id"
+    reports__live_stream ||--o{ reports__drone_alert : "stream_id"
+    reports__live_stream ||--o{ reports__drone_telemetry : "stream_id"
     reports__live_stream ||--o{ reports__media : "stream_id"
     reports__live_stream ||--o{ reports__stream_detection : "stream_id"
     reports__live_stream ||--o{ reports__stream_location : "stream_id"
