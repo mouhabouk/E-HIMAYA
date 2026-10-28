@@ -50,6 +50,10 @@ class Stock(Base):
     qty_ready: Mapped[int] = mapped_column(Integer, server_default="0")
     qty_broken: Mapped[int] = mapped_column(Integer, server_default="0")
     notes: Mapped[str | None] = mapped_column(Text)
+    # Carried by this vehicle of the unit (R3); None: kept at the unit.
+    vehicle_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ops.resource.id", ondelete="SET NULL")
+    )
     version: Mapped[int] = mapped_column(Integer, server_default="1")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
@@ -118,3 +122,27 @@ class UnitCheck(Base):
     verified_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     verified_by: Mapped[str] = mapped_column(Text)
     verified_by_name: Mapped[str | None] = mapped_column(Text)
+
+
+class Transfer(Base):
+    """A member of staff moving to another gouvernorat (R3): sent by the room they leave, decided by the joining one."""
+
+    __tablename__ = "transfer"
+    __table_args__ = {"schema": "inv"}
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    agent_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("inv.agent.id", ondelete="CASCADE"))
+    from_gouvernorat: Mapped[int] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
+    from_unit_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("ops.unit.id"))
+    to_gouvernorat: Mapped[int] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
+    to_unit_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("ops.unit.id"))
+    effective_on: Mapped[date | None] = mapped_column(Date)
+    # pending | accepted | refused | cancelled
+    status: Mapped[str] = mapped_column(Text, server_default="pending")
+    reason: Mapped[str] = mapped_column(Text)
+    decision_reason: Mapped[str | None] = mapped_column(Text)
+    requested_by: Mapped[str] = mapped_column(Text)
+    requested_by_name: Mapped[str | None] = mapped_column(Text)
+    requested_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    decided_by_name: Mapped[str | None] = mapped_column(Text)
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

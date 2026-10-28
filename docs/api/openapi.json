@@ -697,7 +697,10 @@
             "enum": [
               "on_duty",
               "rest",
-              "leave"
+              "leave",
+              "sick",
+              "training",
+              "mission"
             ],
             "title": "Availability",
             "type": "string"
@@ -795,7 +798,10 @@
             "enum": [
               "on_duty",
               "rest",
-              "leave"
+              "leave",
+              "sick",
+              "training",
+              "mission"
             ],
             "title": "Availability",
             "type": "string"
@@ -33970,6 +33976,18 @@
             "title": "Unit Id",
             "type": "string"
           },
+          "vehicle_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vehicle Id"
+          },
           "version": {
             "anyOf": [
               {
@@ -34062,6 +34080,29 @@
             "format": "date-time",
             "title": "Updated At",
             "type": "string"
+          },
+          "vehicle_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vehicle Id"
+          },
+          "vehicle_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vehicle Label"
           },
           "version": {
             "title": "Version",
@@ -36003,6 +36044,263 @@
           "model"
         ],
         "title": "Transcript",
+        "type": "object"
+      },
+      "TransferAcceptIn": {
+        "additionalProperties": false,
+        "properties": {
+          "reason": {
+            "default": "",
+            "maxLength": 500,
+            "title": "Reason",
+            "type": "string"
+          },
+          "unit_id": {
+            "format": "uuid",
+            "title": "Unit Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "unit_id"
+        ],
+        "title": "TransferAcceptIn",
+        "type": "object"
+      },
+      "TransferDecisionIn": {
+        "additionalProperties": false,
+        "properties": {
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "TransferDecisionIn",
+        "type": "object"
+      },
+      "TransferIn": {
+        "additionalProperties": false,
+        "properties": {
+          "effective_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effective On"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          },
+          "to_gouvernorat": {
+            "maximum": 83.0,
+            "minimum": 11.0,
+            "title": "To Gouvernorat",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "to_gouvernorat",
+          "reason"
+        ],
+        "title": "TransferIn",
+        "type": "object"
+      },
+      "TransferOut": {
+        "properties": {
+          "agent_id": {
+            "format": "uuid",
+            "title": "Agent Id",
+            "type": "string"
+          },
+          "can_cancel": {
+            "title": "Can Cancel",
+            "type": "boolean"
+          },
+          "can_decide": {
+            "title": "Can Decide",
+            "type": "boolean"
+          },
+          "decided_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided At"
+          },
+          "decided_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided By Name"
+          },
+          "decision_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decision Reason"
+          },
+          "effective_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effective On"
+          },
+          "from_gouvernorat": {
+            "title": "From Gouvernorat",
+            "type": "integer"
+          },
+          "from_unit_name": {
+            "title": "From Unit Name",
+            "type": "string"
+          },
+          "full_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Full Name"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "matricule": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Matricule"
+          },
+          "rank": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rank"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          },
+          "requested_at": {
+            "format": "date-time",
+            "title": "Requested At",
+            "type": "string"
+          },
+          "requested_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Requested By Name"
+          },
+          "skills": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Skills",
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "accepted",
+              "refused",
+              "cancelled"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "to_gouvernorat": {
+            "title": "To Gouvernorat",
+            "type": "integer"
+          },
+          "to_unit_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To Unit Name"
+          }
+        },
+        "required": [
+          "id",
+          "agent_id",
+          "matricule",
+          "full_name",
+          "rank",
+          "skills",
+          "from_gouvernorat",
+          "from_unit_name",
+          "to_gouvernorat",
+          "to_unit_name",
+          "effective_on",
+          "status",
+          "reason",
+          "decision_reason",
+          "requested_by_name",
+          "requested_at",
+          "decided_by_name",
+          "decided_at",
+          "can_decide",
+          "can_cancel"
+        ],
+        "title": "TransferOut",
         "type": "object"
       },
       "TransitionIn": {
@@ -40928,7 +41226,9 @@
               "create",
               "update",
               "delete",
-              "import"
+              "import",
+              "transfer_out",
+              "transfer_in"
             ],
             "title": "Action",
             "type": "string"
@@ -67531,6 +67831,66 @@
         ]
       }
     },
+    "/api/v1/staff/inventory/agents/{agent_id}/transfers": {
+      "post": {
+        "description": "The room of the gouvernorat the member of staff leaves sends the transfer; nothing moves until it is accepted.",
+        "operationId": "request_transfer_api_v1_staff_inventory_agents__agent_id__transfers_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "agent_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Agent Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransferIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransferOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Request Transfer",
+        "tags": [
+          "staff",
+          "inventory"
+        ]
+      }
+    },
     "/api/v1/staff/inventory/boundaries": {
       "get": {
         "description": "The outlines of the gouvernorats the caller sees (simplified), coloured on the map by the count of a search.",
@@ -68376,6 +68736,250 @@
           }
         ],
         "summary": "Template",
+        "tags": [
+          "staff",
+          "inventory"
+        ]
+      }
+    },
+    "/api/v1/staff/inventory/transfers": {
+      "get": {
+        "description": "The transfers the caller's gouvernorat sends or receives (row level security), the newest first.",
+        "operationId": "list_transfers_api_v1_staff_inventory_transfers_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "pending",
+                    "accepted",
+                    "refused",
+                    "cancelled"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TransferOut"
+                  },
+                  "title": "Response List Transfers Api V1 Staff Inventory Transfers Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Transfers",
+        "tags": [
+          "staff",
+          "inventory"
+        ]
+      }
+    },
+    "/api/v1/staff/inventory/transfers/{transfer_id}/accept": {
+      "post": {
+        "description": "The joining room accepts and names the new unit: the member of staff moves, with a revision on both sides.",
+        "operationId": "accept_transfer_api_v1_staff_inventory_transfers__transfer_id__accept_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "transfer_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Transfer Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransferAcceptIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransferOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Accept Transfer",
+        "tags": [
+          "staff",
+          "inventory"
+        ]
+      }
+    },
+    "/api/v1/staff/inventory/transfers/{transfer_id}/cancel": {
+      "post": {
+        "operationId": "cancel_transfer_api_v1_staff_inventory_transfers__transfer_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "transfer_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Transfer Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransferDecisionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransferOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Cancel Transfer",
+        "tags": [
+          "staff",
+          "inventory"
+        ]
+      }
+    },
+    "/api/v1/staff/inventory/transfers/{transfer_id}/refuse": {
+      "post": {
+        "operationId": "refuse_transfer_api_v1_staff_inventory_transfers__transfer_id__refuse_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "transfer_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Transfer Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransferDecisionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransferOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Refuse Transfer",
         "tags": [
           "staff",
           "inventory"

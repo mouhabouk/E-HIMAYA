@@ -341,6 +341,14 @@ export const ERROR_CODES = [
   "resources_need_dispatch",
   "too_many_injects",
   "unknown_kind",
+  // Phase R3: transfers between gouvernorats, equipment carried by a vehicle.
+  "same_gouvernorat",
+  "transfer_pending",
+  "transfer_not_found",
+  "transfer_decided",
+  "transfer_outdated",
+  "unit_not_in_gouvernorat",
+  "vehicle_not_in_unit",
 ] as const;
 export type ErrorCode = (typeof ERROR_CODES)[number];
 

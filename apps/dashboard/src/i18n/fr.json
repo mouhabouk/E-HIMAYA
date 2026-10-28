@@ -502,7 +502,14 @@
     "offset_after_end": "Le message tombe après la fin de l'exercice.",
     "resources_need_dispatch": "Les ressources ne se réservent qu'avec l'action « envoi de moyens ».",
     "too_many_injects": "Le scénario a atteint le maximum de messages (400).",
-    "unknown_kind": "Type de risque inconnu du générateur."
+    "unknown_kind": "Type de risque inconnu du générateur.",
+    "same_gouvernorat": "L'agent est déjà dans ce gouvernorat.",
+    "transfer_pending": "Une mutation de cet agent attend déjà une décision.",
+    "transfer_not_found": "Mutation introuvable.",
+    "transfer_decided": "Cette mutation a déjà été décidée.",
+    "transfer_outdated": "Le gouvernorat de l'agent a changé depuis l'envoi.",
+    "unit_not_in_gouvernorat": "L'unité n'est pas dans le gouvernorat d'accueil.",
+    "vehicle_not_in_unit": "Le véhicule n'est pas dans cette unité."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -5730,7 +5737,10 @@
     "availability": {
       "on_duty": "En service",
       "rest": "Repos",
-      "leave": "Congé"
+      "leave": "Congé",
+      "sick": "Congé maladie",
+      "training": "Formation",
+      "mission": "Mission"
     },
     "kind": {
       "vehicle": "Véhicules",
@@ -5762,7 +5772,8 @@
       "phone": "Téléphone",
       "availability": "Disponibilité",
       "skills": "Spécialités",
-      "skill": "Spécialité"
+      "skill": "Spécialité",
+      "carrier": "Embarqué sur"
     },
     "form": {
       "pickUnit": "Choisir l'unité",
@@ -5792,7 +5803,8 @@
     },
     "stock": {
       "newTitle": "Nouveau matériel",
-      "editTitle": "Modifier le matériel"
+      "editTitle": "Modifier le matériel",
+      "atUnit": "À l'unité"
     },
     "agents": {
       "newTitle": "Nouvel agent",
@@ -5812,7 +5824,9 @@
       "create": "Création",
       "update": "Modification",
       "delete": "Suppression",
-      "import": "Import"
+      "import": "Import",
+      "transfer_out": "Mutation vers un autre gouvernorat",
+      "transfer_in": "Mutation depuis un autre gouvernorat"
     },
     "import": {
       "title": "Import depuis le modèle du gouvernorat",
@@ -5909,6 +5923,29 @@
       "axisIntro": "Recherche dans la zone de l'axe {{number}} et de ses sous-axes, en nombres par unité, sans nom.",
       "byArea": "Unités situées dans la zone de l'axe, avec une marge de {{km}} km.",
       "noArea": "Aucune zone n'est tracée pour cet axe : la recherche couvre tous ses gouvernorats."
+    },
+    "transfer": {
+      "open": "Mutation",
+      "openNamed": "Mutation de {{label}}",
+      "newTitle": "Mutation de {{name}} vers un autre gouvernorat",
+      "intro": "La salle du gouvernorat que l'agent quitte envoie la mutation ; rien ne change tant que la salle du gouvernorat d'accueil ne l'a pas acceptée avec sa nouvelle unité.",
+      "to": "Gouvernorat d'accueil",
+      "effectiveOn": "Date de prise de fonction",
+      "title": "Mutations entre gouvernorats (en attente : {{n}})",
+      "decided": "Mutations passées ({{n}})",
+      "route": "De {{from}} vers {{to}}",
+      "on": "prise de fonction le {{date}}",
+      "newUnit": "Nouvelle unité",
+      "decisionReason": "Motif (obligatoire pour refuser ou annuler)",
+      "accept": "Accepter la mutation",
+      "refuse": "Refuser",
+      "cancel": "Annuler la mutation",
+      "status": {
+        "pending": "En attente",
+        "accepted": "Acceptée",
+        "refused": "Refusée",
+        "cancelled": "Annulée"
+      }
     }
   },
   "basemap": {

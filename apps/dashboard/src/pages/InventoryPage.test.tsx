@@ -135,3 +135,43 @@ describe("resources search on the map", () => {
     );
   });
 });
+
+// Phase R3: a transfer between gouvernorats sent by one room and decided by the other; equipment on a vehicle.
+describe("inventory R3", () => {
+  it("sends a transfer and accepts the incoming one with its new unit", async () => {
+    const inv = fakeInventoryApi();
+    renderApp(<InventoryPage />, { api: fakeApi(inv), auth: fakeAuth(claims(["ops_manager"], "61")), lang: "ar" });
+    fireEvent.click(await screen.findByRole("tab", { name: "الأعوان" }));
+    const incoming = (await screen.findByText("[SIM] منير الإطفائي")).closest("li") as HTMLElement;
+    expect(within(incoming).getByText("بانتظار القرار")).toBeInTheDocument();
+    const accept = within(incoming).getByRole("button", { name: "قبول النقلة" });
+    expect(accept).toBeDisabled();
+    fireEvent.change(within(incoming).getByLabelText("الوحدة الجديدة"), { target: { value: "u-1" } });
+    fireEvent.click(accept);
+    await waitFor(() => expect(inv.acceptTransfer).toHaveBeenCalledWith("t-1", "u-1", ""));
+
+    fireEvent.click(screen.getByRole("button", { name: "نقلة سامي الغواص" }));
+    const form = screen.getByRole("form", { name: "نقلة سامي الغواص إلى ولاية أخرى" });
+    fireEvent.change(within(form).getByLabelText("الولاية المستقبلة"), { target: { value: "11" } });
+    fireEvent.change(within(form).getByLabelText("سبب التغيير"), { target: { value: "[SIM] تعزيز وحدة الغوص" } });
+    fireEvent.click(within(form).getByRole("button", { name: "حفظ" }));
+    await waitFor(() =>
+      expect(inv.requestTransfer).toHaveBeenCalledWith("a-1", { to_gouvernorat: 11, effective_on: null, reason: "[SIM] تعزيز وحدة الغوص" }),
+    );
+  });
+
+  it("puts equipment on a vehicle of its unit", async () => {
+    const inv = fakeInventoryApi();
+    renderApp(<InventoryPage />, { api: fakeApi(inv), auth: fakeAuth(claims(["ops_manager"], "61")), lang: "ar" });
+    fireEvent.click(await screen.findByRole("tab", { name: "المعدات" }));
+    expect(await screen.findByText("في الوحدة")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "معدات جديدة" }));
+    const form = screen.getByRole("form", { name: "معدات جديدة" });
+    fireEvent.change(within(form).getByLabelText("الوحدة"), { target: { value: "u-1" } });
+    fireEvent.change(within(form).getByLabelText("الصنف"), { target: { value: "pump" } });
+    await waitFor(() => expect(within(form).getByRole("option", { name: /إطفاء 12/ })).toBeInTheDocument());
+    fireEvent.change(within(form).getByLabelText("محمولة على"), { target: { value: "v-1" } });
+    fireEvent.click(within(form).getByRole("button", { name: "حفظ" }));
+    await waitFor(() => expect(inv.saveStock).toHaveBeenCalledWith(null, expect.objectContaining({ unit_id: "u-1", vehicle_id: "v-1" })));
+  });
+});

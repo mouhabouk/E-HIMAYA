@@ -6,7 +6,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useId, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ErrorBox, Loading } from "../components/Feedback";
-import { AgentForm, categoryName, DeleteEntry, StockForm, VehicleForm } from "../components/InventoryForms";
+import { AgentForm, categoryName, DeleteEntry, StockForm, TransferForm, TransfersPanel, VehicleForm } from "../components/InventoryForms";
 import { GouvernoratPicker, SearchTab } from "../components/InventorySearch";
 import { PageTitle } from "../components/PageTitle";
 import { useAuth } from "../context/auth";
@@ -465,6 +465,7 @@ function StockTab({ q, units, catalogue }: { q: ListQuery; units: UnitRow[]; cat
                 <th scope="col">{t("inventory.field.type")}</th>
                 <th scope="col">{t("inventory.field.specs")}</th>
                 <th scope="col">{t("inventory.field.unit")}</th>
+                <th scope="col">{t("inventory.field.carrier")}</th>
                 <th scope="col">{t("inventory.field.qtyReady")}</th>
                 <th scope="col">{t("inventory.field.qtyBroken")}</th>
                 <th scope="col">
@@ -481,6 +482,7 @@ function StockTab({ q, units, catalogue }: { q: ListQuery; units: UnitRow[]; cat
                     <th scope="row">{categoryName(category, lang)}</th>
                     <td>{specText(s.specs, category, lang, (v) => fmt.number(v), t("inventory.yes")) || "—"}</td>
                     <td dir="auto">{s.unit_name}</td>
+                    <td dir="auto">{s.vehicle_label ?? <span className="muted">{t("inventory.stock.atUnit")}</span>}</td>
                     <td className="num">{fmt.number(s.qty_ready)}</td>
                     <td className="num">{s.qty_broken > 0 ? <span className="pill tone-red">{fmt.number(s.qty_broken)}</span> : fmt.number(0)}</td>
                     <td>
@@ -528,6 +530,7 @@ function AgentsTab({ q, units, catalogue }: { q: ListQuery; units: UnitRow[]; ca
   const fmt = useFormat();
   const [skill, setSkill] = useState<string | null>(null);
   const [editing, setEditing] = useState<Agent | "new" | null>(null);
+  const [moving, setMoving] = useState<Agent | null>(null);
   const query = { ...q, category: skill };
   const list = useQuery({ queryKey: inventoryKeys.list("agents", query), queryFn: ({ signal }) => api.agents(query, signal) });
   const data = list.data;
@@ -543,6 +546,8 @@ function AgentsTab({ q, units, catalogue }: { q: ListQuery; units: UnitRow[]; ca
         )}
       </div>
       {data && !data.can_see_names && <p className="alert alert--info">{t("inventory.agents.namesHidden")}</p>}
+      {data?.can_edit && data.can_see_names && <TransfersPanel units={units} />}
+      {moving && <TransferForm key={moving.id} agent={moving} onDone={() => setMoving(null)} />}
       {editing !== null && (
         <AgentForm
           key={editing === "new" ? "new" : editing.id}
@@ -601,6 +606,9 @@ function AgentsTab({ q, units, catalogue }: { q: ListQuery; units: UnitRow[]; ca
                         <div className="actions">
                           <button type="button" className="btn btn--small" aria-label={t("inventory.editNamed", { label })} onClick={() => setEditing(a)}>
                             {t("inventory.edit")}
+                          </button>
+                          <button type="button" className="btn btn--small" aria-label={t("inventory.transfer.openNamed", { label })} onClick={() => setMoving(a)}>
+                            {t("inventory.transfer.open")}
                           </button>
                           <DeleteEntry label={label} onDelete={(reason) => api.deleteAgent(a.id, reason)} />
                         </div>

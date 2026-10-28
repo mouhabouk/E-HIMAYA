@@ -558,3 +558,99 @@ async def test_search_within_a_crisis_axis(client: httpx.AsyncClient, staff: Sta
     commander = staff(["field_commander"], gouvernorat=GABES)
     refused = await client.post(f"{URL}/search", json={**trucks, "axis_id": str(drawn)}, headers=commander)
     assert refused.status_code == 403
+
+
+# ---------------------------------------------------------------- R3
+
+
+async def test_new_types_and_equipment_carried_by_a_vehicle(client: httpx.AsyncClient, staff: Staff) -> None:
+    unit = await _unit(client, staff, GABES)
+    manager = _manager(staff)
+    keys = {c["key"] for c in (await client.get(f"{URL}/catalogue", headers=manager)).json()["items"]}
+    assert {"light_vehicle", "pickup", "truck", "motorcycle", "hydraulic_spreader", "hydraulic_ram"} <= keys
+    vehicle = {
+        "unit_id": unit["id"],
+        "category_key": "rescue_vehicle",
+        "label": f"VSR {secrets.token_hex(2)}",
+        "specs": {},
+    }
+    r = await client.post(f"{URL}/vehicles", json=vehicle, headers=manager)
+    assert r.status_code == 201, r.text
+    truck = r.json()
+    light = {**vehicle, "category_key": "light_vehicle", "label": f"VL {secrets.token_hex(2)}", "specs": {"seats": 5}}
+    assert (await client.post(f"{URL}/vehicles", json=light, headers=manager)).status_code == 201
+    spreader = {"unit_id": unit["id"], "category_key": "hydraulic_spreader", "specs": {}, "qty_ready": 1}
+    # Kept at the unit, and one more carried by the rescue truck: two lines.
+    assert (await client.post(f"{URL}/stock", json=spreader, headers=manager)).status_code == 201
+    r = await client.post(f"{URL}/stock", json={**spreader, "vehicle_id": truck["id"]}, headers=manager)
+    assert r.status_code == 201, r.text
+    assert (r.json()["vehicle_id"], r.json()["vehicle_label"]) == (truck["id"], truck["label"])
+    lines = (await client.get(f"{URL}/stock", params={"unit_id": unit["id"]}, headers=manager)).json()["items"]
+    assert sorted(x["vehicle_label"] or "" for x in lines) == ["", truck["label"]]
+    # A vehicle of another unit cannot carry it.
+    other = await _unit(client, staff, GABES)
+    r = await client.post(
+        f"{URL}/stock", json={**spreader, "unit_id": other["id"], "vehicle_id": truck["id"]}, headers=manager
+    )
+    assert r.json()["detail"] == "vehicle_not_in_unit"
+
+
+async def test_a_transfer_between_gouvernorats(client: httpx.AsyncClient, staff: Staff) -> None:
+    gabes_unit = await _unit(client, staff, GABES)
+    bizerte_unit = await _unit(client, staff, BIZERTE)
+    gabes, bizerte = _manager(staff), _manager(staff, BIZERTE)
+    body = {"unit_id": gabes_unit["id"], "matricule": _matricule(), "full_name": "[SIM] سامي", "rank": "رقيب"}
+    agent = (await client.post(f"{URL}/agents", json=body, headers=gabes)).json()
+    # The new statuses of a member of staff.
+    r = await client.patch(f"{URL}/agents/{agent['id']}", json={**body, "availability": "training"}, headers=gabes)
+    assert r.json()["availability"] == "training"
+    # Bizerte cannot move a member of staff of Gabès, and a transfer to the same gouvernorat is refused.
+    move = {"to_gouvernorat": BIZERTE, "reason": "[SIM] نقلة بطلب من العون"}
+    assert (await client.post(f"{URL}/agents/{agent['id']}/transfers", json=move, headers=bizerte)).status_code == 404
+    same = {**move, "to_gouvernorat": GABES}
+    r = await client.post(f"{URL}/agents/{agent['id']}/transfers", json=same, headers=gabes)
+    assert r.json()["detail"] == "same_gouvernorat"
+    r = await client.post(f"{URL}/agents/{agent['id']}/transfers", json=move, headers=gabes)
+    assert r.status_code == 201, r.text
+    sent = r.json()
+    assert (sent["status"], sent["can_cancel"], sent["can_decide"]) == ("pending", True, False)
+    assert (await client.post(f"{URL}/agents/{agent['id']}/transfers", json=move, headers=gabes)).status_code == 409
+    # Bizerte sees it with the name, and decides; Gabès cannot accept for Bizerte.
+    seen = next(t for t in (await client.get(f"{URL}/transfers", headers=bizerte)).json() if t["id"] == sent["id"])
+    assert (seen["full_name"], seen["can_decide"], seen["can_cancel"]) == ("[SIM] سامي", True, False)
+    accept = {"unit_id": bizerte_unit["id"]}
+    assert (await client.post(f"{URL}/transfers/{sent['id']}/accept", json=accept, headers=gabes)).status_code == 403
+    wrong = {"unit_id": gabes_unit["id"]}
+    r = await client.post(f"{URL}/transfers/{sent['id']}/accept", json=wrong, headers=bizerte)
+    assert r.status_code in (404, 422)
+    r = await client.post(f"{URL}/transfers/{sent['id']}/accept", json=accept, headers=bizerte)
+    assert r.status_code == 200, r.text
+    assert (r.json()["status"], r.json()["to_unit_name"]) == ("accepted", bizerte_unit["name_ar"])
+    # The member of staff now belongs to Bizerte; Gabès no longer sees them, and both keep the history.
+    mine = (await client.get(f"{URL}/agents", params={"unit_id": bizerte_unit["id"]}, headers=bizerte)).json()["items"]
+    assert [a["id"] for a in mine] == [agent["id"]]
+    theirs = (await client.get(f"{URL}/agents", params={"unit_id": gabes_unit["id"]}, headers=gabes)).json()["items"]
+    assert theirs == []
+    history = (await client.get(f"{URL}/revisions", params={"entity_id": agent["id"]}, headers=gabes)).json()
+    assert "transfer_out" in [h["action"] for h in history["items"]]
+    late = {"reason": "[SIM] متأخر جدا"}
+    assert (await client.post(f"{URL}/transfers/{sent['id']}/refuse", json=late, headers=bizerte)).status_code == 409
+
+
+async def test_a_transfer_refused_or_cancelled_moves_nothing(client: httpx.AsyncClient, staff: Staff) -> None:
+    unit = await _unit(client, staff, GABES)
+    gabes, bizerte = _manager(staff), _manager(staff, BIZERTE)
+    body = {"unit_id": unit["id"], "matricule": _matricule(), "full_name": "[SIM] منير"}
+    agent = (await client.post(f"{URL}/agents", json=body, headers=gabes)).json()
+    move = {"to_gouvernorat": BIZERTE, "reason": "[SIM] نقلة"}
+    first = (await client.post(f"{URL}/agents/{agent['id']}/transfers", json=move, headers=gabes)).json()
+    no = {"reason": "[SIM] لا شغور في الوحدة"}
+    assert (await client.post(f"{URL}/transfers/{first['id']}/refuse", json=no, headers=gabes)).status_code == 403
+    r = await client.post(f"{URL}/transfers/{first['id']}/refuse", json=no, headers=bizerte)
+    assert r.json()["status"] == "refused"
+    second = (await client.post(f"{URL}/agents/{agent['id']}/transfers", json=move, headers=gabes)).json()
+    r = await client.post(f"{URL}/transfers/{second['id']}/cancel", json={"reason": "[SIM] تراجع العون"}, headers=gabes)
+    assert r.json()["status"] == "cancelled"
+    assert (await client.post(f"{URL}/transfers/{second['id']}/cancel", json=no, headers=gabes)).status_code == 409
+    still = (await client.get(f"{URL}/agents", params={"unit_id": unit["id"]}, headers=gabes)).json()["items"]
+    assert [a["id"] for a in still] == [agent["id"]]

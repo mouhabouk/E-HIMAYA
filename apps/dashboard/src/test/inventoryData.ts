@@ -6,6 +6,7 @@ import type {
   Overview,
   SearchResult,
   StockLine,
+  Transfer,
   UnitRow,
   Vehicle,
 } from "../lib/inventory";
@@ -205,4 +206,42 @@ export const BOUNDARIES: FeatureCollection = {
     { type: "Feature", id: 61, properties: { code: 61 }, geometry: { type: "Polygon", coordinates: square(10.76, 34.74) } },
     { type: "Feature", id: 23, properties: { code: 23 }, geometry: { type: "Polygon", coordinates: square(9.87, 37.27) } },
   ],
+};
+
+/** R3: a transfer from Sfax to Bizerte as the joining room sees it, and one sent by Sfax ([SIM]). */
+export const TRANSFER_IN: Transfer = {
+  id: "t-1",
+  agent_id: "a-2",
+  matricule: "M5678",
+  full_name: "[SIM] منير الإطفائي",
+  rank: "عريف",
+  skills: ["diving"],
+  from_gouvernorat: 23,
+  from_unit_name: "وحدة بنزرت",
+  to_gouvernorat: 61,
+  to_unit_name: null,
+  effective_on: "2026-11-15",
+  status: "pending",
+  reason: "[SIM] نقلة بطلب من العون لتقريبه من عائلته",
+  decision_reason: null,
+  requested_by_name: "[SIM] رئيس القاعة الجهوية ببنزرت",
+  requested_at: "2026-10-27T10:00:00Z",
+  decided_by_name: null,
+  decided_at: null,
+  can_decide: true,
+  can_cancel: false,
+};
+
+export const TRANSFER_OUT: Transfer = {
+  ...TRANSFER_IN,
+  id: "t-2",
+  agent_id: "a-1",
+  full_name: "سامي الغواص",
+  from_gouvernorat: 61,
+  from_unit_name: "وحدة صفاقس المدينة",
+  to_gouvernorat: 51,
+  reason: "[SIM] تعزيز وحدة الغوص بسوسة",
+  requested_by_name: "[SIM] رئيس القاعة الجهوية بصفاقس",
+  can_decide: false,
+  can_cancel: true,
 };

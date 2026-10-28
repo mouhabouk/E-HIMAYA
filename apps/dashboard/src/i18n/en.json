@@ -502,7 +502,14 @@
     "offset_after_end": "The message falls after the end of the dry run.",
     "resources_need_dispatch": "Resources are booked only with the \"dispatch\" action.",
     "too_many_injects": "The scenario has reached the limit of messages (400).",
-    "unknown_kind": "Hazard type unknown to the generator."
+    "unknown_kind": "Hazard type unknown to the generator.",
+    "same_gouvernorat": "The agent is already in this gouvernorat.",
+    "transfer_pending": "A transfer of this agent is already pending.",
+    "transfer_not_found": "Transfer not found.",
+    "transfer_decided": "This transfer has already been decided.",
+    "transfer_outdated": "The agent's gouvernorat changed since the transfer was sent.",
+    "unit_not_in_gouvernorat": "The unit is not in the joining gouvernorat.",
+    "vehicle_not_in_unit": "The vehicle is not in this unit."
   },
   "kpi": {
     "title": "Key indicators",
@@ -5730,7 +5737,10 @@
     "availability": {
       "on_duty": "On duty",
       "rest": "Rest",
-      "leave": "Leave"
+      "leave": "Leave",
+      "sick": "Sick leave",
+      "training": "Training",
+      "mission": "Mission"
     },
     "kind": {
       "vehicle": "Vehicles",
@@ -5762,7 +5772,8 @@
       "phone": "Phone",
       "availability": "Availability",
       "skills": "Specialities",
-      "skill": "Speciality"
+      "skill": "Speciality",
+      "carrier": "Carried by"
     },
     "form": {
       "pickUnit": "Pick the unit",
@@ -5792,7 +5803,8 @@
     },
     "stock": {
       "newTitle": "New equipment",
-      "editTitle": "Edit equipment"
+      "editTitle": "Edit equipment",
+      "atUnit": "At the unit"
     },
     "agents": {
       "newTitle": "New staff member",
@@ -5812,7 +5824,9 @@
       "create": "Recorded",
       "update": "Changed",
       "delete": "Deleted",
-      "import": "Imported"
+      "import": "Imported",
+      "transfer_out": "Transfer to another gouvernorat",
+      "transfer_in": "Transfer from another gouvernorat"
     },
     "import": {
       "title": "Import from the gouvernorat template",
@@ -5909,6 +5923,29 @@
       "axisIntro": "Search inside the area of axis {{number}} and its sub-axes, as counts by unit, no name.",
       "byArea": "Units inside the axis area, with a {{km}} km margin.",
       "noArea": "No area is drawn for this axis, so the search covers all its gouvernorats."
+    },
+    "transfer": {
+      "open": "Transfer",
+      "openNamed": "Transfer {{label}}",
+      "newTitle": "Transfer {{name}} to another gouvernorat",
+      "intro": "The room of the gouvernorat the agent leaves sends the transfer; nothing changes until the joining room accepts it with the new unit.",
+      "to": "Joining gouvernorat",
+      "effectiveOn": "Start date",
+      "title": "Transfers between gouvernorats (pending: {{n}})",
+      "decided": "Past transfers ({{n}})",
+      "route": "From {{from}} to {{to}}",
+      "on": "starting {{date}}",
+      "newUnit": "New unit",
+      "decisionReason": "Reason (required to refuse or cancel)",
+      "accept": "Accept the transfer",
+      "refuse": "Refuse",
+      "cancel": "Cancel the transfer",
+      "status": {
+        "pending": "Pending",
+        "accepted": "Accepted",
+        "refused": "Refused",
+        "cancelled": "Cancelled"
+      }
     }
   },
   "basemap": {

@@ -339,6 +339,16 @@ CATALOGUE: tuple[Spec, ...] = (
             act_as=R.OPERATOR,
         ),
         button(
+            "inventory.transfer",
+            ("نقلة الأعوان بين الولايات", "Mutations entre gouvernorats", "Transfers between gouvernorats"),
+            "POST /inventory/agents/{agent_id}/transfers",
+            "POST /inventory/transfers/{transfer_id}/accept",
+            "POST /inventory/transfers/{transfer_id}/refuse",
+            "POST /inventory/transfers/{transfer_id}/cancel",
+            flags="personal",
+            act_as=R.OPERATOR,
+        ),
+        button(
             "inventory.catalogue",
             ("أصناف الموارد", "Catalogue", "Catalogue"),
             "POST /inventory/catalogue",
