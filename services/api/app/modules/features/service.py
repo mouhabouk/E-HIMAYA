@@ -219,3 +219,19 @@ def effective(principal: Principal, rules: Iterable[Rule], now: datetime) -> dic
         refused = ceiling(principal, f) if granted else None
         out[key] = Effective(holds_by_default(principal, f), hidden, granted and refused is None, refused)
     return out
+
+
+async def as_for(principal: Principal, key: str) -> Principal | None:
+    """The principal as the routes of feature ``key`` see it: None when hidden, with the lent role when granted.
+
+    For the ``can_*`` flags an answer computes for its buttons, so a granted button shows and a hidden one does not."""
+    rules = await rules_in_force()
+    if not rules or not principal.is_staff:
+        return principal
+    reg = registry.get()
+    feature = reg.features[key]
+    chain = [feature] if feature.parent is None else [feature, reg.features[feature.parent]]
+    outcome = decide(principal, chain, "POST" if feature.kind == "button" else "GET", rules, datetime.now(UTC))
+    if outcome.hidden:
+        return None
+    return elevate(principal, outcome.granted) if outcome.granted is not None else principal

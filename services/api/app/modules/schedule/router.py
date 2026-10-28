@@ -18,6 +18,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.db import get_session
 from app.core.security import Principal, Role, require_roles
 from app.modules.audit import service as audit
+from app.modules.features import service as features
 from app.modules.geo.models import Gouvernorat
 from app.modules.inventory.models import Category
 from app.modules.ops.models import Unit
@@ -209,6 +210,10 @@ async def _detail(session: AsyncSession, p: Principal, period: Period) -> schema
     editable = period.status in domain.EDITABLE
     now = _now()
     states = {i.id: _status(i, period, now) for i in items}
+    # The administrator's rules on each button (L4 §8): None = hidden, or the account with the role a grant lends.
+    pe, ps, pa, pf = [
+        await features.as_for(p, k) for k in ("schedule.edit", "schedule.submit", "schedule.approve", "schedule.follow")
+    ]
     return schemas.PeriodDetail(
         period=_period_out(period, names, items, now),
         items=[
@@ -242,15 +247,25 @@ async def _detail(session: AsyncSession, p: Principal, period: Period) -> schema
             )
             for i in items
         ],
-        can_edit=(editable and writes(p, g)) or (period.status == "approved" and heads(p, g)),
-        can_submit=editable and writes(p, g) and bool(items),
-        can_approve=(period.status == "submitted" and heads(p, g))
-        or (period.status == "awaiting_centre" and approves_centre(p)),
-        can_return=(period.status == "submitted" and heads(p, g))
-        or (period.status == "awaiting_centre" and approves_centre(p))
-        or (period.status == "approved" and heads(p, g)),
-        can_follow_up=period.status == "approved" and writes(p, g),
-        can_delete=period.status == "draft" and writes(p, g),
+        can_edit=bool(pe and ((editable and writes(pe, g)) or (period.status == "approved" and heads(pe, g)))),
+        can_submit=bool(ps and editable and writes(ps, g) and items),
+        can_approve=bool(
+            pa
+            and (
+                (period.status == "submitted" and heads(pa, g))
+                or (period.status == "awaiting_centre" and approves_centre(pa))
+            )
+        ),
+        can_return=bool(
+            pa
+            and (
+                (period.status == "submitted" and heads(pa, g))
+                or (period.status == "awaiting_centre" and approves_centre(pa))
+                or (period.status == "approved" and heads(pa, g))
+            )
+        ),
+        can_follow_up=bool(pf and period.status == "approved" and writes(pf, g)),
+        can_delete=bool(pe and period.status == "draft" and writes(pe, g)),
         previous_id=previous,
     )
 
@@ -262,6 +277,7 @@ async def list_settings(principal: Reader, session: Session) -> list[schemas.Set
     if not principal.is_national:
         query = query.where(Gouvernorat.code == principal.gouvernorat_code)
     settings = {s.gouvernorat_code: s for s in await session.scalars(select(Setting))}
+    editor = await features.as_for(principal, "schedule.settings")
     out = []
     for code, name in (await session.execute(query)).all():
         s = settings.get(code)
@@ -272,7 +288,7 @@ async def list_settings(principal: Reader, session: Session) -> list[schemas.Set
                 approval=s.approval if s else domain.DEFAULT_APPROVAL,
                 updated_by_name=s.updated_by_name if s else None,
                 updated_at=s.updated_at if s else None,
-                can_edit=heads(principal, code),
+                can_edit=editor is not None and heads(editor, code),
             )
         )
     return out

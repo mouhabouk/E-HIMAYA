@@ -75,6 +75,9 @@ async def test_a_hidden_page_and_a_granted_button(client: httpx.AsyncClient, sta
     assert granted["state"] == "active"
     r = await client.put(f"/api/v1/staff/schedule/settings/{GABES}", json=put, headers=operator)
     assert r.status_code == 200, r.text
+    # The answers show the granted button as editable for this account.
+    rows = (await client.get("/api/v1/staff/schedule/settings", headers=operator)).json()
+    assert [x["can_edit"] for x in rows] == [True]
     # Only there: the other buttons of the page, and the other operators, are as before.
     assert (await client.put(f"/api/v1/staff/schedule/settings/{GABES}", json=put, headers=other)).status_code == 403
     mine = (await client.get(f"{URL}/mine", headers=operator)).json()
