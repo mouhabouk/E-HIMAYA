@@ -1,6 +1,6 @@
 @startuml
 !include style.iuml
-title Cas d'utilisation : salle des opérations (jusqu'à L2)
+title Cas d'utilisation : salle des opérations et pilotage
 left to right direction
 actor "Opérateur" as OP
 actor "Chef des opérations" as OPM
@@ -10,6 +10,12 @@ actor "Comité central" as CC
 actor "Éditeur de contenu" as ED
 actor "Administrateur\nde comptes régional" as RAA
 actor "Administrateur\nsécurité / système / IA" as SA
+actor "Chef d'agrès\n(application des équipes, P4a, P4b)" as TL
+actor "Auditeur prévention\n(application des équipes, P4c)" as AU
+actor "Commandant\n(chef des opérations national, L3)" as CMD
+actor "Gouverneur (L3)" as GOV
+actor "Ministre (L3)" as MIN
+CMD -|> OPM
 OPM -|> OP
 rectangle "Tableau de bord central" {
   usecase "S'authentifier (MFA)" as S0
@@ -42,9 +48,72 @@ rectangle "Tableau de bord central" {
   usecase "Importer, approuver, annuler\nles programmes saisonniers (L2)" as S27
   usecase "Suivi du jour des points\nde son gouvernorat (L2)" as S28
   usecase "Revenir à une version\nd'un programme (L2)" as S29
+  usecase "Demander la déclaration\nd'un axe (L3)" as S30
+  usecase "Ouvrir, escalader, clore\nun axe ; décider des demandes (L3)" as S31
+  usecase "Rattacher une intervention,\nabris, évacuations, besoins (L3)" as S32
+  usecase "Compléter et envoyer\nle point de situation (L3)" as S33
+  usecase "Suivre les axes déclarés\nde sa wilaya (L3)" as S34
+  usecase "Comparer les wilayas,\ncouches sensibles (L3)" as S35
+  usecase "Émettre une recommandation\nou une décision signée (L3)" as S36
+  usecase "Mettre à jour l'exécution\nd'une décision (L3)" as S37
+  usecase "Consigner un plan, une décision\nou une instruction au registre (L3b)" as S38
+  usecase "Rechercher au registre\n(recherche avancée, L3b)" as S39
+  usecase "Suivre les recommandations\nclés d'un document (L3b)" as S40
+  usecase "Envoyer une directive\ngénérale ou ciblée (L3b)" as S41
+  usecase "Répondre à une directive\nou lever une notification immédiate (L3b)" as S42
+  usecase "Joindre Word, Excel,\nPDF ou image (L3b)" as S43
+  usecase "Choisir la forme et la place\ndu menu principal (UI-3)" as S44
+  usecase "Afficher les couches de la carte\npar dossiers (UI-3b)" as S45
+  usecase "Gérer les dossiers de couches,\nclasser une couche (UI-3b)" as S46
+  usecase "Tenir le registre des moyens\net du personnel de son gouvernorat (R1)" as S47
+  usecase "Chercher un moyen dans tous les\ngouvernorats, l'afficher sur la carte (R2)" as S48
+  usecase "Passer la carte en satellite ;\nrégler le fournisseur payant (R-S)" as S49
 }
+rectangle "Application des équipes (P4a à P4d)" {
+  usecase "Se connecter par code\n(MFA, PIN 6 chiffres)" as T0
+  usecase "Prendre la garde\n(engin, équipage)" as T1
+  usecase "Accuser réception\nd'une mission" as T2
+  usecase "En route / sur place /\nfin de mission" as T3
+  usecase "Premier bilan < 30 s" as T4
+  usecase "Compter les victimes,\névacuations" as T5
+  usecase "Point de situation\npar touches (P4b)" as T6
+  usecase "Demander un renfort,\nsignaler un danger (P4b)" as T7
+  usecase "Joindre photo,\nvoix, texte (P4b)" as T8
+  usecase "Rapport détaillé\nselon le modèle (P4b)" as T9
+  usecase "Prendre une visite de\nprévention, hors ligne (P4c)" as T10
+  usecase "Grille par touches\net photos (P4c)" as T11
+  usecase "Signatures des deux\nparties (P4c)" as T12
+  usecase "Décider, réserves\net délais (P4c)" as T13
+  usecase "Travailler sans réseau,\nenvoi ordonné (P4d)" as T14
+  usecase "Envoyer par SMS signé\n(P4d)" as T15
+  usecase "Être suivi en route\net sur place (P4d)" as T16
+}
+actor "Citoyen signalant" as CIT
+usecase "Être informé :\néquipe en route, arrivée (P4d)" as C38
+TL --> T1
+TL --> T2
+TL --> T3
+TL --> T4
+TL --> T5
+TL --> T6
+TL --> T7
+TL --> T8
+TL --> T9
+AU --> T10
+AU --> T11
+AU --> T12
+AU --> T13
+TL --> T14
+TL --> T15
+TL --> T16
+T15 ..> T14 : <<extend>>
+CIT --> C38
+T10 ..> T0 : <<include>>
+T11 ..> T10 : <<include>>
+T13 ..> T12 : <<include>>
 OP --> S22
 CC --> S23
+T1 ..> T0 : <<include>>
 OP --> S20
 OPM --> S20
 RAA --> S21
@@ -82,4 +151,52 @@ SA --> S27
 OPM --> S29
 OP --> S28
 OPM --> S28
+OPM --> S30
+CMD --> S31
+OPM --> S32
+OP --> S32
+OPM --> S33
+GOV --> S34
+MIN --> S34
+MIN --> S35
+GOV --> S36
+MIN --> S36
+OPM --> S37
+S36 ..> S0 : <<include>>
+S31 ..> S0 : <<include>>
+OPM --> S38
+CL --> S38
+CC --> S38
+OP --> S39
+GOV --> S39
+MIN --> S39
+OPM --> S40
+CMD --> S41
+CC --> S41
+MIN --> S41
+OPM --> S42
+OP --> S42
+CL --> S42
+S41 ..> S43 : <<include>>
+S42 <.. S43 : <<extend>>
+OP --> S44
+OPM --> S44
+GOV --> S44
+MIN --> S44
+OP --> S45
+OPM --> S45
+CMD --> S45
+MIN --> S45
+SA --> S46
+S45 <.. S46 : <<extend>>
+OP --> S47
+OPM --> S47
+OP --> S48
+CMD --> S48
+GOV --> S48
+MIN --> S48
+OP --> S49
+MIN --> S49
+SA --> S49
+S48 ..> S47 : <<include>>
 @enduml
