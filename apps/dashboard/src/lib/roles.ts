@@ -684,3 +684,11 @@ export function canManageSensors(roles: readonly string[]): boolean {
 /** The watch towers follow the same rule: every room reads its own, the operations manager registers them. */
 export const canOpenTowers = canOpenSensors;
 export const canManageTowers = canManageSensors;
+
+/** Drones too (read only, design-l5 §3.3): every room sees its own; the operations manager registers them and draws
+ * the zones; an agent of the room acknowledges an alert. */
+export const canOpenDrones = canOpenSensors;
+export const canManageDrones = canManageSensors;
+export function canAcknowledgeDroneAlerts(roles: readonly string[]): boolean {
+  return ["operator", "ops_manager", "field_commander"].some((r) => roles.includes(r));
+}

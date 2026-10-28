@@ -23,6 +23,9 @@ export const POI_KINDS = [
   // Watch towers (L5b): a camera on a tower; a fire or smoke in the last hour adds a ring.
   "tower",
   "tower_alert",
+  // Drones (L5b, read only): a quadcopter; an open alert of its zones or battery adds a ring.
+  "drone",
+  "drone_alert",
   // Map data layers loaded from files (phase B1): the icon and colour come from the layer (lib/layers.ts).
   "place",
   "place_cluster",
@@ -60,6 +63,9 @@ export const POI_ICON_PATHS: Record<PoiKind, string> = {
   // Watch tower (the same shape with or without a recent fire or smoke; the ring tells it).
   tower: "M11 2h2v3h3l-1 4h-2v4l3 9h-2l-1.6-5h-2.8L8 22H6l3-9V9H9L8 5h3V2zm-.5 13h3L12 10.5 10.5 15z",
   tower_alert: "M11 2h2v3h3l-1 4h-2v4l3 9h-2l-1.6-5h-2.8L8 22H6l3-9V9H9L8 5h3V2zm-.5 13h3L12 10.5 10.5 15z",
+  // Drone seen from above (the same shape with or without an open alert; the ring tells it).
+  drone: "M5 1.7999999999999998a3.2 3.2 0 1 1 0 6.4a3.2 3.2 0 1 1 0 -6.4zM19 1.7999999999999998a3.2 3.2 0 1 1 0 6.4a3.2 3.2 0 1 1 0 -6.4zM5 15.8a3.2 3.2 0 1 1 0 6.4a3.2 3.2 0 1 1 0 -6.4zM19 15.8a3.2 3.2 0 1 1 0 6.4a3.2 3.2 0 1 1 0 -6.4zM5.7 4.3L19.7 18.3L18.3 19.7L4.3 5.7zM18.3 4.3L19.7 5.7L5.7 19.7L4.3 18.3zM9 9L15 9L15 15L9 15z",
+  drone_alert: "M5 1.7999999999999998a3.2 3.2 0 1 1 0 6.4a3.2 3.2 0 1 1 0 -6.4zM19 1.7999999999999998a3.2 3.2 0 1 1 0 6.4a3.2 3.2 0 1 1 0 -6.4zM5 15.8a3.2 3.2 0 1 1 0 6.4a3.2 3.2 0 1 1 0 -6.4zM19 15.8a3.2 3.2 0 1 1 0 6.4a3.2 3.2 0 1 1 0 -6.4zM5.7 4.3L19.7 18.3L18.3 19.7L4.3 5.7zM18.3 4.3L19.7 5.7L5.7 19.7L4.3 18.3zM9 9L15 9L15 15L9 15z",
   // Map pin (a place whose layer icon is unknown); clusters show their count instead.
   place: "M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 4.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5z",
   place_cluster: "M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z",

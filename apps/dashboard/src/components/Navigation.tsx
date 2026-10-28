@@ -85,6 +85,7 @@ export function navGroups(identity: Identity, t: TFunction, access?: FeatureAcce
         ...e(reads, "/calls", "call", "green", "calls"),
         ...e(reads, "/sensors", "water", "sky", "sensors"),
         ...e(reads, "/towers", "videocam", "orange", "towers"),
+        ...e(reads, "/drones", "drone", "purple", "drones"),
         ...e(reads, "/resource-requests", "inventory2", "amber", "resourceRequests"),
         ...e(canSeeNationalQueues(identity), "/reports/late", "schedule", "orange", "late"),
         ...e(canSeeNationalQueues(identity), "/reports/geo-queue", "wrongLocation", "orange", "geoQueue"),

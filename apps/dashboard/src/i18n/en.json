@@ -64,7 +64,8 @@
     "window": "Decision window",
     "drills": "Dry run",
     "sensors": "Sensors",
-    "towers": "Watch towers"
+    "towers": "Watch towers",
+    "drones": "Drones"
   },
   "header": {
     "scope": "Geographic scope",
@@ -6944,6 +6945,101 @@
       "tower": "Watch tower",
       "alert": "Tower: fire or smoke in the last hour",
       "view": "A tower’s field of view"
+    }
+  },
+  "drones": {
+    "title": "Drones",
+    "simTag": "Simulated until the type of the Office's drones is known",
+    "new": "Register a drone",
+    "intro": "The gouvernorat's drones are read-only sources: the video comes through MediaMTX, the position and camera direction are read from the stream's metadata (KLV). The room is alerted when a drone leaves its work area, nears or enters a no-fly zone, or runs low on battery.",
+    "toMap": "Show them on the map",
+    "readOnly": "The system sends no command to a drone: the pilot alone flies it.",
+    "empty": "No drone registered yet.",
+    "caption": "Drones ({{n}})",
+    "col": {
+      "video": "Video",
+      "position": "Last position",
+      "alerts": "Alerts"
+    },
+    "video": {
+      "live": "Live",
+      "off": "Offline"
+    },
+    "position": {
+      "none": "No position yet",
+      "fresh": "Flying",
+      "stale": "Last seen"
+    },
+    "altitude": "altitude {{m}} m",
+    "battery": "battery {{pct}}%",
+    "openAlerts": "{{n}} open alert(s)",
+    "register": "Register",
+    "form": {
+      "title": "Register a drone"
+    },
+    "errors": {
+      "label": "The name is required.",
+      "zoneName": "The zone's name is required.",
+      "margin": "The margin is required.",
+      "area": {
+        "too_few": "Draw at least 3 points.",
+        "too_many": "{{max}} points at most.",
+        "outside": "The zone must be in Tunisia.",
+        "self_intersecting": "The zone's edges cross: draw it again."
+      }
+    },
+    "key": {
+      "title": "Publish address of {{name}}",
+      "rtsp": "RTSP publish address",
+      "rtmp": "RTMP publish address",
+      "copy": "Copy the token",
+      "howTo": "Set them in the drone or its ground station to publish the video to MediaMTX (docs/sensor-gateway.md, Drones)."
+    },
+    "alerts": {
+      "title": "Open alerts ({{n}})",
+      "none": "No alert",
+      "ack": "Seen",
+      "distance": "{{m}} m away",
+      "kind": {
+        "left_work_area": "Left the work area",
+        "near_no_fly": "Nearing a no-fly zone",
+        "in_no_fly": "Inside a no-fly zone",
+        "low_battery": "Low battery"
+      }
+    },
+    "zone": {
+      "title": "Work and no-fly zones",
+      "new": "Draw a zone",
+      "none": "No zone drawn yet.",
+      "intro": "A work area is where the gouvernorat's drones are expected to fly; a no-fly zone (airport, plant…) alerts for any drone nearing it, whatever its gouvernorat.",
+      "kindLabel": "Type",
+      "kind": {
+        "work": "Work area",
+        "no_fly": "No-fly zone"
+      },
+      "help": {
+        "work": "The room is alerted when a drone of the gouvernorat leaves all its work areas.",
+        "no_fly": "The room is alerted when a drone comes closer than the margin, then when it enters."
+      },
+      "name": "Zone name",
+      "margin": "Approach margin (metres)",
+      "marginShort": "Margin",
+      "drawHelp": "Click the map to add the outline's points ({{max}} at most).",
+      "mapLabel": "Zone drawing map",
+      "active": "Zone active",
+      "off": "Inactive",
+      "metres": "{{m}} m",
+      "newTitle": "New zone",
+      "editTitle": "Edit {{name}}"
+    },
+    "map": {
+      "toggle": "Drones",
+      "drone": "Drone",
+      "alert": "Drone with an open alert",
+      "view": "A drone's camera view",
+      "work": "Drone work area",
+      "noFly": "No-fly zone",
+      "track": "A drone's path (30 min)"
     }
   }
 }

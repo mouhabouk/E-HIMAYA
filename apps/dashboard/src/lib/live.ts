@@ -89,6 +89,18 @@ export type LiveEvent =
       at: string;
       level: "normal" | "watch" | "alarm";
     }
+  /** Phase L5b: where a drone is now (read from its stream), and an alert of its zones or battery. */
+  | { type: "drone.telemetry"; drone_id: string; gouvernorat_code: number | null; at: string; lat: number; lon: number }
+  | {
+      type: "drone.alert";
+      id: number;
+      drone_id: string;
+      drone_label: string | null;
+      gouvernorat_code: number | null;
+      kind: "left_work_area" | "near_no_fly" | "in_no_fly" | "low_battery";
+      zone_name: string | null;
+      at: string;
+    }
   | {
       type: "call.ringing" | "call.answered" | "call.ended" | "call.recording";
       call_id: string;
@@ -312,6 +324,14 @@ function parseEvent(raw: unknown): LiveEvent | { type: "ready" } | null {
         : null;
     case "sensor.reading":
       return typeof m.sensor_id === "string" && typeof m.value === "number" && typeof m.at === "string"
+        ? (m as unknown as LiveEvent)
+        : null;
+    case "drone.telemetry":
+      return typeof m.drone_id === "string" && typeof m.lat === "number" && typeof m.lon === "number"
+        ? (m as unknown as LiveEvent)
+        : null;
+    case "drone.alert":
+      return typeof m.drone_id === "string" && typeof m.kind === "string" && typeof m.at === "string"
         ? (m as unknown as LiveEvent)
         : null;
     case "weather.suggestion":

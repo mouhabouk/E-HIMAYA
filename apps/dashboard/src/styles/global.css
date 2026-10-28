@@ -2075,6 +2075,7 @@ button.map-poi {
   --poi-sensor-alarm: #b91c1c;
   --poi-sensor-silent: #64748b;
   --poi-tower: #c2410c;
+  --poi-drone: #6d28d9;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -2088,6 +2089,7 @@ button.map-poi {
     --poi-sensor-alarm: #fca5a5;
     --poi-sensor-silent: #cbd5e1;
     --poi-tower: #fdba74;
+    --poi-drone: #c4b5fd;
   }
 }
 
@@ -2101,6 +2103,7 @@ button.map-poi {
   --poi-sensor-alarm: #fca5a5;
   --poi-sensor-silent: #cbd5e1;
   --poi-tower: #fdba74;
+  --poi-drone: #c4b5fd;
 }
 
 /* Every chip also carries its label: colour only reinforces the text. */
@@ -2291,6 +2294,37 @@ button.map-poi {
   background: var(--poi-sensor-alarm);
   outline: 3px solid var(--poi-sensor-alarm);
   outline-offset: 2px;
+}
+
+/* Drones (L5b, read only): a drone in purple; an open alert of its zones or battery adds a red ring. */
+.map-poi--drone,
+.map-poi--drone_alert {
+  background: var(--poi-drone);
+  border-radius: 50%;
+}
+.map-poi--drone_alert {
+  outline: 3px solid var(--poi-sensor-alarm);
+  outline-offset: 2px;
+}
+.drone-alerts {
+  display: grid;
+  gap: 8px;
+  padding: 0;
+  list-style: none;
+}
+.drone-alert {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-inline-start: 4px solid var(--poi-sensor-watch);
+  border-radius: 12px;
+}
+.drone-alert--in_no_fly,
+.drone-alert--near_no_fly {
+  border-inline-start-color: var(--poi-sensor-alarm);
 }
 
 /* ---------- Phase 5: committee, notifications, safety tips ---------- */

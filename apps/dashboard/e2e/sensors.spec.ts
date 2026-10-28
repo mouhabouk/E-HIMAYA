@@ -6,6 +6,7 @@
 import { expect, test, type Page } from "@playwright/test";
 import type { Sensor } from "../src/lib/sensors";
 import type { Tower } from "../src/lib/towers";
+import type { Drone, Zone } from "../src/lib/drones";
 import { API, baseMock, commonAnswer, json, signIn } from "./phase7Helpers";
 
 function sensor(over: Partial<Sensor>): Sensor {
@@ -61,6 +62,51 @@ const TOWER: Tower = {
   updated_at: new Date().toISOString(),
 };
 
+// ┏━━ SIMULATION ━━ a drone flying near a no-fly zone, read from its stream (contract phase L5b, /api/v1/staff/drones)
+// ┃ PRODUCTION: services/api (module drones); tests/test_drones.py covers it.
+// ┗━━━━━━━━━━━━━━━━
+const DRONE: Drone = {
+  id: "d-1",
+  label: "Drone Protection 1",
+  gouvernorat_code: 11,
+  stream_status: "live",
+  last: {
+    at: new Date().toISOString(),
+    lat: 36.8,
+    lon: 10.2,
+    alt_m: 120,
+    heading_deg: 90,
+    sensor_az_deg: 0,
+    sensor_hfov_deg: 60,
+    battery_pct: 54,
+    mode: "SIM",
+  },
+  camera_view: [
+    [10.2, 36.8],
+    [10.203, 36.798],
+    [10.204, 36.8],
+    [10.203, 36.802],
+    [10.2, 36.8],
+  ],
+  open_alerts: 1,
+};
+const ZONES: Zone[] = (["work", "no_fly"] as const).map((kind, i) => ({
+  id: `z-${i}`,
+  kind,
+  name: kind === "work" ? "Forêt de Radès" : "Aéroport Tunis-Carthage",
+  gouvernorat_code: 11,
+  ring: [
+    [10.15 + i * 0.05, 36.75],
+    [10.2 + i * 0.05, 36.75],
+    [10.2 + i * 0.05, 36.85],
+    [10.15 + i * 0.05, 36.75],
+  ],
+  margin_m: 1000,
+  active: true,
+  created_by_name: null,
+  updated_at: new Date().toISOString(),
+}));
+
 async function mockApi(page: Page) {
   const base = await baseMock(page);
   const calls = { sensors: 0 };
@@ -75,6 +121,19 @@ async function mockApi(page: Page) {
     if (common) return common;
     if (method === "GET" && pathname === "/api/v1/staff/reports") return json(route, { items: [], next_cursor: null });
     if (method === "GET" && pathname === "/api/v1/staff/towers") return json(route, { items: [TOWER], can_manage: false });
+    if (method === "GET" && pathname === "/api/v1/staff/drones") return json(route, { items: [DRONE], can_register: false });
+    if (method === "GET" && pathname === "/api/v1/staff/drones/zones") return json(route, ZONES);
+    if (method === "GET" && pathname === "/api/v1/staff/drones/d-1/track") {
+      const at = (s: number) => new Date(Date.now() - s * 1000).toISOString();
+      return json(route, {
+        drone_id: "d-1",
+        items: [
+          { ...DRONE.last, at: at(60), lat: 36.78, lon: 10.18 },
+          { ...DRONE.last, at: at(30), lat: 36.79, lon: 10.19 },
+          DRONE.last,
+        ],
+      });
+    }
     if (method === "GET" && pathname === "/api/v1/staff/sensors") {
       calls.sensors += 1;
       return json(route, {
@@ -173,6 +232,31 @@ test.describe("watch towers layer", () => {
     // The wedge is a real MapLibre fill: a bad source or paint expression would be a console error (checked below).
     await page.getByRole("checkbox", { name: "Tours de guet" }).uncheck();
     await expect(tower).toHaveCount(0);
+    expect(api.unexpected).toEqual([]);
+    expect(errors).toEqual([]);
+  });
+});
+
+test.describe("drones layer", () => {
+  test("draws each drone, its camera's view, its path and the zones (read only)", async ({ page }) => {
+    const errors: string[] = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+    page.on("console", (msg) => {
+      if (msg.type() === "error") errors.push(msg.text());
+    });
+    await signIn(page, ["operator"]);
+    const api = await mockApi(page);
+    await page.goto("/map");
+    await page.getByRole("checkbox", { name: "Drones" }).check();
+    const drone = page.getByRole("button", { name: /^Drone Protection 1 — 1 alerte\(s\) ouverte\(s\) · En vol · altitude 120 m · batterie 54 %/ });
+    await expect(drone).toHaveClass(/map-poi--drone_alert/);
+    await expect(page.getByText("Drone avec une alerte ouverte", { exact: true })).toBeVisible();
+    // The zones are named beside the map too; the view, the path and the zones are real MapLibre layers (a bad
+    // source or paint expression would be a console error, checked below).
+    await page.getByText("Liste des signalements affichés sur la carte").click();
+    await expect(page.getByRole("link", { name: "Aéroport Tunis-Carthage — Zone interdite de vol" })).toBeVisible();
+    await page.getByRole("checkbox", { name: "Drones" }).uncheck();
+    await expect(drone).toHaveCount(0);
     expect(api.unexpected).toEqual([]);
     expect(errors).toEqual([]);
   });

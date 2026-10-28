@@ -64,7 +64,8 @@
     "window": "Fenêtre de décision",
     "drills": "Exercice blanc",
     "sensors": "Capteurs",
-    "towers": "Tours de guet"
+    "towers": "Tours de guet",
+    "drones": "Drones"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -6944,6 +6945,101 @@
       "tower": "Tour de guet",
       "alert": "Tour : feu ou fumée dans l’heure",
       "view": "Champ de vision d’une tour"
+    }
+  },
+  "drones": {
+    "title": "Drones",
+    "simTag": "Simulé tant que le type des drones de l'Office n'est pas connu",
+    "new": "Enregistrer un drone",
+    "intro": "Les drones du gouvernorat sont des sources en lecture seule : la vidéo passe par MediaMTX, la position et l'axe de la caméra sont lus dans les métadonnées du flux (KLV). La salle est alertée quand un drone quitte sa zone de travail, approche ou entre dans une zone interdite, ou que sa batterie baisse.",
+    "toMap": "Les voir sur la carte",
+    "readOnly": "Le système n'envoie aucune commande à un drone : seul le pilote le conduit.",
+    "empty": "Aucun drone enregistré.",
+    "caption": "Drones ({{n}})",
+    "col": {
+      "video": "Vidéo",
+      "position": "Dernière position",
+      "alerts": "Alertes"
+    },
+    "video": {
+      "live": "En direct",
+      "off": "Hors ligne"
+    },
+    "position": {
+      "none": "Pas encore de position",
+      "fresh": "En vol",
+      "stale": "Vu pour la dernière fois"
+    },
+    "altitude": "altitude {{m}} m",
+    "battery": "batterie {{pct}} %",
+    "openAlerts": "{{n}} alerte(s) ouverte(s)",
+    "register": "Enregistrer",
+    "form": {
+      "title": "Enregistrer un drone"
+    },
+    "errors": {
+      "label": "Le nom est obligatoire.",
+      "zoneName": "Le nom de la zone est obligatoire.",
+      "margin": "La marge est obligatoire.",
+      "area": {
+        "too_few": "Tracez au moins 3 points.",
+        "too_many": "{{max}} points au plus.",
+        "outside": "La zone doit être en Tunisie.",
+        "self_intersecting": "Les bords de la zone se croisent : retracez-la."
+      }
+    },
+    "key": {
+      "title": "Adresse de diffusion de {{name}}",
+      "rtsp": "Adresse de publication RTSP",
+      "rtmp": "Adresse de publication RTMP",
+      "copy": "Copier le jeton",
+      "howTo": "À saisir dans le drone ou sa station sol pour publier la vidéo vers MediaMTX (docs/sensor-gateway.md, Drones)."
+    },
+    "alerts": {
+      "title": "Alertes ouvertes ({{n}})",
+      "none": "Aucune alerte",
+      "ack": "Vu",
+      "distance": "à {{m}} m",
+      "kind": {
+        "left_work_area": "A quitté la zone de travail",
+        "near_no_fly": "Approche d'une zone interdite",
+        "in_no_fly": "Dans une zone interdite",
+        "low_battery": "Batterie faible"
+      }
+    },
+    "zone": {
+      "title": "Zones de travail et d'exclusion",
+      "new": "Tracer une zone",
+      "none": "Aucune zone tracée.",
+      "intro": "La zone de travail est celle où les drones du gouvernorat doivent voler ; une zone interdite (aéroport, installation…) alerte pour tout drone qui s'en approche, quel que soit son gouvernorat.",
+      "kindLabel": "Type",
+      "kind": {
+        "work": "Zone de travail",
+        "no_fly": "Zone interdite"
+      },
+      "help": {
+        "work": "La salle est alertée quand un drone du gouvernorat sort de toutes ses zones de travail.",
+        "no_fly": "La salle est alertée quand un drone s'approche à moins de la marge, puis quand il y entre."
+      },
+      "name": "Nom de la zone",
+      "margin": "Marge d'approche (mètres)",
+      "marginShort": "Marge",
+      "drawHelp": "Cliquez sur la carte pour ajouter les points du contour ({{max}} au plus).",
+      "mapLabel": "Carte de tracé de la zone",
+      "active": "Zone active",
+      "off": "Inactive",
+      "metres": "{{m}} m",
+      "newTitle": "Nouvelle zone",
+      "editTitle": "Modifier {{name}}"
+    },
+    "map": {
+      "toggle": "Drones",
+      "drone": "Drone",
+      "alert": "Drone avec une alerte ouverte",
+      "view": "Champ de la caméra d'un drone",
+      "work": "Zone de travail des drones",
+      "noFly": "Zone interdite de vol",
+      "track": "Trajet d'un drone (30 min)"
     }
   }
 }
