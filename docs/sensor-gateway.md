@@ -268,8 +268,11 @@ docker run -d --name tower-edge --restart unless-stopped \
   -e EDGE_SOURCE=rtsp://<كاميرا البرج على الشبكة المحلية>/stream \
   -e EDGE_GATEWAY_URL=http://<خادم MediaMTX>:8088 \
   -e VISION_ENABLED_MODELS=fire-smoke \
-  ehimaya/vision python -m app.edge
+  -v visionmodels:/models:ro \
+  ehimaya/vision:dev python -m app.edge
 ```
+
+النماذج تُنسخ مرة واحدة إلى الحاسوب في الحجم `visionmodels`، بالأداة `services/vision/models/fetch_models.py` التي تتحقق من بصمة كل نموذج. ولا يحتاج الحاسوب بعدها إلى الإنترنت.
 
 | المتغيّر | الافتراضي | المعنى |
 |---|---|---|
