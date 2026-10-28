@@ -1,6 +1,6 @@
 @startuml
 !include style.iuml
-title Diagramme d'états : programme d'une wilaya et suivi d'une activité (PL2)
+title Diagramme d'états : programme d'une wilaya et suivi d'une activité (PL2, statuts L4)
 state "Programme" as Per {
   [*] --> Brouillon : créer (vide, copie de la période\nprécédente ou modèle)
   Brouillon --> [*] : supprimer
@@ -16,13 +16,25 @@ state "Programme" as Per {
 }
 state "Activité" as Itm {
   [*] --> Prévue
-  Prévue --> Réalisée
+  Prévue --> EnCours : heure de début (horloge)\nou à la main
+  EnCours --> Réalisée : heure de fin (horloge)\nou à la main
+  Prévue --> Réalisée : à la main
+  Prévue --> NonRéalisée : motif
+  EnCours --> NonRéalisée : motif
   Prévue --> Reportée : motif
+  Prévue --> Refusée : motif
   Prévue --> Annulée : motif
+  NonRéalisée --> Prévue : « remettre à prévue »\n(rend la main à l'horloge)
   Reportée --> Prévue
+  Refusée --> Prévue
   Annulée --> Prévue
   Réalisée --> Prévue
 }
+note right of Itm
+  Un statut posé à la main passe avant l'horloge.
+  Le taux de réalisation compte les activités échues,
+  sans les annulées ni les refusées.
+end note
 note bottom of Per
   Le mode d'approbation est retenu à l'envoi :
   changer le réglage ne touche pas un programme en cours.

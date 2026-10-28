@@ -441,7 +441,7 @@ export function PermissionsPage() {
   const { api } = useServices();
   const q = useQuery({ queryKey: KEYS.catalogue, queryFn: ({ signal }) => api.featureCatalogue(signal), staleTime: Infinity });
   return (
-    <div className="page">
+    <div className="page perm-page">
       <div className="page__head">
         <PageTitle icon="adminPanelSettings" tone="slate">
           {t("permissions.title")}

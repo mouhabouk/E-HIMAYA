@@ -1075,14 +1075,14 @@ export function WindowPage() {
   );
   if (q.isPending)
     return (
-      <div className="page">
+      <div className="page win-page">
         {head}
         <Loading />
       </div>
     );
   if (q.isError)
     return (
-      <div className="page">
+      <div className="page win-page">
         {head}
         <ErrorBox error={q.error} onRetry={() => void q.refetch()} />
       </div>
@@ -1090,7 +1090,7 @@ export function WindowPage() {
   const access = q.data;
   if (!access.full && !access.delegated)
     return (
-      <div className="page">
+      <div className="page win-page">
         {head}
         <p className="alert alert--info">{t("window.noDelegation")}</p>
       </div>
@@ -1100,7 +1100,7 @@ export function WindowPage() {
   );
   const ends = access.delegations.map((d) => d.ends_at).sort()[0];
   return (
-    <div className="page">
+    <div className="page win-page">
       {head}
       <p className="muted">{t(access.full ? "window.intro" : "window.introDelegated")}</p>
       {access.delegated && !access.full && (

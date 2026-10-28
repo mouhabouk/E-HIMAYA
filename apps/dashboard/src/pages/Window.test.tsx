@@ -32,7 +32,7 @@ describe("WindowPage", () => {
     await waitFor(() => expect(win.windowSearch).toHaveBeenLastCalledWith(expect.objectContaining({ q: "حرايق نابل" }), expect.anything()));
     expect(await screen.findByText(/حرايق → حريق/)).toBeInTheDocument();
     const byCategory = screen.getByRole("table", { name: "حسب النوع" });
-    expect(within(byCategory).getByText("<5")).toBeInTheDocument();
+    expect(within(byCategory).getByText(/<5/)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "7d1f5a2e" })).toHaveAttribute("href", "/incidents/7d1f5a2e-0c4b-4c55-9f0e-2a6c1b9e8d01");
 
     fireEvent.click(screen.getByRole("button", { name: "اكتب ملخصا (ذكاء اصطناعي)" }));

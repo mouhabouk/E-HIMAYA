@@ -7277,6 +7277,28 @@ button.nav-card:hover {
 .inventory-search__total {
   margin-block: 0 8px;
 }
+/* The decision window and the permissions page (L4): text, date and number fields drawn like the others. */
+:is(.win-page, .perm-page)
+  :is(input:not([type]), input[type="text"], input[type="date"], input[type="datetime-local"], input[type="number"]) {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
+  min-block-size: 2.25rem;
+}
+/* RS1: the margin around an axis area, and the bounds of a specification. */
+.inventory-search input[type="number"] {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
+  min-block-size: 2.25rem;
+  inline-size: 8rem;
+}
 .inventory-search__units {
   font-weight: 400;
 }

@@ -6,7 +6,7 @@ import type { Cell, Figures } from "../lib/windowTypes";
 /** The indicators of a period (L4 §3 and L4a): the decision window and the library calendar show them alike. */
 export function useCount(minCell: number) {
   const fmt = useFormat();
-  return (n: number | null | undefined) => (n === null || n === undefined ? `<${minCell}` : fmt.number(n));
+  return (n: number | null | undefined) => (n === null || n === undefined ? `\u200e<${minCell}\u200e` : fmt.number(n));
 }
 
 export function Kpi({ label, value }: { label: string; value: ReactNode }) {

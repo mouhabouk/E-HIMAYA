@@ -1,0 +1,56 @@
+@startuml
+!include style.iuml
+title Diagramme de classes : fenêtre de décision, délégation et règles de l'administrateur (L4)
+class "Compte (Keycloak)" as Acc {
+  identifiant, rôles
+  wilaya ou national
+}
+class "Délégation" as Del {
+  bénéficiaire, rôles, wilaya
+  motif, début, fin
+  accordée par, salle : central | g:NN
+  retrait : date, par, motif
+  état : active | programmée | finie | retirée
+}
+class "Événement délégué" as Ev {
+  type : axe | intervention
+  cible, ajouté par, date
+}
+class "Axe" as Axe {
+  numéro, niveau, zone
+}
+class "Intervention" as Inc {
+  catégorie, gravité, statut
+  wilaya, ouverte, close
+}
+class "Recherche enregistrée" as Sav {
+  nom, type : recherche | comparaison
+  critères
+}
+class "Synonyme" as Syn {
+  sens : fire | traffic_accident | ...
+  mots : darija, français
+  modifié par
+}
+class "Règle de fonctionnalité" as Rule {
+  page | onglet | bouton
+  rôle, accordé | masqué
+}
+class "Plafond de sécurité" as Ceil <<fixe>> {
+  couches sensibles, identités,
+  noms et téléphones, clé payante
+}
+Acc "1" -- "0..*" Del : bénéficiaire >
+Acc "1" -- "0..*" Del : accorde >
+Del "1" *-- "1..*" Ev
+Ev "0..*" --> "0..1" Axe
+Ev "0..*" --> "0..1" Inc
+Axe "1" o-- "0..*" Inc : rattachées
+Acc "1" -- "0..*" Sav
+Rule ..> Ceil : ne dépasse jamais
+note bottom of Del
+  Événements dans la portée de la salle
+  et dans celle du bénéficiaire.
+  Chaque ouverture est journalisée.
+end note
+@enduml
