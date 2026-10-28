@@ -3114,5 +3114,135 @@
   "teamOnScene": "The team has arrived",
   "teamNoticesSetting": "Tell me when the team is coming",
   "teamNoticesHint": "A notification when the team leaves, then when it arrives.",
-  "staffKept": "Kept on the phone: sent when the network is back."
+  "staffKept": "Kept on the phone: sent when the network is back.",
+  "beachesTitle": "Beaches today",
+  "beachesHint": "The colour of each beach and why (drowning risk)",
+  "beachesSimBanner": "[SIM] Simulated marine weather: these colours are for a trial, not real. In an emergency call 198.",
+  "beachesWarnToggle": "Warn me near a yellow or red beach",
+  "beachesWarnHint": "Computed on this phone; your position is not sent.",
+  "beachesDanger": "You are {distance} from {name}: {level}",
+  "@beachesDanger": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "level": {
+        "type": "String"
+      },
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+  "beachesEmpty": "No beach data yet.",
+  "beachesNoPosition": "Location is off: beaches are listed by name.",
+  "beachesMapLabel": "Map of the beaches coloured by drowning risk",
+  "beachLevelRed": "Red: high risk",
+  "beachLevelYellow": "Yellow: caution",
+  "beachLevelGreen": "Green: normal",
+  "beachLevelUnknown": "Not computed",
+  "beachScore": "Score {score}/100",
+  "@beachScore": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "beachFactorWaves": "Waves {value} m",
+  "@beachFactorWaves": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "beachFactorOnshore": "Wind from the sea {value} km/h",
+  "@beachFactorOnshore": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "beachFactorCurrent": "Current {value} km/h",
+  "@beachFactorCurrent": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "beachFactorSeason": "Bathing season or heat",
+  "beachFactorCrowd": "Very crowded",
+  "beachFactorUnguarded": "No lifeguards",
+  "beachFactorDrownings": "Past drownings nearby ({value})",
+  "@beachFactorDrownings": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "beachDecisionNote": "This colour helps you decide; always follow the lifeguards and the flags on the beach.",
+  "beachDays": "Next days",
+  "beachWaves": "Waves {value} m",
+  "@beachWaves": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "beachSeaTemp": "Sea {value} °C",
+  "@beachSeaTemp": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "beachCardTitle": "Beach card",
+  "beachCardClassification": "Classification",
+  "beachCardBlueFlag": "Blue Flag",
+  "beachCardGuarded": "Lifeguards",
+  "beachCardGuardHours": "Lifeguard hours",
+  "beachCardSand": "Sand",
+  "beachCardSlope": "Slope",
+  "beachCardDepth": "Depth",
+  "beachCardCurrents": "Known currents",
+  "beachCardCrowd": "Crowd",
+  "beachCardUsage": "Use",
+  "beachCardPeakSeason": "Peak season",
+  "beachCardWaterQuality": "Water quality",
+  "beachYes": "Yes",
+  "beachNo": "No",
+  "beachSource": "Source: {source}",
+  "@beachSource": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "beachPresenceToggle": "Count me when I say I am at a beach",
+  "beachPresenceHint": "Anonymous: a random code of the day, no account and no position. It helps the rescue teams plan.",
+  "beachPresenceButton": "I am at this beach",
+  "beachPresenceSent": "Thank you, you are counted for 30 minutes.",
+  "nearestByRoad": "{minutes} min by road",
+  "@nearestByRoad": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "nearestByRoadEstimate": "about {minutes} min by road (estimate)",
+  "@nearestByRoadEstimate": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  }
 }

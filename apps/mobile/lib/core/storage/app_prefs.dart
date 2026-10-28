@@ -30,6 +30,9 @@ class AppPrefs {
   static const _guideEtag = 'guide.etag';
   static const _guideJson = 'guide.json';
   static const _placesOff = 'places.off';
+  static const _beachWarnings = 'beaches.warnings';
+  static const _beachPresence = 'beaches.presence';
+  static const _beachToken = 'beaches.token';
   static const _alertsJson = 'alerts.last';
   static const _weatherJson = 'weather.last';
   static const _batterySaver = 'power.battery_saver';
@@ -180,6 +183,23 @@ class AppPrefs {
   List<String> get placesOff => _prefs.getStringList(_placesOff) ?? const [];
   Future<void> setPlacesOff(List<String> keys) =>
       _prefs.setStringList(_placesOff, keys);
+
+  /// Phase L1b: the user agreed to be warned when near a yellow or red beach (computed on the
+  /// phone, the position never leaves it). Off until the user turns it on.
+  bool get beachWarnings => _prefs.getBool(_beachWarnings) ?? false;
+  Future<void> setBeachWarnings(bool value) =>
+      _prefs.setBool(_beachWarnings, value);
+
+  /// Phase L1b: the user agreed to say "I am at this beach" (anonymous count for the room).
+  bool get beachPresence => _prefs.getBool(_beachPresence) ?? false;
+  Future<void> setBeachPresence(bool value) =>
+      _prefs.setBool(_beachPresence, value);
+
+  /// The random code of the day sent with "I am at this beach" (`yyyy-mm-dd|token`), drawn again
+  /// each day so two days cannot be linked.
+  String? get beachToken => _prefs.getString(_beachToken);
+  Future<void> setBeachToken(String value) =>
+      _prefs.setString(_beachToken, value);
 
   /// Last active alerts seen (public content), shown when offline until they expire.
   String? get lastAlertsJson => _prefs.getString(_alertsJson);

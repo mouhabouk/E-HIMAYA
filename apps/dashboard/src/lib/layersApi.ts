@@ -11,6 +11,7 @@ import type {
   LayerImportDetail,
   LayerPatch,
   LayerRevision,
+  LayerShapes,
   MapLayer,
   MapLayers,
   ReviewBody,
@@ -27,6 +28,7 @@ export const layerKeys = {
   all: ["layers"] as const,
   imports: (key: string) => ["layers", key, "imports"] as const,
   features: (key: string, bbox: BBox | null) => ["layers", key, "features", bbox] as const,
+  shapes: (key: string, bbox: BBox | null, zoom: number, lang: string) => ["layers", key, "shapes", bbox, zoom, lang] as const,
   deletedFeatures: (key: string) => ["layers", key, "features", "deleted"] as const,
   revisions: (key: string) => ["layers", key, "revisions"] as const,
   review: (key: string, view: string) => ["layers", key, "review", view] as const,
@@ -36,6 +38,19 @@ export const layerKeys = {
 export interface Download {
   blob: Blob;
   filename: string;
+}
+
+/** Hands a downloaded file to the browser (the object URL is released a minute later). */
+export function saveDownload(download: Download): void {
+  const url = URL.createObjectURL(download.blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = download.filename;
+  a.rel = "noopener";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
 function filenameOf(response: Response, fallback: string): string {
@@ -116,6 +131,13 @@ export function layersApi(api: ApiClient) {
     layerFeatures: (key: string, bbox: BBox | null, signal?: AbortSignal) =>
       api.request<LayerFeatures>(`${layerPath(key)}/features`, {
         query: { bbox: bbox ? bbox.map((v) => v.toFixed(5)).join(",") : undefined },
+        signal,
+      }),
+
+    // Phase L1b: the lines and areas of a layer in view, simplified for the zoom (GeoJSON).
+    layerShapes: (key: string, bbox: BBox, zoom: number, lang: string, signal?: AbortSignal) =>
+      api.request<LayerShapes>(`${layerPath(key)}/shapes`, {
+        query: { bbox: bbox.map((v) => v.toFixed(5)).join(","), zoom: String(zoom), lang },
         signal,
       }),
 

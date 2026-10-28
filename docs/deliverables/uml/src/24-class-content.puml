@@ -48,6 +48,33 @@ class ÉlémentCouche {
   lien OSM, doublon possible
   supprimé_le, motif
 }
+class Plage {
+  direction du large
+  météo marine : dernière, prochaine
+}
+class HeureMarine {
+  heure, vagues (hauteur, période, direction)
+  température de la mer, courant
+  simulée
+}
+class RisqueJour {
+  jour, score 0..100
+  niveau : vert | jaune | rouge
+  facteurs (code, points, valeur)
+}
+class AlerteCôtière {
+  jour, niveau, niveau précédent
+  vue par, vue le
+}
+class RèglesCôtières {
+  seuils jaune / rouge
+  points par facteur
+  modifié par, le
+}
+class PrésenceAnonyme {
+  empreinte du jeton du jour
+  vu le (effacée après 24 h)
+}
 class RègleRécompense {
   motif, catégorie
   points, multiplicateur
@@ -83,6 +110,12 @@ SuggestionMétéo ..> Message : devient
 ThèmeGuide "1" *-- "*" ÉlémentGuide
 CoucheCarte "1" *-- "*" ÉlémentCouche
 CoucheCarte "1" *-- "*" RévisionCouche
+ÉlémentCouche "1" -- "0..1" Plage : couche des plages
+Plage "1" *-- "*" HeureMarine
+Plage "1" *-- "*" RisqueJour
+Plage "1" -- "*" AlerteCôtière
+Plage "1" -- "*" PrésenceAnonyme
+RèglesCôtières ..> RisqueJour : calcule
 RègleRécompense "1" -- "*" MouvementPoints
 "Compte" "1" -- "*" MouvementPoints
 "Compte" "1" -- "*" Badge

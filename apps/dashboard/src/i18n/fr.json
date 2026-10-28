@@ -41,7 +41,8 @@
     "counter": "Guichet",
     "prevention": "Visites de prévention",
     "crew": "Équipes de garde",
-    "reportTemplates": "Modèles de rapport"
+    "reportTemplates": "Modèles de rapport",
+    "coastal": "Sécurité côtière"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -328,7 +329,15 @@
     "not_deleted": "La couche n'est pas supprimée.",
     "already_deleted": "Le lieu est déjà supprimé.",
     "merge_target_invalid": "Choisissez un autre lieu, non supprimé, pour la fusion.",
-    "name_required": "Le nom est obligatoire."
+    "name_required": "Le nom est obligatoire.",
+    "layer_not_found": "La couche des plages n'existe pas ou ne vous est pas ouverte.",
+    "beach_not_found": "Plage introuvable.",
+    "alert_not_found": "Alerte introuvable.",
+    "rule_unknown": "Règle inconnue.",
+    "rule_invalid": "Valeurs des règles invalides.",
+    "national_only": "Ce changement est réservé au niveau national.",
+    "settings_missing": "Réglages du risque introuvables.",
+    "hospital_not_offered": "Cet hôpital n'est pas parmi ceux proposés pour cet incident."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -683,7 +692,8 @@
       "crew_alert": "Renfort ou danger signalé par l'équipe",
       "crew_alert_seen": "Alerte vue par la salle",
       "field_attachment": "Pièce jointe des lieux",
-      "detailed_report": "Rapport détaillé"
+      "detailed_report": "Rapport détaillé",
+      "hospital_chosen": "Hôpital choisi"
     },
     "via": {
       "suggestion": "(suggestion confirmée)",
@@ -4512,5 +4522,146 @@
     "classification": "Classification",
     "anyClassification": "Toutes les classifications du type",
     "create": "Créer le brouillon"
+  },
+  "coastal": {
+    "title": "Sécurité côtière",
+    "intro": "Risque de noyade du jour pour chaque plage, par des règles déclarées (vagues, courant, vent de mer, saison, surveillance, noyades passées). L'indice aide à décider : il n'alerte jamais le public de lui-même.",
+    "simBand": "Météo marine simulée : couleurs et chiffres pour l'entraînement seulement.",
+    "simulated": "Météo marine simulée",
+    "filters": "Filtrer les plages",
+    "day": "Jour",
+    "today": "Aujourd'hui",
+    "gouvernorat": "Gouvernorat",
+    "allGouvernorats": "Tous les gouvernorats",
+    "all": "Tous",
+    "guarded": "Surveillée",
+    "unguarded": "Non surveillée",
+    "levelLabel": "Niveau de risque",
+    "level": {
+      "red": "Rouge : risque élevé",
+      "yellow": "Jaune : vigilance",
+      "green": "Vert : normal",
+      "unknown": "Non calculé"
+    },
+    "kpis": "Indicateurs des plages",
+    "kpi": {
+      "beaches": "Plages",
+      "average": "Risque moyen",
+      "guarded": "Plages surveillées",
+      "drownings": "Noyades cette saison",
+      "present": "Présents (avec accord)"
+    },
+    "heat": {
+      "label": "Carte de chaleur",
+      "risk": "Risque du jour",
+      "drownings": "Noyades (5 ans)",
+      "none": "Aucune"
+    },
+    "bulletin": "Télécharger le bulletin côtier (PDF)",
+    "mapLabel": "Carte des plages colorées selon le risque de noyade",
+    "openCard": "Fiche de la plage",
+    "legend": "Légende",
+    "alerts": {
+      "title": "Centre des alertes côtières",
+      "note": "Plage passée au jaune ou au rouge aujourd'hui, une fois par niveau. Le rouge d'abord.",
+      "none": "Aucune alerte ce jour.",
+      "was": "était {{level}}",
+      "acked": "Vu par {{name}} à {{at}}",
+      "ack": "Vu",
+      "arrived": "Nouvelle alerte côtière : {{name}} ({{level}})"
+    },
+    "score": "Score {{score}}/100",
+    "beach": "Plage",
+    "why": "Raisons",
+    "present": "Présents",
+    "presentNow": "{{count}} présents",
+    "noBeaches": "Aucune plage.",
+    "topDangerous": "Les 10 plages les plus dangereuses",
+    "topTouristic": "Les 10 plages les plus touristiques",
+    "byGouvernorat": "Risque moyen par gouvernorat",
+    "redByGouvernorat": "Plages jaunes et rouges par gouvernorat",
+    "noGouvernorat": "Sans gouvernorat",
+    "days": "Les quatre prochains jours",
+    "waves": "Vagues",
+    "seaTemp": "Température de la mer",
+    "length": "Longueur",
+    "source": "Source : {{source}}, {{date}}",
+    "yes": "Oui",
+    "no": "Non",
+    "factor": {
+      "waves": "Vagues {{value}} m",
+      "onshore_wind": "Vent de mer {{value}} km/h",
+      "current": "Courant {{value}} km/h",
+      "season": "Saison balnéaire ou chaleur",
+      "crowd": "Forte affluence",
+      "unguarded": "Non surveillée en saison",
+      "past_drownings": "Noyades passées proches ({{value}})"
+    },
+    "card": {
+      "title": "Fiche de la plage",
+      "empty": "Fiche encore vide.",
+      "classification": "Classement",
+      "blue_flag": "Pavillon bleu",
+      "guarded": "Surveillance",
+      "guard_hours": "Heures de surveillance",
+      "sand": "Type de sable",
+      "slope": "Pente",
+      "depth": "Profondeur",
+      "currents": "Courants connus",
+      "crowd": "Affluence",
+      "usage": "Usage",
+      "peak_season": "Pic de saison",
+      "water_quality": "Qualité de l'eau"
+    },
+    "classification": {
+      "local": "Locale",
+      "touristic": "Touristique",
+      "international": "Internationale"
+    },
+    "value": {
+      "high": "Élevée",
+      "medium": "Moyenne",
+      "low": "Faible"
+    },
+    "rules": {
+      "title": "Règles du calcul du risque",
+      "note": "Les points de chaque règle et les seuils. Un changement s'applique au prochain cycle et entre au journal d'audit.",
+      "updated": "Dernière modification : {{name}}, {{at}}.",
+      "waves": "Vagues (points selon la hauteur)",
+      "waveBelow": "Hauteur sous (m)",
+      "waveAbove": "Au-delà de (m)",
+      "points": "Points",
+      "others": "Autres règles",
+      "yellow": "Seuil jaune",
+      "red": "Seuil rouge",
+      "onshore_kmh": "Vent de mer (km/h)",
+      "onshore_points": "Ses points",
+      "strong_onshore_kmh": "Vent de mer fort (km/h)",
+      "strong_onshore_points": "Ses points",
+      "current_kmh": "Courant (km/h)",
+      "current_points": "Ses points",
+      "hot_c": "Chaleur (°C)",
+      "season_points": "Points saison ou chaleur",
+      "crowd_high_points": "Points forte affluence",
+      "unguarded_points": "Points sans surveillance",
+      "incident_radius_m": "Rayon des noyades (m)",
+      "incident_years": "Années de noyades",
+      "incident_points": "Points par noyade",
+      "incident_max": "Plafond des noyades",
+      "season_months": "Mois de la saison",
+      "invalid": "La règle « {{rule}} » n'est pas valide (rouge au-dessus du jaune et au plus 100, vagues croissantes).",
+      "reason": "Motif du changement",
+      "save": "Enregistrer les règles",
+      "defaults": "Revenir aux valeurs par défaut",
+      "readOnly": "Les règles sont changées par le chef des opérations ou les comités, au niveau national."
+    }
+  },
+  "hospitals": {
+    "title": "Hôpitaux les plus proches par la route",
+    "none": "Aucun hôpital visible pour vous près de cet incident.",
+    "road": "{{km}} km, environ {{minutes}} min",
+    "estimate": "estimation sans moteur d'itinéraire",
+    "add": "Ajouter à l'incident",
+    "added": "Ajouté"
   }
 }

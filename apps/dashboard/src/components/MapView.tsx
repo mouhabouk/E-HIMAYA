@@ -1,4 +1,4 @@
-import type { GeoJSONSource, Map as MlMap, MapMouseEvent, Marker, Popup } from "maplibre-gl";
+import type { ExpressionSpecification, GeoJSONSource, Map as MlMap, MapMouseEvent, Marker, Popup } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { FeatureCollection } from "geojson";
 import { useEffect, useRef, useState, type ReactNode } from "react";
@@ -101,6 +101,8 @@ export interface MapHex {
 export interface HeatPoint {
   lon: number;
   lat: number;
+  /** Weight of the point (phase L1b: a beach's risk score / 100); 1 when omitted. */
+  weight?: number;
 }
 
 interface MapViewProps {
@@ -129,6 +131,10 @@ interface MapViewProps {
   hexes?: MapHex[];
   /** Density layer (ready volunteers): a MapLibre heatmap under the markers. */
   heat?: HeatPoint[];
+  /** Colours of the density layer, fixed when the map is created: greens (readiness) or green-amber-red (risk). */
+  heatTone?: "ready" | "risk";
+  /** Lines and areas of the map data layers (phase L1b): GeoJSON features whose `colour` property paints them. */
+  shapes?: FeatureCollection;
   /** Paths (stream location tracks). */
   lines?: MapLine[];
   /** Weather layer (fire danger field, wind arrows, rain level). */
@@ -151,6 +157,7 @@ const POLYGON_SOURCE = "ehimaya-polygons";
 const HEAT_SOURCE = "ehimaya-heat";
 const HEX_SOURCE = "ehimaya-hexes";
 const LINE_SOURCE = "ehimaya-lines";
+const SHAPE_SOURCE = "ehimaya-shapes";
 const WEATHER_SOURCE = "ehimaya-weather";
 const WIND_ICON = "ehimaya-wind-arrow";
 const TONE_COLOURS: Record<MapPolygon["tone"], string> = { high: "#b91c1c", medium: "#b45309", low: "#4b5563" };
@@ -189,7 +196,11 @@ function hexData(hexes: MapHex[]): GeoJsonData {
 function heatData(points: HeatPoint[]): GeoJsonData {
   return {
     type: "FeatureCollection",
-    features: points.map((p) => ({ type: "Feature", properties: {}, geometry: { type: "Point", coordinates: [p.lon, p.lat] } })),
+    features: points.map((p) => ({
+      type: "Feature",
+      properties: { w: p.weight ?? 1 },
+      geometry: { type: "Point", coordinates: [p.lon, p.lat] },
+    })),
   };
 }
 
@@ -369,6 +380,8 @@ export function MapView({
   polygons,
   hexes,
   heat,
+  heatTone = "ready",
+  shapes,
   lines,
   weather,
   onMapClick,
@@ -597,26 +610,48 @@ export function MapView({
         source: HEAT_SOURCE,
         maxzoom: 15,
         paint: {
+          "heatmap-weight": ["coalesce", ["get", "w"], 1],
           "heatmap-radius": ["interpolate", ["linear"], ["zoom"], 6, 12, 14, 30],
           "heatmap-intensity": ["interpolate", ["linear"], ["zoom"], 6, 0.6, 14, 1.5],
           "heatmap-opacity": 0.65,
-          "heatmap-color": [
-            "interpolate",
-            ["linear"],
-            ["heatmap-density"],
-            0,
-            "rgba(21,128,61,0)",
-            0.3,
-            "rgb(134,239,172)",
-            0.6,
-            "rgb(34,197,94)",
-            1,
-            "rgb(20,83,45)",
-          ],
+          "heatmap-color":
+            heatTone === "risk"
+              ? ["interpolate", ["linear"], ["heatmap-density"], 0, "rgba(21,128,61,0)", 0.25, "rgb(22,163,74)", 0.5, "rgb(217,119,6)", 0.8, "rgb(220,38,38)", 1, "rgb(127,29,29)"]
+              : ["interpolate", ["linear"], ["heatmap-density"], 0, "rgba(21,128,61,0)", 0.3, "rgb(134,239,172)", 0.6, "rgb(34,197,94)", 1, "rgb(20,83,45)"],
         },
       });
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the tone is fixed when the layer is created
   }, [heat]);
+
+  // Lines and areas of the map data layers (rivers, forests, beaches): under the markers, in each layer's colour.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || shapes === undefined) return;
+    whenStyleReady(map, () => {
+      const source = map.getSource<GeoJSONSource>(SHAPE_SOURCE);
+      if (source) {
+        void source.setData(shapes); // resolves once applied; failures are fired as map "error" events
+        return;
+      }
+      map.addSource(SHAPE_SOURCE, { type: "geojson", data: shapes });
+      const areas: ExpressionSpecification = ["match", ["geometry-type"], ["Polygon", "MultiPolygon"], true, false];
+      map.addLayer({
+        id: `${SHAPE_SOURCE}-fill`,
+        type: "fill",
+        source: SHAPE_SOURCE,
+        filter: areas,
+        paint: { "fill-color": ["get", "colour"], "fill-opacity": 0.22 },
+      });
+      map.addLayer({
+        id: `${SHAPE_SOURCE}-line`,
+        type: "line",
+        source: SHAPE_SOURCE,
+        layout: { "line-join": "round", "line-cap": "round" },
+        paint: { "line-color": ["get", "colour"], "line-width": ["case", areas, 1.2, 3], "line-opacity": 0.9 },
+      });
+    });
+  }, [shapes]);
 
   // Location tracks: one line source, created on first use and then only updated.
   useEffect(() => {

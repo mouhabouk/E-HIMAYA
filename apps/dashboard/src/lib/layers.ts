@@ -4,6 +4,7 @@
  * `services/api/app/modules/layers/schemas.py`) and the grouping of many places into clusters.
  */
 
+import type { Geometry as GeoJsonGeometry } from "geojson";
 import type { BBox } from "./filters";
 
 export const LAYER_ICONS = [
@@ -116,6 +117,13 @@ export interface MapLayer {
   deleted_at: string | null;
   delete_reason: string | null;
   purge_at: string | null;
+}
+
+/** The lines and areas of a layer in a map area (phase L1b), simplified for the zoom. */
+export interface LayerShapes {
+  type: "FeatureCollection";
+  features: { type: "Feature"; id: string; geometry: GeoJsonGeometry; properties: { id: string; name: string; kind: string | null } }[];
+  truncated: boolean;
 }
 
 export interface MapLayers {

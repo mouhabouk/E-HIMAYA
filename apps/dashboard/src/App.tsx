@@ -16,6 +16,7 @@ import {
   canEditAiSettings,
   canEditTips,
   canHandleContact,
+  canOpenCoastal,
   canOpenLayers,
   canManageAccounts,
   canOpenCrew,
@@ -101,6 +102,7 @@ const RewardCertificatesPage = page(() => import("./pages/RewardsPages"), "Rewar
 const RewardLeaderboardPage = page(() => import("./pages/RewardsPages"), "RewardLeaderboardPage");
 // Phase B1: map data layers (file import, preview map).
 const LayersPage = page(() => import("./pages/LayersPage"), "LayersPage");
+const CoastalPage = page(() => import("./pages/CoastalPage"), "CoastalPage");
 const EmergencyGuidePage = page(() => import("./pages/EmergencyGuidePage"), "EmergencyGuidePage");
 const ContactInboxPage = page(() => import("./pages/ContactInboxPage"), "ContactInboxPage");
 
@@ -210,6 +212,7 @@ export function AppRoutes() {
         <Route path="notifications/:id" element={notifications(<NotificationEditorPage />)} />
         <Route path="safety-tips" element={tips(<SafetyTipsPage />)} />
         <Route path="layers" element={gated(canOpenLayers, <LayersPage />)} />
+        <Route path="coastal" element={gated(canOpenCoastal, <CoastalPage />)} />
         <Route path="emergency-guide" element={gated(canEditTips, <EmergencyGuidePage />)} />
         <Route path="contact" element={gated(canHandleContact, <ContactInboxPage />)} />
         <Route path="committee" element={committee(<CommitteePage />)} />

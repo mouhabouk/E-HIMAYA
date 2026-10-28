@@ -10707,6 +10707,288 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Kept on the phone: sent when the network is back.'**
   String get staffKept;
+
+  /// No description provided for @beachesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Beaches today'**
+  String get beachesTitle;
+
+  /// No description provided for @beachesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The colour of each beach and why (drowning risk)'**
+  String get beachesHint;
+
+  /// No description provided for @beachesSimBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'[SIM] Simulated marine weather: these colours are for a trial, not real. In an emergency call 198.'**
+  String get beachesSimBanner;
+
+  /// No description provided for @beachesWarnToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Warn me near a yellow or red beach'**
+  String get beachesWarnToggle;
+
+  /// No description provided for @beachesWarnHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Computed on this phone; your position is not sent.'**
+  String get beachesWarnHint;
+
+  /// No description provided for @beachesDanger.
+  ///
+  /// In en, this message translates to:
+  /// **'You are {distance} from {name}: {level}'**
+  String beachesDanger(String name, String level, String distance);
+
+  /// No description provided for @beachesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No beach data yet.'**
+  String get beachesEmpty;
+
+  /// No description provided for @beachesNoPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'Location is off: beaches are listed by name.'**
+  String get beachesNoPosition;
+
+  /// No description provided for @beachesMapLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Map of the beaches coloured by drowning risk'**
+  String get beachesMapLabel;
+
+  /// No description provided for @beachLevelRed.
+  ///
+  /// In en, this message translates to:
+  /// **'Red: high risk'**
+  String get beachLevelRed;
+
+  /// No description provided for @beachLevelYellow.
+  ///
+  /// In en, this message translates to:
+  /// **'Yellow: caution'**
+  String get beachLevelYellow;
+
+  /// No description provided for @beachLevelGreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Green: normal'**
+  String get beachLevelGreen;
+
+  /// No description provided for @beachLevelUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Not computed'**
+  String get beachLevelUnknown;
+
+  /// No description provided for @beachScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Score {score}/100'**
+  String beachScore(int score);
+
+  /// No description provided for @beachFactorWaves.
+  ///
+  /// In en, this message translates to:
+  /// **'Waves {value} m'**
+  String beachFactorWaves(String value);
+
+  /// No description provided for @beachFactorOnshore.
+  ///
+  /// In en, this message translates to:
+  /// **'Wind from the sea {value} km/h'**
+  String beachFactorOnshore(String value);
+
+  /// No description provided for @beachFactorCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'Current {value} km/h'**
+  String beachFactorCurrent(String value);
+
+  /// No description provided for @beachFactorSeason.
+  ///
+  /// In en, this message translates to:
+  /// **'Bathing season or heat'**
+  String get beachFactorSeason;
+
+  /// No description provided for @beachFactorCrowd.
+  ///
+  /// In en, this message translates to:
+  /// **'Very crowded'**
+  String get beachFactorCrowd;
+
+  /// No description provided for @beachFactorUnguarded.
+  ///
+  /// In en, this message translates to:
+  /// **'No lifeguards'**
+  String get beachFactorUnguarded;
+
+  /// No description provided for @beachFactorDrownings.
+  ///
+  /// In en, this message translates to:
+  /// **'Past drownings nearby ({value})'**
+  String beachFactorDrownings(String value);
+
+  /// No description provided for @beachDecisionNote.
+  ///
+  /// In en, this message translates to:
+  /// **'This colour helps you decide; always follow the lifeguards and the flags on the beach.'**
+  String get beachDecisionNote;
+
+  /// No description provided for @beachDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Next days'**
+  String get beachDays;
+
+  /// No description provided for @beachWaves.
+  ///
+  /// In en, this message translates to:
+  /// **'Waves {value} m'**
+  String beachWaves(String value);
+
+  /// No description provided for @beachSeaTemp.
+  ///
+  /// In en, this message translates to:
+  /// **'Sea {value} °C'**
+  String beachSeaTemp(String value);
+
+  /// No description provided for @beachCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Beach card'**
+  String get beachCardTitle;
+
+  /// No description provided for @beachCardClassification.
+  ///
+  /// In en, this message translates to:
+  /// **'Classification'**
+  String get beachCardClassification;
+
+  /// No description provided for @beachCardBlueFlag.
+  ///
+  /// In en, this message translates to:
+  /// **'Blue Flag'**
+  String get beachCardBlueFlag;
+
+  /// No description provided for @beachCardGuarded.
+  ///
+  /// In en, this message translates to:
+  /// **'Lifeguards'**
+  String get beachCardGuarded;
+
+  /// No description provided for @beachCardGuardHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Lifeguard hours'**
+  String get beachCardGuardHours;
+
+  /// No description provided for @beachCardSand.
+  ///
+  /// In en, this message translates to:
+  /// **'Sand'**
+  String get beachCardSand;
+
+  /// No description provided for @beachCardSlope.
+  ///
+  /// In en, this message translates to:
+  /// **'Slope'**
+  String get beachCardSlope;
+
+  /// No description provided for @beachCardDepth.
+  ///
+  /// In en, this message translates to:
+  /// **'Depth'**
+  String get beachCardDepth;
+
+  /// No description provided for @beachCardCurrents.
+  ///
+  /// In en, this message translates to:
+  /// **'Known currents'**
+  String get beachCardCurrents;
+
+  /// No description provided for @beachCardCrowd.
+  ///
+  /// In en, this message translates to:
+  /// **'Crowd'**
+  String get beachCardCrowd;
+
+  /// No description provided for @beachCardUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'Use'**
+  String get beachCardUsage;
+
+  /// No description provided for @beachCardPeakSeason.
+  ///
+  /// In en, this message translates to:
+  /// **'Peak season'**
+  String get beachCardPeakSeason;
+
+  /// No description provided for @beachCardWaterQuality.
+  ///
+  /// In en, this message translates to:
+  /// **'Water quality'**
+  String get beachCardWaterQuality;
+
+  /// No description provided for @beachYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get beachYes;
+
+  /// No description provided for @beachNo.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get beachNo;
+
+  /// No description provided for @beachSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Source: {source}'**
+  String beachSource(String source);
+
+  /// No description provided for @beachPresenceToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Count me when I say I am at a beach'**
+  String get beachPresenceToggle;
+
+  /// No description provided for @beachPresenceHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Anonymous: a random code of the day, no account and no position. It helps the rescue teams plan.'**
+  String get beachPresenceHint;
+
+  /// No description provided for @beachPresenceButton.
+  ///
+  /// In en, this message translates to:
+  /// **'I am at this beach'**
+  String get beachPresenceButton;
+
+  /// No description provided for @beachPresenceSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you, you are counted for 30 minutes.'**
+  String get beachPresenceSent;
+
+  /// No description provided for @nearestByRoad.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min by road'**
+  String nearestByRoad(int minutes);
+
+  /// No description provided for @nearestByRoadEstimate.
+  ///
+  /// In en, this message translates to:
+  /// **'about {minutes} min by road (estimate)'**
+  String nearestByRoadEstimate(int minutes);
 }
 
 class _AppLocalizationsDelegate

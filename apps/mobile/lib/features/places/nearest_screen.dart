@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
+import '../../core/http/api_error.dart';
+import '../../core/http/ehimaya_api.dart';
 import '../../core/http/models.dart';
 import '../../core/location/location_service.dart';
 import '../../core/settings/settings_controller.dart';
@@ -22,6 +24,20 @@ final myPositionProvider = FutureProvider.autoDispose<GeoPoint?>(
   (ref) => ref.read(locationServiceProvider).bestEffort(),
   retry: (_, _) => null,
 );
+
+/// Phase L1b: the nearest places of a layer timed on the road by the server, when it can be
+/// reached (offline, the list keeps its straight-line order and distances).
+final roadTimesProvider = FutureProvider.autoDispose
+    .family<Map<String, RoadTime>, (String, double, double)>((ref, at) async {
+      final (key, lat, lon) = at;
+      try {
+        return await ref
+            .read(apiProvider)
+            .roadNearest(key, GeoPoint(lat: lat, lon: lon));
+      } on ApiException {
+        return const {};
+      }
+    }, retry: (_, _) => null);
 
 /// Layers the user turned off, kept between visits.
 class PlacesOffController extends Notifier<Set<String>> {
@@ -143,6 +159,7 @@ class NearestScreen extends ConsumerWidget {
         _LayerCard(
           layer: layer,
           lang: lang,
+          here: here,
           near: here == null
               ? null
               : nearest(data.packages[layer.key]?.places ?? const [], here),
@@ -244,20 +261,31 @@ class _PositionCard extends ConsumerWidget {
   }
 }
 
-class _LayerCard extends StatelessWidget {
-  const _LayerCard({required this.layer, required this.lang, this.near});
+class _LayerCard extends ConsumerWidget {
+  const _LayerCard({
+    required this.layer,
+    required this.lang,
+    this.here,
+    this.near,
+  });
 
   final PlaceLayer layer;
   final String lang;
+  final GeoPoint? here;
 
   /// Null while the position is unknown.
   final List<NearPlace>? near;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colour = guideColour(layer.colour);
+    final at = here;
+    final road = at == null
+        ? const <String, RoadTime>{}
+        : ref.watch(roadTimesProvider((layer.key, at.lat, at.lon))).value ??
+              const <String, RoadTime>{};
     return Card(
       key: Key('nearest-layer-${layer.key}'),
       child: Padding(
@@ -312,7 +340,8 @@ class _LayerCard extends StatelessWidget {
                 child: Text(l10n.nearestNone),
               )
             else
-              for (final p in near!) _PlaceTile(near: p),
+              for (final p in near!)
+                _PlaceTile(near: p, road: road[p.place.id]),
             if (layer.source.isNotEmpty)
               Text(
                 l10n.nearestSource(
@@ -331,9 +360,12 @@ class _LayerCard extends StatelessWidget {
 }
 
 class _PlaceTile extends ConsumerWidget {
-  const _PlaceTile({required this.near});
+  const _PlaceTile({required this.near, this.road});
 
   final NearPlace near;
+
+  /// The time on the road, when the server gave it.
+  final RoadTime? road;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -352,6 +384,10 @@ class _PlaceTile extends ConsumerWidget {
       subtitle: Text(
         [
           formatDistance(near.distanceM),
+          if (road case final r?)
+            r.estimated
+                ? l10n.nearestByRoadEstimate(_minutes(r.seconds))
+                : l10n.nearestByRoad(_minutes(r.seconds)),
           if (details.isNotEmpty) details,
         ].join(' · '),
       ),
@@ -384,6 +420,8 @@ class _PlaceTile extends ConsumerWidget {
     );
   }
 }
+
+int _minutes(int seconds) => seconds < 60 ? 1 : (seconds / 60).round();
 
 /// Opens the phone's own maps app on the place (`geo:` URI, understood by Android and by the
 /// usual map apps), with the name as label.

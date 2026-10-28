@@ -32,6 +32,7 @@ import { boundsOfPositions, forecastBounds, forecastMapPolygons } from "../lib/f
 import { p7Keys } from "../lib/phase7Api";
 import { useFormat, useGouvernorats, useLanguage } from "../lib/hooks";
 import { canManageIncidents } from "../lib/roles";
+import { NearHospitals } from "../components/NearHospitals";
 import { queryKeys } from "../lib/staffApi";
 import { TIMELINE_KINDS, type IncidentDetail, type TimelineEntry } from "../lib/types";
 import { PageTitle } from "../components/PageTitle";
@@ -475,6 +476,8 @@ export function IncidentDetailPage() {
         <RespondersPanel incident={incident} />
         <ConferencePanel incident={incident} />
       </div>
+
+      <NearHospitals incident={incident} />
 
       <AssistantPanel incident={incident} />
 

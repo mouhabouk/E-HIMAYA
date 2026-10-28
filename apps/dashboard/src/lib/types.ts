@@ -300,6 +300,8 @@ export const TIMELINE_KINDS = [
   ...PHASE9_TIMELINE_KINDS,
   // Phase P4a (staff app)
   ...CREW_TIMELINE_KINDS,
+  // Phase L1b: the hospital the room added (nearest on the road).
+  "hospital_chosen",
 ] as const;
 
 export interface IncidentSummary {

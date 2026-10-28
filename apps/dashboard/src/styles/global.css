@@ -4876,3 +4876,123 @@ button.nav-card:hover {
 .visit-photos h4 {
   margin: 0.75rem 0 0.5rem;
 }
+
+/* Coastal safety (phase L1b): risk colours are the design tokens red, amber and green, always with their word. */
+.coastal-page {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.kpi--risk-red { border-inline-start-color: var(--tone-red); }
+.kpi--risk-yellow { border-inline-start-color: var(--tone-amber); }
+.kpi--risk-green { border-inline-start-color: var(--tone-green); }
+.bars__bar--risk { background: var(--tone-red); }
+
+.coastal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.coastal-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(18rem, 1fr);
+  gap: 0.75rem;
+}
+
+@media (max-width: 960px) {
+  .coastal-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.coastal-map__map {
+  block-size: 32rem;
+}
+
+.coastal-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.85rem;
+}
+
+.coastal-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.coastal-legend__dot {
+  inline-size: 0.8rem;
+  block-size: 0.8rem;
+  border-radius: 50%;
+  border: 1px solid var(--surface);
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+.coastal-alerts,
+.near-hospitals {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.coastal-alert,
+.near-hospitals li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.6rem;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.coastal-alert--acked {
+  opacity: 0.75;
+}
+
+.coastal-beach__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.coastal-card {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 0.5rem 1rem;
+  margin: 0;
+}
+
+.coastal-card dt {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.coastal-card dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.coastal-rules {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.75rem;
+}
+
+.coastal-rules__band {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}

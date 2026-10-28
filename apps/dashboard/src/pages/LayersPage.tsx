@@ -27,7 +27,7 @@ import {
   type MapLayer,
   type MapLayers,
 } from "../lib/layers";
-import { layerKeys, type Download } from "../lib/layersApi";
+import { layerKeys, saveDownload } from "../lib/layersApi";
 import { SimTag } from "../components/StreamBits";
 import { localized } from "../lib/localized";
 import { TUNISIA_BOUNDS } from "../lib/mapStyle";
@@ -54,17 +54,6 @@ const CHANGE_COLOURS: Record<Change, string> = {
 };
 const SHOWN_ROWS = 100;
 
-function save(download: Download): void {
-  const url = URL.createObjectURL(download.blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = download.filename;
-  a.rel = "noopener";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 60_000);
-}
 
 // ---------------------------------------------------------------- layer form
 
@@ -989,7 +978,7 @@ function ExportButtons({ layer }: { layer: MapLayer }) {
   const lang = useLanguage();
   const download = useMutation({
     mutationFn: (format: "csv" | "xlsx" | "geojson") => api.exportLayer(layer.key, format, lang),
-    onSuccess: save,
+    onSuccess: saveDownload,
   });
   return (
     <div className="actions" role="group" aria-label={t("layers.export.title")}>
@@ -1058,7 +1047,7 @@ function TemplateLinks() {
   const lang = useLanguage();
   const download = useMutation({
     mutationFn: (format: "csv" | "xlsx") => api.layerTemplate(format, lang),
-    onSuccess: save,
+    onSuccess: saveDownload,
   });
   return (
     <div className="actions">

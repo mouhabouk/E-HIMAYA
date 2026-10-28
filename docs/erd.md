@@ -140,6 +140,73 @@ erDiagram
     }
 ```
 
+## coastal
+
+```mermaid
+erDiagram
+    coastal__alert {
+        uuid id PK
+        uuid feature_id FK
+        date day
+        text level
+        text previous_level
+        smallint score
+        smallint gouvernorat_code FK
+        boolean simulated
+        datetime created_at
+        text acked_by
+        text acked_by_name
+        datetime acked_at
+    }
+    coastal__beach {
+        uuid feature_id PK,FK
+        float seaward_deg
+        datetime fetched_at
+        datetime next_fetch_at
+        smallint attempts
+        text source
+        boolean simulated
+    }
+    coastal__beach_day {
+        uuid feature_id PK,FK
+        date day PK
+        smallint score
+        text level
+        jsonb factors
+        jsonb inputs
+        text source
+        boolean simulated
+        datetime computed_at
+    }
+    coastal__marine_hour {
+        uuid feature_id PK,FK
+        datetime at PK
+        float wave_height_m
+        float wave_period_s
+        float wave_direction_deg
+        float sea_temp_c
+        float current_kmh
+        float current_direction_deg
+    }
+    coastal__presence {
+        uuid feature_id PK,FK
+        blob token_hash PK
+        datetime at
+    }
+    coastal__settings {
+        smallint id PK
+        jsonb rules
+        text updated_by
+        datetime updated_at
+    }
+    coastal__beach ||--o{ coastal__alert : "feature_id"
+    coastal__beach ||--o{ coastal__beach_day : "feature_id"
+    coastal__beach ||--o{ coastal__marine_hour : "feature_id"
+    coastal__beach ||--o{ coastal__presence : "feature_id"
+    geo__gouvernorat ||--o{ coastal__alert : "gouvernorat_code"
+    geo__layer_feature ||--o{ coastal__beach : "feature_id"
+```
+
 ## contact
 
 ```mermaid

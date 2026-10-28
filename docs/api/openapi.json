@@ -753,6 +753,22 @@
         "title": "AlertSentOut",
         "type": "object"
       },
+      "AlertsOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__coastal__schemas__AlertOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "AlertsOut",
+        "type": "object"
+      },
       "AnalysisOut": {
         "properties": {
           "attempts": {
@@ -2071,6 +2087,302 @@
           "next_cursor"
         ],
         "title": "BadgePage",
+        "type": "object"
+      },
+      "BeachDetail": {
+        "properties": {
+          "attribution": {
+            "items": {
+              "anyOf": [
+                {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "title": "Attribution",
+            "type": "array"
+          },
+          "beach": {
+            "$ref": "#/components/schemas/BeachOut"
+          },
+          "card": {
+            "additionalProperties": true,
+            "title": "Card",
+            "type": "object"
+          },
+          "days": {
+            "items": {
+              "$ref": "#/components/schemas/DayRisk"
+            },
+            "title": "Days",
+            "type": "array"
+          },
+          "length_m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Length M"
+          },
+          "seaward_deg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seaward Deg"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "sources": {
+            "additionalProperties": true,
+            "title": "Sources",
+            "type": "object"
+          }
+        },
+        "required": [
+          "beach",
+          "days",
+          "card",
+          "sources",
+          "length_m",
+          "seaward_deg",
+          "simulated",
+          "attribution"
+        ],
+        "title": "BeachDetail",
+        "type": "object"
+      },
+      "BeachOut": {
+        "properties": {
+          "classification": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Classification"
+          },
+          "crowd": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crowd"
+          },
+          "current_kmh": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Kmh"
+          },
+          "factors": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/Factor"
+            },
+            "title": "Factors",
+            "type": "array"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "guarded": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Guarded"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "lat": {
+            "title": "Lat",
+            "type": "number"
+          },
+          "level": {
+            "anyOf": [
+              {
+                "enum": [
+                  "green",
+                  "yellow",
+                  "red"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Level"
+          },
+          "lon": {
+            "title": "Lon",
+            "type": "number"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "present": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Present"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "sea_temp_c": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sea Temp C"
+          },
+          "wave_height_m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wave Height M"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "lat",
+          "lon",
+          "gouvernorat_code",
+          "level",
+          "score"
+        ],
+        "title": "BeachOut",
+        "type": "object"
+      },
+      "BeachesOut": {
+        "properties": {
+          "attribution": {
+            "items": {
+              "anyOf": [
+                {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "title": "Attribution",
+            "type": "array"
+          },
+          "computed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Computed At"
+          },
+          "day": {
+            "format": "date",
+            "title": "Day",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/BeachOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "warn_radius_m": {
+            "title": "Warn Radius M",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "day",
+          "computed_at",
+          "simulated",
+          "attribution",
+          "warn_radius_m",
+          "items"
+        ],
+        "title": "BeachesOut",
         "type": "object"
       },
       "Bilingual": {
@@ -4713,6 +5025,98 @@
           "count"
         ],
         "title": "Day",
+        "type": "object"
+      },
+      "DayRisk": {
+        "properties": {
+          "current_kmh": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Kmh"
+          },
+          "day": {
+            "format": "date",
+            "title": "Day",
+            "type": "string"
+          },
+          "factors": {
+            "items": {
+              "$ref": "#/components/schemas/Factor"
+            },
+            "title": "Factors",
+            "type": "array"
+          },
+          "level": {
+            "enum": [
+              "green",
+              "yellow",
+              "red"
+            ],
+            "title": "Level",
+            "type": "string"
+          },
+          "max_temperature_c": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Temperature C"
+          },
+          "onshore_wind_kmh": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Onshore Wind Kmh"
+          },
+          "score": {
+            "title": "Score",
+            "type": "integer"
+          },
+          "sea_temp_c": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sea Temp C"
+          },
+          "wave_height_m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wave Height M"
+          }
+        },
+        "required": [
+          "day",
+          "level",
+          "score",
+          "factors"
+        ],
+        "title": "DayRisk",
         "type": "object"
       },
       "DelegationOut": {
@@ -8908,6 +9312,27 @@
         "title": "Facets",
         "type": "object"
       },
+      "Factor": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "points": {
+            "title": "Points",
+            "type": "integer"
+          },
+          "value": {
+            "title": "Value"
+          }
+        },
+        "required": [
+          "code",
+          "points"
+        ],
+        "title": "Factor",
+        "type": "object"
+      },
       "FeaturePatch": {
         "additionalProperties": false,
         "properties": {
@@ -10444,6 +10869,73 @@
         "title": "GouvernoratOut",
         "type": "object"
       },
+      "GouvernoratRisk": {
+        "properties": {
+          "average_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Average Score"
+          },
+          "beaches": {
+            "title": "Beaches",
+            "type": "integer"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code"
+          },
+          "crowd_high": {
+            "title": "Crowd High",
+            "type": "integer"
+          },
+          "crowd_low": {
+            "title": "Crowd Low",
+            "type": "integer"
+          },
+          "crowd_medium": {
+            "title": "Crowd Medium",
+            "type": "integer"
+          },
+          "green": {
+            "title": "Green",
+            "type": "integer"
+          },
+          "red": {
+            "title": "Red",
+            "type": "integer"
+          },
+          "yellow": {
+            "title": "Yellow",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "code",
+          "beaches",
+          "red",
+          "yellow",
+          "green",
+          "average_score",
+          "crowd_high",
+          "crowd_medium",
+          "crowd_low"
+        ],
+        "title": "GouvernoratRisk",
+        "type": "object"
+      },
       "GrantIn": {
         "properties": {
           "duration_min": {
@@ -11327,6 +11819,20 @@
           "simulated"
         ],
         "title": "Hospital",
+        "type": "object"
+      },
+      "HospitalChoice": {
+        "properties": {
+          "feature_id": {
+            "format": "uuid",
+            "title": "Feature Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "feature_id"
+        ],
+        "title": "HospitalChoice",
         "type": "object"
       },
       "HourOut": {
@@ -12981,81 +13487,6 @@
           "fields"
         ],
         "title": "KindOut",
-        "type": "object"
-      },
-      "Kpis": {
-        "properties": {
-          "analysis_pending": {
-            "default": 0,
-            "title": "Analysis Pending",
-            "type": "integer"
-          },
-          "avg_first_response_s": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Avg First Response S"
-          },
-          "by_category": {
-            "additionalProperties": {
-              "type": "integer"
-            },
-            "title": "By Category",
-            "type": "object"
-          },
-          "by_gouvernorat": {
-            "items": {
-              "$ref": "#/components/schemas/GouvernoratCount"
-            },
-            "title": "By Gouvernorat",
-            "type": "array"
-          },
-          "by_status": {
-            "additionalProperties": {
-              "type": "integer"
-            },
-            "title": "By Status",
-            "type": "object"
-          },
-          "certificates_submitted": {
-            "default": 0,
-            "title": "Certificates Submitted",
-            "type": "integer"
-          },
-          "high_priority": {
-            "default": 0,
-            "title": "High Priority",
-            "type": "integer"
-          },
-          "orgs_pending_review": {
-            "default": 0,
-            "title": "Orgs Pending Review",
-            "type": "integer"
-          },
-          "since": {
-            "format": "date-time",
-            "title": "Since",
-            "type": "string"
-          },
-          "total": {
-            "title": "Total",
-            "type": "integer"
-          }
-        },
-        "required": [
-          "since",
-          "total",
-          "by_status",
-          "by_category",
-          "by_gouvernorat",
-          "avg_first_response_s"
-        ],
-        "title": "Kpis",
         "type": "object"
       },
       "LastImport": {
@@ -16383,6 +16814,78 @@
         "title": "Names",
         "type": "object"
       },
+      "NearHospital": {
+        "description": "A hospital near an incident, timed on the road (phase L1b).",
+        "properties": {
+          "distance_m": {
+            "title": "Distance M",
+            "type": "integer"
+          },
+          "engine": {
+            "title": "Engine",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "lat": {
+            "title": "Lat",
+            "type": "number"
+          },
+          "layer": {
+            "title": "Layer",
+            "type": "string"
+          },
+          "lon": {
+            "title": "Lon",
+            "type": "number"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "road_m": {
+            "title": "Road M",
+            "type": "integer"
+          },
+          "road_s": {
+            "title": "Road S",
+            "type": "integer"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "phone",
+          "layer",
+          "lat",
+          "lon",
+          "distance_m",
+          "road_m",
+          "road_s",
+          "engine",
+          "simulated"
+        ],
+        "title": "NearHospital",
+        "type": "object"
+      },
       "NearbyIncident": {
         "description": "Summary of an open incident near a report, whatever its gouvernorat (no reporter data).",
         "properties": {
@@ -18346,114 +18849,6 @@
         "title": "OrganizationCard",
         "type": "object"
       },
-      "Overview": {
-        "properties": {
-          "by_category": {
-            "items": {
-              "$ref": "#/components/schemas/KeyCount"
-            },
-            "title": "By Category",
-            "type": "array"
-          },
-          "by_gouvernorat": {
-            "items": {
-              "$ref": "#/components/schemas/KeyCount"
-            },
-            "title": "By Gouvernorat",
-            "type": "array"
-          },
-          "by_hour": {
-            "items": {
-              "$ref": "#/components/schemas/KeyCount"
-            },
-            "title": "By Hour",
-            "type": "array"
-          },
-          "by_source": {
-            "items": {
-              "$ref": "#/components/schemas/KeyCount"
-            },
-            "title": "By Source",
-            "type": "array"
-          },
-          "by_status": {
-            "items": {
-              "$ref": "#/components/schemas/KeyCount"
-            },
-            "title": "By Status",
-            "type": "array"
-          },
-          "by_weekday": {
-            "items": {
-              "$ref": "#/components/schemas/KeyCount"
-            },
-            "title": "By Weekday",
-            "type": "array"
-          },
-          "category": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Category"
-          },
-          "from": {
-            "format": "date",
-            "title": "From",
-            "type": "string"
-          },
-          "gouvernorats": {
-            "items": {
-              "type": "integer"
-            },
-            "title": "Gouvernorats",
-            "type": "array"
-          },
-          "incidents": {
-            "items": {
-              "$ref": "#/components/schemas/IncidentCount"
-            },
-            "title": "Incidents",
-            "type": "array"
-          },
-          "min_cell": {
-            "title": "Min Cell",
-            "type": "integer"
-          },
-          "response_time": {
-            "$ref": "#/components/schemas/ResponseTimes"
-          },
-          "to": {
-            "format": "date",
-            "title": "To",
-            "type": "string"
-          },
-          "totals": {
-            "$ref": "#/components/schemas/Totals"
-          }
-        },
-        "required": [
-          "from",
-          "to",
-          "gouvernorats",
-          "category",
-          "totals",
-          "response_time",
-          "by_category",
-          "by_gouvernorat",
-          "by_status",
-          "by_source",
-          "by_hour",
-          "by_weekday",
-          "min_cell"
-        ],
-        "title": "Overview",
-        "type": "object"
-      },
       "ParticipantIn": {
         "properties": {
           "gouvernorat_code": {
@@ -18999,6 +19394,22 @@
         "title": "PositionsOut",
         "type": "object"
       },
+      "PresenceIn": {
+        "properties": {
+          "token": {
+            "maxLength": 64,
+            "minLength": 16,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "title": "Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "token"
+        ],
+        "title": "PresenceIn",
+        "type": "object"
+      },
       "PreviewPoint": {
         "properties": {
           "change": {
@@ -19510,6 +19921,39 @@
             "additionalProperties": true,
             "title": "Props",
             "type": "object"
+          },
+          "road_engine": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Road Engine"
+          },
+          "road_m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Road M"
+          },
+          "road_s": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Road S"
           }
         },
         "required": [
@@ -22708,6 +23152,27 @@
           "editable"
         ],
         "title": "SettingOut",
+        "type": "object"
+      },
+      "SettingsIn": {
+        "properties": {
+          "reason": {
+            "maxLength": 500,
+            "minLength": 3,
+            "title": "Reason",
+            "type": "string"
+          },
+          "rules": {
+            "additionalProperties": true,
+            "title": "Rules",
+            "type": "object"
+          }
+        },
+        "required": [
+          "rules",
+          "reason"
+        ],
+        "title": "SettingsIn",
         "type": "object"
       },
       "Shapes": {
@@ -30071,6 +30536,114 @@
         "title": "ReviewIn",
         "type": "object"
       },
+      "app__modules__analytics__schemas__Overview": {
+        "properties": {
+          "by_category": {
+            "items": {
+              "$ref": "#/components/schemas/KeyCount"
+            },
+            "title": "By Category",
+            "type": "array"
+          },
+          "by_gouvernorat": {
+            "items": {
+              "$ref": "#/components/schemas/KeyCount"
+            },
+            "title": "By Gouvernorat",
+            "type": "array"
+          },
+          "by_hour": {
+            "items": {
+              "$ref": "#/components/schemas/KeyCount"
+            },
+            "title": "By Hour",
+            "type": "array"
+          },
+          "by_source": {
+            "items": {
+              "$ref": "#/components/schemas/KeyCount"
+            },
+            "title": "By Source",
+            "type": "array"
+          },
+          "by_status": {
+            "items": {
+              "$ref": "#/components/schemas/KeyCount"
+            },
+            "title": "By Status",
+            "type": "array"
+          },
+          "by_weekday": {
+            "items": {
+              "$ref": "#/components/schemas/KeyCount"
+            },
+            "title": "By Weekday",
+            "type": "array"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "from": {
+            "format": "date",
+            "title": "From",
+            "type": "string"
+          },
+          "gouvernorats": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Gouvernorats",
+            "type": "array"
+          },
+          "incidents": {
+            "items": {
+              "$ref": "#/components/schemas/IncidentCount"
+            },
+            "title": "Incidents",
+            "type": "array"
+          },
+          "min_cell": {
+            "title": "Min Cell",
+            "type": "integer"
+          },
+          "response_time": {
+            "$ref": "#/components/schemas/ResponseTimes"
+          },
+          "to": {
+            "format": "date",
+            "title": "To",
+            "type": "string"
+          },
+          "totals": {
+            "$ref": "#/components/schemas/Totals"
+          }
+        },
+        "required": [
+          "from",
+          "to",
+          "gouvernorats",
+          "category",
+          "totals",
+          "response_time",
+          "by_category",
+          "by_gouvernorat",
+          "by_status",
+          "by_source",
+          "by_hour",
+          "by_weekday",
+          "min_cell"
+        ],
+        "title": "Overview",
+        "type": "object"
+      },
       "app__modules__analytics__schemas__ReportIn": {
         "properties": {
           "filters": {
@@ -30388,6 +30961,327 @@
           "remarks"
         ],
         "title": "SummaryOut",
+        "type": "object"
+      },
+      "app__modules__coastal__schemas__AlertOut": {
+        "properties": {
+          "acked_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acked At"
+          },
+          "acked_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acked By Name"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "day": {
+            "format": "date",
+            "title": "Day",
+            "type": "string"
+          },
+          "feature_id": {
+            "title": "Feature Id",
+            "type": "string"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "level": {
+            "enum": [
+              "yellow",
+              "red"
+            ],
+            "title": "Level",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "previous_level": {
+            "anyOf": [
+              {
+                "enum": [
+                  "green",
+                  "yellow",
+                  "red"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous Level"
+          },
+          "score": {
+            "title": "Score",
+            "type": "integer"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "feature_id",
+          "name",
+          "day",
+          "level",
+          "previous_level",
+          "score",
+          "gouvernorat_code",
+          "simulated",
+          "created_at",
+          "acked_by_name",
+          "acked_at"
+        ],
+        "title": "AlertOut",
+        "type": "object"
+      },
+      "app__modules__coastal__schemas__Kpis": {
+        "properties": {
+          "average_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Average Score"
+          },
+          "beaches": {
+            "title": "Beaches",
+            "type": "integer"
+          },
+          "drownings_season": {
+            "title": "Drownings Season",
+            "type": "integer"
+          },
+          "green": {
+            "title": "Green",
+            "type": "integer"
+          },
+          "guarded": {
+            "title": "Guarded",
+            "type": "integer"
+          },
+          "present": {
+            "title": "Present",
+            "type": "integer"
+          },
+          "red": {
+            "title": "Red",
+            "type": "integer"
+          },
+          "unknown": {
+            "title": "Unknown",
+            "type": "integer"
+          },
+          "yellow": {
+            "title": "Yellow",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "beaches",
+          "red",
+          "yellow",
+          "green",
+          "unknown",
+          "average_score",
+          "guarded",
+          "drownings_season",
+          "present"
+        ],
+        "title": "Kpis",
+        "type": "object"
+      },
+      "app__modules__coastal__schemas__Overview": {
+        "properties": {
+          "attribution": {
+            "items": {
+              "anyOf": [
+                {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "title": "Attribution",
+            "type": "array"
+          },
+          "beaches": {
+            "items": {
+              "$ref": "#/components/schemas/BeachOut"
+            },
+            "title": "Beaches",
+            "type": "array"
+          },
+          "by_gouvernorat": {
+            "items": {
+              "$ref": "#/components/schemas/GouvernoratRisk"
+            },
+            "title": "By Gouvernorat",
+            "type": "array"
+          },
+          "computed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Computed At"
+          },
+          "day": {
+            "format": "date",
+            "title": "Day",
+            "type": "string"
+          },
+          "heat_drownings": {
+            "items": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "title": "Heat Drownings",
+            "type": "array"
+          },
+          "heat_risk": {
+            "items": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "title": "Heat Risk",
+            "type": "array"
+          },
+          "kpis": {
+            "$ref": "#/components/schemas/app__modules__coastal__schemas__Kpis"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "top_dangerous": {
+            "items": {
+              "$ref": "#/components/schemas/BeachOut"
+            },
+            "title": "Top Dangerous",
+            "type": "array"
+          },
+          "top_touristic": {
+            "items": {
+              "$ref": "#/components/schemas/BeachOut"
+            },
+            "title": "Top Touristic",
+            "type": "array"
+          }
+        },
+        "required": [
+          "day",
+          "computed_at",
+          "simulated",
+          "attribution",
+          "kpis",
+          "top_dangerous",
+          "top_touristic",
+          "by_gouvernorat",
+          "beaches",
+          "heat_risk",
+          "heat_drownings"
+        ],
+        "title": "Overview",
+        "type": "object"
+      },
+      "app__modules__coastal__schemas__SettingsOut": {
+        "properties": {
+          "defaults": {
+            "additionalProperties": true,
+            "title": "Defaults",
+            "type": "object"
+          },
+          "rules": {
+            "additionalProperties": true,
+            "title": "Rules",
+            "type": "object"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
+          "updated_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By"
+          }
+        },
+        "required": [
+          "rules",
+          "defaults",
+          "updated_by",
+          "updated_at"
+        ],
+        "title": "SettingsOut",
         "type": "object"
       },
       "app__modules__contact__router__SummaryOut": {
@@ -32214,6 +33108,81 @@
         "title": "Review",
         "type": "object"
       },
+      "app__modules__reports__schemas__Kpis": {
+        "properties": {
+          "analysis_pending": {
+            "default": 0,
+            "title": "Analysis Pending",
+            "type": "integer"
+          },
+          "avg_first_response_s": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avg First Response S"
+          },
+          "by_category": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "By Category",
+            "type": "object"
+          },
+          "by_gouvernorat": {
+            "items": {
+              "$ref": "#/components/schemas/GouvernoratCount"
+            },
+            "title": "By Gouvernorat",
+            "type": "array"
+          },
+          "by_status": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "By Status",
+            "type": "object"
+          },
+          "certificates_submitted": {
+            "default": 0,
+            "title": "Certificates Submitted",
+            "type": "integer"
+          },
+          "high_priority": {
+            "default": 0,
+            "title": "High Priority",
+            "type": "integer"
+          },
+          "orgs_pending_review": {
+            "default": 0,
+            "title": "Orgs Pending Review",
+            "type": "integer"
+          },
+          "since": {
+            "format": "date-time",
+            "title": "Since",
+            "type": "string"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "since",
+          "total",
+          "by_status",
+          "by_category",
+          "by_gouvernorat",
+          "avg_first_response_s"
+        ],
+        "title": "Kpis",
+        "type": "object"
+      },
       "app__modules__reports__schemas__ReportIn": {
         "properties": {
           "category": {
@@ -33675,6 +34644,146 @@
         "summary": "Charter",
         "tags": [
           "identity"
+        ]
+      }
+    },
+    "/api/v1/coastal/beaches": {
+      "get": {
+        "operationId": "public_beaches_api_v1_coastal_beaches_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "day",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Day"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeachesOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Public Beaches",
+        "tags": [
+          "coastal"
+        ]
+      }
+    },
+    "/api/v1/coastal/beaches/{feature_id}": {
+      "get": {
+        "operationId": "public_beach_api_v1_coastal_beaches__feature_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "feature_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Feature Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeachDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Public Beach",
+        "tags": [
+          "coastal"
+        ]
+      }
+    },
+    "/api/v1/coastal/beaches/{feature_id}/presence": {
+      "post": {
+        "description": "\"I am at this beach\", sent by a phone whose owner agreed: no account, no position, a daily random token.",
+        "operationId": "presence_api_v1_coastal_beaches__feature_id__presence_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "feature_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Feature Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PresenceIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Presence",
+        "tags": [
+          "coastal"
         ]
       }
     },
@@ -36302,7 +37411,7 @@
     },
     "/api/v1/layers/{key}/features": {
       "get": {
-        "description": "Either the nearest places to ``near`` (with their distance) or the places in a map area (``bbox``).",
+        "description": "Either the nearest places to ``near`` (with their distance) or the places in a map area (``bbox``). With\n``road``, the closest candidates as the crow flies are ordered by the distance and time on the road (routing\nengine, or its estimate when the engine is not there, said in ``road_engine``).",
         "operationId": "public_features_api_v1_layers__key__features_get",
         "parameters": [
           {
@@ -36387,6 +37496,18 @@
               ],
               "title": "Lang",
               "type": "string"
+            }
+          },
+          {
+            "description": "order the nearest places by the road (car)",
+            "in": "query",
+            "name": "road",
+            "required": false,
+            "schema": {
+              "default": false,
+              "description": "order the nearest places by the road (car)",
+              "title": "Road",
+              "type": "boolean"
             }
           }
         ],
@@ -44853,7 +45974,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Overview"
+                  "$ref": "#/components/schemas/app__modules__analytics__schemas__Overview"
                 }
               }
             },
@@ -46558,6 +47679,447 @@
         "summary": "Put Stamp Photo",
         "tags": [
           "staff-institutions"
+        ]
+      }
+    },
+    "/api/v1/staff/coastal/alerts": {
+      "get": {
+        "operationId": "alerts_api_v1_staff_coastal_alerts_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "day",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Day"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlertsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Alerts",
+        "tags": [
+          "staff",
+          "coastal"
+        ]
+      }
+    },
+    "/api/v1/staff/coastal/alerts/{alert_id}/ack": {
+      "post": {
+        "operationId": "ack_api_v1_staff_coastal_alerts__alert_id__ack_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "alert_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Alert Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__coastal__schemas__AlertOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Ack",
+        "tags": [
+          "staff",
+          "coastal"
+        ]
+      }
+    },
+    "/api/v1/staff/coastal/beaches/{feature_id}": {
+      "get": {
+        "operationId": "staff_beach_api_v1_staff_coastal_beaches__feature_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "feature_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Feature Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeachDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Staff Beach",
+        "tags": [
+          "staff",
+          "coastal"
+        ]
+      }
+    },
+    "/api/v1/staff/coastal/bulletin.pdf": {
+      "get": {
+        "operationId": "bulletin_api_v1_staff_coastal_bulletin_pdf_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "day",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Day"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "default": "ar",
+              "enum": [
+                "ar",
+                "fr",
+                "en"
+              ],
+              "title": "Lang",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 99,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Bulletin",
+        "tags": [
+          "staff",
+          "coastal"
+        ]
+      }
+    },
+    "/api/v1/staff/coastal/overview": {
+      "get": {
+        "operationId": "overview_api_v1_staff_coastal_overview_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "day",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Day"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 99,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          },
+          {
+            "in": "query",
+            "name": "classification",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 40,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Classification"
+            }
+          },
+          {
+            "in": "query",
+            "name": "guarded",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Guarded"
+            }
+          },
+          {
+            "in": "query",
+            "name": "level",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "green",
+                    "yellow",
+                    "red"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Level"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__coastal__schemas__Overview"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Overview",
+        "tags": [
+          "staff",
+          "coastal"
+        ]
+      }
+    },
+    "/api/v1/staff/coastal/settings": {
+      "get": {
+        "operationId": "get_rules_api_v1_staff_coastal_settings_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__coastal__schemas__SettingsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Rules",
+        "tags": [
+          "staff",
+          "coastal"
+        ]
+      },
+      "put": {
+        "operationId": "put_rules_api_v1_staff_coastal_settings_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SettingsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__coastal__schemas__SettingsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Put Rules",
+        "tags": [
+          "staff",
+          "coastal"
         ]
       }
     },
@@ -48866,6 +50428,114 @@
         ]
       }
     },
+    "/api/v1/staff/incidents/{incident_id}/hospitals": {
+      "get": {
+        "operationId": "nearest_hospitals_api_v1_staff_incidents__incident_id__hospitals_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incident_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Incident Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/NearHospital"
+                  },
+                  "title": "Response Nearest Hospitals Api V1 Staff Incidents  Incident Id  Hospitals Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Nearest Hospitals",
+        "tags": [
+          "incidents"
+        ]
+      },
+      "post": {
+        "operationId": "choose_hospital_api_v1_staff_incidents__incident_id__hospitals_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incident_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Incident Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HospitalChoice"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NearHospital"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Choose Hospital",
+        "tags": [
+          "incidents"
+        ]
+      }
+    },
     "/api/v1/staff/incidents/{incident_id}/lead": {
       "post": {
         "operationId": "transfer_lead_api_v1_staff_incidents__incident_id__lead_post",
@@ -49440,7 +51110,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Kpis"
+                  "$ref": "#/components/schemas/app__modules__reports__schemas__Kpis"
                 }
               }
             },

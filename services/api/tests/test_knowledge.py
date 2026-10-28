@@ -120,6 +120,23 @@ async def publish(client: httpx.AsyncClient, staff: Staff, body: dict[str, Any],
     return entry["id"]  # type: ignore[no-any-return]
 
 
+async def free_year(client: httpx.AsyncClient, headers: dict[str, str]) -> int:
+    """A past year with no memory entry in Zaghouan yet: on a reused DB (the job runs this file twice) a browse of the
+    year then lists this test's entries only."""
+    while True:
+        year = random_year()
+        body = await find(
+            client,
+            headers,
+            "",
+            kinds="memory",
+            gouvernorat=ZAGHOUAN,
+            **{"from": f"{year}-01-01", "to": f"{year}-12-31"},
+        )
+        if not body["items"]:
+            return year
+
+
 async def find(client: httpx.AsyncClient, headers: dict[str, str], q: str, **params: Any) -> dict[str, Any]:
     r = await client.get("/api/v1/staff/library/search", params={"q": q, **params}, headers=headers)
     assert r.status_code == 200, r.text
@@ -408,7 +425,8 @@ async def test_library_search_scope_and_highlight(client: httpx.AsyncClient, sta
 
 
 async def test_library_arabic_variants_and_pagination(client: httpx.AsyncClient, staff: Staff) -> None:
-    word, year = unique_word(), random_year()
+    national = staff(gouvernorat=None)
+    word, year = unique_word(), await free_year(client, national)
     period = {"from": f"{year}-01-01", "to": f"{year}-12-31"}
     created = [
         await publish(
@@ -424,7 +442,6 @@ async def test_library_arabic_variants_and_pagination(client: httpx.AsyncClient,
         for n in range(3)
     ]
     await index_all()
-    national = staff(gouvernorat=None)
     # "الفيضانات" written with its article and diacritics still matches; "ecole" without accent matches "École".
     body = await find(client, national, f"فيضانات {word}", **period)
     assert ids(body) == set(created)

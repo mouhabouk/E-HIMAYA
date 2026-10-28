@@ -367,6 +367,10 @@ PS> flutter run --dart-define=API_BASE_URL=http://localhost:8000 `
 $ docker compose --env-file .env -f infra/compose.yml --profile vision up -d
 ```
 
+السلامة الساحلية (المرحلة L1b) لا تحتاج ملفا خاصا: على جهاز التطوير يبقى `WEATHER_PROVIDER` فارغا فيعمل محاكي
+الطقس البحري **[SIM]** دون إنترنت. للطقس البحري الحقيقي: `WEATHER_PROVIDER=open-meteo` مع الوصول إلى
+`marine-api.open-meteo.com` (التفاصيل في الدليل التقني §9).
+
 ### 11.1 إعداد OpenSearch في WSL
 
 ```bash

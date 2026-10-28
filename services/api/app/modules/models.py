@@ -5,6 +5,7 @@ from app.modules.analytics.models import Notification, Scenario, Schedule
 from app.modules.analytics.models import Report as AnalyticsReport
 from app.modules.appinfo.models import AppRating
 from app.modules.audit.models import AuditLog
+from app.modules.coastal.models import Beach, BeachDay, CoastalAlert, CoastalSettings, MarineHour, Presence
 from app.modules.contact.models import ContactEvent, ContactRequest
 from app.modules.content.models import GuideItem, GuideTopic, Revision, SafetyTip
 from app.modules.decision.models import ProcedureChunk
@@ -81,12 +82,16 @@ __all__ = [
     "Assignment",
     "AuditLog",
     "BadgeAward",
+    "Beach",
+    "BeachDay",
     "Call",
     "Callout",
     "CalloutTarget",
     "CasualtyCount",
     "CasualtyTransport",
     "Certificate",
+    "CoastalAlert",
+    "CoastalSettings",
     "Conference",
     "Consent",
     "ConsumerCursor",
@@ -133,6 +138,7 @@ __all__ = [
     "LocationPoint",
     "LockedFile",
     "MapFeature",
+    "MarineHour",
     "Media",
     "Member",
     "MemoryEntry",
@@ -146,6 +152,7 @@ __all__ = [
     "Organization",
     "Outbox",
     "PendingAward",
+    "Presence",
     "ProcedureChunk",
     "Profile",
     "Report",

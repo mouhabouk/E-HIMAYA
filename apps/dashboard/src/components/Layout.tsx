@@ -13,6 +13,7 @@ import {
   canManageMedicalCommittee,
   canReviewDoctors,
   canHandleContact,
+  canOpenCoastal,
   canOpenLayers,
   canManageAccounts,
   canOpenCrew,
@@ -356,6 +357,11 @@ export function Layout() {
           {editsTips && (
             <NavItem to="/emergency-guide" icon="medicalServices" tone="red">
               {t("nav.emergencyGuide")}
+            </NavItem>
+          )}
+          {canOpenCoastal(identity.roles) && (
+            <NavItem to="/coastal" icon="healthAndSafety" tone="sky">
+              {t("nav.coastal")}
             </NavItem>
           )}
           {canOpenLayers(identity.roles) && (
