@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
+import '../../l10n/app_localizations.dart';
 import 'tokens.dart';
 
 /// Shared components of the design system (docs/design-system.md §3). Screens build on these so
@@ -575,4 +578,154 @@ class _RingPainter extends CustomPainter {
   @override
   bool shouldRepaint(_RingPainter old) =>
       old.value != value || old.color != color || old.track != track;
+}
+
+/// A whole number as − value + (R4a, docs/design-system.md §3 `Stepper`): the user taps instead of
+/// typing. It edits [controller] as text, so a screen keeps its own parsing; the value stays
+/// typeable for a large number, a long press repeats then moves ten steps, and the bounds hold.
+class NumberStepper extends StatefulWidget {
+  const NumberStepper({
+    required this.controller,
+    required this.label,
+    this.fieldKey,
+    this.min = 0,
+    this.max = 1000000,
+    this.step = 1,
+    this.start,
+    this.enabled = true,
+    this.errorText,
+    this.labelWidget,
+    this.onChanged,
+    super.key,
+  });
+
+  final TextEditingController controller;
+
+  /// The field's name, read by screen readers on the buttons ("increase capacity").
+  final String label;
+
+  /// The key of the text field, so tests that typed a number keep finding it.
+  final Key? fieldKey;
+  final int min;
+  final int max;
+  final int step;
+
+  /// Where the first tap on an empty field lands; [min] when absent.
+  final int? start;
+  final bool enabled;
+  final String? errorText;
+
+  /// Shown instead of [label] above the value (a required mark).
+  final Widget? labelWidget;
+  final ValueChanged<String>? onChanged;
+
+  @override
+  State<NumberStepper> createState() => _NumberStepperState();
+}
+
+class _NumberStepperState extends State<NumberStepper> {
+  Timer? _repeat;
+  int _ticks = 0;
+
+  int? get _value => int.tryParse(widget.controller.text.trim());
+
+  void _move(int sign, [int times = 1]) {
+    final current = _value;
+    final next = current == null
+        ? (widget.start ?? widget.min)
+        : (current + sign * widget.step * times).clamp(widget.min, widget.max);
+    final text = '$next';
+    if (text == widget.controller.text) return;
+    setState(() => widget.controller.text = text);
+    widget.onChanged?.call(text);
+  }
+
+  void _hold(int sign) {
+    _ticks = 0;
+    final wide = widget.max - widget.min >= widget.step * 100;
+    _repeat = Timer.periodic(const Duration(milliseconds: 80), (_) {
+      _ticks += 1;
+      _move(sign, wide && _ticks > 10 ? 10 : 1);
+    });
+  }
+
+  void _stop() {
+    _repeat?.cancel();
+    _repeat = null;
+  }
+
+  @override
+  void dispose() {
+    _stop();
+    super.dispose();
+  }
+
+  Widget _button(BuildContext context, int sign) {
+    final l10n = AppLocalizations.of(context);
+    final value = _value;
+    final atBound =
+        value != null && (sign > 0 ? value >= widget.max : value <= widget.min);
+    final active = widget.enabled && !atBound;
+    return Semantics(
+      button: true,
+      enabled: active,
+      label: sign > 0
+          ? l10n.stepperIncrease(widget.label)
+          : l10n.stepperDecrease(widget.label),
+      excludeSemantics: true,
+      child: GestureDetector(
+        onLongPressStart: active ? (_) => _hold(sign) : null,
+        onLongPressEnd: (_) => _stop(),
+        onLongPressCancel: _stop,
+        child: IconButton.filledTonal(
+          key: switch (widget.fieldKey) {
+            ValueKey<String>(:final value) => Key(
+              '$value-${sign > 0 ? 'plus' : 'minus'}',
+            ),
+            _ => null,
+          },
+          constraints: const BoxConstraints.tightFor(width: 48, height: 48),
+          onPressed: active ? () => _move(sign) : null,
+          icon: Icon(sign > 0 ? Icons.add : Icons.remove),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) => Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Padding(
+        padding: const EdgeInsets.only(top: 4),
+        child: _button(context, -1),
+      ),
+      const SizedBox(width: 8),
+      Expanded(
+        child: TextField(
+          key: widget.fieldKey,
+          controller: widget.controller,
+          enabled: widget.enabled,
+          keyboardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          textAlign: TextAlign.center,
+          textDirection: TextDirection.ltr,
+          style: const TextStyle(fontWeight: FontWeight.w700),
+          decoration: InputDecoration(
+            label: widget.labelWidget ?? Text(widget.label),
+            errorText: widget.errorText,
+          ),
+          onChanged: (text) {
+            setState(() {});
+            widget.onChanged?.call(text);
+          },
+        ),
+      ),
+      const SizedBox(width: 8),
+      Padding(
+        padding: const EdgeInsets.only(top: 4),
+        child: _button(context, 1),
+      ),
+    ],
+  );
 }

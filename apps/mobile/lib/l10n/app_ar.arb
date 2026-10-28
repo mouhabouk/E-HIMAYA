@@ -1814,5 +1814,7 @@
   "beachPresenceButton": "أنا في هذا الشاطئ",
   "beachPresenceSent": "شكرا، أنت محسوب لمدة 30 دقيقة.",
   "nearestByRoad": "{minutes} دقيقة على الطريق",
-  "nearestByRoadEstimate": "حوالي {minutes} دقيقة على الطريق (تقدير)"
+  "nearestByRoadEstimate": "حوالي {minutes} دقيقة على الطريق (تقدير)",
+  "stepperIncrease": "زيادة {label}",
+  "stepperDecrease": "إنقاص {label}"
 }

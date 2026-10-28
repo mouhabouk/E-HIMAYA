@@ -1814,5 +1814,7 @@
   "beachPresenceButton": "Je suis à cette plage",
   "beachPresenceSent": "Merci, vous êtes compté pendant 30 minutes.",
   "nearestByRoad": "{minutes} min par la route",
-  "nearestByRoadEstimate": "environ {minutes} min par la route (estimation)"
+  "nearestByRoadEstimate": "environ {minutes} min par la route (estimation)",
+  "stepperIncrease": "Augmenter : {label}",
+  "stepperDecrease": "Diminuer : {label}"
 }

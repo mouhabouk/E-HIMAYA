@@ -84,11 +84,11 @@ if [ "${DRILL_MIGRATE:-1}" = 1 ]; then
 else
   audit=""
 fi
-psql_a -c "CREATE SCHEMA drill; CREATE TABLE drill.row (id serial PRIMARY KEY, phase text NOT NULL,
+psql_a -c "CREATE SCHEMA restore_check; CREATE TABLE restore_check.row (id serial PRIMARY KEY, phase text NOT NULL,
            at timestamptz NOT NULL DEFAULT clock_timestamp())"
 write_rows() {
   for i in 1 2 3 4 5; do
-    psql_a -c "INSERT INTO drill.row (phase) VALUES ('$1'); $(echo "$audit" | sed "s/PHASE/$1/")"
+    psql_a -c "INSERT INTO restore_check.row (phase) VALUES ('$1'); $(echo "$audit" | sed "s/PHASE/$1/")"
   done
 }
 write_rows before_base
@@ -128,7 +128,7 @@ RTO=$(( $(date +%s) - started ))
 
 step "6. checks"
 counts=$(psql_b -c "SELECT string_agg(phase || '=' || n, ' ' ORDER BY phase)
-                    FROM (SELECT phase, count(*) AS n FROM drill.row GROUP BY phase) c")
+                    FROM (SELECT phase, count(*) AS n FROM restore_check.row GROUP BY phase) c")
 echo "rows restored: $counts"
 [ "$counts" = "after_base=5 before_base=5" ] || fail "expected after_base=5 before_base=5, got '$counts'"
 if [ -n "$audit" ]; then

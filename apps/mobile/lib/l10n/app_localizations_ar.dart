@@ -6165,4 +6165,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String nearestByRoadEstimate(int minutes) {
     return 'حوالي $minutes دقيقة على الطريق (تقدير)';
   }
+
+  @override
+  String stepperIncrease(String label) {
+    return 'زيادة $label';
+  }
+
+  @override
+  String stepperDecrease(String label) {
+    return 'إنقاص $label';
+  }
 }

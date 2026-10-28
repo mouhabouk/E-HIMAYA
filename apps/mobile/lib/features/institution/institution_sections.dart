@@ -453,18 +453,19 @@ class _CardEditorState extends ConsumerState<_CardEditor> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             SectionTitle(l10n.orgCardTabBuilding),
-            TextField(
-              key: const Key('edit-capacity'),
+            NumberStepper(
+              fieldKey: const Key('edit-capacity'),
               controller: _capacity,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: l10n.orgCapacity),
+              label: l10n.orgCapacity,
+              max: 1000000,
+              step: 10,
             ),
             const SizedBox(height: 8),
-            TextField(
-              key: const Key('edit-floors'),
+            NumberStepper(
+              fieldKey: const Key('edit-floors'),
               controller: _floors,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: l10n.orgFloors),
+              label: l10n.orgFloors,
+              max: 300,
             ),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
@@ -545,6 +546,17 @@ class KindFieldInputs extends StatelessWidget {
                       child: VisibilityPill(f.visibility),
                     ),
                     value: values[f.key] == true,
+                    onChanged: (v) => onChanged(f.key, v),
+                  )
+                : f.type == KindFieldType.int
+                ? _KindCount(
+                    field: f,
+                    initial: values[f.key] is String
+                        ? values[f.key]! as String
+                        : '',
+                    errorText: showErrors
+                        ? kindFieldError(l10n, f, values[f.key])
+                        : null,
                     onChanged: (v) => onChanged(f.key, v),
                   )
                 : TextFormField(
@@ -986,6 +998,59 @@ class _InviteFormState extends ConsumerState<_InviteForm> {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// A whole-number answer of the kind, with steppers (R4a) and the badge of who may see it.
+class _KindCount extends StatefulWidget {
+  const _KindCount({
+    required this.field,
+    required this.initial,
+    required this.onChanged,
+    this.errorText,
+  });
+
+  final KindField field;
+  final String initial;
+  final ValueChanged<String> onChanged;
+  final String? errorText;
+
+  @override
+  State<_KindCount> createState() => _KindCountState();
+}
+
+class _KindCountState extends State<_KindCount> {
+  late final _controller = TextEditingController(text: widget.initial);
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final f = widget.field;
+    final label = kindFieldText(l10n, f.key);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: VisibilityPill(f.visibility),
+        ),
+        const SizedBox(height: 4),
+        NumberStepper(
+          fieldKey: Key('kf-${f.key}'),
+          controller: _controller,
+          label: label,
+          max: f.maximum,
+          errorText: widget.errorText,
+          onChanged: widget.onChanged,
+        ),
+      ],
     );
   }
 }

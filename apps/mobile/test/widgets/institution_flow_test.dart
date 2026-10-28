@@ -502,10 +502,10 @@ void main() {
     expect(find.text('Réservoirs'), findsOneWidget);
     expect(find.text("Lors d'un signalement proche"), findsOneWidget);
 
-    // Edit: a bad number is caught, then the card is saved with its version.
+    // Edit: a number above the limit is caught (the field takes digits only), then the card is saved with its version.
     await tester.tap(find.byKey(const Key('org-card-edit')));
     await tester.pumpAndSettle();
-    await tester.enterText(find.byKey(const Key('kf-tanks')), 'beaucoup');
+    await tester.enterText(find.byKey(const Key('kf-tanks')), '99999999');
     await tester.tap(find.byKey(const Key('org-card-save')));
     await tester.pumpAndSettle();
     expect(
