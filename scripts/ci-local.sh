@@ -568,6 +568,8 @@ job_keycloak_realms() {
   grep -q "Realm 'ehimaya-staff' imported" kc.log
   step "Staff tokens prove the second factor (amr)"
   python3 infra/keycloak/check_mfa.py "http://localhost:$http_port"
+  step "Proof of work after three failed sign-ins (phase L2)"
+  python3 infra/keycloak/check_login_guard.py "http://localhost:$http_port"
   step "Phone sign-in with an SMS code (phase A)"
   OTP_SMS_SECRET=ci-only-otp-secret-ci-only-otp-0001 python3 infra/keycloak/check_phone_otp.py "http://localhost:$http_port" "$otp_port"
 }

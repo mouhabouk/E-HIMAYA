@@ -1,4 +1,4 @@
-# الإصدارات المثبتة (المراحل 1 إلى 10 والمراحل A و B1 و B2 و C1-a و C1-b و C1-c و UI-2 و P2a و P2b و P3a و P3b و P3c و P5a و P5b و P4a و P4b و P4c و P4d و L1a و L1b)
+# الإصدارات المثبتة (المراحل 1 إلى 10 والمراحل A و B1 و B2 و C1-a و C1-b و C1-c و UI-2 و P2a و P2b و P3a و P3b و P3c و P5a و P5b و P4a و P4b و P4c و P4d و L1a و L1b و L2)
 
 تُحدَّث هذه القائمة مع كل مرحلة. تُعتمد الإصدارات الدقيقة أدناه في الكود والحاويات.
 
@@ -225,7 +225,7 @@ vite 8.3.4، typescript 5.9.3، vitest 5.0.5، eslint 10.13.0). البصمة SHA
 | واجهة Keycloak البرمجية للمزودات (`keycloak-server-spi`، `keycloak-server-spi-private`، `keycloak-services`) | 26.8.1 (نطاق `provided`) | بناء المزود فقط، لا تُضمَّن في الملف | Apache-2.0 |
 | Maven (مرحلة البناء فقط) | `maven:3.9.11-eclipse-temurin-21@sha256:6fdc855a…d237` | بناء المزود وتشغيل اختباراته داخل `docker build` | Apache-2.0 |
 | Java (Eclipse Temurin) | 21 | لغة المزود (`maven.compiler.release` 21) | GPL-2.0 + CE |
-| JUnit Jupiter | 5.13.4 | 36 اختبارا لمزود Keycloak | EPL-2.0 |
+| JUnit Jupiter | 5.13.4 | 44 اختبارا لمزود Keycloak | EPL-2.0 |
 | maven-surefire-plugin | 3.5.4 | تشغيل اختبارات JUnit | Apache-2.0 |
 | Pillow (أداة محلية، خارج المستودع) | — | توليد أيقونات التطبيق من شعار الديوان مرة واحدة | MIT-CMU |
 
@@ -497,6 +497,21 @@ vite 8.3.4، typescript 5.9.3، vitest 5.0.5، eslint 10.13.0). البصمة SHA
 لا حزمة جديدة: الخريطة الحرارية والأشكال بـ MapLibre الموجود، والنشرة بـ WeasyPrint الموجود، والخريطة في التطبيق بـ
 `flutter_map` الموجود.
 
+## مرحلة L2 (البرامج الموسمية وحماية كلمات المرور)
+
+تفاصيل المرحلة في [تقرير المرحلة](phase-l2-report.html) والتصميم في [phase-l/design-l2.md](phase-l/design-l2.md).
+
+| الأداة أو المصدر | الإصدار | الاستعمال | الرخصة |
+|---|---|---|---|
+| ترحيل قاعدة البيانات | 0055 | المخطط `programme`: البرامج ونقاطها ونسخها، مع RLS حسب الولاية | — |
+| أمر تحميل البرامج | `python -m app.modules.programmes.cli load <ملف> [--dry-run]` | تحميل برامج 2026 مسودات من النموذج (JSON أو xlsx أو CSV) | — |
+| نموذج البرامج | `data/programmes/2026/` (xlsx و JSON و CSV والمخطط) | دون أسماء المشرفين ولا هواتفهم | — |
+| مزود Keycloak | `ehimaya-guarded-password-form` (في الحزمة `phone-otp`) | مسألة حسابية في المتصفح (SHA-256، 18 بتا) بعد 3 محاولات فاشلة لاسم المستخدم | — |
+| إعدادات الفضاءين | `failureFactor=10`، `length(8)` | القفل المؤقت بعد 10 محاولات، و8 أحرف على الأقل | — |
+
+لا حزمة جديدة: قراءة xlsx بـ `openpyxl` الموجود، و SHA-256 في المتصفح بسكربت صغير في قالب الدخول دون مكتبة، وفي
+Keycloak بـ `java.security` القياسية. تطبيق الهاتف لم يتغير (0.22.0).
+
 ## أولوية التنصيب
 
 1. Docker Engine 27+ مع Compose v2 (البنية كاملة بأمر واحد).
@@ -552,3 +567,6 @@ vite 8.3.4، typescript 5.9.3، vitest 5.0.5، eslint 10.13.0). البصمة SHA
 26. مرحلة L1b: لا شيء يُثبَّت. `alembic upgrade head` (0054) ينشئ المخطط `coastal`، ثم تُضاف متغيرات الطقس البحري
     واللوحة الساحلية من `.env.example` (القيم الافتراضية تكفي). تُنشر طبقة الشواطئ `osm_beaches` من اللوحة فيبدأ العامل
     حساب الخطر كل ساعة؛ دون اتصال بالإنترنت يعمل المحاكي ويظهر شريط [SIM]. يُبنى التطبيق 0.22.0 بالأمر المعتاد.
+27. مرحلة L2: لا شيء يُثبَّت. `alembic upgrade head` (0055) ينشئ المخطط `programme`، ويُعاد بناء صورة Keycloak
+    (`docker compose build keycloak`) ثم استيراد الفضاءين لتفعيل نموذج الدخول المحمي. تُحمَّل برامج 2026 مسودات بـ
+    `python -m app.modules.programmes.cli load data/programmes/2026/programmes_2026.json` ثم يعتمدها مدير العمليات من اللوحة.

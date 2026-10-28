@@ -1,0 +1,39 @@
+@startuml
+!include style.iuml
+title Séquence : programme saisonnier, de l'import à la carte et au suivi du jour (L2)
+autonumber
+actor "Gestionnaire national\n(admin. système ou chef des opérations)" as MGR
+actor "Salle régionale" as OPS
+participant "Tableau de bord\n(Programmes saisonniers)" as UI
+participant "API" as API
+database "PostgreSQL\n(schémas programme et geo)" as DB
+participant "Worker\n(chaque heure)" as WRK
+participant "Risque de noyade (L1b)" as CST
+actor "Citoyen (app)" as CIT
+== Import et vérification ==
+MGR -> UI : fichier xlsx, CSV ou JSON
+UI -> API : POST /staff/programmes/imports (aperçu)
+API -> API : lecture, erreurs, avertissements,\nécart des totaux, différences
+API --> UI : aperçu (rien n'est enregistré)
+MGR -> API : POST /staff/programmes/imports?apply=true (motif)
+API -> DB : brouillon ou nouvelle version + instantané
+== Approbation ==
+MGR -> API : POST /staff/programmes/{id}/approve
+API -> DB : nom et date de l'approbation, version
+API -> DB : couche prog_<code> (L1a) : publics selon le type,\nnom et téléphone du responsable : salles seulement
+== Dates ==
+WRK -> DB : programmes dont la date de début ou de fin est passée
+WRK -> DB : couche publiée entre les dates, suspendue sinon ;\nprogramme terminé après la fin
+CIT -> API : couches et « le plus proche » (points ouverts, sans responsable)
+== Suivi du jour ==
+OPS -> UI : points de son gouvernorat
+OPS -> API : PATCH /staff/programmes/{id}/points/{p}\n(statut, sauveteurs déployés, note)
+API -> DB : nouvelle version « suivi du jour »
+API -> DB : couche mise à jour (point fermé = caché)
+WRK -> CST : calcul horaire
+CST -> DB : point de plage ouvert à 1 km ?
+CST --> CST : plage « surveillée » (programme, version)\nou facteur « non surveillée »
+== Versions ==
+MGR -> API : GET /revisions/{n}/diff
+MGR -> API : POST /revisions/{n}/restore (motif) : nouvelle version
+@enduml

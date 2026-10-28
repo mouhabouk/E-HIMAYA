@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Keycloak provider ehimaya-phone-otp: sign-in with a Tunisian mobile number and a 6-digit SMS code
-  (phase A, docs/phase-a/design.md §2.2). Built into target/ehimaya-phone-otp.jar and mounted in
+  (phase A, docs/phase-a/design.md §2.2), and since phase L2 ehimaya-guarded-password-form (package
+  tn.ehimaya.keycloak.guard): the password form with a proof of work after three failed attempts
+  (docs/phase-l/design-l2.md §3). Built into target/ehimaya-phone-otp.jar and mounted in
   /opt/keycloak/providers (infra/compose.yml). Keycloak libraries are "provided": the jar carries only our classes.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"

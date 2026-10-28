@@ -42,7 +42,8 @@
     "prevention": "Prevention visits",
     "crew": "Crews on duty",
     "reportTemplates": "Report templates",
-    "coastal": "Coastal safety"
+    "coastal": "Coastal safety",
+    "programmes": "Seasonal programmes"
   },
   "header": {
     "scope": "Geographic scope",
@@ -337,7 +338,27 @@
     "rule_invalid": "Invalid rule values.",
     "national_only": "This change is for national level only.",
     "settings_missing": "Risk settings not found.",
-    "hospital_not_offered": "This hospital is not among those offered for this incident."
+    "hospital_not_offered": "This hospital is not among those offered for this incident.",
+    "code_taken": "This code is already used by another programme.",
+    "dates_reversed": "The end cannot come before the start.",
+    "programme_closed": "The programme has ended or was cancelled: it can no longer change.",
+    "cancel_instead": "An approved programme is not deleted: cancel it with a reason.",
+    "programme_not_draft": "The programme is no longer a draft.",
+    "no_points": "A programme without points cannot be approved.",
+    "not_live": "Only an approved or updated programme can be cancelled.",
+    "ref_taken": "This point reference already exists in the programme.",
+    "point_not_found": "Point not found.",
+    "follow_up_only": "The regional room updates the status, the lifeguards deployed and the note only.",
+    "nothing_to_change": "Nothing changed.",
+    "close_instead": "A point of an approved programme is not deleted: close it with a reason.",
+    "revision_not_found": "Version not found.",
+    "bad_coordinates": "Coordinates missing or outside Tunisia.",
+    "file_format": "Format refused: xlsx, csv or json.",
+    "file_encoding": "Unreadable encoding (save the file as UTF-8).",
+    "file_unreadable": "Damaged or unreadable file.",
+    "file_sheet_missing": "The sheet « النقاط » (points) is missing from the file.",
+    "file_schema": "The file does not follow the programme schema.",
+    "file_too_many_points": "Too many points in the file."
   },
   "kpi": {
     "title": "Key indicators",
@@ -4663,5 +4684,229 @@
     "estimate": "estimate without routing engine",
     "add": "Add to the incident",
     "added": "Added"
+  },
+  "programmes": {
+    "title": "Seasonal programmes",
+    "intro": "Deployment programmes (road rescue, beaches, seasonal centres) become dated map layers: an approved programme shows from its first to its last day, and every change makes a new version.",
+    "listCaption": "Programmes",
+    "empty": "No programmes yet.",
+    "dates": "Valid",
+    "live": "On the map",
+    "all": "All",
+    "back": "← Programmes",
+    "reason": "Reason (required)",
+    "reasonOptional": "Reason (optional)",
+    "approvedBy": "Approved by {{name}} on {{date}}",
+    "notApproved": "Draft: nothing shows on the map before approval.",
+    "source": "Source document: {{source}}",
+    "layer": "Layer:",
+    "cancelledBecause": "Cancelled: {{reason}}",
+    "waitingDates": "Approved: the layer will show automatically on the start date.",
+    "kind": {
+      "road": "Road rescue",
+      "seasonal": "Seasonal centres",
+      "beach": "Beach deployment",
+      "other": "Other"
+    },
+    "status": {
+      "draft": "Draft",
+      "approved": "Approved",
+      "updated": "Updated",
+      "ended": "Ended",
+      "cancelled": "Cancelled"
+    },
+    "pointStatus": {
+      "open": "Open",
+      "closed": "Closed",
+      "postponed": "Postponed"
+    },
+    "confidence": {
+      "confirmed": "Confirmed",
+      "high": "High",
+      "medium": "Medium",
+      "approximate": "Approximate",
+      "review": "To review",
+      "unknown": "Unknown"
+    },
+    "field": {
+      "code": "Code",
+      "kind": "Type",
+      "title": "Title",
+      "season": "Season",
+      "valid_from": "Start",
+      "valid_to": "End",
+      "source_document": "Source document",
+      "status": "Status",
+      "ref": "Point reference",
+      "gouvernorat_code": "Gouvernorat",
+      "place_name": "Place",
+      "sub_points": "Sub-points",
+      "lat": "Latitude",
+      "lon": "Longitude",
+      "geo_confidence": "Position accuracy",
+      "staff_count": "Staff",
+      "staff_composition": "Composition",
+      "supervisors": "Supervisors",
+      "lifeguards_planned": "Lifeguards planned",
+      "lifeguards_deployed": "Lifeguards deployed",
+      "equipment": "Equipment",
+      "hours": "Hours",
+      "opening_date": "Opening",
+      "closing_date": "Closing",
+      "supervisor_name": "Supervisor",
+      "supervisor_phone": "Supervisor's phone",
+      "notes": "Notes"
+    },
+    "totals": {
+      "staff": "staff",
+      "lifeguards_planned": "lifeguards planned",
+      "lifeguards_deployed": "lifeguards deployed"
+    },
+    "figures": {
+      "label": "Programme figures",
+      "points": "Points",
+      "open": "Open",
+      "unlocated": "Without position",
+      "gouvernorats": "Gouvernorats",
+      "staff": "Staff",
+      "coverage": "Lifeguards deployed"
+    },
+    "new": {
+      "open": "New programme",
+      "title": "New programme (draft)",
+      "codeHelp": "In capitals, like ROAD-2026 or BEACH-2026-NORTH.",
+      "datesHelp": "The end cannot come before the start.",
+      "create": "Create the draft"
+    },
+    "import": {
+      "open": "Import a file",
+      "title": "Import programmes",
+      "intro": "The xlsx template, the CSV of points or the JSON of the schema. The file is checked first and nothing is saved before you confirm. A programme that already exists gets a new version.",
+      "file": "File",
+      "fileHelp": "xlsx, csv or json, 10 MB at most.",
+      "tooLarge": "This file is larger than 10 MB.",
+      "check": "Check the file",
+      "errors": "Errors (these points will not be imported)",
+      "warnings": "Warnings",
+      "programmes": "Content of the file ({{format}})",
+      "what": "Effect",
+      "newDraft": "New draft",
+      "newVersion": "New version",
+      "showDiff": "Show the differences",
+      "totals": "Declared totals",
+      "totalsMatch": "Match the points",
+      "gap": "{{field}}: {{stated}} declared, {{computed}} from the points",
+      "fixFirst": "Fix the errors in the file, then check it again.",
+      "apply": "Save the import",
+      "applied": "Import saved."
+    },
+    "problem": {
+      "line": "line {{line}}",
+      "total": "The declared total of {{field}} differs from the points ({{value}})",
+      "bad_date": "Unreadable date",
+      "bad_code": "Programme code does not follow the pattern",
+      "unknown_type": "Unknown programme type",
+      "programme_incomplete": "Incomplete programme (code, title or dates)",
+      "dates_reversed": "The end comes before the start",
+      "point_incomplete": "Incomplete point (reference or place)",
+      "bad_coordinates": "Unreadable coordinates",
+      "outside_tunisia": "Coordinates outside Tunisia ({{value}})",
+      "bad_number": "Unreadable number ({{value}})",
+      "deployed_above_planned": "More lifeguards deployed than planned",
+      "duplicate_programme": "Programme repeated in the file",
+      "programme_missing": "Point without a programme code",
+      "programme_unknown": "The point refers to a programme in neither the file nor the system",
+      "duplicate_point": "Point reference repeated",
+      "no_position": "Point without a position: it will not be on the map",
+      "unknown_gouvernorat": "Unknown gouvernorat ({{value}})"
+    },
+    "diff": {
+      "summary": "{{added}} added, {{removed}} removed, {{changed}} changed",
+      "none": "No differences.",
+      "added": "Added",
+      "removed": "Removed"
+    },
+    "action": {
+      "approve": {
+        "title": "Approve",
+        "explain": "The programme shows on the maps, for its audiences, from its first to its last valid day. Your name and the date are recorded.",
+        "confirm": "Approve the programme"
+      },
+      "edit": {
+        "title": "Edit",
+        "explain": "After approval, each change makes a new version with its reason.",
+        "confirm": "Save"
+      },
+      "cancel": {
+        "title": "Cancel the programme",
+        "explain": "The programme leaves the maps and stays in the archive with its versions.",
+        "confirm": "Cancel the programme"
+      },
+      "copy": {
+        "title": "Copy for another season",
+        "explain": "A new draft with the same points, without the daily follow-up (all open, lifeguards deployed empty).",
+        "confirm": "Create the copy"
+      },
+      "delete": {
+        "title": "Delete the draft",
+        "explain": "The draft and its points are deleted for good. An approved programme is cancelled, not deleted.",
+        "confirm": "Delete for good"
+      }
+    },
+    "points": {
+      "filters": "Filter the points",
+      "search": "Search (place or reference)",
+      "unlocated": "Without position",
+      "lowCoverage": "Under 50% of lifeguards deployed",
+      "low": "Low",
+      "none": "No matching points.",
+      "actions": "Actions",
+      "add": "Add a point",
+      "edit": "Edit point {{ref}}",
+      "editShort": "Edit",
+      "delete": "Delete",
+      "position": "Position",
+      "positionHelp": "Type the coordinates or click on the map.",
+      "positionMap": "Map: click to place the point",
+      "required": "The reference and the place are required.",
+      "nothing": "Nothing changed.",
+      "save": "Save the point",
+      "map": "Map of the programme's points",
+      "legend": "Point legend",
+      "caption": "Points: {{count}}"
+    },
+    "followUp": {
+      "open": "Today's follow-up",
+      "title": "Today's follow-up: {{place}}",
+      "save": "Save the follow-up"
+    },
+    "revisions": {
+      "title": "Versions",
+      "number": "Version",
+      "action": "Change",
+      "who": "By",
+      "system": "The system",
+      "diff": "Differences of v{{n}}",
+      "diffTitle": "What changed from v{{previous}} to v{{n}}",
+      "restore": "Back to v{{n}}",
+      "restoreTitle": "Back to version {{n}}",
+      "restoreExplain": "The points and fields of version {{n}} come back in a new version {{next}}; nothing is erased.",
+      "confirm": "Back to this version"
+    },
+    "revisionAction": {
+      "create": "Created",
+      "import": "Import",
+      "update": "Edited",
+      "approve": "Approved",
+      "cancel": "Cancelled",
+      "copy": "Copied",
+      "end": "Validity ended",
+      "point_add": "Point added",
+      "point_update": "Point edited",
+      "point_delete": "Point deleted",
+      "follow_up": "Daily follow-up",
+      "restore": "Back to a version"
+    },
+    "unlocatedCount": "{{count}} without position"
   }
 }

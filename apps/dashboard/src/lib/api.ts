@@ -204,6 +204,27 @@ export const ERROR_CODES = [
   "national_only",
   "settings_missing",
   "hospital_not_offered",
+  // Seasonal programmes (phase L2).
+  "code_taken",
+  "dates_reversed",
+  "programme_closed",
+  "cancel_instead",
+  "programme_not_draft",
+  "no_points",
+  "not_live",
+  "ref_taken",
+  "point_not_found",
+  "follow_up_only",
+  "nothing_to_change",
+  "close_instead",
+  "revision_not_found",
+  "bad_coordinates",
+  "file_format",
+  "file_encoding",
+  "file_unreadable",
+  "file_sheet_missing",
+  "file_schema",
+  "file_too_many_points",
 ] as const;
 export type ErrorCode = (typeof ERROR_CODES)[number];
 

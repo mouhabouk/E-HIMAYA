@@ -19,6 +19,7 @@ import { FakeWebSocket } from "./FakeWebSocket";
 import { AI_STATUS_READY, fakeJwt } from "./fixtures";
 import { fakeOpsApi } from "./opsFixtures";
 import { fakeCoastalApi } from "./coastalFixtures";
+import { fakeProgrammesApi } from "./programmeFixtures";
 import { FakeSipEngine, fakePhase7Api } from "./phase7Fixtures";
 import { fakePhase8Api } from "./phase8Fixtures";
 import { fakePhase9Api } from "./phase9Fixtures";
@@ -230,6 +231,7 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     ...fakePreventionApi(),
     ...fakeLayersApi(),
     ...fakeCoastalApi(),
+    ...fakeProgrammesApi(),
     ...fakeGuideApi(),
     ...fakeContactApi(),
     ...fakeSafetyApi(),

@@ -41,6 +41,9 @@ rectangle "Tableau de bord central" {
   usecase "Suivre la sécurité côtière,\nalertes et bulletin (L1b)" as S24
   usecase "Régler les seuils\ndu risque de noyade (L1b)" as S25
   usecase "Choisir l'hôpital le plus proche\npar la route (L1b)" as S26
+  usecase "Importer, approuver, annuler\nles programmes saisonniers (L2)" as S27
+  usecase "Suivi du jour des points\nde son gouvernorat (L2)" as S28
+  usecase "Revenir à une version\nd'un programme (L2)" as S29
 }
 rectangle "Application des équipes (P4a à P4d)" {
   usecase "Se connecter par code\n(MFA, PIN 6 chiffres)" as T0
@@ -119,4 +122,9 @@ OP --> S24
 CC --> S24
 CC --> S25
 OP --> S26
+OPM --> S27
+SA --> S27
+OPM --> S29
+OP --> S28
+OPM --> S28
 @enduml

@@ -323,8 +323,8 @@ jobs:
     runs-on: ${{ vars.RUNNER || 'ubuntu-24.04' }}
     steps:
       - uses: actions/checkout@v7
-      # Phase A: the image of infra/keycloak/Dockerfile (Keycloak + provider ehimaya-phone-otp, whose unit tests run
-      # during the build).
+      # Phase A: the image of infra/keycloak/Dockerfile (Keycloak + providers ehimaya-phone-otp and, phase L2,
+      # ehimaya-guarded-password-form, whose unit tests run during the build).
       - name: Build Keycloak with the e-Himaya providers
         run: docker build -t ehimaya/keycloak:ci infra/keycloak
       - name: Import both realms into a throwaway Keycloak
@@ -343,6 +343,8 @@ jobs:
           grep -q "Realm 'ehimaya-staff' imported" kc.log
       - name: Staff tokens prove the second factor (amr)
         run: python3 infra/keycloak/check_mfa.py http://localhost:8080
+      - name: Proof of work after three failed sign-ins (phase L2)
+        run: python3 infra/keycloak/check_login_guard.py http://localhost:8080
       - name: Phone sign-in with an SMS code (phase A)
         env:
           OTP_SMS_SECRET: ci-only-otp-secret-ci-only-otp-0001

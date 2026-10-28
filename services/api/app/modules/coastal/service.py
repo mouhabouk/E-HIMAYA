@@ -13,6 +13,7 @@ The worker (app/modules/coastal/worker.py) runs ``refresh`` every COASTAL_REFRES
    ``coastal.alert``), once per beach, day and level.
 """
 
+import dataclasses
 import hashlib
 import hmac
 import uuid
@@ -31,6 +32,7 @@ from app.modules.coastal import marine, risk
 from app.modules.coastal.models import Beach, BeachDay, CoastalAlert, CoastalSettings, MarineHour, Presence
 from app.modules.geo.models import Layer, LayerFeature
 from app.modules.layers.service import LAT, LON
+from app.modules.programmes import service as programmes
 from app.modules.reports.domain import Category, Status
 from app.modules.reports.models import Report
 from app.modules.weather import service as weather
@@ -332,6 +334,9 @@ async def compute(session: AsyncSession, now: datetime) -> int:
                 feature.props or {},
                 incidents.get(beach.feature_id, 0),
             )
+            guarded_by = await programmes.guarded_near(session, float(lat), float(lon), day)
+            if guarded_by is not None:
+                inputs = dataclasses.replace(inputs, guarded=True)
             assessed = risk.assess(inputs, rule_set)
             stmt = insert(BeachDay).values(
                 feature_id=beach.feature_id,
@@ -339,7 +344,7 @@ async def compute(session: AsyncSession, now: datetime) -> int:
                 score=assessed.score,
                 level=assessed.level,
                 factors=assessed.factors,
-                inputs=inputs.as_dict(),
+                inputs={**inputs.as_dict(), "guarded_by": guarded_by},
                 source=",".join(sources) or None,
                 simulated=simulated,
                 computed_at=now,

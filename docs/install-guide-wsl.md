@@ -371,6 +371,10 @@ $ docker compose --env-file .env -f infra/compose.yml --profile vision up -d
 الطقس البحري **[SIM]** دون إنترنت. للطقس البحري الحقيقي: `WEATHER_PROVIDER=open-meteo` مع الوصول إلى
 `marine-api.open-meteo.com` (التفاصيل في الدليل التقني §9).
 
+البرامج الموسمية (المرحلة L2) لا تحتاج ملفا خاصا: بعد `alembic upgrade head` يحمّلها الأمر
+`python -m app.modules.programmes.cli load data/programmes/2026/programmes_2026.json` مسودات (التفاصيل في الدليل التقني
+§9). حماية الدخول بعد 3 محاولات فاشلة تأتي مع صورة Keycloak بعد `docker compose build keycloak`.
+
 ### 11.1 إعداد OpenSearch في WSL
 
 ```bash

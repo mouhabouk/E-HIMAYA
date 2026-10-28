@@ -42,7 +42,8 @@
     "prevention": "Visites de prévention",
     "crew": "Équipes de garde",
     "reportTemplates": "Modèles de rapport",
-    "coastal": "Sécurité côtière"
+    "coastal": "Sécurité côtière",
+    "programmes": "Programmes saisonniers"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -337,7 +338,27 @@
     "rule_invalid": "Valeurs des règles invalides.",
     "national_only": "Ce changement est réservé au niveau national.",
     "settings_missing": "Réglages du risque introuvables.",
-    "hospital_not_offered": "Cet hôpital n'est pas parmi ceux proposés pour cet incident."
+    "hospital_not_offered": "Cet hôpital n'est pas parmi ceux proposés pour cet incident.",
+    "code_taken": "Cet identifiant est déjà pris par un autre programme.",
+    "dates_reversed": "La fin ne peut pas précéder le début.",
+    "programme_closed": "Le programme est terminé ou annulé : il ne se modifie plus.",
+    "cancel_instead": "Un programme approuvé ne se supprime pas : annulez-le avec un motif.",
+    "programme_not_draft": "Le programme n’est plus un brouillon.",
+    "no_points": "Un programme sans points ne peut pas être approuvé.",
+    "not_live": "Seul un programme approuvé ou mis à jour peut être annulé.",
+    "ref_taken": "Cette référence de point existe déjà dans le programme.",
+    "point_not_found": "Point introuvable.",
+    "follow_up_only": "La salle régionale met à jour le statut, les sauveteurs déployés et la note seulement.",
+    "nothing_to_change": "Rien n’a changé.",
+    "close_instead": "Le point d’un programme approuvé ne se supprime pas : fermez-le avec un motif.",
+    "revision_not_found": "Version introuvable.",
+    "bad_coordinates": "Coordonnées incomplètes ou hors de Tunisie.",
+    "file_format": "Format refusé : xlsx, csv ou json.",
+    "file_encoding": "Encodage illisible (enregistrez le fichier en UTF-8).",
+    "file_unreadable": "Fichier abîmé ou illisible.",
+    "file_sheet_missing": "La feuille « النقاط » (points) manque dans le fichier.",
+    "file_schema": "Le fichier ne suit pas le schéma des programmes.",
+    "file_too_many_points": "Trop de points dans le fichier."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -4663,5 +4684,229 @@
     "estimate": "estimation sans moteur d'itinéraire",
     "add": "Ajouter à l'incident",
     "added": "Ajouté"
+  },
+  "programmes": {
+    "title": "Programmes saisonniers",
+    "intro": "Les programmes de déploiement (secours routier, plages, centres saisonniers) deviennent des couches datées de la carte : un programme approuvé s’affiche du premier au dernier jour, chaque changement fait une nouvelle version.",
+    "listCaption": "Les programmes",
+    "empty": "Aucun programme pour l’instant.",
+    "dates": "Validité",
+    "live": "Sur la carte",
+    "all": "Tous",
+    "back": "← Les programmes",
+    "reason": "Motif (obligatoire)",
+    "reasonOptional": "Motif (facultatif)",
+    "approvedBy": "Approuvé par {{name}} le {{date}}",
+    "notApproved": "Brouillon : rien ne s’affiche sur la carte avant l’approbation.",
+    "source": "Document source : {{source}}",
+    "layer": "Couche :",
+    "cancelledBecause": "Annulé : {{reason}}",
+    "waitingDates": "Approuvé : la couche s’affichera automatiquement à la date de début.",
+    "kind": {
+      "road": "Secours routier",
+      "seasonal": "Centres saisonniers",
+      "beach": "Surveillance des plages",
+      "other": "Autre"
+    },
+    "status": {
+      "draft": "Brouillon",
+      "approved": "Approuvé",
+      "updated": "Mis à jour",
+      "ended": "Terminé",
+      "cancelled": "Annulé"
+    },
+    "pointStatus": {
+      "open": "Ouvert",
+      "closed": "Fermé",
+      "postponed": "Reporté"
+    },
+    "confidence": {
+      "confirmed": "Confirmée",
+      "high": "Élevée",
+      "medium": "Moyenne",
+      "approximate": "Approximative",
+      "review": "À vérifier",
+      "unknown": "Inconnue"
+    },
+    "field": {
+      "code": "Identifiant",
+      "kind": "Type",
+      "title": "Intitulé",
+      "season": "Saison",
+      "valid_from": "Début",
+      "valid_to": "Fin",
+      "source_document": "Document source",
+      "status": "Statut",
+      "ref": "Référence du point",
+      "gouvernorat_code": "Gouvernorat",
+      "place_name": "Lieu",
+      "sub_points": "Points secondaires",
+      "lat": "Latitude",
+      "lon": "Longitude",
+      "geo_confidence": "Précision de la position",
+      "staff_count": "Agents",
+      "staff_composition": "Composition",
+      "supervisors": "Encadrants",
+      "lifeguards_planned": "Sauveteurs prévus",
+      "lifeguards_deployed": "Sauveteurs déployés",
+      "equipment": "Équipement",
+      "hours": "Horaires",
+      "opening_date": "Ouverture",
+      "closing_date": "Fermeture",
+      "supervisor_name": "Responsable",
+      "supervisor_phone": "Téléphone du responsable",
+      "notes": "Notes"
+    },
+    "totals": {
+      "staff": "agents",
+      "lifeguards_planned": "sauveteurs prévus",
+      "lifeguards_deployed": "sauveteurs déployés"
+    },
+    "figures": {
+      "label": "Chiffres du programme",
+      "points": "Points",
+      "open": "Ouverts",
+      "unlocated": "Sans position",
+      "gouvernorats": "Gouvernorats",
+      "staff": "Agents",
+      "coverage": "Sauveteurs déployés"
+    },
+    "new": {
+      "open": "Nouveau programme",
+      "title": "Nouveau programme (brouillon)",
+      "codeHelp": "En majuscules, comme ROAD-2026 ou BEACH-2026-NORD.",
+      "datesHelp": "La fin ne peut pas précéder le début.",
+      "create": "Créer le brouillon"
+    },
+    "import": {
+      "open": "Importer un fichier",
+      "title": "Importer des programmes",
+      "intro": "Le modèle xlsx, le CSV des points ou le JSON du schéma. Le fichier est d’abord vérifié et rien n’est enregistré avant votre confirmation. Un programme qui existe déjà reçoit une nouvelle version.",
+      "file": "Fichier",
+      "fileHelp": "xlsx, csv ou json, 10 Mo au plus.",
+      "tooLarge": "Ce fichier dépasse 10 Mo.",
+      "check": "Vérifier le fichier",
+      "errors": "Erreurs (les points concernés ne seront pas importés)",
+      "warnings": "Avertissements",
+      "programmes": "Contenu du fichier ({{format}})",
+      "what": "Effet",
+      "newDraft": "Nouveau brouillon",
+      "newVersion": "Nouvelle version",
+      "showDiff": "Voir les différences",
+      "totals": "Totaux déclarés",
+      "totalsMatch": "Conformes aux points",
+      "gap": "{{field}} : {{stated}} déclarés, {{computed}} d’après les points",
+      "fixFirst": "Corrigez les erreurs dans le fichier puis vérifiez-le de nouveau.",
+      "apply": "Enregistrer l’import",
+      "applied": "Import enregistré."
+    },
+    "problem": {
+      "line": "ligne {{line}}",
+      "total": "Le total des {{field}} déclaré diffère de celui des points ({{value}})",
+      "bad_date": "Date illisible",
+      "bad_code": "Identifiant de programme non conforme",
+      "unknown_type": "Type de programme inconnu",
+      "programme_incomplete": "Programme incomplet (identifiant, intitulé ou dates)",
+      "dates_reversed": "La fin précède le début",
+      "point_incomplete": "Point incomplet (référence ou lieu)",
+      "bad_coordinates": "Coordonnées illisibles",
+      "outside_tunisia": "Coordonnées hors de Tunisie ({{value}})",
+      "bad_number": "Nombre illisible ({{value}})",
+      "deployed_above_planned": "Plus de sauveteurs déployés que prévus",
+      "duplicate_programme": "Programme en double dans le fichier",
+      "programme_missing": "Point sans identifiant de programme",
+      "programme_unknown": "Le point renvoie à un programme absent du fichier et du système",
+      "duplicate_point": "Référence de point en double",
+      "no_position": "Point sans position : il ne sera pas sur la carte",
+      "unknown_gouvernorat": "Gouvernorat inconnu ({{value}})"
+    },
+    "diff": {
+      "summary": "{{added}} ajoutés, {{removed}} retirés, {{changed}} modifiés",
+      "none": "Aucune différence.",
+      "added": "Ajoutés",
+      "removed": "Retirés"
+    },
+    "action": {
+      "approve": {
+        "title": "Approuver",
+        "explain": "Le programme s’affichera sur les cartes, selon ses publics, du premier au dernier jour de validité. Votre nom et la date sont enregistrés.",
+        "confirm": "Approuver le programme"
+      },
+      "edit": {
+        "title": "Modifier",
+        "explain": "Après l’approbation, chaque modification crée une nouvelle version avec son motif.",
+        "confirm": "Enregistrer"
+      },
+      "cancel": {
+        "title": "Annuler le programme",
+        "explain": "Le programme quitte les cartes et reste dans les archives avec ses versions.",
+        "confirm": "Annuler le programme"
+      },
+      "copy": {
+        "title": "Copier pour une autre saison",
+        "explain": "Un nouveau brouillon avec les mêmes points, sans le suivi quotidien (tous ouverts, sauveteurs déployés vides).",
+        "confirm": "Créer la copie"
+      },
+      "delete": {
+        "title": "Supprimer le brouillon",
+        "explain": "Le brouillon et ses points sont supprimés définitivement. Un programme approuvé s’annule, il ne se supprime pas.",
+        "confirm": "Supprimer définitivement"
+      }
+    },
+    "points": {
+      "filters": "Filtrer les points",
+      "search": "Rechercher (lieu ou référence)",
+      "unlocated": "Sans position",
+      "lowCoverage": "Moins de 50 % des sauveteurs déployés",
+      "low": "Faible",
+      "none": "Aucun point ne correspond.",
+      "actions": "Actions",
+      "add": "Ajouter un point",
+      "edit": "Modifier le point {{ref}}",
+      "editShort": "Modifier",
+      "delete": "Supprimer",
+      "position": "Position",
+      "positionHelp": "Saisissez les coordonnées ou cliquez sur la carte.",
+      "positionMap": "Carte : cliquez pour placer le point",
+      "required": "La référence et le lieu sont obligatoires.",
+      "nothing": "Rien n’a changé.",
+      "save": "Enregistrer le point",
+      "map": "Carte des points du programme",
+      "legend": "Légende des points",
+      "caption": "Points : {{count}}"
+    },
+    "followUp": {
+      "open": "Suivi du jour",
+      "title": "Suivi du jour : {{place}}",
+      "save": "Enregistrer le suivi"
+    },
+    "revisions": {
+      "title": "Versions",
+      "number": "Version",
+      "action": "Changement",
+      "who": "Par",
+      "system": "Le système",
+      "diff": "Différences de v{{n}}",
+      "diffTitle": "Ce qui a changé de v{{previous}} à v{{n}}",
+      "restore": "Revenir à v{{n}}",
+      "restoreTitle": "Revenir à la version {{n}}",
+      "restoreExplain": "Les points et les champs de la version {{n}} sont rétablis dans une nouvelle version {{next}} ; rien n’est effacé.",
+      "confirm": "Revenir à cette version"
+    },
+    "revisionAction": {
+      "create": "Création",
+      "import": "Import",
+      "update": "Modification",
+      "approve": "Approbation",
+      "cancel": "Annulation",
+      "copy": "Copie",
+      "end": "Fin de validité",
+      "point_add": "Point ajouté",
+      "point_update": "Point modifié",
+      "point_delete": "Point supprimé",
+      "follow_up": "Suivi du jour",
+      "restore": "Retour à une version"
+    },
+    "unlocatedCount": "{{count}} sans position"
   }
 }

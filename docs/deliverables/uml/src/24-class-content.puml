@@ -75,6 +75,25 @@ class PrésenceAnonyme {
   empreinte du jeton du jour
   vu le (effacée après 24 h)
 }
+class Programme {
+  code, type, intitulé, saison
+  début, fin, statut, version
+  totaux déclarés
+  approuvé par, approuvé le
+  motif d'annulation
+}
+class PointProgramme {
+  référence, gouvernorat, lieu
+  position, précision de la position
+  agents, sauveteurs prévus et déployés
+  horaires, statut
+  responsable et téléphone (salles seulement)
+}
+class RévisionProgramme {
+  numéro, action, motif
+  auteur, date
+  instantané complet
+}
 class RègleRécompense {
   motif, catégorie
   points, multiplicateur
@@ -116,6 +135,10 @@ Plage "1" *-- "*" RisqueJour
 Plage "1" -- "*" AlerteCôtière
 Plage "1" -- "*" PrésenceAnonyme
 RèglesCôtières ..> RisqueJour : calcule
+Programme "1" *-- "*" PointProgramme
+Programme "1" *-- "*" RévisionProgramme
+Programme "1" -- "0..1" CoucheCarte : couche datée (L2)
+PointProgramme ..> RisqueJour : plage surveillée à 1 km
 RègleRécompense "1" -- "*" MouvementPoints
 "Compte" "1" -- "*" MouvementPoints
 "Compte" "1" -- "*" Badge

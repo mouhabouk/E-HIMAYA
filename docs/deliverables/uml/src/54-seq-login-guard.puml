@@ -1,0 +1,28 @@
+@startuml
+!include style.iuml
+title Séquence : preuve de travail après trois échecs de connexion (L2, point 8)
+autonumber
+actor "Agent ou établissement" as U
+participant "Navigateur\n(page de connexion, pow.js)" as B
+participant "Keycloak\n(ehimaya-guarded-password-form)" as KC
+database "Stockage à usage unique\n(Keycloak)" as ST
+U -> B : nom et mot de passe
+B -> KC : POST (1er, 2e essai)
+KC -> ST : échecs du nom (empreinte, 15 min)
+KC --> B : formulaire ordinaire « invalide »
+B -> KC : POST (3e essai)
+KC -> ST : 3 échecs
+KC --> B : formulaire + défi (sel, 18 bits)\nsel gardé dans la session
+B -> B : cherche n : SHA-256(sel:n)\ncommence par 18 bits à zéro (~1 s)
+B --> U : « Vérification faite » (ligne d'état lue)
+U -> B : mot de passe
+B -> KC : POST + solution
+alt solution absente ou fausse
+  KC --> B : refus, nouveau défi\n(mot de passe non vérifié)
+else solution juste
+  KC -> KC : vérification du mot de passe
+  KC -> ST : succès : compteur effacé
+  KC --> B : étape suivante (code OTP pour les agents)
+end
+note over KC : Le verrouillage temporaire du royaume\narrive à 10 échecs (au lieu de 3).\nUn nom sans compte reçoit le même défi.
+@enduml

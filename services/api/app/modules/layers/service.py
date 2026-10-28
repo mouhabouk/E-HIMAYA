@@ -547,6 +547,17 @@ async def shapes_in(
     return (await session.execute(query)).all()
 
 
+def sync_columns(layer: Layer) -> None:
+    """Keep the B1 columns in step: ``audience`` public when citizens see it, ``enabled`` when it is in use.
+
+    A sensitive layer is never public, and its audiences do not matter (the minister alone sees it)."""
+    if layer.sensitive:
+        layer.audiences = [a for a in layer.audiences if a != "citizen"]
+    layer.audience = "public" if "citizen" in layer.audiences and not layer.sensitive else "staff"
+    layer.enabled = layer.status == "published" and layer.deleted_at is None
+    layer.staff_only = sorted(k for k, allowed in (layer.fields or {}).items() if "citizen" not in allowed)
+
+
 def live_layer() -> ColumnElement[bool]:
     """A layer in use: published (``enabled`` follows) and not deleted."""
     return Layer.enabled.is_(True) & Layer.deleted_at.is_(None) & or_(Layer.status == "published")

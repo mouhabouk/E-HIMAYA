@@ -99,7 +99,7 @@ def _beach_out(
         sea_temp_c=inputs.get("sea_temp_c"),
         current_kmh=inputs.get("current_kmh"),
         classification=props.get("classification"),
-        guarded=service.flag(guarded),
+        guarded=True if inputs.get("guarded_by") else service.flag(guarded),
         crowd=props.get("crowd"),
         present=present,
     )
@@ -183,6 +183,11 @@ async def _detail(session: AsyncSession, principal: Principal | None, feature_id
         for k in card
         if props.get(f"{k}_source") or props.get(f"{k}_date")
     }
+    # An open point of a beach programme in force guards the beach today (phase L2, design-l2.md §2.6).
+    guarded_by = days[0].inputs.get("guarded_by") if days and days[0].day == today else None
+    if guarded_by:
+        card["guarded"] = "yes"
+        sources["guarded"] = {"source": guarded_by, "date": today.isoformat()}
     simulated = any(d.simulated for d in days)
     present = None
     if principal is not None and principal.is_staff:
