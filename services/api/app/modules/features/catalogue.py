@@ -360,6 +360,8 @@ CATALOGUE: tuple[Spec, ...] = (
             "inventory.import",
             ("استيراد ملف", "Importer", "Import a file"),
             "POST /inventory/imports",
+            "POST /inventory/import-profiles",
+            "DELETE /inventory/import-profiles/{profile_id}",
             act_as=R.OPERATOR,
         ),
         button(

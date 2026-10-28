@@ -28,7 +28,16 @@ from app.modules.crisis import service as crisis_service
 from app.modules.crisis.models import Axis as CrisisAxis
 from app.modules.geo.models import Gouvernorat
 from app.modules.inventory import domain, schemas
-from app.modules.inventory.models import Agent, AgentSkill, Category, InventoryRevision, Stock, Transfer, UnitCheck
+from app.modules.inventory.models import (
+    Agent,
+    AgentSkill,
+    Category,
+    ImportProfile,
+    InventoryRevision,
+    Stock,
+    Transfer,
+    UnitCheck,
+)
 from app.modules.layers.domain import neutralize
 from app.modules.ops import resources
 from app.modules.ops.domain import ResourceKind
@@ -1142,17 +1151,23 @@ async def import_register(
     entity: Annotated[Entity | None, Query()] = None,
     apply: Annotated[bool, Query()] = False,
     reason: Annotated[str, Query(max_length=500)] = "",
+    mapping: Annotated[str | None, Query(max_length=8000)] = None,
+    profile: Annotated[uuid.UUID | None, Query()] = None,
 ) -> schemas.ImportOut:
     """The register of one gouvernorat from the xlsx template (or a CSV of one sheet, named by ``entity``). Without
     ``apply`` nothing is saved: the answer counts the new and changed rows and lists the errors and warnings. With
     ``apply`` the rows are added or updated (vehicles by unit and label, equipment by unit, type and specifications,
-    staff by matricule); nothing absent from the file is deleted. A file with errors is refused."""
+    staff by matricule); nothing absent from the file is deleted. A file with errors is refused.
+
+    R4b: a JSON file too, and a file with its own columns: ``mapping`` (JSON, ``{"stock": {"<heading>": "<field>"}}``)
+    or a saved ``profile`` renames them; the answer lists the columns no field matched, to map them on screen."""
     code = _gouvernorat(principal, gouvernorat)
     _require_edit(principal, code)
     data = await _read_body(request)
     _, units, _, refs = await _lookups(session, code)
     try:
-        parsed = domain.parse(file_name, data, entity, units, refs)
+        chosen = await _mapping(session, mapping, profile)
+        parsed = domain.parse(file_name, data, entity, units, refs, chosen)
     except FileError as exc:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, exc.code) from exc
     why = _reason(reason) if apply else None
@@ -1312,7 +1327,115 @@ async def import_register(
         agents=counts["agents"],
         errors=[schemas.ProblemOut(**p.out()) for p in parsed.errors],
         warnings=[schemas.ProblemOut(**p.out()) for p in parsed.warnings],
+        headings=dict(parsed.headings),
+        unknown=dict(parsed.unknown),
+        fields={e: list(domain.COLUMNS[e]) for e in domain.ENTITIES},
     )
+
+
+async def _mapping(session: AsyncSession, text: str | None, profile_id: uuid.UUID | None) -> domain.Mapping:
+    """The saved profile (one the caller's gouvernorat may read), then the mapping chosen on screen over it."""
+    out: domain.Mapping = {}
+    if profile_id is not None:
+        saved = await session.get(ImportProfile, profile_id)
+        if saved is None:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, "profile_not_found")
+        out = domain.check_mapping(saved.mapping)
+    if text:
+        try:
+            chosen = json.loads(text)
+        except ValueError as exc:
+            raise FileError("mapping_invalid") from exc
+        for entity, pairs in domain.check_mapping(chosen).items():
+            out[entity] = {**out.get(entity, {}), **pairs}
+    return out
+
+
+def _profile_out(principal: Principal, row: ImportProfile) -> schemas.ImportProfileOut:
+    return schemas.ImportProfileOut(
+        id=row.id,
+        name=row.name,
+        gouvernorat_code=row.gouvernorat_code,
+        mapping=row.mapping,
+        created_by_name=row.created_by_name,
+        created_at=row.created_at,
+        # A shared profile is the central room's to remove.
+        can_delete=can_edit(principal, row.gouvernorat_code)
+        and (row.gouvernorat_code is not None or principal.is_national),
+    )
+
+
+@router.get("/import-profiles", response_model=list[schemas.ImportProfileOut])
+async def list_import_profiles(principal: Reader, session: Session) -> list[schemas.ImportProfileOut]:
+    """The column mappings the caller may use: their gouvernorat's and the central room's (row level security)."""
+    rows = (await session.scalars(select(ImportProfile).order_by(ImportProfile.name).limit(200))).all()
+    return [_profile_out(principal, r) for r in rows]
+
+
+@router.post("/import-profiles", response_model=schemas.ImportProfileOut, status_code=status.HTTP_201_CREATED)
+async def create_import_profile(
+    principal: Reader, session: Session, body: schemas.ImportProfileIn
+) -> schemas.ImportProfileOut:
+    """Keep a mapping by name. A regional room keeps it for its gouvernorat; the central room may share it."""
+    if body.shared and not principal.is_national:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "out_of_scope")
+    code = None if body.shared else _gouvernorat(principal, principal.gouvernorat_code)
+    _require_edit(principal, code)
+    try:
+        mapping = domain.check_mapping(body.mapping)
+    except FileError as exc:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, exc.code) from exc
+    if not mapping:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "mapping_invalid")
+    taken = await session.scalar(
+        select(ImportProfile.id).where(
+            func.coalesce(ImportProfile.gouvernorat_code, 0) == (code or 0),
+            func.lower(ImportProfile.name) == body.name.lower(),
+        )
+    )
+    if taken is not None:
+        raise HTTPException(status.HTTP_409_CONFLICT, "profile_name_taken")
+    row = ImportProfile(
+        name=body.name,
+        gouvernorat_code=code,
+        mapping={e: dict(p) for e, p in mapping.items()},
+        created_by=audit.actor_of(principal),
+        created_by_name=audit.name_of(principal),
+    )
+    session.add(row)
+    await session.flush()
+    await session.refresh(row)
+    await audit.record(
+        session,
+        actor=audit.actor_of(principal),
+        action="inventory.import_profile.create",
+        target=str(row.id),
+        details={"name": row.name, "fields": sum(len(p) for p in mapping.values())},
+        gouvernorats=[code] if code is not None else None,
+    )
+    out = _profile_out(principal, row)
+    await session.commit()
+    return out
+
+
+@router.delete("/import-profiles/{profile_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_import_profile(principal: Reader, session: Session, profile_id: uuid.UUID) -> Response:
+    row = await session.get(ImportProfile, profile_id)
+    if row is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "profile_not_found")
+    if not _profile_out(principal, row).can_delete:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "out_of_scope")
+    await session.delete(row)
+    await audit.record(
+        session,
+        actor=audit.actor_of(principal),
+        action="inventory.import_profile.delete",
+        target=str(row.id),
+        details={"name": row.name},
+        gouvernorats=[row.gouvernorat_code] if row.gouvernorat_code is not None else None,
+    )
+    await session.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 def _csv(rows: list[list[Any]], stem: str) -> Response:

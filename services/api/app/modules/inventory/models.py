@@ -146,3 +146,20 @@ class Transfer(Base):
     requested_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     decided_by_name: Mapped[str | None] = mapped_column(Text)
     decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class ImportProfile(Base):
+    """How the columns of a foreign file match the register's fields (R4b), kept by name for the next import."""
+
+    __tablename__ = "import_profile"
+    __table_args__ = {"schema": "inv"}
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    name: Mapped[str] = mapped_column(Text)
+    # None: the central room's, offered to every room.
+    gouvernorat_code: Mapped[int | None] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
+    # {"vehicles" | "stock" | "agents": {"<file heading>": "<field>"}}
+    mapping: Mapped[dict[str, dict[str, str]]] = mapped_column(JSONB)
+    created_by: Mapped[str] = mapped_column(Text)
+    created_by_name: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

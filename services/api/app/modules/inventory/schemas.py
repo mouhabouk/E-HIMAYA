@@ -1,8 +1,8 @@
 import uuid
 from datetime import date, datetime
-from typing import Any, Literal
+from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
 Kind = Literal["vehicle", "equipment", "skill"]
 Family = Literal["vehicles", "equipment", "boats", "air", "ppe"]
@@ -289,7 +289,7 @@ class ImportCounts(BaseModel):
 
 
 class ImportOut(BaseModel):
-    format: Literal["xlsx", "csv"]
+    format: Literal["xlsx", "csv", "json"]
     gouvernorat_code: int
     applied: bool
     vehicles: ImportCounts
@@ -297,6 +297,35 @@ class ImportOut(BaseModel):
     agents: ImportCounts
     errors: list[ProblemOut]
     warnings: list[ProblemOut]
+    # R4b: the columns of the file by sheet, those that match no field (to map them on screen), and the fields.
+    headings: dict[str, list[str]] = Field(default_factory=dict)
+    unknown: dict[str, list[str]] = Field(default_factory=dict)
+    fields: dict[str, list[str]] = Field(default_factory=dict)
+
+
+Heading = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)]
+FieldKey = Annotated[str, StringConstraints(pattern=r"^[a-z][a-z0-9_]{1,39}$")]
+
+
+class ImportProfileIn(BaseModel):
+    """A mapping kept by name (R4b). The fields are checked against the register's by the API."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=2, max_length=80)]
+    mapping: dict[Literal["vehicles", "stock", "agents"], dict[Heading, FieldKey]] = Field(max_length=3)
+    # The central room may keep a profile for every room; a regional room keeps its own.
+    shared: bool = False
+
+
+class ImportProfileOut(BaseModel):
+    id: uuid.UUID
+    name: str
+    gouvernorat_code: int | None
+    mapping: dict[str, dict[str, str]]
+    created_by_name: str | None
+    created_at: datetime
+    can_delete: bool
 
 
 # ---------------------------------------------------------------- search (phase R2)

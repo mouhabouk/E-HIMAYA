@@ -2,11 +2,11 @@
 // and the minister see, the tabs of a room, recording a vehicle with its specifications, the staff names kept to the
 // operations rooms, and the import preview before saving. Phase R2 (§2.3): the search across the gouvernorats.
 import { fireEvent, screen, waitFor, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { canListInventory, canOpenInventory } from "../lib/roles";
 import { describeSearch } from "../components/ResourceSearchLayer";
 import { EMPTY_SEARCH, parseSearch, searchParam } from "../lib/inventory";
-import { AGENT, CATALOGUE, fakeInventoryApi, OVERVIEW } from "../test/inventoryFixtures";
+import { AGENT, CATALOGUE, FOREIGN_PREVIEW, fakeInventoryApi, MAPPED_PREVIEW, OVERVIEW } from "../test/inventoryFixtures";
 import { fakeApi, fakeAuth, renderApp } from "../test/render";
 import { InventoryPage } from "./InventoryPage";
 
@@ -87,15 +87,17 @@ describe("InventoryPage", () => {
     renderApp(<InventoryPage />, { api: fakeApi(inv), auth: fakeAuth(claims(["ops_manager"], "61")), lang: "ar" });
     fireEvent.click(await screen.findByRole("tab", { name: "الاستيراد" }));
     const file = new File(["x"], "sfax.xlsx");
-    fireEvent.change(screen.getByLabelText("الملف (xlsx أو CSV)"), { target: { files: [file] } });
+    fireEvent.change(screen.getByLabelText("الملف (xlsx أو CSV أو JSON)"), { target: { files: [file] } });
     fireEvent.click(screen.getByRole("button", { name: "معاينة" }));
     const summary = await screen.findByRole("table", { name: /ما في الملف/ });
     expect(within(summary).getByRole("row", { name: /الآليات/ })).toHaveTextContent(/2\s*1\s*0/);
     expect(screen.getByText(/سنة غير صالحة/)).toBeInTheDocument();
-    expect(inv.importInventory).toHaveBeenCalledWith(file, null, null, false);
+    expect(inv.importInventory).toHaveBeenCalledWith(file, null, null, false, "", { profile: null, mapping: {} });
     fireEvent.change(screen.getByLabelText("سبب التغيير"), { target: { value: "التحميل الأول" } });
     fireEvent.click(screen.getByRole("button", { name: "حفظ في السجل" }));
-    await waitFor(() => expect(inv.importInventory).toHaveBeenCalledWith(file, null, null, true, "التحميل الأول"));
+    await waitFor(() =>
+      expect(inv.importInventory).toHaveBeenCalledWith(file, null, null, true, "التحميل الأول", { profile: null, mapping: {} }),
+    );
   });
 
   it("searches every gouvernorat for fire engines of 2000 L or more", async () => {
@@ -173,5 +175,30 @@ describe("inventory R3", () => {
     fireEvent.change(within(form).getByLabelText("محمولة على"), { target: { value: "v-1" } });
     fireEvent.click(within(form).getByRole("button", { name: "حفظ" }));
     await waitFor(() => expect(inv.saveStock).toHaveBeenCalledWith(null, expect.objectContaining({ unit_id: "u-1", vehicle_id: "v-1" })));
+  });
+
+  // Phase R4b: a JSON file with its own columns, mapped from lists, then kept as a profile.
+  it("maps the columns of a foreign JSON file from lists and keeps the mapping", async () => {
+    const inv = fakeInventoryApi();
+    inv.importInventory = vi.fn().mockResolvedValueOnce(FOREIGN_PREVIEW).mockResolvedValue(MAPPED_PREVIEW);
+    renderApp(<InventoryPage />, { api: fakeApi(inv), auth: fakeAuth(claims(["ops_manager"], "61")), lang: "ar" });
+    fireEvent.click(await screen.findByRole("tab", { name: "الاستيراد" }));
+    const file = new File(["[]"], "unit.json");
+    fireEvent.change(screen.getByLabelText("الملف (xlsx أو CSV أو JSON)"), { target: { files: [file] } });
+    fireEvent.change(screen.getByLabelText("الملف يحتوي"), { target: { value: "stock" } });
+    expect(await screen.findByRole("option", { name: "[SIM] ملف وحدة صفاقس" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "معاينة" }));
+    const table = await screen.findByRole("table", { name: "المعدات" });
+    fireEvent.change(within(table).getByRole("combobox", { name: "الوحدة الأصلية" }), { target: { value: "unit" } });
+    fireEvent.change(within(table).getByRole("combobox", { name: "النوع" }), { target: { value: "category" } });
+    fireEvent.change(within(table).getByRole("combobox", { name: "العدد" }), { target: { value: "qty_ready" } });
+    // A field already chosen for one column is not offered for another.
+    expect(within(within(table).getByRole("combobox", { name: "العدد" })).getByRole("option", { name: "الوحدة" })).toBeDisabled();
+    const mapping = { stock: { "الوحدة الأصلية": "unit", "النوع": "category", "العدد": "qty_ready" } };
+    fireEvent.click(screen.getByRole("button", { name: "إعادة المعاينة بهذا الربط" }));
+    await waitFor(() => expect(inv.importInventory).toHaveBeenLastCalledWith(file, null, "stock", false, "", { profile: null, mapping }));
+    fireEvent.change(screen.getByLabelText("حفظ الربط باسم"), { target: { value: "ملف الوحدة" } });
+    fireEvent.click(screen.getByRole("button", { name: "حفظ النموذج" }));
+    await waitFor(() => expect(inv.saveImportProfile).toHaveBeenCalledWith({ name: "ملف الوحدة", mapping, shared: false }));
   });
 });

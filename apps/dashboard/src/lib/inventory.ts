@@ -261,7 +261,7 @@ export interface ImportCounts {
 }
 
 export interface InventoryImport {
-  format: "xlsx" | "csv";
+  format: "xlsx" | "csv" | "json";
   gouvernorat_code: number;
   applied: boolean;
   vehicles: ImportCounts;
@@ -269,6 +269,34 @@ export interface InventoryImport {
   agents: ImportCounts;
   errors: ImportProblem[];
   warnings: ImportProblem[];
+  // R4b: the file's columns by sheet, those no field matched, and the register's fields.
+  headings: Partial<Record<Entity, string[]>>;
+  unknown: Partial<Record<Entity, string[]>>;
+  fields: Partial<Record<Entity, string[]>>;
+}
+
+/** R4b: per sheet, a column of the file to a field of the register. */
+export type ColumnMapping = Partial<Record<Entity, Record<string, string>>>;
+
+export interface ImportProfile {
+  id: string;
+  name: string;
+  gouvernorat_code: number | null;
+  mapping: ColumnMapping;
+  created_by_name: string | null;
+  created_at: string;
+  can_delete: boolean;
+}
+
+export interface ImportProfileBody {
+  name: string;
+  mapping: ColumnMapping;
+  shared: boolean;
+}
+
+export interface ImportOptions {
+  mapping?: ColumnMapping;
+  profile?: string | null;
 }
 
 // ---------------------------------------------------------------- transfers between gouvernorats (R3)
@@ -429,6 +457,7 @@ export const inventoryKeys = {
   search: (q: SearchQuery) => ["inventory", "search", q] as const,
   boundaries: ["inventory", "boundaries"] as const,
   transfers: ["inventory", "transfers"] as const,
+  profiles: ["inventory", "import-profiles"] as const,
 };
 
 /** "2 000 L · 4x4": the specifications of a vehicle or a stock line, as the catalogue names them. */
@@ -513,7 +542,14 @@ export function inventoryApi(api: ApiClient) {
       api.request<undefined>(`${I}/agents/${enc(id)}`, { method: "DELETE", body: { reason } }),
     inventoryRevisions: (entityId: string, signal?: AbortSignal) =>
       api.request<{ items: InventoryRevision[] }>(`${I}/revisions`, { query: { entity_id: entityId }, signal }),
-    importInventory: (file: File, gouvernorat: number | null, entity: Entity | null, apply: boolean, reason = "") =>
+    importInventory: (
+      file: File,
+      gouvernorat: number | null,
+      entity: Entity | null,
+      apply: boolean,
+      reason = "",
+      options: ImportOptions = {},
+    ) =>
       api.request<InventoryImport>(`${I}/imports`, {
         method: "POST",
         query: {
@@ -522,9 +558,16 @@ export function inventoryApi(api: ApiClient) {
           entity,
           apply,
           reason: apply ? reason : undefined,
+          profile: options.profile ?? undefined,
+          mapping: options.mapping && Object.keys(options.mapping).length > 0 ? JSON.stringify(options.mapping) : undefined,
         },
         rawBody: file,
       }),
+    importProfiles: (signal?: AbortSignal) => api.request<ImportProfile[]>(`${I}/import-profiles`, { signal }),
+    saveImportProfile: (body: ImportProfileBody) =>
+      api.request<ImportProfile>(`${I}/import-profiles`, { method: "POST", body }),
+    deleteImportProfile: (id: string) =>
+      api.request<undefined>(`${I}/import-profiles/${enc(id)}`, { method: "DELETE" }),
     inventoryTemplate: async (gouvernorat: number | null): Promise<Download> => {
       const response = await api.requestRaw(`${I}/template`, { query: { gouvernorat }, accept: "*/*" });
       return { blob: await response.blob(), filename: filenameOf(response, "inventory.xlsx") };

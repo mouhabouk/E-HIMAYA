@@ -1,15 +1,18 @@
 """Reading and checking the resources register files (phase R1, docs/phase-r/design-resources.md §2.2).
 
-One xlsx template per gouvernorat with three sheets, «الآليات», «المعدات» and «الأعوان», or a CSV of one of them.
+One xlsx template per gouvernorat with three sheets, «الآليات», «المعدات» and «الأعوان», a CSV of one of them, or a
+JSON file (R4b): an array of records of one of them, or an object holding the three arrays. The columns of a file that
+are not the template's are matched with the register's fields by a mapping the user chose from lists (R4b).
 Nothing here touches the database: the caller passes the gouvernorat's units and the catalogue, and the rows come back
 resolved (unit id, catalogue key, typed specifications) with the errors that drop a row and the warnings that keep it.
 """
 
 import io
+import json
 import re
 from dataclasses import dataclass, field
 from datetime import date
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 from app.modules.programmes.domain import (
     FileError,
@@ -31,10 +34,15 @@ FAMILIES = ("vehicles", "equipment", "boats", "air", "ppe")
 # What the register shows for a vehicle; "assigned" is set by the interventions only.
 VEHICLE_STATES = ("ready", "assigned", "maintenance", "broken")
 WRITABLE_STATES = ("ready", "maintenance", "broken")
-AVAILABILITY = ("on_duty", "rest", "leave")
+AVAILABILITY = ("on_duty", "rest", "leave", "sick", "training", "mission")
 STALE_DAYS = 30
 MAX_ROWS = 5000
 MAX_BYTES = 10 * 1024 * 1024
+# R4b: a JSON file is records of scalars, at most this deep (the object, its arrays, their records, a list of skills).
+MAX_JSON_DEPTH = 4
+# R4b: how many columns of one sheet a mapping may rename, and how long a heading may be.
+MAX_MAPPED = 60
+MAX_HEADING = 100
 KEY = re.compile(r"^[a-z][a-z0-9_]{1,39}$")
 
 SHEETS: dict[Entity, tuple[str, ...]] = {
@@ -43,7 +51,16 @@ SHEETS: dict[Entity, tuple[str, ...]] = {
     "agents": ("الأعوان", "agents", "staff"),
 }
 STATE_LABELS = {"جاهزة": "ready", "جاهز": "ready", "صيانة": "maintenance", "معطلة": "broken", "معطل": "broken"}
-AVAILABILITY_LABELS = {"في الخدمة": "on_duty", "راحة": "rest", "إجازة": "leave"}
+AVAILABILITY_LABELS = {
+    "في الخدمة": "on_duty",
+    "راحة": "rest",
+    "إجازة": "leave",
+    "عطلة مرض": "sick",
+    "مرض": "sick",
+    "تكوين": "training",
+    "مأمورية": "mission",
+    "مهمة": "mission",
+}
 YES = {"1", "نعم", "yes", "oui", "true", "x", "✓"}
 NO = {"0", "لا", "no", "non", "false", ""}
 
@@ -99,12 +116,19 @@ class Problem:
         return {k: v for k, v in self.__dict__.items() if v not in ("", None)}
 
 
+Format = Literal["xlsx", "csv", "json"]
+Mapping = dict[Entity, dict[str, str]]
+
+
 @dataclass
 class Parsed:
-    format: Literal["xlsx", "csv"]
+    format: Format
     rows: dict[Entity, list[dict[str, Any]]]
     errors: list[Problem] = field(default_factory=list)
     warnings: list[Problem] = field(default_factory=list)
+    # R4b: the columns of the file by sheet, and those that match no field of the register (to map them on screen).
+    headings: dict[Entity, list[str]] = field(default_factory=dict)
+    unknown: dict[Entity, list[str]] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -179,11 +203,13 @@ def matches(specs: dict[str, Any], wanted: dict[str, Any]) -> bool:
 # ---------------------------------------------------------------- reading
 
 
-def _format(file_name: str, data: bytes) -> Literal["xlsx", "csv"]:
+def _format(file_name: str, data: bytes) -> Format:
     if len(data) > MAX_BYTES:
         raise FileError("file_too_large")
     if data[:2] == b"PK" or file_name.lower().endswith(".xlsx"):
         return "xlsx"
+    if file_name.lower().endswith(".json") or data.lstrip(b"\xef\xbb\xbf \t\r\n")[:1] in (b"[", b"{"):
+        return "json"
     if file_name.lower().endswith((".csv", ".txt")):
         return "csv"
     raise FileError("file_format")
@@ -210,18 +236,118 @@ def _records_xlsx(data: bytes) -> dict[Entity, list[dict[str, Any]]]:
         workbook.close()
 
 
+def _depth(value: Any, level: int = 1) -> int:
+    if isinstance(value, dict):
+        return max((_depth(v, level + 1) for v in value.values()), default=level)
+    if isinstance(value, list):
+        return max((_depth(v, level + 1) for v in value), default=level)
+    return level - 1
+
+
+def _scalar(value: Any) -> Any:
+    """A JSON value of a record: a scalar as it is, a list of scalars (skills) joined; anything else refused."""
+    if value is None or isinstance(value, str | int | float | bool):
+        return value
+    if isinstance(value, list) and all(isinstance(v, str | int | float) for v in value):
+        return "؛ ".join(_text(v) for v in value)
+    raise FileError("file_json_shape")
+
+
+def _records_json(data: bytes, entity: Entity | None) -> dict[Entity, list[dict[str, Any]]]:
+    try:
+        document = json.loads(data.decode("utf-8-sig"))
+    except UnicodeDecodeError as exc:
+        raise FileError("file_encoding") from exc
+    except (ValueError, RecursionError) as exc:
+        raise FileError("file_unreadable") from exc
+    if _depth(document) > MAX_JSON_DEPTH:
+        raise FileError("file_json_shape")
+    found: dict[Entity, list[Any]] = {e: [] for e in ENTITIES}
+    if isinstance(document, list):
+        if entity is None:
+            raise FileError("entity_required")
+        found[entity] = document
+    elif isinstance(document, dict):
+        names = {normalize(n): e for e, labels in SHEETS.items() for n in (e, *labels)}
+        for key, records in document.items():
+            target = names.get(normalize(_text(key)))
+            if target is None:
+                continue
+            if not isinstance(records, list):
+                raise FileError("file_json_shape")
+            found[target] = records
+        if not any(found.values()):
+            raise FileError("file_sheet_missing", "vehicles / stock / agents")
+    else:
+        raise FileError("file_json_shape")
+    out: dict[Entity, list[dict[str, Any]]] = {}
+    for name, records in found.items():
+        if not all(isinstance(r, dict) for r in records):
+            raise FileError("file_json_shape")
+        out[name] = [{_text(k): _scalar(v) for k, v in r.items()} for r in records]
+    return out
+
+
+def check_mapping(mapping: Any) -> Mapping:
+    """A mapping chosen on screen: per sheet, a heading of the file to a field of the register. ``FileError`` when a
+    sheet or a field is not one of ours, or the mapping is too large: the headings are data and never reach SQL."""
+    if not isinstance(mapping, dict):
+        raise FileError("mapping_invalid")
+    out: Mapping = {}
+    for name, pairs in mapping.items():
+        if name not in ENTITIES or not isinstance(pairs, dict) or len(pairs) > MAX_MAPPED:
+            raise FileError("mapping_invalid", _text(name)[:40])
+        entity = cast(Entity, name)
+        clean: dict[str, str] = {}
+        for heading, target in pairs.items():
+            if not isinstance(heading, str) or not isinstance(target, str):
+                raise FileError("mapping_invalid")
+            heading = _text(heading)
+            if not heading or len(heading) > MAX_HEADING or target not in COLUMNS[entity]:
+                raise FileError("mapping_invalid", heading[:40] or target[:40])
+            clean[heading] = target
+        if len(set(clean.values())) != len(clean):
+            raise FileError("mapping_duplicate", entity)
+        if clean:
+            out[entity] = clean
+    return out
+
+
+def _mapped(row: dict[str, Any], pairs: dict[str, str]) -> dict[str, Any]:
+    """The row with the mapped headings renamed to the register's field keys (which ``_keyed`` reads first)."""
+    if not pairs:
+        return row
+    by_heading = {normalize(_text(k)): v for k, v in row.items() if k is not None}
+    out = dict(row)
+    for heading, target in pairs.items():
+        value = by_heading.get(normalize(heading))
+        if value not in (None, ""):
+            out[target] = value
+    return out
+
+
+def _unknown(headings: list[str], entity: Entity, pairs: dict[str, str]) -> list[str]:
+    known = {normalize(h) for key, labels in COLUMNS[entity].items() for h in (key, *labels)}
+    known |= {normalize(h) for h in pairs}
+    return [h for h in headings if h and normalize(h) not in known]
+
+
 def parse(
     file_name: str,
     data: bytes,
     entity: Entity | None,
     units: dict[str, Any],
     categories: dict[str, CategoryRef],
+    mapping: Mapping | None = None,
 ) -> Parsed:
     """``units`` maps a normalised unit name (Arabic or French) to its id; ``categories`` maps a normalised key or
-    name (Arabic, French or English) to the catalogue entry. A CSV holds one entity, named by ``entity``."""
+    name (Arabic, French or English) to the catalogue entry. A CSV, or a JSON array, holds one entity, named by
+    ``entity``. ``mapping`` (R4b) renames the columns of a file that are not the template's."""
     fmt = _format(file_name, data)
     if fmt == "xlsx":
         raw = _records_xlsx(data)
+    elif fmt == "json":
+        raw = _records_json(data, entity)
     else:
         if entity is None:
             raise FileError("entity_required")
@@ -229,10 +355,16 @@ def parse(
         raw[entity] = _records_csv(data)
     if sum(len(v) for v in raw.values()) > MAX_ROWS:
         raise FileError("file_too_many_rows")
+    mapping = mapping or {}
     parsed = Parsed(format=fmt, rows={e: [] for e in ENTITIES})
     for name, rows in raw.items():
+        pairs = mapping.get(name, {})
+        if rows:
+            headings = list(dict.fromkeys(_text(h) for r in rows[:50] for h in r if h is not None))[:MAX_MAPPED]
+            parsed.headings[name] = headings
+            parsed.unknown[name] = _unknown(headings, name, pairs)
         for line, row in enumerate(rows, start=2):
-            values = _keyed(row, COLUMNS[name])
+            values = _keyed(_mapped(row, pairs), COLUMNS[name])
             if not values:
                 continue
             checked = _check(name, values, line, units, categories, parsed)

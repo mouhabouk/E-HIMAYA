@@ -15829,6 +15829,117 @@
         "title": "ImportDetail",
         "type": "object"
       },
+      "ImportProfileIn": {
+        "additionalProperties": false,
+        "description": "A mapping kept by name (R4b). The fields are checked against the register's by the API.",
+        "properties": {
+          "mapping": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "pattern": "^[a-z][a-z0-9_]{1,39}$",
+                "type": "string"
+              },
+              "propertyNames": {
+                "maxLength": 100,
+                "minLength": 1
+              },
+              "type": "object"
+            },
+            "maxProperties": 3,
+            "propertyNames": {
+              "enum": [
+                "vehicles",
+                "stock",
+                "agents"
+              ]
+            },
+            "title": "Mapping",
+            "type": "object"
+          },
+          "name": {
+            "maxLength": 80,
+            "minLength": 2,
+            "title": "Name",
+            "type": "string"
+          },
+          "shared": {
+            "default": false,
+            "title": "Shared",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name",
+          "mapping"
+        ],
+        "title": "ImportProfileIn",
+        "type": "object"
+      },
+      "ImportProfileOut": {
+        "properties": {
+          "can_delete": {
+            "title": "Can Delete",
+            "type": "boolean"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "mapping": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "title": "Mapping",
+            "type": "object"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "gouvernorat_code",
+          "mapping",
+          "created_by_name",
+          "created_at",
+          "can_delete"
+        ],
+        "title": "ImportProfileOut",
+        "type": "object"
+      },
       "ImportedProgramme": {
         "properties": {
           "code": {
@@ -41099,10 +41210,21 @@
             "title": "Errors",
             "type": "array"
           },
+          "fields": {
+            "additionalProperties": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "title": "Fields",
+            "type": "object"
+          },
           "format": {
             "enum": [
               "xlsx",
-              "csv"
+              "csv",
+              "json"
             ],
             "title": "Format",
             "type": "string"
@@ -41111,8 +41233,28 @@
             "title": "Gouvernorat Code",
             "type": "integer"
           },
+          "headings": {
+            "additionalProperties": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "title": "Headings",
+            "type": "object"
+          },
           "stock": {
             "$ref": "#/components/schemas/ImportCounts"
+          },
+          "unknown": {
+            "additionalProperties": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "title": "Unknown",
+            "type": "object"
           },
           "vehicles": {
             "$ref": "#/components/schemas/ImportCounts"
@@ -68122,9 +68264,129 @@
         ]
       }
     },
+    "/api/v1/staff/inventory/import-profiles": {
+      "get": {
+        "description": "The column mappings the caller may use: their gouvernorat's and the central room's (row level security).",
+        "operationId": "list_import_profiles_api_v1_staff_inventory_import_profiles_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ImportProfileOut"
+                  },
+                  "title": "Response List Import Profiles Api V1 Staff Inventory Import Profiles Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Import Profiles",
+        "tags": [
+          "staff",
+          "inventory"
+        ]
+      },
+      "post": {
+        "description": "Keep a mapping by name. A regional room keeps it for its gouvernorat; the central room may share it.",
+        "operationId": "create_import_profile_api_v1_staff_inventory_import_profiles_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportProfileIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportProfileOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Import Profile",
+        "tags": [
+          "staff",
+          "inventory"
+        ]
+      }
+    },
+    "/api/v1/staff/inventory/import-profiles/{profile_id}": {
+      "delete": {
+        "operationId": "delete_import_profile_api_v1_staff_inventory_import_profiles__profile_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Profile Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Import Profile",
+        "tags": [
+          "staff",
+          "inventory"
+        ]
+      }
+    },
     "/api/v1/staff/inventory/imports": {
       "post": {
-        "description": "The register of one gouvernorat from the xlsx template (or a CSV of one sheet, named by ``entity``). Without\n``apply`` nothing is saved: the answer counts the new and changed rows and lists the errors and warnings. With\n``apply`` the rows are added or updated (vehicles by unit and label, equipment by unit, type and specifications,\nstaff by matricule); nothing absent from the file is deleted. A file with errors is refused.",
+        "description": "The register of one gouvernorat from the xlsx template (or a CSV of one sheet, named by ``entity``). Without\n``apply`` nothing is saved: the answer counts the new and changed rows and lists the errors and warnings. With\n``apply`` the rows are added or updated (vehicles by unit and label, equipment by unit, type and specifications,\nstaff by matricule); nothing absent from the file is deleted. A file with errors is refused.\n\nR4b: a JSON file too, and a file with its own columns: ``mapping`` (JSON, ``{\"stock\": {\"<heading>\": \"<field>\"}}``)\nor a saved ``profile`` renames them; the answer lists the columns no field matched, to map them on screen.",
         "operationId": "import_register_api_v1_staff_inventory_imports_post",
         "parameters": [
           {
@@ -68196,6 +68458,40 @@
               "maxLength": 500,
               "title": "Reason",
               "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "mapping",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 8000,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Mapping"
+            }
+          },
+          {
+            "in": "query",
+            "name": "profile",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Profile"
             }
           }
         ],

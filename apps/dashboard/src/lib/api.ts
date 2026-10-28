@@ -348,6 +348,12 @@ export const ERROR_CODES = [
   "transfer_decided",
   "transfer_outdated",
   "unit_not_in_gouvernorat",
+  // Phase R4b: a JSON file and the mapping of its columns.
+  "file_json_shape",
+  "mapping_invalid",
+  "mapping_duplicate",
+  "profile_name_taken",
+  "profile_not_found",
   "vehicle_not_in_unit",
 ] as const;
 export type ErrorCode = (typeof ERROR_CODES)[number];

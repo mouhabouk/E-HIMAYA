@@ -2,6 +2,7 @@ import type { FeatureCollection } from "geojson";
 import type {
   Agent,
   Catalogue,
+  ImportProfile,
   InventoryImport,
   Overview,
   SearchResult,
@@ -152,6 +153,40 @@ export const IMPORT_PREVIEW: InventoryImport = {
   agents: { new: 3, changed: 0, unchanged: 1 },
   errors: [],
   warnings: [{ code: "year_invalid", entity: "vehicles", line: 4, value: "1900" }],
+  headings: {},
+  unknown: {},
+  fields: {},
+};
+
+const STOCK_FIELDS = ["unit", "category", "qty_ready", "qty_broken", "notes", "capacity_l", "flow_lpm"];
+
+/** R4b: a JSON file of a unit's equipment whose columns are not the template's ([SIM]). */
+export const FOREIGN_PREVIEW: InventoryImport = {
+  ...IMPORT_PREVIEW,
+  format: "json",
+  vehicles: { new: 0, changed: 0, unchanged: 0 },
+  stock: { new: 0, changed: 0, unchanged: 0 },
+  agents: { new: 0, changed: 0, unchanged: 0 },
+  warnings: [],
+  headings: { stock: ["الوحدة الأصلية", "النوع", "العدد", "ملاحظات"] },
+  unknown: { stock: ["الوحدة الأصلية", "النوع", "العدد"] },
+  fields: { stock: STOCK_FIELDS },
+};
+
+export const MAPPED_PREVIEW: InventoryImport = {
+  ...FOREIGN_PREVIEW,
+  stock: { new: 4, changed: 1, unchanged: 0 },
+  unknown: { stock: [] },
+};
+
+export const IMPORT_PROFILE: ImportProfile = {
+  id: "p-1",
+  name: "[SIM] ملف وحدة صفاقس",
+  gouvernorat_code: 61,
+  mapping: { stock: { "الوحدة الأصلية": "unit", "النوع": "category", "العدد": "qty_ready" } },
+  created_by_name: "[SIM] رئيس القاعة الجهوية بصفاقس",
+  created_at: "2026-10-28T10:00:00Z",
+  can_delete: true,
 };
 
 /** Phase R2: fire engines of 2000 L or more across the country ([SIM] figures). */
