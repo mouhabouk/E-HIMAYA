@@ -410,7 +410,13 @@
     "shelter_not_found": "مركز الإيواء غير موجود.",
     "evacuation_not_found": "منطقة الإخلاء غير موجودة.",
     "need_not_found": "النقص غير موجود.",
-    "occupants_over_capacity": "العدد الحالي يفوق السعة."
+    "occupants_over_capacity": "العدد الحالي يفوق السعة.",
+    "group_not_found": "هذا المجلد غير موجود.",
+    "group_not_empty": "المجلد يحوي طبقات: انقلها إلى مجلد آخر أولًا.",
+    "group_kept": "هذا المجلد لا يُحذف.",
+    "group_sensitivity_mismatch": "الطبقات الحساسة في مجلد الطبقات الحساسة وحده، ولا تدخله غيرها.",
+    "icon_unknown": "أيقونة غير معروفة.",
+    "tone_unknown": "لون غير معروف."
   },
   "kpi": {
     "title": "المؤشرات الرئيسية",
@@ -3872,7 +3878,8 @@
       "tabs": {
         "label": "الطبقات",
         "layers": "الطبقات ({{count}})",
-        "deleted": "المحذوفات ({{count}})"
+        "deleted": "المحذوفات ({{count}})",
+        "folders": "مجلدات الخريطة ({{count}})"
       },
       "visibility": {
         "title": "من يرى الطبقة",
@@ -3992,6 +3999,58 @@
       "duplicates": "تكرار محتمل: {{n}}",
       "ministerOnly": "الوزير وحده",
       "listSeparator": "، "
+    },
+    "groups": {
+      "showAll": "إظهار كل طبقات {{group}}",
+      "count": "{{on}} من {{total}}",
+      "title": "مجلدات لوحة الطبقات",
+      "intro": "تظهر الطبقات على الخريطة في هذه المجلدات بهذا الترتيب. المجلد لا يمنح أي صلاحية: من يرى الطبقة يُضبط في إعداداتها، ولا يرى المستخدم إلا المجلدات التي فيها طبقة يراها.",
+      "folder": "المجلد",
+      "layers": "الطبقات",
+      "position": "الترتيب",
+      "positionHelp": "الأصغر يظهر أولًا.",
+      "newTitle": "مجلد جديد",
+      "editTitle": "تعديل المجلد: {{group}}",
+      "edit": "تعديل",
+      "editNamed": "تعديل المجلد {{group}}",
+      "delete": "حذف",
+      "deleteNamed": "حذف المجلد {{group}}",
+      "kept": "مجلد ثابت",
+      "notEmpty": "فيه طبقات",
+      "namesRequired": "اكتب اسم المجلد بالعربية والفرنسية والإنجليزية.",
+      "pick": "المجلد على الخريطة",
+      "pickHelp": "المجلد الذي تظهر فيه الطبقة في لوحة الخريطة. لا يغيّر من يراها.",
+      "pickSensitive": "الطبقة الحساسة تبقى في مجلد الطبقات الحساسة.",
+      "icons": {
+        "localFireDepartment": "إطفاء",
+        "medicalServices": "صحة",
+        "policy": "أمن",
+        "apartment": "مبنى",
+        "menuBook": "تعليم",
+        "localShipping": "نقل",
+        "inventory2": "مخزون",
+        "map": "خريطة",
+        "groups": "تجمع",
+        "schedule": "موسم",
+        "lockOpen": "قفل",
+        "layers": "طبقات",
+        "healthAndSafety": "وقاية",
+        "warning": "خطر",
+        "campaign": "تنبيه",
+        "folderOpen": "مجلد"
+      },
+      "tones": {
+        "red": "أحمر",
+        "navy": "كحلي",
+        "purple": "بنفسجي",
+        "green": "أخضر",
+        "amber": "كهرماني",
+        "teal": "فيروزي",
+        "slate": "رمادي",
+        "pink": "وردي",
+        "sky": "سماوي",
+        "orange": "برتقالي"
+      }
     }
   },
   "guide": {

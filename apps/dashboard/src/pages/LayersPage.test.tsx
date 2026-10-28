@@ -225,6 +225,72 @@ describe("LayersPage", () => {
     await waitFor(() => expect(restoreLayer).toHaveBeenCalledWith("old", "Supprimée par erreur"));
   });
 
+  it("moves a layer to another folder and manages the folders (phase UI-3b)", async () => {
+    const folder = (key: string, fr: string, position: number, count: number, sensitive = false) => ({
+      key,
+      name: { ar: fr, fr, en: fr },
+      icon: "medicalServices",
+      tone: "pink",
+      position,
+      sensitive,
+      layer_count: count,
+    });
+    const groups = [
+      folder("health", "Établissements de santé", 2, 1),
+      folder("transport", "Transports", 6, 0),
+      folder("sensitive", "Couches sensibles", 11, 0, true),
+      folder("other", "Autres couches", 12, 0),
+    ];
+    const updateLayer = vi.fn(() => Promise.resolve(layer({ group: "transport" })));
+    const createLayerGroup = vi.fn(() => Promise.resolve(folder("depots", "Dépôts", 13, 0)));
+    const deleteLayerGroup = vi.fn(() => Promise.resolve());
+    const api = fakeApi({
+      ...fakeLayersApi(),
+      layers: vi.fn(() => Promise.resolve({ ...list([layer({ group: "health" })]), groups })),
+      updateLayer,
+      createLayerGroup,
+      deleteLayerGroup,
+    });
+    renderApp(<LayersPage />, { api, auth: fakeAuth(SYSADMIN), lang: "fr" });
+    expect(await screen.findByRole("cell", { name: "Établissements de santé" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Ouvrir" }));
+    // The sensitive folder is not offered for an ordinary layer.
+    const pick = await screen.findByRole("combobox", { name: "Dossier sur la carte" });
+    expect(within(pick).queryByRole("option", { name: "Couches sensibles" })).not.toBeInTheDocument();
+    fireEvent.change(pick, { target: { value: "transport" } });
+    const card = pick.closest("form") as HTMLElement;
+    fireEvent.change(within(card).getByLabelText("Motif de la modification"), { target: { value: "Bon dossier" } });
+    fireEvent.click(within(card).getByRole("button", { name: "Enregistrer" }));
+    await waitFor(() => expect(updateLayer).toHaveBeenCalledTimes(1));
+    expect(updateLayer.mock.calls[0]).toMatchObject(["hopitaux", { group_key: "transport", reason: "Bon dossier" }]);
+
+    fireEvent.click(screen.getByRole("tab", { name: "Dossiers de la carte (4)" }));
+    // A folder with layers, and the permanent folders, cannot be deleted; an empty one can.
+    expect(screen.getByText("Contient des couches")).toBeInTheDocument();
+    expect(screen.getAllByText("Dossier permanent")).toHaveLength(2);
+    fireEvent.click(screen.getByRole("button", { name: "Supprimer le dossier Transports" }));
+    await waitFor(() => expect(deleteLayerGroup).toHaveBeenCalledWith("transport"));
+
+    fireEvent.click(screen.getByRole("button", { name: "Nouveau dossier" }));
+    fireEvent.click(screen.getByRole("button", { name: "Enregistrer" }));
+    expect(await screen.findByText(/Saisissez le nom du dossier/)).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Nom en arabe"), { target: { value: "المستودعات" } });
+    fireEvent.change(screen.getByLabelText("Nom en français"), { target: { value: "Dépôts" } });
+    fireEvent.change(screen.getByLabelText("Nom en anglais"), { target: { value: "Depots" } });
+    fireEvent.click(screen.getByRole("radio", { name: "Stocks" }));
+    fireEvent.click(screen.getByRole("radio", { name: "Ambre" }));
+    fireEvent.click(screen.getByRole("button", { name: "Enregistrer" }));
+    await waitFor(() =>
+      expect(createLayerGroup).toHaveBeenCalledWith({
+        key: "depots",
+        name: { ar: "المستودعات", fr: "Dépôts", en: "Depots" },
+        icon: "inventory2",
+        tone: "amber",
+        position: 13,
+      }),
+    );
+  });
+
   it("reviews suggested names: accepts every high one at once", async () => {
     const suggested = {
       id: "f1",

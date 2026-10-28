@@ -175,6 +175,10 @@ export function fakeLayersApi() {
     restoreFeature: vi.fn(),
     // Phase L1b.
     layerShapes: vi.fn(() => Promise.resolve({ type: "FeatureCollection" as const, features: [], truncated: false })),
+    // Phase UI-3b.
+    createLayerGroup: vi.fn(),
+    updateLayerGroup: vi.fn(),
+    deleteLayerGroup: vi.fn(),
     certificateLookup: vi.fn(),
     addStamp: vi.fn(),
     putStampPhoto: vi.fn(),

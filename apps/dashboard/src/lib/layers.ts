@@ -117,6 +117,53 @@ export interface MapLayer {
   deleted_at: string | null;
   delete_reason: string | null;
   purge_at: string | null;
+  /** Phase UI-3b: the folder of the layer panel it shows in (its own, or the one its key suggests). */
+  group?: string;
+}
+
+/** A folder of the map's layer panel (phase UI-3b): grants nothing, each layer keeps who sees it. */
+export interface LayerGroup {
+  key: string;
+  name: Names;
+  /** A dashboard icon (Icon.tsx) and a category colour. */
+  icon: string;
+  tone: string;
+  position: number;
+  /** Holds the sensitive layers alone; listed only to their readers. */
+  sensitive: boolean;
+  layer_count: number;
+}
+
+export interface LayerGroupBody {
+  key: string;
+  name: Names;
+  icon: string;
+  tone: string;
+  position?: number;
+}
+
+export const OTHER_GROUP = "other";
+const FALLBACK_OTHER: LayerGroup = {
+  key: OTHER_GROUP,
+  name: { ar: "طبقات أخرى", fr: "Autres couches", en: "Other layers" },
+  icon: "layers",
+  tone: "slate",
+  position: 999,
+  sensitive: false,
+  layer_count: 0,
+};
+
+/** The layers in each folder of the panel, in the groups' order; a layer whose group is unknown goes to "other". */
+export function layerFolders<T extends Pick<MapLayer, "key" | "group">>(
+  groups: readonly LayerGroup[],
+  layers: readonly T[],
+): { group: LayerGroup; layers: T[] }[] {
+  const known = new Set(groups.map((g) => g.key));
+  const folderOf = (l: T) => (l.group && known.has(l.group) ? l.group : OTHER_GROUP);
+  const all = known.has(OTHER_GROUP) ? groups : [...groups, FALLBACK_OTHER];
+  return all
+    .map((group) => ({ group, layers: layers.filter((l) => folderOf(l) === group.key) }))
+    .filter((f) => f.layers.length > 0);
 }
 
 /** The lines and areas of a layer in a map area (phase L1b), simplified for the zoom. */
@@ -127,6 +174,8 @@ export interface LayerShapes {
 }
 
 export interface MapLayers {
+  /** Phase UI-3b: the folders holding a layer the caller sees (all of them for the administrator), in order. */
+  groups?: LayerGroup[];
   items: MapLayer[];
   /** Layers deleted less than 30 days ago (administrator only): restorable. */
   deleted: MapLayer[];
@@ -239,6 +288,8 @@ export interface LayerAccess {
 export type LayerPatch = Partial<Omit<LayerBody, "key" | "reason">> &
   Partial<LayerAccess> & {
   enabled?: boolean;
+  /** Phase UI-3b: null puts it back in the folder its key suggests. */
+  group_key?: string | null;
   version: number;
   reason: string;
 };

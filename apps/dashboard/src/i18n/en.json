@@ -410,7 +410,13 @@
     "shelter_not_found": "Shelter not found.",
     "evacuation_not_found": "Zone not found.",
     "need_not_found": "Need not found.",
-    "occupants_over_capacity": "Occupants exceed the capacity."
+    "occupants_over_capacity": "Occupants exceed the capacity.",
+    "group_not_found": "This folder does not exist.",
+    "group_not_empty": "The folder holds layers: move them first.",
+    "group_kept": "This folder cannot be deleted.",
+    "group_sensitivity_mismatch": "Sensitive layers go in the sensitive folder, and only there.",
+    "icon_unknown": "Unknown icon.",
+    "tone_unknown": "Unknown colour."
   },
   "kpi": {
     "title": "Key indicators",
@@ -3872,7 +3878,8 @@
       "tabs": {
         "label": "Layers",
         "layers": "Layers ({{count}})",
-        "deleted": "Deleted ({{count}})"
+        "deleted": "Deleted ({{count}})",
+        "folders": "Map folders ({{count}})"
       },
       "visibility": {
         "title": "Who sees the layer",
@@ -3992,6 +3999,58 @@
       "duplicates": "Possible duplicates: {{n}}",
       "ministerOnly": "The minister alone",
       "listSeparator": ", "
+    },
+    "groups": {
+      "showAll": "Show every layer: {{group}}",
+      "count": "{{on}} of {{total}}",
+      "title": "Folders of the layer panel",
+      "intro": "Layers show on the map in these folders, in this order. A folder grants nothing: who sees a layer is set in its settings, and each user sees only the folders holding a layer they see.",
+      "folder": "Folder",
+      "layers": "Layers",
+      "position": "Order",
+      "positionHelp": "Smallest first.",
+      "newTitle": "New folder",
+      "editTitle": "Edit folder: {{group}}",
+      "edit": "Edit",
+      "editNamed": "Edit folder {{group}}",
+      "delete": "Delete",
+      "deleteNamed": "Delete folder {{group}}",
+      "kept": "Permanent folder",
+      "notEmpty": "Holds layers",
+      "namesRequired": "Enter the folder’s name in Arabic, French and English.",
+      "pick": "Folder on the map",
+      "pickHelp": "The folder the layer shows in on the map panel. It does not change who sees it.",
+      "pickSensitive": "A sensitive layer stays in the sensitive layers folder.",
+      "icons": {
+        "localFireDepartment": "Fire",
+        "medicalServices": "Health",
+        "policy": "Security",
+        "apartment": "Building",
+        "menuBook": "Education",
+        "localShipping": "Transport",
+        "inventory2": "Stock",
+        "map": "Map",
+        "groups": "Gathering",
+        "schedule": "Season",
+        "lockOpen": "Padlock",
+        "layers": "Layers",
+        "healthAndSafety": "Prevention",
+        "warning": "Danger",
+        "campaign": "Alert",
+        "folderOpen": "Folder"
+      },
+      "tones": {
+        "red": "Red",
+        "navy": "Navy",
+        "purple": "Purple",
+        "green": "Green",
+        "amber": "Amber",
+        "teal": "Teal",
+        "slate": "Slate",
+        "pink": "Pink",
+        "sky": "Sky",
+        "orange": "Orange"
+      }
     }
   },
   "guide": {

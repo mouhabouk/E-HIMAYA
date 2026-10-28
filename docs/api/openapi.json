@@ -12543,6 +12543,140 @@
         "title": "GrantPage",
         "type": "object"
       },
+      "GroupIn": {
+        "description": "A new group of the layer panel (system administrator).",
+        "properties": {
+          "icon": {
+            "title": "Icon",
+            "type": "string"
+          },
+          "key": {
+            "pattern": "^[a-z][a-z0-9_]{1,39}$",
+            "title": "Key",
+            "type": "string"
+          },
+          "name": {
+            "$ref": "#/components/schemas/Names"
+          },
+          "position": {
+            "default": 0,
+            "maximum": 999.0,
+            "minimum": 0.0,
+            "title": "Position",
+            "type": "integer"
+          },
+          "sensitive": {
+            "default": false,
+            "title": "Sensitive",
+            "type": "boolean"
+          },
+          "tone": {
+            "title": "Tone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "icon",
+          "tone"
+        ],
+        "title": "GroupIn",
+        "type": "object"
+      },
+      "GroupOut": {
+        "properties": {
+          "icon": {
+            "title": "Icon",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "layer_count": {
+            "title": "Layer Count",
+            "type": "integer"
+          },
+          "name": {
+            "$ref": "#/components/schemas/Names"
+          },
+          "position": {
+            "title": "Position",
+            "type": "integer"
+          },
+          "sensitive": {
+            "title": "Sensitive",
+            "type": "boolean"
+          },
+          "tone": {
+            "title": "Tone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "icon",
+          "tone",
+          "position",
+          "sensitive",
+          "layer_count"
+        ],
+        "title": "GroupOut",
+        "type": "object"
+      },
+      "GroupPatch": {
+        "properties": {
+          "icon": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icon"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Names"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "position": {
+            "anyOf": [
+              {
+                "maximum": 999.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Position"
+          },
+          "tone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tone"
+          }
+        },
+        "title": "GroupPatch",
+        "type": "object"
+      },
       "GroupingSettings": {
         "properties": {
           "radius_m": {
@@ -15298,6 +15432,10 @@
             "title": "Geometry",
             "type": "string"
           },
+          "group": {
+            "title": "Group",
+            "type": "string"
+          },
           "hidden_count": {
             "title": "Hidden Count",
             "type": "integer"
@@ -15445,7 +15583,8 @@
           "quality",
           "deleted_at",
           "delete_reason",
-          "purge_at"
+          "purge_at",
+          "group"
         ],
         "title": "LayerOut",
         "type": "object"
@@ -15566,6 +15705,18 @@
               }
             ],
             "title": "Fields"
+          },
+          "group_key": {
+            "anyOf": [
+              {
+                "pattern": "^[a-z][a-z0-9_]{1,39}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Group Key"
           },
           "icon": {
             "anyOf": [
@@ -15719,6 +15870,13 @@
               "$ref": "#/components/schemas/LayerOut"
             },
             "title": "Deleted",
+            "type": "array"
+          },
+          "groups": {
+            "items": {
+              "$ref": "#/components/schemas/GroupOut"
+            },
+            "title": "Groups",
             "type": "array"
           },
           "icons": {
@@ -58045,6 +58203,150 @@
           }
         ],
         "summary": "Create Layer",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/staff/layers/groups": {
+      "post": {
+        "operationId": "create_group_api_v1_staff_layers_groups_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GroupIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Group",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      }
+    },
+    "/api/v1/staff/layers/groups/{gkey}": {
+      "delete": {
+        "operationId": "delete_group_api_v1_staff_layers_groups__gkey__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "gkey",
+            "required": true,
+            "schema": {
+              "title": "Gkey",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Group",
+        "tags": [
+          "staff",
+          "layers"
+        ]
+      },
+      "patch": {
+        "operationId": "update_group_api_v1_staff_layers_groups__gkey__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "gkey",
+            "required": true,
+            "schema": {
+              "title": "Gkey",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GroupPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Group",
         "tags": [
           "staff",
           "layers"

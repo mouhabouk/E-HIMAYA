@@ -106,6 +106,17 @@ export type Tone =
   | "sky"
   | "orange";
 
+const TONES: readonly Tone[] = ["red", "navy", "purple", "green", "amber", "teal", "slate", "pink", "sky", "orange"];
+
+/** A name or colour that came from the server (layer groups, phase UI-3b) falls back to a neutral one. */
+export function iconOr(name: string, fallback: IconName): IconName {
+  return Object.hasOwn(PATHS, name) ? (name as IconName) : fallback;
+}
+
+export function toneOr(tone: string, fallback: Tone): Tone {
+  return TONES.find((t) => t === tone) ?? fallback;
+}
+
 export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
   return (
     <svg

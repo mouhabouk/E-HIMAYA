@@ -151,4 +151,59 @@ describe("useMapDataLayers", () => {
     await waitFor(() => expect(screen.queryByText(/Oued Medjerda/)).not.toBeInTheDocument());
     expect(JSON.parse(sessionStorage.getItem("ehimaya.mapDataLayers") ?? "null")).toEqual([]);
   });
+
+  it("puts the layers in folders that open and close, each with a switch for all its layers (UI-3b)", async () => {
+    sessionStorage.clear();
+    const group = (key: string, fr: string, icon: string, tone: string, position: number) => ({
+      key,
+      name: { ar: fr, fr, en: fr },
+      icon,
+      tone,
+      position,
+      sensitive: false,
+      layer_count: 2,
+    });
+    const api = fakeApi({
+      ...fakeLayersApi(),
+      layers: vi.fn(() =>
+        Promise.resolve({
+          groups: [
+            group("civil_protection", "Moyens de la protection civile", "localFireDepartment", "red", 1),
+            group("health", "Établissements de santé", "medicalServices", "pink", 2),
+          ],
+          items: [
+            { ...layer("hopitaux", "Hôpitaux", "#C62828"), group: "health" },
+            { ...layer("pharmacies", "Pharmacies", "#2E7D32"), group: "health" },
+            { ...layer("bouches", "Bouches d’incendie", "#B71C1C"), group: "civil_protection" },
+            { ...layer("divers", "Divers", "#37474F"), group: "unknown" },
+          ],
+          deleted: [],
+          can_manage: false,
+          icons: [],
+          palette: [],
+          limits: { file_bytes: 1, rows: 1 },
+        }),
+      ),
+    });
+    renderApp(<Harness />, { api, auth: fakeAuth(OPERATOR_CLAIMS), lang: "fr" });
+    const health = await screen.findByRole("button", { name: /Établissements de santé/ });
+    // In the groups' order, a layer of an unknown group last under "other"; all closed while nothing is on.
+    expect(screen.getAllByRole("button", { expanded: false }).map((b) => b.textContent)).toEqual(["Moyens de la protection civile0 sur 1", "Établissements de santé0 sur 2", "Autres couches0 sur 1"]);
+    expect(screen.queryByRole("checkbox", { name: /Hôpitaux/ })).not.toBeInTheDocument();
+    fireEvent.click(health);
+    expect(health).toHaveAttribute("aria-expanded", "true");
+    fireEvent.click(screen.getByRole("checkbox", { name: /Hôpitaux/ }));
+    const all = screen.getByRole("checkbox", { name: "Afficher toutes les couches : Établissements de santé" });
+    expect(all).toHaveProperty("indeterminate", true);
+    expect(health).toHaveTextContent("1 sur 2");
+    fireEvent.click(all);
+    expect(screen.getByRole("checkbox", { name: /Pharmacies/ })).toBeChecked();
+    expect(JSON.parse(sessionStorage.getItem("ehimaya.mapDataLayers") ?? "[]")).toEqual(["hopitaux", "pharmacies"]);
+    fireEvent.click(all);
+    expect(JSON.parse(sessionStorage.getItem("ehimaya.mapDataLayers") ?? "[]")).toEqual([]);
+    // The switch of a closed folder turns its layers on without opening it; the open folders are remembered.
+    fireEvent.click(screen.getByRole("checkbox", { name: /toutes les couches : Moyens de la protection civile/ }));
+    expect(JSON.parse(sessionStorage.getItem("ehimaya.mapDataLayers") ?? "[]")).toEqual(["bouches"]);
+    expect(JSON.parse(localStorage.getItem("ehimaya.layerFolders") ?? "[]")).toEqual(["health"]);
+  });
 });

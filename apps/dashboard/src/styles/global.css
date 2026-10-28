@@ -6909,3 +6909,150 @@ button.nav-card:hover {
     margin: 0;
   }
 }
+
+/* ---------- Phase UI-3b: map layers in folders (docs/phase-ui3/design-layer-groups.md) ---------- */
+.layer-folders {
+  flex-basis: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+  gap: 0.5rem;
+  align-items: start;
+}
+
+.layer-folder {
+  border: 1px solid var(--chrome-edge);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.layer-folder[data-open] {
+  box-shadow: var(--chrome-shadow);
+}
+
+.layer-folder__head {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding-inline-start: 0.6rem;
+}
+
+.layer-folder__all {
+  inline-size: 1.1rem;
+  block-size: 1.1rem;
+  margin: 0;
+  accent-color: var(--primary);
+  flex: none;
+}
+
+.layer-folder__btn {
+  display: flex;
+  flex: 1;
+  min-inline-size: 0;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.5rem;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  text-align: start;
+  cursor: pointer;
+}
+
+.layer-folder__btn:hover {
+  background: color-mix(in srgb, var(--primary) 7%, transparent);
+}
+
+.layer-folder__name {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+.layer-folder__count {
+  padding: 0.05rem 0.45rem;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.layer-folder__btn > svg {
+  flex: none;
+  transition: transform 0.15s ease;
+}
+
+.layer-folder[data-open] .layer-folder__btn > svg {
+  transform: rotate(180deg);
+}
+
+.layer-folder__list {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.5rem 0.75rem 0.65rem;
+  border-block-start: 1px solid var(--border);
+}
+
+.layer-folder__list[hidden] {
+  display: none;
+}
+
+.layer-folder__list .checkbox {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.4rem;
+}
+
+.layer-folder__list .checkbox > span[dir] {
+  min-inline-size: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .layer-folder__btn > svg {
+    transition: none;
+  }
+}
+
+.tone-dot {
+  display: inline-block;
+  inline-size: 0.9rem;
+  block-size: 0.9rem;
+  border-radius: 50%;
+  background: var(--tone-fill);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--text) 18%, transparent);
+}
+
+.layer-group-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.layer-groups-table .actions {
+  align-items: center;
+  margin: 0;
+}
+
+.layer-group-form {
+  margin-block-start: 0.75rem;
+}
+
+.layer-group-form input:not([type="radio"], [type="checkbox"]) {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
+  min-block-size: 2.25rem;
+}
+
+.layer-folder-pick {
+  margin-block: 0.75rem;
+  max-inline-size: 28rem;
+}

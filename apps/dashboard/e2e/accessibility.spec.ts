@@ -254,3 +254,100 @@ test.describe("accessibility of the main menu (ar)", () => {
     });
   }
 });
+
+// Phase UI-3b: the map's layers in folders (one open, with a mixed "show all" switch), and the administrator's
+// folders tab, in both modes.
+const FOLDER = (key: string, ar: string, icon: string, tone: string, position: number, count: number) => ({
+  key,
+  name: { ar, fr: ar, en: ar },
+  icon,
+  tone,
+  position,
+  sensitive: false,
+  layer_count: count,
+});
+const MAP_LAYER = (key: string, ar: string, icon: string, colour: string, group: string) => ({
+  id: key,
+  key,
+  name: { ar, fr: ar, en: ar },
+  icon,
+  colour,
+  audience: "staff",
+  source: "OpenStreetMap",
+  licence: "ODbL",
+  to_verify: false,
+  simulated: true,
+  staff_only: [],
+  editors_allowed: false,
+  enabled: true,
+  version: 1,
+  data_version: 1,
+  feature_count: 0,
+  hidden_count: 0,
+  updated_by_name: null,
+  updated_at: "2026-10-28T08:00:00Z",
+  last_import: null,
+  can_manage: true,
+  can_import: true,
+  status: "published",
+  audiences: ["room", "command"],
+  scope: [],
+  default_on: key === "hospitals",
+  sensitive: false,
+  fields: {},
+  actions: { call: true, directions: true },
+  geometry: "point",
+  quality: { suggested: 0, duplicates: 0, deleted: 0 },
+  deleted_at: null,
+  delete_reason: null,
+  purge_at: null,
+  group,
+});
+const FOLDERED = {
+  groups: [
+    FOLDER("civil_protection", "موارد الحماية المدنية", "localFireDepartment", "red", 1, 1),
+    FOLDER("health", "المؤسسات الصحية", "medicalServices", "pink", 2, 2),
+    FOLDER("other", "طبقات أخرى", "layers", "slate", 12, 0),
+  ],
+  items: [
+    MAP_LAYER("hydrants", "نقاط التزود بالماء", "water", "#B71C1C", "civil_protection"),
+    MAP_LAYER("hospitals", "المستشفيات", "hospital", "#C62828", "health"),
+    MAP_LAYER("pharmacies", "الصيدليات", "pharmacy", "#2E7D32", "health"),
+  ],
+  deleted: [],
+  can_manage: true,
+  icons: ["hospital", "pharmacy", "water", "pin"],
+  palette: ["#C62828", "#2E7D32", "#B71C1C"],
+  limits: { file_bytes: 10485760, rows: 50000 },
+};
+
+test.describe("accessibility of the layer folders (ar)", () => {
+  for (const theme of ["light", "dark"] as const) {
+    test(`map and folders tab, ${theme}, have no serious or critical violation`, async ({ page }) => {
+      await signIn(page, [...ROLES, "sysadmin"], "Salma Ben Ali");
+      await page.addInitScript((mode) => {
+        window.localStorage.setItem("ehimaya.lang", "ar");
+        window.localStorage.setItem("ehimaya.theme", mode);
+      }, theme);
+      const fence = await baseMock(page);
+      await mockApi(page);
+      await page.route(`${API}/api/v1/staff/layers`, (route) => json(route, FOLDERED));
+      await page.route(`${API}/api/v1/staff/layers/*/features**`, (route) => json(route, { items: [], truncated: false }));
+      await page.goto("/map");
+      const health = page.getByRole("button", { name: /المؤسسات الصحية/ });
+      await expect(health).toHaveAttribute("aria-expanded", "true");
+      await expect(page.getByRole("checkbox", { name: "إظهار كل طبقات المؤسسات الصحية" })).toHaveJSProperty("indeterminate", true);
+      await page.getByRole("button", { name: /موارد الحماية المدنية/ }).click();
+      await expect(page.getByRole("checkbox", { name: /نقاط التزود بالماء/ })).toBeVisible();
+      await audit(page, "/map", "main .layer-folder");
+
+      await page.goto("/layers");
+      await page.getByRole("tab", { name: /مجلدات الخريطة/ }).click();
+      await expect(page.getByRole("button", { name: "تعديل المجلد المؤسسات الصحية" })).toBeVisible();
+      await page.getByRole("button", { name: "مجلد جديد" }).click();
+      const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]).analyze();
+      expect(results.violations.filter((v) => v.impact === "serious" || v.impact === "critical").map((v) => v.id)).toEqual([]);
+      expect(fence.unexpected).toEqual([]);
+    });
+  }
+});

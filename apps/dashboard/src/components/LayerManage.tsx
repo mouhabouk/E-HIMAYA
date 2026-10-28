@@ -132,7 +132,7 @@ function useAccessSave(layer: MapLayer) {
   const [tried, setTried] = useState(false);
   const [saved, setSaved] = useState(false);
   const mutation = useMutation({
-    mutationFn: (changes: Partial<LayerAccess>) =>
+    mutationFn: (changes: Partial<LayerAccess> & { group_key?: string }) =>
       api.updateLayer(layer.key, { ...changes, version: layer.version, reason: reason.trim() }),
     onSuccess: () => {
       setReason("");
@@ -141,7 +141,7 @@ function useAccessSave(layer: MapLayer) {
       refresh();
     },
   });
-  const submit = (changes: Partial<LayerAccess>) => {
+  const submit = (changes: Partial<LayerAccess> & { group_key?: string }) => {
     setTried(true);
     setSaved(false);
     if (reasonValid(reason)) mutation.mutate(changes);
@@ -155,6 +155,12 @@ export function VisibilityCard({ layer }: { layer: MapLayer }) {
   const id = useId();
   const [draft, setDraft] = useState<LayerAccess>(() => accessOf(layer));
   const save = useAccessSave(layer);
+  const { api } = useServices();
+  const lang = useLanguage();
+  // Phase UI-3b: the folder it shows in on the map; a sensitive layer stays in the sensitive folder.
+  const groups = useQuery({ queryKey: layerKeys.all, queryFn: ({ signal }) => api.layers(signal) }).data?.groups ?? [];
+  const [folder, setFolder] = useState(layer.group ?? "");
+  const folders = groups.filter((g) => !g.sensitive);
   const toggle = (group: Group) =>
     setDraft({
       ...draft,
@@ -174,7 +180,8 @@ export function VisibilityCard({ layer }: { layer: MapLayer }) {
       aria-labelledby={`${id}-title`}
       onSubmit={(e) => {
         e.preventDefault();
-        save.submit(changes);
+        const moved = !draft.sensitive && !layer.sensitive && folder !== "" && folder !== layer.group;
+        save.submit(moved ? { ...changes, group_key: folder } : changes);
       }}
     >
       <h3 id={`${id}-title`}>{t("layers.manage.visibility.title")}</h3>
@@ -232,6 +239,29 @@ export function VisibilityCard({ layer }: { layer: MapLayer }) {
           ))}
         </fieldset>
       </details>
+
+      {folders.length > 0 && (
+        <div className="field layer-folder-pick">
+          <label htmlFor={`${id}-folder`}>{t("layers.groups.pick")}</label>
+          <select
+            id={`${id}-folder`}
+            value={draft.sensitive || layer.sensitive ? "" : folder}
+            disabled={draft.sensitive || layer.sensitive}
+            aria-describedby={`${id}-folder-help`}
+            onChange={(e) => setFolder(e.target.value)}
+          >
+            {(draft.sensitive || layer.sensitive) && <option value="">{t("layers.groups.pickSensitive")}</option>}
+            {folders.map((g) => (
+              <option key={g.key} value={g.key}>
+                {localized(g.name, lang)}
+              </option>
+            ))}
+          </select>
+          <p id={`${id}-folder-help`} className="muted">
+            {t("layers.groups.pickHelp")}
+          </p>
+        </div>
+      )}
 
       <label className="checkbox">
         <input

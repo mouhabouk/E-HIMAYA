@@ -621,6 +621,7 @@ erDiagram
         datetime deleted_at
         text deleted_by
         text delete_reason
+        text group_key FK
     }
     geo__layer_feature {
         uuid id PK
@@ -649,6 +650,17 @@ erDiagram
         datetime deleted_at
         text deleted_by
         text delete_reason
+    }
+    geo__layer_group {
+        text key PK
+        jsonb name
+        text icon
+        text tone
+        integer position
+        boolean sensitive
+        datetime created_at
+        datetime updated_at
+        text updated_by
     }
     geo__layer_import {
         uuid id PK
@@ -689,6 +701,7 @@ erDiagram
     geo__layer ||--o{ geo__layer_feature : "layer_id"
     geo__layer ||--o{ geo__layer_import : "layer_id"
     geo__layer ||--o{ geo__layer_revision : "layer_id"
+    geo__layer_group ||--o{ geo__layer : "group_key"
     geo__layer_import ||--o{ geo__layer_feature : "import_id"
 ```
 

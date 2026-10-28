@@ -28,7 +28,7 @@ from app.core.db import as_system, get_session
 from app.core.security import CurrentPrincipal, Principal, Role
 from app.modules.audit import service as audit
 from app.modules.decision import routing
-from app.modules.geo.models import Layer, LayerFeature, LayerImport, LayerRevision
+from app.modules.geo.models import Layer, LayerFeature, LayerGroup, LayerImport, LayerRevision
 from app.modules.layers import access, domain, geoformats, schemas, service
 from app.modules.ops.models import Unit
 
@@ -116,6 +116,7 @@ REVISED = (
     "sensitive",
     "fields",
     "actions",
+    "group_key",
 )
 
 
@@ -209,6 +210,7 @@ async def _layer_out(session: AsyncSession, layer: Layer, principal: Principal) 
         purge_at=(
             layer.deleted_at + timedelta(days=get_settings().retention_layer_deleted_days) if layer.deleted_at else None
         ),
+        group=layer.group_key or domain.default_group(layer.key, layer.icon, layer.sensitive),
     )
 
 
@@ -216,14 +218,129 @@ async def _layer_out(session: AsyncSession, layer: Layer, principal: Principal) 
 async def list_layers(principal: Staff, session: Session) -> schemas.LayersOut:
     layers = (await session.scalars(select(Layer).order_by(Layer.created_at, Layer.key))).all()
     mine = [layer for layer in layers if access.sees(principal, layer) or can_import(principal, layer)]
+    items = [await _layer_out(session, layer, principal) for layer in mine if layer.deleted_at is None]
     return schemas.LayersOut(
-        items=[await _layer_out(session, layer, principal) for layer in mine if layer.deleted_at is None],
+        groups=await _groups_out(session, items, every=can_manage(principal)),
+        items=items,
         deleted=[await _layer_out(session, layer, principal) for layer in mine if layer.deleted_at is not None],
         can_manage=can_manage(principal),
         icons=list(domain.ICONS),
         palette=list(domain.PALETTE),
         limits={"file_bytes": domain.MAX_FILE_BYTES, "rows": domain.MAX_ROWS},
     )
+
+
+# ---------------------------------------------------------------- groups (phase UI-3b)
+
+
+def _group_out(group: LayerGroup, count: int) -> schemas.GroupOut:
+    return schemas.GroupOut(
+        key=group.key,
+        name=schemas.Names.model_validate(group.name),
+        icon=group.icon,
+        tone=group.tone,
+        position=group.position,
+        sensitive=group.sensitive,
+        layer_count=count,
+    )
+
+
+async def _groups_out(
+    session: AsyncSession, items: Sequence[schemas.LayerOut], *, every: bool
+) -> list[schemas.GroupOut]:
+    """The groups in which the caller sees a layer, in order; a group grants nothing, so the others stay unknown."""
+    counts: dict[str, int] = {}
+    for item in items:
+        counts[item.group] = counts.get(item.group, 0) + 1
+    groups = (await session.scalars(select(LayerGroup).order_by(LayerGroup.position, LayerGroup.key))).all()
+    return [_group_out(g, counts.get(g.key, 0)) for g in groups if every or counts.get(g.key)]
+
+
+def _check_look(icon: str | None, tone: str | None) -> None:
+    if icon is not None and icon not in domain.GROUP_ICONS:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "icon_unknown")
+    if tone is not None and tone not in domain.GROUP_TONES:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "tone_unknown")
+
+
+async def _group(session: AsyncSession, key: str, *, lock: bool = False) -> LayerGroup:
+    query = select(LayerGroup).where(LayerGroup.key == key)
+    group = await session.scalar(query.with_for_update() if lock else query)
+    if group is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "group_not_found")
+    return group
+
+
+async def _group_count(session: AsyncSession, key: str) -> int:
+    layers = (await session.execute(select(Layer.key, Layer.icon, Layer.sensitive, Layer.group_key))).all()
+    return sum(1 for k, icon, sensitive, own in layers if (own or domain.default_group(k, icon, sensitive)) == key)
+
+
+@router.post("/groups", response_model=schemas.GroupOut, status_code=status.HTTP_201_CREATED)
+async def create_group(principal: Staff, session: Session, body: schemas.GroupIn) -> schemas.GroupOut:
+    _require(can_manage(principal), principal)
+    _check_look(body.icon, body.tone)
+    if await session.scalar(select(LayerGroup.key).where(LayerGroup.key == body.key)):
+        raise HTTPException(status.HTTP_409_CONFLICT, "key_taken")
+    actor = audit.actor_of(principal)
+    group = LayerGroup(
+        key=body.key,
+        name=body.name.model_dump(),
+        icon=body.icon,
+        tone=body.tone,
+        position=body.position,
+        sensitive=body.sensitive,
+        updated_by=actor,
+    )
+    session.add(group)
+    await session.flush()
+    await audit.record(session, actor=actor, action="layer_group.create", target=f"layer_group:{group.key}")
+    await session.refresh(group)
+    out = _group_out(group, 0)
+    await session.commit()
+    return out
+
+
+@router.patch("/groups/{gkey}", response_model=schemas.GroupOut)
+async def update_group(principal: Staff, session: Session, gkey: str, body: schemas.GroupPatch) -> schemas.GroupOut:
+    _require(can_manage(principal), principal)
+    _check_look(body.icon, body.tone)
+    group = await _group(session, gkey, lock=True)
+    changes = body.model_dump(exclude_unset=True, exclude_none=True)
+    if body.name is not None:
+        changes["name"] = body.name.model_dump()
+    for field, value in changes.items():
+        setattr(group, field, value)
+    actor = audit.actor_of(principal)
+    group.updated_by, group.updated_at = actor, datetime.now(UTC)
+    await audit.record(
+        session,
+        actor=actor,
+        action="layer_group.update",
+        target=f"layer_group:{group.key}",
+        details={"fields": sorted(changes)},
+    )
+    await session.flush()
+    await session.refresh(group)
+    out = _group_out(group, await _group_count(session, group.key))
+    await session.commit()
+    return out
+
+
+@router.delete("/groups/{gkey}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_group(principal: Staff, session: Session, gkey: str) -> Response:
+    _require(can_manage(principal), principal)
+    group = await _group(session, gkey, lock=True)
+    if group.key in (domain.OTHER_GROUP, domain.SENSITIVE_GROUP):
+        raise HTTPException(status.HTTP_409_CONFLICT, "group_kept")
+    if await _group_count(session, group.key):
+        raise HTTPException(status.HTTP_409_CONFLICT, "group_not_empty")
+    await session.delete(group)
+    await audit.record(
+        session, actor=audit.actor_of(principal), action="layer_group.delete", target=f"layer_group:{group.key}"
+    )
+    await session.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @router.get("/template")
@@ -298,6 +415,13 @@ async def update_layer(principal: Staff, session: Session, key: str, body: schem
     if body.version != layer.version:
         raise HTTPException(status.HTTP_409_CONFLICT, "version_conflict")
     changes = body.model_dump(exclude_unset=True, exclude={"version", "reason"})
+    if changes.get("group_key") is not None:
+        group = await _group(session, changes["group_key"])
+        if group.sensitive != bool(changes.get("sensitive", layer.sensitive)):
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "group_sensitivity_mismatch")
+    elif "sensitive" in changes and changes["sensitive"] != layer.sensitive and "group_key" not in changes:
+        # A layer that becomes sensitive (or stops being so) leaves its group for the one its key suggests.
+        changes["group_key"] = None
     if "name" in changes and body.name is not None:
         changes["name"] = body.name.model_dump()
     if "actions" in changes and body.actions is not None:
@@ -455,6 +579,8 @@ async def restore_revision(
     for field in REVISED:
         if field in revision.snapshot:
             setattr(layer, field, revision.snapshot[field])
+    if layer.group_key and not await session.scalar(select(LayerGroup.key).where(LayerGroup.key == layer.group_key)):
+        layer.group_key = None  # the group was deleted since: the layer goes back to the one its key suggests
     _sync(layer)
     layer.version += 1
     layer.data_version += 1

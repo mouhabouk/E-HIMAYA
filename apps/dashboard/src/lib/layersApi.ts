@@ -7,6 +7,8 @@ import type {
   LayerBody,
   LayerFeature,
   LayerFeatures,
+  LayerGroup,
+  LayerGroupBody,
   LayerImport,
   LayerImportDetail,
   LayerPatch,
@@ -66,6 +68,15 @@ export function layersApi(api: ApiClient) {
     createLayer: (body: LayerBody) => api.request<MapLayer>(L, { method: "POST", body }),
 
     updateLayer: (key: string, body: LayerPatch) => api.request<MapLayer>(layerPath(key), { method: "PATCH", body }),
+
+    // Phase UI-3b: the folders of the layer panel (system administrator).
+    createLayerGroup: (body: LayerGroupBody) => api.request<LayerGroup>(`${L}/groups`, { method: "POST", body }),
+
+    updateLayerGroup: (key: string, body: Partial<Omit<LayerGroupBody, "key">>) =>
+      api.request<LayerGroup>(`${L}/groups/${enc(key)}`, { method: "PATCH", body }),
+
+    deleteLayerGroup: (key: string) =>
+      api.requestRaw(`${L}/groups/${enc(key)}`, { method: "DELETE" }).then(() => undefined),
 
     // Phase L1a: delete (kept 30 days), restore, erase now, settings revisions.
     deleteLayer: (key: string, reason: string) =>

@@ -410,7 +410,13 @@
     "shelter_not_found": "Centre introuvable.",
     "evacuation_not_found": "Zone introuvable.",
     "need_not_found": "Besoin introuvable.",
-    "occupants_over_capacity": "Occupants au-delà de la capacité."
+    "occupants_over_capacity": "Occupants au-delà de la capacité.",
+    "group_not_found": "Ce dossier n’existe pas.",
+    "group_not_empty": "Le dossier contient des couches : déplacez-les d’abord.",
+    "group_kept": "Ce dossier ne peut pas être supprimé.",
+    "group_sensitivity_mismatch": "Les couches sensibles vont dans le dossier sensible, et lui seul les reçoit.",
+    "icon_unknown": "Icône inconnue.",
+    "tone_unknown": "Couleur inconnue."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -3872,7 +3878,8 @@
       "tabs": {
         "label": "Couches",
         "layers": "Couches ({{count}})",
-        "deleted": "Supprimées ({{count}})"
+        "deleted": "Supprimées ({{count}})",
+        "folders": "Dossiers de la carte ({{count}})"
       },
       "visibility": {
         "title": "Qui voit la couche",
@@ -3992,6 +3999,58 @@
       "duplicates": "Doublons possibles : {{n}}",
       "ministerOnly": "Le ministre seul",
       "listSeparator": ", "
+    },
+    "groups": {
+      "showAll": "Afficher toutes les couches : {{group}}",
+      "count": "{{on}} sur {{total}}",
+      "title": "Dossiers du panneau des couches",
+      "intro": "Les couches s’affichent sur la carte dans ces dossiers, dans cet ordre. Un dossier ne donne aucun droit : qui voit une couche se règle dans ses paramètres, et chacun ne voit que les dossiers contenant une couche qu’il voit.",
+      "folder": "Dossier",
+      "layers": "Couches",
+      "position": "Ordre",
+      "positionHelp": "Le plus petit s’affiche en premier.",
+      "newTitle": "Nouveau dossier",
+      "editTitle": "Modifier le dossier : {{group}}",
+      "edit": "Modifier",
+      "editNamed": "Modifier le dossier {{group}}",
+      "delete": "Supprimer",
+      "deleteNamed": "Supprimer le dossier {{group}}",
+      "kept": "Dossier permanent",
+      "notEmpty": "Contient des couches",
+      "namesRequired": "Saisissez le nom du dossier en arabe, en français et en anglais.",
+      "pick": "Dossier sur la carte",
+      "pickHelp": "Le dossier où la couche apparaît dans le panneau de la carte. Ne change pas qui la voit.",
+      "pickSensitive": "Une couche sensible reste dans le dossier des couches sensibles.",
+      "icons": {
+        "localFireDepartment": "Incendie",
+        "medicalServices": "Santé",
+        "policy": "Sécurité",
+        "apartment": "Bâtiment",
+        "menuBook": "Enseignement",
+        "localShipping": "Transport",
+        "inventory2": "Stocks",
+        "map": "Carte",
+        "groups": "Rassemblement",
+        "schedule": "Saison",
+        "lockOpen": "Cadenas",
+        "layers": "Couches",
+        "healthAndSafety": "Prévention",
+        "warning": "Danger",
+        "campaign": "Alerte",
+        "folderOpen": "Dossier"
+      },
+      "tones": {
+        "red": "Rouge",
+        "navy": "Marine",
+        "purple": "Violet",
+        "green": "Vert",
+        "amber": "Ambre",
+        "teal": "Sarcelle",
+        "slate": "Ardoise",
+        "pink": "Rose",
+        "sky": "Ciel",
+        "orange": "Orange"
+      }
     }
   },
   "guide": {

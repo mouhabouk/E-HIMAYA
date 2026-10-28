@@ -126,6 +126,7 @@ class LayerPatch(BaseModel):
     sensitive: bool | None = None
     fields: Fields | None = None
     actions: Actions | None = None
+    group_key: str | None = Field(default=None, pattern=r"^[a-z][a-z0-9_]{1,39}$")
 
     _v_icon = field_validator("icon")(_icon)
     _v_colour = field_validator("colour")(_colour)
@@ -177,9 +178,41 @@ class LayerOut(BaseModel):
     deleted_at: datetime | None
     delete_reason: str | None
     purge_at: datetime | None
+    # Phase UI-3b: the group it shows in (its own, or the one its key suggests).
+    group: str
+
+
+class GroupIn(BaseModel):
+    """A new group of the layer panel (system administrator)."""
+
+    key: str = Field(pattern=r"^[a-z][a-z0-9_]{1,39}$")
+    name: Names
+    icon: str
+    tone: str
+    position: int = Field(default=0, ge=0, le=999)
+    sensitive: bool = False
+
+
+class GroupPatch(BaseModel):
+    name: Names | None = None
+    icon: str | None = None
+    tone: str | None = None
+    position: int | None = Field(default=None, ge=0, le=999)
+
+
+class GroupOut(BaseModel):
+    key: str
+    name: Names
+    icon: str
+    tone: str
+    position: int
+    sensitive: bool
+    layer_count: int
 
 
 class LayersOut(BaseModel):
+    # Phase UI-3b: the groups holding a layer the caller sees (all of them for the administrator), in order.
+    groups: list[GroupOut] = Field(default_factory=list)
     items: list[LayerOut]
     deleted: list[LayerOut] = Field(default_factory=list)
     can_manage: bool
