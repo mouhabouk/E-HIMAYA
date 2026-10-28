@@ -183,6 +183,9 @@ export const ERROR_CODES = [
   "period_not_approved",
   "not_due_yet",
   "item_not_found",
+  "template_not_found",
+  "template_name_taken",
+  "template_mismatch",
   // Phase R1: the resources register.
   "counts_only",
   "category_unknown",

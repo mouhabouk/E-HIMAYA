@@ -458,7 +458,10 @@
     "no_previous_period": "No programme for the previous period.",
     "period_not_approved": "Only the activities of an approved programme are followed up.",
     "not_due_yet": "An activity still to come cannot be marked done.",
-    "item_not_found": "Activity not found."
+    "item_not_found": "Activity not found.",
+    "template_not_found": "Template not found.",
+    "template_name_taken": "A template already has this name.",
+    "template_mismatch": "The template is for another span or gouvernorat."
   },
   "kpi": {
     "title": "Key indicators",
@@ -5970,6 +5973,7 @@
     "tabs": {
       "label": "Programme sections",
       "programme": "Programme",
+      "templates": "Templates",
       "progress": "Progress",
       "settings": "Approval"
     },
@@ -6109,6 +6113,26 @@
       "approvalOf": "Approval of {{name}}",
       "updated": "Last change",
       "save": "Save"
+    },
+    "template": {
+      "title": "Programme templates",
+      "pick": "Template",
+      "apply": "Apply the template",
+      "noneYet": "No template saved yet: save a programme as a template to reuse it.",
+      "keep": "Save this programme as a template",
+      "name": "Template name",
+      "nameOf": "Name of template {{name}}",
+      "save": "Save the template",
+      "saved": "Template “{{name}}” saved.",
+      "option": "{{name}} ({{count}} activities)",
+      "startFrom": "or from a template",
+      "create": "Create from the template",
+      "listTitle": "Saved programme templates",
+      "intro": "A programme repeats: it is saved once as a template and applied to the next periods, each activity on its day of the period. Saving under the same name replaces it.",
+      "activities": "Activities",
+      "rename": "Rename",
+      "delete": "Delete",
+      "deleteOf": "Delete template {{name}}"
     }
   }
 }

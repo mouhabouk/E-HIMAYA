@@ -80,8 +80,8 @@ def test_calendar_rules() -> None:
         date(2026, 10, d) for d in (1, 8, 15, 22, 29)
     ]
     # The 31st of a month has no place in a shorter one.
-    assert domain.shift("month", date(2026, 1, 31), date(2026, 1, 1), date(2026, 2, 1)) is None
-    assert domain.shift("week", date(2026, 10, 21), date(2026, 10, 19), date(2026, 10, 26)) == date(2026, 10, 28)
+    assert domain.place(30, date(2026, 2, 1), date(2026, 2, 28)) is None
+    assert domain.place(2, date(2026, 10, 26), date(2026, 11, 1)) == date(2026, 10, 28)
 
 
 async def test_each_gouvernorat_approves_its_own_way(client: httpx.AsyncClient, staff: Staff) -> None:
@@ -202,3 +202,38 @@ async def test_follow_up_progress_and_copy(client: httpx.AsyncClient, staff: Sta
         )
     ).json()
     assert slot["period"]["period"]["id"] == nxt["period"]["id"] and not slot["can_create"]
+
+
+async def test_a_programme_kept_as_a_template(client: httpx.AsyncClient, staff: Staff) -> None:
+    """A programme repeats (Yamen, 2026-10-28): it is kept once under a name and applied to the next periods."""
+    room = staff(["operator"], gouvernorat=GABES)
+    on = monday()
+    p = await add(client, room, await week(client, room, on), item(on, activity="duty", repeat="daily"))
+    p = await add(client, room, p, item(on + timedelta(days=2), activity="exercise", title="تمرين الإخلاء"))
+    name = f"الأسبوع العادي {secrets.token_hex(3)}"
+    r = await client.post(f"{URL}/periods/{p['period']['id']}/template", json={"name": name}, headers=room)
+    assert r.status_code == 201, r.text
+    template = r.json()
+    assert template["items"] == 8 and template["activities"] == {"duty": 7, "exercise": 1}
+    # Saved again under the same name, it is replaced; another gouvernorat does not see it.
+    r = await client.post(f"{URL}/periods/{p['period']['id']}/template", json={"name": name}, headers=room)
+    assert r.json()["id"] == template["id"]
+    listed = (await client.get(f"{URL}/templates", params={"span": "week"}, headers=room)).json()
+    assert template["id"] in {t["id"] for t in listed}
+    other = (await client.get(f"{URL}/templates", headers=staff(["operator"], gouvernorat=BIZERTE))).json()
+    assert template["id"] not in {t["id"] for t in other}
+
+    # Three weeks later, the template fills the new week, each activity on its day.
+    later = await week(client, room, on + timedelta(days=21))
+    r = await step(client, room, later, "apply-template", template_id=template["id"])
+    assert r.status_code == 200, r.text
+    items = r.json()["items"]
+    assert len(items) == 8 and {i["status"] for i in items} == {"planned"}
+    exercise = next(i for i in items if i["activity"] == "exercise")
+    assert exercise["on_date"] == (on + timedelta(days=23)).isoformat()
+    assert len({i["series_id"] for i in items if i["activity"] == "duty"}) == 1
+    # A day's template does not fit a week.
+    day = (await client.post(f"{URL}/periods", json={"span": "day", "on": on.isoformat()}, headers=room)).json()
+    r = await step(client, room, day, "apply-template", template_id=template["id"])
+    assert r.status_code == 422 and r.json()["detail"] == "template_mismatch"
+    assert (await client.delete(f"{URL}/templates/{template['id']}", headers=room)).status_code == 204

@@ -8,7 +8,7 @@ rule in the database. The governor and the minister see the progress only: the a
 
 import uuid
 from collections import defaultdict
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, time
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
@@ -25,7 +25,7 @@ from app.modules.register import service as register
 from app.modules.register.models import Document
 from app.modules.reports.staff_router import READ_ROLES
 from app.modules.schedule import domain, schemas
-from app.modules.schedule.models import Item, Period, Setting
+from app.modules.schedule.models import Item, Period, Setting, Template
 
 router = APIRouter(prefix="/api/v1/staff/schedule", tags=["staff", "schedule"])
 Session = Annotated[AsyncSession, Depends(get_session)]
@@ -561,41 +561,215 @@ async def copy_previous(
     )
     if previous is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "no_previous_period")
-    source = (await _items(session, [previous.id]))[previous.id]
+    rows = _snapshot((await _items(session, [previous.id]))[previous.id], previous.starts_on)
+    copied = await _add_snapshot(session, principal, period, rows)
+    _touch(period, principal, _now())
+    await _record(session, principal, "period_copied", period, source=str(previous.id), items=copied)
+    await session.commit()
+    return await _detail(session, principal, period)
+
+
+# ---------------------------------------------------------------- templates (a programme kept to start from)
+
+
+def _snapshot(items: list[Item], start: date) -> list[dict[str, Any]]:
+    """The activities of a programme placed by their day in the period, as a template keeps them."""
+    return [
+        {
+            "offset": (i.on_date - start).days,
+            "series": str(i.series_id) if i.series_id else None,
+            "activity": i.activity,
+            "title": i.title,
+            "starts_at": i.starts_at.isoformat() if i.starts_at else None,
+            "ends_at": i.ends_at.isoformat() if i.ends_at else None,
+            "unit_id": str(i.unit_id) if i.unit_id else None,
+            "place": i.place,
+            "responsible": i.responsible,
+            "staff_count": i.staff_count,
+            "resources": i.resources,
+            "plan_document_id": str(i.plan_document_id) if i.plan_document_id else None,
+            "notes": i.notes,
+        }
+        for i in items
+    ]
+
+
+async def _add_snapshot(session: AsyncSession, p: Principal, period: Period, rows: list[dict[str, Any]]) -> int:
+    """Adds the activities of a template or of the previous period to a programme; their follow-up starts again. A
+    unit or a plan that is gone since is left out of the activity."""
     existing = await session.scalar(select(func.count()).select_from(Item).where(Item.period_id == period.id)) or 0
-    if existing + len(source) > domain.MAX_ITEMS:
+    if existing + len(rows) > domain.MAX_ITEMS:
         raise _unprocessable("too_many_items")
-    series: dict[uuid.UUID, uuid.UUID] = {}
-    copied = 0
-    for i in source:
-        day = domain.shift(span, i.on_date, previous.starts_on, period.starts_on)
-        if day is None or day > period.ends_on:
+    units = set(await session.scalars(select(Unit.id).where(Unit.gouvernorat_code == period.gouvernorat_code)))
+    plan_ids = {uuid.UUID(r["plan_document_id"]) for r in rows if r.get("plan_document_id")}
+    plans = set(await session.scalars(select(Document.id).where(Document.id.in_(plan_ids)))) if plan_ids else set()
+    series: dict[str, uuid.UUID] = {}
+    added = 0
+    for r in rows:
+        day = domain.place(int(r["offset"]), period.starts_on, period.ends_on)
+        if day is None:
             continue
-        sid = series.setdefault(i.series_id, uuid.uuid4()) if i.series_id else None
+        unit = uuid.UUID(r["unit_id"]) if r.get("unit_id") else None
+        plan = uuid.UUID(r["plan_document_id"]) if r.get("plan_document_id") else None
         session.add(
             Item(
                 period_id=period.id,
                 gouvernorat_code=period.gouvernorat_code,
-                series_id=sid,
-                activity=i.activity,
-                title=i.title,
+                series_id=series.setdefault(r["series"], uuid.uuid4()) if r.get("series") else None,
+                activity=r["activity"],
+                title=r["title"],
                 on_date=day,
-                starts_at=i.starts_at,
-                ends_at=i.ends_at,
-                unit_id=i.unit_id,
-                place=i.place,
-                responsible=i.responsible,
-                staff_count=i.staff_count,
-                resources=i.resources,
-                plan_document_id=i.plan_document_id,
-                notes=i.notes,
+                starts_at=time.fromisoformat(r["starts_at"]) if r.get("starts_at") else None,
+                ends_at=time.fromisoformat(r["ends_at"]) if r.get("ends_at") else None,
+                unit_id=unit if unit in units else None,
+                place=r.get("place", ""),
+                responsible=r.get("responsible", ""),
+                staff_count=r.get("staff_count"),
+                resources=r.get("resources", []),
+                plan_document_id=plan if plan in plans else None,
+                notes=r.get("notes", ""),
                 status="planned",
-                created_by_name=audit.name_of(principal),
+                created_by_name=audit.name_of(p),
             )
         )
-        copied += 1
+        added += 1
+    return added
+
+
+def _template_out(t: Template) -> schemas.TemplateOut:
+    activities: dict[str, int] = defaultdict(int)
+    for r in t.items:
+        activities[r["activity"]] += 1
+    return schemas.TemplateOut(
+        id=t.id,
+        gouvernorat_code=t.gouvernorat_code,
+        span=t.span,
+        name=t.name,
+        items=len(t.items),
+        activities=dict(activities),
+        created_by_name=t.created_by_name,
+        created_at=t.created_at,
+        updated_by_name=t.updated_by_name,
+        updated_at=t.updated_at,
+    )
+
+
+async def _template(session: AsyncSession, template_id: uuid.UUID) -> Template:
+    template = await session.get(Template, template_id)
+    if template is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "template_not_found")
+    return template
+
+
+@router.get("/templates", response_model=list[schemas.TemplateOut])
+async def list_templates(
+    principal: Reader,
+    session: Session,
+    span: Annotated[domain.Span | None, Query()] = None,
+    gouvernorat: Annotated[schemas.Code | None, Query()] = None,
+) -> list[schemas.TemplateOut]:
+    g = _gouvernorat(principal, gouvernorat)
+    query = select(Template).where(Template.gouvernorat_code == g).order_by(Template.span, Template.name)
+    if span:
+        query = query.where(Template.span == span)
+    return [_template_out(t) for t in await session.scalars(query)]
+
+
+@router.post("/periods/{period_id}/template", response_model=schemas.TemplateOut, status_code=status.HTTP_201_CREATED)
+async def save_template(
+    principal: Reader, session: Session, period_id: uuid.UUID, body: schemas.TemplateIn
+) -> schemas.TemplateOut:
+    """Keeps this programme as a template under a name; a template of the same name and span is replaced."""
+    period = await _period(session, period_id)
+    if not writes(principal, period.gouvernorat_code):
+        raise _forbidden()
+    items = (await _items(session, [period.id]))[period.id]
+    if not items:
+        raise _unprocessable("no_items")
+    template = await session.scalar(
+        select(Template).where(
+            Template.gouvernorat_code == period.gouvernorat_code,
+            Template.span == period.span,
+            Template.name == body.name,
+        )
+    )
+    now = _now()
+    replaced = template is not None
+    if template is None:
+        template = Template(
+            gouvernorat_code=period.gouvernorat_code,
+            span=period.span,
+            name=body.name,
+            created_by_name=audit.name_of(principal),
+            created_at=now,
+        )
+        session.add(template)
+    template.items = _snapshot(items, period.starts_on)
+    template.updated_by_name, template.updated_at = audit.name_of(principal), now
+    await session.flush()
+    await _record(session, principal, "template_saved", period, name=body.name, replaced=replaced, items=len(items))
+    await session.commit()
+    return _template_out(template)
+
+
+@router.patch("/templates/{template_id}", response_model=schemas.TemplateOut)
+async def rename_template(
+    principal: Reader, session: Session, template_id: uuid.UUID, body: schemas.TemplateIn
+) -> schemas.TemplateOut:
+    template = await _template(session, template_id)
+    if not writes(principal, template.gouvernorat_code):
+        raise _forbidden()
+    taken = await session.scalar(
+        select(Template.id).where(
+            Template.gouvernorat_code == template.gouvernorat_code,
+            Template.span == template.span,
+            Template.name == body.name,
+            Template.id != template.id,
+        )
+    )
+    if taken:
+        raise HTTPException(status.HTTP_409_CONFLICT, "template_name_taken")
+    template.name = body.name
+    template.updated_by_name, template.updated_at = audit.name_of(principal), _now()
+    await session.commit()
+    return _template_out(template)
+
+
+@router.delete("/templates/{template_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_template(principal: Reader, session: Session, template_id: uuid.UUID) -> Response:
+    template = await _template(session, template_id)
+    if not writes(principal, template.gouvernorat_code):
+        raise _forbidden()
+    await audit.record(
+        session,
+        actor=audit.actor_of(principal),
+        action="schedule.template_deleted",
+        target=str(template.id),
+        details={"name": template.name, "span": template.span},
+        gouvernorats=[template.gouvernorat_code],
+    )
+    await session.delete(template)
+    await session.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.post("/periods/{period_id}/apply-template", response_model=schemas.PeriodDetail)
+async def apply_template(
+    principal: Reader, session: Session, period_id: uuid.UUID, body: schemas.ApplyTemplate
+) -> schemas.PeriodDetail:
+    """Adds the activities of a template of the same span to this programme, each on its day of the period."""
+    period = await _period(session, period_id)
+    _check_version(period, body.version)
+    if period.status not in domain.EDITABLE:
+        raise HTTPException(status.HTTP_409_CONFLICT, "period_locked")
+    if not writes(principal, period.gouvernorat_code):
+        raise _forbidden()
+    template = await _template(session, body.template_id)
+    if template.gouvernorat_code != period.gouvernorat_code or template.span != period.span:
+        raise _unprocessable("template_mismatch")
+    added = await _add_snapshot(session, principal, period, template.items)
     _touch(period, principal, _now())
-    await _record(session, principal, "period_copied", period, source=str(previous.id), items=copied)
+    await _record(session, principal, "template_applied", period, template=str(template.id), items=added)
     await session.commit()
     return await _detail(session, principal, period)
 

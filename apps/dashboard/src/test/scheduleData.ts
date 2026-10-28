@@ -1,4 +1,4 @@
-import type { PeriodDetail, PeriodSlot, Progress, ScheduleItem, ScheduleOptions, ScheduleSetting } from "../lib/schedule";
+import type { PeriodDetail, PeriodSlot, Progress, ScheduleItem, ScheduleOptions, ScheduleSetting, ScheduleTemplate } from "../lib/schedule";
 
 /**
  * A simulated weekly programme of Nabeul ([SIM], phase PL2): the data of the unit tests, the accessibility check and
@@ -168,3 +168,30 @@ export const SCHEDULE_OPTIONS: ScheduleOptions = {
   ],
   plans: [{ id: "reg-plan", title: "[SIM] المخطط الجهوي للنجدة عند الفيضانات بولاية نابل", hazard_key: "floods" }],
 };
+
+export const SCHEDULE_TEMPLATES: ScheduleTemplate[] = [
+  {
+    id: "tpl-week",
+    gouvernorat_code: 21,
+    span: "week",
+    name: "[SIM] الأسبوع العادي",
+    items: 11,
+    activities: { duty: 7, patrol: 1, exercise: 1, prevention_visit: 1, maintenance: 1 },
+    created_by_name: "[SIM] رئيس القاعة الجهوية",
+    created_at: "2026-10-10T09:00:00Z",
+    updated_by_name: "[SIM] رئيس القاعة الجهوية",
+    updated_at: "2026-10-24T15:10:00Z",
+  },
+  {
+    id: "tpl-summer",
+    gouvernorat_code: 21,
+    span: "week",
+    name: "[SIM] أسبوع موسم الاصطياف",
+    items: 18,
+    activities: { duty: 7, patrol: 7, awareness: 2, readiness_check: 2 },
+    created_by_name: "[SIM] رئيس القاعة الجهوية",
+    created_at: "2026-06-01T09:00:00Z",
+    updated_by_name: "[SIM] رئيس القاعة الجهوية",
+    updated_at: "2026-06-01T09:00:00Z",
+  },
+];

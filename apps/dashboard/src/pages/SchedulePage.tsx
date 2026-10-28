@@ -35,10 +35,11 @@ import {
   type ItemStatus,
   type PeriodDetail,
   type ScheduleItem,
+  type ScheduleTemplate,
   type Span,
 } from "../lib/schedule";
 
-type Tab = "programme" | "progress" | "settings";
+type Tab = "programme" | "templates" | "progress" | "settings";
 
 const todayIso = () => isoDay(new Date());
 
@@ -703,17 +704,260 @@ function PeriodBar({ detail }: { detail: PeriodDetail }) {
   );
 }
 
-function Programme({ span, on, gouvernorat }: { span: Span; on: string; gouvernorat: number | null }) {
+/** The templates of the gouvernorat for this span (Yamen, 2026-10-28: a programme repeats, it is not written again). */
+function useTemplates(gouvernorat: number | null, span: Span | null, enabled = true) {
+  const { api } = useServices();
+  return useQuery({
+    queryKey: scheduleKeys.templates(gouvernorat, span),
+    queryFn: ({ signal }) => api.scheduleTemplates(gouvernorat, span, signal),
+    enabled: enabled && gouvernorat !== null,
+  });
+}
+
+function TemplatePicker({ templates, value, onChange, label }: { templates: ScheduleTemplate[]; value: string; onChange: (v: string) => void; label: string }) {
+  const { t } = useTranslation();
+  const id = useId();
+  return (
+    <>
+      <label htmlFor={id}>{label}</label>
+      <select id={id} value={value} onChange={(e) => onChange(e.target.value)}>
+        <option value="">—</option>
+        {templates.map((x) => (
+          <option key={x.id} value={x.id}>
+            {t("schedule.template.option", { name: x.name, count: x.items })}
+          </option>
+        ))}
+      </select>
+    </>
+  );
+}
+
+/** Apply a template to this programme, or keep it as one. */
+function TemplateBar({ detail }: { detail: PeriodDetail }) {
   const { t } = useTranslation();
   const { api } = useServices();
   const refresh = useRefresh();
+  const id = useId();
+  const p = detail.period;
+  const editable = detail.can_edit && (p.status === "draft" || p.status === "returned");
+  const keeps = (detail.can_edit || detail.can_follow_up) && detail.items.length > 0;
+  const templates = useTemplates(p.gouvernorat_code, p.span, editable);
+  const [choice, setChoice] = useState("");
+  const [name, setName] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState<string | null>(null);
+  const apply = useMutation({
+    mutationFn: () => api.applyScheduleTemplate(p.id, p.version, choice),
+    onSuccess: () => (setChoice(""), refresh()),
+  });
+  const keep = useMutation({
+    mutationFn: () => api.saveScheduleTemplate(p.id, name.trim()),
+    onSuccess: (x) => (setSaving(false), setName(""), setSaved(x.name), refresh()),
+  });
+  if (!editable && !keeps) return null;
+  const error = apply.error ?? keep.error;
+  return (
+    <section className="card sched-templates no-print" aria-labelledby={`${id}-h`}>
+      <h2 id={`${id}-h`} className="sched-templates__title">
+        {t("schedule.template.title")}
+      </h2>
+      {editable && (templates.data ?? []).length > 0 && (
+        <form
+          className="directive__actions"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (choice) apply.mutate();
+          }}
+        >
+          <TemplatePicker templates={templates.data ?? []} value={choice} onChange={setChoice} label={t("schedule.template.pick")} />
+          <button type="submit" className="btn btn--primary" disabled={!choice || apply.isPending}>
+            {t("schedule.template.apply")}
+          </button>
+        </form>
+      )}
+      {editable && templates.data && templates.data.length === 0 && <p className="muted">{t("schedule.template.noneYet")}</p>}
+      {keeps && !saving && (
+        <button type="button" className="btn" onClick={() => (setSaved(null), setSaving(true))}>
+          {t("schedule.template.keep")}
+        </button>
+      )}
+      {saving && (
+        <form
+          className="directive__actions"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (name.trim().length >= 2) keep.mutate();
+          }}
+        >
+          <label htmlFor={`${id}-n`}>{t("schedule.template.name")}</label>
+          <input id={`${id}-n`} dir="auto" minLength={2} maxLength={120} value={name} onChange={(e) => setName(e.target.value)} />
+          <button type="submit" className="btn btn--primary" disabled={name.trim().length < 2 || keep.isPending}>
+            {t("schedule.template.save")}
+          </button>
+          <button type="button" className="btn btn--ghost" onClick={() => setSaving(false)}>
+            {t("common.cancel")}
+          </button>
+        </form>
+      )}
+      {saved && (
+        <p role="status" className="muted">
+          {t("schedule.template.saved", { name: saved })}
+        </p>
+      )}
+      {error && (
+        <p role="alert" className="field__error">
+          {t(errorMessageKey(error))}
+        </p>
+      )}
+    </section>
+  );
+}
+
+/** A new programme started empty or from a template. */
+function StartPeriod({ span, on, gouvernorat }: { span: Span; on: string; gouvernorat: number }) {
+  const { t } = useTranslation();
+  const { api } = useServices();
+  const refresh = useRefresh();
+  const templates = useTemplates(gouvernorat, span);
+  const [choice, setChoice] = useState("");
+  const create = useMutation({
+    mutationFn: async (template: string | null) => {
+      const made = await api.createPeriod(span, on, gouvernorat);
+      return template ? api.applyScheduleTemplate(made.period.id, made.period.version, template) : made;
+    },
+    onSettled: refresh,
+  });
+  return (
+    <>
+      <button type="button" className="btn btn--primary" disabled={create.isPending} onClick={() => create.mutate(null)}>
+        {t(`schedule.create.${span}`)}
+      </button>
+      {(templates.data ?? []).length > 0 && (
+        <form
+          className="directive__actions sched-start"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (choice) create.mutate(choice);
+          }}
+        >
+          <TemplatePicker templates={templates.data ?? []} value={choice} onChange={setChoice} label={t("schedule.template.startFrom")} />
+          <button type="submit" className="btn" disabled={!choice || create.isPending}>
+            {t("schedule.template.create")}
+          </button>
+        </form>
+      )}
+      {create.isError && (
+        <p role="alert" className="field__error">
+          {t(errorMessageKey(create.error))}
+        </p>
+      )}
+    </>
+  );
+}
+
+function TemplateRow({ template }: { template: ScheduleTemplate }) {
+  const { t } = useTranslation();
+  const { api } = useServices();
+  const fmt = useFormat();
+  const refresh = useRefresh();
+  const id = useId();
+  const [name, setName] = useState(template.name);
+  const rename = useMutation({ mutationFn: () => api.renameScheduleTemplate(template.id, name.trim()), onSuccess: refresh });
+  const remove = useMutation({ mutationFn: () => api.deleteScheduleTemplate(template.id), onSuccess: refresh });
+  const error = rename.error ?? remove.error;
+  return (
+    <tr>
+      <td>
+        <form
+          className="directive__actions"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (name.trim().length >= 2 && name.trim() !== template.name) rename.mutate();
+          }}
+        >
+          <label htmlFor={`${id}-n`} className="visually-hidden">
+            {t("schedule.template.nameOf", { name: template.name })}
+          </label>
+          <input id={`${id}-n`} dir="auto" minLength={2} maxLength={120} value={name} onChange={(e) => setName(e.target.value)} />
+          <button type="submit" className="btn btn--small" disabled={name.trim().length < 2 || name.trim() === template.name || rename.isPending}>
+            {t("schedule.template.rename")}
+          </button>
+        </form>
+        {error && (
+          <span role="alert" className="field__error">
+            {t(errorMessageKey(error))}
+          </span>
+        )}
+      </td>
+      <td>{t(`schedule.span.${template.span}`)}</td>
+      <td>
+        {(Object.entries(template.activities) as [keyof typeof ACTIVITIES, number][])
+          .map(([k, n]) => `${t(`schedule.activity.${k}`)} × ${fmt.number(n)}`)
+          .join(t("common.listSeparator"))}
+      </td>
+      <td className="muted">
+        {template.updated_by_name ?? "—"} · {fmt.dateTime(template.updated_at)}
+      </td>
+      <td>
+        <button
+          type="button"
+          className="btn btn--small btn--ghost"
+          disabled={remove.isPending}
+          onClick={() => remove.mutate()}
+          aria-label={t("schedule.template.deleteOf", { name: template.name })}
+        >
+          {t("schedule.template.delete")}
+        </button>
+      </td>
+    </tr>
+  );
+}
+
+function TemplatesView({ gouvernorat }: { gouvernorat: number }) {
+  const { t } = useTranslation();
+  const templates = useTemplates(gouvernorat, null);
+  if (templates.isPending) return <Loading />;
+  if (templates.isError) return <ErrorBox error={templates.error} onRetry={() => void templates.refetch()} />;
+  return (
+    <section aria-labelledby="sched-templates">
+      <h2 id="sched-templates">{t("schedule.template.listTitle")}</h2>
+      <p className="muted">{t("schedule.template.intro")}</p>
+      {templates.data.length === 0 ? (
+        <p className="card ops-empty">{t("schedule.template.noneYet")}</p>
+      ) : (
+        <table className="table">
+          <caption className="visually-hidden">{t("schedule.template.listTitle")}</caption>
+          <thead>
+            <tr>
+              <th scope="col">{t("schedule.template.name")}</th>
+              <th scope="col">{t("schedule.span.label")}</th>
+              <th scope="col">{t("schedule.template.activities")}</th>
+              <th scope="col">{t("schedule.settings.updated")}</th>
+              <th scope="col">
+                <span className="visually-hidden">{t("schedule.template.delete")}</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {templates.data.map((x) => (
+              <TemplateRow key={`${x.id}-${x.name}`} template={x} />
+            ))}
+          </tbody>
+        </table>
+      )}
+    </section>
+  );
+}
+
+function Programme({ span, on, gouvernorat }: { span: Span; on: string; gouvernorat: number | null }) {
+  const { t } = useTranslation();
+  const { api } = useServices();
   const slot = useQuery({
     queryKey: scheduleKeys.slot(gouvernorat, span, on),
     queryFn: ({ signal }) => api.scheduleSlot(span, on, gouvernorat, signal),
   });
   const [open, setOpen] = useState<ScheduleItem | null>(null);
   const [form, setForm] = useState<"new" | ScheduleItem | null>(null);
-  const create = useMutation({ mutationFn: () => api.createPeriod(span, on, gouvernorat), onSuccess: refresh });
   if (slot.isPending) return <Loading />;
   if (slot.isError) return <ErrorBox error={slot.error} onRetry={() => void slot.refetch()} />;
   const detail = slot.data.period;
@@ -721,16 +965,7 @@ function Programme({ span, on, gouvernorat }: { span: Span; on: string; gouverno
     return (
       <div className="card ops-empty">
         <p>{t("schedule.none")}</p>
-        {slot.data.can_create && (
-          <button type="button" className="btn btn--primary" disabled={create.isPending} onClick={() => create.mutate()}>
-            {t(`schedule.create.${span}`)}
-          </button>
-        )}
-        {create.isError && (
-          <p role="alert" className="field__error">
-            {t(errorMessageKey(create.error))}
-          </p>
-        )}
+        {slot.data.can_create && gouvernorat !== null && <StartPeriod span={span} on={on} gouvernorat={gouvernorat} />}
       </div>
     );
   }
@@ -739,6 +974,7 @@ function Programme({ span, on, gouvernorat }: { span: Span; on: string; gouverno
   return (
     <div className="sched-programme">
       <PeriodBar detail={detail} />
+      <TemplateBar detail={detail} />
       {detail.can_edit && form === null && (
         <p className="no-print">
           <button type="button" className="btn" onClick={() => (setOpen(null), setForm("new"))}>
@@ -924,7 +1160,7 @@ export function SchedulePage() {
   const [start, end] = bounds(span, on);
   const label =
     span === "day" ? `${names.weekday(on)} ${fmt.date(on)}` : span === "week" ? t("schedule.weekOf", { from: fmt.date(start), to: fmt.date(end) }) : names.month(start);
-  const tabs: Tab[] = lists ? ["programme", "progress", "settings"] : ["progress"];
+  const tabs: Tab[] = lists ? ["programme", "templates", "progress", "settings"] : ["progress"];
   return (
     <div className="page schedule-page">
       <div className="page__head">
@@ -951,6 +1187,8 @@ export function SchedulePage() {
       )}
       {tab !== "settings" && (
         <div className="sched-nav no-print">
+          {tab !== "templates" && (
+            <>
           <div className="segmented__row" role="group" aria-label={t("schedule.span.label")}>
             {SPANS.map((s) => (
               <button key={s} type="button" className={`btn btn--small${span === s ? " btn--primary" : ""}`} aria-pressed={span === s} onClick={() => setSpan(s)}>
@@ -977,7 +1215,9 @@ export function SchedulePage() {
             </label>
             <input id={`${id}-on`} type="date" value={on} onChange={(e) => e.target.value && setOn(e.target.value)} />
           </div>
-          {national && tab === "programme" && (
+            </>
+          )}
+          {national && (tab === "programme" || tab === "templates") && (
             <div className="field">
               <label htmlFor={`${id}-g`}>{t("schedule.progress.gouvernorat")}</label>
               <select id={`${id}-g`} value={gouvernorat ?? ""} onChange={(e) => setGouvernorat(e.target.value ? Number(e.target.value) : null)}>
@@ -992,7 +1232,7 @@ export function SchedulePage() {
           )}
         </div>
       )}
-      {tab !== "settings" && (
+      {(tab === "programme" || tab === "progress") && (
         <h2 className="sched-heading">
           {label}
           {tab === "programme" && gouvernorat !== null && <span className="muted"> · {nameOf(gouvernorat)}</span>}
@@ -1014,6 +1254,8 @@ export function SchedulePage() {
           }
         />
       )}
+      {tab === "templates" &&
+        (gouvernorat === null ? <p className="card ops-empty">{t("schedule.pickGouvernorat")}</p> : <TemplatesView gouvernorat={gouvernorat} />)}
       {tab === "settings" && <SettingsView />}
     </div>
   );

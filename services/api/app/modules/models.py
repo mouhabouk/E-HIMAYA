@@ -98,6 +98,7 @@ from app.modules.safety.models import LiveShare, LocationHistory, LocationPoint,
 from app.modules.schedule.models import Item as ScheduleItem
 from app.modules.schedule.models import Period as SchedulePeriod
 from app.modules.schedule.models import Setting as ScheduleSetting
+from app.modules.schedule.models import Template as ScheduleTemplate
 from app.modules.streams.models import LiveStream, StreamDetection, StreamLocation, StreamSegment
 from app.modules.telephony.models import Call, Conference, OperatorEndpoint, SmsInbound
 from app.modules.volunteers.models import Volunteer, VolunteerReview
@@ -233,6 +234,7 @@ __all__ = [
     "ScheduleItem",
     "SchedulePeriod",
     "ScheduleSetting",
+    "ScheduleTemplate",
     "SearchDoc",
     "Shelter",
     "Shift",

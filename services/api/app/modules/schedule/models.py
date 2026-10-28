@@ -86,3 +86,20 @@ class Item(Base):
     created_by_name: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class Template(Base):
+    """A programme kept under a name, its activities placed by their day in the period (0 is the first day)."""
+
+    __tablename__ = "template"
+    __table_args__ = {"schema": "sched"}
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    gouvernorat_code: Mapped[int] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
+    span: Mapped[str] = mapped_column(Text)
+    name: Mapped[str] = mapped_column(Text)
+    items: Mapped[list[dict[str, Any]]] = mapped_column(JSONB, server_default="[]")
+    created_by_name: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_by_name: Mapped[str | None] = mapped_column(Text)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

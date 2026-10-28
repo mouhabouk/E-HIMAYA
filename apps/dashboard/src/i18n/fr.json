@@ -458,7 +458,10 @@
     "no_previous_period": "Pas de programme pour la période précédente.",
     "period_not_approved": "Seules les activités d'un programme approuvé se suivent.",
     "not_due_yet": "Une activité à venir ne peut être marquée réalisée.",
-    "item_not_found": "Activité introuvable."
+    "item_not_found": "Activité introuvable.",
+    "template_not_found": "Modèle introuvable.",
+    "template_name_taken": "Un modèle porte déjà ce nom.",
+    "template_mismatch": "Le modèle est d'une autre durée ou d'un autre gouvernorat."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -5970,6 +5973,7 @@
     "tabs": {
       "label": "Sections de la programmation",
       "programme": "Programme",
+      "templates": "Modèles",
       "progress": "Taux de réalisation",
       "settings": "Mode d'approbation"
     },
@@ -6109,6 +6113,26 @@
       "approvalOf": "Mode d'approbation de {{name}}",
       "updated": "Dernier changement",
       "save": "Enregistrer"
+    },
+    "template": {
+      "title": "Modèles de programme",
+      "pick": "Modèle",
+      "apply": "Appliquer le modèle",
+      "noneYet": "Aucun modèle enregistré : enregistrez un programme comme modèle pour le réutiliser.",
+      "keep": "Enregistrer ce programme comme modèle",
+      "name": "Nom du modèle",
+      "nameOf": "Nom du modèle {{name}}",
+      "save": "Enregistrer le modèle",
+      "saved": "Modèle « {{name}} » enregistré.",
+      "option": "{{name}} ({{count}} activités)",
+      "startFrom": "ou à partir d'un modèle",
+      "create": "Créer depuis le modèle",
+      "listTitle": "Modèles de programme enregistrés",
+      "intro": "Un programme se répète : il est enregistré une fois comme modèle et appliqué aux périodes suivantes, chaque activité à son jour de la période. Un modèle enregistré sous le même nom le remplace.",
+      "activities": "Activités",
+      "rename": "Renommer",
+      "delete": "Supprimer",
+      "deleteOf": "Supprimer le modèle {{name}}"
     }
   }
 }

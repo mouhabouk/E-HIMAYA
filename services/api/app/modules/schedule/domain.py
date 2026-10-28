@@ -1,6 +1,6 @@
 """The calendar rules of the programmes (phase PL2, docs/phase-pl/design-plans.md §3): the bounds of a day, a week
-(from Monday) or a month, the days a repeated activity falls on, the shift of a copied programme, and the approval
-path each gouvernorat chooses. Nothing here touches the database."""
+(from Monday) or a month, the days a repeated activity falls on, the day of a copied or templated activity, and the
+approval path each gouvernorat chooses. Nothing here touches the database."""
 
 import calendar
 from datetime import date, timedelta
@@ -61,13 +61,11 @@ def expand(repeat: Repeat, first: date, end: date) -> list[date]:
     return days
 
 
-def shift(span: Span, day: date, old_start: date, new_start: date) -> date | None:
-    """Where a day of a copied programme lands in the new period: the same place in the day or week, the same day of
-    the month (none when the new month is shorter)."""
-    if span != "month":
-        return new_start + (day - old_start)
-    last = calendar.monthrange(new_start.year, new_start.month)[1]
-    return new_start.replace(day=day.day) if day.day <= last else None
+def place(offset: int, start: date, end: date) -> date | None:
+    """The day of a template's activity in a period: ``offset`` days after its first day, none past its end (a
+    month template's 31st has no place in a shorter month)."""
+    day = start + timedelta(days=offset)
+    return day if day <= end else None
 
 
 def after_submit(approval: Approval) -> str:

@@ -212,3 +212,28 @@ class Options(BaseModel):
     units: list[UnitOption]
     categories: list[CategoryOption]
     plans: list[PlanOption]
+
+
+TemplateName = Annotated[Text, StringConstraints(min_length=2, max_length=120)]
+
+
+class TemplateIn(BaseModel):
+    name: TemplateName
+
+
+class ApplyTemplate(BaseModel):
+    version: int
+    template_id: uuid.UUID
+
+
+class TemplateOut(BaseModel):
+    id: uuid.UUID
+    gouvernorat_code: int
+    span: Span
+    name: str
+    items: int
+    activities: dict[str, int]
+    created_by_name: str | None
+    created_at: datetime
+    updated_by_name: str | None
+    updated_at: datetime

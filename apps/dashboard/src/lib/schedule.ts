@@ -174,12 +174,27 @@ export interface ScheduleOptions {
   plans: { id: string; title: string; hazard_key: string | null }[];
 }
 
+/** A programme kept under a name to start the next ones from (Yamen, 2026-10-28). */
+export interface ScheduleTemplate {
+  id: string;
+  gouvernorat_code: number;
+  span: Span;
+  name: string;
+  items: number;
+  activities: Partial<Record<Activity, number>>;
+  created_by_name: string | null;
+  created_at: string;
+  updated_by_name: string | null;
+  updated_at: string;
+}
+
 export const scheduleKeys = {
   all: ["schedule"] as const,
   slot: (g: number | null, span: Span, on: string) => ["schedule", "slot", g, span, on] as const,
   progress: (span: Span, on: string) => ["schedule", "progress", span, on] as const,
   settings: ["schedule", "settings"] as const,
   options: (g: number | null) => ["schedule", "options", g] as const,
+  templates: (g: number | null, span: Span | null) => ["schedule", "templates", g, span] as const,
 };
 
 // ---------------------------------------------------------------- calendar (dates as YYYY-MM-DD, no time zone)
@@ -267,6 +282,18 @@ export function scheduleApi(api: ApiClient) {
     scheduleSettings: (signal?: AbortSignal) => api.request<ScheduleSetting[]>(`${S}/settings`, { signal }),
     saveScheduleSetting: (code: number, approval: Approval) =>
       api.request<ScheduleSetting>(`${S}/settings/${code}`, { method: "PUT", body: { approval } }),
+    scheduleTemplates: (gouvernorat: number | null, span: Span | null, signal?: AbortSignal) =>
+      api.request<ScheduleTemplate[]>(`${S}/templates`, { signal, query: { gouvernorat, span } }),
+    saveScheduleTemplate: (periodId: string, name: string) =>
+      api.request<ScheduleTemplate>(`${S}/periods/${enc(periodId)}/template`, { method: "POST", body: { name } }),
+    renameScheduleTemplate: (id: string, name: string) =>
+      api.request<ScheduleTemplate>(`${S}/templates/${enc(id)}`, { method: "PATCH", body: { name } }),
+    deleteScheduleTemplate: (id: string) => api.request<undefined>(`${S}/templates/${enc(id)}`, { method: "DELETE" }),
+    applyScheduleTemplate: (periodId: string, version: number, templateId: string) =>
+      api.request<PeriodDetail>(`${S}/periods/${enc(periodId)}/apply-template`, {
+        method: "POST",
+        body: { version, template_id: templateId },
+      }),
     scheduleOptions: (gouvernorat: number | null, signal?: AbortSignal) =>
       api.request<ScheduleOptions>(`${S}/options`, { signal, query: { gouvernorat } }),
   };

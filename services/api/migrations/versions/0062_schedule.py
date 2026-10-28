@@ -4,6 +4,8 @@
   head of the room then the central room). Each gouvernorat chooses; without a row, the head of the room approves.
 * ``sched.period``: one programme of a gouvernorat for a day, a week (from Monday) or a month (from the 1st), with its
   approval path (kept when it is sent, so a later change of the setting does not change a programme under way).
+* ``sched.template``: a programme kept under a name to start the next ones from, its activities placed by their day
+  in the period (Yamen, 2026-10-28: a programme repeats, it is not written again).
 * ``sched.item``: an activity of the programme (duty, patrol, exercise, prevention visit, maintenance…), its day and
   hours, unit, place, person in charge, staff and resources, the plan it follows, and its follow-up (done, postponed
   or cancelled, with the reason).
@@ -94,6 +96,21 @@ CREATE TABLE sched.item (
 CREATE INDEX ix_item_period ON sched.item (period_id, on_date, starts_at);
 CREATE INDEX ix_item_series ON sched.item (series_id) WHERE series_id IS NOT NULL;
 
+CREATE TABLE sched.template (
+    id               uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    gouvernorat_code smallint NOT NULL REFERENCES geo.gouvernorat(code),
+    span             text NOT NULL CHECK (span IN ('day', 'week', 'month')),
+    name             text NOT NULL CHECK (length(name) BETWEEN 2 AND 120),
+    items            jsonb NOT NULL DEFAULT '[]',
+    created_by_name  text,
+    created_at       timestamptz NOT NULL DEFAULT now(),
+    updated_by_name  text,
+    updated_at       timestamptz NOT NULL DEFAULT now(),
+    CONSTRAINT uq_template UNIQUE (gouvernorat_code, span, name)
+);
+
+ALTER TABLE sched.template ENABLE ROW LEVEL SECURITY;
+CREATE POLICY template_all ON sched.template USING ({_OWN}) WITH CHECK ({_OWN});
 ALTER TABLE sched.setting ENABLE ROW LEVEL SECURITY;
 CREATE POLICY setting_select ON sched.setting FOR SELECT USING (true);
 CREATE POLICY setting_write ON sched.setting FOR INSERT WITH CHECK ({_OWN});
@@ -105,6 +122,7 @@ CREATE POLICY item_all ON sched.item USING ({_OWN}) WITH CHECK ({_OWN});
 """
 
 DOWNGRADE = """
+DROP TABLE sched.template;
 DROP TABLE sched.item;
 DROP TABLE sched.period;
 DROP TABLE sched.setting;

@@ -72,6 +72,30 @@ describe("SchedulePage", () => {
     await waitFor(() => expect(api.periodStep).toHaveBeenLastCalledWith("per-nabeul-w44", "submit", 4, undefined));
   });
 
+  it("keeps a programme as a template and starts a new one from it", async () => {
+    const api = fakeScheduleApi();
+    vi.mocked(api.scheduleSlot).mockResolvedValue({ ...SCHEDULE_SLOT, period: null, can_create: true });
+    renderApp(<SchedulePage />, { api: fakeApi(api), auth: fakeAuth(claims(["operator"], "21")), lang: "ar" });
+    fireEvent.change(await screen.findByLabelText("أو من نموذج"), { target: { value: "tpl-week" } });
+    fireEvent.click(screen.getByRole("button", { name: "إنشاء من النموذج" }));
+    await waitFor(() => expect(api.applyScheduleTemplate).toHaveBeenCalledWith("per-nabeul-w44", 4, "tpl-week"));
+    expect(api.createPeriod).toHaveBeenCalledWith("week", expect.any(String), 21);
+  });
+
+  it("saves the programme under a name and lists the templates", async () => {
+    const api = fakeScheduleApi();
+    renderApp(<SchedulePage />, { api: fakeApi(api), auth: fakeAuth(claims(["operator"], "21")), lang: "ar" });
+    fireEvent.click(await screen.findByRole("button", { name: "حفظ هذه البرمجة نموذجا" }));
+    fireEvent.change(screen.getByLabelText("اسم النموذج"), { target: { value: "أسبوع الشتاء" } });
+    fireEvent.click(screen.getByRole("button", { name: "حفظ النموذج" }));
+    await waitFor(() => expect(api.saveScheduleTemplate).toHaveBeenCalledWith("per-nabeul-w44", "أسبوع الشتاء"));
+    expect(await screen.findByText("حُفظ النموذج «أسبوع الشتاء».")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("tab", { name: "النماذج" }));
+    expect(await screen.findByDisplayValue("[SIM] أسبوع موسم الاصطياف")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "حذف النموذج [SIM] الأسبوع العادي" }));
+    await waitFor(() => expect(api.deleteScheduleTemplate).toHaveBeenCalledWith("tpl-week"));
+  });
+
   it("lets the head of the room choose how its gouvernorat approves", async () => {
     const api = fakeScheduleApi();
     renderApp(<SchedulePage />, { api: fakeApi(api), auth: fakeAuth(claims(["ops_manager"], "21")), lang: "ar" });
