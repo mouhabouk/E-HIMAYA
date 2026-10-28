@@ -18572,6 +18572,39 @@
         "title": "MessagePage",
         "type": "object"
       },
+      "Mine": {
+        "description": "What the administrator's rules change for the caller: the dashboard opens and hides accordingly.",
+        "properties": {
+          "granted": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Granted",
+            "type": "array"
+          },
+          "hidden": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Hidden",
+            "type": "array"
+          },
+          "lent": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Lent",
+            "type": "object"
+          }
+        },
+        "required": [
+          "granted",
+          "hidden",
+          "lent"
+        ],
+        "title": "Mine",
+        "type": "object"
+      },
       "MineList": {
         "properties": {
           "items": {
@@ -22729,6 +22762,51 @@
         "title": "PreviewPoint",
         "type": "object"
       },
+      "PreviewRow": {
+        "properties": {
+          "default": {
+            "title": "Default",
+            "type": "boolean"
+          },
+          "granted": {
+            "title": "Granted",
+            "type": "boolean"
+          },
+          "hidden": {
+            "title": "Hidden",
+            "type": "boolean"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "open": {
+            "title": "Open",
+            "type": "boolean"
+          },
+          "refused": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Refused"
+          }
+        },
+        "required": [
+          "key",
+          "default",
+          "hidden",
+          "granted",
+          "refused",
+          "open"
+        ],
+        "title": "PreviewRow",
+        "type": "object"
+      },
       "PrioritySettings": {
         "properties": {
           "category_severity": {
@@ -26312,6 +26390,21 @@
           "reason"
         ],
         "title": "RevocationIn",
+        "type": "object"
+      },
+      "RevokeIn": {
+        "properties": {
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "RevokeIn",
         "type": "object"
       },
       "Role": {
@@ -37431,6 +37524,390 @@
           "lon"
         ],
         "title": "Point",
+        "type": "object"
+      },
+      "app__modules__features__schemas__FeatureOut": {
+        "properties": {
+          "act_as": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Act As"
+          },
+          "flags": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Flags",
+            "type": "array"
+          },
+          "grantable": {
+            "title": "Grantable",
+            "type": "boolean"
+          },
+          "group": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Group"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "page",
+              "tab",
+              "button"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "names": {
+            "$ref": "#/components/schemas/app__modules__features__schemas__Names"
+          },
+          "nav": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nav"
+          },
+          "parent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent"
+          },
+          "roles": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Roles",
+            "type": "array"
+          },
+          "routes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Routes",
+            "type": "array"
+          }
+        },
+        "required": [
+          "key",
+          "kind",
+          "names",
+          "parent",
+          "group",
+          "nav",
+          "flags",
+          "roles",
+          "act_as",
+          "grantable",
+          "routes"
+        ],
+        "title": "FeatureOut",
+        "type": "object"
+      },
+      "app__modules__features__schemas__Names": {
+        "properties": {
+          "ar": {
+            "title": "Ar",
+            "type": "string"
+          },
+          "en": {
+            "title": "En",
+            "type": "string"
+          },
+          "fr": {
+            "title": "Fr",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ar",
+          "fr",
+          "en"
+        ],
+        "title": "Names",
+        "type": "object"
+      },
+      "app__modules__features__schemas__RuleIn": {
+        "properties": {
+          "effect": {
+            "enum": [
+              "grant",
+              "hide"
+            ],
+            "title": "Effect",
+            "type": "string"
+          },
+          "ends_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ends At"
+          },
+          "feature_key": {
+            "maxLength": 80,
+            "minLength": 2,
+            "title": "Feature Key",
+            "type": "string"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          },
+          "starts_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Starts At"
+          },
+          "target": {
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Target",
+            "type": "string"
+          },
+          "target_kind": {
+            "enum": [
+              "user",
+              "role"
+            ],
+            "title": "Target Kind",
+            "type": "string"
+          },
+          "target_name": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Name"
+          }
+        },
+        "required": [
+          "feature_key",
+          "effect",
+          "target_kind",
+          "target",
+          "reason"
+        ],
+        "title": "RuleIn",
+        "type": "object"
+      },
+      "app__modules__features__schemas__RuleOut": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "effect": {
+            "enum": [
+              "grant",
+              "hide"
+            ],
+            "title": "Effect",
+            "type": "string"
+          },
+          "ends_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ends At"
+          },
+          "feature_key": {
+            "title": "Feature Key",
+            "type": "string"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          },
+          "revoke_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revoke Reason"
+          },
+          "revoked_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revoked At"
+          },
+          "revoked_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revoked By Name"
+          },
+          "starts_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Starts At"
+          },
+          "state": {
+            "enum": [
+              "active",
+              "scheduled",
+              "ended",
+              "revoked"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "target": {
+            "title": "Target",
+            "type": "string"
+          },
+          "target_kind": {
+            "enum": [
+              "user",
+              "role"
+            ],
+            "title": "Target Kind",
+            "type": "string"
+          },
+          "target_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Name"
+          }
+        },
+        "required": [
+          "id",
+          "feature_key",
+          "effect",
+          "target_kind",
+          "target",
+          "target_name",
+          "gouvernorat_code",
+          "reason",
+          "starts_at",
+          "ends_at",
+          "created_by_name",
+          "created_at",
+          "revoked_at",
+          "revoked_by_name",
+          "revoke_reason",
+          "state"
+        ],
+        "title": "RuleOut",
         "type": "object"
       },
       "app__modules__forecast__schemas__Point": {
@@ -60616,6 +61093,319 @@
         "summary": "List Anchors",
         "tags": [
           "evidence"
+        ]
+      }
+    },
+    "/api/v1/staff/features/catalogue": {
+      "get": {
+        "operationId": "catalogue_api_v1_staff_features_catalogue_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/app__modules__features__schemas__FeatureOut"
+                  },
+                  "title": "Response Catalogue Api V1 Staff Features Catalogue Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Catalogue",
+        "tags": [
+          "features"
+        ]
+      }
+    },
+    "/api/v1/staff/features/mine": {
+      "get": {
+        "operationId": "mine_api_v1_staff_features_mine_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mine"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Mine",
+        "tags": [
+          "features"
+        ]
+      }
+    },
+    "/api/v1/staff/features/preview": {
+      "get": {
+        "description": "What an account with these roles (and this subject, for its own rules) sees once the rules apply.",
+        "operationId": "preview_api_v1_staff_features_preview_get",
+        "parameters": [
+          {
+            "description": "Comma-separated roles",
+            "in": "query",
+            "name": "roles",
+            "required": true,
+            "schema": {
+              "description": "Comma-separated roles",
+              "maxLength": 400,
+              "title": "Roles",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          },
+          {
+            "in": "query",
+            "name": "subject",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Subject"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PreviewRow"
+                  },
+                  "title": "Response Preview Api V1 Staff Features Preview Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Preview",
+        "tags": [
+          "features"
+        ]
+      }
+    },
+    "/api/v1/staff/features/rules": {
+      "get": {
+        "operationId": "list_rules_api_v1_staff_features_rules_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "feature",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Feature"
+            }
+          },
+          {
+            "in": "query",
+            "name": "include_ended",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Include Ended",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/app__modules__features__schemas__RuleOut"
+                  },
+                  "title": "Response List Rules Api V1 Staff Features Rules Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Rules",
+        "tags": [
+          "features"
+        ]
+      },
+      "post": {
+        "operationId": "create_rule_api_v1_staff_features_rules_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__features__schemas__RuleIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__features__schemas__RuleOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Rule",
+        "tags": [
+          "features"
+        ]
+      }
+    },
+    "/api/v1/staff/features/rules/{rule_id}/revoke": {
+      "post": {
+        "operationId": "revoke_rule_api_v1_staff_features_rules__rule_id__revoke_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "rule_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Rule Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevokeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__features__schemas__RuleOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Revoke Rule",
+        "tags": [
+          "features"
         ]
       }
     },

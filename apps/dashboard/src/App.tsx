@@ -2,11 +2,12 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { i18n } from "i18next";
 import { lazy, Suspense, useState, type ComponentType, type ReactNode } from "react";
 import { I18nextProvider } from "react-i18next";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router";
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router";
 import { RequireAuth } from "./auth/RequireAuth";
 import { Loading } from "./components/Feedback";
 import { Layout } from "./components/Layout";
-import { AuthProvider, useAuth } from "./context/auth";
+import { AuthProvider, LendRoles, useAuth } from "./context/auth";
+import { allowed, featureOfPath, lentRoles, pageOf, useMyFeatures } from "./lib/features";
 import { FiltersProvider } from "./context/filters";
 import { LiveProvider } from "./context/live";
 import { ServicesProvider, type Services } from "./context/services";
@@ -25,6 +26,7 @@ import {
   canOpenInventory,
   canOpenLayers,
   canManageAccounts,
+  canManagePermissions,
   canOpenCrew,
   canOpenBreakGlass,
   canReadPlatformSettings,
@@ -129,6 +131,8 @@ const ProgrammeDetailPage = page(() => import("./pages/ProgrammeDetailPage"), "P
 const InventoryPage = page(() => import("./pages/InventoryPage"), "InventoryPage");
 const EmergencyGuidePage = page(() => import("./pages/EmergencyGuidePage"), "EmergencyGuidePage");
 const ContactInboxPage = page(() => import("./pages/ContactInboxPage"), "ContactInboxPage");
+// Phase L4: what the system administrator grants and hides.
+const PermissionsPage = page(() => import("./pages/PermissionsPage"), "PermissionsPage");
 
 export function createQueryClient(): QueryClient {
   return new QueryClient({
@@ -145,15 +149,28 @@ export function createQueryClient(): QueryClient {
 /** Screens of one area (reports or institutions) for the roles that can use it; the API checks again. */
 export function Gate({ allow, children }: { allow: (roles: readonly string[]) => boolean; children: ReactNode }) {
   const { user } = useAuth();
-  if (!user || !allow(user.identity.roles)) return <NoAccessPage reason="noRole" embedded />;
-  return children;
+  return (
+    <FeatureGate byRole={!!user && allow(user.identity.roles)}>{children}</FeatureGate>
+  );
+}
+
+/**
+ * The administrator's rules on the page at this path (L4 §8): a hidden page is refused, a granted one opens, and the
+ * roles its grants lend show the granted buttons inside it. The API enforces the same rules.
+ */
+function FeatureGate({ byRole, children }: { byRole: boolean; children: ReactNode }) {
+  const { user } = useAuth();
+  const { pathname } = useLocation();
+  const access = useMyFeatures();
+  const key = featureOfPath(pathname);
+  if (!user || !allowed(access, key, byRole)) return <NoAccessPage reason="noRole" embedded />;
+  return <LendRoles roles={key ? lentRoles(access, pageOf(key)) : []}>{children}</LendRoles>;
 }
 
 /** A screen whose access depends on the scope (national or regional room) as well as the roles (phase 9). */
 export function ScopeGate({ allow, children }: { allow: (identity: StaffIdentity) => boolean; children: ReactNode }) {
   const { user } = useAuth();
-  if (!user || !allow(user.identity)) return <NoAccessPage reason="noRole" embedded />;
-  return children;
+  return <FeatureGate byRole={!!user && allow(user.identity)}>{children}</FeatureGate>;
 }
 
 /** The KPIs need a report read role; other staff start on the first area their roles open. */
@@ -217,6 +234,10 @@ export function AppRoutes() {
         <Route path="accounts" element={scoped(canManageAccounts, <AccountsPage />)} />
         <Route path="audit" element={scoped(canReadScopedAudit, <AuditPage />)} />
         <Route path="break-glass" element={scoped(canOpenBreakGlass, <BreakGlassPage />)} />
+        <Route
+          path="permissions"
+          element={scoped(canManagePermissions, <Suspense fallback={<Loading />}><PermissionsPage /></Suspense>)}
+        />
         <Route path="calls" element={reports(<CallsPage />)} />
         <Route path="weather/suggestions" element={weather(<WeatherSuggestionsPage />)} />
         <Route path="orgs" element={orgs(<OrgsPage />)} />

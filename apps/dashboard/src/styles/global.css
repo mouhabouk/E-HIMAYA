@@ -7716,3 +7716,94 @@ button.nav-card:hover {
   margin-top: 12px;
   justify-content: center;
 }
+
+/* ---------- Phase L4 §8: permissions of the system administrator ---------- */
+.perm-layout {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr));
+  align-items: start;
+}
+.perm-form {
+  display: grid;
+  gap: 0.75rem;
+}
+.perm-form__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+}
+.perm-form__row > .field {
+  flex: 1 1 12rem;
+}
+.perm-rules,
+.perm-tree,
+.perm-preview {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.perm-rule,
+.perm-tree > li,
+.perm-preview > li {
+  padding-block: 0.5rem;
+  border-block-end: 1px solid var(--border);
+}
+.perm-rule:last-child,
+.perm-tree > li:last-child,
+.perm-preview > li:last-child {
+  border-block-end: none;
+}
+.perm-rule--grant {
+  border-inline-start: 3px solid var(--ok-text);
+  padding-inline-start: 0.5rem;
+}
+.perm-rule--hide {
+  border-inline-start: 3px solid var(--error-text);
+  padding-inline-start: 0.5rem;
+}
+.perm-tree ul {
+  margin: 0.25rem 0 0;
+  padding-inline-start: 1rem;
+  list-style: none;
+}
+.perm-group > summary {
+  cursor: pointer;
+  padding-block: 0.4rem;
+  font-weight: 600;
+}
+.perm-preview > li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.perm-preview__closed {
+  color: var(--muted);
+}
+.tag--effect-grant,
+.tag--preview-granted,
+.tag--preview-open,
+.tag--rule-active {
+  background: var(--ok-bg);
+  color: var(--ok-text);
+}
+.tag--effect-hide,
+.tag--preview-hidden,
+.tag--flag-fixed {
+  background: var(--error-bg);
+  color: var(--error-text);
+}
+.tag--flag-personal,
+.tag--rule-scheduled {
+  background: var(--warn-bg);
+  color: var(--warn-text);
+}
+.tag--flag-national {
+  background: var(--info-bg);
+  color: var(--info-text);
+}
+.tag--preview-closed,
+.tag--rule-ended,
+.tag--rule-revoked {
+  background: var(--surface-2);
+}

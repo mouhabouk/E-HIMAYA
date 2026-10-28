@@ -49,6 +49,8 @@ from app.modules.doctors.router import router as doctors_router
 from app.modules.doctors.staff_router import router as doctors_staff_router
 from app.modules.evidence.router import router as evidence_router
 from app.modules.evidence.worker import evidence_forever
+from app.modules.features import registry as features_registry
+from app.modules.features.router import router as features_router
 from app.modules.forecast.router import router as forecast_router
 from app.modules.geo.router import router as geo_router
 from app.modules.health.router import metrics_router
@@ -320,6 +322,8 @@ def create_app() -> FastAPI:
     for router in routers:
         app.include_router(router)
     app.include_router(accounts.router)
+    app.include_router(features_router)
+    features_registry.install(app.routes)
     return app
 
 

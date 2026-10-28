@@ -13,6 +13,7 @@ import {
   canHandleContact,
   canManageAccounts,
   canManageMedicalCommittee,
+  canManagePermissions,
   canMonitorPerformance,
   canOpenAxes,
   canOpenBreakGlass,
@@ -39,6 +40,7 @@ import {
   isCommittee,
 } from "../lib/roles";
 import type { MenuPosition, MenuShape } from "../lib/menu";
+import { allowed, featureOfPath, type FeatureAccess } from "../lib/features";
 
 export interface NavEntry {
   to: string;
@@ -57,15 +59,16 @@ export interface NavGroup {
 }
 
 /** The links the user's roles can open (the API enforces the same rules), in their groups; empty groups dropped. */
-export function navGroups(identity: Identity, t: TFunction): NavGroup[] {
+export function navGroups(identity: Identity, t: TFunction, access?: FeatureAccess): NavGroup[] {
   const roles = identity.roles;
   const reads = hasReadAccess(roles);
   const knowledge = canReadKnowledge(roles);
   const analytics = canReadAnalytics(roles);
   const editsTips = canEditTips(roles);
   const orgs = canReadOrgs(roles);
+  // The administrator's rules (L4 §8): a hidden page leaves the menu, a granted one joins it.
   const e = (show: boolean, to: string, icon: IconName, tone: Tone, key: string, end?: boolean): NavEntry[] =>
-    show ? [{ to, end, icon, tone, label: t(`nav.${key}`) }] : [];
+    (access ? allowed(access, featureOfPath(to), show) : show) ? [{ to, end, icon, tone, label: t(`nav.${key}`) }] : [];
   const groups: NavGroup[] = [
     {
       key: "ops",
@@ -166,6 +169,7 @@ export function navGroups(identity: Identity, t: TFunction): NavGroup[] {
         ...e(canManageAccounts(identity), "/accounts", "manageAccounts", "slate", "accounts"),
         ...e(canReadScopedAudit(identity), "/audit", "policy", "slate", "audit"),
         ...e(canOpenBreakGlass(identity), "/break-glass", "lockOpen", "red", "breakGlass"),
+        ...e(canManagePermissions(identity), "/permissions", "adminPanelSettings", "slate", "permissions"),
       ],
     },
   ];

@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Outlet } from "react-router";
 import { Icon } from "./Icon";
+import { useMyFeatures } from "../lib/features";
 import { Disclosure, MainNav, navGroups } from "./Navigation";
 import { useAuth } from "../context/auth";
 import { useLiveState } from "../context/live";
@@ -259,6 +260,7 @@ export function Layout() {
   const [menu, setMenu] = useState<MenuPrefs>(storedMenu);
   const top = menu.position === "top";
   const headerRef = useHeaderHeight(top);
+  const access = useMyFeatures();
   if (!user) return null;
   const { identity } = user;
   const scope = identity.national
@@ -270,7 +272,7 @@ export function Layout() {
   const roles = staffRoles(identity.roles)
     .map((r) => t(`roles.${r}`))
     .join(t("common.listSeparator"));
-  const groups = navGroups(identity, t);
+  const groups = navGroups(identity, t, access);
 
   return (
     <div className="shell" data-menu-shape={menu.shape} data-menu-position={menu.position}>

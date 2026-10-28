@@ -17,6 +17,7 @@ import {
   VEHICLE,
 } from "../src/test/inventoryData";
 import { BASEMAP, BASEMAP_SETTINGS } from "../src/test/basemapData";
+import { FEATURE_RULES, FEATURES, NO_FEATURES, PREVIEW } from "../src/test/featuresData";
 import { SCHEDULE_OPTIONS, SCHEDULE_PROGRESS, SCHEDULE_SETTINGS, SCHEDULE_SLOT, SCHEDULE_TEMPLATES } from "../src/test/scheduleData";
 import { DIRECTIVE_ALL_DETAIL, DISPATCH_PAGE, HAZARDS, PLAN_DETAIL, PLANS, REVISIONS, SEARCH } from "../src/test/registerData";
 import { JENDOUBA_AXIS, NABEUL_AXIS, NABEUL_DETAIL, overview, REQUEST, SOUSSE_AXIS, SUGGESTIONS } from "../src/test/crisisData";
@@ -209,6 +210,11 @@ async function mockApi(page: Page): Promise<string[]> {
     if (pathname === "/api/v1/staff/register/dispatches") return json(route, DISPATCH_PAGE);
     if (pathname === "/api/v1/staff/register/dispatches/dsp-all") return json(route, DIRECTIVE_ALL_DETAIL);
     if (pathname === "/api/v1/staff/register/plans") return json(route, PLANS);
+    // The administrator's permissions (phase L4 §8), [SIM] data.
+    if (pathname === "/api/v1/staff/features/mine") return json(route, NO_FEATURES);
+    if (pathname === "/api/v1/staff/features/catalogue") return json(route, FEATURES);
+    if (pathname === "/api/v1/staff/features/rules") return json(route, FEATURE_RULES);
+    if (pathname === "/api/v1/staff/features/preview") return json(route, PREVIEW);
     if (pathname === "/api/v1/staff/schedule/slot") return json(route, SCHEDULE_SLOT);
     if (pathname === "/api/v1/staff/schedule/progress") return json(route, SCHEDULE_PROGRESS);
     if (pathname === "/api/v1/staff/schedule/settings") return json(route, SCHEDULE_SETTINGS);
@@ -303,6 +309,26 @@ test.describe("accessibility of the programmes (ar)", () => {
       await page.getByRole("tab", { name: "طريقة الاعتماد" }).click();
       await expect(page.locator("main #sched-settings")).toBeVisible();
       await scan(page, `/schedule approval ${theme}`);
+      expect(fence.unexpected).toEqual([]);
+    });
+  }
+});
+
+// Phase L4 §8: the permissions page of the system administrator, the catalogue open, in both modes.
+test.describe("accessibility of the permissions (ar)", () => {
+  for (const theme of ["light", "dark"] as const) {
+    test(`rules, preview and catalogue, ${theme}, have no serious or critical violation`, async ({ page }) => {
+      await signIn(page, [...ROLES, "sysadmin"], "Salma Ben Ali");
+      await page.addInitScript((t) => {
+        window.localStorage.setItem("ehimaya.lang", "ar");
+        window.localStorage.setItem("ehimaya.theme", t);
+      }, theme);
+      const fence = await baseMock(page);
+      await mockApi(page);
+      await page.goto("/permissions");
+      await expect(page.locator("main .perm-rule").first()).toBeVisible();
+      await page.locator("main .perm-group summary").first().click();
+      await scan(page, `/permissions ${theme}`);
       expect(fence.unexpected).toEqual([]);
     });
   }

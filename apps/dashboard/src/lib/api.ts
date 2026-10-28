@@ -300,6 +300,13 @@ export const ERROR_CODES = [
   "evacuation_not_found",
   "need_not_found",
   "occupants_over_capacity",
+  // Phase L4 §8: the administrator's rules.
+  "feature_hidden",
+  "ceiling",
+  "self_lockout",
+  "unknown_feature",
+  "unknown_role",
+  "user_rule_has_no_gouvernorat",
 ] as const;
 export type ErrorCode = (typeof ERROR_CODES)[number];
 

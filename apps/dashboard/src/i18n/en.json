@@ -59,7 +59,8 @@
     },
     "inventory": "Resources register",
     "plans": "Intervention plans",
-    "schedule": "Programmes"
+    "schedule": "Programmes",
+    "permissions": "Permissions"
   },
   "header": {
     "scope": "Geographic scope",
@@ -461,7 +462,13 @@
     "item_not_found": "Activity not found.",
     "template_not_found": "Template not found.",
     "template_name_taken": "A template already has this name.",
-    "template_mismatch": "The template is for another span or gouvernorat."
+    "template_mismatch": "The template is for another span or gouvernorat.",
+    "feature_hidden": "The administrator hid this feature from your account.",
+    "ceiling": "The fixed security rules do not allow this grant.",
+    "self_lockout": "The permissions page cannot be hidden from administrators.",
+    "unknown_feature": "This feature is not in the catalogue.",
+    "unknown_role": "Unknown role.",
+    "user_rule_has_no_gouvernorat": "An account rule is not limited to a gouvernorat: the account has its own."
   },
   "kpi": {
     "title": "Key indicators",
@@ -6141,6 +6148,90 @@
       "rename": "Rename",
       "delete": "Delete",
       "deleteOf": "Delete template {{name}}"
+    }
+  },
+  "permissions": {
+    "title": "Permissions",
+    "intro": "The system administrator delegates every permission: grants a page, a tab or a button to an account or a role, or hides it, for a period or open-ended. The server refuses what is hidden; every change is audited.",
+    "ceilingNote": "The fixed security rules are a ceiling nobody lifts: no sensitive layers, no personal data for the governor and the minister, no accounts, audit or basemap key, no national scope for a regional account. Hiding is always possible.",
+    "new": "New rule",
+    "feature": "Page, tab or button",
+    "choose": "Choose",
+    "wholePage": "The whole page: {{name}}",
+    "featureRequired": "Choose the page or the button.",
+    "kind": {
+      "page": "Page",
+      "tab": "Tab",
+      "button": "Button"
+    },
+    "effect": "Decision",
+    "effects": {
+      "grant": "Grant",
+      "hide": "Hide"
+    },
+    "target": "For whom",
+    "targets": {
+      "role": "A role",
+      "user": "One account"
+    },
+    "role": "Role",
+    "gouvernorat": "Gouvernorat",
+    "everyGouvernorat": "Every gouvernorat",
+    "national": "National scope",
+    "account": "Account id",
+    "accountHint": "Copy it from the accounts page.",
+    "accountName": "Holder's name (as a reminder)",
+    "from": "From",
+    "to": "To (optional)",
+    "reason": "Reason",
+    "save": {
+      "grant": "Grant",
+      "hide": "Hide"
+    },
+    "saved": "Rule saved and applied.",
+    "rules": "Rules in force",
+    "showEnded": "Show ended and revoked rules",
+    "noRules": "No rule: every account sees what its roles allow.",
+    "state": {
+      "active": "In force",
+      "scheduled": "Scheduled",
+      "ended": "Ended",
+      "revoked": "Revoked"
+    },
+    "period": "From {{from}} to {{to}}",
+    "open": "Open-ended",
+    "by": "{{name}}, {{at}}",
+    "revokedBy": "Revoked by {{name}}, {{at}}",
+    "revoke": "Revoke the rule",
+    "revokeTitle": "Revoke the rule",
+    "catalogue": "Catalogue",
+    "catalogueIntro": "Every page of the dashboard, with its tabs and buttons, and who holds them by default.",
+    "heldBy": "By default: {{roles}}",
+    "heldByAll": "By default: all staff",
+    "actsAs": "The grantee acts as {{role}}",
+    "flag": {
+      "personal": "Personal data",
+      "national": "National",
+      "fixed": "Fixed"
+    },
+    "flagHint": {
+      "personal": "Never granted to the governor or the minister.",
+      "national": "Granted to a national account only.",
+      "fixed": "Never granted; hidden only."
+    },
+    "ceiling": {
+      "fixed": "A fixed feature: never granted, hidden only.",
+      "personal_data": "Personal data: never granted to the governor or the minister.",
+      "national_scope": "A national feature: never granted to a role of one gouvernorat.",
+      "technical_account": "Technical accounts never receive operational rights.",
+      "not_staff": "Never granted to a citizen account."
+    },
+    "preview": "What an account sees",
+    "previewState": {
+      "open": "Open",
+      "closed": "Closed",
+      "hidden": "Hidden",
+      "granted": "Granted"
     }
   }
 }

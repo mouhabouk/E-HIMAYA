@@ -59,7 +59,8 @@
     },
     "inventory": "Registre des moyens",
     "plans": "Plans d'intervention",
-    "schedule": "Programmation"
+    "schedule": "Programmation",
+    "permissions": "Autorisations"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -461,7 +462,13 @@
     "item_not_found": "Activité introuvable.",
     "template_not_found": "Modèle introuvable.",
     "template_name_taken": "Un modèle porte déjà ce nom.",
-    "template_mismatch": "Le modèle est d'une autre durée ou d'un autre gouvernorat."
+    "template_mismatch": "Le modèle est d'une autre durée ou d'un autre gouvernorat.",
+    "feature_hidden": "L'administrateur a masqué cette fonction pour votre compte.",
+    "ceiling": "Les règles de sécurité fixes interdisent cette autorisation.",
+    "self_lockout": "La page des autorisations ne peut être masquée aux administrateurs.",
+    "unknown_feature": "Cette fonction n'existe pas au catalogue.",
+    "unknown_role": "Rôle inconnu.",
+    "user_rule_has_no_gouvernorat": "Une règle de compte ne se limite pas à un gouvernorat : le compte a le sien."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -6141,6 +6148,90 @@
       "rename": "Renommer",
       "delete": "Supprimer",
       "deleteOf": "Supprimer le modèle {{name}}"
+    }
+  },
+  "permissions": {
+    "title": "Autorisations",
+    "intro": "L'administrateur système délègue toutes les autorisations : il accorde une page, un onglet ou un bouton à un compte ou à un rôle, ou le masque, pour une période ou sans terme. Le serveur refuse ce qui est masqué ; chaque changement est audité.",
+    "ceilingNote": "Les règles de sécurité fixes sont un plafond que personne ne lève : ni couches sensibles, ni données personnelles au gouverneur et au ministre, ni comptes, audit ou clé du fond de carte, ni portée nationale à un compte régional. Masquer reste toujours possible.",
+    "new": "Nouvelle règle",
+    "feature": "Page, onglet ou bouton",
+    "choose": "Choisir",
+    "wholePage": "Toute la page : {{name}}",
+    "featureRequired": "Choisissez la page ou le bouton.",
+    "kind": {
+      "page": "Page",
+      "tab": "Onglet",
+      "button": "Bouton"
+    },
+    "effect": "Décision",
+    "effects": {
+      "grant": "Accorder",
+      "hide": "Masquer"
+    },
+    "target": "Pour qui",
+    "targets": {
+      "role": "Un rôle",
+      "user": "Un compte"
+    },
+    "role": "Rôle",
+    "gouvernorat": "Gouvernorat",
+    "everyGouvernorat": "Tous les gouvernorats",
+    "national": "Portée nationale",
+    "account": "Identifiant du compte",
+    "accountHint": "À copier depuis la page des comptes.",
+    "accountName": "Nom du titulaire (pour mémoire)",
+    "from": "Du",
+    "to": "Au (facultatif)",
+    "reason": "Motif",
+    "save": {
+      "grant": "Accorder",
+      "hide": "Masquer"
+    },
+    "saved": "Règle enregistrée et appliquée.",
+    "rules": "Règles en vigueur",
+    "showEnded": "Afficher les règles terminées ou retirées",
+    "noRules": "Aucune règle : chaque compte voit ce que ses rôles permettent.",
+    "state": {
+      "active": "En vigueur",
+      "scheduled": "Programmée",
+      "ended": "Terminée",
+      "revoked": "Retirée"
+    },
+    "period": "Du {{from}} au {{to}}",
+    "open": "Sans terme",
+    "by": "{{name}}, {{at}}",
+    "revokedBy": "Retirée par {{name}}, {{at}}",
+    "revoke": "Retirer la règle",
+    "revokeTitle": "Retirer la règle",
+    "catalogue": "Catalogue",
+    "catalogueIntro": "Toutes les pages du tableau de bord, avec leurs onglets et boutons, et qui les détient par défaut.",
+    "heldBy": "Par défaut : {{roles}}",
+    "heldByAll": "Par défaut : tous les agents",
+    "actsAs": "Le bénéficiaire agit en tant que {{role}}",
+    "flag": {
+      "personal": "Données personnelles",
+      "national": "National",
+      "fixed": "Fixe"
+    },
+    "flagHint": {
+      "personal": "Jamais accordé au gouverneur ni au ministre.",
+      "national": "Accordé seulement à un compte national.",
+      "fixed": "Jamais accordé ; seulement masqué."
+    },
+    "ceiling": {
+      "fixed": "Fonction fixe : jamais accordée, seulement masquée.",
+      "personal_data": "Données personnelles : jamais accordées au gouverneur ni au ministre.",
+      "national_scope": "Fonction nationale : jamais accordée à un rôle d'un seul gouvernorat.",
+      "technical_account": "Les comptes techniques ne reçoivent pas de droits opérationnels.",
+      "not_staff": "Jamais accordé à un compte citoyen."
+    },
+    "preview": "Ce que voit un compte",
+    "previewState": {
+      "open": "Ouverte",
+      "closed": "Fermée",
+      "hidden": "Masquée",
+      "granted": "Accordée"
     }
   }
 }

@@ -656,3 +656,8 @@ export const WORK_PROGRAMME_ROLES = [...READ_ROLES, "governor", "minister"] as c
 export function canOpenSchedule(roles: readonly string[]): boolean {
   return any(WORK_PROGRAMME_ROLES, roles);
 }
+
+/** The permissions page (L4 §8): the system administrator with a national scope grants and hides every feature. */
+export function canManagePermissions(who: Pick<Who, "roles" | "national">): boolean {
+  return who.national && who.roles.includes("sysadmin");
+}

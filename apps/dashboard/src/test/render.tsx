@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 import { I18nextProvider } from "react-i18next";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { vi } from "vitest";
+import { fakeFeaturesApi } from "./featuresFixtures";
 import type { AuthService, AuthUser } from "../auth/authService";
 import { identityFromClaims } from "../auth/identity";
 import { AuthProvider } from "../context/auth";
@@ -250,6 +251,7 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     ...fakeContactApi(),
     ...fakeSafetyApi(),
     ...fakeDoctorsApi(),
+    ...fakeFeaturesApi(),
     gouvernorats: vi.fn(() =>
       Promise.resolve([
         { code: 11, iso_code: "TN-11", name: "تونس", name_ar: "تونس", name_fr: "Tunis", delegation_count: 21 },
