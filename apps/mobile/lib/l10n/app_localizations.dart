@@ -10989,6 +10989,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'about {minutes} min by road (estimate)'**
   String nearestByRoadEstimate(int minutes);
+
+  /// Screen reader name of the + button of a number stepper (R4a).
+  ///
+  /// In en, this message translates to:
+  /// **'Increase {label}'**
+  String stepperIncrease(String label);
+
+  /// Screen reader name of the − button of a number stepper (R4a).
+  ///
+  /// In en, this message translates to:
+  /// **'Decrease {label}'**
+  String stepperDecrease(String label);
 }
 
 class _AppLocalizationsDelegate

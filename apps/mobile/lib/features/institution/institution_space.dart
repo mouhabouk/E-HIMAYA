@@ -660,13 +660,12 @@ class _ActivityFormState extends ConsumerState<_ActivityForm> {
               ),
             ],
             const SizedBox(height: 8),
-            TextField(
-              key: const Key('org-activity-participants'),
+            NumberStepper(
+              fieldKey: const Key('org-activity-participants'),
               controller: _participants,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: l10n.orgActivityParticipants,
-              ),
+              label: l10n.orgActivityParticipants,
+              max: 1000000,
+              step: 5,
             ),
             const SizedBox(height: 8),
             TextField(

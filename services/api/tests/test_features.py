@@ -81,7 +81,9 @@ async def test_a_hidden_page_and_a_granted_button(client: httpx.AsyncClient, sta
     # Only there: the other buttons of the page, and the other operators, are as before.
     assert (await client.put(f"/api/v1/staff/schedule/settings/{GABES}", json=put, headers=other)).status_code == 403
     mine = (await client.get(f"{URL}/mine", headers=operator)).json()
-    assert mine == {"granted": ["schedule.settings"], "hidden": [], "lent": {"schedule.settings": "ops_manager"}}
+    # Only the dormant dry run is hidden from the account until the administrator grants it.
+    assert all(key.split(".")[0] == "drill" for key in mine.pop("hidden"))
+    assert mine == {"granted": ["schedule.settings"], "lent": {"schedule.settings": "ops_manager"}}
     # Never beyond the account's gouvernorat.
     r = await client.put("/api/v1/staff/schedule/settings/23", json=put, headers=operator)
     assert r.status_code in (403, 404)

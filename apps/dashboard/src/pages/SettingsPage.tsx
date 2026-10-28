@@ -32,6 +32,7 @@ import { p9Keys } from "../lib/phase9Api";
 import { SLA_BANDS, type PlatformSetting } from "../lib/phase9Types";
 import { CHECK_MAX_HOURS_RANGE, LIVE_MAX_MINUTES_RANGE } from "../lib/safetyApi";
 import { PageTitle } from "../components/PageTitle";
+import { Stepper } from "../components/Stepper";
 
 type Values = Record<string, string>;
 
@@ -111,18 +112,17 @@ function SettingCard({
           {fields.map((f) => (
             <div key={f.name} className={`field field--number${tried && error ? " field--invalid" : ""}`}>
               <label htmlFor={`${id}-${f.name}`}>{f.label}</label>
-              <input
+              <Stepper
                 id={`${id}-${f.name}`}
-                type="number"
-                inputMode="numeric"
                 dir="ltr"
                 min={f.min}
                 max={f.max}
-                step={1}
-                value={values[f.name] ?? ""}
+                value={values[f.name] ? Number(values[f.name]) : null}
                 readOnly={!editable}
-                aria-invalid={tried && error ? true : undefined}
-                onChange={(e) => setValues((v) => ({ ...v, [f.name]: e.target.value }))}
+                label={f.label}
+                invalid={Boolean(tried && error)}
+                onChange={(n) => setValues((v) => ({ ...v, [f.name]: String(n) }))}
+                onClear={() => setValues((v) => ({ ...v, [f.name]: "" }))}
               />
               {f.unit && <span className="muted">{f.unit}</span>}
             </div>

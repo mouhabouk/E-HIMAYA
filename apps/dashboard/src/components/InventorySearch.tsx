@@ -5,6 +5,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useId, useState, type SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
+import { Stepper } from "./Stepper";
 import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
 import { errorMessageKey } from "../lib/api";
@@ -13,6 +14,7 @@ import {
   EMPTY_SEARCH,
   inventoryKeys,
   searchParam,
+  specStep,
   type Category,
   type CategoryKind,
   type Entity,
@@ -100,24 +102,26 @@ function SpecConditions({
           <div key={d.key} className="inventory-search__range">
             <div className="field">
               <label htmlFor={`${id}-${d.key}-min`}>{t("inventory.search.min", { spec: name + unit })}</label>
-              <input
+              <Stepper
                 id={`${id}-${d.key}-min`}
-                type="number"
-                inputMode="decimal"
                 min={0}
-                value={current[0] ?? ""}
-                onChange={(e) => update(0, e.target.value)}
+                step={specStep(d.unit)}
+                value={current[0]}
+                label={t("inventory.search.min", { spec: name + unit })}
+                onChange={(n) => update(0, String(n))}
+                onClear={() => update(0, "")}
               />
             </div>
             <div className="field">
               <label htmlFor={`${id}-${d.key}-max`}>{t("inventory.search.max", { spec: name + unit })}</label>
-              <input
+              <Stepper
                 id={`${id}-${d.key}-max`}
-                type="number"
-                inputMode="decimal"
                 min={0}
-                value={current[1] ?? ""}
-                onChange={(e) => update(1, e.target.value)}
+                step={specStep(d.unit)}
+                value={current[1]}
+                label={t("inventory.search.max", { spec: name + unit })}
+                onChange={(n) => update(1, String(n))}
+                onClear={() => update(1, "")}
               />
             </div>
           </div>
@@ -257,15 +261,14 @@ export function SearchTab({
           {axis && (
             <div className="field">
               <label htmlFor={`${id}-margin`}>{t("inventory.search.margin")}</label>
-              <input
+              <Stepper
                 id={`${id}-margin`}
-                type="number"
-                inputMode="decimal"
                 min={0}
                 max={50}
-                step={1}
                 value={draft.margin_km ?? 0}
-                onChange={(e) => patch({ margin_km: Math.min(50, Math.max(0, Number(e.target.value) || 0)) })}
+                label={t("inventory.search.margin")}
+                unit="km"
+                onChange={(n) => patch({ margin_km: n })}
               />
             </div>
           )}

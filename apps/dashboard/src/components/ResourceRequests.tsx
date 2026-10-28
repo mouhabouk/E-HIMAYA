@@ -24,6 +24,7 @@ import {
 import { queryKeys } from "../lib/staffApi";
 import type { IncidentDetail } from "../lib/types";
 import { InlineDialog, ReasonField, useRoomName } from "./Phase9Bits";
+import { Stepper } from "./Stepper";
 
 function useRefresh() {
   const qc = useQueryClient();
@@ -301,14 +302,7 @@ function NewRequestForm({ incident }: { incident: IncidentDetail }) {
       </div>
       <div className="field field--number">
         <label htmlFor={`${id}-qty`}>{t("resourceRequests.quantity")}</label>
-        <input
-          id={`${id}-qty`}
-          type="number"
-          min={1}
-          max={50}
-          value={quantity}
-          onChange={(e) => setQuantity(Number(e.target.value))}
-        />
+        <Stepper id={`${id}-qty`} min={1} max={50} value={quantity} label={t("resourceRequests.quantity")} onChange={setQuantity} />
       </div>
       <ReasonField label={t("resourceRequests.reason")} value={reason} onChange={setReason} showError={tried} />
       <button type="submit" className="btn btn--primary" disabled={create.isPending}>

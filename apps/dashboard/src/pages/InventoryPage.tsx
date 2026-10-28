@@ -6,9 +6,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useId, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ErrorBox, Loading } from "../components/Feedback";
-import { AgentForm, categoryName, DeleteEntry, StockForm, VehicleForm } from "../components/InventoryForms";
+import { AgentForm, categoryName, DeleteEntry, StockForm, TransferForm, TransfersPanel, VehicleForm } from "../components/InventoryForms";
 import { GouvernoratPicker, SearchTab } from "../components/InventorySearch";
 import { PageTitle } from "../components/PageTitle";
+import { Stepper } from "../components/Stepper";
 import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
 import { errorMessageKey } from "../lib/api";
@@ -23,6 +24,7 @@ import {
   type CategoryKind,
   type Entity,
   type Family,
+  type ColumnMapping,
   type InventoryImport,
   type ImportProblem,
   type ListQuery,
@@ -465,6 +467,7 @@ function StockTab({ q, units, catalogue }: { q: ListQuery; units: UnitRow[]; cat
                 <th scope="col">{t("inventory.field.type")}</th>
                 <th scope="col">{t("inventory.field.specs")}</th>
                 <th scope="col">{t("inventory.field.unit")}</th>
+                <th scope="col">{t("inventory.field.carrier")}</th>
                 <th scope="col">{t("inventory.field.qtyReady")}</th>
                 <th scope="col">{t("inventory.field.qtyBroken")}</th>
                 <th scope="col">
@@ -481,6 +484,7 @@ function StockTab({ q, units, catalogue }: { q: ListQuery; units: UnitRow[]; cat
                     <th scope="row">{categoryName(category, lang)}</th>
                     <td>{specText(s.specs, category, lang, (v) => fmt.number(v), t("inventory.yes")) || "—"}</td>
                     <td dir="auto">{s.unit_name}</td>
+                    <td dir="auto">{s.vehicle_label ?? <span className="muted">{t("inventory.stock.atUnit")}</span>}</td>
                     <td className="num">{fmt.number(s.qty_ready)}</td>
                     <td className="num">{s.qty_broken > 0 ? <span className="pill tone-red">{fmt.number(s.qty_broken)}</span> : fmt.number(0)}</td>
                     <td>
@@ -528,6 +532,7 @@ function AgentsTab({ q, units, catalogue }: { q: ListQuery; units: UnitRow[]; ca
   const fmt = useFormat();
   const [skill, setSkill] = useState<string | null>(null);
   const [editing, setEditing] = useState<Agent | "new" | null>(null);
+  const [moving, setMoving] = useState<Agent | null>(null);
   const query = { ...q, category: skill };
   const list = useQuery({ queryKey: inventoryKeys.list("agents", query), queryFn: ({ signal }) => api.agents(query, signal) });
   const data = list.data;
@@ -543,6 +548,8 @@ function AgentsTab({ q, units, catalogue }: { q: ListQuery; units: UnitRow[]; ca
         )}
       </div>
       {data && !data.can_see_names && <p className="alert alert--info">{t("inventory.agents.namesHidden")}</p>}
+      {data?.can_edit && data.can_see_names && <TransfersPanel units={units} />}
+      {moving && <TransferForm key={moving.id} agent={moving} onDone={() => setMoving(null)} />}
       {editing !== null && (
         <AgentForm
           key={editing === "new" ? "new" : editing.id}
@@ -602,6 +609,9 @@ function AgentsTab({ q, units, catalogue }: { q: ListQuery; units: UnitRow[]; ca
                           <button type="button" className="btn btn--small" aria-label={t("inventory.editNamed", { label })} onClick={() => setEditing(a)}>
                             {t("inventory.edit")}
                           </button>
+                          <button type="button" className="btn btn--small" aria-label={t("inventory.transfer.openNamed", { label })} onClick={() => setMoving(a)}>
+                            {t("inventory.transfer.open")}
+                          </button>
                           <DeleteEntry label={label} onDelete={(reason) => api.deleteAgent(a.id, reason)} />
                         </div>
                       )}
@@ -653,16 +663,22 @@ function ImportTab({ national, gouvernorat }: { national: boolean; gouvernorat: 
   const [entity, setEntity] = useState<Entity>("vehicles");
   const [preview, setPreview] = useState<InventoryImport | null>(null);
   const [reason, setReason] = useState("");
-  const csv = Boolean(file?.name.toLowerCase().endsWith(".csv"));
+  // R4b: a saved mapping, and the one chosen on screen for the columns the preview did not recognise.
+  const [profile, setProfile] = useState<string | null>(null);
+  const [mapping, setMapping] = useState<ColumnMapping>({});
+  const profiles = useQuery({ queryKey: inventoryKeys.profiles, queryFn: ({ signal }) => api.importProfiles(signal) });
+  const lower = file?.name.toLowerCase() ?? "";
+  const json = lower.endsWith(".json");
+  const csv = lower.endsWith(".csv") || json;
   const tooLarge = Boolean(file && file.size > MAX_FILE);
   const where = national ? target : null;
   const template = useMutation({ mutationFn: () => api.inventoryTemplate(where), onSuccess: saveDownload });
   const check = useMutation({
-    mutationFn: (f: File) => api.importInventory(f, where, csv ? entity : null, false),
+    mutationFn: (f: File) => api.importInventory(f, where, csv ? entity : null, false, "", { profile, mapping }),
     onSuccess: setPreview,
   });
   const apply = useMutation({
-    mutationFn: (f: File) => api.importInventory(f, where, csv ? entity : null, true, reason.trim()),
+    mutationFn: (f: File) => api.importInventory(f, where, csv ? entity : null, true, reason.trim(), { profile, mapping }),
     onSuccess: (result) => {
       setPreview(result);
       void qc.invalidateQueries({ queryKey: inventoryKeys.all });
@@ -699,11 +715,12 @@ function ImportTab({ national, gouvernorat }: { national: boolean; gouvernorat: 
         <input
           id={`${id}-file`}
           type="file"
-          accept=".xlsx,.csv"
+          accept=".xlsx,.csv,.json"
           aria-describedby={`${id}-file-help`}
           aria-invalid={tooLarge || undefined}
           onChange={(e) => {
             setFile(e.target.files?.[0] ?? null);
+            setMapping({});
             reset();
           }}
         />
@@ -714,10 +731,36 @@ function ImportTab({ national, gouvernorat }: { national: boolean; gouvernorat: 
       {csv && (
         <div className="field">
           <label htmlFor={`${id}-entity`}>{t("inventory.import.csvOf")}</label>
-          <select id={`${id}-entity`} value={entity} onChange={(e) => setEntity(e.target.value as Entity)}>
+          <select id={`${id}-entity`} value={entity} aria-describedby={json ? `${id}-json-help` : undefined} onChange={(e) => setEntity(e.target.value as Entity)}>
             {(["vehicles", "stock", "agents"] as const).map((k) => (
               <option key={k} value={k}>
                 {t(`inventory.import.sheet.${k}`)}
+              </option>
+            ))}
+          </select>
+          {json && (
+            <p id={`${id}-json-help`} className="muted">
+              {t("inventory.import.jsonHelp")}
+            </p>
+          )}
+        </div>
+      )}
+      {(profiles.data?.length ?? 0) > 0 && (
+        <div className="field">
+          <label htmlFor={`${id}-profile`}>{t("inventory.import.profile")}</label>
+          <select
+            id={`${id}-profile`}
+            value={profile ?? ""}
+            onChange={(e) => {
+              setProfile(e.target.value || null);
+              reset();
+            }}
+          >
+            <option value="">{t("inventory.import.noProfile")}</option>
+            {profiles.data?.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.name}
+                {p.gouvernorat_code === null ? ` (${t("inventory.import.shared")})` : ""}
               </option>
             ))}
           </select>
@@ -739,6 +782,16 @@ function ImportTab({ national, gouvernorat }: { national: boolean; gouvernorat: 
             <p role="status" className="alert alert--ok">
               {t("inventory.import.applied", { gouvernorat: nameOf(preview.gouvernorat_code) })}
             </p>
+          )}
+          {!preview.applied && (
+            <MappingPanel
+              preview={preview}
+              mapping={mapping}
+              national={national}
+              onChange={setMapping}
+              onRecheck={() => file && check.mutate(file)}
+              busy={check.isPending}
+            />
           )}
           <ProblemItems title={t("inventory.import.errors")} items={preview.errors} tone="error" />
           <ProblemItems title={t("inventory.import.warnings")} items={preview.warnings} tone="warning" />
@@ -783,6 +836,130 @@ function ImportTab({ national, gouvernorat }: { national: boolean; gouvernorat: 
             </form>
           )}
         </div>
+      )}
+    </section>
+  );
+}
+
+/**
+ * R4b: the columns of the file that match no field of the register, each with a list of the fields (no typing), then
+ * a new preview with this mapping and, if wanted, the mapping kept by name for the next file.
+ */
+function MappingPanel({
+  preview,
+  mapping,
+  national,
+  onChange,
+  onRecheck,
+  busy,
+}: {
+  preview: InventoryImport;
+  mapping: ColumnMapping;
+  national: boolean;
+  onChange: (m: ColumnMapping) => void;
+  onRecheck: () => void;
+  busy: boolean;
+}) {
+  const { t } = useTranslation();
+  const { api } = useServices();
+  const qc = useQueryClient();
+  const id = useId();
+  const [name, setName] = useState("");
+  const [shared, setShared] = useState(false);
+  const save = useMutation({
+    mutationFn: () => api.saveImportProfile({ name: name.trim(), mapping, shared: national && shared }),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: inventoryKeys.profiles }),
+  });
+  const sheets = (["vehicles", "stock", "agents"] as const).filter(
+    (e) => (preview.unknown[e]?.length ?? 0) > 0 || Object.keys(mapping[e] ?? {}).length > 0,
+  );
+  if (sheets.length === 0) return null;
+  const pick = (entity: Entity, heading: string, field: string) => {
+    const pairs = Object.fromEntries(Object.entries(mapping[entity] ?? {}).filter(([h]) => h !== heading));
+    onChange({ ...mapping, [entity]: field ? { ...pairs, [heading]: field } : pairs });
+  };
+  const mapped = Object.values(mapping).some((p) => Object.keys(p).length > 0);
+  return (
+    <section className="inventory-mapping" aria-labelledby={`${id}-t`}>
+      <h3 id={`${id}-t`}>{t("inventory.import.mapping.title")}</h3>
+      <p className="muted">{t("inventory.import.mapping.intro")}</p>
+      {sheets.map((entity) => {
+        const pairs = mapping[entity] ?? {};
+        const columns = [...new Set([...(preview.unknown[entity] ?? []), ...Object.keys(pairs)])];
+        const taken = new Set(Object.values(pairs));
+        return (
+          <table key={entity} className="table inventory-table">
+            <caption>{t(`inventory.import.sheet.${entity}`)}</caption>
+            <thead>
+              <tr>
+                <th scope="col">{t("inventory.import.mapping.column")}</th>
+                <th scope="col">{t("inventory.import.mapping.field")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {columns.map((heading, n) => (
+                <tr key={heading}>
+                  <th scope="row" dir="auto" id={`${id}-${entity}-${n}`}>
+                    {heading}
+                  </th>
+                  <td>
+                    <select
+                      aria-labelledby={`${id}-${entity}-${n}`}
+                      value={pairs[heading] ?? ""}
+                      onChange={(e) => pick(entity, heading, e.target.value)}
+                    >
+                      <option value="">{t("inventory.import.mapping.none")}</option>
+                      {(preview.fields[entity] ?? []).map((f) => (
+                        <option key={f} value={f} disabled={taken.has(f) && pairs[heading] !== f}>
+                          {t(`inventory.import.fieldName.${f}`, { defaultValue: f })}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        );
+      })}
+      <div className="actions">
+        <button type="button" className="btn btn--primary" disabled={!mapped || busy} onClick={onRecheck}>
+          {t("inventory.import.mapping.recheck")}
+        </button>
+      </div>
+      {mapped && (
+        <form
+          noValidate
+          className="actions"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (name.trim().length >= 2) save.mutate();
+          }}
+        >
+          <div className="field">
+            <label htmlFor={`${id}-name`}>{t("inventory.import.mapping.saveAs")}</label>
+            <input id={`${id}-name`} dir="auto" maxLength={80} value={name} onChange={(e) => setName(e.target.value)} />
+          </div>
+          {national && (
+            <label className="checkbox">
+              <input type="checkbox" checked={shared} onChange={(e) => setShared(e.target.checked)} />
+              {t("inventory.import.mapping.share")}
+            </label>
+          )}
+          <button type="submit" className="btn" disabled={name.trim().length < 2 || save.isPending}>
+            {t("inventory.import.mapping.save")}
+          </button>
+        </form>
+      )}
+      {save.isSuccess && (
+        <p role="status" className="alert alert--ok">
+          {t("inventory.import.mapping.saved", { name: save.data.name })}
+        </p>
+      )}
+      {save.isError && (
+        <p role="alert" className="alert alert--error">
+          {t(errorMessageKey(save.error))}
+        </p>
       )}
     </section>
   );
@@ -888,7 +1065,7 @@ function CategoryForm({ onDone }: { onDone: () => void }) {
         {kind === "skill" && (
           <div className="field">
             <label htmlFor={`${id}-levels`}>{t("inventory.catalogue.levels")}</label>
-            <input id={`${id}-levels`} type="number" min={0} max={5} value={levels} onChange={(e) => setLevels(Math.max(0, Math.min(5, Number(e.target.value) || 0)))} />
+            <Stepper id={`${id}-levels`} min={0} max={5} value={levels} label={t("inventory.catalogue.levels")} onChange={setLevels} />
           </div>
         )}
       </div>

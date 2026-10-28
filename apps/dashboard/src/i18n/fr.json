@@ -61,7 +61,8 @@
     "plans": "Plans d'intervention",
     "schedule": "Programmation",
     "permissions": "Autorisations",
-    "window": "Fenêtre de décision"
+    "window": "Fenêtre de décision",
+    "drills": "Exercice blanc"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -481,7 +482,39 @@
     "two_gouvernorats_required": "Choisissez deux gouvernorats.",
     "too_many_saved": "Nombre maximal de recherches enregistrées atteint (50).",
     "query_too_long": "Recherche trop longue.",
-    "no_words": "Ajoutez au moins un mot."
+    "no_words": "Ajoutez au moins un mot.",
+    "already_withdrawn": "Ce gouvernorat s'est déjà retiré de l'exercice.",
+    "not_a_draft": "L'exercice ne se modifie qu'en brouillon.",
+    "not_approved": "L'exercice ne démarre qu'après l'accord de tous les gouvernorats.",
+    "not_now": "Cette décision n'est pas possible à cette étape de l'exercice.",
+    "not_over": "L'exercice ne se clôt qu'une fois terminé ou arrêté.",
+    "not_participating": "Votre gouvernorat n'a pas accepté cet exercice ou s'en est retiré.",
+    "not_running": "L'exercice n'est pas en cours.",
+    "not_started": "L'exercice n'a pas encore démarré.",
+    "not_submitted": "L'exercice n'a pas encore été soumis aux gouvernorats.",
+    "resource_not_free": "Une des ressources choisies n'est plus disponible dans cet exercice.",
+    "too_many_active": "La salle a atteint le maximum d'exercices ouverts (3).",
+    "not_the_evaluator": "L'évaluation revient au seul évaluateur indépendant désigné.",
+    "gouvernorat_not_in_drill": "Ce gouvernorat ne fait pas partie de l'exercice.",
+    "inconsistent_results": "Les résultats du test de charge sont incohérents.",
+    "no_evaluator": "Désignez un évaluateur indépendant avant de soumettre.",
+    "no_injects": "Ajoutez les messages du scénario avant de soumettre.",
+    "offset_after_end": "Le message tombe après la fin de l'exercice.",
+    "resources_need_dispatch": "Les ressources ne se réservent qu'avec l'action « envoi de moyens ».",
+    "too_many_injects": "Le scénario a atteint le maximum de messages (400).",
+    "unknown_kind": "Type de risque inconnu du générateur.",
+    "same_gouvernorat": "L'agent est déjà dans ce gouvernorat.",
+    "transfer_pending": "Une mutation de cet agent attend déjà une décision.",
+    "transfer_not_found": "Mutation introuvable.",
+    "transfer_decided": "Cette mutation a déjà été décidée.",
+    "transfer_outdated": "Le gouvernorat de l'agent a changé depuis l'envoi.",
+    "unit_not_in_gouvernorat": "L'unité n'est pas dans le gouvernorat d'accueil.",
+    "vehicle_not_in_unit": "Le véhicule n'est pas dans cette unité.",
+    "file_json_shape": "Fichier JSON non accepté : un tableau d'enregistrements à valeurs simples, ou un objet avec vehicles, stock et agents.",
+    "mapping_invalid": "Correspondance des colonnes invalide : choisissez un champ de la liste pour chaque colonne.",
+    "mapping_duplicate": "Un même champ est lié à deux colonnes de la même feuille.",
+    "profile_name_taken": "Un modèle de correspondance porte déjà ce nom.",
+    "profile_not_found": "Modèle de correspondance introuvable ou non disponible pour votre gouvernorat."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -5709,7 +5742,10 @@
     "availability": {
       "on_duty": "En service",
       "rest": "Repos",
-      "leave": "Congé"
+      "leave": "Congé",
+      "sick": "Congé maladie",
+      "training": "Formation",
+      "mission": "Mission"
     },
     "kind": {
       "vehicle": "Véhicules",
@@ -5741,7 +5777,8 @@
       "phone": "Téléphone",
       "availability": "Disponibilité",
       "skills": "Spécialités",
-      "skill": "Spécialité"
+      "skill": "Spécialité",
+      "carrier": "Embarqué sur"
     },
     "form": {
       "pickUnit": "Choisir l'unité",
@@ -5771,7 +5808,8 @@
     },
     "stock": {
       "newTitle": "Nouveau matériel",
-      "editTitle": "Modifier le matériel"
+      "editTitle": "Modifier le matériel",
+      "atUnit": "À l'unité"
     },
     "agents": {
       "newTitle": "Nouvel agent",
@@ -5791,17 +5829,19 @@
       "create": "Création",
       "update": "Modification",
       "delete": "Suppression",
-      "import": "Import"
+      "import": "Import",
+      "transfer_out": "Mutation vers un autre gouvernorat",
+      "transfer_in": "Mutation depuis un autre gouvernorat"
     },
     "import": {
       "title": "Import depuis le modèle du gouvernorat",
       "intro": "Téléchargez le modèle xlsx (avec les unités du gouvernorat et les types acceptés), remplissez ses trois feuilles : véhicules, matériel et agents, puis vérifiez avant d'enregistrer. Rien n'est supprimé de ce qui manque au fichier.",
       "pickGouvernorat": "Choisir le gouvernorat",
       "template": "Télécharger le modèle",
-      "file": "Fichier (xlsx ou CSV)",
+      "file": "Fichier (xlsx, CSV ou JSON)",
       "fileHelp": "10 Mo au plus, 5 000 lignes.",
       "tooLarge": "Le fichier dépasse 10 Mo.",
-      "csvOf": "Le CSV contient",
+      "csvOf": "Le fichier contient",
       "check": "Vérifier",
       "applied": "Registre enregistré pour {{gouvernorat}}.",
       "errors": "Erreurs bloquantes",
@@ -5836,6 +5876,47 @@
         "year_invalid": "année invalide (ignorée)",
         "availability_unknown": "disponibilité inconnue (considéré en service)",
         "matricule_elsewhere": "matricule enregistré dans un autre gouvernorat"
+      },
+      "jsonHelp": "Fichier JSON : un tableau d'enregistrements pour une feuille, ou un objet avec vehicles, stock et agents.",
+      "profile": "Modèle de correspondance",
+      "noProfile": "Sans modèle (colonnes du modèle officiel)",
+      "shared": "partagé",
+      "mapping": {
+        "title": "Colonnes non reconnues",
+        "intro": "Pour chaque colonne du fichier, choisissez le champ du registre. Les colonnes laissées sur « aucun » sont ignorées.",
+        "column": "Colonne du fichier",
+        "field": "Champ du registre",
+        "none": "Aucun (ignorée)",
+        "recheck": "Prévisualiser avec cette correspondance",
+        "saveAs": "Enregistrer la correspondance sous le nom",
+        "save": "Enregistrer le modèle",
+        "saved": "Modèle « {{name}} » enregistré.",
+        "share": "Disponible pour tous les gouvernorats",
+        "delete": "Supprimer le modèle",
+        "deleted": "Modèle supprimé."
+      },
+      "fieldName": {
+        "unit": "Unité",
+        "category": "Catégorie",
+        "label": "Libellé",
+        "code": "Code interne",
+        "state": "État",
+        "year": "Année",
+        "notes": "Notes",
+        "capacity_l": "Capacité (L)",
+        "flow_lpm": "Débit (L/min)",
+        "length_m": "Longueur (m)",
+        "seats": "Places",
+        "power_kva": "Puissance (kVA)",
+        "four_wd": "4x4",
+        "qty_ready": "Nombre prêt",
+        "qty_broken": "Nombre en panne",
+        "matricule": "Matricule",
+        "full_name": "Nom et prénom",
+        "rank": "Grade",
+        "availability": "Disponibilité",
+        "phone": "Téléphone",
+        "skills": "Spécialités"
       }
     },
     "catalogue": {
@@ -5888,6 +5969,29 @@
       "axisIntro": "Recherche dans la zone de l'axe {{number}} et de ses sous-axes, en nombres par unité, sans nom.",
       "byArea": "Unités situées dans la zone de l'axe, avec une marge de {{km}} km.",
       "noArea": "Aucune zone n'est tracée pour cet axe : la recherche couvre tous ses gouvernorats."
+    },
+    "transfer": {
+      "open": "Mutation",
+      "openNamed": "Mutation de {{label}}",
+      "newTitle": "Mutation de {{name}} vers un autre gouvernorat",
+      "intro": "La salle du gouvernorat que l'agent quitte envoie la mutation ; rien ne change tant que la salle du gouvernorat d'accueil ne l'a pas acceptée avec sa nouvelle unité.",
+      "to": "Gouvernorat d'accueil",
+      "effectiveOn": "Date de prise de fonction",
+      "title": "Mutations entre gouvernorats (en attente : {{n}})",
+      "decided": "Mutations passées ({{n}})",
+      "route": "De {{from}} vers {{to}}",
+      "on": "prise de fonction le {{date}}",
+      "newUnit": "Nouvelle unité",
+      "decisionReason": "Motif (obligatoire pour refuser ou annuler)",
+      "accept": "Accepter la mutation",
+      "refuse": "Refuser",
+      "cancel": "Annuler la mutation",
+      "status": {
+        "pending": "En attente",
+        "accepted": "Acceptée",
+        "refused": "Refusée",
+        "cancelled": "Annulée"
+      }
     }
   },
   "basemap": {
@@ -6455,5 +6559,209 @@
       "again": "Rédiger à nouveau",
       "label": "Synthèse automatique indicative"
     }
+  },
+  "drill": {
+    "title": "Exercice blanc numérique",
+    "intro": "Un scénario écrit et minuté joué aux salles des gouvernorats qui l'ont accepté : elles répondent avec leurs ressources réelles, réservées dans l'exercice seulement sans changer leur état réel, puis un évaluateur indépendant l'évalue.",
+    "measures": {
+      "label": "Ce que mesure l'exercice",
+      "load": {
+        "title": "Le système face à un très grand nombre de signalements",
+        "text": "Test de charge et d'attaques sur la copie isolée seulement."
+      },
+      "resources": {
+        "title": "Les ressources existantes",
+        "text": "Ce qui est disponible dans chaque gouvernorat et ce qui manque au pic."
+      },
+      "room": {
+        "title": "La salle des opérations",
+        "text": "Rapidité de réponse et respect du plan."
+      }
+    },
+    "listCaption": "Exercices",
+    "empty": "Aucun exercice pour l'instant.",
+    "back": "← Tous les exercices",
+    "minutes": "{{count}} min",
+    "field": {
+      "title": "Titre de l'exercice",
+      "objective": "Objectif",
+      "hazard": "Risque",
+      "gouvernorats": "Gouvernorats participants",
+      "planned_start": "Début prévu",
+      "duration_min": "Durée (minutes)",
+      "evaluator": "Identifiant du compte évaluateur",
+      "evaluator_name": "Évaluateur",
+      "injects": "Messages",
+      "status": "État"
+    },
+    "hazard": {
+      "none": "Aucun",
+      "fire": "Incendie",
+      "traffic_accident": "Accident de la route",
+      "flood": "Inondation",
+      "drowning": "Noyade",
+      "medical": "Secours médical",
+      "chemical_leak": "Fuite chimique"
+    },
+    "new": {
+      "open": "Nouvel exercice",
+      "title": "Planifier un exercice",
+      "intro": "L'exercice reste un brouillon jusqu'à sa soumission aux gouvernorats. L'évaluateur n'appartient à aucun gouvernorat participant.",
+      "create": "Créer le brouillon",
+      "durationHelp": "De 10 minutes à 12 heures.",
+      "evaluatorHelp": "Un compte hors des gouvernorats participants (peut être désigné plus tard).",
+      "ownOnly": "Salle régionale : l'exercice porte sur le gouvernorat de {{name}} seul.",
+      "placesHelp": "Choisissez au moins un gouvernorat."
+    },
+    "status": {
+      "draft": "Brouillon",
+      "submitted": "En attente des accords",
+      "ready": "Prêt à démarrer",
+      "running": "En cours",
+      "stopped": "Arrêté",
+      "ended": "Terminé",
+      "closed": "Clos"
+    },
+    "decision": {
+      "pending": "En attente",
+      "approved": "Accord",
+      "refused": "Refus",
+      "withdrawn": "Retrait"
+    },
+    "approval": {
+      "title": "Accord des gouvernorats",
+      "intro": "L'exercice ne démarre qu'après l'accord de chaque gouvernorat participant. Tout gouvernorat peut se retirer à tout moment, avec un motif.",
+      "awaitsYou": "Attend la décision de votre gouvernorat",
+      "mine": "Décision du gouvernorat de {{name}}",
+      "withdrawReason": "Motif du retrait",
+      "approve": "Accepter",
+      "refuse": "Refuser",
+      "withdraw": "Se retirer",
+      "refuseReason": "Motif du refus"
+    },
+    "actions": {
+      "submit": "Soumettre aux gouvernorats",
+      "start": "Démarrer l'exercice",
+      "close": "Clore l'exercice"
+    },
+    "stop": {
+      "label": "Arrêt de l'exercice",
+      "open": "Arrêter l'exercice immédiatement",
+      "reason": "Motif de l'arrêt",
+      "confirm": "Confirmer l'arrêt",
+      "stopped": "Arrêté par {{name}}",
+      "allWithdrawn": "Tous les gouvernorats se sont retirés"
+    },
+    "tabs": {
+      "label": "Étapes de l'exercice",
+      "scenario": "Scénario",
+      "run": "Déroulement",
+      "evaluation": "Évaluation",
+      "report": "Rapport"
+    },
+    "injectKind": {
+      "report": "Signalement",
+      "development": "Évolution",
+      "shortage": "Pénurie",
+      "evacuation": "Évacuation",
+      "decision": "Décision attendue",
+      "information": "Information"
+    },
+    "inject": {
+      "new": "Nouveau message",
+      "offset": "Après le début (minutes)",
+      "kind": "Type",
+      "gouvernorat": "Gouvernorat",
+      "all": "Tous les gouvernorats",
+      "title": "Message",
+      "body": "Détails",
+      "needs": "Moyens demandés",
+      "expected": "Réponse attendue selon le plan",
+      "expectedShort": "Attendu",
+      "add": "Ajouter le message",
+      "caption": "Messages du scénario : {{count}}",
+      "empty": "Aucun message : ajoutez-en un ou générez des signalements.",
+      "generated": "Généré",
+      "actions": "Actions",
+      "delete": "Supprimer"
+    },
+    "generate": {
+      "title": "Générateur de signalements",
+      "intro": "Des signalements citoyens fictifs répartis sur la durée à un rythme croissant, dans tous les gouvernorats participants. La même graine donne le même scénario. La charge maximale (des milliers par minute) se joue sur la copie isolée seulement.",
+      "count": "Nombre de signalements",
+      "seed": "Graine",
+      "kinds": "Types de risque",
+      "run": "Générer",
+      "done": "Les signalements générés ont été ajoutés au scénario."
+    },
+    "action": {
+      "acknowledged": "Reçu",
+      "dispatched": "Envoi de moyens",
+      "escalated": "Escalade",
+      "evacuation": "Évacuation",
+      "decision": "Décision",
+      "note": "Note"
+    },
+    "run": {
+      "elapsed": "{{count}} min écoulées",
+      "remaining": "{{count}} min restantes",
+      "free": "Vos ressources disponibles dans l'exercice",
+      "nothingYet": "Aucun message pour l'instant.",
+      "answer": "Réponse de la salle",
+      "action": "Action",
+      "text": "Texte",
+      "book": "Ressources réservées dans l'exercice",
+      "noneFree": "Aucune ressource disponible de ce type.",
+      "send": "Envoyer la réponse",
+      "booked": "Réservé",
+      "released": "libéré",
+      "release": "Libérer les ressources"
+    },
+    "planFollowed": {
+      "yes": "Plan suivi",
+      "partly": "En partie",
+      "no": "Non suivi",
+      "not_applicable": "Sans objet"
+    },
+    "eval": {
+      "title": "Évaluation de l'évaluateur indépendant",
+      "intro": "Pour chaque message : le plan a-t-il été suivi, et une note de 0 à 5.",
+      "plan": "Plan",
+      "score": "Note",
+      "notes": "Remarques",
+      "save": "Enregistrer",
+      "saved": "Enregistré"
+    },
+    "report": {
+      "answered": "Messages ayant reçu une réponse",
+      "median": "Délai médian de réponse (minutes)",
+      "score": "Note moyenne",
+      "short": "Ressources manquantes au pic",
+      "resources": "Ressources par gouvernorat et par type",
+      "kind": "Type",
+      "atStart": "Disponibles au départ",
+      "peak": "Réservation simultanée maximale",
+      "shortCol": "Manque",
+      "noResources": "Aucune ressource réservée.",
+      "injects": "Messages et réponses",
+      "firstAnswer": "Première réponse",
+      "unanswered": "Sans réponse",
+      "booked": "Réservé",
+      "shortfall": "Manque",
+      "stress": "Test de charge et de sécurité (copie isolée)",
+      "stressIntro": "Résultats du script de charge qui envoie des milliers de signalements avec des tentatives d'injection SQL, de scripts, de requêtes malformées et de saturation depuis un seul appareil.",
+      "noStress": "Aucun résultat de test de charge enregistré.",
+      "stressLine": "{{sent}} signalements envoyés, {{accepted}} acceptés ; pic de {{peak}} par seconde ; temps de réponse p95 {{p95}} ms ; erreurs serveur {{errors}}.",
+      "attacks": "Tentatives d'attaque : {{sent}}, dont {{blocked}} bloquées.",
+      "allBlocked": "Toutes bloquées",
+      "notAllBlocked": "Pas toutes bloquées",
+      "conclusion": "Conclusion"
+    }
+  },
+  "stepper": {
+    "decrease": "Diminuer",
+    "increase": "Augmenter",
+    "decreaseNamed": "Diminuer : {{label}}",
+    "increaseNamed": "Augmenter : {{label}}"
   }
 }

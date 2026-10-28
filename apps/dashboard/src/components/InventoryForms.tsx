@@ -4,12 +4,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useId, useState, type ReactNode, type SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
+import { Stepper } from "./Stepper";
 import { useServices } from "../context/services";
 import { errorMessageKey } from "../lib/api";
-import { useFormat, useLanguage } from "../lib/hooks";
+import { useFormat, useGouvernorats, useLanguage } from "../lib/hooks";
 import {
   AVAILABILITY,
   inventoryKeys,
+  specStep,
   WRITABLE_STATES,
   type Agent,
   type Availability,
@@ -18,6 +20,7 @@ import {
   type Skill,
   type SpecValue,
   type StockLine,
+  type Transfer,
   type UnitRow,
   type Vehicle,
   type WritableState,
@@ -128,15 +131,17 @@ function SpecFields({
               {d.name[lang]}
               {d.unit && <span className="muted"> ({d.unit})</span>}
             </label>
-            <input
+            <Stepper
               id={`${id}-${d.key}`}
-              type="number"
               min={0}
-              inputMode="decimal"
-              value={typeof specs[d.key] === "number" ? String(specs[d.key]) : ""}
-              onChange={(e) => {
+              step={specStep(d.unit)}
+              value={typeof specs[d.key] === "number" ? (specs[d.key] as number) : null}
+              label={d.name[lang]}
+              unit={d.unit || undefined}
+              onChange={(n) => onChange({ ...specs, [d.key]: n })}
+              onClear={() => {
                 const { [d.key]: _old, ...rest } = specs;
-                onChange(e.target.value === "" ? rest : { ...rest, [d.key]: Number(e.target.value) });
+                onChange(rest);
               }}
             />
           </div>
@@ -307,7 +312,16 @@ export function VehicleForm({
           )}
         </Field>
         <Field id={`${id}-year`} label={t("inventory.field.year")}>
-          <input id={`${id}-year`} type="number" min={1950} max={2100} inputMode="numeric" value={year} onChange={(e) => setYear(e.target.value)} />
+          <Stepper
+            id={`${id}-year`}
+            min={1950}
+            max={2100}
+            start={new Date().getFullYear()}
+            value={year ? Number(year) : null}
+            label={t("inventory.field.year")}
+            onChange={(n) => setYear(String(n))}
+            onClear={() => setYear("")}
+          />
         </Field>
       </div>
       <SpecFields id={`${id}-spec`} category={current} specs={specs} onChange={setSpecs} />
@@ -343,8 +357,16 @@ export function StockForm({
   const [ready, setReady] = useState(String(line?.qty_ready ?? 0));
   const [broken, setBroken] = useState(String(line?.qty_broken ?? 0));
   const [notes, setNotes] = useState(line?.notes ?? "");
+  const [carrier, setCarrier] = useState(line?.vehicle_id ?? "");
   const [reason, setReason] = useState("");
   const [tried, setTried] = useState(false);
+  const lang = useLanguage();
+  // R3: the vehicles of the chosen unit, one of which may carry this equipment.
+  const unitVehicles = useQuery({
+    queryKey: inventoryKeys.list("vehicles", { gouvernorat: null, unit: unit || null, category: null }),
+    queryFn: ({ signal }) => api.vehicles({ gouvernorat: null, unit, category: null }, signal),
+    enabled: Boolean(unit),
+  });
   const types = categories.filter((c) => c.kind === "equipment");
   const current = types.find((c) => c.key === category);
   const missing = !unit || !category || (line !== null && reason.trim().length < MIN_REASON);
@@ -358,6 +380,7 @@ export function StockForm({
         qty_ready: count(ready),
         qty_broken: count(broken),
         notes: notes.trim() || null,
+        vehicle_id: carrier || null,
         reason: reason.trim(),
         version: line?.version,
       }),
@@ -377,16 +400,51 @@ export function StockForm({
     >
       <div className="form-grid">
         <Field id={`${id}-unit`} label={t("inventory.field.unit")}>
-          <UnitSelect id={`${id}-unit`} units={units} value={unit} onChange={setUnit} />
+          <UnitSelect
+            id={`${id}-unit`}
+            units={units}
+            value={unit}
+            onChange={(v) => {
+              setUnit(v);
+              setCarrier("");
+            }}
+          />
         </Field>
         <Field id={`${id}-type`} label={t("inventory.field.type")}>
           <CategorySelect id={`${id}-type`} categories={types} value={category} onChange={setCategory} />
         </Field>
+        <Field id={`${id}-carrier`} label={t("inventory.field.carrier")}>
+          <select id={`${id}-carrier`} value={carrier} disabled={!unit} onChange={(e) => setCarrier(e.target.value)}>
+            <option value="">{t("inventory.stock.atUnit")}</option>
+            {(unitVehicles.data?.items ?? []).map((v) => (
+              <option key={v.id} value={v.id}>
+                {v.label}
+                {v.code ? ` (${v.code})` : ""} · {categoryName(categories.find((c) => c.key === v.category_key), lang)}
+              </option>
+            ))}
+          </select>
+        </Field>
         <Field id={`${id}-ready`} label={t("inventory.field.qtyReady")}>
-          <input id={`${id}-ready`} type="number" min={0} max={100000} inputMode="numeric" value={ready} onChange={(e) => setReady(e.target.value)} />
+          <Stepper
+            id={`${id}-ready`}
+            min={0}
+            max={100000}
+            value={ready === "" ? null : Number(ready)}
+            label={t("inventory.field.qtyReady")}
+            onChange={(n) => setReady(String(n))}
+            onClear={() => setReady("")}
+          />
         </Field>
         <Field id={`${id}-broken`} label={t("inventory.field.qtyBroken")}>
-          <input id={`${id}-broken`} type="number" min={0} max={100000} inputMode="numeric" value={broken} onChange={(e) => setBroken(e.target.value)} />
+          <Stepper
+            id={`${id}-broken`}
+            min={0}
+            max={100000}
+            value={broken === "" ? null : Number(broken)}
+            label={t("inventory.field.qtyBroken")}
+            onChange={(n) => setBroken(String(n))}
+            onClear={() => setBroken("")}
+          />
         </Field>
       </div>
       <SpecFields id={`${id}-spec`} category={current} specs={specs} onChange={setSpecs} />
@@ -623,5 +681,182 @@ function Revisions({ entityId }: { entityId: string }) {
         ))}
       </ol>
     </details>
+  );
+}
+
+// ---------------------------------------------------------------- transfers between gouvernorats (R3)
+
+/** The room of the gouvernorat the member of staff leaves sends the transfer; the joining room decides. */
+export function TransferForm({ agent, onDone }: { agent: Agent; onDone: () => void }) {
+  const { t } = useTranslation();
+  const { api } = useServices();
+  const id = useId();
+  const saved = useSaved(onDone);
+  const geo = useGouvernorats();
+  const [to, setTo] = useState("");
+  const [on, setOn] = useState("");
+  const [reason, setReason] = useState("");
+  const [tried, setTried] = useState(false);
+  const missing = !to || reason.trim().length < MIN_REASON;
+  const mutation = useMutation({
+    mutationFn: () => api.requestTransfer(agent.id, { to_gouvernorat: Number(to), effective_on: on || null, reason: reason.trim() }),
+    onSuccess: saved,
+  });
+  return (
+    <FormShell
+      title={t("inventory.transfer.newTitle", { name: agent.full_name ?? agent.rank ?? "" })}
+      onSubmit={() => {
+        setTried(true);
+        if (!missing) mutation.mutate();
+      }}
+      pending={mutation.isPending}
+      error={mutation.error}
+      problem={tried && missing ? t("inventory.form.missing") : null}
+      onCancel={onDone}
+    >
+      <p className="muted">{t("inventory.transfer.intro")}</p>
+      <div className="form-grid">
+        <Field id={`${id}-to`} label={t("inventory.transfer.to")}>
+          <select id={`${id}-to`} aria-required="true" value={to} onChange={(e) => setTo(e.target.value)}>
+            <option value="">—</option>
+            {geo.list
+              .filter((g) => g.code !== agent.gouvernorat_code)
+              .map((g) => (
+                <option key={g.code} value={g.code}>
+                  {geo.nameOf(g.code)}
+                </option>
+              ))}
+          </select>
+        </Field>
+        <Field id={`${id}-on`} label={t("inventory.transfer.effectiveOn")}>
+          <input id={`${id}-on`} type="date" value={on} onChange={(e) => setOn(e.target.value)} />
+        </Field>
+      </div>
+      <ReasonField id={`${id}-reason`} value={reason} onChange={setReason} required tried={tried} />
+    </FormShell>
+  );
+}
+
+const TRANSFER_TONE: Record<Transfer["status"], string> = {
+  pending: "tone-amber",
+  accepted: "tone-green",
+  refused: "tone-red",
+  cancelled: "tone-slate",
+};
+
+function TransferRow({ transfer, units }: { transfer: Transfer; units: UnitRow[] }) {
+  const { t } = useTranslation();
+  const { api } = useServices();
+  const fmt = useFormat();
+  const lang = useLanguage();
+  const geo = useGouvernorats();
+  const qc = useQueryClient();
+  const id = useId();
+  const [unit, setUnit] = useState("");
+  const [reason, setReason] = useState("");
+  const done = () => void qc.invalidateQueries({ queryKey: inventoryKeys.all });
+  const accept = useMutation({ mutationFn: () => api.acceptTransfer(transfer.id, unit, reason.trim()), onSuccess: done });
+  const refuse = useMutation({ mutationFn: () => api.refuseTransfer(transfer.id, reason.trim()), onSuccess: done });
+  const cancel = useMutation({ mutationFn: () => api.cancelTransfer(transfer.id, reason.trim()), onSuccess: done });
+  const error = accept.error ?? refuse.error ?? cancel.error;
+  const joining = units.filter((u) => u.gouvernorat_code === transfer.to_gouvernorat && u.can_edit);
+  const reasoned = reason.trim().length >= MIN_REASON;
+  return (
+    <li className="card inventory-transfer">
+      <div className="inventory-transfer__head">
+        <strong dir="auto">{transfer.full_name ?? t("inventory.agents.hidden")}</strong>
+        {transfer.rank && <span className="muted"> · {transfer.rank}</span>}{" "}
+        <span className={`pill ${TRANSFER_TONE[transfer.status]}`}>{t(`inventory.transfer.status.${transfer.status}`)}</span>
+      </div>
+      <p>
+        {t("inventory.transfer.route", {
+          from: `${geo.nameOf(transfer.from_gouvernorat) ?? ""} (${transfer.from_unit_name})`,
+          to: `${geo.nameOf(transfer.to_gouvernorat) ?? ""}${transfer.to_unit_name ? ` (${transfer.to_unit_name})` : ""}`,
+        })}
+        {transfer.effective_on && <> · {t("inventory.transfer.on", { date: fmt.date(transfer.effective_on) })}</>}
+      </p>
+      <p className="muted" dir="auto">
+        {transfer.reason} · {transfer.requested_by_name ?? "—"} · {fmt.dateTime(transfer.requested_at)}
+      </p>
+      {transfer.decision_reason && (
+        <p className="muted" dir="auto">
+          {transfer.decided_by_name ?? "—"}: {transfer.decision_reason}
+        </p>
+      )}
+      {(transfer.can_decide || transfer.can_cancel) && (
+        <div className="inventory-transfer__decide">
+          {transfer.can_decide && (
+            <div className="field">
+              <label htmlFor={`${id}-unit`}>{t("inventory.transfer.newUnit")}</label>
+              <select id={`${id}-unit`} value={unit} onChange={(e) => setUnit(e.target.value)}>
+                <option value="">{t("inventory.form.pickUnit")}</option>
+                {joining.map((u) => (
+                  <option key={u.id} value={u.id}>
+                    {lang === "ar" ? u.name_ar : u.name_fr}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+          <div className="field">
+            <label htmlFor={`${id}-reason`}>{t("inventory.transfer.decisionReason")}</label>
+            <input id={`${id}-reason`} dir="auto" maxLength={500} value={reason} onChange={(e) => setReason(e.target.value)} />
+          </div>
+          <div className="actions">
+            {transfer.can_decide && (
+              <>
+                <button type="button" className="btn btn--primary btn--small" disabled={!unit || accept.isPending} onClick={() => accept.mutate()}>
+                  {t("inventory.transfer.accept")}
+                </button>
+                <button type="button" className="btn btn--small" disabled={!reasoned || refuse.isPending} onClick={() => refuse.mutate()}>
+                  {t("inventory.transfer.refuse")}
+                </button>
+              </>
+            )}
+            {transfer.can_cancel && (
+              <button type="button" className="btn btn--small btn--danger" disabled={!reasoned || cancel.isPending} onClick={() => cancel.mutate()}>
+                {t("inventory.transfer.cancel")}
+              </button>
+            )}
+          </div>
+          {error !== null && (
+            <p className="field__error" role="alert">
+              {t(errorMessageKey(error))}
+            </p>
+          )}
+        </div>
+      )}
+    </li>
+  );
+}
+
+/** The transfers the room sends and receives: the pending ones open, the decided ones folded. */
+export function TransfersPanel({ units }: { units: UnitRow[] }) {
+  const { t } = useTranslation();
+  const { api } = useServices();
+  const list = useQuery({ queryKey: inventoryKeys.transfers, queryFn: ({ signal }) => api.transfers(signal) });
+  const items = list.data ?? [];
+  if (items.length === 0) return null;
+  const pending = items.filter((x) => x.status === "pending");
+  const decided = items.filter((x) => x.status !== "pending");
+  return (
+    <section className="inventory-transfers" aria-labelledby="inventory-transfers">
+      <h3 id="inventory-transfers">{t("inventory.transfer.title", { n: pending.length })}</h3>
+      <ul className="inventory-transfers__list">
+        {pending.map((x) => (
+          <TransferRow key={x.id} transfer={x} units={units} />
+        ))}
+      </ul>
+      {decided.length > 0 && (
+        <details>
+          <summary>{t("inventory.transfer.decided", { n: decided.length })}</summary>
+          <ul className="inventory-transfers__list">
+            {decided.map((x) => (
+              <TransferRow key={x.id} transfer={x} units={units} />
+            ))}
+          </ul>
+        </details>
+      )}
+    </section>
   );
 }

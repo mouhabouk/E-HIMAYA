@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/http/ehimaya_api.dart';
 import '../../core/http/error_messages.dart';
 import '../../core/http/models.dart';
 import '../../core/http/volunteer_models.dart';
+import '../../core/ui/components.dart';
 import '../../core/ui/emergency_action.dart';
 import '../../l10n/app_localizations.dart';
 import '../alerts/alert_labels.dart';
@@ -216,16 +216,15 @@ class _EtaDialogState extends State<_EtaDialog> {
     final l10n = AppLocalizations.of(context);
     return AlertDialog(
       title: Text(l10n.calloutAccept),
-      content: TextField(
-        key: const Key('callout-eta'),
+      content: NumberStepper(
+        fieldKey: const Key('callout-eta'),
         controller: _controller,
-        autofocus: true,
-        keyboardType: TextInputType.number,
-        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-        decoration: InputDecoration(
-          labelText: l10n.calloutEtaLabel,
-          errorText: _value == null ? l10n.errorEtaRequired : null,
-        ),
+        label: l10n.calloutEtaLabel,
+        min: 1,
+        max: 600,
+        step: 5,
+        start: 10,
+        errorText: _value == null ? l10n.errorEtaRequired : null,
         onChanged: (_) => setState(() {}),
       ),
       actions: [

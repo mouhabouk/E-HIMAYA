@@ -2,10 +2,12 @@ import type { FeatureCollection } from "geojson";
 import type {
   Agent,
   Catalogue,
+  ImportProfile,
   InventoryImport,
   Overview,
   SearchResult,
   StockLine,
+  Transfer,
   UnitRow,
   Vehicle,
 } from "../lib/inventory";
@@ -151,6 +153,40 @@ export const IMPORT_PREVIEW: InventoryImport = {
   agents: { new: 3, changed: 0, unchanged: 1 },
   errors: [],
   warnings: [{ code: "year_invalid", entity: "vehicles", line: 4, value: "1900" }],
+  headings: {},
+  unknown: {},
+  fields: {},
+};
+
+const STOCK_FIELDS = ["unit", "category", "qty_ready", "qty_broken", "notes", "capacity_l", "flow_lpm"];
+
+/** R4b: a JSON file of a unit's equipment whose columns are not the template's ([SIM]). */
+export const FOREIGN_PREVIEW: InventoryImport = {
+  ...IMPORT_PREVIEW,
+  format: "json",
+  vehicles: { new: 0, changed: 0, unchanged: 0 },
+  stock: { new: 0, changed: 0, unchanged: 0 },
+  agents: { new: 0, changed: 0, unchanged: 0 },
+  warnings: [],
+  headings: { stock: ["الوحدة الأصلية", "النوع", "العدد", "ملاحظات"] },
+  unknown: { stock: ["الوحدة الأصلية", "النوع", "العدد"] },
+  fields: { stock: STOCK_FIELDS },
+};
+
+export const MAPPED_PREVIEW: InventoryImport = {
+  ...FOREIGN_PREVIEW,
+  stock: { new: 4, changed: 1, unchanged: 0 },
+  unknown: { stock: [] },
+};
+
+export const IMPORT_PROFILE: ImportProfile = {
+  id: "p-1",
+  name: "[SIM] ملف وحدة صفاقس",
+  gouvernorat_code: 61,
+  mapping: { stock: { "الوحدة الأصلية": "unit", "النوع": "category", "العدد": "qty_ready" } },
+  created_by_name: "[SIM] رئيس القاعة الجهوية بصفاقس",
+  created_at: "2026-10-28T10:00:00Z",
+  can_delete: true,
 };
 
 /** Phase R2: fire engines of 2000 L or more across the country ([SIM] figures). */
@@ -205,4 +241,42 @@ export const BOUNDARIES: FeatureCollection = {
     { type: "Feature", id: 61, properties: { code: 61 }, geometry: { type: "Polygon", coordinates: square(10.76, 34.74) } },
     { type: "Feature", id: 23, properties: { code: 23 }, geometry: { type: "Polygon", coordinates: square(9.87, 37.27) } },
   ],
+};
+
+/** R3: a transfer from Sfax to Bizerte as the joining room sees it, and one sent by Sfax ([SIM]). */
+export const TRANSFER_IN: Transfer = {
+  id: "t-1",
+  agent_id: "a-2",
+  matricule: "M5678",
+  full_name: "[SIM] منير الإطفائي",
+  rank: "عريف",
+  skills: ["diving"],
+  from_gouvernorat: 23,
+  from_unit_name: "وحدة بنزرت",
+  to_gouvernorat: 61,
+  to_unit_name: null,
+  effective_on: "2026-11-15",
+  status: "pending",
+  reason: "[SIM] نقلة بطلب من العون لتقريبه من عائلته",
+  decision_reason: null,
+  requested_by_name: "[SIM] رئيس القاعة الجهوية ببنزرت",
+  requested_at: "2026-10-27T10:00:00Z",
+  decided_by_name: null,
+  decided_at: null,
+  can_decide: true,
+  can_cancel: false,
+};
+
+export const TRANSFER_OUT: Transfer = {
+  ...TRANSFER_IN,
+  id: "t-2",
+  agent_id: "a-1",
+  full_name: "سامي الغواص",
+  from_gouvernorat: 61,
+  from_unit_name: "وحدة صفاقس المدينة",
+  to_gouvernorat: 51,
+  reason: "[SIM] تعزيز وحدة الغوص بسوسة",
+  requested_by_name: "[SIM] رئيس القاعة الجهوية بصفاقس",
+  can_decide: false,
+  can_cancel: true,
 };

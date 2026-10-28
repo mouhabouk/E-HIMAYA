@@ -14,7 +14,7 @@ export const VEHICLE_STATES = ["ready", "assigned", "maintenance", "broken"] as 
 export type VehicleState = (typeof VEHICLE_STATES)[number];
 export const WRITABLE_STATES = ["ready", "maintenance", "broken"] as const;
 export type WritableState = (typeof WRITABLE_STATES)[number];
-export const AVAILABILITY = ["on_duty", "rest", "leave"] as const;
+export const AVAILABILITY = ["on_duty", "rest", "leave", "sick", "training", "mission"] as const;
 export type Availability = (typeof AVAILABILITY)[number];
 export type Entity = "vehicles" | "stock" | "agents";
 export type SpecValue = number | boolean;
@@ -167,6 +167,9 @@ export interface StockLine {
   qty_ready: number;
   qty_broken: number;
   notes: string | null;
+  /** Carried by this vehicle of the unit (R3); null: kept at the unit. */
+  vehicle_id?: string | null;
+  vehicle_label?: string | null;
   version: number;
   updated_at: string;
 }
@@ -178,6 +181,7 @@ export interface StockBody {
   qty_ready: number;
   qty_broken: number;
   notes: string | null;
+  vehicle_id?: string | null;
   reason: string;
   version?: number;
 }
@@ -236,7 +240,7 @@ export interface InventoryRevision {
   id: string;
   entity: "vehicle" | "stock" | "agent";
   entity_id: string;
-  action: "create" | "update" | "delete" | "import";
+  action: "create" | "update" | "delete" | "import" | "transfer_out" | "transfer_in";
   snapshot: Record<string, unknown>;
   reason: string | null;
   created_by_name: string | null;
@@ -257,7 +261,7 @@ export interface ImportCounts {
 }
 
 export interface InventoryImport {
-  format: "xlsx" | "csv";
+  format: "xlsx" | "csv" | "json";
   gouvernorat_code: number;
   applied: boolean;
   vehicles: ImportCounts;
@@ -265,6 +269,67 @@ export interface InventoryImport {
   agents: ImportCounts;
   errors: ImportProblem[];
   warnings: ImportProblem[];
+  // R4b: the file's columns by sheet, those no field matched, and the register's fields.
+  headings: Partial<Record<Entity, string[]>>;
+  unknown: Partial<Record<Entity, string[]>>;
+  fields: Partial<Record<Entity, string[]>>;
+}
+
+/** R4b: per sheet, a column of the file to a field of the register. */
+export type ColumnMapping = Partial<Record<Entity, Record<string, string>>>;
+
+export interface ImportProfile {
+  id: string;
+  name: string;
+  gouvernorat_code: number | null;
+  mapping: ColumnMapping;
+  created_by_name: string | null;
+  created_at: string;
+  can_delete: boolean;
+}
+
+export interface ImportProfileBody {
+  name: string;
+  mapping: ColumnMapping;
+  shared: boolean;
+}
+
+export interface ImportOptions {
+  mapping?: ColumnMapping;
+  profile?: string | null;
+}
+
+// ---------------------------------------------------------------- transfers between gouvernorats (R3)
+
+export type TransferStatus = "pending" | "accepted" | "refused" | "cancelled";
+
+export interface Transfer {
+  id: string;
+  agent_id: string;
+  matricule: string | null;
+  full_name: string | null;
+  rank: string | null;
+  skills: string[];
+  from_gouvernorat: number;
+  from_unit_name: string;
+  to_gouvernorat: number;
+  to_unit_name: string | null;
+  effective_on: string | null;
+  status: TransferStatus;
+  reason: string;
+  decision_reason: string | null;
+  requested_by_name: string | null;
+  requested_at: string;
+  decided_by_name: string | null;
+  decided_at: string | null;
+  can_decide: boolean;
+  can_cancel: boolean;
+}
+
+export interface TransferBody {
+  to_gouvernorat: number;
+  effective_on: string | null;
+  reason: string;
 }
 
 export interface ListQuery {
@@ -391,6 +456,8 @@ export const inventoryKeys = {
   revisions: (id: string) => ["inventory", "revisions", id] as const,
   search: (q: SearchQuery) => ["inventory", "search", q] as const,
   boundaries: ["inventory", "boundaries"] as const,
+  transfers: ["inventory", "transfers"] as const,
+  profiles: ["inventory", "import-profiles"] as const,
 };
 
 /** "2 000 L · 4x4": the specifications of a vehicle or a stock line, as the catalogue names them. */
@@ -421,6 +488,13 @@ function filenameOf(response: Response, fallback: string): string {
 
 function listQuery(q: ListQuery, key: "category" | "skill" = "category") {
   return { gouvernorat: q.gouvernorat, unit_id: q.unit, [key]: q.category };
+}
+
+/** The step of a specification by its unit: litres of a tank by 500, a flow by 100, the rest by one. */
+export function specStep(unit: string): number {
+  if (unit === "L") return 500;
+  if (unit === "L/min") return 100;
+  return 1;
 }
 
 export function inventoryApi(api: ApiClient) {
@@ -455,11 +529,27 @@ export function inventoryApi(api: ApiClient) {
       id
         ? api.request<Agent>(`${I}/agents/${enc(id)}`, { method: "PATCH", body })
         : api.request<Agent>(`${I}/agents`, { method: "POST", body }),
+    transfers: (signal?: AbortSignal) => api.request<Transfer[]>(`${I}/transfers`, { signal }),
+    requestTransfer: (agentId: string, body: TransferBody) =>
+      api.request<Transfer>(`${I}/agents/${enc(agentId)}/transfers`, { method: "POST", body }),
+    acceptTransfer: (id: string, unitId: string, reason: string) =>
+      api.request<Transfer>(`${I}/transfers/${enc(id)}/accept`, { method: "POST", body: { unit_id: unitId, reason } }),
+    refuseTransfer: (id: string, reason: string) =>
+      api.request<Transfer>(`${I}/transfers/${enc(id)}/refuse`, { method: "POST", body: { reason } }),
+    cancelTransfer: (id: string, reason: string) =>
+      api.request<Transfer>(`${I}/transfers/${enc(id)}/cancel`, { method: "POST", body: { reason } }),
     deleteAgent: (id: string, reason: string) =>
       api.request<undefined>(`${I}/agents/${enc(id)}`, { method: "DELETE", body: { reason } }),
     inventoryRevisions: (entityId: string, signal?: AbortSignal) =>
       api.request<{ items: InventoryRevision[] }>(`${I}/revisions`, { query: { entity_id: entityId }, signal }),
-    importInventory: (file: File, gouvernorat: number | null, entity: Entity | null, apply: boolean, reason = "") =>
+    importInventory: (
+      file: File,
+      gouvernorat: number | null,
+      entity: Entity | null,
+      apply: boolean,
+      reason = "",
+      options: ImportOptions = {},
+    ) =>
       api.request<InventoryImport>(`${I}/imports`, {
         method: "POST",
         query: {
@@ -468,9 +558,16 @@ export function inventoryApi(api: ApiClient) {
           entity,
           apply,
           reason: apply ? reason : undefined,
+          profile: options.profile ?? undefined,
+          mapping: options.mapping && Object.keys(options.mapping).length > 0 ? JSON.stringify(options.mapping) : undefined,
         },
         rawBody: file,
       }),
+    importProfiles: (signal?: AbortSignal) => api.request<ImportProfile[]>(`${I}/import-profiles`, { signal }),
+    saveImportProfile: (body: ImportProfileBody) =>
+      api.request<ImportProfile>(`${I}/import-profiles`, { method: "POST", body }),
+    deleteImportProfile: (id: string) =>
+      api.request<undefined>(`${I}/import-profiles/${enc(id)}`, { method: "DELETE" }),
     inventoryTemplate: async (gouvernorat: number | null): Promise<Download> => {
       const response = await api.requestRaw(`${I}/template`, { query: { gouvernorat }, accept: "*/*" });
       return { blob: await response.blob(), filename: filenameOf(response, "inventory.xlsx") };

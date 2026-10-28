@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { Icon } from "../components/Icon";
 import { PageTitle } from "../components/PageTitle";
+import { Stepper } from "../components/Stepper";
 import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
 import { errorMessageKey } from "../lib/api";
@@ -355,13 +356,14 @@ function ItemForm({
         </div>
         <div className="field">
           <label htmlFor={`${id}-n`}>{t("schedule.item.staff")}</label>
-          <input
+          <Stepper
             id={`${id}-n`}
-            type="number"
             min={0}
             max={10000}
-            value={f.staff_count ?? ""}
-            onChange={(e) => set({ staff_count: e.target.value === "" ? null : Math.max(0, Number(e.target.value)) })}
+            value={f.staff_count}
+            label={t("schedule.item.staff")}
+            onChange={(n) => set({ staff_count: n })}
+            onClear={() => set({ staff_count: null })}
           />
         </div>
       </div>
@@ -385,13 +387,13 @@ function ItemForm({
             </div>
             <div className="field">
               <label htmlFor={`${id}-rq${n}`}>{t("schedule.item.qty")}</label>
-              <input
+              <Stepper
                 id={`${id}-rq${n}`}
-                type="number"
                 min={1}
                 max={1000}
                 value={r.qty}
-                onChange={(e) => set({ resources: f.resources.map((x, k) => (k === n ? { ...x, qty: Math.max(1, Number(e.target.value) || 1) } : x)) })}
+                label={t("schedule.item.qty")}
+                onChange={(q) => set({ resources: f.resources.map((x, k) => (k === n ? { ...x, qty: q } : x)) })}
               />
             </div>
             <button type="button" className="btn btn--small btn--ghost" onClick={() => set({ resources: f.resources.filter((_, k) => k !== n) })}>

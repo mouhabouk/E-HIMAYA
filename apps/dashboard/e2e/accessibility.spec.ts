@@ -274,6 +274,9 @@ async function mockApi(page: Page): Promise<string[]> {
       // Phase R2: the search across the gouvernorats and the outlines it colours on the map.
       "/api/v1/staff/inventory/search": SEARCH_RESULT,
       "/api/v1/staff/inventory/boundaries": BOUNDARIES,
+      // Phase R3 and R4b: no transfer waiting, no saved column mapping.
+      "/api/v1/staff/inventory/transfers": [],
+      "/api/v1/staff/inventory/import-profiles": [],
       // Satellite background (phase R).
       "/api/v1/staff/basemap": BASEMAP,
       "/api/v1/staff/basemap/settings": BASEMAP_SETTINGS,
@@ -555,7 +558,7 @@ test.describe("accessibility of the resources register (ar)", () => {
       await page.getByRole("button", { name: "آلية جديدة" }).click();
       const form = page.getByRole("form", { name: "آلية جديدة" });
       await form.getByLabel("الصنف").selectOption("fire_engine");
-      await expect(form.getByLabel(/السعة/)).toBeVisible();
+      await expect(form.getByRole("spinbutton", { name: /السعة/ })).toBeVisible();
       await scan();
       await page.getByRole("tab", { name: "الأعوان" }).click();
       await page.getByRole("button", { name: "عون جديد" }).click();
@@ -564,14 +567,14 @@ test.describe("accessibility of the resources register (ar)", () => {
       await page.getByRole("tab", { name: "الاستيراد" }).click();
       // The central room names the gouvernorat it imports for.
       await page.getByRole("region", { name: "الاستيراد من نموذج الولاية" }).getByLabel("الولاية").selectOption({ index: 1 });
-      await page.getByLabel("الملف (xlsx أو CSV)").setInputFiles({ name: "sfax.xlsx", mimeType: "application/octet-stream", buffer: Buffer.from("PK") });
+      await page.getByLabel("الملف (xlsx أو CSV أو JSON)").setInputFiles({ name: "sfax.xlsx", mimeType: "application/octet-stream", buffer: Buffer.from("PK") });
       await page.getByRole("button", { name: "معاينة" }).click();
       await expect(page.getByRole("table", { name: /ما في الملف/ })).toBeVisible();
       await scan();
       // Phase R2: the search across the gouvernorats, then its result in the «موارد الحماية المدنية» folder of the map.
       await page.getByRole("tab", { name: "البحث عبر الولايات" }).click();
       await page.getByLabel("الصنف").selectOption("fire_engine");
-      await page.getByLabel("السعة (L): من").fill("2000");
+      await page.getByRole("spinbutton", { name: "السعة (L): من" }).fill("2000");
       await page.getByRole("button", { name: "بحث", exact: true }).click();
       await expect(page.getByRole("table", { name: "نتيجة البحث حسب الولاية" })).toBeVisible();
       await page.getByRole("row", { name: /تونس/ }).getByText(/الوحدات/).click();

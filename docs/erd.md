@@ -576,6 +576,104 @@ erDiagram
     geo__gouvernorat ||--o{ decision_window__delegation_event : "gouvernorat_code"
 ```
 
+## drill
+
+```mermaid
+erDiagram
+    drill__booking {
+        uuid exercise_id PK,FK
+        uuid resource_id PK,FK
+        uuid response_id FK
+        text kind
+        smallint gouvernorat_code FK
+        datetime booked_at PK
+        datetime released_at
+    }
+    drill__evaluation {
+        uuid inject_id PK,FK
+        text plan_followed
+        smallint score
+        text notes
+        text evaluated_by_name
+        datetime evaluated_at
+    }
+    drill__exercise {
+        uuid id PK
+        text title
+        text objective
+        text hazard_key
+        uuid plan_document_id
+        array gouvernorats
+        text room
+        datetime planned_start
+        smallint duration_min
+        text evaluator
+        text evaluator_name
+        text status
+        datetime started_at
+        datetime ended_at
+        text stop_reason
+        text stopped_by_name
+        jsonb resources_at_start
+        text conclusion
+        text created_by
+        text created_by_name
+        datetime created_at
+        datetime updated_at
+    }
+    drill__inject {
+        uuid id PK
+        uuid exercise_id FK
+        smallint offset_min
+        smallint gouvernorat_code FK
+        text kind
+        text title
+        text body
+        jsonb needs
+        text expected
+        boolean generated
+        datetime created_at
+    }
+    drill__participant {
+        uuid exercise_id PK,FK
+        smallint gouvernorat_code PK,FK
+        text decision
+        text reason
+        text decided_by_name
+        datetime decided_at
+    }
+    drill__response {
+        uuid id PK
+        uuid inject_id FK
+        smallint gouvernorat_code FK
+        text action
+        text text
+        text responded_by
+        text responded_by_name
+        datetime responded_at
+    }
+    drill__stress_run {
+        uuid id PK
+        uuid exercise_id FK
+        text environment
+        jsonb results
+        text recorded_by_name
+        datetime recorded_at
+    }
+    drill__exercise ||--o{ drill__booking : "exercise_id"
+    drill__exercise ||--o{ drill__inject : "exercise_id"
+    drill__exercise ||--o{ drill__participant : "exercise_id"
+    drill__exercise ||--o{ drill__stress_run : "exercise_id"
+    drill__inject ||--o{ drill__evaluation : "inject_id"
+    drill__inject ||--o{ drill__response : "inject_id"
+    drill__response ||--o{ drill__booking : "response_id"
+    geo__gouvernorat ||--o{ drill__booking : "gouvernorat_code"
+    geo__gouvernorat ||--o{ drill__inject : "gouvernorat_code"
+    geo__gouvernorat ||--o{ drill__participant : "gouvernorat_code"
+    geo__gouvernorat ||--o{ drill__response : "gouvernorat_code"
+    ops__resource ||--o{ drill__booking : "resource_id"
+```
+
 ## evidence
 
 ```mermaid
@@ -963,6 +1061,15 @@ erDiagram
         datetime updated_at
         text updated_by
     }
+    inv__import_profile {
+        uuid id PK
+        text name
+        smallint gouvernorat_code FK
+        jsonb mapping
+        text created_by
+        text created_by_name
+        datetime created_at
+    }
     inv__revision {
         uuid id PK
         text entity
@@ -984,10 +1091,28 @@ erDiagram
         integer qty_ready
         integer qty_broken
         text notes
+        uuid vehicle_id FK
         integer version
         datetime created_at
         datetime updated_at
         text updated_by
+    }
+    inv__transfer {
+        uuid id PK
+        uuid agent_id FK
+        smallint from_gouvernorat FK
+        uuid from_unit_id FK
+        smallint to_gouvernorat FK
+        uuid to_unit_id FK
+        date effective_on
+        text status
+        text reason
+        text decision_reason
+        text requested_by
+        text requested_by_name
+        datetime requested_at
+        text decided_by_name
+        datetime decided_at
     }
     inv__unit_check {
         uuid unit_id PK,FK
@@ -997,14 +1122,21 @@ erDiagram
         text verified_by_name
     }
     geo__gouvernorat ||--o{ inv__agent : "gouvernorat_code"
+    geo__gouvernorat ||--o{ inv__import_profile : "gouvernorat_code"
     geo__gouvernorat ||--o{ inv__revision : "gouvernorat_code"
     geo__gouvernorat ||--o{ inv__stock : "gouvernorat_code"
+    geo__gouvernorat ||--o{ inv__transfer : "from_gouvernorat"
+    geo__gouvernorat ||--o{ inv__transfer : "to_gouvernorat"
     geo__gouvernorat ||--o{ inv__unit_check : "gouvernorat_code"
     inv__agent ||--o{ inv__agent_skill : "agent_id"
+    inv__agent ||--o{ inv__transfer : "agent_id"
     inv__category ||--o{ inv__agent_skill : "skill_key"
     inv__category ||--o{ inv__stock : "category_key"
+    ops__resource ||--o{ inv__stock : "vehicle_id"
     ops__unit ||--o{ inv__agent : "unit_id"
     ops__unit ||--o{ inv__stock : "unit_id"
+    ops__unit ||--o{ inv__transfer : "from_unit_id"
+    ops__unit ||--o{ inv__transfer : "to_unit_id"
     ops__unit ||--o{ inv__unit_check : "unit_id"
 ```
 

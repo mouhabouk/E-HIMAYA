@@ -134,6 +134,8 @@ const ContactInboxPage = page(() => import("./pages/ContactInboxPage"), "Contact
 // Phase L4: what the system administrator grants and hides.
 const PermissionsPage = page(() => import("./pages/PermissionsPage"), "PermissionsPage");
 const WindowPage = page(() => import("./pages/WindowPage"), "WindowPage");
+const DrillsPage = page(() => import("./pages/DrillsPage"), "DrillsPage");
+const DrillPage = page(() => import("./pages/DrillPage"), "DrillPage");
 
 export function createQueryClient(): QueryClient {
   return new QueryClient({
@@ -241,6 +243,9 @@ export function AppRoutes() {
         />
         {/* Opened in full by the rooms, through a delegation by others: the page and the API decide (L4 §5). */}
         <Route path="window" element={scoped(() => true, <Suspense fallback={<Loading />}><WindowPage /></Suspense>)} />
+        {/* Dormant (L5a): no role opens the dry run; only the administrator's grant does (design-l5.md §2.1). */}
+        <Route path="drills" element={scoped(() => false, <Suspense fallback={<Loading />}><DrillsPage /></Suspense>)} />
+        <Route path="drills/:id" element={scoped(() => false, <Suspense fallback={<Loading />}><DrillPage /></Suspense>)} />
         <Route path="calls" element={reports(<CallsPage />)} />
         <Route path="weather/suggestions" element={weather(<WeatherSuggestionsPage />)} />
         <Route path="orgs" element={orgs(<OrgsPage />)} />

@@ -21,6 +21,7 @@ import type { Category } from "../lib/types";
 import { ReportsLibraryTabs } from "./ReportsLibraryPage";
 import { LANGUAGES, type Language } from "../i18n";
 import { PageTitle } from "../components/PageTitle";
+import { Stepper } from "../components/Stepper";
 
 const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 /** Staff subject ids are UUIDs (Keycloak `sub`). */
@@ -254,14 +255,7 @@ function ScheduleForm({ schedule, onDone }: { schedule: ReportSchedule | null; o
         {form.frequency === "monthly" && (
           <div className="field field--number">
             <label htmlFor={`${base}-day`}>{t("schedules.day")}</label>
-            <input
-              id={`${base}-day`}
-              type="number"
-              min={1}
-              max={28}
-              value={form.day}
-              onChange={(e) => set({ day: Math.min(28, Math.max(1, Number(e.target.value) || 1)) })}
-            />
+            <Stepper id={`${base}-day`} min={1} max={28} value={form.day} label={t("schedules.day")} onChange={(n) => set({ day: n })} />
           </div>
         )}
         <div className={`field${err("time") ? " field--invalid" : ""}`}>

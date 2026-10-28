@@ -398,6 +398,26 @@ class _RegisterInstitutionScreenState
     ),
   );
 
+  /// A count field with steppers (R4a), so the number is set without typing.
+  Widget _count(
+    String key,
+    TextEditingController c,
+    String label,
+    int max, {
+    bool isRequired = false,
+  }) => Padding(
+    padding: const EdgeInsets.only(bottom: 12),
+    child: NumberStepper(
+      fieldKey: Key('org-$key'),
+      controller: c,
+      label: label,
+      labelWidget: isRequired ? RequiredLabel(label) : null,
+      max: max,
+      step: max > 1000 ? 10 : 1,
+      errorText: _errors[key],
+    ),
+  );
+
   List<Widget> _identityStep(AppLocalizations l10n) => [
     _field('name', _name, l10n.orgName, isRequired: true),
     Text(l10n.orgIdentifierType, style: Theme.of(context).textTheme.bodySmall),
@@ -504,14 +524,14 @@ class _RegisterInstitutionScreenState
       ),
       const SizedBox(height: 12),
       _field('address', _address, l10n.orgAddress, isRequired: true),
-      _field(
+      _count(
         'capacity',
         _capacity,
         l10n.orgCapacity,
+        1000000,
         isRequired: true,
-        keyboard: TextInputType.number,
       ),
-      _field('floors', _floors, l10n.orgFloors, keyboard: TextInputType.number),
+      _count('floors', _floors, l10n.orgFloors, 300),
       SwitchListTile(
         key: const Key('org-receives-public'),
         contentPadding: EdgeInsets.zero,

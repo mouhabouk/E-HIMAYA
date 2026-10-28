@@ -35,6 +35,7 @@ import {
   type ProgrammeDetail,
   type ProgrammePoint,
 } from "../lib/programmes";
+import { Stepper } from "../components/Stepper";
 
 const POINT_COLOURS: Record<PointStatus, string> = {
   open: "#188038",
@@ -612,12 +613,14 @@ function FollowUp({ programme, point, onClose }: { programme: Programme; point: 
           </div>
           <div className="field">
             <label htmlFor={`${id}-deployed`}>{t("programmes.field.lifeguards_deployed")}</label>
-            <input
+            <Stepper
               id={`${id}-deployed`}
-              type="number"
               min={0}
-              value={deployed}
-              onChange={(e) => setDeployed(e.target.value)}
+              max={10000}
+              value={deployed.trim() === "" ? null : Number(deployed)}
+              label={t("programmes.field.lifeguards_deployed")}
+              onChange={(n) => setDeployed(String(n))}
+              onClear={() => setDeployed("")}
             />
           </div>
           <div className="field">

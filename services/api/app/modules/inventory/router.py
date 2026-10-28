@@ -17,10 +17,10 @@ from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
 from geoalchemy2 import Geography, Geometry
-from sqlalchemy import and_, cast, delete, func, select
+from sqlalchemy import and_, cast, delete, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.db import get_session, get_system_sessionmaker
+from app.core.db import as_system, get_session, get_system_sessionmaker
 from app.core.security import Principal, Role, require_roles
 from app.modules.audit import service as audit
 from app.modules.crisis import domain as crisis_domain
@@ -28,7 +28,16 @@ from app.modules.crisis import service as crisis_service
 from app.modules.crisis.models import Axis as CrisisAxis
 from app.modules.geo.models import Gouvernorat
 from app.modules.inventory import domain, schemas
-from app.modules.inventory.models import Agent, AgentSkill, Category, InventoryRevision, Stock, UnitCheck
+from app.modules.inventory.models import (
+    Agent,
+    AgentSkill,
+    Category,
+    ImportProfile,
+    InventoryRevision,
+    Stock,
+    Transfer,
+    UnitCheck,
+)
 from app.modules.layers.domain import neutralize
 from app.modules.ops import resources
 from app.modules.ops.domain import ResourceKind
@@ -649,6 +658,12 @@ async def update_vehicle(
         unit = await _unit(session, body.unit_id)
         _require_edit(principal, unit.gouvernorat_code)
         vehicle.unit_id = unit.id
+        # The equipment it carries moves with it (R3).
+        await session.execute(
+            update(Stock)
+            .where(Stock.vehicle_id == vehicle.id)
+            .values(unit_id=unit.id, gouvernorat_code=unit.gouvernorat_code)
+        )
     category = await _category(session, body.category_key, "vehicle")
     values = body.model_dump()
     values["specs"] = _specs(body.specs, category)
@@ -695,7 +710,7 @@ async def delete_vehicle(
 # ---------------------------------------------------------------- equipment by quantity
 
 
-def _stock_out(s: Stock, unit: Unit) -> schemas.StockOut:
+def _stock_out(s: Stock, unit: Unit, vehicle_label: str | None = None) -> schemas.StockOut:
     return schemas.StockOut(
         id=s.id,
         unit_id=unit.id,
@@ -706,6 +721,8 @@ def _stock_out(s: Stock, unit: Unit) -> schemas.StockOut:
         qty_ready=s.qty_ready,
         qty_broken=s.qty_broken,
         notes=s.notes,
+        vehicle_id=s.vehicle_id,
+        vehicle_label=vehicle_label,
         version=s.version,
         updated_at=s.updated_at,
     )
@@ -731,7 +748,16 @@ async def list_stock(
     if category:
         query = query.where(Stock.category_key == category)
     rows = (await session.execute(query.order_by(Stock.gouvernorat_code, Unit.name_ar, Stock.category_key))).all()
-    return schemas.StockListOut(items=[_stock_out(s, u) for s, u in rows], can_edit=can_edit(principal))
+    carriers = {s.vehicle_id for s, _ in rows if s.vehicle_id is not None}
+    labels: dict[uuid.UUID, str] = {}
+    if carriers:
+        labels = dict(
+            (await session.execute(select(Resource.id, Resource.label).where(Resource.id.in_(carriers)))).all()
+        )
+    return schemas.StockListOut(
+        items=[_stock_out(s, u, labels.get(s.vehicle_id) if s.vehicle_id else None) for s, u in rows],
+        can_edit=can_edit(principal),
+    )
 
 
 async def _stock(session: AsyncSession, stock_id: uuid.UUID) -> tuple[Stock, Unit]:
@@ -749,13 +775,33 @@ async def _stock(session: AsyncSession, stock_id: uuid.UUID) -> tuple[Stock, Uni
 
 
 async def _stock_free(
-    session: AsyncSession, unit_id: uuid.UUID, key: str, specs: dict[str, Any], own: uuid.UUID | None
+    session: AsyncSession,
+    unit_id: uuid.UUID,
+    key: str,
+    specs: dict[str, Any],
+    own: uuid.UUID | None,
+    vehicle_id: uuid.UUID | None = None,
 ) -> None:
-    query = select(Stock.id).where(Stock.unit_id == unit_id, Stock.category_key == key, Stock.specs == specs)
+    query = select(Stock.id).where(
+        Stock.unit_id == unit_id,
+        Stock.category_key == key,
+        Stock.specs == specs,
+        Stock.vehicle_id == vehicle_id if vehicle_id is not None else Stock.vehicle_id.is_(None),
+    )
     if own is not None:
         query = query.where(Stock.id != own)
     if await session.scalar(query):
         raise HTTPException(status.HTTP_409_CONFLICT, "stock_exists")
+
+
+async def _carrier(session: AsyncSession, vehicle_id: uuid.UUID | None, unit: Unit) -> str | None:
+    """The vehicle that carries a stock line: one of the same unit (R3). Its label, or None when kept at the unit."""
+    if vehicle_id is None:
+        return None
+    vehicle = await session.get(Resource, vehicle_id)
+    if vehicle is None or vehicle.unit_id != unit.id:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "vehicle_not_in_unit")
+    return vehicle.label
 
 
 @router.post("/stock", response_model=schemas.StockOut, status_code=status.HTTP_201_CREATED)
@@ -764,8 +810,10 @@ async def create_stock(principal: Reader, session: Session, body: schemas.StockI
     _require_edit(principal, unit.gouvernorat_code)
     category = await _category(session, body.category_key, "equipment")
     specs = _specs(body.specs, category)
-    await _stock_free(session, unit.id, category.key, specs, None)
+    label = await _carrier(session, body.vehicle_id, unit)
+    await _stock_free(session, unit.id, category.key, specs, None, body.vehicle_id)
     line = Stock(
+        vehicle_id=body.vehicle_id,
         unit_id=unit.id,
         gouvernorat_code=unit.gouvernorat_code,
         category_key=category.key,
@@ -783,7 +831,7 @@ async def create_stock(principal: Reader, session: Session, body: schemas.StockI
         session, principal, "stock", line.id, unit.gouvernorat_code, "create", _stock_snapshot(line, unit), reason
     )
     await session.commit()
-    return _stock_out(line, unit)
+    return _stock_out(line, unit, label)
 
 
 @router.patch("/stock/{stock_id}", response_model=schemas.StockOut)
@@ -800,8 +848,9 @@ async def update_stock(
         _require_edit(principal, unit.gouvernorat_code)
     category = await _category(session, body.category_key, "equipment")
     specs = _specs(body.specs, category)
-    await _stock_free(session, unit.id, category.key, specs, line.id)
-    line.unit_id, line.gouvernorat_code = unit.id, unit.gouvernorat_code
+    label = await _carrier(session, body.vehicle_id, unit)
+    await _stock_free(session, unit.id, category.key, specs, line.id, body.vehicle_id)
+    line.unit_id, line.gouvernorat_code, line.vehicle_id = unit.id, unit.gouvernorat_code, body.vehicle_id
     line.category_key, line.specs = category.key, specs
     line.qty_ready, line.qty_broken, line.notes = body.qty_ready, body.qty_broken, body.notes
     line.version += 1
@@ -812,7 +861,7 @@ async def update_stock(
         session, principal, "stock", line.id, unit.gouvernorat_code, "update", _stock_snapshot(line, unit), reason
     )
     await session.commit()
-    return _stock_out(line, unit)
+    return _stock_out(line, unit, label)
 
 
 @router.delete("/stock/{stock_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -1102,17 +1151,23 @@ async def import_register(
     entity: Annotated[Entity | None, Query()] = None,
     apply: Annotated[bool, Query()] = False,
     reason: Annotated[str, Query(max_length=500)] = "",
+    mapping: Annotated[str | None, Query(max_length=8000)] = None,
+    profile: Annotated[uuid.UUID | None, Query()] = None,
 ) -> schemas.ImportOut:
     """The register of one gouvernorat from the xlsx template (or a CSV of one sheet, named by ``entity``). Without
     ``apply`` nothing is saved: the answer counts the new and changed rows and lists the errors and warnings. With
     ``apply`` the rows are added or updated (vehicles by unit and label, equipment by unit, type and specifications,
-    staff by matricule); nothing absent from the file is deleted. A file with errors is refused."""
+    staff by matricule); nothing absent from the file is deleted. A file with errors is refused.
+
+    R4b: a JSON file too, and a file with its own columns: ``mapping`` (JSON, ``{"stock": {"<heading>": "<field>"}}``)
+    or a saved ``profile`` renames them; the answer lists the columns no field matched, to map them on screen."""
     code = _gouvernorat(principal, gouvernorat)
     _require_edit(principal, code)
     data = await _read_body(request)
     _, units, _, refs = await _lookups(session, code)
     try:
-        parsed = domain.parse(file_name, data, entity, units, refs)
+        chosen = await _mapping(session, mapping, profile)
+        parsed = domain.parse(file_name, data, entity, units, refs, chosen)
     except FileError as exc:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, exc.code) from exc
     why = _reason(reason) if apply else None
@@ -1173,7 +1228,11 @@ async def import_register(
         line = await session.scalar(
             select(Stock)
             .where(
-                Stock.unit_id == row["unit_id"], Stock.category_key == row["category_key"], Stock.specs == row["specs"]
+                Stock.unit_id == row["unit_id"],
+                Stock.category_key == row["category_key"],
+                Stock.specs == row["specs"],
+                # The file counts what the unit keeps; equipment carried by a vehicle is edited on screen.
+                Stock.vehicle_id.is_(None),
             )
             .with_for_update()
         )
@@ -1268,7 +1327,115 @@ async def import_register(
         agents=counts["agents"],
         errors=[schemas.ProblemOut(**p.out()) for p in parsed.errors],
         warnings=[schemas.ProblemOut(**p.out()) for p in parsed.warnings],
+        headings=dict(parsed.headings),
+        unknown=dict(parsed.unknown),
+        fields={e: list(domain.COLUMNS[e]) for e in domain.ENTITIES},
     )
+
+
+async def _mapping(session: AsyncSession, text: str | None, profile_id: uuid.UUID | None) -> domain.Mapping:
+    """The saved profile (one the caller's gouvernorat may read), then the mapping chosen on screen over it."""
+    out: domain.Mapping = {}
+    if profile_id is not None:
+        saved = await session.get(ImportProfile, profile_id)
+        if saved is None:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, "profile_not_found")
+        out = domain.check_mapping(saved.mapping)
+    if text:
+        try:
+            chosen = json.loads(text)
+        except ValueError as exc:
+            raise FileError("mapping_invalid") from exc
+        for entity, pairs in domain.check_mapping(chosen).items():
+            out[entity] = {**out.get(entity, {}), **pairs}
+    return out
+
+
+def _profile_out(principal: Principal, row: ImportProfile) -> schemas.ImportProfileOut:
+    return schemas.ImportProfileOut(
+        id=row.id,
+        name=row.name,
+        gouvernorat_code=row.gouvernorat_code,
+        mapping=row.mapping,
+        created_by_name=row.created_by_name,
+        created_at=row.created_at,
+        # A shared profile is the central room's to remove.
+        can_delete=can_edit(principal, row.gouvernorat_code)
+        and (row.gouvernorat_code is not None or principal.is_national),
+    )
+
+
+@router.get("/import-profiles", response_model=list[schemas.ImportProfileOut])
+async def list_import_profiles(principal: Reader, session: Session) -> list[schemas.ImportProfileOut]:
+    """The column mappings the caller may use: their gouvernorat's and the central room's (row level security)."""
+    rows = (await session.scalars(select(ImportProfile).order_by(ImportProfile.name).limit(200))).all()
+    return [_profile_out(principal, r) for r in rows]
+
+
+@router.post("/import-profiles", response_model=schemas.ImportProfileOut, status_code=status.HTTP_201_CREATED)
+async def create_import_profile(
+    principal: Reader, session: Session, body: schemas.ImportProfileIn
+) -> schemas.ImportProfileOut:
+    """Keep a mapping by name. A regional room keeps it for its gouvernorat; the central room may share it."""
+    if body.shared and not principal.is_national:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "out_of_scope")
+    code = None if body.shared else _gouvernorat(principal, principal.gouvernorat_code)
+    _require_edit(principal, code)
+    try:
+        mapping = domain.check_mapping(body.mapping)
+    except FileError as exc:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, exc.code) from exc
+    if not mapping:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "mapping_invalid")
+    taken = await session.scalar(
+        select(ImportProfile.id).where(
+            func.coalesce(ImportProfile.gouvernorat_code, 0) == (code or 0),
+            func.lower(ImportProfile.name) == body.name.lower(),
+        )
+    )
+    if taken is not None:
+        raise HTTPException(status.HTTP_409_CONFLICT, "profile_name_taken")
+    row = ImportProfile(
+        name=body.name,
+        gouvernorat_code=code,
+        mapping={e: dict(p) for e, p in mapping.items()},
+        created_by=audit.actor_of(principal),
+        created_by_name=audit.name_of(principal),
+    )
+    session.add(row)
+    await session.flush()
+    await session.refresh(row)
+    await audit.record(
+        session,
+        actor=audit.actor_of(principal),
+        action="inventory.import_profile.create",
+        target=str(row.id),
+        details={"name": row.name, "fields": sum(len(p) for p in mapping.values())},
+        gouvernorats=[code] if code is not None else None,
+    )
+    out = _profile_out(principal, row)
+    await session.commit()
+    return out
+
+
+@router.delete("/import-profiles/{profile_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_import_profile(principal: Reader, session: Session, profile_id: uuid.UUID) -> Response:
+    row = await session.get(ImportProfile, profile_id)
+    if row is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "profile_not_found")
+    if not _profile_out(principal, row).can_delete:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "out_of_scope")
+    await session.delete(row)
+    await audit.record(
+        session,
+        actor=audit.actor_of(principal),
+        action="inventory.import_profile.delete",
+        target=str(row.id),
+        details={"name": row.name},
+        gouvernorats=[row.gouvernorat_code] if row.gouvernorat_code is not None else None,
+    )
+    await session.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 def _csv(rows: list[list[Any]], stem: str) -> Response:
@@ -1553,3 +1720,209 @@ async def export_search(principal: Viewer, session: Session, body: schemas.Searc
     )
     await session.commit()
     return _csv(rows, f"inventory-search-{body.what}")
+
+
+# ---------------------------------------------------------------- R3: transfers between gouvernorats
+
+
+async def _transfer_out(session: AsyncSession, principal: Principal, rows: list[Transfer]) -> list[schemas.TransferOut]:
+    """The transfers with their member of staff and units, read with the system scope: the joining room cannot see
+    the agent row of the gouvernorat they leave. Names only for the operations rooms, as everywhere."""
+    if not rows:
+        return []
+    names = sees_names(principal)
+    async with as_system(session):
+        agents = {
+            a.id: a
+            for a in (await session.scalars(select(Agent).where(Agent.id.in_({t.agent_id for t in rows})))).all()
+        }
+        unit_ids = {t.from_unit_id for t in rows} | {t.to_unit_id for t in rows if t.to_unit_id}
+        units = dict((await session.execute(select(Unit.id, Unit.name_ar).where(Unit.id.in_(unit_ids)))).all())
+        skills = await _skills_of(session, list(agents))
+    out = []
+    for t in rows:
+        a = agents.get(t.agent_id)
+        out.append(
+            schemas.TransferOut(
+                id=t.id,
+                agent_id=t.agent_id,
+                matricule=a.matricule if a and names else None,
+                full_name=a.full_name if a and names else None,
+                rank=a.rank if a else None,
+                skills=sorted(s.skill_key for s in skills.get(t.agent_id, [])),
+                from_gouvernorat=t.from_gouvernorat,
+                from_unit_name=units.get(t.from_unit_id, "—"),
+                to_gouvernorat=t.to_gouvernorat,
+                to_unit_name=units.get(t.to_unit_id) if t.to_unit_id else None,
+                effective_on=t.effective_on,
+                status=t.status,
+                reason=t.reason,
+                decision_reason=t.decision_reason,
+                requested_by_name=t.requested_by_name,
+                requested_at=t.requested_at,
+                decided_by_name=t.decided_by_name,
+                decided_at=t.decided_at,
+                can_decide=t.status == "pending" and can_edit(principal, t.to_gouvernorat),
+                can_cancel=t.status == "pending" and can_edit(principal, t.from_gouvernorat),
+            )
+        )
+    return out
+
+
+@router.get("/transfers", response_model=list[schemas.TransferOut])
+async def list_transfers(
+    principal: Reader,
+    session: Session,
+    status_: Annotated[schemas.TransferStatus | None, Query(alias="status")] = None,
+) -> list[schemas.TransferOut]:
+    """The transfers the caller's gouvernorat sends or receives (row level security), the newest first."""
+    query = select(Transfer).order_by(Transfer.requested_at.desc()).limit(200)
+    if status_ is not None:
+        query = query.where(Transfer.status == status_)
+    rows = list((await session.scalars(query)).all())
+    return await _transfer_out(session, principal, rows)
+
+
+@router.post("/agents/{agent_id}/transfers", response_model=schemas.TransferOut, status_code=status.HTTP_201_CREATED)
+async def request_transfer(
+    principal: Reader, session: Session, agent_id: uuid.UUID, body: schemas.TransferIn
+) -> schemas.TransferOut:
+    """The room of the gouvernorat the member of staff leaves sends the transfer; nothing moves until it is accepted."""
+    agent, unit = await _agent(session, agent_id)
+    _require_edit(principal, unit.gouvernorat_code)
+    if body.to_gouvernorat == agent.gouvernorat_code:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "same_gouvernorat")
+    if await session.get(Gouvernorat, body.to_gouvernorat) is None:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "invalid_gouvernorat")
+    if await session.scalar(select(Transfer.id).where(Transfer.agent_id == agent.id, Transfer.status == "pending")):
+        raise HTTPException(status.HTTP_409_CONFLICT, "transfer_pending")
+    row = Transfer(
+        agent_id=agent.id,
+        from_gouvernorat=agent.gouvernorat_code,
+        from_unit_id=agent.unit_id,
+        to_gouvernorat=body.to_gouvernorat,
+        effective_on=body.effective_on,
+        reason=body.reason.strip(),
+        requested_by=audit.actor_of(principal),
+        requested_by_name=audit.name_of(principal),
+    )
+    session.add(row)
+    await session.flush()
+    await session.refresh(row)
+    await audit.record(
+        session,
+        actor=audit.actor_of(principal),
+        action="inventory.transfer.request",
+        target=str(row.id),
+        details={"agent": str(agent.id), "from": row.from_gouvernorat, "to": row.to_gouvernorat},
+        gouvernorats=[row.from_gouvernorat, row.to_gouvernorat],
+    )
+    out = (await _transfer_out(session, principal, [row]))[0]
+    await session.commit()
+    return out
+
+
+async def _pending(session: AsyncSession, transfer_id: uuid.UUID) -> Transfer:
+    row = await session.scalar(select(Transfer).where(Transfer.id == transfer_id).with_for_update())
+    if row is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "transfer_not_found")
+    if row.status != "pending":
+        raise HTTPException(status.HTTP_409_CONFLICT, "transfer_decided")
+    return row
+
+
+@router.post("/transfers/{transfer_id}/accept", response_model=schemas.TransferOut)
+async def accept_transfer(
+    principal: Reader, session: Session, transfer_id: uuid.UUID, body: schemas.TransferAcceptIn
+) -> schemas.TransferOut:
+    """The joining room accepts and names the new unit: the member of staff moves, with a revision on both sides."""
+    row = await _pending(session, transfer_id)
+    _require_edit(principal, row.to_gouvernorat)
+    unit = await _unit(session, body.unit_id)
+    if unit.gouvernorat_code != row.to_gouvernorat:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "unit_not_in_gouvernorat")
+    now = _now()
+    reason = _reason(body.reason, required=False)
+    async with as_system(session):
+        agent = await session.scalar(select(Agent).where(Agent.id == row.agent_id).with_for_update())
+        if agent is None:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, "agent_not_found")
+        if agent.gouvernorat_code != row.from_gouvernorat:
+            raise HTTPException(status.HTTP_409_CONFLICT, "transfer_outdated")
+        skills = [
+            {"skill_key": s.skill_key, "level": s.level, "cert_expires": s.cert_expires}
+            for s in (await _skills_of(session, [agent.id]))[agent.id]
+        ]
+        await _revise(
+            session,
+            principal,
+            "agent",
+            agent.id,
+            row.from_gouvernorat,
+            "transfer_out",
+            _agent_snapshot(agent, skills),
+            row.reason,
+        )
+        agent.unit_id, agent.gouvernorat_code = unit.id, unit.gouvernorat_code
+        agent.version += 1
+        agent.updated_at, agent.updated_by = now, audit.actor_of(principal)
+        await session.flush()
+        await _revise(
+            session,
+            principal,
+            "agent",
+            agent.id,
+            unit.gouvernorat_code,
+            "transfer_in",
+            _agent_snapshot(agent, skills),
+            reason or row.reason,
+        )
+        row.status, row.to_unit_id, row.decision_reason = "accepted", unit.id, reason
+        row.decided_by_name, row.decided_at = audit.name_of(principal), now
+        await audit.record(
+            session,
+            actor=audit.actor_of(principal),
+            action="inventory.transfer.accept",
+            target=str(row.id),
+            details={"agent": str(agent.id), "unit": str(unit.id)},
+            gouvernorats=[row.from_gouvernorat, row.to_gouvernorat],
+        )
+    out = (await _transfer_out(session, principal, [row]))[0]
+    await session.commit()
+    return out
+
+
+async def _close_transfer(
+    session: AsyncSession, principal: Principal, transfer_id: uuid.UUID, reason: str, refuse: bool
+) -> schemas.TransferOut:
+    row = await _pending(session, transfer_id)
+    _require_edit(principal, row.to_gouvernorat if refuse else row.from_gouvernorat)
+    row.status = "refused" if refuse else "cancelled"
+    row.decision_reason = reason.strip()
+    row.decided_by_name, row.decided_at = audit.name_of(principal), _now()
+    await audit.record(
+        session,
+        actor=audit.actor_of(principal),
+        action=f"inventory.transfer.{row.status}",
+        target=str(row.id),
+        details={"agent": str(row.agent_id)},
+        gouvernorats=[row.from_gouvernorat, row.to_gouvernorat],
+    )
+    await session.flush()
+    out = (await _transfer_out(session, principal, [row]))[0]
+    await session.commit()
+    return out
+
+
+@router.post("/transfers/{transfer_id}/refuse", response_model=schemas.TransferOut)
+async def refuse_transfer(
+    principal: Reader, session: Session, transfer_id: uuid.UUID, body: schemas.TransferDecisionIn
+) -> schemas.TransferOut:
+    return await _close_transfer(session, principal, transfer_id, body.reason, refuse=True)
+
+
+@router.post("/transfers/{transfer_id}/cancel", response_model=schemas.TransferOut)
+async def cancel_transfer(
+    principal: Reader, session: Session, transfer_id: uuid.UUID, body: schemas.TransferDecisionIn
+) -> schemas.TransferOut:
+    return await _close_transfer(session, principal, transfer_id, body.reason, refuse=False)

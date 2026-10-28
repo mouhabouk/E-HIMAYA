@@ -6239,4 +6239,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String nearestByRoadEstimate(int minutes) {
     return 'about $minutes min by road (estimate)';
   }
+
+  @override
+  String stepperIncrease(String label) {
+    return 'Increase $label';
+  }
+
+  @override
+  String stepperDecrease(String label) {
+    return 'Decrease $label';
+  }
 }

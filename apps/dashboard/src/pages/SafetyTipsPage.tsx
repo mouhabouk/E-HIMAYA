@@ -17,6 +17,7 @@ import {
 } from "../lib/opsTypes";
 import { PageTitle } from "../components/PageTitle";
 import { ORG_KINDS, type OrgKind } from "../lib/types";
+import { Stepper } from "../components/Stepper";
 
 export const MAX_ITEMS = 15;
 export const MAX_ITEM_CHARS = 300;
@@ -319,16 +320,14 @@ function TipEditor({ initial, onClose }: { initial: Draft; onClose: (message?: s
           </div>
           <div className="field field--number">
             <label htmlFor={positionId}>{t("tips.position")}</label>
-            <input
+            <Stepper
               id={positionId}
-              type="number"
               min={0}
               max={1000}
               value={draft.position}
               disabled={busy}
-              onChange={(e) =>
-                setDraft((d) => ({ ...d, position: Math.min(1000, Math.max(0, Math.round(Number(e.target.value) || 0))) }))
-              }
+              label={t("tips.position")}
+              onChange={(n) => setDraft((d) => ({ ...d, position: Math.round(n) }))}
             />
           </div>
           <fieldset className="chips" disabled={busy}>

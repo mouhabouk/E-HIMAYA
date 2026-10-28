@@ -10,6 +10,7 @@ import { plansApi } from "./plans";
 import { scheduleApi } from "./schedule";
 import { featuresApi } from "./features";
 import { windowApi } from "./window";
+import { drillApi } from "./drill";
 import { registerApi } from "./register";
 import { contactApi } from "./contact";
 import { opsApi } from "./opsApi";
@@ -251,6 +252,7 @@ export function staffApi(api: ApiClient) {
     ...scheduleApi(api),
     ...featuresApi(api),
     ...windowApi(api),
+    ...drillApi(api),
     ...guideApi(api),
     ...preventionApi(api),
     ...contactApi(api),

@@ -11,6 +11,7 @@ import { keyFrom, OTHER_GROUP, type LayerGroup, type LayerGroupBody, type Names 
 import { layerKeys } from "../lib/layersApi";
 import { localized } from "../lib/localized";
 import { IconTile, iconOr, toneOr, type IconName, type Tone } from "./Icon";
+import { Stepper } from "./Stepper";
 
 /** The same lists as the API (app/modules/layers/domain.py GROUP_ICONS and GROUP_TONES). */
 export const GROUP_ICONS = [
@@ -114,15 +115,14 @@ function GroupForm({ group, next, onDone }: { group: LayerGroup | null; next: nu
         ))}
         <div className="field">
           <label htmlFor={`${id}-position`}>{t("layers.groups.position")}</label>
-          <input
+          <Stepper
             id={`${id}-position`}
-            type="number"
             min={0}
             max={999}
-            inputMode="numeric"
             value={draft.position}
-            aria-describedby={`${id}-position-help`}
-            onChange={(e) => setDraft({ ...draft, position: Math.max(0, Math.min(999, Number(e.target.value) || 0)) })}
+            label={t("layers.groups.position")}
+            describedBy={`${id}-position-help`}
+            onChange={(n) => setDraft({ ...draft, position: n })}
           />
           <p id={`${id}-position-help`} className="muted">
             {t("layers.groups.positionHelp")}

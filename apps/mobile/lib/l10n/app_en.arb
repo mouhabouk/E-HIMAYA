@@ -3244,5 +3244,23 @@
         "type": "int"
       }
     }
+  },
+  "stepperIncrease": "Increase {label}",
+  "stepperDecrease": "Decrease {label}",
+  "@stepperIncrease": {
+    "description": "Screen reader name of the + button of a number stepper (R4a).",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "@stepperDecrease": {
+    "description": "Screen reader name of the − button of a number stepper (R4a).",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
   }
 }
