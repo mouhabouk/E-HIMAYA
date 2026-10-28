@@ -2268,6 +2268,24 @@ erDiagram
 
 ```mermaid
 erDiagram
+    reports__camera_tower {
+        uuid stream_id PK,FK
+        text code
+        smallint gouvernorat_code FK
+        float lat
+        float lon
+        smallint bearing_deg
+        smallint fov_deg
+        integer range_m
+        boolean simulated
+        blob key_enc
+        smallint key_version
+        datetime last_event_at
+        text created_by
+        text created_by_name
+        datetime created_at
+        datetime updated_at
+    }
     reports__escalation {
         bigint id PK
         uuid report_id FK
@@ -2424,7 +2442,21 @@ erDiagram
         datetime created_at
         datetime done_at
     }
+    reports__tower_event {
+        bigint id PK
+        uuid stream_id FK
+        datetime at
+        text label
+        float confidence
+        smallint hits
+        smallint frames
+        text model
+        uuid media_id FK
+        uuid suggestion_id FK
+        datetime received_at
+    }
     geo__delegation ||--o{ reports__report : "delegation_id"
+    geo__gouvernorat ||--o{ reports__camera_tower : "gouvernorat_code"
     geo__gouvernorat ||--o{ reports__live_stream : "gouvernorat_code"
     geo__gouvernorat ||--o{ reports__report : "gouvernorat_code"
     geo__gouvernorat ||--o{ reports__report : "referred_to"
@@ -2433,18 +2465,22 @@ erDiagram
     identity__account ||--o{ reports__report : "user_id"
     ops__incident ||--o{ reports__report : "incident_id"
     org__organization ||--o{ reports__report : "organization_id"
+    reports__camera_tower ||--o{ reports__tower_event : "stream_id"
+    reports__live_stream ||--o{ reports__camera_tower : "stream_id"
     reports__live_stream ||--o{ reports__media : "stream_id"
     reports__live_stream ||--o{ reports__stream_detection : "stream_id"
     reports__live_stream ||--o{ reports__stream_location : "stream_id"
     reports__live_stream ||--o{ reports__stream_segment : "stream_id"
     reports__media ||--o{ reports__stream_detection : "media_id"
     reports__media ||--o{ reports__stream_segment : "media_id"
+    reports__media ||--o{ reports__tower_event : "media_id"
     reports__report ||--o{ reports__escalation : "report_id"
     reports__report ||--o{ reports__live_stream : "report_id"
     reports__report ||--o{ reports__media : "report_id"
     reports__report ||--o{ reports__medical_attachment : "report_id"
     reports__report ||--o{ reports__reporter_context : "report_id"
     reports__report ||--o{ reports__status_history : "report_id"
+    weather__alert_suggestion ||--o{ reports__tower_event : "suggestion_id"
 ```
 
 ## rewards

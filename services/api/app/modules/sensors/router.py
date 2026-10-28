@@ -7,25 +7,23 @@
   Caddy; answers 404 while SENSOR_GATEWAY_TOKEN is unset, and only to an address of SENSOR_GATEWAY_NETWORKS.
 """
 
-import hmac
-import ipaddress
 import uuid
 from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
 import structlog
-from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.config import get_settings
 from app.core.db import get_session, get_system_session
 from app.core.security import Principal, Role, require_roles
 from app.modules.audit import service as audit
 from app.modules.reports.staff_router import READ_ROLES
 from app.modules.sensors import domain, schemas, service
 from app.modules.sensors.domain import Kind
+from app.modules.sensors.gateway import Gateway
 from app.modules.sensors.models import SensorDevice, SensorReading
 
 log = structlog.get_logger()
@@ -239,33 +237,8 @@ async def readings(
 # ---------------------------------------------------------------- the gateway beside MediaMTX
 
 
-def _on_local_network(host: str | None) -> bool:
-    if host is None:
-        return False
-    try:
-        address = ipaddress.ip_address(host)
-    except ValueError:
-        return False
-    return any(address in ipaddress.ip_network(n, strict=False) for n in get_settings().sensor_gateway_networks)
-
-
 @internal_router.post("/internal/sensors/readings", response_model=schemas.IngestOut)
-async def ingest(
-    request: Request,
-    session: SystemSession,
-    body: schemas.ReadingsIn,
-    x_gateway_token: Annotated[str, Header()] = "",
-) -> schemas.IngestOut:
-    expected = get_settings().sensor_gateway_token
-    if expected is None:
-        raise HTTPException(status.HTTP_404_NOT_FOUND)
-    host = request.client.host if request.client else None
-    if not _on_local_network(host):
-        log.warning("sensor.gateway_outside_network")
-        raise HTTPException(status.HTTP_403_FORBIDDEN, "outside_local_network")
-    if not x_gateway_token or not hmac.compare_digest(x_gateway_token.encode(), expected.get_secret_value().encode()):
-        log.warning("sensor.gateway_bad_token")
-        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "bad_token")
+async def ingest(_: Gateway, session: SystemSession, body: schemas.ReadingsIn) -> schemas.IngestOut:
     outcome = await service.ingest(
         session, [service.RawReading(sensor=r.sensor, at=r.at, value=r.value, sig=r.sig) for r in body.readings]
     )

@@ -110,6 +110,8 @@ from app.modules.streams.worker import ingest_forever, streams_forever, vision_i
 from app.modules.telephony.internal import router as telephony_internal_router
 from app.modules.telephony.staff_router import router as telephony_staff_router
 from app.modules.telephony.worker import ari_events_forever, endpoints_forever, recordings_forever
+from app.modules.towers.router import internal_router as towers_internal_router
+from app.modules.towers.router import router as towers_router
 from app.modules.volunteers.router import router as volunteers_router
 from app.modules.volunteers.staff_router import router as volunteers_staff_router
 from app.modules.weather.router import router as weather_router
@@ -324,6 +326,8 @@ def create_app() -> FastAPI:
         identity_internal_router,
         sensors_router,
         sensors_internal_router,
+        towers_router,
+        towers_internal_router,
     )
     for router in routers:
         app.include_router(router)

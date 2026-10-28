@@ -110,6 +110,7 @@ from app.modules.schedule.models import Template as ScheduleTemplate
 from app.modules.sensors.models import SensorDevice, SensorReading
 from app.modules.streams.models import LiveStream, StreamDetection, StreamLocation, StreamSegment
 from app.modules.telephony.models import Call, Conference, OperatorEndpoint, SmsInbound
+from app.modules.towers.models import CameraTower, TowerEvent
 from app.modules.volunteers.models import Volunteer, VolunteerReview
 from app.modules.weather.models import AlertSuggestion, GridPoint, Observation, Rule
 from app.modules.window.models import SavedSearch as WindowSavedSearch
@@ -138,6 +139,7 @@ __all__ = [
     "Call",
     "Callout",
     "CalloutTarget",
+    "CameraTower",
     "CasualtyCount",
     "CasualtyTransport",
     "Category",
@@ -270,6 +272,7 @@ __all__ = [
     "StreamSegment",
     "TeamMember",
     "TimelineEvent",
+    "TowerEvent",
     "Unit",
     "UnitCheck",
     "Volunteer",

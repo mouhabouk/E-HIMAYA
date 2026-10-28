@@ -17906,6 +17906,34 @@
         "title": "KindOut",
         "type": "object"
       },
+      "LastEvent": {
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "confidence": {
+            "title": "Confidence",
+            "type": "number"
+          },
+          "label": {
+            "enum": [
+              "fire",
+              "smoke"
+            ],
+            "title": "Label",
+            "type": "string"
+          }
+        },
+        "required": [
+          "at",
+          "label",
+          "confidence"
+        ],
+        "title": "LastEvent",
+        "type": "object"
+      },
       "LastImport": {
         "properties": {
           "at": {
@@ -35016,7 +35044,9 @@
                 "enum": [
                   "sensor_rain_1h",
                   "sensor_water_level",
-                  "sensor_temperature"
+                  "sensor_temperature",
+                  "tower_fire",
+                  "tower_smoke"
                 ],
                 "type": "string"
               }
@@ -36365,6 +36395,405 @@
           "rejected"
         ],
         "title": "Totals",
+        "type": "object"
+      },
+      "TowerCreated": {
+        "description": "The new tower, the key of its edge computer and the camera's publish token, shown this once.",
+        "properties": {
+          "edge_key": {
+            "title": "Edge Key",
+            "type": "string"
+          },
+          "publish_token": {
+            "title": "Publish Token",
+            "type": "string"
+          },
+          "publish_url_rtmp": {
+            "title": "Publish Url Rtmp",
+            "type": "string"
+          },
+          "publish_url_rtsp": {
+            "title": "Publish Url Rtsp",
+            "type": "string"
+          },
+          "tower": {
+            "$ref": "#/components/schemas/TowerOut"
+          }
+        },
+        "required": [
+          "tower",
+          "edge_key",
+          "publish_token",
+          "publish_url_rtsp",
+          "publish_url_rtmp"
+        ],
+        "title": "TowerCreated",
+        "type": "object"
+      },
+      "TowerEventOut": {
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "confidence": {
+            "title": "Confidence",
+            "type": "number"
+          },
+          "frames": {
+            "title": "Frames",
+            "type": "integer"
+          },
+          "hits": {
+            "title": "Hits",
+            "type": "integer"
+          },
+          "label": {
+            "enum": [
+              "fire",
+              "smoke"
+            ],
+            "title": "Label",
+            "type": "string"
+          },
+          "media_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Media Id"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "suggestion_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suggestion Id"
+          }
+        },
+        "required": [
+          "at",
+          "label",
+          "confidence",
+          "hits",
+          "frames",
+          "model",
+          "media_id",
+          "suggestion_id"
+        ],
+        "title": "TowerEventOut",
+        "type": "object"
+      },
+      "TowerEventsOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/TowerEventOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "tower_id": {
+            "format": "uuid",
+            "title": "Tower Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tower_id",
+          "items"
+        ],
+        "title": "TowerEventsOut",
+        "type": "object"
+      },
+      "TowerIn": {
+        "additionalProperties": false,
+        "properties": {
+          "bearing_deg": {
+            "maximum": 359.0,
+            "minimum": 0.0,
+            "title": "Bearing Deg",
+            "type": "integer"
+          },
+          "code": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{1,39}$",
+            "title": "Code",
+            "type": "string"
+          },
+          "fov_deg": {
+            "maximum": 360.0,
+            "minimum": 5.0,
+            "title": "Fov Deg",
+            "type": "integer"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "maximum": 99.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "label": {
+            "maxLength": 100,
+            "minLength": 2,
+            "title": "Label",
+            "type": "string"
+          },
+          "lat": {
+            "maximum": 38.0,
+            "minimum": 30.0,
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "maximum": 12.0,
+            "minimum": 7.0,
+            "title": "Lon",
+            "type": "number"
+          },
+          "range_m": {
+            "maximum": 50000.0,
+            "minimum": 100.0,
+            "title": "Range M",
+            "type": "integer"
+          },
+          "simulated": {
+            "default": true,
+            "title": "Simulated",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "label",
+          "lat",
+          "lon",
+          "bearing_deg",
+          "fov_deg",
+          "range_m",
+          "code"
+        ],
+        "title": "TowerIn",
+        "type": "object"
+      },
+      "TowerKeyOut": {
+        "properties": {
+          "edge_key": {
+            "title": "Edge Key",
+            "type": "string"
+          },
+          "tower": {
+            "$ref": "#/components/schemas/TowerOut"
+          }
+        },
+        "required": [
+          "tower",
+          "edge_key"
+        ],
+        "title": "TowerKeyOut",
+        "type": "object"
+      },
+      "TowerOut": {
+        "properties": {
+          "bearing_deg": {
+            "title": "Bearing Deg",
+            "type": "integer"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "field_of_view": {
+            "items": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "title": "Field Of View",
+            "type": "array"
+          },
+          "fov_deg": {
+            "title": "Fov Deg",
+            "type": "integer"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "last_event": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LastEvent"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "lat": {
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "title": "Lon",
+            "type": "number"
+          },
+          "range_m": {
+            "title": "Range M",
+            "type": "integer"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "stream_status": {
+            "title": "Stream Status",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "label",
+          "gouvernorat_code",
+          "lat",
+          "lon",
+          "bearing_deg",
+          "fov_deg",
+          "range_m",
+          "simulated",
+          "stream_status",
+          "last_event",
+          "field_of_view",
+          "created_by_name",
+          "updated_at"
+        ],
+        "title": "TowerOut",
+        "type": "object"
+      },
+      "TowerPage": {
+        "properties": {
+          "can_manage": {
+            "title": "Can Manage",
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/TowerOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items",
+          "can_manage"
+        ],
+        "title": "TowerPage",
+        "type": "object"
+      },
+      "TowerUpdate": {
+        "additionalProperties": false,
+        "properties": {
+          "bearing_deg": {
+            "maximum": 359.0,
+            "minimum": 0.0,
+            "title": "Bearing Deg",
+            "type": "integer"
+          },
+          "fov_deg": {
+            "maximum": 360.0,
+            "minimum": 5.0,
+            "title": "Fov Deg",
+            "type": "integer"
+          },
+          "label": {
+            "maxLength": 100,
+            "minLength": 2,
+            "title": "Label",
+            "type": "string"
+          },
+          "lat": {
+            "maximum": 38.0,
+            "minimum": 30.0,
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "maximum": 12.0,
+            "minimum": 7.0,
+            "title": "Lon",
+            "type": "number"
+          },
+          "range_m": {
+            "maximum": 50000.0,
+            "minimum": 100.0,
+            "title": "Range M",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "label",
+          "lat",
+          "lon",
+          "bearing_deg",
+          "fov_deg",
+          "range_m"
+        ],
+        "title": "TowerUpdate",
         "type": "object"
       },
       "TrackOut": {
@@ -84258,6 +84687,243 @@
         "tags": [
           "staff",
           "telephony"
+        ]
+      }
+    },
+    "/api/v1/staff/towers": {
+      "get": {
+        "operationId": "list_towers_api_v1_staff_towers_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowerPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Towers",
+        "tags": [
+          "towers"
+        ]
+      },
+      "post": {
+        "operationId": "create_tower_api_v1_staff_towers_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TowerIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowerCreated"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Tower",
+        "tags": [
+          "towers"
+        ]
+      }
+    },
+    "/api/v1/staff/towers/{tower_id}": {
+      "put": {
+        "operationId": "update_tower_api_v1_staff_towers__tower_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tower_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Tower Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TowerUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowerOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Tower",
+        "tags": [
+          "towers"
+        ]
+      }
+    },
+    "/api/v1/staff/towers/{tower_id}/events": {
+      "get": {
+        "operationId": "events_api_v1_staff_towers__tower_id__events_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tower_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Tower Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "hours",
+            "required": false,
+            "schema": {
+              "default": 24,
+              "maximum": 168,
+              "minimum": 1,
+              "title": "Hours",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowerEventsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Events",
+        "tags": [
+          "towers"
+        ]
+      }
+    },
+    "/api/v1/staff/towers/{tower_id}/key": {
+      "post": {
+        "description": "A new key for the edge computer, shown once; events signed with the old one are refused from now on.",
+        "operationId": "rotate_key_api_v1_staff_towers__tower_id__key_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tower_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Tower Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowerKeyOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Rotate Key",
+        "tags": [
+          "towers"
         ]
       }
     },

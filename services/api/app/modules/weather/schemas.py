@@ -12,8 +12,11 @@ from app.modules.notify.schemas import PublicAlert
 DangerClass = Literal["low", "moderate", "high", "very_high", "extreme"]
 RainLevel = Literal["none", "watch", "warning"]
 Metric = Literal["fire_danger", "wind_gust", "rain_24h", "rain_1h"]
-# A suggestion may also come from a sensor of the local network (L5b, design-l5.md §3.1); rules stay weather only.
-SuggestionMetric = Metric | Literal["sensor_rain_1h", "sensor_water_level", "sensor_temperature"]
+# A suggestion may also come from a sensor or a watch tower of the local network (L5b, design-l5.md §3.1 and §3.2);
+# rules stay weather only.
+SuggestionMetric = (
+    Metric | Literal["sensor_rain_1h", "sensor_water_level", "sensor_temperature", "tower_fire", "tower_smoke"]
+)
 Severity = Literal["high", "medium", "low"]
 
 
