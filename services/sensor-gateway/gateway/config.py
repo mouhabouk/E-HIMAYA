@@ -39,6 +39,9 @@ class Settings:
     batch: int = 500
     timeout_s: float = 10.0
     max_body: int = 65_536
+    # A tower event carries one JPEG (~2 MB at most, base64): its own body limit and a smaller queue.
+    max_event_body: int = 3_000_000
+    events_max: int = 200
 
     @classmethod
     def from_env(cls, env: dict[str, str] | None = None) -> "Settings":
@@ -58,4 +61,5 @@ class Settings:
             queue_path=Path(env.get("GATEWAY_QUEUE", str(cls.queue_path))),
             queue_max=int(env.get("GATEWAY_QUEUE_MAX", cls.queue_max)),
             flush_every_s=float(env.get("GATEWAY_FLUSH_S", cls.flush_every_s)),
+            events_max=int(env.get("GATEWAY_EVENTS_MAX", cls.events_max)),
         )

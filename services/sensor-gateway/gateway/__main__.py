@@ -22,8 +22,9 @@ def serve() -> int:
         print(f"configuration: {exc}", file=sys.stderr)
         return 2
     queue = Queue(settings.queue_path, settings.queue_max)
-    forwarder = Forwarder(settings, queue)
-    server = make_server(settings, queue)
+    events = Queue(settings.queue_path, settings.events_max, table="event")
+    forwarder = Forwarder(settings, queue, events)
+    server = make_server(settings, queue, events)
     worker = threading.Thread(target=forwarder.run, name="forwarder", daemon=True)
     worker.start()
 
@@ -38,6 +39,7 @@ def serve() -> int:
     worker.join(timeout=settings.timeout_s)
     forwarder.flush_once()
     queue.close()
+    events.close()
     return 0
 
 

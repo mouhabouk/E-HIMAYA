@@ -81,6 +81,9 @@ def test_rules_free_of_the_database() -> None:
     fields = ("T1", "2026-10-28T20:00:00+01:00", "fire", "0.9", "3", "5", "")
     sig = domain.sign(key, *fields)
     assert domain.signature_valid(key, sig, *fields)
+    # The same vector as the gateway's simulator and the edge program (services/sensor-gateway tests).
+    vector = "da3de1c6f641ec22d489b15c5bb21af095bb49ba96726ef0440bf02abb79d959"
+    assert domain.sign("00" * 32, "TWR-1", "2026-10-28T20:00:00+00:00", "fire", "0.87", "3", "5", "") == vector
     assert not domain.signature_valid(key, sig, *fields[:3], "0.91", *fields[4:])
     assert not domain.signature_valid(key, sig, *fields[:6], "zz")
     assert domain.parse_confidence("1.0") == 1.0 and domain.parse_confidence("1.5") is None

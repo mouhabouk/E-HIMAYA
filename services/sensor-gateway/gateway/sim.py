@@ -4,6 +4,7 @@
 sensor was registered). A scenario gives each step's value; one step is sent every ``--every`` seconds.
 """
 
+import base64
 import hashlib
 import hmac
 import json
@@ -24,6 +25,32 @@ def reading(code: str, key: str, value: float, at: datetime | None = None) -> di
     stamp = (at or datetime.now(UTC)).isoformat(timespec="seconds")
     shown = f"{value:.1f}"
     return {"sensor": code, "at": stamp, "value": shown, "sig": sign(key, code, stamp, shown)}
+
+
+def sign_event(key: str, tower: str, at: str, label: str, confidence: str, hits: str, frames: str, sha: str) -> str:
+    """HMAC-SHA256 over "<tower>|<at>|<label>|<confidence>|<hits>|<frames>|<frame_sha256>": a tower's edge computer."""
+    message = f"{tower}|{at}|{label}|{confidence}|{hits}|{frames}|{sha}".encode()
+    return hmac.new(bytes.fromhex(key), message, hashlib.sha256).hexdigest()
+
+
+def tower_event(
+    code: str, key: str, label: str, confidence: float, frame: bytes = b"", at: datetime | None = None
+) -> dict[str, str]:
+    """A [SIM] fire or smoke confirmed in 3 of 5 frames, as the edge program sends it."""
+    stamp = (at or datetime.now(UTC)).isoformat(timespec="seconds")
+    shown = f"{confidence:.2f}"
+    sha = hashlib.sha256(frame).hexdigest() if frame else ""
+    return {
+        "tower": code,
+        "at": stamp,
+        "label": label,
+        "confidence": shown,
+        "hits": "3",
+        "frames": "5",
+        "model": "SIM",
+        "frame_jpeg_b64": base64.b64encode(frame).decode() if frame else "",
+        "sig": sign_event(key, code, stamp, label, shown, "3", "5", sha),
+    }
 
 
 # Scenario → kind → value at step i of n (n ≥ 2).
