@@ -1780,9 +1780,54 @@ erDiagram
 
 ```mermaid
 erDiagram
+    register__attachment {
+        uuid id PK
+        uuid dispatch_id FK
+        uuid reply_id FK
+        smallint gouvernorat_code FK
+        text file_key
+        text file_name
+        text content_type
+        integer size
+        text sha256
+        text created_by
+        datetime created_at
+    }
     register__counter {
+        text series PK
         integer year PK
         integer last
+    }
+    register__dispatch {
+        uuid id PK
+        text number
+        text kind
+        text audience
+        smallint origin_gouvernorat FK
+        text urgency
+        text subject
+        text body
+        array topics
+        uuid incident_id FK
+        uuid axis_id FK
+        boolean reply_required
+        datetime reply_due_at
+        text status
+        datetime closed_at
+        text closed_by_name
+        text created_by
+        text created_by_name
+        datetime created_at
+        text norm
+        tsvector search
+    }
+    register__dispatch_target {
+        uuid dispatch_id PK,FK
+        smallint gouvernorat_code PK,FK
+        datetime seen_at
+        text seen_by_name
+        datetime replied_at
+        integer replies
     }
     register__document {
         uuid id PK
@@ -1844,6 +1889,16 @@ erDiagram
         text updated_by_name
         datetime updated_at
     }
+    register__reply {
+        uuid id PK
+        uuid dispatch_id FK
+        smallint gouvernorat_code FK
+        text side
+        text body
+        text created_by
+        text created_by_name
+        datetime created_at
+    }
     register__revision {
         uuid document_id PK,FK
         integer version PK
@@ -1854,13 +1909,23 @@ erDiagram
         text created_by_name
         datetime created_at
     }
+    crisis__axis ||--o{ register__dispatch : "axis_id"
     crisis__directive ||--o{ register__document : "directive_id"
+    geo__gouvernorat ||--o{ register__attachment : "gouvernorat_code"
+    geo__gouvernorat ||--o{ register__dispatch : "origin_gouvernorat"
+    geo__gouvernorat ||--o{ register__dispatch_target : "gouvernorat_code"
     geo__gouvernorat ||--o{ register__document : "gouvernorat_code"
+    geo__gouvernorat ||--o{ register__reply : "gouvernorat_code"
+    ops__incident ||--o{ register__dispatch : "incident_id"
+    register__dispatch ||--o{ register__attachment : "dispatch_id"
+    register__dispatch ||--o{ register__dispatch_target : "dispatch_id"
+    register__dispatch ||--o{ register__reply : "dispatch_id"
     register__document ||--o{ register__document : "repealed_by"
     register__document ||--o{ register__link : "from_id"
     register__document ||--o{ register__link : "to_id"
     register__document ||--o{ register__recommendation : "document_id"
     register__document ||--o{ register__revision : "document_id"
+    register__reply ||--o{ register__attachment : "reply_id"
 ```
 
 ## reports

@@ -174,3 +174,117 @@ class RevisionOut(BaseModel):
 
 class FileOut(BaseModel):
     url: str
+
+
+# --- Directives and notices (design §8) -----------------------------------------------------------------------------
+
+DispatchKind = Literal["directive", "notice"]
+Audience = Literal["all", "targeted", "centre"]
+Urgency = Literal["normal", "urgent", "flash"]
+
+
+class DispatchIn(BaseModel):
+    kind: DispatchKind
+    # Directives: every gouvernorat ("all") or those listed ("targeted"). Notices go to the centre.
+    audience: Literal["all", "targeted"] = "all"
+    gouvernorats: Annotated[list[Code], Field(max_length=24)] = Field(default_factory=list)
+    urgency: Urgency = "normal"
+    subject: Annotated[Text, StringConstraints(min_length=3, max_length=300)]
+    body: Annotated[Text, StringConstraints(max_length=20_000)] = ""
+    topics: Annotated[list[Topic], Field(max_length=12)] = Field(default_factory=list)
+    incident_id: uuid.UUID | None = None
+    axis_id: uuid.UUID | None = None
+    reply_required: bool = True
+    reply_due_at: datetime | None = None
+
+
+class ReplyIn(BaseModel):
+    body: Annotated[Text, StringConstraints(max_length=20_000)] = ""
+    # The thread written in (the centre names it; a gouvernorat writes in its own).
+    gouvernorat_code: Code | None = None
+
+
+class AttachmentOut(BaseModel):
+    id: str
+    file_name: str
+    content_type: str
+    size: int
+    sha256: str
+    created_at: datetime
+
+
+class TargetOut(BaseModel):
+    gouvernorat_code: int
+    gouvernorat_name: str | None
+    seen_at: datetime | None
+    seen_by_name: str | None
+    replied_at: datetime | None
+    replies: int
+    overdue: bool
+
+
+class ReplyOut(BaseModel):
+    id: str
+    gouvernorat_code: int
+    side: Literal["centre", "regional"]
+    body: str
+    created_by_name: str | None
+    created_at: datetime
+    attachments: list[AttachmentOut]
+    mine: bool
+
+
+class DispatchOut(BaseModel):
+    id: str
+    number: str
+    kind: DispatchKind
+    audience: Audience
+    origin_gouvernorat: int | None
+    origin_name: str | None
+    urgency: Urgency
+    subject: str
+    body: str
+    topics: list[str]
+    incident_id: str | None
+    axis_id: str | None
+    reply_required: bool
+    reply_due_at: datetime | None
+    status: Literal["open", "closed"]
+    closed_at: datetime | None
+    created_by_name: str | None
+    created_at: datetime
+    # The gouvernorats the caller sees (the centre: all of them; a gouvernorat: its own).
+    targets: int
+    seen: int
+    replied: int
+    # For the receiving side: not opened yet by it.
+    unread: bool
+    overdue: bool
+    attachments: int
+    excerpt: str | None = None
+
+
+class ThreadOut(BaseModel):
+    gouvernorat_code: int
+    gouvernorat_name: str | None
+    replies: list[ReplyOut]
+
+
+class DispatchDetail(BaseModel):
+    dispatch: DispatchOut
+    attachments: list[AttachmentOut]
+    targets: list[TargetOut]
+    threads: list[ThreadOut]
+    can_reply: bool
+    can_close: bool
+    can_attach: bool
+    # The reply just written (its files follow).
+    reply_id: str | None = None
+
+
+class DispatchPage(BaseModel):
+    items: list[DispatchOut]
+    total: int
+    unread: int
+    can_direct: bool
+    can_notify: bool

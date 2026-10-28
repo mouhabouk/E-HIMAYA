@@ -1698,126 +1698,6 @@
         "title": "AttachIn",
         "type": "object"
       },
-      "AttachmentOut": {
-        "properties": {
-          "assignment_id": {
-            "format": "uuid",
-            "title": "Assignment Id",
-            "type": "string"
-          },
-          "body": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Body"
-          },
-          "bytes": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Bytes"
-          },
-          "content_type": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Content Type"
-          },
-          "created_at": {
-            "format": "date-time",
-            "title": "Created At",
-            "type": "string"
-          },
-          "created_by_name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Created By Name"
-          },
-          "device_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Device At"
-          },
-          "duration_s": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Duration S"
-          },
-          "id": {
-            "format": "uuid",
-            "title": "Id",
-            "type": "string"
-          },
-          "kind": {
-            "enum": [
-              "photo",
-              "voice",
-              "text"
-            ],
-            "title": "Kind",
-            "type": "string"
-          },
-          "url": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Url"
-          }
-        },
-        "required": [
-          "id",
-          "assignment_id",
-          "kind",
-          "body",
-          "content_type",
-          "bytes",
-          "duration_s",
-          "created_by_name",
-          "device_at",
-          "created_at"
-        ],
-        "title": "AttachmentOut",
-        "type": "object"
-      },
       "AudienceOut": {
         "properties": {
           "email": {
@@ -6734,6 +6614,426 @@
           "reason"
         ],
         "title": "DismissIn",
+        "type": "object"
+      },
+      "DispatchDetail": {
+        "properties": {
+          "attachments": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__register__schemas__AttachmentOut"
+            },
+            "title": "Attachments",
+            "type": "array"
+          },
+          "can_attach": {
+            "title": "Can Attach",
+            "type": "boolean"
+          },
+          "can_close": {
+            "title": "Can Close",
+            "type": "boolean"
+          },
+          "can_reply": {
+            "title": "Can Reply",
+            "type": "boolean"
+          },
+          "dispatch": {
+            "$ref": "#/components/schemas/DispatchOut"
+          },
+          "reply_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reply Id"
+          },
+          "targets": {
+            "items": {
+              "$ref": "#/components/schemas/TargetOut"
+            },
+            "title": "Targets",
+            "type": "array"
+          },
+          "threads": {
+            "items": {
+              "$ref": "#/components/schemas/ThreadOut"
+            },
+            "title": "Threads",
+            "type": "array"
+          }
+        },
+        "required": [
+          "dispatch",
+          "attachments",
+          "targets",
+          "threads",
+          "can_reply",
+          "can_close",
+          "can_attach"
+        ],
+        "title": "DispatchDetail",
+        "type": "object"
+      },
+      "DispatchIn": {
+        "properties": {
+          "audience": {
+            "default": "all",
+            "enum": [
+              "all",
+              "targeted"
+            ],
+            "title": "Audience",
+            "type": "string"
+          },
+          "axis_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Axis Id"
+          },
+          "body": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Body",
+            "type": "string"
+          },
+          "gouvernorats": {
+            "items": {
+              "maximum": 83.0,
+              "minimum": 11.0,
+              "type": "integer"
+            },
+            "maxItems": 24,
+            "title": "Gouvernorats",
+            "type": "array"
+          },
+          "incident_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Incident Id"
+          },
+          "kind": {
+            "enum": [
+              "directive",
+              "notice"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "reply_due_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reply Due At"
+          },
+          "reply_required": {
+            "default": true,
+            "title": "Reply Required",
+            "type": "boolean"
+          },
+          "subject": {
+            "maxLength": 300,
+            "minLength": 3,
+            "title": "Subject",
+            "type": "string"
+          },
+          "topics": {
+            "items": {
+              "maxLength": 60,
+              "minLength": 2,
+              "type": "string"
+            },
+            "maxItems": 12,
+            "title": "Topics",
+            "type": "array"
+          },
+          "urgency": {
+            "default": "normal",
+            "enum": [
+              "normal",
+              "urgent",
+              "flash"
+            ],
+            "title": "Urgency",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "subject"
+        ],
+        "title": "DispatchIn",
+        "type": "object"
+      },
+      "DispatchOut": {
+        "properties": {
+          "attachments": {
+            "title": "Attachments",
+            "type": "integer"
+          },
+          "audience": {
+            "enum": [
+              "all",
+              "targeted",
+              "centre"
+            ],
+            "title": "Audience",
+            "type": "string"
+          },
+          "axis_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Axis Id"
+          },
+          "body": {
+            "title": "Body",
+            "type": "string"
+          },
+          "closed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Closed At"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "excerpt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Excerpt"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "incident_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Incident Id"
+          },
+          "kind": {
+            "enum": [
+              "directive",
+              "notice"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "number": {
+            "title": "Number",
+            "type": "string"
+          },
+          "origin_gouvernorat": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Origin Gouvernorat"
+          },
+          "origin_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Origin Name"
+          },
+          "overdue": {
+            "title": "Overdue",
+            "type": "boolean"
+          },
+          "replied": {
+            "title": "Replied",
+            "type": "integer"
+          },
+          "reply_due_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reply Due At"
+          },
+          "reply_required": {
+            "title": "Reply Required",
+            "type": "boolean"
+          },
+          "seen": {
+            "title": "Seen",
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "open",
+              "closed"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "subject": {
+            "title": "Subject",
+            "type": "string"
+          },
+          "targets": {
+            "title": "Targets",
+            "type": "integer"
+          },
+          "topics": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Topics",
+            "type": "array"
+          },
+          "unread": {
+            "title": "Unread",
+            "type": "boolean"
+          },
+          "urgency": {
+            "enum": [
+              "normal",
+              "urgent",
+              "flash"
+            ],
+            "title": "Urgency",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "kind",
+          "audience",
+          "origin_gouvernorat",
+          "origin_name",
+          "urgency",
+          "subject",
+          "body",
+          "topics",
+          "incident_id",
+          "axis_id",
+          "reply_required",
+          "reply_due_at",
+          "status",
+          "closed_at",
+          "created_by_name",
+          "created_at",
+          "targets",
+          "seen",
+          "replied",
+          "unread",
+          "overdue",
+          "attachments"
+        ],
+        "title": "DispatchOut",
+        "type": "object"
+      },
+      "DispatchPage": {
+        "properties": {
+          "can_direct": {
+            "title": "Can Direct",
+            "type": "boolean"
+          },
+          "can_notify": {
+            "title": "Can Notify",
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/DispatchOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          },
+          "unread": {
+            "title": "Unread",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "unread",
+          "can_direct",
+          "can_notify"
+        ],
+        "title": "DispatchPage",
         "type": "object"
       },
       "DocRef": {
@@ -13415,7 +13715,7 @@
           },
           "attachments": {
             "items": {
-              "$ref": "#/components/schemas/AttachmentOut"
+              "$ref": "#/components/schemas/app__modules__ops__schemas__AttachmentOut"
             },
             "title": "Attachments",
             "type": "array"
@@ -17394,7 +17694,7 @@
           },
           "attachments": {
             "items": {
-              "$ref": "#/components/schemas/AttachmentOut"
+              "$ref": "#/components/schemas/app__modules__ops__schemas__AttachmentOut"
             },
             "title": "Attachments",
             "type": "array"
@@ -22756,6 +23056,94 @@
           "reason"
         ],
         "title": "RepealIn",
+        "type": "object"
+      },
+      "ReplyIn": {
+        "properties": {
+          "body": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Body",
+            "type": "string"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "maximum": 83.0,
+                "minimum": 11.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          }
+        },
+        "title": "ReplyIn",
+        "type": "object"
+      },
+      "ReplyOut": {
+        "properties": {
+          "attachments": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__register__schemas__AttachmentOut"
+            },
+            "title": "Attachments",
+            "type": "array"
+          },
+          "body": {
+            "title": "Body",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "mine": {
+            "title": "Mine",
+            "type": "boolean"
+          },
+          "side": {
+            "enum": [
+              "centre",
+              "regional"
+            ],
+            "title": "Side",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "gouvernorat_code",
+          "side",
+          "body",
+          "created_by_name",
+          "created_at",
+          "attachments",
+          "mine"
+        ],
+        "title": "ReplyOut",
         "type": "object"
       },
       "ReportFilters": {
@@ -29711,6 +30099,79 @@
         "title": "SummaryTeamMember",
         "type": "object"
       },
+      "TargetOut": {
+        "properties": {
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "gouvernorat_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Name"
+          },
+          "overdue": {
+            "title": "Overdue",
+            "type": "boolean"
+          },
+          "replied_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Replied At"
+          },
+          "replies": {
+            "title": "Replies",
+            "type": "integer"
+          },
+          "seen_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seen At"
+          },
+          "seen_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seen By Name"
+          }
+        },
+        "required": [
+          "gouvernorat_code",
+          "gouvernorat_name",
+          "seen_at",
+          "seen_by_name",
+          "replied_at",
+          "replies",
+          "overdue"
+        ],
+        "title": "TargetOut",
+        "type": "object"
+      },
       "TeamMemberIn": {
         "properties": {
           "email": {
@@ -30213,6 +30674,39 @@
           "body"
         ],
         "title": "TextNoteIn",
+        "type": "object"
+      },
+      "ThreadOut": {
+        "properties": {
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "gouvernorat_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Name"
+          },
+          "replies": {
+            "items": {
+              "$ref": "#/components/schemas/ReplyOut"
+            },
+            "title": "Replies",
+            "type": "array"
+          }
+        },
+        "required": [
+          "gouvernorat_code",
+          "gouvernorat_name",
+          "replies"
+        ],
+        "title": "ThreadOut",
         "type": "object"
       },
       "Thresholds": {
@@ -35560,6 +36054,126 @@
         "title": "AlertOut",
         "type": "object"
       },
+      "app__modules__ops__schemas__AttachmentOut": {
+        "properties": {
+          "assignment_id": {
+            "format": "uuid",
+            "title": "Assignment Id",
+            "type": "string"
+          },
+          "body": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Body"
+          },
+          "bytes": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bytes"
+          },
+          "content_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content Type"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "device_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device At"
+          },
+          "duration_s": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration S"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "photo",
+              "voice",
+              "text"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url"
+          }
+        },
+        "required": [
+          "id",
+          "assignment_id",
+          "kind",
+          "body",
+          "content_type",
+          "bytes",
+          "duration_s",
+          "created_by_name",
+          "device_at",
+          "created_at"
+        ],
+        "title": "AttachmentOut",
+        "type": "object"
+      },
       "app__modules__ops__schemas__CloseIn": {
         "properties": {
           "casualties": {
@@ -37163,6 +37777,45 @@
           "items"
         ],
         "title": "RevisionsOut",
+        "type": "object"
+      },
+      "app__modules__register__schemas__AttachmentOut": {
+        "properties": {
+          "content_type": {
+            "title": "Content Type",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "file_name": {
+            "title": "File Name",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "sha256": {
+            "title": "Sha256",
+            "type": "string"
+          },
+          "size": {
+            "title": "Size",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "file_name",
+          "content_type",
+          "size",
+          "sha256",
+          "created_at"
+        ],
+        "title": "AttachmentOut",
         "type": "object"
       },
       "app__modules__register__schemas__DocumentIn": {
@@ -62849,6 +63502,536 @@
         "tags": [
           "staff",
           "programmes"
+        ]
+      }
+    },
+    "/api/v1/staff/register/attachments/{attachment_id}": {
+      "get": {
+        "operationId": "get_attachment_api_v1_staff_register_attachments__attachment_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "attachment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Attachment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Attachment",
+        "tags": [
+          "staff",
+          "register"
+        ]
+      }
+    },
+    "/api/v1/staff/register/dispatches": {
+      "get": {
+        "description": "Directives and notices the caller's scope reads: the centre all of them, a gouvernorat the directives sent to\nevery gouvernorat or to it, and its own notices.",
+        "operationId": "list_dispatches_api_v1_staff_register_dispatches_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "box",
+            "required": false,
+            "schema": {
+              "default": "all",
+              "enum": [
+                "inbox",
+                "sent",
+                "all"
+              ],
+              "title": "Box",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Comma-separated kinds",
+            "in": "query",
+            "name": "kind",
+            "required": false,
+            "schema": {
+              "default": "",
+              "description": "Comma-separated kinds",
+              "maxLength": 40,
+              "title": "Kind",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Comma-separated urgencies",
+            "in": "query",
+            "name": "urgency",
+            "required": false,
+            "schema": {
+              "default": "",
+              "description": "Comma-separated urgencies",
+              "maxLength": 40,
+              "title": "Urgency",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "state",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "open",
+                    "closed"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "State"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 83,
+                  "minimum": 11,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 300,
+              "title": "Q",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "From"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "To"
+            }
+          },
+          {
+            "in": "query",
+            "name": "unread",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Unread",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "maximum": 10000,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DispatchPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Dispatches",
+        "tags": [
+          "staff",
+          "register"
+        ]
+      },
+      "post": {
+        "description": "A directive of the centre (to every gouvernorat or to those listed) or a notice of a regional room.",
+        "operationId": "send_dispatch_api_v1_staff_register_dispatches_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DispatchIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DispatchDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Send Dispatch",
+        "tags": [
+          "staff",
+          "register"
+        ]
+      }
+    },
+    "/api/v1/staff/register/dispatches/{dispatch_id}": {
+      "get": {
+        "description": "Opening it marks it seen for the receiving side (the gouvernorat for a directive, the centre for a notice).",
+        "operationId": "get_dispatch_api_v1_staff_register_dispatches__dispatch_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dispatch_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Dispatch Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DispatchDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Dispatch",
+        "tags": [
+          "staff",
+          "register"
+        ]
+      }
+    },
+    "/api/v1/staff/register/dispatches/{dispatch_id}/attachments": {
+      "put": {
+        "description": "A file (PDF, Word, Excel, PowerPoint, OpenDocument, image, text or CSV; up to 20 MB, 10 per message) as the\nrequest body, attached to the dispatch by its author or to a reply by the reply's author.",
+        "operationId": "attach_dispatch_api_v1_staff_register_dispatches__dispatch_id__attachments_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dispatch_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Dispatch Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "file_name",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 1,
+              "title": "File Name",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "reply_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Reply Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__register__schemas__AttachmentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Attach Dispatch",
+        "tags": [
+          "staff",
+          "register"
+        ]
+      }
+    },
+    "/api/v1/staff/register/dispatches/{dispatch_id}/close": {
+      "post": {
+        "operationId": "close_dispatch_api_v1_staff_register_dispatches__dispatch_id__close_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dispatch_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Dispatch Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DispatchDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Close Dispatch",
+        "tags": [
+          "staff",
+          "register"
+        ]
+      }
+    },
+    "/api/v1/staff/register/dispatches/{dispatch_id}/replies": {
+      "post": {
+        "description": "A message in the thread of one gouvernorat; its files follow with ``PUT .../attachments?reply_id=``.",
+        "operationId": "reply_dispatch_api_v1_staff_register_dispatches__dispatch_id__replies_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dispatch_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Dispatch Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReplyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DispatchDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Reply Dispatch",
+        "tags": [
+          "staff",
+          "register"
         ]
       }
     },

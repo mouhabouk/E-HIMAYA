@@ -68,10 +68,14 @@ from app.modules.orgs.models import (
     TeamMember,
 )
 from app.modules.programmes.models import Programme, ProgrammePoint, ProgrammeRevision
+from app.modules.register.models import Attachment as RegisterAttachment
 from app.modules.register.models import Counter as RegisterCounter
+from app.modules.register.models import Dispatch as RegisterDispatch
+from app.modules.register.models import DispatchTarget as RegisterDispatchTarget
 from app.modules.register.models import Document as RegisterDocument
 from app.modules.register.models import Link as RegisterLink
 from app.modules.register.models import Recommendation as RegisterRecommendation
+from app.modules.register.models import Reply as RegisterReply
 from app.modules.register.models import Revision as RegisterRevision
 from app.modules.reports.models import Media, Report, StatusHistory
 from app.modules.rewards.models import (
@@ -190,10 +194,14 @@ __all__ = [
     "Programme",
     "ProgrammePoint",
     "ProgrammeRevision",
+    "RegisterAttachment",
     "RegisterCounter",
+    "RegisterDispatch",
+    "RegisterDispatchTarget",
     "RegisterDocument",
     "RegisterLink",
     "RegisterRecommendation",
+    "RegisterReply",
     "RegisterRevision",
     "Report",
     "ReportTemplate",

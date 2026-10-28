@@ -8,6 +8,10 @@
 * ``register.link``: one document repeals, amends or complements another.
 * ``register.recommendation``: the key recommendations of a document with who acts, the deadline and the status.
 * ``register.revision``: a snapshot of the document per saved change, with the reason.
+* ``register.dispatch``: a directive of the centre to every gouvernorat or to some, or a notice of a gouvernorat to
+  the centre about an event; ``register.dispatch_target`` follows each gouvernorat concerned (seen, replied).
+* ``register.reply`` and ``register.attachment``: one thread of replies per gouvernorat, with the attached files
+  (Office, PDF, images). A gouvernorat reads its own thread only; the centre reads them all.
 * ``crisis.axis.plan_document_id``: the plan in force on an axis, a document of the register.
 
 Row-level security: national staff see every document; a regional account sees the central documents and those of
@@ -88,8 +92,10 @@ CREATE INDEX ix_document_topics ON register.document USING gin (topics);
 CREATE INDEX ix_document_axes ON register.document USING gin (axis_ids);
 
 CREATE TABLE register.counter (
-    year integer PRIMARY KEY,
-    last integer NOT NULL
+    series text NOT NULL DEFAULT 'REG',
+    year   integer NOT NULL,
+    last   integer NOT NULL,
+    PRIMARY KEY (series, year)
 );
 
 -- The document policy, for the tables that hang off a document (owner's rights: no recursion into the policy).
@@ -141,6 +147,89 @@ CREATE TABLE register.revision (
     PRIMARY KEY (document_id, version)
 );
 
+-- Directives of the centre to the gouvernorats and notices of a gouvernorat to the centre, with one thread of replies
+-- per gouvernorat and attached files (design §8).
+CREATE TABLE register.dispatch (
+    id                 uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    number             text NOT NULL UNIQUE,
+    kind               text NOT NULL CHECK (kind IN ('directive', 'notice')),
+    -- all: every gouvernorat; targeted: those of register.dispatch_target; notice: from origin_gouvernorat to the centre.
+    audience           text NOT NULL CHECK (audience IN ('all', 'targeted', 'centre')),
+    origin_gouvernorat smallint REFERENCES geo.gouvernorat(code),
+    urgency            text NOT NULL DEFAULT 'normal' CHECK (urgency IN ('normal', 'urgent', 'flash')),
+    subject            text NOT NULL CHECK (length(subject) BETWEEN 3 AND 300),
+    body               text NOT NULL DEFAULT '',
+    topics             text[] NOT NULL DEFAULT '{{}}',
+    incident_id        uuid REFERENCES ops.incident(id) ON DELETE SET NULL,
+    axis_id            uuid REFERENCES crisis.axis(id) ON DELETE SET NULL,
+    reply_required     boolean NOT NULL DEFAULT true,
+    reply_due_at       timestamptz,
+    status             text NOT NULL DEFAULT 'open' CHECK (status IN ('open', 'closed')),
+    closed_at          timestamptz,
+    closed_by_name     text,
+    created_by         text NOT NULL,
+    created_by_name    text,
+    created_at         timestamptz NOT NULL DEFAULT now(),
+    norm               text NOT NULL DEFAULT '',
+    search             tsvector GENERATED ALWAYS AS (to_tsvector('simple'::regconfig, norm)) STORED,
+    CONSTRAINT ck_dispatch_side CHECK (
+        (kind = 'directive' AND audience IN ('all', 'targeted') AND origin_gouvernorat IS NULL)
+        OR (kind = 'notice' AND audience = 'centre' AND origin_gouvernorat IS NOT NULL)
+    )
+);
+CREATE INDEX ix_dispatch_created ON register.dispatch (created_at DESC);
+CREATE INDEX ix_dispatch_search ON register.dispatch USING gin (search);
+
+-- One row per gouvernorat a dispatch concerns (the targets of a directive, the origin of a notice): seen and replied.
+CREATE TABLE register.dispatch_target (
+    dispatch_id      uuid NOT NULL REFERENCES register.dispatch(id) ON DELETE CASCADE,
+    gouvernorat_code smallint NOT NULL REFERENCES geo.gouvernorat(code),
+    seen_at          timestamptz,
+    seen_by_name     text,
+    replied_at       timestamptz,
+    replies          integer NOT NULL DEFAULT 0,
+    PRIMARY KEY (dispatch_id, gouvernorat_code)
+);
+CREATE INDEX ix_dispatch_target_gouvernorat ON register.dispatch_target (gouvernorat_code, dispatch_id);
+
+-- A dispatch a regional account may read: a directive to all or to its gouvernorat, or its own notice.
+CREATE FUNCTION register.sees_dispatch(p_dispatch uuid) RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER
+SET search_path = pg_catalog, pg_temp AS $$
+    SELECT ehimaya.sees_all() OR (ehimaya.regional() AND EXISTS (
+        SELECT 1 FROM register.dispatch_target t
+        WHERE t.dispatch_id = p_dispatch AND t.gouvernorat_code = ehimaya.gouvernorat()
+    )) $$;
+
+-- A reply belongs to the thread of one gouvernorat: the centre and that gouvernorat read it, nobody else.
+CREATE TABLE register.reply (
+    id               uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    dispatch_id      uuid NOT NULL REFERENCES register.dispatch(id) ON DELETE CASCADE,
+    gouvernorat_code smallint NOT NULL REFERENCES geo.gouvernorat(code),
+    side             text NOT NULL CHECK (side IN ('centre', 'regional')),
+    body             text NOT NULL DEFAULT '',
+    created_by       text NOT NULL,
+    created_by_name  text,
+    created_at       timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX ix_reply_thread ON register.reply (dispatch_id, gouvernorat_code, created_at);
+
+CREATE TABLE register.attachment (
+    id               uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    dispatch_id      uuid NOT NULL REFERENCES register.dispatch(id) ON DELETE CASCADE,
+    reply_id         uuid REFERENCES register.reply(id) ON DELETE CASCADE,
+    -- The thread of the reply it is attached to (null: attached to the dispatch itself).
+    gouvernorat_code smallint REFERENCES geo.gouvernorat(code),
+    file_key         text NOT NULL,
+    file_name        text NOT NULL,
+    content_type     text NOT NULL,
+    size             integer NOT NULL,
+    sha256           text NOT NULL,
+    created_by       text NOT NULL,
+    created_at       timestamptz NOT NULL DEFAULT now(),
+    CONSTRAINT ck_attachment_thread CHECK ((reply_id IS NULL) = (gouvernorat_code IS NULL))
+);
+CREATE INDEX ix_attachment_dispatch ON register.attachment (dispatch_id);
+
 ALTER TABLE crisis.axis ADD COLUMN plan_document_id uuid REFERENCES register.document(id) ON DELETE SET NULL;
 
 ALTER TABLE register.document ENABLE ROW LEVEL SECURITY;
@@ -154,6 +243,25 @@ ALTER TABLE register.recommendation ENABLE ROW LEVEL SECURITY;
 CREATE POLICY recommendation_all ON register.recommendation USING ({_DOC}) WITH CHECK ({_DOC});
 ALTER TABLE register.revision ENABLE ROW LEVEL SECURITY;
 CREATE POLICY revision_all ON register.revision USING ({_DOC}) WITH CHECK ({_DOC});
+
+ALTER TABLE register.dispatch ENABLE ROW LEVEL SECURITY;
+CREATE POLICY dispatch_all ON register.dispatch
+    USING (register.sees_dispatch(id) OR (ehimaya.regional() AND origin_gouvernorat = ehimaya.gouvernorat()))
+    WITH CHECK (ehimaya.sees_all() OR (ehimaya.regional() AND origin_gouvernorat = ehimaya.gouvernorat()));
+ALTER TABLE register.dispatch_target ENABLE ROW LEVEL SECURITY;
+CREATE POLICY dispatch_target_all ON register.dispatch_target
+    USING (ehimaya.sees_all() OR (ehimaya.regional() AND gouvernorat_code = ehimaya.gouvernorat()))
+    WITH CHECK (ehimaya.sees_all() OR (ehimaya.regional() AND gouvernorat_code = ehimaya.gouvernorat()));
+ALTER TABLE register.reply ENABLE ROW LEVEL SECURITY;
+CREATE POLICY reply_all ON register.reply
+    USING (ehimaya.sees_all() OR (ehimaya.regional() AND gouvernorat_code = ehimaya.gouvernorat()))
+    WITH CHECK (ehimaya.sees_all() OR (ehimaya.regional() AND gouvernorat_code = ehimaya.gouvernorat()));
+ALTER TABLE register.attachment ENABLE ROW LEVEL SECURITY;
+CREATE POLICY attachment_all ON register.attachment
+    USING (CASE WHEN gouvernorat_code IS NULL THEN register.sees_dispatch(dispatch_id)
+                ELSE ehimaya.sees_all() OR (ehimaya.regional() AND gouvernorat_code = ehimaya.gouvernorat()) END)
+    WITH CHECK (CASE WHEN gouvernorat_code IS NULL THEN register.sees_dispatch(dispatch_id)
+                ELSE ehimaya.sees_all() OR (ehimaya.regional() AND gouvernorat_code = ehimaya.gouvernorat()) END);
 
 ALTER TABLE knowledge.search_doc DROP CONSTRAINT ck_search_doc_kind;
 ALTER TABLE knowledge.search_doc ADD CONSTRAINT ck_search_doc_kind

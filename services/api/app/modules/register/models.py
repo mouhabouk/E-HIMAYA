@@ -4,7 +4,7 @@ import uuid
 from datetime import date, datetime
 from typing import Any
 
-from sqlalchemy import Computed, Date, DateTime, ForeignKey, Integer, SmallInteger, Text, func
+from sqlalchemy import Boolean, Computed, Date, DateTime, ForeignKey, Integer, SmallInteger, Text, func
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB, TSVECTOR, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -72,6 +72,8 @@ class Counter(Base):
     __tablename__ = "counter"
     __table_args__ = _S
 
+    # REG (documents), DIR (directives), NOT (notices).
+    series: Mapped[str] = mapped_column(Text, primary_key=True, server_default="REG")
     year: Mapped[int] = mapped_column(Integer, primary_key=True)
     last: Mapped[int] = mapped_column(Integer)
 
@@ -122,4 +124,93 @@ class Revision(Base):
     reason: Mapped[str | None] = mapped_column(Text)
     created_by: Mapped[str] = mapped_column(Text)
     created_by_name: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class Dispatch(Base):
+    """A directive of the centre to the gouvernorats, or a notice of a gouvernorat to the centre (design §8)."""
+
+    __tablename__ = "dispatch"
+    __table_args__ = _S
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
+    number: Mapped[str] = mapped_column(Text, unique=True)
+    # directive | notice
+    kind: Mapped[str] = mapped_column(Text)
+    # all | targeted (directives) | centre (notices)
+    audience: Mapped[str] = mapped_column(Text)
+    origin_gouvernorat: Mapped[int | None] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
+    urgency: Mapped[str] = mapped_column(Text, server_default="normal")
+    subject: Mapped[str] = mapped_column(Text)
+    body: Mapped[str] = mapped_column(Text, server_default="")
+    topics: Mapped[list[str]] = mapped_column(ARRAY(Text), server_default="{}")
+    incident_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ops.incident.id", ondelete="SET NULL")
+    )
+    axis_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("crisis.axis.id", ondelete="SET NULL", use_alter=True)
+    )
+    reply_required: Mapped[bool] = mapped_column(Boolean, server_default="true")
+    reply_due_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    status: Mapped[str] = mapped_column(Text, server_default="open")
+    closed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    closed_by_name: Mapped[str | None] = mapped_column(Text)
+    created_by: Mapped[str] = mapped_column(Text)
+    created_by_name: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    norm: Mapped[str] = mapped_column(Text, server_default="")
+    search: Mapped[Any] = mapped_column(TSVECTOR, Computed("to_tsvector('simple'::regconfig, norm)"), deferred=True)
+
+
+class DispatchTarget(Base):
+    __tablename__ = "dispatch_target"
+    __table_args__ = _S
+
+    dispatch_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("register.dispatch.id", ondelete="CASCADE"), primary_key=True
+    )
+    gouvernorat_code: Mapped[int] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"), primary_key=True)
+    seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    seen_by_name: Mapped[str | None] = mapped_column(Text)
+    replied_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    replies: Mapped[int] = mapped_column(Integer, server_default="0")
+
+
+class Reply(Base):
+    """One message in the thread of one gouvernorat (the centre and that gouvernorat read it)."""
+
+    __tablename__ = "reply"
+    __table_args__ = _S
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
+    dispatch_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("register.dispatch.id", ondelete="CASCADE")
+    )
+    gouvernorat_code: Mapped[int] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
+    # centre | regional
+    side: Mapped[str] = mapped_column(Text)
+    body: Mapped[str] = mapped_column(Text, server_default="")
+    created_by: Mapped[str] = mapped_column(Text)
+    created_by_name: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class Attachment(Base):
+    __tablename__ = "attachment"
+    __table_args__ = _S
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
+    dispatch_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("register.dispatch.id", ondelete="CASCADE")
+    )
+    reply_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("register.reply.id", ondelete="CASCADE")
+    )
+    gouvernorat_code: Mapped[int | None] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
+    file_key: Mapped[str] = mapped_column(Text)
+    file_name: Mapped[str] = mapped_column(Text)
+    content_type: Mapped[str] = mapped_column(Text)
+    size: Mapped[int] = mapped_column(Integer)
+    sha256: Mapped[str] = mapped_column(Text)
+    created_by: Mapped[str] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

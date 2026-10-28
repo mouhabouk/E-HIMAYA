@@ -67,15 +67,16 @@ def forbidden(detail: str = "insufficient_role") -> HTTPException:
     return HTTPException(status.HTTP_403_FORBIDDEN, detail)
 
 
-async def next_number(session: AsyncSession, year: int) -> str:
+async def next_number(session: AsyncSession, year: int, series: str = "REG") -> str:
+    """``REG-2026-0001`` for documents, ``DIR-``/``NOT-`` for directives and notices (design §8)."""
     n = await session.scalar(
         text(
-            "INSERT INTO register.counter (year, last) VALUES (:y, 1) "
-            "ON CONFLICT (year) DO UPDATE SET last = register.counter.last + 1 RETURNING last"
+            "INSERT INTO register.counter (series, year, last) VALUES (:s, :y, 1) "
+            "ON CONFLICT (series, year) DO UPDATE SET last = register.counter.last + 1 RETURNING last"
         ),
-        {"y": year},
+        {"s": series, "y": year},
     )
-    return f"REG-{year}-{int(n or 0):04d}"
+    return f"{series}-{year}-{int(n or 0):04d}"
 
 
 async def gouvernorat_names(session: AsyncSession) -> dict[int, str]:

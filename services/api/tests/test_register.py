@@ -22,7 +22,7 @@ from app.core.db import get_system_sessionmaker
 from app.core.security import Principal, Realm
 from app.modules.knowledge import indexer
 from app.modules.register import domain, service
-from tests.conftest import FakeStore
+from tests.conftest import FakeStore, outbox_events
 
 Staff = Callable[..., dict[str, str]]
 URL = "/api/v1/staff/register"
@@ -502,3 +502,134 @@ async def test_library_lists_open_documents(client: httpx.AsyncClient, staff: St
     item = await client.get(f"/api/v1/staff/library/items/register/{shared['id']}", headers=h)
     assert item.status_code == 200, item.text
     assert item.json()["fields"]["document_id"] == shared["id"]
+
+
+# --- Directives and notices between the centre and the gouvernorats (design §8) -----------------------------------
+
+DOCX = b"PK\x03\x04" + b"\x14\x00" * 20
+XLS = b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1" + b"\x00" * 32
+
+
+def test_attachment_types() -> None:
+    assert domain.attachment_type(PDF, "x.bin") == ("application/pdf", ".pdf")
+    assert domain.attachment_type(DOCX, "تقرير.docx")[0].endswith("wordprocessingml.document")  # type: ignore[index]
+    assert domain.attachment_type(DOCX, "جدول.XLSX")[0].endswith("spreadsheetml.sheet")  # type: ignore[index]
+    assert domain.attachment_type(XLS, "old.xls") == ("application/vnd.ms-excel", ".xls")
+    assert domain.attachment_type("ولاية,عدد\nنابل,3\n".encode(), "a.csv") == ("text/csv", ".csv")
+    # An archive or a program renamed is refused.
+    assert domain.attachment_type(DOCX, "x.zip") is None
+    assert domain.attachment_type(b"MZ\x90\x00", "x.docx") is None
+    assert domain.attachment_type(b"\xff\xfe\x00bad", "x.txt") is None
+
+
+async def test_directive_to_one_gouvernorat_and_threads(
+    client: httpx.AsyncClient, staff: Staff, fake_store: FakeStore
+) -> None:
+    w = word()
+    centre = staff(["ops_manager"], gouvernorat=None)
+    nabeul, sousse = room(staff), room(staff, SOUSSE)
+    D = f"{URL}/dispatches"
+    # Only the centre directs; a regional room cannot.
+    body = {"kind": "directive", "audience": "targeted", "gouvernorats": [NABEUL], "subject": f"تأمين السدود {w}"}
+    assert (await client.post(D, json=body, headers=nabeul)).status_code == 403
+    assert (await client.post(D, json={**body, "gouvernorats": []}, headers=centre)).status_code == 422
+    r = await client.post(
+        D, json={**body, "body": "تقرير عن منسوب السدود قبل الساعة 18", "urgency": "urgent"}, headers=centre
+    )
+    assert r.status_code == 201, r.text
+    directive = r.json()["dispatch"]
+    assert directive["number"].startswith("DIR-") and directive["targets"] == 1 and not directive["unread"]
+    did = directive["id"]
+    # The author attaches a Word file; a CSV renamed .exe is refused.
+    r = await client.put(f"{D}/{did}/attachments", params={"file_name": "تعليمات.docx"}, content=DOCX, headers=centre)
+    assert r.status_code == 200, r.text
+    r = await client.put(f"{D}/{did}/attachments", params={"file_name": "x.exe"}, content=b"MZ\x90", headers=centre)
+    assert r.status_code == 415
+
+    # A private directive: Sousse neither lists nor opens it.
+    assert w not in str((await client.get(D, params={"q": w}, headers=sousse)).json())
+    assert (await client.get(f"{D}/{did}", headers=sousse)).status_code == 404
+    inbox = (await client.get(D, params={"box": "inbox", "q": w}, headers=nabeul)).json()
+    assert [x["id"] for x in inbox["items"]] == [did] and inbox["items"][0]["unread"] and inbox["can_notify"]
+    # Opening marks it seen; Nabeul replies with an Excel file.
+    opened = (await client.get(f"{D}/{did}", headers=nabeul)).json()
+    assert opened["dispatch"]["seen"] == 1 and len(opened["attachments"]) == 1 and opened["can_reply"]
+    r = await client.post(f"{D}/{did}/replies", json={"body": "منسوب سد المصري 82%"}, headers=nabeul)
+    assert r.status_code == 200, r.text
+    rid = r.json()["reply_id"]
+    r = await client.put(
+        f"{D}/{did}/attachments", params={"file_name": "منسوب.xls", "reply_id": rid}, content=XLS, headers=nabeul
+    )
+    assert r.status_code == 200, r.text
+    # The centre sees the thread of Nabeul, replied, and answers in it.
+    seen = (await client.get(f"{D}/{did}", headers=centre)).json()
+    assert seen["targets"][0]["replied_at"] and seen["targets"][0]["seen_at"]
+    thread = seen["threads"][0]
+    assert thread["gouvernorat_code"] == NABEUL and thread["replies"][0]["attachments"][0]["file_name"] == "منسوب.xls"
+    assert (await client.post(f"{D}/{did}/replies", json={"body": "شكرا"}, headers=centre)).status_code == 422
+    r = await client.post(
+        f"{D}/{did}/replies", json={"body": "واصلوا المتابعة", "gouvernorat_code": NABEUL}, headers=centre
+    )
+    assert r.status_code == 200
+    # The governor of Nabeul reads, does not reply; another room's attachment cannot be fetched by Sousse.
+    gov = (await client.get(f"{D}/{did}", headers=staff(["governor"], gouvernorat=NABEUL))).json()
+    assert len(gov["threads"][0]["replies"]) == 2 and not gov["can_reply"]
+    file_id = thread["replies"][0]["attachments"][0]["id"]
+    assert (await client.get(f"{URL}/attachments/{file_id}", headers=sousse)).status_code == 404
+    url = (await client.get(f"{URL}/attachments/{file_id}", headers=nabeul)).json()["url"]
+    assert url.startswith("http://s3.test/register/dispatch/")
+    # Closing stops replies.
+    assert (await client.post(f"{D}/{did}/close", headers=nabeul)).status_code == 403
+    assert (await client.post(f"{D}/{did}/close", headers=centre)).json()["dispatch"]["status"] == "closed"
+    assert (await client.post(f"{D}/{did}/replies", json={"body": "رد متأخر"}, headers=nabeul)).status_code == 409
+
+
+async def test_general_directive_keeps_each_thread_private(client: httpx.AsyncClient, staff: Staff) -> None:
+    w = word()
+    centre = staff(["central_committee"], gouvernorat=None)
+    D = f"{URL}/dispatches"
+    due = "2099-01-01T12:00:00+01:00"
+    r = await client.post(
+        D, json={"kind": "directive", "subject": f"جرد وسائل الضخ {w}", "reply_due_at": due}, headers=centre
+    )
+    assert r.status_code == 201, r.text
+    d = r.json()
+    assert d["dispatch"]["audience"] == "all" and d["dispatch"]["targets"] == 24
+    did = d["dispatch"]["id"]
+    for code, text_ in ((NABEUL, "نابل: 12 مضخة"), (SOUSSE, "سوسة: 7 مضخات")):
+        r = await client.post(f"{D}/{did}/replies", json={"body": text_}, headers=room(staff, code))
+        assert r.status_code == 200, r.text
+    # Each gouvernorat sees the directive and only its own thread; the centre sees both, replied 2 of 24.
+    nabeul = (await client.get(f"{D}/{did}", headers=room(staff))).json()
+    assert [t["gouvernorat_code"] for t in nabeul["threads"]] == [NABEUL]
+    assert "سوسة" not in str(nabeul["threads"]) and nabeul["dispatch"]["targets"] == 1
+    whole = (await client.get(f"{D}/{did}", headers=centre)).json()
+    assert {t["gouvernorat_code"] for t in whole["threads"]} == {NABEUL, SOUSSE}
+    assert whole["dispatch"]["replied"] == 2 and len(whole["targets"]) == 24
+    listed = (await client.get(D, params={"q": w, "box": "sent"}, headers=centre)).json()
+    assert listed["items"][0]["replied"] == 2 and listed["can_direct"]
+
+
+async def test_notice_from_a_room_to_the_centre(client: httpx.AsyncClient, staff: Staff, session: AsyncSession) -> None:
+    w = word()
+    D = f"{URL}/dispatches"
+    centre = staff(["ops_manager"], gouvernorat=None)
+    body = {"kind": "notice", "urgency": "flash", "subject": f"انهيار جزئي لجسر {w}", "body": "الطريق 27 مقطوعة"}
+    assert (await client.post(D, json=body, headers=centre)).status_code == 403
+    assert (await client.post(D, json=body, headers=staff(["governor"], gouvernorat=NABEUL))).status_code == 403
+    r = await client.post(D, json=body, headers=staff(["operator"], gouvernorat=NABEUL))
+    assert r.status_code == 201, r.text
+    notice = r.json()["dispatch"]
+    assert notice["number"].startswith("NOT-") and notice["origin_gouvernorat"] == NABEUL
+    # Sousse does not see it; the centre has it unread in its inbox, then answers.
+    assert (await client.get(f"{D}/{notice['id']}", headers=room(staff, SOUSSE))).status_code == 404
+    inbox = (await client.get(D, params={"box": "inbox", "q": w}, headers=centre)).json()
+    assert inbox["items"][0]["unread"] and inbox["unread"] >= 1
+    r = await client.post(
+        f"{D}/{notice['id']}/replies", json={"body": "أُرسلت وحدة هندسة", "gouvernorat_code": NABEUL}, headers=centre
+    )
+    assert r.status_code == 200
+    back = (await client.get(f"{D}/{notice['id']}", headers=room(staff))).json()
+    assert back["threads"][0]["replies"][0]["side"] == "centre" and back["targets"][0]["replied_at"]
+    events = await outbox_events(session, "register.notice_sent")
+    assert any(e["id"] == notice["id"] and e["urgency"] == "flash" for e in events)

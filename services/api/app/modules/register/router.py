@@ -20,7 +20,8 @@ from app.core.security import Principal, Role, require_roles
 from app.core.storage import get_store
 from app.modules.audit import service as audit
 from app.modules.crisis.models import Axis
-from app.modules.register import domain, schemas, service
+from app.modules.register import dispatch, domain, schemas, service
+from app.modules.register.models import Attachment as RegisterAttachment
 from app.modules.register.models import Document, Link, Recommendation, Revision
 
 router = APIRouter(prefix="/api/v1/staff/register", tags=["staff", "register"])
@@ -315,3 +316,133 @@ async def revisions(principal: Reader, session: Session, document_id: uuid.UUID)
         )
         for r in rows
     ]
+
+
+# --- Directives and notices between the centre and the gouvernorats (design §8) -----------------------------------
+
+
+@router.get("/dispatches", response_model=schemas.DispatchPage)
+async def list_dispatches(
+    principal: Reader,
+    session: Session,
+    box: Annotated[Literal["inbox", "sent", "all"], Query()] = "all",
+    kind: Annotated[str, Query(max_length=40, description="Comma-separated kinds")] = "",
+    urgency: Annotated[str, Query(max_length=40, description="Comma-separated urgencies")] = "",
+    state: Annotated[Literal["open", "closed"] | None, Query()] = None,
+    gouvernorat: Annotated[int | None, Query(ge=11, le=83)] = None,
+    q: Annotated[str, Query(max_length=300)] = "",
+    date_from: Annotated[date | None, Query(alias="from")] = None,
+    date_to: Annotated[date | None, Query(alias="to")] = None,
+    unread: Annotated[bool, Query()] = False,
+    limit: Annotated[int, Query(ge=1, le=dispatch.PAGE_MAX)] = 30,
+    offset: Annotated[int, Query(ge=0, le=10_000)] = 0,
+) -> schemas.DispatchPage:
+    """Directives and notices the caller's scope reads: the centre all of them, a gouvernorat the directives sent to
+    every gouvernorat or to it, and its own notices."""
+    filters = dispatch.Filters(
+        box=box,
+        kinds=_csv(kind, domain.DISPATCH_KINDS, "kind"),
+        urgencies=_csv(urgency, domain.URGENCIES, "urgency"),
+        state=state,
+        gouvernorat_code=gouvernorat,
+        q=q.strip(),
+        date_from=date_from,
+        date_to=date_to,
+        unread_only=unread,
+        limit=limit,
+        offset=offset,
+    )
+    items, total, terms = await dispatch.search(session, principal, filters)
+    ids = [d.id for d in items]
+    targets = await dispatch.targets_of(session, ids)
+    files = await dispatch.attachment_counts(session, ids)
+    names = await service.gouvernorat_names(session)
+    return schemas.DispatchPage(
+        items=[dispatch.dispatch_out(principal, d, targets[d.id], names, files.get(d.id, 0), terms) for d in items],
+        total=total,
+        unread=await dispatch.unread_count(session, principal),
+        can_direct=domain.centre_writes(principal),
+        can_notify=domain.room_writes(principal),
+    )
+
+
+@router.post("/dispatches", response_model=schemas.DispatchDetail, status_code=status.HTTP_201_CREATED)
+async def send_dispatch(principal: Reader, session: Session, body: schemas.DispatchIn) -> schemas.DispatchDetail:
+    """A directive of the centre (to every gouvernorat or to those listed) or a notice of a regional room."""
+    d = await dispatch.create(session, principal, body)
+    out = await dispatch.detail(session, principal, d)
+    await session.commit()
+    return out
+
+
+@router.get("/dispatches/{dispatch_id}", response_model=schemas.DispatchDetail)
+async def get_dispatch(principal: Reader, session: Session, dispatch_id: uuid.UUID) -> schemas.DispatchDetail:
+    """Opening it marks it seen for the receiving side (the gouvernorat for a directive, the centre for a notice)."""
+    d = await dispatch.get(session, dispatch_id)
+    await dispatch.mark_seen(session, principal, d)
+    out = await dispatch.detail(session, principal, d)
+    await session.commit()
+    return out
+
+
+@router.post("/dispatches/{dispatch_id}/replies", response_model=schemas.DispatchDetail)
+async def reply_dispatch(
+    principal: Reader, session: Session, dispatch_id: uuid.UUID, body: schemas.ReplyIn
+) -> schemas.DispatchDetail:
+    """A message in the thread of one gouvernorat; its files follow with ``PUT .../attachments?reply_id=``."""
+    d = await dispatch.get(session, dispatch_id, lock=True)
+    r = await dispatch.reply(session, principal, d, body)
+    out = await dispatch.detail(session, principal, d)
+    await session.commit()
+    out.reply_id = str(r.id)
+    return out
+
+
+@router.put("/dispatches/{dispatch_id}/attachments", response_model=schemas.AttachmentOut)
+async def attach_dispatch(
+    principal: Reader,
+    session: Session,
+    dispatch_id: uuid.UUID,
+    request: Request,
+    file_name: Annotated[str, Query(min_length=1, max_length=200)],
+    reply_id: Annotated[uuid.UUID | None, Query()] = None,
+) -> schemas.AttachmentOut:
+    """A file (PDF, Word, Excel, PowerPoint, OpenDocument, image, text or CSV; up to 20 MB, 10 per message) as the
+    request body, attached to the dispatch by its author or to a reply by the reply's author."""
+    d = await dispatch.get(session, dispatch_id)
+    data = await _read_body(request)
+    a = await dispatch.attach(session, principal, d, reply_id, file_name, data)
+    out = dispatch.attachment_out(a)
+    await session.commit()
+    return out
+
+
+@router.get("/attachments/{attachment_id}", response_model=schemas.FileOut)
+async def get_attachment(principal: Reader, session: Session, attachment_id: uuid.UUID) -> schemas.FileOut:
+    a = await session.get(RegisterAttachment, attachment_id)
+    if a is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "file_not_found")
+    await audit.record(
+        session,
+        actor=audit.actor_of(principal),
+        action="register.attachment_read",
+        target=str(a.dispatch_id),
+        details={"attachment": str(a.id), "sha256": a.sha256},
+        gouvernorats=[a.gouvernorat_code] if a.gouvernorat_code else None,
+    )
+    await session.commit()
+    name = a.file_name.replace('"', "")
+    return schemas.FileOut(
+        url=get_store().presign_get(
+            a.file_key, content_type=a.content_type, disposition=f'attachment; filename="{name}"'
+        )
+    )
+
+
+@router.post("/dispatches/{dispatch_id}/close", response_model=schemas.DispatchDetail)
+async def close_dispatch(principal: Reader, session: Session, dispatch_id: uuid.UUID) -> schemas.DispatchDetail:
+    d = await dispatch.get(session, dispatch_id, lock=True)
+    await dispatch.close(session, principal, d)
+    out = await dispatch.detail(session, principal, d)
+    await session.commit()
+    return out
