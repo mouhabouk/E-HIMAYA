@@ -6664,6 +6664,14 @@
             },
             "title": "Threads",
             "type": "array"
+          },
+          "viewer_side": {
+            "enum": [
+              "centre",
+              "regional"
+            ],
+            "title": "Viewer Side",
+            "type": "string"
           }
         },
         "required": [
@@ -6673,7 +6681,8 @@
           "threads",
           "can_reply",
           "can_close",
-          "can_attach"
+          "can_attach",
+          "viewer_side"
         ],
         "title": "DispatchDetail",
         "type": "object"
