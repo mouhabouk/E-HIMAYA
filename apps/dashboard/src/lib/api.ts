@@ -159,6 +159,30 @@ export const ERROR_CODES = [
   "group_sensitivity_mismatch",
   "icon_unknown",
   "tone_unknown",
+  // Satellite background (phase R).
+  "basemap_url_https",
+  "basemap_url_placeholders",
+  "basemap_key_unused",
+  "basemap_key_missing",
+  // Phase R1: the resources register.
+  "counts_only",
+  "category_unknown",
+  "category_inactive",
+  "category_taken",
+  "category_not_found",
+  "family_mismatch",
+  "spec_unknown",
+  "spec_invalid",
+  "unit_not_found",
+  "vehicle_not_found",
+  "stock_not_found",
+  "stock_exists",
+  "agent_not_found",
+  "matricule_taken",
+  "skill_level_invalid",
+  "entity_required",
+  "import_has_errors",
+  "file_too_many_rows",
   "not_deleted",
   "already_deleted",
   "merge_target_invalid",
@@ -367,6 +391,8 @@ export interface ApiClient {
    * (binary downloads, redirects to pre-signed links).
    */
   requestRaw(path: string, options?: RequestOptions & { accept?: string }): Promise<Response>;
+  /** The absolute address of an API path (map tiles fetched by the map library itself). */
+  resolve?(path: string): string;
 }
 
 export function buildUrl(baseUrl: string, path: string, query?: Record<string, QueryValue>): string {
@@ -458,6 +484,7 @@ export function createApiClient(
 
   return {
     requestRaw,
+    resolve: (path: string) => buildUrl(baseUrl, path),
     async request<T>(path: string, options: RequestOptions = {}): Promise<T> {
       const response = await requestRaw(path, options);
       if (response.status === 204) return undefined as T;

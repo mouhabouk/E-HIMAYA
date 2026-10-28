@@ -21,6 +21,8 @@ import { fakeOpsApi } from "./opsFixtures";
 import { fakeCoastalApi } from "./coastalFixtures";
 import { fakeProgrammesApi } from "./programmeFixtures";
 import { fakeCrisisApi } from "./crisisFixtures";
+import { fakeBasemapApi } from "./basemapFixtures";
+import { fakeInventoryApi } from "./inventoryFixtures";
 import { fakeRegisterApi } from "./registerFixtures";
 import { FakeSipEngine, fakePhase7Api } from "./phase7Fixtures";
 import { fakePhase8Api } from "./phase8Fixtures";
@@ -240,6 +242,8 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     ...fakeProgrammesApi(),
     ...fakeCrisisApi(),
     ...fakeRegisterApi(),
+    ...fakeInventoryApi(),
+    ...fakeBasemapApi(),
     ...fakeGuideApi(),
     ...fakeContactApi(),
     ...fakeSafetyApi(),

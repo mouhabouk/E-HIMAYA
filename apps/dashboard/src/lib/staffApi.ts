@@ -4,6 +4,8 @@ import { appFeedbackApi } from "./appFeedback";
 import { coastalApi } from "./coastalApi";
 import { programmesApi } from "./programmes";
 import { crisisApi } from "./crisis";
+import { basemapApi } from "./basemap";
+import { inventoryApi } from "./inventory";
 import { registerApi } from "./register";
 import { contactApi } from "./contact";
 import { opsApi } from "./opsApi";
@@ -239,6 +241,8 @@ export function staffApi(api: ApiClient) {
     ...programmesApi(api),
     ...crisisApi(api),
     ...registerApi(api),
+    ...inventoryApi(api),
+    ...basemapApi(api),
     ...guideApi(api),
     ...preventionApi(api),
     ...contactApi(api),

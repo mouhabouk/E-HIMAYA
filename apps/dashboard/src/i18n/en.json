@@ -56,7 +56,8 @@
       "orgs": "Institutions",
       "knowledge": "Analysis and knowledge",
       "system": "System"
-    }
+    },
+    "inventory": "Resources register"
   },
   "header": {
     "scope": "Geographic scope",
@@ -416,7 +417,29 @@
     "group_kept": "This folder cannot be deleted.",
     "group_sensitivity_mismatch": "Sensitive layers go in the sensitive folder, and only there.",
     "icon_unknown": "Unknown icon.",
-    "tone_unknown": "Unknown colour."
+    "tone_unknown": "Unknown colour.",
+    "counts_only": "You see the counts only: the lists and names are for the operations rooms.",
+    "category_unknown": "This type is not in the catalogue or does not fit this register.",
+    "category_inactive": "This type is switched off in the catalogue: no new entries.",
+    "category_taken": "A type already has this key.",
+    "category_not_found": "Type not found.",
+    "family_mismatch": "Vehicles and equipment need a family; specialities have none.",
+    "spec_unknown": "A specification this type does not have.",
+    "spec_invalid": "Invalid specification value.",
+    "unit_not_found": "Unit not found in your scope.",
+    "vehicle_not_found": "Vehicle not found.",
+    "stock_not_found": "Equipment line not found.",
+    "stock_exists": "This equipment with these specifications is already in the unit: change its quantity.",
+    "agent_not_found": "Staff member not found.",
+    "matricule_taken": "This staff number is already given to someone else.",
+    "skill_level_invalid": "Invalid speciality level.",
+    "entity_required": "Say what the CSV holds (vehicles, equipment or staff).",
+    "import_has_errors": "The file has errors: fix them and check again.",
+    "file_too_many_rows": "The file has more than 5,000 rows.",
+    "basemap_url_https": "The provider address must start with https://.",
+    "basemap_url_placeholders": "The address must contain {z}, {x} and {y}.",
+    "basemap_key_unused": "The key is not used: add {key} to the address or name the header.",
+    "basemap_key_missing": "The address asks for a key ({key}) and none is stored."
   },
   "kpi": {
     "title": "Key indicators",
@@ -542,7 +565,22 @@
     "count": "Reports shown: {{count}}",
     "truncated": "More reports exist, zoom in to see them",
     "openDetail": "Open details",
-    "listToggle": "List of reports shown on the map"
+    "listToggle": "List of reports shown on the map",
+    "resourceSearch": {
+      "layer": "Search result: {{search}}",
+      "between": "{{spec}} between {{low}} and {{high}}",
+      "atLeast": "{{spec}} {{value}} or more",
+      "atMost": "{{spec}} {{value}} or less",
+      "level": "level {{level}} or more",
+      "place": "{{name}}: {{total}}",
+      "legend": "Colour key by count",
+      "none": "None",
+      "range": "{{low}} to {{high}}",
+      "zoomHint": "The count is written on each gouvernorat; zoom in to see the units.",
+      "unitsHint": "The count is written on each unit.",
+      "edit": "Edit the search",
+      "clear": "Remove the result"
+    }
   },
   "priority": {
     "badge": "Priority {{score}} ({{band}})",
@@ -3878,6 +3916,7 @@
       "tabs": {
         "label": "Layers",
         "layers": "Layers ({{count}})",
+        "background": "Map background",
         "deleted": "Deleted ({{count}})",
         "folders": "Map folders ({{count}})"
       },
@@ -5546,5 +5585,287 @@
     "repliesN": "{{n}} reply(ies)",
     "replies": "Replies",
     "writeTo": "Write to a gouvernorat that has not replied"
+  },
+  "inventory": {
+    "title": "Resources register",
+    "introCentral": "The equipment and staff of every gouvernorat in one register: vehicles with their specifications (2,000 L fire engine), equipment by quantity, staff with their specialities. The central room sees everything and keeps the catalogue.",
+    "introRegional": "Your gouvernorat's register: vehicles with their specifications, equipment by quantity, staff with their specialities. You see your own units only and confirm each unit's figures once a month.",
+    "countsOnly": "Only the counts show here. The lists and staff names are for the operations rooms.",
+    "empty": "Nothing recorded yet.",
+    "otherType": "Other type",
+    "yes": "yes",
+    "anyType": "All",
+    "allGouvernorats": "All gouvernorats",
+    "actions": "Actions",
+    "edit": "Edit",
+    "editNamed": "Edit {{label}}",
+    "delete": "Delete",
+    "deleteNamed": "Delete {{label}}",
+    "confirmDelete": "Confirm deletion",
+    "export": "Export CSV",
+    "exportWithNames": "With names and phones (the gouvernorat's room); the export is audited.",
+    "exportNoNames": "Without names or phones; the export is audited.",
+    "tabs": {
+      "label": "Register sections",
+      "overview": "Overview",
+      "search": "Search across gouvernorats",
+      "units": "Units",
+      "vehicles": "Vehicles",
+      "stock": "Equipment",
+      "agents": "Staff",
+      "import": "Import",
+      "catalogue": "Catalogue"
+    },
+    "kpi": {
+      "vehiclesReady": "vehicles ready out of {{total}}",
+      "equipmentReady": "equipment ready ({{broken}} broken)",
+      "agentsOnDuty": "staff on duty out of {{total}}",
+      "units": "units"
+    },
+    "overview": {
+      "byGouvernorat": "By gouvernorat",
+      "units": "Units",
+      "out": "Out of service",
+      "equipment": "Equipment",
+      "agents": "Staff",
+      "stale": "{{n}} not confirmed",
+      "broken": "({{n}} broken)",
+      "agentsOf": "{{on}} of {{all}}",
+      "byType": "By type",
+      "bySkill": "Staff by speciality",
+      "skillReady": "On duty, valid certificate",
+      "expired": "Certificate expired"
+    },
+    "state": {
+      "ready": "Ready",
+      "assigned": "On a mission",
+      "maintenance": "Maintenance",
+      "broken": "Broken"
+    },
+    "availability": {
+      "on_duty": "On duty",
+      "rest": "Rest",
+      "leave": "Leave"
+    },
+    "kind": {
+      "vehicle": "Vehicles",
+      "equipment": "Equipment",
+      "skill": "Specialities"
+    },
+    "family": {
+      "vehicles": "Vehicles",
+      "equipment": "Equipment",
+      "boats": "Boats",
+      "air": "Air",
+      "ppe": "Personal protective equipment"
+    },
+    "field": {
+      "gouvernorat": "Gouvernorat",
+      "unit": "Unit",
+      "type": "Type",
+      "label": "Name",
+      "code": "Internal number",
+      "state": "State",
+      "year": "Year",
+      "notes": "Notes",
+      "specs": "Specifications",
+      "qtyReady": "Ready",
+      "qtyBroken": "Broken",
+      "matricule": "Staff number",
+      "fullName": "Full name",
+      "rank": "Rank",
+      "phone": "Phone",
+      "availability": "Availability",
+      "skills": "Specialities",
+      "skill": "Speciality"
+    },
+    "form": {
+      "pickUnit": "Pick the unit",
+      "pickType": "Pick the type",
+      "reason": "Reason for the change",
+      "reasonOptional": "Reason for the change (optional)",
+      "reasonHelp": "Kept with the version and who made it (at least 5 characters for a change).",
+      "missing": "Fill in the required fields.",
+      "deleteReason": "Reason (sold, scrapped, retired…)"
+    },
+    "units": {
+      "intro": "The regional room confirms each unit's figures once a month. A unit not confirmed for 30 days shows to the central room.",
+      "staleCount": "{{n}} units to confirm",
+      "vehicles": "Vehicles ready",
+      "verified": "Last confirmed",
+      "never": "Never confirmed",
+      "stale": "To confirm",
+      "verify": "Confirm the figures",
+      "verifyNamed": "Confirm the figures of {{unit}}",
+      "none": "No units in this scope."
+    },
+    "vehicles": {
+      "newTitle": "New vehicle",
+      "editTitle": "Edit {{label}}",
+      "assignedNote": "On a mission: its state follows the intervention.",
+      "count": "{{n}} vehicles"
+    },
+    "stock": {
+      "newTitle": "New equipment",
+      "editTitle": "Edit equipment"
+    },
+    "agents": {
+      "newTitle": "New staff member",
+      "editTitle": "Edit {{name}}",
+      "privacy": "The name and phone are personal data: shown to the operations rooms only, and exported by the gouvernorat's room only.",
+      "levelOf": "Level of {{skill}}",
+      "level": "level {{level}}",
+      "expiresOf": "{{skill}} certificate expiry",
+      "expiredOn": "expired {{date}}",
+      "namesHidden": "Names and phones are hidden: they are for the operations rooms only.",
+      "count": "{{n}} staff",
+      "hidden": "name hidden"
+    },
+    "revisions": {
+      "title": "Versions",
+      "none": "No versions.",
+      "create": "Recorded",
+      "update": "Changed",
+      "delete": "Deleted",
+      "import": "Imported"
+    },
+    "import": {
+      "title": "Import from the gouvernorat template",
+      "intro": "Download the xlsx template (with the gouvernorat's units and the accepted types), fill in its three sheets: vehicles, equipment and staff, then check before saving. Nothing missing from the file is deleted.",
+      "pickGouvernorat": "Pick the gouvernorat",
+      "template": "Download the template",
+      "file": "File (xlsx or CSV)",
+      "fileHelp": "10 MB at most, 5,000 rows.",
+      "tooLarge": "The file is over 10 MB.",
+      "csvOf": "The CSV holds",
+      "check": "Check",
+      "applied": "Register saved for {{gouvernorat}}.",
+      "errors": "Errors that block saving",
+      "warnings": "Warnings",
+      "summary": "What the file holds for {{gouvernorat}} ({{format}})",
+      "what": "Sheet",
+      "new": "New",
+      "changed": "Changed",
+      "unchanged": "Unchanged",
+      "fixFirst": "Fix the errors in the file, then check again.",
+      "apply": "Save to the register",
+      "editorsOnly": "Importing is for the head of the operations room.",
+      "line": "line {{line}}",
+      "sheet": {
+        "vehicles": "Vehicles",
+        "stock": "Equipment",
+        "agents": "Staff"
+      },
+      "problem": {
+        "unit_unknown": "unknown unit in the gouvernorat",
+        "category_unknown": "type not in the catalogue",
+        "category_inactive": "type switched off",
+        "spec_invalid": "invalid specification",
+        "label_required": "name missing",
+        "quantity_invalid": "invalid quantity",
+        "quantity_zero": "quantity is zero",
+        "matricule_required": "staff number missing",
+        "name_required": "name missing",
+        "skill_invalid": "invalid speciality or level",
+        "duplicate_row": "duplicate row",
+        "state_unknown": "unknown state (taken as ready)",
+        "year_invalid": "invalid year (ignored)",
+        "availability_unknown": "unknown availability (taken as on duty)",
+        "matricule_elsewhere": "staff number recorded in another gouvernorat"
+      }
+    },
+    "catalogue": {
+      "intro": "One catalogue for every gouvernorat, so the figures add up without ambiguity. The central room keeps it; a type is never deleted, only switched off.",
+      "newTitle": "New type",
+      "kind": "Kind",
+      "family": "Family",
+      "key": "Key (Latin letters)",
+      "levels": "Levels",
+      "levelsOf": "{{n}} levels",
+      "state": "State",
+      "active": "Active",
+      "inactive": "Switched off",
+      "switchOff": "Switch off",
+      "switchOn": "Switch on"
+    },
+    "search": {
+      "intro": "Ask one question of every gouvernorat you see: for example fire trucks of 2000 L or more, or staff trained in diving. The result gives counts by gouvernorat and unit, never a name, and can be shown on the map or exported.",
+      "what": "What are you looking for?",
+      "specs": "Required specifications",
+      "required": "{{spec}}: required",
+      "min": "{{spec}}: from",
+      "max": "{{spec}}: to",
+      "minLevel": "Minimum level",
+      "anyLevel": "Any level",
+      "validCert": "Valid certificate only",
+      "submit": "Search",
+      "total": "Count: {{total}}",
+      "readyCount": "{{label}}: {{ready}}",
+      "inGouvernorats": "in {{count}} gouvernorat(s)",
+      "toMap": "Show on the map",
+      "export": "Export the result (CSV)",
+      "none": "No result for this search.",
+      "caption": "Search result by gouvernorat",
+      "count": "Count",
+      "unitsOf": "Units ({{count}})",
+      "unitCount": "{{total}} ({{label}}: {{ready}})",
+      "ready": {
+        "vehicles": "Ready",
+        "stock": "Ready",
+        "agents": "On duty"
+      },
+      "readyOnly": {
+        "vehicles": "Ready vehicles only",
+        "stock": "Ready quantity only",
+        "agents": "Staff on duty only"
+      },
+      "mapRoomsOnly": "The live map is for the operations rooms; every count is in the table below."
+    }
+  },
+  "basemap": {
+    "label": "Map background",
+    "mode": {
+      "map": "Map",
+      "satellite": "Satellite",
+      "hybrid": "Hybrid"
+    },
+    "source": {
+      "open": "Open Sentinel‑2 imagery",
+      "paid": "Imagery of the provider chosen by the administration"
+    },
+    "settings": {
+      "title": "Map background: satellite imagery",
+      "open": "Without any setting, the maps use the open Sentinel‑2 imagery (EOX, CC BY-NC-SA 4.0 licence, non-commercial use), with CARTO place names in the hybrid view.",
+      "intro": "If the administration contracts a paid imagery provider (sharper and more recent), enter the service address and licence key here, then test the connection before switching it on. The key stays encrypted on the server and never reaches a browser.",
+      "provider": "Provider",
+      "maxZoom": "Maximum zoom served by the provider",
+      "url": "Imagery address (API)",
+      "urlHelp": "The tile address from the provider's contract, with {z}, {x} and {y}, and {key} where the key goes if it is in the address.",
+      "useExample": "Use this provider's example",
+      "key": "Licence key",
+      "keyKept": "Key stored ({{hint}}). Leave empty to keep it.",
+      "keyNone": "No key stored.",
+      "header": "Header name if the key is sent in one (optional)",
+      "dropKey": "Remove the stored key",
+      "attribution": "Source credit on the map (required by the licence)",
+      "enabled": "Use this provider on every map",
+      "fallback": "If the provider fails or the key expires, the map takes the image from the open source, tile by tile.",
+      "lastTestOk": "Last test succeeded: {{time}}",
+      "lastTestFailed": "Last test failed: {{time}}",
+      "notTested": "The current settings have not been tested yet.",
+      "updated": "Last change: {{name}}, {{time}}",
+      "testOk": "Connection works: an image from the provider arrived in {{ms}} ms.",
+      "testFailed": "Connection failed ({{status}}). Check the address and the key.",
+      "saved": "Settings saved; the change is in the audit log.",
+      "test": "Test the connection",
+      "save": "Save"
+    },
+    "provider": {
+      "esri": "Esri World Imagery",
+      "maxar": "Maxar",
+      "mapbox": "Mapbox Satellite",
+      "google": "Google Maps Platform",
+      "other": "Other provider"
+    }
   }
 }

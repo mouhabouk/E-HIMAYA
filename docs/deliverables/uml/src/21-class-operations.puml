@@ -51,6 +51,33 @@ class Unité {
 class Moyen {
   type, libellé
   statut
+  caractéristiques (R1)
+}
+class "CatégorieMoyen (R1)" as Categorie {
+  clé, nature, famille
+  noms (ar, fr, en)
+  caractéristiques attendues
+  niveaux de compétence
+}
+class "Stock (R1)" as Stock {
+  gouvernorat, caractéristiques
+  prêts, en panne
+  version
+}
+class "Agent (R1)" as Agent {
+  matricule, nom, grade
+  téléphone (salle du gouvernorat)
+  disponibilité, version
+}
+class "CompétenceAgent (R1)" as Competence {
+  niveau, certificat valable jusqu'au
+}
+class "RévisionInventaire (R1)" as RevInv {
+  entité, action, instantané
+  motif, auteur
+}
+class "VérificationUnité (R1)" as Verif {
+  vérifiée le, par
 }
 class Affectation {
   type, ordre
@@ -144,6 +171,15 @@ Incident "1" -- "*" Mobilisation
 Incident "1" -- "*" DemandeRenfort
 Incident "1" -- "*" Prévision
 Unité "1" *-- "*" Moyen
+Unité "1" *-- "*" Stock
+Unité "1" *-- "*" Agent
+Unité "1" -- "0..1" Verif : dernière vérification
+Agent "1" *-- "*" Competence
+Stock "*" --> "1" Categorie
+Competence "*" --> "1" Categorie
+Moyen "*" ..> "0..1" Categorie : type
+note "Recherche R2 : décomptes par gouvernorat et par unité,\nportée de l'appelant ; la salle centrale voit tout." as NR
+Categorie .. NR
 Affectation "*" --> "0..1" Moyen
 Mobilisation "1" *-- "*" CibleMobilisation
 CibleMobilisation "*" --> "1" "Bénévole"

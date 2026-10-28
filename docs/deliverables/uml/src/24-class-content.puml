@@ -37,6 +37,13 @@ class CoucheCarte {
   champs : colonne → publics
   supprimée_le, motif (30 jours)
 }
+class "FondDeCarte (R-S)" as FondCarte {
+  fournisseur, modèle d'adresse (https)
+  clé de licence (chiffrée, jamais rendue)
+  en-tête de la clé, attribution
+  zoom max, activé, dernier test
+  -- à défaut : imagerie ouverte EOX
+}
 class DossierCouches {
   clé, noms (ar, fr, en)
   icône, couleur, ordre

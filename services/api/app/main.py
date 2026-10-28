@@ -31,6 +31,8 @@ from app.modules.analytics.worker import analytics_forever
 from app.modules.appinfo.feedback import router as appinfo_feedback_router
 from app.modules.appinfo.router import router as appinfo_router
 from app.modules.audit.router import router as audit_router
+from app.modules.basemap.router import router as basemap_router
+from app.modules.basemap.router import tiles_router as basemap_tiles_router
 from app.modules.coastal.router import public_router as coastal_router
 from app.modules.coastal.router import router as coastal_staff_router
 from app.modules.coastal.worker import coastal_forever
@@ -54,6 +56,7 @@ from app.modules.health.router import router as health_router
 from app.modules.identity.email import router as identity_email_router
 from app.modules.identity.internal import router as identity_internal_router
 from app.modules.identity.router import router as identity_router
+from app.modules.inventory.router import router as inventory_router
 from app.modules.knowledge.indexer import knowledge_forever
 from app.modules.knowledge.router import router as knowledge_router
 from app.modules.layers.router import public_router as layers_router
@@ -307,6 +310,9 @@ def create_app() -> FastAPI:
         programmes_router,
         crisis_router,
         register_router,
+        inventory_router,
+        basemap_router,
+        basemap_tiles_router,
         identity_internal_router,
     )
     for router in routers:

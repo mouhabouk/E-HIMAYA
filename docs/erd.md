@@ -574,6 +574,21 @@ erDiagram
 
 ```mermaid
 erDiagram
+    geo__basemap {
+        text key PK
+        text provider
+        text url_template
+        blob api_key
+        text key_header
+        text attribution
+        smallint max_zoom
+        boolean enabled
+        boolean last_test_ok
+        datetime last_test_at
+        text updated_by
+        text updated_by_name
+        datetime updated_at
+    }
     geo__delegation {
         integer id PK
         text code
@@ -835,6 +850,88 @@ erDiagram
     identity__account ||--o{ identity__volunteer : "user_id"
     identity__doctor ||--o{ identity__doctor_review : "user_id"
     identity__volunteer ||--o{ identity__volunteer_review : "user_id"
+```
+
+## inv
+
+```mermaid
+erDiagram
+    inv__agent {
+        uuid id PK
+        uuid unit_id FK
+        smallint gouvernorat_code FK
+        text matricule
+        text full_name
+        text rank
+        text phone
+        text availability
+        text notes
+        integer version
+        datetime created_at
+        datetime updated_at
+        text updated_by
+    }
+    inv__agent_skill {
+        uuid agent_id PK,FK
+        text skill_key PK,FK
+        smallint level
+        date cert_expires
+    }
+    inv__category {
+        text key PK
+        text kind
+        text family
+        jsonb name
+        jsonb specs
+        smallint levels
+        integer position
+        boolean active
+        datetime updated_at
+        text updated_by
+    }
+    inv__revision {
+        uuid id PK
+        text entity
+        uuid entity_id
+        smallint gouvernorat_code FK
+        text action
+        jsonb snapshot
+        text reason
+        text created_by
+        text created_by_name
+        datetime created_at
+    }
+    inv__stock {
+        uuid id PK
+        uuid unit_id FK
+        smallint gouvernorat_code FK
+        text category_key FK
+        jsonb specs
+        integer qty_ready
+        integer qty_broken
+        text notes
+        integer version
+        datetime created_at
+        datetime updated_at
+        text updated_by
+    }
+    inv__unit_check {
+        uuid unit_id PK,FK
+        smallint gouvernorat_code FK
+        datetime verified_at
+        text verified_by
+        text verified_by_name
+    }
+    geo__gouvernorat ||--o{ inv__agent : "gouvernorat_code"
+    geo__gouvernorat ||--o{ inv__revision : "gouvernorat_code"
+    geo__gouvernorat ||--o{ inv__stock : "gouvernorat_code"
+    geo__gouvernorat ||--o{ inv__unit_check : "gouvernorat_code"
+    inv__agent ||--o{ inv__agent_skill : "agent_id"
+    inv__category ||--o{ inv__agent_skill : "skill_key"
+    inv__category ||--o{ inv__stock : "category_key"
+    ops__unit ||--o{ inv__agent : "unit_id"
+    ops__unit ||--o{ inv__stock : "unit_id"
+    ops__unit ||--o{ inv__unit_check : "unit_id"
 ```
 
 ## knowledge
@@ -1300,6 +1397,12 @@ erDiagram
         text notes
         geography_point_4326 location
         datetime location_at
+        text category_key FK
+        jsonb specs
+        text code
+        smallint year
+        text out_reason
+        text updated_by
         integer version
         datetime created_at
         datetime updated_at
@@ -1382,6 +1485,7 @@ erDiagram
     geo__layer_feature ||--o{ ops__casualty_transport : "hospital_ref"
     identity__volunteer ||--o{ ops__assignment : "volunteer_id"
     identity__volunteer ||--o{ ops__callout_target : "volunteer_id"
+    inv__category ||--o{ ops__resource : "category_key"
     ops__assignment ||--o{ ops__callout_target : "assignment_id"
     ops__assignment ||--o{ ops__casualty_transport : "assignment_id"
     ops__assignment ||--o{ ops__crew_alert : "assignment_id"

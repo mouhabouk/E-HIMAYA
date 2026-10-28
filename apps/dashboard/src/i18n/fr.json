@@ -56,7 +56,8 @@
       "orgs": "Établissements",
       "knowledge": "Analyse et savoir",
       "system": "Système"
-    }
+    },
+    "inventory": "Registre des moyens"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -416,7 +417,29 @@
     "group_kept": "Ce dossier ne peut pas être supprimé.",
     "group_sensitivity_mismatch": "Les couches sensibles vont dans le dossier sensible, et lui seul les reçoit.",
     "icon_unknown": "Icône inconnue.",
-    "tone_unknown": "Couleur inconnue."
+    "tone_unknown": "Couleur inconnue.",
+    "counts_only": "Vous voyez les effectifs seulement : les listes et les noms sont réservés aux salles d'opérations.",
+    "category_unknown": "Ce type n'existe pas dans le catalogue ou ne convient pas à ce registre.",
+    "category_inactive": "Ce type est désactivé dans le catalogue : aucune nouvelle entrée.",
+    "category_taken": "Un type porte déjà cet identifiant.",
+    "category_not_found": "Type introuvable.",
+    "family_mismatch": "Les véhicules et le matériel ont une famille, les spécialités n'en ont pas.",
+    "spec_unknown": "Caractéristique inconnue pour ce type.",
+    "spec_invalid": "Valeur de caractéristique invalide.",
+    "unit_not_found": "Unité introuvable dans votre périmètre.",
+    "vehicle_not_found": "Véhicule introuvable.",
+    "stock_not_found": "Ligne de matériel introuvable.",
+    "stock_exists": "Ce matériel avec ces caractéristiques existe déjà dans l'unité : modifiez sa quantité.",
+    "agent_not_found": "Agent introuvable.",
+    "matricule_taken": "Ce matricule est déjà attribué à un autre agent.",
+    "skill_level_invalid": "Niveau de spécialité invalide.",
+    "entity_required": "Indiquez le contenu du CSV (véhicules, matériel ou agents).",
+    "import_has_errors": "Le fichier contient des erreurs : corrigez-les puis revérifiez.",
+    "file_too_many_rows": "Le fichier dépasse 5 000 lignes.",
+    "basemap_url_https": "L'adresse du fournisseur doit commencer par https://.",
+    "basemap_url_placeholders": "L'adresse doit contenir {z}, {x} et {y}.",
+    "basemap_key_unused": "La clé n'est pas utilisée : ajoutez {key} à l'adresse ou indiquez l'en-tête.",
+    "basemap_key_missing": "L'adresse demande une clé ({key}) et aucune n'est enregistrée."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -542,7 +565,22 @@
     "count": "Signalements affichés : {{count}}",
     "truncated": "D’autres signalements existent, zoomez pour les voir",
     "openDetail": "Ouvrir le détail",
-    "listToggle": "Liste des signalements affichés sur la carte"
+    "listToggle": "Liste des signalements affichés sur la carte",
+    "resourceSearch": {
+      "layer": "Résultat de recherche : {{search}}",
+      "between": "{{spec}} entre {{low}} et {{high}}",
+      "atLeast": "{{spec}} {{value}} ou plus",
+      "atMost": "{{spec}} {{value}} ou moins",
+      "level": "niveau {{level}} ou plus",
+      "place": "{{name}} : {{total}}",
+      "legend": "Légende des couleurs selon le nombre",
+      "none": "Aucun",
+      "range": "de {{low}} à {{high}}",
+      "zoomHint": "Le nombre est écrit sur chaque gouvernorat ; zoomez pour voir les unités.",
+      "unitsHint": "Le nombre est écrit sur chaque unité.",
+      "edit": "Modifier la recherche",
+      "clear": "Retirer le résultat"
+    }
   },
   "priority": {
     "badge": "Priorité {{score}} ({{band}})",
@@ -3878,6 +3916,7 @@
       "tabs": {
         "label": "Couches",
         "layers": "Couches ({{count}})",
+        "background": "Fond de carte",
         "deleted": "Supprimées ({{count}})",
         "folders": "Dossiers de la carte ({{count}})"
       },
@@ -5546,5 +5585,287 @@
     "repliesN": "{{n}} réponse(s)",
     "replies": "Réponses",
     "writeTo": "Écrire à un gouvernorat qui n'a pas répondu"
+  },
+  "inventory": {
+    "title": "Registre des moyens",
+    "introCentral": "Le matériel et les agents de tous les gouvernorats dans un seul registre : les véhicules avec leurs caractéristiques (camion d'incendie 2 000 L), le matériel en quantité, les agents avec leurs spécialités. La salle centrale voit tout et tient le catalogue.",
+    "introRegional": "Le registre de votre gouvernorat : véhicules avec leurs caractéristiques, matériel en quantité, agents avec leurs spécialités. Vous ne voyez que vos unités et confirmez les données de chaque unité une fois par mois.",
+    "countsOnly": "Seuls les effectifs s'affichent ici. Les listes et les noms des agents sont réservés aux salles d'opérations.",
+    "empty": "Rien d'enregistré pour l'instant.",
+    "otherType": "Autre type",
+    "yes": "oui",
+    "anyType": "Tous",
+    "allGouvernorats": "Tous les gouvernorats",
+    "actions": "Actions",
+    "edit": "Modifier",
+    "editNamed": "Modifier {{label}}",
+    "delete": "Supprimer",
+    "deleteNamed": "Supprimer {{label}}",
+    "confirmDelete": "Confirmer la suppression",
+    "export": "Exporter en CSV",
+    "exportWithNames": "Avec les noms et téléphones (salle du gouvernorat) ; l'export est journalisé.",
+    "exportNoNames": "Sans les noms ni les téléphones ; l'export est journalisé.",
+    "tabs": {
+      "label": "Sections du registre",
+      "overview": "Vue d'ensemble",
+      "search": "Recherche nationale",
+      "units": "Unités",
+      "vehicles": "Véhicules",
+      "stock": "Matériel",
+      "agents": "Agents",
+      "import": "Import",
+      "catalogue": "Catalogue"
+    },
+    "kpi": {
+      "vehiclesReady": "véhicules prêts sur {{total}}",
+      "equipmentReady": "matériels prêts ({{broken}} en panne)",
+      "agentsOnDuty": "agents en service sur {{total}}",
+      "units": "unités"
+    },
+    "overview": {
+      "byGouvernorat": "Par gouvernorat",
+      "units": "Unités",
+      "out": "Hors service",
+      "equipment": "Matériel",
+      "agents": "Agents",
+      "stale": "{{n}} non confirmées",
+      "broken": "({{n}} en panne)",
+      "agentsOf": "{{on}} sur {{all}}",
+      "byType": "Par type",
+      "bySkill": "Agents par spécialité",
+      "skillReady": "En service, certificat valide",
+      "expired": "Certificat expiré"
+    },
+    "state": {
+      "ready": "Prêt",
+      "assigned": "En mission",
+      "maintenance": "Entretien",
+      "broken": "En panne"
+    },
+    "availability": {
+      "on_duty": "En service",
+      "rest": "Repos",
+      "leave": "Congé"
+    },
+    "kind": {
+      "vehicle": "Véhicules",
+      "equipment": "Matériel",
+      "skill": "Spécialités"
+    },
+    "family": {
+      "vehicles": "Véhicules",
+      "equipment": "Matériel",
+      "boats": "Embarcations",
+      "air": "Moyens aériens",
+      "ppe": "Équipements de protection individuelle"
+    },
+    "field": {
+      "gouvernorat": "Gouvernorat",
+      "unit": "Unité",
+      "type": "Type",
+      "label": "Désignation",
+      "code": "Numéro interne",
+      "state": "État",
+      "year": "Année",
+      "notes": "Notes",
+      "specs": "Caractéristiques",
+      "qtyReady": "Quantité prête",
+      "qtyBroken": "Quantité en panne",
+      "matricule": "Matricule",
+      "fullName": "Nom et prénom",
+      "rank": "Grade",
+      "phone": "Téléphone",
+      "availability": "Disponibilité",
+      "skills": "Spécialités",
+      "skill": "Spécialité"
+    },
+    "form": {
+      "pickUnit": "Choisir l'unité",
+      "pickType": "Choisir le type",
+      "reason": "Motif du changement",
+      "reasonOptional": "Motif du changement (facultatif)",
+      "reasonHelp": "Conservé avec la version et son auteur (5 caractères au moins pour une modification).",
+      "missing": "Complétez les champs obligatoires.",
+      "deleteReason": "Motif (vente, réforme, retraite…)"
+    },
+    "units": {
+      "intro": "La salle régionale confirme les données de chaque unité une fois par mois. Une unité non confirmée depuis 30 jours est signalée à la salle centrale.",
+      "staleCount": "{{n}} unités à confirmer",
+      "vehicles": "Véhicules prêts",
+      "verified": "Dernière confirmation",
+      "never": "Jamais confirmée",
+      "stale": "À confirmer",
+      "verify": "Confirmer les données",
+      "verifyNamed": "Confirmer les données de {{unit}}",
+      "none": "Aucune unité dans ce périmètre."
+    },
+    "vehicles": {
+      "newTitle": "Nouveau véhicule",
+      "editTitle": "Modifier {{label}}",
+      "assignedNote": "En mission : son état suit l'intervention.",
+      "count": "{{n}} véhicules"
+    },
+    "stock": {
+      "newTitle": "Nouveau matériel",
+      "editTitle": "Modifier le matériel"
+    },
+    "agents": {
+      "newTitle": "Nouvel agent",
+      "editTitle": "Modifier {{name}}",
+      "privacy": "Le nom et le téléphone sont des données personnelles : visibles des seules salles d'opérations, exportés par la salle du gouvernorat uniquement.",
+      "levelOf": "Niveau de {{skill}}",
+      "level": "niveau {{level}}",
+      "expiresOf": "Expiration du certificat {{skill}}",
+      "expiredOn": "expiré le {{date}}",
+      "namesHidden": "Noms et téléphones masqués : réservés aux salles d'opérations.",
+      "count": "{{n}} agents",
+      "hidden": "nom masqué"
+    },
+    "revisions": {
+      "title": "Versions",
+      "none": "Aucune version.",
+      "create": "Création",
+      "update": "Modification",
+      "delete": "Suppression",
+      "import": "Import"
+    },
+    "import": {
+      "title": "Import depuis le modèle du gouvernorat",
+      "intro": "Téléchargez le modèle xlsx (avec les unités du gouvernorat et les types acceptés), remplissez ses trois feuilles : véhicules, matériel et agents, puis vérifiez avant d'enregistrer. Rien n'est supprimé de ce qui manque au fichier.",
+      "pickGouvernorat": "Choisir le gouvernorat",
+      "template": "Télécharger le modèle",
+      "file": "Fichier (xlsx ou CSV)",
+      "fileHelp": "10 Mo au plus, 5 000 lignes.",
+      "tooLarge": "Le fichier dépasse 10 Mo.",
+      "csvOf": "Le CSV contient",
+      "check": "Vérifier",
+      "applied": "Registre enregistré pour {{gouvernorat}}.",
+      "errors": "Erreurs bloquantes",
+      "warnings": "Avertissements",
+      "summary": "Contenu du fichier pour {{gouvernorat}} ({{format}})",
+      "what": "Feuille",
+      "new": "Nouveaux",
+      "changed": "Modifiés",
+      "unchanged": "Inchangés",
+      "fixFirst": "Corrigez les erreurs dans le fichier puis vérifiez à nouveau.",
+      "apply": "Enregistrer dans le registre",
+      "editorsOnly": "L'import est réservé au chef de la salle d'opérations.",
+      "line": "ligne {{line}}",
+      "sheet": {
+        "vehicles": "Véhicules",
+        "stock": "Matériel",
+        "agents": "Agents"
+      },
+      "problem": {
+        "unit_unknown": "unité inconnue dans le gouvernorat",
+        "category_unknown": "type absent du catalogue",
+        "category_inactive": "type désactivé",
+        "spec_invalid": "caractéristique invalide",
+        "label_required": "désignation manquante",
+        "quantity_invalid": "quantité invalide",
+        "quantity_zero": "quantité nulle",
+        "matricule_required": "matricule manquant",
+        "name_required": "nom manquant",
+        "skill_invalid": "spécialité ou niveau invalide",
+        "duplicate_row": "ligne en double",
+        "state_unknown": "état inconnu (considéré prêt)",
+        "year_invalid": "année invalide (ignorée)",
+        "availability_unknown": "disponibilité inconnue (considéré en service)",
+        "matricule_elsewhere": "matricule enregistré dans un autre gouvernorat"
+      }
+    },
+    "catalogue": {
+      "intro": "Un seul catalogue pour tous les gouvernorats, pour additionner les chiffres sans ambiguïté. La salle centrale le tient ; un type ne se supprime pas, il se désactive.",
+      "newTitle": "Nouveau type",
+      "kind": "Nature",
+      "family": "Famille",
+      "key": "Identifiant (latin)",
+      "levels": "Niveaux",
+      "levelsOf": "{{n}} niveaux",
+      "state": "État",
+      "active": "Actif",
+      "inactive": "Désactivé",
+      "switchOff": "Désactiver",
+      "switchOn": "Activer"
+    },
+    "search": {
+      "intro": "Posez une seule question à tous les gouvernorats que vous voyez : par exemple les camions d'incendie de 2000 L ou plus, ou les agents plongeurs. Le résultat donne des nombres par gouvernorat et par unité, sans aucun nom ; il peut être affiché sur la carte ou exporté.",
+      "what": "Que cherchez-vous ?",
+      "specs": "Caractéristiques demandées",
+      "required": "{{spec}} : exigé",
+      "min": "{{spec}} : de",
+      "max": "{{spec}} : à",
+      "minLevel": "Niveau minimal",
+      "anyLevel": "Tous niveaux",
+      "validCert": "Certificat valide seulement",
+      "submit": "Rechercher",
+      "total": "Nombre : {{total}}",
+      "readyCount": "{{label}} : {{ready}}",
+      "inGouvernorats": "dans {{count}} gouvernorat(s)",
+      "toMap": "Afficher sur la carte",
+      "export": "Exporter le résultat (CSV)",
+      "none": "Aucun résultat pour cette recherche.",
+      "caption": "Résultat de la recherche par gouvernorat",
+      "count": "Nombre",
+      "unitsOf": "Unités ({{count}})",
+      "unitCount": "{{total}} ({{label}} : {{ready}})",
+      "ready": {
+        "vehicles": "Prêts",
+        "stock": "Prêt",
+        "agents": "En service"
+      },
+      "readyOnly": {
+        "vehicles": "Engins prêts seulement",
+        "stock": "Quantité prête seulement",
+        "agents": "Agents en service seulement"
+      },
+      "mapRoomsOnly": "La carte en direct est réservée aux salles des opérations ; tous les nombres figurent dans le tableau ci-dessous."
+    }
+  },
+  "basemap": {
+    "label": "Fond de carte",
+    "mode": {
+      "map": "Plan",
+      "satellite": "Satellite",
+      "hybrid": "Hybride"
+    },
+    "source": {
+      "open": "Images ouvertes Sentinel‑2",
+      "paid": "Images du fournisseur retenu par l'administration"
+    },
+    "settings": {
+      "title": "Fond de carte : images satellite",
+      "open": "Sans réglage, les cartes utilisent les images ouvertes Sentinel‑2 (EOX, licence CC BY-NC-SA 4.0, usage non commercial), avec les noms de lieux de CARTO en mode hybride.",
+      "intro": "Si l'administration a un contrat avec un fournisseur d'images payant (plus précis et plus récent), saisissez ici l'adresse du service et la clé de licence, puis testez la connexion avant de l'activer. La clé reste chiffrée sur le serveur et n'atteint aucun navigateur.",
+      "provider": "Fournisseur",
+      "maxZoom": "Zoom maximal servi par le fournisseur",
+      "url": "Adresse des images (API)",
+      "urlHelp": "Adresse des tuiles selon le contrat du fournisseur, avec {z}, {x} et {y}, et {key} à la place de la clé si elle figure dans l'adresse.",
+      "useExample": "Utiliser l'exemple de ce fournisseur",
+      "key": "Clé de licence",
+      "keyKept": "Clé enregistrée ({{hint}}). Laissez vide pour la garder.",
+      "keyNone": "Aucune clé enregistrée.",
+      "header": "Nom de l'en-tête si la clé y est envoyée (facultatif)",
+      "dropKey": "Supprimer la clé enregistrée",
+      "attribution": "Mention de la source sur la carte (exigée par la licence)",
+      "enabled": "Activer ce fournisseur pour toutes les cartes",
+      "fallback": "Si le fournisseur tombe en panne ou si la clé expire, la carte prend l'image de la source ouverte, tuile par tuile.",
+      "lastTestOk": "Dernier test réussi : {{time}}",
+      "lastTestFailed": "Dernier test échoué : {{time}}",
+      "notTested": "Les réglages actuels n'ont pas encore été testés.",
+      "updated": "Dernière modification : {{name}}, {{time}}",
+      "testOk": "Connexion réussie : une image du fournisseur reçue en {{ms}} ms.",
+      "testFailed": "Échec de la connexion ({{status}}). Vérifiez l'adresse et la clé.",
+      "saved": "Réglages enregistrés ; le changement est inscrit au journal d'audit.",
+      "test": "Tester la connexion",
+      "save": "Enregistrer"
+    },
+    "provider": {
+      "esri": "Esri World Imagery",
+      "maxar": "Maxar",
+      "mapbox": "Mapbox Satellite",
+      "google": "Google Maps Platform",
+      "other": "Autre fournisseur"
+    }
   }
 }

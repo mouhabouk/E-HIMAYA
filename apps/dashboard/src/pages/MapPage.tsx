@@ -5,7 +5,9 @@ import { Link, useNavigate } from "react-router";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { FiltersBar } from "../components/FiltersBar";
 import { LazyMapView } from "../components/LazyMap";
-import { useMapDataLayers } from "../components/MapDataLayers";
+import { useBasemap } from "../components/BasemapSwitch";
+import { useMapDataLayers, type FolderExtra } from "../components/MapDataLayers";
+import { useResourceSearchLayer } from "../components/ResourceSearchLayer";
 import type { HeatPoint, MapMarker, MapPoi, MapPolygon } from "../components/MapView";
 import { MapLegend, orgKindLabel } from "../components/OrgBits";
 import { useMapWeather, useWeatherGrid, WeatherControls, WeatherPointCard, type WeatherViews } from "../components/WeatherLayer";
@@ -118,6 +120,7 @@ export function MapPage() {
   const [showVolunteers, setVolunteerLayer] = useLayer(VOLUNTEER_LAYER_KEY);
   const [showAlerts, setAlertLayer] = useLayer(ALERT_LAYER_KEY);
   const gouvernorats = useGouvernorats();
+  const basemap = useBasemap();
 
   // Outbound call from a map point (phase 7 §4, FR-C-10): reporter, volunteer or unit, through the softphone.
   const phone = useSoftphone();
@@ -329,9 +332,28 @@ export function MapPage() {
     }
     return out;
   }, [showResources, resourcesQuery.data, showVolunteers, volunteersQuery.data, lang, t]);
+  // Phase R2: the units and resources of the operations and a resources search sent from the register sit in the
+  // «موارد الحماية المدنية» folder of the layer panel, beside the file layers of that folder.
+  const resourceSearch = useResourceSearchLayer(bbox);
+  const civilProtection = useMemo<FolderExtra[]>(() => {
+    const out: FolderExtra[] = [];
+    if (resourceSearch.extra) out.push(resourceSearch.extra);
+    if (resourceLayerAllowed) {
+      out.push({ key: "ops-resources", label: t("ops.map.resourcesToggle"), on: resourceLayer, onChange: setResourceLayer });
+    }
+    return out;
+  }, [resourceSearch.extra, resourceLayerAllowed, resourceLayer, setResourceLayer, t]);
+  const folderExtras = useMemo(() => ({ civil_protection: civilProtection }), [civilProtection]);
   // Map data layers loaded from files (phase B1): hospitals, shelters… any number at once.
-  const dataLayers = useMapDataLayers(bbox);
-  const allPois = useMemo(() => [...pois, ...opsPois, ...dataLayers.pois], [pois, opsPois, dataLayers.pois]);
+  const dataLayers = useMapDataLayers(bbox, folderExtras);
+  const allPois = useMemo(
+    () => [...pois, ...opsPois, ...resourceSearch.pois, ...dataLayers.pois],
+    [pois, opsPois, resourceSearch.pois, dataLayers.pois],
+  );
+  const shapes = useMemo(
+    () => ({ ...dataLayers.shapes, features: [...resourceSearch.shapes, ...dataLayers.shapes.features] }),
+    [dataLayers.shapes, resourceSearch.shapes],
+  );
   const heat = useMemo<HeatPoint[]>(
     () =>
       showVolunteers
@@ -383,9 +405,6 @@ export function MapPage() {
             <span>{t("orgs.layer.toggle")}</span>
           </label>
         )}
-        {resourceLayerAllowed && (
-          <LayerToggle checked={resourceLayer} onChange={setResourceLayer} label={t("ops.map.resourcesToggle")} />
-        )}
         <LayerToggle checked={showVolunteers} onChange={setVolunteerLayer} label={t("ops.map.volunteersToggle")} />
         <LayerToggle checked={showAlerts} onChange={setAlertLayer} label={t("ops.map.alertsToggle")} />
         <LayerToggle
@@ -402,6 +421,7 @@ export function MapPage() {
           </span>
         )}
         {legend.length > 0 && <MapLegend items={legend} />}
+        {basemap.control}
       </div>
       {dataLayers.controls}
       {showWeather && (
@@ -472,8 +492,9 @@ export function MapPage() {
           onOpenPoi={onOpenPoi}
           polygons={polygons}
           heat={heat}
-          shapes={dataLayers.shapes}
+          shapes={shapes}
           weather={mapWeather}
+          basemap={basemap.view}
           onMapClick={onMapClick}
           popup={weatherPopup}
           onPopupClose={() => setWeatherPoint(null)}

@@ -65,6 +65,9 @@ rectangle "Tableau de bord central" {
   usecase "Choisir la forme et la place\ndu menu principal (UI-3)" as S44
   usecase "Afficher les couches de la carte\npar dossiers (UI-3b)" as S45
   usecase "Gérer les dossiers de couches,\nclasser une couche (UI-3b)" as S46
+  usecase "Tenir le registre des moyens\net du personnel de son gouvernorat (R1)" as S47
+  usecase "Chercher un moyen dans tous les\ngouvernorats, l'afficher sur la carte (R2)" as S48
+  usecase "Passer la carte en satellite ;\nrégler le fournisseur payant (R-S)" as S49
 }
 rectangle "Application des équipes (P4a à P4d)" {
   usecase "Se connecter par code\n(MFA, PIN 6 chiffres)" as T0
@@ -186,4 +189,14 @@ CMD --> S45
 MIN --> S45
 SA --> S46
 S45 <.. S46 : <<extend>>
+OP --> S47
+OPM --> S47
+OP --> S48
+CMD --> S48
+GOV --> S48
+MIN --> S48
+OP --> S49
+MIN --> S49
+SA --> S49
+S48 ..> S47 : <<include>>
 @enduml

@@ -5,6 +5,7 @@ from app.modules.analytics.models import Notification, Scenario, Schedule
 from app.modules.analytics.models import Report as AnalyticsReport
 from app.modules.appinfo.models import AppRating
 from app.modules.audit.models import AuditLog
+from app.modules.basemap.models import Basemap
 from app.modules.coastal.models import Beach, BeachDay, CoastalAlert, CoastalSettings, MarineHour, Presence
 from app.modules.contact.models import ContactEvent, ContactRequest
 from app.modules.content.models import GuideItem, GuideTopic, Revision, SafetyTip
@@ -30,6 +31,7 @@ from app.modules.evidence.models import Anchor, Leaf
 from app.modules.forecast.models import ForecastRun
 from app.modules.geo.models import Delegation, Gouvernorat, Layer, LayerFeature, LayerImport, LayerRevision
 from app.modules.identity.models import Account, Consent, EmailCode, ErasureRequest, Profile
+from app.modules.inventory.models import Agent, AgentSkill, Category, InventoryRevision, Stock, UnitCheck
 from app.modules.knowledge.models import IndexState, MemoryEntry, MemoryEntryVersion, SearchDoc
 from app.modules.medical.models import FileKey, FileOpening, LockedFile
 from app.modules.notify.models import Device, Dispatch, Message, OrgDigest, Outbox
@@ -99,6 +101,8 @@ from app.modules.weather.models import AlertSuggestion, GridPoint, Observation, 
 
 __all__ = [
     "Account",
+    "Agent",
+    "AgentSkill",
     "AiSettingsRow",
     "AlertSuggestion",
     "Analysis",
@@ -111,6 +115,7 @@ __all__ = [
     "AxisEvent",
     "AxisIncident",
     "BadgeAward",
+    "Basemap",
     "Beach",
     "BeachDay",
     "Call",
@@ -118,6 +123,7 @@ __all__ = [
     "CalloutTarget",
     "CasualtyCount",
     "CasualtyTransport",
+    "Category",
     "Certificate",
     "CoastalAlert",
     "CoastalSettings",
@@ -159,6 +165,7 @@ __all__ = [
     "Hazmat",
     "Incident",
     "IndexState",
+    "InventoryRevision",
     "Invitation",
     "Layer",
     "LayerFeature",
@@ -225,12 +232,14 @@ __all__ = [
     "SmsInbound",
     "StaffDevice",
     "StatusHistory",
+    "Stock",
     "StreamDetection",
     "StreamLocation",
     "StreamSegment",
     "TeamMember",
     "TimelineEvent",
     "Unit",
+    "UnitCheck",
     "Volunteer",
     "VolunteerReview",
 ]

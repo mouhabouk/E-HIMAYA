@@ -243,7 +243,7 @@ describe("LayersPage", () => {
     ];
     const updateLayer = vi.fn(() => Promise.resolve(layer({ group: "transport" })));
     const createLayerGroup = vi.fn(() => Promise.resolve(folder("depots", "Dépôts", 13, 0)));
-    const deleteLayerGroup = vi.fn(() => Promise.resolve());
+    const deleteLayerGroup = vi.fn(() => Promise.resolve(undefined));
     const api = fakeApi({
       ...fakeLayersApi(),
       layers: vi.fn(() => Promise.resolve({ ...list([layer({ group: "health" })]), groups })),

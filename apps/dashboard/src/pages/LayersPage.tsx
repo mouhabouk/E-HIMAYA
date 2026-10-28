@@ -1,3 +1,4 @@
+import { BasemapSettingsCard } from "../components/BasemapSettings";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Suspense, useId, useMemo, useState, type SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
@@ -1073,7 +1074,7 @@ export function LayersPage() {
   const lang = useLanguage();
   const [selected, setSelected] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
-  const [tab, setTab] = useState<"layers" | "folders" | "deleted">("layers");
+  const [tab, setTab] = useState<"layers" | "folders" | "background" | "deleted">("layers");
   const query = useQuery({ queryKey: layerKeys.all, queryFn: ({ signal }) => api.layers(signal) });
   const meta = query.data;
   const layers = meta?.items ?? [];
@@ -1111,7 +1112,7 @@ export function LayersPage() {
           )}
           {meta.can_manage && (
             <div role="tablist" aria-label={t("layers.manage.tabs.label")} className="tabs">
-              {(["layers", "folders", "deleted"] as const).map((k) => (
+              {(["layers", "folders", "background", "deleted"] as const).map((k) => (
                 <button
                   key={k}
                   type="button"
@@ -1131,6 +1132,8 @@ export function LayersPage() {
             <DeletedLayers items={meta.deleted} />
           ) : tab === "folders" && meta.can_manage ? (
             <LayerGroupsCard groups={meta.groups ?? []} />
+          ) : tab === "background" && meta.can_manage ? (
+            <BasemapSettingsCard />
           ) : layers.length === 0 ? (
             <p className="muted">{t("layers.list.empty")}</p>
           ) : (
