@@ -4,6 +4,7 @@
  */
 import type { Page, Route, WebSocketRoute } from "@playwright/test";
 import { E2E_ENV } from "../playwright.config";
+import { BASEMAP } from "../src/test/basemapData";
 
 export const API = E2E_ENV.VITE_API_BASE_URL;
 
@@ -153,6 +154,8 @@ export function commonAnswer(
   if (method === "GET" && pathname === "/api/v1/staff/layers") {
     return json(route, { items: [], can_manage: false, icons: [], palette: [], limits: { file_bytes: 10485760, rows: 50000 } });
   }
+  // Map background (phase R): the open satellite source, read by the background switch of the map.
+  if (method === "GET" && pathname === "/api/v1/staff/basemap") return json(route, BASEMAP);
   if (method === "GET" && pathname === "/api/v1/staff/break-glass")
     return json(route, { items: [], next_cursor: null });
   return null;
