@@ -260,6 +260,16 @@ export function canEditCoastalRules(identity: { roles: readonly string[]; nation
   return identity.national && any(COASTAL_RULE_ROLES, identity.roles);
 }
 
+/**
+ * Seasonal programmes (phase L2): every reader of the room and the system administrator see them; the national
+ * system administrator and operations manager prepare, import, approve and cancel them (the API decides per action).
+ */
+export const PROGRAMME_ROLES = [...READ_ROLES, "sysadmin"] as const;
+
+export function canOpenProgrammes(roles: readonly string[]): boolean {
+  return any(PROGRAMME_ROLES, roles);
+}
+
 /** Contact us inbox (phase B1): operations manager, both committees and content editors, in their scope. */
 export const CONTACT_ROLES = ["ops_manager", "local_committee", "central_committee", "content_editor"] as const;
 

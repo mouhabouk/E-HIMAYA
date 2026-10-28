@@ -51,6 +51,7 @@ from app.modules.orgs.models import (
     Organization,
     TeamMember,
 )
+from app.modules.programmes.models import Programme, ProgrammePoint, ProgrammeRevision
 from app.modules.reports.models import Media, Report, StatusHistory
 from app.modules.rewards.models import (
     BadgeAward,
@@ -155,6 +156,9 @@ __all__ = [
     "Presence",
     "ProcedureChunk",
     "Profile",
+    "Programme",
+    "ProgrammePoint",
+    "ProgrammeRevision",
     "Report",
     "ReportTemplate",
     "Resource",

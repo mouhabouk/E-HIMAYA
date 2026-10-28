@@ -140,15 +140,7 @@ async def _revise(session: AsyncSession, layer: Layer, principal: Principal, act
     )
 
 
-def _sync(layer: Layer) -> None:
-    """Keep the B1 columns in step: ``audience`` public when citizens see it, ``enabled`` when it is in use.
-
-    A sensitive layer is never public, and its audiences do not matter (the minister alone sees it)."""
-    if layer.sensitive:
-        layer.audiences = [a for a in layer.audiences if a != "citizen"]
-    layer.audience = "public" if "citizen" in layer.audiences and not layer.sensitive else "staff"
-    layer.enabled = layer.status == "published" and layer.deleted_at is None
-    layer.staff_only = sorted(k for k, allowed in (layer.fields or {}).items() if "citizen" not in allowed)
+_sync = service.sync_columns
 
 
 async def _layer_out(session: AsyncSession, layer: Layer, principal: Principal) -> schemas.LayerOut:

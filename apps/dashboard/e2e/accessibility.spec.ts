@@ -23,6 +23,8 @@ const SCREENS: { path: string; ready: string }[] = [
   { path: "/audit", ready: "main h1" },
   { path: "/settings", ready: "main h1" },
   { path: "/coastal", ready: "main h1" },
+  { path: "/programmes", ready: "main table" },
+  { path: "/programmes/p1", ready: "main table" },
 ];
 
 const PAGE = { items: [], next_cursor: null, total: 0 };
@@ -57,6 +59,56 @@ const COASTAL_OVERVIEW = {
   heat_drownings: [],
 };
 
+const PROGRAMME = {
+  id: "p1",
+  code: "BEACH-2026",
+  kind: "beach",
+  title: "Plan de surveillance des plages 2026",
+  season: "Été 2026",
+  valid_from: "2026-06-15",
+  valid_to: "2026-09-15",
+  status: "approved",
+  version: 2,
+  source_document: "",
+  declared: {},
+  approved_by_name: "Salma",
+  approved_at: "2026-06-01T09:00:00Z",
+  cancel_reason: null,
+  layer_key: "prog_beach_2026",
+  live: true,
+  updated_by_name: "Salma",
+  updated_at: "2026-06-01T09:00:00Z",
+  figures: { points: 1, unlocated: 0, open: 1, gouvernorats: 1, staff: 20, lifeguards_planned: 8, lifeguards_deployed: 2 },
+  can_edit: true,
+  can_follow_up: true,
+};
+const PROGRAMME_POINT = {
+  id: "pt1",
+  ref: "BEACH-2026-001",
+  gouvernorat_code: 17,
+  place_name: "Plage de la Corniche",
+  sub_points: null,
+  lat: 37.27,
+  lon: 9.87,
+  geo_confidence: "confirmed",
+  geo_note: null,
+  staff_count: 20,
+  staff_composition: null,
+  supervisors: 1,
+  lifeguards_planned: 8,
+  lifeguards_deployed: 2,
+  equipment: null,
+  hours: "08:00-19:00",
+  opening_date: null,
+  closing_date: null,
+  status: "open",
+  supervisor_name: "Responsable",
+  supervisor_phone: "+216 70 000 000",
+  notes: null,
+  updated_at: "2026-06-01T09:00:00Z",
+  can_follow_up: true,
+};
+
 async function mockApi(page: Page): Promise<string[]> {
   const unanswered: string[] = [];
   await page.route(`${API}/**`, (route) => {
@@ -89,6 +141,15 @@ async function mockApi(page: Page): Promise<string[]> {
     if (pathname === "/api/v1/staff/coastal/alerts") return json(route, { items: [] });
     if (pathname === "/api/v1/staff/coastal/settings") {
       return json(route, { rules: { yellow: 35, red: 60, waves: [[1, 10], [null, 40]] }, defaults: {}, updated_by: null, updated_at: null });
+    }
+    // Seasonal programmes (phase L2): one approved programme with one point.
+    if (pathname === "/api/v1/staff/programmes") return json(route, { items: [PROGRAMME], can_create: true });
+    if (pathname === "/api/v1/staff/programmes/p1") {
+      return json(route, { programme: PROGRAMME, points: [PROGRAMME_POINT], computed: { staff: 20 } });
+    }
+    if (pathname === "/api/v1/staff/programmes/p1/revisions") {
+      const revision = { action: "approve", reason: null, created_by_name: "Salma", created_at: "2026-06-01T09:00:00Z", points: 1 };
+      return json(route, { items: [{ ...revision, number: 2 }, { ...revision, number: 1, action: "import" }] });
     }
     unanswered.push(pathname);
     return json(route, PAGE);
