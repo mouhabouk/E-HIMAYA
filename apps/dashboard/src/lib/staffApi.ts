@@ -3,6 +3,7 @@ import { bboxParam, filtersToQuery, type BBox, type ReportFilters } from "./filt
 import { appFeedbackApi } from "./appFeedback";
 import { coastalApi } from "./coastalApi";
 import { programmesApi } from "./programmes";
+import { crisisApi } from "./crisis";
 import { contactApi } from "./contact";
 import { opsApi } from "./opsApi";
 import { crewApi } from "./crewApi";
@@ -235,6 +236,7 @@ export function staffApi(api: ApiClient) {
     ...layersApi(api),
     ...coastalApi(api),
     ...programmesApi(api),
+    ...crisisApi(api),
     ...guideApi(api),
     ...preventionApi(api),
     ...contactApi(api),

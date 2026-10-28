@@ -20,6 +20,7 @@ import { AI_STATUS_READY, fakeJwt } from "./fixtures";
 import { fakeOpsApi } from "./opsFixtures";
 import { fakeCoastalApi } from "./coastalFixtures";
 import { fakeProgrammesApi } from "./programmeFixtures";
+import { fakeCrisisApi } from "./crisisFixtures";
 import { FakeSipEngine, fakePhase7Api } from "./phase7Fixtures";
 import { fakePhase8Api } from "./phase8Fixtures";
 import { fakePhase9Api } from "./phase9Fixtures";
@@ -232,6 +233,7 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     ...fakeLayersApi(),
     ...fakeCoastalApi(),
     ...fakeProgrammesApi(),
+    ...fakeCrisisApi(),
     ...fakeGuideApi(),
     ...fakeContactApi(),
     ...fakeSafetyApi(),

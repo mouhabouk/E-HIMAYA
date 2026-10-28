@@ -72,7 +72,7 @@ export const PHASE9_TECHNICAL_ROLES = ["security_admin", "ai_admin", "regional_a
 export const TECHNICAL_ROLES = ["sysadmin", ...PHASE9_TECHNICAL_ROLES] as const;
 /** Function families of §1.1 (derived from roles, as the API does). */
 export const FUNCTION_ROLES = {
-  command: ["central_committee", "local_committee", "field_commander"],
+  command: ["central_committee", "local_committee", "field_commander", "governor", "minister"],
   operations: ["operator", "ops_manager"],
   technical: TECHNICAL_ROLES,
   support: ["content_editor", "org_auditor", "medical_coordinator"],
@@ -107,9 +107,15 @@ export const REGIONAL_GRANTABLE_ROLES = [
   "content_editor",
   "medical_coordinator",
   "team_leader",
+  "governor",
 ] as const;
 /** Added for a national regional account administrator. */
-export const NATIONAL_GRANTABLE_ROLES = [...REGIONAL_GRANTABLE_ROLES, "central_committee", "org_auditor"] as const;
+export const NATIONAL_GRANTABLE_ROLES = [
+  ...REGIONAL_GRANTABLE_ROLES,
+  "central_committee",
+  "org_auditor",
+  "minister",
+] as const;
 
 /** Every role the dashboard knows (shown in the header). */
 export const STAFF_ROLES = [
@@ -118,6 +124,8 @@ export const STAFF_ROLES = [
   "medical_coordinator",
   ...TECHNICAL_ROLES,
   "team_leader",
+  "governor",
+  "minister",
 ] as const;
 export type StaffRole = (typeof STAFF_ROLES)[number];
 
@@ -145,6 +153,7 @@ export function hasDashboardAccess(roles: readonly string[]): boolean {
     canReadOrgs(roles) ||
     canReadResources(roles) ||
     canUseNotifications(roles) ||
+    canOpenCommand(roles) ||
     PHASE9_TECHNICAL_ROLES.some((r) => roles.includes(r))
   );
 }
@@ -318,6 +327,7 @@ export function hasSoftphone(roles: readonly string[]): boolean {
 /** Pages a user lands on when the KPIs are not theirs: the first area their roles open. */
 export function landingPath(roles: readonly string[]): string {
   if (hasReadAccess(roles)) return "/";
+  if (canOpenCommand(roles)) return "/command";
   if (roles.includes("regional_account_admin")) return "/accounts";
   if (roles.includes("security_admin")) return "/break-glass";
   if (roles.includes("ai_admin")) return "/settings/ai";
@@ -578,4 +588,25 @@ export function canMarkCrewAlerts(roles: readonly string[]): boolean {
 /** Phase P4b: detailed-report templates are edited and approved by the Office (central command or a national manager). */
 export function canEditReportTemplates(identity: { roles: readonly string[]; national: boolean }): boolean {
   return identity.roles.includes("central_committee") || (identity.national && identity.roles.includes("ops_manager"));
+}
+
+/**
+ * Disaster and crisis axes (phase L3, docs/phase-l/design-l3.md §3). The operations rooms work the axes; the governor
+ * and the minister see only the declared axes (never the reports and interventions lists) on the command screen,
+ * which the rooms open too. The API decides each action (commander, regional manager, issuer).
+ */
+export const AXIS_ROLES = ["operator", "ops_manager"] as const;
+export const COMMAND_ROLES = ["governor", "minister", "ops_manager"] as const;
+
+export function canOpenAxes(roles: readonly string[]): boolean {
+  return any(AXIS_ROLES, roles);
+}
+
+export function canOpenCommand(roles: readonly string[]): boolean {
+  return any(COMMAND_ROLES, roles);
+}
+
+/** Issues recommendations and decisions: a governor (their gouvernorat) or the minister. */
+export function isIssuer(roles: readonly string[]): boolean {
+  return roles.includes("governor") || roles.includes("minister");
 }

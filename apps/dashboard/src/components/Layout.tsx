@@ -15,6 +15,8 @@ import {
   canHandleContact,
   canOpenCoastal,
   canOpenProgrammes,
+  canOpenAxes,
+  canOpenCommand,
   canOpenLayers,
   canManageAccounts,
   canOpenCrew,
@@ -363,6 +365,16 @@ export function Layout() {
           {canOpenCoastal(identity.roles) && (
             <NavItem to="/coastal" icon="healthAndSafety" tone="sky">
               {t("nav.coastal")}
+            </NavItem>
+          )}
+          {canOpenCommand(identity.roles) && (
+            <NavItem to="/command" icon="militaryTech" tone="navy">
+              {t("nav.command")}
+            </NavItem>
+          )}
+          {canOpenAxes(identity.roles) && (
+            <NavItem to="/axes" icon="warning" tone="red">
+              {t("nav.axes")}
             </NavItem>
           )}
           {canOpenProgrammes(identity.roles) && (

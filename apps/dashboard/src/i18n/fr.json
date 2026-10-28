@@ -43,7 +43,9 @@
     "crew": "Équipes de garde",
     "reportTemplates": "Modèles de rapport",
     "coastal": "Sécurité côtière",
-    "programmes": "Programmes saisonniers"
+    "programmes": "Programmes saisonniers",
+    "command": "Commandement",
+    "axes": "Axes de crise"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -75,7 +77,9 @@
     "ai_admin": "Administrateur IA",
     "regional_account_admin": "Administrateur des comptes",
     "medical_coordinator": "Coordinateur médical régional",
-    "team_leader": "Chef d'agrès"
+    "team_leader": "Chef d'agrès",
+    "governor": "Gouverneur",
+    "minister": "Ministre"
   },
   "status": {
     "received": "Reçu",
@@ -358,7 +362,29 @@
     "file_unreadable": "Fichier abîmé ou illisible.",
     "file_sheet_missing": "La feuille « النقاط » (points) manque dans le fichier.",
     "file_schema": "Le fichier ne suit pas le schéma des programmes.",
-    "file_too_many_points": "Trop de points dans le fichier."
+    "file_too_many_points": "Trop de points dans le fichier.",
+    "axis_not_found": "Axe introuvable ou hors de votre périmètre.",
+    "axis_closed": "L’axe est clôturé.",
+    "incident_not_found": "Intervention introuvable.",
+    "incident_not_attachable": "Intervention fusionnée ou dissoute : non rattachable.",
+    "incident_out_of_axis": "L’intervention relève d’un autre gouvernorat.",
+    "incident_in_other_axis": "L’intervention est rattachée à un autre axe ouvert.",
+    "incident_not_attached": "Intervention non rattachée à cet axe.",
+    "close_the_national_axis": "Clôturez l’axe national, pas un sous-axe.",
+    "gouvernorats_required": "Choisissez au moins un gouvernorat.",
+    "gouvernorat_required": "Choisissez le gouvernorat.",
+    "request_decided": "Demande déjà tranchée.",
+    "request_not_found": "Demande introuvable.",
+    "executor_name_required": "Indiquez le partenaire.",
+    "due_in_past": "Échéance passée.",
+    "directive_overridden": "Décision remplacée par celle du ministre.",
+    "directive_not_found": "Décision introuvable.",
+    "sitrep_sent": "Point déjà envoyé.",
+    "sitrep_not_found": "Point introuvable.",
+    "shelter_not_found": "Centre introuvable.",
+    "evacuation_not_found": "Zone introuvable.",
+    "need_not_found": "Besoin introuvable.",
+    "occupants_over_capacity": "Occupants au-delà de la capacité."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -4908,5 +4934,250 @@
       "restore": "Retour à une version"
     },
     "unlocatedCount": "{{count}} sans position"
+  },
+  "crisis": {
+    "sim": "données simulées",
+    "level": {
+      "1": "Veille",
+      "2": "Alerte",
+      "3": "Intervention étendue",
+      "4": "Catastrophe majeure"
+    },
+    "kind": {
+      "flood": "Inondation",
+      "forest_fire": "Feu de forêt",
+      "storm": "Tempête",
+      "earthquake": "Séisme",
+      "technological": "Accident technologique",
+      "health": "Crise sanitaire",
+      "other": "Autre"
+    },
+    "role": {
+      "governor": "Gouverneur",
+      "minister": "Ministre"
+    },
+    "fig": {
+      "incidentsOpen": "Interventions ouvertes",
+      "deceased": "Décès",
+      "injuredHint": "{{n}} blessés",
+      "rescued": "Personnes secourues",
+      "evacuated": "Personnes évacuées",
+      "sheltered": "Hébergés",
+      "resources": "Moyens engagés",
+      "volunteersHint": "et {{n}} volontaires",
+      "decisionsDone": "Décisions exécutées",
+      "meanHours": "Exécution moyenne {{h}} h"
+    },
+    "map": {
+      "aria": "Carte de commandement : les gouvernorats et le niveau de leurs axes. Les listes à côté donnent toutes les valeurs.",
+      "axisAria": "Carte de l’axe {{name}} : zone, interventions, hébergement, évacuation et zones des décisions.",
+      "controls": "Commandes de la carte",
+      "zoomIn": "Zoom avant",
+      "zoomOut": "Zoom arrière",
+      "home": "Recentrer",
+      "tilt": "Basculer entre vue à plat et vue inclinée",
+      "hideLayers": "Masquer les couches",
+      "showLayers": "Couches",
+      "legend": "Légende des niveaux",
+      "unavailable": "Carte indisponible dans ce navigateur ; les listes donnent toutes les valeurs.",
+      "layer": {
+        "gouvernorats": "Gouvernorats",
+        "axes": "Zones des axes",
+        "incidents": "Interventions",
+        "shelters": "Centres d’hébergement",
+        "evacuations": "Zones d’évacuation",
+        "decisions": "Zones des décisions"
+      }
+    },
+    "command": {
+      "eyebrow": "Commandement des catastrophes et crises",
+      "minister": "Tableau du ministre : situation nationale",
+      "governor": "Tableau du gouverneur de {{name}}",
+      "active": "{{count}} axe(s) actif(s)",
+      "overview": "Vue d’ensemble",
+      "axes": "Crises en cours",
+      "axesIn": "Crises en cours à {{name}}",
+      "allGouvernorats": "Tous les gouvernorats",
+      "none": "Aucune catastrophe ou crise déclarée dans le gouvernorat.",
+      "noneNational": "Aucune catastrophe ou crise déclarée dans le pays.",
+      "ranking": "Gouvernorats par charge",
+      "rankingCaption": "Gouvernorats avec des axes ouverts, par niveau puis par charge (interventions ouvertes par moyen engagé).",
+      "gouvernorat": "Gouvernorat",
+      "level": "Niveau",
+      "weight": "Charge",
+      "resources": "Moyens engagés",
+      "noResources": "Aucun moyen engagé sur les interventions rattachées.",
+      "needs": "Besoins et demandes d’appui ({{n}})",
+      "noNeeds": "Aucun besoin signalé.",
+      "follow": "Suivi",
+      "noArchive": "Aucun axe clôturé.",
+      "tab": {
+        "decisions": "Décisions et recommandations",
+        "sitreps": "Points de situation",
+        "archive": "Archives",
+        "timeline": "Chronologie"
+      }
+    },
+    "axes": {
+      "title": "Axes de catastrophe et de crise",
+      "intro": "Un axe regroupe les interventions d’un événement majeur : zone, niveau, moyens et décisions. Le commandant l’ouvre ; le chef de salle régionale le demande.",
+      "open": "Ouvrir un axe",
+      "request": "Demander la déclaration d’un axe",
+      "openConfirm": "Ouvrir et prévenir gouverneur et ministre",
+      "requestConfirm": "Envoyer au commandant",
+      "name": "Nom de l’axe",
+      "namePlaceholder": "Inondations de Nabeul, octobre 2026",
+      "kind": "Type",
+      "national": "Axe national (un sous-axe par gouvernorat)",
+      "plan": "Plan activé",
+      "facts": "Faits (10 caractères au moins)",
+      "pending": "Demandes en attente du commandant ({{n}})",
+      "requestIncidents": "{{n}} intervention(s) proposée(s)",
+      "requestStatus": {
+        "pending": "En attente",
+        "accepted": "Acceptée",
+        "rejected": "Refusée"
+      },
+      "rejectReason": "Motif du refus",
+      "accept": "Accepter et ouvrir",
+      "reject": "Refuser",
+      "state": "État",
+      "openList": "Ouverts",
+      "closedList": "Clôturés",
+      "noneOpen": "Aucun axe ouvert.",
+      "noneClosed": "Aucun axe clôturé."
+    },
+    "axis": {
+      "label": "Axe",
+      "national": "National",
+      "nationalOf": "National ({{n}} gouvernorats)",
+      "since": "depuis {{at}}",
+      "level": "Niveau",
+      "situation": "Situation",
+      "suggested": "Suggestions de rattachement ({{n}})",
+      "noSuggestion": "Aucune intervention ouverte compatible dans la zone.",
+      "attach": "Rattacher",
+      "propose": "Proposer",
+      "dismiss": "Écarter",
+      "attached": "Interventions rattachées ({{n}})",
+      "noIncident": "Aucune intervention rattachée.",
+      "incidentFigs": "Décès {{d}} · blessés {{i}} · moyens {{r}}",
+      "shelters": "Hébergement ({{n}})",
+      "evacuations": "Évacuation : {{n}} personnes",
+      "escalate": "Passer en axe national",
+      "addGouvernorats": "Ajouter des gouvernorats",
+      "gouvernorats": "Gouvernorats concernés",
+      "reason": "Motif",
+      "escalateConfirm": "Confirmer",
+      "close": "Clôturer l’axe",
+      "summary": "Bilan final (10 caractères au moins)",
+      "closeConfirm": "Clôturer et créer le brouillon de mémoire",
+      "closed": "Clôturé"
+    },
+    "add": {
+      "shelter": "Ajouter un centre",
+      "shelterName": "Nom du centre",
+      "shelterCount": "Capacité",
+      "occupants": "Occupants",
+      "evacuation": "Ajouter une zone d’évacuation",
+      "evacuationName": "Zone",
+      "evacuationCount": "Personnes évacuées",
+      "need": "Signaler un besoin",
+      "needName": "Besoin (pompes, couvertures…)",
+      "needCount": "Quantité",
+      "submit": "Ajouter"
+    },
+    "need": {
+      "raised": "Signalé",
+      "met": "Satisfait",
+      "markMet": "Satisfait"
+    },
+    "directive": {
+      "new": "Recommandation ou décision",
+      "kindLabel": "Type",
+      "kind": {
+        "decision": "Décision",
+        "recommendation": "Recommandation"
+      },
+      "number": "n° {{n}}",
+      "category": "Catégorie",
+      "cat": {
+        "evacuation": "Évacuation",
+        "resources": "Réquisition de moyens",
+        "closure": "Fermeture de route ou d’établissement",
+        "shelter": "Ouverture d’un centre d’hébergement",
+        "support": "Demande d’appui",
+        "plan": "Activation d’un plan",
+        "public_information": "Information du public",
+        "other": "Autre"
+      },
+      "executor": "Exécutant",
+      "exec": {
+        "regional": "Salle régionale",
+        "central": "Salle centrale",
+        "partner": "Partenaire"
+      },
+      "partnerName": "Nom du partenaire",
+      "due": "Échéance",
+      "issuer": "Émise par",
+      "text": "Texte",
+      "signNote": "Le serveur signe le texte, l’émetteur, son rôle et l’heure ; rien n’est modifiable ni supprimable ensuite.",
+      "issue": "Émettre et signer",
+      "noAxis": "Aucun axe ouvert sur lequel vous pouvez émettre.",
+      "none": "Aucune décision ni recommandation.",
+      "status": {
+        "issued": "Émise",
+        "received": "Reçue",
+        "in_progress": "En cours",
+        "done": "Exécutée",
+        "failed": "Impossible"
+      },
+      "to": {
+        "received": "Accuser réception",
+        "in_progress": "Commencer",
+        "done": "Exécutée",
+        "failed": "Impossible (motif)"
+      },
+      "overridden": "En conflit : la décision du ministre prévaut",
+      "overdue": "Échéance dépassée",
+      "signed": "Signée (clé {{key}})",
+      "unsigned": "Non signée : clé de signature absente sur le serveur.",
+      "reason": "Motif : {{reason}}",
+      "reasonLabel": "Motif (obligatoire si impossible)"
+    },
+    "sitrep": {
+      "none": "Aucun point de situation envoyé.",
+      "number": "Point de situation {{n}}",
+      "draft": "Brouillon",
+      "figures": "Interventions {{incidents}} · décès {{deceased}} · évacués {{evacuated}} · hébergés {{sheltered}}",
+      "assessment": "Appréciation",
+      "send": "Envoyer au gouverneur et au ministre",
+      "prepare": "Préparer un point maintenant",
+      "dueIn": "Prochain point dans {{h}} h",
+      "late": "Point de situation en retard"
+    },
+    "event": {
+      "opened": "Ouverture de l’axe",
+      "escalated": "Passage en axe national",
+      "updated": "Mise à jour de l’axe",
+      "closed": "Clôture de l’axe",
+      "incident_attached": "Intervention rattachée",
+      "incident_detached": "Intervention détachée",
+      "incident_proposed": "Rattachement proposé",
+      "shelter_opened": "Centre d’hébergement ouvert",
+      "shelter_updated": "Centre mis à jour",
+      "evacuation_ordered": "Zone d’évacuation",
+      "evacuation_updated": "Évacuation mise à jour",
+      "need_raised": "Besoin signalé",
+      "need_met": "Besoin satisfait",
+      "directive_issued": "Recommandation ou décision émise",
+      "directive_received": "Décision reçue",
+      "directive_in_progress": "Décision en cours",
+      "directive_done": "Décision exécutée",
+      "directive_failed": "Décision impossible",
+      "directive_overdue": "Échéance dépassée",
+      "sitrep_drafted": "Brouillon de point",
+      "sitrep_sent": "Point envoyé"
+    }
   }
 }
