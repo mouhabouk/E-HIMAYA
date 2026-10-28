@@ -18,8 +18,10 @@ export interface OutlineEntry {
 }
 
 export function openPdf(data: ArrayBuffer): Promise<PdfDocument> {
-  // A copy: PDF.js transfers the buffer to its worker, and the query cache keeps the original.
-  return pdfjs.getDocument({ data: new Uint8Array(data.slice(0)), useSystemFonts: true, enableXfa: false }).promise;
+  // A copy: PDF.js transfers the buffer to its worker, and the query cache keeps the original. The fonts embedded in
+  // the file are used even when a font of the same name is installed: a local Arabic font drawn glyph by glyph loses
+  // its joining.
+  return pdfjs.getDocument({ data: new Uint8Array(data.slice(0)), useSystemFonts: false, enableXfa: false }).promise;
 }
 
 /** An entry of the table of contents as PDF.js gives it (only the fields read here). */
@@ -49,7 +51,11 @@ export async function outline(doc: PdfDocument): Promise<OutlineEntry[]> {
   return out;
 }
 
-/** Pages (1-based) whose text contains every word of the query, folded like the register's search. */
+/**
+ * Pages (1-based) whose text contains every word of the query, folded like the register's search. The spaces of the
+ * page are ignored, and the pieces of text are also read in reverse: a PDF printed by a browser keeps its Arabic as
+ * a piece per glyph from right to left, so «الإيواء» comes out as «اء», «ﻮ», «ﻳ», «ﻹ», «ا».
+ */
 export async function findPages(doc: PdfDocument, query: string): Promise<number[]> {
   const words = fold(query).split(/\s+/).filter(Boolean);
   if (!words.length) return [];
@@ -57,10 +63,16 @@ export async function findPages(doc: PdfDocument, query: string): Promise<number
   for (let n = 1; n <= doc.numPages; n++) {
     const page = await doc.getPage(n);
     const content = await page.getTextContent();
-    const text = fold(content.items.map((i) => ("str" in i ? i.str : "")).join(" "));
-    if (words.every((w) => text.includes(w))) hits.push(n);
+    const pieces = content.items.map((i) => ("str" in i ? i.str : ""));
+    if (words.every((w) => contains(pieces, w))) hits.push(n);
   }
   return hits;
+}
+
+/** Whether the pieces of text of a page hold a folded word, in reading or in visual order. */
+export function contains(pieces: string[], word: string): boolean {
+  const flat = (list: string[]) => fold(list.join("")).replace(/\s+/g, "").replaceAll("\u0000", "");
+  return flat(pieces).includes(word) || flat([...pieces].reverse()).includes(word);
 }
 
 /** Lower case without Arabic diacritics and tatweel, alef forms as one (the PDF text often differs in these). */
@@ -68,7 +80,7 @@ export function fold(s: string): string {
   return s
     .toLowerCase()
     .normalize("NFKC")
-    .replace(/[ً-ٰٟـ]/g, "")
+    .replace(/[\u064B-\u0670\u065F\u0640]/g, "")
     .replace(/[آأإ]/g, "ا")
     .replace(/ى/g, "ي")
     .replace(/ة/g, "ه");

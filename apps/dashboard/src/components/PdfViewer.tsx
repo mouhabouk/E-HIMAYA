@@ -223,10 +223,11 @@ export function PdfViewer({ documentId, title }: { documentId: string; title: st
         </div>
       )}
       <div className="pdf-viewer__frame" ref={frame} tabIndex={0} aria-label={t("plans.viewer.pageOf", { page, count: pages })}>
+        {/* PDF.js draws glyph by glyph from the left: an RTL canvas would shift every Arabic glyph by its width. */}
         {renderError ? (
           <p className="alert alert--error">{t("plans.viewer.renderError")}</p>
         ) : (
-          <canvas ref={canvas} role="img" aria-label={t("plans.viewer.pageOf", { page, count: pages })} />
+          <canvas ref={canvas} dir="ltr" role="img" aria-label={t("plans.viewer.pageOf", { page, count: pages })} />
         )}
       </div>
     </section>
