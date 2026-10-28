@@ -21,6 +21,7 @@ import {
   canOpenAxes,
   canOpenCommand,
   canOpenRegister,
+  canOpenSchedule,
   canOpenInventory,
   canOpenLayers,
   canManageAccounts,
@@ -105,6 +106,8 @@ const RegisterDocumentPage = page(() => import("./pages/RegisterDocumentPage"), 
 // Phase PL1: intervention plans by hazard, read on the screen.
 const PlansPage = page(() => import("./pages/PlansPage"), "PlansPage");
 const PlanViewerPage = page(() => import("./pages/PlansPage"), "PlanViewerPage");
+// Phase PL2: daily, weekly and monthly programmes of every gouvernorat.
+const SchedulePage = page(() => import("./pages/SchedulePage"), "SchedulePage");
 const DispatchesPage = page(() => import("./pages/DispatchPages"), "DispatchesPage");
 const DispatchPage = page(() => import("./pages/DispatchPages"), "DispatchPage");
 const MemoryListPage = page(() => import("./pages/MemoryListPage"), "MemoryListPage");
@@ -245,6 +248,7 @@ export function AppRoutes() {
         <Route path="register/:id" element={gated(canOpenRegister, <RegisterDocumentPage />)} />
         <Route path="plans" element={gated(canOpenRegister, <PlansPage />)} />
         <Route path="plans/:id" element={gated(canOpenRegister, <PlanViewerPage />)} />
+        <Route path="schedule" element={gated(canOpenSchedule, <SchedulePage />)} />
         <Route path="command" element={gated(canOpenCommand, <CommandPage />)} />
         <Route path="emergency-guide" element={gated(canEditTips, <EmergencyGuidePage />)} />
         <Route path="contact" element={gated(canHandleContact, <ContactInboxPage />)} />

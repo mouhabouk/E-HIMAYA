@@ -646,3 +646,13 @@ export function canOpenInventory(roles: readonly string[]): boolean {
 export function canListInventory(roles: readonly string[]): boolean {
   return any(INVENTORY_LIST_ROLES, roles);
 }
+
+/**
+ * Daily, weekly and monthly programmes (phase PL2, docs/phase-pl/design-plans.md §3.6): the rooms and committees read
+ * the programmes; the governor and the minister see the progress only (the activities name the people in charge).
+ */
+export const WORK_PROGRAMME_ROLES = [...READ_ROLES, "governor", "minister"] as const;
+
+export function canOpenSchedule(roles: readonly string[]): boolean {
+  return any(WORK_PROGRAMME_ROLES, roles);
+}

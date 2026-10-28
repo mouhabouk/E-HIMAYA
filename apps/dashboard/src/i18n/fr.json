@@ -58,7 +58,8 @@
       "system": "Système"
     },
     "inventory": "Registre des moyens",
-    "plans": "Plans d'intervention"
+    "plans": "Plans d'intervention",
+    "schedule": "Programmation"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -443,7 +444,21 @@
     "basemap_key_missing": "L'adresse demande une clé ({key}) et aucune n'est enregistrée.",
     "hazard_unknown": "Risque inconnu ou désactivé : choisissez un risque de la liste.",
     "hazard_only_for_plans": "Seul un plan porte un risque.",
-    "viewer_pdf_only": "Seul un PDF s'affiche à l'écran ; ouvrez le fichier depuis le registre."
+    "viewer_pdf_only": "Seul un PDF s'affiche à l'écran ; ouvrez le fichier depuis le registre.",
+    "period_not_found": "Programme introuvable ou hors de votre périmètre.",
+    "period_exists": "Un programme existe déjà pour cette période.",
+    "period_not_draft": "Seul un brouillon peut être supprimé.",
+    "no_items": "Ajoutez au moins une activité avant l'envoi.",
+    "period_locked": "Le programme attend son approbation : renvoyez-le avant de le modifier.",
+    "approved_head_only": "Un programme approuvé est mis à jour par le chef de salle.",
+    "date_outside_period": "La date est hors de la période du programme.",
+    "hours_reversed": "L'heure de fin précède l'heure de début.",
+    "plan_not_found": "Plan introuvable ou non accessible.",
+    "too_many_items": "Trop d'activités.",
+    "no_previous_period": "Pas de programme pour la période précédente.",
+    "period_not_approved": "Seules les activités d'un programme approuvé se suivent.",
+    "not_due_yet": "Une activité à venir ne peut être marquée réalisée.",
+    "item_not_found": "Activité introuvable."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -5947,6 +5962,153 @@
       "hits": "Trouvé sur {{count}} pages :",
       "contents": "Sommaire du plan",
       "renderError": "Impossible d'afficher cette page."
+    }
+  },
+  "schedule": {
+    "title": "Programmes quotidiens, hebdomadaires et mensuels",
+    "intro": "Le programme de chaque gouvernorat pour toutes les activités : permanences, patrouilles, exercices, visites de prévention, maintenance et autres. Approuvé comme le gouvernorat l'a choisi, suivi activité par activité.",
+    "tabs": {
+      "label": "Sections de la programmation",
+      "programme": "Programme",
+      "progress": "Taux de réalisation",
+      "settings": "Mode d'approbation"
+    },
+    "span": {
+      "label": "Durée",
+      "day": "Jour",
+      "week": "Semaine",
+      "month": "Mois"
+    },
+    "previous": {
+      "day": "Jour précédent",
+      "week": "Semaine précédente",
+      "month": "Mois précédent"
+    },
+    "next": {
+      "day": "Jour suivant",
+      "week": "Semaine suivante",
+      "month": "Mois suivant"
+    },
+    "today": "Aujourd'hui",
+    "pickDay": "Choisir un jour",
+    "weekOf": "Semaine du {{from}} au {{to}}",
+    "pickGouvernorat": "Choisissez le gouvernorat pour afficher son programme.",
+    "none": "Pas encore de programme pour cette période.",
+    "create": {
+      "day": "Créer le programme du jour",
+      "week": "Créer le programme de la semaine",
+      "month": "Créer le programme du mois"
+    },
+    "emptyDay": "Aucune activité ce jour.",
+    "allDay": "Toute la journée",
+    "legend": "Types d'activité",
+    "activity": {
+      "duty": "Permanence",
+      "patrol": "Patrouille",
+      "exercise": "Exercice",
+      "prevention_visit": "Visite de prévention",
+      "maintenance": "Maintenance",
+      "training": "Formation",
+      "awareness": "Sensibilisation",
+      "readiness_check": "Contrôle de disponibilité",
+      "meeting": "Réunion",
+      "other": "Autre"
+    },
+    "status": {
+      "draft": "Brouillon",
+      "submitted": "En attente du chef de salle",
+      "awaiting_centre": "En attente de la salle centrale",
+      "approved": "Approuvé",
+      "returned": "Renvoyé"
+    },
+    "itemStatus": {
+      "planned": "Prévu",
+      "done": "Réalisé",
+      "postponed": "Reporté",
+      "cancelled": "Annulé"
+    },
+    "approval": {
+      "direct": "Publication directe",
+      "head": "Approbation du chef de salle",
+      "head_and_centre": "Chef de salle puis salle centrale"
+    },
+    "repeat": {
+      "none": "Une fois",
+      "daily": "Chaque jour jusqu'à la fin de la période",
+      "weekdays": "Jours ouvrables (lundi à vendredi)",
+      "weekly": "Chaque semaine le même jour"
+    },
+    "period": {
+      "title": "État du programme",
+      "counts": "{{items}} activités, {{done}} réalisées, {{postponed}} reportées",
+      "returned": "Renvoyé : {{reason}}",
+      "submitted": "Envoyé par {{who}}.",
+      "approved": "Approuvé par {{who}}.",
+      "centreApproved": "Approuvé par la salle centrale : {{who}}.",
+      "submit": "Envoyer pour approbation",
+      "publish": "Publier le programme",
+      "approve": "Approuver",
+      "return": "Renvoyer le programme",
+      "returnReason": "Motif du renvoi",
+      "copy": "Copier la période précédente",
+      "print": "Imprimer",
+      "delete": "Supprimer le brouillon"
+    },
+    "item": {
+      "open": "{{title}}, {{activity}}, {{time}}, {{status}}",
+      "add": "Ajouter une activité",
+      "edit": "Modifier l'activité",
+      "save": "Enregistrer",
+      "activity": "Type d'activité",
+      "title": "Intitulé",
+      "date": "Date",
+      "starts": "De",
+      "ends": "À",
+      "repeat": "Répétition",
+      "unit": "Unité",
+      "place": "Lieu",
+      "responsible": "Responsable (fonction ou nom)",
+      "staff": "Nombre d'agents",
+      "resources": "Moyens requis",
+      "resource": "Type",
+      "qty": "Nombre",
+      "addResource": "Ajouter un moyen",
+      "removeResource": "Retirer",
+      "plan": "Plan associé",
+      "notes": "Note",
+      "inSeries": "dans une série",
+      "followUp": "Suivi",
+      "reason": "Motif (report ou annulation)",
+      "remove": "Supprimer l'activité",
+      "removeSeries": "Supprimer toute la série"
+    },
+    "follow": {
+      "done": "Réalisé",
+      "postponed": "Reporter",
+      "cancelled": "Annuler",
+      "planned": "Remettre en prévu",
+      "notDue": "Une activité se marque réalisée le jour venu."
+    },
+    "progress": {
+      "title": "Taux de réalisation par gouvernorat",
+      "gouvernorat": "Gouvernorat",
+      "status": "État du programme",
+      "items": "Activités",
+      "done": "Réalisées",
+      "postponed": "Reportées",
+      "rate": "Taux de réalisation",
+      "none": "Pas de programme",
+      "notDue": "Pas encore échu",
+      "open": "Ouvrir le programme",
+      "openOf": "Ouvrir le programme de {{name}}"
+    },
+    "settings": {
+      "title": "Mode d'approbation des programmes par gouvernorat",
+      "intro": "Chaque gouvernorat choisit comment ses programmes sont approuvés ; le chef de sa salle décide. Le mode est gardé avec le programme lors de son envoi.",
+      "approval": "Mode d'approbation",
+      "approvalOf": "Mode d'approbation de {{name}}",
+      "updated": "Dernier changement",
+      "save": "Enregistrer"
     }
   }
 }

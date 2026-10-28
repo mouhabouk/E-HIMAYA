@@ -58,7 +58,8 @@
       "system": "System"
     },
     "inventory": "Resources register",
-    "plans": "Intervention plans"
+    "plans": "Intervention plans",
+    "schedule": "Programmes"
   },
   "header": {
     "scope": "Geographic scope",
@@ -443,7 +444,21 @@
     "basemap_key_missing": "The address asks for a key ({key}) and none is stored.",
     "hazard_unknown": "Unknown or switched-off hazard: pick one from the list.",
     "hazard_only_for_plans": "Only a plan has a hazard.",
-    "viewer_pdf_only": "Only a PDF is shown on the screen; open the file from the register."
+    "viewer_pdf_only": "Only a PDF is shown on the screen; open the file from the register.",
+    "period_not_found": "Programme not found or outside your scope.",
+    "period_exists": "A programme already exists for this period.",
+    "period_not_draft": "Only a draft can be deleted.",
+    "no_items": "Add at least one activity before sending.",
+    "period_locked": "The programme awaits approval: send it back before changing it.",
+    "approved_head_only": "An approved programme is updated by the head of the room.",
+    "date_outside_period": "The date is outside the programme's period.",
+    "hours_reversed": "The end time is before the start time.",
+    "plan_not_found": "Plan not found or not available to you.",
+    "too_many_items": "Too many activities.",
+    "no_previous_period": "No programme for the previous period.",
+    "period_not_approved": "Only the activities of an approved programme are followed up.",
+    "not_due_yet": "An activity still to come cannot be marked done.",
+    "item_not_found": "Activity not found."
   },
   "kpi": {
     "title": "Key indicators",
@@ -5947,6 +5962,153 @@
       "hits": "Found on {{count}} pages:",
       "contents": "Plan contents",
       "renderError": "This page could not be drawn."
+    }
+  },
+  "schedule": {
+    "title": "Daily, weekly and monthly programmes",
+    "intro": "Each gouvernorat's programme for every activity: duty rosters, patrols, exercises, prevention visits, maintenance and more. Approved the way the gouvernorat chose, followed up activity by activity.",
+    "tabs": {
+      "label": "Programme sections",
+      "programme": "Programme",
+      "progress": "Progress",
+      "settings": "Approval"
+    },
+    "span": {
+      "label": "Span",
+      "day": "Day",
+      "week": "Week",
+      "month": "Month"
+    },
+    "previous": {
+      "day": "Previous day",
+      "week": "Previous week",
+      "month": "Previous month"
+    },
+    "next": {
+      "day": "Next day",
+      "week": "Next week",
+      "month": "Next month"
+    },
+    "today": "Today",
+    "pickDay": "Pick a day",
+    "weekOf": "Week of {{from}} to {{to}}",
+    "pickGouvernorat": "Choose the gouvernorat to show its programme.",
+    "none": "No programme for this period yet.",
+    "create": {
+      "day": "Create the day's programme",
+      "week": "Create the week's programme",
+      "month": "Create the month's programme"
+    },
+    "emptyDay": "No activity on this day.",
+    "allDay": "All day",
+    "legend": "Kinds of activity",
+    "activity": {
+      "duty": "Duty",
+      "patrol": "Patrol",
+      "exercise": "Exercise",
+      "prevention_visit": "Prevention visit",
+      "maintenance": "Maintenance",
+      "training": "Training",
+      "awareness": "Awareness",
+      "readiness_check": "Readiness check",
+      "meeting": "Meeting",
+      "other": "Other"
+    },
+    "status": {
+      "draft": "Draft",
+      "submitted": "Awaiting the head of the room",
+      "awaiting_centre": "Awaiting the central room",
+      "approved": "Approved",
+      "returned": "Sent back"
+    },
+    "itemStatus": {
+      "planned": "Planned",
+      "done": "Done",
+      "postponed": "Postponed",
+      "cancelled": "Cancelled"
+    },
+    "approval": {
+      "direct": "Published directly",
+      "head": "Approved by the head of the room",
+      "head_and_centre": "Head of the room, then the central room"
+    },
+    "repeat": {
+      "none": "Once",
+      "daily": "Every day until the end of the period",
+      "weekdays": "Working days (Monday to Friday)",
+      "weekly": "Every week on the same day"
+    },
+    "period": {
+      "title": "Programme state",
+      "counts": "{{items}} activities, {{done}} done, {{postponed}} postponed",
+      "returned": "Sent back: {{reason}}",
+      "submitted": "Sent by {{who}}.",
+      "approved": "Approved by {{who}}.",
+      "centreApproved": "Approved by the central room: {{who}}.",
+      "submit": "Send for approval",
+      "publish": "Publish the programme",
+      "approve": "Approve",
+      "return": "Send the programme back",
+      "returnReason": "Reason for sending back",
+      "copy": "Copy the previous period",
+      "print": "Print",
+      "delete": "Delete the draft"
+    },
+    "item": {
+      "open": "{{title}}, {{activity}}, {{time}}, {{status}}",
+      "add": "Add an activity",
+      "edit": "Edit the activity",
+      "save": "Save",
+      "activity": "Kind of activity",
+      "title": "Title",
+      "date": "Date",
+      "starts": "From",
+      "ends": "To",
+      "repeat": "Repeat",
+      "unit": "Unit",
+      "place": "Place",
+      "responsible": "In charge (role or name)",
+      "staff": "Staff",
+      "resources": "Resources needed",
+      "resource": "Type",
+      "qty": "Number",
+      "addResource": "Add a resource",
+      "removeResource": "Remove",
+      "plan": "Related plan",
+      "notes": "Note",
+      "inSeries": "part of a series",
+      "followUp": "Follow-up",
+      "reason": "Reason (postponing or cancelling)",
+      "remove": "Delete the activity",
+      "removeSeries": "Delete the whole series"
+    },
+    "follow": {
+      "done": "Done",
+      "postponed": "Postpone",
+      "cancelled": "Cancel",
+      "planned": "Back to planned",
+      "notDue": "An activity is marked done once its day has come."
+    },
+    "progress": {
+      "title": "Progress by gouvernorat",
+      "gouvernorat": "Gouvernorat",
+      "status": "Programme state",
+      "items": "Activities",
+      "done": "Done",
+      "postponed": "Postponed",
+      "rate": "Progress",
+      "none": "No programme",
+      "notDue": "Not due yet",
+      "open": "Open the programme",
+      "openOf": "Open the programme of {{name}}"
+    },
+    "settings": {
+      "title": "How each gouvernorat approves its programmes",
+      "intro": "Each gouvernorat chooses how its programmes are approved; the head of its room decides. The choice is kept with a programme when it is sent.",
+      "approval": "Approval",
+      "approvalOf": "Approval of {{name}}",
+      "updated": "Last change",
+      "save": "Save"
     }
   }
 }
