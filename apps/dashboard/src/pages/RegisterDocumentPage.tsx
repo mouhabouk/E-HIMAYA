@@ -488,7 +488,7 @@ export function RegisterDocumentPage() {
             <dd>{x.source === "axis" ? (x.signed ? t("register.sourceAxisSigned") : t("register.fromAxis")) : t("register.sourceManual")}</dd>
             <dt>{t("register.field.updated")}</dt>
             <dd>
-              {fmt.dateTime(x.updated_at)} {x.updated_by_name ? `· ${x.updated_by_name}` : ""} ·{" "}
+              {fmt.dateTime(x.updated_at)} {x.updated_by_name ? `· ${simText(x.updated_by_name).text}` : ""} ·{" "}
               {t("register.revisions.version", { n: x.version })}
             </dd>
           </dl>
