@@ -78,6 +78,9 @@ async function mockApi(page: Page): Promise<string[]> {
       });
     }
     if (pathname === "/api/v1/staff/ai/status") return json(route, { configured: false, capabilities: {} });
+    if (pathname === "/api/v1/staff/app-feedback") {
+      return json(route, { days: 30, count: 0, average: null, by_stars: {}, by_build: [], remarks: [] });
+    }
     if (pathname === "/api/v1/staff/alerts/active") return json(route, []);
     if (pathname === "/api/v1/staff/volunteers/map") return json(route, { type: "FeatureCollection", features: [] });
     if (pathname === "/api/v1/staff/reports/map") return json(route, { type: "FeatureCollection", features: [] });
