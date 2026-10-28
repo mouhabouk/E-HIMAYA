@@ -1,0 +1,24 @@
+@startuml
+!include style.iuml
+title Diagramme d'états : programme saisonnier et sa couche (L2)
+state Programme {
+  [*] --> Brouillon : saisie, import ou copie\nd'un programme précédent
+  Brouillon --> Brouillon : points, import\n(nouvelle version)
+  Brouillon --> Supprimé : suppression définitive
+  Brouillon --> Approuvé : approbation\n(nom, date, couche créée)
+  Approuvé --> MisÀJour : modification avec motif,\nsuivi du jour, retour à une version
+  MisÀJour --> MisÀJour : chaque changement :\nnouvelle version
+  Approuvé --> Annulé : annulation avec motif
+  MisÀJour --> Annulé : annulation avec motif
+  Approuvé --> Terminé : date de fin passée (worker)
+  MisÀJour --> Terminé : date de fin passée (worker)
+  Supprimé --> [*]
+  Terminé --> [*] : archive, comparaison des saisons
+  Annulé --> [*] : archive
+}
+state "Couche prog_<code>" as Couche {
+  [*] --> Suspendue : approbation avant la date de début
+  Suspendue --> Publiée : date de début atteinte
+  Publiée --> Suspendue : fin, annulation
+}
+@enduml

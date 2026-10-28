@@ -357,6 +357,25 @@ RETENTION_COASTAL_PRESENCE_HOURS=24                 # محو «أنا في ال�
 يحتاج الخادم الوصول إلى `marine-api.open-meteo.com` (HTTPS). دون ذلك، أو مع `WEATHER_PROVIDER=sim`، يعمل المحاكي وتظهر
 الشاشات بشارة **[SIM]**. تُعدَّل قواعد الخطر وعتباتها من صفحة «السلامة الساحلية» في اللوحة (اللجنة المركزية).
 
+### البرامج الموسمية وحماية الدخول (المرحلة L2)
+
+بعد `alembic upgrade head` (0055) تُحمَّل برامج 2026 مسودات، ثم يعتمد مدير العمليات كل برنامج من صفحة «البرامج» فيظهر
+على الخريطة بين تاريخيه فقط:
+
+```bash
+docker compose --env-file .env -f infra/compose.yml run --rm -v "$PWD/data/programmes:/data/programmes:ro" api \
+  python -m app.modules.programmes.cli load /data/programmes/2026/programmes_2026.json --dry-run   # العدّ دون كتابة
+docker compose --env-file .env -f infra/compose.yml run --rm -v "$PWD/data/programmes:/data/programmes:ro" api \
+  python -m app.modules.programmes.cli load /data/programmes/2026/programmes_2026.json
+```
+
+أسماء المشرفين وهواتفهم ليست في الملفات؛ تُدخلها القاعات من اللوحة ولا يراها إلا قاعات العمليات.
+
+حماية الدخول جزء من صورة Keycloak: `docker compose --env-file .env -f infra/compose.yml build keycloak` ثم إعادة تشغيله.
+في الفضاءات المستوردة سابقا يُستورد الملفان `infra/keycloak/realms/*.json` من جديد (أو يُختار نموذج
+`ehimaya-guarded-password-form` في مسار الدخول وتُضبط «Max login failures» على 10 من إدارة Keycloak). التحقق:
+`python3 infra/keycloak/check_login_guard.py http://localhost:8080`.
+
 ## 10. خادم GPU (اختياري)
 
 | المكون | المصدر |
@@ -643,7 +662,7 @@ flutter run --dart-define=API_BASE_URL=http://localhost:8000 \
 
 ### 15.4 مزود Keycloak دون Docker (اختياري)
 
-JDK 21 و Maven 3.9، ثم `mvn -f infra/keycloak/providers/phone-otp/pom.xml verify` (36 اختبارا).
+JDK 21 و Maven 3.9، ثم `mvn -f infra/keycloak/providers/phone-otp/pom.xml verify` (44 اختبارا).
 
 ## 16. فحوص الجودة والأمن قبل كل إصدار
 
