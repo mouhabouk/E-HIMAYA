@@ -26059,6 +26059,17 @@
             ],
             "title": "Email"
           },
+          "engine": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Engine"
+          },
           "gouvernorat_code": {
             "anyOf": [
               {
@@ -26083,6 +26094,28 @@
             ],
             "title": "Kind",
             "type": "string"
+          },
+          "lat": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lat"
+          },
+          "lon": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lon"
           },
           "name": {
             "title": "Name",
@@ -26123,6 +26156,28 @@
           },
           "reason": {
             "$ref": "#/components/schemas/Bilingual"
+          },
+          "road_m": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Road M"
+          },
+          "road_s": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Road S"
           },
           "role": {
             "anyOf": [

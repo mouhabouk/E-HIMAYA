@@ -471,8 +471,16 @@ export function RecommendationsPanel({
 
 // ---------------------------------------------------------------- responders
 
-export function RespondersPanel({ incident }: { incident: IncidentDetail }) {
+export function RespondersPanel({
+  incident,
+  onRoute,
+}: {
+  incident: IncidentDetail;
+  /** Draws the road from a unit to the incident on the incident map (L4 §10). */
+  onRoute?: (from: { lat: number; lon: number }, to: { lat: number; lon: number }, profile: RouteProfile) => void;
+}) {
   const { t } = useTranslation();
+  const fmt = useFormat();
   const { api } = useServices();
   const lang = useLanguage();
   const base = useId();
@@ -503,6 +511,27 @@ export function RespondersPanel({ incident }: { incident: IncidentDetail }) {
                 <span className="visually-hidden">{t("decision.rationale")} </span>
                 {bilingual(r.reason, lang)}
               </p>
+              {r.road_m != null && r.road_s != null && (
+                <p className="muted">
+                  {t("hospitals.road", {
+                    km: fmt.decimal(r.road_m / 1000),
+                    minutes: fmt.number(Math.max(1, Math.round(r.road_s / 60))),
+                  })}
+                  {r.engine === "fallback" && ` · ${t("hospitals.estimate")}`}{" "}
+                  {onRoute && r.lat != null && r.lon != null && incident.centroid && (
+                    <button
+                      type="button"
+                      className="btn btn--small"
+                      onClick={() => {
+                        if (r.lat != null && r.lon != null && incident.centroid)
+                          onRoute({ lat: r.lat, lon: r.lon }, incident.centroid, "truck");
+                      }}
+                    >
+                      {t("responders.showRoute", { name: r.name })}
+                    </button>
+                  )}
+                </p>
+              )}
               {r.phone && (
                 <span className="responders__phone">
                   <a href={`tel:${r.phone}`} dir="ltr">

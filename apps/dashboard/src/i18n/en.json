@@ -2541,7 +2541,8 @@
   "responders": {
     "title": "Officials to involve",
     "intro": "Directory suggestions by incident type and gouvernorat, with their reason.",
-    "none": "No official suggested."
+    "none": "No official suggested.",
+    "showRoute": "Route from {{name}}"
   },
   "assistant": {
     "title": "Assistant (procedures and past incidents)",
@@ -4864,7 +4865,8 @@
     "road": "{{km}} km, about {{minutes}} min",
     "estimate": "estimate without routing engine",
     "add": "Add to the incident",
-    "added": "Added"
+    "added": "Added",
+    "showRoute": "Route to {{name}}"
   },
   "programmes": {
     "title": "Seasonal programmes",

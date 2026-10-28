@@ -566,6 +566,29 @@ async def test_responders_by_type_and_level(
             await s.execute(text("UPDATE ops.level_state SET level = 'normal', reason = NULL"))
 
 
+async def test_responders_quickest_unit_on_the_road(
+    client: httpx.AsyncClient, staff: Staff, engine: FakeEngine, environment: FakeEnvironment
+) -> None:
+    """L4 §10: the units are timed on the road and the quickest comes first, with its road distance and time."""
+    await clear_units(TATAOUINE)
+    incident_id = await new_incident(client, staff, TATAOUINE_POINT, TATAOUINE)
+    near = await make_unit(client, staff, TATAOUINE, "advanced_post", 32.9397, 10.4518)
+    far = await make_unit(client, staff, TATAOUINE, "advanced_post", 32.8797, 10.4518)
+    engine.times = {32.9397: 1500.0, 32.8797: 420.0}
+    url = f"/api/v1/staff/incidents/{incident_id}/responders"
+    operator = staff(gouvernorat=TATAOUINE)
+    units = [i for i in (await client.get(url, headers=operator)).json()["items"] if i["kind"] == "unit"]
+    assert [u["id"] for u in units] == [f"unit:{far['id']}", f"unit:{near['id']}"]
+    first = units[0]
+    assert first["road_s"] == 420 and first["engine"] == "valhalla" and first["lat"] == pytest.approx(32.8797)
+    assert "7 دقيقة" in first["reason"]["ar"] and "(تقدير)" not in first["reason"]["ar"]
+    # Without the engine: the straight-line estimate, said so.
+    routing.set_engine(None)
+    units = [i for i in (await client.get(url, headers=operator)).json()["items"] if i["kind"] == "unit"]
+    assert units[0]["id"] == f"unit:{near['id']}" and units[0]["engine"] == "fallback"
+    assert "(تقدير)" in units[0]["reason"]["ar"]
+
+
 # ---------------------------------------------------------------- assistant
 
 

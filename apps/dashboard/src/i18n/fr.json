@@ -2541,7 +2541,8 @@
   "responders": {
     "title": "Responsables à associer",
     "intro": "Suggestions de l’annuaire selon le type d’incident et le gouvernorat, avec leur raison.",
-    "none": "Aucun responsable suggéré."
+    "none": "Aucun responsable suggéré.",
+    "showRoute": "Itinéraire depuis {{name}}"
   },
   "assistant": {
     "title": "Assistant (procédures et incidents passés)",
@@ -4864,7 +4865,8 @@
     "road": "{{km}} km, environ {{minutes}} min",
     "estimate": "estimation sans moteur d'itinéraire",
     "add": "Ajouter à l'incident",
-    "added": "Ajouté"
+    "added": "Ajouté",
+    "showRoute": "Itinéraire vers {{name}}"
   },
   "programmes": {
     "title": "Programmes saisonniers",

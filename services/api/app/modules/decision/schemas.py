@@ -82,6 +82,12 @@ class Responder(BaseModel):
     email: str | None = None
     gouvernorat_code: int | None = None
     distance_m: int | None = None
+    # A unit (L4 §10): its place, and the road distance and time to the incident ("fallback" engine = an estimate).
+    lat: float | None = None
+    lon: float | None = None
+    road_m: int | None = None
+    road_s: int | None = None
+    engine: str | None = None
     reason: Bilingual
 
 
