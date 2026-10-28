@@ -526,6 +526,56 @@ erDiagram
     }
 ```
 
+## decision_window
+
+```mermaid
+erDiagram
+    decision_window__delegation {
+        uuid id PK
+        text grantee
+        text grantee_name
+        array grantee_roles
+        smallint grantee_gouvernorat FK
+        text reason
+        datetime starts_at
+        datetime ends_at
+        text granted_by
+        text granted_by_name
+        text granted_room
+        datetime created_at
+        datetime revoked_at
+        text revoked_by_name
+        text revoke_reason
+    }
+    decision_window__delegation_event {
+        uuid delegation_id PK,FK
+        text kind PK
+        uuid target_id PK
+        text label
+        smallint gouvernorat_code FK
+        text added_by_name
+        datetime added_at
+    }
+    decision_window__saved_search {
+        uuid id PK
+        text owner
+        text name
+        text kind
+        jsonb query
+        datetime created_at
+    }
+    decision_window__synonym {
+        uuid id PK
+        text meaning
+        array words
+        text updated_by_name
+        datetime updated_at
+    }
+    decision_window__delegation ||--o{ decision_window__delegation_event : "delegation_id"
+    geo__gouvernorat ||--o{ decision_window__delegation : "grantee_gouvernorat"
+    geo__gouvernorat ||--o{ decision_window__delegation_event : "gouvernorat_code"
+```
+
 ## evidence
 
 ```mermaid

@@ -104,6 +104,9 @@ from app.modules.streams.models import LiveStream, StreamDetection, StreamLocati
 from app.modules.telephony.models import Call, Conference, OperatorEndpoint, SmsInbound
 from app.modules.volunteers.models import Volunteer, VolunteerReview
 from app.modules.weather.models import AlertSuggestion, GridPoint, Observation, Rule
+from app.modules.window.models import SavedSearch as WindowSavedSearch
+from app.modules.window.models import Synonym as WindowSynonym
+from app.modules.window.models import WindowDelegation, WindowEvent
 
 __all__ = [
     "Account",
@@ -254,4 +257,8 @@ __all__ = [
     "UnitCheck",
     "Volunteer",
     "VolunteerReview",
+    "WindowDelegation",
+    "WindowEvent",
+    "WindowSavedSearch",
+    "WindowSynonym",
 ]

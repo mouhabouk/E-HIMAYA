@@ -112,6 +112,7 @@ from app.modules.volunteers.staff_router import router as volunteers_staff_route
 from app.modules.weather.router import router as weather_router
 from app.modules.weather.staff_router import router as weather_staff_router
 from app.modules.weather.worker import weather_forever
+from app.modules.window.router import router as window_router
 
 log = structlog.get_logger()
 _REQUEST_ID = re.compile(r"^[A-Za-z0-9-]{8,64}$")
@@ -323,6 +324,7 @@ def create_app() -> FastAPI:
         app.include_router(router)
     app.include_router(accounts.router)
     app.include_router(features_router)
+    app.include_router(window_router)
     features_registry.install(app.routes)
     return app
 

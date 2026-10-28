@@ -49,6 +49,17 @@ KIND_LABELS: dict[str, LabelPair] = {
     "gouvernorat_summary": {"ar": "ملخص حسب الولاية", "fr": "Synthèse par gouvernorat", "en": "Summary by governorate"},
     "scenario": {"ar": "سيناريو افتراضي", "fr": "Scénario de simulation", "en": "Simulation scenario"},
     "after_action": {"ar": "تقييم ما بعد التدخل", "fr": "Retour d'expérience", "en": "After-action review"},
+    # The reports of the decision window (L4 §3.4), exported on demand and not kept in the repository.
+    "window_search": {
+        "ar": "نافذة القرار: بحث",
+        "fr": "Fenêtre de décision : recherche",
+        "en": "Decision window: search",
+    },
+    "window_compare": {
+        "ar": "نافذة القرار: مقارنة",
+        "fr": "Fenêtre de décision : comparaison",
+        "en": "Decision window: comparison",
+    },
 }
 STATUS_LABELS: dict[str, LabelPair] = {
     "received": {"ar": "مستلم", "fr": "Reçu", "en": "Received"},
