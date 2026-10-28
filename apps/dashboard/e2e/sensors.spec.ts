@@ -5,6 +5,7 @@
  */
 import { expect, test, type Page } from "@playwright/test";
 import type { Sensor } from "../src/lib/sensors";
+import type { Tower } from "../src/lib/towers";
 import { API, baseMock, commonAnswer, json, signIn } from "./phase7Helpers";
 
 function sensor(over: Partial<Sensor>): Sensor {
@@ -33,6 +34,33 @@ function sensor(over: Partial<Sensor>): Sensor {
   };
 }
 
+// ┏━━ SIMULATION ━━ a watch tower that saw fire a moment ago (contract phase L5b, GET /api/v1/staff/towers)
+// ┃ PRODUCTION: services/api (module towers); tests/test_towers.py covers it.
+// ┗━━━━━━━━━━━━━━━━
+const TOWER: Tower = {
+  id: "t-1",
+  code: "TUN-TWR-01",
+  label: "Tour de Boukornine",
+  gouvernorat_code: 11,
+  lat: 36.72,
+  lon: 10.33,
+  bearing_deg: 90,
+  fov_deg: 60,
+  range_m: 8000,
+  simulated: true,
+  stream_status: "live",
+  last_event: { at: new Date().toISOString(), label: "fire", confidence: 0.86 },
+  field_of_view: [
+    [10.33, 36.72],
+    [10.4, 36.66],
+    [10.42, 36.72],
+    [10.4, 36.78],
+    [10.33, 36.72],
+  ],
+  created_by_name: null,
+  updated_at: new Date().toISOString(),
+};
+
 async function mockApi(page: Page) {
   const base = await baseMock(page);
   const calls = { sensors: 0 };
@@ -46,6 +74,7 @@ async function mockApi(page: Page) {
     const common = commonAnswer(method, pathname, route);
     if (common) return common;
     if (method === "GET" && pathname === "/api/v1/staff/reports") return json(route, { items: [], next_cursor: null });
+    if (method === "GET" && pathname === "/api/v1/staff/towers") return json(route, { items: [TOWER], can_manage: false });
     if (method === "GET" && pathname === "/api/v1/staff/sensors") {
       calls.sensors += 1;
       return json(route, {
@@ -121,6 +150,29 @@ test.describe("sensors layer", () => {
     await page.getByRole("checkbox", { name: "Capteurs" }).uncheck();
     await expect(alarm).toHaveCount(0);
 
+    expect(api.unexpected).toEqual([]);
+    expect(errors).toEqual([]);
+  });
+});
+
+
+test.describe("watch towers layer", () => {
+  test("draws each tower and the wedge of its view, red after a fire", async ({ page }) => {
+    const errors: string[] = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+    page.on("console", (msg) => {
+      if (msg.type() === "error") errors.push(msg.text());
+    });
+    await signIn(page, ["operator"]);
+    const api = await mockApi(page);
+    await page.goto("/map");
+    await page.getByRole("checkbox", { name: "Tours de guet" }).check();
+    const tower = page.getByRole("button", { name: /^Tour de Boukornine \[SIM\] — Feu · Est \(90°\), ouverture 60°, portée 8 km$/ });
+    await expect(tower).toHaveClass(/map-poi--tower_alert/);
+    await expect(page.getByText("Tour : feu ou fumée dans l’heure", { exact: true })).toBeVisible();
+    // The wedge is a real MapLibre fill: a bad source or paint expression would be a console error (checked below).
+    await page.getByRole("checkbox", { name: "Tours de guet" }).uncheck();
+    await expect(tower).toHaveCount(0);
     expect(api.unexpected).toEqual([]);
     expect(errors).toEqual([]);
   });

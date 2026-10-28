@@ -63,7 +63,8 @@
     "permissions": "Permissions",
     "window": "Decision window",
     "drills": "Dry run",
-    "sensors": "Sensors"
+    "sensors": "Sensors",
+    "towers": "Watch towers"
   },
   "header": {
     "scope": "Geographic scope",
@@ -518,7 +519,8 @@
     "profile_not_found": "Mapping profile not found or not available to your gouvernorat.",
     "sensor_code_taken": "A sensor already has this code.",
     "threshold_out_of_range": "Threshold outside the plausible range of this kind of sensor.",
-    "outside_local_network": "Refused: the request is not from the local network."
+    "outside_local_network": "Refused: the request is not from the local network.",
+    "tower_code_taken": "A tower already has this code."
   },
   "kpi": {
     "title": "Key indicators",
@@ -2493,7 +2495,13 @@
       "dismiss": "Dismiss",
       "reason": "Reason (required)",
       "reasonRequired": "Enter a reason (at least 3 characters).",
-      "confirmDismiss": "Dismiss the suggestion"
+      "confirmDismiss": "Dismiss the suggestion",
+      "device": {
+        "sensor": "Sensor",
+        "tower": "Tower",
+        "openSensors": "Sensors page",
+        "openTowers": "Towers page"
+      }
     }
   },
   "decision": {
@@ -6860,6 +6868,82 @@
       "alarm": "Sensor: alarm",
       "silent": "Sensor: silent or off",
       "noReading": "No reading yet"
+    }
+  },
+  "towers": {
+    "title": "Watch towers",
+    "intro": "The towers’ cameras, on the local network. A small computer beside each camera detects fire and smoke and sends a signed event when it is confirmed in 3 of 5 frames. The event becomes a suggestion in the alert centre; no report is created automatically.",
+    "new": "New tower",
+    "empty": "No tower registered yet.",
+    "caption": "Towers ({{n}})",
+    "col": {
+      "camera": "Camera",
+      "view": "Field of view",
+      "last": "Last detection"
+    },
+    "camera": {
+      "live": "Live",
+      "off": "Offline"
+    },
+    "view": "{{direction}} ({{bearing}}°), {{fov}}° wide, {{km}} km",
+    "label": {
+      "fire": "Fire",
+      "smoke": "Smoke"
+    },
+    "compass": {
+      "n": "North",
+      "ne": "North-east",
+      "e": "East",
+      "se": "South-east",
+      "s": "South",
+      "sw": "South-west",
+      "w": "West",
+      "nw": "North-west"
+    },
+    "field": {
+      "codeHelp": "Latin letters, digits, - and _, e.g. JND-TWR-01. The tower’s computer sends it with each event.",
+      "bearing": "Camera direction (degrees from north)",
+      "bearingShort": "Direction",
+      "fov": "Opening (degrees)",
+      "fovShort": "Opening",
+      "range": "Range (metres)",
+      "rangeShort": "Range",
+      "simulated": "Trial tower [SIM]"
+    },
+    "form": {
+      "newTitle": "New tower",
+      "editTitle": "Edit {{name}}"
+    },
+    "errors": {
+      "label": "The name is required.",
+      "view": "Direction, opening and range are required."
+    },
+    "key": {
+      "title": "Keys of tower {{code}}",
+      "once": "Copy these values now: they are not shown again, nor written to the audit log.",
+      "edge": "Tower computer key",
+      "rtsp": "Camera publish address on MediaMTX",
+      "token": "Publish token",
+      "copy": "Copy the computer key",
+      "howTo": "The tower’s computer signs each event with this key, as described in docs/sensor-gateway.md (watch towers).",
+      "rotate": "Rotate the key",
+      "confirmRotate": "Rotate the key of tower {{code}}’s computer? Any event signed with the old key is refused at once."
+    },
+    "events": {
+      "show": "Detections",
+      "title": "Detections of {{name}} (24 h)",
+      "caption": "Latest detections",
+      "none": "No detection yet",
+      "what": "Detection",
+      "confidence": "Confidence",
+      "frames": "Frames",
+      "hits": "{{hits}} of {{frames}}"
+    },
+    "map": {
+      "toggle": "Watch towers",
+      "tower": "Watch tower",
+      "alert": "Tower: fire or smoke in the last hour",
+      "view": "A tower’s field of view"
     }
   }
 }

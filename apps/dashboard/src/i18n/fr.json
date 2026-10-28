@@ -63,7 +63,8 @@
     "permissions": "Autorisations",
     "window": "Fenêtre de décision",
     "drills": "Exercice blanc",
-    "sensors": "Capteurs"
+    "sensors": "Capteurs",
+    "towers": "Tours de guet"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -518,7 +519,8 @@
     "profile_not_found": "Modèle de correspondance introuvable ou non disponible pour votre gouvernorat.",
     "sensor_code_taken": "Un capteur porte déjà ce code.",
     "threshold_out_of_range": "Seuil hors de la plage plausible de ce type de capteur.",
-    "outside_local_network": "Refusé : la demande ne vient pas du réseau local."
+    "outside_local_network": "Refusé : la demande ne vient pas du réseau local.",
+    "tower_code_taken": "Une tour porte déjà ce code."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -2493,7 +2495,13 @@
       "dismiss": "Écarter",
       "reason": "Motif (obligatoire)",
       "reasonRequired": "Indiquez un motif (au moins 3 caractères).",
-      "confirmDismiss": "Écarter la suggestion"
+      "confirmDismiss": "Écarter la suggestion",
+      "device": {
+        "sensor": "Capteur",
+        "tower": "Tour",
+        "openSensors": "Page des capteurs",
+        "openTowers": "Page des tours"
+      }
     }
   },
   "decision": {
@@ -6860,6 +6868,82 @@
       "alarm": "Capteur : alarme",
       "silent": "Capteur : muet ou arrêté",
       "noReading": "Aucune mesure"
+    }
+  },
+  "towers": {
+    "title": "Tours de guet",
+    "intro": "Les caméras des tours, sur le réseau local. Un petit ordinateur à côté de chaque caméra détecte le feu et la fumée et envoie un évènement signé quand c’est confirmé dans 3 images sur 5. L’évènement devient une suggestion dans le centre d’alertes ; aucun signalement n’est créé automatiquement.",
+    "new": "Nouvelle tour",
+    "empty": "Aucune tour enregistrée.",
+    "caption": "Tours ({{n}})",
+    "col": {
+      "camera": "Caméra",
+      "view": "Champ de vision",
+      "last": "Dernière détection"
+    },
+    "camera": {
+      "live": "En direct",
+      "off": "Hors ligne"
+    },
+    "view": "{{direction}} ({{bearing}}°), ouverture {{fov}}°, portée {{km}} km",
+    "label": {
+      "fire": "Feu",
+      "smoke": "Fumée"
+    },
+    "compass": {
+      "n": "Nord",
+      "ne": "Nord-est",
+      "e": "Est",
+      "se": "Sud-est",
+      "s": "Sud",
+      "sw": "Sud-ouest",
+      "w": "Ouest",
+      "nw": "Nord-ouest"
+    },
+    "field": {
+      "codeHelp": "Lettres latines, chiffres, - et _, par ex. JND-TWR-01. L’ordinateur de la tour l’envoie avec chaque évènement.",
+      "bearing": "Direction de la caméra (degrés depuis le nord)",
+      "bearingShort": "Direction",
+      "fov": "Ouverture (degrés)",
+      "fovShort": "Ouverture",
+      "range": "Portée (mètres)",
+      "rangeShort": "Portée",
+      "simulated": "Tour d’essai [SIM]"
+    },
+    "form": {
+      "newTitle": "Nouvelle tour",
+      "editTitle": "Modifier {{name}}"
+    },
+    "errors": {
+      "label": "Le nom est obligatoire.",
+      "view": "La direction, l’ouverture et la portée sont obligatoires."
+    },
+    "key": {
+      "title": "Clés de la tour {{code}}",
+      "once": "Copiez ces valeurs maintenant : elles ne seront plus affichées ni écrites dans le journal d’audit.",
+      "edge": "Clé de l’ordinateur de la tour",
+      "rtsp": "Adresse de diffusion de la caméra vers MediaMTX",
+      "token": "Jeton de diffusion",
+      "copy": "Copier la clé de l’ordinateur",
+      "howTo": "L’ordinateur de la tour signe chaque évènement avec cette clé, comme décrit dans docs/sensor-gateway.md (tours de guet).",
+      "rotate": "Renouveler la clé",
+      "confirmRotate": "Renouveler la clé de l’ordinateur de la tour {{code}} ? Tout évènement signé avec l’ancienne clé sera refusé aussitôt."
+    },
+    "events": {
+      "show": "Détections",
+      "title": "Détections de {{name}} (24 h)",
+      "caption": "Dernières détections",
+      "none": "Aucune détection",
+      "what": "Détection",
+      "confidence": "Confiance",
+      "frames": "Images",
+      "hits": "{{hits}} sur {{frames}}"
+    },
+    "map": {
+      "toggle": "Tours de guet",
+      "tower": "Tour de guet",
+      "alert": "Tour : feu ou fumée dans l’heure",
+      "view": "Champ de vision d’une tour"
     }
   }
 }

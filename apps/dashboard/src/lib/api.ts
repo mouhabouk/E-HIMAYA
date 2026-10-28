@@ -354,6 +354,7 @@ export const ERROR_CODES = [
   "mapping_duplicate",
   "profile_name_taken",
   "sensor_code_taken",
+  "tower_code_taken",
   "threshold_out_of_range",
   "outside_local_network",
   "profile_not_found",

@@ -680,3 +680,7 @@ export function canOpenSensors(roles: readonly string[]): boolean {
 export function canManageSensors(roles: readonly string[]): boolean {
   return roles.includes("ops_manager");
 }
+
+/** The watch towers follow the same rule: every room reads its own, the operations manager registers them. */
+export const canOpenTowers = canOpenSensors;
+export const canManageTowers = canManageSensors;

@@ -69,6 +69,7 @@ const SCREENS: { path: string; ready: string }[] = [
   { path: "/schedule", ready: "main .rate" },
   // Phase L5b: the sensors of the local network, by urgency.
   { path: "/sensors", ready: "main table" },
+  { path: "/towers", ready: "main table" },
 ];
 
 // ┏━━ SIMULATION ━━ sensors of the local network (phase L5b), one per level
@@ -93,6 +94,27 @@ const SENSORS = (["alarm", "watch", "silent", "normal", "disabled"] as const).ma
   last_at: state === "silent" ? null : "2026-10-28T20:00:00Z",
   state,
   level_since: "2026-10-28T19:00:00Z",
+  created_by_name: null,
+  updated_at: "2026-10-28T19:00:00Z",
+}));
+
+// ┏━━ SIMULATION ━━ watch towers (phase L5b): one that saw fire, one quiet with its camera off
+// ┃ PRODUCTION: services/api (module towers); tests/test_towers.py covers it.
+// ┗━━━━━━━━━━━━━━━━
+const TOWERS = [0, 1].map((i) => ({
+  id: `t-${i}`,
+  code: `TUN-TWR-0${i}`,
+  label: `Tour ${i}`,
+  gouvernorat_code: 11,
+  lat: 36.72,
+  lon: 10.33,
+  bearing_deg: 90 * i,
+  fov_deg: 60,
+  range_m: 8000,
+  simulated: true,
+  stream_status: i === 0 ? "live" : "ended",
+  last_event: i === 0 ? { at: "2026-10-28T20:00:00Z", label: "fire", confidence: 0.86 } : null,
+  field_of_view: [],
   created_by_name: null,
   updated_at: "2026-10-28T19:00:00Z",
 }));
@@ -310,6 +332,7 @@ async function mockApi(page: Page): Promise<string[]> {
       "/api/v1/staff/basemap/settings": BASEMAP_SETTINGS,
       // Phase L5b: sensors ([SIM]) at every level.
       "/api/v1/staff/sensors": { items: SENSORS, can_manage: true },
+      "/api/v1/staff/towers": { items: TOWERS, can_manage: true },
     };
     if (pathname in inventory) return json(route, inventory[pathname]);
     unanswered.push(pathname);

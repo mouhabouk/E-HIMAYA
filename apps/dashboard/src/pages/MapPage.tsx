@@ -23,8 +23,10 @@ import { initialBoundsFor } from "../lib/mapStyle";
 import { opsKeys } from "../lib/opsApi";
 import type { Message } from "../lib/opsTypes";
 import { errorMessageKey } from "../lib/api";
-import { canOpenSensors, canReadOrgs, canReadResources, canUseTelephony } from "../lib/roles";
+import { canOpenSensors, canOpenTowers, canReadOrgs, canReadResources, canUseTelephony } from "../lib/roles";
 import { sensorKeys, type SensorState } from "../lib/sensors";
+import { compassOf, recentEvent, towerKeys } from "../lib/towers";
+import { useNow } from "../lib/phase9";
 import type { DialBody } from "../lib/telephonyTypes";
 import { queryKeys } from "../lib/staffApi";
 import type { Page, StaffReport } from "../lib/types";
@@ -40,6 +42,10 @@ const VOLUNTEER_LAYER_KEY = "ehimaya.mapVolunteerLayer";
 const ALERT_LAYER_KEY = "ehimaya.mapAlertLayer";
 const WEATHER_LAYER_KEY = "ehimaya.mapWeatherLayer";
 const SENSOR_LAYER_KEY = "ehimaya.mapSensorLayer";
+const TOWER_LAYER_KEY = "ehimaya.mapTowerLayer";
+// The wedge of a tower's view: MapLibre paints plain colours, the same in both themes.
+const TOWER_VIEW = "#ea580c";
+const TOWER_VIEW_ALERT = "#dc2626";
 
 const SENSOR_POI: Record<SensorState, MapPoi["kind"]> = {
   normal: "sensor",
@@ -132,6 +138,11 @@ export function MapPage() {
   const sensorLayerAllowed = canOpenSensors(user?.identity.roles ?? []);
   const [sensorLayer, setSensorLayer] = useLayer(SENSOR_LAYER_KEY);
   const showSensors = sensorLayerAllowed && sensorLayer;
+  const towerLayerAllowed = canOpenTowers(user?.identity.roles ?? []);
+  const [towerLayer, setTowerLayer] = useLayer(TOWER_LAYER_KEY);
+  const showTowers = towerLayerAllowed && towerLayer;
+  // A minute is fine enough for "a fire or smoke in the last hour".
+  const clock = useNow(60_000);
   const qc = useQueryClient();
   const gouvernorats = useGouvernorats();
   const basemap = useBasemap();
@@ -230,6 +241,13 @@ export function MapPage() {
     queryFn: ({ signal }) => api.sensors(signal),
   });
 
+  // Watch towers (L5b, design-l5 §3.2): each tower and the wedge of its camera's view.
+  const towersQuery = useQuery({
+    queryKey: towerKeys.all,
+    enabled: showTowers,
+    queryFn: ({ signal }) => api.towers(signal),
+  });
+
   // Institutions layer «المؤسسات» (FR-C-10): refetched with the same debounced bbox as the reports.
   const orgsQuery = useQuery({
     queryKey: bbox ? queryKeys.orgsMap(bbox) : ["orgs-map", "pending"],
@@ -263,6 +281,7 @@ export function MapPage() {
     useCallback((event) => {
       if (event.type === "report.created") setFresh((prev) => new Set(prev).add(event.report.id));
       if (event.type === "sensor.reading") void qc.invalidateQueries({ queryKey: sensorKeys.all });
+      if (event.type === "stream.alert") void qc.invalidateQueries({ queryKey: towerKeys.all });
     }, [qc]),
   );
 
@@ -367,8 +386,45 @@ export function MapPage() {
         });
       }
     }
+    if (showTowers) {
+      for (const tw of towersQuery.data?.items ?? []) {
+        const recent = recentEvent(tw, clock);
+        out.push({
+          id: `tower-${tw.id}`,
+          lon: tw.lon,
+          lat: tw.lat,
+          kind: recent ? "tower_alert" : "tower",
+          title: `${tw.label}${tw.simulated ? " [SIM]" : ""}`,
+          subtitle: [
+            recent ? t(`towers.label.${recent}`) : null,
+            t("towers.view", {
+              direction: t(`towers.compass.${compassOf(tw.bearing_deg)}`),
+              bearing: fmt.number(tw.bearing_deg),
+              fov: fmt.number(tw.fov_deg),
+              km: fmt.decimal(tw.range_m / 1000),
+            }),
+          ]
+            .filter(Boolean)
+            .join(" · "),
+          href: "/towers",
+        });
+      }
+    }
     return out;
-  }, [showResources, resourcesQuery.data, showVolunteers, volunteersQuery.data, showSensors, sensorsQuery.data, lang, t, fmt]);
+  }, [
+    showResources,
+    resourcesQuery.data,
+    showVolunteers,
+    volunteersQuery.data,
+    showSensors,
+    sensorsQuery.data,
+    showTowers,
+    towersQuery.data,
+    clock,
+    lang,
+    t,
+    fmt,
+  ]);
   // Phase R2: the units and resources of the operations and a resources search sent from the register sit in the
   // «موارد الحماية المدنية» folder of the layer panel, beside the file layers of that folder.
   const resourceSearch = useResourceSearchLayer(bbox);
@@ -402,7 +458,18 @@ export function MapPage() {
     [showVolunteers, volunteersQuery.data],
   );
   const alerts = useMemo(() => (showAlerts ? (alertsQuery.data ?? []) : []), [showAlerts, alertsQuery.data]);
-  const polygons = useMemo(() => alertPolygons(alerts), [alerts]);
+  const polygons = useMemo<MapPolygon[]>(() => {
+    const wedges: MapPolygon[] = showTowers
+      ? (towersQuery.data?.items ?? []).map((tw) => ({
+          id: `tower-view-${tw.id}`,
+          coordinates: [tw.field_of_view],
+          tone: "low",
+          colour: recentEvent(tw, clock) ? TOWER_VIEW_ALERT : TOWER_VIEW,
+          outline: "solid",
+        }))
+      : [];
+    return [...alertPolygons(alerts), ...wedges];
+  }, [alerts, showTowers, towersQuery.data, clock]);
 
   const legend = useMemo(() => {
     const items: { kind: MapPoi["kind"]; label: string }[] = [];
@@ -425,8 +492,11 @@ export function MapPage() {
         { kind: "sensor_silent", label: t("sensors.map.silent") },
       );
     }
+    if (showTowers) {
+      items.push({ kind: "tower", label: t("towers.map.tower") }, { kind: "tower_alert", label: t("towers.map.alert") });
+    }
     return items;
-  }, [showOrgs, showResources, showVolunteers, showSensors, t]);
+  }, [showOrgs, showResources, showVolunteers, showSensors, showTowers, t]);
 
   return (
     <div className="page page--map">
@@ -454,6 +524,9 @@ export function MapPage() {
         <LayerToggle checked={showAlerts} onChange={setAlertLayer} label={t("ops.map.alertsToggle")} />
         {sensorLayerAllowed && (
           <LayerToggle checked={sensorLayer} onChange={setSensorLayer} label={t("sensors.map.toggle")} />
+        )}
+        {towerLayerAllowed && (
+          <LayerToggle checked={towerLayer} onChange={setTowerLayer} label={t("towers.map.toggle")} />
         )}
         <LayerToggle
           checked={showWeather}

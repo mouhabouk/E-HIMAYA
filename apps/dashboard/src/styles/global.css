@@ -2074,6 +2074,7 @@ button.map-poi {
   --poi-sensor-watch: #b45309;
   --poi-sensor-alarm: #b91c1c;
   --poi-sensor-silent: #64748b;
+  --poi-tower: #c2410c;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -2086,6 +2087,7 @@ button.map-poi {
     --poi-sensor-watch: #fbbf24;
     --poi-sensor-alarm: #fca5a5;
     --poi-sensor-silent: #cbd5e1;
+    --poi-tower: #fdba74;
   }
 }
 
@@ -2098,6 +2100,7 @@ button.map-poi {
   --poi-sensor-watch: #fbbf24;
   --poi-sensor-alarm: #fca5a5;
   --poi-sensor-silent: #cbd5e1;
+  --poi-tower: #fdba74;
 }
 
 /* Every chip also carries its label: colour only reinforces the text. */
@@ -2276,6 +2279,18 @@ button.map-poi {
   background: var(--poi-sensor-silent);
   border-style: dotted;
   opacity: 0.8;
+}
+
+/* Watch towers (L5b): a tower in orange; a fire or smoke in the last hour adds a red ring. */
+.map-poi--tower,
+.map-poi--tower_alert {
+  background: var(--poi-tower);
+  border-radius: 4px;
+}
+.map-poi--tower_alert {
+  background: var(--poi-sensor-alarm);
+  outline: 3px solid var(--poi-sensor-alarm);
+  outline-offset: 2px;
 }
 
 /* ---------- Phase 5: committee, notifications, safety tips ---------- */

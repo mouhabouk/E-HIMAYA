@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useId, useState, type SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { SimTag, SimulationBand } from "../components/StreamBits";
 import { WeatherAttributionLine } from "../components/WeatherLayer";
@@ -13,6 +13,7 @@ import { errorMessageKey } from "../lib/api";
 import { useFormat, useGouvernorats, useLanguage } from "../lib/hooks";
 import { p7Keys } from "../lib/phase7Api";
 import { canDraftMessage } from "../lib/roles";
+import { compassOf } from "../lib/towers";
 import type { SuggestionEvidence, WeatherSuggestion } from "../lib/weatherTypes";
 import { localized } from "../lib/localized";
 import { PageTitle } from "../components/PageTitle";
@@ -41,10 +42,88 @@ function evidenceRows(evidence: WeatherSuggestion["evidence"]): SuggestionEviden
   );
 }
 
+const num = (v: unknown): number | null => (typeof v === "number" && Number.isFinite(v) ? v : null);
+const str = (v: unknown): string => (typeof v === "string" ? v : "");
+
+/** A suggestion raised by a device of the local network (L5b): a sensor's reading or a watch tower's detection. */
+function DeviceEvidence({ evidence }: { evidence: Record<string, unknown> }) {
+  const { t } = useTranslation();
+  const fmt = useFormat();
+  const point = evidence.peak_point as { lat?: unknown; lon?: unknown } | undefined;
+  const lat = num(point?.lat);
+  const lon = num(point?.lon);
+  const place = lat !== null && lon !== null && (
+    <dd className="code" dir="ltr">
+      {lat.toFixed(4)}, {lon.toFixed(4)}
+    </dd>
+  );
+  if (evidence.source === "tower") {
+    const label = str(evidence.label) === "smoke" ? "smoke" : "fire";
+    const bearing = num(evidence.bearing_deg) ?? 0;
+    return (
+      <dl className="fields">
+        <dt>{t("weather.suggestions.device.tower")}</dt>
+        <dd dir="auto">
+          {str(evidence.tower_name)}{" "}
+          <span className="code muted" dir="ltr">
+            {str(evidence.tower_code)}
+          </span>
+        </dd>
+        <dt>{t("towers.events.what")}</dt>
+        <dd>
+          {t(`towers.label.${label}`)} · {fmt.percent(num(evidence.confidence) ?? 0)} ·{" "}
+          {t("towers.events.hits", { hits: fmt.number(num(evidence.hits) ?? 0), frames: fmt.number(num(evidence.frames) ?? 0) })}
+        </dd>
+        <dt>{t("towers.col.view")}</dt>
+        <dd>
+          {t("towers.view", {
+            direction: t(`towers.compass.${compassOf(bearing)}`),
+            bearing: fmt.number(bearing),
+            fov: fmt.number(num(evidence.fov_deg) ?? 0),
+            km: fmt.decimal((num(evidence.range_m) ?? 0) / 1000),
+          })}{" "}
+          <Link to="/towers">{t("weather.suggestions.device.openTowers")}</Link>
+        </dd>
+        {place && <dt>{t("weather.suggestions.where")}</dt>}
+        {place}
+      </dl>
+    );
+  }
+  const value = num(evidence.max_value);
+  const threshold = num(evidence.threshold);
+  const unit = str(evidence.unit);
+  return (
+    <dl className="fields">
+      <dt>{t("weather.suggestions.device.sensor")}</dt>
+      <dd dir="auto">
+        {str(evidence.sensor_name)}{" "}
+        <span className="code muted" dir="ltr">
+          {str(evidence.sensor_code)}
+        </span>
+        {evidence.provider ? ` · ${str(evidence.provider)}` : null}
+      </dd>
+      <dt>{t("weather.suggestions.value")}</dt>
+      <dd dir="ltr">
+        {value !== null ? `${fmt.decimal(value)} ${unit}` : "—"}
+        {threshold !== null && ` (≥ ${fmt.decimal(threshold)} ${unit})`}
+      </dd>
+      <dt>{t("sensors.col.state")}</dt>
+      <dd>
+        {t(`sensors.state.${str(evidence.level) === "alarm" ? "alarm" : "watch"}`)}{" "}
+        <Link to="/sensors">{t("weather.suggestions.device.openSensors")}</Link>
+      </dd>
+      {place && <dt>{t("weather.suggestions.where")}</dt>}
+      {place}
+    </dl>
+  );
+}
+
 function Evidence({ suggestion }: { suggestion: WeatherSuggestion }) {
   const { t } = useTranslation();
   const fmt = useFormat();
   const gouvernorats = useGouvernorats();
+  const ev = suggestion.evidence;
+  if (!Array.isArray(ev) && (ev.source === "sensor" || ev.source === "tower")) return <DeviceEvidence evidence={ev} />;
   const rows = evidenceRows(suggestion.evidence);
   if (rows.length === 0) return <p className="muted">{t("weather.suggestions.noEvidence")}</p>;
   const metric = (m: string) =>
