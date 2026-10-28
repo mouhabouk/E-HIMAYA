@@ -213,9 +213,7 @@ async def test_events_checked_kept_and_suggested(
     # The frame is kept beside the camera's stream; the detection is confirmed; no report is ever created.
     media = await session.get(Media, first.evidence["media_id"])
     assert media is not None and media.report_id is None and media.analysis and media.analysis["source"] == "edge"
-    detections = (
-        await session.scalars(select(StreamDetection).where(StreamDetection.stream_id == tower["id"]))
-    ).all()
+    detections = (await session.scalars(select(StreamDetection).where(StreamDetection.stream_id == tower["id"]))).all()
     assert len(detections) == 3 and all(d.confirmed and (d.model or "").startswith("edge") for d in detections)
     assert await session.scalar(select(Report.id).where(Report.id == tower["id"])) is None
     reader = staff(["operator"], gouvernorat=JENDOUBA)
