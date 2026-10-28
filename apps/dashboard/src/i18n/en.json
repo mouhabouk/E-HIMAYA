@@ -59,7 +59,9 @@
     },
     "inventory": "Resources register",
     "plans": "Intervention plans",
-    "schedule": "Programmes"
+    "schedule": "Programmes",
+    "permissions": "Permissions",
+    "window": "Decision window"
   },
   "header": {
     "scope": "Geographic scope",
@@ -461,7 +463,25 @@
     "item_not_found": "Activity not found.",
     "template_not_found": "Template not found.",
     "template_name_taken": "A template already has this name.",
-    "template_mismatch": "The template is for another span or gouvernorat."
+    "template_mismatch": "The template is for another span or gouvernorat.",
+    "feature_hidden": "The administrator hid this feature from your account.",
+    "ceiling": "The fixed security rules do not allow this grant.",
+    "self_lockout": "The permissions page cannot be hidden from administrators.",
+    "unknown_feature": "This feature is not in the catalogue.",
+    "unknown_role": "Unknown role.",
+    "user_rule_has_no_gouvernorat": "An account rule is not limited to a gouvernorat: the account has its own.",
+    "window_delegation_required": "This window opens only with a delegation in force.",
+    "delegate_not_allowed": "This account cannot receive a delegation: a governorate's operations manager delegates to its governor and local committee only.",
+    "event_out_of_scope": "This event is outside your scope or the delegate's.",
+    "unknown_event": "This event does not exist.",
+    "self_delegation": "You cannot delegate to yourself.",
+    "already_full_view": "This account already opens the whole window.",
+    "account_not_found": "Account not found or disabled.",
+    "delegation_closed": "This delegation has ended or was withdrawn.",
+    "two_gouvernorats_required": "Choose two governorates.",
+    "too_many_saved": "Saved searches limit reached (50).",
+    "query_too_long": "Search too long.",
+    "no_words": "Add at least one word."
   },
   "kpi": {
     "title": "Key indicators",
@@ -2534,7 +2554,8 @@
   "responders": {
     "title": "Officials to involve",
     "intro": "Directory suggestions by incident type and gouvernorat, with their reason.",
-    "none": "No official suggested."
+    "none": "No official suggested.",
+    "showRoute": "Route from {{name}}"
   },
   "assistant": {
     "title": "Assistant (procedures and past incidents)",
@@ -3100,10 +3121,9 @@
     "clearDates": "Clear the dates",
     "back": "← Events library",
     "calendar": {
-      "prev": "Previous month",
-      "next": "Next month",
-      "caption": "Items per day, {{month}}",
-      "day": "{{date}}: {{n}} items",
+      "prev": "Previous period",
+      "next": "Next period",
+      "caption": "Items by cell, {{period}}",
       "short": {
         "1": "Mon",
         "2": "Tue",
@@ -3112,7 +3132,27 @@
         "5": "Fri",
         "6": "Sat",
         "7": "Sun"
-      }
+      },
+      "cell": "{{label}}: {{n}} items",
+      "level": "Level",
+      "levels": {
+        "day": "Day",
+        "week": "Week",
+        "month": "Month",
+        "quarter": "Quarter",
+        "half": "Half-year",
+        "year": "Year"
+      },
+      "quarterTitle": "Q{{n}} {{year}}",
+      "halfTitle": "H{{n}} {{year}}",
+      "range": "{{from}} – {{to}}",
+      "hour": "{{h}}:00",
+      "openDay": "Show this day's events",
+      "less": "Less",
+      "more": "More",
+      "figures": "Intervention indicators for the period shown",
+      "figuresNote": "Interventions within your scope over the period; a cell under the floor shows \"<5\". The grid above counts library items.",
+      "heatmap": "Heat map of the period"
     },
     "tree": {
       "title": "Tree",
@@ -4857,7 +4897,8 @@
     "road": "{{km}} km, about {{minutes}} min",
     "estimate": "estimate without routing engine",
     "add": "Add to the incident",
-    "added": "Added"
+    "added": "Added",
+    "showRoute": "Route to {{name}}"
   },
   "programmes": {
     "title": "Seasonal programmes",
@@ -5165,7 +5206,8 @@
         "archive": "Archive",
         "timeline": "Timeline",
         "documents": "Documents",
-        "plans": "Plans and recommendations"
+        "plans": "Plans and recommendations",
+        "resources": "Resources in the area"
       }
     },
     "axes": {
@@ -5841,7 +5883,11 @@
         "stock": "Ready quantity only",
         "agents": "Staff on duty only"
       },
-      "mapRoomsOnly": "The live map is for the operations rooms; every count is in the table below."
+      "mapRoomsOnly": "The live map is for the operations rooms; every count is in the table below.",
+      "margin": "Margin around the area (km)",
+      "axisIntro": "Search inside the area of axis {{number}} and its sub-axes, as counts by unit, no name.",
+      "byArea": "Units inside the axis area, with a {{km}} km margin.",
+      "noArea": "No area is drawn for this axis, so the search covers all its gouvernorats."
     }
   },
   "basemap": {
@@ -6027,8 +6073,11 @@
     },
     "itemStatus": {
       "planned": "Planned",
+      "in_progress": "In progress",
       "done": "Done",
+      "not_done": "Not done",
       "postponed": "Postponed",
+      "refused": "Refused",
       "cancelled": "Cancelled"
     },
     "approval": {
@@ -6082,16 +6131,21 @@
       "notes": "Note",
       "inSeries": "part of a series",
       "followUp": "Follow-up",
-      "reason": "Reason (postponing or cancelling)",
+      "reason": "Reason (not done, postponed, refused or cancelled)",
       "remove": "Delete the activity",
       "removeSeries": "Delete the whole series"
     },
     "follow": {
+      "in_progress": "In progress",
       "done": "Done",
+      "not_done": "Not done",
       "postponed": "Postpone",
+      "refused": "Refuse",
       "cancelled": "Cancel",
       "planned": "Back to planned",
-      "notDue": "An activity is marked done once its day has come."
+      "notDue": "An activity is followed up once its day has come.",
+      "auto": "automatic, from its hours",
+      "autoHint": "An activity with hours is in progress from its start and done at its end, unless a status is set by hand."
     },
     "progress": {
       "title": "Progress by gouvernorat",
@@ -6133,6 +6187,273 @@
       "rename": "Rename",
       "delete": "Delete",
       "deleteOf": "Delete template {{name}}"
+    }
+  },
+  "permissions": {
+    "title": "Permissions",
+    "intro": "The system administrator delegates every permission: grants a page, a tab or a button to an account or a role, or hides it, for a period or open-ended. The server refuses what is hidden; every change is audited.",
+    "ceilingNote": "The fixed security rules are a ceiling nobody lifts: no sensitive layers, no personal data for the governor and the minister, no accounts, audit or basemap key, no national scope for a regional account. Hiding is always possible.",
+    "new": "New rule",
+    "feature": "Page, tab or button",
+    "choose": "Choose",
+    "wholePage": "The whole page: {{name}}",
+    "featureRequired": "Choose the page or the button.",
+    "kind": {
+      "page": "Page",
+      "tab": "Tab",
+      "button": "Button"
+    },
+    "effect": "Decision",
+    "effects": {
+      "grant": "Grant",
+      "hide": "Hide"
+    },
+    "target": "For whom",
+    "targets": {
+      "role": "A role",
+      "user": "One account"
+    },
+    "role": "Role",
+    "gouvernorat": "Gouvernorat",
+    "everyGouvernorat": "Every gouvernorat",
+    "national": "National scope",
+    "account": "Account id",
+    "accountHint": "Copy it from the accounts page.",
+    "accountName": "Holder's name (as a reminder)",
+    "from": "From",
+    "to": "To (optional)",
+    "reason": "Reason",
+    "save": {
+      "grant": "Grant",
+      "hide": "Hide"
+    },
+    "saved": "Rule saved and applied.",
+    "rules": "Rules in force",
+    "showEnded": "Show ended and revoked rules",
+    "noRules": "No rule: every account sees what its roles allow.",
+    "state": {
+      "active": "In force",
+      "scheduled": "Scheduled",
+      "ended": "Ended",
+      "revoked": "Revoked"
+    },
+    "period": "From {{from}} to {{to}}",
+    "open": "Open-ended",
+    "by": "{{name}}, {{at}}",
+    "revokedBy": "Revoked by {{name}}, {{at}}",
+    "revoke": "Revoke the rule",
+    "revokeTitle": "Revoke the rule",
+    "catalogue": "Catalogue",
+    "catalogueIntro": "Every page of the dashboard, with its tabs and buttons, and who holds them by default.",
+    "heldBy": "By default: {{roles}}",
+    "heldByAll": "By default: all staff",
+    "actsAs": "The grantee acts as {{role}}",
+    "flag": {
+      "personal": "Personal data",
+      "national": "National",
+      "fixed": "Fixed"
+    },
+    "flagHint": {
+      "personal": "Never granted to the governor or the minister.",
+      "national": "Granted to a national account only.",
+      "fixed": "Never granted; hidden only."
+    },
+    "ceiling": {
+      "fixed": "A fixed feature: never granted, hidden only.",
+      "personal_data": "Personal data: never granted to the governor or the minister.",
+      "national_scope": "A national feature: never granted to a role of one gouvernorat.",
+      "technical_account": "Technical accounts never receive operational rights.",
+      "not_staff": "Never granted to a citizen account."
+    },
+    "preview": "What an account sees",
+    "previewState": {
+      "open": "Open",
+      "closed": "Closed",
+      "hidden": "Hidden",
+      "granted": "Granted"
+    }
+  },
+  "window": {
+    "title": "Decision window",
+    "intro": "The situation now, search, comparison of two periods or two governorates, and reports, on one page. Aggregates only, with no personal data.",
+    "introDelegated": "This window is open to you through a delegation and covers the delegated events only: their indicators, comparison and reports, aggregated and without personal data.",
+    "noDelegation": "No delegation is in force for your account. The central room or the governorate's operations manager opens this window through a delegation on selected events.",
+    "delegatedUntil": "Delegation in force until {{at}}, on these events:",
+    "delegatedScope": "Results cover the delegated events only.",
+    "none": "None",
+    "minutes": "{{n}} min",
+    "severity": "Severity {{n}}",
+    "severityUnknown": "Severity not set",
+    "severityLabel": "Severity",
+    "byCategory": "By type",
+    "bySeverity": "By severity",
+    "byGouvernorat": "By governorate",
+    "series": {
+      "day": "Day by day",
+      "month": "Month by month"
+    },
+    "floor": "Any cell with fewer than {{n}} cases shows as “<{{n}}” so no person can be identified.",
+    "national": "National",
+    "gouvernorat": "Governorate",
+    "allGouvernorats": "All governorates",
+    "category": "Type",
+    "any": "Any",
+    "status": "Status",
+    "source": "Source",
+    "sources": {
+      "app": "App",
+      "call": "Call",
+      "sms": "SMS",
+      "portal": "Portal",
+      "iot": "Sensors"
+    },
+    "from": "From",
+    "to": "To",
+    "choose": "Choose",
+    "quick": "Quick search",
+    "quickHint": "Reference, place or word: fire Nabeul, accident…",
+    "searchButton": "Search",
+    "advanced": "Advanced search",
+    "understood": "Search read as:",
+    "kind": {
+      "category": "Type",
+      "classification": "Sub-type",
+      "gouvernorat": "Governorate",
+      "delegation": "Delegation",
+      "reference": "Reference",
+      "word": "Word",
+      "unmatched": "Not understood"
+    },
+    "results": "Results from {{from}} to {{to}}",
+    "items": "Interventions ({{n}})",
+    "truncated": "Only the latest 200 are shown",
+    "ref": "Reference",
+    "opened": "Opened",
+    "axis": "Axis",
+    "metric": {
+      "incidents": "Interventions",
+      "injured": "Injured",
+      "deceased": "Deaths",
+      "rescued": "Rescued",
+      "burned_ha": "Burned area (ha)",
+      "to_assignment_min": "Time to assignment",
+      "to_on_scene_min": "Time to arrival",
+      "reports": "Reports received",
+      "confirmed": "Confirmed reports",
+      "confirmed_rate": "Confirmed rate",
+      "category": "Type",
+      "severity": "Severity",
+      "status": "Status",
+      "gouvernorat": "Governorate",
+      "programmes": {
+        "programmes": "Seasonal programmes",
+        "posts": "Programme posts",
+        "lifeguards_planned": "Lifeguards planned",
+        "lifeguards_deployed": "Lifeguards deployed",
+        "activities_done": "Activities done",
+        "rate": "Completion rate"
+      }
+    },
+    "export": {
+      "pdf": "PDF report",
+      "xlsx": "XLSX sheet",
+      "audited": "Every export is audited."
+    },
+    "now": {
+      "at": "Situation at {{at}}, refreshed every minute.",
+      "axes": "Open axes",
+      "noAxes": "No open axis.",
+      "attached": "{{n}} intervention(s)",
+      "plan": "Plan in force: {{title}}",
+      "planText": "The axis has a written plan.",
+      "noPlan": "No plan linked to the axis.",
+      "open": "Ongoing interventions ({{n}})",
+      "resources": "Ready resources",
+      "kind": "Type",
+      "available": "Available",
+      "assigned": "Assigned",
+      "outOfService": "Out of service",
+      "progress": "Programme completion",
+      "today": "Today",
+      "week": "Week",
+      "decisions": "Latest decisions and recommendations",
+      "noDecisions": "No decision yet.",
+      "areaResources": "Resources in the area of {{number}}"
+    },
+    "saved": {
+      "name": "Search name",
+      "save": "Save search",
+      "list": "Saved searches",
+      "delete": "Delete {{name}}"
+    },
+    "compare": {
+      "metric": "Indicator",
+      "a": "Side A",
+      "b": "Side B",
+      "delta": "Difference",
+      "pct": "Difference %",
+      "mode": "Compare",
+      "modes": {
+        "periods": "Two periods",
+        "gouvernorats": "Two governorates"
+      },
+      "run": "Compare",
+      "title": "Comparison"
+    },
+    "delegation": {
+      "new": "New delegation",
+      "intro": "A delegation opens the window to one account, for a period, on selected events only. Every grant, withdrawal and look is audited.",
+      "find": "Find an account",
+      "grantee": "Account",
+      "ends": "Ends",
+      "events": "Delegated events",
+      "incidents": "Specific interventions",
+      "incidentsHint": "Full intervention identifier, separated by commas.",
+      "eventsRequired": "Choose at least one axis or intervention.",
+      "reason": "Reason",
+      "grant": "Grant the delegation",
+      "granted": "Delegation granted.",
+      "revoke": "Withdraw the delegation",
+      "revokeTitle": "Withdraw the delegation before its end",
+      "state": {
+        "active": "Active",
+        "scheduled": "Scheduled",
+        "ended": "Ended",
+        "revoked": "Withdrawn"
+      },
+      "period": "From {{from}} to {{to}}",
+      "by": "Granted by {{name}}",
+      "kind": {
+        "axis": "Axis",
+        "incident": "Intervention"
+      },
+      "revokedBy": "Withdrawn by {{name}} on {{at}}",
+      "list": "Delegations",
+      "showEnded": "Show ended and withdrawn",
+      "none": "No delegation."
+    },
+    "dictionary": {
+      "title": "Synonym dictionary",
+      "intro": "The words the quick search understands, in Arabic, French, English and dialect. Kept by the central room.",
+      "meaning": "Meaning",
+      "meaningHint": "Type code (fire, flood…), sub-type (forest_fire…) or a word.",
+      "words": "Synonyms (comma separated)",
+      "save": "Save",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "tabs": {
+      "label": "Decision window sections",
+      "now": "Situation now",
+      "search": "Search",
+      "compare": "Comparison",
+      "delegations": "Delegations",
+      "dictionary": "Dictionary"
+    },
+    "summary": {
+      "ask": "Write a summary (AI)",
+      "again": "Write again",
+      "label": "Advisory automatic summary"
     }
   }
 }

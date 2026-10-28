@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ء-حماية | تقرير المرحلة L4</title>
+<style>
+:root{--bg:#f7f8fa;--paper:#fff;--ink:#1b2430;--muted:#5b6675;--line:#dfe3e8;--accent:#b3261e;--accent2:#0b5cad;--ok:#1e7d3a;--warn:#a15c00;--chip:#eef1f5;--head:#f1f3f6;--navy:#1f3d99;--orange:#e07b00}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1318;--paper:#161b22;--ink:#e6eaef;--muted:#9aa5b1;--line:#2a313b;--accent:#ff6b5e;--accent2:#5aa9ff;--ok:#5cc97a;--warn:#e0a24a;--chip:#1f2630;--head:#1c222b;--navy:#8fa8ff;--orange:#ffb35c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Naskh Arabic","Segoe UI",Tahoma,Arial,sans-serif;line-height:1.75;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header.cover{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:10px;padding:28px 24px;margin-bottom:20px}
+header.cover h1{margin:0 0 6px;font-size:30px}
+header.cover .sub{color:var(--muted);margin:0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:16px}
+.meta div{background:var(--chip);border-radius:6px;padding:8px 12px;font-size:14px}
+.meta b{display:block;color:var(--muted);font-weight:600;font-size:12px}
+a{color:var(--accent2);text-decoration:none}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:20px}
+h2{margin-top:0;font-size:23px;border-bottom:2px solid var(--line);padding-bottom:8px}
+h3{font-size:18px;margin:18px 0 8px}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:start;vertical-align:top}
+th{background:var(--head);font-weight:700;white-space:nowrap}
+code{direction:ltr;unicode-bidi:isolate;background:var(--chip);padding:1px 5px;border-radius:4px;font-size:13px}
+pre{direction:ltr;text-align:left;background:var(--chip);padding:10px 12px;border-radius:6px;overflow-x:auto;font-size:13px;margin:6px 0}
+.note{border-inline-start:4px solid var(--accent2);background:var(--chip);padding:10px 14px;border-radius:6px;margin:12px 0}
+.warn{border-inline-start:4px solid var(--warn)}
+.sim{display:inline-block;background:#ffb300;color:#1f1300;font-weight:700;font-size:12px;padding:1px 8px;border-radius:999px;margin-inline-end:6px}
+.simbox{border:2px dashed #ffb300;background:rgba(255,179,0,.10);border-radius:8px;padding:12px 16px;margin:12px 0}
+.ltr{direction:ltr;unicode-bidi:isolate}
+ul,ol{padding-inline-start:22px}
+.bar{height:10px;background:var(--chip);border-radius:6px;overflow:hidden;min-width:90px}
+.bar span{display:block;height:100%;background:var(--ok)}
+.pipeline{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0}
+.pipeline div{border:1px solid var(--line);border-radius:8px;padding:6px 12px;background:var(--chip);font-weight:600}
+.pipeline div.now{border-color:var(--accent);background:rgba(179,38,30,.08)}
+.pipeline i{color:var(--muted);font-style:normal}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--paper)}
+.card h3{margin:0 0 4px;font-size:17px}
+.card .v{color:var(--muted);font-size:13px;margin:0 0 6px}
+.card dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:6px 0;font-size:14px}
+.card dt{color:var(--muted);font-weight:600}
+.card dd{margin:0}
+.prio{display:inline-block;border-radius:999px;padding:0 8px;font-size:12px;font-weight:700;color:#fff}
+.p1{background:#b3261e}.p2{background:#a15c00}.p3{background:#0b5cad}.p4{background:#5b6675}
+footer{color:var(--muted);text-align:center;font-size:13px}
+@media print{body{background:#fff}section,header.cover,.card{border:none;break-inside:avoid-page}}
+</style>
+<body>
+<div class="wrap">
+<header class="cover">
+  <h1>ء-حماية <span class="ltr">e-Himaya</span></h1>
+  <p class="sub">تقرير المرحلة L4: نافذة أصحاب القرار (الوضع الآن، البحث، المقارنة، التفويض، القاموس)، وروزنامة مكتبة الأحداث بستة مستويات (L4a)، والبحث في الموارد داخل حيّز المحور (RS1)، ووضعيات نشاط البرمجة، وصلاحيات مدير النظام، والمسارات حول الحادث</p>
+  <div class="meta">
+    <div><b>التاريخ</b>2026-10-28</div>
+    <div><b>الفرع</b><span class="ltr">claude/project-thread-yzwsn2</span></div>
+    <div><b>الحالة</b>منجزة، بانتظار الدمج</div>
+    <div><b>المراجع</b><a href="phase-l/design-l4.md">تصميم L4</a> · <a href="versions.md">الإصدارات</a> · <a href="backlog.md">القائمة المؤجلة (§3.7)</a></div>
+  </div>
+</header>
+
+<section>
+<h2>1. أين تقع هذه المرحلة من مسار المشروع</h2>
+<div class="pipeline">
+  <div>التبليغ</div><i>←</i>
+  <div class="now">المعالجة</div><i>←</i>
+  <div class="now">التحليل</div><i>←</i>
+  <div class="now">مؤشرات الأداء KPI</div><i>←</i>
+  <div>التنبؤ بالذكاء الاصطناعي</div><i>←</i>
+  <div class="now">اتخاذ القرار</div>
+</div>
+<ul>
+  <li><b>المعالجة</b>: وضعيات نشاط البرمجة تتغير بالتوقيت أو باليد، والوحدات المقترحة للحادث مرتبة بزمن الطريق، ومسار المستشفى مرسوم على الخريطة.</li>
+  <li><b>التحليل ومؤشرات الأداء</b>: الروزنامة من اليوم إلى السنة بتدرّج اللون، وتحتها مؤشرات الفترة؛ والبحث والمقارنة في نافذة القرار.</li>
+  <li><b>اتخاذ القرار</b>: نافذة واحدة لأصحاب القرار، «الوضع الآن» والموارد داخل حيّز المحور، مع ملخص مكتوب استشاري يحمل وسم الذكاء الاصطناعي.</li>
+</ul>
+</section>
+
+<section>
+<h2>2. مراجعة ← تصميم ← تطوير</h2>
+<div class="note"><b>الطلب:</b> البند 11 (نافذة أصحاب القرار) والبند 6 (الروزنامة بالسنة والسداسي والثلاثي والشهر والأسبوع واليوم). أجاب يامن عن أسئلة التصميم الأربعة (التفويض، القاموس بالدارجة، التقارير، وضعيات النشاط)، ثم أضاف: مدير النظام هو المفوض الأساسي لكل الصلاحيات، واختار أن «تبقى سقفا ثابتا» قواعد الأمن. ووافق على أربع نقاط للذكاء الاصطناعي «حسب الأولوية» مع «اترك ما توصلنا إليه والذكاء الاصطناعي يساعد ويقترح»، وعلى ترتيب الوحدات بزمن الطريق ورسم المسار.</div>
+<div class="note warn"><b>الأمن:</b> النافذة مجمّعة دائما: لا مبلّغ ولا هاتف ولا ضحية ولا عنوان، والخانات دون الحد تُعرض «&lt;5». نطاقها من الدور والولاية، والتفويض يقصرها على الأحداث المختارة دون الموارد ولا البحث بالكلمات الحرة. الطبقات الحساسة لا تمر بها، ولا يراها الوالي ولو كان المحور مفتوحا. البحث في الموارد داخل الحيّز يقرأ المحور بأمن مستوى الصفوف للسائل، فمحور ولاية أخرى غير موجود بالنسبة له. قواعد مدير النظام تُطبَّق في الخادم على كل مسار، والسقف الثابت يرفض كل منح يتجاوزه. الملخص المكتوب يتلقى الأعداد المجمّعة وحدها، ويُرفض إن ذكر رقما ليس منها. كل منح وسحب وفتح مفوَّض وتصدير وملخص مسجَّل في التدقيق.</div>
+<h3>L4b: نافذة أصحاب القرار</h3>
+<ol>
+  <li><b>الوضع الآن</b>: المحاور المفتوحة بمستواها ومخططها الساري، التدخلات المفتوحة حسب الخطورة، الموارد المتاحة والمشغولة والمعطلة، نسبة إنجاز البرمجة لكل ولاية، آخر القرارات، ورابط «الموارد في الحيّز» لكل محور.</li>
+  <li><b>البحث</b>: سطر واحد بالكلمات العادية أو بالدارجة، يعرض كيف فُهم، مع المرشحات؛ المؤشرات والرسوم وقائمة تدخلات دون شخص؛ البحوث المحفوظة؛ التصدير PDF و Excel.</li>
+  <li><b>المقارنة</b> بين فترتين أو ولايتين، كل مؤشر بقيمتيه والفرق ملونا بحسب الأسوأ.</li>
+  <li><b>التفويض</b> بسبب ومدة وأحداث مختارة، يضاف إليه ويُسحب؛ و<b>قاموس المرادفات</b> تضبطه القاعة المركزية.</li>
+  <li><b>الملخص المكتوب</b> الاستشاري للبحث وللمقارنة (§9 البند 1).</li>
+</ol>
+<h3>L4a: روزنامة مكتبة الأحداث</h3>
+<ol>
+  <li>ستة مستويات: اليوم بالساعات، الأسبوع والشهر بالأيام، الثلاثي بالأسابيع، السداسي والسنة بالأشهر؛ السابق والموالي، والنقر ينزل إلى المستوى الأدق، واليوم يفتح قائمته.</li>
+  <li>تدرّج اللون بحسب العدد مع مفتاح الألوان؛ وتحت الروزنامة مؤشرات تدخلات الفترة لأدوار الإحصاء ورابط الخريطة الحرارية للفترة نفسها.</li>
+</ol>
+<h3>البقية</h3>
+<ol>
+  <li><b>وضعيات نشاط البرمجة</b> السبع، آليا بالتوقيت أو يدويا بسبب، مع من وضعها.</li>
+  <li><b>صلاحيات مدير النظام</b>: صفحة «الصلاحيات» بشجرة الفهرس والقواعد السارية ومعاينة ما يراه حساب.</li>
+  <li><b>المسارات حول الحادث</b>: الوحدات المقترحة بزمن الطريق، وزر «المسار» للمستشفى وللوحدة.</li>
+  <li><b>RS1</b>: تبويب «الموارد» في لوحة المحور يبحث داخل حيّز المحور وفروعه بهامش حتى 50 كم، وإن لم يُرسم حيّز ففي ولاياته.</li>
+</ol>
+</section>
+
+<section>
+<h2>3. لقطات <span class="sim">[SIM]</span></h2>
+<p>نافذة القرار لرئيس القاعة المركزية: الوضع الآن نهارا، والبحث ليلا ونهارا مع المؤشرات، والمقارنة:</p>
+  <img src="phase-l/l4-window-now-day.png" alt="الوضع الآن، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-l/l4-window-search-night.png" alt="البحث في النافذة، ليلا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-l/l4-window-search-figures-day.png" alt="مؤشرات البحث، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-l/l4-window-compare-day.png" alt="المقارنة بين فترتين، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+<p>التفويضات وما يراه المفوَّض له، وقاموس المرادفات:</p>
+  <img src="phase-l/l4-window-delegations-night.png" alt="التفويضات، ليلا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-l/l4-window-delegated-day.png" alt="النافذة لصاحب تفويض، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-l/l4-window-dictionary-night.png" alt="قاموس المرادفات، ليلا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+<p>روزنامة مكتبة الأحداث: الشهر والسنة واليوم، ومؤشرات الفترة:</p>
+  <img src="phase-l/l4-calendar-month-day.png" alt="الروزنامة بالشهر، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-l/l4-calendar-year-night.png" alt="الروزنامة بالسنة، ليلا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-l/l4-calendar-day-day.png" alt="الروزنامة باليوم، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-l/l4-calendar-figures-night.png" alt="مؤشرات الفترة تحت الروزنامة، ليلا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+<p>الموارد داخل حيّز المحور، وصفحة الصلاحيات لمدير النظام:</p>
+  <img src="phase-l/l4-axis-resources-day.png" alt="الموارد في حيّز المحور، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-l/l4-permissions-night.png" alt="الصلاحيات، ليلا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+</section>
+
+<section>
+<h2>4. التقدم لكل جزء</h2>
+<div class="tbl"><table>
+<tr><th>البند</th><th>الحالة</th><th>التقدم</th></tr>
+<tr><td>F-DSH-79 الوضع الآن</td><td>منجز (L4b)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-DSH-80 البحث والمؤشرات والبحوث المحفوظة</td><td>منجز (L4b)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-DSH-81 المقارنة والتصدير</td><td>منجز (L4b)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-DSH-82 الملخص المكتوب الاستشاري</td><td>منجز (L4b)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-DSH-83 التفويض</td><td>منجز</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-DSH-84 قاموس المرادفات</td><td>منجز</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-DSH-85 الروزنامة بستة مستويات ومؤشرات الفترة</td><td>منجز (L4a)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-DSH-86 الوضعيات، الصلاحيات، المسارات، الموارد في الحيّز</td><td>منجز</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-SRV-28 إلى F-SRV-32</td><td>منجز</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>X2 إشعار الهاتف والمكالمة للوالي والوزير</td><td>للدراسة</td><td><div class="bar"><span style="width:0%"></span></div></td></tr>
+<tr><td>الذكاء الاصطناعي AI2 إلى AI4</td><td>في L5</td><td><div class="bar"><span style="width:0%"></span></div></td></tr>
+</table></div>
+<p><b>تقدم المرحلة L4: 100%. التالي: التمارين <span class="sim">[SIM]</span> (L5) ومعها AI2 إلى AI4.</b></p>
+</section>
+
+<section>
+<h2>5. المحاكاة <span class="sim">[SIM]</span></h2>
+<div class="simbox"><ul>
+  <li><span class="sim">[SIM]</span> كل الأعداد والتدخلات والمحاور والوحدات والتفويضات والقواعد والأسماء في اللقطات مختلَقة للعرض.</li>
+  <li><span class="sim">[SIM]</span> الملخص المكتوب في الاختبارات يأتي من نموذج مقلَّد؛ في الإنتاج يكتبه النموذج المحلي الموجود منذ المرحلة 7.</li>
+  <li>كلمات قاموس الدارجة المبذورة أولية تنتظر مراجعة القاعة المركزية.</li>
+</ul></div>
+</section>
+
+<section>
+<h2>6. الاختبارات المطبقة</h2>
+<div class="tbl"><table>
+<tr><th>المكوّن</th><th>العدد</th><th>النتيجة</th></tr>
+<tr><td>الخلفية (pytest)</td><td>992، منها النافذة والتفويض والصلاحيات والوضعيات والروزنامة والموارد في الحيّز</td><td>ناجحة (2 متخطّاة كالعادة)</td></tr>
+<tr><td>الترحيلات</td><td>صعودا ونزولا ثم صعودا حتى 0065</td><td>ناجحة</td></tr>
+<tr><td>لوحة القيادة (vitest)</td><td>556</td><td>كلها ناجحة</td></tr>
+<tr><td>لوحة القيادة (Playwright مع axe)</td><td>80، منها الروزنامة ونافذة القرار</td><td>كلها ناجحة، دون أي مخالفة</td></tr>
+<tr><td><code>ruff</code> و <code>mypy</code> و <code>eslint</code> و <code>tsc</code>، و OpenAPI (498 مسارا، 601 عملية)</td><td>—</td><td>لا ملاحظة</td></tr>
+</table></div>
+<ul>
+  <li>النطاق: كل ولاية ترى أعدادها وحدها والمركز يرى الكل؛ المفوَّض له لا يرى إلا أحداثه؛ الخانات دون الحد ترجع فارغة.</li>
+  <li>الصلاحيات: الحجب يرفض الطريق في الخادم (<code>feature_hidden</code>)، والمنح فوق السقف يُرفض عند الحفظ، ومدير النظام لا يحجب الصلاحيات عن نفسه.</li>
+  <li>الروزنامة: حدود كل مستوى وخاناته بتوقيت تونس، والمؤشرات لأدوار الإحصاء وحدها وسنة على الأكثر (422).</li>
+  <li>RS1: الوحدات داخل الحيّز بالهامش، والولايات حين لا حيّز، و404 لمحور ولاية أخرى، و403 دون صلاحية المحاور.</li>
+  <li>الملخص: يُرفض الجواب الذي فيه رقم غير موجود في الأعداد، و503 إن لم يكن النموذج متاحا.</li>
+</ul>
+</section>
+
+<section id="tools">
+<h2>7. التقنيات والأدوات والمصادر والإصدارات</h2>
+<p>القائمة الكاملة في <a href="versions.md">versions.md</a>.</p>
+<div class="cards">
+<div class="card"><h3>ترحيلات قاعدة البيانات</h3><p class="v">0063 و 0064 و 0065 · <span class="prio p1">1</span></p>
+<dl><dt>الاستعمال</dt><dd>وضعيات النشاط، الجدول <code>access.feature_rule</code>، والمخطط <code>decision_window</code></dd><dt>الأمر</dt><dd><code>alembic upgrade head</code></dd></dl></div>
+<div class="card"><h3>النموذج اللغوي المحلي</h3><p class="v">Ollama الموجود منذ المرحلة 7 · <span class="prio p2">2</span></p>
+<dl><dt>الاستعمال</dt><dd>الملخص المكتوب الاستشاري</dd><dt>الأثر</dt><dd>لا تثبيت جديد</dd></dl></div>
+<div class="card"><h3>محرك الطرق</h3><p class="v">Valhalla الموجود منذ المرحلة 7 · <span class="prio p2">2</span></p>
+<dl><dt>الاستعمال</dt><dd>ترتيب الوحدات بزمن الطريق ومسار المستشفى</dd></dl></div>
+<div class="card"><h3>الواجهة البرمجية</h3><p class="v">498 مسارا · 601 عملية · <span class="prio p2">2</span></p>
+<dl><dt>الجديد</dt><dd><code>/api/v1/staff/window/*</code> و <code>/access/*</code> و <code>/library/calendar/grid</code> و <code>/library/calendar/figures</code>، و <code>axis_id</code> و <code>margin_km</code> في البحث الموحّد</dd></dl></div>
+<div class="card"><h3>تطبيق الهاتف</h3><p class="v">0.22.0 دون تغيير · <span class="prio p4">4</span></p>
+<dl><dt>الأثر</dt><dd>لا شيء؛ كل الجديد في اللوحة والخادم</dd></dl></div>
+</div>
+</section>
+
+<section>
+<h2>8. المخرجات المحيَّنة</h2>
+<ul>
+  <li>الملف الوصفي V24 (docx و pdf) في <code>spec/</code>: F-DSH-79 إلى 86 و F-SRV-28 إلى 32، 498 مسارا و601 عملية، الاختبارات، وخارطة الطريق.</li>
+  <li>مخططات UML في <code>diagrams/</code>: مخطط أصناف جديد لنافذة القرار (27)، وتسلسلات النافذة (67) والتفويض (68) والروزنامة (69) والموارد في الحيّز (70)، وحالات النشاط المحدَّثة (66)، وحالات الاستعمال S56 إلى S63 في مخطط القاعة.</li>
+  <li>العرض للمسؤولين في <code>presentation/</code>: 43 مرحلة، الاختبارات، وخارطة الطريق.</li>
+  <li>مرجع التصميم أعيد توليده دون تغيير، إذ لا ألوان ولا أيقونات جديدة: <a href="design-reference.html">design-reference.html</a>.</li>
+  <li>سجل الإصدارات، القائمة المؤجلة (§3.7)، ودليلا التنصيب (الترحيلات 0063 إلى 0065)، واللقطات في <code>phase-l/</code>.</li>
+</ul>
+</section>
+
+<section>
+<h2>9. ملاحظات وانحرافات</h2>
+<ul>
+  <li>X2 (إشعار الهاتف والمكالمة الآلية للوالي والوزير) بقي للدراسة: لا تطبيق لهما بعد، والإشعار الحي في اللوحة قائم.</li>
+  <li>نقاط الذكاء الاصطناعي 2 إلى 4 (قراءة المخطط، مسودة البرمجة، رصد الشذوذ) انتقلت إلى L5 كما في الترتيب المتفق عليه.</li>
+  <li>مؤشرات الروزنامة لا تتجاوز سنة واحدة في الطلب الواحد، لتبقى الإجابة سريعة.</li>
+  <li>إذا تعطّل محرك الطرق، تُرتَّب الوحدات بالمسافة المستقيمة ويُكتب أن الرقم تقدير.</li>
+</ul>
+</section>
+
+<section>
+<h2>10. ما يلي</h2>
+<p>الدمج، ثم التمارين <span class="sim">[SIM]</span> (L5) ومعها قراءة المخطط ومسودة البرمجة ورصد الشذوذ (AI2 إلى AI4).</p>
+</section>
+</div>
+</body>
+</html>

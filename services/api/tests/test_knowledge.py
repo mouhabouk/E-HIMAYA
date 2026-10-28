@@ -18,6 +18,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_system_sessionmaker
 from app.modules.decision import llm
+from app.modules.knowledge import calendar as kcalendar
 from app.modules.knowledge import documents, indexer, opensearch, search
 from app.modules.knowledge import text as kt
 from app.modules.knowledge.domain import Kind
@@ -476,6 +477,32 @@ async def test_library_calendar_tree_and_item(
         )
     ).json()
     assert {d["date"]: d["count"] for d in cal["days"]}.get("2001-03-05", 0) >= 1
+    # The six levels (L4a): the same filters, the period of the level cut into its cells.
+    grids = {}
+    for level in kcalendar.LEVELS:
+        r = await client.get(
+            "/api/v1/staff/library/calendar/grid",
+            params={"level": level, "on": "2001-03-05", "kinds": "memory", "category": "landslide"},
+            headers=zaghouan,
+        )
+        assert r.status_code == 200, r.text
+        grids[level] = r.json()
+    assert len(grids["day"]["cells"]) == 24 and grids["day"]["cells"][12]["count"] >= 1
+    assert sum(c["count"] for c in grids["day"]["cells"]) == grids["day"]["cells"][12]["count"]
+    assert grids["week"]["start"] == "2001-03-05" and len(grids["week"]["cells"]) == 7
+    assert grids["week"]["cells"][0]["count"] >= 1
+    assert len(grids["month"]["cells"]) == 31 and grids["month"]["cells"][4]["count"] >= 1
+    quarter = grids["quarter"]
+    assert quarter["step"] == "week" and quarter["cells"][0]["start"] == "2001-01-01"
+    assert quarter["cells"][-1]["end"] == "2001-03-31"
+    assert next(c for c in quarter["cells"] if c["start"] == "2001-03-05")["count"] >= 1
+    assert [len(grids[x]["cells"]) for x in ("half", "year")] == [6, 12]
+    assert grids["year"]["cells"][2]["count"] == grids["half"]["cells"][2]["count"] >= 1
+    assert all(sum(c["count"] for c in grids[x]["cells"]) >= 1 for x in grids)
+    bad = await client.get(
+        "/api/v1/staff/library/calendar/grid", params={"level": "decade", "on": "2001-03-05"}, headers=zaghouan
+    )
+    assert bad.status_code == 422
     tree = (
         await client.get("/api/v1/staff/library/tree", params={"by": "type", "category": "landslide"}, headers=zaghouan)
     ).json()
@@ -508,6 +535,40 @@ async def test_library_calendar_tree_and_item(
         )
     ).scalar_one()
     assert audited == 1
+
+
+def test_calendar_levels_bounds_and_cells() -> None:
+    from datetime import date
+
+    on = date(2024, 2, 29)
+    assert kcalendar.bounds("week", on) == (date(2024, 2, 26), date(2024, 3, 3))
+    assert kcalendar.bounds("quarter", on) == (date(2024, 1, 1), date(2024, 3, 31))
+    assert kcalendar.bounds("half", date(2024, 11, 2)) == (date(2024, 7, 1), date(2024, 12, 31))
+    assert kcalendar.bounds("year", on) == (date(2024, 1, 1), date(2024, 12, 31))
+    weeks = kcalendar.cells("quarter", *kcalendar.bounds("quarter", on))
+    # 2024-01-01 is a Monday; the last week is cut at the end of March.
+    assert weeks[0] == (date(2024, 1, 1), date(2024, 1, 7)) and weeks[-1] == (date(2024, 3, 25), date(2024, 3, 31))
+    assert len(kcalendar.cells("month", *kcalendar.bounds("month", on))) == 29
+
+
+async def test_calendar_figures_scope_and_roles(client: httpx.AsyncClient, staff: Staff) -> None:
+    url = "/api/v1/staff/library/calendar/figures"
+    period = {"from": "2001-03-01", "to": "2001-03-31"}
+    zaghouan = staff(["operator"], gouvernorat=ZAGHOUAN)
+    r = await client.get(url, params=period, headers=zaghouan)
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["gouvernorats"] == [ZAGHOUAN] and body["min_cell"] >= 1 and "by_category" in body["figures"]
+    # Another gouvernorat than one's own: refused, never widened.
+    other = await client.get(url, params=period | {"gouvernorat": BEJA}, headers=zaghouan)
+    assert other.status_code == 403
+    editor = staff(["content_editor"])
+    assert (await client.get(url, params=period, headers=editor)).status_code == 403
+    long = {"from": "2001-01-01", "to": "2002-06-30"}
+    assert (await client.get(url, params=long, headers=zaghouan)).status_code == 422
+    national = staff(["central_committee"], gouvernorat=None)
+    whole = (await client.get(url, params=period | {"category": "landslide"}, headers=national)).json()
+    assert whole["gouvernorats"] == []
 
 
 async def test_indexer_follows_events_and_wipes_rejected_reports(client: httpx.AsyncClient, staff: Staff) -> None:

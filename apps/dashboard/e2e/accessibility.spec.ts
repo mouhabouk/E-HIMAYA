@@ -17,6 +17,20 @@ import {
   VEHICLE,
 } from "../src/test/inventoryData";
 import { BASEMAP, BASEMAP_SETTINGS } from "../src/test/basemapData";
+import { fakeFigures, fakeGrid } from "../src/test/libraryCalendarData";
+import type { CalendarLevel } from "../src/lib/phase8Types";
+import { FEATURE_RULES, FEATURES, NO_FEATURES, PREVIEW } from "../src/test/featuresData";
+import {
+  WINDOW_ACCESS_FULL,
+  WINDOW_COMPARE,
+  WINDOW_DELEGATES,
+  WINDOW_DELEGATION,
+  WINDOW_NOW,
+  WINDOW_SAVED,
+  WINDOW_SEARCH,
+  WINDOW_SUMMARY,
+  WINDOW_SYNONYMS,
+} from "../src/test/windowData";
 import { SCHEDULE_OPTIONS, SCHEDULE_PROGRESS, SCHEDULE_SETTINGS, SCHEDULE_SLOT, SCHEDULE_TEMPLATES } from "../src/test/scheduleData";
 import { DIRECTIVE_ALL_DETAIL, DISPATCH_PAGE, HAZARDS, PLAN_DETAIL, PLANS, REVISIONS, SEARCH } from "../src/test/registerData";
 import { JENDOUBA_AXIS, NABEUL_AXIS, NABEUL_DETAIL, overview, REQUEST, SOUSSE_AXIS, SUGGESTIONS } from "../src/test/crisisData";
@@ -156,10 +170,14 @@ async function mockApi(page: Page): Promise<string[]> {
   await page.route(`${API}/**`, (route) => {
     const request = route.request();
     const { pathname } = new URL(request.url());
+    // The decision window answers its own access (full view) before the common default (no delegation).
+    if (pathname === "/api/v1/staff/window/access") return json(route, WINDOW_ACCESS_FULL);
     const common = commonAnswer(request.method(), pathname, route);
     if (common) return common;
     // Phase R2: the search of the resources register is a POST that answers.
     if (pathname === "/api/v1/staff/inventory/search") return json(route, SEARCH_RESULT);
+    // Phase L4 §9: the written summary of the decision window is a POST that answers.
+    if (pathname === "/api/v1/staff/window/summary") return json(route, WINDOW_SUMMARY);
     if (request.method() !== "GET") return json(route, {}, 204);
     if (pathname === "/api/v1/staff/kpis") {
       return json(route, {
@@ -209,6 +227,34 @@ async function mockApi(page: Page): Promise<string[]> {
     if (pathname === "/api/v1/staff/register/dispatches") return json(route, DISPATCH_PAGE);
     if (pathname === "/api/v1/staff/register/dispatches/dsp-all") return json(route, DIRECTIVE_ALL_DETAIL);
     if (pathname === "/api/v1/staff/register/plans") return json(route, PLANS);
+    // The administrator's permissions (phase L4 §8), [SIM] data.
+    if (pathname === "/api/v1/staff/features/mine") return json(route, NO_FEATURES);
+    if (pathname === "/api/v1/staff/features/catalogue") return json(route, FEATURES);
+    if (pathname === "/api/v1/staff/features/rules") return json(route, FEATURE_RULES);
+    if (pathname === "/api/v1/staff/features/preview") return json(route, PREVIEW);
+    // The decision window (phase L4 §3 and §5), [SIM] data.
+    const decisionWindow: Record<string, unknown> = {
+      "/api/v1/staff/window/access": WINDOW_ACCESS_FULL,
+      "/api/v1/staff/window/now": WINDOW_NOW,
+      "/api/v1/staff/window/search": WINDOW_SEARCH,
+      "/api/v1/staff/window/compare": WINDOW_COMPARE,
+      "/api/v1/staff/window/searches": WINDOW_SAVED,
+      "/api/v1/staff/window/synonyms": WINDOW_SYNONYMS,
+      "/api/v1/staff/window/delegates": WINDOW_DELEGATES,
+      "/api/v1/staff/window/delegations": [WINDOW_DELEGATION],
+    };
+    if (pathname in decisionWindow) return json(route, decisionWindow[pathname]);
+    // The six-level calendar of the events library (phase L4a), [SIM] data.
+    if (pathname === "/api/v1/staff/library/search")
+      return json(route, { items: [], facets: { kind: [], year: [], gouvernorat: [], category: [] }, backend: "postgres", semantic: false, next_cursor: null });
+    if (pathname === "/api/v1/staff/library/calendar/grid") {
+      const q = new URL(route.request().url()).searchParams;
+      return json(route, fakeGrid((q.get("level") ?? "month") as CalendarLevel, q.get("on") ?? "2026-08-12"));
+    }
+    if (pathname === "/api/v1/staff/library/calendar/figures") {
+      const q = new URL(route.request().url()).searchParams;
+      return json(route, fakeFigures(q.get("from") ?? "2026-08-01", q.get("to") ?? "2026-08-31"));
+    }
     if (pathname === "/api/v1/staff/schedule/slot") return json(route, SCHEDULE_SLOT);
     if (pathname === "/api/v1/staff/schedule/progress") return json(route, SCHEDULE_PROGRESS);
     if (pathname === "/api/v1/staff/schedule/settings") return json(route, SCHEDULE_SETTINGS);
@@ -303,6 +349,82 @@ test.describe("accessibility of the programmes (ar)", () => {
       await page.getByRole("tab", { name: "طريقة الاعتماد" }).click();
       await expect(page.locator("main #sched-settings")).toBeVisible();
       await scan(page, `/schedule approval ${theme}`);
+      expect(fence.unexpected).toEqual([]);
+    });
+  }
+});
+
+// Phase L4 §8: the permissions page of the system administrator, the catalogue open, in both modes.
+test.describe("accessibility of the permissions (ar)", () => {
+  for (const theme of ["light", "dark"] as const) {
+    test(`rules, preview and catalogue, ${theme}, have no serious or critical violation`, async ({ page }) => {
+      await signIn(page, [...ROLES, "sysadmin"], "Salma Ben Ali");
+      await page.addInitScript((t) => {
+        window.localStorage.setItem("ehimaya.lang", "ar");
+        window.localStorage.setItem("ehimaya.theme", t);
+      }, theme);
+      const fence = await baseMock(page);
+      await mockApi(page);
+      await page.goto("/permissions");
+      await expect(page.locator("main .perm-rule").first()).toBeVisible();
+      await page.locator("main .perm-group summary").first().click();
+      await scan(page, `/permissions ${theme}`);
+      expect(fence.unexpected).toEqual([]);
+    });
+  }
+});
+
+// Phase L4 §3: the decision window (the situation now, a search, a comparison, the delegations), in both modes.
+test.describe("accessibility of the decision window (ar)", () => {
+  for (const theme of ["light", "dark"] as const) {
+    test(`now, search, comparison and delegations, ${theme}, have no serious or critical violation`, async ({ page }) => {
+      await signIn(page, ["ops_manager"], "Salma Ben Ali");
+      await page.addInitScript((t) => {
+        window.localStorage.setItem("ehimaya.lang", "ar");
+        window.localStorage.setItem("ehimaya.theme", t);
+      }, theme);
+      const fence = await baseMock(page);
+      await mockApi(page);
+      await page.goto("/window");
+      await expect(page.locator("main .win-axis").first()).toBeVisible();
+      await scan(page, `/window now ${theme}`);
+      await page.getByRole("tab", { name: "البحث" }).click();
+      await expect(page.locator("main .win-understood")).toBeVisible();
+      await page.getByRole("button", { name: "اكتب ملخصا (ذكاء اصطناعي)" }).click();
+      await expect(page.locator("main .win-summary__body")).toBeVisible();
+      await scan(page, `/window search ${theme}`);
+      await page.getByRole("tab", { name: "المقارنة" }).click();
+      await page.getByRole("button", { name: "قارن" }).click();
+      await expect(page.locator("main .win-compare")).toBeVisible();
+      await scan(page, `/window compare ${theme}`);
+      await page.getByRole("tab", { name: "التفويضات" }).click();
+      await expect(page.locator("main .win-delegation").first()).toBeVisible();
+      await scan(page, `/window delegations ${theme}`);
+      expect(fence.unexpected).toEqual([]);
+    });
+  }
+});
+
+test.describe("accessibility of the library calendar (ar)", () => {
+  for (const theme of ["light", "dark"] as const) {
+    test(`the month, year and day levels with their indicators, ${theme}, have no serious or critical violation`, async ({ page }) => {
+      await signIn(page, ["ops_manager"], "Salma Ben Ali");
+      await page.addInitScript((t) => {
+        window.localStorage.setItem("ehimaya.lang", "ar");
+        window.localStorage.setItem("ehimaya.theme", t);
+      }, theme);
+      const fence = await baseMock(page);
+      await mockApi(page);
+      await page.goto("/library?view=calendar&from=2026-08-12");
+      await expect(page.locator("main .calendar__grid")).toBeVisible();
+      await expect(page.locator("main .calendar__figures .kpis")).toBeVisible();
+      await scan(page, `/library calendar month ${theme}`);
+      await page.getByRole("button", { name: "سنة", exact: true }).click();
+      await expect(page.locator("main .calendar__cells--month")).toBeVisible();
+      await scan(page, `/library calendar year ${theme}`);
+      await page.getByRole("button", { name: "يوم", exact: true }).click();
+      await expect(page.locator("main .calendar__cells--hour")).toBeVisible();
+      await scan(page, `/library calendar day ${theme}`);
       expect(fence.unexpected).toEqual([]);
     });
   }

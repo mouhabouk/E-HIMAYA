@@ -473,11 +473,11 @@ export function IncidentDetailPage() {
       <OperationsPanel incident={incident} assignPreset={assignPreset} />
 
       <div className="detail__grid">
-        <RespondersPanel incident={incident} />
+        <RespondersPanel incident={incident} onRoute={(from, to, profile) => setRouteRequest({ from, to, profile })} />
         <ConferencePanel incident={incident} />
       </div>
 
-      <NearHospitals incident={incident} />
+      <NearHospitals incident={incident} onRoute={(from, to, profile) => setRouteRequest({ from, to, profile })} />
 
       <AssistantPanel incident={incident} />
 

@@ -28,6 +28,7 @@ from app.modules.crisis.models import (
 from app.modules.decision.models import ProcedureChunk
 from app.modules.doctors.models import Doctor, DoctorReview
 from app.modules.evidence.models import Anchor, Leaf
+from app.modules.features.models import FeatureRule
 from app.modules.forecast.models import ForecastRun
 from app.modules.geo.models import Delegation, Gouvernorat, Layer, LayerFeature, LayerImport, LayerRevision
 from app.modules.identity.models import Account, Consent, EmailCode, ErasureRequest, Profile
@@ -103,6 +104,9 @@ from app.modules.streams.models import LiveStream, StreamDetection, StreamLocati
 from app.modules.telephony.models import Call, Conference, OperatorEndpoint, SmsInbound
 from app.modules.volunteers.models import Volunteer, VolunteerReview
 from app.modules.weather.models import AlertSuggestion, GridPoint, Observation, Rule
+from app.modules.window.models import SavedSearch as WindowSavedSearch
+from app.modules.window.models import Synonym as WindowSynonym
+from app.modules.window.models import WindowDelegation, WindowEvent
 
 __all__ = [
     "Account",
@@ -158,6 +162,7 @@ __all__ = [
     "Equipment",
     "ErasureRequest",
     "Evacuation",
+    "FeatureRule",
     "FieldAttachment",
     "FieldReport",
     "FileKey",
@@ -252,4 +257,8 @@ __all__ = [
     "UnitCheck",
     "Volunteer",
     "VolunteerReview",
+    "WindowDelegation",
+    "WindowEvent",
+    "WindowSavedSearch",
+    "WindowSynonym",
 ]

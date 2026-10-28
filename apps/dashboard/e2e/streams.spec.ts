@@ -193,6 +193,8 @@ async function mock(page: Page, streams: StaffStream[]): Promise<Mock> {
         return json(route, { ...found });
       }
     }
+    // What the system administrator grants and hides (phase L4 §8): nothing here.
+    if (method === "GET" && pathname === "/api/v1/staff/features/mine") return json(route, { granted: [], hidden: [], lent: {} });
     m.unexpected.push(`${method} ${pathname}`);
     return json(route, { detail: "not_found" }, 404);
   });

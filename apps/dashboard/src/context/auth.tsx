@@ -56,3 +56,19 @@ export function useAuth(): AuthContextValue {
   if (!v) throw new Error("AuthProvider missing");
   return v;
 }
+
+/**
+ * Roles lent on one page by the administrator's grants (L4, design-l4.md §8): inside it, the granted buttons show as
+ * for an account holding that role. The API lends the same role on the granted routes only and checks the rest.
+ */
+export function LendRoles({ roles, children }: { roles: readonly string[]; children: ReactNode }) {
+  const parent = useAuth();
+  const key = [...roles].sort().join(",");
+  const value = useMemo<AuthContextValue>(() => {
+    const user = parent.user;
+    if (!user || key === "") return parent;
+    const all = [...new Set([...user.identity.roles, ...key.split(",")])];
+    return { ...parent, user: { ...user, identity: { ...user.identity, roles: all } } };
+  }, [parent, key]);
+  return <AuthContext value={value}>{children}</AuthContext>;
+}

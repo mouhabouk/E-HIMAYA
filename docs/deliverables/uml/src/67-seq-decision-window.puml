@@ -1,0 +1,34 @@
+@startuml
+!include style.iuml
+title Séquence : recherche, comparaison et résumé écrit dans la fenêtre de décision (L4)
+autonumber
+actor "Chef de salle\n(Nabeul)" as OPM
+participant "Tableau de bord" as UI
+participant "API" as API
+database "PostgreSQL" as DB
+participant "Modèle de langue\nlocal (Ollama)" as LLM
+OPM -> UI : « حرايق نابل جويلية »
+UI -> API : GET /staff/window/search?q=…
+API -> DB : dictionnaire : catégories, wilayas,\ndélégations, synonymes
+API -> API : lecture : fire, 21 ; mots compris affichés
+API -> DB : indicateurs de la période dans sa portée\n(cellules < 5 → null)
+API --> UI : indicateurs, graphiques, 200 interventions\nau plus, sans titre ni personne
+OPM -> UI : « Comparer » juillet 2025 / juillet 2026
+UI -> API : GET /staff/window/compare
+API --> UI : valeurs, écart, écart en %
+OPM -> UI : « Rédiger un résumé (IA) »
+UI -> API : POST /staff/window/summary
+API -> LLM : les seuls agrégats affichés\n(« <5 » pour une cellule masquée)
+LLM --> API : {"summary": …}
+API -> API : chaque nombre du texte\nfait-il partie des agrégats ?
+alt un nombre inventé
+  API --> UI : refus : « lire les tableaux »
+else fidèle
+  API -> DB : audit window.summary
+  API --> UI : résumé consultatif, marqué IA
+end
+OPM -> UI : « PDF »
+UI -> API : POST /staff/window/export
+API -> DB : audit window.export
+API --> UI : fichier
+@enduml

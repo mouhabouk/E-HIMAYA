@@ -300,6 +300,26 @@ export const ERROR_CODES = [
   "evacuation_not_found",
   "need_not_found",
   "occupants_over_capacity",
+  // Phase L4 §8: the administrator's rules.
+  "feature_hidden",
+  "ceiling",
+  "self_lockout",
+  "unknown_feature",
+  "unknown_role",
+  "user_rule_has_no_gouvernorat",
+  // Phase L4 §3 and §5: the decision window and its delegations.
+  "window_delegation_required",
+  "delegate_not_allowed",
+  "event_out_of_scope",
+  "unknown_event",
+  "self_delegation",
+  "already_full_view",
+  "account_not_found",
+  "delegation_closed",
+  "two_gouvernorats_required",
+  "too_many_saved",
+  "query_too_long",
+  "no_words",
 ] as const;
 export type ErrorCode = (typeof ERROR_CODES)[number];
 

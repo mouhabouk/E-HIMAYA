@@ -16,10 +16,14 @@ from app.core.config import get_settings
 from app.core.db import get_session
 from app.core.ratelimit import enforce, opaque
 from app.core.security import Principal, require_roles
-from app.modules.knowledge import items, memory, search
+from app.modules.analytics.domain import READ_ROLES as ANALYTICS_ROLES
+from app.modules.knowledge import calendar, items, memory, search
 from app.modules.knowledge import schemas as s
 from app.modules.knowledge.domain import AUTHOR_ROLES, LIBRARY_ROLES, REVIEW_ROLES, Kind
 from app.modules.reports.domain import Category
+from app.modules.window import service as window_service
+from app.modules.window.access import Viewer, codes_of
+from app.modules.window.schemas import Filters as WindowFilters
 
 router = APIRouter(prefix="/api/v1/staff", tags=["staff", "knowledge"])
 Session = Annotated[AsyncSession, Depends(get_session)]
@@ -182,6 +186,49 @@ async def library_calendar(
 ) -> s.CalendarOut:
     filters = _filters(kinds, None, None, gouvernorat, category)
     return await search.calendar_counts(session, principal, filters, year, month)
+
+
+@router.get("/library/calendar/grid", response_model=s.CalendarGrid)
+async def library_calendar_grid(
+    principal: Reader,
+    session: Session,
+    level: calendar.Level,
+    on: date,
+    kinds: str | None = None,
+    gouvernorat: Annotated[int | None, Query(ge=11, le=83)] = None,
+    category: Category | None = None,
+) -> s.CalendarGrid:
+    """One of the six levels of the calendar (L4a): the period of ``level`` that contains ``on``, cut into cells."""
+    filters = _filters(kinds, None, None, gouvernorat, category)
+    return await calendar.grid(session, principal, filters, level, on)
+
+
+@router.get("/library/calendar/figures", response_model=s.PeriodFigures)
+async def library_calendar_figures(
+    principal: Annotated[Principal, Depends(require_roles(*ANALYTICS_ROLES))],
+    session: Session,
+    from_: Annotated[date, Query(alias="from")],
+    to: date,
+    gouvernorat: Annotated[int | None, Query(ge=11, le=83)] = None,
+    category: Category | None = None,
+) -> s.PeriodFigures:
+    """The indicators of the period shown (L4a): those of the decision window, within the caller's scope."""
+    if to < from_ or (to - from_).days > 366:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "invalid_period")
+    f = WindowFilters(
+        from_=from_,
+        to=to,
+        gouvernorats=[gouvernorat] if gouvernorat else [],
+        category=[category.value] if category else [],
+    )
+    q = window_service.build(Viewer(principal, True, codes_of(principal)), f, from_, to)
+    return s.PeriodFigures(
+        from_=from_,
+        to=to,
+        gouvernorats=q.codes,
+        figures=await window_service.figures(session, q),
+        min_cell=window_service.min_cell(),
+    )
 
 
 @router.get("/library/tree", response_model=s.TreeOut)

@@ -334,7 +334,45 @@ describe("Events library", () => {
     await waitFor(() => expect(api.librarySearch).toHaveBeenLastCalledWith(expect.objectContaining({ q: "feux", kinds: ["report"] }), expect.anything()));
 
     fireEvent.click(screen.getByRole("button", { name: "Calendrier" }));
-    expect(await screen.findByRole("table", { name: /Éléments par jour/ })).toBeInTheDocument();
+    expect(await screen.findByRole("table", { name: /Éléments par case/ })).toBeInTheDocument();
+    // A content editor reads the library, not the statistics: no indicators under the grid.
+    expect(screen.queryByRole("heading", { name: /Indicateurs des interventions/ })).not.toBeInTheDocument();
+  });
+
+  it("walks the calendar's six levels, drills down and shows the period's indicators", async () => {
+    const { api } = renderApp(at("/library", <EventsLibraryPage />), {
+      auth: fakeAuth(NATIONAL_MANAGER),
+      lang: "fr",
+      path: "/library?view=calendar&from=2026-08-12",
+    });
+    expect(await screen.findByRole("heading", { level: 2, name: "août 2026" })).toBeInTheDocument();
+    expect(api.libraryGrid).toHaveBeenLastCalledWith("month", "2026-08-12", expect.anything(), expect.anything());
+    // The indicators of the month shown, with the heat map of the same period.
+    expect(await screen.findByRole("heading", { name: /Indicateurs des interventions/ })).toBeInTheDocument();
+    await waitFor(() => expect(api.libraryFigures).toHaveBeenLastCalledWith("2026-08-01", "2026-08-31", expect.anything(), expect.anything()));
+    expect(screen.getByRole("link", { name: "Carte de chaleur de la période" })).toHaveAttribute(
+      "href",
+      "/analytics?from=2026-08-01&to=2026-08-31",
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Année" }));
+    expect(await screen.findByRole("heading", { level: 2, name: "2026" })).toBeInTheDocument();
+    const months = screen.getByRole("list", { name: /Éléments par case, 2026/ });
+    expect(within(months).getAllByRole("listitem")).toHaveLength(12);
+    // A busy month opens the month level; a busy day of it opens the day by hours.
+    fireEvent.click(within(months).getByRole("button", { name: /^février : 3 éléments/ }));
+    expect(await screen.findByRole("heading", { level: 2, name: "février 2026" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /^2 : 3 éléments/ }));
+    expect(await screen.findByRole("heading", { level: 2, name: /2 février 2026/ })).toBeInTheDocument();
+    expect(within(screen.getByRole("list", { name: /Éléments par case/ })).getAllByRole("listitem")).toHaveLength(24);
+    fireEvent.click(screen.getByRole("button", { name: "Période suivante" }));
+    expect(await screen.findByRole("heading", { level: 2, name: /3 février 2026/ })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Voir les événements de ce jour" }));
+    await waitFor(() => expect(screen.getByTestId("where")).toHaveTextContent("from=2026-02-03&to=2026-02-03"));
+
+    fireEvent.click(screen.getByRole("button", { name: "Calendrier" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Trimestre" }));
+    expect(await screen.findByRole("heading", { level: 2, name: "T1 2026" })).toBeInTheDocument();
   });
 
   it("shows an item with its linked media", async () => {

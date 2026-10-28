@@ -4,7 +4,7 @@ import uuid
 from datetime import date, datetime, time
 from typing import Any
 
-from sqlalchemy import Date, DateTime, ForeignKey, Integer, SmallInteger, Text, Time, func
+from sqlalchemy import Boolean, Date, DateTime, ForeignKey, Integer, SmallInteger, Text, Time, func
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -81,6 +81,7 @@ class Item(Base):
     notes: Mapped[str] = mapped_column(Text, server_default="")
     status: Mapped[str] = mapped_column(Text, server_default="planned")
     status_reason: Mapped[str | None] = mapped_column(Text)
+    status_manual: Mapped[bool] = mapped_column(Boolean, server_default="false")
     status_by_name: Mapped[str | None] = mapped_column(Text)
     status_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_by_name: Mapped[str | None] = mapped_column(Text)

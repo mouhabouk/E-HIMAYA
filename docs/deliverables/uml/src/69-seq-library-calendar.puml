@@ -1,0 +1,25 @@
+@startuml
+!include style.iuml
+title Séquence : calendrier à six niveaux de la bibliothèque et indicateurs de la période (L4a)
+autonumber
+actor "Opérateur" as OP
+participant "Tableau de bord" as UI
+participant "API" as API
+database "PostgreSQL" as DB
+OP -> UI : « Calendrier », niveau « Année »
+UI -> API : GET /staff/library/calendar/grid?level=year&on=…
+API -> DB : éléments de la bibliothèque par mois\n(filtres et portée de la recherche)
+API --> UI : 12 cases, teinte selon le nombre
+UI -> API : GET /staff/library/calendar/figures?from&to
+API -> DB : indicateurs de la fenêtre de décision\n(cellules < 5 masquées)
+API --> UI : indicateurs et graphiques de l'année
+OP -> UI : clic sur juillet
+UI -> API : GET …/grid?level=month
+OP -> UI : clic sur le 12
+UI -> API : GET …/grid?level=day
+API --> UI : 24 heures
+OP -> UI : « Voir les événements de ce jour »
+UI -> API : GET /staff/library/search?from=…&to=…
+OP -> UI : « Carte de chaleur de la période »
+UI -> UI : /analytics?from&to
+@enduml

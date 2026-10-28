@@ -59,7 +59,9 @@
     },
     "inventory": "Registre des moyens",
     "plans": "Plans d'intervention",
-    "schedule": "Programmation"
+    "schedule": "Programmation",
+    "permissions": "Autorisations",
+    "window": "Fenêtre de décision"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -461,7 +463,25 @@
     "item_not_found": "Activité introuvable.",
     "template_not_found": "Modèle introuvable.",
     "template_name_taken": "Un modèle porte déjà ce nom.",
-    "template_mismatch": "Le modèle est d'une autre durée ou d'un autre gouvernorat."
+    "template_mismatch": "Le modèle est d'une autre durée ou d'un autre gouvernorat.",
+    "feature_hidden": "L'administrateur a masqué cette fonction pour votre compte.",
+    "ceiling": "Les règles de sécurité fixes interdisent cette autorisation.",
+    "self_lockout": "La page des autorisations ne peut être masquée aux administrateurs.",
+    "unknown_feature": "Cette fonction n'existe pas au catalogue.",
+    "unknown_role": "Rôle inconnu.",
+    "user_rule_has_no_gouvernorat": "Une règle de compte ne se limite pas à un gouvernorat : le compte a le sien.",
+    "window_delegation_required": "Cette fenêtre ne s'ouvre qu'avec une délégation en cours.",
+    "delegate_not_allowed": "Délégation impossible à ce compte : le directeur des opérations du gouvernorat délègue à son gouverneur et à son comité local seulement.",
+    "event_out_of_scope": "Cet événement est hors de votre périmètre ou de celui du délégataire.",
+    "unknown_event": "Cet événement n'existe pas.",
+    "self_delegation": "Vous ne pouvez pas vous déléguer.",
+    "already_full_view": "Ce compte ouvre déjà la fenêtre entière.",
+    "account_not_found": "Compte introuvable ou désactivé.",
+    "delegation_closed": "Cette délégation est terminée ou retirée.",
+    "two_gouvernorats_required": "Choisissez deux gouvernorats.",
+    "too_many_saved": "Nombre maximal de recherches enregistrées atteint (50).",
+    "query_too_long": "Recherche trop longue.",
+    "no_words": "Ajoutez au moins un mot."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -2534,7 +2554,8 @@
   "responders": {
     "title": "Responsables à associer",
     "intro": "Suggestions de l’annuaire selon le type d’incident et le gouvernorat, avec leur raison.",
-    "none": "Aucun responsable suggéré."
+    "none": "Aucun responsable suggéré.",
+    "showRoute": "Itinéraire depuis {{name}}"
   },
   "assistant": {
     "title": "Assistant (procédures et incidents passés)",
@@ -3100,10 +3121,9 @@
     "clearDates": "Effacer les dates",
     "back": "← Médiathèque",
     "calendar": {
-      "prev": "Mois précédent",
-      "next": "Mois suivant",
-      "caption": "Éléments par jour, {{month}}",
-      "day": "{{date}} : {{n}} éléments",
+      "prev": "Période précédente",
+      "next": "Période suivante",
+      "caption": "Éléments par case, {{period}}",
       "short": {
         "1": "Lun",
         "2": "Mar",
@@ -3112,7 +3132,27 @@
         "5": "Ven",
         "6": "Sam",
         "7": "Dim"
-      }
+      },
+      "cell": "{{label}} : {{n}} éléments",
+      "level": "Niveau",
+      "levels": {
+        "day": "Jour",
+        "week": "Semaine",
+        "month": "Mois",
+        "quarter": "Trimestre",
+        "half": "Semestre",
+        "year": "Année"
+      },
+      "quarterTitle": "T{{n}} {{year}}",
+      "halfTitle": "S{{n}} {{year}}",
+      "range": "{{from}} – {{to}}",
+      "hour": "{{h}} h",
+      "openDay": "Voir les événements de ce jour",
+      "less": "Moins",
+      "more": "Plus",
+      "figures": "Indicateurs des interventions de la période affichée",
+      "figuresNote": "Interventions de votre périmètre sur la période ; une case sous le seuil s'affiche « <5 ». La grille ci-dessus compte les éléments de la bibliothèque.",
+      "heatmap": "Carte de chaleur de la période"
     },
     "tree": {
       "title": "Arborescence",
@@ -4857,7 +4897,8 @@
     "road": "{{km}} km, environ {{minutes}} min",
     "estimate": "estimation sans moteur d'itinéraire",
     "add": "Ajouter à l'incident",
-    "added": "Ajouté"
+    "added": "Ajouté",
+    "showRoute": "Itinéraire vers {{name}}"
   },
   "programmes": {
     "title": "Programmes saisonniers",
@@ -5165,7 +5206,8 @@
         "archive": "Archives",
         "timeline": "Chronologie",
         "documents": "Documents",
-        "plans": "Plans et recommandations"
+        "plans": "Plans et recommandations",
+        "resources": "Moyens dans la zone"
       }
     },
     "axes": {
@@ -5841,7 +5883,11 @@
         "stock": "Quantité prête seulement",
         "agents": "Agents en service seulement"
       },
-      "mapRoomsOnly": "La carte en direct est réservée aux salles des opérations ; tous les nombres figurent dans le tableau ci-dessous."
+      "mapRoomsOnly": "La carte en direct est réservée aux salles des opérations ; tous les nombres figurent dans le tableau ci-dessous.",
+      "margin": "Marge autour de la zone (km)",
+      "axisIntro": "Recherche dans la zone de l'axe {{number}} et de ses sous-axes, en nombres par unité, sans nom.",
+      "byArea": "Unités situées dans la zone de l'axe, avec une marge de {{km}} km.",
+      "noArea": "Aucune zone n'est tracée pour cet axe : la recherche couvre tous ses gouvernorats."
     }
   },
   "basemap": {
@@ -6027,8 +6073,11 @@
     },
     "itemStatus": {
       "planned": "Prévu",
+      "in_progress": "En cours",
       "done": "Réalisé",
+      "not_done": "Non réalisé",
       "postponed": "Reporté",
+      "refused": "Refusé",
       "cancelled": "Annulé"
     },
     "approval": {
@@ -6082,16 +6131,21 @@
       "notes": "Note",
       "inSeries": "dans une série",
       "followUp": "Suivi",
-      "reason": "Motif (report ou annulation)",
+      "reason": "Motif (non réalisé, reporté, refusé ou annulé)",
       "remove": "Supprimer l'activité",
       "removeSeries": "Supprimer toute la série"
     },
     "follow": {
+      "in_progress": "En cours",
       "done": "Réalisé",
+      "not_done": "Non réalisé",
       "postponed": "Reporter",
+      "refused": "Refuser",
       "cancelled": "Annuler",
       "planned": "Remettre en prévu",
-      "notDue": "Une activité se marque réalisée le jour venu."
+      "notDue": "Une activité se suit le jour venu.",
+      "auto": "automatique, selon l’horaire",
+      "autoHint": "Activité avec horaire : « En cours » à son début et « Réalisé » à sa fin, sauf statut posé à la main."
     },
     "progress": {
       "title": "Taux de réalisation par gouvernorat",
@@ -6133,6 +6187,273 @@
       "rename": "Renommer",
       "delete": "Supprimer",
       "deleteOf": "Supprimer le modèle {{name}}"
+    }
+  },
+  "permissions": {
+    "title": "Autorisations",
+    "intro": "L'administrateur système délègue toutes les autorisations : il accorde une page, un onglet ou un bouton à un compte ou à un rôle, ou le masque, pour une période ou sans terme. Le serveur refuse ce qui est masqué ; chaque changement est audité.",
+    "ceilingNote": "Les règles de sécurité fixes sont un plafond que personne ne lève : ni couches sensibles, ni données personnelles au gouverneur et au ministre, ni comptes, audit ou clé du fond de carte, ni portée nationale à un compte régional. Masquer reste toujours possible.",
+    "new": "Nouvelle règle",
+    "feature": "Page, onglet ou bouton",
+    "choose": "Choisir",
+    "wholePage": "Toute la page : {{name}}",
+    "featureRequired": "Choisissez la page ou le bouton.",
+    "kind": {
+      "page": "Page",
+      "tab": "Onglet",
+      "button": "Bouton"
+    },
+    "effect": "Décision",
+    "effects": {
+      "grant": "Accorder",
+      "hide": "Masquer"
+    },
+    "target": "Pour qui",
+    "targets": {
+      "role": "Un rôle",
+      "user": "Un compte"
+    },
+    "role": "Rôle",
+    "gouvernorat": "Gouvernorat",
+    "everyGouvernorat": "Tous les gouvernorats",
+    "national": "Portée nationale",
+    "account": "Identifiant du compte",
+    "accountHint": "À copier depuis la page des comptes.",
+    "accountName": "Nom du titulaire (pour mémoire)",
+    "from": "Du",
+    "to": "Au (facultatif)",
+    "reason": "Motif",
+    "save": {
+      "grant": "Accorder",
+      "hide": "Masquer"
+    },
+    "saved": "Règle enregistrée et appliquée.",
+    "rules": "Règles en vigueur",
+    "showEnded": "Afficher les règles terminées ou retirées",
+    "noRules": "Aucune règle : chaque compte voit ce que ses rôles permettent.",
+    "state": {
+      "active": "En vigueur",
+      "scheduled": "Programmée",
+      "ended": "Terminée",
+      "revoked": "Retirée"
+    },
+    "period": "Du {{from}} au {{to}}",
+    "open": "Sans terme",
+    "by": "{{name}}, {{at}}",
+    "revokedBy": "Retirée par {{name}}, {{at}}",
+    "revoke": "Retirer la règle",
+    "revokeTitle": "Retirer la règle",
+    "catalogue": "Catalogue",
+    "catalogueIntro": "Toutes les pages du tableau de bord, avec leurs onglets et boutons, et qui les détient par défaut.",
+    "heldBy": "Par défaut : {{roles}}",
+    "heldByAll": "Par défaut : tous les agents",
+    "actsAs": "Le bénéficiaire agit en tant que {{role}}",
+    "flag": {
+      "personal": "Données personnelles",
+      "national": "National",
+      "fixed": "Fixe"
+    },
+    "flagHint": {
+      "personal": "Jamais accordé au gouverneur ni au ministre.",
+      "national": "Accordé seulement à un compte national.",
+      "fixed": "Jamais accordé ; seulement masqué."
+    },
+    "ceiling": {
+      "fixed": "Fonction fixe : jamais accordée, seulement masquée.",
+      "personal_data": "Données personnelles : jamais accordées au gouverneur ni au ministre.",
+      "national_scope": "Fonction nationale : jamais accordée à un rôle d'un seul gouvernorat.",
+      "technical_account": "Les comptes techniques ne reçoivent pas de droits opérationnels.",
+      "not_staff": "Jamais accordé à un compte citoyen."
+    },
+    "preview": "Ce que voit un compte",
+    "previewState": {
+      "open": "Ouverte",
+      "closed": "Fermée",
+      "hidden": "Masquée",
+      "granted": "Accordée"
+    }
+  },
+  "window": {
+    "title": "Fenêtre de décision",
+    "intro": "La situation actuelle, la recherche, la comparaison de deux périodes ou de deux gouvernorats et les rapports, sur une seule page. Des agrégats seulement, sans aucune donnée personnelle.",
+    "introDelegated": "Cette fenêtre vous est ouverte par délégation et se limite aux événements délégués : leurs indicateurs, leur comparaison et leurs rapports, agrégés et sans données personnelles.",
+    "noDelegation": "Aucune délégation en cours pour votre compte. La salle centrale ou le directeur des opérations du gouvernorat ouvre cette fenêtre par une délégation sur des événements choisis.",
+    "delegatedUntil": "Délégation en cours jusqu'au {{at}}, sur les événements suivants :",
+    "delegatedScope": "Les résultats se limitent aux événements délégués.",
+    "none": "Aucun",
+    "minutes": "{{n}} min",
+    "severity": "Gravité {{n}}",
+    "severityUnknown": "Gravité non définie",
+    "severityLabel": "Gravité",
+    "byCategory": "Par type",
+    "bySeverity": "Par gravité",
+    "byGouvernorat": "Par gouvernorat",
+    "series": {
+      "day": "Évolution par jour",
+      "month": "Évolution par mois"
+    },
+    "floor": "Toute case de moins de {{n}} cas s'affiche « <{{n}} », pour qu'aucune personne ne soit identifiable.",
+    "national": "National",
+    "gouvernorat": "Gouvernorat",
+    "allGouvernorats": "Tous les gouvernorats",
+    "category": "Type",
+    "any": "Tous",
+    "status": "État",
+    "source": "Source",
+    "sources": {
+      "app": "Application",
+      "call": "Appel",
+      "sms": "SMS",
+      "portal": "Portail",
+      "iot": "Capteurs"
+    },
+    "from": "Du",
+    "to": "Au",
+    "choose": "Choisir",
+    "quick": "Recherche rapide",
+    "quickHint": "Référence, lieu ou mot : incendie Nabeul, accident…",
+    "searchButton": "Rechercher",
+    "advanced": "Recherche avancée",
+    "understood": "Recherche comprise ainsi :",
+    "kind": {
+      "category": "Type",
+      "classification": "Sous-type",
+      "gouvernorat": "Gouvernorat",
+      "delegation": "Délégation",
+      "reference": "Référence",
+      "word": "Mot",
+      "unmatched": "Non compris"
+    },
+    "results": "Résultats du {{from}} au {{to}}",
+    "items": "Interventions ({{n}})",
+    "truncated": "Seules les 200 plus récentes sont affichées",
+    "ref": "Référence",
+    "opened": "Ouverture",
+    "axis": "Axe",
+    "metric": {
+      "incidents": "Interventions",
+      "injured": "Blessés",
+      "deceased": "Décès",
+      "rescued": "Personnes secourues",
+      "burned_ha": "Surface brûlée (ha)",
+      "to_assignment_min": "Délai d'engagement",
+      "to_on_scene_min": "Délai d'arrivée",
+      "reports": "Signalements reçus",
+      "confirmed": "Signalements confirmés",
+      "confirmed_rate": "Taux de confirmation",
+      "category": "Type",
+      "severity": "Gravité",
+      "status": "État",
+      "gouvernorat": "Gouvernorat",
+      "programmes": {
+        "programmes": "Programmes saisonniers",
+        "posts": "Postes des programmes",
+        "lifeguards_planned": "Maîtres-nageurs prévus",
+        "lifeguards_deployed": "Maîtres-nageurs déployés",
+        "activities_done": "Activités réalisées",
+        "rate": "Taux de réalisation"
+      }
+    },
+    "export": {
+      "pdf": "Rapport PDF",
+      "xlsx": "Tableau XLSX",
+      "audited": "Chaque export est journalisé."
+    },
+    "now": {
+      "at": "Situation au {{at}}, actualisée chaque minute.",
+      "axes": "Axes ouverts",
+      "noAxes": "Aucun axe ouvert.",
+      "attached": "{{n}} intervention(s)",
+      "plan": "Plan en vigueur : {{title}}",
+      "planText": "L'axe a un plan écrit.",
+      "noPlan": "Aucun plan lié à l'axe.",
+      "open": "Interventions en cours ({{n}})",
+      "resources": "Moyens disponibles",
+      "kind": "Type",
+      "available": "Disponibles",
+      "assigned": "Engagés",
+      "outOfService": "Hors service",
+      "progress": "Réalisation de la programmation",
+      "today": "Aujourd'hui",
+      "week": "Semaine",
+      "decisions": "Dernières décisions et recommandations",
+      "noDecisions": "Aucune décision.",
+      "areaResources": "Moyens dans la zone de {{number}}"
+    },
+    "saved": {
+      "name": "Nom de la recherche",
+      "save": "Enregistrer",
+      "list": "Recherches enregistrées",
+      "delete": "Supprimer {{name}}"
+    },
+    "compare": {
+      "metric": "Indicateur",
+      "a": "Côté A",
+      "b": "Côté B",
+      "delta": "Écart",
+      "pct": "Écart %",
+      "mode": "Type de comparaison",
+      "modes": {
+        "periods": "Deux périodes",
+        "gouvernorats": "Deux gouvernorats"
+      },
+      "run": "Comparer",
+      "title": "Résultat de la comparaison"
+    },
+    "delegation": {
+      "new": "Nouvelle délégation",
+      "intro": "Une délégation ouvre la fenêtre à un compte, pour une durée, sur des événements choisis seulement. Chaque octroi, retrait ou consultation est journalisé.",
+      "find": "Chercher un compte",
+      "grantee": "Compte",
+      "ends": "Fin",
+      "events": "Événements délégués",
+      "incidents": "Interventions précises",
+      "incidentsHint": "Identifiant complet de l'intervention, séparés par des virgules.",
+      "eventsRequired": "Choisissez au moins un axe ou une intervention.",
+      "reason": "Motif",
+      "grant": "Accorder la délégation",
+      "granted": "Délégation accordée.",
+      "revoke": "Retirer la délégation",
+      "revokeTitle": "Retirer la délégation avant son terme",
+      "state": {
+        "active": "En cours",
+        "scheduled": "Programmée",
+        "ended": "Terminée",
+        "revoked": "Retirée"
+      },
+      "period": "Du {{from}} au {{to}}",
+      "by": "Accordée par {{name}}",
+      "kind": {
+        "axis": "Axe",
+        "incident": "Intervention"
+      },
+      "revokedBy": "Retirée par {{name}} le {{at}}",
+      "list": "Délégations",
+      "showEnded": "Afficher les terminées et retirées",
+      "none": "Aucune délégation."
+    },
+    "dictionary": {
+      "title": "Dictionnaire des synonymes",
+      "intro": "Les mots que comprend la recherche rapide, en arabe, français, anglais et dialecte. Tenu par la salle centrale.",
+      "meaning": "Sens",
+      "meaningHint": "Code du type (fire, flood…), du sous-type (forest_fire…) ou un mot.",
+      "words": "Synonymes (séparés par des virgules)",
+      "save": "Enregistrer",
+      "edit": "Modifier",
+      "delete": "Supprimer"
+    },
+    "tabs": {
+      "label": "Sections de la fenêtre de décision",
+      "now": "Situation actuelle",
+      "search": "Recherche",
+      "compare": "Comparaison",
+      "delegations": "Délégations",
+      "dictionary": "Dictionnaire"
+    },
+    "summary": {
+      "ask": "Rédiger une synthèse (IA)",
+      "again": "Rédiger à nouveau",
+      "label": "Synthèse automatique indicative"
     }
   }
 }

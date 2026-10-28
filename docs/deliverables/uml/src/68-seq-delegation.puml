@@ -1,0 +1,29 @@
+@startuml
+!include style.iuml
+title Séquence : délégation de la fenêtre au gouverneur sur un axe (L4)
+autonumber
+actor "Chef de salle\n(Nabeul)" as OPM
+actor "Gouverneur\n(Nabeul)" as GOV
+participant "Tableau de bord" as UI
+participant "API" as API
+database "PostgreSQL" as DB
+OPM -> UI : « Délégations » : gouverneur, motif,\njusqu'au 3 novembre, axe AX-2026-004
+UI -> API : POST /staff/window/delegations
+API -> API : bénéficiaire permis (gouverneur, comité\nde sa wilaya) ; événements dans les deux portées
+API -> DB : délégation, événements, audit grant
+GOV -> UI : menu « Fenêtre de décision »
+UI -> API : GET /staff/window/access
+API --> UI : delegated : true
+GOV -> UI : recherche
+UI -> API : GET /staff/window/search
+API -> DB : interventions choisies et celles de l'axe\n(non détachées), audit delegate_view
+API --> UI : indicateurs de ces seuls événements,\nsans moyens ni recherche par mots libres
+OPM -> UI : ajouter une intervention
+UI -> API : POST /staff/window/delegations/{id}/events
+OPM -> UI : « Retirer » (motif)
+UI -> API : POST /staff/window/delegations/{id}/revoke
+API -> DB : retrait, audit revoke
+GOV -> UI : recherche
+UI -> API : GET /staff/window/search
+API --> UI : 403 window_delegation_required
+@enduml

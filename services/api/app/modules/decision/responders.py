@@ -3,7 +3,7 @@
 The suggestion is drawn from what the platform already knows, each entry with its reason:
 
 * civil protection units of the directory of phase 5 (``ops.unit``): the gouvernorat's regional directorate and the
-  nearest units or advanced posts, with their phone;
+  units or advanced posts quickest to reach on the road (L4 §10), with their phone, road distance and time;
 * the regional committee of the gouvernorat when the situation may call for a level change (phase 5 committees);
 * national services involved by incident type and classification (``domain.AGENCIES``), with the public emergency
   number when one exists nationally (190 SAMU, 193 Garde nationale, 197 Police);
@@ -12,12 +12,12 @@ The suggestion is drawn from what the platform already knows, each entry with it
 
 from typing import Any
 
-from geoalchemy2 import Geography
+from geoalchemy2 import Geography, Geometry
 from sqlalchemy import cast, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.security import Principal
-from app.modules.decision import domain
+from app.modules.decision import domain, routing
 from app.modules.decision import schemas as s
 from app.modules.decision.context import Situation
 from app.modules.ops.models import Unit
@@ -26,6 +26,8 @@ from app.modules.orgs.models import Organization
 from app.modules.reports.domain import Category
 
 NEAREST_UNITS = 2
+# Units timed on the road among the closest as the crow flies.
+UNIT_CANDIDATES = 6
 UNIT_RADIUS_M = 60_000
 _LIVES_CATEGORIES = frozenset({Category.MEDICAL, Category.DROWNING, Category.TRAFFIC_ACCIDENT, Category.SOS})
 
@@ -60,20 +62,29 @@ async def _units(session: AsyncSession, principal: Principal, situation: Situati
         return found
     point = cast(func.ST_SetSRID(func.ST_MakePoint(situation.lon, situation.lat), 4326), Geography(srid=4326))
     distance = func.ST_Distance(Unit.location, point)
+    geometry = cast(Unit.location, Geometry)
     rows = (
         await session.execute(
-            select(Unit, distance)
+            select(Unit, distance, func.ST_Y(geometry), func.ST_X(geometry))
             .where(
                 unit_scope(principal),
                 Unit.kind != "directorate",
                 func.ST_DWithin(Unit.location, point, UNIT_RADIUS_M),
             )
             .order_by(distance)
-            .limit(NEAREST_UNITS)
+            .limit(UNIT_CANDIDATES)
         )
     ).all()
-    for unit, meters in rows:
-        km = float(meters) / 1000
+    if not rows:
+        return found
+    # The closest as the crow flies, then timed on the road; the quickest first (L4 §10).
+    target = routing.Point(situation.lat, situation.lon)
+    legs, engine = await routing.travel([routing.Point(float(r[2]), float(r[3])) for r in rows], target, "car")
+    timed = sorted(zip(rows, legs, strict=True), key=lambda pair: (pair[1].duration_s, float(pair[0][1])))
+    for (unit, meters, lat, lon), leg in timed[:NEAREST_UNITS]:
+        km = leg.distance_m / 1000
+        minutes = max(1, round(leg.duration_s / 60))
+        estimate = engine == "fallback"
         found.append(
             s.Responder(
                 id=f"unit:{unit.id}",
@@ -85,7 +96,16 @@ async def _units(session: AsyncSession, principal: Principal, situation: Situati
                 phone=unit.phone,
                 gouvernorat_code=unit.gouvernorat_code,
                 distance_m=round(float(meters)),
-                reason=s.Bilingual(ar=f"أقرب وحدة ({km:.1f} كم)", fr=f"unité la plus proche ({km:.1f} km)"),
+                lat=float(lat),
+                lon=float(lon),
+                road_m=round(leg.distance_m),
+                road_s=round(leg.duration_s),
+                engine=engine,
+                reason=s.Bilingual(
+                    ar=f"الأسرع وصولا: {minutes} دقيقة، {km:.1f} كم على الطريق" + (" (تقدير)" if estimate else ""),
+                    fr=f"la plus rapide : {minutes} min, {km:.1f} km par la route"
+                    + (" (estimation)" if estimate else ""),
+                ),
             )
         )
     return found

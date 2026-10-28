@@ -20,6 +20,42 @@
         "title": "AcceptOut",
         "type": "object"
       },
+      "AccessOut": {
+        "properties": {
+          "delegated": {
+            "title": "Delegated",
+            "type": "boolean"
+          },
+          "delegations": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__window__schemas__DelegationOut"
+            },
+            "title": "Delegations",
+            "type": "array"
+          },
+          "full": {
+            "title": "Full",
+            "type": "boolean"
+          },
+          "keeps_dictionary": {
+            "title": "Keeps Dictionary",
+            "type": "boolean"
+          },
+          "may_delegate": {
+            "title": "May Delegate",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "full",
+          "delegated",
+          "may_delegate",
+          "keeps_dictionary",
+          "delegations"
+        ],
+        "title": "AccessOut",
+        "type": "object"
+      },
       "AccountIn": {
         "properties": {
           "email": {
@@ -2284,6 +2320,98 @@
         "title": "AxisList",
         "type": "object"
       },
+      "AxisNow": {
+        "properties": {
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "incidents": {
+            "title": "Incidents",
+            "type": "integer"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "level": {
+            "title": "Level",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "number": {
+            "title": "Number",
+            "type": "string"
+          },
+          "opened_at": {
+            "format": "date-time",
+            "title": "Opened At",
+            "type": "string"
+          },
+          "plan": {
+            "title": "Plan",
+            "type": "string"
+          },
+          "plan_document_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plan Document Id"
+          },
+          "plan_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plan Title"
+          },
+          "scope": {
+            "title": "Scope",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "name",
+          "kind",
+          "level",
+          "scope",
+          "gouvernorat_code",
+          "opened_at",
+          "plan",
+          "plan_document_id",
+          "plan_title",
+          "incidents"
+        ],
+        "title": "AxisNow",
+        "type": "object"
+      },
       "AxisOut": {
         "properties": {
           "area": {
@@ -3179,6 +3307,83 @@
           "average"
         ],
         "title": "BuildAverage",
+        "type": "object"
+      },
+      "CalendarCell": {
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "end": {
+            "format": "date",
+            "title": "End",
+            "type": "string"
+          },
+          "start": {
+            "title": "Start",
+            "type": "string"
+          }
+        },
+        "required": [
+          "start",
+          "end",
+          "count"
+        ],
+        "title": "CalendarCell",
+        "type": "object"
+      },
+      "CalendarGrid": {
+        "description": "One level of the six-level calendar (L4a): the period that contains a day, cut into cells.",
+        "properties": {
+          "cells": {
+            "items": {
+              "$ref": "#/components/schemas/CalendarCell"
+            },
+            "title": "Cells",
+            "type": "array"
+          },
+          "end": {
+            "format": "date",
+            "title": "End",
+            "type": "string"
+          },
+          "level": {
+            "enum": [
+              "day",
+              "week",
+              "month",
+              "quarter",
+              "half",
+              "year"
+            ],
+            "title": "Level",
+            "type": "string"
+          },
+          "start": {
+            "format": "date",
+            "title": "Start",
+            "type": "string"
+          },
+          "step": {
+            "enum": [
+              "hour",
+              "day",
+              "week",
+              "month"
+            ],
+            "title": "Step",
+            "type": "string"
+          }
+        },
+        "required": [
+          "level",
+          "step",
+          "start",
+          "end",
+          "cells"
+        ],
+        "title": "CalendarGrid",
         "type": "object"
       },
       "CalendarOut": {
@@ -4325,6 +4530,31 @@
         "title": "CategoryTotal",
         "type": "object"
       },
+      "Cell": {
+        "properties": {
+          "count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Count"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "count"
+        ],
+        "title": "Cell",
+        "type": "object"
+      },
       "CertificateChange": {
         "description": "A substantive difference between the certified snapshot and the institution today (phase P3a).",
         "properties": {
@@ -5274,6 +5504,209 @@
         "title": "CommitteeOut",
         "type": "object"
       },
+      "CompareIn": {
+        "properties": {
+          "a_from": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "A From"
+          },
+          "a_gouvernorat": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "A Gouvernorat"
+          },
+          "a_to": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "A To"
+          },
+          "b_from": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "B From"
+          },
+          "b_gouvernorat": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "B Gouvernorat"
+          },
+          "b_to": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "B To"
+          },
+          "filters": {
+            "$ref": "#/components/schemas/Filters"
+          },
+          "mode": {
+            "default": "periods",
+            "enum": [
+              "periods",
+              "gouvernorats"
+            ],
+            "title": "Mode",
+            "type": "string"
+          }
+        },
+        "title": "CompareIn",
+        "type": "object"
+      },
+      "CompareOut": {
+        "properties": {
+          "a": {
+            "$ref": "#/components/schemas/Side"
+          },
+          "b": {
+            "$ref": "#/components/schemas/Side"
+          },
+          "delegated": {
+            "title": "Delegated",
+            "type": "boolean"
+          },
+          "min_cell": {
+            "title": "Min Cell",
+            "type": "integer"
+          },
+          "mode": {
+            "enum": [
+              "periods",
+              "gouvernorats"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/CompareRow"
+            },
+            "title": "Rows",
+            "type": "array"
+          }
+        },
+        "required": [
+          "mode",
+          "a",
+          "b",
+          "rows",
+          "delegated",
+          "min_cell"
+        ],
+        "title": "CompareOut",
+        "type": "object"
+      },
+      "CompareRow": {
+        "properties": {
+          "a": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "A"
+          },
+          "b": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "B"
+          },
+          "delta": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delta"
+          },
+          "key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Key"
+          },
+          "metric": {
+            "title": "Metric",
+            "type": "string"
+          },
+          "pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pct"
+          }
+        },
+        "required": [
+          "metric",
+          "a",
+          "b",
+          "delta",
+          "pct"
+        ],
+        "title": "CompareRow",
+        "type": "object"
+      },
       "ComparisonReport": {
         "description": "What was declared against what the inspector found, computed by the server (design-prevention.md §3).",
         "properties": {
@@ -5781,9 +6214,19 @@
             "title": "Due",
             "type": "integer"
           },
+          "in_progress": {
+            "default": 0,
+            "title": "In Progress",
+            "type": "integer"
+          },
           "items": {
             "default": 0,
             "title": "Items",
+            "type": "integer"
+          },
+          "not_done": {
+            "default": 0,
+            "title": "Not Done",
             "type": "integer"
           },
           "postponed": {
@@ -5801,6 +6244,11 @@
               }
             ],
             "title": "Rate"
+          },
+          "refused": {
+            "default": 0,
+            "title": "Refused",
+            "type": "integer"
           }
         },
         "title": "Counts",
@@ -6230,42 +6678,153 @@
         "title": "DecideIn",
         "type": "object"
       },
-      "DelegationOut": {
+      "DecisionNow": {
         "properties": {
-          "code": {
-            "title": "Code",
+          "axis_id": {
+            "format": "uuid",
+            "title": "Axis Id",
             "type": "string"
           },
-          "gouvernorat_code": {
-            "title": "Gouvernorat Code",
-            "type": "integer"
+          "axis_number": {
+            "title": "Axis Number",
+            "type": "string"
+          },
+          "body": {
+            "title": "Body",
+            "type": "string"
+          },
+          "category": {
+            "title": "Category",
+            "type": "string"
           },
           "id": {
+            "format": "uuid",
             "title": "Id",
+            "type": "string"
+          },
+          "issued_at": {
+            "format": "date-time",
+            "title": "Issued At",
+            "type": "string"
+          },
+          "issuer_role": {
+            "title": "Issuer Role",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "number": {
+            "title": "Number",
             "type": "integer"
           },
-          "name": {
-            "title": "Name",
-            "type": "string"
-          },
-          "name_ar": {
-            "title": "Name Ar",
-            "type": "string"
-          },
-          "name_fr": {
-            "title": "Name Fr",
+          "status": {
+            "title": "Status",
             "type": "string"
           }
         },
         "required": [
           "id",
-          "code",
-          "gouvernorat_code",
-          "name",
-          "name_ar",
-          "name_fr"
+          "axis_id",
+          "axis_number",
+          "number",
+          "kind",
+          "category",
+          "body",
+          "issuer_role",
+          "issued_at",
+          "status"
         ],
-        "title": "DelegationOut",
+        "title": "DecisionNow",
+        "type": "object"
+      },
+      "Delegate": {
+        "properties": {
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "roles": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Roles",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "roles",
+          "gouvernorat_code"
+        ],
+        "title": "Delegate",
+        "type": "object"
+      },
+      "DelegationIn": {
+        "properties": {
+          "ends_at": {
+            "format": "date-time",
+            "title": "Ends At",
+            "type": "string"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/EventRef"
+            },
+            "maxItems": 50,
+            "minItems": 1,
+            "title": "Events",
+            "type": "array"
+          },
+          "grantee": {
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Grantee",
+            "type": "string"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          },
+          "starts_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Starts At"
+          }
+        },
+        "required": [
+          "grantee",
+          "reason",
+          "ends_at",
+          "events"
+        ],
+        "title": "DelegationIn",
         "type": "object"
       },
       "DeleteIn": {
@@ -9557,6 +10116,47 @@
         "title": "Evaluation",
         "type": "object"
       },
+      "EventRef": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "axis",
+              "incident"
+            ],
+            "title": "Kind",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "id"
+        ],
+        "title": "EventRef",
+        "type": "object"
+      },
+      "EventsIn": {
+        "properties": {
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/EventRef"
+            },
+            "maxItems": 50,
+            "minItems": 1,
+            "title": "Events",
+            "type": "array"
+          }
+        },
+        "required": [
+          "events"
+        ],
+        "title": "EventsIn",
+        "type": "object"
+      },
       "Evidence": {
         "properties": {
           "intervention_ids": {
@@ -10027,6 +10627,55 @@
           "updated_at"
         ],
         "title": "ExportDevice",
+        "type": "object"
+      },
+      "ExportIn": {
+        "properties": {
+          "compare": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CompareIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "filters": {
+            "$ref": "#/components/schemas/Filters"
+          },
+          "format": {
+            "enum": [
+              "pdf",
+              "xlsx"
+            ],
+            "title": "Format",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "search",
+              "compare"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "lang": {
+            "default": "ar",
+            "enum": [
+              "ar",
+              "fr",
+              "en"
+            ],
+            "title": "Lang",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "format"
+        ],
+        "title": "ExportIn",
         "type": "object"
       },
       "ExportLedgerEntry": {
@@ -12028,6 +12677,136 @@
           "url"
         ],
         "title": "FileOut",
+        "type": "object"
+      },
+      "Filters": {
+        "description": "The criteria of a search, of each side of a comparison and of an export (L4 §3.2).",
+        "properties": {
+          "category": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 20,
+            "title": "Category",
+            "type": "array"
+          },
+          "classification": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 40,
+            "title": "Classification",
+            "type": "array"
+          },
+          "delegation": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delegation"
+          },
+          "from": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "From"
+          },
+          "gouvernorats": {
+            "items": {
+              "type": "integer"
+            },
+            "maxItems": 24,
+            "title": "Gouvernorats",
+            "type": "array"
+          },
+          "org": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Org"
+          },
+          "q": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Q"
+          },
+          "severity": {
+            "items": {
+              "type": "integer"
+            },
+            "maxItems": 5,
+            "title": "Severity",
+            "type": "array"
+          },
+          "source": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 5,
+            "title": "Source",
+            "type": "array"
+          },
+          "status": {
+            "items": {
+              "enum": [
+                "open",
+                "closed"
+              ],
+              "type": "string"
+            },
+            "maxItems": 2,
+            "title": "Status",
+            "type": "array"
+          },
+          "to": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          }
+        },
+        "title": "Filters",
         "type": "object"
       },
       "FireDangerOut": {
@@ -15134,6 +15913,114 @@
         "title": "IncidentPage",
         "type": "object"
       },
+      "IncidentRow": {
+        "properties": {
+          "axis_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Axis Number"
+          },
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "classification": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Classification"
+          },
+          "closed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Closed At"
+          },
+          "delegation_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delegation Id"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "opened_at": {
+            "format": "date-time",
+            "title": "Opened At",
+            "type": "string"
+          },
+          "ref": {
+            "title": "Ref",
+            "type": "string"
+          },
+          "severity": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Severity"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "ref",
+          "category",
+          "classification",
+          "severity",
+          "status",
+          "gouvernorat_code",
+          "delegation_id",
+          "opened_at",
+          "closed_at",
+          "axis_number"
+        ],
+        "title": "IncidentRow",
+        "type": "object"
+      },
       "IncidentSummary": {
         "properties": {
           "assignments_active": {
@@ -15829,8 +16716,11 @@
           "status": {
             "enum": [
               "planned",
+              "in_progress",
               "done",
+              "not_done",
               "postponed",
+              "refused",
               "cancelled"
             ],
             "title": "Status",
@@ -18554,6 +19444,39 @@
         "title": "MessagePage",
         "type": "object"
       },
+      "Mine": {
+        "description": "What the administrator's rules change for the caller: the dashboard opens and hides accordingly.",
+        "properties": {
+          "granted": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Granted",
+            "type": "array"
+          },
+          "hidden": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Hidden",
+            "type": "array"
+          },
+          "lent": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Lent",
+            "type": "object"
+          }
+        },
+        "required": [
+          "granted",
+          "hidden",
+          "lent"
+        ],
+        "title": "Mine",
+        "type": "object"
+      },
       "MineList": {
         "properties": {
           "items": {
@@ -19895,6 +20818,84 @@
           "unread"
         ],
         "title": "NotificationPage",
+        "type": "object"
+      },
+      "NowOut": {
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "axes": {
+            "items": {
+              "$ref": "#/components/schemas/AxisNow"
+            },
+            "title": "Axes",
+            "type": "array"
+          },
+          "decisions": {
+            "items": {
+              "$ref": "#/components/schemas/DecisionNow"
+            },
+            "title": "Decisions",
+            "type": "array"
+          },
+          "delegated": {
+            "title": "Delegated",
+            "type": "boolean"
+          },
+          "open_incidents": {
+            "items": {
+              "$ref": "#/components/schemas/Cell"
+            },
+            "title": "Open Incidents",
+            "type": "array"
+          },
+          "open_total": {
+            "title": "Open Total",
+            "type": "integer"
+          },
+          "progress": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ProgressNow"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Progress"
+          },
+          "resources": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ResourceNow"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resources"
+          }
+        },
+        "required": [
+          "at",
+          "delegated",
+          "axes",
+          "open_incidents",
+          "open_total",
+          "resources",
+          "progress",
+          "decisions"
+        ],
+        "title": "NowOut",
         "type": "object"
       },
       "OpLevel": {
@@ -21757,6 +22758,44 @@
         "title": "PeriodDetail",
         "type": "object"
       },
+      "PeriodFigures": {
+        "description": "The indicators of the period a calendar level shows (L4a), floored as in the decision window.",
+        "properties": {
+          "figures": {
+            "$ref": "#/components/schemas/app__modules__window__schemas__Figures"
+          },
+          "from": {
+            "format": "date",
+            "title": "From",
+            "type": "string"
+          },
+          "gouvernorats": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Gouvernorats",
+            "type": "array"
+          },
+          "min_cell": {
+            "title": "Min Cell",
+            "type": "integer"
+          },
+          "to": {
+            "format": "date",
+            "title": "To",
+            "type": "string"
+          }
+        },
+        "required": [
+          "from",
+          "to",
+          "gouvernorats",
+          "figures",
+          "min_cell"
+        ],
+        "title": "PeriodFigures",
+        "type": "object"
+      },
       "PeriodIn": {
         "properties": {
           "gouvernorat_code": {
@@ -22711,6 +23750,51 @@
         "title": "PreviewPoint",
         "type": "object"
       },
+      "PreviewRow": {
+        "properties": {
+          "default": {
+            "title": "Default",
+            "type": "boolean"
+          },
+          "granted": {
+            "title": "Granted",
+            "type": "boolean"
+          },
+          "hidden": {
+            "title": "Hidden",
+            "type": "boolean"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "open": {
+            "title": "Open",
+            "type": "boolean"
+          },
+          "refused": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Refused"
+          }
+        },
+        "required": [
+          "key",
+          "default",
+          "hidden",
+          "granted",
+          "refused",
+          "open"
+        ],
+        "title": "PreviewRow",
+        "type": "object"
+      },
       "PrioritySettings": {
         "properties": {
           "category_severity": {
@@ -23262,6 +24346,56 @@
         "title": "ProgrammePatch",
         "type": "object"
       },
+      "Programmes": {
+        "properties": {
+          "activities_done": {
+            "title": "Activities Done",
+            "type": "integer"
+          },
+          "activities_due": {
+            "title": "Activities Due",
+            "type": "integer"
+          },
+          "lifeguards_deployed": {
+            "title": "Lifeguards Deployed",
+            "type": "integer"
+          },
+          "lifeguards_planned": {
+            "title": "Lifeguards Planned",
+            "type": "integer"
+          },
+          "posts": {
+            "title": "Posts",
+            "type": "integer"
+          },
+          "programmes": {
+            "title": "Programmes",
+            "type": "integer"
+          },
+          "rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rate"
+          }
+        },
+        "required": [
+          "programmes",
+          "posts",
+          "lifeguards_planned",
+          "lifeguards_deployed",
+          "activities_due",
+          "activities_done",
+          "rate"
+        ],
+        "title": "Programmes",
+        "type": "object"
+      },
       "ProgrammesOut": {
         "properties": {
           "can_create": {
@@ -23281,6 +24415,68 @@
           "can_create"
         ],
         "title": "ProgrammesOut",
+        "type": "object"
+      },
+      "ProgressNow": {
+        "properties": {
+          "day_done": {
+            "title": "Day Done",
+            "type": "integer"
+          },
+          "day_due": {
+            "title": "Day Due",
+            "type": "integer"
+          },
+          "day_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Day Rate"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "gouvernorat_name": {
+            "title": "Gouvernorat Name",
+            "type": "string"
+          },
+          "week_done": {
+            "title": "Week Done",
+            "type": "integer"
+          },
+          "week_due": {
+            "title": "Week Due",
+            "type": "integer"
+          },
+          "week_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Week Rate"
+          }
+        },
+        "required": [
+          "gouvernorat_code",
+          "gouvernorat_name",
+          "day_due",
+          "day_done",
+          "day_rate",
+          "week_due",
+          "week_done",
+          "week_rate"
+        ],
+        "title": "ProgressNow",
         "type": "object"
       },
       "ProgressOut": {
@@ -25599,6 +26795,34 @@
         "title": "ResourceIn",
         "type": "object"
       },
+      "ResourceNow": {
+        "properties": {
+          "assigned": {
+            "title": "Assigned",
+            "type": "integer"
+          },
+          "available": {
+            "title": "Available",
+            "type": "integer"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "out_of_service": {
+            "title": "Out Of Service",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "kind",
+          "available",
+          "assigned",
+          "out_of_service"
+        ],
+        "title": "ResourceNow",
+        "type": "object"
+      },
       "ResourcePage": {
         "properties": {
           "items": {
@@ -25963,6 +27187,17 @@
             ],
             "title": "Email"
           },
+          "engine": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Engine"
+          },
           "gouvernorat_code": {
             "anyOf": [
               {
@@ -25987,6 +27222,28 @@
             ],
             "title": "Kind",
             "type": "string"
+          },
+          "lat": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lat"
+          },
+          "lon": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lon"
           },
           "name": {
             "title": "Name",
@@ -26027,6 +27284,28 @@
           },
           "reason": {
             "$ref": "#/components/schemas/Bilingual"
+          },
+          "road_m": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Road M"
+          },
+          "road_s": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Road S"
           },
           "role": {
             "anyOf": [
@@ -26296,6 +27575,21 @@
         "title": "RevocationIn",
         "type": "object"
       },
+      "RevokeIn": {
+        "properties": {
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "RevokeIn",
+        "type": "object"
+      },
       "Role": {
         "enum": [
           "citizen",
@@ -26470,6 +27764,78 @@
           "rules"
         ],
         "title": "RulesIn",
+        "type": "object"
+      },
+      "SavedIn": {
+        "properties": {
+          "kind": {
+            "enum": [
+              "search",
+              "compare"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "query": {
+            "additionalProperties": true,
+            "title": "Query",
+            "type": "object"
+          }
+        },
+        "required": [
+          "name",
+          "kind",
+          "query"
+        ],
+        "title": "SavedIn",
+        "type": "object"
+      },
+      "SavedOut": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "search",
+              "compare"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "query": {
+            "additionalProperties": true,
+            "title": "Query",
+            "type": "object"
+          }
+        },
+        "required": [
+          "name",
+          "kind",
+          "query",
+          "id",
+          "created_at"
+        ],
+        "title": "SavedOut",
         "type": "object"
       },
       "ScenarioIn": {
@@ -27166,6 +28532,36 @@
         "title": "ScoreComponent",
         "type": "object"
       },
+      "SearchAxis": {
+        "description": "The axis a search was confined to (RS1); ``by_area`` False: the axis has no drawn area, its gouvernorats\nwere searched instead.",
+        "properties": {
+          "by_area": {
+            "title": "By Area",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "margin_km": {
+            "title": "Margin Km",
+            "type": "number"
+          },
+          "number": {
+            "title": "Number",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "by_area",
+          "margin_km"
+        ],
+        "title": "SearchAxis",
+        "type": "object"
+      },
       "SearchGouvernorat": {
         "properties": {
           "code": {
@@ -27681,6 +29077,54 @@
           "gouvernorat_code"
         ],
         "title": "ShiftRow",
+        "type": "object"
+      },
+      "Side": {
+        "properties": {
+          "figures": {
+            "$ref": "#/components/schemas/app__modules__window__schemas__Figures"
+          },
+          "from": {
+            "format": "date",
+            "title": "From",
+            "type": "string"
+          },
+          "gouvernorats": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Gouvernorats",
+            "type": "array"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "programmes": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Programmes"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "to": {
+            "format": "date",
+            "title": "To",
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "from",
+          "to",
+          "gouvernorats",
+          "figures",
+          "programmes"
+        ],
+        "title": "Side",
         "type": "object"
       },
       "SigningKeyOut": {
@@ -31979,6 +33423,46 @@
         "title": "SummaryHazmat",
         "type": "object"
       },
+      "SummaryIn": {
+        "properties": {
+          "compare": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CompareIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "filters": {
+            "$ref": "#/components/schemas/Filters"
+          },
+          "kind": {
+            "enum": [
+              "search",
+              "compare"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "lang": {
+            "default": "ar",
+            "enum": [
+              "ar",
+              "fr",
+              "en"
+            ],
+            "title": "Lang",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "title": "SummaryIn",
+        "type": "object"
+      },
       "SummaryTeamMember": {
         "properties": {
           "full_name": {
@@ -32016,6 +33500,80 @@
           "training_status"
         ],
         "title": "SummaryTeamMember",
+        "type": "object"
+      },
+      "SynonymIn": {
+        "properties": {
+          "meaning": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Meaning",
+            "type": "string"
+          },
+          "words": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 50,
+            "minItems": 1,
+            "title": "Words",
+            "type": "array"
+          }
+        },
+        "required": [
+          "meaning",
+          "words"
+        ],
+        "title": "SynonymIn",
+        "type": "object"
+      },
+      "SynonymOut": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "meaning": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Meaning",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "updated_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By Name"
+          },
+          "words": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 50,
+            "minItems": 1,
+            "title": "Words",
+            "type": "array"
+          }
+        },
+        "required": [
+          "meaning",
+          "words",
+          "id",
+          "updated_by_name",
+          "updated_at"
+        ],
+        "title": "SynonymOut",
         "type": "object"
       },
       "Tally": {
@@ -33720,6 +35278,36 @@
           "high"
         ],
         "title": "TrendPoint",
+        "type": "object"
+      },
+      "Understood": {
+        "description": "How one word or phrase of the quick search was read.",
+        "properties": {
+          "key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Key"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "kind"
+        ],
+        "title": "Understood",
         "type": "object"
       },
       "UnitIn": {
@@ -37415,6 +39003,390 @@
         "title": "Point",
         "type": "object"
       },
+      "app__modules__features__schemas__FeatureOut": {
+        "properties": {
+          "act_as": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Act As"
+          },
+          "flags": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Flags",
+            "type": "array"
+          },
+          "grantable": {
+            "title": "Grantable",
+            "type": "boolean"
+          },
+          "group": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Group"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "page",
+              "tab",
+              "button"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "names": {
+            "$ref": "#/components/schemas/app__modules__features__schemas__Names"
+          },
+          "nav": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nav"
+          },
+          "parent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent"
+          },
+          "roles": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Roles",
+            "type": "array"
+          },
+          "routes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Routes",
+            "type": "array"
+          }
+        },
+        "required": [
+          "key",
+          "kind",
+          "names",
+          "parent",
+          "group",
+          "nav",
+          "flags",
+          "roles",
+          "act_as",
+          "grantable",
+          "routes"
+        ],
+        "title": "FeatureOut",
+        "type": "object"
+      },
+      "app__modules__features__schemas__Names": {
+        "properties": {
+          "ar": {
+            "title": "Ar",
+            "type": "string"
+          },
+          "en": {
+            "title": "En",
+            "type": "string"
+          },
+          "fr": {
+            "title": "Fr",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ar",
+          "fr",
+          "en"
+        ],
+        "title": "Names",
+        "type": "object"
+      },
+      "app__modules__features__schemas__RuleIn": {
+        "properties": {
+          "effect": {
+            "enum": [
+              "grant",
+              "hide"
+            ],
+            "title": "Effect",
+            "type": "string"
+          },
+          "ends_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ends At"
+          },
+          "feature_key": {
+            "maxLength": 80,
+            "minLength": 2,
+            "title": "Feature Key",
+            "type": "string"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          },
+          "starts_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Starts At"
+          },
+          "target": {
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Target",
+            "type": "string"
+          },
+          "target_kind": {
+            "enum": [
+              "user",
+              "role"
+            ],
+            "title": "Target Kind",
+            "type": "string"
+          },
+          "target_name": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Name"
+          }
+        },
+        "required": [
+          "feature_key",
+          "effect",
+          "target_kind",
+          "target",
+          "reason"
+        ],
+        "title": "RuleIn",
+        "type": "object"
+      },
+      "app__modules__features__schemas__RuleOut": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "effect": {
+            "enum": [
+              "grant",
+              "hide"
+            ],
+            "title": "Effect",
+            "type": "string"
+          },
+          "ends_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ends At"
+          },
+          "feature_key": {
+            "title": "Feature Key",
+            "type": "string"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          },
+          "revoke_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revoke Reason"
+          },
+          "revoked_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revoked At"
+          },
+          "revoked_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revoked By Name"
+          },
+          "starts_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Starts At"
+          },
+          "state": {
+            "enum": [
+              "active",
+              "scheduled",
+              "ended",
+              "revoked"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "target": {
+            "title": "Target",
+            "type": "string"
+          },
+          "target_kind": {
+            "enum": [
+              "user",
+              "role"
+            ],
+            "title": "Target Kind",
+            "type": "string"
+          },
+          "target_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Name"
+          }
+        },
+        "required": [
+          "id",
+          "feature_key",
+          "effect",
+          "target_kind",
+          "target",
+          "target_name",
+          "gouvernorat_code",
+          "reason",
+          "starts_at",
+          "ends_at",
+          "created_by_name",
+          "created_at",
+          "revoked_at",
+          "revoked_by_name",
+          "revoke_reason",
+          "state"
+        ],
+        "title": "RuleOut",
+        "type": "object"
+      },
       "app__modules__forecast__schemas__Point": {
         "properties": {
           "lat": {
@@ -37435,6 +39407,44 @@
           "lon"
         ],
         "title": "Point",
+        "type": "object"
+      },
+      "app__modules__geo__schemas__DelegationOut": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "name_ar": {
+            "title": "Name Ar",
+            "type": "string"
+          },
+          "name_fr": {
+            "title": "Name Fr",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "gouvernorat_code",
+          "name",
+          "name_ar",
+          "name_fr"
+        ],
+        "title": "DelegationOut",
         "type": "object"
       },
       "app__modules__inventory__schemas__CategoryOut": {
@@ -37742,6 +39752,18 @@
       "app__modules__inventory__schemas__SearchIn": {
         "description": "One question across the gouvernorats the caller sees: \"the fire trucks of 2000 L or more\", \"the divers\".",
         "properties": {
+          "axis_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Axis Id"
+          },
           "category": {
             "anyOf": [
               {
@@ -37768,6 +39790,13 @@
               }
             ],
             "title": "Gouvernorats"
+          },
+          "margin_km": {
+            "default": 0,
+            "maximum": 50.0,
+            "minimum": 0.0,
+            "title": "Margin Km",
+            "type": "number"
           },
           "min_level": {
             "anyOf": [
@@ -37839,6 +39868,16 @@
       "app__modules__inventory__schemas__SearchOut": {
         "description": "Counts only, grouped by gouvernorat and unit: no name, no matricule, no phone, whoever asks.",
         "properties": {
+          "axis": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SearchAxis"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "gouvernorats": {
             "items": {
               "$ref": "#/components/schemas/SearchGouvernorat"
@@ -43123,8 +45162,11 @@
           "status": {
             "enum": [
               "planned",
+              "in_progress",
               "done",
+              "not_done",
               "postponed",
+              "refused",
               "cancelled"
             ],
             "title": "Status",
@@ -43141,6 +45183,10 @@
               }
             ],
             "title": "Status At"
+          },
+          "status_auto": {
+            "title": "Status Auto",
+            "type": "boolean"
           },
           "status_by_name": {
             "anyOf": [
@@ -43210,6 +45256,7 @@
           "plan_title",
           "notes",
           "status",
+          "status_auto",
           "status_reason",
           "status_by_name",
           "status_at"
@@ -43691,6 +45738,479 @@
           "updated_at"
         ],
         "title": "RuleOut",
+        "type": "object"
+      },
+      "app__modules__window__schemas__DelegationOut": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "ends_at": {
+            "format": "date-time",
+            "title": "Ends At",
+            "type": "string"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__window__schemas__EventOut"
+            },
+            "title": "Events",
+            "type": "array"
+          },
+          "granted_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Granted By Name"
+          },
+          "granted_room": {
+            "title": "Granted Room",
+            "type": "string"
+          },
+          "grantee": {
+            "title": "Grantee",
+            "type": "string"
+          },
+          "grantee_gouvernorat": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Grantee Gouvernorat"
+          },
+          "grantee_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Grantee Name"
+          },
+          "grantee_roles": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Grantee Roles",
+            "type": "array"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          },
+          "revoke_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revoke Reason"
+          },
+          "revoked_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revoked At"
+          },
+          "revoked_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revoked By Name"
+          },
+          "starts_at": {
+            "format": "date-time",
+            "title": "Starts At",
+            "type": "string"
+          },
+          "state": {
+            "title": "State",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "grantee",
+          "grantee_name",
+          "grantee_roles",
+          "grantee_gouvernorat",
+          "reason",
+          "starts_at",
+          "ends_at",
+          "granted_by_name",
+          "granted_room",
+          "created_at",
+          "revoked_at",
+          "revoked_by_name",
+          "revoke_reason",
+          "state",
+          "events"
+        ],
+        "title": "DelegationOut",
+        "type": "object"
+      },
+      "app__modules__window__schemas__EventOut": {
+        "properties": {
+          "added_at": {
+            "format": "date-time",
+            "title": "Added At",
+            "type": "string"
+          },
+          "added_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Added By Name"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "axis",
+              "incident"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "id",
+          "label",
+          "gouvernorat_code",
+          "added_by_name",
+          "added_at"
+        ],
+        "title": "EventOut",
+        "type": "object"
+      },
+      "app__modules__window__schemas__Figures": {
+        "properties": {
+          "burned_ha": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Burned Ha"
+          },
+          "by_category": {
+            "items": {
+              "$ref": "#/components/schemas/Cell"
+            },
+            "title": "By Category",
+            "type": "array"
+          },
+          "by_gouvernorat": {
+            "items": {
+              "$ref": "#/components/schemas/Cell"
+            },
+            "title": "By Gouvernorat",
+            "type": "array"
+          },
+          "by_severity": {
+            "items": {
+              "$ref": "#/components/schemas/Cell"
+            },
+            "title": "By Severity",
+            "type": "array"
+          },
+          "by_status": {
+            "items": {
+              "$ref": "#/components/schemas/Cell"
+            },
+            "title": "By Status",
+            "type": "array"
+          },
+          "confirmed": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confirmed"
+          },
+          "confirmed_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confirmed Rate"
+          },
+          "deceased": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deceased"
+          },
+          "incidents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Incidents"
+          },
+          "injured": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Injured"
+          },
+          "reports": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reports"
+          },
+          "rescued": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rescued"
+          },
+          "series": {
+            "items": {
+              "$ref": "#/components/schemas/Cell"
+            },
+            "title": "Series",
+            "type": "array"
+          },
+          "series_step": {
+            "enum": [
+              "day",
+              "month"
+            ],
+            "title": "Series Step",
+            "type": "string"
+          },
+          "to_assignment_min": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To Assignment Min"
+          },
+          "to_on_scene_min": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To On Scene Min"
+          }
+        },
+        "required": [
+          "incidents",
+          "by_category",
+          "by_severity",
+          "by_status",
+          "by_gouvernorat",
+          "series_step",
+          "series",
+          "injured",
+          "deceased",
+          "rescued",
+          "burned_ha",
+          "to_assignment_min",
+          "to_on_scene_min",
+          "reports",
+          "confirmed",
+          "confirmed_rate"
+        ],
+        "title": "Figures",
+        "type": "object"
+      },
+      "app__modules__window__schemas__SearchOut": {
+        "properties": {
+          "delegated": {
+            "title": "Delegated",
+            "type": "boolean"
+          },
+          "figures": {
+            "$ref": "#/components/schemas/app__modules__window__schemas__Figures"
+          },
+          "from": {
+            "format": "date",
+            "title": "From",
+            "type": "string"
+          },
+          "gouvernorats": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Gouvernorats",
+            "type": "array"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/IncidentRow"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "min_cell": {
+            "title": "Min Cell",
+            "type": "integer"
+          },
+          "to": {
+            "format": "date",
+            "title": "To",
+            "type": "string"
+          },
+          "truncated": {
+            "title": "Truncated",
+            "type": "boolean"
+          },
+          "understood": {
+            "items": {
+              "$ref": "#/components/schemas/Understood"
+            },
+            "title": "Understood",
+            "type": "array"
+          }
+        },
+        "required": [
+          "from",
+          "to",
+          "gouvernorats",
+          "understood",
+          "figures",
+          "items",
+          "truncated",
+          "delegated",
+          "min_cell"
+        ],
+        "title": "SearchOut",
+        "type": "object"
+      },
+      "app__modules__window__schemas__SummaryOut": {
+        "properties": {
+          "generated_at": {
+            "format": "date-time",
+            "title": "Generated At",
+            "type": "string"
+          },
+          "model": {
+            "title": "Model",
+            "type": "string"
+          },
+          "notice": {
+            "title": "Notice",
+            "type": "string"
+          },
+          "supported": {
+            "title": "Supported",
+            "type": "boolean"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "supported",
+          "model",
+          "notice",
+          "generated_at"
+        ],
+        "title": "SummaryOut",
         "type": "object"
       }
     },
@@ -46741,7 +49261,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/DelegationOut"
+                    "$ref": "#/components/schemas/app__modules__geo__schemas__DelegationOut"
                   },
                   "title": "Response List Delegations Api V1 Geo Gouvernorats  Code  Delegations Get",
                   "type": "array"
@@ -60593,6 +63113,319 @@
         ]
       }
     },
+    "/api/v1/staff/features/catalogue": {
+      "get": {
+        "operationId": "catalogue_api_v1_staff_features_catalogue_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/app__modules__features__schemas__FeatureOut"
+                  },
+                  "title": "Response Catalogue Api V1 Staff Features Catalogue Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Catalogue",
+        "tags": [
+          "features"
+        ]
+      }
+    },
+    "/api/v1/staff/features/mine": {
+      "get": {
+        "operationId": "mine_api_v1_staff_features_mine_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mine"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Mine",
+        "tags": [
+          "features"
+        ]
+      }
+    },
+    "/api/v1/staff/features/preview": {
+      "get": {
+        "description": "What an account with these roles (and this subject, for its own rules) sees once the rules apply.",
+        "operationId": "preview_api_v1_staff_features_preview_get",
+        "parameters": [
+          {
+            "description": "Comma-separated roles",
+            "in": "query",
+            "name": "roles",
+            "required": true,
+            "schema": {
+              "description": "Comma-separated roles",
+              "maxLength": 400,
+              "title": "Roles",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          },
+          {
+            "in": "query",
+            "name": "subject",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Subject"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PreviewRow"
+                  },
+                  "title": "Response Preview Api V1 Staff Features Preview Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Preview",
+        "tags": [
+          "features"
+        ]
+      }
+    },
+    "/api/v1/staff/features/rules": {
+      "get": {
+        "operationId": "list_rules_api_v1_staff_features_rules_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "feature",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Feature"
+            }
+          },
+          {
+            "in": "query",
+            "name": "include_ended",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Include Ended",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/app__modules__features__schemas__RuleOut"
+                  },
+                  "title": "Response List Rules Api V1 Staff Features Rules Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Rules",
+        "tags": [
+          "features"
+        ]
+      },
+      "post": {
+        "operationId": "create_rule_api_v1_staff_features_rules_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__features__schemas__RuleIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__features__schemas__RuleOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Rule",
+        "tags": [
+          "features"
+        ]
+      }
+    },
+    "/api/v1/staff/features/rules/{rule_id}/revoke": {
+      "post": {
+        "operationId": "revoke_rule_api_v1_staff_features_rules__rule_id__revoke_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "rule_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Rule Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevokeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__features__schemas__RuleOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Revoke Rule",
+        "tags": [
+          "features"
+        ]
+      }
+    },
     "/api/v1/staff/incidents": {
       "get": {
         "operationId": "list_incidents_api_v1_staff_incidents_get",
@@ -65471,6 +68304,217 @@
           }
         ],
         "summary": "Library Calendar",
+        "tags": [
+          "staff",
+          "knowledge"
+        ]
+      }
+    },
+    "/api/v1/staff/library/calendar/figures": {
+      "get": {
+        "description": "The indicators of the period shown (L4a): those of the decision window, within the caller's scope.",
+        "operationId": "library_calendar_figures_api_v1_staff_library_calendar_figures_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "from",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "title": "From",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "title": "To",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 83,
+                  "minimum": 11,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          },
+          {
+            "in": "query",
+            "name": "category",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/Category"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeriodFigures"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Library Calendar Figures",
+        "tags": [
+          "staff",
+          "knowledge"
+        ]
+      }
+    },
+    "/api/v1/staff/library/calendar/grid": {
+      "get": {
+        "description": "One of the six levels of the calendar (L4a): the period of ``level`` that contains ``on``, cut into cells.",
+        "operationId": "library_calendar_grid_api_v1_staff_library_calendar_grid_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "level",
+            "required": true,
+            "schema": {
+              "enum": [
+                "day",
+                "week",
+                "month",
+                "quarter",
+                "half",
+                "year"
+              ],
+              "title": "Level",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "on",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "title": "On",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "kinds",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kinds"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 83,
+                  "minimum": 11,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          },
+          {
+            "in": "query",
+            "name": "category",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/Category"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalendarGrid"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Library Calendar Grid",
         "tags": [
           "staff",
           "knowledge"
@@ -75668,7 +78712,7 @@
     },
     "/api/v1/staff/schedule/items/{item_id}/status": {
       "post": {
-        "description": "The follow-up of an approved programme: done, postponed or cancelled (with the reason), or planned again.",
+        "description": "The follow-up of an approved programme by hand (docs/phase-l/design-l4.md §6): in progress or done, not done,\npostponed, refused or cancelled with the reason, or planned again (back to the clock for an activity with hours).",
         "operationId": "item_status_api_v1_staff_schedule_items__item_id__status_post",
         "parameters": [
           {
@@ -78243,6 +81287,1226 @@
         "tags": [
           "staff",
           "weather"
+        ]
+      }
+    },
+    "/api/v1/staff/window/access": {
+      "get": {
+        "description": "What the caller may do with the window, and the delegations in force for them.",
+        "operationId": "my_access_api_v1_staff_window_access_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "My Access",
+        "tags": [
+          "window"
+        ]
+      }
+    },
+    "/api/v1/staff/window/compare": {
+      "get": {
+        "operationId": "compare_api_v1_staff_window_compare_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "mode",
+            "required": false,
+            "schema": {
+              "default": "periods",
+              "title": "Mode",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "a_from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "A From"
+            }
+          },
+          {
+            "in": "query",
+            "name": "a_to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "A To"
+            }
+          },
+          {
+            "in": "query",
+            "name": "b_from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "B From"
+            }
+          },
+          {
+            "in": "query",
+            "name": "b_to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "B To"
+            }
+          },
+          {
+            "in": "query",
+            "name": "a_gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "A Gouvernorat"
+            }
+          },
+          {
+            "in": "query",
+            "name": "b_gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "B Gouvernorat"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 200,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "From"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "To"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gouvernorats",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorats"
+            }
+          },
+          {
+            "in": "query",
+            "name": "delegation",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Delegation"
+            }
+          },
+          {
+            "in": "query",
+            "name": "category",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          },
+          {
+            "in": "query",
+            "name": "classification",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Classification"
+            }
+          },
+          {
+            "in": "query",
+            "name": "severity",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Severity"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "source",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Source"
+            }
+          },
+          {
+            "in": "query",
+            "name": "unit",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Unit"
+            }
+          },
+          {
+            "in": "query",
+            "name": "org",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Org"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompareOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Compare",
+        "tags": [
+          "window"
+        ]
+      }
+    },
+    "/api/v1/staff/window/delegates": {
+      "get": {
+        "description": "The accounts the caller may open the window to.",
+        "operationId": "delegates_api_v1_staff_window_delegates_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 100,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Delegate"
+                  },
+                  "title": "Response Delegates Api V1 Staff Window Delegates Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delegates",
+        "tags": [
+          "window"
+        ]
+      }
+    },
+    "/api/v1/staff/window/delegations": {
+      "get": {
+        "operationId": "list_delegations_api_v1_staff_window_delegations_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "include_ended",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Include Ended",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/app__modules__window__schemas__DelegationOut"
+                  },
+                  "title": "Response List Delegations Api V1 Staff Window Delegations Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Delegations",
+        "tags": [
+          "window"
+        ]
+      },
+      "post": {
+        "operationId": "grant_api_v1_staff_window_delegations_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DelegationIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__window__schemas__DelegationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Grant",
+        "tags": [
+          "window"
+        ]
+      }
+    },
+    "/api/v1/staff/window/delegations/{delegation_id}/events": {
+      "post": {
+        "operationId": "add_events_api_v1_staff_window_delegations__delegation_id__events_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "delegation_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Delegation Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__window__schemas__DelegationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Add Events",
+        "tags": [
+          "window"
+        ]
+      }
+    },
+    "/api/v1/staff/window/delegations/{delegation_id}/revoke": {
+      "post": {
+        "operationId": "revoke_api_v1_staff_window_delegations__delegation_id__revoke_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "delegation_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Delegation Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevokeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__window__schemas__DelegationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Revoke",
+        "tags": [
+          "window"
+        ]
+      }
+    },
+    "/api/v1/staff/window/export": {
+      "post": {
+        "description": "The report of a search or of a comparison, in the reader's language; every export is audited (§3.4).",
+        "operationId": "export_api_v1_staff_window_export_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Export",
+        "tags": [
+          "window"
+        ]
+      }
+    },
+    "/api/v1/staff/window/now": {
+      "get": {
+        "operationId": "now_api_v1_staff_window_now_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NowOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Now",
+        "tags": [
+          "window"
+        ]
+      }
+    },
+    "/api/v1/staff/window/search": {
+      "get": {
+        "operationId": "search_api_v1_staff_window_search_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 200,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "From"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "To"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gouvernorats",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorats"
+            }
+          },
+          {
+            "in": "query",
+            "name": "delegation",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Delegation"
+            }
+          },
+          {
+            "in": "query",
+            "name": "category",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          },
+          {
+            "in": "query",
+            "name": "classification",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Classification"
+            }
+          },
+          {
+            "in": "query",
+            "name": "severity",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Severity"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "source",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Source"
+            }
+          },
+          {
+            "in": "query",
+            "name": "unit",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Unit"
+            }
+          },
+          {
+            "in": "query",
+            "name": "org",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Org"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__window__schemas__SearchOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Search",
+        "tags": [
+          "window"
+        ]
+      }
+    },
+    "/api/v1/staff/window/searches": {
+      "get": {
+        "operationId": "list_saved_api_v1_staff_window_searches_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SavedOut"
+                  },
+                  "title": "Response List Saved Api V1 Staff Window Searches Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Saved",
+        "tags": [
+          "window"
+        ]
+      },
+      "post": {
+        "operationId": "save_search_api_v1_staff_window_searches_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SavedIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Save Search",
+        "tags": [
+          "window"
+        ]
+      }
+    },
+    "/api/v1/staff/window/searches/{search_id}": {
+      "delete": {
+        "operationId": "delete_search_api_v1_staff_window_searches__search_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "search_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Search Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Search",
+        "tags": [
+          "window"
+        ]
+      }
+    },
+    "/api/v1/staff/window/summary": {
+      "post": {
+        "description": "The advisory written summary of a search or a comparison (§9, item 1), from the aggregates only; audited.",
+        "operationId": "write_summary_api_v1_staff_window_summary_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SummaryIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__window__schemas__SummaryOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Write Summary",
+        "tags": [
+          "window"
+        ]
+      }
+    },
+    "/api/v1/staff/window/synonyms": {
+      "get": {
+        "operationId": "list_synonyms_api_v1_staff_window_synonyms_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SynonymOut"
+                  },
+                  "title": "Response List Synonyms Api V1 Staff Window Synonyms Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Synonyms",
+        "tags": [
+          "window"
+        ]
+      },
+      "post": {
+        "description": "Add or replace the words of one meaning (the central room keeps the dictionary).",
+        "operationId": "put_synonym_api_v1_staff_window_synonyms_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SynonymIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SynonymOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Put Synonym",
+        "tags": [
+          "window"
+        ]
+      }
+    },
+    "/api/v1/staff/window/synonyms/{synonym_id}": {
+      "delete": {
+        "operationId": "delete_synonym_api_v1_staff_window_synonyms__synonym_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "synonym_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Synonym Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Synonym",
+        "tags": [
+          "window"
         ]
       }
     },

@@ -656,3 +656,17 @@ export const WORK_PROGRAMME_ROLES = [...READ_ROLES, "governor", "minister"] as c
 export function canOpenSchedule(roles: readonly string[]): boolean {
   return any(WORK_PROGRAMME_ROLES, roles);
 }
+
+/** The permissions page (L4 §8): the system administrator with a national scope grants and hides every feature. */
+export function canManagePermissions(who: Pick<Who, "roles" | "national">): boolean {
+  return who.national && who.roles.includes("sysadmin");
+}
+
+/**
+ * The decision window opened in full (L4 §3.5): the central room (a national operator or ops manager) and the ops
+ * manager of a gouvernorat. The minister, governors and committees open it through a delegation only (§5).
+ */
+export function canOpenWindowFull(who: Pick<Who, "roles" | "national">): boolean {
+  if (who.national) return who.roles.includes("operator") || who.roles.includes("ops_manager");
+  return who.roles.includes("ops_manager");
+}

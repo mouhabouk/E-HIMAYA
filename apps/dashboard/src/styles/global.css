@@ -3729,6 +3729,71 @@ button.map-poi {
   font-weight: 700;
   color: var(--info-text);
 }
+/* The six-level calendar (L4a): level switch, cells by hour, day, week or month, heat by count. */
+.calendar__levels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-block-end: 0.5rem;
+}
+.calendar__cells {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
+}
+.calendar__cells--hour {
+  grid-template-columns: repeat(auto-fill, minmax(4.5rem, 1fr));
+}
+.calendar__cells--week {
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+}
+.calendar__cells > li {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  min-block-size: 3.25rem;
+  padding: 0.25rem;
+  text-align: center;
+}
+.calendar__heat--0 {
+  background: transparent;
+}
+.calendar__heat--1 {
+  background: color-mix(in srgb, var(--info-text) 8%, var(--surface));
+}
+.calendar__heat--2 {
+  background: color-mix(in srgb, var(--info-text) 16%, var(--surface));
+}
+.calendar__heat--3 {
+  background: color-mix(in srgb, var(--info-text) 26%, var(--surface));
+}
+.calendar__heat--4 {
+  background: color-mix(in srgb, var(--info-text) 36%, var(--surface));
+}
+.calendar__heat--3 .calendar__count,
+.calendar__heat--4 .calendar__count {
+  color: var(--text);
+}
+.calendar__legend {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+}
+.calendar__swatch {
+  display: inline-block;
+  inline-size: 1rem;
+  block-size: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+}
+.calendar__figures {
+  margin-block-start: 1rem;
+  border-block-start: 1px solid var(--border);
+  padding-block-start: 0.75rem;
+}
 .tree,
 .tree ul {
   list-style: none;
@@ -7212,6 +7277,28 @@ button.nav-card:hover {
 .inventory-search__total {
   margin-block: 0 8px;
 }
+/* The decision window and the permissions page (L4): text, date and number fields drawn like the others. */
+:is(.win-page, .perm-page)
+  :is(input:not([type]), input[type="text"], input[type="date"], input[type="datetime-local"], input[type="number"]) {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
+  min-block-size: 2.25rem;
+}
+/* RS1: the margin around an axis area, and the bounds of a specification. */
+.inventory-search input[type="number"] {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
+  min-block-size: 2.25rem;
+  inline-size: 8rem;
+}
 .inventory-search__units {
   font-weight: 400;
 }
@@ -7551,8 +7638,17 @@ button.nav-card:hover {
   outline: 2px dashed var(--tone-amber);
   outline-offset: -2px;
 }
-.sched-chip--cancelled {
+.sched-chip--cancelled,
+.sched-chip--refused {
   opacity: 0.55;
+}
+.sched-chip--in_progress {
+  outline: 2px solid var(--tone-sky);
+  outline-offset: -2px;
+}
+.sched-chip--not_done {
+  outline: 2px dashed var(--tone-orange);
+  outline-offset: -2px;
 }
 .sched-day,
 .sched-week ol,
@@ -7706,4 +7802,255 @@ button.nav-card:hover {
 .sched-start {
   margin-top: 12px;
   justify-content: center;
+}
+
+/* ---------- Phase L4 §8: permissions of the system administrator ---------- */
+.perm-layout {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr));
+  align-items: start;
+}
+.perm-form {
+  display: grid;
+  gap: 0.75rem;
+}
+.perm-form__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+}
+.perm-form__row > .field {
+  flex: 1 1 12rem;
+}
+.perm-rules,
+.perm-tree,
+.perm-preview {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.perm-rule,
+.perm-tree > li,
+.perm-preview > li {
+  padding-block: 0.5rem;
+  border-block-end: 1px solid var(--border);
+}
+.perm-rule:last-child,
+.perm-tree > li:last-child,
+.perm-preview > li:last-child {
+  border-block-end: none;
+}
+.perm-rule--grant {
+  border-inline-start: 3px solid var(--ok-text);
+  padding-inline-start: 0.5rem;
+}
+.perm-rule--hide {
+  border-inline-start: 3px solid var(--error-text);
+  padding-inline-start: 0.5rem;
+}
+.perm-tree ul {
+  margin: 0.25rem 0 0;
+  padding-inline-start: 1rem;
+  list-style: none;
+}
+.perm-group > summary {
+  cursor: pointer;
+  padding-block: 0.4rem;
+  font-weight: 600;
+}
+.perm-preview > li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.perm-preview__closed {
+  color: var(--muted);
+}
+.tag--effect-grant,
+.tag--preview-granted,
+.tag--preview-open,
+.tag--rule-active {
+  background: var(--ok-bg);
+  color: var(--ok-text);
+}
+.tag--effect-hide,
+.tag--preview-hidden,
+.tag--flag-fixed {
+  background: var(--error-bg);
+  color: var(--error-text);
+}
+.tag--flag-personal,
+.tag--rule-scheduled {
+  background: var(--warn-bg);
+  color: var(--warn-text);
+}
+.tag--flag-national {
+  background: var(--info-bg);
+  color: var(--info-text);
+}
+.tag--preview-closed,
+.tag--rule-ended,
+.tag--rule-revoked {
+  background: var(--surface-2);
+}
+
+/* ------------------------------------------------------------------ the decision window (L4, design-l4.md §3) */
+.win-now,
+.win-search,
+.win-compare-tab,
+.win-delegations,
+.win-dictionary {
+  display: grid;
+  gap: 1rem;
+}
+.win-charts {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  align-items: start;
+}
+.win-bar--hidden {
+  background: repeating-linear-gradient(45deg, var(--border), var(--border) 3px, transparent 3px, transparent 6px);
+}
+.win-quick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+.win-quick input {
+  flex: 1 1 18rem;
+}
+.win-quick label {
+  font-weight: 600;
+}
+.win-advanced {
+  margin-block-start: 0.75rem;
+}
+.win-advanced > summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.win-filters > .field,
+.win-sides > fieldset {
+  flex: 1 1 10rem;
+}
+.win-sides {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.win-side {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+}
+.win-saved {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  align-items: center;
+  margin-block-start: 0.75rem;
+}
+.win-saved__form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+.win-saved__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.win-understood {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.5rem;
+  align-items: center;
+}
+.tag--understood-unmatched {
+  color: var(--warn-text);
+}
+.win-export {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+.win-axes,
+.win-decisions,
+.win-delegation-list,
+.win-synonyms,
+.win-delegation__events {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.win-axis,
+.win-decisions > li,
+.win-delegation,
+.win-synonyms > li {
+  padding-block: 0.5rem;
+  border-block-end: 1px solid var(--border);
+}
+.win-axis:last-child,
+.win-decisions > li:last-child,
+.win-delegation:last-child,
+.win-synonyms > li:last-child {
+  border-block-end: none;
+}
+.win-axis--level-3,
+.win-axis--level-4 {
+  border-inline-start: 3px solid var(--error-text);
+  padding-inline-start: 0.5rem;
+}
+.win-delegation--active {
+  border-inline-start: 3px solid var(--ok-text);
+  padding-inline-start: 0.5rem;
+}
+.win-delegation__events {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+}
+.win-events {
+  display: grid;
+  gap: 0.25rem;
+}
+.win-grant {
+  display: grid;
+  gap: 0.75rem;
+}
+.win-synonyms__actions {
+  display: flex;
+  gap: 0.5rem;
+}
+.win-compare td.win-up {
+  color: var(--error-text);
+}
+.win-compare td.win-down {
+  color: var(--ok-text);
+}
+.win-summary {
+  display: grid;
+  gap: 0.5rem;
+  justify-items: start;
+  margin-block: 0.75rem;
+}
+.win-summary__body {
+  border-inline-start: 3px solid var(--info-text);
+  padding-inline-start: 0.75rem;
+}
+.tag--ai {
+  background: var(--info-bg);
+  color: var(--info-text);
+  font-weight: 700;
 }

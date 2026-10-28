@@ -114,6 +114,12 @@ export interface Responder {
   organization?: string | null;
   phone?: string | null;
   email?: string | null;
+  /** A unit (L4 §10): its place, and the road distance and time to the incident ("fallback" = an estimate). */
+  lat?: number | null;
+  lon?: number | null;
+  road_m?: number | null;
+  road_s?: number | null;
+  engine?: string | null;
   reason: Partial<Bilingual> | string;
 }
 

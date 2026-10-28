@@ -18,7 +18,14 @@ import { SimTag } from "./StreamBits";
  * layers the reader may see, timed by the routing engine (or estimated, and said so). The room adds one to the
  * incident: it goes on the timeline, for the crews and the report.
  */
-export function NearHospitals({ incident }: { incident: IncidentDetail }) {
+export function NearHospitals({
+  incident,
+  onRoute,
+}: {
+  incident: IncidentDetail;
+  /** Draws the road from the incident to a hospital on the incident map (L4 §10). */
+  onRoute?: (from: { lat: number; lon: number }, to: { lat: number; lon: number }, profile: "car") => void;
+}) {
   const { t } = useTranslation();
   const { api } = useServices();
   const { user } = useAuth();
@@ -55,6 +62,17 @@ export function NearHospitals({ incident }: { incident: IncidentDetail }) {
               })}
               {h.engine === "fallback" && ` · ${t("hospitals.estimate")}`}
             </span>
+            {onRoute && incident.centroid && (
+              <button
+                type="button"
+                className="btn btn--small"
+                onClick={() => {
+                  if (incident.centroid) onRoute(incident.centroid, { lat: h.lat, lon: h.lon }, "car");
+                }}
+              >
+                {t("hospitals.showRoute", { name: h.name })}
+              </button>
+            )}
             {h.phone && (
               <a href={`tel:${h.phone}`} dir="ltr">
                 {formatPhone(h.phone)}

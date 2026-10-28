@@ -23,6 +23,7 @@ import {
   hhmm,
   isoDay,
   ITEM_TONE,
+  WITH_REASON,
   monthWeeks,
   moveSpan,
   PERIOD_TONE,
@@ -483,6 +484,7 @@ function ItemPanel({
       <p>
         <span className={`pill tone-${ACTIVITIES[item.activity]}`}>{t(`schedule.activity.${item.activity}`)}</span>{" "}
         <span className={`pill tone-${ITEM_TONE[item.status]}`}>{t(`schedule.itemStatus.${item.status}`)}</span>
+        {item.status_auto && <span className="muted"> · {t("schedule.follow.auto")}</span>}
       </p>
       <dl className="sched-panel__facts">
         <dt>{t("schedule.item.date")}</dt>
@@ -562,21 +564,29 @@ function ItemPanel({
             <input id={`${id}-why`} dir="auto" maxLength={1000} value={reason} onChange={(e) => setReason(e.target.value)} />
           </div>
           <div className="form-actions">
-            <button type="button" className="btn btn--primary" disabled={!due || status.isPending} onClick={() => status.mutate("done")}>
-              {t("schedule.follow.done")}
-            </button>
-            <button type="button" className="btn" disabled={reason.trim().length < 5 || status.isPending} onClick={() => status.mutate("postponed")}>
-              {t("schedule.follow.postponed")}
-            </button>
-            <button type="button" className="btn" disabled={reason.trim().length < 5 || status.isPending} onClick={() => status.mutate("cancelled")}>
-              {t("schedule.follow.cancelled")}
-            </button>
-            {item.status !== "planned" && (
+            {(["in_progress", "done"] as const).map((s) => (
+              <button key={s} type="button" className="btn btn--primary" disabled={!due || item.status === s || status.isPending} onClick={() => status.mutate(s)}>
+                {t(`schedule.follow.${s}`)}
+              </button>
+            ))}
+            {WITH_REASON.map((s) => (
+              <button
+                key={s}
+                type="button"
+                className="btn"
+                disabled={reason.trim().length < 5 || (s === "not_done" && !due) || status.isPending}
+                onClick={() => status.mutate(s)}
+              >
+                {t(`schedule.follow.${s}`)}
+              </button>
+            ))}
+            {(item.status !== "planned" || item.status_auto) && (
               <button type="button" className="btn btn--ghost" disabled={status.isPending} onClick={() => status.mutate("planned")}>
                 {t("schedule.follow.planned")}
               </button>
             )}
           </div>
+          {item.starts_at && <p className="muted">{t("schedule.follow.autoHint")}</p>}
           {!due && <p className="muted">{t("schedule.follow.notDue")}</p>}
         </div>
       )}

@@ -1,3 +1,4 @@
+import type { Figures } from "./windowTypes";
 /**
  * Types mirroring docs/api/phase-8-contract.md §1–§3 (analytics and reports, national memory and events library,
  * rewards). Where the contract leaves a shape open, the API workers' schemas were followed (see the implementation
@@ -476,6 +477,35 @@ export interface LibraryCalendar {
   year: number;
   month: number;
   days: CalendarDay[];
+}
+
+/** The six levels of the library calendar (L4a) and the cells each is cut into. */
+export const CALENDAR_LEVELS = ["day", "week", "month", "quarter", "half", "year"] as const;
+export type CalendarLevel = (typeof CALENDAR_LEVELS)[number];
+export type CalendarStep = "hour" | "day" | "week" | "month";
+
+export interface CalendarCell {
+  /** A date, or a local hour ("2026-08-02T14:00:00+01:00") on the day level. */
+  start: string;
+  end: string;
+  count: number;
+}
+
+export interface CalendarGrid {
+  level: CalendarLevel;
+  step: CalendarStep;
+  start: string;
+  end: string;
+  cells: CalendarCell[];
+}
+
+/** The indicators of the period a calendar level shows, floored as in the decision window. */
+export interface PeriodFigures {
+  from: string;
+  to: string;
+  gouvernorats: number[];
+  figures: Figures;
+  min_cell: number;
 }
 
 export const TREE_AXES = ["period", "type", "gouvernorat"] as const;

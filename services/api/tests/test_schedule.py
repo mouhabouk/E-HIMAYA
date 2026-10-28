@@ -66,6 +66,23 @@ async def step(
     )
 
 
+def test_the_clock_follows_an_activity_up() -> None:
+    from datetime import UTC, datetime, time
+
+    on = date(2026, 7, 15)
+    at = lambda h, m=0: datetime(2026, 7, 15, h - 1, m, tzinfo=UTC)  # noqa: E731 - Tunisia is UTC+1
+    follow = domain.follow_up
+    assert follow("planned", False, True, on, time(8), time(12), at(7, 59)) == ("planned", False)
+    assert follow("planned", False, True, on, time(8), time(12), at(8)) == ("in_progress", True)
+    assert follow("planned", False, True, on, time(8), time(12), at(12)) == ("done", True)
+    # Without an end, done at the end of its day; the whole day, by hand only; not approved, not followed.
+    assert follow("planned", False, True, on, time(8), None, at(23, 59)) == ("in_progress", True)
+    assert follow("planned", False, True, on, None, None, at(23)) == ("planned", False)
+    assert follow("planned", False, False, on, time(8), time(12), at(13)) == ("planned", False)
+    # A status set by hand wins over the clock.
+    assert follow("postponed", True, True, on, time(8), time(12), at(13)) == ("postponed", False)
+
+
 def test_calendar_rules() -> None:
     assert domain.bounds("week", date(2026, 10, 28)) == (date(2026, 10, 26), date(2026, 11, 1))
     assert domain.bounds("month", date(2026, 2, 14)) == (date(2026, 2, 1), date(2026, 2, 28))
@@ -173,7 +190,28 @@ async def test_follow_up_progress_and_copy(client: httpx.AsyncClient, staff: Sta
         f"{URL}/items/{third['id']}/status", json={"status": "cancelled", "reason": "رياح قوية"}, headers=room
     )
     counts = r.json()["period"]["counts"]
-    assert counts == {"items": 7, "due": 6, "done": 1, "postponed": 1, "cancelled": 1, "rate": 0.167}
+    # The week is past: the four activities nobody followed up were done by the clock at their end.
+    assert counts == {
+        "items": 7, "due": 6, "done": 5, "in_progress": 0, "not_done": 0, "postponed": 1, "refused": 0,
+        "cancelled": 1, "rate": 0.833,
+    }  # fmt: skip
+    states = {i["id"]: (i["status"], i["status_auto"]) for i in r.json()["items"]}
+    assert states[first["id"]] == ("done", False) and states[p["items"][3]["id"]] == ("done", True)
+
+    # By hand: not done and refused need a reason; refused leaves the rate; planned again goes back to the clock.
+    fourth, fifth = p["items"][3:5]
+    r = await client.post(f"{URL}/items/{fourth['id']}/status", json={"status": "not_done"}, headers=room)
+    assert r.status_code == 422 and r.json()["detail"] == "reason_required"
+    await client.post(
+        f"{URL}/items/{fourth['id']}/status", json={"status": "not_done", "reason": "نقص في الأعوان"}, headers=room
+    )
+    r = await client.post(
+        f"{URL}/items/{fifth['id']}/status", json={"status": "refused", "reason": "رفض الوالي"}, headers=room
+    )
+    counts = r.json()["period"]["counts"]
+    assert (counts["done"], counts["not_done"], counts["refused"], counts["due"], counts["rate"]) == (3, 1, 1, 5, 0.6)
+    r = await client.post(f"{URL}/items/{fourth['id']}/status", json={"status": "planned"}, headers=room)
+    assert next(i for i in r.json()["items"] if i["id"] == fourth["id"])["status"] == "done"
 
     # The central room sees the progress of every gouvernorat; the governor of Gabes its own, without the list.
     progress = (
@@ -184,7 +222,7 @@ async def test_follow_up_progress_and_copy(client: httpx.AsyncClient, staff: Sta
         )
     ).json()
     gabes = next(row for row in progress["rows"] if row["gouvernorat_code"] == GABES)
-    assert gabes["status"] == "approved" and gabes["counts"]["done"] == 1 and len(progress["rows"]) == 24
+    assert gabes["status"] == "approved" and gabes["counts"]["done"] == 4 and len(progress["rows"]) == 24
     governor = staff(["governor"], gouvernorat=GABES)
     mine = (await client.get(f"{URL}/progress", params={"span": "week", "on": on.isoformat()}, headers=governor)).json()
     assert [row["gouvernorat_code"] for row in mine["rows"]] == [GABES] and not mine["lists"]

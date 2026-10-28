@@ -49,6 +49,8 @@ from app.modules.doctors.router import router as doctors_router
 from app.modules.doctors.staff_router import router as doctors_staff_router
 from app.modules.evidence.router import router as evidence_router
 from app.modules.evidence.worker import evidence_forever
+from app.modules.features import registry as features_registry
+from app.modules.features.router import router as features_router
 from app.modules.forecast.router import router as forecast_router
 from app.modules.geo.router import router as geo_router
 from app.modules.health.router import metrics_router
@@ -110,6 +112,7 @@ from app.modules.volunteers.staff_router import router as volunteers_staff_route
 from app.modules.weather.router import router as weather_router
 from app.modules.weather.staff_router import router as weather_staff_router
 from app.modules.weather.worker import weather_forever
+from app.modules.window.router import router as window_router
 
 log = structlog.get_logger()
 _REQUEST_ID = re.compile(r"^[A-Za-z0-9-]{8,64}$")
@@ -320,6 +323,9 @@ def create_app() -> FastAPI:
     for router in routers:
         app.include_router(router)
     app.include_router(accounts.router)
+    app.include_router(features_router)
+    app.include_router(window_router)
+    features_registry.install(app.routes)
     return app
 
 

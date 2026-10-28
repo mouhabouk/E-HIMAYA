@@ -5,6 +5,7 @@ from typing import Annotated, Any, Literal
 from pydantic import BaseModel, Field, StringConstraints, field_validator, model_validator
 
 from app.modules.reports.domain import Category
+from app.modules.window.schemas import Figures as WindowFigures
 
 Text = Annotated[str, StringConstraints(strip_whitespace=True)]
 MAX_SECTION = 20_000
@@ -221,6 +222,34 @@ class CalendarOut(BaseModel):
     year: int
     month: int
     days: list[Day]
+
+
+class CalendarCell(BaseModel):
+    # The first moment of the cell: a date, or a local hour on the day level.
+    start: str
+    # The last day the cell covers.
+    end: date
+    count: int
+
+
+class CalendarGrid(BaseModel):
+    """One level of the six-level calendar (L4a): the period that contains a day, cut into cells."""
+
+    level: Literal["day", "week", "month", "quarter", "half", "year"]
+    step: Literal["hour", "day", "week", "month"]
+    start: date
+    end: date
+    cells: list[CalendarCell]
+
+
+class PeriodFigures(BaseModel):
+    """The indicators of the period a calendar level shows (L4a), floored as in the decision window."""
+
+    from_: date = Field(serialization_alias="from")
+    to: date
+    gouvernorats: list[int]
+    figures: WindowFigures
+    min_cell: int
 
 
 class TreeNode(BaseModel):

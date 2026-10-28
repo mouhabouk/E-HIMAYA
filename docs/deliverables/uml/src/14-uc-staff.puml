@@ -74,6 +74,14 @@ rectangle "Tableau de bord central" {
   usecase "Enregistrer un programme comme\nmodèle, l'appliquer (PL2)" as S53
   usecase "Approuver le programme ; choisir\nle mode d'approbation (PL2)" as S54
   usecase "Suivre le taux de réalisation\ndes programmes (PL2)" as S55
+  usecase "Fenêtre de décision : situation,\nrecherche, comparaison (L4)" as S56
+  usecase "Exporter, résumé écrit\nconsultatif par l'IA (L4)" as S57
+  usecase "Déléguer la fenêtre sur des\névénements choisis ; retirer (L4)" as S58
+  usecase "Tenir le dictionnaire\ndes synonymes (L4)" as S59
+  usecase "Calendrier de la bibliothèque\nà six niveaux et indicateurs (L4)" as S60
+  usecase "Chercher les moyens dans\nla zone d'un axe (RS1, L4)" as S61
+  usecase "Accorder ou masquer pages,\nonglets et boutons (L4)" as S62
+  usecase "Statut d'une activité, à la main\nou à l'horaire (L4)" as S63
 }
 rectangle "Application des équipes (P4a à P4d)" {
   usecase "Se connecter par code\n(MFA, PIN 6 chiffres)" as T0
@@ -220,4 +228,20 @@ CC --> S54
 CMD --> S55
 GOV --> S55
 MIN --> S55
+OPM --> S56
+CC --> S56
+GOV --> S56 : délégation
+MIN --> S56 : délégation
+S56 <.. S57 : <<extend>>
+OPM --> S58
+CC --> S59
+OP --> S60
+CL --> S60
+OP --> S61
+OPM --> S61
+GOV --> S61
+MIN --> S61
+SA --> S62
+OP --> S63
+OPM --> S63
 @enduml

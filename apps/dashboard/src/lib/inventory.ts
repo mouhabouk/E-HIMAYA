@@ -286,6 +286,9 @@ export interface SearchQuery {
   min_level: number | null;
   valid_cert: boolean;
   gouvernorats: number[] | null;
+  /** RS1: only inside the area of this crisis axis, widened by ``margin_km``. */
+  axis_id?: string | null;
+  margin_km?: number;
 }
 
 export const EMPTY_SEARCH: SearchQuery = {
@@ -320,12 +323,21 @@ export interface SearchGouvernorat {
   units: SearchUnit[];
 }
 
+/** The axis a search was confined to (RS1); ``by_area`` false: no drawn area, its gouvernorats were searched. */
+export interface SearchAxis {
+  id: string;
+  number: string;
+  by_area: boolean;
+  margin_km: number;
+}
+
 /** Counts only, by gouvernorat and unit: no name, whoever asks. */
 export interface SearchResult {
   what: Entity;
   total: number;
   ready: number;
   gouvernorats: SearchGouvernorat[];
+  axis?: SearchAxis | null;
 }
 
 /** The search carried to the map in the address (`/map?resources=…`). */

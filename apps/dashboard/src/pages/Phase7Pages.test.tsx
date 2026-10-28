@@ -368,6 +368,53 @@ describe("IncidentDetailPage decision support", () => {
     expect(screen.getByLabelText("Phénomène")).toHaveValue("forest_fire");
   });
 
+  it("times the units on the road and draws the route of one, and of a hospital (L4 §10)", async () => {
+    const { api } = setup({
+      responders: vi.fn(() =>
+        Promise.resolve([
+          {
+            id: "unit:u1",
+            name: "Poste avancé Sakiet",
+            reason: { ar: "الأسرع وصولا", fr: "la plus rapide : 7 min, 5,2 km par la route" },
+            lat: 34.7,
+            lon: 10.7,
+            road_m: 5200,
+            road_s: 420,
+            engine: "valhalla",
+          },
+        ]),
+      ),
+      incidentHospitals: vi.fn(() =>
+        Promise.resolve([
+          {
+            id: "h1",
+            name: "CHU Habib Bourguiba",
+            phone: null,
+            layer: "hopitaux",
+            lat: 34.73,
+            lon: 10.75,
+            distance_m: 1500,
+            road_m: 2100,
+            road_s: 300,
+            engine: "valhalla",
+            simulated: false,
+          },
+        ]),
+      ),
+    });
+    const responders = (await screen.findByRole("heading", { name: "Responsables à associer" })).closest("section");
+    if (!responders) throw new Error("no panel");
+    expect(await within(responders).findByText(/5,2 km, environ 7 min/)).toBeInTheDocument();
+    fireEvent.click(within(responders).getByRole("button", { name: "Itinéraire depuis Poste avancé Sakiet" }));
+    await waitFor(() =>
+      expect(api.route).toHaveBeenCalledWith({ lat: 34.7, lon: 10.7 }, { lat: 34.74, lon: 10.76 }, "truck", expect.anything()),
+    );
+    fireEvent.click(await screen.findByRole("button", { name: "Itinéraire vers CHU Habib Bourguiba" }));
+    await waitFor(() =>
+      expect(api.route).toHaveBeenCalledWith({ lat: 34.74, lon: 10.76 }, { lat: 34.73, lon: 10.75 }, "car", expect.anything()),
+    );
+  });
+
   it("lists responders with their reason, and the assistant cites its sources as advisory", async () => {
     const ask = vi.fn(() =>
       Promise.resolve({

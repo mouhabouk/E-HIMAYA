@@ -97,6 +97,29 @@ describe("AxisPage", () => {
     fireEvent.click(screen.getByRole("tab", { name: "Points de situation" }));
     expect(await screen.findByText(/Point de situation 3/)).toBeInTheDocument();
   });
+
+  it("searches the resources inside the axis area with a margin (RS1)", async () => {
+    const api = fakeApi(fakeCrisisApi());
+    renderApp(<AxisPage />, {
+      api,
+      auth: fakeAuth(claims(["ops_manager"], "21")),
+      lang: "fr",
+      path: "/axes/ax-nabeul",
+      route: "/axes/:id",
+    });
+    fireEvent.click(await screen.findByRole("tab", { name: "Moyens dans la zone" }));
+    expect(await screen.findByText(/Recherche dans la zone de l'axe/)).toBeInTheDocument();
+    // The axis replaces the choice of a gouvernorat.
+    expect(screen.queryByLabelText("Gouvernorat")).not.toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Marge autour de la zone (km)"), { target: { value: "5" } });
+    fireEvent.click(screen.getByRole("button", { name: "Rechercher" }));
+    await waitFor(() =>
+      expect(api.searchInventory).toHaveBeenCalledWith(
+        expect.objectContaining({ what: "vehicles", axis_id: "ax-nabeul", margin_km: 5, gouvernorats: null }),
+        expect.anything(),
+      ),
+    );
+  });
 });
 
 describe("AxesPage", () => {

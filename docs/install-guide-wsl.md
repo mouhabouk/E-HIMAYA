@@ -380,6 +380,9 @@ $ docker compose --env-file .env -f infra/compose.yml --profile vision up -d
 مخططات التدخل والبرمجة (المرحلة PL): `npm ci` في `apps/dashboard` (الحزمة `pdfjs-dist`) ثم `alembic upgrade head`
 (0061 و 0062). لا شيء آخر في WSL.
 
+نافذة أصحاب القرار والروزنامة (المرحلة L4) لا تحتاجان شيئا في WSL: `alembic upgrade head` (0063 و 0064 و 0065). الملخص
+المكتوب يعمل إن كان Ollama يعمل في WSL بالنموذج المضبوط.
+
 سجل الموارد وخلفية القمر الصناعي (المرحلة R) لا يحتاجان شيئا في WSL: `alembic upgrade head` (0059 و 0060). تظهر صور
 القمر الصناعي إذا وصل متصفح Windows إلى `tiles.maps.eox.at` و `*.basemaps.cartocdn.com`.
 

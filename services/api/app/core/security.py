@@ -17,6 +17,7 @@ from urllib.parse import urlsplit
 import jwt
 from anyio import to_thread
 from fastapi import Depends, HTTPException, status
+from fastapi.requests import HTTPConnection
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from app.core.config import get_settings
@@ -278,9 +279,18 @@ async def get_optional_principal(
     return await authenticate(credentials.credentials)
 
 
-async def get_principal(principal: Annotated[Principal | None, Depends(get_optional_principal)]) -> Principal:
+async def get_principal(
+    connection: HTTPConnection, principal: Annotated[Principal | None, Depends(get_optional_principal)]
+) -> Principal:
     if principal is None:
         raise _unauthorized("authentication_required")
+    if principal.is_staff:
+        # What the system administrator hid or granted on this route (L4 §8): refused, or a role lent here only.
+        from app.modules.features.service import apply
+
+        route = connection.scope.get("route")
+        method = connection.scope.get("method", "GET")
+        principal = await apply(principal, method, getattr(route, "path", None))
     # Database scope of this request (row-level security, phase 9 §9.1); reporters refine it in get_reporter.
     from app.core.access import scope_of_principal, set_db_scope
 
@@ -298,6 +308,8 @@ def require_roles(*roles: Role) -> Callable[..., Awaitable[Principal]]:
             raise HTTPException(status.HTTP_403_FORBIDDEN, "insufficient_role")
         return principal
 
+    # Read by the permissions catalogue (modules.features.registry): who holds a route by default.
+    _dependency.roles = wanted  # type: ignore[attr-defined]
     return _dependency
 
 

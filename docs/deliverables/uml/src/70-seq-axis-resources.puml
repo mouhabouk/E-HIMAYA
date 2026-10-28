@@ -1,0 +1,22 @@
+@startuml
+!include style.iuml
+title Séquence : moyens dans la zone d'un axe de crise (RS1, L4)
+autonumber
+actor "Chef de salle\n(Nabeul)" as OPM
+participant "Tableau de bord" as UI
+participant "API" as API
+database "PostgreSQL" as DB
+OPM -> UI : fenêtre « Situation » : « Moyens dans la zone de AX-2026-004 »
+UI -> UI : tableau de l'axe, onglet « Moyens dans la zone »
+OPM -> UI : engins d'incendie, marge 5 km
+UI -> API : POST /staff/inventory/search\n{axis_id, margin_km: 5}
+API -> DB : axe lu sous la sécurité des lignes\n(autre wilaya : 404)
+API -> DB : union des zones de l'axe et de ses sous-axes
+alt zone tracée
+  API -> DB : unités à moins de 5 km de la zone (ST_DWithin)
+else pas de zone
+  API -> API : les wilayas de l'axe
+end
+API --> UI : nombres par wilaya et par unité,\nsans nom ni téléphone
+OPM -> UI : « Sur la carte » ou export CSV (journalisé)
+@enduml
