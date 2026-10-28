@@ -137,6 +137,11 @@ async function mockApi(page: Page): Promise<ApiMock> {
     if (method === "GET" && pathname === "/api/v1/staff/notifications/m-e2e/audience") {
       return json(route, { push: 120, sms: 0, email: 0 });
     }
+    // What the system administrator grants and hides (phase L4 §8): nothing here.
+    if (method === "GET" && pathname === "/api/v1/staff/features/mine") return json(route, { granted: [], hidden: [], lent: {} });
+    // The decision window (phase L4b): no delegation opens it here.
+    if (method === "GET" && pathname === "/api/v1/staff/window/access")
+      return json(route, { full: false, delegated: false, may_delegate: false, keeps_dictionary: false, delegations: [] });
     mock.unexpected.push(`${method} ${pathname}`);
     return json(route, { detail: "not_found" }, 404);
   });

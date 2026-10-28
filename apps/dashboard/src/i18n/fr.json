@@ -3121,10 +3121,9 @@
     "clearDates": "Effacer les dates",
     "back": "← Médiathèque",
     "calendar": {
-      "prev": "Mois précédent",
-      "next": "Mois suivant",
-      "caption": "Éléments par jour, {{month}}",
-      "day": "{{date}} : {{n}} éléments",
+      "prev": "Période précédente",
+      "next": "Période suivante",
+      "caption": "Éléments par case, {{period}}",
       "short": {
         "1": "Lun",
         "2": "Mar",
@@ -3133,7 +3132,27 @@
         "5": "Ven",
         "6": "Sam",
         "7": "Dim"
-      }
+      },
+      "cell": "{{label}} : {{n}} éléments",
+      "level": "Niveau",
+      "levels": {
+        "day": "Jour",
+        "week": "Semaine",
+        "month": "Mois",
+        "quarter": "Trimestre",
+        "half": "Semestre",
+        "year": "Année"
+      },
+      "quarterTitle": "T{{n}} {{year}}",
+      "halfTitle": "S{{n}} {{year}}",
+      "range": "{{from}} – {{to}}",
+      "hour": "{{h}} h",
+      "openDay": "Voir les événements de ce jour",
+      "less": "Moins",
+      "more": "Plus",
+      "figures": "Indicateurs des interventions de la période affichée",
+      "figuresNote": "Interventions de votre périmètre sur la période ; une case sous le seuil s'affiche « <5 ». La grille ci-dessus compte les éléments de la bibliothèque.",
+      "heatmap": "Carte de chaleur de la période"
     },
     "tree": {
       "title": "Arborescence",
@@ -5187,7 +5206,8 @@
         "archive": "Archives",
         "timeline": "Chronologie",
         "documents": "Documents",
-        "plans": "Plans et recommandations"
+        "plans": "Plans et recommandations",
+        "resources": "Moyens dans la zone"
       }
     },
     "axes": {
@@ -5863,7 +5883,11 @@
         "stock": "Quantité prête seulement",
         "agents": "Agents en service seulement"
       },
-      "mapRoomsOnly": "La carte en direct est réservée aux salles des opérations ; tous les nombres figurent dans le tableau ci-dessous."
+      "mapRoomsOnly": "La carte en direct est réservée aux salles des opérations ; tous les nombres figurent dans le tableau ci-dessous.",
+      "margin": "Marge autour de la zone (km)",
+      "axisIntro": "Recherche dans la zone de l'axe {{number}} et de ses sous-axes, en nombres par unité, sans nom.",
+      "byArea": "Unités situées dans la zone de l'axe, avec une marge de {{km}} km.",
+      "noArea": "Aucune zone n'est tracée pour cet axe : la recherche couvre tous ses gouvernorats."
     }
   },
   "basemap": {
@@ -6353,7 +6377,8 @@
       "today": "Aujourd'hui",
       "week": "Semaine",
       "decisions": "Dernières décisions et recommandations",
-      "noDecisions": "Aucune décision."
+      "noDecisions": "Aucune décision.",
+      "areaResources": "Moyens dans la zone de {{number}}"
     },
     "saved": {
       "name": "Nom de la recherche",

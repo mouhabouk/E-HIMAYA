@@ -3729,6 +3729,71 @@ button.map-poi {
   font-weight: 700;
   color: var(--info-text);
 }
+/* The six-level calendar (L4a): level switch, cells by hour, day, week or month, heat by count. */
+.calendar__levels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-block-end: 0.5rem;
+}
+.calendar__cells {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
+}
+.calendar__cells--hour {
+  grid-template-columns: repeat(auto-fill, minmax(4.5rem, 1fr));
+}
+.calendar__cells--week {
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+}
+.calendar__cells > li {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  min-block-size: 3.25rem;
+  padding: 0.25rem;
+  text-align: center;
+}
+.calendar__heat--0 {
+  background: transparent;
+}
+.calendar__heat--1 {
+  background: color-mix(in srgb, var(--info-text) 8%, var(--surface));
+}
+.calendar__heat--2 {
+  background: color-mix(in srgb, var(--info-text) 16%, var(--surface));
+}
+.calendar__heat--3 {
+  background: color-mix(in srgb, var(--info-text) 26%, var(--surface));
+}
+.calendar__heat--4 {
+  background: color-mix(in srgb, var(--info-text) 36%, var(--surface));
+}
+.calendar__heat--3 .calendar__count,
+.calendar__heat--4 .calendar__count {
+  color: var(--text);
+}
+.calendar__legend {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+}
+.calendar__swatch {
+  display: inline-block;
+  inline-size: 1rem;
+  block-size: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+}
+.calendar__figures {
+  margin-block-start: 1rem;
+  border-block-start: 1px solid var(--border);
+  padding-block-start: 0.75rem;
+}
 .tree,
 .tree ul {
   list-style: none;

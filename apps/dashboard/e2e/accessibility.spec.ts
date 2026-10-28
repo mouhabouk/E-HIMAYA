@@ -17,6 +17,8 @@ import {
   VEHICLE,
 } from "../src/test/inventoryData";
 import { BASEMAP, BASEMAP_SETTINGS } from "../src/test/basemapData";
+import { fakeFigures, fakeGrid } from "../src/test/libraryCalendarData";
+import type { CalendarLevel } from "../src/lib/phase8Types";
 import { FEATURE_RULES, FEATURES, NO_FEATURES, PREVIEW } from "../src/test/featuresData";
 import {
   WINDOW_ACCESS_FULL,
@@ -168,6 +170,8 @@ async function mockApi(page: Page): Promise<string[]> {
   await page.route(`${API}/**`, (route) => {
     const request = route.request();
     const { pathname } = new URL(request.url());
+    // The decision window answers its own access (full view) before the common default (no delegation).
+    if (pathname === "/api/v1/staff/window/access") return json(route, WINDOW_ACCESS_FULL);
     const common = commonAnswer(request.method(), pathname, route);
     if (common) return common;
     // Phase R2: the search of the resources register is a POST that answers.
@@ -240,6 +244,17 @@ async function mockApi(page: Page): Promise<string[]> {
       "/api/v1/staff/window/delegations": [WINDOW_DELEGATION],
     };
     if (pathname in decisionWindow) return json(route, decisionWindow[pathname]);
+    // The six-level calendar of the events library (phase L4a), [SIM] data.
+    if (pathname === "/api/v1/staff/library/search")
+      return json(route, { items: [], facets: { kind: [], year: [], gouvernorat: [], category: [] }, backend: "postgres", semantic: false, next_cursor: null });
+    if (pathname === "/api/v1/staff/library/calendar/grid") {
+      const q = new URL(route.request().url()).searchParams;
+      return json(route, fakeGrid((q.get("level") ?? "month") as CalendarLevel, q.get("on") ?? "2026-08-12"));
+    }
+    if (pathname === "/api/v1/staff/library/calendar/figures") {
+      const q = new URL(route.request().url()).searchParams;
+      return json(route, fakeFigures(q.get("from") ?? "2026-08-01", q.get("to") ?? "2026-08-31"));
+    }
     if (pathname === "/api/v1/staff/schedule/slot") return json(route, SCHEDULE_SLOT);
     if (pathname === "/api/v1/staff/schedule/progress") return json(route, SCHEDULE_PROGRESS);
     if (pathname === "/api/v1/staff/schedule/settings") return json(route, SCHEDULE_SETTINGS);
@@ -385,6 +400,31 @@ test.describe("accessibility of the decision window (ar)", () => {
       await page.getByRole("tab", { name: "التفويضات" }).click();
       await expect(page.locator("main .win-delegation").first()).toBeVisible();
       await scan(page, `/window delegations ${theme}`);
+      expect(fence.unexpected).toEqual([]);
+    });
+  }
+});
+
+test.describe("accessibility of the library calendar (ar)", () => {
+  for (const theme of ["light", "dark"] as const) {
+    test(`the month, year and day levels with their indicators, ${theme}, have no serious or critical violation`, async ({ page }) => {
+      await signIn(page, ["ops_manager"], "Salma Ben Ali");
+      await page.addInitScript((t) => {
+        window.localStorage.setItem("ehimaya.lang", "ar");
+        window.localStorage.setItem("ehimaya.theme", t);
+      }, theme);
+      const fence = await baseMock(page);
+      await mockApi(page);
+      await page.goto("/library?view=calendar&from=2026-08-12");
+      await expect(page.locator("main .calendar__grid")).toBeVisible();
+      await expect(page.locator("main .calendar__figures .kpis")).toBeVisible();
+      await scan(page, `/library calendar month ${theme}`);
+      await page.getByRole("button", { name: "سنة", exact: true }).click();
+      await expect(page.locator("main .calendar__cells--month")).toBeVisible();
+      await scan(page, `/library calendar year ${theme}`);
+      await page.getByRole("button", { name: "يوم", exact: true }).click();
+      await expect(page.locator("main .calendar__cells--hour")).toBeVisible();
+      await scan(page, `/library calendar day ${theme}`);
       expect(fence.unexpected).toEqual([]);
     });
   }

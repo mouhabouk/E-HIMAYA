@@ -136,6 +136,12 @@ export function commonAnswer(
     return json(route, []);
   if (method === "GET" && pathname === "/api/v1/staff/streams")
     return json(route, { items: [], next_cursor: null });
+  // What the system administrator grants and hides (phase L4 §8): nothing here.
+  if (method === "GET" && pathname === "/api/v1/staff/features/mine")
+    return json(route, { granted: [], hidden: [], lent: {} });
+  // The decision window (phase L4b): the menu asks whether a delegation opens it; none here.
+  if (method === "GET" && pathname === "/api/v1/staff/window/access")
+    return json(route, { full: false, delegated: false, may_delegate: false, keeps_dictionary: false, delegations: [] });
   // Active break-glass grants of the signed-in user (banner in the layout, phase 9).
   // National settings (priority bands, phase 9); an empty list keeps the built-in defaults.
   if (method === "GET" && pathname === "/api/v1/staff/settings")

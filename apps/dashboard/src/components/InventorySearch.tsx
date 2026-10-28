@@ -155,8 +155,17 @@ function ResultRow({ g, readyLabel }: { g: SearchGouvernorat; readyLabel: string
   );
 }
 
-/** The search tab of the register: open to the governor and the minister too (counts, never names). */
-export function SearchTab({ catalogue, national }: { catalogue: Category[]; national: boolean }) {
+/** The search tab of the register: open to the governor and the minister too (counts, never names). With an axis
+ * (RS1), the same question inside the area of that crisis axis, widened by a margin. */
+export function SearchTab({
+  catalogue,
+  national,
+  axis,
+}: {
+  catalogue: Category[];
+  national: boolean;
+  axis?: { id: string; number: string };
+}) {
   const { t } = useTranslation();
   const { api } = useServices();
   const fmt = useFormat();
@@ -166,7 +175,8 @@ export function SearchTab({ catalogue, national }: { catalogue: Category[]; nati
   // The live map is the operations rooms' screen; the governor and the minister read the counts in the table.
   const mapAllowed = hasReadAccess(user?.identity.roles ?? []);
   const id = useId();
-  const [draft, setDraft] = useState<SearchQuery>(EMPTY_SEARCH);
+  const start: SearchQuery = axis ? { ...EMPTY_SEARCH, axis_id: axis.id, margin_km: 0 } : EMPTY_SEARCH;
+  const [draft, setDraft] = useState<SearchQuery>(start);
   const [asked, setAsked] = useState<SearchQuery | null>(null);
   const result = useQuery({
     queryKey: asked ? inventoryKeys.search(asked) : ["inventory", "search", "none"],
@@ -193,7 +203,7 @@ export function SearchTab({ catalogue, national }: { catalogue: Category[]; nati
       <h2 id={`${id}-title`} className="visually-hidden">
         {t("inventory.tabs.search")}
       </h2>
-      <p className="muted">{t("inventory.search.intro")}</p>
+      <p className="muted">{axis ? t("inventory.search.axisIntro", { number: axis.number }) : t("inventory.search.intro")}</p>
       <form className="card inventory-form" onSubmit={onSubmit}>
         <fieldset className="inventory-search__what">
           <legend>{t("inventory.search.what")}</legend>
@@ -203,7 +213,7 @@ export function SearchTab({ catalogue, national }: { catalogue: Category[]; nati
                 type="radio"
                 name={`${id}-what`}
                 checked={draft.what === e}
-                onChange={() => setDraft({ ...EMPTY_SEARCH, what: e, gouvernorats: draft.gouvernorats })}
+                onChange={() => setDraft({ ...start, what: e, gouvernorats: draft.gouvernorats, margin_km: draft.margin_km })}
               />
               <span>{t(`inventory.tabs.${e}`)}</span>
             </label>
@@ -244,7 +254,22 @@ export function SearchTab({ catalogue, national }: { catalogue: Category[]; nati
               </select>
             </div>
           )}
-          {national && (
+          {axis && (
+            <div className="field">
+              <label htmlFor={`${id}-margin`}>{t("inventory.search.margin")}</label>
+              <input
+                id={`${id}-margin`}
+                type="number"
+                inputMode="decimal"
+                min={0}
+                max={50}
+                step={1}
+                value={draft.margin_km ?? 0}
+                onChange={(e) => patch({ margin_km: Math.min(50, Math.max(0, Number(e.target.value) || 0)) })}
+              />
+            </div>
+          )}
+          {national && !axis && (
             <GouvernoratPicker
               value={draft.gouvernorats?.[0] ?? null}
               onChange={(g) => patch({ gouvernorats: g === null ? null : [g] })}
@@ -306,6 +331,13 @@ export function SearchTab({ catalogue, national }: { catalogue: Category[]; nati
             )}
           </div>
           {!mapAllowed && <p className="muted">{t("inventory.search.mapRoomsOnly")}</p>}
+          {result.data.axis && (
+            <p className="muted">
+              {result.data.axis.by_area
+                ? t("inventory.search.byArea", { km: fmt.number(result.data.axis.margin_km) })
+                : t("inventory.search.noArea")}
+            </p>
+          )}
           {found.length === 0 ? (
             <p className="muted">{t("inventory.search.none")}</p>
           ) : (

@@ -3309,6 +3309,83 @@
         "title": "BuildAverage",
         "type": "object"
       },
+      "CalendarCell": {
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "end": {
+            "format": "date",
+            "title": "End",
+            "type": "string"
+          },
+          "start": {
+            "title": "Start",
+            "type": "string"
+          }
+        },
+        "required": [
+          "start",
+          "end",
+          "count"
+        ],
+        "title": "CalendarCell",
+        "type": "object"
+      },
+      "CalendarGrid": {
+        "description": "One level of the six-level calendar (L4a): the period that contains a day, cut into cells.",
+        "properties": {
+          "cells": {
+            "items": {
+              "$ref": "#/components/schemas/CalendarCell"
+            },
+            "title": "Cells",
+            "type": "array"
+          },
+          "end": {
+            "format": "date",
+            "title": "End",
+            "type": "string"
+          },
+          "level": {
+            "enum": [
+              "day",
+              "week",
+              "month",
+              "quarter",
+              "half",
+              "year"
+            ],
+            "title": "Level",
+            "type": "string"
+          },
+          "start": {
+            "format": "date",
+            "title": "Start",
+            "type": "string"
+          },
+          "step": {
+            "enum": [
+              "hour",
+              "day",
+              "week",
+              "month"
+            ],
+            "title": "Step",
+            "type": "string"
+          }
+        },
+        "required": [
+          "level",
+          "step",
+          "start",
+          "end",
+          "cells"
+        ],
+        "title": "CalendarGrid",
+        "type": "object"
+      },
       "CalendarOut": {
         "properties": {
           "days": {
@@ -22681,6 +22758,44 @@
         "title": "PeriodDetail",
         "type": "object"
       },
+      "PeriodFigures": {
+        "description": "The indicators of the period a calendar level shows (L4a), floored as in the decision window.",
+        "properties": {
+          "figures": {
+            "$ref": "#/components/schemas/app__modules__window__schemas__Figures"
+          },
+          "from": {
+            "format": "date",
+            "title": "From",
+            "type": "string"
+          },
+          "gouvernorats": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Gouvernorats",
+            "type": "array"
+          },
+          "min_cell": {
+            "title": "Min Cell",
+            "type": "integer"
+          },
+          "to": {
+            "format": "date",
+            "title": "To",
+            "type": "string"
+          }
+        },
+        "required": [
+          "from",
+          "to",
+          "gouvernorats",
+          "figures",
+          "min_cell"
+        ],
+        "title": "PeriodFigures",
+        "type": "object"
+      },
       "PeriodIn": {
         "properties": {
           "gouvernorat_code": {
@@ -28415,6 +28530,36 @@
           "detail"
         ],
         "title": "ScoreComponent",
+        "type": "object"
+      },
+      "SearchAxis": {
+        "description": "The axis a search was confined to (RS1); ``by_area`` False: the axis has no drawn area, its gouvernorats\nwere searched instead.",
+        "properties": {
+          "by_area": {
+            "title": "By Area",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "margin_km": {
+            "title": "Margin Km",
+            "type": "number"
+          },
+          "number": {
+            "title": "Number",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "by_area",
+          "margin_km"
+        ],
+        "title": "SearchAxis",
         "type": "object"
       },
       "SearchGouvernorat": {
@@ -39607,6 +39752,18 @@
       "app__modules__inventory__schemas__SearchIn": {
         "description": "One question across the gouvernorats the caller sees: \"the fire trucks of 2000 L or more\", \"the divers\".",
         "properties": {
+          "axis_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Axis Id"
+          },
           "category": {
             "anyOf": [
               {
@@ -39633,6 +39790,13 @@
               }
             ],
             "title": "Gouvernorats"
+          },
+          "margin_km": {
+            "default": 0,
+            "maximum": 50.0,
+            "minimum": 0.0,
+            "title": "Margin Km",
+            "type": "number"
           },
           "min_level": {
             "anyOf": [
@@ -39704,6 +39868,16 @@
       "app__modules__inventory__schemas__SearchOut": {
         "description": "Counts only, grouped by gouvernorat and unit: no name, no matricule, no phone, whoever asks.",
         "properties": {
+          "axis": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SearchAxis"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "gouvernorats": {
             "items": {
               "$ref": "#/components/schemas/SearchGouvernorat"
@@ -68130,6 +68304,217 @@
           }
         ],
         "summary": "Library Calendar",
+        "tags": [
+          "staff",
+          "knowledge"
+        ]
+      }
+    },
+    "/api/v1/staff/library/calendar/figures": {
+      "get": {
+        "description": "The indicators of the period shown (L4a): those of the decision window, within the caller's scope.",
+        "operationId": "library_calendar_figures_api_v1_staff_library_calendar_figures_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "from",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "title": "From",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "title": "To",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 83,
+                  "minimum": 11,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          },
+          {
+            "in": "query",
+            "name": "category",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/Category"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeriodFigures"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Library Calendar Figures",
+        "tags": [
+          "staff",
+          "knowledge"
+        ]
+      }
+    },
+    "/api/v1/staff/library/calendar/grid": {
+      "get": {
+        "description": "One of the six levels of the calendar (L4a): the period of ``level`` that contains ``on``, cut into cells.",
+        "operationId": "library_calendar_grid_api_v1_staff_library_calendar_grid_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "level",
+            "required": true,
+            "schema": {
+              "enum": [
+                "day",
+                "week",
+                "month",
+                "quarter",
+                "half",
+                "year"
+              ],
+              "title": "Level",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "on",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "title": "On",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "kinds",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kinds"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 83,
+                  "minimum": 11,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          },
+          {
+            "in": "query",
+            "name": "category",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/Category"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalendarGrid"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Library Calendar Grid",
         "tags": [
           "staff",
           "knowledge"

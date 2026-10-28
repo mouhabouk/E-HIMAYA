@@ -16,13 +16,16 @@ from datetime import UTC, date, datetime, timedelta
 from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
-from geoalchemy2 import Geometry
+from geoalchemy2 import Geography, Geometry
 from sqlalchemy import and_, cast, delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_session, get_system_sessionmaker
 from app.core.security import Principal, Role, require_roles
 from app.modules.audit import service as audit
+from app.modules.crisis import domain as crisis_domain
+from app.modules.crisis import service as crisis_service
+from app.modules.crisis.models import Axis as CrisisAxis
 from app.modules.geo.models import Gouvernorat
 from app.modules.inventory import domain, schemas
 from app.modules.inventory.models import Agent, AgentSkill, Category, InventoryRevision, Stock, UnitCheck
@@ -1427,9 +1430,42 @@ async def _search_counts(
     return {unit_id: counts for unit_id, counts in found.items() if counts[0] > 0}
 
 
+async def _axis_units(
+    session: AsyncSession, principal: Principal, axis_id: uuid.UUID, margin_km: float
+) -> tuple[list[int], set[uuid.UUID] | None, schemas.SearchAxis]:
+    """RS1: the gouvernorats of an axis the caller sees and, when it has an area, the units inside it (with margin).
+
+    The axis is read under the caller's row security, so an axis of another gouvernorat is not found."""
+    if not crisis_domain.reads(principal):
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "insufficient_role")
+    axis = await crisis_service.get_axis(session, axis_id)
+    members = [m.id for m in await crisis_service.family(session, axis)]
+    codes = [c for c in await crisis_service.codes_of(session, axis) if principal.can_access_gouvernorat(c)]
+    area = (
+        select(func.ST_Union(cast(CrisisAxis.area, Geometry)))
+        .where(CrisisAxis.id.in_(members), CrisisAxis.area.isnot(None))
+        .scalar_subquery()
+    )
+    has_area = bool(await session.scalar(select(area.isnot(None))))
+    inside: set[uuid.UUID] | None = None
+    if has_area:
+        near = func.ST_DWithin(Unit.location, cast(area, Geography), margin_km * 1000)
+        inside = set(await session.scalars(select(Unit.id).where(Unit.location.isnot(None), near)))
+    out = schemas.SearchAxis(id=axis.id, number=axis.number, by_area=has_area, margin_km=margin_km)
+    return codes, inside, out
+
+
 async def _search(session: AsyncSession, principal: Principal, body: schemas.SearchIn) -> schemas.SearchOut:
-    codes = _search_scope(principal, body.gouvernorats)
+    axis: schemas.SearchAxis | None = None
+    within: set[uuid.UUID] | None = None
+    if body.axis_id is not None:
+        codes: list[int] | None
+        codes, within, axis = await _axis_units(session, principal, body.axis_id, body.margin_km)
+    else:
+        codes = _search_scope(principal, body.gouvernorats)
     counts = await _search_counts(session, principal, body, codes)
+    if within is not None:
+        counts = {unit_id: c for unit_id, c in counts.items() if unit_id in within}
     inside = func.ST_PointOnSurface(Gouvernorat.boundary)
     gouvernorats = select(
         Gouvernorat.code,
@@ -1470,6 +1506,7 @@ async def _search(session: AsyncSession, principal: Principal, body: schemas.Sea
         total=sum(g.total for g in rows.values()),
         ready=sum(g.ready for g in rows.values()),
         gouvernorats=list(rows.values()),
+        axis=axis,
     )
 
 

@@ -7,7 +7,9 @@ import type {
   Hotspots,
   LeaderboardRow,
   Leaderboard,
-  LibraryCalendar,
+  CalendarGrid,
+  CalendarLevel,
+  PeriodFigures,
   LibraryItem,
   LibraryKind,
   LibraryQuery,
@@ -186,17 +188,18 @@ export function phase8Api(api: ApiClient) {
         signal: opts.signal,
       }),
 
-    libraryCalendar: (year: number, month: number, q: Omit<LibraryQuery, "q">, signal?: AbortSignal) =>
-      api.request<LibraryCalendar>(`${EV}/calendar`, {
-        query: {
-          year,
-          month,
-          kinds: q.kinds,
-          gouvernorat: q.gouvernorat ?? undefined,
-          category: q.category || undefined,
-        },
+    libraryGrid: (level: CalendarLevel, on: string, q: Omit<LibraryQuery, "q">, signal?: AbortSignal) =>
+      api.request<CalendarGrid>(`${EV}/calendar/grid`, {
+        query: { level, on, kinds: q.kinds, gouvernorat: q.gouvernorat ?? undefined, category: q.category || undefined },
         signal,
       }),
+
+    libraryFigures: (from: string, to: string, q: Omit<LibraryQuery, "q">, signal?: AbortSignal) =>
+      api.request<PeriodFigures>(`${EV}/calendar/figures`, {
+        query: { from, to, gouvernorat: q.gouvernorat ?? undefined, category: q.category || undefined },
+        signal,
+      }),
+
 
     libraryTree: (by: TreeAxis, q: Omit<LibraryQuery, "q">, signal?: AbortSignal) =>
       api.request<LibraryTree>(`${EV}/tree`, {
@@ -319,8 +322,10 @@ export const p8Keys = {
   memoryVersion: (id: string, v: number) => ["memory", "version", id, v] as const,
   librarySearch: (q: LibraryQuery) =>
     ["library-search", q.q, q.kinds.join(","), q.from ?? "", q.to ?? "", q.gouvernorat, q.category ?? ""] as const,
-  libraryCalendar: (y: number, m: number, q: Omit<LibraryQuery, "q">) =>
-    ["library-calendar", y, m, q.kinds.join(","), q.gouvernorat, q.category ?? ""] as const,
+  libraryGrid: (level: CalendarLevel, on: string, q: Omit<LibraryQuery, "q">) =>
+    ["library-grid", level, on, q.kinds.join(","), q.gouvernorat, q.category ?? ""] as const,
+  libraryFigures: (from: string, to: string, q: Omit<LibraryQuery, "q">) =>
+    ["library-figures", from, to, q.gouvernorat, q.category ?? ""] as const,
   libraryTree: (by: TreeAxis, q: Omit<LibraryQuery, "q">) =>
     ["library-tree", by, q.kinds.join(","), q.gouvernorat, q.category ?? ""] as const,
   libraryItem: (kind: string, id: string) => ["library-item", kind, id] as const,

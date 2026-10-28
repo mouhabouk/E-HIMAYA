@@ -108,6 +108,9 @@ def _where(principal: Principal, filters: Filters) -> tuple[str, dict[str, Any]]
     return " AND ".join(clauses), params
 
 
+where = _where
+
+
 def visible(principal: Principal, row: SearchDoc, filters: Filters) -> bool:
     """The same rule as ``_where``, applied in Python to every candidate (whatever engine produced it)."""
     if row.deleted or row.kind not in _kinds(principal, filters):

@@ -1,5 +1,7 @@
 import { vi } from "vitest";
 import type { Phase8Api } from "../lib/phase8Api";
+import type { CalendarLevel } from "../lib/phase8Types";
+import { fakeFigures, fakeGrid } from "./libraryCalendarData";
 import type {
   AnalyticsOverview,
   BadgeAward,
@@ -350,7 +352,8 @@ export function fakePhase8Api(): Phase8Api {
     memoryVersion: vi.fn(),
     memoryFromIncident: vi.fn(() => Promise.resolve(makeMemoryEntry({ id: "mem-new" }))),
     librarySearch: vi.fn(() => Promise.resolve(makeSearch())),
-    libraryCalendar: vi.fn(() => Promise.resolve({ year: 2026, month: 8, days: [{ date: "2026-08-02", count: 3 }] })),
+    libraryGrid: vi.fn((level: CalendarLevel, on: string) => Promise.resolve(fakeGrid(level, on))),
+    libraryFigures: vi.fn((from: string, to: string) => Promise.resolve(fakeFigures(from, to))),
     libraryTree: vi.fn(() => Promise.resolve({ by: "period" as const, nodes: [] })),
     libraryItem: vi.fn(() => Promise.resolve(makeLibraryItem())),
     rewardSettings: vi.fn(() => Promise.resolve(REWARD_SETTINGS)),

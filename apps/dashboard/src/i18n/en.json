@@ -3121,10 +3121,9 @@
     "clearDates": "Clear the dates",
     "back": "← Events library",
     "calendar": {
-      "prev": "Previous month",
-      "next": "Next month",
-      "caption": "Items per day, {{month}}",
-      "day": "{{date}}: {{n}} items",
+      "prev": "Previous period",
+      "next": "Next period",
+      "caption": "Items by cell, {{period}}",
       "short": {
         "1": "Mon",
         "2": "Tue",
@@ -3133,7 +3132,27 @@
         "5": "Fri",
         "6": "Sat",
         "7": "Sun"
-      }
+      },
+      "cell": "{{label}}: {{n}} items",
+      "level": "Level",
+      "levels": {
+        "day": "Day",
+        "week": "Week",
+        "month": "Month",
+        "quarter": "Quarter",
+        "half": "Half-year",
+        "year": "Year"
+      },
+      "quarterTitle": "Q{{n}} {{year}}",
+      "halfTitle": "H{{n}} {{year}}",
+      "range": "{{from}} – {{to}}",
+      "hour": "{{h}}:00",
+      "openDay": "Show this day's events",
+      "less": "Less",
+      "more": "More",
+      "figures": "Intervention indicators for the period shown",
+      "figuresNote": "Interventions within your scope over the period; a cell under the floor shows \"<5\". The grid above counts library items.",
+      "heatmap": "Heat map of the period"
     },
     "tree": {
       "title": "Tree",
@@ -5187,7 +5206,8 @@
         "archive": "Archive",
         "timeline": "Timeline",
         "documents": "Documents",
-        "plans": "Plans and recommendations"
+        "plans": "Plans and recommendations",
+        "resources": "Resources in the area"
       }
     },
     "axes": {
@@ -5863,7 +5883,11 @@
         "stock": "Ready quantity only",
         "agents": "Staff on duty only"
       },
-      "mapRoomsOnly": "The live map is for the operations rooms; every count is in the table below."
+      "mapRoomsOnly": "The live map is for the operations rooms; every count is in the table below.",
+      "margin": "Margin around the area (km)",
+      "axisIntro": "Search inside the area of axis {{number}} and its sub-axes, as counts by unit, no name.",
+      "byArea": "Units inside the axis area, with a {{km}} km margin.",
+      "noArea": "No area is drawn for this axis, so the search covers all its gouvernorats."
     }
   },
   "basemap": {
@@ -6353,7 +6377,8 @@
       "today": "Today",
       "week": "Week",
       "decisions": "Latest decisions and recommendations",
-      "noDecisions": "No decision yet."
+      "noDecisions": "No decision yet.",
+      "areaResources": "Resources in the area of {{number}}"
     },
     "saved": {
       "name": "Search name",

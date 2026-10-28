@@ -310,6 +310,9 @@ class SearchIn(BaseModel):
     min_level: int | None = Field(default=None, ge=1, le=5)
     valid_cert: bool = False
     gouvernorats: list[int] | None = Field(default=None, max_length=30)
+    # RS1: only the units inside the area of a crisis axis (its sub-axes included), widened by a margin.
+    axis_id: uuid.UUID | None = None
+    margin_km: float = Field(default=0, ge=0, le=50)
 
 
 class SearchUnit(BaseModel):
@@ -335,6 +338,16 @@ class SearchGouvernorat(BaseModel):
     units: list[SearchUnit]
 
 
+class SearchAxis(BaseModel):
+    """The axis a search was confined to (RS1); ``by_area`` False: the axis has no drawn area, its gouvernorats
+    were searched instead."""
+
+    id: uuid.UUID
+    number: str
+    by_area: bool
+    margin_km: float
+
+
 class SearchOut(BaseModel):
     """Counts only, grouped by gouvernorat and unit: no name, no matricule, no phone, whoever asks."""
 
@@ -342,3 +355,4 @@ class SearchOut(BaseModel):
     total: int
     ready: int
     gouvernorats: list[SearchGouvernorat]
+    axis: SearchAxis | None = None

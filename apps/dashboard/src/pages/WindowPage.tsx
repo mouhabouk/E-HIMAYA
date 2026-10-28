@@ -1,8 +1,9 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useId, useState, type ReactNode, type SyntheticEvent } from "react";
+import { useId, useState, type SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { ErrorBox, Loading } from "../components/Feedback";
+import { FiguresView, Kpi, useCount } from "../components/WindowFigures";
 import { PageTitle } from "../components/PageTitle";
 import { InlineDialog, ReasonField } from "../components/Phase9Bits";
 import { useAuth } from "../context/auth";
@@ -12,14 +13,13 @@ import { useFormat, useGouvernorats, useLanguage } from "../lib/hooks";
 import { saveDownload } from "../lib/layersApi";
 import { REASON_RANGE, reasonValid } from "../lib/phase9";
 import { CATEGORIES } from "../lib/types";
+import { canOpenAxes } from "../lib/roles";
 import type {
-  Cell,
   CompareMode,
   CompareQuery,
   CompareResult,
   Delegation,
   EventRef,
-  Figures,
   SavedSearch,
   SearchResult,
   WindowAccess,
@@ -53,97 +53,6 @@ function lastDays(n: number): { from: string; to: string } {
 }
 
 /** A count of the window: under the floor the API answers null, shown "<5". */
-function useCount(minCell: number) {
-  const fmt = useFormat();
-  return (n: number | null | undefined) => (n === null || n === undefined ? `<${minCell}` : fmt.number(n));
-}
-
-function Kpi({ label, value }: { label: string; value: ReactNode }) {
-  return (
-    <div className="kpi">
-      <dt className="kpi__label">{label}</dt>
-      <dd className="kpi__value">{value}</dd>
-    </div>
-  );
-}
-
-function Cells({ caption, cells, label, minCell }: { caption: string; cells: Cell[]; label: (key: string) => string; minCell: number }) {
-  const { t } = useTranslation();
-  const count = useCount(minCell);
-  const max = Math.max(minCell, ...cells.map((c) => c.count ?? 0));
-  return (
-    <figure className="card chart">
-      <table className="bars">
-        <caption>{caption}</caption>
-        <tbody>
-          {cells.length === 0 ? (
-            <tr>
-              <td className="muted">{t("window.none")}</td>
-            </tr>
-          ) : (
-            cells.map((c) => (
-              <tr key={c.key}>
-                <th scope="row" className="bars__label">
-                  {label(c.key)}
-                </th>
-                <td className="bars__track">
-                  <span
-                    className={`bars__bar${c.count === null ? " win-bar--hidden" : ""}`}
-                    style={{ inlineSize: `${((c.count ?? minCell / 2) / max) * 100}%` }}
-                    aria-hidden="true"
-                  />
-                </td>
-                <td className="bars__value">{count(c.count)}</td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
-    </figure>
-  );
-}
-
-function FiguresView({ figures, minCell }: { figures: Figures; minCell: number }) {
-  const { t } = useTranslation();
-  const fmt = useFormat();
-  const gouvernorats = useGouvernorats();
-  const count = useCount(minCell);
-  const minutes = (m: number | null) => (m === null ? "—" : t("window.minutes", { n: fmt.decimal(m) }));
-  return (
-    <>
-      <dl className="kpis">
-        <Kpi label={t("window.metric.incidents")} value={count(figures.incidents)} />
-        <Kpi label={t("window.metric.injured")} value={count(figures.injured)} />
-        <Kpi label={t("window.metric.deceased")} value={count(figures.deceased)} />
-        <Kpi label={t("window.metric.rescued")} value={count(figures.rescued)} />
-        <Kpi label={t("window.metric.burned_ha")} value={figures.burned_ha === null ? "—" : fmt.decimal(figures.burned_ha)} />
-        <Kpi label={t("window.metric.to_assignment_min")} value={minutes(figures.to_assignment_min)} />
-        <Kpi label={t("window.metric.to_on_scene_min")} value={minutes(figures.to_on_scene_min)} />
-        <Kpi
-          label={t("window.metric.confirmed_rate")}
-          value={figures.confirmed_rate === null ? "—" : fmt.percent(figures.confirmed_rate)}
-        />
-      </dl>
-      <div className="win-charts">
-        <Cells caption={t("window.byCategory")} cells={figures.by_category} label={(k) => t(`category.${k}`, k)} minCell={minCell} />
-        <Cells caption={t("window.bySeverity")} cells={figures.by_severity} label={(k) => t("window.severity", { n: k })} minCell={minCell} />
-        <Cells
-          caption={t("window.byGouvernorat")}
-          cells={figures.by_gouvernorat}
-          label={(k) => gouvernorats.nameOf(Number(k)) ?? k}
-          minCell={minCell}
-        />
-        <Cells
-          caption={t(`window.series.${figures.series_step}`)}
-          cells={figures.series}
-          label={(k) => (figures.series_step === "month" ? k.slice(0, 7) : fmt.date(k))}
-          minCell={minCell}
-        />
-      </div>
-      <p className="muted">{t("window.floor", { n: minCell })}</p>
-    </>
-  );
-}
 
 function ExportButtons({ build }: { build: (format: "pdf" | "xlsx") => Parameters<ReturnType<typeof useServices>["api"]["windowExport"]>[0] }) {
   const { t } = useTranslation();
@@ -211,7 +120,10 @@ function NowTab() {
   const { api } = useServices();
   const fmt = useFormat();
   const gouvernorats = useGouvernorats();
+  const { user } = useAuth();
   const q = useQuery({ queryKey: WINDOW_KEYS.now, queryFn: ({ signal }) => api.windowNow(signal), refetchInterval: 60_000 });
+  // RS1: the rooms open the resources inside an axis area from here; a delegated view has no resources.
+  const toAxis = canOpenAxes(user?.identity.roles ?? []);
   if (q.isPending) return <Loading />;
   if (q.isError) return <ErrorBox error={q.error} onRetry={() => void q.refetch()} />;
   const now = q.data;
@@ -245,6 +157,13 @@ function NowTab() {
                       ? t("window.now.planText")
                       : t("window.now.noPlan")}
                 </p>
+                {toAxis && !now.delegated && (
+                  <p>
+                    <Link className="btn btn--small btn--ghost" to={`/axes/${a.id}?tab=resources`}>
+                      {t("window.now.areaResources", { number: a.number })}
+                    </Link>
+                  </p>
+                )}
               </li>
             ))}
           </ul>

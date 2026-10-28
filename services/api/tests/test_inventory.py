@@ -12,9 +12,10 @@ from typing import Any
 
 import httpx
 from openpyxl import Workbook
-from sqlalchemy import select
+from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.db import as_system
 from app.modules.audit.models import AuditLog
 from app.modules.inventory import domain
 from app.modules.programmes.domain import FileError, normalize
@@ -495,3 +496,65 @@ async def test_search_across_gouvernorats_by_unit(
         )
     ).one()
     assert entry.details["query"]["category"] == "diving"
+
+
+async def test_search_within_a_crisis_axis(client: httpx.AsyncClient, staff: Staff, session: AsyncSession) -> None:
+    """RS1: the same question inside the area of a crisis axis, widened by a margin; without an area, its
+    gouvernorats; an axis the caller does not see is not found."""
+    inside, bizerte = await _unit(client, staff, GABES), await _unit(client, staff, BIZERTE)
+    r = await client.post(
+        "/api/v1/staff/units",
+        json={
+            "name_ar": f"وحدة {secrets.token_hex(3)}",
+            "name_fr": f"Unité {secrets.token_hex(3)}",
+            "kind": "unit",
+            "gouvernorat_code": GABES,
+            # About 9 km east of the area.
+            "location": {"lat": 33.88, "lon": 10.2},
+        },
+        headers=_manager(staff),
+    )
+    assert r.status_code == 201, r.text
+    near = r.json()
+    for unit, code in ((inside, GABES), (near, GABES), (bizerte, BIZERTE)):
+        r = await client.post(
+            f"{URL}/vehicles",
+            json={"unit_id": unit["id"], "category_key": "fire_engine", "label": f"إطفاء {secrets.token_hex(3)}"},
+            headers=_manager(staff, code),
+        )
+        assert r.status_code == 201, r.text
+    drawn, bare = uuid.uuid4(), uuid.uuid4()
+    async with as_system(session):
+        for axis_id, area in (
+            (drawn, "MULTIPOLYGON(((10.08 33.86, 10.12 33.86, 10.12 33.90, 10.08 33.90, 10.08 33.86)))"),
+            (bare, None),
+        ):
+            await session.execute(
+                text(
+                    "INSERT INTO crisis.axis (id, number, name, kind, scope, gouvernorat_code, area, level, opened_by)"
+                    " VALUES (:id, :n, 'فيضانات قابس', 'flood', 'gouvernorat', :g,"
+                    " CAST(ST_GeomFromText(:area, 4326) AS geography), 2, 'test')"
+                ),
+                {"id": axis_id, "n": f"AX-T-{secrets.token_hex(3)}", "g": GABES, "area": area},
+            )
+        await session.commit()
+
+    def unit_of(result: dict[str, Any], unit: dict[str, Any]) -> dict[str, Any] | None:
+        return next((u for g in result["gouvernorats"] for u in g["units"] if u["id"] == unit["id"]), None)
+
+    trucks = {"what": "vehicles", "category": "fire_engine"}
+    minister = staff(["minister"], gouvernorat=None)
+    result = (await client.post(f"{URL}/search", json={**trucks, "axis_id": str(drawn)}, headers=minister)).json()
+    assert result["axis"]["by_area"] is True and [g["code"] for g in result["gouvernorats"]] == [GABES]
+    assert unit_of(result, inside) is not None and unit_of(result, near) is None and unit_of(result, bizerte) is None
+    wider = {**trucks, "axis_id": str(drawn), "margin_km": 15}
+    result = (await client.post(f"{URL}/search", json=wider, headers=_manager(staff))).json()
+    assert unit_of(result, near) is not None and result["axis"]["margin_km"] == 15
+    result = (await client.post(f"{URL}/search", json={**trucks, "axis_id": str(bare)}, headers=minister)).json()
+    assert result["axis"]["by_area"] is False and unit_of(result, near) is not None
+    # Another gouvernorat's room does not see the axis; a role that does not read axes is refused.
+    other = await client.post(f"{URL}/search", json={**trucks, "axis_id": str(drawn)}, headers=_manager(staff, BIZERTE))
+    assert other.status_code == 404
+    commander = staff(["field_commander"], gouvernorat=GABES)
+    refused = await client.post(f"{URL}/search", json={**trucks, "axis_id": str(drawn)}, headers=commander)
+    assert refused.status_code == 403

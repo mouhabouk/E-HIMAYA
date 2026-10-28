@@ -61,7 +61,7 @@ class Viewer:
         return not self.full
 
 
-def _codes(principal: Principal) -> list[int]:
+def codes_of(principal: Principal) -> list[int]:
     return [] if principal.is_national else [principal.gouvernorat_code or 0]
 
 
@@ -83,7 +83,7 @@ async def in_force(session: AsyncSession, subject: str, now: datetime) -> list[W
 async def viewer(session: AsyncSession, principal: Principal) -> Viewer:
     """The caller's view of the window; 403 ``window_delegation_required`` without a delegation in force."""
     if full_view(principal):
-        return Viewer(principal, True, _codes(principal))
+        return Viewer(principal, True, codes_of(principal))
     delegations = await in_force(session, principal.subject, datetime.now(UTC))
     if not delegations:
         raise ApiError(status.HTTP_403_FORBIDDEN, DELEGATION_REQUIRED)
@@ -102,4 +102,4 @@ async def viewer(session: AsyncSession, principal: Principal) -> Viewer:
                 {"axes": axes},
             )
             incidents |= set(attached)
-    return Viewer(principal, False, _codes(principal), sorted(incidents), axes, ids)
+    return Viewer(principal, False, codes_of(principal), sorted(incidents), axes, ids)

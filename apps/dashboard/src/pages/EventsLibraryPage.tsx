@@ -9,10 +9,19 @@ import { isIsoDate } from "../lib/analytics";
 import { useDebounced, useFormat, useGouvernorats, useLanguage } from "../lib/hooks";
 import { localized } from "../lib/localized";
 import { p8Keys } from "../lib/phase8Api";
+import { useAuth } from "../context/auth";
+import { FiguresView } from "../components/WindowFigures";
+import { FINER, heat, partOfYear, shiftDay, todayIso } from "../lib/libraryCalendar";
+import { ANALYTICS_ROLES } from "../lib/roles";
 import {
+  CALENDAR_LEVELS,
   LIBRARY_KINDS,
   TREE_AXES,
   type Bucket,
+  type CalendarCell,
+  type CalendarGrid,
+  type CalendarLevel,
+  type CalendarStep,
   type LibraryFacets,
   type LibraryKind,
   type LibraryQuery,
@@ -230,81 +239,206 @@ function Results({ search }: { search: ReturnType<typeof useLibrarySearch> }) {
   );
 }
 
+function useCalendarLabels() {
+  const { t } = useTranslation();
+  const lang = useLanguage();
+  const locale = INTL_LOCALE[lang];
+  const at = (iso: string) => new Date(`${iso.slice(0, 10)}T12:00:00Z`);
+  const fmtDay = new Intl.DateTimeFormat(locale, { day: "numeric", month: "short", timeZone: "UTC" });
+  const fmtMonth = new Intl.DateTimeFormat(locale, { month: "long", year: "numeric", timeZone: "UTC" });
+  const fmtMonthShort = new Intl.DateTimeFormat(locale, { month: "long", timeZone: "UTC" });
+  const fmtFull = new Intl.DateTimeFormat(locale, { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+  const fmtWeekday = new Intl.DateTimeFormat(locale, { weekday: "short", day: "numeric", timeZone: "UTC" });
+  const range = (from: string, to: string) => t("events.calendar.range", { from: fmtDay.format(at(from)), to: fmtDay.format(at(to)) });
+  return {
+    title(grid: CalendarGrid): string {
+      const year = grid.start.slice(0, 4);
+      switch (grid.level) {
+        case "day":
+          return fmtFull.format(at(grid.start));
+        case "week":
+          return `${range(grid.start, grid.end)} ${year}`;
+        case "month":
+          return fmtMonth.format(at(grid.start));
+        case "quarter":
+        case "half":
+          return t(`events.calendar.${grid.level}Title`, { n: partOfYear(grid.level, grid.start), year });
+        default:
+          return year;
+      }
+    },
+    cell(step: CalendarStep, cell: CalendarCell): string {
+      switch (step) {
+        case "hour":
+          return t("events.calendar.hour", { h: cell.start.slice(11, 13) });
+        case "day":
+          return fmtWeekday.format(at(cell.start));
+        case "week":
+          return range(cell.start, cell.end);
+        default:
+          return fmtMonthShort.format(at(cell.start));
+      }
+    },
+  };
+}
+
+/** The indicators of the period shown (L4a): those of the decision window, for the roles that read statistics. */
+function PeriodFiguresView({ from, to, query }: { from: string; to: string; query: LibraryQuery }) {
+  const { t } = useTranslation();
+  const { api } = useServices();
+  const fig = useQuery({
+    queryKey: p8Keys.libraryFigures(from, to, query),
+    queryFn: ({ signal }) => api.libraryFigures(from, to, query, signal),
+    placeholderData: keepPreviousData,
+  });
+  const heatmap = new URLSearchParams({ from, to });
+  if (query.gouvernorat) heatmap.set("gouvernorat", String(query.gouvernorat));
+  if (query.category) heatmap.set("category", query.category);
+  return (
+    <section className="calendar__figures" aria-labelledby="events-calendar-figures">
+      <div className="calendar__head">
+        <h3 id="events-calendar-figures">{t("events.calendar.figures")}</h3>
+        <Link className="btn btn--small btn--ghost" to={`/analytics?${heatmap.toString()}`}>
+          {t("events.calendar.heatmap")}
+        </Link>
+      </div>
+      <p className="muted">{t("events.calendar.figuresNote")}</p>
+      {fig.isPending && <Loading />}
+      {fig.isError && <ErrorBox error={fig.error} onRetry={() => void fig.refetch()} />}
+      {fig.data && <FiguresView figures={fig.data.figures} minCell={fig.data.min_cell} />}
+    </section>
+  );
+}
+
+/** The calendar at six levels (L4a): a day by hours up to a year by months, heat-shaded, drilling down on a click. */
 function CalendarView({ query, onDay }: { query: LibraryQuery; onDay: (date: string) => void }) {
   const { t } = useTranslation();
   const { api } = useServices();
+  const { user } = useAuth();
   const fmt = useFormat();
   const lang = useLanguage();
-  const now = new Date();
-  const [ym, setYm] = useState(() => {
-    const anchor = query.from ?? query.to;
-    return anchor ? { y: Number(anchor.slice(0, 4)), m: Number(anchor.slice(5, 7)) } : { y: now.getFullYear(), m: now.getMonth() + 1 };
-  });
-  const cal = useQuery({
-    queryKey: p8Keys.libraryCalendar(ym.y, ym.m, query),
-    queryFn: ({ signal }) => api.libraryCalendar(ym.y, ym.m, query, signal),
+  const labels = useCalendarLabels();
+  const [level, setLevel] = useState<CalendarLevel>("month");
+  const [on, setOn] = useState(() => query.from ?? query.to ?? todayIso());
+  const grid = useQuery({
+    queryKey: p8Keys.libraryGrid(level, on, query),
+    queryFn: ({ signal }) => api.libraryGrid(level, on, query, signal),
     placeholderData: keepPreviousData,
   });
-  const counts = new Map((cal.data?.days ?? []).map((d) => [d.date, d.count]));
-  const monthName = new Intl.DateTimeFormat(INTL_LOCALE[lang], { month: "long", year: "numeric" }).format(
-    new Date(ym.y, ym.m - 1, 1),
-  );
-  // Weeks start on Monday (ISO); leading blanks before the 1st.
-  const first = (new Date(ym.y, ym.m - 1, 1).getDay() + 6) % 7;
-  const days = lastDay(ym.y, ym.m);
-  const cells: (number | null)[] = [...Array<null>(first).fill(null), ...Array.from({ length: days }, (_, i) => i + 1)];
-  while (cells.length % 7) cells.push(null);
-  const weeks = Array.from({ length: cells.length / 7 }, (_, w) => cells.slice(w * 7, w * 7 + 7));
-  const shift = (d: number) => setYm(({ y, m }) => (m + d < 1 ? { y: y - 1, m: 12 } : m + d > 12 ? { y: y + 1, m: 1 } : { y, m: m + d }));
+  const data = grid.data;
+  const statistics = ANALYTICS_ROLES.some((r) => user?.identity.roles.includes(r));
+  const max = Math.max(0, ...(data?.cells ?? []).map((c) => c.count));
+  const rtl = directionOf(lang) === "rtl";
+  const open = (cell: CalendarCell) => {
+    const finer = data ? FINER[data.step] : null;
+    if (finer === null) onDay(cell.start.slice(0, 10));
+    else {
+      setLevel(finer);
+      setOn(cell.start.slice(0, 10));
+    }
+  };
+  const button = (cell: CalendarCell, label: string) => {
+    const name = t("events.calendar.cell", { label, n: fmt.number(cell.count) });
+    return cell.count > 0 ? (
+      <button type="button" onClick={() => open(cell)} aria-label={name}>
+        <span className="calendar__num">{label}</span>
+        <span className="calendar__count">{fmt.number(cell.count)}</span>
+      </button>
+    ) : (
+      <span className="calendar__num" aria-label={name}>
+        {label}
+      </span>
+    );
+  };
+  const cellClass = (cell: CalendarCell) => `calendar__day calendar__heat--${heat(cell.count, max)}`;
+  const title = data ? labels.title(data) : "";
+  // Weeks start on Monday (ISO); the month level keeps its weekday table, leading blanks before the 1st.
+  const lead = data?.level === "month" ? (new Date(`${data.start}T12:00:00Z`).getUTCDay() + 6) % 7 : 0;
+  const slots: (CalendarCell | null)[] = data?.level === "month" ? [...Array<null>(lead).fill(null), ...data.cells] : [];
+  while (slots.length % 7) slots.push(null);
   return (
     <section className="card calendar" aria-labelledby="events-calendar">
+      <div className="calendar__levels" role="group" aria-label={t("events.calendar.level")}>
+        {CALENDAR_LEVELS.map((l) => (
+          <button
+            key={l}
+            type="button"
+            className={`btn btn--small${l === level ? " btn--primary" : " btn--ghost"}`}
+            aria-pressed={l === level}
+            onClick={() => setLevel(l)}
+          >
+            {t(`events.calendar.levels.${l}`)}
+          </button>
+        ))}
+      </div>
       <div className="calendar__head">
-        <button type="button" className="btn btn--small" onClick={() => shift(-1)} aria-label={t("events.calendar.prev")}>
-          {directionOf(lang) === "rtl" ? "→" : "←"}
+        <button type="button" className="btn btn--small" onClick={() => setOn(shiftDay(level, on, -1))} aria-label={t("events.calendar.prev")}>
+          {rtl ? "→" : "←"}
         </button>
         <h2 id="events-calendar" aria-live="polite">
-          {monthName}
+          {title}
         </h2>
-        <button type="button" className="btn btn--small" onClick={() => shift(1)} aria-label={t("events.calendar.next")}>
-          {directionOf(lang) === "rtl" ? "←" : "→"}
+        <button type="button" className="btn btn--small" onClick={() => setOn(shiftDay(level, on, 1))} aria-label={t("events.calendar.next")}>
+          {rtl ? "←" : "→"}
         </button>
       </div>
-      {cal.isError && <ErrorBox error={cal.error} onRetry={() => void cal.refetch()} />}
-      <table className="calendar__grid">
-        <caption className="visually-hidden">{t("events.calendar.caption", { month: monthName })}</caption>
-        <thead>
-          <tr>
-            {[1, 2, 3, 4, 5, 6, 7].map((d) => (
-              <th key={d} scope="col">
-                <abbr title={t(`analytics.weekday.${d}`)}>{t(`events.calendar.short.${d}`)}</abbr>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {weeks.map((week, w) => (
-            <tr key={w}>
-              {week.map((day, i) => {
-                if (day === null) return <td key={i} />;
-                const date = `${ym.y}-${pad(ym.m)}-${pad(day)}`;
-                const n = counts.get(date) ?? 0;
-                return (
-                  <td key={i} className={n > 0 ? "calendar__day calendar__day--busy" : "calendar__day"}>
-                    {n > 0 ? (
-                      <button type="button" onClick={() => onDay(date)} aria-label={t("events.calendar.day", { date: fmt.date(date), n: fmt.number(n) })}>
-                        <span className="calendar__num">{day}</span>
-                        <span className="calendar__count">{fmt.number(n)}</span>
-                      </button>
-                    ) : (
-                      <span className="calendar__num">{day}</span>
-                    )}
-                  </td>
-                );
-              })}
+      {level === "day" && (
+        <p>
+          <button type="button" className="btn btn--small btn--ghost" onClick={() => onDay(on)}>
+            {t("events.calendar.openDay")}
+          </button>
+        </p>
+      )}
+      {grid.isPending && <Loading />}
+      {grid.isError && <ErrorBox error={grid.error} onRetry={() => void grid.refetch()} />}
+      {data?.level === "month" && (
+        <table className="calendar__grid">
+          <caption className="visually-hidden">{t("events.calendar.caption", { period: title })}</caption>
+          <thead>
+            <tr>
+              {[1, 2, 3, 4, 5, 6, 7].map((d) => (
+                <th key={d} scope="col">
+                  <abbr title={t(`analytics.weekday.${d}`)}>{t(`events.calendar.short.${d}`)}</abbr>
+                </th>
+              ))}
             </tr>
+          </thead>
+          <tbody>
+            {Array.from({ length: slots.length / 7 }, (_, w) => (
+              <tr key={w}>
+                {slots.slice(w * 7, w * 7 + 7).map((cell, i) =>
+                  cell === null ? (
+                    <td key={i} />
+                  ) : (
+                    <td key={i} className={cellClass(cell)}>
+                      {button(cell, String(Number(cell.start.slice(8, 10))))}
+                    </td>
+                  ),
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+      {data && data.level !== "month" && (
+        <ol className={`calendar__cells calendar__cells--${data.step}`} aria-label={t("events.calendar.caption", { period: title })}>
+          {data.cells.map((cell) => (
+            <li key={cell.start} className={cellClass(cell)}>
+              {button(cell, labels.cell(data.step, cell))}
+            </li>
           ))}
-        </tbody>
-      </table>
+        </ol>
+      )}
+      {data && (
+        <p className="calendar__legend muted" aria-hidden="true">
+          {t("events.calendar.less")}
+          {[0, 1, 2, 3, 4].map((h) => (
+            <span key={h} className={`calendar__swatch calendar__heat--${h}`} />
+          ))}
+          {t("events.calendar.more")}
+        </p>
+      )}
+      {data && statistics && <PeriodFiguresView from={data.start} to={data.end} query={query} />}
     </section>
   );
 }

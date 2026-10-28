@@ -129,8 +129,8 @@ async function mockApi(page: Page) {
         backend: "opensearch",
         next_cursor: null,
       });
-    if (pathname === "/api/v1/staff/library/calendar")
-      return json(route, { year: 2026, month: 8, days: [{ date: "2026-08-02", count: 3 }] });
+    if (pathname === "/api/v1/staff/library/calendar/grid")
+      return json(route, { level: "month", step: "day", start: "2026-08-01", end: "2026-08-31", cells: [{ start: "2026-08-02", end: "2026-08-02", count: 3 }] });
     if (pathname === "/api/v1/staff/rewards/settings")
       return json(route, { daily_cap: 200, thresholds: { bronze: 100, silver: 500, gold: 2000, ambassador: 10000 }, paused_gouvernorats: [] });
     if (pathname === "/api/v1/staff/rewards/rules")
@@ -253,8 +253,8 @@ test.describe("phase 8 screens", () => {
     await expect(page).toHaveURL(/kinds=memory/);
 
     await page.getByRole("button", { name: "Calendrier" }).click();
-    await page.getByRole("button", { name: "Mois précédent" }).click();
-    await expect.poll(() => api.calls.some((c) => c.includes("/library/calendar"))).toBe(true);
+    await page.getByRole("button", { name: "Période précédente" }).click();
+    await expect.poll(() => api.calls.some((c) => c.includes("/library/calendar/grid"))).toBe(true);
     expect(api.unexpected).toEqual([]);
     expect(errors).toEqual([]);
   });
