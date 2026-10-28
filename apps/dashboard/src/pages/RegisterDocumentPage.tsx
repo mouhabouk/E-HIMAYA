@@ -25,11 +25,15 @@ import {
   type RecommendationStatus,
   type Relation,
 } from "../lib/register";
+import { planKeys } from "../lib/plans";
 import { canOpenAxes } from "../lib/roles";
 
 function useInvalidate() {
   const qc = useQueryClient();
-  return () => void qc.invalidateQueries({ queryKey: registerKeys.all });
+  return () => {
+    void qc.invalidateQueries({ queryKey: registerKeys.all });
+    void qc.invalidateQueries({ queryKey: planKeys.all });
+  };
 }
 
 function FilePanel({ d }: { d: DocumentDetail }) {
@@ -60,6 +64,11 @@ function FilePanel({ d }: { d: DocumentDetail }) {
         <p className="muted">{t("register.file.none")}</p>
       )}
       <div className="form-actions">
+        {x.file_type === "application/pdf" && (
+          <Link className="btn btn--primary" to={`/plans/${encodeURIComponent(x.id)}`}>
+            {t("plans.view")}
+          </Link>
+        )}
         {x.file_name && (
           <button type="button" className="btn" onClick={() => open.mutate()} disabled={open.isPending}>
             {t("register.file.open")}

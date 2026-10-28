@@ -2368,6 +2368,14 @@
             "title": "Gouvernorats",
             "type": "array"
           },
+          "hazard_plans": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/DocRef"
+            },
+            "title": "Hazard Plans",
+            "type": "array"
+          },
           "id": {
             "title": "Id",
             "type": "string"
@@ -8086,6 +8094,18 @@
             ],
             "title": "Gouvernorat Code"
           },
+          "hazard_key": {
+            "anyOf": [
+              {
+                "pattern": "^[a-z][a-z0-9_]{1,39}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hazard Key"
+          },
           "issued_on": {
             "format": "date",
             "title": "Issued On",
@@ -13305,6 +13325,145 @@
           }
         },
         "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "HazardIn": {
+        "properties": {
+          "active": {
+            "default": true,
+            "title": "Active",
+            "type": "boolean"
+          },
+          "colour": {
+            "pattern": "^#[0-9A-F]{6}$",
+            "title": "Colour",
+            "type": "string"
+          },
+          "icon": {
+            "pattern": "^[a-zA-Z]{2,40}$",
+            "title": "Icon",
+            "type": "string"
+          },
+          "name": {
+            "additionalProperties": {
+              "maxLength": 80,
+              "minLength": 2,
+              "type": "string"
+            },
+            "propertyNames": {
+              "enum": [
+                "ar",
+                "fr",
+                "en"
+              ]
+            },
+            "title": "Name",
+            "type": "object"
+          },
+          "position": {
+            "default": 0,
+            "maximum": 999.0,
+            "minimum": 0.0,
+            "title": "Position",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "name",
+          "colour",
+          "icon"
+        ],
+        "title": "HazardIn",
+        "type": "object"
+      },
+      "HazardOut": {
+        "properties": {
+          "active": {
+            "title": "Active",
+            "type": "boolean"
+          },
+          "colour": {
+            "title": "Colour",
+            "type": "string"
+          },
+          "icon": {
+            "title": "Icon",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "name": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Name",
+            "type": "object"
+          },
+          "position": {
+            "title": "Position",
+            "type": "integer"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "updated_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By Name"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "colour",
+          "icon",
+          "position",
+          "active",
+          "updated_by_name",
+          "updated_at"
+        ],
+        "title": "HazardOut",
+        "type": "object"
+      },
+      "HazardPlans": {
+        "properties": {
+          "hazard": {
+            "$ref": "#/components/schemas/HazardOut"
+          },
+          "national": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlanOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "regional": {
+            "items": {
+              "$ref": "#/components/schemas/PlanOut"
+            },
+            "title": "Regional",
+            "type": "array"
+          }
+        },
+        "required": [
+          "hazard",
+          "national",
+          "regional"
+        ],
+        "title": "HazardPlans",
         "type": "object"
       },
       "HazmatIn": {
@@ -21320,6 +21479,50 @@
           }
         },
         "title": "Person",
+        "type": "object"
+      },
+      "PlanOut": {
+        "description": "A plan in force (or its latest version when none is), with how many earlier versions it repealed.",
+        "properties": {
+          "document": {
+            "$ref": "#/components/schemas/app__modules__register__schemas__DocumentOut"
+          },
+          "versions": {
+            "title": "Versions",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "document",
+          "versions"
+        ],
+        "title": "PlanOut",
+        "type": "object"
+      },
+      "PlansOut": {
+        "properties": {
+          "can_create": {
+            "title": "Can Create",
+            "type": "boolean"
+          },
+          "can_manage_hazards": {
+            "title": "Can Manage Hazards",
+            "type": "boolean"
+          },
+          "hazards": {
+            "items": {
+              "$ref": "#/components/schemas/HazardPlans"
+            },
+            "title": "Hazards",
+            "type": "array"
+          }
+        },
+        "required": [
+          "hazards",
+          "can_create",
+          "can_manage_hazards"
+        ],
+        "title": "PlansOut",
         "type": "object"
       },
       "PointDetail": {
@@ -40172,6 +40375,18 @@
             ],
             "title": "Gouvernorat Code"
           },
+          "hazard_key": {
+            "anyOf": [
+              {
+                "pattern": "^[a-z][a-z0-9_]{1,39}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hazard Key"
+          },
           "issued_on": {
             "format": "date",
             "title": "Issued On",
@@ -40373,6 +40588,17 @@
             ],
             "title": "Gouvernorat Name"
           },
+          "hazard_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hazard Key"
+          },
           "id": {
             "title": "Id",
             "type": "string"
@@ -40514,6 +40740,7 @@
           "number",
           "reference",
           "kind",
+          "hazard_key",
           "level",
           "gouvernorat_code",
           "gouvernorat_name",
@@ -68749,6 +68976,54 @@
         ]
       }
     },
+    "/api/v1/staff/register/documents/{document_id}/file/content": {
+      "get": {
+        "description": "The file itself, for the viewer in the dashboard (phase PL1): a plan is read on the screen, not downloaded.\nEvery opening is audited like a download.",
+        "operationId": "get_file_content_api_v1_staff_register_documents__document_id__file_content_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get File Content",
+        "tags": [
+          "staff",
+          "register"
+        ]
+      }
+    },
     "/api/v1/staff/register/documents/{document_id}/links": {
       "post": {
         "operationId": "add_link_api_v1_staff_register_documents__document_id__links_post",
@@ -69025,6 +69300,124 @@
           }
         ],
         "summary": "Revisions",
+        "tags": [
+          "staff",
+          "register"
+        ]
+      }
+    },
+    "/api/v1/staff/register/hazards": {
+      "get": {
+        "operationId": "list_hazards_api_v1_staff_register_hazards_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/HazardOut"
+                  },
+                  "title": "Response List Hazards Api V1 Staff Register Hazards Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Hazards",
+        "tags": [
+          "staff",
+          "register"
+        ]
+      }
+    },
+    "/api/v1/staff/register/hazards/{key}": {
+      "put": {
+        "description": "Adds a hazard or changes its names, colour, icon, order or whether it is offered (central room).",
+        "operationId": "put_hazard_api_v1_staff_register_hazards__key__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "pattern": "^[a-z][a-z0-9_]{1,39}$",
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HazardIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HazardOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Put Hazard",
+        "tags": [
+          "staff",
+          "register"
+        ]
+      }
+    },
+    "/api/v1/staff/register/plans": {
+      "get": {
+        "operationId": "list_plans_api_v1_staff_register_plans_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlansOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Plans",
         "tags": [
           "staff",
           "register"

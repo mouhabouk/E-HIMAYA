@@ -94,6 +94,7 @@ export function navGroups(identity: Identity, t: TFunction): NavGroup[] {
       items: [
         ...e(canOpenCommand(roles), "/command", "militaryTech", "navy", "command"),
         ...e(canOpenAxes(roles), "/axes", "warning", "red", "axes"),
+        ...e(canOpenRegister(roles), "/plans", "menuBook", "sky", "plans"),
         ...e(canOpenRegister(roles), "/register", "folderOpen", "navy", "register", true),
         ...e(canOpenRegister(roles), "/register/dispatches", "campaign", "red", "dispatches"),
         ...e(isCommittee(roles) || canMonitorPerformance(roles), "/committee", "monitoring", "navy", "committee"),

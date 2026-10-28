@@ -11,7 +11,7 @@ import uuid
 from datetime import date
 from typing import Annotated, Literal
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Path, Query, Request, Response, status
 from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -20,7 +20,7 @@ from app.core.security import Principal, Role, require_roles
 from app.core.storage import get_store
 from app.modules.audit import service as audit
 from app.modules.crisis.models import Axis
-from app.modules.register import dispatch, domain, schemas, service
+from app.modules.register import dispatch, domain, plans, schemas, service
 from app.modules.register.models import Attachment as RegisterAttachment
 from app.modules.register.models import Document, Link, Recommendation, Revision
 
@@ -270,6 +270,63 @@ async def get_file(principal: Reader, session: Session, document_id: uuid.UUID) 
     return schemas.FileOut(
         url=get_store().presign_get(doc.file_key, content_type=doc.file_type, disposition=f'inline; filename="{name}"')
     )
+
+
+@router.get("/documents/{document_id}/file/content")
+async def get_file_content(principal: Reader, session: Session, document_id: uuid.UUID) -> Response:
+    """The file itself, for the viewer in the dashboard (phase PL1): a plan is read on the screen, not downloaded.
+    Every opening is audited like a download."""
+    doc = await service.visible(session, principal, document_id)
+    if not doc.file_key or not doc.file_type or not doc.file_size:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "file_not_found")
+    if doc.file_type != "application/pdf":
+        # Only a PDF is shown inline; any other file is downloaded through its signed link.
+        raise HTTPException(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, "viewer_pdf_only")
+    data = await get_store().head(doc.file_key, doc.file_size)
+    await audit.record(
+        session,
+        actor=audit.actor_of(principal),
+        action="register.file_read",
+        target=str(doc.id),
+        details={"number": doc.number, "viewer": True},
+        gouvernorats=[doc.gouvernorat_code] if doc.gouvernorat_code else None,
+    )
+    await session.commit()
+    return Response(
+        content=data,
+        media_type="application/pdf",
+        headers={
+            "Cache-Control": "private, no-store",
+            "Content-Disposition": "inline",
+            "X-Content-Type-Options": "nosniff",
+        },
+    )
+
+
+# --- Intervention plans by hazard (phase PL1) -----------------------------------------------------------------------
+
+
+@router.get("/hazards", response_model=list[schemas.HazardOut])
+async def list_hazards(principal: Reader, session: Session) -> list[schemas.HazardOut]:
+    return [plans.hazard_out(h) for h in await plans.hazards(session)]
+
+
+@router.put("/hazards/{key}", response_model=schemas.HazardOut)
+async def put_hazard(
+    principal: Reader,
+    session: Session,
+    key: Annotated[str, Path(pattern=r"^[a-z][a-z0-9_]{1,39}$")],
+    body: schemas.HazardIn,
+) -> schemas.HazardOut:
+    """Adds a hazard or changes its names, colour, icon, order or whether it is offered (central room)."""
+    hazard = await plans.save_hazard(session, principal, key, body, service.now())
+    await session.commit()
+    return plans.hazard_out(hazard)
+
+
+@router.get("/plans", response_model=schemas.PlansOut)
+async def list_plans(principal: Reader, session: Session) -> schemas.PlansOut:
+    return await plans.overview(session, principal)
 
 
 @router.post("/documents/{document_id}/recommendations", response_model=schemas.DocumentDetail)

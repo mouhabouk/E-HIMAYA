@@ -4,6 +4,7 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useId, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { PageTitle } from "../components/PageTitle";
 import { DocumentCard, DocumentForm } from "../components/RegisterBits";
@@ -165,7 +166,10 @@ export function RegisterPage() {
   const [q, setQ] = useState<RegisterQuery>(DEFAULT_QUERY);
   const [text, setText] = useState("");
   const [advanced, setAdvanced] = useState(false);
-  const [creating, setCreating] = useState(false);
+  // A plan of a hazard opened from the plans page: /register?new=plan&hazard=floods.
+  const [params] = useSearchParams();
+  const prefill = params.get("new") === "plan" ? { kind: "plan" as const, hazard_key: params.get("hazard") || null } : undefined;
+  const [creating, setCreating] = useState(Boolean(prefill));
   const debounced = useDebounced(text, 350);
   const [resets, setResets] = useState(0);
   const update = useCallback((patch: Partial<RegisterQuery>) => setQ((x) => ({ ...x, ...patch })), []);
@@ -189,7 +193,7 @@ export function RegisterPage() {
         )}
       </div>
       <p className="muted">{t("register.intro")}</p>
-      {creating && <DocumentForm canCentral={Boolean(data?.can_create_central)} onClose={() => setCreating(false)} />}
+      {creating && <DocumentForm canCentral={Boolean(data?.can_create_central)} initial={prefill} onClose={() => setCreating(false)} />}
       <form role="search" className="filters" onSubmit={(e) => e.preventDefault()}>
         <div className="filters__row">
           <div className="field field--search">

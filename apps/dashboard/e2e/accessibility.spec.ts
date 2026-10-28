@@ -17,7 +17,7 @@ import {
   VEHICLE,
 } from "../src/test/inventoryData";
 import { BASEMAP, BASEMAP_SETTINGS } from "../src/test/basemapData";
-import { DIRECTIVE_ALL_DETAIL, DISPATCH_PAGE, PLAN_DETAIL, REVISIONS, SEARCH } from "../src/test/registerData";
+import { DIRECTIVE_ALL_DETAIL, DISPATCH_PAGE, HAZARDS, PLAN_DETAIL, PLANS, REVISIONS, SEARCH } from "../src/test/registerData";
 import { JENDOUBA_AXIS, NABEUL_AXIS, NABEUL_DETAIL, overview, REQUEST, SOUSSE_AXIS, SUGGESTIONS } from "../src/test/crisisData";
 import { API, baseMock, commonAnswer, json, signIn } from "./phase7Helpers";
 
@@ -47,7 +47,24 @@ const SCREENS: { path: string; ready: string }[] = [
   { path: "/register/reg-plan", ready: "main .recommendations" },
   { path: "/register/dispatches", ready: "main .dispatch-card" },
   { path: "/register/dispatches/dsp-all", ready: "main .thread" },
+  // Phase PL1: the plans by hazard, and one read on the screen.
+  { path: "/plans", ready: "main .plan-card" },
+  { path: "/plans/reg-plan", ready: "main .pdf-viewer canvas" },
 ];
+
+/** A one-page PDF ([SIM]) for the plan viewer; PDF.js rebuilds the missing cross-reference table. */
+const SAMPLE_PDF = [
+  "%PDF-1.4",
+  "1 0 obj <</Type/Catalog/Pages 2 0 R>> endobj",
+  "2 0 obj <</Type/Pages/Kids[3 0 R]/Count 1>> endobj",
+  "3 0 obj <</Type/Page/Parent 2 0 R/MediaBox[0 0 595 842]/Contents 4 0 R/Resources<</Font<</F1 5 0 R>>>>>> endobj",
+  "4 0 obj <</Length 52>> stream",
+  "BT /F1 24 Tf 72 760 Td ([SIM] Plan bleu - inondations) Tj ET",
+  "endstream endobj",
+  "5 0 obj <</Type/Font/Subtype/Type1/BaseFont/Helvetica>> endobj",
+  "trailer <</Root 1 0 R>>",
+  "%%EOF",
+].join("\n");
 
 const PAGE = { items: [], next_cursor: null, total: 0 };
 const BEACH = {
@@ -188,6 +205,10 @@ async function mockApi(page: Page): Promise<string[]> {
     if (pathname === "/api/v1/staff/register/documents/reg-plan/revisions") return json(route, REVISIONS);
     if (pathname === "/api/v1/staff/register/dispatches") return json(route, DISPATCH_PAGE);
     if (pathname === "/api/v1/staff/register/dispatches/dsp-all") return json(route, DIRECTIVE_ALL_DETAIL);
+    if (pathname === "/api/v1/staff/register/plans") return json(route, PLANS);
+    if (pathname === "/api/v1/staff/register/hazards") return json(route, HAZARDS);
+    if (pathname === "/api/v1/staff/register/documents/reg-plan/file/content")
+      return route.fulfill({ status: 200, contentType: "application/pdf", body: SAMPLE_PDF });
     // Resources register (phase R1).
     const inventory: Record<string, unknown> = {
       "/api/v1/staff/inventory/catalogue": CATALOGUE,

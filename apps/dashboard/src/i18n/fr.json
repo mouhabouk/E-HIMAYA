@@ -57,7 +57,8 @@
       "knowledge": "Analyse et savoir",
       "system": "Système"
     },
-    "inventory": "Registre des moyens"
+    "inventory": "Registre des moyens",
+    "plans": "Plans d'intervention"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -439,7 +440,10 @@
     "basemap_url_https": "L'adresse du fournisseur doit commencer par https://.",
     "basemap_url_placeholders": "L'adresse doit contenir {z}, {x} et {y}.",
     "basemap_key_unused": "La clé n'est pas utilisée : ajoutez {key} à l'adresse ou indiquez l'en-tête.",
-    "basemap_key_missing": "L'adresse demande une clé ({key}) et aucune n'est enregistrée."
+    "basemap_key_missing": "L'adresse demande une clé ({key}) et aucune n'est enregistrée.",
+    "hazard_unknown": "Risque inconnu ou désactivé : choisissez un risque de la liste.",
+    "hazard_only_for_plans": "Seul un plan porte un risque.",
+    "viewer_pdf_only": "Seul un PDF s'affiche à l'écran ; ouvrez le fichier depuis le registre."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -5866,6 +5870,83 @@
       "mapbox": "Mapbox Satellite",
       "google": "Google Maps Platform",
       "other": "Autre fournisseur"
+    }
+  },
+  "plans": {
+    "title": "Plans d'intervention",
+    "intro": "Les plans d'intervention établis et approuvés par le comité national, chaque risque avec sa couleur (le plan bleu des inondations). Le plan est déposé une fois en PDF et affiché à l'écran au besoin ; une nouvelle version abroge la précédente, qui reste consultable au registre.",
+    "tabs": {
+      "label": "Sections de la page des plans",
+      "plans": "Plans",
+      "hazards": "Risques et couleurs"
+    },
+    "planOf": "Plan {{hazard}}",
+    "national": "Plan national",
+    "none": "Aucun plan enregistré pour ce risque.",
+    "new": "Nouveau plan pour ce risque",
+    "view": "Afficher à l'écran",
+    "noFile": "Pas encore de PDF pour ce plan",
+    "versions": "{{count}} versions publiées",
+    "back": "Retour aux plans d'intervention",
+    "record": "Fiche du plan au registre",
+    "repealed": "Cette version est abrogée : le plan en vigueur est une version plus récente.",
+    "hazard": "Risque couvert par le plan",
+    "noHazard": "Sans risque précis",
+    "axis": {
+      "title": "Plans d'intervention en vigueur pour ce risque :",
+      "view": "Afficher {{title}} à l'écran"
+    },
+    "icons": {
+      "water": "Eau",
+      "localFireDepartment": "Feu",
+      "science": "Produits chimiques",
+      "medicalServices": "Santé",
+      "landslide": "Séisme et glissement",
+      "thunderstorm": "Tempête",
+      "warning": "Alerte",
+      "healthAndSafety": "Prévention"
+    },
+    "hazards": {
+      "title": "Risques et couleurs de leurs plans",
+      "intro": "La salle centrale tient la liste des risques et la couleur du plan de chacun, telle qu'approuvée par le comité national. Un risque n'est jamais supprimé, seulement désactivé.",
+      "add": "Ajouter un risque",
+      "edit": "Modifier {{name}}",
+      "editShort": "Modifier",
+      "key": "Identifiant",
+      "keyHint": "Minuscules latines, chiffres et _ (ex. : cold_wave).",
+      "name": "Risque",
+      "name_ar": "Nom en arabe",
+      "name_fr": "Nom en français",
+      "name_en": "Nom en anglais",
+      "colour": "Couleur",
+      "icon": "Icône",
+      "position": "Ordre",
+      "active": "Proposé aux nouveaux plans",
+      "state": "État",
+      "on": "Actif",
+      "off": "Désactivé",
+      "updated": "Dernière modification",
+      "preview": "Aperçu",
+      "save": "Enregistrer",
+      "actions": "Actions"
+    },
+    "viewer": {
+      "label": "Lecture de {{title}}",
+      "tools": "Outils de lecture",
+      "previous": "Précédente",
+      "next": "Suivante",
+      "page": "Page",
+      "of": "sur {{count}}",
+      "pageOf": "Page {{page}} sur {{count}}",
+      "zoomIn": "Agrandir",
+      "zoomOut": "Réduire",
+      "fullscreen": "Plein écran",
+      "search": "Rechercher dans le texte du plan",
+      "find": "Rechercher",
+      "noHit": "Aucun résultat.",
+      "hits": "Trouvé sur {{count}} pages :",
+      "contents": "Sommaire du plan",
+      "renderError": "Impossible d'afficher cette page."
     }
   }
 }

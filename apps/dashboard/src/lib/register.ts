@@ -53,6 +53,8 @@ export interface RegisterDocument {
   number: string;
   reference: string;
   kind: DocumentKind;
+  /** The hazard of a plan (phase PL1). */
+  hazard_key: string | null;
   level: DocumentLevel;
   gouvernorat_code: number | null;
   gouvernorat_name: string | null;
@@ -172,6 +174,7 @@ export const DEFAULT_QUERY: RegisterQuery = {
 export interface DocumentBody {
   reference: string;
   kind: DocumentKind;
+  hazard_key: string | null;
   level: DocumentLevel;
   gouvernorat_code: number | null;
   issuer: string;

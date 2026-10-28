@@ -164,6 +164,10 @@ export const ERROR_CODES = [
   "basemap_url_placeholders",
   "basemap_key_unused",
   "basemap_key_missing",
+  // Phase PL1: intervention plans by hazard.
+  "hazard_unknown",
+  "hazard_only_for_plans",
+  "viewer_pdf_only",
   // Phase R1: the resources register.
   "counts_only",
   "category_unknown",

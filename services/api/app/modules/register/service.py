@@ -16,12 +16,13 @@ from app.modules.audit import service as audit
 from app.modules.geo.models import Gouvernorat
 from app.modules.knowledge import text as kt
 from app.modules.register import domain, schemas
-from app.modules.register.models import Document, Link, Recommendation, Revision
+from app.modules.register.models import Document, Hazard, Link, Recommendation, Revision
 
 # Fields of a document a revision keeps (the text of the search is derived, the file is its key and hash).
 SNAPSHOT_FIELDS = (
     "reference",
     "kind",
+    "hazard_key",
     "level",
     "gouvernorat_code",
     "issuer",
@@ -164,13 +165,25 @@ def _check(principal: Principal, body: schemas.DocumentIn) -> None:
     start = body.effective_from or body.issued_on
     if body.effective_to is not None and body.effective_to < start:
         raise error(status.HTTP_422_UNPROCESSABLE_CONTENT, "dates_out_of_order")
+    if body.hazard_key is not None and body.kind != "plan":
+        raise error(status.HTTP_422_UNPROCESSABLE_CONTENT, "hazard_only_for_plans")
     if not domain.can_write(principal, body.level, body.gouvernorat_code):
         raise forbidden("out_of_scope")
+
+
+async def _check_hazard(session: AsyncSession, body: schemas.DocumentIn, current: str | None = None) -> None:
+    """A plan's hazard must be in the list and switched on (a plan keeps the one it had if it is switched off)."""
+    if body.hazard_key is None or body.hazard_key == current:
+        return
+    hazard = await session.get(Hazard, body.hazard_key)
+    if hazard is None or not hazard.active:
+        raise error(status.HTTP_422_UNPROCESSABLE_CONTENT, "hazard_unknown")
 
 
 def _apply(doc: Document, body: schemas.DocumentIn) -> None:
     doc.reference = body.reference
     doc.kind = body.kind
+    doc.hazard_key = body.hazard_key
     doc.level = body.level
     doc.gouvernorat_code = body.gouvernorat_code
     doc.issuer = body.issuer
@@ -192,6 +205,7 @@ def _published_status(doc: Document) -> str:
 
 async def create(session: AsyncSession, principal: Principal, body: schemas.DocumentIn) -> Document:
     _check(principal, body)
+    await _check_hazard(session, body)
     actor, name = audit.actor_of(principal), audit.name_of(principal)
     doc = Document(
         id=uuid.uuid4(),
@@ -234,6 +248,7 @@ async def update_document(
     if doc.status == "repealed":
         raise conflict("document_repealed")
     _check(principal, body)
+    await _check_hazard(session, body, doc.hazard_key)
     _apply(doc, body)
     if body.publish and doc.status == "draft":
         doc.status = _published_status(doc)
@@ -703,6 +718,7 @@ def document_out(
         number=doc.number,
         reference=doc.reference,
         kind=doc.kind,
+        hazard_key=doc.hazard_key,
         level=doc.level,
         gouvernorat_code=doc.gouvernorat_code,
         gouvernorat_name=names.get(doc.gouvernorat_code) if doc.gouvernorat_code else None,

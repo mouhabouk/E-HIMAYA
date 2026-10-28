@@ -24,6 +24,7 @@ Access = Literal["all", "gouvernorat", "command", "restricted"]
 Relation = Literal["repeals", "amends", "complements"]
 RecommendationStatus = Literal["proposed", "in_progress", "done", "dropped"]
 Topic = Annotated[Text, StringConstraints(min_length=2, max_length=60)]
+HazardKey = Annotated[str, StringConstraints(pattern=r"^[a-z][a-z0-9_]{1,39}$")]
 
 
 class DocumentIn(BaseModel):
@@ -42,6 +43,8 @@ class DocumentIn(BaseModel):
     effective_to: date | None = None
     access: Access = "all"
     axis_ids: Annotated[list[uuid.UUID], Field(max_length=20)] = Field(default_factory=list)
+    # The hazard of a plan (phase PL1); only a plan has one.
+    hazard_key: HazardKey | None = None
     # Saved in force at once (otherwise a draft, published later).
     publish: bool = True
 
@@ -109,6 +112,7 @@ class DocumentOut(BaseModel):
     number: str
     reference: str
     kind: Kind
+    hazard_key: str | None
     level: LevelName
     gouvernorat_code: int | None
     gouvernorat_name: str | None
@@ -174,6 +178,49 @@ class RevisionOut(BaseModel):
 
 class FileOut(BaseModel):
     url: str
+
+
+# --- Intervention plans by hazard (phase PL1, docs/phase-pl/design-plans.md §2) ------------------------------------
+
+Colour = Annotated[str, StringConstraints(pattern=r"^#[0-9A-F]{6}$")]
+
+
+class HazardOut(BaseModel):
+    key: str
+    name: dict[str, str]
+    colour: str
+    icon: str
+    position: int
+    active: bool
+    updated_by_name: str | None
+    updated_at: datetime
+
+
+class HazardIn(BaseModel):
+    name: dict[Literal["ar", "fr", "en"], Annotated[Text, StringConstraints(min_length=2, max_length=80)]]
+    colour: Colour
+    icon: Annotated[str, StringConstraints(pattern=r"^[a-zA-Z]{2,40}$")]
+    position: Annotated[int, Field(ge=0, le=999)] = 0
+    active: bool = True
+
+
+class PlanOut(BaseModel):
+    """A plan in force (or its latest version when none is), with how many earlier versions it repealed."""
+
+    document: DocumentOut
+    versions: int
+
+
+class HazardPlans(BaseModel):
+    hazard: HazardOut
+    national: PlanOut | None
+    regional: list[PlanOut]
+
+
+class PlansOut(BaseModel):
+    hazards: list[HazardPlans]
+    can_create: bool
+    can_manage_hazards: bool
 
 
 # --- Directives and notices (design §8) -----------------------------------------------------------------------------

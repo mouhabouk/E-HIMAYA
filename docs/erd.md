@@ -1951,6 +1951,7 @@ erDiagram
         text number
         text reference
         text kind
+        text hazard_key FK
         text level
         smallint gouvernorat_code FK
         text issuer
@@ -1985,6 +1986,17 @@ erDiagram
         text updated_by_name
         datetime updated_at
         integer version
+    }
+    register__hazard {
+        text key PK
+        jsonb name
+        text colour
+        text icon
+        integer position
+        boolean active
+        text updated_by
+        text updated_by_name
+        datetime updated_at
     }
     register__link {
         uuid from_id PK,FK
@@ -2042,6 +2054,7 @@ erDiagram
     register__document ||--o{ register__link : "to_id"
     register__document ||--o{ register__recommendation : "document_id"
     register__document ||--o{ register__revision : "document_id"
+    register__hazard ||--o{ register__document : "hazard_key"
     register__reply ||--o{ register__attachment : "reply_id"
 ```
 

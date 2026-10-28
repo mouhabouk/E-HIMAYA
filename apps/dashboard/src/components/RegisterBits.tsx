@@ -1,6 +1,6 @@
 // covers: phase L3b (docs/phase-l/design-l3b.md §2, §6): pieces shared by the register pages, the axis and the command
 // screens: the status pill, the document card and the form that records or edits a document.
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useId, useState, type SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router";
@@ -9,6 +9,7 @@ import { useServices } from "../context/services";
 import { errorMessageKey } from "../lib/api";
 import { simText } from "../lib/crisisText";
 import { useFormat, useGouvernorats } from "../lib/hooks";
+import { hazardName, planKeys } from "../lib/plans";
 import {
   DOCUMENT_ACCESS,
   DOCUMENT_KINDS,
@@ -91,10 +92,11 @@ export function DocumentRefs({ items }: { items: { id: string; number: string; t
 
 const today = () => new Date().toISOString().slice(0, 10);
 
-function emptyBody(gouvernorat: number | null, national: boolean): DocumentBody {
+function emptyBody(gouvernorat: number | null, national: boolean, initial?: Partial<DocumentBody>): DocumentBody {
   return {
     reference: "",
     kind: "plan",
+    hazard_key: null,
     level: national ? "central" : "regional",
     gouvernorat_code: national ? null : gouvernorat,
     issuer: "",
@@ -109,6 +111,7 @@ function emptyBody(gouvernorat: number | null, national: boolean): DocumentBody 
     access: "all",
     axis_ids: [],
     publish: true,
+    ...initial,
   };
 }
 
@@ -117,6 +120,7 @@ function fromDetail(d: DocumentDetail): DocumentBody {
   return {
     reference: x.reference,
     kind: x.kind,
+    hazard_key: x.hazard_key,
     level: x.level,
     gouvernorat_code: x.gouvernorat_code,
     issuer: x.issuer,
@@ -135,8 +139,19 @@ function fromDetail(d: DocumentDetail): DocumentBody {
 }
 
 /** Records a document (``existing`` absent) or saves a new version of one, with the reason. */
-export function DocumentForm({ existing, canCentral, onClose }: { existing?: DocumentDetail; canCentral: boolean; onClose: () => void }) {
-  const { t } = useTranslation();
+export function DocumentForm({
+  existing,
+  canCentral,
+  onClose,
+  initial,
+}: {
+  existing?: DocumentDetail;
+  canCentral: boolean;
+  onClose: () => void;
+  /** Values of a new document (a plan of a hazard, opened from the plans page). */
+  initial?: Partial<DocumentBody>;
+}) {
+  const { t, i18n } = useTranslation();
   const { api } = useServices();
   const { user } = useAuth();
   const { list } = useGouvernorats();
@@ -144,7 +159,8 @@ export function DocumentForm({ existing, canCentral, onClose }: { existing?: Doc
   const navigate = useNavigate();
   const id = useId();
   const home = user?.identity.gouvernoratCode ?? null;
-  const [f, setF] = useState<DocumentBody>(() => (existing ? fromDetail(existing) : emptyBody(home, canCentral)));
+  const [f, setF] = useState<DocumentBody>(() => (existing ? fromDetail(existing) : emptyBody(home, canCentral, initial)));
+  const hazards = useQuery({ queryKey: planKeys.hazards, queryFn: ({ signal }) => api.hazards(signal), enabled: f.kind === "plan" });
   const [reason, setReason] = useState("");
   const [tried, setTried] = useState(false);
   const set = (patch: Partial<DocumentBody>) => setF((x) => ({ ...x, ...patch }));
@@ -157,6 +173,7 @@ export function DocumentForm({ existing, canCentral, onClose }: { existing?: Doc
     },
     onSuccess: (d) => {
       void qc.invalidateQueries({ queryKey: registerKeys.all });
+      void qc.invalidateQueries({ queryKey: planKeys.all });
       if (existing) onClose();
       else void navigate(`/register/${encodeURIComponent(d.document.id)}`);
     },
@@ -183,7 +200,14 @@ export function DocumentForm({ existing, canCentral, onClose }: { existing?: Doc
       <div className="form-grid">
         <div className="field">
           <label htmlFor={`${id}-k`}>{t("register.field.kind")}</label>
-          <select id={`${id}-k`} value={f.kind} onChange={(e) => set({ kind: e.target.value as DocumentBody["kind"] })}>
+          <select
+            id={`${id}-k`}
+            value={f.kind}
+            onChange={(e) => {
+              const kind = e.target.value as DocumentBody["kind"];
+              set({ kind, hazard_key: kind === "plan" ? f.hazard_key : null });
+            }}
+          >
             {DOCUMENT_KINDS.map((k) => (
               <option key={k} value={k}>
                 {t(`register.kind.${k}`)}
@@ -191,6 +215,21 @@ export function DocumentForm({ existing, canCentral, onClose }: { existing?: Doc
             ))}
           </select>
         </div>
+        {f.kind === "plan" && (
+          <div className="field">
+            <label htmlFor={`${id}-hz`}>{t("plans.hazard")}</label>
+            <select id={`${id}-hz`} value={f.hazard_key ?? ""} onChange={(e) => set({ hazard_key: e.target.value || null })}>
+              <option value="">{t("plans.noHazard")}</option>
+              {(hazards.data ?? [])
+                .filter((h) => h.active || h.key === f.hazard_key)
+                .map((h) => (
+                  <option key={h.key} value={h.key}>
+                    {hazardName(h, i18n.language)}
+                  </option>
+                ))}
+            </select>
+          </div>
+        )}
         <div className="field">
           <label htmlFor={`${id}-l`}>{t("register.field.level")}</label>
           <select

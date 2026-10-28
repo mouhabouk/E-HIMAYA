@@ -218,6 +218,21 @@ function PlanBlock({ axis }: { axis: Axis }) {
       ) : (
         axis.plan && <p>{axis.plan}</p>
       )}
+      {(axis.hazard_plans ?? []).length > 0 && (
+        <div className="ops-plan__hazard">
+          <p className="muted">{t("plans.axis.title")}</p>
+          <ul className="doc-refs">
+            {(axis.hazard_plans ?? []).map((p) => (
+              <li key={p.id}>
+                <span dir="auto">{simText(p.title).text}</span>
+                <Link className="btn btn--small" to={`/plans/${encodeURIComponent(p.id)}`} aria-label={t("plans.axis.view", { title: simText(p.title).text })}>
+                  {t("plans.view")}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       {axis.can_manage && axis.status === "open" && !picking && (
         <button type="button" className="btn btn--small btn--ghost" onClick={() => setPicking(true)}>
           {doc ? t("register.axis.changePlan") : t("register.axis.pickPlan")}

@@ -75,6 +75,7 @@ from app.modules.register.models import Counter as RegisterCounter
 from app.modules.register.models import Dispatch as RegisterDispatch
 from app.modules.register.models import DispatchTarget as RegisterDispatchTarget
 from app.modules.register.models import Document as RegisterDocument
+from app.modules.register.models import Hazard as RegisterHazard
 from app.modules.register.models import Link as RegisterLink
 from app.modules.register.models import Recommendation as RegisterRecommendation
 from app.modules.register.models import Reply as RegisterReply
@@ -206,6 +207,7 @@ __all__ = [
     "RegisterDispatch",
     "RegisterDispatchTarget",
     "RegisterDocument",
+    "RegisterHazard",
     "RegisterLink",
     "RegisterRecommendation",
     "RegisterReply",

@@ -26,6 +26,8 @@ class Document(Base):
     # The official reference: "قرار والي نابل عدد 27 لسنة 2026".
     reference: Mapped[str] = mapped_column(Text, server_default="")
     kind: Mapped[str] = mapped_column(Text)
+    # The hazard of a plan (phase PL1, migration 0061); only a plan has one.
+    hazard_key: Mapped[str | None] = mapped_column(Text, ForeignKey("register.hazard.key", onupdate="CASCADE"))
     # central | regional (with a gouvernorat).
     level: Mapped[str] = mapped_column(Text)
     gouvernorat_code: Mapped[int | None] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
@@ -66,6 +68,23 @@ class Document(Base):
     updated_by_name: Mapped[str | None] = mapped_column(Text)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     version: Mapped[int] = mapped_column(Integer, server_default="1")
+
+
+class Hazard(Base):
+    """A hazard an intervention plan answers, with the colour of its plan (phase PL1, migration 0061)."""
+
+    __tablename__ = "hazard"
+    __table_args__ = _S
+
+    key: Mapped[str] = mapped_column(Text, primary_key=True)
+    name: Mapped[dict[str, str]] = mapped_column(JSONB)
+    colour: Mapped[str] = mapped_column(Text)
+    icon: Mapped[str] = mapped_column(Text)
+    position: Mapped[int] = mapped_column(Integer, server_default="0")
+    active: Mapped[bool] = mapped_column(Boolean, server_default="true")
+    updated_by: Mapped[str | None] = mapped_column(Text)
+    updated_by_name: Mapped[str | None] = mapped_column(Text)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 class Counter(Base):

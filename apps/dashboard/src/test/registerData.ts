@@ -1,3 +1,4 @@
+import type { Hazard, PlansOverview } from "../lib/plans";
 import type { Dispatch, DispatchDetail, DispatchPage, DocumentDetail, RegisterDocument, RegisterSearch, Revision } from "../lib/register";
 
 /**
@@ -12,6 +13,7 @@ function doc(over: Partial<RegisterDocument> & Pick<RegisterDocument, "id" | "nu
   return {
     reference: "",
     kind: "plan",
+    hazard_key: null,
     level: "regional",
     gouvernorat_code: 21,
     gouvernorat_name: "نابل",
@@ -45,6 +47,7 @@ function doc(over: Partial<RegisterDocument> & Pick<RegisterDocument, "id" | "nu
 
 export const PLAN = doc({
   id: "reg-plan",
+  hazard_key: "floods",
   number: "REG-2026-0027",
   reference: "قرار والي نابل عدد 27 لسنة 2026",
   title: "[SIM] المخطط الجهوي للنجدة عند الفيضانات بولاية نابل",
@@ -371,3 +374,58 @@ export const DIRECTIVE_ALL_NABEUL: DispatchDetail = {
   can_attach: false,
   viewer_side: "regional",
 };
+
+/** The hazards and their plans (phase PL1): only the blue of the floods is the committee's, the others proposals. */
+const hazard = (key: string, colour: string, icon: string, ar: string, fr: string, en: string, position: number): Hazard => ({
+  key,
+  name: { ar, fr, en },
+  colour,
+  icon,
+  position,
+  active: true,
+  updated_by_name: "[SIM] القاعة المركزية",
+  updated_at: D(30),
+});
+
+export const HAZARDS: Hazard[] = [
+  hazard("floods", "#1976D2", "water", "الفيضانات", "Inondations", "Floods", 0),
+  hazard("forest_fires", "#D7141A", "localFireDepartment", "حرائق الغابات", "Feux de forêt", "Forest fires", 1),
+  hazard("hazardous_materials", "#F5B400", "science", "المواد الخطرة", "Matières dangereuses", "Hazardous materials", 2),
+  hazard("health", "#188038", "medicalServices", "الأوبئة والطوارئ الصحية", "Épidémies", "Epidemics", 3),
+];
+
+export const HAZARD = first(HAZARDS, 0);
+
+export const NATIONAL_FLOOD_PLAN = doc({
+  id: "reg-blue",
+  number: "REG-2026-0003",
+  hazard_key: "floods",
+  level: "central",
+  gouvernorat_code: null,
+  gouvernorat_name: null,
+  issuer: "اللجنة الوطنية للحماية المدنية",
+  reference: "المخطط الأزرق، نسخة 2026",
+  title: "[SIM] المخطط الأزرق الوطني للتدخل عند الفيضانات",
+  issued_on: day(300),
+  file_name: "المخطط-الأزرق-2026.pdf",
+  file_type: "application/pdf",
+  file_size: 5_242_880,
+  can_edit: false,
+});
+
+export const PLANS: PlansOverview = {
+  hazards: [
+    { hazard: first(HAZARDS, 0), national: { document: NATIONAL_FLOOD_PLAN, versions: 2 }, regional: [{ document: PLAN, versions: 1 }] },
+    { hazard: first(HAZARDS, 1), national: null, regional: [] },
+    { hazard: first(HAZARDS, 2), national: null, regional: [] },
+    { hazard: first(HAZARDS, 3), national: null, regional: [] },
+  ],
+  can_create: true,
+  can_manage_hazards: true,
+};
+
+function first<T>(list: readonly T[], i: number): T {
+  const x = list[i];
+  if (x === undefined) throw new Error("fixture");
+  return x;
+}

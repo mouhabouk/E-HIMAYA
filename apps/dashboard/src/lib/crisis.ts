@@ -84,6 +84,8 @@ export interface Axis {
   can_issue: boolean;
   /** The plan in force on the axis, a document of the register (phase L3b). */
   plan_document?: DocRef | null;
+  /** The plans in force of the axis' hazard, national then of its gouvernorats (phase PL1). */
+  hazard_plans?: DocRef[];
 }
 
 /** A document of the register (phase L3b) as an axis shows it. */

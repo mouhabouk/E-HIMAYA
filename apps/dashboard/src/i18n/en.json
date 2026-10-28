@@ -57,7 +57,8 @@
       "knowledge": "Analysis and knowledge",
       "system": "System"
     },
-    "inventory": "Resources register"
+    "inventory": "Resources register",
+    "plans": "Intervention plans"
   },
   "header": {
     "scope": "Geographic scope",
@@ -439,7 +440,10 @@
     "basemap_url_https": "The provider address must start with https://.",
     "basemap_url_placeholders": "The address must contain {z}, {x} and {y}.",
     "basemap_key_unused": "The key is not used: add {key} to the address or name the header.",
-    "basemap_key_missing": "The address asks for a key ({key}) and none is stored."
+    "basemap_key_missing": "The address asks for a key ({key}) and none is stored.",
+    "hazard_unknown": "Unknown or switched-off hazard: pick one from the list.",
+    "hazard_only_for_plans": "Only a plan has a hazard.",
+    "viewer_pdf_only": "Only a PDF is shown on the screen; open the file from the register."
   },
   "kpi": {
     "title": "Key indicators",
@@ -5866,6 +5870,83 @@
       "mapbox": "Mapbox Satellite",
       "google": "Google Maps Platform",
       "other": "Other provider"
+    }
+  },
+  "plans": {
+    "title": "Intervention plans",
+    "intro": "The intervention plans drawn up and approved by the national committee, each hazard with its colour (the blue plan of the floods). A plan is uploaded once as a PDF and shown on the screen when needed; a new version repeals the previous one, which stays readable in the register.",
+    "tabs": {
+      "label": "Sections of the plans page",
+      "plans": "Plans",
+      "hazards": "Hazards and colours"
+    },
+    "planOf": "{{hazard}} plan",
+    "national": "National plan",
+    "none": "No plan recorded for this hazard yet.",
+    "new": "New plan for this hazard",
+    "view": "Show on screen",
+    "noFile": "No PDF for this plan yet",
+    "versions": "{{count}} published versions",
+    "back": "Back to intervention plans",
+    "record": "Plan record in the register",
+    "repealed": "This version is repealed: the plan in force is a newer version.",
+    "hazard": "Hazard the plan answers",
+    "noHazard": "No specific hazard",
+    "axis": {
+      "title": "Intervention plans in force for this hazard:",
+      "view": "Show {{title}} on screen"
+    },
+    "icons": {
+      "water": "Water",
+      "localFireDepartment": "Fire",
+      "science": "Chemicals",
+      "medicalServices": "Health",
+      "landslide": "Earthquake and landslide",
+      "thunderstorm": "Storm",
+      "warning": "Warning",
+      "healthAndSafety": "Prevention"
+    },
+    "hazards": {
+      "title": "Hazards and the colours of their plans",
+      "intro": "The central room keeps the list of hazards and the colour of each one's plan, as approved by the national committee. A hazard is never deleted, only switched off.",
+      "add": "Add a hazard",
+      "edit": "Edit {{name}}",
+      "editShort": "Edit",
+      "key": "Key",
+      "keyHint": "Lower-case Latin letters, digits and _ (e.g. cold_wave).",
+      "name": "Hazard",
+      "name_ar": "Name in Arabic",
+      "name_fr": "Name in French",
+      "name_en": "Name in English",
+      "colour": "Colour",
+      "icon": "Icon",
+      "position": "Order",
+      "active": "Offered to new plans",
+      "state": "State",
+      "on": "On",
+      "off": "Switched off",
+      "updated": "Last change",
+      "preview": "Preview",
+      "save": "Save",
+      "actions": "Actions"
+    },
+    "viewer": {
+      "label": "Reading {{title}}",
+      "tools": "Reading tools",
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page",
+      "of": "of {{count}}",
+      "pageOf": "Page {{page}} of {{count}}",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "fullscreen": "Full screen",
+      "search": "Search the plan's text",
+      "find": "Search",
+      "noHit": "No result.",
+      "hits": "Found on {{count}} pages:",
+      "contents": "Plan contents",
+      "renderError": "This page could not be drawn."
     }
   }
 }

@@ -102,6 +102,9 @@ const AxisPage = page(() => import("./pages/AxisPage"), "AxisPage");
 // Phase L3b: register of plans, decisions and instructions.
 const RegisterPage = page(() => import("./pages/RegisterPage"), "RegisterPage");
 const RegisterDocumentPage = page(() => import("./pages/RegisterDocumentPage"), "RegisterDocumentPage");
+// Phase PL1: intervention plans by hazard, read on the screen.
+const PlansPage = page(() => import("./pages/PlansPage"), "PlansPage");
+const PlanViewerPage = page(() => import("./pages/PlansPage"), "PlanViewerPage");
 const DispatchesPage = page(() => import("./pages/DispatchPages"), "DispatchesPage");
 const DispatchPage = page(() => import("./pages/DispatchPages"), "DispatchPage");
 const MemoryListPage = page(() => import("./pages/MemoryListPage"), "MemoryListPage");
@@ -240,6 +243,8 @@ export function AppRoutes() {
         <Route path="register/dispatches" element={gated(canOpenRegister, <DispatchesPage />)} />
         <Route path="register/dispatches/:id" element={gated(canOpenRegister, <DispatchPage />)} />
         <Route path="register/:id" element={gated(canOpenRegister, <RegisterDocumentPage />)} />
+        <Route path="plans" element={gated(canOpenRegister, <PlansPage />)} />
+        <Route path="plans/:id" element={gated(canOpenRegister, <PlanViewerPage />)} />
         <Route path="command" element={gated(canOpenCommand, <CommandPage />)} />
         <Route path="emergency-guide" element={gated(canEditTips, <EmergencyGuidePage />)} />
         <Route path="contact" element={gated(canHandleContact, <ContactInboxPage />)} />
