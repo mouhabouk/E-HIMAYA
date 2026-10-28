@@ -213,6 +213,9 @@ def _route(subject: str, payload: dict[str, Any]) -> tuple[str, Callable[[LiveCl
     if subject == "coastal.alert":
         # A beach that turned yellow or red today (phase L1b), to the rooms of its gouvernorat and the national room.
         return "reports", _codes(payload, payload.get("gouvernorat_code"))
+    if subject == "sensor.reading":
+        # A sensor of the local network (L5b) to the rooms of its gouvernorat and the national room.
+        return "reports", _in(payload.get("gouvernorat_code"))
     if subject == "weather.suggestion":
         # Suggested weather alerts (phase 7) go to those who write alerts, scoped to the suggestion's gouvernorats.
         return "editors", _among(payload.get("suggestion", {}).get("gouvernorat_codes"))

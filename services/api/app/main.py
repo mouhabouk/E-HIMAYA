@@ -99,6 +99,8 @@ from app.modules.safety.history import router as safety_history_router
 from app.modules.safety.history import staff_router as safety_history_staff_router
 from app.modules.safety.router import router as safety_router
 from app.modules.schedule.router import router as schedule_router
+from app.modules.sensors.router import internal_router as sensors_internal_router
+from app.modules.sensors.router import router as sensors_router
 from app.modules.settings import service as platform_settings
 from app.modules.settings.router import router as settings_router
 from app.modules.streams.internal import router as streams_internal_router
@@ -320,6 +322,8 @@ def create_app() -> FastAPI:
         basemap_router,
         basemap_tiles_router,
         identity_internal_router,
+        sensors_router,
+        sensors_internal_router,
     )
     for router in routers:
         app.include_router(router)

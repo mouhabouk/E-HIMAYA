@@ -107,6 +107,7 @@ from app.modules.schedule.models import Item as ScheduleItem
 from app.modules.schedule.models import Period as SchedulePeriod
 from app.modules.schedule.models import Setting as ScheduleSetting
 from app.modules.schedule.models import Template as ScheduleTemplate
+from app.modules.sensors.models import SensorDevice, SensorReading
 from app.modules.streams.models import LiveStream, StreamDetection, StreamLocation, StreamSegment
 from app.modules.telephony.models import Call, Conference, OperatorEndpoint, SmsInbound
 from app.modules.volunteers.models import Volunteer, VolunteerReview
@@ -255,6 +256,8 @@ __all__ = [
     "ScheduleSetting",
     "ScheduleTemplate",
     "SearchDoc",
+    "SensorDevice",
+    "SensorReading",
     "Shelter",
     "Shift",
     "Sitrep",

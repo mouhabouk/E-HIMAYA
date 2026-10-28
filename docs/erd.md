@@ -2730,6 +2730,46 @@ erDiagram
     sched__period ||--o{ sched__item : "period_id"
 ```
 
+## sensor
+
+```mermaid
+erDiagram
+    sensor__device {
+        uuid id PK
+        text code
+        text name
+        text kind
+        smallint gouvernorat_code FK
+        float lat
+        float lon
+        text provider
+        float watch_threshold
+        float alarm_threshold
+        smallint silent_after_min
+        boolean enabled
+        boolean simulated
+        blob key_enc
+        smallint key_version
+        float last_value
+        datetime last_at
+        text level
+        datetime level_since
+        text created_by
+        text created_by_name
+        datetime created_at
+        datetime updated_at
+    }
+    sensor__reading {
+        bigint id PK
+        uuid sensor_id FK
+        datetime at
+        float value
+        datetime received_at
+    }
+    geo__gouvernorat ||--o{ sensor__device : "gouvernorat_code"
+    sensor__device ||--o{ sensor__reading : "sensor_id"
+```
+
 ## telephony
 
 ```mermaid

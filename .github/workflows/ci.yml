@@ -170,6 +170,7 @@ jobs:
         include:
           - { name: api, context: services/api, args: "" }
           - { name: notify-sim, context: services/notify-sim, args: "" }
+          - { name: sensor-gateway, context: services/sensor-gateway, args: "" }
           - { name: ai, context: services/ai, args: "--target runtime" }
           - { name: vision, context: services/vision, args: "--target runtime" }
           - { name: postgres, context: infra/postgres, args: "" }
@@ -317,6 +318,28 @@ jobs:
           done
           docker inspect -f '{{.State.Health.Status}}' sim | grep -q healthy
           docker exec sim python -c "import json; a = json.load(open('/data/fcm-service-account.json')); assert a['type'] == 'service_account', a"
+
+  # Gateway of the sensors (L5b, docs/sensor-gateway.md): standard library only at run time; the dev tools are locked.
+  sensor-gateway:
+    name: Sensor gateway · lint, types, tests
+    runs-on: ${{ vars.RUNNER || 'ubuntu-24.04' }}
+    defaults:
+      run:
+        working-directory: services/sensor-gateway
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: "3.12"
+      - run: uv sync --locked
+      - name: Lint
+        run: |
+          uv run ruff check .
+          uv run ruff format --check .
+      - name: Type check
+        run: uv run mypy gateway
+      - name: Tests
+        run: uv run pytest -q
 
   keycloak-realms:
     name: Keycloak · realm import

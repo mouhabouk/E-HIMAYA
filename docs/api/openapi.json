@@ -17839,15 +17839,11 @@
         "title": "KeyCount",
         "type": "object"
       },
-      "Kind": {
+      "Kind-Output": {
         "enum": [
-          "memory",
-          "report_doc",
-          "incident",
-          "report",
-          "transcript",
-          "procedure",
-          "register"
+          "rain_1h",
+          "water_level",
+          "temperature"
         ],
         "title": "Kind",
         "type": "string"
@@ -26350,6 +26346,62 @@
         "title": "ReadinessIn",
         "type": "object"
       },
+      "ReadingOut": {
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "at",
+          "value"
+        ],
+        "title": "ReadingOut",
+        "type": "object"
+      },
+      "ReadingsOut": {
+        "properties": {
+          "alarm_threshold": {
+            "title": "Alarm Threshold",
+            "type": "number"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ReadingOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "sensor_id": {
+            "format": "uuid",
+            "title": "Sensor Id",
+            "type": "string"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          },
+          "watch_threshold": {
+            "title": "Watch Threshold",
+            "type": "number"
+          }
+        },
+        "required": [
+          "sensor_id",
+          "unit",
+          "watch_threshold",
+          "alarm_threshold",
+          "items"
+        ],
+        "title": "ReadingsOut",
+        "type": "object"
+      },
       "Reason": {
         "enum": [
           "report_verified",
@@ -29877,6 +29929,340 @@
           }
         },
         "title": "Section",
+        "type": "object"
+      },
+      "SensorIn": {
+        "additionalProperties": false,
+        "properties": {
+          "alarm_threshold": {
+            "maximum": 300.0,
+            "minimum": -30.0,
+            "title": "Alarm Threshold",
+            "type": "number"
+          },
+          "code": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{1,39}$",
+            "title": "Code",
+            "type": "string"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "maximum": 99.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/app__modules__sensors__domain__Kind"
+          },
+          "lat": {
+            "maximum": 38.0,
+            "minimum": 30.0,
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "maximum": 12.0,
+            "minimum": 7.0,
+            "title": "Lon",
+            "type": "number"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Name",
+            "type": "string"
+          },
+          "provider": {
+            "maxLength": 80,
+            "minLength": 2,
+            "title": "Provider",
+            "type": "string"
+          },
+          "silent_after_min": {
+            "default": 30,
+            "maximum": 1440.0,
+            "minimum": 5.0,
+            "title": "Silent After Min",
+            "type": "integer"
+          },
+          "simulated": {
+            "default": true,
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "watch_threshold": {
+            "maximum": 300.0,
+            "minimum": -30.0,
+            "title": "Watch Threshold",
+            "type": "number"
+          }
+        },
+        "required": [
+          "watch_threshold",
+          "alarm_threshold",
+          "code",
+          "name",
+          "kind",
+          "lat",
+          "lon",
+          "provider"
+        ],
+        "title": "SensorIn",
+        "type": "object"
+      },
+      "SensorKeyOut": {
+        "description": "The sensor and its signing key, shown this once: it is never shown or logged again.",
+        "properties": {
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "sensor": {
+            "$ref": "#/components/schemas/SensorOut"
+          }
+        },
+        "required": [
+          "sensor",
+          "key"
+        ],
+        "title": "SensorKeyOut",
+        "type": "object"
+      },
+      "SensorOut": {
+        "properties": {
+          "alarm_threshold": {
+            "title": "Alarm Threshold",
+            "type": "number"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/Kind-Output"
+          },
+          "last_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last At"
+          },
+          "last_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Value"
+          },
+          "lat": {
+            "title": "Lat",
+            "type": "number"
+          },
+          "level_since": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Level Since"
+          },
+          "lon": {
+            "title": "Lon",
+            "type": "number"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "silent_after_min": {
+            "title": "Silent After Min",
+            "type": "integer"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "state": {
+            "enum": [
+              "normal",
+              "watch",
+              "alarm",
+              "silent",
+              "disabled"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "watch_threshold": {
+            "title": "Watch Threshold",
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name",
+          "kind",
+          "unit",
+          "gouvernorat_code",
+          "lat",
+          "lon",
+          "provider",
+          "watch_threshold",
+          "alarm_threshold",
+          "silent_after_min",
+          "enabled",
+          "simulated",
+          "last_value",
+          "last_at",
+          "state",
+          "level_since",
+          "created_by_name",
+          "updated_at"
+        ],
+        "title": "SensorOut",
+        "type": "object"
+      },
+      "SensorPage": {
+        "properties": {
+          "can_manage": {
+            "title": "Can Manage",
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SensorOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items",
+          "can_manage"
+        ],
+        "title": "SensorPage",
+        "type": "object"
+      },
+      "SensorUpdate": {
+        "additionalProperties": false,
+        "properties": {
+          "alarm_threshold": {
+            "maximum": 300.0,
+            "minimum": -30.0,
+            "title": "Alarm Threshold",
+            "type": "number"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "lat": {
+            "maximum": 38.0,
+            "minimum": 30.0,
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "maximum": 12.0,
+            "minimum": 7.0,
+            "title": "Lon",
+            "type": "number"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Name",
+            "type": "string"
+          },
+          "provider": {
+            "maxLength": 80,
+            "minLength": 2,
+            "title": "Provider",
+            "type": "string"
+          },
+          "silent_after_min": {
+            "maximum": 1440.0,
+            "minimum": 5.0,
+            "title": "Silent After Min",
+            "type": "integer"
+          },
+          "watch_threshold": {
+            "maximum": 300.0,
+            "minimum": -30.0,
+            "title": "Watch Threshold",
+            "type": "number"
+          }
+        },
+        "required": [
+          "watch_threshold",
+          "alarm_threshold",
+          "name",
+          "lat",
+          "lon",
+          "provider",
+          "silent_after_min",
+          "enabled"
+        ],
+        "title": "SensorUpdate",
         "type": "object"
       },
       "Shapes": {
@@ -34616,14 +35002,26 @@
             "type": "string"
           },
           "metric": {
-            "enum": [
-              "fire_danger",
-              "wind_gust",
-              "rain_24h",
-              "rain_1h"
+            "anyOf": [
+              {
+                "enum": [
+                  "fire_danger",
+                  "wind_gust",
+                  "rain_24h",
+                  "rain_1h"
+                ],
+                "type": "string"
+              },
+              {
+                "enum": [
+                  "sensor_rain_1h",
+                  "sensor_water_level",
+                  "sensor_temperature"
+                ],
+                "type": "string"
+              }
             ],
-            "title": "Metric",
-            "type": "string"
+            "title": "Metric"
           },
           "severity": {
             "enum": [
@@ -41619,6 +42017,19 @@
         "title": "SearchOut",
         "type": "object"
       },
+      "app__modules__knowledge__domain__Kind": {
+        "enum": [
+          "memory",
+          "report_doc",
+          "incident",
+          "report",
+          "transcript",
+          "procedure",
+          "register"
+        ],
+        "title": "Kind",
+        "type": "string"
+      },
       "app__modules__knowledge__schemas__ItemOut": {
         "properties": {
           "body": {
@@ -47177,6 +47588,15 @@
         ],
         "title": "TemplateOut",
         "type": "object"
+      },
+      "app__modules__sensors__domain__Kind": {
+        "enum": [
+          "rain_1h",
+          "water_level",
+          "temperature"
+        ],
+        "title": "Kind",
+        "type": "string"
       },
       "app__modules__settings__router__SettingIn": {
         "properties": {
@@ -71779,7 +72199,7 @@
             "name": "kind",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/Kind"
+              "$ref": "#/components/schemas/app__modules__knowledge__domain__Kind"
             }
           },
           {
@@ -83106,6 +83526,243 @@
         "tags": [
           "staff",
           "schedule"
+        ]
+      }
+    },
+    "/api/v1/staff/sensors": {
+      "get": {
+        "operationId": "list_sensors_api_v1_staff_sensors_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SensorPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Sensors",
+        "tags": [
+          "sensors"
+        ]
+      },
+      "post": {
+        "operationId": "create_sensor_api_v1_staff_sensors_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SensorIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SensorKeyOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Sensor",
+        "tags": [
+          "sensors"
+        ]
+      }
+    },
+    "/api/v1/staff/sensors/{sensor_id}": {
+      "put": {
+        "operationId": "update_sensor_api_v1_staff_sensors__sensor_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sensor_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Sensor Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SensorUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SensorOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Sensor",
+        "tags": [
+          "sensors"
+        ]
+      }
+    },
+    "/api/v1/staff/sensors/{sensor_id}/key": {
+      "post": {
+        "description": "A new signing key, shown once; readings signed with the old one are refused from now on.",
+        "operationId": "rotate_key_api_v1_staff_sensors__sensor_id__key_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sensor_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Sensor Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SensorKeyOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Rotate Key",
+        "tags": [
+          "sensors"
+        ]
+      }
+    },
+    "/api/v1/staff/sensors/{sensor_id}/readings": {
+      "get": {
+        "operationId": "readings_api_v1_staff_sensors__sensor_id__readings_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sensor_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Sensor Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "hours",
+            "required": false,
+            "schema": {
+              "default": 24,
+              "maximum": 168,
+              "minimum": 1,
+              "title": "Hours",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadingsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Readings",
+        "tags": [
+          "sensors"
         ]
       }
     },

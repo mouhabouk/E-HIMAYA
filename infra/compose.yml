@@ -301,6 +301,8 @@ services:
       VISION_SERVICE_URL: ${VISION_SERVICE_URL:-}
       VISION_API_TOKEN: ${VISION_API_TOKEN:-}
       VISION_CALLBACK_TOKEN: ${VISION_CALLBACK_TOKEN:-}
+      # Sensors of the local network (L5b): the gateway beside MediaMTX relays their signed readings.
+      SENSOR_GATEWAY_TOKEN: ${SENSOR_GATEWAY_TOKEN:-}
       VISION_READ_PASSWORD: ${VISION_READ_PASSWORD:-}
       VISION_MIN_CONFIDENCE: ${VISION_MIN_CONFIDENCE:-0.45}
       VISION_ALERT_CONFIDENCE: ${VISION_ALERT_CONFIDENCE:-0.6}
@@ -459,6 +461,31 @@ services:
       retries: 20
 
   # ---------------- Live streaming (phase 6, docs/streaming.md) ----------------
+
+  # Gateway of the sensors (L5b, docs/sensor-gateway.md): on the MediaMTX server, receives the signed readings of the
+  # sensors of the local network and relays them to the API. Started with the "sensors" profile; the [SIM] scenarios
+  # are played with `docker compose exec sensor-gateway python -m gateway simulate` (SIM_SENSORS set).
+  sensor-gateway:
+    <<: *restart
+    profiles: [sensors]
+    build:
+      context: ../services/sensor-gateway
+    image: ehimaya/sensor-gateway:dev
+    user: "10001:10001"
+    read_only: true
+    cap_drop: [ALL]
+    environment:
+      GATEWAY_API_URL: http://api:8000
+      GATEWAY_TOKEN: ${SENSOR_GATEWAY_TOKEN:?set SENSOR_GATEWAY_TOKEN}
+      SIM_SENSORS: ${SIM_SENSORS:-}
+    volumes:
+      - sensorqueue:/data
+    ports:
+      # Development: this machine only. On the MediaMTX server, the address of its local-network interface.
+      - "127.0.0.1:8088:8088"
+    depends_on:
+      api:
+        condition: service_healthy
 
   # One-shot: the recordings volume belongs to uid 10001 (MediaMTX writes, the API worker reads and deletes).
   recordings-init:
@@ -827,6 +854,7 @@ services:
 
 volumes:
   # SIMULATION: generated FCM service account of notify-sim. PRODUCTION: remove with the notify-sim service.
+  sensorqueue:
   notifysim:
   # SIMULATION: sample clip of stream-sim.
   simclips:

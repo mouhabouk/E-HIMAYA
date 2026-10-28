@@ -246,6 +246,29 @@ CATALOGUE: tuple[Spec, ...] = (
         ),
         flags="personal",
     ),
+    # Sensors of the local network (L5b): rain gauges, water levels and temperatures relayed by the gateway beside
+    # MediaMTX; a crossed threshold becomes a suggestion in the alert centre, never a message to citizens by itself.
+    page(
+        "sensors",
+        "ops",
+        "/sensors",
+        ("الحساسات", "Capteurs", "Sensors"),
+        ("* /sensors",),
+        button(
+            "sensors.manage",
+            ("تسجيل الحساسات وعتباتها", "Gérer les capteurs", "Manage sensors"),
+            "POST /sensors",
+            "PUT /sensors/{sensor_id}",
+            act_as=R.OPS_MANAGER,
+        ),
+        button(
+            "sensors.key",
+            ("تجديد مفتاح الحساس", "Renouveler la clé", "Rotate the key"),
+            "POST /sensors/{sensor_id}/key",
+            act_as=R.OPS_MANAGER,
+            flags="safety",
+        ),
+    ),
     page(
         "calls",
         "ops",
