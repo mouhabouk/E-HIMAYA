@@ -26222,33 +26222,132 @@
         "title": "ScoreComponent",
         "type": "object"
       },
-      "SearchIn": {
-        "additionalProperties": false,
+      "SearchGouvernorat": {
         "properties": {
-          "phone": {
-            "maxLength": 20,
-            "minLength": 8,
-            "title": "Phone",
+          "code": {
+            "title": "Code",
+            "type": "integer"
+          },
+          "lat": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lat"
+          },
+          "lon": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lon"
+          },
+          "name_ar": {
+            "title": "Name Ar",
             "type": "string"
           },
-          "reason": {
-            "maxLength": 500,
-            "minLength": 10,
-            "title": "Reason",
+          "name_en": {
+            "title": "Name En",
             "type": "string"
           },
-          "report_id": {
-            "format": "uuid",
-            "title": "Report Id",
+          "name_fr": {
+            "title": "Name Fr",
             "type": "string"
+          },
+          "ready": {
+            "title": "Ready",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          },
+          "units": {
+            "items": {
+              "$ref": "#/components/schemas/SearchUnit"
+            },
+            "title": "Units",
+            "type": "array"
           }
         },
         "required": [
-          "phone",
-          "report_id",
-          "reason"
+          "code",
+          "name_ar",
+          "name_fr",
+          "name_en",
+          "lat",
+          "lon",
+          "total",
+          "ready",
+          "units"
         ],
-        "title": "SearchIn",
+        "title": "SearchGouvernorat",
+        "type": "object"
+      },
+      "SearchUnit": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "lat": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lat"
+          },
+          "lon": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lon"
+          },
+          "name_ar": {
+            "title": "Name Ar",
+            "type": "string"
+          },
+          "name_fr": {
+            "title": "Name Fr",
+            "type": "string"
+          },
+          "ready": {
+            "title": "Ready",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "name_ar",
+          "name_fr",
+          "lat",
+          "lon",
+          "total",
+          "ready"
+        ],
+        "title": "SearchUnit",
         "type": "object"
       },
       "Section": {
@@ -36568,6 +36667,140 @@
         "title": "RevisionsOut",
         "type": "object"
       },
+      "app__modules__inventory__schemas__SearchIn": {
+        "description": "One question across the gouvernorats the caller sees: \"the fire trucks of 2000 L or more\", \"the divers\".",
+        "properties": {
+          "category": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "gouvernorats": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 30,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorats"
+          },
+          "min_level": {
+            "anyOf": [
+              {
+                "maximum": 5.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Level"
+          },
+          "ready_only": {
+            "default": false,
+            "title": "Ready Only",
+            "type": "boolean"
+          },
+          "specs": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "items": {
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            },
+            "maxProperties": 10,
+            "title": "Specs",
+            "type": "object"
+          },
+          "valid_cert": {
+            "default": false,
+            "title": "Valid Cert",
+            "type": "boolean"
+          },
+          "what": {
+            "enum": [
+              "vehicles",
+              "stock",
+              "agents"
+            ],
+            "title": "What",
+            "type": "string"
+          }
+        },
+        "required": [
+          "what"
+        ],
+        "title": "SearchIn",
+        "type": "object"
+      },
+      "app__modules__inventory__schemas__SearchOut": {
+        "description": "Counts only, grouped by gouvernorat and unit: no name, no matricule, no phone, whoever asks.",
+        "properties": {
+          "gouvernorats": {
+            "items": {
+              "$ref": "#/components/schemas/SearchGouvernorat"
+            },
+            "title": "Gouvernorats",
+            "type": "array"
+          },
+          "ready": {
+            "title": "Ready",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          },
+          "what": {
+            "enum": [
+              "vehicles",
+              "stock",
+              "agents"
+            ],
+            "title": "What",
+            "type": "string"
+          }
+        },
+        "required": [
+          "what",
+          "total",
+          "ready",
+          "gouvernorats"
+        ],
+        "title": "SearchOut",
+        "type": "object"
+      },
       "app__modules__knowledge__schemas__ItemOut": {
         "properties": {
           "body": {
@@ -40890,6 +41123,35 @@
           "at"
         ],
         "title": "PointIn",
+        "type": "object"
+      },
+      "app__modules__safety__history__SearchIn": {
+        "additionalProperties": false,
+        "properties": {
+          "phone": {
+            "maxLength": 20,
+            "minLength": 8,
+            "title": "Phone",
+            "type": "string"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 10,
+            "title": "Reason",
+            "type": "string"
+          },
+          "report_id": {
+            "format": "uuid",
+            "title": "Report Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "phone",
+          "report_id",
+          "reason"
+        ],
+        "title": "SearchIn",
         "type": "object"
       },
       "app__modules__safety__history__SearchOut": {
@@ -59914,6 +60176,36 @@
         ]
       }
     },
+    "/api/v1/staff/inventory/boundaries": {
+      "get": {
+        "description": "The outlines of the gouvernorats the caller sees (simplified), coloured on the map by the count of a search.",
+        "operationId": "boundaries_api_v1_staff_inventory_boundaries_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Boundaries Api V1 Staff Inventory Boundaries Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Boundaries",
+        "tags": [
+          "staff",
+          "inventory"
+        ]
+      }
+    },
     "/api/v1/staff/inventory/catalogue": {
       "get": {
         "operationId": "catalogue_api_v1_staff_inventory_catalogue_get",
@@ -60334,6 +60626,100 @@
           }
         ],
         "summary": "List Revisions",
+        "tags": [
+          "staff",
+          "inventory"
+        ]
+      }
+    },
+    "/api/v1/staff/inventory/search": {
+      "post": {
+        "description": "The same question across every gouvernorat the caller sees, answered with counts by gouvernorat and unit (no\nname): what the central room, the governor and the minister send to the map.",
+        "operationId": "search_api_v1_staff_inventory_search_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__inventory__schemas__SearchIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__inventory__schemas__SearchOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Search",
+        "tags": [
+          "staff",
+          "inventory"
+        ]
+      }
+    },
+    "/api/v1/staff/inventory/search/export": {
+      "post": {
+        "description": "The result of a search as CSV (counts by unit, no name); audited like every export of the register.",
+        "operationId": "export_search_api_v1_staff_inventory_search_export_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__inventory__schemas__SearchIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Export Search",
         "tags": [
           "staff",
           "inventory"
@@ -72785,7 +73171,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SearchIn"
+                "$ref": "#/components/schemas/app__modules__safety__history__SearchIn"
               }
             }
           },

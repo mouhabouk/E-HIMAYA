@@ -1,3 +1,4 @@
+import type { FeatureCollection } from "geojson";
 import type { ApiClient } from "./api";
 import type { Download } from "./layersApi";
 
@@ -272,6 +273,103 @@ export interface ListQuery {
   category: string | null;
 }
 
+// ---------------------------------------------------------------- search (phase R2)
+
+export type SpecCondition = [number | null, number | null] | boolean;
+
+/** One question across the gouvernorats the caller sees ("fire trucks of 2000 L or more", "divers"). */
+export interface SearchQuery {
+  what: Entity;
+  category: string | null;
+  specs: Record<string, SpecCondition>;
+  ready_only: boolean;
+  min_level: number | null;
+  valid_cert: boolean;
+  gouvernorats: number[] | null;
+}
+
+export const EMPTY_SEARCH: SearchQuery = {
+  what: "vehicles",
+  category: null,
+  specs: {},
+  ready_only: false,
+  min_level: null,
+  valid_cert: false,
+  gouvernorats: null,
+};
+
+export interface SearchUnit {
+  id: string;
+  name_ar: string;
+  name_fr: string;
+  lat: number | null;
+  lon: number | null;
+  total: number;
+  ready: number;
+}
+
+export interface SearchGouvernorat {
+  code: number;
+  name_ar: string;
+  name_fr: string;
+  name_en: string;
+  lat: number | null;
+  lon: number | null;
+  total: number;
+  ready: number;
+  units: SearchUnit[];
+}
+
+/** Counts only, by gouvernorat and unit: no name, whoever asks. */
+export interface SearchResult {
+  what: Entity;
+  total: number;
+  ready: number;
+  gouvernorats: SearchGouvernorat[];
+}
+
+/** The search carried to the map in the address (`/map?resources=…`). */
+export function searchParam(q: SearchQuery): string {
+  return JSON.stringify(q);
+}
+
+function isCondition(v: unknown): v is SpecCondition {
+  return (
+    typeof v === "boolean" ||
+    (Array.isArray(v) && v.length === 2 && v.every((x) => x === null || typeof x === "number"))
+  );
+}
+
+/** The search read back from the address; null when it is missing or not a search. */
+export function parseSearch(raw: string | null): SearchQuery | null {
+  if (!raw) return null;
+  try {
+    const v = JSON.parse(raw) as Partial<Record<keyof SearchQuery, unknown>>;
+    if (v.what !== "vehicles" && v.what !== "stock" && v.what !== "agents") return null;
+    const specs = typeof v.specs === "object" && v.specs !== null ? Object.entries(v.specs) : [];
+    return {
+      what: v.what,
+      category: typeof v.category === "string" ? v.category : null,
+      specs: Object.fromEntries(specs.filter((e): e is [string, SpecCondition] => isCondition(e[1]))),
+      ready_only: v.ready_only === true,
+      min_level: typeof v.min_level === "number" ? v.min_level : null,
+      valid_cert: v.valid_cert === true,
+      gouvernorats: Array.isArray(v.gouvernorats) ? v.gouvernorats.filter((g): g is number => typeof g === "number") : null,
+    };
+  } catch {
+    return null;
+  }
+}
+
+/** Five classes of count, from none to the most of the result (the colour of a gouvernorat on the map). */
+export function countClass(n: number, max: number): 0 | 1 | 2 | 3 | 4 {
+  if (n <= 0 || max <= 0) return 0;
+  return Math.min(4, Math.max(1, Math.ceil((n / max) * 4))) as 1 | 2 | 3 | 4;
+}
+
+/** The colour of each class on the map: slate for none, then the teal of "places and maps" from light to dark. */
+export const COUNT_COLOURS = ["#94A3B8", "#99DCCF", "#4DB8A4", "#00806A", "#004D40"] as const;
+
 export const inventoryKeys = {
   all: ["inventory"] as const,
   catalogue: ["inventory", "catalogue"] as const,
@@ -279,6 +377,8 @@ export const inventoryKeys = {
   units: (g: number | null) => ["inventory", "units", g] as const,
   list: (entity: Entity, q: ListQuery) => ["inventory", entity, q] as const,
   revisions: (id: string) => ["inventory", "revisions", id] as const,
+  search: (q: SearchQuery) => ["inventory", "search", q] as const,
+  boundaries: ["inventory", "boundaries"] as const,
 };
 
 /** "2 000 L · 4x4": the specifications of a vehicle or a stock line, as the catalogue names them. */
@@ -362,6 +462,13 @@ export function inventoryApi(api: ApiClient) {
     inventoryTemplate: async (gouvernorat: number | null): Promise<Download> => {
       const response = await api.requestRaw(`${I}/template`, { query: { gouvernorat }, accept: "*/*" });
       return { blob: await response.blob(), filename: filenameOf(response, "inventory.xlsx") };
+    },
+    searchInventory: (body: SearchQuery, signal?: AbortSignal) =>
+      api.request<SearchResult>(`${I}/search`, { method: "POST", body, signal }),
+    inventoryBoundaries: (signal?: AbortSignal) => api.request<FeatureCollection>(`${I}/boundaries`, { signal }),
+    exportSearch: async (body: SearchQuery): Promise<Download> => {
+      const response = await api.requestRaw(`${I}/search/export`, { method: "POST", body, accept: "*/*" });
+      return { blob: await response.blob(), filename: filenameOf(response, `inventory-search-${body.what}.csv`) };
     },
     exportInventory: async (entity: Entity, gouvernorat: number | null): Promise<Download> => {
       const response = await api.requestRaw(`${I}/export`, { query: { entity, gouvernorat }, accept: "*/*" });

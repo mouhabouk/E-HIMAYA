@@ -1,7 +1,7 @@
 import { vi } from "vitest";
 import type { AgentListing, inventoryApi, Listing } from "../lib/inventory";
 import { first } from "./crisisData";
-import { AGENT, CATALOGUE, IMPORT_PREVIEW, OVERVIEW, STOCK, UNITS, VEHICLE } from "./inventoryData";
+import { AGENT, BOUNDARIES, CATALOGUE, IMPORT_PREVIEW, OVERVIEW, SEARCH_RESULT, STOCK, UNITS, VEHICLE } from "./inventoryData";
 
 export * from "./inventoryData";
 
@@ -32,5 +32,8 @@ export function fakeInventoryApi(): InventoryApi {
     importInventory: vi.fn(() => Promise.resolve(IMPORT_PREVIEW)),
     inventoryTemplate: vi.fn(download),
     exportInventory: vi.fn(download),
+    searchInventory: vi.fn(() => Promise.resolve(SEARCH_RESULT)),
+    inventoryBoundaries: vi.fn(() => Promise.resolve(BOUNDARIES)),
+    exportSearch: vi.fn(download),
   };
 }

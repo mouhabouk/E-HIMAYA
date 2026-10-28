@@ -293,3 +293,52 @@ class ImportOut(BaseModel):
     agents: ImportCounts
     errors: list[ProblemOut]
     warnings: list[ProblemOut]
+
+
+# ---------------------------------------------------------------- search (phase R2)
+
+
+class SearchIn(BaseModel):
+    """One question across the gouvernorats the caller sees: "the fire trucks of 2000 L or more", "the divers"."""
+
+    what: Literal["vehicles", "stock", "agents"]
+    # The catalogue key: a vehicle or equipment category, or a speciality for the staff.
+    category: str | None = Field(default=None, max_length=40)
+    # A range [min, max] (either end may be null) or an exact value, by specification key.
+    specs: dict[str, list[float | None] | bool | float] = Field(default_factory=dict, max_length=10)
+    ready_only: bool = False
+    min_level: int | None = Field(default=None, ge=1, le=5)
+    valid_cert: bool = False
+    gouvernorats: list[int] | None = Field(default=None, max_length=30)
+
+
+class SearchUnit(BaseModel):
+    id: uuid.UUID
+    name_ar: str
+    name_fr: str
+    lat: float | None
+    lon: float | None
+    total: int
+    ready: int
+
+
+class SearchGouvernorat(BaseModel):
+    code: int
+    name_ar: str
+    name_fr: str
+    name_en: str
+    # A point inside the gouvernorat where the map writes its count.
+    lat: float | None
+    lon: float | None
+    total: int
+    ready: int
+    units: list[SearchUnit]
+
+
+class SearchOut(BaseModel):
+    """Counts only, grouped by gouvernorat and unit: no name, no matricule, no phone, whoever asks."""
+
+    what: Literal["vehicles", "stock", "agents"]
+    total: int
+    ready: int
+    gouvernorats: list[SearchGouvernorat]

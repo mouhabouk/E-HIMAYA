@@ -9,13 +9,15 @@ returned to the operations rooms only, and exported by the room of their own gou
 
 import csv
 import io
+import json
 import uuid
 from collections import defaultdict
 from datetime import UTC, date, datetime, timedelta
 from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
-from sqlalchemy import and_, delete, func, select
+from geoalchemy2 import Geometry
+from sqlalchemy import and_, cast, delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_session, get_system_sessionmaker
@@ -1353,3 +1355,164 @@ async def export_register(
     await session.commit()
     suffix = f"-{gouvernorat:02d}" if gouvernorat is not None else ""
     return _csv(rows, f"inventory-{entity}{suffix}")
+
+
+# ---------------------------------------------------------------- search (phase R2)
+
+
+def _search_scope(principal: Principal, wanted: list[int] | None) -> list[int] | None:
+    """The gouvernorats of a search: those asked for, never beyond what the caller sees (``None``: all of them)."""
+    if wanted and any(not principal.can_access_gouvernorat(g) for g in wanted):
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "out_of_scope")
+    if wanted:
+        return sorted(set(wanted))
+    return None if principal.is_national else [principal.gouvernorat_code or 0]
+
+
+async def _search_counts(
+    session: AsyncSession, principal: Principal, body: schemas.SearchIn, codes: list[int] | None
+) -> dict[uuid.UUID, list[int]]:
+    """``{unit id: [total, ready]}`` of what meets the question."""
+    found: dict[uuid.UUID, list[int]] = defaultdict(lambda: [0, 0])
+    if body.what == "vehicles":
+        query = select(Resource.unit_id, Resource.status, Resource.out_reason, Resource.specs).join(
+            Unit, Unit.id == Resource.unit_id
+        )
+        query = query.where(_scope(principal, Unit.gouvernorat_code))
+        if codes is not None:
+            query = query.where(Unit.gouvernorat_code.in_(codes))
+        if body.category:
+            query = query.where(Resource.category_key == body.category)
+        for unit_id, state, out_reason, specs in (await session.execute(query)).all():
+            ready = domain.vehicle_state(state, out_reason) == "ready"
+            if (body.ready_only and not ready) or not domain.matches(specs or {}, body.specs):
+                continue
+            found[unit_id][0] += 1
+            found[unit_id][1] += int(ready)
+    elif body.what == "stock":
+        stock = select(Stock.unit_id, Stock.qty_ready, Stock.qty_broken, Stock.specs).where(
+            _scope(principal, Stock.gouvernorat_code)
+        )
+        if codes is not None:
+            stock = stock.where(Stock.gouvernorat_code.in_(codes))
+        if body.category:
+            stock = stock.where(Stock.category_key == body.category)
+        for unit_id, ready_qty, broken, specs in (await session.execute(stock)).all():
+            if not domain.matches(specs or {}, body.specs):
+                continue
+            found[unit_id][0] += ready_qty + (0 if body.ready_only else broken)
+            found[unit_id][1] += ready_qty
+    else:
+        today = _today()
+        on_duty = Agent.availability == "on_duty"
+        agents = select(Agent.unit_id, func.count(), func.count().filter(on_duty)).where(
+            _scope(principal, Agent.gouvernorat_code)
+        )
+        if codes is not None:
+            agents = agents.where(Agent.gouvernorat_code.in_(codes))
+        if body.category:
+            valid = func.coalesce(AgentSkill.cert_expires >= today, True)
+            agents = agents.join(
+                AgentSkill, and_(AgentSkill.agent_id == Agent.id, AgentSkill.skill_key == body.category)
+            )
+            agents = agents.with_only_columns(Agent.unit_id, func.count(), func.count().filter(and_(on_duty, valid)))
+            if body.min_level is not None:
+                agents = agents.where(AgentSkill.level >= body.min_level)
+            if body.valid_cert:
+                agents = agents.where(valid)
+        if body.ready_only:
+            agents = agents.where(on_duty)
+        for unit_id, n, on_call in (await session.execute(agents.group_by(Agent.unit_id))).all():
+            found[unit_id] = [int(n), int(on_call)]
+    return {unit_id: counts for unit_id, counts in found.items() if counts[0] > 0}
+
+
+async def _search(session: AsyncSession, principal: Principal, body: schemas.SearchIn) -> schemas.SearchOut:
+    codes = _search_scope(principal, body.gouvernorats)
+    counts = await _search_counts(session, principal, body, codes)
+    inside = func.ST_PointOnSurface(Gouvernorat.boundary)
+    gouvernorats = select(
+        Gouvernorat.code,
+        Gouvernorat.name_ar,
+        Gouvernorat.name_fr,
+        Gouvernorat.name_en,
+        func.ST_Y(inside),
+        func.ST_X(inside),
+    ).where(_scope(principal, Gouvernorat.code))
+    if codes is not None:
+        gouvernorats = gouvernorats.where(Gouvernorat.code.in_(codes))
+    rows = {
+        code: schemas.SearchGouvernorat(
+            code=code, name_ar=ar, name_fr=fr, name_en=en, lat=lat, lon=lon, total=0, ready=0, units=[]
+        )
+        for code, ar, fr, en, lat, lon in (await session.execute(gouvernorats.order_by(Gouvernorat.code))).all()
+    }
+    if counts:
+        point = cast(Unit.location, Geometry)
+        units = (
+            await session.execute(
+                select(Unit.id, Unit.name_ar, Unit.name_fr, Unit.gouvernorat_code, func.ST_Y(point), func.ST_X(point))
+                .where(Unit.id.in_(list(counts)))
+                .order_by(Unit.gouvernorat_code, Unit.name_ar)
+            )
+        ).all()
+        for unit_id, ar, fr, code, lat, lon in units:
+            if code not in rows:
+                continue
+            total, ready = counts[unit_id]
+            rows[code].units.append(
+                schemas.SearchUnit(id=unit_id, name_ar=ar, name_fr=fr, lat=lat, lon=lon, total=total, ready=ready)
+            )
+            rows[code].total += total
+            rows[code].ready += ready
+    return schemas.SearchOut(
+        what=body.what,
+        total=sum(g.total for g in rows.values()),
+        ready=sum(g.ready for g in rows.values()),
+        gouvernorats=list(rows.values()),
+    )
+
+
+@router.post("/search", response_model=schemas.SearchOut)
+async def search(principal: Viewer, session: Session, body: schemas.SearchIn) -> schemas.SearchOut:
+    """The same question across every gouvernorat the caller sees, answered with counts by gouvernorat and unit (no
+    name): what the central room, the governor and the minister send to the map."""
+    return await _search(session, principal, body)
+
+
+@router.get("/boundaries")
+async def boundaries(principal: Viewer, session: Session, response: Response) -> dict[str, object]:
+    """The outlines of the gouvernorats the caller sees (simplified), coloured on the map by the count of a search."""
+    rows = await session.execute(
+        select(
+            Gouvernorat.code,
+            func.ST_AsGeoJSON(func.ST_SimplifyPreserveTopology(Gouvernorat.boundary, 0.005), 5),
+        ).where(Gouvernorat.boundary.isnot(None), _scope(principal, Gouvernorat.code))
+    )
+    response.headers["Cache-Control"] = "private, max-age=3600"
+    return {
+        "type": "FeatureCollection",
+        "features": [
+            {"type": "Feature", "id": code, "properties": {"code": code}, "geometry": json.loads(g)}
+            for code, g in rows.all()
+        ],
+    }
+
+
+@router.post("/search/export")
+async def export_search(principal: Viewer, session: Session, body: schemas.SearchIn) -> Response:
+    """The result of a search as CSV (counts by unit, no name); audited like every export of the register."""
+    result = await _search(session, principal, body)
+    rows: list[list[Any]] = [["gouvernorat", "gouvernorat_name", "unit", "total", "ready"]]
+    for g in result.gouvernorats:
+        rows += [[g.code, g.name_ar, u.name_ar, u.total, u.ready] for u in g.units]
+    await audit.record(
+        session,
+        actor=audit.actor_of(principal),
+        action="inventory.search_export",
+        target=f"inventory:{body.what}",
+        details={"rows": len(rows) - 1, "query": body.model_dump(mode="json", exclude_none=True)},
+        gouvernorats=body.gouvernorats,
+    )
+    await session.commit()
+    return _csv(rows, f"inventory-search-{body.what}")

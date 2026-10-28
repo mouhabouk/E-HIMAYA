@@ -1,4 +1,14 @@
-import type { Agent, Catalogue, InventoryImport, Overview, StockLine, UnitRow, Vehicle } from "../lib/inventory";
+import type { FeatureCollection } from "geojson";
+import type {
+  Agent,
+  Catalogue,
+  InventoryImport,
+  Overview,
+  SearchResult,
+  StockLine,
+  UnitRow,
+  Vehicle,
+} from "../lib/inventory";
 
 /** Resources register data (phase R1) shared by the unit tests and the accessibility run. */
 
@@ -141,4 +151,58 @@ export const IMPORT_PREVIEW: InventoryImport = {
   agents: { new: 3, changed: 0, unchanged: 1 },
   errors: [],
   warnings: [{ code: "year_invalid", entity: "vehicles", line: 4, value: "1900" }],
+};
+
+/** Phase R2: fire engines of 2000 L or more across the country ([SIM] figures). */
+export const SEARCH_RESULT: SearchResult = {
+  what: "vehicles",
+  total: 9,
+  ready: 7,
+  gouvernorats: [
+    {
+      code: 11,
+      name_ar: "تونس",
+      name_fr: "Tunis",
+      name_en: "Tunis",
+      lat: 36.82,
+      lon: 10.17,
+      total: 6,
+      ready: 5,
+      units: [
+        { id: "u-11a", name_ar: "وحدة تونس المدينة", name_fr: "Unité Tunis ville", lat: 36.8, lon: 10.18, total: 4, ready: 3 },
+        { id: "u-11b", name_ar: "وحدة باب سعدون", name_fr: "Unité Bab Saadoun", lat: 36.81, lon: 10.15, total: 2, ready: 2 },
+      ],
+    },
+    {
+      code: 61,
+      name_ar: "صفاقس",
+      name_fr: "Sfax",
+      name_en: "Sfax",
+      lat: 34.74,
+      lon: 10.76,
+      total: 3,
+      ready: 2,
+      units: [{ id: "u-1", name_ar: "وحدة صفاقس المدينة", name_fr: "Unité Sfax ville", lat: 34.74, lon: 10.76, total: 3, ready: 2 }],
+    },
+    { code: 23, name_ar: "بنزرت", name_fr: "Bizerte", name_en: "Bizerte", lat: 37.27, lon: 9.87, total: 0, ready: 0, units: [] },
+  ],
+};
+
+const square = (lon: number, lat: number): [number, number][][] => [
+  [
+    [lon - 0.3, lat - 0.3],
+    [lon + 0.3, lat - 0.3],
+    [lon + 0.3, lat + 0.3],
+    [lon - 0.3, lat + 0.3],
+    [lon - 0.3, lat - 0.3],
+  ],
+];
+
+export const BOUNDARIES: FeatureCollection = {
+  type: "FeatureCollection",
+  features: [
+    { type: "Feature", id: 11, properties: { code: 11 }, geometry: { type: "Polygon", coordinates: square(10.17, 36.82) } },
+    { type: "Feature", id: 61, properties: { code: 61 }, geometry: { type: "Polygon", coordinates: square(10.76, 34.74) } },
+    { type: "Feature", id: 23, properties: { code: 23 }, geometry: { type: "Polygon", coordinates: square(9.87, 37.27) } },
+  ],
 };

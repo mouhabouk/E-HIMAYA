@@ -561,7 +561,22 @@
     "count": "Reports shown: {{count}}",
     "truncated": "More reports exist, zoom in to see them",
     "openDetail": "Open details",
-    "listToggle": "List of reports shown on the map"
+    "listToggle": "List of reports shown on the map",
+    "resourceSearch": {
+      "layer": "Search result: {{search}}",
+      "between": "{{spec}} between {{low}} and {{high}}",
+      "atLeast": "{{spec}} {{value}} or more",
+      "atMost": "{{spec}} {{value}} or less",
+      "level": "level {{level}} or more",
+      "place": "{{name}}: {{total}}",
+      "legend": "Colour key by count",
+      "none": "None",
+      "range": "{{low}} to {{high}}",
+      "zoomHint": "The count is written on each gouvernorat; zoom in to see the units.",
+      "unitsHint": "The count is written on each unit.",
+      "edit": "Edit the search",
+      "clear": "Remove the result"
+    }
   },
   "priority": {
     "badge": "Priority {{score}} ({{band}})",
@@ -5588,6 +5603,7 @@
     "tabs": {
       "label": "Register sections",
       "overview": "Overview",
+      "search": "Search across gouvernorats",
       "units": "Units",
       "vehicles": "Vehicles",
       "stock": "Equipment",
@@ -5766,6 +5782,39 @@
       "inactive": "Switched off",
       "switchOff": "Switch off",
       "switchOn": "Switch on"
+    },
+    "search": {
+      "intro": "Ask one question of every gouvernorat you see: for example fire trucks of 2000 L or more, or staff trained in diving. The result gives counts by gouvernorat and unit, never a name, and can be shown on the map or exported.",
+      "what": "What are you looking for?",
+      "specs": "Required specifications",
+      "required": "{{spec}}: required",
+      "min": "{{spec}}: from",
+      "max": "{{spec}}: to",
+      "minLevel": "Minimum level",
+      "anyLevel": "Any level",
+      "validCert": "Valid certificate only",
+      "submit": "Search",
+      "total": "Count: {{total}}",
+      "readyCount": "{{label}}: {{ready}}",
+      "inGouvernorats": "in {{count}} gouvernorat(s)",
+      "toMap": "Show on the map",
+      "export": "Export the result (CSV)",
+      "none": "No result for this search.",
+      "caption": "Search result by gouvernorat",
+      "count": "Count",
+      "unitsOf": "Units ({{count}})",
+      "unitCount": "{{total}} ({{label}}: {{ready}})",
+      "ready": {
+        "vehicles": "Ready",
+        "stock": "Ready",
+        "agents": "On duty"
+      },
+      "readyOnly": {
+        "vehicles": "Ready vehicles only",
+        "stock": "Ready quantity only",
+        "agents": "Staff on duty only"
+      },
+      "mapRoomsOnly": "The live map is for the operations rooms; every count is in the table below."
     }
   }
 }

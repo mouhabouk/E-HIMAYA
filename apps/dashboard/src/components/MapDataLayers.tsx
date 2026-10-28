@@ -1,6 +1,6 @@
 import { keepPreviousData, useQueries, useQuery } from "@tanstack/react-query";
 import type { FeatureCollection } from "geojson";
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { useServices } from "../context/services";
 import type { BBox } from "../lib/filters";
@@ -86,6 +86,32 @@ export function LayerSwatch({ layer }: { layer: Pick<MapLayer, "icon" | "colour"
   );
 }
 
+/**
+ * A layer that is not loaded from a file but belongs in a folder (phase R2): the units and resources of the operations,
+ * the result of a resources search. Its switch is kept by the page that draws it.
+ */
+export interface FolderExtra {
+  key: string;
+  label: string;
+  on: boolean;
+  onChange: (on: boolean) => void;
+  /** Shown under the switch when the layer is on (a count, a legend, a link). */
+  note?: ReactNode;
+  /** Opens the folder once when the layer arrives (a search sent to the map). */
+  reveal?: boolean;
+}
+
+/** Phase R2: the folder the operations layers go to, should the caller see no file layer of it. */
+export const CIVIL_PROTECTION_GROUP: LayerGroup = {
+  key: "civil_protection",
+  name: { ar: "موارد الحماية المدنية", fr: "Moyens de la protection civile", en: "Civil protection resources" },
+  icon: "localFireDepartment",
+  tone: "red",
+  position: 0,
+  sensitive: false,
+  layer_count: 0,
+};
+
 /** "Show every layer of the folder": ticked, unticked, or mixed when only some are on. */
 function FolderSwitch({
   on,
@@ -122,6 +148,7 @@ function LayerFolder({
   open,
   onOpen,
   onToggle,
+  extras = [],
 }: {
   group: LayerGroup;
   layers: MapLayer[];
@@ -129,20 +156,25 @@ function LayerFolder({
   open: boolean;
   onOpen: (open: boolean) => void;
   onToggle: (keys: string[], on: boolean) => void;
+  extras?: readonly FolderExtra[];
 }) {
   const { t } = useTranslation();
   const lang = useLanguage();
   const id = useId();
   const name = localized(group.name, lang);
-  const on = layers.filter((l) => shown.includes(l.key)).length;
+  const on = layers.filter((l) => shown.includes(l.key)).length + extras.filter((x) => x.on).length;
+  const total = layers.length + extras.length;
   return (
     <section className="layer-folder" data-open={open || undefined} aria-labelledby={`${id}-name`}>
       <div className="layer-folder__head">
         <FolderSwitch
           on={on}
-          total={layers.length}
+          total={total}
           label={t("layers.groups.showAll", { group: name })}
-          onChange={(next) => onToggle(layers.map((l) => l.key), next)}
+          onChange={(next) => {
+            if (layers.length > 0) onToggle(layers.map((l) => l.key), next);
+            for (const x of extras) if (x.on !== next) x.onChange(next);
+          }}
         />
         <button
           type="button"
@@ -155,11 +187,20 @@ function LayerFolder({
           <span id={`${id}-name`} className="layer-folder__name">
             {name}
           </span>
-          <span className="layer-folder__count">{t("layers.groups.count", { on, total: layers.length })}</span>
+          <span className="layer-folder__count">{t("layers.groups.count", { on, total })}</span>
           <Icon name="expandMore" size={18} />
         </button>
       </div>
       <div id={`${id}-list`} className="layer-folder__list" hidden={!open}>
+        {extras.map((x) => (
+          <div key={x.key} className="layer-folder__extra">
+            <label className="checkbox">
+              <input type="checkbox" checked={x.on} onChange={(e) => x.onChange(e.target.checked)} />
+              <span>{x.label}</span>
+            </label>
+            {x.on && x.note}
+          </div>
+        ))}
         {layers.map((layer) => (
           <label key={layer.key} className="checkbox">
             <input
@@ -207,7 +248,7 @@ function featurePoi(layer: MapLayer, f: LayerFeature, t: (k: string, o?: Record<
  * existing layers; places in the visible area, grouped when there are many. Phase UI-3b: the layers sit in folders
  * (health facilities, civil protection resources…) that open and close, each with a switch for all its layers.
  */
-export function useMapDataLayers(bbox: BBox | null) {
+export function useMapDataLayers(bbox: BBox | null, extras: Readonly<Record<string, readonly FolderExtra[]>> = {}) {
   const { t } = useTranslation();
   const { api } = useServices();
   const lang = useLanguage();
@@ -215,7 +256,17 @@ export function useMapDataLayers(bbox: BBox | null) {
   const [picked, setPicked] = useState<string[] | null>(storedKeys);
   const layersQuery = useQuery({ queryKey: layerKeys.all, queryFn: ({ signal }) => api.layers(signal) });
   const layers = useMemo(() => (layersQuery.data?.items ?? []).filter((l) => l.enabled), [layersQuery.data]);
-  const folders = useMemo(() => layerFolders(layersQuery.data?.groups ?? [], layers), [layersQuery.data, layers]);
+  const fileFolders = useMemo(() => layerFolders(layersQuery.data?.groups ?? [], layers), [layersQuery.data, layers]);
+  // Phase R2: a folder holding only page layers (no file layer the caller sees) still shows, first.
+  const folders = useMemo(() => {
+    const missing = Object.keys(extras)
+      .filter((key) => (extras[key]?.length ?? 0) > 0 && !fileFolders.some((f) => f.group.key === key))
+      .map((key) => ({
+        group: layersQuery.data?.groups?.find((g) => g.key === key) ?? { ...CIVIL_PROTECTION_GROUP, key },
+        layers: [] as MapLayer[],
+      }));
+    return [...missing, ...fileFolders];
+  }, [extras, fileFolders, layersQuery.data]);
   const [openedFolders, setOpenedFolders] = useState<string[] | null>(storedFolders);
   // Phase L1b: until the user ticks a layer, the layers the administrator marked "shown by default" are on.
   const shown = useMemo(() => picked ?? layers.filter((l) => l.default_on).map((l) => l.key), [picked, layers]);
@@ -286,7 +337,27 @@ export function useMapDataLayers(bbox: BBox | null) {
   // Until the user opens or closes a folder, the folders with a layer on are open (and a lone folder).
   const opened =
     openedFolders ??
-    folders.filter((f) => folders.length === 1 || f.layers.some((l) => shown.includes(l.key))).map((f) => f.group.key);
+    folders
+      .filter(
+        (f) =>
+          folders.length === 1 ||
+          f.layers.some((l) => shown.includes(l.key)) ||
+          (extras[f.group.key] ?? []).some((x) => x.on),
+      )
+      .map((f) => f.group.key);
+  const revealed = folders
+    .filter((f) => (extras[f.group.key] ?? []).some((x) => x.reveal && x.on))
+    .map((f) => f.group.key)
+    .join(",");
+  // Adjusted while rendering (not in an effect): a search sent to the map opens its folder once.
+  const [seenRevealed, setSeenRevealed] = useState("");
+  if (revealed !== seenRevealed) {
+    setSeenRevealed(revealed);
+    if (revealed && openedFolders !== null) {
+      const missing = revealed.split(",").filter((k) => !openedFolders.includes(k));
+      if (missing.length > 0) setOpenedFolders([...openedFolders, ...missing]);
+    }
+  }
   const openFolder = (key: string, open: boolean) => {
     const next = open ? [...opened.filter((k) => k !== key), key] : opened.filter((k) => k !== key);
     setOpenedFolders(next);
@@ -300,7 +371,7 @@ export function useMapDataLayers(bbox: BBox | null) {
   const failed = featureQueries.find((q) => q.isError) ?? shapeQueries.find((q) => q.isError);
 
   const controls =
-    layers.length === 0 ? null : (
+    folders.length === 0 ? null : (
       <fieldset className="map-data-layers">
         <legend id={`${groupId}-legend`}>{t("layers.mapGroup")}</legend>
         <div className="layer-folders">
@@ -313,6 +384,7 @@ export function useMapDataLayers(bbox: BBox | null) {
               open={opened.includes(group.key)}
               onOpen={(open) => openFolder(group.key, open)}
               onToggle={toggle}
+              extras={extras[group.key]}
             />
           ))}
         </div>

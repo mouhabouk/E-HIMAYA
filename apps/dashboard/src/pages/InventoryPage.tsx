@@ -1,4 +1,4 @@
-// covers: phase R1 (docs/phase-r/design-resources.md §2): the resources register of every gouvernorat. The counts by
+// covers: phase R1 (docs/phase-r/design-resources.md §2) and the search of phase R2 (§2.3, §2.4): the resources register of every gouvernorat. The counts by
 // gouvernorat and by type (all that the governor and the minister see), the units with their last confirmation, the
 // vehicles, the equipment and the staff of the gouvernorat, the import from the xlsx template, and the catalogue the
 // central room keeps.
@@ -7,6 +7,7 @@ import { useId, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { AgentForm, categoryName, DeleteEntry, StockForm, VehicleForm } from "../components/InventoryForms";
+import { GouvernoratPicker, SearchTab } from "../components/InventorySearch";
 import { PageTitle } from "../components/PageTitle";
 import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
@@ -34,7 +35,7 @@ import {
 } from "../lib/inventory";
 import { saveDownload } from "../lib/layersApi";
 
-const TABS = ["overview", "units", "vehicles", "stock", "agents", "import", "catalogue"] as const;
+const TABS = ["overview", "search", "units", "vehicles", "stock", "agents", "import", "catalogue"] as const;
 type Tab = (typeof TABS)[number];
 const MAX_FILE = 10 * 1024 * 1024;
 
@@ -43,25 +44,6 @@ function useCatalogue() {
   const query = useQuery({ queryKey: inventoryKeys.catalogue, queryFn: ({ signal }) => api.inventoryCatalogue(signal) });
   const byKey = useMemo(() => new Map((query.data?.items ?? []).map((c) => [c.key, c])), [query.data]);
   return { query, items: query.data?.items ?? [], byKey };
-}
-
-function GouvernoratPicker({ value, onChange, any }: { value: number | null; onChange: (v: number | null) => void; any: string }) {
-  const { t } = useTranslation();
-  const { list } = useGouvernorats();
-  const id = useId();
-  return (
-    <div className="field">
-      <label htmlFor={id}>{t("inventory.field.gouvernorat")}</label>
-      <select id={id} value={value ?? ""} onChange={(e) => onChange(e.target.value ? Number(e.target.value) : null)}>
-        <option value="">{any}</option>
-        {list.map((g) => (
-          <option key={g.code} value={g.code}>
-            {g.name}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
 }
 
 function ExportButton({ entity, gouvernorat, names }: { entity: Entity; gouvernorat: number | null; names?: boolean }) {
@@ -1044,7 +1026,7 @@ export function InventoryPage() {
     enabled: lists,
   });
   const q: ListQuery = { gouvernorat, unit: null, category: null };
-  const shown = lists ? TABS : (["overview"] as const);
+  const shown = lists ? TABS : (["overview", "search"] as const);
   const unitRows = units.data?.items ?? [];
   return (
     <div className="page inventory-page">
@@ -1080,6 +1062,7 @@ export function InventoryPage() {
             </div>
           )}
           {tab === "overview" && <OverviewTab data={overview.data} categories={catalogue.byKey} />}
+          {tab === "search" && <SearchTab catalogue={catalogue.items} national={national} />}
           {lists && tab === "units" && <UnitsTab units={unitRows} />}
           {lists && tab === "vehicles" && <VehiclesTab q={q} units={unitRows} catalogue={catalogue} />}
           {lists && tab === "stock" && <StockTab q={q} units={unitRows} catalogue={catalogue} />}

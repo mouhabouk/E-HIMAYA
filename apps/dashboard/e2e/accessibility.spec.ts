@@ -5,7 +5,17 @@
  */
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
-import { AGENT, CATALOGUE, IMPORT_PREVIEW, OVERVIEW, STOCK, UNITS, VEHICLE } from "../src/test/inventoryData";
+import {
+  AGENT,
+  BOUNDARIES,
+  CATALOGUE,
+  IMPORT_PREVIEW,
+  OVERVIEW,
+  SEARCH_RESULT,
+  STOCK,
+  UNITS,
+  VEHICLE,
+} from "../src/test/inventoryData";
 import { DIRECTIVE_ALL_DETAIL, DISPATCH_PAGE, PLAN_DETAIL, REVISIONS, SEARCH } from "../src/test/registerData";
 import { JENDOUBA_AXIS, NABEUL_AXIS, NABEUL_DETAIL, overview, REQUEST, SOUSSE_AXIS, SUGGESTIONS } from "../src/test/crisisData";
 import { API, baseMock, commonAnswer, json, signIn } from "./phase7Helpers";
@@ -127,6 +137,8 @@ async function mockApi(page: Page): Promise<string[]> {
     const { pathname } = new URL(request.url());
     const common = commonAnswer(request.method(), pathname, route);
     if (common) return common;
+    // Phase R2: the search of the resources register is a POST that answers.
+    if (pathname === "/api/v1/staff/inventory/search") return json(route, SEARCH_RESULT);
     if (request.method() !== "GET") return json(route, {}, 204);
     if (pathname === "/api/v1/staff/kpis") {
       return json(route, {
@@ -183,6 +195,9 @@ async function mockApi(page: Page): Promise<string[]> {
       "/api/v1/staff/inventory/vehicles": { items: [VEHICLE], can_edit: true },
       "/api/v1/staff/inventory/stock": { items: [STOCK], can_edit: true },
       "/api/v1/staff/inventory/agents": { items: [AGENT], can_edit: true, can_see_names: true, can_export_names: true },
+      // Phase R2: the search across the gouvernorats and the outlines it colours on the map.
+      "/api/v1/staff/inventory/search": SEARCH_RESULT,
+      "/api/v1/staff/inventory/boundaries": BOUNDARIES,
     };
     if (pathname in inventory) return json(route, inventory[pathname]);
     unanswered.push(pathname);
@@ -364,6 +379,18 @@ test.describe("accessibility of the resources register (ar)", () => {
       await page.getByLabel("الملف (xlsx أو CSV)").setInputFiles({ name: "sfax.xlsx", mimeType: "application/octet-stream", buffer: Buffer.from("PK") });
       await page.getByRole("button", { name: "معاينة" }).click();
       await expect(page.getByRole("table", { name: /ما في الملف/ })).toBeVisible();
+      await scan();
+      // Phase R2: the search across the gouvernorats, then its result in the «موارد الحماية المدنية» folder of the map.
+      await page.getByRole("tab", { name: "البحث عبر الولايات" }).click();
+      await page.getByLabel("الصنف").selectOption("fire_engine");
+      await page.getByLabel("السعة (L): من").fill("2000");
+      await page.getByRole("button", { name: "بحث", exact: true }).click();
+      await expect(page.getByRole("table", { name: "نتيجة البحث حسب الولاية" })).toBeVisible();
+      await page.getByRole("row", { name: /تونس/ }).getByText(/الوحدات/).click();
+      await scan();
+      await page.getByRole("button", { name: "عرض على الخريطة" }).click();
+      await expect(page.getByRole("checkbox", { name: /نتيجة البحث: شاحنة إطفاء/ })).toBeChecked();
+      await expect(page.getByText("إزالة نتيجة البحث")).toBeVisible();
       await scan();
       expect(fence.unexpected).toEqual([]);
     });

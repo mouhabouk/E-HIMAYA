@@ -244,7 +244,9 @@ async def test_each_gouvernorat_keeps_and_sees_its_own(client: httpx.AsyncClient
     assert (
         await client.request("DELETE", f"{URL}/vehicles/{created['id']}", json={}, headers=manager)
     ).status_code == 422
-    r = await client.request("DELETE", f"{URL}/vehicles/{created['id']}", json={"reason": "بيعت الآلية"}, headers=manager)
+    r = await client.request(
+        "DELETE", f"{URL}/vehicles/{created['id']}", json={"reason": "بيعت الآلية"}, headers=manager
+    )
     assert r.status_code == 204
 
 
@@ -422,3 +424,74 @@ async def test_import_preview_then_apply(client: httpx.AsyncClient, staff: Staff
     assert (await client.get(f"{URL}/template", headers=_manager(staff, None))).json()[
         "detail"
     ] == "gouvernorat_required"
+
+
+# ---------------------------------------------------------------- search (phase R2)
+
+
+async def test_search_across_gouvernorats_by_unit(
+    client: httpx.AsyncClient, staff: Staff, session: AsyncSession
+) -> None:
+    gabes, bizerte = await _unit(client, staff, GABES), await _unit(client, staff, BIZERTE)
+    for unit, code, capacities in ((gabes, GABES, (2000, 4000, 1000)), (bizerte, BIZERTE, (2500,))):
+        for capacity in capacities:
+            r = await client.post(
+                f"{URL}/vehicles",
+                json={
+                    "unit_id": unit["id"],
+                    "category_key": "fire_engine",
+                    "label": f"إطفاء {secrets.token_hex(3)}",
+                    "specs": {"capacity_l": capacity},
+                    "state": "maintenance" if capacity == 4000 else "ready",
+                    "reason": "" if capacity != 4000 else "صيانة دورية",
+                },
+                headers=_manager(staff, code),
+            )
+            assert r.status_code == 201, r.text
+    for unit, code, level in ((gabes, GABES, 3), (bizerte, BIZERTE, 1)):
+        body = {
+            "unit_id": unit["id"],
+            "matricule": _matricule(),
+            "full_name": "سالم الغطاس",
+            "phone": "21000000",
+            "skills": [{"skill_key": "diving", "level": level}],
+        }
+        assert (await client.post(f"{URL}/agents", json=body, headers=_manager(staff, code))).status_code == 201
+
+    def unit_of(result: dict[str, Any], unit: dict[str, Any]) -> dict[str, Any] | None:
+        return next((u for g in result["gouvernorats"] for u in g["units"] if u["id"] == unit["id"]), None)
+
+    trucks = {"what": "vehicles", "category": "fire_engine", "specs": {"capacity_l": [2000, None]}}
+    minister = staff(["minister"], gouvernorat=None)
+    result = (await client.post(f"{URL}/search", json=trucks, headers=minister)).json()
+    assert len(result["gouvernorats"]) == 24
+    found = unit_of(result, gabes)
+    assert found is not None and (found["total"], found["ready"]) == (2, 1)
+    assert round(found["lat"], 2) == 33.88 and round(found["lon"], 2) == 10.1
+    assert unit_of(result, bizerte) == {**(unit_of(result, bizerte) or {}), "total": 1, "ready": 1}
+    ready = (await client.post(f"{URL}/search", json={**trucks, "ready_only": True}, headers=minister)).json()
+    assert (unit_of(ready, gabes) or {}).get("total") == 1
+
+    # A regional room and its governor: their own gouvernorat only, and no way to ask for another.
+    for regional in (_manager(staff), staff(["governor"], gouvernorat=GABES)):
+        own = (await client.post(f"{URL}/search", json=trucks, headers=regional)).json()
+        assert [g["code"] for g in own["gouvernorats"]] == [GABES] and unit_of(own, bizerte) is None
+        asked = await client.post(f"{URL}/search", json={**trucks, "gouvernorats": [BIZERTE]}, headers=regional)
+        assert asked.status_code == 403
+        outlines = (await client.get(f"{URL}/boundaries", headers=regional)).json()["features"]
+        assert {f["id"] for f in outlines} <= {GABES}
+
+    divers = {"what": "agents", "category": "diving", "min_level": 2}
+    result = (await client.post(f"{URL}/search", json=divers, headers=minister)).json()
+    assert (unit_of(result, gabes) or {}).get("total") == 1 and unit_of(result, bizerte) is None
+    assert "سالم" not in str(result) and "21000000" not in str(result)
+
+    # The CSV of a result: counts by unit, no name; audited.
+    r = await client.post(f"{URL}/search/export", json=divers, headers=minister)
+    assert r.status_code == 200 and gabes["name_ar"] in r.text and "سالم" not in r.text
+    entry = (
+        await session.scalars(
+            select(AuditLog).where(AuditLog.action == "inventory.search_export").order_by(AuditLog.id.desc()).limit(1)
+        )
+    ).one()
+    assert entry.details["query"]["category"] == "diving"

@@ -7187,3 +7187,75 @@ button.nav-card:hover {
 .inventory-page .programme-import .inventory-table {
   margin-block-start: 0.75rem;
 }
+
+/* Phase R2: the resources search, in the register and as a layer of the «موارد الحماية المدنية» folder. */
+.inventory-search__what {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+.inventory-search__specs {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px 12px;
+}
+.inventory-search__range {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.inventory-search__total {
+  margin-block: 0 8px;
+}
+.inventory-search__units {
+  font-weight: 400;
+}
+.inventory-search__units summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.inventory-search__units ul {
+  margin: 4px 0 0;
+  padding-inline-start: 18px;
+}
+.inventory-search__result .actions {
+  margin-block-end: 8px;
+}
+.layer-folder__extra .resource-search {
+  margin: 4px 0 8px;
+  padding-inline-start: 28px;
+  font-size: 0.85rem;
+}
+.resource-search p {
+  margin-block: 4px;
+}
+.resource-search__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  list-style: none;
+  margin: 4px 0;
+  padding: 0;
+}
+.resource-search__legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.resource-search__swatch {
+  inline-size: 14px;
+  block-size: 14px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+}
+.layer-folder__extra .checkbox {
+  flex-wrap: nowrap;
+  align-items: flex-start;
+}
+.layer-folder__extra .checkbox > span {
+  min-inline-size: 0;
+}

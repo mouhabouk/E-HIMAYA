@@ -561,7 +561,22 @@
     "count": "Signalements affichés : {{count}}",
     "truncated": "D’autres signalements existent, zoomez pour les voir",
     "openDetail": "Ouvrir le détail",
-    "listToggle": "Liste des signalements affichés sur la carte"
+    "listToggle": "Liste des signalements affichés sur la carte",
+    "resourceSearch": {
+      "layer": "Résultat de recherche : {{search}}",
+      "between": "{{spec}} entre {{low}} et {{high}}",
+      "atLeast": "{{spec}} {{value}} ou plus",
+      "atMost": "{{spec}} {{value}} ou moins",
+      "level": "niveau {{level}} ou plus",
+      "place": "{{name}} : {{total}}",
+      "legend": "Légende des couleurs selon le nombre",
+      "none": "Aucun",
+      "range": "de {{low}} à {{high}}",
+      "zoomHint": "Le nombre est écrit sur chaque gouvernorat ; zoomez pour voir les unités.",
+      "unitsHint": "Le nombre est écrit sur chaque unité.",
+      "edit": "Modifier la recherche",
+      "clear": "Retirer le résultat"
+    }
   },
   "priority": {
     "badge": "Priorité {{score}} ({{band}})",
@@ -5588,6 +5603,7 @@
     "tabs": {
       "label": "Sections du registre",
       "overview": "Vue d'ensemble",
+      "search": "Recherche nationale",
       "units": "Unités",
       "vehicles": "Véhicules",
       "stock": "Matériel",
@@ -5766,6 +5782,39 @@
       "inactive": "Désactivé",
       "switchOff": "Désactiver",
       "switchOn": "Activer"
+    },
+    "search": {
+      "intro": "Posez une seule question à tous les gouvernorats que vous voyez : par exemple les camions d'incendie de 2000 L ou plus, ou les agents plongeurs. Le résultat donne des nombres par gouvernorat et par unité, sans aucun nom ; il peut être affiché sur la carte ou exporté.",
+      "what": "Que cherchez-vous ?",
+      "specs": "Caractéristiques demandées",
+      "required": "{{spec}} : exigé",
+      "min": "{{spec}} : de",
+      "max": "{{spec}} : à",
+      "minLevel": "Niveau minimal",
+      "anyLevel": "Tous niveaux",
+      "validCert": "Certificat valide seulement",
+      "submit": "Rechercher",
+      "total": "Nombre : {{total}}",
+      "readyCount": "{{label}} : {{ready}}",
+      "inGouvernorats": "dans {{count}} gouvernorat(s)",
+      "toMap": "Afficher sur la carte",
+      "export": "Exporter le résultat (CSV)",
+      "none": "Aucun résultat pour cette recherche.",
+      "caption": "Résultat de la recherche par gouvernorat",
+      "count": "Nombre",
+      "unitsOf": "Unités ({{count}})",
+      "unitCount": "{{total}} ({{label}} : {{ready}})",
+      "ready": {
+        "vehicles": "Prêts",
+        "stock": "Prêt",
+        "agents": "En service"
+      },
+      "readyOnly": {
+        "vehicles": "Engins prêts seulement",
+        "stock": "Quantité prête seulement",
+        "agents": "Agents en service seulement"
+      },
+      "mapRoomsOnly": "La carte en direct est réservée aux salles des opérations ; tous les nombres figurent dans le tableau ci-dessous."
     }
   }
 }

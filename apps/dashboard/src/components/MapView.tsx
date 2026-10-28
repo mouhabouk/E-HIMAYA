@@ -641,7 +641,7 @@ export function MapView({
         type: "fill",
         source: SHAPE_SOURCE,
         filter: areas,
-        paint: { "fill-color": ["get", "colour"], "fill-opacity": 0.22 },
+        paint: { "fill-color": ["get", "colour"], "fill-opacity": ["coalesce", ["get", "opacity"], 0.22] },
       });
       map.addLayer({
         id: `${SHAPE_SOURCE}-line`,

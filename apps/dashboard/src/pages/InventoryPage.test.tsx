@@ -1,10 +1,12 @@
 // covers: phase R1 (docs/phase-r/design-resources.md §2): the resources register page. The counts that the governor
 // and the minister see, the tabs of a room, recording a vehicle with its specifications, the staff names kept to the
-// operations rooms, and the import preview before saving.
+// operations rooms, and the import preview before saving. Phase R2 (§2.3): the search across the gouvernorats.
 import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { canListInventory, canOpenInventory } from "../lib/roles";
-import { AGENT, fakeInventoryApi, OVERVIEW } from "../test/inventoryFixtures";
+import { describeSearch } from "../components/ResourceSearchLayer";
+import { EMPTY_SEARCH, parseSearch, searchParam } from "../lib/inventory";
+import { AGENT, CATALOGUE, fakeInventoryApi, OVERVIEW } from "../test/inventoryFixtures";
 import { fakeApi, fakeAuth, renderApp } from "../test/render";
 import { InventoryPage } from "./InventoryPage";
 
@@ -31,7 +33,7 @@ describe("InventoryPage", () => {
       Promise.resolve({ ...OVERVIEW, can_list: false, can_edit: false, can_see_names: false });
     renderApp(<InventoryPage />, { api: fakeApi(inv), auth: fakeAuth(claims(["governor"], "61")), lang: "ar" });
     expect(await screen.findByText("تظهر هنا الأعداد فقط. القوائم وأسماء الأعوان لقاعات العمليات.")).toBeInTheDocument();
-    expect(screen.queryByRole("tablist")).not.toBeInTheDocument();
+    expect(screen.getAllByRole("tab").map((tab) => tab.textContent)).toEqual(["نظرة عامة", "البحث عبر الولايات"]);
     expect(screen.getByRole("table", { name: "حسب الولاية" })).toBeInTheDocument();
     expect(screen.getByRole("table", { name: "الأعوان حسب الاختصاص" })).toHaveTextContent("غوص");
     expect(inv.inventoryUnits).not.toHaveBeenCalled();
@@ -95,5 +97,41 @@ describe("InventoryPage", () => {
     fireEvent.click(screen.getByRole("button", { name: "حفظ في السجل" }));
     await waitFor(() => expect(inv.importInventory).toHaveBeenCalledWith(file, null, null, true, "التحميل الأول"));
   });
+
+  it("searches every gouvernorat for fire engines of 2000 L or more", async () => {
+    const inv = fakeInventoryApi();
+    renderApp(<InventoryPage />, { api: fakeApi(inv), auth: fakeAuth(claims(["minister"])), lang: "ar" });
+    fireEvent.click(await screen.findByRole("tab", { name: "البحث عبر الولايات" }));
+    fireEvent.change(await screen.findByLabelText("الصنف"), { target: { value: "fire_engine" } });
+    fireEvent.change(screen.getByLabelText("السعة (L): من"), { target: { value: "2000" } });
+    fireEvent.click(screen.getByLabelText("الآليات الجاهزة فقط"));
+    fireEvent.click(screen.getByRole("button", { name: "بحث" }));
+    const table = await screen.findByRole("table", { name: "نتيجة البحث حسب الولاية" });
+    expect(inv.searchInventory).toHaveBeenCalledWith(
+      { ...EMPTY_SEARCH, category: "fire_engine", specs: { capacity_l: [2000, null] }, ready_only: true },
+      expect.anything(),
+    );
+    // Bizerte has none: left out of the table; the units of a gouvernorat sit under its name.
+    expect(within(table).getAllByRole("row")).toHaveLength(3);
+    expect(within(table).getByRole("row", { name: /تونس/ })).toHaveTextContent("وحدة باب سعدون");
+    expect(screen.getByText(/في 2 ولاية/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "تصدير النتيجة (CSV)" }));
+    await waitFor(() => expect(inv.exportSearch).toHaveBeenCalled());
+    // The minister reads the counts here; the live map is the rooms' screen.
+    expect(screen.queryByRole("button", { name: "عرض على الخريطة" })).not.toBeInTheDocument();
+    expect(screen.getByText(/الخريطة الحية خاصة بقاعات العمليات/)).toBeInTheDocument();
+  });
 });
 
+describe("resources search on the map", () => {
+  it("travels in the address and reads back in words", () => {
+    const q = { ...EMPTY_SEARCH, category: "fire_engine", specs: { capacity_l: [2000, null] as [number, null], four_wd: true } };
+    expect(parseSearch(searchParam(q))).toEqual(q);
+    expect(parseSearch("{\"what\":\"drones\"}")).toBeNull();
+    expect(parseSearch("not json")).toBeNull();
+    const t = (key: string, o?: Record<string, unknown>) => `${key}${o ? JSON.stringify(o) : ""}`;
+    expect(describeSearch(q, CATALOGUE.items[0], "ar", t, String)).toBe(
+      'شاحنة إطفاء · map.resourceSearch.atLeast{"spec":"السعة","value":"\u20682000 L\u2069"} · دفع رباعي',
+    );
+  });
+});
