@@ -62,7 +62,8 @@
     "schedule": "Programmation",
     "permissions": "Autorisations",
     "window": "Fenêtre de décision",
-    "drills": "Exercice blanc"
+    "drills": "Exercice blanc",
+    "sensors": "Capteurs"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -514,7 +515,10 @@
     "mapping_invalid": "Correspondance des colonnes invalide : choisissez un champ de la liste pour chaque colonne.",
     "mapping_duplicate": "Un même champ est lié à deux colonnes de la même feuille.",
     "profile_name_taken": "Un modèle de correspondance porte déjà ce nom.",
-    "profile_not_found": "Modèle de correspondance introuvable ou non disponible pour votre gouvernorat."
+    "profile_not_found": "Modèle de correspondance introuvable ou non disponible pour votre gouvernorat.",
+    "sensor_code_taken": "Un capteur porte déjà ce code.",
+    "threshold_out_of_range": "Seuil hors de la plage plausible de ce type de capteur.",
+    "outside_local_network": "Refusé : la demande ne vient pas du réseau local."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -6763,5 +6767,91 @@
     "increase": "Augmenter",
     "decreaseNamed": "Diminuer : {{label}}",
     "increaseNamed": "Augmenter : {{label}}"
+  },
+  "sensors": {
+    "title": "Capteurs",
+    "intro": "Capteurs du réseau local : pluie, niveau d'eau et température. Leurs mesures arrivent par la passerelle installée à côté du serveur MediaMTX ; un seuil franchi devient une suggestion dans le centre des alertes, rien n'est envoyé aux citoyens d'ici.",
+    "toSuggestions": "Centre des alertes",
+    "new": "Nouveau capteur",
+    "edit": "Modifier",
+    "save": "Enregistrer",
+    "empty": "Aucun capteur enregistré.",
+    "caption": "Capteurs ({{n}})",
+    "countsLabel": "Capteurs par état",
+    "col": {
+      "last": "Dernière mesure",
+      "state": "État",
+      "thresholds": "Vigilance / alarme",
+      "actions": "Actions"
+    },
+    "state": {
+      "normal": "Normal",
+      "watch": "Vigilance",
+      "alarm": "Alarme",
+      "silent": "Muet",
+      "disabled": "Désactivé"
+    },
+    "kind": {
+      "rain_1h": "Pluviomètre",
+      "water_level": "Niveau d'eau",
+      "temperature": "Température"
+    },
+    "unit": {
+      "rain_1h": "mm/h",
+      "water_level": "m",
+      "temperature": "°C"
+    },
+    "providers": {
+      "office": "Office national de la protection civile",
+      "inm": "Institut national de la météorologie",
+      "agriculture": "Ministère de l'Agriculture"
+    },
+    "field": {
+      "kind": "Type",
+      "code": "Code",
+      "codeHelp": "Lettres latines, chiffres, - et _, par ex. GAB-RAIN-01. Le capteur l'envoie avec chaque mesure.",
+      "name": "Nom",
+      "lat": "Latitude",
+      "lon": "Longitude",
+      "provider": "Fournisseur",
+      "watch": "Seuil de vigilance ({{unit}})",
+      "watchShort": "seuil de vigilance",
+      "alarm": "Seuil d'alarme ({{unit}})",
+      "alarmShort": "seuil d'alarme",
+      "silent": "Muet après (minutes sans mesure)",
+      "silentShort": "délai de silence",
+      "enabled": "Capteur actif (désactivé : ses mesures sont refusées)",
+      "simulated": "Capteur de simulation [SIM]"
+    },
+    "form": {
+      "newTitle": "Nouveau capteur",
+      "editTitle": "Modifier {{name}}"
+    },
+    "errors": {
+      "code": "Le code a 2 à 40 lettres latines, chiffres, - ou _, et commence par une lettre ou un chiffre.",
+      "required": "Le nom et le fournisseur sont obligatoires.",
+      "place": "Position hors de Tunisie : latitude entre 30 et 38, longitude entre 7 et 12.",
+      "thresholds": "Le seuil d'alarme ne peut pas être inférieur au seuil de vigilance.",
+      "gouvernorat": "Choisissez le gouvernorat."
+    },
+    "key": {
+      "title": "Clé du capteur {{code}}",
+      "once": "Copiez cette clé maintenant dans le capteur : elle ne sera plus jamais affichée ni journalisée.",
+      "copy": "Copier la clé",
+      "copied": "Copiée",
+      "done": "Terminé, masquer la clé",
+      "howTo": "Le capteur signe chaque mesure avec cette clé (HMAC-SHA256), voir le guide docs/sensor-gateway.md.",
+      "rotate": "Renouveler la clé",
+      "confirmRotate": "Renouveler la clé du capteur {{code}} ? Toute signature avec l'ancienne clé sera refusée aussitôt."
+    },
+    "readings": {
+      "show": "Mesures",
+      "title": "Mesures de {{name}} (24 h)",
+      "caption": "Dernières mesures",
+      "at": "Heure",
+      "value": "Valeur",
+      "none": "Aucune mesure ces dernières 24 h.",
+      "thresholds": "Vigilance dès {{watch}}, alarme dès {{alarm}}."
+    }
   }
 }

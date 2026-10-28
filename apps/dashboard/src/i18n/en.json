@@ -62,7 +62,8 @@
     "schedule": "Programmes",
     "permissions": "Permissions",
     "window": "Decision window",
-    "drills": "Dry run"
+    "drills": "Dry run",
+    "sensors": "Sensors"
   },
   "header": {
     "scope": "Geographic scope",
@@ -514,7 +515,10 @@
     "mapping_invalid": "Invalid column mapping: pick a field from the list for each column.",
     "mapping_duplicate": "One field is mapped to two columns of the same sheet.",
     "profile_name_taken": "A mapping profile with this name already exists.",
-    "profile_not_found": "Mapping profile not found or not available to your gouvernorat."
+    "profile_not_found": "Mapping profile not found or not available to your gouvernorat.",
+    "sensor_code_taken": "A sensor already has this code.",
+    "threshold_out_of_range": "Threshold outside the plausible range of this kind of sensor.",
+    "outside_local_network": "Refused: the request is not from the local network."
   },
   "kpi": {
     "title": "Key indicators",
@@ -6763,5 +6767,91 @@
     "increase": "Increase",
     "decreaseNamed": "Decrease {{label}}",
     "increaseNamed": "Increase {{label}}"
+  },
+  "sensors": {
+    "title": "Sensors",
+    "intro": "Sensors of the local network: rain, water level and temperature. Their readings arrive through the gateway beside the MediaMTX server; a crossed threshold becomes a suggestion in the alert centre, and nothing is sent to citizens from here.",
+    "toSuggestions": "Alert centre",
+    "new": "New sensor",
+    "edit": "Edit",
+    "save": "Save",
+    "empty": "No sensor registered yet.",
+    "caption": "Sensors ({{n}})",
+    "countsLabel": "Sensors by state",
+    "col": {
+      "last": "Last reading",
+      "state": "State",
+      "thresholds": "Watch / alarm",
+      "actions": "Actions"
+    },
+    "state": {
+      "normal": "Normal",
+      "watch": "Watch",
+      "alarm": "Alarm",
+      "silent": "Silent",
+      "disabled": "Disabled"
+    },
+    "kind": {
+      "rain_1h": "Rain gauge",
+      "water_level": "Water level",
+      "temperature": "Temperature"
+    },
+    "unit": {
+      "rain_1h": "mm/h",
+      "water_level": "m",
+      "temperature": "°C"
+    },
+    "providers": {
+      "office": "National Civil Protection Office",
+      "inm": "National Institute of Meteorology",
+      "agriculture": "Ministry of Agriculture"
+    },
+    "field": {
+      "kind": "Kind",
+      "code": "Code",
+      "codeHelp": "Latin letters, digits, - and _, e.g. GAB-RAIN-01. The sensor sends it with every reading.",
+      "name": "Name",
+      "lat": "Latitude",
+      "lon": "Longitude",
+      "provider": "Provider",
+      "watch": "Watch threshold ({{unit}})",
+      "watchShort": "watch threshold",
+      "alarm": "Alarm threshold ({{unit}})",
+      "alarmShort": "alarm threshold",
+      "silent": "Silent after (minutes without a reading)",
+      "silentShort": "silence delay",
+      "enabled": "Sensor enabled (disabled: its readings are refused)",
+      "simulated": "Simulation sensor [SIM]"
+    },
+    "form": {
+      "newTitle": "New sensor",
+      "editTitle": "Edit {{name}}"
+    },
+    "errors": {
+      "code": "The code has 2 to 40 Latin letters, digits, - or _, starting with a letter or digit.",
+      "required": "Name and provider are required.",
+      "place": "Position outside Tunisia: latitude between 30 and 38, longitude between 7 and 12.",
+      "thresholds": "The alarm threshold cannot be below the watch threshold.",
+      "gouvernorat": "Choose the gouvernorat."
+    },
+    "key": {
+      "title": "Key of sensor {{code}}",
+      "once": "Copy this key into the sensor now: it is never shown again nor written to the audit log.",
+      "copy": "Copy the key",
+      "copied": "Copied",
+      "done": "Done, hide the key",
+      "howTo": "The sensor signs each reading with this key (HMAC-SHA256), as in the gateway guide docs/sensor-gateway.md.",
+      "rotate": "Rotate the key",
+      "confirmRotate": "Rotate the key of sensor {{code}}? Any signature with the old key is refused at once."
+    },
+    "readings": {
+      "show": "Readings",
+      "title": "Readings of {{name}} (24 h)",
+      "caption": "Last readings",
+      "at": "Time",
+      "value": "Value",
+      "none": "No reading in the last 24 hours.",
+      "thresholds": "Watch from {{watch}}, alarm from {{alarm}}."
+    }
   }
 }

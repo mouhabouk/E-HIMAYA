@@ -670,3 +670,13 @@ export function canOpenWindowFull(who: Pick<Who, "roles" | "national">): boolean
   if (who.national) return who.roles.includes("operator") || who.roles.includes("ops_manager");
   return who.roles.includes("ops_manager");
 }
+
+// ---------- Phase L5b: sensors of the local network ----------
+/** Rooms see their gouvernorat's sensors (the central room all); the operations manager registers them. */
+export function canOpenSensors(roles: readonly string[]): boolean {
+  return hasReadAccess(roles);
+}
+
+export function canManageSensors(roles: readonly string[]): boolean {
+  return roles.includes("ops_manager");
+}

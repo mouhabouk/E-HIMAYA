@@ -136,6 +136,8 @@ const PermissionsPage = page(() => import("./pages/PermissionsPage"), "Permissio
 const WindowPage = page(() => import("./pages/WindowPage"), "WindowPage");
 const DrillsPage = page(() => import("./pages/DrillsPage"), "DrillsPage");
 const DrillPage = page(() => import("./pages/DrillPage"), "DrillPage");
+// Phase L5b: sensors of the local network.
+const SensorsPage = page(() => import("./pages/SensorsPage"), "SensorsPage");
 
 export function createQueryClient(): QueryClient {
   return new QueryClient({
@@ -247,6 +249,7 @@ export function AppRoutes() {
         <Route path="drills" element={scoped(() => false, <Suspense fallback={<Loading />}><DrillsPage /></Suspense>)} />
         <Route path="drills/:id" element={scoped(() => false, <Suspense fallback={<Loading />}><DrillPage /></Suspense>)} />
         <Route path="calls" element={reports(<CallsPage />)} />
+        <Route path="sensors" element={reports(<SensorsPage />)} />
         <Route path="weather/suggestions" element={weather(<WeatherSuggestionsPage />)} />
         <Route path="orgs" element={orgs(<OrgsPage />)} />
         <Route path="orgs/certificates" element={orgs(<CertificatesPage />)} />

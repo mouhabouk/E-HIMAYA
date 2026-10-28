@@ -80,6 +80,15 @@ export type LiveEvent =
       gouvernorat_code: number | null;
       simulated: boolean;
     }
+  /** Phase L5b: a reading of a sensor of the local network, with its level after it. */
+  | {
+      type: "sensor.reading";
+      sensor_id: string;
+      gouvernorat_code: number;
+      value: number;
+      at: string;
+      level: "normal" | "watch" | "alarm";
+    }
   | {
       type: "call.ringing" | "call.answered" | "call.ended" | "call.recording";
       call_id: string;
@@ -299,6 +308,10 @@ function parseEvent(raw: unknown): LiveEvent | { type: "ready" } | null {
         typeof m.feature_id === "string" &&
         (m.level === "yellow" || m.level === "red") &&
         typeof m.score === "number"
+        ? (m as unknown as LiveEvent)
+        : null;
+    case "sensor.reading":
+      return typeof m.sensor_id === "string" && typeof m.value === "number" && typeof m.at === "string"
         ? (m as unknown as LiveEvent)
         : null;
     case "weather.suggestion":
