@@ -18,6 +18,16 @@ import {
 } from "../src/test/inventoryData";
 import { BASEMAP, BASEMAP_SETTINGS } from "../src/test/basemapData";
 import { FEATURE_RULES, FEATURES, NO_FEATURES, PREVIEW } from "../src/test/featuresData";
+import {
+  WINDOW_ACCESS_FULL,
+  WINDOW_COMPARE,
+  WINDOW_DELEGATES,
+  WINDOW_DELEGATION,
+  WINDOW_NOW,
+  WINDOW_SAVED,
+  WINDOW_SEARCH,
+  WINDOW_SYNONYMS,
+} from "../src/test/windowData";
 import { SCHEDULE_OPTIONS, SCHEDULE_PROGRESS, SCHEDULE_SETTINGS, SCHEDULE_SLOT, SCHEDULE_TEMPLATES } from "../src/test/scheduleData";
 import { DIRECTIVE_ALL_DETAIL, DISPATCH_PAGE, HAZARDS, PLAN_DETAIL, PLANS, REVISIONS, SEARCH } from "../src/test/registerData";
 import { JENDOUBA_AXIS, NABEUL_AXIS, NABEUL_DETAIL, overview, REQUEST, SOUSSE_AXIS, SUGGESTIONS } from "../src/test/crisisData";
@@ -215,6 +225,18 @@ async function mockApi(page: Page): Promise<string[]> {
     if (pathname === "/api/v1/staff/features/catalogue") return json(route, FEATURES);
     if (pathname === "/api/v1/staff/features/rules") return json(route, FEATURE_RULES);
     if (pathname === "/api/v1/staff/features/preview") return json(route, PREVIEW);
+    // The decision window (phase L4 §3 and §5), [SIM] data.
+    const decisionWindow: Record<string, unknown> = {
+      "/api/v1/staff/window/access": WINDOW_ACCESS_FULL,
+      "/api/v1/staff/window/now": WINDOW_NOW,
+      "/api/v1/staff/window/search": WINDOW_SEARCH,
+      "/api/v1/staff/window/compare": WINDOW_COMPARE,
+      "/api/v1/staff/window/searches": WINDOW_SAVED,
+      "/api/v1/staff/window/synonyms": WINDOW_SYNONYMS,
+      "/api/v1/staff/window/delegates": WINDOW_DELEGATES,
+      "/api/v1/staff/window/delegations": [WINDOW_DELEGATION],
+    };
+    if (pathname in decisionWindow) return json(route, decisionWindow[pathname]);
     if (pathname === "/api/v1/staff/schedule/slot") return json(route, SCHEDULE_SLOT);
     if (pathname === "/api/v1/staff/schedule/progress") return json(route, SCHEDULE_PROGRESS);
     if (pathname === "/api/v1/staff/schedule/settings") return json(route, SCHEDULE_SETTINGS);
@@ -329,6 +351,35 @@ test.describe("accessibility of the permissions (ar)", () => {
       await expect(page.locator("main .perm-rule").first()).toBeVisible();
       await page.locator("main .perm-group summary").first().click();
       await scan(page, `/permissions ${theme}`);
+      expect(fence.unexpected).toEqual([]);
+    });
+  }
+});
+
+// Phase L4 §3: the decision window (the situation now, a search, a comparison, the delegations), in both modes.
+test.describe("accessibility of the decision window (ar)", () => {
+  for (const theme of ["light", "dark"] as const) {
+    test(`now, search, comparison and delegations, ${theme}, have no serious or critical violation`, async ({ page }) => {
+      await signIn(page, ["ops_manager"], "Salma Ben Ali");
+      await page.addInitScript((t) => {
+        window.localStorage.setItem("ehimaya.lang", "ar");
+        window.localStorage.setItem("ehimaya.theme", t);
+      }, theme);
+      const fence = await baseMock(page);
+      await mockApi(page);
+      await page.goto("/window");
+      await expect(page.locator("main .win-axis").first()).toBeVisible();
+      await scan(page, `/window now ${theme}`);
+      await page.getByRole("tab", { name: "البحث" }).click();
+      await expect(page.locator("main .win-understood")).toBeVisible();
+      await scan(page, `/window search ${theme}`);
+      await page.getByRole("tab", { name: "المقارنة" }).click();
+      await page.getByRole("button", { name: "قارن" }).click();
+      await expect(page.locator("main .win-compare")).toBeVisible();
+      await scan(page, `/window compare ${theme}`);
+      await page.getByRole("tab", { name: "التفويضات" }).click();
+      await expect(page.locator("main .win-delegation").first()).toBeVisible();
+      await scan(page, `/window delegations ${theme}`);
       expect(fence.unexpected).toEqual([]);
     });
   }

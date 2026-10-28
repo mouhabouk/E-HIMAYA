@@ -25,6 +25,7 @@ import {
   canOpenProgrammes,
   canOpenRegister,
   canOpenSchedule,
+  canOpenWindowFull,
   canReadAnalytics,
   canReadKnowledge,
   canReadOrgs,
@@ -59,7 +60,7 @@ export interface NavGroup {
 }
 
 /** The links the user's roles can open (the API enforces the same rules), in their groups; empty groups dropped. */
-export function navGroups(identity: Identity, t: TFunction, access?: FeatureAccess): NavGroup[] {
+export function navGroups(identity: Identity, t: TFunction, access?: FeatureAccess, windowOpen?: boolean): NavGroup[] {
   const roles = identity.roles;
   const reads = hasReadAccess(roles);
   const knowledge = canReadKnowledge(roles);
@@ -97,6 +98,7 @@ export function navGroups(identity: Identity, t: TFunction, access?: FeatureAcce
       tone: "navy",
       label: t("nav.group.crisis"),
       items: [
+        ...e(windowOpen ?? canOpenWindowFull(identity), "/window", "insights", "navy", "window"),
         ...e(canOpenCommand(roles), "/command", "militaryTech", "navy", "command"),
         ...e(canOpenAxes(roles), "/axes", "warning", "red", "axes"),
         ...e(canOpenRegister(roles), "/plans", "menuBook", "sky", "plans"),

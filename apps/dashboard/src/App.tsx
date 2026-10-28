@@ -133,6 +133,7 @@ const EmergencyGuidePage = page(() => import("./pages/EmergencyGuidePage"), "Eme
 const ContactInboxPage = page(() => import("./pages/ContactInboxPage"), "ContactInboxPage");
 // Phase L4: what the system administrator grants and hides.
 const PermissionsPage = page(() => import("./pages/PermissionsPage"), "PermissionsPage");
+const WindowPage = page(() => import("./pages/WindowPage"), "WindowPage");
 
 export function createQueryClient(): QueryClient {
   return new QueryClient({
@@ -238,6 +239,8 @@ export function AppRoutes() {
           path="permissions"
           element={scoped(canManagePermissions, <Suspense fallback={<Loading />}><PermissionsPage /></Suspense>)}
         />
+        {/* Opened in full by the rooms, through a delegation by others: the page and the API decide (L4 §5). */}
+        <Route path="window" element={scoped(() => true, <Suspense fallback={<Loading />}><WindowPage /></Suspense>)} />
         <Route path="calls" element={reports(<CallsPage />)} />
         <Route path="weather/suggestions" element={weather(<WeatherSuggestionsPage />)} />
         <Route path="orgs" element={orgs(<OrgsPage />)} />

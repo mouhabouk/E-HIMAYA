@@ -7807,3 +7807,148 @@ button.nav-card:hover {
 .tag--rule-revoked {
   background: var(--surface-2);
 }
+
+/* ------------------------------------------------------------------ the decision window (L4, design-l4.md §3) */
+.win-now,
+.win-search,
+.win-compare-tab,
+.win-delegations,
+.win-dictionary {
+  display: grid;
+  gap: 1rem;
+}
+.win-charts {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  align-items: start;
+}
+.win-bar--hidden {
+  background: repeating-linear-gradient(45deg, var(--border), var(--border) 3px, transparent 3px, transparent 6px);
+}
+.win-quick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+.win-quick input {
+  flex: 1 1 18rem;
+}
+.win-quick label {
+  font-weight: 600;
+}
+.win-advanced {
+  margin-block-start: 0.75rem;
+}
+.win-advanced > summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.win-filters > .field,
+.win-sides > fieldset {
+  flex: 1 1 10rem;
+}
+.win-sides {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.win-side {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+}
+.win-saved {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  align-items: center;
+  margin-block-start: 0.75rem;
+}
+.win-saved__form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+.win-saved__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.win-understood {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.5rem;
+  align-items: center;
+}
+.tag--understood-unmatched {
+  color: var(--warn-text);
+}
+.win-export {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+.win-axes,
+.win-decisions,
+.win-delegation-list,
+.win-synonyms,
+.win-delegation__events {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.win-axis,
+.win-decisions > li,
+.win-delegation,
+.win-synonyms > li {
+  padding-block: 0.5rem;
+  border-block-end: 1px solid var(--border);
+}
+.win-axis:last-child,
+.win-decisions > li:last-child,
+.win-delegation:last-child,
+.win-synonyms > li:last-child {
+  border-block-end: none;
+}
+.win-axis--level-3,
+.win-axis--level-4 {
+  border-inline-start: 3px solid var(--error-text);
+  padding-inline-start: 0.5rem;
+}
+.win-delegation--active {
+  border-inline-start: 3px solid var(--ok-text);
+  padding-inline-start: 0.5rem;
+}
+.win-delegation__events {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+}
+.win-events {
+  display: grid;
+  gap: 0.25rem;
+}
+.win-grant {
+  display: grid;
+  gap: 0.75rem;
+}
+.win-synonyms__actions {
+  display: flex;
+  gap: 0.5rem;
+}
+.win-compare td.win-up {
+  color: var(--error-text);
+}
+.win-compare td.win-down {
+  color: var(--ok-text);
+}

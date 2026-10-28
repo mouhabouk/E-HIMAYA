@@ -60,7 +60,8 @@
     "inventory": "Registre des moyens",
     "plans": "Plans d'intervention",
     "schedule": "Programmation",
-    "permissions": "Autorisations"
+    "permissions": "Autorisations",
+    "window": "Fenêtre de décision"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -468,7 +469,19 @@
     "self_lockout": "La page des autorisations ne peut être masquée aux administrateurs.",
     "unknown_feature": "Cette fonction n'existe pas au catalogue.",
     "unknown_role": "Rôle inconnu.",
-    "user_rule_has_no_gouvernorat": "Une règle de compte ne se limite pas à un gouvernorat : le compte a le sien."
+    "user_rule_has_no_gouvernorat": "Une règle de compte ne se limite pas à un gouvernorat : le compte a le sien.",
+    "window_delegation_required": "Cette fenêtre ne s'ouvre qu'avec une délégation en cours.",
+    "delegate_not_allowed": "Délégation impossible à ce compte : le directeur des opérations du gouvernorat délègue à son gouverneur et à son comité local seulement.",
+    "event_out_of_scope": "Cet événement est hors de votre périmètre ou de celui du délégataire.",
+    "unknown_event": "Cet événement n'existe pas.",
+    "self_delegation": "Vous ne pouvez pas vous déléguer.",
+    "already_full_view": "Ce compte ouvre déjà la fenêtre entière.",
+    "account_not_found": "Compte introuvable ou désactivé.",
+    "delegation_closed": "Cette délégation est terminée ou retirée.",
+    "two_gouvernorats_required": "Choisissez deux gouvernorats.",
+    "too_many_saved": "Nombre maximal de recherches enregistrées atteint (50).",
+    "query_too_long": "Recherche trop longue.",
+    "no_words": "Ajoutez au moins un mot."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -6234,6 +6247,183 @@
       "closed": "Fermée",
       "hidden": "Masquée",
       "granted": "Accordée"
+    }
+  },
+  "window": {
+    "title": "Fenêtre de décision",
+    "intro": "La situation actuelle, la recherche, la comparaison de deux périodes ou de deux gouvernorats et les rapports, sur une seule page. Des agrégats seulement, sans aucune donnée personnelle.",
+    "introDelegated": "Cette fenêtre vous est ouverte par délégation et se limite aux événements délégués : leurs indicateurs, leur comparaison et leurs rapports, agrégés et sans données personnelles.",
+    "noDelegation": "Aucune délégation en cours pour votre compte. La salle centrale ou le directeur des opérations du gouvernorat ouvre cette fenêtre par une délégation sur des événements choisis.",
+    "delegatedUntil": "Délégation en cours jusqu'au {{at}}, sur les événements suivants :",
+    "delegatedScope": "Les résultats se limitent aux événements délégués.",
+    "none": "Aucun",
+    "minutes": "{{n}} min",
+    "severity": "Gravité {{n}}",
+    "severityUnknown": "Gravité non définie",
+    "severityLabel": "Gravité",
+    "byCategory": "Par type",
+    "bySeverity": "Par gravité",
+    "byGouvernorat": "Par gouvernorat",
+    "series": {
+      "day": "Évolution par jour",
+      "month": "Évolution par mois"
+    },
+    "floor": "Toute case de moins de {{n}} cas s'affiche « <{{n}} », pour qu'aucune personne ne soit identifiable.",
+    "national": "National",
+    "gouvernorat": "Gouvernorat",
+    "allGouvernorats": "Tous les gouvernorats",
+    "category": "Type",
+    "any": "Tous",
+    "status": "État",
+    "source": "Source",
+    "sources": {
+      "app": "Application",
+      "call": "Appel",
+      "sms": "SMS",
+      "portal": "Portail",
+      "iot": "Capteurs"
+    },
+    "from": "Du",
+    "to": "Au",
+    "choose": "Choisir",
+    "quick": "Recherche rapide",
+    "quickHint": "Référence, lieu ou mot : incendie Nabeul, accident…",
+    "searchButton": "Rechercher",
+    "advanced": "Recherche avancée",
+    "understood": "Recherche comprise ainsi :",
+    "kind": {
+      "category": "Type",
+      "classification": "Sous-type",
+      "gouvernorat": "Gouvernorat",
+      "delegation": "Délégation",
+      "reference": "Référence",
+      "word": "Mot",
+      "unmatched": "Non compris"
+    },
+    "results": "Résultats du {{from}} au {{to}}",
+    "items": "Interventions ({{n}})",
+    "truncated": "Seules les 200 plus récentes sont affichées",
+    "ref": "Référence",
+    "opened": "Ouverture",
+    "axis": "Axe",
+    "metric": {
+      "incidents": "Interventions",
+      "injured": "Blessés",
+      "deceased": "Décès",
+      "rescued": "Personnes secourues",
+      "burned_ha": "Surface brûlée (ha)",
+      "to_assignment_min": "Délai d'engagement",
+      "to_on_scene_min": "Délai d'arrivée",
+      "reports": "Signalements reçus",
+      "confirmed": "Signalements confirmés",
+      "confirmed_rate": "Taux de confirmation",
+      "category": "Type",
+      "severity": "Gravité",
+      "status": "État",
+      "gouvernorat": "Gouvernorat",
+      "programmes": {
+        "programmes": "Programmes saisonniers",
+        "posts": "Postes des programmes",
+        "lifeguards_planned": "Maîtres-nageurs prévus",
+        "lifeguards_deployed": "Maîtres-nageurs déployés",
+        "activities_done": "Activités réalisées",
+        "rate": "Taux de réalisation"
+      }
+    },
+    "export": {
+      "pdf": "Rapport PDF",
+      "xlsx": "Tableau XLSX",
+      "audited": "Chaque export est journalisé."
+    },
+    "now": {
+      "at": "Situation au {{at}}, actualisée chaque minute.",
+      "axes": "Axes ouverts",
+      "noAxes": "Aucun axe ouvert.",
+      "attached": "{{n}} intervention(s)",
+      "plan": "Plan en vigueur : {{title}}",
+      "planText": "L'axe a un plan écrit.",
+      "noPlan": "Aucun plan lié à l'axe.",
+      "open": "Interventions en cours ({{n}})",
+      "resources": "Moyens disponibles",
+      "kind": "Type",
+      "available": "Disponibles",
+      "assigned": "Engagés",
+      "outOfService": "Hors service",
+      "progress": "Réalisation de la programmation",
+      "today": "Aujourd'hui",
+      "week": "Semaine",
+      "decisions": "Dernières décisions et recommandations",
+      "noDecisions": "Aucune décision."
+    },
+    "saved": {
+      "name": "Nom de la recherche",
+      "save": "Enregistrer",
+      "list": "Recherches enregistrées",
+      "delete": "Supprimer {{name}}"
+    },
+    "compare": {
+      "metric": "Indicateur",
+      "a": "Côté A",
+      "b": "Côté B",
+      "delta": "Écart",
+      "pct": "Écart %",
+      "mode": "Type de comparaison",
+      "modes": {
+        "periods": "Deux périodes",
+        "gouvernorats": "Deux gouvernorats"
+      },
+      "run": "Comparer",
+      "title": "Résultat de la comparaison"
+    },
+    "delegation": {
+      "new": "Nouvelle délégation",
+      "intro": "Une délégation ouvre la fenêtre à un compte, pour une durée, sur des événements choisis seulement. Chaque octroi, retrait ou consultation est journalisé.",
+      "find": "Chercher un compte",
+      "grantee": "Compte",
+      "ends": "Fin",
+      "events": "Événements délégués",
+      "incidents": "Interventions précises",
+      "incidentsHint": "Identifiant complet de l'intervention, séparés par des virgules.",
+      "eventsRequired": "Choisissez au moins un axe ou une intervention.",
+      "reason": "Motif",
+      "grant": "Accorder la délégation",
+      "granted": "Délégation accordée.",
+      "revoke": "Retirer la délégation",
+      "revokeTitle": "Retirer la délégation avant son terme",
+      "state": {
+        "active": "En cours",
+        "scheduled": "Programmée",
+        "ended": "Terminée",
+        "revoked": "Retirée"
+      },
+      "period": "Du {{from}} au {{to}}",
+      "by": "Accordée par {{name}}",
+      "kind": {
+        "axis": "Axe",
+        "incident": "Intervention"
+      },
+      "revokedBy": "Retirée par {{name}} le {{at}}",
+      "list": "Délégations",
+      "showEnded": "Afficher les terminées et retirées",
+      "none": "Aucune délégation."
+    },
+    "dictionary": {
+      "title": "Dictionnaire des synonymes",
+      "intro": "Les mots que comprend la recherche rapide, en arabe, français, anglais et dialecte. Tenu par la salle centrale.",
+      "meaning": "Sens",
+      "meaningHint": "Code du type (fire, flood…), du sous-type (forest_fire…) ou un mot.",
+      "words": "Synonymes (séparés par des virgules)",
+      "save": "Enregistrer",
+      "edit": "Modifier",
+      "delete": "Supprimer"
+    },
+    "tabs": {
+      "label": "Sections de la fenêtre de décision",
+      "now": "Situation actuelle",
+      "search": "Recherche",
+      "compare": "Comparaison",
+      "delegations": "Délégations",
+      "dictionary": "Dictionnaire"
     }
   }
 }
