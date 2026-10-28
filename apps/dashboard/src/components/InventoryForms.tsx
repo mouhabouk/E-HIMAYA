@@ -4,12 +4,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useId, useState, type ReactNode, type SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
+import { Stepper } from "./Stepper";
 import { useServices } from "../context/services";
 import { errorMessageKey } from "../lib/api";
 import { useFormat, useGouvernorats, useLanguage } from "../lib/hooks";
 import {
   AVAILABILITY,
   inventoryKeys,
+  specStep,
   WRITABLE_STATES,
   type Agent,
   type Availability,
@@ -129,15 +131,17 @@ function SpecFields({
               {d.name[lang]}
               {d.unit && <span className="muted"> ({d.unit})</span>}
             </label>
-            <input
+            <Stepper
               id={`${id}-${d.key}`}
-              type="number"
               min={0}
-              inputMode="decimal"
-              value={typeof specs[d.key] === "number" ? String(specs[d.key]) : ""}
-              onChange={(e) => {
+              step={specStep(d.unit)}
+              value={typeof specs[d.key] === "number" ? (specs[d.key] as number) : null}
+              label={d.name[lang]}
+              unit={d.unit || undefined}
+              onChange={(n) => onChange({ ...specs, [d.key]: n })}
+              onClear={() => {
                 const { [d.key]: _old, ...rest } = specs;
-                onChange(e.target.value === "" ? rest : { ...rest, [d.key]: Number(e.target.value) });
+                onChange(rest);
               }}
             />
           </div>
@@ -308,7 +312,16 @@ export function VehicleForm({
           )}
         </Field>
         <Field id={`${id}-year`} label={t("inventory.field.year")}>
-          <input id={`${id}-year`} type="number" min={1950} max={2100} inputMode="numeric" value={year} onChange={(e) => setYear(e.target.value)} />
+          <Stepper
+            id={`${id}-year`}
+            min={1950}
+            max={2100}
+            start={new Date().getFullYear()}
+            value={year ? Number(year) : null}
+            label={t("inventory.field.year")}
+            onChange={(n) => setYear(String(n))}
+            onClear={() => setYear("")}
+          />
         </Field>
       </div>
       <SpecFields id={`${id}-spec`} category={current} specs={specs} onChange={setSpecs} />
@@ -412,10 +425,26 @@ export function StockForm({
           </select>
         </Field>
         <Field id={`${id}-ready`} label={t("inventory.field.qtyReady")}>
-          <input id={`${id}-ready`} type="number" min={0} max={100000} inputMode="numeric" value={ready} onChange={(e) => setReady(e.target.value)} />
+          <Stepper
+            id={`${id}-ready`}
+            min={0}
+            max={100000}
+            value={ready === "" ? null : Number(ready)}
+            label={t("inventory.field.qtyReady")}
+            onChange={(n) => setReady(String(n))}
+            onClear={() => setReady("")}
+          />
         </Field>
         <Field id={`${id}-broken`} label={t("inventory.field.qtyBroken")}>
-          <input id={`${id}-broken`} type="number" min={0} max={100000} inputMode="numeric" value={broken} onChange={(e) => setBroken(e.target.value)} />
+          <Stepper
+            id={`${id}-broken`}
+            min={0}
+            max={100000}
+            value={broken === "" ? null : Number(broken)}
+            label={t("inventory.field.qtyBroken")}
+            onChange={(n) => setBroken(String(n))}
+            onClear={() => setBroken("")}
+          />
         </Field>
       </div>
       <SpecFields id={`${id}-spec`} category={current} specs={specs} onChange={setSpecs} />

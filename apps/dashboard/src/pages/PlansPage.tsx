@@ -26,6 +26,7 @@ import {
   type PlanEntry,
 } from "../lib/plans";
 import { registerKeys } from "../lib/register";
+import { Stepper } from "../components/Stepper";
 
 const enc = encodeURIComponent;
 
@@ -169,13 +170,13 @@ function HazardForm({ hazard, onDone }: { hazard: Hazard | null; onDone: () => v
         </div>
         <div className="field">
           <label htmlFor={`${id}-p`}>{t("plans.hazards.position")}</label>
-          <input
+          <Stepper
             id={`${id}-p`}
-            type="number"
             min={0}
             max={999}
             value={f.position}
-            onChange={(e) => setF((x) => ({ ...x, position: Math.min(999, Math.max(0, Number(e.target.value) || 0)) }))}
+            label={t("plans.hazards.position")}
+            onChange={(n) => setF((x) => ({ ...x, position: n }))}
           />
         </div>
       </div>

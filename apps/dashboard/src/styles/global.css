@@ -8093,7 +8093,7 @@ button.nav-card:hover {
 }
 .drill-needs__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
   gap: 8px 12px;
 }
 .drill-needs__item {
@@ -8102,9 +8102,6 @@ button.nav-card:hover {
   justify-content: space-between;
   gap: 8px;
   font-size: 0.875rem;
-}
-.drill-needs__item input {
-  width: 4.5rem;
 }
 .drill-page__meta {
   display: flex;
@@ -8240,4 +8237,83 @@ button.nav-card:hover {
 .inventory-transfer__decide .field input,
 .inventory-transfer__decide .field select {
   min-inline-size: 14rem;
+}
+/* R4a: the stepper (− value +). Buttons 48 px, the value centred and still typeable; no native spinners. */
+.stepper {
+  display: inline-flex;
+  align-items: stretch;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  overflow: hidden;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+}
+.stepper:focus-within {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.stepper__btn {
+  inline-size: 48px;
+  min-block-size: 48px;
+  border: 0;
+  background: var(--surface-2);
+  color: var(--primary);
+  font: inherit;
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+}
+.stepper__btn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--primary) 12%, var(--surface-2));
+}
+.stepper__btn:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+.stepper__btn:disabled {
+  color: var(--muted);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.stepper > input.stepper__value[type="number"] {
+  inline-size: 5.5ch;
+  min-inline-size: 0;
+  border: 0;
+  border-inline: 1px solid var(--border);
+  border-radius: 0;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  text-align: center;
+  padding: 0 0.25rem;
+  min-block-size: 48px;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+.stepper > input.stepper__value[type="number"]::-webkit-outer-spin-button,
+.stepper > input.stepper__value[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.stepper > input.stepper__value[type="number"]:focus {
+  outline: none;
+}
+.stepper > input.stepper__value[type="number"][aria-invalid="true"] {
+  background: var(--error-bg);
+  color: var(--error-text);
+}
+.stepper__unit {
+  align-self: center;
+  padding-inline: 0.6rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.stepper[data-disabled] {
+  opacity: 0.6;
 }

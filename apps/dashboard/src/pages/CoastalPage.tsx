@@ -35,6 +35,7 @@ import { saveDownload } from "../lib/layersApi";
 import { initialBoundsFor } from "../lib/mapStyle";
 import { canEditCoastalRules } from "../lib/roles";
 import { directionOf } from "../i18n";
+import { Stepper } from "../components/Stepper";
 
 const FORECAST_DAYS = 4;
 const REASON_MIN = 3;
@@ -53,6 +54,13 @@ function forecastDays(now = new Date()): string[] {
     const d = new Date(Date.UTC(tunis.getUTCFullYear(), tunis.getUTCMonth(), tunis.getUTCDate() + i));
     return d.toISOString().slice(0, 10);
   });
+}
+
+/** A distance moves by 50 m and a speed by 5 km/h; points, thresholds, years and months one by one. */
+function ruleStep(key: string): number {
+  if (key.endsWith("_m")) return 50;
+  if (key.endsWith("_kmh")) return 5;
+  return 1;
 }
 
 export function LevelPill({ level }: { level: RiskLevel | null | undefined }) {
@@ -466,26 +474,28 @@ function RulesEditor() {
                 <label htmlFor={`${id}-w${i}`}>
                   {upper === null ? t("coastal.rules.waveAbove") : t("coastal.rules.waveBelow")}
                 </label>
-                <input
+                <Stepper
                   id={`${id}-w${i}`}
-                  type="number"
-                  step="0.1"
-                  min="0"
+                  step={0.1}
+                  min={0}
                   dir="ltr"
-                  value={upper === null ? (bands[i - 1]?.[0] ?? "") : Number.isNaN(upper) ? "" : upper}
+                  value={upper === null ? (bands[i - 1]?.[0] ?? null) : Number.isNaN(upper) ? null : upper}
                   disabled={upper === null}
-                  onChange={(e) => setBand(i, 0, e.target.value)}
+                  label={upper === null ? t("coastal.rules.waveAbove") : t("coastal.rules.waveBelow")}
+                  onChange={(n) => setBand(i, 0, String(n))}
+                  onClear={() => setBand(i, 0, "")}
                 />
               </div>
               <div className="field">
                 <label htmlFor={`${id}-p${i}`}>{t("coastal.rules.points")}</label>
-                <input
+                <Stepper
                   id={`${id}-p${i}`}
-                  type="number"
-                  min="0"
+                  min={0}
                   dir="ltr"
-                  value={Number.isNaN(points) ? "" : points}
-                  onChange={(e) => setBand(i, 1, e.target.value)}
+                  value={Number.isNaN(points) ? null : points}
+                  label={t("coastal.rules.points")}
+                  onChange={(n) => setBand(i, 1, String(n))}
+                  onClear={() => setBand(i, 1, "")}
                 />
               </div>
             </div>
@@ -498,14 +508,15 @@ function RulesEditor() {
           {NUMERIC_RULES.map((key) => (
             <div key={key} className={`field${touched && problem === key ? " field--invalid" : ""}`}>
               <label htmlFor={`${id}-${key}`}>{t(`coastal.rules.${key}`)}</label>
-              <input
+              <Stepper
                 id={`${id}-${key}`}
-                type="number"
-                min="0"
-                step="any"
+                min={0}
+                step={ruleStep(key)}
                 dir="ltr"
-                value={typeof rules[key] === "number" && !Number.isNaN(rules[key]) ? rules[key] : ""}
-                onChange={(e) => set(key, e.target.value === "" ? Number.NaN : Number(e.target.value))}
+                value={typeof rules[key] === "number" && !Number.isNaN(rules[key]) ? rules[key] : null}
+                label={t(`coastal.rules.${key}`)}
+                onChange={(n) => set(key, n)}
+                onClear={() => set(key, Number.NaN)}
               />
             </div>
           ))}

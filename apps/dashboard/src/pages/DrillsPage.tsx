@@ -8,6 +8,7 @@ import { SimBadge } from "../components/crisis/CrisisBits";
 import { DRILL_HAZARDS, DrillStatusPill } from "../components/DrillBits";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { PageTitle } from "../components/PageTitle";
+import { Stepper } from "../components/Stepper";
 import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
 import { errorMessageKey } from "../lib/api";
@@ -138,16 +139,17 @@ export function DrillForm({ onClose }: { onClose: () => void }) {
           <label htmlFor={`${id}-duration`}>
             {t("drill.field.duration_min")}
           </label>
-          <input
+          <Stepper
             id={`${id}-duration`}
-            type="number"
             min={10}
             max={720}
+            step={10}
             value={form.duration_min}
-            aria-required="true"
-            aria-invalid={(tried && !durationOk) || undefined}
-            aria-describedby={`${id}-duration-help`}
-            onChange={(e) => set({ duration_min: Number(e.target.value) })}
+            label={t("drill.field.duration_min")}
+            required
+            invalid={tried && !durationOk}
+            describedBy={`${id}-duration-help`}
+            onChange={(n) => set({ duration_min: n })}
           />
           <p id={`${id}-duration-help`} className={tried && !durationOk ? "field__error" : "muted"}>
             {t("drill.new.durationHelp")}

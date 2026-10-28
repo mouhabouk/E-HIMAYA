@@ -16,7 +16,8 @@ describe("AiSettingsPage", () => {
   it("validates like the API before saving and shows field errors", async () => {
     const { api } = setup();
     const weather = await screen.findByLabelText("Météo");
-    fireEvent.change(weather, { target: { value: "150" } });
+    // The stepper holds the maximum while typing; a value under the minimum still reaches the check.
+    fireEvent.change(weather, { target: { value: "-5" } });
     fireEvent.change(screen.getByLabelText("Fenêtre de temps (minutes)", { selector: "[id$='-window']" }), {
       target: { value: "2.5" },
     });

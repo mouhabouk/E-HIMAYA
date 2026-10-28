@@ -20,6 +20,7 @@ import { reasonValid } from "../lib/phase9";
 import { p9Keys } from "../lib/phase9Api";
 import type { PlatformSetting } from "../lib/phase9Types";
 import { ReasonField } from "./Phase9Bits";
+import { Stepper } from "./Stepper";
 
 /** "Fields marked * are required." at the top of a form (phase A, rule 2). */
 export function RequiredNote() {
@@ -128,7 +129,6 @@ export function AppReleaseCard({ setting }: { setting: PlatformSetting }) {
   const error = problem
     ? t(`settings.release.errors.${problem}`, { min: BUILD_RANGE.min, max: BUILD_RANGE.max, notes: NOTES_MAX })
     : null;
-  const build = (s: string) => (s === "" ? Number.NaN : Number(s));
   const invalid = (tried: boolean, ...fields: string[]) =>
     tried && problem !== null && fields.includes(problem) ? true : undefined;
 
@@ -157,32 +157,32 @@ export function AppReleaseCard({ setting }: { setting: PlatformSetting }) {
             </div>
             <div className="field field--number">
               <label htmlFor={`${id}-latest`}>{t("settings.release.latestBuild")}</label>
-              <input
+              <Stepper
                 id={`${id}-latest`}
-                type="number"
-                inputMode="numeric"
                 dir="ltr"
-                aria-required="true"
+                required
                 min={BUILD_RANGE.min}
                 max={BUILD_RANGE.max}
-                value={Number.isNaN(v.latest_build) ? "" : v.latest_build}
-                aria-invalid={invalid(tried, "build", "order")}
-                onChange={(e) => setV({ ...v, latest_build: build(e.target.value) })}
+                value={Number.isNaN(v.latest_build) ? null : v.latest_build}
+                label={t("settings.release.latestBuild")}
+                invalid={invalid(tried, "build", "order")}
+                onChange={(n) => setV({ ...v, latest_build: n })}
+                onClear={() => setV({ ...v, latest_build: Number.NaN })}
               />
             </div>
             <div className="field field--number">
               <label htmlFor={`${id}-min`}>{t("settings.release.minBuild")}</label>
-              <input
+              <Stepper
                 id={`${id}-min`}
-                type="number"
-                inputMode="numeric"
                 dir="ltr"
-                aria-required="true"
+                required
                 min={BUILD_RANGE.min}
                 max={BUILD_RANGE.max}
-                value={Number.isNaN(v.min_build) ? "" : v.min_build}
-                aria-invalid={invalid(tried, "build", "order")}
-                onChange={(e) => setV({ ...v, min_build: build(e.target.value) })}
+                value={Number.isNaN(v.min_build) ? null : v.min_build}
+                label={t("settings.release.minBuild")}
+                invalid={invalid(tried, "build", "order")}
+                onChange={(n) => setV({ ...v, min_build: n })}
+                onClear={() => setV({ ...v, min_build: Number.NaN })}
               />
             </div>
             <div className="field">

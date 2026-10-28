@@ -19,6 +19,7 @@ import { canEditAiSettings } from "../lib/roles";
 import { queryKeys } from "../lib/staffApi";
 import { AI_CAPABILITIES, CATEGORIES, PRIORITY_COMPONENTS, type AiSettings } from "../lib/types";
 import { PageTitle } from "../components/PageTitle";
+import { Stepper } from "../components/Stepper";
 
 function useFieldError() {
   const { t } = useTranslation();
@@ -46,19 +47,18 @@ function NumberField({ id, label, value, onChange, rule, error, readOnly }: Numb
   return (
     <div className={`field field--number${message ? " field--invalid" : ""}`}>
       <label htmlFor={id}>{label}</label>
-      <input
+      <Stepper
         id={id}
-        type="number"
-        inputMode={rule.integer ? "numeric" : "decimal"}
         dir="ltr"
         min={rule.min}
         max={rule.max}
         step={rule.integer ? 1 : 0.01}
-        value={value}
+        value={value === "" ? null : Number(value)}
         readOnly={readOnly}
-        aria-invalid={message ? true : undefined}
-        aria-describedby={message ? errorId : undefined}
-        onChange={(e) => onChange(e.target.value)}
+        invalid={Boolean(message)}
+        describedBy={message ? errorId : undefined}
+        onChange={(n) => onChange(String(n))}
+        onClear={() => onChange("")}
       />
       {message && (
         <span id={errorId} className="field__error">

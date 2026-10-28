@@ -54,7 +54,7 @@ describe("InventoryPage", () => {
     fireEvent.change(within(form).getByLabelText("الوحدة"), { target: { value: "u-1" } });
     fireEvent.change(within(form).getByLabelText("الصنف"), { target: { value: "fire_engine" } });
     fireEvent.change(within(form).getByLabelText("التسمية"), { target: { value: "إطفاء 14" } });
-    fireEvent.change(within(form).getByLabelText(/السعة/), { target: { value: "2000" } });
+    fireEvent.change(within(form).getByRole("spinbutton", { name: /السعة/ }), { target: { value: "2000" } });
     fireEvent.click(within(form).getByLabelText("دفع رباعي"));
     fireEvent.click(within(form).getByRole("button", { name: "حفظ" }));
     await waitFor(() =>

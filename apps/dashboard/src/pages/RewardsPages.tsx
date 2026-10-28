@@ -30,6 +30,7 @@ import {
 import { canEditRewardRules, canManageRewards, canSeeRewardActivity } from "../lib/roles";
 import type { Category } from "../lib/types";
 import { PageTitle } from "../components/PageTitle";
+import { Stepper } from "../components/Stepper";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const ids = (text: string) => text.split(/[\s,]+/).filter(Boolean);
@@ -145,16 +146,15 @@ function RuleRow({ rule, editable }: { rule: RewardRule; editable: boolean }) {
             <label htmlFor={`${base}-v`} className="visually-hidden">
               {t("rewards.rules.valueOf", { rule: label })}
             </label>
-            <input
+            <Stepper
               id={`${base}-v`}
-              type="number"
-              className="input--short"
               step={multiplier ? 0.1 : 1}
               min={multiplier ? MULTIPLIER_RANGE[0] : POINTS_RANGE[0]}
               max={multiplier ? MULTIPLIER_RANGE[1] : POINTS_RANGE[1]}
-              value={value}
-              aria-invalid={invalid ? true : undefined}
-              onChange={(e) => setValue(e.target.value)}
+              value={value === "" ? null : Number(value)}
+              invalid={invalid}
+              onChange={(n) => setValue(String(n))}
+              onClear={() => setValue("")}
             />
             <button
               type="button"
@@ -244,7 +244,16 @@ function NewRuleForm() {
         <CategorySelect value={category} onChange={(c) => setCategory((c ?? "fire") as Category)} label={t("analytics.category")} />
         <div className={`field field--number${invalid ? " field--invalid" : ""}`}>
           <label htmlFor={`${base}-v`}>{isMultiplier(reason) ? t("rewards.rules.multiplier") : t("rewards.rules.pointsField")}</label>
-          <input id={`${base}-v`} type="number" value={value} onChange={(e) => setValue(e.target.value)} aria-describedby={`${base}-hint`} />
+          <Stepper
+            id={`${base}-v`}
+            step={isMultiplier(reason) ? 0.1 : 1}
+            min={isMultiplier(reason) ? MULTIPLIER_RANGE[0] : POINTS_RANGE[0]}
+            max={isMultiplier(reason) ? MULTIPLIER_RANGE[1] : POINTS_RANGE[1]}
+            value={value === "" ? null : Number(value)}
+            describedBy={`${base}-hint`}
+            onChange={(n) => setValue(String(n))}
+            onClear={() => setValue("")}
+          />
           <p id={`${base}-hint`} className="muted">
             {isMultiplier(reason)
               ? t("rewards.rules.multiplierRange", { min: MULTIPLIER_RANGE[0], max: MULTIPLIER_RANGE[1] })
@@ -515,7 +524,16 @@ function NominationForm({ onDone }: { onDone: () => void }) {
         </div>
         <div className={`field field--number${bad("year") ? " field--invalid" : ""}`}>
           <label htmlFor={`${base}-y`}>{t("rewards.nominations.year")}</label>
-          <input id={`${base}-y`} type="number" value={f.year} onChange={(e) => setF({ ...f, year: e.target.value })} />
+          <Stepper
+            id={`${base}-y`}
+            min={2000}
+            max={2100}
+            start={new Date().getFullYear()}
+            value={f.year === "" ? null : Number(f.year)}
+            label={t("rewards.nominations.year")}
+            onChange={(n) => setF({ ...f, year: String(n) })}
+            onClear={() => setF({ ...f, year: "" })}
+          />
         </div>
       </div>
       <div className={`field${bad("reason") ? " field--invalid" : ""}`}>

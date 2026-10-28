@@ -13,6 +13,7 @@ import { localized } from "../lib/localized";
 import { classificationsFor } from "../lib/opsTypes";
 import { canEditReportTemplates } from "../lib/roles";
 import { CATEGORIES, type Category } from "../lib/types";
+import { Stepper } from "../components/Stepper";
 
 const LANGS: Lang[] = ["ar", "fr", "en"];
 const KEY = /^[a-z0-9_]{1,40}$/;
@@ -181,12 +182,14 @@ function FieldEditor({
           />
           <div className="field field--inline">
             <label htmlFor={ids.max}>{t("templates.max")}</label>
-            <input
+            <Stepper
               id={ids.max}
-              type="number"
               min={1}
-              value={field.max ?? ""}
-              onChange={(e) => onChange({ ...field, max: e.target.value ? Number(e.target.value) : null })}
+              max={100000}
+              value={field.max ?? null}
+              label={t("templates.max")}
+              onChange={(n) => onChange({ ...field, max: n })}
+              onClear={() => onChange({ ...field, max: null })}
             />
           </div>
         </>

@@ -23,6 +23,7 @@ import { canCreateReports } from "../lib/roles";
 import type { Category } from "../lib/types";
 import { AnalyticsTabs } from "./AnalyticsPage";
 import { PageTitle } from "../components/PageTitle";
+import { Stepper } from "../components/Stepper";
 
 const FACTOR_MIN = 1;
 const FACTOR_MAX = 10;
@@ -147,17 +148,17 @@ function ScenarioForm() {
         <CategorySelect value={form.category} onChange={(c) => set({ category: (c ?? "fire") as Category })} label={t("scenarios.form.category")} />
         <div className={`field field--number${err("factor") ? " field--invalid" : ""}`}>
           <label htmlFor={`${base}-factor`}>{t("scenarios.form.factor")}</label>
-          <input
+          <Stepper
             id={`${base}-factor`}
-            type="number"
-            inputMode="decimal"
             min={FACTOR_MIN}
             max={FACTOR_MAX}
             step={0.1}
-            value={form.factor}
-            aria-invalid={err("factor") ? true : undefined}
-            aria-describedby={`${base}-factor-hint`}
-            onChange={(e) => set({ factor: e.target.value })}
+            value={form.factor === "" ? null : Number(form.factor)}
+            label={t("scenarios.form.factor")}
+            invalid={Boolean(err("factor"))}
+            describedBy={`${base}-factor-hint`}
+            onChange={(n) => set({ factor: String(n) })}
+            onClear={() => set({ factor: "" })}
           />
           <p id={`${base}-factor-hint`} className="muted">
             {t("scenarios.form.factorHint", { min: FACTOR_MIN, max: FACTOR_MAX })}
@@ -165,16 +166,16 @@ function ScenarioForm() {
         </div>
         <div className={`field field--number${err("horizon") ? " field--invalid" : ""}`}>
           <label htmlFor={`${base}-horizon`}>{t("scenarios.form.horizon")}</label>
-          <input
+          <Stepper
             id={`${base}-horizon`}
-            type="number"
             min={HORIZON_MIN}
             max={HORIZON_MAX}
-            step={1}
-            value={form.horizon}
-            aria-invalid={err("horizon") ? true : undefined}
-            aria-describedby={`${base}-horizon-hint`}
-            onChange={(e) => set({ horizon: e.target.value })}
+            value={form.horizon === "" ? null : Number(form.horizon)}
+            label={t("scenarios.form.horizon")}
+            invalid={Boolean(err("horizon"))}
+            describedBy={`${base}-horizon-hint`}
+            onChange={(n) => set({ horizon: String(n) })}
+            onClear={() => set({ horizon: "" })}
           />
           <p id={`${base}-horizon-hint`} className="muted">
             {t("scenarios.form.horizonHint", { min: HORIZON_MIN, max: HORIZON_MAX })}
@@ -197,14 +198,14 @@ function ScenarioForm() {
           {RESOURCE_KINDS.map((k) => (
             <div key={k} className="field field--number">
               <label htmlFor={`${base}-u-${k}`}>{t(`resources.kind.${k}`)}</label>
-              <input
+              <Stepper
                 id={`${base}-u-${k}`}
-                type="number"
                 min={0}
                 max={MAX_UNAVAILABLE}
-                step={1}
-                value={form.unavailable[k] ?? ""}
-                onChange={(e) => set({ unavailable: { ...form.unavailable, [k]: e.target.value } })}
+                value={form.unavailable[k] ? Number(form.unavailable[k]) : null}
+                label={t(`resources.kind.${k}`)}
+                onChange={(n) => set({ unavailable: { ...form.unavailable, [k]: String(n) } })}
+                onClear={() => set({ unavailable: { ...form.unavailable, [k]: "" } })}
               />
             </div>
           ))}

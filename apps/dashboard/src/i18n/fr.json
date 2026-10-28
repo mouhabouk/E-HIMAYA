@@ -6711,5 +6711,11 @@
       "notAllBlocked": "Pas toutes bloquées",
       "conclusion": "Conclusion"
     }
+  },
+  "stepper": {
+    "decrease": "Diminuer",
+    "increase": "Augmenter",
+    "decreaseNamed": "Diminuer : {{label}}",
+    "increaseNamed": "Augmenter : {{label}}"
   }
 }

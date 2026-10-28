@@ -461,6 +461,13 @@ function listQuery(q: ListQuery, key: "category" | "skill" = "category") {
   return { gouvernorat: q.gouvernorat, unit_id: q.unit, [key]: q.category };
 }
 
+/** The step of a specification by its unit: litres of a tank by 500, a flow by 100, the rest by one. */
+export function specStep(unit: string): number {
+  if (unit === "L") return 500;
+  if (unit === "L/min") return 100;
+  return 1;
+}
+
 export function inventoryApi(api: ApiClient) {
   return {
     inventoryCatalogue: (signal?: AbortSignal) => api.request<Catalogue>(`${I}/catalogue`, { signal }),

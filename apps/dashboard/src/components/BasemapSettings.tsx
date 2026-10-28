@@ -16,6 +16,7 @@ import {
 } from "../lib/basemap";
 import { useFormat } from "../lib/hooks";
 import { ErrorBox, Loading } from "./Feedback";
+import { Stepper } from "./Stepper";
 
 function SettingsForm({ saved }: { saved: BasemapSettings }) {
   const { t } = useTranslation();
@@ -75,14 +76,7 @@ function SettingsForm({ saved }: { saved: BasemapSettings }) {
         </div>
         <div className="field">
           <label htmlFor={`${id}-zoom`}>{t("basemap.settings.maxZoom")}</label>
-          <input
-            id={`${id}-zoom`}
-            type="number"
-            min={1}
-            max={22}
-            value={maxZoom}
-            onChange={(e) => setMaxZoom(Math.max(1, Math.min(22, Number(e.target.value) || 1)))}
-          />
+          <Stepper id={`${id}-zoom`} min={1} max={22} value={maxZoom} label={t("basemap.settings.maxZoom")} onChange={setMaxZoom} />
         </div>
       </div>
       <div className="field">

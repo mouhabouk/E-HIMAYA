@@ -6711,5 +6711,11 @@
       "notAllBlocked": "لم تُصدّ كلها",
       "conclusion": "الخلاصة"
     }
+  },
+  "stepper": {
+    "decrease": "إنقاص",
+    "increase": "زيادة",
+    "decreaseNamed": "إنقاص {{label}}",
+    "increaseNamed": "زيادة {{label}}"
   }
 }

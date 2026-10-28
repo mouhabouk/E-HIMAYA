@@ -26,6 +26,7 @@ import { queryKeys } from "../lib/staffApi";
 import type { IncidentDetail } from "../lib/types";
 import { useDraft } from "../lib/drafts";
 import { CrewLine, FieldSection, PositionLine, crewTimelineParts } from "./CrewBits";
+import { Stepper } from "./Stepper";
 
 /** A recommendation's "open assignment" (phase 7 §3): preselects a resource; the operator still submits. */
 export interface AssignPreset {
@@ -563,25 +564,11 @@ function CalloutForm({ incident }: { incident: IncidentDetail }) {
         </div>
         <div className="field field--number">
           <label htmlFor={ids.radius}>{t("ops.callout.radiusKm")}</label>
-          <input
-            id={ids.radius}
-            type="number"
-            min={1}
-            max={100}
-            value={radiusKm}
-            onChange={(e) => setRadiusKm(Math.min(100, Math.max(1, Number(e.target.value) || 1)))}
-          />
+          <Stepper id={ids.radius} min={1} max={100} value={radiusKm} label={t("ops.callout.radiusKm")} onChange={setRadiusKm} />
         </div>
         <div className="field field--number">
           <label htmlFor={ids.requested}>{t("ops.callout.requested")}</label>
-          <input
-            id={ids.requested}
-            type="number"
-            min={1}
-            max={50}
-            value={requested}
-            onChange={(e) => setRequested(Math.min(50, Math.max(1, Number(e.target.value) || 1)))}
-          />
+          <Stepper id={ids.requested} min={1} max={50} value={requested} label={t("ops.callout.requested")} onChange={setRequested} />
         </div>
       </div>
       <fieldset className="ops-suggestions">
@@ -770,12 +757,13 @@ function CloseForm({ incident }: { incident: IncidentDetail }) {
           {CASUALTY_KINDS.map((k) => (
             <div key={k} className="field field--number">
               <label htmlFor={`${ids.base}-${k}`}>{t(`ops.close.casualty.${k}`)}</label>
-              <input
+              <Stepper
                 id={`${ids.base}-${k}`}
-                type="number"
                 min={0}
+                max={10000}
                 value={casualties[k]}
-                onChange={(e) => setCasualties((c) => ({ ...c, [k]: Math.max(0, Math.floor(Number(e.target.value) || 0)) }))}
+                label={t(`ops.close.casualty.${k}`)}
+                onChange={(n) => setCasualties((c) => ({ ...c, [k]: Math.floor(n) }))}
               />
             </div>
           ))}

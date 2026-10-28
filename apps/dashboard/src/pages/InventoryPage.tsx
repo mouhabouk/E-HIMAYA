@@ -9,6 +9,7 @@ import { ErrorBox, Loading } from "../components/Feedback";
 import { AgentForm, categoryName, DeleteEntry, StockForm, TransferForm, TransfersPanel, VehicleForm } from "../components/InventoryForms";
 import { GouvernoratPicker, SearchTab } from "../components/InventorySearch";
 import { PageTitle } from "../components/PageTitle";
+import { Stepper } from "../components/Stepper";
 import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
 import { errorMessageKey } from "../lib/api";
@@ -896,7 +897,7 @@ function CategoryForm({ onDone }: { onDone: () => void }) {
         {kind === "skill" && (
           <div className="field">
             <label htmlFor={`${id}-levels`}>{t("inventory.catalogue.levels")}</label>
-            <input id={`${id}-levels`} type="number" min={0} max={5} value={levels} onChange={(e) => setLevels(Math.max(0, Math.min(5, Number(e.target.value) || 0)))} />
+            <Stepper id={`${id}-levels`} min={0} max={5} value={levels} label={t("inventory.catalogue.levels")} onChange={setLevels} />
           </div>
         )}
       </div>

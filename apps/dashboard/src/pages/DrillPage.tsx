@@ -11,6 +11,7 @@ import { DecisionPill, DRILL_HAZARDS, DrillStatusPill, Needs } from "../componen
 import { ErrorBox, Loading } from "../components/Feedback";
 import { PageTitle } from "../components/PageTitle";
 import { ReasonField } from "../components/Phase9Bits";
+import { Stepper } from "../components/Stepper";
 import { useServices } from "../context/services";
 import { errorMessageKey, isApiError } from "../lib/api";
 import {
@@ -254,15 +255,16 @@ function InjectForm({ drill }: { drill: Drill }) {
       <div className="form-grid">
         <div className="field">
           <label htmlFor={`${id}-offset`}>{t("drill.inject.offset")}</label>
-          <input
+          <Stepper
             id={`${id}-offset`}
-            type="number"
             min={0}
             max={drill.duration_min - 1}
+            step={5}
             value={f.offset_min}
-            aria-required="true"
-            aria-invalid={(tried && !offsetOk) || undefined}
-            onChange={(e) => setF({ ...f, offset_min: Number(e.target.value) })}
+            label={t("drill.inject.offset")}
+            required
+            invalid={tried && !offsetOk}
+            onChange={(n) => setF({ ...f, offset_min: n })}
           />
         </div>
         <div className="field">
@@ -310,15 +312,15 @@ function InjectForm({ drill }: { drill: Drill }) {
         <legend>{t("drill.inject.needs")}</legend>
         <div className="drill-needs__grid">
           {RESOURCE_KINDS.map((k) => (
-            <label key={k} className="drill-needs__item">
-              <span>{t(`resources.kind.${k}`)}</span>
-              <input
-                type="number"
+            <div key={k} className="drill-needs__item">
+              <span id={`${id}-need-${k}`}>{t(`resources.kind.${k}`)}</span>
+              <Stepper
                 min={0}
                 max={50}
                 value={needs[k] ?? 0}
-                onChange={(e) => {
-                  const n = Math.max(0, Math.min(50, Number(e.target.value) || 0));
+                labelledBy={`${id}-need-${k}`}
+                label={t(`resources.kind.${k}`)}
+                onChange={(n) => {
                   setNeeds((cur) => {
                     const rest: Partial<Record<ResourceKind, number>> = {};
                     for (const kind of RESOURCE_KINDS) if (kind !== k && cur[kind]) rest[kind] = cur[kind];
@@ -326,7 +328,7 @@ function InjectForm({ drill }: { drill: Drill }) {
                   });
                 }}
               />
-            </label>
+            </div>
           ))}
         </div>
       </fieldset>
@@ -368,11 +370,11 @@ function Generator({ drill }: { drill: Drill }) {
       <div className="form-grid">
         <div className="field">
           <label htmlFor={`${id}-count`}>{t("drill.generate.count")}</label>
-          <input id={`${id}-count`} type="number" min={1} max={300} value={count} onChange={(e) => setCount(Number(e.target.value))} />
+          <Stepper id={`${id}-count`} min={1} max={300} step={10} value={count} label={t("drill.generate.count")} onChange={setCount} />
         </div>
         <div className="field">
           <label htmlFor={`${id}-seed`}>{t("drill.generate.seed")}</label>
-          <input id={`${id}-seed`} type="number" min={0} value={seed} onChange={(e) => setSeed(Number(e.target.value))} />
+          <Stepper id={`${id}-seed`} min={0} max={2 ** 31 - 1} value={seed} label={t("drill.generate.seed")} onChange={setSeed} />
         </div>
       </div>
       <fieldset>
@@ -687,7 +689,7 @@ function EvaluateRow({ drill, inject }: { drill: Drill; inject: Inject }) {
         <label className="visually-hidden" htmlFor={`${id}-s`}>
           {t("drill.eval.score")}
         </label>
-        <input id={`${id}-s`} type="number" min={0} max={5} value={score} onChange={(e) => setScore(Number(e.target.value))} />
+        <Stepper id={`${id}-s`} min={0} max={5} value={score} label={t("drill.eval.score")} onChange={setScore} />
       </td>
       <td>
         <label className="visually-hidden" htmlFor={`${id}-n`}>
