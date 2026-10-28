@@ -277,7 +277,7 @@ function DispatchCard({ d, centre }: { d: Dispatch; centre: boolean }) {
           : d.audience === "all"
             ? t("dispatch.audienceOf.all")
             : t("dispatch.toCount", { n: d.targets })}
-        {d.created_by_name && <> · {d.created_by_name}</>}
+        {d.created_by_name && <> · {simText(d.created_by_name).text}</>}
         {d.attachments > 0 && <> · {t("dispatch.files", { n: d.attachments })}</>}
         {centre && d.kind === "directive" && d.reply_required && <> · {t("dispatch.repliedOf", { replied: d.replied, n: d.targets })}</>}
         {!centre && d.kind === "directive" && <> · {d.replied ? t("dispatch.youReplied") : d.reply_required ? t("dispatch.awaitingYou") : t("dispatch.forInfo")}</>}
@@ -454,7 +454,7 @@ function Thread({ d, thread, centre }: { d: DispatchDetail; thread: DispatchDeta
             <li key={r.id} className={`thread__msg thread__msg--${r.side}`}>
               <p className="thread__head">
                 <strong>{r.side === "centre" ? t("dispatch.centre") : thread.gouvernorat_name}</strong>
-                {r.created_by_name && <span className="muted"> · {r.created_by_name}</span>}
+                {r.created_by_name && <span className="muted"> · {simText(r.created_by_name).text}</span>}
                 <time className="muted" dateTime={r.created_at}>
                   {" "}
                   · {fmt.dateTime(r.created_at)}
@@ -462,7 +462,7 @@ function Thread({ d, thread, centre }: { d: DispatchDetail; thread: DispatchDeta
               </p>
               {r.body && (
                 <p className="report-text" dir="auto">
-                  {r.body}
+                  {simText(r.body).text}
                 </p>
               )}
               <Attachments items={r.attachments} />
@@ -531,7 +531,7 @@ export function DispatchPage() {
               : t("dispatch.toCount", { n: x.targets })}
         </span>
         <span>
-          {x.created_by_name} · {fmt.dateTime(x.created_at)}
+          {simText(x.created_by_name ?? "").text} · {fmt.dateTime(x.created_at)}
         </span>
         {x.reply_due_at && <span>{t("dispatch.dueOn", { at: fmt.dateTime(x.reply_due_at) })}</span>}
         {simText(x.subject).sim && <SimBadge />}
@@ -541,7 +541,7 @@ export function DispatchPage() {
         <h2 id={`${fid}-b`}>{t("dispatch.text")}</h2>
         {x.body ? (
           <p className="report-text" dir="auto">
-            {x.body}
+            {simText(x.body).text}
           </p>
         ) : (
           <p className="muted">{t("dispatch.noText")}</p>

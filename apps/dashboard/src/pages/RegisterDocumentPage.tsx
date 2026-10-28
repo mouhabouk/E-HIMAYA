@@ -108,7 +108,7 @@ function RecommendationRow({ r, canEdit }: { r: Recommendation; canEdit: boolean
     <li className={`recommendation${r.overdue ? " is-overdue" : ""}`}>
       <span className="recommendation__no">{r.number}</span>
       <div className="recommendation__body">
-        <p dir="auto">{r.body}</p>
+        <p dir="auto">{simText(r.body).text}</p>
         <p className="muted">
           {r.responsible && <>{r.responsible} · </>}
           {r.due_on ? t("register.rec.due", { date: fmt.date(r.due_on) }) : t("register.rec.noDue")}
@@ -335,7 +335,7 @@ function Revisions({ id: docId }: { id: string }) {
               <span>
                 {t("register.revisions.version", { n: r.version })} · {t(`register.revisions.change.${r.change}`, { defaultValue: r.change })}
               </span>
-              {r.created_by_name && <span className="muted">{r.created_by_name}</span>}
+              {r.created_by_name && <span className="muted">{simText(r.created_by_name).text}</span>}
               {r.reason && <span className="muted">· {r.reason}</span>}
             </li>
           ))}
@@ -519,12 +519,12 @@ export function RegisterDocumentPage() {
         <h2 id="doc-text">{t("register.text")}</h2>
         {x.summary && (
           <p className="register-doc__summary" dir="auto">
-            {x.summary}
+            {simText(x.summary).text}
           </p>
         )}
         {d.body ? (
           <p className="report-text" dir="auto">
-            {d.body}
+            {simText(d.body).text}
           </p>
         ) : (
           !x.summary && <p className="muted">{t("register.noText")}</p>

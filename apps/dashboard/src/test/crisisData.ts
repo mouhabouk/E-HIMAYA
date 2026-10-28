@@ -364,7 +364,7 @@ NABEUL_AXIS.plan_document = {
 };
 NABEUL_DETAIL.documents = [
   NABEUL_AXIS.plan_document,
-  { id: "reg-axis", number: "REG-2026-0051", reference: "AX-2026-007 · 2", title: "[SIM] فيضانات نابل، أكتوبر 2026 (AX-2026-007) · 2", kind: "decision", status: "in_force" },
+  { id: "reg-axis", number: "REG-2026-0051", reference: "AX-2026-007 · 2", title: "[SIM] فيضانات نابل، أكتوبر 2026 : إخلاء الأحياء المنخفضة بمنزل تميم.", kind: "decision", status: "in_force" },
 ];
 NABEUL_DETAIL.sitreps = SITREPS;
 NABEUL_DETAIL.timeline = [

@@ -60,7 +60,7 @@ export function DocumentCard({ d }: { d: RegisterDocument }) {
           <bdi>{d.reference}</bdi>
         </p>
       )}
-      {d.excerpt ? <Excerpt text={d.excerpt} /> : d.summary && <p className="register-card__summary">{d.summary}</p>}
+      {d.excerpt ? <Excerpt text={d.excerpt} /> : d.summary && <p className="register-card__summary">{simText(d.summary).text}</p>}
       <p className="muted register-card__foot">
         {d.issuer} · {t("register.issuedOn", { date: fmt.date(d.issued_on) })} · <Validity d={d} />
         {d.file_name && <> · {t("register.hasFile")}</>}

@@ -491,7 +491,10 @@ async def record_directive(
     central; the governor's is regional. The governor's decisions it overrides are repealed by it."""
     minister = issuer_role == "minister"
     issued_on = issued_at.date()
-    title = f"{axis_name} ({axis_number}) · {number}"
+    # The reference already carries the axis number and the order; the title says what was decided.
+    gist = " ".join(body.split())
+    gist = gist if len(gist) <= 140 else gist[:139].rstrip() + "…"
+    title = f"{axis_name}: {gist}" if gist else axis_name
     doc = Document(
         id=uuid.uuid4(),
         number=await next_number(session, issued_on.year),

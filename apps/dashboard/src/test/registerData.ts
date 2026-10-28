@@ -105,7 +105,7 @@ export const AXIS_DECISION = doc({
   gouvernorat_name: null,
   issuer: "وزير الداخلية",
   signatory: "[SIM] وزير الداخلية",
-  title: "[SIM] فيضانات نابل، أكتوبر 2026 (AX-2026-007) · 2",
+  title: "[SIM] فيضانات نابل، أكتوبر 2026: إخلاء الأحياء المنخفضة بمنزل تميم.",
   summary: "إخلاء الأحياء المنخفضة بمنزل تميم. [SIM]",
   topics: ["floods", "civil_protection"],
   issued_on: day(0),
