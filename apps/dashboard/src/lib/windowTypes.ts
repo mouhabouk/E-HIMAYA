@@ -255,3 +255,19 @@ export interface ExportIn {
   filters: WindowFilters;
   compare?: (CompareQuery & { filters: WindowFilters }) | null;
 }
+
+export interface SummaryIn {
+  kind: "search" | "compare";
+  lang: "ar" | "fr" | "en";
+  filters: WindowFilters;
+  compare?: (CompareQuery & { filters: WindowFilters }) | null;
+}
+
+/** The advisory written summary (§9, item 1); `supported` false: the model's answer was refused. */
+export interface WindowSummary {
+  text: string;
+  supported: boolean;
+  model: string;
+  notice: string;
+  generated_at: string;
+}

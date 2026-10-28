@@ -33278,6 +33278,46 @@
         "title": "SummaryHazmat",
         "type": "object"
       },
+      "SummaryIn": {
+        "properties": {
+          "compare": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CompareIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "filters": {
+            "$ref": "#/components/schemas/Filters"
+          },
+          "kind": {
+            "enum": [
+              "search",
+              "compare"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "lang": {
+            "default": "ar",
+            "enum": [
+              "ar",
+              "fr",
+              "en"
+            ],
+            "title": "Lang",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "title": "SummaryIn",
+        "type": "object"
+      },
       "SummaryTeamMember": {
         "properties": {
           "full_name": {
@@ -45963,6 +46003,40 @@
           "min_cell"
         ],
         "title": "SearchOut",
+        "type": "object"
+      },
+      "app__modules__window__schemas__SummaryOut": {
+        "properties": {
+          "generated_at": {
+            "format": "date-time",
+            "title": "Generated At",
+            "type": "string"
+          },
+          "model": {
+            "title": "Model",
+            "type": "string"
+          },
+          "notice": {
+            "title": "Notice",
+            "type": "string"
+          },
+          "supported": {
+            "title": "Supported",
+            "type": "boolean"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "supported",
+          "model",
+          "notice",
+          "generated_at"
+        ],
+        "title": "SummaryOut",
         "type": "object"
       }
     },
@@ -81883,6 +81957,53 @@
           }
         ],
         "summary": "Delete Search",
+        "tags": [
+          "window"
+        ]
+      }
+    },
+    "/api/v1/staff/window/summary": {
+      "post": {
+        "description": "The advisory written summary of a search or a comparison (§9, item 1), from the aggregates only; audited.",
+        "operationId": "write_summary_api_v1_staff_window_summary_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SummaryIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__window__schemas__SummaryOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Write Summary",
         "tags": [
           "window"
         ]

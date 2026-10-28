@@ -13,10 +13,12 @@ import type {
   ExportIn,
   SavedSearch,
   SearchResult,
+  SummaryIn,
   Synonym,
   WindowAccess,
   WindowFilters,
   WindowNow,
+  WindowSummary,
 } from "./windowTypes";
 
 export type * from "./windowTypes";
@@ -73,6 +75,7 @@ export function windowApi(api: ApiClient) {
       const response = await api.requestRaw(`${W}/export`, { method: "POST", body, accept: "*/*" });
       return { blob: await response.blob(), filename: filenameOf(response, `e-himaya-window.${body.format}`) };
     },
+    windowSummary: (body: SummaryIn) => api.request<WindowSummary>(`${W}/summary`, { method: "POST", body }),
     savedSearches: (signal?: AbortSignal) => api.request<SavedSearch[]>(`${W}/searches`, { signal }),
     saveSearch: (body: Omit<SavedSearch, "id" | "created_at">) =>
       api.request<SavedSearch>(`${W}/searches`, { method: "POST", body }),

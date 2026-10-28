@@ -169,6 +169,41 @@ function ExportButtons({ build }: { build: (format: "pdf" | "xlsx") => Parameter
   );
 }
 
+/** The advisory written summary of what is shown (§9, item 1): asked for, labelled, never a decision. */
+function SummaryPanel({ build }: { build: () => Parameters<ReturnType<typeof useServices>["api"]["windowSummary"]>[0] }) {
+  const { t } = useTranslation();
+  const { api } = useServices();
+  const fmt = useFormat();
+  const run = useMutation({ mutationFn: () => api.windowSummary(build()) });
+  return (
+    <div className="win-summary">
+      <button type="button" className="btn btn--small" disabled={run.isPending} onClick={() => run.mutate()}>
+        {t(run.data ? "window.summary.again" : "window.summary.ask")}
+      </button>
+      {run.isPending && <Loading />}
+      {run.isError && (
+        <p className="alert alert--error" role="alert">
+          {t(errorMessageKey(run.error))}
+        </p>
+      )}
+      {run.data && (
+        <section className="win-summary__body" aria-label={t("window.summary.label")}>
+          <p>
+            <span className="tag tag--ai">{t("window.summary.label")}</span>{" "}
+            <span className="muted">
+              {run.data.model} · {fmt.dateTime(run.data.generated_at)}
+            </span>
+          </p>
+          <p dir="auto" className={run.data.supported ? "" : "muted"}>
+            {run.data.text}
+          </p>
+          <p className="muted">{run.data.notice}</p>
+        </section>
+      )}
+    </div>
+  );
+}
+
 // ---------------------------------------------------------------- the situation now
 
 function NowTab() {
@@ -550,6 +585,7 @@ function SearchTab({ access }: { access: WindowAccess }) {
           </div>
           {access.delegated && !access.full && <p className="alert alert--info">{t("window.delegatedScope")}</p>}
           <Understood result={q.data} />
+          <SummaryPanel build={() => ({ kind: "search", lang, filters })} />
           <FiguresView figures={q.data.figures} minCell={q.data.min_cell} />
           <div className="table-wrap">
             <table className="table table--compact">
@@ -767,6 +803,7 @@ function CompareTab() {
             <h2 id={`${id}-res`}>{t("window.compare.title")}</h2>
             <ExportButtons build={(format) => ({ kind: "compare", format, lang, filters: asked.f, compare: { ...asked.c, filters: asked.f } })} />
           </div>
+          <SummaryPanel build={() => ({ kind: "compare", lang, filters: asked.f, compare: { ...asked.c, filters: asked.f } })} />
           <CompareTable result={q.data} />
           <p className="muted">{t("window.floor", { n: q.data.min_cell })}</p>
         </section>

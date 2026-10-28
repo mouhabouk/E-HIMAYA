@@ -17,7 +17,7 @@ from app.modules.access.keycloak import get_directory as _get_directory
 from app.modules.analytics import documents
 from app.modules.analytics import service as analytics
 from app.modules.audit import service as audit
-from app.modules.window import access, exports, schemas, service
+from app.modules.window import access, exports, schemas, service, summary
 from app.modules.window.access import Viewer
 from app.modules.window.models import SavedSearch, Synonym, WindowDelegation, WindowEvent
 
@@ -204,6 +204,32 @@ async def export(principal: AnyStaff, session: Session, body: schemas.ExportIn) 
         data,
         media_type=_MEDIA[body.format],
         headers={"Content-Disposition": f'attachment; filename="e-himaya-window-{body.kind}-{stamp}.{body.format}"'},
+    )
+
+
+@router.post("/summary", response_model=schemas.SummaryOut)
+async def write_summary(principal: AnyStaff, session: Session, body: schemas.SummaryIn) -> schemas.SummaryOut:
+    """The advisory written summary of a search or a comparison (§9, item 1), from the aggregates only; audited."""
+    viewer = await _viewer(session, principal, "summary")
+    names = await analytics.gouvernorat_names(session)
+    if body.kind == "search":
+        out = await service.search(session, viewer, body.filters)
+        facts, min_cell = summary.search_facts(out, body.lang, names), out.min_cell
+    else:
+        result = await service.compare(session, viewer, body.compare or schemas.CompareIn(filters=body.filters))
+        facts, min_cell = summary.compare_facts(result, body.lang, names), result.min_cell
+    text_out, supported, model = await summary.write(facts, body.lang, min_cell)
+    await audit.record(
+        session,
+        actor=audit.actor_of(principal),
+        action="window.summary",
+        target=f"window:{body.kind}",
+        details={"lang": body.lang, "supported": supported, "model": model, "delegated": viewer.delegated},
+        gouvernorats=viewer.codes or None,
+    )
+    await session.commit()
+    return schemas.SummaryOut(
+        text=text_out, supported=supported, model=model, notice=summary.NOTICE[body.lang], generated_at=_now()
     )
 
 

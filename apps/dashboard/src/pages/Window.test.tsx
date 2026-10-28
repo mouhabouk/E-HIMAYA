@@ -35,6 +35,11 @@ describe("WindowPage", () => {
     expect(within(byCategory).getByText("<5")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "7d1f5a2e" })).toHaveAttribute("href", "/incidents/7d1f5a2e-0c4b-4c55-9f0e-2a6c1b9e8d01");
 
+    fireEvent.click(screen.getByRole("button", { name: "اكتب ملخصا (ذكاء اصطناعي)" }));
+    expect(await screen.findByText(/\[SIM\] سُجّل 42 تدخلا/)).toBeInTheDocument();
+    expect(win.windowSummary).toHaveBeenCalledWith(expect.objectContaining({ kind: "search", lang: "ar" }));
+    expect(screen.getAllByText("ملخص آلي استشاري").length).toBeGreaterThan(0);
+
     fireEvent.click(screen.getByRole("button", { name: "تقرير PDF" }));
     await waitFor(() => expect(win.windowExport).toHaveBeenCalledWith(expect.objectContaining({ kind: "search", format: "pdf", lang: "ar" })));
     vi.unstubAllGlobals();

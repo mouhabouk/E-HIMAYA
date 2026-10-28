@@ -8,6 +8,7 @@ import type {
   Synonym,
   WindowAccess,
   WindowNow,
+  WindowSummary,
 } from "../lib/windowTypes";
 
 /**
@@ -222,3 +223,11 @@ export const WINDOW_SAVED: SavedSearch[] = [
 export const WINDOW_SYNONYMS: Synonym[] = [
   { id: "y-1", meaning: "traffic_accident", words: ["كسيدة", "اكسيدان", "accident"], updated_by_name: "e-Himaya", updated_at: "2026-10-28T00:00:00Z" },
 ];
+
+export const WINDOW_SUMMARY: WindowSummary = {
+  text: "[SIM] سُجّل 42 تدخلا في جويلية، منها 27 حريقا و11 حادث مرور.",
+  supported: true,
+  model: "qwen3",
+  notice: "ملخص آلي استشاري، أعدّه نموذج لغوي محلي من الأعداد المجمّعة المعروضة فقط. راجع الأرقام قبل اعتماده.",
+  generated_at: "2026-10-28T09:00:00Z",
+};

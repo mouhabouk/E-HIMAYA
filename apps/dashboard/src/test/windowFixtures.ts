@@ -8,6 +8,7 @@ import {
   WINDOW_NOW,
   WINDOW_SAVED,
   WINDOW_SEARCH,
+  WINDOW_SUMMARY,
   WINDOW_SYNONYMS,
 } from "./windowData";
 
@@ -21,6 +22,7 @@ export function fakeWindowApi(): ReturnType<typeof windowApi> {
     windowSearch: vi.fn(() => Promise.resolve(WINDOW_SEARCH)),
     windowCompare: vi.fn(() => Promise.resolve(WINDOW_COMPARE)),
     windowExport: vi.fn(() => Promise.resolve({ blob: new Blob(["x"]), filename: "window.pdf" })),
+    windowSummary: vi.fn(() => Promise.resolve(WINDOW_SUMMARY)),
     savedSearches: vi.fn(() => Promise.resolve(WINDOW_SAVED)),
     saveSearch: vi.fn(() => Promise.resolve(SAVED)),
     deleteSearch: vi.fn(() => Promise.resolve(undefined)),

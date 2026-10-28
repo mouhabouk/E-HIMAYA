@@ -6424,6 +6424,11 @@
       "compare": "Comparison",
       "delegations": "Delegations",
       "dictionary": "Dictionary"
+    },
+    "summary": {
+      "ask": "Write a summary (AI)",
+      "again": "Write again",
+      "label": "Advisory automatic summary"
     }
   }
 }

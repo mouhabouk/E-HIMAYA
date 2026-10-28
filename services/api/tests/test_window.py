@@ -3,6 +3,7 @@ figures are aggregated with the small counts hidden and no personal data; two pe
 side by side; reports export in PDF and XLSX and are audited; the minister, governors and committees see the window
 only through a delegation, on its events only; saved searches and the dictionary of the central room."""
 
+import json
 import uuid
 from collections.abc import Callable, Iterator
 from datetime import UTC, datetime, timedelta
@@ -13,8 +14,10 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.access import keycloak
-from app.modules.window import service
+from app.modules.decision import llm
+from app.modules.window import service, summary
 from tests.test_accounts import FakeDirectory
+from tests.test_decision import FakeLlm
 
 Staff = Callable[..., dict[str, str]]
 URL = "/api/v1/staff/window"
@@ -325,3 +328,37 @@ async def test_saved_searches_and_the_dictionary(
     assert r.status_code == 200, r.text
     r = await client.get(f"{URL}/search", params={"q": "لهيب", "from": JULY_A[0], "to": JULY_A[1]}, headers=me)
     assert r.json()["understood"][0]["kind"] == "category" and r.json()["figures"]["incidents"] == 6
+
+
+# ---------------------------------------------------------------- the written summary (§9, item 1)
+
+
+def test_a_summary_keeps_to_the_figures() -> None:
+    facts = {"period": "2011-07-01 → 2011-07-31", "figures": {"incidents": 8, "rate": 0.814, "flood": "<5"}}
+    assert summary.faithful("٨ تدخلات في جويلية 2011، والنسبة 81%، والفيضانات أقل من 5.", facts | {"floor": 5})
+    assert summary.faithful("8 interventions du 1 au 31 juillet, taux 81.4 %.", facts)
+    assert not summary.faithful("8 interventions, soit 12 de plus.", facts)
+
+
+async def test_summary_of_a_search_from_aggregates_only(
+    client: httpx.AsyncClient, staff: Staff, session: AsyncSession, seeded: dict[str, list[str]]
+) -> None:
+    body = {"kind": "search", "lang": "ar", "filters": {"from": JULY_A[0], "to": JULY_A[1]}}
+    assert (await client.post(f"{URL}/summary", json=body, headers=room(staff))).status_code == 503
+    fake = FakeLlm()
+    fake.reply = lambda system, user: json.dumps({"summary": "سُجّل 8 تدخلات منها 6 حرائق، وأقل من 5 فيضانات."})
+    llm.set_llm(fake)
+    try:
+        r = await client.post(f"{URL}/summary", json=body, headers=room(staff))
+        assert r.status_code == 200, r.text
+        assert r.json()["supported"] and r.json()["text"].startswith("سُجّل 8") and "استشاري" in r.json()["notice"]
+        _, user = fake.prompts[-1]
+        assert "<figures>" in user and "فلان" not in user and seeded["a"][0] not in user
+        # A number that is not one of the figures: the summary is refused, not shown.
+        fake.reply = lambda system, user: json.dumps({"summary": "سُجّل 8 تدخلات، بزيادة 30 عن العام الماضي."})
+        r = await client.post(f"{URL}/summary", json=body, headers=room(staff))
+        assert not r.json()["supported"] and "30" not in r.json()["text"]
+    finally:
+        llm.set_llm(None)
+    n = await session.scalar(text("SELECT count(*) FROM audit.log WHERE action = 'window.summary'"))
+    assert int(n or 0) >= 2

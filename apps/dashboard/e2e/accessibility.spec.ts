@@ -26,6 +26,7 @@ import {
   WINDOW_NOW,
   WINDOW_SAVED,
   WINDOW_SEARCH,
+  WINDOW_SUMMARY,
   WINDOW_SYNONYMS,
 } from "../src/test/windowData";
 import { SCHEDULE_OPTIONS, SCHEDULE_PROGRESS, SCHEDULE_SETTINGS, SCHEDULE_SLOT, SCHEDULE_TEMPLATES } from "../src/test/scheduleData";
@@ -171,6 +172,8 @@ async function mockApi(page: Page): Promise<string[]> {
     if (common) return common;
     // Phase R2: the search of the resources register is a POST that answers.
     if (pathname === "/api/v1/staff/inventory/search") return json(route, SEARCH_RESULT);
+    // Phase L4 §9: the written summary of the decision window is a POST that answers.
+    if (pathname === "/api/v1/staff/window/summary") return json(route, WINDOW_SUMMARY);
     if (request.method() !== "GET") return json(route, {}, 204);
     if (pathname === "/api/v1/staff/kpis") {
       return json(route, {
@@ -372,6 +375,8 @@ test.describe("accessibility of the decision window (ar)", () => {
       await scan(page, `/window now ${theme}`);
       await page.getByRole("tab", { name: "البحث" }).click();
       await expect(page.locator("main .win-understood")).toBeVisible();
+      await page.getByRole("button", { name: "اكتب ملخصا (ذكاء اصطناعي)" }).click();
+      await expect(page.locator("main .win-summary__body")).toBeVisible();
       await scan(page, `/window search ${theme}`);
       await page.getByRole("tab", { name: "المقارنة" }).click();
       await page.getByRole("button", { name: "قارن" }).click();

@@ -6424,6 +6424,11 @@
       "compare": "Comparaison",
       "delegations": "Délégations",
       "dictionary": "Dictionnaire"
+    },
+    "summary": {
+      "ask": "Rédiger une synthèse (IA)",
+      "again": "Rédiger à nouveau",
+      "label": "Synthèse automatique indicative"
     }
   }
 }

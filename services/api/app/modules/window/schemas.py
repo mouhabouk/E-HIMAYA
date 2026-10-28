@@ -293,3 +293,19 @@ class ExportIn(BaseModel):
     lang: Lang = "ar"
     filters: Filters = Field(default_factory=Filters)
     compare: CompareIn | None = None
+
+
+class SummaryIn(BaseModel):
+    kind: Literal["search", "compare"]
+    lang: Lang = "ar"
+    filters: Filters = Field(default_factory=Filters)
+    compare: CompareIn | None = None
+
+
+class SummaryOut(BaseModel):
+    text: str
+    # False: the model's answer was refused (not JSON, or a number that is not one of the figures).
+    supported: bool
+    model: str
+    notice: str
+    generated_at: datetime

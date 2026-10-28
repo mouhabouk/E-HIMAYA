@@ -457,6 +457,12 @@ CATALOGUE: tuple[Spec, ...] = (
         ),
         tab("window.compare", ("المقارنة", "Comparaison", "Comparison"), "GET /window/compare", flags="fixed"),
         button(
+            "window.summary",
+            ("ملخص مكتوب بالذكاء الاصطناعي", "Synthèse rédigée par l'IA", "AI written summary"),
+            "POST /window/summary",
+            flags="fixed",
+        ),
+        button(
             "window.export",
             ("تصدير تقرير", "Exporter un rapport", "Export a report"),
             "POST /window/export",
