@@ -18,6 +18,9 @@ import {
   canHandleContact,
   canOpenCoastal,
   canOpenProgrammes,
+  canOpenAxes,
+  canOpenCommand,
+  canOpenRegister,
   canOpenLayers,
   canManageAccounts,
   canOpenCrew,
@@ -92,6 +95,14 @@ const ScenariosPage = page(() => import("./pages/ScenariosPage"), "ScenariosPage
 const ScenarioDetailPage = page(() => import("./pages/ScenariosPage"), "ScenarioDetailPage");
 const ReportsLibraryPage = page(() => import("./pages/ReportsLibraryPage"), "ReportsLibraryPage");
 const ReportSchedulesPage = page(() => import("./pages/ReportSchedulesPage"), "ReportSchedulesPage");
+const CommandPage = page(() => import("./pages/CommandPage"), "CommandPage");
+const AxesPage = page(() => import("./pages/AxesPage"), "AxesPage");
+const AxisPage = page(() => import("./pages/AxisPage"), "AxisPage");
+// Phase L3b: register of plans, decisions and instructions.
+const RegisterPage = page(() => import("./pages/RegisterPage"), "RegisterPage");
+const RegisterDocumentPage = page(() => import("./pages/RegisterDocumentPage"), "RegisterDocumentPage");
+const DispatchesPage = page(() => import("./pages/DispatchPages"), "DispatchesPage");
+const DispatchPage = page(() => import("./pages/DispatchPages"), "DispatchPage");
 const MemoryListPage = page(() => import("./pages/MemoryListPage"), "MemoryListPage");
 const MemoryEntryPage = page(() => import("./pages/MemoryEntryPage"), "MemoryEntryPage");
 const EventsLibraryPage = page(() => import("./pages/EventsLibraryPage"), "EventsLibraryPage");
@@ -219,6 +230,13 @@ export function AppRoutes() {
         <Route path="coastal" element={gated(canOpenCoastal, <CoastalPage />)} />
         <Route path="programmes" element={gated(canOpenProgrammes, <ProgrammesPage />)} />
         <Route path="programmes/:id" element={gated(canOpenProgrammes, <ProgrammeDetailPage />)} />
+        <Route path="axes" element={gated(canOpenAxes, <AxesPage />)} />
+        <Route path="axes/:id" element={gated(canOpenAxes, <AxisPage />)} />
+        <Route path="register" element={gated(canOpenRegister, <RegisterPage />)} />
+        <Route path="register/dispatches" element={gated(canOpenRegister, <DispatchesPage />)} />
+        <Route path="register/dispatches/:id" element={gated(canOpenRegister, <DispatchPage />)} />
+        <Route path="register/:id" element={gated(canOpenRegister, <RegisterDocumentPage />)} />
+        <Route path="command" element={gated(canOpenCommand, <CommandPage />)} />
         <Route path="emergency-guide" element={gated(canEditTips, <EmergencyGuidePage />)} />
         <Route path="contact" element={gated(canHandleContact, <ContactInboxPage />)} />
         <Route path="committee" element={committee(<CommitteePage />)} />

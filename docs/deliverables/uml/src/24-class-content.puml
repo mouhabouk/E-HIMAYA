@@ -37,6 +37,12 @@ class CoucheCarte {
   champs : colonne → publics
   supprimée_le, motif (30 jours)
 }
+class DossierCouches {
+  clé, noms (ar, fr, en)
+  icône, couleur, ordre
+  sensible
+  -- n'accorde aucun droit (UI-3b)
+}
 class RévisionCouche {
   numéro, action, instantané
   motif, auteur, date
@@ -129,6 +135,7 @@ SuggestionMétéo ..> Message : devient
 ThèmeGuide "1" *-- "*" ÉlémentGuide
 CoucheCarte "1" *-- "*" ÉlémentCouche
 CoucheCarte "1" *-- "*" RévisionCouche
+DossierCouches "1" o-- "*" CoucheCarte : dossier (ou celui que\nsa clé suggère, UI-3b)
 ÉlémentCouche "1" -- "0..1" Plage : couche des plages
 Plage "1" *-- "*" HeureMarine
 Plage "1" *-- "*" RisqueJour

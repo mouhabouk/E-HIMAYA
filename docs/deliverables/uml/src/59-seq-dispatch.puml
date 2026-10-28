@@ -1,0 +1,32 @@
+@startuml
+!include style.iuml
+title Séquence : directive aux wilayas, fils de réponses privés et notification immédiate (L3b)
+autonumber
+actor "Salle centrale" as CEN
+participant "Tableau de bord" as UI
+participant "API" as API
+database "PostgreSQL (RLS)" as DB
+participant "Stockage objet" as S3
+actor "Salle régionale\nNabeul" as NAB
+actor "Salle régionale\nSousse" as SOU
+CEN -> UI : directive générale, urgence, échéance,\ntexte et modèle Excel
+UI -> API : POST /register/dispatches (audience tous)
+API -> DB : envoi DIR-2026-0042 + 24 destinataires
+UI -> API : PUT /dispatches/{id}/attachments (fichier)
+API -> API : type vérifié par son contenu
+API -> S3 : dépôt, empreinte SHA-256
+API -> NAB : notification en direct
+API -> SOU : notification en direct
+NAB -> API : GET /dispatches/{id}
+API -> DB : vu_le (Nabeul)
+NAB -> API : POST /dispatches/{id}/replies (texte + pièce)
+API -> DB : réponse dans le fil de Nabeul
+SOU -> API : GET /dispatches/{id}
+DB --> SOU : directive + son seul fil (RLS)
+CEN -> API : GET /dispatches/{id}
+DB --> CEN : suivi (vu, répondu) et tous les fils
+CEN -> API : POST /dispatches/{id}/replies (wilaya 81)
+API -> NAB : réponse du centre dans son fil
+NAB -> API : POST /dispatches (notification immédiate,\névénement lié)
+API -> CEN : notification NOT-2026-0019
+@enduml

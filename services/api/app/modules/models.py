@@ -8,6 +8,22 @@ from app.modules.audit.models import AuditLog
 from app.modules.coastal.models import Beach, BeachDay, CoastalAlert, CoastalSettings, MarineHour, Presence
 from app.modules.contact.models import ContactEvent, ContactRequest
 from app.modules.content.models import GuideItem, GuideTopic, Revision, SafetyTip
+from app.modules.crisis.models import (
+    Axis,
+    AxisEvent,
+    AxisIncident,
+    Counter,
+    DeclarationRequest,
+    DirectiveEvent,
+    Dismissal,
+    Evacuation,
+    Need,
+    Shelter,
+    Sitrep,
+)
+from app.modules.crisis.models import (
+    Directive as CrisisDirective,
+)
 from app.modules.decision.models import ProcedureChunk
 from app.modules.doctors.models import Doctor, DoctorReview
 from app.modules.evidence.models import Anchor, Leaf
@@ -52,6 +68,15 @@ from app.modules.orgs.models import (
     TeamMember,
 )
 from app.modules.programmes.models import Programme, ProgrammePoint, ProgrammeRevision
+from app.modules.register.models import Attachment as RegisterAttachment
+from app.modules.register.models import Counter as RegisterCounter
+from app.modules.register.models import Dispatch as RegisterDispatch
+from app.modules.register.models import DispatchTarget as RegisterDispatchTarget
+from app.modules.register.models import Document as RegisterDocument
+from app.modules.register.models import Link as RegisterLink
+from app.modules.register.models import Recommendation as RegisterRecommendation
+from app.modules.register.models import Reply as RegisterReply
+from app.modules.register.models import Revision as RegisterRevision
 from app.modules.reports.models import Media, Report, StatusHistory
 from app.modules.rewards.models import (
     BadgeAward,
@@ -82,6 +107,9 @@ __all__ = [
     "AppRating",
     "Assignment",
     "AuditLog",
+    "Axis",
+    "AxisEvent",
+    "AxisIncident",
     "BadgeAward",
     "Beach",
     "BeachDay",
@@ -98,13 +126,18 @@ __all__ = [
     "ConsumerCursor",
     "ContactEvent",
     "ContactRequest",
+    "Counter",
     "CrewAlert",
     "CrewEvent",
     "CrewPosition",
+    "CrisisDirective",
+    "DeclarationRequest",
     "Delegation",
     "Device",
     "Directive",
     "DirectiveAck",
+    "DirectiveEvent",
+    "Dismissal",
     "Dispatch",
     "Doctor",
     "DoctorReview",
@@ -113,6 +146,7 @@ __all__ = [
     "EmailCode",
     "Equipment",
     "ErasureRequest",
+    "Evacuation",
     "FieldAttachment",
     "FieldReport",
     "FileKey",
@@ -145,6 +179,7 @@ __all__ = [
     "MemoryEntry",
     "MemoryEntryVersion",
     "Message",
+    "Need",
     "Nomination",
     "Notification",
     "Observation",
@@ -159,6 +194,15 @@ __all__ = [
     "Programme",
     "ProgrammePoint",
     "ProgrammeRevision",
+    "RegisterAttachment",
+    "RegisterCounter",
+    "RegisterDispatch",
+    "RegisterDispatchTarget",
+    "RegisterDocument",
+    "RegisterLink",
+    "RegisterRecommendation",
+    "RegisterReply",
+    "RegisterRevision",
     "Report",
     "ReportTemplate",
     "Resource",
@@ -175,7 +219,9 @@ __all__ = [
     "Scenario",
     "Schedule",
     "SearchDoc",
+    "Shelter",
     "Shift",
+    "Sitrep",
     "SmsInbound",
     "StaffDevice",
     "StatusHistory",

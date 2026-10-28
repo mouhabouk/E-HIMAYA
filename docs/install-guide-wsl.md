@@ -375,6 +375,13 @@ $ docker compose --env-file .env -f infra/compose.yml --profile vision up -d
 `python -m app.modules.programmes.cli load data/programmes/2026/programmes_2026.json` مسودات (التفاصيل في الدليل التقني
 §9). حماية الدخول بعد 3 محاولات فاشلة تأتي مع صورة Keycloak بعد `docker compose build keycloak`.
 
+القائمة الرئيسية ومجلدات الطبقات (المرحلتان UI-3 و UI-3b) لا تحتاج شيئا في WSL: `alembic upgrade head` (0058).
+
+السجل والتوجيهات (المرحلة L3b) لا تحتاج شيئا في WSL: `alembic upgrade head` (0057)، والملفات في MinIO الموجود.
+
+محاور الكوارث (المرحلة L3) لا تحتاج شيئا في WSL: `alembic upgrade head` (0056)، ثم استيراد فضاء الأعوان من جديد ليظهر
+الدوران `governor` و `minister` (التفاصيل في الدليل التقني، «محاور الكوارث وواجهات القيادة»).
+
 ### 11.1 إعداد OpenSearch في WSL
 
 ```bash

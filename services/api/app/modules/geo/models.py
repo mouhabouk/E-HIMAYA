@@ -77,6 +77,25 @@ class Layer(Base):
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     deleted_by: Mapped[str | None] = mapped_column(Text)
     delete_reason: Mapped[str | None] = mapped_column(Text)
+    # Phase UI-3b (migration 0058): the folder of the map's layer panel; none means the one the key suggests.
+    group_key: Mapped[str | None] = mapped_column(Text, ForeignKey("geo.layer_group.key", onupdate="CASCADE"))
+
+
+class LayerGroup(Base):
+    """A folder of the map's layer panel (phase UI-3b, docs/phase-ui3/design-layer-groups.md): grants nothing."""
+
+    __tablename__ = "layer_group"
+    __table_args__ = {"schema": "geo"}
+
+    key: Mapped[str] = mapped_column(Text, primary_key=True)
+    name: Mapped[dict[str, str]] = mapped_column(JSONB)
+    icon: Mapped[str] = mapped_column(Text)
+    tone: Mapped[str] = mapped_column(Text)
+    position: Mapped[int] = mapped_column(Integer, server_default="0")
+    sensitive: Mapped[bool] = mapped_column(Boolean, server_default="false")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_by: Mapped[str | None] = mapped_column(Text)
 
 
 class LayerRevision(Base):

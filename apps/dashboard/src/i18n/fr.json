@@ -43,7 +43,20 @@
     "crew": "Équipes de garde",
     "reportTemplates": "Modèles de rapport",
     "coastal": "Sécurité côtière",
-    "programmes": "Programmes saisonniers"
+    "programmes": "Programmes saisonniers",
+    "command": "Commandement",
+    "axes": "Axes de crise",
+    "register": "Plans et recommandations",
+    "dispatches": "Directives et réponses",
+    "group": {
+      "ops": "Opérations du jour",
+      "crisis": "Crises et commandement",
+      "alerts": "Alertes et contact",
+      "people": "Bénévoles et médecins",
+      "orgs": "Établissements",
+      "knowledge": "Analyse et savoir",
+      "system": "Système"
+    }
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -60,7 +73,22 @@
       "dark": "sombre"
     },
     "language": "Langue",
-    "logoAlt": "Office National de la Protection Civile"
+    "logoAlt": "Office National de la Protection Civile",
+    "account": "Mon compte et réglages",
+    "themeLabel": "Mode",
+    "menu": {
+      "shape": "Forme du menu",
+      "position": "Position du menu",
+      "shapes": {
+        "grouped": "Groupé",
+        "flat": "À plat"
+      },
+      "positions": {
+        "top": "En haut",
+        "right": "À droite",
+        "left": "À gauche"
+      }
+    }
   },
   "roles": {
     "operator": "Opérateur",
@@ -75,7 +103,9 @@
     "ai_admin": "Administrateur IA",
     "regional_account_admin": "Administrateur des comptes",
     "medical_coordinator": "Coordinateur médical régional",
-    "team_leader": "Chef d'agrès"
+    "team_leader": "Chef d'agrès",
+    "governor": "Gouverneur",
+    "minister": "Ministre"
   },
   "status": {
     "received": "Reçu",
@@ -358,7 +388,35 @@
     "file_unreadable": "Fichier abîmé ou illisible.",
     "file_sheet_missing": "La feuille « النقاط » (points) manque dans le fichier.",
     "file_schema": "Le fichier ne suit pas le schéma des programmes.",
-    "file_too_many_points": "Trop de points dans le fichier."
+    "file_too_many_points": "Trop de points dans le fichier.",
+    "axis_not_found": "Axe introuvable ou hors de votre périmètre.",
+    "axis_closed": "L’axe est clôturé.",
+    "incident_not_found": "Intervention introuvable.",
+    "incident_not_attachable": "Intervention fusionnée ou dissoute : non rattachable.",
+    "incident_out_of_axis": "L’intervention relève d’un autre gouvernorat.",
+    "incident_in_other_axis": "L’intervention est rattachée à un autre axe ouvert.",
+    "incident_not_attached": "Intervention non rattachée à cet axe.",
+    "close_the_national_axis": "Clôturez l’axe national, pas un sous-axe.",
+    "gouvernorats_required": "Choisissez au moins un gouvernorat.",
+    "gouvernorat_required": "Choisissez le gouvernorat.",
+    "request_decided": "Demande déjà tranchée.",
+    "request_not_found": "Demande introuvable.",
+    "executor_name_required": "Indiquez le partenaire.",
+    "due_in_past": "Échéance passée.",
+    "directive_overridden": "Décision remplacée par celle du ministre.",
+    "directive_not_found": "Décision introuvable.",
+    "sitrep_sent": "Point déjà envoyé.",
+    "sitrep_not_found": "Point introuvable.",
+    "shelter_not_found": "Centre introuvable.",
+    "evacuation_not_found": "Zone introuvable.",
+    "need_not_found": "Besoin introuvable.",
+    "occupants_over_capacity": "Occupants au-delà de la capacité.",
+    "group_not_found": "Ce dossier n’existe pas.",
+    "group_not_empty": "Le dossier contient des couches : déplacez-les d’abord.",
+    "group_kept": "Ce dossier ne peut pas être supprimé.",
+    "group_sensitivity_mismatch": "Les couches sensibles vont dans le dossier sensible, et lui seul les reçoit.",
+    "icon_unknown": "Icône inconnue.",
+    "tone_unknown": "Couleur inconnue."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -2969,7 +3027,8 @@
       "incident": "Incident",
       "report": "Signalement",
       "transcript": "Transcription",
-      "procedure": "Procédure"
+      "procedure": "Procédure",
+      "register": "Plans et instructions"
     },
     "results": "Résultats",
     "count": "Résultats affichés : {{n}}",
@@ -3018,7 +3077,8 @@
         "audio": "Audio",
         "recording": "Enregistrement",
         "document": "Document"
-      }
+      },
+      "openRegister": "Ouvrir le document dans le registre"
     }
   },
   "rewards": {
@@ -3818,7 +3878,8 @@
       "tabs": {
         "label": "Couches",
         "layers": "Couches ({{count}})",
-        "deleted": "Supprimées ({{count}})"
+        "deleted": "Supprimées ({{count}})",
+        "folders": "Dossiers de la carte ({{count}})"
       },
       "visibility": {
         "title": "Qui voit la couche",
@@ -3938,6 +3999,58 @@
       "duplicates": "Doublons possibles : {{n}}",
       "ministerOnly": "Le ministre seul",
       "listSeparator": ", "
+    },
+    "groups": {
+      "showAll": "Afficher toutes les couches : {{group}}",
+      "count": "{{on}} sur {{total}}",
+      "title": "Dossiers du panneau des couches",
+      "intro": "Les couches s’affichent sur la carte dans ces dossiers, dans cet ordre. Un dossier ne donne aucun droit : qui voit une couche se règle dans ses paramètres, et chacun ne voit que les dossiers contenant une couche qu’il voit.",
+      "folder": "Dossier",
+      "layers": "Couches",
+      "position": "Ordre",
+      "positionHelp": "Le plus petit s’affiche en premier.",
+      "newTitle": "Nouveau dossier",
+      "editTitle": "Modifier le dossier : {{group}}",
+      "edit": "Modifier",
+      "editNamed": "Modifier le dossier {{group}}",
+      "delete": "Supprimer",
+      "deleteNamed": "Supprimer le dossier {{group}}",
+      "kept": "Dossier permanent",
+      "notEmpty": "Contient des couches",
+      "namesRequired": "Saisissez le nom du dossier en arabe, en français et en anglais.",
+      "pick": "Dossier sur la carte",
+      "pickHelp": "Le dossier où la couche apparaît dans le panneau de la carte. Ne change pas qui la voit.",
+      "pickSensitive": "Une couche sensible reste dans le dossier des couches sensibles.",
+      "icons": {
+        "localFireDepartment": "Incendie",
+        "medicalServices": "Santé",
+        "policy": "Sécurité",
+        "apartment": "Bâtiment",
+        "menuBook": "Enseignement",
+        "localShipping": "Transport",
+        "inventory2": "Stocks",
+        "map": "Carte",
+        "groups": "Rassemblement",
+        "schedule": "Saison",
+        "lockOpen": "Cadenas",
+        "layers": "Couches",
+        "healthAndSafety": "Prévention",
+        "warning": "Danger",
+        "campaign": "Alerte",
+        "folderOpen": "Dossier"
+      },
+      "tones": {
+        "red": "Rouge",
+        "navy": "Marine",
+        "purple": "Violet",
+        "green": "Vert",
+        "amber": "Ambre",
+        "teal": "Sarcelle",
+        "slate": "Ardoise",
+        "pink": "Rose",
+        "sky": "Ciel",
+        "orange": "Orange"
+      }
     }
   },
   "guide": {
@@ -4908,5 +5021,530 @@
       "restore": "Retour à une version"
     },
     "unlocatedCount": "{{count}} sans position"
+  },
+  "crisis": {
+    "sim": "données simulées",
+    "level": {
+      "1": "Veille",
+      "2": "Alerte",
+      "3": "Intervention étendue",
+      "4": "Catastrophe majeure"
+    },
+    "kind": {
+      "flood": "Inondation",
+      "forest_fire": "Feu de forêt",
+      "storm": "Tempête",
+      "earthquake": "Séisme",
+      "technological": "Accident technologique",
+      "health": "Crise sanitaire",
+      "other": "Autre"
+    },
+    "role": {
+      "governor": "Gouverneur",
+      "minister": "Ministre"
+    },
+    "fig": {
+      "incidentsOpen": "Interventions ouvertes",
+      "deceased": "Décès",
+      "injuredHint": "{{n}} blessés",
+      "rescued": "Personnes secourues",
+      "evacuated": "Personnes évacuées",
+      "sheltered": "Hébergés",
+      "resources": "Moyens engagés",
+      "volunteersHint": "et {{n}} volontaires",
+      "decisionsDone": "Décisions exécutées",
+      "meanHours": "Exécution moyenne {{h}} h"
+    },
+    "map": {
+      "aria": "Carte de commandement : les gouvernorats et le niveau de leurs axes. Les listes à côté donnent toutes les valeurs.",
+      "axisAria": "Carte de l’axe {{name}} : zone, interventions, hébergement, évacuation et zones des décisions.",
+      "controls": "Commandes de la carte",
+      "zoomIn": "Zoom avant",
+      "zoomOut": "Zoom arrière",
+      "home": "Recentrer",
+      "tilt": "Basculer entre vue à plat et vue inclinée",
+      "hideLayers": "Masquer les couches",
+      "showLayers": "Couches",
+      "legend": "Légende des niveaux",
+      "unavailable": "Carte indisponible dans ce navigateur ; les listes donnent toutes les valeurs.",
+      "layer": {
+        "gouvernorats": "Gouvernorats",
+        "axes": "Zones des axes",
+        "incidents": "Interventions",
+        "shelters": "Centres d’hébergement",
+        "evacuations": "Zones d’évacuation",
+        "decisions": "Zones des décisions"
+      }
+    },
+    "command": {
+      "eyebrow": "Commandement des catastrophes et crises",
+      "minister": "Tableau du ministre : situation nationale",
+      "governor": "Tableau du gouverneur de {{name}}",
+      "active": "{{count}} axe(s) actif(s)",
+      "overview": "Vue d’ensemble",
+      "axes": "Crises en cours",
+      "axesIn": "Crises en cours à {{name}}",
+      "allGouvernorats": "Tous les gouvernorats",
+      "none": "Aucune catastrophe ou crise déclarée dans le gouvernorat.",
+      "noneNational": "Aucune catastrophe ou crise déclarée dans le pays.",
+      "ranking": "Gouvernorats par charge",
+      "rankingCaption": "Gouvernorats avec des axes ouverts, par niveau puis par charge (interventions ouvertes par moyen engagé).",
+      "gouvernorat": "Gouvernorat",
+      "level": "Niveau",
+      "weight": "Charge",
+      "resources": "Moyens engagés",
+      "noResources": "Aucun moyen engagé sur les interventions rattachées.",
+      "needs": "Besoins et demandes d’appui ({{n}})",
+      "noNeeds": "Aucun besoin signalé.",
+      "follow": "Suivi",
+      "noArchive": "Aucun axe clôturé.",
+      "tab": {
+        "decisions": "Décisions et recommandations",
+        "sitreps": "Points de situation",
+        "archive": "Archives",
+        "timeline": "Chronologie",
+        "documents": "Documents",
+        "plans": "Plans et recommandations"
+      }
+    },
+    "axes": {
+      "title": "Axes de catastrophe et de crise",
+      "intro": "Un axe regroupe les interventions d’un événement majeur : zone, niveau, moyens et décisions. Le commandant l’ouvre ; le chef de salle régionale le demande.",
+      "open": "Ouvrir un axe",
+      "request": "Demander la déclaration d’un axe",
+      "openConfirm": "Ouvrir et prévenir gouverneur et ministre",
+      "requestConfirm": "Envoyer au commandant",
+      "name": "Nom de l’axe",
+      "namePlaceholder": "Inondations de Nabeul, octobre 2026",
+      "kind": "Type",
+      "national": "Axe national (un sous-axe par gouvernorat)",
+      "plan": "Plan activé",
+      "facts": "Faits (10 caractères au moins)",
+      "pending": "Demandes en attente du commandant ({{n}})",
+      "requestIncidents": "{{n}} intervention(s) proposée(s)",
+      "requestStatus": {
+        "pending": "En attente",
+        "accepted": "Acceptée",
+        "rejected": "Refusée"
+      },
+      "rejectReason": "Motif du refus",
+      "accept": "Accepter et ouvrir",
+      "reject": "Refuser",
+      "state": "État",
+      "openList": "Ouverts",
+      "closedList": "Clôturés",
+      "noneOpen": "Aucun axe ouvert.",
+      "noneClosed": "Aucun axe clôturé."
+    },
+    "axis": {
+      "label": "Axe",
+      "national": "National",
+      "nationalOf": "National ({{n}} gouvernorats)",
+      "since": "depuis {{at}}",
+      "level": "Niveau",
+      "situation": "Situation",
+      "suggested": "Suggestions de rattachement ({{n}})",
+      "noSuggestion": "Aucune intervention ouverte compatible dans la zone.",
+      "attach": "Rattacher",
+      "propose": "Proposer",
+      "dismiss": "Écarter",
+      "attached": "Interventions rattachées ({{n}})",
+      "noIncident": "Aucune intervention rattachée.",
+      "incidentFigs": "Décès {{d}} · blessés {{i}} · moyens {{r}}",
+      "shelters": "Hébergement ({{n}})",
+      "evacuations": "Évacuation : {{n}} personnes",
+      "escalate": "Passer en axe national",
+      "addGouvernorats": "Ajouter des gouvernorats",
+      "gouvernorats": "Gouvernorats concernés",
+      "reason": "Motif",
+      "escalateConfirm": "Confirmer",
+      "close": "Clôturer l’axe",
+      "summary": "Bilan final (10 caractères au moins)",
+      "closeConfirm": "Clôturer et créer le brouillon de mémoire",
+      "closed": "Clôturé"
+    },
+    "add": {
+      "shelter": "Ajouter un centre",
+      "shelterName": "Nom du centre",
+      "shelterCount": "Capacité",
+      "occupants": "Occupants",
+      "evacuation": "Ajouter une zone d’évacuation",
+      "evacuationName": "Zone",
+      "evacuationCount": "Personnes évacuées",
+      "need": "Signaler un besoin",
+      "needName": "Besoin (pompes, couvertures…)",
+      "needCount": "Quantité",
+      "submit": "Ajouter"
+    },
+    "need": {
+      "raised": "Signalé",
+      "met": "Satisfait",
+      "markMet": "Satisfait"
+    },
+    "directive": {
+      "new": "Recommandation ou décision",
+      "kindLabel": "Type",
+      "kind": {
+        "decision": "Décision",
+        "recommendation": "Recommandation"
+      },
+      "number": "n° {{n}}",
+      "category": "Catégorie",
+      "cat": {
+        "evacuation": "Évacuation",
+        "resources": "Réquisition de moyens",
+        "closure": "Fermeture de route ou d’établissement",
+        "shelter": "Ouverture d’un centre d’hébergement",
+        "support": "Demande d’appui",
+        "plan": "Activation d’un plan",
+        "public_information": "Information du public",
+        "other": "Autre"
+      },
+      "executor": "Exécutant",
+      "exec": {
+        "regional": "Salle régionale",
+        "central": "Salle centrale",
+        "partner": "Partenaire"
+      },
+      "partnerName": "Nom du partenaire",
+      "due": "Échéance",
+      "issuer": "Émise par",
+      "text": "Texte",
+      "signNote": "Le serveur signe le texte, l’émetteur, son rôle et l’heure ; rien n’est modifiable ni supprimable ensuite.",
+      "issue": "Émettre et signer",
+      "noAxis": "Aucun axe ouvert sur lequel vous pouvez émettre.",
+      "none": "Aucune décision ni recommandation.",
+      "status": {
+        "issued": "Émise",
+        "received": "Reçue",
+        "in_progress": "En cours",
+        "done": "Exécutée",
+        "failed": "Impossible"
+      },
+      "to": {
+        "received": "Accuser réception",
+        "in_progress": "Commencer",
+        "done": "Exécutée",
+        "failed": "Impossible (motif)"
+      },
+      "overridden": "En conflit : la décision du ministre prévaut",
+      "overdue": "Échéance dépassée",
+      "signed": "Signée (clé {{key}})",
+      "unsigned": "Non signée : clé de signature absente sur le serveur.",
+      "reason": "Motif : {{reason}}",
+      "reasonLabel": "Motif (obligatoire si impossible)"
+    },
+    "sitrep": {
+      "none": "Aucun point de situation envoyé.",
+      "number": "Point de situation {{n}}",
+      "draft": "Brouillon",
+      "figures": "Interventions {{incidents}} · décès {{deceased}} · évacués {{evacuated}} · hébergés {{sheltered}}",
+      "assessment": "Appréciation",
+      "send": "Envoyer au gouverneur et au ministre",
+      "prepare": "Préparer un point maintenant",
+      "dueIn": "Prochain point dans {{h}} h",
+      "late": "Point de situation en retard"
+    },
+    "event": {
+      "opened": "Ouverture de l’axe",
+      "escalated": "Passage en axe national",
+      "updated": "Mise à jour de l’axe",
+      "closed": "Clôture de l’axe",
+      "incident_attached": "Intervention rattachée",
+      "incident_detached": "Intervention détachée",
+      "incident_proposed": "Rattachement proposé",
+      "shelter_opened": "Centre d’hébergement ouvert",
+      "shelter_updated": "Centre mis à jour",
+      "evacuation_ordered": "Zone d’évacuation",
+      "evacuation_updated": "Évacuation mise à jour",
+      "need_raised": "Besoin signalé",
+      "need_met": "Besoin satisfait",
+      "directive_issued": "Recommandation ou décision émise",
+      "directive_received": "Décision reçue",
+      "directive_in_progress": "Décision en cours",
+      "directive_done": "Décision exécutée",
+      "directive_failed": "Décision impossible",
+      "directive_overdue": "Échéance dépassée",
+      "sitrep_drafted": "Brouillon de point",
+      "sitrep_sent": "Point envoyé"
+    }
+  },
+  "register": {
+    "title": "Registre des plans et recommandations",
+    "intro": "Plans, décisions, notes, circulaires, instructions permanentes et temporaires, centraux et régionaux, avec leurs références, leurs dates d'effet et leurs principales recommandations.",
+    "new": "Enregistrer un document",
+    "back": "← Registre des plans et recommandations",
+    "edit": "Modifier",
+    "deleteDraft": "Supprimer le brouillon",
+    "issuedOn": "émis le {{date}}",
+    "hasFile": "fichier joint",
+    "recommendationsOpen": "recommandations ouvertes {{open}} sur {{n}}",
+    "fromAxis": "d'un axe de crise",
+    "sourceAxisSigned": "décision ou recommandation d'un axe, signée électroniquement",
+    "sourceManual": "saisi manuellement",
+    "facts": "Fiche",
+    "text": "Résumé et texte",
+    "noText": "Ni résumé ni texte.",
+    "axes": "Axes de crise liés",
+    "repealedNote": "Document abrogé : {{reason}}",
+    "openRepealing": "Ouvrir le document abrogeant",
+    "validity": {
+      "since": "en vigueur depuis le {{from}}",
+      "between": "du {{from}} au {{to}}"
+    },
+    "kind": {
+      "plan": "Plan",
+      "decision": "Décision",
+      "memo": "Note",
+      "circular": "Circulaire",
+      "standing_instruction": "Instruction permanente",
+      "temporary_instruction": "Instruction temporaire",
+      "recommendation": "Recommandation",
+      "minutes": "Procès-verbal",
+      "other": "Autre"
+    },
+    "level": {
+      "central": "Central",
+      "regional": "Régional"
+    },
+    "status": {
+      "in_force": "En vigueur",
+      "draft": "Brouillon",
+      "expired": "Expiré",
+      "repealed": "Abrogé"
+    },
+    "access": {
+      "all": "Tous les agents",
+      "gouvernorat": "Salles du gouvernorat",
+      "command": "Commandement",
+      "restricted": "Restreint"
+    },
+    "topic": {
+      "floods": "Inondations",
+      "forest_fires": "Feux de forêt",
+      "beaches": "Plages",
+      "hazardous_materials": "Matières dangereuses",
+      "establishments": "Établissements",
+      "health": "Santé",
+      "transport": "Transport",
+      "earthquakes": "Séismes",
+      "storms": "Tempêtes",
+      "civil_protection": "Protection civile",
+      "public_information": "Information du public",
+      "other": "Autre"
+    },
+    "field": {
+      "kind": "Type",
+      "level": "Niveau",
+      "gouvernorat": "Gouvernorat",
+      "access": "Accès",
+      "title": "Titre",
+      "reference": "Référence officielle",
+      "referencePlaceholder": "Arrêté du gouverneur de Nabeul n° 27 de 2026",
+      "issuer": "Émetteur",
+      "issuerPlaceholder": "Gouverneur, directeur général, comité régional…",
+      "signatory": "Signataire",
+      "issuedOn": "Date d'émission",
+      "effectiveFrom": "Date d'effet",
+      "effectiveTo": "Date de fin",
+      "required": "obligatoire",
+      "topics": "Thèmes",
+      "topic": "Thème",
+      "summary": "Résumé",
+      "body": "Texte",
+      "bodyHint": "Saisissez le texte ou les passages importants : la recherche porte sur le titre, la référence, le résumé et le texte.",
+      "status": "Statut",
+      "validity": "Validité",
+      "source": "Origine",
+      "updated": "Dernière modification"
+    },
+    "form": {
+      "new": "Enregistrer un document au registre",
+      "edit": "Modifier {{number}}",
+      "reason": "Motif de la modification",
+      "publish": "Enregistrer et publier",
+      "save": "Enregistrer une nouvelle version",
+      "saveDraft": "Enregistrer en brouillon",
+      "incomplete": "Complétez les champs signalés.",
+      "datesOutOfOrder": "La date de fin précède la date d'effet."
+    },
+    "search": {
+      "label": "Rechercher dans le registre",
+      "placeholder": "Mots du titre, de la référence ou du texte…",
+      "sort": "Tri",
+      "sortBy": {
+        "relevance": "Pertinence",
+        "newest": "Plus récents",
+        "oldest": "Plus anciens"
+      },
+      "advanced": "Recherche avancée",
+      "anyGouvernorat": "Tous les gouvernorats",
+      "anyTopic": "Tous les thèmes",
+      "dateField": "Période sur",
+      "byIssued": "date d'émission",
+      "byEffective": "date d'effet",
+      "from": "Du",
+      "to": "Au",
+      "inForceOn": "En vigueur le",
+      "withFile": "Avec fichier joint seulement",
+      "results": "Résultats",
+      "count": "{{n}} document(s)",
+      "inForceOnNote": "ce qui était en vigueur le {{date}}",
+      "none": "Aucun document ne correspond.",
+      "facets": "Filtrer par statut, niveau et type"
+    },
+    "file": {
+      "title": "Fichier",
+      "none": "Aucun fichier joint.",
+      "sha": "Empreinte SHA-256 :",
+      "open": "Ouvrir le fichier",
+      "upload": "Joindre un fichier",
+      "replace": "Remplacer le fichier",
+      "allowed": "PDF, Word ou image, 20 Mo au plus"
+    },
+    "rec": {
+      "title": "Principales recommandations ({{open}} ouvertes sur {{n}})",
+      "none": "Aucune recommandation.",
+      "due": "échéance {{date}}",
+      "noDue": "sans échéance",
+      "overdue": "en retard",
+      "status": {
+        "proposed": "Proposée",
+        "in_progress": "En cours",
+        "done": "Réalisée",
+        "dropped": "Abandonnée"
+      },
+      "changeStatus": "Statut de la recommandation {{n}}",
+      "reason": "Motif de l'abandon",
+      "apply": "Mettre à jour",
+      "body": "Recommandation",
+      "responsible": "Responsable",
+      "dueOn": "Échéance",
+      "add": "Ajouter une recommandation"
+    },
+    "links": {
+      "title": "Liens avec d'autres documents",
+      "none": "Aucun lien.",
+      "find": "Chercher un document",
+      "document": "Document",
+      "relation": "Lien",
+      "add": "Lier",
+      "remove": "Délier",
+      "repealsHint": "L'abrogation est définitive : l'autre document devient abrogé par celui-ci.",
+      "rel": {
+        "repeals": {
+          "out": "abroge",
+          "in": "abrogé par"
+        },
+        "amends": {
+          "out": "modifie",
+          "in": "modifié par"
+        },
+        "complements": {
+          "out": "complète",
+          "in": "complété par"
+        }
+      }
+    },
+    "revisions": {
+      "title": "Versions",
+      "version": "version {{n}}",
+      "change": {
+        "created": "enregistrement",
+        "updated": "modification",
+        "repealed": "abrogation",
+        "file": "fichier",
+        "recorded_from_axis": "enregistrement automatique d'un axe"
+      }
+    },
+    "repeal": {
+      "action": "Abroger",
+      "reason": "Motif de l'abrogation",
+      "hint": "L'abrogation est définitive et reste dans les versions et le journal d'audit.",
+      "confirm": "Confirmer l'abrogation"
+    },
+    "axis": {
+      "plan": "Plan activé :",
+      "pickPlan": "Choisir le plan dans le registre",
+      "changePlan": "Changer de plan",
+      "setPlan": "Retenir",
+      "clearPlan": "Retirer",
+      "noDocuments": "Aucun document lié à l'axe."
+    },
+    "command": {
+      "none": "Aucun plan ni recommandation en vigueur dans votre périmètre.",
+      "all": "Tout le registre"
+    }
+  },
+  "dispatch": {
+    "title": "Directives et réponses",
+    "intro": "Directives du centre aux gouvernorats (générales ou propres à un gouvernorat) et avis immédiats des salles régionales, avec un fil de réponses par gouvernorat que seuls ce gouvernorat et le centre lisent.",
+    "newDirective": "Nouvelle directive",
+    "newNotice": "Avis immédiat",
+    "back": "← Directives et réponses",
+    "kind": {
+      "directive": "Directive",
+      "notice": "Avis"
+    },
+    "urgency": {
+      "normal": "Normale",
+      "urgent": "Urgente",
+      "flash": "Immédiate"
+    },
+    "urgencyLabel": "Priorité",
+    "audience": "Destinataires",
+    "audienceOf": {
+      "all": "Générale, tous les gouvernorats",
+      "targeted": "Propre à un ou plusieurs gouvernorats"
+    },
+    "gouvernorats": "Gouvernorats concernés",
+    "dueAt": "Réponse attendue avant",
+    "subject": "Objet",
+    "body": "Texte",
+    "attach": "Joindre des fichiers",
+    "attachHint": "Word, Excel, PowerPoint, PDF, image ou texte ; 20 Mo par fichier, 10 fichiers",
+    "removeFile": "Retirer {{name}}",
+    "replyRequired": "Réponse demandée (sinon pour information)",
+    "incomplete": "Complétez l'objet, écrivez un texte ou joignez un fichier, et choisissez les gouvernorats.",
+    "sendDirective": "Envoyer la directive",
+    "sendNotice": "Envoyer l'avis",
+    "unread": "Nouveau",
+    "closed": "Clos",
+    "open": "Ouvert",
+    "overdue": "En retard",
+    "fromGouvernorat": "du gouvernorat de {{name}}",
+    "toCount": "à {{n}} gouvernorat(s)",
+    "files": "{{n}} fichier(s)",
+    "repliedOf": "{{replied}} réponse(s) sur {{n}}",
+    "youReplied": "Répondu",
+    "awaitingYou": "Votre réponse est attendue",
+    "forInfo": "Pour information",
+    "box": "Boîte",
+    "boxOf": {
+      "inbox": "Reçus",
+      "sent": "Envoyés",
+      "all": "Tous"
+    },
+    "search": "Rechercher dans l'objet et le texte",
+    "any": "Tous",
+    "state": "État",
+    "count": "{{n}} message(s)",
+    "none": "Aucun message.",
+    "sendReply": "Envoyer",
+    "threadOf": "Fil du gouvernorat de {{name}}",
+    "noReply": "Pas encore de réponse.",
+    "centre": "Salle centrale",
+    "replyTo": "Répondre au gouvernorat de {{name}}",
+    "yourReply": "Votre réponse",
+    "close": "Clore",
+    "dueOn": "réponse avant le {{at}}",
+    "text": "Texte et pièces jointes",
+    "noText": "Pas de texte, voir les pièces jointes.",
+    "follow": "Suivi : {{replied}} réponse(s), {{seen}} lu(s) sur {{n}}",
+    "seen": "Lu",
+    "replied": "Réponse",
+    "repliesN": "{{n}} réponse(s)",
+    "replies": "Réponses",
+    "writeTo": "Écrire à un gouvernorat qui n'a pas répondu"
   }
 }

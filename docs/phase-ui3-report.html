@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ء-حماية | تقرير المرحلتين UI-3 و UI-3b</title>
+<style>
+:root{--bg:#f7f8fa;--paper:#fff;--ink:#1b2430;--muted:#5b6675;--line:#dfe3e8;--accent:#b3261e;--accent2:#0b5cad;--ok:#1e7d3a;--warn:#a15c00;--chip:#eef1f5;--head:#f1f3f6;--navy:#1f3d99;--orange:#e07b00}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1318;--paper:#161b22;--ink:#e6eaef;--muted:#9aa5b1;--line:#2a313b;--accent:#ff6b5e;--accent2:#5aa9ff;--ok:#5cc97a;--warn:#e0a24a;--chip:#1f2630;--head:#1c222b;--navy:#8fa8ff;--orange:#ffb35c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Naskh Arabic","Segoe UI",Tahoma,Arial,sans-serif;line-height:1.75;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header.cover{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:10px;padding:28px 24px;margin-bottom:20px}
+header.cover h1{margin:0 0 6px;font-size:30px}
+header.cover .sub{color:var(--muted);margin:0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:16px}
+.meta div{background:var(--chip);border-radius:6px;padding:8px 12px;font-size:14px}
+.meta b{display:block;color:var(--muted);font-weight:600;font-size:12px}
+a{color:var(--accent2);text-decoration:none}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:20px}
+h2{margin-top:0;font-size:23px;border-bottom:2px solid var(--line);padding-bottom:8px}
+h3{font-size:18px;margin:18px 0 8px}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:start;vertical-align:top}
+th{background:var(--head);font-weight:700;white-space:nowrap}
+code{direction:ltr;unicode-bidi:isolate;background:var(--chip);padding:1px 5px;border-radius:4px;font-size:13px}
+pre{direction:ltr;text-align:left;background:var(--chip);padding:10px 12px;border-radius:6px;overflow-x:auto;font-size:13px;margin:6px 0}
+.note{border-inline-start:4px solid var(--accent2);background:var(--chip);padding:10px 14px;border-radius:6px;margin:12px 0}
+.warn{border-inline-start:4px solid var(--warn)}
+.sim{display:inline-block;background:#ffb300;color:#1f1300;font-weight:700;font-size:12px;padding:1px 8px;border-radius:999px;margin-inline-end:6px}
+.simbox{border:2px dashed #ffb300;background:rgba(255,179,0,.10);border-radius:8px;padding:12px 16px;margin:12px 0}
+.ltr{direction:ltr;unicode-bidi:isolate}
+ul,ol{padding-inline-start:22px}
+.bar{height:10px;background:var(--chip);border-radius:6px;overflow:hidden;min-width:90px}
+.bar span{display:block;height:100%;background:var(--ok)}
+.pipeline{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0}
+.pipeline div{border:1px solid var(--line);border-radius:8px;padding:6px 12px;background:var(--chip);font-weight:600}
+.pipeline div.now{border-color:var(--accent);background:rgba(179,38,30,.08)}
+.pipeline i{color:var(--muted);font-style:normal}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--paper)}
+.card h3{margin:0 0 4px;font-size:17px}
+.card .v{color:var(--muted);font-size:13px;margin:0 0 6px}
+.card dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:6px 0;font-size:14px}
+.card dt{color:var(--muted);font-weight:600}
+.card dd{margin:0}
+.prio{display:inline-block;border-radius:999px;padding:0 8px;font-size:12px;font-weight:700;color:#fff}
+.p1{background:#b3261e}.p2{background:#a15c00}.p3{background:#0b5cad}.p4{background:#5b6675}
+footer{color:var(--muted);text-align:center;font-size:13px}
+@media print{body{background:#fff}section,header.cover,.card{border:none;break-inside:avoid-page}}
+</style>
+<body>
+<div class="wrap">
+<header class="cover">
+  <h1>ء-حماية <span class="ltr">e-Himaya</span></h1>
+  <p class="sub">تقرير المرحلتين UI-3 و UI-3b: القائمة الرئيسية المجمّعة أو المسطّحة في الأعلى أو على الجانب، وطبقات الخريطة في مجلدات</p>
+  <div class="meta">
+    <div><b>التاريخ</b>2026-10-28</div>
+    <div><b>الفرع</b><span class="ltr">claude/project-thread-yzwsn2</span></div>
+    <div><b>الحالة</b>منجزة، في طلب الدمج <a href="https://github.com/mouhabouk/E-HIMAYA/pull/112">#112</a> مع L3 و L3b</div>
+    <div><b>المراجع</b><a href="phase-ui3/design-menu.md">تصميم القائمة</a> · <a href="phase-ui3/design-layer-groups.md">تصميم المجلدات</a> · <a href="versions.md">الإصدارات</a> · <a href="backlog.md">القائمة المؤجلة (§3.5)</a></div>
+  </div>
+</header>
+
+<section>
+<h2>1. أين تقع هذه المرحلة من مسار المشروع</h2>
+<div class="pipeline">
+  <div>التبليغ</div><i>←</i>
+  <div class="now">المعالجة</div><i>←</i>
+  <div>التحليل</div><i>←</i>
+  <div>مؤشرات الأداء KPI</div><i>←</i>
+  <div>التنبؤ بالذكاء الاصطناعي</div><i>←</i>
+  <div class="now">اتخاذ القرار</div>
+</div>
+<ul>
+  <li><b>المعالجة</b>: يصل عون القاعة إلى ما يحتاجه أسرع؛ الروابط الأربعون صارت سبع مجموعات حسب العمل، والخريطة تعرض ما يُطلب منها دون قائمة طويلة.</li>
+  <li><b>اتخاذ القرار</b>: على خريطة القيادة يفتح المسؤول مجلد «موارد الحماية المدنية» أو «المؤسسات الصحية» ويُظهر طبقاته بضغطة، تمهيدا لسجل الموارد وترحيله إلى الخريطة (R1 و R2).</li>
+</ul>
+</section>
+
+<section>
+<h2>2. مراجعة ← تصميم ← تطوير</h2>
+<div class="note"><b>الطلب:</b> قائمة رئيسية مجمّعة تنفتح عند المرور، أو مسطّحة، في أعلى الصفحة أو يمينها أو يسارها، يختارها المستخدم من حسابه، بطابع زجاجي في الوضعين. ثم: طبقات الخريطة مجمّعة (المؤسسات الصحية بها المستشفيات والمصحات والصيدليات، وموارد الحماية المدنية…) لا في قائمة مسطّحة.</div>
+<div class="note warn"><b>الأمن:</b> المجموعات والمجلدات لا تمنح أي صلاحية. القائمة تعرض الروابط نفسها بقواعد الأدوار نفسها، والواجهة البرمجية تفرض القواعد. ولا يعيد الخادم إلا المجلدات التي فيها طبقة يراها الطالب، فلا يعرف الوالي ولا القاعات بوجود مجلد الطبقات الحساسة، والطبقة الحساسة لا تخرج منه.</div>
+<h3>UI-3: القائمة الرئيسية</h3>
+<ol>
+  <li><b>سبع مجموعات</b>: العمليات اليومية، الأزمات والقيادة، التنبيهات والتواصل، المتطوعون والأطباء، المؤسسات، التحليل والمعرفة، النظام؛ المجموعة الفارغة لا تظهر، وذات الرابط الواحد تصير رابطا مباشرا.</li>
+  <li><b>مجمّعة</b>: تنفتح بالمرور (بعد 90 جزءا من الثانية لتفادي الفتح العرضي) أو بالنقر أو بلوحة المفاتيح، ويغلقها Escape ويعيد التركيز إلى زرها، وينغلق اللوح عند النقر خارجه أو عند اختيار رابط. <b>مسطّحة</b>: كل الروابط ظاهرة، وفي الشريط الجانبي تحت عنوان كل مجموعة.</li>
+  <li><b>الموضع</b>: أعلى الصفحة، أو شريط جانبي يمينا أو يسارا (جهة ثابتة في العربية والفرنسية والإنجليزية)؛ صفحات القيادة بملء الشاشة تتكيّف معه.</li>
+  <li><b>«حسابي والإعدادات»</b>: المستخدم وأدواره، اللغة، الوضع الليلي أو النهاري، شكل القائمة وموضعها، الخروج؛ الاختيار محفوظ في المتصفح.</li>
+</ol>
+<h3>UI-3b: مجلدات طبقات الخريطة</h3>
+<ol>
+  <li><b>12 مجلدا</b> مرتّبة: موارد الحماية المدنية، المؤسسات الصحية، الأمن، الإدارة، التعليم، النقل، المنشآت الاقتصادية، الماء والغابات، أماكن التجمع، المواسم والسواحل، الطبقات الحساسة، طبقات أخرى.</li>
+  <li><b>التصنيف الآلي</b>: الطبقة بلا مجلد تنزل في المجلد الذي يدل عليه مفتاحها (<code>osm_hospitals</code> ← المؤسسات الصحية، <code>prog_…</code> ← المواسم) أو أيقونتها؛ والترحيل 0058 صنّف الطبقات الموجودة بالقواعد نفسها.</li>
+  <li><b>على الخريطة</b>: مجلدات تُفتح وتُطوى، بعدد الطبقات الظاهرة، وزر «إظهار الكل» بثلاث حالات (الكل، لا شيء، بعضها بعلامة −)؛ تُفتح افتراضيا المجلدات التي فيها طبقة ظاهرة، وتُحفظ المجلدات المفتوحة.</li>
+  <li><b>الإدارة</b>: تبويب «مجلدات الخريطة» لمدير المنظومة: الأسماء الثلاثة والأيقونة واللون والترتيب، والحذف للمجلد الفارغ فقط؛ ومجلد كل طبقة يُختار من إعداداتها ويُحفظ في نسخها. كل تغيير مسجّل في سجل التدقيق.</li>
+</ol>
+</section>
+
+<section>
+<h2>3. لقطات <span class="sim">[SIM]</span></h2>
+<p>القائمة المجمّعة في الأعلى، نهارا بمجموعة مفتوحة ثم ليلا بقائمة الحساب:</p>
+  <img src="phase-ui3/ui3-top-grouped-day.png" alt="القائمة المجمّعة في الأعلى، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-ui3/ui3-top-grouped-night.png" alt="قائمة الحساب، ليلا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+<p>الشريط الجانبي على اليمين ليلا، والقائمة المسطّحة على اليسار ليلا وفي الأعلى نهارا:</p>
+  <img src="phase-ui3/ui3-right-grouped-night.png" alt="الشريط الجانبي على اليمين، ليلا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-ui3/ui3-left-flat-night.png" alt="القائمة المسطّحة على اليسار، ليلا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-ui3/ui3-top-flat-day.png" alt="القائمة المسطّحة في الأعلى، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+<p>واجهة القيادة بملء الشاشة مع الشريط الجانبي:</p>
+  <img src="phase-ui3/ui3-right-grouped-command-night.png" alt="واجهة الوزير مع الشريط الجانبي" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+<p>طبقات الخريطة في مجلدات، ليلا (مجلدا الحماية المدنية والصحة مفتوحان، وزر «إظهار الكل» بعلامة −) ثم نهارا مع الشريط الجانبي:</p>
+  <img src="phase-ui3/ui3b-map-folders-night.png" alt="مجلدات الطبقات على الخريطة، ليلا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-ui3/ui3b-map-folders-day.png" alt="مجلدات الطبقات على الخريطة، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+<p>إدارة المجلدات (مدير المنظومة) نهارا، وتعديل مجلد ليلا، واختيار مجلد طبقة من إعداداتها:</p>
+  <img src="phase-ui3/ui3b-layers-folders-day.png" alt="تبويب مجلدات الخريطة، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-ui3/ui3b-layers-folders-night.png" alt="تعديل مجلد، ليلا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-ui3/ui3b-layer-pick-day.png" alt="اختيار مجلد الطبقة" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+</section>
+
+<section>
+<h2>4. التقدم لكل جزء</h2>
+<div class="tbl"><table>
+<tr><th>البند</th><th>الحالة</th><th>التقدم</th></tr>
+<tr><td>F-DSH-66 القائمة الرئيسية: الشكل والموضع وقائمة الحساب</td><td>منجز (UI-3)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-DSH-67 مجلدات الطبقات على الخريطة</td><td>منجز (UI-3b)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-DSH-68 إدارة المجلدات ومجلد كل طبقة</td><td>منجز (UI-3b)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-SRV-22 مجلدات الطبقات في الخادم، والقاعدة BR-07d</td><td>منجز (UI-3b)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>طبقة الوحدات والموارد داخل مجلد «موارد الحماية المدنية»</td><td>مبرمج في R2 (M4)</td><td><div class="bar"><span style="width:0%"></span></div></td></tr>
+<tr><td>حفظ اختيار القائمة في الحساب على الخادم</td><td>مؤجل (M1)</td><td><div class="bar"><span style="width:0%"></span></div></td></tr>
+</table></div>
+<p><b>تقدم UI-3 و UI-3b: 100%. التالي: سجل الموارد (R1) والبحث والترحيل إلى الخريطة (R2).</b></p>
+</section>
+
+<section>
+<h2>5. المحاكاة <span class="sim">[SIM]</span></h2>
+<div class="simbox"><ul>
+  <li><span class="sim">[SIM]</span> الطبقات ونقاطها في لقطات الخريطة مختلَقة بأسماء طبقات OSM المعتادة ونقاط حول تونس؛ كلها بالشارة.</li>
+  <li>اللقطات بواجهة برمجية محاكاة؛ المجلدات الاثنا عشر هي نفسها التي ينشئها الترحيل 0058.</li>
+</ul></div>
+</section>
+
+<section>
+<h2>6. الاختبارات المطبقة</h2>
+<div class="tbl"><table>
+<tr><th>المكوّن</th><th>العدد</th><th>النتيجة</th></tr>
+<tr><td>الخلفية (pytest)</td><td>953، منها <code>test_layer_groups.py</code> (11)</td><td>ناجحة (2 متخطّاة كالعادة)</td></tr>
+<tr><td>الترحيلات</td><td>صعودا ونزولا ثم صعودا حتى 0058</td><td>ناجحة</td></tr>
+<tr><td>لوحة القيادة (vitest)</td><td>521، منها القائمة (Layout) والمجلدات (MapDataLayers و LayersPage)</td><td>كلها ناجحة</td></tr>
+<tr><td>لوحة القيادة (Playwright مع axe)</td><td>64، منها القائمة بأشكالها الستة والمجلدات ليلا ونهارا</td><td>كلها ناجحة، دون أي مخالفة</td></tr>
+<tr><td><code>ruff</code> و <code>eslint</code> و <code>tsc</code>، و OpenAPI و ERD بـ <code>--check</code></td><td>—</td><td>لا ملاحظة</td></tr>
+</table></div>
+<ul>
+  <li>الرؤية: القاعة لا تتلقى مجلد الطبقات الحساسة، والوزير يتلقاه؛ ولا يُعاد مجلد فارغ لغير المدير.</li>
+  <li>القواعد: الطبقة الحساسة لا تدخل غير مجلدها والعادية لا تدخله (422)؛ الطبقة التي تصير حساسة تنتقل إليه؛ المجلد الذي فيه طبقات لا يُحذف (409)، و«أخرى» و«الحساسة» ثابتان؛ استرجاع نسخة يعيد مجلدها.</li>
+  <li>الإدارة: غير المدير لا ينشئ مجلدا (403)، والأيقونة واللون من قائمة معتمدة، والإنشاء والتعديل والحذف في سجل التدقيق.</li>
+</ul>
+</section>
+
+<section id="tools">
+<h2>7. التقنيات والأدوات والمصادر والإصدارات</h2>
+<p>لا حزمة جديدة ولا خدمة ولا إعداد جديد. القائمة الكاملة في <a href="versions.md">versions.md</a>.</p>
+<div class="cards">
+<div class="card"><h3>ترحيل قاعدة البيانات</h3><p class="v">0058 · <span class="prio p1">1</span></p>
+<dl><dt>الاستعمال</dt><dd><code>geo.layer_group</code> و <code>geo.layer.group_key</code></dd><dt>الأمر</dt><dd><code>alembic upgrade head</code></dd></dl></div>
+<div class="card"><h3>الواجهة البرمجية</h3><p class="v">433 مسارا · 520 عملية · <span class="prio p2">2</span></p>
+<dl><dt>الجديد</dt><dd><code>/api/v1/staff/layers/groups</code>: الإنشاء والتعديل والحذف، و<code>groups</code> في قائمة الطبقات</dd></dl></div>
+<div class="card"><h3>الأيقونات</h3><p class="v">Material Symbols Rounded · <span class="prio p3">3</span></p>
+<dl><dt>الجديد</dt><dd>أيقونات المجموعات والحساب والخروج والتوسيع</dd><dt>الرخصة</dt><dd>Apache 2.0</dd></dl></div>
+<div class="card"><h3>تطبيق الهاتف</h3><p class="v">0.22.0 دون تغيير · <span class="prio p4">4</span></p>
+<dl><dt>الأثر</dt><dd>لا شيء؛ القائمة والمجلدات في اللوحة</dd></dl></div>
+</div>
+</section>
+
+<section>
+<h2>8. المخرجات المحيَّنة</h2>
+<ul>
+  <li>الملف الوصفي V21 (docx و pdf) في <code>spec/</code>: F-DSH-66 إلى 68 و F-SRV-22 منجزة، القاعدة BR-07d، 433 مسارا و520 عملية، الاختبارات، و UI-3 و UI-3b و R1-R2 في خارطة الطريق، ومصطلح مجلد الطبقات.</li>
+  <li>مخططات UML في <code>diagrams/</code>: تسلسل «طبقات الخريطة في مجلدات حسب ما يراه كل مستخدم» (61)، صنف مجلد الطبقات في مخطط المحتوى (24)، وحالات الاستعمال S44 إلى S46.</li>
+  <li>العرض للمسؤولين في <code>presentation/</code>: 37 مرحلة، الاختبارات، وخارطة الطريق.</li>
+  <li>مرجع التصميم مُعاد توليده: <a href="design-reference.html">design-reference.html</a>.</li>
+  <li>سجل الإصدارات، القائمة المؤجلة (§3.5)، ودليلا التنصيب (الترحيل 0058)، واللقطات في <code>screens/ui3/</code> و <code>screens/ui3b/</code>.</li>
+</ul>
+</section>
+
+<section>
+<h2>9. ملاحظات وانحرافات</h2>
+<ul>
+  <li>الألواح الزجاجية المتداخلة لا تُضبّب الصفحة في المتصفحات، فصارت ألواح القوائم شبه معتمة (97%) ليبقى النص مقروءا في الوضعين.</li>
+  <li>اختيار القائمة يُحفظ في المتصفح لا في الحساب (M1)، كما الوضع الليلي.</li>
+  <li>«طبقة الوحدات والموارد» ما زالت زرا فوق الخريطة؛ تدخل مجلد «موارد الحماية المدنية» مع سجل الموارد (M4، R2).</li>
+</ul>
+</section>
+
+<section>
+<h2>10. ما يلي</h2>
+<p>دمج <a href="https://github.com/mouhabouk/E-HIMAYA/pull/112">#112</a>. ثم سجل الموارد بكل ولاية (R1): المعدات بخصائصها (شاحنة إطفاء 2000 ل مثلا) والأعوان باختصاصاتهم (الغوص مثلا)، كل ولاية ترى مواردها والقاعة المركزية ترى الكل؛ ثم البحث في كل الولايات وترحيل النتائج إلى الخريطة حسب الولاية في مجلد «موارد الحماية المدنية» (R2)؛ ثم L4 و L5.</p>
+</section>
+</div>
+</body>
+</html>

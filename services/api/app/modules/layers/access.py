@@ -7,13 +7,14 @@ Five audiences instead of the eleven staff roles, so the administrator chooses w
 | citizen   | everyone, without signing in (the citizen's app)              |
 | room      | operator, ops_manager                                         |
 | field     | field_commander, team_leader                                  |
-| command   | local_committee (the governor), central_committee (minister)  |
+| command   | local_committee, central_committee, governor, minister (L3)   |
 | support   | every other staff role                                        |
 
 A layer is seen by its audiences once published; a draft, a paused or a deleted layer by its managers only. A
 *sensitive* layer (barracks, oil and gas) is seen by the minister alone (``central_committee`` with a national
-scope) and by its managers; never by a governor, even during an open crisis axis. A layer limited to some
-gouvernorats (``scope``) is seen by the national staff and by the regional staff of those gouvernorats.
+scope, or the ``minister`` role of phase L3) and by its managers; never by a governor, even during an open crisis
+axis. A layer limited to some gouvernorats (``scope``) is seen by the national staff and by the regional staff of
+those gouvernorats.
 
 Columns: ``fields`` maps a column to the audiences that see it; a column not listed is seen by every audience of the
 layer. The managers always see everything. The API answers 404 for a layer a principal may not see.
@@ -35,6 +36,8 @@ ROLE_AUDIENCE: dict[Role, Audience] = {
     Role.TEAM_LEADER: "field",
     Role.LOCAL_COMMITTEE: "command",
     Role.CENTRAL_COMMITTEE: "command",
+    Role.GOVERNOR: "command",
+    Role.MINISTER: "command",
 }
 # Columns shown on a place card besides the extra columns of the file.
 CARD_FIELDS = ("phone", "phone2", "address", "delegation", "manager", "hours", "email", "website")
@@ -54,7 +57,11 @@ def manages(principal: Principal | None) -> bool:
 
 
 def is_minister(principal: Principal | None) -> bool:
-    return principal is not None and principal.is_national and Role.CENTRAL_COMMITTEE in principal.roles
+    return (
+        principal is not None
+        and principal.is_national
+        and bool({Role.CENTRAL_COMMITTEE, Role.MINISTER} & principal.roles)
+    )
 
 
 def sees(principal: Principal | None, layer: Any) -> bool:

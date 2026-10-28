@@ -1,41 +1,15 @@
-import { type ReactNode, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { NavLink, Outlet } from "react-router";
-import { IconTile, type IconName, type Tone } from "./Icon";
+import { Outlet } from "react-router";
+import { Icon } from "./Icon";
+import { Disclosure, MainNav, navGroups } from "./Navigation";
 import { useAuth } from "../context/auth";
 import { useLiveState } from "../context/live";
 import { directionOf, LANGUAGES, type Language } from "../i18n";
 import { useGouvernorats, useLanguage } from "../lib/hooks";
-import {
-  canEditAiSettings,
-  canDraftMessage,
-  canEditTips,
-  canManageMedicalCommittee,
-  canReviewDoctors,
-  canHandleContact,
-  canOpenCoastal,
-  canOpenProgrammes,
-  canOpenLayers,
-  canManageAccounts,
-  canOpenCrew,
-  canOpenBreakGlass,
-  canReadPlatformSettings,
-  canReadScopedAudit,
-  canRequestBreakGlass,
-  canSeeNationalQueues,
-  canMonitorPerformance,
-  canReadAnalytics,
-  canReadKnowledge,
-  canReadRewards,
-  canReadOrgs,
-  canReadResources,
-  canReviewWeatherSuggestions,
-  canUseNotifications,
-  hasReadAccess,
-  isCommittee,
-  staffRoles,
-} from "../lib/roles";
-import { applyTheme, nextTheme, storedTheme, type Theme } from "../lib/theme";
+import { canDraftMessage, canRequestBreakGlass, hasReadAccess, staffRoles } from "../lib/roles";
+import { MENU_POSITIONS, MENU_SHAPES, type MenuPrefs, saveMenu, storedMenu } from "../lib/menu";
+import { applyTheme, nextTheme, storedTheme, THEMES, type Theme } from "../lib/theme";
 import { NoAccessPage } from "../pages/NoAccessPage";
 import { AlertFollowUpToasts } from "./AlertFollowUpToasts";
 import { ActiveGrantBanner } from "./BreakGlass";
@@ -141,10 +115,15 @@ function LiveIndicator() {
  * anchor or moving the keyboard focus never leaves the target under the header (WCAG 2.4.11), however many rows
  * the navigation wraps to.
  */
-function useHeaderHeight() {
+function useHeaderHeight(top: boolean) {
   return useCallback((header: HTMLElement | null) => {
     if (!header || typeof ResizeObserver === "undefined") return;
     const root = document.documentElement;
+    // A side bar takes no height: pages that fill the screen use the whole of it.
+    if (!top) {
+      root.style.setProperty("--header-h", "0px");
+      return () => root.style.removeProperty("--header-h");
+    }
     const observer = new ResizeObserver(() =>
       root.style.setProperty("--header-h", `${header.offsetHeight}px`),
     );
@@ -153,28 +132,122 @@ function useHeaderHeight() {
       observer.disconnect();
       root.style.removeProperty("--header-h");
     };
-  }, []);
+  }, [top]);
 }
 
-/** Navigation link with its category icon tile (design system §3): the label carries the meaning. */
-function NavItem({
-  to,
-  end,
-  icon,
-  tone,
-  children,
+/** Segmented choice inside the account menu: radio buttons styled as one pill row. */
+function Segmented<T extends string>({
+  label,
+  name,
+  options,
+  value,
+  onChange,
 }: {
-  to: string;
-  end?: boolean;
-  icon: IconName;
-  tone: Tone;
-  children: ReactNode;
+  label: string;
+  name: string;
+  options: readonly { value: T; label: string }[];
+  value: T;
+  onChange: (v: T) => void;
 }) {
   return (
-    <NavLink to={to} end={end}>
-      <IconTile name={icon} tone={tone} size="sm" />
-      {children}
-    </NavLink>
+    <fieldset className="segmented">
+      <legend>{label}</legend>
+      <div className="segmented__row">
+        {options.map((o) => (
+          <label key={o.value} className="segmented__option">
+            <input type="radio" name={name} value={o.value} checked={o.value === value} onChange={() => onChange(o.value)} />
+            <span>{o.label}</span>
+          </label>
+        ))}
+      </div>
+    </fieldset>
+  );
+}
+
+/**
+ * The account menu (design UI-3 §2.3): who is signed in, the language, the theme, how the main menu shows, and
+ * sign-out. Every choice applies at once.
+ */
+function AccountMenu({
+  name,
+  scope,
+  roles,
+  menu,
+  onMenu,
+  onSignOut,
+}: {
+  name: string;
+  scope: string;
+  roles: string;
+  menu: MenuPrefs;
+  onMenu: (m: MenuPrefs) => void;
+  onSignOut: () => void;
+}) {
+  const { t } = useTranslation();
+  const [theme, setTheme] = useState<Theme>(storedTheme);
+  const rail = menu.position !== "top" && menu.shape === "grouped";
+  return (
+    <Disclosure
+      className="account"
+      panelClassName="account__panel"
+      hover={false}
+      label={
+        <>
+          <span className="account__avatar" aria-hidden="true">
+            <Icon name="accountCircle" size={rail ? 30 : 26} />
+          </span>
+          <span className="account__who">
+            <span className="account__name">{name}</span>
+            <span className="account__scope">{scope}</span>
+          </span>
+          <span className="visually-hidden">{t("header.account")}</span>
+        </>
+      }
+    >
+      <div className="account__user">
+        <p className="account__name">{name}</p>
+        <p className="muted">
+          <span className="visually-hidden">{t("header.scope")}: </span>
+          {scope}
+        </p>
+        <p className="muted">
+          <span className="visually-hidden">{t("header.roles")}: </span>
+          {roles}
+        </p>
+      </div>
+      <div className="account__section">
+        <p className="account__label">{t("header.language")}</p>
+        <LanguageMenu />
+      </div>
+      <Segmented
+        label={t("header.themeLabel")}
+        name="theme"
+        value={theme}
+        options={THEMES.map((v) => ({ value: v, label: t(`header.theme.${v}`) }))}
+        onChange={(v) => {
+          applyTheme(v);
+          setTheme(v);
+        }}
+      />
+      <Segmented
+        label={t("header.menu.shape")}
+        name="menu-shape"
+        value={menu.shape}
+        options={MENU_SHAPES.map((v) => ({ value: v, label: t(`header.menu.shapes.${v}`) }))}
+        onChange={(shape) => onMenu({ ...menu, shape })}
+      />
+      <Segmented
+        label={t("header.menu.position")}
+        name="menu-position"
+        value={menu.position}
+        options={MENU_POSITIONS.map((v) => ({ value: v, label: t(`header.menu.positions.${v}`) }))}
+        onChange={(position) => onMenu({ ...menu, position })}
+      />
+      <button type="button" className="btn account__logout" onClick={onSignOut}>
+        <Icon name="logout" size={20} />
+        {t("header.logout")}
+      </button>
+    </Disclosure>
   );
 }
 
@@ -183,7 +256,9 @@ export function Layout() {
   const { user, signOut } = useAuth();
   const live = useLiveState();
   const gouvernorats = useGouvernorats();
-  const headerRef = useHeaderHeight();
+  const [menu, setMenu] = useState<MenuPrefs>(storedMenu);
+  const top = menu.position === "top";
+  const headerRef = useHeaderHeight(top);
   if (!user) return null;
   const { identity } = user;
   const scope = identity.national
@@ -191,32 +266,19 @@ export function Layout() {
     : t("header.gouvernorat", {
         name: gouvernorats.nameOf(identity.gouvernoratCode) ?? "",
       });
-  // Only the screens the user's roles can use (the API enforces the same rules).
   const readsReports = hasReadAccess(identity.roles);
-  const readsOrgs = canReadOrgs(identity.roles);
-  const readsResources = canReadResources(identity.roles);
-  const notifies = canUseNotifications(identity.roles);
-  const editsTips = canEditTips(identity.roles);
-  const reviewsDoctors = canReviewDoctors(identity.roles);
-  const reviewsWeather = canReviewWeatherSuggestions(identity.roles);
-  const committee =
-    isCommittee(identity.roles) || canMonitorPerformance(identity.roles);
-  const analytics = canReadAnalytics(identity.roles);
-  const knowledge = canReadKnowledge(identity.roles);
-  const rewards = canReadRewards(identity.roles);
-  const nationalQueues = canSeeNationalQueues(identity);
-  const aiSettings = readsReports || canEditAiSettings(identity);
   const roles = staffRoles(identity.roles)
     .map((r) => t(`roles.${r}`))
     .join(t("common.listSeparator"));
+  const groups = navGroups(identity, t);
 
   return (
-    <div className="shell">
+    <div className="shell" data-menu-shape={menu.shape} data-menu-position={menu.position}>
       <a className="skip-link" href="#main">
         {t("app.skipToContent")}
       </a>
       <EnvironmentStrip />
-      <header className="header" ref={headerRef}>
+      <header className={`header header--${top ? "top" : "side"} header--${menu.shape}`} ref={headerRef}>
         <div className="header__brand">
           {/* Logo of the Office (phase A, §2.5): the name next to it is the accessible text. */}
           <img
@@ -226,229 +288,39 @@ export function Layout() {
             height="32"
             className="header__logo"
           />
-          <span>{t("app.name")}</span>
+          <span className="header__title">{t("app.name")}</span>
         </div>
-        <nav aria-label={t("nav.main")} className="header__nav">
-          {readsReports && (
-            <>
-              <NavItem to="/" end icon="home" tone="navy">
-                {t("nav.home")}
-              </NavItem>
-              <NavItem to="/reports" icon="description" tone="red">
-                {t("nav.reports")}
-              </NavItem>
-              <NavItem to="/incidents" icon="localFireDepartment" tone="red">
-                {t("nav.incidents")}
-              </NavItem>
-              <NavItem to="/map" icon="map" tone="teal">
-                {t("nav.map")}
-              </NavItem>
-              <NavItem to="/streams" icon="videocam" tone="red">
-                {t("nav.streams")}
-              </NavItem>
-              <NavItem to="/volunteers" icon="volunteerActivism" tone="green">
-                {t("nav.volunteers")}
-              </NavItem>
-              <NavItem to="/calls" icon="call" tone="green">
-                {t("nav.calls")}
-              </NavItem>
-              <NavItem to="/resource-requests" icon="inventory2" tone="amber">
-                {t("nav.resourceRequests")}
-              </NavItem>
-            </>
-          )}
-          {nationalQueues && (
-            <>
-              <NavItem to="/reports/late" icon="schedule" tone="orange">
-                {t("nav.late")}
-              </NavItem>
-              <NavItem
-                to="/reports/geo-queue"
-                icon="wrongLocation"
-                tone="orange"
-              >
-                {t("nav.geoQueue")}
-              </NavItem>
-            </>
-          )}
-          {reviewsDoctors && (
-            <NavItem to="/doctors" icon="stethoscope" tone="purple">
-              {t("nav.doctors")}
-            </NavItem>
-          )}
-          {canManageMedicalCommittee(identity) && (
-            <NavItem to="/medical-committee" icon="groups" tone="purple">
-              {t("nav.medicalCommittee")}
-            </NavItem>
-          )}
-          {readsResources && (
-            <NavItem to="/resources" icon="localShipping" tone="amber">
-              {t("nav.resources")}
-            </NavItem>
-          )}
-          {notifies && (
-            <NavItem to="/notifications" icon="campaign" tone="sky">
-              {t("nav.notifications")}
-            </NavItem>
-          )}
-          {reviewsWeather && (
-            <NavItem
-              to="/weather/suggestions"
-              icon="partlyCloudyDay"
-              tone="sky"
-            >
-              {t("nav.weatherSuggestions")}
-            </NavItem>
-          )}
-          {committee && (
-            <NavItem to="/committee" icon="monitoring" tone="navy">
-              {t("nav.committee")}
-            </NavItem>
-          )}
-          {analytics && (
-            <>
-              <NavItem to="/analytics" icon="analytics" tone="navy">
-                {t("nav.analytics")}
-              </NavItem>
-              <NavItem to="/reports-library" icon="folderOpen" tone="slate">
-                {t("nav.reportsLibrary")}
-              </NavItem>
-            </>
-          )}
-          {knowledge && (
-            <>
-              <NavItem to="/memory" icon="historyEdu" tone="purple">
-                {t("nav.memory")}
-              </NavItem>
-              <NavItem to="/library" icon="menuBook" tone="purple">
-                {t("nav.library")}
-              </NavItem>
-            </>
-          )}
-          {rewards && (
-            <NavItem to="/rewards" icon="militaryTech" tone="pink">
-              {t("nav.rewards")}
-            </NavItem>
-          )}
-          {readsOrgs && (
-            <>
-              <NavItem to="/orgs" end icon="apartment" tone="navy">
-                {t("nav.orgs")}
-              </NavItem>
-              <NavItem
-                to="/orgs/certificates"
-                icon="workspacePremium"
-                tone="amber"
-              >
-                {t("nav.certificates")}
-              </NavItem>
-              <NavItem to="/orgs/certificates/counter" icon="verified" tone="green">
-                {t("nav.counter")}
-              </NavItem>
-              <NavItem to="/orgs/prevention" icon="policy" tone="purple">
-                {t("nav.prevention")}
-              </NavItem>
-            </>
-          )}
-          {editsTips && (
-            <NavItem to="/safety-tips" icon="healthAndSafety" tone="green">
-              {t("nav.safetyTips")}
-            </NavItem>
-          )}
-          {editsTips && (
-            <NavItem to="/emergency-guide" icon="medicalServices" tone="red">
-              {t("nav.emergencyGuide")}
-            </NavItem>
-          )}
-          {canOpenCoastal(identity.roles) && (
-            <NavItem to="/coastal" icon="healthAndSafety" tone="sky">
-              {t("nav.coastal")}
-            </NavItem>
-          )}
-          {canOpenProgrammes(identity.roles) && (
-            <NavItem to="/programmes" icon="schedule" tone="orange">
-              {t("nav.programmes")}
-            </NavItem>
-          )}
-          {canOpenLayers(identity.roles) && (
-            <NavItem to="/layers" icon="layers" tone="teal">
-              {t("nav.layers")}
-            </NavItem>
-          )}
-          {canHandleContact(identity.roles) && (
-            <NavItem to="/contact" icon="mail" tone="sky">
-              {t("nav.contact")}
-            </NavItem>
-          )}
-          {canReadPlatformSettings(identity.roles) && (
-            <NavItem to="/settings" end icon="settings" tone="slate">
-              {t("nav.settings")}
-            </NavItem>
-          )}
-          {aiSettings && (
-            <NavItem to="/settings/ai" icon="smartToy" tone="slate">
-              {t("nav.aiSettings")}
-            </NavItem>
-          )}
-          {canOpenCrew(identity.roles) && (
-            <NavItem to="/crew" icon="groups" tone="green">
-              {t("nav.crew")}
-            </NavItem>
-          )}
-          {hasReadAccess(identity.roles) && (
-            <NavItem to="/report-templates" icon="description" tone="purple">
-              {t("nav.reportTemplates")}
-            </NavItem>
-          )}
-          {canManageAccounts(identity) && (
-            <NavItem to="/accounts" icon="manageAccounts" tone="slate">
-              {t("nav.accounts")}
-            </NavItem>
-          )}
-          {canReadScopedAudit(identity) && (
-            <NavItem to="/audit" icon="policy" tone="slate">
-              {t("nav.audit")}
-            </NavItem>
-          )}
-          {canOpenBreakGlass(identity) && (
-            <NavItem to="/break-glass" icon="lockOpen" tone="red">
-              {t("nav.breakGlass")}
-            </NavItem>
-          )}
-        </nav>
+        <MainNav groups={groups} shape={menu.shape} position={menu.position} />
         <div className="header__tools">
           <LiveIndicator />
-          <div className="header__user">
-            <span className="header__name">{identity.name}</span>
-            <span className="header__scope">
-              <span className="visually-hidden">{t("header.scope")}: </span>
-              {scope}
-            </span>
-            <span className="header__roles">
-              <span className="visually-hidden">{t("header.roles")}: </span>
-              {roles}
-            </span>
-          </div>
-          <LanguageMenu />
-          <ThemeToggle />
-          <button type="button" className="btn" onClick={() => void signOut()}>
-            {t("header.logout")}
-          </button>
+          <AccountMenu
+            name={identity.name}
+            scope={scope}
+            roles={roles}
+            menu={menu}
+            onMenu={(m) => {
+              saveMenu(m);
+              setMenu(m);
+            }}
+            onSignOut={() => void signOut()}
+          />
         </div>
       </header>
-      <LevelBanner />
-      {canRequestBreakGlass(identity.roles) && (
-        <div className="shell__banner">
-          <ActiveGrantBanner />
-        </div>
-      )}
-      <main id="main" tabIndex={-1} className="main">
-        {live === "forbidden" ? (
-          <NoAccessPage reason="liveForbidden" embedded />
-        ) : (
-          <Outlet />
+      <div className="shell__body">
+        <LevelBanner />
+        {canRequestBreakGlass(identity.roles) && (
+          <div className="shell__banner">
+            <ActiveGrantBanner />
+          </div>
         )}
-      </main>
+        <main id="main" tabIndex={-1} className="main">
+          {live === "forbidden" ? (
+            <NoAccessPage reason="liveForbidden" embedded />
+          ) : (
+            <Outlet />
+          )}
+        </main>
+      </div>
       {readsReports && <StreamAlertToasts />}
       {canDraftMessage(identity.roles, "alert") && <AlertFollowUpToasts />}
       <SoftphoneDock />

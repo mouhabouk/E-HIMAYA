@@ -43,7 +43,20 @@
     "crew": "Crews on duty",
     "reportTemplates": "Report templates",
     "coastal": "Coastal safety",
-    "programmes": "Seasonal programmes"
+    "programmes": "Seasonal programmes",
+    "command": "Command",
+    "axes": "Crisis axes",
+    "register": "Plans and recommendations",
+    "dispatches": "Directives and replies",
+    "group": {
+      "ops": "Daily operations",
+      "crisis": "Crises and command",
+      "alerts": "Alerts and contact",
+      "people": "Volunteers and doctors",
+      "orgs": "Institutions",
+      "knowledge": "Analysis and knowledge",
+      "system": "System"
+    }
   },
   "header": {
     "scope": "Geographic scope",
@@ -60,7 +73,22 @@
       "dark": "dark"
     },
     "language": "Language",
-    "logoAlt": "Office National de la Protection Civile"
+    "logoAlt": "Office National de la Protection Civile",
+    "account": "My account and settings",
+    "themeLabel": "Mode",
+    "menu": {
+      "shape": "Menu shape",
+      "position": "Menu position",
+      "shapes": {
+        "grouped": "Grouped",
+        "flat": "Flat"
+      },
+      "positions": {
+        "top": "Top",
+        "right": "Right",
+        "left": "Left"
+      }
+    }
   },
   "roles": {
     "operator": "Operator",
@@ -75,7 +103,9 @@
     "ai_admin": "AI administrator",
     "regional_account_admin": "Account administrator",
     "medical_coordinator": "Regional medical coordinator",
-    "team_leader": "Team leader"
+    "team_leader": "Team leader",
+    "governor": "Governor",
+    "minister": "Minister"
   },
   "status": {
     "received": "Received",
@@ -358,7 +388,35 @@
     "file_unreadable": "Damaged or unreadable file.",
     "file_sheet_missing": "The sheet « النقاط » (points) is missing from the file.",
     "file_schema": "The file does not follow the programme schema.",
-    "file_too_many_points": "Too many points in the file."
+    "file_too_many_points": "Too many points in the file.",
+    "axis_not_found": "Axis not found or outside your scope.",
+    "axis_closed": "The axis is closed.",
+    "incident_not_found": "Intervention not found.",
+    "incident_not_attachable": "Merged or dissolved intervention: cannot be attached.",
+    "incident_out_of_axis": "The intervention belongs to another gouvernorat.",
+    "incident_in_other_axis": "The intervention is attached to another open axis.",
+    "incident_not_attached": "The intervention is not attached to this axis.",
+    "close_the_national_axis": "Close the national axis, not a sub-axis.",
+    "gouvernorats_required": "Choose at least one gouvernorat.",
+    "gouvernorat_required": "Choose the gouvernorat.",
+    "request_decided": "The request was already decided.",
+    "request_not_found": "Request not found.",
+    "executor_name_required": "Name the partner.",
+    "due_in_past": "The deadline is in the past.",
+    "directive_overridden": "Overridden by the minister’s decision.",
+    "directive_not_found": "Decision not found.",
+    "sitrep_sent": "Report already sent.",
+    "sitrep_not_found": "Report not found.",
+    "shelter_not_found": "Shelter not found.",
+    "evacuation_not_found": "Zone not found.",
+    "need_not_found": "Need not found.",
+    "occupants_over_capacity": "Occupants exceed the capacity.",
+    "group_not_found": "This folder does not exist.",
+    "group_not_empty": "The folder holds layers: move them first.",
+    "group_kept": "This folder cannot be deleted.",
+    "group_sensitivity_mismatch": "Sensitive layers go in the sensitive folder, and only there.",
+    "icon_unknown": "Unknown icon.",
+    "tone_unknown": "Unknown colour."
   },
   "kpi": {
     "title": "Key indicators",
@@ -2969,7 +3027,8 @@
       "incident": "Incident",
       "report": "Citizen report",
       "transcript": "Transcript",
-      "procedure": "Procedure"
+      "procedure": "Procedure",
+      "register": "Plans and instructions"
     },
     "results": "Results",
     "count": "Results shown: {{n}}",
@@ -3018,7 +3077,8 @@
         "audio": "Audio",
         "recording": "Recording",
         "document": "Document"
-      }
+      },
+      "openRegister": "Open the document in the register"
     }
   },
   "rewards": {
@@ -3818,7 +3878,8 @@
       "tabs": {
         "label": "Layers",
         "layers": "Layers ({{count}})",
-        "deleted": "Deleted ({{count}})"
+        "deleted": "Deleted ({{count}})",
+        "folders": "Map folders ({{count}})"
       },
       "visibility": {
         "title": "Who sees the layer",
@@ -3938,6 +3999,58 @@
       "duplicates": "Possible duplicates: {{n}}",
       "ministerOnly": "The minister alone",
       "listSeparator": ", "
+    },
+    "groups": {
+      "showAll": "Show every layer: {{group}}",
+      "count": "{{on}} of {{total}}",
+      "title": "Folders of the layer panel",
+      "intro": "Layers show on the map in these folders, in this order. A folder grants nothing: who sees a layer is set in its settings, and each user sees only the folders holding a layer they see.",
+      "folder": "Folder",
+      "layers": "Layers",
+      "position": "Order",
+      "positionHelp": "Smallest first.",
+      "newTitle": "New folder",
+      "editTitle": "Edit folder: {{group}}",
+      "edit": "Edit",
+      "editNamed": "Edit folder {{group}}",
+      "delete": "Delete",
+      "deleteNamed": "Delete folder {{group}}",
+      "kept": "Permanent folder",
+      "notEmpty": "Holds layers",
+      "namesRequired": "Enter the folder’s name in Arabic, French and English.",
+      "pick": "Folder on the map",
+      "pickHelp": "The folder the layer shows in on the map panel. It does not change who sees it.",
+      "pickSensitive": "A sensitive layer stays in the sensitive layers folder.",
+      "icons": {
+        "localFireDepartment": "Fire",
+        "medicalServices": "Health",
+        "policy": "Security",
+        "apartment": "Building",
+        "menuBook": "Education",
+        "localShipping": "Transport",
+        "inventory2": "Stock",
+        "map": "Map",
+        "groups": "Gathering",
+        "schedule": "Season",
+        "lockOpen": "Padlock",
+        "layers": "Layers",
+        "healthAndSafety": "Prevention",
+        "warning": "Danger",
+        "campaign": "Alert",
+        "folderOpen": "Folder"
+      },
+      "tones": {
+        "red": "Red",
+        "navy": "Navy",
+        "purple": "Purple",
+        "green": "Green",
+        "amber": "Amber",
+        "teal": "Teal",
+        "slate": "Slate",
+        "pink": "Pink",
+        "sky": "Sky",
+        "orange": "Orange"
+      }
     }
   },
   "guide": {
@@ -4908,5 +5021,530 @@
       "restore": "Back to a version"
     },
     "unlocatedCount": "{{count}} without position"
+  },
+  "crisis": {
+    "sim": "simulated data",
+    "level": {
+      "1": "Watch",
+      "2": "Alert",
+      "3": "Wide intervention",
+      "4": "Major disaster"
+    },
+    "kind": {
+      "flood": "Flood",
+      "forest_fire": "Forest fire",
+      "storm": "Storm",
+      "earthquake": "Earthquake",
+      "technological": "Technological accident",
+      "health": "Health crisis",
+      "other": "Other"
+    },
+    "role": {
+      "governor": "Governor",
+      "minister": "Minister"
+    },
+    "fig": {
+      "incidentsOpen": "Open interventions",
+      "deceased": "Deaths",
+      "injuredHint": "{{n}} injured",
+      "rescued": "Rescued",
+      "evacuated": "Evacuated",
+      "sheltered": "Sheltered",
+      "resources": "Resources engaged",
+      "volunteersHint": "and {{n}} volunteers",
+      "decisionsDone": "Decisions carried out",
+      "meanHours": "Mean {{h}} h to carry out"
+    },
+    "map": {
+      "aria": "Command map: the gouvernorats and the level of their axes. The lists beside it give every value.",
+      "axisAria": "Map of the axis {{name}}: area, interventions, shelters, evacuation and decision areas.",
+      "controls": "Map controls",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "home": "Back to the whole view",
+      "tilt": "Switch between flat and tilted view",
+      "hideLayers": "Hide layers",
+      "showLayers": "Layers",
+      "legend": "Levels legend",
+      "unavailable": "The map is not available in this browser; the lists give every value.",
+      "layer": {
+        "gouvernorats": "Gouvernorats",
+        "axes": "Axis areas",
+        "incidents": "Interventions",
+        "shelters": "Shelters",
+        "evacuations": "Evacuation zones",
+        "decisions": "Decision areas"
+      }
+    },
+    "command": {
+      "eyebrow": "Disaster and crisis command",
+      "minister": "Minister’s board: national situation",
+      "governor": "Governor of {{name}}",
+      "active": "{{count}} active axes",
+      "overview": "Overview",
+      "axes": "Active crises",
+      "axesIn": "Active crises in {{name}}",
+      "allGouvernorats": "All gouvernorats",
+      "none": "No disaster or crisis declared in the gouvernorat.",
+      "noneNational": "No disaster or crisis declared in the country.",
+      "ranking": "Gouvernorats by load",
+      "rankingCaption": "Gouvernorats with open axes, by level then load (open interventions per engaged resource).",
+      "gouvernorat": "Gouvernorat",
+      "level": "Level",
+      "weight": "Load",
+      "resources": "Resources engaged",
+      "noResources": "No resource engaged on the attached interventions.",
+      "needs": "Shortfalls and support requests ({{n}})",
+      "noNeeds": "No shortfall raised.",
+      "follow": "Follow-up",
+      "noArchive": "No closed axis yet.",
+      "tab": {
+        "decisions": "Decisions and recommendations",
+        "sitreps": "Situation reports",
+        "archive": "Archive",
+        "timeline": "Timeline",
+        "documents": "Documents",
+        "plans": "Plans and recommendations"
+      }
+    },
+    "axes": {
+      "title": "Disaster and crisis axes",
+      "intro": "An axis groups the interventions of one major event: area, level, resources and decisions. The commander opens it; the regional room head requests it.",
+      "open": "Open an axis",
+      "request": "Request an axis",
+      "openConfirm": "Open and notify governor and minister",
+      "requestConfirm": "Send to the commander",
+      "name": "Axis name",
+      "namePlaceholder": "Nabeul floods, October 2026",
+      "kind": "Kind",
+      "national": "National axis (one sub-axis per gouvernorat)",
+      "plan": "Plan activated",
+      "facts": "Facts (at least 10 characters)",
+      "pending": "Requests waiting for the commander ({{n}})",
+      "requestIncidents": "{{n}} interventions proposed",
+      "requestStatus": {
+        "pending": "Pending",
+        "accepted": "Accepted",
+        "rejected": "Rejected"
+      },
+      "rejectReason": "Reason for rejecting",
+      "accept": "Accept and open",
+      "reject": "Reject",
+      "state": "State",
+      "openList": "Open",
+      "closedList": "Closed",
+      "noneOpen": "No open axis.",
+      "noneClosed": "No closed axis."
+    },
+    "axis": {
+      "label": "Axis",
+      "national": "National",
+      "nationalOf": "National ({{n}} gouvernorats)",
+      "since": "since {{at}}",
+      "level": "Level",
+      "situation": "Situation",
+      "suggested": "Suggested to attach ({{n}})",
+      "noSuggestion": "No open matching intervention in the area.",
+      "attach": "Attach",
+      "propose": "Propose",
+      "dismiss": "Dismiss",
+      "attached": "Attached interventions ({{n}})",
+      "noIncident": "No intervention attached yet.",
+      "incidentFigs": "Deaths {{d}} · injured {{i}} · resources {{r}}",
+      "shelters": "Shelters ({{n}})",
+      "evacuations": "Evacuation: {{n}} people",
+      "escalate": "Escalate to national",
+      "addGouvernorats": "Add gouvernorats",
+      "gouvernorats": "Gouvernorats concerned",
+      "reason": "Reason",
+      "escalateConfirm": "Confirm",
+      "close": "Close the axis",
+      "summary": "Final summary (at least 10 characters)",
+      "closeConfirm": "Close and draft the national memory",
+      "closed": "Closed"
+    },
+    "add": {
+      "shelter": "Add a shelter",
+      "shelterName": "Shelter name",
+      "shelterCount": "Capacity",
+      "occupants": "Occupants",
+      "evacuation": "Add an evacuation zone",
+      "evacuationName": "Zone",
+      "evacuationCount": "People evacuated",
+      "need": "Raise a shortfall",
+      "needName": "Shortfall (pumps, blankets…)",
+      "needCount": "Quantity",
+      "submit": "Add"
+    },
+    "need": {
+      "raised": "Raised",
+      "met": "Met",
+      "markMet": "Mark met"
+    },
+    "directive": {
+      "new": "Recommendation or decision",
+      "kindLabel": "Kind",
+      "kind": {
+        "decision": "Decision",
+        "recommendation": "Recommendation"
+      },
+      "number": "No. {{n}}",
+      "category": "Category",
+      "cat": {
+        "evacuation": "Evacuation",
+        "resources": "Resources",
+        "closure": "Road or building closure",
+        "shelter": "Open a shelter",
+        "support": "Support request",
+        "plan": "Activate a plan",
+        "public_information": "Public information",
+        "other": "Other"
+      },
+      "executor": "Executed by",
+      "exec": {
+        "regional": "Regional room",
+        "central": "Central room",
+        "partner": "Partner"
+      },
+      "partnerName": "Partner name",
+      "due": "Deadline",
+      "issuer": "Issued by",
+      "text": "Text",
+      "signNote": "The server signs the text, issuer, role and time; nothing can be changed or deleted afterwards.",
+      "issue": "Issue and sign",
+      "noAxis": "No open axis you may issue on.",
+      "none": "No decision or recommendation yet.",
+      "status": {
+        "issued": "Issued",
+        "received": "Received",
+        "in_progress": "In progress",
+        "done": "Done",
+        "failed": "Failed"
+      },
+      "to": {
+        "received": "Acknowledge",
+        "in_progress": "Start",
+        "done": "Done",
+        "failed": "Failed (reason)"
+      },
+      "overridden": "Conflicts: the minister’s decision prevails",
+      "overdue": "Overdue",
+      "signed": "Signed (key {{key}})",
+      "unsigned": "Unsigned: no signing key on the server.",
+      "reason": "Reason: {{reason}}",
+      "reasonLabel": "Reason (required when failed)"
+    },
+    "sitrep": {
+      "none": "No situation report sent yet.",
+      "number": "Situation report {{n}}",
+      "draft": "Draft",
+      "figures": "Interventions {{incidents}} · deaths {{deceased}} · evacuated {{evacuated}} · sheltered {{sheltered}}",
+      "assessment": "Assessment",
+      "send": "Send to governor and minister",
+      "prepare": "Prepare a report now",
+      "dueIn": "Next report in {{h}} h",
+      "late": "Situation report overdue"
+    },
+    "event": {
+      "opened": "Axis opened",
+      "escalated": "Escalated to national",
+      "updated": "Axis updated",
+      "closed": "Axis closed",
+      "incident_attached": "Intervention attached",
+      "incident_detached": "Intervention detached",
+      "incident_proposed": "Attachment proposed",
+      "shelter_opened": "Shelter opened",
+      "shelter_updated": "Shelter updated",
+      "evacuation_ordered": "Evacuation zone",
+      "evacuation_updated": "Evacuation updated",
+      "need_raised": "Shortfall raised",
+      "need_met": "Shortfall met",
+      "directive_issued": "Recommendation or decision issued",
+      "directive_received": "Decision received",
+      "directive_in_progress": "Decision in progress",
+      "directive_done": "Decision carried out",
+      "directive_failed": "Decision failed",
+      "directive_overdue": "Deadline passed",
+      "sitrep_drafted": "Report drafted",
+      "sitrep_sent": "Report sent"
+    }
+  },
+  "register": {
+    "title": "Register of plans and recommendations",
+    "intro": "Plans, decisions, memos, circulars, standing and temporary instructions, central and regional, with their references, dates in force and key recommendations.",
+    "new": "Record a document",
+    "back": "← Register of plans and recommendations",
+    "edit": "Edit",
+    "deleteDraft": "Delete draft",
+    "issuedOn": "issued {{date}}",
+    "hasFile": "file attached",
+    "recommendationsOpen": "open recommendations {{open}} of {{n}}",
+    "fromAxis": "from a crisis axis",
+    "sourceAxisSigned": "decision or recommendation of an axis, electronically signed",
+    "sourceManual": "recorded manually",
+    "facts": "Record",
+    "text": "Summary and text",
+    "noText": "No summary or text.",
+    "axes": "Linked crisis axes",
+    "repealedNote": "Repealed: {{reason}}",
+    "openRepealing": "Open the repealing document",
+    "validity": {
+      "since": "in force since {{from}}",
+      "between": "from {{from}} to {{to}}"
+    },
+    "kind": {
+      "plan": "Plan",
+      "decision": "Decision",
+      "memo": "Memo",
+      "circular": "Circular",
+      "standing_instruction": "Standing instruction",
+      "temporary_instruction": "Temporary instruction",
+      "recommendation": "Recommendation",
+      "minutes": "Minutes",
+      "other": "Other"
+    },
+    "level": {
+      "central": "Central",
+      "regional": "Regional"
+    },
+    "status": {
+      "in_force": "In force",
+      "draft": "Draft",
+      "expired": "Expired",
+      "repealed": "Repealed"
+    },
+    "access": {
+      "all": "All staff",
+      "gouvernorat": "Gouvernorat rooms",
+      "command": "Command",
+      "restricted": "Restricted"
+    },
+    "topic": {
+      "floods": "Floods",
+      "forest_fires": "Forest fires",
+      "beaches": "Beaches",
+      "hazardous_materials": "Hazardous materials",
+      "establishments": "Establishments",
+      "health": "Health",
+      "transport": "Transport",
+      "earthquakes": "Earthquakes",
+      "storms": "Storms",
+      "civil_protection": "Civil protection",
+      "public_information": "Public information",
+      "other": "Other"
+    },
+    "field": {
+      "kind": "Type",
+      "level": "Level",
+      "gouvernorat": "Gouvernorat",
+      "access": "Access",
+      "title": "Title",
+      "reference": "Official reference",
+      "referencePlaceholder": "Decision of the Governor of Nabeul No. 27 of 2026",
+      "issuer": "Issued by",
+      "issuerPlaceholder": "Governor, director general, regional committee…",
+      "signatory": "Signatory",
+      "issuedOn": "Issue date",
+      "effectiveFrom": "In force from",
+      "effectiveTo": "End date",
+      "required": "required",
+      "topics": "Topics",
+      "topic": "Topic",
+      "summary": "Summary",
+      "body": "Text",
+      "bodyHint": "Type the text or its key passages: the search covers the title, reference, summary and text.",
+      "status": "Status",
+      "validity": "In force",
+      "source": "Source",
+      "updated": "Last change"
+    },
+    "form": {
+      "new": "Record a document in the register",
+      "edit": "Edit {{number}}",
+      "reason": "Reason for the change",
+      "publish": "Record and publish",
+      "save": "Save a new version",
+      "saveDraft": "Save as draft",
+      "incomplete": "Complete the marked fields.",
+      "datesOutOfOrder": "The end date is before the start date."
+    },
+    "search": {
+      "label": "Search the register",
+      "placeholder": "Words from the title, reference or text…",
+      "sort": "Sort",
+      "sortBy": {
+        "relevance": "Relevance",
+        "newest": "Newest",
+        "oldest": "Oldest"
+      },
+      "advanced": "Advanced search",
+      "anyGouvernorat": "All gouvernorats",
+      "anyTopic": "All topics",
+      "dateField": "Period on",
+      "byIssued": "issue date",
+      "byEffective": "date in force",
+      "from": "From",
+      "to": "To",
+      "inForceOn": "In force on",
+      "withFile": "With a file only",
+      "results": "Results",
+      "count": "{{n}} document(s)",
+      "inForceOnNote": "what was in force on {{date}}",
+      "none": "No document matches.",
+      "facets": "Filter by status, level and type"
+    },
+    "file": {
+      "title": "File",
+      "none": "No file attached.",
+      "sha": "SHA-256 fingerprint:",
+      "open": "Open the file",
+      "upload": "Attach a file",
+      "replace": "Replace the file",
+      "allowed": "PDF, Word or image, up to 20 MB"
+    },
+    "rec": {
+      "title": "Key recommendations ({{open}} open of {{n}})",
+      "none": "No recommendations.",
+      "due": "due {{date}}",
+      "noDue": "no deadline",
+      "overdue": "overdue",
+      "status": {
+        "proposed": "Proposed",
+        "in_progress": "In progress",
+        "done": "Done",
+        "dropped": "Dropped"
+      },
+      "changeStatus": "Status of recommendation {{n}}",
+      "reason": "Reason for dropping",
+      "apply": "Update",
+      "body": "Recommendation",
+      "responsible": "Responsible",
+      "dueOn": "Deadline",
+      "add": "Add a recommendation"
+    },
+    "links": {
+      "title": "Links to other documents",
+      "none": "No links.",
+      "find": "Find a document",
+      "document": "Document",
+      "relation": "Link",
+      "add": "Link",
+      "remove": "Unlink",
+      "repealsHint": "Repeal is final: the other document becomes repealed by this one.",
+      "rel": {
+        "repeals": {
+          "out": "repeals",
+          "in": "repealed by"
+        },
+        "amends": {
+          "out": "amends",
+          "in": "amended by"
+        },
+        "complements": {
+          "out": "complements",
+          "in": "complemented by"
+        }
+      }
+    },
+    "revisions": {
+      "title": "Versions",
+      "version": "version {{n}}",
+      "change": {
+        "created": "recorded",
+        "updated": "changed",
+        "repealed": "repealed",
+        "file": "file",
+        "recorded_from_axis": "recorded from an axis"
+      }
+    },
+    "repeal": {
+      "action": "Repeal",
+      "reason": "Reason for repeal",
+      "hint": "Repeal is final and stays in the versions and the audit log.",
+      "confirm": "Confirm repeal"
+    },
+    "axis": {
+      "plan": "Plan activated:",
+      "pickPlan": "Choose the plan from the register",
+      "changePlan": "Change plan",
+      "setPlan": "Set",
+      "clearPlan": "Remove",
+      "noDocuments": "No documents linked to the axis."
+    },
+    "command": {
+      "none": "No plan or recommendation in force in your scope.",
+      "all": "Whole register"
+    }
+  },
+  "dispatch": {
+    "title": "Directives and replies",
+    "intro": "Directives of the centre to the gouvernorats (to all or to one) and immediate notices of the regional rooms, with one thread of replies per gouvernorat that only it and the centre read.",
+    "newDirective": "New directive",
+    "newNotice": "Immediate notice",
+    "back": "← Directives and replies",
+    "kind": {
+      "directive": "Directive",
+      "notice": "Notice"
+    },
+    "urgency": {
+      "normal": "Normal",
+      "urgent": "Urgent",
+      "flash": "Immediate"
+    },
+    "urgencyLabel": "Priority",
+    "audience": "Recipients",
+    "audienceOf": {
+      "all": "General, every gouvernorat",
+      "targeted": "For one or more gouvernorats"
+    },
+    "gouvernorats": "Gouvernorats concerned",
+    "dueAt": "Reply due by",
+    "subject": "Subject",
+    "body": "Text",
+    "attach": "Attach files",
+    "attachHint": "Word, Excel, PowerPoint, PDF, image or text; 20 MB per file, 10 files",
+    "removeFile": "Remove {{name}}",
+    "replyRequired": "Reply required (otherwise for information)",
+    "incomplete": "Fill in the subject, write a text or attach a file, and pick the gouvernorats.",
+    "sendDirective": "Send the directive",
+    "sendNotice": "Send the notice",
+    "unread": "New",
+    "closed": "Closed",
+    "open": "Open",
+    "overdue": "Overdue",
+    "fromGouvernorat": "from {{name}}",
+    "toCount": "to {{n}} gouvernorat(s)",
+    "files": "{{n}} file(s)",
+    "repliedOf": "{{replied}} of {{n}} replied",
+    "youReplied": "Replied",
+    "awaitingYou": "Awaiting your reply",
+    "forInfo": "For information",
+    "box": "Box",
+    "boxOf": {
+      "inbox": "Inbox",
+      "sent": "Sent",
+      "all": "All"
+    },
+    "search": "Search the subject and text",
+    "any": "All",
+    "state": "State",
+    "count": "{{n}} message(s)",
+    "none": "No messages.",
+    "sendReply": "Send",
+    "threadOf": "Thread of {{name}}",
+    "noReply": "No reply yet.",
+    "centre": "Central room",
+    "replyTo": "Reply to {{name}}",
+    "yourReply": "Your reply",
+    "close": "Close",
+    "dueOn": "reply due {{at}}",
+    "text": "Text and attachments",
+    "noText": "No text; see the attachments.",
+    "follow": "Follow-up: {{replied}} replied, {{seen}} read of {{n}}",
+    "seen": "Read",
+    "replied": "Replied",
+    "repliesN": "{{n}} reply(ies)",
+    "replies": "Replies",
+    "writeTo": "Write to a gouvernorat that has not replied"
   }
 }

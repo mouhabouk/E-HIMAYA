@@ -34,6 +34,7 @@ import { TUNISIA_BOUNDS } from "../lib/mapStyle";
 import { reasonValid } from "../lib/phase9";
 import { PageTitle } from "../components/PageTitle";
 import { Pill } from "../components/Icon";
+import { LayerGroupsCard } from "../components/LayerGroups";
 import {
   DeletedLayers,
   DeletedPlaces,
@@ -1072,11 +1073,15 @@ export function LayersPage() {
   const lang = useLanguage();
   const [selected, setSelected] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
-  const [tab, setTab] = useState<"layers" | "deleted">("layers");
+  const [tab, setTab] = useState<"layers" | "folders" | "deleted">("layers");
   const query = useQuery({ queryKey: layerKeys.all, queryFn: ({ signal }) => api.layers(signal) });
   const meta = query.data;
   const layers = meta?.items ?? [];
   const current = layers.find((l) => l.key === selected) ?? null;
+  const folderName = (key: string | undefined) => {
+    const group = meta?.groups?.find((g) => g.key === key);
+    return group ? localized(group.name, lang) : "—";
+  };
 
   return (
     <div className="page">
@@ -1106,7 +1111,7 @@ export function LayersPage() {
           )}
           {meta.can_manage && (
             <div role="tablist" aria-label={t("layers.manage.tabs.label")} className="tabs">
-              {(["layers", "deleted"] as const).map((k) => (
+              {(["layers", "folders", "deleted"] as const).map((k) => (
                 <button
                   key={k}
                   type="button"
@@ -1115,13 +1120,17 @@ export function LayersPage() {
                   className={`tabs__tab${tab === k ? " tabs__tab--active" : ""}`}
                   onClick={() => setTab(k)}
                 >
-                  {t(`layers.manage.tabs.${k}`, { count: k === "deleted" ? meta.deleted.length : layers.length })}
+                  {t(`layers.manage.tabs.${k}`, {
+                    count: k === "deleted" ? meta.deleted.length : k === "folders" ? (meta.groups ?? []).length : layers.length,
+                  })}
                 </button>
               ))}
             </div>
           )}
           {tab === "deleted" && meta.can_manage ? (
             <DeletedLayers items={meta.deleted} />
+          ) : tab === "folders" && meta.can_manage ? (
+            <LayerGroupsCard groups={meta.groups ?? []} />
           ) : layers.length === 0 ? (
             <p className="muted">{t("layers.list.empty")}</p>
           ) : (
@@ -1130,6 +1139,7 @@ export function LayersPage() {
               <thead>
                 <tr>
                   <th scope="col">{t("layers.list.name")}</th>
+                  <th scope="col">{t("layers.groups.folder")}</th>
                   <th scope="col">{t("layers.form.audience")}</th>
                   <th scope="col">{t("layers.list.places")}</th>
                   <th scope="col">{t("layers.list.lastImport")}</th>
@@ -1147,6 +1157,7 @@ export function LayersPage() {
                       {l.to_verify && <span className="chip chip--to-verify">{t("layers.toVerify")}</span>}
                       {l.simulated && <SimTag label={t("layers.simulated")} />}
                     </td>
+                    <td>{folderName(l.group)}</td>
                     <td>
                       {l.sensitive
                         ? t("layers.manage.ministerOnly")

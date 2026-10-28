@@ -1,0 +1,45 @@
+@startuml
+!include style.iuml
+title Séquence : axe de catastrophe ou de crise, de la demande à la clôture (L3)
+autonumber
+actor "Chef de salle régionale\n(ops_manager régional)" as RS
+actor "Commandant\n(ops_manager national)" as CMD
+actor "Gouverneur" as GOV
+actor "Ministre" as MIN
+participant "Tableau de bord\n(Axes, conduite de terrain)" as UI
+participant "API\n(/staff/crisis)" as API
+database "PostgreSQL\n(schéma crisis, RLS par gouvernorats)" as DB
+participant "Worker\n(chaque minute)" as WRK
+participant "Mémoire nationale" as MEM
+== Déclaration ==
+RS -> API : POST /requests (faits, type, nom, emprise, interventions)
+API -> DB : demande « en attente » + audit
+CMD -> API : POST /requests/{id}/decide (accepter)
+API -> DB : axe AX-2026-014 ouvert, niveau, emprise
+API -> GOV : notification en direct (axis.opened)
+API -> MIN : notification en direct
+== Rattachement ==
+UI -> API : GET /axes/{id}/suggestions
+API -> DB : interventions ouvertes dans l'emprise\n(ou le gouvernorat), type compatible
+RS -> API : POST /axes/{id}/incidents (rattacher)
+note right of API : jamais de rattachement automatique ;\nl'opérateur propose, la salle décide
+API -> DB : chronologie de l'axe
+== Composants ==
+RS -> API : abris, zones d'évacuation, besoins
+API -> DB : moyens engagés calculés\ndepuis les affectations
+GOV -> API : GET /command (sa wilaya, chiffres sans identités)
+MIN -> API : GET /command (national, classement, couches sensibles)
+== Escalade ==
+CMD -> API : POST /axes/{id}/escalate (gouvernorats)
+API -> DB : axe national parent + sous-axe par wilaya,\naucune donnée perdue
+== Point de situation ==
+WRK -> DB : axes dont le prochain point est dû\n(niveau 1 : 24 h … niveau 4 : 2 h)
+WRK -> DB : brouillon calculé (interventions, victimes,\névacués, abris, moyens, décisions)
+CMD -> API : POST /sitreps/{id}/send (appréciation)
+API -> GOV : point envoyé
+API -> MIN : point envoyé (axe national)
+== Clôture ==
+CMD -> API : POST /axes/{id}/close (bilan)
+API -> DB : bilan final calculé, axe clos
+API -> MEM : brouillon de fiche avec la chronologie
+@enduml

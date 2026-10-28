@@ -43,7 +43,20 @@
     "crew": "فرق المناوبة",
     "reportTemplates": "قوالب التقارير",
     "coastal": "السلامة الساحلية",
-    "programmes": "البرامج الموسمية"
+    "programmes": "البرامج الموسمية",
+    "command": "القيادة",
+    "axes": "محاور الأزمات",
+    "register": "المخططات والتوصيات",
+    "dispatches": "التوجيهات والردود",
+    "group": {
+      "ops": "العمليات اليومية",
+      "crisis": "الأزمات والقيادة",
+      "alerts": "التنبيهات والتواصل",
+      "people": "المتطوعون والأطباء",
+      "orgs": "المؤسسات",
+      "knowledge": "التحليل والمعرفة",
+      "system": "النظام"
+    }
   },
   "header": {
     "scope": "النطاق الجغرافي",
@@ -60,7 +73,22 @@
       "dark": "داكن"
     },
     "language": "اللغة",
-    "logoAlt": "الديوان الوطني للحماية المدنية"
+    "logoAlt": "الديوان الوطني للحماية المدنية",
+    "account": "حسابي والإعدادات",
+    "themeLabel": "الوضع",
+    "menu": {
+      "shape": "شكل القائمة",
+      "position": "موضع القائمة",
+      "shapes": {
+        "grouped": "مجمّعة",
+        "flat": "مسطّحة"
+      },
+      "positions": {
+        "top": "أعلى الصفحة",
+        "right": "يمين",
+        "left": "يسار"
+      }
+    }
   },
   "roles": {
     "operator": "مشغّل بلاغات",
@@ -75,7 +103,9 @@
     "ai_admin": "مسؤول نماذج الذكاء الاصطناعي",
     "regional_account_admin": "مسؤول حسابات القاعة",
     "medical_coordinator": "منسّق طبي جهوي",
-    "team_leader": "قائد فريق التدخل"
+    "team_leader": "قائد فريق التدخل",
+    "governor": "الوالي",
+    "minister": "الوزير"
   },
   "status": {
     "received": "مستلم",
@@ -358,7 +388,35 @@
     "file_unreadable": "الملف تالف أو غير مقروء.",
     "file_sheet_missing": "ورقة «النقاط» غير موجودة في الملف.",
     "file_schema": "الملف لا يطابق مخطط البرامج.",
-    "file_too_many_points": "عدد النقاط في الملف كبير جدا."
+    "file_too_many_points": "عدد النقاط في الملف كبير جدا.",
+    "axis_not_found": "المحور غير موجود أو خارج نطاقك.",
+    "axis_closed": "المحور مغلق.",
+    "incident_not_found": "التدخل غير موجود.",
+    "incident_not_attachable": "هذا التدخل مدمج أو ملغى: لا يُلحق.",
+    "incident_out_of_axis": "التدخل من ولاية أخرى.",
+    "incident_in_other_axis": "التدخل ملحق بمحور مفتوح آخر.",
+    "incident_not_attached": "التدخل غير ملحق بهذا المحور.",
+    "close_the_national_axis": "يُغلق المحور الوطني الأصل، لا فرعه.",
+    "gouvernorats_required": "اختر ولاية واحدة على الأقل.",
+    "gouvernorat_required": "اختر الولاية.",
+    "request_decided": "بُتّ في هذا الطلب.",
+    "request_not_found": "الطلب غير موجود.",
+    "executor_name_required": "اكتب اسم الجهة الشريكة.",
+    "due_in_past": "الأجل في الماضي.",
+    "directive_overridden": "القرار معوّض بقرار الوزير.",
+    "directive_not_found": "القرار غير موجود.",
+    "sitrep_sent": "أُرسل هذا التقرير.",
+    "sitrep_not_found": "التقرير غير موجود.",
+    "shelter_not_found": "مركز الإيواء غير موجود.",
+    "evacuation_not_found": "منطقة الإخلاء غير موجودة.",
+    "need_not_found": "النقص غير موجود.",
+    "occupants_over_capacity": "العدد الحالي يفوق السعة.",
+    "group_not_found": "هذا المجلد غير موجود.",
+    "group_not_empty": "المجلد يحوي طبقات: انقلها إلى مجلد آخر أولًا.",
+    "group_kept": "هذا المجلد لا يُحذف.",
+    "group_sensitivity_mismatch": "الطبقات الحساسة في مجلد الطبقات الحساسة وحده، ولا تدخله غيرها.",
+    "icon_unknown": "أيقونة غير معروفة.",
+    "tone_unknown": "لون غير معروف."
   },
   "kpi": {
     "title": "المؤشرات الرئيسية",
@@ -2969,7 +3027,8 @@
       "incident": "حادثة",
       "report": "بلاغ",
       "transcript": "تفريغ نصي",
-      "procedure": "إجراء"
+      "procedure": "إجراء",
+      "register": "المخططات والتعليمات"
     },
     "results": "النتائج",
     "count": "النتائج المعروضة: {{n}}",
@@ -3018,7 +3077,8 @@
         "audio": "صوت",
         "recording": "تسجيل",
         "document": "وثيقة"
-      }
+      },
+      "openRegister": "فتح الوثيقة في السجل"
     }
   },
   "rewards": {
@@ -3818,7 +3878,8 @@
       "tabs": {
         "label": "الطبقات",
         "layers": "الطبقات ({{count}})",
-        "deleted": "المحذوفات ({{count}})"
+        "deleted": "المحذوفات ({{count}})",
+        "folders": "مجلدات الخريطة ({{count}})"
       },
       "visibility": {
         "title": "من يرى الطبقة",
@@ -3938,6 +3999,58 @@
       "duplicates": "تكرار محتمل: {{n}}",
       "ministerOnly": "الوزير وحده",
       "listSeparator": "، "
+    },
+    "groups": {
+      "showAll": "إظهار كل طبقات {{group}}",
+      "count": "{{on}} من {{total}}",
+      "title": "مجلدات لوحة الطبقات",
+      "intro": "تظهر الطبقات على الخريطة في هذه المجلدات بهذا الترتيب. المجلد لا يمنح أي صلاحية: من يرى الطبقة يُضبط في إعداداتها، ولا يرى المستخدم إلا المجلدات التي فيها طبقة يراها.",
+      "folder": "المجلد",
+      "layers": "الطبقات",
+      "position": "الترتيب",
+      "positionHelp": "الأصغر يظهر أولًا.",
+      "newTitle": "مجلد جديد",
+      "editTitle": "تعديل المجلد: {{group}}",
+      "edit": "تعديل",
+      "editNamed": "تعديل المجلد {{group}}",
+      "delete": "حذف",
+      "deleteNamed": "حذف المجلد {{group}}",
+      "kept": "مجلد ثابت",
+      "notEmpty": "فيه طبقات",
+      "namesRequired": "اكتب اسم المجلد بالعربية والفرنسية والإنجليزية.",
+      "pick": "المجلد على الخريطة",
+      "pickHelp": "المجلد الذي تظهر فيه الطبقة في لوحة الخريطة. لا يغيّر من يراها.",
+      "pickSensitive": "الطبقة الحساسة تبقى في مجلد الطبقات الحساسة.",
+      "icons": {
+        "localFireDepartment": "إطفاء",
+        "medicalServices": "صحة",
+        "policy": "أمن",
+        "apartment": "مبنى",
+        "menuBook": "تعليم",
+        "localShipping": "نقل",
+        "inventory2": "مخزون",
+        "map": "خريطة",
+        "groups": "تجمع",
+        "schedule": "موسم",
+        "lockOpen": "قفل",
+        "layers": "طبقات",
+        "healthAndSafety": "وقاية",
+        "warning": "خطر",
+        "campaign": "تنبيه",
+        "folderOpen": "مجلد"
+      },
+      "tones": {
+        "red": "أحمر",
+        "navy": "كحلي",
+        "purple": "بنفسجي",
+        "green": "أخضر",
+        "amber": "كهرماني",
+        "teal": "فيروزي",
+        "slate": "رمادي",
+        "pink": "وردي",
+        "sky": "سماوي",
+        "orange": "برتقالي"
+      }
     }
   },
   "guide": {
@@ -4908,5 +5021,530 @@
       "restore": "رجوع إلى نسخة"
     },
     "unlocatedCount": "{{count}} دون موقع"
+  },
+  "crisis": {
+    "sim": "بيانات تجريبية",
+    "level": {
+      "1": "مراقبة",
+      "2": "تأهب",
+      "3": "تدخل واسع",
+      "4": "كارثة كبرى"
+    },
+    "kind": {
+      "flood": "فيضان",
+      "forest_fire": "حريق غابات",
+      "storm": "عاصفة",
+      "earthquake": "زلزال",
+      "technological": "حادث تكنولوجي",
+      "health": "أزمة صحية",
+      "other": "أخرى"
+    },
+    "role": {
+      "governor": "الوالي",
+      "minister": "الوزير"
+    },
+    "fig": {
+      "incidentsOpen": "تدخلات مفتوحة",
+      "deceased": "وفيات",
+      "injuredHint": "{{n}} إصابة",
+      "rescued": "مُنقَذون",
+      "evacuated": "مُجلَون",
+      "sheltered": "في الإيواء",
+      "resources": "وسائل مسخّرة",
+      "volunteersHint": "و{{n}} متطوعا",
+      "decisionsDone": "قرارات منفّذة",
+      "meanHours": "متوسط التنفيذ {{h}} س"
+    },
+    "map": {
+      "aria": "خريطة القيادة: الولايات ومستوى المحاور فيها. القائمة بجانب الخريطة تحمل كل المعطيات.",
+      "axisAria": "خريطة محور {{name}}: الحيّز والتدخلات والإيواء والإخلاء وحيّز القرارات.",
+      "controls": "التحكم في الخريطة",
+      "zoomIn": "تكبير",
+      "zoomOut": "تصغير",
+      "home": "العودة إلى المحور",
+      "tilt": "التبديل بين العرض المسطح والمائل",
+      "hideLayers": "إخفاء الطبقات",
+      "showLayers": "الطبقات",
+      "legend": "مفتاح المستويات",
+      "unavailable": "الخريطة غير متاحة في هذا المتصفح؛ القوائم تعرض كل المعطيات.",
+      "layer": {
+        "gouvernorats": "الولايات",
+        "axes": "حيّز المحاور",
+        "incidents": "التدخلات",
+        "shelters": "مراكز الإيواء",
+        "evacuations": "مناطق الإخلاء",
+        "decisions": "حيّز القرارات"
+      }
+    },
+    "command": {
+      "eyebrow": "قيادة الكوارث والأزمات",
+      "minister": "لوحة الوزير: الوضع الوطني",
+      "governor": "لوحة والي {{name}}",
+      "active": "{{count}} محور نشط",
+      "overview": "الوضع العام",
+      "axes": "الأزمات النشطة",
+      "axesIn": "الأزمات النشطة في {{name}}",
+      "allGouvernorats": "كل الولايات",
+      "none": "لا كارثة أو أزمة معلنة في الولاية.",
+      "noneNational": "لا كارثة أو أزمة معلنة في البلاد.",
+      "ranking": "ترتيب الولايات حسب الثقل",
+      "rankingCaption": "الولايات ذات المحاور المفتوحة، بترتيب المستوى ثم الثقل (التدخلات المفتوحة لكل وسيلة مسخّرة).",
+      "gouvernorat": "الولاية",
+      "level": "المستوى",
+      "weight": "الثقل",
+      "resources": "الوسائل المسخّرة",
+      "noResources": "لا وسيلة مسخّرة على التدخلات الملحقة.",
+      "needs": "نقص الموارد وطلبات الدعم ({{n}})",
+      "noNeeds": "لا نقص مرفوع.",
+      "follow": "المتابعة",
+      "noArchive": "لا محاور مغلقة بعد.",
+      "tab": {
+        "decisions": "القرارات والتوصيات",
+        "sitreps": "تقارير الوضع",
+        "archive": "الأرشيف",
+        "timeline": "الخط الزمني",
+        "documents": "الوثائق",
+        "plans": "المخططات والتوصيات"
+      }
+    },
+    "axes": {
+      "title": "محاور الكوارث والأزمات",
+      "intro": "المحور يجمع تدخلات حدث كبير واحد: حيّزه ومستواه وموارده وقراراته. يفتحه القائد، ويطلبه رئيس القاعة الجهوية.",
+      "open": "فتح محور",
+      "request": "طلب إعلان محور",
+      "openConfirm": "فتح المحور وإشعار الوالي والوزير",
+      "requestConfirm": "رفع الطلب إلى القائد",
+      "name": "اسم المحور",
+      "namePlaceholder": "فيضانات نابل، أكتوبر 2026",
+      "kind": "النوع",
+      "national": "محور وطني (تحته فرع لكل ولاية)",
+      "plan": "المخطط المفعّل",
+      "facts": "الوقائع (10 أحرف على الأقل)",
+      "pending": "طلبات إعلان بانتظار القائد ({{n}})",
+      "requestIncidents": "{{n}} تدخل مقترح",
+      "requestStatus": {
+        "pending": "بانتظار القرار",
+        "accepted": "مقبول",
+        "rejected": "مرفوض"
+      },
+      "rejectReason": "سبب الرفض",
+      "accept": "قبول وفتح المحور",
+      "reject": "رفض",
+      "state": "الحالة",
+      "openList": "مفتوحة",
+      "closedList": "مغلقة",
+      "noneOpen": "لا محور مفتوح.",
+      "noneClosed": "لا محور مغلق."
+    },
+    "axis": {
+      "label": "المحور",
+      "national": "وطني",
+      "nationalOf": "وطني ({{n}} ولايات)",
+      "since": "منذ {{at}}",
+      "level": "المستوى",
+      "situation": "الوضع",
+      "suggested": "مقترح للإلحاق ({{n}})",
+      "noSuggestion": "لا تدخل مفتوح متوافق داخل الحيّز.",
+      "attach": "إلحاق",
+      "propose": "اقتراح الإلحاق",
+      "dismiss": "رفض",
+      "attached": "التدخلات الملحقة ({{n}})",
+      "noIncident": "لا تدخل ملحق بعد.",
+      "incidentFigs": "وفيات {{d}} · إصابات {{i}} · وسائل {{r}}",
+      "shelters": "مراكز الإيواء ({{n}})",
+      "evacuations": "الإخلاء: {{n}} شخصا",
+      "escalate": "رفع إلى محور وطني",
+      "addGouvernorats": "إضافة ولايات",
+      "gouvernorats": "الولايات المعنية",
+      "reason": "السبب",
+      "escalateConfirm": "تأكيد التصعيد",
+      "close": "إغلاق المحور",
+      "summary": "الحصيلة النهائية (10 أحرف على الأقل)",
+      "closeConfirm": "إغلاق وإنشاء مسودة الذاكرة الوطنية",
+      "closed": "مغلق"
+    },
+    "add": {
+      "shelter": "إضافة مركز إيواء",
+      "shelterName": "اسم المركز",
+      "shelterCount": "السعة",
+      "occupants": "العدد الحالي",
+      "evacuation": "إضافة منطقة إخلاء",
+      "evacuationName": "المنطقة",
+      "evacuationCount": "عدد المُجلَين",
+      "need": "رفع نقص",
+      "needName": "ما ينقص (مضخات، أغطية…)",
+      "needCount": "الكمية",
+      "submit": "إضافة"
+    },
+    "need": {
+      "raised": "مرفوع",
+      "met": "مُلبّى",
+      "markMet": "تمّت التلبية"
+    },
+    "directive": {
+      "new": "توصية أو قرار",
+      "kindLabel": "النوع",
+      "kind": {
+        "decision": "قرار",
+        "recommendation": "توصية"
+      },
+      "number": "رقم {{n}}",
+      "category": "الصنف",
+      "cat": {
+        "evacuation": "إخلاء",
+        "resources": "تسخير موارد",
+        "closure": "غلق طريق أو مؤسسة",
+        "shelter": "فتح مركز إيواء",
+        "support": "طلب دعم",
+        "plan": "تفعيل مخطط",
+        "public_information": "إعلام العموم",
+        "other": "أخرى"
+      },
+      "executor": "الجهة المنفّذة",
+      "exec": {
+        "regional": "القاعة الجهوية",
+        "central": "القاعة المركزية",
+        "partner": "جهة شريكة"
+      },
+      "partnerName": "اسم الجهة الشريكة",
+      "due": "الأجل",
+      "issuer": "المُصدر",
+      "text": "النص",
+      "signNote": "يوقّع الخادم النص ومُصدره ودوره ووقته توقيعا رقميا؛ لا يُعدَّل بعد الإصدار ولا يُحذف.",
+      "issue": "إصدار وتوقيع",
+      "noAxis": "لا محور مفتوح تملك عليه صلاحية الإصدار.",
+      "none": "لا قرارات ولا توصيات بعد.",
+      "status": {
+        "issued": "صدر",
+        "received": "استُلم",
+        "in_progress": "قيد التنفيذ",
+        "done": "نُفّذ",
+        "failed": "تعذّر"
+      },
+      "to": {
+        "received": "تأكيد الاستلام",
+        "in_progress": "بدء التنفيذ",
+        "done": "نُفّذ",
+        "failed": "تعذّر (مع السبب)"
+      },
+      "overridden": "يتعارض، يُعتمد قرار الوزير",
+      "overdue": "فات الأجل",
+      "signed": "موقّع رقميا (المفتاح {{key}})",
+      "unsigned": "غير موقّع: مفتاح التوقيع غير مضبوط على الخادم.",
+      "reason": "السبب: {{reason}}",
+      "reasonLabel": "السبب (إجباري عند التعذّر)"
+    },
+    "sitrep": {
+      "none": "لا تقرير وضع مرسل بعد.",
+      "number": "تقرير الوضع {{n}}",
+      "draft": "مسودة",
+      "figures": "تدخلات {{incidents}} · وفيات {{deceased}} · مُجلَون {{evacuated}} · في الإيواء {{sheltered}}",
+      "assessment": "تقدير الوضع",
+      "send": "إرسال إلى الوالي والوزير",
+      "prepare": "إعداد تقرير وضع الآن",
+      "dueIn": "التقرير القادم بعد {{h}} س",
+      "late": "تقرير الوضع متأخر"
+    },
+    "event": {
+      "opened": "فتح المحور",
+      "escalated": "تصعيد إلى محور وطني",
+      "updated": "تحديث المحور",
+      "closed": "إغلاق المحور",
+      "incident_attached": "إلحاق تدخل",
+      "incident_detached": "فصل تدخل",
+      "incident_proposed": "اقتراح إلحاق تدخل",
+      "shelter_opened": "فتح مركز إيواء",
+      "shelter_updated": "تحديث مركز إيواء",
+      "evacuation_ordered": "منطقة إخلاء",
+      "evacuation_updated": "تحديث الإخلاء",
+      "need_raised": "رفع نقص",
+      "need_met": "تلبية نقص",
+      "directive_issued": "صدور توصية أو قرار",
+      "directive_received": "استلام قرار",
+      "directive_in_progress": "بدء تنفيذ قرار",
+      "directive_done": "تنفيذ قرار",
+      "directive_failed": "تعذّر تنفيذ قرار",
+      "directive_overdue": "فوات أجل قرار",
+      "sitrep_drafted": "مسودة تقرير وضع",
+      "sitrep_sent": "إرسال تقرير وضع"
+    }
+  },
+  "register": {
+    "title": "سجل المخططات والتوصيات",
+    "intro": "المخططات والقرارات والمذكرات والمناشير والتعليمات الدائمة والوقتية، مركزيا وجهويا، بمراجعها وتواريخ نفاذها وأهم توصياتها.",
+    "new": "تدوين وثيقة",
+    "back": "← سجل المخططات والتوصيات",
+    "edit": "تعديل",
+    "deleteDraft": "حذف المسودة",
+    "issuedOn": "صادرة في {{date}}",
+    "hasFile": "ملف مرفق",
+    "recommendationsOpen": "توصيات مفتوحة {{open}} من {{n}}",
+    "fromAxis": "من محور أزمة",
+    "sourceAxisSigned": "قرار أو توصية محور، موقّع إلكترونيا",
+    "sourceManual": "مدوّنة يدويا",
+    "facts": "البطاقة",
+    "text": "الملخص والنص",
+    "noText": "لا ملخص ولا نص.",
+    "axes": "محاور الأزمات المرتبطة",
+    "repealedNote": "وثيقة ملغاة: {{reason}}",
+    "openRepealing": "فتح الوثيقة الملغية",
+    "validity": {
+      "since": "نافذة منذ {{from}}",
+      "between": "من {{from}} إلى {{to}}"
+    },
+    "kind": {
+      "plan": "مخطط",
+      "decision": "قرار",
+      "memo": "مذكرة",
+      "circular": "منشور",
+      "standing_instruction": "تعليمة دائمة",
+      "temporary_instruction": "تعليمة وقتية",
+      "recommendation": "توصية",
+      "minutes": "محضر",
+      "other": "أخرى"
+    },
+    "level": {
+      "central": "مركزي",
+      "regional": "جهوي"
+    },
+    "status": {
+      "in_force": "نافذة",
+      "draft": "مسودة",
+      "expired": "منتهية",
+      "repealed": "ملغاة"
+    },
+    "access": {
+      "all": "كل الأعوان",
+      "gouvernorat": "قاعات الولاية",
+      "command": "القيادة",
+      "restricted": "محدود"
+    },
+    "topic": {
+      "floods": "الفيضانات",
+      "forest_fires": "حرائق الغابات",
+      "beaches": "الشواطئ",
+      "hazardous_materials": "المواد الخطرة",
+      "establishments": "المؤسسات",
+      "health": "الصحة",
+      "transport": "النقل",
+      "earthquakes": "الزلازل",
+      "storms": "العواصف",
+      "civil_protection": "الحماية المدنية",
+      "public_information": "إعلام العموم",
+      "other": "أخرى"
+    },
+    "field": {
+      "kind": "النوع",
+      "level": "المستوى",
+      "gouvernorat": "الولاية",
+      "access": "الاطلاع",
+      "title": "العنوان",
+      "reference": "المرجع الرسمي",
+      "referencePlaceholder": "قرار والي نابل عدد 27 لسنة 2026",
+      "issuer": "الجهة المصدرة",
+      "issuerPlaceholder": "الوالي، المدير العام، اللجنة الجهوية…",
+      "signatory": "الموقّع",
+      "issuedOn": "تاريخ الإصدار",
+      "effectiveFrom": "تاريخ النفاذ",
+      "effectiveTo": "تاريخ الانتهاء",
+      "required": "إلزامي",
+      "topics": "المواضيع",
+      "topic": "الموضوع",
+      "summary": "الملخص",
+      "body": "النص",
+      "bodyHint": "اكتب هنا النص أو الفقرات المهمة: البحث يجري على العنوان والمرجع والملخص والنص.",
+      "status": "الحالة",
+      "validity": "النفاذ",
+      "source": "المصدر",
+      "updated": "آخر تعديل"
+    },
+    "form": {
+      "new": "تدوين وثيقة في السجل",
+      "edit": "تعديل {{number}}",
+      "reason": "سبب التعديل",
+      "publish": "تدوين ونشر",
+      "save": "حفظ نسخة جديدة",
+      "saveDraft": "حفظ كمسودة",
+      "incomplete": "أكمل الحقول المعلّمة.",
+      "datesOutOfOrder": "تاريخ الانتهاء قبل تاريخ النفاذ."
+    },
+    "search": {
+      "label": "بحث في السجل",
+      "placeholder": "كلمات من العنوان أو المرجع أو النص…",
+      "sort": "الترتيب",
+      "sortBy": {
+        "relevance": "الأقرب",
+        "newest": "الأحدث",
+        "oldest": "الأقدم"
+      },
+      "advanced": "بحث متقدم",
+      "anyGouvernorat": "كل الولايات",
+      "anyTopic": "كل المواضيع",
+      "dateField": "الفترة على",
+      "byIssued": "تاريخ الإصدار",
+      "byEffective": "تاريخ النفاذ",
+      "from": "من",
+      "to": "إلى",
+      "inForceOn": "نافذة في تاريخ",
+      "withFile": "بملف مرفق فقط",
+      "results": "النتائج",
+      "count": "{{n}} وثيقة",
+      "inForceOnNote": "ما كان نافذا يوم {{date}}",
+      "none": "لا وثيقة توافق البحث.",
+      "facets": "تصفية حسب الحالة والمستوى والنوع"
+    },
+    "file": {
+      "title": "الملف",
+      "none": "لا ملف مرفق.",
+      "sha": "البصمة SHA-256:",
+      "open": "فتح الملف",
+      "upload": "إرفاق ملف",
+      "replace": "استبدال الملف",
+      "allowed": "PDF أو Word أو صورة، حتى 20 م.ب"
+    },
+    "rec": {
+      "title": "أهم التوصيات ({{open}} مفتوحة من {{n}})",
+      "none": "لا توصيات مدوّنة.",
+      "due": "الأجل {{date}}",
+      "noDue": "دون أجل",
+      "overdue": "متأخرة",
+      "status": {
+        "proposed": "مقترحة",
+        "in_progress": "قيد الإنجاز",
+        "done": "منجزة",
+        "dropped": "متروكة"
+      },
+      "changeStatus": "حالة التوصية {{n}}",
+      "reason": "سبب الترك",
+      "apply": "تحديث",
+      "body": "التوصية",
+      "responsible": "الجهة المعنية",
+      "dueOn": "الأجل",
+      "add": "إضافة توصية"
+    },
+    "links": {
+      "title": "الصلات بوثائق أخرى",
+      "none": "لا صلات.",
+      "find": "ابحث عن وثيقة",
+      "document": "الوثيقة",
+      "relation": "الصلة",
+      "add": "ربط",
+      "remove": "فك الربط",
+      "repealsHint": "الإلغاء نهائي: تصير الوثيقة الأخرى ملغاة بهذه.",
+      "rel": {
+        "repeals": {
+          "out": "تلغي",
+          "in": "ملغاة بـ"
+        },
+        "amends": {
+          "out": "تعدّل",
+          "in": "معدّلة بـ"
+        },
+        "complements": {
+          "out": "تكمّل",
+          "in": "مكمّلة بـ"
+        }
+      }
+    },
+    "revisions": {
+      "title": "النسخ",
+      "version": "النسخة {{n}}",
+      "change": {
+        "created": "تدوين",
+        "updated": "تعديل",
+        "repealed": "إلغاء",
+        "file": "ملف",
+        "recorded_from_axis": "تدوين آلي من محور"
+      }
+    },
+    "repeal": {
+      "action": "إلغاء الوثيقة",
+      "reason": "سبب الإلغاء",
+      "hint": "الإلغاء نهائي ويبقى في النسخ وفي سجل التدقيق.",
+      "confirm": "تأكيد الإلغاء"
+    },
+    "axis": {
+      "plan": "المخطط المفعّل:",
+      "pickPlan": "اختيار المخطط من السجل",
+      "changePlan": "تغيير المخطط",
+      "setPlan": "اعتماد",
+      "clearPlan": "إزالة",
+      "noDocuments": "لا وثائق مرتبطة بالمحور."
+    },
+    "command": {
+      "none": "لا مخططات ولا توصيات نافذة في نطاقك.",
+      "all": "كل السجل"
+    }
+  },
+  "dispatch": {
+    "title": "التوجيهات والردود",
+    "intro": "توجيهات المركزي نحو الولايات (عامة للكل أو خاصة بولاية) والإشعارات الفورية من القاعات الجهوية، بخيط ردود لكل ولاية لا يطّلع عليه إلا هي والمركزي.",
+    "newDirective": "توجيه جديد",
+    "newNotice": "إشعار فوري",
+    "back": "← التوجيهات والردود",
+    "kind": {
+      "directive": "توجيه",
+      "notice": "إشعار"
+    },
+    "urgency": {
+      "normal": "عادي",
+      "urgent": "عاجل",
+      "flash": "فوري"
+    },
+    "urgencyLabel": "الأولوية",
+    "audience": "الوجهة",
+    "audienceOf": {
+      "all": "عام لكل الولايات",
+      "targeted": "خاص بولاية أو أكثر"
+    },
+    "gouvernorats": "الولايات المعنية",
+    "dueAt": "أجل الرد",
+    "subject": "الموضوع",
+    "body": "النص",
+    "attach": "إرفاق ملفات",
+    "attachHint": "Word أو Excel أو PowerPoint أو PDF أو صورة أو نص، حتى 20 م.ب للملف و10 ملفات",
+    "removeFile": "إزالة {{name}}",
+    "replyRequired": "الرد مطلوب (وإلا فللعلم)",
+    "incomplete": "أكمل الموضوع، واكتب نصا أو أرفق ملفا، واختر الولايات.",
+    "sendDirective": "إرسال التوجيه",
+    "sendNotice": "رفع الإشعار",
+    "unread": "جديد",
+    "closed": "مغلق",
+    "open": "مفتوح",
+    "overdue": "متأخر",
+    "fromGouvernorat": "من ولاية {{name}}",
+    "toCount": "إلى {{n}} ولاية",
+    "files": "{{n}} ملف",
+    "repliedOf": "ردّت {{replied}} من {{n}}",
+    "youReplied": "تم الرد",
+    "awaitingYou": "بانتظار ردكم",
+    "forInfo": "للعلم",
+    "box": "الصندوق",
+    "boxOf": {
+      "inbox": "الوارد",
+      "sent": "الصادر",
+      "all": "الكل"
+    },
+    "search": "بحث في الموضوع والنص",
+    "any": "الكل",
+    "state": "الحالة",
+    "count": "{{n}} مراسلة",
+    "none": "لا مراسلات.",
+    "sendReply": "إرسال",
+    "threadOf": "خيط ولاية {{name}}",
+    "noReply": "لا ردود بعد.",
+    "centre": "القاعة المركزية",
+    "replyTo": "رد إلى ولاية {{name}}",
+    "yourReply": "ردكم",
+    "close": "إغلاق المراسلة",
+    "dueOn": "أجل الرد {{at}}",
+    "text": "النص والمرفقات",
+    "noText": "لا نص، انظر المرفقات.",
+    "follow": "المتابعة: ردّت {{replied}} واطّلعت {{seen}} من {{n}}",
+    "seen": "اطّلعت",
+    "replied": "ردّت",
+    "repliesN": "{{n}} رد",
+    "replies": "الردود",
+    "writeTo": "مراسلة ولاية لم ترد بعد"
   }
 }

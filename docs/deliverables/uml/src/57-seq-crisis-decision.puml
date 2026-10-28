@@ -1,0 +1,32 @@
+@startuml
+!include style.iuml
+title Séquence : recommandation ou décision signée, conflit et échéance (L3)
+autonumber
+actor "Gouverneur" as GOV
+actor "Ministre" as MIN
+participant "Tableau de bord\n(commandement)" as UI
+participant "API" as API
+participant "Clé Ed25519\ndu serveur" as KEY
+database "PostgreSQL" as DB
+actor "Salle exécutante\n(régionale ou centrale)" as OPS
+participant "Worker" as WRK
+GOV -> UI : décision « évacuation », texte, emprise,\nexécutant, échéance
+UI -> API : POST /axes/{id}/directives
+API -> KEY : signer (texte, émetteur, rôle, heure)
+KEY --> API : signature + identifiant de clé
+API -> DB : décision « émise », non modifiable
+API -> OPS : notification en direct
+OPS -> API : POST /directives/{id}/status (reçue, en cours, exécutée)
+MIN -> API : POST /axes/{id}/directives\n(même axe, même catégorie)
+API -> KEY : signer
+API -> DB : décision du ministre
+API -> DB : décision du gouverneur non exécutée :\n« en conflit, la décision du ministre prévaut »
+API -> GOV : notification du conflit
+API -> OPS : nouvelle décision
+WRK -> DB : échéance dans moins d'une heure ?
+WRK -> OPS : rappel
+WRK -> DB : échéance passée sans exécution ?
+WRK -> MIN : alerte à l'émetteur
+OPS -> API : impossible (motif)
+API -> MIN : motif transmis à l'émetteur
+@enduml

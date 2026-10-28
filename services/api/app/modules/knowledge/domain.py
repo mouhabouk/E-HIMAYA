@@ -29,6 +29,8 @@ class Kind(StrEnum):
     REPORT = "report"
     TRANSCRIPT = "transcript"
     PROCEDURE = "procedure"
+    # Phase L3b: plans, decisions and instructions of the register (only those every staff member of a scope reads).
+    REGISTER = "register"
 
 
 # Kinds whose text is encrypted at its source: kept encrypted in knowledge.search_doc (blind-index word search).
@@ -41,6 +43,7 @@ KIND_LABELS: dict[str, dict[str, str]] = {
     Kind.REPORT: {"ar": "بلاغات", "fr": "Signalements"},
     Kind.TRANSCRIPT: {"ar": "تفريغ المكالمات والفيديو", "fr": "Transcriptions"},
     Kind.PROCEDURE: {"ar": "إجراءات", "fr": "Procédures"},
+    Kind.REGISTER: {"ar": "المخططات والتعليمات", "fr": "Plans et instructions"},
 }
 
 

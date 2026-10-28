@@ -198,6 +198,11 @@ _SWEEPS: dict[str, tuple[str, Callable[[str], list[Ref]]]] = {
         "AND updated_at < :settled ORDER BY 1, 2 LIMIT :n",
         lambda i: [(Kind.TRANSCRIPT, i)],
     ),
+    "register": (
+        "SELECT updated_at AS ts, id::text AS id FROM register.document "
+        "WHERE (updated_at, id::text) > (:ts, :id) AND updated_at < :settled ORDER BY 1, 2 LIMIT :n",
+        lambda i: [(Kind.REGISTER, i)],
+    ),
     "report_doc": (
         "SELECT updated_at AS ts, id::text AS id FROM analytics.report "
         "WHERE (updated_at, id::text) > (:ts, :id) AND updated_at < :settled ORDER BY 1, 2 LIMIT :n",

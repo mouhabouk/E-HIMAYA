@@ -51,6 +51,71 @@ ICONS = (
     "fuel",
     "pin",
 )
+# Groups of the map's layer panel (phase UI-3b): their icons are the dashboard's (Icon.tsx), their tones the
+# design system's category colours.
+GROUP_ICONS = (
+    "localFireDepartment",
+    "medicalServices",
+    "policy",
+    "apartment",
+    "menuBook",
+    "localShipping",
+    "inventory2",
+    "map",
+    "groups",
+    "schedule",
+    "lockOpen",
+    "layers",
+    "healthAndSafety",
+    "warning",
+    "campaign",
+    "folderOpen",
+)
+GROUP_TONES = ("red", "navy", "purple", "green", "amber", "teal", "slate", "pink", "sky", "orange")
+OTHER_GROUP = "other"
+SENSITIVE_GROUP = "sensitive"
+# The same rules as migration 0058: the stem of the key (``osm_hospitals`` → ``hospitals``), then the icon.
+GROUP_STEMS = {
+    "civil_protection": ("civil_protection", "fire_hydrants", "units"),
+    "health": ("hospitals", "clinics", "pharmacies", "elderly_homes"),
+    "security": ("police", "national_guard"),
+    "administration": ("governorate_hq", "delegation_hq", "ministries"),
+    "education": ("schools", "institutes", "faculties", "universities"),
+    "transport": ("airports", "train_stations", "railways", "bus_stations", "bus_stops"),
+    "economy": ("factories", "companies", "fuel_stations", "supermarkets", "hotels"),
+    "water_forests": ("lakes", "rivers", "forests", "dams"),
+    "gathering": ("worship", "sports"),
+    "seasons": ("beaches",),
+    "sensitive": ("barracks", "oil_gas"),
+}
+GROUP_OF_ICON = {
+    "hospital": "health",
+    "clinic": "health",
+    "pharmacy": "health",
+    "police": "security",
+    "guard": "security",
+    "civil_protection": "civil_protection",
+    "shelter": "civil_protection",
+    "school": "education",
+    "factory": "economy",
+    "fuel": "economy",
+    "water": "water_forests",
+}
+
+
+def default_group(key: str, icon: str, sensitive: bool) -> str:
+    """The group a layer without one is shown in: sensitive layers together, programme layers with the seasons."""
+    if sensitive:
+        return SENSITIVE_GROUP
+    if key.startswith("prog_"):
+        return "seasons"
+    stem = key.removeprefix("osm_").removeprefix("sim_")
+    for group, stems in GROUP_STEMS.items():
+        if stem in stems:
+            return group
+    return GROUP_OF_ICON.get(icon, OTHER_GROUP)
+
+
 # Layer colours: white text and icons on each reach 4.5:1 (WCAG AA). Amber stays reserved for simulations.
 PALETTE = (
     "#C62828",

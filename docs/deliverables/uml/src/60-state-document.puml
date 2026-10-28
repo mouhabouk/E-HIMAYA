@@ -1,0 +1,27 @@
+@startuml
+!include style.iuml
+title Diagramme d'états : document du registre, recommandation et envoi (L3b)
+state "Document" as Doc {
+  [*] --> Brouillon : enregistrer en brouillon
+  [*] --> EnVigueur : publier
+  Brouillon --> EnVigueur : publier
+  Brouillon --> [*] : supprimer (brouillon seulement)
+  EnVigueur --> EnVigueur : modification (motif, révision)
+  EnVigueur --> Expiré : date de fin passée (automatique)
+  EnVigueur --> Abrogé : abrogation (motif)\nou document qui l'abroge
+  Expiré --> Abrogé : document qui l'abroge
+}
+state "Recommandation" as Rec {
+  [*] --> Proposée
+  Proposée --> EnCours
+  EnCours --> Réalisée
+  Proposée --> Abandonnée
+  EnCours --> Abandonnée
+}
+state "Envoi (directive ou notification)" as Dsp {
+  [*] --> Ouvert : envoi
+  Ouvert --> Ouvert : vu, réponses, pièces jointes
+  Ouvert --> Clos : clôture par l'auteur
+  Clos --> [*]
+}
+@enduml

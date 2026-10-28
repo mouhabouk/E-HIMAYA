@@ -1,6 +1,6 @@
 import { keepPreviousData, useQueries, useQuery } from "@tanstack/react-query";
 import type { FeatureCollection } from "geojson";
-import { useId, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useServices } from "../context/services";
 import type { BBox } from "../lib/filters";
@@ -10,16 +10,21 @@ import {
   formatPhone,
   isLayerIcon,
   LAYER_ICON_PATHS,
+  layerFolders,
   type LayerFeature,
+  type LayerGroup,
   type MapLayer,
 } from "../lib/layers";
 import { layerKeys } from "../lib/layersApi";
 import { localized } from "../lib/localized";
 import { SimTag } from "./StreamBits";
 import { ErrorBox } from "./Feedback";
+import { Icon, IconTile, iconOr, toneOr } from "./Icon";
 import type { MapPoi } from "./MapView";
 
 const STORE_KEY = "ehimaya.mapDataLayers";
+// Phase UI-3b: the folders the user opened, kept in the browser like the menu.
+const FOLDERS_KEY = "ehimaya.layerFolders";
 // Above this many places of one layer in view, neighbours are grouped (MapLibre draws every marker as an element).
 const MAX_SINGLE = 300;
 
@@ -32,6 +37,23 @@ function storedKeys(): string[] | null {
     return Array.isArray(v) ? v.filter((k): k is string => typeof k === "string") : null;
   } catch {
     return null;
+  }
+}
+
+function storedFolders(): string[] | null {
+  try {
+    const v: unknown = JSON.parse(localStorage.getItem(FOLDERS_KEY) ?? "null");
+    return Array.isArray(v) ? v.filter((k): k is string => typeof k === "string") : null;
+  } catch {
+    return null;
+  }
+}
+
+function storeFolders(keys: string[]): void {
+  try {
+    localStorage.setItem(FOLDERS_KEY, JSON.stringify(keys));
+  } catch {
+    /* ignore: the choice still applies until the page is reloaded */
   }
 }
 
@@ -64,6 +86,98 @@ export function LayerSwatch({ layer }: { layer: Pick<MapLayer, "icon" | "colour"
   );
 }
 
+/** "Show every layer of the folder": ticked, unticked, or mixed when only some are on. */
+function FolderSwitch({
+  on,
+  total,
+  label,
+  onChange,
+}: {
+  on: number;
+  total: number;
+  label: string;
+  onChange: (on: boolean) => void;
+}) {
+  const ref = useRef<HTMLInputElement>(null);
+  const mixed = on > 0 && on < total;
+  useEffect(() => {
+    if (ref.current) ref.current.indeterminate = mixed;
+  }, [mixed]);
+  return (
+    <input
+      ref={ref}
+      type="checkbox"
+      className="layer-folder__all"
+      checked={on === total}
+      aria-label={label}
+      onChange={() => onChange(on < total)}
+    />
+  );
+}
+
+function LayerFolder({
+  group,
+  layers,
+  shown,
+  open,
+  onOpen,
+  onToggle,
+}: {
+  group: LayerGroup;
+  layers: MapLayer[];
+  shown: readonly string[];
+  open: boolean;
+  onOpen: (open: boolean) => void;
+  onToggle: (keys: string[], on: boolean) => void;
+}) {
+  const { t } = useTranslation();
+  const lang = useLanguage();
+  const id = useId();
+  const name = localized(group.name, lang);
+  const on = layers.filter((l) => shown.includes(l.key)).length;
+  return (
+    <section className="layer-folder" data-open={open || undefined} aria-labelledby={`${id}-name`}>
+      <div className="layer-folder__head">
+        <FolderSwitch
+          on={on}
+          total={layers.length}
+          label={t("layers.groups.showAll", { group: name })}
+          onChange={(next) => onToggle(layers.map((l) => l.key), next)}
+        />
+        <button
+          type="button"
+          className="layer-folder__btn"
+          aria-expanded={open}
+          aria-controls={`${id}-list`}
+          onClick={() => onOpen(!open)}
+        >
+          <IconTile name={iconOr(group.icon, "layers")} tone={toneOr(group.tone, "slate")} size="sm" />
+          <span id={`${id}-name`} className="layer-folder__name">
+            {name}
+          </span>
+          <span className="layer-folder__count">{t("layers.groups.count", { on, total: layers.length })}</span>
+          <Icon name="expandMore" size={18} />
+        </button>
+      </div>
+      <div id={`${id}-list`} className="layer-folder__list" hidden={!open}>
+        {layers.map((layer) => (
+          <label key={layer.key} className="checkbox">
+            <input
+              type="checkbox"
+              checked={shown.includes(layer.key)}
+              onChange={(e) => onToggle([layer.key], e.target.checked)}
+            />
+            <LayerSwatch layer={layer} />
+            <span dir="auto">{localized(layer.name, lang)}</span>
+            {layer.audience === "staff" && <span className="chip">{t("layers.audience.staff")}</span>}
+            {layer.simulated && <SimTag label={t("layers.simulated")} />}
+          </label>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function featurePoi(layer: MapLayer, f: LayerFeature, t: (k: string, o?: Record<string, unknown>) => string): MapPoi {
   const details: string[] = [];
   if (f.phone) details.push(`${t("layers.place.phone")}: ${formatPhone(f.phone)}`);
@@ -90,7 +204,8 @@ function featurePoi(layer: MapLayer, f: LayerFeature, t: (k: string, o?: Record<
 
 /**
  * Map data layers on the live map (phase B1, design §2.4): one tick per layer, any number at once, beside the
- * existing layers; places in the visible area, grouped when there are many.
+ * existing layers; places in the visible area, grouped when there are many. Phase UI-3b: the layers sit in folders
+ * (health facilities, civil protection resources…) that open and close, each with a switch for all its layers.
  */
 export function useMapDataLayers(bbox: BBox | null) {
   const { t } = useTranslation();
@@ -100,6 +215,8 @@ export function useMapDataLayers(bbox: BBox | null) {
   const [picked, setPicked] = useState<string[] | null>(storedKeys);
   const layersQuery = useQuery({ queryKey: layerKeys.all, queryFn: ({ signal }) => api.layers(signal) });
   const layers = useMemo(() => (layersQuery.data?.items ?? []).filter((l) => l.enabled), [layersQuery.data]);
+  const folders = useMemo(() => layerFolders(layersQuery.data?.groups ?? [], layers), [layersQuery.data, layers]);
+  const [openedFolders, setOpenedFolders] = useState<string[] | null>(storedFolders);
   // Phase L1b: until the user ticks a layer, the layers the administrator marked "shown by default" are on.
   const shown = useMemo(() => picked ?? layers.filter((l) => l.default_on).map((l) => l.key), [picked, layers]);
   const active = useMemo(() => layers.filter((l) => shown.includes(l.key)), [layers, shown]);
@@ -160,10 +277,20 @@ export function useMapDataLayers(bbox: BBox | null) {
     return out;
   }, [active, featureQueries, bbox, t, lang]);
 
-  const toggle = (key: string, on: boolean) => {
-    const next = on ? [...shown.filter((k) => k !== key), key] : shown.filter((k) => k !== key);
+  const toggle = (keys: string[], on: boolean) => {
+    const rest = shown.filter((k) => !keys.includes(k));
+    const next = on ? [...rest, ...keys] : rest;
     setPicked(next);
     storeKeys(next);
+  };
+  // Until the user opens or closes a folder, the folders with a layer on are open (and a lone folder).
+  const opened =
+    openedFolders ??
+    folders.filter((f) => folders.length === 1 || f.layers.some((l) => shown.includes(l.key))).map((f) => f.group.key);
+  const openFolder = (key: string, open: boolean) => {
+    const next = open ? [...opened.filter((k) => k !== key), key] : opened.filter((k) => k !== key);
+    setOpenedFolders(next);
+    storeFolders(next);
   };
 
   const truncated = [
@@ -176,19 +303,19 @@ export function useMapDataLayers(bbox: BBox | null) {
     layers.length === 0 ? null : (
       <fieldset className="map-data-layers">
         <legend id={`${groupId}-legend`}>{t("layers.mapGroup")}</legend>
-        {layers.map((layer) => (
-          <label key={layer.key} className="checkbox">
-            <input
-              type="checkbox"
-              checked={shown.includes(layer.key)}
-              onChange={(e) => toggle(layer.key, e.target.checked)}
+        <div className="layer-folders">
+          {folders.map(({ group, layers: inFolder }) => (
+            <LayerFolder
+              key={group.key}
+              group={group}
+              layers={inFolder}
+              shown={shown}
+              open={opened.includes(group.key)}
+              onOpen={(open) => openFolder(group.key, open)}
+              onToggle={toggle}
             />
-            <LayerSwatch layer={layer} />
-            <span dir="auto">{localized(layer.name, lang)}</span>
-            {layer.audience === "staff" && <span className="chip">{t("layers.audience.staff")}</span>}
-            {layer.simulated && <SimTag label={t("layers.simulated")} />}
-          </label>
-        ))}
+          ))}
+        </div>
         {truncated.length > 0 && (
           <p className="muted" role="status">
             {t("layers.truncated", {

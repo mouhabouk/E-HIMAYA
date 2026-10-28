@@ -161,4 +161,46 @@ Affectation "1" *-- "*" AlerteÉquipe
 Affectation "1" *-- "*" PièceJointe
 Incident "1" -- "0..1" CompteurVictimes
 Affectation "1" *-- "*" Évacuation
+class "Axe (L3)" as Axe {
+  numéro : AX-AAAA-NNN
+  nom, type, niveau 1..4
+  gouvernorat (vide = national)
+  emprise : polygone
+  plan, statut, bilan
+  prochain_point
+}
+class "DemandeDéclaration" as DemandeDecl {
+  motif, type, emprise proposée
+  statut : en attente | acceptée | refusée
+}
+class "DirectiveAxe" as DirAxe {
+  type : recommandation | décision
+  catégorie, texte, emprise
+  exécutant, échéance
+  statut, motif
+  signature Ed25519, id de clé
+  remplacée_par
+}
+class "PointSituation" as Sitrep {
+  numéro, chiffres calculés
+  appréciation, envoyé_le
+}
+class "Abri" as Abri {
+  nom, lieu, capacité, occupants
+}
+class "ZoneÉvacuation" as ZoneEvac {
+  emprise, évacués
+}
+class "BesoinMoyens" as Besoin {
+  libellé, quantité, statut
+}
+Axe "0..1" o-- "*" Axe : parent national
+Axe "1" o-- "*" Incident : rattachées
+Axe "1" *-- "*" DirAxe
+Axe "1" *-- "*" Sitrep
+Axe "1" *-- "*" Abri
+Axe "1" *-- "*" ZoneEvac
+Axe "1" *-- "*" Besoin
+DemandeDecl "*" --> "0..1" Axe : ouvre
+DirAxe "*" --> "0..1" DirAxe : en conflit avec
 @enduml

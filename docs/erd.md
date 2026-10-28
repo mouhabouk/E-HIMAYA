@@ -301,6 +301,183 @@ erDiagram
     content__guide_topic ||--o{ content__guide_item : "topic_id"
 ```
 
+## crisis
+
+```mermaid
+erDiagram
+    crisis__axis {
+        uuid id PK
+        text number
+        text name
+        text kind
+        text scope
+        uuid parent_id FK
+        smallint gouvernorat_code FK
+        geography_multipolygon_4326 area
+        smallint level
+        text plan
+        uuid plan_document_id FK
+        text status
+        uuid request_id
+        text opened_by
+        text opened_by_name
+        datetime opened_at
+        text closed_by
+        text closed_by_name
+        datetime closed_at
+        jsonb closing
+        datetime next_sitrep_at
+        uuid memory_id
+        integer version
+        datetime updated_at
+    }
+    crisis__axis_incident {
+        uuid axis_id PK,FK
+        uuid incident_id PK,FK
+        text attached_by
+        text attached_by_name
+        datetime attached_at
+        text detached_by
+        text detached_by_name
+        datetime detached_at
+        text detach_reason
+    }
+    crisis__counter {
+        integer year PK
+        integer last
+    }
+    crisis__directive {
+        uuid id PK
+        uuid axis_id FK
+        integer number
+        text kind
+        text category
+        text body
+        geography_multipolygon_4326 area
+        text executor
+        text executor_name
+        datetime due_at
+        text status
+        text status_reason
+        text issuer_role
+        text issued_by
+        text issued_by_name
+        datetime issued_at
+        text signature
+        text key_id
+        uuid overridden_by FK
+        datetime reminded_at
+        datetime overdue_at
+        datetime done_at
+        datetime updated_at
+    }
+    crisis__directive_event {
+        bigint id PK
+        uuid directive_id FK
+        uuid axis_id FK
+        text status
+        text reason
+        text by_actor
+        text by_name
+        datetime at
+    }
+    crisis__dismissal {
+        uuid axis_id PK,FK
+        uuid incident_id PK,FK
+        text dismissed_by
+        datetime dismissed_at
+    }
+    crisis__evacuation {
+        uuid id PK
+        uuid axis_id FK
+        text name
+        geography_multipolygon_4326 area
+        integer evacuated
+        text updated_by
+        datetime updated_at
+    }
+    crisis__event {
+        bigint id PK
+        uuid axis_id FK
+        datetime at
+        text actor
+        text actor_name
+        text kind
+        jsonb payload
+    }
+    crisis__need {
+        uuid id PK
+        uuid axis_id FK
+        text label
+        integer quantity
+        text status
+        text created_by
+        text created_by_name
+        datetime created_at
+        datetime met_at
+    }
+    crisis__request {
+        uuid id PK
+        smallint gouvernorat_code FK
+        text name
+        text kind
+        smallint level
+        text facts
+        array incident_ids
+        geography_multipolygon_4326 area
+        text status
+        text created_by
+        text created_by_name
+        datetime created_at
+        text decided_by
+        text decided_by_name
+        datetime decided_at
+        text decision_reason
+        uuid axis_id FK
+    }
+    crisis__shelter {
+        uuid id PK
+        uuid axis_id FK
+        text name
+        geography_point_4326 location
+        integer capacity
+        integer occupants
+        text updated_by
+        datetime updated_at
+    }
+    crisis__sitrep {
+        uuid id PK
+        uuid axis_id FK
+        integer number
+        jsonb figures
+        text assessment
+        text status
+        text created_by
+        datetime created_at
+        text sent_by
+        text sent_by_name
+        datetime sent_at
+    }
+    crisis__axis ||--o{ crisis__axis : "parent_id"
+    crisis__axis ||--o{ crisis__axis_incident : "axis_id"
+    crisis__axis ||--o{ crisis__directive : "axis_id"
+    crisis__axis ||--o{ crisis__directive_event : "axis_id"
+    crisis__axis ||--o{ crisis__dismissal : "axis_id"
+    crisis__axis ||--o{ crisis__evacuation : "axis_id"
+    crisis__axis ||--o{ crisis__event : "axis_id"
+    crisis__axis ||--o{ crisis__need : "axis_id"
+    crisis__axis ||--o{ crisis__request : "axis_id"
+    crisis__axis ||--o{ crisis__shelter : "axis_id"
+    crisis__axis ||--o{ crisis__sitrep : "axis_id"
+    crisis__directive ||--o{ crisis__directive : "overridden_by"
+    crisis__directive ||--o{ crisis__directive_event : "directive_id"
+    geo__gouvernorat ||--o{ crisis__axis : "gouvernorat_code"
+    geo__gouvernorat ||--o{ crisis__request : "gouvernorat_code"
+    ops__incident ||--o{ crisis__axis_incident : "incident_id"
+    ops__incident ||--o{ crisis__dismissal : "incident_id"
+    register__document ||--o{ crisis__axis : "plan_document_id"
+```
+
 ## decision
 
 ```mermaid
@@ -444,6 +621,7 @@ erDiagram
         datetime deleted_at
         text deleted_by
         text delete_reason
+        text group_key FK
     }
     geo__layer_feature {
         uuid id PK
@@ -472,6 +650,17 @@ erDiagram
         datetime deleted_at
         text deleted_by
         text delete_reason
+    }
+    geo__layer_group {
+        text key PK
+        jsonb name
+        text icon
+        text tone
+        integer position
+        boolean sensitive
+        datetime created_at
+        datetime updated_at
+        text updated_by
     }
     geo__layer_import {
         uuid id PK
@@ -512,6 +701,7 @@ erDiagram
     geo__layer ||--o{ geo__layer_feature : "layer_id"
     geo__layer ||--o{ geo__layer_import : "layer_id"
     geo__layer ||--o{ geo__layer_revision : "layer_id"
+    geo__layer_group ||--o{ geo__layer : "group_key"
     geo__layer_import ||--o{ geo__layer_feature : "import_id"
 ```
 
@@ -1597,6 +1787,158 @@ erDiagram
     geo__layer ||--o{ programme__programme : "layer_id"
     programme__programme ||--o{ programme__point : "programme_id"
     programme__programme ||--o{ programme__revision : "programme_id"
+```
+
+## register
+
+```mermaid
+erDiagram
+    register__attachment {
+        uuid id PK
+        uuid dispatch_id FK
+        uuid reply_id FK
+        smallint gouvernorat_code FK
+        text file_key
+        text file_name
+        text content_type
+        integer size
+        text sha256
+        text created_by
+        datetime created_at
+    }
+    register__counter {
+        text series PK
+        integer year PK
+        integer last
+    }
+    register__dispatch {
+        uuid id PK
+        text number
+        text kind
+        text audience
+        smallint origin_gouvernorat FK
+        text urgency
+        text subject
+        text body
+        array topics
+        uuid incident_id FK
+        uuid axis_id FK
+        boolean reply_required
+        datetime reply_due_at
+        text status
+        datetime closed_at
+        text closed_by_name
+        text created_by
+        text created_by_name
+        datetime created_at
+        text norm
+        tsvector search
+    }
+    register__dispatch_target {
+        uuid dispatch_id PK,FK
+        smallint gouvernorat_code PK,FK
+        datetime seen_at
+        text seen_by_name
+        datetime replied_at
+        integer replies
+    }
+    register__document {
+        uuid id PK
+        text number
+        text reference
+        text kind
+        text level
+        smallint gouvernorat_code FK
+        text issuer
+        text signatory
+        text title
+        text summary
+        text body
+        array topics
+        date issued_on
+        date effective_from
+        date effective_to
+        text status
+        uuid repealed_by FK
+        text repeal_reason
+        text access
+        array axis_ids
+        text source
+        uuid directive_id FK
+        text signature
+        text key_id
+        text file_key
+        text file_name
+        text file_type
+        integer file_size
+        text file_sha256
+        text norm
+        tsvector search
+        text created_by
+        text created_by_name
+        datetime created_at
+        text updated_by
+        text updated_by_name
+        datetime updated_at
+        integer version
+    }
+    register__link {
+        uuid from_id PK,FK
+        uuid to_id PK,FK
+        text relation
+        text created_by
+        datetime created_at
+    }
+    register__recommendation {
+        uuid id PK
+        uuid document_id FK
+        integer number
+        text body
+        text responsible
+        date due_on
+        text status
+        text status_reason
+        text updated_by
+        text updated_by_name
+        datetime updated_at
+    }
+    register__reply {
+        uuid id PK
+        uuid dispatch_id FK
+        smallint gouvernorat_code FK
+        text side
+        text body
+        text created_by
+        text created_by_name
+        datetime created_at
+    }
+    register__revision {
+        uuid document_id PK,FK
+        integer version PK
+        jsonb snapshot
+        text change
+        text reason
+        text created_by
+        text created_by_name
+        datetime created_at
+    }
+    crisis__axis ||--o{ register__dispatch : "axis_id"
+    crisis__directive ||--o{ register__document : "directive_id"
+    geo__gouvernorat ||--o{ register__attachment : "gouvernorat_code"
+    geo__gouvernorat ||--o{ register__dispatch : "origin_gouvernorat"
+    geo__gouvernorat ||--o{ register__dispatch_target : "gouvernorat_code"
+    geo__gouvernorat ||--o{ register__document : "gouvernorat_code"
+    geo__gouvernorat ||--o{ register__reply : "gouvernorat_code"
+    ops__incident ||--o{ register__dispatch : "incident_id"
+    register__dispatch ||--o{ register__attachment : "dispatch_id"
+    register__dispatch ||--o{ register__dispatch_target : "dispatch_id"
+    register__dispatch ||--o{ register__reply : "dispatch_id"
+    register__document ||--o{ register__document : "repealed_by"
+    register__document ||--o{ register__link : "from_id"
+    register__document ||--o{ register__link : "to_id"
+    register__document ||--o{ register__recommendation : "document_id"
+    register__document ||--o{ register__revision : "document_id"
+    register__reply ||--o{ register__attachment : "reply_id"
 ```
 
 ## reports

@@ -12,6 +12,10 @@ actor "Administrateur\nde comptes régional" as RAA
 actor "Administrateur\nsécurité / système / IA" as SA
 actor "Chef d'agrès\n(application des équipes, P4a, P4b)" as TL
 actor "Auditeur prévention\n(application des équipes, P4c)" as AU
+actor "Commandant\n(chef des opérations national, L3)" as CMD
+actor "Gouverneur (L3)" as GOV
+actor "Ministre (L3)" as MIN
+CMD -|> OPM
 OPM -|> OP
 rectangle "Tableau de bord central" {
   usecase "S'authentifier (MFA)" as S0
@@ -44,6 +48,23 @@ rectangle "Tableau de bord central" {
   usecase "Importer, approuver, annuler\nles programmes saisonniers (L2)" as S27
   usecase "Suivi du jour des points\nde son gouvernorat (L2)" as S28
   usecase "Revenir à une version\nd'un programme (L2)" as S29
+  usecase "Demander la déclaration\nd'un axe (L3)" as S30
+  usecase "Ouvrir, escalader, clore\nun axe ; décider des demandes (L3)" as S31
+  usecase "Rattacher une intervention,\nabris, évacuations, besoins (L3)" as S32
+  usecase "Compléter et envoyer\nle point de situation (L3)" as S33
+  usecase "Suivre les axes déclarés\nde sa wilaya (L3)" as S34
+  usecase "Comparer les wilayas,\ncouches sensibles (L3)" as S35
+  usecase "Émettre une recommandation\nou une décision signée (L3)" as S36
+  usecase "Mettre à jour l'exécution\nd'une décision (L3)" as S37
+  usecase "Consigner un plan, une décision\nou une instruction au registre (L3b)" as S38
+  usecase "Rechercher au registre\n(recherche avancée, L3b)" as S39
+  usecase "Suivre les recommandations\nclés d'un document (L3b)" as S40
+  usecase "Envoyer une directive\ngénérale ou ciblée (L3b)" as S41
+  usecase "Répondre à une directive\nou lever une notification immédiate (L3b)" as S42
+  usecase "Joindre Word, Excel,\nPDF ou image (L3b)" as S43
+  usecase "Choisir la forme et la place\ndu menu principal (UI-3)" as S44
+  usecase "Afficher les couches de la carte\npar dossiers (UI-3b)" as S45
+  usecase "Gérer les dossiers de couches,\nclasser une couche (UI-3b)" as S46
 }
 rectangle "Application des équipes (P4a à P4d)" {
   usecase "Se connecter par code\n(MFA, PIN 6 chiffres)" as T0
@@ -127,4 +148,42 @@ SA --> S27
 OPM --> S29
 OP --> S28
 OPM --> S28
+OPM --> S30
+CMD --> S31
+OPM --> S32
+OP --> S32
+OPM --> S33
+GOV --> S34
+MIN --> S34
+MIN --> S35
+GOV --> S36
+MIN --> S36
+OPM --> S37
+S36 ..> S0 : <<include>>
+S31 ..> S0 : <<include>>
+OPM --> S38
+CL --> S38
+CC --> S38
+OP --> S39
+GOV --> S39
+MIN --> S39
+OPM --> S40
+CMD --> S41
+CC --> S41
+MIN --> S41
+OPM --> S42
+OP --> S42
+CL --> S42
+S41 ..> S43 : <<include>>
+S42 <.. S43 : <<extend>>
+OP --> S44
+OPM --> S44
+GOV --> S44
+MIN --> S44
+OP --> S45
+OPM --> S45
+CMD --> S45
+MIN --> S45
+SA --> S46
+S45 <.. S46 : <<extend>>
 @enduml

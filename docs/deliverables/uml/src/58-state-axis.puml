@@ -1,0 +1,35 @@
+@startuml
+!include style.iuml
+title Diagramme d'états : axe, demande de déclaration et décision (L3)
+state "Demande de déclaration" as Req {
+  [*] --> EnAttente : chef de salle régionale
+  EnAttente --> Acceptée : commandant (axe ouvert)
+  EnAttente --> Refusée : commandant (motif)
+  Acceptée --> [*]
+  Refusée --> [*]
+}
+state Axe {
+  [*] --> Ouvert : commandant\n(direct ou demande acceptée)
+  Ouvert --> Ouvert : niveau 1 à 4, emprise,\nrattachements, points de situation
+  Ouvert --> National : escalade\n(parent national + sous-axes)
+  National --> National : wilaya ajoutée
+  Ouvert --> Clos : clôture avec bilan
+  National --> Clos : clôture avec bilan
+  Clos --> [*] : fiche de mémoire (brouillon)
+}
+state "Recommandation ou décision" as Dir {
+  [*] --> Émise : signée Ed25519
+  Émise --> Reçue
+  Reçue --> EnCours
+  EnCours --> Exécutée
+  Émise --> Impossible : motif
+  Reçue --> Impossible : motif
+  EnCours --> Impossible : motif
+  Émise --> EnConflit : décision du ministre\n(même catégorie)
+  Reçue --> EnConflit
+  EnCours --> EnConflit
+  Exécutée --> [*]
+  Impossible --> [*]
+  EnConflit --> [*]
+}
+@enduml

@@ -38,6 +38,8 @@ from app.modules.contact.router import router as contact_router
 from app.modules.contact.router import staff_router as contact_staff_router
 from app.modules.content.guide import router as guide_router
 from app.modules.content.router import router as content_router
+from app.modules.crisis.router import router as crisis_router
+from app.modules.crisis.worker import crisis_forever
 from app.modules.decision.procedures import procedures_forever
 from app.modules.decision.router import router as decision_router
 from app.modules.doctors.committee_router import router as medical_committee_router
@@ -75,6 +77,8 @@ from app.modules.privacy.retention import retention_forever
 from app.modules.privacy.router import router as privacy_router
 from app.modules.programmes.router import router as programmes_router
 from app.modules.programmes.worker import programmes_forever
+from app.modules.register.router import router as register_router
+from app.modules.register.worker import register_forever
 from app.modules.reports.jurisdiction import sla_forever
 from app.modules.reports.live import hub
 from app.modules.reports.live import router as live_router
@@ -132,6 +136,8 @@ WORKER_LOOPS: list[tuple[str, WorkerLoop]] = [
     ("weather-grid", weather_forever),
     ("coastal", coastal_forever),
     ("programmes", programmes_forever),
+    ("crisis", crisis_forever),
+    ("register", register_forever),
     ("procedures-index", procedures_forever),
     ("telephony-events", ari_events_forever),
     ("telephony-recordings", recordings_forever),
@@ -299,6 +305,8 @@ def create_app() -> FastAPI:
         coastal_router,
         coastal_staff_router,
         programmes_router,
+        crisis_router,
+        register_router,
         identity_internal_router,
     )
     for router in routers:

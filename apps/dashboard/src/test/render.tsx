@@ -20,6 +20,8 @@ import { AI_STATUS_READY, fakeJwt } from "./fixtures";
 import { fakeOpsApi } from "./opsFixtures";
 import { fakeCoastalApi } from "./coastalFixtures";
 import { fakeProgrammesApi } from "./programmeFixtures";
+import { fakeCrisisApi } from "./crisisFixtures";
+import { fakeRegisterApi } from "./registerFixtures";
 import { FakeSipEngine, fakePhase7Api } from "./phase7Fixtures";
 import { fakePhase8Api } from "./phase8Fixtures";
 import { fakePhase9Api } from "./phase9Fixtures";
@@ -173,6 +175,10 @@ export function fakeLayersApi() {
     restoreFeature: vi.fn(),
     // Phase L1b.
     layerShapes: vi.fn(() => Promise.resolve({ type: "FeatureCollection" as const, features: [], truncated: false })),
+    // Phase UI-3b.
+    createLayerGroup: vi.fn(),
+    updateLayerGroup: vi.fn(),
+    deleteLayerGroup: vi.fn(),
     certificateLookup: vi.fn(),
     addStamp: vi.fn(),
     putStampPhoto: vi.fn(),
@@ -232,6 +238,8 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     ...fakeLayersApi(),
     ...fakeCoastalApi(),
     ...fakeProgrammesApi(),
+    ...fakeCrisisApi(),
+    ...fakeRegisterApi(),
     ...fakeGuideApi(),
     ...fakeContactApi(),
     ...fakeSafetyApi(),
