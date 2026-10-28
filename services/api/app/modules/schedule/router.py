@@ -117,23 +117,28 @@ async def _record(session: AsyncSession, p: Principal, action: str, period: Peri
 # ---------------------------------------------------------------- reading
 
 
-def _counts(items: list[Item], today: date) -> schemas.Counts:
+def _status(i: Item, period: Period, now: datetime) -> tuple[str, bool]:
+    return domain.follow_up(
+        i.status, i.status_manual, period.status == "approved", i.on_date, i.starts_at, i.ends_at, now
+    )
+
+
+def _counts(items: list[Item], period: Period, now: datetime) -> schemas.Counts:
     c = schemas.Counts(items=len(items))
+    today = domain.local_today(now)
+    done_due = 0
     for i in items:
-        if i.status == "done":
-            c.done += 1
-        elif i.status == "postponed":
-            c.postponed += 1
-        elif i.status == "cancelled":
-            c.cancelled += 1
-        if i.on_date <= today and i.status != "cancelled":
+        state, _ = _status(i, period, now)
+        if state != "planned":
+            setattr(c, state, getattr(c, state) + 1)
+        if i.on_date <= today and state not in domain.LEFT_OUT:
             c.due += 1
-    done_due = sum(1 for i in items if i.on_date <= today and i.status == "done")
+            done_due += state == "done"
     c.rate = round(done_due / c.due, 3) if c.due else None
     return c
 
 
-def _period_out(period: Period, names: dict[int, str], items: list[Item], today: date) -> schemas.PeriodOut:
+def _period_out(period: Period, names: dict[int, str], items: list[Item], now: datetime) -> schemas.PeriodOut:
     return schemas.PeriodOut(
         id=period.id,
         gouvernorat_code=period.gouvernorat_code,
@@ -155,7 +160,7 @@ def _period_out(period: Period, names: dict[int, str], items: list[Item], today:
         created_by_name=period.created_by_name,
         updated_by_name=period.updated_by_name,
         updated_at=period.updated_at,
-        counts=_counts(items, today),
+        counts=_counts(items, period, now),
     )
 
 
@@ -202,8 +207,10 @@ async def _detail(session: AsyncSession, p: Principal, period: Period) -> schema
     )
     g = period.gouvernorat_code
     editable = period.status in domain.EDITABLE
+    now = _now()
+    states = {i.id: _status(i, period, now) for i in items}
     return schemas.PeriodDetail(
-        period=_period_out(period, names, items, register.today()),
+        period=_period_out(period, names, items, now),
         items=[
             schemas.ItemOut(
                 id=i.id,
@@ -227,7 +234,8 @@ async def _detail(session: AsyncSession, p: Principal, period: Period) -> schema
                 plan_document_id=i.plan_document_id,
                 plan_title=plans.get(i.plan_document_id) if i.plan_document_id else None,
                 notes=i.notes,
-                status=i.status,
+                status=states[i.id][0],
+                status_auto=states[i.id][1],
                 status_reason=i.status_reason,
                 status_by_name=i.status_by_name,
                 status_at=i.status_at,
@@ -381,7 +389,7 @@ async def get_progress(principal: Viewer, session: Session, span: domain.Span, o
     }
     items = await _items(session, [p.id for p in periods.values()])
     settings = {s.gouvernorat_code: s.approval for s in await session.scalars(select(Setting))}
-    today = register.today()
+    now = _now()
     rows = []
     for code, name in gouvernorats:
         period = periods.get(code)
@@ -392,7 +400,7 @@ async def get_progress(principal: Viewer, session: Session, span: domain.Span, o
                 approval=settings.get(code, domain.DEFAULT_APPROVAL),
                 period_id=period.id if period else None,
                 status=period.status if period else None,
-                counts=_counts(items[period.id], today) if period else schemas.Counts(),
+                counts=_counts(items[period.id], period, now) if period else schemas.Counts(),
             )
         )
     return schemas.ProgressOut(span=span, starts_on=start, ends_on=end, rows=rows, lists=reads_lists(principal))
@@ -907,17 +915,19 @@ async def delete_item(
 async def item_status(
     principal: Reader, session: Session, item_id: uuid.UUID, body: schemas.ItemStatusIn
 ) -> schemas.PeriodDetail:
-    """The follow-up of an approved programme: done, postponed or cancelled (with the reason), or planned again."""
+    """The follow-up of an approved programme by hand (docs/phase-l/design-l4.md §6): in progress or done, not done,
+    postponed, refused or cancelled with the reason, or planned again (back to the clock for an activity with hours)."""
     item, period = await _item(session, item_id)
     if period.status != "approved":
         raise HTTPException(status.HTTP_409_CONFLICT, "period_not_approved")
     if not writes(principal, period.gouvernorat_code):
         raise _forbidden()
-    if body.status in {"postponed", "cancelled"} and len(body.reason) < 5:
+    if body.status in domain.WITH_REASON and len(body.reason) < 5:
         raise _unprocessable("reason_required")
-    if body.status == "done" and item.on_date > register.today():
+    if body.status in {"in_progress", "done", "not_done"} and item.on_date > domain.local_today(_now()):
         raise _unprocessable("not_due_yet")
     item.status = body.status
+    item.status_manual = body.status != "planned"
     item.status_reason = body.reason or None
     item.status_by_name, item.status_at = audit.name_of(principal), _now()
     await session.commit()

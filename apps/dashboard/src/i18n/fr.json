@@ -6027,8 +6027,11 @@
     },
     "itemStatus": {
       "planned": "Prévu",
+      "in_progress": "En cours",
       "done": "Réalisé",
+      "not_done": "Non réalisé",
       "postponed": "Reporté",
+      "refused": "Refusé",
       "cancelled": "Annulé"
     },
     "approval": {
@@ -6082,16 +6085,21 @@
       "notes": "Note",
       "inSeries": "dans une série",
       "followUp": "Suivi",
-      "reason": "Motif (report ou annulation)",
+      "reason": "Motif (non réalisé, reporté, refusé ou annulé)",
       "remove": "Supprimer l'activité",
       "removeSeries": "Supprimer toute la série"
     },
     "follow": {
+      "in_progress": "En cours",
       "done": "Réalisé",
+      "not_done": "Non réalisé",
       "postponed": "Reporter",
+      "refused": "Refuser",
       "cancelled": "Annuler",
       "planned": "Remettre en prévu",
-      "notDue": "Une activité se marque réalisée le jour venu."
+      "notDue": "Une activité se suit le jour venu.",
+      "auto": "automatique, selon l’horaire",
+      "autoHint": "Activité avec horaire : « En cours » à son début et « Réalisé » à sa fin, sauf statut posé à la main."
     },
     "progress": {
       "title": "Taux de réalisation par gouvernorat",

@@ -39,7 +39,7 @@ describe("SchedulePage", () => {
     fireEvent.click(screen.getByRole("button", { name: /دورية الشريط الساحلي/ }));
     const panel = within(screen.getByRole("region", { name: "[SIM] دورية الشريط الساحلي الحمامات" }));
     expect(panel.getByText(/رياح قوية/)).toBeInTheDocument();
-    fireEvent.change(panel.getByLabelText("السبب (للتأجيل أو الإلغاء)"), { target: { value: "تحسّن الطقس" } });
+    fireEvent.change(panel.getByLabelText("السبب (إذا لم يتم أو أُجّل أو رُفض أو أُلغي)"), { target: { value: "تحسّن الطقس" } });
     fireEvent.click(panel.getByRole("button", { name: "إعادة إلى مبرمج" }));
     await waitFor(() => expect(api.scheduleItemStatus).toHaveBeenCalledWith("patrol-1", "planned", "تحسّن الطقس"));
     // The month view lays the same programme on a grid.

@@ -2467,6 +2467,7 @@ erDiagram
         text notes
         text status
         text status_reason
+        boolean status_manual
         text status_by_name
         datetime status_at
         text created_by_name

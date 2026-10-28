@@ -7551,8 +7551,17 @@ button.nav-card:hover {
   outline: 2px dashed var(--tone-amber);
   outline-offset: -2px;
 }
-.sched-chip--cancelled {
+.sched-chip--cancelled,
+.sched-chip--refused {
   opacity: 0.55;
+}
+.sched-chip--in_progress {
+  outline: 2px solid var(--tone-sky);
+  outline-offset: -2px;
+}
+.sched-chip--not_done {
+  outline: 2px dashed var(--tone-orange);
+  outline-offset: -2px;
 }
 .sched-day,
 .sched-week ol,

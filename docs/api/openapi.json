@@ -5781,9 +5781,19 @@
             "title": "Due",
             "type": "integer"
           },
+          "in_progress": {
+            "default": 0,
+            "title": "In Progress",
+            "type": "integer"
+          },
           "items": {
             "default": 0,
             "title": "Items",
+            "type": "integer"
+          },
+          "not_done": {
+            "default": 0,
+            "title": "Not Done",
             "type": "integer"
           },
           "postponed": {
@@ -5801,6 +5811,11 @@
               }
             ],
             "title": "Rate"
+          },
+          "refused": {
+            "default": 0,
+            "title": "Refused",
+            "type": "integer"
           }
         },
         "title": "Counts",
@@ -15829,8 +15844,11 @@
           "status": {
             "enum": [
               "planned",
+              "in_progress",
               "done",
+              "not_done",
               "postponed",
+              "refused",
               "cancelled"
             ],
             "title": "Status",
@@ -43123,8 +43141,11 @@
           "status": {
             "enum": [
               "planned",
+              "in_progress",
               "done",
+              "not_done",
               "postponed",
+              "refused",
               "cancelled"
             ],
             "title": "Status",
@@ -43141,6 +43162,10 @@
               }
             ],
             "title": "Status At"
+          },
+          "status_auto": {
+            "title": "Status Auto",
+            "type": "boolean"
           },
           "status_by_name": {
             "anyOf": [
@@ -43210,6 +43235,7 @@
           "plan_title",
           "notes",
           "status",
+          "status_auto",
           "status_reason",
           "status_by_name",
           "status_at"
@@ -75668,7 +75694,7 @@
     },
     "/api/v1/staff/schedule/items/{item_id}/status": {
       "post": {
-        "description": "The follow-up of an approved programme: done, postponed or cancelled (with the reason), or planned again.",
+        "description": "The follow-up of an approved programme by hand (docs/phase-l/design-l4.md §6): in progress or done, not done,\npostponed, refused or cancelled with the reason, or planned again (back to the clock for an activity with hours).",
         "operationId": "item_status_api_v1_staff_schedule_items__item_id__status_post",
         "parameters": [
           {

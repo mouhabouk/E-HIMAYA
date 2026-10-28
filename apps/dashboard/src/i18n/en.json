@@ -6027,8 +6027,11 @@
     },
     "itemStatus": {
       "planned": "Planned",
+      "in_progress": "In progress",
       "done": "Done",
+      "not_done": "Not done",
       "postponed": "Postponed",
+      "refused": "Refused",
       "cancelled": "Cancelled"
     },
     "approval": {
@@ -6082,16 +6085,21 @@
       "notes": "Note",
       "inSeries": "part of a series",
       "followUp": "Follow-up",
-      "reason": "Reason (postponing or cancelling)",
+      "reason": "Reason (not done, postponed, refused or cancelled)",
       "remove": "Delete the activity",
       "removeSeries": "Delete the whole series"
     },
     "follow": {
+      "in_progress": "In progress",
       "done": "Done",
+      "not_done": "Not done",
       "postponed": "Postpone",
+      "refused": "Refuse",
       "cancelled": "Cancel",
       "planned": "Back to planned",
-      "notDue": "An activity is marked done once its day has come."
+      "notDue": "An activity is followed up once its day has come.",
+      "auto": "automatic, from its hours",
+      "autoHint": "An activity with hours is in progress from its start and done at its end, unless a status is set by hand."
     },
     "progress": {
       "title": "Progress by gouvernorat",

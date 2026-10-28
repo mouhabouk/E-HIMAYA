@@ -10,8 +10,10 @@ export const APPROVALS = ["direct", "head", "head_and_centre"] as const;
 export type Approval = (typeof APPROVALS)[number];
 export const REPEATS = ["none", "daily", "weekdays", "weekly"] as const;
 export type Repeat = (typeof REPEATS)[number];
-export const ITEM_STATUSES = ["planned", "done", "postponed", "cancelled"] as const;
+export const ITEM_STATUSES = ["planned", "in_progress", "done", "not_done", "postponed", "refused", "cancelled"] as const;
 export type ItemStatus = (typeof ITEM_STATUSES)[number];
+/** Set by hand with a reason (docs/phase-l/design-l4.md §6). */
+export const WITH_REASON: readonly ItemStatus[] = ["not_done", "postponed", "refused", "cancelled"];
 export const PERIOD_STATUSES = ["draft", "submitted", "awaiting_centre", "approved", "returned"] as const;
 export type PeriodStatus = (typeof PERIOD_STATUSES)[number];
 
@@ -32,7 +34,7 @@ export type Activity = keyof typeof ACTIVITIES;
 export const ACTIVITY_KEYS = Object.keys(ACTIVITIES) as Activity[];
 
 // Tones of the design system (components/Icon.tsx), named here so Playwright can load this file.
-type Tone = "slate" | "amber" | "orange" | "green" | "red";
+type Tone = "slate" | "amber" | "orange" | "green" | "red" | "sky" | "pink";
 
 export const PERIOD_TONE: Record<PeriodStatus, Tone> = {
   draft: "slate",
@@ -44,8 +46,11 @@ export const PERIOD_TONE: Record<PeriodStatus, Tone> = {
 
 export const ITEM_TONE: Record<ItemStatus, Tone> = {
   planned: "slate",
+  in_progress: "sky",
   done: "green",
+  not_done: "orange",
   postponed: "amber",
+  refused: "pink",
   cancelled: "red",
 };
 
@@ -53,7 +58,10 @@ export interface Counts {
   items: number;
   due: number;
   done: number;
+  in_progress: number;
+  not_done: number;
   postponed: number;
+  refused: number;
   cancelled: number;
   rate: number | null;
 }
@@ -76,6 +84,8 @@ export interface ScheduleItem {
   plan_title: string | null;
   notes: string;
   status: ItemStatus;
+  /** The clock set the status from the hours of the activity. */
+  status_auto: boolean;
   status_reason: string | null;
   status_by_name: string | null;
   status_at: string | null;

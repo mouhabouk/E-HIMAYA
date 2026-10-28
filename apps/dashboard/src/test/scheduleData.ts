@@ -20,6 +20,7 @@ const item = (over: Partial<ScheduleItem> & Pick<ScheduleItem, "id" | "activity"
   plan_title: null,
   notes: "",
   status: "planned",
+  status_auto: false,
   status_reason: null,
   status_by_name: null,
   status_at: null,
@@ -39,7 +40,9 @@ export const SCHEDULE_ITEMS: ScheduleItem[] = [
       starts_at: "07:00:00",
       ends_at: "19:00:00",
       staff_count: 12,
-      status: n === 0 ? "done" : n === 1 ? "done" : "planned",
+      // Done by hand on Monday and Tuesday; Wednesday's duty is under way by the clock.
+      status: n === 0 ? "done" : n === 1 ? "done" : n === 2 ? "in_progress" : "planned",
+      status_auto: n === 2,
       status_by_name: n < 2 ? "[SIM] عون القاعة" : null,
       status_at: n < 2 ? `${day(n)}T19:05:00Z` : null,
     }),
@@ -104,7 +107,7 @@ export const SCHEDULE_DETAIL: PeriodDetail = {
     created_by_name: "[SIM] عون القاعة",
     updated_by_name: "[SIM] عون القاعة",
     updated_at: "2026-10-27T19:05:00Z",
-    counts: { items: 11, due: 5, done: 2, postponed: 1, cancelled: 0, rate: 0.4 },
+    counts: { items: 11, due: 5, done: 2, in_progress: 1, not_done: 0, postponed: 1, refused: 0, cancelled: 0, rate: 0.4 },
   },
   items: SCHEDULE_ITEMS,
   can_edit: false,
@@ -146,8 +149,8 @@ export const SCHEDULE_PROGRESS: Progress = {
     status: n === 4 ? null : (["approved", "approved", "awaiting_centre", "approved"] as const)[n] ?? "draft",
     counts:
       n === 4
-        ? { items: 0, due: 0, done: 0, postponed: 0, cancelled: 0, rate: null }
-        : { items: 30 + n, due: 12, done: 12 - n * 2, postponed: n, cancelled: 0, rate: (12 - n * 2) / 12 },
+        ? { items: 0, due: 0, done: 0, in_progress: 0, not_done: 0, postponed: 0, refused: 0, cancelled: 0, rate: null }
+        : { items: 30 + n, due: 12, done: 12 - n * 2, in_progress: 0, not_done: n, postponed: n, refused: 0, cancelled: 0, rate: (12 - n * 2) / 12 },
   })),
 };
 

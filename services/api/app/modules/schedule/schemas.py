@@ -22,7 +22,7 @@ Activity = Literal[
     "other",
 ]
 PeriodStatus = Literal["draft", "submitted", "awaiting_centre", "approved", "returned"]
-ItemStatus = Literal["planned", "done", "postponed", "cancelled"]
+ItemStatus = Literal["planned", "in_progress", "done", "not_done", "postponed", "refused", "cancelled"]
 CategoryKey = Annotated[str, StringConstraints(pattern=r"^[a-z][a-z0-9_]{1,39}$")]
 
 
@@ -112,6 +112,8 @@ class ItemOut(BaseModel):
     plan_title: str | None
     notes: str
     status: ItemStatus
+    # True when the clock set the status from the hours of the activity (docs/phase-l/design-l4.md §6).
+    status_auto: bool
     status_reason: str | None
     status_by_name: str | None
     status_at: datetime | None
@@ -121,9 +123,12 @@ class Counts(BaseModel):
     items: int = 0
     due: int = 0
     done: int = 0
+    in_progress: int = 0
+    not_done: int = 0
     postponed: int = 0
+    refused: int = 0
     cancelled: int = 0
-    # Done among the activities whose day has come (cancelled ones left out); None when nothing is due yet.
+    # Done among the activities whose day has come (refused and cancelled ones left out); None when nothing is due.
     rate: float | None = None
 
 

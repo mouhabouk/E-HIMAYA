@@ -3,8 +3,9 @@
 approval path each gouvernorat chooses. Nothing here touches the database."""
 
 import calendar
-from datetime import date, timedelta
+from datetime import date, datetime, time, timedelta
 from typing import Literal
+from zoneinfo import ZoneInfo
 
 Span = Literal["day", "week", "month"]
 SPANS: tuple[Span, ...] = ("day", "week", "month")
@@ -24,7 +25,12 @@ ACTIVITIES = (
     "meeting",
     "other",
 )
-ITEM_STATUSES = ("planned", "done", "postponed", "cancelled")
+ITEM_STATUSES = ("planned", "in_progress", "done", "not_done", "postponed", "refused", "cancelled")
+# Set by hand with a reason; refused and cancelled activities are left out of the completion rate.
+WITH_REASON = frozenset({"not_done", "postponed", "refused", "cancelled"})
+LEFT_OUT = frozenset({"refused", "cancelled"})
+# The hours of an activity are those of Tunisia.
+TUNIS = ZoneInfo("Africa/Tunis")
 # A programme is written while a draft or sent back; it is locked while it waits for an approval.
 EDITABLE = frozenset({"draft", "returned"})
 WAITING = frozenset({"submitted", "awaiting_centre"})
@@ -74,3 +80,25 @@ def after_submit(approval: Approval) -> str:
 
 def after_head(approval: Approval) -> str:
     return "awaiting_centre" if approval == "head_and_centre" else "approved"
+
+
+def local_today(now: datetime) -> date:
+    return now.astimezone(TUNIS).date()
+
+
+def follow_up(
+    status: str, manual: bool, approved: bool, on: date, starts: time | None, ends: time | None, now: datetime
+) -> tuple[str, bool]:
+    """The status of an activity and whether the clock set it (docs/phase-l/design-l4.md §6): an activity of an
+    approved programme with a start time, never set by hand, is in progress from its start and done at its end (the
+    end of its day without an end time). A status set by hand always wins; an activity of the whole day stays by
+    hand."""
+    if manual or status != "planned" or not approved or starts is None:
+        return status, False
+    start = datetime.combine(on, starts, TUNIS)
+    end = datetime.combine(on, ends, TUNIS) if ends else datetime.combine(on + timedelta(days=1), time(0), TUNIS)
+    if now >= end:
+        return "done", True
+    if now >= start:
+        return "in_progress", True
+    return "planned", False
