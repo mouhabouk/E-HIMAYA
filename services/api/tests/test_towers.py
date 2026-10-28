@@ -113,7 +113,8 @@ async def test_register_scope_and_secrets_shown_once(
     mine = next(t for t in listed["items"] if t["id"] == tower["id"])
     assert "edge_key" not in mine and listed["can_manage"] is False
     logs = (await session.scalars(select(AuditLog).where(AuditLog.target == f"stream:{tower['id']}"))).all()
-    assert logs and all(key not in str(log.details) and created["publish_token"] not in str(log.details) for log in logs)
+    secrets_shown = (key, created["publish_token"])
+    assert logs and all(s not in str(log.details) for log in logs for s in secrets_shown)
     other = (await client.get(URL, headers=staff(["operator"], gouvernorat=BIZERTE))).json()
     assert tower["id"] not in {t["id"] for t in other["items"]}
     central = (await client.get(URL, headers=staff(["operator"], gouvernorat=None))).json()
@@ -223,6 +224,7 @@ async def test_events_checked_kept_and_suggested(
     assert mine["last_event"]["label"] == "fire" and mine["last_event"]["confidence"] == pytest.approx(0.9)
     hist = (await client.get(f"{URL}/{tower['id']}/events", headers=reader)).json()
     assert [e["label"] for e in hist["items"]] == ["fire", "fire", "smoke"]
-    page = await client.get("/api/v1/staff/weather/suggestions", headers=staff(["content_editor"], gouvernorat=JENDOUBA))
+    editor = staff(["content_editor"], gouvernorat=JENDOUBA)
+    page = await client.get("/api/v1/staff/weather/suggestions", headers=editor)
     assert page.status_code == 200, page.text
     assert {s["metric"] for s in page.json()["items"]} >= {"tower_fire", "tower_smoke"}
