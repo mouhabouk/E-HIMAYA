@@ -10,6 +10,7 @@ actor "Responsable\nd'établissement" as ORG
 actor "Personnel de salle" as OPS
 actor "Comités" as COM
 actor "Administrateurs" as ADM
+actor "Gouverneur, ministre\n(L3)" as GM
 CIT -|> ANO
 VOL -|> CIT
 DOC -|> CIT
@@ -29,6 +30,7 @@ rectangle "e-Himaya" {
   usecase "Piloter niveaux\net directives" as U12
   usecase "Publier alertes\net contenus" as U13
   usecase "Administrer comptes,\nparamètres et audit" as U14
+  usecase "Conduire un axe de catastrophe\net décider (signé, L3)" as U15
 }
 ANO --> U1
 ANO --> U2
@@ -43,5 +45,7 @@ OPS --> U10
 OPS --> U11
 COM --> U12
 COM --> U13
+OPS --> U15
+GM --> U15
 ADM --> U14
 @enduml
