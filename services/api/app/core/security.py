@@ -51,6 +51,10 @@ class Role(StrEnum):
     MEDICAL_COORDINATOR = "medical_coordinator"
     # Phase P4a: the leader of an intervention team, on the staff app (shift, mission steps, field reports only).
     TEAM_LEADER = "team_leader"
+    # Phase L3 (docs/phase-l/design-l3.md §1): the governor (scope: their gouvernorat) and the minister (national)
+    # see declared disasters and crises only, never single interventions, and issue recommendations and decisions.
+    GOVERNOR = "governor"
+    MINISTER = "minister"
 
 
 REALM_ROLES: dict[Realm, frozenset[Role]] = {
@@ -70,6 +74,8 @@ REALM_ROLES: dict[Realm, frozenset[Role]] = {
             Role.REGIONAL_ACCOUNT_ADMIN,
             Role.MEDICAL_COORDINATOR,
             Role.TEAM_LEADER,
+            Role.GOVERNOR,
+            Role.MINISTER,
         }
     ),
 }
@@ -86,7 +92,9 @@ class Function(StrEnum):
 
 
 FUNCTION_ROLES: dict[Function, frozenset[Role]] = {
-    Function.COMMAND: frozenset({Role.CENTRAL_COMMITTEE, Role.LOCAL_COMMITTEE, Role.FIELD_COMMANDER}),
+    Function.COMMAND: frozenset(
+        {Role.CENTRAL_COMMITTEE, Role.LOCAL_COMMITTEE, Role.FIELD_COMMANDER, Role.GOVERNOR, Role.MINISTER}
+    ),
     Function.OPERATIONS: frozenset({Role.OPERATOR, Role.OPS_MANAGER}),
     Function.TECHNICAL: frozenset({Role.SYSADMIN, Role.SECURITY_ADMIN, Role.AI_ADMIN, Role.REGIONAL_ACCOUNT_ADMIN}),
     Function.SUPPORT: frozenset({Role.CONTENT_EDITOR, Role.ORG_AUDITOR, Role.MEDICAL_COORDINATOR}),

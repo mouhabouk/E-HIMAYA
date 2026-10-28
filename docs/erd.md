@@ -301,6 +301,181 @@ erDiagram
     content__guide_topic ||--o{ content__guide_item : "topic_id"
 ```
 
+## crisis
+
+```mermaid
+erDiagram
+    crisis__axis {
+        uuid id PK
+        text number
+        text name
+        text kind
+        text scope
+        uuid parent_id FK
+        smallint gouvernorat_code FK
+        geography_multipolygon_4326 area
+        smallint level
+        text plan
+        text status
+        uuid request_id
+        text opened_by
+        text opened_by_name
+        datetime opened_at
+        text closed_by
+        text closed_by_name
+        datetime closed_at
+        jsonb closing
+        datetime next_sitrep_at
+        uuid memory_id
+        integer version
+        datetime updated_at
+    }
+    crisis__axis_incident {
+        uuid axis_id PK,FK
+        uuid incident_id PK,FK
+        text attached_by
+        text attached_by_name
+        datetime attached_at
+        text detached_by
+        text detached_by_name
+        datetime detached_at
+        text detach_reason
+    }
+    crisis__counter {
+        integer year PK
+        integer last
+    }
+    crisis__directive {
+        uuid id PK
+        uuid axis_id FK
+        integer number
+        text kind
+        text category
+        text body
+        geography_multipolygon_4326 area
+        text executor
+        text executor_name
+        datetime due_at
+        text status
+        text status_reason
+        text issuer_role
+        text issued_by
+        text issued_by_name
+        datetime issued_at
+        text signature
+        text key_id
+        uuid overridden_by FK
+        datetime reminded_at
+        datetime overdue_at
+        datetime done_at
+        datetime updated_at
+    }
+    crisis__directive_event {
+        bigint id PK
+        uuid directive_id FK
+        uuid axis_id FK
+        text status
+        text reason
+        text by_actor
+        text by_name
+        datetime at
+    }
+    crisis__dismissal {
+        uuid axis_id PK,FK
+        uuid incident_id PK,FK
+        text dismissed_by
+        datetime dismissed_at
+    }
+    crisis__evacuation {
+        uuid id PK
+        uuid axis_id FK
+        text name
+        geography_multipolygon_4326 area
+        integer evacuated
+        text updated_by
+        datetime updated_at
+    }
+    crisis__event {
+        bigint id PK
+        uuid axis_id FK
+        datetime at
+        text actor
+        text actor_name
+        text kind
+        jsonb payload
+    }
+    crisis__need {
+        uuid id PK
+        uuid axis_id FK
+        text label
+        integer quantity
+        text status
+        text created_by
+        text created_by_name
+        datetime created_at
+        datetime met_at
+    }
+    crisis__request {
+        uuid id PK
+        smallint gouvernorat_code FK
+        text name
+        text kind
+        smallint level
+        text facts
+        array incident_ids
+        geography_multipolygon_4326 area
+        text status
+        text created_by
+        text created_by_name
+        datetime created_at
+        text decided_by
+        text decided_by_name
+        datetime decided_at
+        text decision_reason
+        uuid axis_id FK
+    }
+    crisis__shelter {
+        uuid id PK
+        uuid axis_id FK
+        text name
+        geography_point_4326 location
+        integer capacity
+        integer occupants
+        text updated_by
+        datetime updated_at
+    }
+    crisis__sitrep {
+        uuid id PK
+        uuid axis_id FK
+        integer number
+        jsonb figures
+        text assessment
+        text status
+        text created_by
+        datetime created_at
+        text sent_by
+        text sent_by_name
+        datetime sent_at
+    }
+    crisis__axis ||--o{ crisis__axis : "parent_id"
+    crisis__axis ||--o{ crisis__axis_incident : "axis_id"
+    crisis__axis ||--o{ crisis__directive : "axis_id"
+    crisis__axis ||--o{ crisis__directive_event : "axis_id"
+    crisis__axis ||--o{ crisis__dismissal : "axis_id"
+    crisis__axis ||--o{ crisis__evacuation : "axis_id"
+    crisis__axis ||--o{ crisis__event : "axis_id"
+    crisis__axis ||--o{ crisis__need : "axis_id"
+    crisis__axis ||--o{ crisis__request : "axis_id"
+    crisis__axis ||--o{ crisis__shelter : "axis_id"
+    crisis__axis ||--o{ crisis__sitrep : "axis_id"
+    crisis__directive ||--o{ crisis__directive : "overridden_by"
+    crisis__directive ||--o{ crisis__directive_event : "directive_id"
+    geo__gouvernorat ||--o{ crisis__axis : "gouvernorat_code"
+    geo__gouvernorat ||--o{ crisis__request : "gouvernorat_code"
+    ops__incident ||--o{ crisis__axis_incident : "incident_id"
+    ops__incident ||--o{ crisis__dismissal : "incident_id"
+```
+
 ## decision
 
 ```mermaid

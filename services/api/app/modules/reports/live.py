@@ -14,6 +14,7 @@ from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect, st
 
 from app.core.config import get_settings
 from app.core.security import Principal, Role, authenticate
+from app.modules.crisis import domain as crisis_domain
 from app.modules.reports.staff_router import READ_ROLES
 from app.modules.telephony.domain import CALL_ROLES, mask_number
 
@@ -55,6 +56,8 @@ class LiveClient:
             return self.reads_reports or Role.ORG_AUDITOR in roles
         if audience == "editors":
             return bool(roles & EDITOR_ROLES)
+        if audience == "crisis":
+            return crisis_domain.reads(self.principal)
         return True
 
     def can_see(self, gouvernorat_code: int | None) -> bool:
@@ -204,6 +207,9 @@ def _route(subject: str, payload: dict[str, Any]) -> tuple[str, Callable[[LiveCl
     if subject == "directive.issued":
         directive = payload.get("directive", {})
         return "staff", _among(directive.get("gouvernorat_codes"))
+    if subject.startswith("axis."):
+        # Crisis axes (phase L3): rooms, governors and the minister of the axis's gouvernorats; national always.
+        return "crisis", _among(payload.get("gouvernorat_codes"), everywhere_when_empty=False)
     if subject == "coastal.alert":
         # A beach that turned yellow or red today (phase L1b), to the rooms of its gouvernorat and the national room.
         return "reports", _codes(payload, payload.get("gouvernorat_code"))

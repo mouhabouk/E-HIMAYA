@@ -31,6 +31,8 @@ SAFETY_LIVE_MAX_MINUTES = "safety.live_max_minutes"
 SAFETY_CHECK_MAX_HOURS = "safety.check_max_hours"
 # Phase B2: the 72-hour location history, off until the Office's legal review (design-b2 §6).
 SAFETY_LOCATION_HISTORY = "safety.location_history"
+# Phase L3 (design-l3 §2): hours between two situation reports of a disaster or crisis axis, per level 1 to 4.
+CRISIS_SITREP_HOURS = "crisis.sitrep_hours"
 
 BANDS = ("critical", "high", "normal", "low")
 
@@ -119,6 +121,15 @@ def _int_between(low: int, high: int) -> Callable[[Any], Any]:
     return check
 
 
+def _sitrep_hours(value: Any) -> Any:
+    if not isinstance(value, dict) or set(value) != {"1", "2", "3", "4"}:
+        raise ValueError("hours for each level 1 to 4")
+    for hours in value.values():
+        if isinstance(hours, bool) or not isinstance(hours, int) or not 1 <= hours <= 72:
+            raise ValueError("an integer between 1 and 72 hours per level")
+    return {k: int(value[k]) for k in ("1", "2", "3", "4")}
+
+
 def _boolean(value: Any) -> Any:
     if not isinstance(value, bool):
         raise ValueError("expected true or false")
@@ -153,6 +164,7 @@ DEFAULTS: dict[str, Any] = {
     SAFETY_LIVE_MAX_MINUTES: 480,
     SAFETY_CHECK_MAX_HOURS: 24,
     SAFETY_LOCATION_HISTORY: False,
+    CRISIS_SITREP_HOURS: {"1": 24, "2": 12, "3": 6, "4": 2},
 }
 
 # Roles allowed to change each key (national scope required). Missing = read-only.
@@ -168,6 +180,7 @@ EDITORS: dict[str, frozenset[Role]] = {
     SAFETY_LIVE_MAX_MINUTES: frozenset({Role.SYSADMIN}),
     SAFETY_CHECK_MAX_HOURS: frozenset({Role.SYSADMIN}),
     SAFETY_LOCATION_HISTORY: frozenset({Role.SYSADMIN}),
+    CRISIS_SITREP_HOURS: frozenset({Role.SYSADMIN}),
 }
 # Keys no one may change in phase 9: enabling them needs a formal approval outside the platform (§7.4).
 FORMAL_APPROVAL = frozenset({NOTIFY_REAL_SEND})
@@ -184,6 +197,7 @@ VALIDATORS: dict[str, Callable[[Any], Any]] = {
     SAFETY_LIVE_MAX_MINUTES: _int_between(15, 1440),
     SAFETY_CHECK_MAX_HOURS: _int_between(1, 72),
     SAFETY_LOCATION_HISTORY: _boolean,
+    CRISIS_SITREP_HOURS: _sitrep_hours,
 }
 
 

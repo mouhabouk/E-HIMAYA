@@ -1339,7 +1339,7 @@
         "title": "ApproveIn",
         "type": "object"
       },
-      "Area": {
+      "Area-Output": {
         "properties": {
           "gouvernorat_codes": {
             "items": {
@@ -1684,6 +1684,20 @@
         "title": "Assumption",
         "type": "object"
       },
+      "AttachIn": {
+        "properties": {
+          "incident_id": {
+            "format": "uuid",
+            "title": "Incident Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "incident_id"
+        ],
+        "title": "AttachIn",
+        "type": "object"
+      },
       "AttachmentOut": {
         "properties": {
           "assignment_id": {
@@ -1940,6 +1954,480 @@
           "updated_at"
         ],
         "title": "AwarenessTip",
+        "type": "object"
+      },
+      "AxisDetail": {
+        "properties": {
+          "axis": {
+            "$ref": "#/components/schemas/AxisOut"
+          },
+          "directives": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__crisis__schemas__DirectiveOut"
+            },
+            "title": "Directives",
+            "type": "array"
+          },
+          "evacuations": {
+            "items": {
+              "$ref": "#/components/schemas/EvacuationOut"
+            },
+            "title": "Evacuations",
+            "type": "array"
+          },
+          "incidents": {
+            "items": {
+              "$ref": "#/components/schemas/IncidentOut"
+            },
+            "title": "Incidents",
+            "type": "array"
+          },
+          "needs": {
+            "items": {
+              "$ref": "#/components/schemas/NeedOut"
+            },
+            "title": "Needs",
+            "type": "array"
+          },
+          "shelters": {
+            "items": {
+              "$ref": "#/components/schemas/ShelterOut"
+            },
+            "title": "Shelters",
+            "type": "array"
+          },
+          "sitreps": {
+            "items": {
+              "$ref": "#/components/schemas/SitrepOut"
+            },
+            "title": "Sitreps",
+            "type": "array"
+          },
+          "timeline": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__crisis__schemas__EventOut"
+            },
+            "title": "Timeline",
+            "type": "array"
+          }
+        },
+        "required": [
+          "axis",
+          "incidents",
+          "shelters",
+          "evacuations",
+          "needs",
+          "directives",
+          "sitreps",
+          "timeline"
+        ],
+        "title": "AxisDetail",
+        "type": "object"
+      },
+      "AxisIn": {
+        "properties": {
+          "area": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__crisis__schemas__Area"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "maximum": 83.0,
+                "minimum": 11.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "gouvernorats": {
+            "items": {
+              "maximum": 83.0,
+              "minimum": 11.0,
+              "type": "integer"
+            },
+            "maxItems": 24,
+            "title": "Gouvernorats",
+            "type": "array"
+          },
+          "incident_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 200,
+            "title": "Incident Ids",
+            "type": "array"
+          },
+          "kind": {
+            "enum": [
+              "flood",
+              "forest_fire",
+              "storm",
+              "earthquake",
+              "technological",
+              "health",
+              "other"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "level": {
+            "maximum": 4.0,
+            "minimum": 1.0,
+            "title": "Level",
+            "type": "integer"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 3,
+            "title": "Name",
+            "type": "string"
+          },
+          "national": {
+            "default": false,
+            "title": "National",
+            "type": "boolean"
+          },
+          "plan": {
+            "default": "",
+            "maxLength": 2000,
+            "title": "Plan",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "kind",
+          "level"
+        ],
+        "title": "AxisIn",
+        "type": "object"
+      },
+      "AxisList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AxisOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "AxisList",
+        "type": "object"
+      },
+      "AxisOut": {
+        "properties": {
+          "area": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area"
+          },
+          "can_command": {
+            "default": false,
+            "title": "Can Command",
+            "type": "boolean"
+          },
+          "can_issue": {
+            "default": false,
+            "title": "Can Issue",
+            "type": "boolean"
+          },
+          "can_manage": {
+            "default": false,
+            "title": "Can Manage",
+            "type": "boolean"
+          },
+          "children": {
+            "items": {
+              "$ref": "#/components/schemas/AxisOut"
+            },
+            "title": "Children",
+            "type": "array"
+          },
+          "closed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Closed At"
+          },
+          "closed_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Closed By Name"
+          },
+          "closing": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Closing"
+          },
+          "figures": {
+            "$ref": "#/components/schemas/app__modules__crisis__schemas__Figures"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "gouvernorat_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Name"
+          },
+          "gouvernorats": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Gouvernorats",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "flood",
+              "forest_fire",
+              "storm",
+              "earthquake",
+              "technological",
+              "health",
+              "other"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "level": {
+            "title": "Level",
+            "type": "integer"
+          },
+          "memory_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Memory Id"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "next_sitrep_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Sitrep At"
+          },
+          "number": {
+            "title": "Number",
+            "type": "string"
+          },
+          "opened_at": {
+            "format": "date-time",
+            "title": "Opened At",
+            "type": "string"
+          },
+          "opened_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opened By Name"
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Id"
+          },
+          "plan": {
+            "title": "Plan",
+            "type": "string"
+          },
+          "scope": {
+            "enum": [
+              "gouvernorat",
+              "national"
+            ],
+            "title": "Scope",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "open",
+              "closed"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "name",
+          "kind",
+          "scope",
+          "parent_id",
+          "gouvernorat_code",
+          "gouvernorat_name",
+          "gouvernorats",
+          "area",
+          "level",
+          "plan",
+          "status",
+          "opened_by_name",
+          "opened_at",
+          "closed_by_name",
+          "closed_at",
+          "closing",
+          "next_sitrep_at",
+          "memory_id",
+          "version",
+          "figures"
+        ],
+        "title": "AxisOut",
+        "type": "object"
+      },
+      "AxisPatch": {
+        "properties": {
+          "area": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__crisis__schemas__Area"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "level": {
+            "anyOf": [
+              {
+                "maximum": 4.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Level"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 3,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "plan": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plan"
+          },
+          "reason": {
+            "default": "",
+            "maxLength": 1000,
+            "title": "Reason",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version"
+        ],
+        "title": "AxisPatch",
         "type": "object"
       },
       "BadgeItem": {
@@ -4004,46 +4492,6 @@
         "title": "ClassificationOut",
         "type": "object"
       },
-      "CloseIn": {
-        "properties": {
-          "casualties": {
-            "$ref": "#/components/schemas/Casualties"
-          },
-          "lessons": {
-            "anyOf": [
-              {
-                "maxLength": 5000,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Lessons"
-          },
-          "outcome": {
-            "enum": [
-              "resolved",
-              "false_alarm",
-              "transferred"
-            ],
-            "title": "Outcome",
-            "type": "string"
-          },
-          "summary": {
-            "maxLength": 5000,
-            "minLength": 10,
-            "title": "Summary",
-            "type": "string"
-          }
-        },
-        "required": [
-          "outcome",
-          "summary"
-        ],
-        "title": "CloseIn",
-        "type": "object"
-      },
       "CodeIn": {
         "additionalProperties": false,
         "properties": {
@@ -4117,6 +4565,87 @@
           "reason"
         ],
         "title": "CommandLevelIn",
+        "type": "object"
+      },
+      "CommandOverview": {
+        "properties": {
+          "axes": {
+            "items": {
+              "$ref": "#/components/schemas/AxisOut"
+            },
+            "title": "Axes",
+            "type": "array"
+          },
+          "closed": {
+            "items": {
+              "$ref": "#/components/schemas/AxisOut"
+            },
+            "title": "Closed",
+            "type": "array"
+          },
+          "directives": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__crisis__schemas__DirectiveOut"
+            },
+            "title": "Directives",
+            "type": "array"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "gouvernorats": {
+            "items": {
+              "$ref": "#/components/schemas/GouvernoratState"
+            },
+            "title": "Gouvernorats",
+            "type": "array"
+          },
+          "needs": {
+            "items": {
+              "$ref": "#/components/schemas/NeedOut"
+            },
+            "title": "Needs",
+            "type": "array"
+          },
+          "role": {
+            "enum": [
+              "governor",
+              "minister"
+            ],
+            "title": "Role",
+            "type": "string"
+          },
+          "sitreps": {
+            "items": {
+              "$ref": "#/components/schemas/SitrepOut"
+            },
+            "title": "Sitreps",
+            "type": "array"
+          },
+          "totals": {
+            "$ref": "#/components/schemas/app__modules__crisis__schemas__Figures"
+          }
+        },
+        "required": [
+          "role",
+          "gouvernorat_code",
+          "totals",
+          "axes",
+          "gouvernorats",
+          "needs",
+          "directives",
+          "sitreps",
+          "closed"
+        ],
+        "title": "CommandOverview",
         "type": "object"
       },
       "CommitteeMember": {
@@ -5165,6 +5694,25 @@
         "title": "DayRisk",
         "type": "object"
       },
+      "DecideIn": {
+        "properties": {
+          "accept": {
+            "title": "Accept",
+            "type": "boolean"
+          },
+          "reason": {
+            "default": "",
+            "maxLength": 1000,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "accept"
+        ],
+        "title": "DecideIn",
+        "type": "object"
+      },
       "DelegationOut": {
         "properties": {
           "code": {
@@ -5229,6 +5777,21 @@
           "status"
         ],
         "title": "DeleteOut",
+        "type": "object"
+      },
+      "DetachIn": {
+        "properties": {
+          "reason": {
+            "maxLength": 1000,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "DetachIn",
         "type": "object"
       },
       "DetailOut": {
@@ -5875,84 +6438,14 @@
         "title": "DirectiveAckOut",
         "type": "object"
       },
-      "DirectiveIn": {
+      "DirectiveEventOut": {
         "properties": {
-          "body": {
-            "maxLength": 5000,
-            "minLength": 1,
-            "title": "Body",
-            "type": "string"
-          },
-          "gouvernorat_codes": {
-            "items": {
-              "type": "integer"
-            },
-            "maxItems": 24,
-            "title": "Gouvernorat Codes",
-            "type": "array"
-          },
-          "title": {
-            "maxLength": 150,
-            "minLength": 3,
-            "title": "Title",
-            "type": "string"
-          },
-          "urgency": {
-            "default": "normal",
-            "enum": [
-              "normal",
-              "urgent"
-            ],
-            "title": "Urgency",
-            "type": "string"
-          }
-        },
-        "required": [
-          "title",
-          "body"
-        ],
-        "title": "DirectiveIn",
-        "type": "object"
-      },
-      "DirectiveOut": {
-        "properties": {
-          "acks": {
-            "items": {
-              "$ref": "#/components/schemas/DirectiveAckOut"
-            },
-            "title": "Acks",
-            "type": "array"
-          },
-          "body": {
-            "title": "Body",
-            "type": "string"
-          },
-          "from_level": {
-            "enum": [
-              "central",
-              "local"
-            ],
-            "title": "From Level",
-            "type": "string"
-          },
-          "gouvernorat_codes": {
-            "items": {
-              "type": "integer"
-            },
-            "title": "Gouvernorat Codes",
-            "type": "array"
-          },
-          "id": {
-            "format": "uuid",
-            "title": "Id",
-            "type": "string"
-          },
-          "issued_at": {
+          "at": {
             "format": "date-time",
-            "title": "Issued At",
+            "title": "At",
             "type": "string"
           },
-          "issued_by": {
+          "by_name": {
             "anyOf": [
               {
                 "type": "string"
@@ -5961,48 +6454,38 @@
                 "type": "null"
               }
             ],
-            "title": "Issued By"
+            "title": "By Name"
           },
-          "pending_acks": {
-            "items": {
-              "type": "integer"
-            },
-            "title": "Pending Acks",
-            "type": "array"
-          },
-          "title": {
-            "title": "Title",
-            "type": "string"
-          },
-          "urgency": {
-            "enum": [
-              "normal",
-              "urgent"
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
             ],
-            "title": "Urgency",
+            "title": "Reason"
+          },
+          "status": {
+            "title": "Status",
             "type": "string"
           }
         },
         "required": [
-          "id",
-          "title",
-          "body",
-          "urgency",
-          "from_level",
-          "issued_by",
-          "issued_at",
-          "gouvernorat_codes",
-          "acks",
-          "pending_acks"
+          "status",
+          "reason",
+          "by_name",
+          "at"
         ],
-        "title": "DirectiveOut",
+        "title": "DirectiveEventOut",
         "type": "object"
       },
       "DirectivePage": {
         "properties": {
           "items": {
             "items": {
-              "$ref": "#/components/schemas/DirectiveOut"
+              "$ref": "#/components/schemas/app__modules__ops__schemas__DirectiveOut"
             },
             "title": "Items",
             "type": "array"
@@ -6055,6 +6538,32 @@
           "body"
         ],
         "title": "DirectiveSpec",
+        "type": "object"
+      },
+      "DirectiveStatusIn": {
+        "properties": {
+          "reason": {
+            "default": "",
+            "maxLength": 1000,
+            "title": "Reason",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "issued",
+              "received",
+              "in_progress",
+              "done",
+              "failed"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "DirectiveStatusIn",
         "type": "object"
       },
       "DirectoryDoctor": {
@@ -7652,6 +8161,31 @@
         "title": "EquipmentOut",
         "type": "object"
       },
+      "EscalateIn": {
+        "properties": {
+          "gouvernorats": {
+            "items": {
+              "maximum": 83.0,
+              "minimum": 11.0,
+              "type": "integer"
+            },
+            "maxItems": 24,
+            "title": "Gouvernorats",
+            "type": "array"
+          },
+          "reason": {
+            "maxLength": 1000,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "EscalateIn",
+        "type": "object"
+      },
       "EscalationOut": {
         "properties": {
           "actor_name": {
@@ -7728,6 +8262,100 @@
         "title": "EscalationOut",
         "type": "object"
       },
+      "EvacuationIn": {
+        "properties": {
+          "area": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__crisis__schemas__Area"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "evacuated": {
+            "default": 0,
+            "maximum": 10000000.0,
+            "minimum": 0.0,
+            "title": "Evacuated",
+            "type": "integer"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "EvacuationIn",
+        "type": "object"
+      },
+      "EvacuationOut": {
+        "properties": {
+          "area": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area"
+          },
+          "axis_id": {
+            "title": "Axis Id",
+            "type": "string"
+          },
+          "evacuated": {
+            "title": "Evacuated",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "axis_id",
+          "name",
+          "area",
+          "evacuated",
+          "updated_at"
+        ],
+        "title": "EvacuationOut",
+        "type": "object"
+      },
+      "EvacuationPatch": {
+        "properties": {
+          "evacuated": {
+            "maximum": 10000000.0,
+            "minimum": 0.0,
+            "title": "Evacuated",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "evacuated"
+        ],
+        "title": "EvacuationPatch",
+        "type": "object"
+      },
       "Evaluation": {
         "properties": {
           "casualties": {
@@ -7784,49 +8412,6 @@
           "closed_at"
         ],
         "title": "Evaluation",
-        "type": "object"
-      },
-      "EventOut": {
-        "properties": {
-          "action": {
-            "title": "Action",
-            "type": "string"
-          },
-          "at": {
-            "format": "date-time",
-            "title": "At",
-            "type": "string"
-          },
-          "gouvernorat_code": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Gouvernorat Code"
-          },
-          "status": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Status"
-          }
-        },
-        "required": [
-          "action",
-          "status",
-          "gouvernorat_code",
-          "at"
-        ],
-        "title": "EventOut",
         "type": "object"
       },
       "Evidence": {
@@ -8176,7 +8761,7 @@
           },
           "history": {
             "items": {
-              "$ref": "#/components/schemas/EventOut"
+              "$ref": "#/components/schemas/app__modules__contact__router__EventOut"
             },
             "title": "History",
             "type": "array"
@@ -10271,47 +10856,6 @@
         "title": "FieldVisit",
         "type": "object"
       },
-      "Figures": {
-        "properties": {
-          "gouvernorats": {
-            "default": 0,
-            "title": "Gouvernorats",
-            "type": "integer"
-          },
-          "lifeguards_deployed": {
-            "default": 0,
-            "title": "Lifeguards Deployed",
-            "type": "integer"
-          },
-          "lifeguards_planned": {
-            "default": 0,
-            "title": "Lifeguards Planned",
-            "type": "integer"
-          },
-          "open": {
-            "default": 0,
-            "title": "Open",
-            "type": "integer"
-          },
-          "points": {
-            "default": 0,
-            "title": "Points",
-            "type": "integer"
-          },
-          "staff": {
-            "default": 0,
-            "title": "Staff",
-            "type": "integer"
-          },
-          "unlocated": {
-            "default": 0,
-            "title": "Unlocated",
-            "type": "integer"
-          }
-        },
-        "title": "Figures",
-        "type": "object"
-      },
       "FireDangerOut": {
         "description": "Canadian FWI System of the day (noon values) and its class.",
         "properties": {
@@ -10424,7 +10968,7 @@
           "ignition": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/Point-Input"
+                "$ref": "#/components/schemas/app__modules__forecast__schemas__Point"
               },
               {
                 "type": "null"
@@ -11083,6 +11627,78 @@
           "crowd_low"
         ],
         "title": "GouvernoratRisk",
+        "type": "object"
+      },
+      "GouvernoratState": {
+        "properties": {
+          "axes": {
+            "title": "Axes",
+            "type": "integer"
+          },
+          "code": {
+            "title": "Code",
+            "type": "integer"
+          },
+          "deceased": {
+            "title": "Deceased",
+            "type": "integer"
+          },
+          "evacuated": {
+            "title": "Evacuated",
+            "type": "integer"
+          },
+          "incidents_open": {
+            "title": "Incidents Open",
+            "type": "integer"
+          },
+          "level": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Level"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "needs_open": {
+            "title": "Needs Open",
+            "type": "integer"
+          },
+          "resources": {
+            "title": "Resources",
+            "type": "integer"
+          },
+          "weight": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weight"
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "level",
+          "axes",
+          "incidents_open",
+          "resources",
+          "weight",
+          "deceased",
+          "evacuated",
+          "needs_open"
+        ],
+        "title": "GouvernoratState",
         "type": "object"
       },
       "GrantIn": {
@@ -12804,6 +13420,165 @@
           "action"
         ],
         "title": "IncidentLinkIn",
+        "type": "object"
+      },
+      "IncidentList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/IncidentOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "IncidentList",
+        "type": "object"
+      },
+      "IncidentOut": {
+        "description": "An intervention of the axis as the command sees it: the facts, no reporter, no victim identity.",
+        "properties": {
+          "attached_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Attached At"
+          },
+          "attached_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Attached By Name"
+          },
+          "axis_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Axis Id"
+          },
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "deceased": {
+            "default": 0,
+            "title": "Deceased",
+            "type": "integer"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "injured": {
+            "default": 0,
+            "title": "Injured",
+            "type": "integer"
+          },
+          "lat": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lat"
+          },
+          "lon": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lon"
+          },
+          "opened_at": {
+            "format": "date-time",
+            "title": "Opened At",
+            "type": "string"
+          },
+          "rescued": {
+            "default": 0,
+            "title": "Rescued",
+            "type": "integer"
+          },
+          "resources": {
+            "default": 0,
+            "title": "Resources",
+            "type": "integer"
+          },
+          "severity": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Severity"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "required": [
+          "id",
+          "category",
+          "severity",
+          "status",
+          "gouvernorat_code",
+          "lat",
+          "lon",
+          "opened_at"
+        ],
+        "title": "IncidentOut",
         "type": "object"
       },
       "IncidentPage": {
@@ -15658,7 +16433,7 @@
             "type": "boolean"
           },
           "area": {
-            "$ref": "#/components/schemas/Area"
+            "$ref": "#/components/schemas/app__modules__notify__schemas__Area"
           },
           "audience": {
             "anyOf": [
@@ -15841,7 +16616,7 @@
             "type": "boolean"
           },
           "area": {
-            "$ref": "#/components/schemas/Area"
+            "$ref": "#/components/schemas/Area-Output"
           },
           "audience": {
             "anyOf": [
@@ -16251,7 +17026,7 @@
           },
           "history": {
             "items": {
-              "$ref": "#/components/schemas/EventOut"
+              "$ref": "#/components/schemas/app__modules__contact__router__EventOut"
             },
             "title": "History",
             "type": "array"
@@ -17075,6 +17850,96 @@
           "report_count"
         ],
         "title": "NearbyIncident",
+        "type": "object"
+      },
+      "NeedIn": {
+        "properties": {
+          "label": {
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Label",
+            "type": "string"
+          },
+          "quantity": {
+            "maximum": 1000000.0,
+            "minimum": 1.0,
+            "title": "Quantity",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "label",
+          "quantity"
+        ],
+        "title": "NeedIn",
+        "type": "object"
+      },
+      "NeedOut": {
+        "properties": {
+          "axis_id": {
+            "title": "Axis Id",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "met_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Met At"
+          },
+          "quantity": {
+            "title": "Quantity",
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "raised",
+              "met"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "axis_id",
+          "label",
+          "quantity",
+          "status",
+          "created_by_name",
+          "created_at",
+          "met_at"
+        ],
+        "title": "NeedOut",
         "type": "object"
       },
       "NextBadge": {
@@ -18019,7 +18884,7 @@
             "type": "object"
           },
           "location": {
-            "$ref": "#/components/schemas/Point-Input"
+            "$ref": "#/components/schemas/app__modules__orgs__schemas__Point"
           },
           "manager": {
             "$ref": "#/components/schemas/Person-Input"
@@ -18833,7 +19698,7 @@
             "type": "object"
           },
           "location": {
-            "$ref": "#/components/schemas/Point-Input"
+            "$ref": "#/components/schemas/app__modules__orgs__schemas__Point"
           },
           "manager": {
             "$ref": "#/components/schemas/Person-Input"
@@ -19221,28 +20086,6 @@
           }
         },
         "title": "Person",
-        "type": "object"
-      },
-      "Point-Input": {
-        "properties": {
-          "lat": {
-            "maximum": 37.6,
-            "minimum": 30.0,
-            "title": "Lat",
-            "type": "number"
-          },
-          "lon": {
-            "maximum": 11.7,
-            "minimum": 7.4,
-            "title": "Lon",
-            "type": "number"
-          }
-        },
-        "required": [
-          "lat",
-          "lon"
-        ],
-        "title": "Point",
         "type": "object"
       },
       "PointDetail": {
@@ -20192,7 +21035,7 @@
             "type": "object"
           },
           "figures": {
-            "$ref": "#/components/schemas/Figures"
+            "$ref": "#/components/schemas/app__modules__programmes__schemas__Figures"
           },
           "id": {
             "title": "Id",
@@ -20489,7 +21332,7 @@
       "PublicAlert": {
         "properties": {
           "area": {
-            "$ref": "#/components/schemas/Area"
+            "$ref": "#/components/schemas/Area-Output"
           },
           "body": {
             "additionalProperties": {
@@ -21692,6 +22535,241 @@
           "source"
         ],
         "title": "ReporterContextOut",
+        "type": "object"
+      },
+      "RequestIn": {
+        "properties": {
+          "area": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__crisis__schemas__Area"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "facts": {
+            "maxLength": 4000,
+            "minLength": 10,
+            "title": "Facts",
+            "type": "string"
+          },
+          "incident_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 200,
+            "title": "Incident Ids",
+            "type": "array"
+          },
+          "kind": {
+            "enum": [
+              "flood",
+              "forest_fire",
+              "storm",
+              "earthquake",
+              "technological",
+              "health",
+              "other"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "level": {
+            "maximum": 4.0,
+            "minimum": 1.0,
+            "title": "Level",
+            "type": "integer"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 3,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "kind",
+          "level",
+          "facts"
+        ],
+        "title": "RequestIn",
+        "type": "object"
+      },
+      "RequestList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RequestOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "RequestList",
+        "type": "object"
+      },
+      "RequestOut": {
+        "properties": {
+          "area": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area"
+          },
+          "axis_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Axis Id"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "decided_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided At"
+          },
+          "decided_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided By Name"
+          },
+          "decision_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decision Reason"
+          },
+          "facts": {
+            "title": "Facts",
+            "type": "string"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "gouvernorat_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Name"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "incident_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Incident Ids",
+            "type": "array"
+          },
+          "kind": {
+            "enum": [
+              "flood",
+              "forest_fire",
+              "storm",
+              "earthquake",
+              "technological",
+              "health",
+              "other"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "level": {
+            "title": "Level",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "accepted",
+              "rejected"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "gouvernorat_code",
+          "gouvernorat_name",
+          "name",
+          "kind",
+          "level",
+          "facts",
+          "incident_ids",
+          "area",
+          "status",
+          "created_by_name",
+          "created_at",
+          "decided_by_name",
+          "decided_at",
+          "decision_reason",
+          "axis_id"
+        ],
+        "title": "RequestOut",
         "type": "object"
       },
       "RescueIn": {
@@ -22938,7 +24016,9 @@
           "ai_admin",
           "regional_account_admin",
           "medical_coordinator",
-          "team_leader"
+          "team_leader",
+          "governor",
+          "minister"
         ],
         "title": "Role",
         "type": "string"
@@ -23989,6 +25069,140 @@
         "title": "ShareIn",
         "type": "object"
       },
+      "ShelterIn": {
+        "properties": {
+          "capacity": {
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Capacity",
+            "type": "integer"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__crisis__schemas__Point"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Name",
+            "type": "string"
+          },
+          "occupants": {
+            "default": 0,
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Occupants",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "name",
+          "capacity"
+        ],
+        "title": "ShelterIn",
+        "type": "object"
+      },
+      "ShelterOut": {
+        "properties": {
+          "axis_id": {
+            "title": "Axis Id",
+            "type": "string"
+          },
+          "capacity": {
+            "title": "Capacity",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "lat": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lat"
+          },
+          "lon": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lon"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "occupants": {
+            "title": "Occupants",
+            "type": "integer"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "axis_id",
+          "name",
+          "lat",
+          "lon",
+          "capacity",
+          "occupants",
+          "updated_at"
+        ],
+        "title": "ShelterOut",
+        "type": "object"
+      },
+      "ShelterPatch": {
+        "properties": {
+          "capacity": {
+            "anyOf": [
+              {
+                "maximum": 1000000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capacity"
+          },
+          "occupants": {
+            "anyOf": [
+              {
+                "maximum": 1000000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Occupants"
+          }
+        },
+        "title": "ShelterPatch",
+        "type": "object"
+      },
       "ShiftIn": {
         "properties": {
           "client_id": {
@@ -24226,6 +25440,95 @@
           "signed_message"
         ],
         "title": "SigningKeyOut",
+        "type": "object"
+      },
+      "SitrepOut": {
+        "properties": {
+          "assessment": {
+            "title": "Assessment",
+            "type": "string"
+          },
+          "axis_id": {
+            "title": "Axis Id",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "figures": {
+            "additionalProperties": true,
+            "title": "Figures",
+            "type": "object"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "number": {
+            "title": "Number",
+            "type": "integer"
+          },
+          "sent_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sent At"
+          },
+          "sent_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sent By Name"
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "sent"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "axis_id",
+          "number",
+          "figures",
+          "assessment",
+          "status",
+          "created_at",
+          "sent_by_name",
+          "sent_at"
+        ],
+        "title": "SitrepOut",
+        "type": "object"
+      },
+      "SitrepSend": {
+        "properties": {
+          "assessment": {
+            "maxLength": 4000,
+            "minLength": 5,
+            "title": "Assessment",
+            "type": "string"
+          }
+        },
+        "required": [
+          "assessment"
+        ],
+        "title": "SitrepSend",
         "type": "object"
       },
       "SmsKeyOut": {
@@ -32043,6 +33346,49 @@
         "title": "SettingsOut",
         "type": "object"
       },
+      "app__modules__contact__router__EventOut": {
+        "properties": {
+          "action": {
+            "title": "Action",
+            "type": "string"
+          },
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          }
+        },
+        "required": [
+          "action",
+          "status",
+          "gouvernorat_code",
+          "at"
+        ],
+        "title": "EventOut",
+        "type": "object"
+      },
       "app__modules__contact__router__SummaryOut": {
         "properties": {
           "anonymous": {
@@ -32219,6 +33565,552 @@
           "updated_at"
         ],
         "title": "ItemOut",
+        "type": "object"
+      },
+      "app__modules__crisis__schemas__Area": {
+        "description": "GeoJSON polygon drawn on the map (Polygon or MultiPolygon, WGS 84).",
+        "properties": {
+          "coordinates": {
+            "items": {},
+            "title": "Coordinates",
+            "type": "array"
+          },
+          "type": {
+            "enum": [
+              "Polygon",
+              "MultiPolygon"
+            ],
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "coordinates"
+        ],
+        "title": "Area",
+        "type": "object"
+      },
+      "app__modules__crisis__schemas__CloseIn": {
+        "properties": {
+          "summary": {
+            "maxLength": 4000,
+            "minLength": 10,
+            "title": "Summary",
+            "type": "string"
+          }
+        },
+        "required": [
+          "summary"
+        ],
+        "title": "CloseIn",
+        "type": "object"
+      },
+      "app__modules__crisis__schemas__DirectiveIn": {
+        "properties": {
+          "area": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__crisis__schemas__Area"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "body": {
+            "maxLength": 4000,
+            "minLength": 5,
+            "title": "Body",
+            "type": "string"
+          },
+          "category": {
+            "enum": [
+              "evacuation",
+              "resources",
+              "closure",
+              "shelter",
+              "support",
+              "plan",
+              "public_information",
+              "other"
+            ],
+            "title": "Category",
+            "type": "string"
+          },
+          "due_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due At"
+          },
+          "executor": {
+            "enum": [
+              "regional",
+              "central",
+              "partner"
+            ],
+            "title": "Executor",
+            "type": "string"
+          },
+          "executor_name": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 2,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Executor Name"
+          },
+          "kind": {
+            "enum": [
+              "recommendation",
+              "decision"
+            ],
+            "title": "Kind",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "category",
+          "body",
+          "executor"
+        ],
+        "title": "DirectiveIn",
+        "type": "object"
+      },
+      "app__modules__crisis__schemas__DirectiveOut": {
+        "properties": {
+          "area": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area"
+          },
+          "axis_id": {
+            "title": "Axis Id",
+            "type": "string"
+          },
+          "axis_number": {
+            "title": "Axis Number",
+            "type": "string"
+          },
+          "body": {
+            "title": "Body",
+            "type": "string"
+          },
+          "can_update": {
+            "default": false,
+            "title": "Can Update",
+            "type": "boolean"
+          },
+          "category": {
+            "enum": [
+              "evacuation",
+              "resources",
+              "closure",
+              "shelter",
+              "support",
+              "plan",
+              "public_information",
+              "other"
+            ],
+            "title": "Category",
+            "type": "string"
+          },
+          "done_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Done At"
+          },
+          "due_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due At"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/DirectiveEventOut"
+            },
+            "title": "Events",
+            "type": "array"
+          },
+          "executor": {
+            "enum": [
+              "regional",
+              "central",
+              "partner"
+            ],
+            "title": "Executor",
+            "type": "string"
+          },
+          "executor_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Executor Name"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "issued_at": {
+            "format": "date-time",
+            "title": "Issued At",
+            "type": "string"
+          },
+          "issued_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issued By Name"
+          },
+          "issuer_role": {
+            "enum": [
+              "governor",
+              "minister"
+            ],
+            "title": "Issuer Role",
+            "type": "string"
+          },
+          "key_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Key Id"
+          },
+          "kind": {
+            "enum": [
+              "recommendation",
+              "decision"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "number": {
+            "title": "Number",
+            "type": "integer"
+          },
+          "overdue": {
+            "title": "Overdue",
+            "type": "boolean"
+          },
+          "overridden_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Overridden By"
+          },
+          "signature": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signature"
+          },
+          "status": {
+            "enum": [
+              "issued",
+              "received",
+              "in_progress",
+              "done",
+              "failed"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "status_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status Reason"
+          }
+        },
+        "required": [
+          "id",
+          "axis_id",
+          "axis_number",
+          "number",
+          "kind",
+          "category",
+          "body",
+          "area",
+          "executor",
+          "executor_name",
+          "due_at",
+          "status",
+          "status_reason",
+          "issuer_role",
+          "issued_by_name",
+          "issued_at",
+          "signature",
+          "key_id",
+          "overridden_by",
+          "overdue",
+          "done_at"
+        ],
+        "title": "DirectiveOut",
+        "type": "object"
+      },
+      "app__modules__crisis__schemas__EventOut": {
+        "properties": {
+          "actor_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actor Name"
+          },
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "payload": {
+            "additionalProperties": true,
+            "title": "Payload",
+            "type": "object"
+          }
+        },
+        "required": [
+          "at",
+          "actor_name",
+          "kind",
+          "payload"
+        ],
+        "title": "EventOut",
+        "type": "object"
+      },
+      "app__modules__crisis__schemas__Figures": {
+        "properties": {
+          "deceased": {
+            "default": 0,
+            "title": "Deceased",
+            "type": "integer"
+          },
+          "decisions": {
+            "default": 0,
+            "title": "Decisions",
+            "type": "integer"
+          },
+          "decisions_done": {
+            "default": 0,
+            "title": "Decisions Done",
+            "type": "integer"
+          },
+          "decisions_failed": {
+            "default": 0,
+            "title": "Decisions Failed",
+            "type": "integer"
+          },
+          "done_share": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Done Share"
+          },
+          "evacuated": {
+            "default": 0,
+            "title": "Evacuated",
+            "type": "integer"
+          },
+          "incidents": {
+            "default": 0,
+            "title": "Incidents",
+            "type": "integer"
+          },
+          "incidents_open": {
+            "default": 0,
+            "title": "Incidents Open",
+            "type": "integer"
+          },
+          "injured": {
+            "default": 0,
+            "title": "Injured",
+            "type": "integer"
+          },
+          "injured_serious": {
+            "default": 0,
+            "title": "Injured Serious",
+            "type": "integer"
+          },
+          "mean_hours_to_done": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mean Hours To Done"
+          },
+          "needs_open": {
+            "default": 0,
+            "title": "Needs Open",
+            "type": "integer"
+          },
+          "rescued": {
+            "default": 0,
+            "title": "Rescued",
+            "type": "integer"
+          },
+          "resources": {
+            "default": 0,
+            "title": "Resources",
+            "type": "integer"
+          },
+          "resources_by_kind": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Resources By Kind",
+            "type": "object"
+          },
+          "shelter_capacity": {
+            "default": 0,
+            "title": "Shelter Capacity",
+            "type": "integer"
+          },
+          "sheltered": {
+            "default": 0,
+            "title": "Sheltered",
+            "type": "integer"
+          },
+          "shelters": {
+            "default": 0,
+            "title": "Shelters",
+            "type": "integer"
+          },
+          "trapped": {
+            "default": 0,
+            "title": "Trapped",
+            "type": "integer"
+          },
+          "volunteers": {
+            "default": 0,
+            "title": "Volunteers",
+            "type": "integer"
+          }
+        },
+        "title": "Figures",
+        "type": "object"
+      },
+      "app__modules__crisis__schemas__Point": {
+        "properties": {
+          "lat": {
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Lon",
+            "type": "number"
+          }
+        },
+        "required": [
+          "lat",
+          "lon"
+        ],
+        "title": "Point",
+        "type": "object"
+      },
+      "app__modules__forecast__schemas__Point": {
+        "properties": {
+          "lat": {
+            "maximum": 37.6,
+            "minimum": 30.0,
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "maximum": 11.7,
+            "minimum": 7.4,
+            "title": "Lon",
+            "type": "number"
+          }
+        },
+        "required": [
+          "lat",
+          "lon"
+        ],
+        "title": "Point",
         "type": "object"
       },
       "app__modules__knowledge__schemas__ItemOut": {
@@ -33004,6 +34896,32 @@
         "title": "InboxItem",
         "type": "object"
       },
+      "app__modules__notify__schemas__Area": {
+        "properties": {
+          "gouvernorat_codes": {
+            "items": {
+              "type": "integer"
+            },
+            "maxItems": 24,
+            "title": "Gouvernorat Codes",
+            "type": "array"
+          },
+          "polygon": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Polygon"
+          }
+        },
+        "title": "Area",
+        "type": "object"
+      },
       "app__modules__notify__schemas__DeviceIn": {
         "properties": {
           "lat": {
@@ -33329,6 +35247,46 @@
         "title": "AlertOut",
         "type": "object"
       },
+      "app__modules__ops__schemas__CloseIn": {
+        "properties": {
+          "casualties": {
+            "$ref": "#/components/schemas/Casualties"
+          },
+          "lessons": {
+            "anyOf": [
+              {
+                "maxLength": 5000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lessons"
+          },
+          "outcome": {
+            "enum": [
+              "resolved",
+              "false_alarm",
+              "transferred"
+            ],
+            "title": "Outcome",
+            "type": "string"
+          },
+          "summary": {
+            "maxLength": 5000,
+            "minLength": 10,
+            "title": "Summary",
+            "type": "string"
+          }
+        },
+        "required": [
+          "outcome",
+          "summary"
+        ],
+        "title": "CloseIn",
+        "type": "object"
+      },
       "app__modules__ops__schemas__DeviceIn": {
         "properties": {
           "app_build": {
@@ -33381,6 +35339,129 @@
           "platform"
         ],
         "title": "DeviceIn",
+        "type": "object"
+      },
+      "app__modules__ops__schemas__DirectiveIn": {
+        "properties": {
+          "body": {
+            "maxLength": 5000,
+            "minLength": 1,
+            "title": "Body",
+            "type": "string"
+          },
+          "gouvernorat_codes": {
+            "items": {
+              "type": "integer"
+            },
+            "maxItems": 24,
+            "title": "Gouvernorat Codes",
+            "type": "array"
+          },
+          "title": {
+            "maxLength": 150,
+            "minLength": 3,
+            "title": "Title",
+            "type": "string"
+          },
+          "urgency": {
+            "default": "normal",
+            "enum": [
+              "normal",
+              "urgent"
+            ],
+            "title": "Urgency",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "body"
+        ],
+        "title": "DirectiveIn",
+        "type": "object"
+      },
+      "app__modules__ops__schemas__DirectiveOut": {
+        "properties": {
+          "acks": {
+            "items": {
+              "$ref": "#/components/schemas/DirectiveAckOut"
+            },
+            "title": "Acks",
+            "type": "array"
+          },
+          "body": {
+            "title": "Body",
+            "type": "string"
+          },
+          "from_level": {
+            "enum": [
+              "central",
+              "local"
+            ],
+            "title": "From Level",
+            "type": "string"
+          },
+          "gouvernorat_codes": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Gouvernorat Codes",
+            "type": "array"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "issued_at": {
+            "format": "date-time",
+            "title": "Issued At",
+            "type": "string"
+          },
+          "issued_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issued By"
+          },
+          "pending_acks": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Pending Acks",
+            "type": "array"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "urgency": {
+            "enum": [
+              "normal",
+              "urgent"
+            ],
+            "title": "Urgency",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "body",
+          "urgency",
+          "from_level",
+          "issued_by",
+          "issued_at",
+          "gouvernorat_codes",
+          "acks",
+          "pending_acks"
+        ],
+        "title": "DirectiveOut",
         "type": "object"
       },
       "app__modules__ops__schemas__Point": {
@@ -33657,7 +35738,7 @@
             "title": "Label"
           },
           "location": {
-            "$ref": "#/components/schemas/Point-Input"
+            "$ref": "#/components/schemas/app__modules__orgs__schemas__Point"
           }
         },
         "required": [
@@ -34016,6 +36097,47 @@
           "at"
         ],
         "title": "Review",
+        "type": "object"
+      },
+      "app__modules__programmes__schemas__Figures": {
+        "properties": {
+          "gouvernorats": {
+            "default": 0,
+            "title": "Gouvernorats",
+            "type": "integer"
+          },
+          "lifeguards_deployed": {
+            "default": 0,
+            "title": "Lifeguards Deployed",
+            "type": "integer"
+          },
+          "lifeguards_planned": {
+            "default": 0,
+            "title": "Lifeguards Planned",
+            "type": "integer"
+          },
+          "open": {
+            "default": 0,
+            "title": "Open",
+            "type": "integer"
+          },
+          "points": {
+            "default": 0,
+            "title": "Points",
+            "type": "integer"
+          },
+          "staff": {
+            "default": 0,
+            "title": "Staff",
+            "type": "integer"
+          },
+          "unlocated": {
+            "default": 0,
+            "title": "Unlocated",
+            "type": "integer"
+          }
+        },
+        "title": "Figures",
         "type": "object"
       },
       "app__modules__programmes__schemas__ImportOut": {
@@ -50205,6 +52327,1359 @@
         ]
       }
     },
+    "/api/v1/staff/crisis/axes": {
+      "get": {
+        "operationId": "list_axes_api_v1_staff_crisis_axes_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "default": "open",
+              "enum": [
+                "open",
+                "closed"
+              ],
+              "title": "Status",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AxisList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Axes",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      },
+      "post": {
+        "operationId": "open_axis_api_v1_staff_crisis_axes_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AxisIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AxisOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Open Axis",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
+    "/api/v1/staff/crisis/axes/{axis_id}": {
+      "get": {
+        "operationId": "get_axis_api_v1_staff_crisis_axes__axis_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "axis_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Axis Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AxisDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Axis",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      },
+      "patch": {
+        "operationId": "update_axis_api_v1_staff_crisis_axes__axis_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "axis_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Axis Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AxisPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AxisOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Axis",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
+    "/api/v1/staff/crisis/axes/{axis_id}/close": {
+      "post": {
+        "operationId": "close_api_v1_staff_crisis_axes__axis_id__close_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "axis_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Axis Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__crisis__schemas__CloseIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AxisOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Close",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
+    "/api/v1/staff/crisis/axes/{axis_id}/directives": {
+      "post": {
+        "operationId": "issue_api_v1_staff_crisis_axes__axis_id__directives_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "axis_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Axis Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__crisis__schemas__DirectiveIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__crisis__schemas__DirectiveOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Issue",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
+    "/api/v1/staff/crisis/axes/{axis_id}/escalate": {
+      "post": {
+        "operationId": "escalate_api_v1_staff_crisis_axes__axis_id__escalate_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "axis_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Axis Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EscalateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AxisOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Escalate",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
+    "/api/v1/staff/crisis/axes/{axis_id}/evacuations": {
+      "post": {
+        "operationId": "add_evacuation_api_v1_staff_crisis_axes__axis_id__evacuations_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "axis_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Axis Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EvacuationIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvacuationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Add Evacuation",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
+    "/api/v1/staff/crisis/axes/{axis_id}/evacuations/{evacuation_id}": {
+      "patch": {
+        "operationId": "update_evacuation_api_v1_staff_crisis_axes__axis_id__evacuations__evacuation_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "axis_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Axis Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "evacuation_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Evacuation Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EvacuationPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvacuationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Evacuation",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
+    "/api/v1/staff/crisis/axes/{axis_id}/incidents": {
+      "post": {
+        "description": "The room manager attaches; an operator proposes (the proposal goes to the timeline for the manager).",
+        "operationId": "attach_api_v1_staff_crisis_axes__axis_id__incidents_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "axis_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Axis Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttachIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Attach",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
+    "/api/v1/staff/crisis/axes/{axis_id}/incidents/{incident_id}/detach": {
+      "post": {
+        "operationId": "detach_api_v1_staff_crisis_axes__axis_id__incidents__incident_id__detach_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "axis_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Axis Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "incident_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Incident Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DetachIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Detach",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
+    "/api/v1/staff/crisis/axes/{axis_id}/needs": {
+      "post": {
+        "operationId": "raise_need_api_v1_staff_crisis_axes__axis_id__needs_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "axis_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Axis Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NeedIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NeedOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Raise Need",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
+    "/api/v1/staff/crisis/axes/{axis_id}/needs/{need_id}/met": {
+      "post": {
+        "operationId": "need_met_api_v1_staff_crisis_axes__axis_id__needs__need_id__met_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "axis_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Axis Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "need_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Need Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NeedOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Need Met",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
+    "/api/v1/staff/crisis/axes/{axis_id}/shelters": {
+      "post": {
+        "operationId": "add_shelter_api_v1_staff_crisis_axes__axis_id__shelters_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "axis_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Axis Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShelterIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShelterOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Add Shelter",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
+    "/api/v1/staff/crisis/axes/{axis_id}/shelters/{shelter_id}": {
+      "patch": {
+        "operationId": "update_shelter_api_v1_staff_crisis_axes__axis_id__shelters__shelter_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "axis_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Axis Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "shelter_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Shelter Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShelterPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShelterOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Shelter",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
+    "/api/v1/staff/crisis/axes/{axis_id}/sitreps": {
+      "post": {
+        "operationId": "draft_sitrep_api_v1_staff_crisis_axes__axis_id__sitreps_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "axis_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Axis Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SitrepOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Draft Sitrep",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
+    "/api/v1/staff/crisis/axes/{axis_id}/suggestions": {
+      "get": {
+        "operationId": "suggestions_api_v1_staff_crisis_axes__axis_id__suggestions_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "axis_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Axis Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidentList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Suggestions",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
+    "/api/v1/staff/crisis/axes/{axis_id}/suggestions/{incident_id}/dismiss": {
+      "post": {
+        "operationId": "dismiss_api_v1_staff_crisis_axes__axis_id__suggestions__incident_id__dismiss_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "axis_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Axis Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "incident_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Incident Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Dismiss",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
+    "/api/v1/staff/crisis/boundaries": {
+      "get": {
+        "description": "Gouvernorat outlines for the command maps (simplified; reference data).",
+        "operationId": "boundaries_api_v1_staff_crisis_boundaries_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Boundaries Api V1 Staff Crisis Boundaries Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Boundaries",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
+    "/api/v1/staff/crisis/command": {
+      "get": {
+        "description": "The governor's and the minister's screen (design §6): the declared axes they see, the state of each\ngouvernorat, the open needs, their own decisions and the last situation reports. The rooms get the same view\n(the commander's national picture).",
+        "operationId": "command_api_v1_staff_crisis_command_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommandOverview"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Command",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
+    "/api/v1/staff/crisis/directives/{directive_id}/status": {
+      "post": {
+        "operationId": "directive_status_api_v1_staff_crisis_directives__directive_id__status_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "directive_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Directive Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DirectiveStatusIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__crisis__schemas__DirectiveOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Directive Status",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
+    "/api/v1/staff/crisis/requests": {
+      "get": {
+        "operationId": "list_requests_api_v1_staff_crisis_requests_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "default": "pending",
+              "enum": [
+                "pending",
+                "decided"
+              ],
+              "title": "Status",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Requests",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      },
+      "post": {
+        "operationId": "create_request_api_v1_staff_crisis_requests_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Request",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
+    "/api/v1/staff/crisis/requests/{request_id}/decide": {
+      "post": {
+        "operationId": "decide_request_api_v1_staff_crisis_requests__request_id__decide_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "request_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Request Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecideIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Decide Request",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
+    "/api/v1/staff/crisis/sitreps/{sitrep_id}/send": {
+      "post": {
+        "operationId": "send_sitrep_api_v1_staff_crisis_sitreps__sitrep_id__send_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sitrep_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Sitrep Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SitrepSend"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SitrepOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Send Sitrep",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
     "/api/v1/staff/directives": {
       "get": {
         "operationId": "list_directives_api_v1_staff_directives_get",
@@ -50286,7 +53761,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/DirectiveIn"
+                "$ref": "#/components/schemas/app__modules__ops__schemas__DirectiveIn"
               }
             }
           },
@@ -50297,7 +53772,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DirectiveOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__DirectiveOut"
                 }
               }
             },
@@ -50355,7 +53830,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DirectiveOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__DirectiveOut"
                 }
               }
             },
@@ -51497,7 +54972,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CloseIn"
+                "$ref": "#/components/schemas/app__modules__ops__schemas__CloseIn"
               }
             }
           },
