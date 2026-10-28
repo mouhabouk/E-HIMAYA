@@ -6372,3 +6372,540 @@ button.nav-card:hover {
 .file-picker__list {
   flex-basis: 100%;
 }
+
+/* ---------- Phase UI-3: the main menu (docs/phase-ui3/design-menu.md) ----------
+   Grouped or flat, at the top or in a side bar on the right or the left. Glass panels and pill links in the
+   design system colours; the open panel and the account menu float above the page in both modes. */
+
+.shell {
+  --chrome-glass: color-mix(in srgb, var(--surface) 82%, transparent);
+  --chrome-panel: color-mix(in srgb, var(--surface) 97%, transparent);
+  --chrome-edge: color-mix(in srgb, var(--primary) 18%, var(--border));
+  --chrome-shadow: 0 12px 36px rgb(16 24 48 / 16%);
+  --rail-w: 92px;
+  --side-w: 268px;
+}
+
+:root[data-theme="dark"] .shell {
+  --chrome-glass: color-mix(in srgb, #0b1224 80%, transparent);
+  --chrome-panel: color-mix(in srgb, #0f1830 97%, transparent);
+  --chrome-edge: rgb(143 168 255 / 24%);
+  --chrome-shadow: 0 0 0 1px rgb(143 168 255 / 6%), 0 14px 44px rgb(0 0 0 / 50%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .shell {
+    --chrome-glass: color-mix(in srgb, #0b1224 80%, transparent);
+    --chrome-panel: color-mix(in srgb, #0f1830 97%, transparent);
+    --chrome-edge: rgb(143 168 255 / 24%);
+    --chrome-shadow: 0 0 0 1px rgb(143 168 255 / 6%), 0 14px 44px rgb(0 0 0 / 50%);
+  }
+}
+
+.header {
+  background: var(--chrome-glass);
+  backdrop-filter: blur(16px) saturate(1.2);
+  border-color: var(--chrome-edge);
+}
+
+.header__title {
+  white-space: nowrap;
+}
+
+/* Pill links: the same in the top bar, the side bar and the open panels. */
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.3rem 0.85rem 0.3rem 0.35rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+[dir="rtl"] .nav-link {
+  padding: 0.3rem 0.35rem 0.3rem 0.85rem;
+}
+
+.nav-link:hover {
+  background: color-mix(in srgb, var(--primary) 8%, transparent);
+  border-color: var(--chrome-edge);
+}
+
+.nav-link[aria-current="page"] {
+  background: var(--tone-navy-tint);
+  border-color: color-mix(in srgb, var(--tone-navy-ink) 30%, transparent);
+  color: var(--tone-navy-ink);
+}
+
+.main-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Group buttons. */
+.nav-group {
+  position: relative;
+}
+
+.nav-group__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.7rem 0.3rem 0.35rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+[dir="rtl"] .nav-group__btn {
+  padding: 0.3rem 0.35rem 0.3rem 0.7rem;
+}
+
+.nav-group__btn:hover,
+.nav-group[data-open] > .nav-group__btn {
+  background: color-mix(in srgb, var(--primary) 8%, transparent);
+  border-color: var(--chrome-edge);
+}
+
+.nav-group__btn[data-active] {
+  background: var(--tone-navy-tint);
+  border-color: color-mix(in srgb, var(--tone-navy-ink) 30%, transparent);
+  color: var(--tone-navy-ink);
+}
+
+.nav-group__btn > svg {
+  transition: transform 0.15s ease;
+}
+
+.nav-group[data-open] > .nav-group__btn > svg {
+  transform: rotate(180deg);
+}
+
+/* Floating glass panel (group links, account menu). */
+.glass-panel {
+  position: absolute;
+  z-index: 40;
+  padding: 0.6rem;
+  border: 1px solid var(--chrome-edge);
+  border-radius: 20px;
+  background: var(--chrome-panel);
+  backdrop-filter: blur(18px) saturate(1.25);
+  box-shadow: var(--chrome-shadow);
+}
+
+.glass-panel[hidden] {
+  display: none;
+}
+
+.nav-group__panel {
+  inset-block-start: calc(100% + 0.4rem);
+  inset-inline-start: 0;
+  min-inline-size: 15rem;
+}
+
+.nav-group__panel ul {
+  display: grid;
+  gap: 0.2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nav-group__title {
+  margin: 0.1rem 0.5rem 0.45rem;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+/* ---- Top bar ---- */
+.header--top {
+  flex-wrap: nowrap;
+}
+
+.header--top.header--flat {
+  flex-wrap: wrap;
+}
+
+.header--top .main-nav {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+}
+
+.header--top.header--grouped .main-nav {
+  gap: 0.15rem;
+}
+
+/* The top bar keeps one line: the brand shows its logo only and the live state its dot (the words stay for screen
+   readers) when the seven groups need the room. */
+.header--top .live > span:last-child {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 1800px) {
+  .header--top.header--grouped .header__title {
+    display: none;
+  }
+}
+
+.header--top .header__tools {
+  flex: none;
+  flex-wrap: nowrap;
+}
+
+/* ---- Side bar: a narrow icon rail (grouped) or a wide list (flat), fixed on the chosen side ---- */
+.header--side {
+  position: fixed;
+  inset-block: 0;
+  z-index: 30;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: 0.75rem;
+  padding: 0.85rem 0.5rem;
+  border-block-end: 0;
+  box-shadow: var(--chrome-shadow);
+}
+
+.shell[data-menu-position="right"] .header--side {
+  right: 0;
+  border-left: 1px solid var(--chrome-edge);
+}
+
+.shell[data-menu-position="left"] .header--side {
+  left: 0;
+  border-right: 1px solid var(--chrome-edge);
+}
+
+.shell[data-menu-position="right"][data-menu-shape="grouped"] {
+  padding-right: var(--rail-w);
+}
+
+.shell[data-menu-position="left"][data-menu-shape="grouped"] {
+  padding-left: var(--rail-w);
+}
+
+.shell[data-menu-position="right"][data-menu-shape="flat"] {
+  padding-right: var(--side-w);
+}
+
+.shell[data-menu-position="left"][data-menu-shape="flat"] {
+  padding-left: var(--side-w);
+}
+
+.header--side.header--grouped {
+  inline-size: var(--rail-w);
+}
+
+.header--side.header--flat {
+  inline-size: var(--side-w);
+}
+
+.header--side .header__brand {
+  justify-content: center;
+}
+
+.header--side.header--grouped .header__title {
+  display: none;
+}
+
+.header--side .main-nav {
+  flex: 1 1 auto;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: 0.3rem;
+}
+
+.header--side.header--flat .main-nav {
+  overflow-y: auto;
+  gap: 0.75rem;
+}
+
+.main-nav__section {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.main-nav__heading {
+  margin: 0 0.6rem 0.2rem;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+/* The rail: icon over its group name, the panel opens beside it. */
+.header--side.header--grouped .nav-group__btn,
+.header--side.header--grouped .nav-group--single .nav-link {
+  flex-direction: column;
+  gap: 0.25rem;
+  inline-size: 100%;
+  padding: 0.45rem 0.2rem;
+  border-radius: 16px;
+  font-size: 0.72rem;
+  line-height: 1.25;
+  text-align: center;
+  white-space: normal;
+}
+
+.header--side.header--grouped .nav-group__btn .icon-tile,
+.header--side.header--grouped .nav-group--single .icon-tile {
+  --tile: 2.4rem;
+}
+
+.shell[data-menu-position="right"] .header--side .glass-panel {
+  inset-block-start: 0;
+  inset-inline: auto;
+  right: calc(100% + 0.6rem);
+}
+
+.shell[data-menu-position="left"] .header--side .glass-panel {
+  inset-block-start: 0;
+  inset-inline: auto;
+  left: calc(100% + 0.6rem);
+}
+
+.header--side .header__tools {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.header--side.header--grouped .live > span:last-child {
+  font-size: 0.68rem;
+  text-align: center;
+}
+
+.header--side.header--grouped .live {
+  flex-direction: column;
+}
+
+/* ---- Account menu ---- */
+.account {
+  position: relative;
+}
+
+.account > .nav-group__btn {
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem 0.25rem 0.3rem;
+  border-color: var(--chrome-edge);
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
+  font-weight: 600;
+}
+
+[dir="rtl"] .account > .nav-group__btn {
+  padding: 0.25rem 0.3rem 0.25rem 0.75rem;
+}
+
+.account__avatar {
+  display: inline-grid;
+  place-items: center;
+  color: var(--tone-navy-ink);
+}
+
+.account__who {
+  display: grid;
+  line-height: 1.2;
+  text-align: start;
+}
+
+.account__name {
+  font-weight: 700;
+}
+
+.account__scope {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.header--side.header--grouped .account > .nav-group__btn {
+  justify-content: center;
+  padding: 0.35rem;
+}
+
+.header--side.header--grouped .account__who {
+  display: none;
+}
+
+.header--top .account__panel {
+  inset-block-start: calc(100% + 0.4rem);
+  inset-inline-end: 0;
+}
+
+.header--side .account__panel {
+  inset-block-start: auto !important;
+  inset-block-end: 0;
+}
+
+.account__panel {
+  display: grid;
+  gap: 0.8rem;
+  inline-size: min(22rem, calc(100vw - 2rem));
+  padding: 1rem;
+}
+
+.account__user p {
+  margin: 0;
+}
+
+.account__label,
+.segmented legend {
+  margin: 0 0 0.35rem;
+  padding: 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.segmented {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.segmented__row {
+  display: flex;
+  padding: 0.2rem;
+  border-radius: 999px;
+  background: var(--surface-2);
+}
+
+.segmented__option {
+  flex: 1 1 0;
+  position: relative;
+}
+
+.segmented__option input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.segmented__option span {
+  display: block;
+  padding: 0.3rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.segmented__option input:checked + span {
+  background: var(--primary);
+  color: var(--primary-text);
+}
+
+.segmented__option input:focus-visible + span {
+  outline: 3px solid var(--focus);
+  outline-offset: 1px;
+}
+
+.account__logout {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+/* Narrow screens: the side bar comes back to the top as a scrolling row. */
+@media (max-width: 720px) {
+  .shell[data-menu-position] {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .header--side {
+    position: sticky;
+    inset-block: 0 auto;
+    inline-size: auto !important;
+    flex-direction: row;
+    align-items: center;
+    overflow-x: auto;
+    border: 0;
+    border-block-end: 1px solid var(--chrome-edge);
+  }
+
+  .header--side .main-nav {
+    flex-direction: row;
+  }
+
+  .header--side .header__tools {
+    flex-direction: row;
+  }
+
+  .header--top {
+    flex-wrap: wrap;
+  }
+
+  .header--top.header--grouped .main-nav {
+    flex-wrap: wrap;
+  }
+}
+
+/* Top and flat: the brand and the tools share the first line, the links fill the lines under them. */
+.header--top.header--flat .header__brand {
+  order: 0;
+}
+
+.header--top.header--flat .header__tools {
+  order: 1;
+}
+
+.header--top.header--flat .main-nav {
+  order: 2;
+  flex-basis: 100%;
+}
+
+.header--side.header--flat .header__brand {
+  justify-content: flex-start;
+  padding-inline: 0.4rem;
+}
+
+.header--side.header--flat .header__title {
+  font-size: 0.95rem;
+  line-height: 1.35;
+  white-space: normal;
+}
+
+/* Floating docks (softphone, toasts) keep clear of the side bar on whichever side they sit. */
+.shell[data-menu-shape="grouped"] {
+  --bar-w: var(--rail-w);
+}
+
+.shell[data-menu-shape="flat"] {
+  --bar-w: var(--side-w);
+}
+
+.shell[data-menu-position="right"] :is(.softphone, .toasts) {
+  margin-right: var(--bar-w);
+}
+
+.shell[data-menu-position="left"] :is(.softphone, .toasts) {
+  margin-left: var(--bar-w);
+}
+
+@media (max-width: 720px) {
+  .shell[data-menu-position] :is(.softphone, .toasts) {
+    margin: 0;
+  }
+}

@@ -215,3 +215,42 @@ for (const lang of ["fr", "ar"] as const) {
     }
   });
 }
+
+// Phase UI-3: the main menu in each shape and position, with a group and the account menu open, in both modes.
+const MENUS = [
+  { shape: "grouped", position: "top", theme: "light" },
+  { shape: "grouped", position: "right", theme: "dark" },
+  { shape: "grouped", position: "left", theme: "light" },
+  { shape: "flat", position: "top", theme: "dark" },
+  { shape: "flat", position: "right", theme: "light" },
+  { shape: "flat", position: "left", theme: "dark" },
+] as const;
+
+test.describe("accessibility of the main menu (ar)", () => {
+  for (const m of MENUS) {
+    test(`${m.shape} ${m.position} ${m.theme} has no serious or critical violation`, async ({ page }) => {
+      await signIn(page, ROLES, "Salma Ben Ali");
+      await page.addInitScript((menu) => {
+        window.localStorage.setItem("ehimaya.lang", "ar");
+        window.localStorage.setItem("ehimaya.theme", menu.theme);
+        window.localStorage.setItem("ehimaya.menu", JSON.stringify({ shape: menu.shape, position: menu.position }));
+      }, m);
+      const fence = await baseMock(page);
+      await mockApi(page);
+      await page.goto("/register");
+      await expect(page.locator("main .register-card").first()).toBeVisible();
+      if (m.shape === "grouped") {
+        const group = page.getByRole("button", { name: "الأزمات والقيادة" });
+        await group.click();
+        await expect(group).toHaveAttribute("aria-expanded", "true");
+        await expect(page.getByRole("link", { name: "التوجيهات والردود" })).toBeVisible();
+        await page.keyboard.press("Escape");
+        await expect(group).toHaveAttribute("aria-expanded", "false");
+      }
+      await page.getByRole("button", { name: /حسابي والإعدادات/ }).click();
+      await expect(page.getByRole("radio", { name: "مجمّعة" })).toBeAttached();
+      await audit(page, "/register", "main .register-card");
+      expect(fence.unexpected).toEqual([]);
+    });
+  }
+});

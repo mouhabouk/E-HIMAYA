@@ -149,6 +149,7 @@ describe("OrgsPage", () => {
 
 describe("navigation and gates by role", () => {
   it("shows reports and institutions to an operator", async () => {
+    localStorage.setItem("ehimaya.menu", JSON.stringify({ shape: "flat", position: "top" }));
     renderApp(<Layout />, { lang: "fr" });
     const nav = await screen.findByRole("navigation", { name: "Navigation principale" });
     for (const name of ["Indicateurs", "Signalements", "Incidents", "Carte en direct", "Établissements", "Certificats à examiner"]) {
@@ -159,12 +160,16 @@ describe("navigation and gates by role", () => {
   it("shows only the institution screens to an institutions auditor", async () => {
     renderApp(<Layout />, { auth: fakeAuth(AUDITOR_CLAIMS), lang: "fr" });
     const nav = await screen.findByRole("navigation", { name: "Navigation principale" });
+    // Grouped (the default): one group, opened by its button.
+    expect(within(nav).getAllByRole("button").map((b) => b.textContent)).toEqual(["Établissements"]);
+    fireEvent.click(within(nav).getByRole("button", { name: "Établissements" }));
     expect(within(nav).getAllByRole("link").map((l) => l.textContent)).toEqual([
       "Établissements",
       "Certificats à examiner",
       "Guichet",
       "Visites de prévention",
     ]);
+    fireEvent.click(screen.getByRole("button", { name: /Mon compte et réglages/ }));
     expect(screen.getByText("Auditeur des établissements")).toBeInTheDocument();
   });
 

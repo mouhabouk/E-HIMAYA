@@ -47,7 +47,16 @@
     "command": "Commandement",
     "axes": "Axes de crise",
     "register": "Plans et recommandations",
-    "dispatches": "Directives et réponses"
+    "dispatches": "Directives et réponses",
+    "group": {
+      "ops": "Opérations du jour",
+      "crisis": "Crises et commandement",
+      "alerts": "Alertes et contact",
+      "people": "Bénévoles et médecins",
+      "orgs": "Établissements",
+      "knowledge": "Analyse et savoir",
+      "system": "Système"
+    }
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -64,7 +73,22 @@
       "dark": "sombre"
     },
     "language": "Langue",
-    "logoAlt": "Office National de la Protection Civile"
+    "logoAlt": "Office National de la Protection Civile",
+    "account": "Mon compte et réglages",
+    "themeLabel": "Mode",
+    "menu": {
+      "shape": "Forme du menu",
+      "position": "Position du menu",
+      "shapes": {
+        "grouped": "Groupé",
+        "flat": "À plat"
+      },
+      "positions": {
+        "top": "En haut",
+        "right": "À droite",
+        "left": "À gauche"
+      }
+    }
   },
   "roles": {
     "operator": "Opérateur",

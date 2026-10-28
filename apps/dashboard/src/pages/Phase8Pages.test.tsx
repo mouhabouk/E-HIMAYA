@@ -399,6 +399,7 @@ describe("Rewards", () => {
 
 describe("navigation", () => {
   function nav(claims: Record<string, unknown>) {
+    localStorage.setItem("ehimaya.menu", JSON.stringify({ shape: "flat", position: "top" }));
     renderApp(
       <Routes>
         <Route element={<Layout />}>
