@@ -8,7 +8,7 @@
   "editUsernameAllowed": false,
   "bruteForceProtected": true,
   "permanentLockout": false,
-  "failureFactor": 3,
+  "failureFactor": 10,
   "waitIncrementSeconds": 60,
   "maxFailureWaitSeconds": 900,
   "maxDeltaTimeSeconds": 43200,
@@ -369,13 +369,13 @@
     },
     {
       "alias": "ehimaya browser forms",
-      "description": "Username and password, then the OTP code (set up at the first sign-in).",
+      "description": "Username and password (proof of work from the third failed attempt, phase L2), then the OTP code (set up at the first sign-in).",
       "providerId": "basic-flow",
       "topLevel": false,
       "builtIn": false,
       "authenticationExecutions": [
         {
-          "authenticator": "auth-username-password-form",
+          "authenticator": "ehimaya-guarded-password-form",
           "authenticatorConfig": "amr-pwd",
           "authenticatorFlow": false,
           "requirement": "REQUIRED",
@@ -398,7 +398,9 @@
       "alias": "amr-pwd",
       "config": {
         "default.reference.value": "pwd",
-        "default.reference.maxAge": "0"
+        "default.reference.maxAge": "0",
+        "ehimaya.guard.after": "3",
+        "ehimaya.guard.bits": "18"
       }
     },
     {

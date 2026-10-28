@@ -8,7 +8,7 @@
   "editUsernameAllowed": false,
   "bruteForceProtected": true,
   "permanentLockout": false,
-  "failureFactor": 3,
+  "failureFactor": 10,
   "waitIncrementSeconds": 60,
   "maxFailureWaitSeconds": 900,
   "maxDeltaTimeSeconds": 43200,
@@ -189,6 +189,7 @@
       ]
     }
   ],
+  "browserFlow": "ehimaya browser",
   "directGrantFlow": "ehimaya phone direct grant",
   "authenticationFlows": [
     {
@@ -206,6 +207,83 @@
           "userSetupAllowed": false
         }
       ]
+    },
+    {
+      "alias": "ehimaya browser",
+      "description": "Phase L2 (item 8): Keycloak's browser flow with the password form that asks for a proof of work from the third failed attempt of a user name.",
+      "providerId": "basic-flow",
+      "topLevel": true,
+      "builtIn": false,
+      "authenticationExecutions": [
+        {
+          "authenticator": "auth-cookie",
+          "authenticatorFlow": false,
+          "requirement": "ALTERNATIVE",
+          "priority": 10,
+          "userSetupAllowed": false
+        },
+        {
+          "authenticator": "identity-provider-redirector",
+          "authenticatorFlow": false,
+          "requirement": "ALTERNATIVE",
+          "priority": 25,
+          "userSetupAllowed": false
+        },
+        {
+          "authenticatorFlow": true,
+          "flowAlias": "ehimaya browser forms",
+          "requirement": "ALTERNATIVE",
+          "priority": 30,
+          "userSetupAllowed": false
+        }
+      ]
+    },
+    {
+      "alias": "ehimaya browser forms",
+      "description": "Username and password (proof of work from the third failed attempt), then an OTP code for the accounts that set one up.",
+      "providerId": "basic-flow",
+      "topLevel": false,
+      "builtIn": false,
+      "authenticationExecutions": [
+        {
+          "authenticator": "ehimaya-guarded-password-form",
+          "authenticatorConfig": "guard-pwd",
+          "authenticatorFlow": false,
+          "requirement": "REQUIRED",
+          "priority": 10,
+          "userSetupAllowed": false
+        },
+        {
+          "authenticatorFlow": true,
+          "flowAlias": "ehimaya browser conditional otp",
+          "requirement": "CONDITIONAL",
+          "priority": 20,
+          "userSetupAllowed": false
+        }
+      ]
+    },
+    {
+      "alias": "ehimaya browser conditional otp",
+      "description": "The OTP code, for the accounts that set one up.",
+      "providerId": "basic-flow",
+      "topLevel": false,
+      "builtIn": false,
+      "authenticationExecutions": [
+        {
+          "authenticator": "conditional-user-configured",
+          "authenticatorFlow": false,
+          "requirement": "REQUIRED",
+          "priority": 10,
+          "userSetupAllowed": false
+        },
+        {
+          "authenticator": "auth-otp-form",
+          "authenticatorFlow": false,
+          "requirement": "REQUIRED",
+          "priority": 20,
+          "userSetupAllowed": false
+        }
+      ]
     }
   ],
   "requiredActions": [
@@ -219,5 +297,14 @@
       "config": {}
     }
   ],
-  "loginTheme": "ehimaya"
+  "loginTheme": "ehimaya",
+  "authenticatorConfig": [
+    {
+      "alias": "guard-pwd",
+      "config": {
+        "ehimaya.guard.after": "3",
+        "ehimaya.guard.bits": "18"
+      }
+    }
+  ]
 }
