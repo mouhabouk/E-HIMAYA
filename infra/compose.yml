@@ -696,6 +696,23 @@ services:
       mediamtx:
         condition: service_healthy
 
+  # Drone position reader (L5b, profile "drones"): reads the KLV (MISB ST 0601) of the drone streams on air from
+  # MediaMTX over SRT and relays the positions to the API (/internal/drones/telemetry). Read only: nothing is ever sent
+  # to a drone. Same image as the vision service; no model needed.
+  drone-telemetry:
+    <<: *restart
+    profiles: ["drones"]
+    image: ehimaya/vision:dev
+    command: ["python", "-m", "app.telemetry", "serve"]
+    environment:
+      TELEMETRY_API_URL: http://api:8000
+      TELEMETRY_GATEWAY_TOKEN: ${SENSOR_GATEWAY_TOKEN:-}
+      TELEMETRY_READ_PASSWORD: ${VISION_READ_PASSWORD:-}
+    read_only: true
+    depends_on:
+      mediamtx:
+        condition: service_healthy
+
   # ---------------- Events library search (phase 8, profile "search") ----------------
 
   # One-shot: the certificate volume belongs to the OpenSearch user (uid 1000) only; the CA volume is world-readable

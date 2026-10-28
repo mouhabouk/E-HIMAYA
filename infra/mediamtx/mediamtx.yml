@@ -109,9 +109,16 @@ webrtcHandshakeTimeout: 10s
 webrtcTrackGatherTimeout: 2s
 
 ###############################################
+# SRT (MPEG-TS): the drone position reader (services/vision app.telemetry) reads drone streams here, because MPEG-TS
+# keeps their KLV data stream (MISB ST 0601) and FFmpeg's RTSP client drops it. Internal only (srt://mediamtx:8890,
+# never published on the host); a drone or ground station that sends MPEG-TS with KLV may also publish here.
+
+srt: true
+srtAddress: :8890
+
+###############################################
 # Protocols not used by e-Himaya
 
-srt: false
 moq: false
 
 ###############################################
