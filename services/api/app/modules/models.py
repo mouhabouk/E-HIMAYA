@@ -27,6 +27,13 @@ from app.modules.crisis.models import (
 )
 from app.modules.decision.models import ProcedureChunk
 from app.modules.doctors.models import Doctor, DoctorReview
+from app.modules.drill.models import Booking as DrillBooking
+from app.modules.drill.models import Evaluation as DrillEvaluation
+from app.modules.drill.models import Exercise as DrillExercise
+from app.modules.drill.models import Inject as DrillInject
+from app.modules.drill.models import Participant as DrillParticipant
+from app.modules.drill.models import Response as DrillResponse
+from app.modules.drill.models import StressRun as DrillStressRun
 from app.modules.evidence.models import Anchor, Leaf
 from app.modules.features.models import FeatureRule
 from app.modules.forecast.models import ForecastRun
@@ -158,6 +165,13 @@ __all__ = [
     "DoctorReview",
     "Document",
     "DocumentVersion",
+    "DrillBooking",
+    "DrillEvaluation",
+    "DrillExercise",
+    "DrillInject",
+    "DrillParticipant",
+    "DrillResponse",
+    "DrillStressRun",
     "EmailCode",
     "Equipment",
     "ErasureRequest",

@@ -136,7 +136,14 @@ def ceiling(principal: Principal, feature: Feature) -> str | None:
 
 
 def holds_by_default(principal: Principal, feature: Feature) -> bool:
+    if dormant(feature):
+        return False
     return not feature.roles or bool(principal.roles & feature.roles)
+
+
+def dormant(feature: Feature) -> bool:
+    """Held by nobody until granted (the dry run, L5a); a safety button is never dormant."""
+    return "dormant" in feature.flags and "safety" not in feature.flags
 
 
 @dataclass(frozen=True, slots=True)
@@ -150,6 +157,9 @@ def decide(
     principal: Principal, chain: Sequence[Feature], method: str, rules: Iterable[Rule], now: datetime
 ) -> Outcome:
     rules = tuple(rules)
+    if chain and "safety" in chain[0].flags:
+        # Never hidden nor dormant: the handler checks who may press it (the stop of a dry run).
+        return Outcome(False, None)
     granted: Feature | None = None
     for feature in chain:
         st = state(principal, feature, rules, now)
@@ -161,6 +171,8 @@ def decide(
             # A page grant opens its pages' reads; a write needs the grant of its button.
             if feature.kind != "page" or method not in WRITE_METHODS:
                 granted = feature
+    if granted is None and any(dormant(f) for f in chain):
+        return Outcome(True, None)
     return Outcome(False, granted)
 
 
@@ -179,7 +191,7 @@ async def apply(principal: Principal, method: str, route_path: str | None) -> Pr
     if not chain:
         return principal
     rules = await rules_in_force()
-    if not rules:
+    if not rules and not any(dormant(f) for f in chain):
         return principal
     outcome = decide(principal, chain, method, rules, datetime.now(UTC))
     if outcome.hidden:
@@ -225,12 +237,14 @@ async def as_for(principal: Principal, key: str) -> Principal | None:
     """The principal as the routes of feature ``key`` see it: None when hidden, with the lent role when granted.
 
     For the ``can_*`` flags an answer computes for its buttons, so a granted button shows and a hidden one does not."""
-    rules = await rules_in_force()
-    if not rules or not principal.is_staff:
+    if not principal.is_staff:
         return principal
     reg = registry.get()
     feature = reg.features[key]
     chain = [feature] if feature.parent is None else [feature, reg.features[feature.parent]]
+    rules = await rules_in_force()
+    if not rules and not any(dormant(f) for f in chain):
+        return principal
     outcome = decide(principal, chain, "POST" if feature.kind == "button" else "GET", rules, datetime.now(UTC))
     if outcome.hidden:
         return None

@@ -107,6 +107,7 @@ export function navGroups(identity: Identity, t: TFunction, access?: FeatureAcce
         ...e(isCommittee(roles) || canMonitorPerformance(roles), "/committee", "monitoring", "navy", "committee"),
         ...e(canOpenProgrammes(roles), "/programmes", "schedule", "orange", "programmes"),
         ...e(canOpenCoastal(roles), "/coastal", "healthAndSafety", "sky", "coastal"),
+        ...e(false, "/drills", "militaryTech", "amber", "drills"),
       ],
     },
     {

@@ -61,7 +61,8 @@
     "plans": "Plans d'intervention",
     "schedule": "Programmation",
     "permissions": "Autorisations",
-    "window": "Fenêtre de décision"
+    "window": "Fenêtre de décision",
+    "drills": "Exercice blanc"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -481,7 +482,27 @@
     "two_gouvernorats_required": "Choisissez deux gouvernorats.",
     "too_many_saved": "Nombre maximal de recherches enregistrées atteint (50).",
     "query_too_long": "Recherche trop longue.",
-    "no_words": "Ajoutez au moins un mot."
+    "no_words": "Ajoutez au moins un mot.",
+    "already_withdrawn": "Ce gouvernorat s'est déjà retiré de l'exercice.",
+    "not_a_draft": "L'exercice ne se modifie qu'en brouillon.",
+    "not_approved": "L'exercice ne démarre qu'après l'accord de tous les gouvernorats.",
+    "not_now": "Cette décision n'est pas possible à cette étape de l'exercice.",
+    "not_over": "L'exercice ne se clôt qu'une fois terminé ou arrêté.",
+    "not_participating": "Votre gouvernorat n'a pas accepté cet exercice ou s'en est retiré.",
+    "not_running": "L'exercice n'est pas en cours.",
+    "not_started": "L'exercice n'a pas encore démarré.",
+    "not_submitted": "L'exercice n'a pas encore été soumis aux gouvernorats.",
+    "resource_not_free": "Une des ressources choisies n'est plus disponible dans cet exercice.",
+    "too_many_active": "La salle a atteint le maximum d'exercices ouverts (3).",
+    "not_the_evaluator": "L'évaluation revient au seul évaluateur indépendant désigné.",
+    "gouvernorat_not_in_drill": "Ce gouvernorat ne fait pas partie de l'exercice.",
+    "inconsistent_results": "Les résultats du test de charge sont incohérents.",
+    "no_evaluator": "Désignez un évaluateur indépendant avant de soumettre.",
+    "no_injects": "Ajoutez les messages du scénario avant de soumettre.",
+    "offset_after_end": "Le message tombe après la fin de l'exercice.",
+    "resources_need_dispatch": "Les ressources ne se réservent qu'avec l'action « envoi de moyens ».",
+    "too_many_injects": "Le scénario a atteint le maximum de messages (400).",
+    "unknown_kind": "Type de risque inconnu du générateur."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -6454,6 +6475,204 @@
       "ask": "Rédiger une synthèse (IA)",
       "again": "Rédiger à nouveau",
       "label": "Synthèse automatique indicative"
+    }
+  },
+  "drill": {
+    "title": "Exercice blanc numérique",
+    "intro": "Un scénario écrit et minuté joué aux salles des gouvernorats qui l'ont accepté : elles répondent avec leurs ressources réelles, réservées dans l'exercice seulement sans changer leur état réel, puis un évaluateur indépendant l'évalue.",
+    "measures": {
+      "label": "Ce que mesure l'exercice",
+      "load": {
+        "title": "Le système face à un très grand nombre de signalements",
+        "text": "Test de charge et d'attaques sur la copie isolée seulement."
+      },
+      "resources": {
+        "title": "Les ressources existantes",
+        "text": "Ce qui est disponible dans chaque gouvernorat et ce qui manque au pic."
+      },
+      "room": {
+        "title": "La salle des opérations",
+        "text": "Rapidité de réponse et respect du plan."
+      }
+    },
+    "listCaption": "Exercices",
+    "empty": "Aucun exercice pour l'instant.",
+    "back": "← Tous les exercices",
+    "minutes": "{{count}} min",
+    "field": {
+      "title": "Titre de l'exercice",
+      "objective": "Objectif",
+      "hazard": "Risque",
+      "gouvernorats": "Gouvernorats participants",
+      "planned_start": "Début prévu",
+      "duration_min": "Durée (minutes)",
+      "evaluator": "Identifiant du compte évaluateur",
+      "evaluator_name": "Évaluateur",
+      "injects": "Messages",
+      "status": "État"
+    },
+    "hazard": {
+      "none": "Aucun",
+      "fire": "Incendie",
+      "traffic_accident": "Accident de la route",
+      "flood": "Inondation",
+      "drowning": "Noyade",
+      "medical": "Secours médical",
+      "chemical_leak": "Fuite chimique"
+    },
+    "new": {
+      "open": "Nouvel exercice",
+      "title": "Planifier un exercice",
+      "intro": "L'exercice reste un brouillon jusqu'à sa soumission aux gouvernorats. L'évaluateur n'appartient à aucun gouvernorat participant.",
+      "create": "Créer le brouillon",
+      "durationHelp": "De 10 minutes à 12 heures.",
+      "evaluatorHelp": "Un compte hors des gouvernorats participants (peut être désigné plus tard).",
+      "ownOnly": "Salle régionale : l'exercice porte sur le gouvernorat de {{name}} seul.",
+      "placesHelp": "Choisissez au moins un gouvernorat."
+    },
+    "status": {
+      "draft": "Brouillon",
+      "submitted": "En attente des accords",
+      "ready": "Prêt à démarrer",
+      "running": "En cours",
+      "stopped": "Arrêté",
+      "ended": "Terminé",
+      "closed": "Clos"
+    },
+    "decision": {
+      "pending": "En attente",
+      "approved": "Accord",
+      "refused": "Refus",
+      "withdrawn": "Retrait"
+    },
+    "approval": {
+      "title": "Accord des gouvernorats",
+      "intro": "L'exercice ne démarre qu'après l'accord de chaque gouvernorat participant. Tout gouvernorat peut se retirer à tout moment, avec un motif.",
+      "awaitsYou": "Attend la décision de votre gouvernorat",
+      "mine": "Décision du gouvernorat de {{name}}",
+      "withdrawReason": "Motif du retrait",
+      "approve": "Accepter",
+      "refuse": "Refuser",
+      "withdraw": "Se retirer",
+      "refuseReason": "Motif du refus"
+    },
+    "actions": {
+      "submit": "Soumettre aux gouvernorats",
+      "start": "Démarrer l'exercice",
+      "close": "Clore l'exercice"
+    },
+    "stop": {
+      "label": "Arrêt de l'exercice",
+      "open": "Arrêter l'exercice immédiatement",
+      "reason": "Motif de l'arrêt",
+      "confirm": "Confirmer l'arrêt",
+      "stopped": "Arrêté par {{name}}",
+      "allWithdrawn": "Tous les gouvernorats se sont retirés"
+    },
+    "tabs": {
+      "label": "Étapes de l'exercice",
+      "scenario": "Scénario",
+      "run": "Déroulement",
+      "evaluation": "Évaluation",
+      "report": "Rapport"
+    },
+    "injectKind": {
+      "report": "Signalement",
+      "development": "Évolution",
+      "shortage": "Pénurie",
+      "evacuation": "Évacuation",
+      "decision": "Décision attendue",
+      "information": "Information"
+    },
+    "inject": {
+      "new": "Nouveau message",
+      "offset": "Après le début (minutes)",
+      "kind": "Type",
+      "gouvernorat": "Gouvernorat",
+      "all": "Tous les gouvernorats",
+      "title": "Message",
+      "body": "Détails",
+      "needs": "Moyens demandés",
+      "expected": "Réponse attendue selon le plan",
+      "expectedShort": "Attendu",
+      "add": "Ajouter le message",
+      "caption": "Messages du scénario : {{count}}",
+      "empty": "Aucun message : ajoutez-en un ou générez des signalements.",
+      "generated": "Généré",
+      "actions": "Actions",
+      "delete": "Supprimer"
+    },
+    "generate": {
+      "title": "Générateur de signalements",
+      "intro": "Des signalements citoyens fictifs répartis sur la durée à un rythme croissant, dans tous les gouvernorats participants. La même graine donne le même scénario. La charge maximale (des milliers par minute) se joue sur la copie isolée seulement.",
+      "count": "Nombre de signalements",
+      "seed": "Graine",
+      "kinds": "Types de risque",
+      "run": "Générer",
+      "done": "Les signalements générés ont été ajoutés au scénario."
+    },
+    "action": {
+      "acknowledged": "Reçu",
+      "dispatched": "Envoi de moyens",
+      "escalated": "Escalade",
+      "evacuation": "Évacuation",
+      "decision": "Décision",
+      "note": "Note"
+    },
+    "run": {
+      "elapsed": "{{count}} min écoulées",
+      "remaining": "{{count}} min restantes",
+      "free": "Vos ressources disponibles dans l'exercice",
+      "nothingYet": "Aucun message pour l'instant.",
+      "answer": "Réponse de la salle",
+      "action": "Action",
+      "text": "Texte",
+      "book": "Ressources réservées dans l'exercice",
+      "noneFree": "Aucune ressource disponible de ce type.",
+      "send": "Envoyer la réponse",
+      "booked": "Réservé",
+      "released": "libéré",
+      "release": "Libérer les ressources"
+    },
+    "planFollowed": {
+      "yes": "Plan suivi",
+      "partly": "En partie",
+      "no": "Non suivi",
+      "not_applicable": "Sans objet"
+    },
+    "eval": {
+      "title": "Évaluation de l'évaluateur indépendant",
+      "intro": "Pour chaque message : le plan a-t-il été suivi, et une note de 0 à 5.",
+      "plan": "Plan",
+      "score": "Note",
+      "notes": "Remarques",
+      "save": "Enregistrer",
+      "saved": "Enregistré"
+    },
+    "report": {
+      "answered": "Messages ayant reçu une réponse",
+      "median": "Délai médian de réponse (minutes)",
+      "score": "Note moyenne",
+      "short": "Ressources manquantes au pic",
+      "resources": "Ressources par gouvernorat et par type",
+      "kind": "Type",
+      "atStart": "Disponibles au départ",
+      "peak": "Réservation simultanée maximale",
+      "shortCol": "Manque",
+      "noResources": "Aucune ressource réservée.",
+      "injects": "Messages et réponses",
+      "firstAnswer": "Première réponse",
+      "unanswered": "Sans réponse",
+      "booked": "Réservé",
+      "shortfall": "Manque",
+      "stress": "Test de charge et de sécurité (copie isolée)",
+      "stressIntro": "Résultats du script de charge qui envoie des milliers de signalements avec des tentatives d'injection SQL, de scripts, de requêtes malformées et de saturation depuis un seul appareil.",
+      "noStress": "Aucun résultat de test de charge enregistré.",
+      "stressLine": "{{sent}} signalements envoyés, {{accepted}} acceptés ; pic de {{peak}} par seconde ; temps de réponse p95 {{p95}} ms ; erreurs serveur {{errors}}.",
+      "attacks": "Tentatives d'attaque : {{sent}}, dont {{blocked}} bloquées.",
+      "allBlocked": "Toutes bloquées",
+      "notAllBlocked": "Pas toutes bloquées",
+      "conclusion": "Conclusion"
     }
   }
 }

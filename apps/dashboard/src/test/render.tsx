@@ -8,6 +8,7 @@ import { MemoryRouter, Route, Routes } from "react-router";
 import { vi } from "vitest";
 import { fakeFeaturesApi } from "./featuresFixtures";
 import { fakeWindowApi } from "./windowFixtures";
+import { fakeDrillApi } from "./drillFixtures";
 import type { AuthService, AuthUser } from "../auth/authService";
 import { identityFromClaims } from "../auth/identity";
 import { AuthProvider } from "../context/auth";
@@ -254,6 +255,7 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     ...fakeDoctorsApi(),
     ...fakeFeaturesApi(),
     ...fakeWindowApi(),
+    ...fakeDrillApi(),
     gouvernorats: vi.fn(() =>
       Promise.resolve([
         { code: 11, iso_code: "TN-11", name: "تونس", name_ar: "تونس", name_fr: "Tunis", delegation_count: 21 },

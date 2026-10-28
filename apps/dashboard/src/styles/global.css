@@ -7277,8 +7277,8 @@ button.nav-card:hover {
 .inventory-search__total {
   margin-block: 0 8px;
 }
-/* The decision window and the permissions page (L4): text, date and number fields drawn like the others. */
-:is(.win-page, .perm-page)
+/* The decision window and the permissions page (L4), the dry run (L5a): text, date and number fields drawn like the others. */
+:is(.win-page, .perm-page, .drills-page, .drill-page)
   :is(input:not([type]), input[type="text"], input[type="date"], input[type="datetime-local"], input[type="number"]) {
   font: inherit;
   color: var(--text);
@@ -8053,4 +8053,156 @@ button.nav-card:hover {
   background: var(--info-bg);
   color: var(--info-text);
   font-weight: 700;
+}
+
+/* L5a: the digital dry run (docs/phase-l/design-l5.md §2). */
+.drill-measures {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 12px;
+}
+.drill-measures__item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 16px;
+  border-inline-start: 4px solid var(--tone-amber);
+}
+.drill-form,
+.drill-inject-form,
+.drill-generator {
+  display: grid;
+  gap: 12px;
+}
+.drill-form__wide {
+  grid-column: 1 / -1;
+}
+.drill-form__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: 8px 16px;
+}
+.drill-form__places,
+.drill-needs {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 8px 12px 12px;
+}
+.drill-needs__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  gap: 8px 12px;
+}
+.drill-needs__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.875rem;
+}
+.drill-needs__item input {
+  width: 4.5rem;
+}
+.drill-page__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-block-end: 8px;
+}
+.drill-stop {
+  margin-block: 12px;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: var(--tone-red-tint);
+  border: 1px solid color-mix(in srgb, var(--tone-red) 30%, transparent);
+}
+.drill-participants {
+  margin-block: 12px;
+}
+.drill-participants__list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px;
+  display: grid;
+  gap: 8px;
+}
+.drill-participants__mine {
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+.drill-scenario {
+  display: grid;
+  gap: 16px;
+}
+.drill-scenario__editors {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+.drill-run__clock {
+  margin-block: 8px 12px;
+}
+.drill-feed {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+.drill-feed__item {
+  padding: 12px 16px;
+}
+.drill-feed__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.drill-feed__answers {
+  margin: 8px 0;
+  padding-inline-start: 1.2rem;
+  display: grid;
+  gap: 6px;
+}
+.drill-answer {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--line);
+  display: grid;
+  gap: 8px;
+}
+.drill-answer h4 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+.drill-report {
+  display: grid;
+  gap: 16px;
+}
+.drill-report__kpis {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+}
+@media (max-width: 40rem) {
+  .drill-scenario__editors {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.drill-form input:not([type="checkbox"]),
+.drill-inject-form input:not([type="checkbox"], [type="number"]),
+.drill-generator input[type="number"] {
+  inline-size: 100%;
+}
+.drill-answer input:not([type="checkbox"]) {
+  inline-size: 100%;
+}
+.drill-answer__send {
+  justify-self: start;
 }

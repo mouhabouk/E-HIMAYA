@@ -80,7 +80,7 @@ def _rule_out(row: FeatureRule, now: datetime) -> schemas.RuleOut:
 @router.get("/mine", response_model=schemas.Mine)
 async def mine(principal: AnyStaff) -> schemas.Mine:
     rules = await service.rules_in_force()
-    eff = service.effective(principal, rules, datetime.now(UTC)) if rules else {}
+    eff = service.effective(principal, rules, datetime.now(UTC))
     granted = [k for k, e in eff.items() if e.granted and not e.hidden]
     features = registry.get().features
     return schemas.Mine(

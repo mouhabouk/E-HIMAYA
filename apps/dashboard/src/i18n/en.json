@@ -61,7 +61,8 @@
     "plans": "Intervention plans",
     "schedule": "Programmes",
     "permissions": "Permissions",
-    "window": "Decision window"
+    "window": "Decision window",
+    "drills": "Dry run"
   },
   "header": {
     "scope": "Geographic scope",
@@ -481,7 +482,27 @@
     "two_gouvernorats_required": "Choose two governorates.",
     "too_many_saved": "Saved searches limit reached (50).",
     "query_too_long": "Search too long.",
-    "no_words": "Add at least one word."
+    "no_words": "Add at least one word.",
+    "already_withdrawn": "This gouvernorat already withdrew from the dry run.",
+    "not_a_draft": "A dry run is edited only as a draft.",
+    "not_approved": "The dry run starts only once every gouvernorat has approved it.",
+    "not_now": "This decision is not possible at this step of the dry run.",
+    "not_over": "A dry run is closed only once it has ended or been stopped.",
+    "not_participating": "Your gouvernorat has not approved this dry run or has withdrawn.",
+    "not_running": "The dry run is not running.",
+    "not_started": "The dry run has not started yet.",
+    "not_submitted": "The dry run has not been submitted to the gouvernorats yet.",
+    "resource_not_free": "One of the chosen resources is no longer free in this dry run.",
+    "too_many_active": "The room has reached the limit of open dry runs (3).",
+    "not_the_evaluator": "Only the appointed independent evaluator evaluates.",
+    "gouvernorat_not_in_drill": "This gouvernorat is not part of the dry run.",
+    "inconsistent_results": "The load test results are inconsistent.",
+    "no_evaluator": "Appoint an independent evaluator before submitting.",
+    "no_injects": "Add the scenario's messages before submitting.",
+    "offset_after_end": "The message falls after the end of the dry run.",
+    "resources_need_dispatch": "Resources are booked only with the \"dispatch\" action.",
+    "too_many_injects": "The scenario has reached the limit of messages (400).",
+    "unknown_kind": "Hazard type unknown to the generator."
   },
   "kpi": {
     "title": "Key indicators",
@@ -6454,6 +6475,204 @@
       "ask": "Write a summary (AI)",
       "again": "Write again",
       "label": "Advisory automatic summary"
+    }
+  },
+  "drill": {
+    "title": "Digital dry run",
+    "intro": "A written, timed scenario played to the rooms of the gouvernorats that approved it: they answer with their real resources, booked inside the dry run only without changing their real status, then an independent evaluator evaluates it.",
+    "measures": {
+      "label": "What the dry run measures",
+      "load": {
+        "title": "The system under a huge number of reports",
+        "text": "Load and attack test on the isolated copy only."
+      },
+      "resources": {
+        "title": "The existing resources",
+        "text": "What each gouvernorat has and what is short at the peak."
+      },
+      "room": {
+        "title": "The operations room",
+        "text": "Speed of answer and following the plan."
+      }
+    },
+    "listCaption": "Dry runs",
+    "empty": "No dry runs yet.",
+    "back": "← All dry runs",
+    "minutes": "{{count}} min",
+    "field": {
+      "title": "Title",
+      "objective": "Objective",
+      "hazard": "Hazard",
+      "gouvernorats": "Participating gouvernorats",
+      "planned_start": "Planned start",
+      "duration_min": "Duration (minutes)",
+      "evaluator": "Evaluator account id",
+      "evaluator_name": "Evaluator",
+      "injects": "Messages",
+      "status": "Status"
+    },
+    "hazard": {
+      "none": "None",
+      "fire": "Fire",
+      "traffic_accident": "Road accident",
+      "flood": "Flood",
+      "drowning": "Drowning",
+      "medical": "Medical",
+      "chemical_leak": "Chemical leak"
+    },
+    "new": {
+      "open": "New dry run",
+      "title": "Plan a dry run",
+      "intro": "The dry run stays a draft until you submit it to the gouvernorats. The evaluator belongs to no participating gouvernorat.",
+      "create": "Create the draft",
+      "durationHelp": "From 10 minutes to 12 hours.",
+      "evaluatorHelp": "An account outside the participating gouvernorats (can be appointed later).",
+      "ownOnly": "Regional room: the dry run covers {{name}} only.",
+      "placesHelp": "Choose at least one gouvernorat."
+    },
+    "status": {
+      "draft": "Draft",
+      "submitted": "Awaiting approvals",
+      "ready": "Ready to start",
+      "running": "Running",
+      "stopped": "Stopped",
+      "ended": "Ended",
+      "closed": "Closed"
+    },
+    "decision": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "refused": "Refused",
+      "withdrawn": "Withdrawn"
+    },
+    "approval": {
+      "title": "Approval of the gouvernorats",
+      "intro": "The dry run starts only once every participating gouvernorat approves. Any gouvernorat may withdraw at any time, with a reason.",
+      "awaitsYou": "Awaits your gouvernorat's decision",
+      "mine": "Decision of {{name}}",
+      "withdrawReason": "Reason for withdrawing",
+      "approve": "Approve",
+      "refuse": "Refuse",
+      "withdraw": "Withdraw",
+      "refuseReason": "Reason for refusing"
+    },
+    "actions": {
+      "submit": "Submit to the gouvernorats",
+      "start": "Start the dry run",
+      "close": "Close the dry run"
+    },
+    "stop": {
+      "label": "Stop of the dry run",
+      "open": "Stop the dry run now",
+      "reason": "Reason for stopping",
+      "confirm": "Confirm the stop",
+      "stopped": "Stopped by {{name}}",
+      "allWithdrawn": "Every gouvernorat withdrew"
+    },
+    "tabs": {
+      "label": "Steps of the dry run",
+      "scenario": "Scenario",
+      "run": "Run",
+      "evaluation": "Evaluation",
+      "report": "Report"
+    },
+    "injectKind": {
+      "report": "Report",
+      "development": "Development",
+      "shortage": "Shortage",
+      "evacuation": "Evacuation",
+      "decision": "Decision needed",
+      "information": "Information"
+    },
+    "inject": {
+      "new": "New message",
+      "offset": "After the start (minutes)",
+      "kind": "Type",
+      "gouvernorat": "Gouvernorat",
+      "all": "All gouvernorats",
+      "title": "Message",
+      "body": "Details",
+      "needs": "Resources needed",
+      "expected": "Expected answer under the plan",
+      "expectedShort": "Expected",
+      "add": "Add the message",
+      "caption": "Scenario messages: {{count}}",
+      "empty": "No messages yet: add one or generate reports.",
+      "generated": "Generated",
+      "actions": "Actions",
+      "delete": "Delete"
+    },
+    "generate": {
+      "title": "Report generator",
+      "intro": "Fictitious citizens' reports spread over the run at a rising rhythm, in every participating gouvernorat. The same seed gives the same scenario. The maximum load (thousands a minute) runs on the isolated copy only.",
+      "count": "Number of reports",
+      "seed": "Seed",
+      "kinds": "Hazard types",
+      "run": "Generate",
+      "done": "The generated reports were added to the scenario."
+    },
+    "action": {
+      "acknowledged": "Acknowledged",
+      "dispatched": "Dispatch resources",
+      "escalated": "Escalate",
+      "evacuation": "Evacuation",
+      "decision": "Decision",
+      "note": "Note"
+    },
+    "run": {
+      "elapsed": "{{count}} min elapsed",
+      "remaining": "{{count}} min left",
+      "free": "Your resources free in the dry run",
+      "nothingYet": "No message yet.",
+      "answer": "The room's answer",
+      "action": "Action",
+      "text": "Text",
+      "book": "Resources booked inside the dry run",
+      "noneFree": "No free resources of this kind.",
+      "send": "Send the answer",
+      "booked": "Booked",
+      "released": "released",
+      "release": "Release the resources"
+    },
+    "planFollowed": {
+      "yes": "Plan followed",
+      "partly": "Partly",
+      "no": "Not followed",
+      "not_applicable": "Not applicable"
+    },
+    "eval": {
+      "title": "Evaluation by the independent evaluator",
+      "intro": "For each message: was the plan followed, and a score from 0 to 5.",
+      "plan": "Plan",
+      "score": "Score",
+      "notes": "Notes",
+      "save": "Save",
+      "saved": "Saved"
+    },
+    "report": {
+      "answered": "Messages answered",
+      "median": "Median answer time (minutes)",
+      "score": "Mean score",
+      "short": "Resources short at the peak",
+      "resources": "Resources by gouvernorat and kind",
+      "kind": "Kind",
+      "atStart": "Free at the start",
+      "peak": "Most booked at once",
+      "shortCol": "Short",
+      "noResources": "No resources were booked.",
+      "injects": "Messages and answers",
+      "firstAnswer": "First answer",
+      "unanswered": "Unanswered",
+      "booked": "Booked",
+      "shortfall": "Short",
+      "stress": "Load and security test (isolated copy)",
+      "stressIntro": "Results of the load script that sends thousands of reports with attempts at SQL injection, scripts, malformed requests and flooding from one device.",
+      "noStress": "No load test results recorded yet.",
+      "stressLine": "{{sent}} reports sent, {{accepted}} accepted; peak {{peak}} a second; p95 response time {{p95}} ms; server errors {{errors}}.",
+      "attacks": "Attack attempts: {{sent}}, {{blocked}} blocked.",
+      "allBlocked": "All blocked",
+      "notAllBlocked": "Not all blocked",
+      "conclusion": "Conclusion"
     }
   }
 }

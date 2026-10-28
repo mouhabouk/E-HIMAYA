@@ -8,6 +8,9 @@ Flags (the fixed ceiling, Yamen 2026-10-28: the security rules stay a ceiling no
 
 * ``personal``: shows reporters, callers, victims, citizens or personnel; never granted to a governor or a minister.
 * ``national``: needs the national scope; never granted to a regional account or to a role in one gouvernorat.
+* ``dormant``: held by nobody by default; a route under it is refused until the administrator grants it (L5a, the
+  dry run). Its buttons are dormant with it.
+* ``safety``: a button never hidden nor dormant (the stop of a dry run); its handler checks who may press it.
 * ``fixed``: never granted at all (sensitive layers, the paid basemap key, accounts, the audit, break-glass, the
   permissions themselves). It can still be hidden.
 
@@ -438,6 +441,51 @@ CATALOGUE: tuple[Spec, ...] = (
         ),
     ),
     # ------------------------------------------------------------------ crisis
+    # The digital dry run (L5a): dormant, nobody holds it until the administrator grants it (Yamen 2026-10-28); the
+    # stop button is never hidden from a room taking part in a run (design-l5.md §7).
+    page(
+        "drill",
+        "crisis",
+        "/drills",
+        ("العملية البيضاء", "Exercice à blanc", "Dry run"),
+        ("* /drills",),
+        button(
+            "drill.plan",
+            ("تخطيط العملية البيضاء", "Planifier", "Plan"),
+            "POST /drills",
+            "PUT /drills/{exercise_id}",
+            "POST /drills/{exercise_id}/submit",
+            "POST /drills/{exercise_id}/close",
+            "POST /drills/{exercise_id}/stress",
+        ),
+        button(
+            "drill.scenario",
+            ("السيناريو والحقن", "Scénario et injects", "Scenario and injects"),
+            "POST /drills/{exercise_id}/injects",
+            "PUT /drills/{exercise_id}/injects/{inject_id}",
+            "DELETE /drills/{exercise_id}/injects/{inject_id}",
+            "POST /drills/{exercise_id}/generate",
+        ),
+        button(
+            "drill.approve",
+            ("موافقة الولاية وسحبها", "Accord du gouvernorat", "Gouvernorat approval"),
+            "POST /drills/{exercise_id}/approvals",
+        ),
+        button("drill.start", ("بدء العملية", "Démarrer", "Start"), "POST /drills/{exercise_id}/start"),
+        button("drill.stop", ("إيقاف العملية", "Arrêter", "Stop"), "POST /drills/{exercise_id}/stop", flags="safety"),
+        button(
+            "drill.respond",
+            ("الرد على الحقن", "Répondre", "Answer injects"),
+            "POST /drills/{exercise_id}/injects/{inject_id}/responses",
+            "POST /drills/{exercise_id}/responses/{response_id}/release",
+        ),
+        button(
+            "drill.evaluate",
+            ("التقييم", "Évaluer", "Evaluate"),
+            "PUT /drills/{exercise_id}/injects/{inject_id}/evaluation",
+        ),
+        flags="dormant",
+    ),
     # The decision window opens through delegations (L4 §5), never through a grant: it can only be hidden.
     page(
         "window",

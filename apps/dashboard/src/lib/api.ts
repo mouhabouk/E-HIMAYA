@@ -320,6 +320,27 @@ export const ERROR_CODES = [
   "too_many_saved",
   "query_too_long",
   "no_words",
+  // Phase L5a: the digital dry run.
+  "already_withdrawn",
+  "not_a_draft",
+  "not_approved",
+  "not_now",
+  "not_over",
+  "not_participating",
+  "not_running",
+  "not_started",
+  "not_submitted",
+  "resource_not_free",
+  "too_many_active",
+  "not_the_evaluator",
+  "gouvernorat_not_in_drill",
+  "inconsistent_results",
+  "no_evaluator",
+  "no_injects",
+  "offset_after_end",
+  "resources_need_dispatch",
+  "too_many_injects",
+  "unknown_kind",
 ] as const;
 export type ErrorCode = (typeof ERROR_CODES)[number];
 
