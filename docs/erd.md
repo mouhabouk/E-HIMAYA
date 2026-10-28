@@ -1529,6 +1529,76 @@ erDiagram
     org__prevention_visit ||--o{ org__prevention_reservation : "visit_id"
 ```
 
+## programme
+
+```mermaid
+erDiagram
+    programme__point {
+        uuid id PK
+        uuid programme_id FK
+        text ref
+        smallint gouvernorat_code FK
+        text place_name
+        text sub_points
+        geography_point_4326 location
+        text geo_confidence
+        text geo_note
+        integer staff_count
+        text staff_composition
+        integer supervisors
+        integer lifeguards_planned
+        integer lifeguards_deployed
+        text equipment
+        text hours
+        date opening_date
+        date closing_date
+        text status
+        text supervisor_name
+        text supervisor_phone
+        text notes
+        text updated_by
+        datetime updated_at
+    }
+    programme__programme {
+        uuid id PK
+        text code
+        text kind
+        text title
+        text season
+        date valid_from
+        date valid_to
+        text status
+        integer version
+        text source_document
+        jsonb declared
+        text approved_by
+        text approved_by_name
+        datetime approved_at
+        text cancel_reason
+        uuid layer_id FK
+        text created_by
+        datetime created_at
+        text updated_by
+        text updated_by_name
+        datetime updated_at
+    }
+    programme__revision {
+        uuid id PK
+        uuid programme_id FK
+        integer number
+        text action
+        text reason
+        jsonb snapshot
+        text created_by
+        text created_by_name
+        datetime created_at
+    }
+    geo__gouvernorat ||--o{ programme__point : "gouvernorat_code"
+    geo__layer ||--o{ programme__programme : "layer_id"
+    programme__programme ||--o{ programme__point : "programme_id"
+    programme__programme ||--o{ programme__revision : "programme_id"
+```
+
 ## reports
 
 ```mermaid

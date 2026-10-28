@@ -4627,6 +4627,52 @@
         "title": "ContactIn",
         "type": "object"
       },
+      "CopyIn": {
+        "properties": {
+          "code": {
+            "maxLength": 40,
+            "pattern": "^[A-Z]+-[0-9]{4}(-[A-Z0-9]+)?$",
+            "title": "Code",
+            "type": "string"
+          },
+          "season": {
+            "default": "",
+            "maxLength": 80,
+            "title": "Season",
+            "type": "string"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "minLength": 3,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "valid_from": {
+            "format": "date",
+            "title": "Valid From",
+            "type": "string"
+          },
+          "valid_to": {
+            "format": "date",
+            "title": "Valid To",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "valid_from",
+          "valid_to"
+        ],
+        "title": "CopyIn",
+        "type": "object"
+      },
       "CounterView": {
         "description": "What the agent at the counter of a regional administration sees after scanning a certificate (phase P3a).",
         "properties": {
@@ -5722,6 +5768,68 @@
           }
         },
         "title": "DialIn",
+        "type": "object"
+      },
+      "DiffOut": {
+        "properties": {
+          "added": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Added",
+            "type": "array"
+          },
+          "against": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Against"
+          },
+          "changed": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "items": {},
+                "type": "array"
+              },
+              "type": "object"
+            },
+            "title": "Changed",
+            "type": "object"
+          },
+          "number": {
+            "title": "Number",
+            "type": "integer"
+          },
+          "programme": {
+            "additionalProperties": {
+              "items": {},
+              "type": "array"
+            },
+            "title": "Programme",
+            "type": "object"
+          },
+          "removed": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Removed",
+            "type": "array"
+          }
+        },
+        "required": [
+          "number",
+          "against",
+          "programme",
+          "added",
+          "removed",
+          "changed"
+        ],
+        "title": "DiffOut",
         "type": "object"
       },
       "DirectiveAckOut": {
@@ -10163,6 +10271,47 @@
         "title": "FieldVisit",
         "type": "object"
       },
+      "Figures": {
+        "properties": {
+          "gouvernorats": {
+            "default": 0,
+            "title": "Gouvernorats",
+            "type": "integer"
+          },
+          "lifeguards_deployed": {
+            "default": 0,
+            "title": "Lifeguards Deployed",
+            "type": "integer"
+          },
+          "lifeguards_planned": {
+            "default": 0,
+            "title": "Lifeguards Planned",
+            "type": "integer"
+          },
+          "open": {
+            "default": 0,
+            "title": "Open",
+            "type": "integer"
+          },
+          "points": {
+            "default": 0,
+            "title": "Points",
+            "type": "integer"
+          },
+          "staff": {
+            "default": 0,
+            "title": "Staff",
+            "type": "integer"
+          },
+          "unlocated": {
+            "default": 0,
+            "title": "Unlocated",
+            "type": "integer"
+          }
+        },
+        "title": "Figures",
+        "type": "object"
+      },
       "FireDangerOut": {
         "description": "Canadian FWI System of the day (noon values) and its class.",
         "properties": {
@@ -12118,146 +12267,115 @@
         "title": "ImportDetail",
         "type": "object"
       },
-      "ImportOut": {
+      "ImportedProgramme": {
         "properties": {
-          "applied_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Applied At"
+          "code": {
+            "title": "Code",
+            "type": "string"
           },
-          "can_apply": {
-            "title": "Can Apply",
-            "type": "boolean"
-          },
-          "can_undo": {
-            "title": "Can Undo",
-            "type": "boolean"
-          },
-          "counts": {
+          "computed": {
             "additionalProperties": {
               "type": "integer"
             },
-            "title": "Counts",
+            "title": "Computed",
             "type": "object"
           },
-          "created_at": {
-            "format": "date-time",
-            "title": "Created At",
-            "type": "string"
+          "declared": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Declared",
+            "type": "object"
           },
-          "created_by_name": {
+          "diff": {
             "anyOf": [
               {
-                "type": "string"
+                "$ref": "#/components/schemas/DiffOut"
               },
               {
                 "type": "null"
               }
-            ],
-            "title": "Created By Name"
+            ]
           },
-          "expired": {
-            "title": "Expired",
+          "exists": {
+            "title": "Exists",
             "type": "boolean"
           },
-          "file_name": {
-            "title": "File Name",
-            "type": "string"
-          },
-          "format": {
-            "title": "Format",
-            "type": "string"
-          },
-          "id": {
-            "format": "uuid",
-            "title": "Id",
-            "type": "string"
-          },
-          "mode": {
-            "enum": [
-              "merge",
-              "replace"
-            ],
-            "title": "Mode",
-            "type": "string"
-          },
-          "reason": {
+          "kind": {
             "anyOf": [
               {
+                "enum": [
+                  "road",
+                  "seasonal",
+                  "beach",
+                  "other"
+                ],
                 "type": "string"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Reason"
+            "title": "Kind"
           },
-          "rejected": {
-            "items": {
-              "additionalProperties": true,
-              "type": "object"
-            },
-            "title": "Rejected",
-            "type": "array"
+          "points": {
+            "title": "Points",
+            "type": "integer"
           },
           "status": {
-            "title": "Status",
-            "type": "string"
-          },
-          "undone_at": {
             "anyOf": [
               {
-                "format": "date-time",
+                "enum": [
+                  "draft",
+                  "approved",
+                  "updated",
+                  "ended",
+                  "cancelled"
+                ],
                 "type": "string"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Undone At"
+            "title": "Status"
           },
-          "warnings": {
-            "items": {
-              "additionalProperties": true,
-              "type": "object"
-            },
-            "title": "Warnings",
-            "type": "array"
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "unlocated": {
+            "title": "Unlocated",
+            "type": "integer"
           }
         },
         "required": [
-          "id",
-          "file_name",
-          "format",
-          "mode",
+          "code",
+          "title",
+          "kind",
+          "exists",
           "status",
-          "counts",
-          "rejected",
-          "warnings",
-          "reason",
-          "created_by_name",
-          "created_at",
-          "applied_at",
-          "undone_at",
-          "expired",
-          "can_apply",
-          "can_undo"
+          "points",
+          "unlocated",
+          "computed",
+          "declared",
+          "diff"
         ],
-        "title": "ImportOut",
+        "title": "ImportedProgramme",
         "type": "object"
       },
       "ImportsOut": {
         "properties": {
           "items": {
             "items": {
-              "$ref": "#/components/schemas/ImportOut"
+              "$ref": "#/components/schemas/app__modules__layers__schemas__ImportOut"
             },
             "title": "Items",
             "type": "array"
@@ -14601,7 +14719,7 @@
           },
           "points": {
             "items": {
-              "$ref": "#/components/schemas/PointOut"
+              "$ref": "#/components/schemas/app__modules__safety__router__PointOut"
             },
             "title": "Points",
             "type": "array"
@@ -19211,25 +19329,6 @@
         "title": "PointDetail",
         "type": "object"
       },
-      "PointIn": {
-        "additionalProperties": false,
-        "properties": {
-          "at": {
-            "format": "date-time",
-            "title": "At",
-            "type": "string"
-          },
-          "location": {
-            "$ref": "#/components/schemas/LocationIn"
-          }
-        },
-        "required": [
-          "location",
-          "at"
-        ],
-        "title": "PointIn",
-        "type": "object"
-      },
       "PointInfo": {
         "properties": {
           "distance_km": {
@@ -19270,40 +19369,260 @@
         "title": "PointInfo",
         "type": "object"
       },
-      "PointOut": {
+      "PointPatch": {
+        "description": "Every field is optional: only the fields sent change. A regional room may send status, lifeguards_deployed\nand notes only (the daily follow-up).",
         "properties": {
-          "accuracy_m": {
+          "closing_date": {
             "anyOf": [
               {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Closing Date"
+          },
+          "equipment": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Equipment"
+          },
+          "geo_confidence": {
+            "anyOf": [
+              {
+                "enum": [
+                  "confirmed",
+                  "high",
+                  "medium",
+                  "approximate",
+                  "review",
+                  "unknown"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Geo Confidence"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "maximum": 83.0,
+                "minimum": 11.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "hours": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hours"
+          },
+          "lat": {
+            "anyOf": [
+              {
+                "maximum": 37.6,
+                "minimum": 30.0,
                 "type": "number"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Accuracy M"
+            "title": "Lat"
           },
-          "at": {
-            "format": "date-time",
-            "title": "At",
-            "type": "string"
+          "lifeguards_deployed": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lifeguards Deployed"
           },
-          "lat": {
-            "title": "Lat",
-            "type": "number"
+          "lifeguards_planned": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lifeguards Planned"
           },
           "lon": {
-            "title": "Lon",
-            "type": "number"
+            "anyOf": [
+              {
+                "maximum": 11.7,
+                "minimum": 7.4,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lon"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "opening_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opening Date"
+          },
+          "place_name": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "minLength": 2,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Place Name"
+          },
+          "reason": {
+            "default": "",
+            "maxLength": 500,
+            "title": "Reason",
+            "type": "string"
+          },
+          "staff_composition": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Staff Composition"
+          },
+          "staff_count": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Staff Count"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "enum": [
+                  "open",
+                  "closed",
+                  "postponed"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "sub_points": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sub Points"
+          },
+          "supervisor_name": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supervisor Name"
+          },
+          "supervisor_phone": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supervisor Phone"
+          },
+          "supervisors": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supervisors"
           }
         },
-        "required": [
-          "lat",
-          "lon",
-          "accuracy_m",
-          "at"
-        ],
-        "title": "PointOut",
+        "title": "PointPatch",
         "type": "object"
       },
       "PointsIn": {
@@ -19311,7 +19630,7 @@
         "properties": {
           "points": {
             "items": {
-              "$ref": "#/components/schemas/PointIn"
+              "$ref": "#/components/schemas/app__modules__safety__history__PointIn"
             },
             "maxItems": 100,
             "minItems": 1,
@@ -19477,6 +19796,63 @@
           }
         },
         "title": "PrioritySettings",
+        "type": "object"
+      },
+      "ProblemOut": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "line": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Line"
+          },
+          "programme": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Programme"
+          },
+          "ref": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ref"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "title": "ProblemOut",
         "type": "object"
       },
       "ProfileIn": {
@@ -19673,6 +20049,352 @@
           "locale"
         ],
         "title": "ProfileOut",
+        "type": "object"
+      },
+      "ProgrammeDetail": {
+        "properties": {
+          "computed": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Computed",
+            "type": "object"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__programmes__schemas__PointOut"
+            },
+            "title": "Points",
+            "type": "array"
+          },
+          "programme": {
+            "$ref": "#/components/schemas/ProgrammeOut"
+          }
+        },
+        "required": [
+          "programme",
+          "points",
+          "computed"
+        ],
+        "title": "ProgrammeDetail",
+        "type": "object"
+      },
+      "ProgrammeIn": {
+        "properties": {
+          "code": {
+            "maxLength": 40,
+            "pattern": "^[A-Z]+-[0-9]{4}(-[A-Z0-9]+)?$",
+            "title": "Code",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "road",
+              "seasonal",
+              "beach",
+              "other"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "season": {
+            "default": "",
+            "maxLength": 80,
+            "title": "Season",
+            "type": "string"
+          },
+          "source_document": {
+            "default": "",
+            "maxLength": 300,
+            "title": "Source Document",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 300,
+            "minLength": 3,
+            "title": "Title",
+            "type": "string"
+          },
+          "valid_from": {
+            "format": "date",
+            "title": "Valid From",
+            "type": "string"
+          },
+          "valid_to": {
+            "format": "date",
+            "title": "Valid To",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "kind",
+          "title",
+          "valid_from",
+          "valid_to"
+        ],
+        "title": "ProgrammeIn",
+        "type": "object"
+      },
+      "ProgrammeOut": {
+        "properties": {
+          "approved_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved At"
+          },
+          "approved_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved By Name"
+          },
+          "can_edit": {
+            "title": "Can Edit",
+            "type": "boolean"
+          },
+          "can_follow_up": {
+            "title": "Can Follow Up",
+            "type": "boolean"
+          },
+          "cancel_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancel Reason"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "declared": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Declared",
+            "type": "object"
+          },
+          "figures": {
+            "$ref": "#/components/schemas/Figures"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "road",
+              "seasonal",
+              "beach",
+              "other"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "layer_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Layer Key"
+          },
+          "live": {
+            "title": "Live",
+            "type": "boolean"
+          },
+          "season": {
+            "title": "Season",
+            "type": "string"
+          },
+          "source_document": {
+            "title": "Source Document",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "approved",
+              "updated",
+              "ended",
+              "cancelled"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "updated_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By Name"
+          },
+          "valid_from": {
+            "format": "date",
+            "title": "Valid From",
+            "type": "string"
+          },
+          "valid_to": {
+            "format": "date",
+            "title": "Valid To",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "kind",
+          "title",
+          "season",
+          "valid_from",
+          "valid_to",
+          "status",
+          "version",
+          "source_document",
+          "declared",
+          "approved_by_name",
+          "approved_at",
+          "cancel_reason",
+          "layer_key",
+          "live",
+          "updated_by_name",
+          "updated_at",
+          "figures",
+          "can_edit",
+          "can_follow_up"
+        ],
+        "title": "ProgrammeOut",
+        "type": "object"
+      },
+      "ProgrammePatch": {
+        "properties": {
+          "reason": {
+            "default": "",
+            "maxLength": 500,
+            "title": "Reason",
+            "type": "string"
+          },
+          "season": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Season"
+          },
+          "source_document": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Document"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "minLength": 3,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "valid_from": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid From"
+          },
+          "valid_to": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid To"
+          }
+        },
+        "title": "ProgrammePatch",
+        "type": "object"
+      },
+      "ProgrammesOut": {
+        "properties": {
+          "can_create": {
+            "title": "Can Create",
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ProgrammeOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items",
+          "can_create"
+        ],
+        "title": "ProgrammesOut",
         "type": "object"
       },
       "ProofOut": {
@@ -22130,20 +22852,57 @@
         "title": "Revision",
         "type": "object"
       },
-      "RevisionsOut": {
+      "RevisionOut": {
         "properties": {
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/Revision"
-            },
-            "title": "Items",
-            "type": "array"
+          "action": {
+            "title": "Action",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "number": {
+            "title": "Number",
+            "type": "integer"
+          },
+          "points": {
+            "title": "Points",
+            "type": "integer"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
           }
         },
         "required": [
-          "items"
+          "number",
+          "action",
+          "reason",
+          "created_by_name",
+          "created_at",
+          "points"
         ],
-        "title": "RevisionsOut",
+        "title": "RevisionOut",
         "type": "object"
       },
       "RevocationIn": {
@@ -31970,6 +32729,141 @@
         "title": "FeatureOut",
         "type": "object"
       },
+      "app__modules__layers__schemas__ImportOut": {
+        "properties": {
+          "applied_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Applied At"
+          },
+          "can_apply": {
+            "title": "Can Apply",
+            "type": "boolean"
+          },
+          "can_undo": {
+            "title": "Can Undo",
+            "type": "boolean"
+          },
+          "counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Counts",
+            "type": "object"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "expired": {
+            "title": "Expired",
+            "type": "boolean"
+          },
+          "file_name": {
+            "title": "File Name",
+            "type": "string"
+          },
+          "format": {
+            "title": "Format",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "mode": {
+            "enum": [
+              "merge",
+              "replace"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "rejected": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Rejected",
+            "type": "array"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "undone_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Undone At"
+          },
+          "warnings": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "file_name",
+          "format",
+          "mode",
+          "status",
+          "counts",
+          "rejected",
+          "warnings",
+          "reason",
+          "created_by_name",
+          "created_at",
+          "applied_at",
+          "undone_at",
+          "expired",
+          "can_apply",
+          "can_undo"
+        ],
+        "title": "ImportOut",
+        "type": "object"
+      },
       "app__modules__layers__schemas__ReasonIn": {
         "additionalProperties": false,
         "properties": {
@@ -32022,6 +32916,22 @@
           "reason"
         ],
         "title": "ReviewIn",
+        "type": "object"
+      },
+      "app__modules__layers__schemas__RevisionsOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Revision"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "RevisionsOut",
         "type": "object"
       },
       "app__modules__medical__schemas__InboxItem": {
@@ -33108,6 +34018,591 @@
         "title": "Review",
         "type": "object"
       },
+      "app__modules__programmes__schemas__ImportOut": {
+        "properties": {
+          "applied": {
+            "title": "Applied",
+            "type": "boolean"
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/ProblemOut"
+            },
+            "title": "Errors",
+            "type": "array"
+          },
+          "format": {
+            "title": "Format",
+            "type": "string"
+          },
+          "programmes": {
+            "items": {
+              "$ref": "#/components/schemas/ImportedProgramme"
+            },
+            "title": "Programmes",
+            "type": "array"
+          },
+          "warnings": {
+            "items": {
+              "$ref": "#/components/schemas/ProblemOut"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "format",
+          "applied",
+          "programmes",
+          "errors",
+          "warnings"
+        ],
+        "title": "ImportOut",
+        "type": "object"
+      },
+      "app__modules__programmes__schemas__PointIn": {
+        "properties": {
+          "closing_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Closing Date"
+          },
+          "equipment": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Equipment"
+          },
+          "geo_confidence": {
+            "anyOf": [
+              {
+                "enum": [
+                  "confirmed",
+                  "high",
+                  "medium",
+                  "approximate",
+                  "review",
+                  "unknown"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Geo Confidence"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "maximum": 83.0,
+                "minimum": 11.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "hours": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hours"
+          },
+          "lat": {
+            "anyOf": [
+              {
+                "maximum": 37.6,
+                "minimum": 30.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lat"
+          },
+          "lifeguards_deployed": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lifeguards Deployed"
+          },
+          "lifeguards_planned": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lifeguards Planned"
+          },
+          "lon": {
+            "anyOf": [
+              {
+                "maximum": 11.7,
+                "minimum": 7.4,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lon"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "opening_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opening Date"
+          },
+          "place_name": {
+            "maxLength": 300,
+            "minLength": 2,
+            "title": "Place Name",
+            "type": "string"
+          },
+          "reason": {
+            "default": "",
+            "maxLength": 500,
+            "title": "Reason",
+            "type": "string"
+          },
+          "ref": {
+            "maxLength": 60,
+            "minLength": 1,
+            "title": "Ref",
+            "type": "string"
+          },
+          "staff_composition": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Staff Composition"
+          },
+          "staff_count": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Staff Count"
+          },
+          "status": {
+            "default": "open",
+            "enum": [
+              "open",
+              "closed",
+              "postponed"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "sub_points": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sub Points"
+          },
+          "supervisor_name": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supervisor Name"
+          },
+          "supervisor_phone": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supervisor Phone"
+          },
+          "supervisors": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supervisors"
+          }
+        },
+        "required": [
+          "ref",
+          "place_name"
+        ],
+        "title": "PointIn",
+        "type": "object"
+      },
+      "app__modules__programmes__schemas__PointOut": {
+        "properties": {
+          "can_follow_up": {
+            "title": "Can Follow Up",
+            "type": "boolean"
+          },
+          "closing_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Closing Date"
+          },
+          "equipment": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Equipment"
+          },
+          "geo_confidence": {
+            "enum": [
+              "confirmed",
+              "high",
+              "medium",
+              "approximate",
+              "review",
+              "unknown"
+            ],
+            "title": "Geo Confidence",
+            "type": "string"
+          },
+          "geo_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Geo Note"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "hours": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hours"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "lat": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lat"
+          },
+          "lifeguards_deployed": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lifeguards Deployed"
+          },
+          "lifeguards_planned": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lifeguards Planned"
+          },
+          "lon": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lon"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "opening_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opening Date"
+          },
+          "place_name": {
+            "title": "Place Name",
+            "type": "string"
+          },
+          "ref": {
+            "title": "Ref",
+            "type": "string"
+          },
+          "staff_composition": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Staff Composition"
+          },
+          "staff_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Staff Count"
+          },
+          "status": {
+            "enum": [
+              "open",
+              "closed",
+              "postponed"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "sub_points": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sub Points"
+          },
+          "supervisor_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supervisor Name"
+          },
+          "supervisor_phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supervisor Phone"
+          },
+          "supervisors": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supervisors"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "ref",
+          "gouvernorat_code",
+          "place_name",
+          "sub_points",
+          "lat",
+          "lon",
+          "geo_confidence",
+          "geo_note",
+          "staff_count",
+          "staff_composition",
+          "supervisors",
+          "lifeguards_planned",
+          "lifeguards_deployed",
+          "equipment",
+          "hours",
+          "opening_date",
+          "closing_date",
+          "status",
+          "supervisor_name",
+          "supervisor_phone",
+          "notes",
+          "updated_at",
+          "can_follow_up"
+        ],
+        "title": "PointOut",
+        "type": "object"
+      },
+      "app__modules__programmes__schemas__ReasonIn": {
+        "properties": {
+          "reason": {
+            "default": "",
+            "maxLength": 500,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "title": "ReasonIn",
+        "type": "object"
+      },
+      "app__modules__programmes__schemas__RevisionsOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RevisionOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "RevisionsOut",
+        "type": "object"
+      },
       "app__modules__reports__schemas__Kpis": {
         "properties": {
           "analysis_pending": {
@@ -33783,6 +35278,25 @@
         "title": "SettingsOut",
         "type": "object"
       },
+      "app__modules__safety__history__PointIn": {
+        "additionalProperties": false,
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "location": {
+            "$ref": "#/components/schemas/LocationIn"
+          }
+        },
+        "required": [
+          "location",
+          "at"
+        ],
+        "title": "PointIn",
+        "type": "object"
+      },
       "app__modules__safety__history__SearchOut": {
         "properties": {
           "enabled": {
@@ -33939,7 +35453,7 @@
           "position": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/PointOut"
+                "$ref": "#/components/schemas/app__modules__safety__router__PointOut"
               },
               {
                 "type": "null"
@@ -34066,6 +35580,42 @@
           "expires_at"
         ],
         "title": "InvitationPreview",
+        "type": "object"
+      },
+      "app__modules__safety__router__PointOut": {
+        "properties": {
+          "accuracy_m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Accuracy M"
+          },
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "lat": {
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "title": "Lon",
+            "type": "number"
+          }
+        },
+        "required": [
+          "lat",
+          "lon",
+          "accuracy_m",
+          "at"
+        ],
+        "title": "PointOut",
         "type": "object"
       },
       "app__modules__safety__router__PositionIn": {
@@ -52041,7 +53591,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ImportOut"
+                  "$ref": "#/components/schemas/app__modules__layers__schemas__ImportOut"
                 }
               }
             },
@@ -52099,7 +53649,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ImportOut"
+                  "$ref": "#/components/schemas/app__modules__layers__schemas__ImportOut"
                 }
               }
             },
@@ -52167,7 +53717,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ImportOut"
+                  "$ref": "#/components/schemas/app__modules__layers__schemas__ImportOut"
                 }
               }
             },
@@ -52490,7 +54040,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RevisionsOut"
+                  "$ref": "#/components/schemas/app__modules__layers__schemas__RevisionsOut"
                 }
               }
             },
@@ -55821,6 +57371,855 @@
         "summary": "Schedule Request",
         "tags": [
           "staff-institutions"
+        ]
+      }
+    },
+    "/api/v1/staff/programmes": {
+      "get": {
+        "operationId": "list_programmes_api_v1_staff_programmes_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgrammesOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Programmes",
+        "tags": [
+          "staff",
+          "programmes"
+        ]
+      },
+      "post": {
+        "operationId": "create_programme_api_v1_staff_programmes_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgrammeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgrammeDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Programme",
+        "tags": [
+          "staff",
+          "programmes"
+        ]
+      }
+    },
+    "/api/v1/staff/programmes/imports": {
+      "post": {
+        "description": "The file (xlsx template, CSV of points or JSON) is the request body. Without ``apply`` nothing is saved: the\nanswer lists the errors, the warnings (totals that do not add up, points without a position) and, for a\nprogramme already in the system, what the file changes. With ``apply`` the new programmes are saved as drafts and\nan existing one gets a new version with the file's points.",
+        "operationId": "import_programmes_api_v1_staff_programmes_imports_post",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "file_name",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 1,
+              "title": "File Name",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "apply",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Apply",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "reason",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 500,
+              "title": "Reason",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__programmes__schemas__ImportOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Import Programmes",
+        "tags": [
+          "staff",
+          "programmes"
+        ]
+      }
+    },
+    "/api/v1/staff/programmes/{programme_id}": {
+      "delete": {
+        "description": "A draft is deleted; an approved programme is cancelled instead (its versions stay).",
+        "operationId": "delete_programme_api_v1_staff_programmes__programme_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "programme_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Programme Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Programme",
+        "tags": [
+          "staff",
+          "programmes"
+        ]
+      },
+      "get": {
+        "operationId": "get_programme_api_v1_staff_programmes__programme_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "programme_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Programme Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgrammeDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Programme",
+        "tags": [
+          "staff",
+          "programmes"
+        ]
+      },
+      "patch": {
+        "operationId": "update_programme_api_v1_staff_programmes__programme_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "programme_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Programme Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgrammePatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgrammeDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Programme",
+        "tags": [
+          "staff",
+          "programmes"
+        ]
+      }
+    },
+    "/api/v1/staff/programmes/{programme_id}/approve": {
+      "post": {
+        "operationId": "approve_api_v1_staff_programmes__programme_id__approve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "programme_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Programme Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__programmes__schemas__ReasonIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgrammeDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Approve",
+        "tags": [
+          "staff",
+          "programmes"
+        ]
+      }
+    },
+    "/api/v1/staff/programmes/{programme_id}/cancel": {
+      "post": {
+        "operationId": "cancel_api_v1_staff_programmes__programme_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "programme_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Programme Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__programmes__schemas__ReasonIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgrammeDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Cancel",
+        "tags": [
+          "staff",
+          "programmes"
+        ]
+      }
+    },
+    "/api/v1/staff/programmes/{programme_id}/copy": {
+      "post": {
+        "description": "\"Copy last year's programme\": a new draft with the same points, opened, without this year's counts.",
+        "operationId": "copy_programme_api_v1_staff_programmes__programme_id__copy_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "programme_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Programme Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CopyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgrammeDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Copy Programme",
+        "tags": [
+          "staff",
+          "programmes"
+        ]
+      }
+    },
+    "/api/v1/staff/programmes/{programme_id}/points": {
+      "post": {
+        "operationId": "add_point_api_v1_staff_programmes__programme_id__points_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "programme_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Programme Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__programmes__schemas__PointIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgrammeDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Add Point",
+        "tags": [
+          "staff",
+          "programmes"
+        ]
+      }
+    },
+    "/api/v1/staff/programmes/{programme_id}/points/{point_id}": {
+      "delete": {
+        "description": "A point of a draft is deleted; a point of an approved programme is closed instead (a new version).",
+        "operationId": "delete_point_api_v1_staff_programmes__programme_id__points__point_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "programme_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Programme Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "point_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Point Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgrammeDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Point",
+        "tags": [
+          "staff",
+          "programmes"
+        ]
+      },
+      "patch": {
+        "operationId": "update_point_api_v1_staff_programmes__programme_id__points__point_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "programme_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Programme Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "point_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Point Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PointPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgrammeDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Point",
+        "tags": [
+          "staff",
+          "programmes"
+        ]
+      }
+    },
+    "/api/v1/staff/programmes/{programme_id}/revisions": {
+      "get": {
+        "operationId": "list_revisions_api_v1_staff_programmes__programme_id__revisions_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "programme_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Programme Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__programmes__schemas__RevisionsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Revisions",
+        "tags": [
+          "staff",
+          "programmes"
+        ]
+      }
+    },
+    "/api/v1/staff/programmes/{programme_id}/revisions/{number}/diff": {
+      "get": {
+        "description": "What version ``number`` changed compared with ``against`` (the version before it by default).",
+        "operationId": "revision_diff_api_v1_staff_programmes__programme_id__revisions__number__diff_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "programme_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Programme Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "number",
+            "required": true,
+            "schema": {
+              "title": "Number",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "against",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Against"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiffOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Revision Diff",
+        "tags": [
+          "staff",
+          "programmes"
+        ]
+      }
+    },
+    "/api/v1/staff/programmes/{programme_id}/revisions/{number}/restore": {
+      "post": {
+        "description": "Back to a version: its dates, title and points (a new version; the status does not go back).",
+        "operationId": "restore_revision_api_v1_staff_programmes__programme_id__revisions__number__restore_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "programme_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Programme Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "number",
+            "required": true,
+            "schema": {
+              "title": "Number",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__programmes__schemas__ReasonIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgrammeDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Restore Revision",
+        "tags": [
+          "staff",
+          "programmes"
         ]
       }
     },

@@ -17,6 +17,7 @@ import { directionOf } from "../i18n";
 import { errorMessageKey } from "../lib/api";
 import { useFormat, useGouvernorats, useLanguage } from "../lib/hooks";
 import { LAYER_ICON_PATHS } from "../lib/layers";
+import type { BBox } from "../lib/filters";
 import { initialBoundsFor } from "../lib/mapStyle";
 import { reasonValid } from "../lib/phase9";
 import {
@@ -935,7 +936,17 @@ export function ProgrammeDetailPage() {
   const live = LIVE.includes(p.status);
   const gaps = totalGaps(p.declared, d.computed);
   const c = coverage(f.lifeguards_planned, f.lifeguards_deployed);
-  const kpis: [string, string][] = [
+  const located = d.points.filter((pt) => pt.lat !== null && pt.lon !== null);
+  // The map opens on the programme's points (the user moves it from there).
+  const mapBounds: BBox = located.length
+    ? [
+        Math.min(...located.map((pt) => pt.lon as number)) - 0.3,
+        Math.min(...located.map((pt) => pt.lat as number)) - 0.3,
+        Math.max(...located.map((pt) => pt.lon as number)) + 0.3,
+        Math.max(...located.map((pt) => pt.lat as number)) + 0.3,
+      ]
+    : bounds;
+  const kpis: [string, string, string?][] = [
     ["points", fmt.number(f.points)],
     ["open", fmt.number(f.open)],
     ["unlocated", fmt.number(f.unlocated)],
@@ -943,7 +954,8 @@ export function ProgrammeDetailPage() {
     ["staff", fmt.number(f.staff)],
     [
       "coverage",
-      c === null ? "—" : `${fmt.percent(c)} (${fmt.number(f.lifeguards_deployed)}/${fmt.number(f.lifeguards_planned)})`,
+      c === null ? "—" : fmt.percent(c),
+      c === null ? undefined : `${fmt.number(f.lifeguards_deployed)} / ${fmt.number(f.lifeguards_planned)}`,
     ],
   ];
   return (
@@ -984,10 +996,11 @@ export function ProgrammeDetailPage() {
       )}
       {p.status === "approved" && !p.live && <p className="alert alert--info">{t("programmes.waitingDates")}</p>}
       <dl className="kpis" aria-label={t("programmes.figures.label")}>
-        {kpis.map(([k, v]) => (
+        {kpis.map(([k, v, sub]) => (
           <div className="kpi" key={k}>
             <dt className="kpi__label">{t(`programmes.figures.${k}`)}</dt>
             <dd className="kpi__value">{v}</dd>
+            {sub && <dd className="muted">{sub}</dd>}
           </div>
         ))}
       </dl>
@@ -1052,7 +1065,7 @@ export function ProgrammeDetailPage() {
         <LazyMapView
           className="map programme-map"
           markers={[]}
-          bounds={bounds}
+          bounds={mapBounds}
           ariaLabel={t("programmes.points.map")}
           styleUrl={mapStyleUrl}
           dir={directionOf(lang)}

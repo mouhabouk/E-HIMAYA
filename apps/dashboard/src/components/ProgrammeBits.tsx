@@ -76,6 +76,16 @@ function shown(value: unknown): string {
   return JSON.stringify(value);
 }
 
+/** A value of the diff in words: point statuses are translated, the rest is shown as it is. */
+function valueText(t: (k: string, o?: Record<string, unknown>) => string, field: string, value: unknown): string {
+  if (field === "status" && typeof value === "string")
+    return t(`programmes.pointStatus.${value}`, { defaultValue: value });
+  if (field === "geo_confidence" && typeof value === "string") {
+    return t(`programmes.confidence.${value}`, { defaultValue: value });
+  }
+  return shown(value);
+}
+
 function fieldLabel(t: (k: string, o?: Record<string, unknown>) => string, field: string): string {
   return t(`programmes.field.${field}`, { defaultValue: field });
 }
@@ -101,8 +111,8 @@ export function DiffView({ diff }: { diff: ProgrammeDiff }) {
         <ul className="programme-diff__list">
           {programme.map(([field, [before, after]]) => (
             <li key={field}>
-              <strong>{fieldLabel(t, field)}</strong>: <del dir="auto">{shown(before)}</del> →{" "}
-              <ins dir="auto">{shown(after)}</ins>
+              <strong>{fieldLabel(t, field)}</strong>: <del dir="auto">{valueText(t, field, before)}</del> →{" "}
+              <ins dir="auto">{valueText(t, field, after)}</ins>
             </li>
           ))}
         </ul>
@@ -125,7 +135,10 @@ export function DiffView({ diff }: { diff: ProgrammeDiff }) {
             <li key={ref}>
               <span dir="ltr">{ref}</span>:{" "}
               {Object.entries(fields)
-                .map(([field, [before, after]]) => `${fieldLabel(t, field)} ${shown(before)} → ${shown(after)}`)
+                .map(
+                  ([field, [before, after]]) =>
+                    `${fieldLabel(t, field)} ${valueText(t, field, before)} → ${valueText(t, field, after)}`,
+                )
                 .join(t("common.listSeparator"))}
             </li>
           ))}

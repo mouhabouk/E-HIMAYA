@@ -5009,6 +5009,18 @@ button.nav-card:hover {
   block-size: 28rem;
 }
 
+.programmes-page :is(input:not([type="checkbox"], [type="file"], [type="radio"]), select),
+.programme-page :is(input:not([type="checkbox"], [type="file"], [type="radio"]), select) {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
+  min-block-size: 2.25rem;
+  max-inline-size: 100%;
+}
+
 .programme-locate {
   border: 1px solid var(--border);
   border-radius: var(--radius, 0.5rem);
