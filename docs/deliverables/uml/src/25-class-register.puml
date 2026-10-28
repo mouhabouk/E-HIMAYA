@@ -1,0 +1,67 @@
+@startuml
+!include style.iuml
+title Diagramme de classes : registre des plans et directives aux wilayas (L3b)
+class "Document" as Doc {
+  numéro REG-AAAA-NNNN, référence
+  type : plan | décision | note | circulaire |
+  instruction permanente | temporaire | ...
+  niveau : central | régional, wilaya
+  émetteur, signataire, titre, résumé, texte
+  thèmes, émis_le, en_vigueur_du, au
+  statut : brouillon | en vigueur | expiré | abrogé
+  accès : tous | wilaya | commandement | restreint
+  fichier, empreinte SHA-256
+  source : saisi | axe
+}
+class "Recommandation" as Rec {
+  rang, texte, entité concernée
+  échéance, statut, en retard
+}
+class "Lien" as Lien {
+  relation : abroge | modifie | complète
+}
+class "Révision" as Rev {
+  version, motif, différences
+}
+class "Envoi" as Dsp {
+  numéro DIR- ou NOT-AAAA-NNNN
+  type : directive | notification
+  audience : tous | ciblée | centre
+  wilaya d'origine : notification
+  urgence : normale | urgente | immédiate
+  objet, texte, thèmes
+  réponse requise, échéance
+  statut : ouvert | clos
+}
+class "Destinataire" as Tgt {
+  wilaya, vu_le, répondu_le, réponses
+}
+class "Réponse" as Rep {
+  wilaya du fil, côté : centre | régional
+  texte, auteur, date
+}
+class "PièceJointe" as Att {
+  wilaya du fil, nom, type vérifié
+  taille, SHA-256
+}
+class "Axe" as Axe
+class "DécisionAxe" as DirAxe
+class "Incident" as Inc
+Doc "1" *-- "*" Rec
+Doc "1" *-- "*" Rev
+Doc "1" -- "*" Lien : source
+Lien "*" --> "1" Doc : cible
+Axe "*" --> "0..1" Doc : plan
+Doc "*" -- "*" Axe : documents de l'axe
+DirAxe "1" --> "0..1" Doc : consignée au registre
+Dsp "1" *-- "*" Tgt
+Dsp "1" *-- "*" Rep
+Dsp "1" *-- "*" Att
+Rep "1" o-- "*" Att
+Dsp "*" --> "0..1" Inc : événement
+Dsp "*" --> "0..1" Axe
+note bottom of Rep
+  RLS : une wilaya ne voit que son fil ;
+  la salle centrale voit tous les fils.
+end note
+@enduml

@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ء-حماية | تقرير المرحلة L3b</title>
+<style>
+:root{--bg:#f7f8fa;--paper:#fff;--ink:#1b2430;--muted:#5b6675;--line:#dfe3e8;--accent:#b3261e;--accent2:#0b5cad;--ok:#1e7d3a;--warn:#a15c00;--chip:#eef1f5;--head:#f1f3f6;--navy:#1f3d99;--orange:#e07b00}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1318;--paper:#161b22;--ink:#e6eaef;--muted:#9aa5b1;--line:#2a313b;--accent:#ff6b5e;--accent2:#5aa9ff;--ok:#5cc97a;--warn:#e0a24a;--chip:#1f2630;--head:#1c222b;--navy:#8fa8ff;--orange:#ffb35c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Naskh Arabic","Segoe UI",Tahoma,Arial,sans-serif;line-height:1.75;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header.cover{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:10px;padding:28px 24px;margin-bottom:20px}
+header.cover h1{margin:0 0 6px;font-size:30px}
+header.cover .sub{color:var(--muted);margin:0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:16px}
+.meta div{background:var(--chip);border-radius:6px;padding:8px 12px;font-size:14px}
+.meta b{display:block;color:var(--muted);font-weight:600;font-size:12px}
+a{color:var(--accent2);text-decoration:none}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:20px}
+h2{margin-top:0;font-size:23px;border-bottom:2px solid var(--line);padding-bottom:8px}
+h3{font-size:18px;margin:18px 0 8px}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:start;vertical-align:top}
+th{background:var(--head);font-weight:700;white-space:nowrap}
+code{direction:ltr;unicode-bidi:isolate;background:var(--chip);padding:1px 5px;border-radius:4px;font-size:13px}
+pre{direction:ltr;text-align:left;background:var(--chip);padding:10px 12px;border-radius:6px;overflow-x:auto;font-size:13px;margin:6px 0}
+.note{border-inline-start:4px solid var(--accent2);background:var(--chip);padding:10px 14px;border-radius:6px;margin:12px 0}
+.warn{border-inline-start:4px solid var(--warn)}
+.sim{display:inline-block;background:#ffb300;color:#1f1300;font-weight:700;font-size:12px;padding:1px 8px;border-radius:999px;margin-inline-end:6px}
+.simbox{border:2px dashed #ffb300;background:rgba(255,179,0,.10);border-radius:8px;padding:12px 16px;margin:12px 0}
+.ltr{direction:ltr;unicode-bidi:isolate}
+ul,ol{padding-inline-start:22px}
+.bar{height:10px;background:var(--chip);border-radius:6px;overflow:hidden;min-width:90px}
+.bar span{display:block;height:100%;background:var(--ok)}
+.pipeline{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0}
+.pipeline div{border:1px solid var(--line);border-radius:8px;padding:6px 12px;background:var(--chip);font-weight:600}
+.pipeline div.now{border-color:var(--accent);background:rgba(179,38,30,.08)}
+.pipeline i{color:var(--muted);font-style:normal}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--paper)}
+.card h3{margin:0 0 4px;font-size:17px}
+.card .v{color:var(--muted);font-size:13px;margin:0 0 6px}
+.card dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:6px 0;font-size:14px}
+.card dt{color:var(--muted);font-weight:600}
+.card dd{margin:0}
+.prio{display:inline-block;border-radius:999px;padding:0 8px;font-size:12px;font-weight:700;color:#fff}
+.p1{background:#b3261e}.p2{background:#a15c00}.p3{background:#0b5cad}.p4{background:#5b6675}
+footer{color:var(--muted);text-align:center;font-size:13px}
+@media print{body{background:#fff}section,header.cover,.card{border:none;break-inside:avoid-page}}
+</style>
+<body>
+<div class="wrap">
+<header class="cover">
+  <h1>ء-حماية <span class="ltr">e-Himaya</span></h1>
+  <p class="sub">تقرير المرحلة L3b: سجل المخططات والتوصيات مركزيا وجهويا، والتوجيهات والردود والإشعارات الفورية بين المركزي والجهات</p>
+  <div class="meta">
+    <div><b>التاريخ</b>2026-10-28</div>
+    <div><b>الفرع</b><span class="ltr">claude/project-thread-yzwsn2</span></div>
+    <div><b>الحالة</b>منجزة، تُرفع مع L3 بعد دمج #111</div>
+    <div><b>المراجع</b><a href="phase-l/design-l3b.md">التصميم</a> · <a href="versions.md">الإصدارات</a> · <a href="backlog.md">القائمة المؤجلة (§3.4)</a> · <a href="install-guide.md">دليل التنصيب</a></div>
+  </div>
+</header>
+
+<section>
+<h2>1. أين تقع هذه المرحلة من مسار المشروع</h2>
+<div class="pipeline">
+  <div>التبليغ</div><i>←</i>
+  <div class="now">المعالجة</div><i>←</i>
+  <div>التحليل</div><i>←</i>
+  <div>مؤشرات الأداء KPI</div><i>←</i>
+  <div>التنبؤ بالذكاء الاصطناعي</div><i>←</i>
+  <div class="now">اتخاذ القرار</div>
+</div>
+<ul>
+  <li><b>اتخاذ القرار</b>: كل مخطط وقرار ومنشور وتعليمة دائمة أو وقتية وتوصية في سجل واحد، يُعرف منه ما هو نافذ اليوم وما أُلغي وبأي وثيقة، وتُتابع فيه أهم التوصيات بآجالها؛ ومخطط كل محور أزمة يُختار منه.</li>
+  <li><b>المعالجة</b>: التوجيه يخرج من القاعة المركزية إلى ولاية أو أكثر أو إلى الكل، وترد كل ولاية في خيطها بنص أو ملفات، وترفع القاعة الجهوية إشعارا فوريا عن حدث.</li>
+</ul>
+</section>
+
+<section>
+<h2>2. مراجعة ← تصميم ← تطوير</h2>
+<div class="note"><b>الطلب:</b> محور «المخططات وأهم التوصيات مركزيا وجهويا»: تدوين كل الوثائق والمخططات والقرارات والمذكرات والتعليمات الدائمة والوقتية، مع بحث متقدم (الموضوع، الفترة، وغيرهما)، وربط حقل «المخطط» في المحور بوثيقة من السجل. ثم التوجيهات من المركزي نحو الجهوي، خاصة لا تطّلع عليها إلا الولاية المعنية أو عامة للكل، والردود أو الإشعار الفوري من القاعة الجهوية؛ الردود تطّلع عليها الولاية الصادرة دون سواها، والقاعة المركزية على كل الردود؛ بنص أو بملفات Office أو PDF أو غيرها.</div>
+<div class="note warn"><b>الأمن:</b> خيط كل ولاية (ردودها ومرفقاتها) محمي بأمن مستوى الصفوف في قاعدة البيانات، لا في الواجهة فقط؛ والتوجيه الخاص لا يظهر لغير الولايات المعنية. نوع كل ملف يُتحقق منه بمحتواه لا باسمه، وكل تحميل برابط مؤقت مسجَّل في سجل التدقيق. الوثيقة النافذة لا تُعدَّل إلا بسبب يُحفظ في نسخها، ولا يُحذف إلا ما كان مسودة.</div>
+<ol>
+  <li><b>الوثيقة</b>: رقم <code>REG-2026-0027</code>، مرجع رسمي، نوع (مخطط، قرار، مذكرة، منشور، تعليمة دائمة أو وقتية، توصية، محضر، أخرى)، مستوى مركزي أو جهوي بولايته، جهة مصدرة وموقّع، تواريخ الإصدار والنفاذ والانتهاء، مواضيع، ملخص ونص، الملف الأصلي وبصمته، ودرجة اطّلاع (الكل، الولاية، القيادة، مقيّد).</li>
+  <li><b>الحالات</b>: مسودة، نافذة، منتهية آليا بتاريخها، ملغاة بسبب أو بوثيقة تلغيها؛ والصلات «تلغي، تعدّل، تكمّل» تظهر في الاتجاهين.</li>
+  <li><b>التدوين الآلي</b>: القرار أو التوصية الموقّعة في محور أزمة تدخل السجل نافذة، بعنوان يقول ما قُرّر ومرجع المحور ورتبة القرار.</li>
+  <li><b>البحث</b>: بالكلمات مع مقتطف، والترتيب، والولاية والموضوع والجهة المصدرة والفترة على حقل تاريخ يُختار، و«نافذ في تاريخ»، و«بملف»، مع عدّادات الحالة والمستوى والنوع.</li>
+  <li><b>المراسلة</b>: توجيه <code>DIR-2026-0042</code> عام (يتوسع إلى 24 ولاية) أو خاص بولايات، أو إشعار فوري <code>NOT-2026-0019</code> من قاعة جهوية إلى المركزي؛ أولوية عادية أو عاجلة أو فورية، رد مطلوب بأجل أو للعلم، صلة اختيارية بحادث أو محور، حتى 10 مرفقات بـ 20 م.ب.</li>
+  <li><b>المتابعة</b>: من اطّلع ومتى، ومن ردّ وكم مرة، والمتأخر عن الأجل؛ والمركزي يراسل ولاية لم ترد بعد، ويغلق المراسلة.</li>
+  <li><b>الواجهات</b>: <code>/register</code> و <code>/register/:id</code> و <code>/register/dispatches</code> و <code>/register/dispatches/:id</code>، وتبويب «الوثائق» في المحور، وتبويب «المخططات والتوصيات» في لوحتي الوالي والوزير.</li>
+</ol>
+</section>
+
+<section>
+<h2>3. لقطات <span class="sim">[SIM]</span></h2>
+<p>السجل والبحث المتقدم بعدّاداته، الوضع النهاري ثم الليلي:</p>
+<div style="display:flex;flex-direction:column;gap:12px;align-items:center">
+  <img src="phase-l/l3b-register-day.png" alt="السجل، الوضع النهاري" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-l/l3b-register-night.png" alt="السجل، الوضع الليلي" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+</div>
+
+<p>بطاقة المخطط الجهوي للنجدة عند الفيضانات بنابل: الملف وبصمته، أهم التوصيات بآجالها والمتأخر منها، الصلات بالوثائق، والمحور المرتبط:</p>
+<div style="display:flex;flex-direction:column;gap:12px;align-items:center">
+  <img src="phase-l/l3b-document-day.png" alt="بطاقة الوثيقة، الوضع النهاري" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-l/l3b-document-night.png" alt="بطاقة الوثيقة، الوضع الليلي" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+</div>
+
+<p>تدوين وثيقة جديدة:</p>
+<div style="display:flex;flex-direction:column;gap:12px;align-items:center">
+  <img src="phase-l/l3b-new-document-day.png" alt="تدوين وثيقة" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+</div>
+
+<p>التوجيهات والردود عند القاعة المركزية، وتحرير توجيه خاص بولاية نابل:</p>
+<div style="display:flex;flex-direction:column;gap:12px;align-items:center">
+  <img src="phase-l/l3b-dispatches-centre-day.png" alt="الوارد والصادر" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-l/l3b-new-directive-night.png" alt="تحرير توجيه خاص" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+</div>
+
+<p>التوجيه العام نفسه: عند القاعة المركزية جدول المتابعة وخيط لكل ولاية؛ وعند ولاية نابل خيطها وحده:</p>
+<div style="display:flex;flex-direction:column;gap:12px;align-items:center">
+  <img src="phase-l/l3b-dispatch-centre-night.png" alt="التوجيه كما تراه القاعة المركزية" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-l/l3b-dispatch-nabeul-day.png" alt="التوجيه كما تراه ولاية نابل" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+</div>
+
+<p>تبويب المخططات والتوصيات في لوحة الوالي، ووثائق المحور ومخططه:</p>
+<div style="display:flex;flex-direction:column;gap:12px;align-items:center">
+  <img src="phase-l/l3b-governor-plans-night.png" alt="لوحة الوالي، تبويب المخططات" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-l/l3b-axis-documents-day.png" alt="وثائق المحور" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+</div>
+
+</section>
+
+<section>
+<h2>4. التقدم لكل جزء</h2>
+<div class="tbl"><table>
+<tr><th>البند</th><th>الحالة</th><th>التقدم</th></tr>
+<tr><td>F-DSH-63 السجل والبحث المتقدم</td><td>منجز (L3b)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-DSH-64 بطاقة الوثيقة والتوصيات والصلات، ومخطط المحور</td><td>منجز (L3b)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-DSH-65 التوجيهات والردود والإشعارات</td><td>منجز (L3b)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-SRV-20 السجل: الترقيم والحالات والاطّلاع والبحث والملفات والنسخ</td><td>منجز (L3b)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-SRV-21 المراسلات: الخيوط الخاصة و RLS والمرفقات والمتابعة</td><td>منجز (L3b)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>استخراج نص الملفات للبحث</td><td>مؤجل (G1)</td><td><div class="bar"><span style="width:0%"></span></div></td></tr>
+<tr><td>معاينة ملفات Office داخل المنصة</td><td>مؤجل (G4)</td><td><div class="bar"><span style="width:0%"></span></div></td></tr>
+</table></div>
+<p><b>تقدم L3b: 100%. التالي: القائمة الرئيسية (UI-3)، ثم L4 و L5.</b></p>
+</section>
+
+<section>
+<h2>5. المحاكاة <span class="sim">[SIM]</span></h2>
+<div class="simbox"><ul>
+  <li><span class="sim">[SIM]</span> الوثائق والتوجيهات والردود في اللقطات والاختبارات مختلَقة (المخطط الجهوي لنابل، منشور الاستعداد لموسم الأمطار، تعليمة منع السباحة، قرار محور فيضانات نابل، توجيه جرد وسائل الضخ، إشعار انهيار جسر وادي الشيوخ). كلها تحمل الشارة، والعلامة لا تظهر في العناوين والنصوص بل في الشارة وحدها.</li>
+  <li>اللقطات بواجهة برمجية محاكاة؛ أسماء الولايات حقيقية.</li>
+</ul></div>
+</section>
+
+<section>
+<h2>6. الاختبارات المطبقة</h2>
+<div class="tbl"><table>
+<tr><th>المكوّن</th><th>العدد</th><th>النتيجة</th></tr>
+<tr><td>الخلفية (pytest)</td><td>942، منها <code>test_register.py</code> (13)</td><td>ناجحة (2 متخطّاة كالعادة؛ <code>test_forecasts_need_weather</code> فشل مرة في التشغيل الكامل ونجح وحده، وهو سابق لهذه المرحلة)</td></tr>
+<tr><td>الترحيلات</td><td>صعودا ونزولا ثم صعودا حتى 0057</td><td>ناجحة</td></tr>
+<tr><td>لوحة القيادة (vitest)</td><td>517، منها <code>Register.test.tsx</code> (12)</td><td>كلها ناجحة</td></tr>
+<tr><td>لوحة القيادة (Playwright مع axe)</td><td>56، منها <code>/register</code> و <code>/register/:id</code> و <code>/register/dispatches</code> و <code>/register/dispatches/:id</code></td><td>كلها ناجحة</td></tr>
+<tr><td><code>ruff</code> و <code>mypy</code> و <code>eslint</code> و <code>tsc</code>، و OpenAPI و ERD بـ <code>--check</code></td><td>—</td><td>لا ملاحظة</td></tr>
+</table></div>
+<ul>
+  <li>العزل: توجيه عام لكل الولايات، ترد نابل وسوسة، فلا ترى أي منهما رد الأخرى، والمركزي يرى الخيطين وأن ولايتين من 24 ردّتا؛ ومرفق رد نابل لا تستطيع سوسة تحميله (404).</li>
+  <li>التوجيه الخاص بولاية لا يظهر لغيرها؛ والإشعار الفوري من قاعة جهوية يصل المركزي وحده.</li>
+  <li>الملفات: PDF و PNG و JPEG و Office و OpenDocument والنص مقبولة بمحتواها، والملف المتنكّر باسم مزيّف مرفوض (415)؛ حد العشرة ملفات.</li>
+  <li>السجل: الحالات والانتقالات، الإلغاء بوثيقة، الانتهاء الآلي، النسخ بالسبب، درجات الاطّلاع، البحث بالمقتطف، والتدوين الآلي لقرار المحور.</li>
+</ul>
+</section>
+
+<section id="tools">
+<h2>7. التقنيات والأدوات والمصادر والإصدارات</h2>
+<p>لا حزمة جديدة ولا خدمة ولا إعداد جديد. القائمة الكاملة في <a href="versions.md">versions.md</a>.</p>
+<div class="cards">
+<div class="card"><h3>ترحيل قاعدة البيانات</h3><p class="v">0057 · <span class="prio p1">1</span></p>
+<dl><dt>الاستعمال</dt><dd>المخطط <code>register</code> مع RLS لخيط كل ولاية</dd><dt>الأمر</dt><dd><code>alembic upgrade head</code></dd></dl></div>
+<div class="card"><h3>التخزين</h3><p class="v">مستودع الكائنات الموجود · <span class="prio p2">2</span></p>
+<dl><dt>الملفات</dt><dd>حتى 20 م.ب، ببصمة SHA-256</dd><dt>التحميل</dt><dd>رابط مؤقت مسجَّل</dd></dl></div>
+<div class="card"><h3>الواجهة البرمجية</h3><p class="v">431 مسارا · 517 عملية · <span class="prio p2">2</span></p>
+<dl><dt>الجديد</dt><dd><code>/api/v1/staff/register</code>: الوثائق، الملفات، التوصيات، الصلات، النسخ، المراسلات، الردود، المرفقات</dd></dl></div>
+<div class="card"><h3>تطبيق الهاتف</h3><p class="v">0.22.0 دون تغيير · <span class="prio p4">4</span></p>
+<dl><dt>الأثر</dt><dd>لا شيء؛ السجل والتوجيهات في اللوحة</dd></dl></div>
+</div>
+</section>
+
+<section>
+<h2>8. المخرجات المحيَّنة</h2>
+<ul>
+  <li>الملف الوصفي V20 (docx و pdf) في <code>spec/</code>: F-DSH-63 إلى 65 و F-SRV-20 و 21 منجزة، القاعدة BR-07c، 431 مسارا و517 عملية، الاختبارات، و L3b و UI-3 في خارطة الطريق، ومصطلحات السجل والتوجيه والإشعار الفوري.</li>
+  <li>مخططات UML في <code>diagrams/</code>: أصناف السجل والتوجيهات (25)، تسلسل «التوجيه العام وخيوط الردود الخاصة والإشعار الفوري» (59)، حالات الوثيقة والتوصية والمراسلة (60)، وحالات الاستعمال S38 إلى S43 و U16.</li>
+  <li>العرض للمسؤولين في <code>presentation/</code>: 35 مرحلة، الاختبارات، وخارطة الطريق.</li>
+  <li>مرجع التصميم مُعاد توليده: <a href="design-reference.html">design-reference.html</a>.</li>
+  <li>سجل الإصدارات، القائمة المؤجلة (§3.4)، ودليلا التنصيب (الترحيل 0057)، واللقطات في <code>screens/l3b/</code>.</li>
+</ul>
+</section>
+
+<section>
+<h2>9. ملاحظات وانحرافات</h2>
+<ul>
+  <li>«توجيهات اللجنتين» القائمة منذ المرحلة 5 بقيت كما هي؛ المراسلات الجديدة بين القاعات، بخيوط وملفات.</li>
+  <li>نص الملفات المرفقة لا يُستخرج آليا: الملخص والنص المهم يُكتبان في البطاقة، والبحث يجري عليهما (G1).</li>
+  <li>عنوان قرار المحور في السجل صار «اسم المحور: ما قُرّر» بدل تكرار المرجع.</li>
+</ul>
+</section>
+
+<section>
+<h2>10. ما يلي</h2>
+<p>دمج #111 (L2)، ثم رفع L3 و L3b في طلب دمج جديد. بعدها القائمة الرئيسية الجديدة (UI-3): مجمّعة أو مسطّحة، أعلى الصفحة أو يمينها أو يسارها باختيار المستخدم، ثم L4 (نافذة أصحاب القرار والروزنامة) و L5.</p>
+</section>
+</div>
+</body>
+</html>

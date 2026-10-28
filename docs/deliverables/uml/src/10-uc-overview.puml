@@ -31,6 +31,7 @@ rectangle "e-Himaya" {
   usecase "Publier alertes\net contenus" as U13
   usecase "Administrer comptes,\nparamètres et audit" as U14
   usecase "Conduire un axe de catastrophe\net décider (signé, L3)" as U15
+  usecase "Registre des plans et\ndirectives aux wilayas (L3b)" as U16
 }
 ANO --> U1
 ANO --> U2
@@ -47,5 +48,7 @@ COM --> U12
 COM --> U13
 OPS --> U15
 GM --> U15
+OPS --> U16
+GM --> U16
 ADM --> U14
 @enduml
