@@ -537,7 +537,9 @@
     "task_deleted": "This task was removed from the list.",
     "model_changed": "The model or its thresholds changed since the page was opened. Reload and read the card again.",
     "model_not_found": "Unknown model.",
-    "model_not_trained": "This model has no trained version yet."
+    "model_not_trained": "This model has no trained version yet.",
+    "suggestion_gone": "This suggestion no longer stands: it changed, or was accepted or set aside. Reload the programme.",
+    "suggestions_off": "Suggested activities are switched off in the AI settings."
   },
   "kpi": {
     "title": "Key indicators",
@@ -999,9 +1001,10 @@
       "summary": "Correct the highlighted fields before saving."
     },
     "assist": {
-      "title": "Local model suggestions in operations",
+      "title": "AI suggestions in operations",
       "help": "Every suggestion is approved by a person and audited (AI-01). Switching it off blocks any new reading; what was already suggested stays, with its label.",
-      "planReading": "Reading the intervention plan into a suggested task list"
+      "planReading": "Reading the intervention plan into a suggested task list",
+      "programmeSuggestions": "Suggest activities in the programme from the forecast, the beaches and the history"
     }
   },
   "orgs": {
@@ -6330,6 +6333,22 @@
       "rename": "Rename",
       "delete": "Delete",
       "deleteOf": "Delete template {{name}}"
+    },
+    "suggest": {
+      "title": "Suggested activities",
+      "ai": "AI suggestion",
+      "notice": "Worked out from the weather forecast, the drowning risk of the beaches, the interventions of the same season and a recent rise. Nothing is added until you accept it; you then complete the activity and the programme is approved as usual.",
+      "simulated": "Simulation",
+      "accept": "Accept and add",
+      "dismiss": "Set aside",
+      "reason": "Reason (optional)",
+      "confirmDismiss": "Confirm",
+      "source": {
+        "weather": "Weather forecast",
+        "beaches": "Drowning risk of the beaches",
+        "season": "Same season in past years",
+        "rise": "Recent rise in interventions"
+      }
     }
   },
   "permissions": {

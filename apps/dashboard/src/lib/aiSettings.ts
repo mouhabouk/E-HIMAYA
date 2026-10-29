@@ -15,6 +15,7 @@ export interface AiSettingsForm {
   semantic_radius_m: string;
   semantic_window_min: string;
   plan_reading: boolean;
+  programme_suggestions: boolean;
 }
 
 export type FieldError =
@@ -59,6 +60,7 @@ export function toForm(s: AiSettings): AiSettingsForm {
     semantic_radius_m: str(s.grouping.semantic_radius_m),
     semantic_window_min: str(s.grouping.semantic_window_min),
     plan_reading: s.assist?.plan_reading ?? true,
+    programme_suggestions: s.assist?.programme_suggestions ?? true,
   };
 }
 
@@ -113,7 +115,7 @@ export function validateAiSettings(form: AiSettingsForm): { settings: AiSettings
       semantic_radius_m: check(form.semantic_radius_m, RULES.semantic_radius_m, "semantic_radius_m", errors),
       semantic_window_min: check(form.semantic_window_min, RULES.semantic_window_min, "semantic_window_min", errors),
     },
-    assist: { plan_reading: form.plan_reading },
+    assist: { plan_reading: form.plan_reading, programme_suggestions: form.programme_suggestions },
   };
   return { settings: Object.keys(errors).length === 0 ? settings : null, errors };
 }

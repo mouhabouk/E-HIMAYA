@@ -537,7 +537,9 @@
     "task_deleted": "Cette tâche a été retirée de la liste.",
     "model_changed": "Le modèle ou ses seuils ont changé depuis l'ouverture de la page. Rechargez et relisez la fiche.",
     "model_not_found": "Modèle inconnu.",
-    "model_not_trained": "Ce modèle n'a pas encore de version entraînée."
+    "model_not_trained": "Ce modèle n'a pas encore de version entraînée.",
+    "suggestion_gone": "Cette suggestion n'existe plus : elle a changé, ou a été acceptée ou écartée. Rechargez le programme.",
+    "suggestions_off": "Les activités suggérées sont désactivées dans les réglages de l'IA."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -999,9 +1001,10 @@
       "summary": "Corrigez les champs signalés avant d’enregistrer."
     },
     "assist": {
-      "title": "Suggestions du modèle local dans les opérations",
+      "title": "Suggestions de l'IA dans les opérations",
       "help": "Chaque suggestion est validée par une personne et journalisée (AI-01). La désactiver bloque toute nouvelle lecture ; ce qui a déjà été suggéré reste, avec son étiquette.",
-      "planReading": "Lecture du plan d'intervention et liste de tâches proposée"
+      "planReading": "Lecture du plan d'intervention et liste de tâches proposée",
+      "programmeSuggestions": "Suggérer des activités dans le programme à partir des prévisions, des plages et de l'historique"
     }
   },
   "orgs": {
@@ -6330,6 +6333,22 @@
       "rename": "Renommer",
       "delete": "Supprimer",
       "deleteOf": "Supprimer le modèle {{name}}"
+    },
+    "suggest": {
+      "title": "Activités suggérées",
+      "ai": "Suggestion de l'IA",
+      "notice": "Calculées à partir des prévisions météo, du risque de noyade des plages, des interventions de la même saison et d'une hausse récente. Rien n'est ajouté sans votre accord ; vous complétez ensuite l'activité et le programme est approuvé comme d'habitude.",
+      "simulated": "Simulation",
+      "accept": "Accepter et ajouter",
+      "dismiss": "Écarter",
+      "reason": "Motif (facultatif)",
+      "confirmDismiss": "Confirmer",
+      "source": {
+        "weather": "Prévisions météo",
+        "beaches": "Risque de noyade des plages",
+        "season": "Même saison les années passées",
+        "rise": "Hausse récente des interventions"
+      }
     }
   },
   "permissions": {

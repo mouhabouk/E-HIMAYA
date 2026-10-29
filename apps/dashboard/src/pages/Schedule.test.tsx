@@ -72,6 +72,46 @@ describe("SchedulePage", () => {
     await waitFor(() => expect(api.periodStep).toHaveBeenLastCalledWith("per-nabeul-w44", "submit", 4, undefined));
   });
 
+  it("offers the suggested activities with their reasons, to accept or set aside (AI3)", async () => {
+    const api = fakeScheduleApi();
+    const draft = { ...SCHEDULE_DETAIL, period: { ...SCHEDULE_DETAIL.period, status: "draft" as const }, can_edit: true, can_submit: true, can_follow_up: false };
+    vi.mocked(api.scheduleSlot).mockResolvedValue({ ...SCHEDULE_SLOT, period: draft });
+    vi.mocked(api.scheduleSuggestions).mockResolvedValue({
+      enabled: true,
+      can_accept: true,
+      items: [
+        {
+          key: "fire_patrol:2026-10-27",
+          source: "weather",
+          activity: "patrol",
+          on_date: "2026-10-27",
+          title: "دورية مراقبة الغابات: خطر حرائق مرتفع جدا",
+          reasons: ["توقع خطر الحرائق مرتفع جدا يوم 2026-10-27 في 3 من 5 نقاط الطقس بالولاية."],
+          simulated: true,
+        },
+        {
+          key: "season:fire",
+          source: "season",
+          activity: "prevention_visit",
+          on_date: "2026-10-26",
+          title: "زيارات وقائية: موسم الحرائق",
+          reasons: ["6 تدخلا (الحرائق) في نفس الأيام خلال السنوات الثلاث الماضية، أي 2.4 مرة المعدل السنوي."],
+          simulated: false,
+        },
+      ],
+    });
+    renderApp(<SchedulePage />, { api: fakeApi(api), auth: fakeAuth(claims(["operator"], "21")), lang: "ar" });
+    const bar = within(await screen.findByRole("region", { name: /أنشطة مقترحة/ }));
+    expect(bar.getByText(/نقاط الطقس بالولاية/)).toBeInTheDocument();
+    expect(bar.getAllByText("اقتراح الذكاء الاصطناعي").length).toBeGreaterThan(0);
+    fireEvent.click(bar.getAllByRole("button", { name: "قبول وإضافته" })[0] as HTMLElement);
+    await waitFor(() => expect(api.acceptScheduleSuggestion).toHaveBeenCalledWith("per-nabeul-w44", "fire_patrol:2026-10-27", 4, "ar"));
+    fireEvent.click(bar.getAllByRole("button", { name: "تنحية" })[1] as HTMLElement);
+    fireEvent.change(bar.getByLabelText("السبب (اختياري)"), { target: { value: "زيارات مبرمجة سابقا" } });
+    fireEvent.click(bar.getByRole("button", { name: "تأكيد التنحية" }));
+    await waitFor(() => expect(api.dismissScheduleSuggestion).toHaveBeenCalledWith("per-nabeul-w44", "season:fire", "زيارات مبرمجة سابقا"));
+  });
+
   it("keeps a programme as a template and starts a new one from it", async () => {
     const api = fakeScheduleApi();
     vi.mocked(api.scheduleSlot).mockResolvedValue({ ...SCHEDULE_SLOT, period: null, can_create: true });

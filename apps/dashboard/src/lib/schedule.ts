@@ -89,7 +89,29 @@ export interface ScheduleItem {
   status_reason: string | null;
   status_by_name: string | null;
   status_at: string | null;
+  /** Accepted from a suggestion (AI3): it keeps the AI label. */
+  suggested?: boolean;
 }
+
+/** An activity the engine suggests for the days still ahead (AI3, design-l5.md §4.3); nothing is added until the
+ * room accepts it. */
+export interface ScheduleSuggestion {
+  key: string;
+  source: "weather" | "beaches" | "season" | "rise";
+  activity: Activity;
+  on_date: string;
+  title: string;
+  reasons: string[];
+  simulated: boolean;
+}
+
+export interface ScheduleSuggestions {
+  enabled: boolean;
+  can_accept: boolean;
+  items: ScheduleSuggestion[];
+}
+
+export const MAX_DISMISS_REASON = 300;
 
 export interface Period {
   id: string;
@@ -205,6 +227,7 @@ export const scheduleKeys = {
   settings: ["schedule", "settings"] as const,
   options: (g: number | null) => ["schedule", "options", g] as const,
   templates: (g: number | null, span: Span | null) => ["schedule", "templates", g, span] as const,
+  suggestions: (periodId: string, version: number, lang: string) => ["schedule", "suggestions", periodId, version, lang] as const,
 };
 
 // ---------------------------------------------------------------- calendar (dates as YYYY-MM-DD, no time zone)
@@ -303,6 +326,18 @@ export function scheduleApi(api: ApiClient) {
       api.request<PeriodDetail>(`${S}/periods/${enc(periodId)}/apply-template`, {
         method: "POST",
         body: { version, template_id: templateId },
+      }),
+    scheduleSuggestions: (periodId: string, lang: string, signal?: AbortSignal) =>
+      api.request<ScheduleSuggestions>(`${S}/periods/${enc(periodId)}/suggestions`, { signal, query: { lang } }),
+    acceptScheduleSuggestion: (periodId: string, key: string, version: number, lang: string) =>
+      api.request<PeriodDetail>(`${S}/periods/${enc(periodId)}/suggestions/${enc(key)}/accept`, {
+        method: "POST",
+        body: { version, lang },
+      }),
+    dismissScheduleSuggestion: (periodId: string, key: string, reason: string) =>
+      api.request<undefined>(`${S}/periods/${enc(periodId)}/suggestions/${enc(key)}/dismiss`, {
+        method: "POST",
+        body: { reason },
       }),
     scheduleOptions: (gouvernorat: number | null, signal?: AbortSignal) =>
       api.request<ScheduleOptions>(`${S}/options`, { signal, query: { gouvernorat } }),

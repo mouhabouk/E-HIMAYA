@@ -51,7 +51,7 @@ describe("AiSettingsPage", () => {
   });
 
   it("switches off the reading of the intervention plans (AI-01)", async () => {
-    const saved = { ...AI_SETTINGS, assist: { plan_reading: false } };
+    const saved = { ...AI_SETTINGS, assist: { plan_reading: false, programme_suggestions: true } };
     const { api } = setup({ saveAiSettings: vi.fn(() => Promise.resolve(saved)) });
     const toggle = await screen.findByRole("switch", { name: "Lecture du plan d'intervention et liste de tâches proposée" });
     expect(toggle).toBeChecked();

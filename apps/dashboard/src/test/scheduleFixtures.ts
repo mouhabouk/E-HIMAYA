@@ -29,5 +29,8 @@ export function fakeScheduleApi(): ReturnType<typeof scheduleApi> {
     deleteScheduleTemplate: vi.fn(() => Promise.resolve(undefined)),
     applyScheduleTemplate: vi.fn(() => Promise.resolve(SCHEDULE_DETAIL)),
     scheduleOptions: vi.fn(() => Promise.resolve(SCHEDULE_OPTIONS)),
+    scheduleSuggestions: vi.fn(() => Promise.resolve({ enabled: true, can_accept: false, items: [] })),
+    acceptScheduleSuggestion: vi.fn(() => Promise.resolve(SCHEDULE_DETAIL)),
+    dismissScheduleSuggestion: vi.fn(() => Promise.resolve(undefined)),
   };
 }

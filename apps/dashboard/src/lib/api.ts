@@ -361,6 +361,8 @@ export const ERROR_CODES = [
   "vehicle_not_in_unit",
   // L5 (AI2): the task list read from an intervention plan.
   "plan_reading_off",
+  "suggestion_gone",
+  "suggestions_off",
   "plan_not_offered",
   "checklist_approved",
   "reading_in_progress",

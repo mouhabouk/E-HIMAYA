@@ -7885,6 +7885,31 @@ button.nav-card:hover {
   margin: 0;
   flex-basis: 100%;
 }
+.sched-suggest {
+  margin-bottom: 12px;
+}
+.sched-suggest__list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+.sched-suggest__item {
+  border-block-start: 1px solid var(--border);
+  padding-block-start: 8px;
+}
+.sched-suggest__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+.sched-suggest__why {
+  margin: 4px 0 8px;
+  padding-inline-start: 20px;
+}
 .sched-start {
   margin-top: 12px;
   justify-content: center;
