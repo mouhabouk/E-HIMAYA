@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useId, useState, type SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router";
+import { AnomalyList } from "../components/AnomalyList";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { SimTag, SimulationBand } from "../components/StreamBits";
 import { WeatherAttributionLine } from "../components/WeatherLayer";
@@ -10,6 +11,7 @@ import { useLiveEvents } from "../context/live";
 import { useServices } from "../context/services";
 import { NEW_ALERT_PATH, prefillFromSuggestion } from "../lib/alertPrefill";
 import { errorMessageKey } from "../lib/api";
+import { anomalyKeys } from "../lib/anomalies";
 import { useFormat, useGouvernorats, useLanguage } from "../lib/hooks";
 import { p7Keys } from "../lib/phase7Api";
 import { canDraftMessage } from "../lib/roles";
@@ -331,6 +333,7 @@ function SuggestionCard({ suggestion, fresh }: { suggestion: WeatherSuggestion; 
 export function WeatherSuggestionsPage() {
   const { t } = useTranslation();
   const { api } = useServices();
+  const lang = useLanguage();
   const fmt = useFormat();
   const [fresh, setFresh] = useState<ReadonlySet<string>>(new Set());
   const [announce, setAnnounce] = useState("");
@@ -350,6 +353,11 @@ export function WeatherSuggestionsPage() {
       [t],
     ),
   );
+  const anomalies = useQuery({
+    queryKey: anomalyKeys.all(lang),
+    queryFn: ({ signal }) => api.anomalies(lang, signal),
+    refetchInterval: 15 * 60_000,
+  });
   const pending = (query.data ?? []).filter((s) => !s.status || s.status === "pending");
   const simulated = pending.some((s) => s.simulated);
   return (
@@ -366,6 +374,9 @@ export function WeatherSuggestionsPage() {
       {query.isPending && <Loading />}
       {query.isError && <ErrorBox error={query.error} onRetry={() => void query.refetch()} />}
       {query.isSuccess && pending.length === 0 && <p className="muted">{t("weather.suggestions.none")}</p>}
+      {anomalies.data?.enabled && anomalies.data.items.length > 0 && (
+        <AnomalyList items={anomalies.data.items} headingId="alerts-anomalies" />
+      )}
       <div className="suggestions">
         {pending.map((s) => (
           <SuggestionCard key={s.id} suggestion={s} fresh={fresh.has(s.id)} />

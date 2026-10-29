@@ -7885,6 +7885,17 @@ button.nav-card:hover {
   margin: 0;
   flex-basis: 100%;
 }
+.anomalies__list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.anomalies__item {
+  border-inline-start: 3px solid var(--border);
+  padding-inline-start: 8px;
+}
 .sched-suggest {
   margin-bottom: 12px;
 }

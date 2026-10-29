@@ -2,6 +2,7 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tansta
 import { useId, useState, type SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
+import { AnomalyList } from "../components/AnomalyList";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { FiguresView, Kpi, useCount } from "../components/WindowFigures";
 import { PageTitle } from "../components/PageTitle";
@@ -121,7 +122,12 @@ function NowTab() {
   const fmt = useFormat();
   const gouvernorats = useGouvernorats();
   const { user } = useAuth();
-  const q = useQuery({ queryKey: WINDOW_KEYS.now, queryFn: ({ signal }) => api.windowNow(signal), refetchInterval: 60_000 });
+  const lang = useLanguage();
+  const q = useQuery({
+    queryKey: [...WINDOW_KEYS.now, lang],
+    queryFn: ({ signal }) => api.windowNow(signal, lang),
+    refetchInterval: 60_000,
+  });
   // RS1: the rooms open the resources inside an axis area from here; a delegated view has no resources.
   const toAxis = canOpenAxes(user?.identity.roles ?? []);
   if (q.isPending) return <Loading />;
@@ -208,6 +214,7 @@ function NowTab() {
           </div>
         </section>
       )}
+      {now.anomalies && now.anomalies.length > 0 && <AnomalyList items={now.anomalies} headingId="win-anomalies" />}
       {now.progress && (
         <section className="card" aria-labelledby="win-prog">
           <h2 id="win-prog">{t("window.now.progress")}</h2>

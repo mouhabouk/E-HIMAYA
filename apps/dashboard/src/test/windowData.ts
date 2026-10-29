@@ -166,6 +166,27 @@ export const WINDOW_NOW: WindowNow = {
       status: "in_progress",
     },
   ],
+  anomalies: [
+    {
+      id: "an-1",
+      indicator: "arrival",
+      gouvernorat_code: 21,
+      gouvernorat_name: "نابل",
+      delegation_id: 2101,
+      delegation_name: "الحمامات",
+      day: "2026-10-29",
+      value: 24,
+      mean: 14,
+      std: 3,
+      z: 3.3,
+      baseline: "recent",
+      points: 8,
+      n: 9,
+      higher: true,
+      text: "[SIM] زمن الوصول في معتمدية الحمامات خلال الأيام السبعة الأخيرة 24 دقيقة، والمعتاد 14 ± 3 (في الأسابيع الثمانية السابقة).",
+      raised_at: "2026-10-29T07:00:00Z",
+    },
+  ],
 };
 
 export const WINDOW_DELEGATION: Delegation = {

@@ -25,6 +25,9 @@ describe("WindowPage", () => {
     expect(await screen.findByText(/AX-2026-004 · \[SIM\] حرائق غابات نابل/)).toBeInTheDocument();
     expect(screen.getByText("[SIM] إخلاء المنازل المحاذية لغابة دار شيشو")).toBeInTheDocument();
     expect(screen.getByText("المخطط الساري: [SIM] مخطط مجابهة حرائق الغابات")).toBeInTheDocument();
+    // AI4: an indicator out of its habit, calmly, with its explanation.
+    const unusual = within(screen.getByRole("region", { name: /مؤشرات خارج عادتها/ }));
+    expect(unusual.getByText(/المعتاد 14 ± 3/)).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("tab", { name: "البحث" }));
     fireEvent.change(await screen.findByLabelText("بحث سريع"), { target: { value: "حرايق نابل" } });

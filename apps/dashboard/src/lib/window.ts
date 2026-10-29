@@ -54,7 +54,7 @@ export function filterQuery(f: WindowFilters) {
 export function windowApi(api: ApiClient) {
   return {
     windowAccess: (signal?: AbortSignal) => api.request<WindowAccess>(`${W}/access`, { signal }),
-    windowNow: (signal?: AbortSignal) => api.request<WindowNow>(`${W}/now`, { signal }),
+    windowNow: (signal?: AbortSignal, lang?: string) => api.request<WindowNow>(`${W}/now`, { signal, query: { lang } }),
     windowSearch: (f: WindowFilters, signal?: AbortSignal) =>
       api.request<SearchResult>(`${W}/search`, { signal, query: filterQuery(f) }),
     windowCompare: (f: WindowFilters, c: CompareQuery, signal?: AbortSignal) =>

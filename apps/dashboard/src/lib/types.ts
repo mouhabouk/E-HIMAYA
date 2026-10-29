@@ -382,6 +382,7 @@ export interface AiSettings {
   assist?: {
     plan_reading: boolean;
     programme_suggestions?: boolean;
+    anomalies?: boolean;
   };
 }
 

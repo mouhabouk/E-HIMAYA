@@ -301,6 +301,16 @@ export function AiSettingsFormView({ initial, editable }: { initial: AiSettings;
           />
           <span>{t("aiSettings.assist.programmeSuggestions")}</span>
         </label>
+        <label className="checkbox">
+          <input
+            type="checkbox"
+            role="switch"
+            checked={form.anomalies}
+            disabled={ro}
+            onChange={(e) => update((f) => ({ ...f, anomalies: e.target.checked }))}
+          />
+          <span>{t("aiSettings.assist.anomalies")}</span>
+        </label>
       </section>
 
       {editable && (

@@ -1004,7 +1004,8 @@
       "title": "AI suggestions in operations",
       "help": "Every suggestion is approved by a person and audited (AI-01). Switching it off blocks any new reading; what was already suggested stays, with its label.",
       "planReading": "Reading the intervention plan into a suggested task list",
-      "programmeSuggestions": "Suggest activities in the programme from the forecast, the beaches and the history"
+      "programmeSuggestions": "Suggest activities in the programme from the forecast, the beaches and the history",
+      "anomalies": "A calm alert when an indicator leaves its habit (reports, arrival time, completion rate)"
     }
   },
   "orgs": {
@@ -7183,6 +7184,16 @@
       "help": "The drowning model is trained on [SIM] days from a declared process, then the daily computation applies it in shadow beside the rule, with no publication and no alert.",
       "start": "Train a new version",
       "running": "Training…"
+    }
+  },
+  "anomalies": {
+    "title": "Indicators out of their habit",
+    "ai": "Statistical detection",
+    "help": "Each indicator compared with its usual series (mean and deviation). For attention only: nothing is sent to citizens.",
+    "indicator": {
+      "reports": "Reports",
+      "arrival": "Arrival time",
+      "completion": "Completion rate"
     }
   }
 }

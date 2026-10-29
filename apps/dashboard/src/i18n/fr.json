@@ -1004,7 +1004,8 @@
       "title": "Suggestions de l'IA dans les opérations",
       "help": "Chaque suggestion est validée par une personne et journalisée (AI-01). La désactiver bloque toute nouvelle lecture ; ce qui a déjà été suggéré reste, avec son étiquette.",
       "planReading": "Lecture du plan d'intervention et liste de tâches proposée",
-      "programmeSuggestions": "Suggérer des activités dans le programme à partir des prévisions, des plages et de l'historique"
+      "programmeSuggestions": "Suggérer des activités dans le programme à partir des prévisions, des plages et de l'historique",
+      "anomalies": "Alerte discrète quand un indicateur sort de son habitude (signalements, délai d'arrivée, taux de réalisation)"
     }
   },
   "orgs": {
@@ -7183,6 +7184,16 @@
       "help": "Le modèle de noyade s'entraîne sur des journées [SIM] d'un processus déclaré, puis le calcul quotidien l'applique en ombre à côté de la règle, sans publication ni alerte.",
       "start": "Entraîner une nouvelle version",
       "running": "Entraînement…"
+    }
+  },
+  "anomalies": {
+    "title": "Indicateurs inhabituels",
+    "ai": "Détection statistique",
+    "help": "Chaque indicateur comparé à sa série habituelle (moyenne et écart). Pour attirer l'attention seulement : rien n'est envoyé au citoyen.",
+    "indicator": {
+      "reports": "Signalements",
+      "arrival": "Délai d'arrivée",
+      "completion": "Taux de réalisation"
     }
   }
 }
