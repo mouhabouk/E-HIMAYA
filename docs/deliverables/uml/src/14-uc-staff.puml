@@ -88,6 +88,13 @@ rectangle "Tableau de bord central" {
   usecase "Capteurs, tours et drones\nen lecture seule (L5b) [SIM]" as S67
   usecase "Approuver les seuils\nd'une fiche de modèle (AI-01)" as S68
   usecase "Accepter ou écarter une activité\nsuggérée ; voir les anomalies (L5c)" as S69
+  usecase "Adopter, modifier ou rejeter\nune proposition de l'assistant (AI5a)" as S70
+  usecase "Écrire un ordre ou une question\nà l'assistant (AI5a)" as S71
+  usecase "Dicter un message vocal,\nle corriger avant l'envoi (AI5b)" as S72
+  usecase "Consulter le tableau du commandant\nen lecture seule (AI5b)" as S73
+  usecase "Accorder le bouton\n« assistant du commandant » (AI5b)" as S74
+  usecase "Lancer ou programmer un entraînement,\ncomparer à la version en cours (AI5c)" as S75
+  usecase "Confirmer la lecture d'un signalement\npour l'apprentissage (#138)" as S76
 }
 rectangle "Application des équipes (P4a à P4d)" {
   usecase "Se connecter par code\n(MFA, PIN 6 chiffres)" as T0
@@ -261,4 +268,15 @@ OPM --> S67
 SA --> S68 : prépare
 CC --> S68
 OPM --> S69
+OPM --> S70 : chef des opérations régional
+CMD --> S70 : salle centrale
+OPM --> S71
+OPM --> S72
+GOV --> S73 : sans bouton
+SA --> S74
+SA --> S75
+CC --> S75 : lecture
+OP --> S76
+S71 ..> S70 : <<include>>
+S72 ..> S71 : <<extend>>
 @enduml

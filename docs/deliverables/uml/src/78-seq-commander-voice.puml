@@ -1,0 +1,27 @@
+@startuml
+!include style.iuml
+title Séquence : message vocal du commandant (AI5b)
+autonumber
+actor "Commandant" as CMD
+participant "Tableau de bord" as UI
+participant "API" as API
+participant "Service IA\n(faster-whisper, local)" as ASR
+database "Stockage" as ST
+database "PostgreSQL" as DB
+CMD -> UI : micro, 60 s au plus, « arrêter »
+UI -> API : POST /staff/incidents/{id}/command/voice?lang=ar\n(4 Mo au plus)
+API -> ST : audio temporaire
+API -> ASR : /v1/transcribe, prompt : mots des ordres
+ASR --> API : texte
+API -> ST : audio effacé (réussite ou échec)
+API -> DB : transcription chiffrée (command_voice)
+API --> UI : texte dans la boîte, non envoyé
+CMD -> UI : corrige le texte, envoie
+UI -> API : POST .../command {text, voice_id}
+API -> DB : texte corrigé chiffré, mots erronés\n(Levenshtein sur les mots)
+API -> DB : échantillon « voix »
+note over API
+  Taux de mots erronés par langue sur 90 jours
+  dans la fiche du modèle (objectif ≤ 15 % en derja).
+end note
+@enduml

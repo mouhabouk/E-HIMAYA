@@ -410,18 +410,19 @@ async def _targets_table(session: AsyncSession, lang: Lang, now: datetime) -> s.
     def verdict(met: bool | None) -> str:
         return t["v.unmeasured"] if met is None else t["v.met"] if met else t["v.not_met"]
 
+    at_least, at_most, none = f"≥ {_pct(lang, TARGET_READING)}", f"≤ {_pct(lang, TARGET_WER)}", _pct(lang, 0.0)
     rows: list[list[str]] = []
     measured = _load("orders.json")
     combined = measured["sets"]["heldout"]["combined"]["all"] if measured else None
     if combined is not None:
         exact, invalid = combined["exact"], combined["invalid"]
         value = f"{_count(lang, exact['count'], exact['of'])} · {_interval(lang, exact['interval'])}"
-        rows.append([t["g.reading"], "≥ 95%", value, verdict(exact["interval"][0] >= TARGET_READING)])
+        rows.append([t["g.reading"], at_least, value, verdict(exact["interval"][0] >= TARGET_READING)])
         rows.append(
-            [t["g.invalid"], "0%", _count(lang, invalid["count"], invalid["of"]), verdict(invalid["count"] == 0)]
+            [t["g.invalid"], none, _count(lang, invalid["count"], invalid["of"]), verdict(invalid["count"] == 0)]
         )
     else:
-        rows += [[t["g.reading"], "≥ 95%", "—", verdict(None)], [t["g.invalid"], "0%", "—", verdict(None)]]
+        rows += [[t["g.reading"], at_least, "—", verdict(None)], [t["g.invalid"], none, "—", verdict(None)]]
     async with as_system(session):
         words, errors = (
             await session.execute(
@@ -440,10 +441,15 @@ async def _targets_table(session: AsyncSession, lang: Lang, now: datetime) -> s.
         model = await ranker.current(session)
         live = await ranker.since_training(session, model) if model is not None else None
     wer = int(errors or 0) / int(words) if words else None
-    rows.append([t["g.voice"], "≤ 15%", _pct(lang, wer), verdict(None if wer is None else wer <= TARGET_WER)])
+    rows.append([t["g.voice"], at_most, _pct(lang, wer), verdict(None if wer is None else wer <= TARGET_WER)])
     n, wrong = int(decided_orders[0]), int(decided_orders[1])
     rows.append(
-        [t["g.production"], "≥ 95%", _count(lang, n - wrong, n), verdict(None if not n else (n - wrong) / n >= 0.95)]
+        [
+            t["g.production"],
+            at_least,
+            _count(lang, n - wrong, n),
+            verdict(None if not n else (n - wrong) / n >= TARGET_READING),
+        ]
     )
     if live is not None and live["incidents"]:
         k = live["incidents"]

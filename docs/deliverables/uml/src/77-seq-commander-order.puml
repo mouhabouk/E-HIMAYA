@@ -1,0 +1,32 @@
+@startuml
+!include style.iuml
+title Séquence : ordre écrit et décision du commandant (AI5a)
+autonumber
+actor "Commandant\n(chef des opérations régional\nou salle centrale)" as CMD
+participant "Tableau de bord" as UI
+participant "API" as API
+participant "Ollama\n(local, Qwen3)" as LLM
+database "PostgreSQL" as DB
+CMD -> UI : page de l'incident
+UI -> API : GET /staff/incidents/{id}/command
+API -> DB : propositions des règles à jour,\nles autres « dépassées »
+API --> UI : propositions numérotées, ce qu'ont fait\nles commandants (chiffres nationaux), commandant_only
+CMD -> UI : « ابعثوا زوز صهاريج ماء »
+UI -> API : POST /staff/incidents/{id}/command
+API -> API : lexique : verbe, moyen, nombre, niveau
+alt pas de verbe clair
+  API -> LLM : texte entre <order>, schéma JSON strict
+  LLM --> API : intention, action
+end
+API -> DB : carte « ordre », audit command.order
+API --> UI : « lu : envoyer · 2 × camion-citerne »
+CMD -> UI : adopter / modifier / rejeter (motif)
+UI -> API : POST /staff/command/decisions/{id}
+API -> DB : décision, chronologie, audit\n(409 si déjà décidée)
+API -> DB : échantillon « ordre » anonymisé
+UI -> UI : le bouton ouvre l'affectation habituelle
+note over UI
+  Une question n'est pas une carte :
+  l'assistant répond avec ses sources.
+end note
+@enduml

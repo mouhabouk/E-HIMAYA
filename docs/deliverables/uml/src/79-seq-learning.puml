@@ -1,0 +1,32 @@
+@startuml
+!include style.iuml
+title Séquence : apprendre des décisions et de leurs résultats, en ombre (AI5c)
+autonumber
+actor "Administrateur système / IA" as SA
+participant "Centre d'entraînement" as UI
+participant "API" as API
+participant "Travailleur\n(learning_forever)" as W
+database "PostgreSQL" as DB
+SA -> UI : « classement du commandant » : lancer\nou programmer (arrêté par défaut)
+UI -> API : POST /staff/learning/jobs
+API -> DB : entraînement en file, audit
+W -> DB : prend l'entraînement
+W -> DB : lier chaque décision d'un incident clos\nà son résultat (par lots)
+W -> W : étiquettes : adopté 1, rejeté 0,\nrejeté puis même moyen 1, « déjà fait » écarté
+W -> W : incidents fixés : 1 sur 5 réservé
+W -> W : régression logistique (scikit-learn)
+W -> W : première proposition adoptée :\nmodèle, règles, version en cours
+alt meilleure que la version en cours
+  W -> DB : nouvelle version « en cours », l'ancienne retirée
+else
+  W -> DB : version « rejetée »
+end
+SA -> UI : résultats : modèle face aux règles
+UI -> API : GET /staff/ai/models?lang=ar
+API -> DB : décisions prises après l'entraînement
+API --> UI : fiche : objectifs, verdicts,\nombre sur décisions jamais vues
+note over W
+  Le classement du tableau ne change pas :
+  ombre jusqu'à la décision du comité (AI-01, AI-03).
+end note
+@enduml
