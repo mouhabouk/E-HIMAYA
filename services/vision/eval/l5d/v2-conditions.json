@@ -1,0 +1,352 @@
+{
+ "models": [
+  "ehimaya-fire-smoke-yolox-tiny@2.0.0",
+  "yolox-tiny-coco-person@0.1.1rc0"
+ ],
+ "measured_on": "2026-10-29",
+ "tags_reviewed": false,
+ "labels": {
+  "fire": {
+   "all": {
+    "images": 123,
+    "small": false,
+    "0.45": {
+     "missed": 16,
+     "rate": 0.13,
+     "interval": [
+      0.082,
+      0.201
+     ]
+    },
+    "0.6": {
+     "missed": 29,
+     "rate": 0.236,
+     "interval": [
+      0.169,
+      0.318
+     ]
+    }
+   },
+   "conditions": {
+    "light": {
+     "day": {
+      "images": 35,
+      "small": false,
+      "0.45": {
+       "missed": 3,
+       "rate": 0.086,
+       "interval": [
+        0.03,
+        0.224
+       ]
+      },
+      "0.6": {
+       "missed": 5,
+       "rate": 0.143,
+       "interval": [
+        0.063,
+        0.294
+       ]
+      }
+     },
+     "night": {
+      "images": 87,
+      "small": false,
+      "0.45": {
+       "missed": 12,
+       "rate": 0.138,
+       "interval": [
+        0.081,
+        0.226
+       ]
+      },
+      "0.6": {
+       "missed": 23,
+       "rate": 0.264,
+       "interval": [
+        0.183,
+        0.366
+       ]
+      }
+     }
+    },
+    "visibility": {
+     "clear": {
+      "images": 94,
+      "small": false,
+      "0.45": {
+       "missed": 8,
+       "rate": 0.085,
+       "interval": [
+        0.044,
+        0.159
+       ]
+      },
+      "0.6": {
+       "missed": 18,
+       "rate": 0.191,
+       "interval": [
+        0.125,
+        0.283
+       ]
+      }
+     },
+     "smoke_or_fog": {
+      "images": 28,
+      "small": true,
+      "0.45": {
+       "missed": 7,
+       "rate": 0.25,
+       "interval": [
+        0.127,
+        0.434
+       ]
+      },
+      "0.6": {
+       "missed": 10,
+       "rate": 0.357,
+       "interval": [
+        0.207,
+        0.542
+       ]
+      }
+     }
+    },
+    "distance": {
+     "near": {
+      "images": 100,
+      "small": false,
+      "0.45": {
+       "missed": 8,
+       "rate": 0.08,
+       "interval": [
+        0.041,
+        0.15
+       ]
+      },
+      "0.6": {
+       "missed": 15,
+       "rate": 0.15,
+       "interval": [
+        0.093,
+        0.233
+       ]
+      }
+     },
+     "far": {
+      "images": 22,
+      "small": true,
+      "0.45": {
+       "missed": 7,
+       "rate": 0.318,
+       "interval": [
+        0.164,
+        0.527
+       ]
+      },
+      "0.6": {
+       "missed": 13,
+       "rate": 0.591,
+       "interval": [
+        0.387,
+        0.767
+       ]
+      }
+     }
+    },
+    "setting": {
+     "indoor": {
+      "images": 29,
+      "small": true,
+      "0.45": {
+       "missed": 1,
+       "rate": 0.034,
+       "interval": [
+        0.006,
+        0.172
+       ]
+      },
+      "0.6": {
+       "missed": 2,
+       "rate": 0.069,
+       "interval": [
+        0.019,
+        0.22
+       ]
+      }
+     },
+     "outdoor": {
+      "images": 72,
+      "small": false,
+      "0.45": {
+       "missed": 12,
+       "rate": 0.167,
+       "interval": [
+        0.098,
+        0.269
+       ]
+      },
+      "0.6": {
+       "missed": 22,
+       "rate": 0.306,
+       "interval": [
+        0.211,
+        0.42
+       ]
+      }
+     }
+    }
+   }
+  },
+  "smoke": {
+   "all": {
+    "images": 43,
+    "small": false,
+    "0.45": {
+     "missed": 17,
+     "rate": 0.395,
+     "interval": [
+      0.264,
+      0.544
+     ]
+    },
+    "0.6": {
+     "missed": 22,
+     "rate": 0.512,
+     "interval": [
+      0.368,
+      0.654
+     ]
+    }
+   },
+   "conditions": {
+    "light": {
+     "day": {
+      "images": 26,
+      "small": true,
+      "0.45": {
+       "missed": 5,
+       "rate": 0.192,
+       "interval": [
+        0.085,
+        0.379
+       ]
+      },
+      "0.6": {
+       "missed": 9,
+       "rate": 0.346,
+       "interval": [
+        0.194,
+        0.538
+       ]
+      }
+     },
+     "night": {
+      "images": 14,
+      "small": true,
+      "0.45": {
+       "missed": 9,
+       "rate": 0.643,
+       "interval": [
+        0.388,
+        0.837
+       ]
+      },
+      "0.6": {
+       "missed": 10,
+       "rate": 0.714,
+       "interval": [
+        0.454,
+        0.883
+       ]
+      }
+     }
+    },
+    "distance": {
+     "near": {
+      "images": 16,
+      "small": true,
+      "0.45": {
+       "missed": 10,
+       "rate": 0.625,
+       "interval": [
+        0.386,
+        0.815
+       ]
+      },
+      "0.6": {
+       "missed": 11,
+       "rate": 0.688,
+       "interval": [
+        0.444,
+        0.858
+       ]
+      }
+     },
+     "far": {
+      "images": 24,
+      "small": true,
+      "0.45": {
+       "missed": 4,
+       "rate": 0.167,
+       "interval": [
+        0.067,
+        0.359
+       ]
+      },
+      "0.6": {
+       "missed": 8,
+       "rate": 0.333,
+       "interval": [
+        0.18,
+        0.533
+       ]
+      }
+     }
+    },
+    "setting": {
+     "indoor": {
+      "images": 12,
+      "small": true,
+      "0.45": {
+       "missed": 9,
+       "rate": 0.75,
+       "interval": [
+        0.468,
+        0.911
+       ]
+      },
+      "0.6": {
+       "missed": 10,
+       "rate": 0.833,
+       "interval": [
+        0.552,
+        0.953
+       ]
+      }
+     },
+     "outdoor": {
+      "images": 28,
+      "small": true,
+      "0.45": {
+       "missed": 5,
+       "rate": 0.179,
+       "interval": [
+        0.079,
+        0.356
+       ]
+      },
+      "0.6": {
+       "missed": 9,
+       "rate": 0.321,
+       "interval": [
+        0.179,
+        0.507
+       ]
+      }
+     }
+    }
+   }
+  }
+ }
+}
