@@ -60,7 +60,7 @@ Error bodies have the form `{"detail": "<code>"}`. The codes are:
 
 | Key | Model | Input | Labels | Source |
 |---|---|---|---|---|
-| `fire-smoke` | `ehimaya-fire-smoke-yolox-tiny` 2.0.0 | 416×416 | fire, smoke | YOLOX-Tiny fine-tuned by e-Himaya (`training/`, [EVALUATION.md](EVALUATION.md)) |
+| `fire-smoke` | `ehimaya-fire-smoke-yolox-tiny` 3.0.0 | 416×416 | fire, smoke | YOLOX-Tiny trained by e-Himaya (`training/`, [EVALUATION.md](EVALUATION.md)) |
 | `person` | `yolox-tiny-coco-person` 0.1.1rc0 | 416×416 | person (COCO class 0 only) | [Megvii YOLOX release 0.1.1rc0](https://github.com/Megvii-BaseDetection/YOLOX/releases/tag/0.1.1rc0) |
 
 * **Running the models.** Both models run with ONNX Runtime on the CPU. The letterbox, YOLOX grid decoding, NMS and
@@ -68,14 +68,14 @@ Error bodies have the form `{"detail": "<code>"}`. The codes are:
 * **Installing them.** `models/fetch_models.py` installs them. It uses only the standard library, downloads each ONNX
   file (or copies the bundled one), checks the pinned SHA-256 and writes `manifest.json`. Nothing is downloaded at
   run time.
-* **Where they come from.** Our fire and smoke weights are committed in `models/weights/fire-smoke-yolox-tiny-v2.onnx`
+* **Where they come from.** Our fire and smoke weights are committed in `models/weights/fire-smoke-yolox-tiny-v3.onnx`
   (20.2 MB; the repository is private, so a release asset would need a token to download). The person file comes from
   the YOLOX release.
-* **Calibration.** A per-label calibration `score ** score_power` in the manifest (fire: 0.56, smoke: 0.74) maps
-  the network scores onto the API thresholds (0.45 and 0.6): the raw threshold that reaches precision 0.80 becomes
-  0.45. Fire is fitted on `eval/calibration.json` (`python eval/evaluate.py --samples eval/calibration.json --fit`);
-  that set has only 3 smoke images, so smoke is fitted on the training-validation split pooled with
-  `eval/calibration.json`. Neither overlaps the evaluation sample (EVALUATION.md).
+* **Calibration.** A per-label calibration `score ** score_power` in the manifest (fire: 0.48, smoke: 1.7) maps
+  the network scores onto the API thresholds (0.45 and 0.6). Fire: the raw threshold that reaches precision 0.80 on
+  `eval/calibration.json` becomes 0.45 (`python eval/evaluate.py --samples eval/calibration.json --fit`). Smoke: the
+  lowest power that keeps false smoke on the smoke-free images of `eval/calibration.json` at the 2.0.0 level. Neither
+  overlaps the evaluation sample (EVALUATION.md).
 * **Turning one off.** `VISION_ENABLED_MODELS='["fire-smoke"]'` turns the person model off on small CPUs.
 
 ```bash
@@ -104,10 +104,11 @@ permissive parts:
 1. **Student.** [YOLOX-Tiny](https://github.com/Megvii-BaseDetection/YOLOX) (Apache-2.0, code and COCO weights).
 2. **Images.** Open Images V7 *train* and *validation* images that humans verified to contain or not contain Fire,
    Flame, Wildfire, Bonfire, Campfire or Smoke (images CC BY 2.0, labels CC BY 4.0), with ordinary scenes with people
-   as background images. Model 2.0.0 adds the human fire boxes of two GitHub datasets whose repositories grant a
+   as background images. Model 2.0.0 added the human fire boxes of two GitHub datasets whose repositories grant a
    permissive licence: [FireNET](https://github.com/OlafenwaMoses/FireNET) (MIT) and the
    [FURG fire dataset](https://github.com/steffensbola/furg-fire-dataset) (CC0-1.0); see "Fire and smoke datasets
-   found on GitHub" below.
+   found on GitHub" below. Model 3.0.0 adds [D-Fire](https://github.com/gaiasd/DFireDataset) (CC0-1.0, human fire
+   and smoke boxes), de-duplicated against every evaluation and test image (`eval/l5d/README.md`).
 3. **Boxes.** Open Images has no fire or smoke boxes. They were drawn by
    [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO) Swin-T OGC (Apache-2.0), prompted "fire . smoke .".
    The human image labels gate them: a class verified absent gets no box, and an image verified positive where the
@@ -117,22 +118,21 @@ permissive parts:
 
 The trade-offs are described in EVALUATION.md:
 
-* the training set is still small (1,724 images with boxes, 851 of them with smoke);
-* the Open Images boxes and the smoke boxes come from a teacher model, not from people;
+* 12,524 training images, 7,943 with boxes (6,224 with smoke), most of the boxes now drawn by people (D-Fire);
+* the Open Images boxes come from a teacher model, not from people;
 * the evaluation is frame-level, because no box ground truth is available.
 
-The pipeline accepts more data in YOLO format: `training/train.py --yolo DIR:smoke,fire`. D-Fire (CC0-1.0, 21,527
-images with human fire and smoke boxes) is the best next addition; it is hosted on OneDrive and Kaggle, which the
-build machine of 2.0.0 could not reach. The service code does not change, only the ONNX file and its SHA-256 in
-`fetch_models.py`.
+The pipeline accepts more data in YOLO format: `training/train.py --yolo DIR:smoke,fire`. The service code does not
+change with a new model, only the ONNX file, its SHA-256 and its calibration in `fetch_models.py`.
 
 ### Reproducing the fire and smoke model
 
 The `training/` folder is never installed in the service image. It needs a separate environment: PyTorch CPU or GPU,
 torchvision, transformers, onnxruntime, a YOLOX checkout and a GroundingDINO checkout.
 
-Model 2.0.0 was fine-tuned from model 1.0.0 (itself from the COCO weights). `build_dataset.py` now reads the V7
-label files; model 1.0.0 had used V5 (same images, fewer verified labels). The steps:
+Model 3.0.0 was trained from the COCO weights on a GPU, with D-Fire added; its exact commands, data counts and
+training curve are in [`eval/l5d/README.md`](eval/l5d/README.md). The steps of model 2.0.0 (fine-tuned from model
+1.0.0 on a CPU) were:
 
 ```bash
 TEACHER="--checkpoint groundingdino_swint_ogc.pth --vocab bert-base-uncased-vocab.txt --short-side 512"
@@ -189,7 +189,7 @@ Every model and dataset that was used, with its primary source:
 
 | Item | Role | Licence | Evidence |
 |---|---|---|---|
-| `ehimaya-fire-smoke-yolox-tiny` 2.0.0 (our weights) | fire and smoke model, shipped | Apache-2.0 | Derived from the YOLOX-Tiny weights and trained by us on the data below |
+| `ehimaya-fire-smoke-yolox-tiny` 3.0.0 (our weights) | fire and smoke model, shipped | Apache-2.0 | Derived from the YOLOX-Tiny weights and trained by us on the data below |
 | YOLOX code and `yolox_tiny` COCO weights (0.1.1rc0) | person model (shipped); student initialisation | Apache-2.0 | [LICENSE](https://github.com/Megvii-BaseDetection/YOLOX/blob/main/LICENSE), [release assets](https://github.com/Megvii-BaseDetection/YOLOX/releases/tag/0.1.1rc0) |
 | COCO 2017 (training data of YOLOX) | upstream of the person model | annotations CC BY 4.0; images under Flickr terms | [cocodataset.org/#termsofuse](https://cocodataset.org/#termsofuse) |
 | Grounding DINO Swin-T OGC (code and `groundingdino_swint_ogc.pth`) | teacher (box drawing); training only, not shipped | Apache-2.0 | [LICENSE](https://github.com/IDEA-Research/GroundingDINO/blob/main/LICENSE), [release v0.1.0-alpha](https://github.com/IDEA-Research/GroundingDINO/releases/tag/v0.1.0-alpha) |
@@ -198,6 +198,7 @@ Every model and dataset that was used, with its primary source:
 | Open Images V7 test images (383 in `eval/samples.json`, with author and page) | held-out evaluation; downloaded at run time, not committed | CC BY 2.0 per image; labels CC BY 4.0 | same as above; each sample lists its author and Flickr page |
 | FireNET v1.0 (`fire-dataset.zip`, SHA-256 `714a5342…`), by Moses Olafenwa | training images and human fire boxes (412 train); its 90 validation images are a held-out test set | MIT | [LICENSE](https://github.com/OlafenwaMoses/FireNET/blob/master/LICENSE), [release v1.0](https://github.com/OlafenwaMoses/FireNET/releases/tag/v1.0) |
 | FURG fire dataset (commit `6aff09d7`), by Steffens, Hüttner et al. | video frames with human fire boxes (17 videos; 3 held out as a test set) | CC0-1.0 | [LICENSE](https://github.com/steffensbola/furg-fire-dataset/blob/master/LICENSE) |
+| D-Fire, by de Venâncio, Lisboa and Barbosa (`D-Fire.zip`, 21,527 images) | training images with human fire and smoke boxes (8,886 kept after de-duplication); its test split (4,306) is a held-out test set; 3.0.0 only | CC0-1.0 | [DFireDataset](https://github.com/gaiasd/DFireDataset) |
 | D-Fire (not used: not reachable from the build machine) | best next training data | CC0-1.0 (the authors note that images keep their providers' terms) | [LICENSE](https://github.com/gaia-solutions-on-demand/DFireDataset/blob/master/LICENSE) |
 
 Runtime libraries:

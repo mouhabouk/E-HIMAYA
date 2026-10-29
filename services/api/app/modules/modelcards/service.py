@@ -29,7 +29,7 @@ from app.modules.modelcards.texts import CARDS, LABELS, Lang
 MEASURES = Path(__file__).resolve().parent / "measures"
 SMALL = 30
 # The detectors of the vision service (services/vision/models/fetch_models.py): checked by a test.
-FIRE_SMOKE_VERSION = "ehimaya-fire-smoke-yolox-tiny 2.0.0"
+FIRE_SMOKE_VERSION = "ehimaya-fire-smoke-yolox-tiny 3.0.0"
 PERSON_VERSION = "yolox-tiny-coco-person 0.1.1rc0"
 ORDER = ("fire_smoke", "person", "report_reading", "written_summary", "plan_reading", "drowning")
 FAMILY = {

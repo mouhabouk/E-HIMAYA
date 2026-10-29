@@ -1,0 +1,35 @@
+{
+ "models": [
+  "ehimaya-fire-smoke-yolox-tiny@2.0.0",
+  "yolox-tiny-coco-person@0.1.1rc0"
+ ],
+ "set": "training\\work\\extra\\furg\\test",
+ "fire": {
+  "images": 69,
+  "boxes": 75,
+  "ap50": 0.5486519600737644,
+  "thresholds": {
+   "0.25": {
+    "frame_recall": 0.9565217391304348,
+    "frame_precision": null,
+    "box_recall": 0.6266666666666667,
+    "tp": 66,
+    "fp": 0
+   },
+   "0.45": {
+    "frame_recall": 0.927536231884058,
+    "frame_precision": null,
+    "box_recall": 0.6133333333333333,
+    "tp": 64,
+    "fp": 0
+   },
+   "0.6": {
+    "frame_recall": 0.8405797101449275,
+    "frame_precision": null,
+    "box_recall": 0.56,
+    "tp": 58,
+    "fp": 0
+   }
+  }
+ }
+}

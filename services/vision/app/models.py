@@ -2,7 +2,7 @@
 
 Each model directory holds ``model.onnx`` and ``manifest.json``::
 
-    {"name": "ehimaya-fire-smoke-yolox-tiny", "version": "2.0.0", "license": "Apache-2.0",
+    {"name": "ehimaya-fire-smoke-yolox-tiny", "version": "3.0.0", "license": "Apache-2.0",
      "format": "yolox", "input_size": [416, 416], "labels": ["fire", "smoke"], "sha256": "…", …}
 
 ``labels`` maps every output class of the network to one of ``fire|smoke|person``, or ``null`` to ignore it

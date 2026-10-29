@@ -1,0 +1,40 @@
+{"epoch": 0, "total_loss": 6.2488, "iou_loss": 2.5163, "conf_loss": 2.8762, "cls_loss": 0.8563, "ap_fire": 0.8153, "ap_smoke": 0.62, "map": 0.7177, "best": true}
+{"epoch": 1, "total_loss": 5.5167, "iou_loss": 2.5076, "conf_loss": 2.3283, "cls_loss": 0.6808, "ap_fire": 0.8988, "ap_smoke": 0.8127, "map": 0.8558, "best": true}
+{"epoch": 2, "total_loss": 5.1457, "iou_loss": 2.3907, "conf_loss": 2.1006, "cls_loss": 0.6544, "ap_fire": 0.9449, "ap_smoke": 0.8465, "map": 0.8957, "best": true}
+{"epoch": 3, "total_loss": 4.9546, "iou_loss": 2.3318, "conf_loss": 1.9849, "cls_loss": 0.6379, "ap_fire": 0.9394, "ap_smoke": 0.8651, "map": 0.9022, "best": true}
+{"epoch": 4, "total_loss": 4.8461, "iou_loss": 2.2929, "conf_loss": 1.9223, "cls_loss": 0.6309, "ap_fire": 0.9299, "ap_smoke": 0.8752, "map": 0.9025, "best": true}
+{"epoch": 5, "total_loss": 4.7549, "iou_loss": 2.2607, "conf_loss": 1.8698, "cls_loss": 0.6244, "ap_fire": 0.9486, "ap_smoke": 0.8861, "map": 0.9173, "best": true}
+{"epoch": 6, "total_loss": 4.6954, "iou_loss": 2.2405, "conf_loss": 1.8362, "cls_loss": 0.6188, "ap_fire": 0.9561, "ap_smoke": 0.9091, "map": 0.9326, "best": true}
+{"epoch": 7, "total_loss": 4.6371, "iou_loss": 2.2237, "conf_loss": 1.801, "cls_loss": 0.6124, "ap_fire": 0.953, "ap_smoke": 0.9015, "map": 0.9272}
+{"epoch": 8, "total_loss": 4.5642, "iou_loss": 2.2008, "conf_loss": 1.7528, "cls_loss": 0.6106, "ap_fire": 0.9491, "ap_smoke": 0.9002, "map": 0.9246}
+{"epoch": 9, "total_loss": 4.5149, "iou_loss": 2.1794, "conf_loss": 1.7314, "cls_loss": 0.6041, "ap_fire": 0.9577, "ap_smoke": 0.8988, "map": 0.9283}
+{"epoch": 10, "total_loss": 4.4747, "iou_loss": 2.1701, "conf_loss": 1.7023, "cls_loss": 0.6023, "ap_fire": 0.9616, "ap_smoke": 0.9205, "map": 0.941, "best": true}
+{"epoch": 11, "total_loss": 4.4447, "iou_loss": 2.1645, "conf_loss": 1.681, "cls_loss": 0.5992, "ap_fire": 0.965, "ap_smoke": 0.9314, "map": 0.9482, "best": true}
+{"epoch": 12, "total_loss": 4.401, "iou_loss": 2.1395, "conf_loss": 1.6678, "cls_loss": 0.5937, "ap_fire": 0.9502, "ap_smoke": 0.9178, "map": 0.934}
+{"epoch": 13, "total_loss": 4.3455, "iou_loss": 2.1234, "conf_loss": 1.6307, "cls_loss": 0.5915, "ap_fire": 0.9521, "ap_smoke": 0.8989, "map": 0.9255}
+{"epoch": 14, "total_loss": 4.311, "iou_loss": 2.1142, "conf_loss": 1.6099, "cls_loss": 0.587, "ap_fire": 0.9595, "ap_smoke": 0.9245, "map": 0.942}
+{"epoch": 15, "total_loss": 4.2572, "iou_loss": 2.0957, "conf_loss": 1.5779, "cls_loss": 0.5836, "ap_fire": 0.9559, "ap_smoke": 0.9238, "map": 0.9398}
+{"epoch": 16, "total_loss": 4.2014, "iou_loss": 2.0766, "conf_loss": 1.5477, "cls_loss": 0.577, "ap_fire": 0.9535, "ap_smoke": 0.902, "map": 0.9278}
+{"epoch": 17, "total_loss": 4.1785, "iou_loss": 2.0693, "conf_loss": 1.5326, "cls_loss": 0.5765, "ap_fire": 0.9517, "ap_smoke": 0.9276, "map": 0.9396}
+{"epoch": 18, "total_loss": 4.1444, "iou_loss": 2.0531, "conf_loss": 1.5181, "cls_loss": 0.5732, "ap_fire": 0.9543, "ap_smoke": 0.9421, "map": 0.9482}
+{"epoch": 19, "total_loss": 4.0838, "iou_loss": 2.0343, "conf_loss": 1.4811, "cls_loss": 0.5684, "ap_fire": 0.9621, "ap_smoke": 0.9321, "map": 0.9471}
+{"epoch": 20, "total_loss": 4.0624, "iou_loss": 2.0255, "conf_loss": 1.4697, "cls_loss": 0.5672, "ap_fire": 0.9672, "ap_smoke": 0.933, "map": 0.9501, "best": true}
+{"epoch": 21, "total_loss": 4.0059, "iou_loss": 2.0095, "conf_loss": 1.4348, "cls_loss": 0.5616, "ap_fire": 0.9686, "ap_smoke": 0.9379, "map": 0.9532, "best": true}
+{"epoch": 22, "total_loss": 3.9902, "iou_loss": 1.9958, "conf_loss": 1.4327, "cls_loss": 0.5617, "ap_fire": 0.9717, "ap_smoke": 0.9385, "map": 0.9551, "best": true}
+{"epoch": 23, "total_loss": 3.9421, "iou_loss": 1.9854, "conf_loss": 1.4005, "cls_loss": 0.5562, "ap_fire": 0.9577, "ap_smoke": 0.951, "map": 0.9544}
+{"epoch": 24, "total_loss": 3.9117, "iou_loss": 1.9699, "conf_loss": 1.3898, "cls_loss": 0.5519, "ap_fire": 0.9616, "ap_smoke": 0.9426, "map": 0.9521}
+{"epoch": 25, "total_loss": 3.8479, "iou_loss": 1.9498, "conf_loss": 1.3494, "cls_loss": 0.5487, "ap_fire": 0.959, "ap_smoke": 0.9358, "map": 0.9474}
+{"epoch": 26, "total_loss": 3.8154, "iou_loss": 1.9435, "conf_loss": 1.3262, "cls_loss": 0.5457, "ap_fire": 0.9675, "ap_smoke": 0.9391, "map": 0.9533}
+{"epoch": 27, "total_loss": 3.7695, "iou_loss": 1.9248, "conf_loss": 1.303, "cls_loss": 0.5417, "ap_fire": 0.961, "ap_smoke": 0.9432, "map": 0.9521}
+{"epoch": 28, "total_loss": 3.7165, "iou_loss": 1.9055, "conf_loss": 1.275, "cls_loss": 0.536, "ap_fire": 0.957, "ap_smoke": 0.9463, "map": 0.9516}
+{"epoch": 29, "total_loss": 3.687, "iou_loss": 1.8995, "conf_loss": 1.2536, "cls_loss": 0.5339, "ap_fire": 0.9649, "ap_smoke": 0.9422, "map": 0.9536}
+{"epoch": 30, "total_loss": 3.6503, "iou_loss": 1.8841, "conf_loss": 1.2346, "cls_loss": 0.5316, "ap_fire": 0.9645, "ap_smoke": 0.9409, "map": 0.9527}
+{"epoch": 31, "total_loss": 3.632, "iou_loss": 1.8821, "conf_loss": 1.22, "cls_loss": 0.5299, "ap_fire": 0.9739, "ap_smoke": 0.9412, "map": 0.9576, "best": true}
+{"epoch": 32, "total_loss": 3.5892, "iou_loss": 1.8614, "conf_loss": 1.2012, "cls_loss": 0.5266, "ap_fire": 0.9633, "ap_smoke": 0.9424, "map": 0.9528}
+{"epoch": 33, "total_loss": 3.5479, "iou_loss": 1.8514, "conf_loss": 1.1728, "cls_loss": 0.5237, "ap_fire": 0.9735, "ap_smoke": 0.9456, "map": 0.9596, "best": true}
+{"epoch": 34, "total_loss": 4.0115, "iou_loss": 1.7711, "conf_loss": 1.1723, "cls_loss": 0.5103, "ap_fire": 0.9712, "ap_smoke": 0.9457, "map": 0.9585}
+{"epoch": 35, "total_loss": 3.8978, "iou_loss": 1.7403, "conf_loss": 1.1148, "cls_loss": 0.5019, "ap_fire": 0.973, "ap_smoke": 0.9486, "map": 0.9608, "best": true}
+{"epoch": 36, "total_loss": 3.8063, "iou_loss": 1.7105, "conf_loss": 1.0737, "cls_loss": 0.4944, "ap_fire": 0.975, "ap_smoke": 0.949, "map": 0.962, "best": true}
+{"epoch": 37, "total_loss": 3.7295, "iou_loss": 1.6908, "conf_loss": 1.0315, "cls_loss": 0.4909, "ap_fire": 0.9674, "ap_smoke": 0.9537, "map": 0.9606}
+{"epoch": 38, "total_loss": 3.6858, "iou_loss": 1.6789, "conf_loss": 1.0064, "cls_loss": 0.4889, "ap_fire": 0.9706, "ap_smoke": 0.9504, "map": 0.9605}
+{"epoch": 39, "total_loss": 3.6093, "iou_loss": 1.6585, "conf_loss": 0.9664, "cls_loss": 0.4835, "ap_fire": 0.9618, "ap_smoke": 0.9571, "map": 0.9594}

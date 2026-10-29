@@ -1,0 +1,63 @@
+{
+ "models": [
+  "ehimaya-fire-smoke-yolox-tiny@3.0.0",
+  "yolox-tiny-coco-person@0.1.1rc0"
+ ],
+ "set": "D:\\E-HIMAYA\\l5d\\D-Fire\\D-Fire\\test",
+ "smoke": {
+  "images": 2081,
+  "boxes": 2315,
+  "ap50": 0.6644939185574222,
+  "thresholds": {
+   "0.25": {
+    "frame_recall": 0.9226333493512734,
+    "frame_precision": 0.7292062286365363,
+    "box_recall": 0.745572354211663,
+    "tp": 1920,
+    "fp": 713
+   },
+   "0.45": {
+    "frame_recall": 0.8630466122056704,
+    "frame_precision": 0.8079172289698605,
+    "box_recall": 0.687257019438445,
+    "tp": 1796,
+    "fp": 427
+   },
+   "0.6": {
+    "frame_recall": 0.7996155694377703,
+    "frame_precision": 0.8455284552845529,
+    "box_recall": 0.6423326133909287,
+    "tp": 1664,
+    "fp": 304
+   }
+  }
+ },
+ "fire": {
+  "images": 1115,
+  "boxes": 2878,
+  "ap50": 0.6520505581465961,
+  "thresholds": {
+   "0.25": {
+    "frame_recall": 0.9695067264573991,
+    "frame_precision": 0.8572561459159397,
+    "box_recall": 0.7581653926337735,
+    "tp": 1081,
+    "fp": 180
+   },
+   "0.45": {
+    "frame_recall": 0.9605381165919282,
+    "frame_precision": 0.9272727272727272,
+    "box_recall": 0.6831132731063239,
+    "tp": 1071,
+    "fp": 84
+   },
+   "0.6": {
+    "frame_recall": 0.9363228699551569,
+    "frame_precision": 0.9577981651376147,
+    "box_recall": 0.6087560806115357,
+    "tp": 1044,
+    "fp": 46
+   }
+  }
+ }
+}

@@ -4,7 +4,7 @@ export const FIRE_CARD: ModelCard = {
   id: "fire_smoke",
   name: "كاشف النار والدخان",
   family: "vision",
-  version: "ehimaya-fire-smoke-yolox-tiny 2.0.0",
+  version: "ehimaya-fire-smoke-yolox-tiny 3.0.0",
   licences: ["Apache-2.0 (YOLOX)", "CC0-1.0 (FURG)"],
   simulated: false,
   status: "pending",
