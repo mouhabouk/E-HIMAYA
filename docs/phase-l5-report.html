@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ء-حماية | تقرير المرحلة L5</title>
+<style>
+:root{--bg:#f7f8fa;--paper:#fff;--ink:#1b2430;--muted:#5b6675;--line:#dfe3e8;--accent:#b3261e;--accent2:#0b5cad;--ok:#1e7d3a;--warn:#a15c00;--chip:#eef1f5;--head:#f1f3f6;--navy:#1f3d99;--orange:#e07b00}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1318;--paper:#161b22;--ink:#e6eaef;--muted:#9aa5b1;--line:#2a313b;--accent:#ff6b5e;--accent2:#5aa9ff;--ok:#5cc97a;--warn:#e0a24a;--chip:#1f2630;--head:#1c222b;--navy:#8fa8ff;--orange:#ffb35c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Naskh Arabic","Segoe UI",Tahoma,Arial,sans-serif;line-height:1.75;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header.cover{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:10px;padding:28px 24px;margin-bottom:20px}
+header.cover h1{margin:0 0 6px;font-size:30px}
+header.cover .sub{color:var(--muted);margin:0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:16px}
+.meta div{background:var(--chip);border-radius:6px;padding:8px 12px;font-size:14px}
+.meta b{display:block;color:var(--muted);font-weight:600;font-size:12px}
+a{color:var(--accent2);text-decoration:none}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:20px}
+h2{margin-top:0;font-size:23px;border-bottom:2px solid var(--line);padding-bottom:8px}
+h3{font-size:18px;margin:18px 0 8px}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:start;vertical-align:top}
+th{background:var(--head);font-weight:700;white-space:nowrap}
+code{direction:ltr;unicode-bidi:isolate;background:var(--chip);padding:1px 5px;border-radius:4px;font-size:13px}
+pre{direction:ltr;text-align:left;background:var(--chip);padding:10px 12px;border-radius:6px;overflow-x:auto;font-size:13px;margin:6px 0}
+.note{border-inline-start:4px solid var(--accent2);background:var(--chip);padding:10px 14px;border-radius:6px;margin:12px 0}
+.warn{border-inline-start:4px solid var(--warn)}
+.sim{display:inline-block;background:#ffb300;color:#1f1300;font-weight:700;font-size:12px;padding:1px 8px;border-radius:999px;margin-inline-end:6px}
+.simbox{border:2px dashed #ffb300;background:rgba(255,179,0,.10);border-radius:8px;padding:12px 16px;margin:12px 0}
+.ltr{direction:ltr;unicode-bidi:isolate}
+ul,ol{padding-inline-start:22px}
+.bar{height:10px;background:var(--chip);border-radius:6px;overflow:hidden;min-width:90px}
+.bar span{display:block;height:100%;background:var(--ok)}
+.pipeline{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0}
+.pipeline div{border:1px solid var(--line);border-radius:8px;padding:6px 12px;background:var(--chip);font-weight:600}
+.pipeline div.now{border-color:var(--accent);background:rgba(179,38,30,.08)}
+.pipeline i{color:var(--muted);font-style:normal}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--paper)}
+.card h3{margin:0 0 4px;font-size:17px}
+.card .v{color:var(--muted);font-size:13px;margin:0 0 6px}
+.card dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:6px 0;font-size:14px}
+.card dt{color:var(--muted);font-weight:600}
+.card dd{margin:0}
+.prio{display:inline-block;border-radius:999px;padding:0 8px;font-size:12px;font-weight:700;color:#fff}
+.p1{background:#b3261e}.p2{background:#a15c00}.p3{background:#0b5cad}.p4{background:#5b6675}
+footer{color:var(--muted);text-align:center;font-size:13px}
+@media print{body{background:#fff}section,header.cover,.card{border:none;break-inside:avoid-page}}
+</style>
+<body>
+<div class="wrap">
+<header class="cover">
+  <h1>ء-حماية <span class="ltr">e-Himaya</span></h1>
+  <p class="sub">تقرير المرحلة L5: العملية البيضاء الرقمية وقراءة المخطط (L5a)، الحساسات وأبراج المراقبة والدرون للقراءة فقط <span class="sim">[SIM]</span> (L5b)، بطاقات النماذج ونموذج الغرق في الظل والأنشطة المقترحة ورصد الشذوذ (L5c)، وكاشف النار والدخان 3.0.0 (L5d)؛ ومعها نقل الأعوان (R3) والعدّاد واستيراد JSON (R4)</p>
+  <div class="meta">
+    <div><b>التاريخ</b>2026-10-29</div>
+    <div><b>الفرع</b><span class="ltr">claude/project-thread-yzwsn2</span></div>
+    <div><b>الحالة</b>الكود مدموج (#116 و #117 و #132 و #133 و #134)؛ وثائق نهاية المرحلة بانتظار الدمج</div>
+    <div><b>المراجع</b><a href="phase-l/design-l5.md">تصميم L5</a> · <a href="phase-r/design-r4.md">تصميم R4</a> · <a href="versions.md">الإصدارات</a> · <a href="backlog.md">القائمة المؤجلة (§3.8)</a> · <a href="../services/vision/EVALUATION.md">تقييم الرؤية</a></div>
+  </div>
+</header>
+
+<section>
+<h2>1. أين تقع هذه المرحلة من مسار المشروع</h2>
+<div class="pipeline">
+  <div class="now">التبليغ</div><i>←</i>
+  <div class="now">المعالجة</div><i>←</i>
+  <div>التحليل</div><i>←</i>
+  <div class="now">مؤشرات الأداء KPI</div><i>←</i>
+  <div class="now">التنبؤ بالذكاء الاصطناعي</div><i>←</i>
+  <div class="now">اتخاذ القرار</div>
+</div>
+<ul>
+  <li><b>التبليغ</b>: مصادر جديدة غير المواطن، الحساسات وأبراج المراقبة والدرون، تصل اقتراحاتٍ لا بلاغاتٍ آلية.</li>
+  <li><b>المعالجة ومؤشرات الأداء</b>: العملية البيضاء تقيس زمن قبول البلاغ وزمن الرد ونقص الموارد عند الذروة، ومتابعة مهام المخطط.</li>
+  <li><b>التنبؤ</b>: نموذج الغرق في الظل، والأنشطة المقترحة من الطقس والموسم، ورصد ما خرج عن المعتاد؛ وبطاقة لكل نموذج تقول أين يخطئ.</li>
+  <li><b>اتخاذ القرار</b>: كل اقتراح بوسم الذكاء الاصطناعي ومفتاح إيقاف وتدقيق؛ والعتبات لا تُعتمد إلا بمحضر اللجنة (AI-01).</li>
+</ul>
+</section>
+
+<section>
+<h2>2. مراجعة ← تصميم ← تطوير</h2>
+<div class="note"><b>الطلب:</b> البنود 2 و3 و5 و7 و9 بمعطيات تجريبية مع تقرير، ونقاط الذكاء الاصطناعي AI2 إلى AI4. قال يامن إن التمرين «في العمليات الميدانية تسمى عملية بيضاء، وهذه رقمية لمعرفة نجاعة التطبيقة من حيث العدد الهائل من البلاغات، ثم من ناحية الموارد»، وإن مدير النظام هو من يفعّلها، ونبّه إلى «حقن SQL لغاية تعطيل أو سرقة معطيات». ووافق على طريق الحساسات عبر بوابة على خادم MediaMTX، وعلى الدرون للقراءة فقط ما دام نوعها غير معروف. ثم طلب إعادة تدريب كاشف النار على بطاقة NVIDIA بجهازه (L5d)، وفوّض القرار: «اجعل نفسك مكاني في أخذ القرار».</div>
+<div class="note warn"><b>الأمن:</b> التمرين لا يصل إلى مواطن ولا إلى الإحصائيات ولا يحجز موردا حقيقيا، والضغط الأقصى والحمولات الهجومية على النسخة المعزولة وحدها؛ كل كتابة وقراءة بطلبات مُعلَّمة، وفحص آلي يرفض SQL مركّبا من نص، وحدود لعدد الحقن وإيقاعها ومدتها. الأجهزة على الشبكة المحلية وحدها، والقراءة غير الموقّعة تُرفض، والمفاتيح مشفّرة تُعرض مرة واحدة ولا تُكتب في أي سجل. لا طريق ولا مكتبة لأمر الدرون، واختبار دائم يفشل لو ظهر. قراءة المخطط تعامل نص الملف معطياتٍ لا تعليمات، وتتحقق من الصفحة والاقتباس. الوالي والوزير يقرآن مهام المخطط دون أسماء، ولا يرون الطبقات الحساسة.</div>
+<h3>L5a: العملية البيضاء الرقمية وقراءة المخطط (AI2)</h3>
+<ol>
+  <li>يمنح مدير النظام عناصرها من «الصلاحيات»، وهي محجوبة عن الجميع افتراضيا؛ وزر الإيقاف لا يُحجب عن رئيس قاعة مشاركة.</li>
+  <li>التخطيط والسيناريو بحقن مؤرّخة بالدقيقة وجوابها المنتظر والموارد المطلوبة بالعدّاد؛ موافقة كل ولاية أو رفضها بسبب.</li>
+  <li>التنفيذ في مسار كهرماني، بحجز موارد داخل التمرين وحده؛ ونتيجة اختبار الحمل (<code>drill.js</code>) من النسخة المعزولة.</li>
+  <li>التقييم بالحقنة والتقرير: زمن الرد، نقص الموارد عند الذروة، الحمولات المرفوضة.</li>
+  <li>«مهام المخطط» في المحور والتمرين: النموذج المحلي يقترح، ورئيس القاعة يراجع مهمة مهمة ثم يعتمد ويتابع.</li>
+</ol>
+<h3>L5b: الحساسات والأبراج والدرون <span class="sim">[SIM]</span></h3>
+<ol>
+  <li>بوابة <code>sensor-gateway</code> على خادم MediaMTX: قراءات موقّعة، طابور أثناء الانقطاع، محاكي سيناريوهات.</li>
+  <li>الحساسات بعتبتي الانتباه والإنذار ومدة الصمت، والتجاوز اقتراح في مركز التنبيهات؛ وطبقة في الخريطة.</li>
+  <li>أبراج المراقبة: برنامج الحافة المرجعي يشغّل الكاشف ويؤكد 3 إطارات من 5، والحدث اقتراح لا بلاغ.</li>
+  <li>الدرون: الموقع من KLV عبر SRT الداخلي، ومناطق العمل والحظر وأربعة تنبيهات، ومحاكي مسار بدل SITL.</li>
+</ol>
+<h3>L5c و L5d: بطاقات النماذج والاقتراحات والكاشف 3.0.0</h3>
+<ol>
+  <li>ست بطاقات بالشكل نفسه وبثلاث لغات، والأخطاء حسب الظروف (للنار) وحسب اللغة (لقراءة البلاغ)، و«عيّنة صغيرة» دون 30، واعتماد اللجنة بمرجع المحضر.</li>
+  <li>نموذج الغرق (انحدار لوجستي) في الظل: AUC 0.828 مقابل 0.812 للقواعد على أيام <span class="sim">[SIM]</span>.</li>
+  <li>الأنشطة المقترحة (AI3) ورصد الشذوذ (AI4) إحصاءً معلَّلا بالأرقام، لا نموذجا لغويا.</li>
+  <li>الكاشف 3.0.0: استدعاء النار 0.87 ← 0.96 بنفس الدقة (0.68 ← 0.69)، والدخان معايَر على مستوى إنذارات 2.0.0 الكاذبة.</li>
+</ol>
+<h3>R3 و R4</h3>
+<ol>
+  <li>نقل الأعوان بين الولايات (إرسال، قبول بوحدة جديدة، رفض، إلغاء)، وأصناف جديدة في الكتالوج.</li>
+  <li>العدّاد (− قيمة +) بدل الأرقام المكتوبة في اللوحة وتطبيق الهاتف، واستيراد JSON بربط الأعمدة الأجنبية.</li>
+</ol>
+</section>
+
+<section>
+<h2>3. لقطات <span class="sim">[SIM]</span></h2>
+  <img src="phase-l/l5-drills-list-day.png" alt="قائمة العمليات البيضاء، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-l/l5-drill-plan-night.png" alt="تمرين جديد، ليلا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-l/l5-drill-scenario-day.png" alt="السيناريو والحقن، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-l/l5-drill-approval-night.png" alt="موافقة الولاية، ليلا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-l/l5-drill-run-day.png" alt="التنفيذ، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-l/l5-drill-report-night.png" alt="تقرير العملية البيضاء، ليلا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-l/r4-needs-day.png" alt="الموارد المطلوبة بالعدّاد، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-l/l5-plan-checklist-day.png" alt="مهام المخطط، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-l/l5-sensors-day.png" alt="الحساسات، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-l/l5-sensor-form-night.png" alt="حساس جديد، ليلا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-l/l5-towers-night.png" alt="أبراج المراقبة، ليلا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-l/l5-drones-day.png" alt="الدرون والمناطق والتنبيهات، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-l/l5-model-cards-night.png" alt="بطاقات النماذج، ليلا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+</section>
+
+<section>
+<h2>4. التقدم لكل جزء</h2>
+<div class="tbl"><table>
+<tr><th>البند</th><th>الحالة</th><th>التقدم</th></tr>
+<tr><td>F-DSH-87 و 88 العملية البيضاء الرقمية</td><td>منجز (L5a)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-DSH-89 مهام المخطط (AI2)</td><td>منجز (L5a)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-DSH-90 إلى 92 الحساسات والأبراج والدرون</td><td>منجز بمعطيات [SIM] (L5b)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-DSH-93 بطاقات النماذج ونموذج الغرق في الظل</td><td>منجز (L5c)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-DSH-94 الأنشطة المقترحة ورصد الشذوذ</td><td>منجز (L5c)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-SRV-05 كاشف النار والدخان 3.0.0</td><td>منجز جزئيا حتى التجربة الميدانية (L5d)</td><td><div class="bar"><span style="width:80%"></span></div></td></tr>
+<tr><td>F-DSH-95 و 96 نقل الأعوان، العدّاد، استيراد JSON</td><td>منجز (R3 و R4)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-SRV-33 إلى F-SRV-40</td><td>منجز</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>الأجهزة الحقيقية (DRN-01 و SNS-01)</td><td>التجربة الميدانية</td><td><div class="bar"><span style="width:0%"></span></div></td></tr>
+<tr><td>الربط بـ Oracle (R4)</td><td>مؤجل</td><td><div class="bar"><span style="width:0%"></span></div></td></tr>
+</table></div>
+<p><b>تقدم المرحلة L5: 100%. التالي: التجربة الميدانية في ولاية واحدة بالأجهزة الحقيقية، بعد قرارات الديوان.</b></p>
+</section>
+
+<section>
+<h2>5. المحاكاة <span class="sim">[SIM]</span></h2>
+<div class="simbox"><ul>
+  <li><span class="sim">[SIM]</span> التمارين والحقن والولايات والمقيِّمون والموارد في اللقطات مختلَقة للعرض.</li>
+  <li><span class="sim">[SIM]</span> الحساسات والأبراج والدرونات وقراءاتها ومساراتها من المحاكيات (البوابة <code>simulate</code>، ومحاكي مسار KLV، وفيديو مسجَّل للبرج).</li>
+  <li><span class="sim">[SIM]</span> نموذج الغرق مدرَّب ومقيس على أيام محاكاة؛ وقراءة البلاغ مقيسة على 60 بلاغا محاكى.</li>
+  <li>أرقام كاشف النار 3.0.0 حقيقية، على 383 صورة تقييم معلنة، ووسوم الظروف بالعين لم تُراجَع بعد.</li>
+</ul></div>
+</section>
+
+<section>
+<h2>6. الاختبارات المطبقة</h2>
+<div class="tbl"><table>
+<tr><th>المكوّن</th><th>العدد</th><th>النتيجة</th></tr>
+<tr><td>الخلفية (pytest)</td><td>1033، منها العملية البيضاء وأمنها، والحساسات والأبراج والدرون، ومهام المخطط، والبطاقات، والاقتراحات، والشذوذ</td><td>ناجحة في CI</td></tr>
+<tr><td>الترحيلات</td><td>صعودا ونزولا ثم صعودا حتى 0075</td><td>ناجحة</td></tr>
+<tr><td>لوحة القيادة (vitest)</td><td>585</td><td>ناجحة</td></tr>
+<tr><td>لوحة القيادة (Playwright مع axe)</td><td>93، منها العملية البيضاء والحساسات والدرون وبطاقات النماذج</td><td>ناجحة، دون أي مخالفة</td></tr>
+<tr><td>الخدمات المساعدة</td><td>حوالي 205، منها قارئ KLV وبرنامج الحافة والبوابة</td><td>ناجحة</td></tr>
+<tr><td>قياس قراءة البلاغ بالنموذج الحقيقي (qwen3:1.7b)</td><td>60 بلاغا <span class="sim">[SIM]</span></td><td>حياة في خطر أُغفلت في 6 من 37؛ الدارجة 5 من 13، والدارجة بالحروف اللاتينية 3 من 5</td></tr>
+<tr><td>CI على #134</td><td>27 فحصا</td><td>كلها ناجحة</td></tr>
+</table></div>
+<ul>
+  <li>الدرون: <code>tests/test_drones.py</code> يفشل إن ظهر طريق درون غير طرق القراءة أو أسماء أوامر MAVLink أو مكتبة قيادة.</li>
+  <li>العملية البيضاء: لا شيء من التمرين في الإحصائيات أو الإشعارات؛ الإيقاف متاح لرئيس قاعة مشاركة؛ <code>drill.js</code> يرفض الانطلاق دون <code>ISOLATED=yes</code>.</li>
+  <li>الحساسات والأبراج: القراءة غير الموقّعة أو من عنوان خارج الشبكة المحلية مرفوضة، والمفتاح لا يعود في أي جواب بعد عرضه الأول.</li>
+  <li>مهام المخطط: الاقتباس غير الموجود في صفحته موسوم، والقائمة لا تُعتمد ما دامت مهمة دون مراجعة.</li>
+</ul>
+</section>
+
+<section id="tools">
+<h2>7. التقنيات والأدوات والمصادر والإصدارات</h2>
+<p>القائمة الكاملة في <a href="versions.md">versions.md</a>.</p>
+<div class="cards">
+<div class="card"><h3>ترحيلات قاعدة البيانات</h3><p class="v">من 0066 إلى 0075 · <span class="prio p1">1</span></p>
+<dl><dt>الاستعمال</dt><dd>العملية البيضاء، نقل الأعوان، ربط الاستيراد، الحساسات والأبراج والدرون، مهام المخطط، البطاقات، الاقتراحات، الشذوذ</dd><dt>الأمر</dt><dd><code>alembic upgrade head</code></dd></dl></div>
+<div class="card"><h3>بوابة الحساسات</h3><p class="v">ehimaya/sensor-gateway 0.1.0 · <span class="prio p1">1</span></p>
+<dl><dt>الاستعمال</dt><dd>على خادم MediaMTX في الشبكة المحلية؛ مكتبة Python القياسية وحدها</dd><dt>المتغير</dt><dd><code>SENSOR_GATEWAY_TOKEN</code></dd></dl></div>
+<div class="card"><h3>pypdf و scikit-learn</h3><p class="v">6.21.4 و 1.9.1 · <span class="prio p2">2</span></p>
+<dl><dt>الاستعمال</dt><dd>نص المخطط لـ AI2، ونموذج الغرق في الظل</dd><dt>الرخصة</dt><dd>BSD-3-Clause</dd></dl></div>
+<div class="card"><h3>كاشف النار والدخان</h3><p class="v">3.0.0 · SHA-256 <code>39de2276…84f7</code> · <span class="prio p2">2</span></p>
+<dl><dt>التدريب</dt><dd>YOLOX-Tiny من أوزان COCO، 12,524 صورة بعد إزالة التكرار، منها D-Fire (CC0-1.0)</dd></dl></div>
+<div class="card"><h3>الواجهة البرمجية</h3><p class="v">555 مسارا · 667 عملية · <span class="prio p2">2</span></p>
+<dl><dt>الجديد</dt><dd><code>/staff/drills/*</code> و <code>/staff/sensors/*</code> و <code>/staff/towers/*</code> و <code>/staff/drones/*</code> و <code>/staff/ai/models/*</code> و <code>/staff/anomalies</code> و <code>.../checklist/*</code> و <code>.../suggestions/*</code> و <code>/staff/inventory/transfers/*</code></dd></dl></div>
+<div class="card"><h3>تطبيق الهاتف</h3><p class="v">0.22.0 · <span class="prio p4">4</span></p>
+<dl><dt>الأثر</dt><dd>حقول العدّ بالعدّاد (R4a)، دون إصدار جديد</dd></dl></div>
+</div>
+</section>
+
+<section>
+<h2>8. المخرجات المحيَّنة</h2>
+<ul>
+  <li>الملف الوصفي V25 (docx و pdf) في <code>spec/</code>: F-DSH-87 إلى 96، F-SRV-33 إلى 40، القواعد BR-18 إلى BR-20، القرارات الخارجية DRN-01 و SNS-01 و AI-02، 555 مسارا و667 عملية، 33 مخططا و197 جدولا و75 ترحيلا، الاختبارات، وخارطة الطريق.</li>
+  <li>مخططات UML في <code>diagrams/</code>: ثلاثة مخططات أصناف (28 العملية البيضاء ومهام المخطط، 29 الأجهزة، 2a الذكاء الاصطناعي)، وخمسة تسلسلات (71 إلى 75)، وحالات العملية البيضاء (76)، وحالات الاستعمال S64 إلى S69.</li>
+  <li>العرض للمسؤولين في <code>presentation/</code>: 45 مرحلة، الكاشف 3.0.0، الاختبارات، وخارطة الطريق.</li>
+  <li>مرجع التصميم أعيد توليده بأيقونات L5 (الدرون والحساسات والأبراج): <a href="design-reference.html">design-reference.html</a>.</li>
+  <li>سجل الإصدارات، القائمة المؤجلة (§3.8)، دليلا التنصيب (الترحيلات 0066 إلى 0075، البوابة، الشبكة المحلية)، واللقطات في <code>phase-l/</code>.</li>
+</ul>
+</section>
+
+<section>
+<h2>9. ملاحظات وانحرافات</h2>
+<ul>
+  <li>محاكاة الدرون بمحاكي مسار يمر بترميز KLV وفكّه بدل ArduPilot SITL، لأن SITL يحتاج بروتوكول قيادة لا مكان له في المنظومة.</li>
+  <li>قراءة البلاغ بالدارجة، خاصة بالحروف اللاتينية، أضعف نقطة في بطاقات النماذج؛ معجم الدارجة يُعدّ في خيط مستقل.</li>
+  <li>معايرة الدخان في 3.0.0 على مستوى الإنذار الكاذب لـ 2.0.0 لا على دقة 0.80، لأن الأخيرة تضاعف الدخان الكاذب.</li>
+  <li>AP50 على مجموعة FURG انخفض (0.549 ← 0.157) بسبب شكل الصناديق في D-Fire، بينما ارتفع استدعاء الإطارات، وهو ما تقرره الخدمة.</li>
+  <li>إصلاحات تصميم ظهرت في لقطات نهاية المرحلة: صفحتا بطاقات النماذج ومهام المخطط كانتا أعرض من الشاشة (عنوان مخفي يأخذ العرض كله)، وحقول نماذج L5 بلا نسق التصميم، وأزرار الصفوف تكسر خطوط الجداول.</li>
+  <li>التمرين «غير المعلن» بقي سؤالا مفتوحا للديوان، والربط بـ Oracle مؤجل.</li>
+</ul>
+</section>
+
+<section>
+<h2>10. ما يلي</h2>
+<p>دمج هذا التحيين، ثم قرارات الديوان (DRN-01 و SNS-01 و AI-01 و AI-02 و FLD-01) قبل التجربة الميدانية في ولاية واحدة بالأجهزة الحقيقية.</p>
+</section>
+</div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+@startuml
+!include style.iuml
+title Séquence : lecture du plan en liste de tâches revue (AI2)
+autonumber
+actor "Chef de salle" as OPM
+participant "Tableau de bord" as UI
+participant "API" as API
+participant "Travailleur" as W
+participant "Ollama\n(local)" as LLM
+database "PostgreSQL" as DB
+OPM -> UI : axe, onglet « Tâches du plan », plan bleu
+UI -> API : POST /staff/crisis/axes/{id}/checklist/read
+API -> DB : liste en file, audit
+W -> DB : prend la liste (bail)
+W -> W : texte du PDF (pypdf, 300 pages au plus)
+loop chaque fenêtre (~6000 caractères)
+  W -> LLM : texte comme données, schéma JSON strict
+  LLM --> W : tâches : action, responsable, moyen, page, citation
+  W -> W : page dans la fenêtre ?\ncitation trouvée dans la page ?
+end
+W -> DB : tâches proposées, état revue\n(sauf si la liste a changé entre-temps)
+OPM -> UI : accepter, modifier, supprimer, ajouter
+UI -> API : POST .../tasks/{t}/review
+OPM -> UI : « Approuver la liste »
+UI -> API : POST .../checklist/approve
+API -> API : aucune tâche sans revue
+OPM -> UI : suivre : en cours, faite
+UI -> API : POST .../tasks/{t}/status
+note over LLM
+  Rien ne sort du réseau local.
+  Interrupteur « lecture du plan » dans les réglages IA.
+end note
+@enduml

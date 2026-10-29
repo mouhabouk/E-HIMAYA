@@ -1,0 +1,49 @@
+@startuml
+!include style.iuml
+title Diagramme de classes : fiches de modèles, modèle de noyade en ombre, suggestions et anomalies (L5c)
+class "Fiche de modèle" as Card {
+  modèle : feu et fumée | personnes | lecture du signalement
+           | résumé | lecture du plan | noyade
+  usage, limites, données et licences
+  mesures datées, erreurs par condition ou langue
+  seuils, version
+  état : en attente | approuvée | modifiée, à revoir
+}
+class "Décision du comité" as Dec {
+  approuvée | retirée
+  seuils et version vus
+  référence du procès-verbal, note
+}
+class "Modèle de noyade" as Rm <<[SIM]>> {
+  version, régression logistique
+  coefficients explicites, seuils des niveaux
+  mesures (AUC, jours manqués)
+}
+class "Jour de plage" as Bd {
+  niveau des règles
+  probabilité et niveau de l'ombre
+}
+class "Suggestion d'activité" as Sg <<calculée>> {
+  clé, jour, raisons et chiffres
+  feux | pluies | plages rouges | saison | hausse
+}
+class "Mise à l'écart" as Dis {
+  motif, par, date
+}
+class "Période de programmation" as Per
+class "Anomalie" as An {
+  indicateur : signalements | arrivée | réalisation
+  wilaya, délégation, jour
+  valeur, moyenne, écart, z
+  base : saison | semaines récentes
+}
+Card "1" -- "0..*" Dec
+Card "1" -- "0..1" Rm
+Rm "1" ..> "0..*" Bd : calcul quotidien, sans alerte
+Per "1" -- "0..*" Sg
+Sg "1" -- "0..1" Dis
+note bottom of Card
+  L'IA propose, l'humain décide (AI-01) :
+  marque IA, audit, interrupteur dans les réglages.
+end note
+@enduml

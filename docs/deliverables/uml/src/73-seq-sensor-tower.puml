@@ -1,0 +1,27 @@
+@startuml
+!include style.iuml
+title Séquence : lecture d'un capteur et feu vu par une tour, par la passerelle locale (L5b) [SIM]
+autonumber
+participant "Pluviomètre" as SEN
+participant "Ordinateur de bord\n(tour)" as EDGE
+participant "Passerelle\n(serveur MediaMTX)" as GW
+participant "API" as API
+database "PostgreSQL" as DB
+actor "Agent de salle" as OP
+SEN -> GW : POST lecture JSON signée (HMAC)
+GW -> GW : adresse du réseau local permise ?
+GW -> API : POST /internal/sensors/readings\n(X-Gateway-Token)
+API -> DB : clé déchiffrée, signature vérifiée
+API -> DB : lecture, état alarme, suggestion d'alerte
+API --> OP : centre des alertes : proposition
+note right of GW
+  Panne de l'API : la passerelle garde
+  les lectures en file et les renvoie.
+end note
+EDGE -> EDGE : détecteur 3.0.0 sur le flux,\n3 images sur 5
+EDGE -> GW : événement signé : feu, confiance, image
+GW -> API : POST /internal/towers/events
+API -> DB : événement, suggestion (pas un signalement)
+OP -> API : GET /staff/towers/{id}/events
+OP -> OP : vérifie avec le direct, décide
+@enduml
