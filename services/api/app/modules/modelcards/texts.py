@@ -164,8 +164,8 @@ CARDS: dict[str, dict[Lang, dict[str, str]]] = {
             "فرنسية) ليحوّلها إلى بطاقة قرار. القائد يعتمد أو يعدّل أو يرفض، والاعتماد يفتح المسار المعتاد ولا ينفّذ "
             "شيئا.",
             "limits": "قد يخطئ في قراءة أمر بكلمات لم يرها: تظهر القراءة على البطاقة ليصحّحها القائد. أرقام القراءة من "
-            "نصوص [SIM] كتبت للمشروع، لا من أوامر حقيقية. ذاكرة القرارات تعدّ ما قرّره القادة ولا تحكم على صوابه "
-            "قبل ربطه بنتيجة التدخل (AI5c).",
+            "نصوص [SIM] كتبت للمشروع، لا من أوامر حقيقية. كل قرار يُربط بنتيجة الحادث بعد إغلاقه، والترتيب المتعلَّم "
+            "يبقى في الظل حتى تقرر اللجنة.",
             "data": "النموذج اللغوي المحلي (Qwen3، Apache-2.0) ومعجم الدارجة والفصحى والفرنسية للوسائل والأعداد. "
             "قراءة الأوامر تقاس على 60 نصا محجوزا لم يُضبط عليها شيء. قرارات القادة تحفظ دون أسماء المبلّغين ولا "
             "أرقامهم.",
@@ -176,8 +176,8 @@ CARDS: dict[str, dict[Lang, dict[str, str]]] = {
             "qu'il tape ou dicte (arabe, derja ou français) pour en faire une carte de décision. Le commandant adopte, "
             "modifie ou rejette ; adopter ouvre le circuit habituel et n'exécute rien.",
             "limits": "Peut mal lire un ordre aux mots inconnus : la lecture est affichée sur la carte pour correction. "
-            "Les chiffres de lecture viennent de textes [SIM] écrits pour le projet, pas d'ordres réels. La mémoire "
-            "compte ce que les commandants ont décidé sans juger du résultat avant le lien au bilan (AI5c).",
+            "Les chiffres de lecture viennent de textes [SIM] écrits pour le projet, pas d'ordres réels. Chaque "
+            "décision est liée au bilan de l'incident clos ; le classement appris reste en ombre jusqu'au comité.",
             "data": "Le modèle de langue local (Qwen3, Apache-2.0) et un lexique derja, arabe et français des moyens et "
             "des nombres. La lecture est mesurée sur 60 textes réservés, jamais utilisés pour le réglage. Les "
             "décisions sont gardées sans nom ni numéro des signalants.",
@@ -188,8 +188,8 @@ CARDS: dict[str, dict[Lang, dict[str, str]]] = {
             "type or dictate (Arabic, Derja or French) into a decision card. The commander adopts, modifies or "
             "rejects; adopting opens the usual flow and executes nothing.",
             "limits": "May misread an order with words it has not seen: the reading is shown on the card to correct. "
-            "The reading figures come from [SIM] texts written for the project, not from real orders. The memory "
-            "counts what commanders decided and does not judge it before the link to the outcome (AI5c).",
+            "The reading figures come from [SIM] texts written for the project, not from real orders. Each "
+            "decision is linked to the outcome of the closed incident; the learned ranking stays in shadow until the committee.",
             "data": "The local language model (Qwen3, Apache-2.0) and a Derja, Arabic and French lexicon of resources "
             "and numbers. The reading is measured on 60 held-out texts never used for tuning. Decisions are kept "
             "without reporters' names or numbers.",
@@ -339,6 +339,28 @@ LABELS: dict[Lang, dict[str, str]] = {
         "r.lang.ar": "العربية والدارجة",
         "r.lang.fr": "الفرنسية",
         "r.lang.en": "الإنجليزية",
+        "m.ranker": "الترتيب المتعلَّم (في الظل): الاقتراح الأول المعتمد، مقارنة بترتيب القواعد",
+        "c.set": "المجموعة",
+        "c.incidents": "الحوادث",
+        "c.model_first": "الأول عند النموذج اعتُمد",
+        "c.rules_first": "الأول عند القواعد اعتُمد",
+        "r.set.heldout": "حوادث محجوزة عند التدريب",
+        "r.set.since": "قرارات بعد التدريب",
+        "not_trained": "لم يُدرَّب بعد: يُطلق من مركز التدريب حين تتجمع القرارات",
+        "shadow": "في الظل: لا يغيّر ترتيب اللوحة حتى تقرر اللجنة",
+        "m.targets": "الأهداف: هل بلغت الأداة الدقة المطلوبة؟",
+        "c.target": "الهدف",
+        "c.verdict": "الحكم",
+        "g.reading": "قراءة الأوامر، المطابقة التامة (المحجوزة، الحد الأدنى للفترة)",
+        "g.invalid": "أجوبة غير صالحة من النموذج",
+        "g.voice": "تفريغ الدارجة، نسبة الكلمات الخاطئة (90 يوما)",
+        "g.production": "أوامر لم تُرفض بسبب قراءة خاطئة (90 يوما)",
+        "g.ranker": "الترتيب المتعلَّم بعد التدريب (النموذج / القواعد)",
+        "g.ranker_target": "أعلى من القواعد",
+        "v.met": "محقَّق",
+        "v.not_met": "غير محقَّق",
+        "v.unmeasured": "لم يُقَس بعد",
+        "targets_note": "الحكم على الحد الأدنى لفترة الثقة حيث توجد. القراءة على نصوص [SIM]، والبقية على قرارات القادة الحقيقية.",
         "t.commander": "مساعد القائد مفعّل",
         "t.none": "لا عتبة: يُرفض الملخص إن ذكر رقما غير موجود",
         "d.approved": "اعتمد",
@@ -457,6 +479,28 @@ LABELS: dict[Lang, dict[str, str]] = {
         "r.lang.ar": "Arabe et derja",
         "r.lang.fr": "Français",
         "r.lang.en": "Anglais",
+        "m.ranker": "Classement appris (en ombre) : première proposition adoptée, comparée à l'ordre des règles",
+        "c.set": "Ensemble",
+        "c.incidents": "Incidents",
+        "c.model_first": "Première du modèle adoptée",
+        "c.rules_first": "Première des règles adoptée",
+        "r.set.heldout": "Incidents réservés à l'entraînement",
+        "r.set.since": "Décisions depuis l'entraînement",
+        "not_trained": "Pas encore entraîné : à lancer depuis le centre d'entraînement quand les décisions s'accumulent",
+        "shadow": "En ombre : ne change pas l'ordre du tableau avant la décision du comité",
+        "m.targets": "Objectifs : l'outil atteint-il la précision voulue ?",
+        "c.target": "Objectif",
+        "c.verdict": "Verdict",
+        "g.reading": "Lecture des ordres, exacte (réservés, borne basse de l'intervalle)",
+        "g.invalid": "Réponses invalides du modèle",
+        "g.voice": "Transcription derja, taux de mots erronés (90 jours)",
+        "g.production": "Ordres non rejetés pour mauvaise lecture (90 jours)",
+        "g.ranker": "Classement appris après l'entraînement (modèle / règles)",
+        "g.ranker_target": "Au-dessus des règles",
+        "v.met": "Atteint",
+        "v.not_met": "Non atteint",
+        "v.unmeasured": "Pas encore mesuré",
+        "targets_note": "Verdict sur la borne basse de l'intervalle de confiance quand il y en a une. La lecture sur des textes [SIM], le reste sur les décisions réelles des commandants.",
         "t.commander": "Assistant du commandant activé",
         "t.none": "Pas de seuil : le résumé est refusé s'il cite un chiffre absent",
         "d.approved": "Approuvé",
@@ -575,6 +619,28 @@ LABELS: dict[Lang, dict[str, str]] = {
         "r.lang.ar": "Arabic and Derja",
         "r.lang.fr": "French",
         "r.lang.en": "English",
+        "m.ranker": "Learned ranking (in shadow): first proposal adopted, compared with the rules' order",
+        "c.set": "Set",
+        "c.incidents": "Incidents",
+        "c.model_first": "Model's first adopted",
+        "c.rules_first": "Rules' first adopted",
+        "r.set.heldout": "Incidents held out at training",
+        "r.set.since": "Decisions since training",
+        "not_trained": "Not trained yet: launched from the training centre once decisions accumulate",
+        "shadow": "In shadow: does not change the board's order until the committee decides",
+        "m.targets": "Targets: does the tool reach the accuracy required?",
+        "c.target": "Target",
+        "c.verdict": "Verdict",
+        "g.reading": "Order reading, exact match (held out, lower bound of the interval)",
+        "g.invalid": "Invalid answers from the model",
+        "g.voice": "Derja transcription, word error rate (90 days)",
+        "g.production": "Orders not rejected for a wrong reading (90 days)",
+        "g.ranker": "Learned ranking after training (model / rules)",
+        "g.ranker_target": "Above the rules",
+        "v.met": "Met",
+        "v.not_met": "Not met",
+        "v.unmeasured": "Not measured yet",
+        "targets_note": "Judged on the lower bound of the confidence interval where there is one. The reading on [SIM] texts, the rest on the commanders' real decisions.",
         "t.commander": "Commander's assistant switched on",
         "t.none": "No threshold: the summary is refused if it cites a figure not given",
         "d.approved": "Approved",

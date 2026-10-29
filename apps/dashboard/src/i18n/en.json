@@ -7351,7 +7351,9 @@
       "images": "{{images}} images ({{confirmed}} confirmed by the 3-of-5 rule) · fire: {{fire}} · smoke: {{smoke}}",
       "waitingTrainer": "The image list is ready. Run the trainer on a GPU machine so it sends its results back.",
       "trainer": "Trainer results: {{model}} ({{by}})",
-      "failed": "Training failed: {{error}}"
+      "failed": "Training failed: {{error}}",
+      "ranking": "First proposal adopted on {{incidents}} held-out incidents (model / rules):",
+      "outcomes": "{{count}} decisions linked to the incident's outcome."
     },
     "model": {
       "title": "Current model",
@@ -7366,7 +7368,10 @@
       "evaluatedOn": {
         "confirmed": "Evaluated on confirmed",
         "all": "Evaluated on all"
-      }
+      },
+      "firstModel": "Model's first adopted",
+      "firstRules": "Rules' first adopted",
+      "rankedIncidents": "on {{count}} incidents"
     },
     "words": {
       "title": "New words to review",
@@ -7402,6 +7407,10 @@
       "fire_smoke": {
         "title": "Fire and smoke",
         "help": "Prepares the media library's images and frames to train the fire and smoke detector on a GPU machine."
+      },
+      "command_ranker": {
+        "title": "Ranking of the commander's proposals",
+        "help": "Learns from the commanders' decisions and the incidents' outcomes which proposals are adopted first; stays in shadow, compared with the rules' order, until the committee decides."
       }
     },
     "label": {

@@ -19,6 +19,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.storage import get_store
 from app.modules.audit import service as audit
+from app.modules.decision import outcomes, ranker
 from app.modules.learning import samples, tasks
 from app.modules.learning.models import LearnedModel, Sample, TrainingJob
 from app.modules.settings import domain as settings_domain
@@ -72,10 +73,15 @@ async def _work(session: AsyncSession, job: TrainingJob, task: tasks.Task) -> tu
         if not prepared["images"]:
             return "skipped", {**result, "skipped": "no_images"}, None
         return "waiting_trainer", result, None
+    actor_name = "system" if job.trigger == "schedule" else job.requested_by_name
+    if task.key == ranker.TASK:
+        linked = await outcomes.link_all(session)
+        ranked, ranker_model = await ranker.train(session, actor_name)
+        state = "skipped" if ranker_model is None else "done"
+        return state, {"outcomes_linked": linked, **ranked}, ranker_model.id if ranker_model else None
     synced = await sync_samples(session)
     if task.key == "derja_words":
         return "done", {"synced": synced, **await tasks.derja_words(session)}, None
-    actor_name = "system" if job.trigger == "schedule" else job.requested_by_name
     trained, model = await tasks.train_text(session, task, actor_name)
     return ("skipped" if model is None else "done"), {"synced": synced, **trained}, model.id if model else None
 

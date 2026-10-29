@@ -7351,7 +7351,9 @@
       "images": "{{images}} images ({{confirmed}} confirmées par la règle 3 sur 5) · feu : {{fire}} · fumée : {{smoke}}",
       "waitingTrainer": "La liste d'images est prête. Lancez l'entraîneur sur une machine avec GPU pour qu'il envoie ses résultats.",
       "trainer": "Résultats de l'entraîneur : {{model}} ({{by}})",
-      "failed": "Échec de l'entraînement : {{error}}"
+      "failed": "Échec de l'entraînement : {{error}}",
+      "ranking": "Première proposition adoptée sur {{incidents}} incidents réservés (modèle / règles) :",
+      "outcomes": "{{count}} décisions liées au bilan de l'incident."
     },
     "model": {
       "title": "Modèle actuel",
@@ -7366,7 +7368,10 @@
       "evaluatedOn": {
         "confirmed": "Évalué sur les confirmés",
         "all": "Évalué sur tous"
-      }
+      },
+      "firstModel": "Première du modèle adoptée",
+      "firstRules": "Première des règles adoptée",
+      "rankedIncidents": "sur {{count}} incidents"
     },
     "words": {
       "title": "Nouveaux mots à revoir",
@@ -7402,6 +7407,10 @@
       "fire_smoke": {
         "title": "Feu et fumée",
         "help": "Prépare les images de la médiathèque et leurs cadres pour entraîner le détecteur de feu et de fumée sur une machine avec GPU."
+      },
+      "command_ranker": {
+        "title": "Classement des propositions du commandant",
+        "help": "Apprend des décisions des commandants et du bilan des incidents quelles propositions sont adoptées en premier ; reste en ombre, comparé à l'ordre des règles, jusqu'à la décision du comité."
       }
     },
     "label": {

@@ -14,6 +14,7 @@ export const LEARNING_TASKS = [
   "report_rejected",
   "derja_words",
   "fire_smoke",
+  "command_ranker",
 ] as const;
 export type LearningTask = (typeof LEARNING_TASKS)[number];
 export type JobState =
@@ -72,6 +73,18 @@ export interface JobResult {
   confirmed?: number;
   boxes?: Record<string, number>;
   trainer?: { model: string; metrics: Record<string, number>; by: string };
+  /** The commander's ranking (AI5c): decisions linked to their outcome, and the rules' first proposal adopted. */
+  outcomes_linked?: number;
+  ranked_incidents?: number;
+  rules_top1?: number;
+}
+
+/** The learned ranking against the rules' order on the held-out incidents (AI5c). */
+export interface Ranking {
+  incidents: number;
+  top1: number;
+  rules_top1: number;
+  current_top1: number | null;
 }
 
 export interface TrainingJob {
@@ -95,6 +108,7 @@ export interface TrainedModel {
     current?: Scores | null;
     baseline?: Scores | null;
     evaluated_on?: "confirmed" | "all";
+    ranking?: Ranking;
   };
   primary_metric: string;
   train_samples: number;
