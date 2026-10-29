@@ -33462,6 +33462,54 @@
             ],
             "title": "Text Ar"
           },
+          "text_ar_masks": {
+            "items": {
+              "maxItems": 3,
+              "minItems": 3,
+              "prefixItems": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "integer"
+                },
+                {
+                  "enum": [
+                    "hide",
+                    "flag"
+                  ],
+                  "type": "string"
+                }
+              ],
+              "type": "array"
+            },
+            "title": "Text Ar Masks",
+            "type": "array"
+          },
+          "text_masks": {
+            "items": {
+              "maxItems": 3,
+              "minItems": 3,
+              "prefixItems": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "integer"
+                },
+                {
+                  "enum": [
+                    "hide",
+                    "flag"
+                  ],
+                  "type": "string"
+                }
+              ],
+              "type": "array"
+            },
+            "title": "Text Masks",
+            "type": "array"
+          },
           "tracking_code": {
             "title": "Tracking Code",
             "type": "string"
@@ -33857,6 +33905,54 @@
               }
             ],
             "title": "Text Ar"
+          },
+          "text_ar_masks": {
+            "items": {
+              "maxItems": 3,
+              "minItems": 3,
+              "prefixItems": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "integer"
+                },
+                {
+                  "enum": [
+                    "hide",
+                    "flag"
+                  ],
+                  "type": "string"
+                }
+              ],
+              "type": "array"
+            },
+            "title": "Text Ar Masks",
+            "type": "array"
+          },
+          "text_masks": {
+            "items": {
+              "maxItems": 3,
+              "minItems": 3,
+              "prefixItems": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "integer"
+                },
+                {
+                  "enum": [
+                    "hide",
+                    "flag"
+                  ],
+                  "type": "string"
+                }
+              ],
+              "type": "array"
+            },
+            "title": "Text Masks",
+            "type": "array"
           },
           "tracking_code": {
             "title": "Tracking Code",
@@ -37994,6 +38090,30 @@
             ],
             "title": "Text"
           },
+          "text_masks": {
+            "items": {
+              "maxItems": 3,
+              "minItems": 3,
+              "prefixItems": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "integer"
+                },
+                {
+                  "enum": [
+                    "hide",
+                    "flag"
+                  ],
+                  "type": "string"
+                }
+              ],
+              "type": "array"
+            },
+            "title": "Text Masks",
+            "type": "array"
+          },
           "translation_ar": {
             "anyOf": [
               {
@@ -38004,6 +38124,30 @@
               }
             ],
             "title": "Translation Ar"
+          },
+          "translation_ar_masks": {
+            "items": {
+              "maxItems": 3,
+              "minItems": 3,
+              "prefixItems": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "integer"
+                },
+                {
+                  "enum": [
+                    "hide",
+                    "flag"
+                  ],
+                  "type": "string"
+                }
+              ],
+              "type": "array"
+            },
+            "title": "Translation Ar Masks",
+            "type": "array"
           }
         },
         "required": [

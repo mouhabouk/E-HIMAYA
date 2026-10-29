@@ -15,6 +15,7 @@ import {
 } from "../lib/types";
 import { AnalysisChip, PriorityBadge } from "./AiBadges";
 import { CategoryLabel } from "./CategoryIcon";
+import { MaskedText } from "./MaskedText";
 
 const CREDIBILITY_COMPONENTS = [
   "base",
@@ -271,14 +272,14 @@ function TranscriptView({ item }: { item: Transcript }) {
         <>
           {item.text && (
             <blockquote className="report-text" lang={item.language ?? undefined} dir="auto">
-              {item.text}
+              <MaskedText text={item.text} masks={item.text_masks} />
             </blockquote>
           )}
           {item.translation_ar && (
             <>
               <p className="muted translation-label">{t("ai.translation")}</p>
               <blockquote className="report-text report-text--translation" lang="ar" dir="rtl">
-                {item.translation_ar}
+                <MaskedText text={item.translation_ar} masks={item.translation_ar_masks} />
               </blockquote>
             </>
           )}

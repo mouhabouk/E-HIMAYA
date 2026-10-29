@@ -17,6 +17,7 @@ from app.modules.audit import service as audit
 from app.modules.audit.service import actor_of
 from app.modules.identity.models import Profile
 from app.modules.medical import service as locked_files
+from app.modules.moderation import service as moderation
 from app.modules.ops import service as ops
 from app.modules.orgs import service as orgs
 from app.modules.orgs.models import Organization
@@ -241,6 +242,8 @@ def analysis_out(analysis: Analysis, media: list[Media]) -> schemas.AnalysisOut:
             translation_ar=m.translation_ar,
             error=(m.analysis or {}).get("error"),
             model=(m.analysis or {}).get("model"),
+            text_masks=moderation.masks(m.transcript),
+            translation_ar_masks=moderation.masks(m.translation_ar),
         )
         for m in media
         if m.kind in ("audio", "video") and (m.transcript is not None or (m.analysis or {}).get("error"))

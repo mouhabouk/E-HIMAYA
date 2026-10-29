@@ -107,6 +107,9 @@ export interface StaffReport {
   // AI layer 1 (phase 3): suggestions for the operator, never applied automatically (BR-06, BR-11).
   /** Arabic translation of a French or English text (FR-A-045); null for Arabic. */
   text_ar: string | null;
+  /** Words to hide (`hide`) or to shade red (`flag`) on screen, [start, end, kind] in UTF-16 units; absent from older payloads. */
+  text_masks?: [number, number, "hide" | "flag"][];
+  text_ar_masks?: [number, number, "hide" | "flag"][];
   /** BR-20 priority, 0..100. */
   priority_score: number | null;
   /** BR-06 suggested credibility, 0..100. */
@@ -255,6 +258,9 @@ export interface Transcript {
   translation_ar: string | null;
   error: string | null;
   model: string | null;
+  /** Words to hide on screen, as `StaffReport.text_masks`. */
+  text_masks?: [number, number, "hide" | "flag"][];
+  translation_ar_masks?: [number, number, "hide" | "flag"][];
 }
 
 export interface Analysis {
