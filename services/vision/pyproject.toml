@@ -5,24 +5,24 @@ description = "ء-حماية / e-Himaya — computer vision service (fire, smoke
 requires-python = ">=3.12"
 # Every dependency and every model is under a permissive licence (README.md, "Licences"): no Ultralytics/AGPL code.
 dependencies = [
-  "fastapi==0.146.0",
+  "fastapi==0.162.0",
   "uvicorn[standard]==0.54.0",
-  "pydantic-settings==2.16.0",
+  "pydantic-settings==2.16.1",
   "python-multipart==0.0.32",
   "httpx==0.28.1",
   "structlog==26.1.0",
   "numpy==2.5.4",
-  "onnxruntime==1.30.0",
+  "onnxruntime==1.31.0",
   "pillow==13.0.0",
-  "av==19.0.1",
+  "av==19.0.2",
   "prometheus-client==0.26.0",
 ]
 
 [dependency-groups]
 dev = [
   "pytest==9.1.1",
-  "pytest-asyncio==1.4.0",
-  "ruff==0.17.1",
+  "pytest-asyncio==1.4.1",
+  "ruff==0.17.2",
   "mypy==2.4.0",
 ]
 
