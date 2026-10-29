@@ -670,3 +670,25 @@ export function canOpenWindowFull(who: Pick<Who, "roles" | "national">): boolean
   if (who.national) return who.roles.includes("operator") || who.roles.includes("ops_manager");
   return who.roles.includes("ops_manager");
 }
+
+// ---------- Phase L5b: sensors of the local network ----------
+/** Rooms see their gouvernorat's sensors (the central room all); the operations manager registers them. */
+export function canOpenSensors(roles: readonly string[]): boolean {
+  return hasReadAccess(roles);
+}
+
+export function canManageSensors(roles: readonly string[]): boolean {
+  return roles.includes("ops_manager");
+}
+
+/** The watch towers follow the same rule: every room reads its own, the operations manager registers them. */
+export const canOpenTowers = canOpenSensors;
+export const canManageTowers = canManageSensors;
+
+/** Drones too (read only, design-l5 §3.3): every room sees its own; the operations manager registers them and draws
+ * the zones; an agent of the room acknowledges an alert. */
+export const canOpenDrones = canOpenSensors;
+export const canManageDrones = canManageSensors;
+export function canAcknowledgeDroneAlerts(roles: readonly string[]): boolean {
+  return ["operator", "ops_manager", "field_commander"].some((r) => roles.includes(r));
+}

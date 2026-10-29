@@ -19,6 +19,8 @@ COPY --from=web csp.mjs /tmp/csp.mjs
 RUN node /tmp/csp.mjs dist /tmp/csp.caddy
 
 FROM caddy:2.11-alpine@sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f
+# Alpine fixes that land before the next Caddy image (Trivy fails CI on a fixed CRITICAL, e.g. brotli-libs).
+RUN apk upgrade --no-cache
 COPY --from=web Caddyfile /etc/caddy/Caddyfile
 COPY --from=build /tmp/csp.caddy /etc/caddy/csp.caddy
 COPY --from=build /app/dist /srv

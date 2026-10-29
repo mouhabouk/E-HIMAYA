@@ -67,7 +67,93 @@ const SCREENS: { path: string; ready: string }[] = [
   { path: "/plans/reg-plan", ready: "main .pdf-viewer canvas" },
   // Phase PL2: the progress of the programmes (the national user lands on it).
   { path: "/schedule", ready: "main .rate" },
+  // Phase L5b: the sensors of the local network, by urgency.
+  { path: "/sensors", ready: "main table" },
+  { path: "/towers", ready: "main table" },
+  { path: "/drones", ready: "main table" },
 ];
+
+// ┏━━ SIMULATION ━━ sensors of the local network (phase L5b), one per level
+// ┃ PRODUCTION: services/api (module sensors); tests/test_sensors.py covers it.
+// ┗━━━━━━━━━━━━━━━━
+const SENSORS = (["alarm", "watch", "silent", "normal", "disabled"] as const).map((state, i) => ({
+  id: `s-${i}`,
+  code: `TUN-RAIN-0${i}`,
+  name: `Pluviomètre ${i}`,
+  kind: "rain_1h",
+  unit: "mm/h",
+  gouvernorat_code: 11,
+  lat: 36.8,
+  lon: 10.18,
+  provider: "INM",
+  watch_threshold: 20,
+  alarm_threshold: 40,
+  silent_after_min: 30,
+  enabled: state !== "disabled",
+  simulated: true,
+  last_value: state === "silent" ? null : 10 * i,
+  last_at: state === "silent" ? null : "2026-10-28T20:00:00Z",
+  state,
+  level_since: "2026-10-28T19:00:00Z",
+  created_by_name: null,
+  updated_at: "2026-10-28T19:00:00Z",
+}));
+
+// ┏━━ SIMULATION ━━ watch towers (phase L5b): one that saw fire, one quiet with its camera off
+// ┃ PRODUCTION: services/api (module towers); tests/test_towers.py covers it.
+// ┗━━━━━━━━━━━━━━━━
+const TOWERS = [0, 1].map((i) => ({
+  id: `t-${i}`,
+  code: `TUN-TWR-0${i}`,
+  label: `Tour ${i}`,
+  gouvernorat_code: 11,
+  lat: 36.72,
+  lon: 10.33,
+  bearing_deg: 90 * i,
+  fov_deg: 60,
+  range_m: 8000,
+  simulated: true,
+  stream_status: i === 0 ? "live" : "ended",
+  last_event: i === 0 ? { at: "2026-10-28T20:00:00Z", label: "fire", confidence: 0.86 } : null,
+  field_of_view: [],
+  created_by_name: null,
+  updated_at: "2026-10-28T19:00:00Z",
+}));
+
+// ┏━━ SIMULATION ━━ drones (phase L5b, read only): one flying with an open alert, one on the ground; two zones
+// ┃ PRODUCTION: services/api (module drones); tests/test_drones.py covers it.
+// ┗━━━━━━━━━━━━━━━━
+const DRONES = [0, 1].map((i) => ({
+  id: `d-${i}`,
+  label: `Drone ${i}`,
+  gouvernorat_code: 11,
+  stream_status: i === 0 ? "live" : "ended",
+  last:
+    i === 0
+      ? { at: "2026-10-28T20:00:00Z", lat: 36.8, lon: 10.2, alt_m: 120, heading_deg: 90, sensor_az_deg: 0, sensor_hfov_deg: 60, battery_pct: 54, mode: "SIM" }
+      : null,
+  camera_view: null,
+  open_alerts: i === 0 ? 1 : 0,
+}));
+const DRONE_ALERTS = [
+  { id: 1, drone_id: "d-0", drone_label: "Drone 0", at: "2026-10-28T20:00:00Z", kind: "near_no_fly", zone_name: "Aéroport", detail: { distance_m: 1500 }, acknowledged_by_name: null, acknowledged_at: null },
+];
+const DRONE_ZONES = (["work", "no_fly"] as const).map((kind, i) => ({
+  id: `z-${i}`,
+  kind,
+  name: kind === "work" ? "Forêt" : "Aéroport",
+  gouvernorat_code: 11,
+  ring: [
+    [10.1, 36.7],
+    [10.2, 36.7],
+    [10.2, 36.8],
+    [10.1, 36.7],
+  ],
+  margin_m: 500,
+  active: true,
+  created_by_name: null,
+  updated_at: "2026-10-28T19:00:00Z",
+}));
 
 /** A one-page PDF ([SIM]) for the plan viewer; PDF.js rebuilds the missing cross-reference table. */
 const SAMPLE_PDF = [
@@ -280,6 +366,12 @@ async function mockApi(page: Page): Promise<string[]> {
       // Satellite background (phase R).
       "/api/v1/staff/basemap": BASEMAP,
       "/api/v1/staff/basemap/settings": BASEMAP_SETTINGS,
+      // Phase L5b: sensors ([SIM]) at every level.
+      "/api/v1/staff/sensors": { items: SENSORS, can_manage: true },
+      "/api/v1/staff/towers": { items: TOWERS, can_manage: true },
+      "/api/v1/staff/drones": { items: DRONES, can_register: true },
+      "/api/v1/staff/drones/alerts": DRONE_ALERTS,
+      "/api/v1/staff/drones/zones": DRONE_ZONES,
     };
     if (pathname in inventory) return json(route, inventory[pathname]);
     unanswered.push(pathname);

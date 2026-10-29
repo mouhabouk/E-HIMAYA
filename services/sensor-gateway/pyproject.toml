@@ -1,0 +1,40 @@
+# Gateway of the sensors (L5b, docs/phase-l/design-l5.md §3.0, docs/sensor-gateway.md): runs on the MediaMTX server of
+# the local network, receives the signed readings of the sensors and relays them to the API. Python standard library
+# only at run time, so it runs on a small machine without anything else to install.
+[project]
+name = "ehimaya-sensor-gateway"
+version = "0.1.0"
+description = "ء-حماية / e-Himaya — gateway of the sensors on the local network (beside MediaMTX)"
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+dev = [
+  "pytest==9.1.1",
+  "ruff==0.17.1",
+  "mypy==2.4.0",
+]
+
+[tool.uv]
+default-groups = ["dev"]
+package = false
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "ASYNC", "RUF"]
+ignore = ["S101", "RUF001", "RUF002", "RUF003"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S105", "S106", "S310"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+exclude = ["tests/"]

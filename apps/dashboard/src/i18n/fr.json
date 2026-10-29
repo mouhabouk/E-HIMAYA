@@ -62,7 +62,10 @@
     "schedule": "Programmation",
     "permissions": "Autorisations",
     "window": "Fenêtre de décision",
-    "drills": "Exercice blanc"
+    "drills": "Exercice blanc",
+    "sensors": "Capteurs",
+    "towers": "Tours de guet",
+    "drones": "Drones"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -514,7 +517,11 @@
     "mapping_invalid": "Correspondance des colonnes invalide : choisissez un champ de la liste pour chaque colonne.",
     "mapping_duplicate": "Un même champ est lié à deux colonnes de la même feuille.",
     "profile_name_taken": "Un modèle de correspondance porte déjà ce nom.",
-    "profile_not_found": "Modèle de correspondance introuvable ou non disponible pour votre gouvernorat."
+    "profile_not_found": "Modèle de correspondance introuvable ou non disponible pour votre gouvernorat.",
+    "sensor_code_taken": "Un capteur porte déjà ce code.",
+    "threshold_out_of_range": "Seuil hors de la plage plausible de ce type de capteur.",
+    "outside_local_network": "Refusé : la demande ne vient pas du réseau local.",
+    "tower_code_taken": "Une tour porte déjà ce code."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -2489,7 +2496,13 @@
       "dismiss": "Écarter",
       "reason": "Motif (obligatoire)",
       "reasonRequired": "Indiquez un motif (au moins 3 caractères).",
-      "confirmDismiss": "Écarter la suggestion"
+      "confirmDismiss": "Écarter la suggestion",
+      "device": {
+        "sensor": "Capteur",
+        "tower": "Tour",
+        "openSensors": "Page des capteurs",
+        "openTowers": "Page des tours"
+      }
     }
   },
   "decision": {
@@ -6763,5 +6776,270 @@
     "increase": "Augmenter",
     "decreaseNamed": "Diminuer : {{label}}",
     "increaseNamed": "Augmenter : {{label}}"
+  },
+  "sensors": {
+    "title": "Capteurs",
+    "intro": "Capteurs du réseau local : pluie, niveau d'eau et température. Leurs mesures arrivent par la passerelle installée à côté du serveur MediaMTX ; un seuil franchi devient une suggestion dans le centre des alertes, rien n'est envoyé aux citoyens d'ici.",
+    "toSuggestions": "Centre des alertes",
+    "new": "Nouveau capteur",
+    "edit": "Modifier",
+    "save": "Enregistrer",
+    "empty": "Aucun capteur enregistré.",
+    "caption": "Capteurs ({{n}})",
+    "countsLabel": "Capteurs par état",
+    "col": {
+      "last": "Dernière mesure",
+      "state": "État",
+      "thresholds": "Vigilance / alarme",
+      "actions": "Actions"
+    },
+    "state": {
+      "normal": "Normal",
+      "watch": "Vigilance",
+      "alarm": "Alarme",
+      "silent": "Muet",
+      "disabled": "Désactivé"
+    },
+    "kind": {
+      "rain_1h": "Pluviomètre",
+      "water_level": "Niveau d'eau",
+      "temperature": "Température"
+    },
+    "unit": {
+      "rain_1h": "mm/h",
+      "water_level": "m",
+      "temperature": "°C"
+    },
+    "providers": {
+      "office": "Office national de la protection civile",
+      "inm": "Institut national de la météorologie",
+      "agriculture": "Ministère de l'Agriculture"
+    },
+    "field": {
+      "kind": "Type",
+      "code": "Code",
+      "codeHelp": "Lettres latines, chiffres, - et _, par ex. GAB-RAIN-01. Le capteur l'envoie avec chaque mesure.",
+      "name": "Nom",
+      "lat": "Latitude",
+      "lon": "Longitude",
+      "provider": "Fournisseur",
+      "watch": "Seuil de vigilance ({{unit}})",
+      "watchShort": "seuil de vigilance",
+      "alarm": "Seuil d'alarme ({{unit}})",
+      "alarmShort": "seuil d'alarme",
+      "silent": "Muet après (minutes sans mesure)",
+      "silentShort": "délai de silence",
+      "enabled": "Capteur actif (désactivé : ses mesures sont refusées)",
+      "simulated": "Capteur de simulation [SIM]"
+    },
+    "form": {
+      "newTitle": "Nouveau capteur",
+      "editTitle": "Modifier {{name}}"
+    },
+    "errors": {
+      "code": "Le code a 2 à 40 lettres latines, chiffres, - ou _, et commence par une lettre ou un chiffre.",
+      "required": "Le nom et le fournisseur sont obligatoires.",
+      "place": "Position hors de Tunisie : latitude entre 30 et 38, longitude entre 7 et 12.",
+      "thresholds": "Le seuil d'alarme ne peut pas être inférieur au seuil de vigilance.",
+      "gouvernorat": "Choisissez le gouvernorat."
+    },
+    "key": {
+      "title": "Clé du capteur {{code}}",
+      "once": "Copiez cette clé maintenant dans le capteur : elle ne sera plus jamais affichée ni journalisée.",
+      "copy": "Copier la clé",
+      "copied": "Copiée",
+      "done": "Terminé, masquer la clé",
+      "howTo": "Le capteur signe chaque mesure avec cette clé (HMAC-SHA256), voir le guide docs/sensor-gateway.md.",
+      "rotate": "Renouveler la clé",
+      "confirmRotate": "Renouveler la clé du capteur {{code}} ? Toute signature avec l'ancienne clé sera refusée aussitôt."
+    },
+    "readings": {
+      "show": "Mesures",
+      "title": "Mesures de {{name}} (24 h)",
+      "caption": "Dernières mesures",
+      "at": "Heure",
+      "value": "Valeur",
+      "none": "Aucune mesure ces dernières 24 h.",
+      "thresholds": "Vigilance dès {{watch}}, alarme dès {{alarm}}."
+    },
+    "map": {
+      "toggle": "Capteurs",
+      "normal": "Capteur : normal",
+      "watch": "Capteur : vigilance",
+      "alarm": "Capteur : alarme",
+      "silent": "Capteur : muet ou arrêté",
+      "noReading": "Aucune mesure"
+    }
+  },
+  "towers": {
+    "title": "Tours de guet",
+    "intro": "Les caméras des tours, sur le réseau local. Un petit ordinateur à côté de chaque caméra détecte le feu et la fumée et envoie un évènement signé quand c’est confirmé dans 3 images sur 5. L’évènement devient une suggestion dans le centre d’alertes ; aucun signalement n’est créé automatiquement.",
+    "new": "Nouvelle tour",
+    "empty": "Aucune tour enregistrée.",
+    "caption": "Tours ({{n}})",
+    "col": {
+      "camera": "Caméra",
+      "view": "Champ de vision",
+      "last": "Dernière détection"
+    },
+    "camera": {
+      "live": "En direct",
+      "off": "Hors ligne"
+    },
+    "view": "{{direction}} ({{bearing}}°), ouverture {{fov}}°, portée {{km}} km",
+    "label": {
+      "fire": "Feu",
+      "smoke": "Fumée"
+    },
+    "compass": {
+      "n": "Nord",
+      "ne": "Nord-est",
+      "e": "Est",
+      "se": "Sud-est",
+      "s": "Sud",
+      "sw": "Sud-ouest",
+      "w": "Ouest",
+      "nw": "Nord-ouest"
+    },
+    "field": {
+      "codeHelp": "Lettres latines, chiffres, - et _, par ex. JND-TWR-01. L’ordinateur de la tour l’envoie avec chaque évènement.",
+      "bearing": "Direction de la caméra (degrés depuis le nord)",
+      "bearingShort": "Direction",
+      "fov": "Ouverture (degrés)",
+      "fovShort": "Ouverture",
+      "range": "Portée (mètres)",
+      "rangeShort": "Portée",
+      "simulated": "Tour d’essai [SIM]"
+    },
+    "form": {
+      "newTitle": "Nouvelle tour",
+      "editTitle": "Modifier {{name}}"
+    },
+    "errors": {
+      "label": "Le nom est obligatoire.",
+      "view": "La direction, l’ouverture et la portée sont obligatoires."
+    },
+    "key": {
+      "title": "Clés de la tour {{code}}",
+      "once": "Copiez ces valeurs maintenant : elles ne seront plus affichées ni écrites dans le journal d’audit.",
+      "edge": "Clé de l’ordinateur de la tour",
+      "rtsp": "Adresse de diffusion de la caméra vers MediaMTX",
+      "token": "Jeton de diffusion",
+      "copy": "Copier la clé de l’ordinateur",
+      "howTo": "L’ordinateur de la tour signe chaque évènement avec cette clé, comme décrit dans docs/sensor-gateway.md (tours de guet).",
+      "rotate": "Renouveler la clé",
+      "confirmRotate": "Renouveler la clé de l’ordinateur de la tour {{code}} ? Tout évènement signé avec l’ancienne clé sera refusé aussitôt."
+    },
+    "events": {
+      "show": "Détections",
+      "title": "Détections de {{name}} (24 h)",
+      "caption": "Dernières détections",
+      "none": "Aucune détection",
+      "what": "Détection",
+      "confidence": "Confiance",
+      "frames": "Images",
+      "hits": "{{hits}} sur {{frames}}"
+    },
+    "map": {
+      "toggle": "Tours de guet",
+      "tower": "Tour de guet",
+      "alert": "Tour : feu ou fumée dans l’heure",
+      "view": "Champ de vision d’une tour"
+    }
+  },
+  "drones": {
+    "title": "Drones",
+    "simTag": "Simulé tant que le type des drones de l'Office n'est pas connu",
+    "new": "Enregistrer un drone",
+    "intro": "Les drones du gouvernorat sont des sources en lecture seule : la vidéo passe par MediaMTX, la position et l'axe de la caméra sont lus dans les métadonnées du flux (KLV). La salle est alertée quand un drone quitte sa zone de travail, approche ou entre dans une zone interdite, ou que sa batterie baisse.",
+    "toMap": "Les voir sur la carte",
+    "readOnly": "Le système n'envoie aucune commande à un drone : seul le pilote le conduit.",
+    "empty": "Aucun drone enregistré.",
+    "caption": "Drones ({{n}})",
+    "col": {
+      "video": "Vidéo",
+      "position": "Dernière position",
+      "alerts": "Alertes"
+    },
+    "video": {
+      "live": "En direct",
+      "off": "Hors ligne"
+    },
+    "position": {
+      "none": "Pas encore de position",
+      "fresh": "En vol",
+      "stale": "Vu pour la dernière fois"
+    },
+    "altitude": "altitude {{m}} m",
+    "battery": "batterie {{pct}} %",
+    "openAlerts": "{{n}} alerte(s) ouverte(s)",
+    "register": "Enregistrer",
+    "form": {
+      "title": "Enregistrer un drone"
+    },
+    "errors": {
+      "label": "Le nom est obligatoire.",
+      "zoneName": "Le nom de la zone est obligatoire.",
+      "margin": "La marge est obligatoire.",
+      "area": {
+        "too_few": "Tracez au moins 3 points.",
+        "too_many": "{{max}} points au plus.",
+        "outside": "La zone doit être en Tunisie.",
+        "self_intersecting": "Les bords de la zone se croisent : retracez-la."
+      }
+    },
+    "key": {
+      "title": "Adresse de diffusion de {{name}}",
+      "rtsp": "Adresse de publication RTSP",
+      "rtmp": "Adresse de publication RTMP",
+      "copy": "Copier le jeton",
+      "howTo": "À saisir dans le drone ou sa station sol pour publier la vidéo vers MediaMTX (docs/sensor-gateway.md, Drones)."
+    },
+    "alerts": {
+      "title": "Alertes ouvertes ({{n}})",
+      "none": "Aucune alerte",
+      "ack": "Vu",
+      "distance": "à {{m}} m",
+      "kind": {
+        "left_work_area": "A quitté la zone de travail",
+        "near_no_fly": "Approche d'une zone interdite",
+        "in_no_fly": "Dans une zone interdite",
+        "low_battery": "Batterie faible"
+      }
+    },
+    "zone": {
+      "title": "Zones de travail et d'exclusion",
+      "new": "Tracer une zone",
+      "none": "Aucune zone tracée.",
+      "intro": "La zone de travail est celle où les drones du gouvernorat doivent voler ; une zone interdite (aéroport, installation…) alerte pour tout drone qui s'en approche, quel que soit son gouvernorat.",
+      "kindLabel": "Type",
+      "kind": {
+        "work": "Zone de travail",
+        "no_fly": "Zone interdite"
+      },
+      "help": {
+        "work": "La salle est alertée quand un drone du gouvernorat sort de toutes ses zones de travail.",
+        "no_fly": "La salle est alertée quand un drone s'approche à moins de la marge, puis quand il y entre."
+      },
+      "name": "Nom de la zone",
+      "margin": "Marge d'approche (mètres)",
+      "marginShort": "Marge",
+      "drawHelp": "Cliquez sur la carte pour ajouter les points du contour ({{max}} au plus).",
+      "mapLabel": "Carte de tracé de la zone",
+      "active": "Zone active",
+      "off": "Inactive",
+      "metres": "{{m}} m",
+      "newTitle": "Nouvelle zone",
+      "editTitle": "Modifier {{name}}"
+    },
+    "map": {
+      "toggle": "Drones",
+      "drone": "Drone",
+      "alert": "Drone avec une alerte ouverte",
+      "view": "Champ de la caméra d'un drone",
+      "work": "Zone de travail des drones",
+      "noFly": "Zone interdite de vol",
+      "track": "Trajet d'un drone (30 min)"
+    }
   }
 }

@@ -34,6 +34,7 @@ from app.modules.drill.models import Inject as DrillInject
 from app.modules.drill.models import Participant as DrillParticipant
 from app.modules.drill.models import Response as DrillResponse
 from app.modules.drill.models import StressRun as DrillStressRun
+from app.modules.drones.models import DroneAlert, DroneTelemetry, DroneZone
 from app.modules.evidence.models import Anchor, Leaf
 from app.modules.features.models import FeatureRule
 from app.modules.forecast.models import ForecastRun
@@ -107,8 +108,10 @@ from app.modules.schedule.models import Item as ScheduleItem
 from app.modules.schedule.models import Period as SchedulePeriod
 from app.modules.schedule.models import Setting as ScheduleSetting
 from app.modules.schedule.models import Template as ScheduleTemplate
+from app.modules.sensors.models import SensorDevice, SensorReading
 from app.modules.streams.models import LiveStream, StreamDetection, StreamLocation, StreamSegment
 from app.modules.telephony.models import Call, Conference, OperatorEndpoint, SmsInbound
+from app.modules.towers.models import CameraTower, TowerEvent
 from app.modules.volunteers.models import Volunteer, VolunteerReview
 from app.modules.weather.models import AlertSuggestion, GridPoint, Observation, Rule
 from app.modules.window.models import SavedSearch as WindowSavedSearch
@@ -137,6 +140,7 @@ __all__ = [
     "Call",
     "Callout",
     "CalloutTarget",
+    "CameraTower",
     "CasualtyCount",
     "CasualtyTransport",
     "Category",
@@ -172,6 +176,9 @@ __all__ = [
     "DrillParticipant",
     "DrillResponse",
     "DrillStressRun",
+    "DroneAlert",
+    "DroneTelemetry",
+    "DroneZone",
     "EmailCode",
     "Equipment",
     "ErasureRequest",
@@ -255,6 +262,8 @@ __all__ = [
     "ScheduleSetting",
     "ScheduleTemplate",
     "SearchDoc",
+    "SensorDevice",
+    "SensorReading",
     "Shelter",
     "Shift",
     "Sitrep",
@@ -267,6 +276,7 @@ __all__ = [
     "StreamSegment",
     "TeamMember",
     "TimelineEvent",
+    "TowerEvent",
     "Unit",
     "UnitCheck",
     "Volunteer",

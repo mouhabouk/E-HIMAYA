@@ -62,7 +62,10 @@
     "schedule": "Programmes",
     "permissions": "Permissions",
     "window": "Decision window",
-    "drills": "Dry run"
+    "drills": "Dry run",
+    "sensors": "Sensors",
+    "towers": "Watch towers",
+    "drones": "Drones"
   },
   "header": {
     "scope": "Geographic scope",
@@ -514,7 +517,11 @@
     "mapping_invalid": "Invalid column mapping: pick a field from the list for each column.",
     "mapping_duplicate": "One field is mapped to two columns of the same sheet.",
     "profile_name_taken": "A mapping profile with this name already exists.",
-    "profile_not_found": "Mapping profile not found or not available to your gouvernorat."
+    "profile_not_found": "Mapping profile not found or not available to your gouvernorat.",
+    "sensor_code_taken": "A sensor already has this code.",
+    "threshold_out_of_range": "Threshold outside the plausible range of this kind of sensor.",
+    "outside_local_network": "Refused: the request is not from the local network.",
+    "tower_code_taken": "A tower already has this code."
   },
   "kpi": {
     "title": "Key indicators",
@@ -2489,7 +2496,13 @@
       "dismiss": "Dismiss",
       "reason": "Reason (required)",
       "reasonRequired": "Enter a reason (at least 3 characters).",
-      "confirmDismiss": "Dismiss the suggestion"
+      "confirmDismiss": "Dismiss the suggestion",
+      "device": {
+        "sensor": "Sensor",
+        "tower": "Tower",
+        "openSensors": "Sensors page",
+        "openTowers": "Towers page"
+      }
     }
   },
   "decision": {
@@ -6763,5 +6776,270 @@
     "increase": "Increase",
     "decreaseNamed": "Decrease {{label}}",
     "increaseNamed": "Increase {{label}}"
+  },
+  "sensors": {
+    "title": "Sensors",
+    "intro": "Sensors of the local network: rain, water level and temperature. Their readings arrive through the gateway beside the MediaMTX server; a crossed threshold becomes a suggestion in the alert centre, and nothing is sent to citizens from here.",
+    "toSuggestions": "Alert centre",
+    "new": "New sensor",
+    "edit": "Edit",
+    "save": "Save",
+    "empty": "No sensor registered yet.",
+    "caption": "Sensors ({{n}})",
+    "countsLabel": "Sensors by state",
+    "col": {
+      "last": "Last reading",
+      "state": "State",
+      "thresholds": "Watch / alarm",
+      "actions": "Actions"
+    },
+    "state": {
+      "normal": "Normal",
+      "watch": "Watch",
+      "alarm": "Alarm",
+      "silent": "Silent",
+      "disabled": "Disabled"
+    },
+    "kind": {
+      "rain_1h": "Rain gauge",
+      "water_level": "Water level",
+      "temperature": "Temperature"
+    },
+    "unit": {
+      "rain_1h": "mm/h",
+      "water_level": "m",
+      "temperature": "°C"
+    },
+    "providers": {
+      "office": "National Civil Protection Office",
+      "inm": "National Institute of Meteorology",
+      "agriculture": "Ministry of Agriculture"
+    },
+    "field": {
+      "kind": "Kind",
+      "code": "Code",
+      "codeHelp": "Latin letters, digits, - and _, e.g. GAB-RAIN-01. The sensor sends it with every reading.",
+      "name": "Name",
+      "lat": "Latitude",
+      "lon": "Longitude",
+      "provider": "Provider",
+      "watch": "Watch threshold ({{unit}})",
+      "watchShort": "watch threshold",
+      "alarm": "Alarm threshold ({{unit}})",
+      "alarmShort": "alarm threshold",
+      "silent": "Silent after (minutes without a reading)",
+      "silentShort": "silence delay",
+      "enabled": "Sensor enabled (disabled: its readings are refused)",
+      "simulated": "Simulation sensor [SIM]"
+    },
+    "form": {
+      "newTitle": "New sensor",
+      "editTitle": "Edit {{name}}"
+    },
+    "errors": {
+      "code": "The code has 2 to 40 Latin letters, digits, - or _, starting with a letter or digit.",
+      "required": "Name and provider are required.",
+      "place": "Position outside Tunisia: latitude between 30 and 38, longitude between 7 and 12.",
+      "thresholds": "The alarm threshold cannot be below the watch threshold.",
+      "gouvernorat": "Choose the gouvernorat."
+    },
+    "key": {
+      "title": "Key of sensor {{code}}",
+      "once": "Copy this key into the sensor now: it is never shown again nor written to the audit log.",
+      "copy": "Copy the key",
+      "copied": "Copied",
+      "done": "Done, hide the key",
+      "howTo": "The sensor signs each reading with this key (HMAC-SHA256), as in the gateway guide docs/sensor-gateway.md.",
+      "rotate": "Rotate the key",
+      "confirmRotate": "Rotate the key of sensor {{code}}? Any signature with the old key is refused at once."
+    },
+    "readings": {
+      "show": "Readings",
+      "title": "Readings of {{name}} (24 h)",
+      "caption": "Last readings",
+      "at": "Time",
+      "value": "Value",
+      "none": "No reading in the last 24 hours.",
+      "thresholds": "Watch from {{watch}}, alarm from {{alarm}}."
+    },
+    "map": {
+      "toggle": "Sensors",
+      "normal": "Sensor: normal",
+      "watch": "Sensor: watch",
+      "alarm": "Sensor: alarm",
+      "silent": "Sensor: silent or off",
+      "noReading": "No reading yet"
+    }
+  },
+  "towers": {
+    "title": "Watch towers",
+    "intro": "The towers’ cameras, on the local network. A small computer beside each camera detects fire and smoke and sends a signed event when it is confirmed in 3 of 5 frames. The event becomes a suggestion in the alert centre; no report is created automatically.",
+    "new": "New tower",
+    "empty": "No tower registered yet.",
+    "caption": "Towers ({{n}})",
+    "col": {
+      "camera": "Camera",
+      "view": "Field of view",
+      "last": "Last detection"
+    },
+    "camera": {
+      "live": "Live",
+      "off": "Offline"
+    },
+    "view": "{{direction}} ({{bearing}}°), {{fov}}° wide, {{km}} km",
+    "label": {
+      "fire": "Fire",
+      "smoke": "Smoke"
+    },
+    "compass": {
+      "n": "North",
+      "ne": "North-east",
+      "e": "East",
+      "se": "South-east",
+      "s": "South",
+      "sw": "South-west",
+      "w": "West",
+      "nw": "North-west"
+    },
+    "field": {
+      "codeHelp": "Latin letters, digits, - and _, e.g. JND-TWR-01. The tower’s computer sends it with each event.",
+      "bearing": "Camera direction (degrees from north)",
+      "bearingShort": "Direction",
+      "fov": "Opening (degrees)",
+      "fovShort": "Opening",
+      "range": "Range (metres)",
+      "rangeShort": "Range",
+      "simulated": "Trial tower [SIM]"
+    },
+    "form": {
+      "newTitle": "New tower",
+      "editTitle": "Edit {{name}}"
+    },
+    "errors": {
+      "label": "The name is required.",
+      "view": "Direction, opening and range are required."
+    },
+    "key": {
+      "title": "Keys of tower {{code}}",
+      "once": "Copy these values now: they are not shown again, nor written to the audit log.",
+      "edge": "Tower computer key",
+      "rtsp": "Camera publish address on MediaMTX",
+      "token": "Publish token",
+      "copy": "Copy the computer key",
+      "howTo": "The tower’s computer signs each event with this key, as described in docs/sensor-gateway.md (watch towers).",
+      "rotate": "Rotate the key",
+      "confirmRotate": "Rotate the key of tower {{code}}’s computer? Any event signed with the old key is refused at once."
+    },
+    "events": {
+      "show": "Detections",
+      "title": "Detections of {{name}} (24 h)",
+      "caption": "Latest detections",
+      "none": "No detection yet",
+      "what": "Detection",
+      "confidence": "Confidence",
+      "frames": "Frames",
+      "hits": "{{hits}} of {{frames}}"
+    },
+    "map": {
+      "toggle": "Watch towers",
+      "tower": "Watch tower",
+      "alert": "Tower: fire or smoke in the last hour",
+      "view": "A tower’s field of view"
+    }
+  },
+  "drones": {
+    "title": "Drones",
+    "simTag": "Simulated until the type of the Office's drones is known",
+    "new": "Register a drone",
+    "intro": "The gouvernorat's drones are read-only sources: the video comes through MediaMTX, the position and camera direction are read from the stream's metadata (KLV). The room is alerted when a drone leaves its work area, nears or enters a no-fly zone, or runs low on battery.",
+    "toMap": "Show them on the map",
+    "readOnly": "The system sends no command to a drone: the pilot alone flies it.",
+    "empty": "No drone registered yet.",
+    "caption": "Drones ({{n}})",
+    "col": {
+      "video": "Video",
+      "position": "Last position",
+      "alerts": "Alerts"
+    },
+    "video": {
+      "live": "Live",
+      "off": "Offline"
+    },
+    "position": {
+      "none": "No position yet",
+      "fresh": "Flying",
+      "stale": "Last seen"
+    },
+    "altitude": "altitude {{m}} m",
+    "battery": "battery {{pct}}%",
+    "openAlerts": "{{n}} open alert(s)",
+    "register": "Register",
+    "form": {
+      "title": "Register a drone"
+    },
+    "errors": {
+      "label": "The name is required.",
+      "zoneName": "The zone's name is required.",
+      "margin": "The margin is required.",
+      "area": {
+        "too_few": "Draw at least 3 points.",
+        "too_many": "{{max}} points at most.",
+        "outside": "The zone must be in Tunisia.",
+        "self_intersecting": "The zone's edges cross: draw it again."
+      }
+    },
+    "key": {
+      "title": "Publish address of {{name}}",
+      "rtsp": "RTSP publish address",
+      "rtmp": "RTMP publish address",
+      "copy": "Copy the token",
+      "howTo": "Set them in the drone or its ground station to publish the video to MediaMTX (docs/sensor-gateway.md, Drones)."
+    },
+    "alerts": {
+      "title": "Open alerts ({{n}})",
+      "none": "No alert",
+      "ack": "Seen",
+      "distance": "{{m}} m away",
+      "kind": {
+        "left_work_area": "Left the work area",
+        "near_no_fly": "Nearing a no-fly zone",
+        "in_no_fly": "Inside a no-fly zone",
+        "low_battery": "Low battery"
+      }
+    },
+    "zone": {
+      "title": "Work and no-fly zones",
+      "new": "Draw a zone",
+      "none": "No zone drawn yet.",
+      "intro": "A work area is where the gouvernorat's drones are expected to fly; a no-fly zone (airport, plant…) alerts for any drone nearing it, whatever its gouvernorat.",
+      "kindLabel": "Type",
+      "kind": {
+        "work": "Work area",
+        "no_fly": "No-fly zone"
+      },
+      "help": {
+        "work": "The room is alerted when a drone of the gouvernorat leaves all its work areas.",
+        "no_fly": "The room is alerted when a drone comes closer than the margin, then when it enters."
+      },
+      "name": "Zone name",
+      "margin": "Approach margin (metres)",
+      "marginShort": "Margin",
+      "drawHelp": "Click the map to add the outline's points ({{max}} at most).",
+      "mapLabel": "Zone drawing map",
+      "active": "Zone active",
+      "off": "Inactive",
+      "metres": "{{m}} m",
+      "newTitle": "New zone",
+      "editTitle": "Edit {{name}}"
+    },
+    "map": {
+      "toggle": "Drones",
+      "drone": "Drone",
+      "alert": "Drone with an open alert",
+      "view": "A drone's camera view",
+      "work": "Drone work area",
+      "noFly": "No-fly zone",
+      "track": "A drone's path (30 min)"
+    }
   }
 }

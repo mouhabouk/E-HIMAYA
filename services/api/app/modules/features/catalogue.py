@@ -246,6 +246,80 @@ CATALOGUE: tuple[Spec, ...] = (
         ),
         flags="personal",
     ),
+    # Sensors of the local network (L5b): rain gauges, water levels and temperatures relayed by the gateway beside
+    # MediaMTX; a crossed threshold becomes a suggestion in the alert centre, never a message to citizens by itself.
+    page(
+        "sensors",
+        "ops",
+        "/sensors",
+        ("الحساسات", "Capteurs", "Sensors"),
+        ("* /sensors",),
+        button(
+            "sensors.manage",
+            ("تسجيل الحساسات وعتباتها", "Gérer les capteurs", "Manage sensors"),
+            "POST /sensors",
+            "PUT /sensors/{sensor_id}",
+            act_as=R.OPS_MANAGER,
+        ),
+        button(
+            "sensors.key",
+            ("تجديد مفتاح الحساس", "Renouveler la clé", "Rotate the key"),
+            "POST /sensors/{sensor_id}/key",
+            act_as=R.OPS_MANAGER,
+            flags="safety",
+        ),
+    ),
+    # Phase L5b (design-l5 §3.2): the watch towers, their field of view on the map and the fire or smoke their edge
+    # computers confirm; an event becomes a suggestion in the alert centre, never an automatic report.
+    page(
+        "towers",
+        "ops",
+        "/towers",
+        ("أبراج المراقبة", "Tours de guet", "Watch towers"),
+        ("* /towers",),
+        button(
+            "towers.manage",
+            ("تسجيل الأبراج واتجاهها", "Gérer les tours", "Manage towers"),
+            "POST /towers",
+            "PUT /towers/{tower_id}",
+            act_as=R.OPS_MANAGER,
+        ),
+        button(
+            "towers.key",
+            ("تجديد مفتاح حاسوب البرج", "Renouveler la clé de la tour", "Rotate the tower key"),
+            "POST /towers/{tower_id}/key",
+            act_as=R.OPS_MANAGER,
+            flags="safety",
+        ),
+    ),
+    # Phase L5b (design-l5 §3.3): the drones as read-only sources, their position and camera cone on the map, the
+    # work areas and no-fly zones the room draws, and the alerts. Nothing is ever sent to a drone.
+    page(
+        "drones",
+        "ops",
+        "/drones",
+        ("الدرون", "Drones", "Drones"),
+        ("* /drones",),
+        button(
+            "drones.register",
+            ("تسجيل درون", "Enregistrer un drone", "Register a drone"),
+            "POST /drones",
+            act_as=R.OPS_MANAGER,
+        ),
+        button(
+            "drones.zones",
+            ("رسم مناطق العمل والحظر", "Zones de travail et d'exclusion", "Work and no-fly zones"),
+            "POST /drones/zones",
+            "PUT /drones/zones/{zone_id}",
+            act_as=R.OPS_MANAGER,
+        ),
+        button(
+            "drones.ack",
+            ("الإقرار بتنبيه الدرون", "Accuser réception d'une alerte", "Acknowledge an alert"),
+            "POST /drones/alerts/{alert_id}/ack",
+            act_as=R.OPERATOR,
+        ),
+    ),
     page(
         "calls",
         "ops",

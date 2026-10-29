@@ -48,6 +48,8 @@ from app.modules.doctors.committee_router import router as medical_committee_rou
 from app.modules.doctors.router import router as doctors_router
 from app.modules.doctors.staff_router import router as doctors_staff_router
 from app.modules.drill.router import router as drill_router
+from app.modules.drones.router import internal_router as drones_internal_router
+from app.modules.drones.router import router as drones_router
 from app.modules.evidence.router import router as evidence_router
 from app.modules.evidence.worker import evidence_forever
 from app.modules.features import registry as features_registry
@@ -99,6 +101,8 @@ from app.modules.safety.history import router as safety_history_router
 from app.modules.safety.history import staff_router as safety_history_staff_router
 from app.modules.safety.router import router as safety_router
 from app.modules.schedule.router import router as schedule_router
+from app.modules.sensors.router import internal_router as sensors_internal_router
+from app.modules.sensors.router import router as sensors_router
 from app.modules.settings import service as platform_settings
 from app.modules.settings.router import router as settings_router
 from app.modules.streams.internal import router as streams_internal_router
@@ -108,6 +112,8 @@ from app.modules.streams.worker import ingest_forever, streams_forever, vision_i
 from app.modules.telephony.internal import router as telephony_internal_router
 from app.modules.telephony.staff_router import router as telephony_staff_router
 from app.modules.telephony.worker import ari_events_forever, endpoints_forever, recordings_forever
+from app.modules.towers.router import internal_router as towers_internal_router
+from app.modules.towers.router import router as towers_router
 from app.modules.volunteers.router import router as volunteers_router
 from app.modules.volunteers.staff_router import router as volunteers_staff_router
 from app.modules.weather.router import router as weather_router
@@ -320,6 +326,12 @@ def create_app() -> FastAPI:
         basemap_router,
         basemap_tiles_router,
         identity_internal_router,
+        sensors_router,
+        sensors_internal_router,
+        towers_router,
+        towers_internal_router,
+        drones_router,
+        drones_internal_router,
     )
     for router in routers:
         app.include_router(router)

@@ -68,6 +68,55 @@ describe("WeatherSuggestionsPage", () => {
     );
   }
 
+  it("summarises a suggestion raised by a sensor or a watch tower of the local network (L5b)", async () => {
+    const sensor = makeSuggestion({
+      id: "ws-s",
+      title: { ar: "أمطار غزيرة مقيسة", fr: "Fortes pluies mesurées", en: "Heavy rain measured" },
+      evidence: {
+        source: "sensor",
+        sensor_id: "s-1",
+        sensor_code: "SFX-RAIN-01",
+        sensor_name: "Pluviomètre Chaabouni [SIM]",
+        provider: "INM",
+        level: "alarm",
+        threshold: 40,
+        unit: "mm",
+        max_value: 46.5,
+        peak_point: { lat: 34.74, lon: 10.76 },
+      },
+    });
+    const tower = makeSuggestion({
+      id: "ws-t",
+      title: { ar: "حريق رصده برج مراقبة", fr: "Feu repéré par une tour de guet", en: "Fire spotted by a watch tower" },
+      evidence: {
+        source: "tower",
+        tower_id: "t-1",
+        tower_code: "JND-TWR-01",
+        tower_name: "Tour d’Aïn Draham [SIM]",
+        label: "fire",
+        confidence: 0.86,
+        hits: 4,
+        frames: 5,
+        bearing_deg: 90,
+        fov_deg: 60,
+        range_m: 8000,
+        peak_point: { lat: 36.78, lon: 8.69 },
+      },
+    });
+    setup({ weatherSuggestions: vi.fn(() => Promise.resolve([sensor, tower])) });
+    const rain = await screen.findByRole("article", { name: "Fortes pluies mesurées" });
+    expect(within(rain).queryByRole("table")).not.toBeInTheDocument();
+    expect(rain).toHaveTextContent("Pluviomètre Chaabouni [SIM]");
+    expect(rain).toHaveTextContent("46,5 mm (≥ 40 mm)");
+    expect(rain).toHaveTextContent("Alarme");
+    expect(within(rain).getByRole("link", { name: "Page des capteurs" })).toHaveAttribute("href", "/sensors");
+    const fire = screen.getByRole("article", { name: "Feu repéré par une tour de guet" });
+    expect(fire).toHaveTextContent("Feu · 86 %");
+    expect(fire).toHaveTextContent("4 sur 5");
+    expect(fire).toHaveTextContent("Est (90°), ouverture 60°, portée 8 km");
+    expect(within(fire).getByRole("link", { name: "Page des tours" })).toHaveAttribute("href", "/towers");
+  });
+
   it("shows the evidence and opens the alert form prefilled on accept (nothing is sent)", async () => {
     const { api } = setup();
     const card = await screen.findByRole("article", { name: "Danger d’incendie très élevé" });

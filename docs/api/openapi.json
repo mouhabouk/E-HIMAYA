@@ -9031,6 +9031,154 @@
         "title": "DownloadOut",
         "type": "object"
       },
+      "DroneCreated": {
+        "description": "The new drone and its publish token, shown once (MediaMTX takes its video; nothing is ever sent back).",
+        "properties": {
+          "drone": {
+            "$ref": "#/components/schemas/DroneOut"
+          },
+          "publish_token": {
+            "title": "Publish Token",
+            "type": "string"
+          },
+          "publish_url_rtmp": {
+            "title": "Publish Url Rtmp",
+            "type": "string"
+          },
+          "publish_url_rtsp": {
+            "title": "Publish Url Rtsp",
+            "type": "string"
+          }
+        },
+        "required": [
+          "drone",
+          "publish_token",
+          "publish_url_rtsp",
+          "publish_url_rtmp"
+        ],
+        "title": "DroneCreated",
+        "type": "object"
+      },
+      "DroneIn": {
+        "additionalProperties": false,
+        "properties": {
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "maximum": 99.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "label": {
+            "maxLength": 100,
+            "minLength": 2,
+            "title": "Label",
+            "type": "string"
+          }
+        },
+        "required": [
+          "label"
+        ],
+        "title": "DroneIn",
+        "type": "object"
+      },
+      "DroneOut": {
+        "properties": {
+          "camera_view": {
+            "anyOf": [
+              {
+                "items": {
+                  "items": {
+                    "type": "number"
+                  },
+                  "type": "array"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Camera View"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "last": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Telemetry"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "open_alerts": {
+            "title": "Open Alerts",
+            "type": "integer"
+          },
+          "stream_status": {
+            "title": "Stream Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "gouvernorat_code",
+          "stream_status",
+          "last",
+          "camera_view",
+          "open_alerts"
+        ],
+        "title": "DroneOut",
+        "type": "object"
+      },
+      "DronePage": {
+        "properties": {
+          "can_register": {
+            "title": "Can Register",
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/DroneOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items",
+          "can_register"
+        ],
+        "title": "DronePage",
+        "type": "object"
+      },
       "EmailOut": {
         "properties": {
           "email": {
@@ -17839,15 +17987,11 @@
         "title": "KeyCount",
         "type": "object"
       },
-      "Kind": {
+      "Kind-Output": {
         "enum": [
-          "memory",
-          "report_doc",
-          "incident",
-          "report",
-          "transcript",
-          "procedure",
-          "register"
+          "rain_1h",
+          "water_level",
+          "temperature"
         ],
         "title": "Kind",
         "type": "string"
@@ -17908,6 +18052,34 @@
           "fields"
         ],
         "title": "KindOut",
+        "type": "object"
+      },
+      "LastEvent": {
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "confidence": {
+            "title": "Confidence",
+            "type": "number"
+          },
+          "label": {
+            "enum": [
+              "fire",
+              "smoke"
+            ],
+            "title": "Label",
+            "type": "string"
+          }
+        },
+        "required": [
+          "at",
+          "label",
+          "confidence"
+        ],
+        "title": "LastEvent",
         "type": "object"
       },
       "LastImport": {
@@ -26350,6 +26522,62 @@
         "title": "ReadinessIn",
         "type": "object"
       },
+      "ReadingOut": {
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "at",
+          "value"
+        ],
+        "title": "ReadingOut",
+        "type": "object"
+      },
+      "ReadingsOut": {
+        "properties": {
+          "alarm_threshold": {
+            "title": "Alarm Threshold",
+            "type": "number"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ReadingOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "sensor_id": {
+            "format": "uuid",
+            "title": "Sensor Id",
+            "type": "string"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          },
+          "watch_threshold": {
+            "title": "Watch Threshold",
+            "type": "number"
+          }
+        },
+        "required": [
+          "sensor_id",
+          "unit",
+          "watch_threshold",
+          "alarm_threshold",
+          "items"
+        ],
+        "title": "ReadingsOut",
+        "type": "object"
+      },
       "Reason": {
         "enum": [
           "report_verified",
@@ -29877,6 +30105,340 @@
           }
         },
         "title": "Section",
+        "type": "object"
+      },
+      "SensorIn": {
+        "additionalProperties": false,
+        "properties": {
+          "alarm_threshold": {
+            "maximum": 300.0,
+            "minimum": -30.0,
+            "title": "Alarm Threshold",
+            "type": "number"
+          },
+          "code": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{1,39}$",
+            "title": "Code",
+            "type": "string"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "maximum": 99.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/app__modules__sensors__domain__Kind"
+          },
+          "lat": {
+            "maximum": 38.0,
+            "minimum": 30.0,
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "maximum": 12.0,
+            "minimum": 7.0,
+            "title": "Lon",
+            "type": "number"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Name",
+            "type": "string"
+          },
+          "provider": {
+            "maxLength": 80,
+            "minLength": 2,
+            "title": "Provider",
+            "type": "string"
+          },
+          "silent_after_min": {
+            "default": 30,
+            "maximum": 1440.0,
+            "minimum": 5.0,
+            "title": "Silent After Min",
+            "type": "integer"
+          },
+          "simulated": {
+            "default": true,
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "watch_threshold": {
+            "maximum": 300.0,
+            "minimum": -30.0,
+            "title": "Watch Threshold",
+            "type": "number"
+          }
+        },
+        "required": [
+          "watch_threshold",
+          "alarm_threshold",
+          "code",
+          "name",
+          "kind",
+          "lat",
+          "lon",
+          "provider"
+        ],
+        "title": "SensorIn",
+        "type": "object"
+      },
+      "SensorKeyOut": {
+        "description": "The sensor and its signing key, shown this once: it is never shown or logged again.",
+        "properties": {
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "sensor": {
+            "$ref": "#/components/schemas/SensorOut"
+          }
+        },
+        "required": [
+          "sensor",
+          "key"
+        ],
+        "title": "SensorKeyOut",
+        "type": "object"
+      },
+      "SensorOut": {
+        "properties": {
+          "alarm_threshold": {
+            "title": "Alarm Threshold",
+            "type": "number"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/Kind-Output"
+          },
+          "last_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last At"
+          },
+          "last_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Value"
+          },
+          "lat": {
+            "title": "Lat",
+            "type": "number"
+          },
+          "level_since": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Level Since"
+          },
+          "lon": {
+            "title": "Lon",
+            "type": "number"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "silent_after_min": {
+            "title": "Silent After Min",
+            "type": "integer"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "state": {
+            "enum": [
+              "normal",
+              "watch",
+              "alarm",
+              "silent",
+              "disabled"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "watch_threshold": {
+            "title": "Watch Threshold",
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name",
+          "kind",
+          "unit",
+          "gouvernorat_code",
+          "lat",
+          "lon",
+          "provider",
+          "watch_threshold",
+          "alarm_threshold",
+          "silent_after_min",
+          "enabled",
+          "simulated",
+          "last_value",
+          "last_at",
+          "state",
+          "level_since",
+          "created_by_name",
+          "updated_at"
+        ],
+        "title": "SensorOut",
+        "type": "object"
+      },
+      "SensorPage": {
+        "properties": {
+          "can_manage": {
+            "title": "Can Manage",
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SensorOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items",
+          "can_manage"
+        ],
+        "title": "SensorPage",
+        "type": "object"
+      },
+      "SensorUpdate": {
+        "additionalProperties": false,
+        "properties": {
+          "alarm_threshold": {
+            "maximum": 300.0,
+            "minimum": -30.0,
+            "title": "Alarm Threshold",
+            "type": "number"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "lat": {
+            "maximum": 38.0,
+            "minimum": 30.0,
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "maximum": 12.0,
+            "minimum": 7.0,
+            "title": "Lon",
+            "type": "number"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Name",
+            "type": "string"
+          },
+          "provider": {
+            "maxLength": 80,
+            "minLength": 2,
+            "title": "Provider",
+            "type": "string"
+          },
+          "silent_after_min": {
+            "maximum": 1440.0,
+            "minimum": 5.0,
+            "title": "Silent After Min",
+            "type": "integer"
+          },
+          "watch_threshold": {
+            "maximum": 300.0,
+            "minimum": -30.0,
+            "title": "Watch Threshold",
+            "type": "number"
+          }
+        },
+        "required": [
+          "watch_threshold",
+          "alarm_threshold",
+          "name",
+          "lat",
+          "lon",
+          "provider",
+          "silent_after_min",
+          "enabled"
+        ],
+        "title": "SensorUpdate",
         "type": "object"
       },
       "Shapes": {
@@ -34616,14 +35178,28 @@
             "type": "string"
           },
           "metric": {
-            "enum": [
-              "fire_danger",
-              "wind_gust",
-              "rain_24h",
-              "rain_1h"
+            "anyOf": [
+              {
+                "enum": [
+                  "fire_danger",
+                  "wind_gust",
+                  "rain_24h",
+                  "rain_1h"
+                ],
+                "type": "string"
+              },
+              {
+                "enum": [
+                  "sensor_rain_1h",
+                  "sensor_water_level",
+                  "sensor_temperature",
+                  "tower_fire",
+                  "tower_smoke"
+                ],
+                "type": "string"
+              }
             ],
-            "title": "Metric",
-            "type": "string"
+            "title": "Metric"
           },
           "severity": {
             "enum": [
@@ -35183,6 +35759,102 @@
           "training_expires_on"
         ],
         "title": "TeamMemberOut",
+        "type": "object"
+      },
+      "Telemetry": {
+        "properties": {
+          "alt_m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alt M"
+          },
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "battery_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Battery Pct"
+          },
+          "heading_deg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Heading Deg"
+          },
+          "lat": {
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "title": "Lon",
+            "type": "number"
+          },
+          "mode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mode"
+          },
+          "sensor_az_deg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sensor Az Deg"
+          },
+          "sensor_hfov_deg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sensor Hfov Deg"
+          }
+        },
+        "required": [
+          "at",
+          "lat",
+          "lon",
+          "alt_m",
+          "heading_deg",
+          "sensor_az_deg",
+          "sensor_hfov_deg",
+          "battery_pct",
+          "mode"
+        ],
+        "title": "Telemetry",
         "type": "object"
       },
       "TemplateField": {
@@ -35969,49 +36641,305 @@
         "title": "Totals",
         "type": "object"
       },
-      "TrackOut": {
+      "TowerCreated": {
+        "description": "The new tower, the key of its edge computer and the camera's publish token, shown this once.",
         "properties": {
-          "history": {
-            "items": {
-              "$ref": "#/components/schemas/HistoryEntry"
-            },
-            "title": "History",
-            "type": "array"
-          },
-          "received_at": {
-            "format": "date-time",
-            "title": "Received At",
+          "edge_key": {
+            "title": "Edge Key",
             "type": "string"
           },
-          "status": {
-            "$ref": "#/components/schemas/Status"
+          "publish_token": {
+            "title": "Publish Token",
+            "type": "string"
           },
-          "team_en_route_at": {
+          "publish_url_rtmp": {
+            "title": "Publish Url Rtmp",
+            "type": "string"
+          },
+          "publish_url_rtsp": {
+            "title": "Publish Url Rtsp",
+            "type": "string"
+          },
+          "tower": {
+            "$ref": "#/components/schemas/TowerOut"
+          }
+        },
+        "required": [
+          "tower",
+          "edge_key",
+          "publish_token",
+          "publish_url_rtsp",
+          "publish_url_rtmp"
+        ],
+        "title": "TowerCreated",
+        "type": "object"
+      },
+      "TowerEventOut": {
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "confidence": {
+            "title": "Confidence",
+            "type": "number"
+          },
+          "frames": {
+            "title": "Frames",
+            "type": "integer"
+          },
+          "hits": {
+            "title": "Hits",
+            "type": "integer"
+          },
+          "label": {
+            "enum": [
+              "fire",
+              "smoke"
+            ],
+            "title": "Label",
+            "type": "string"
+          },
+          "media_id": {
             "anyOf": [
               {
-                "format": "date-time",
+                "format": "uuid",
                 "type": "string"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Team En Route At"
+            "title": "Media Id"
           },
-          "team_on_scene_at": {
+          "model": {
             "anyOf": [
               {
-                "format": "date-time",
                 "type": "string"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Team On Scene At"
+            "title": "Model"
           },
-          "tracking_code": {
-            "title": "Tracking Code",
+          "suggestion_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suggestion Id"
+          }
+        },
+        "required": [
+          "at",
+          "label",
+          "confidence",
+          "hits",
+          "frames",
+          "model",
+          "media_id",
+          "suggestion_id"
+        ],
+        "title": "TowerEventOut",
+        "type": "object"
+      },
+      "TowerEventsOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/TowerEventOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "tower_id": {
+            "format": "uuid",
+            "title": "Tower Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tower_id",
+          "items"
+        ],
+        "title": "TowerEventsOut",
+        "type": "object"
+      },
+      "TowerIn": {
+        "additionalProperties": false,
+        "properties": {
+          "bearing_deg": {
+            "maximum": 359.0,
+            "minimum": 0.0,
+            "title": "Bearing Deg",
+            "type": "integer"
+          },
+          "code": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{1,39}$",
+            "title": "Code",
+            "type": "string"
+          },
+          "fov_deg": {
+            "maximum": 360.0,
+            "minimum": 5.0,
+            "title": "Fov Deg",
+            "type": "integer"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "maximum": 99.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "label": {
+            "maxLength": 100,
+            "minLength": 2,
+            "title": "Label",
+            "type": "string"
+          },
+          "lat": {
+            "maximum": 38.0,
+            "minimum": 30.0,
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "maximum": 12.0,
+            "minimum": 7.0,
+            "title": "Lon",
+            "type": "number"
+          },
+          "range_m": {
+            "maximum": 50000.0,
+            "minimum": 100.0,
+            "title": "Range M",
+            "type": "integer"
+          },
+          "simulated": {
+            "default": true,
+            "title": "Simulated",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "label",
+          "lat",
+          "lon",
+          "bearing_deg",
+          "fov_deg",
+          "range_m",
+          "code"
+        ],
+        "title": "TowerIn",
+        "type": "object"
+      },
+      "TowerKeyOut": {
+        "properties": {
+          "edge_key": {
+            "title": "Edge Key",
+            "type": "string"
+          },
+          "tower": {
+            "$ref": "#/components/schemas/TowerOut"
+          }
+        },
+        "required": [
+          "tower",
+          "edge_key"
+        ],
+        "title": "TowerKeyOut",
+        "type": "object"
+      },
+      "TowerOut": {
+        "properties": {
+          "bearing_deg": {
+            "title": "Bearing Deg",
+            "type": "integer"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "field_of_view": {
+            "items": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "title": "Field Of View",
+            "type": "array"
+          },
+          "fov_deg": {
+            "title": "Fov Deg",
+            "type": "integer"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "last_event": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LastEvent"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "lat": {
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "title": "Lon",
+            "type": "number"
+          },
+          "range_m": {
+            "title": "Range M",
+            "type": "integer"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "stream_status": {
+            "title": "Stream Status",
             "type": "string"
           },
           "updated_at": {
@@ -36021,13 +36949,95 @@
           }
         },
         "required": [
-          "tracking_code",
-          "status",
-          "received_at",
-          "updated_at",
-          "history"
+          "id",
+          "code",
+          "label",
+          "gouvernorat_code",
+          "lat",
+          "lon",
+          "bearing_deg",
+          "fov_deg",
+          "range_m",
+          "simulated",
+          "stream_status",
+          "last_event",
+          "field_of_view",
+          "created_by_name",
+          "updated_at"
         ],
-        "title": "TrackOut",
+        "title": "TowerOut",
+        "type": "object"
+      },
+      "TowerPage": {
+        "properties": {
+          "can_manage": {
+            "title": "Can Manage",
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/TowerOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items",
+          "can_manage"
+        ],
+        "title": "TowerPage",
+        "type": "object"
+      },
+      "TowerUpdate": {
+        "additionalProperties": false,
+        "properties": {
+          "bearing_deg": {
+            "maximum": 359.0,
+            "minimum": 0.0,
+            "title": "Bearing Deg",
+            "type": "integer"
+          },
+          "fov_deg": {
+            "maximum": 360.0,
+            "minimum": 5.0,
+            "title": "Fov Deg",
+            "type": "integer"
+          },
+          "label": {
+            "maxLength": 100,
+            "minLength": 2,
+            "title": "Label",
+            "type": "string"
+          },
+          "lat": {
+            "maximum": 38.0,
+            "minimum": 30.0,
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "maximum": 12.0,
+            "minimum": 7.0,
+            "title": "Lon",
+            "type": "number"
+          },
+          "range_m": {
+            "maximum": 50000.0,
+            "minimum": 100.0,
+            "title": "Range M",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "label",
+          "lat",
+          "lon",
+          "bearing_deg",
+          "fov_deg",
+          "range_m"
+        ],
+        "title": "TowerUpdate",
         "type": "object"
       },
       "TrackPoint": {
@@ -38804,6 +39814,181 @@
         "title": "WrappedKeyIn",
         "type": "object"
       },
+      "ZoneIn": {
+        "additionalProperties": false,
+        "properties": {
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "maximum": 99.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "kind": {
+            "enum": [
+              "work",
+              "no_fly"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "margin_m": {
+            "default": 500,
+            "maximum": 5000.0,
+            "minimum": 0.0,
+            "title": "Margin M",
+            "type": "integer"
+          },
+          "name": {
+            "maxLength": 100,
+            "minLength": 2,
+            "title": "Name",
+            "type": "string"
+          },
+          "ring": {
+            "items": {
+              "items": {
+                "type": "number"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            "maxItems": 101,
+            "minItems": 3,
+            "title": "Ring",
+            "type": "array"
+          }
+        },
+        "required": [
+          "kind",
+          "name",
+          "ring"
+        ],
+        "title": "ZoneIn",
+        "type": "object"
+      },
+      "ZoneOut": {
+        "properties": {
+          "active": {
+            "title": "Active",
+            "type": "boolean"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "work",
+              "no_fly"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "margin_m": {
+            "title": "Margin M",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "ring": {
+            "items": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "title": "Ring",
+            "type": "array"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "name",
+          "gouvernorat_code",
+          "ring",
+          "margin_m",
+          "active",
+          "created_by_name",
+          "updated_at"
+        ],
+        "title": "ZoneOut",
+        "type": "object"
+      },
+      "ZoneUpdate": {
+        "additionalProperties": false,
+        "properties": {
+          "active": {
+            "title": "Active",
+            "type": "boolean"
+          },
+          "margin_m": {
+            "maximum": 5000.0,
+            "minimum": 0.0,
+            "title": "Margin M",
+            "type": "integer"
+          },
+          "name": {
+            "maxLength": 100,
+            "minLength": 2,
+            "title": "Name",
+            "type": "string"
+          },
+          "ring": {
+            "items": {
+              "items": {
+                "type": "number"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            "maxItems": 101,
+            "minItems": 3,
+            "title": "Ring",
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "ring",
+          "margin_m",
+          "active"
+        ],
+        "title": "ZoneUpdate",
+        "type": "object"
+      },
       "app__modules__access__schemas__ReviewIn": {
         "properties": {
           "note": {
@@ -40677,6 +41862,124 @@
         "title": "ReportOut",
         "type": "object"
       },
+      "app__modules__drones__schemas__AlertOut": {
+        "properties": {
+          "acknowledged_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acknowledged At"
+          },
+          "acknowledged_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acknowledged By Name"
+          },
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "detail": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Detail",
+            "type": "object"
+          },
+          "drone_id": {
+            "format": "uuid",
+            "title": "Drone Id",
+            "type": "string"
+          },
+          "drone_label": {
+            "title": "Drone Label",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "kind": {
+            "enum": [
+              "left_work_area",
+              "near_no_fly",
+              "in_no_fly",
+              "low_battery"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "zone_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Zone Name"
+          }
+        },
+        "required": [
+          "id",
+          "drone_id",
+          "drone_label",
+          "at",
+          "kind",
+          "zone_name",
+          "detail",
+          "acknowledged_by_name",
+          "acknowledged_at"
+        ],
+        "title": "AlertOut",
+        "type": "object"
+      },
+      "app__modules__drones__schemas__TrackOut": {
+        "properties": {
+          "drone_id": {
+            "format": "uuid",
+            "title": "Drone Id",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Telemetry"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "drone_id",
+          "items"
+        ],
+        "title": "TrackOut",
+        "type": "object"
+      },
       "app__modules__features__schemas__FeatureOut": {
         "properties": {
           "act_as": {
@@ -41618,6 +42921,19 @@
         ],
         "title": "SearchOut",
         "type": "object"
+      },
+      "app__modules__knowledge__domain__Kind": {
+        "enum": [
+          "memory",
+          "report_doc",
+          "incident",
+          "report",
+          "transcript",
+          "procedure",
+          "register"
+        ],
+        "title": "Kind",
+        "type": "string"
       },
       "app__modules__knowledge__schemas__ItemOut": {
         "properties": {
@@ -45854,6 +47170,67 @@
         "title": "ReportPage",
         "type": "object"
       },
+      "app__modules__reports__schemas__TrackOut": {
+        "properties": {
+          "history": {
+            "items": {
+              "$ref": "#/components/schemas/HistoryEntry"
+            },
+            "title": "History",
+            "type": "array"
+          },
+          "received_at": {
+            "format": "date-time",
+            "title": "Received At",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/Status"
+          },
+          "team_en_route_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Team En Route At"
+          },
+          "team_on_scene_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Team On Scene At"
+          },
+          "tracking_code": {
+            "title": "Tracking Code",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tracking_code",
+          "status",
+          "received_at",
+          "updated_at",
+          "history"
+        ],
+        "title": "TrackOut",
+        "type": "object"
+      },
       "app__modules__rewards__schemas__CertificateOut": {
         "properties": {
           "code": {
@@ -47177,6 +48554,15 @@
         ],
         "title": "TemplateOut",
         "type": "object"
+      },
+      "app__modules__sensors__domain__Kind": {
+        "enum": [
+          "rain_1h",
+          "water_level",
+          "temperature"
+        ],
+        "title": "Kind",
+        "type": "string"
       },
       "app__modules__settings__router__SettingIn": {
         "properties": {
@@ -57431,7 +58817,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrackOut"
+                  "$ref": "#/components/schemas/app__modules__reports__schemas__TrackOut"
                 }
               }
             },
@@ -65417,6 +66803,373 @@
         ]
       }
     },
+    "/api/v1/staff/drones": {
+      "get": {
+        "operationId": "list_drones_api_v1_staff_drones_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DronePage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Drones",
+        "tags": [
+          "drones"
+        ]
+      },
+      "post": {
+        "description": "A drone of the room: its video is published to MediaMTX with the token shown once; nothing goes back to it.",
+        "operationId": "register_drone_api_v1_staff_drones_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DroneIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DroneCreated"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Register Drone",
+        "tags": [
+          "drones"
+        ]
+      }
+    },
+    "/api/v1/staff/drones/alerts": {
+      "get": {
+        "operationId": "list_alerts_api_v1_staff_drones_alerts_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "hours",
+            "required": false,
+            "schema": {
+              "default": 24,
+              "maximum": 168,
+              "minimum": 1,
+              "title": "Hours",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "open_only",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Open Only",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/app__modules__drones__schemas__AlertOut"
+                  },
+                  "title": "Response List Alerts Api V1 Staff Drones Alerts Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Alerts",
+        "tags": [
+          "drones"
+        ]
+      }
+    },
+    "/api/v1/staff/drones/alerts/{alert_id}/ack": {
+      "post": {
+        "operationId": "acknowledge_api_v1_staff_drones_alerts__alert_id__ack_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "alert_id",
+            "required": true,
+            "schema": {
+              "title": "Alert Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Acknowledge",
+        "tags": [
+          "drones"
+        ]
+      }
+    },
+    "/api/v1/staff/drones/zones": {
+      "get": {
+        "operationId": "list_zones_api_v1_staff_drones_zones_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ZoneOut"
+                  },
+                  "title": "Response List Zones Api V1 Staff Drones Zones Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Zones",
+        "tags": [
+          "drones"
+        ]
+      },
+      "post": {
+        "operationId": "create_zone_api_v1_staff_drones_zones_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ZoneIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ZoneOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Zone",
+        "tags": [
+          "drones"
+        ]
+      }
+    },
+    "/api/v1/staff/drones/zones/{zone_id}": {
+      "put": {
+        "operationId": "update_zone_api_v1_staff_drones_zones__zone_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "zone_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Zone Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ZoneUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ZoneOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Zone",
+        "tags": [
+          "drones"
+        ]
+      }
+    },
+    "/api/v1/staff/drones/{drone_id}/track": {
+      "get": {
+        "operationId": "track_api_v1_staff_drones__drone_id__track_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "drone_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Drone Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "minutes",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "maximum": 1440,
+              "minimum": 1,
+              "title": "Minutes",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__drones__schemas__TrackOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Track",
+        "tags": [
+          "drones"
+        ]
+      }
+    },
     "/api/v1/staff/emergency-guide": {
       "get": {
         "operationId": "staff_guide_api_v1_staff_emergency_guide_get",
@@ -71779,7 +73532,7 @@
             "name": "kind",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/Kind"
+              "$ref": "#/components/schemas/app__modules__knowledge__domain__Kind"
             }
           },
           {
@@ -83109,6 +84862,243 @@
         ]
       }
     },
+    "/api/v1/staff/sensors": {
+      "get": {
+        "operationId": "list_sensors_api_v1_staff_sensors_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SensorPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Sensors",
+        "tags": [
+          "sensors"
+        ]
+      },
+      "post": {
+        "operationId": "create_sensor_api_v1_staff_sensors_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SensorIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SensorKeyOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Sensor",
+        "tags": [
+          "sensors"
+        ]
+      }
+    },
+    "/api/v1/staff/sensors/{sensor_id}": {
+      "put": {
+        "operationId": "update_sensor_api_v1_staff_sensors__sensor_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sensor_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Sensor Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SensorUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SensorOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Sensor",
+        "tags": [
+          "sensors"
+        ]
+      }
+    },
+    "/api/v1/staff/sensors/{sensor_id}/key": {
+      "post": {
+        "description": "A new signing key, shown once; readings signed with the old one are refused from now on.",
+        "operationId": "rotate_key_api_v1_staff_sensors__sensor_id__key_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sensor_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Sensor Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SensorKeyOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Rotate Key",
+        "tags": [
+          "sensors"
+        ]
+      }
+    },
+    "/api/v1/staff/sensors/{sensor_id}/readings": {
+      "get": {
+        "operationId": "readings_api_v1_staff_sensors__sensor_id__readings_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sensor_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Sensor Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "hours",
+            "required": false,
+            "schema": {
+              "default": 24,
+              "maximum": 168,
+              "minimum": 1,
+              "title": "Hours",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadingsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Readings",
+        "tags": [
+          "sensors"
+        ]
+      }
+    },
     "/api/v1/staff/settings": {
       "get": {
         "operationId": "list_settings_api_v1_staff_settings_get",
@@ -83601,6 +85591,243 @@
         "tags": [
           "staff",
           "telephony"
+        ]
+      }
+    },
+    "/api/v1/staff/towers": {
+      "get": {
+        "operationId": "list_towers_api_v1_staff_towers_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowerPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Towers",
+        "tags": [
+          "towers"
+        ]
+      },
+      "post": {
+        "operationId": "create_tower_api_v1_staff_towers_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TowerIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowerCreated"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Tower",
+        "tags": [
+          "towers"
+        ]
+      }
+    },
+    "/api/v1/staff/towers/{tower_id}": {
+      "put": {
+        "operationId": "update_tower_api_v1_staff_towers__tower_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tower_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Tower Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TowerUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowerOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Tower",
+        "tags": [
+          "towers"
+        ]
+      }
+    },
+    "/api/v1/staff/towers/{tower_id}/events": {
+      "get": {
+        "operationId": "events_api_v1_staff_towers__tower_id__events_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tower_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Tower Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "hours",
+            "required": false,
+            "schema": {
+              "default": 24,
+              "maximum": 168,
+              "minimum": 1,
+              "title": "Hours",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowerEventsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Events",
+        "tags": [
+          "towers"
+        ]
+      }
+    },
+    "/api/v1/staff/towers/{tower_id}/key": {
+      "post": {
+        "description": "A new key for the edge computer, shown once; events signed with the old one are refused from now on.",
+        "operationId": "rotate_key_api_v1_staff_towers__tower_id__key_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tower_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Tower Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowerKeyOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Rotate Key",
+        "tags": [
+          "towers"
         ]
       }
     },

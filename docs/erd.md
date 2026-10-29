@@ -2268,6 +2268,63 @@ erDiagram
 
 ```mermaid
 erDiagram
+    reports__camera_tower {
+        uuid stream_id PK,FK
+        text code
+        smallint gouvernorat_code FK
+        float lat
+        float lon
+        smallint bearing_deg
+        smallint fov_deg
+        integer range_m
+        boolean simulated
+        blob key_enc
+        smallint key_version
+        datetime last_event_at
+        text created_by
+        text created_by_name
+        datetime created_at
+        datetime updated_at
+    }
+    reports__drone_alert {
+        bigint id PK
+        uuid stream_id FK
+        smallint gouvernorat_code FK
+        datetime at
+        text kind
+        uuid zone_id FK
+        jsonb detail
+        text acknowledged_by
+        text acknowledged_by_name
+        datetime acknowledged_at
+    }
+    reports__drone_telemetry {
+        bigint id PK
+        uuid stream_id FK
+        datetime at
+        float lat
+        float lon
+        float alt_m
+        float heading_deg
+        float sensor_az_deg
+        float sensor_hfov_deg
+        float battery_pct
+        text mode
+        datetime received_at
+    }
+    reports__drone_zone {
+        uuid id PK
+        smallint gouvernorat_code FK
+        text kind
+        text name
+        geography_polygon_4326 area
+        integer margin_m
+        boolean active
+        text created_by
+        text created_by_name
+        datetime created_at
+        datetime updated_at
+    }
     reports__escalation {
         bigint id PK
         uuid report_id FK
@@ -2424,7 +2481,23 @@ erDiagram
         datetime created_at
         datetime done_at
     }
+    reports__tower_event {
+        bigint id PK
+        uuid stream_id FK
+        datetime at
+        text label
+        float confidence
+        smallint hits
+        smallint frames
+        text model
+        uuid media_id FK
+        uuid suggestion_id FK
+        datetime received_at
+    }
     geo__delegation ||--o{ reports__report : "delegation_id"
+    geo__gouvernorat ||--o{ reports__camera_tower : "gouvernorat_code"
+    geo__gouvernorat ||--o{ reports__drone_alert : "gouvernorat_code"
+    geo__gouvernorat ||--o{ reports__drone_zone : "gouvernorat_code"
     geo__gouvernorat ||--o{ reports__live_stream : "gouvernorat_code"
     geo__gouvernorat ||--o{ reports__report : "gouvernorat_code"
     geo__gouvernorat ||--o{ reports__report : "referred_to"
@@ -2433,18 +2506,25 @@ erDiagram
     identity__account ||--o{ reports__report : "user_id"
     ops__incident ||--o{ reports__report : "incident_id"
     org__organization ||--o{ reports__report : "organization_id"
+    reports__camera_tower ||--o{ reports__tower_event : "stream_id"
+    reports__drone_zone ||--o{ reports__drone_alert : "zone_id"
+    reports__live_stream ||--o{ reports__camera_tower : "stream_id"
+    reports__live_stream ||--o{ reports__drone_alert : "stream_id"
+    reports__live_stream ||--o{ reports__drone_telemetry : "stream_id"
     reports__live_stream ||--o{ reports__media : "stream_id"
     reports__live_stream ||--o{ reports__stream_detection : "stream_id"
     reports__live_stream ||--o{ reports__stream_location : "stream_id"
     reports__live_stream ||--o{ reports__stream_segment : "stream_id"
     reports__media ||--o{ reports__stream_detection : "media_id"
     reports__media ||--o{ reports__stream_segment : "media_id"
+    reports__media ||--o{ reports__tower_event : "media_id"
     reports__report ||--o{ reports__escalation : "report_id"
     reports__report ||--o{ reports__live_stream : "report_id"
     reports__report ||--o{ reports__media : "report_id"
     reports__report ||--o{ reports__medical_attachment : "report_id"
     reports__report ||--o{ reports__reporter_context : "report_id"
     reports__report ||--o{ reports__status_history : "report_id"
+    weather__alert_suggestion ||--o{ reports__tower_event : "suggestion_id"
 ```
 
 ## rewards
@@ -2728,6 +2808,46 @@ erDiagram
     ops__unit ||--o{ sched__item : "unit_id"
     register__document ||--o{ sched__item : "plan_document_id"
     sched__period ||--o{ sched__item : "period_id"
+```
+
+## sensor
+
+```mermaid
+erDiagram
+    sensor__device {
+        uuid id PK
+        text code
+        text name
+        text kind
+        smallint gouvernorat_code FK
+        float lat
+        float lon
+        text provider
+        float watch_threshold
+        float alarm_threshold
+        smallint silent_after_min
+        boolean enabled
+        boolean simulated
+        blob key_enc
+        smallint key_version
+        float last_value
+        datetime last_at
+        text level
+        datetime level_since
+        text created_by
+        text created_by_name
+        datetime created_at
+        datetime updated_at
+    }
+    sensor__reading {
+        bigint id PK
+        uuid sensor_id FK
+        datetime at
+        float value
+        datetime received_at
+    }
+    geo__gouvernorat ||--o{ sensor__device : "gouvernorat_code"
+    sensor__device ||--o{ sensor__reading : "sensor_id"
 ```
 
 ## telephony

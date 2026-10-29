@@ -1,0 +1,28 @@
+# ء-حماية / e-Himaya — the server on the Office's local network (L5b, docs/field-guide-sensors.md §6).
+#
+# Added on top of compose.yml and compose.prod.yml:
+#   docker compose --env-file .env -f infra/compose.yml -f infra/compose.prod.yml -f infra/compose.lan.yml \
+#     --profile sensors --profile vision --profile drones up -d --build --wait
+#
+# Each device port is published on the address of its own network only (Docker writes its own iptables rules and
+# does not go through ufw, so binding the address is the first barrier; the DOCKER-USER rules of the guide are the
+# second):
+#   SENSORS_LAN_IP  the server's address on the sensors network (gateway 8088)
+#   DEVICES_LAN_IP  the server's address on the cameras, towers and drones network (RTSP 8554, RTMP 1935, and the
+#                   gateway 8088 for the towers' edge computers)
+#   STAFF_LAN_IP    the server's address on the rooms' network (WebRTC media 8189/udp)
+
+services:
+  mediamtx:
+    ports: !override
+      - "${STAFF_LAN_IP:?set STAFF_LAN_IP}:8189:8189/udp"
+      - "${DEVICES_LAN_IP:?set DEVICES_LAN_IP}:8554:8554"
+      - "${DEVICES_LAN_IP:?set DEVICES_LAN_IP}:1935:1935"
+
+  sensor-gateway:
+    environment:
+      # Who may post: the sensors network, and the towers' edge computers on the devices network.
+      GATEWAY_ALLOW: ${GATEWAY_ALLOW:?set GATEWAY_ALLOW, e.g. 192.168.50.0/24,192.168.60.0/24}
+    ports: !override
+      - "${SENSORS_LAN_IP:?set SENSORS_LAN_IP}:8088:8088"
+      - "${DEVICES_LAN_IP:?set DEVICES_LAN_IP}:8088:8088"

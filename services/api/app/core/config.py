@@ -2,6 +2,7 @@
 
 import base64
 import binascii
+import ipaddress
 from functools import lru_cache
 from pathlib import Path
 from typing import Annotated, Literal
@@ -195,6 +196,14 @@ class Settings(BaseSettings):
     # ┃   with POST /api/v1/staff/streams (docs/streaming.md).
     # ┗━━━━━━━━━━━━━━━━
     stream_sim_token: SecretStr | None = Field(default=None, min_length=24)
+
+    # Sensors of the local network (L5b, docs/phase-l/design-l5.md §3.0): the gateway beside MediaMTX relays their
+    # signed readings to POST /internal/sensors/readings with this token (X-Gateway-Token); 404 while unset.
+    sensor_gateway_token: SecretStr | None = Field(default=None, min_length=24)
+    # Addresses the gateway may call from: the local network only, never the internet.
+    sensor_gateway_networks: Annotated[list[str], NoDecode] = Field(
+        default_factory=lambda: ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "127.0.0.0/8", "::1/128"]
+    )
 
     # Vision service (services/vision, fire/smoke/person detector). Unset: streams and images are not analysed.
     vision_service_url: str | None = None
@@ -460,6 +469,7 @@ class Settings(BaseSettings):
         "vision_api_token",
         "vision_callback_token",
         "vision_read_password",
+        "sensor_gateway_token",
         "telephony_ari_url",
         "telephony_ari_password",
         "telephony_sim_token",
@@ -536,6 +546,16 @@ class Settings(BaseSettings):
         if self.vision_alert_confidence < self.vision_min_confidence:
             raise ValueError("VISION_ALERT_CONFIDENCE must be at least VISION_MIN_CONFIDENCE")
         return self
+
+    @field_validator("sensor_gateway_networks", mode="before")
+    @classmethod
+    def _split_networks(cls, value: object) -> object:
+        if isinstance(value, str):
+            value = [item.strip() for item in value.split(",") if item.strip()]
+        if isinstance(value, list):
+            for item in value:
+                ipaddress.ip_network(item, strict=False)  # ValueError on anything that is not a network
+        return value
 
     @field_validator("oidc_issuers", "api_cors_origins", "telephony_ice_servers", mode="before")
     @classmethod

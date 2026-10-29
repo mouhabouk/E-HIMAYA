@@ -27,6 +27,8 @@ os.environ["MEDIAMTX_HOOK_TOKEN"] = "test-mediamtx-hook-token-0001"
 os.environ["MEDIAMTX_API_PASSWORD"] = "test-mediamtx-api-password-0001"
 os.environ["VISION_CALLBACK_TOKEN"] = "test-vision-callback-token-0001"
 os.environ["VISION_READ_PASSWORD"] = "test-vision-read-password-0001"
+# Sensors of the local network (L5b): the gateway beside MediaMTX.
+os.environ["SENSOR_GATEWAY_TOKEN"] = "test-sensor-gateway-token-0001"
 os.environ["STREAM_SIM_TOKEN"] = "test-stream-sim-token-0000001"
 # Telephony (phase 7): ARI is replaced by a fake (tests/test_telephony.py), SMS gateway secret, call simulator.
 os.environ["TELEPHONY_ARI_PASSWORD"] = "test-ari-password-0001"
