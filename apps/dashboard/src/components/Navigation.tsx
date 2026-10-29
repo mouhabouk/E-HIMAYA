@@ -10,6 +10,7 @@ import type { StaffIdentity as Identity } from "../auth/identity";
 import {
   canEditAiSettings,
   canReadModelCards,
+  canOpenLearning,
   canEditTips,
   canHandleContact,
   canManageAccounts,
@@ -174,6 +175,7 @@ export function navGroups(identity: Identity, t: TFunction, access?: FeatureAcce
         ...e(canReadPlatformSettings(roles), "/settings", "settings", "slate", "settings", true),
         ...e(reads || canEditAiSettings(identity), "/settings/ai", "smartToy", "slate", "aiSettings", true),
         ...e(canReadModelCards(identity), "/settings/ai/models", "science", "slate", "modelCards"),
+        ...e(canOpenLearning(identity), "/settings/ai/learning", "science", "slate", "learning"),
         ...e(canManageAccounts(identity), "/accounts", "manageAccounts", "slate", "accounts"),
         ...e(canReadScopedAudit(identity), "/audit", "policy", "slate", "audit"),
         ...e(canOpenBreakGlass(identity), "/break-glass", "lockOpen", "red", "breakGlass"),

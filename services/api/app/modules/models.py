@@ -43,6 +43,8 @@ from app.modules.geo.models import Delegation, Gouvernorat, Layer, LayerFeature,
 from app.modules.identity.models import Account, Consent, EmailCode, ErasureRequest, Profile
 from app.modules.inventory.models import Agent, AgentSkill, Category, InventoryRevision, Stock, UnitCheck
 from app.modules.knowledge.models import IndexState, MemoryEntry, MemoryEntryVersion, SearchDoc
+from app.modules.learning.models import LearnedModel, TrainingJob
+from app.modules.learning.models import Sample as LearningSample
 from app.modules.medical.models import FileKey, FileOpening, LockedFile
 from app.modules.notify.models import Device, Dispatch, Message, OrgDigest, Outbox
 from app.modules.ops.models import (
@@ -208,6 +210,8 @@ __all__ = [
     "LayerImport",
     "LayerRevision",
     "Leaf",
+    "LearnedModel",
+    "LearningSample",
     "LedgerEntry",
     "LevelState",
     "LiveShare",
@@ -285,6 +289,7 @@ __all__ = [
     "TeamMember",
     "TimelineEvent",
     "TowerEvent",
+    "TrainingJob",
     "Unit",
     "UnitCheck",
     "Volunteer",

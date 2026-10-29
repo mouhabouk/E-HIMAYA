@@ -66,7 +66,8 @@
     "sensors": "Capteurs",
     "towers": "Tours de guet",
     "drones": "Drones",
-    "modelCards": "Fiches des modèles"
+    "modelCards": "Fiches des modèles",
+    "learning": "Centre d'entraînement"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -539,7 +540,11 @@
     "model_not_found": "Modèle inconnu.",
     "model_not_trained": "Ce modèle n'a pas encore de version entraînée.",
     "suggestion_gone": "Cette suggestion n'existe plus : elle a changé, ou a été acceptée ou écartée. Rechargez le programme.",
-    "suggestions_off": "Les activités suggérées sont désactivées dans les réglages de l'IA."
+    "suggestions_off": "Les activités suggérées sont désactivées dans les réglages de l'IA.",
+    "training_in_progress": "Cet entraînement est en cours ou en attente. Attendez sa fin avant de le relancer.",
+    "report_not_final": "La lecture ne se confirme qu'une fois le signalement clôturé ou rejeté.",
+    "report_without_text": "Ce signalement n'a ni texte ni transcription : rien à ajouter à l'entraînement.",
+    "not_waiting_trainer": "Cet entraînement n'attend pas de résultats de l'entraîneur."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -7199,5 +7204,123 @@
   "moderation": {
     "masked": "Mot grossier masqué",
     "flagged": "Menace, incitation ou violence"
+  },
+  "learning": {
+    "title": "Centre d'entraînement",
+    "intro": "L'outil apprend localement des signalements eux-mêmes : les textes des signalements clôturés et rejetés, anonymisés, forment un jeu de données sur lequel les modèles s'entraînent régulièrement. L'administrateur système choisit les entraînements, les lance ou les programme. Une nouvelle version n'est retenue que si elle dépasse l'actuelle, et reste en mode fantôme jusqu'à la décision du comité.",
+    "data": {
+      "title": "Jeu de données",
+      "help": "Texte du signalement et transcription de ses messages vocaux et vidéo, sans numéros de téléphone, noms, plaques ni liens, chiffrés, supprimés avec l'anonymisation du signalement.",
+      "total": "Textes",
+      "heldout": "Pour l'évaluation (non entraînés)",
+      "origin": {
+        "weak": "Lecture du système",
+        "operator": "Confirmés par l'opérateur",
+        "commander": "Confirmés par le commandant"
+      }
+    },
+    "export": {
+      "reports": "Exporter les textes (CSV)",
+      "fireSmoke": "Exporter les images feu et fumée (JSON)"
+    },
+    "gpu": "Nécessite un GPU",
+    "schedule": {
+      "enabled": "Entraînement périodique",
+      "every": "Tous les",
+      "days": "jours",
+      "reason": "Programmation de l'entraînement depuis le centre d'entraînement"
+    },
+    "launch": {
+      "start": "Lancer maintenant",
+      "busy": "Entraînement en cours…"
+    },
+    "lastJob": "Dernier entraînement",
+    "noJob": "Cet entraînement n'a pas encore été lancé.",
+    "state": {
+      "queued": "En attente",
+      "running": "En cours",
+      "done": "Terminé",
+      "skipped": "Non exécuté",
+      "failed": "Échec",
+      "waiting_trainer": "Attend l'entraîneur"
+    },
+    "trigger": {
+      "manual": "Manuel",
+      "schedule": "Programmé"
+    },
+    "skipped": {
+      "too_few_samples": "Pas encore assez d'échantillons (au moins 30 pour l'entraînement, 10 pour l'évaluation, et deux classes).",
+      "no_images": "Aucune image vérifiée dans la médiathèque pour l'instant."
+    },
+    "result": {
+      "promoted": "Version {{version}} retenue : elle dépasse l'actuelle",
+      "kept": "La version {{version}} ne dépasse pas l'actuelle, qui reste",
+      "primary": "Indicateur principal",
+      "samples": "Entraînement : {{train}} (dont {{trainConfirmed}} confirmés) · Évaluation : {{heldout}} (dont {{heldoutConfirmed}} confirmés)",
+      "images": "{{images}} images ({{confirmed}} confirmées par la règle 3 sur 5) · feu : {{fire}} · fumée : {{smoke}}",
+      "waitingTrainer": "La liste d'images est prête. Lancez l'entraîneur sur une machine avec GPU pour qu'il envoie ses résultats.",
+      "trainer": "Résultats de l'entraîneur : {{model}} ({{by}})",
+      "failed": "Échec de l'entraînement : {{error}}"
+    },
+    "model": {
+      "title": "Modèle actuel",
+      "none": "Aucun modèle retenu pour l'instant.",
+      "version": "Version {{version}}",
+      "shadow": "Mode fantôme",
+      "macroF1": "F1 macro",
+      "accuracy": "Exactitude",
+      "baseline": "Liste de mots actuelle",
+      "samples": "Échantillons",
+      "samplesValue": "{{train}} pour l'entraînement, {{heldout}} pour l'évaluation",
+      "evaluatedOn": {
+        "confirmed": "Évalué sur les confirmés",
+        "all": "Évalué sur tous"
+      }
+    },
+    "words": {
+      "title": "Nouveaux mots à revoir",
+      "help": "Des mots fréquents dans les signalements qu'aucune liste ne connaît : synonymes ou nouvelles graphies en derja. Une personne les revoit avant tout ajout ; rien n'est ajouté automatiquement.",
+      "none": "Pas encore de nouveaux mots.",
+      "caption": "Nouveaux mots proposés",
+      "word": "Mot",
+      "count": "Fréquence",
+      "script": "Écriture",
+      "category": "Catégorie dominante",
+      "scripts": {
+        "ar": "Arabe",
+        "latn": "Latine"
+      }
+    },
+    "task": {
+      "report_category": {
+        "title": "Catégorie du signalement",
+        "help": "Apprend le type d'incident à partir du texte (incendie, inondation, noyade…)."
+      },
+      "report_lives": {
+        "title": "Vies en danger",
+        "help": "Apprend si le texte signale des vies en danger, comparé à la liste de mots actuelle."
+      },
+      "report_rejected": {
+        "title": "Signalements rejetés",
+        "help": "Apprend les signalements que la salle rejette (faux, doublons, non urgents)."
+      },
+      "derja_words": {
+        "title": "Nouveaux synonymes",
+        "help": "Extrait les nouveaux mots et graphies de la derja (arabe et latine) des textes des signalements."
+      },
+      "fire_smoke": {
+        "title": "Feu et fumée",
+        "help": "Prépare les images de la médiathèque et leurs cadres pour entraîner le détecteur de feu et de fumée sur une machine avec GPU."
+      }
+    },
+    "label": {
+      "title": "Confirmer la lecture pour l'entraînement",
+      "help": "Confirmez ou corrigez la lecture du signalement clôturé : votre confirmation pèse plus que la lecture du système.",
+      "category": "Catégorie correcte",
+      "lives": "Y avait-il des vies en danger ?",
+      "rejected": "Le rejet était-il justifié ?",
+      "save": "Confirmer",
+      "confirmed": "Confirmé"
+    }
   }
 }

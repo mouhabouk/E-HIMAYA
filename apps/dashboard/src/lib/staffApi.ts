@@ -6,6 +6,7 @@ import { programmesApi } from "./programmes";
 import { checklistApi } from "./checklist";
 import { anomalyApi } from "./anomalies";
 import { modelCardsApi } from "./modelCards";
+import { learningApi } from "./learning";
 import { crisisApi } from "./crisis";
 import { basemapApi } from "./basemap";
 import { inventoryApi } from "./inventory";
@@ -264,6 +265,7 @@ export function staffApi(api: ApiClient) {
     ...dronesApi(api),
     ...checklistApi(api),
     ...modelCardsApi(api),
+    ...learningApi(api),
     ...anomalyApi(api),
     ...guideApi(api),
     ...preventionApi(api),

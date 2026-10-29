@@ -176,6 +176,22 @@ export function canReadModelCards(identity: { roles: readonly string[]; national
   return canEditAiSettings(identity);
 }
 
+/** The training centre (docs/learning.md): the system and AI administrators launch; the central committee reads. */
+export const LEARNING_LAUNCH_ROLES = ["sysadmin", "ai_admin"] as const;
+
+export function canOpenLearning(identity: { roles: readonly string[]; national: boolean }): boolean {
+  return identity.national && [...LEARNING_LAUNCH_ROLES, "central_committee"].some((r) => identity.roles.includes(r));
+}
+
+export function canLaunchTraining(identity: { roles: readonly string[]; national: boolean }): boolean {
+  return identity.national && LEARNING_LAUNCH_ROLES.some((r) => identity.roles.includes(r));
+}
+
+/** The operator confirms the reading of a closed or rejected report for the training (API: WRITE_ROLES). */
+export function canLabelForLearning(roles: readonly string[]): boolean {
+  return canChangeStatus(roles);
+}
+
 const any = (allowed: readonly string[], roles: readonly string[]) => allowed.some((r) => roles.includes(r));
 
 export function canReadResources(roles: readonly string[]): boolean {

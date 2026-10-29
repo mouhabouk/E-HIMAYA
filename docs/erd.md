@@ -67,6 +67,33 @@ erDiagram
         integer n
         datetime raised_at
     }
+    ai__learning_model {
+        uuid id PK
+        text task
+        integer version
+        text algorithm
+        jsonb params
+        jsonb metrics
+        text primary_metric
+        text state
+        integer train_samples
+        integer heldout_samples
+        text trained_by_name
+        datetime trained_at
+    }
+    ai__learning_sample {
+        uuid id PK
+        text source
+        text source_id
+        text group_key
+        blob text_enc
+        jsonb label
+        text label_origin
+        text split
+        text labelled_by
+        datetime created_at
+        datetime updated_at
+    }
     ai__model_decision {
         uuid id PK
         text model
@@ -84,6 +111,21 @@ erDiagram
         text updated_by
         datetime updated_at
     }
+    ai__training_job {
+        uuid id PK
+        text task
+        text trigger
+        text state
+        text requested_by
+        text requested_by_name
+        datetime requested_at
+        datetime started_at
+        datetime finished_at
+        jsonb result
+        text error
+        uuid model_id FK
+    }
+    ai__learning_model ||--o{ ai__training_job : "model_id"
     geo__delegation ||--o{ ai__anomaly : "delegation_id"
     geo__gouvernorat ||--o{ ai__anomaly : "gouvernorat_code"
     reports__report ||--o{ ai__analysis : "report_id"

@@ -15,6 +15,7 @@ import { VisionImage, VisionSummary, visionDetections } from "../components/Visi
 import { OrganizationCardPanel } from "../components/OrganizationCardPanel";
 import { ClaimBadge, EscalationTag, GeoStateTag } from "../components/Phase9Bits";
 import { ReportHandling } from "../components/ReportHandling";
+import { LearningLabelSection } from "../components/LearningLabel";
 import { featureKindLabel, MapLegend, orgKindLabel, orgPois, pointsBounds, useLegendItems } from "../components/OrgBits";
 import { StatusChip } from "../components/StatusChip";
 import { useAuth } from "../context/auth";
@@ -382,6 +383,8 @@ export function ReportDetailPage() {
           <h2 id="sec-status">{t("detail.statusChange")}</h2>
           <StatusChangeForm report={r} />
         </section>
+
+        <LearningLabelSection report={r} />
 
         <GroupingSection report={r} />
 

@@ -377,6 +377,11 @@ export const ERROR_CODES = [
   "model_not_trained",
   "checklist_not_approved",
   "task_deleted",
+  // The training centre (docs/learning.md).
+  "training_in_progress",
+  "report_not_final",
+  "report_without_text",
+  "not_waiting_trainer",
 ] as const;
 export type ErrorCode = (typeof ERROR_CODES)[number];
 
