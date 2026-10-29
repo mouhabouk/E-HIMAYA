@@ -1,0 +1,982 @@
+{
+ "about": "Condition tags of the fire and smoke positives of eval/samples.json, for the false-negative rates by condition (docs/phase-l/design-l5.md §4.1). Tagged by eye on thumbnails in a development session on 2026-10-29, before the detector was run on them, and not yet reviewed by a second person. null: an artwork or abstract picture, left out of every condition (still counted in EVALUATION.md). A null setting: a close-up that shows neither inside nor outside.",
+ "definitions": {
+  "light": {
+   "day": "scene lit by daylight or bright room light",
+   "night": "dark scene lit mainly by the fire, a lamp or a flash"
+  },
+  "visibility": {
+   "clear": "no fog, haze or dense smoke over the scene",
+   "smoke_or_fog": "fog, haze or dense smoke covers part of the scene"
+  },
+  "distance": {
+   "near": "the fire or smoke fills a large part of the frame",
+   "far": "the fire or smoke is a small part of a wide scene"
+  },
+  "setting": {
+   "indoor": "inside a building or a studio",
+   "outdoor": "outside"
+  }
+ },
+ "tags": {
+  "0a5bc77b6d2f25d0": {
+   "light": "day",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "5bc73921866ce790": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": null
+  },
+  "6a4cd4375ca4e57d": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "a5135bccba1fac42": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "de46a11677335470": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": null
+  },
+  "c1f719bf5e50e013": {
+   "light": "day",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": null
+  },
+  "6b437b561efbc9cf": null,
+  "5dce30e7bd51d911": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "597dea28b6800cdf": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "2cf7925a4594fdfe": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "f49ff01ec314cb92": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "6f7106944ba59421": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "1fc5892beef8da90": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "297c24dc326ada69": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "d43204a167455313": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "f9dbc79818e94f7b": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "132d68f884cf832c": {
+   "light": "day",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "275b643e81ba0d35": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": null
+  },
+  "c091eb922ca78207": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "b7de9e49829956b5": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "e4000d2303a58c38": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "3779f90dd7d13c76": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "33d13e75c202806d": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "c6c7e0c194bfb9aa": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": null
+  },
+  "0d0a1caff7584512": {
+   "light": "day",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "a3400f913e7a5847": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": null
+  },
+  "4a8ffcae0b95e7bf": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "acf27654a4bb1ccf": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": null
+  },
+  "57b73b5c536e3cdf": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "29108aa95d8a9f42": {
+   "light": "day",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "b3ba669a11c685e1": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "40f06c38aa75651b": {
+   "light": "day",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "c25538eab68b7fa5": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "0f1c7251a826e366": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "190f9091e369d334": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "c48fcdb1c8921618": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "37ed975b93359477": {
+   "light": "day",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "c915a13709d99a2a": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "ec3b056f675b4504": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "88142a6fe1ba29b2": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "39a52e719e975a08": {
+   "light": "day",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "8a72d0700e329345": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "30f3b090161603d2": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "9974f3f044ea31fd": {
+   "light": "day",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "548bcb5e7c1551f6": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "5a942e4c3af7294c": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": null
+  },
+  "fcdb4b5136c6a734": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "b6b53c9468d96c4d": {
+   "light": "day",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "496e3d40e1c4973c": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": null
+  },
+  "793344676809dc2d": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "952a07646ba14f4b": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "cd983fab19b94cc8": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "af9730116f0dc911": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "5793222363f2e03d": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "a713315b9d1bc736": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "1c69796e598de62d": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "1259abcb763e4532": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "347da3ace8345d85": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "269db3693c4d1b83": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": null
+  },
+  "750b82eda9ed31fb": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "93bbaa05a4384e0c": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "a9dc0ef0d2f8c16a": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": null
+  },
+  "ca72bceafa59ebc6": {
+   "light": "day",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "15053ab4de81f336": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "7ca807e5abad3a28": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "27444eff11ae6668": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": null
+  },
+  "4b76bec08da21dcc": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "413a6a5b04977acf": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": null
+  },
+  "30f3bb282e5ea489": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "1af1238005b5bd6e": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "42ed9bb137267d6a": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": null
+  },
+  "341c333009392e74": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "7c3fc1ef23349cbf": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "421d21e008200bd9": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "71094bb532dc60ea": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "26c08b528b99c2b6": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "c6f1729867ea312d": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "b0ccbcd557fdae1f": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": null
+  },
+  "a14c94a07c2f9a1a": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "9ecbbf545d33dcfa": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "752790deece3d74e": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "042a8d34fad306ae": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "3d9f65a036c4fd4e": {
+   "light": "day",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "c8decc50c8e82795": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": null
+  },
+  "31c00e63208b6ff5": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": null
+  },
+  "8819e4e192c3e320": {
+   "light": "night",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "34a0090a3c650bef": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "a0086b22f9c0d5a7": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "989e11c9cda59318": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "1156c6023cc97d84": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "2fb9c5e51d7cbc34": {
+   "light": "night",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "5580cc68078e4210": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": null
+  },
+  "ef27882418be3dee": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": null
+  },
+  "1815b244c465a60b": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "b4f0003a65d7b7dd": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "6e2cc6c422d1b0a9": {
+   "light": "day",
+   "visibility": "clear",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "e6d5d136b3ac691e": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": null
+  },
+  "bc89dc5dfa1c5eef": {
+   "light": "night",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "02d62eb592219064": {
+   "light": "night",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "8dce5bdba6c3d0a3": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "47a1790f2493597f": {
+   "light": "day",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "8b65c195543cbd02": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "760c3b81ab09213b": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "ac313c46dd1ac1e2": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "8ff4b1b9dadcb2f7": {
+   "light": "day",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "1698ab61bc5c955f": {
+   "light": "day",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "e2e4b8154a419c62": {
+   "light": "night",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "9089d60404ad44c7": {
+   "light": "night",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "06fb64c164a752ec": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "e57c0bdc89c5d6b7": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "b010748dec80bf8b": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "80c4c10bce58a5e8": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": null
+  },
+  "9466fa1e23abe9bc": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "0a62378af752b3e9": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "5b4985749dd90faa": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "b3d529bfa3c55d4a": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "1048792e6f93fd42": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "440bf239744941b9": {
+   "light": "night",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "c0065da5a09f51fd": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "514533f2a6411fd6": {
+   "light": "night",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "dc7e7965bec796c6": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "3a12a23f7eec30be": {
+   "light": "night",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "aba4641b4af9331f": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "315f1c9c0d9f5b0d": null,
+  "6e7ca860dda89248": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "710b7fcb73c5d4fe": {
+   "light": "night",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "3df742918936fd89": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "277330dec3f2dd87": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "a20f7712409f4317": null,
+  "ad3600f0e6b7f85e": {
+   "light": "night",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "6cdc0364d8f3cb9b": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "13d07f9ecb4bb8f9": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "47d3cc89b2924706": {
+   "light": "night",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "1ab030ae06af6338": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "5553c4ec7fd53362": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "b54665085e7be8b2": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "81d52345b77fe0dd": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "756e55a270015ec5": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "012161ba1f688d43": {
+   "light": "night",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "38a6ade58475cc6e": {
+   "light": "night",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "2ff8b20aa4ae2a3c": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "27e9e3a7bc9cd7c3": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "86c899f07ea75323": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "f1db5b6db21adeaa": {
+   "light": "night",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "b3daf39d62887fcc": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "e92f351209a721bd": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "fab1f309b8fd169a": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "034496d1dd5f89f4": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "4ddf3c03d88873d3": {
+   "light": "night",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "87f2b3a315d594e9": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "8b1de4d138a20568": {
+   "light": "night",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "4c081d3c09f3463d": {
+   "light": "night",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "66fa97565233bc11": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "5c3a0d1db40ba538": {
+   "light": "night",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "e4afe545901401da": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "83693828a45d0aad": {
+   "light": "night",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "outdoor"
+  },
+  "0142fc822339a954": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "c2c7e67db07b4989": {
+   "light": "night",
+   "visibility": "smoke_or_fog",
+   "distance": "near",
+   "setting": "indoor"
+  },
+  "1dd991cb28b5b85d": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "e284facfe196a22c": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "081d21e7ceb26c1c": {
+   "light": "day",
+   "visibility": "smoke_or_fog",
+   "distance": "far",
+   "setting": "outdoor"
+  },
+  "b7455a173d8c219a": null,
+  "537f83df9d25d8b5": {
+   "light": "night",
+   "visibility": "clear",
+   "distance": "near",
+   "setting": "outdoor"
+  }
+ },
+ "reviewed": false
+}

@@ -464,6 +464,20 @@ jobs:
           uv sync --locked
           AI_MODELS_DIR="$MODELS" AI_TEST_AUDIO_DIR="$SAMPLES" uv run pytest -o addopts="" -m models -v -s
 
+      - name: Report reading misses by language (model card, design-l5.md §4.1)
+        working-directory: services/ai
+        run: |
+          AI_MODELS_DIR="$MODELS" uv run python eval/reports.py --json eval/reports-results.json | tee -a "$GITHUB_STEP_SUMMARY"
+          # The same figures in the log, to copy into the model card when the artifact cannot be downloaded.
+          python -c "import json; print('MODEL_CARD_REPORTS ' + json.dumps(json.load(open('eval/reports-results.json')), ensure_ascii=False, separators=(',', ':')))"
+
+      - name: Keep the measures for the model cards
+        uses: actions/upload-artifact@v7
+        with:
+          name: model-card-reports
+          path: services/ai/eval/reports-results.json
+          retention-days: 30
+
       - name: API ↔ AI service contract
         run: |
           cd services/ai
@@ -543,6 +557,12 @@ jobs:
       - name: Evaluation on the held-out sample (frame-level precision/recall, CPU latency)
         working-directory: services/vision
         run: VISION_MODELS_DIR="$MODELS" uv run python eval/evaluate.py --threads 2 --json eval/results.json
+
+      - name: Fire and smoke misses by condition (model card, design-l5.md §4.1)
+        working-directory: services/vision
+        run: |
+          VISION_MODELS_DIR="$MODELS" uv run python eval/conditions.py --threads 2 --json eval/conditions-results.json \
+            | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Images work together (models job → volume → healthy service)
         run: |

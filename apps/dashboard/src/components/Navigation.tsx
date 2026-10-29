@@ -9,6 +9,7 @@ import { Icon, IconTile, type IconName, type Tone } from "./Icon";
 import type { StaffIdentity as Identity } from "../auth/identity";
 import {
   canEditAiSettings,
+  canReadModelCards,
   canEditTips,
   canHandleContact,
   canManageAccounts,
@@ -171,7 +172,8 @@ export function navGroups(identity: Identity, t: TFunction, access?: FeatureAcce
       items: [
         ...e(canOpenLayers(roles), "/layers", "layers", "teal", "layers"),
         ...e(canReadPlatformSettings(roles), "/settings", "settings", "slate", "settings", true),
-        ...e(reads || canEditAiSettings(identity), "/settings/ai", "smartToy", "slate", "aiSettings"),
+        ...e(reads || canEditAiSettings(identity), "/settings/ai", "smartToy", "slate", "aiSettings", true),
+        ...e(canReadModelCards(identity), "/settings/ai/models", "science", "slate", "modelCards"),
         ...e(canManageAccounts(identity), "/accounts", "manageAccounts", "slate", "accounts"),
         ...e(canReadScopedAudit(identity), "/audit", "policy", "slate", "audit"),
         ...e(canOpenBreakGlass(identity), "/break-glass", "lockOpen", "red", "breakGlass"),

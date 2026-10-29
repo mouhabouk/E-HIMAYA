@@ -1,4 +1,5 @@
 /** The decision window (L4, design-l4.md §3 and §5): the shapes the API answers. */
+import type { Anomaly } from "./anomalies";
 
 export interface WindowFilters {
   q?: string;
@@ -176,6 +177,8 @@ export interface WindowNow {
   resources: ResourceNow[] | null;
   progress: ProgressNow[] | null;
   decisions: DecisionNow[];
+  /** The indicators out of their habit today (AI4); full view only, null when switched off. */
+  anomalies?: Anomaly[] | null;
 }
 
 export interface EventRef {

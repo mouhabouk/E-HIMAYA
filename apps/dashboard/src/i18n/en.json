@@ -65,7 +65,8 @@
     "drills": "Dry run",
     "sensors": "Sensors",
     "towers": "Watch towers",
-    "drones": "Drones"
+    "drones": "Drones",
+    "modelCards": "Model cards"
   },
   "header": {
     "scope": "Geographic scope",
@@ -533,7 +534,12 @@
     "tasks_not_reviewed": "Some suggestions have not been reviewed yet.",
     "checklist_empty": "No task in the list: accept or add one.",
     "checklist_not_approved": "The list is not approved yet.",
-    "task_deleted": "This task was removed from the list."
+    "task_deleted": "This task was removed from the list.",
+    "model_changed": "The model or its thresholds changed since the page was opened. Reload and read the card again.",
+    "model_not_found": "Unknown model.",
+    "model_not_trained": "This model has no trained version yet.",
+    "suggestion_gone": "This suggestion no longer stands: it changed, or was accepted or set aside. Reload the programme.",
+    "suggestions_off": "Suggested activities are switched off in the AI settings."
   },
   "kpi": {
     "title": "Key indicators",
@@ -995,9 +1001,11 @@
       "summary": "Correct the highlighted fields before saving."
     },
     "assist": {
-      "title": "Local model suggestions in operations",
+      "title": "AI suggestions in operations",
       "help": "Every suggestion is approved by a person and audited (AI-01). Switching it off blocks any new reading; what was already suggested stays, with its label.",
-      "planReading": "Reading the intervention plan into a suggested task list"
+      "planReading": "Reading the intervention plan into a suggested task list",
+      "programmeSuggestions": "Suggest activities in the programme from the forecast, the beaches and the history",
+      "anomalies": "A calm alert when an indicator leaves its habit (reports, arrival time, completion rate)"
     }
   },
   "orgs": {
@@ -4952,6 +4960,10 @@
       "save": "Save the rules",
       "defaults": "Back to the defaults",
       "readOnly": "The operations manager or the committees change the rules, at national level."
+    },
+    "shadow": {
+      "column": "Shadow model",
+      "help": "The “shadow model” column is for comparison only: trained on simulated data, never published to citizens, it opens no alert; the level in force is the rule's."
     }
   },
   "hospitals": {
@@ -6322,6 +6334,22 @@
       "rename": "Rename",
       "delete": "Delete",
       "deleteOf": "Delete template {{name}}"
+    },
+    "suggest": {
+      "title": "Suggested activities",
+      "ai": "AI suggestion",
+      "notice": "Worked out from the weather forecast, the drowning risk of the beaches, the interventions of the same season and a recent rise. Nothing is added until you accept it; you then complete the activity and the programme is approved as usual.",
+      "simulated": "Simulation",
+      "accept": "Accept and add",
+      "dismiss": "Set aside",
+      "reason": "Reason (optional)",
+      "confirmDismiss": "Confirm",
+      "source": {
+        "weather": "Weather forecast",
+        "beaches": "Drowning risk of the beaches",
+        "season": "Same season in past years",
+        "rise": "Recent rise in interventions"
+      }
     }
   },
   "permissions": {
@@ -7126,5 +7154,46 @@
       "not_applicable": "Not applicable"
     },
     "waiting": "Suggestions left to review: {{count}}"
+  },
+  "modelCards": {
+    "title": "Model cards",
+    "intro": "Every model of the system has a card of the same shape: use, limits, data and licences, dated figures, thresholds and the committee's approval (AI-01). A figure from a small sample is flagged.",
+    "version": "Version",
+    "use": "Use",
+    "limits": "Limits",
+    "data": "Data and licences",
+    "measures": "Figures",
+    "thresholds": "Thresholds",
+    "decisions": "Committee approval (AI-01)",
+    "noDecision": "The committee has not decided yet.",
+    "measuredOn": "Measured on {{date}}",
+    "smallSample": "small sample",
+    "simulated": "Simulated data",
+    "pdf": "Export PDF",
+    "decide": {
+      "title": "Committee decision",
+      "approved": "Approve the thresholds shown",
+      "withdrawn": "Withdraw the approval",
+      "reference": "Minutes reference",
+      "referenceHelp": "Number or date of the committee's minutes, as archived.",
+      "referenceRequired": "Write the minutes reference (at least 3 characters).",
+      "note": "Note",
+      "submit": "Record the decision"
+    },
+    "train": {
+      "help": "The drowning model is trained on [SIM] days from a declared process, then the daily computation applies it in shadow beside the rule, with no publication and no alert.",
+      "start": "Train a new version",
+      "running": "Training…"
+    }
+  },
+  "anomalies": {
+    "title": "Indicators out of their habit",
+    "ai": "Statistical detection",
+    "help": "Each indicator compared with its usual series (mean and deviation). For attention only: nothing is sent to citizens.",
+    "indicator": {
+      "reports": "Reports",
+      "arrival": "Arrival time",
+      "completion": "Completion rate"
+    }
   }
 }

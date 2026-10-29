@@ -65,7 +65,8 @@
     "drills": "Exercice blanc",
     "sensors": "Capteurs",
     "towers": "Tours de guet",
-    "drones": "Drones"
+    "drones": "Drones",
+    "modelCards": "Fiches des modèles"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -533,7 +534,12 @@
     "tasks_not_reviewed": "Des suggestions n'ont pas encore été revues.",
     "checklist_empty": "Aucune tâche dans la liste : acceptez-en ou ajoutez-en une.",
     "checklist_not_approved": "La liste n'est pas encore approuvée.",
-    "task_deleted": "Cette tâche a été retirée de la liste."
+    "task_deleted": "Cette tâche a été retirée de la liste.",
+    "model_changed": "Le modèle ou ses seuils ont changé depuis l'ouverture de la page. Rechargez et relisez la fiche.",
+    "model_not_found": "Modèle inconnu.",
+    "model_not_trained": "Ce modèle n'a pas encore de version entraînée.",
+    "suggestion_gone": "Cette suggestion n'existe plus : elle a changé, ou a été acceptée ou écartée. Rechargez le programme.",
+    "suggestions_off": "Les activités suggérées sont désactivées dans les réglages de l'IA."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -995,9 +1001,11 @@
       "summary": "Corrigez les champs signalés avant d’enregistrer."
     },
     "assist": {
-      "title": "Suggestions du modèle local dans les opérations",
+      "title": "Suggestions de l'IA dans les opérations",
       "help": "Chaque suggestion est validée par une personne et journalisée (AI-01). La désactiver bloque toute nouvelle lecture ; ce qui a déjà été suggéré reste, avec son étiquette.",
-      "planReading": "Lecture du plan d'intervention et liste de tâches proposée"
+      "planReading": "Lecture du plan d'intervention et liste de tâches proposée",
+      "programmeSuggestions": "Suggérer des activités dans le programme à partir des prévisions, des plages et de l'historique",
+      "anomalies": "Alerte discrète quand un indicateur sort de son habitude (signalements, délai d'arrivée, taux de réalisation)"
     }
   },
   "orgs": {
@@ -4952,6 +4960,10 @@
       "save": "Enregistrer les règles",
       "defaults": "Revenir aux valeurs par défaut",
       "readOnly": "Les règles sont changées par le chef des opérations ou les comités, au niveau national."
+    },
+    "shadow": {
+      "column": "Modèle en ombre",
+      "help": "La colonne « modèle en ombre » sert à comparer : entraîné sur des données simulées, jamais publié au citoyen, il n'ouvre aucune alerte ; le niveau retenu est celui de la règle."
     }
   },
   "hospitals": {
@@ -6322,6 +6334,22 @@
       "rename": "Renommer",
       "delete": "Supprimer",
       "deleteOf": "Supprimer le modèle {{name}}"
+    },
+    "suggest": {
+      "title": "Activités suggérées",
+      "ai": "Suggestion de l'IA",
+      "notice": "Calculées à partir des prévisions météo, du risque de noyade des plages, des interventions de la même saison et d'une hausse récente. Rien n'est ajouté sans votre accord ; vous complétez ensuite l'activité et le programme est approuvé comme d'habitude.",
+      "simulated": "Simulation",
+      "accept": "Accepter et ajouter",
+      "dismiss": "Écarter",
+      "reason": "Motif (facultatif)",
+      "confirmDismiss": "Confirmer",
+      "source": {
+        "weather": "Prévisions météo",
+        "beaches": "Risque de noyade des plages",
+        "season": "Même saison les années passées",
+        "rise": "Hausse récente des interventions"
+      }
     }
   },
   "permissions": {
@@ -7126,5 +7154,46 @@
       "not_applicable": "Sans objet"
     },
     "waiting": "Suggestions à revoir : {{count}}"
+  },
+  "modelCards": {
+    "title": "Fiches des modèles",
+    "intro": "Chaque modèle du système a une fiche de même forme : usage, limites, données et licences, chiffres datés, seuils et approbation du comité (AI-01). Un chiffre calculé sur un petit échantillon est signalé.",
+    "version": "Version",
+    "use": "Usage",
+    "limits": "Limites",
+    "data": "Données et licences",
+    "measures": "Chiffres",
+    "thresholds": "Seuils",
+    "decisions": "Approbation du comité (AI-01)",
+    "noDecision": "Le comité n'a pas encore décidé.",
+    "measuredOn": "Mesuré le {{date}}",
+    "smallSample": "petit échantillon",
+    "simulated": "Données simulées",
+    "pdf": "Exporter en PDF",
+    "decide": {
+      "title": "Décision du comité",
+      "approved": "Approuver les seuils affichés",
+      "withdrawn": "Retirer l'approbation",
+      "reference": "Référence du procès-verbal",
+      "referenceHelp": "Numéro ou date du procès-verbal du comité, tel qu'archivé.",
+      "referenceRequired": "Écrivez la référence du procès-verbal (3 caractères au moins).",
+      "note": "Note",
+      "submit": "Enregistrer la décision"
+    },
+    "train": {
+      "help": "Le modèle de noyade s'entraîne sur des journées [SIM] d'un processus déclaré, puis le calcul quotidien l'applique en ombre à côté de la règle, sans publication ni alerte.",
+      "start": "Entraîner une nouvelle version",
+      "running": "Entraînement…"
+    }
+  },
+  "anomalies": {
+    "title": "Indicateurs inhabituels",
+    "ai": "Détection statistique",
+    "help": "Chaque indicateur comparé à sa série habituelle (moyenne et écart). Pour attirer l'attention seulement : rien n'est envoyé au citoyen.",
+    "indicator": {
+      "reports": "Signalements",
+      "arrival": "Délai d'arrivée",
+      "completion": "Taux de réalisation"
+    }
   }
 }

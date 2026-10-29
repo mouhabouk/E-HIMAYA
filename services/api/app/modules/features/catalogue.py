@@ -493,6 +493,13 @@ CATALOGUE: tuple[Spec, ...] = (
             act_as=R.OPERATOR,
         ),
         button(
+            "schedule.suggestions",
+            ("الأنشطة المقترحة", "Activités suggérées", "Suggested activities"),
+            "POST /schedule/periods/{period_id}/suggestions/{key}/accept",
+            "POST /schedule/periods/{period_id}/suggestions/{key}/dismiss",
+            act_as=R.OPERATOR,
+        ),
+        button(
             "schedule.templates",
             ("النماذج", "Modèles", "Templates"),
             "POST /schedule/periods/{period_id}/template",
@@ -881,7 +888,7 @@ CATALOGUE: tuple[Spec, ...] = (
         "alerts",
         "/weather/suggestions",
         ("مقترحات الطقس", "Suggestions météo", "Weather suggestions"),
-        ("GET /weather/suggestions", "* /weather/rules", "WRITE /weather/suggestions"),
+        ("GET /weather/suggestions", "* /weather/rules", "WRITE /weather/suggestions", "GET /anomalies"),
         button(
             "weather.decide",
             ("قبول المقترح أو رفضه", "Accepter ou écarter", "Accept or dismiss"),
@@ -1258,6 +1265,28 @@ CATALOGUE: tuple[Spec, ...] = (
             flags="national",
             act_as=R.CENTRAL_COMMITTEE,
         ),
+    ),
+    page(
+        "ai_models",
+        "system",
+        "/settings/ai/models",
+        ("بطاقات النماذج", "Fiches des modèles", "Model cards"),
+        ("* /ai/models",),
+        button(
+            "ai_models.decide",
+            ("اعتماد اللجنة", "Approbation du comité", "Committee approval"),
+            "POST /ai/models/{model}/decisions",
+            flags="national",
+            act_as=R.CENTRAL_COMMITTEE,
+        ),
+        button(
+            "ai_models.train",
+            ("تدريب نموذج الغرق", "Entraîner le modèle de noyade", "Train the drowning model"),
+            "POST /ai/models/drowning/train",
+            flags="national",
+            act_as=R.CENTRAL_COMMITTEE,
+        ),
+        flags="national",
     ),
     page(
         "accounts",

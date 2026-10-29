@@ -10,7 +10,7 @@
             "type": "object"
           },
           "suggestion": {
-            "$ref": "#/components/schemas/SuggestionOut"
+            "$ref": "#/components/schemas/app__modules__weather__schemas__SuggestionOut"
           }
         },
         "required": [
@@ -1473,6 +1473,154 @@
         "title": "AnnualReservations",
         "type": "object"
       },
+      "AnomaliesOut": {
+        "properties": {
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AnomalyOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "enabled",
+          "items"
+        ],
+        "title": "AnomaliesOut",
+        "type": "object"
+      },
+      "AnomalyOut": {
+        "description": "An indicator out of its habit (AI4), with its explanation in the reader's language. Figures only.",
+        "properties": {
+          "baseline": {
+            "enum": [
+              "season",
+              "recent"
+            ],
+            "title": "Baseline",
+            "type": "string"
+          },
+          "day": {
+            "format": "date",
+            "title": "Day",
+            "type": "string"
+          },
+          "delegation_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delegation Id"
+          },
+          "delegation_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delegation Name"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "gouvernorat_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Name"
+          },
+          "higher": {
+            "title": "Higher",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "indicator": {
+            "enum": [
+              "reports",
+              "arrival",
+              "completion"
+            ],
+            "title": "Indicator",
+            "type": "string"
+          },
+          "mean": {
+            "title": "Mean",
+            "type": "number"
+          },
+          "n": {
+            "title": "N",
+            "type": "integer"
+          },
+          "points": {
+            "title": "Points",
+            "type": "integer"
+          },
+          "raised_at": {
+            "format": "date-time",
+            "title": "Raised At",
+            "type": "string"
+          },
+          "std": {
+            "title": "Std",
+            "type": "number"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "number"
+          },
+          "z": {
+            "title": "Z",
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "indicator",
+          "gouvernorat_code",
+          "gouvernorat_name",
+          "delegation_id",
+          "delegation_name",
+          "day",
+          "value",
+          "mean",
+          "std",
+          "z",
+          "baseline",
+          "points",
+          "n",
+          "higher",
+          "text",
+          "raised_at"
+        ],
+        "title": "AnomalyOut",
+        "type": "object"
+      },
       "AppVersionOut": {
         "properties": {
           "channel": {
@@ -1921,9 +2069,19 @@
       "AssistSettings": {
         "description": "AI-01: each suggestion of the local language model in the operations can be switched off here (design-l4.md\n§9, design-l5.md §2.3). Off, the button is refused and nothing queued is read; what was already suggested stays\nwith its label.",
         "properties": {
+          "anomalies": {
+            "default": true,
+            "title": "Anomalies",
+            "type": "boolean"
+          },
           "plan_reading": {
             "default": true,
             "title": "Plan Reading",
+            "type": "boolean"
+          },
+          "programme_suggestions": {
+            "default": true,
+            "title": "Programme Suggestions",
             "type": "boolean"
           }
         },
@@ -4165,6 +4323,140 @@
           "position"
         ],
         "title": "CalloutTargetOut",
+        "type": "object"
+      },
+      "CardOut": {
+        "properties": {
+          "can_decide": {
+            "title": "Can Decide",
+            "type": "boolean"
+          },
+          "can_train": {
+            "title": "Can Train",
+            "type": "boolean"
+          },
+          "data": {
+            "title": "Data",
+            "type": "string"
+          },
+          "decisions": {
+            "items": {
+              "$ref": "#/components/schemas/DecisionOut"
+            },
+            "title": "Decisions",
+            "type": "array"
+          },
+          "family": {
+            "enum": [
+              "vision",
+              "language",
+              "tabular"
+            ],
+            "title": "Family",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "licences": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Licences",
+            "type": "array"
+          },
+          "limits": {
+            "title": "Limits",
+            "type": "string"
+          },
+          "measures": {
+            "items": {
+              "$ref": "#/components/schemas/Table"
+            },
+            "title": "Measures",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "status": {
+            "enum": [
+              "approved",
+              "pending",
+              "changed",
+              "withdrawn",
+              "shadow"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "status_label": {
+            "title": "Status Label",
+            "type": "string"
+          },
+          "thresholds": {
+            "items": {
+              "$ref": "#/components/schemas/Threshold"
+            },
+            "title": "Thresholds",
+            "type": "array"
+          },
+          "use": {
+            "title": "Use",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "family",
+          "version",
+          "licences",
+          "simulated",
+          "status",
+          "status_label",
+          "use",
+          "limits",
+          "data",
+          "measures",
+          "thresholds",
+          "decisions",
+          "can_decide",
+          "can_train"
+        ],
+        "title": "CardOut",
+        "type": "object"
+      },
+      "CardsOut": {
+        "properties": {
+          "generated_at": {
+            "format": "date-time",
+            "title": "Generated At",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CardOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items",
+          "generated_at"
+        ],
+        "title": "CardsOut",
         "type": "object"
       },
       "Casualties": {
@@ -6833,6 +7125,16 @@
             ],
             "title": "Sea Temp C"
           },
+          "shadow": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ShadowRisk"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "wave_height_m": {
             "anyOf": [
               {
@@ -6871,6 +7173,43 @@
           "accept"
         ],
         "title": "DecideIn",
+        "type": "object"
+      },
+      "DecisionIn": {
+        "properties": {
+          "decision": {
+            "enum": [
+              "approved",
+              "withdrawn"
+            ],
+            "title": "Decision",
+            "type": "string"
+          },
+          "note": {
+            "default": "",
+            "maxLength": 500,
+            "title": "Note",
+            "type": "string"
+          },
+          "reference": {
+            "maxLength": 200,
+            "minLength": 3,
+            "title": "Reference",
+            "type": "string"
+          },
+          "version": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "decision",
+          "version",
+          "reference"
+        ],
+        "title": "DecisionIn",
         "type": "object"
       },
       "DecisionNow": {
@@ -6932,6 +7271,67 @@
           "status"
         ],
         "title": "DecisionNow",
+        "type": "object"
+      },
+      "DecisionOut": {
+        "properties": {
+          "decided_at": {
+            "format": "date-time",
+            "title": "Decided At",
+            "type": "string"
+          },
+          "decided_by_name": {
+            "title": "Decided By Name",
+            "type": "string"
+          },
+          "decision": {
+            "enum": [
+              "approved",
+              "withdrawn"
+            ],
+            "title": "Decision",
+            "type": "string"
+          },
+          "note": {
+            "title": "Note",
+            "type": "string"
+          },
+          "reference": {
+            "title": "Reference",
+            "type": "string"
+          },
+          "thresholds": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Thresholds",
+            "type": "object"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "decision",
+          "version",
+          "thresholds",
+          "reference",
+          "note",
+          "decided_by_name",
+          "decided_at"
+        ],
+        "title": "DecisionOut",
         "type": "object"
       },
       "Delegate": {
@@ -22123,6 +22523,20 @@
       },
       "NowOut": {
         "properties": {
+          "anomalies": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/AnomalyOut"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Anomalies"
+          },
           "at": {
             "format": "date-time",
             "title": "At",
@@ -30642,6 +31056,35 @@
         "title": "SensorUpdate",
         "type": "object"
       },
+      "ShadowRisk": {
+        "description": "The drowning risk model in shadow (design-l5.md §4.2): staff only, [SIM], compared with the rules, never\npublished and never used for an alert.",
+        "properties": {
+          "level": {
+            "enum": [
+              "green",
+              "yellow",
+              "red"
+            ],
+            "title": "Level",
+            "type": "string"
+          },
+          "probability": {
+            "title": "Probability",
+            "type": "number"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "level",
+          "probability",
+          "version"
+        ],
+        "title": "ShadowRisk",
+        "type": "object"
+      },
       "Shapes": {
         "description": "A GeoJSON ``FeatureCollection`` of the lines and areas in a map area, simplified for the zoom.",
         "properties": {
@@ -35304,172 +35747,46 @@
         "title": "Suggestion",
         "type": "object"
       },
-      "SuggestionOut": {
+      "SuggestionAccept": {
         "properties": {
-          "body": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "title": "Body",
-            "type": "object"
-          },
-          "category": {
-            "const": "weather",
-            "title": "Category",
-            "type": "string"
-          },
-          "created_at": {
-            "format": "date-time",
-            "title": "Created At",
-            "type": "string"
-          },
-          "decided_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Decided At"
-          },
-          "decided_by": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Decided By"
-          },
-          "dismiss_reason": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Dismiss Reason"
-          },
-          "evidence": {
-            "additionalProperties": true,
-            "title": "Evidence",
-            "type": "object"
-          },
-          "gouvernorat_codes": {
-            "items": {
-              "type": "integer"
-            },
-            "title": "Gouvernorat Codes",
-            "type": "array"
-          },
-          "hazard": {
-            "title": "Hazard",
-            "type": "string"
-          },
-          "id": {
-            "format": "uuid",
-            "title": "Id",
-            "type": "string"
-          },
-          "metric": {
-            "anyOf": [
-              {
-                "enum": [
-                  "fire_danger",
-                  "wind_gust",
-                  "rain_24h",
-                  "rain_1h"
-                ],
-                "type": "string"
-              },
-              {
-                "enum": [
-                  "sensor_rain_1h",
-                  "sensor_water_level",
-                  "sensor_temperature",
-                  "tower_fire",
-                  "tower_smoke"
-                ],
-                "type": "string"
-              }
-            ],
-            "title": "Metric"
-          },
-          "severity": {
+          "lang": {
+            "default": "ar",
             "enum": [
-              "high",
-              "medium",
-              "low"
+              "ar",
+              "fr",
+              "en"
             ],
-            "title": "Severity",
+            "title": "Lang",
             "type": "string"
           },
-          "simulated": {
-            "title": "Simulated",
-            "type": "boolean"
-          },
-          "status": {
-            "enum": [
-              "pending",
-              "accepted",
-              "dismissed",
-              "expired"
-            ],
-            "title": "Status",
-            "type": "string"
-          },
-          "title": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "title": "Title",
-            "type": "object"
-          },
-          "valid_from": {
-            "format": "date-time",
-            "title": "Valid From",
-            "type": "string"
-          },
-          "valid_until": {
-            "format": "date-time",
-            "title": "Valid Until",
-            "type": "string"
+          "version": {
+            "title": "Version",
+            "type": "integer"
           }
         },
         "required": [
-          "id",
-          "metric",
-          "gouvernorat_codes",
-          "category",
-          "hazard",
-          "severity",
-          "title",
-          "body",
-          "evidence",
-          "valid_from",
-          "valid_until",
-          "status",
-          "created_at",
-          "decided_by",
-          "decided_at",
-          "dismiss_reason",
-          "simulated"
+          "version"
         ],
-        "title": "SuggestionOut",
+        "title": "SuggestionAccept",
+        "type": "object"
+      },
+      "SuggestionDismiss": {
+        "properties": {
+          "reason": {
+            "default": "",
+            "maxLength": 300,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "title": "SuggestionDismiss",
         "type": "object"
       },
       "SuggestionPage": {
         "properties": {
           "items": {
             "items": {
-              "$ref": "#/components/schemas/SuggestionOut"
+              "$ref": "#/components/schemas/app__modules__weather__schemas__SuggestionOut"
             },
             "title": "Items",
             "type": "array"
@@ -35479,6 +35796,32 @@
           "items"
         ],
         "title": "SuggestionPage",
+        "type": "object"
+      },
+      "SuggestionsOut": {
+        "properties": {
+          "can_accept": {
+            "title": "Can Accept",
+            "type": "boolean"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__schedule__schemas__SuggestionOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "enabled",
+          "can_accept",
+          "items"
+        ],
+        "title": "SuggestionsOut",
         "type": "object"
       },
       "SummaryHazmat": {
@@ -35673,6 +36016,80 @@
           "updated_at"
         ],
         "title": "SynonymOut",
+        "type": "object"
+      },
+      "Table": {
+        "description": "One table of figures, already worded and formatted in the reader's language (the PDF prints the same).",
+        "properties": {
+          "columns": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Columns",
+            "type": "array"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "measured_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Measured On"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "rows": {
+            "items": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "title": "Rows",
+            "type": "array"
+          },
+          "simulated": {
+            "default": false,
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "small_rows": {
+            "default": [],
+            "items": {
+              "type": "integer"
+            },
+            "title": "Small Rows",
+            "type": "array"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "title",
+          "columns",
+          "rows"
+        ],
+        "title": "Table",
         "type": "object"
       },
       "Tally": {
@@ -36506,6 +36923,39 @@
           "replies"
         ],
         "title": "ThreadOut",
+        "type": "object"
+      },
+      "Threshold": {
+        "properties": {
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "value"
+        ],
+        "title": "Threshold",
         "type": "object"
       },
       "Thresholds": {
@@ -37452,6 +37902,19 @@
           "lon"
         ],
         "title": "TrackPoint",
+        "type": "object"
+      },
+      "TrainIn": {
+        "properties": {
+          "seed": {
+            "default": 7,
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Seed",
+            "type": "integer"
+          }
+        },
+        "title": "TrainIn",
         "type": "object"
       },
       "Transcript": {
@@ -48864,6 +49327,11 @@
             ],
             "title": "Status Reason"
           },
+          "suggested": {
+            "default": false,
+            "title": "Suggested",
+            "type": "boolean"
+          },
           "title": {
             "title": "Title",
             "type": "string"
@@ -49025,6 +49493,71 @@
           "can_edit"
         ],
         "title": "SettingOut",
+        "type": "object"
+      },
+      "app__modules__schedule__schemas__SuggestionOut": {
+        "properties": {
+          "activity": {
+            "enum": [
+              "duty",
+              "patrol",
+              "exercise",
+              "prevention_visit",
+              "maintenance",
+              "training",
+              "awareness",
+              "readiness_check",
+              "meeting",
+              "other"
+            ],
+            "title": "Activity",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "on_date": {
+            "format": "date",
+            "title": "On Date",
+            "type": "string"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Reasons",
+            "type": "array"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "source": {
+            "enum": [
+              "weather",
+              "beaches",
+              "season",
+              "rise"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "source",
+          "activity",
+          "on_date",
+          "title",
+          "reasons",
+          "simulated"
+        ],
+        "title": "SuggestionOut",
         "type": "object"
       },
       "app__modules__schedule__schemas__TemplateIn": {
@@ -49401,6 +49934,167 @@
           "updated_at"
         ],
         "title": "RuleOut",
+        "type": "object"
+      },
+      "app__modules__weather__schemas__SuggestionOut": {
+        "properties": {
+          "body": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Body",
+            "type": "object"
+          },
+          "category": {
+            "const": "weather",
+            "title": "Category",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "decided_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided At"
+          },
+          "decided_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided By"
+          },
+          "dismiss_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dismiss Reason"
+          },
+          "evidence": {
+            "additionalProperties": true,
+            "title": "Evidence",
+            "type": "object"
+          },
+          "gouvernorat_codes": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Gouvernorat Codes",
+            "type": "array"
+          },
+          "hazard": {
+            "title": "Hazard",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "metric": {
+            "anyOf": [
+              {
+                "enum": [
+                  "fire_danger",
+                  "wind_gust",
+                  "rain_24h",
+                  "rain_1h"
+                ],
+                "type": "string"
+              },
+              {
+                "enum": [
+                  "sensor_rain_1h",
+                  "sensor_water_level",
+                  "sensor_temperature",
+                  "tower_fire",
+                  "tower_smoke"
+                ],
+                "type": "string"
+              }
+            ],
+            "title": "Metric"
+          },
+          "severity": {
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ],
+            "title": "Severity",
+            "type": "string"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "accepted",
+              "dismissed",
+              "expired"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Title",
+            "type": "object"
+          },
+          "valid_from": {
+            "format": "date-time",
+            "title": "Valid From",
+            "type": "string"
+          },
+          "valid_until": {
+            "format": "date-time",
+            "title": "Valid Until",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "metric",
+          "gouvernorat_codes",
+          "category",
+          "hazard",
+          "severity",
+          "title",
+          "body",
+          "evidence",
+          "valid_from",
+          "valid_until",
+          "status",
+          "created_at",
+          "decided_by",
+          "decided_at",
+          "dismiss_reason",
+          "simulated"
+        ],
+        "title": "SuggestionOut",
         "type": "object"
       },
       "app__modules__window__schemas__DelegationOut": {
@@ -61240,6 +61934,224 @@
         ]
       }
     },
+    "/api/v1/staff/ai/models": {
+      "get": {
+        "operationId": "list_cards_api_v1_staff_ai_models_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "default": "ar",
+              "enum": [
+                "ar",
+                "fr",
+                "en"
+              ],
+              "title": "Lang",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Cards",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/v1/staff/ai/models/drowning/train": {
+      "post": {
+        "description": "Trains a new version of the drowning risk model on [SIM] days; the daily computation uses it in shadow.",
+        "operationId": "train_api_v1_staff_ai_models_drowning_train_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrainIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Train",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/v1/staff/ai/models/{model}/card.pdf": {
+      "get": {
+        "operationId": "card_pdf_api_v1_staff_ai_models__model__card_pdf_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "model",
+            "required": true,
+            "schema": {
+              "title": "Model",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "default": "ar",
+              "enum": [
+                "ar",
+                "fr",
+                "en"
+              ],
+              "title": "Lang",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Card Pdf",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/v1/staff/ai/models/{model}/decisions": {
+      "post": {
+        "description": "The committee approves the thresholds of the card as shown, or withdraws its approval; audited.",
+        "operationId": "decide_api_v1_staff_ai_models__model__decisions_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "model",
+            "required": true,
+            "schema": {
+              "title": "Model",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Decide",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
     "/api/v1/staff/ai/settings": {
       "get": {
         "operationId": "get_settings_api_v1_staff_ai_settings_get",
@@ -62002,6 +62914,60 @@
         "tags": [
           "staff",
           "analytics"
+        ]
+      }
+    },
+    "/api/v1/staff/anomalies": {
+      "get": {
+        "description": "Today's indicators out of their habit in the reader's scope (a room its gouvernorat, the centre all).",
+        "operationId": "list_anomalies_api_v1_staff_anomalies_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "default": "ar",
+              "enum": [
+                "ar",
+                "fr",
+                "en"
+              ],
+              "title": "Lang",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnomaliesOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Anomalies",
+        "tags": [
+          "ai"
         ]
       }
     },
@@ -85676,6 +86642,204 @@
         ]
       }
     },
+    "/api/v1/staff/schedule/periods/{period_id}/suggestions": {
+      "get": {
+        "description": "What the engine suggests for the days still ahead of a programme being written, each with its reasons.\nNothing is added until the room accepts it (AI-01).",
+        "operationId": "list_suggestions_api_v1_staff_schedule_periods__period_id__suggestions_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "period_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Period Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "default": "ar",
+              "enum": [
+                "ar",
+                "fr",
+                "en"
+              ],
+              "title": "Lang",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuggestionsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Suggestions",
+        "tags": [
+          "staff",
+          "schedule"
+        ]
+      }
+    },
+    "/api/v1/staff/schedule/periods/{period_id}/suggestions/{key}/accept": {
+      "post": {
+        "description": "The suggestion becomes an activity of the programme, with its reasons in the notes and the AI label; the\nroom completes it (hours, unit, people) and the programme is approved as usual. Audited.",
+        "operationId": "accept_suggestion_api_v1_staff_schedule_periods__period_id__suggestions__key__accept_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "period_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Period Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "pattern": "^[a-z_]{3,30}:[a-z0-9_-]{2,40}$",
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SuggestionAccept"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeriodDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Accept Suggestion",
+        "tags": [
+          "staff",
+          "schedule"
+        ]
+      }
+    },
+    "/api/v1/staff/schedule/periods/{period_id}/suggestions/{key}/dismiss": {
+      "post": {
+        "description": "The room sets the suggestion aside for this programme, with its reason if it gives one. Audited.",
+        "operationId": "dismiss_suggestion_api_v1_staff_schedule_periods__period_id__suggestions__key__dismiss_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "period_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Period Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "pattern": "^[a-z_]{3,30}:[a-z0-9_-]{2,40}$",
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SuggestionDismiss"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Dismiss Suggestion",
+        "tags": [
+          "staff",
+          "schedule"
+        ]
+      }
+    },
     "/api/v1/staff/schedule/periods/{period_id}/template": {
       "post": {
         "description": "Keeps this programme as a template under a name; a template of the same name and span is replaced.",
@@ -88031,7 +89195,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SuggestionOut"
+                  "$ref": "#/components/schemas/app__modules__weather__schemas__SuggestionOut"
                 }
               }
             },
@@ -88746,6 +89910,23 @@
     "/api/v1/staff/window/now": {
       "get": {
         "operationId": "now_api_v1_staff_window_now_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "default": "ar",
+              "enum": [
+                "ar",
+                "fr",
+                "en"
+              ],
+              "title": "Lang",
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -88756,6 +89937,16 @@
               }
             },
             "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
           }
         },
         "security": [

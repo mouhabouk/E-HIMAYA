@@ -29,6 +29,8 @@ dependencies = [
   "openpyxl==3.1.5",
   # Text of the intervention plans the local model reads into a task list (L5, AI2); pure Python, no network.
   "pypdf==6.21.4",
+  # The drowning risk model kept in shadow beside the declared rules (L5, S3); trained on [SIM] data in the server.
+  "scikit-learn==1.9.1",
 ]
 
 [dependency-groups]

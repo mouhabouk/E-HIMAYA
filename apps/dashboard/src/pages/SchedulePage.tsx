@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { Icon } from "../components/Icon";
 import { PageTitle } from "../components/PageTitle";
+import { SimTag } from "../components/StreamBits";
 import { Stepper } from "../components/Stepper";
 import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
@@ -24,6 +25,7 @@ import {
   hhmm,
   isoDay,
   ITEM_TONE,
+  MAX_DISMISS_REASON,
   WITH_REASON,
   monthWeeks,
   moveSpan,
@@ -37,6 +39,7 @@ import {
   type ItemStatus,
   type PeriodDetail,
   type ScheduleItem,
+  type ScheduleSuggestion,
   type ScheduleTemplate,
   type Span,
 } from "../lib/schedule";
@@ -99,7 +102,7 @@ function ActivityChip({ item, onOpen, compact }: { item: ScheduleItem; onOpen: (
         <bdi>{time}</bdi>
       </span>
       <span className="sched-chip__title" dir="auto">
-        {item.title}
+        {item.suggested && <span className="tag tag--ai">{t("schedule.suggest.ai")}</span>} {item.title}
       </span>
       {!compact && (
         <span className="sched-chip__meta">
@@ -825,6 +828,113 @@ function TemplateBar({ detail }: { detail: PeriodDetail }) {
   );
 }
 
+/** One suggested activity: accepted as it is (the room completes it after), or set aside with a reason. */
+function SuggestionRow({ detail, suggestion, canAccept }: { detail: PeriodDetail; suggestion: ScheduleSuggestion; canAccept: boolean }) {
+  const { t } = useTranslation();
+  const { api } = useServices();
+  const lang = useLanguage();
+  const fmt = useFormat();
+  const refresh = useRefresh();
+  const id = useId();
+  const [aside, setAside] = useState(false);
+  const [reason, setReason] = useState("");
+  const p = detail.period;
+  const accept = useMutation({
+    mutationFn: () => api.acceptScheduleSuggestion(p.id, suggestion.key, p.version, lang),
+    onSuccess: refresh,
+  });
+  const dismiss = useMutation({
+    mutationFn: () => api.dismissScheduleSuggestion(p.id, suggestion.key, reason.trim()),
+    onSuccess: refresh,
+  });
+  const error = accept.error ?? dismiss.error;
+  return (
+    <li className="sched-suggest__item" aria-labelledby={`${id}-t`}>
+      <p className="sched-suggest__head">
+        <span className={`sched-legend__dot tone-${ACTIVITIES[suggestion.activity]}`} aria-hidden="true" />
+        <strong id={`${id}-t`} dir="auto">
+          {suggestion.title}
+        </strong>
+        {suggestion.simulated && <SimTag label={t("schedule.suggest.simulated")} />}
+      </p>
+      <p className="muted">
+        {fmt.date(`${suggestion.on_date}T12:00:00Z`)} · {t(`schedule.activity.${suggestion.activity}`)} ·{" "}
+        {t(`schedule.suggest.source.${suggestion.source}`)}
+      </p>
+      <ul className="sched-suggest__why">
+        {suggestion.reasons.map((r) => (
+          <li key={r} dir="auto">
+            {r}
+          </li>
+        ))}
+      </ul>
+      {canAccept && !aside && (
+        <div className="directive__actions">
+          <button type="button" className="btn btn--primary btn--small" disabled={accept.isPending} onClick={() => accept.mutate()}>
+            {t("schedule.suggest.accept")}
+          </button>
+          <button type="button" className="btn btn--small" onClick={() => setAside(true)}>
+            {t("schedule.suggest.dismiss")}
+          </button>
+        </div>
+      )}
+      {canAccept && aside && (
+        <form
+          className="directive__actions"
+          onSubmit={(e) => {
+            e.preventDefault();
+            dismiss.mutate();
+          }}
+        >
+          <label htmlFor={`${id}-r`}>{t("schedule.suggest.reason")}</label>
+          <input id={`${id}-r`} dir="auto" maxLength={MAX_DISMISS_REASON} value={reason} onChange={(e) => setReason(e.target.value)} />
+          <button type="submit" className="btn btn--primary btn--small" disabled={dismiss.isPending}>
+            {t("schedule.suggest.confirmDismiss")}
+          </button>
+          <button type="button" className="btn btn--ghost btn--small" onClick={() => setAside(false)}>
+            {t("common.cancel")}
+          </button>
+        </form>
+      )}
+      {error && (
+        <p role="alert" className="field__error">
+          {t(errorMessageKey(error))}
+        </p>
+      )}
+    </li>
+  );
+}
+
+/** What the engine suggests for the days still ahead of a programme being written (AI3); hidden when switched off
+ * in the AI settings or when it has nothing to say. */
+function SuggestionsBar({ detail }: { detail: PeriodDetail }) {
+  const { t } = useTranslation();
+  const { api } = useServices();
+  const lang = useLanguage();
+  const id = useId();
+  const p = detail.period;
+  const editable = detail.can_edit && (p.status === "draft" || p.status === "returned");
+  const query = useQuery({
+    queryKey: scheduleKeys.suggestions(p.id, p.version, lang),
+    queryFn: ({ signal }) => api.scheduleSuggestions(p.id, lang, signal),
+    enabled: editable,
+  });
+  if (!editable || !query.data?.enabled || query.data.items.length === 0) return null;
+  return (
+    <section className="card sched-suggest no-print" aria-labelledby={`${id}-h`}>
+      <h2 id={`${id}-h`} className="sched-templates__title">
+        {t("schedule.suggest.title")} <span className="tag tag--ai">{t("schedule.suggest.ai")}</span>
+      </h2>
+      <p className="muted">{t("schedule.suggest.notice")}</p>
+      <ul className="sched-suggest__list">
+        {query.data.items.map((s) => (
+          <SuggestionRow key={s.key} detail={detail} suggestion={s} canAccept={query.data.can_accept} />
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 /** A new programme started empty or from a template. */
 function StartPeriod({ span, on, gouvernorat }: { span: Span; on: string; gouvernorat: number }) {
   const { t } = useTranslation();
@@ -987,6 +1097,7 @@ function Programme({ span, on, gouvernorat }: { span: Span; on: string; gouverno
     <div className="sched-programme">
       <PeriodBar detail={detail} />
       <TemplateBar detail={detail} />
+      <SuggestionsBar detail={detail} />
       {detail.can_edit && form === null && (
         <p className="no-print">
           <button type="button" className="btn" onClick={() => (setOpen(null), setForm("new"))}>

@@ -1,13 +1,13 @@
 """Import every module's models so they register on ``Base.metadata`` (used by Alembic)."""
 
-from app.modules.ai.models import AiSettingsRow, Analysis
+from app.modules.ai.models import AiSettingsRow, Analysis, Anomaly, ModelDecision
 from app.modules.analytics.models import Notification, Scenario, Schedule
 from app.modules.analytics.models import Report as AnalyticsReport
 from app.modules.appinfo.models import AppRating
 from app.modules.audit.models import AuditLog
 from app.modules.basemap.models import Basemap
 from app.modules.checklist.models import Checklist, ChecklistTask
-from app.modules.coastal.models import Beach, BeachDay, CoastalAlert, CoastalSettings, MarineHour, Presence
+from app.modules.coastal.models import Beach, BeachDay, CoastalAlert, CoastalSettings, MarineHour, Presence, RiskModel
 from app.modules.contact.models import ContactEvent, ContactRequest
 from app.modules.content.models import GuideItem, GuideTopic, Revision, SafetyTip
 from app.modules.crisis.models import (
@@ -108,6 +108,7 @@ from app.modules.safety.models import LiveShare, LocationHistory, LocationPoint,
 from app.modules.schedule.models import Item as ScheduleItem
 from app.modules.schedule.models import Period as SchedulePeriod
 from app.modules.schedule.models import Setting as ScheduleSetting
+from app.modules.schedule.models import SuggestionDismissal
 from app.modules.schedule.models import Template as ScheduleTemplate
 from app.modules.sensors.models import SensorDevice, SensorReading
 from app.modules.streams.models import LiveStream, StreamDetection, StreamLocation, StreamSegment
@@ -128,6 +129,7 @@ __all__ = [
     "Analysis",
     "AnalyticsReport",
     "Anchor",
+    "Anomaly",
     "AppRating",
     "Assignment",
     "AuditLog",
@@ -220,6 +222,7 @@ __all__ = [
     "MemoryEntry",
     "MemoryEntryVersion",
     "Message",
+    "ModelDecision",
     "Need",
     "Nomination",
     "Notification",
@@ -251,6 +254,7 @@ __all__ = [
     "Revision",
     "RewardCertificate",
     "RewardRule",
+    "RiskModel",
     "Rule",
     "SafetyAlert",
     "SafetyAlertRecipient",
@@ -277,6 +281,7 @@ __all__ = [
     "StreamDetection",
     "StreamLocation",
     "StreamSegment",
+    "SuggestionDismissal",
     "TeamMember",
     "TimelineEvent",
     "TowerEvent",

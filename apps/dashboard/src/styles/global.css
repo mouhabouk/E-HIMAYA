@@ -7885,6 +7885,42 @@ button.nav-card:hover {
   margin: 0;
   flex-basis: 100%;
 }
+.anomalies__list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.anomalies__item {
+  border-inline-start: 3px solid var(--border);
+  padding-inline-start: 8px;
+}
+.sched-suggest {
+  margin-bottom: 12px;
+}
+.sched-suggest__list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+.sched-suggest__item {
+  border-block-start: 1px solid var(--border);
+  padding-block-start: 8px;
+}
+.sched-suggest__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+.sched-suggest__why {
+  margin: 4px 0 8px;
+  padding-inline-start: 20px;
+}
 .sched-start {
   margin-top: 12px;
   justify-content: center;
@@ -8516,4 +8552,88 @@ button.nav-card:hover {
 .segmented--small .segmented__item > span {
   min-block-size: 2.25rem;
   padding-block: 0.4rem;
+}
+
+/* ------------------------------------------------------------------ model cards (L5, design-l5.md §4.1) */
+
+.model-card {
+  display: grid;
+  gap: 0.6rem;
+  margin-block-end: 1rem;
+}
+
+.model-card h2,
+.model-card h3,
+.model-card h4,
+.model-card p {
+  margin: 0;
+}
+
+.model-card__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.model-card__head h2 {
+  margin-inline-end: auto;
+}
+
+.model-card__text,
+.model-card__thresholds {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.model-card__text dt,
+.model-card__thresholds dt {
+  font-weight: 700;
+}
+
+.model-card__text dd,
+.model-card__thresholds dd {
+  margin: 0;
+}
+
+.model-card__thresholds > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.model-card__licences {
+  display: block;
+  margin-block-start: 0.25rem;
+}
+
+.model-card__measure {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.model-card__small th,
+.model-card__small td {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.tag--small {
+  font-style: normal;
+}
+
+.model-card__decisions {
+  margin: 0;
+  padding-inline-start: 1.2rem;
+}
+
+.model-card__decide,
+.model-card__train {
+  display: grid;
+  gap: 0.6rem;
+  padding: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface-2);
 }

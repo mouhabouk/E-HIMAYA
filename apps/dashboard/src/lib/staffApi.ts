@@ -4,6 +4,8 @@ import { appFeedbackApi } from "./appFeedback";
 import { coastalApi } from "./coastalApi";
 import { programmesApi } from "./programmes";
 import { checklistApi } from "./checklist";
+import { anomalyApi } from "./anomalies";
+import { modelCardsApi } from "./modelCards";
 import { crisisApi } from "./crisis";
 import { basemapApi } from "./basemap";
 import { inventoryApi } from "./inventory";
@@ -261,6 +263,8 @@ export function staffApi(api: ApiClient) {
     ...towersApi(api),
     ...dronesApi(api),
     ...checklistApi(api),
+    ...modelCardsApi(api),
+    ...anomalyApi(api),
     ...guideApi(api),
     ...preventionApi(api),
     ...contactApi(api),

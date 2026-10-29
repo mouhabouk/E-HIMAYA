@@ -1,0 +1,300 @@
+{
+ "about": "Report reading of services/ai/eval/reports.py: 60 [SIM] reports in five language varieties, the citizen category given as \"other\" (CI job AI · real models, 2026-10-29).",
+ "source": "services/ai/eval/reports.py",
+ "model": "qwen3:1.7b",
+ "measured_on": "2026-10-29",
+ "all": {
+  "reports": 60,
+  "invalid": {
+   "count": 0,
+   "of": 60,
+   "rate": 0.0,
+   "interval": [
+    0.0,
+    0.06
+   ],
+   "small": false
+  },
+  "lives_missed": {
+   "count": 6,
+   "of": 37,
+   "rate": 0.162,
+   "interval": [
+    0.077,
+    0.311
+   ],
+   "small": false
+  },
+  "lives_false_alarm": {
+   "count": 3,
+   "of": 23,
+   "rate": 0.13,
+   "interval": [
+    0.045,
+    0.321
+   ],
+   "small": true
+  },
+  "category_missed": {
+   "count": 56,
+   "of": 60,
+   "rate": 0.933,
+   "interval": [
+    0.841,
+    0.974
+   ],
+   "small": false
+  }
+ },
+ "varieties": {
+  "ar_msa": {
+   "reports": 20,
+   "invalid": {
+    "count": 0,
+    "of": 20,
+    "rate": 0.0,
+    "interval": [
+     0.0,
+     0.161
+    ],
+    "small": true
+   },
+   "lives_missed": {
+    "count": 0,
+    "of": 12,
+    "rate": 0.0,
+    "interval": [
+     0.0,
+     0.243
+    ],
+    "small": true
+   },
+   "lives_false_alarm": {
+    "count": 0,
+    "of": 8,
+    "rate": 0.0,
+    "interval": [
+     0.0,
+     0.324
+    ],
+    "small": true
+   },
+   "category_missed": {
+    "count": 19,
+    "of": 20,
+    "rate": 0.95,
+    "interval": [
+     0.764,
+     0.991
+    ],
+    "small": true
+   }
+  },
+  "derja": {
+   "reports": 20,
+   "invalid": {
+    "count": 0,
+    "of": 20,
+    "rate": 0.0,
+    "interval": [
+     0.0,
+     0.161
+    ],
+    "small": true
+   },
+   "lives_missed": {
+    "count": 5,
+    "of": 13,
+    "rate": 0.385,
+    "interval": [
+     0.177,
+     0.645
+    ],
+    "small": true
+   },
+   "lives_false_alarm": {
+    "count": 2,
+    "of": 7,
+    "rate": 0.286,
+    "interval": [
+     0.082,
+     0.641
+    ],
+    "small": true
+   },
+   "category_missed": {
+    "count": 18,
+    "of": 20,
+    "rate": 0.9,
+    "interval": [
+     0.699,
+     0.972
+    ],
+    "small": true
+   }
+  },
+  "ar_derja": {
+   "reports": 12,
+   "invalid": {
+    "count": 0,
+    "of": 12,
+    "rate": 0.0,
+    "interval": [
+     0.0,
+     0.243
+    ],
+    "small": true
+   },
+   "lives_missed": {
+    "count": 2,
+    "of": 8,
+    "rate": 0.25,
+    "interval": [
+     0.071,
+     0.591
+    ],
+    "small": true
+   },
+   "lives_false_alarm": {
+    "count": 1,
+    "of": 4,
+    "rate": 0.25,
+    "interval": [
+     0.046,
+     0.699
+    ],
+    "small": true
+   },
+   "category_missed": {
+    "count": 11,
+    "of": 12,
+    "rate": 0.917,
+    "interval": [
+     0.646,
+     0.985
+    ],
+    "small": true
+   }
+  },
+  "ar_latn": {
+   "reports": 8,
+   "invalid": {
+    "count": 0,
+    "of": 8,
+    "rate": 0.0,
+    "interval": [
+     0.0,
+     0.324
+    ],
+    "small": true
+   },
+   "lives_missed": {
+    "count": 3,
+    "of": 5,
+    "rate": 0.6,
+    "interval": [
+     0.231,
+     0.882
+    ],
+    "small": true
+   },
+   "lives_false_alarm": {
+    "count": 1,
+    "of": 3,
+    "rate": 0.333,
+    "interval": [
+     0.061,
+     0.792
+    ],
+    "small": true
+   },
+   "category_missed": {
+    "count": 7,
+    "of": 8,
+    "rate": 0.875,
+    "interval": [
+     0.529,
+     0.978
+    ],
+    "small": true
+   }
+  },
+  "fr": {
+   "reports": 20,
+   "invalid": {
+    "count": 0,
+    "of": 20,
+    "rate": 0.0,
+    "interval": [
+     0.0,
+     0.161
+    ],
+    "small": true
+   },
+   "lives_missed": {
+    "count": 1,
+    "of": 12,
+    "rate": 0.083,
+    "interval": [
+     0.015,
+     0.354
+    ],
+    "small": true
+   },
+   "lives_false_alarm": {
+    "count": 1,
+    "of": 8,
+    "rate": 0.125,
+    "interval": [
+     0.022,
+     0.471
+    ],
+    "small": true
+   },
+   "category_missed": {
+    "count": 19,
+    "of": 20,
+    "rate": 0.95,
+    "interval": [
+     0.764,
+     0.991
+    ],
+    "small": true
+   }
+  }
+ },
+ "confusions": [
+  [
+   "fire→other",
+   12
+  ],
+  [
+   "traffic_accident→other",
+   10
+  ],
+  [
+   "medical→other",
+   9
+  ],
+  [
+   "drowning→other",
+   6
+  ],
+  [
+   "flood→other",
+   6
+  ],
+  [
+   "chemical_leak→other",
+   5
+  ],
+  [
+   "landslide→other",
+   5
+  ],
+  [
+   "sos→other",
+   3
+  ]
+ ]
+}

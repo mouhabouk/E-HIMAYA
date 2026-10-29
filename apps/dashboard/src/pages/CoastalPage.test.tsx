@@ -58,7 +58,12 @@ describe("CoastalPage", () => {
     expect(within(panel).getByText("Locale")).toBeInTheDocument();
     expect(within(panel).getByText(/Source : ONTT, 2026-06-01/)).toBeInTheDocument();
     expect(within(panel).getAllByText("Non")).toHaveLength(2); // "False" and "no" from the imported file
-    expect(within(panel).getByRole("table", { name: "Les quatre prochains jours" }).querySelectorAll("tbody tr")).toHaveLength(2);
+    const days = within(panel).getByRole("table", { name: "Les quatre prochains jours" });
+    expect(days.querySelectorAll("tbody tr")).toHaveLength(2);
+    // The drowning model in shadow, beside the rule, for comparison only (L5, design-l5.md §4.2).
+    expect(within(days).getByRole("columnheader", { name: /Modèle en ombre/ })).toBeInTheDocument();
+    expect(within(days).getByText("12 %")).toBeInTheDocument();
+    expect(within(panel).getByText(/sert à comparer/)).toBeInTheDocument();
   });
 
   it("announces a live coastal alert", async () => {

@@ -1,0 +1,431 @@
+{
+ "about": "Declared evaluation set of the structured reading of a report (services/ai/app/extract.py), for the false negatives by language variety (docs/phase-l/design-l5.md §4.1). [SIM]: written by the e-Himaya team in October 2026 to sound like citizen reports; no real report, no personal data. Each report is read with the citizen's category set to 'other', so the category comes from the text. Small set: every rate carries its 95 % interval.",
+ "varieties": {
+  "ar_msa": "Modern Standard Arabic",
+  "ar_derja": "Tunisian Arabic (Derja), Arabic script",
+  "ar_latn": "Tunisian Arabic (Derja), Latin script with digits",
+  "fr": "French"
+ },
+ "reports": [
+  {
+   "id": "ar_msa-01",
+   "variety": "ar_msa",
+   "text": "حريق كبير في عمارة بحي النصر، والدخان يملأ الطابق الثالث وهناك عائلة عالقة في الشقة",
+   "category": "fire",
+   "lives_at_risk": true
+  },
+  {
+   "id": "ar_msa-02",
+   "variety": "ar_msa",
+   "text": "اندلع حريق في أعشاب يابسة قرب الطريق الوطنية رقم 1، لا يوجد أحد في المكان",
+   "category": "fire",
+   "lives_at_risk": false
+  },
+  {
+   "id": "ar_msa-03",
+   "variety": "ar_msa",
+   "text": "طفل يغرق الآن في شاطئ الحمامات قرب النزل، الأمواج عالية ولا يوجد حارس",
+   "category": "drowning",
+   "lives_at_risk": true
+  },
+  {
+   "id": "ar_msa-04",
+   "variety": "ar_msa",
+   "text": "حادث مرور بين سيارة وشاحنة على الطريق السيارة، السائق محاصر داخل السيارة وينزف",
+   "category": "traffic_accident",
+   "lives_at_risk": true
+  },
+  {
+   "id": "ar_msa-05",
+   "variety": "ar_msa",
+   "text": "اصطدام خفيف بين سيارتين في مفترق الطرق، لا إصابات والسائقان بخير",
+   "category": "traffic_accident",
+   "lives_at_risk": false
+  },
+  {
+   "id": "ar_msa-06",
+   "variety": "ar_msa",
+   "text": "المياه دخلت المنازل في حي الرياض وارتفعت إلى متر، وكبار السن في الطابق الأرضي لا يستطيعون الخروج",
+   "category": "flood",
+   "lives_at_risk": true
+  },
+  {
+   "id": "ar_msa-07",
+   "variety": "ar_msa",
+   "text": "تجمّع مياه الأمطار في النفق تحت الجسر، الطريق مغلقة ولا أحد عالق",
+   "category": "flood",
+   "lives_at_risk": false
+  },
+  {
+   "id": "ar_msa-08",
+   "variety": "ar_msa",
+   "text": "رجل مسن سقط في الشارع وفقد الوعي ولا يتنفس جيدا",
+   "category": "medical",
+   "lives_at_risk": true
+  },
+  {
+   "id": "ar_msa-09",
+   "variety": "ar_msa",
+   "text": "أحتاج معلومات عن أقرب صيدلية مفتوحة الليلة لدواء الضغط",
+   "category": "medical",
+   "lives_at_risk": false
+  },
+  {
+   "id": "ar_msa-10",
+   "variety": "ar_msa",
+   "text": "تسرب غاز من خزان في المنطقة الصناعية، رائحة قوية وعمال يشعرون بالاختناق",
+   "category": "chemical_leak",
+   "lives_at_risk": true
+  },
+  {
+   "id": "ar_msa-11",
+   "variety": "ar_msa",
+   "text": "انهيار جزء من الجبل على منزلين في عين دراهم، هناك أشخاص تحت الأنقاض",
+   "category": "landslide",
+   "lives_at_risk": true
+  },
+  {
+   "id": "ar_msa-12",
+   "variety": "ar_msa",
+   "text": "سقوط صخور على الطريق الجبلية بعد الأمطار، الطريق مقطوعة ولم يصب أحد",
+   "category": "landslide",
+   "lives_at_risk": false
+  },
+  {
+   "id": "ar_msa-13",
+   "variety": "ar_msa",
+   "text": "النار تنتشر في الغابة باتجاه القرية بسرعة بسبب الرياح، السكان ما زالوا في منازلهم",
+   "category": "fire",
+   "lives_at_risk": true
+  },
+  {
+   "id": "ar_msa-14",
+   "variety": "ar_msa",
+   "text": "أرجوكم ساعدوني، شخص يهاجمني في المنزل وأنا مختبئة في الغرفة",
+   "category": "sos",
+   "lives_at_risk": true
+  },
+  {
+   "id": "ar_msa-15",
+   "variety": "ar_msa",
+   "text": "رأيت قاربا صغيرا مقلوبا قرب الشاطئ دون أحد بداخله",
+   "category": "drowning",
+   "lives_at_risk": false
+  },
+  {
+   "id": "ar_msa-16",
+   "variety": "ar_msa",
+   "text": "امرأة حامل في حالة ولادة متعسرة ولا توجد سيارة لنقلها، تنزف كثيرا",
+   "category": "medical",
+   "lives_at_risk": true
+  },
+  {
+   "id": "ar_msa-17",
+   "variety": "ar_msa",
+   "text": "قطة عالقة فوق شجرة عالية منذ الصباح في الحديقة العمومية",
+   "category": "other",
+   "lives_at_risk": false
+  },
+  {
+   "id": "ar_msa-18",
+   "variety": "ar_msa",
+   "text": "انفجار قارورة غاز في مطعم وسط المدينة، يوجد جرحى والنار مشتعلة",
+   "category": "fire",
+   "lives_at_risk": true
+  },
+  {
+   "id": "ar_msa-19",
+   "variety": "ar_msa",
+   "text": "انقلاب حافلة نقل ريفي فيها تلاميذ في منعرج خطير، عدة مصابين",
+   "category": "traffic_accident",
+   "lives_at_risk": true
+  },
+  {
+   "id": "ar_msa-20",
+   "variety": "ar_msa",
+   "text": "تسرّب مادة زيتية من شاحنة على الطريق، لا رائحة ولا مصابين",
+   "category": "chemical_leak",
+   "lives_at_risk": false
+  },
+  {
+   "id": "ar_derja-01",
+   "variety": "ar_derja",
+   "text": "فما نار شاعلة في الدار متاع جارنا والصغار مازالو لداخل، اعملو مزية اسرعو",
+   "category": "fire",
+   "lives_at_risk": true
+  },
+  {
+   "id": "ar_derja-02",
+   "variety": "ar_derja",
+   "text": "شعلت النار في الزبلة قدام الحومة، ما فما حد قريب",
+   "category": "fire",
+   "lives_at_risk": false
+  },
+  {
+   "id": "ar_derja-03",
+   "variety": "ar_derja",
+   "text": "فما واحد قاعد يغرق في البحر و الموج عالي برشا، ما فماش حارس",
+   "category": "drowning",
+   "lives_at_risk": true
+  },
+  {
+   "id": "ar_derja-04",
+   "variety": "ar_derja",
+   "text": "كسيدة كبيرة في الكياس، كرهبة تقلبت وفيها زوز مجروحين ما ينجموش يخرجو",
+   "category": "traffic_accident",
+   "lives_at_risk": true
+  },
+  {
+   "id": "ar_derja-05",
+   "variety": "ar_derja",
+   "text": "كرهبتين تضاربو شوية في الرمبوان، ما صار شي لحد",
+   "category": "traffic_accident",
+   "lives_at_risk": false
+  },
+  {
+   "id": "ar_derja-06",
+   "variety": "ar_derja",
+   "text": "الما دخل للديار في الحومة وولى يطلع برشا، فما عجوز وحدها ما تنجمش تخرج",
+   "category": "flood",
+   "lives_at_risk": true
+  },
+  {
+   "id": "ar_derja-07",
+   "variety": "ar_derja",
+   "text": "بابا طاح في الدار وما عادش يتكلم، وجهو تبدل، اعملو مزية جيو فيسع",
+   "category": "medical",
+   "lives_at_risk": true
+  },
+  {
+   "id": "ar_derja-08",
+   "variety": "ar_derja",
+   "text": "نحب نعرف وين فما سبيطار مفتوح ليوما باش نعمل تحليل",
+   "category": "medical",
+   "lives_at_risk": false
+  },
+  {
+   "id": "ar_derja-09",
+   "variety": "ar_derja",
+   "text": "فما ريحة غاز قوية برشا في العمارة والناس بدات تدوخ",
+   "category": "chemical_leak",
+   "lives_at_risk": true
+  },
+  {
+   "id": "ar_derja-10",
+   "variety": "ar_derja",
+   "text": "الجبل طاح على دار في الضيعة وفما ناس تحت الحجر",
+   "category": "landslide",
+   "lives_at_risk": true
+  },
+  {
+   "id": "ar_derja-11",
+   "variety": "ar_derja",
+   "text": "عاونوني فما راجل يتبع فيا بموس وأنا مخبية في حانوت",
+   "category": "sos",
+   "lives_at_risk": true
+  },
+  {
+   "id": "ar_derja-12",
+   "variety": "ar_derja",
+   "text": "فما كلب سايب في الشارع ينبح على الناس من الصباح",
+   "category": "other",
+   "lives_at_risk": false
+  },
+  {
+   "id": "ar_latn-01",
+   "variety": "ar_latn",
+   "text": "famma nar kbira fi l3imara w famma 3ayla ma tnajjamch tokhrej, 3aj3lou",
+   "category": "fire",
+   "lives_at_risk": true
+  },
+  {
+   "id": "ar_latn-02",
+   "variety": "ar_latn",
+   "text": "famma tfol 9a3ed yo8ra9 fil b7ar 9odem l'hotel, el mouj 3ali barcha",
+   "category": "drowning",
+   "lives_at_risk": true
+  },
+  {
+   "id": "ar_latn-03",
+   "variety": "ar_latn",
+   "text": "accident kbir fil autoroute, karhba t9allbet w el chauffeur m3a99ed lowta w ynazzef",
+   "category": "traffic_accident",
+   "lives_at_risk": true
+  },
+  {
+   "id": "ar_latn-04",
+   "variety": "ar_latn",
+   "text": "zouz karhbet tadharbou chwaya, ma famma 7atta blessé",
+   "category": "traffic_accident",
+   "lives_at_risk": false
+  },
+  {
+   "id": "ar_latn-05",
+   "variety": "ar_latn",
+   "text": "omi ta7et w ma 3adech tetnaffes mli7, 3aj3lou ya3tikom essa7a",
+   "category": "medical",
+   "lives_at_risk": true
+  },
+  {
+   "id": "ar_latn-06",
+   "variety": "ar_latn",
+   "text": "el ma dkhal lel dyar w tla3 barcha, famma sghar m3a99din fil dar",
+   "category": "flood",
+   "lives_at_risk": true
+  },
+  {
+   "id": "ar_latn-07",
+   "variety": "ar_latn",
+   "text": "nar fil 7chich 9rib mel route, ma famma 7add",
+   "category": "fire",
+   "lives_at_risk": false
+  },
+  {
+   "id": "ar_latn-08",
+   "variety": "ar_latn",
+   "text": "famma chajra ta7et 3al trottoir w sakret chwaya el thniya",
+   "category": "other",
+   "lives_at_risk": false
+  },
+  {
+   "id": "fr-01",
+   "variety": "fr",
+   "text": "Incendie dans un immeuble à Sousse, une famille est bloquée au troisième étage, beaucoup de fumée",
+   "category": "fire",
+   "lives_at_risk": true
+  },
+  {
+   "id": "fr-02",
+   "variety": "fr",
+   "text": "Un feu de broussailles près de l'autoroute, personne à proximité",
+   "category": "fire",
+   "lives_at_risk": false
+  },
+  {
+   "id": "fr-03",
+   "variety": "fr",
+   "text": "Un enfant se noie devant l'hôtel à Hammamet, les vagues sont fortes et il n'y a pas de surveillant",
+   "category": "drowning",
+   "lives_at_risk": true
+  },
+  {
+   "id": "fr-04",
+   "variety": "fr",
+   "text": "Une barque vide dérive près de la plage, personne à bord",
+   "category": "drowning",
+   "lives_at_risk": false
+  },
+  {
+   "id": "fr-05",
+   "variety": "fr",
+   "text": "Grave accident sur la route de Bizerte, le conducteur est coincé dans la voiture et saigne",
+   "category": "traffic_accident",
+   "lives_at_risk": true
+  },
+  {
+   "id": "fr-06",
+   "variety": "fr",
+   "text": "Petit accrochage entre deux voitures au rond-point, aucun blessé",
+   "category": "traffic_accident",
+   "lives_at_risk": false
+  },
+  {
+   "id": "fr-07",
+   "variety": "fr",
+   "text": "L'eau est entrée dans les maisons du quartier, elle monte vite et une vieille dame ne peut pas sortir",
+   "category": "flood",
+   "lives_at_risk": true
+  },
+  {
+   "id": "fr-08",
+   "variety": "fr",
+   "text": "Le tunnel sous le pont est inondé, la route est fermée, personne n'est bloqué",
+   "category": "flood",
+   "lives_at_risk": false
+  },
+  {
+   "id": "fr-09",
+   "variety": "fr",
+   "text": "Mon père est tombé et ne respire presque plus, il ne répond pas",
+   "category": "medical",
+   "lives_at_risk": true
+  },
+  {
+   "id": "fr-10",
+   "variety": "fr",
+   "text": "Je cherche une pharmacie de garde ouverte ce soir",
+   "category": "medical",
+   "lives_at_risk": false
+  },
+  {
+   "id": "fr-11",
+   "variety": "fr",
+   "text": "Fuite de gaz dans une usine de la zone industrielle, des ouvriers ont du mal à respirer",
+   "category": "chemical_leak",
+   "lives_at_risk": true
+  },
+  {
+   "id": "fr-12",
+   "variety": "fr",
+   "text": "Une flaque d'huile sur la chaussée après le passage d'un camion, pas d'odeur ni de blessé",
+   "category": "chemical_leak",
+   "lives_at_risk": false
+  },
+  {
+   "id": "fr-13",
+   "variety": "fr",
+   "text": "Un glissement de terrain a enseveli une maison à Aïn Draham, des personnes sont sous les décombres",
+   "category": "landslide",
+   "lives_at_risk": true
+  },
+  {
+   "id": "fr-14",
+   "variety": "fr",
+   "text": "Des rochers sont tombés sur la route de montagne, la route est coupée mais personne n'est blessé",
+   "category": "landslide",
+   "lives_at_risk": false
+  },
+  {
+   "id": "fr-15",
+   "variety": "fr",
+   "text": "Aidez-moi, quelqu'un essaie d'entrer chez moi avec un couteau, je suis cachée",
+   "category": "sos",
+   "lives_at_risk": true
+  },
+  {
+   "id": "fr-16",
+   "variety": "fr",
+   "text": "Le feu de forêt avance vers le village à cause du vent, les habitants sont encore chez eux",
+   "category": "fire",
+   "lives_at_risk": true
+  },
+  {
+   "id": "fr-17",
+   "variety": "fr",
+   "text": "Une femme enceinte saigne beaucoup et commence à accoucher, pas de voiture pour l'emmener",
+   "category": "medical",
+   "lives_at_risk": true
+  },
+  {
+   "id": "fr-18",
+   "variety": "fr",
+   "text": "Un bus scolaire s'est renversé dans un virage, plusieurs enfants blessés",
+   "category": "traffic_accident",
+   "lives_at_risk": true
+  },
+  {
+   "id": "fr-19",
+   "variety": "fr",
+   "text": "Un chat est coincé en haut d'un arbre dans le jardin public depuis ce matin",
+   "category": "other",
+   "lives_at_risk": false
+  },
+  {
+   "id": "fr-20",
+   "variety": "fr",
+   "text": "Explosion d'une bouteille de gaz dans un restaurant du centre-ville, il y a des blessés",
+   "category": "fire",
+   "lives_at_risk": true
+  }
+ ]
+}

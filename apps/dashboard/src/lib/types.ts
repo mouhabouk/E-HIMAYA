@@ -381,6 +381,8 @@ export interface AiSettings {
   /** AI-01: each suggestion of the local model in the operations can be switched off (design-l5.md §2.3). */
   assist?: {
     plan_reading: boolean;
+    programme_suggestions?: boolean;
+    anomalies?: boolean;
   };
 }
 

@@ -51,12 +51,41 @@ erDiagram
         datetime updated_at
         datetime completed_at
     }
+    ai__anomaly {
+        uuid id PK
+        text indicator
+        text unit_key
+        smallint gouvernorat_code FK
+        integer delegation_id FK
+        date day
+        float value
+        float mean
+        float std
+        float z
+        text baseline
+        smallint points
+        integer n
+        datetime raised_at
+    }
+    ai__model_decision {
+        uuid id PK
+        text model
+        text decision
+        jsonb thresholds
+        text version
+        text reference
+        text note
+        text decided_by_name
+        datetime decided_at
+    }
     ai__settings {
         smallint id PK
         jsonb value
         text updated_by
         datetime updated_at
     }
+    geo__delegation ||--o{ ai__anomaly : "delegation_id"
+    geo__gouvernorat ||--o{ ai__anomaly : "gouvernorat_code"
     reports__report ||--o{ ai__analysis : "report_id"
 ```
 
@@ -201,6 +230,9 @@ erDiagram
         text source
         boolean simulated
         datetime computed_at
+        float shadow_p
+        text shadow_level
+        integer shadow_version
     }
     coastal__marine_hour {
         uuid feature_id PK,FK
@@ -216,6 +248,16 @@ erDiagram
         uuid feature_id PK,FK
         blob token_hash PK
         datetime at
+    }
+    coastal__risk_model {
+        integer version PK
+        text algorithm
+        jsonb params
+        jsonb metrics
+        boolean simulated
+        integer seed
+        text trained_by_name
+        datetime trained_at
     }
     coastal__settings {
         smallint id PK
@@ -2800,6 +2842,7 @@ erDiagram
         jsonb resources
         uuid plan_document_id FK
         text notes
+        text suggestion_key
         text status
         text status_reason
         boolean status_manual
@@ -2839,6 +2882,14 @@ erDiagram
         text updated_by_name
         datetime updated_at
     }
+    sched__suggestion_dismissal {
+        uuid period_id PK,FK
+        text key PK
+        smallint gouvernorat_code FK
+        text reason
+        text dismissed_by_name
+        datetime dismissed_at
+    }
     sched__template {
         uuid id PK
         smallint gouvernorat_code FK
@@ -2853,10 +2904,12 @@ erDiagram
     geo__gouvernorat ||--o{ sched__item : "gouvernorat_code"
     geo__gouvernorat ||--o{ sched__period : "gouvernorat_code"
     geo__gouvernorat ||--o{ sched__setting : "gouvernorat_code"
+    geo__gouvernorat ||--o{ sched__suggestion_dismissal : "gouvernorat_code"
     geo__gouvernorat ||--o{ sched__template : "gouvernorat_code"
     ops__unit ||--o{ sched__item : "unit_id"
     register__document ||--o{ sched__item : "plan_document_id"
     sched__period ||--o{ sched__item : "period_id"
+    sched__period ||--o{ sched__suggestion_dismissal : "period_id"
 ```
 
 ## sensor

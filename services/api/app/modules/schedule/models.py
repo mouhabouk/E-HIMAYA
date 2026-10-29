@@ -79,6 +79,8 @@ class Item(Base):
     resources: Mapped[list[dict[str, Any]]] = mapped_column(JSONB, server_default="[]")
     plan_document_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("register.document.id"))
     notes: Mapped[str] = mapped_column(Text, server_default="")
+    # The suggestion (AI3) the activity was accepted from: it keeps the AI label.
+    suggestion_key: Mapped[str | None] = mapped_column(Text)
     status: Mapped[str] = mapped_column(Text, server_default="planned")
     status_reason: Mapped[str | None] = mapped_column(Text)
     status_manual: Mapped[bool] = mapped_column(Boolean, server_default="false")
@@ -87,6 +89,22 @@ class Item(Base):
     created_by_name: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class SuggestionDismissal(Base):
+    """A suggested activity (AI3) the room set aside for one programme, with its reason."""
+
+    __tablename__ = "suggestion_dismissal"
+    __table_args__ = {"schema": "sched"}
+
+    period_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("sched.period.id", ondelete="CASCADE"), primary_key=True
+    )
+    key: Mapped[str] = mapped_column(Text, primary_key=True)
+    gouvernorat_code: Mapped[int] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
+    reason: Mapped[str] = mapped_column(Text, server_default="")
+    dismissed_by_name: Mapped[str | None] = mapped_column(Text)
+    dismissed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 class Template(Base):

@@ -4,6 +4,8 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.modules.anomaly.schemas import AnomalyOut
+
 Lang = Literal["ar", "fr", "en"]
 
 
@@ -194,6 +196,8 @@ class NowOut(BaseModel):
     resources: list[ResourceNow] | None
     progress: list[ProgressNow] | None
     decisions: list[DecisionNow]
+    # The indicators out of their habit today (AI4): full view only, None when switched off.
+    anomalies: list[AnomalyOut] | None = None
 
 
 # ---------------------------------------------------------------- access, delegations

@@ -12,6 +12,15 @@ class Factor(BaseModel):
     value: Any = None
 
 
+class ShadowRisk(BaseModel):
+    """The drowning risk model in shadow (design-l5.md §4.2): staff only, [SIM], compared with the rules, never
+    published and never used for an alert."""
+
+    level: Level
+    probability: float
+    version: int
+
+
 class DayRisk(BaseModel):
     day: date
     level: Level
@@ -22,6 +31,7 @@ class DayRisk(BaseModel):
     current_kmh: float | None = None
     onshore_wind_kmh: float | None = None
     max_temperature_c: float | None = None
+    shadow: ShadowRisk | None = None
 
 
 class BeachOut(BaseModel):

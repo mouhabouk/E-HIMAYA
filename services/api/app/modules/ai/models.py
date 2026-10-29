@@ -1,8 +1,8 @@
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any
 
-from sqlalchemy import DateTime, ForeignKey, Integer, SmallInteger, Text, func
+from sqlalchemy import Date, DateTime, Float, ForeignKey, Integer, SmallInteger, Text, func
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -47,3 +47,42 @@ class AiSettingsRow(Base):
     value: Mapped[dict[str, Any]] = mapped_column(JSONB)
     updated_by: Mapped[str] = mapped_column(Text)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class ModelDecision(Base):
+    """A committee decision about a model card (AI-01): thresholds approved or approval withdrawn. Append-only."""
+
+    __tablename__ = "model_decision"
+    __table_args__ = {"schema": "ai"}
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    model: Mapped[str] = mapped_column(Text)
+    decision: Mapped[str] = mapped_column(Text)
+    thresholds: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default="{}")
+    version: Mapped[str] = mapped_column(Text)
+    reference: Mapped[str] = mapped_column(Text)
+    note: Mapped[str] = mapped_column(Text, server_default="")
+    decided_by_name: Mapped[str] = mapped_column(Text)
+    decided_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class Anomaly(Base):
+    """An indicator of a gouvernorat or a delegation found outside its usual series on a day (AI4), kept once."""
+
+    __tablename__ = "anomaly"
+    __table_args__ = {"schema": "ai"}
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    indicator: Mapped[str] = mapped_column(Text)
+    unit_key: Mapped[str] = mapped_column(Text)
+    gouvernorat_code: Mapped[int] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
+    delegation_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("geo.delegation.id"))
+    day: Mapped[date] = mapped_column(Date)
+    value: Mapped[float] = mapped_column(Float)
+    mean: Mapped[float] = mapped_column(Float)
+    std: Mapped[float] = mapped_column(Float)
+    z: Mapped[float] = mapped_column(Float)
+    baseline: Mapped[str] = mapped_column(Text)
+    points: Mapped[int] = mapped_column(SmallInteger)
+    n: Mapped[int] = mapped_column(Integer)
+    raised_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
