@@ -9,7 +9,7 @@ rule in the database. The governor and the minister see the progress only: the a
 import uuid
 from collections import defaultdict
 from datetime import UTC, date, datetime, time
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlalchemy import delete, func, select
@@ -17,6 +17,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_session
 from app.core.security import Principal, Role, require_roles
+from app.modules.ai import settings as ai_settings
 from app.modules.audit import service as audit
 from app.modules.features import service as features
 from app.modules.geo.models import Gouvernorat
@@ -25,8 +26,8 @@ from app.modules.ops.models import Unit
 from app.modules.register import service as register
 from app.modules.register.models import Document
 from app.modules.reports.staff_router import READ_ROLES
-from app.modules.schedule import domain, schemas
-from app.modules.schedule.models import Item, Period, Setting, Template
+from app.modules.schedule import domain, schemas, suggest
+from app.modules.schedule.models import Item, Period, Setting, SuggestionDismissal, Template
 
 router = APIRouter(prefix="/api/v1/staff/schedule", tags=["staff", "schedule"])
 Session = Annotated[AsyncSession, Depends(get_session)]
@@ -244,6 +245,7 @@ async def _detail(session: AsyncSession, p: Principal, period: Period) -> schema
                 status_reason=i.status_reason,
                 status_by_name=i.status_by_name,
                 status_at=i.status_at,
+                suggested=i.suggestion_key is not None,
             )
             for i in items
         ],
@@ -948,3 +950,150 @@ async def item_status(
     item.status_by_name, item.status_at = audit.name_of(principal), _now()
     await session.commit()
     return await _detail(session, principal, period)
+
+
+# ---------------------------------------------------------------- suggested activities (AI3, design-l5.md §4.3)
+
+
+async def _suggestions(session: AsyncSession, period: Period, lang: str) -> list[suggest.Suggestion]:
+    items = (await _items(session, [period.id]))[period.id]
+    dismissed = set(
+        await session.scalars(select(SuggestionDismissal.key).where(SuggestionDismissal.period_id == period.id))
+    )
+    taken = {i.suggestion_key for i in items if i.suggestion_key} | dismissed
+    planned = {(i.activity, i.on_date) for i in items if i.suggestion_key is None}
+    return await suggest.suggestions(
+        session, period.gouvernorat_code, period.starts_on, period.ends_on, _now(), lang, taken, planned
+    )
+
+
+async def _suggestion_rights(session: AsyncSession, p: Principal, period: Period) -> None:
+    """Only the room writing a draft or returned programme takes or sets aside a suggestion, while they are on."""
+    if not (await ai_settings.load(session)).assist.programme_suggestions:
+        raise HTTPException(status.HTTP_409_CONFLICT, "suggestions_off")
+    if period.status not in domain.EDITABLE:
+        raise HTTPException(status.HTTP_409_CONFLICT, "period_locked")
+    if not writes(p, period.gouvernorat_code):
+        raise _forbidden()
+
+
+@router.get("/periods/{period_id}/suggestions", response_model=schemas.SuggestionsOut)
+async def list_suggestions(
+    principal: Reader,
+    session: Session,
+    period_id: uuid.UUID,
+    lang: Annotated[Literal["ar", "fr", "en"], Query()] = "ar",
+) -> schemas.SuggestionsOut:
+    """What the engine suggests for the days still ahead of a programme being written, each with its reasons.
+    Nothing is added until the room accepts it (AI-01)."""
+    period = await _period(session, period_id)
+    if not (await ai_settings.load(session)).assist.programme_suggestions:
+        return schemas.SuggestionsOut(enabled=False, can_accept=False, items=[])
+    actor = await features.as_for(principal, "schedule.suggestions")
+    if period.status not in domain.EDITABLE or not writes(principal, period.gouvernorat_code):
+        return schemas.SuggestionsOut(enabled=True, can_accept=False, items=[])
+    found = await _suggestions(session, period, lang)
+    return schemas.SuggestionsOut(
+        enabled=True,
+        can_accept=actor is not None and writes(actor, period.gouvernorat_code),
+        items=[
+            schemas.SuggestionOut(
+                key=s.key,
+                source=s.source,
+                activity=s.activity,
+                on_date=s.on_date,
+                title=s.title,
+                reasons=s.reasons,
+                simulated=s.simulated,
+            )
+            for s in found
+        ],
+    )
+
+
+@router.post("/periods/{period_id}/suggestions/{key}/accept", response_model=schemas.PeriodDetail)
+async def accept_suggestion(
+    principal: Reader,
+    session: Session,
+    period_id: uuid.UUID,
+    key: schemas.SuggestionKey,
+    body: schemas.SuggestionAccept,
+) -> schemas.PeriodDetail:
+    """The suggestion becomes an activity of the programme, with its reasons in the notes and the AI label; the
+    room completes it (hours, unit, people) and the programme is approved as usual. Audited."""
+    period = await _period(session, period_id)
+    _check_version(period, body.version)
+    await _suggestion_rights(session, principal, period)
+    found = next((s for s in await _suggestions(session, period, body.lang) if s.key == key), None)
+    if found is None:
+        raise HTTPException(status.HTTP_409_CONFLICT, "suggestion_gone")
+    count = await session.scalar(select(func.count()).select_from(Item).where(Item.period_id == period.id)) or 0
+    if count + 1 > domain.MAX_ITEMS:
+        raise _unprocessable("too_many_items")
+    item = Item(
+        period_id=period.id,
+        gouvernorat_code=period.gouvernorat_code,
+        activity=found.activity,
+        title=found.title[:300],
+        on_date=found.on_date,
+        notes=suggest.note(found, body.lang)[:2000],
+        suggestion_key=found.key,
+        status="planned",
+        resources=[],
+        created_by_name=audit.name_of(principal),
+    )
+    session.add(item)
+    await session.flush()
+    _touch(period, principal, _now())
+    await _record(
+        session,
+        principal,
+        "suggestion_accepted",
+        period,
+        key=found.key,
+        source=found.source,
+        activity=found.activity,
+        on_date=found.on_date.isoformat(),
+        evidence=found.evidence,
+        simulated=found.simulated,
+    )
+    await session.commit()
+    return await _detail(session, principal, period)
+
+
+@router.post("/periods/{period_id}/suggestions/{key}/dismiss", status_code=status.HTTP_204_NO_CONTENT)
+async def dismiss_suggestion(
+    principal: Reader,
+    session: Session,
+    period_id: uuid.UUID,
+    key: schemas.SuggestionKey,
+    body: schemas.SuggestionDismiss,
+) -> Response:
+    """The room sets the suggestion aside for this programme, with its reason if it gives one. Audited."""
+    period = await _period(session, period_id)
+    await _suggestion_rights(session, principal, period)
+    found = next((s for s in await _suggestions(session, period, "ar") if s.key == key), None)
+    if found is None:
+        raise HTTPException(status.HTTP_409_CONFLICT, "suggestion_gone")
+    session.add(
+        SuggestionDismissal(
+            period_id=period.id,
+            key=key,
+            gouvernorat_code=period.gouvernorat_code,
+            reason=body.reason,
+            dismissed_by_name=audit.name_of(principal),
+            dismissed_at=_now(),
+        )
+    )
+    await _record(
+        session,
+        principal,
+        "suggestion_dismissed",
+        period,
+        key=key,
+        source=found.source,
+        reason=body.reason,
+        evidence=found.evidence,
+    )
+    await session.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

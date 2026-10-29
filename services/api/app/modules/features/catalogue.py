@@ -493,6 +493,13 @@ CATALOGUE: tuple[Spec, ...] = (
             act_as=R.OPERATOR,
         ),
         button(
+            "schedule.suggestions",
+            ("الأنشطة المقترحة", "Activités suggérées", "Suggested activities"),
+            "POST /schedule/periods/{period_id}/suggestions/{key}/accept",
+            "POST /schedule/periods/{period_id}/suggestions/{key}/dismiss",
+            act_as=R.OPERATOR,
+        ),
+        button(
             "schedule.templates",
             ("النماذج", "Modèles", "Templates"),
             "POST /schedule/periods/{period_id}/template",

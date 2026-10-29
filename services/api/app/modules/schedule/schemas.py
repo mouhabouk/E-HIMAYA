@@ -117,6 +117,8 @@ class ItemOut(BaseModel):
     status_reason: str | None
     status_by_name: str | None
     status_at: datetime | None
+    # Accepted from a suggestion (AI3): it keeps the AI label.
+    suggested: bool = False
 
 
 class Counts(BaseModel):
@@ -242,3 +244,34 @@ class TemplateOut(BaseModel):
     created_at: datetime
     updated_by_name: str | None
     updated_at: datetime
+
+
+# ---------------------------------------------------------------- suggested activities (AI3, design-l5.md §4.3)
+
+SuggestionKey = Annotated[str, StringConstraints(pattern=r"^[a-z_]{3,30}:[a-z0-9_-]{2,40}$")]
+
+
+class SuggestionOut(BaseModel):
+    key: str
+    source: Literal["weather", "beaches", "season", "rise"]
+    activity: Activity
+    on_date: date
+    title: str
+    reasons: list[str]
+    simulated: bool
+
+
+class SuggestionsOut(BaseModel):
+    # False when the AI settings switched the suggestions off (AI-01).
+    enabled: bool
+    can_accept: bool
+    items: list[SuggestionOut]
+
+
+class SuggestionAccept(BaseModel):
+    version: int
+    lang: Literal["ar", "fr", "en"] = "ar"
+
+
+class SuggestionDismiss(BaseModel):
+    reason: Annotated[Text, StringConstraints(max_length=300)] = ""

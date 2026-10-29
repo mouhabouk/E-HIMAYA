@@ -108,6 +108,7 @@ from app.modules.safety.models import LiveShare, LocationHistory, LocationPoint,
 from app.modules.schedule.models import Item as ScheduleItem
 from app.modules.schedule.models import Period as SchedulePeriod
 from app.modules.schedule.models import Setting as ScheduleSetting
+from app.modules.schedule.models import SuggestionDismissal
 from app.modules.schedule.models import Template as ScheduleTemplate
 from app.modules.sensors.models import SensorDevice, SensorReading
 from app.modules.streams.models import LiveStream, StreamDetection, StreamLocation, StreamSegment
@@ -279,6 +280,7 @@ __all__ = [
     "StreamDetection",
     "StreamLocation",
     "StreamSegment",
+    "SuggestionDismissal",
     "TeamMember",
     "TimelineEvent",
     "TowerEvent",
