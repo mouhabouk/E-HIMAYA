@@ -32,7 +32,7 @@ dependencies:
   # (nothing leaves the phone). MIT.
   flutter_tts: 4.2.5
   # Phase 6 live streaming (WebRTC publisher; WHIP itself is implemented in lib/core/webrtc). MIT.
-  flutter_webrtc: 1.6.2+hotfix.3
+  flutter_webrtc: 1.6.3
   geolocator: 14.0.1
   go_router: 18.1.0
   image_picker: 1.2.4
