@@ -65,7 +65,8 @@
     "drills": "Dry run",
     "sensors": "Sensors",
     "towers": "Watch towers",
-    "drones": "Drones"
+    "drones": "Drones",
+    "modelCards": "Model cards"
   },
   "header": {
     "scope": "Geographic scope",
@@ -533,7 +534,10 @@
     "tasks_not_reviewed": "Some suggestions have not been reviewed yet.",
     "checklist_empty": "No task in the list: accept or add one.",
     "checklist_not_approved": "The list is not approved yet.",
-    "task_deleted": "This task was removed from the list."
+    "task_deleted": "This task was removed from the list.",
+    "model_changed": "The model or its thresholds changed since the page was opened. Reload and read the card again.",
+    "model_not_found": "Unknown model.",
+    "model_not_trained": "This model has no trained version yet."
   },
   "kpi": {
     "title": "Key indicators",
@@ -4952,6 +4956,10 @@
       "save": "Save the rules",
       "defaults": "Back to the defaults",
       "readOnly": "The operations manager or the committees change the rules, at national level."
+    },
+    "shadow": {
+      "column": "Shadow model",
+      "help": "The “shadow model” column is for comparison only: trained on simulated data, never published to citizens, it opens no alert; the level in force is the rule's."
     }
   },
   "hospitals": {
@@ -7126,5 +7134,36 @@
       "not_applicable": "Not applicable"
     },
     "waiting": "Suggestions left to review: {{count}}"
+  },
+  "modelCards": {
+    "title": "Model cards",
+    "intro": "Every model of the system has a card of the same shape: use, limits, data and licences, dated figures, thresholds and the committee's approval (AI-01). A figure from a small sample is flagged.",
+    "version": "Version",
+    "use": "Use",
+    "limits": "Limits",
+    "data": "Data and licences",
+    "measures": "Figures",
+    "thresholds": "Thresholds",
+    "decisions": "Committee approval (AI-01)",
+    "noDecision": "The committee has not decided yet.",
+    "measuredOn": "Measured on {{date}}",
+    "smallSample": "small sample",
+    "simulated": "Simulated data",
+    "pdf": "Export PDF",
+    "decide": {
+      "title": "Committee decision",
+      "approved": "Approve the thresholds shown",
+      "withdrawn": "Withdraw the approval",
+      "reference": "Minutes reference",
+      "referenceHelp": "Number or date of the committee's minutes, as archived.",
+      "referenceRequired": "Write the minutes reference (at least 3 characters).",
+      "note": "Note",
+      "submit": "Record the decision"
+    },
+    "train": {
+      "help": "The drowning model is trained on [SIM] days from a declared process, then the daily computation applies it in shadow beside the rule, with no publication and no alert.",
+      "start": "Train a new version",
+      "running": "Training…"
+    }
   }
 }

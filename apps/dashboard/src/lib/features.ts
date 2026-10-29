@@ -70,6 +70,7 @@ export const PAGE_PATHS: readonly (readonly [string, string])[] = [
   ["/memory", "memory"],
   ["/library", "library"],
   ["/layers", "layers"],
+  ["/settings/ai/models", "ai_models"],
   ["/settings/ai", "ai_settings"],
   ["/settings", "settings"],
   ["/accounts", "accounts"],

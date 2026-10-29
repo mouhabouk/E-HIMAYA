@@ -370,6 +370,9 @@ export const ERROR_CODES = [
   "too_many_tasks",
   "tasks_not_reviewed",
   "checklist_empty",
+  "model_changed",
+  "model_not_found",
+  "model_not_trained",
   "checklist_not_approved",
   "task_deleted",
 ] as const;

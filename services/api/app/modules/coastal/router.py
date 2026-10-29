@@ -190,7 +190,8 @@ async def _detail(session: AsyncSession, principal: Principal | None, feature_id
         sources["guarded"] = {"source": guarded_by, "date": today.isoformat()}
     simulated = any(d.simulated for d in days)
     present = None
-    if principal is not None and principal.is_staff:
+    staff = principal is not None and principal.is_staff
+    if staff:
         present = (await service.presence_counts(session, datetime.now(UTC))).get(feature.id, 0)
     return schemas.BeachDetail(
         beach=_beach_out(feature, float(lat), float(lon), days[0] if days and days[0].day == today else None, present),
@@ -205,6 +206,9 @@ async def _detail(session: AsyncSession, principal: Principal | None, feature_id
                 current_kmh=d.inputs.get("current_kmh"),
                 onshore_wind_kmh=d.inputs.get("onshore_wind_kmh"),
                 max_temperature_c=d.inputs.get("max_temperature_c"),
+                shadow=schemas.ShadowRisk(level=d.shadow_level, probability=d.shadow_p, version=d.shadow_version)
+                if staff and d.shadow_level is not None and d.shadow_p is not None and d.shadow_version is not None
+                else None,
             )
             for d in days
         ],

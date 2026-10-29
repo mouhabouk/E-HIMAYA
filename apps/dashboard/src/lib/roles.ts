@@ -171,6 +171,11 @@ export function canEditAiSettings(identity: { roles: readonly string[]; national
   return identity.national && AI_SETTINGS_ROLES.some((r) => identity.roles.includes(r));
 }
 
+/** The model cards (L5, design-l5.md §4.1): the national AI administrator and central committee. */
+export function canReadModelCards(identity: { roles: readonly string[]; national: boolean }): boolean {
+  return canEditAiSettings(identity);
+}
+
 const any = (allowed: readonly string[], roles: readonly string[]) => allowed.some((r) => roles.includes(r));
 
 export function canReadResources(roles: readonly string[]): boolean {

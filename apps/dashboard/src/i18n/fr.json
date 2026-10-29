@@ -65,7 +65,8 @@
     "drills": "Exercice blanc",
     "sensors": "Capteurs",
     "towers": "Tours de guet",
-    "drones": "Drones"
+    "drones": "Drones",
+    "modelCards": "Fiches des modèles"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -533,7 +534,10 @@
     "tasks_not_reviewed": "Des suggestions n'ont pas encore été revues.",
     "checklist_empty": "Aucune tâche dans la liste : acceptez-en ou ajoutez-en une.",
     "checklist_not_approved": "La liste n'est pas encore approuvée.",
-    "task_deleted": "Cette tâche a été retirée de la liste."
+    "task_deleted": "Cette tâche a été retirée de la liste.",
+    "model_changed": "Le modèle ou ses seuils ont changé depuis l'ouverture de la page. Rechargez et relisez la fiche.",
+    "model_not_found": "Modèle inconnu.",
+    "model_not_trained": "Ce modèle n'a pas encore de version entraînée."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -4952,6 +4956,10 @@
       "save": "Enregistrer les règles",
       "defaults": "Revenir aux valeurs par défaut",
       "readOnly": "Les règles sont changées par le chef des opérations ou les comités, au niveau national."
+    },
+    "shadow": {
+      "column": "Modèle en ombre",
+      "help": "La colonne « modèle en ombre » sert à comparer : entraîné sur des données simulées, jamais publié au citoyen, il n'ouvre aucune alerte ; le niveau retenu est celui de la règle."
     }
   },
   "hospitals": {
@@ -7126,5 +7134,36 @@
       "not_applicable": "Sans objet"
     },
     "waiting": "Suggestions à revoir : {{count}}"
+  },
+  "modelCards": {
+    "title": "Fiches des modèles",
+    "intro": "Chaque modèle du système a une fiche de même forme : usage, limites, données et licences, chiffres datés, seuils et approbation du comité (AI-01). Un chiffre calculé sur un petit échantillon est signalé.",
+    "version": "Version",
+    "use": "Usage",
+    "limits": "Limites",
+    "data": "Données et licences",
+    "measures": "Chiffres",
+    "thresholds": "Seuils",
+    "decisions": "Approbation du comité (AI-01)",
+    "noDecision": "Le comité n'a pas encore décidé.",
+    "measuredOn": "Mesuré le {{date}}",
+    "smallSample": "petit échantillon",
+    "simulated": "Données simulées",
+    "pdf": "Exporter en PDF",
+    "decide": {
+      "title": "Décision du comité",
+      "approved": "Approuver les seuils affichés",
+      "withdrawn": "Retirer l'approbation",
+      "reference": "Référence du procès-verbal",
+      "referenceHelp": "Numéro ou date du procès-verbal du comité, tel qu'archivé.",
+      "referenceRequired": "Écrivez la référence du procès-verbal (3 caractères au moins).",
+      "note": "Note",
+      "submit": "Enregistrer la décision"
+    },
+    "train": {
+      "help": "Le modèle de noyade s'entraîne sur des journées [SIM] d'un processus déclaré, puis le calcul quotidien l'applique en ombre à côté de la règle, sans publication ni alerte.",
+      "start": "Entraîner une nouvelle version",
+      "running": "Entraînement…"
+    }
   }
 }

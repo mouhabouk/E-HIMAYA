@@ -47,3 +47,20 @@ class AiSettingsRow(Base):
     value: Mapped[dict[str, Any]] = mapped_column(JSONB)
     updated_by: Mapped[str] = mapped_column(Text)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class ModelDecision(Base):
+    """A committee decision about a model card (AI-01): thresholds approved or approval withdrawn. Append-only."""
+
+    __tablename__ = "model_decision"
+    __table_args__ = {"schema": "ai"}
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    model: Mapped[str] = mapped_column(Text)
+    decision: Mapped[str] = mapped_column(Text)
+    thresholds: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default="{}")
+    version: Mapped[str] = mapped_column(Text)
+    reference: Mapped[str] = mapped_column(Text)
+    note: Mapped[str] = mapped_column(Text, server_default="")
+    decided_by_name: Mapped[str] = mapped_column(Text)
+    decided_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

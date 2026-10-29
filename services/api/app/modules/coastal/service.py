@@ -28,7 +28,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.core import events
 from app.core.config import get_settings
-from app.modules.coastal import marine, risk
+from app.modules.coastal import marine, risk, shadow
 from app.modules.coastal.models import Beach, BeachDay, CoastalAlert, CoastalSettings, MarineHour, Presence
 from app.modules.geo.models import Layer, LayerFeature
 from app.modules.layers.service import LAT, LON
@@ -305,6 +305,7 @@ async def compute(session: AsyncSession, now: datetime) -> int:
     window_start, _ = _bathing(days[0], rule_set)
     _, window_end = _bathing(days[-1], rule_set)
     incidents = await _incidents(session, [b[0].feature_id for b in beaches], rule_set, now)
+    model = await shadow.latest(session)
     previous = {
         r.feature_id: r.level for r in (await session.scalars(select(BeachDay).where(BeachDay.day == today))).all()
     }
@@ -338,6 +339,7 @@ async def compute(session: AsyncSession, now: datetime) -> int:
             if guarded_by is not None:
                 inputs = dataclasses.replace(inputs, guarded=True)
             assessed = risk.assess(inputs, rule_set)
+            shadowed = shadow.assess(model, inputs, rule_set)
             stmt = insert(BeachDay).values(
                 feature_id=beach.feature_id,
                 day=day,
@@ -348,6 +350,7 @@ async def compute(session: AsyncSession, now: datetime) -> int:
                 source=",".join(sources) or None,
                 simulated=simulated,
                 computed_at=now,
+                **shadowed,
             )
             await session.execute(
                 stmt.on_conflict_do_update(
@@ -360,6 +363,9 @@ async def compute(session: AsyncSession, now: datetime) -> int:
                         "source": stmt.excluded.source,
                         "simulated": stmt.excluded.simulated,
                         "computed_at": stmt.excluded.computed_at,
+                        "shadow_p": stmt.excluded.shadow_p,
+                        "shadow_level": stmt.excluded.shadow_level,
+                        "shadow_version": stmt.excluded.shadow_version,
                     },
                 )
             )

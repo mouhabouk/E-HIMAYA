@@ -101,6 +101,7 @@ export const DETAIL: BeachDetail = {
       current_kmh: 2.4,
       onshore_wind_kmh: 18,
       max_temperature_c: 31,
+      shadow: { level: "yellow", probability: 0.12, version: 2 },
     },
     {
       day: "2026-07-05",

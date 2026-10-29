@@ -70,6 +70,7 @@ from app.modules.layers.router import public_router as layers_router
 from app.modules.layers.router import router as layers_staff_router
 from app.modules.medical.router import me_router as medical_me_router
 from app.modules.medical.router import router as medical_router
+from app.modules.modelcards.router import router as modelcards_router
 from app.modules.notify.delivery import deliver_forever
 from app.modules.notify.router import router as notify_router
 from app.modules.notify.staff_router import router as notify_staff_router
@@ -336,6 +337,7 @@ def create_app() -> FastAPI:
         drones_router,
         drones_internal_router,
         checklist_router,
+        modelcards_router,
     )
     for router in routers:
         app.include_router(router)

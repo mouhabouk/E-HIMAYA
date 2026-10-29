@@ -1260,6 +1260,28 @@ CATALOGUE: tuple[Spec, ...] = (
         ),
     ),
     page(
+        "ai_models",
+        "system",
+        "/settings/ai/models",
+        ("بطاقات النماذج", "Fiches des modèles", "Model cards"),
+        ("* /ai/models",),
+        button(
+            "ai_models.decide",
+            ("اعتماد اللجنة", "Approbation du comité", "Committee approval"),
+            "POST /ai/models/{model}/decisions",
+            flags="national",
+            act_as=R.CENTRAL_COMMITTEE,
+        ),
+        button(
+            "ai_models.train",
+            ("تدريب نموذج الغرق", "Entraîner le modèle de noyade", "Train the drowning model"),
+            "POST /ai/models/drowning/train",
+            flags="national",
+            act_as=R.CENTRAL_COMMITTEE,
+        ),
+        flags="national",
+    ),
+    page(
         "accounts",
         "system",
         "/accounts",

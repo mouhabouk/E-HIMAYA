@@ -15,6 +15,7 @@ import { SoftphoneProvider } from "./context/softphone";
 import { isApiError } from "./lib/api";
 import {
   canEditAiSettings,
+  canReadModelCards,
   canEditTips,
   canHandleContact,
   canOpenCoastal,
@@ -52,6 +53,7 @@ import {
 import type { StaffIdentity } from "./auth/identity";
 import { AccountsPage } from "./pages/AccountsPage";
 import { AiSettingsPage } from "./pages/AiSettingsPage";
+import { ModelCardsPage } from "./pages/ModelCardsPage";
 import { AuditPage } from "./pages/AuditPage";
 import { BreakGlassPage } from "./pages/BreakGlassPage";
 import { GeoQueuePage } from "./pages/GeoQueuePage";
@@ -235,6 +237,7 @@ export function AppRoutes() {
           path="settings/ai"
           element={scoped((id) => hasReadAccess(id.roles) || canEditAiSettings(id), <AiSettingsPage />)}
         />
+        <Route path="settings/ai/models" element={scoped(canReadModelCards, <ModelCardsPage />)} />
         <Route path="resource-requests" element={reports(<ResourceRequestsPage />)} />
         <Route path="crew" element={<Gate allow={canOpenCrew}><CrewPage /></Gate>} />
         <Route path="report-templates" element={reports(<ReportTemplatesPage />)} />

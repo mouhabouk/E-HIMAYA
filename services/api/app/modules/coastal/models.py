@@ -4,7 +4,7 @@ import uuid
 from datetime import date, datetime
 from typing import Any
 
-from sqlalchemy import Boolean, Date, DateTime, Float, ForeignKey, LargeBinary, SmallInteger, Text, func
+from sqlalchemy import Boolean, Date, DateTime, Float, ForeignKey, Integer, LargeBinary, SmallInteger, Text, func
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -57,6 +57,10 @@ class BeachDay(Base):
     source: Mapped[str | None] = mapped_column(Text)
     simulated: Mapped[bool] = mapped_column(Boolean, server_default="false")
     computed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    # The drowning risk model in shadow beside the rules (migration 0073): compared, never published.
+    shadow_p: Mapped[float | None] = mapped_column(Float)
+    shadow_level: Mapped[str | None] = mapped_column(Text)
+    shadow_version: Mapped[int | None] = mapped_column(Integer)
 
 
 class CoastalAlert(Base):
@@ -87,6 +91,22 @@ class CoastalSettings(Base):
     rules: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default="{}")
     updated_by: Mapped[str | None] = mapped_column(Text)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class RiskModel(Base):
+    """One trained version of the drowning risk model (migration 0073): plain coefficients, no pickle."""
+
+    __tablename__ = "risk_model"
+    __table_args__ = {"schema": "coastal"}
+
+    version: Mapped[int] = mapped_column(Integer, primary_key=True)
+    algorithm: Mapped[str] = mapped_column(Text)
+    params: Mapped[dict[str, Any]] = mapped_column(JSONB)
+    metrics: Mapped[dict[str, Any]] = mapped_column(JSONB)
+    simulated: Mapped[bool] = mapped_column(Boolean, server_default="true")
+    seed: Mapped[int] = mapped_column(Integer)
+    trained_by_name: Mapped[str] = mapped_column(Text)
+    trained_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 class Presence(Base):

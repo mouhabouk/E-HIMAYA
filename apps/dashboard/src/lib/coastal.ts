@@ -32,6 +32,8 @@ export interface DayRisk {
   current_kmh: number | null;
   onshore_wind_kmh: number | null;
   max_temperature_c: number | null;
+  /** The drowning risk model kept in shadow (L5, design-l5.md §4.2): staff only, [SIM], never published. */
+  shadow?: { level: RiskLevel; probability: number; version: number } | null;
 }
 
 export interface Beach {

@@ -329,6 +329,7 @@ function BeachPanel({ id, onClose }: { id: string; onClose: () => void }) {
   const reason = useFactorText();
   const detail = useQuery({ queryKey: coastalKeys.beach(id), queryFn: ({ signal }) => api.coastalBeach(id, signal) });
   const d = detail.data;
+  const shadowed = Boolean(d?.days.some((day) => day.shadow));
   return (
     <section className="card coastal-beach" aria-labelledby="coastal-beach-title">
       <div className="coastal-beach__head">
@@ -365,6 +366,11 @@ function BeachPanel({ id, onClose }: { id: string; onClose: () => void }) {
                   <th scope="col">{t("coastal.waves")}</th>
                   <th scope="col">{t("coastal.seaTemp")}</th>
                   <th scope="col">{t("coastal.why")}</th>
+                  {shadowed && (
+                    <th scope="col">
+                      <span className="tag tag--ai">{t("checklist.aiLabel")}</span> {t("coastal.shadow.column")}
+                    </th>
+                  )}
                 </tr>
               </thead>
               <tbody>
@@ -377,11 +383,28 @@ function BeachPanel({ id, onClose }: { id: string; onClose: () => void }) {
                     <td dir="ltr">{day.wave_height_m === null ? "—" : `${fmt.decimal(day.wave_height_m)} m`}</td>
                     <td dir="ltr">{day.sea_temp_c === null ? "—" : `${fmt.decimal(day.sea_temp_c)} °C`}</td>
                     <td>{day.factors.length ? day.factors.map(reason).join(t("common.listSeparator")) : "—"}</td>
+                    {shadowed && (
+                      <td>
+                        {day.shadow ? (
+                          <>
+                            <LevelPill level={day.shadow.level} />{" "}
+                            <span dir="ltr">{fmt.percent(day.shadow.probability)}</span>
+                          </>
+                        ) : (
+                          "—"
+                        )}
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+          {shadowed && (
+            <p className="muted">
+              <SimTag label={t("coastal.simulated")} /> {t("coastal.shadow.help")}
+            </p>
+          )}
           <h3>{t("coastal.card.title")}</h3>
           <dl className="coastal-card">
             {Object.entries(d.card).map(([field, value]) => {
