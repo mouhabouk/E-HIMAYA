@@ -477,7 +477,7 @@ jobs:
           uv sync --locked
           uv run python eval/orders.py --ollama "$AI_OLLAMA_URL" --model "$AI_LLM_MODEL" --json eval/orders-results.json \
             --misses | tee -a "$GITHUB_STEP_SUMMARY"
-          python -c "import json; print('MODEL_CARD_ORDERS ' + json.dumps(json.load(open('eval/orders-results.json')), ensure_ascii=False, separators=(',', ':')))"
+          python -c "import json; d = json.load(open('eval/orders-results.json')); d.pop('readings'); print('MODEL_CARD_ORDERS ' + json.dumps(d, ensure_ascii=False, separators=(',', ':')))"
 
       - name: Keep the measures for the model cards
         uses: actions/upload-artifact@v7

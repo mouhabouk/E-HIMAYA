@@ -108,9 +108,15 @@ def test_combine_trusts_the_lexicon_for_names_and_numbers() -> None:
     model = orders.Reading(intent="order", action="dispatch", resource_kind="fire_engine", count=1, reader="model")
     both = orders.combine(rules, model)
     assert (both.action, both.resource_kind, both.count, both.reader) == ("dispatch", "water_tanker", 2, "combined")
-    # The model saw no action where the keyword is explicit; a question stays a question.
+    # An explicit keyword decides: the model's other reading does not override it.
     assert orders.combine(rules, orders.Reading(intent="order", action="note", reader="model")).action == "dispatch"
-    assert orders.combine(rules, orders.Reading(intent="question", reader="model")).intent == "question"
+    assert orders.combine(rules, orders.Reading(intent="question", reader="model")).action == "dispatch"
+    assert orders.combine(orders.read_rules("كم صهريج متاح؟"), model).intent == "question"
+    # Where the lexicon found no action, the model reads it.
+    free = orders.read_rules("الوضع صعب في الغابة، شوفوا شنوة تعملوا")
+    assert free.action in (None, "note")
+    got = orders.combine(free, model)
+    assert (got.action, got.resource_kind, got.count) == ("dispatch", "fire_engine", 1)
     # A field that does not belong to the action is dropped.
     alert = orders.combine(
         orders.read_rules("نبهوا السكان"),

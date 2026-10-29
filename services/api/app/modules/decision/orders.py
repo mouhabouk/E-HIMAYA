@@ -7,10 +7,11 @@ structure: an action, and for a dispatch the resource kind and the count. Two re
   script) and French, and keywords for each action. Exact when a word is known, silent otherwise;
 * the local language model (Ollama, JSON constrained by a schema, temperature 0), which understands the free wording.
 
-The model decides the intent and the action; the lexicon wins for the resource kind and the count when it found
-exactly one, because a name in the lexicon is never wrong. Without a model the rules alone answer, and the result says
-so (``reader: "rules"``). Nothing is executed: the reading becomes a proposal card the commander confirms, edits or
-rejects. ``eval/orders.py`` measures each reader and the combination on ``eval/orders.json``.
+An explicit keyword in the lexicon decides the intent and the action, and a resource name or number from the lexicon
+wins; the model reads what the lexicon could not (free wording without a known verb). Without a model the rules alone
+answer, and the result says so (``reader: "rules"``). Nothing is executed: the reading becomes a proposal card the
+commander confirms, edits or rejects. ``eval/orders.py`` measures each reader and the combination on
+``eval/orders.json``.
 """
 
 import json
@@ -523,26 +524,34 @@ async def read_model(text: str, llm: LlmClient) -> Reading:
 
 
 def combine(rules: Reading, model: Reading) -> Reading:
-    """The model reads the intent and the action; a resource name or number found in the lexicon wins."""
-    if model.intent == "question":
+    """The lexicon first; the model fills what the lexicon could not read.
+
+    Measured on the development set (eval/orders.py, CI 2026-10-29, qwen3:1.7b): the lexicon read every text, and
+    letting the model decide the intent and the action lost 17 points of exact readings. So an explicit keyword (a
+    question word, an action verb) decides, and the model is asked only when the lexicon found no action; a resource
+    name or number from the lexicon still wins over the model's.
+    """
+    if rules.intent == "question":
         return Reading(intent="question", reader="combined")
-    out = Reading(
-        intent="order",
-        action=model.action,
-        resource_kind=model.resource_kind,
-        count=model.count,
-        level=model.level,
-        reader="combined",
-    )
-    if out.action == "note" and rules.action not in (None, "note"):
-        # The model found no action where a keyword is explicit ("ابعث", "envoyez", "alerte").
-        out.action = rules.action
-    if out.action in ("dispatch", "route") and rules.resource_kind:
-        out.resource_kind = rules.resource_kind
-    if out.action == "dispatch" and rules.count is not None:
-        out.count = rules.count
-    if out.action == "escalate" and rules.level:
-        out.level = rules.level
+    if rules.action not in (None, "note"):
+        out = Reading(**{**rules.as_dict(), "reader": "combined"})
+        if out.action in ("dispatch", "route") and out.resource_kind is None and model.action == out.action:
+            out.resource_kind = model.resource_kind
+        if out.action == "dispatch" and out.count is None and model.action == "dispatch":
+            out.count = model.count
+        if out.action == "escalate" and out.level is None and model.action == "escalate":
+            out.level = model.level
+    elif model.intent == "question":
+        return Reading(intent="question", reader="combined")
+    else:
+        out = Reading(
+            intent="order",
+            action=model.action,
+            resource_kind=rules.resource_kind or model.resource_kind,
+            count=rules.count if rules.count is not None else model.count,
+            level=rules.level or model.level,
+            reader="combined",
+        )
     if out.action not in ("dispatch", "route"):
         out.resource_kind = None
     if out.action != "dispatch":

@@ -104,6 +104,12 @@ def main() -> None:
         return {name: await read_all(items, llm) for name, items in texts.items()}
 
     read = asyncio.run(read_sets())
+    # Each text's readings, kept with the figures, so a change to the combination can be weighed on the development
+    # set without the model.
+    result["readings"] = {
+        name: [{"id": r["id"], **{k: r[k] for k in ("rules", "model", "combined")}} for r in rows]
+        for name, rows in read.items()
+    }
     for name, rows in read.items():
         result["sets"][name] = {
             reader: {g: summary([r for r in rows if r["variety"] in v], reader) for g, v in GROUPS.items()}
