@@ -719,7 +719,7 @@ services:
   # (the API reads ca.pem from it).
   opensearch-init:
     profiles: ["search"]
-    image: opensearchproject/opensearch:2.19.6@sha256:be67c71b8d0e5edf1e9825145501c0136c3b8221206e1ce782ce17b04d0280b5
+    image: opensearchproject/opensearch:3.8.0@sha256:fafe3fc3587088674669235575aa166228c48bdb940294a8cdbbc1da75236a40
     restart: "no"
     user: "0:0"
     entrypoint: ["/bin/sh", "-c", "chown 1000:1000 /certs /ca && chmod 0700 /certs && chmod 0755 /ca"]
@@ -734,7 +734,7 @@ services:
   opensearch:
     <<: *restart
     profiles: ["search"]
-    image: opensearchproject/opensearch:2.19.6@sha256:be67c71b8d0e5edf1e9825145501c0136c3b8221206e1ce782ce17b04d0280b5
+    image: opensearchproject/opensearch:3.8.0@sha256:fafe3fc3587088674669235575aa166228c48bdb940294a8cdbbc1da75236a40
     entrypoint: ["/bin/bash", "/usr/local/bin/ehimaya-entrypoint.sh"]
     environment:
       OPENSEARCH_ADMIN_PASSWORD: ${OPENSEARCH_ADMIN_PASSWORD:-}
