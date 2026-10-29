@@ -15,6 +15,7 @@ from app.core.storage import get_store
 from app.modules.ai.models import Analysis
 from app.modules.audit import service as audit
 from app.modules.audit.service import actor_of
+from app.modules.geo import service as geo_service
 from app.modules.identity.models import Profile
 from app.modules.medical import service as locked_files
 from app.modules.moderation import service as moderation
@@ -73,6 +74,20 @@ def _bbox(raw: str | None) -> tuple[float, float, float, float] | None:
 @router.get("/kpis", response_model=schemas.Kpis)
 async def kpis(principal: StaffReader, session: Session, since: datetime | None = None) -> schemas.Kpis:
     return await service.kpis(session, principal, since or datetime.now(UTC) - timedelta(hours=24))
+
+
+@router.get("/kpis/delegations", response_model=list[schemas.DelegationCount])
+async def kpis_by_delegation(
+    principal: StaffReader,
+    session: Session,
+    since: datetime | None = None,
+    category: Category | None = None,
+) -> list[schemas.DelegationCount]:
+    """Reports per délégation in the caller's scope (phase M): the map colours each délégation by its rate per
+    10,000 inhabitants (census 2024, from the boundaries)."""
+    return await service.kpis_by_delegation(
+        session, principal, since or datetime.now(UTC) - timedelta(days=30), category
+    )
 
 
 @router.get("/reports", response_model=schemas.StaffReportPage)
@@ -227,6 +242,9 @@ async def _detail(
         escalations=await jurisdiction.escalations_of(session, report.id),
         reporter_context=reporter_context,
         medical_attached=await session.get(MedicalAttachment, report.id) is not None,
+        address=await geo_service.address_out(
+            session, report.delegation_id, report.sector_code, report.municipality_id
+        ),
     )
 
 

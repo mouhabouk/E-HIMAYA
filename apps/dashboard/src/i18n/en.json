@@ -625,7 +625,9 @@
       "gouvernorat": "Gouvernorat",
       "delegation": "Delegation",
       "reporterKind": "Reporter type",
-      "coordinates": "Coordinates"
+      "coordinates": "Coordinates",
+      "sector": "Imada (sector)",
+      "municipality": "Municipality"
     },
     "location": "Location",
     "mapLabel": "Map of the report location",
@@ -7422,5 +7424,31 @@
       "save": "Confirm",
       "confirmed": "Confirmed"
     }
+  },
+  "admin": {
+    "toggle": "Administrative boundaries",
+    "level": "Administrative level",
+    "levels": {
+      "gouvernorats": "Gouvernorats",
+      "delegations": "Délégations",
+      "sectors": "Imadas",
+      "municipalities": "Municipalities"
+    },
+    "levelOne": {
+      "gouvernorats": "Gouvernorat",
+      "delegations": "Délégation",
+      "sectors": "Imada",
+      "municipalities": "Municipality"
+    },
+    "rateToggle": "Colour by reports per 10,000 inhabitants (last {{days}} days)",
+    "count": "{{count}} units",
+    "error": "The boundaries could not be loaded",
+    "source": "© OpenStreetMap contributors · Map Tunisia (ODbL)",
+    "ins": "INS code {{code}}",
+    "population": "Population (2024 census): {{count}}",
+    "area": "Area: {{value}} km²",
+    "reports": "{{count}} reports in {{days}} days",
+    "rate": "{{value}} per 10,000 inhabitants",
+    "legend": "Lightest to darkest, up to {{max}} reports per 10,000 inhabitants · délégations with the highest rate"
   }
 }

@@ -3,7 +3,19 @@ from datetime import date, datetime
 from typing import Any
 
 from geoalchemy2 import Geography, Geometry
-from sqlalchemy import Boolean, Date, DateTime, ForeignKey, Integer, SmallInteger, Text, UniqueConstraint, func
+from sqlalchemy import (
+    BigInteger,
+    Boolean,
+    Date,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    SmallInteger,
+    Text,
+    UniqueConstraint,
+    func,
+)
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -21,6 +33,14 @@ class Gouvernorat(Base):
     # English name (0024_i18n_english): the French one without diacritics where usual ("Gabes", "Beja").
     name_en: Mapped[str] = mapped_column(Text)
     boundary: Mapped[object | None] = mapped_column(Geometry("MULTIPOLYGON", srid=4326), deferred=True)
+    # Phase M (migration 0079, Map Tunisia): INS code, economic region, district (decree 2023-589), census, area.
+    ins_code: Mapped[int | None] = mapped_column(SmallInteger, unique=True)
+    region: Mapped[str | None] = mapped_column(Text, ForeignKey("geo.economic_region.code"))
+    district: Mapped[int | None] = mapped_column(SmallInteger, ForeignKey("geo.district.number"))
+    population_2014: Mapped[int | None] = mapped_column(Integer)
+    population_2024: Mapped[int | None] = mapped_column(Integer)
+    area_km2: Mapped[float | None] = mapped_column(Float(precision=24))
+    label: Mapped[object | None] = mapped_column(Geometry("POINT", srid=4326), deferred=True)
 
     delegations: Mapped[list["Delegation"]] = relationship(back_populates="gouvernorat", order_by="Delegation.id")
 
@@ -35,8 +55,114 @@ class Delegation(Base):
     name_ar: Mapped[str] = mapped_column(Text)
     name_fr: Mapped[str] = mapped_column(Text)
     boundary: Mapped[object | None] = mapped_column(Geometry("MULTIPOLYGON", srid=4326), deferred=True)
+    # Phase M (migration 0079): the INS 2024 code (4 digits), census and area; our id and names are kept.
+    ins_code: Mapped[str | None] = mapped_column(Text, unique=True)
+    name_en: Mapped[str | None] = mapped_column(Text)
+    population_2014: Mapped[int | None] = mapped_column(Integer)
+    population_2024: Mapped[int | None] = mapped_column(Integer)
+    area_km2: Mapped[float | None] = mapped_column(Float(precision=24))
+    hasc: Mapped[str | None] = mapped_column(Text)
+    osm_relation: Mapped[int | None] = mapped_column(BigInteger)
+    label: Mapped[object | None] = mapped_column(Geometry("POINT", srid=4326), deferred=True)
 
     gouvernorat: Mapped[Gouvernorat] = relationship(back_populates="delegations")
+
+
+class EconomicRegion(Base):
+    """One of the 7 economic regions (Grand Tunis, Nord-Est… Sud-Ouest)."""
+
+    __tablename__ = "economic_region"
+    __table_args__ = {"schema": "geo"}
+
+    code: Mapped[str] = mapped_column(Text, primary_key=True)
+    short: Mapped[str] = mapped_column(Text, unique=True)
+    name_ar: Mapped[str] = mapped_column(Text)
+    name_fr: Mapped[str] = mapped_column(Text)
+    name_en: Mapped[str] = mapped_column(Text)
+
+
+class District(Base):
+    """One of the 5 districts of decree 2023-589 (الأقاليم)."""
+
+    __tablename__ = "district"
+    __table_args__ = {"schema": "geo"}
+
+    number: Mapped[int] = mapped_column(SmallInteger, primary_key=True)
+    name_ar: Mapped[str] = mapped_column(Text)
+    name_fr: Mapped[str] = mapped_column(Text)
+    name_en: Mapped[str] = mapped_column(Text)
+
+
+class Sector(Base):
+    """An imada (عمادة): the 6-digit INS geocode, or ``x<OSM relation>`` where OpenStreetMap has none."""
+
+    __tablename__ = "sector"
+    __table_args__ = {"schema": "geo"}
+
+    code: Mapped[str] = mapped_column(Text, primary_key=True)
+    delegation_id: Mapped[int] = mapped_column(Integer, ForeignKey("geo.delegation.id"))
+    gouvernorat_code: Mapped[int] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
+    name_ar: Mapped[str] = mapped_column(Text)
+    name_fr: Mapped[str] = mapped_column(Text)
+    name_en: Mapped[str] = mapped_column(Text)
+    osm_relation: Mapped[int | None] = mapped_column(BigInteger)
+    area_km2: Mapped[float | None] = mapped_column(Float(precision=24))
+    label: Mapped[object | None] = mapped_column(Geometry("POINT", srid=4326), deferred=True)
+    boundary: Mapped[object] = mapped_column(Geometry("MULTIPOLYGON", srid=4326), deferred=True)
+
+
+class Municipality(Base):
+    """A municipality (بلدية), identified by its OpenStreetMap relation (INS publishes no municipality code)."""
+
+    __tablename__ = "municipality"
+    __table_args__ = {"schema": "geo"}
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=False)
+    gouvernorat_code: Mapped[int] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
+    name_ar: Mapped[str] = mapped_column(Text)
+    name_fr: Mapped[str] = mapped_column(Text)
+    name_en: Mapped[str] = mapped_column(Text)
+    area_km2: Mapped[float | None] = mapped_column(Float(precision=24))
+    label: Mapped[object | None] = mapped_column(Geometry("POINT", srid=4326), deferred=True)
+    boundary: Mapped[object] = mapped_column(Geometry("MULTIPOLYGON", srid=4326), deferred=True)
+
+
+class WaterBody(Base):
+    """A lake, dam reservoir, sebkha, chott or lagoon."""
+
+    __tablename__ = "water_body"
+    __table_args__ = {"schema": "geo"}
+
+    id: Mapped[str] = mapped_column(Text, primary_key=True)
+    kind: Mapped[str] = mapped_column(Text)
+    gouvernorat_codes: Mapped[list[int]] = mapped_column(ARRAY(SmallInteger))
+    name_ar: Mapped[str] = mapped_column(Text)
+    name_fr: Mapped[str] = mapped_column(Text)
+    name_en: Mapped[str] = mapped_column(Text)
+    salt: Mapped[bool] = mapped_column(Boolean, server_default="false")
+    intermittent: Mapped[bool] = mapped_column(Boolean, server_default="false")
+    area_km2: Mapped[float | None] = mapped_column(Float(precision=24))
+    label: Mapped[object | None] = mapped_column(Geometry("POINT", srid=4326), deferred=True)
+    boundary: Mapped[object] = mapped_column(Geometry("MULTIPOLYGON", srid=4326), deferred=True)
+
+
+class City(Base):
+    """The capital, a gouvernorat capital or a municipal seat, with its administrative address."""
+
+    __tablename__ = "city"
+    __table_args__ = {"schema": "geo"}
+
+    id: Mapped[str] = mapped_column(Text, primary_key=True)
+    kind: Mapped[str] = mapped_column(Text)
+    gouvernorat_code: Mapped[int] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
+    delegation_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("geo.delegation.id"))
+    sector_code: Mapped[str | None] = mapped_column(Text, ForeignKey("geo.sector.code"))
+    municipality_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey("geo.municipality.id"))
+    name_ar: Mapped[str] = mapped_column(Text)
+    name_fr: Mapped[str] = mapped_column(Text)
+    name_en: Mapped[str] = mapped_column(Text)
+    place: Mapped[str | None] = mapped_column(Text)
+    location: Mapped[object] = mapped_column(Geometry("POINT", srid=4326))
 
 
 class Layer(Base):

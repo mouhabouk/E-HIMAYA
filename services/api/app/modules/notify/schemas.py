@@ -33,8 +33,11 @@ class LocalizedBody(BaseModel):
 
 class Area(BaseModel):
     gouvernorat_codes: list[int] = Field(default_factory=list, max_length=24)
-    # GeoJSON Polygon: {"type": "Polygon", "coordinates": [[[lon, lat], ...]]}
+    # GeoJSON Polygon: {"type": "Polygon", "coordinates": [[[lon, lat], ...]]}. In answers, the area of chosen
+    # délégations made of several parts (islands) is a MultiPolygon.
     polygon: dict[str, Any] | None = None
+    # Phase M: an alert to some délégations; the server stores their union as the area's polygon.
+    delegation_ids: list[int] = Field(default_factory=list, max_length=60)
 
 
 class MessageIn(BaseModel):

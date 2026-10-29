@@ -429,9 +429,23 @@ export interface Polygon {
   coordinates: [number, number][][];
 }
 
+/** GeoJSON MultiPolygon: the area of chosen délégations with several parts (islands, phase M). */
+export interface MultiPolygon {
+  type: "MultiPolygon";
+  coordinates: [number, number][][][];
+}
+
 export interface Area {
   gouvernorat_codes: number[];
-  polygon: Polygon | null;
+  polygon: Polygon | MultiPolygon | null;
+  /** Phase M: the délégations an alert targets (their union is the polygon). */
+  delegation_ids?: number[];
+}
+
+/** The outer rings of an area, one per part. */
+export function areaRings(polygon: Polygon | MultiPolygon | null | undefined): [number, number][][][] {
+  if (!polygon) return [];
+  return polygon.type === "Polygon" ? [polygon.coordinates] : polygon.coordinates;
 }
 
 export interface Message {
@@ -495,7 +509,7 @@ export interface MessageBody {
   category?: AlertCategory | null;
   hazard?: Hazard | null;
   expires_at?: string | null;
-  area: { gouvernorat_codes: number[]; polygon?: Polygon | null };
+  area: { gouvernorat_codes: number[]; polygon?: Polygon | null; delegation_ids?: number[] };
   org_kinds?: OrgKind[];
   ack_required?: boolean;
   version?: number;

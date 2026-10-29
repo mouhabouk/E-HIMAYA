@@ -89,6 +89,15 @@ export interface MapPopupContent {
   node: ReactNode;
 }
 
+/**
+ * Administrative boundaries (phase M): the units of one level as outlines, filled by their `fill` property when
+ * `filled` (reports per 10,000 inhabitants), clickable for their names and figures.
+ */
+export interface MapAdmin {
+  data: FeatureCollection;
+  filled: boolean;
+}
+
 /** A cell of an aggregate grid (phase 8 hotspots): a hexagon filled by its count class, never a single point. */
 export interface MapHex {
   id: string;
@@ -140,6 +149,10 @@ interface MapViewProps {
   lines?: MapLine[];
   /** Weather layer (fire danger field, wind arrows, rain level). */
   weather?: MapWeather | null;
+  /** Administrative boundaries (phase M), drawn under every other layer of the application. */
+  admin?: MapAdmin | null;
+  /** A click on an administrative unit: its properties and the clicked point. */
+  onAdminClick?: (properties: Record<string, unknown>, lon: number, lat: number) => void;
   /** Satellite or hybrid background (phase R); the street map of the style when absent or in "map" mode. */
   basemap?: BasemapView | null;
   /** A click on the map background (not on a marker): e.g. the weather of that point. */
@@ -162,6 +175,7 @@ const HEX_SOURCE = "ehimaya-hexes";
 const LINE_SOURCE = "ehimaya-lines";
 const SHAPE_SOURCE = "ehimaya-shapes";
 const WEATHER_SOURCE = "ehimaya-weather";
+const ADMIN_SOURCE = "ehimaya-admin";
 const WIND_ICON = "ehimaya-wind-arrow";
 const BASEMAP_SOURCE = "ehimaya-basemap";
 const LABEL_SOURCE = "ehimaya-basemap-labels";
@@ -389,6 +403,8 @@ export function MapView({
   shapes,
   lines,
   weather,
+  admin,
+  onAdminClick,
   basemap,
   onMapClick,
   popup,
@@ -401,9 +417,9 @@ export function MapView({
   const mapRef = useRef<MlMap | null>(null);
   const markersRef = useRef(new Map<string, { marker: Marker; el: HTMLElement; data: MapMarker }>());
   const poisRef = useRef(new Map<string, { marker: Marker; key: string }>());
-  const callbacks = useRef({ onOpen, onBoundsChange, onOpenPoi, onMapClick, onPopupClose, onCall });
+  const callbacks = useRef({ onOpen, onBoundsChange, onOpenPoi, onMapClick, onPopupClose, onCall, onAdminClick });
   useEffect(() => {
-    callbacks.current = { onOpen, onBoundsChange, onOpenPoi, onMapClick, onPopupClose, onCall };
+    callbacks.current = { onOpen, onBoundsChange, onOpenPoi, onMapClick, onPopupClose, onCall, onAdminClick };
   });
   // The call button is offered only when a handler is given (telephony roles); its label is part of the popup.
   const callKey = onCall && callLabel ? callLabel : "";
@@ -435,6 +451,11 @@ export function MapView({
     // Background clicks only: markers are buttons of their own, whose clicks bubble through the container.
     map.on("click", (e: MapMouseEvent) => {
       if (e.originalEvent.target !== map.getCanvas()) return;
+      const adminFill = `${ADMIN_SOURCE}-fill`;
+      if (callbacks.current.onAdminClick && map.getLayer(adminFill)) {
+        const [unit] = map.queryRenderedFeatures(e.point, { layers: [adminFill] });
+        if (unit) callbacks.current.onAdminClick(unit.properties, e.lngLat.lng, e.lngLat.lat);
+      }
       callbacks.current.onMapClick?.(e.lngLat.lng, e.lngLat.lat);
     });
     mapRef.current = map;
@@ -570,6 +591,42 @@ export function MapView({
       });
     });
   }, [polygons]);
+
+  // Administrative boundaries (phase M): under every other layer of the application; hidden when switched off.
+  const adminData = admin?.data;
+  const adminFilled = admin?.filled ?? false;
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || (admin === undefined && !map.getSource(ADMIN_SOURCE))) return;
+    whenStyleReady(map, () => {
+      const data: GeoJsonData = adminData ?? { type: "FeatureCollection", features: [] };
+      const source = map.getSource<GeoJSONSource>(ADMIN_SOURCE);
+      if (source) {
+        void source.setData(data);
+      } else {
+        map.addSource(ADMIN_SOURCE, { type: "geojson", data });
+        const above = map.getStyle().layers.find((l) => l.id.startsWith("ehimaya-") && !l.id.startsWith("ehimaya-basemap"));
+        map.addLayer(
+          { id: `${ADMIN_SOURCE}-fill`, type: "fill", source: ADMIN_SOURCE, paint: { "fill-color": ["get", "fill"] } },
+          above?.id,
+        );
+        map.addLayer(
+          {
+            id: `${ADMIN_SOURCE}-line`,
+            type: "line",
+            source: ADMIN_SOURCE,
+            layout: { "line-join": "round" },
+            paint: { "line-color": ["get", "line"], "line-width": ["interpolate", ["linear"], ["zoom"], 6, 0.8, 12, 2] },
+          },
+          above?.id,
+        );
+      }
+      // A fill of opacity 0 is still clickable: the unit opens its card without hiding the map.
+      map.setPaintProperty(`${ADMIN_SOURCE}-fill`, "fill-opacity", adminFilled ? 0.6 : 0);
+    });
+    // `admin` itself is only checked for presence; the data and the fill switch are the dependencies.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [adminData, adminFilled, admin === undefined]);
 
   // Hotspot hexagons (phase 8): one source, created on first use and then only updated.
   useEffect(() => {

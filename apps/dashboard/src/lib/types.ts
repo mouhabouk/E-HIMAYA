@@ -174,6 +174,21 @@ export interface StaffReportDetail extends StaffReport {
   reporter_context?: ReporterContext | null;
   /** Phase B2: the reporter attached their medical file (opened on request, audited). */
   medical_attached?: boolean;
+  /** Phase M: the délégation, imada and municipality containing the position (null outside the land). */
+  address?: AdminAddress | null;
+}
+
+/** One unit of an administrative address (phase M). */
+export interface PlaceName {
+  id: string;
+  name_ar: string;
+  name_fr: string;
+}
+
+export interface AdminAddress {
+  delegation: PlaceName | null;
+  sector: PlaceName | null;
+  municipality: PlaceName | null;
 }
 
 /** Priority components (BR-20), in the order of the settings. */

@@ -37,6 +37,7 @@ from app.core.db import as_system
 from app.core.events import emit
 from app.modules.ai import pipeline
 from app.modules.ai.models import Analysis
+from app.modules.geo.service import admin_address
 from app.modules.identity.models import Account, AccountKind, AccountStatus, Profile, phone_index
 from app.modules.identity.service import Reporter, _upsert_account
 from app.modules.reports import schemas as report_schemas
@@ -237,6 +238,7 @@ async def _create_report(
 ) -> Report:
     created_at = min(sent_at, now) if sent_at is not None else now
     gouvernorat = await locate_gouvernorat(session, parsed.lat, parsed.lon)
+    address = await admin_address(session, parsed.lat, parsed.lon)
     report = Report(
         tracking_code=await next_tracking_code(session, now, gouvernorat),
         client_uuid=None,
@@ -245,6 +247,9 @@ async def _create_report(
         location=_point(parsed.lat, parsed.lon),
         location_accuracy_m=parsed.accuracy_m,
         gouvernorat_code=gouvernorat,
+        delegation_id=address.delegation_id,
+        sector_code=address.sector_code,
+        municipality_id=address.municipality_id,
         status=Status.RECEIVED.value,
         source="sms",
         created_at=created_at,

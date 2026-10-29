@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { FiltersBar } from "../components/FiltersBar";
 import { LazyMapView } from "../components/LazyMap";
+import { useAdminLayer } from "../components/AdminLayer";
 import { useBasemap } from "../components/BasemapSwitch";
 import { useMapDataLayers, type FolderExtra } from "../components/MapDataLayers";
 import { useResourceSearchLayer } from "../components/ResourceSearchLayer";
@@ -177,6 +178,7 @@ export function MapPage() {
   const qc = useQueryClient();
   const gouvernorats = useGouvernorats();
   const basemap = useBasemap();
+  const adminLayer = useAdminLayer();
 
   // Outbound call from a map point (phase 7 §4, FR-C-10): reporter, volunteer or unit, through the softphone.
   const phone = useSoftphone();
@@ -655,6 +657,7 @@ export function MapPage() {
         {basemap.control}
       </div>
       {dataLayers.controls}
+      {adminLayer.controls}
       {showWeather && (
         <WeatherControls
           views={weatherViews}
@@ -726,10 +729,15 @@ export function MapPage() {
           heat={heat}
           shapes={shapes}
           weather={mapWeather}
+          admin={adminLayer.admin}
+          onAdminClick={adminLayer.onAdminClick}
           basemap={basemap.view}
           onMapClick={onMapClick}
-          popup={weatherPopup}
-          onPopupClose={() => setWeatherPoint(null)}
+          popup={weatherPopup ?? adminLayer.popup}
+          onPopupClose={() => {
+            setWeatherPoint(null);
+            adminLayer.closePopup();
+          }}
           onCall={onCall}
           callLabel={t("phone.call")}
         />

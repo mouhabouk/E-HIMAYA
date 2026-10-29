@@ -625,7 +625,9 @@
       "gouvernorat": "Gouvernorat",
       "delegation": "Délégation",
       "reporterKind": "Type de signalant",
-      "coordinates": "Coordonnées"
+      "coordinates": "Coordonnées",
+      "sector": "Imada (secteur)",
+      "municipality": "Municipalité"
     },
     "location": "Localisation",
     "mapLabel": "Carte de la localisation du signalement",
@@ -7422,5 +7424,31 @@
       "save": "Confirmer",
       "confirmed": "Confirmé"
     }
+  },
+  "admin": {
+    "toggle": "Limites administratives",
+    "level": "Niveau administratif",
+    "levels": {
+      "gouvernorats": "Gouvernorats",
+      "delegations": "Délégations",
+      "sectors": "Imadas",
+      "municipalities": "Municipalités"
+    },
+    "levelOne": {
+      "gouvernorats": "Gouvernorat",
+      "delegations": "Délégation",
+      "sectors": "Imada",
+      "municipalities": "Municipalité"
+    },
+    "rateToggle": "Colorer par signalements pour 10 000 habitants ({{days}} derniers jours)",
+    "count": "{{count}} unités",
+    "error": "Impossible de charger les limites",
+    "source": "© contributeurs OpenStreetMap · Map Tunisia (ODbL)",
+    "ins": "code INS {{code}}",
+    "population": "Population (recensement 2024) : {{count}}",
+    "area": "Superficie : {{value}} km²",
+    "reports": "{{count}} signalements en {{days}} jours",
+    "rate": "{{value}} pour 10 000 habitants",
+    "legend": "Du plus clair au plus foncé, jusqu'à {{max}} signalements pour 10 000 habitants · délégations au taux le plus élevé"
   }
 }

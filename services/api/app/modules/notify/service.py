@@ -14,7 +14,7 @@ from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from fastapi import HTTPException, status
-from sqlalchemy import and_, any_, func, or_, select, text
+from sqlalchemy import and_, any_, case, func, or_, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.crypto import get_cipher
@@ -76,7 +76,24 @@ def _polygon_wkt(polygon: dict[str, Any]) -> str:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "invalid_area")
     if any(not (LON_MIN <= lon <= LON_MAX and LAT_MIN <= lat <= LAT_MAX) for lon, lat in points):
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "invalid_area")
-    return "SRID=4326;POLYGON((" + ", ".join(f"{lon} {lat}" for lon, lat in points) + "))"
+    return "SRID=4326;MULTIPOLYGON(((" + ", ".join(f"{lon} {lat}" for lon, lat in points) + ")))"
+
+
+async def _delegations_area(session: AsyncSession, ids: list[int]) -> str:
+    """The union of the délégations' boundaries (simplified to about 50 m), as EWKT; 422 for an unknown id."""
+    found, ewkt = (
+        await session.execute(
+            text(
+                "SELECT count(*), ST_AsEWKT(ST_Multi(ST_CollectionExtract(ST_MakeValid("
+                "ST_SimplifyPreserveTopology(ST_UnaryUnion(ST_Collect(boundary)), 0.0005)), 3))) "
+                "FROM geo.delegation WHERE id = ANY(:ids) AND boundary IS NOT NULL"
+            ),
+            {"ids": ids},
+        )
+    ).one()
+    if found != len(ids) or ewkt is None:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "invalid_delegation")
+    return str(ewkt)
 
 
 async def _check_polygon(session: AsyncSession, wkt: str) -> None:
@@ -130,7 +147,7 @@ async def _apply(session: AsyncSession, message: Message, body: schemas.MessageI
     if body.kind == "info":
         if body.topic is None or body.audience is None:
             raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "topic_and_audience_required")
-        if body.area.polygon is not None:
+        if body.area.polygon is not None or body.area.delegation_ids:
             raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "invalid_area")
         if body.audience == "user":
             if body.user_id is None or await session.get(Account, body.user_id) is None:
@@ -143,6 +160,7 @@ async def _apply(session: AsyncSession, message: Message, body: schemas.MessageI
         message.org_kinds, message.ack_required = list(body.org_kinds), body.ack_required
         message.severity = message.category = message.hazard = None
         message.expires_at, message.area_polygon = None, None
+        message.delegation_ids = []
     else:
         if body.severity is None or body.category is None or body.expires_at is None:
             raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "severity_category_expiry_required")
@@ -156,7 +174,13 @@ async def _apply(session: AsyncSession, message: Message, body: schemas.MessageI
         message.topic = message.audience = None
         message.user_id = None
         message.org_kinds, message.ack_required = [], False
-        if body.area.polygon is not None:
+        delegations = sorted(set(body.area.delegation_ids))
+        message.delegation_ids = delegations
+        if delegations:
+            if codes or body.area.polygon is not None:
+                raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "invalid_area")
+            message.area_polygon = await _delegations_area(session, delegations)
+        elif body.area.polygon is not None:
             if codes:
                 raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "invalid_area")
             wkt = _polygon_wkt(body.area.polygon)
@@ -174,9 +198,16 @@ async def _apply(session: AsyncSession, message: Message, body: schemas.MessageI
 async def _area(session: AsyncSession, message: Message) -> schemas.Area:
     polygon = None
     if message.area_polygon is not None:
-        raw = await session.scalar(select(func.ST_AsGeoJSON(Message.area_polygon, 6)).where(Message.id == message.id))
+        # One part is answered as a Polygon, as before the MultiPolygon column (drawn areas, most délégations).
+        single = case((func.ST_NumGeometries(Message.area_polygon) == 1, func.ST_GeometryN(Message.area_polygon, 1)))
+        shape = func.coalesce(single, Message.area_polygon)
+        raw = await session.scalar(select(func.ST_AsGeoJSON(shape, 6)).where(Message.id == message.id))
         polygon = json.loads(raw) if raw else None
-    return schemas.Area(gouvernorat_codes=list(message.gouvernorat_codes), polygon=polygon)
+    return schemas.Area(
+        gouvernorat_codes=list(message.gouvernorat_codes),
+        polygon=polygon,
+        delegation_ids=list(message.delegation_ids or []),
+    )
 
 
 async def message_out(session: AsyncSession, message: Message) -> schemas.MessageOut:
