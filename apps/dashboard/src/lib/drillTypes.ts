@@ -1,3 +1,5 @@
+import type { ChecklistCounts } from "./checklist";
+
 /** The digital dry run (L5a, docs/phase-l/design-l5.md §2), as services/api/app/modules/drill/schemas.py answers it. */
 
 export const INJECT_KINDS = ["report", "development", "shortage", "evacuation", "decision", "information"] as const;
@@ -203,4 +205,6 @@ export interface DrillReport {
   mean_score: number | null;
   resources: ResourceLine[];
   stress: Stress[];
+  /** How far the approved task list of the plan was followed (AI2), when the dry run has one. */
+  plan_tasks?: ChecklistCounts | null;
 }

@@ -521,7 +521,19 @@
     "sensor_code_taken": "A sensor already has this code.",
     "threshold_out_of_range": "Threshold outside the plausible range of this kind of sensor.",
     "outside_local_network": "Refused: the request is not from the local network.",
-    "tower_code_taken": "A tower already has this code."
+    "tower_code_taken": "A tower already has this code.",
+    "plan_reading_off": "Plan reading by AI is switched off in the AI settings.",
+    "plan_not_offered": "This plan is not offered for this axis or dry run.",
+    "checklist_approved": "The list is approved and followed: add tasks by hand instead of reading again.",
+    "reading_in_progress": "The model is reading the plan right now. Wait for the result.",
+    "checklist_not_in_review": "The list is not in review.",
+    "task_not_found": "Task not found.",
+    "task_required": "Write the corrected task.",
+    "too_many_tasks": "The list has reached its maximum number of tasks.",
+    "tasks_not_reviewed": "Some suggestions have not been reviewed yet.",
+    "checklist_empty": "No task in the list: accept or add one.",
+    "checklist_not_approved": "The list is not approved yet.",
+    "task_deleted": "This task was removed from the list."
   },
   "kpi": {
     "title": "Key indicators",
@@ -981,6 +993,11 @@
       "range": "The value must be between {{min}} and {{max}}.",
       "allZero": "The weights cannot all be zero.",
       "summary": "Correct the highlighted fields before saving."
+    },
+    "assist": {
+      "title": "Local model suggestions in operations",
+      "help": "Every suggestion is approved by a person and audited (AI-01). Switching it off blocks any new reading; what was already suggested stays, with its label.",
+      "planReading": "Reading the intervention plan into a suggested task list"
     }
   },
   "orgs": {
@@ -5253,7 +5270,8 @@
         "timeline": "Timeline",
         "documents": "Documents",
         "plans": "Plans and recommendations",
-        "resources": "Resources in the area"
+        "resources": "Resources in the area",
+        "tasks": "Plan tasks"
       }
     },
     "axes": {
@@ -6670,7 +6688,8 @@
       "scenario": "Scenario",
       "run": "Run",
       "evaluation": "Evaluation",
-      "report": "Report"
+      "report": "Report",
+      "plan": "Plan tasks"
     },
     "injectKind": {
       "report": "Report",
@@ -6768,7 +6787,8 @@
       "attacks": "Attack attempts: {{sent}}, {{blocked}} blocked.",
       "allBlocked": "All blocked",
       "notAllBlocked": "Not all blocked",
-      "conclusion": "Conclusion"
+      "conclusion": "Conclusion",
+      "planTasks": "Plan tasks done"
     }
   },
   "stepper": {
@@ -7041,5 +7061,70 @@
       "noFly": "No-fly zone",
       "track": "A drone's path (30 min)"
     }
+  },
+  "checklist": {
+    "aiLabel": "AI suggestion",
+    "notice": "The local model reads the plan and suggests the tasks; none is followed before the room manager reviews them and approves the list.",
+    "from": "Read from: {{title}}",
+    "model": "model {{model}}",
+    "pages": "{{read}} of {{total}} pages read",
+    "none": "No task list for this plan yet.",
+    "noPlan": "No readable PDF plan. Link a plan from the register first.",
+    "noTask": "The model found no task in the plan. Add them by hand.",
+    "reading": "The local model is reading the plan. It may take a few minutes; the suggestions will appear here.",
+    "read": {
+      "title": "Read the plan with the local model",
+      "plan": "Plan",
+      "start": "Read the plan",
+      "again": "Read again",
+      "againHelp": "Reading again removes the current suggestions and your review."
+    },
+    "failure": {
+      "plan_has_no_text": "The plan is a scan without text. Upload a text PDF or add the tasks by hand.",
+      "plan_unreadable": "The plan file could not be opened.",
+      "plan_encrypted": "The plan file is password protected.",
+      "plan_file_missing": "The plan file is missing.",
+      "model_unavailable": "The local model has been unavailable for a while. Try again later.",
+      "model_output_invalid": "The model gave no valid answer. Read again or add the tasks by hand.",
+      "unknown": "The plan could not be read."
+    },
+    "review": {
+      "suggested": "Suggested",
+      "accepted": "Accepted",
+      "edited": "Edited",
+      "deleted": "Deleted",
+      "added": "Added"
+    },
+    "task": {
+      "action": "Task",
+      "actionRequired": "Write the task (at least 3 characters).",
+      "owner": "Who",
+      "resource": "Resource",
+      "page": "Page",
+      "onPage": "page {{page}} of the plan",
+      "quoteFound": "Passage found on the page",
+      "quoteMissing": "Passage not found on the page: check the plan",
+      "suggestedWas": "Model's suggestion",
+      "accept": "Accept",
+      "edit": "Edit",
+      "delete": "Delete",
+      "saveEdit": "Save the edit",
+      "add": "Add a task",
+      "addSave": "Add"
+    },
+    "approve": "Approve the list",
+    "approveHelp": "Once approved, the rooms follow the tasks one by one.",
+    "progress": "{{done}} of {{total}} handled",
+    "approvedBy": "approved by {{name}}",
+    "follow": {
+      "label": "Task state: {{action}}"
+    },
+    "status": {
+      "todo": "To do",
+      "doing": "In progress",
+      "done": "Done",
+      "not_applicable": "Not applicable"
+    },
+    "waiting": "Suggestions left to review: {{count}}"
   }
 }

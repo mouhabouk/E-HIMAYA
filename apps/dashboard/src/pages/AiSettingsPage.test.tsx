@@ -50,6 +50,16 @@ describe("AiSettingsPage", () => {
     expect(await screen.findByText("Réglages enregistrés.")).toBeInTheDocument();
   });
 
+  it("switches off the reading of the intervention plans (AI-01)", async () => {
+    const saved = { ...AI_SETTINGS, assist: { plan_reading: false } };
+    const { api } = setup({ saveAiSettings: vi.fn(() => Promise.resolve(saved)) });
+    const toggle = await screen.findByRole("switch", { name: "Lecture du plan d'intervention et liste de tâches proposée" });
+    expect(toggle).toBeChecked();
+    fireEvent.click(toggle);
+    fireEvent.click(screen.getByRole("button", { name: "Enregistrer" }));
+    await waitFor(() => expect(api.saveAiSettings).toHaveBeenCalledWith(saved));
+  });
+
   it("shows 403 and 422 answers as translated messages", async () => {
     const save = vi
       .fn()

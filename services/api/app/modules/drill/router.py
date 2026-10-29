@@ -21,10 +21,14 @@ from app.core.access import ApiError, room_of
 from app.core.db import as_system, get_session
 from app.core.security import REALM_ROLES, Principal, Realm, require_roles
 from app.modules.audit import service as audit
+from app.modules.checklist import schemas as checklist_schemas
+from app.modules.checklist import service as checklist
 from app.modules.drill import schemas
 from app.modules.drill.models import Booking, Evaluation, Exercise, Inject, Participant, Response, StressRun
 from app.modules.features import service as features
 from app.modules.ops.models import Resource, Unit
+from app.modules.register import service as register
+from app.modules.register.models import Document
 
 router = APIRouter(prefix="/api/v1/staff/drills", tags=["drill"])
 
@@ -786,6 +790,129 @@ async def release(principal: AnyStaff, session: Session, exercise_id: uuid.UUID,
         await session.commit()
 
 
+# ---------------------------------------------------------------- the task list read from the plan (AI2)
+
+CHECKLIST_EDITABLE = {"draft", "submitted", "ready"}
+
+
+async def _checklist_owner(session: AsyncSession, principal: Principal, ex: Exercise) -> checklist.Owner:
+    """Inside ``as_system``: the plan is checked against the caller's own scope and access level here."""
+    planner = _planner(principal, ex) and ex.status in CHECKLIST_EDITABLE
+    code = _participant_code(principal, ex)
+    following = False
+    if code is not None and ex.status == "running":
+        part = await session.get(Participant, (ex.id, code))
+        following = part is not None and part.decision == "approved"
+    docs: list[Document] = []
+    if ex.plan_document_id is not None:
+        doc = await session.get(Document, ex.plan_document_id)
+        in_scope = doc is not None and (
+            principal.is_national or doc.gouvernorat_code in (None, principal.gouvernorat_code)
+        )
+        if doc is not None and in_scope and register.readable(principal, doc):
+            docs.append(doc)
+    return checklist.Owner(
+        axis_id=None,
+        exercise_id=ex.id,
+        hazard=ex.hazard_key or "",
+        plans=checklist.offered(docs),
+        can_request=planner,
+        can_review=planner,
+        can_follow=following,
+        show_names=True,
+        gouvernorats=list(ex.gouvernorats),
+    )
+
+
+async def _checklist(
+    session: AsyncSession, principal: Principal, exercise_id: uuid.UUID
+) -> tuple[Exercise, checklist.Owner]:
+    ex = await _load(session, principal, exercise_id)
+    return ex, await _checklist_owner(session, principal, ex)
+
+
+async def _checklist_out(session: AsyncSession, owner: checklist.Owner) -> checklist_schemas.ChecklistOut:
+    return await checklist.view(session, owner, await checklist.find(session, owner))
+
+
+@router.get("/{exercise_id}/checklist", response_model=checklist_schemas.ChecklistOut)
+async def get_checklist(
+    principal: AnyStaff, session: Session, exercise_id: uuid.UUID
+) -> checklist_schemas.ChecklistOut:
+    """The plan's tasks: the expected answer the rooms follow during the run and the evaluator compares with."""
+    async with as_system(session):
+        _, owner = await _checklist(session, principal, exercise_id)
+        return await _checklist_out(session, owner)
+
+
+@router.post("/{exercise_id}/checklist/read", response_model=checklist_schemas.ChecklistOut, status_code=202)
+async def read_checklist(
+    principal: AnyStaff, session: Session, exercise_id: uuid.UUID, body: checklist_schemas.ReadIn
+) -> checklist_schemas.ChecklistOut:
+    async with as_system(session):
+        _, owner = await _checklist(session, principal, exercise_id)
+        await checklist.request_reading(session, principal, owner, body)
+        out = await _checklist_out(session, owner)
+        await session.commit()
+    return out
+
+
+@router.post("/{exercise_id}/checklist/tasks", response_model=checklist_schemas.ChecklistOut, status_code=201)
+async def add_checklist_task(
+    principal: AnyStaff, session: Session, exercise_id: uuid.UUID, body: checklist_schemas.TaskIn
+) -> checklist_schemas.ChecklistOut:
+    async with as_system(session):
+        _, owner = await _checklist(session, principal, exercise_id)
+        await checklist.add(session, principal, owner, body)
+        out = await _checklist_out(session, owner)
+        await session.commit()
+    return out
+
+
+@router.post("/{exercise_id}/checklist/tasks/{task_id}/review", response_model=checklist_schemas.ChecklistOut)
+async def review_checklist_task(
+    principal: AnyStaff,
+    session: Session,
+    exercise_id: uuid.UUID,
+    task_id: uuid.UUID,
+    body: checklist_schemas.ReviewIn,
+) -> checklist_schemas.ChecklistOut:
+    async with as_system(session):
+        _, owner = await _checklist(session, principal, exercise_id)
+        await checklist.review(session, principal, owner, task_id, body)
+        out = await _checklist_out(session, owner)
+        await session.commit()
+    return out
+
+
+@router.post("/{exercise_id}/checklist/approve", response_model=checklist_schemas.ChecklistOut)
+async def approve_checklist(
+    principal: AnyStaff, session: Session, exercise_id: uuid.UUID, body: checklist_schemas.ApproveIn
+) -> checklist_schemas.ChecklistOut:
+    async with as_system(session):
+        _, owner = await _checklist(session, principal, exercise_id)
+        await checklist.approve(session, principal, owner, body)
+        out = await _checklist_out(session, owner)
+        await session.commit()
+    return out
+
+
+@router.post("/{exercise_id}/checklist/tasks/{task_id}/status", response_model=checklist_schemas.ChecklistOut)
+async def follow_checklist_task(
+    principal: AnyStaff,
+    session: Session,
+    exercise_id: uuid.UUID,
+    task_id: uuid.UUID,
+    body: checklist_schemas.FollowIn,
+) -> checklist_schemas.ChecklistOut:
+    async with as_system(session):
+        _, owner = await _checklist(session, principal, exercise_id)
+        await checklist.follow(session, principal, owner, task_id, body)
+        out = await _checklist_out(session, owner)
+        await session.commit()
+    return out
+
+
 # ---------------------------------------------------------------- evaluation, closing, load results
 
 
@@ -908,6 +1035,7 @@ async def report(principal: AnyStaff, session: Session, exercise_id: uuid.UUID) 
                 select(StressRun).where(StressRun.exercise_id == ex.id).order_by(StressRun.recorded_at)
             )
         ]
+        plan_tasks = await checklist.coverage(session, exercise_id=ex.id)
         await session.commit()
 
     assert ex.started_at is not None
@@ -985,4 +1113,5 @@ async def report(principal: AnyStaff, session: Session, exercise_id: uuid.UUID) 
         mean_score=round(statistics.mean(m.score for m in marks), 2) if marks else None,
         resources=resources,
         stress=stress,
+        plan_tasks=plan_tasks,
     )

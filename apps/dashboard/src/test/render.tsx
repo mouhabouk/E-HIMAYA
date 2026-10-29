@@ -11,6 +11,7 @@ import { fakeWindowApi } from "./windowFixtures";
 import { fakeDrillApi } from "./drillFixtures";
 import { fakeSensorsApi } from "./sensorsFixtures";
 import { fakeTowersApi } from "./towersFixtures";
+import { fakeChecklistApi } from "./checklistFixtures";
 import { fakeDronesApi } from "./dronesFixtures";
 import type { AuthService, AuthUser } from "../auth/authService";
 import { identityFromClaims } from "../auth/identity";
@@ -262,6 +263,7 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     ...fakeSensorsApi(),
     ...fakeTowersApi(),
     ...fakeDronesApi(),
+    ...fakeChecklistApi(),
     gouvernorats: vi.fn(() =>
       Promise.resolve([
         { code: 11, iso_code: "TN-11", name: "تونس", name_ar: "تونس", name_fr: "Tunis", delegation_count: 21 },

@@ -209,6 +209,7 @@ export const AI_SETTINGS: AiSettings = {
     semantic_radius_m: 5000,
     semantic_window_min: 180,
   },
+  assist: { plan_reading: true },
 };
 
 export const AI_STATUS_READY: AiStatus = {

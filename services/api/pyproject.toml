@@ -27,6 +27,8 @@ dependencies = [
   "websockets==17.2",
   # Spreadsheet exports of the reports repository (phase 8 analytics).
   "openpyxl==3.1.5",
+  # Text of the intervention plans the local model reads into a task list (L5, AI2); pure Python, no network.
+  "pypdf==6.21.4",
 ]
 
 [dependency-groups]

@@ -521,7 +521,19 @@
     "sensor_code_taken": "Un capteur porte déjà ce code.",
     "threshold_out_of_range": "Seuil hors de la plage plausible de ce type de capteur.",
     "outside_local_network": "Refusé : la demande ne vient pas du réseau local.",
-    "tower_code_taken": "Une tour porte déjà ce code."
+    "tower_code_taken": "Une tour porte déjà ce code.",
+    "plan_reading_off": "La lecture du plan par l'IA est désactivée dans les réglages de l'IA.",
+    "plan_not_offered": "Ce plan n'est pas proposé pour cet axe ou cet exercice.",
+    "checklist_approved": "La liste est approuvée et suivie : ajoutez les tâches à la main au lieu de relire.",
+    "reading_in_progress": "Le modèle lit le plan en ce moment. Attendez le résultat.",
+    "checklist_not_in_review": "La liste n'est pas en revue.",
+    "task_not_found": "Tâche introuvable.",
+    "task_required": "Écrivez la tâche corrigée.",
+    "too_many_tasks": "La liste a atteint son nombre maximal de tâches.",
+    "tasks_not_reviewed": "Des suggestions n'ont pas encore été revues.",
+    "checklist_empty": "Aucune tâche dans la liste : acceptez-en ou ajoutez-en une.",
+    "checklist_not_approved": "La liste n'est pas encore approuvée.",
+    "task_deleted": "Cette tâche a été retirée de la liste."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -981,6 +993,11 @@
       "range": "La valeur doit être entre {{min}} et {{max}}.",
       "allZero": "Les pondérations ne peuvent pas être toutes nulles.",
       "summary": "Corrigez les champs signalés avant d’enregistrer."
+    },
+    "assist": {
+      "title": "Suggestions du modèle local dans les opérations",
+      "help": "Chaque suggestion est validée par une personne et journalisée (AI-01). La désactiver bloque toute nouvelle lecture ; ce qui a déjà été suggéré reste, avec son étiquette.",
+      "planReading": "Lecture du plan d'intervention et liste de tâches proposée"
     }
   },
   "orgs": {
@@ -5253,7 +5270,8 @@
         "timeline": "Chronologie",
         "documents": "Documents",
         "plans": "Plans et recommandations",
-        "resources": "Moyens dans la zone"
+        "resources": "Moyens dans la zone",
+        "tasks": "Tâches du plan"
       }
     },
     "axes": {
@@ -6670,7 +6688,8 @@
       "scenario": "Scénario",
       "run": "Déroulement",
       "evaluation": "Évaluation",
-      "report": "Rapport"
+      "report": "Rapport",
+      "plan": "Tâches du plan"
     },
     "injectKind": {
       "report": "Signalement",
@@ -6768,7 +6787,8 @@
       "attacks": "Tentatives d'attaque : {{sent}}, dont {{blocked}} bloquées.",
       "allBlocked": "Toutes bloquées",
       "notAllBlocked": "Pas toutes bloquées",
-      "conclusion": "Conclusion"
+      "conclusion": "Conclusion",
+      "planTasks": "Tâches du plan accomplies"
     }
   },
   "stepper": {
@@ -7041,5 +7061,70 @@
       "noFly": "Zone interdite de vol",
       "track": "Trajet d'un drone (30 min)"
     }
+  },
+  "checklist": {
+    "aiLabel": "Suggestion de l'IA",
+    "notice": "Le modèle local lit le plan et propose les tâches ; aucune n'est suivie avant que le chef de salle ne les revoie et approuve la liste.",
+    "from": "Lue depuis : {{title}}",
+    "model": "modèle {{model}}",
+    "pages": "{{read}} pages lues sur {{total}}",
+    "none": "Pas encore de liste de tâches pour ce plan.",
+    "noPlan": "Aucun plan PDF lisible. Rattachez d'abord un plan du registre.",
+    "noTask": "Le modèle n'a trouvé aucune tâche dans le plan. Ajoutez-les à la main.",
+    "reading": "Le modèle local lit le plan. Cela peut prendre quelques minutes ; les suggestions s'afficheront ici.",
+    "read": {
+      "title": "Lire le plan avec le modèle local",
+      "plan": "Plan",
+      "start": "Lire le plan",
+      "again": "Relire",
+      "againHelp": "Relire efface les suggestions actuelles et votre revue."
+    },
+    "failure": {
+      "plan_has_no_text": "Le plan est un scan sans texte. Chargez un PDF texte ou ajoutez les tâches à la main.",
+      "plan_unreadable": "Le fichier du plan n'a pas pu être ouvert.",
+      "plan_encrypted": "Le fichier du plan est protégé par mot de passe.",
+      "plan_file_missing": "Le fichier du plan est introuvable.",
+      "model_unavailable": "Le modèle local est indisponible depuis un moment. Réessayez plus tard.",
+      "model_output_invalid": "Le modèle n'a pas donné de réponse valide. Relisez ou ajoutez les tâches à la main.",
+      "unknown": "La lecture du plan a échoué."
+    },
+    "review": {
+      "suggested": "Suggérée",
+      "accepted": "Acceptée",
+      "edited": "Corrigée",
+      "deleted": "Supprimée",
+      "added": "Ajoutée"
+    },
+    "task": {
+      "action": "Tâche",
+      "actionRequired": "Écrivez la tâche (3 caractères au moins).",
+      "owner": "Responsable",
+      "resource": "Moyen",
+      "page": "Page",
+      "onPage": "page {{page}} du plan",
+      "quoteFound": "Passage trouvé sur la page",
+      "quoteMissing": "Passage introuvable sur la page : vérifiez le plan",
+      "suggestedWas": "Suggestion du modèle",
+      "accept": "Accepter",
+      "edit": "Corriger",
+      "delete": "Supprimer",
+      "saveEdit": "Enregistrer la correction",
+      "add": "Ajouter une tâche",
+      "addSave": "Ajouter"
+    },
+    "approve": "Approuver la liste",
+    "approveHelp": "Après approbation, les salles suivent les tâches une à une.",
+    "progress": "{{done}} sur {{total}} traitées",
+    "approvedBy": "approuvée par {{name}}",
+    "follow": {
+      "label": "État de la tâche : {{action}}"
+    },
+    "status": {
+      "todo": "À faire",
+      "doing": "En cours",
+      "done": "Faite",
+      "not_applicable": "Sans objet"
+    },
+    "waiting": "Suggestions à revoir : {{count}}"
   }
 }

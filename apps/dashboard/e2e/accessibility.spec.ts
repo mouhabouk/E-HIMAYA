@@ -33,6 +33,7 @@ import {
 } from "../src/test/windowData";
 import { SCHEDULE_OPTIONS, SCHEDULE_PROGRESS, SCHEDULE_SETTINGS, SCHEDULE_SLOT, SCHEDULE_TEMPLATES } from "../src/test/scheduleData";
 import { DIRECTIVE_ALL_DETAIL, DISPATCH_PAGE, HAZARDS, PLAN_DETAIL, PLANS, REVISIONS, SEARCH } from "../src/test/registerData";
+import { APPROVED as CHECKLIST_APPROVED, REVIEW as CHECKLIST_REVIEW } from "../src/test/checklistFixtures";
 import { JENDOUBA_AXIS, NABEUL_AXIS, NABEUL_DETAIL, overview, REQUEST, SOUSSE_AXIS, SUGGESTIONS } from "../src/test/crisisData";
 import { API, baseMock, commonAnswer, json, signIn } from "./phase7Helpers";
 
@@ -444,6 +445,34 @@ test.describe("accessibility of the programmes (ar)", () => {
       await page.getByRole("tab", { name: "طريقة الاعتماد" }).click();
       await expect(page.locator("main #sched-settings")).toBeVisible();
       await scan(page, `/schedule approval ${theme}`);
+      expect(fence.unexpected).toEqual([]);
+    });
+  }
+});
+
+// L5 (AI2): the task list read from the plan of an axis, in review then followed, in both modes.
+test.describe("accessibility of the plan tasks (ar)", () => {
+  for (const theme of ["light", "dark"] as const) {
+    test(`review and follow-up, ${theme}, have no serious or critical violation`, async ({ page }) => {
+      await signIn(page, ROLES, "Salma Ben Ali");
+      await page.addInitScript((t) => {
+        window.localStorage.setItem("ehimaya.lang", "ar");
+        window.localStorage.setItem("ehimaya.theme", t);
+      }, theme);
+      const fence = await baseMock(page);
+      await mockApi(page);
+      let list = CHECKLIST_REVIEW;
+      await page.route(`${API}/api/v1/staff/crisis/axes/ax-nabeul/checklist`, (route) => json(route, list));
+      for (const [state, data] of [
+        ["review", CHECKLIST_REVIEW],
+        ["approved", CHECKLIST_APPROVED],
+      ] as const) {
+        list = data;
+        await page.goto("/axes/ax-nabeul");
+        await page.getByRole("tab", { name: "مهام المخطط" }).click();
+        await expect(page.locator("main .checklist-task").first()).toBeVisible();
+        await scan(page, `/axes/ax-nabeul tasks ${state} ${theme}`);
+      }
       expect(fence.unexpected).toEqual([]);
     });
   }

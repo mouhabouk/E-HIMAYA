@@ -278,6 +278,21 @@ export function AiSettingsFormView({ initial, editable }: { initial: AiSettings;
         </fieldset>
       </section>
 
+      <section className="card" aria-labelledby={`${base}-assist`}>
+        <h2 id={`${base}-assist`}>{t("aiSettings.assist.title")}</h2>
+        <p className="muted">{t("aiSettings.assist.help")}</p>
+        <label className="checkbox">
+          <input
+            type="checkbox"
+            role="switch"
+            checked={form.plan_reading}
+            disabled={ro}
+            onChange={(e) => update((f) => ({ ...f, plan_reading: e.target.checked }))}
+          />
+          <span>{t("aiSettings.assist.planReading")}</span>
+        </label>
+      </section>
+
       {editable && (
         <div className="actions">
           <button type="submit" className="btn btn--primary" disabled={mutation.isPending}>

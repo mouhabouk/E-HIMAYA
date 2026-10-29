@@ -7236,7 +7236,7 @@ button.nav-card:hover {
 }
 
 .inventory-kpis .kpi__label {
-  color: var(--text-muted);
+  color: var(--muted);
   font-size: 0.9rem;
 }
 
@@ -8402,4 +8402,118 @@ button.nav-card:hover {
 }
 .stepper[data-disabled] {
   opacity: 0.6;
+}
+
+/* ---------- L5 (AI2): the task list read from the intervention plan ---------- */
+.checklist {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.checklist__notice {
+  margin: 0;
+}
+
+.checklist-read,
+.checklist-form {
+  display: grid;
+  gap: 0.6rem;
+  padding: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface-2);
+}
+
+.checklist-read__title {
+  margin: 0;
+  font-weight: 700;
+}
+
+.checklist-form__row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.6rem;
+}
+
+.checklist-tasks {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.checklist-task {
+  display: grid;
+  gap: 0.4rem;
+  justify-items: start;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--border);
+  border-inline-start: 4px solid var(--tone-purple);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.checklist-task--done,
+.checklist-task--not_applicable {
+  border-inline-start-color: var(--tone-green);
+}
+
+.checklist-task--doing {
+  border-inline-start-color: var(--tone-amber);
+}
+
+.checklist-task.is-deleted {
+  border-inline-start-color: var(--border);
+  opacity: 0.7;
+}
+
+.checklist-task.is-deleted .checklist-task__action {
+  text-decoration: line-through;
+}
+
+.checklist-task__body p {
+  margin: 0;
+}
+
+.checklist-task__action {
+  font-weight: 700;
+}
+
+.checklist-quote blockquote {
+  margin: 0;
+  padding-inline-start: 0.6rem;
+  border-inline-start: 3px solid var(--border);
+  color: var(--muted);
+}
+
+.checklist-quote p {
+  margin: 0.2rem 0 0;
+}
+
+.checklist__progress {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.checklist__progress .meter {
+  flex-basis: 10rem;
+}
+
+.checklist-approve {
+  display: grid;
+  gap: 0.3rem;
+  justify-items: start;
+}
+
+.checklist-approve p {
+  margin: 0;
+}
+
+.segmented--small .segmented__item > span {
+  min-block-size: 2.25rem;
+  padding-block: 0.4rem;
 }

@@ -551,6 +551,10 @@ CATALOGUE: tuple[Spec, ...] = (
             "PUT /drills/{exercise_id}/injects/{inject_id}",
             "DELETE /drills/{exercise_id}/injects/{inject_id}",
             "POST /drills/{exercise_id}/generate",
+            "POST /drills/{exercise_id}/checklist/read",
+            "POST /drills/{exercise_id}/checklist/tasks",
+            "POST /drills/{exercise_id}/checklist/tasks/{task_id}/review",
+            "POST /drills/{exercise_id}/checklist/approve",
         ),
         button(
             "drill.approve",
@@ -564,6 +568,7 @@ CATALOGUE: tuple[Spec, ...] = (
             ("الرد على الحقن", "Répondre", "Answer injects"),
             "POST /drills/{exercise_id}/injects/{inject_id}/responses",
             "POST /drills/{exercise_id}/responses/{response_id}/release",
+            "POST /drills/{exercise_id}/checklist/tasks/{task_id}/status",
         ),
         button(
             "drill.evaluate",
@@ -687,6 +692,21 @@ CATALOGUE: tuple[Spec, ...] = (
             "POST /crisis/axes/{axis_id}/sitreps",
             "POST /crisis/sitreps/{sitrep_id}/send",
             act_as=R.OPS_MANAGER,
+        ),
+        button(
+            "axes.checklist",
+            ("قراءة المخطط ومراجعة المهام", "Lecture du plan et revue des tâches", "Plan reading and task review"),
+            "POST /crisis/axes/{axis_id}/checklist/read",
+            "POST /crisis/axes/{axis_id}/checklist/tasks",
+            "POST /crisis/axes/{axis_id}/checklist/tasks/{task_id}/review",
+            "POST /crisis/axes/{axis_id}/checklist/approve",
+            act_as=R.OPS_MANAGER,
+        ),
+        button(
+            "axes.checklist_follow",
+            ("متابعة مهام المخطط", "Suivi des tâches du plan", "Follow the plan's tasks"),
+            "POST /crisis/axes/{axis_id}/checklist/tasks/{task_id}/status",
+            act_as=R.OPERATOR,
         ),
         button(
             "axes.requests",
