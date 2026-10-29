@@ -6,15 +6,17 @@ import math
 import uuid
 from typing import Annotated, Literal
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
 from app.core.db import get_session
 from app.core.ratelimit import enforce, opaque
 from app.core.security import Principal, require_roles
+from app.core.storage import get_store
 from app.modules.ai import settings as ai_settings
-from app.modules.decision import assistant, command, context, recommendations, responders, routing
+from app.modules.ai.client import get_ai_client
+from app.modules.decision import assistant, command, context, recommendations, responders, routing, voice
 from app.modules.decision import schemas as s
 from app.modules.decision.models import CommandDecision
 from app.modules.ops import service as incidents
@@ -110,6 +112,7 @@ async def post_command_text(
     """A typed or dictated text: a question is answered from sources, an order becomes a proposal card."""
     incident = await incidents.get_in_scope(session, principal, incident_id)
     await commander_on(session)
+    command.require_commander(principal)
     await enforce(f"command:{opaque(principal.subject)}", get_settings().assistant_per_hour, ASSISTANT_WINDOW_S)
     out = await command.command_text(session, principal, incident, body)
     await session.commit()
@@ -126,6 +129,50 @@ async def decide_command(
         raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
     await incidents.get_in_scope(session, principal, row.incident_id)
     await commander_on(session)
+    command.require_commander(principal)
     out = await command.decide(session, principal, row, body)
+    await session.commit()
+    return out
+
+
+async def _voice_body(request: Request) -> bytes:
+    """The recording, refused as soon as it grows past ``voice.MAX_BYTES``."""
+    chunks: list[bytes] = []
+    size = 0
+    async for chunk in request.stream():
+        size += len(chunk)
+        if size > voice.MAX_BYTES:
+            raise HTTPException(status.HTTP_413_CONTENT_TOO_LARGE, "media_too_large")
+        chunks.append(chunk)
+    return b"".join(chunks)
+
+
+@router.post(
+    "/incidents/{incident_id}/command/voice",
+    response_model=s.VoiceOut,
+    openapi_extra={
+        "requestBody": {
+            "required": True,
+            "content": {t: {"schema": {"type": "string", "format": "binary"}} for t in sorted(voice.VOICE_TYPES)},
+        }
+    },
+)
+async def post_command_voice(
+    principal: StaffReader,
+    session: Session,
+    request: Request,
+    incident_id: uuid.UUID,
+    lang: Annotated[Literal["ar", "fr"], Query()] = "ar",
+) -> s.VoiceOut:
+    """A voice message as the raw request body (AI5b): transcribed locally, the audio deleted, the text returned for
+    the commander to correct; nothing is sent until the commander sends the text."""
+    incident = await incidents.get_in_scope(session, principal, incident_id)
+    await commander_on(session)
+    command.require_commander(principal)
+    await enforce(f"command:{opaque(principal.subject)}", get_settings().assistant_per_hour, ASSISTANT_WINDOW_S)
+    content_type = (request.headers.get("content-type") or "").split(";")[0].strip().lower()
+    out = await voice.transcribe(
+        session, principal, incident, get_ai_client(), get_store(), await _voice_body(request), content_type, lang
+    )
     await session.commit()
     return out

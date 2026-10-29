@@ -51,14 +51,16 @@ class FakeAi:
         self.vector = VECTOR
         self.transcript = {"text": "Il y a le feu au deuxième étage.", "language": "fr"}
         self.on_extract: Callable[[], Any] | None = None
+        self.transcribe_options: dict[str, str | None] = {}
 
     def _check(self, name: str, arg: Any) -> None:
         self.calls.append((name, arg))
         if name in self.fail:
             raise self.fail[name]
 
-    async def transcribe(self, url: str) -> dict[str, Any]:
+    async def transcribe(self, url: str, language: str | None = None, prompt: str | None = None) -> dict[str, Any]:
         self._check("transcribe", url)
+        self.transcribe_options = {"language": language, "prompt": prompt}
         return {
             **self.transcript,
             "language_probability": 0.97,

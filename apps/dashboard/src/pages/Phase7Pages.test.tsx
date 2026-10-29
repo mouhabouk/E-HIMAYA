@@ -679,13 +679,108 @@ describe("IncidentDetailPage commander's assistant (AI5a)", () => {
     vi.mocked(api.commandBoard).mockResolvedValue(makeCommandBoard({ proposals: [order] }));
     fireEvent.change(within(p).getByLabelText("Ordre ou question"), { target: { value: "ابعثولي زوز كميونات طفي" } });
     fireEvent.click(within(p).getByRole("button", { name: "Envoyer" }));
-    await waitFor(() => expect(api.commandText).toHaveBeenCalledWith("i-1", "ابعثولي زوز كميونات طفي", "fr"));
+    await waitFor(() => expect(api.commandText).toHaveBeenCalledWith("i-1", "ابعثولي زوز كميونات طفي", "fr", null));
     expect(await within(p).findByText(/le lexique seul a lu l’ordre/)).toBeInTheDocument();
     expect(within(p).getByText("Votre ordre est ajouté en tête de liste.")).toBeInTheDocument();
     const card = await within(p).findByRole("listitem", { name: "Engager 2 fourgons" });
     expect(within(card).getByText("Votre ordre")).toBeInTheDocument();
     expect(within(card).getByText("ابعثولي زوز كميونات طفي")).toBeInTheDocument();
     expect(within(card).getByText(/^Envoi · 2 × /)).toBeInTheDocument();
+  });
+
+  it("lets whoever is not the commander see the board without deciding (AI5b)", async () => {
+    setup({ commandBoard: vi.fn(() => Promise.resolve(makeCommandBoard({ can_decide: false }))) });
+    const p = await panel();
+    expect(await within(p).findByRole("listitem", { name: "Engager 1 camion-citerne d'eau" })).toBeInTheDocument();
+    expect(within(p).getByText(/la décision revient au chef de salle/)).toBeInTheDocument();
+    expect(within(p).queryByLabelText("Ordre ou question")).not.toBeInTheDocument();
+    expect(within(p).queryByRole("button", { name: "Adopter" })).not.toBeInTheDocument();
+  });
+
+  describe("voice message (AI5b)", () => {
+    class FakeRecorder {
+      state: "inactive" | "recording" = "inactive";
+      mimeType = "audio/webm";
+      ondataavailable: ((e: { data: Blob }) => void) | null = null;
+      onstop: (() => void) | null = null;
+      readonly stream: MediaStream;
+      constructor(stream: MediaStream) {
+        this.stream = stream;
+      }
+      start() {
+        this.state = "recording";
+      }
+      stop() {
+        this.state = "inactive";
+        this.ondataavailable?.({ data: new Blob(["voice"], { type: "audio/webm" }) });
+        this.onstop?.();
+      }
+    }
+    const track = { stop: vi.fn() };
+    const getUserMedia = vi.fn(() => Promise.resolve({ getTracks: () => [track] }));
+
+    beforeEach(() => {
+      vi.stubGlobal("MediaRecorder", FakeRecorder);
+      Object.defineProperty(navigator, "mediaDevices", {
+        configurable: true,
+        value: { getUserMedia },
+      });
+    });
+    afterEach(() => {
+      vi.unstubAllGlobals();
+      Reflect.deleteProperty(navigator, "mediaDevices");
+    });
+
+    it("records, puts the transcript in the box to correct, and sends it with the message id", async () => {
+      const { api } = setup({
+        commandVoice: vi.fn(() =>
+          Promise.resolve({
+            voice_id: "v-1",
+            text: "envoyez deux fourgon",
+            language: "fr",
+            model: "whisper",
+            duration_s: 3,
+          }),
+        ),
+        commandText: vi.fn(() =>
+          Promise.resolve({
+            reading: { intent: "order" as const, action: "dispatch" as const, reader: "rules" as const },
+            fallback: false,
+            card: makeCommandCard({ id: "cd-9", origin: "order" }),
+            answer: null,
+          }),
+        ),
+      });
+      const p = await panel();
+      fireEvent.click(await within(p).findByRole("button", { name: "Message vocal" }));
+      const stop = await within(p).findByRole("button", { name: "Arrêter (60 s)" });
+      expect(stop).toHaveAttribute("aria-pressed", "true");
+      fireEvent.click(stop);
+      await waitFor(() => expect(api.commandVoice).toHaveBeenCalledWith("i-1", expect.any(Blob), "fr"));
+      expect(track.stop).toHaveBeenCalled();
+      const box = within(p).getByLabelText("Ordre ou question");
+      await waitFor(() => expect(box).toHaveValue("envoyez deux fourgon"));
+      expect(within(p).getByText(/corrigez si besoin puis envoyez/)).toBeInTheDocument();
+      expect(api.commandText).not.toHaveBeenCalled();
+      fireEvent.change(box, { target: { value: "envoyez deux fourgons" } });
+      fireEvent.click(within(p).getByRole("button", { name: "Envoyer" }));
+      await waitFor(() => expect(api.commandText).toHaveBeenCalledWith("i-1", "envoyez deux fourgons", "fr", "v-1"));
+      await waitFor(() => expect(within(p).queryByText(/corrigez si besoin/)).not.toBeInTheDocument());
+    });
+
+    it("says when the microphone is refused, and when transcription is down", async () => {
+      const { api } = setup({
+        commandVoice: vi.fn(() => Promise.reject(new ApiError(503, "transcription_unavailable"))),
+      });
+      const p = await panel();
+      getUserMedia.mockRejectedValueOnce(new Error("denied"));
+      fireEvent.click(await within(p).findByRole("button", { name: "Message vocal" }));
+      expect(await within(p).findByText("Le navigateur n'a pas autorisé le microphone.")).toBeInTheDocument();
+      fireEvent.click(within(p).getByRole("button", { name: "Message vocal" }));
+      fireEvent.click(await within(p).findByRole("button", { name: "Arrêter (60 s)" }));
+      await waitFor(() => expect(api.commandVoice).toHaveBeenCalled());
+      expect(await within(p).findByText(/La transcription n'est pas disponible/)).toBeInTheDocument();
+    });
   });
 
   it("answers a question from cited sources", async () => {

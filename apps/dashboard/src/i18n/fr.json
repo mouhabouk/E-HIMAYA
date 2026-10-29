@@ -548,7 +548,15 @@
     "training_in_progress": "Cet entraînement est en cours ou en attente. Attendez sa fin avant de le relancer.",
     "report_not_final": "La lecture ne se confirme qu'une fois le signalement clôturé ou rejeté.",
     "report_without_text": "Ce signalement n'a ni texte ni transcription : rien à ajouter à l'entraînement.",
-    "not_waiting_trainer": "Cet entraînement n'attend pas de résultats de l'entraîneur."
+    "not_waiting_trainer": "Cet entraînement n'attend pas de résultats de l'entraîneur.",
+    "commander_only": "La décision revient au chef de salle et à la salle centrale, ou à qui l'administrateur a donné le bouton.",
+    "transcription_unavailable": "La transcription n'est pas disponible : tapez l'ordre ou réessayez dans un instant.",
+    "audio_undecodable": "L'enregistrement est illisible, recommencez.",
+    "nothing_heard": "Aucune parole entendue dans l'enregistrement.",
+    "audio_too_long": "L'enregistrement dépasse une minute.",
+    "media_too_large": "Fichier trop volumineux.",
+    "voice_not_found": "Ce message vocal est introuvable ou n'est pas le vôtre.",
+    "voice_already_sent": "Ce message vocal a déjà été envoyé."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -7274,6 +7282,14 @@
       "none": "Pas encore d’antécédent pour cette proposition dans des incidents similaires.",
       "line": "Dans des incidents similaires : adoptée {{adopted}} fois sur {{decided}} (dont {{modified}} modifiée(s)), rejetée {{rejected}} fois.",
       "reason": "Motif de rejet le plus fréquent : {{reason}}."
+    },
+    "readOnly": "Vous voyez les propositions et leur mémoire ; la décision revient au chef de salle et à la salle centrale, ou à qui l'administrateur a donné le bouton « Assistant du commandant ».",
+    "voice": {
+      "record": "Message vocal",
+      "stop": "Arrêter ({{seconds}} s)",
+      "transcribing": "Transcription…",
+      "refused": "Le navigateur n'a pas autorisé le microphone.",
+      "correct": "Voici ce qui a été entendu : corrigez si besoin puis envoyez. La correction améliore la transcription."
     }
   },
   "moderation": {

@@ -3,10 +3,11 @@ from datetime import datetime
 from typing import Any
 
 from pgvector.sqlalchemy import Vector
-from sqlalchemy import Boolean, Computed, DateTime, ForeignKey, SmallInteger, Text, func
+from sqlalchemy import Boolean, Computed, DateTime, Float, ForeignKey, Integer, SmallInteger, Text, func
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB, TSVECTOR, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
+from app.core.crypto import EncryptedText
 from app.core.db import Base
 
 
@@ -72,3 +73,27 @@ class CommandDecision(Base):
     decided_by_name: Mapped[str | None] = mapped_column(Text)
     decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     outcome: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+
+
+class CommandVoice(Base):
+    """A commander's voice message (AI5b, migration 0078): the transcript, then the text the commander corrected.
+
+    The audio itself is deleted once transcribed."""
+
+    __tablename__ = "command_voice"
+    __table_args__ = {"schema": "decision"}
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
+    incident_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ops.incident.id", ondelete="CASCADE")
+    )
+    lang: Mapped[str | None] = mapped_column(Text)
+    model: Mapped[str] = mapped_column(Text)
+    duration_s: Mapped[float] = mapped_column(Float)
+    transcript: Mapped[str] = mapped_column("transcript_enc", EncryptedText("decision.command_voice.transcript"))
+    corrected: Mapped[str | None] = mapped_column("corrected_enc", EncryptedText("decision.command_voice.corrected"))
+    words: Mapped[int | None] = mapped_column(Integer)
+    word_errors: Mapped[int | None] = mapped_column(Integer)
+    created_by: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

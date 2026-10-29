@@ -180,11 +180,26 @@ class CommandBoard(BaseModel):
     decided: list[CommandCard]
     simulated: bool = False
     notice: Bilingual
+    # The commander (AI5b): the regional room manager, the central room, or whoever the system administrator granted
+    # the button to. Others see the board and its memory, without deciding.
+    can_decide: bool = True
 
 
 class CommandTextIn(BaseModel):
     text: Annotated[Text, StringConstraints(min_length=3, max_length=1000)]
     lang: Literal["ar", "fr"] = "ar"
+    # The voice message this text was transcribed from and corrected (AI5b): kept to measure and learn.
+    voice_id: uuid.UUID | None = None
+
+
+class VoiceOut(BaseModel):
+    """A transcribed voice message, for the commander to correct before sending (AI5b)."""
+
+    voice_id: uuid.UUID
+    text: str
+    language: str | None
+    model: str
+    duration_s: float
 
 
 class CommandTextOut(BaseModel):

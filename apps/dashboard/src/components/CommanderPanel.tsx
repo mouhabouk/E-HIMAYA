@@ -7,7 +7,7 @@
  * the classic recommendations panel shows instead.
  */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useId, useState, type SyntheticEvent } from "react";
+import { useEffect, useId, useRef, useState, type SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { useServices } from "../context/services";
@@ -26,6 +26,7 @@ import { useFormat, useLanguage } from "../lib/hooks";
 import { p7Keys } from "../lib/phase7Api";
 import type { IncidentDetail } from "../lib/types";
 import { ErrorBox, Loading } from "./Feedback";
+import { Icon } from "./Icon";
 import {
   AdvisoryNote,
   Inputs,
@@ -240,7 +241,8 @@ function ProposalCard({
   number: number;
   onAssign: OnAssign;
   onRoute: OnRoute;
-  onDecided: (decided: CommandCard) => void;
+  /** Left out for whoever sees the board without deciding (AI5b). */
+  onDecided?: (decided: CommandCard) => void;
 }) {
   const { t } = useTranslation();
   const lang = useLanguage();
@@ -278,7 +280,7 @@ function ProposalCard({
       <Inputs inputs={card.inputs} label={t("decision.inputs")} />
       <p className="muted">{t("commander.opensFlows")}</p>
       <RecommendationActions actions={card.actions} onAssign={onAssign} onRoute={onRoute} />
-      <DecisionForm card={card} onDone={onDecided} />
+      {onDecided && <DecisionForm card={card} onDone={onDecided} />}
     </li>
   );
 }
@@ -350,18 +352,131 @@ function Answer({ result }: { result: CommandTextResult }) {
   );
 }
 
+/** The longest voice message, in seconds (the API refuses longer ones). */
+export const VOICE_MAX_S = 60;
+
+function canRecord(): boolean {
+  return typeof MediaRecorder !== "undefined" && typeof navigator !== "undefined" && !!navigator.mediaDevices;
+}
+
+/**
+ * AI5b: the microphone of the command box. One press starts, a second press stops (or the minute does); the recording
+ * is transcribed locally and its text put in the box to be corrected. Nothing is sent from here.
+ */
+function VoiceButton({
+  incident,
+  disabled,
+  onText,
+}: {
+  incident: IncidentDetail;
+  disabled: boolean;
+  onText: (text: string, voiceId: string) => void;
+}) {
+  const { t } = useTranslation();
+  const { api } = useServices();
+  const lang = useLanguage();
+  const recorder = useRef<MediaRecorder | null>(null);
+  const timer = useRef<number | null>(null);
+  const [seconds, setSeconds] = useState(0);
+  const [recording, setRecording] = useState(false);
+  const [refused, setRefused] = useState(false);
+  const transcribe = useMutation({
+    mutationFn: (audio: Blob) => api.commandVoice(incident.id, audio, lang),
+    onSuccess: (result) => onText(result.text, result.voice_id),
+  });
+  const stopTimer = () => {
+    if (timer.current !== null) window.clearInterval(timer.current);
+    timer.current = null;
+  };
+  useEffect(
+    () => () => {
+      stopTimer();
+      recorder.current?.stream.getTracks().forEach((track) => track.stop());
+    },
+    [],
+  );
+  const stop = () => {
+    stopTimer();
+    if (recorder.current?.state === "recording") recorder.current.stop();
+  };
+  // The minute is up: the recording stops as if pressed.
+  useEffect(() => {
+    if (!recording || seconds < VOICE_MAX_S) return;
+    if (timer.current !== null) window.clearInterval(timer.current);
+    timer.current = null;
+    if (recorder.current?.state === "recording") recorder.current.stop();
+  }, [recording, seconds]);
+  const start = async () => {
+    setRefused(false);
+    transcribe.reset();
+    let stream: MediaStream;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch {
+      setRefused(true);
+      return;
+    }
+    const chunks: Blob[] = [];
+    const rec = new MediaRecorder(stream);
+    rec.ondataavailable = (e) => {
+      if (e.data.size > 0) chunks.push(e.data);
+    };
+    rec.onstop = () => {
+      stream.getTracks().forEach((track) => track.stop());
+      recorder.current = null;
+      setRecording(false);
+      setSeconds(0);
+      const audio = new Blob(chunks, { type: rec.mimeType || "audio/webm" });
+      if (audio.size > 0) transcribe.mutate(audio);
+    };
+    recorder.current = rec;
+    rec.start();
+    setRecording(true);
+    setSeconds(0);
+    timer.current = window.setInterval(() => setSeconds((s) => s + 1), 1000);
+  };
+  if (!canRecord()) return null;
+  return (
+    <>
+      <button
+        type="button"
+        className={`btn ${recording ? "btn--danger" : ""}`}
+        aria-pressed={recording}
+        disabled={disabled || transcribe.isPending}
+        onClick={() => (recording ? stop() : void start())}
+      >
+        <Icon name={recording ? "stop" : "mic"} size={18} />{" "}
+        {recording
+          ? t("commander.voice.stop", { seconds: VOICE_MAX_S - seconds })
+          : transcribe.isPending
+            ? t("commander.voice.transcribing")
+            : t("commander.voice.record")}
+      </button>
+      {refused && (
+        <p className="alert alert--warn" role="alert">
+          {t("commander.voice.refused")}
+        </p>
+      )}
+      <MutationError error={transcribe.error} />
+    </>
+  );
+}
+
 function CommandBox({ incident, onCard }: { incident: IncidentDetail; onCard: () => void }) {
   const { t } = useTranslation();
   const { api } = useServices();
   const lang = useLanguage();
   const base = useId();
   const [text, setText] = useState("");
+  // The voice message the text came from: sent with it, so the correction is measured and learnt from (AI5b).
+  const [voiceId, setVoiceId] = useState<string | null>(null);
   const [last, setLast] = useState<CommandTextResult | null>(null);
   const send = useMutation({
-    mutationFn: (value: string) => api.commandText(incident.id, value, lang),
+    mutationFn: (value: string) => api.commandText(incident.id, value, lang, voiceId),
     onSuccess: (result) => {
       setLast(result);
       setText("");
+      setVoiceId(null);
       if (result.card) onCard();
     },
   });
@@ -385,10 +500,20 @@ function CommandBox({ incident, onCard }: { incident: IncidentDetail; onCard: ()
           onChange={(e) => setText(e.target.value)}
         />
       </div>
+      {voiceId && <p className="muted">{t("commander.voice.correct")}</p>}
       <div className="actions">
         <button type="submit" className="btn btn--primary" disabled={send.isPending || text.trim().length < 3}>
           {send.isPending ? t("assistant.thinking") : t("commander.send")}
         </button>
+        <VoiceButton
+          incident={incident}
+          disabled={send.isPending}
+          onText={(heard, id) => {
+            setText(heard);
+            setVoiceId(id);
+            setLast(null);
+          }}
+        />
       </div>
       {unavailable ? (
         <p className="alert alert--warn" role="alert">
@@ -430,7 +555,11 @@ export function CommanderPanel({
     <section className="card commander" aria-labelledby={`${base}-title`}>
       <h2 id={`${base}-title`}>{t("commander.title")}</h2>
       <AdvisoryNote text={t("commander.advisory")} />
-      <CommandBox incident={incident} onCard={refresh} />
+      {board.data?.can_decide === false ? (
+        <p className="muted">{t("commander.readOnly")}</p>
+      ) : (
+        <CommandBox incident={incident} onCard={refresh} />
+      )}
       {board.isPending && <Loading />}
       {board.isError && <ErrorBox error={board.error} onRetry={() => void board.refetch()} />}
       {data && (
@@ -458,7 +587,7 @@ export function CommanderPanel({
                   number={i + 1}
                   onAssign={onAssign}
                   onRoute={onRoute}
-                  onDecided={refresh}
+                  onDecided={data.can_decide === false ? undefined : refresh}
                 />
               ))}
             </ol>

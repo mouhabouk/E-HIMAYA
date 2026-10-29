@@ -4,6 +4,7 @@ import type {
   CommandBoard,
   CommandCard,
   CommandTextResult,
+  CommandVoiceResult,
   DecideBody,
   FireForecastBody,
   ForecastRun,
@@ -105,11 +106,21 @@ export function phase7Api(api: ApiClient) {
     commandBoard: (incidentId: string, signal?: AbortSignal) =>
       api.request<CommandBoard>(`${incidentPath(incidentId)}/command`, { signal }),
 
-    /** A typed (or dictated) text in ar or fr: an English interface sends French. */
-    commandText: (incidentId: string, text: string, lang: Language) =>
+    /** A typed (or dictated) text in ar or fr: an English interface sends French. `voiceId`: the voice message the
+     * text was transcribed from and corrected (AI5b). */
+    commandText: (incidentId: string, text: string, lang: Language, voiceId?: string | null) =>
       api.request<CommandTextResult>(`${incidentPath(incidentId)}/command`, {
         method: "POST",
-        body: { text, lang: lang === "ar" ? "ar" : "fr" },
+        body: { text, lang: lang === "ar" ? "ar" : "fr", ...(voiceId ? { voice_id: voiceId } : {}) },
+      }),
+
+    /** A recorded voice message (AI5b): transcribed locally and returned for correction; nothing is sent yet. */
+    commandVoice: (incidentId: string, audio: Blob, lang: Language) =>
+      api.request<CommandVoiceResult>(`${incidentPath(incidentId)}/command/voice`, {
+        method: "POST",
+        query: { lang: lang === "ar" ? "ar" : "fr" },
+        rawBody: audio,
+        rawType: audio.type.split(";")[0] || "audio/webm",
       }),
 
     decideCommand: (decisionId: string, body: DecideBody) =>

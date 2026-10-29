@@ -28,9 +28,9 @@ from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_system_sessionmaker
-from app.core.security import Principal
+from app.core.security import Principal, Role
 from app.modules.audit import service as audit
-from app.modules.decision import assistant, context, domain, orders, recommendations
+from app.modules.decision import assistant, context, domain, orders, recommendations, voice
 from app.modules.decision import schemas as s
 from app.modules.decision.context import Situation
 from app.modules.decision.llm import LlmRejected, LlmUnavailable, get_llm
@@ -195,6 +195,18 @@ async def _rows(session: AsyncSession, incident_id: uuid.UUID) -> list[CommandDe
     )
 
 
+def may_command(principal: Principal) -> bool:
+    """The commander (Yamen, 2026-10-29): the regional operations manager and the central room. The system
+    administrator decides who else: a grant of the ``incidents.commander`` button lends the operations manager's role
+    on these routes (for instance to an operator of the room, to help choose the resources and the team size)."""
+    return Role.OPS_MANAGER in principal.roles or (principal.is_national and Role.OPERATOR in principal.roles)
+
+
+def require_commander(principal: Principal) -> None:
+    if not may_command(principal):
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "commander_only")
+
+
 async def board(session: AsyncSession, principal: Principal, incident: Incident) -> s.CommandBoard:
     situation = await context.gather(session, incident)
     advice = await recommendations.recommend(session, principal, situation)
@@ -243,6 +255,7 @@ async def board(session: AsyncSession, principal: Principal, incident: Incident)
         decided=[card(r, known.get(r.key)) for r in done],
         simulated=situation.simulated,
         notice=NOTICE,
+        can_decide=may_command(principal),
     )
 
 
@@ -347,6 +360,8 @@ async def order_item(
 async def command_text(
     session: AsyncSession, principal: Principal, incident: Incident, body: s.CommandTextIn
 ) -> s.CommandTextOut:
+    if body.voice_id is not None:
+        await voice.corrected(session, principal, incident, body.voice_id, body.text)
     llm = get_llm()
     fallback = False
     try:

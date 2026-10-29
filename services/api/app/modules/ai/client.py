@@ -20,7 +20,7 @@ class AiRejected(Exception):
 
 
 class AiClient(Protocol):
-    async def transcribe(self, url: str) -> dict[str, Any]: ...
+    async def transcribe(self, url: str, language: str | None = None, prompt: str | None = None) -> dict[str, Any]: ...
 
     async def translate(self, texts: list[str], source: str) -> dict[str, Any]: ...
 
@@ -51,8 +51,13 @@ class HttpAiClient:
         data: dict[str, Any] = response.json()
         return data
 
-    async def transcribe(self, url: str) -> dict[str, Any]:
-        return await self._post("/v1/transcribe", {"url": url})
+    async def transcribe(self, url: str, language: str | None = None, prompt: str | None = None) -> dict[str, Any]:
+        body: dict[str, Any] = {"url": url}
+        if language is not None:
+            body["language"] = language
+        if prompt is not None:
+            body["prompt"] = prompt
+        return await self._post("/v1/transcribe", body)
 
     async def translate(self, texts: list[str], source: str) -> dict[str, Any]:
         return await self._post("/v1/translate", {"texts": texts, "source": source})

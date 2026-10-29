@@ -666,6 +666,20 @@ erDiagram
         datetime decided_at
         jsonb outcome
     }
+    decision__command_voice {
+        uuid id PK
+        uuid incident_id FK
+        text lang
+        text model
+        float duration_s
+        blob transcript_enc
+        blob corrected_enc
+        integer words
+        integer word_errors
+        text created_by
+        datetime created_at
+        datetime sent_at
+    }
     decision__procedure_chunk {
         text id PK
         text procedure_id
@@ -685,6 +699,7 @@ erDiagram
         datetime indexed_at
     }
     ops__incident ||--o{ decision__command_decision : "incident_id"
+    ops__incident ||--o{ decision__command_voice : "incident_id"
 ```
 
 ## decision_window

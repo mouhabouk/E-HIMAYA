@@ -252,6 +252,7 @@ export function fakePhase7Api(): Phase7Api {
     // Off by default: the classic recommendations panel shows (tests of the commander's assistant switch it on).
     commandBoard: vi.fn(() => Promise.reject(new ApiError(409, "commander_off"))),
     commandText: vi.fn(),
+    commandVoice: vi.fn(),
     decideCommand: vi.fn(),
     sipCredentials: vi.fn(() => Promise.resolve(makeCredentials())),
     calls: vi.fn(() => Promise.resolve(empty)),

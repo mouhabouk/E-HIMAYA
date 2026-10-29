@@ -142,7 +142,7 @@ internal object store, the only URL prefix it accepts). All models run locally (
 
 | endpoint | body → answer |
 |---|---|
-| `POST /v1/transcribe` | `{"url", "language": null}` → `{"text", "language", "language_probability", "duration_s", "segments": [{start, end, text}], "model"}` |
+| `POST /v1/transcribe` | `{"url", "language": null, "prompt": null}` (`prompt`: vocabulary hint of the caller, ≤ 800 characters; null = the default Arabic hint) → `{"text", "language", "language_probability", "duration_s", "segments": [{start, end, text}], "model"}` |
 | `POST /v1/translate` | `{"texts": [...], "source": "fr"\|"en"}` → `{"texts": [...arabic], "model"}` |
 | `POST /v1/embed` | `{"texts": [...]}` → `{"vectors": [[768 floats]], "dim": 768, "model"}` |
 | `POST /v1/extract` | `{"text", "reported_category"}` → extraction (§2) + `"model"` |

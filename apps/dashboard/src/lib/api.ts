@@ -382,6 +382,15 @@ export const ERROR_CODES = [
   "already_decided",
   "invalid_action_index",
   "nothing_modified",
+  // AI5b: the commander and the voice messages.
+  "commander_only",
+  "transcription_unavailable",
+  "audio_undecodable",
+  "nothing_heard",
+  "audio_too_long",
+  "media_too_large",
+  "voice_not_found",
+  "voice_already_sent",
   // The training centre (docs/learning.md).
   "training_in_progress",
   "report_not_final",
@@ -476,6 +485,8 @@ export interface RequestOptions {
   body?: unknown;
   /** A file sent as the request body as it is (map layer imports); `body` is ignored. */
   rawBody?: Blob;
+  /** The type sent with `rawBody` (a recording, AI5b); `application/octet-stream` when left out. */
+  rawType?: string;
   signal?: AbortSignal;
   /** Skip the Authorization header (public endpoints). */
   anonymous?: boolean;
@@ -551,7 +562,7 @@ export function createApiClient(
     if (token && !options.anonymous) headers.Authorization = `Bearer ${token}`;
     let body: string | Blob | undefined;
     if (options.rawBody !== undefined) {
-      headers["Content-Type"] = "application/octet-stream";
+      headers["Content-Type"] = options.rawType ?? "application/octet-stream";
       body = options.rawBody;
     } else if (options.body !== undefined) {
       headers["Content-Type"] = "application/json";

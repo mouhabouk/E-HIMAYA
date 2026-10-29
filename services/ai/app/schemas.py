@@ -17,6 +17,8 @@ class TranscribeIn(BaseModel):
     url: str = Field(max_length=4096)
     # Forced language; None = detected among ar, fr, en.
     language: Literal["ar", "fr", "en"] | None = None
+    # Vocabulary hint of the caller (the commander's orders, AI5b); None = the default hint for Arabic.
+    prompt: str | None = Field(default=None, max_length=800)
 
 
 class Segment(BaseModel):
