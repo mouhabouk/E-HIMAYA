@@ -1,0 +1,27 @@
+@startuml
+!include style.iuml
+title Séquence : drone en lecture seule, zones et alertes (L5b) [SIM]
+autonumber
+participant "Drone\n(piloté par le pilote)" as DR
+participant "MediaMTX" as MTX
+participant "Lecteur KLV" as KLV
+participant "API" as API
+database "PostgreSQL" as DB
+actor "Agent de salle" as OP
+OP -> API : POST /staff/drones (enregistrer)
+OP -> API : POST /staff/drones/zones\n(zone de travail, zone interdite, marge)
+DR -> MTX : vidéo + KLV (MPEG-TS)
+KLV -> MTX : lecture SRT interne
+KLV -> KLV : MISB ST 0601 : position,\naltitude, cap, caméra, batterie
+KLV -> API : POST /internal/drones/telemetry
+API -> DB : position
+API -> API : hors zones de travail ? proche ou dans\nune zone interdite ? batterie < 25 % ?
+API -> DB : alerte (pas de répétition avant 5 min)
+API --> OP : alerte sur la page et la carte
+OP -> API : POST /staff/drones/alerts/{id}/ack
+OP -> API : GET /staff/drones/{id}/track (30 min)
+note over DR, API
+  Aucune route n'envoie de commande au drone.
+  Un test permanent échoue si une telle route apparaît.
+end note
+@enduml

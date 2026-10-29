@@ -546,8 +546,11 @@ export function SensorsPage() {
                   <tr key={s.id} aria-selected={selected === s.id}>
                     <th scope="row" dir="auto">
                       {s.name} {s.simulated && <SimTag />}
-                      <div className="code muted" dir="ltr">
-                        {s.code} · {s.provider}
+                      <div className="muted">
+                        <span className="code" dir="ltr">
+                          {s.code}
+                        </span>
+                        {s.provider && <> · <span dir="auto">{s.provider}</span></>}
                       </div>
                     </th>
                     <td>{t(`sensors.kind.${s.kind}`)}</td>
