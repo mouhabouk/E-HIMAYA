@@ -60,7 +60,9 @@ def test_the_window_is_the_days_still_ahead() -> None:
     assert suggest.window(start, start + timedelta(days=6), date(2026, 11, 3)) == []
 
 
-async def test_suggestions_accepted_or_set_aside(client: httpx.AsyncClient, staff: Staff, session: AsyncSession) -> None:
+async def test_suggestions_accepted_or_set_aside(
+    client: httpx.AsyncClient, staff: Staff, session: AsyncSession
+) -> None:
     room = staff(["operator"], gouvernorat=GABES)
     monday = future_monday()
     hot, wet = monday + timedelta(days=1), monday + timedelta(days=3)
