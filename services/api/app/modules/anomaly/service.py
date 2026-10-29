@@ -217,10 +217,10 @@ async def _completion(session: AsyncSession, today: date, codes: list[int]) -> l
             "count(*) FILTER (WHERE i.status = 'done' OR (i.status = 'planned' AND NOT i.status_manual "
             "AND i.starts_at IS NOT NULL AND i.on_date < CAST(:today AS date))) "
             "FROM sched.item i JOIN sched.period p ON p.id = i.period_id "
-            "WHERE p.status = 'approved' AND i.on_date <= CAST(:today AS date) AND i.on_date > CAST(:today AS date) - :days"
+            "WHERE p.status = 'approved' AND i.on_date <= CAST(:today AS date) AND i.on_date > CAST(:since AS date)"
             f"{_scope(codes, 'i.gouvernorat_code')} GROUP BY 1, 2"
         ),
-        {"today": today, "days": 7 * (max(SEASON) + 1), "codes": codes},
+        {"today": today, "since": today - timedelta(days=7 * (max(SEASON) + 1)), "codes": codes},
     )
     series: dict[int, dict[int, tuple[float, int]]] = defaultdict(dict)
     for g, b, due, done in rows:

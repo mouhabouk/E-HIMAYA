@@ -35,6 +35,7 @@ import { SCHEDULE_OPTIONS, SCHEDULE_PROGRESS, SCHEDULE_SETTINGS, SCHEDULE_SLOT, 
 import { DIRECTIVE_ALL_DETAIL, DISPATCH_PAGE, HAZARDS, PLAN_DETAIL, PLANS, REVISIONS, SEARCH } from "../src/test/registerData";
 import { APPROVED as CHECKLIST_APPROVED, REVIEW as CHECKLIST_REVIEW } from "../src/test/checklistFixtures";
 import { JENDOUBA_AXIS, NABEUL_AXIS, NABEUL_DETAIL, overview, REQUEST, SOUSSE_AXIS, SUGGESTIONS } from "../src/test/crisisData";
+import { CARDS as MODEL_CARDS } from "../src/test/modelCardsData";
 import { API, baseMock, commonAnswer, json, signIn } from "./phase7Helpers";
 
 const ROLES = ["operator", "ops_manager", "central_committee", "security_admin", "content_editor", "org_auditor"];
@@ -473,6 +474,26 @@ test.describe("accessibility of the plan tasks (ar)", () => {
         await expect(page.locator("main .checklist-task").first()).toBeVisible();
         await scan(page, `/axes/ax-nabeul tasks ${state} ${theme}`);
       }
+      expect(fence.unexpected).toEqual([]);
+    });
+  }
+});
+
+// L5c (§4.1 and §4.2): the model cards, with their measures, small samples and the committee's form, in both modes.
+test.describe("accessibility of the model cards (ar)", () => {
+  for (const theme of ["light", "dark"] as const) {
+    test(`cards and decision form, ${theme}, have no serious or critical violation`, async ({ page }) => {
+      await signIn(page, ROLES, "Salma Ben Ali");
+      await page.addInitScript((t) => {
+        window.localStorage.setItem("ehimaya.lang", "ar");
+        window.localStorage.setItem("ehimaya.theme", t);
+      }, theme);
+      const fence = await baseMock(page);
+      await mockApi(page);
+      await page.route(`${API}/api/v1/staff/ai/models**`, (route) => json(route, MODEL_CARDS));
+      await page.goto("/settings/ai/models");
+      await expect(page.locator("main .model-card").first()).toBeVisible();
+      await scan(page, `/settings/ai/models ${theme}`);
       expect(fence.unexpected).toEqual([]);
     });
   }

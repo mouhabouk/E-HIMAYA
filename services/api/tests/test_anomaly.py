@@ -91,3 +91,35 @@ async def test_the_alert_centre_and_the_switch(client: httpx.AsyncClient, staff:
         assert (await client.get("/api/v1/staff/window/now", headers=centre)).json()["anomalies"] is None
     finally:
         await client.put(AI_SETTINGS, json=settings, headers=committee)
+
+
+async def test_completion_out_of_habit() -> None:
+    now = datetime(secrets.choice(range(2400, 2900)), 3, 20, 18, tzinfo=UTC)
+    today = now.date()
+    async with get_system_sessionmaker()() as s, s.begin():
+        # Nine weeks of approved programmes: everything done, then three in ten this week.
+        for b in range(9):
+            start = today - timedelta(days=7 * b + 6)
+            period = await s.scalar(
+                text(
+                    "INSERT INTO sched.period (gouvernorat_code, span, starts_on, ends_on, status) "
+                    "VALUES (:g, 'week', :s, :e, 'approved') RETURNING id"
+                ),
+                {"g": KEF, "s": start, "e": start + timedelta(days=6)},
+            )
+            for n in range(10):
+                state = "done" if b > 0 or n < 3 else "not_done"
+                await s.execute(
+                    text(
+                        "INSERT INTO sched.item (period_id, gouvernorat_code, activity, title, on_date, status, "
+                        "status_manual, status_reason) VALUES (:p, :g, 'patrol', '[SIM] دورية', :d, :st, true, :r)"
+                    ),
+                    {"p": period, "g": KEF, "d": start + timedelta(days=n % 7), "st": state, "r": "[SIM] سبب"},
+                )
+    async with get_system_sessionmaker()() as s:
+        found = await service.detect(s, now=now, codes=[KEF])
+        await s.commit()
+        explained = await service.explain(s, found, "ar")
+    completion = next(a for a in found if a.indicator == "completion")
+    assert completion.value == 0.3 and completion.mean == 1 and completion.baseline == "recent"
+    assert "30 %" in next(e for e in explained if e["indicator"] == "completion")["text"]
