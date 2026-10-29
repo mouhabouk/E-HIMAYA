@@ -359,6 +359,19 @@ export const ERROR_CODES = [
   "outside_local_network",
   "profile_not_found",
   "vehicle_not_in_unit",
+  // L5 (AI2): the task list read from an intervention plan.
+  "plan_reading_off",
+  "plan_not_offered",
+  "checklist_approved",
+  "reading_in_progress",
+  "checklist_not_in_review",
+  "task_not_found",
+  "task_required",
+  "too_many_tasks",
+  "tasks_not_reviewed",
+  "checklist_empty",
+  "checklist_not_approved",
+  "task_deleted",
 ] as const;
 export type ErrorCode = (typeof ERROR_CODES)[number];
 

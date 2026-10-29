@@ -366,6 +366,51 @@ erDiagram
         datetime detached_at
         text detach_reason
     }
+    crisis__checklist {
+        uuid id PK
+        uuid axis_id FK
+        uuid exercise_id FK
+        uuid document_id FK
+        text file_sha256
+        text state
+        text error
+        smallint attempts
+        datetime next_attempt_at
+        datetime lease_until
+        text model
+        smallint pages
+        smallint pages_read
+        text requested_by
+        text requested_by_name
+        datetime requested_at
+        datetime read_at
+        text approved_by
+        text approved_by_name
+        datetime approved_at
+        datetime updated_at
+        integer version
+    }
+    crisis__checklist_task {
+        uuid id PK
+        uuid checklist_id FK
+        smallint position
+        text action
+        text owner
+        text resource
+        smallint page
+        text quote
+        boolean quote_found
+        text origin
+        text review
+        jsonb suggested
+        text status
+        text note
+        text status_by_name
+        datetime status_at
+        text reviewed_by_name
+        datetime reviewed_at
+        datetime created_at
+    }
     crisis__counter {
         integer year PK
         integer last
@@ -484,6 +529,7 @@ erDiagram
     }
     crisis__axis ||--o{ crisis__axis : "parent_id"
     crisis__axis ||--o{ crisis__axis_incident : "axis_id"
+    crisis__axis ||--o{ crisis__checklist : "axis_id"
     crisis__axis ||--o{ crisis__directive : "axis_id"
     crisis__axis ||--o{ crisis__directive_event : "axis_id"
     crisis__axis ||--o{ crisis__dismissal : "axis_id"
@@ -493,13 +539,16 @@ erDiagram
     crisis__axis ||--o{ crisis__request : "axis_id"
     crisis__axis ||--o{ crisis__shelter : "axis_id"
     crisis__axis ||--o{ crisis__sitrep : "axis_id"
+    crisis__checklist ||--o{ crisis__checklist_task : "checklist_id"
     crisis__directive ||--o{ crisis__directive : "overridden_by"
     crisis__directive ||--o{ crisis__directive_event : "directive_id"
+    drill__exercise ||--o{ crisis__checklist : "exercise_id"
     geo__gouvernorat ||--o{ crisis__axis : "gouvernorat_code"
     geo__gouvernorat ||--o{ crisis__request : "gouvernorat_code"
     ops__incident ||--o{ crisis__axis_incident : "incident_id"
     ops__incident ||--o{ crisis__dismissal : "incident_id"
     register__document ||--o{ crisis__axis : "plan_document_id"
+    register__document ||--o{ crisis__checklist : "document_id"
 ```
 
 ## decision

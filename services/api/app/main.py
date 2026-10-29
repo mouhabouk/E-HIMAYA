@@ -33,6 +33,8 @@ from app.modules.appinfo.router import router as appinfo_router
 from app.modules.audit.router import router as audit_router
 from app.modules.basemap.router import router as basemap_router
 from app.modules.basemap.router import tiles_router as basemap_tiles_router
+from app.modules.checklist.router import router as checklist_router
+from app.modules.checklist.service import checklist_forever
 from app.modules.coastal.router import public_router as coastal_router
 from app.modules.coastal.router import router as coastal_staff_router
 from app.modules.coastal.worker import coastal_forever
@@ -162,6 +164,7 @@ WORKER_LOOPS: list[tuple[str, WorkerLoop]] = [
     ("sla-escalation", sla_forever),
     ("breakglass", breakglass_forever),
     ("evidence", evidence_forever),
+    ("plan-checklist", checklist_forever),
 ]
 # Paths a worker-role process still serves: probes and the metrics scrape, never SOS traffic.
 _WORKER_PATHS = ("/health/", "/metrics")
@@ -332,6 +335,7 @@ def create_app() -> FastAPI:
         towers_internal_router,
         drones_router,
         drones_internal_router,
+        checklist_router,
     )
     for router in routers:
         app.include_router(router)

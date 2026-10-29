@@ -378,6 +378,10 @@ export interface AiSettings {
     semantic_radius_m: number;
     semantic_window_min: number;
   };
+  /** AI-01: each suggestion of the local model in the operations can be switched off (design-l5.md §2.3). */
+  assist?: {
+    plan_reading: boolean;
+  };
 }
 
 export const AI_CAPABILITIES = ["transcribe", "translate_fr", "translate_en", "embed", "extract"] as const;

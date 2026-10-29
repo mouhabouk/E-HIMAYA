@@ -6,6 +6,7 @@ from app.modules.analytics.models import Report as AnalyticsReport
 from app.modules.appinfo.models import AppRating
 from app.modules.audit.models import AuditLog
 from app.modules.basemap.models import Basemap
+from app.modules.checklist.models import Checklist, ChecklistTask
 from app.modules.coastal.models import Beach, BeachDay, CoastalAlert, CoastalSettings, MarineHour, Presence
 from app.modules.contact.models import ContactEvent, ContactRequest
 from app.modules.content.models import GuideItem, GuideTopic, Revision, SafetyTip
@@ -145,6 +146,8 @@ __all__ = [
     "CasualtyTransport",
     "Category",
     "Certificate",
+    "Checklist",
+    "ChecklistTask",
     "CoastalAlert",
     "CoastalSettings",
     "Conference",

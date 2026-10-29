@@ -947,6 +947,9 @@
       },
       "AiSettings": {
         "properties": {
+          "assist": {
+            "$ref": "#/components/schemas/AssistSettings"
+          },
           "grouping": {
             "$ref": "#/components/schemas/GroupingSettings"
           },
@@ -1650,37 +1653,6 @@
         "title": "ApprovalIn",
         "type": "object"
       },
-      "ApproveIn": {
-        "properties": {
-          "note": {
-            "anyOf": [
-              {
-                "maxLength": 500,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Note"
-          },
-          "resource_ids": {
-            "items": {
-              "format": "uuid",
-              "type": "string"
-            },
-            "maxItems": 50,
-            "minItems": 1,
-            "title": "Resource Ids",
-            "type": "array"
-          }
-        },
-        "required": [
-          "resource_ids"
-        ],
-        "title": "ApproveIn",
-        "type": "object"
-      },
       "Area-Output": {
         "properties": {
           "gouvernorat_codes": {
@@ -1944,6 +1916,18 @@
           "status"
         ],
         "title": "AssignmentStatusIn",
+        "type": "object"
+      },
+      "AssistSettings": {
+        "description": "AI-01: each suggestion of the local language model in the operations can be switched off here (design-l4.md\n§9, design-l5.md §2.3). Off, the button is refused and nothing queued is read; what was already suggested stays\nwith its label.",
+        "properties": {
+          "plan_reading": {
+            "default": true,
+            "title": "Plan Reading",
+            "type": "boolean"
+          }
+        },
+        "title": "AssistSettings",
         "type": "object"
       },
       "AssistantIn": {
@@ -5061,6 +5045,207 @@
         "title": "ChecklistItemOut",
         "type": "object"
       },
+      "ChecklistOut": {
+        "properties": {
+          "approved_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved At"
+          },
+          "approved_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved By Name"
+          },
+          "can_follow": {
+            "title": "Can Follow",
+            "type": "boolean"
+          },
+          "can_review": {
+            "title": "Can Review",
+            "type": "boolean"
+          },
+          "counts": {
+            "$ref": "#/components/schemas/app__modules__checklist__schemas__Counts"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "pages": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pages"
+          },
+          "pages_read": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pages Read"
+          },
+          "plan": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlanRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "plans": {
+            "items": {
+              "$ref": "#/components/schemas/PlanRef"
+            },
+            "title": "Plans",
+            "type": "array"
+          },
+          "read_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Read At"
+          },
+          "reading_available": {
+            "title": "Reading Available",
+            "type": "boolean"
+          },
+          "requested_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Requested At"
+          },
+          "requested_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Requested By Name"
+          },
+          "state": {
+            "anyOf": [
+              {
+                "enum": [
+                  "queued",
+                  "reading",
+                  "review",
+                  "approved",
+                  "failed"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "State"
+          },
+          "tasks": {
+            "items": {
+              "$ref": "#/components/schemas/TaskOut"
+            },
+            "title": "Tasks",
+            "type": "array"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "state",
+          "error",
+          "plan",
+          "plans",
+          "model",
+          "pages",
+          "pages_read",
+          "requested_by_name",
+          "requested_at",
+          "read_at",
+          "approved_by_name",
+          "approved_at",
+          "version",
+          "tasks",
+          "counts",
+          "reading_available",
+          "can_review",
+          "can_follow"
+        ],
+        "title": "ChecklistOut",
+        "type": "object"
+      },
       "CitizenDetail": {
         "properties": {
           "badges": {
@@ -6262,63 +6447,6 @@
           "gouvernorat_code"
         ],
         "title": "CounterView",
-        "type": "object"
-      },
-      "Counts": {
-        "properties": {
-          "cancelled": {
-            "default": 0,
-            "title": "Cancelled",
-            "type": "integer"
-          },
-          "done": {
-            "default": 0,
-            "title": "Done",
-            "type": "integer"
-          },
-          "due": {
-            "default": 0,
-            "title": "Due",
-            "type": "integer"
-          },
-          "in_progress": {
-            "default": 0,
-            "title": "In Progress",
-            "type": "integer"
-          },
-          "items": {
-            "default": 0,
-            "title": "Items",
-            "type": "integer"
-          },
-          "not_done": {
-            "default": 0,
-            "title": "Not Done",
-            "type": "integer"
-          },
-          "postponed": {
-            "default": 0,
-            "title": "Postponed",
-            "type": "integer"
-          },
-          "rate": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Rate"
-          },
-          "refused": {
-            "default": 0,
-            "title": "Refused",
-            "type": "integer"
-          }
-        },
-        "title": "Counts",
         "type": "object"
       },
       "CredentialsOut": {
@@ -14123,6 +14251,31 @@
           "simulated"
         ],
         "title": "FloodForecastOut",
+        "type": "object"
+      },
+      "FollowIn": {
+        "properties": {
+          "note": {
+            "default": "",
+            "maxLength": 500,
+            "title": "Note",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "todo",
+              "doing",
+              "done",
+              "not_applicable"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "FollowIn",
         "type": "object"
       },
       "FreeResource": {
@@ -24119,7 +24272,7 @@
             "title": "Centre Approved By Name"
           },
           "counts": {
-            "$ref": "#/components/schemas/Counts"
+            "$ref": "#/components/schemas/app__modules__schedule__schemas__Counts"
           },
           "created_by_name": {
             "anyOf": [
@@ -24408,6 +24561,29 @@
           "versions"
         ],
         "title": "PlanOut",
+        "type": "object"
+      },
+      "PlanRef": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "number": {
+            "title": "Number",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "title"
+        ],
+        "title": "PlanRef",
         "type": "object"
       },
       "PlansOut": {
@@ -25743,7 +25919,7 @@
             "type": "string"
           },
           "counts": {
-            "$ref": "#/components/schemas/Counts"
+            "$ref": "#/components/schemas/app__modules__schedule__schemas__Counts"
           },
           "gouvernorat_code": {
             "title": "Gouvernorat Code",
@@ -26461,6 +26637,31 @@
           "remaining"
         ],
         "title": "QuotaOut",
+        "type": "object"
+      },
+      "ReadIn": {
+        "properties": {
+          "document_id": {
+            "format": "uuid",
+            "title": "Document Id",
+            "type": "string"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version"
+          }
+        },
+        "required": [
+          "document_id"
+        ],
+        "title": "ReadIn",
         "type": "object"
       },
       "ReadinessIn": {
@@ -35573,6 +35774,195 @@
         "title": "TargetOut",
         "type": "object"
       },
+      "TaskIn": {
+        "properties": {
+          "action": {
+            "maxLength": 400,
+            "minLength": 3,
+            "title": "Action",
+            "type": "string"
+          },
+          "owner": {
+            "default": "",
+            "maxLength": 160,
+            "title": "Owner",
+            "type": "string"
+          },
+          "page": {
+            "anyOf": [
+              {
+                "maximum": 2000.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page"
+          },
+          "resource": {
+            "default": "",
+            "maxLength": 160,
+            "title": "Resource",
+            "type": "string"
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "title": "TaskIn",
+        "type": "object"
+      },
+      "TaskOut": {
+        "properties": {
+          "action": {
+            "title": "Action",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "note": {
+            "title": "Note",
+            "type": "string"
+          },
+          "origin": {
+            "enum": [
+              "ai",
+              "manual"
+            ],
+            "title": "Origin",
+            "type": "string"
+          },
+          "owner": {
+            "title": "Owner",
+            "type": "string"
+          },
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page"
+          },
+          "position": {
+            "title": "Position",
+            "type": "integer"
+          },
+          "quote": {
+            "title": "Quote",
+            "type": "string"
+          },
+          "quote_found": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quote Found"
+          },
+          "resource": {
+            "title": "Resource",
+            "type": "string"
+          },
+          "review": {
+            "enum": [
+              "suggested",
+              "accepted",
+              "edited",
+              "deleted",
+              "added"
+            ],
+            "title": "Review",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "todo",
+              "doing",
+              "done",
+              "not_applicable"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "status_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status At"
+          },
+          "status_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status By Name"
+          },
+          "suggested": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suggested"
+          }
+        },
+        "required": [
+          "id",
+          "position",
+          "action",
+          "owner",
+          "resource",
+          "page",
+          "quote",
+          "quote_found",
+          "origin",
+          "review",
+          "suggested",
+          "status",
+          "note",
+          "status_by_name",
+          "status_at"
+        ],
+        "title": "TaskOut",
+        "type": "object"
+      },
       "TeamMemberIn": {
         "properties": {
           "email": {
@@ -40655,6 +41045,88 @@
         "title": "SettingsOut",
         "type": "object"
       },
+      "app__modules__checklist__schemas__ApproveIn": {
+        "properties": {
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version"
+        ],
+        "title": "ApproveIn",
+        "type": "object"
+      },
+      "app__modules__checklist__schemas__Counts": {
+        "properties": {
+          "deleted": {
+            "default": 0,
+            "title": "Deleted",
+            "type": "integer"
+          },
+          "doing": {
+            "default": 0,
+            "title": "Doing",
+            "type": "integer"
+          },
+          "done": {
+            "default": 0,
+            "title": "Done",
+            "type": "integer"
+          },
+          "kept": {
+            "default": 0,
+            "title": "Kept",
+            "type": "integer"
+          },
+          "not_applicable": {
+            "default": 0,
+            "title": "Not Applicable",
+            "type": "integer"
+          },
+          "suggested": {
+            "default": 0,
+            "title": "Suggested",
+            "type": "integer"
+          },
+          "todo": {
+            "default": 0,
+            "title": "Todo",
+            "type": "integer"
+          }
+        },
+        "title": "Counts",
+        "type": "object"
+      },
+      "app__modules__checklist__schemas__ReviewIn": {
+        "properties": {
+          "decision": {
+            "enum": [
+              "accept",
+              "edit",
+              "delete"
+            ],
+            "title": "Decision",
+            "type": "string"
+          },
+          "task": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TaskIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "decision"
+        ],
+        "title": "ReviewIn",
+        "type": "object"
+      },
       "app__modules__coastal__schemas__AlertOut": {
         "properties": {
           "acked_at": {
@@ -41828,6 +42300,16 @@
             },
             "title": "Plan Followed",
             "type": "object"
+          },
+          "plan_tasks": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__checklist__schemas__Counts"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "resources": {
             "items": {
@@ -44098,6 +44580,37 @@
           "seen_at"
         ],
         "title": "AlertOut",
+        "type": "object"
+      },
+      "app__modules__ops__schemas__ApproveIn": {
+        "properties": {
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "resource_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 50,
+            "minItems": 1,
+            "title": "Resource Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "resource_ids"
+        ],
+        "title": "ApproveIn",
         "type": "object"
       },
       "app__modules__ops__schemas__AttachmentOut": {
@@ -48011,6 +48524,63 @@
           "location"
         ],
         "title": "PositionIn",
+        "type": "object"
+      },
+      "app__modules__schedule__schemas__Counts": {
+        "properties": {
+          "cancelled": {
+            "default": 0,
+            "title": "Cancelled",
+            "type": "integer"
+          },
+          "done": {
+            "default": 0,
+            "title": "Done",
+            "type": "integer"
+          },
+          "due": {
+            "default": 0,
+            "title": "Due",
+            "type": "integer"
+          },
+          "in_progress": {
+            "default": 0,
+            "title": "In Progress",
+            "type": "integer"
+          },
+          "items": {
+            "default": 0,
+            "title": "Items",
+            "type": "integer"
+          },
+          "not_done": {
+            "default": 0,
+            "title": "Not Done",
+            "type": "integer"
+          },
+          "postponed": {
+            "default": 0,
+            "title": "Postponed",
+            "type": "integer"
+          },
+          "rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rate"
+          },
+          "refused": {
+            "default": 0,
+            "title": "Refused",
+            "type": "integer"
+          }
+        },
+        "title": "Counts",
         "type": "object"
       },
       "app__modules__schedule__schemas__ItemIn": {
@@ -64139,6 +64709,371 @@
         ]
       }
     },
+    "/api/v1/staff/crisis/axes/{axis_id}/checklist": {
+      "get": {
+        "operationId": "get_checklist_api_v1_staff_crisis_axes__axis_id__checklist_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "axis_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Axis Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecklistOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Checklist",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
+    "/api/v1/staff/crisis/axes/{axis_id}/checklist/approve": {
+      "post": {
+        "operationId": "approve_api_v1_staff_crisis_axes__axis_id__checklist_approve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "axis_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Axis Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__checklist__schemas__ApproveIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecklistOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Approve",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
+    "/api/v1/staff/crisis/axes/{axis_id}/checklist/read": {
+      "post": {
+        "description": "The local model reads the plan in the background; the list shows \"reading\" until its suggestions arrive.",
+        "operationId": "read_plan_api_v1_staff_crisis_axes__axis_id__checklist_read_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "axis_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Axis Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReadIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecklistOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Read Plan",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
+    "/api/v1/staff/crisis/axes/{axis_id}/checklist/tasks": {
+      "post": {
+        "operationId": "add_task_api_v1_staff_crisis_axes__axis_id__checklist_tasks_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "axis_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Axis Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecklistOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Add Task",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
+    "/api/v1/staff/crisis/axes/{axis_id}/checklist/tasks/{task_id}/review": {
+      "post": {
+        "operationId": "review_task_api_v1_staff_crisis_axes__axis_id__checklist_tasks__task_id__review_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "axis_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Axis Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "task_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Task Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__checklist__schemas__ReviewIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecklistOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Review Task",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
+    "/api/v1/staff/crisis/axes/{axis_id}/checklist/tasks/{task_id}/status": {
+      "post": {
+        "operationId": "follow_task_api_v1_staff_crisis_axes__axis_id__checklist_tasks__task_id__status_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "axis_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Axis Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "task_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Task Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FollowIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecklistOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Follow Task",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
     "/api/v1/staff/crisis/axes/{axis_id}/close": {
       "post": {
         "operationId": "close_api_v1_staff_crisis_axes__axis_id__close_post",
@@ -65951,6 +66886,365 @@
           }
         ],
         "summary": "Decide",
+        "tags": [
+          "drill"
+        ]
+      }
+    },
+    "/api/v1/staff/drills/{exercise_id}/checklist": {
+      "get": {
+        "description": "The plan's tasks: the expected answer the rooms follow during the run and the evaluator compares with.",
+        "operationId": "get_checklist_api_v1_staff_drills__exercise_id__checklist_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "exercise_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Exercise Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecklistOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Checklist",
+        "tags": [
+          "drill"
+        ]
+      }
+    },
+    "/api/v1/staff/drills/{exercise_id}/checklist/approve": {
+      "post": {
+        "operationId": "approve_checklist_api_v1_staff_drills__exercise_id__checklist_approve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "exercise_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Exercise Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__checklist__schemas__ApproveIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecklistOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Approve Checklist",
+        "tags": [
+          "drill"
+        ]
+      }
+    },
+    "/api/v1/staff/drills/{exercise_id}/checklist/read": {
+      "post": {
+        "operationId": "read_checklist_api_v1_staff_drills__exercise_id__checklist_read_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "exercise_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Exercise Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReadIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecklistOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Read Checklist",
+        "tags": [
+          "drill"
+        ]
+      }
+    },
+    "/api/v1/staff/drills/{exercise_id}/checklist/tasks": {
+      "post": {
+        "operationId": "add_checklist_task_api_v1_staff_drills__exercise_id__checklist_tasks_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "exercise_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Exercise Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecklistOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Add Checklist Task",
+        "tags": [
+          "drill"
+        ]
+      }
+    },
+    "/api/v1/staff/drills/{exercise_id}/checklist/tasks/{task_id}/review": {
+      "post": {
+        "operationId": "review_checklist_task_api_v1_staff_drills__exercise_id__checklist_tasks__task_id__review_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "exercise_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Exercise Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "task_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Task Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__checklist__schemas__ReviewIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecklistOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Review Checklist Task",
+        "tags": [
+          "drill"
+        ]
+      }
+    },
+    "/api/v1/staff/drills/{exercise_id}/checklist/tasks/{task_id}/status": {
+      "post": {
+        "operationId": "follow_checklist_task_api_v1_staff_drills__exercise_id__checklist_tasks__task_id__status_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "exercise_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Exercise Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "task_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Task Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FollowIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecklistOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Follow Checklist Task",
         "tags": [
           "drill"
         ]
@@ -81126,7 +82420,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ApproveIn"
+                "$ref": "#/components/schemas/app__modules__ops__schemas__ApproveIn"
               }
             }
           },

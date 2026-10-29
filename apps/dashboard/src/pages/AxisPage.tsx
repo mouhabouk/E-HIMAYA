@@ -10,6 +10,7 @@ import { errorMessageKey } from "../lib/api";
 import { areaBounds, AXIS_LEVELS, crisisKeys, hoursUntil, type Axis, type AxisDetail } from "../lib/crisis";
 import { DEFAULT_QUERY, registerKeys } from "../lib/register";
 import { DocumentRefs } from "../components/RegisterBits";
+import { PlanChecklist } from "../components/PlanChecklist";
 import { SearchTab } from "../components/InventorySearch";
 import { inventoryKeys } from "../lib/inventory";
 import { displayName, isSimulated, simText } from "../lib/crisisText";
@@ -18,7 +19,7 @@ import { initialBoundsFor } from "../lib/mapStyle";
 
 const CommandMap = lazy(() => import("../components/crisis/CommandMap").then((m) => ({ default: m.CommandMap })));
 
-type Tab = "decisions" | "documents" | "sitreps" | "timeline" | "resources";
+type Tab = "decisions" | "tasks" | "documents" | "sitreps" | "timeline" | "resources";
 
 function useInvalidate() {
   const qc = useQueryClient();
@@ -483,7 +484,7 @@ export function AxisPage() {
 
       <section className="ops-bottom" aria-label={t("crisis.command.follow")}>
         <div role="tablist" className="ops-tabs" aria-label={t("crisis.command.follow")}>
-          {(["decisions", "documents", "sitreps", "timeline", "resources"] as const).map((k) => (
+          {(["decisions", "tasks", "documents", "sitreps", "timeline", "resources"] as const).map((k) => (
             <button key={k} type="button" role="tab" aria-selected={tab === k} className="ops-tab" onClick={() => setTab(k)}>
               {t(`crisis.command.tab.${k}`)}
             </button>
@@ -506,6 +507,7 @@ export function AxisPage() {
             ) : (
               <DocumentRefs items={d.documents ?? []} />
             ))}
+          {tab === "tasks" && <PlanChecklist owner={{ kind: "axis", id: a.id }} />}
           {tab === "sitreps" && <Sitreps d={d} />}
           {tab === "resources" && <AreaResources axis={a} />}
           {tab === "timeline" && (

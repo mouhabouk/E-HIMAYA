@@ -10,6 +10,7 @@ import { SimBadge } from "../components/crisis/CrisisBits";
 import { DecisionPill, DRILL_HAZARDS, DrillStatusPill, Needs } from "../components/DrillBits";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { PageTitle } from "../components/PageTitle";
+import { PlanChecklist } from "../components/PlanChecklist";
 import { ReasonField } from "../components/Phase9Bits";
 import { Stepper } from "../components/Stepper";
 import { useServices } from "../context/services";
@@ -35,7 +36,7 @@ import { useFormat, useGouvernorats } from "../lib/hooks";
 import { reasonValid } from "../lib/phase9";
 import { simText } from "../lib/crisisText";
 
-type Tab = "scenario" | "run" | "evaluation" | "report";
+type Tab = "scenario" | "plan" | "run" | "evaluation" | "report";
 
 function useDrillMutation<A>(id: string, fn: (a: A) => Promise<unknown>, onDone?: () => void) {
   const qc = useQueryClient();
@@ -781,6 +782,18 @@ function ReportTab({ drill }: { drill: Drill }) {
           <p className="kpi-tile__label">{t("drill.report.score")}</p>
           </div>
         </li>
+        {r.plan_tasks && (
+          <li className="kpi-tile tone-purple">
+            <div>
+            <p className="kpi-tile__value">
+              <bdi dir="ltr">
+                {fmt.number(r.plan_tasks.done)}/{fmt.number(r.plan_tasks.kept)}
+              </bdi>
+            </p>
+            <p className="kpi-tile__label">{t("drill.report.planTasks")}</p>
+            </div>
+          </li>
+        )}
         <li className="kpi-tile tone-red">
           <div>
           <p className="kpi-tile__value">
@@ -942,6 +955,7 @@ export function DrillPage() {
   const started = d ? STARTED.has(d.status) : false;
   const tabs: Tab[] = [];
   if (injects.data) tabs.push("scenario");
+  if (d?.plan_document_id) tabs.push("plan");
   if (started) tabs.push("run");
   if (d?.can_evaluate && injects.data) tabs.push("evaluation");
   if (d && (d.status === "stopped" || d.status === "ended" || d.status === "closed")) tabs.push("report");
@@ -994,6 +1008,7 @@ export function DrillPage() {
       )}
       <div role="tabpanel">
         {tab === "scenario" && injects.data && <ScenarioTab drill={d} injects={injects.data} />}
+        {tab === "plan" && <PlanChecklist owner={{ kind: "drill", id: d.id }} />}
         {tab === "run" && <RunTab drill={d} />}
         {tab === "evaluation" && injects.data && <EvaluationTab drill={d} injects={injects.data} />}
         {tab === "report" && <ReportTab drill={d} />}

@@ -108,9 +108,19 @@ class GroupingSettings(BaseModel):
         return self
 
 
+class AssistSettings(BaseModel):
+    """AI-01: each suggestion of the local language model in the operations can be switched off here (design-l4.md
+    §9, design-l5.md §2.3). Off, the button is refused and nothing queued is read; what was already suggested stays
+    with its label."""
+
+    # The task list read from an intervention plan (AI2).
+    plan_reading: bool = True
+
+
 class AiSettings(BaseModel):
     priority: PrioritySettings = Field(default_factory=PrioritySettings)
     grouping: GroupingSettings = Field(default_factory=GroupingSettings)
+    assist: AssistSettings = Field(default_factory=AssistSettings)
 
 
 async def load(session: AsyncSession) -> AiSettings:

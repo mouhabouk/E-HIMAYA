@@ -7,6 +7,7 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints, field_validator
 
+from app.modules.checklist.schemas import Counts
 from app.modules.ops.domain import ResourceKind as Equipment
 
 Code = Annotated[int, Field(ge=11, le=83)]
@@ -252,3 +253,5 @@ class ReportOut(BaseModel):
     mean_score: float | None
     resources: list[ResourceLine]
     stress: list[StressIn]
+    # How far the approved task list of the plan was followed (AI2), when the dry run has one.
+    plan_tasks: Counts | None = None
