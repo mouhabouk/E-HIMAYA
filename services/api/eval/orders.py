@@ -97,9 +97,14 @@ def main() -> None:
     print("| set | reader | group | texts | intent | action | exact | invalid |")
     print("|---|---|---|---|---|---|---|---|")
     misses = []
-    for name, file in SETS.items():
-        data = json.loads((HERE / file).read_text(encoding="utf-8"))
-        rows = asyncio.run(read_all(data["orders"], llm))
+    texts = {name: json.loads((HERE / file).read_text(encoding="utf-8"))["orders"] for name, file in SETS.items()}
+
+    async def read_sets() -> dict[str, list[dict]]:
+        # One event loop for every set: the model's HTTP client belongs to the loop it first ran in.
+        return {name: await read_all(items, llm) for name, items in texts.items()}
+
+    read = asyncio.run(read_sets())
+    for name, rows in read.items():
         result["sets"][name] = {
             reader: {g: summary([r for r in rows if r["variety"] in v], reader) for g, v in GROUPS.items()}
             for reader in readers
