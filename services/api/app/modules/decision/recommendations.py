@@ -158,17 +158,19 @@ def _minutes(seconds: float) -> int:
 
 
 async def resource_items(
-    session: AsyncSession, principal: Principal, situation: Situation
+    session: AsyncSession, principal: Principal, situation: Situation, ordered: list[Need] | None = None
 ) -> tuple[list[s.Recommendation], tuple[routing.Point, routing.Profile] | None]:
-    """One recommendation per resource kind still needed, and the origin of the first proposed vehicle (route)."""
+    """One recommendation per resource kind still needed, and the origin of the first proposed vehicle (route).
+
+    ``ordered``: what a commander asked for (AI5a orders), proposed on top of what is already engaged."""
     if situation.lat is None or situation.lon is None:
         return [], None
     target = routing.Point(situation.lat, situation.lon)
     items: list[s.Recommendation] = []
     first_origin: tuple[routing.Point, routing.Profile] | None = None
-    for need in needs(situation):
+    for need in ordered if ordered is not None else needs(situation):
         engaged = situation.engaged.get(need.kind, 0)
-        missing = need.count - engaged
+        missing = need.count if ordered is not None else need.count - engaged
         if missing <= 0:
             continue
         label = domain.RESOURCE_LABELS.get(need.kind, domain.RESOURCE_LABELS["other"])
@@ -397,15 +399,20 @@ def escalation_item(situation: Situation) -> s.Recommendation | None:
     )
 
 
-def alert_item(situation: Situation) -> s.Recommendation | None:
+def alert_item(situation: Situation, ordered: bool = False) -> s.Recommendation | None:
+    """``ordered``: a commander asked for an alert (AI5a): the form is prepared even when no rule calls for one."""
     hazard = domain.ALERT_HAZARD.get(situation.category)
     if hazard is None or situation.incident.gouvernorat_code is None:
         return None
     weather, forecast = situation.weather, situation.forecast
     reasons: list[s.Bilingual] = []
+    if ordered:
+        reasons.append(_b("بأمر القائد", "sur ordre du commandant"))
     if situation.category == Category.FIRE:
-        if situation.classification != "forest_fire" and not danger_at_least(
-            weather.fire_danger if weather else None, "very_high"
+        if (
+            not ordered
+            and situation.classification != "forest_fire"
+            and not danger_at_least(weather.fire_danger if weather else None, "very_high")
         ):
             return None
         if forecast and (forecast.max_area_ha or 0) >= ALERT_FIRE_HA:
@@ -436,6 +443,7 @@ def alert_item(situation: Situation) -> s.Recommendation | None:
         )
     if not reasons:
         return None
+    signals = len(reasons) - ordered
     place = situation.gouvernorat or {"ar": "", "fr": ""}
     texts = domain.ALERT_TEXTS[hazard]
     fmt = {"place_ar": place["ar"], "place_fr": place["fr"]}
@@ -446,7 +454,7 @@ def alert_item(situation: Situation) -> s.Recommendation | None:
         "kind": "alert",
         "category": "hazard",
         "hazard": hazard,
-        "severity": "high" if len(reasons) >= 2 or (situation.severity or 0) >= 80 else "medium",
+        "severity": "high" if signals >= 2 or (situation.severity or 0) >= 80 else "medium",
         "title": {k: v.format(**fmt) for k, v in texts["title"].items()},
         "body": {k: v.format(**fmt) for k, v in texts["body"].items()},
         "channels": ["push", "sms"],
@@ -467,7 +475,7 @@ def alert_item(situation: Situation) -> s.Recommendation | None:
             "forecast": forecast.as_inputs() if forecast else None,
             "pending_weather_suggestions": situation.weather_suggestions,
         },
-        confidence="high" if len(reasons) >= 2 else "medium",
+        confidence="high" if signals >= 2 else "medium",
         actions=[
             s.Action(
                 type="open_alert_form", label=_b("فتح نموذج التنبيه", "Ouvrir le formulaire d'alerte"), prefill=prefill

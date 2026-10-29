@@ -13,8 +13,10 @@ from app.core.config import get_settings
 from app.core.db import get_session
 from app.core.ratelimit import enforce, opaque
 from app.core.security import Principal, require_roles
-from app.modules.decision import assistant, context, recommendations, responders, routing
+from app.modules.ai import settings as ai_settings
+from app.modules.decision import assistant, command, context, recommendations, responders, routing
 from app.modules.decision import schemas as s
+from app.modules.decision.models import CommandDecision
 from app.modules.ops import service as incidents
 from app.modules.reports.staff_router import READ_ROLES
 
@@ -79,3 +81,51 @@ async def ask_assistant(
     answer = await assistant.ask(session, principal, incident, body)
     await session.commit()
     return answer
+
+
+# ---------------------------------------------------------------- commander's assistant (AI5a)
+
+
+async def commander_on(session: AsyncSession) -> None:
+    """AI-01: the assistant can be switched off in the AI settings; the classic recommendations stay."""
+    if not (await ai_settings.load(session)).assist.commander:
+        raise HTTPException(status.HTTP_409_CONFLICT, "commander_off")
+
+
+@router.get("/incidents/{incident_id}/command", response_model=s.CommandBoard)
+async def get_command_board(principal: StaffReader, session: Session, incident_id: uuid.UUID) -> s.CommandBoard:
+    """Numbered proposals for the commander, each kept with the situation it was made in (refreshed on each call)."""
+    incident = await incidents.get_in_scope(session, principal, incident_id)
+    await commander_on(session)
+    await enforce(f"recommend:{opaque(principal.subject)}", RECOMMEND_LIMIT, RECOMMEND_WINDOW_S)
+    out = await command.board(session, principal, incident)
+    await session.commit()
+    return out
+
+
+@router.post("/incidents/{incident_id}/command", response_model=s.CommandTextOut)
+async def post_command_text(
+    principal: StaffReader, session: Session, incident_id: uuid.UUID, body: s.CommandTextIn
+) -> s.CommandTextOut:
+    """A typed or dictated text: a question is answered from sources, an order becomes a proposal card."""
+    incident = await incidents.get_in_scope(session, principal, incident_id)
+    await commander_on(session)
+    await enforce(f"command:{opaque(principal.subject)}", get_settings().assistant_per_hour, ASSISTANT_WINDOW_S)
+    out = await command.command_text(session, principal, incident, body)
+    await session.commit()
+    return out
+
+
+@router.post("/command/decisions/{decision_id}", response_model=s.CommandCard)
+async def decide_command(
+    principal: StaffReader, session: Session, decision_id: uuid.UUID, body: s.DecideIn
+) -> s.CommandCard:
+    """Adopt, adopt modified or reject a proposal. Nothing is executed: the card's actions open the usual flows."""
+    row = await session.get(CommandDecision, decision_id, with_for_update=True)
+    if row is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
+    await incidents.get_in_scope(session, principal, row.incident_id)
+    await commander_on(session)
+    out = await command.decide(session, principal, row, body)
+    await session.commit()
+    return out

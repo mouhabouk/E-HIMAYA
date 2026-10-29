@@ -539,7 +539,11 @@
     "model_not_found": "Modèle inconnu.",
     "model_not_trained": "Ce modèle n'a pas encore de version entraînée.",
     "suggestion_gone": "Cette suggestion n'existe plus : elle a changé, ou a été acceptée ou écartée. Rechargez le programme.",
-    "suggestions_off": "Les activités suggérées sont désactivées dans les réglages de l'IA."
+    "suggestions_off": "Les activités suggérées sont désactivées dans les réglages de l'IA.",
+    "commander_off": "L'assistant du commandant est désactivé dans les réglages de l'IA.",
+    "already_decided": "Cette proposition a déjà été décidée ; la liste est actualisée.",
+    "invalid_action_index": "L'action choisie n'est plus sur la carte.",
+    "nothing_modified": "Rien n'a changé dans la proposition."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -910,7 +914,8 @@
       "crew_alert_seen": "Alerte vue par la salle",
       "field_attachment": "Pièce jointe des lieux",
       "detailed_report": "Rapport détaillé",
-      "hospital_chosen": "Hôpital choisi"
+      "hospital_chosen": "Hôpital choisi",
+      "command_decision": "Décision du commandant"
     },
     "via": {
       "suggestion": "(suggestion confirmée)",
@@ -1005,7 +1010,8 @@
       "help": "Chaque suggestion est validée par une personne et journalisée (AI-01). La désactiver bloque toute nouvelle lecture ; ce qui a déjà été suggéré reste, avec son étiquette.",
       "planReading": "Lecture du plan d'intervention et liste de tâches proposée",
       "programmeSuggestions": "Suggérer des activités dans le programme à partir des prévisions, des plages et de l'historique",
-      "anomalies": "Alerte discrète quand un indicateur sort de son habitude (signalements, délai d'arrivée, taux de réalisation)"
+      "anomalies": "Alerte discrète quand un indicateur sort de son habitude (signalements, délai d'arrivée, taux de réalisation)",
+      "commander": "Assistant du commandant : propositions numérotées, lecture des ordres tapés et mémoire des décisions"
     }
   },
   "orgs": {
@@ -7194,6 +7200,75 @@
       "reports": "Signalements",
       "arrival": "Délai d'arrivée",
       "completion": "Taux de réalisation"
+    }
+  },
+  "commander": {
+    "title": "Assistant du commandant",
+    "advisory": "propositions automatiques justifiées ; adopter ouvre le circuit habituel, rien n’est exécuté automatiquement, la décision revient au commandant.",
+    "aiLabel": "Proposition automatique",
+    "yourOrder": "Votre ordre",
+    "proposals": "Propositions numérotées du commandant",
+    "textLabel": "Ordre ou question",
+    "textHint": "Ex. : envoyez deux fourgons · combien de citernes sont disponibles ?",
+    "send": "Envoyer",
+    "readAs": "Lu :",
+    "fallback": "Modèle local indisponible : le lexique seul a lu l’ordre, vérifiez la lecture.",
+    "cardAdded": "Votre ordre est ajouté en tête de liste.",
+    "opensFlows": "Chaque bouton ouvre le circuit habituel (affectation, formulaire d’alerte, appel, itinéraire), où l’on confirme.",
+    "adopt": "Adopter",
+    "modify": "Modifier puis adopter",
+    "reject": "Rejeter",
+    "keep": "Actions conservées",
+    "reason": "Motif du rejet",
+    "note": "Note (facultative)",
+    "noteRequired": "Précisez le motif",
+    "nothingChanged": "Rien n’a changé : retirez une action ou ajoutez une note.",
+    "confirmReject": "Confirmer le rejet",
+    "confirmModify": "Adopter modifié",
+    "decided": "Vos décisions",
+    "reader": {
+      "rules": "par le lexique",
+      "model": "par le modèle",
+      "combined": "par le lexique et le modèle"
+    },
+    "action": {
+      "dispatch": "Envoi",
+      "alert": "Alerte à la population",
+      "escalate": "Changement de niveau",
+      "volunteers": "Mobilisation de volontaires",
+      "call": "Appel",
+      "route": "Itinéraire",
+      "note": "Consigne"
+    },
+    "kind": {
+      "resources": "Moyens",
+      "volunteers": "Volontaires",
+      "route": "Itinéraire",
+      "escalation": "Escalade",
+      "alert": "Alerte",
+      "responders": "Responsables",
+      "note": "Consigne"
+    },
+    "status": {
+      "proposed": "Proposée",
+      "adopted": "Adoptée",
+      "modified": "Adoptée modifiée",
+      "rejected": "Rejetée",
+      "expired": "Dépassée"
+    },
+    "reasons": {
+      "not_needed": "Pas nécessaire",
+      "already_done": "Déjà fait",
+      "wrong_resource": "Moyen inadapté",
+      "too_slow": "Trop lent",
+      "unsafe": "Dangereux",
+      "wrong_reading": "Ordre mal lu",
+      "other": "Autre motif"
+    },
+    "track": {
+      "none": "Pas encore d’antécédent pour cette proposition dans des incidents similaires.",
+      "line": "Dans des incidents similaires : adoptée {{adopted}} fois sur {{decided}} (dont {{modified}} modifiée(s)), rejetée {{rejected}} fois.",
+      "reason": "Motif de rejet le plus fréquent : {{reason}}."
     }
   }
 }

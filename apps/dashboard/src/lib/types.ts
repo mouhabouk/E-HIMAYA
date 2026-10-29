@@ -302,6 +302,8 @@ export const TIMELINE_KINDS = [
   ...CREW_TIMELINE_KINDS,
   // Phase L1b: the hospital the room added (nearest on the road).
   "hospital_chosen",
+  // AI5a: a commander adopted, modified or rejected a proposal of the commander's assistant.
+  "command_decision",
 ] as const;
 
 export interface IncidentSummary {
@@ -383,6 +385,8 @@ export interface AiSettings {
     plan_reading: boolean;
     programme_suggestions?: boolean;
     anomalies?: boolean;
+    /** AI5: the commander's assistant (proposals, orders and its memory). */
+    commander?: boolean;
   };
 }
 

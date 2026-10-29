@@ -597,6 +597,33 @@ erDiagram
 
 ```mermaid
 erDiagram
+    decision__command_decision {
+        uuid id PK
+        uuid incident_id FK
+        text origin
+        text kind
+        text key
+        jsonb title
+        jsonb rationale
+        text confidence
+        jsonb proposal
+        jsonb features
+        text command_text
+        text lang
+        text model
+        boolean simulated
+        text status
+        jsonb final
+        text reason_code
+        text reason_text
+        text created_by
+        datetime created_at
+        datetime updated_at
+        text decided_by
+        text decided_by_name
+        datetime decided_at
+        jsonb outcome
+    }
     decision__procedure_chunk {
         text id PK
         text procedure_id
@@ -615,6 +642,7 @@ erDiagram
         text embedding_model
         datetime indexed_at
     }
+    ops__incident ||--o{ decision__command_decision : "incident_id"
 ```
 
 ## decision_window

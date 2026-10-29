@@ -539,7 +539,11 @@
     "model_not_found": "Unknown model.",
     "model_not_trained": "This model has no trained version yet.",
     "suggestion_gone": "This suggestion no longer stands: it changed, or was accepted or set aside. Reload the programme.",
-    "suggestions_off": "Suggested activities are switched off in the AI settings."
+    "suggestions_off": "Suggested activities are switched off in the AI settings.",
+    "commander_off": "The commander's assistant is switched off in the AI settings.",
+    "already_decided": "This proposal was already decided; the list was refreshed.",
+    "invalid_action_index": "The chosen action is no longer on the card.",
+    "nothing_modified": "Nothing changed in the proposal."
   },
   "kpi": {
     "title": "Key indicators",
@@ -910,7 +914,8 @@
       "crew_alert_seen": "Alert seen by the room",
       "field_attachment": "Attachment from the scene",
       "detailed_report": "Detailed report",
-      "hospital_chosen": "Hospital chosen"
+      "hospital_chosen": "Hospital chosen",
+      "command_decision": "Commander's decision"
     },
     "via": {
       "suggestion": "(suggestion confirmed)",
@@ -1005,7 +1010,8 @@
       "help": "Every suggestion is approved by a person and audited (AI-01). Switching it off blocks any new reading; what was already suggested stays, with its label.",
       "planReading": "Reading the intervention plan into a suggested task list",
       "programmeSuggestions": "Suggest activities in the programme from the forecast, the beaches and the history",
-      "anomalies": "A calm alert when an indicator leaves its habit (reports, arrival time, completion rate)"
+      "anomalies": "A calm alert when an indicator leaves its habit (reports, arrival time, completion rate)",
+      "commander": "Commander's assistant: numbered proposals, reading of typed orders and the memory of decisions"
     }
   },
   "orgs": {
@@ -7194,6 +7200,75 @@
       "reports": "Reports",
       "arrival": "Arrival time",
       "completion": "Completion rate"
+    }
+  },
+  "commander": {
+    "title": "Commander's assistant",
+    "advisory": "reasoned automatic proposals; adopting opens the usual flow, nothing is executed automatically, the commander decides.",
+    "aiLabel": "Automatic proposal",
+    "yourOrder": "Your order",
+    "proposals": "Numbered proposals for the commander",
+    "textLabel": "Order or question",
+    "textHint": "E.g. send two fire engines · how many tankers are available?",
+    "send": "Send",
+    "readAs": "Read as:",
+    "fallback": "Local model unavailable: the lexicon alone read the order, check the reading.",
+    "cardAdded": "Your order was added at the top of the list.",
+    "opensFlows": "Each button opens the usual flow (assignment, alert form, call, route), where it is confirmed.",
+    "adopt": "Adopt",
+    "modify": "Modify then adopt",
+    "reject": "Reject",
+    "keep": "Actions kept",
+    "reason": "Reason for rejecting",
+    "note": "Note (optional)",
+    "noteRequired": "State the reason",
+    "nothingChanged": "Nothing changed: drop an action or add a note.",
+    "confirmReject": "Confirm rejection",
+    "confirmModify": "Adopt modified",
+    "decided": "Your decisions",
+    "reader": {
+      "rules": "by the lexicon",
+      "model": "by the model",
+      "combined": "by the lexicon and the model"
+    },
+    "action": {
+      "dispatch": "Dispatch",
+      "alert": "Public alert",
+      "escalate": "Level change",
+      "volunteers": "Volunteer call-out",
+      "call": "Call",
+      "route": "Route",
+      "note": "Instruction"
+    },
+    "kind": {
+      "resources": "Resources",
+      "volunteers": "Volunteers",
+      "route": "Route",
+      "escalation": "Escalation",
+      "alert": "Alert",
+      "responders": "Responders",
+      "note": "Instruction"
+    },
+    "status": {
+      "proposed": "Proposed",
+      "adopted": "Adopted",
+      "modified": "Adopted modified",
+      "rejected": "Rejected",
+      "expired": "Overtaken"
+    },
+    "reasons": {
+      "not_needed": "Not needed",
+      "already_done": "Already done",
+      "wrong_resource": "Wrong resource",
+      "too_slow": "Too slow",
+      "unsafe": "Unsafe",
+      "wrong_reading": "Order misread",
+      "other": "Other reason"
+    },
+    "track": {
+      "none": "No precedent yet for this proposal in similar incidents.",
+      "line": "In similar incidents: adopted {{adopted}} of {{decided}} times ({{modified}} modified), rejected {{rejected}}.",
+      "reason": "Most frequent rejection reason: {{reason}}."
     }
   }
 }

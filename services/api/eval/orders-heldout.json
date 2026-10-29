@@ -1,0 +1,611 @@
+{
+ "about": "[SIM] Held-out commander texts for AI5a (docs/phase-ai5/design-ai5.md §6): written before the readers were measured on them and never used to tune the lexicon or the prompt. Same fields as orders.json.",
+ "varieties": {
+  "ar_msa": "Modern Standard Arabic",
+  "ar_derja": "Tunisian Derja, Arabic script",
+  "ar_latn": "Tunisian Derja, Latin script",
+  "fr": "French"
+ },
+ "orders": [
+  {
+   "id": "h01",
+   "variety": "ar_msa",
+   "text": "نرجو توجيه عربتي إطفاء نحو المصنع المشتعل",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "fire_engine",
+   "count": 2,
+   "level": null
+  },
+  {
+   "id": "h02",
+   "variety": "ar_msa",
+   "text": "يجب إرسال أربع سيارات إسعاف إلى الحافلة المنقلبة",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "ambulance",
+   "count": 4,
+   "level": null
+  },
+  {
+   "id": "h03",
+   "variety": "ar_msa",
+   "text": "زودوا الموقع بصهريجين للماء",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "water_tanker",
+   "count": 2,
+   "level": null
+  },
+  {
+   "id": "h04",
+   "variety": "ar_msa",
+   "text": "نحتاج آلية ثقيلة لرفع الأنقاض",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "heavy_equipment",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "h05",
+   "variety": "ar_msa",
+   "text": "أرسلوا زورقا مطاطيا إلى الحي الغارق",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "boat",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "h06",
+   "variety": "ar_msa",
+   "text": "وجهوا طائرة دون طيار فوق المرتفعات",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "drone",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "h07",
+   "variety": "ar_msa",
+   "text": "ابعثوا سيارتي نجدة إلى النفق",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "rescue_vehicle",
+   "count": 2,
+   "level": null
+  },
+  {
+   "id": "h08",
+   "variety": "ar_msa",
+   "text": "ننتقل إلى مستوى الأزمة فورا",
+   "intent": "order",
+   "action": "escalate",
+   "resource_kind": null,
+   "count": null,
+   "level": "crisis"
+  },
+  {
+   "id": "h09",
+   "variety": "ar_msa",
+   "text": "يتعين رفع مستوى التدخل إلى الكارثة",
+   "intent": "order",
+   "action": "escalate",
+   "resource_kind": null,
+   "count": null,
+   "level": "disaster"
+  },
+  {
+   "id": "h10",
+   "variety": "ar_msa",
+   "text": "وجهوا رسالة تحذير إلى سكان الضفة اليسرى",
+   "intent": "order",
+   "action": "alert",
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "h11",
+   "variety": "ar_msa",
+   "text": "استدعوا المتطوعين الغطاسين",
+   "intent": "order",
+   "action": "volunteers",
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "h12",
+   "variety": "ar_msa",
+   "text": "اتصلوا بمستشفى الولاية لتجهيز قسم الاستعجالي",
+   "intent": "order",
+   "action": "call",
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "h13",
+   "variety": "ar_msa",
+   "text": "ما أقصر طريق لسيارة الإسعاف إلى المصابين",
+   "intent": "order",
+   "action": "route",
+   "resource_kind": "ambulance",
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "h14",
+   "variety": "ar_msa",
+   "text": "كم بقي من الوقت لوصول الصهريج؟",
+   "intent": "question",
+   "action": null,
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "h15",
+   "variety": "ar_msa",
+   "text": "أين يوجد أقرب مستشفى؟",
+   "intent": "question",
+   "action": null,
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "h16",
+   "variety": "ar_msa",
+   "text": "ما عدد البلاغات الواردة حول هذا الحريق؟",
+   "intent": "question",
+   "action": null,
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "h17",
+   "variety": "ar_msa",
+   "text": "دونوا أن الحريق تمت محاصرته من الجهة الشمالية",
+   "intent": "order",
+   "action": "note",
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "h18",
+   "variety": "ar_msa",
+   "text": "أرسلوا مطفأة كبيرة إلى مستودع المحروقات",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "large_extinguisher",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "h19",
+   "variety": "ar_msa",
+   "text": "يلزمنا ست شاحنات إطفاء إضافية",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "fire_engine",
+   "count": 6,
+   "level": null
+  },
+  {
+   "id": "h20",
+   "variety": "ar_msa",
+   "text": "لماذا تأخر وصول الفريق الثاني؟",
+   "intent": "question",
+   "action": null,
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "h21",
+   "variety": "ar_derja",
+   "text": "سيب زوز امبيلونسات للكياس",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "ambulance",
+   "count": 2,
+   "level": null
+  },
+  {
+   "id": "h22",
+   "variety": "ar_derja",
+   "text": "يلزمنا كميون طفي آخر",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "fire_engine",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "h23",
+   "variety": "ar_derja",
+   "text": "جيبوا جرافة تنحي الحجر من الثنية",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "heavy_equipment",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "h24",
+   "variety": "ar_derja",
+   "text": "ابعثوا زوز فلايك للوادي",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "boat",
+   "count": 2,
+   "level": null
+  },
+  {
+   "id": "h25",
+   "variety": "ar_derja",
+   "text": "ابعث صهريج ماء للغابة",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "water_tanker",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "h26",
+   "variety": "ar_derja",
+   "text": "طلعوا درون فوق الجبل",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "drone",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "h27",
+   "variety": "ar_derja",
+   "text": "عيط لجماعة الستاغ يقصوا الضو",
+   "intent": "order",
+   "action": "call",
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "h28",
+   "variety": "ar_derja",
+   "text": "كلم الوالي وفهمو الوضعية",
+   "intent": "order",
+   "action": "call",
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "h29",
+   "variety": "ar_derja",
+   "text": "قولوا للناس ما يقربوش للبحر",
+   "intent": "order",
+   "action": "alert",
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "h30",
+   "variety": "ar_derja",
+   "text": "نطلعو للأزمة",
+   "intent": "order",
+   "action": "escalate",
+   "resource_kind": null,
+   "count": null,
+   "level": "crisis"
+  },
+  {
+   "id": "h31",
+   "variety": "ar_derja",
+   "text": "نحتاجو متطوعين يعرفو الإسعافات",
+   "intent": "order",
+   "action": "volunteers",
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "h32",
+   "variety": "ar_derja",
+   "text": "شنوة أقرب كميون للحريق؟",
+   "intent": "question",
+   "action": null,
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "h33",
+   "variety": "ar_derja",
+   "text": "فما مصابين ولا لا؟",
+   "intent": "question",
+   "action": null,
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "h34",
+   "variety": "ar_derja",
+   "text": "قداش من واحد محاصر؟",
+   "intent": "question",
+   "action": null,
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "h35",
+   "variety": "ar_derja",
+   "text": "اكتب اللي الفرقة الأولى وصلت",
+   "intent": "order",
+   "action": "note",
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "h36",
+   "variety": "ar_derja",
+   "text": "ورينا الثنية الأسرع للكميون",
+   "intent": "order",
+   "action": "route",
+   "resource_kind": "fire_engine",
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "h37",
+   "variety": "ar_latn",
+   "text": "ab3athli 3 ambulancet lel blasa",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "ambulance",
+   "count": 3,
+   "level": null
+  },
+  {
+   "id": "h38",
+   "variety": "ar_latn",
+   "text": "sayeb drone fou9 el ghaba",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "drone",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "h39",
+   "variety": "ar_latn",
+   "text": "chnowa 7alet el ta9es?",
+   "intent": "question",
+   "action": null,
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "h40",
+   "variety": "ar_latn",
+   "text": "kalmou el 7imaya mta3 nabeul",
+   "intent": "order",
+   "action": "call",
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "h41",
+   "variety": "fr",
+   "text": "Il nous faut deux camions-citernes de plus",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "water_tanker",
+   "count": 2,
+   "level": null
+  },
+  {
+   "id": "h42",
+   "variety": "fr",
+   "text": "Engagez cinq fourgons pompe-tonne sur le massif",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "fire_engine",
+   "count": 5,
+   "level": null
+  },
+  {
+   "id": "h43",
+   "variety": "fr",
+   "text": "Une ambulance de réanimation vers le stade, vite",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "ambulance",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "h44",
+   "variety": "fr",
+   "text": "Faites venir une pelleteuse pour dégager la chaussée",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "heavy_equipment",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "h45",
+   "variety": "fr",
+   "text": "Envoyez un zodiac au quartier inondé",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "boat",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "h46",
+   "variety": "fr",
+   "text": "Lancez deux drones sur la zone sinistrée",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "drone",
+   "count": 2,
+   "level": null
+  },
+  {
+   "id": "h47",
+   "variety": "fr",
+   "text": "Il faut un véhicule de commandement sur place",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "command_vehicle",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "h48",
+   "variety": "fr",
+   "text": "On passe en niveau catastrophe",
+   "intent": "order",
+   "action": "escalate",
+   "resource_kind": null,
+   "count": null,
+   "level": "disaster"
+  },
+  {
+   "id": "h49",
+   "variety": "fr",
+   "text": "Déclarez la crise pour le gouvernorat",
+   "intent": "order",
+   "action": "escalate",
+   "resource_kind": null,
+   "count": null,
+   "level": "crisis"
+  },
+  {
+   "id": "h50",
+   "variety": "fr",
+   "text": "Diffusez une alerte aux habitants de la vallée",
+   "intent": "order",
+   "action": "alert",
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "h51",
+   "variety": "fr",
+   "text": "Faites appel aux bénévoles plongeurs",
+   "intent": "order",
+   "action": "volunteers",
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "h52",
+   "variety": "fr",
+   "text": "Contactez la STEG pour couper le courant",
+   "intent": "order",
+   "action": "call",
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "h53",
+   "variety": "fr",
+   "text": "Montrez-moi le trajet du camion-citerne",
+   "intent": "order",
+   "action": "route",
+   "resource_kind": "water_tanker",
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "h54",
+   "variety": "fr",
+   "text": "Où en est le premier fourgon ?",
+   "intent": "question",
+   "action": null,
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "h55",
+   "variety": "fr",
+   "text": "Combien de personnes sont piégées ?",
+   "intent": "question",
+   "action": null,
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "h56",
+   "variety": "fr",
+   "text": "Quel est l'hôpital le plus proche",
+   "intent": "question",
+   "action": null,
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "h57",
+   "variety": "fr",
+   "text": "Consignez que le feu est fixé au nord",
+   "intent": "order",
+   "action": "note",
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "h58",
+   "variety": "fr",
+   "text": "Trois véhicules de secours en renfort",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "rescue_vehicle",
+   "count": 3,
+   "level": null
+  },
+  {
+   "id": "h59",
+   "variety": "fr",
+   "text": "Pourquoi le drone n'a pas décollé ?",
+   "intent": "question",
+   "action": null,
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "h60",
+   "variety": "fr",
+   "text": "Mettez en place un grand extincteur au dépôt",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "large_extinguisher",
+   "count": 1,
+   "level": null
+  }
+ ]
+}

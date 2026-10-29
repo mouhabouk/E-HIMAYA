@@ -157,6 +157,44 @@ CARDS: dict[str, dict[Lang, dict[str, str]]] = {
             "accepted, edited, deleted.",
         },
     },
+    "commander": {
+        "ar": {
+            "name": "مساعد القائد",
+            "use": "يقترح على القائد قرارات مرقّمة ومعلّلة لكل حادثة، ويقرأ ما يكتبه أو يمليه من أوامر (فصحى أو دارجة أو "
+            "فرنسية) ليحوّلها إلى بطاقة قرار. القائد يعتمد أو يعدّل أو يرفض، والاعتماد يفتح المسار المعتاد ولا ينفّذ "
+            "شيئا.",
+            "limits": "قد يخطئ في قراءة أمر بكلمات لم يرها: تظهر القراءة على البطاقة ليصحّحها القائد. أرقام القراءة من "
+            "نصوص [SIM] كتبت للمشروع، لا من أوامر حقيقية. ذاكرة القرارات تعدّ ما قرّره القادة ولا تحكم على صوابه "
+            "قبل ربطه بنتيجة التدخل (AI5c).",
+            "data": "النموذج اللغوي المحلي (Qwen3، Apache-2.0) ومعجم الدارجة والفصحى والفرنسية للوسائل والأعداد. "
+            "قراءة الأوامر تقاس على 60 نصا محجوزا لم يُضبط عليها شيء. قرارات القادة تحفظ دون أسماء المبلّغين ولا "
+            "أرقامهم.",
+        },
+        "fr": {
+            "name": "Assistant du commandant",
+            "use": "Propose au commandant des décisions numérotées et justifiées pour chaque incident, et lit les ordres "
+            "qu'il tape ou dicte (arabe, derja ou français) pour en faire une carte de décision. Le commandant adopte, "
+            "modifie ou rejette ; adopter ouvre le circuit habituel et n'exécute rien.",
+            "limits": "Peut mal lire un ordre aux mots inconnus : la lecture est affichée sur la carte pour correction. "
+            "Les chiffres de lecture viennent de textes [SIM] écrits pour le projet, pas d'ordres réels. La mémoire "
+            "compte ce que les commandants ont décidé sans juger du résultat avant le lien au bilan (AI5c).",
+            "data": "Le modèle de langue local (Qwen3, Apache-2.0) et un lexique derja, arabe et français des moyens et "
+            "des nombres. La lecture est mesurée sur 60 textes réservés, jamais utilisés pour le réglage. Les "
+            "décisions sont gardées sans nom ni numéro des signalants.",
+        },
+        "en": {
+            "name": "Commander's assistant",
+            "use": "Proposes numbered, reasoned decisions to the commander for each incident, and reads the orders they "
+            "type or dictate (Arabic, Derja or French) into a decision card. The commander adopts, modifies or "
+            "rejects; adopting opens the usual flow and executes nothing.",
+            "limits": "May misread an order with words it has not seen: the reading is shown on the card to correct. "
+            "The reading figures come from [SIM] texts written for the project, not from real orders. The memory "
+            "counts what commanders decided and does not judge it before the link to the outcome (AI5c).",
+            "data": "The local language model (Qwen3, Apache-2.0) and a Derja, Arabic and French lexicon of resources "
+            "and numbers. The reading is measured on 60 held-out texts never used for tuning. Decisions are kept "
+            "without reporters' names or numbers.",
+        },
+    },
     "drowning": {
         "ar": {
             "name": "نموذج خطر الغرق (في الظل)",
@@ -277,6 +315,22 @@ LABELS: dict[Lang, dict[str, str]] = {
         "t.yellow": "احتمال المستوى الأصفر",
         "t.red": "احتمال المستوى الأحمر",
         "t.plan_reading": "قراءة المخطط مفعّلة",
+        "m.orders": "قراءة أوامر القائد (60 نصا محجوزا)",
+        "m.commander": "قرارات القادة في آخر 90 يوما",
+        "c.reader": "القارئ",
+        "c.texts": "النصوص",
+        "c.exact": "بطاقة صحيحة دون تعديل",
+        "c.action": "الإجراء صحيح",
+        "r.reader.rules": "المعجم وحده",
+        "r.reader.model": "النموذج وحده",
+        "r.reader.combined": "المعجم والنموذج (المعتمد)",
+        "r.proposed": "اقتراحات عُرضت",
+        "r.adopted": "اعتُمدت",
+        "r.modified": "اعتُمدت معدّلة",
+        "r.rejected": "رُفضت",
+        "r.expired": "تجاوزها الوضع",
+        "r.orders": "منها أوامر كتبها القادة",
+        "t.commander": "مساعد القائد مفعّل",
         "t.none": "لا عتبة: يُرفض الملخص إن ذكر رقما غير موجود",
         "d.approved": "اعتمد",
         "d.withdrawn": "سحب الاعتماد",
@@ -370,6 +424,22 @@ LABELS: dict[Lang, dict[str, str]] = {
         "t.yellow": "Probabilité du niveau jaune",
         "t.red": "Probabilité du niveau rouge",
         "t.plan_reading": "Lecture du plan activée",
+        "m.orders": "Lecture des ordres du commandant (60 textes réservés)",
+        "m.commander": "Décisions des commandants sur 90 jours",
+        "c.reader": "Lecteur",
+        "c.texts": "Textes",
+        "c.exact": "Carte juste sans retouche",
+        "c.action": "Action juste",
+        "r.reader.rules": "Lexique seul",
+        "r.reader.model": "Modèle seul",
+        "r.reader.combined": "Lexique et modèle (retenu)",
+        "r.proposed": "Propositions affichées",
+        "r.adopted": "Adoptées",
+        "r.modified": "Adoptées modifiées",
+        "r.rejected": "Rejetées",
+        "r.expired": "Dépassées par la situation",
+        "r.orders": "dont ordres tapés par les commandants",
+        "t.commander": "Assistant du commandant activé",
         "t.none": "Pas de seuil : le résumé est refusé s'il cite un chiffre absent",
         "d.approved": "Approuvé",
         "d.withdrawn": "Approbation retirée",
@@ -463,6 +533,22 @@ LABELS: dict[Lang, dict[str, str]] = {
         "t.yellow": "Probability of the yellow level",
         "t.red": "Probability of the red level",
         "t.plan_reading": "Plan reading switched on",
+        "m.orders": "Reading of the commander's orders (60 held-out texts)",
+        "m.commander": "Commanders' decisions over 90 days",
+        "c.reader": "Reader",
+        "c.texts": "Texts",
+        "c.exact": "Card right without edit",
+        "c.action": "Action right",
+        "r.reader.rules": "Lexicon alone",
+        "r.reader.model": "Model alone",
+        "r.reader.combined": "Lexicon and model (used)",
+        "r.proposed": "Proposals shown",
+        "r.adopted": "Adopted",
+        "r.modified": "Adopted modified",
+        "r.rejected": "Rejected",
+        "r.expired": "Overtaken by the situation",
+        "r.orders": "of which orders typed by commanders",
+        "t.commander": "Commander's assistant switched on",
         "t.none": "No threshold: the summary is refused if it cites a figure not given",
         "d.approved": "Approved",
         "d.withdrawn": "Approval withdrawn",

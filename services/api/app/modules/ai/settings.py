@@ -119,6 +119,8 @@ class AssistSettings(BaseModel):
     programme_suggestions: bool = True
     # The indicators found outside their habit (AI4, design-l5.md §4.4).
     anomalies: bool = True
+    # The commander's assistant: proposals, reading of orders, and its memory (AI5, docs/phase-ai5/design-ai5.md).
+    commander: bool = True
 
 
 class AiSettings(BaseModel):
