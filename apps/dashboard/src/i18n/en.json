@@ -66,7 +66,8 @@
     "sensors": "Sensors",
     "towers": "Watch towers",
     "drones": "Drones",
-    "modelCards": "Model cards"
+    "modelCards": "Model cards",
+    "learning": "Training centre"
   },
   "header": {
     "scope": "Geographic scope",
@@ -543,7 +544,11 @@
     "commander_off": "The commander's assistant is switched off in the AI settings.",
     "already_decided": "This proposal was already decided; the list was refreshed.",
     "invalid_action_index": "The chosen action is no longer on the card.",
-    "nothing_modified": "Nothing changed in the proposal."
+    "nothing_modified": "Nothing changed in the proposal.",
+    "training_in_progress": "This training is running or queued. Wait for it to end before launching it again.",
+    "report_not_final": "The reading is confirmed only once the report is closed or rejected.",
+    "report_without_text": "This report has no text or transcript: nothing to add to the training.",
+    "not_waiting_trainer": "This training is not waiting for trainer results."
   },
   "kpi": {
     "title": "Key indicators",
@@ -7274,5 +7279,123 @@
   "moderation": {
     "masked": "Offensive word hidden",
     "flagged": "Threat, incitement or violence"
+  },
+  "learning": {
+    "title": "Training centre",
+    "intro": "The tool learns locally from the reports themselves: the texts of closed and rejected reports, anonymised, form a data set the models train on regularly. The system administrator chooses the trainings, launches or schedules them. A new version is kept only when it beats the current one, and stays in shadow until the committee decides.",
+    "data": {
+      "title": "Data set",
+      "help": "The report's text and the transcripts of its voice and video messages, without phone numbers, names, plates or links, encrypted, deleted with the report's anonymisation.",
+      "total": "Texts",
+      "heldout": "For evaluation (not trained on)",
+      "origin": {
+        "weak": "System reading",
+        "operator": "Confirmed by the operator",
+        "commander": "Confirmed by the commander"
+      }
+    },
+    "export": {
+      "reports": "Export the texts (CSV)",
+      "fireSmoke": "Export the fire and smoke images (JSON)"
+    },
+    "gpu": "Needs a GPU",
+    "schedule": {
+      "enabled": "Periodic training",
+      "every": "Every",
+      "days": "days",
+      "reason": "Training schedule set from the training centre"
+    },
+    "launch": {
+      "start": "Launch now",
+      "busy": "Training running…"
+    },
+    "lastJob": "Last training",
+    "noJob": "This training has not been launched yet.",
+    "state": {
+      "queued": "Queued",
+      "running": "Running",
+      "done": "Done",
+      "skipped": "Not run",
+      "failed": "Failed",
+      "waiting_trainer": "Waiting for the trainer"
+    },
+    "trigger": {
+      "manual": "Manual",
+      "schedule": "Scheduled"
+    },
+    "skipped": {
+      "too_few_samples": "Not enough samples yet (at least 30 to train, 10 to evaluate, and two classes).",
+      "no_images": "No verified images in the media library yet."
+    },
+    "result": {
+      "promoted": "Version {{version}} kept: it beats the current one",
+      "kept": "Version {{version}} did not beat the current one, which stays",
+      "primary": "Main figure",
+      "samples": "Training: {{train}} ({{trainConfirmed}} confirmed) · Evaluation: {{heldout}} ({{heldoutConfirmed}} confirmed)",
+      "images": "{{images}} images ({{confirmed}} confirmed by the 3-of-5 rule) · fire: {{fire}} · smoke: {{smoke}}",
+      "waitingTrainer": "The image list is ready. Run the trainer on a GPU machine so it sends its results back.",
+      "trainer": "Trainer results: {{model}} ({{by}})",
+      "failed": "Training failed: {{error}}"
+    },
+    "model": {
+      "title": "Current model",
+      "none": "No model kept yet.",
+      "version": "Version {{version}}",
+      "shadow": "In shadow",
+      "macroF1": "Macro F1",
+      "accuracy": "Accuracy",
+      "baseline": "Current word list",
+      "samples": "Samples",
+      "samplesValue": "{{train}} to train, {{heldout}} to evaluate",
+      "evaluatedOn": {
+        "confirmed": "Evaluated on confirmed",
+        "all": "Evaluated on all"
+      }
+    },
+    "words": {
+      "title": "New words to review",
+      "help": "Words frequent in the reports that no list knows: Derja synonyms or new spellings. A person reviews them before anything is added; nothing is added on its own.",
+      "none": "No new words yet.",
+      "caption": "Proposed new words",
+      "word": "Word",
+      "count": "Count",
+      "script": "Script",
+      "category": "Main category",
+      "scripts": {
+        "ar": "Arabic",
+        "latn": "Latin"
+      }
+    },
+    "task": {
+      "report_category": {
+        "title": "Report category",
+        "help": "Learns the type of incident from the text (fire, flood, drowning…)."
+      },
+      "report_lives": {
+        "title": "Lives at risk",
+        "help": "Learns whether the text reports lives at risk, compared with the current word list."
+      },
+      "report_rejected": {
+        "title": "Rejected reports",
+        "help": "Learns the reports the room rejects (false, duplicate, not an emergency)."
+      },
+      "derja_words": {
+        "title": "New synonyms",
+        "help": "Extracts new Derja words and spellings (Arabic and Latin script) from the report texts."
+      },
+      "fire_smoke": {
+        "title": "Fire and smoke",
+        "help": "Prepares the media library's images and frames to train the fire and smoke detector on a GPU machine."
+      }
+    },
+    "label": {
+      "title": "Confirm the reading for training",
+      "help": "Confirm or correct the reading of the closed report: your confirmation weighs more than the system's reading.",
+      "category": "Correct category",
+      "lives": "Were lives at risk?",
+      "rejected": "Was the rejection right?",
+      "save": "Confirm",
+      "confirmed": "Confirmed"
+    }
   }
 }

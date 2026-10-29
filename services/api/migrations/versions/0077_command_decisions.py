@@ -12,8 +12,8 @@ similar situations.
 
 Rows follow the incident's visibility (row-level security, like the incident timeline).
 
-Revision ID: 0076_command_decisions
-Revises: 0075_anomalies
+Revision ID: 0077_command_decisions
+Revises: 0076_learning
 Create Date: 2026-10-29
 """
 
@@ -21,8 +21,8 @@ from collections.abc import Sequence
 
 from migrations.sqlutil import run_script
 
-revision: str = "0076_command_decisions"
-down_revision: str | None = "0075_anomalies"
+revision: str = "0077_command_decisions"
+down_revision: str | None = "0076_learning"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 

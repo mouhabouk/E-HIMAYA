@@ -69,6 +69,8 @@ from app.modules.knowledge.indexer import knowledge_forever
 from app.modules.knowledge.router import router as knowledge_router
 from app.modules.layers.router import public_router as layers_router
 from app.modules.layers.router import router as layers_staff_router
+from app.modules.learning.router import router as learning_router
+from app.modules.learning.worker import learning_forever
 from app.modules.medical.router import me_router as medical_me_router
 from app.modules.medical.router import router as medical_router
 from app.modules.modelcards.router import router as modelcards_router
@@ -167,6 +169,7 @@ WORKER_LOOPS: list[tuple[str, WorkerLoop]] = [
     ("breakglass", breakglass_forever),
     ("evidence", evidence_forever),
     ("plan-checklist", checklist_forever),
+    ("learning", learning_forever),
 ]
 # Paths a worker-role process still serves: probes and the metrics scrape, never SOS traffic.
 _WORKER_PATHS = ("/health/", "/metrics")
@@ -340,6 +343,7 @@ def create_app() -> FastAPI:
         checklist_router,
         modelcards_router,
         anomaly_router,
+        learning_router,
     )
     for router in routers:
         app.include_router(router)

@@ -316,6 +316,8 @@ class Settings(BaseSettings):
     coastal_layer_key: str = "osm_beaches"
     coastal_refresh_interval_s: int = Field(default=3600, ge=60)
     coastal_max_beaches_per_cycle: int = Field(default=300, ge=1, le=5000)
+    # Self-learning (docs/learning.md): seconds between two looks at the training queue and the schedule.
+    learning_interval_s: int = Field(default=300, ge=30)
     # Terrain model (Copernicus DEM GLO-90) installed by the one-shot "terrain" job; absent: slope 0, stated.
     terrain_dir: Path = Path("/terrain")
 

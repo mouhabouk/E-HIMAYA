@@ -382,6 +382,11 @@ export const ERROR_CODES = [
   "already_decided",
   "invalid_action_index",
   "nothing_modified",
+  // The training centre (docs/learning.md).
+  "training_in_progress",
+  "report_not_final",
+  "report_without_text",
+  "not_waiting_trainer",
 ] as const;
 export type ErrorCode = (typeof ERROR_CODES)[number];
 

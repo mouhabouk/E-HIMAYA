@@ -18896,6 +18896,91 @@
         "title": "KindOut",
         "type": "object"
       },
+      "LabelIn": {
+        "description": "What the operator confirms or corrects when a report ends; a field left out stays as read by the system.",
+        "properties": {
+          "category": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Category"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "lives_at_risk": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lives At Risk"
+          },
+          "rejected": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rejected"
+          }
+        },
+        "title": "LabelIn",
+        "type": "object"
+      },
+      "LabelOut": {
+        "properties": {
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "confirmed": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Confirmed",
+            "type": "array"
+          },
+          "lives_at_risk": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lives At Risk"
+          },
+          "rejected": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rejected"
+          }
+        },
+        "title": "LabelOut",
+        "type": "object"
+      },
       "LastEvent": {
         "properties": {
           "at": {
@@ -18999,6 +19084,26 @@
           "lon"
         ],
         "title": "LatLon",
+        "type": "object"
+      },
+      "LaunchIn": {
+        "properties": {
+          "task": {
+            "enum": [
+              "report_category",
+              "report_lives",
+              "report_rejected",
+              "derja_words",
+              "fire_smoke"
+            ],
+            "title": "Task",
+            "type": "string"
+          }
+        },
+        "required": [
+          "task"
+        ],
+        "title": "LaunchIn",
         "type": "object"
       },
       "LayerIn": {
@@ -38434,6 +38539,27 @@
           }
         },
         "title": "TrainIn",
+        "type": "object"
+      },
+      "TrainerResultIn": {
+        "properties": {
+          "metrics": {
+            "additionalProperties": true,
+            "title": "Metrics",
+            "type": "object"
+          },
+          "model": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Model",
+            "type": "string"
+          }
+        },
+        "required": [
+          "model",
+          "metrics"
+        ],
+        "title": "TrainerResultIn",
         "type": "object"
       },
       "Transcript": {
@@ -76204,6 +76330,251 @@
         ]
       }
     },
+    "/api/v1/staff/learning": {
+      "get": {
+        "operationId": "overview_api_v1_staff_learning_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Overview Api V1 Staff Learning Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Overview",
+        "tags": [
+          "learning"
+        ]
+      }
+    },
+    "/api/v1/staff/learning/datasets/{task}": {
+      "get": {
+        "description": "The anonymised data set, to train outside the platform: the report texts (CSV) or the image manifest of the\nfire and smoke detector (JSON, links valid six hours). Every export is audited.",
+        "operationId": "dataset_api_v1_staff_learning_datasets__task__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "task",
+            "required": true,
+            "schema": {
+              "enum": [
+                "reports",
+                "fire_smoke"
+              ],
+              "title": "Task",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Dataset",
+        "tags": [
+          "learning"
+        ]
+      }
+    },
+    "/api/v1/staff/learning/jobs": {
+      "get": {
+        "operationId": "list_jobs_api_v1_staff_learning_jobs_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "task",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Task"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "title": "Response List Jobs Api V1 Staff Learning Jobs Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Jobs",
+        "tags": [
+          "learning"
+        ]
+      },
+      "post": {
+        "description": "Queues a training; the worker runs it within LEARNING_INTERVAL_S.",
+        "operationId": "launch_api_v1_staff_learning_jobs_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LaunchIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Launch Api V1 Staff Learning Jobs Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Launch",
+        "tags": [
+          "learning"
+        ]
+      }
+    },
+    "/api/v1/staff/learning/jobs/{job_id}/trainer-result": {
+      "post": {
+        "description": "The figures of the GPU trainer for a fire and smoke training (services/vision/training/from_manifest.py).",
+        "operationId": "trainer_result_api_v1_staff_learning_jobs__job_id__trainer_result_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrainerResultIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Trainer Result Api V1 Staff Learning Jobs  Job Id  Trainer Result Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Trainer Result",
+        "tags": [
+          "learning"
+        ]
+      }
+    },
     "/api/v1/staff/levels": {
       "get": {
         "operationId": "get_levels_api_v1_staff_levels_get",
@@ -83656,6 +84027,111 @@
         "summary": "Link Report",
         "tags": [
           "incidents"
+        ]
+      }
+    },
+    "/api/v1/staff/reports/{report_id}/learning-label": {
+      "get": {
+        "operationId": "get_label_api_v1_staff_reports__report_id__learning_label_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "report_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Report Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LabelOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Label",
+        "tags": [
+          "learning"
+        ]
+      },
+      "put": {
+        "description": "The operator confirms or corrects the reading; it weighs more than the system's own labels in training.",
+        "operationId": "put_label_api_v1_staff_reports__report_id__learning_label_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "report_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Report Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LabelIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LabelOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Put Label",
+        "tags": [
+          "learning"
         ]
       }
     },

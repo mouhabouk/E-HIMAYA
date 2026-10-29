@@ -33,6 +33,7 @@ at once and a crash leaves at most one batch to redo. Durations come from the se
 | layer_features_     |                                                                        |          |
 | deleted             |                                                                        |          |
 | coastal_presence    | anonymous "I am at this beach" counts (phase L1b)                      | 24 hours |
+| learning_samples    | training samples (docs/learning.md) of reports anonymised or erased    | (reports)|
 """
 
 import asyncio
@@ -288,6 +289,18 @@ async def purge_coastal_presence(session: AsyncSession, settings: Settings, now:
     return await _delete(session, "coastal.presence", "ctid", "at < :cutoff", {"cutoff": cutoff})
 
 
+async def purge_learning_samples(session: AsyncSession, settings: Settings, now: datetime) -> int:
+    """Training samples (docs/learning.md) go with their report's anonymisation: the text never outlives the report."""
+    return await _delete(
+        session,
+        "ai.learning_sample",
+        "id",
+        "source = 'report' AND NOT EXISTS (SELECT 1 FROM reports.report r WHERE r.id::text = source_id "
+        "AND r.anonymised_at IS NULL)",
+        {},
+    )
+
+
 JOBS: list[tuple[str, Job]] = [
     ("events", purge_events),
     ("notify_outbox", purge_notify_outbox),
@@ -316,6 +329,8 @@ JOBS: list[tuple[str, Job]] = [
     ("layers_deleted", purge_deleted_layers),
     ("layer_features_deleted", purge_deleted_features),
     ("coastal_presence", purge_coastal_presence),
+    # After "reports": the training samples of the reports anonymised in this run.
+    ("learning_samples", purge_learning_samples),
 ]
 
 

@@ -40,7 +40,7 @@ class ProcedureChunk(Base):
 
 
 class CommandDecision(Base):
-    """A proposal shown to a commander and what they did with it (AI5a, migration 0076): the assistant's memory."""
+    """A proposal shown to a commander and what they did with it (AI5a, migration 0077): the assistant's memory."""
 
     __tablename__ = "command_decision"
     __table_args__ = {"schema": "decision"}
