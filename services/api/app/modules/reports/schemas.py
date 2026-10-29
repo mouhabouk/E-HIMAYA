@@ -5,6 +5,7 @@ from typing import Annotated, Any, Literal
 from pydantic import AwareDatetime, BaseModel, Field, StringConstraints
 
 from app.modules.medical.schemas import LockedFileIn
+from app.modules.moderation.terms import MaskKind
 from app.modules.orgs.schemas import OrganizationCard, OrgRef
 from app.modules.reports.domain import LAT_MAX, LAT_MIN, LON_MAX, LON_MIN, Category, Lang, Status
 
@@ -147,6 +148,10 @@ class StaffReport(BaseModel):
     lang: str | None
     # Arabic translation of a French or English text (FR-A-045); null for Arabic texts.
     text_ar: str | None = None
+    # Words to hide ("hide": obscene, insulting) or to shade red ("flag": threats, incitement, terrorism) on screen
+    # (moderation.masks): [start, end, kind], end excluded, in UTF-16 code units.
+    text_masks: list[tuple[int, int, MaskKind]] = Field(default_factory=list)
+    text_ar_masks: list[tuple[int, int, MaskKind]] = Field(default_factory=list)
     location: LocationOut
     gouvernorat_code: int | None
     delegation_id: int | None
@@ -260,6 +265,9 @@ class Transcript(BaseModel):
     translation_ar: str | None
     error: str | None
     model: str | None
+    # Words to hide on screen, as StaffReport.text_masks.
+    text_masks: list[tuple[int, int, MaskKind]] = Field(default_factory=list)
+    translation_ar_masks: list[tuple[int, int, MaskKind]] = Field(default_factory=list)
 
 
 class AnalysisOut(BaseModel):

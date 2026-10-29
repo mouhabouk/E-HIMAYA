@@ -29,6 +29,7 @@ import { queryKeys } from "../lib/staffApi";
 import type { Media, ReportStatus, StaffReportDetail } from "../lib/types";
 import { useDraft } from "../lib/drafts";
 import { PageTitle } from "../components/PageTitle";
+import { MaskedText } from "../components/MaskedText";
 
 function MediaItem({ media, onBroken }: { media: Media; onBroken: () => void }) {
   const { t } = useTranslation();
@@ -355,13 +356,13 @@ export function ReportDetailPage() {
                 {t("detail.textLang", { lang: r.lang ? t(`languages.${r.lang}`) : t("common.notAvailable") })}
               </p>
               <blockquote className="report-text" lang={r.lang ?? undefined} dir="auto">
-                {r.text}
+                <MaskedText text={r.text} masks={r.text_masks} />
               </blockquote>
               {r.text_ar && (
                 <>
                   <p className="muted translation-label">{t("ai.translation")}</p>
                   <blockquote className="report-text report-text--translation" lang="ar" dir="rtl">
-                    {r.text_ar}
+                    <MaskedText text={r.text_ar} masks={r.text_ar_masks} />
                   </blockquote>
                 </>
               )}

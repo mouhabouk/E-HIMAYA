@@ -24,6 +24,7 @@ from app.modules.ai.models import Analysis
 from app.modules.geo.models import Gouvernorat
 from app.modules.identity.models import Account, Profile
 from app.modules.identity.service import Reporter, consume_anon_quota, has_consented
+from app.modules.moderation import service as moderation
 from app.modules.notify import outbox
 from app.modules.orgs import service as orgs
 from app.modules.orgs.domain import OrgKind
@@ -348,6 +349,8 @@ def staff_report(
         text=r.text_original,
         lang=r.lang_original,
         text_ar=r.text_ar,
+        text_masks=moderation.masks(r.text_original),
+        text_ar_masks=moderation.masks(r.text_ar),
         location=_location(row),
         gouvernorat_code=r.gouvernorat_code,
         delegation_id=r.delegation_id,

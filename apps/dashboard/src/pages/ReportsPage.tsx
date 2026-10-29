@@ -18,6 +18,7 @@ import type { ReportSort } from "../lib/staffApi";
 import type { StaffReport } from "../lib/types";
 import { useEffectiveFilters } from "./useEffectiveFilters";
 import { PageTitle } from "../components/PageTitle";
+import { MaskedText } from "../components/MaskedText";
 
 const SORTS: readonly ReportSort[] = ["received", "priority"];
 const SORT_STORAGE_KEY = "ehimaya.reportsSort";
@@ -53,11 +54,12 @@ function TextCell({ report }: { report: StaffReport }) {
   return (
     <div className="text-cell">
       <p className="clamp" lang={report.lang ?? undefined} dir="auto">
-        {report.text}
+        <MaskedText text={report.text} masks={report.text_masks} />
       </p>
       {report.text_ar && (
         <p className="clamp text-cell__translation" lang="ar" dir="rtl">
-          <span className="tag tag--translation">{t("ai.translationShort")}</span> {report.text_ar}
+          <span className="tag tag--translation">{t("ai.translationShort")}</span>{" "}
+          <MaskedText text={report.text_ar} masks={report.text_ar_masks} />
         </p>
       )}
     </div>

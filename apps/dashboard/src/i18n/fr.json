@@ -7195,5 +7195,9 @@
       "arrival": "Délai d'arrivée",
       "completion": "Taux de réalisation"
     }
+  },
+  "moderation": {
+    "masked": "Mot grossier masqué",
+    "flagged": "Menace, incitation ou violence"
   }
 }

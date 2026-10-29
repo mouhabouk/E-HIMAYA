@@ -1,0 +1,45 @@
+id,text,script,category,lives_at_risk,injured,deaths,hazards,status
+1,فما عايلة محصورين في الطابق الثاني والدخان كلاهم,ar,fire,1,0,0,,proposed
+2,fama 3ayla m7asrin fel etage thani w eddo5an klehom,latn,fire,1,0,0,,proposed
+3,زوز عالقين في الكرهبة والواد حامل,ar,flood,1,0,0,rising_water,proposed
+4,zouz 3al9in fel karhba w el wed 7amel,latn,flood,1,0,0,rising_water,proposed
+5,طلعنا للسطح والماء دخل للدار، عندنا صغار,ar,flood,1,0,0,rising_water,proposed
+6,"tla3na lel sta7, el me dkhal lel dar, 3andna sghar",latn,flood,1,0,0,rising_water,proposed
+7,أكسيدون في الطريق الوطنية فمّا زوز مجروحين وواحد ما يتحرّكش,ar,traffic_accident,1,1,0,,proposed
+8,accident fi ettri9 el wataniya fama zouz mjarou7in w wa7ed ma yet7arrekch,latn,traffic_accident,1,1,0,,proposed
+9,ريحة قاز قوية في العمارة والبوتة تسرّب,ar,fire,0,0,0,gas,proposed
+10,ri7et gaz 9wiya fel 3imara w el bouta tsarreb,latn,fire,0,0,0,gas,proposed
+11,الكونتور شعل والدخان في الدروج,ar,fire,0,0,0,electricity,proposed
+12,el compteur ch3el w eddo5an fel drouj,latn,fire,0,0,0,electricity,proposed
+13,عايلة مخنوقة بالكانون، الأم ما تفيقش,ar,medical,1,1,0,,proposed
+14,"3ayla ma5nou9a bel kanoun, el om ma tfi9ch",latn,medical,1,1,0,,proposed
+15,لقينا راجل ميّت في الشط,ar,drowning,0,0,1,,proposed
+16,l9ina rajel mayet fech-chatt,latn,drowning,0,0,1,,proposed
+17,ولد غطس من الصخر وما طلعش، البحر هايج,ar,drowning,1,0,0,,proposed
+18,"wled ghtas mel sa5r w ma tla3ch, el b7ar hayej",latn,drowning,1,0,0,,proposed
+19,الغابة شاعلة والنار وصلت للديار، الريح قوية,ar,fire,1,0,0,spreading_fire,proposed
+20,"el ghaba ch3la w ennar wesslet lel dyar, erri7 9wiya",latn,fire,1,0,0,spreading_fire,proposed
+21,وكالة قديمة طاحت في المدينة العربي وفمّا ناس تحت الردم,ar,landslide,1,0,0,building_collapse,proposed
+22,wkala 9dima ta7et fel medina w fama nes ta7t erradm,latn,landslide,1,0,0,building_collapse,proposed
+23,مرتي بش تولد والطريق مقصوصة بالثلج,ar,medical,1,0,0,,proposed
+24,mrati bech tooled w ettri9 ma9sousa bel thelj,latn,medical,1,0,0,,proposed
+25,بابا جاتو جلطة وفمّو مايل,ar,medical,0,1,0,,proposed
+26,baba jetou jalta w fommou mayel,latn,medical,0,1,0,,proposed
+27,سيتارن بنزين مقلوبة في الكيّاس وشعلت,ar,traffic_accident,0,0,0,fuel,proposed
+28,citerne benzine m9loba fel kayyes w ch3let,latn,traffic_accident,0,0,0,fuel,proposed
+29,سمعنا صوت كبير في المعمل والبلّور تكسّر,ar,other,0,0,0,explosion,proposed
+30,sma3na sout kbir fel usine w el bellour tkassar,latn,other,0,0,0,explosion,proposed
+31,عمّال تسمّمو بدوا الرشّ في السانية ويرجّعو,ar,chemical_leak,0,1,0,chemical,proposed
+32,3ommel tsammmou b dwa errach fel senya w yraj3ou,latn,chemical_leak,0,1,0,chemical,proposed
+33,كلب مكلوب عضّ زوز صغار قدّام المكتب,ar,other,0,1,0,,proposed
+34,kalb makloub 3adh zouz sghar 9oddem el mekteb,latn,other,0,1,0,,proposed
+35,الشيباني مشى لربّي قبل ما تجي الأمبيلانص,ar,medical,0,0,1,,proposed
+36,ech-chibeni mcha l rabbi 9bal ma tji l'ambulance,latn,medical,0,0,1,,proposed
+37,الصغير ضاع في الغابة من العشية وما يجاوبش,ar,other,1,0,0,,proposed
+38,es-sghir dha3 fel ghaba mel 3chiya,latn,other,1,0,0,,proposed
+39,لاباس، ما فما حتى خطر، الحمد لله,ar,other,0,0,0,,proposed
+40,"labes, ma fama 7atta 5tar, el 7amdoulah",latn,other,0,0,0,,proposed
+41,موش مجروح، خايف برك,ar,other,0,0,0,,proposed
+42,"mouch mjarou7, 5ayef bark",latn,other,0,0,0,,proposed
+43,نجرّب برك التطبيقة,ar,other,0,0,0,,proposed
+44,nejarreb bark el application,latn,other,0,0,0,,proposed

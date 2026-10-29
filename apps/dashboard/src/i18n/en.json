@@ -7195,5 +7195,9 @@
       "arrival": "Arrival time",
       "completion": "Completion rate"
     }
+  },
+  "moderation": {
+    "masked": "Offensive word hidden",
+    "flagged": "Threat, incitement or violence"
   }
 }
