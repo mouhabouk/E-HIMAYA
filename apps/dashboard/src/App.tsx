@@ -16,6 +16,7 @@ import { isApiError } from "./lib/api";
 import {
   canEditAiSettings,
   canReadModelCards,
+  canOpenLearning,
   canEditTips,
   canHandleContact,
   canOpenCoastal,
@@ -54,6 +55,7 @@ import type { StaffIdentity } from "./auth/identity";
 import { AccountsPage } from "./pages/AccountsPage";
 import { AiSettingsPage } from "./pages/AiSettingsPage";
 import { ModelCardsPage } from "./pages/ModelCardsPage";
+import { LearningPage } from "./pages/LearningPage";
 import { AuditPage } from "./pages/AuditPage";
 import { BreakGlassPage } from "./pages/BreakGlassPage";
 import { GeoQueuePage } from "./pages/GeoQueuePage";
@@ -238,6 +240,7 @@ export function AppRoutes() {
           element={scoped((id) => hasReadAccess(id.roles) || canEditAiSettings(id), <AiSettingsPage />)}
         />
         <Route path="settings/ai/models" element={scoped(canReadModelCards, <ModelCardsPage />)} />
+        <Route path="settings/ai/learning" element={scoped(canOpenLearning, <LearningPage />)} />
         <Route path="resource-requests" element={reports(<ResourceRequestsPage />)} />
         <Route path="crew" element={<Gate allow={canOpenCrew}><CrewPage /></Gate>} />
         <Route path="report-templates" element={reports(<ReportTemplatesPage />)} />

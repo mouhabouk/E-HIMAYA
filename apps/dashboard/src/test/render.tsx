@@ -13,6 +13,7 @@ import { fakeSensorsApi } from "./sensorsFixtures";
 import { fakeTowersApi } from "./towersFixtures";
 import { fakeChecklistApi } from "./checklistFixtures";
 import { fakeModelCardsApi } from "./modelCardsFixtures";
+import { fakeLearningApi } from "./learningFixtures";
 import { fakeDronesApi } from "./dronesFixtures";
 import type { AuthService, AuthUser } from "../auth/authService";
 import { identityFromClaims } from "../auth/identity";
@@ -266,6 +267,7 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     ...fakeDronesApi(),
     ...fakeChecklistApi(),
     ...fakeModelCardsApi(),
+    ...fakeLearningApi(),
     anomalies: vi.fn(() => Promise.resolve({ enabled: true, items: [] })),
     gouvernorats: vi.fn(() =>
       Promise.resolve([

@@ -33,6 +33,10 @@ SAFETY_CHECK_MAX_HOURS = "safety.check_max_hours"
 SAFETY_LOCATION_HISTORY = "safety.location_history"
 # Phase L3 (design-l3 §2): hours between two situation reports of a disaster or crisis axis, per level 1 to 4.
 CRISIS_SITREP_HOURS = "crisis.sitrep_hours"
+# Self-learning (docs/learning.md §3): which trainings of the training centre run on their own, and every how many
+# days. All off by default: the system administrator turns them on.
+LEARNING_SCHEDULE = "learning.schedule"
+LEARNING_TASKS = ("report_category", "report_lives", "report_rejected", "derja_words", "fire_smoke")
 
 BANDS = ("critical", "high", "normal", "low")
 
@@ -130,6 +134,20 @@ def _sitrep_hours(value: Any) -> Any:
     return {k: int(value[k]) for k in ("1", "2", "3", "4")}
 
 
+def _learning_schedule(value: Any) -> Any:
+    if not isinstance(value, dict) or not set(value) <= set(LEARNING_TASKS):
+        raise ValueError("a schedule per known training")
+    out: dict[str, dict[str, Any]] = {}
+    for key, entry in value.items():
+        if not isinstance(entry, dict) or not isinstance(entry.get("enabled"), bool):
+            raise ValueError("enabled: true or false")
+        every = entry.get("every_days")
+        if isinstance(every, bool) or not isinstance(every, int) or not 1 <= every <= 90:
+            raise ValueError("every_days: an integer between 1 and 90")
+        out[key] = {"enabled": entry["enabled"], "every_days": every}
+    return {k: out.get(k, {"enabled": False, "every_days": 7}) for k in LEARNING_TASKS}
+
+
 def _boolean(value: Any) -> Any:
     if not isinstance(value, bool):
         raise ValueError("expected true or false")
@@ -165,6 +183,7 @@ DEFAULTS: dict[str, Any] = {
     SAFETY_CHECK_MAX_HOURS: 24,
     SAFETY_LOCATION_HISTORY: False,
     CRISIS_SITREP_HOURS: {"1": 24, "2": 12, "3": 6, "4": 2},
+    LEARNING_SCHEDULE: {key: {"enabled": False, "every_days": 7} for key in LEARNING_TASKS},
 }
 
 # Roles allowed to change each key (national scope required). Missing = read-only.
@@ -181,6 +200,7 @@ EDITORS: dict[str, frozenset[Role]] = {
     SAFETY_CHECK_MAX_HOURS: frozenset({Role.SYSADMIN}),
     SAFETY_LOCATION_HISTORY: frozenset({Role.SYSADMIN}),
     CRISIS_SITREP_HOURS: frozenset({Role.SYSADMIN}),
+    LEARNING_SCHEDULE: frozenset({Role.SYSADMIN, Role.AI_ADMIN}),
 }
 # Keys no one may change in phase 9: enabling them needs a formal approval outside the platform (§7.4).
 FORMAL_APPROVAL = frozenset({NOTIFY_REAL_SEND})
@@ -198,6 +218,7 @@ VALIDATORS: dict[str, Callable[[Any], Any]] = {
     SAFETY_CHECK_MAX_HOURS: _int_between(1, 72),
     SAFETY_LOCATION_HISTORY: _boolean,
     CRISIS_SITREP_HOURS: _sitrep_hours,
+    LEARNING_SCHEDULE: _learning_schedule,
 }
 
 
