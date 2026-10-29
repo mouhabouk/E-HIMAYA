@@ -291,7 +291,11 @@ async def test_samples_go_with_the_report(
     async with get_system_sessionmaker()() as s, s.begin():
         assert await service.sync_samples(s) >= 1
         orphan = f"gone-{uuid.uuid4()}"
-        s.add(Sample(source=samples.SOURCE_REPORT, source_id=orphan, text="x", label={}, split="train"))
+        s.add(
+            Sample(
+                source=samples.SOURCE_REPORT, source_id=orphan, text="x", label={}, label_origin="weak", split="train"
+            )
+        )
     async with get_system_sessionmaker()() as s, s.begin():
         await retention.purge_learning_samples(s, get_settings(), datetime.now(UTC))
         assert await s.scalar(select(Sample).where(Sample.source_id == report_id)) is not None
