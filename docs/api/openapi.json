@@ -2074,6 +2074,11 @@
             "title": "Anomalies",
             "type": "boolean"
           },
+          "commander": {
+            "default": true,
+            "title": "Commander",
+            "type": "boolean"
+          },
           "plan_reading": {
             "default": true,
             "title": "Plan Reading",
@@ -5785,6 +5790,248 @@
         "title": "CodeOut",
         "type": "object"
       },
+      "CommandBoard": {
+        "properties": {
+          "decided": {
+            "items": {
+              "$ref": "#/components/schemas/CommandCard"
+            },
+            "title": "Decided",
+            "type": "array"
+          },
+          "generated_at": {
+            "format": "date-time",
+            "title": "Generated At",
+            "type": "string"
+          },
+          "incident_id": {
+            "format": "uuid",
+            "title": "Incident Id",
+            "type": "string"
+          },
+          "notice": {
+            "$ref": "#/components/schemas/Bilingual"
+          },
+          "proposals": {
+            "items": {
+              "$ref": "#/components/schemas/CommandCard"
+            },
+            "title": "Proposals",
+            "type": "array"
+          },
+          "simulated": {
+            "default": false,
+            "title": "Simulated",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "incident_id",
+          "generated_at",
+          "proposals",
+          "decided",
+          "notice"
+        ],
+        "title": "CommandBoard",
+        "type": "object"
+      },
+      "CommandCard": {
+        "properties": {
+          "actions": {
+            "items": {
+              "$ref": "#/components/schemas/Action"
+            },
+            "title": "Actions",
+            "type": "array"
+          },
+          "command_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Command Text"
+          },
+          "confidence": {
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "title": "Confidence",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "decided_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided At"
+          },
+          "decided_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided By Name"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "incident_id": {
+            "format": "uuid",
+            "title": "Incident Id",
+            "type": "string"
+          },
+          "inputs": {
+            "additionalProperties": true,
+            "title": "Inputs",
+            "type": "object"
+          },
+          "kept_actions": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kept Actions"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "resources",
+              "volunteers",
+              "route",
+              "escalation",
+              "alert",
+              "responders",
+              "note"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "origin": {
+            "enum": [
+              "rules",
+              "order"
+            ],
+            "title": "Origin",
+            "type": "string"
+          },
+          "rationale": {
+            "$ref": "#/components/schemas/Bilingual"
+          },
+          "reason_code": {
+            "anyOf": [
+              {
+                "enum": [
+                  "not_needed",
+                  "already_done",
+                  "wrong_resource",
+                  "too_slow",
+                  "unsafe",
+                  "wrong_reading",
+                  "other"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason Code"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "status": {
+            "enum": [
+              "proposed",
+              "adopted",
+              "modified",
+              "rejected",
+              "expired"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "$ref": "#/components/schemas/Bilingual"
+          },
+          "track": {
+            "$ref": "#/components/schemas/Track"
+          }
+        },
+        "required": [
+          "id",
+          "incident_id",
+          "origin",
+          "kind",
+          "key",
+          "title",
+          "rationale",
+          "confidence",
+          "inputs",
+          "actions",
+          "status",
+          "simulated",
+          "track",
+          "created_at"
+        ],
+        "title": "CommandCard",
+        "type": "object"
+      },
       "CommandLevelIn": {
         "properties": {
           "level": {
@@ -5895,6 +6142,67 @@
           "closed"
         ],
         "title": "CommandOverview",
+        "type": "object"
+      },
+      "CommandTextIn": {
+        "properties": {
+          "lang": {
+            "default": "ar",
+            "enum": [
+              "ar",
+              "fr"
+            ],
+            "title": "Lang",
+            "type": "string"
+          },
+          "text": {
+            "maxLength": 1000,
+            "minLength": 3,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "title": "CommandTextIn",
+        "type": "object"
+      },
+      "CommandTextOut": {
+        "properties": {
+          "answer": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AssistantOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "card": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CommandCard"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fallback": {
+            "default": false,
+            "title": "Fallback",
+            "type": "boolean"
+          },
+          "reading": {
+            "$ref": "#/components/schemas/Reading"
+          }
+        },
+        "required": [
+          "reading"
+        ],
+        "title": "CommandTextOut",
         "type": "object"
       },
       "CommitteeMember": {
@@ -7154,25 +7462,6 @@
           "factors"
         ],
         "title": "DayRisk",
-        "type": "object"
-      },
-      "DecideIn": {
-        "properties": {
-          "accept": {
-            "title": "Accept",
-            "type": "boolean"
-          },
-          "reason": {
-            "default": "",
-            "maxLength": 1000,
-            "title": "Reason",
-            "type": "string"
-          }
-        },
-        "required": [
-          "accept"
-        ],
-        "title": "DecideIn",
         "type": "object"
       },
       "DecisionIn": {
@@ -27242,6 +27531,91 @@
         "title": "ReadinessIn",
         "type": "object"
       },
+      "Reading": {
+        "description": "How a commander's text was read (orders.py).",
+        "properties": {
+          "action": {
+            "anyOf": [
+              {
+                "enum": [
+                  "dispatch",
+                  "alert",
+                  "escalate",
+                  "volunteers",
+                  "call",
+                  "route",
+                  "note"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Action"
+          },
+          "count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Count"
+          },
+          "intent": {
+            "enum": [
+              "question",
+              "order"
+            ],
+            "title": "Intent",
+            "type": "string"
+          },
+          "level": {
+            "anyOf": [
+              {
+                "enum": [
+                  "crisis",
+                  "disaster"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Level"
+          },
+          "reader": {
+            "enum": [
+              "rules",
+              "model",
+              "combined"
+            ],
+            "title": "Reader",
+            "type": "string"
+          },
+          "resource_kind": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resource Kind"
+          }
+        },
+        "required": [
+          "intent",
+          "reader"
+        ],
+        "title": "Reading",
+        "type": "object"
+      },
       "ReadingOut": {
         "properties": {
           "at": {
@@ -38081,6 +38455,55 @@
         "title": "TowerUpdate",
         "type": "object"
       },
+      "Track": {
+        "description": "What commanders did with the same proposal in incidents of the same category (the assistant's memory).",
+        "properties": {
+          "adopted": {
+            "title": "Adopted",
+            "type": "integer"
+          },
+          "decided": {
+            "title": "Decided",
+            "type": "integer"
+          },
+          "modified": {
+            "title": "Modified",
+            "type": "integer"
+          },
+          "rejected": {
+            "title": "Rejected",
+            "type": "integer"
+          },
+          "top_reason": {
+            "anyOf": [
+              {
+                "enum": [
+                  "not_needed",
+                  "already_done",
+                  "wrong_resource",
+                  "too_slow",
+                  "unsafe",
+                  "wrong_reading",
+                  "other"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Top Reason"
+          }
+        },
+        "required": [
+          "decided",
+          "adopted",
+          "modified",
+          "rejected"
+        ],
+        "title": "Track",
+        "type": "object"
+      },
       "TrackPoint": {
         "properties": {
           "at": {
@@ -42487,6 +42910,25 @@
         "title": "CloseIn",
         "type": "object"
       },
+      "app__modules__crisis__schemas__DecideIn": {
+        "properties": {
+          "accept": {
+            "title": "Accept",
+            "type": "boolean"
+          },
+          "reason": {
+            "default": "",
+            "maxLength": 1000,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "accept"
+        ],
+        "title": "DecideIn",
+        "type": "object"
+      },
       "app__modules__crisis__schemas__DirectiveIn": {
         "properties": {
           "area": {
@@ -42970,6 +43412,73 @@
           "lon"
         ],
         "title": "Point",
+        "type": "object"
+      },
+      "app__modules__decision__schemas__DecideIn": {
+        "properties": {
+          "kept_actions": {
+            "anyOf": [
+              {
+                "items": {
+                  "exclusiveMaximum": 50.0,
+                  "minimum": 0.0,
+                  "type": "integer"
+                },
+                "maxItems": 50,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kept Actions"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "reason_code": {
+            "anyOf": [
+              {
+                "enum": [
+                  "not_needed",
+                  "already_done",
+                  "wrong_resource",
+                  "too_slow",
+                  "unsafe",
+                  "wrong_reading",
+                  "other"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason Code"
+          },
+          "verdict": {
+            "enum": [
+              "adopt",
+              "modify",
+              "reject"
+            ],
+            "title": "Verdict",
+            "type": "string"
+          }
+        },
+        "required": [
+          "verdict"
+        ],
+        "title": "DecideIn",
         "type": "object"
       },
       "app__modules__drill__schemas__CloseIn": {
@@ -65209,6 +65718,66 @@
         ]
       }
     },
+    "/api/v1/staff/command/decisions/{decision_id}": {
+      "post": {
+        "description": "Adopt, adopt modified or reject a proposal. Nothing is executed: the card's actions open the usual flows.",
+        "operationId": "decide_command_api_v1_staff_command_decisions__decision_id__post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "decision_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Decision Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__decision__schemas__DecideIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommandCard"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Decide Command",
+        "tags": [
+          "staff",
+          "decision"
+        ]
+      }
+    },
     "/api/v1/staff/committee/performance": {
       "get": {
         "operationId": "performance_api_v1_staff_committee_performance_get",
@@ -67360,7 +67929,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/DecideIn"
+                "$ref": "#/components/schemas/app__modules__crisis__schemas__DecideIn"
               }
             }
           },
@@ -70910,6 +71479,114 @@
         "summary": "Close Incident",
         "tags": [
           "incidents"
+        ]
+      }
+    },
+    "/api/v1/staff/incidents/{incident_id}/command": {
+      "get": {
+        "description": "Numbered proposals for the commander, each kept with the situation it was made in (refreshed on each call).",
+        "operationId": "get_command_board_api_v1_staff_incidents__incident_id__command_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incident_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Incident Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommandBoard"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Command Board",
+        "tags": [
+          "staff",
+          "decision"
+        ]
+      },
+      "post": {
+        "description": "A typed or dictated text: a question is answered from sources, an order becomes a proposal card.",
+        "operationId": "post_command_text_api_v1_staff_incidents__incident_id__command_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incident_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Incident Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommandTextIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommandTextOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Post Command Text",
+        "tags": [
+          "staff",
+          "decision"
         ]
       }
     },

@@ -1,6 +1,10 @@
 import type { ApiClient } from "./api";
 import type {
   AssistantAnswer,
+  CommandBoard,
+  CommandCard,
+  CommandTextResult,
+  DecideBody,
   FireForecastBody,
   ForecastRun,
   Recommendations,
@@ -97,6 +101,20 @@ export function phase7Api(api: ApiClient) {
         body: { question, lang: lang === "ar" ? "ar" : "fr" },
       }),
 
+    // ---------- AI5a commander's assistant ----------
+    commandBoard: (incidentId: string, signal?: AbortSignal) =>
+      api.request<CommandBoard>(`${incidentPath(incidentId)}/command`, { signal }),
+
+    /** A typed (or dictated) text in ar or fr: an English interface sends French. */
+    commandText: (incidentId: string, text: string, lang: Language) =>
+      api.request<CommandTextResult>(`${incidentPath(incidentId)}/command`, {
+        method: "POST",
+        body: { text, lang: lang === "ar" ? "ar" : "fr" },
+      }),
+
+    decideCommand: (decisionId: string, body: DecideBody) =>
+      api.request<CommandCard>(`/api/v1/staff/command/decisions/${enc(decisionId)}`, { method: "POST", body }),
+
     // ---------- §4 telephony ----------
     sipCredentials: () => api.request<SipCredentials>("/api/v1/staff/telephony/credentials", { method: "POST" }),
 
@@ -153,6 +171,7 @@ export const p7Keys = {
   weatherAt: (lat: number, lon: number) => ["weather-at", lat.toFixed(3), lon.toFixed(3)] as const,
   suggestions: ["weather-suggestions"] as const,
   recommendations: (incidentId: string) => ["recommendations", incidentId] as const,
+  commandBoard: (incidentId: string) => ["command-board", incidentId] as const,
   responders: (incidentId: string) => ["responders", incidentId] as const,
   forecast: (incidentId: string, kind: "fire" | "flood") => ["forecast", incidentId, kind] as const,
   route: (from: string, to: string, profile: string) => ["route", from, to, profile] as const,

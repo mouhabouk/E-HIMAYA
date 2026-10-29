@@ -1,5 +1,6 @@
 import { vi } from "vitest";
-import type { Recommendations, ForecastRun } from "../lib/decisionTypes";
+import { ApiError } from "../lib/api";
+import type { CommandBoard, CommandCard, ForecastRun, Recommendations } from "../lib/decisionTypes";
 import type { Phase7Api } from "../lib/phase7Api";
 import type { SipCall, SipCallHandlers, SipEngine, SipEngineEvents } from "../lib/softphone";
 import type { SipCredentials, StaffCall } from "../lib/telephonyTypes";
@@ -174,6 +175,52 @@ export function makeRecommendations(overrides: Partial<Recommendations> = {}): R
   };
 }
 
+export function makeCommandCard(overrides: Partial<CommandCard> = {}): CommandCard {
+  return {
+    id: "cd-1",
+    incident_id: "i-1",
+    origin: "rules",
+    kind: "resources",
+    key: "resources:water_tanker",
+    title: { ar: "إرسال 1 شاحنة صهريج ماء", fr: "Engager 1 camion-citerne d'eau" },
+    rationale: { ar: "الحاجة: 1، الأقرب زمنيا: CCF-12 (8 min).", fr: "Besoin : 1. Le plus proche : CCF-12 (8 min)." },
+    confidence: "high",
+    inputs: { resource_kind: "water_tanker", needed: 1 },
+    actions: [{ type: "open_assignment", resource_id: "res-1", label: { ar: "تكليف CCF-12", fr: "Engager CCF-12" } }],
+    status: "proposed",
+    command_text: null,
+    model: null,
+    simulated: false,
+    track: { decided: 9, adopted: 6, modified: 1, rejected: 2, top_reason: "already_done" },
+    created_at: new Date().toISOString(),
+    ...overrides,
+  };
+}
+
+export function makeCommandBoard(overrides: Partial<CommandBoard> = {}): CommandBoard {
+  return {
+    incident_id: "i-1",
+    generated_at: new Date().toISOString(),
+    proposals: [
+      makeCommandCard(),
+      makeCommandCard({
+        id: "cd-2",
+        kind: "escalation",
+        key: "escalation:crisis",
+        title: { ar: "اقتراح رفع المستوى إلى الأزمة", fr: "Proposer le passage au niveau crise" },
+        rationale: { ar: "خطر حرائق أقصى.", fr: "Danger d'incendie extrême." },
+        confidence: "medium",
+        inputs: { proposed_level: "crisis" },
+        actions: [],
+        track: { decided: 0, adopted: 0, modified: 0, rejected: 0, top_reason: null },
+      }),
+    ],
+    decided: [],
+    simulated: false,
+    ...overrides,
+  };
+}
+
 /** Phase 7 calls of the fake API: empty or ready answers by default, override per test. */
 export function fakePhase7Api(): Phase7Api {
   return {
@@ -202,6 +249,10 @@ export function fakePhase7Api(): Phase7Api {
     ),
     responders: vi.fn(() => Promise.resolve([])),
     askAssistant: vi.fn(),
+    // Off by default: the classic recommendations panel shows (tests of the commander's assistant switch it on).
+    commandBoard: vi.fn(() => Promise.reject(new ApiError(409, "commander_off"))),
+    commandText: vi.fn(),
+    decideCommand: vi.fn(),
     sipCredentials: vi.fn(() => Promise.resolve(makeCredentials())),
     calls: vi.fn(() => Promise.resolve(empty)),
     call: vi.fn(),

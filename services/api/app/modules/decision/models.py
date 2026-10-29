@@ -1,9 +1,10 @@
+import uuid
 from datetime import datetime
 from typing import Any
 
 from pgvector.sqlalchemy import Vector
-from sqlalchemy import Computed, DateTime, SmallInteger, Text, func
-from sqlalchemy.dialects.postgresql import ARRAY, JSONB, TSVECTOR
+from sqlalchemy import Boolean, Computed, DateTime, ForeignKey, SmallInteger, Text, func
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB, TSVECTOR, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.db import Base
@@ -36,3 +37,38 @@ class ProcedureChunk(Base):
     embedding: Mapped[list[float] | None] = mapped_column(Vector(768), deferred=True)
     embedding_model: Mapped[str | None] = mapped_column(Text)
     indexed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class CommandDecision(Base):
+    """A proposal shown to a commander and what they did with it (AI5a, migration 0077): the assistant's memory."""
+
+    __tablename__ = "command_decision"
+    __table_args__ = {"schema": "decision"}
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
+    incident_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ops.incident.id", ondelete="CASCADE")
+    )
+    origin: Mapped[str] = mapped_column(Text)
+    kind: Mapped[str] = mapped_column(Text)
+    key: Mapped[str] = mapped_column(Text)
+    title: Mapped[dict[str, str]] = mapped_column(JSONB)
+    rationale: Mapped[dict[str, str]] = mapped_column(JSONB)
+    confidence: Mapped[str] = mapped_column(Text)
+    proposal: Mapped[dict[str, Any]] = mapped_column(JSONB)
+    features: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default="{}")
+    command_text: Mapped[str | None] = mapped_column(Text)
+    lang: Mapped[str | None] = mapped_column(Text)
+    model: Mapped[str | None] = mapped_column(Text)
+    simulated: Mapped[bool] = mapped_column(Boolean, server_default="false")
+    status: Mapped[str] = mapped_column(Text, server_default="proposed")
+    final: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    reason_code: Mapped[str | None] = mapped_column(Text)
+    reason_text: Mapped[str | None] = mapped_column(Text)
+    created_by: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    decided_by: Mapped[str | None] = mapped_column(Text)
+    decided_by_name: Mapped[str | None] = mapped_column(Text)
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    outcome: Mapped[dict[str, Any] | None] = mapped_column(JSONB)

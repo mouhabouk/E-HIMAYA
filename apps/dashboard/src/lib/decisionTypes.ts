@@ -145,3 +145,100 @@ export interface AssistantAnswer {
   sources: AssistantSource[];
   model: string;
 }
+
+// ---------------------------------------------------------------- commander's assistant (AI5a)
+
+export const COMMAND_KINDS = [...RECOMMENDATION_KINDS, "note"] as const;
+export type CommandKind = (typeof COMMAND_KINDS)[number];
+export type CommandStatus =
+  | "proposed"
+  | "adopted"
+  | "modified"
+  | "rejected"
+  | "expired";
+/** Ready reasons for a rejection (R4: pick, do not type); "other" opens the note. */
+export const REJECT_REASONS = [
+  "not_needed",
+  "already_done",
+  "wrong_resource",
+  "too_slow",
+  "unsafe",
+  "wrong_reading",
+  "other",
+] as const;
+export type RejectReason = (typeof REJECT_REASONS)[number];
+export type OrderAction =
+  | "dispatch"
+  | "alert"
+  | "escalate"
+  | "volunteers"
+  | "call"
+  | "route"
+  | "note";
+
+/** What commanders did with the same proposal in other incidents of the same category. */
+export interface CommandTrack {
+  decided: number;
+  adopted: number;
+  modified: number;
+  rejected: number;
+  top_reason?: RejectReason | null;
+}
+
+/** How a commander's text was read: the lexicon, the local model, or both. */
+export interface CommandReading {
+  intent: "question" | "order";
+  action?: OrderAction | null;
+  resource_kind?: string | null;
+  count?: number | null;
+  level?: "crisis" | "disaster" | null;
+  reader: "rules" | "model" | "combined";
+}
+
+export interface CommandCard {
+  id: string;
+  incident_id: string;
+  origin: "rules" | "order";
+  kind: CommandKind;
+  key: string;
+  title: Partial<Bilingual>;
+  rationale: Partial<Bilingual>;
+  confidence: Confidence;
+  inputs: Record<string, unknown>;
+  actions: RecommendationAction[];
+  status: CommandStatus;
+  command_text?: string | null;
+  model?: string | null;
+  simulated: boolean;
+  track: CommandTrack;
+  created_at: string;
+  decided_at?: string | null;
+  decided_by_name?: string | null;
+  kept_actions?: number[] | null;
+  note?: string | null;
+  reason_code?: RejectReason | null;
+}
+
+/** `GET /api/v1/staff/incidents/{id}/command`: `409 commander_off` when switched off in the AI settings. */
+export interface CommandBoard {
+  incident_id: string;
+  generated_at: string;
+  proposals: CommandCard[];
+  decided: CommandCard[];
+  simulated?: boolean;
+}
+
+/** `POST /api/v1/staff/incidents/{id}/command`: a question is answered, an order becomes a card. */
+export interface CommandTextResult {
+  reading: CommandReading;
+  fallback: boolean;
+  answer?: AssistantAnswer | null;
+  card?: CommandCard | null;
+}
+
+export interface DecideBody {
+  verdict: "adopt" | "modify" | "reject";
+  kept_actions?: number[];
+  note?: string;
+  reason_code?: RejectReason;
+}

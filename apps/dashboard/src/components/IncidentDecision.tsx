@@ -37,7 +37,7 @@ import type { Language } from "../i18n";
 
 const HORIZON_CHOICES = [30, 60, 120, 240] as const;
 
-function MutationError({ error }: { error: unknown }) {
+export function MutationError({ error }: { error: unknown }) {
   const { t } = useTranslation();
   if (!error) return null;
   return (
@@ -47,7 +47,7 @@ function MutationError({ error }: { error: unknown }) {
   );
 }
 
-function Inputs({ inputs, label }: { inputs: Record<string, unknown>; label: string }) {
+export function Inputs({ inputs, label }: { inputs: Record<string, unknown>; label: string }) {
   const entries = Object.entries(inputs);
   if (entries.length === 0) return null;
   return (
@@ -334,6 +334,72 @@ function dialBodyOf(a: Extract<RecommendationAction, { type: "call" }>): DialBod
   return null;
 }
 
+/** The buttons of a recommendation, each opening an existing flow (also used by the commander's assistant). */
+export function RecommendationActions({
+  actions,
+  onAssign,
+  onRoute,
+}: {
+  actions: RecommendationAction[];
+  onAssign: (resourceId: string | null, order: string | null) => void;
+  onRoute: (from: { lat: number; lon: number }, to: { lat: number; lon: number }, profile: RouteProfile) => void;
+}) {
+  const { t } = useTranslation();
+  const { user } = useAuth();
+  const lang = useLanguage();
+  const navigate = useNavigate();
+  const roles = user?.identity.roles ?? [];
+  if (actions.length === 0) return null;
+  return (
+    <div className="actions">
+      {actions.map((a, i) => {
+        const label = actionLabel(t, a, lang);
+        switch (a.type) {
+          case "open_assignment":
+            return canDispatch(roles) ? (
+              <button
+                key={i}
+                type="button"
+                className="btn btn--small"
+                onClick={() => onAssign(a.resource_id ?? null, a.order ?? null)}
+              >
+                {label}
+              </button>
+            ) : null;
+          case "open_alert_form":
+            return canDraftMessage(roles, "alert") ? (
+              <button
+                key={i}
+                type="button"
+                className="btn btn--small"
+                onClick={() => void navigate(NEW_ALERT_PATH, { state: prefillFromAction(a.prefill) })}
+              >
+                {label}
+              </button>
+            ) : null;
+          case "call": {
+            const body = dialBodyOf(a);
+            return body ? <CallButton key={i} body={body} label={label} /> : null;
+          }
+          case "show_route":
+            return (
+              <button
+                key={i}
+                type="button"
+                className="btn btn--small"
+                onClick={() => onRoute(a.from, a.to, a.profile ?? "car")}
+              >
+                {label}
+              </button>
+            );
+          default:
+            return null;
+        }
+      })}
+    </div>
+  );
+}
+
 function RecommendationCard({
   item,
   onAssign,
@@ -344,10 +410,7 @@ function RecommendationCard({
   onRoute: (from: { lat: number; lon: number }, to: { lat: number; lon: number }, profile: RouteProfile) => void;
 }) {
   const { t } = useTranslation();
-  const { user } = useAuth();
   const lang = useLanguage();
-  const navigate = useNavigate();
-  const roles = user?.identity.roles ?? [];
   const id = useId();
   return (
     <li className="recommendation" aria-labelledby={id}>
@@ -364,54 +427,7 @@ function RecommendationCard({
         <strong>{t("decision.rationale")}</strong> {bilingual(item.rationale, lang)}
       </p>
       <Inputs inputs={item.inputs} label={t("decision.inputs")} />
-      {item.actions.length > 0 && (
-        <div className="actions">
-          {item.actions.map((a, i) => {
-            const label = actionLabel(t, a, lang);
-            switch (a.type) {
-              case "open_assignment":
-                return canDispatch(roles) ? (
-                  <button
-                    key={i}
-                    type="button"
-                    className="btn btn--small"
-                    onClick={() => onAssign(a.resource_id ?? null, a.order ?? null)}
-                  >
-                    {label}
-                  </button>
-                ) : null;
-              case "open_alert_form":
-                return canDraftMessage(roles, "alert") ? (
-                  <button
-                    key={i}
-                    type="button"
-                    className="btn btn--small"
-                    onClick={() => void navigate(NEW_ALERT_PATH, { state: prefillFromAction(a.prefill) })}
-                  >
-                    {label}
-                  </button>
-                ) : null;
-              case "call": {
-                const body = dialBodyOf(a);
-                return body ? <CallButton key={i} body={body} label={label} /> : null;
-              }
-              case "show_route":
-                return (
-                  <button
-                    key={i}
-                    type="button"
-                    className="btn btn--small"
-                    onClick={() => onRoute(a.from, a.to, a.profile ?? "car")}
-                  >
-                    {label}
-                  </button>
-                );
-              default:
-                return null;
-            }
-          })}
-        </div>
-      )}
+      <RecommendationActions actions={item.actions} onAssign={onAssign} onRoute={onRoute} />
     </li>
   );
 }
@@ -550,7 +566,7 @@ export function RespondersPanel({
 
 // ---------------------------------------------------------------- assistant
 
-function sourceHref(s: AssistantAnswer["sources"][number]): string | null {
+export function sourceHref(s: AssistantAnswer["sources"][number]): string | null {
   if (s.kind === "incident") return `/incidents/${encodeURIComponent(s.id)}`;
   if (s.kind === "report") return `/reports/${encodeURIComponent(s.id)}`;
   if (s.kind === "memory") return `/memory/${encodeURIComponent(s.id)}`;

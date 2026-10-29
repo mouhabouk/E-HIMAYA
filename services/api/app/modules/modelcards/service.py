@@ -23,6 +23,7 @@ from app.modules.ai.models import Analysis, ModelDecision
 from app.modules.audit.models import AuditLog
 from app.modules.checklist.models import ChecklistTask
 from app.modules.coastal import shadow
+from app.modules.decision.models import CommandDecision
 from app.modules.modelcards import schemas as s
 from app.modules.modelcards.texts import CARDS, LABELS, Lang
 
@@ -31,13 +32,14 @@ SMALL = 30
 # The detectors of the vision service (services/vision/models/fetch_models.py): checked by a test.
 FIRE_SMOKE_VERSION = "ehimaya-fire-smoke-yolox-tiny 3.0.0"
 PERSON_VERSION = "yolox-tiny-coco-person 0.1.1rc0"
-ORDER = ("fire_smoke", "person", "report_reading", "written_summary", "plan_reading", "drowning")
+ORDER = ("fire_smoke", "person", "report_reading", "written_summary", "plan_reading", "commander", "drowning")
 FAMILY = {
     "fire_smoke": "vision",
     "person": "vision",
     "report_reading": "language",
     "written_summary": "language",
     "plan_reading": "language",
+    "commander": "language",
     "drowning": "tabular",
 }
 LICENCES = {
@@ -46,6 +48,7 @@ LICENCES = {
     "report_reading": ["Apache-2.0 (Qwen3)", "MIT (Ollama)"],
     "written_summary": ["Apache-2.0 (Qwen3)", "MIT (Ollama)"],
     "plan_reading": ["Apache-2.0 (Qwen3)", "MIT (Ollama)", "BSD-3-Clause (pypdf)"],
+    "commander": ["Apache-2.0 (Qwen3)", "MIT (Ollama)"],
     "drowning": ["BSD-3-Clause (scikit-learn)"],
 }
 
@@ -279,6 +282,92 @@ async def _plan_tables(session: AsyncSession, lang: Lang, now: datetime) -> list
     ]
 
 
+def _orders_tables(lang: Lang) -> list[s.Table]:
+    """Held-out reading of the commander's texts (services/api/eval/orders.py): each reader on all texts, then the
+    reader used in production by language variety."""
+    t = LABELS[lang]
+    measured = _load("orders.json")
+    columns = [t["c.reader"], t["c.texts"], t["c.exact"], t["c.interval"], t["c.action"], t["c.invalid"]]
+    if measured is None:
+        return [s.Table(key="orders", title=t["m.orders"], columns=columns, rows=[], note=t["not_measured"])]
+    held = measured["sets"]["heldout"]
+    lines = [
+        (t[f"r.reader.{reader}"], held[reader]["all"]) for reader in ("rules", "model", "combined") if reader in held
+    ]
+    lines += [
+        (f"{t['r.reader.combined']} · {t[f'r.{group}']}", figures)
+        for group, figures in held.get("combined", {}).items()
+        if group != "all"
+    ]
+    rows: list[list[str]] = []
+    small: list[int] = []
+    for label, figures in lines:
+        exact, action, invalid = figures["exact"], figures["action"], figures["invalid"]
+        if exact["small"]:
+            small.append(len(rows))
+        rows.append(
+            [
+                label,
+                str(figures["texts"]),
+                _count(lang, exact["count"], exact["of"]),
+                _interval(lang, exact["interval"]),
+                _count(lang, action["count"], action["of"]),
+                _count(lang, invalid["count"], invalid["of"]),
+            ]
+        )
+    return [
+        s.Table(
+            key="orders",
+            title=t["m.orders"],
+            measured_on=date.fromisoformat(measured["date"]),
+            simulated=True,
+            columns=columns,
+            rows=rows,
+            small_rows=small,
+            note=f"{measured['model']}" + (f" · {t['small']}" if small else ""),
+        )
+    ]
+
+
+async def _commander_tables(session: AsyncSession, lang: Lang, now: datetime) -> list[s.Table]:
+    """What commanders actually did with the proposals over 90 days (decision.command_decision)."""
+    t = LABELS[lang]
+    since = now - timedelta(days=90)
+    async with as_system(session):
+        by_status = dict(
+            (
+                await session.execute(
+                    select(CommandDecision.status, func.count())
+                    .where(CommandDecision.created_at >= since)
+                    .group_by(CommandDecision.status)
+                )
+            ).all()
+        )
+        typed = int(
+            await session.scalar(
+                select(func.count()).where(CommandDecision.created_at >= since, CommandDecision.origin == "order")
+            )
+            or 0
+        )
+    shown = sum(int(n) for n in by_status.values())
+    decided = sum(int(by_status.get(k, 0)) for k in ("adopted", "modified", "rejected"))
+    rows = [[t["r.proposed"], str(shown)], [t["r.orders"], str(typed)]]
+    for key in ("adopted", "modified", "rejected"):
+        rows.append([t[f"r.{key}"], _count(lang, int(by_status.get(key, 0)), decided)])
+    rows.append([t["r.expired"], str(int(by_status.get("expired", 0)))])
+    return [
+        s.Table(
+            key="commander",
+            title=t["m.commander"],
+            measured_on=now.date(),
+            columns=[t["c.measure"], t["c.value"]],
+            rows=rows,
+            small_rows=list(range(2, 5)) if decided < SMALL else [],
+            note=t["small"] if decided < SMALL else None,
+        )
+    ]
+
+
 async def _drowning_tables(session: AsyncSession, lang: Lang, model: Any, now: datetime) -> list[s.Table]:
     t = LABELS[lang]
     if model is None:
@@ -365,6 +454,7 @@ async def _versions(session: AsyncSession, model: Any) -> dict[str, str]:
         "report_reading": await _llm_of_reports(session),
         "written_summary": assistant,
         "plan_reading": assistant,
+        "commander": assistant,
         "drowning": f"v{model.version}" if model is not None else "—",
     }
 
@@ -384,6 +474,8 @@ def _thresholds(lang: Lang, card: str, ai: ai_settings.AiSettings, model: Any) -
         values = {"suggestion_min_confidence": ai.priority.suggestion_min_confidence}
     elif card == "plan_reading":
         values = {"plan_reading": ai.assist.plan_reading}
+    elif card == "commander":
+        values = {"commander": ai.assist.commander}
     elif card == "drowning":
         cutoffs = model.params["cutoffs"] if model is not None else {}
         values = {"yellow": cutoffs.get("yellow"), "red": cutoffs.get("red")}
@@ -424,6 +516,8 @@ async def cards(session: AsyncSession, principal: Principal, lang: Lang) -> s.Ca
             measures = await _summary_tables(session, lang, now)
         elif card == "plan_reading":
             measures = await _plan_tables(session, lang, now)
+        elif card == "commander":
+            measures = [*_orders_tables(lang), *await _commander_tables(session, lang, now)]
         else:
             measures = await _drowning_tables(session, lang, model, now)
         items.append(

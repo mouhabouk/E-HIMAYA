@@ -332,6 +332,16 @@ async function mockApi(page: Page, creds: SipCredentials) {
     if (verb === "GET" && pathname === "/api/v1/staff/incidents/i-1/recommendations") {
       return json(route, { generated_at: new Date().toISOString(), items: [] });
     }
+    // AI5a: the commander's assistant, on and with nothing to propose.
+    if (verb === "GET" && pathname === "/api/v1/staff/incidents/i-1/command") {
+      return json(route, {
+        incident_id: "i-1",
+        generated_at: new Date().toISOString(),
+        proposals: [],
+        decided: [],
+        simulated: false,
+      });
+    }
     if (verb === "GET" && pathname === "/api/v1/staff/incidents/i-1/responders") return json(route, { items: [] });
     if (verb === "GET" && pathname === "/api/v1/staff/incidents/i-1/volunteer-suggestions") return json(route, []);
     if (verb === "GET" && pathname === "/api/v1/staff/incidents/i-1/conference") return json(route, []);

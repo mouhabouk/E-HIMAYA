@@ -5,6 +5,7 @@ import { Link, useParams } from "react-router";
 import { IncidentStatusChip, PriorityBadge, ReportMarkers } from "../components/AiBadges";
 import { CategoryLabel } from "../components/CategoryIcon";
 import { ErrorBox, Loading } from "../components/Feedback";
+import { CommanderPanel, useCommandBoard, useCommanderOff } from "../components/CommanderPanel";
 import { CommandLevelTag, IncidentCommandPanel } from "../components/IncidentCommand";
 import { MemoryFromIncidentButton } from "../components/MemoryFromIncident";
 import { ResourceRequestsPanel } from "../components/ResourceRequests";
@@ -13,7 +14,6 @@ import {
   ConferencePanel,
   ForecastLegend,
   ForecastPanel,
-  RecommendationsPanel,
   RespondersPanel,
   type ForecastState,
 } from "../components/IncidentDecision";
@@ -28,7 +28,7 @@ import { directionOf } from "../i18n";
 import { errorMessageKey, isApiError } from "../lib/api";
 import type { RouteProfile } from "../lib/decisionTypes";
 import type { BBox } from "../lib/filters";
-import { boundsOfPositions, forecastBounds, forecastMapPolygons } from "../lib/forecast";
+import { bilingual, boundsOfPositions, forecastBounds, forecastMapPolygons } from "../lib/forecast";
 import { p7Keys } from "../lib/phase7Api";
 import { useFormat, useGouvernorats, useLanguage } from "../lib/hooks";
 import { canManageIncidents } from "../lib/roles";
@@ -81,8 +81,23 @@ function TimelineItem({ entry, incident }: { entry: TimelineEntry; incident: Inc
           <span className="muted"> {t("incidents.detail.timelineReports", { count: reports })}</span>
         )}
         <OpsTimelineDetails kind={entry.kind} payload={entry.payload} />
+        {entry.kind === "command_decision" && <CommandDecisionNote payload={entry.payload} />}
       </p>
     </li>
+  );
+}
+
+/** AI5a: what the commander decided on a proposal, in the timeline. */
+function CommandDecisionNote({ payload }: { payload: Record<string, unknown> }) {
+  const { t } = useTranslation();
+  const lang = useLanguage();
+  const verdict = typeof payload.verdict === "string" ? payload.verdict : null;
+  const title = typeof payload.title === "object" ? bilingual(payload.title, lang) : "";
+  return (
+    <span dir="auto">
+      {verdict && <span className="muted">{t(`commander.status.${verdict}`, { defaultValue: verdict })}: </span>}
+      {title}
+    </span>
   );
 }
 
@@ -248,6 +263,9 @@ export function IncidentDetailPage() {
   });
 
   const incident = query.data;
+  // AI5a: while the commander's assistant is on, its box also answers questions (one box, not two).
+  const board = useCommandBoard(id);
+  const commanderOff = useCommanderOff(board);
   const markers = useMemo<MapMarker[]>(
     () =>
       (incident?.reports ?? []).map((r) => ({
@@ -458,7 +476,7 @@ export function IncidentDetailPage() {
           shown={forecastShown}
           onShown={setForecastShown}
         />
-        <RecommendationsPanel
+        <CommanderPanel
           incident={incident}
           onAssign={(resourceId, order) => setAssignPreset({ resourceId, order, nonce: Date.now() })}
           onRoute={(from, to, profile) => setRouteRequest({ from, to, profile })}
@@ -479,7 +497,8 @@ export function IncidentDetailPage() {
 
       <NearHospitals incident={incident} onRoute={(from, to, profile) => setRouteRequest({ from, to, profile })} />
 
-      <AssistantPanel incident={incident} />
+      {/* The commander's assistant answers questions in its own box; the classic assistant stays when it is off. */}
+      {commanderOff && <AssistantPanel incident={incident} />}
 
       <div className="detail__grid">
         <section className="card" aria-labelledby="sec-timeline">

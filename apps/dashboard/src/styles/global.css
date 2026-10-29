@@ -3223,6 +3223,78 @@ button.map-poi {
 .recommendation__why {
   margin: 0;
 }
+/* AI5a: the commander's assistant, numbered cards like the recommendations, the decision under each. */
+.commander__box {
+  margin-block: 0.5rem 0.75rem;
+}
+.commander__list,
+.commander__history {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+.commander__card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.75rem;
+  display: grid;
+  gap: 0.4rem;
+}
+.commander__no {
+  display: grid;
+  place-items: center;
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  border-radius: 50%;
+  background: var(--tone-navy-tint);
+  color: var(--tone-navy-ink);
+  font-weight: 700;
+}
+.tag--order {
+  background: var(--tone-navy-tint);
+  color: var(--tone-navy-ink);
+  font-weight: 700;
+}
+.commander__said {
+  margin: 0;
+  padding-inline-start: 0.6rem;
+  border-inline-start: 3px solid var(--tone-navy-ink);
+  white-space: pre-wrap;
+}
+.commander__reading,
+.commander__track {
+  margin: 0;
+}
+.commander__decide {
+  border-block-start: 1px solid var(--border);
+  padding-block-start: 0.5rem;
+}
+.commander__decided {
+  padding-block: 0.4rem;
+  border-block-end: 1px solid var(--border);
+}
+.commander__decided p {
+  margin: 0.2rem 0 0;
+}
+.pill--decision-adopted {
+  --tone-tint: var(--tone-green-tint);
+  --tone-ink: var(--tone-green-ink);
+}
+.pill--decision-modified {
+  --tone-tint: var(--tone-teal-tint);
+  --tone-ink: var(--tone-teal-ink);
+}
+.pill--decision-rejected {
+  --tone-tint: var(--tone-red-tint);
+  --tone-ink: var(--tone-red-ink);
+}
+.pill--decision-proposed,
+.pill--decision-expired {
+  --tone-tint: var(--tone-slate-tint);
+  --tone-ink: var(--tone-slate-ink);
+}
 .chip--confidence-high {
   color: var(--status-closed);
 }

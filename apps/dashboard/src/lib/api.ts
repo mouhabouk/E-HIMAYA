@@ -377,6 +377,11 @@ export const ERROR_CODES = [
   "model_not_trained",
   "checklist_not_approved",
   "task_deleted",
+  // AI5a: the commander's assistant.
+  "commander_off",
+  "already_decided",
+  "invalid_action_index",
+  "nothing_modified",
   // The training centre (docs/learning.md).
   "training_in_progress",
   "report_not_final",

@@ -471,11 +471,21 @@ jobs:
           # The same figures in the log, to copy into the model card when the artifact cannot be downloaded.
           python -c "import json; print('MODEL_CARD_REPORTS ' + json.dumps(json.load(open('eval/reports-results.json')), ensure_ascii=False, separators=(',', ':')))"
 
+      - name: Commander's texts read (AI5a, docs/phase-ai5/design-ai5.md §6)
+        working-directory: services/api
+        run: |
+          uv sync --locked
+          uv run python eval/orders.py --ollama "$AI_OLLAMA_URL" --model "$AI_LLM_MODEL" --json eval/orders-results.json \
+            --misses | tee -a "$GITHUB_STEP_SUMMARY"
+          python -c "import json; d = json.load(open('eval/orders-results.json')); d.pop('readings'); print('MODEL_CARD_ORDERS ' + json.dumps(d, ensure_ascii=False, separators=(',', ':')))"
+
       - name: Keep the measures for the model cards
         uses: actions/upload-artifact@v7
         with:
           name: model-card-reports
-          path: services/ai/eval/reports-results.json
+          path: |
+            services/ai/eval/reports-results.json
+            services/api/eval/orders-results.json
           retention-days: 30
 
       - name: API ↔ AI service contract

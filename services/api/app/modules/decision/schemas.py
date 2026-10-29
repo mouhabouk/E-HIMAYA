@@ -117,3 +117,87 @@ class AssistantOut(BaseModel):
     sources: list[Source]
     model: str
     notice: Bilingual
+
+
+# ---------------------------------------------------------------- commander's assistant (AI5a)
+
+CommandKind = Literal["resources", "volunteers", "route", "escalation", "alert", "responders", "note"]
+CommandStatus = Literal["proposed", "adopted", "modified", "rejected", "expired"]
+ReasonCode = Literal["not_needed", "already_done", "wrong_resource", "too_slow", "unsafe", "wrong_reading", "other"]
+
+
+class Track(BaseModel):
+    """What commanders did with the same proposal in incidents of the same category (the assistant's memory)."""
+
+    decided: int
+    adopted: int
+    modified: int
+    rejected: int
+    top_reason: ReasonCode | None = None
+
+
+class Reading(BaseModel):
+    """How a commander's text was read (orders.py)."""
+
+    intent: Literal["question", "order"]
+    action: Literal["dispatch", "alert", "escalate", "volunteers", "call", "route", "note"] | None = None
+    resource_kind: str | None = None
+    count: int | None = None
+    level: Literal["crisis", "disaster"] | None = None
+    reader: Literal["rules", "model", "combined"]
+
+
+class CommandCard(BaseModel):
+    id: uuid.UUID
+    incident_id: uuid.UUID
+    origin: Literal["rules", "order"]
+    kind: CommandKind
+    key: str
+    title: Bilingual
+    rationale: Bilingual
+    confidence: Confidence
+    inputs: dict[str, Any]
+    actions: list[Action]
+    status: CommandStatus
+    command_text: str | None = None
+    model: str | None = None
+    simulated: bool
+    track: Track
+    created_at: datetime
+    decided_at: datetime | None = None
+    decided_by_name: str | None = None
+    # Indices of the actions the commander kept, and their note.
+    kept_actions: list[int] | None = None
+    note: str | None = None
+    reason_code: ReasonCode | None = None
+
+
+class CommandBoard(BaseModel):
+    incident_id: uuid.UUID
+    generated_at: datetime
+    # Open proposals, then the latest decisions on this incident.
+    proposals: list[CommandCard]
+    decided: list[CommandCard]
+    simulated: bool = False
+    notice: Bilingual
+
+
+class CommandTextIn(BaseModel):
+    text: Annotated[Text, StringConstraints(min_length=3, max_length=1000)]
+    lang: Literal["ar", "fr"] = "ar"
+
+
+class CommandTextOut(BaseModel):
+    reading: Reading
+    # True when the language model failed and the rules alone read the text.
+    fallback: bool = False
+    answer: AssistantOut | None = None
+    card: CommandCard | None = None
+
+
+class DecideIn(BaseModel):
+    verdict: Literal["adopt", "modify", "reject"]
+    # modify: the indices of the card's actions the commander keeps (others are dropped).
+    kept_actions: list[Annotated[int, Field(ge=0, lt=50)]] | None = Field(default=None, max_length=50)
+    note: Annotated[Text, StringConstraints(max_length=500)] | None = None
+    reason_code: ReasonCode | None = None

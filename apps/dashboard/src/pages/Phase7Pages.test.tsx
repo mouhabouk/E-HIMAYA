@@ -9,6 +9,8 @@ import { makeResource } from "../test/opsFixtures";
 import {
   FakeSipEngine,
   makeCall,
+  makeCommandBoard,
+  makeCommandCard,
   makeCredentials,
   makeFireForecast,
   makeRecommendations,
@@ -561,5 +563,151 @@ describe("Outbound call buttons", () => {
     fireEvent.click(await screen.findByRole("button", { name: "Appeler Délégué" }));
     await waitFor(() => expect(api.dial).toHaveBeenCalledWith({ number: "+21674000001" }));
     expect(await screen.findByText(/Appel lancé/)).toBeInTheDocument();
+  });
+});
+
+describe("IncidentDetailPage commander's assistant (AI5a)", () => {
+  function setup(overrides: Parameters<typeof fakeApi>[0] = {}) {
+    const api = fakeApi({
+      incident: vi.fn(() => Promise.resolve(makeIncidentDetail())),
+      commandBoard: vi.fn(() => Promise.resolve(makeCommandBoard())),
+      decideCommand: vi.fn((id: string) => Promise.resolve(makeCommandCard({ id, status: "adopted" }))),
+      resources: vi.fn(() =>
+        Promise.resolve({ items: [makeResource({ id: "res-1", label: "CCF-12" })], next_cursor: null }),
+      ),
+      ...overrides,
+    });
+    const utils = renderApp(
+      <Routes>
+        <Route path="/incidents/:id" element={<IncidentDetailPage />} />
+      </Routes>,
+      {
+        api,
+        auth: fakeAuth({ ...OPERATOR_CLAIMS, realm_access: { roles: ["ops_manager"] } }),
+        lang: "fr",
+        path: "/incidents/i-1",
+      },
+    );
+    return utils;
+  }
+
+  async function panel() {
+    const section = (await screen.findByRole("heading", { name: "Assistant du commandant" })).closest("section");
+    if (!section) throw new Error("no panel");
+    return section;
+  }
+
+  it("numbers the proposals with what commanders did elsewhere; adopting records the decision only", async () => {
+    const { api } = setup();
+    const p = await panel();
+    const list = await within(p).findByRole("list", { name: "Propositions numérotées du commandant" });
+    const first = within(list).getByRole("listitem", { name: "Engager 1 camion-citerne d'eau" });
+    expect(first.querySelector(".commander__no")).toHaveTextContent("1");
+    expect(within(first).getByText("Proposition automatique")).toBeInTheDocument();
+    expect(within(first).getByText(/adoptée 7 fois sur 9 \(dont 1 modifiée\(s\)\), rejetée 2 fois/)).toBeInTheDocument();
+    expect(within(first).getByText(/Motif de rejet le plus fréquent : Déjà fait/)).toBeInTheDocument();
+    const second = within(list).getByRole("listitem", { name: "Proposer le passage au niveau crise" });
+    expect(within(second).getByText(/Pas encore d’antécédent/)).toBeInTheDocument();
+    // One box for orders and questions: the classic panels are not shown twice.
+    expect(screen.queryByRole("heading", { name: "Recommandations" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Assistant (procédures et incidents passés)" })).not.toBeInTheDocument();
+
+    fireEvent.click(within(first).getByRole("button", { name: "Adopter" }));
+    await waitFor(() => expect(api.decideCommand).toHaveBeenCalledWith("cd-1", { verdict: "adopt" }));
+    await waitFor(() => expect(api.commandBoard).toHaveBeenCalledTimes(2));
+    expect(api.createAssignment).not.toHaveBeenCalled();
+  });
+
+  it("rejects with a ready reason; 'other' needs a note", async () => {
+    const { api } = setup();
+    const p = await panel();
+    const first = await within(p).findByRole("listitem", { name: "Engager 1 camion-citerne d'eau" });
+    fireEvent.click(within(first).getByRole("button", { name: "Rejeter" }));
+    const confirm = within(first).getByRole("button", { name: "Confirmer le rejet" });
+    expect(confirm).toBeDisabled();
+    fireEvent.click(within(first).getByLabelText("Autre motif"));
+    expect(confirm).toBeDisabled();
+    fireEvent.change(within(first).getByLabelText("Précisez le motif"), { target: { value: "  la route est coupée " } });
+    expect(confirm).toBeEnabled();
+    fireEvent.click(within(first).getByLabelText("Déjà fait"));
+    fireEvent.click(confirm);
+    await waitFor(() =>
+      expect(api.decideCommand).toHaveBeenCalledWith("cd-1", {
+        verdict: "reject",
+        reason_code: "already_done",
+        note: "la route est coupée",
+      }),
+    );
+  });
+
+  it("adopts modified: an action removed, nothing changed is refused", async () => {
+    const { api } = setup();
+    const p = await panel();
+    const first = await within(p).findByRole("listitem", { name: "Engager 1 camion-citerne d'eau" });
+    fireEvent.click(within(first).getByRole("button", { name: "Modifier puis adopter" }));
+    const confirm = within(first).getByRole("button", { name: "Adopter modifié" });
+    expect(confirm).toBeDisabled();
+    expect(within(first).getByText(/Rien n’a changé/)).toBeInTheDocument();
+    fireEvent.click(within(first).getByRole("checkbox", { name: "Engager CCF-12" }));
+    fireEvent.click(confirm);
+    await waitFor(() =>
+      expect(api.decideCommand).toHaveBeenCalledWith("cd-1", { verdict: "modify", kept_actions: [] }),
+    );
+  });
+
+  it("turns a typed order into a card and shows how it was read", async () => {
+    const reading = {
+      intent: "order",
+      action: "dispatch",
+      resource_kind: "fire_engine",
+      count: 2,
+      reader: "rules",
+    } as const;
+    const order = makeCommandCard({
+      id: "cd-9",
+      origin: "order",
+      title: { ar: "إرسال 2 شاحنة إطفاء", fr: "Engager 2 fourgons" },
+      command_text: "ابعثولي زوز كميونات طفي",
+      inputs: { reading },
+    });
+    const { api } = setup({
+      commandText: vi.fn(() =>
+        Promise.resolve({ reading, fallback: true, card: order, answer: null }),
+      ),
+    });
+    const p = await panel();
+    vi.mocked(api.commandBoard).mockResolvedValue(makeCommandBoard({ proposals: [order] }));
+    fireEvent.change(within(p).getByLabelText("Ordre ou question"), { target: { value: "ابعثولي زوز كميونات طفي" } });
+    fireEvent.click(within(p).getByRole("button", { name: "Envoyer" }));
+    await waitFor(() => expect(api.commandText).toHaveBeenCalledWith("i-1", "ابعثولي زوز كميونات طفي", "fr"));
+    expect(await within(p).findByText(/le lexique seul a lu l’ordre/)).toBeInTheDocument();
+    expect(within(p).getByText("Votre ordre est ajouté en tête de liste.")).toBeInTheDocument();
+    const card = await within(p).findByRole("listitem", { name: "Engager 2 fourgons" });
+    expect(within(card).getByText("Votre ordre")).toBeInTheDocument();
+    expect(within(card).getByText("ابعثولي زوز كميونات طفي")).toBeInTheDocument();
+    expect(within(card).getByText(/^Envoi · 2 × /)).toBeInTheDocument();
+  });
+
+  it("answers a question from cited sources", async () => {
+    const { api } = setup({
+      commandText: vi.fn(() =>
+        Promise.resolve({
+          reading: { intent: "question" as const, action: null, reader: "rules" as const },
+          fallback: false,
+          card: null,
+          answer: {
+            answer: "Trois citernes sont disponibles à Sfax.",
+            sources: [{ kind: "incident" as const, id: "i-7", title: "Feu de Sakiet", excerpt: "3 citernes engagées." }],
+            model: "qwen3:8b",
+          },
+        }),
+      ),
+    });
+    const p = await panel();
+    fireEvent.change(within(p).getByLabelText("Ordre ou question"), { target: { value: "combien de citernes ?" } });
+    fireEvent.click(within(p).getByRole("button", { name: "Envoyer" }));
+    expect(await within(p).findByText("Trois citernes sont disponibles à Sfax.")).toBeInTheDocument();
+    expect(within(p).getByRole("link", { name: "Feu de Sakiet" })).toHaveAttribute("href", "/incidents/i-7");
+    expect(api.decideCommand).not.toHaveBeenCalled();
   });
 });

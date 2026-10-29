@@ -1,0 +1,611 @@
+{
+ "about": "[SIM] Simulated commander orders and questions for the reading of AI5a (docs/phase-ai5/design-ai5.md §6). Written for the project, no real incident. count: the number said, 1 when a single unit is named without a number; null for actions other than dispatch.",
+ "varieties": {
+  "ar_msa": "Modern Standard Arabic",
+  "ar_derja": "Tunisian Derja, Arabic script",
+  "ar_latn": "Tunisian Derja, Latin script",
+  "fr": "French"
+ },
+ "orders": [
+  {
+   "id": "o01",
+   "variety": "ar_msa",
+   "text": "أرسلوا شاحنتي إطفاء إضافيتين إلى موقع الحريق",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "fire_engine",
+   "count": 2,
+   "level": null
+  },
+  {
+   "id": "o02",
+   "variety": "ar_msa",
+   "text": "ابعثوا سيارة إسعاف إلى مكان الحادث فورا",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "ambulance",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "o03",
+   "variety": "ar_msa",
+   "text": "وجّهوا ثلاث سيارات إسعاف نحو الطريق الوطنية",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "ambulance",
+   "count": 3,
+   "level": null
+  },
+  {
+   "id": "o04",
+   "variety": "ar_msa",
+   "text": "نحتاج صهريج ماء إضافيا لتزويد الشاحنات",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "water_tanker",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "o05",
+   "variety": "ar_msa",
+   "text": "كلفوا جرافة لفتح خط النار في الغابة",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "heavy_equipment",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "o06",
+   "variety": "ar_msa",
+   "text": "أرسلوا قاربين لإجلاء العائلات المحاصرة بالمياه",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "boat",
+   "count": 2,
+   "level": null
+  },
+  {
+   "id": "o07",
+   "variety": "ar_msa",
+   "text": "أطلقوا طائرة مسيرة لاستطلاع امتداد الحريق",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "drone",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "o08",
+   "variety": "ar_msa",
+   "text": "عززوا الموقع بآلية نجدة وإنقاذ",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "rescue_vehicle",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "o09",
+   "variety": "ar_msa",
+   "text": "أرسلوا سيارة قيادة إلى الموقع",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "command_vehicle",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "o10",
+   "variety": "ar_msa",
+   "text": "ارفعوا المستوى إلى الأزمة",
+   "intent": "order",
+   "action": "escalate",
+   "resource_kind": null,
+   "count": null,
+   "level": "crisis"
+  },
+  {
+   "id": "o11",
+   "variety": "ar_msa",
+   "text": "أقترح إعلان حالة الكارثة في الولاية",
+   "intent": "order",
+   "action": "escalate",
+   "resource_kind": null,
+   "count": null,
+   "level": "disaster"
+  },
+  {
+   "id": "o12",
+   "variety": "ar_msa",
+   "text": "نبهوا المواطنين في المنطقة بضرورة الابتعاد عن الوادي",
+   "intent": "order",
+   "action": "alert",
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "o13",
+   "variety": "ar_msa",
+   "text": "استنفروا المتطوعين المسعفين القريبين",
+   "intent": "order",
+   "action": "volunteers",
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "o14",
+   "variety": "ar_msa",
+   "text": "اتصلوا بالحرس الوطني لغلق الطريق",
+   "intent": "order",
+   "action": "call",
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "o15",
+   "variety": "ar_msa",
+   "text": "اعرضوا أسرع مسلك لشاحنة الإطفاء",
+   "intent": "order",
+   "action": "route",
+   "resource_kind": "fire_engine",
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "o16",
+   "variety": "ar_msa",
+   "text": "كم عدد الشاحنات المتاحة في الولاية؟",
+   "intent": "question",
+   "action": null,
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "o17",
+   "variety": "ar_msa",
+   "text": "ما هي حالة الطقس في موقع الحريق؟",
+   "intent": "question",
+   "action": null,
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "o18",
+   "variety": "ar_msa",
+   "text": "هل هناك مصابون في الحادث؟",
+   "intent": "question",
+   "action": null,
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "o19",
+   "variety": "ar_msa",
+   "text": "سجلوا أن الفريق الأول وصل إلى الموقع",
+   "intent": "order",
+   "action": "note",
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "o20",
+   "variety": "ar_msa",
+   "text": "أرسلوا خمس شاحنات إطفاء من الولايات المجاورة",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "fire_engine",
+   "count": 5,
+   "level": null
+  },
+  {
+   "id": "o21",
+   "variety": "ar_derja",
+   "text": "ابعثلي زوز كميونات طفي للغابة",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "fire_engine",
+   "count": 2,
+   "level": null
+  },
+  {
+   "id": "o22",
+   "variety": "ar_derja",
+   "text": "سيبوا امبيلونس للطريق السريعة توا",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "ambulance",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "o23",
+   "variety": "ar_derja",
+   "text": "نحب سيترنة ماء زادة",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "water_tanker",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "o24",
+   "variety": "ar_derja",
+   "text": "ابعثوا تراكس يحل الثنية",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "heavy_equipment",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "o25",
+   "variety": "ar_derja",
+   "text": "ابعث ثلاثة امبيلونسات للبلاصة",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "ambulance",
+   "count": 3,
+   "level": null
+  },
+  {
+   "id": "o26",
+   "variety": "ar_derja",
+   "text": "طلعوا الدرون يشوف وين وصلت النار",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "drone",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "o27",
+   "variety": "ar_derja",
+   "text": "سيبوا فلوكة للوادي فما عباد محاصرين",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "boat",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "o28",
+   "variety": "ar_derja",
+   "text": "عيطوا للحرس يسكروا الثنية",
+   "intent": "order",
+   "action": "call",
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "o29",
+   "variety": "ar_derja",
+   "text": "كلموا الغابات يبعثوا ناسهم",
+   "intent": "order",
+   "action": "call",
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "o30",
+   "variety": "ar_derja",
+   "text": "نبهوا الناس في الحومة يبعدوا على الوادي",
+   "intent": "order",
+   "action": "alert",
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "o31",
+   "variety": "ar_derja",
+   "text": "طلعوا المستوى للأزمة",
+   "intent": "order",
+   "action": "escalate",
+   "resource_kind": null,
+   "count": null,
+   "level": "crisis"
+  },
+  {
+   "id": "o32",
+   "variety": "ar_derja",
+   "text": "جيبوا المتطوعين اللي قراب",
+   "intent": "order",
+   "action": "volunteers",
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "o33",
+   "variety": "ar_derja",
+   "text": "قداش من كميون فاضي عندنا؟",
+   "intent": "question",
+   "action": null,
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "o34",
+   "variety": "ar_derja",
+   "text": "وين وصلت الامبيلونس؟",
+   "intent": "question",
+   "action": null,
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "o35",
+   "variety": "ar_derja",
+   "text": "شنوة حالة الطقس غدوة؟",
+   "intent": "question",
+   "action": null,
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "o36",
+   "variety": "ar_derja",
+   "text": "ابعثوا كرهبة قيادة للبلاصة",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "command_vehicle",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "o37",
+   "variety": "ar_latn",
+   "text": "ab3ath zouz kamyoun tafi lel ghaba",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "fire_engine",
+   "count": 2,
+   "level": null
+  },
+  {
+   "id": "o38",
+   "variety": "ar_latn",
+   "text": "sayeb ambulance lel autoroute tawa",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "ambulance",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "o39",
+   "variety": "ar_latn",
+   "text": "9adech men camion disponible?",
+   "intent": "question",
+   "action": null,
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "o40",
+   "variety": "ar_latn",
+   "text": "3ayet lel 7aras ysakrou el thnia",
+   "intent": "order",
+   "action": "call",
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "o41",
+   "variety": "fr",
+   "text": "Envoyez deux fourgons d'incendie supplémentaires sur le feu",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "fire_engine",
+   "count": 2,
+   "level": null
+  },
+  {
+   "id": "o42",
+   "variety": "fr",
+   "text": "Engagez une ambulance vers le lieu de l'accident",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "ambulance",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "o43",
+   "variety": "fr",
+   "text": "Il faut trois ambulances sur la RN1",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "ambulance",
+   "count": 3,
+   "level": null
+  },
+  {
+   "id": "o44",
+   "variety": "fr",
+   "text": "Envoyez un camion-citerne pour ravitailler les engins",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "water_tanker",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "o45",
+   "variety": "fr",
+   "text": "Dépêchez un bulldozer pour ouvrir un pare-feu",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "heavy_equipment",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "o46",
+   "variety": "fr",
+   "text": "Mobilisez deux embarcations pour évacuer les familles",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "boat",
+   "count": 2,
+   "level": null
+  },
+  {
+   "id": "o47",
+   "variety": "fr",
+   "text": "Faites décoller un drone de reconnaissance",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "drone",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "o48",
+   "variety": "fr",
+   "text": "Renfort : un véhicule de secours routier",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "rescue_vehicle",
+   "count": 1,
+   "level": null
+  },
+  {
+   "id": "o49",
+   "variety": "fr",
+   "text": "Passez au niveau crise",
+   "intent": "order",
+   "action": "escalate",
+   "resource_kind": null,
+   "count": null,
+   "level": "crisis"
+  },
+  {
+   "id": "o50",
+   "variety": "fr",
+   "text": "Je propose de déclarer la catastrophe",
+   "intent": "order",
+   "action": "escalate",
+   "resource_kind": null,
+   "count": null,
+   "level": "disaster"
+  },
+  {
+   "id": "o51",
+   "variety": "fr",
+   "text": "Alertez la population de rester loin de l'oued",
+   "intent": "order",
+   "action": "alert",
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "o52",
+   "variety": "fr",
+   "text": "Mobilisez les volontaires secouristes du secteur",
+   "intent": "order",
+   "action": "volunteers",
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "o53",
+   "variety": "fr",
+   "text": "Appelez la garde nationale pour fermer la route",
+   "intent": "order",
+   "action": "call",
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "o54",
+   "variety": "fr",
+   "text": "Affichez l'itinéraire le plus rapide pour l'ambulance",
+   "intent": "order",
+   "action": "route",
+   "resource_kind": "ambulance",
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "o55",
+   "variety": "fr",
+   "text": "Combien de fourgons sont disponibles ?",
+   "intent": "question",
+   "action": null,
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "o56",
+   "variety": "fr",
+   "text": "Quelle est la vitesse du vent sur le site ?",
+   "intent": "question",
+   "action": null,
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "o57",
+   "variety": "fr",
+   "text": "Notez que la première équipe est arrivée sur place",
+   "intent": "order",
+   "action": "note",
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "o58",
+   "variety": "fr",
+   "text": "Envoyez quatre camions de pompiers des gouvernorats voisins",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "fire_engine",
+   "count": 4,
+   "level": null
+  },
+  {
+   "id": "o59",
+   "variety": "fr",
+   "text": "Y a-t-il des blessés ?",
+   "intent": "question",
+   "action": null,
+   "resource_kind": null,
+   "count": null,
+   "level": null
+  },
+  {
+   "id": "o60",
+   "variety": "fr",
+   "text": "Engagez un poste de commandement mobile",
+   "intent": "order",
+   "action": "dispatch",
+   "resource_kind": "command_vehicle",
+   "count": 1,
+   "level": null
+  }
+ ]
+}

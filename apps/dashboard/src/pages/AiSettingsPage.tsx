@@ -311,6 +311,16 @@ export function AiSettingsFormView({ initial, editable }: { initial: AiSettings;
           />
           <span>{t("aiSettings.assist.anomalies")}</span>
         </label>
+        <label className="checkbox">
+          <input
+            type="checkbox"
+            role="switch"
+            checked={form.commander}
+            disabled={ro}
+            onChange={(e) => update((f) => ({ ...f, commander: e.target.checked }))}
+          />
+          <span>{t("aiSettings.assist.commander")}</span>
+        </label>
       </section>
 
       {editable && (
