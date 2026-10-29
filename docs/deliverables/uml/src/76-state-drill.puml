@@ -1,0 +1,21 @@
+@startuml
+!include style.iuml
+title États : opération blanche (L5a)
+[*] --> Brouillon
+Brouillon : scénario modifiable
+Brouillon --> Soumis : présentée aux wilayas
+Soumis --> Pret : toutes les wilayas acceptent
+Pret --> Soumis : une wilaya refuse ou retire
+Soumis --> Soumis : refus avec motif
+Pret --> EnCours : démarrer
+state "Prêt" as Pret
+state "En cours [SIM]" as EnCours
+EnCours --> Arrete : « Arrêter » (motif)\nou toutes les wilayas retirées
+EnCours --> Termine : durée écoulée
+state "Arrêté" as Arrete
+state "Terminé" as Termine
+Arrete --> Clos : conclusion
+Termine --> Clos : conclusion
+Clos --> [*]
+Clos : rapport archivé
+@enduml

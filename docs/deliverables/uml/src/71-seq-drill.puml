@@ -1,0 +1,40 @@
+@startuml
+!include style.iuml
+title Séquence : opération blanche numérique entre Nabeul et Bizerte (L5a) [SIM]
+autonumber
+actor "Administrateur" as ADM
+actor "Salle centrale\n(planificateur)" as PL
+actor "Chef de salle\n(Nabeul)" as NB
+actor "Évaluateur" as EV
+participant "Tableau de bord" as UI
+participant "API" as API
+database "PostgreSQL" as DB
+ADM -> UI : « Permissions » : éléments de l'opération blanche\n(masqués par défaut) à la salle centrale
+PL -> UI : exercice, plan bleu, wilayas 21 et 23, évaluateur
+UI -> API : POST /staff/drills
+PL -> UI : injections datées à la minute, moyens demandés
+UI -> API : POST /staff/drills/{id}/injects
+PL -> UI : « Présenter aux wilayas »
+UI -> API : POST /staff/drills/{id}/submit
+NB -> UI : accepter (ou refuser avec motif)
+UI -> API : POST /staff/drills/{id}/approvals
+API -> DB : toutes acceptées : état prêt
+PL -> UI : « Démarrer »
+UI -> API : POST /staff/drills/{id}/start
+API -> DB : moyens au départ, audit
+loop chaque injection à son heure
+  API --> UI : fil ambre [SIM]
+  NB -> UI : réponse, réserver 2 bateaux
+  UI -> API : POST /staff/drills/{id}/injects/{i}/responses
+  API -> DB : réservation dans l'exercice seul
+end
+PL -> API : POST /staff/drills/{id}/stress\n(résultat k6 de la copie isolée)
+alt incident réel
+  NB -> UI : « Arrêter l'exercice » (motif)
+  UI -> API : POST /staff/drills/{id}/stop
+end
+EV -> UI : grille par injection
+UI -> API : PUT /staff/drills/{id}/injects/{i}/evaluation
+PL -> UI : rapport, puis clôture avec conclusion
+UI -> API : GET /staff/drills/{id}/report
+@enduml

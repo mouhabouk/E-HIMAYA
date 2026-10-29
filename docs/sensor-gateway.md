@@ -248,7 +248,7 @@ GATEWAY_API_URL=http://10.0.0.5:8000 GATEWAY_TOKEN=... GATEWAY_QUEUE=/var/lib/eh
   "confidence": "0.87",
   "hits": "3",
   "frames": "5",
-  "model": "fire-smoke@2.0.0",
+  "model": "fire-smoke@3.0.0",
   "frame_jpeg_b64": "<صورة JPEG بترميز base64، حتى 2 ميغابايت تقريبا>",
   "sig": "<64 حرفا ست عشريا>"
 }

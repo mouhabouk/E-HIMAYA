@@ -1,0 +1,72 @@
+@startuml
+!include style.iuml
+title Diagramme de classes : opération blanche numérique et tâches du plan (L5a)
+class "Exercice" as Ex <<[SIM]>> {
+  titre, objectif, risque, plan
+  wilayas, salle : central | g:NN
+  début prévu, durée
+  évaluateur indépendant
+  état : brouillon | soumis | prêt | en cours
+         | arrêté | terminé | clos
+  motif d'arrêt, conclusion
+}
+class "Participation" as Par {
+  wilaya
+  décision : en attente | acceptée
+             | refusée | retirée
+  motif, par, date
+}
+class "Injection" as Inj {
+  minute depuis le début, wilaya
+  type : signalement | évolution | manque
+         | évacuation | décision
+  titre, texte, moyens demandés
+  réponse attendue, générée
+}
+class "Réponse" as Rep {
+  wilaya, action, texte
+  par, date
+}
+class "Réservation" as Boo {
+  moyen du registre, type, wilaya
+  réservé, libéré
+}
+class "Évaluation" as Eva {
+  plan suivi : oui | partiel | non
+  note, remarques, évaluateur
+}
+class "Essai de charge" as Str {
+  environnement : copie isolée
+  signalements envoyés, acceptés, refusés
+  attaques envoyées, bloquées
+}
+class "Liste de tâches du plan" as Chk {
+  axe ou exercice, document, empreinte
+  état : file | lecture | revue | approuvée | échec
+  modèle, pages lues, version
+}
+class "Tâche" as Task {
+  action, responsable, moyen
+  page, citation, citation trouvée
+  origine : modèle | manuelle
+  revue : proposée | acceptée | modifiée | supprimée
+  suivi : à faire | en cours | faite | sans objet
+}
+class "Moyen (registre R)" as Res
+class "Document du registre" as Doc
+Ex "1" *-- "1..*" Par
+Ex "1" *-- "0..*" Inj
+Inj "1" *-- "0..*" Rep
+Rep "1" -- "0..*" Boo
+Boo "0..*" --> "1" Res : réservé dans l'exercice seul
+Inj "1" -- "0..1" Eva
+Ex "1" *-- "0..*" Str
+Ex "0..1" -- "0..1" Chk
+Chk "1" *-- "0..*" Task
+Chk "0..*" --> "1" Doc : plan PDF
+note bottom of Ex
+  Tout ce qu'il crée porte exercise_id :
+  ni citoyen, ni statistiques, ni état réel des moyens.
+  Le chef d'une salle participante peut toujours l'arrêter.
+end note
+@enduml

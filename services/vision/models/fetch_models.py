@@ -24,22 +24,24 @@ MODELS: dict[str, dict[str, Any]] = {
     # Fire and smoke: YOLOX-Tiny fine-tuned by e-Himaya (services/vision/training, EVALUATION.md).
     "fire-smoke": {
         "name": "ehimaya-fire-smoke-yolox-tiny",
-        "version": "2.0.0",
+        "version": "3.0.0",
         "license": "Apache-2.0",
         # Our own weights ship in the repository (20 MB): the repository is private, so no anonymous download URL.
-        "bundled": "weights/fire-smoke-yolox-tiny-v2.onnx",
-        "sha256": "3b9f2b5f8513ad76a1817a18614bfc73c4d625f5fcf2f3952ed1839ae43339b6",
-        "source": "e-Himaya: YOLOX-Tiny (Megvii, Apache-2.0) fine-tuned on Open Images V7 fire/smoke images "
+        "bundled": "weights/fire-smoke-yolox-tiny-v3.onnx",
+        "sha256": "39de22767c117330708f0a48103003d03d41df5bd3eb72cabb3674ace75384f7",
+        "source": "e-Himaya: YOLOX-Tiny (Megvii, Apache-2.0) trained on Open Images V7 fire/smoke images "
         "(images CC BY 2.0, labels CC BY 4.0, Google LLC; boxes drawn by Grounding DINO, Apache-2.0), "
-        "FireNET by Moses Olafenwa (MIT, github.com/OlafenwaMoses/FireNET) and the FURG fire dataset by "
-        "Steffens et al. (CC0-1.0, github.com/steffensbola/furg-fire-dataset); see services/vision/training",
+        "FireNET by Moses Olafenwa (MIT, github.com/OlafenwaMoses/FireNET), the FURG fire dataset by "
+        "Steffens et al. (CC0-1.0, github.com/steffensbola/furg-fire-dataset) and D-Fire by de Venâncio et al. "
+        "(CC0-1.0, github.com/gaiasd/DFireDataset); see services/vision/training and eval/l5d",
         "format": "yolox",
         "input_size": [416, 416],
         "labels": ["fire", "smoke"],
-        # Raw score r becomes r ** power, so that the threshold reaching precision 0.80 maps to 0.45 (EVALUATION.md):
-        # fire fitted on eval/calibration.json (raw 0.24); smoke on the training-validation split pooled with
-        # eval/calibration.json (raw 0.34). Neither set overlaps the evaluation sample.
-        "score_power": {"fire": 0.56, "smoke": 0.74},
+        # Raw score r becomes r ** power (EVALUATION.md). Fire: the threshold reaching precision 0.80 on
+        # eval/calibration.json maps to 0.45 (raw 0.19). Smoke: the lowest power that flags no more of the smoke-free
+        # images of eval/calibration.json than model 2.0.0 did (5 %), so that smoke false alarms do not grow.
+        # Neither fit uses the evaluation sample.
+        "score_power": {"fire": 0.48, "smoke": 1.7},
     },
     # People: the official YOLOX-Tiny COCO model (Megvii, release 0.1.1rc0), only the "person" class is used.
     "person": {

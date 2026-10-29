@@ -1,0 +1,231 @@
+id,derja_ar,derja_latn,msa,fr,category,category_ar,use,region_note,example,status
+1,محصور | محصورين,m7sour | m7sourin,محاصر / محاصرون,"coincé(s), piégé(s)",lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),,فما ناس محصورين في الطابق الثاني,proposed
+2,محاصر | محاصرين,m7asar | m7asrin,محاصر / محاصرون,"encerclé(s), piégé(s)",lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),,عايلة محاصرين بالنار,proposed
+3,عالق | عالقين,3ale9 | 3al9in,عالق / عالقون,bloqué(s),lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),,زوز عالقين في الكرهبة,proposed
+4,مسكّر عليه | مسكرين عليهم,msakker 3lih | msakrin 3lihom,مغلق عليه / عليهم,enfermé(s),lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),,الباب مسكّر عليهم والدخان داخل,proposed
+5,ما ينجمش يخرج | ما ينجموش يخرجو,ma ynajemch yo5rej | ma ynajmouch yo5rjou,لا يستطيع / لا يستطيعون الخروج,ne peut / ne peuvent pas sortir,lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),,العجوز ما تنجمش تخرج,proposed
+6,مازال داخل | مازالو داخل,mazel dakhel | mazelou dakhel,ما زال / ما زالوا في الداخل,encore à l'intérieur,lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),,مازالو صغار داخل الدار,proposed
+7,فما ناس داخل,fama nes dakhel,يوجد أشخاص في الداخل,il y a des gens à l'intérieur,lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),,فما ناس داخل الحانوت,proposed
+8,صغار | صغيّر | صغيّرة,sghar | sghayer | sghayra,أطفال / طفل / طفلة,enfants / enfant,lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),يُقرأ مع سياق الخطر,فما صغار في الكرهبة,proposed
+9,بيبي | ولد صغير | طفلة صغيرة,bebe | wled sghir | tfla sghira,رضيع / طفل صغير / طفلة صغيرة,"bébé, petit enfant",lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),,بيبي وحدو في الدار,proposed
+10,شايب | شيباني | عجوز | عزوزة,cheyeb | chibeni | 3jouz | 3zouza,شيخ مسن / عجوز,personne âgée,lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),«عزوزة» شائعة في الساحل والجنوب,عزوزة وحدها والدار تشعل,proposed
+11,مقعد | معاق | ما يمشيش,mo9a3ed | m3a9 | ma yemchich,مُقعد / ذو إعاقة / لا يمشي,"handicapé, ne marche pas",lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),,بابا مقعد ما ينجمش يهبط,proposed
+12,حبلة | مرا حبلة | بش تولد,7ebla | mra 7ebla | bech tooled,امرأة حامل / على وشك الولادة,femme enceinte / en travail,lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),,مرا حبلة بش تولد والطريق مقصوصة,proposed
+13,يغرق | غارق | غرق,yogro9 | ghare9 | ghre9,يغرق / غارق / غرق,se noie / noyé,lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),,فما واحد يغرق قدام الشط,proposed
+14,هزّو الموج | هزّاتو البحر,hazzou el mouj | hazzatou el b7ar,جرفه الموج / جرفه البحر,emporté par les vagues,lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),,صغير هزّو الموج,proposed
+15,هزّو الواد | هزّاتو السيلة,hazzou el wed | hazzatou essila,جرفه الوادي / جرفه السيل,emporté par l'oued / la crue,lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),«السيلة» في الجنوب والوسط,كرهبة هزّاتها السيلة,proposed
+16,تحت الردم | تحت الحجر,ta7t erradm | ta7t el 7jar,تحت الأنقاض,sous les décombres,lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),,فما ناس تحت الردم,proposed
+17,ما يتنفسش | ما عادش يتنفس,ma yetnaffesch | ma 3adech yetnaffes,لا يتنفس / توقف عن التنفس,ne respire pas / plus,lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),,الطفل ما عادش يتنفس,proposed
+18,تخنّق | مخنوق | خنقو الدخان,t5annag | ma5nou9 | 5ne9ou eddo5an,اختنق / مختنق / خنقه الدخان,asphyxié / étouffé par la fumée,lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),,فما شكون تخنّق بالدخان,proposed
+19,يعيّط | يعيّطو | يصيح | يستنجد,y3ayyet | y3aytou | ysi7 | yestanjed,يصرخ / يصرخون / يستغيث,crie / crient / appelle à l'aide,lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),,نسمعو فيهم يعيّطو من داخل,proposed
+20,عاونونا | اعتقونا | نجدة,3awnouna | a3t9ouna | najda,ساعدونا / أنقذونا / النجدة,aidez-nous / sauvez-nous / au secours,lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),«اعتقونا» شائعة في تونس العاصمة والشمال,اعتقونا الماء داخل علينا,proposed
+21,بالخف | فيسع | زربة,bel5aff | fissa3 | zarba,بسرعة / عاجل,vite / urgent,sos,استغاثة / طلب نجدة,نوع البلاغ: استغاثة,,ايجاو بالخف,proposed
+22,فمّا خطر | خطر كبير,fama 5tar | 5tar kbir,يوجد خطر / خطر كبير,il y a un danger / grand danger,sos,استغاثة / طلب نجدة,نوع البلاغ: استغاثة,,,proposed
+23,طايح في الأرض | طاح وما قامش,ta7 fel ardh | ta7 w ma 9amech,ساقط على الأرض / سقط ولم ينهض,tombé par terre / ne se relève pas,injured,جرحى / إصابة,إشارة «جرحى»,,راجل طاح وما قامش,proposed
+24,مجروح | مجروحين | مجرّح,mjarou7 | mjarou7in | mjarra7,جريح / جرحى,blessé(s),injured,جرحى / إصابة,إشارة «جرحى»,,فما زوز مجروحين,proposed
+25,متضرّر | متضرّرين,metdharrer | metdharrin,مصاب / مصابون,"atteint(s), blessé(s)",injured,جرحى / إصابة,إشارة «جرحى»,,,proposed
+26,يسيل فيه الدم | ينزف | الدم يجري,ysil fih eddam | yanzef | eddam yejri,ينزف,saigne,injured,جرحى / إصابة,إشارة «جرحى»,,يسيل فيه الدم من راسو,proposed
+27,مكسور | تكسّرت ساقو | تكسّر يدّو,maksour | tkassret se9ou | tkassar yeddou,كسر / انكسرت ساقه / انكسرت يده,fracture / jambe cassée / bras cassé,injured,جرحى / إصابة,إشارة «جرحى»,,,proposed
+28,محروق | تحرق | حرقتو النار,ma7rou9 | t7ra9 | 7ar9atou ennar,محروق / احترق / أحرقته النار,brûlé,injured,جرحى / إصابة,إشارة «جرحى»,,ولد تحرق في يدّو,proposed
+29,طاح عليه | غاب | مغشي عليه | ما يفيقش,ta7 3lih | ghab | mghchi 3lih | ma yfi9ch,أغمي عليه / فاقد الوعي,évanoui / inconscient,injured,جرحى / إصابة,إشارة «جرحى»,«طاح عليه» = أغمي عليه,طاح عليه وما يفيقش,proposed
+30,داخ | دوخة,de5 | dou5a,دوار / دوخة,"vertige, malaise",medical,حالة صحية,نوع البلاغ,,,proposed
+31,ضربة شمس | ضربتو الشمس,dharbet chams | dharbatou echams,ضربة شمس,insolation,medical,حالة صحية,نوع البلاغ,,,proposed
+32,قلبو | وجيعة في صدرو,9albou | wji3a fi sedrou,أزمة قلبية / ألم في الصدر,malaise cardiaque / douleur thoracique,medical,حالة صحية,نوع البلاغ,,وجيعة في صدرو وما ينجمش يتنفس,proposed
+33,السكّر طاح | السكّر طلع,essokkor ta7 | essokkor tla3,هبوط / ارتفاع السكر,hypoglycémie / hyperglycémie,medical,حالة صحية,نوع البلاغ,,,proposed
+34,تشنّج | ترعّش | عندو الصرع,tchannaj | tra33ech | 3andou essra3,تشنج / نوبة صرع,convulsions / crise d'épilepsie,medical,حالة صحية,نوع البلاغ,,,proposed
+35,لدغتو عقرب | عضّتو حنش,ldaghtou 39rab | 3addhetou 7nech,لدغته عقرب / لدغته أفعى,piqûre de scorpion / morsure de serpent,medical,حالة صحية,نوع البلاغ,الجنوب والوسط في الصيف,صغير لدغتو عقرب,proposed
+36,تسمّم | كلا حاجة فاسدة,tsammem | kla 7aja fesda,تسمم / أكل طعاما فاسدا,intoxication,medical,حالة صحية,نوع البلاغ,,,proposed
+37,وجيعة | يوجع فيه,wji3a | youja3 fih,ألم,douleur,medical,حالة صحية,نوع البلاغ,,,proposed
+38,مريض برشا | حالتو خايبة,mridh barcha | 7altou 5ayba,مريض جدا / حالته سيئة,très malade / état grave,medical,حالة صحية,نوع البلاغ,,,proposed
+39,مات | ماتو | ميّت | ميتين,mat | matou | mayet | maytin,مات / ماتوا / ميت / موتى,mort(s) / décédé(s),deaths,وفيات,إشارة «وفيات»,,فما واحد مات في الحادث,proposed
+40,توفّى | توفّات | ربّي رحمو,twaffa | twaffet | rabbi r7mou,توفي / توفيت,décédé(e),deaths,وفيات,إشارة «وفيات»,,,proposed
+41,جثّة | لقينا جثّة,jottha | l9ina jottha,جثة / وجدنا جثة,cadavre / on a trouvé un corps,deaths,وفيات,إشارة «وفيات»,,,proposed
+42,ما عادش يتحرّك,ma 3adech yet7arrek,لم يعد يتحرك,ne bouge plus,deaths,وفيات,إشارة «وفيات»,يُعامل كحياة في خطر حتى يتأكد,,proposed
+43,النار | شعلت | تشعل | شاعلة,ennar | ch3let | tech3el | ch3la,النار / اشتعلت / تشتعل / مشتعلة,le feu / a pris feu / brûle,fire,حريق,نوع البلاغ,,الدار شاعلة,proposed
+44,حريقة | حريق,7ri9a | 7ri9,حريق,incendie,fire,حريق,نوع البلاغ,,,proposed
+45,شعلت فيه النار | شعلت في,ch3let fih ennar | ch3let fi,اشتعلت فيه النار,a pris feu,fire,حريق,نوع البلاغ,,شعلت النار في الغابة,proposed
+46,الدخان | دخّان | دخان كحل,eddo5an | do55an | do5an k7al,الدخان / دخان أسود,fumée / fumée noire,fire,حريق,نوع البلاغ,,فما دخان كحل طالع من البلاصة,proposed
+47,لهيب | شعلة | السنة متاع النار,lhib | ch3la | elsna mta3 ennar,لهب / ألسنة اللهب,flammes,fire,حريق,نوع البلاغ,,,proposed
+48,الغابة شاعلة | حريقة غابة,el ghaba ch3la | 7ri9et ghaba,حريق غابة,feu de forêt,fire,حريق,نوع البلاغ,الشمال الغربي (جندوبة، باجة، الكاف، سليانة),,proposed
+49,الزرع شاعل | القمح شاعل | الصابة شاعلة,ezzra3 ch3el | el 9am7 ch3el | essaba ch3la,حريق في الحقول / القمح / المحصول,feu de champ / de récolte,fire,حريق,نوع البلاغ,الشمال والوسط في الصيف,,proposed
+50,الزيتون شاعل | الغابة متاع الزيتون,ezzitoun ch3el,حريق في غابة الزيتون,feu d'oliveraie,fire,حريق,نوع البلاغ,الساحل وصفاقس,,proposed
+51,المصبّة شاعلة | الزبلة شاعلة,el masabba ch3la | ezzebla ch3la,حريق في المصب / في الفضلات,feu de décharge / d'ordures,fire,حريق,نوع البلاغ,,,proposed
+52,الكرهبة شاعلة | الكميون شاعل,el karhba ch3la | el camion ch3el,السيارة مشتعلة / الشاحنة مشتعلة,voiture / camion en feu,fire,حريق,نوع البلاغ,,,proposed
+53,الكوزينة شاعلة | تحرقت الكوزينة,el couzina ch3la | t7ar9et el couzina,احترق المطبخ,cuisine en feu,fire,حريق,نوع البلاغ,,,proposed
+54,ينتشر | تكبر | تجري النار | الريح تزيد فيها,yentacher | tekber | tejri ennar | erri7 tzid fiha,ينتشر / تكبر / النار تمتد / الريح تزيدها,se propage / grandit / le vent l'attise,hazard:spreading_fire,خطر: نار تنتشر,الأخطار المصاحبة,,,proposed
+55,القاز | الغاز | بوتة | قاز البوتة,el gaz | bouta | gaz el bouta,الغاز / قارورة الغاز,gaz / bouteille de gaz,hazard:gas,خطر: غاز,الأخطار المصاحبة,«البوتة» = قارورة الغاز المنزلية,ريحة قاز في الدار,proposed
+56,ريحة قاز | ريحة غاز,ri7et gaz,رائحة غاز,odeur de gaz,hazard:gas,خطر: غاز,الأخطار المصاحبة,,,proposed
+57,الستاغ | الكونتور | الغاز الطبيعي,esstag | el compteur,شبكة الغاز والكهرباء (STEG) / العداد,STEG / compteur,hazard:gas,خطر: غاز,الأخطار المصاحبة,STEG: الشركة التونسية للكهرباء والغاز,,proposed
+58,تفرقع | تفجّر | انفجار | بمب,tfar9a3 | tfajjar | infijar | bomb,انفجر / انفجار,explosion / a explosé,hazard:explosion,خطر: انفجار,الأخطار المصاحبة,,البوتة تفرقعت,proposed
+59,الإيسانس | البنزين | المازوط | الكاز,l'essence | el benzine | el mazout | el kaz,البنزين / المازوت (الديزل) / الكيروسين,essence / gasoil / pétrole,hazard:fuel,خطر: وقود,الأخطار المصاحبة,«الكاز» = الكيروسين (البترول الأبيض),,proposed
+60,الضو | الكوران | الطريسيتي,eddhaw | el courant | el trisiti,الكهرباء / التيار الكهربائي,l'électricité / le courant,hazard:electricity,خطر: كهرباء,الأخطار المصاحبة,,الكوران قاصص والسلك طايح,proposed
+61,سلك طايح | الفيل طايح | كابل,selk ta7 | el fil ta7 | cable,سلك كهربائي ساقط,câble tombé,hazard:electricity,خطر: كهرباء,الأخطار المصاحبة,,,proposed
+62,ضربو الضو | ضربتو الكوران | تكهرب,dharbou eddhaw | dharbatou el courant | tkahrab,صعقته الكهرباء,électrocuté,injured,جرحى / إصابة,إشارة «جرحى»,,,proposed
+63,ريحة خايبة | ريحة كيمياء | دوا,ri7a 5ayba | ri7et kimia | dwa,رائحة كريهة / رائحة مواد كيميائية / مبيد,mauvaise odeur / produit chimique / pesticide,chemical_leak,تسرب مواد كيميائية,نوع البلاغ,«دوا» قد يعني المبيد الزراعي,,proposed
+64,حاجة سامّة | سمّ,7aja semma | semm,مادة سامة / سم,produit toxique / poison,hazard:chemical,خطر: مواد كيميائية,الأخطار المصاحبة,,,proposed
+65,تسرّب | يسرّب | يقطّر,tsarrob | ysarreb | y9atter,تسرب / يتسرب / يقطر,fuite / fuit,chemical_leak,تسرب مواد كيميائية,نوع البلاغ,,,proposed
+66,الكلور | الجافال | الأسيد,el chlore | el javel | l'acide,الكلور / ماء الجافيل / الحمض,chlore / javel / acide,hazard:chemical,خطر: مواد كيميائية,الأخطار المصاحبة,,,proposed
+67,الفيضان | فاضت | فاض الواد,el fayadhan | fadhet | fadh el wed,فيضان / فاض الوادي,inondation / l'oued a débordé,flood,فيضان / أمطار,نوع البلاغ,,,proposed
+68,السيلة | جات السيلة,essila | jet essila,السيل / جاء السيل,crue / la crue est arrivée,flood,فيضان / أمطار,نوع البلاغ,الجنوب والوسط,,proposed
+69,الماء دخل | دخل علينا الماء | الماء في الدار,el me dkhal | dkhal 3lina el me | el me fel dar,دخل الماء / دخل علينا الماء,l'eau est entrée,flood,فيضان / أمطار,نوع البلاغ,,الماء دخل علينا للدار,proposed
+70,الماء يطلع | طلع الماء | الماء يزيد,el me yotla3 | tla3 el me | el me yzid,الماء يرتفع,l'eau monte,hazard:rising_water,خطر: ماء يرتفع,الأخطار المصاحبة,,,proposed
+71,الماء للركبة | الماء للصدر,el me lerrokba | el me lessadr,الماء إلى الركبة / إلى الصدر,l'eau jusqu'au genou / à la poitrine,hazard:rising_water,خطر: ماء يرتفع,الأخطار المصاحبة,يدل على العمق,,proposed
+72,مطر | نوّ | صبّ النو,matar | nou | sabb ennou,مطر / أمطار غزيرة,pluie / forte pluie,flood,فيضان / أمطار,نوع البلاغ,«النو» = المطر الغزير في الساحل وصفاقس,,proposed
+73,التبروري | الجليد,ettabrouri | ejjlid,البَرَد / الجليد,grêle / glace,flood,فيضان / أمطار,نوع البلاغ,,,proposed
+74,الواد | القنطرة | الشعبة,el wed | el 9antra | ech3ba,الوادي / القنطرة / المجرى,oued / pont / ravine,place,مكان واتجاه,فهم المكان,,,proposed
+75,مقصوصة الطريق | الطريق مقطوعة,ma9sousa ettri9 | ettri9 ma9tou3a,الطريق مقطوعة,route coupée,flood,فيضان / أمطار,نوع البلاغ,,,proposed
+76,الكرهبة في الماء | غرقت الكرهبة,el karhba fel me | ghre9et el karhba,السيارة في الماء / غرقت السيارة,voiture dans l'eau,flood,فيضان / أمطار,نوع البلاغ,,,proposed
+77,البحر | الشط | الموج,el b7ar | ech-chatt | el mouj,البحر / الشاطئ / الموج,mer / plage / vagues,drowning,غرق,نوع البلاغ,,,proposed
+78,البحر هايج | البحر مقلوب,el b7ar hayej | el b7ar ma9loub,البحر هائج,mer agitée,drowning,غرق,نوع البلاغ,,,proposed
+79,التيار | البحر يجبد | يجبد فيه البحر,ettayyar | el b7ar yejbed | yejbed fih el b7ar,تيار ساحب,courant d'arrachement,drowning,غرق,نوع البلاغ,,,proposed
+80,عام وما رجعش | دخل للبحر وما خرجش,3am w ma rja3ch | dkhal lel b7ar w ma 5rajch,سبح ولم يعد / دخل البحر ولم يخرج,nagé et pas revenu,drowning,غرق,نوع البلاغ,,,proposed
+81,فلوكة | شقف | بطّو,flouka | chgof | batou,قارب صغير / قارب,barque / bateau,drowning,غرق,نوع البلاغ,,,proposed
+82,البسين | الماجل | البير,el piscine | el mejel | el bir,المسبح / الماجل (خزان الماء) / البئر,piscine / citerne / puits,drowning,غرق,نوع البلاغ,«الماجل» خزان ماء المطر في البيوت الريفية,طفل طاح في الماجل,proposed
+83,السدّ | البحيرة,essadd | el b7ira,السد / البحيرة,barrage / lac,drowning,غرق,نوع البلاغ,,,proposed
+84,أكسيدون | حادث | كسيدة,accident | 7adeth | ksida,حادث مرور,accident,traffic_accident,حادث مرور,نوع البلاغ,«كسيدة» عامية,صار أكسيدون في الطريق السريعة,proposed
+85,تصادمو | تلاقاو | ضربو بعضهم,tsadmou | tla9aw | dharbou ba3dhhom,تصادما / اصطدمت السيارتان,collision,traffic_accident,حادث مرور,نوع البلاغ,,,proposed
+86,تقلبت الكرهبة | انقلبت | تدردحت,t9allbet el karhba | en9albet | tdardhet,انقلبت السيارة,voiture renversée,traffic_accident,حادث مرور,نوع البلاغ,«تدردحت» = تدحرجت,,proposed
+87,ضربتو كرهبة | دعستو كرهبة,dharbatou karhba | da3satou karhba,صدمته سيارة / دهسته سيارة,renversé par une voiture,traffic_accident,حادث مرور,نوع البلاغ,,,proposed
+88,الكرهبة | الكميون | الموتور | الكار | اللواج | التاكسي,el karhba | el camion | el motor | el car | el louage | el taxi,السيارة / الشاحنة / الدراجة النارية / الحافلة / سيارة الأجرة الجماعية / سيارة الأجرة,voiture / camion / moto / car / louage / taxi,traffic_accident,حادث مرور,نوع البلاغ,«اللواج» = سيارة أجرة بين المدن,,proposed
+89,الأوتوروت | الطريق السريعة | الروتة,l'autoroute | ettri9 essri3a | erroute,الطريق السيارة / الطريق,autoroute / route,place,مكان واتجاه,فهم المكان,,,proposed
+90,الكيّاس | الرّوندبوان | الكروازمون,el kayyes | el rond-point | el croisement,الطريق المعبدة / الدوار / المفترق,route goudronnée / rond-point / carrefour,place,مكان واتجاه,فهم المكان,«الكيّاس» = الطريق المعبّدة,,proposed
+91,مسكّر في الكرهبة | ما ينجموش يخرجو من الكرهبة,msakker fel karhba,محصور داخل السيارة,coincé dans la voiture,lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),,,proposed
+92,التران | الماترو,ettran | el metro,القطار / المترو,train / métro,traffic_accident,حادث مرور,نوع البلاغ,,,proposed
+93,طاح الحيط | طاحت الدار | تهدّمت,ta7 el 7it | ta7et eddar | thaddmet,سقط الجدار / انهار المنزل / تهدّمت,mur effondré / maison effondrée,hazard:building_collapse,خطر: انهيار مبنى,الأخطار المصاحبة,,,proposed
+94,السقف طاح | الدالة طاحت,essa9f ta7 | eddala ta7et,انهار السقف,plafond effondré,hazard:building_collapse,خطر: انهيار مبنى,الأخطار المصاحبة,«الدالة» = سقف خرساني,,proposed
+95,الحيط مشقّق | بش يطيح,el 7it mcha99e9 | bech yti7,الجدار متصدع / على وشك السقوط,mur fissuré / va tomber,hazard:building_collapse,خطر: انهيار مبنى,الأخطار المصاحبة,,,proposed
+96,الجبل طاح | تزلّق الطين | انزلاق,ejjbal ta7 | tzalle9 ettin | inzila9,انزلاق أرضي,glissement de terrain,landslide,انزلاق أرضي / انهيار,نوع البلاغ,,,proposed
+97,الحجر طاح على الطريق,el 7jar ta7 3la ettri9,سقوط صخور على الطريق,chute de pierres,landslide,انزلاق أرضي / انهيار,نوع البلاغ,,,proposed
+98,زلزال | تزلزلت الأرض | الأرض تهزّت,zelzel | tzalzlet el ardh | el ardh thazzet,زلزال,séisme,landslide,انزلاق أرضي / انهيار,نوع البلاغ,يصنَّف «أخرى» إن لم يكن انهيار,,proposed
+99,بير | طاح في بير,bir | ta7 fi bir,بئر / سقط في بئر,puits / tombé dans un puits,lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),,,proposed
+100,الأسانسير واقف وفيه ناس,l'ascenseur wa9ef w fih nes,المصعد متوقف وبه أشخاص,ascenseur bloqué avec des gens,lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),,,proposed
+101,حيوان | كلب | نحل | دبّور,7ayawen | kalb | na7l | dabbour,حيوان / كلب / نحل / زنبور,animal / chien / abeilles / guêpes,other,أخرى,نوع البلاغ,,,proposed
+102,الريح | العجاج | الزوبعة,erri7 | el 3jaj | ezzouba3a,الريح / العجاج (عاصفة رملية) / الزوبعة,vent / tempête de sable / tourbillon,other,أخرى,نوع البلاغ,«العجاج» الجنوب,,proposed
+103,الثلج | البرد,ethelj | el bard,الثلج / البرد,neige / froid,other,أخرى,نوع البلاغ,الشمال الغربي في الشتاء,,proposed
+104,ضايع | ضاع | تلف,dhaye3 | dha3 | tlef,تائه / ضاع,perdu / égaré,sos,استغاثة / طلب نجدة,نوع البلاغ: استغاثة,«تلف» = تاه في الجنوب والساحل,صغير تلف في الغابة,proposed
+105,واحد | زوز | ثلاثة | أربعة | خمسة,wa7ed | zouz | thletha | arb3a | 5amsa,واحد / اثنان / ثلاثة / أربعة / خمسة,un / deux / trois / quatre / cinq,quantity,عدد وكمية,فهم العدد,«زوز» = اثنان,,proposed
+106,برشا | ياسر | بالكدس,barcha | yesser | bel kdes,كثير / كثيرون,beaucoup,quantity,عدد وكمية,فهم العدد,«ياسر» الساحل والجنوب,,proposed
+107,شويّة | حبّة | شوية برك,chwaya | 7abba | chwaya bark,قليل,un peu,quantity,عدد وكمية,فهم العدد,,,proposed
+108,عايلة كاملة | الدار الكل,3ayla kemla | eddar el kol,عائلة كاملة / كل أهل البيت,toute une famille,quantity,عدد وكمية,فهم العدد,,,proposed
+109,ناس | عباد | خلق,nes | 3bed | 5al9,أشخاص / ناس,des gens,quantity,عدد وكمية,فهم العدد,«عباد» الشمال الغربي والجنوب,,proposed
+110,الدار | الحوش | البيت,eddar | el 7ouch | el bit,المنزل / الحوش / الغرفة,maison / cour / chambre,place,مكان واتجاه,فهم المكان,«البيت» = الغرفة في الدارجة,,proposed
+111,الطابق | الإيتاج | الفوق | اللوطا,ettabe9 | l'étage | el fou9 | el louta,الطابق / الأعلى / الأسفل,étage / en haut / en bas,place,مكان واتجاه,فهم المكان,«اللوطا» = تحت,,proposed
+112,الكوزينة | الدوش | البانو,el couzina | eddouch | el bano,المطبخ / الحمام,cuisine / salle de bain,place,مكان واتجاه,فهم المكان,,,proposed
+113,الحانوت | المحل | المغازة,el 7anout | el ma7al | el magasin,الدكان / المحل / المتجر,boutique / magasin,place,مكان واتجاه,فهم المكان,,,proposed
+114,الجامع | السبيطار | المكتب | المعمل | الوزين,ejjame3 | essbitar | el mekteb | el ma3mel | el usine,المسجد / المستشفى / المدرسة / المصنع,mosquée / hôpital / école / usine,place,مكان واتجاه,فهم المكان,«المكتب» = المدرسة الابتدائية عند كبار السن,,proposed
+115,الحومة | الحيّ | الدوّار | العرش,el 7ouma | el 7ay | eddouwar | el 3arch,الحي / القرية الصغيرة,quartier / douar,place,مكان واتجاه,فهم المكان,«الدوّار» في الريف,,proposed
+116,الهنشير | السانية | الجنان,el hanchir | essenya | ejjnen,الضيعة / البستان,ferme / verger,place,مكان واتجاه,فهم المكان,«السانية» الساحل وصفاقس,,proposed
+117,قدّام | تالي | بحذا | قريب من | على جال,9oddem | tali | b7dhe | 9rib men | 3la jal,أمام / خلف / بجانب / قرب,devant / derrière / à côté de / près de,place,مكان واتجاه,فهم المكان,,,proposed
+118,اليمين | اليسار | الشمال,el imin | el isar | ech-chmel,اليمين / اليسار,droite / gauche,place,مكان واتجاه,فهم المكان,«الشمال» = اليسار في الدارجة، لا الاتجاه,,proposed
+119,بعيد | قريب | هوني | غادي,b3id | 9rib | houni | ghadi,بعيد / قريب / هنا / هناك,loin / près / ici / là-bas,place,مكان واتجاه,فهم المكان,,,proposed
+120,توّا | توة | في بلاصتها,tawa | fi blasetha,الآن / حالا,maintenant / tout de suite,time,زمن,فهم الزمن,,,proposed
+121,من شويّة | من ساعة,men chwaya | men se3a,منذ قليل / منذ ساعة,il y a peu / il y a une heure,time,زمن,فهم الزمن,,,proposed
+122,البارح | اليوم | غدوة,el bera7 | el youm | ghodwa,أمس / اليوم / غدا,hier / aujourd'hui / demain,time,زمن,فهم الزمن,,,proposed
+123,الصباح | العشية | الليل | نص الليل,essbe7 | el 3chiya | ellil | noss ellil,الصباح / المساء / الليل / منتصف الليل,matin / après-midi / nuit / minuit,time,زمن,فهم الزمن,«العشية» = بعد الظهر,,proposed
+124,ابعثولنا | ابعثو | جيبو,eb3thoulna | eb3thou | jibou,أرسلوا لنا / أرسلوا / أحضروا,envoyez-nous / envoyez / apportez,sos,استغاثة / طلب نجدة,نوع البلاغ: استغاثة,,,proposed
+125,الحماية | الحماية المدنية | البومبيي,el 7imaya | el 7imaya el madaniya | les pompiers,الحماية المدنية / رجال الإطفاء,protection civile / pompiers,sos,استغاثة / طلب نجدة,نوع البلاغ: استغاثة,,,proposed
+126,الأمبيلانص | الإسعاف | السامو,l'ambulance | el is3af | le SAMU,سيارة الإسعاف / الإسعاف الطبي,ambulance / SAMU,sos,استغاثة / طلب نجدة,نوع البلاغ: استغاثة,,,proposed
+127,الحاكم | البوليس | الحرس,el 7akem | el police | el 7aras,الأمن / الشرطة / الحرس الوطني,police / garde nationale,other,أخرى,نوع البلاغ,«الحاكم» = الشرطة عامة,,proposed
+128,ما فما حتى حد | ما جاش حد,ma fama 7atta 7ad | ma jech 7ad,لا يوجد أحد / لم يأت أحد,personne / personne n'est venu,other,أخرى,نوع البلاغ,,,proposed
+129,ما فماش خطر | لاباس | الحمد لله ما فما شي,ma famech 5tar | labes | el 7amdoulah ma fama chay,لا خطر / بخير,pas de danger / ça va,other,أخرى,نوع البلاغ,يخفض الأولوية، لا يُلغي البلاغ,,proposed
+130,كذبة | نلعب | ما فما شي,kedhba | nal3eb | ma fama chay,كذب / أمزح / لا شيء,mensonge / je plaisante / rien,other,أخرى,نوع البلاغ,بلاغ كاذب محتمل؛ القرار لعون القاعة,,proposed
+131,شنوّة | آش | شنية,chnowa | ach | chniya,ماذا,quoi,general,كلمات عامة,فهم الجملة,,,proposed
+132,وين | فين,win | fin,أين,où,general,كلمات عامة,فهم الجملة,«فين» في الجنوب والساحل,,proposed
+133,كيفاش | قدّاش,kifech | 9addech,كيف / كم,comment / combien,general,كلمات عامة,فهم الجملة,,,proposed
+134,نجّم | ما نجّمش,najjem | ma najjamch,أستطيع / لا أستطيع,je peux / je ne peux pas,general,كلمات عامة,فهم الجملة,,,proposed
+135,نحب | حاجتي ب,n7eb | 7ajti b,أريد / أحتاج إلى,je veux / j'ai besoin de,general,كلمات عامة,فهم الجملة,,,proposed
+136,راهو | راهي | راهم,rahou | rahi | rahom,إنه / إنها / إنهم (للتأكيد),il est / elle est (insistance),general,كلمات عامة,فهم الجملة,,,proposed
+137,ماو | ياخي,maw | ya5i,أليس / هل,n'est-ce pas / est-ce que,general,كلمات عامة,فهم الجملة,,,proposed
+138,موش | مش | ماهوش,mouch | mech | mahouch,ليس / غير,pas / ne ... pas,general,كلمات عامة,فهم الجملة,النفي يقلب المعنى: «موش مجروح»,,proposed
+139,بش | باش,bech | bach,سوف / لكي,va / pour,general,كلمات عامة,فهم الجملة,«بش يطيح» = سيسقط,,proposed
+140,جا | جات | جاو,ja | jet | jew,جاء / جاءت / جاؤوا,est venu / venue / venus,general,كلمات عامة,فهم الجملة,,,proposed
+141,هبط | طلع | دخل | خرج,hbat | tla3 | dkhal | 5raj,نزل / صعد / دخل / خرج,descendre / monter / entrer / sortir,general,كلمات عامة,فهم الجملة,,,proposed
+142,خايف | مرعوب | مخلوع,5ayef | mar3oub | ma5lou3,خائف / مذعور,a peur / terrifié,general,كلمات عامة,فهم الجملة,«مخلوع» = مفزوع,,proposed
+143,محصور في الأسانسير | واقف بيه الأسانسير,m7asar fel ascenseur | wa9ef bih l'ascenseur,عالق في المصعد,bloqué dans l'ascenseur,lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),,فمّا عجوز محصور في الأسانسير والضو مقصوص,proposed
+144,الباب ما يتحلّش | الباب مسكّر بالمفتاح,el beb ma yet7allech | el beb msakker bel mfta7,الباب لا يُفتح,la porte ne s'ouvre pas,lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),يُقرأ مع سياق النار أو الماء,النار في الدار والباب ما يتحلّش,proposed
+145,طاح في الماجل | طاح في البير,ta7 fel mejel | ta7 fel bir,سقط في الصهريج / البئر,tombé dans la citerne / le puits,lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),,صغير طاح في الماجل متاع الجيران,proposed
+146,ما نجّمش نتنفّس | الدخان كلانا,ma najjamch netnaffes | eddo5an klena,لا أستطيع التنفس / الدخان يخنقنا,je ne peux pas respirer,lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),,"ma najjamch netnaffes, eddo5an klena fel bit",proposed
+147,حلّو علينا | فكّونا,7allou 3lina | fakkouna,أنقذونا / حرّرونا,"libérez-nous, sortez-nous de là",lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),,حلّو علينا راهو الماء يطلع,proposed
+148,حرّاقة | الفلوكة متاع الحرقة,7arra9a | el flouka mta3 el 7ar9a,مهاجرون غير نظاميين في قارب,migrants en mer (harraga),lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),الساحل وصفاقس والمهدية,فلوكة متاع حرّاقة تغرق قدّام الشط,proposed
+149,الولد ضاع | صغير ضايع,el wled dha3 | sghir dhaye3,طفل مفقود,enfant perdu,lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),«ضاع» = فُقد,صغيري ضاع في الغابة من العشية,proposed
+150,ما يجاوبش | التليفون مسكّر,ma yjewebch | ettelifoun msakker,لا يجيب / الهاتف مغلق,il ne répond pas,lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),يُعامل كحياة في خطر مع سياق الحادث,خويا في البحر وما يجاوبش,proposed
+151,مازال فيه الروح | مازال يتنفّس,mazel fih erro7 | mazel yetnaffes,ما يزال حيّا,il respire encore,injured,جرحى / إصابة,إشارة «جرحى»,يفرّق بين الجريح والمتوفّى,مازال فيه الروح، ابعثو الأمبيلانص,proposed
+152,مضروب | ضربوه | تعارك,madhroub | dharbouh | t3arek,مضروب / تعرّض للضرب,"frappé, bagarre",injured,جرحى / إصابة,إشارة «جرحى»,,ولد مضروب بالموس في الحومة,proposed
+153,موس | سكّين | ضربة موس,mous | sekkina | dharbet mous,سكين / طعنة,"couteau, coup de couteau",injured,جرحى / إصابة,إشارة «جرحى»,«الموس» = السكين,dharbouh b mous fi kerchou,proposed
+154,الدم يجري من راسو | راسو مفلّق,eddam yejri men rasou | rasou mfalla9,ينزف من رأسه,il saigne de la tête,injured,جرحى / إصابة,إشارة «جرحى»,,طاح من السلّوم وراسو مفلّق,proposed
+155,ما يحسّش بساقيه | ما يتحرّكش,ma y7essech b se9ih | ma yet7arrekch,لا يحس بساقيه / لا يتحرك,il ne sent plus ses jambes,injured,جرحى / إصابة,إشارة «جرحى»,إصابة عمود فقري محتملة,طاح من الفوق وما يحسّش بساقيه,proposed
+156,محروق برشا | الحرق كبير,ma7rou9 barcha | el 7ar9 kbir,حروق بالغة,gravement brûlé,injured,جرحى / إصابة,إشارة «جرحى»,,الصغير محروق برشا بالماء السخون,proposed
+157,طاح من السلّوم | طاح من السطح,ta7 men essellom | ta7 men essta7,سقط من السلم / السطح,tombé de l'échelle / du toit,injured,جرحى / إصابة,إشارة «جرحى»,«السلّوم» = السلّم,عامل طاح من السطح في الشانطي,proposed
+158,الضيقة | ما يلحقش نفسو,edhi9a | ma yel7a9ch nafsou,ضيق تنفس / ربو,"crise d'asthme, essoufflement",medical,حالة صحية,نوع البلاغ,«الضيقة» = الربو,بنتي جاتها الضيقة وما عندناش الدوا,proposed
+159,جلطة | تجلّط | فالج,jalta | tjallat | felej,جلطة / شلل,"AVC, attaque",medical,حالة صحية,نوع البلاغ,«فالج» عند كبار السن,بابا جاتو جلطة وفمّو مايل,proposed
+160,قلبو وقف | سكتة قلبية,9albou wa9ef | sakta 9albiya,توقف القلب,arrêt cardiaque,medical,حالة صحية,نوع البلاغ,,"9albou wa9ef, chnowa na3mlou?",proposed
+161,بش تولد | جاتها الوجيعة | الماء نزل,bech tooled | jetha el wji3a | el me nzel,على وشك الولادة,"elle va accoucher, perte des eaux",medical,حالة صحية,نوع البلاغ,,مرتي بش تولد والطريق مقصوصة,proposed
+162,سخانة | سخون | الحمّى,s5ana | s5oun | el 7omma,حمّى,fièvre,medical,حالة صحية,نوع البلاغ,,الصغير سخانتو 40 وما يفيقش,proposed
+163,يرجّع | قلبت معدتو | تقيّأ,yraja3 | 9olbet ma3dtou | t9ayya,يتقيأ,il vomit,medical,حالة صحية,نوع البلاغ,«يرجّع» = يتقيأ,الكل يرجّعو بعد العرس، تسمّم,proposed
+164,الحساسية | تنفخ وجهو,el 7asasiya | tenfa5 wejhou,حساسية / تورم الوجه,"allergie, visage gonflé",medical,حالة صحية,نوع البلاغ,,لدغتو نحلة وتنفخ وجهو,proposed
+165,الكانون | البرازيرو | الفاخر,el kanoun | el brasero | el fe5er,موقد الفحم,"brasero, charbon",medical,حالة صحية,نوع البلاغ,اختناق بأحادي أكسيد الكربون في الشتاء,عايلة مخنوقة بالكانون في البيت,proposed
+166,مخنوقين بالشوفاج | الشوفو,ma5nou9in bel chauffage | el chauffe-eau,اختناق بالمدفأة / سخان الماء,intoxiqués par le chauffage,medical,حالة صحية,نوع البلاغ,سخان الماء بالغاز في الدوش,لقيناهم مخنوقين في الدوش، الشوفو متاع القاز,proposed
+167,ضربة سخانة | الشهيلي,dharbet s5ana | ech-chhili,ضربة حرّ / ريح الشهيلي,"coup de chaleur, sirocco",medical,حالة صحية,نوع البلاغ,«الشهيلي» ريح حارة من الجنوب,عامل في الحصاد طاح بضربة سخانة,proposed
+168,عضّو كلب مسعور | كلب مكلوب,3addhou kalb mas3our | kalb makloub,عضّه كلب مسعور,mordu par un chien enragé,medical,حالة صحية,نوع البلاغ,«كلب» هنا حيوان، لا شتيمة,كلب مكلوب عضّ زوز صغار قدّام المكتب,proposed
+169,لدغتو حيّة | لسعتو لفعة,ldaghtou 7ayya | les3atou lef3a,لدغته أفعى,mordu par une vipère,medical,حالة صحية,نوع البلاغ,الجنوب,lef3a les3atou fi se9ou fel hanchir,proposed
+170,شرب جافال | كلا دوا,chreb javel | kla dwa,شرب مادة سامة / ابتلع دواء,a bu de l'eau de javel,medical,حالة صحية,نوع البلاغ,حالة تسمم طفل,الصغير شرب جافال من الكوزينة,proposed
+171,مات غرقان | لقيناه في الماء,mat ghar9en | l9inah fel me,مات غرقا,mort noyé,deaths,وفيات,إشارة «وفيات»,,لقينا راجل ميت في الشط,proposed
+172,الله يرحمو | مشى لربّي,allah yer7mou | mcha l rabbi,توفّي,il est décédé,deaths,وفيات,إشارة «وفيات»,عبارة ترحّم تدل على الوفاة,الشيباني مشى لربّي قبل ما تجي الأمبيلانص,proposed
+173,شرارة | الشرار طاير,charara | ech-charar tayer,شرارة,étincelle,fire,حريق,نوع البلاغ,,الشرار طاير من الكوزينة,proposed
+174,الكونتور شعل | الطابلو شعل,el compteur ch3el | el tableau ch3el,اشتعل عداد / لوحة الكهرباء,le compteur électrique a pris feu,hazard:electricity,خطر: كهرباء,الأخطار المصاحبة,,el compteur ch3el w do5an fel 3ali,proposed
+175,الدار ولّات ظلمة بالدخان,eddar wallet dhalma bed-do5an,امتلأ البيت بالدخان,la maison est envahie de fumée,fire,حريق,نوع البلاغ,,,proposed
+176,التبن شاعل | الكدس شاعل,ettben ch3el | el kdes ch3el,اشتعل التبن / أكوام القش,la paille brûle,fire,حريق,نوع البلاغ,الريف,كدس تبن شاعل قدّام الإسطبل,proposed
+177,البوتة تسرّب | البوتة شعلت,el bouta tsarreb | el bouta ch3let,قارورة الغاز تتسرب / اشتعلت,la bouteille de gaz fuit / brûle,hazard:gas,خطر: غاز,الأخطار المصاحبة,,el bouta ch3let fel couzina,proposed
+178,الغابة تحرق والريح قوية,el ghaba ta7re9 w erri7 9wiya,حريق غابة مع رياح قوية,feu de forêt avec vent fort,hazard:spreading_fire,خطر: نار تنتشر,الأخطار المصاحبة,الشمال الغربي في الصيف,,proposed
+179,النار وصلت للديار,ennar wesslet lel dyar,وصلت النار إلى المنازل,le feu a atteint les maisons,hazard:spreading_fire,خطر: نار تنتشر,الأخطار المصاحبة,,"ennar wesslet lel dyar, ba3thou les pompiers",proposed
+180,الكميون متاع البنزين | سيتارن,el camion mta3 el benzine | citerne,شاحنة صهريج وقود,camion-citerne,hazard:fuel,خطر: وقود,الأخطار المصاحبة,,سيتارن بنزين مقلوبة في الطريق,proposed
+181,صوت كبير | دوّى,sout kbir | dawwa,دويّ انفجار,grosse détonation,hazard:explosion,خطر: انفجار,الأخطار المصاحبة,,سمعنا صوت كبير والبلّور تكسّر,proposed
+182,ريحة الأمونياك | ريحة تحرق في العينين,ri7et l'ammoniac | ri7a ta7re9 fel 3inin,رائحة غاز مهيّج,"odeur d'ammoniac, ça pique les yeux",hazard:chemical,خطر: مواد كيميائية,الأخطار المصاحبة,,ri7a ta7re9 fel 3inin 9rib el ma3mel,proposed
+183,المبيد | دوا الفلاحة | الرشّ,el mobid | dwa el fle7a | errach,مبيد زراعي,pesticide,hazard:chemical,خطر: مواد كيميائية,الأخطار المصاحبة,«دوا» قد يعني المبيد,عمّال تسمّمو بدوا الرشّ في السانية,proposed
+184,الماء هزّ الكرهبة | الكرهبة عامت,el me hazz el karhba | el karhba 3amet,جرف الماء السيارة,l'eau a emporté la voiture,flood,فيضان / أمطار,نوع البلاغ,,el karhba 3amet fel wed w fiha nes,proposed
+185,الواد حامل | الواد طالع,el wed 7amel | el wed tale3,الوادي في حالة فيضان,l'oued est en crue,flood,فيضان / أمطار,نوع البلاغ,«حامل» = في فيضان,ما تقطعوش، الواد حامل,proposed
+186,البالوعة طافحة | الريقار طافح,el balou3a taf7a | el regard taf7,البالوعة فاضت,l'égout déborde,flood,فيضان / أمطار,نوع البلاغ,«الريقار» = فتحة المجاري,,proposed
+187,طلعنا للسطح | فوق السطح,tla3na lel sta7 | fou9 essta7,صعدنا إلى السطح,nous sommes montés sur le toit,hazard:rising_water,خطر: ماء يرتفع,الأخطار المصاحبة,يدلّ على حياة في خطر,"tla3na lel sta7, el me fel dar",proposed
+188,الماء للرقبة | الماء غطّى الكرهبة,el me lerra9ba | el me ghatta el karhba,الماء إلى الرقبة / غمر السيارة,l'eau jusqu'au cou,hazard:rising_water,خطر: ماء يرتفع,الأخطار المصاحبة,,,proposed
+189,غطس وما طلعش,ghtas w ma tla3ch,غاص ولم يطفُ,il a plongé et n'est pas remonté,drowning,غرق,نوع البلاغ,,ولد غطس من الصخر وما طلعش,proposed
+190,العوّام | المنقذ,el 3awwem | el mon9idh,السبّاح المنقذ,maître-nageur,drowning,غرق,نوع البلاغ,,ما فماش منقذ في الشط,proposed
+191,الجت سكي | الشقف تقلب,el jet-ski | ech-chgof t9alleb,دراجة مائية / انقلب القارب,"jet-ski, la barque s'est renversée",drowning,غرق,نوع البلاغ,,,proposed
+192,دعس واحد وهرب,da3as wa7ed w hrab,صدم شخصا وفرّ,délit de fuite,traffic_accident,حادث مرور,نوع البلاغ,,كرهبة دعست صغير وهربت,proposed
+193,الموتور طاح | المتور زلق,el motor ta7 | el motor zle9,سقط سائق الدراجة النارية,chute de moto,traffic_accident,حادث مرور,نوع البلاغ,«الموتور» = الدراجة النارية,,proposed
+194,الكار تقلّب | الكار متاع المكتب,el car t9alleb | el car mta3 el mekteb,انقلبت الحافلة / حافلة المدرسة,le bus s'est renversé,traffic_accident,حادث مرور,نوع البلاغ,حافلة تلاميذ تعني عددا كبيرا,el car mta3 el mekteb t9alleb fel kayyes,proposed
+195,مسكّر في الكرهبة والكرهبة شاعلة,msakker fel karhba w el karhba ch3la,عالق في سيارة تحترق,coincé dans une voiture en feu,lives_at_risk,حياة في خطر,إشارة «حياة في خطر» (تبرز البلاغ فورا),,,proposed
+196,الدار القديمة طاحت | الوكالة طاحت,eddar el 9dima ta7et | el wkala ta7et,انهار بيت قديم,une vieille maison s'est effondrée,hazard:building_collapse,خطر: انهيار مبنى,الأخطار المصاحبة,«الوكالة» = بناية قديمة متعددة السكان في المدينة العتيقة,وكالة طاحت في المدينة العربي وفمّا ناس تحت,proposed
+197,الشانطي طاح | السقالة طاحت,ech-chantier ta7 | essa9ala ta7et,سقطت سقالة ورشة البناء,échafaudage effondré,hazard:building_collapse,خطر: انهيار مبنى,الأخطار المصاحبة,«الشانطي» = ورشة البناء,,proposed
+198,الطريق تحفّرت | الطريق هبطت,ettri9 t7affret | ettri9 hbatet,انخسفت الطريق,la route s'est effondrée,landslide,انزلاق أرضي / انهيار,نوع البلاغ,,,proposed
+199,عركة | تضاربو | فتنة,3arka | tdharbou | fetna,شجار,bagarre,other,أخرى,نوع البلاغ,,عركة كبيرة قدّام الكافي وفمّا مجروحين,proposed
+200,براكاج | سرقوه | خطفولو,braquage | sre9ouh | 5tafoulou,سطو / سرقة بالقوة,"braquage, vol",other,أخرى,نوع البلاغ,يُحوَّل إلى الأمن,braquage 9oddem el banka,proposed
+201,حلّوف بري | الحلالف في الطريق,7allouf barri | el 7lalef fi ettri9,خنزير بري,sanglier sur la route,other,أخرى,نوع البلاغ,«حلّوف» هنا حيوان، لا شتيمة,,proposed
+202,النحل هجم | دبابير,enna7l hjem | dbabir,هجوم نحل / دبابير,attaque d'abeilles / guêpes,other,أخرى,نوع البلاغ,,النحل هجم على الصغار في الجنان,proposed
+203,قطوس محصور | قطوس في الشجرة,9attous m7asar | 9attous fi ech-chajra,قطّ عالق,chat coincé,other,أخرى,نوع البلاغ,يخفض الأولوية (حيوان),,proposed
+204,العجاج | الريح هزّت السقف,el 3jaj | erri7 hazzet essa9f,عاصفة رملية / الريح اقتلعت السقف,"tempête, le vent a arraché le toit",other,أخرى,نوع البلاغ,,,proposed
+205,التبروري كسّر | الثلج سكّر الطريق,ettabrouri kassar | ethelj sakker ettri9,البَرَد / الثلج أغلق الطريق,"grêle, neige bloquant la route",other,أخرى,نوع البلاغ,الشمال الغربي في الشتاء,ethelj sakker ettri9 w fama mridh fel douar,proposed
+206,إيجاو بالخف | ابعثو حد,ijew bel5aff | eb3thou 7ad,تعالوا بسرعة / أرسلوا أحدا,"venez vite, envoyez quelqu'un",sos,استغاثة / طلب نجدة,نوع البلاغ: استغاثة,,"ijew bel5aff, fama 7ri9a",proposed
+207,يعيشك | بربّي | الله يخلّيك,y3aychek | birabbi | allah y5allik,من فضلك / أرجوك,"s'il vous plaît, je vous en supplie",sos,استغاثة / طلب نجدة,نوع البلاغ: استغاثة,صيغ رجاء تدلّ على الاستعجال,"birabbi ijew, el me dkhal",proposed
+208,ابعثو الحماية والأمبيلانص,eb3thou el 7imaya w l'ambulance,أرسلوا الحماية المدنية والإسعاف,envoyez les pompiers et l'ambulance,sos,استغاثة / طلب نجدة,نوع البلاغ: استغاثة,,,proposed
+209,ما فما حتى حد جا | ستناو برشا,ma fama 7atta 7ad ja | stannew barcha,لم يأت أحد / انتظرنا طويلا,personne n'est venu,sos,استغاثة / طلب نجدة,نوع البلاغ: استغاثة,يرفع أولوية المتابعة,,proposed
+210,قدّام الجامع | تالي المكتب | بحذا الكسكروت,9oddem ejjame3 | tali el mekteb | b7dhe el casse-croûte,أمام المسجد / خلف المدرسة / قرب المطعم,"devant la mosquée, derrière l'école",place,مكان واتجاه,فهم المكان,معالم يصف بها المواطن المكان,,proposed
+211,الطريق الجهوية | الطريق الوطنية | الكيلومتر,ettri9 ej-jihawiya | ettri9 el wataniya | el kilometre,الطريق الجهوية / الوطنية / الكيلومتر,"route régionale / nationale, PK",place,مكان واتجاه,فهم المكان,,accident fi ettri9 el wataniya 1 kilometre 40,proposed
+212,الشط | الكورنيش | المرسى,ech-chatt | el corniche | el marsa,الشاطئ / الكورنيش / الميناء,"plage, corniche, port",place,مكان واتجاه,فهم المكان,,,proposed
+213,الجبل | الغابة | الوطا,ejjbal | el ghaba | el wta,الجبل / الغابة / السهل,"montagne, forêt, plaine",place,مكان واتجاه,فهم المكان,«الوطا» = الأرض المنبسطة,,proposed
+214,المدينة العربي | السوق | البطحاء,el medina el 3arbi | essou9 | el bat7a,المدينة العتيقة / السوق / الساحة,"médina, souk, place",place,مكان واتجاه,فهم المكان,,,proposed
+215,الدار الثالثة على اليمين,eddar ethletha 3al imin,المنزل الثالث على اليمين,troisième maison à droite,place,مكان واتجاه,فهم المكان,«اليمين» هنا اتجاه,,proposed
+216,عشرة | عشرين | ميّة,3achra | 3ichrin | miya,عشرة / عشرون / مائة,"dix, vingt, cent",quantity,عدد وكمية,فهم العدد,,,proposed
+217,فوق العشرة | قريب العشرين,fou9 el 3achra | 9rib el 3ichrin,أكثر من عشرة / قرابة عشرين,"plus de dix, près de vingt",quantity,عدد وكمية,فهم العدد,,,proposed
+218,الكار مليان | قسم كامل,el car mlein | 9ism kemel,حافلة ممتلئة / قسم كامل من التلاميذ,"bus plein, une classe entière",quantity,عدد وكمية,فهم العدد,يدلّ على عدد كبير,,proposed
+219,واحد برك | ثنين,wa7ed bark | thnin,واحد فقط / اثنان,"un seul, deux",quantity,عدد وكمية,فهم العدد,«ثنين» = زوز في الساحل,,proposed
+220,عندو ساعة | عندها نهار,3andou se3a | 3andha nhar,منذ ساعة / منذ يوم,depuis une heure / un jour,time,زمن,فهم الزمن,,عندو ساعة محصور وما جا حد,proposed
+221,دقيقة | دقايق | ربع ساعة,d9i9a | d9aye9 | rob3 se3a,دقيقة / دقائق / ربع ساعة,"minute(s), quart d'heure",time,زمن,فهم الزمن,,,proposed
+222,الفجر | مع العصر | مع المغرب,el fjer | ma3 el 3sar | ma3 el moghreb,الفجر / العصر / المغرب,"aube, après-midi, coucher du soleil",time,زمن,فهم الزمن,,,proposed
+223,مسخسخ | مفجوع,mse5se5 | mafjou3,مذعور جدا,"terrifié, paniqué",general,كلمات عامة,فهم الجملة,,,proposed
+224,ما نعرفش | ما فهمتش,ma na3refch | ma fhemtech,لا أعرف / لم أفهم,je ne sais pas,general,كلمات عامة,فهم الجملة,,,proposed
+225,شوف | اسمع | ركّز,chouf | esma3 | rakkez,انظر / اسمع / ركّز,"regarde, écoute",general,كلمات عامة,فهم الجملة,,,proposed
+226,هاو | هاهو | هاني,haw | hahou | heni,ها هو / ها أنا,"le voilà, me voici",general,كلمات عامة,فهم الجملة,,heni fel karhba w el me yotla3,proposed
+227,زادة | مالا | ياخي,zeda | mela | ya5i,أيضا / إذن / هل,"aussi, alors, est-ce que",general,كلمات عامة,فهم الجملة,,,proposed
+228,موش لاباس | حالتو موش مليحة,mouch labes | 7altou mouch mli7a,ليس بخير / حالته سيئة,il ne va pas bien,general,كلمات عامة,فهم الجملة,النفي يقلب المعنى: «موش لاباس» = خطر,,proposed
+229,مزيان | باهي | لاباس عليه,mezyen | behi | labes 3lih,بخير / جيد,"bien, ça va",general,كلمات عامة,فهم الجملة,يخفض الأولوية,,proposed
+230,نجرّب | تست | نمزح,nejarreb | test | nemza7,أجرّب / أمزح,"je teste, je plaisante",other,أخرى,نوع البلاغ,بلاغ تجريبي محتمل؛ القرار لعون القاعة,,proposed

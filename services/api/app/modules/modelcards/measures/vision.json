@@ -1,12 +1,12 @@
 {
- "about": "Frame-level figures of services/vision/EVALUATION.md (model 2.0.0, measured 2026-10-20 with eval/evaluate.py on 383 held-out Open Images V7 test images).",
- "measured_on": "2026-10-20",
+ "about": "Frame-level figures of services/vision/EVALUATION.md (model 3.0.0, measured 2026-10-29 with eval/evaluate.py on 383 held-out Open Images V7 test images).",
+ "measured_on": "2026-10-29",
  "sample": 383,
  "source": "services/vision/EVALUATION.md",
  "labels": {
-  "fire": {"positives": 123, "0.45": {"precision": 0.677, "recall": 0.870, "tp": 107, "fp": 51, "fn": 16}, "0.6": {"precision": 0.752, "recall": 0.764, "tp": 94, "fp": 31, "fn": 29}},
-  "smoke": {"positives": 43, "0.45": {"precision": 0.634, "recall": 0.605, "tp": 26, "fp": 15, "fn": 17}, "0.6": {"precision": 0.750, "recall": 0.488, "tp": 21, "fp": 7, "fn": 22}},
+  "fire": {"positives": 123, "0.45": {"precision": 0.686, "recall": 0.959, "tp": 118, "fp": 54, "fn": 5}, "0.6": {"precision": 0.724, "recall": 0.894, "tp": 110, "fp": 42, "fn": 13}},
+  "smoke": {"positives": 43, "0.45": {"precision": 0.625, "recall": 0.581, "tp": 25, "fp": 15, "fn": 18}, "0.6": {"precision": 0.767, "recall": 0.535, "tp": 23, "fp": 7, "fn": 20}},
   "person": {"positives": null, "0.45": {"precision": 0.873, "recall": 0.802}, "0.6": {"precision": 0.913, "recall": 0.757}}
  },
- "hard_negatives": {"images": 120, "fire": {"0.45": 0.42, "0.6": 0.28}, "smoke": {"0.45": 0.24, "0.6": 0.15}}
+ "hard_negatives": {"images": 120, "fire": {"0.45": 0.42, "0.6": 0.33}, "smoke": {"0.45": 0.28, "0.6": 0.2}}
 }

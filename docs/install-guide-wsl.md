@@ -380,6 +380,11 @@ $ docker compose --env-file .env -f infra/compose.yml --profile vision up -d
 مخططات التدخل والبرمجة (المرحلة PL): `npm ci` في `apps/dashboard` (الحزمة `pdfjs-dist`) ثم `alembic upgrade head`
 (0061 و 0062). لا شيء آخر في WSL.
 
+المرحلة L5 (ومعها R3 و R4): `alembic upgrade head` (من 0066 إلى 0075)، ثم أضف `SENSOR_GATEWAY_TOKEN` إلى `.env`
+(`openssl rand -hex 24`). الحساسات والدرون [SIM] تعمل في WSL بالملفين الشخصيين `sensors` و `drones`:
+`docker compose --env-file .env -f infra/compose.yml --profile sensors --profile drones up -d`. اختبار الضغط في
+العملية البيضاء لا يُشغَّل في WSL إلا على نسخة معزولة (`ISOLATED=yes`).
+
 نافذة أصحاب القرار والروزنامة (المرحلة L4) لا تحتاجان شيئا في WSL: `alembic upgrade head` (0063 و 0064 و 0065). الملخص
 المكتوب يعمل إن كان Ollama يعمل في WSL بالنموذج المضبوط.
 

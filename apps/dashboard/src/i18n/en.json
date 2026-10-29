@@ -7270,5 +7270,9 @@
       "line": "In similar incidents: adopted {{adopted}} of {{decided}} times ({{modified}} modified), rejected {{rejected}}.",
       "reason": "Most frequent rejection reason: {{reason}}."
     }
+  },
+  "moderation": {
+    "masked": "Offensive word hidden",
+    "flagged": "Threat, incitement or violence"
   }
 }

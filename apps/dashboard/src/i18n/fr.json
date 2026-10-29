@@ -7270,5 +7270,9 @@
       "line": "Dans des incidents similaires : adoptée {{adopted}} fois sur {{decided}} (dont {{modified}} modifiée(s)), rejetée {{rejected}} fois.",
       "reason": "Motif de rejet le plus fréquent : {{reason}}."
     }
+  },
+  "moderation": {
+    "masked": "Mot grossier masqué",
+    "flagged": "Menace, incitation ou violence"
   }
 }

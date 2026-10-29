@@ -82,6 +82,12 @@ rectangle "Tableau de bord central" {
   usecase "Chercher les moyens dans\nla zone d'un axe (RS1, L4)" as S61
   usecase "Accorder ou masquer pages,\nonglets et boutons (L4)" as S62
   usecase "Statut d'une activité, à la main\nou à l'horaire (L4)" as S63
+  usecase "Opération blanche : plan, injections,\naccord de la wilaya, arrêt (L5a) [SIM]" as S64
+  usecase "Évaluer une opération blanche (L5a)" as S65
+  usecase "Revoir et suivre les tâches\ndu plan lues par l'IA (AI2)" as S66
+  usecase "Capteurs, tours et drones\nen lecture seule (L5b) [SIM]" as S67
+  usecase "Approuver les seuils\nd'une fiche de modèle (AI-01)" as S68
+  usecase "Accepter ou écarter une activité\nsuggérée ; voir les anomalies (L5c)" as S69
 }
 rectangle "Application des équipes (P4a à P4d)" {
   usecase "Se connecter par code\n(MFA, PIN 6 chiffres)" as T0
@@ -244,4 +250,15 @@ MIN --> S61
 SA --> S62
 OP --> S63
 OPM --> S63
+SA --> S64 : accorde
+CC --> S64
+OPM --> S64
+OPM --> S65 : évaluateur désigné
+OPM --> S66
+GOV --> S66 : sans noms
+OP --> S67
+OPM --> S67
+SA --> S68 : prépare
+CC --> S68
+OPM --> S69
 @enduml
