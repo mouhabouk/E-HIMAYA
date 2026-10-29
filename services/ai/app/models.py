@@ -105,7 +105,7 @@ class Whisper(_Lazy[Any]):
         except Exception as exc:
             raise ModelUnavailable(f"whisper: {exc}") from exc
 
-    def transcribe(self, audio_path: str, language: str | None) -> Transcript:
+    def transcribe(self, audio_path: str, language: str | None, prompt: str | None = None) -> Transcript:
         from faster_whisper.audio import decode_audio
 
         settings = get_settings()
@@ -133,7 +133,9 @@ class Whisper(_Lazy[Any]):
                 language = max(ALLOWED_SPEECH_LANGUAGES, key=lambda code: probabilities.get(code, 0.0))
                 probability = float(probabilities.get(language, 0.0))
         # The dialect vocabulary hint noticeably improves the spelling of Tunisian words.
-        prompt = settings.whisper_prompt_ar if language == "ar" else None
+        # A caller's hint (the commander's vocabulary) replaces it in any language.
+        if prompt is None:
+            prompt = settings.whisper_prompt_ar if language == "ar" else None
         segments, info = model.transcribe(audio, language=language, initial_prompt=prompt, **options)
         parts = [(float(s.start), float(s.end), s.text.strip()) for s in segments]
         return Transcript(

@@ -23,7 +23,7 @@ from app.modules.ai.models import Analysis, ModelDecision
 from app.modules.audit.models import AuditLog
 from app.modules.checklist.models import ChecklistTask
 from app.modules.coastal import shadow
-from app.modules.decision.models import CommandDecision
+from app.modules.decision.models import CommandDecision, CommandVoice
 from app.modules.modelcards import schemas as s
 from app.modules.modelcards.texts import CARDS, LABELS, Lang
 
@@ -364,8 +364,49 @@ async def _commander_tables(session: AsyncSession, lang: Lang, now: datetime) ->
             rows=rows,
             small_rows=list(range(2, 5)) if decided < SMALL else [],
             note=t["small"] if decided < SMALL else None,
-        )
+        ),
+        await _voice_table(session, lang, now),
     ]
+
+
+async def _voice_table(session: AsyncSession, lang: Lang, now: datetime) -> s.Table:
+    """The transcription on the commanders' own voice messages over 90 days (AI5b, decision.command_voice): the word
+    error rate between what Whisper heard and what the commander sent after correcting it."""
+    t = LABELS[lang]
+    since = now - timedelta(days=90)
+    async with as_system(session):
+        rows = (
+            await session.execute(
+                select(
+                    CommandVoice.lang,
+                    func.count(),
+                    func.coalesce(func.sum(CommandVoice.words), 0),
+                    func.coalesce(func.sum(CommandVoice.word_errors), 0),
+                    func.count().filter(CommandVoice.word_errors == 0),
+                )
+                .where(CommandVoice.sent_at >= since)
+                .group_by(CommandVoice.lang)
+                .order_by(CommandVoice.lang)
+            )
+        ).all()
+    lines: list[list[str]] = []
+    small: list[int] = []
+    for code, messages, words, errors, exact in rows:
+        if messages < SMALL:
+            small.append(len(lines))
+        rate = _pct(lang, int(errors or 0) / int(words)) if words else "—"
+        lines.append(
+            [t.get(f"r.lang.{code}", code or "—"), str(messages), str(words), rate, _count(lang, int(exact), messages)]
+        )
+    return s.Table(
+        key="commander_voice",
+        title=t["m.voice"],
+        measured_on=now.date(),
+        columns=[t["c.language"], t["c.messages"], t["c.words"], t["c.wer"], t["c.untouched"]],
+        rows=lines,
+        small_rows=small,
+        note=(t["small"] if small else None) if lines else t["not_measured"],
+    )
 
 
 async def _drowning_tables(session: AsyncSession, lang: Lang, model: Any, now: datetime) -> list[s.Table]:

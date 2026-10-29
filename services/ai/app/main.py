@@ -106,7 +106,7 @@ async def transcribe(request: Request, body: TranscribeIn, _: Authorized) -> Tra
     models.whisper.get()  # fail fast (503) before downloading the media
     async with downloaded(body.url, request.app.state.http) as path:
         try:
-            result = await _run(request, "whisper", models.whisper.transcribe, path, body.language)
+            result = await _run(request, "whisper", models.whisper.transcribe, path, body.language, body.prompt)
         except models.MediaRejected as exc:
             raise HTTPException(422, str(exc)) from exc
         except ModelUnavailable:

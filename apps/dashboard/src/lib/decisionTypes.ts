@@ -226,6 +226,17 @@ export interface CommandBoard {
   proposals: CommandCard[];
   decided: CommandCard[];
   simulated?: boolean;
+  /** AI5b: false for whoever may see the board without deciding (an operator of a regional room). */
+  can_decide?: boolean;
+}
+
+/** `POST /api/v1/staff/incidents/{id}/command/voice`: the transcript, for the commander to correct before sending. */
+export interface CommandVoiceResult {
+  voice_id: string;
+  text: string;
+  language: string | null;
+  model: string;
+  duration_s: number;
 }
 
 /** `POST /api/v1/staff/incidents/{id}/command`: a question is answered, an order becomes a card. */

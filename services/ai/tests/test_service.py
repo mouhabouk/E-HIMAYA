@@ -164,3 +164,32 @@ def test_installed_pyav_decodes_audio_for_faster_whisper(tmp_path: Any) -> None:
         out.writeframes(tone.tobytes())
     audio = decode_audio(str(path), sampling_rate=16000)
     assert 15000 < len(audio) <= 16000
+
+
+def test_a_caller_vocabulary_replaces_the_default_hint(monkeypatch: pytest.MonkeyPatch) -> None:
+    """AI5b: the commander's vocabulary is the prompt in any language; without one, the Arabic default applies."""
+    from types import SimpleNamespace
+
+    import faster_whisper.audio
+
+    from app import models
+    from app.config import get_settings
+
+    prompts: list[str | None] = []
+
+    class FakeModel:
+        feature_extractor = SimpleNamespace(sampling_rate=16_000)
+
+        def transcribe(self, audio: Any, **options: Any) -> Any:
+            prompts.append(options.get("initial_prompt"))
+            segment = SimpleNamespace(start=0.0, end=1.0, text=" ابعثوا زوز كميونات ")
+            return [segment], SimpleNamespace(language=options.get("language"), duration=1.0)
+
+    monkeypatch.setattr(models.whisper, "get", lambda: FakeModel())
+    monkeypatch.setattr(faster_whisper.audio, "decode_audio", lambda path, sampling_rate: np.zeros(16_000))
+    out = models.whisper.transcribe("x.webm", "ar", "أوامر القائد: صهريج، شاحنة إطفاء")
+    assert out.text == "ابعثوا زوز كميونات" and prompts == ["أوامر القائد: صهريج، شاحنة إطفاء"]
+    models.whisper.transcribe("x.webm", "fr", "camion-citerne")
+    models.whisper.transcribe("x.webm", "ar")
+    models.whisper.transcribe("x.webm", "fr")
+    assert prompts[1:] == ["camion-citerne", get_settings().whisper_prompt_ar, None]

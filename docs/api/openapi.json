@@ -5792,6 +5792,11 @@
       },
       "CommandBoard": {
         "properties": {
+          "can_decide": {
+            "default": true,
+            "title": "Can Decide",
+            "type": "boolean"
+          },
           "decided": {
             "items": {
               "$ref": "#/components/schemas/CommandCard"
@@ -6160,6 +6165,18 @@
             "minLength": 3,
             "title": "Text",
             "type": "string"
+          },
+          "voice_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Voice Id"
           }
         },
         "required": [
@@ -40798,6 +40815,48 @@
         "title": "VisitSignatures",
         "type": "object"
       },
+      "VoiceOut": {
+        "description": "A transcribed voice message, for the commander to correct before sending (AI5b).",
+        "properties": {
+          "duration_s": {
+            "title": "Duration S",
+            "type": "number"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language"
+          },
+          "model": {
+            "title": "Model",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "voice_id": {
+            "format": "uuid",
+            "title": "Voice Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "voice_id",
+          "text",
+          "language",
+          "model",
+          "duration_s"
+        ],
+        "title": "VoiceOut",
+        "type": "object"
+      },
       "VolunteerCalloutRef": {
         "properties": {
           "callout_id": {
@@ -71645,6 +71704,117 @@
         "summary": "Set Command Level",
         "tags": [
           "incidents"
+        ]
+      }
+    },
+    "/api/v1/staff/incidents/{incident_id}/command/voice": {
+      "post": {
+        "description": "A voice message as the raw request body (AI5b): transcribed locally, the audio deleted, the text returned for\nthe commander to correct; nothing is sent until the commander sends the text.",
+        "operationId": "post_command_voice_api_v1_staff_incidents__incident_id__command_voice_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incident_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Incident Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "default": "ar",
+              "enum": [
+                "ar",
+                "fr"
+              ],
+              "title": "Lang",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "audio/aac": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "audio/mp4": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "audio/mpeg": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "audio/ogg": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "audio/wav": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "audio/webm": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "audio/x-wav": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoiceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Post Command Voice",
+        "tags": [
+          "staff",
+          "decision"
         ]
       }
     },

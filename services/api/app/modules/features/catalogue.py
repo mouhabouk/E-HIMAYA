@@ -212,8 +212,9 @@ CATALOGUE: tuple[Spec, ...] = (
             "incidents.commander",
             ("مساعد القائد: الأوامر واعتماد الاقتراحات", "Assistant du commandant", "Commander's assistant"),
             "POST /incidents/{incident_id}/command",
+            "POST /incidents/{incident_id}/command/voice",
             "POST /command/decisions/{decision_id}",
-            act_as=R.OPERATOR,
+            act_as=R.OPS_MANAGER,
         ),
         button(
             "incidents.conference",

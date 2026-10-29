@@ -26,7 +26,7 @@ from app.modules.crisis.models import (
 from app.modules.crisis.models import (
     Directive as CrisisDirective,
 )
-from app.modules.decision.models import CommandDecision, ProcedureChunk
+from app.modules.decision.models import CommandDecision, CommandVoice, ProcedureChunk
 from app.modules.doctors.models import Doctor, DoctorReview
 from app.modules.drill.models import Booking as DrillBooking
 from app.modules.drill.models import Evaluation as DrillEvaluation
@@ -155,6 +155,7 @@ __all__ = [
     "CoastalAlert",
     "CoastalSettings",
     "CommandDecision",
+    "CommandVoice",
     "Conference",
     "Consent",
     "ConsumerCursor",

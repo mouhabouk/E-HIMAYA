@@ -14,7 +14,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_system_sessionmaker
-from app.modules.decision import llm, orders
+from app.modules.decision import llm, orders, voice
 from app.modules.decision.context import WeatherAtPoint
 from app.modules.decision.llm import LlmRejected, LlmUnavailable
 from tests import test_decision
@@ -158,6 +158,7 @@ async def fleet(client: httpx.AsyncClient, staff: Staff, engine: FakeEngine) -> 
     await clear_units(TATAOUINE)
     async with get_system_sessionmaker()() as s, s.begin():
         await s.execute(text("DELETE FROM decision.command_decision"))
+        await s.execute(text("DELETE FROM decision.command_voice"))
     unit = await make_unit(client, staff, TATAOUINE, "directorate", 32.95, 10.45)
     out = {
         "engine": await make_resource(client, staff, unit, "fire_engine", 32.9397, 10.4518),
@@ -186,11 +187,11 @@ async def test_board_keeps_proposals_and_decisions(
     resources = await fleet(client, staff, engine)
     environment.weather = WeatherAtPoint(observed_at=datetime.now(UTC), fire_danger="high", simulated=True)
     incident_id = await fire_incident(client, staff)
-    operator = staff(gouvernorat=TATAOUINE)
+    commander = staff(["ops_manager"], gouvernorat=TATAOUINE)
     url = f"/api/v1/staff/incidents/{incident_id}/command"
 
     assert (await client.get(url, headers=staff(gouvernorat=11))).status_code == 404
-    r = await client.get(url, headers=operator)
+    r = await client.get(url, headers=commander)
     assert r.status_code == 200, r.text
     board = r.json()
     assert board["simulated"] is True and board["notice"]["ar"] and board["decided"] == []
@@ -202,7 +203,7 @@ async def test_board_keeps_proposals_and_decisions(
     assert engines["track"] == {"decided": 0, "adopted": 0, "modified": 0, "rejected": 0, "top_reason": None}
 
     # A refresh updates the same rows: no duplicates.
-    again = (await client.get(url, headers=operator)).json()
+    again = (await client.get(url, headers=commander)).json()
     assert {c["id"] for c in again["proposals"]} == {c["id"] for c in board["proposals"]}
     count = await session.scalar(
         text("SELECT count(*) FROM decision.command_decision WHERE incident_id = :i"), {"i": incident_id}
@@ -218,26 +219,26 @@ async def test_board_keeps_proposals_and_decisions(
 
     decide = f"/api/v1/staff/command/decisions/{engines['id']}"
     assert (await client.post(decide, json={"verdict": "adopt"}, headers=staff(gouvernorat=11))).status_code == 404
-    r = await client.post(decide, json={"verdict": "adopt"}, headers=operator)
+    r = await client.post(decide, json={"verdict": "adopt"}, headers=commander)
     assert r.status_code == 200, r.text
     adopted = r.json()
     assert adopted["status"] == "adopted" and adopted["kept_actions"] == list(range(len(engines["actions"])))
     assert adopted["decided_at"] is not None
-    assert (await client.post(decide, json={"verdict": "reject"}, headers=operator)).status_code == 409
+    assert (await client.post(decide, json={"verdict": "reject"}, headers=commander)).status_code == 409
 
     tankers = by_key(again["proposals"], "resources:water_tanker")
     decide_t = f"/api/v1/staff/command/decisions/{tankers['id']}"
-    r = await client.post(decide_t, json={"verdict": "reject"}, headers=operator)
+    r = await client.post(decide_t, json={"verdict": "reject"}, headers=commander)
     assert r.status_code == 422 and r.json()["detail"] == "reason_required"
-    r = await client.post(decide_t, json={"verdict": "modify", "kept_actions": [7]}, headers=operator)
+    r = await client.post(decide_t, json={"verdict": "modify", "kept_actions": [7]}, headers=commander)
     assert r.status_code == 422 and r.json()["detail"] == "invalid_action_index"
     r = await client.post(
-        decide_t, json={"verdict": "reject", "reason_code": "already_done", "note": "وصل"}, headers=operator
+        decide_t, json={"verdict": "reject", "reason_code": "already_done", "note": "وصل"}, headers=commander
     )
     assert r.status_code == 200 and r.json()["status"] == "rejected" and r.json()["reason_code"] == "already_done"
 
     # Decided proposals are not proposed again in the same words; they are listed as decided.
-    board = (await client.get(url, headers=operator)).json()
+    board = (await client.get(url, headers=commander)).json()
     assert {c["id"] for c in board["decided"]} == {engines["id"], tankers["id"]}
     assert engines["id"] not in {c["id"] for c in board["proposals"]}
 
@@ -258,12 +259,12 @@ async def test_board_keeps_proposals_and_decisions(
     assert audited == 2
 
     # Advice only: adopting assigned nothing.
-    detail = (await client.get(f"/api/v1/staff/incidents/{incident_id}", headers=operator)).json()
+    detail = (await client.get(f"/api/v1/staff/incidents/{incident_id}", headers=commander)).json()
     assert detail["assignments"] == []
 
     # Memory: another fire shows what commanders did with the same proposals.
     other_id = await fire_incident(client, staff)
-    other = (await client.get(f"/api/v1/staff/incidents/{other_id}/command", headers=operator)).json()
+    other = (await client.get(f"/api/v1/staff/incidents/{other_id}/command", headers=commander)).json()
     track = by_key(other["proposals"], "resources:fire_engine")["track"]
     assert track["decided"] >= 1 and track["adopted"] >= 1
     track = by_key(other["proposals"], "resources:water_tanker")["track"]
@@ -275,20 +276,20 @@ async def test_modify_keeps_some_actions(
 ) -> None:
     await fleet(client, staff, engine)
     incident_id = await fire_incident(client, staff)
-    operator = staff(gouvernorat=TATAOUINE)
+    commander = staff(["ops_manager"], gouvernorat=TATAOUINE)
     r = await client.post(
         f"/api/v1/staff/incidents/{incident_id}/command",
         json={"text": "ابعثوا زوز صهاريج ماء", "lang": "ar"},
-        headers=operator,
+        headers=commander,
     )
     assert r.status_code == 200, r.text
     card = r.json()["card"]
     assert len(card["actions"]) == 2
     decide = f"/api/v1/staff/command/decisions/{card['id']}"
-    r = await client.post(decide, json={"verdict": "modify", "kept_actions": [0, 1]}, headers=operator)
+    r = await client.post(decide, json={"verdict": "modify", "kept_actions": [0, 1]}, headers=commander)
     assert r.status_code == 422 and r.json()["detail"] == "nothing_modified"
     r = await client.post(
-        decide, json={"verdict": "modify", "kept_actions": [1], "note": "الثاني فقط"}, headers=operator
+        decide, json={"verdict": "modify", "kept_actions": [1], "note": "الثاني فقط"}, headers=commander
     )
     assert r.status_code == 200, r.text
     assert r.json()["status"] == "modified" and r.json()["kept_actions"] == [1] and r.json()["note"] == "الثاني فقط"
@@ -302,9 +303,9 @@ async def test_order_without_model_is_read_by_the_rules(
 ) -> None:
     resources = await fleet(client, staff, engine)
     incident_id = await fire_incident(client, staff)
-    operator = staff(gouvernorat=TATAOUINE)
+    commander = staff(["ops_manager"], gouvernorat=TATAOUINE)
     url = f"/api/v1/staff/incidents/{incident_id}/command"
-    r = await client.post(url, json={"text": "ابعثوا زوز صهاريج ماء", "lang": "ar"}, headers=operator)
+    r = await client.post(url, json={"text": "ابعثوا زوز صهاريج ماء", "lang": "ar"}, headers=commander)
     assert r.status_code == 200, r.text
     out = r.json()
     assert out["reading"] == {
@@ -323,11 +324,11 @@ async def test_order_without_model_is_read_by_the_rules(
     assert [a["resource_id"] for a in card["actions"]] == [resources["tanker2"]["id"], resources["tanker1"]["id"]]
     assert card["inputs"]["reading"]["count"] == 2 and card["inputs"]["incident"]["category"] == "fire"
     # The order is on the board, first.
-    board = (await client.get(url, headers=operator)).json()
+    board = (await client.get(url, headers=commander)).json()
     assert board["proposals"][0]["id"] == card["id"]
 
     # Questions need the language model (the assistant answers from its sources).
-    r = await client.post(url, json={"text": "قداش من كميون فاضي؟", "lang": "ar"}, headers=operator)
+    r = await client.post(url, json={"text": "قداش من كميون فاضي؟", "lang": "ar"}, headers=commander)
     assert r.status_code == 503 and r.json()["detail"] == "assistant_unavailable"
 
 
@@ -341,10 +342,10 @@ async def test_order_read_by_the_model_with_the_lexicon(
 ) -> None:
     resources = await fleet(client, staff, engine)
     incident_id = await fire_incident(client, staff)
-    operator = staff(gouvernorat=TATAOUINE)
+    commander = staff(["ops_manager"], gouvernorat=TATAOUINE)
     url = f"/api/v1/staff/incidents/{incident_id}/command"
     fake_llm.reading = {"intent": "order", "action": "dispatch", "resource_kind": None, "count": None, "level": None}
-    r = await client.post(url, json={"text": "يلزمنا كميون طفي آخر للبلاصة", "lang": "ar"}, headers=operator)
+    r = await client.post(url, json={"text": "يلزمنا كميون طفي آخر للبلاصة", "lang": "ar"}, headers=commander)
     assert r.status_code == 200, r.text
     out = r.json()
     assert out["reading"]["reader"] == "combined" and out["reading"]["resource_kind"] == "fire_engine"
@@ -360,7 +361,7 @@ async def test_order_read_by_the_model_with_the_lexicon(
 
     # The model fails: the rules read the text and the answer says so.
     fake_llm.fail = LlmUnavailable("down")
-    r = await client.post(url, json={"text": "Envoyez un camion-citerne", "lang": "fr"}, headers=operator)
+    r = await client.post(url, json={"text": "Envoyez un camion-citerne", "lang": "fr"}, headers=commander)
     assert r.status_code == 200, r.text
     assert r.json()["fallback"] is True and r.json()["reading"]["reader"] == "rules"
     assert r.json()["card"]["model"] is None
@@ -375,28 +376,28 @@ async def test_escalation_alert_and_note_orders(
 ) -> None:
     await fleet(client, staff, engine)
     incident_id = await fire_incident(client, staff)
-    operator = staff(gouvernorat=TATAOUINE)
+    commander = staff(["ops_manager"], gouvernorat=TATAOUINE)
     url = f"/api/v1/staff/incidents/{incident_id}/command"
 
     fake_llm.reading = {"intent": "order", "action": "escalate", "resource_kind": None, "count": None, "level": None}
-    card = (await client.post(url, json={"text": "ارفعوا المستوى إلى الكارثة"}, headers=operator)).json()["card"]
+    card = (await client.post(url, json={"text": "ارفعوا المستوى إلى الكارثة"}, headers=commander)).json()["card"]
     assert card["kind"] == "escalation" and card["actions"] == []
     assert card["inputs"]["proposed_level"] == "disaster" and card["confidence"] == "low"
 
     fake_llm.reading = {"intent": "order", "action": "alert", "resource_kind": None, "count": None, "level": None}
-    card = (await client.post(url, json={"text": "نبهوا السكان"}, headers=operator)).json()["card"]
+    card = (await client.post(url, json={"text": "نبهوا السكان"}, headers=commander)).json()["card"]
     assert card["kind"] == "alert" and card["actions"][0]["type"] == "open_alert_form"
     assert card["actions"][0]["prefill"]["hazard"] == "forest_fire"
 
     fake_llm.reading = {"intent": "order", "action": "note", "resource_kind": None, "count": None, "level": None}
-    card = (await client.post(url, json={"text": "سجلوا أن الفريق وصل"}, headers=operator)).json()["card"]
+    card = (await client.post(url, json={"text": "سجلوا أن الفريق وصل"}, headers=commander)).json()["card"]
     assert card["kind"] == "note" and card["actions"] == []
-    r = await client.post(f"/api/v1/staff/command/decisions/{card['id']}", json={"verdict": "adopt"}, headers=operator)
+    r = await client.post(f"/api/v1/staff/command/decisions/{card['id']}", json={"verdict": "adopt"}, headers=commander)
     assert r.status_code == 200 and r.json()["status"] == "adopted"
 
     # A dispatch without a recognisable resource becomes a note asking to say which.
     fake_llm.reading = {"intent": "order", "action": "dispatch", "resource_kind": None, "count": None, "level": None}
-    card = (await client.post(url, json={"text": "ابعثوا حاجة"}, headers=operator)).json()["card"]
+    card = (await client.post(url, json={"text": "ابعثوا حاجة"}, headers=commander)).json()["card"]
     assert card["kind"] == "note" and "الوسيلة" in card["rationale"]["ar"]
 
 
@@ -413,7 +414,7 @@ async def test_question_goes_to_the_assistant(
     r = await client.post(
         f"/api/v1/staff/incidents/{incident_id}/command",
         json={"text": "Comment protéger le public d'un feu de forêt ?", "lang": "fr"},
-        headers=staff(gouvernorat=TATAOUINE),
+        headers=staff(["ops_manager"], gouvernorat=TATAOUINE),
     )
     assert r.status_code == 200, r.text
     out = r.json()
@@ -433,16 +434,16 @@ async def test_switched_off_in_the_ai_settings(client: httpx.AsyncClient, staff:
     assert settings["assist"]["commander"] is True
     off = {**settings, "assist": {**settings["assist"], "commander": False}}
     url = f"/api/v1/staff/incidents/{incident_id}/command"
-    operator = staff(gouvernorat=TATAOUINE)
+    commander = staff(["ops_manager"], gouvernorat=TATAOUINE)
     try:
         assert (await client.put(AI_SETTINGS, json=off, headers=committee)).status_code == 200
-        r = await client.get(url, headers=operator)
+        r = await client.get(url, headers=commander)
         assert r.status_code == 409 and r.json()["detail"] == "commander_off"
-        r = await client.post(url, json={"text": "ابعثوا اسعاف"}, headers=operator)
+        r = await client.post(url, json={"text": "ابعثوا اسعاف"}, headers=commander)
         assert r.status_code == 409
         # The classic recommendations stay.
         assert (
-            await client.get(f"/api/v1/staff/incidents/{incident_id}/recommendations", headers=operator)
+            await client.get(f"/api/v1/staff/incidents/{incident_id}/recommendations", headers=commander)
         ).status_code == 200
     finally:
         await client.put(AI_SETTINGS, json=settings, headers=committee)
@@ -459,3 +460,115 @@ def test_lexicon_floor(name: str, floor: float) -> None:
         got = orders.finish(orders.read_rules(row["text"])).as_dict()
         exact += all(got[f] == row[f] for f in fields)
     assert exact / len(rows) >= floor
+
+
+# ---------------------------------------------------------------- the commander and the voice (AI5b)
+
+
+def test_word_errors_between_transcript_and_correction() -> None:
+    assert voice.word_errors(voice.words_of("ابعثوا زوز كميونات طفي"), voice.words_of("ابعثوا زوز كميونات")) == 1
+    assert voice.word_errors(voice.words_of("Envoyez deux fourgons"), voice.words_of("envoyez des fourgons")) == 1
+    assert voice.word_errors(voice.words_of("نبهوا السكان"), voice.words_of("نبّهوا السكّان")) == 0
+    assert voice.word_errors([], ["a", "b"]) == 2 and voice.word_errors(["a"], []) == 1
+
+
+async def test_only_the_commander_decides(client: httpx.AsyncClient, staff: Staff, engine: FakeEngine) -> None:
+    """The regional manager and the central room; an operator of a regional room sees without deciding."""
+    await fleet(client, staff, engine)
+    incident_id = await fire_incident(client, staff)
+    url = f"/api/v1/staff/incidents/{incident_id}/command"
+    operator = staff(gouvernorat=TATAOUINE)
+    board = (await client.get(url, headers=operator)).json()
+    assert board["can_decide"] is False
+    r = await client.post(url, json={"text": "ابعثوا اسعاف"}, headers=operator)
+    assert (r.status_code, r.json()["detail"]) == (403, "commander_only")
+    decision = board["proposals"][0]["id"]
+    r = await client.post(f"/api/v1/staff/command/decisions/{decision}", json={"verdict": "adopt"}, headers=operator)
+    assert (r.status_code, r.json()["detail"]) == (403, "commander_only")
+
+    for commander in (staff(["ops_manager"], gouvernorat=TATAOUINE), staff(["operator"], gouvernorat=None)):
+        assert (await client.get(url, headers=commander)).json()["can_decide"] is True
+        assert (await client.post(url, json={"text": "ابعثوا اسعاف"}, headers=commander)).status_code == 200
+
+
+async def test_voice_message_corrected_then_sent(
+    client: httpx.AsyncClient, staff: Staff, engine: FakeEngine, fake_ai: Any, fake_store: Any
+) -> None:
+    await fleet(client, staff, engine)
+    incident_id = await fire_incident(client, staff)
+    commander = staff(["ops_manager"], gouvernorat=TATAOUINE)
+    url = f"/api/v1/staff/incidents/{incident_id}/command"
+    fake_ai.transcript = {"text": "ابعثوا زوز صهاريج ما", "language": "ar"}
+
+    def audio(content_type: str = "audio/webm") -> dict[str, str]:
+        return {**commander, "Content-Type": content_type}
+
+    r = await client.post(f"{url}/voice", params={"lang": "ar"}, content=b"OggS-audio", headers=audio())
+    assert r.status_code == 200, r.text
+    heard = r.json()
+    assert heard["text"] == "ابعثوا زوز صهاريج ما" and heard["model"] == "whisper-test"
+    # The vocabulary of the orders is the hint; the audio is deleted once transcribed.
+    assert fake_ai.transcribe_options == {"language": "ar", "prompt": voice.PROMPTS["ar"]}
+    assert fake_store.objects == {} and fake_store.deleted[-1].startswith("command-voice/")
+
+    corrected = "ابعثوا زوز صهاريج ماء"
+    r = await client.post(url, json={"text": corrected, "voice_id": heard["voice_id"]}, headers=commander)
+    assert r.status_code == 200, r.text
+    assert r.json()["card"]["inputs"]["reading"]["count"] == 2
+    again = await client.post(url, json={"text": corrected, "voice_id": heard["voice_id"]}, headers=commander)
+    assert (again.status_code, again.json()["detail"]) == (409, "voice_already_sent")
+    other = staff(["ops_manager"], gouvernorat=TATAOUINE, sub="another-manager")
+    r = await client.post(f"{url}/voice", content=b"x", headers={**other, "Content-Type": "audio/webm"})
+    stranger = await client.post(url, json={"text": corrected, "voice_id": r.json()["voice_id"]}, headers=commander)
+    assert (stranger.status_code, stranger.json()["detail"]) == (404, "voice_not_found")
+
+    async with get_system_sessionmaker()() as s:
+        row = (
+            await s.execute(
+                text("SELECT words, word_errors, sent_at FROM decision.command_voice WHERE id = :i"),
+                {"i": heard["voice_id"]},
+            )
+        ).one()
+        assert (row.words, row.word_errors) == (4, 1) and row.sent_at is not None
+        sample = (
+            await s.execute(
+                text(
+                    "SELECT label, label_origin, group_key FROM ai.learning_sample "
+                    "WHERE source = 'voice' AND source_id = :i"
+                ),
+                {"i": heard["voice_id"]},
+            )
+        ).one()
+        assert sample.label_origin == "commander" and sample.group_key == incident_id
+        assert sample.label["transcript"] == "ابعثوا زوز صهاريج ما" and sample.label["word_errors"] == 1
+
+    # The commanders' word error rate in the model card.
+    ai_admin = staff(["ai_admin"], gouvernorat=None)
+    cards = (await client.get("/api/v1/staff/ai/models", headers=ai_admin)).json()["items"]
+    (commander_card,) = [c for c in cards if c["id"] == "commander"]
+    tables = {t["key"]: t for t in commander_card["measures"]}
+    assert tables["commander_voice"]["rows"][0][:2] == ["العربية والدارجة", "1"]
+
+
+async def test_voice_message_refusals(
+    client: httpx.AsyncClient, staff: Staff, engine: FakeEngine, fake_ai: Any
+) -> None:
+    from app.modules.ai.client import AiRejected, AiUnavailable
+
+    incident_id = await fire_incident(client, staff)
+    url = f"/api/v1/staff/incidents/{incident_id}/command/voice"
+    commander = staff(["ops_manager"], gouvernorat=TATAOUINE)
+
+    def post(content: bytes = b"audio", content_type: str = "audio/webm", who: dict[str, str] = commander) -> Any:
+        return client.post(url, content=content, headers={**who, "Content-Type": content_type})
+
+    assert (await post(content_type="video/mp4")).json()["detail"] == "unsupported_media_type"
+    assert (await post(content=b"x" * (voice.MAX_BYTES + 1))).status_code == 413
+    assert (await post(who=staff(gouvernorat=TATAOUINE))).json()["detail"] == "commander_only"
+    fake_ai.transcript = {"text": "  ", "language": "ar"}
+    assert (await post()).json()["detail"] == "nothing_heard"
+    fake_ai.fail["transcribe"] = AiRejected("media_undecodable")
+    assert (await post()).json()["detail"] == "audio_undecodable"
+    fake_ai.fail["transcribe"] = AiUnavailable("down")
+    r = await post()
+    assert (r.status_code, r.json()["detail"]) == (503, "transcription_unavailable")
