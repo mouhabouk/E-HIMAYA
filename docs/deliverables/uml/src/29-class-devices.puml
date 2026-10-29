@@ -1,0 +1,58 @@
+@startuml
+!include style.iuml
+title Diagramme de classes : capteurs, tours de guet et drones en lecture seule (L5b)
+class "Capteur" as Sen <<[SIM]>> {
+  code, nom, type : pluie 1 h | niveau d'eau | température
+  wilaya, position, fournisseur
+  seuil de vigilance, seuil d'alarme
+  muet après (min), actif
+  clé de signature (chiffrée), version
+  état : normal | vigilance | alarme | muet
+}
+class "Lecture" as Rd {
+  date, valeur, reçue
+}
+class "Flux caméra" as Cam {
+  source : camera | drone
+}
+class "Tour de guet" as Tow <<[SIM]>> {
+  code, wilaya, position
+  orientation, ouverture, portée
+  clé de bord (chiffrée), version
+}
+class "Événement de bord" as TEv {
+  feu | fumée, confiance
+  3 images sur 5, modèle, image
+}
+class "Position du drone" as Tel {
+  date, lat, lon, altitude, cap
+  azimut et ouverture caméra
+  batterie, mode
+}
+class "Zone" as Zone {
+  travail | interdite
+  wilaya, polygone, marge (m), active
+}
+class "Alerte drone" as DAl {
+  sortie | approche | entrée | batterie
+  détail, acquittée par, date
+}
+class "Suggestion d'alerte" as Sug
+class "Passerelle (serveur MediaMTX)" as Gw <<réseau local>> {
+  adresses permises, file d'attente
+}
+Sen "1" *-- "0..*" Rd
+Gw ..> Rd : relaie, signée
+Gw ..> TEv : relaie, signé
+Sen ..> Sug : seuil franchi
+Tow "1" -- "1" Cam
+Tow "1" *-- "0..*" TEv
+TEv ..> Sug : proposition, pas un signalement
+Cam "1" *-- "0..*" Tel : KLV (MISB ST 0601)
+Cam "1" -- "0..*" DAl
+DAl "0..*" --> "0..1" Zone
+note bottom of Tel
+  Lecture seule : aucune commande de vol,
+  aucune bibliothèque de pilotage (test permanent).
+end note
+@enduml

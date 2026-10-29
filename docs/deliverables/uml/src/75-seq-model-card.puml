@@ -1,0 +1,26 @@
+@startuml
+!include style.iuml
+title Séquence : fiche de modèle et décision du comité (L5c, AI-01)
+autonumber
+actor "Administrateur IA" as AIA
+actor "Comité technique" as COM
+participant "Tableau de bord" as UI
+participant "API" as API
+database "PostgreSQL" as DB
+AIA -> UI : « Fiches de modèles »
+UI -> API : GET /staff/ai/models?lang=ar
+API --> UI : six fiches : mesures, erreurs par condition\net par langue, « petit échantillon », seuils
+AIA -> UI : entraîner le modèle de noyade [SIM]
+UI -> API : POST /staff/ai/models/drowning/train
+API -> DB : version, coefficients, mesures (ombre)
+COM -> UI : approuver les seuils tels qu'ils apparaissent,\nréférence du procès-verbal
+UI -> API : POST /staff/ai/models/{m}/decisions
+API -> DB : décision avec seuils et version, audit
+COM -> UI : exporter
+UI -> API : GET /staff/ai/models/{m}/card.pdf
+API -> DB : audit de l'export
+note over API
+  Nouvelle version ou nouveaux seuils (ex. 3.0.0) :
+  « modifiée, attend une nouvelle approbation ».
+end note
+@enduml
