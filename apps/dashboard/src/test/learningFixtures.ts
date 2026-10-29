@@ -93,6 +93,42 @@ export const OVERVIEW: LearningOverview = {
       schedule: { enabled: true, every_days: 7 },
     }),
     task("fire_smoke"),
+    task("command_ranker", {
+      primary_metric: "top1",
+      last_job: {
+        ...CATEGORY_JOB,
+        id: "job-3",
+        task: "command_ranker",
+        result: {
+          outcomes_linked: 40,
+          promoted: true,
+          version: 1,
+          primary: 0.82,
+          rules_top1: 0.55,
+          ranked_incidents: 22,
+          train: 160,
+          heldout: 40,
+        },
+      },
+      current: {
+        version: 1,
+        algorithm: "logreg",
+        metrics: {
+          model: { n: 40, accuracy: 0.85, macro_f1: 0.84, classes: {} },
+          ranking: {
+            incidents: 22,
+            top1: 0.82,
+            rules_top1: 0.55,
+            current_top1: null,
+          },
+        },
+        primary_metric: "top1",
+        train_samples: 160,
+        heldout_samples: 40,
+        trained_by_name: "Yamen Admin",
+        trained_at: "2026-10-29T08:02:00Z",
+      },
+    }),
   ],
 };
 

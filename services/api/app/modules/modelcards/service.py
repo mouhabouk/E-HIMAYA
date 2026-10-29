@@ -23,12 +23,16 @@ from app.modules.ai.models import Analysis, ModelDecision
 from app.modules.audit.models import AuditLog
 from app.modules.checklist.models import ChecklistTask
 from app.modules.coastal import shadow
+from app.modules.decision import ranker
 from app.modules.decision.models import CommandDecision, CommandVoice
 from app.modules.modelcards import schemas as s
 from app.modules.modelcards.texts import CARDS, LABELS, Lang
 
 MEASURES = Path(__file__).resolve().parent / "measures"
 SMALL = 30
+# The targets of the commander's assistant (docs/phase-ai5/design-ai5.md §6).
+TARGET_READING = 0.95
+TARGET_WER = 0.15
 # The detectors of the vision service (services/vision/models/fetch_models.py): checked by a test.
 FIRE_SMOKE_VERSION = "ehimaya-fire-smoke-yolox-tiny 3.0.0"
 PERSON_VERSION = "yolox-tiny-coco-person 0.1.1rc0"
@@ -366,7 +370,95 @@ async def _commander_tables(session: AsyncSession, lang: Lang, now: datetime) ->
             note=t["small"] if decided < SMALL else None,
         ),
         await _voice_table(session, lang, now),
+        await _ranker_table(session, lang),
+        await _targets_table(session, lang, now),
     ]
+
+
+async def _ranker_table(session: AsyncSession, lang: Lang) -> s.Table:
+    """The learned ranking in shadow (AI5c, decision/ranker.py): how often the proposal it ranks first was adopted,
+    beside the rules' own order, on the held-out incidents and on the decisions taken since it was trained."""
+    t = LABELS[lang]
+    columns = [t["c.set"], t["c.incidents"], t["c.model_first"], t["c.rules_first"]]
+    async with as_system(session):
+        model = await ranker.current(session)
+        live = await ranker.since_training(session, model) if model is not None else None
+    if model is None or live is None:
+        return s.Table(key="commander_ranker", title=t["m.ranker"], columns=columns, rows=[], note=t["not_trained"])
+    held = model.metrics["ranking"]
+    lines = [
+        (t["r.set.heldout"], held["incidents"], held["model"], held["rules"]),
+        (t["r.set.since"], live["incidents"], live["model"], live["rules"]),
+    ]
+    return s.Table(
+        key="commander_ranker",
+        title=t["m.ranker"],
+        measured_on=model.trained_at.date(),
+        columns=columns,
+        rows=[[label, str(n), _count(lang, m, n), _count(lang, r, n)] for label, n, m, r in lines],
+        small_rows=[i for i, line in enumerate(lines) if line[1] < SMALL],
+        note=f"v{model.version} · {t['shadow']}",
+    )
+
+
+async def _targets_table(session: AsyncSession, lang: Lang, now: datetime) -> s.Table:
+    """Yamen's condition, \"high accuracy through training and learning\": each target of design-ai5 §6 beside the
+    figure it is judged on (the lower bound of the interval where there is one) and whether it is met."""
+    t = LABELS[lang]
+    since = now - timedelta(days=90)
+
+    def verdict(met: bool | None) -> str:
+        return t["v.unmeasured"] if met is None else t["v.met"] if met else t["v.not_met"]
+
+    rows: list[list[str]] = []
+    measured = _load("orders.json")
+    combined = measured["sets"]["heldout"]["combined"]["all"] if measured else None
+    if combined is not None:
+        exact, invalid = combined["exact"], combined["invalid"]
+        value = f"{_count(lang, exact['count'], exact['of'])} · {_interval(lang, exact['interval'])}"
+        rows.append([t["g.reading"], "≥ 95%", value, verdict(exact["interval"][0] >= TARGET_READING)])
+        rows.append(
+            [t["g.invalid"], "0%", _count(lang, invalid["count"], invalid["of"]), verdict(invalid["count"] == 0)]
+        )
+    else:
+        rows += [[t["g.reading"], "≥ 95%", "—", verdict(None)], [t["g.invalid"], "0%", "—", verdict(None)]]
+    async with as_system(session):
+        words, errors = (
+            await session.execute(
+                select(
+                    func.coalesce(func.sum(CommandVoice.words), 0), func.coalesce(func.sum(CommandVoice.word_errors), 0)
+                ).where(CommandVoice.sent_at >= since, CommandVoice.lang == "ar")
+            )
+        ).one()
+        decided_orders = (
+            await session.execute(
+                select(func.count(), func.count().filter(CommandDecision.reason_code == "wrong_reading")).where(
+                    CommandDecision.origin == "order", CommandDecision.decided_at >= since
+                )
+            )
+        ).one()
+        model = await ranker.current(session)
+        live = await ranker.since_training(session, model) if model is not None else None
+    wer = int(errors or 0) / int(words) if words else None
+    rows.append([t["g.voice"], "≤ 15%", _pct(lang, wer), verdict(None if wer is None else wer <= TARGET_WER)])
+    n, wrong = int(decided_orders[0]), int(decided_orders[1])
+    rows.append(
+        [t["g.production"], "≥ 95%", _count(lang, n - wrong, n), verdict(None if not n else (n - wrong) / n >= 0.95)]
+    )
+    if live is not None and live["incidents"]:
+        k = live["incidents"]
+        value = f"{_count(lang, live['model'], k)} / {_count(lang, live['rules'], k)}"
+        rows.append([t["g.ranker"], t["g.ranker_target"], value, verdict(live["model"] > live["rules"])])
+    else:
+        rows.append([t["g.ranker"], t["g.ranker_target"], "—", verdict(None)])
+    return s.Table(
+        key="commander_targets",
+        title=t["m.targets"],
+        measured_on=now.date(),
+        columns=[t["c.measure"], t["c.target"], t["c.value"], t["c.verdict"]],
+        rows=rows,
+        note=t["targets_note"],
+    )
 
 
 async def _voice_table(session: AsyncSession, lang: Lang, now: datetime) -> s.Table:

@@ -36,7 +36,14 @@ CRISIS_SITREP_HOURS = "crisis.sitrep_hours"
 # Self-learning (docs/learning.md §3): which trainings of the training centre run on their own, and every how many
 # days. All off by default: the system administrator turns them on.
 LEARNING_SCHEDULE = "learning.schedule"
-LEARNING_TASKS = ("report_category", "report_lives", "report_rejected", "derja_words", "fire_smoke")
+LEARNING_TASKS = (
+    "report_category",
+    "report_lives",
+    "report_rejected",
+    "derja_words",
+    "fire_smoke",
+    "command_ranker",
+)
 
 BANDS = ("critical", "high", "normal", "low")
 

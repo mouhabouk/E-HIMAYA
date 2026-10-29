@@ -8,10 +8,12 @@ how it runs. The system administrator launches them, or schedules them (setting 
 | report_rejected | reports the room rejects (false, duplicate)  | report samples (final status + operator) | worker  |
 | derja_words     | new Derja words and spellings to review    | the training texts                         | worker  |
 | fire_smoke      | the fire and smoke detector                | photos and frames of the media library     | trainer |
+| command_ranker  | the order of the commander's proposals     | decided proposals and their outcomes (AI5c) | worker  |
 
 A text model is promoted (``current``) only when it beats the current one on the same heldout samples; it then runs
 in shadow (AI-01). The fire and smoke detector needs a GPU: the job prepares the image set (``vision_dataset``) and
-waits for the trainer (services/vision/training), which reports its figures back.
+waits for the trainer (services/vision/training), which reports its figures back. The commander's ranking is learnt
+from ``decision.command_decision`` (decision/ranker.py), not from text samples, and stays in shadow beside the rules.
 """
 
 import uuid
@@ -55,6 +57,7 @@ TASKS: dict[str, Task] = {
         Task("report_rejected", "worker", "rejected"),
         Task("derja_words", "worker", primary_metric="candidates"),
         Task("fire_smoke", "trainer", primary_metric="map50"),
+        Task("command_ranker", "worker", primary_metric="top1"),
     )
 }
 

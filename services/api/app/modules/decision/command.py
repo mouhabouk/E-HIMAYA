@@ -36,6 +36,9 @@ from app.modules.decision.context import Situation
 from app.modules.decision.llm import LlmRejected, LlmUnavailable, get_llm
 from app.modules.decision.models import CommandDecision
 from app.modules.decision.recommendations import Need
+from app.modules.learning.anonymize import anonymize
+from app.modules.learning.models import Sample
+from app.modules.learning.samples import split_of
 from app.modules.ops.models import Incident, TimelineEvent
 
 log = structlog.get_logger()
@@ -46,6 +49,7 @@ NOTICE = s.Bilingual(
     "la décision revient au commandant.",
 )
 DECIDED_SHOWN = 20
+SOURCE_ORDER = "order"
 VERDICTS = {"adopt": "adopted", "modify": "modified", "reject": "rejected"}
 ORDER_KINDS: dict[str, s.CommandKind] = {
     "dispatch": "resources",
@@ -168,12 +172,13 @@ def card(row: CommandDecision, track: s.Track | None = None) -> s.CommandCard:
     )
 
 
-def _fill(row: CommandDecision, item: s.Recommendation, situation: Situation) -> None:
+def _fill(row: CommandDecision, item: s.Recommendation, situation: Situation, rule_rank: int | None = None) -> None:
     row.title = item.title.model_dump()
     row.rationale = item.rationale.model_dump()
     row.confidence = item.confidence
     row.proposal = item.model_dump(mode="json", by_alias=True)
-    row.features = features_of(situation)
+    # The rank among the rules' proposals: the order the learned ranking is compared with (AI5c, ranker.py).
+    row.features = features_of(situation) | ({"rule_rank": rule_rank} if rule_rank is not None else {})
     row.simulated = situation.simulated
     row.updated_at = datetime.now(UTC)
 
@@ -236,7 +241,7 @@ async def board(session: AsyncSession, principal: Principal, incident: Incident)
             )
             session.add(row)
             rows.insert(0, row)
-        _fill(row, item, situation)
+        _fill(row, item, situation, seen[key])
     for key, row in open_rules.items():
         if key not in seen:
             row.status, row.updated_at = "expired", datetime.now(UTC)
@@ -463,6 +468,33 @@ async def decide(session: AsyncSession, principal: Principal, row: CommandDecisi
             "kept_actions": kept,
         },
     )
+    if row.origin == "order" and row.command_text:
+        session.add(_order_sample(row))
     await session.flush()
     known = await tracks({row.key}, str(row.features.get("category")), row.incident_id)
     return card(row, known.get(row.key))
+
+
+def _order_sample(row: CommandDecision) -> Sample:
+    """A decided order for the self-learning centre (AI5c): the commander's text, anonymised, with how it was read and
+    what the commander did with it. An order rejected as \"wrong reading\" is a reading error to learn from; an adopted
+    one, a reading the commander confirmed (the material of the language model's fine-tuning, AI5d)."""
+    group = str(row.incident_id)
+    return Sample(
+        source=SOURCE_ORDER,
+        source_id=str(row.id),
+        group_key=group,
+        text=anonymize(row.command_text or ""),
+        label={
+            "reading": row.proposal.get("inputs", {}).get("reading"),
+            "lang": row.lang,
+            "model": row.model,
+            "verdict": row.status,
+            "reason_code": row.reason_code,
+            "reading_confirmed": row.status in ("adopted", "modified"),
+            "wrong_reading": row.reason_code == "wrong_reading",
+        },
+        label_origin="commander",
+        split=split_of(group),
+        labelled_by=row.decided_by,
+    )

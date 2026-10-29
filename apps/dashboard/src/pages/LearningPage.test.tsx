@@ -68,6 +68,27 @@ describe("LearningPage", () => {
     );
   });
 
+  it("shows the commander's ranking beside the rules' order (AI5c)", async () => {
+    renderApp(<LearningPage />, {
+      api: fakeApi({ ...fakeLearningApi() }),
+      auth: fakeAuth(SYSADMIN_CLAIMS),
+      lang: "ar",
+    });
+    await screen.findByRole("heading", { name: "ترتيب اقتراحات القائد" });
+    const ranker = section("ترتيب اقتراحات القائد");
+    expect(
+      within(ranker).getByText(/رُبط 40 قرارا بنتيجة الحادث/),
+    ).toBeInTheDocument();
+    expect(within(ranker).getByText(/على 22 حادثة محجوزة/)).toBeInTheDocument();
+    expect(
+      within(ranker).getByText("الأول عند النموذج اعتُمد"),
+    ).toBeInTheDocument();
+    expect(
+      within(ranker).getByText("الأول عند القواعد اعتُمد"),
+    ).toBeInTheDocument();
+    expect(within(ranker).getByText("على 22 حادثة")).toBeInTheDocument();
+  });
+
   it("turns on a periodic training through the platform setting", async () => {
     const learning = fakeLearningApi();
     const phase9 = fakePhase9Api();

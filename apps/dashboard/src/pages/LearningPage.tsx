@@ -156,6 +156,19 @@ function JobSummary({ job }: { job: TrainingJob }) {
           · {t("learning.result.primary")}: <Percent value={r.primary} />
         </p>
       )}
+      {r.rules_top1 !== undefined && (
+        <p className="muted">
+          {t("learning.result.ranking", {
+            incidents: r.ranked_incidents ?? 0,
+          })}{" "}
+          <Percent value={r.primary} /> / <Percent value={r.rules_top1} />
+        </p>
+      )}
+      {r.outcomes_linked !== undefined && (
+        <p className="muted">
+          {t("learning.result.outcomes", { count: r.outcomes_linked })}
+        </p>
+      )}
       {r.train !== undefined && (
         <p className="muted">
           {t("learning.result.samples", {
@@ -227,6 +240,27 @@ function CurrentModel({ task }: { task: TaskOverview }) {
             <Percent value={scores?.accuracy} />
           </dd>
         </div>
+        {m.metrics.ranking && (
+          <>
+            <div>
+              <dt>{t("learning.model.firstModel")}</dt>
+              <dd>
+                <Percent value={m.metrics.ranking.top1} />
+              </dd>
+            </div>
+            <div>
+              <dt>{t("learning.model.firstRules")}</dt>
+              <dd>
+                <Percent value={m.metrics.ranking.rules_top1} />{" "}
+                <span className="muted">
+                  {t("learning.model.rankedIncidents", {
+                    count: m.metrics.ranking.incidents,
+                  })}
+                </span>
+              </dd>
+            </div>
+          </>
+        )}
         {m.metrics.baseline && (
           <div>
             <dt>{t("learning.model.baseline")}</dt>
