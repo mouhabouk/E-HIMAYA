@@ -1,0 +1,65 @@
+@startuml
+!include style.iuml
+title Diagramme de classes : assistant du commandant et apprentissage local (AI5, centre d'entraînement)
+class "Incident" as Inc {
+  catégorie, niveau, statut
+  clôture, évaluation
+}
+class "Décision du commandant" as CD {
+  origine : règles | ordre
+  type, clé, titre, justification, confiance
+  {field} caractéristiques anonymes (rang de la règle…)
+  texte de l'ordre, langue, lecteur
+  statut : proposé | adopté | modifié | rejeté | dépassé
+  final, motif du rejet
+  décidé par, décidé le
+  résultat
+}
+class "Résultat" as Out <<calculé à la clôture>> {
+  minutes jusqu'à la clôture, résultat
+  ordres après, premier sur place
+  escalade, même moyen envoyé ensuite
+}
+class "Message vocal" as V {
+  transcription (chiffrée)
+  texte corrigé (chiffré)
+  langue, mots erronés
+  audio : jamais gardé
+}
+class "Échantillon" as S {
+  source : signalement | ordre | voix
+  texte anonymisé (chiffré)
+  étiquettes, origine de l'étiquette
+  partie : entraînement | réservée
+}
+class "Entraînement" as J {
+  tâche : catégorie | vies | rejet | mots
+         | feu et fumée | classement du commandant
+  état, résultat, lancé par
+}
+class "Modèle appris" as M {
+  tâche, version, algorithme
+  paramètres en nombres simples
+  mesures, mesure principale
+  état : en cours | rejeté | retiré
+}
+class "Fiche du modèle\n« assistant du commandant »" as Card {
+  objectifs et verdicts
+  classement appris face aux règles
+}
+Inc "1" -- "0..*" CD
+CD "1" -- "0..1" Out
+Inc "1" -- "0..*" V
+V "0..1" -- "0..1" CD : ordre envoyé
+CD "1" ..> "0..1" S : ordre décidé
+V "1" ..> "0..1" S : correction
+J "0..*" ..> "0..*" S : apprend de
+J "1" -- "0..1" M : produit
+CD "0..*" <.. M : classe (ombre)
+Card ..> M
+Card ..> CD
+note bottom of CD
+  L'IA propose, le commandant décide (AI-01, BR-21).
+  Adopter n'exécute rien : le bouton ouvre le parcours habituel.
+end note
+@enduml
