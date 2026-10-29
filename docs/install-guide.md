@@ -495,6 +495,9 @@ sudo ufw allow 10000:10099/udp                                                # 
 docker compose --env-file .env -f infra/compose.yml -f infra/compose.prod.yml up -d --build --wait
 ```
 
+على الشبكة المحلية للديوان، بلا إنترنت، ومع الحساسات والكاميرات والدرون: يُضاف `-f infra/compose.lan.yml` والملفات
+الشخصية `sensors` و `vision` و `drones`، كما في `docs/field-guide-sensors.md` §6.
+
 ترتيب الإقلاع: `postgres` ثم `db-roles` ثم `migrate` ثم `api` و `worker` ثم `caddy`. الواجهة البرمجية ترفض الإقلاع إذا
 بقي أي سر قيمة مثال أو أقصر من 16 حرفا، وتسمّي الإعداد المعني دون أن تطبع قيمته.
 

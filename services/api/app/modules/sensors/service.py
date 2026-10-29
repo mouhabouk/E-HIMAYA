@@ -103,7 +103,7 @@ async def ingest(session: AsyncSession, readings: list[RawReading], now: datetim
         device.last_value, device.last_at, device.updated_at = value, at, now
         if after != before:
             device.level, device.level_since = after, now
-        if domain.rises(before, after) and await _suggest(session, device, value, now):
+        if domain.rises(before, after) and domain.is_fresh(at, now) and await _suggest(session, device, value, now):
             out.suggestions += 1
         await emit(
             session,

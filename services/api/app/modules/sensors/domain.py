@@ -16,8 +16,12 @@ from typing import Literal
 
 KEY_CONTEXT = "sensor.device.key"
 KEY_BYTES = 32
-# A reading dated further than this from the server's clock is refused (old replay, or a clock gone astray).
+# A reading dated this far ahead of the server's clock is refused (a clock gone astray).
 CLOCK_SKEW = timedelta(minutes=10)
+# A reading kept by the gateway while the system was unreachable still counts when it arrives, up to this age. It
+# fills the history but never raises a suggestion (only a reading within CLOCK_SKEW of now does); an old reading sent
+# twice is a replay of the same (sensor, at).
+MAX_AGE = timedelta(hours=48)
 MAX_BATCH = 500
 _VALUE = re.compile(r"^-?\d{1,7}(\.\d{1,4})?$")
 _SIG = re.compile(r"^[0-9a-f]{64}$")
@@ -76,17 +80,22 @@ def parse_value(raw: str, kind: Kind) -> float | None:
     return value if math.isfinite(value) and low <= value <= high else None
 
 
-def parse_at(raw: str, now: datetime) -> datetime | None:
-    """The reading's time, or None when it has no offset or is too far from the server's clock."""
+def parse_at(raw: str, now: datetime, max_age: timedelta = MAX_AGE) -> datetime | None:
+    """The reading's time, or None when it has no offset, is ahead of the server's clock or older than max_age."""
     if len(raw) > 40:
         return None
     try:
         at = datetime.fromisoformat(raw)
     except ValueError:
         return None
-    if at.tzinfo is None or abs(at - now) > CLOCK_SKEW:
+    if at.tzinfo is None or at - now > CLOCK_SKEW or now - at > max_age:
         return None
     return at
+
+
+def is_fresh(at: datetime, now: datetime) -> bool:
+    """A reading recent enough to raise a suggestion (a late one, delivered after an outage, only fills the history)."""
+    return abs(at - now) <= CLOCK_SKEW
 
 
 def level_of(value: float, watch: float, alarm: float) -> Level:

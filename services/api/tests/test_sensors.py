@@ -64,7 +64,11 @@ def test_signature_is_over_the_strings_as_sent() -> None:
     assert domain.parse_value("41.25", domain.Kind.TEMPERATURE) == 41.25
     now = datetime.now(UTC)
     assert domain.parse_at(now.replace(tzinfo=None).isoformat(), now) is None
-    assert domain.parse_at((now - timedelta(hours=1)).isoformat(), now) is None
+    # Ahead of the clock or older than two days: refused; a few hours late (an outage): kept, but not fresh.
+    assert domain.parse_at((now + timedelta(hours=1)).isoformat(), now) is None
+    assert domain.parse_at((now - timedelta(hours=49)).isoformat(), now) is None
+    late = domain.parse_at((now - timedelta(hours=1)).isoformat(), now)
+    assert late is not None and not domain.is_fresh(late, now) and domain.is_fresh(now, now)
     assert domain.level_of(20, 20, 40) == "watch"
     assert domain.state_of(
         enabled=True, level="alarm", last_at=now - timedelta(hours=2), silent_after_min=30, now=now
@@ -154,7 +158,8 @@ async def test_readings_rated_refused_and_suggested(
         _reading(code, key, "5", now - timedelta(minutes=5)),
         _reading(code, key, "25", now - timedelta(minutes=1)),
         tampered,
-        _reading(code, key, "5", now - timedelta(minutes=30)),
+        _reading(code, key, "5", now + timedelta(minutes=30)),
+        _reading(code, key, "5", now - timedelta(hours=49)),
         _reading(code, key, "999", now - timedelta(minutes=3)),
         _reading("NOPE-1", key, "5"),
     ]
@@ -162,7 +167,7 @@ async def test_readings_rated_refused_and_suggested(
     assert r.status_code == 200, r.text
     out = r.json()
     assert out["accepted"] == 2 and out["suggestions"] == 1
-    assert out["rejected"] == {"bad_signature": 1, "bad_time": 1, "bad_value": 1, "unknown_sensor": 1}
+    assert out["rejected"] == {"bad_signature": 1, "bad_time": 2, "bad_value": 1, "unknown_sensor": 1}
     # A replay of an accepted reading is refused.
     r = await client.post(INGEST, json={"readings": [batch[0]]}, headers=GATEWAY)
     assert r.json()["rejected"] == {"replay": 1}
@@ -200,3 +205,19 @@ async def test_readings_rated_refused_and_suggested(
     page = await client.get("/api/v1/staff/weather/suggestions", headers=staff(["content_editor"], gouvernorat=GABES))
     assert page.status_code == 200, page.text
     assert {s["metric"] for s in page.json()["items"]} >= {"sensor_rain_1h"}
+
+
+async def test_readings_kept_through_an_outage_fill_the_history_only(client: httpx.AsyncClient, staff: Staff) -> None:
+    """The gateway keeps readings while the system is unreachable: hours later they are stored, but a level reached
+    in the past moves the sensor only if nothing newer arrived, and never raises a suggestion."""
+    created = await _create(client, staff)
+    sensor, key = created["sensor"], created["key"]
+    now = datetime.now(UTC)
+    late = [_reading(sensor["code"], key, v, now - timedelta(hours=h)) for v, h in (("5", 6), ("45", 5), ("2", 4))]
+    r = await client.post(INGEST, json={"readings": late}, headers=GATEWAY)
+    assert r.json() == {"accepted": 3, "rejected": {}, "suggestions": 0}
+    hist = (await client.get(f"{URL}/{sensor['id']}/readings", headers=staff(["operator"], gouvernorat=GABES))).json()
+    assert [i["value"] for i in hist["items"]] == [5, 45, 2]
+    # The same late batch again: replays.
+    r = await client.post(INGEST, json={"readings": late}, headers=GATEWAY)
+    assert r.json()["rejected"] == {"replay": 3}

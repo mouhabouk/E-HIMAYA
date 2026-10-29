@@ -94,7 +94,8 @@ async def ingest(session: AsyncSession, raw: RawEvent, now: datetime | None = No
     fields = (raw.tower, raw.at, raw.label, raw.confidence, raw.hits, raw.frames, sha)
     if not domain.signature_valid(key_of(tower), raw.sig, *fields):
         return _refuse("bad_signature")
-    at = domain.parse_at(raw.at, now)
+    # A detection is live or nothing: one that comes late is refused, unlike a sensor's reading.
+    at = domain.parse_at(raw.at, now, max_age=domain.CLOCK_SKEW)
     if at is None:
         return _refuse("bad_time")
     confidence = domain.parse_confidence(raw.confidence)
