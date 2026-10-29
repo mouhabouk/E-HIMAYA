@@ -469,7 +469,7 @@ jobs:
         run: |
           AI_MODELS_DIR="$MODELS" uv run python eval/reports.py --json eval/reports-results.json | tee -a "$GITHUB_STEP_SUMMARY"
           # The same figures in the log, to copy into the model card when the artifact cannot be downloaded.
-          cat eval/reports-results.json
+          python -c "import json; print('MODEL_CARD_REPORTS ' + json.dumps(json.load(open('eval/reports-results.json')), ensure_ascii=False, separators=(',', ':')))"
 
       - name: Keep the measures for the model cards
         uses: actions/upload-artifact@v7
