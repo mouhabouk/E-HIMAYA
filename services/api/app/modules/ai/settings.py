@@ -117,6 +117,8 @@ class AssistSettings(BaseModel):
     plan_reading: bool = True
     # The activities suggested in a programme (AI3, design-l5.md §4.3).
     programme_suggestions: bool = True
+    # The indicators found outside their habit (AI4, design-l5.md §4.4).
+    anomalies: bool = True
 
 
 class AiSettings(BaseModel):

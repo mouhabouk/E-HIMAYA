@@ -16,6 +16,7 @@ from app.modules.access.keycloak import DirectoryError, StaffAccount
 from app.modules.access.keycloak import get_directory as _get_directory
 from app.modules.analytics import documents
 from app.modules.analytics import service as analytics
+from app.modules.anomaly import router as anomalies
 from app.modules.audit import service as audit
 from app.modules.window import access, exports, schemas, service, summary
 from app.modules.window.access import Viewer
@@ -121,9 +122,13 @@ async def my_access(principal: AnyStaff, session: Session) -> schemas.AccessOut:
 
 
 @router.get("/now", response_model=schemas.NowOut)
-async def now(principal: AnyStaff, session: Session) -> schemas.NowOut:
+async def now(principal: AnyStaff, session: Session, lang: Annotated[schemas.Lang, Query()] = "ar") -> schemas.NowOut:
     viewer = await _viewer(session, principal, "now")
-    return await service.now(session, viewer)
+    out = await service.now(session, viewer)
+    if viewer.full:
+        found = await anomalies.for_scope(session, viewer.codes, lang)
+        out.anomalies = found.items if found.enabled else None
+    return out
 
 
 @router.get("/search", response_model=schemas.SearchOut)

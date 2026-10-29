@@ -1,6 +1,6 @@
 """Import every module's models so they register on ``Base.metadata`` (used by Alembic)."""
 
-from app.modules.ai.models import AiSettingsRow, Analysis, ModelDecision
+from app.modules.ai.models import AiSettingsRow, Analysis, Anomaly, ModelDecision
 from app.modules.analytics.models import Notification, Scenario, Schedule
 from app.modules.analytics.models import Report as AnalyticsReport
 from app.modules.appinfo.models import AppRating
@@ -129,6 +129,7 @@ __all__ = [
     "Analysis",
     "AnalyticsReport",
     "Anchor",
+    "Anomaly",
     "AppRating",
     "Assignment",
     "AuditLog",

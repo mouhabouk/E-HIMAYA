@@ -888,7 +888,7 @@ CATALOGUE: tuple[Spec, ...] = (
         "alerts",
         "/weather/suggestions",
         ("مقترحات الطقس", "Suggestions météo", "Weather suggestions"),
-        ("GET /weather/suggestions", "* /weather/rules", "WRITE /weather/suggestions"),
+        ("GET /weather/suggestions", "* /weather/rules", "WRITE /weather/suggestions", "GET /anomalies"),
         button(
             "weather.decide",
             ("قبول المقترح أو رفضه", "Accepter ou écarter", "Accept or dismiss"),

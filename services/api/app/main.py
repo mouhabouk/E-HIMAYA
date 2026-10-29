@@ -28,6 +28,7 @@ from app.modules.ai.router import router as ai_router
 from app.modules.analytics.library import router as analytics_library_router
 from app.modules.analytics.router import router as analytics_router
 from app.modules.analytics.worker import analytics_forever
+from app.modules.anomaly.router import router as anomaly_router
 from app.modules.appinfo.feedback import router as appinfo_feedback_router
 from app.modules.appinfo.router import router as appinfo_router
 from app.modules.audit.router import router as audit_router
@@ -338,6 +339,7 @@ def create_app() -> FastAPI:
         drones_internal_router,
         checklist_router,
         modelcards_router,
+        anomaly_router,
     )
     for router in routers:
         app.include_router(router)

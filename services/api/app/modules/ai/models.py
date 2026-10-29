@@ -1,8 +1,8 @@
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any
 
-from sqlalchemy import DateTime, ForeignKey, Integer, SmallInteger, Text, func
+from sqlalchemy import Date, DateTime, Float, ForeignKey, Integer, SmallInteger, Text, func
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -64,3 +64,25 @@ class ModelDecision(Base):
     note: Mapped[str] = mapped_column(Text, server_default="")
     decided_by_name: Mapped[str] = mapped_column(Text)
     decided_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class Anomaly(Base):
+    """An indicator of a gouvernorat or a delegation found outside its usual series on a day (AI4), kept once."""
+
+    __tablename__ = "anomaly"
+    __table_args__ = {"schema": "ai"}
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    indicator: Mapped[str] = mapped_column(Text)
+    unit_key: Mapped[str] = mapped_column(Text)
+    gouvernorat_code: Mapped[int] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
+    delegation_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("geo.delegation.id"))
+    day: Mapped[date] = mapped_column(Date)
+    value: Mapped[float] = mapped_column(Float)
+    mean: Mapped[float] = mapped_column(Float)
+    std: Mapped[float] = mapped_column(Float)
+    z: Mapped[float] = mapped_column(Float)
+    baseline: Mapped[str] = mapped_column(Text)
+    points: Mapped[int] = mapped_column(SmallInteger)
+    n: Mapped[int] = mapped_column(Integer)
+    raised_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
