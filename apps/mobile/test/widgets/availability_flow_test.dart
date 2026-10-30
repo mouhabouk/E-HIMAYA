@@ -83,6 +83,6 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('Calendrier enregistré'), findsOneWidget);
-      await unmountApp(tester);
+    await unmountApp(tester);
   });
 }
