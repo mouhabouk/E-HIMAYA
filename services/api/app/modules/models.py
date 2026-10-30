@@ -115,6 +115,12 @@ from app.modules.schedule.models import Setting as ScheduleSetting
 from app.modules.schedule.models import SuggestionDismissal
 from app.modules.schedule.models import Template as ScheduleTemplate
 from app.modules.sensors.models import SensorDevice, SensorReading
+from app.modules.snacr.models import Alias as SnacrAlias
+from app.modules.snacr.models import Dataset as SnacrDataset
+from app.modules.snacr.models import Intervention as SnacrIntervention
+from app.modules.snacr.models import Plan as SnacrPlan
+from app.modules.snacr.models import SpecialRisk
+from app.modules.strategies.models import StrategyItem
 from app.modules.streams.models import LiveStream, StreamDetection, StreamLocation, StreamSegment
 from app.modules.telephony.models import Call, Conference, OperatorEndpoint, SmsInbound
 from app.modules.towers.models import CameraTower, TowerEvent
@@ -285,9 +291,15 @@ __all__ = [
     "Shift",
     "Sitrep",
     "SmsInbound",
+    "SnacrAlias",
+    "SnacrDataset",
+    "SnacrIntervention",
+    "SnacrPlan",
+    "SpecialRisk",
     "StaffDevice",
     "StatusHistory",
     "Stock",
+    "StrategyItem",
     "StreamDetection",
     "StreamLocation",
     "StreamSegment",

@@ -83,6 +83,10 @@ class Affectation {
   type, ordre
   statut
   en route, sur place, libéré
+  quitté les lieux, hôpital,
+  disponible, retour à l'unité (S2)
+  agents, moyens utilisés,
+  source de chaque heure (S2)
 }
 class Mobilisation {
   compétence, rayon_km

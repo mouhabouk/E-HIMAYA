@@ -23,7 +23,7 @@ from app.modules.audit import service as audit
 from app.modules.identity.models import Profile
 from app.modules.identity.service import Reporter
 from app.modules.notify import outbox
-from app.modules.ops import resources, schemas, scope, shifts
+from app.modules.ops import record_checks, resources, schemas, scope, shifts
 from app.modules.ops import service as incidents
 from app.modules.ops.domain import ACTIVE_ASSIGNMENT, ASSIGNMENT_TRANSITIONS, classification_allowed
 from app.modules.ops.models import (
@@ -159,7 +159,7 @@ async def advance_reports(
 async def assignments_of(session: AsyncSession, incident_id: uuid.UUID) -> list[schemas.AssignmentOut]:
     rows = (
         await session.execute(
-            select(Assignment, Resource, Unit, Volunteer, Profile, Shift, _UNSEEN)
+            select(Assignment, Resource, Unit, Volunteer, Profile, Shift, _UNSEEN, _UNIT_DISTANCE)
             .outerjoin(Resource, Resource.id == Assignment.resource_id)
             .outerjoin(Unit, Unit.id == Resource.unit_id)
             .outerjoin(Volunteer, Volunteer.user_id == Assignment.volunteer_id)
@@ -199,6 +199,12 @@ async def _positions(session: AsyncSession, ids: list[uuid.UUID]) -> dict[uuid.U
     }
 
 
+# How far the vehicle's unit is from the incident, to judge the travel time (phase S2).
+_UNIT_DISTANCE = func.ST_Distance(
+    Unit.location,
+    select(Incident.centroid).where(Incident.id == Assignment.incident_id).correlate(Assignment).scalar_subquery(),
+)
+
 # Alerts of the team the room has not marked seen (phase P4b).
 _UNSEEN = (
     select(func.count(CrewAlert.id))
@@ -216,10 +222,20 @@ def _assignment_out(
     p: Profile | None,
     sh: Shift | None,
     unseen: int | None = 0,
+    distance_m: float | None = None,
     *,
     position: schemas.VehiclePosition | None = None,
 ) -> schemas.AssignmentOut:
+    times = {f: getattr(a, f) for f in record_checks.TIMES}
     return schemas.AssignmentOut(
+        record_warnings=record_checks.warnings(
+            times,
+            status=a.status,
+            released_at=a.released_at,
+            crew_count=a.crew_count,
+            distance_m=distance_m,
+            now=_now(),
+        ),
         id=a.id,
         incident_id=a.incident_id,
         kind=a.kind,
@@ -243,6 +259,13 @@ def _assignment_out(
         on_scene_at=a.on_scene_at,
         released_at=a.released_at,
         cancelled_at=a.cancelled_at,
+        left_scene_at=a.left_scene_at,
+        at_hospital_at=a.at_hospital_at,
+        available_at=a.available_at,
+        back_at_unit_at=a.back_at_unit_at,
+        crew_count=a.crew_count,
+        consumables=a.consumables or {},
+        time_sources=a.time_sources or {},
         crew=(
             schemas.CrewRef(
                 shift_id=sh.id,
@@ -262,7 +285,7 @@ def _assignment_out(
 async def assignment_out(session: AsyncSession, assignment_id: uuid.UUID) -> schemas.AssignmentOut:
     row = (
         await session.execute(
-            select(Assignment, Resource, Unit, Volunteer, Profile, Shift, _UNSEEN)
+            select(Assignment, Resource, Unit, Volunteer, Profile, Shift, _UNSEEN, _UNIT_DISTANCE)
             .outerjoin(Resource, Resource.id == Assignment.resource_id)
             .outerjoin(Unit, Unit.id == Resource.unit_id)
             .outerjoin(Volunteer, Volunteer.user_id == Assignment.volunteer_id)
@@ -447,22 +470,35 @@ async def create_assignment(
 
 
 async def _set_assignment_status(
-    session: AsyncSession, assignment: Assignment, target: str, actor: str, *, at: datetime | None = None
+    session: AsyncSession,
+    assignment: Assignment,
+    target: str,
+    actor: str,
+    *,
+    at: datetime | None = None,
+    source: str = "room",
 ) -> None:
-    """``at``: when it happened, for a step the team's phone kept without network (phase P4d); now otherwise."""
+    """``at``: when it happened, for a step the team's phone kept without network (phase P4d); now otherwise.
+    ``source``: who gave the time (the app, a text message or the room, phase S2)."""
     if target not in ASSIGNMENT_TRANSITIONS[assignment.status]:
         raise HTTPException(status.HTTP_409_CONFLICT, "invalid_transition")
     now = at or _now()
     assignment.status = target
+    sources = dict(assignment.time_sources or {})
     if target == "en_route":
         assignment.en_route_at = now
+        sources["en_route_at"] = source
     elif target == "on_scene":
         assignment.on_scene_at = now
-        assignment.en_route_at = assignment.en_route_at or now
+        sources["on_scene_at"] = source
+        if assignment.en_route_at is None:
+            assignment.en_route_at = now
+            sources["en_route_at"] = source
     elif target == "released":
         assignment.released_at = now
     elif target == "cancelled":
         assignment.cancelled_at = now
+    assignment.time_sources = sources
     if target in ("released", "cancelled") and assignment.resource_id is not None:
         resource = await session.get(Resource, assignment.resource_id, with_for_update=True)
         if resource is not None and resource.status == "assigned":

@@ -676,6 +676,24 @@ class StaffController extends Notifier<StaffState> {
     {'status': status, 'lat': ?at?.lat, 'lon': ?at?.lon},
   );
 
+  /// Left the scene, at the hospital, back at the unit (phase S2): the phone's time, kept in order
+  /// by the server; back at the unit ends the mission.
+  Future<bool> milestone(String id, String step) =>
+      _write(id, 'milestone', {'step': step});
+
+  /// The crew and what the mission used (phase S2).
+  Future<bool> teamRecord(
+    String id, {
+    required int crewCount,
+    required Map<String, int> consumables,
+  }) => _write(id, 'record', {
+    'crew_count': crewCount,
+    'consumables': {
+      for (final e in consumables.entries)
+        if (e.value > 0) e.key: e.value,
+    },
+  });
+
   /// Situation report (design §5.5); backup chips mean "backup needed".
   Future<bool> situation(
     String id, {

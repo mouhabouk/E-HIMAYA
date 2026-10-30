@@ -56,7 +56,8 @@
       "people": "Bénévoles et médecins",
       "orgs": "Établissements",
       "knowledge": "Analyse et savoir",
-      "system": "Système"
+      "system": "Système",
+      "strategies": "Stratégies"
     },
     "inventory": "Registre des moyens",
     "plans": "Plans d'intervention",
@@ -69,7 +70,10 @@
     "drones": "Drones",
     "modelCards": "Fiches des modèles",
     "learning": "Centre d'entraînement",
-    "disasters": "Catastrophes : bilan et carte"
+    "disasters": "Catastrophes : bilan et carte",
+    "strategies": "Toutes les stratégies",
+    "snacr": "Analyse et couverture des risques (SNACR)",
+    "lessons": "Retours d'expérience"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -560,7 +564,29 @@
     "voice_not_found": "Ce message vocal est introuvable ou n'est pas le vôtre.",
     "voice_already_sent": "Ce message vocal a déjà été envoyé.",
     "outside_gouvernorat": "Lieu hors de votre gouvernorat : une salle régionale saisit les signalements de son gouvernorat.",
-    "invalid_selection": "Sélection invalide."
+    "invalid_selection": "Sélection invalide.",
+    "alias_empty": "Le nom est vide.",
+    "alias_exists": "Ce nom est déjà rattaché à une délégation.",
+    "body_or_link_required": "Saisissez le texte de la page ou un lien.",
+    "delegation_not_in_gouvernorat": "La délégation choisie n'est pas de ce gouvernorat.",
+    "no_dataset": "Aucune année n'est encore chargée dans l'archive.",
+    "plan_not_draft": "Ce schéma est déjà approuvé.",
+    "years_not_loaded": "L'une des années choisies n'est pas chargée.",
+    "file_columns_missing": "Il manque au fichier des colonnes de l'archive (dates, direction régionale, délégation, nature).",
+    "time_needs_previous": "Cette heure demande d'abord l'étape précédente.",
+    "time_without_zone": "Heure sans fuseau horaire.",
+    "time_in_future": "L'heure est dans le futur.",
+    "times_out_of_order": "Les heures ne sont pas dans l'ordre : chaque étape suit la précédente.",
+    "mission_too_long": "La mission dépasse 72 heures depuis l'ordre.",
+    "return_before_departure": "Le retour à l'unité doit suivre le départ.",
+    "consumable_unknown": "Ressource inconnue.",
+    "consumable_out_of_range": "Quantité hors des limites.",
+    "assignment_cancelled": "Cet engagement est annulé.",
+    "record_closed": "Le relevé n'est plus modifiable (7 jours après la fin).",
+    "time_required": "Une heure atteinte par la mission ne peut pas être effacée.",
+    "correction_reason_required": "Corriger une heure donnée par l'équipe demande un motif.",
+    "year_has_dataset": "Cette année vient du fichier de l'Office ou de [SIM] : supprimez-la d'abord.",
+    "no_records": "Aucun relevé pour cette année."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -941,7 +967,10 @@
       "field_attachment": "Pièce jointe des lieux",
       "detailed_report": "Rapport détaillé",
       "hospital_chosen": "Hôpital choisi",
-      "command_decision": "Décision du commandant"
+      "command_decision": "Décision du commandant",
+      "mission_step": "Étape de la mission",
+      "record_saved": "Relevé de mission modifié",
+      "team_record": "Équipage et ressources (équipe)"
     },
     "via": {
       "suggestion": "(suggestion confirmée)",
@@ -3768,7 +3797,8 @@
         "crisis": "Seuils des catastrophes et du commandement",
         "alerts": "Seuils des alertes",
         "rooms": "Seuils des salles et du terrain",
-        "partners": "Seuils des médecins et des établissements"
+        "partners": "Seuils des médecins et des établissements",
+        "snacr": "Seuils de l'analyse et de la couverture des risques (SNACR)"
       },
       "help": "Les nombres du travail quotidien : les changer ne demande pas de nouvelle version, et ils restent dans leurs bornes. Ce qui n’est pas changé garde sa valeur par défaut.",
       "bounds": "Chaque valeur est un entier dans les bornes indiquées à côté.",
@@ -3777,7 +3807,12 @@
         "count": "nombre",
         "days": "jours",
         "hours": "heures",
-        "metres": "mètres"
+        "metres": "mètres",
+        "minutes": "minutes",
+        "percent": "pour cent",
+        "per_km2": "habitants au km²",
+        "months": "mois",
+        "years": "ans"
       },
       "names": {
         "crisis": {
@@ -3821,6 +3856,37 @@
         "orgs": {
           "invitation_days": "Validité d’une invitation d’établissement",
           "reservation_due_soon_days": "Alerte avant l’échéance des réserves"
+        },
+        "snacr": {
+          "target": {
+            "medical": {
+              "urban": "Délai cible, secours à personne, urbain",
+              "periurban": "Délai cible, secours à personne, périurbain",
+              "rural": "Délai cible, secours à personne, rural"
+            },
+            "road": {
+              "urban": "Délai cible, accidents de la route, urbain",
+              "periurban": "Délai cible, accidents de la route, périurbain",
+              "rural": "Délai cible, accidents de la route, rural"
+            },
+            "fire": {
+              "urban": "Délai cible, incendies, urbain",
+              "periurban": "Délai cible, incendies, périurbain",
+              "rural": "Délai cible, incendies, rural"
+            },
+            "rescue": {
+              "urban": "Délai cible, sauvetage et opérations diverses, urbain",
+              "periurban": "Délai cible, sauvetage et opérations diverses, périurbain",
+              "rural": "Délai cible, sauvetage et opérations diverses, rural"
+            }
+          },
+          "goal_percent": "Part des interventions qui doivent tenir le délai",
+          "density": {
+            "urban": "Densité minimale d'une délégation urbaine",
+            "periurban": "Densité minimale d'une délégation périurbaine"
+          },
+          "review_months": "Revue du schéma tous les",
+          "validity_years": "Durée de validité du schéma"
         }
       }
     }
@@ -7626,5 +7692,422 @@
     "from": "à partir du {{from}}",
     "everyDay": "tous les jours",
     "overnight": "(jusqu’au lendemain)"
+  },
+  "strategies": {
+    "title": "Stratégies",
+    "intro": "Ce qui oriente l'action à moyen et long terme, en un seul endroit : l'analyse et la couverture des risques, les plans d'intervention, les programmes saisonniers, les exercices blancs et les retours d'expérience. Chaque page reste aussi dans son menu d'origine ; l'administrateur du système ajoute les autres.",
+    "tabs": {
+      "label": "Sections des stratégies",
+      "all": "Stratégies",
+      "manage": "Gérer les éléments"
+    },
+    "about": {
+      "snacr": "Les interventions sur trois ans : taux pour 1 000 habitants, délais d'arrivée, priorités, et le schéma approuvé par les commissions.",
+      "plans": "Plans d'intervention nationaux et régionaux par aléa, dans la couleur de chaque aléa.",
+      "programmes": "Programmes saisonniers des gouvernorats : été, feux, pluies.",
+      "drills": "Exercices blancs numériques et leur évaluation.",
+      "lessons": "Tirer et consigner les leçons des événements passés."
+    },
+    "back": "← Stratégies",
+    "open": "Ouvrir la page",
+    "openSite": "Ouvrir le site officiel",
+    "icons": {
+      "insights": "Indicateurs",
+      "menuBook": "Livre",
+      "policy": "Politique",
+      "analytics": "Analyse",
+      "schedule": "Calendrier",
+      "healthAndSafety": "Sécurité",
+      "warning": "Alerte",
+      "historyEdu": "Mémoire",
+      "militaryTech": "Médaille",
+      "groups": "Équipes",
+      "water": "Eau"
+    },
+    "tones": {
+      "purple": "Violet",
+      "navy": "Bleu marine",
+      "teal": "Bleu-vert",
+      "green": "Vert",
+      "sky": "Bleu ciel",
+      "orange": "Orange",
+      "amber": "Ambre",
+      "red": "Rouge",
+      "pink": "Rose",
+      "slate": "Gris"
+    },
+    "manage": {
+      "title": "Éléments des stratégies",
+      "intro": "L'administrateur national du système crée un élément du menu des stratégies : une stratégie nationale, un programme, une référence. L'élément a sa propre page en trois langues, ou un lien vers une page de la plateforme ou un site officiel, et s'affiche pour tous les agents ou pour certains rôles. Chaque modification est journalisée.",
+      "add": "Créer un élément",
+      "edit": "Modifier « {{name}} »",
+      "editShort": "Modifier",
+      "delete": "Supprimer",
+      "confirmDelete": "Retirer « {{name}} » du menu des stratégies ?",
+      "key": "Identifiant",
+      "keyHint": "Minuscules latines, chiffres et tiret bas, par exemple snrrc_2030. Il ne change plus après la création.",
+      "name": "Nom ({{lang}})",
+      "summary": "Ligne de présentation ({{lang}})",
+      "body": "Texte de la page ({{lang}})",
+      "bodyHint": "Le texte s'écrit en Markdown : titres, listes, liens.",
+      "link": "Lien",
+      "linkHint": "Une page de la plateforme commençant par /, par exemple /snacr, ou un site officiel en https://",
+      "icon": "Icône",
+      "tone": "Couleur",
+      "position": "Ordre",
+      "roles": "Visible par",
+      "rolesHint": "Sans choix : visible par tous les agents.",
+      "active": "Affiché dans le menu",
+      "needOne": "Saisissez le texte de la page ou un lien.",
+      "save": "Enregistrer",
+      "none": "Aucun élément ajouté pour l'instant.",
+      "colName": "Élément",
+      "colKind": "Contenu",
+      "colRoles": "Visible par",
+      "colState": "État",
+      "colUpdated": "Dernière modification",
+      "colActions": "Actions",
+      "ownPage": "Page propre",
+      "everyone": "Tous les agents",
+      "shown": "Affiché",
+      "hidden": "Masqué"
+    }
+  },
+  "snacr": {
+    "title": "Analyse et couverture des risques (SNACR)",
+    "intro": "Le schéma d'analyse et de couverture des risques, tiré de l'archive des interventions de l'Office sur trois ans : fréquence pour 1 000 habitants, délais d'arrivée, priorités par délégation, et registre des risques particuliers. Sur le modèle des SDACR français, des CRMP britanniques et de la norme NFPA 1710, dans le cadre de la loi 91-39 et du décret 93-942.",
+    "years": "Années",
+    "national": "Tout le pays",
+    "noData": "Aucune année n'est encore chargée dans l'archive.",
+    "empty": "Aucune donnée.",
+    "tabs": {
+      "label": "Sections de l'analyse",
+      "indicators": "Indicateurs et carte",
+      "matrix": "Matrice des priorités",
+      "seasons": "Saisons et heures",
+      "special": "Risques particuliers",
+      "plan": "Schéma",
+      "archive": "Archive",
+      "method": "Méthode et références"
+    },
+    "unit": {
+      "min": "min"
+    },
+    "family": {
+      "label": "Famille d'intervention",
+      "medical": "Secours à personne",
+      "road": "Accidents de la route",
+      "fire": "Incendies",
+      "rescue": "Sauvetage et opérations diverses"
+    },
+    "zone": {
+      "urban": "Urbain",
+      "periurban": "Périurbain",
+      "rural": "Rural"
+    },
+    "priority": {
+      "high": "Priorité haute",
+      "medium": "Priorité moyenne",
+      "low": "Priorité normale"
+    },
+    "ind": {
+      "annual": "Interventions par an",
+      "rate": "Pour 1 000 habitants",
+      "compliance": "Dans le délai (objectif {{goal}} %)",
+      "complianceShort": "Dans le délai",
+      "completeness": "Complétude de l'archive",
+      "unmatched": "Interventions sans délégation reconnue",
+      "byGouvernorat": "Par gouvernorat : interventions, taux et arrivée dans 90 % des cas",
+      "byDelegation": "Par délégation : {{family}}"
+    },
+    "col": {
+      "gouvernorat": "Gouvernorat",
+      "delegation": "Délégation",
+      "zone": "Milieu",
+      "target": "Cible",
+      "median": "Médiane",
+      "p90short": "90 %",
+      "p90": "{{family}} (90 %)",
+      "departure": "Départ (médiane)",
+      "levels": "Fréquence × couverture",
+      "priority": "Priorité"
+    },
+    "sort": {
+      "label": "Tri",
+      "priority": "Par priorité",
+      "rate": "Par taux",
+      "compliance": "Moins bien couvertes d'abord"
+    },
+    "map": {
+      "title": "Carte des délégations",
+      "metric": "Couleur selon",
+      "aria": "Carte des délégations colorées selon l'indicateur choisi",
+      "metrics": {
+        "priority": "Priorité",
+        "rate": "Taux pour 1 000 habitants",
+        "compliance": "Part dans le délai",
+        "completeness": "Complétude de l'archive"
+      },
+      "legend": {
+        "priority": "Rouge : priorité haute, orange : moyenne, vert : normale, gris : sans données. Cliquez une délégation pour lire ses chiffres.",
+        "rate": "Du clair au foncé : quintiles du taux national pour 1 000 habitants.",
+        "compliance": "Du rouge (moins de 20 %) au vert (80 % et plus).",
+        "completeness": "Du rouge (archive incomplète) au vert (archive complète)."
+      }
+    },
+    "matrix": {
+      "title": "Matrice fréquence × couverture",
+      "intro": "Nombre de délégations dans chaque case. La fréquence va de 1 à 5 selon les quintiles du taux national pour 1 000 habitants ; la couverture de 1 à 5 selon l'écart à l'objectif de part dans le délai.",
+      "corner": "Fréquence \\ couverture",
+      "coverage": "Couverture {{level}}",
+      "frequency": "Fréquence {{level}}",
+      "levels": "Couverture 1 : objectif atteint ; 2 : écart jusqu'à 10 points ; 3 : jusqu'à 25 ; 4 : jusqu'à 40 ; 5 : plus de 40 points.",
+      "legend": {
+        "high": "Produit de 15 et plus : un objectif du schéma",
+        "medium": "De 8 à 14 : à suivre",
+        "low": "Moins de 8"
+      }
+    },
+    "seasons": {
+      "months": "Interventions par mois : {{family}}",
+      "hours": "Par jour et par heure (heure de Tunis)",
+      "day": "Jour",
+      "subtypes": "Types les plus fréquents : {{family}}"
+    },
+    "month": {
+      "1": "janvier",
+      "2": "février",
+      "3": "mars",
+      "4": "avril",
+      "5": "mai",
+      "6": "juin",
+      "7": "juillet",
+      "8": "août",
+      "9": "septembre",
+      "10": "octobre",
+      "11": "novembre",
+      "12": "décembre"
+    },
+    "weekday": {
+      "1": "lundi",
+      "2": "mardi",
+      "3": "mercredi",
+      "4": "jeudi",
+      "5": "vendredi",
+      "6": "samedi",
+      "7": "dimanche"
+    },
+    "hazard": {
+      "flood": "Inondations",
+      "forest_fire": "Feux de forêt",
+      "industrial": "Accidents industriels",
+      "hazmat_transport": "Transport de matières dangereuses",
+      "coastal": "Risques littoraux",
+      "earthquake": "Séismes",
+      "storm": "Tempêtes",
+      "drought": "Sécheresse et canicules",
+      "epidemic": "Épidémies"
+    },
+    "special": {
+      "intro": "Les risques particuliers par gouvernorat : probabilité et gravité de 1 à 5, leur produit donne le niveau. Les premières entrées sont [SIM] ; elles deviennent réelles dès que la commission les modifie.",
+      "title": "Registre des risques particuliers",
+      "hazard": "Aléa",
+      "probability": "Probabilité",
+      "gravity": "Gravité",
+      "level": "Niveau",
+      "note": "Note",
+      "actions": "Actions",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "save": "Enregistrer le risque"
+    },
+    "plan": {
+      "intro": "Le schéma fige l'analyse des années choisies avec le registre des risques particuliers et en tire les objectifs. La commission régionale le prépare pour son gouvernorat, la commission nationale pour le schéma national, puis il est approuvé (décret 93-942).",
+      "title": "Schémas",
+      "draftNational": "Préparer le projet de schéma national",
+      "draftRegional": "Préparer le projet de schéma de {{name}}",
+      "none": "Aucun schéma pour l'instant.",
+      "scope": "Portée",
+      "national": "National",
+      "version": "Version",
+      "status": "État",
+      "statuses": {
+        "draft": "Projet",
+        "approved": "Approuvé",
+        "superseded": "Remplacé"
+      },
+      "years": "Années",
+      "objectives": "Objectifs",
+      "review": "Revue avant le",
+      "valid": "Valide jusqu'au",
+      "pdf": "PDF",
+      "approve": "Approuver"
+    },
+    "archive": {
+      "intro": "Une année par fichier de l'Office (xlsx ou CSV). Seuls les heures, le lieu et la nature sont lus : l'adresse, les textes libres, les agents et les véhicules ne sont jamais stockés. Les années [SIM] sont générées sur les distributions de l'archive réelle de 2022 en attendant le fichier de l'année.",
+      "title": "Années chargées",
+      "year": "Année",
+      "source": "Source",
+      "office": "Fichier de l'Office",
+      "rows": "Interventions",
+      "skipped": "Lignes écartées",
+      "by": "Chargée par",
+      "delete": "Supprimer l'année",
+      "confirmDelete": "Supprimer les interventions de {{year}} ?",
+      "import": "Charger le fichier de l'année",
+      "reading": "Lecture du fichier…",
+      "file": "Fichier",
+      "fileHint": "L'export de l'Office tel quel ; il remplace l'année si elle est déjà chargée.",
+      "simulate": "Générer {{year}} [SIM]",
+      "unmatched": "Noms de délégations inconnus",
+      "unmatchedIntro": "Des noms écrits par l'archive qui ne correspondent à aucune délégation. Rattachez chacun à sa délégation : les interventions stockées sont corrigées et les prochains fichiers le reconnaissent.",
+      "allMatched": "Tous les noms sont reconnus.",
+      "rowsCount": "{{count}} interventions",
+      "alias": "Rattacher à une délégation",
+      "aliasTo": "Rattacher « {{raw}} » à une délégation",
+      "pick": "Choisir la délégation",
+      "live": "Relevés des salles",
+      "fromRecords": "Construire {{year}} depuis les relevés"
+    },
+    "method": {
+      "title": "Méthode",
+      "steps": {
+        "zones": "Chaque délégation est classée selon la densité du recensement 2024 : urbaine dès {{urban}} habitants au km², périurbaine dès {{periurban}}, rurale en dessous.",
+        "rate": "Fréquence des interventions pour 1 000 habitants par an, sur trois années consécutives par défaut.",
+        "arrival": "Délai de l'appel à l'arrivée, en médiane et au 90e percentile (pratique NFPA), et part des interventions dans le délai du milieu de la délégation ; objectif {{goal}} %.",
+        "levels": "Niveau de fréquence de 1 à 5 selon les quintiles nationaux ; niveau de couverture de 1 à 5 selon l'écart à l'objectif.",
+        "priority": "Priorité = fréquence × couverture : haute dès 15, moyenne dès 8.",
+        "special": "Risques particuliers : probabilité × gravité, au registre de chaque gouvernorat (stratégie 2030 et cadre de Sendai).",
+        "cycle": "Le schéma est revu tous les {{review}} mois (réunion annuelle des commissions) et refait tous les {{validity}} ans."
+      },
+      "targets": "Délais cibles (objectif : {{goal}} % des interventions dans le délai)",
+      "settings": "Ces valeurs sont des réglages modifiables par les personnes habilitées :",
+      "settingsLink": "Réglages → Seuils",
+      "references": "Références nationales et internationales"
+    },
+    "use": {
+      "legal_basis": "Base juridique",
+      "committees_and_review": "Commissions et revue",
+      "special_risks": "Risques particuliers",
+      "structure_everyday_special_coverage": "Structure du schéma : risques courants, particuliers et couverture",
+      "plan_cycle": "Cycle du schéma",
+      "percentile_indicators": "Indicateurs en percentiles",
+      "matrix": "Matrice des risques"
+    },
+    "mission": {
+      "title": "Étapes de la mission d'après les relevés (médiane · P90)",
+      "rows": "Interventions",
+      "turnout": "Départ",
+      "travel": "Trajet",
+      "on_scene": "Sur les lieux",
+      "transport": "Transport à l'hôpital",
+      "length": "De l'appel au retour",
+      "crew": "Agents en moyenne",
+      "note": "Calculé sur les heures saisies par les équipes et les salles ; l'archive de l'Office n'a ni le départ des lieux, ni l'hôpital, ni le retour."
+    }
+  },
+  "record": {
+    "open": "Relevé de mission",
+    "title": "Relevé de la mission : heures, équipage, ressources",
+    "intro": "Saisissez l'heure en chiffres (1432 ou 143205), avec les flèches (Maj : dix minutes) ou les boutons − et +. La date suit l'étape précédente et passe minuit d'elle-même.",
+    "indicators": "Indicateurs de la mission",
+    "clockPlaceholder": "hh:mm:ss",
+    "now": "Maintenant",
+    "clear": "Effacer",
+    "minus": "Moins une minute : {{step}}",
+    "plus": "Plus une minute : {{step}}",
+    "dayBefore": "Jour précédent",
+    "dayNext": "Jour suivant",
+    "after": "{{duration}} après l'étape précédente",
+    "hint": "Pas encore saisi",
+    "crew": "Nombre d'agents engagés",
+    "crewCount": "{{count}} agents",
+    "consumables": "Ressources utilisées",
+    "reasonTitle": "Motif de la correction",
+    "reasonHint": "Heure donnée par l'équipe modifiée : {{steps}}",
+    "reasonOther": "Motif",
+    "save": "Enregistrer le relevé",
+    "close": "Fermer",
+    "fixErrors": "Corrigez les heures signalées avant d'enregistrer.",
+    "needReason": "Choisissez le motif de la correction.",
+    "nothing": "Aucun changement.",
+    "step": {
+      "created_at": "Ordre d'engagement",
+      "en_route_at": "Départ",
+      "on_scene_at": "Arrivée sur les lieux",
+      "left_scene_at": "Départ des lieux",
+      "at_hospital_at": "Arrivée à l'hôpital",
+      "available_at": "Disponible sur le retour",
+      "back_at_unit_at": "Retour à l'unité"
+    },
+    "source": {
+      "app": "Application",
+      "sms": "Par SMS",
+      "room": "Salle",
+      "order": "Automatique",
+      "changed": "Modifié"
+    },
+    "error": {
+      "clock": "Écrivez l'heure ainsi : 1432, 14:32 ou 14:32:05.",
+      "time_needs_previous": "Cette heure demande d'abord l'étape précédente.",
+      "time_in_future": "L'heure est dans le futur.",
+      "times_out_of_order": "Les heures ne sont pas dans l'ordre : chaque étape suit la précédente.",
+      "mission_too_long": "La mission dépasse 72 heures depuis l'ordre.",
+      "return_before_departure": "Le retour à l'unité doit suivre le départ.",
+      "time_required": "Une heure atteinte par la mission ne peut pas être effacée."
+    },
+    "indicator": {
+      "turnout": "Délai de départ",
+      "travel": "Trajet",
+      "response": "De l'appel à l'arrivée",
+      "on_scene": "Sur les lieux",
+      "transport": "Transport à l'hôpital",
+      "available": "Jusqu'à la disponibilité",
+      "return": "Retour",
+      "mission": "Durée de la mission"
+    },
+    "consumable": {
+      "water_m3": "Eau (m³)",
+      "foam_l": "Émulseur (L)",
+      "powder_kg": "Poudre (kg)",
+      "co2_kg": "CO₂ (kg)",
+      "extinguishers": "Extincteurs utilisés",
+      "oxygen_l": "Oxygène (L)",
+      "fuel_l": "Carburant (L)",
+      "sandbags": "Sacs de sable",
+      "absorbent_kg": "Absorbant (kg)"
+    },
+    "reason": {
+      "late_press": "Bouton pressé en retard",
+      "early_press": "Bouton pressé trop tôt",
+      "no_network": "Pas de réseau",
+      "radio_log": "Selon le registre radio",
+      "other": "Autre"
+    },
+    "warningsTitle": "Alertes de qualité des heures",
+    "warning": {
+      "travel_too_fast": "Trajet trop court pour la distance",
+      "steps_together": "Départ et arrivée presque simultanés",
+      "turnout_long": "Délai de départ au-delà de 30 min",
+      "on_scene_long": "Plus de 12 h sur les lieux",
+      "transport_instant": "Transport à l'hôpital en moins d'une minute",
+      "return_long": "Retour à l'unité après plus de 6 h",
+      "return_missing": "Retour à l'unité non saisi",
+      "crew_missing": "Nombre d'agents non saisi"
+    },
+    "suggest": {
+      "title": "Heures relevées dans les notes et le journal radio",
+      "intro": "Les heures sont lues dans les notes de la salle sur l'incident, les notes écrites de l'équipe et un texte collé ici (le journal radio par exemple). Aucune n'est retenue sans votre clic, puis elle passe les mêmes règles d'ordre.",
+      "paste": "Journal radio ou tout texte (facultatif)",
+      "placeholder": "ex. : départ 14h02, arrivée sur les lieux 14h11, retour à la caserne 15h20",
+      "read": "Lire les heures",
+      "none": "Aucune heure nouvelle dans ce qui est écrit.",
+      "apply": "Retenir",
+      "source": {
+        "room_note": "Note de la salle",
+        "team_note": "Note de l'équipe",
+        "pasted": "Texte collé"
+      }
+    }
   }
 }

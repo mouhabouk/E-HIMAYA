@@ -1672,6 +1672,13 @@ erDiagram
         uuid shift_id FK
         datetime acknowledged_at
         text contact_phone
+        datetime left_scene_at
+        datetime at_hospital_at
+        datetime available_at
+        datetime back_at_unit_at
+        smallint crew_count
+        jsonb consumables
+        jsonb time_sources
     }
     ops__callout {
         uuid id PK
@@ -3158,6 +3165,110 @@ erDiagram
     }
     geo__gouvernorat ||--o{ sensor__device : "gouvernorat_code"
     sensor__device ||--o{ sensor__reading : "sensor_id"
+```
+
+## snacr
+
+```mermaid
+erDiagram
+    snacr__alias {
+        uuid id PK
+        smallint gouvernorat_code FK
+        text raw
+        text normalized
+        integer delegation_id FK
+        text created_by
+        text created_by_name
+        datetime created_at
+    }
+    snacr__dataset {
+        uuid id PK
+        smallint year
+        text source
+        boolean simulated
+        text file_name
+        integer rows
+        jsonb quality
+        text imported_by
+        text imported_by_name
+        datetime imported_at
+    }
+    snacr__intervention {
+        bigint id PK
+        uuid dataset_id FK
+        smallint year
+        text family
+        text nature
+        text subtype
+        smallint gouvernorat_code FK
+        integer delegation_id FK
+        text delegation_raw
+        datetime called_at
+        datetime departed_at
+        datetime arrived_at
+        datetime ended_at
+        float arrival_min
+        datetime left_at
+        datetime hospital_at
+        datetime returned_at
+        smallint crew_count
+        array flags
+    }
+    snacr__plan {
+        uuid id PK
+        smallint gouvernorat_code FK
+        integer version
+        array years
+        text status
+        boolean simulated
+        jsonb content
+        text created_by
+        text created_by_name
+        datetime created_at
+        text approved_by
+        text approved_by_name
+        datetime approved_at
+    }
+    snacr__special_risk {
+        uuid id PK
+        smallint gouvernorat_code FK
+        text hazard
+        smallint probability
+        smallint gravity
+        text note
+        boolean simulated
+        text updated_by
+        text updated_by_name
+        datetime updated_at
+    }
+    geo__delegation ||--o{ snacr__alias : "delegation_id"
+    geo__delegation ||--o{ snacr__intervention : "delegation_id"
+    geo__gouvernorat ||--o{ snacr__alias : "gouvernorat_code"
+    geo__gouvernorat ||--o{ snacr__intervention : "gouvernorat_code"
+    geo__gouvernorat ||--o{ snacr__plan : "gouvernorat_code"
+    geo__gouvernorat ||--o{ snacr__special_risk : "gouvernorat_code"
+    snacr__dataset ||--o{ snacr__intervention : "dataset_id"
+```
+
+## strategy
+
+```mermaid
+erDiagram
+    strategy__item {
+        text key PK
+        jsonb name
+        jsonb summary
+        jsonb body
+        text link
+        text icon
+        text tone
+        array roles
+        integer position
+        boolean active
+        text updated_by
+        text updated_by_name
+        datetime updated_at
+    }
 ```
 
 ## telephony

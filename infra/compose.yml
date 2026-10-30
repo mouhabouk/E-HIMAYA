@@ -344,6 +344,13 @@ services:
       # SMS reports (FR-A-048): HMAC secret of the SMS gateway's webhook POST /internal/sms/inbound; empty = 404.
       SMS_INBOUND_SECRET: ${SMS_INBOUND_SECRET:-}
       SMS_DEDUP_WINDOW_H: ${SMS_DEDUP_WINDOW_H:-48}
+      # ┏━━ DEMONSTRATION ━━ an Android phone with a SIM card as the SMS gateway (docs/sms-phone-gateway.md): the
+      # ┃   signing key of its webhook, and its local server for the replies. PRODUCTION: empty.
+      # ┗━━━━━━━━━━━━━━━━
+      SMS_PHONE_SIGNING_KEY: ${SMS_PHONE_SIGNING_KEY:-}
+      SMS_PHONE_URL: ${SMS_PHONE_URL:-}
+      SMS_PHONE_USERNAME: ${SMS_PHONE_USERNAME:-}
+      SMS_PHONE_PASSWORD: ${SMS_PHONE_PASSWORD:-}
       # Phase A: Keycloak (provider ehimaya-phone-otp) asks for the SMS sign-in code here; empty = 404.
       OTP_SMS_SECRET: ${OTP_SMS_SECRET:-}
       # Weather layer and spread forecasts (phase 7, docs/weather-forecast.md).

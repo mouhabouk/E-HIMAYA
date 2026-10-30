@@ -1100,6 +1100,261 @@
         "title": "AlertsOut",
         "type": "object"
       },
+      "AliasCreated": {
+        "properties": {
+          "alias": {
+            "$ref": "#/components/schemas/AliasOut"
+          },
+          "rows_fixed": {
+            "title": "Rows Fixed",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "alias",
+          "rows_fixed"
+        ],
+        "title": "AliasCreated",
+        "type": "object"
+      },
+      "AliasIn": {
+        "properties": {
+          "delegation_id": {
+            "title": "Delegation Id",
+            "type": "integer"
+          },
+          "gouvernorat_code": {
+            "maximum": 83.0,
+            "minimum": 11.0,
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "raw": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Raw",
+            "type": "string"
+          }
+        },
+        "required": [
+          "gouvernorat_code",
+          "raw",
+          "delegation_id"
+        ],
+        "title": "AliasIn",
+        "type": "object"
+      },
+      "AliasOut": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "delegation_id": {
+            "title": "Delegation Id",
+            "type": "integer"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "raw": {
+            "title": "Raw",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "gouvernorat_code",
+          "raw",
+          "delegation_id",
+          "created_by_name",
+          "created_at"
+        ],
+        "title": "AliasOut",
+        "type": "object"
+      },
+      "Analysis": {
+        "properties": {
+          "breaks": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Breaks",
+            "type": "array"
+          },
+          "by_year": {
+            "items": {
+              "$ref": "#/components/schemas/YearCount"
+            },
+            "title": "By Year",
+            "type": "array"
+          },
+          "codes": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Codes",
+            "type": "array"
+          },
+          "datasets": {
+            "items": {
+              "$ref": "#/components/schemas/DatasetUse"
+            },
+            "title": "Datasets",
+            "type": "array"
+          },
+          "delegations": {
+            "items": {
+              "$ref": "#/components/schemas/DelegationAnalysis"
+            },
+            "title": "Delegations",
+            "type": "array"
+          },
+          "gouvernorats": {
+            "items": {
+              "$ref": "#/components/schemas/GouvernoratAnalysis"
+            },
+            "title": "Gouvernorats",
+            "type": "array"
+          },
+          "matrix": {
+            "description": "Délégations by frequency level (rows 1-5) and coverage level (1-5)",
+            "items": {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            "title": "Matrix",
+            "type": "array"
+          },
+          "method": {
+            "$ref": "#/components/schemas/Method"
+          },
+          "mission": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/MissionFamily"
+            },
+            "propertyNames": {
+              "enum": [
+                "medical",
+                "road",
+                "fire",
+                "rescue"
+              ]
+            },
+            "title": "Mission",
+            "type": "object"
+          },
+          "month": {
+            "additionalProperties": {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            "propertyNames": {
+              "enum": [
+                "medical",
+                "road",
+                "fire",
+                "rescue"
+              ]
+            },
+            "title": "Month",
+            "type": "object"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "subtypes": {
+            "additionalProperties": {
+              "items": {
+                "$ref": "#/components/schemas/SubtypeCount"
+              },
+              "type": "array"
+            },
+            "propertyNames": {
+              "enum": [
+                "medical",
+                "road",
+                "fire",
+                "rescue"
+              ]
+            },
+            "title": "Subtypes",
+            "type": "object"
+          },
+          "totals": {
+            "$ref": "#/components/schemas/app__modules__snacr__schemas__Totals"
+          },
+          "weekday_hour": {
+            "additionalProperties": {
+              "items": {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              "type": "array"
+            },
+            "propertyNames": {
+              "enum": [
+                "medical",
+                "road",
+                "fire",
+                "rescue"
+              ]
+            },
+            "title": "Weekday Hour",
+            "type": "object"
+          },
+          "years": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Years",
+            "type": "array"
+          }
+        },
+        "required": [
+          "years",
+          "codes",
+          "simulated",
+          "datasets",
+          "method",
+          "breaks",
+          "totals",
+          "by_year",
+          "gouvernorats",
+          "delegations",
+          "matrix",
+          "month",
+          "weekday_hour",
+          "subtypes"
+        ],
+        "title": "Analysis",
+        "type": "object"
+      },
       "AnalysisOut": {
         "properties": {
           "attempts": {
@@ -1912,6 +2167,42 @@
       },
       "AssignmentOut": {
         "properties": {
+          "at_hospital_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "At Hospital At"
+          },
+          "available_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Available At"
+          },
+          "back_at_unit_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Back At Unit At"
+          },
           "cancelled_at": {
             "anyOf": [
               {
@@ -1923,6 +2214,26 @@
               }
             ],
             "title": "Cancelled At"
+          },
+          "consumables": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "propertyNames": {
+              "enum": [
+                "water_m3",
+                "foam_l",
+                "powder_kg",
+                "co2_kg",
+                "extinguishers",
+                "oxygen_l",
+                "fuel_l",
+                "sandbags",
+                "absorbent_kg"
+              ]
+            },
+            "title": "Consumables",
+            "type": "object"
           },
           "contact_phone": {
             "anyOf": [
@@ -1954,6 +2265,17 @@
               }
             ]
           },
+          "crew_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crew Count"
+          },
           "en_route_at": {
             "anyOf": [
               {
@@ -1983,6 +2305,18 @@
             ],
             "title": "Kind",
             "type": "string"
+          },
+          "left_scene_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Left Scene At"
           },
           "on_scene_at": {
             "anyOf": [
@@ -2017,6 +2351,13 @@
               }
             ]
           },
+          "record_warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Record Warnings",
+            "type": "array"
+          },
           "released_at": {
             "anyOf": [
               {
@@ -2049,6 +2390,18 @@
             ],
             "title": "Status",
             "type": "string"
+          },
+          "time_sources": {
+            "additionalProperties": {
+              "enum": [
+                "app",
+                "sms",
+                "room"
+              ],
+              "type": "string"
+            },
+            "title": "Time Sources",
+            "type": "object"
           },
           "volunteer": {
             "anyOf": [
@@ -7405,6 +7758,114 @@
         "title": "Cron",
         "type": "object"
       },
+      "DatasetOut": {
+        "properties": {
+          "file_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File Name"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "imported_at": {
+            "format": "date-time",
+            "title": "Imported At",
+            "type": "string"
+          },
+          "imported_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Imported By Name"
+          },
+          "quality": {
+            "additionalProperties": true,
+            "title": "Quality",
+            "type": "object"
+          },
+          "rows": {
+            "title": "Rows",
+            "type": "integer"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "source": {
+            "enum": [
+              "office",
+              "simulated",
+              "live"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
+          "year": {
+            "title": "Year",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "year",
+          "source",
+          "simulated",
+          "file_name",
+          "rows",
+          "quality",
+          "imported_by_name",
+          "imported_at"
+        ],
+        "title": "DatasetOut",
+        "type": "object"
+      },
+      "DatasetUse": {
+        "properties": {
+          "rows": {
+            "title": "Rows",
+            "type": "integer"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "source": {
+            "default": "office",
+            "enum": [
+              "office",
+              "simulated",
+              "live"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
+          "year": {
+            "title": "Year",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "year",
+          "simulated",
+          "rows"
+        ],
+        "title": "DatasetUse",
+        "type": "object"
+      },
       "Day": {
         "properties": {
           "count": {
@@ -7721,6 +8182,183 @@
           "gouvernorat_code"
         ],
         "title": "Delegate",
+        "type": "object"
+      },
+      "DelegationAnalysis": {
+        "properties": {
+          "annual": {
+            "title": "Annual",
+            "type": "integer"
+          },
+          "area_km2": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area Km2"
+          },
+          "completeness_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completeness Pct"
+          },
+          "compliance_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Compliance Pct"
+          },
+          "coverage_level": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coverage Level"
+          },
+          "families": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/FamilyFigures"
+            },
+            "propertyNames": {
+              "enum": [
+                "medical",
+                "road",
+                "fire",
+                "rescue"
+              ]
+            },
+            "title": "Families",
+            "type": "object"
+          },
+          "frequency_level": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Frequency Level"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "name_ar": {
+            "title": "Name Ar",
+            "type": "string"
+          },
+          "name_fr": {
+            "title": "Name Fr",
+            "type": "string"
+          },
+          "population": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Population"
+          },
+          "priority": {
+            "anyOf": [
+              {
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Priority"
+          },
+          "rate_per_1000": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rate Per 1000"
+          },
+          "recorded_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recorded Pct"
+          },
+          "rows": {
+            "title": "Rows",
+            "type": "integer"
+          },
+          "zone": {
+            "enum": [
+              "urban",
+              "periurban",
+              "rural"
+            ],
+            "title": "Zone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "rows",
+          "completeness_pct",
+          "recorded_pct",
+          "compliance_pct",
+          "id",
+          "gouvernorat_code",
+          "name_ar",
+          "name_fr",
+          "population",
+          "area_km2",
+          "zone",
+          "annual",
+          "rate_per_1000",
+          "frequency_level",
+          "coverage_level",
+          "priority",
+          "families"
+        ],
+        "title": "DelegationAnalysis",
         "type": "object"
       },
       "DelegationCount": {
@@ -13449,6 +14087,110 @@
         "title": "Factor",
         "type": "object"
       },
+      "FamilyFigures": {
+        "properties": {
+          "arrival_median": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Arrival Median"
+          },
+          "arrival_p90": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Arrival P90"
+          },
+          "completeness_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completeness Pct"
+          },
+          "compliance_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Compliance Pct"
+          },
+          "departure_median": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Departure Median"
+          },
+          "departure_p90": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Departure P90"
+          },
+          "recorded_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recorded Pct"
+          },
+          "rows": {
+            "title": "Rows",
+            "type": "integer"
+          },
+          "target": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target"
+          }
+        },
+        "required": [
+          "rows",
+          "completeness_pct",
+          "recorded_pct",
+          "compliance_pct"
+        ],
+        "title": "FamilyFigures",
+        "type": "object"
+      },
       "FeaturePatch": {
         "additionalProperties": false,
         "properties": {
@@ -15242,6 +15984,98 @@
         "title": "Geometry",
         "type": "object"
       },
+      "GouvernoratAnalysis": {
+        "properties": {
+          "annual": {
+            "title": "Annual",
+            "type": "integer"
+          },
+          "code": {
+            "title": "Code",
+            "type": "integer"
+          },
+          "completeness_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completeness Pct"
+          },
+          "compliance_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Compliance Pct"
+          },
+          "families": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/FamilyFigures"
+            },
+            "propertyNames": {
+              "enum": [
+                "medical",
+                "road",
+                "fire",
+                "rescue"
+              ]
+            },
+            "title": "Families",
+            "type": "object"
+          },
+          "rate_per_1000": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rate Per 1000"
+          },
+          "recorded_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recorded Pct"
+          },
+          "rows": {
+            "title": "Rows",
+            "type": "integer"
+          },
+          "unmatched": {
+            "title": "Unmatched",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "rows",
+          "completeness_pct",
+          "recorded_pct",
+          "compliance_pct",
+          "code",
+          "unmatched",
+          "annual",
+          "rate_per_1000",
+          "families"
+        ],
+        "title": "GouvernoratAnalysis",
+        "type": "object"
+      },
       "GouvernoratCount": {
         "properties": {
           "code": {
@@ -16104,7 +16938,7 @@
           "national": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/PlanOut"
+                "$ref": "#/components/schemas/app__modules__register__schemas__PlanOut"
               },
               {
                 "type": "null"
@@ -16113,7 +16947,7 @@
           },
           "regional": {
             "items": {
-              "$ref": "#/components/schemas/PlanOut"
+              "$ref": "#/components/schemas/app__modules__register__schemas__PlanOut"
             },
             "title": "Regional",
             "type": "array"
@@ -18908,6 +19742,27 @@
           "steps"
         ],
         "title": "ItemText",
+        "type": "object"
+      },
+      "ItemsOut": {
+        "properties": {
+          "can_manage": {
+            "title": "Can Manage",
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__strategies__schemas__ItemOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items",
+          "can_manage"
+        ],
+        "title": "ItemsOut",
         "type": "object"
       },
       "KeyBackup": {
@@ -21707,6 +22562,103 @@
         "title": "MessagePage",
         "type": "object"
       },
+      "Method": {
+        "properties": {
+          "goal": {
+            "title": "Goal",
+            "type": "integer"
+          },
+          "periurban": {
+            "title": "Periurban",
+            "type": "integer"
+          },
+          "review_months": {
+            "title": "Review Months",
+            "type": "integer"
+          },
+          "targets": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "propertyNames": {
+                "enum": [
+                  "urban",
+                  "periurban",
+                  "rural"
+                ]
+              },
+              "type": "object"
+            },
+            "propertyNames": {
+              "enum": [
+                "medical",
+                "road",
+                "fire",
+                "rescue"
+              ]
+            },
+            "title": "Targets",
+            "type": "object"
+          },
+          "urban": {
+            "title": "Urban",
+            "type": "integer"
+          },
+          "validity_years": {
+            "title": "Validity Years",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "goal",
+          "urban",
+          "periurban",
+          "targets",
+          "review_months",
+          "validity_years"
+        ],
+        "title": "Method",
+        "type": "object"
+      },
+      "MilestoneIn": {
+        "description": "A step of the mission after the arrival on scene (phase S2).",
+        "properties": {
+          "client_id": {
+            "format": "uuid",
+            "title": "Client Id",
+            "type": "string"
+          },
+          "device_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device At"
+          },
+          "step": {
+            "enum": [
+              "left_scene",
+              "at_hospital",
+              "available",
+              "back_at_unit"
+            ],
+            "title": "Step",
+            "type": "string"
+          }
+        },
+        "required": [
+          "client_id",
+          "step"
+        ],
+        "title": "MilestoneIn",
+        "type": "object"
+      },
       "Mine": {
         "description": "What the administrator's rules change for the caller: the dashboard opens and hides accordingly.",
         "properties": {
@@ -21859,6 +22811,169 @@
         "title": "MineOut",
         "type": "object"
       },
+      "MissionFamily": {
+        "description": "The parts of a mission in minutes, from the records of the operations rooms (phase S2).",
+        "properties": {
+          "crew_mean": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crew Mean"
+          },
+          "hospital_rows": {
+            "title": "Hospital Rows",
+            "type": "integer"
+          },
+          "length_median": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Length Median"
+          },
+          "length_p90": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Length P90"
+          },
+          "on_scene_median": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "On Scene Median"
+          },
+          "on_scene_p90": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "On Scene P90"
+          },
+          "returned_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Returned Pct"
+          },
+          "rows": {
+            "title": "Rows",
+            "type": "integer"
+          },
+          "transport_median": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transport Median"
+          },
+          "transport_p90": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transport P90"
+          },
+          "travel_median": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Travel Median"
+          },
+          "travel_p90": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Travel P90"
+          },
+          "turnout_median": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Turnout Median"
+          },
+          "turnout_p90": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Turnout P90"
+          }
+        },
+        "required": [
+          "rows",
+          "returned_pct",
+          "hospital_rows",
+          "crew_mean",
+          "turnout_median",
+          "turnout_p90",
+          "travel_median",
+          "travel_p90",
+          "on_scene_median",
+          "on_scene_p90",
+          "transport_median",
+          "transport_p90",
+          "length_median",
+          "length_p90"
+        ],
+        "title": "MissionFamily",
+        "type": "object"
+      },
       "MissionIncident": {
         "properties": {
           "category": {
@@ -21984,12 +23099,48 @@
             "title": "Alerts",
             "type": "array"
           },
+          "at_hospital_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "At Hospital At"
+          },
           "attachments": {
             "items": {
               "$ref": "#/components/schemas/app__modules__ops__schemas__AttachmentOut"
             },
             "title": "Attachments",
             "type": "array"
+          },
+          "available_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Available At"
+          },
+          "back_at_unit_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Back At Unit At"
           },
           "cancelled_at": {
             "anyOf": [
@@ -22006,6 +23157,26 @@
           "casualties": {
             "$ref": "#/components/schemas/CasualtiesOut"
           },
+          "consumables": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "propertyNames": {
+              "enum": [
+                "water_m3",
+                "foam_l",
+                "powder_kg",
+                "co2_kg",
+                "extinguishers",
+                "oxygen_l",
+                "fuel_l",
+                "sandbags",
+                "absorbent_kg"
+              ]
+            },
+            "title": "Consumables",
+            "type": "object"
+          },
           "contact_phone": {
             "anyOf": [
               {
@@ -22021,6 +23192,17 @@
             "format": "date-time",
             "title": "Created At",
             "type": "string"
+          },
+          "crew_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crew Count"
           },
           "detailed_report": {
             "anyOf": [
@@ -22073,6 +23255,18 @@
           "incident": {
             "$ref": "#/components/schemas/MissionIncident"
           },
+          "left_scene_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Left Scene At"
+          },
           "on_scene_at": {
             "anyOf": [
               {
@@ -22095,6 +23289,13 @@
               }
             ],
             "title": "Order"
+          },
+          "record_warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Record Warnings",
+            "type": "array"
           },
           "released_at": {
             "anyOf": [
@@ -22128,6 +23329,18 @@
                 "type": "null"
               }
             ]
+          },
+          "time_sources": {
+            "additionalProperties": {
+              "enum": [
+                "app",
+                "sms",
+                "room"
+              ],
+              "type": "string"
+            },
+            "title": "Time Sources",
+            "type": "object"
           },
           "transports": {
             "items": {
@@ -23173,6 +24386,135 @@
           "decisions"
         ],
         "title": "NowOut",
+        "type": "object"
+      },
+      "Objective": {
+        "properties": {
+          "delegation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delegation"
+          },
+          "delegation_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delegation Id"
+          },
+          "family": {
+            "anyOf": [
+              {
+                "enum": [
+                  "medical",
+                  "road",
+                  "fire",
+                  "rescue"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Family"
+          },
+          "from_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "From Pct"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "hazard": {
+            "anyOf": [
+              {
+                "enum": [
+                  "flood",
+                  "forest_fire",
+                  "industrial",
+                  "hazmat_transport",
+                  "coastal",
+                  "earthquake",
+                  "storm",
+                  "drought",
+                  "epidemic"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hazard"
+          },
+          "kind": {
+            "enum": [
+              "coverage",
+              "data",
+              "names",
+              "special"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "rows": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rows"
+          },
+          "target_min": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Min"
+          },
+          "to_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To Pct"
+          }
+        },
+        "required": [
+          "kind",
+          "gouvernorat_code"
+        ],
+        "title": "Objective",
         "type": "object"
       },
       "OpLevel": {
@@ -25706,6 +27048,33 @@
         "title": "PlaceUpdate",
         "type": "object"
       },
+      "PlanIn": {
+        "properties": {
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "maximum": 83.0,
+                "minimum": 11.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "years": {
+            "items": {
+              "type": "integer"
+            },
+            "maxItems": 5,
+            "title": "Years",
+            "type": "array"
+          }
+        },
+        "title": "PlanIn",
+        "type": "object"
+      },
       "PlanOption": {
         "properties": {
           "hazard_key": {
@@ -25737,24 +27106,6 @@
         "title": "PlanOption",
         "type": "object"
       },
-      "PlanOut": {
-        "description": "A plan in force (or its latest version when none is), with how many earlier versions it repealed.",
-        "properties": {
-          "document": {
-            "$ref": "#/components/schemas/app__modules__register__schemas__DocumentOut"
-          },
-          "versions": {
-            "title": "Versions",
-            "type": "integer"
-          }
-        },
-        "required": [
-          "document",
-          "versions"
-        ],
-        "title": "PlanOut",
-        "type": "object"
-      },
       "PlanRef": {
         "properties": {
           "id": {
@@ -25776,6 +27127,139 @@
           "title"
         ],
         "title": "PlanRef",
+        "type": "object"
+      },
+      "PlanSummary": {
+        "properties": {
+          "approved_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved At"
+          },
+          "approved_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved By Name"
+          },
+          "can_approve": {
+            "title": "Can Approve",
+            "type": "boolean"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "objectives": {
+            "title": "Objectives",
+            "type": "integer"
+          },
+          "review_due": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Review Due"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "approved",
+              "superseded"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "valid_until": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid Until"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          },
+          "years": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Years",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "gouvernorat_code",
+          "version",
+          "years",
+          "status",
+          "simulated",
+          "created_by_name",
+          "created_at",
+          "approved_by_name",
+          "approved_at",
+          "review_due",
+          "valid_until",
+          "objectives",
+          "can_approve"
+        ],
+        "title": "PlanSummary",
         "type": "object"
       },
       "PlansOut": {
@@ -28355,6 +29839,155 @@
         "title": "Recommendations",
         "type": "object"
       },
+      "RecordIn": {
+        "description": "The room completes or corrects the record of a mission (phase S2).",
+        "properties": {
+          "consumables": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "maxProperties": 12,
+                "propertyNames": {
+                  "enum": [
+                    "water_m3",
+                    "foam_l",
+                    "powder_kg",
+                    "co2_kg",
+                    "extinguishers",
+                    "oxygen_l",
+                    "fuel_l",
+                    "sandbags",
+                    "absorbent_kg"
+                  ]
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Consumables"
+          },
+          "crew_count": {
+            "anyOf": [
+              {
+                "maximum": 60.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crew Count"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "times": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecordTimes"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "title": "RecordIn",
+        "type": "object"
+      },
+      "RecordTimes": {
+        "description": "The times the room gives or corrects; a time left out stays as it is, ``null`` clears it.",
+        "properties": {
+          "at_hospital_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "At Hospital At"
+          },
+          "available_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Available At"
+          },
+          "back_at_unit_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Back At Unit At"
+          },
+          "en_route_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "En Route At"
+          },
+          "left_scene_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Left Scene At"
+          },
+          "on_scene_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "On Scene At"
+          }
+        },
+        "title": "RecordTimes",
+        "type": "object"
+      },
       "RecordingOut": {
         "properties": {
           "bytes": {
@@ -28432,6 +30065,40 @@
           "reason"
         ],
         "title": "ReferIn",
+        "type": "object"
+      },
+      "Reference": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url"
+          },
+          "use": {
+            "title": "Use",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "title",
+          "use"
+        ],
+        "title": "Reference",
         "type": "object"
       },
       "ReferralAcceptIn": {
@@ -32982,6 +34649,160 @@
         "title": "SpecDef",
         "type": "object"
       },
+      "SpecialRiskIn": {
+        "properties": {
+          "gouvernorat_code": {
+            "maximum": 83.0,
+            "minimum": 11.0,
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "gravity": {
+            "maximum": 5.0,
+            "minimum": 1.0,
+            "title": "Gravity",
+            "type": "integer"
+          },
+          "hazard": {
+            "enum": [
+              "flood",
+              "forest_fire",
+              "industrial",
+              "hazmat_transport",
+              "coastal",
+              "earthquake",
+              "storm",
+              "drought",
+              "epidemic"
+            ],
+            "title": "Hazard",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "probability": {
+            "maximum": 5.0,
+            "minimum": 1.0,
+            "title": "Probability",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "gouvernorat_code",
+          "hazard",
+          "probability",
+          "gravity"
+        ],
+        "title": "SpecialRiskIn",
+        "type": "object"
+      },
+      "SpecialRiskOut": {
+        "properties": {
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "gravity": {
+            "title": "Gravity",
+            "type": "integer"
+          },
+          "hazard": {
+            "enum": [
+              "flood",
+              "forest_fire",
+              "industrial",
+              "hazmat_transport",
+              "coastal",
+              "earthquake",
+              "storm",
+              "drought",
+              "epidemic"
+            ],
+            "title": "Hazard",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "level": {
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ],
+            "title": "Level",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "probability": {
+            "title": "Probability",
+            "type": "integer"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
+          "updated_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By Name"
+          }
+        },
+        "required": [
+          "id",
+          "gouvernorat_code",
+          "hazard",
+          "probability",
+          "gravity",
+          "level",
+          "note",
+          "simulated",
+          "updated_by_name",
+          "updated_at"
+        ],
+        "title": "SpecialRiskOut",
+        "type": "object"
+      },
       "StaffActivity": {
         "properties": {
           "created_at": {
@@ -36949,6 +38770,43 @@
         "title": "StressIn",
         "type": "object"
       },
+      "SubtypeCount": {
+        "properties": {
+          "rows": {
+            "title": "Rows",
+            "type": "integer"
+          },
+          "subtype": {
+            "title": "Subtype",
+            "type": "string"
+          }
+        },
+        "required": [
+          "subtype",
+          "rows"
+        ],
+        "title": "SubtypeCount",
+        "type": "object"
+      },
+      "SuggestIn": {
+        "description": "A radio log or any text the operator pastes, read next to the notes already on the incident (phase S2).",
+        "properties": {
+          "text": {
+            "anyOf": [
+              {
+                "maxLength": 8000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          }
+        },
+        "title": "SuggestIn",
+        "type": "object"
+      },
       "Suggestion": {
         "properties": {
           "distance_m": {
@@ -37851,6 +39709,74 @@
         "title": "TeamMemberOut",
         "type": "object"
       },
+      "TeamRecordIn": {
+        "description": "The crew and what the mission used, as the team gives them (phase S2).",
+        "properties": {
+          "client_id": {
+            "format": "uuid",
+            "title": "Client Id",
+            "type": "string"
+          },
+          "consumables": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "maxProperties": 12,
+                "propertyNames": {
+                  "enum": [
+                    "water_m3",
+                    "foam_l",
+                    "powder_kg",
+                    "co2_kg",
+                    "extinguishers",
+                    "oxygen_l",
+                    "fuel_l",
+                    "sandbags",
+                    "absorbent_kg"
+                  ]
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Consumables"
+          },
+          "crew_count": {
+            "anyOf": [
+              {
+                "maximum": 60.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crew Count"
+          },
+          "device_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device At"
+          }
+        },
+        "required": [
+          "client_id"
+        ],
+        "title": "TeamRecordIn",
+        "type": "object"
+      },
       "Telemetry": {
         "properties": {
           "alt_m": {
@@ -38333,6 +40259,66 @@
         "title": "TileSource",
         "type": "object"
       },
+      "TimeSuggestion": {
+        "description": "A time read from what was written about the mission; applied only when the operator presses it.",
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "conflict": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Conflict"
+          },
+          "source": {
+            "enum": [
+              "room_note",
+              "team_note",
+              "pasted"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
+          "step": {
+            "enum": [
+              "en_route_at",
+              "on_scene_at",
+              "left_scene_at",
+              "at_hospital_at",
+              "available_at",
+              "back_at_unit_at"
+            ],
+            "title": "Step",
+            "type": "string"
+          },
+          "words": {
+            "title": "Words",
+            "type": "string"
+          },
+          "written_at": {
+            "format": "date-time",
+            "title": "Written At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "step",
+          "at",
+          "source",
+          "words",
+          "written_at"
+        ],
+        "title": "TimeSuggestion",
+        "type": "object"
+      },
       "TimelineEntry": {
         "properties": {
           "actor": {
@@ -38767,39 +40753,6 @@
           "reason"
         ],
         "title": "TopicPatch",
-        "type": "object"
-      },
-      "Totals": {
-        "properties": {
-          "closed": {
-            "title": "Closed",
-            "type": "integer"
-          },
-          "in_progress": {
-            "title": "In Progress",
-            "type": "integer"
-          },
-          "received": {
-            "title": "Received",
-            "type": "integer"
-          },
-          "rejected": {
-            "title": "Rejected",
-            "type": "integer"
-          },
-          "verified": {
-            "title": "Verified",
-            "type": "integer"
-          }
-        },
-        "required": [
-          "received",
-          "verified",
-          "in_progress",
-          "closed",
-          "rejected"
-        ],
-        "title": "Totals",
         "type": "object"
       },
       "TowerCreated": {
@@ -40452,6 +42405,29 @@
           "items"
         ],
         "title": "UnitsOut",
+        "type": "object"
+      },
+      "UnmatchedName": {
+        "properties": {
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "raw": {
+            "title": "Raw",
+            "type": "string"
+          },
+          "rows": {
+            "title": "Rows",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "gouvernorat_code",
+          "raw",
+          "rows"
+        ],
+        "title": "UnmatchedName",
         "type": "object"
       },
       "UserChannels": {
@@ -42148,6 +44124,35 @@
         "title": "WrappedKeyIn",
         "type": "object"
       },
+      "YearCount": {
+        "properties": {
+          "families": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "propertyNames": {
+              "enum": [
+                "medical",
+                "road",
+                "fire",
+                "rescue"
+              ]
+            },
+            "title": "Families",
+            "type": "object"
+          },
+          "year": {
+            "title": "Year",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "year",
+          "families"
+        ],
+        "title": "YearCount",
+        "type": "object"
+      },
       "ZoneIn": {
         "additionalProperties": false,
         "properties": {
@@ -42439,7 +44444,7 @@
             "type": "string"
           },
           "totals": {
-            "$ref": "#/components/schemas/Totals"
+            "$ref": "#/components/schemas/app__modules__analytics__schemas__Totals"
           }
         },
         "required": [
@@ -42723,6 +44728,39 @@
           "next_cursor"
         ],
         "title": "ReportPage",
+        "type": "object"
+      },
+      "app__modules__analytics__schemas__Totals": {
+        "properties": {
+          "closed": {
+            "title": "Closed",
+            "type": "integer"
+          },
+          "in_progress": {
+            "title": "In Progress",
+            "type": "integer"
+          },
+          "received": {
+            "title": "Received",
+            "type": "integer"
+          },
+          "rejected": {
+            "title": "Rejected",
+            "type": "integer"
+          },
+          "verified": {
+            "title": "Verified",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "received",
+          "verified",
+          "in_progress",
+          "closed",
+          "rejected"
+        ],
+        "title": "Totals",
         "type": "object"
       },
       "app__modules__appinfo__feedback__SummaryOut": {
@@ -49276,6 +51314,24 @@
         "title": "LinkOut",
         "type": "object"
       },
+      "app__modules__register__schemas__PlanOut": {
+        "description": "A plan in force (or its latest version when none is), with how many earlier versions it repealed.",
+        "properties": {
+          "document": {
+            "$ref": "#/components/schemas/app__modules__register__schemas__DocumentOut"
+          },
+          "versions": {
+            "title": "Versions",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "document",
+          "versions"
+        ],
+        "title": "PlanOut",
+        "type": "object"
+      },
       "app__modules__register__schemas__RevisionOut": {
         "properties": {
           "change": {
@@ -51341,6 +53397,509 @@
           "items"
         ],
         "title": "SettingsOut",
+        "type": "object"
+      },
+      "app__modules__snacr__schemas__ImportOut": {
+        "properties": {
+          "dataset": {
+            "$ref": "#/components/schemas/DatasetOut"
+          }
+        },
+        "required": [
+          "dataset"
+        ],
+        "title": "ImportOut",
+        "type": "object"
+      },
+      "app__modules__snacr__schemas__Overview": {
+        "properties": {
+          "can_edit_national": {
+            "title": "Can Edit National",
+            "type": "boolean"
+          },
+          "can_import": {
+            "title": "Can Import",
+            "type": "boolean"
+          },
+          "datasets": {
+            "items": {
+              "$ref": "#/components/schemas/DatasetOut"
+            },
+            "title": "Datasets",
+            "type": "array"
+          },
+          "default_years": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Default Years",
+            "type": "array"
+          },
+          "method": {
+            "$ref": "#/components/schemas/Method"
+          },
+          "references": {
+            "items": {
+              "$ref": "#/components/schemas/Reference"
+            },
+            "title": "References",
+            "type": "array"
+          }
+        },
+        "required": [
+          "datasets",
+          "default_years",
+          "method",
+          "references",
+          "can_import",
+          "can_edit_national"
+        ],
+        "title": "Overview",
+        "type": "object"
+      },
+      "app__modules__snacr__schemas__PlanOut": {
+        "properties": {
+          "approved_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved At"
+          },
+          "approved_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved By Name"
+          },
+          "can_approve": {
+            "title": "Can Approve",
+            "type": "boolean"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "objective_list": {
+            "items": {
+              "$ref": "#/components/schemas/Objective"
+            },
+            "title": "Objective List",
+            "type": "array"
+          },
+          "objectives": {
+            "title": "Objectives",
+            "type": "integer"
+          },
+          "references": {
+            "items": {
+              "$ref": "#/components/schemas/Reference"
+            },
+            "title": "References",
+            "type": "array"
+          },
+          "review_due": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Review Due"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "special_risks": {
+            "items": {
+              "$ref": "#/components/schemas/SpecialRiskOut"
+            },
+            "title": "Special Risks",
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "approved",
+              "superseded"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "valid_until": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid Until"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          },
+          "years": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Years",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "gouvernorat_code",
+          "version",
+          "years",
+          "status",
+          "simulated",
+          "created_by_name",
+          "created_at",
+          "approved_by_name",
+          "approved_at",
+          "review_due",
+          "valid_until",
+          "objectives",
+          "can_approve",
+          "objective_list",
+          "special_risks",
+          "references"
+        ],
+        "title": "PlanOut",
+        "type": "object"
+      },
+      "app__modules__snacr__schemas__Totals": {
+        "properties": {
+          "annual": {
+            "title": "Annual",
+            "type": "integer"
+          },
+          "completeness_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completeness Pct"
+          },
+          "compliance_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Compliance Pct"
+          },
+          "population": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Population"
+          },
+          "rate_per_1000": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rate Per 1000"
+          },
+          "recorded_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recorded Pct"
+          },
+          "rows": {
+            "title": "Rows",
+            "type": "integer"
+          },
+          "unmatched": {
+            "title": "Unmatched",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "rows",
+          "completeness_pct",
+          "recorded_pct",
+          "compliance_pct",
+          "unmatched",
+          "annual",
+          "population",
+          "rate_per_1000"
+        ],
+        "title": "Totals",
+        "type": "object"
+      },
+      "app__modules__strategies__schemas__ItemIn": {
+        "properties": {
+          "active": {
+            "default": true,
+            "title": "Active",
+            "type": "boolean"
+          },
+          "body": {
+            "additionalProperties": {
+              "maxLength": 20000,
+              "type": "string"
+            },
+            "propertyNames": {
+              "enum": [
+                "ar",
+                "fr",
+                "en"
+              ]
+            },
+            "title": "Body",
+            "type": "object"
+          },
+          "icon": {
+            "default": "insights",
+            "pattern": "^[a-zA-Z0-9]{2,40}$",
+            "title": "Icon",
+            "type": "string"
+          },
+          "link": {
+            "anyOf": [
+              {
+                "pattern": "^(/[A-Za-z0-9/_\\-]{0,200}|https://[^\\s]{4,500})$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Link"
+          },
+          "name": {
+            "additionalProperties": {
+              "maxLength": 80,
+              "minLength": 2,
+              "type": "string"
+            },
+            "propertyNames": {
+              "enum": [
+                "ar",
+                "fr",
+                "en"
+              ]
+            },
+            "title": "Name",
+            "type": "object"
+          },
+          "position": {
+            "default": 100,
+            "maximum": 999.0,
+            "minimum": 0.0,
+            "title": "Position",
+            "type": "integer"
+          },
+          "roles": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 20,
+            "title": "Roles",
+            "type": "array"
+          },
+          "summary": {
+            "additionalProperties": {
+              "maxLength": 300,
+              "type": "string"
+            },
+            "propertyNames": {
+              "enum": [
+                "ar",
+                "fr",
+                "en"
+              ]
+            },
+            "title": "Summary",
+            "type": "object"
+          },
+          "tone": {
+            "default": "purple",
+            "enum": [
+              "navy",
+              "red",
+              "teal",
+              "green",
+              "sky",
+              "orange",
+              "purple",
+              "amber",
+              "pink",
+              "slate"
+            ],
+            "title": "Tone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "ItemIn",
+        "type": "object"
+      },
+      "app__modules__strategies__schemas__ItemOut": {
+        "properties": {
+          "active": {
+            "title": "Active",
+            "type": "boolean"
+          },
+          "body": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Body",
+            "type": "object"
+          },
+          "icon": {
+            "title": "Icon",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "link": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Link"
+          },
+          "name": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Name",
+            "type": "object"
+          },
+          "position": {
+            "title": "Position",
+            "type": "integer"
+          },
+          "roles": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Roles",
+            "type": "array"
+          },
+          "summary": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Summary",
+            "type": "object"
+          },
+          "tone": {
+            "title": "Tone",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "updated_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By Name"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "summary",
+          "body",
+          "link",
+          "icon",
+          "tone",
+          "roles",
+          "position",
+          "active",
+          "updated_by_name",
+          "updated_at"
+        ],
+        "title": "ItemOut",
         "type": "object"
       },
       "app__modules__streams__schemas__Point": {
@@ -53816,6 +56375,81 @@
         ]
       }
     },
+    "/api/v1/crew/missions/{assignment_id}/milestone": {
+      "post": {
+        "operationId": "milestone_api_v1_crew_missions__assignment_id__milestone_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MilestoneIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Milestone",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
     "/api/v1/crew/missions/{assignment_id}/notes": {
       "post": {
         "operationId": "text_note_api_v1_crew_missions__assignment_id__notes_post",
@@ -53962,6 +56596,81 @@
           }
         ],
         "summary": "Positions",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/missions/{assignment_id}/record": {
+      "post": {
+        "operationId": "team_record_api_v1_crew_missions__assignment_id__record_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamRecordIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Team Record",
         "tags": [
           "crew"
         ]
@@ -64889,6 +67598,128 @@
         "summary": "Summary",
         "tags": [
           "app"
+        ]
+      }
+    },
+    "/api/v1/staff/assignments/{assignment_id}/record": {
+      "put": {
+        "description": "The room completes or corrects the times, the crew and the resources of a mission (phase S2).",
+        "operationId": "save_record_api_v1_staff_assignments__assignment_id__record_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignmentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Save Record",
+        "tags": [
+          "incidents"
+        ]
+      }
+    },
+    "/api/v1/staff/assignments/{assignment_id}/record/suggestions": {
+      "post": {
+        "description": "Times read from the notes on the incident, the team's text notes and a pasted radio log (phase S2): only\nsuggestions, nothing is saved.",
+        "operationId": "suggest_record_times_api_v1_staff_assignments__assignment_id__record_suggestions_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SuggestIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TimeSuggestion"
+                  },
+                  "title": "Response Suggest Record Times Api V1 Staff Assignments  Assignment Id  Record Suggestions Post",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Suggest Record Times",
+        "tags": [
+          "incidents"
         ]
       }
     },
@@ -90567,6 +93398,1090 @@
         "summary": "Open Shifts",
         "tags": [
           "crew"
+        ]
+      }
+    },
+    "/api/v1/staff/snacr": {
+      "get": {
+        "operationId": "overview_api_v1_staff_snacr_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__snacr__schemas__Overview"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Overview",
+        "tags": [
+          "staff",
+          "snacr"
+        ]
+      }
+    },
+    "/api/v1/staff/snacr/aliases": {
+      "get": {
+        "operationId": "list_aliases_api_v1_staff_snacr_aliases_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 83,
+                  "minimum": 11,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AliasOut"
+                  },
+                  "title": "Response List Aliases Api V1 Staff Snacr Aliases Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Aliases",
+        "tags": [
+          "staff",
+          "snacr"
+        ]
+      },
+      "post": {
+        "description": "Tie a name of the archive to its délégation; the rows already loaded with that name follow.",
+        "operationId": "create_alias_api_v1_staff_snacr_aliases_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AliasIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AliasCreated"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Alias",
+        "tags": [
+          "staff",
+          "snacr"
+        ]
+      }
+    },
+    "/api/v1/staff/snacr/analysis": {
+      "get": {
+        "description": "Everyday risks over three consecutive years by default: frequency per 1,000 inhabitants (census 2024), arrival\ntimes at the median and the 90th percentile, the share within the target of the délégation's kind, the\ncompleteness of the archive, the frequency × coverage matrix, seasons and hours.",
+        "operationId": "analysis_api_v1_staff_snacr_analysis_get",
+        "parameters": [
+          {
+            "description": "Comma-separated years",
+            "in": "query",
+            "name": "years",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "pattern": "^\\d{4}(,\\d{4}){0,4}$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated years",
+              "title": "Years"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 83,
+                  "minimum": 11,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Analysis"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Analysis",
+        "tags": [
+          "staff",
+          "snacr"
+        ]
+      }
+    },
+    "/api/v1/staff/snacr/datasets": {
+      "post": {
+        "description": "The Office's yearly export (xlsx or CSV) is the request body. It replaces the year already loaded. Only the\ntimes, the place and the nature are read; the address, the free texts, the crew and the vehicles never are.",
+        "operationId": "import_dataset_api_v1_staff_snacr_datasets_post",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "year",
+            "required": true,
+            "schema": {
+              "maximum": 2100,
+              "minimum": 2000,
+              "title": "Year",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "file_name",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 1,
+              "title": "File Name",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__snacr__schemas__ImportOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Import Dataset",
+        "tags": [
+          "staff",
+          "snacr"
+        ]
+      }
+    },
+    "/api/v1/staff/snacr/datasets/live": {
+      "post": {
+        "description": "The year drawn from the records of the operations rooms (phase S2): the times the teams and the rooms gave,\nthe crews. Built again on each call; it never replaces the Office's file or a [SIM] year.",
+        "operationId": "live_dataset_api_v1_staff_snacr_datasets_live_post",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "year",
+            "required": true,
+            "schema": {
+              "maximum": 2100,
+              "minimum": 2000,
+              "title": "Year",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__snacr__schemas__ImportOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Live Dataset",
+        "tags": [
+          "staff",
+          "snacr"
+        ]
+      }
+    },
+    "/api/v1/staff/snacr/datasets/simulate": {
+      "post": {
+        "description": "[SIM] A year generated on the distributions of the real 2022 archive, until the Office's file of that year\narrives (it then replaces the simulated year by the same import).",
+        "operationId": "simulate_dataset_api_v1_staff_snacr_datasets_simulate_post",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "year",
+            "required": true,
+            "schema": {
+              "maximum": 2100,
+              "minimum": 2000,
+              "title": "Year",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "rows",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 250000,
+                  "minimum": 100,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Rows"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__snacr__schemas__ImportOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Simulate Dataset",
+        "tags": [
+          "staff",
+          "snacr"
+        ]
+      }
+    },
+    "/api/v1/staff/snacr/datasets/{year}": {
+      "delete": {
+        "operationId": "delete_dataset_api_v1_staff_snacr_datasets__year__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "year",
+            "required": true,
+            "schema": {
+              "title": "Year",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Dataset",
+        "tags": [
+          "staff",
+          "snacr"
+        ]
+      }
+    },
+    "/api/v1/staff/snacr/plans": {
+      "get": {
+        "operationId": "list_plans_api_v1_staff_snacr_plans_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 83,
+                  "minimum": 11,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PlanSummary"
+                  },
+                  "title": "Response List Plans Api V1 Staff Snacr Plans Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Plans",
+        "tags": [
+          "staff",
+          "snacr"
+        ]
+      },
+      "post": {
+        "description": "A draft: the analysis of the chosen years frozen with the register of specific risks and the objectives drawn\nfrom them. The national plan is prepared by the national level only.",
+        "operationId": "create_plan_api_v1_staff_snacr_plans_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlanIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__snacr__schemas__PlanOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Plan",
+        "tags": [
+          "staff",
+          "snacr"
+        ]
+      }
+    },
+    "/api/v1/staff/snacr/plans/{plan_id}": {
+      "get": {
+        "operationId": "get_plan_api_v1_staff_snacr_plans__plan_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plan_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Plan Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__snacr__schemas__PlanOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Plan",
+        "tags": [
+          "staff",
+          "snacr"
+        ]
+      }
+    },
+    "/api/v1/staff/snacr/plans/{plan_id}/approve": {
+      "post": {
+        "description": "The committee of the plan's level approves it (decree 93-942: the governor for the regional plan, the\nnational commission for the national one); the plan it replaces is superseded.",
+        "operationId": "approve_plan_api_v1_staff_snacr_plans__plan_id__approve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plan_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Plan Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__snacr__schemas__PlanOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Approve Plan",
+        "tags": [
+          "staff",
+          "snacr"
+        ]
+      }
+    },
+    "/api/v1/staff/snacr/plans/{plan_id}/document": {
+      "get": {
+        "description": "The plan as a document (Arabic): framework and references, territory, everyday risks, coverage and gaps,\nspecific risks, objectives, review, and the completeness of the archive.",
+        "operationId": "plan_document_api_v1_staff_snacr_plans__plan_id__document_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plan_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Plan Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "format",
+            "required": false,
+            "schema": {
+              "default": "pdf",
+              "pattern": "^(pdf|html)$",
+              "title": "Format",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/pdf": {},
+              "text/html": {}
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Plan Document",
+        "tags": [
+          "staff",
+          "snacr"
+        ]
+      }
+    },
+    "/api/v1/staff/snacr/special-risks": {
+      "get": {
+        "operationId": "list_special_risks_api_v1_staff_snacr_special_risks_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 83,
+                  "minimum": 11,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SpecialRiskOut"
+                  },
+                  "title": "Response List Special Risks Api V1 Staff Snacr Special Risks Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Special Risks",
+        "tags": [
+          "staff",
+          "snacr"
+        ]
+      },
+      "post": {
+        "description": "Add or update the risk of a gouvernorat (one per hazard); an edited [SIM] entry becomes a real one.",
+        "operationId": "put_special_risk_api_v1_staff_snacr_special_risks_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SpecialRiskIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpecialRiskOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Put Special Risk",
+        "tags": [
+          "staff",
+          "snacr"
+        ]
+      }
+    },
+    "/api/v1/staff/snacr/special-risks/{risk_id}": {
+      "delete": {
+        "operationId": "delete_special_risk_api_v1_staff_snacr_special_risks__risk_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "risk_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Risk Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Special Risk",
+        "tags": [
+          "staff",
+          "snacr"
+        ]
+      }
+    },
+    "/api/v1/staff/snacr/unmatched": {
+      "get": {
+        "description": "The names of the archive tied to no délégation yet, the most frequent first.",
+        "operationId": "unmatched_api_v1_staff_snacr_unmatched_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 83,
+                  "minimum": 11,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/UnmatchedName"
+                  },
+                  "title": "Response Unmatched Api V1 Staff Snacr Unmatched Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Unmatched",
+        "tags": [
+          "staff",
+          "snacr"
+        ]
+      }
+    },
+    "/api/v1/staff/strategies": {
+      "get": {
+        "description": "The items the caller sees (active, open to one of their roles); the administrator gets them all.",
+        "operationId": "list_items_api_v1_staff_strategies_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Items",
+        "tags": [
+          "staff",
+          "strategies"
+        ]
+      }
+    },
+    "/api/v1/staff/strategies/{key}": {
+      "delete": {
+        "operationId": "delete_item_api_v1_staff_strategies__key__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "pattern": "^[a-z][a-z0-9_]{1,39}$",
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Item",
+        "tags": [
+          "staff",
+          "strategies"
+        ]
+      },
+      "get": {
+        "operationId": "get_item_api_v1_staff_strategies__key__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "pattern": "^[a-z][a-z0-9_]{1,39}$",
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__strategies__schemas__ItemOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Item",
+        "tags": [
+          "staff",
+          "strategies"
+        ]
+      },
+      "put": {
+        "description": "Adds an item or changes it. It needs its name in the three languages, and a page text or a link.",
+        "operationId": "put_item_api_v1_staff_strategies__key__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "pattern": "^[a-z][a-z0-9_]{1,39}$",
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__strategies__schemas__ItemIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__strategies__schemas__ItemOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Put Item",
+        "tags": [
+          "staff",
+          "strategies"
         ]
       }
     },

@@ -26,7 +26,7 @@ from app.core.security import Principal, Role
 from app.core.storage import get_store
 from app.modules.audit import service as audit
 from app.modules.geo.models import Delegation, Layer, LayerFeature
-from app.modules.ops import interventions, resources, schemas, templates
+from app.modules.ops import interventions, record, resources, schemas, templates
 from app.modules.ops import service as incidents
 from app.modules.ops.domain import ACTIVE_ASSIGNMENT, classification_allowed
 from app.modules.ops.models import (
@@ -389,6 +389,13 @@ async def mission_out(session: AsyncSession, assignment: Assignment) -> schemas.
         on_scene_at=assignment.on_scene_at,
         released_at=assignment.released_at,
         cancelled_at=assignment.cancelled_at,
+        left_scene_at=assignment.left_scene_at,
+        at_hospital_at=assignment.at_hospital_at,
+        available_at=assignment.available_at,
+        back_at_unit_at=assignment.back_at_unit_at,
+        crew_count=assignment.crew_count,
+        consumables=assignment.consumables or {},
+        time_sources=assignment.time_sources or {},
         incident=schemas.MissionIncident(
             id=incident.id,
             category=incident.category,
@@ -441,6 +448,8 @@ async def _mission(session: AsyncSession, principal: Principal, assignment_id: u
         raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
     if assignment.shift_id is None:
         assignment.shift_id = shift.id
+    if assignment.crew_count is None:
+        assignment.crew_count = shift.crew_size
     return assignment, shift
 
 
@@ -478,7 +487,15 @@ def device_time(body: schemas.CrewWrite, assignment: Assignment) -> datetime:
     at = body.device_at
     earliest = max(
         t
-        for t in (assignment.created_at, assignment.acknowledged_at, assignment.en_route_at, assignment.on_scene_at)
+        for t in (
+            assignment.created_at,
+            assignment.acknowledged_at,
+            assignment.en_route_at,
+            assignment.on_scene_at,
+            assignment.left_scene_at,
+            assignment.at_hospital_at,
+            assignment.available_at,
+        )
         if t is not None
     )
     if at is None or at.tzinfo is None or at > now or now - at > LATE_WRITE or at < earliest:
@@ -543,12 +560,62 @@ async def step(
     at = device_time(body, assignment)
     if assignment.acknowledged_at is None:
         assignment.acknowledged_at = at
-    await interventions._set_assignment_status(session, assignment, body.status, _who(principal), at=at)
+    await interventions._set_assignment_status(
+        session, assignment, body.status, _who(principal), at=at, source=VIA.get()
+    )
     if body.status == "on_scene":
         await interventions.advance_reports(session, assignment.incident_id, Status.INTERVENED)
     await _announce(session, assignment)
     if assignment.resource_id is not None:
         await resources.announce(session, assignment.resource_id)
+    return assignment
+
+
+async def milestone(
+    session: AsyncSession, principal: Principal, assignment_id: uuid.UUID, body: schemas.MilestoneIn
+) -> Assignment:
+    """Left the scene, at the hospital, back at the unit (phase S2): the phone's time, kept in order."""
+    assignment, _ = await _mission(session, principal, assignment_id)
+    if await _seen(session, body.client_id) is not None:
+        return assignment
+    at = device_time(body, assignment)
+    if body.step == "back_at_unit" and assignment.en_route_at is not None and at <= assignment.en_route_at:
+        at = _now()
+    _event(session, principal, body, "milestone", assignment, {"step": body.step})
+    if await record.milestone(session, assignment, body.step, at, _who(principal), VIA.get()):
+        await _announce(session, assignment)
+        if assignment.resource_id is not None:
+            await resources.announce(session, assignment.resource_id)
+    return assignment
+
+
+async def team_record(
+    session: AsyncSession, principal: Principal, assignment_id: uuid.UUID, body: schemas.TeamRecordIn
+) -> Assignment:
+    """The crew and what the mission used (phase S2)."""
+    assignment, _ = await _mission(session, principal, assignment_id)
+    if await _seen(session, body.client_id) is not None:
+        return assignment
+    if assignment.status == "cancelled":
+        raise HTTPException(status.HTTP_409_CONFLICT, "assignment_cancelled")
+    record.team_record(assignment, body.crew_count, body.consumables)
+    _event(
+        session,
+        principal,
+        body,
+        "record",
+        assignment,
+        {"crew_count": assignment.crew_count, "consumables": assignment.consumables},
+    )
+    _timeline(
+        session,
+        assignment,
+        "team_record",
+        _who(principal),
+        crew_count=assignment.crew_count,
+        consumables=assignment.consumables,
+    )
+    await _announce(session, assignment)
     return assignment
 
 

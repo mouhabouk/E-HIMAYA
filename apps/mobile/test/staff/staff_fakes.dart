@@ -334,6 +334,17 @@ class FakeCrewServer {
         case 'status':
           x['status'] = body['status'];
           x['${body['status']}_at'] = now;
+        case 'milestone':
+          final step = body['step'] as String;
+          x['${step}_at'] ??= now;
+          if ((step == 'available' || step == 'back_at_unit') &&
+              x['status'] == 'on_scene') {
+            x['status'] = 'released';
+            x['released_at'] = now;
+          }
+        case 'record':
+          x['crew_count'] = body['crew_count'];
+          x['consumables'] = body['consumables'];
         case 'situation':
           if (x['status'] != 'on_scene') {
             return const FakeResponse(409, json: {'detail': 'not_on_scene'});

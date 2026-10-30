@@ -17,7 +17,7 @@ from app.core.db import get_session
 from app.core.security import Principal, Role, require_roles
 from app.modules.audit import service as audit
 from app.modules.audit.service import actor_of
-from app.modules.ops import crew, hospitals, interventions, requests, schemas, scope, service
+from app.modules.ops import crew, hospitals, interventions, record, record_suggest, requests, schemas, scope, service
 from app.modules.ops.models import Incident
 from app.modules.reports import service as reports
 from app.modules.reports.models import Report
@@ -360,6 +360,37 @@ async def create_assignment(
     )
     await session.commit()
     return await interventions.assignment_out(session, assignment.id)
+
+
+@router.put("/assignments/{assignment_id}/record", response_model=schemas.AssignmentOut)
+async def save_record(
+    principal: StaffWriter, session: Session, assignment_id: uuid.UUID, body: schemas.RecordIn
+) -> schemas.AssignmentOut:
+    """The room completes or corrects the times, the crew and the resources of a mission (phase S2)."""
+    assignment = await record.save(session, principal, assignment_id, body)
+    await _incident_audit(
+        session,
+        principal,
+        "assignment.record",
+        assignment.incident_id,
+        body.reason,
+        {
+            "assignment_id": str(assignment_id),
+            "times": sorted(body.times.model_fields_set) if body.times is not None else [],
+            "crew_count": assignment.crew_count,
+        },
+    )
+    await session.commit()
+    return await interventions.assignment_out(session, assignment_id)
+
+
+@router.post("/assignments/{assignment_id}/record/suggestions", response_model=list[schemas.TimeSuggestion])
+async def suggest_record_times(
+    principal: StaffWriter, session: Session, assignment_id: uuid.UUID, body: schemas.SuggestIn
+) -> list[schemas.TimeSuggestion]:
+    """Times read from the notes on the incident, the team's text notes and a pasted radio log (phase S2): only
+    suggestions, nothing is saved."""
+    return await record_suggest.suggestions(session, principal, assignment_id, body)
 
 
 @router.post("/assignments/{assignment_id}/status", response_model=schemas.AssignmentOut)

@@ -1,0 +1,21 @@
+@startuml
+!include style.iuml
+title Séquence : élément du menu des stratégies créé par l'administrateur (S)
+autonumber
+actor "Administrateur national\ndu système" as A
+actor "Agent" as G
+participant "Tableau de bord" as UI
+participant "API" as API
+database "PostgreSQL\nstrategy.item" as DB
+A -> UI : Stratégies → « Gérer les éléments » → créer
+UI -> API : PUT /staff/strategies/{clé}\n{nom ×3, résumé, page Markdown ou lien, icône, couleur, rôles}
+API -> API : sysadmin national seulement ; page ou lien ;\nlien /… ou https:// ; rôles connus
+API -> DB : enregistre ; audit « strategies.item_saved »
+G -> UI : ouvre le tableau de bord
+UI -> API : GET /staff/strategies
+API --> UI : éléments affichés pour ses rôles
+UI --> G : menu « Stratégies » : SNACR, plans, programmes,\nexercices blancs, retours d'expérience + éléments ajoutés
+G -> UI : ouvre l'élément
+UI -> API : GET /staff/strategies/{clé}
+UI --> G : sa page (Markdown) ou la page liée
+@enduml

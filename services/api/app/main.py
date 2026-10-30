@@ -113,6 +113,8 @@ from app.modules.sensors.router import internal_router as sensors_internal_route
 from app.modules.sensors.router import router as sensors_router
 from app.modules.settings import service as platform_settings
 from app.modules.settings.router import router as settings_router
+from app.modules.snacr.router import router as snacr_router
+from app.modules.strategies.router import router as strategies_router
 from app.modules.streams.internal import router as streams_internal_router
 from app.modules.streams.router import router as streams_router
 from app.modules.streams.staff_router import router as streams_staff_router
@@ -342,6 +344,8 @@ def create_app() -> FastAPI:
         towers_internal_router,
         places_router,
         availability_router,
+        snacr_router,
+        strategies_router,
         drones_router,
         drones_internal_router,
         checklist_router,

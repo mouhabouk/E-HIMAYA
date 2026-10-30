@@ -80,6 +80,8 @@ export const PAGE_PATHS: readonly (readonly [string, string])[] = [
   ["/permissions", "permissions"],
   ["/window", "window"],
   ["/drills", "drill"],
+  ["/snacr", "snacr"],
+  ["/strategies", "strategies"],
 ];
 
 /** The page (or tab) a dashboard path belongs to: the longest path that contains it. */

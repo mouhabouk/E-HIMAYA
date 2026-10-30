@@ -1,9 +1,11 @@
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Outlet } from "react-router";
-import { Icon } from "./Icon";
+import { Icon, iconOr, toneOr } from "./Icon";
 import { useMyFeatures } from "../lib/features";
 import { useWindowOpen } from "../lib/window";
+import { itemPath, useStrategyItems } from "../lib/strategies";
+import { localized } from "../lib/localized";
 import { Disclosure, MainNav, navGroups } from "./Navigation";
 import { useAuth } from "../context/auth";
 import { useLiveState } from "../context/live";
@@ -263,6 +265,8 @@ export function Layout() {
   const headerRef = useHeaderHeight(top);
   const access = useMyFeatures();
   const windowOpen = useWindowOpen(user?.identity ?? null);
+  const lang = useLanguage();
+  const strategyItems = useStrategyItems(user !== null);
   if (!user) return null;
   const { identity } = user;
   const scope = identity.national
@@ -274,7 +278,13 @@ export function Layout() {
   const roles = staffRoles(identity.roles)
     .map((r) => t(`roles.${r}`))
     .join(t("common.listSeparator"));
-  const groups = navGroups(identity, t, access, windowOpen);
+  const strategies = strategyItems.map((i) => ({
+    to: itemPath(i),
+    icon: iconOr(i.icon, "insights"),
+    tone: toneOr(i.tone, "purple"),
+    label: localized(i.name, lang),
+  }));
+  const groups = navGroups(identity, t, access, windowOpen, strategies);
 
   return (
     <div className="shell" data-menu-shape={menu.shape} data-menu-position={menu.position}>

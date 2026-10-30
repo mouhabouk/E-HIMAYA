@@ -2780,6 +2780,32 @@
   "staffStepOnTheWay": "On the way",
   "staffStepArrived": "Arrived",
   "staffStepOver": "Intervention over",
+  "staffStepLeftScene": "Left the scene",
+  "staffStepAtHospital": "At the hospital",
+  "staffStepAvailable": "Free on the way back",
+  "staffStepBackAtUnit": "Back at the unit",
+  "staffBackEndsMission": "Back at the unit ends the mission and frees the vehicle.",
+  "staffRecordTitle": "Crew and resources",
+  "staffRecordCrew": "Agents on the mission",
+  "staffRecordUsed": "Resources used",
+  "staffRecordSend": "Send to the room",
+  "staffUsedWater": "Water (m³)",
+  "staffUsedFoam": "Foam (L)",
+  "staffUsedPowder": "Powder (kg)",
+  "staffUsedCo2": "CO₂ (kg)",
+  "staffUsedExtinguishers": "Extinguishers used",
+  "staffUsedOxygen": "Oxygen (L)",
+  "staffUsedFuel": "Fuel (L)",
+  "staffUsedSandbags": "Sandbags",
+  "staffUsedAbsorbent": "Absorbent (kg)",
+  "staffRecordAgents": "{count} agents",
+  "@staffRecordAgents": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "staffAwayFrom": "You are {meters} m from the scene",
   "@staffAwayFrom": {
     "placeholders": {

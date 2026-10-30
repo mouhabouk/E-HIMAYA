@@ -53,9 +53,12 @@ async def new_report(client: httpx.AsyncClient, location: dict[str, float], **ov
 
 async def new_incident(client: httpx.AsyncClient, staff: Staff, location: dict[str, float]) -> tuple[str, str]:
     report = await new_report(client, location)
-    r = await client.post(
-        f"/api/v1/staff/reports/{report['id']}/incident", json={"action": "new"}, headers=staff(["operator"])
-    )
+    url = f"/api/v1/staff/reports/{report['id']}/incident"
+    r = await client.post(url, json={"action": "new"}, headers=staff(["operator"]))
+    if r.status_code == 409 and r.json().get("detail") == "possible_duplicate":
+        # Another test's open incident happens to be near the random place: this one is a different incident.
+        body = {"action": "new", "override_reason": "test: a separate incident"}
+        r = await client.post(url, json=body, headers=staff(["operator"]))
     assert r.status_code == 200, r.text
     return r.json()["incident_id"], report["id"]
 

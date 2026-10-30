@@ -265,6 +265,16 @@ class Settings(BaseSettings):
     # Window in which an SMS report and the same report synced later by the app are merged (same 8-hex prefix,
     # category and sender), and in which a repeated SMS returns the existing report.
     sms_dedup_window_h: int = Field(default=48, ge=1, le=168)
+    # ┏━━ DEMONSTRATION ━━ an Android phone with a SIM card as the SMS gateway (phase S2, docs/sms-phone-gateway.md):
+    # ┃   the open-source app "SMS Gateway for Android" posts each received SMS to POST /internal/sms/phone, signed
+    # ┃   with its own signing key (X-Signature: hex HMAC-SHA256 of "<body><X-Timestamp>"); replies leave through
+    # ┃   the phone's local server (SMS_PHONE_URL, basic auth). Unset: 404 and the usual gateway.
+    # ┃ PRODUCTION: the operators' gateway on POST /internal/sms/inbound; leave these empty.
+    # ┗━━━━━━━━━━━━━━━━
+    sms_phone_signing_key: SecretStr | None = Field(default=None, min_length=8)
+    sms_phone_url: str | None = None
+    sms_phone_username: str | None = None
+    sms_phone_password: SecretStr | None = None
     # Phase A sign-in by phone (docs/phase-a/design.md §2.2): HMAC-SHA256 key shared with the Keycloak provider
     # ehimaya-phone-otp, which signs POST /internal/auth/otp-sms like the SMS gateway does. Unset: 404.
     otp_sms_secret: SecretStr | None = Field(default=None, min_length=24)
@@ -436,6 +446,9 @@ class Settings(BaseSettings):
             if self.telephony_sim_token is not None:
                 # SIMULATION: the call simulator checks never run in production.
                 problems.append("TELEPHONY_SIM_TOKEN must be empty (simulation only)")
+            if self.sms_phone_signing_key is not None or self.sms_phone_url:
+                # DEMONSTRATION: a phone as the SMS gateway is for showing the platform, never for production.
+                problems.append("SMS_PHONE_SIGNING_KEY and SMS_PHONE_URL must be empty (demonstration only)")
             if not self.staff_mfa_required:
                 # Phase 10 §1.1: staff accounts always prove a second factor in production.
                 problems.append("STAFF_MFA_REQUIRED must be true")
@@ -502,6 +515,10 @@ class Settings(BaseSettings):
         "telephony_ari_password",
         "telephony_sim_token",
         "sms_inbound_secret",
+        "sms_phone_signing_key",
+        "sms_phone_url",
+        "sms_phone_username",
+        "sms_phone_password",
         "otp_sms_secret",
         "routing_url",
         "ollama_url",

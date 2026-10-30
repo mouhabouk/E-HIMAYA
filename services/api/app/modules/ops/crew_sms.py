@@ -6,7 +6,8 @@ The gateway posts it to ``POST /internal/sms/inbound`` (telephony.internal) next
 ``EH2 <device> <assignment> <event> <unix time> <client_id> <signature>``
 
 * ``device``, ``assignment`` and ``client_id``: 32 hex digits each (UUIDs without dashes);
-* ``event``: ``ack``, ``en_route``, ``on_scene``, ``released``, ``backup`` or ``danger``;
+* ``event``: ``ack``, ``en_route``, ``on_scene``, ``released``, ``backup``, ``danger``, or a later step of the
+  mission (phase S2): ``left_scene``, ``at_hospital``, ``available``, ``back_at_unit``;
 * ``signature``: the first 16 hex digits of HMAC-SHA256(phone's key, ``EH2|device|assignment|event|time|client_id``).
   The key is the phone's own (``POST /crew/devices/current/sms-key``), encrypted at rest on both sides.
 
@@ -36,14 +37,25 @@ log = structlog.get_logger()
 
 _BODY = re.compile(
     r"^\s*EH2\s+(?P<device>[0-9a-f]{32})\s+(?P<assignment>[0-9a-f]{32})\s+"
-    r"(?P<event>ack|en_route|on_scene|released|backup|danger)\s+(?P<ts>\d{9,11})\s+"
+    r"(?P<event>ack|en_route|on_scene|released|backup|danger|left_scene|at_hospital|available|back_at_unit)\s+(?P<ts>\d{9,11})\s+"
     r"(?P<client>[0-9a-f]{32})\s+(?P<sig>[0-9a-f]{16})\s*$",
     re.IGNORECASE,
 )
 MAX_AGE = timedelta(hours=12)
 CLOCK_SKEW = timedelta(minutes=5)
 
-Event = Literal["ack", "en_route", "on_scene", "released", "backup", "danger"]
+Event = Literal[
+    "ack",
+    "en_route",
+    "on_scene",
+    "released",
+    "backup",
+    "danger",
+    "left_scene",
+    "at_hospital",
+    "available",
+    "back_at_unit",
+]
 
 
 @dataclass(frozen=True, slots=True)
@@ -144,6 +156,9 @@ async def _apply(session: AsyncSession, principal: Principal, message: CrewSms) 
         case "en_route" | "on_scene" | "released":
             step = schemas.StepIn(status=message.event, **write)
             return await crew.step(session, principal, message.assignment_id, step)
+        case "left_scene" | "at_hospital" | "available" | "back_at_unit":
+            milestone = schemas.MilestoneIn(step=message.event, **write)
+            return await crew.milestone(session, principal, message.assignment_id, milestone)
         case "backup" | "danger":
             alert = schemas.AlertIn(kind=message.event, items=[], **write)
             return await crew.alert(session, principal, message.assignment_id, alert)

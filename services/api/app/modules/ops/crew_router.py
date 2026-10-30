@@ -172,6 +172,22 @@ async def step(
     return await _answer(session, principal, "crew.status", assignment)
 
 
+@router.post("/missions/{assignment_id}/milestone", response_model=schemas.MissionOut)
+async def milestone(
+    principal: Leader, session: Session, _device: Device, assignment_id: uuid.UUID, body: schemas.MilestoneIn
+) -> schemas.MissionOut:
+    assignment = await crew.milestone(session, principal, assignment_id, body)
+    return await _answer(session, principal, "crew.milestone", assignment)
+
+
+@router.post("/missions/{assignment_id}/record", response_model=schemas.MissionOut)
+async def team_record(
+    principal: Leader, session: Session, _device: Device, assignment_id: uuid.UUID, body: schemas.TeamRecordIn
+) -> schemas.MissionOut:
+    assignment = await crew.team_record(session, principal, assignment_id, body)
+    return await _answer(session, principal, "crew.record", assignment)
+
+
 @router.post("/missions/{assignment_id}/first-report", response_model=schemas.MissionOut)
 async def first_report(
     principal: Leader, session: Session, _device: Device, assignment_id: uuid.UUID, body: schemas.FirstReportIn

@@ -9,7 +9,7 @@ lifetimes, signature ages) stay in the code or the environment, as the design ex
 from dataclasses import dataclass
 from typing import Any, Literal
 
-Unit = Literal["count", "days", "hours", "metres"]
+Unit = Literal["count", "days", "hours", "metres", "minutes", "percent", "per_km2", "months", "years"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -46,6 +46,27 @@ SPECS: dict[str, Spec] = {
     "doctors.committee_max": Spec("partners", "count", 7, 1, 30),
     "orgs.invitation_days": Spec("partners", "days", 7, 1, 60),
     "orgs.reservation_due_soon_days": Spec("partners", "days", 14, 1, 90),
+    # Risk analysis and coverage plan (SNACR, docs/phase-s/design-s.md §5): arrival targets from the call, by family
+    # and by kind of délégation, the share of interventions that must meet them, and the densities that class a
+    # délégation urban (at least ``urban``) or rural (below ``periurban``).
+    "snacr.target.medical.urban": Spec("snacr", "minutes", 10, 3, 120),
+    "snacr.target.medical.periurban": Spec("snacr", "minutes", 15, 3, 120),
+    "snacr.target.medical.rural": Spec("snacr", "minutes", 25, 3, 120),
+    "snacr.target.road.urban": Spec("snacr", "minutes", 12, 3, 120),
+    "snacr.target.road.periurban": Spec("snacr", "minutes", 18, 3, 120),
+    "snacr.target.road.rural": Spec("snacr", "minutes", 30, 3, 120),
+    "snacr.target.fire.urban": Spec("snacr", "minutes", 10, 3, 120),
+    "snacr.target.fire.periurban": Spec("snacr", "minutes", 15, 3, 120),
+    "snacr.target.fire.rural": Spec("snacr", "minutes", 25, 3, 120),
+    "snacr.target.rescue.urban": Spec("snacr", "minutes", 15, 3, 120),
+    "snacr.target.rescue.periurban": Spec("snacr", "minutes", 20, 3, 120),
+    "snacr.target.rescue.rural": Spec("snacr", "minutes", 35, 3, 120),
+    "snacr.goal_percent": Spec("snacr", "percent", 90, 50, 100),
+    "snacr.density.urban": Spec("snacr", "per_km2", 1_000, 50, 20_000),
+    "snacr.density.periurban": Spec("snacr", "per_km2", 150, 10, 5_000),
+    # Decree 93-942: the committees meet at least once a year; the plan is reviewed then, and remade every five years.
+    "snacr.review_months": Spec("snacr", "months", 12, 1, 60),
+    "snacr.validity_years": Spec("snacr", "years", 5, 1, 10),
 }
 
 DEFAULTS: dict[str, int] = {name: spec.default for name, spec in SPECS.items()}

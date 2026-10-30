@@ -160,6 +160,7 @@ async function mock(page: Page, streams: StaffStream[]): Promise<Mock> {
     }
     if (method === "GET" && pathname === "/api/v1/staff/levels") return json(route, []);
     if (method === "GET" && pathname === "/api/v1/app/environment") return json(route, { banner: null });
+    if (method === "GET" && pathname === "/api/v1/staff/strategies") return json(route, { items: [], can_manage: false });
     if (method === "GET" && pathname === "/api/v1/staff/break-glass") return json(route, { items: [], next_cursor: null });
     if (method === "GET" && pathname === "/api/v1/staff/streams") {
       const status = searchParams.get("status");

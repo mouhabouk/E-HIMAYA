@@ -235,6 +235,16 @@ export interface Assignment {
   contact_phone?: string | null;
   /** Phase P4d: the vehicle's last position sent from the leader's phone, and its distance to the incident. */
   position?: VehiclePosition | null;
+  /** Phase S2: the rest of the mission's times, its crew, what it used, and who gave each time. */
+  left_scene_at?: string | null;
+  at_hospital_at?: string | null;
+  available_at?: string | null;
+  back_at_unit_at?: string | null;
+  crew_count?: number | null;
+  consumables?: Partial<Record<string, number>>;
+  time_sources?: Partial<Record<string, "app" | "sms" | "room">>;
+  /** Times that hold but are not credible, for the room to check. */
+  record_warnings?: string[];
 }
 
 export interface VehiclePosition {

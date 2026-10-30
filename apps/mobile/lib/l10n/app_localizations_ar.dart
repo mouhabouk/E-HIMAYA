@@ -5372,6 +5372,65 @@ class AppLocalizationsAr extends AppLocalizations {
   String get staffStepOver => 'انتهى التدخل';
 
   @override
+  String get staffStepLeftScene => 'غادرنا المكان';
+
+  @override
+  String get staffStepAtHospital => 'وصلنا للمستشفى';
+
+  @override
+  String get staffStepAvailable => 'متاحون في طريق العودة';
+
+  @override
+  String get staffStepBackAtUnit => 'رجعنا للوحدة';
+
+  @override
+  String get staffBackEndsMission => 'الرجوع للوحدة ينهي المهمة ويحرر الآلية.';
+
+  @override
+  String get staffRecordTitle => 'الأعوان والموارد';
+
+  @override
+  String get staffRecordCrew => 'عدد الأعوان المشاركين';
+
+  @override
+  String get staffRecordUsed => 'الموارد المستعملة';
+
+  @override
+  String get staffRecordSend => 'إرسال إلى القاعة';
+
+  @override
+  String get staffUsedWater => 'الماء (م³)';
+
+  @override
+  String get staffUsedFoam => 'المادة الرغوية (لتر)';
+
+  @override
+  String get staffUsedPowder => 'المسحوق (كغ)';
+
+  @override
+  String get staffUsedCo2 => 'ثاني أكسيد الكربون (كغ)';
+
+  @override
+  String get staffUsedExtinguishers => 'المطافئ المستعملة';
+
+  @override
+  String get staffUsedOxygen => 'الأكسجين (لتر)';
+
+  @override
+  String get staffUsedFuel => 'الوقود (لتر)';
+
+  @override
+  String get staffUsedSandbags => 'أكياس الرمل';
+
+  @override
+  String get staffUsedAbsorbent => 'المادة الماصّة (كغ)';
+
+  @override
+  String staffRecordAgents(int count) {
+    return '$count أعوان';
+  }
+
+  @override
   String staffAwayFrom(int meters) {
     return 'أنت على بعد $meters م من الموقع';
   }

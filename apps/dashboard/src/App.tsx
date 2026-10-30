@@ -21,6 +21,7 @@ import {
   canHandleContact,
   canOpenCoastal,
   canOpenProgrammes,
+  canOpenSnacr,
   canOpenAxes,
   canOpenDisasters,
   canEnterReports,
@@ -143,6 +144,10 @@ const ContactInboxPage = page(() => import("./pages/ContactInboxPage"), "Contact
 const PermissionsPage = page(() => import("./pages/PermissionsPage"), "PermissionsPage");
 const WindowPage = page(() => import("./pages/WindowPage"), "WindowPage");
 const DrillsPage = page(() => import("./pages/DrillsPage"), "DrillsPage");
+// Phase S: the strategies menu and SNACR.
+const StrategiesPage = page(() => import("./pages/StrategiesPage"), "StrategiesPage");
+const StrategyItemPage = page(() => import("./pages/StrategiesPage"), "StrategyItemPage");
+const SnacrPage = page(() => import("./pages/SnacrPage"), "SnacrPage");
 const DrillPage = page(() => import("./pages/DrillPage"), "DrillPage");
 // Phase L5b: sensors of the local network.
 const SensorsPage = page(() => import("./pages/SensorsPage"), "SensorsPage");
@@ -285,6 +290,9 @@ export function AppRoutes() {
         <Route path="layers" element={gated(canOpenLayers, <LayersPage />)} />
         <Route path="coastal" element={gated(canOpenCoastal, <CoastalPage />)} />
         <Route path="programmes" element={gated(canOpenProgrammes, <ProgrammesPage />)} />
+        <Route path="strategies" element={gated(() => true, <StrategiesPage />)} />
+        <Route path="strategies/:key" element={gated(() => true, <StrategyItemPage />)} />
+        <Route path="snacr" element={gated(canOpenSnacr, <SnacrPage />)} />
         <Route path="programmes/:id" element={gated(canOpenProgrammes, <ProgrammeDetailPage />)} />
         <Route path="inventory" element={gated(canOpenInventory, <InventoryPage />)} />
         <Route path="disasters" element={gated(canOpenDisasters, <DisastersPage />)} />

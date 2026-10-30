@@ -1,0 +1,74 @@
+@startuml
+!include style.iuml
+title Diagramme de classes : analyse et couverture des risques (SNACR) et menu des stratégies (S)
+hide empty methods
+skinparam linetype ortho
+class "Jeu de données (année)" as Dataset {
+  année : unique
+  source : office | simulé [SIM]
+  nom_fichier
+  lignes
+  qualité : lus, gardés, écartés, drapeaux,\n complétude par gouvernorat, noms inconnus
+  chargé_par, chargé_le
+}
+class Intervention {
+  année
+  appel, départ, arrivée, fin : horodatages
+  {field} gouvernorat, délégation (INS)
+  famille : secours | route | incendie | sauvetage
+  sous_type
+  {field} délais : départ, arrivée (min)
+  drapeaux[]
+  -- jamais : adresse, textes libres,\n agents, véhicules --
+}
+class "Nom alternatif" as Alias {
+  gouvernorat
+  nom_brut, forme_normalisée
+  {field} délégation (INS)
+  créé_par
+}
+class "Risque particulier" as SpecialRisk {
+  gouvernorat
+  aléa : inondation | feu de forêt | industriel |\n TMD | littoral | séisme | tempête |\n sécheresse | épidémie
+  probabilité 1-5, gravité 1-5
+  niveau = probabilité × gravité
+  simulé [SIM]
+}
+class "Schéma" as Plan {
+  {field} gouvernorat (vide = national)
+  version
+  années[]
+  statut : projet | approuvé | remplacé
+  instantané : analyse figée
+  objectifs[] : couverture | données | noms | particulier
+  approuvé_par, approuvé_le
+}
+class "Seuils SNACR (réglage)" as Thresholds {
+  {field} cibles par famille × milieu (min)
+  objectif % dans le délai
+  densités urbain / périurbain
+  {field} revue (mois), validité (ans)
+}
+class "Délégation (Map Tunisia)" as Delegation {
+  id INS
+  population 2024
+  superficie
+  milieu : urbain | périurbain | rural
+}
+class "Élément de stratégie" as StrategyItem {
+  clé
+  {field} nom, résumé, page (ar, fr, en)
+  lien : /page | https://
+  icône, couleur, ordre
+  {field} rôles[] (vide = tous)
+  affiché
+}
+Dataset "1" *-- "0..*" Intervention
+Intervention "0..*" --> "0..1" Delegation
+Alias "0..*" --> "1" Delegation
+Plan ..> SpecialRisk : fige
+Plan ..> Intervention : analyse figée
+Plan ..> Thresholds : méthode
+Delegation ..> Thresholds : milieu selon densité
+note bottom of StrategyItem : créé par l'administrateur national du système\nmenu « Stratégies » à côté de SNACR, plans,\nprogrammes, exercices blancs, retours d'expérience
+@enduml
