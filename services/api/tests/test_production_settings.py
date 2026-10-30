@@ -61,6 +61,7 @@ def test_strong_secrets_start() -> None:
         ("telephony_ari_password", "change-me-generate-with-openssl-rand-hex-24", "change-me"),
         ("sms_inbound_secret", "change-me-generate-with-openssl-rand-hex-32", "change-me"),
         ("telephony_sim_token", secrets.token_urlsafe(24), "TELEPHONY_SIM_TOKEN"),
+        ("sms_phone_signing_key", secrets.token_urlsafe(12), "SMS_PHONE_SIGNING_KEY"),
     ],
 )
 def test_weak_secret_is_refused(setting: str, value: str, reason: str) -> None:

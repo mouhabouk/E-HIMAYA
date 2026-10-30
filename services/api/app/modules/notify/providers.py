@@ -199,6 +199,26 @@ class HttpSms:
         return Result(ok=True) if response.is_success else Result(ok=False, error=f"http_{response.status_code}")
 
 
+class PhoneSms:
+    """DEMONSTRATION: an Android phone running "SMS Gateway for Android" in local server mode sends the SMS
+    (docs/sms-phone-gateway.md). PRODUCTION: HttpSms, the operators' gateway."""
+
+    configured = True
+
+    def __init__(self, url: str, username: str, password: str, client: httpx.AsyncClient | None = None) -> None:
+        self._url, self._auth = url.rstrip("/") + "/message", (username, password)
+        self._client = client or httpx.AsyncClient(timeout=15)
+
+    async def send(self, to: str, text: str) -> Result:
+        try:
+            response = await self._client.post(
+                self._url, json={"textMessage": {"text": text}, "phoneNumbers": [to]}, auth=self._auth
+            )
+        except httpx.HTTPError as exc:
+            return Result(ok=False, error=type(exc).__name__)
+        return Result(ok=True) if response.is_success else Result(ok=False, error=f"http_{response.status_code}")
+
+
 class SmtpEmail:
     configured = True
 
@@ -273,15 +293,21 @@ def _build() -> Providers:
                 path=str(settings.fcm_service_account_file),
                 error=type(exc).__name__,
             )
-    sms: SmsProvider = (
-        HttpSms(
-            settings.sms_http_url,
-            settings.sms_http_token.get_secret_value() if settings.sms_http_token else None,
-            settings.sms_sender,
+    sms: SmsProvider
+    if settings.sms_phone_url and settings.sms_phone_username and settings.sms_phone_password:
+        sms = PhoneSms(
+            settings.sms_phone_url, settings.sms_phone_username, settings.sms_phone_password.get_secret_value()
         )
-        if settings.sms_http_url
-        else Unconfigured()
-    )
+    else:
+        sms = (
+            HttpSms(
+                settings.sms_http_url,
+                settings.sms_http_token.get_secret_value() if settings.sms_http_token else None,
+                settings.sms_sender,
+            )
+            if settings.sms_http_url
+            else Unconfigured()
+        )
     email: EmailProvider = (
         SmtpEmail(
             settings.smtp_host,

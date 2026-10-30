@@ -20,12 +20,14 @@ from typing import Any
 import httpx
 import jwt
 import pytest
+from pydantic import SecretStr
 from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
 from app.core.db import get_system_sessionmaker
 from app.modules.identity.models import Account, Profile, phone_index
+from app.modules.notify.providers import PhoneSms
 from app.modules.ops.models import Incident
 from app.modules.privacy import retention
 from app.modules.reports import live
@@ -731,6 +733,64 @@ async def test_sms_creates_a_report(
 
     bad = await send_sms(client, sender, "hello")
     assert bad.json() == {"status": "ignored", "tracking_code": None, "reason": "unparseable"}
+
+
+# ┏━━ DEMONSTRATION ━━ an Android phone as the SMS gateway (docs/sms-phone-gateway.md).
+PHONE_KEY = "phone-signing-key"
+
+
+def phone_signed(body: dict[str, Any], *, key: str = PHONE_KEY, at: int | None = None) -> tuple[bytes, dict[str, str]]:
+    raw = json.dumps(body).encode()
+    ts = str(at if at is not None else int(time.time()))
+    mac = hmac.new(key.encode(), raw + ts.encode(), hashlib.sha256).hexdigest()
+    return raw, {"X-Timestamp": ts, "X-Signature": mac, "Content-Type": "application/json"}
+
+
+async def test_sms_through_a_phone(client: httpx.AsyncClient, channels: Any, monkeypatch: pytest.MonkeyPatch) -> None:
+    hook = {
+        "deviceId": "d1",
+        "event": "sms:received",
+        "id": "e1",
+        "webhookId": "w1",
+        "payload": {"messageId": uuid.uuid4().hex, "message": "", "sender": mobile(), "recipient": None},
+    }
+    raw, headers = phone_signed(hook)
+    assert (await client.post("/internal/sms/phone", content=raw, headers=headers)).status_code == 404
+    monkeypatch.setattr(get_settings(), "sms_phone_signing_key", SecretStr(PHONE_KEY))
+    _, pre = prefix()
+    hook["payload"]["message"] = f"EH1 fire {SFAX_SMS} 12m {pre}"  # type: ignore[index]
+    raw, headers = phone_signed(hook, key="another-key")
+    assert (await client.post("/internal/sms/phone", content=raw, headers=headers)).status_code == 401
+    raw, headers = phone_signed(hook, at=int(time.time()) - 600)
+    assert (await client.post("/internal/sms/phone", content=raw, headers=headers)).status_code == 401
+    raw, headers = phone_signed(hook)
+    r = await client.post("/internal/sms/phone", content=raw, headers=headers)
+    assert r.status_code == 200 and r.json()["status"] == "created", r.text
+    assert channels.sms.sent[-1][1].find(r.json()["tracking_code"]) >= 0
+    # The phone's own events (sent, delivered) are answered, never retried.
+    raw, headers = phone_signed({"event": "sms:delivered", "payload": {"messageId": "x", "phoneNumber": "+1"}})
+    assert (await client.post("/internal/sms/phone", content=raw, headers=headers)).json()["reason"] == (
+        "not_a_received_sms"
+    )
+
+
+async def test_phone_sends_the_replies() -> None:
+    sent: list[httpx.Request] = []
+
+    def answer(request: httpx.Request) -> httpx.Response:
+        sent.append(request)
+        return httpx.Response(202, json={"id": "m1"})
+
+    phone = PhoneSms(
+        "http://192.168.1.20:8080/", "sms", "secret", client=httpx.AsyncClient(transport=httpx.MockTransport(answer))
+    )
+    assert (await phone.send("+21698111222", "EH-26-10-0000001")).ok
+    assert str(sent[0].url) == "http://192.168.1.20:8080/message"
+    assert json.loads(sent[0].content) == {
+        "textMessage": {"text": "EH-26-10-0000001"},
+        "phoneNumbers": ["+21698111222"],
+    }
+    assert sent[0].headers["authorization"].startswith("Basic ")
 
 
 async def test_sms_after_app_report_is_a_duplicate(

@@ -1,0 +1,30 @@
+@startuml
+!include style.iuml
+title Séquence : relevé de la mission, de l'ordre au retour à l'unité (S2)
+autonumber
+actor "Chef d'agrès" as TL
+participant "Application\ndes équipes" as APP
+actor "Opérateur" as OP
+participant "Tableau de bord" as UI
+participant "API" as API
+database "PostgreSQL\nops.assignment" as DB
+TL -> APP : « Quitté les lieux » (puis hôpital)
+APP -> API : POST /crew/missions/{id}/milestone\n{étape, heure du téléphone} (ou SMS EH2 signé)
+API -> API : heures dans l'ordre ; l'étape d'avant exigée ;\npas dans le futur ; retour > départ
+API -> DB : left_scene_at, at_hospital_at ; source « app » ou « sms »
+TL -> APP : « Disponibles sur le retour »
+APP -> API : POST …/milestone {available}
+API -> DB : available_at ; mission terminée, véhicule disponible
+TL -> APP : agents et moyens (− et +)
+APP -> API : POST …/record {crew_count, consumables}
+OP -> UI : « Relevé de la mission »
+UI -> API : POST /staff/assignments/{id}/record/suggestions\n{journal radio collé}
+API -> DB : notes de la salle, notes écrites de l'équipe
+API --> UI : heures lues (étape, heure, mots, règle enfreinte) ; rien n'est enregistré
+OP -> UI : « Retenir » une heure ; corrige au clavier (1432, ↑ ↓)
+UI -> UI : mêmes règles, erreur sur le champ
+UI -> API : PUT /staff/assignments/{id}/record\n{heures changées, agents, moyens, motif}
+API -> API : motif exigé si une heure de l'équipe change
+API -> DB : enregistre ; ligne « record_saved » (avant, après, motif)
+API --> UI : mission, indicateurs et avertissements
+@enduml

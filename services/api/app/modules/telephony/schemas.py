@@ -151,6 +151,21 @@ class SmsInboundIn(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
+class PhoneSms(BaseModel):
+    """DEMONSTRATION: the received SMS in the webhook of "SMS Gateway for Android" (docs/sms-phone-gateway.md)."""
+
+    message_id: Annotated[str, StringConstraints(min_length=1, max_length=120)] = Field(alias="messageId")
+    message: Annotated[str, StringConstraints(max_length=1600)]
+    sender: Annotated[str, StringConstraints(min_length=3, max_length=32)]
+    recipient: Annotated[str, StringConstraints(max_length=32)] | None = None
+
+
+class PhoneWebhookIn(BaseModel):
+    event: Annotated[str, StringConstraints(max_length=40)]
+    #: Read as ``PhoneSms`` for "sms:received" only: the other events carry other fields.
+    payload: dict[str, Any] | None = None
+
+
 class SmsInboundOut(BaseModel):
     # created: a new report; duplicate: an existing report (gateway retry or repeated SMS); ignored: not a report;
     # applied: a step or an alert of a team leader's phone (EH2, phase P4d).

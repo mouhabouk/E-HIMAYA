@@ -76,6 +76,11 @@ async def sms_inbound(
     except ValidationError as exc:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "invalid_body") from exc
 
+    return await _receive(session, message)
+
+
+async def _receive(session: AsyncSession, message: schemas.SmsInboundIn) -> schemas.SmsInboundOut:
+    """One received SMS, whichever gateway brought it: a team's step (EH2) or a citizen's report (EH1)."""
     sender_key = sms.sender_hash(message.sender).hex()[:32]
     if crew_sms.is_crew_sms(message.text):
         verdict = await ratelimit.check(f"crew-sms-in:{sender_key}", CREW_SMS_PER_SENDER_PER_HOUR, 3600)
@@ -103,6 +108,60 @@ async def sms_inbound(
             if not result.ok:
                 log.warning("sms.reply_failed", error=result.error)
     return schemas.SmsInboundOut(status=outcome.status, tracking_code=tracking, reason=outcome.reason)
+
+
+# ---------------------------------------------------------------- demonstration
+# ┏━━ DEMONSTRATION ━━ an Android phone with a SIM card as the gateway (docs/sms-phone-gateway.md): the app
+# ┃   "SMS Gateway for Android" (Apache-2.0) posts its "sms:received" webhook here, signed with its signing key.
+# ┃ PRODUCTION: the operators' gateway on /internal/sms/inbound; SMS_PHONE_SIGNING_KEY empty and this answers 404.
+# ┗━━━━━━━━━━━━━━━━
+
+
+def phone_signature(key: str, timestamp: str, body: bytes) -> str:
+    """The app's signature: hex HMAC-SHA256 of the raw body followed by the timestamp."""
+    return hmac.new(key.encode(), body + timestamp.encode(), hashlib.sha256).hexdigest()
+
+
+@router.post("/internal/sms/phone", response_model=schemas.SmsInboundOut)
+async def sms_phone(
+    request: Request,
+    session: Session,
+    x_timestamp: Annotated[str | None, Header(max_length=20)] = None,
+    x_signature: Annotated[str | None, Header(max_length=100)] = None,
+) -> schemas.SmsInboundOut:
+    key = get_settings().sms_phone_signing_key
+    if key is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
+    body = await request.body()
+    if len(body) > MAX_BODY_BYTES:
+        raise HTTPException(status.HTTP_413_CONTENT_TOO_LARGE, "too_large")
+    if not x_timestamp or not x_signature or not x_timestamp.isdigit():
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "invalid_signature")
+    if abs(time.time() - int(x_timestamp)) > SIGNATURE_MAX_AGE_S:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "invalid_signature")
+    expected = phone_signature(key.get_secret_value(), x_timestamp, body)
+    if not hmac.compare_digest(expected.encode(), x_signature.strip().lower().encode()):
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "invalid_signature")
+    try:
+        hook = schemas.PhoneWebhookIn.model_validate_json(body)
+    except ValidationError as exc:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "invalid_body") from exc
+    if hook.event != "sms:received" or hook.payload is None:
+        # Other events of the app (sent, delivered, ping): answered so that the phone does not retry them.
+        return schemas.SmsInboundOut(status="ignored", reason="not_a_received_sms")
+    try:
+        received = schemas.PhoneSms.model_validate(hook.payload)
+    except ValidationError as exc:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "invalid_body") from exc
+    message = schemas.SmsInboundIn.model_validate(
+        {
+            "message_id": f"phone:{received.message_id}",
+            "from": received.sender,
+            "to": received.recipient,
+            "text": received.message,
+        }
+    )
+    return await _receive(session, message)
 
 
 # ---------------------------------------------------------------- simulation
