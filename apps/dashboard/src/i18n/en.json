@@ -50,7 +50,8 @@
     "dispatches": "Directives and replies",
     "group": {
       "ops": "Daily operations",
-      "crisis": "Crises and command",
+      "crisis": "Command and decision",
+      "disasters": "Disaster and crisis management",
       "alerts": "Alerts and contact",
       "people": "Volunteers and doctors",
       "orgs": "Institutions",
@@ -67,7 +68,8 @@
     "towers": "Watch towers",
     "drones": "Drones",
     "modelCards": "Model cards",
-    "learning": "Training centre"
+    "learning": "Training centre",
+    "disasters": "Disasters: summary and map"
   },
   "header": {
     "scope": "Geographic scope",
@@ -7492,5 +7494,25 @@
   "committeeHeading": {
     "regional": "Regional committee chaired by the Governor of {{name}}",
     "national": "National committee chaired by the Minister of the Interior"
+  },
+  "disasters": {
+    "title": "Disasters: summary and map",
+    "intro": "Ongoing and closed disasters in one place. Choose one or more disasters and gouvernorats: the summary adds up their figures and the map shows their places only (area, interventions, shelters, evacuation zones). The rooms, the commander and the regional and national committees see it, each within its gouvernorat.",
+    "open": "Ongoing",
+    "closed": "Closed",
+    "noneOpen": "No ongoing disaster.",
+    "noneClosed": "No closed disaster yet.",
+    "gouvernorats": "Gouvernorats shown",
+    "summary": "Summary of the chosen disasters: {{count}}",
+    "chooseOne": "Choose at least one disaster.",
+    "list": "Disasters",
+    "show": "Show {{name}} on the map",
+    "mapAria": "Map of the chosen disasters: {{count}}",
+    "closedAfter": "Closed on {{at}} after {{hours}} h",
+    "places": "Places of the disaster",
+    "shelter": "Shelter",
+    "occupancy": "{{n}} of {{of}}",
+    "promote": "Promote to a disaster",
+    "promoted": "A disaster promoted from an intervention: it is attached from the start."
   }
 }

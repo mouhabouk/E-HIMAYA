@@ -8699,6 +8699,81 @@
         "title": "DirectoryDoctor",
         "type": "object"
       },
+      "DisasterArea": {
+        "properties": {
+          "area": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "level": {
+            "title": "Level",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "level",
+          "area"
+        ],
+        "title": "DisasterArea",
+        "type": "object"
+      },
+      "DisasterMap": {
+        "properties": {
+          "areas": {
+            "items": {
+              "$ref": "#/components/schemas/DisasterArea"
+            },
+            "title": "Areas",
+            "type": "array"
+          },
+          "evacuations": {
+            "items": {
+              "$ref": "#/components/schemas/EvacuationOut"
+            },
+            "title": "Evacuations",
+            "type": "array"
+          },
+          "figures": {
+            "$ref": "#/components/schemas/app__modules__crisis__schemas__Figures"
+          },
+          "incidents": {
+            "items": {
+              "$ref": "#/components/schemas/IncidentOut"
+            },
+            "title": "Incidents",
+            "type": "array"
+          },
+          "shelters": {
+            "items": {
+              "$ref": "#/components/schemas/ShelterOut"
+            },
+            "title": "Shelters",
+            "type": "array"
+          }
+        },
+        "required": [
+          "figures",
+          "areas",
+          "incidents",
+          "shelters",
+          "evacuations"
+        ],
+        "title": "DisasterMap",
+        "type": "object"
+      },
       "DismissIn": {
         "properties": {
           "reason": {
@@ -68305,6 +68380,57 @@
           }
         ],
         "summary": "Directive Status",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
+    "/api/v1/staff/crisis/disasters/map": {
+      "get": {
+        "description": "The disaster view (docs/phase-n/design-n.md §3): the places of the chosen disasters only (their areas,\ninterventions, shelters and evacuation zones) and their summed figures, for the rooms, the commander and the\ncommittees. Row-level security keeps a regional reader to the disasters of their gouvernorat.",
+        "operationId": "disaster_map_api_v1_staff_crisis_disasters_map_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "axis",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 1110,
+              "title": "Axis",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DisasterMap"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Disaster Map",
         "tags": [
           "staff",
           "crisis"

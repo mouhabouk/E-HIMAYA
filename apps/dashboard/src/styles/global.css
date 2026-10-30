@@ -9061,3 +9061,65 @@ button.nav-card:hover {
   border: 2px solid rgb(255 255 255 / 85%);
   box-shadow: 0 2px 6px rgb(14 20 38 / 40%), inset 0 1px 0 rgb(255 255 255 / 45%);
 }
+
+/* Phase N (docs/phase-n/design-n.md §3): the disaster view, the list of disasters beside their map. */
+.disasters-layout {
+  display: grid;
+  grid-template-columns: minmax(16rem, 22rem) 1fr;
+  gap: 1rem;
+  margin-block: 1rem;
+}
+
+.disasters-layout__list {
+  max-block-size: 70vh;
+  overflow-y: auto;
+}
+
+.disasters-layout__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.disasters-layout__head h2 {
+  margin: 0;
+  margin-inline-end: auto;
+  font-size: 1.05rem;
+}
+
+.disasters-layout__map {
+  position: relative;
+  min-block-size: 60vh;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.disasters-layout__map > * {
+  position: absolute;
+  inset: 0;
+}
+
+.disaster-card__closing {
+  margin-block-start: 0.5rem;
+  padding-block-start: 0.5rem;
+  border-block-start: 1px solid var(--border);
+}
+
+.disasters-places {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0;
+  list-style: none;
+}
+
+@media (max-width: 900px) {
+  .disasters-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .disasters-layout__list {
+    max-block-size: none;
+  }
+}

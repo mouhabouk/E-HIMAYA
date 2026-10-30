@@ -619,6 +619,13 @@ export function canEditReportTemplates(identity: { roles: readonly string[]; nat
 export const AXIS_ROLES = ["operator", "ops_manager"] as const;
 export const COMMAND_ROLES = ["governor", "minister", "ops_manager"] as const;
 
+/** The disaster view (phase N): the rooms, the governor and the minister, and both committees. */
+export const DISASTER_ROLES = ["operator", "ops_manager", "governor", "minister", ...COMMITTEE_ROLES] as const;
+
+export function canOpenDisasters(roles: readonly string[]): boolean {
+  return any(DISASTER_ROLES, roles);
+}
+
 export function canOpenAxes(roles: readonly string[]): boolean {
   return any(AXIS_ROLES, roles);
 }

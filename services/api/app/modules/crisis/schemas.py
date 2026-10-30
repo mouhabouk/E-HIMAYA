@@ -367,6 +367,23 @@ class AxisDetail(BaseModel):
     documents: list[DocRef] = Field(default_factory=list)
 
 
+# --- Disasters (phase N) ---------------------------------------------------------------------------------------------
+
+
+class DisasterArea(BaseModel):
+    id: str
+    level: int
+    area: dict[str, Any] | None
+
+
+class DisasterMap(BaseModel):
+    figures: Figures
+    areas: list[DisasterArea]
+    incidents: list[IncidentOut]
+    shelters: list[ShelterOut]
+    evacuations: list[EvacuationOut]
+
+
 # --- Command (governor, minister) -----------------------------------------------------------------------------------
 
 

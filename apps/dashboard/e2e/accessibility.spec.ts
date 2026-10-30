@@ -599,7 +599,7 @@ test.describe("accessibility of the main menu (ar)", () => {
       await page.goto("/register");
       await expect(page.locator("main .register-card").first()).toBeVisible();
       if (m.shape === "grouped") {
-        const group = page.getByRole("button", { name: "الأزمات والقيادة" });
+        const group = page.getByRole("button", { name: "القيادة والقرار" });
         await group.click();
         await expect(group).toHaveAttribute("aria-expanded", "true");
         await expect(page.getByRole("link", { name: "التوجيهات والردود" })).toBeVisible();

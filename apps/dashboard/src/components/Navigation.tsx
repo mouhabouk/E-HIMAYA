@@ -1,5 +1,5 @@
 // The main menu (phase UI-3, docs/phase-ui3/design-menu.md): the same links under the same role rules as before,
-// in seven groups. Grouped, each group is a disclosure button that opens a glass panel on hover, click or keyboard;
+// in eight groups (phase N split the disasters from the command). Grouped, each group is a disclosure button that opens a glass panel on hover, click or keyboard;
 // flat, every link shows at once. At the top of the page or in a side bar, as the user chose in the account menu.
 import { type ReactNode, useEffect, useId, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -18,6 +18,7 @@ import {
   canManagePermissions,
   canMonitorPerformance,
   canOpenAxes,
+  canOpenDisasters,
   canOpenBreakGlass,
   canOpenCoastal,
   canOpenCommand,
@@ -99,18 +100,28 @@ export function navGroups(identity: Identity, t: TFunction, access?: FeatureAcce
     },
     {
       key: "crisis",
-      icon: "crisisAlert",
+      icon: "militaryTech",
       tone: "navy",
       label: t("nav.group.crisis"),
       items: [
         ...e(windowOpen ?? canOpenWindowFull(identity), "/window", "insights", "navy", "window"),
         ...e(canOpenCommand(roles), "/command", "militaryTech", "navy", "command"),
-        ...e(canOpenAxes(roles), "/axes", "warning", "red", "axes"),
         ...e(canOpenRegister(roles), "/plans", "menuBook", "sky", "plans"),
         ...e(canOpenRegister(roles), "/register", "folderOpen", "navy", "register", true),
         ...e(canOpenRegister(roles), "/register/dispatches", "campaign", "red", "dispatches"),
         ...e(isCommittee(roles) || canMonitorPerformance(roles), "/committee", "monitoring", "navy", "committee"),
         ...e(canOpenProgrammes(roles), "/programmes", "schedule", "orange", "programmes"),
+      ],
+    },
+    {
+      // Phase N (docs/phase-n/design-n.md §3): disasters and crises apart from the daily command.
+      key: "disasters",
+      icon: "crisisAlert",
+      tone: "red",
+      label: t("nav.group.disasters"),
+      items: [
+        ...e(canOpenDisasters(roles), "/disasters", "warning", "red", "disasters"),
+        ...e(canOpenAxes(roles), "/axes", "crisisAlert", "red", "axes"),
         ...e(canOpenCoastal(roles), "/coastal", "healthAndSafety", "sky", "coastal"),
         ...e(false, "/drills", "militaryTech", "amber", "drills"),
       ],

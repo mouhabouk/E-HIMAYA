@@ -249,6 +249,15 @@ export interface CommandOverview {
   closed: Axis[];
 }
 
+/** The places of the chosen disasters and their summed figures (phase N, docs/phase-n/design-n.md §3). */
+export interface DisasterMap {
+  figures: Figures;
+  areas: { id: string; level: number; area: Area | null }[];
+  incidents: AxisIncident[];
+  shelters: Shelter[];
+  evacuations: Evacuation[];
+}
+
 export interface AxisBody {
   name: string;
   kind: AxisKind;
@@ -288,6 +297,7 @@ export const crisisKeys = {
   requests: (status: "pending" | "decided") => ["crisis", "requests", status] as const,
   command: ["crisis", "command"] as const,
   boundaries: ["crisis", "boundaries"] as const,
+  disasterMap: (ids: readonly string[]) => ["crisis", "disasterMap", ...ids] as const,
 };
 
 const C = "/api/v1/staff/crisis";
@@ -299,6 +309,8 @@ export function crisisApi(api: ApiClient) {
     crisisAxes: (status: "open" | "closed", signal?: AbortSignal) =>
       api.request<{ items: Axis[] }>(`${C}/axes`, { query: { status }, signal }).then((b) => b.items),
     crisisAxis: (id: string, signal?: AbortSignal) => api.request<AxisDetail>(axis(id), { signal }),
+    disasterMap: (ids: readonly string[], signal?: AbortSignal) =>
+      api.request<DisasterMap>(`${C}/disasters/map`, { query: { axis: ids }, signal }),
     openAxis: (body: AxisBody) => api.request<Axis>(`${C}/axes`, { method: "POST", body }),
     updateAxis: (
       id: string,

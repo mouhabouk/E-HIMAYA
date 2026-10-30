@@ -50,7 +50,8 @@
     "dispatches": "Directives et réponses",
     "group": {
       "ops": "Opérations du jour",
-      "crisis": "Crises et commandement",
+      "crisis": "Commandement et décision",
+      "disasters": "Gestion des catastrophes et des crises",
       "alerts": "Alertes et contact",
       "people": "Bénévoles et médecins",
       "orgs": "Établissements",
@@ -67,7 +68,8 @@
     "towers": "Tours de guet",
     "drones": "Drones",
     "modelCards": "Fiches des modèles",
-    "learning": "Centre d'entraînement"
+    "learning": "Centre d'entraînement",
+    "disasters": "Catastrophes : bilan et carte"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -7492,5 +7494,25 @@
   "committeeHeading": {
     "regional": "Comité régional présidé par M. le gouverneur de {{name}}",
     "national": "Comité national présidé par M. le ministre de l'Intérieur"
+  },
+  "disasters": {
+    "title": "Catastrophes : bilan et carte",
+    "intro": "Les catastrophes en cours et clôturées au même endroit. Choisissez une ou plusieurs catastrophes et gouvernorats : le bilan additionne leurs chiffres et la carte ne montre que leurs lieux (zone, interventions, abris, zones d'évacuation). Les salles, le commandant et les comités régional et national la voient, chacun dans son gouvernorat.",
+    "open": "En cours",
+    "closed": "Clôturées",
+    "noneOpen": "Aucune catastrophe en cours.",
+    "noneClosed": "Aucune catastrophe clôturée.",
+    "gouvernorats": "Gouvernorats affichés",
+    "summary": "Bilan des catastrophes choisies : {{count}}",
+    "chooseOne": "Choisissez au moins une catastrophe.",
+    "list": "Catastrophes",
+    "show": "Afficher {{name}} sur la carte",
+    "mapAria": "Carte des catastrophes choisies : {{count}}",
+    "closedAfter": "Clôturée le {{at}} après {{hours}} h",
+    "places": "Lieux de la catastrophe",
+    "shelter": "Abri",
+    "occupancy": "{{n}} sur {{of}}",
+    "promote": "Élever en catastrophe",
+    "promoted": "Catastrophe élevée depuis une intervention : celle-ci lui est rattachée dès l'ouverture."
   }
 }

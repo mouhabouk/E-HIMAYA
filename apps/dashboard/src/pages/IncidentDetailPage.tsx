@@ -32,6 +32,7 @@ import { bilingual, boundsOfPositions, forecastBounds, forecastMapPolygons } fro
 import { p7Keys } from "../lib/phase7Api";
 import { useFormat, useGouvernorats, useLanguage } from "../lib/hooks";
 import { canManageIncidents } from "../lib/roles";
+import { promoteLink } from "../lib/crisisText";
 import { NearHospitals } from "../components/NearHospitals";
 import { queryKeys } from "../lib/staffApi";
 import { TIMELINE_KINDS, type IncidentDetail, type TimelineEntry } from "../lib/types";
@@ -311,6 +312,12 @@ export function IncidentDetailPage() {
         {incident.op_level && incident.op_level !== "normal" && <LevelTag level={incident.op_level} />}
         <CommandLevelTag level={incident.command_level} />
         {incident.status !== "dissolved" && <MemoryFromIncidentButton incidentId={incident.id} />}
+        {/* Phase N (docs/phase-n/design-n.md §4): the room manager promotes an intervention to a disaster. */}
+        {incident.status === "open" && (user?.identity.roles ?? []).includes("ops_manager") && (
+          <Link className="btn btn--small btn--danger" to={promoteLink(incident)}>
+            {t("disasters.promote")}
+          </Link>
+        )}
       </div>
 
       <div className="detail__grid">
