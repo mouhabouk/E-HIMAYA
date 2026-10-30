@@ -238,6 +238,7 @@ export interface Assignment {
   /** Phase S2: the rest of the mission's times, its crew, what it used, and who gave each time. */
   left_scene_at?: string | null;
   at_hospital_at?: string | null;
+  available_at?: string | null;
   back_at_unit_at?: string | null;
   crew_count?: number | null;
   consumables?: Partial<Record<string, number>>;

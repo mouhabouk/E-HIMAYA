@@ -337,7 +337,8 @@ class FakeCrewServer {
         case 'milestone':
           final step = body['step'] as String;
           x['${step}_at'] ??= now;
-          if (step == 'back_at_unit' && x['status'] == 'on_scene') {
+          if ((step == 'available' || step == 'back_at_unit') &&
+              x['status'] == 'on_scene') {
             x['status'] = 'released';
             x['released_at'] = now;
           }

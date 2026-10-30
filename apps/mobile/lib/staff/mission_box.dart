@@ -216,7 +216,9 @@ Map<String, dynamic> applyLocally(
     case 'milestone':
       final step = b['step'] as String;
       m['${step}_at'] ??= at;
-      if (step == 'back_at_unit' && m['status'] == 'on_scene') {
+      // Free on the way back or back at the unit ends the mission (record.py RELEASING).
+      if ((step == 'available' || step == 'back_at_unit') &&
+          m['status'] == 'on_scene') {
         m['status'] = 'released';
         m['released_at'] = at;
       }

@@ -139,6 +139,7 @@ class MissionRecord(BaseModel):
 
     left_scene_at: datetime | None = None
     at_hospital_at: datetime | None = None
+    available_at: datetime | None = None
     back_at_unit_at: datetime | None = None
     crew_count: int | None = None
     consumables: dict[Consumable, float] = Field(default_factory=dict)
@@ -241,6 +242,7 @@ class RecordTimes(BaseModel):
     on_scene_at: AwareDatetime | None = None
     left_scene_at: AwareDatetime | None = None
     at_hospital_at: AwareDatetime | None = None
+    available_at: AwareDatetime | None = None
     back_at_unit_at: AwareDatetime | None = None
 
 
@@ -255,7 +257,9 @@ class RecordIn(BaseModel):
 
 
 SuggestionSource = Literal["room_note", "team_note", "pasted"]
-EditableStep = Literal["en_route_at", "on_scene_at", "left_scene_at", "at_hospital_at", "back_at_unit_at"]
+EditableStep = Literal[
+    "en_route_at", "on_scene_at", "left_scene_at", "at_hospital_at", "available_at", "back_at_unit_at"
+]
 
 
 class SuggestIn(BaseModel):
@@ -785,7 +789,7 @@ class StepIn(CrewWrite):
 class MilestoneIn(CrewWrite):
     """A step of the mission after the arrival on scene (phase S2)."""
 
-    step: Literal["left_scene", "at_hospital", "back_at_unit"]
+    step: Literal["left_scene", "at_hospital", "available", "back_at_unit"]
 
 
 class TeamRecordIn(CrewWrite):

@@ -1580,6 +1580,7 @@
   "staffStepOver": "Intervention terminée",
   "staffStepLeftScene": "Départ des lieux",
   "staffStepAtHospital": "Arrivée à l'hôpital",
+  "staffStepAvailable": "Disponibles sur le retour",
   "staffStepBackAtUnit": "Retour à l'unité",
   "staffBackEndsMission": "Le retour à l'unité termine la mission et libère le véhicule.",
   "staffRecordTitle": "Équipage et ressources",

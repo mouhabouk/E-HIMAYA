@@ -18,7 +18,7 @@ def _iso(at: datetime) -> str:
 
 def test_rules() -> None:
     now = datetime.now(UTC)
-    t = [now - timedelta(minutes=60 - 10 * i) for i in range(6)]
+    t = [now - timedelta(minutes=70 - 10 * i) for i in range(len(record.CHAIN))]
     times: dict[str, datetime | None] = dict(zip(record.CHAIN, t, strict=True))
     assert record.broken_rule(times, now) is None
     assert record.broken_rule(times | {"on_scene_at": t[0] - timedelta(minutes=1)}, now) == "times_out_of_order"
@@ -104,13 +104,17 @@ async def test_team_records_the_mission(client: httpx.AsyncClient, staff: Staff)
         "detail"
     ] == "consumable_out_of_range"
 
-    # Back at the unit ends the mission and frees the vehicle.
-    mission = (await leader.post(f"{path}/milestone", write(step="back_at_unit"))).json()
-    assert mission["status"] == "released" and mission["back_at_unit_at"] > mission["en_route_at"]
-    assert mission["released_at"] == mission["back_at_unit_at"]
-    assert mission["time_sources"] == {f: "app" for f in record.EDITABLE}
+    # Free on the way back ends the mission and frees the vehicle for another one before it reaches the unit.
+    mission = (await leader.post(f"{path}/milestone", write(step="available"))).json()
+    assert mission["status"] == "released" and mission["released_at"] == mission["available_at"]
+    assert mission["available_at"] >= mission["at_hospital_at"]
     vehicles = (await client.get("/api/v1/staff/resources", params={"limit": 500}, headers=operator)).json()["items"]
     assert next(v for v in vehicles if v["id"] == resource["id"])["status"] == "available"
+    # Back at the unit is still recorded afterwards, for the return time.
+    mission = (await leader.post(f"{path}/milestone", write(step="back_at_unit"))).json()
+    assert mission["back_at_unit_at"] >= mission["available_at"] > mission["en_route_at"]
+    assert mission["released_at"] == mission["available_at"]
+    assert mission["time_sources"] == {f: "app" for f in record.EDITABLE}
 
     # The room corrects a time the team gave: with a reason, and in order.
     url = f"/api/v1/staff/assignments/{assignment['id']}/record"
@@ -139,7 +143,7 @@ async def test_team_records_the_mission(client: httpx.AsyncClient, staff: Staff)
     assert saved["time_sources"]["en_route_at"] == "app"
     detail = (await client.get(f"/api/v1/staff/incidents/{incident_id}", headers=operator)).json()
     kinds = [e["kind"] for e in detail["timeline"]]
-    assert kinds.count("mission_step") == 3 and "team_record" in kinds
+    assert kinds.count("mission_step") == 4 and "team_record" in kinds
     saved_event = next(e for e in detail["timeline"] if e["kind"] == "record_saved")
     assert saved_event["payload"]["reason"] == "تأخر الضغط على الزر في المكان"
     assert list(saved_event["payload"]["times"]) == ["on_scene_at"]
@@ -247,7 +251,7 @@ async def test_snacr_year_from_the_records(client: httpx.AsyncClient, staff: Sta
     )
     assignment = r.json()
     start = datetime.fromisoformat(assignment["created_at"])
-    at = [_iso(start + timedelta(seconds=s)) for s in (1, 2, 3, 4, 5)]
+    at = [_iso(start + timedelta(seconds=s)) for s in (1, 2, 3, 4, 5, 6)]
     times = dict(zip(record.EDITABLE, at, strict=True))
     r = await client.put(
         f"/api/v1/staff/assignments/{assignment['id']}/record",

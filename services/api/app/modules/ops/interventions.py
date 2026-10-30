@@ -226,10 +226,7 @@ def _assignment_out(
     *,
     position: schemas.VehiclePosition | None = None,
 ) -> schemas.AssignmentOut:
-    times = {
-        f: getattr(a, f)
-        for f in ("created_at", "en_route_at", "on_scene_at", "left_scene_at", "at_hospital_at", "back_at_unit_at")
-    }
+    times = {f: getattr(a, f) for f in record_checks.TIMES}
     return schemas.AssignmentOut(
         record_warnings=record_checks.warnings(
             times,
@@ -264,6 +261,7 @@ def _assignment_out(
         cancelled_at=a.cancelled_at,
         left_scene_at=a.left_scene_at,
         at_hospital_at=a.at_hospital_at,
+        available_at=a.available_at,
         back_at_unit_at=a.back_at_unit_at,
         crew_count=a.crew_count,
         consumables=a.consumables or {},

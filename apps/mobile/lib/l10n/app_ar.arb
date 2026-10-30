@@ -1580,6 +1580,7 @@
   "staffStepOver": "انتهى التدخل",
   "staffStepLeftScene": "غادرنا المكان",
   "staffStepAtHospital": "وصلنا للمستشفى",
+  "staffStepAvailable": "متاحون في طريق العودة",
   "staffStepBackAtUnit": "رجعنا للوحدة",
   "staffBackEndsMission": "الرجوع للوحدة ينهي المهمة ويحرر الآلية.",
   "staffRecordTitle": "الأعوان والموارد",

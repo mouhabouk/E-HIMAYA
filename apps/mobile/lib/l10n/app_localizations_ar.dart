@@ -5378,6 +5378,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get staffStepAtHospital => 'وصلنا للمستشفى';
 
   @override
+  String get staffStepAvailable => 'متاحون في طريق العودة';
+
+  @override
   String get staffStepBackAtUnit => 'رجعنا للوحدة';
 
   @override

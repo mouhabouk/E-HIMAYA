@@ -9580,6 +9580,12 @@ abstract class AppLocalizations {
   /// **'At the hospital'**
   String get staffStepAtHospital;
 
+  /// No description provided for @staffStepAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Free on the way back'**
+  String get staffStepAvailable;
+
   /// No description provided for @staffStepBackAtUnit.
   ///
   /// In en, this message translates to:

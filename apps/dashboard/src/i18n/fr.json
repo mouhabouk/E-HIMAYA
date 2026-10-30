@@ -8037,6 +8037,7 @@
       "on_scene_at": "Arrivée sur les lieux",
       "left_scene_at": "Départ des lieux",
       "at_hospital_at": "Arrivée à l'hôpital",
+      "available_at": "Disponible sur le retour",
       "back_at_unit_at": "Retour à l'unité"
     },
     "source": {
@@ -8061,6 +8062,7 @@
       "response": "De l'appel à l'arrivée",
       "on_scene": "Sur les lieux",
       "transport": "Transport à l'hôpital",
+      "available": "Jusqu'à la disponibilité",
       "return": "Retour",
       "mission": "Durée de la mission"
     },

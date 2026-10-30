@@ -391,6 +391,7 @@ async def mission_out(session: AsyncSession, assignment: Assignment) -> schemas.
         cancelled_at=assignment.cancelled_at,
         left_scene_at=assignment.left_scene_at,
         at_hospital_at=assignment.at_hospital_at,
+        available_at=assignment.available_at,
         back_at_unit_at=assignment.back_at_unit_at,
         crew_count=assignment.crew_count,
         consumables=assignment.consumables or {},
@@ -493,6 +494,7 @@ def device_time(body: schemas.CrewWrite, assignment: Assignment) -> datetime:
             assignment.on_scene_at,
             assignment.left_scene_at,
             assignment.at_hospital_at,
+            assignment.available_at,
         )
         if t is not None
     )

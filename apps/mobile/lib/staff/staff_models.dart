@@ -464,6 +464,7 @@ class Mission {
     this.releasedAt,
     this.leftSceneAt,
     this.atHospitalAt,
+    this.availableAt,
     this.backAtUnitAt,
     this.crewCount,
     this.consumables = const {},
@@ -505,6 +506,7 @@ class Mission {
       releasedAt: _date(j['released_at']),
       leftSceneAt: _date(j['left_scene_at']),
       atHospitalAt: _date(j['at_hospital_at']),
+      availableAt: _date(j['available_at']),
       backAtUnitAt: _date(j['back_at_unit_at']),
       crewCount: j['crew_count'] as int?,
       consumables: {
@@ -556,6 +558,9 @@ class Mission {
   /// Phase S2: the rest of the mission's times, the crew and what it used (design-s2 §3).
   final DateTime? leftSceneAt;
   final DateTime? atHospitalAt;
+
+  /// Free for another mission on the way back, before reaching the unit.
+  final DateTime? availableAt;
   final DateTime? backAtUnitAt;
   final int? crewCount;
   final Map<String, int> consumables;
@@ -604,12 +609,13 @@ class Mission {
           ? const ['left_scene']
           : const ['back_at_unit'];
     }
-    if (leftSceneAt != null && atHospitalAt == null) {
+    if (availableAt != null) return const ['back_at_unit'];
+    if (atHospitalAt == null) {
       return transports.isNotEmpty
-          ? const ['at_hospital', 'back_at_unit']
-          : const ['back_at_unit', 'at_hospital'];
+          ? const ['at_hospital', 'available', 'back_at_unit']
+          : const ['back_at_unit', 'available', 'at_hospital'];
     }
-    return const ['back_at_unit'];
+    return const ['back_at_unit', 'available'];
   }
 
   /// Rings full screen until the leader acknowledges it.

@@ -5446,6 +5446,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get staffStepAtHospital => 'At the hospital';
 
   @override
+  String get staffStepAvailable => 'Free on the way back';
+
+  @override
   String get staffStepBackAtUnit => 'Back at the unit';
 
   @override

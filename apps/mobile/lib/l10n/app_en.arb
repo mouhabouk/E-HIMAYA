@@ -2782,6 +2782,7 @@
   "staffStepOver": "Intervention over",
   "staffStepLeftScene": "Left the scene",
   "staffStepAtHospital": "At the hospital",
+  "staffStepAvailable": "Free on the way back",
   "staffStepBackAtUnit": "Back at the unit",
   "staffBackEndsMission": "Back at the unit ends the mission and frees the vehicle.",
   "staffRecordTitle": "Crew and resources",

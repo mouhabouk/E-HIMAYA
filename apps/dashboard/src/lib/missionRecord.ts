@@ -11,17 +11,22 @@ export const RECORD_STEPS = [
   "on_scene_at",
   "left_scene_at",
   "at_hospital_at",
+  "available_at",
   "back_at_unit_at",
 ] as const;
 export type RecordStep = (typeof RECORD_STEPS)[number];
 export type EditableStep = Exclude<RecordStep, "created_at">;
 export const EDITABLE_STEPS = RECORD_STEPS.slice(1) as readonly EditableStep[];
 
-/** A time needs the one before it: no hospital without leaving the scene, no return without a departure. */
+/**
+ * A time needs the one before it: no hospital and no "free on the way back" without leaving the scene, no return
+ * without a departure.
+ */
 export const NEEDS: Partial<Record<EditableStep, EditableStep>> = {
   on_scene_at: "en_route_at",
   left_scene_at: "on_scene_at",
   at_hospital_at: "left_scene_at",
+  available_at: "left_scene_at",
   back_at_unit_at: "en_route_at",
 };
 /** Times the status already reached cannot be cleared. */
@@ -157,6 +162,7 @@ export const INDICATORS = [
   { key: "response", from: "called_at", to: "on_scene_at" },
   { key: "on_scene", from: "on_scene_at", to: "left_scene_at" },
   { key: "transport", from: "left_scene_at", to: "at_hospital_at" },
+  { key: "available", from: "last_out", to: "available_at" },
   { key: "return", from: "last_out", to: "back_at_unit_at" },
   { key: "mission", from: "created_at", to: "back_at_unit_at" },
 ] as const;

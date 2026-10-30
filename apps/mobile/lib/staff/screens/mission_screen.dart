@@ -308,7 +308,11 @@ class _Timeline extends StatelessWidget {
           m.atHospitalAt != null,
           false,
         ),
-      if (m.releasedAt != null && m.backAtUnitAt == null)
+      if (m.availableAt != null)
+        (l10n.staffStepAvailable, m.availableAt, true, false),
+      if (m.releasedAt != null &&
+          m.backAtUnitAt == null &&
+          m.availableAt == null)
         (l10n.staffStepOver, m.releasedAt, true, false),
       (l10n.staffStepBackAtUnit, m.backAtUnitAt, m.backAtUnitAt != null, false),
     ];
@@ -499,6 +503,7 @@ class _Milestones extends ConsumerWidget {
         Icons.local_hospital,
         Tone.red,
       ),
+      'available' => (l10n.staffStepAvailable, Icons.check_circle, Tone.navy),
       _ => (l10n.staffStepBackAtUnit, Icons.home_work, Tone.green),
     };
     Future<void> give(String step) =>

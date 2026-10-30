@@ -174,13 +174,23 @@ void main() {
     ); // the shift's 5, plus one
     expect((record.json! as Map)['consumables'], {'water_m3': 2});
 
-    final back = find.byKey(const Key('step-back_at_unit'));
+    // Free on the way back: the vehicle can be sent again, the return stays to be given.
+    final free = find.byKey(const Key('step-available'));
     await tester.scrollUntilVisible(
-      back,
+      free,
       -200,
       scrollable: find.byType(Scrollable).first,
     );
     await tester.pumpAndSettle();
+    await tester.tap(free);
+    await tester.pumpAndSettle();
+    expect(server.writes.last.json, containsPair('step', 'available'));
+    expect(server.missions.single['status'], 'released');
+    expect(find.byKey(const Key('step-available')), findsNothing);
+    expect(find.byKey(const Key('step-at_hospital')), findsNothing);
+    expect(find.text('Free on the way back'), findsOneWidget);
+
+    final back = find.byKey(const Key('step-back_at_unit'));
     await tester.tap(back);
     await tester.pumpAndSettle();
     expect(server.writes.last.json, containsPair('step', 'back_at_unit'));

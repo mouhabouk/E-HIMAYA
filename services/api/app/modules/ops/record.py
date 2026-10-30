@@ -22,14 +22,35 @@ from app.modules.ops.models import Assignment, Incident, TimelineEvent
 from app.modules.reports.domain import Status
 
 #: The times of a mission, in the order they happen: the order (fixed), the departure, the arrival on scene, the
-#: departure from the scene, the arrival at the hospital and the return to the unit.
-CHAIN = ("created_at", "en_route_at", "on_scene_at", "left_scene_at", "at_hospital_at", "back_at_unit_at")
+#: departure from the scene, the arrival at the hospital, free for another mission on the way back, and the return to
+#: the unit.
+CHAIN = (
+    "created_at",
+    "en_route_at",
+    "on_scene_at",
+    "left_scene_at",
+    "at_hospital_at",
+    "available_at",
+    "back_at_unit_at",
+)
 EDITABLE = CHAIN[1:]
 #: A time needs the one before it: no hospital without leaving the scene, no return without a departure.
-NEEDS = {"on_scene_at": "en_route_at", "left_scene_at": "on_scene_at", "at_hospital_at": "left_scene_at"}
+NEEDS = {
+    "on_scene_at": "en_route_at",
+    "left_scene_at": "on_scene_at",
+    "at_hospital_at": "left_scene_at",
+    "available_at": "left_scene_at",
+}
 NEEDS_RETURN = "en_route_at"
 #: The steps the team's phone gives after the arrival on scene.
-MILESTONES = {"left_scene": "left_scene_at", "at_hospital": "at_hospital_at", "back_at_unit": "back_at_unit_at"}
+MILESTONES = {
+    "left_scene": "left_scene_at",
+    "at_hospital": "at_hospital_at",
+    "available": "available_at",
+    "back_at_unit": "back_at_unit_at",
+}
+#: The steps that free the vehicle when no one has ended the mission yet.
+RELEASING = ("available_at", "back_at_unit_at")
 #: A phone or a computer a little ahead of the server.
 FUTURE_SKEW = timedelta(minutes=2)
 #: The longest a mission lasts, from the order to the return.
@@ -116,7 +137,8 @@ def _timeline(session: AsyncSession, assignment: Assignment, kind: str, actor: s
 
 
 async def _release(session: AsyncSession, assignment: Assignment, actor: str, at: datetime, source: str) -> None:
-    """Back at the unit ends the mission when no one has ended it yet: the vehicle is free again."""
+    """Free on the way back, or back at the unit, ends the mission when no one has ended it yet: the vehicle can be
+    sent again."""
     if assignment.status == "on_scene":
         await interventions._set_assignment_status(session, assignment, "released", actor, at=at, source=source)
 
@@ -137,7 +159,7 @@ async def milestone(
     setattr(assignment, field, at)
     assignment.time_sources = {**(assignment.time_sources or {}), field: source}
     _timeline(session, assignment, "mission_step", actor, step=step, at=at.isoformat(), source=source)
-    if step == "back_at_unit":
+    if field in RELEASING:
         await _release(session, assignment, actor, at, source)
     await session.flush()
     return True
@@ -197,9 +219,10 @@ async def save(
         else:
             sources[field] = "room"
     assignment.time_sources = sources
-    if changed.get("back_at_unit_at") is not None:
-        await _release(session, assignment, actor, changed["back_at_unit_at"], "room")
-        assignment.time_sources = {**assignment.time_sources, "back_at_unit_at": "room"}
+    freed = next((changed[f] for f in RELEASING if changed.get(f) is not None), None)
+    if freed is not None:
+        await _release(session, assignment, actor, freed, "room")
+        assignment.time_sources = {**assignment.time_sources, **{f: "room" for f in RELEASING if changed.get(f)}}
     if assignment.released_at is not None and assignment.on_scene_at is not None:
         assignment.released_at = max(assignment.released_at, assignment.on_scene_at)
     crew_before, used_before = assignment.crew_count, dict(assignment.consumables or {})

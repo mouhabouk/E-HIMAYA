@@ -27,6 +27,7 @@ UPGRADE = f"""
 ALTER TABLE ops.assignment
     ADD COLUMN left_scene_at timestamptz,
     ADD COLUMN at_hospital_at timestamptz,
+    ADD COLUMN available_at timestamptz,
     ADD COLUMN back_at_unit_at timestamptz,
     ADD COLUMN crew_count smallint CHECK (crew_count BETWEEN 1 AND 60),
     ADD COLUMN consumables jsonb NOT NULL DEFAULT '{{}}'::jsonb CHECK (jsonb_typeof(consumables) = 'object'),
@@ -35,8 +36,9 @@ ALTER TABLE ops.assignment ADD CONSTRAINT ck_assignment_times_order CHECK (
     (on_scene_at IS NULL OR en_route_at IS NULL OR on_scene_at >= en_route_at)
     AND (left_scene_at IS NULL OR (on_scene_at IS NOT NULL AND left_scene_at >= on_scene_at))
     AND (at_hospital_at IS NULL OR (left_scene_at IS NOT NULL AND at_hospital_at >= left_scene_at))
+    AND (available_at IS NULL OR (left_scene_at IS NOT NULL AND available_at >= coalesce(at_hospital_at, left_scene_at)))
     AND (back_at_unit_at IS NULL OR (en_route_at IS NOT NULL AND back_at_unit_at > en_route_at
-        AND back_at_unit_at >= coalesce(at_hospital_at, left_scene_at, on_scene_at, en_route_at)))
+        AND back_at_unit_at >= coalesce(available_at, at_hospital_at, left_scene_at, on_scene_at, en_route_at)))
 ) NOT VALID;
 
 ALTER TABLE ops.crew_event DROP CONSTRAINT crew_event_kind_check;
@@ -63,8 +65,8 @@ ALTER TABLE ops.crew_event DROP CONSTRAINT crew_event_kind_check;
 ALTER TABLE ops.crew_event ADD CONSTRAINT crew_event_kind_check CHECK (kind IN ({KINDS}));
 
 ALTER TABLE ops.assignment DROP CONSTRAINT ck_assignment_times_order;
-ALTER TABLE ops.assignment DROP COLUMN left_scene_at, DROP COLUMN at_hospital_at, DROP COLUMN back_at_unit_at,
-    DROP COLUMN crew_count, DROP COLUMN consumables, DROP COLUMN time_sources;
+ALTER TABLE ops.assignment DROP COLUMN left_scene_at, DROP COLUMN at_hospital_at, DROP COLUMN available_at,
+    DROP COLUMN back_at_unit_at, DROP COLUMN crew_count, DROP COLUMN consumables, DROP COLUMN time_sources;
 """  # noqa: S608 (constant SQL, nothing is interpolated from input)
 
 

@@ -5498,6 +5498,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get staffStepAtHospital => 'Arrivée à l\'hôpital';
 
   @override
+  String get staffStepAvailable => 'Disponibles sur le retour';
+
+  @override
   String get staffStepBackAtUnit => 'Retour à l\'unité';
 
   @override

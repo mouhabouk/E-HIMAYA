@@ -36,6 +36,18 @@ MAX_SUGGESTIONS = 20
 #: Matched on the text with its letters folded (see ``_fold``).
 STEP_WORDS: tuple[tuple[str, tuple[str, ...]], ...] = (
     (
+        "available_at",
+        (
+            "متاحين",
+            "متاحون",
+            "متاح",
+            "جاهزين لتدخل",
+            "جاهزين للتدخل",
+            "disponible",
+            "available",
+        ),
+    ),
+    (
         "back_at_unit_at",
         (
             "رجعنا للوحده",

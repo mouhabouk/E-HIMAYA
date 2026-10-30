@@ -8037,6 +8037,7 @@
       "on_scene_at": "Arrival on scene",
       "left_scene_at": "Left the scene",
       "at_hospital_at": "Arrival at hospital",
+      "available_at": "Free on the way back",
       "back_at_unit_at": "Back at the unit"
     },
     "source": {
@@ -8061,6 +8062,7 @@
       "response": "Call to arrival",
       "on_scene": "On scene",
       "transport": "Transport to hospital",
+      "available": "Until free",
       "return": "Return",
       "mission": "Mission length"
     },

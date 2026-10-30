@@ -85,6 +85,7 @@ function assignmentTimes(a: Assignment) {
     on_scene_at: a.on_scene_at,
     left_scene_at: a.left_scene_at ?? null,
     at_hospital_at: a.at_hospital_at ?? null,
+    available_at: a.available_at ?? null,
     back_at_unit_at: a.back_at_unit_at ?? null,
   };
 }

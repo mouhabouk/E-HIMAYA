@@ -5,6 +5,16 @@ block a write, because a real mission can be unusual."""
 from datetime import datetime, timedelta
 
 #: Straight-line speed from the unit to the scene above which the travel time is not credible.
+#: The times of a mission (record.CHAIN, kept here so that this module imports nothing of the room's).
+TIMES = (
+    "created_at",
+    "en_route_at",
+    "on_scene_at",
+    "left_scene_at",
+    "at_hospital_at",
+    "available_at",
+    "back_at_unit_at",
+)
 MAX_SPEED_KMH = 130
 #: Below this distance the speed is not judged (the unit next to the scene).
 SPEED_FROM_M = 2000
@@ -58,7 +68,8 @@ def warnings(
     last_out = hospital or left or arrival
     if back and last_out and back - last_out > RETURN_LONG:
         out.append("return_long")
-    if back is None and released_at is not None and now - released_at > RETURN_DUE:
+    # Free on the way back: the vehicle may be on its next mission, its return is not awaited.
+    if back is None and times.get("available_at") is None and released_at and now - released_at > RETURN_DUE:
         out.append("return_missing")
     if status == "released" and crew_count is None:
         out.append("crew_missing")
