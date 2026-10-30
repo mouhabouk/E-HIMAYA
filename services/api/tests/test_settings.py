@@ -64,6 +64,7 @@ async def test_defaults_present(client: httpx.AsyncClient, staff: Staff) -> None
         "anonymous.report_quota",
         "geo.max_trusted_accuracy_m",
         "contact.access_info_days",
+        "operations.thresholds",
     }
     security = _items((await client.get(URL, headers=staff(["security_admin"], gouvernorat=None))).json())
     assert {k for k, v in security.items() if v["editable"]} == {"anonymous.report_quota", "alerts.four_eyes"}
@@ -126,6 +127,10 @@ async def test_version_conflict(client: httpx.AsyncClient, staff: Staff, restore
         ("anonymous.report_quota", True),
         ("geo.max_trusted_accuracy_m", 10),
         ("geo.max_trusted_accuracy_m", 30_000),
+        ("operations.thresholds", {"crisis.disaster_map_max": 0}),
+        ("operations.thresholds", {"crisis.disaster_map_max": "5"}),
+        ("operations.thresholds", {"no.such_threshold": 5}),
+        ("operations.thresholds", [5]),
     ],
 )
 async def test_validation(client: httpx.AsyncClient, staff: Staff, key: str, value: Any) -> None:
@@ -186,3 +191,27 @@ async def test_cache_dropped_on_bus_event(session: AsyncSession, restore_setting
     # …until another instance announces the change.
     await settings_service.on_event("settings.changed", {"key": "anonymous.report_quota"})
     assert await settings_service.get(session, "anonymous.report_quota") == 7
+
+
+async def test_operational_thresholds(client: httpx.AsyncClient, staff: Staff, restore_settings: None) -> None:
+    """Phase N (review point 27): the numbers of daily operations are one setting, each within its bounds."""
+    central = staff(["central_committee"], gouvernorat=None)
+    body = (await client.get(URL, headers=central)).json()
+    specs = {t["name"]: t for t in body["thresholds"]}
+    assert specs["alerts.max_days"] == {
+        "name": "alerts.max_days",
+        "group": "alerts",
+        "unit": "days",
+        "default": 7,
+        "low": 1,
+        "high": 30,
+    }
+    item = _items(body)["operations.thresholds"]
+    assert item["value"]["doctors.committee_max"] == 7 and item["editable"]
+    # Only the numbers given change; the others keep their default.
+    r = await _put(client, central, "operations.thresholds", {"doctors.committee_max": 5}, item["version"])
+    assert r.status_code == 200, r.text
+    assert r.json()["value"]["doctors.committee_max"] == 5 and r.json()["value"]["alerts.max_days"] == 7
+    admin = staff(["sysadmin"], gouvernorat=None)
+    committee = (await client.get("/api/v1/staff/medical-committee", headers=admin)).json()
+    assert committee["max_members"] == 5

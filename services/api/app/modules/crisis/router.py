@@ -35,6 +35,7 @@ from app.modules.layers.service import point as wkt_point
 from app.modules.register import plans as register_plans
 from app.modules.register import service as register
 from app.modules.register.models import Document as RegisterDocument
+from app.modules.settings import service as settings
 
 router = APIRouter(prefix="/api/v1/staff/crisis", tags=["staff", "crisis"])
 Session = Annotated[AsyncSession, Depends(get_session)]
@@ -52,7 +53,8 @@ _Reader = Annotated[
     ),
 ]
 # The disasters one view may show at once (phase N).
-DISASTER_MAP_LIMIT = 30
+# The disasters chosen at once: the setting ``crisis.disaster_map_max`` (phase N §9), never above its bound.
+DISASTER_MAP_CEILING = 100
 TIMELINE_LIMIT = 200
 CACHE_HEADER = "private, max-age=3600"
 
@@ -710,7 +712,7 @@ async def decide_request(
 
 @router.get("/disasters/map", response_model=schemas.DisasterMap)
 async def disaster_map(
-    principal: Reader, session: Session, axis: Annotated[str, Query(max_length=DISASTER_MAP_LIMIT * 37)] = ""
+    principal: Reader, session: Session, axis: Annotated[str, Query(max_length=DISASTER_MAP_CEILING * 37)] = ""
 ) -> schemas.DisasterMap:
     """The disaster view (docs/phase-n/design-n.md §3): the places of the chosen disasters only (their areas,
     interventions, shelters and evacuation zones) and their summed figures, for the rooms, the commander and the
@@ -719,7 +721,7 @@ async def disaster_map(
         axis_ids = [uuid.UUID(part) for part in axis.split(",") if part.strip()]
     except ValueError:
         axis_ids = []
-    if not 0 < len(axis_ids) <= DISASTER_MAP_LIMIT:
+    if not 0 < len(axis_ids) <= await settings.threshold(session, "crisis.disaster_map_max"):
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "invalid_selection")
     members: dict[uuid.UUID, Axis] = {}
     for chosen in await session.scalars(select(Axis).where(Axis.id.in_(axis_ids))):

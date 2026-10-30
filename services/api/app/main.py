@@ -32,6 +32,7 @@ from app.modules.anomaly.router import router as anomaly_router
 from app.modules.appinfo.feedback import router as appinfo_feedback_router
 from app.modules.appinfo.router import router as appinfo_router
 from app.modules.audit.router import router as audit_router
+from app.modules.availability.router import router as availability_router
 from app.modules.basemap.router import router as basemap_router
 from app.modules.basemap.router import tiles_router as basemap_tiles_router
 from app.modules.checklist.router import router as checklist_router
@@ -340,6 +341,7 @@ def create_app() -> FastAPI:
         towers_router,
         towers_internal_router,
         places_router,
+        availability_router,
         drones_router,
         drones_internal_router,
         checklist_router,

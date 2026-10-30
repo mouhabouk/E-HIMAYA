@@ -1170,6 +1170,18 @@ erDiagram
         datetime updated_at
         datetime deleted_at
     }
+    identity__availability_slot {
+        uuid id PK
+        uuid user_id FK
+        text role
+        text kind
+        array weekdays
+        date starts_on
+        date ends_on
+        time from_time
+        time to_time
+        datetime created_at
+    }
     identity__consent {
         integer id PK
         uuid user_id FK
@@ -1276,6 +1288,7 @@ erDiagram
     geo__gouvernorat ||--o{ identity__doctor : "gouvernorat_code"
     geo__gouvernorat ||--o{ identity__profile : "gouvernorat_code"
     geo__gouvernorat ||--o{ identity__volunteer : "gouvernorat_code"
+    identity__account ||--o{ identity__availability_slot : "user_id"
     identity__account ||--o{ identity__consent : "user_id"
     identity__account ||--o{ identity__doctor : "user_id"
     identity__account ||--o{ identity__email_code : "user_id"

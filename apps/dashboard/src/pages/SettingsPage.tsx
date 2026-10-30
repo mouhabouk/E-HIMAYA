@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useId, useState, type SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
@@ -29,7 +29,7 @@ import {
   type SettingError,
 } from "../lib/phase9";
 import { p9Keys } from "../lib/phase9Api";
-import { SLA_BANDS, type PlatformSetting } from "../lib/phase9Types";
+import { SLA_BANDS, type PlatformSetting, type ThresholdSpec } from "../lib/phase9Types";
 import { CHECK_MAX_HOURS_RANGE, LIVE_MAX_MINUTES_RANGE } from "../lib/safetyApi";
 import { PageTitle } from "../components/PageTitle";
 import { Stepper } from "../components/Stepper";
@@ -170,6 +170,58 @@ function SettingCard({
   );
 }
 
+const THRESHOLD_GROUPS = ["crisis", "alerts", "rooms", "partners"] as const;
+
+/**
+ * Phase N (docs/phase-n/design-n.md §9, review point 27): the operational thresholds, one setting, one card per group.
+ * Each number has its own bounds, given by the API with its default.
+ */
+function ThresholdsCards({ setting, specs }: { setting: PlatformSetting; specs: readonly ThresholdSpec[] }) {
+  const { t } = useTranslation();
+  const fmt = useFormat();
+  const current = (setting.value ?? {}) as Record<string, number>;
+  const all = Object.fromEntries(specs.map((s) => [s.name, String(current[s.name] ?? s.default)]));
+  const byName = new Map(specs.map((s) => [s.name, s]));
+  const outOfBounds = (v: Values) =>
+    specs.some((s) => {
+      const n = Number(v[s.name] === "" ? Number.NaN : v[s.name]);
+      return !Number.isInteger(n) || n < s.low || n > s.high;
+    });
+  return (
+    <>
+      {THRESHOLD_GROUPS.map((group) => {
+        const mine = specs.filter((s) => s.group === group);
+        if (mine.length === 0) return null;
+        return (
+          <SettingCard
+            key={`${setting.key}-${setting.version}-${group}`}
+            setting={setting}
+            title={t(`settings.thresholds.group.${group}`)}
+            help={t("settings.thresholds.help")}
+            orderMessage={t("settings.thresholds.bounds")}
+            fields={mine.map((s) => ({
+              name: s.name,
+              label: t(`settings.thresholds.names.${s.name}`),
+              unit: t("settings.thresholds.unit", {
+                unit: t(`settings.thresholds.units.${s.unit}`),
+                low: fmt.number(s.low),
+                high: fmt.number(s.high),
+                fallback: fmt.number(s.default),
+              }),
+              min: s.low,
+              max: s.high,
+            }))}
+            initial={all}
+            // The whole setting is sent: the other groups keep their current values.
+            toValue={(v) => Object.fromEntries([...byName.keys()].map((name) => [name, Number(v[name] ?? all[name])]))}
+            validate={(v) => (outOfBounds({ ...all, ...v }) ? "order" : null)}
+          />
+        );
+      })}
+    </>
+  );
+}
+
 const ints = (v: Values, names: readonly string[]) => names.map((n) => Number(v[n] === "" ? Number.NaN : v[n]));
 
 /**
@@ -180,7 +232,9 @@ export function SettingsPage() {
   const { t } = useTranslation();
   const { user } = useAuth();
   const fmt = useFormat();
+  const { api } = useServices();
   const query = usePlatformSettings();
+  const specs = useQuery({ queryKey: p9Keys.thresholdSpecs, queryFn: ({ signal }) => api.thresholdSpecs(signal), staleTime: Infinity });
 
   if (query.isPending) return <Loading />;
   if (query.isError) return <ErrorBox error={query.error} onRetry={() => void query.refetch()} />;
@@ -198,6 +252,7 @@ export function SettingsPage() {
   const liveMax = settingOf(items, "safety.live_max_minutes");
   const checkMax = settingOf(items, "safety.check_max_hours");
   const locationHistory = settingOf(items, "safety.location_history");
+  const thresholds = settingOf(items, "operations.thresholds");
   const anyEditable = items.some((s) => s.editable);
   const seconds = t("settings.seconds");
 
@@ -329,6 +384,8 @@ export function SettingsPage() {
       {locationHistory && (
         <LocationHistoryCard key={`${locationHistory.key}-${locationHistory.version}`} setting={locationHistory} />
       )}
+
+      {thresholds && specs.data && specs.data.length > 0 && <ThresholdsCards setting={thresholds} specs={specs.data} />}
 
       <section className="card" aria-labelledby="settings-fixed">
         <h2 id="settings-fixed">{t("settings.fixed.title")}</h2>

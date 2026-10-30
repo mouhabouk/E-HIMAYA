@@ -9200,3 +9200,33 @@ button.nav-card:hover {
     max-block-size: none;
   }
 }
+
+/* Phase N (design §8): availability calendar of volunteers and doctors. */
+.calendar-now--available {
+  background: var(--ok-bg);
+  color: var(--ok-text);
+}
+.calendar-now--unavailable {
+  background: var(--error-bg);
+  color: var(--error-text);
+}
+.calendar-slots {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+.calendar-slots__item {
+  padding: 0.4rem 0.6rem;
+  border-inline-start: 4px solid var(--ok-text);
+  background: var(--surface-2);
+  border-radius: var(--radius);
+}
+.calendar-slots__item--unavailable {
+  border-inline-start-color: var(--error-text);
+}
+.calendar-slots__hours {
+  white-space: nowrap;
+  unicode-bidi: isolate;
+}

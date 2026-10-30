@@ -31,6 +31,7 @@ function doctor(overrides: Partial<StaffDoctorDetail> = {}): StaffDoctorDetail {
     cp_staff_no: "PC/4521",
     review_reason: null,
     reviews: [],
+    calendar: { role: "doctor", slots: [], planned_now: null },
     ...overrides,
   };
 }

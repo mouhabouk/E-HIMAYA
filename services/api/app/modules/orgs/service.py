@@ -45,6 +45,7 @@ from app.modules.orgs.models import (
     PreventionVisit,
     TeamMember,
 )
+from app.modules.settings import service as settings
 
 _LAT = func.ST_Y(cast(Organization.location, Geometry))
 _LON = func.ST_X(cast(Organization.location, Geometry))
@@ -567,12 +568,13 @@ async def alerts_counts(session: AsyncSession, org_ids: Sequence[uuid.UUID]) -> 
         )
     )
     # Phase P3b: reservations due within 14 days or overdue, and visits to come.
+    soon = await settings.threshold(session, "orgs.reservation_due_soon_days")
     ending.update(
         await session.scalars(
             select(PreventionReservation.org_id).where(
                 PreventionReservation.org_id.in_(org_ids),
                 PreventionReservation.lifted_at.is_(None),
-                PreventionReservation.due_on <= on + timedelta(days=domain.RESERVATION_DUE_SOON_DAYS),
+                PreventionReservation.due_on <= on + timedelta(days=soon),
             )
         )
     )
@@ -677,7 +679,7 @@ async def invite(
         email=str(body.email).lower(),
         role=body.role.value,
         token_hash=_token_hash(token),
-        expires_at=datetime.now(UTC) + timedelta(days=domain.INVITATION_DAYS),
+        expires_at=datetime.now(UTC) + timedelta(days=await settings.threshold(session, "orgs.invitation_days")),
         created_by=user.user_id,
     )
     session.add(invitation)

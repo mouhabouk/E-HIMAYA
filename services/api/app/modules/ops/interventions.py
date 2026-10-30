@@ -555,6 +555,8 @@ async def suggestions(
             Volunteer.ready_until > func.now(),
             Volunteer.period_from <= today,
             (Volunteer.period_to.is_(None)) | (Volunteer.period_to >= today),
+            # Phase N (design §8): a volunteer whose calendar says unavailable now is not suggested.
+            func.identity.planned_state(Volunteer.user_id, "volunteer", func.now()).is_distinct_from("unavailable"),
             volunteers.scope_filter(principal),
         )
     )

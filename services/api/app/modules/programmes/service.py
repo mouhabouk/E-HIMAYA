@@ -25,12 +25,11 @@ from app.modules.layers.service import point as wkt_point
 from app.modules.layers.service import sync_columns
 from app.modules.programmes import domain
 from app.modules.programmes.models import Programme, ProgrammePoint, ProgrammeRevision
+from app.modules.settings import service as settings
 
 LAT = func.ST_Y(cast(ProgrammePoint.location, Geometry))
 LON = func.ST_X(cast(ProgrammePoint.location, Geometry))
 LIVE = ("approved", "updated")
-# A beach is guarded today when an open point of a beach programme in force is this close (design §2.6).
-GUARD_RADIUS_M = 1000
 
 LAYER_LOOK: dict[str, tuple[str, str]] = {
     "road": ("ambulance", "#C62828"),
@@ -389,7 +388,8 @@ async def figures(session: AsyncSession, ids: list[uuid.UUID]) -> dict[uuid.UUID
 
 
 async def guarded_near(session: AsyncSession, lat: float, lon: float, day: date) -> str | None:
-    """The beach programme (code and version) with an open point within GUARD_RADIUS_M of a beach on ``day``."""
+    """The beach programme (code and version) with an open point near a beach on ``day`` (the
+    ``programmes.guard_radius_m`` setting)."""
     async with as_system(session):
         found = await session.execute(
             text(
@@ -405,7 +405,11 @@ async def guarded_near(session: AsyncSession, lat: float, lon: float, day: date)
                 ORDER BY ST_Distance(pt.location, ST_GeogFromText(:here)) LIMIT 1
                 """
             ),
-            {"day": day, "here": wkt_point(lat, lon), "radius": GUARD_RADIUS_M},
+            {
+                "day": day,
+                "here": wkt_point(lat, lon),
+                "radius": await settings.threshold(session, "programmes.guard_radius_m"),
+            },
         )
         row = found.first()
     return f"{row[0]} v{row[1]}" if row else None

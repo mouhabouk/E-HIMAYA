@@ -3762,6 +3762,67 @@
       "version": "Version",
       "remarks": "Latest remarks",
       "noRemarks": "No remark in this period."
+    },
+    "thresholds": {
+      "group": {
+        "crisis": "Disaster and command thresholds",
+        "alerts": "Alert thresholds",
+        "rooms": "Room and field thresholds",
+        "partners": "Doctor and institution thresholds"
+      },
+      "help": "The numbers of daily work: changing them needs no new release, and they stay within their bounds. What is not changed keeps its default.",
+      "bounds": "Each value is a whole number within the bounds shown next to it.",
+      "unit": "{{unit}} · between {{low}} and {{high}} · default {{fallback}}",
+      "units": {
+        "count": "count",
+        "days": "days",
+        "hours": "hours",
+        "metres": "metres"
+      },
+      "names": {
+        "crisis": {
+          "disaster_map_max": "Disasters shown together, at most"
+        },
+        "decision": {
+          "unit_radius_m": "Search radius for nearby units",
+          "resource_radius_m": "Search radius for suggested resources"
+        },
+        "forecast": {
+          "flood_radius_m": "Flood estimate radius around the intervention"
+        },
+        "alerts": {
+          "max_days": "Longest duration of an alert",
+          "inbox_days": "How long alerts stay in the citizen’s inbox"
+        },
+        "telephony": {
+          "sms_match_m": "SMS and app report matching distance"
+        },
+        "drones": {
+          "nearby_m": "Radius of zones near a drone"
+        },
+        "sensors": {
+          "suggestion_hours": "Validity of a sensor suggestion"
+        },
+        "towers": {
+          "suggestion_hours": "Validity of a tower suggestion"
+        },
+        "inventory": {
+          "stale_days": "Days after which an inventory is stale"
+        },
+        "coastal": {
+          "warn_radius_m": "Beach warning radius"
+        },
+        "programmes": {
+          "guard_radius_m": "Guarded beach radius"
+        },
+        "doctors": {
+          "committee_max": "Medical committee members, at most"
+        },
+        "orgs": {
+          "invitation_days": "Validity of an institution invitation",
+          "reservation_due_soon_days": "Warning before reservations fall due"
+        }
+      }
     }
   },
   "accounts": {
@@ -7548,5 +7609,22 @@
     "where": "Where: type the place's name",
     "none": "No place of that name in this layer.",
     "more": "More results: refine the name."
+  },
+  "calendar": {
+    "title": "Availability calendar",
+    "empty": "No calendar set in the app.",
+    "now": {
+      "available": "Available now by their calendar",
+      "unavailable": "Unavailable now by their calendar: not suggested for call-outs",
+      "none": "Nothing planned now"
+    },
+    "kind": {
+      "available": "Available",
+      "unavailable": "Unavailable"
+    },
+    "between": "from {{from}} to {{to}}",
+    "from": "from {{from}}",
+    "everyDay": "every day",
+    "overnight": "(into the next day)"
   }
 }

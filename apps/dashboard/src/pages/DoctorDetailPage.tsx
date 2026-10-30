@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useId, useState, type SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
+import { AvailabilityCalendar } from "../components/AvailabilityCalendar";
 import { Link, useParams } from "react-router";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { useServices } from "../context/services";
@@ -207,6 +208,7 @@ export function DoctorDetailPage() {
           <ReviewForm doctor={d} />
         </section>
       </div>
+      <AvailabilityCalendar calendar={d.calendar} />
       <section className="card" aria-labelledby="sec-doctor-reviews">
         <h2 id="sec-doctor-reviews">{t("volunteers.detail.reviews")}</h2>
         {d.reviews.length === 0 ? (

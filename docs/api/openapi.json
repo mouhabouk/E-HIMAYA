@@ -12576,6 +12576,14 @@
             "title": "App Ratings",
             "type": "array"
           },
+          "availability": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/SlotOut"
+            },
+            "title": "Availability",
+            "type": "array"
+          },
           "calls": {
             "items": {
               "$ref": "#/components/schemas/ExportCall"
@@ -32666,6 +32674,184 @@
         "title": "SkillTotal",
         "type": "object"
       },
+      "SlotIn": {
+        "properties": {
+          "ends_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ends On"
+          },
+          "from_time": {
+            "format": "time",
+            "title": "From Time",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "available",
+              "unavailable"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "starts_on": {
+            "format": "date",
+            "title": "Starts On",
+            "type": "string"
+          },
+          "to_time": {
+            "format": "time",
+            "title": "To Time",
+            "type": "string"
+          },
+          "weekdays": {
+            "items": {
+              "maximum": 7.0,
+              "minimum": 1.0,
+              "type": "integer"
+            },
+            "maxItems": 7,
+            "title": "Weekdays",
+            "type": "array"
+          }
+        },
+        "required": [
+          "kind",
+          "starts_on",
+          "from_time",
+          "to_time"
+        ],
+        "title": "SlotIn",
+        "type": "object"
+      },
+      "SlotOut": {
+        "properties": {
+          "ends_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ends On"
+          },
+          "from_time": {
+            "format": "time",
+            "title": "From Time",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "available",
+              "unavailable"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "starts_on": {
+            "format": "date",
+            "title": "Starts On",
+            "type": "string"
+          },
+          "to_time": {
+            "format": "time",
+            "title": "To Time",
+            "type": "string"
+          },
+          "weekdays": {
+            "items": {
+              "maximum": 7.0,
+              "minimum": 1.0,
+              "type": "integer"
+            },
+            "maxItems": 7,
+            "title": "Weekdays",
+            "type": "array"
+          }
+        },
+        "required": [
+          "kind",
+          "starts_on",
+          "from_time",
+          "to_time",
+          "id"
+        ],
+        "title": "SlotOut",
+        "type": "object"
+      },
+      "SlotsIn": {
+        "properties": {
+          "slots": {
+            "items": {
+              "$ref": "#/components/schemas/SlotIn"
+            },
+            "maxItems": 20,
+            "title": "Slots",
+            "type": "array"
+          }
+        },
+        "required": [
+          "slots"
+        ],
+        "title": "SlotsIn",
+        "type": "object"
+      },
+      "SlotsOut": {
+        "properties": {
+          "planned_now": {
+            "anyOf": [
+              {
+                "enum": [
+                  "available",
+                  "unavailable"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Planned Now"
+          },
+          "role": {
+            "enum": [
+              "volunteer",
+              "doctor"
+            ],
+            "title": "Role",
+            "type": "string"
+          },
+          "slots": {
+            "items": {
+              "$ref": "#/components/schemas/SlotOut"
+            },
+            "title": "Slots",
+            "type": "array"
+          }
+        },
+        "required": [
+          "role",
+          "slots",
+          "planned_now"
+        ],
+        "title": "SlotsOut",
+        "type": "object"
+      },
       "SmsKeyOut": {
         "description": "The phone's own key for its signed EH2 text messages (design §9.3).",
         "properties": {
@@ -33044,6 +33230,9 @@
             "title": "Available",
             "type": "boolean"
           },
+          "calendar": {
+            "$ref": "#/components/schemas/SlotsOut"
+          },
           "committee_until": {
             "anyOf": [
               {
@@ -33225,7 +33414,8 @@
           "licence_no",
           "cp_staff_no",
           "review_reason",
-          "reviews"
+          "reviews",
+          "calendar"
         ],
         "title": "StaffDoctorDetail",
         "type": "object"
@@ -35853,6 +36043,9 @@
             "title": "Availability",
             "type": "string"
           },
+          "calendar": {
+            "$ref": "#/components/schemas/SlotsOut"
+          },
           "callouts": {
             "items": {
               "$ref": "#/components/schemas/VolunteerCalloutRef"
@@ -36027,7 +36220,8 @@
           "notes",
           "review_reason",
           "reviews",
-          "callouts"
+          "callouts",
+          "calendar"
         ],
         "title": "StaffVolunteerDetail",
         "type": "object"
@@ -38045,6 +38239,44 @@
           "value"
         ],
         "title": "Threshold",
+        "type": "object"
+      },
+      "ThresholdSpec": {
+        "properties": {
+          "default": {
+            "title": "Default",
+            "type": "integer"
+          },
+          "group": {
+            "title": "Group",
+            "type": "string"
+          },
+          "high": {
+            "title": "High",
+            "type": "integer"
+          },
+          "low": {
+            "title": "Low",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "group",
+          "unit",
+          "default",
+          "low",
+          "high"
+        ],
+        "title": "ThresholdSpec",
         "type": "object"
       },
       "Thresholds": {
@@ -51095,6 +51327,14 @@
             },
             "title": "Items",
             "type": "array"
+          },
+          "thresholds": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/ThresholdSpec"
+            },
+            "title": "Thresholds",
+            "type": "array"
           }
         },
         "required": [
@@ -55580,6 +55820,151 @@
         "summary": "Me",
         "tags": [
           "identity"
+        ]
+      }
+    },
+    "/api/v1/me/availability": {
+      "get": {
+        "operationId": "mine_api_v1_me_availability_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "role",
+            "required": true,
+            "schema": {
+              "enum": [
+                "volunteer",
+                "doctor"
+              ],
+              "title": "Role",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SlotsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Mine",
+        "tags": [
+          "availability"
+        ]
+      },
+      "put": {
+        "description": "The whole calendar at once: the app sends every slot the person keeps.",
+        "operationId": "replace_api_v1_me_availability_put",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "role",
+            "required": true,
+            "schema": {
+              "enum": [
+                "volunteer",
+                "doctor"
+              ],
+              "title": "Role",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SlotsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SlotsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Replace",
+        "tags": [
+          "availability"
         ]
       }
     },
@@ -68530,7 +68915,7 @@
             "required": false,
             "schema": {
               "default": "",
-              "maxLength": 1110,
+              "maxLength": 3700,
               "title": "Axis",
               "type": "string"
             }

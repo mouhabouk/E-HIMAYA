@@ -3762,6 +3762,67 @@
       "version": "Version",
       "remarks": "Dernières remarques",
       "noRemarks": "Aucune remarque sur cette période."
+    },
+    "thresholds": {
+      "group": {
+        "crisis": "Seuils des catastrophes et du commandement",
+        "alerts": "Seuils des alertes",
+        "rooms": "Seuils des salles et du terrain",
+        "partners": "Seuils des médecins et des établissements"
+      },
+      "help": "Les nombres du travail quotidien : les changer ne demande pas de nouvelle version, et ils restent dans leurs bornes. Ce qui n’est pas changé garde sa valeur par défaut.",
+      "bounds": "Chaque valeur est un entier dans les bornes indiquées à côté.",
+      "unit": "{{unit}} · entre {{low}} et {{high}} · par défaut {{fallback}}",
+      "units": {
+        "count": "nombre",
+        "days": "jours",
+        "hours": "heures",
+        "metres": "mètres"
+      },
+      "names": {
+        "crisis": {
+          "disaster_map_max": "Catastrophes affichées ensemble, au plus"
+        },
+        "decision": {
+          "unit_radius_m": "Rayon de recherche des unités proches",
+          "resource_radius_m": "Rayon de recherche des moyens proposés"
+        },
+        "forecast": {
+          "flood_radius_m": "Rayon d’estimation de crue autour de l’intervention"
+        },
+        "alerts": {
+          "max_days": "Durée maximale d’une alerte",
+          "inbox_days": "Durée des alertes dans la boîte du citoyen"
+        },
+        "telephony": {
+          "sms_match_m": "Distance d’appariement SMS et application"
+        },
+        "drones": {
+          "nearby_m": "Rayon des zones proches du drone"
+        },
+        "sensors": {
+          "suggestion_hours": "Validité d’une suggestion de capteur"
+        },
+        "towers": {
+          "suggestion_hours": "Validité d’une suggestion de tour"
+        },
+        "inventory": {
+          "stale_days": "Délai après lequel l’inventaire est ancien"
+        },
+        "coastal": {
+          "warn_radius_m": "Rayon d’avertissement des plages"
+        },
+        "programmes": {
+          "guard_radius_m": "Rayon d’une plage surveillée"
+        },
+        "doctors": {
+          "committee_max": "Membres du comité médical, au plus"
+        },
+        "orgs": {
+          "invitation_days": "Validité d’une invitation d’établissement",
+          "reservation_due_soon_days": "Alerte avant l’échéance des réserves"
+        }
+      }
     }
   },
   "accounts": {
@@ -7548,5 +7609,22 @@
     "where": "Où : tapez le nom du lieu",
     "none": "Aucun lieu de ce nom dans cette couche.",
     "more": "Autres résultats : précisez le nom."
+  },
+  "calendar": {
+    "title": "Calendrier de disponibilité",
+    "empty": "Aucun calendrier saisi dans l’application.",
+    "now": {
+      "available": "Disponible maintenant selon son calendrier",
+      "unavailable": "Indisponible maintenant selon son calendrier : non proposé à l’appel",
+      "none": "Rien de prévu maintenant"
+    },
+    "kind": {
+      "available": "Disponible",
+      "unavailable": "Indisponible"
+    },
+    "between": "du {{from}} au {{to}}",
+    "from": "à partir du {{from}}",
+    "everyDay": "tous les jours",
+    "overnight": "(jusqu’au lendemain)"
   }
 }

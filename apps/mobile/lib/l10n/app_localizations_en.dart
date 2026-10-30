@@ -6249,4 +6249,85 @@ class AppLocalizationsEn extends AppLocalizations {
   String stepperDecrease(String label) {
     return 'Decrease $label';
   }
+
+  @override
+  String get availabilityTitle => 'My availability calendar';
+
+  @override
+  String get availabilityDesc => 'When you can be called, and when not';
+
+  @override
+  String get availabilityIntro =>
+      'The room reads this calendar. While it says unavailable, you are not suggested for call-outs.';
+
+  @override
+  String get availabilityNowAvailable => 'Available now by your calendar';
+
+  @override
+  String get availabilityNowUnavailable => 'Unavailable now by your calendar';
+
+  @override
+  String get availabilityNowNone => 'Nothing planned now';
+
+  @override
+  String get availabilityEmpty =>
+      'No period yet. Add when you are available or away.';
+
+  @override
+  String get availabilityAdd => 'Add a period';
+
+  @override
+  String get availabilitySave => 'Save the calendar';
+
+  @override
+  String get availabilitySaved => 'Calendar saved';
+
+  @override
+  String get availabilityKindAvailable => 'Available';
+
+  @override
+  String get availabilityKindUnavailable => 'Unavailable';
+
+  @override
+  String get availabilityEveryDay => 'Every day';
+
+  @override
+  String get availabilityStartsOn => 'From';
+
+  @override
+  String get availabilityEndsOn => 'To';
+
+  @override
+  String get availabilityNoEnd => 'No end date';
+
+  @override
+  String get availabilityFromTime => 'From';
+
+  @override
+  String get availabilityToTime => 'To';
+
+  @override
+  String get availabilityOvernight => 'into the next day';
+
+  @override
+  String get availabilityRemove => 'Remove this period';
+
+  @override
+  String get availabilityMax => '20 periods at most';
+
+  @override
+  String get availabilityEmptyHours => 'The start and end hours must differ';
+
+  @override
+  String get availabilityOk => 'Add';
+
+  @override
+  String availabilityFromDate(String date) {
+    return 'From $date';
+  }
+
+  @override
+  String availabilityBetween(String from, String to) {
+    return 'From $from to $to';
+  }
 }

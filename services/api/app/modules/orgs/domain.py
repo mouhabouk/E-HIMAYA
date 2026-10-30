@@ -81,7 +81,6 @@ REVIEW_TRANSITIONS: dict[str, tuple[OrgStatus, OrgStatus]] = {
 
 MAX_ORGS_PER_ACCOUNT = 5
 MAX_PENDING_INVITATIONS = 20
-INVITATION_DAYS = 7
 MAX_FEATURES = 200
 FEATURE_MAX_DISTANCE_M = 2000
 TRAINING_EXPIRING_DAYS = 60
@@ -94,7 +93,6 @@ STAMP_PHOTO_MAX_BYTES = 5 * 1024 * 1024
 # Phase P3b: prevention certificate. The validity is a working value until the Office gives the official one [SIM].
 PREVENTION_DEFAULT_MONTHS = 12
 RESERVATION_MAX_MONTHS = 12
-RESERVATION_DUE_SOON_DAYS = 14
 MAX_RESERVATIONS = 50
 
 # ---------------------------------------------------------------- identifiers and contacts

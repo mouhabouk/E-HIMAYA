@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/alerts/notifications_screen.dart';
+import '../../features/availability/availability_screen.dart';
 import '../../features/beaches/beaches_screen.dart';
 import '../../features/charter/charter_controller.dart';
 import '../../features/charter/charter_screen.dart';
@@ -56,6 +57,7 @@ import '../../features/welcome/language_screen.dart';
 import '../../features/welcome/permissions_screen.dart';
 import '../../features/welcome/welcome_controller.dart';
 import '../auth/identity.dart';
+import '../http/availability_models.dart';
 import '../http/doctor_models.dart';
 import '../http/models.dart';
 import '../security/locked_alert.dart';
@@ -101,6 +103,8 @@ abstract final class Routes {
   static const volunteer = '/volunteer';
   static const volunteerApply = '/volunteer/apply';
   static const callouts = '/callouts';
+  // Phase N (design §8): the availability calendar, as a volunteer or as a doctor.
+  static String availability(CalendarRole role) => '/availability/${role.wire}';
   // Phase C1-a: doctors.
   static const doctor = '/doctor';
   static const doctorApply = '/doctor/apply';
@@ -477,6 +481,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         ],
       ),
       GoRoute(path: Routes.callouts, builder: (_, _) => const CalloutsScreen()),
+      GoRoute(
+        path: '/availability/:role',
+        builder: (_, state) => AvailabilityScreen(
+          role: state.pathParameters['role'] == 'doctor'
+              ? CalendarRole.doctor
+              : CalendarRole.volunteer,
+        ),
+      ),
       GoRoute(
         path: Routes.lockedAlert,
         builder: (_, _) => const LockedAlertScreen(),

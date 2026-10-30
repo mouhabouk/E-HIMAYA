@@ -12,6 +12,7 @@ import '../../features/safety/safety_models.dart';
 import '../quota/anon_quota.dart';
 import 'api_client.dart';
 import 'api_error.dart';
+import 'availability_models.dart';
 import 'doctor_models.dart';
 import 'email_status.dart';
 import 'models.dart';
@@ -448,6 +449,32 @@ class EHimayaApi {
 
   Future<void> withdrawVolunteer() => guardApi(() async {
     await _dio.delete<Object?>('/api/v1/me/volunteer');
+  });
+
+  // ---------------------------------------------------------------- availability calendar (phase N §8)
+
+  Future<AvailabilityCalendar> myAvailability(CalendarRole role) =>
+      guardApi(() async {
+        final r = await _dio.get<Map<String, Object?>>(
+          '/api/v1/me/availability',
+          queryParameters: {'role': role.wire},
+        );
+        return AvailabilityCalendar.fromJson(r.data!);
+      });
+
+  /// The whole calendar at once: every slot the person keeps.
+  Future<AvailabilityCalendar> putAvailability(
+    CalendarRole role,
+    List<AvailabilitySlot> slots,
+  ) => guardApi(() async {
+    final r = await _dio.put<Map<String, Object?>>(
+      '/api/v1/me/availability',
+      queryParameters: {'role': role.wire},
+      data: {
+        'slots': [for (final s in slots) s.toJson()],
+      },
+    );
+    return AvailabilityCalendar.fromJson(r.data!);
   });
 
   // ---------------------------------------------------------------- doctors (phase C1-a)

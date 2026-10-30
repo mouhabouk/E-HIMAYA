@@ -16,7 +16,7 @@ from app.core.access import ACTION_NOT_ALLOWED, NATIONAL_SCOPE_REQUIRED
 from app.core.events import emit
 from app.core.security import Principal
 from app.modules.audit import service as audit
-from app.modules.settings import domain
+from app.modules.settings import domain, thresholds
 from app.modules.settings.models import PlatformSetting
 
 CACHE_TTL_S = 10.0
@@ -47,6 +47,13 @@ async def get(session: AsyncSession, key: str) -> Any:
         value = domain.DEFAULTS[key]
     _cache[key] = (now + CACHE_TTL_S, value)
     return value
+
+
+async def threshold(session: AsyncSession, name: str) -> int:
+    """An operational threshold (``thresholds.SPECS``), its default when it was never changed."""
+    stored = await get(session, domain.THRESHOLDS)
+    value = stored.get(name) if isinstance(stored, dict) else None
+    return int(value) if isinstance(value, int) else thresholds.SPECS[name].default
 
 
 async def enforced_since(session: AsyncSession) -> datetime | None:

@@ -124,3 +124,46 @@ describe("SettingsPage, phase A", () => {
     expect(save).not.toHaveBeenCalled();
   });
 });
+
+describe("SettingsPage, phase N thresholds", () => {
+  it("edits the operational thresholds of one group within their bounds and sends the whole setting", async () => {
+    const save = vi.fn((key: string, body: { value: unknown; version: number }) =>
+      Promise.resolve({ key, value: body.value, version: body.version + 1, updated_by_name: "Admin", updated_at: "2026-10-30T09:00:00Z", editable: true }),
+    );
+    const base = { version: 1, updated_by_name: null, updated_at: null, editable: true };
+    const api = fakeApi({
+      platformSettings: vi.fn(() =>
+        Promise.resolve([
+          ...settings(true),
+          { ...base, key: "operations.thresholds", value: { "alerts.max_days": 7, "doctors.committee_max": 7 } },
+        ]),
+      ),
+      thresholdSpecs: vi.fn(() =>
+        Promise.resolve([
+          { name: "alerts.max_days", group: "alerts" as const, unit: "days" as const, default: 7, low: 1, high: 30 },
+          { name: "doctors.committee_max", group: "partners" as const, unit: "count" as const, default: 7, low: 1, high: 30 },
+        ]),
+      ),
+      savePlatformSetting: save,
+    });
+    renderApp(<SettingsPage />, { api, auth: fakeAuth(SYSADMIN), lang: "fr" });
+    const title = await screen.findByRole("heading", { name: "Seuils des alertes" });
+    expect(screen.getByRole("heading", { name: "Seuils des médecins et des établissements" })).toBeInTheDocument();
+    const input = screen.getByRole("spinbutton", { name: "Durée maximale d’une alerte" });
+    expect(screen.getByText("jours · entre 1 et 30 · par défaut 7")).toBeInTheDocument();
+    const c = card(title);
+    // Above the bound, the field stops at it; below, the card refuses to save.
+    fireEvent.change(input, { target: { value: "45" } });
+    expect(input).toHaveValue(30);
+    fireEvent.change(input, { target: { value: "0" } });
+    c.reason("Alertes de longue durée en hiver");
+    c.save();
+    expect(await screen.findByText("Chaque valeur est un entier dans les bornes indiquées à côté.")).toBeInTheDocument();
+    expect(save).not.toHaveBeenCalled();
+    fireEvent.change(input, { target: { value: "10" } });
+    c.save();
+    await waitFor(() => expect(save).toHaveBeenCalled());
+    expect(save.mock.calls[0]?.[0]).toBe("operations.thresholds");
+    expect(save.mock.calls[0]?.[1].value).toEqual({ "alerts.max_days": 10, "doctors.committee_max": 7 });
+  });
+});

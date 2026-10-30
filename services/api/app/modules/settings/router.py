@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_session
 from app.core.security import CurrentPrincipal, Principal
-from app.modules.settings import service
+from app.modules.settings import service, thresholds
 from app.modules.settings.models import PlatformSetting
 
 router = APIRouter(prefix="/api/v1/staff/settings", tags=["staff", "settings"])
@@ -34,8 +34,19 @@ class SettingOut(BaseModel):
     editable: bool
 
 
+class ThresholdSpec(BaseModel):
+    name: str
+    group: str
+    unit: str
+    default: int
+    low: int
+    high: int
+
+
 class SettingsOut(BaseModel):
     items: list[SettingOut]
+    # Phase N: what each operational threshold means, for the editor of ``operations.thresholds``.
+    thresholds: list[ThresholdSpec] = []
 
 
 class SettingIn(BaseModel):
@@ -57,7 +68,13 @@ def _out(row: PlatformSetting, principal: Principal) -> SettingOut:
 
 @router.get("", response_model=SettingsOut)
 async def list_settings(principal: Staff, session: Session) -> SettingsOut:
-    return SettingsOut(items=[_out(row, principal) for row in await service.rows(session)])
+    return SettingsOut(
+        items=[_out(row, principal) for row in await service.rows(session)],
+        thresholds=[
+            ThresholdSpec(name=name, group=s.group, unit=s.unit, default=s.default, low=s.low, high=s.high)
+            for name, s in thresholds.SPECS.items()
+        ],
+    )
 
 
 @router.put("/{key}", response_model=SettingOut)

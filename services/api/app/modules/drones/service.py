@@ -19,12 +19,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.events import emit
 from app.modules.drones import domain, schemas
 from app.modules.drones.models import DroneAlert, DroneTelemetry
+from app.modules.settings import service as settings
 from app.modules.streams.domain import LOCATION_EVENT_INTERVAL_S
 from app.modules.streams.models import LiveStream
 from app.modules.streams.service import _point
 
 log = structlog.get_logger()
-NEARBY_M = 20_000
 
 _ZONES = text(
     """
@@ -103,7 +103,11 @@ async def _check(
     out: Outcome,
 ) -> None:
     where = {"lat": round(p.lat, 6), "lon": round(p.lon, 6)}
-    zones = (await session.execute(_ZONES, {"lat": p.lat, "lon": p.lon, "nearby": NEARBY_M})).all()
+    zones = (
+        await session.execute(
+            _ZONES, {"lat": p.lat, "lon": p.lon, "nearby": await settings.threshold(session, "drones.nearby_m")}
+        )
+    ).all()
     for z in zones:
         if z.kind != "no_fly":
             continue

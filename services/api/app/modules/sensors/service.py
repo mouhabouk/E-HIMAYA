@@ -21,11 +21,11 @@ from app.modules.geo.models import Gouvernorat
 from app.modules.sensors import domain
 from app.modules.sensors.domain import Kind
 from app.modules.sensors.models import SensorDevice, SensorReading
+from app.modules.settings import service as settings
 from app.modules.weather.models import AlertSuggestion
 from app.modules.weather.service import ACTIVE_STATUSES, suggestion_out
 
 log = structlog.get_logger()
-SUGGESTION_HOURS = 6
 
 
 @dataclass(frozen=True, slots=True)
@@ -163,7 +163,7 @@ async def _suggest(session: AsyncSession, device: SensorDevice, value: float, no
         body=body,
         evidence=evidence,
         valid_from=now,
-        valid_until=now + timedelta(hours=SUGGESTION_HOURS),
+        valid_until=now + timedelta(hours=await settings.threshold(session, "sensors.suggestion_hours")),
         simulated=device.simulated,
     )
     session.add(suggestion)

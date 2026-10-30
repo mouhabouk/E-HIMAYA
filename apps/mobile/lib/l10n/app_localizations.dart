@@ -11001,6 +11001,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Decrease {label}'**
   String stepperDecrease(String label);
+
+  /// No description provided for @availabilityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My availability calendar'**
+  String get availabilityTitle;
+
+  /// No description provided for @availabilityDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'When you can be called, and when not'**
+  String get availabilityDesc;
+
+  /// No description provided for @availabilityIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'The room reads this calendar. While it says unavailable, you are not suggested for call-outs.'**
+  String get availabilityIntro;
+
+  /// No description provided for @availabilityNowAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Available now by your calendar'**
+  String get availabilityNowAvailable;
+
+  /// No description provided for @availabilityNowUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Unavailable now by your calendar'**
+  String get availabilityNowUnavailable;
+
+  /// No description provided for @availabilityNowNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing planned now'**
+  String get availabilityNowNone;
+
+  /// No description provided for @availabilityEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No period yet. Add when you are available or away.'**
+  String get availabilityEmpty;
+
+  /// No description provided for @availabilityAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a period'**
+  String get availabilityAdd;
+
+  /// No description provided for @availabilitySave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save the calendar'**
+  String get availabilitySave;
+
+  /// No description provided for @availabilitySaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar saved'**
+  String get availabilitySaved;
+
+  /// No description provided for @availabilityKindAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get availabilityKindAvailable;
+
+  /// No description provided for @availabilityKindUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Unavailable'**
+  String get availabilityKindUnavailable;
+
+  /// No description provided for @availabilityEveryDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Every day'**
+  String get availabilityEveryDay;
+
+  /// No description provided for @availabilityStartsOn.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get availabilityStartsOn;
+
+  /// No description provided for @availabilityEndsOn.
+  ///
+  /// In en, this message translates to:
+  /// **'To'**
+  String get availabilityEndsOn;
+
+  /// No description provided for @availabilityNoEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'No end date'**
+  String get availabilityNoEnd;
+
+  /// No description provided for @availabilityFromTime.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get availabilityFromTime;
+
+  /// No description provided for @availabilityToTime.
+  ///
+  /// In en, this message translates to:
+  /// **'To'**
+  String get availabilityToTime;
+
+  /// No description provided for @availabilityOvernight.
+  ///
+  /// In en, this message translates to:
+  /// **'into the next day'**
+  String get availabilityOvernight;
+
+  /// No description provided for @availabilityRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this period'**
+  String get availabilityRemove;
+
+  /// No description provided for @availabilityMax.
+  ///
+  /// In en, this message translates to:
+  /// **'20 periods at most'**
+  String get availabilityMax;
+
+  /// No description provided for @availabilityEmptyHours.
+  ///
+  /// In en, this message translates to:
+  /// **'The start and end hours must differ'**
+  String get availabilityEmptyHours;
+
+  /// No description provided for @availabilityOk.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get availabilityOk;
+
+  /// No description provided for @availabilityFromDate.
+  ///
+  /// In en, this message translates to:
+  /// **'From {date}'**
+  String availabilityFromDate(String date);
+
+  /// No description provided for @availabilityBetween.
+  ///
+  /// In en, this message translates to:
+  /// **'From {from} to {to}'**
+  String availabilityBetween(String from, String to);
 }
 
 class _AppLocalizationsDelegate

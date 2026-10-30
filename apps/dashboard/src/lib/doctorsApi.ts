@@ -1,5 +1,5 @@
 import type { ApiClient } from "./api";
-import type { VolunteerDecision, VolunteerStatus } from "./opsTypes";
+import type { AvailabilityCalendarData, VolunteerDecision, VolunteerStatus } from "./opsTypes";
 import type { Page } from "./types";
 
 const enc = encodeURIComponent;
@@ -51,6 +51,7 @@ export interface StaffDoctor {
 }
 
 export interface StaffDoctorDetail extends StaffDoctor {
+  calendar: AvailabilityCalendarData;
   phone: string | null;
   email: string | null;
   licence_no: string | null;

@@ -225,6 +225,7 @@ export function makeVolunteerDetail(overrides: Partial<StaffVolunteerDetail> = {
     notes: "شهادة إسعاف من الهلال الأحمر",
     review_reason: null,
     reviews: [],
+    calendar: { role: "volunteer", slots: [], planned_now: null },
     callouts: [],
     ...overrides,
   };

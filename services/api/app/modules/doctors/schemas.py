@@ -4,6 +4,8 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, Field, StringConstraints
 
+from app.modules.availability.schemas import SlotsOut
+
 # Specialties a doctor can declare (labels in the clients' translations). A fixed list in C1-a.
 Specialty = Literal[
     "general_practice",
@@ -108,6 +110,8 @@ class StaffDoctorDetail(StaffDoctor):
     cp_staff_no: str | None
     review_reason: str | None
     reviews: list[DoctorReviewOut]
+    # Phase N (design §8): the calendar the person keeps in the app, and what it says now.
+    calendar: SlotsOut
 
 
 class DoctorReviewIn(BaseModel):

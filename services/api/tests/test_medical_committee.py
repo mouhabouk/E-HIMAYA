@@ -12,6 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_system_sessionmaker
 from app.modules.doctors import service
+from app.modules.settings import thresholds
 from tests.conftest import TokenFactory, bearer
 from tests.test_doctors import GABES, SFAX, approve, registered
 from tests.test_operations import Staff
@@ -70,7 +71,7 @@ async def test_sysadmin_appoints_renews_and_revokes(
     r = await client.put(f"{COMMITTEE}/{doctor_id}", json={"months": 6, "reason": "Comité 2027"}, headers=admin)
     assert r.status_code == 200, r.text
     out = r.json()
-    assert out["max_members"] == service.COMMITTEE_MAX
+    assert out["max_members"] == thresholds.DEFAULTS["doctors.committee_max"]
     assert [m["id"] for m in out["members"]] == [doctor_id]
     assert out["members"][0]["committee_until"]
     # The doctor sees it in the app; they are no longer a candidate.
@@ -110,7 +111,8 @@ async def test_no_self_appointment_and_a_seat_limit(
     assert r.status_code == 403 and r.json()["detail"] == "self_appointment"
 
     admin = staff(["sysadmin"], gouvernorat=None, email="admin@protectioncivile.tn")
-    seated = [doctor_id] + [(await cp_doctor(client, staff, make_token))[0] for _ in range(service.COMMITTEE_MAX - 1)]
+    most = thresholds.DEFAULTS["doctors.committee_max"]
+    seated = [doctor_id] + [(await cp_doctor(client, staff, make_token))[0] for _ in range(most - 1)]
     for d in seated:
         assert (await client.put(f"{COMMITTEE}/{d}", json={}, headers=admin)).status_code == 200
     extra, _, _ = await cp_doctor(client, staff, make_token)

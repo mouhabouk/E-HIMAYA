@@ -5,6 +5,7 @@ from app.modules.analytics.models import Notification, Scenario, Schedule
 from app.modules.analytics.models import Report as AnalyticsReport
 from app.modules.appinfo.models import AppRating
 from app.modules.audit.models import AuditLog
+from app.modules.availability.models import AvailabilitySlot
 from app.modules.basemap.models import Basemap
 from app.modules.checklist.models import Checklist, ChecklistTask
 from app.modules.coastal.models import Beach, BeachDay, CoastalAlert, CoastalSettings, MarineHour, Presence, RiskModel
@@ -136,6 +137,7 @@ __all__ = [
     "AppRating",
     "Assignment",
     "AuditLog",
+    "AvailabilitySlot",
     "Axis",
     "AxisEvent",
     "AxisIncident",

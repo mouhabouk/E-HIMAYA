@@ -25,14 +25,13 @@ from app.modules.ops import interventions
 from app.modules.ops.models import Resource, Unit
 from app.modules.ops.resources import unit_scope
 from app.modules.reports.domain import Category
+from app.modules.settings import service as settings
 
 NOTICE = s.Bilingual(
     ar="توصيات مساعدة على القرار مع مبرراتها ومدخلاتها؛ لا يُنفذ أي شيء آليا والقرار للمسؤول.",
     fr="Recommandations d'aide à la décision avec leur justification et leurs données ; rien n'est appliqué "
     "automatiquement, la décision revient au responsable.",
 )
-# Candidate resources considered per kind (straight line), then ranked by travel time.
-RESOURCE_RADIUS_M = 150_000
 CANDIDATES_PER_KIND = 8
 LARGE_FIRE_HA = 50.0
 ALERT_FIRE_HA = 20.0
@@ -144,7 +143,7 @@ async def _candidates(
                 unit_scope(principal),
                 Resource.kind == kind,
                 Resource.status == "available",
-                func.ST_DWithin(location, point, RESOURCE_RADIUS_M),
+                func.ST_DWithin(location, point, await settings.threshold(session, "decision.resource_radius_m")),
             )
             .order_by(distance, Resource.label)
             .limit(CANDIDATES_PER_KIND)

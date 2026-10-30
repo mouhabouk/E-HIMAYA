@@ -50,6 +50,7 @@ from app.modules.reports.service import (
     next_tracking_code,
     staff_report,
 )
+from app.modules.settings import service as platform_settings
 from app.modules.telephony.domain import normalize_caller
 from app.modules.telephony.models import SmsInbound
 
@@ -62,8 +63,6 @@ _BODY = re.compile(
 )
 _MESSAGE_CONTEXT = "telephony.sms_inbound.message_id"
 _SENDER_CONTEXT = "telephony.sms_inbound.sender"
-# An app report and an SMS report of an unknown sender are the same report only this close to each other.
-MATCH_DISTANCE_M = 5_000
 SMS_ACTOR = "sms"
 
 
@@ -162,7 +161,13 @@ async def _matching_app_report(
     if owner is not None:
         query = query.where(Report.user_id == owner)
     else:
-        query = query.where(func.ST_DWithin(Report.location, _point(parsed.lat, parsed.lon), MATCH_DISTANCE_M))
+        query = query.where(
+            func.ST_DWithin(
+                Report.location,
+                _point(parsed.lat, parsed.lon),
+                await platform_settings.threshold(session, "telephony.sms_match_m"),
+            )
+        )
     return await session.scalar(query.order_by(Report.received_at.desc()).limit(1))
 
 
@@ -315,7 +320,11 @@ async def adopt_sms_report(
         query = query.where(SmsInbound.sender_hash == phone)
     else:
         query = query.where(
-            func.ST_DWithin(Report.location, _point(body.location.lat, body.location.lon), MATCH_DISTANCE_M)
+            func.ST_DWithin(
+                Report.location,
+                _point(body.location.lat, body.location.lon),
+                await platform_settings.threshold(session, "telephony.sms_match_m"),
+            )
         )
     # The SMS report is not the reporter's yet: found and taken over with the system scope (row-level security), the
     # ownership rule below being the check.
