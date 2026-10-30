@@ -584,7 +584,9 @@
     "assignment_cancelled": "This assignment is cancelled.",
     "record_closed": "The record can no longer be changed (7 days after the mission ended).",
     "time_required": "A time the mission reached cannot be cleared.",
-    "correction_reason_required": "Correcting a time the team gave needs a reason."
+    "correction_reason_required": "Correcting a time the team gave needs a reason.",
+    "year_has_dataset": "This year comes from the Office's file or is [SIM]: delete it first.",
+    "no_records": "No records for this year."
   },
   "kpi": {
     "title": "Key indicators",
@@ -7963,7 +7965,9 @@
       "rowsCount": "{{count}} interventions",
       "alias": "Tie to a délégation",
       "aliasTo": "Tie “{{raw}}” to a délégation",
-      "pick": "Choose the délégation"
+      "pick": "Choose the délégation",
+      "live": "Operations rooms' records",
+      "fromRecords": "Build {{year}} from the records"
     },
     "method": {
       "title": "Method",
@@ -7989,6 +7993,17 @@
       "plan_cycle": "Plan cycle",
       "percentile_indicators": "Percentile indicators",
       "matrix": "Risk matrix"
+    },
+    "mission": {
+      "title": "Mission stages from the rooms' records (median · P90)",
+      "rows": "Interventions",
+      "turnout": "Turnout",
+      "travel": "Travel",
+      "on_scene": "On scene",
+      "transport": "Transport to hospital",
+      "length": "Call to return",
+      "crew": "Mean crew",
+      "note": "Computed from the times the teams and rooms recorded; the Office's archive has no left-scene, hospital or return times."
     }
   },
   "record": {
@@ -8066,6 +8081,17 @@
       "no_network": "No network",
       "radio_log": "From the radio log",
       "other": "Other"
+    },
+    "warningsTitle": "Time quality warnings",
+    "warning": {
+      "travel_too_fast": "Travel too short for the distance",
+      "steps_together": "Departure and arrival almost at once",
+      "turnout_long": "Turnout over 30 minutes",
+      "on_scene_long": "Over 12 hours on scene",
+      "transport_instant": "Transport to hospital under a minute",
+      "return_long": "Back at the unit after over 6 hours",
+      "return_missing": "Return to the unit not recorded",
+      "crew_missing": "Crew not recorded"
     }
   }
 }

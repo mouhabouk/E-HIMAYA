@@ -43,13 +43,34 @@ export function MissionIndicators({ assignment, calledAt }: { assignment: Assign
   const fmt = useFormat();
   const values = indicators(timesOf(assignmentTimes(assignment)), calledAt ? new Date(calledAt) : null);
   const shown = INDICATORS.filter((i) => values[i.key] !== undefined);
-  if (shown.length === 0) return null;
+  const warnings = assignment.record_warnings ?? [];
+  if (shown.length === 0 && warnings.length === 0) return null;
   return (
-    <ul className="record-indicators" aria-label={t("record.indicators")}>
-      {shown.map((i) => (
-        <li key={i.key}>
-          <span className="record-indicators__label">{t(`record.indicator.${i.key}`)}</span>
-          <strong>{fmt.duration(values[i.key] ?? 0)}</strong>
+    <>
+      {shown.length > 0 && (
+        <ul className="record-indicators" aria-label={t("record.indicators")}>
+          {shown.map((i) => (
+            <li key={i.key}>
+              <span className="record-indicators__label">{t(`record.indicator.${i.key}`)}</span>
+              <strong>{fmt.duration(values[i.key] ?? 0)}</strong>
+            </li>
+          ))}
+        </ul>
+      )}
+      <RecordWarnings warnings={warnings} />
+    </>
+  );
+}
+
+/** Times that hold but are not credible (phase S2, rules on the server): to check, never blocking. */
+export function RecordWarnings({ warnings }: { warnings: readonly string[] }) {
+  const { t } = useTranslation();
+  if (warnings.length === 0) return null;
+  return (
+    <ul className="record-warnings" aria-label={t("record.warningsTitle")}>
+      {warnings.map((w) => (
+        <li key={w} className="record-pill record-pill--warning">
+          {t(`record.warning.${w}`, { defaultValue: w })}
         </li>
       ))}
     </ul>
@@ -301,6 +322,7 @@ export function MissionRecordEditor({
     >
       <h3>{t("record.title")}</h3>
       <p className="muted">{t("record.intro")}</p>
+      <RecordWarnings warnings={assignment.record_warnings ?? []} />
       <ol className="record-steps">
         <li className="record-step record-step--fixed">
           <div className="record-step__head">

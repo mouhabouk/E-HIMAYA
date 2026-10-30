@@ -172,6 +172,24 @@ const ANALYSIS: SnacrAnalysis = {
   month: { fire: [1, 2, 3, 4, 5, 9, 20, 18, 6, 3, 2, 1] },
   weekday_hour: { fire: Array.from({ length: 7 }, () => Array.from({ length: 24 }, () => 1)) },
   subtypes: { fire: [{ subtype: "بمواد غابية و أعشاب", rows: 40 }] },
+  mission: {
+    fire: {
+      rows: 12,
+      returned_pct: 83,
+      hospital_rows: 2,
+      crew_mean: 4.5,
+      turnout_median: 2,
+      turnout_p90: 4,
+      travel_median: 9,
+      travel_p90: 17,
+      on_scene_median: 45,
+      on_scene_p90: 90,
+      transport_median: null,
+      transport_p90: null,
+      length_median: 75,
+      length_p90: 140,
+    },
+  },
 };
 const PLAN: SnacrPlanSummary = {
   id: "p1",
@@ -204,6 +222,10 @@ describe("SnacrPage", () => {
     expect(screen.getByText("أولوية عالية")).toBeInTheDocument();
     expect(await screen.findByTestId("map")).toBeInTheDocument();
     expect(screen.queryByRole("tab", { name: "الأرشيف" })).not.toBeInTheDocument();
+    // Phase S2: the whole mission from the rooms' records.
+    const mission = screen.getByRole("table", { name: /مراحل المهمة من سجلات القاعات/ });
+    expect(within(mission).getByRole("rowheader", { name: "الحرائق" })).toBeInTheDocument();
+    expect(within(mission).getByText(/^4[.,]5$/)).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("tab", { name: "مصفوفة الأولويات" }));
     const row = screen.getByRole("rowheader", { name: "تواتر 5" }).closest("tr") as HTMLElement;
@@ -228,6 +250,8 @@ describe("SnacrPage", () => {
     fireEvent.change(screen.getByLabelText("السنة"), { target: { value: "2026" } });
     fireEvent.click(screen.getByRole("button", { name: "توليد سنة 2026 [SIM]" }));
     await waitFor(() => expect(api.simulateSnacr).toHaveBeenCalledWith(2026));
+    fireEvent.click(screen.getByRole("button", { name: "بناء سنة 2026 من سجلات القاعات" }));
+    await waitFor(() => expect(api.liveSnacr).toHaveBeenCalledWith(2026));
 
     fireEvent.click(screen.getByRole("tab", { name: "المنهجية والمراجع" }));
     expect(screen.getByRole("link", { name: "NFPA 1710" })).toHaveAttribute("href", "https://www.nfpa.org");

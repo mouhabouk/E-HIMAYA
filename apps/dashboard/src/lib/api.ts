@@ -422,6 +422,8 @@ export const ERROR_CODES = [
   "record_closed",
   "time_required",
   "correction_reason_required",
+  "year_has_dataset",
+  "no_records",
 ] as const;
 export type ErrorCode = (typeof ERROR_CODES)[number];
 

@@ -26,6 +26,7 @@ import { canPlanSnacr } from "../lib/roles";
 import {
   FAMILIES,
   HAZARDS,
+  MISSION_PARTS,
   PRIORITY_COLOURS,
   priorityOf,
   snacrKeys,
@@ -152,6 +153,54 @@ function DelegationMap({ analysis, gouvernorat }: { analysis: SnacrAnalysis; gou
   );
 }
 
+/** Phase S2: the whole mission, from the records of the rooms (the Office's archive stops at the arrival). */
+function MissionTable({ analysis }: { analysis: SnacrAnalysis }) {
+  const { t } = useTranslation();
+  const fmt = useFormat();
+  const m = t("snacr.unit.min");
+  const rows = FAMILIES.filter((f) => analysis.mission?.[f]);
+  if (rows.length === 0) return null;
+  return (
+    <div className="table-wrap">
+      <table className="table table--compact">
+        <caption>{t("snacr.mission.title")}</caption>
+        <thead>
+          <tr>
+            <th scope="col">{t("snacr.family.label")}</th>
+            <th scope="col">{t("snacr.mission.rows")}</th>
+            {MISSION_PARTS.map((p) => (
+              <th scope="col" key={p}>
+                {t(`snacr.mission.${p}`)}
+              </th>
+            ))}
+            <th scope="col">{t("snacr.mission.crew")}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((f) => {
+            const x = analysis.mission?.[f];
+            if (!x) return null;
+            return (
+              <tr key={f}>
+                <th scope="row">{t(`snacr.family.${f}`)}</th>
+                <td>{fmt.number(x.rows)}</td>
+                {MISSION_PARTS.map((p) => (
+                  <td key={p}>
+                    {minutes(x[`${p}_median`], m)}
+                    <span className="cell-sub"> · P90 {minutes(x[`${p}_p90`], m)}</span>
+                  </td>
+                ))}
+                <td>{x.crew_mean === null ? "—" : fmt.decimal(x.crew_mean)}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+      <p className="muted">{t("snacr.mission.note")}</p>
+    </div>
+  );
+}
+
 function IndicatorsTab({ analysis, gouvernorat }: { analysis: SnacrAnalysis; gouvernorat: number | null }) {
   const { t } = useTranslation();
   const fmt = useFormat();
@@ -195,6 +244,7 @@ function IndicatorsTab({ analysis, gouvernorat }: { analysis: SnacrAnalysis; gou
         </div>
       </dl>
       <DelegationMap analysis={analysis} gouvernorat={gouvernorat} />
+      <MissionTable analysis={analysis} />
       <div className="table-wrap">
         <table className="table table--compact">
           <caption>{t("snacr.ind.byGouvernorat")}</caption>
@@ -701,8 +751,9 @@ function ArchiveTab({ overview }: { overview: SnacrOverview }) {
   const invalidate = () => void qc.invalidateQueries({ queryKey: snacrKeys.all });
   const upload = useMutation({ mutationFn: () => api.importSnacr(year, file as File), onSuccess: invalidate });
   const simulate = useMutation({ mutationFn: () => api.simulateSnacr(year), onSuccess: invalidate });
+  const live = useMutation({ mutationFn: () => api.liveSnacr(year), onSuccess: invalidate });
   const remove = useMutation({ mutationFn: (y: number) => api.deleteSnacrYear(y), onSuccess: invalidate });
-  const error = upload.error ?? simulate.error ?? remove.error;
+  const error = upload.error ?? simulate.error ?? live.error ?? remove.error;
   return (
     <>
       <p className="muted">{t("snacr.archive.intro")}</p>
@@ -728,7 +779,13 @@ function ArchiveTab({ overview }: { overview: SnacrOverview }) {
               <tr key={d.id}>
                 <th scope="row">{d.year}</th>
                 <td>
-                  {d.simulated ? <SimBadge /> : <bdi dir="ltr">{d.file_name ?? t("snacr.archive.office")}</bdi>}
+                  {d.simulated ? (
+                    <SimBadge />
+                  ) : d.source === "live" ? (
+                    t("snacr.archive.live")
+                  ) : (
+                    <bdi dir="ltr">{d.file_name ?? t("snacr.archive.office")}</bdi>
+                  )}
                 </td>
                 <td>{fmt.number(d.rows)}</td>
                 <td>{fmt.number(typeof d.quality.read === "number" ? d.quality.read - d.rows : 0)}</td>
@@ -784,6 +841,9 @@ function ArchiveTab({ overview }: { overview: SnacrOverview }) {
             </button>
             <button type="button" className="btn" disabled={simulate.isPending} onClick={() => simulate.mutate()}>
               {t("snacr.archive.simulate", { year })}
+            </button>
+            <button type="button" className="btn" disabled={live.isPending} onClick={() => live.mutate()}>
+              {t("snacr.archive.fromRecords", { year })}
             </button>
           </div>
         </form>

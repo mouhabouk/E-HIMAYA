@@ -242,6 +242,8 @@ export interface Assignment {
   crew_count?: number | null;
   consumables?: Partial<Record<string, number>>;
   time_sources?: Partial<Record<string, "app" | "sms" | "room">>;
+  /** Times that hold but are not credible, for the room to check. */
+  record_warnings?: string[];
 }
 
 export interface VehiclePosition {

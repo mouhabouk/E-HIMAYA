@@ -9537,3 +9537,16 @@ button.nav-card:hover {
 .record-row > td {
   background: var(--surface-2);
 }
+.record-warnings {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.record-pill--warning {
+  background: var(--tone-amber-tint);
+  color: var(--tone-amber-ink);
+  border: 1px solid var(--tone-amber);
+}

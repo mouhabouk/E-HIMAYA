@@ -27,7 +27,7 @@ export type Priority = "high" | "medium" | "low";
 export interface SnacrDataset {
   id: string;
   year: number;
-  source: "office" | "simulated";
+  source: "office" | "simulated" | "live";
   simulated: boolean;
   file_name: string | null;
   rows: number;
@@ -95,7 +95,7 @@ export interface SnacrAnalysis {
   years: number[];
   codes: number[];
   simulated: boolean;
-  datasets: { year: number; simulated: boolean; rows: number }[];
+  datasets: { year: number; simulated: boolean; rows: number; source?: "office" | "simulated" | "live" }[];
   method: SnacrMethod;
   breaks: number[];
   totals: Figures & { unmatched: number; annual: number; population: number | null; rate_per_1000: number | null };
@@ -108,7 +108,19 @@ export interface SnacrAnalysis {
   /** Monday first (ISO), 24 hours, local time. */
   weekday_hour: Partial<Record<Family, number[][]>>;
   subtypes: Partial<Record<Family, { subtype: string; rows: number }[]>>;
+  /** Phase S2: the parts of a mission in minutes, from the records of the operations rooms. */
+  mission?: Partial<Record<Family, MissionFamily>>;
 }
+
+export const MISSION_PARTS = ["turnout", "travel", "on_scene", "transport", "length"] as const;
+export type MissionPart = (typeof MISSION_PARTS)[number];
+
+export type MissionFamily = {
+  rows: number;
+  returned_pct: number | null;
+  hospital_rows: number;
+  crew_mean: number | null;
+} & { [K in `${MissionPart}_${"median" | "p90"}`]: number | null };
 
 export interface UnmatchedName {
   gouvernorat_code: number;
@@ -221,6 +233,8 @@ export function snacrApi(api: ApiClient) {
       }),
     simulateSnacr: (year: number) =>
       api.request<{ dataset: SnacrDataset }>(`${S}/datasets/simulate`, { method: "POST", query: { year } }),
+    liveSnacr: (year: number) =>
+      api.request<{ dataset: SnacrDataset }>(`${S}/datasets/live`, { method: "POST", query: { year } }),
     deleteSnacrYear: (year: number) => api.request<undefined>(`${S}/datasets/${year}`, { method: "DELETE" }),
     snacrUnmatched: (signal?: AbortSignal) => api.request<UnmatchedName[]>(`${S}/unmatched`, { signal }),
     snacrAliases: (signal?: AbortSignal) => api.request<SnacrAlias[]>(`${S}/aliases`, { signal }),

@@ -164,6 +164,26 @@ async def simulate_dataset(
     return schemas.ImportOut(dataset=_dataset(dataset))
 
 
+@router.post("/datasets/live", response_model=schemas.ImportOut, status_code=status.HTTP_201_CREATED)
+async def live_dataset(
+    principal: Editor, session: Session, year: Annotated[int, Query(ge=2000, le=2100)]
+) -> schemas.ImportOut:
+    """The year drawn from the records of the operations rooms (phase S2): the times the teams and the rooms gave,
+    the crews. Built again on each call; it never replaces the Office's file or a [SIM] year."""
+    _national(principal)
+    dataset = await service.build_live(session, year, audit.actor_of(principal), audit.name_of(principal))
+    await audit.record(
+        session,
+        actor=audit.actor_of(principal),
+        action="snacr.dataset_live",
+        target=f"snacr_dataset:{year}",
+        details={"rows": dataset.rows},
+    )
+    await session.commit()
+    await session.refresh(dataset)
+    return schemas.ImportOut(dataset=_dataset(dataset))
+
+
 @router.delete("/datasets/{year}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_dataset(principal: Editor, session: Session, year: int) -> Response:
     _national(principal)

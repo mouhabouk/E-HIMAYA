@@ -143,6 +143,8 @@ class MissionRecord(BaseModel):
     crew_count: int | None = None
     consumables: dict[Consumable, float] = Field(default_factory=dict)
     time_sources: dict[str, TimeSource] = Field(default_factory=dict)
+    #: Times that hold but are not credible, for the room to check (``record_checks.WARNINGS``).
+    record_warnings: list[str] = Field(default_factory=list)
 
 
 class AssignmentOut(MissionRecord):

@@ -10,7 +10,7 @@ from app.modules.snacr.domain import Family, Hazard, Priority, Zone
 class DatasetOut(BaseModel):
     id: uuid.UUID
     year: int
-    source: Literal["office", "simulated"]
+    source: Literal["office", "simulated", "live"]
     simulated: bool
     file_name: str | None
     rows: int
@@ -88,6 +88,26 @@ class DatasetUse(BaseModel):
     year: int
     simulated: bool
     rows: int
+    source: Literal["office", "simulated", "live"] = "office"
+
+
+class MissionFamily(BaseModel):
+    """The parts of a mission in minutes, from the records of the operations rooms (phase S2)."""
+
+    rows: int
+    returned_pct: float | None
+    hospital_rows: int
+    crew_mean: float | None
+    turnout_median: float | None
+    turnout_p90: float | None
+    travel_median: float | None
+    travel_p90: float | None
+    on_scene_median: float | None
+    on_scene_p90: float | None
+    transport_median: float | None
+    transport_p90: float | None
+    length_median: float | None
+    length_p90: float | None
 
 
 class Analysis(BaseModel):
@@ -105,6 +125,7 @@ class Analysis(BaseModel):
     month: dict[Family, list[int]]
     weekday_hour: dict[Family, list[list[int]]]
     subtypes: dict[Family, list[SubtypeCount]]
+    mission: dict[Family, MissionFamily] = Field(default_factory=dict)
 
 
 class UnmatchedName(BaseModel):

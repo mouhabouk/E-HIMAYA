@@ -906,6 +906,7 @@ CATALOGUE: tuple[Spec, ...] = (
             ("أرشيف التدخلات", "Archive des interventions", "Intervention archive"),
             "POST /snacr/datasets",
             "POST /snacr/datasets/simulate",
+            "POST /snacr/datasets/live",
             "DELETE /snacr/datasets/{year}",
             "POST /snacr/aliases",
             flags="national",

@@ -215,6 +215,7 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     snacrAnalysis: vi.fn(),
     importSnacr: vi.fn(),
     simulateSnacr: vi.fn(),
+    liveSnacr: vi.fn(),
     deleteSnacrYear: vi.fn(),
     snacrUnmatched: vi.fn(() => Promise.resolve([])),
     snacrAliases: vi.fn(() => Promise.resolve([])),

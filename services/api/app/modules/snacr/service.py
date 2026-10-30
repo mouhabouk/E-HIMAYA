@@ -122,6 +122,72 @@ async def load(
     return dataset
 
 
+# One row per incident of the year, from the records of the operations rooms (phase S2): the call is the opening of
+# the incident, then the first vehicle out, the first on scene, the first to leave it and reach the hospital, and the
+# last back at its unit; the crew is the sum of the agents of its vehicles.
+_LIVE = text(
+    """
+INSERT INTO snacr.intervention (dataset_id, year, family, nature, subtype, gouvernorat_code, delegation_id,
+    delegation_raw, called_at, departed_at, arrived_at, ended_at, arrival_min, flags, left_at, hospital_at,
+    returned_at, crew_count)
+SELECT CAST(:dataset AS uuid), CAST(:year AS smallint),
+    CASE i.category WHEN 'fire' THEN 'fire' WHEN 'traffic_accident' THEN 'road' WHEN 'medical' THEN 'medical'
+        ELSE 'rescue' END,
+    i.category, i.classification, i.gouvernorat_code, i.delegation_id, coalesce(d.name_ar, ''),
+    i.opened_at, a.departed, a.arrived, coalesce(a.returned, a.released), a.arrival_min,
+    CASE WHEN a.arrived IS NULL THEN ARRAY['arrival_missing']
+         WHEN a.arrival_min > :ceiling THEN ARRAY['arrival_outlier'] ELSE '{}'::text[] END,
+    a.left_at, a.hospital_at, a.returned, a.crew
+FROM ops.incident i
+LEFT JOIN geo.delegation d ON d.id = i.delegation_id
+JOIN LATERAL (
+    SELECT min(x.en_route_at) AS departed, min(x.on_scene_at) AS arrived, min(x.left_scene_at) AS left_at,
+        min(x.at_hospital_at) AS hospital_at, max(x.back_at_unit_at) AS returned, max(x.released_at) AS released,
+        CAST(nullif(sum(coalesce(x.crew_count, 0)), 0) AS smallint) AS crew,
+        EXTRACT(EPOCH FROM (min(x.on_scene_at) - i.opened_at)) / 60 AS arrival_min
+    FROM ops.assignment x
+    WHERE x.incident_id = i.id AND x.kind = 'resource' AND x.status <> 'cancelled'
+) a ON a.departed IS NOT NULL
+WHERE i.gouvernorat_code IS NOT NULL AND i.merged_into IS NULL AND i.status <> 'dissolved'
+  AND EXTRACT(YEAR FROM i.opened_at AT TIME ZONE 'Africa/Tunis') = :year
+"""
+)
+
+
+async def build_live(session: AsyncSession, year: int, actor: str, actor_name: str | None) -> Dataset:
+    """The year drawn from the records of the operations rooms (phase S2). It never replaces the Office's file or a
+    [SIM] year: delete that year first."""
+    existing = await session.scalar(select(Dataset).where(Dataset.year == year))
+    if existing is not None and existing.source != "live":
+        raise HTTPException(status.HTTP_409_CONFLICT, "year_has_dataset")
+    if existing is not None:
+        await session.delete(existing)
+        await session.flush()
+    dataset = Dataset(
+        id=uuid.uuid4(),
+        year=year,
+        source="live",
+        simulated=False,
+        file_name=None,
+        rows=0,
+        quality={},
+        imported_by=actor,
+        imported_by_name=actor_name,
+    )
+    session.add(dataset)
+    await session.flush()
+    result = await session.execute(
+        _LIVE, {"dataset": str(dataset.id), "year": year, "ceiling": domain.ARRIVAL_CEILING_MIN}
+    )
+    rows = int(getattr(result, "rowcount", 0) or 0)
+    if rows == 0:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "no_records")
+    dataset.rows = rows
+    dataset.quality = {"read": rows, "kept": rows, "skipped": {}, "flags": {}, "source": "live"}
+    await session.flush()
+    return dataset
+
+
 async def datasets(session: AsyncSession) -> list[Dataset]:
     return list((await session.scalars(select(Dataset).order_by(Dataset.year))).all())
 
@@ -224,6 +290,46 @@ WHERE i.year = ANY(:years) AND (cardinality(CAST(:codes AS smallint[])) = 0 OR i
 GROUP BY 1, 2 ORDER BY 3 DESC
 """
 )
+
+# The indicators of the whole mission (phase S2), in minutes, where both of their times are known: what the records
+# of the rooms give beyond the Office's archive (leaving the scene, the hospital, the return, the crew).
+_M = "EXTRACT(EPOCH FROM ({b} - {a})) / 60"
+_MISSION_PARTS = {
+    "turnout": _M.format(a="i.called_at", b="i.departed_at"),
+    "travel": _M.format(a="i.departed_at", b="i.arrived_at"),
+    "on_scene": _M.format(a="i.arrived_at", b="i.left_at"),
+    "transport": _M.format(a="i.left_at", b="i.hospital_at"),
+    "length": _M.format(a="i.called_at", b="i.returned_at"),
+}
+_MISSION_COLUMNS = ", ".join(
+    f"percentile_cont(0.5) WITHIN GROUP (ORDER BY {e}) FILTER (WHERE {e} >= 0) AS {k}_median, "
+    f"percentile_cont(0.9) WITHIN GROUP (ORDER BY {e}) FILTER (WHERE {e} >= 0) AS {k}_p90"
+    for k, e in _MISSION_PARTS.items()
+)
+_MISSION = text(
+    f"""
+SELECT i.family, count(*) AS n, count(i.returned_at) AS returned, count(i.hospital_at) AS hospital,
+    count(i.crew_count) AS crewed, avg(i.crew_count) AS crew_mean, {_MISSION_COLUMNS}
+FROM snacr.intervention i
+WHERE i.year = ANY(:years) AND (cardinality(CAST(:codes AS smallint[])) = 0 OR i.gouvernorat_code = ANY(:codes))
+  AND (i.left_at IS NOT NULL OR i.returned_at IS NOT NULL OR i.crew_count IS NOT NULL)
+GROUP BY i.family
+"""  # noqa: S608 (constants only, no input)
+)
+
+
+async def mission_indicators(session: AsyncSession, params: dict[str, Any]) -> dict[str, Any]:
+    """Per family, the medians and 90th percentiles of the parts of a mission, and the crew (phase S2)."""
+    out: dict[str, Any] = {}
+    for row in (await session.execute(_MISSION, params)).mappings():
+        out[row["family"]] = {
+            "rows": row["n"],
+            "returned_pct": _pct(row["returned"], row["n"]),
+            "hospital_rows": row["hospital"],
+            "crew_mean": _round(row["crew_mean"]) if row["crewed"] else None,
+            **{f"{k}_{q}": _round(row[f"{k}_{q}"]) for k in _MISSION_PARTS for q in ("median", "p90")},
+        }
+    return out
 
 
 def _pct(part: int, whole: int) -> float | None:
@@ -390,7 +496,7 @@ async def analysis(session: AsyncSession, codes: list[int], years: list[int]) ->
         "years": years,
         "codes": codes,
         "simulated": any(d.simulated for d in used),
-        "datasets": [{"year": d.year, "simulated": d.simulated, "rows": d.rows} for d in used],
+        "datasets": [{"year": d.year, "simulated": d.simulated, "rows": d.rows, "source": d.source} for d in used],
         "method": m,
         "breaks": [round(b, 2) for b in breaks],
         "totals": {
@@ -401,6 +507,7 @@ async def analysis(session: AsyncSession, codes: list[int], years: list[int]) ->
             "rate_per_1000": round(1000 * totals["n"] / span / scope_population, 2) if scope_population else None,
         },
         "by_year": [{"year": y, "families": f} for y, f in sorted(by_year.items())],
+        "mission": await mission_indicators(session, params),
         "gouvernorats": out_gouvernorats,
         "delegations": out_delegations,
         "matrix": matrix,

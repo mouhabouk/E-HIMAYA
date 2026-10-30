@@ -82,8 +82,12 @@ describe("the room's editor", () => {
   afterEach(() => vi.useRealTimers());
 
   it("shows the durations under the assignment", () => {
-    renderApp(<MissionIndicators assignment={mission()} calledAt={iso(at(13, 58))} />, { lang: "ar" });
+    renderApp(
+      <MissionIndicators assignment={mission({ record_warnings: ["steps_together"] })} calledAt={iso(at(13, 58))} />,
+      { lang: "ar" },
+    );
     expect(screen.getByText("مهلة الخروج")).toBeInTheDocument();
+    expect(screen.getByText("الخروج والوصول في اللحظة نفسها تقريبا")).toBeInTheDocument();
     expect(screen.getByText("من النداء إلى الوصول")).toBeInTheDocument();
   });
 

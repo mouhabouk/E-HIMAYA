@@ -7,7 +7,7 @@ from typing import Any
 
 import httpx
 
-from app.modules.ops import crew_sms, record
+from app.modules.ops import crew_sms, record, record_checks
 from tests.test_crew import Staff, _on_shift, new_incident, write
 from tests.test_operations import make_resource, random_place
 
@@ -37,6 +37,37 @@ def test_rules() -> None:
     sms = f"EH2 {'a' * 32} {'b' * 32} back_at_unit 1793350000 {'c' * 32} {'d' * 16}"
     parsed = crew_sms.parse(sms)
     assert parsed is not None and parsed.event == "back_at_unit" and len(sms) < 160
+
+
+def test_warnings() -> None:
+    """Times that hold but are not credible are flagged for the room, never refused."""
+    now = datetime.now(UTC)
+    t0 = now - timedelta(hours=10)
+    times: dict[str, datetime | None] = {
+        "created_at": t0,
+        "en_route_at": t0 + timedelta(minutes=2),
+        "on_scene_at": t0 + timedelta(minutes=12),
+        "left_scene_at": t0 + timedelta(minutes=50),
+        "at_hospital_at": t0 + timedelta(minutes=65),
+        "back_at_unit_at": t0 + timedelta(minutes=90),
+    }
+    common: dict[str, Any] = {"status": "released", "released_at": t0, "crew_count": 4, "now": now}
+    assert record_checks.warnings(times, distance_m=9000, **common) == []
+    # 30 km in two minutes: faster than the road allows; the two buttons pressed together.
+    fast = times | {"on_scene_at": t0 + timedelta(minutes=4)}
+    assert record_checks.warnings(fast, distance_m=30_000, **common) == ["travel_too_fast"]
+    together = times | {"on_scene_at": t0 + timedelta(minutes=2, seconds=5)}
+    assert record_checks.warnings(together, distance_m=None, **common) == ["steps_together"]
+    late = times | {"en_route_at": t0 + timedelta(minutes=45), "on_scene_at": t0 + timedelta(minutes=48)}
+    assert "turnout_long" in record_checks.warnings(late, distance_m=None, **common)
+    assert record_checks.warnings(
+        times | {"at_hospital_at": t0 + timedelta(minutes=50, seconds=20)}, distance_m=None, **common
+    ) == ["transport_instant"]
+    no_return = times | {"back_at_unit_at": None}
+    assert record_checks.warnings(no_return, distance_m=None, **common | {"crew_count": None}) == [
+        "return_missing",
+        "crew_missing",
+    ]
 
 
 async def test_team_records_the_mission(client: httpx.AsyncClient, staff: Staff) -> None:
@@ -141,9 +172,56 @@ async def test_room_records_a_team_without_the_app(client: httpx.AsyncClient, st
     assert saved["status"] == "released" and saved["released_at"] == saved["back_at_unit_at"]
     assert saved["at_hospital_at"] is None and saved["crew_count"] == 3
     assert set(saved["time_sources"].values()) == {"room"}
+    # One second between the departure and the arrival: saved, and flagged for the room to check.
+    assert {"travel_too_fast", "steps_together"} & set(saved["record_warnings"])
     # A time the room gave changes without a reason; clearing the hospital time is allowed.
     r = await client.put(url, json={"times": {"left_scene_at": None}}, headers=operator)
     assert r.status_code == 200 and r.json()["left_scene_at"] is None
     # Out of the gouvernorat: not found.
     tunis = staff(["operator"], 11)
     assert (await client.put(url, json={"crew_count": 2}, headers=tunis)).status_code in (403, 404)
+
+
+async def test_snacr_year_from_the_records(client: httpx.AsyncClient, staff: Staff) -> None:
+    """The records of the rooms feed SNACR: a year drawn from them, with the parts of the mission and the crew."""
+    resource = await make_resource(client, staff)
+    incident_id, _ = await new_incident(client, staff, random_place())
+    operator = staff(["operator"])
+    r = await client.post(
+        f"/api/v1/staff/incidents/{incident_id}/assignments", json={"resource_id": resource["id"]}, headers=operator
+    )
+    assignment = r.json()
+    start = datetime.fromisoformat(assignment["created_at"])
+    at = [_iso(start + timedelta(seconds=s)) for s in (1, 2, 3, 4, 5)]
+    times = dict(zip(record.EDITABLE, at, strict=True))
+    r = await client.put(
+        f"/api/v1/staff/assignments/{assignment['id']}/record",
+        json={"times": times, "crew_count": 5},
+        headers=operator,
+    )
+    assert r.status_code == 200, r.text
+
+    room = staff(["ops_manager"], gouvernorat=None)
+    url = "/api/v1/staff/snacr"
+    year = start.year
+    r = await client.post(f"{url}/datasets/live", params={"year": year}, headers=room)
+    assert r.status_code == 201, r.text
+    assert r.json()["dataset"]["source"] == "live" and r.json()["dataset"]["rows"] >= 1
+    # Built again on each call; a regional account cannot.
+    assert (await client.post(f"{url}/datasets/live", params={"year": year}, headers=room)).status_code == 201
+    regional = staff(["ops_manager"], gouvernorat=61)
+    assert (await client.post(f"{url}/datasets/live", params={"year": year}, headers=regional)).status_code == 403
+    analysis = (
+        await client.get(f"{url}/analysis", params={"years": str(year), "gouvernorat": 61}, headers=room)
+    ).json()
+    mission = analysis["mission"]["fire"]
+    assert mission["rows"] >= 1 and mission["crew_mean"] is not None and mission["length_median"] is not None
+    assert analysis["datasets"][0]["source"] == "live"
+    # Never over the Office's file or a [SIM] year.
+    r = await client.post(f"{url}/datasets/simulate", params={"year": 2034, "rows": 100}, headers=room)
+    assert r.status_code == 201
+    assert (await client.post(f"{url}/datasets/live", params={"year": 2034}, headers=room)).json()[
+        "detail"
+    ] == "year_has_dataset"
+    for y in (year, 2034):
+        assert (await client.delete(f"{url}/datasets/{y}", headers=room)).status_code == 204

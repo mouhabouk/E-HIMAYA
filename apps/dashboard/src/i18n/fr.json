@@ -584,7 +584,9 @@
     "assignment_cancelled": "Cet engagement est annulé.",
     "record_closed": "Le relevé n'est plus modifiable (7 jours après la fin).",
     "time_required": "Une heure atteinte par la mission ne peut pas être effacée.",
-    "correction_reason_required": "Corriger une heure donnée par l'équipe demande un motif."
+    "correction_reason_required": "Corriger une heure donnée par l'équipe demande un motif.",
+    "year_has_dataset": "Cette année vient du fichier de l'Office ou de [SIM] : supprimez-la d'abord.",
+    "no_records": "Aucun relevé pour cette année."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -7963,7 +7965,9 @@
       "rowsCount": "{{count}} interventions",
       "alias": "Rattacher à une délégation",
       "aliasTo": "Rattacher « {{raw}} » à une délégation",
-      "pick": "Choisir la délégation"
+      "pick": "Choisir la délégation",
+      "live": "Relevés des salles",
+      "fromRecords": "Construire {{year}} depuis les relevés"
     },
     "method": {
       "title": "Méthode",
@@ -7989,6 +7993,17 @@
       "plan_cycle": "Cycle du schéma",
       "percentile_indicators": "Indicateurs en percentiles",
       "matrix": "Matrice des risques"
+    },
+    "mission": {
+      "title": "Étapes de la mission d'après les relevés (médiane · P90)",
+      "rows": "Interventions",
+      "turnout": "Départ",
+      "travel": "Trajet",
+      "on_scene": "Sur les lieux",
+      "transport": "Transport à l'hôpital",
+      "length": "De l'appel au retour",
+      "crew": "Agents en moyenne",
+      "note": "Calculé sur les heures saisies par les équipes et les salles ; l'archive de l'Office n'a ni le départ des lieux, ni l'hôpital, ni le retour."
     }
   },
   "record": {
@@ -8066,6 +8081,17 @@
       "no_network": "Pas de réseau",
       "radio_log": "Selon le registre radio",
       "other": "Autre"
+    },
+    "warningsTitle": "Alertes de qualité des heures",
+    "warning": {
+      "travel_too_fast": "Trajet trop court pour la distance",
+      "steps_together": "Départ et arrivée presque simultanés",
+      "turnout_long": "Délai de départ au-delà de 30 min",
+      "on_scene_long": "Plus de 12 h sur les lieux",
+      "transport_instant": "Transport à l'hôpital en moins d'une minute",
+      "return_long": "Retour à l'unité après plus de 6 h",
+      "return_missing": "Retour à l'unité non saisi",
+      "crew_missing": "Nombre d'agents non saisi"
     }
   }
 }

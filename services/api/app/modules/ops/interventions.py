@@ -23,7 +23,7 @@ from app.modules.audit import service as audit
 from app.modules.identity.models import Profile
 from app.modules.identity.service import Reporter
 from app.modules.notify import outbox
-from app.modules.ops import resources, schemas, scope, shifts
+from app.modules.ops import record_checks, resources, schemas, scope, shifts
 from app.modules.ops import service as incidents
 from app.modules.ops.domain import ACTIVE_ASSIGNMENT, ASSIGNMENT_TRANSITIONS, classification_allowed
 from app.modules.ops.models import (
@@ -159,7 +159,7 @@ async def advance_reports(
 async def assignments_of(session: AsyncSession, incident_id: uuid.UUID) -> list[schemas.AssignmentOut]:
     rows = (
         await session.execute(
-            select(Assignment, Resource, Unit, Volunteer, Profile, Shift, _UNSEEN)
+            select(Assignment, Resource, Unit, Volunteer, Profile, Shift, _UNSEEN, _UNIT_DISTANCE)
             .outerjoin(Resource, Resource.id == Assignment.resource_id)
             .outerjoin(Unit, Unit.id == Resource.unit_id)
             .outerjoin(Volunteer, Volunteer.user_id == Assignment.volunteer_id)
@@ -199,6 +199,12 @@ async def _positions(session: AsyncSession, ids: list[uuid.UUID]) -> dict[uuid.U
     }
 
 
+# How far the vehicle's unit is from the incident, to judge the travel time (phase S2).
+_UNIT_DISTANCE = func.ST_Distance(
+    Unit.location,
+    select(Incident.centroid).where(Incident.id == Assignment.incident_id).correlate(Assignment).scalar_subquery(),
+)
+
 # Alerts of the team the room has not marked seen (phase P4b).
 _UNSEEN = (
     select(func.count(CrewAlert.id))
@@ -216,10 +222,23 @@ def _assignment_out(
     p: Profile | None,
     sh: Shift | None,
     unseen: int | None = 0,
+    distance_m: float | None = None,
     *,
     position: schemas.VehiclePosition | None = None,
 ) -> schemas.AssignmentOut:
+    times = {
+        f: getattr(a, f)
+        for f in ("created_at", "en_route_at", "on_scene_at", "left_scene_at", "at_hospital_at", "back_at_unit_at")
+    }
     return schemas.AssignmentOut(
+        record_warnings=record_checks.warnings(
+            times,
+            status=a.status,
+            released_at=a.released_at,
+            crew_count=a.crew_count,
+            distance_m=distance_m,
+            now=_now(),
+        ),
         id=a.id,
         incident_id=a.incident_id,
         kind=a.kind,
@@ -268,7 +287,7 @@ def _assignment_out(
 async def assignment_out(session: AsyncSession, assignment_id: uuid.UUID) -> schemas.AssignmentOut:
     row = (
         await session.execute(
-            select(Assignment, Resource, Unit, Volunteer, Profile, Shift, _UNSEEN)
+            select(Assignment, Resource, Unit, Volunteer, Profile, Shift, _UNSEEN, _UNIT_DISTANCE)
             .outerjoin(Resource, Resource.id == Assignment.resource_id)
             .outerjoin(Unit, Unit.id == Resource.unit_id)
             .outerjoin(Volunteer, Volunteer.user_id == Assignment.volunteer_id)
