@@ -2,6 +2,8 @@
 
 * Open source, on by default and without a key: Sentinel-2 cloudless by EOX (CC BY-NC-SA 4.0, attribution required;
   the civil protection's use is not commercial), with the place names of CARTO above it in the hybrid view.
+* On a network without internet, both come from the Office's own map server instead (BASEMAP_OPEN_* and
+  BASEMAP_LABEL_* settings, docs/offline-maps.md): open_source() and label_source() return what is in force.
 * Paid source, at the administration's choice: the tile address and licence key of the provider it contracts with,
   kept by the API. The browser never receives the key: it asks the API for each tile with a signed, short-lived
   address, and the API fetches the tile from the provider. Should the provider fail, the tile comes from the open
@@ -15,6 +17,7 @@ import time
 from typing import Literal
 from urllib.parse import quote
 
+from app.core.config import get_settings
 from app.core.crypto import get_cipher
 
 Provider = Literal["esri", "maxar", "mapbox", "google", "other"]
@@ -39,8 +42,22 @@ _TOKEN = re.compile(r"^(\d{10})\.([A-Za-z0-9_-]{22,64})$")
 _PLACEHOLDERS = ("{z}", "{x}", "{y}")
 
 
+def open_source() -> tuple[list[str], str, int]:
+    """Tile addresses, attribution and deepest zoom of the open satellite background in force."""
+    s = get_settings()
+    tiles = s.basemap_open_tiles.split() if s.basemap_open_tiles else [OPEN_TILES]
+    return tiles, s.basemap_open_attribution or OPEN_ATTRIBUTION, s.basemap_open_max_zoom or OPEN_MAX_ZOOM
+
+
+def label_source() -> tuple[list[str], str, int]:
+    """Tile addresses, attribution and deepest zoom of the place names drawn over the imagery (hybrid)."""
+    s = get_settings()
+    tiles = s.basemap_label_tiles.split() if s.basemap_label_tiles else LABEL_TILES
+    return tiles, s.basemap_label_attribution or LABEL_ATTRIBUTION, s.basemap_label_max_zoom or LABEL_MAX_ZOOM
+
+
 def open_tile(z: int, x: int, y: int) -> str:
-    return OPEN_TILES.replace("{z}", str(z)).replace("{x}", str(x)).replace("{y}", str(y))
+    return open_source()[0][0].replace("{z}", str(z)).replace("{x}", str(x)).replace("{y}", str(y))
 
 
 def check_template(url_template: str, has_key: bool, key_header: str | None) -> None:

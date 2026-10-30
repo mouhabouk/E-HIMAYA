@@ -95,6 +95,9 @@ rectangle "Tableau de bord central" {
   usecase "Accorder le bouton\n« assistant du commandant » (AI5b)" as S74
   usecase "Lancer ou programmer un entraînement,\ncomparer à la version en cours (AI5c)" as S75
   usecase "Confirmer la lecture d'un signalement\npour l'apprentissage (#138)" as S76
+  usecase "Limites administratives et\ntaux par délégation (M)" as S77
+  usecase "Alerter des délégations\nchoisies (M)" as S78
+  usecase "Enregistrer un lieu ;\nvue 3D d'un lieu (M)" as S79
 }
 rectangle "Application des équipes (P4a à P4d)" {
   usecase "Se connecter par code\n(MFA, PIN 6 chiffres)" as T0
@@ -277,6 +280,12 @@ SA --> S74
 SA --> S75
 CC --> S75 : lecture
 OP --> S76
+OP --> S77
+GOV --> S77
+OP --> S78
+OPM --> S78 : publie (quatre yeux)
+OP --> S79
+OPM --> S79
 S71 ..> S70 : <<include>>
 S72 ..> S71 : <<extend>>
 @enduml

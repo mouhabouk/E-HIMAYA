@@ -52,7 +52,9 @@ class Message(Base):
     severity: Mapped[str | None] = mapped_column(Text)
     category: Mapped[str | None] = mapped_column(Text)
     hazard: Mapped[str | None] = mapped_column(Text)
-    area_polygon: Mapped[object | None] = mapped_column(Geometry("POLYGON", srid=4326))
+    # A drawn polygon, or the union of the chosen délégations (phase M): a MultiPolygon from migration 0080.
+    area_polygon: Mapped[object | None] = mapped_column(Geometry("MULTIPOLYGON", srid=4326))
+    delegation_ids: Mapped[list[int]] = mapped_column(ARRAY(Integer), server_default="{}")
     expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     gouvernorat_codes: Mapped[list[int]] = mapped_column(ARRAY(SmallInteger), server_default="{}")
     creator_scope: Mapped[int | None] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))

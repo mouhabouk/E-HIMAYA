@@ -44,6 +44,13 @@ class "FondDeCarte (R-S)" as FondCarte {
   zoom max, activé, dernier test
   -- à défaut : imagerie ouverte EOX
 }
+class "LieuEnregistré (M)" as LieuEnr {
+  nom (1..120), type : critique | important | autre
+  note (≤ 2000), lat, lon
+  gouvernorat, délégation (déduits)
+  créé par, modifié par, dates
+  -- RLS par gouvernorat ; audit place.*
+}
 class DossierCouches {
   clé, noms (ar, fr, en)
   icône, couleur, ordre

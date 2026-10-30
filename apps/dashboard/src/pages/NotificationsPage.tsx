@@ -41,7 +41,9 @@ export function TargetText({ message }: { message: Message }) {
   const { t } = useTranslation();
   const gouvernorats = useGouvernorats();
   if (message.audience === "user") return <>{t("notify.target.user")}</>;
-  const place = message.area.polygon
+  const place = message.area.delegation_ids?.length
+    ? t("notify.target.delegations", { count: message.area.delegation_ids.length })
+    : message.area.polygon
     ? t("notify.target.polygon")
     : message.area.gouvernorat_codes.length === 0
       ? t("notify.target.national")

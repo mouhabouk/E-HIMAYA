@@ -365,6 +365,11 @@ services:
       OPENSEARCH_JAVA_OPTS: -Xms${OPENSEARCH_HEAP:-1g} -Xmx${OPENSEARCH_HEAP:-1g}
     mem_limit: ${OPENSEARCH_MEM_LIMIT:-2g}
 
+  # The Office's map server (profile "maps", docs/offline-maps.md): reached only through Caddy on API_HOST/maps/.
+  maps:
+    ports: !reset []
+    command: ["--config", "/data/config.json", "--port", "8080", "--public_url", "https://${API_HOST}/maps/"]
+
   # Development helpers, never started in production (no profile "dev-tools" is enabled here).
   mailpit:
     profiles: ["dev-tools"]

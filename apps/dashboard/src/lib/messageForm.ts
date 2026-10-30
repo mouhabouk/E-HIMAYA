@@ -23,7 +23,8 @@ export const BODY_MAX = 1000;
 export const MAX_ALERT_DAYS = 7;
 export const SMS_CHARS = 300;
 
-export type AreaMode = "gouvernorats" | "polygon";
+/** Phase M adds "delegations": some délégations of a gouvernorat, picked from the Map Tunisia list. */
+export type AreaMode = "gouvernorats" | "delegations" | "polygon";
 
 export interface MessageForm {
   kind: MessageKind;
@@ -41,6 +42,7 @@ export interface MessageForm {
   expiresAt: string;
   areaMode: AreaMode;
   vertices: Vertex[];
+  delegations: number[];
   /** Phase P2b, audience "organizations": some kinds only (none: every kind) and a read acknowledgement. */
   orgKinds: OrgKind[];
   ackRequired: boolean;
@@ -57,7 +59,8 @@ export type FormErrors = Partial<
     | "severity"
     | "category"
     | "expiresAt"
-    | "polygon",
+    | "polygon"
+    | "delegations",
     string
   >
 >;
@@ -86,6 +89,7 @@ export function emptyForm(kind: MessageKind, now: Date = new Date()): MessageFor
     expiresAt: toLocalInput(new Date(now.getTime() + 24 * 3_600_000)),
     areaMode: "gouvernorats",
     vertices: [],
+    delegations: [],
     orgKinds: [],
     ackRequired: false,
   };
@@ -105,8 +109,9 @@ export function formFromMessage(m: Message): MessageForm {
     category: m.category ?? "",
     hazard: m.hazard ?? "",
     expiresAt: m.expires_at ? toLocalInput(new Date(m.expires_at)) : toLocalInput(new Date(Date.now() + 86_400_000)),
-    areaMode: m.area.polygon ? "polygon" : "gouvernorats",
-    vertices: fromPolygon(m.area.polygon),
+    areaMode: m.area.delegation_ids?.length ? "delegations" : m.area.polygon ? "polygon" : "gouvernorats",
+    vertices: m.area.polygon?.type === "Polygon" && !m.area.delegation_ids?.length ? fromPolygon(m.area.polygon) : [],
+    delegations: [...(m.area.delegation_ids ?? [])],
     orgKinds: [...(m.org_kinds ?? [])],
     ackRequired: m.ack_required ?? false,
   };
@@ -136,6 +141,7 @@ export function validateForm(form: MessageForm, now: Date = new Date()): FormErr
       const err: PolygonError | null = validateVertices(form.vertices);
       if (err) errors.polygon = `polygon.${err}`;
     }
+    if (form.areaMode === "delegations" && form.delegations.length === 0) errors.delegations = "delegationsRequired";
   }
   return errors;
 }
@@ -157,16 +163,18 @@ export function toMessageBody(form: MessageForm, version?: number): MessageBody 
       ack_required: toOrgs && form.ackRequired,
     };
   }
-  const polygon = form.areaMode === "polygon";
   return {
     ...base,
     severity: form.severity || null,
     category: form.category || null,
     hazard: form.hazard || null,
     expires_at: new Date(form.expiresAt).toISOString(),
-    area: polygon
-      ? { gouvernorat_codes: [], polygon: toPolygon(form.vertices) }
-      : { gouvernorat_codes: [...form.gouvernorats] },
+    area:
+      form.areaMode === "polygon"
+        ? { gouvernorat_codes: [], polygon: toPolygon(form.vertices) }
+        : form.areaMode === "delegations"
+          ? { gouvernorat_codes: [], delegation_ids: [...form.delegations] }
+          : { gouvernorat_codes: [...form.gouvernorats] },
   };
 }
 

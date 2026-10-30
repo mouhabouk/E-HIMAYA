@@ -23,6 +23,7 @@ import { useServices } from "../context/services";
 import { errorMessageKey, isApiError } from "../lib/api";
 import { useFormat, useGouvernorats, useLanguage } from "../lib/hooks";
 import { applyLiveEvent } from "../lib/liveCache";
+import { localizedName } from "../lib/localized";
 import { directionOf } from "../i18n";
 import { statusChoices, TRANSITIONS } from "../lib/status";
 import { canChangeStatus } from "../lib/roles";
@@ -307,7 +308,13 @@ export function ReportDetailPage() {
             <dt>{t("detail.fields.gouvernorat")}</dt>
             <dd>{gouvernorats.nameOf(r.gouvernorat_code) ?? t("common.notAvailable")}</dd>
             <dt>{t("detail.fields.delegation")}</dt>
-            <dd>{r.delegation_id ?? t("common.notAvailable")}</dd>
+            <dd dir="auto">{r.address?.delegation ? localizedName(r.address.delegation, lang) : t("common.notAvailable")}</dd>
+            <dt>{t("detail.fields.sector")}</dt>
+            <dd dir="auto">{r.address?.sector ? localizedName(r.address.sector, lang) : t("common.notAvailable")}</dd>
+            <dt>{t("detail.fields.municipality")}</dt>
+            <dd dir="auto">
+              {r.address?.municipality ? localizedName(r.address.municipality, lang) : t("common.notAvailable")}
+            </dd>
             <dt>{t("detail.fields.reporterKind")}</dt>
             <dd>{t(`reporterKind.${r.reporter_kind}`)}</dd>
             <dt>{t("detail.fields.coordinates")}</dt>

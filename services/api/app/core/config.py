@@ -320,6 +320,16 @@ class Settings(BaseSettings):
     learning_interval_s: int = Field(default=300, ge=30)
     # Terrain model (Copernicus DEM GLO-90) installed by the one-shot "terrain" job; absent: slope 0, stated.
     terrain_dir: Path = Path("/terrain")
+    # Open satellite background and hybrid place names of the maps (docs/offline-maps.md). Unset: the public sources of
+    # app/modules/basemap/domain.py (Sentinel-2 cloudless by EOX, CARTO place names). On a network without internet, the
+    # Office's own map server (profile "maps"): BASEMAP_OPEN_TILES=https://API_HOST/maps/data/satellite/{z}/{x}/{y}.jpg
+    # and BASEMAP_LABEL_TILES=https://API_HOST/maps/styles/ehimaya-labels/{z}/{x}/{y}.png (space-separated for several).
+    basemap_open_tiles: str | None = None
+    basemap_open_attribution: str | None = None
+    basemap_open_max_zoom: int | None = Field(default=None, ge=1, le=22)
+    basemap_label_tiles: str | None = None
+    basemap_label_attribution: str | None = None
+    basemap_label_max_zoom: int | None = Field(default=None, ge=1, le=22)
 
     # Analytics and reports (phase 8, docs/api/phase-8-contract.md §1). k-anonymity floor of exported documents: a
     # count below it is printed "<N" (never the exact value) in PDF and XLSX exports.
@@ -380,6 +390,18 @@ class Settings(BaseSettings):
     api_log_level: str = "INFO"
     db_pool_size: int = 10
     db_max_overflow: int = 20
+
+    @field_validator("basemap_open_tiles", "basemap_label_tiles")
+    @classmethod
+    def _tile_templates(cls, value: str | None) -> str | None:
+        value = (value or "").strip()
+        if not value:
+            return None
+        for template in value.split():
+            placeholders = all(p in template for p in ("{z}", "{x}", "{y}"))
+            if not template.startswith(("https://", "http://")) or not placeholders:
+                raise ValueError("a tile address is an http(s) URL with {z}, {x} and {y}")
+        return value
 
     @field_validator("field_encryption_key")
     @classmethod
@@ -447,6 +469,10 @@ class Settings(BaseSettings):
         return value
 
     @field_validator(
+        "basemap_open_attribution",
+        "basemap_open_max_zoom",
+        "basemap_label_attribution",
+        "basemap_label_max_zoom",
         "ai_service_url",
         "ai_service_token",
         "metrics_token",

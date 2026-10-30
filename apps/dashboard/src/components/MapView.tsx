@@ -1,7 +1,7 @@
 import type { ExpressionSpecification, GeoJSONSource, Map as MlMap, MapMouseEvent, Marker, Popup } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { FeatureCollection } from "geojson";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { CATEGORY_ICON_PATHS } from "../lib/categoryIcons";
 import type { BasemapView } from "../lib/basemap";
@@ -89,6 +89,15 @@ export interface MapPopupContent {
   node: ReactNode;
 }
 
+/**
+ * Administrative boundaries (phase M): the units of one level as outlines, filled by their `fill` property when
+ * `filled` (reports per 10,000 inhabitants), clickable for their names and figures.
+ */
+export interface MapAdmin {
+  data: FeatureCollection;
+  filled: boolean;
+}
+
 /** A cell of an aggregate grid (phase 8 hotspots): a hexagon filled by its count class, never a single point. */
 export interface MapHex {
   id: string;
@@ -140,6 +149,10 @@ interface MapViewProps {
   lines?: MapLine[];
   /** Weather layer (fire danger field, wind arrows, rain level). */
   weather?: MapWeather | null;
+  /** Administrative boundaries (phase M), drawn under every other layer of the application. */
+  admin?: MapAdmin | null;
+  /** A click on an administrative unit: its properties and the clicked point. */
+  onAdminClick?: (properties: Record<string, unknown>, lon: number, lat: number) => void;
   /** Satellite or hybrid background (phase R); the street map of the style when absent or in "map" mode. */
   basemap?: BasemapView | null;
   /** A click on the map background (not on a marker): e.g. the weather of that point. */
@@ -152,20 +165,29 @@ interface MapViewProps {
   /** "Call" button in the popups of reports (reporter) and points with `call`; omitted without telephony. */
   onCall?: (body: DialBody) => void;
   callLabel?: string;
+  /**
+   * Focus view (phase M, Yamen 2026-10-30): a double click on a place or a report lifts a 500 m disc around it in a
+   * tilted 3D view and dims the rest of the map; another double click (or the button) returns to the previous view.
+   * The labels name the button that leaves it and the popup button that enters it (keyboard users).
+   */
+  focus?: { exitLabel: string; enterLabel: string; onChange?: (focused: boolean) => void };
 }
 
 type GeoJsonData = FeatureCollection;
 
 const POLYGON_SOURCE = "ehimaya-polygons";
+const FOCUS_SOURCE = "ehimaya-focus";
+const FOCUS_RADIUS_M = 500;
 const HEAT_SOURCE = "ehimaya-heat";
 const HEX_SOURCE = "ehimaya-hexes";
 const LINE_SOURCE = "ehimaya-lines";
 const SHAPE_SOURCE = "ehimaya-shapes";
 const WEATHER_SOURCE = "ehimaya-weather";
+const ADMIN_SOURCE = "ehimaya-admin";
 const WIND_ICON = "ehimaya-wind-arrow";
 const BASEMAP_SOURCE = "ehimaya-basemap";
 const LABEL_SOURCE = "ehimaya-basemap-labels";
-const TONE_COLOURS: Record<MapPolygon["tone"], string> = { high: "#b91c1c", medium: "#b45309", low: "#4b5563" };
+const TONE_COLOURS: Record<MapPolygon["tone"], string> = { high: "#D7141A", medium: "#C25E00", low: "#5B6478" };
 
 /** Run `fn` now if the style is ready, otherwise once it has loaded. */
 function whenStyleReady(map: MlMap, fn: () => void): void {
@@ -225,11 +247,20 @@ function lineData(lines: MapLine[]): GeoJsonData {
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 
+/**
+ * A report on the map (phase M, Yamen 2026-10-29): a glass hexagon in the colour of its incident type with the type's
+ * pictogram, inside a hexagonal ring in the colour of its status. The type is told by the pictogram and the status by
+ * the accessible name and the popup, never by colour alone.
+ */
 function markerElement(m: MapMarker): HTMLElement {
   const el = document.createElement("button");
   el.type = "button";
   el.setAttribute("aria-label", `${m.title} — ${m.subtitle}`);
   updateMarkerElement(el, m);
+  const ring = document.createElement("span");
+  ring.className = "map-marker__ring";
+  const glass = document.createElement("span");
+  glass.className = "map-marker__glass";
   const svg = document.createElementNS(SVG_NS, "svg");
   svg.setAttribute("viewBox", "0 0 24 24");
   svg.setAttribute("aria-hidden", "true");
@@ -238,12 +269,19 @@ function markerElement(m: MapMarker): HTMLElement {
   path.setAttribute("fill-rule", "evenodd");
   path.setAttribute("d", CATEGORY_ICON_PATHS[m.category]);
   svg.appendChild(path);
-  el.appendChild(svg);
+  glass.appendChild(svg);
+  ring.appendChild(glass);
+  el.appendChild(ring);
   return el;
 }
 
 function updateMarkerElement(el: HTMLElement, m: MapMarker): void {
-  el.className = `map-marker chip--${m.status}${m.highlight ? " map-marker--new" : ""}`;
+  // Only our own classes change: MapLibre's (maplibregl-marker…) position the marker and must stay.
+  for (const c of [...el.classList]) {
+    if (c.startsWith("map-marker") || c.startsWith("chip--")) el.classList.remove(c);
+  }
+  el.classList.add("map-marker", `map-marker--${m.category}`, `chip--${m.status}`);
+  if (m.highlight) el.classList.add("map-marker--new");
   el.setAttribute("aria-label", `${m.title} — ${m.subtitle}`);
 }
 
@@ -261,6 +299,7 @@ function popupContent(
   openLabel: string,
   onOpen?: (id: string) => void,
   call?: { label: string; onCall: (body: DialBody) => void },
+  focus?: { label: string; onFocus: (lon: number, lat: number) => void },
 ): HTMLElement {
   // Built with DOM APIs (textContent), never innerHTML: report data is user-supplied.
   const root = document.createElement("div");
@@ -279,6 +318,14 @@ function popupContent(
   });
   root.append(title, sub, link);
   if (call) root.append(callButton(call.label, { report_id: m.id }, call.onCall));
+  if (focus) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "btn btn--small btn--ghost";
+    button.textContent = focus.label;
+    button.addEventListener("click", () => focus.onFocus(m.lon, m.lat));
+    root.append(button);
+  }
   return root;
 }
 
@@ -360,6 +407,59 @@ function poiPopupContent(
   return root;
 }
 
+/** A disc of `radius` metres as a closed ring of [lon, lat]. */
+function disc(lon: number, lat: number, radius: number, steps = 72): [number, number][] {
+  const dLon = radius / (111_320 * Math.cos((lat * Math.PI) / 180));
+  const dLat = radius / 110_540;
+  const ring: [number, number][] = [];
+  for (let i = 0; i <= steps; i++) {
+    const a = (i / steps) * 2 * Math.PI;
+    ring.push([lon + dLon * Math.cos(a), lat + dLat * Math.sin(a)]);
+  }
+  return ring;
+}
+
+function focusData(lon: number, lat: number): GeoJsonData {
+  const ring = disc(lon, lat, FOCUS_RADIUS_M);
+  const world: [number, number][] = [
+    [-180, -85],
+    [180, -85],
+    [180, 85],
+    [-180, 85],
+    [-180, -85],
+  ];
+  return {
+    type: "FeatureCollection",
+    features: [
+      // The rest of the map, with the disc cut out: dimmed like a background behind glass.
+      { type: "Feature", properties: { role: "mask" }, geometry: { type: "Polygon", coordinates: [world, [...ring].reverse()] } },
+      { type: "Feature", properties: { role: "area" }, geometry: { type: "Polygon", coordinates: [ring] } },
+    ],
+  };
+}
+
+/** Markers outside the lifted disc fade with the rest of the map (and come back when it closes). */
+function dimOutside(markers: Iterable<Marker>, centre: [number, number] | null): void {
+  for (const marker of markers) {
+    if (!centre) {
+      marker.setOpacity("1");
+      continue;
+    }
+    const at = marker.getLngLat();
+    const dx = (at.lng - centre[0]) * 111_320 * Math.cos((centre[1] * Math.PI) / 180);
+    const dy = (at.lat - centre[1]) * 110_540;
+    marker.setOpacity(Math.hypot(dx, dy) > FOCUS_RADIUS_M ? "0.3" : "1");
+  }
+}
+
+function prefersReducedMotion(): boolean {
+  try {
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  } catch {
+    return false;
+  }
+}
+
 function boundsOf(map: MlMap): BBox {
   const b = map.getBounds();
   return [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()];
@@ -389,6 +489,8 @@ export function MapView({
   shapes,
   lines,
   weather,
+  admin,
+  onAdminClick,
   basemap,
   onMapClick,
   popup,
@@ -396,15 +498,128 @@ export function MapView({
   focusBounds,
   onCall,
   callLabel,
+  focus,
 }: MapViewProps) {
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MlMap | null>(null);
   const markersRef = useRef(new Map<string, { marker: Marker; el: HTMLElement; data: MapMarker }>());
   const poisRef = useRef(new Map<string, { marker: Marker; key: string }>());
-  const callbacks = useRef({ onOpen, onBoundsChange, onOpenPoi, onMapClick, onPopupClose, onCall });
+  const callbacks = useRef({ onOpen, onBoundsChange, onOpenPoi, onMapClick, onPopupClose, onCall, onAdminClick, focus });
   useEffect(() => {
-    callbacks.current = { onOpen, onBoundsChange, onOpenPoi, onMapClick, onPopupClose, onCall };
+    callbacks.current = { onOpen, onBoundsChange, onOpenPoi, onMapClick, onPopupClose, onCall, onAdminClick, focus };
   });
+  const popupRef = useRef<Popup | null>(null);
+  // Focus view: the camera to go back to, and whether the view is focused (shows the button that leaves it).
+  const savedCamera = useRef<{ center: [number, number]; zoom: number; pitch: number; bearing: number } | null>(null);
+  const [focused, setFocused] = useState(false);
+  const focusEnter = focus?.enterLabel ?? "";
+
+  const allMarkers = () => [
+    ...[...markersRef.current.values()].map((e) => e.marker),
+    ...[...poisRef.current.values()].map((e) => e.marker),
+  ];
+  const leaveFocus = useCallback(() => {
+    const map = mapRef.current;
+    const saved = savedCamera.current;
+    if (!map || !saved) return;
+    savedCamera.current = null;
+    for (const id of [`${FOCUS_SOURCE}-buildings`, `${FOCUS_SOURCE}-edge`, `${FOCUS_SOURCE}-glow`, `${FOCUS_SOURCE}-plinth`, `${FOCUS_SOURCE}-mask`]) {
+      if (map.getLayer(id)) map.removeLayer(id);
+    }
+    if (map.getSource(FOCUS_SOURCE)) map.removeSource(FOCUS_SOURCE);
+    dimOutside(allMarkers(), null);
+    window.setTimeout(() => map.easeTo({ ...saved, duration: prefersReducedMotion() ? 0 : 1000 }), 0);
+    setFocused(false);
+    callbacks.current.focus?.onChange?.(false);
+  }, []);
+
+  const enterFocus = useCallback((lon: number, lat: number) => {
+    const map = mapRef.current;
+    if (!map) return;
+    if (!savedCamera.current) {
+      const c = map.getCenter();
+      savedCamera.current = { center: [c.lng, c.lat], zoom: map.getZoom(), pitch: map.getPitch(), bearing: map.getBearing() };
+    }
+    const data = focusData(lon, lat);
+    dimOutside(allMarkers(), [lon, lat]);
+    // The card a first click may have opened would hide the lifted place.
+    popupRef.current?.remove();
+    callbacks.current.onPopupClose?.();
+    whenStyleReady(map, () => {
+      const source = map.getSource<GeoJSONSource>(FOCUS_SOURCE);
+      if (source) {
+        void source.setData(data);
+      } else {
+        map.addSource(FOCUS_SOURCE, { type: "geojson", data });
+        map.addLayer({
+          id: `${FOCUS_SOURCE}-mask`,
+          type: "fill",
+          source: FOCUS_SOURCE,
+          filter: ["==", ["get", "role"], "mask"],
+          paint: { "fill-color": "#0E1426", "fill-opacity": 0.55 },
+        });
+        // The lifted disc: a translucent glass plinth, a soft glow and a white rim.
+        map.addLayer({
+          id: `${FOCUS_SOURCE}-plinth`,
+          type: "fill-extrusion",
+          source: FOCUS_SOURCE,
+          filter: ["==", ["get", "role"], "area"],
+          paint: { "fill-extrusion-color": "#8FA8FF", "fill-extrusion-height": 40, "fill-extrusion-opacity": 0.22 },
+        });
+        map.addLayer({
+          id: `${FOCUS_SOURCE}-glow`,
+          type: "line",
+          source: FOCUS_SOURCE,
+          filter: ["==", ["get", "role"], "area"],
+          paint: { "line-color": "#8FA8FF", "line-width": 12, "line-blur": 10, "line-opacity": 0.7 },
+        });
+        map.addLayer({
+          id: `${FOCUS_SOURCE}-edge`,
+          type: "line",
+          source: FOCUS_SOURCE,
+          filter: ["==", ["get", "role"], "area"],
+          paint: { "line-color": "#ffffff", "line-width": 2 },
+        });
+        // On the Office's vector map (docs/offline-maps.md) the buildings rise in 3D.
+        if (map.getSource("openmaptiles") && map.getLayer("building")) {
+          map.addLayer({
+            id: `${FOCUS_SOURCE}-buildings`,
+            type: "fill-extrusion",
+            source: "openmaptiles",
+            "source-layer": "building",
+            minzoom: 14,
+            paint: {
+              "fill-extrusion-color": "#DFE4F2",
+              "fill-extrusion-height": ["coalesce", ["get", "render_height"], 8],
+              "fill-extrusion-base": ["coalesce", ["get", "render_min_height"], 0],
+              "fill-extrusion-opacity": 0.85,
+            },
+          });
+        }
+      }
+    });
+    // After the gesture that asked for it: MapLibre ends a double click's own handling by stopping the camera.
+    window.setTimeout(() => {
+      map.flyTo({
+        center: [lon, lat],
+        zoom: 15,
+        pitch: 60,
+        bearing: map.getBearing() - 20,
+        duration: prefersReducedMotion() ? 0 : 1400,
+        essential: true,
+      });
+    }, 0);
+    setFocused(true);
+    callbacks.current.focus?.onChange?.(true);
+  }, []);
+  const toggleFocus = useCallback(
+    (lon: number, lat: number) => (savedCamera.current ? leaveFocus() : enterFocus(lon, lat)),
+    [enterFocus, leaveFocus],
+  );
+  const toggleRef = useRef(toggleFocus);
+  useEffect(() => {
+    toggleRef.current = toggleFocus;
+  }, [toggleFocus]);
   // The call button is offered only when a handler is given (telephony roles); its label is part of the popup.
   const callKey = onCall && callLabel ? callLabel : "";
   const [popupEl] = useState(() => {
@@ -412,7 +627,6 @@ export function MapView({
     el.className = "map-popup map-popup--react";
     return el;
   });
-  const popupRef = useRef<Popup | null>(null);
 
   // Create the map once (bounds/style changes after mount are not applied: the user controls the view).
   useEffect(() => {
@@ -435,7 +649,21 @@ export function MapView({
     // Background clicks only: markers are buttons of their own, whose clicks bubble through the container.
     map.on("click", (e: MapMouseEvent) => {
       if (e.originalEvent.target !== map.getCanvas()) return;
+      // The second click of a double click belongs to the focus view, not to the point under it.
+      if (callbacks.current.focus && e.originalEvent.detail > 1) return;
+      const adminFill = `${ADMIN_SOURCE}-fill`;
+      if (callbacks.current.onAdminClick && map.getLayer(adminFill)) {
+        const [unit] = map.queryRenderedFeatures(e.point, { layers: [adminFill] });
+        if (unit) callbacks.current.onAdminClick(unit.properties, e.lngLat.lng, e.lngLat.lat);
+      }
       callbacks.current.onMapClick?.(e.lngLat.lng, e.lngLat.lat);
+    });
+    // Focus view on a double click of the map (the zoom of a double click is then turned off).
+    if (callbacks.current.focus) map.doubleClickZoom.disable();
+    map.on("dblclick", (e: MapMouseEvent) => {
+      if (!callbacks.current.focus) return;
+      e.preventDefault();
+      toggleRef.current(e.lngLat.lng, e.lngLat.lat);
     });
     mapRef.current = map;
     const registry = markersRef.current;
@@ -460,13 +688,14 @@ export function MapView({
     const registry = markersRef.current;
     const seen = new Set<string>();
     const call = callKey ? { label: callKey, onCall: (b: DialBody) => callbacks.current.onCall?.(b) } : undefined;
+    const lift = focusEnter ? { label: focusEnter, onFocus: (lon: number, lat: number) => toggleRef.current(lon, lat) } : undefined;
     for (const m of markers) {
       seen.add(m.id);
       const existing = registry.get(m.id);
       if (existing) {
         updateMarkerElement(existing.el, m);
         if (existing.data.lon !== m.lon || existing.data.lat !== m.lat) existing.marker.setLngLat([m.lon, m.lat]);
-        if (openLabel) existing.marker.getPopup().setDOMContent(popupContent(m, openLabel, (id) => callbacks.current.onOpen?.(id), call));
+        if (openLabel) existing.marker.getPopup().setDOMContent(popupContent(m, openLabel, (id) => callbacks.current.onOpen?.(id), call, lift));
         existing.data = m;
         continue;
       }
@@ -475,10 +704,18 @@ export function MapView({
       if (openLabel) {
         marker.setPopup(
           new maplibregl.Popup({ offset: 16, closeButton: true, focusAfterOpen: true }).setDOMContent(
-            popupContent(m, openLabel, (id) => callbacks.current.onOpen?.(id), call),
+            popupContent(m, openLabel, (id) => callbacks.current.onOpen?.(id), call, lift),
           ),
         );
       }
+      // A double click on a report lifts its place (focus view); the marker's own click still opens its popup.
+      el.addEventListener("dblclick", (e) => {
+        if (!callbacks.current.focus) return;
+        e.preventDefault();
+        e.stopPropagation();
+        const at = registry.get(m.id)?.data ?? m;
+        toggleRef.current(at.lon, at.lat);
+      });
       marker.addTo(map);
       registry.set(m.id, { marker, el, data: m });
     }
@@ -488,7 +725,7 @@ export function MapView({
         registry.delete(id);
       }
     }
-  }, [markers, openLabel, callKey]);
+  }, [markers, openLabel, callKey, focusEnter]);
 
   // Institutions layer: re-create a point only when what it shows changed.
   useEffect(() => {
@@ -552,7 +789,22 @@ export function MapView({
         id: `${POLYGON_SOURCE}-fill`,
         type: "fill",
         source: POLYGON_SOURCE,
-        paint: { "fill-color": ["get", "colour"], "fill-opacity": 0.18 },
+        paint: { "fill-color": ["get", "colour"], "fill-opacity": 0.14 },
+      });
+      // Glass edge: a soft glow of the area's colour under a thin white rim, then the outline itself.
+      map.addLayer({
+        id: `${POLYGON_SOURCE}-glow`,
+        type: "line",
+        source: POLYGON_SOURCE,
+        layout: { "line-join": "round" },
+        paint: { "line-color": ["get", "colour"], "line-width": 9, "line-blur": 7, "line-opacity": 0.35 },
+      });
+      map.addLayer({
+        id: `${POLYGON_SOURCE}-rim`,
+        type: "line",
+        source: POLYGON_SOURCE,
+        layout: { "line-join": "round" },
+        paint: { "line-color": "#ffffff", "line-width": 4, "line-opacity": 0.55 },
       });
       map.addLayer({
         id: `${POLYGON_SOURCE}-line`,
@@ -570,6 +822,61 @@ export function MapView({
       });
     });
   }, [polygons]);
+
+  // Administrative boundaries (phase M): under every other layer of the application; hidden when switched off.
+  const adminData = admin?.data;
+  const adminFilled = admin?.filled ?? false;
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || (admin === undefined && !map.getSource(ADMIN_SOURCE))) return;
+    whenStyleReady(map, () => {
+      const data: GeoJsonData = adminData ?? { type: "FeatureCollection", features: [] };
+      const source = map.getSource<GeoJSONSource>(ADMIN_SOURCE);
+      if (source) {
+        void source.setData(data);
+      } else {
+        map.addSource(ADMIN_SOURCE, { type: "geojson", data });
+        const above = map.getStyle().layers.find((l) => l.id.startsWith("ehimaya-") && !l.id.startsWith("ehimaya-basemap"));
+        map.addLayer(
+          { id: `${ADMIN_SOURCE}-fill`, type: "fill", source: ADMIN_SOURCE, paint: { "fill-color": ["get", "fill"] } },
+          above?.id,
+        );
+        // Glass edge of the boundaries: a white rim under the navy line, so it reads on imagery and on streets.
+        map.addLayer(
+          {
+            id: `${ADMIN_SOURCE}-rim`,
+            type: "line",
+            source: ADMIN_SOURCE,
+            layout: { "line-join": "round" },
+            paint: {
+              "line-color": "#ffffff",
+              "line-opacity": 0.7,
+              "line-width": ["interpolate", ["linear"], ["zoom"], 6, 2.4, 12, 4.5],
+            },
+          },
+          above?.id,
+        );
+        map.addLayer(
+          {
+            id: `${ADMIN_SOURCE}-line`,
+            type: "line",
+            source: ADMIN_SOURCE,
+            layout: { "line-join": "round" },
+            paint: {
+              "line-color": ["get", "line"],
+              "line-opacity": 0.85,
+              "line-width": ["interpolate", ["linear"], ["zoom"], 6, 0.8, 12, 2],
+            },
+          },
+          above?.id,
+        );
+      }
+      // Unfilled, a frosted veil of 4 % (still clickable): the unit opens its card without hiding the map.
+      map.setPaintProperty(`${ADMIN_SOURCE}-fill`, "fill-opacity", adminFilled ? 0.55 : 0.04);
+    });
+    // `admin` itself is only checked for presence; the data and the fill switch are the dependencies.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [adminData, adminFilled, admin === undefined]);
 
   // Hotspot hexagons (phase 8): one source, created on first use and then only updated.
   useEffect(() => {
@@ -847,7 +1154,14 @@ export function MapView({
 
   return (
     <>
-      <div ref={container} className={className ?? "map"} role="region" aria-label={ariaLabel} />
+      <div className="map-frame">
+        <div ref={container} className={`${className ?? "map"}${focused ? " map--focused" : ""}`} role="region" aria-label={ariaLabel} />
+        {focused && focus && (
+          <button type="button" className="btn btn--small map-focus-exit" onClick={leaveFocus}>
+            {focus.exitLabel}
+          </button>
+        )}
+      </div>
       {popup && createPortal(popup.node, popupEl)}
     </>
   );

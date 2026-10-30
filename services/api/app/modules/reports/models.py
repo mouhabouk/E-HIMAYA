@@ -51,6 +51,9 @@ class Report(Base):
     location_accuracy_m: Mapped[float | None] = mapped_column(Float(precision=24))
     gouvernorat_code: Mapped[int | None] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
     delegation_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("geo.delegation.id"))
+    # Administrative address of the position (phase M, migration 0079): délégation above, imada and municipality.
+    sector_code: Mapped[str | None] = mapped_column(Text, ForeignKey("geo.sector.code"))
+    municipality_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey("geo.municipality.id"))
     priority_score: Mapped[int | None] = mapped_column(SmallInteger)
     credibility_score: Mapped[int | None] = mapped_column(SmallInteger)
     status: Mapped[str] = mapped_column(Text, server_default="received")

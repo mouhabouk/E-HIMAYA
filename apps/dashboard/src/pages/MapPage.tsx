@@ -5,6 +5,8 @@ import { Link, useNavigate } from "react-router";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { FiltersBar } from "../components/FiltersBar";
 import { LazyMapView } from "../components/LazyMap";
+import { useSavedPlaces } from "../components/SavedPlaces";
+import { useAdminLayer } from "../components/AdminLayer";
 import { useBasemap } from "../components/BasemapSwitch";
 import { useMapDataLayers, type FolderExtra } from "../components/MapDataLayers";
 import { useResourceSearchLayer } from "../components/ResourceSearchLayer";
@@ -21,7 +23,7 @@ import { useDebounced, useFormat, useGouvernorats, useLanguage } from "../lib/ho
 import { mapKey } from "../lib/liveCache";
 import { initialBoundsFor } from "../lib/mapStyle";
 import { opsKeys } from "../lib/opsApi";
-import type { Message } from "../lib/opsTypes";
+import { areaRings, type Message } from "../lib/opsTypes";
 import { errorMessageKey } from "../lib/api";
 import {
   canOpenDrones,
@@ -137,7 +139,11 @@ function droneLines(results: readonly { data?: DroneTrack }[]): MapLine[] {
 
 function alertPolygons(alerts: readonly Message[]): MapPolygon[] {
   return alerts.flatMap((a) =>
-    a.area.polygon ? [{ id: a.id, coordinates: a.area.polygon.coordinates, tone: a.severity ?? "low" }] : [],
+    areaRings(a.area.polygon).map((coordinates, i) => ({
+      id: i === 0 ? a.id : `${a.id}-${i}`,
+      coordinates,
+      tone: a.severity ?? "low",
+    })),
   );
 }
 
@@ -177,6 +183,9 @@ export function MapPage() {
   const qc = useQueryClient();
   const gouvernorats = useGouvernorats();
   const basemap = useBasemap();
+  const adminLayer = useAdminLayer();
+  const savedPlaces = useSavedPlaces();
+  const [focused, setFocused] = useState(false);
 
   // Outbound call from a map point (phase 7 §4, FR-C-10): reporter, volunteer or unit, through the softphone.
   const phone = useSoftphone();
@@ -219,9 +228,10 @@ export function MapPage() {
   const mapWeather = useMapWeather(weatherGrid, weatherViews, showWeather);
   const onMapClick = useCallback(
     (lon: number, lat: number) => {
+      if (savedPlaces.onMapClick(lon, lat)) return;
       if (showWeather) setWeatherPoint({ lat, lon });
     },
-    [showWeather],
+    [showWeather, savedPlaces],
   );
   const onWeatherCentre = () => {
     if (!rawBBox) return;
@@ -524,8 +534,8 @@ export function MapPage() {
   // Map data layers loaded from files (phase B1): hospitals, shelters… any number at once.
   const dataLayers = useMapDataLayers(bbox, folderExtras);
   const allPois = useMemo(
-    () => [...pois, ...opsPois, ...resourceSearch.pois, ...dataLayers.pois],
-    [pois, opsPois, resourceSearch.pois, dataLayers.pois],
+    () => [...pois, ...opsPois, ...resourceSearch.pois, ...dataLayers.pois, ...savedPlaces.pois],
+    [pois, opsPois, resourceSearch.pois, dataLayers.pois, savedPlaces.pois],
   );
   const shapes = useMemo(
     () => ({ ...dataLayers.shapes, features: [...resourceSearch.shapes, ...dataLayers.shapes.features] }),
@@ -655,6 +665,8 @@ export function MapPage() {
         {basemap.control}
       </div>
       {dataLayers.controls}
+      {adminLayer.controls}
+      {savedPlaces.controls}
       {showWeather && (
         <WeatherControls
           views={weatherViews}
@@ -679,7 +691,9 @@ export function MapPage() {
                   <strong dir="auto">{localized(a.title, lang)}</strong>
                   <span className="muted">
                     {" · "}
-                    {a.area.polygon
+                    {a.area.delegation_ids?.length
+                      ? t("ops.map.delegationsArea", { count: a.area.delegation_ids.length })
+                      : a.area.polygon
                       ? t("ops.map.drawnArea")
                       : a.area.gouvernorat_codes.length === 0
                         ? t("ops.map.national")
@@ -704,6 +718,9 @@ export function MapPage() {
       {showOrgs && orgsQuery.isError && (
         <ErrorBox error={orgsQuery.error} onRetry={() => void orgsQuery.refetch()} />
       )}
+      <p className="muted map-focus-hint" role="status" aria-live="polite">
+        {focused ? t("map.focus.on") : t("map.focus.hint")}
+      </p>
       <div role="status" aria-live="polite">
         {callNotice && <p className={`alert ${callNotice.ok ? "alert--info" : "alert--error"}`}>{callNotice.text}</p>}
       </div>
@@ -726,10 +743,18 @@ export function MapPage() {
           heat={heat}
           shapes={shapes}
           weather={mapWeather}
+          admin={adminLayer.admin}
+          onAdminClick={adminLayer.onAdminClick}
           basemap={basemap.view}
           onMapClick={onMapClick}
-          popup={weatherPopup}
-          onPopupClose={() => setWeatherPoint(null)}
+          popup={savedPlaces.popup ?? weatherPopup ?? adminLayer.popup}
+          onPopupClose={() => {
+            setWeatherPoint(null);
+            adminLayer.closePopup();
+            savedPlaces.closePopup();
+          }}
+          focusBounds={savedPlaces.focusBounds}
+          focus={{ exitLabel: t("map.focus.exit"), enterLabel: t("map.focus.enter"), onChange: setFocused }}
           onCall={onCall}
           callLabel={t("phone.call")}
         />

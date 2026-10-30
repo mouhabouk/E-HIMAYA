@@ -1,0 +1,32 @@
+@startuml
+!include style.iuml
+title Séquence : lieux enregistrés et vue 3D d'un lieu (M)
+autonumber
+actor "Salle des opérations" as OP
+participant "Carte en direct\n(MapLibre)" as UI
+participant "API" as API
+database "PostgreSQL\nops.saved_place (RLS)" as DB
+== Enregistrer un lieu ==
+OP -> UI : « Enregistrer un lieu » puis clic sur la carte
+UI -> OP : fiche : nom, type (critique, important, autre), note
+OP -> UI : enregistrer
+UI -> API : POST /staff/places
+API -> DB : gouvernorat et délégation\npar ST_Intersects
+alt hors de la Tunisie
+  API --> UI : 422 outside_tunisia
+else gouvernorat hors du périmètre
+  API --> UI : 403 out_of_scope
+else
+  API -> DB : insertion + audit « place.create »
+  API --> UI : 201
+end
+UI -> API : GET /staff/places
+API --> UI : critiques, puis importants, puis autres
+OP -> UI : clic sur un lieu de la liste
+UI -> UI : vol vers le lieu (≈ 300 m)
+== Vue 3D ==
+OP -> UI : double clic sur l'incident ou le lieu
+UI -> UI : disque de 500 m extrudé, bâtiments en relief,\nreste de la carte voilé, marqueurs hors zone estompés,\ncaméra inclinée à 60°
+OP -> UI : double clic ou « Retour »
+UI -> UI : couches retirées, caméra d'origine
+@enduml

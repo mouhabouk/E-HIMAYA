@@ -22,6 +22,7 @@ from app.core.security import Principal
 from app.modules.ai import pipeline
 from app.modules.ai.models import Analysis
 from app.modules.geo.models import Gouvernorat
+from app.modules.geo.service import admin_address
 from app.modules.identity.models import Account, Profile
 from app.modules.identity.service import Reporter, consume_anon_quota, has_consented
 from app.modules.moderation import service as moderation
@@ -222,6 +223,7 @@ async def create_report(
         created_at = received_at
     source = "portal" if from_portal else "app"
     place = await geo.assess(session, body.location.lat, body.location.lon, body.location.accuracy_m, source)
+    address = await admin_address(session, body.location.lat, body.location.lon)
     tracking_code = await next_tracking_code(session, received_at, place.tracking_gouvernorat)
     text_value = body.text.strip() if body.text and body.text.strip() else None
 
@@ -235,6 +237,9 @@ async def create_report(
         location=cast(func.ST_SetSRID(func.ST_MakePoint(body.location.lon, body.location.lat), 4326), Geography),
         location_accuracy_m=body.location.accuracy_m,
         gouvernorat_code=place.gouvernorat_code,
+        delegation_id=address.delegation_id,
+        sector_code=address.sector_code,
+        municipality_id=address.municipality_id,
         geo_state=place.state,
         geo_candidates=place.candidates,
         geo_reason=place.reason,
@@ -641,6 +646,21 @@ async def change_status(session: AsyncSession, report: Report, target: Status, a
         {"report_id": str(report.id), "tracking_code": report.tracking_code, "status": target.value},
     )
     await session.flush()
+
+
+async def kpis_by_delegation(
+    session: AsyncSession, principal: Principal, since: datetime, category: Category | None
+) -> list[schemas.DelegationCount]:
+    base = and_(await scope_clause(session, principal), Report.received_at >= since, Report.delegation_id.is_not(None))
+    if category is not None:
+        base = and_(base, Report.category == category.value)
+    rows = await session.execute(
+        select(Report.delegation_id, func.count())
+        .where(base)
+        .group_by(Report.delegation_id)
+        .order_by(Report.delegation_id)
+    )
+    return [schemas.DelegationCount(delegation_id=d, count=int(n)) for d, n in rows.all()]
 
 
 async def kpis(session: AsyncSession, principal: Principal, since: datetime) -> schemas.Kpis:

@@ -6,9 +6,11 @@ from collections.abc import Callable
 
 import httpx
 import pytest
+from pydantic import ValidationError
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import Settings, get_settings
 from app.modules.audit.models import AuditLog
 from app.modules.basemap import domain
 from app.modules.basemap import router as basemap_router
@@ -43,6 +45,23 @@ def test_templates_and_tokens() -> None:
     assert not domain.tile_token_valid(token, now=1_800_000_000 + domain.TOKEN_SECONDS + 1)
     assert not domain.tile_token_valid(token[:-2] + "xx", now=1_800_000_000)
     assert domain.key_hint(KEY) == "••••1234"
+
+
+def test_the_office_map_server_replaces_the_public_sources(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Without internet (docs/offline-maps.md) the imagery and the place names come from the Office's map server."""
+    assert domain.open_source() == ([domain.OPEN_TILES], domain.OPEN_ATTRIBUTION, domain.OPEN_MAX_ZOOM)
+    local = "https://api.example.test/maps/data/satellite/{z}/{x}/{y}.jpg"
+    labels = "https://api.example.test/maps/styles/ehimaya-labels/{z}/{x}/{y}.png"
+    settings = get_settings()
+    monkeypatch.setattr(settings, "basemap_open_tiles", local)
+    monkeypatch.setattr(settings, "basemap_open_attribution", "Sentinel-2 – office mirror")
+    monkeypatch.setattr(settings, "basemap_open_max_zoom", 16)
+    monkeypatch.setattr(settings, "basemap_label_tiles", labels)
+    assert domain.open_source() == ([local], "Sentinel-2 – office mirror", 16)
+    assert domain.label_source() == ([labels], domain.LABEL_ATTRIBUTION, domain.LABEL_MAX_ZOOM)
+    assert domain.open_tile(6, 33, 25) == "https://api.example.test/maps/data/satellite/6/33/25.jpg"
+    with pytest.raises(ValidationError, match="tile address"):
+        Settings(basemap_open_tiles="https://api.example.test/maps/satellite.jpg")
 
 
 @pytest.fixture

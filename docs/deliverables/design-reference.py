@@ -70,6 +70,17 @@ def t_count():
   src=open('apps/dashboard/src/lib/inventory.ts').read()
   cols=re.findall(r'#[0-9A-Fa-f]{6}',re.search(r'COUNT_COLOURS = \[([^\]]*)\]',src).group(1))
   return ''.join(f'<tr><td>{sw(c)}</td><td>{n}</td><td class="ltr"><code>{c}</code></td></tr>' for c,n in zip(cols,['صفر','قليل','متوسط','كثير','الأكثر']))
+def t_marker():
+  css=open('apps/dashboard/src/styles/global.css').read()
+  names={'sos':'نجدة','fire':'حريق','flood':'فيضان','traffic_accident':'حادث مرور','drowning':'غرق','landslide':'انزلاق تربة','chemical_leak':'تسرّب كيميائي','medical':'إسعاف','other':'آخر'}
+  rows=''
+  for k,top,bot in re.findall(r'\.map-marker--(\w+) \{ --glass-top: (#[0-9a-fA-F]{6}); --glass-bottom: (#[0-9a-fA-F]{6});',css):
+    rows+=f'<tr><td><span style="display:inline-block;width:26px;height:30px;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);background:linear-gradient(160deg,{top},{bot})"></span></td><td>{names.get(k,k)}</td><td class="ltr"><code>{top} → {bot}</code></td></tr>'
+  return rows
+def t_place():
+  src=open('apps/dashboard/src/lib/places.ts').read()
+  cols=dict(re.findall(r'(critical|important|other): "(#[0-9A-Fa-f]{6})"',src))
+  return ''.join(f'<tr><td>{sw(cols[k])}</td><td>{n}</td><td class="ltr"><code>{cols[k]}</code></td></tr>' for k,n in [('critical','حرج'),('important','هام'),('other','آخر')])
 page=f'''<title>مرجع تصميم ء-حماية</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap">
@@ -119,6 +130,10 @@ small{{color:var(--muted)}}
 <div class="tbl"><table><tr><th></th><th>المعنى</th><th>المتغير</th><th>القيمة</th></tr>{t_sem()}</table></div>
 <h3>تدرّج العدد على الخريطة (المرحلة R)</h3><p>نتيجة البحث في سجل الموارد تلوّن الولايات بخمس درجات حسب العدد، والرمادي للصفر. العدد مكتوب دائما في فقاعة فوق الولاية أو الوحدة، فاللون لا يحمل المعنى وحده. المصدر: <code class="ltr">COUNT_COLOURS</code> في <code class="ltr">apps/dashboard/src/lib/inventory.ts</code>.</p>
 <div class="tbl"><table><tr><th></th><th>الدرجة</th><th>القيمة</th></tr>{t_count()}</table></div>
+<h3>رموز البلاغات الزجاجية حسب نوع الحادث (المرحلة M)</h3><p>سداسي زجاجي بتدرّج لون النوع ولمعة وحافة بيضاء، وأيقونة النوع فوقه دائما فلا يحمل اللون المعنى وحده؛ البلاغ الجديد بنبضة تتوقف مع تقليل الحركة. المصدر: <code class="ltr">.map-marker--*</code> في <code class="ltr">apps/dashboard/src/styles/global.css</code>.</p>
+<div class="tbl"><table><tr><th></th><th>النوع</th><th>التدرّج</th></tr>{t_marker()}</table></div>
+<h3>أنواع الأماكن المسجَّلة (المرحلة M)</h3><p>النوع مكتوب دائما بجانب الاسم في القائمة وفي البطاقة. المصدر: <code class="ltr">PLACE_COLOURS</code> في <code class="ltr">apps/dashboard/src/lib/places.ts</code>.</p>
+<div class="tbl"><table><tr><th></th><th>النوع</th><th>القيمة</th></tr>{t_place()}</table></div>
 <h3>ألوان مخاطر مخططات التدخل (المرحلة PL)</h3><p>لون كل خطر يلوّن بطاقته ورأس مخططه في العارض؛ الأزرق للفيضانات من اللجنة، والبقية تؤكدها القاعة المركزية أو تغيّرها من الصفحة. يُكتب النص على اللون بالأبيض أو بالحبر حسب أيهما أوضح.</p>
 <div class="tbl"><table><tr><th></th><th>الخطر</th><th>اللون</th><th>التباين</th><th>الأيقونة</th></tr>{t_hazard()}</table></div>
 <h3>ألوان أنشطة البرمجة (المرحلة PL)</h3><p>كل نوع نشاط في التقويم بلون من ألوان النظام، مع اسمه دائما، فلا يُعتمد على اللون وحده.</p>

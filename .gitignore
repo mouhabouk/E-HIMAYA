@@ -16,3 +16,6 @@ build/
 # scripts/ci-local.sh output
 ci-local-report.md
 ci-local-logs/
+
+# The Office map server data (phase M, docs/offline-maps.md): extracts, MBTiles, fonts. Never committed.
+infra/maps/data/

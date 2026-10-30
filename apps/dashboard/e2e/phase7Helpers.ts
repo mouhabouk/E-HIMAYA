@@ -132,6 +132,8 @@ export function commonAnswer(
       },
     ]);
   }
+  // Saved places of the room (phase M): none.
+  if (method === "GET" && pathname === "/api/v1/staff/places") return json(route, []);
   if (method === "GET" && pathname === "/api/v1/staff/levels")
     return json(route, []);
   if (method === "GET" && pathname === "/api/v1/staff/streams")

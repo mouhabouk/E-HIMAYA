@@ -57,6 +57,13 @@
 	handle /api/v1/uploads/* {
 		reverse_proxy tusd:1080
 	}
+	# The Office's map server (profile "maps", docs/offline-maps.md): styles, vector and satellite tiles and fonts,
+	# GET only; answers 502 while the profile is not started (the apps then keep their configured style).
+	handle_path /maps/* {
+		@write not method GET HEAD
+		respond @write 405
+		reverse_proxy maps:8080
+	}
 	# Live streaming (docs/streaming.md): only the media paths of MediaMTX, never its pages, API or metrics.
 	# WHIP (phones publish) and WHEP (dashboard reads), with their session URLs /live/<id>/(whip|whep)/<session>.
 	@webrtc path_regexp ^/live/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/(whip|whep)(/[0-9a-f-]{36})?$

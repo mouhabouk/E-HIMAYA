@@ -71,18 +71,16 @@ def _national(principal: Principal) -> None:
 
 
 def _open() -> schemas.TileSource:
-    return schemas.TileSource(
-        tiles=[domain.OPEN_TILES], attribution=domain.OPEN_ATTRIBUTION, max_zoom=domain.OPEN_MAX_ZOOM
-    )
+    tiles, attribution, max_zoom = domain.open_source()
+    return schemas.TileSource(tiles=tiles, attribution=attribution, max_zoom=max_zoom)
 
 
 @router.get("", response_model=schemas.BasemapOut)
 async def basemap(principal: Annotated[Principal, Depends(get_principal)], session: Session) -> schemas.BasemapOut:
     _staff(principal)
     row = await session.get(Basemap, KEY)
-    labels = schemas.TileSource(
-        tiles=domain.LABEL_TILES, attribution=domain.LABEL_ATTRIBUTION, max_zoom=domain.LABEL_MAX_ZOOM
-    )
+    label_tiles, label_attribution, label_max_zoom = domain.label_source()
+    labels = schemas.TileSource(tiles=label_tiles, attribution=label_attribution, max_zoom=label_max_zoom)
     if row is None or not row.enabled:
         return schemas.BasemapOut(source="open", satellite=_open(), labels=labels, open=_open())
     paid = schemas.TileSource(

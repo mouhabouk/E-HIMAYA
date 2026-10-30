@@ -1,0 +1,25 @@
+@startuml
+!include style.iuml
+title Séquence : serveur de cartes local du bureau (M)
+autonumber
+actor "Administrateur\nsystème" as SA
+participant "Préparation\n(profil maps-prepare)" as PREP
+participant "TileServer GL\n(maps)" as TS
+participant "Caddy" as CAD
+participant "API" as API
+participant "Tableau de bord,\nportail, application" as UI
+participant "Valhalla" as VAL
+SA -> PREP : docker compose --profile maps-prepare
+PREP -> PREP : Planetiler : tunisia.osm.pbf → tuiles vectorielles\npolices Noto, imagerie satellite (GDAL, optionnelle)
+PREP -> TS : /data/config.json (make_config.py)
+SA -> VAL : routing-prepare sur le même fichier OSM
+SA -> API : BASEMAP_* dans .env
+UI -> API : GET /staff/basemap
+API --> UI : styles et tuiles sous /maps/
+UI -> CAD : GET /maps/styles/…, /maps/data/…
+CAD -> TS : lecture seule (autre méthode : 405)
+TS --> UI : style, tuiles, polices, satellite
+note over UI, TS
+  Aucune requête ne sort du réseau du bureau.
+end note
+@enduml

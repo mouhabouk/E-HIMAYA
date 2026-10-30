@@ -690,6 +690,43 @@
         "title": "AdjustIn",
         "type": "object"
       },
+      "AdminAddressOut": {
+        "description": "Délégation, imada and municipality containing a position (phase M); each null outside the land.",
+        "properties": {
+          "delegation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlaceName"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "municipality": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlaceName"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sector": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlaceName"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "title": "AdminAddressOut",
+        "type": "object"
+      },
       "AgentIn": {
         "properties": {
           "availability": {
@@ -1803,6 +1840,14 @@
       },
       "Area-Output": {
         "properties": {
+          "delegation_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "maxItems": 60,
+            "title": "Delegation Ids",
+            "type": "array"
+          },
           "gouvernorat_codes": {
             "items": {
               "type": "integer"
@@ -7676,6 +7721,24 @@
           "gouvernorat_code"
         ],
         "title": "Delegate",
+        "type": "object"
+      },
+      "DelegationCount": {
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "delegation_id": {
+            "title": "Delegation Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "delegation_id",
+          "count"
+        ],
+        "title": "DelegationCount",
         "type": "object"
       },
       "DelegationIn": {
@@ -25339,6 +25402,222 @@
         "title": "Person",
         "type": "object"
       },
+      "PlaceIn": {
+        "properties": {
+          "kind": {
+            "default": "important",
+            "enum": [
+              "important",
+              "critical",
+              "other"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "lat": {
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Lon",
+            "type": "number"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "required": [
+          "name",
+          "lat",
+          "lon"
+        ],
+        "title": "PlaceIn",
+        "type": "object"
+      },
+      "PlaceName": {
+        "description": "One administrative unit of an address: its identifier (délégation id, imada code, municipality id) and names.",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name_ar": {
+            "title": "Name Ar",
+            "type": "string"
+          },
+          "name_fr": {
+            "title": "Name Fr",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name_ar",
+          "name_fr"
+        ],
+        "title": "PlaceName",
+        "type": "object"
+      },
+      "PlaceOut": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "delegation_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delegation Id"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "important",
+              "critical",
+              "other"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "lat": {
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "title": "Lon",
+            "type": "number"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "updated_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By Name"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "kind",
+          "note",
+          "lat",
+          "lon",
+          "gouvernorat_code",
+          "delegation_id",
+          "created_by_name",
+          "created_at",
+          "updated_by_name",
+          "updated_at"
+        ],
+        "title": "PlaceOut",
+        "type": "object"
+      },
+      "PlaceUpdate": {
+        "properties": {
+          "kind": {
+            "enum": [
+              "important",
+              "critical",
+              "other"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "required": [
+          "name",
+          "kind"
+        ],
+        "title": "PlaceUpdate",
+        "type": "object"
+      },
       "PlanOption": {
         "properties": {
           "hazard_key": {
@@ -34053,6 +34332,16 @@
       },
       "StaffReportDetail": {
         "properties": {
+          "address": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AdminAddressOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "allowed_transitions": {
             "items": {
               "$ref": "#/components/schemas/Status"
@@ -45534,6 +45823,14 @@
       },
       "app__modules__notify__schemas__Area": {
         "properties": {
+          "delegation_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "maxItems": 60,
+            "title": "Delegation Ids",
+            "type": "array"
+          },
           "gouvernorat_codes": {
             "items": {
               "type": "integer"
@@ -54369,6 +54666,88 @@
         ]
       }
     },
+    "/api/v1/geo/boundaries/{level}": {
+      "get": {
+        "description": "GeoJSON of one administrative level with its codes, names and census (public reference data, ODbL).",
+        "operationId": "boundaries_api_v1_geo_boundaries__level__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "level",
+            "required": true,
+            "schema": {
+              "enum": [
+                "regions",
+                "districts",
+                "gouvernorats",
+                "delegations",
+                "sectors",
+                "municipalities",
+                "water",
+                "cities"
+              ],
+              "title": "Level",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 83,
+                  "minimum": 11,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          },
+          {
+            "in": "query",
+            "name": "detail",
+            "required": false,
+            "schema": {
+              "default": "medium",
+              "enum": [
+                "low",
+                "medium",
+                "high"
+              ],
+              "title": "Detail",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/geo+json": {}
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Boundaries",
+        "tags": [
+          "geo"
+        ]
+      }
+    },
     "/api/v1/geo/gouvernorats": {
       "get": {
         "operationId": "list_gouvernorats_api_v1_geo_gouvernorats_get",
@@ -54477,6 +54856,67 @@
           }
         },
         "summary": "List Delegations",
+        "tags": [
+          "geo"
+        ]
+      }
+    },
+    "/api/v1/geo/locate": {
+      "get": {
+        "description": "The délégation, imada and municipality containing a point (signed-in users).",
+        "operationId": "locate_api_v1_geo_locate_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "lat",
+            "required": true,
+            "schema": {
+              "maximum": 38.0,
+              "minimum": 30.0,
+              "title": "Lat",
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lon",
+            "required": true,
+            "schema": {
+              "maximum": 12.0,
+              "minimum": 7.0,
+              "title": "Lon",
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminAddressOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Locate",
         "tags": [
           "geo"
         ]
@@ -74820,6 +75260,82 @@
         ]
       }
     },
+    "/api/v1/staff/kpis/delegations": {
+      "get": {
+        "description": "Reports per délégation in the caller's scope (phase M): the map colours each délégation by its rate per\n10,000 inhabitants (census 2024, from the boundaries).",
+        "operationId": "kpis_by_delegation_api_v1_staff_kpis_delegations_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "since",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Since"
+            }
+          },
+          {
+            "in": "query",
+            "name": "category",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/Category"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DelegationCount"
+                  },
+                  "title": "Response Kpis By Delegation Api V1 Staff Kpis Delegations Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Kpis By Delegation",
+        "tags": [
+          "staff"
+        ]
+      }
+    },
     "/api/v1/staff/layers": {
       "get": {
         "operationId": "list_layers_api_v1_staff_layers_get",
@@ -79633,6 +80149,210 @@
         "summary": "Review Org",
         "tags": [
           "staff-institutions"
+        ]
+      }
+    },
+    "/api/v1/staff/places": {
+      "get": {
+        "operationId": "list_places_api_v1_staff_places_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "kind",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "important",
+                    "critical",
+                    "other"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kind"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PlaceOut"
+                  },
+                  "title": "Response List Places Api V1 Staff Places Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Places",
+        "tags": [
+          "places"
+        ]
+      },
+      "post": {
+        "operationId": "create_place_api_v1_staff_places_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlaceIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlaceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Place",
+        "tags": [
+          "places"
+        ]
+      }
+    },
+    "/api/v1/staff/places/{place_id}": {
+      "delete": {
+        "operationId": "delete_place_api_v1_staff_places__place_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "place_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Place Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Place",
+        "tags": [
+          "places"
+        ]
+      },
+      "put": {
+        "operationId": "update_place_api_v1_staff_places__place_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "place_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Place Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlaceUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlaceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Place",
+        "tags": [
+          "places"
         ]
       }
     },

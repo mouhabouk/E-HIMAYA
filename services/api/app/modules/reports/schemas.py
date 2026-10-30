@@ -4,6 +4,7 @@ from typing import Annotated, Any, Literal
 
 from pydantic import AwareDatetime, BaseModel, Field, StringConstraints
 
+from app.modules.geo.schemas import AdminAddressOut
 from app.modules.medical.schemas import LockedFileIn
 from app.modules.moderation.terms import MaskKind
 from app.modules.orgs.schemas import OrganizationCard, OrgRef
@@ -297,6 +298,8 @@ class StaffReportDetail(StaffReport):
     reporter_context: ReporterContextOut | None = None
     # Phase B2: the reporter attached their medical file (opened with GET …/medical, audited).
     medical_attached: bool = False
+    # Phase M: the délégation, imada and municipality containing the position (Map Tunisia boundaries).
+    address: AdminAddressOut | None = None
 
 
 class MedicalOut(BaseModel):
@@ -321,6 +324,11 @@ class StatusChangeIn(BaseModel):
 
 class GouvernoratCount(BaseModel):
     code: int | None
+    count: int
+
+
+class DelegationCount(BaseModel):
+    delegation_id: int
     count: int
 
 
