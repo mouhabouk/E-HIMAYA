@@ -188,6 +188,8 @@ _FILLER = ["قرب", "الدار", "fi", "el houma", "route", "الطريق", "�
 async def test_text_training_is_promoted_only_when_better(session: AsyncSession) -> None:
     rng = random.Random(7)
     async with get_system_sessionmaker()() as s, s.begin():
+        # Only this test's texts: the reports other tests leave behind would make the score depend on their order.
+        await s.execute(delete(Sample).where(Sample.source == samples.SOURCE_REPORT))
         for i in range(120):
             category = "fire" if i % 2 else "flood"
             words = rng.sample(_FIRE if category == "fire" else _FLOOD, 2) + rng.sample(_FILLER, 3)
