@@ -13,13 +13,13 @@ describe("filters", () => {
 
   it("builds the contract query", () => {
     const q = filtersToQuery(
-      { statuses: ["in_progress", "received"], categories: ["fire"], gouvernorat: 61, period: "24h", q: "  EH-26 " },
+      { statuses: ["in_progress", "received"], categories: ["fire"], gouvernorats: [61], period: "24h", q: "  EH-26 " },
       { now: NOW, bbox: [10, 34, 11, 35], cursor: "abc", limit: 50 },
     );
     expect(q).toEqual({
       status: ["in_progress", "received"],
       category: ["fire"],
-      gouvernorat_code: 61,
+      gouvernorat_code: [61],
       since: "2026-10-18T12:00:00.000Z",
       q: "EH-26",
       bbox: "10.00000,34.00000,11.00000,35.00000",
@@ -38,7 +38,7 @@ describe("filters", () => {
     expect(matchesFilters(r, DEFAULT_FILTERS, { now: NOW })).toBe(true);
     expect(matchesFilters(r, { ...DEFAULT_FILTERS, statuses: ["closed"] }, { now: NOW })).toBe(false);
     expect(matchesFilters(r, { ...DEFAULT_FILTERS, categories: ["flood"] }, { now: NOW })).toBe(false);
-    expect(matchesFilters(r, { ...DEFAULT_FILTERS, gouvernorat: 11 }, { now: NOW })).toBe(false);
+    expect(matchesFilters(r, { ...DEFAULT_FILTERS, gouvernorats: [11] }, { now: NOW })).toBe(false);
     expect(matchesFilters(r, { ...DEFAULT_FILTERS, q: "0004821" }, { now: NOW })).toBe(true);
     expect(matchesFilters(r, { ...DEFAULT_FILTERS, q: "مستودع" }, { now: NOW })).toBe(true);
     expect(matchesFilters(r, { ...DEFAULT_FILTERS, q: "zzz" }, { now: NOW })).toBe(false);

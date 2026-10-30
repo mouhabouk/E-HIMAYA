@@ -8,6 +8,6 @@ export function useEffectiveFilters(): { filters: ReportFilters; national: boole
   const { filters } = useFilters();
   const { user } = useAuth();
   const national = user?.identity.national ?? false;
-  const effective = useMemo(() => (national ? filters : { ...filters, gouvernorat: null }), [filters, national]);
+  const effective = useMemo(() => (national ? filters : { ...filters, gouvernorats: [] }), [filters, national]);
   return { filters: effective, national };
 }

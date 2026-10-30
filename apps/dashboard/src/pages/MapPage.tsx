@@ -10,6 +10,7 @@ import { useAdminLayer } from "../components/AdminLayer";
 import { useBasemap } from "../components/BasemapSwitch";
 import { useMapDataLayers, type FolderExtra } from "../components/MapDataLayers";
 import { useResourceSearchLayer } from "../components/ResourceSearchLayer";
+import { WhatWhereSearch } from "../components/WhatWhereSearch";
 import type { HeatPoint, MapLine, MapMarker, MapPoi, MapPolygon } from "../components/MapView";
 import { MapLegend, orgKindLabel } from "../components/OrgBits";
 import { useMapWeather, useWeatherGrid, WeatherControls, WeatherPointCard, type WeatherViews } from "../components/WeatherLayer";
@@ -21,7 +22,7 @@ import { directionOf } from "../i18n";
 import type { BBox } from "../lib/filters";
 import { useDebounced, useFormat, useGouvernorats, useLanguage } from "../lib/hooks";
 import { mapKey } from "../lib/liveCache";
-import { initialBoundsFor } from "../lib/mapStyle";
+import { gouvernoratsBounds, initialBoundsFor } from "../lib/mapStyle";
 import { opsKeys } from "../lib/opsApi";
 import { areaRings, type Message } from "../lib/opsTypes";
 import { errorMessageKey } from "../lib/api";
@@ -185,6 +186,20 @@ export function MapPage() {
   const basemap = useBasemap();
   const adminLayer = useAdminLayer();
   const savedPlaces = useSavedPlaces();
+  // The view follows the last of two choices (phase N, design §6): the gouvernorats picked in the filters (their joint
+  // box) or a saved place. Previous values kept in state, the pattern React recommends over an effect.
+  const govKey = filters.gouvernorats.join(",");
+  const [focus, setFocus] = useState<BBox | null>(null);
+  const [seenGov, setSeenGov] = useState(govKey);
+  const [seenPlace, setSeenPlace] = useState(savedPlaces.focusBounds);
+  if (govKey !== seenGov) {
+    setSeenGov(govKey);
+    setFocus(filters.gouvernorats.length > 0 ? gouvernoratsBounds(filters.gouvernorats) : null);
+  }
+  if (savedPlaces.focusBounds !== seenPlace) {
+    setSeenPlace(savedPlaces.focusBounds);
+    setFocus(savedPlaces.focusBounds);
+  }
   const [focused, setFocused] = useState(false);
 
   // Outbound call from a map point (phase 7 §4, FR-C-10): reporter, volunteer or unit, through the softphone.
@@ -666,7 +681,6 @@ export function MapPage() {
       </div>
       {dataLayers.controls}
       {adminLayer.controls}
-      {savedPlaces.controls}
       {showWeather && (
         <WeatherControls
           views={weatherViews}
@@ -724,41 +738,50 @@ export function MapPage() {
       <div role="status" aria-live="polite">
         {callNotice && <p className={`alert ${callNotice.ok ? "alert--info" : "alert--error"}`}>{callNotice.text}</p>}
       </div>
-      <Suspense fallback={<Loading />}>
-        <LazyMapView
-          className="map map--full"
-          markers={markers}
-          bounds={initialBounds}
-          ariaLabel={t("map.label")}
-          openLabel={t("map.openDetail")}
-          onOpen={onOpen}
-          onBoundsChange={setRawBBox}
-          styleUrl={mapStyleUrl}
-          dir={directionOf(lang)}
-          pois={allPois}
-          poiOpenLabel={t("orgs.layer.open")}
-          onOpenPoi={onOpenPoi}
-          polygons={polygons}
-          lines={lines}
-          heat={heat}
-          shapes={shapes}
-          weather={mapWeather}
-          admin={adminLayer.admin}
-          onAdminClick={adminLayer.onAdminClick}
-          basemap={basemap.view}
-          onMapClick={onMapClick}
-          popup={savedPlaces.popup ?? weatherPopup ?? adminLayer.popup}
-          onPopupClose={() => {
-            setWeatherPoint(null);
-            adminLayer.closePopup();
-            savedPlaces.closePopup();
-          }}
-          focusBounds={savedPlaces.focusBounds}
-          focus={{ exitLabel: t("map.focus.exit"), enterLabel: t("map.focus.enter"), onChange: setFocused }}
-          onCall={onCall}
-          callLabel={t("phone.call")}
-        />
-      </Suspense>
+      {/* Phase N (design §7): "what, then where" and the saved places beside the map, not above it. */}
+      <div className="map-with-side">
+        <aside className="map-with-side__aside">
+          <WhatWhereSearch onPick={(p) => setFocus([p.lon - 0.01, p.lat - 0.008, p.lon + 0.01, p.lat + 0.008])} />
+          {savedPlaces.controls}
+        </aside>
+        <div className="map-with-side__map">
+          <Suspense fallback={<Loading />}>
+            <LazyMapView
+              className="map map--full"
+              markers={markers}
+              bounds={initialBounds}
+              ariaLabel={t("map.label")}
+              openLabel={t("map.openDetail")}
+              onOpen={onOpen}
+              onBoundsChange={setRawBBox}
+              styleUrl={mapStyleUrl}
+              dir={directionOf(lang)}
+              pois={allPois}
+              poiOpenLabel={t("orgs.layer.open")}
+              onOpenPoi={onOpenPoi}
+              polygons={polygons}
+              lines={lines}
+              heat={heat}
+              shapes={shapes}
+              weather={mapWeather}
+              admin={adminLayer.admin}
+              onAdminClick={adminLayer.onAdminClick}
+              basemap={basemap.view}
+              onMapClick={onMapClick}
+              popup={savedPlaces.popup ?? weatherPopup ?? adminLayer.popup}
+              onPopupClose={() => {
+                setWeatherPoint(null);
+                adminLayer.closePopup();
+                savedPlaces.closePopup();
+              }}
+              focusBounds={focus}
+              focus={{ exitLabel: t("map.focus.exit"), enterLabel: t("map.focus.enter"), onChange: setFocused }}
+              onCall={onCall}
+              callLabel={t("phone.call")}
+            />
+          </Suspense>
+        </div>
+      </div>
       <details className="card map-list">
         <summary>{t("map.listToggle")}</summary>
         <ul>

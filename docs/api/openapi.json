@@ -19442,6 +19442,11 @@
             "title": "Audiences",
             "type": "array"
           },
+          "can_edit": {
+            "default": false,
+            "title": "Can Edit",
+            "type": "boolean"
+          },
           "can_import": {
             "title": "Can Import",
             "type": "boolean"
@@ -76125,6 +76130,25 @@
               "title": "Deleted",
               "type": "boolean"
             }
+          },
+          {
+            "description": "words of the place's name",
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 100,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "words of the place's name",
+              "title": "Q"
+            }
           }
         ],
         "responses": {
@@ -84125,7 +84149,8 @@
             "schema": {
               "anyOf": [
                 {
-                  "type": "integer"
+                  "maxLength": 100,
+                  "type": "string"
                 },
                 {
                   "type": "null"

@@ -9123,3 +9123,80 @@ button.nav-card:hover {
     max-block-size: none;
   }
 }
+
+/* Phase N (design §6): the gouvernorats of the filters, several at once. */
+.filters__gouvernorats {
+  position: relative;
+}
+
+.filters__gouvernorats > summary {
+  cursor: pointer;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.filters__gouvernorats[open] > .chips {
+  position: absolute;
+  z-index: 30;
+  inset-inline-start: 0;
+  margin-block-start: 0.35rem;
+  inline-size: min(36rem, 90vw);
+  padding: 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+/* Phase N (design §7): the map with its side column ("what, then where", saved places). */
+.map-with-side {
+  display: grid;
+  grid-template-columns: minmax(15rem, 20rem) 1fr;
+  gap: 0.75rem;
+  align-items: start;
+}
+
+.map-with-side__aside {
+  display: grid;
+  gap: 0.75rem;
+  max-block-size: 75vh;
+  overflow-y: auto;
+}
+
+.what-where {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.what-where__title {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.what-where__row {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.what-where__results {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (max-width: 900px) {
+  .map-with-side {
+    grid-template-columns: 1fr;
+  }
+
+  .map-with-side__aside {
+    max-block-size: none;
+  }
+}

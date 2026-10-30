@@ -165,6 +165,8 @@ class LayerOut(BaseModel):
     last_import: LastImport | None
     can_manage: bool
     can_import: bool
+    # Correct the places by hand (phase N): managers, and content editors on the layers opened to them.
+    can_edit: bool = False
     status: Status
     audiences: list[Group]
     scope: list[int]

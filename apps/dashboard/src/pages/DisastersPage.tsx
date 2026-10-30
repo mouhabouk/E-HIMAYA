@@ -15,24 +15,11 @@ import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
 import { areaBounds, crisisKeys, type Axis } from "../lib/crisis";
 import { displayName, isSimulated } from "../lib/crisisText";
-import type { BBox } from "../lib/filters";
 import { useFormat, useGouvernorats } from "../lib/hooks";
-import { initialBoundsFor, TUNISIA_BOUNDS } from "../lib/mapStyle";
+import { gouvernoratsBounds } from "../lib/mapStyle";
 import { canOpenAxes } from "../lib/roles";
 
 const CommandMap = lazy(() => import("../components/crisis/CommandMap").then((m) => ({ default: m.CommandMap })));
-
-/** The box around the given gouvernorats (Tunisia when none). */
-export function gouvernoratsBounds(codes: readonly number[]): BBox {
-  if (codes.length === 0) return TUNISIA_BOUNDS;
-  const boxes = codes.map((c) => initialBoundsFor(c));
-  return [
-    Math.min(...boxes.map((b) => b[0])),
-    Math.min(...boxes.map((b) => b[1])),
-    Math.max(...boxes.map((b) => b[2])),
-    Math.max(...boxes.map((b) => b[3])),
-  ];
-}
 
 function DisasterCard({ a, chosen, onToggle, linked }: { a: Axis; chosen: boolean; onToggle: (on: boolean) => void; linked: boolean }) {
   const { t } = useTranslation();

@@ -2,14 +2,14 @@
 // choice of disasters and gouvernorats and the map of the chosen disasters' places only.
 import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { GOUVERNORAT_BOUNDS, TUNISIA_BOUNDS } from "../lib/mapStyle";
+import { GOUVERNORAT_BOUNDS, gouvernoratsBounds, TUNISIA_BOUNDS } from "../lib/mapStyle";
 import { canOpenAxes, canOpenDisasters } from "../lib/roles";
 import { NABEUL_AXIS } from "../test/crisisData";
 import { fakeCrisisApi } from "../test/crisisFixtures";
 import { fakeApi, fakeAuth, renderApp } from "../test/render";
 import { promoteLink, readPromotion } from "../lib/crisisText";
 import { AxesPage } from "./AxesPage";
-import { DisastersPage, gouvernoratsBounds } from "./DisastersPage";
+import { DisastersPage } from "./DisastersPage";
 
 vi.mock("../components/crisis/CommandMap", () => ({
   CommandMap: (props: { ariaLabel: string; incidents?: unknown[]; focus?: number[] }) => (

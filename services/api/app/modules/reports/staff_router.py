@@ -60,6 +60,17 @@ def _csv_enum[E: (Status, Category)](raw: str | None, enum: type[E]) -> list[E]:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, f"invalid_{enum.__name__.lower()}") from exc
 
 
+def _codes(raw: str | None) -> list[int]:
+    """Gouvernorat codes, comma-separated (two digits each)."""
+    try:
+        codes = [int(item) for item in (raw or "").split(",") if item.strip()]
+    except ValueError as exc:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "unknown_gouvernorat") from exc
+    if any(not 10 <= c <= 99 for c in codes):
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "unknown_gouvernorat")
+    return codes
+
+
 def _bbox(raw: str | None) -> tuple[float, float, float, float] | None:
     if not raw:
         return None
@@ -97,7 +108,8 @@ async def list_reports(
     session: Session,
     status_: Annotated[str | None, Query(alias="status")] = None,
     category: str | None = None,
-    gouvernorat_code: int | None = None,
+    # One gouvernorat or several, comma-separated (phase N, design §6).
+    gouvernorat_code: Annotated[str | None, Query(max_length=100)] = None,
     since: datetime | None = None,
     until: datetime | None = None,
     bbox: str | None = None,
@@ -115,7 +127,8 @@ async def list_reports(
     filters = service.StaffFilters(
         statuses=_csv_enum(status_, Status),
         categories=_csv_enum(category, Category),
-        gouvernorat_code=gouvernorat_code,
+        gouvernorat_code=None,
+        gouvernorat_codes=_codes(gouvernorat_code),
         since=since,
         until=until,
         bbox=_bbox(bbox),

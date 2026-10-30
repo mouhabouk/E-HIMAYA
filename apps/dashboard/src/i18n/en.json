@@ -590,7 +590,8 @@
     "gouvernorat": "Gouvernorat",
     "allGouvernorats": "All gouvernorats",
     "reset": "Reset",
-    "unverified": "To verify only"
+    "unverified": "To verify only",
+    "someGouvernorats": "{{count}} gouvernorats"
   },
   "reports": {
     "title": "Reports",
@@ -3934,7 +3935,7 @@
       "staffOnly": "Columns never sent to the app",
       "staffOnlyHelp": "Comma-separated. Default: manager (name of the person in charge).",
       "toVerify": "Data to be verified (shown with “To be verified”)",
-      "editorsAllowed": "Content editors may import into this layer",
+      "editorsAllowed": "Content editors may correct the places of this layer (imports stay with the administrator)",
       "enabled": "Layer on",
       "create": "Create the layer",
       "errors": {
@@ -7540,5 +7541,12 @@
     "mapAria": "Map to place the report",
     "submit": "Record the report",
     "entered": "Entered by the room · {{channel}}"
+  },
+  "whatWhere": {
+    "title": "What, then where",
+    "what": "What: choose a layer",
+    "where": "Where: type the place's name",
+    "none": "No place of that name in this layer.",
+    "more": "More results: refine the name."
   }
 }

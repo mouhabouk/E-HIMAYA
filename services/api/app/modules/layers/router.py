@@ -60,12 +60,20 @@ def can_manage(principal: Principal) -> bool:
     return access.manages(principal)
 
 
-def can_import(principal: Principal, layer: Layer) -> bool:
+def can_edit_places(principal: Principal, layer: Layer) -> bool:
+    """Correct the places by hand (add, move, rename, delete, restore, review names): the managers, and the content
+    editors on the layers opened to them."""
     if not principal.is_national or layer.deleted_at is not None:
         return False
     if access.manages(principal):
         return True
     return Role.CONTENT_EDITOR in principal.roles and layer.editors_allowed and not layer.sensitive
+
+
+def can_import(principal: Principal, layer: Layer) -> bool:
+    """Bring a file in, apply, discard or undo an import: the managers alone (phase N, option (b) of Yamen's review:
+    the content editor corrects points, never loads or removes a whole file)."""
+    return principal.is_national and layer.deleted_at is None and access.manages(principal)
 
 
 def _require(allowed: bool, principal: Principal) -> None:
@@ -85,7 +93,7 @@ async def _layer(session: AsyncSession, key: str, *, lock: bool = False) -> Laye
 async def _seen_layer(session: AsyncSession, key: str, principal: Principal, *, lock: bool = False) -> Layer:
     """A layer the principal sees or works on; any other answers 404, as if it did not exist."""
     layer = await _layer(session, key, lock=lock)
-    if not (access.sees(principal, layer) or can_import(principal, layer)):
+    if not (access.sees(principal, layer) or can_edit_places(principal, layer)):
         raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
     return layer
 
@@ -196,6 +204,7 @@ async def _layer_out(session: AsyncSession, layer: Layer, principal: Principal) 
         ),
         can_manage=can_manage(principal),
         can_import=can_import(principal, layer),
+        can_edit=can_edit_places(principal, layer),
         status=layer.status,
         audiences=list(layer.audiences),
         scope=list(layer.scope),
@@ -217,7 +226,7 @@ async def _layer_out(session: AsyncSession, layer: Layer, principal: Principal) 
 @router.get("", response_model=schemas.LayersOut)
 async def list_layers(principal: Staff, session: Session) -> schemas.LayersOut:
     layers = (await session.scalars(select(Layer).order_by(Layer.created_at, Layer.key))).all()
-    mine = [layer for layer in layers if access.sees(principal, layer) or can_import(principal, layer)]
+    mine = [layer for layer in layers if access.sees(principal, layer) or can_edit_places(principal, layer)]
     items = [await _layer_out(session, layer, principal) for layer in mine if layer.deleted_at is None]
     return schemas.LayersOut(
         groups=await _groups_out(session, items, every=can_manage(principal)),
@@ -713,7 +722,7 @@ async def preview_import(
 @router.get("/{key}/imports", response_model=schemas.ImportsOut)
 async def list_imports(principal: Staff, session: Session, key: str) -> schemas.ImportsOut:
     layer = await _layer(session, key)
-    _require(can_import(principal, layer) or can_manage(principal), principal)
+    _require(can_edit_places(principal, layer) or can_manage(principal), principal)
     latest = await _latest_applied(session, layer)
     jobs = await session.scalars(
         select(LayerImport).where(LayerImport.layer_id == layer.id).order_by(LayerImport.created_at.desc()).limit(50)
@@ -732,7 +741,7 @@ async def _job(session: AsyncSession, layer: Layer, import_id: uuid.UUID, *, loc
 @router.get("/{key}/imports/{import_id}", response_model=schemas.ImportDetail)
 async def get_import(principal: Staff, session: Session, key: str, import_id: uuid.UUID) -> schemas.ImportDetail:
     layer = await _layer(session, key)
-    _require(can_import(principal, layer) or can_manage(principal), principal)
+    _require(can_edit_places(principal, layer) or can_manage(principal), principal)
     job = await _job(session, layer, import_id)
     latest = await _latest_applied(session, layer)
     return schemas.ImportDetail(**_import_out(job, layer, principal, latest), points=_points(job.rows or []))
@@ -876,7 +885,7 @@ async def export_layer(
 ) -> Response:
     """The whole layer with every column (staff-only ones included): edit it and import it again."""
     layer = await _layer(session, key)
-    _require(can_import(principal, layer) or can_manage(principal), principal)
+    _require(can_edit_places(principal, layer) or can_manage(principal), principal)
     found = await service.features_in(session, layer, include_hidden=True, limit=domain.MAX_ROWS)
     shapes: dict[uuid.UUID, str] = dict(
         (
@@ -996,10 +1005,11 @@ async def staff_features(
     bbox: Annotated[str | None, Query(description="minLon,minLat,maxLon,maxLat")] = None,
     gouvernorat: Annotated[int | None, Query(ge=1, le=99)] = None,
     deleted: Annotated[bool, Query(description="the deleted places (managers)")] = False,
+    q: Annotated[str | None, Query(max_length=100, description="words of the place's name")] = None,
 ) -> schemas.FeaturesOut:
     layer = await _seen_layer(session, key, principal)
     if deleted:
-        _require(can_import(principal, layer) or can_manage(principal), principal)
+        _require(can_edit_places(principal, layer) or can_manage(principal), principal)
     found = await service.features_in(
         session,
         layer,
@@ -1007,6 +1017,7 @@ async def staff_features(
         gouvernorat=gouvernorat,
         include_hidden=True,
         include_deleted=deleted,
+        q=q.strip() if q and q.strip() else None,
         limit=MAX_STAFF_FEATURES + 1,
     )
     if deleted:
@@ -1067,7 +1078,7 @@ async def _relocate(session: AsyncSession, lat: float, lon: float) -> int:
 @router.post("/{key}/features", response_model=schemas.FeatureOut, status_code=status.HTTP_201_CREATED)
 async def create_feature(principal: Staff, session: Session, key: str, body: schemas.FeatureIn) -> schemas.FeatureOut:
     layer = await _layer(session, key, lock=True)
-    _require(can_import(principal, layer), principal)
+    _require(can_edit_places(principal, layer), principal)
     ref = body.ref or domain.auto_ref(body.name, body.lat, body.lon)
     if await session.scalar(select(LayerFeature.id).where(LayerFeature.layer_id == layer.id, LayerFeature.ref == ref)):
         raise HTTPException(status.HTTP_409_CONFLICT, "duplicate_id")
@@ -1107,7 +1118,7 @@ async def update_feature(
     principal: Staff, session: Session, key: str, feature_id: uuid.UUID, body: schemas.FeaturePatch
 ) -> schemas.FeatureOut:
     layer = await _layer(session, key, lock=True)
-    _require(can_import(principal, layer), principal)
+    _require(can_edit_places(principal, layer), principal)
     found = (
         await session.execute(
             select(LayerFeature, service.LAT, service.LON)
@@ -1169,7 +1180,7 @@ async def delete_feature(
 ) -> schemas.FeatureOut:
     """Off the maps at once; the place stays in the layer's "deleted" list, where it can be restored."""
     layer = await _layer(session, key, lock=True)
-    _require(can_import(principal, layer), principal)
+    _require(can_edit_places(principal, layer), principal)
     feature = await _feature(session, layer, feature_id)
     if feature.deleted_at is not None:
         raise HTTPException(status.HTTP_409_CONFLICT, "already_deleted")
@@ -1200,7 +1211,7 @@ async def restore_feature(
     principal: Staff, session: Session, key: str, feature_id: uuid.UUID, body: schemas.ReasonIn
 ) -> schemas.FeatureOut:
     layer = await _layer(session, key, lock=True)
-    _require(can_import(principal, layer), principal)
+    _require(can_edit_places(principal, layer), principal)
     feature = await _feature(session, layer, feature_id)
     if feature.deleted_at is None:
         raise HTTPException(status.HTTP_409_CONFLICT, "not_deleted")
@@ -1240,7 +1251,7 @@ async def review_queue(
 ) -> schemas.ReviewQueue:
     """The places waiting for the administrator: suggested names (by confidence), or possible duplicates."""
     layer = await _layer(session, key)
-    _require(can_import(principal, layer), principal)
+    _require(can_edit_places(principal, layer), principal)
     live = (LayerFeature.layer_id == layer.id) & LayerFeature.deleted_at.is_(None)
     waiting = LayerFeature.possible_duplicate.is_(True) if duplicates else LayerFeature.name_status == "suggested"
     counts = dict(
@@ -1270,7 +1281,7 @@ async def review(principal: Staff, session: Session, key: str, body: schemas.Rev
     """Accept, edit or reject suggested names (one by one, or every name of a confidence at once); keep or merge
     possible duplicates. The citizen's app shows a place only once its name is official or accepted."""
     layer = await _layer(session, key, lock=True)
-    _require(can_import(principal, layer), principal)
+    _require(can_edit_places(principal, layer), principal)
     reason = _check_reason(body.reason)
     actor = audit.actor_of(principal)
     now = datetime.now(UTC)

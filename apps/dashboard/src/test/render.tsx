@@ -170,6 +170,7 @@ export function fakeLayersApi() {
     discardImport: vi.fn(),
     undoImport: vi.fn(),
     layerFeatures: vi.fn(() => Promise.resolve({ items: [], truncated: false })),
+    layerPlaces: vi.fn(() => Promise.resolve({ items: [], truncated: false })),
     createFeature: vi.fn(),
     updateFeature: vi.fn(),
     exportLayer: vi.fn(),

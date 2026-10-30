@@ -547,6 +547,8 @@ class StaffFilters:
     escalation_states: list[str] = field(default_factory=list)
     claimed: bool | None = None
     sla_bands: list[str] = field(default_factory=list)
+    # Several gouvernorats at once (phase N); ``gouvernorat_code`` keeps the single one of the other callers.
+    gouvernorat_codes: list[int] = field(default_factory=list)
 
 
 async def staff_list(
@@ -559,6 +561,8 @@ async def staff_list(
         query = query.where(Report.category.in_([c.value for c in filters.categories]))
     if filters.gouvernorat_code is not None:
         query = query.where(Report.gouvernorat_code == filters.gouvernorat_code)
+    if filters.gouvernorat_codes:
+        query = query.where(Report.gouvernorat_code.in_(filters.gouvernorat_codes))
     if filters.since is not None:
         query = query.where(Report.received_at >= filters.since)
     if filters.until is not None:

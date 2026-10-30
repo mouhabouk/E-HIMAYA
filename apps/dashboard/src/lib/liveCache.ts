@@ -40,7 +40,7 @@ export function normalizeFilters(f: ReportFilters): ReportFilters {
   return {
     statuses: [...f.statuses].sort(),
     categories: [...f.categories].sort(),
-    gouvernorat: f.gouvernorat,
+    gouvernorats: [...f.gouvernorats].sort((a, b) => a - b),
     period: f.period,
     q: f.q.trim(),
     ...(f.unverified ? { unverified: true } : {}),

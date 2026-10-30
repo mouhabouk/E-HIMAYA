@@ -50,3 +50,22 @@ async def test_inside_its_gouvernorat_and_for_the_rooms_only(client: httpx.Async
     assert sea.status_code == 422 and sea.json()["detail"] == "outside_tunisia"
     bad = await client.post(URL, json={**body, "channel": "pigeon"}, headers=staff(["operator"], gouvernorat=SOUSSE))
     assert bad.status_code == 422
+
+
+async def test_the_list_takes_several_gouvernorats(client: httpx.AsyncClient, staff: Staff) -> None:
+    """Phase N (design §6): the national map and list filter on several gouvernorats at once."""
+    central = staff(["operator"], gouvernorat=None)
+    ids = {}
+    for name, place in (("nabeul", IN_NABEUL), ("sousse", IN_SOUSSE)):
+        r = await client.post(
+            URL, json={"category": "medical", "location": place, "channel": "in_person"}, headers=central
+        )
+        ids[name] = r.json()["id"]
+    both = (
+        await client.get(URL, params={"gouvernorat_code": f"{NABEUL},{SOUSSE}", "limit": 500}, headers=central)
+    ).json()
+    assert {ids["nabeul"], ids["sousse"]} <= {r["id"] for r in both["items"]}
+    one = (await client.get(URL, params={"gouvernorat_code": str(SOUSSE), "limit": 500}, headers=central)).json()
+    assert ids["sousse"] in {r["id"] for r in one["items"]} and ids["nabeul"] not in {r["id"] for r in one["items"]}
+    bad = await client.get(URL, params={"gouvernorat_code": "21,x"}, headers=central)
+    assert bad.status_code == 422 and bad.json()["detail"] == "unknown_gouvernorat"

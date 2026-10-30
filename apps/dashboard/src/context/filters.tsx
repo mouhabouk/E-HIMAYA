@@ -20,7 +20,7 @@ function load(): ReportFilters {
     return {
       statuses: Array.isArray(v.statuses) ? v.statuses.filter(isReportStatus) : [],
       categories: Array.isArray(v.categories) ? v.categories.filter(isCategory) : [],
-      gouvernorat: typeof v.gouvernorat === "number" ? v.gouvernorat : null,
+      gouvernorats: Array.isArray(v.gouvernorats) ? v.gouvernorats.filter((c): c is number => Number.isInteger(c)) : [],
       period: isPeriod(v.period) ? v.period : DEFAULT_FILTERS.period,
       q: typeof v.q === "string" ? v.q : "",
       unverified: v.unverified === true,

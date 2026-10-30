@@ -590,7 +590,8 @@
     "gouvernorat": "Gouvernorat",
     "allGouvernorats": "Tous les gouvernorats",
     "reset": "Réinitialiser",
-    "unverified": "À vérifier uniquement"
+    "unverified": "À vérifier uniquement",
+    "someGouvernorats": "{{count}} gouvernorats"
   },
   "reports": {
     "title": "Signalements",
@@ -3934,7 +3935,7 @@
       "staffOnly": "Colonnes jamais envoyées à l’application",
       "staffOnlyHelp": "Séparées par des virgules. Par défaut : manager (nom du responsable).",
       "toVerify": "Données à vérifier (affichées avec « À vérifier »)",
-      "editorsAllowed": "Les éditeurs de contenu peuvent importer dans cette couche",
+      "editorsAllowed": "Les éditeurs de contenu peuvent corriger les lieux de cette couche (l'import reste à l'administrateur)",
       "enabled": "Couche active",
       "create": "Créer la couche",
       "errors": {
@@ -7540,5 +7541,12 @@
     "mapAria": "Carte pour placer le signalement",
     "submit": "Enregistrer le signalement",
     "entered": "Saisi par la salle · {{channel}}"
+  },
+  "whatWhere": {
+    "title": "Quoi, puis où",
+    "what": "Quoi : choisissez une couche",
+    "where": "Où : tapez le nom du lieu",
+    "none": "Aucun lieu de ce nom dans cette couche.",
+    "more": "Autres résultats : précisez le nom."
   }
 }

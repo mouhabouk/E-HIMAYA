@@ -101,7 +101,10 @@ export interface MapLayer {
   updated_at: string;
   last_import: { id: string; status: string; at: string; by: string | null } | null;
   can_manage: boolean;
+  /** Load a file, apply or undo an import: the managers alone (phase N). */
   can_import: boolean;
+  /** Correct the places by hand: managers, and content editors on the layers opened to them (phase N). */
+  can_edit: boolean;
   status: LayerStatus;
   audiences: Group[];
   /** Gouvernorat codes whose regional staff see it; empty: national. */

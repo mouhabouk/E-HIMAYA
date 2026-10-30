@@ -99,21 +99,33 @@ export function FiltersBar({ showGouvernorat }: { showGouvernorat: boolean }) {
       </fieldset>
       <div className="filters__row">
         {showGouvernorat && (
-          <div className="field">
-            <label htmlFor={selectId}>{t("filters.gouvernorat")}</label>
-            <select
-              id={selectId}
-              value={filters.gouvernorat ?? ""}
-              onChange={(e) => setFilters({ gouvernorat: e.target.value ? Number(e.target.value) : null })}
-            >
-              <option value="">{t("filters.allGouvernorats")}</option>
+          // Phase N (design §6): several gouvernorats at once, in a disclosure that keeps the bar short.
+          <details className="filters__gouvernorats" id={selectId}>
+            <summary>
+              {t("filters.gouvernorat")}:{" "}
+              {filters.gouvernorats.length === 0
+                ? t("filters.allGouvernorats")
+                : filters.gouvernorats.length <= 2
+                  ? filters.gouvernorats.map((c) => gouvernorats.nameOf(c)).join("، ")
+                  : t("filters.someGouvernorats", { count: filters.gouvernorats.length })}
+            </summary>
+            <fieldset className="chips">
+              <legend className="visually-hidden">{t("filters.gouvernorat")}</legend>
+              <button type="button" className="btn btn--small btn--ghost" onClick={() => setFilters({ gouvernorats: [] })}>
+                {t("filters.allGouvernorats")}
+              </button>
               {gouvernorats.list.map((g) => (
-                <option key={g.code} value={g.code}>
-                  {gouvernorats.nameOf(g.code)}
-                </option>
+                <label key={g.code} className="chip-toggle">
+                  <input
+                    type="checkbox"
+                    checked={filters.gouvernorats.includes(g.code)}
+                    onChange={() => setFilters({ gouvernorats: toggle(filters.gouvernorats, g.code) })}
+                  />
+                  <span>{gouvernorats.nameOf(g.code)}</span>
+                </label>
               ))}
-            </select>
-          </div>
+            </fieldset>
+          </details>
         )}
         <PeriodSelector value={filters.period} onChange={(period) => setFilters({ period })} />
         <label className="chip-toggle">
