@@ -81,7 +81,7 @@ const AGENTS = [
 
 async function mockApi(page: Page) {
   const m = await baseMock(page);
-  const agents = [...AGENTS];
+  const agents: Record<string, unknown>[] = [...AGENTS];
   await page.route(`${API}/**`, async (route) => {
     const request = route.request();
     const { pathname } = new URL(request.url());
