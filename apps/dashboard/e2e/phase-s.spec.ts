@@ -66,9 +66,9 @@ async function mockApi(page: Page) {
         { code: 21, iso_code: "TN-21", name: "نابل", name_ar: "نابل", name_fr: "Nabeul", delegation_count: 16 },
       ]);
     }
+    if (pathname === "/api/v1/staff/strategies") return json(route, { items: [ITEM], can_manage: true });
     const common = commonAnswer(method, pathname, route);
     if (common) return common;
-    if (pathname === "/api/v1/staff/strategies") return json(route, { items: [ITEM], can_manage: true });
     if (pathname === "/api/v1/staff/strategies/snrrc_2030") return json(route, ITEM);
     if (pathname === "/api/v1/staff/snacr") {
       return json(route, {

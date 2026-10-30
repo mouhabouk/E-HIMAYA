@@ -115,6 +115,9 @@ export function commonAnswer(
 ): Promise<void> | null {
   // Environment strip (backlog G3): production-like, no strip.
   if (method === "GET" && pathname === "/api/v1/app/environment") return json(route, { banner: null });
+  // The «Strategies» menu group (phase S): no item added by the system administrator.
+  if (method === "GET" && pathname === "/api/v1/staff/strategies")
+    return json(route, { items: [], can_manage: false });
   if (method === "GET" && pathname === "/api/v1/geo/gouvernorats") {
     return json(route, [
       {

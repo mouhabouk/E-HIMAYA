@@ -7038,6 +7038,44 @@ button.nav-card:hover {
   flex-direction: column;
 }
 
+/* A short screen: the rail tightens so the account and the tools stay on screen; on a very short one it keeps its
+   icons and drops the names under them (still read aloud). */
+@media (max-height: 960px) {
+  .header--side.header--grouped {
+    gap: 0.4rem;
+    padding-block: 0.5rem;
+  }
+
+  .header--side.header--grouped .main-nav {
+    gap: 0.15rem;
+  }
+
+  .header--side.header--grouped .nav-group__btn,
+  .header--side.header--grouped .nav-group--single .nav-link {
+    gap: 0.15rem;
+    padding-block: 0.25rem;
+    font-size: 0.68rem;
+    line-height: 1.15;
+  }
+
+  .header--side.header--grouped .nav-group__btn .icon-tile,
+  .header--side.header--grouped .nav-group--single .icon-tile {
+    --tile: 2.1rem;
+  }
+}
+
+@media (max-height: 899px) {
+  .header--side.header--grouped .nav-group__label,
+  .header--side.header--grouped .nav-group--single .nav-link span {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
 /* ---- Account menu ---- */
 .account {
   position: relative;

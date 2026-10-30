@@ -119,6 +119,7 @@ async function mockApi(page: Page): Promise<ApiMock> {
     }
     if (method === "GET" && pathname === "/api/v1/staff/levels") return json(route, []);
     if (method === "GET" && pathname === "/api/v1/app/environment") return json(route, { banner: null });
+    if (method === "GET" && pathname === "/api/v1/staff/strategies") return json(route, { items: [], can_manage: false });
     if (method === "POST" && pathname === "/api/v1/staff/notifications") {
       const body = request.postDataJSON() as MessageBody;
       mock.created.push(body);
