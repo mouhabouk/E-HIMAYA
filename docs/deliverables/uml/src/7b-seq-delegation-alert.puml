@@ -1,0 +1,33 @@
+@startuml
+!include style.iuml
+title Séquence : alerte à des délégations choisies (M)
+autonumber
+actor "Salle des opérations" as OP
+participant "Tableau de bord" as UI
+participant "API" as API
+database "PostgreSQL\n(geo.delegation, Map Tunisia)" as DB
+actor "Salle centrale\n(seconde validation)" as CEN
+participant "Diffusion\n(worker)" as W
+actor "Citoyens de la zone" as CIT
+OP -> UI : Alerte, zone « Délégations »\ngouvernorat puis délégations
+UI -> API : GET /geo/boundaries/delegation?gouvernorat=…
+API -> DB : population (INS) par délégation
+API --> UI : habitants concernés
+OP -> UI : enregistrer le brouillon
+UI -> API : POST /staff/messages\n(delegation_ids)
+API -> DB : union des géométries\n→ zone MultiPolygon
+alt salle régionale et délégation hors de son gouvernorat
+  API --> UI : 403 out_of_scope
+else dans le périmètre
+  API --> UI : brouillon
+end
+CEN -> UI : publier (règle des quatre yeux)
+UI -> API : POST /staff/messages/{id}/publish
+API -> W : message publié
+W -> DB : appareils dont la position\nest dans la zone
+W -> CIT : notification
+note right of UI
+  La zone est dessinée sur la carte du message
+  envoyé et sur la carte en direct.
+end note
+@enduml
