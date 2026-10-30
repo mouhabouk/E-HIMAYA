@@ -208,6 +208,8 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     kpis: vi.fn(),
     reports: vi.fn(() => Promise.resolve({ items: [], next_cursor: null })),
     report: vi.fn(),
+    // Phase N: a report entered by a room.
+    enterReport: vi.fn(),
     changeStatus: vi.fn(),
     incidents: vi.fn(() => Promise.resolve({ items: [], next_cursor: null })),
     incident: vi.fn(),
