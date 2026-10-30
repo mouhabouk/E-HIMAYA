@@ -308,7 +308,7 @@ export function FieldAgentsPage() {
     enabled: gouvernorat !== null,
   });
   return (
-    <div className="page">
+    <div className="page field-agents-page">
       <div className="page__head">
         <PageTitle icon="groups" tone="green">
           {t("fieldAgents.pageTitle")}

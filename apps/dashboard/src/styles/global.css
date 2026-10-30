@@ -7615,8 +7615,8 @@ button.nav-card:hover {
 .inventory-search__total {
   margin-block: 0 8px;
 }
-/* The decision window and the permissions page (L4), the dry run (L5a): text, date and number fields drawn like the others. */
-:is(.win-page, .perm-page, .drills-page, .drill-page)
+/* The decision window and the permissions page (L4), the dry run (L5a), the field agents (F): text, date and number fields drawn like the others. */
+:is(.win-page, .perm-page, .drills-page, .drill-page, .field-agents-page)
   :is(input:not([type]), input[type="text"], input[type="date"], input[type="datetime-local"], input[type="number"]) {
   font: inherit;
   color: var(--text);

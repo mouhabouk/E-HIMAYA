@@ -526,13 +526,17 @@ class NatureChips extends ConsumerWidget {
                     key: Key('nature-$n'),
                     label: Text(natureLabel(l10n, n)),
                     selected: n == chosen,
-                    onSelected: readOnly || n == chosen
+                    // The chosen one stays enabled so it reads as chosen, not as greyed out.
+                    onSelected: readOnly
                         ? null
-                        : (_) => unawaited(
-                            ref
-                                .read(staffControllerProvider.notifier)
-                                .nature(mission.id, n),
-                          ),
+                        : (_) {
+                            if (n == chosen) return;
+                            unawaited(
+                              ref
+                                  .read(staffControllerProvider.notifier)
+                                  .nature(mission.id, n),
+                            );
+                          },
                   ),
             ],
           ),
