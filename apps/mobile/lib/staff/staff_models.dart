@@ -462,6 +462,11 @@ class Mission {
     this.enRouteAt,
     this.onSceneAt,
     this.releasedAt,
+    this.leftSceneAt,
+    this.atHospitalAt,
+    this.backAtUnitAt,
+    this.crewCount,
+    this.consumables = const {},
     this.category,
     this.classification,
     this.title,
@@ -498,6 +503,14 @@ class Mission {
       enRouteAt: _date(j['en_route_at']),
       onSceneAt: _date(j['on_scene_at']),
       releasedAt: _date(j['released_at']),
+      leftSceneAt: _date(j['left_scene_at']),
+      atHospitalAt: _date(j['at_hospital_at']),
+      backAtUnitAt: _date(j['back_at_unit_at']),
+      crewCount: j['crew_count'] as int?,
+      consumables: {
+        for (final e in (j['consumables'] as Map? ?? const {}).entries)
+          e.key as String: (e.value as num).toInt(),
+      },
       incidentId: inc['id'] as String,
       category: ReportCategory.fromWire(inc['category'] as String?),
       classification: inc['classification'] as String?,
@@ -539,6 +552,13 @@ class Mission {
   final DateTime? enRouteAt;
   final DateTime? onSceneAt;
   final DateTime? releasedAt;
+
+  /// Phase S2: the rest of the mission's times, the crew and what it used (design-s2 §3).
+  final DateTime? leftSceneAt;
+  final DateTime? atHospitalAt;
+  final DateTime? backAtUnitAt;
+  final int? crewCount;
+  final Map<String, int> consumables;
   final String incidentId;
   final ReportCategory? category;
   final String? classification;
@@ -571,6 +591,26 @@ class Mission {
       status == MissionStatus.ordered ||
       status == MissionStatus.enRoute ||
       status == MissionStatus.onScene;
+
+  /// The steps after the arrival the leader can give now, the main one first: leaving the scene,
+  /// then the hospital (first when someone was taken) and the return to the unit, which ends the
+  /// mission. A mission the room ended still takes its return.
+  List<String> get nextMilestones {
+    final arrived =
+        status == MissionStatus.onScene || status == MissionStatus.released;
+    if (!arrived || backAtUnitAt != null) return const [];
+    if (leftSceneAt == null) {
+      return status == MissionStatus.onScene
+          ? const ['left_scene']
+          : const ['back_at_unit'];
+    }
+    if (leftSceneAt != null && atHospitalAt == null) {
+      return transports.isNotEmpty
+          ? const ['at_hospital', 'back_at_unit']
+          : const ['back_at_unit', 'at_hospital'];
+    }
+    return const ['back_at_unit'];
+  }
 
   /// Rings full screen until the leader acknowledges it.
   bool get unacknowledged => active && acknowledgedAt == null;

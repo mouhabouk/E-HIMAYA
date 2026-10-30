@@ -167,6 +167,12 @@ CATALOGUE: tuple[Spec, ...] = (
             act_as=R.OPERATOR,
         ),
         button(
+            "incidents.record",
+            ("سجل تواقيت المهمة وأعوانها ومواردها", "Relevé de la mission", "Mission record"),
+            "PUT /assignments/{assignment_id}/record",
+            act_as=R.OPERATOR,
+        ),
+        button(
             "incidents.callout",
             ("استنفار المتطوعين", "Appeler des bénévoles", "Call volunteers out"),
             "POST /incidents/{incident_id}/callouts",

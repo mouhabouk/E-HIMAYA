@@ -18,6 +18,7 @@ import '../staff_labels.dart';
 import '../staff_models.dart';
 import 'detailed_report_screen.dart';
 import 'field_widgets.dart';
+import 'record_screen.dart';
 import 'situation_screen.dart';
 import 'transport_screen.dart';
 
@@ -84,6 +85,17 @@ class MissionScreen extends ConsumerWidget {
                           ),
                     onTap: () =>
                         push(context, SituationScreen(missionId: m.id)),
+                  ),
+                  NavCard(
+                    key: const Key('open-record'),
+                    icon: Icons.groups,
+                    tone: Tone.navy,
+                    title: l10n.staffRecordTitle,
+                    subtitle: l10n.staffRecordAgents(
+                      m.crewCount ?? s.me?.shift?.crewSize ?? 0,
+                    ),
+                    onTap: () =>
+                        push(context, MissionRecordScreen(missionId: m.id)),
                   ),
                   NavCard(
                     key: const Key('open-transports'),
@@ -246,7 +258,8 @@ class _MissionCard extends ConsumerWidget {
   }
 }
 
-/// Five stations and the time of each (design §5.3).
+/// The stations of the mission and the time of each (design §5.3), from the order to the return
+/// to the unit (phase S2).
 class _Timeline extends StatelessWidget {
   const _Timeline({required this.mission, required this.away});
 
@@ -281,7 +294,23 @@ class _Timeline extends StatelessWidget {
         m.onSceneAt != null,
         m.status == MissionStatus.onScene,
       ),
-      (l10n.staffStepOver, m.releasedAt, m.releasedAt != null, false),
+      // Phase S2: after the arrival, leaving the scene, the hospital and the return to the unit.
+      (
+        l10n.staffStepLeftScene,
+        m.leftSceneAt,
+        m.leftSceneAt != null,
+        m.status == MissionStatus.onScene && m.leftSceneAt == null,
+      ),
+      if (m.atHospitalAt != null || m.transports.isNotEmpty)
+        (
+          l10n.staffStepAtHospital,
+          m.atHospitalAt,
+          m.atHospitalAt != null,
+          false,
+        ),
+      if (m.releasedAt != null && m.backAtUnitAt == null)
+        (l10n.staffStepOver, m.releasedAt, true, false),
+      (l10n.staffStepBackAtUnit, m.backAtUnitAt, m.backAtUnitAt != null, false),
     ];
     final n = Neutrals.of(context);
     return AppCard(
@@ -396,15 +425,11 @@ class _NextStep extends ConsumerWidget {
             Icons.place,
             Tone.orange,
           ),
-          MissionStatus.onScene => (
-            'released',
-            l10n.staffStepOver,
-            Icons.flag,
-            Tone.green,
-          ),
           _ => null,
         };
-    if (next == null) return const SizedBox.shrink();
+    if (next == null) {
+      return _Milestones(mission: m, busy: busy);
+    }
     final near =
         m.status == MissionStatus.enRoute &&
         away != null &&
@@ -449,6 +474,61 @@ class _NextStep extends ConsumerWidget {
               ),
             ),
           ),
+      ],
+    );
+  }
+}
+
+/// The steps after the arrival (phase S2): one big button for the main one, the other beside it;
+/// back at the unit ends the mission. The time is the phone's, kept in order by the server.
+class _Milestones extends ConsumerWidget {
+  const _Milestones({required this.mission, required this.busy});
+
+  final Mission mission;
+  final bool busy;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final steps = mission.nextMilestones;
+    if (steps.isEmpty) return const SizedBox.shrink();
+    (String, IconData, Tone) look(String step) => switch (step) {
+      'left_scene' => (l10n.staffStepLeftScene, Icons.logout, Tone.orange),
+      'at_hospital' => (
+        l10n.staffStepAtHospital,
+        Icons.local_hospital,
+        Tone.red,
+      ),
+      _ => (l10n.staffStepBackAtUnit, Icons.home_work, Tone.green),
+    };
+    Future<void> give(String step) =>
+        ref.read(staffControllerProvider.notifier).milestone(mission.id, step);
+    final (label, icon, tone) = look(steps.first);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        BigStepButton(
+          key: Key('step-${steps.first}'),
+          label: label,
+          caption: steps.first == 'back_at_unit'
+              ? l10n.staffBackEndsMission
+              : null,
+          icon: icon,
+          tone: tone,
+          onPressed: busy ? null : () => give(steps.first),
+        ),
+        for (final other in steps.skip(1)) ...[
+          const SizedBox(height: 8),
+          OutlinedButton.icon(
+            key: Key('step-$other'),
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size.fromHeight(56),
+            ),
+            onPressed: busy ? null : () => give(other),
+            icon: Icon(look(other).$2),
+            label: Text(look(other).$1),
+          ),
+        ],
       ],
     );
   }

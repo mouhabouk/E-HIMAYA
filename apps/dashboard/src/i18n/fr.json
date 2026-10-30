@@ -572,7 +572,19 @@
     "no_dataset": "Aucune année n'est encore chargée dans l'archive.",
     "plan_not_draft": "Ce schéma est déjà approuvé.",
     "years_not_loaded": "L'une des années choisies n'est pas chargée.",
-    "file_columns_missing": "Il manque au fichier des colonnes de l'archive (dates, direction régionale, délégation, nature)."
+    "file_columns_missing": "Il manque au fichier des colonnes de l'archive (dates, direction régionale, délégation, nature).",
+    "time_needs_previous": "Cette heure demande d'abord l'étape précédente.",
+    "time_without_zone": "Heure sans fuseau horaire.",
+    "time_in_future": "L'heure est dans le futur.",
+    "times_out_of_order": "Les heures ne sont pas dans l'ordre : chaque étape suit la précédente.",
+    "mission_too_long": "La mission dépasse 72 heures depuis l'ordre.",
+    "return_before_departure": "Le retour à l'unité doit suivre le départ.",
+    "consumable_unknown": "Ressource inconnue.",
+    "consumable_out_of_range": "Quantité hors des limites.",
+    "assignment_cancelled": "Cet engagement est annulé.",
+    "record_closed": "Le relevé n'est plus modifiable (7 jours après la fin).",
+    "time_required": "Une heure atteinte par la mission ne peut pas être effacée.",
+    "correction_reason_required": "Corriger une heure donnée par l'équipe demande un motif."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -953,7 +965,10 @@
       "field_attachment": "Pièce jointe des lieux",
       "detailed_report": "Rapport détaillé",
       "hospital_chosen": "Hôpital choisi",
-      "command_decision": "Décision du commandant"
+      "command_decision": "Décision du commandant",
+      "mission_step": "Étape de la mission",
+      "record_saved": "Relevé de mission modifié",
+      "team_record": "Équipage et ressources (équipe)"
     },
     "via": {
       "suggestion": "(suggestion confirmée)",
@@ -7974,6 +7989,83 @@
       "plan_cycle": "Cycle du schéma",
       "percentile_indicators": "Indicateurs en percentiles",
       "matrix": "Matrice des risques"
+    }
+  },
+  "record": {
+    "open": "Relevé de mission",
+    "title": "Relevé de la mission : heures, équipage, ressources",
+    "intro": "Saisissez l'heure en chiffres (1432 ou 143205), avec les flèches (Maj : dix minutes) ou les boutons − et +. La date suit l'étape précédente et passe minuit d'elle-même.",
+    "indicators": "Indicateurs de la mission",
+    "clockPlaceholder": "hh:mm:ss",
+    "now": "Maintenant",
+    "clear": "Effacer",
+    "minus": "Moins une minute : {{step}}",
+    "plus": "Plus une minute : {{step}}",
+    "dayBefore": "Jour précédent",
+    "dayNext": "Jour suivant",
+    "after": "{{duration}} après l'étape précédente",
+    "hint": "Pas encore saisi",
+    "crew": "Nombre d'agents engagés",
+    "crewCount": "{{count}} agents",
+    "consumables": "Ressources utilisées",
+    "reasonTitle": "Motif de la correction",
+    "reasonHint": "Heure donnée par l'équipe modifiée : {{steps}}",
+    "reasonOther": "Motif",
+    "save": "Enregistrer le relevé",
+    "close": "Fermer",
+    "fixErrors": "Corrigez les heures signalées avant d'enregistrer.",
+    "needReason": "Choisissez le motif de la correction.",
+    "nothing": "Aucun changement.",
+    "step": {
+      "created_at": "Ordre d'engagement",
+      "en_route_at": "Départ",
+      "on_scene_at": "Arrivée sur les lieux",
+      "left_scene_at": "Départ des lieux",
+      "at_hospital_at": "Arrivée à l'hôpital",
+      "back_at_unit_at": "Retour à l'unité"
+    },
+    "source": {
+      "app": "Application",
+      "sms": "Par SMS",
+      "room": "Salle",
+      "order": "Automatique",
+      "changed": "Modifié"
+    },
+    "error": {
+      "clock": "Écrivez l'heure ainsi : 1432, 14:32 ou 14:32:05.",
+      "time_needs_previous": "Cette heure demande d'abord l'étape précédente.",
+      "time_in_future": "L'heure est dans le futur.",
+      "times_out_of_order": "Les heures ne sont pas dans l'ordre : chaque étape suit la précédente.",
+      "mission_too_long": "La mission dépasse 72 heures depuis l'ordre.",
+      "return_before_departure": "Le retour à l'unité doit suivre le départ.",
+      "time_required": "Une heure atteinte par la mission ne peut pas être effacée."
+    },
+    "indicator": {
+      "turnout": "Délai de départ",
+      "travel": "Trajet",
+      "response": "De l'appel à l'arrivée",
+      "on_scene": "Sur les lieux",
+      "transport": "Transport à l'hôpital",
+      "return": "Retour",
+      "mission": "Durée de la mission"
+    },
+    "consumable": {
+      "water_m3": "Eau (m³)",
+      "foam_l": "Émulseur (L)",
+      "powder_kg": "Poudre (kg)",
+      "co2_kg": "CO₂ (kg)",
+      "extinguishers": "Extincteurs utilisés",
+      "oxygen_l": "Oxygène (L)",
+      "fuel_l": "Carburant (L)",
+      "sandbags": "Sacs de sable",
+      "absorbent_kg": "Absorbant (kg)"
+    },
+    "reason": {
+      "late_press": "Bouton pressé en retard",
+      "early_press": "Bouton pressé trop tôt",
+      "no_network": "Pas de réseau",
+      "radio_log": "Selon le registre radio",
+      "other": "Autre"
     }
   }
 }

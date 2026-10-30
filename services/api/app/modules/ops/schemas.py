@@ -127,7 +127,25 @@ class VehiclePosition(BaseModel):
     distance_m: int | None = None
 
 
-class AssignmentOut(BaseModel):
+#: What a mission uses (phase S2, ``record.CONSUMABLES``).
+Consumable = Literal[
+    "water_m3", "foam_l", "powder_kg", "co2_kg", "extinguishers", "oxygen_l", "fuel_l", "sandbags", "absorbent_kg"
+]
+TimeSource = Literal["app", "sms", "room"]
+
+
+class MissionRecord(BaseModel):
+    """The rest of a mission's times, its crew, what it used and who gave each time (phase S2)."""
+
+    left_scene_at: datetime | None = None
+    at_hospital_at: datetime | None = None
+    back_at_unit_at: datetime | None = None
+    crew_count: int | None = None
+    consumables: dict[Consumable, float] = Field(default_factory=dict)
+    time_sources: dict[str, TimeSource] = Field(default_factory=dict)
+
+
+class AssignmentOut(MissionRecord):
     id: uuid.UUID
     incident_id: uuid.UUID
     kind: Literal["resource", "volunteer"]
@@ -212,6 +230,26 @@ class AssignmentIn(BaseModel):
 class AssignmentStatusIn(BaseModel):
     status: AssignmentStatus
     note: Annotated[Text, StringConstraints(max_length=500)] | None = None
+
+
+class RecordTimes(BaseModel):
+    """The times the room gives or corrects; a time left out stays as it is, ``null`` clears it."""
+
+    en_route_at: AwareDatetime | None = None
+    on_scene_at: AwareDatetime | None = None
+    left_scene_at: AwareDatetime | None = None
+    at_hospital_at: AwareDatetime | None = None
+    back_at_unit_at: AwareDatetime | None = None
+
+
+class RecordIn(BaseModel):
+    """The room completes or corrects the record of a mission (phase S2)."""
+
+    times: RecordTimes | None = None
+    crew_count: int | None = Field(default=None, ge=1, le=60)
+    consumables: dict[Consumable, float] | None = Field(default=None, max_length=12)
+    #: Required when a time the team gave changes.
+    reason: Annotated[Text, StringConstraints(max_length=300)] | None = None
 
 
 class CalloutIn(BaseModel):
@@ -684,7 +722,7 @@ class MissionIncident(BaseModel):
     status: IncidentStatus
 
 
-class MissionOut(BaseModel):
+class MissionOut(MissionRecord):
     id: uuid.UUID
     status: AssignmentStatus
     order: str | None
@@ -717,6 +755,19 @@ class StepIn(CrewWrite):
     status: CrewStep
     lat: float | None = Field(default=None, ge=-90, le=90)
     lon: float | None = Field(default=None, ge=-180, le=180)
+
+
+class MilestoneIn(CrewWrite):
+    """A step of the mission after the arrival on scene (phase S2)."""
+
+    step: Literal["left_scene", "at_hospital", "back_at_unit"]
+
+
+class TeamRecordIn(CrewWrite):
+    """The crew and what the mission used, as the team gives them (phase S2)."""
+
+    crew_count: int | None = Field(default=None, ge=1, le=60)
+    consumables: dict[Consumable, float] | None = Field(default=None, max_length=12)
 
 
 class FirstReportIn(CrewWrite):

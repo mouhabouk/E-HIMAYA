@@ -9568,6 +9568,114 @@ abstract class AppLocalizations {
   /// **'Intervention over'**
   String get staffStepOver;
 
+  /// No description provided for @staffStepLeftScene.
+  ///
+  /// In en, this message translates to:
+  /// **'Left the scene'**
+  String get staffStepLeftScene;
+
+  /// No description provided for @staffStepAtHospital.
+  ///
+  /// In en, this message translates to:
+  /// **'At the hospital'**
+  String get staffStepAtHospital;
+
+  /// No description provided for @staffStepBackAtUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Back at the unit'**
+  String get staffStepBackAtUnit;
+
+  /// No description provided for @staffBackEndsMission.
+  ///
+  /// In en, this message translates to:
+  /// **'Back at the unit ends the mission and frees the vehicle.'**
+  String get staffBackEndsMission;
+
+  /// No description provided for @staffRecordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Crew and resources'**
+  String get staffRecordTitle;
+
+  /// No description provided for @staffRecordCrew.
+  ///
+  /// In en, this message translates to:
+  /// **'Agents on the mission'**
+  String get staffRecordCrew;
+
+  /// No description provided for @staffRecordUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Resources used'**
+  String get staffRecordUsed;
+
+  /// No description provided for @staffRecordSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send to the room'**
+  String get staffRecordSend;
+
+  /// No description provided for @staffUsedWater.
+  ///
+  /// In en, this message translates to:
+  /// **'Water (m³)'**
+  String get staffUsedWater;
+
+  /// No description provided for @staffUsedFoam.
+  ///
+  /// In en, this message translates to:
+  /// **'Foam (L)'**
+  String get staffUsedFoam;
+
+  /// No description provided for @staffUsedPowder.
+  ///
+  /// In en, this message translates to:
+  /// **'Powder (kg)'**
+  String get staffUsedPowder;
+
+  /// No description provided for @staffUsedCo2.
+  ///
+  /// In en, this message translates to:
+  /// **'CO₂ (kg)'**
+  String get staffUsedCo2;
+
+  /// No description provided for @staffUsedExtinguishers.
+  ///
+  /// In en, this message translates to:
+  /// **'Extinguishers used'**
+  String get staffUsedExtinguishers;
+
+  /// No description provided for @staffUsedOxygen.
+  ///
+  /// In en, this message translates to:
+  /// **'Oxygen (L)'**
+  String get staffUsedOxygen;
+
+  /// No description provided for @staffUsedFuel.
+  ///
+  /// In en, this message translates to:
+  /// **'Fuel (L)'**
+  String get staffUsedFuel;
+
+  /// No description provided for @staffUsedSandbags.
+  ///
+  /// In en, this message translates to:
+  /// **'Sandbags'**
+  String get staffUsedSandbags;
+
+  /// No description provided for @staffUsedAbsorbent.
+  ///
+  /// In en, this message translates to:
+  /// **'Absorbent (kg)'**
+  String get staffUsedAbsorbent;
+
+  /// No description provided for @staffRecordAgents.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} agents'**
+  String staffRecordAgents(int count);
+
   /// No description provided for @staffAwayFrom.
   ///
   /// In en, this message translates to:

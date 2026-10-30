@@ -226,6 +226,13 @@ class Assignment(Base):
     acknowledged_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     # Phase P4b: a number the room gives the team for the scene ("المبلّغ" on the phone).
     contact_phone: Mapped[str | None] = mapped_column(Text)
+    # Phase S2: the rest of the mission's times, its crew and what it used, and who gave each time.
+    left_scene_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    at_hospital_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    back_at_unit_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    crew_count: Mapped[int | None] = mapped_column(SmallInteger)
+    consumables: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default="{}")
+    time_sources: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default="{}")
 
 
 class CalloutTarget(Base):

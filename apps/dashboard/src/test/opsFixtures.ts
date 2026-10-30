@@ -43,6 +43,7 @@ export function fakeOpsApi(): OpsApi {
     addIncidentNote: vi.fn(),
     createAssignment: vi.fn(),
     updateAssignment: vi.fn(),
+    saveMissionRecord: vi.fn(),
     closeIncident: vi.fn(),
     volunteerSuggestions: vi.fn(() => Promise.resolve([])),
     createCallout: vi.fn(),

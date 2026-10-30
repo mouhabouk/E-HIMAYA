@@ -5492,6 +5492,63 @@ class AppLocalizationsFr extends AppLocalizations {
   String get staffStepOver => 'Intervention terminée';
 
   @override
+  String get staffStepLeftScene => 'Départ des lieux';
+
+  @override
+  String get staffStepAtHospital => 'Arrivée à l\'hôpital';
+
+  @override
+  String get staffStepBackAtUnit => 'Retour à l\'unité';
+
+  @override
+  String get staffBackEndsMission =>
+      'Le retour à l\'unité termine la mission et libère le véhicule.';
+
+  @override
+  String get staffRecordTitle => 'Équipage et ressources';
+
+  @override
+  String get staffRecordCrew => 'Agents engagés';
+
+  @override
+  String get staffRecordUsed => 'Ressources utilisées';
+
+  @override
+  String get staffRecordSend => 'Envoyer à la salle';
+
+  @override
+  String get staffUsedWater => 'Eau (m³)';
+
+  @override
+  String get staffUsedFoam => 'Émulseur (L)';
+
+  @override
+  String get staffUsedPowder => 'Poudre (kg)';
+
+  @override
+  String get staffUsedCo2 => 'CO₂ (kg)';
+
+  @override
+  String get staffUsedExtinguishers => 'Extincteurs utilisés';
+
+  @override
+  String get staffUsedOxygen => 'Oxygène (L)';
+
+  @override
+  String get staffUsedFuel => 'Carburant (L)';
+
+  @override
+  String get staffUsedSandbags => 'Sacs de sable';
+
+  @override
+  String get staffUsedAbsorbent => 'Absorbant (kg)';
+
+  @override
+  String staffRecordAgents(int count) {
+    return '$count agents';
+  }
+
+  @override
   String staffAwayFrom(int meters) {
     return 'Vous êtes à $meters m des lieux';
   }

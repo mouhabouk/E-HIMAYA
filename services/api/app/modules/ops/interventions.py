@@ -243,6 +243,12 @@ def _assignment_out(
         on_scene_at=a.on_scene_at,
         released_at=a.released_at,
         cancelled_at=a.cancelled_at,
+        left_scene_at=a.left_scene_at,
+        at_hospital_at=a.at_hospital_at,
+        back_at_unit_at=a.back_at_unit_at,
+        crew_count=a.crew_count,
+        consumables=a.consumables or {},
+        time_sources=a.time_sources or {},
         crew=(
             schemas.CrewRef(
                 shift_id=sh.id,
@@ -447,22 +453,35 @@ async def create_assignment(
 
 
 async def _set_assignment_status(
-    session: AsyncSession, assignment: Assignment, target: str, actor: str, *, at: datetime | None = None
+    session: AsyncSession,
+    assignment: Assignment,
+    target: str,
+    actor: str,
+    *,
+    at: datetime | None = None,
+    source: str = "room",
 ) -> None:
-    """``at``: when it happened, for a step the team's phone kept without network (phase P4d); now otherwise."""
+    """``at``: when it happened, for a step the team's phone kept without network (phase P4d); now otherwise.
+    ``source``: who gave the time (the app, a text message or the room, phase S2)."""
     if target not in ASSIGNMENT_TRANSITIONS[assignment.status]:
         raise HTTPException(status.HTTP_409_CONFLICT, "invalid_transition")
     now = at or _now()
     assignment.status = target
+    sources = dict(assignment.time_sources or {})
     if target == "en_route":
         assignment.en_route_at = now
+        sources["en_route_at"] = source
     elif target == "on_scene":
         assignment.on_scene_at = now
-        assignment.en_route_at = assignment.en_route_at or now
+        sources["on_scene_at"] = source
+        if assignment.en_route_at is None:
+            assignment.en_route_at = now
+            sources["en_route_at"] = source
     elif target == "released":
         assignment.released_at = now
     elif target == "cancelled":
         assignment.cancelled_at = now
+    assignment.time_sources = sources
     if target in ("released", "cancelled") and assignment.resource_id is not None:
         resource = await session.get(Resource, assignment.resource_id, with_for_update=True)
         if resource is not None and resource.status == "assigned":

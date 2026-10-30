@@ -38,6 +38,7 @@ import type {
   NearHospital,
 } from "./opsTypes";
 import type { IncidentDetail, Page, TimelineEntry } from "./types";
+import type { RecordBody } from "./missionRecord";
 
 const enc = encodeURIComponent;
 const incidentPath = (id: string) => `/api/v1/staff/incidents/${enc(id)}`;
@@ -130,6 +131,8 @@ export function opsApi(api: ApiClient) {
         method: "POST",
         body: note?.trim() ? { status, note: note.trim() } : { status },
       }),
+    saveMissionRecord: (id: string, body: RecordBody) =>
+      api.request<Assignment>(`/api/v1/staff/assignments/${enc(id)}/record`, { method: "PUT", body }),
     closeIncident: (id: string, body: CloseBody) =>
       api.request<IncidentDetail>(`${incidentPath(id)}/close`, { method: "POST", body }),
     volunteerSuggestions: (

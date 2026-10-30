@@ -572,7 +572,19 @@
     "no_dataset": "No year is loaded in the archive yet.",
     "plan_not_draft": "This plan is already approved.",
     "years_not_loaded": "One of the chosen years is not loaded.",
-    "file_columns_missing": "The file lacks archive columns (dates, regional directorate, délégation, nature)."
+    "file_columns_missing": "The file lacks archive columns (dates, regional directorate, délégation, nature).",
+    "time_needs_previous": "This time needs the step before it first.",
+    "time_without_zone": "The time has no time zone.",
+    "time_in_future": "The time is in the future.",
+    "times_out_of_order": "The times are out of order: each step comes after the one before.",
+    "mission_too_long": "The mission lasts more than 72 hours from the order.",
+    "return_before_departure": "The return to the unit must come after the departure.",
+    "consumable_unknown": "Unknown resource.",
+    "consumable_out_of_range": "The amount is out of range.",
+    "assignment_cancelled": "This assignment is cancelled.",
+    "record_closed": "The record can no longer be changed (7 days after the mission ended).",
+    "time_required": "A time the mission reached cannot be cleared.",
+    "correction_reason_required": "Correcting a time the team gave needs a reason."
   },
   "kpi": {
     "title": "Key indicators",
@@ -953,7 +965,10 @@
       "field_attachment": "Attachment from the scene",
       "detailed_report": "Detailed report",
       "hospital_chosen": "Hospital chosen",
-      "command_decision": "Commander's decision"
+      "command_decision": "Commander's decision",
+      "mission_step": "Mission step",
+      "record_saved": "Mission record changed",
+      "team_record": "Crew and resources from the team"
     },
     "via": {
       "suggestion": "(suggestion confirmed)",
@@ -7974,6 +7989,83 @@
       "plan_cycle": "Plan cycle",
       "percentile_indicators": "Percentile indicators",
       "matrix": "Risk matrix"
+    }
+  },
+  "record": {
+    "open": "Mission record",
+    "title": "Mission record: times, crew, resources",
+    "intro": "Type the time as digits (1432 or 143205), use the arrow keys (Shift: ten minutes) or the − and + buttons. The date follows the step before and crosses midnight by itself.",
+    "indicators": "Mission indicators",
+    "clockPlaceholder": "hh:mm:ss",
+    "now": "Now",
+    "clear": "Clear",
+    "minus": "One minute earlier: {{step}}",
+    "plus": "One minute later: {{step}}",
+    "dayBefore": "Day before",
+    "dayNext": "Next day",
+    "after": "{{duration}} after the step before",
+    "hint": "Not recorded yet",
+    "crew": "Agents on the mission",
+    "crewCount": "{{count}} agents",
+    "consumables": "Resources used",
+    "reasonTitle": "Reason for the correction",
+    "reasonHint": "A time the team gave changed: {{steps}}",
+    "reasonOther": "Reason",
+    "save": "Save the record",
+    "close": "Close",
+    "fixErrors": "Fix the marked times before saving.",
+    "needReason": "Pick the reason for the correction.",
+    "nothing": "Nothing changed yet.",
+    "step": {
+      "created_at": "Order",
+      "en_route_at": "Departure",
+      "on_scene_at": "Arrival on scene",
+      "left_scene_at": "Left the scene",
+      "at_hospital_at": "Arrival at hospital",
+      "back_at_unit_at": "Back at the unit"
+    },
+    "source": {
+      "app": "From the app",
+      "sms": "By text message",
+      "room": "From the room",
+      "order": "Automatic",
+      "changed": "Changed"
+    },
+    "error": {
+      "clock": "Write the time as 1432, 14:32 or 14:32:05.",
+      "time_needs_previous": "This time needs the step before it first.",
+      "time_in_future": "The time is in the future.",
+      "times_out_of_order": "The times are out of order: each step comes after the one before.",
+      "mission_too_long": "The mission lasts more than 72 hours from the order.",
+      "return_before_departure": "The return to the unit must come after the departure.",
+      "time_required": "A time the mission reached cannot be cleared."
+    },
+    "indicator": {
+      "turnout": "Turnout",
+      "travel": "Travel",
+      "response": "Call to arrival",
+      "on_scene": "On scene",
+      "transport": "Transport to hospital",
+      "return": "Return",
+      "mission": "Mission length"
+    },
+    "consumable": {
+      "water_m3": "Water (m³)",
+      "foam_l": "Foam (L)",
+      "powder_kg": "Powder (kg)",
+      "co2_kg": "CO₂ (kg)",
+      "extinguishers": "Extinguishers used",
+      "oxygen_l": "Oxygen (L)",
+      "fuel_l": "Fuel (L)",
+      "sandbags": "Sandbags",
+      "absorbent_kg": "Absorbent (kg)"
+    },
+    "reason": {
+      "late_press": "Button pressed late",
+      "early_press": "Button pressed too early",
+      "no_network": "No network",
+      "radio_log": "From the radio log",
+      "other": "Other"
     }
   }
 }

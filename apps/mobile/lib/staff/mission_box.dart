@@ -30,7 +30,8 @@ class MissionWrite {
   final String missionId;
 
   /// The last part of `/missions/{id}/…`: `ack`, `status`, `situation`, `casualties`,
-  /// `transports`, `alerts`, `notes`, `attachments` or `detailed-report`.
+  /// `transports`, `alerts`, `notes`, `attachments`, `detailed-report`, or (phase S2)
+  /// `milestone` and `record`.
   final String action;
 
   /// The JSON body, or the query of an attachment (the bytes are sealed next to it).
@@ -53,6 +54,7 @@ class MissionWrite {
   String? get smsEvent => switch (action) {
     'ack' => 'ack',
     'status' => body['status'] as String?,
+    'milestone' => body['step'] as String?,
     'alerts' => body['kind'] as String?,
     _ => null,
   };
@@ -211,6 +213,16 @@ Map<String, dynamic> applyLocally(
       m['status'] = status;
       m['${status}_at'] = at;
       if (m['acknowledged_at'] == null) m['acknowledged_at'] = at;
+    case 'milestone':
+      final step = b['step'] as String;
+      m['${step}_at'] ??= at;
+      if (step == 'back_at_unit' && m['status'] == 'on_scene') {
+        m['status'] = 'released';
+        m['released_at'] = at;
+      }
+    case 'record':
+      if (b['crew_count'] != null) m['crew_count'] = b['crew_count'];
+      if (b['consumables'] != null) m['consumables'] = b['consumables'];
     case 'casualties':
       final c = Map<String, dynamic>.of(
         m['casualties'] as Map<String, dynamic>? ?? const {},

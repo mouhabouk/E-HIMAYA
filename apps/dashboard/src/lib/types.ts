@@ -329,6 +329,10 @@ export const TIMELINE_KINDS = [
   "hospital_chosen",
   // AI5a: a commander adopted, modified or rejected a proposal of the commander's assistant.
   "command_decision",
+  // Phase S2: a step of the mission after the arrival, the room's record, the team's crew and resources.
+  "mission_step",
+  "record_saved",
+  "team_record",
 ] as const;
 
 export interface IncidentSummary {

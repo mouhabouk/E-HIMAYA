@@ -99,7 +99,8 @@ void main() {
     await tester.tap(find.byKey(const Key('step-on_scene')));
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('open-situation')), findsOneWidget);
-    expect(find.byKey(const Key('step-released')), findsOneWidget);
+    expect(find.byKey(const Key('step-left_scene')), findsOneWidget);
+    expect(find.byKey(const Key('open-record')), findsOneWidget);
 
     // Backup is one tap away from the bottom bar.
     await tester.tap(find.byKey(const Key('alert-backup')));
@@ -114,6 +115,78 @@ void main() {
     expect(alert.json, containsPair('kind', 'backup'));
     expect((alert.json! as Map)['items'], ['ambulance', 'ladder']);
     expect(find.text('Waiting for the room'), findsOneWidget);
+  });
+
+  testWidgets('S2: the steps after the arrival, the crew and the resources', (
+    tester,
+  ) async {
+    final server = FakeCrewServer()
+      ..shiftOpen = true
+      ..missions.add({
+        ...FakeCrewServer.mission(
+          status: 'on_scene',
+          acknowledgedAt: '2026-10-26T09:00:10Z',
+        ),
+        'en_route_at': '2026-10-26T09:01:00Z',
+        'on_scene_at': '2026-10-26T09:09:00Z',
+      });
+    final store = await signedInStore();
+    await StaffVault(store).setPin('123456', 'salt');
+    await pumpStaffApp(tester, server, store: store);
+    await enterPin(tester, '123456');
+    await tester.tap(find.byKey(const Key('mission-m-1')));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('step-left_scene')));
+    await tester.pumpAndSettle();
+    final left = server.writes.last;
+    expect(left.path, '/api/v1/crew/missions/m-1/milestone');
+    expect(left.json, containsPair('step', 'left_scene'));
+    // No one taken to hospital: the return comes first, the hospital stays at hand.
+    expect(find.byKey(const Key('step-back_at_unit')), findsOneWidget);
+    expect(find.byKey(const Key('step-at_hospital')), findsOneWidget);
+    expect(
+      find.text('Back at the unit ends the mission and frees the vehicle.'),
+      findsOneWidget,
+    );
+
+    final open = find.byKey(const Key('open-record'));
+    await tester.scrollUntilVisible(
+      open,
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(open);
+    await tester.pumpAndSettle();
+    expect(find.text('Crew and resources'), findsWidgets);
+    await tester.tap(find.byKey(const Key('record-crew-plus')));
+    await tester.tap(find.byKey(const Key('record-water_m3-plus')));
+    await tester.tap(find.byKey(const Key('record-water_m3-plus')));
+    await tester.pump();
+    await tester.tap(find.byKey(const Key('send-record')));
+    await tester.pumpAndSettle();
+    final record = server.writes.last;
+    expect(record.path, '/api/v1/crew/missions/m-1/record');
+    expect(
+      record.json,
+      containsPair('crew_count', 6),
+    ); // the shift's 5, plus one
+    expect((record.json! as Map)['consumables'], {'water_m3': 2});
+
+    final back = find.byKey(const Key('step-back_at_unit'));
+    await tester.scrollUntilVisible(
+      back,
+      -200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(back);
+    await tester.pumpAndSettle();
+    expect(server.writes.last.json, containsPair('step', 'back_at_unit'));
+    expect(server.missions.single['status'], 'released');
+    expect(find.byKey(const Key('step-back_at_unit')), findsNothing);
+    expect(find.text('Back at the unit'), findsOneWidget);
   });
 
   testWidgets('situation report, counters, attachments, transport, template', (

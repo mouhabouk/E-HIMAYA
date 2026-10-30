@@ -409,6 +409,19 @@ export const ERROR_CODES = [
   "plan_not_draft",
   "years_not_loaded",
   "file_columns_missing",
+  // The record of a mission (docs/phase-s/design-s2.md).
+  "time_needs_previous",
+  "time_without_zone",
+  "time_in_future",
+  "times_out_of_order",
+  "mission_too_long",
+  "return_before_departure",
+  "consumable_unknown",
+  "consumable_out_of_range",
+  "assignment_cancelled",
+  "record_closed",
+  "time_required",
+  "correction_reason_required",
 ] as const;
 export type ErrorCode = (typeof ERROR_CODES)[number];
 

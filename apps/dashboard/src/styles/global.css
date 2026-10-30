@@ -9371,3 +9371,169 @@ button.nav-card:hover {
   /* The share of the busiest hour, from transparent to the red of the fire family. */
   background: color-mix(in srgb, var(--tone-red) calc(var(--heat, 0) * 100%), transparent);
 }
+
+/* Phase S2: the record of a mission (times in order, crew, resources) and its durations. */
+.record-editor {
+  display: grid;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.record-editor h3 {
+  margin: 0;
+}
+.record-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+  counter-reset: record-step;
+}
+.record-steps > li {
+  position: relative;
+  padding-inline-start: 36px;
+  counter-increment: record-step;
+}
+.record-steps > li::before {
+  content: counter(record-step);
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: 12px;
+  inline-size: 24px;
+  block-size: 24px;
+  border-radius: 50%;
+  background: var(--tone-navy-tint);
+  color: var(--tone-navy-ink);
+  font-weight: 700;
+  font-size: 13px;
+  display: grid;
+  place-items: center;
+}
+.record-steps > li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 11px;
+  inset-block: 40px -8px;
+  border-inline-start: 2px solid var(--border);
+}
+.record-step {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+}
+.record-step--changed {
+  border-color: var(--tone-amber);
+  background: var(--tone-amber-tint);
+}
+.record-step--error {
+  border-color: var(--error-text);
+  background: var(--error-bg);
+}
+.record-step__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.record-step__label {
+  font-weight: 700;
+}
+.record-step__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-block-start: 8px;
+}
+.record-step__clock {
+  inline-size: 8.5em;
+  font-family: var(--mono);
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 0.04em;
+}
+.record-step__nudge {
+  min-inline-size: 44px;
+  font-weight: 700;
+}
+.record-step__day {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.record-step__hint {
+  margin: 4px 0 0;
+  font-size: 13px;
+}
+.record-step__fixed {
+  margin: 8px 0 0;
+  font-family: var(--mono);
+  font-weight: 700;
+}
+.record-pill {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.record-pill--app,
+.record-pill--sms {
+  background: var(--tone-teal-tint);
+  color: var(--tone-teal-ink);
+}
+.record-pill--room {
+  background: var(--tone-navy-tint);
+  color: var(--tone-navy-ink);
+}
+.record-pill--order {
+  background: var(--tone-slate-tint);
+  color: var(--tone-slate-ink);
+}
+.record-pill--changed {
+  background: var(--tone-amber);
+  color: var(--tone-amber-on);
+}
+.record-required {
+  color: var(--error-text);
+  font-weight: 700;
+}
+.record-indicators {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.record-indicators li {
+  display: grid;
+  padding: 6px 12px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  min-inline-size: 7em;
+}
+.record-indicators__label {
+  font-size: 12px;
+  color: var(--muted);
+}
+.record-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 12px;
+}
+.record-consumables {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+}
+.record-row > td {
+  background: var(--surface-2);
+}

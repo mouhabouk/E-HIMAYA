@@ -50,6 +50,11 @@ class Intervention(Base):
     arrived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     ended_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     arrival_min: Mapped[float | None] = mapped_column(Float)
+    # Phase S2: the end of the mission and its crew, from the records of the operations room.
+    left_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    hospital_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    returned_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    crew_count: Mapped[int | None] = mapped_column(SmallInteger)
     flags: Mapped[list[str]] = mapped_column(ARRAY(Text))
 
 

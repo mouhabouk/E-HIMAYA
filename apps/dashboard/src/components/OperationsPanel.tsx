@@ -26,6 +26,7 @@ import { queryKeys } from "../lib/staffApi";
 import type { IncidentDetail } from "../lib/types";
 import { useDraft } from "../lib/drafts";
 import { CrewLine, FieldSection, PositionLine, crewTimelineParts } from "./CrewBits";
+import { MissionIndicators, MissionRecordEditor } from "./MissionRecord";
 import { Stepper } from "./Stepper";
 
 /** A recommendation's "open assignment" (phase 7 §3): preselects a resource; the operator still submits. */
@@ -162,8 +163,18 @@ function CardForm({ incident, canEdit }: { incident: IncidentDetail; canEdit: bo
 
 // ---------------------------------------------------------------- assignments
 
-function AssignmentRow({ assignment, canEdit }: { assignment: Assignment; canEdit: boolean }) {
+function AssignmentRow({
+  assignment,
+  canEdit,
+  calledAt,
+}: {
+  assignment: Assignment;
+  canEdit: boolean;
+  calledAt?: string | null;
+}) {
   const { t } = useTranslation();
+  const [recordOpen, setRecordOpen] = useState(false);
+  const recordId = useId();
   const { api } = useServices();
   const fmt = useFormat();
   const refresh = useRefreshIncident(assignment.incident_id);
@@ -189,65 +200,96 @@ function AssignmentRow({ assignment, canEdit }: { assignment: Assignment; canEdi
     assignment.on_scene_at ??
     assignment.en_route_at ??
     assignment.created_at;
+  const recordable = canEdit && assignment.status !== "cancelled";
   return (
-    <tr>
-      <td>
-        <strong dir="auto">{who}</strong>
-        <div className="cell-sub">
-          {assignment.kind === "resource"
-            ? assignment.resource?.unit_name
-            : assignment.volunteer?.phone && <span dir="ltr">{assignment.volunteer.phone}</span>}
-        </div>
-        {assignment.crew && <CrewLine crew={assignment.crew} />}
-        {assignment.position && <PositionLine position={assignment.position} />}
-      </td>
-      <td>
-        <AssignmentStatusChip status={assignment.status} />
-        <div className="cell-sub">
-          <time dateTime={last}>{fmt.time(last)}</time>
-        </div>
-      </td>
-      <td dir="auto">
-        {assignment.order ?? "—"}
-        {assignment.contact_phone && (
+    <>
+      <tr>
+        <td>
+          <strong dir="auto">{who}</strong>
           <div className="cell-sub">
-            {t("crew.contactPhone")}: <span dir="ltr">{assignment.contact_phone}</span>
+            {assignment.kind === "resource"
+              ? assignment.resource?.unit_name
+              : assignment.volunteer?.phone && <span dir="ltr">{assignment.volunteer.phone}</span>}
           </div>
-        )}
-      </td>
-      <td>
-        {canEdit && next.length > 0 ? (
-          <div className="ops-row-actions">
-            <label className="visually-hidden" htmlFor={noteId}>
-              {t("ops.assignment.note")}
-            </label>
-            <input
-              id={noteId}
-              value={note}
-              maxLength={500}
-              placeholder={t("ops.assignment.note")}
-              dir="auto"
-              onChange={(e) => setNote(e.target.value)}
+          {assignment.crew && <CrewLine crew={assignment.crew} />}
+          {assignment.position && <PositionLine position={assignment.position} />}
+        </td>
+        <td>
+          <AssignmentStatusChip status={assignment.status} />
+          <div className="cell-sub">
+            <time dateTime={last}>{fmt.time(last)}</time>
+          </div>
+          <MissionIndicators assignment={assignment} calledAt={calledAt} />
+        </td>
+        <td dir="auto">
+          {assignment.order ?? "—"}
+          {assignment.contact_phone && (
+            <div className="cell-sub">
+              {t("crew.contactPhone")}: <span dir="ltr">{assignment.contact_phone}</span>
+            </div>
+          )}
+        </td>
+        <td>
+          {canEdit && next.length > 0 ? (
+            <div className="ops-row-actions">
+              <label className="visually-hidden" htmlFor={noteId}>
+                {t("ops.assignment.note")}
+              </label>
+              <input
+                id={noteId}
+                value={note}
+                maxLength={500}
+                placeholder={t("ops.assignment.note")}
+                dir="auto"
+                onChange={(e) => setNote(e.target.value)}
+              />
+              {next.map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  className={`btn btn--small${s === "cancelled" ? "" : " btn--primary"}`}
+                  disabled={mutation.isPending}
+                  onClick={() => mutation.mutate(s)}
+                  aria-label={t("ops.assignment.moveLabel", { who, status: t(`ops.assignment.status.${s}`) })}
+                >
+                  {t(`ops.assignment.action.${s}`)}
+                </button>
+              ))}
+              <MutationError error={mutation.error} />
+            </div>
+          ) : (
+            !recordable && <span className="muted">—</span>
+          )}
+          {recordable && (
+            <button
+              type="button"
+              className="btn btn--small"
+              aria-expanded={recordOpen}
+              aria-controls={recordId}
+              onClick={() => setRecordOpen((o) => !o)}
+            >
+              {t("record.open")}
+            </button>
+          )}
+        </td>
+      </tr>
+      {recordOpen && (
+        <tr className="record-row" id={recordId}>
+          <td colSpan={4}>
+            <MissionRecordEditor
+              assignment={assignment}
+              calledAt={calledAt}
+              onCancel={() => setRecordOpen(false)}
+              onSaved={() => {
+                setRecordOpen(false);
+                refresh();
+                void qc.invalidateQueries({ queryKey: opsKeys.resourcesAll });
+              }}
             />
-            {next.map((s) => (
-              <button
-                key={s}
-                type="button"
-                className={`btn btn--small${s === "cancelled" ? "" : " btn--primary"}`}
-                disabled={mutation.isPending}
-                onClick={() => mutation.mutate(s)}
-                aria-label={t("ops.assignment.moveLabel", { who, status: t(`ops.assignment.status.${s}`) })}
-              >
-                {t(`ops.assignment.action.${s}`)}
-              </button>
-            ))}
-            <MutationError error={mutation.error} />
-          </div>
-        ) : (
-          <span className="muted">—</span>
-        )}
-      </td>
-    </tr>
+          </td>
+        </tr>
+      )}
+    </>
   );
 }
 
@@ -369,7 +411,7 @@ function AssignmentsSection({
         </thead>
         <tbody>
           {rows.map((a) => (
-            <AssignmentRow key={a.id} assignment={a} canEdit={canEdit} />
+            <AssignmentRow key={a.id} assignment={a} canEdit={canEdit} calledAt={incident.opened_at} />
           ))}
         </tbody>
       </table>
@@ -839,6 +881,16 @@ export function OpsTimelineDetails({ kind, payload }: { kind: string; payload: R
   if (resource) parts.push(resource);
   const status = str("status");
   if (status && kind === "assignment_status") parts.push(t(`ops.assignment.status.${status}`));
+  // Phase S2: a step of the mission after the arrival, and the room's corrections with their reason.
+  const step = str("step");
+  if (step && kind === "mission_step") parts.push(t(`record.step.${step}_at`));
+  if (kind === "record_saved" && payload.times && typeof payload.times === "object")
+    parts.push(Object.keys(payload.times).map((f) => t(`record.step.${f}`)).join("، "));
+  const crewCount = num("crew_count");
+  if (crewCount !== null && (kind === "record_saved" || kind === "team_record"))
+    parts.push(t("record.crewCount", { count: crewCount }));
+  const reason = str("reason");
+  if (reason && kind === "record_saved") parts.push(reason);
   const skill = str("skill");
   if (skill) parts.push(t(`volunteers.skill.${skill}`));
   const requested = num("requested");
