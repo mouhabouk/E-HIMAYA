@@ -1249,6 +1249,21 @@
           "method": {
             "$ref": "#/components/schemas/Method"
           },
+          "mission": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/MissionFamily"
+            },
+            "propertyNames": {
+              "enum": [
+                "medical",
+                "road",
+                "fire",
+                "rescue"
+              ]
+            },
+            "title": "Mission",
+            "type": "object"
+          },
           "month": {
             "additionalProperties": {
               "items": {
@@ -2152,6 +2167,42 @@
       },
       "AssignmentOut": {
         "properties": {
+          "at_hospital_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "At Hospital At"
+          },
+          "available_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Available At"
+          },
+          "back_at_unit_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Back At Unit At"
+          },
           "cancelled_at": {
             "anyOf": [
               {
@@ -2163,6 +2214,26 @@
               }
             ],
             "title": "Cancelled At"
+          },
+          "consumables": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "propertyNames": {
+              "enum": [
+                "water_m3",
+                "foam_l",
+                "powder_kg",
+                "co2_kg",
+                "extinguishers",
+                "oxygen_l",
+                "fuel_l",
+                "sandbags",
+                "absorbent_kg"
+              ]
+            },
+            "title": "Consumables",
+            "type": "object"
           },
           "contact_phone": {
             "anyOf": [
@@ -2194,6 +2265,17 @@
               }
             ]
           },
+          "crew_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crew Count"
+          },
           "en_route_at": {
             "anyOf": [
               {
@@ -2223,6 +2305,18 @@
             ],
             "title": "Kind",
             "type": "string"
+          },
+          "left_scene_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Left Scene At"
           },
           "on_scene_at": {
             "anyOf": [
@@ -2257,6 +2351,13 @@
               }
             ]
           },
+          "record_warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Record Warnings",
+            "type": "array"
+          },
           "released_at": {
             "anyOf": [
               {
@@ -2289,6 +2390,18 @@
             ],
             "title": "Status",
             "type": "string"
+          },
+          "time_sources": {
+            "additionalProperties": {
+              "enum": [
+                "app",
+                "sms",
+                "room"
+              ],
+              "type": "string"
+            },
+            "title": "Time Sources",
+            "type": "object"
           },
           "volunteer": {
             "anyOf": [
@@ -7695,7 +7808,8 @@
           "source": {
             "enum": [
               "office",
-              "simulated"
+              "simulated",
+              "live"
             ],
             "title": "Source",
             "type": "string"
@@ -7728,6 +7842,16 @@
           "simulated": {
             "title": "Simulated",
             "type": "boolean"
+          },
+          "source": {
+            "default": "office",
+            "enum": [
+              "office",
+              "simulated",
+              "live"
+            ],
+            "title": "Source",
+            "type": "string"
           },
           "year": {
             "title": "Year",
@@ -22497,6 +22621,44 @@
         "title": "Method",
         "type": "object"
       },
+      "MilestoneIn": {
+        "description": "A step of the mission after the arrival on scene (phase S2).",
+        "properties": {
+          "client_id": {
+            "format": "uuid",
+            "title": "Client Id",
+            "type": "string"
+          },
+          "device_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device At"
+          },
+          "step": {
+            "enum": [
+              "left_scene",
+              "at_hospital",
+              "available",
+              "back_at_unit"
+            ],
+            "title": "Step",
+            "type": "string"
+          }
+        },
+        "required": [
+          "client_id",
+          "step"
+        ],
+        "title": "MilestoneIn",
+        "type": "object"
+      },
       "Mine": {
         "description": "What the administrator's rules change for the caller: the dashboard opens and hides accordingly.",
         "properties": {
@@ -22649,6 +22811,169 @@
         "title": "MineOut",
         "type": "object"
       },
+      "MissionFamily": {
+        "description": "The parts of a mission in minutes, from the records of the operations rooms (phase S2).",
+        "properties": {
+          "crew_mean": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crew Mean"
+          },
+          "hospital_rows": {
+            "title": "Hospital Rows",
+            "type": "integer"
+          },
+          "length_median": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Length Median"
+          },
+          "length_p90": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Length P90"
+          },
+          "on_scene_median": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "On Scene Median"
+          },
+          "on_scene_p90": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "On Scene P90"
+          },
+          "returned_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Returned Pct"
+          },
+          "rows": {
+            "title": "Rows",
+            "type": "integer"
+          },
+          "transport_median": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transport Median"
+          },
+          "transport_p90": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transport P90"
+          },
+          "travel_median": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Travel Median"
+          },
+          "travel_p90": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Travel P90"
+          },
+          "turnout_median": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Turnout Median"
+          },
+          "turnout_p90": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Turnout P90"
+          }
+        },
+        "required": [
+          "rows",
+          "returned_pct",
+          "hospital_rows",
+          "crew_mean",
+          "turnout_median",
+          "turnout_p90",
+          "travel_median",
+          "travel_p90",
+          "on_scene_median",
+          "on_scene_p90",
+          "transport_median",
+          "transport_p90",
+          "length_median",
+          "length_p90"
+        ],
+        "title": "MissionFamily",
+        "type": "object"
+      },
       "MissionIncident": {
         "properties": {
           "category": {
@@ -22774,12 +23099,48 @@
             "title": "Alerts",
             "type": "array"
           },
+          "at_hospital_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "At Hospital At"
+          },
           "attachments": {
             "items": {
               "$ref": "#/components/schemas/app__modules__ops__schemas__AttachmentOut"
             },
             "title": "Attachments",
             "type": "array"
+          },
+          "available_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Available At"
+          },
+          "back_at_unit_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Back At Unit At"
           },
           "cancelled_at": {
             "anyOf": [
@@ -22796,6 +23157,26 @@
           "casualties": {
             "$ref": "#/components/schemas/CasualtiesOut"
           },
+          "consumables": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "propertyNames": {
+              "enum": [
+                "water_m3",
+                "foam_l",
+                "powder_kg",
+                "co2_kg",
+                "extinguishers",
+                "oxygen_l",
+                "fuel_l",
+                "sandbags",
+                "absorbent_kg"
+              ]
+            },
+            "title": "Consumables",
+            "type": "object"
+          },
           "contact_phone": {
             "anyOf": [
               {
@@ -22811,6 +23192,17 @@
             "format": "date-time",
             "title": "Created At",
             "type": "string"
+          },
+          "crew_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crew Count"
           },
           "detailed_report": {
             "anyOf": [
@@ -22863,6 +23255,18 @@
           "incident": {
             "$ref": "#/components/schemas/MissionIncident"
           },
+          "left_scene_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Left Scene At"
+          },
           "on_scene_at": {
             "anyOf": [
               {
@@ -22885,6 +23289,13 @@
               }
             ],
             "title": "Order"
+          },
+          "record_warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Record Warnings",
+            "type": "array"
           },
           "released_at": {
             "anyOf": [
@@ -22918,6 +23329,18 @@
                 "type": "null"
               }
             ]
+          },
+          "time_sources": {
+            "additionalProperties": {
+              "enum": [
+                "app",
+                "sms",
+                "room"
+              ],
+              "type": "string"
+            },
+            "title": "Time Sources",
+            "type": "object"
           },
           "transports": {
             "items": {
@@ -29414,6 +29837,155 @@
           "notice"
         ],
         "title": "Recommendations",
+        "type": "object"
+      },
+      "RecordIn": {
+        "description": "The room completes or corrects the record of a mission (phase S2).",
+        "properties": {
+          "consumables": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "maxProperties": 12,
+                "propertyNames": {
+                  "enum": [
+                    "water_m3",
+                    "foam_l",
+                    "powder_kg",
+                    "co2_kg",
+                    "extinguishers",
+                    "oxygen_l",
+                    "fuel_l",
+                    "sandbags",
+                    "absorbent_kg"
+                  ]
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Consumables"
+          },
+          "crew_count": {
+            "anyOf": [
+              {
+                "maximum": 60.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crew Count"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "times": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecordTimes"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "title": "RecordIn",
+        "type": "object"
+      },
+      "RecordTimes": {
+        "description": "The times the room gives or corrects; a time left out stays as it is, ``null`` clears it.",
+        "properties": {
+          "at_hospital_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "At Hospital At"
+          },
+          "available_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Available At"
+          },
+          "back_at_unit_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Back At Unit At"
+          },
+          "en_route_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "En Route At"
+          },
+          "left_scene_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Left Scene At"
+          },
+          "on_scene_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "On Scene At"
+          }
+        },
+        "title": "RecordTimes",
         "type": "object"
       },
       "RecordingOut": {
@@ -38216,6 +38788,25 @@
         "title": "SubtypeCount",
         "type": "object"
       },
+      "SuggestIn": {
+        "description": "A radio log or any text the operator pastes, read next to the notes already on the incident (phase S2).",
+        "properties": {
+          "text": {
+            "anyOf": [
+              {
+                "maxLength": 8000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          }
+        },
+        "title": "SuggestIn",
+        "type": "object"
+      },
       "Suggestion": {
         "properties": {
           "distance_m": {
@@ -39118,6 +39709,74 @@
         "title": "TeamMemberOut",
         "type": "object"
       },
+      "TeamRecordIn": {
+        "description": "The crew and what the mission used, as the team gives them (phase S2).",
+        "properties": {
+          "client_id": {
+            "format": "uuid",
+            "title": "Client Id",
+            "type": "string"
+          },
+          "consumables": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "maxProperties": 12,
+                "propertyNames": {
+                  "enum": [
+                    "water_m3",
+                    "foam_l",
+                    "powder_kg",
+                    "co2_kg",
+                    "extinguishers",
+                    "oxygen_l",
+                    "fuel_l",
+                    "sandbags",
+                    "absorbent_kg"
+                  ]
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Consumables"
+          },
+          "crew_count": {
+            "anyOf": [
+              {
+                "maximum": 60.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crew Count"
+          },
+          "device_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device At"
+          }
+        },
+        "required": [
+          "client_id"
+        ],
+        "title": "TeamRecordIn",
+        "type": "object"
+      },
       "Telemetry": {
         "properties": {
           "alt_m": {
@@ -39598,6 +40257,66 @@
           "max_zoom"
         ],
         "title": "TileSource",
+        "type": "object"
+      },
+      "TimeSuggestion": {
+        "description": "A time read from what was written about the mission; applied only when the operator presses it.",
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "conflict": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Conflict"
+          },
+          "source": {
+            "enum": [
+              "room_note",
+              "team_note",
+              "pasted"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
+          "step": {
+            "enum": [
+              "en_route_at",
+              "on_scene_at",
+              "left_scene_at",
+              "at_hospital_at",
+              "available_at",
+              "back_at_unit_at"
+            ],
+            "title": "Step",
+            "type": "string"
+          },
+          "words": {
+            "title": "Words",
+            "type": "string"
+          },
+          "written_at": {
+            "format": "date-time",
+            "title": "Written At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "step",
+          "at",
+          "source",
+          "words",
+          "written_at"
+        ],
+        "title": "TimeSuggestion",
         "type": "object"
       },
       "TimelineEntry": {
@@ -55656,6 +56375,81 @@
         ]
       }
     },
+    "/api/v1/crew/missions/{assignment_id}/milestone": {
+      "post": {
+        "operationId": "milestone_api_v1_crew_missions__assignment_id__milestone_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MilestoneIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Milestone",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
     "/api/v1/crew/missions/{assignment_id}/notes": {
       "post": {
         "operationId": "text_note_api_v1_crew_missions__assignment_id__notes_post",
@@ -55802,6 +56596,81 @@
           }
         ],
         "summary": "Positions",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/missions/{assignment_id}/record": {
+      "post": {
+        "operationId": "team_record_api_v1_crew_missions__assignment_id__record_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamRecordIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Team Record",
         "tags": [
           "crew"
         ]
@@ -66729,6 +67598,128 @@
         "summary": "Summary",
         "tags": [
           "app"
+        ]
+      }
+    },
+    "/api/v1/staff/assignments/{assignment_id}/record": {
+      "put": {
+        "description": "The room completes or corrects the times, the crew and the resources of a mission (phase S2).",
+        "operationId": "save_record_api_v1_staff_assignments__assignment_id__record_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignmentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Save Record",
+        "tags": [
+          "incidents"
+        ]
+      }
+    },
+    "/api/v1/staff/assignments/{assignment_id}/record/suggestions": {
+      "post": {
+        "description": "Times read from the notes on the incident, the team's text notes and a pasted radio log (phase S2): only\nsuggestions, nothing is saved.",
+        "operationId": "suggest_record_times_api_v1_staff_assignments__assignment_id__record_suggestions_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SuggestIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TimeSuggestion"
+                  },
+                  "title": "Response Suggest Record Times Api V1 Staff Assignments  Assignment Id  Record Suggestions Post",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Suggest Record Times",
+        "tags": [
+          "incidents"
         ]
       }
     },
@@ -92677,6 +93668,57 @@
           }
         ],
         "summary": "Import Dataset",
+        "tags": [
+          "staff",
+          "snacr"
+        ]
+      }
+    },
+    "/api/v1/staff/snacr/datasets/live": {
+      "post": {
+        "description": "The year drawn from the records of the operations rooms (phase S2): the times the teams and the rooms gave,\nthe crews. Built again on each call; it never replaces the Office's file or a [SIM] year.",
+        "operationId": "live_dataset_api_v1_staff_snacr_datasets_live_post",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "year",
+            "required": true,
+            "schema": {
+              "maximum": 2100,
+              "minimum": 2000,
+              "title": "Year",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__snacr__schemas__ImportOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Live Dataset",
         "tags": [
           "staff",
           "snacr"

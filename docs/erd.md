@@ -1672,6 +1672,13 @@ erDiagram
         uuid shift_id FK
         datetime acknowledged_at
         text contact_phone
+        datetime left_scene_at
+        datetime at_hospital_at
+        datetime available_at
+        datetime back_at_unit_at
+        smallint crew_count
+        jsonb consumables
+        jsonb time_sources
     }
     ops__callout {
         uuid id PK
@@ -3201,6 +3208,10 @@ erDiagram
         datetime arrived_at
         datetime ended_at
         float arrival_min
+        datetime left_at
+        datetime hospital_at
+        datetime returned_at
+        smallint crew_count
         array flags
     }
     snacr__plan {
