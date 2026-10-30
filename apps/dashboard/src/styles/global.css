@@ -1149,10 +1149,10 @@ legend {
   background: none;
   cursor: pointer;
   filter: drop-shadow(0 2px 3px rgb(14 20 38 / 45%)) drop-shadow(0 0 6px var(--glass-glow, transparent));
-  transition: transform 0.15s ease;
 }
 
-.map-marker:hover {
+/* MapLibre places the marker with its own transform: the hover lift is on the ring inside. */
+.map-marker:hover .map-marker__ring {
   transform: translateY(-2px) scale(1.06);
 }
 
@@ -1163,6 +1163,7 @@ legend {
   block-size: 100%;
   clip-path: var(--hex);
   background: currentColor;
+  transition: transform 0.15s ease;
 }
 
 .map-marker__glass {
@@ -1215,9 +1216,11 @@ legend {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .map-marker,
   .map-marker--new {
     animation: none;
+  }
+
+  .map-marker__ring {
     transition: none;
   }
 }
@@ -8962,6 +8965,8 @@ button.nav-card:hover {
 .map-frame {
   position: relative;
   inline-size: 100%;
+  /* Markers far outside the view (a tilted, zoomed focus view) never widen the page. */
+  overflow: hidden;
 }
 
 .map--focused {

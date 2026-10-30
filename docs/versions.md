@@ -1,4 +1,4 @@
-# الإصدارات المثبتة (المراحل 1 إلى 10 والمراحل A و B1 و B2 و C1-a و C1-b و C1-c و UI-2 و P2a و P2b و P3a و P3b و P3c و P5a و P5b و P4a و P4b و P4c و P4d و L1a و L1b و L2 و L3 و L3b و UI-3 و UI-3b و R و PL و L4 و R3 و R4 و L5 و AI5a)
+# الإصدارات المثبتة (المراحل 1 إلى 10 والمراحل A و B1 و B2 و C1-a و C1-b و C1-c و UI-2 و P2a و P2b و P3a و P3b و P3c و P5a و P5b و P4a و P4b و P4c و P4d و L1a و L1b و L2 و L3 و L3b و UI-3 و UI-3b و R و PL و L4 و R3 و R4 و L5 و AI5a و M)
 
 تُحدَّث هذه القائمة مع كل مرحلة. تُعتمد الإصدارات الدقيقة أدناه في الكود والحاويات.
 
@@ -497,6 +497,28 @@ vite 8.3.4، typescript 5.9.3، vitest 5.0.5، eslint 10.13.0). البصمة SHA
 لا حزمة جديدة: الخريطة الحرارية والأشكال بـ MapLibre الموجود، والنشرة بـ WeasyPrint الموجود، والخريطة في التطبيق بـ
 `flutter_map` الموجود.
 
+## المرحلة M (خريطة تونس الإدارية، الخادم المحلي للخرائط، التنسيق البلوري والأماكن الهامة)
+
+تفاصيل المرحلة في [تقرير المرحلة](phase-m-report.html)، والتصميم في [phase-m/design-m.md](phase-m/design-m.md)،
+ودليل التنصيب في [offline-maps.md](offline-maps.md).
+
+| الأداة أو المصدر | الإصدار | الاستعمال | الرخصة |
+|---|---|---|---|
+| Map Tunisia (Alaa Taieb) | الإيداع `2b704248` (2026-10-24)، البصمات في `services/api/seed/geo/admin/SOURCE.md` | الحدود الإدارية بكل مستوياتها، رموز INS، تعداد 2014 و2024 | بيانات OpenStreetMap: ODbL 1.0 (ذكر «© OpenStreetMap contributors · Map Tunisia by Alaa Taieb») |
+| ترحيل قاعدة البيانات | 0079 | المرجع الإداري: الأقاليم والمقاطعات والعمادات والبلديات والمدن والمسطحات المائية، وحدود الولايات والمعتمديات، وعنوان كل بلاغ | — |
+| ترحيل قاعدة البيانات | 0080 | الإنذار بالمعتمديات: `delegation_ids`، والمنطقة MultiPolygon | — |
+| ترحيل قاعدة البيانات | 0081 | الجدول `ops.saved_place`: الأماكن الهامة للقاعات، تحت أمان الأسطر | — |
+| خادم الخرائط | `maptiler/tileserver-gl:v5.7.0` (مثبّت بالبصمة)، الملف الشخصي `maps` | البلاطات المتجهة والصور والخطوط والنمطان، داخل الشبكة | BSD-2-Clause |
+| بناء البلاطات | `ghcr.io/onthegomap/planetiler:0.10.2` (مثبّت بالبصمة)، الملف الشخصي `maps-prepare` | بلاطات تونس بمخطط OpenMapTiles بالعربية والفرنسية والإنجليزية | Apache-2.0 / البيانات ODbL 1.0 |
+| استيراد صور المكتب | `ghcr.io/osgeo/gdal:ubuntu-small-3.13.3` (مثبّت بالبصمة)، اختياري | GeoTIFF إلى MBTiles | MIT |
+| الخطوط | OpenMapTiles fonts 2.0 (Noto Sans) | أسماء الخريطة، ومنها الحروف العربية | SIL OFL 1.1 |
+| نسخ صور القمر الصناعي | `infra/maps/fetch_tiles.py` على `python:3.12-slim` | نسخة محلية من Sentinel‑2 cloudless حتى التقريب 14 (نحو 1.7 غيغابايت) | الصور CC BY-NC-SA 4.0 |
+
+لا حزمة جديدة: MapLibre 6 الموجود يرسم العربية بنفسه. متغيرات جديدة (اختيارية): `MAPS_PUBLIC_URL` و`MAPS_FONTS_SHA256`
+و`SAT_URL` و`SAT_MAX_ZOOM` و`SAT_ATTRIBUTION` و`SAT_COUNT_ONLY`، و`BASEMAP_OPEN_TILES` و`BASEMAP_OPEN_ATTRIBUTION`
+و`BASEMAP_OPEN_MAX_ZOOM` و`BASEMAP_LABEL_TILES` و`BASEMAP_LABEL_ATTRIBUTION` و`BASEMAP_LABEL_MAX_ZOOM`. في Caddy مسار
+جديد `https://API_HOST/maps/*` للقراءة فقط. لا دور جديد. تطبيق الهاتف لم يتغير (يكفي `MAP_TILE_URL` عند البناء).
+
 ## المرحلة AI5 (مساعد القائد): الخطوة AI5a، لوحة القائد وذاكرة القرارات والأوامر المكتوبة
 
 التصميم في [phase-ai5/design-ai5.md](phase-ai5/design-ai5.md)، والتقرير في نهاية المرحلة (بعد AI5c).
@@ -712,3 +734,6 @@ Keycloak بـ `java.security` القياسية. تطبيق الهاتف لم ي�
     إلى 0075). أضف `SENSOR_GATEWAY_TOKEN` إلى `.env` وشغّل الملفين الشخصيين `sensors` و `drones` إن لزم، و
     `infra/compose.lan.yml` على الشبكة المحلية (`docs/field-guide-sensors.md`). يمنح مدير المنظومة عناصر العملية البيضاء
     من «الصلاحيات»، واختبار الضغط على النسخة المعزولة وحدها.
+35. المرحلة M: لا حزمة. `alembic upgrade head` (0079 و 0080 و 0081) يحمّل المرجع الإداري لـ Map Tunisia ويعيد عنوان
+    البلاغات القديمة. الخادم المحلي للخرائط اختياري: يُحضَّر مرة واحدة بالملف الشخصي `maps-prepare` ثم يُشغَّل `maps`،
+    كما في `docs/offline-maps.md`.

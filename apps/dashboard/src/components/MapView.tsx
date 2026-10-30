@@ -276,7 +276,12 @@ function markerElement(m: MapMarker): HTMLElement {
 }
 
 function updateMarkerElement(el: HTMLElement, m: MapMarker): void {
-  el.className = `map-marker map-marker--${m.category} chip--${m.status}${m.highlight ? " map-marker--new" : ""}`;
+  // Only our own classes change: MapLibre's (maplibregl-marker…) position the marker and must stay.
+  for (const c of [...el.classList]) {
+    if (c.startsWith("map-marker") || c.startsWith("chip--")) el.classList.remove(c);
+  }
+  el.classList.add("map-marker", `map-marker--${m.category}`, `chip--${m.status}`);
+  if (m.highlight) el.classList.add("map-marker--new");
   el.setAttribute("aria-label", `${m.title} — ${m.subtitle}`);
 }
 
@@ -433,6 +438,20 @@ function focusData(lon: number, lat: number): GeoJsonData {
   };
 }
 
+/** Markers outside the lifted disc fade with the rest of the map (and come back when it closes). */
+function dimOutside(markers: Iterable<Marker>, centre: [number, number] | null): void {
+  for (const marker of markers) {
+    if (!centre) {
+      marker.setOpacity("1");
+      continue;
+    }
+    const at = marker.getLngLat();
+    const dx = (at.lng - centre[0]) * 111_320 * Math.cos((centre[1] * Math.PI) / 180);
+    const dy = (at.lat - centre[1]) * 110_540;
+    marker.setOpacity(Math.hypot(dx, dy) > FOCUS_RADIUS_M ? "0.3" : "1");
+  }
+}
+
 function prefersReducedMotion(): boolean {
   try {
     return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -489,11 +508,16 @@ export function MapView({
   useEffect(() => {
     callbacks.current = { onOpen, onBoundsChange, onOpenPoi, onMapClick, onPopupClose, onCall, onAdminClick, focus };
   });
+  const popupRef = useRef<Popup | null>(null);
   // Focus view: the camera to go back to, and whether the view is focused (shows the button that leaves it).
   const savedCamera = useRef<{ center: [number, number]; zoom: number; pitch: number; bearing: number } | null>(null);
   const [focused, setFocused] = useState(false);
   const focusEnter = focus?.enterLabel ?? "";
 
+  const allMarkers = () => [
+    ...[...markersRef.current.values()].map((e) => e.marker),
+    ...[...poisRef.current.values()].map((e) => e.marker),
+  ];
   const leaveFocus = useCallback(() => {
     const map = mapRef.current;
     const saved = savedCamera.current;
@@ -503,7 +527,8 @@ export function MapView({
       if (map.getLayer(id)) map.removeLayer(id);
     }
     if (map.getSource(FOCUS_SOURCE)) map.removeSource(FOCUS_SOURCE);
-    map.easeTo({ ...saved, duration: prefersReducedMotion() ? 0 : 1000 });
+    dimOutside(allMarkers(), null);
+    window.setTimeout(() => map.easeTo({ ...saved, duration: prefersReducedMotion() ? 0 : 1000 }), 0);
     setFocused(false);
     callbacks.current.focus?.onChange?.(false);
   }, []);
@@ -516,6 +541,10 @@ export function MapView({
       savedCamera.current = { center: [c.lng, c.lat], zoom: map.getZoom(), pitch: map.getPitch(), bearing: map.getBearing() };
     }
     const data = focusData(lon, lat);
+    dimOutside(allMarkers(), [lon, lat]);
+    // The card a first click may have opened would hide the lifted place.
+    popupRef.current?.remove();
+    callbacks.current.onPopupClose?.();
     whenStyleReady(map, () => {
       const source = map.getSource<GeoJSONSource>(FOCUS_SOURCE);
       if (source) {
@@ -569,14 +598,17 @@ export function MapView({
         }
       }
     });
-    map.flyTo({
-      center: [lon, lat],
-      zoom: Math.max(map.getZoom(), 15.5),
-      pitch: 60,
-      bearing: map.getBearing() - 20,
-      duration: prefersReducedMotion() ? 0 : 1400,
-      essential: true,
-    });
+    // After the gesture that asked for it: MapLibre ends a double click's own handling by stopping the camera.
+    window.setTimeout(() => {
+      map.flyTo({
+        center: [lon, lat],
+        zoom: 15,
+        pitch: 60,
+        bearing: map.getBearing() - 20,
+        duration: prefersReducedMotion() ? 0 : 1400,
+        essential: true,
+      });
+    }, 0);
     setFocused(true);
     callbacks.current.focus?.onChange?.(true);
   }, []);
@@ -595,7 +627,6 @@ export function MapView({
     el.className = "map-popup map-popup--react";
     return el;
   });
-  const popupRef = useRef<Popup | null>(null);
 
   // Create the map once (bounds/style changes after mount are not applied: the user controls the view).
   useEffect(() => {
@@ -618,6 +649,8 @@ export function MapView({
     // Background clicks only: markers are buttons of their own, whose clicks bubble through the container.
     map.on("click", (e: MapMouseEvent) => {
       if (e.originalEvent.target !== map.getCanvas()) return;
+      // The second click of a double click belongs to the focus view, not to the point under it.
+      if (callbacks.current.focus && e.originalEvent.detail > 1) return;
       const adminFill = `${ADMIN_SOURCE}-fill`;
       if (callbacks.current.onAdminClick && map.getLayer(adminFill)) {
         const [unit] = map.queryRenderedFeatures(e.point, { layers: [adminFill] });

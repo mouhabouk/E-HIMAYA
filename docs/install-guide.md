@@ -572,6 +572,17 @@ docker compose --env-file .env -f infra/compose.yml -f infra/compose.prod.yml --
 - التحويل إلى 198 معطّل (`TELEPHONY_TRANSFER_198_ENABLED=false`) إلى حين توقيع الاتفاقية مع المشغّل والحماية المدنية.
 - أرقام النجدة في التطبيق تبقى دائما مكالمة عادية عبر شريحة الهاتف.
 
+### 12.1 الخرائط دون إنترنت (المرحلة M)
+
+الخرائط تعمل افتراضيا بمصادر عامة على الإنترنت (OpenStreetMap و EOX و CARTO). ليعمل كل شيء داخل شبكة الديوان دون أي طلب
+خارجي، يُجهَّز الخادم المحلي للخرائط مرة واحدة كما في [`docs/offline-maps.md`](offline-maps.md):
+
+1. على جهاز متصل بالإنترنت: `docker compose -f infra/compose.yml --profile maps-prepare run --rm maps-tiles`، ثم
+   `maps-fonts`، ثم `maps-satellite` (أو `maps-satellite-import` لصور المكتب).
+2. نقل `infra/maps/data/` إلى الخادم، ثم `docker compose --env-file .env -f infra/compose.yml -f infra/compose.prod.yml --profile maps up -d`.
+3. في `.env`: `MAP_STYLE_URL` للوحة والبوابة، و`BASEMAP_OPEN_TILES` و`BASEMAP_LABEL_TILES` للقمر الصناعي،
+   و`ROUTING_OSM_URL=file:///sources/tunisia.osm.pbf` للملاحة، و`MAP_TILE_URL` عند بناء التطبيق.
+
 ## 13. النسخ الاحتياطي والاستعادة والترقية
 
 ### 13.1 النسخ الاحتياطي
