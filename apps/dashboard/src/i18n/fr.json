@@ -1702,7 +1702,8 @@
         "high": "Gravité haute",
         "medium": "Gravité moyenne",
         "low": "Gravité faible"
-      }
+      },
+      "delegationsArea": "{{count}} délégation(s)"
     }
   },
   "resources": {
@@ -1973,7 +1974,8 @@
     "target": {
       "user": "Un utilisateur",
       "polygon": "Zone dessinée",
-      "national": "Tout le pays"
+      "national": "Tout le pays",
+      "delegations": "{{count}} délégation(s)"
     },
     "filters": {
       "kind": "Type",
@@ -2014,6 +2016,7 @@
       "legend": "Zone concernée",
       "mode": {
         "gouvernorats": "Gouvernorats",
+        "delegations": "Délégations",
         "polygon": "Zone dessinée"
       },
       "drawHelp": "Cliquez sur la carte pour placer les sommets de la zone (3 à {{max}} points), puis terminez.",
@@ -2026,7 +2029,13 @@
       "clear": "Effacer la zone",
       "own": "Cible : gouvernorat de {{name}}",
       "gouvernorats": "Gouvernorats ciblés",
-      "emptyIsNational": "Aucun gouvernorat coché : tout le pays."
+      "emptyIsNational": "Aucun gouvernorat coché : tout le pays.",
+      "delegationsGouvernorat": "Gouvernorat",
+      "delegationsPick": "Choisir le gouvernorat…",
+      "delegations": "Délégations concernées",
+      "delegationsAll": "Toutes les délégations du gouvernorat",
+      "delegationsChosen": "Délégations choisies : {{count}} · population concernée (recensement 2024) : {{people}}",
+      "delegationsMap": "Carte des délégations : cliquez sur une délégation pour l’ajouter ou la retirer"
     },
     "validation": {
       "summary": "Corrigez les champs signalés.",
@@ -2045,7 +2054,8 @@
         "too_many": "La zone compte trop de sommets (au plus {{max}}).",
         "outside": "La zone doit rester en Tunisie (au plus {{max}} sommets).",
         "self_intersecting": "Les côtés de la zone se croisent (au plus {{max}} sommets)."
-      }
+      },
+      "delegationsRequired": "Choisissez au moins une délégation."
     },
     "userLookup": {
       "email": "E-mail du compte",

@@ -968,7 +968,8 @@ async def scoped_certificate(
 async def add_stamp(
     session: AsyncSession, cert: Certificate, org: Organization, body: schemas.StampIn, actor: str, name: str | None
 ) -> CertificateStamp:
-    on = service.today()
+    # The stamp's day is the counter's day in Tunis, the same calendar as the approval date below.
+    on = service.now().astimezone(TUNIS_TZ).date()
     if counter_reasons(cert, org, on):
         raise HTTPException(status.HTTP_409_CONFLICT, "certificate_not_valid")
     approved_on = cert.reviewed_at.astimezone(TUNIS_TZ).date() if cert.reviewed_at else on

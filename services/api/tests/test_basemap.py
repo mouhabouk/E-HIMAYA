@@ -52,20 +52,16 @@ def test_the_office_map_server_replaces_the_public_sources(monkeypatch: pytest.M
     assert domain.open_source() == ([domain.OPEN_TILES], domain.OPEN_ATTRIBUTION, domain.OPEN_MAX_ZOOM)
     local = "https://api.example.test/maps/data/satellite/{z}/{x}/{y}.jpg"
     labels = "https://api.example.test/maps/styles/ehimaya-labels/{z}/{x}/{y}.png"
-    monkeypatch.setenv("BASEMAP_OPEN_TILES", local)
-    monkeypatch.setenv("BASEMAP_OPEN_ATTRIBUTION", "Sentinel-2 – office mirror")
-    monkeypatch.setenv("BASEMAP_OPEN_MAX_ZOOM", "16")
-    monkeypatch.setenv("BASEMAP_LABEL_TILES", labels)
-    get_settings.cache_clear()
-    try:
-        assert domain.open_source() == ([local], "Sentinel-2 – office mirror", 16)
-        assert domain.label_source() == ([labels], domain.LABEL_ATTRIBUTION, domain.LABEL_MAX_ZOOM)
-        assert domain.open_tile(6, 33, 25) == "https://api.example.test/maps/data/satellite/6/33/25.jpg"
-        with pytest.raises(ValidationError, match="tile address"):
-            Settings(basemap_open_tiles="https://api.example.test/maps/satellite.jpg")
-    finally:
-        monkeypatch.undo()
-        get_settings.cache_clear()
+    settings = get_settings()
+    monkeypatch.setattr(settings, "basemap_open_tiles", local)
+    monkeypatch.setattr(settings, "basemap_open_attribution", "Sentinel-2 – office mirror")
+    monkeypatch.setattr(settings, "basemap_open_max_zoom", 16)
+    monkeypatch.setattr(settings, "basemap_label_tiles", labels)
+    assert domain.open_source() == ([local], "Sentinel-2 – office mirror", 16)
+    assert domain.label_source() == ([labels], domain.LABEL_ATTRIBUTION, domain.LABEL_MAX_ZOOM)
+    assert domain.open_tile(6, 33, 25) == "https://api.example.test/maps/data/satellite/6/33/25.jpg"
+    with pytest.raises(ValidationError, match="tile address"):
+        Settings(basemap_open_tiles="https://api.example.test/maps/satellite.jpg")
 
 
 @pytest.fixture

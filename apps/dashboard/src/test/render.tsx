@@ -269,6 +269,8 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     ...fakeModelCardsApi(),
     ...fakeLearningApi(),
     anomalies: vi.fn(() => Promise.resolve({ enabled: true, items: [] })),
+    boundaries: vi.fn(() => Promise.resolve({ type: "FeatureCollection" as const, features: [] })),
+    delegationCounts: vi.fn(() => Promise.resolve([])),
     gouvernorats: vi.fn(() =>
       Promise.resolve([
         { code: 11, iso_code: "TN-11", name: "تونس", name_ar: "تونس", name_fr: "Tunis", delegation_count: 21 },

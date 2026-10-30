@@ -11,6 +11,8 @@ import { ADMIN_LINE, adminKeys, type AdminProps } from "../lib/admin";
 import { useFormat, useGouvernorats, useLanguage } from "../lib/hooks";
 import { localizedName } from "../lib/localized";
 import { initialBoundsFor } from "../lib/mapStyle";
+import { areaRings, type MultiPolygon, type Polygon } from "../lib/opsTypes";
+import { verticesBounds } from "../lib/polygon";
 import { Loading } from "./Feedback";
 import { LazyMapView } from "./LazyMap";
 import type { MapAdmin } from "./MapView";
@@ -99,7 +101,7 @@ export function DelegationPicker({
               onChange([]);
             }}
           >
-            <option value="">{t("common.choose")}</option>
+            <option value="">{t("notify.area.delegationsPick")}</option>
             {gouvernorats.list.map((g) => (
               <option key={g.code} value={g.code}>
                 {gouvernorats.nameOf(g.code)}
@@ -153,5 +155,39 @@ export function DelegationPicker({
         </Suspense>
       )}
     </div>
+  );
+}
+
+/** The délégations of a sent alert: their names and their union on a map. */
+export function DelegationArea({ ids, polygon }: { ids: readonly number[]; polygon: Polygon | MultiPolygon | null }) {
+  const { t } = useTranslation();
+  const { mapStyleUrl } = useServices();
+  const lang = useLanguage();
+  const first = ids[0];
+  const query = useDelegations(first !== undefined ? gouvernoratOfDelegation(first) : null);
+  const names = (query.data?.features ?? [])
+    .map((f) => f.properties as AdminProps)
+    .filter((u) => ids.includes(Number(u.id)))
+    .map((u) => localizedName(u, lang));
+  const parts = areaRings(polygon);
+  const points = parts.flatMap((p) => p[0] ?? []);
+  const bounds = verticesBounds(points);
+  return (
+    <>
+      <p dir="auto">{names.length > 0 ? names.join(t("common.listSeparator")) : t("notify.target.delegations", { count: ids.length })}</p>
+      {bounds && (
+        <Suspense fallback={<Loading />}>
+          <LazyMapView
+            className="map map--draw"
+            markers={[]}
+            bounds={bounds}
+            ariaLabel={t("notify.area.delegationsMap")}
+            styleUrl={mapStyleUrl}
+            dir={directionOf(lang)}
+            polygons={parts.map((coordinates, i) => ({ id: `area-${i}`, coordinates, tone: "high" as const }))}
+          />
+        </Suspense>
+      )}
+    </>
   );
 }

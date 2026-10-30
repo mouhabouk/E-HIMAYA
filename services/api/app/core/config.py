@@ -469,6 +469,10 @@ class Settings(BaseSettings):
         return value
 
     @field_validator(
+        "basemap_open_attribution",
+        "basemap_open_max_zoom",
+        "basemap_label_attribution",
+        "basemap_label_max_zoom",
         "ai_service_url",
         "ai_service_token",
         "metrics_token",

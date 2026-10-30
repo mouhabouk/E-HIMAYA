@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Suspense, useId, useMemo, useState, type ReactNode, type SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from "react-router";
+import { DelegationArea, DelegationPicker } from "../components/DelegationPicker";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { LazyPolygonDrawMap } from "../components/LazyPolygonMap";
 import { useAuth } from "../context/auth";
@@ -35,7 +36,7 @@ import {
   type MessageKind,
   type UserLookup,
 } from "../lib/opsTypes";
-import { addVertex, MAX_VERTICES, undoVertex, verticesBounds } from "../lib/polygon";
+import { addVertex, fromPolygon, MAX_VERTICES, undoVertex, verticesBounds } from "../lib/polygon";
 import { canDraftMessage, canPublishMessage } from "../lib/roles";
 import { ORG_KINDS } from "../lib/types";
 import { MessageKindTag, MessageStatusTag, StatsText, TargetText } from "./NotificationsPage";
@@ -74,7 +75,7 @@ function Field({
   );
 }
 
-/** Area of an alert: gouvernorats (none = national) or a polygon drawn on the map. */
+/** Area of an alert: gouvernorats (none = national), some délégations (phase M) or a polygon drawn on the map. */
 function AreaEditor({
   form,
   setForm,
@@ -100,7 +101,7 @@ function AreaEditor({
     <fieldset className="area-editor" disabled={disabled}>
       <legend>{t("notify.area.legend")}</legend>
       <div className="segmented">
-        {(["gouvernorats", "polygon"] as const).map((mode) => (
+        {(["gouvernorats", "delegations", "polygon"] as const).map((mode) => (
           <label key={mode} className="segmented__item">
             <input
               type="radio"
@@ -114,6 +115,12 @@ function AreaEditor({
       </div>
       {form.areaMode === "gouvernorats" ? (
         <GouvernoratTargets form={form} setForm={setForm} />
+      ) : form.areaMode === "delegations" ? (
+        <DelegationPicker
+          value={form.delegations}
+          onChange={(delegations) => setForm({ delegations })}
+          error={errors.delegations}
+        />
       ) : (
         <div className="area-draw">
           <p className="muted" id={`${base}-help`}>
@@ -808,9 +815,10 @@ function SentMessage({ message }: { message: Message }) {
     },
     onError: () => setConfirming(false),
   });
+  const byDelegations = (message.area.delegation_ids?.length ?? 0) > 0;
   const vertices = useMemo(
-    () => (message.area.polygon?.coordinates[0] ?? []).slice(0, -1).map(([lon, lat]) => [lon, lat] as [number, number]),
-    [message.area.polygon],
+    () => (message.area.polygon?.type === "Polygon" && !byDelegations ? fromPolygon(message.area.polygon) : []),
+    [message.area.polygon, byDelegations],
   );
   const bounds = verticesBounds(vertices);
   return (
@@ -871,6 +879,14 @@ function SentMessage({ message }: { message: Message }) {
               <>
                 <dt>{t("notify.area.gouvernorats")}</dt>
                 <dd>{message.area.gouvernorat_codes.map((c) => gouvernorats.nameOf(c)).join(t("common.listSeparator"))}</dd>
+              </>
+            )}
+            {byDelegations && (
+              <>
+                <dt>{t("notify.area.delegations")}</dt>
+                <dd>
+                  <DelegationArea ids={message.area.delegation_ids ?? []} polygon={message.area.polygon} />
+                </dd>
               </>
             )}
             {message.audience === "organizations" && (

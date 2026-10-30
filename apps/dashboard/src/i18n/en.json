@@ -1702,7 +1702,8 @@
         "high": "High severity",
         "medium": "Medium severity",
         "low": "Low severity"
-      }
+      },
+      "delegationsArea": "{{count}} délégation(s)"
     }
   },
   "resources": {
@@ -1973,7 +1974,8 @@
     "target": {
       "user": "One user",
       "polygon": "Drawn area",
-      "national": "Whole country"
+      "national": "Whole country",
+      "delegations": "{{count}} délégation(s)"
     },
     "filters": {
       "kind": "Type",
@@ -2014,6 +2016,7 @@
       "legend": "Area concerned",
       "mode": {
         "gouvernorats": "Gouvernorats",
+        "delegations": "Délégations",
         "polygon": "Drawn area"
       },
       "drawHelp": "Click on the map to place the vertices of the area (3 to {{max}} points), then finish.",
@@ -2026,7 +2029,13 @@
       "clear": "Clear the area",
       "own": "Target: gouvernorat of {{name}}",
       "gouvernorats": "Targeted gouvernorats",
-      "emptyIsNational": "No gouvernorat ticked: the whole country."
+      "emptyIsNational": "No gouvernorat ticked: the whole country.",
+      "delegationsGouvernorat": "Gouvernorat",
+      "delegationsPick": "Choose the gouvernorat…",
+      "delegations": "Délégations concerned",
+      "delegationsAll": "All délégations of the gouvernorat",
+      "delegationsChosen": "Délégations chosen: {{count}} · people concerned (2024 census): {{people}}",
+      "delegationsMap": "Map of the délégations: click one to add or remove it"
     },
     "validation": {
       "summary": "Correct the highlighted fields.",
@@ -2045,7 +2054,8 @@
         "too_many": "The area has too many vertices (at most {{max}}).",
         "outside": "The area must stay within Tunisia (at most {{max}} vertices).",
         "self_intersecting": "The sides of the area cross each other (at most {{max}} vertices)."
-      }
+      },
+      "delegationsRequired": "Choose at least one délégation."
     },
     "userLookup": {
       "email": "Account email",

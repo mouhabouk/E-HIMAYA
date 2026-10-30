@@ -351,7 +351,12 @@ async def create(session: AsyncSession, principal: Principal, body: schemas.Mess
         created_by_name=audit.name_of(principal),
         version=1,
     )
-    if not principal.is_national and not body.area.gouvernorat_codes and body.area.polygon is None:
+    if (
+        not principal.is_national
+        and not body.area.gouvernorat_codes
+        and body.area.polygon is None
+        and not body.area.delegation_ids
+    ):
         # A regional editor's message targets its gouvernorat unless it says otherwise.
         body.area.gouvernorat_codes = [principal.gouvernorat_code]  # type: ignore[list-item]
     await _apply(session, message, body)

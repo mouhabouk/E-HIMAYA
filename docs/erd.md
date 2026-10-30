@@ -937,6 +937,19 @@ erDiagram
         text updated_by_name
         datetime updated_at
     }
+    geo__city {
+        text id PK
+        text kind
+        smallint gouvernorat_code FK
+        integer delegation_id FK
+        text sector_code FK
+        bigint municipality_id FK
+        text name_ar
+        text name_fr
+        text name_en
+        text place
+        geometry_point_4326 location
+    }
     geo__delegation {
         integer id PK
         text code
@@ -944,6 +957,27 @@ erDiagram
         text name_ar
         text name_fr
         geometry_multipolygon_4326 boundary
+        text ins_code
+        text name_en
+        integer population_2014
+        integer population_2024
+        float area_km2
+        text hasc
+        bigint osm_relation
+        geometry_point_4326 label
+    }
+    geo__district {
+        smallint number PK
+        text name_ar
+        text name_fr
+        text name_en
+    }
+    geo__economic_region {
+        text code PK
+        text short
+        text name_ar
+        text name_fr
+        text name_en
     }
     geo__gouvernorat {
         smallint code PK
@@ -952,6 +986,13 @@ erDiagram
         text name_fr
         text name_en
         geometry_multipolygon_4326 boundary
+        smallint ins_code
+        text region FK
+        smallint district FK
+        integer population_2014
+        integer population_2024
+        float area_km2
+        geometry_point_4326 label
     }
     geo__layer {
         uuid id PK
@@ -1058,14 +1099,58 @@ erDiagram
         text created_by_name
         datetime created_at
     }
+    geo__municipality {
+        bigint id PK
+        smallint gouvernorat_code FK
+        text name_ar
+        text name_fr
+        text name_en
+        float area_km2
+        geometry_point_4326 label
+        geometry_multipolygon_4326 boundary
+    }
+    geo__sector {
+        text code PK
+        integer delegation_id FK
+        smallint gouvernorat_code FK
+        text name_ar
+        text name_fr
+        text name_en
+        bigint osm_relation
+        float area_km2
+        geometry_point_4326 label
+        geometry_multipolygon_4326 boundary
+    }
+    geo__water_body {
+        text id PK
+        text kind
+        array gouvernorat_codes
+        text name_ar
+        text name_fr
+        text name_en
+        boolean salt
+        boolean intermittent
+        float area_km2
+        geometry_point_4326 label
+        geometry_multipolygon_4326 boundary
+    }
+    geo__delegation ||--o{ geo__city : "delegation_id"
     geo__delegation ||--o{ geo__layer_feature : "delegation_id"
+    geo__delegation ||--o{ geo__sector : "delegation_id"
+    geo__district ||--o{ geo__gouvernorat : "district"
+    geo__economic_region ||--o{ geo__gouvernorat : "region"
+    geo__gouvernorat ||--o{ geo__city : "gouvernorat_code"
     geo__gouvernorat ||--o{ geo__delegation : "gouvernorat_code"
     geo__gouvernorat ||--o{ geo__layer_feature : "gouvernorat_code"
+    geo__gouvernorat ||--o{ geo__municipality : "gouvernorat_code"
+    geo__gouvernorat ||--o{ geo__sector : "gouvernorat_code"
     geo__layer ||--o{ geo__layer_feature : "layer_id"
     geo__layer ||--o{ geo__layer_import : "layer_id"
     geo__layer ||--o{ geo__layer_revision : "layer_id"
     geo__layer_group ||--o{ geo__layer : "group_key"
     geo__layer_import ||--o{ geo__layer_feature : "import_id"
+    geo__municipality ||--o{ geo__city : "municipality_id"
+    geo__sector ||--o{ geo__city : "sector_code"
 ```
 
 ## identity
@@ -1496,7 +1581,8 @@ erDiagram
         text severity
         text category
         text hazard
-        geometry_polygon_4326 area_polygon
+        geometry_multipolygon_4326 area_polygon
+        array delegation_ids
         datetime expires_at
         array gouvernorat_codes
         smallint creator_scope FK
@@ -2583,6 +2669,8 @@ erDiagram
         float location_accuracy_m
         smallint gouvernorat_code FK
         integer delegation_id FK
+        text sector_code FK
+        bigint municipality_id FK
         smallint priority_score
         smallint credibility_score
         text status
@@ -2678,6 +2766,8 @@ erDiagram
     geo__gouvernorat ||--o{ reports__report : "gouvernorat_code"
     geo__gouvernorat ||--o{ reports__report : "referred_to"
     geo__gouvernorat ||--o{ reports__reporter_context : "reporter_gouvernorat_code"
+    geo__municipality ||--o{ reports__report : "municipality_id"
+    geo__sector ||--o{ reports__report : "sector_code"
     identity__account ||--o{ reports__live_stream : "user_id"
     identity__account ||--o{ reports__report : "user_id"
     ops__incident ||--o{ reports__report : "incident_id"

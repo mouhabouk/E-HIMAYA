@@ -179,7 +179,7 @@ const ADMIN_SOURCE = "ehimaya-admin";
 const WIND_ICON = "ehimaya-wind-arrow";
 const BASEMAP_SOURCE = "ehimaya-basemap";
 const LABEL_SOURCE = "ehimaya-basemap-labels";
-const TONE_COLOURS: Record<MapPolygon["tone"], string> = { high: "#b91c1c", medium: "#b45309", low: "#4b5563" };
+const TONE_COLOURS: Record<MapPolygon["tone"], string> = { high: "#D7141A", medium: "#C25E00", low: "#5B6478" };
 
 /** Run `fn` now if the style is ready, otherwise once it has loaded. */
 function whenStyleReady(map: MlMap, fn: () => void): void {
@@ -239,11 +239,20 @@ function lineData(lines: MapLine[]): GeoJsonData {
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 
+/**
+ * A report on the map (phase M, Yamen 2026-10-29): a glass hexagon in the colour of its incident type with the type's
+ * pictogram, inside a hexagonal ring in the colour of its status. The type is told by the pictogram and the status by
+ * the accessible name and the popup, never by colour alone.
+ */
 function markerElement(m: MapMarker): HTMLElement {
   const el = document.createElement("button");
   el.type = "button";
   el.setAttribute("aria-label", `${m.title} — ${m.subtitle}`);
   updateMarkerElement(el, m);
+  const ring = document.createElement("span");
+  ring.className = "map-marker__ring";
+  const glass = document.createElement("span");
+  glass.className = "map-marker__glass";
   const svg = document.createElementNS(SVG_NS, "svg");
   svg.setAttribute("viewBox", "0 0 24 24");
   svg.setAttribute("aria-hidden", "true");
@@ -252,12 +261,14 @@ function markerElement(m: MapMarker): HTMLElement {
   path.setAttribute("fill-rule", "evenodd");
   path.setAttribute("d", CATEGORY_ICON_PATHS[m.category]);
   svg.appendChild(path);
-  el.appendChild(svg);
+  glass.appendChild(svg);
+  ring.appendChild(glass);
+  el.appendChild(ring);
   return el;
 }
 
 function updateMarkerElement(el: HTMLElement, m: MapMarker): void {
-  el.className = `map-marker chip--${m.status}${m.highlight ? " map-marker--new" : ""}`;
+  el.className = `map-marker map-marker--${m.category} chip--${m.status}${m.highlight ? " map-marker--new" : ""}`;
   el.setAttribute("aria-label", `${m.title} — ${m.subtitle}`);
 }
 
@@ -573,7 +584,22 @@ export function MapView({
         id: `${POLYGON_SOURCE}-fill`,
         type: "fill",
         source: POLYGON_SOURCE,
-        paint: { "fill-color": ["get", "colour"], "fill-opacity": 0.18 },
+        paint: { "fill-color": ["get", "colour"], "fill-opacity": 0.14 },
+      });
+      // Glass edge: a soft glow of the area's colour under a thin white rim, then the outline itself.
+      map.addLayer({
+        id: `${POLYGON_SOURCE}-glow`,
+        type: "line",
+        source: POLYGON_SOURCE,
+        layout: { "line-join": "round" },
+        paint: { "line-color": ["get", "colour"], "line-width": 9, "line-blur": 7, "line-opacity": 0.35 },
+      });
+      map.addLayer({
+        id: `${POLYGON_SOURCE}-rim`,
+        type: "line",
+        source: POLYGON_SOURCE,
+        layout: { "line-join": "round" },
+        paint: { "line-color": "#ffffff", "line-width": 4, "line-opacity": 0.55 },
       });
       map.addLayer({
         id: `${POLYGON_SOURCE}-line`,
@@ -610,19 +636,38 @@ export function MapView({
           { id: `${ADMIN_SOURCE}-fill`, type: "fill", source: ADMIN_SOURCE, paint: { "fill-color": ["get", "fill"] } },
           above?.id,
         );
+        // Glass edge of the boundaries: a white rim under the navy line, so it reads on imagery and on streets.
+        map.addLayer(
+          {
+            id: `${ADMIN_SOURCE}-rim`,
+            type: "line",
+            source: ADMIN_SOURCE,
+            layout: { "line-join": "round" },
+            paint: {
+              "line-color": "#ffffff",
+              "line-opacity": 0.7,
+              "line-width": ["interpolate", ["linear"], ["zoom"], 6, 2.4, 12, 4.5],
+            },
+          },
+          above?.id,
+        );
         map.addLayer(
           {
             id: `${ADMIN_SOURCE}-line`,
             type: "line",
             source: ADMIN_SOURCE,
             layout: { "line-join": "round" },
-            paint: { "line-color": ["get", "line"], "line-width": ["interpolate", ["linear"], ["zoom"], 6, 0.8, 12, 2] },
+            paint: {
+              "line-color": ["get", "line"],
+              "line-opacity": 0.85,
+              "line-width": ["interpolate", ["linear"], ["zoom"], 6, 0.8, 12, 2],
+            },
           },
           above?.id,
         );
       }
-      // A fill of opacity 0 is still clickable: the unit opens its card without hiding the map.
-      map.setPaintProperty(`${ADMIN_SOURCE}-fill`, "fill-opacity", adminFilled ? 0.6 : 0);
+      // Unfilled, a frosted veil of 4 % (still clickable): the unit opens its card without hiding the map.
+      map.setPaintProperty(`${ADMIN_SOURCE}-fill`, "fill-opacity", adminFilled ? 0.55 : 0.04);
     });
     // `admin` itself is only checked for presence; the data and the fill switch are the dependencies.
     // eslint-disable-next-line react-hooks/exhaustive-deps

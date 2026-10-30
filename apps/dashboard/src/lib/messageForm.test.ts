@@ -65,6 +65,31 @@ describe("message composer form", () => {
     expect(body.expires_at).toBe(new Date(form.expiresAt).toISOString());
   });
 
+  it("sends an alert to chosen délégations and reads it back (phase M)", () => {
+    const form = {
+      ...emptyForm("alert", NOW),
+      severity: "medium" as const,
+      category: "weather" as const,
+      gouvernorats: [61],
+      areaMode: "delegations" as const,
+    };
+    expect(validateForm(form, NOW).delegations).toBe("delegationsRequired");
+    const body = toMessageBody({ ...form, delegations: [6107, 6114] });
+    expect(body.area).toEqual({ gouvernorat_codes: [], delegation_ids: [6107, 6114] });
+    const back = formFromMessage(
+      makeMessage({
+        area: {
+          gouvernorat_codes: [],
+          delegation_ids: [6107, 6114],
+          polygon: { type: "MultiPolygon", coordinates: [[[[10.7, 34.7], [10.8, 34.7], [10.8, 34.8], [10.7, 34.7]]]] },
+        },
+      }),
+    );
+    expect(back.areaMode).toBe("delegations");
+    expect(back.delegations).toEqual([6107, 6114]);
+    expect(back.vertices).toEqual([]);
+  });
+
   it("builds an info body; a message to one user has no area", () => {
     const form = { ...emptyForm("info", NOW), topic: "training" as const, gouvernorats: [61] };
     expect(toMessageBody(form)).toMatchObject({ topic: "training", audience: "all", user_id: null, area: { gouvernorat_codes: [61] } });

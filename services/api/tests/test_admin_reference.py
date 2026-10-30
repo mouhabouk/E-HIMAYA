@@ -1,4 +1,4 @@
-# covers: FR-M-01, FR-M-02, FR-M-03, FR-M-04
+# covers: FR-M-01, FR-M-02, FR-M-03, FR-M-04, FR-M-07
 """Administrative reference of phase M (docs/phase-m/design-m.md): the Map Tunisia boundaries of migration 0079, the
 administrative address of every report, the boundaries for the maps and the reports per délégation."""
 
@@ -36,12 +36,15 @@ async def test_the_reference_is_complete_and_nested(session: AsyncSession) -> No
     )
     assert mismatched == 0
     # Every imada lies in its délégation's gouvernorat; our ids and names are unchanged (Sfax Ville is still 6114).
-    assert await session.scalar(
-        text(
-            "SELECT count(*) FROM geo.sector s JOIN geo.delegation d ON d.id = s.delegation_id "
-            "WHERE s.gouvernorat_code <> d.gouvernorat_code"
+    assert (
+        await session.scalar(
+            text(
+                "SELECT count(*) FROM geo.sector s JOIN geo.delegation d ON d.id = s.delegation_id "
+                "WHERE s.gouvernorat_code <> d.gouvernorat_code"
+            )
         )
-    ) == 0
+        == 0
+    )
     sfax = (await session.execute(text("SELECT id, ins_code FROM geo.delegation WHERE name_fr = 'Sfax Ville'"))).one()
     assert tuple(sfax) == (6114, "3451")
 
@@ -116,3 +119,38 @@ async def test_reports_per_delegation_follow_the_scope(
     assert national[6114] >= 2 and any(d // 100 == 11 for d in national)
     regional = (await client.get("/api/v1/staff/kpis/delegations", headers=staff(gouvernorat=61))).json()
     assert regional and all(c["delegation_id"] // 100 == 61 for c in regional)
+
+
+async def test_an_alert_to_some_delegations(client: httpx.AsyncClient, staff: Staff) -> None:
+    from tests.test_notifications import active_ids, alert_body, drain
+
+    central = staff(["central_committee"], gouvernorat=None)
+    post = lambda body, headers=central: client.post("/api/v1/staff/notifications", json=body, headers=headers)  # noqa: E731
+    for area, code in (
+        ({"delegation_ids": [9999]}, "invalid_delegation"),
+        ({"delegation_ids": [6114], "gouvernorat_codes": [61]}, "invalid_area"),
+    ):
+        r = await post(alert_body(area=area))
+        assert (r.status_code, r.json()["detail"]) == (422, code)
+
+    # Sfax Ville and the Kerkennah islands: their union has several parts.
+    sfax_committee = staff(["local_committee"], gouvernorat=61)
+    r = await post(alert_body(area={"delegation_ids": [6114, 6107]}, severity="medium"), sfax_committee)
+    assert r.status_code == 201, r.text
+    alert = r.json()
+    assert alert["area"]["delegation_ids"] == [6107, 6114] and alert["area"]["gouvernorat_codes"] == []
+    assert alert["area"]["polygon"]["type"] == "MultiPolygon"
+    # Another member publishes it (four eyes).
+    r = await client.post(f"/api/v1/staff/notifications/{alert['id']}/publish", headers=central)
+    assert r.status_code == 200, r.text
+    await drain()  # its pushes go now, not during another test's delivery
+
+    assert alert["id"] in await active_ids(client, lat=34.7406, lon=10.7603)  # Sfax medina
+    assert alert["id"] in await active_ids(client, lat=34.70, lon=11.17)  # Remla, Kerkennah
+    assert alert["id"] not in await active_ids(client, lat=34.52, lon=10.50)  # Mahrès
+    # A regional committee picks the délégations of its own gouvernorat only.
+    r = await post(alert_body(area={"delegation_ids": [1101]}), sfax_committee)
+    assert (r.status_code, r.json()["detail"]) == (403, "out_of_scope")
+    r = await client.post(f"/api/v1/staff/notifications/{alert['id']}/cancel", headers=central)
+    assert r.status_code == 200, r.text
+    await drain()

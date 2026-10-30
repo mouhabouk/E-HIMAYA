@@ -690,6 +690,43 @@
         "title": "AdjustIn",
         "type": "object"
       },
+      "AdminAddressOut": {
+        "description": "Délégation, imada and municipality containing a position (phase M); each null outside the land.",
+        "properties": {
+          "delegation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlaceName"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "municipality": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlaceName"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sector": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlaceName"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "title": "AdminAddressOut",
+        "type": "object"
+      },
       "AgentIn": {
         "properties": {
           "availability": {
@@ -1803,6 +1840,14 @@
       },
       "Area-Output": {
         "properties": {
+          "delegation_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "maxItems": 60,
+            "title": "Delegation Ids",
+            "type": "array"
+          },
           "gouvernorat_codes": {
             "items": {
               "type": "integer"
@@ -7676,6 +7721,24 @@
           "gouvernorat_code"
         ],
         "title": "Delegate",
+        "type": "object"
+      },
+      "DelegationCount": {
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "delegation_id": {
+            "title": "Delegation Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "delegation_id",
+          "count"
+        ],
+        "title": "DelegationCount",
         "type": "object"
       },
       "DelegationIn": {
@@ -25339,6 +25402,30 @@
         "title": "Person",
         "type": "object"
       },
+      "PlaceName": {
+        "description": "One administrative unit of an address: its identifier (délégation id, imada code, municipality id) and names.",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name_ar": {
+            "title": "Name Ar",
+            "type": "string"
+          },
+          "name_fr": {
+            "title": "Name Fr",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name_ar",
+          "name_fr"
+        ],
+        "title": "PlaceName",
+        "type": "object"
+      },
       "PlanOption": {
         "properties": {
           "hazard_key": {
@@ -34053,6 +34140,16 @@
       },
       "StaffReportDetail": {
         "properties": {
+          "address": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AdminAddressOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "allowed_transitions": {
             "items": {
               "$ref": "#/components/schemas/Status"
@@ -45534,6 +45631,14 @@
       },
       "app__modules__notify__schemas__Area": {
         "properties": {
+          "delegation_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "maxItems": 60,
+            "title": "Delegation Ids",
+            "type": "array"
+          },
           "gouvernorat_codes": {
             "items": {
               "type": "integer"
@@ -54369,6 +54474,88 @@
         ]
       }
     },
+    "/api/v1/geo/boundaries/{level}": {
+      "get": {
+        "description": "GeoJSON of one administrative level with its codes, names and census (public reference data, ODbL).",
+        "operationId": "boundaries_api_v1_geo_boundaries__level__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "level",
+            "required": true,
+            "schema": {
+              "enum": [
+                "regions",
+                "districts",
+                "gouvernorats",
+                "delegations",
+                "sectors",
+                "municipalities",
+                "water",
+                "cities"
+              ],
+              "title": "Level",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 83,
+                  "minimum": 11,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          },
+          {
+            "in": "query",
+            "name": "detail",
+            "required": false,
+            "schema": {
+              "default": "medium",
+              "enum": [
+                "low",
+                "medium",
+                "high"
+              ],
+              "title": "Detail",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/geo+json": {}
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Boundaries",
+        "tags": [
+          "geo"
+        ]
+      }
+    },
     "/api/v1/geo/gouvernorats": {
       "get": {
         "operationId": "list_gouvernorats_api_v1_geo_gouvernorats_get",
@@ -54477,6 +54664,67 @@
           }
         },
         "summary": "List Delegations",
+        "tags": [
+          "geo"
+        ]
+      }
+    },
+    "/api/v1/geo/locate": {
+      "get": {
+        "description": "The délégation, imada and municipality containing a point (signed-in users).",
+        "operationId": "locate_api_v1_geo_locate_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "lat",
+            "required": true,
+            "schema": {
+              "maximum": 38.0,
+              "minimum": 30.0,
+              "title": "Lat",
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lon",
+            "required": true,
+            "schema": {
+              "maximum": 12.0,
+              "minimum": 7.0,
+              "title": "Lon",
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminAddressOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Locate",
         "tags": [
           "geo"
         ]
@@ -74815,6 +75063,82 @@
           }
         ],
         "summary": "Kpis",
+        "tags": [
+          "staff"
+        ]
+      }
+    },
+    "/api/v1/staff/kpis/delegations": {
+      "get": {
+        "description": "Reports per délégation in the caller's scope (phase M): the map colours each délégation by its rate per\n10,000 inhabitants (census 2024, from the boundaries).",
+        "operationId": "kpis_by_delegation_api_v1_staff_kpis_delegations_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "since",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Since"
+            }
+          },
+          {
+            "in": "query",
+            "name": "category",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/Category"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DelegationCount"
+                  },
+                  "title": "Response Kpis By Delegation Api V1 Staff Kpis Delegations Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Kpis By Delegation",
         "tags": [
           "staff"
         ]

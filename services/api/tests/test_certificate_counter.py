@@ -5,7 +5,7 @@ administration with the hand stamp and its photo, the electronic seal (docs/phas
 import os
 import uuid
 from collections.abc import Callable
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from typing import Any
 
 import httpx
@@ -200,11 +200,12 @@ async def test_counter_lookup_and_hand_stamp(
     operator = staff(["operator"])
     assert (await client.get(lookup, params={"code": cert["code"]}, headers=operator)).json()["can_stamp"] is False
     stamps = f"/api/v1/staff/certificates/{cert['id']}/stamps"
-    body = {"place": "الإدارة الجهوية للحماية المدنية بصفاقس", "stamped_on": date.today().isoformat()}
+    tunis_today = datetime.now(certificate.TUNIS_TZ).date()
+    body = {"place": "الإدارة الجهوية للحماية المدنية بصفاقس", "stamped_on": tunis_today.isoformat()}
     assert (await client.post(stamps, json=body, headers=operator)).status_code == 403
 
     future = await client.post(
-        stamps, json=body | {"stamped_on": (date.today() + timedelta(days=1)).isoformat()}, headers=auditor
+        stamps, json=body | {"stamped_on": (tunis_today + timedelta(days=1)).isoformat()}, headers=auditor
     )
     assert (future.status_code, future.json()["detail"]) == (422, "invalid_stamp_date")
     before = await client.post(stamps, json=body | {"stamped_on": "2020-01-01"}, headers=auditor)

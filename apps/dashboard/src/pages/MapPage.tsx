@@ -22,7 +22,7 @@ import { useDebounced, useFormat, useGouvernorats, useLanguage } from "../lib/ho
 import { mapKey } from "../lib/liveCache";
 import { initialBoundsFor } from "../lib/mapStyle";
 import { opsKeys } from "../lib/opsApi";
-import type { Message } from "../lib/opsTypes";
+import { areaRings, type Message } from "../lib/opsTypes";
 import { errorMessageKey } from "../lib/api";
 import {
   canOpenDrones,
@@ -138,7 +138,11 @@ function droneLines(results: readonly { data?: DroneTrack }[]): MapLine[] {
 
 function alertPolygons(alerts: readonly Message[]): MapPolygon[] {
   return alerts.flatMap((a) =>
-    a.area.polygon ? [{ id: a.id, coordinates: a.area.polygon.coordinates, tone: a.severity ?? "low" }] : [],
+    areaRings(a.area.polygon).map((coordinates, i) => ({
+      id: i === 0 ? a.id : `${a.id}-${i}`,
+      coordinates,
+      tone: a.severity ?? "low",
+    })),
   );
 }
 
@@ -682,7 +686,9 @@ export function MapPage() {
                   <strong dir="auto">{localized(a.title, lang)}</strong>
                   <span className="muted">
                     {" · "}
-                    {a.area.polygon
+                    {a.area.delegation_ids?.length
+                      ? t("ops.map.delegationsArea", { count: a.area.delegation_ids.length })
+                      : a.area.polygon
                       ? t("ops.map.drawnArea")
                       : a.area.gouvernorat_codes.length === 0
                         ? t("ops.map.national")

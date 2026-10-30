@@ -309,6 +309,14 @@ services:
       # Decision support (phase 7, docs/decision-support.md). Routing engine (profile "routing"): set
       # ROUTING_URL=http://routing:8002; empty = straight-line estimates ("engine": "fallback").
       ROUTING_URL: ${ROUTING_URL:-}
+      # The Office's map server (phase M, docs/offline-maps.md): imagery and labels of the satellite basemap; empty =
+      # the public sources (Sentinel-2 cloudless by EOX, Esri labels).
+      BASEMAP_OPEN_TILES: ${BASEMAP_OPEN_TILES:-}
+      BASEMAP_OPEN_ATTRIBUTION: ${BASEMAP_OPEN_ATTRIBUTION:-}
+      BASEMAP_OPEN_MAX_ZOOM: ${BASEMAP_OPEN_MAX_ZOOM:-}
+      BASEMAP_LABEL_TILES: ${BASEMAP_LABEL_TILES:-}
+      BASEMAP_LABEL_ATTRIBUTION: ${BASEMAP_LABEL_ATTRIBUTION:-}
+      BASEMAP_LABEL_MAX_ZOOM: ${BASEMAP_LABEL_MAX_ZOOM:-}
       # Incident assistant: the Ollama server of the AI layer (profile "ai"); empty = 503 assistant_unavailable.
       OLLAMA_URL: ${OLLAMA_URL:-}
       ASSISTANT_MODEL: ${ASSISTANT_MODEL:-${AI_LLM_MODEL:-qwen3:4b}}
@@ -845,6 +853,8 @@ services:
     volumes:
       - ./routing/prepare.sh:/routing/prepare.sh:ro
       - routingdata:/data
+      # The extract of the map server (phase M): ROUTING_OSM_URL=file:///sources/tunisia.osm.pbf builds offline.
+      - ./maps/data/sources:/sources:ro
     depends_on:
       routing-init:
         condition: service_completed_successfully
@@ -867,6 +877,112 @@ services:
       retries: 30
     depends_on:
       routing-prepare:
+        condition: service_completed_successfully
+
+  # ---------------- The Office's map server (phase M, docs/offline-maps.md) ----------------
+  # Vector tiles of Tunisia, the e-Himaya styles (streets, labels over imagery) and the satellite imagery, all from
+  # infra/maps/data on this machine: no request leaves the Office's network once prepared. Data © OpenStreetMap
+  # contributors (ODbL 1.0); never committed (infra/maps/data is ignored).
+  #   1. On a machine with internet: docker compose -f infra/compose.yml --profile maps-prepare run --rm maps-tiles
+  #      (then maps-fonts and maps-satellite), or copy a prepared infra/maps/data folder.
+  #   2. docker compose --env-file .env -f infra/compose.yml --profile maps up -d   → http://localhost:8091
+  maps-tiles:
+    profiles: ["maps-prepare"]
+    image: ghcr.io/onthegomap/planetiler:0.10.2@sha256:cf32202dbc001a9ab4bc11534b642b13de3798179817da8558e567a3d13dd403
+    restart: "no"
+    # OpenMapTiles schema with the Arabic, French and English names; the extract and the sea/lake sources are kept
+    # in data/sources (the routing engine reads the same extract, profile "routing").
+    command:
+      - --area=tunisia
+      - --download
+      - --osm-path=/data/sources/tunisia.osm.pbf
+      - --download-dir=/data/sources
+      - --output=/data/tunisia.mbtiles
+      - --languages=ar,fr,en
+      - --force
+      - --maxzoom=14
+    volumes:
+      - ./maps/data:/data
+    healthcheck:
+      disable: true
+
+  maps-fonts:
+    profiles: ["maps-prepare"]
+    image: python:3.12-slim@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1
+    restart: "no"
+    command: ["python", "-I", "/maps/fetch_fonts.py"]
+    environment:
+      MAPS_FONTS_SHA256: ${MAPS_FONTS_SHA256:-}
+    volumes:
+      - ./maps/fetch_fonts.py:/maps/fetch_fonts.py:ro
+      - ./maps/data:/data
+    healthcheck:
+      disable: true
+
+  # Satellite imagery copied into data/satellite.mbtiles (resumable; SAT_COUNT_ONLY=1 estimates the size first).
+  maps-satellite:
+    profiles: ["maps-prepare"]
+    image: python:3.12-slim@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1
+    restart: "no"
+    command: ["python", "-I", "/maps/fetch_tiles.py"]
+    environment:
+      SAT_URL: ${SAT_URL:-}
+      SAT_MAX_ZOOM: ${SAT_MAX_ZOOM:-14}
+      SAT_ATTRIBUTION: ${SAT_ATTRIBUTION:-}
+      SAT_COUNT_ONLY: ${SAT_COUNT_ONLY:-0}
+    volumes:
+      - ./maps/fetch_tiles.py:/maps/fetch_tiles.py:ro
+      - ./maps/data:/data
+    healthcheck:
+      disable: true
+
+  # Or imagery of the Office's own (orthophotos, Copernicus mosaics) as a GeoTIFF in data/sources/satellite.tif.
+  maps-satellite-import:
+    profiles: ["maps-prepare"]
+    image: ghcr.io/osgeo/gdal:ubuntu-small-3.13.3@sha256:64250faf833c06d4b21afce4c27190039ba7ab58d70f0eebc87cf77d929c0b40
+    restart: "no"
+    entrypoint: ["/bin/sh", "-ec"]
+    command:
+      - >-
+        gdalwarp -t_srs EPSG:3857 -r bilinear -co TILED=YES /data/sources/satellite.tif /data/sources/satellite-3857.tif &&
+        gdal_translate -of MBTILES -co TILE_FORMAT=JPEG -co QUALITY=85 -co ZOOM_LEVEL_STRATEGY=UPPER
+        /data/sources/satellite-3857.tif /data/satellite.mbtiles &&
+        gdaladdo -r average /data/satellite.mbtiles 2 4 8 16 32 64 128 256 512 1024 2048 4096
+    volumes:
+      - ./maps/data:/data
+    healthcheck:
+      disable: true
+
+  maps-config:
+    profiles: ["maps"]
+    image: python:3.12-slim@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1
+    restart: "no"
+    command: ["python", "-I", "/maps/make_config.py"]
+    volumes:
+      - ./maps/make_config.py:/maps/make_config.py:ro
+      - ./maps/styles:/styles:ro
+      - ./maps/data:/data
+    healthcheck:
+      disable: true
+
+  maps:
+    <<: *restart
+    profiles: ["maps"]
+    image: maptiler/tileserver-gl:v5.7.0@sha256:24d0364e1d40da0ae3fb3269f617c26e36a883ad4b7454e5c4064a8795bfc807
+    # The address the browsers use (behind Caddy: https://<API_HOST>/maps/), written into every TileJSON and style.
+    command: ["--config", "/data/config.json", "--port", "8080", "--public_url", "${MAPS_PUBLIC_URL:-http://localhost:8091/}"]
+    volumes:
+      - ./maps/styles:/styles:ro
+      - ./maps/data:/data:ro
+    ports:
+      - "127.0.0.1:8091:8080"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8080/health').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 20
+    depends_on:
+      maps-config:
         condition: service_completed_successfully
 
 volumes:
