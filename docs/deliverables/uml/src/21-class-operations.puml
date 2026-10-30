@@ -87,6 +87,17 @@ class Affectation {
   disponible, retour à l'unité (S2)
   agents, moyens utilisés,
   source de chaque heure (S2)
+  point de la mission, note (F)
+  nature, étapes passées et motifs,
+  sans intervention, ouverte du terrain (F)
+}
+class AgentTerrain <<F>> {
+  matricule (unique / gouvernorat)
+  nom, fonction, garde
+  téléphone (chiffré)
+  empreinte du code, expire, essais
+  charte acceptée le
+  désactivé / supprimé, motif
 }
 class Mobilisation {
   compétence, rayon_km
@@ -127,7 +138,7 @@ class PositionÉquipe <<P4d>> {
   heure, position, précision
   conservée 30 jours
 }
-class RapportTerrain <<P4a, P4b>> {
+class RapportTerrain <<P4a, P4b, F>> {
   type : premier, mise à jour, détaillé
   catégorie, gravité 1..4
   renforts (types), danger équipage
@@ -193,6 +204,8 @@ Appel "*" --> "0..1" Signalement : rattaché à
 Garde "*" --> "1" Moyen
 Garde "*" --> "1" TéléphoneÉquipe
 Affectation "*" --> "0..1" Garde : accusé_le
+AgentTerrain "1" --> "0..1" TéléphoneÉquipe : activé
+Garde "*" --> "*" AgentTerrain : équipage
 Affectation "1" *-- "*" ÉvénementÉquipe
 Affectation "1" *-- "*" PositionÉquipe
 Affectation "1" *-- "*" RapportTerrain
