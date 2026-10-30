@@ -56,7 +56,8 @@
       "people": "Volunteers and doctors",
       "orgs": "Institutions",
       "knowledge": "Analysis and knowledge",
-      "system": "System"
+      "system": "System",
+      "strategies": "Strategies"
     },
     "inventory": "Resources register",
     "plans": "Intervention plans",
@@ -69,7 +70,10 @@
     "drones": "Drones",
     "modelCards": "Model cards",
     "learning": "Training centre",
-    "disasters": "Disasters: summary and map"
+    "disasters": "Disasters: summary and map",
+    "strategies": "All strategies",
+    "snacr": "Risk analysis and coverage (SNACR)",
+    "lessons": "Lessons learned"
   },
   "header": {
     "scope": "Geographic scope",
@@ -560,7 +564,15 @@
     "voice_not_found": "This voice message does not exist or is not yours.",
     "voice_already_sent": "This voice message was already sent.",
     "outside_gouvernorat": "The place is outside your gouvernorat: a regional room enters reports of its own gouvernorat.",
-    "invalid_selection": "Invalid selection."
+    "invalid_selection": "Invalid selection.",
+    "alias_empty": "The name is empty.",
+    "alias_exists": "This name is already tied to a délégation.",
+    "body_or_link_required": "Enter the page text or a link.",
+    "delegation_not_in_gouvernorat": "The chosen délégation is not in this gouvernorat.",
+    "no_dataset": "No year is loaded in the archive yet.",
+    "plan_not_draft": "This plan is already approved.",
+    "years_not_loaded": "One of the chosen years is not loaded.",
+    "file_columns_missing": "The file lacks archive columns (dates, regional directorate, délégation, nature)."
   },
   "kpi": {
     "title": "Key indicators",
@@ -3768,7 +3780,8 @@
         "crisis": "Disaster and command thresholds",
         "alerts": "Alert thresholds",
         "rooms": "Room and field thresholds",
-        "partners": "Doctor and institution thresholds"
+        "partners": "Doctor and institution thresholds",
+        "snacr": "Risk analysis and coverage thresholds (SNACR)"
       },
       "help": "The numbers of daily work: changing them needs no new release, and they stay within their bounds. What is not changed keeps its default.",
       "bounds": "Each value is a whole number within the bounds shown next to it.",
@@ -3777,7 +3790,12 @@
         "count": "count",
         "days": "days",
         "hours": "hours",
-        "metres": "metres"
+        "metres": "metres",
+        "minutes": "minutes",
+        "percent": "per cent",
+        "per_km2": "inhabitants per km²",
+        "months": "months",
+        "years": "years"
       },
       "names": {
         "crisis": {
@@ -3821,6 +3839,37 @@
         "orgs": {
           "invitation_days": "Validity of an institution invitation",
           "reservation_due_soon_days": "Warning before reservations fall due"
+        },
+        "snacr": {
+          "target": {
+            "medical": {
+              "urban": "Arrival target, medical aid, urban",
+              "periurban": "Arrival target, medical aid, periurban",
+              "rural": "Arrival target, medical aid, rural"
+            },
+            "road": {
+              "urban": "Arrival target, road accidents, urban",
+              "periurban": "Arrival target, road accidents, periurban",
+              "rural": "Arrival target, road accidents, rural"
+            },
+            "fire": {
+              "urban": "Arrival target, fires, urban",
+              "periurban": "Arrival target, fires, periurban",
+              "rural": "Arrival target, fires, rural"
+            },
+            "rescue": {
+              "urban": "Arrival target, rescue and other operations, urban",
+              "periurban": "Arrival target, rescue and other operations, periurban",
+              "rural": "Arrival target, rescue and other operations, rural"
+            }
+          },
+          "goal_percent": "Share of interventions that must meet the target",
+          "density": {
+            "urban": "Lowest density of an urban délégation",
+            "periurban": "Lowest density of a periurban délégation"
+          },
+          "review_months": "Plan review every",
+          "validity_years": "Plan validity"
         }
       }
     }
@@ -7626,5 +7675,305 @@
     "from": "from {{from}}",
     "everyDay": "every day",
     "overnight": "(into the next day)"
+  },
+  "strategies": {
+    "title": "Strategies",
+    "intro": "What steers the work in the medium and long term, in one place: risk analysis and coverage, intervention plans, seasonal programmes, dry runs and lessons learned. Each page also stays in its own menu; the system administrator adds the others.",
+    "tabs": {
+      "label": "Strategies sections",
+      "all": "Strategies",
+      "manage": "Manage items"
+    },
+    "about": {
+      "snacr": "Three years of interventions: rate per 1,000 inhabitants, arrival times, priorities, and the plan the committees approve.",
+      "plans": "National and regional intervention plans by hazard, in each hazard's colour.",
+      "programmes": "Seasonal programmes of the gouvernorats: summer, fires, rains.",
+      "drills": "Digital dry runs and their evaluation.",
+      "lessons": "Drawing and recording the lessons of past events."
+    },
+    "back": "← Strategies",
+    "open": "Open the page",
+    "openSite": "Open the official site",
+    "icons": {
+      "insights": "Indicators",
+      "menuBook": "Book",
+      "policy": "Policy",
+      "analytics": "Analysis",
+      "schedule": "Calendar",
+      "healthAndSafety": "Safety",
+      "warning": "Warning",
+      "historyEdu": "Memory",
+      "militaryTech": "Medal",
+      "groups": "Teams",
+      "water": "Water"
+    },
+    "tones": {
+      "purple": "Purple",
+      "navy": "Navy",
+      "teal": "Teal",
+      "green": "Green",
+      "sky": "Sky blue",
+      "orange": "Orange",
+      "amber": "Amber",
+      "red": "Red",
+      "pink": "Pink",
+      "slate": "Grey"
+    },
+    "manage": {
+      "title": "Strategies items",
+      "intro": "The national system administrator creates an item of the strategies menu: a national strategy, a programme, a reference. The item has its own page in three languages, or a link to a page of the platform or an official site, and shows for every staff member or for some roles. Every change is audited.",
+      "add": "Create an item",
+      "edit": "Edit “{{name}}”",
+      "editShort": "Edit",
+      "delete": "Delete",
+      "confirmDelete": "Remove “{{name}}” from the strategies menu?",
+      "key": "Identifier",
+      "keyHint": "Lower-case Latin letters, digits and underscore, such as snrrc_2030. It cannot change after creation.",
+      "name": "Name ({{lang}})",
+      "summary": "One-line description ({{lang}})",
+      "body": "Page text ({{lang}})",
+      "bodyHint": "The text is written in Markdown: headings, lists, links.",
+      "link": "Link",
+      "linkHint": "A page of the platform starting with /, such as /snacr, or an official site starting with https://",
+      "icon": "Icon",
+      "tone": "Colour",
+      "position": "Order",
+      "roles": "Shown to",
+      "rolesHint": "None chosen: shown to every staff member.",
+      "active": "Shown in the menu",
+      "needOne": "Enter the page text or a link.",
+      "save": "Save",
+      "none": "No item added yet.",
+      "colName": "Item",
+      "colKind": "Content",
+      "colRoles": "Shown to",
+      "colState": "State",
+      "colUpdated": "Last change",
+      "colActions": "Actions",
+      "ownPage": "Own page",
+      "everyone": "All staff",
+      "shown": "Shown",
+      "hidden": "Hidden"
+    }
+  },
+  "snacr": {
+    "title": "Risk analysis and coverage (SNACR)",
+    "intro": "The risk analysis and coverage plan, drawn from three years of the Office's archive of interventions: frequency per 1,000 inhabitants, arrival times, priorities by délégation, and the register of specific risks. Modelled on the French SDACR, the British CRMP and the NFPA 1710 standard, within law 91-39 and decree 93-942.",
+    "years": "Years",
+    "national": "Whole country",
+    "noData": "No year is loaded in the archive yet.",
+    "empty": "No data.",
+    "tabs": {
+      "label": "Analysis sections",
+      "indicators": "Indicators and map",
+      "matrix": "Priority matrix",
+      "seasons": "Seasons and hours",
+      "special": "Specific risks",
+      "plan": "Plan",
+      "archive": "Archive",
+      "method": "Method and references"
+    },
+    "unit": {
+      "min": "min"
+    },
+    "family": {
+      "label": "Intervention family",
+      "medical": "Medical aid",
+      "road": "Road accidents",
+      "fire": "Fires",
+      "rescue": "Rescue and other operations"
+    },
+    "zone": {
+      "urban": "Urban",
+      "periurban": "Periurban",
+      "rural": "Rural"
+    },
+    "priority": {
+      "high": "High priority",
+      "medium": "Medium priority",
+      "low": "Normal priority"
+    },
+    "ind": {
+      "annual": "Interventions a year",
+      "rate": "Per 1,000 inhabitants",
+      "compliance": "Within target (goal {{goal}} %)",
+      "complianceShort": "Within target",
+      "completeness": "Archive completeness",
+      "unmatched": "Interventions with an unknown délégation",
+      "byGouvernorat": "By gouvernorat: interventions, rate and arrival in 90 % of cases",
+      "byDelegation": "By délégation: {{family}}"
+    },
+    "col": {
+      "gouvernorat": "Gouvernorat",
+      "delegation": "Délégation",
+      "zone": "Setting",
+      "target": "Target",
+      "median": "Median",
+      "p90short": "90 %",
+      "p90": "{{family}} (90 %)",
+      "departure": "Departure (median)",
+      "levels": "Frequency × coverage",
+      "priority": "Priority"
+    },
+    "sort": {
+      "label": "Sort",
+      "priority": "By priority",
+      "rate": "By rate",
+      "compliance": "Least covered first"
+    },
+    "map": {
+      "title": "Map of the délégations",
+      "metric": "Colour by",
+      "aria": "Map of the délégations coloured by the chosen indicator",
+      "metrics": {
+        "priority": "Priority",
+        "rate": "Rate per 1,000 inhabitants",
+        "compliance": "Share within target",
+        "completeness": "Archive completeness"
+      },
+      "legend": {
+        "priority": "Red: high priority, orange: medium, green: normal, grey: no data. Click a délégation to read its figures.",
+        "rate": "Light to dark: quintiles of the national rate per 1,000 inhabitants.",
+        "compliance": "From red (under 20 %) to green (80 % and over).",
+        "completeness": "From red (incomplete archive) to green (complete archive)."
+      }
+    },
+    "matrix": {
+      "title": "Frequency × coverage matrix",
+      "intro": "Number of délégations in each cell. Frequency runs from 1 to 5 by quintiles of the national rate per 1,000 inhabitants; coverage from 1 to 5 by the gap to the within-target goal.",
+      "corner": "Frequency \\ coverage",
+      "coverage": "Coverage {{level}}",
+      "frequency": "Frequency {{level}}",
+      "levels": "Coverage 1: goal met; 2: gap up to 10 points; 3: up to 25; 4: up to 40; 5: over 40 points.",
+      "legend": {
+        "high": "Product of 15 or more: an objective of the plan",
+        "medium": "From 8 to 14: to follow",
+        "low": "Under 8"
+      }
+    },
+    "seasons": {
+      "months": "Interventions by month: {{family}}",
+      "hours": "By day and hour (Tunis time)",
+      "day": "Day",
+      "subtypes": "Most frequent kinds: {{family}}"
+    },
+    "month": {
+      "1": "January",
+      "2": "February",
+      "3": "March",
+      "4": "April",
+      "5": "May",
+      "6": "June",
+      "7": "July",
+      "8": "August",
+      "9": "September",
+      "10": "October",
+      "11": "November",
+      "12": "December"
+    },
+    "weekday": {
+      "1": "Monday",
+      "2": "Tuesday",
+      "3": "Wednesday",
+      "4": "Thursday",
+      "5": "Friday",
+      "6": "Saturday",
+      "7": "Sunday"
+    },
+    "hazard": {
+      "flood": "Floods",
+      "forest_fire": "Forest fires",
+      "industrial": "Industrial accidents",
+      "hazmat_transport": "Hazardous materials transport",
+      "coastal": "Coastal hazards",
+      "earthquake": "Earthquakes",
+      "storm": "Storms",
+      "drought": "Drought and heatwaves",
+      "epidemic": "Epidemics"
+    },
+    "special": {
+      "intro": "Specific risks by gouvernorat: probability and gravity from 1 to 5; their product gives the level. The first entries are [SIM]; they become real as soon as the committee edits them.",
+      "title": "Specific risks register",
+      "hazard": "Hazard",
+      "probability": "Probability",
+      "gravity": "Gravity",
+      "level": "Level",
+      "note": "Note",
+      "actions": "Actions",
+      "edit": "Edit",
+      "delete": "Delete",
+      "save": "Save the risk"
+    },
+    "plan": {
+      "intro": "A plan freezes the analysis of the chosen years with the specific risks register and draws its objectives. The regional committee prepares it for its gouvernorat, the national committee the national plan; then it is approved (decree 93-942).",
+      "title": "Plans",
+      "draftNational": "Draft the national plan",
+      "draftRegional": "Draft the plan of {{name}}",
+      "none": "No plan yet.",
+      "scope": "Scope",
+      "national": "National",
+      "version": "Version",
+      "status": "Status",
+      "statuses": {
+        "draft": "Draft",
+        "approved": "Approved",
+        "superseded": "Superseded"
+      },
+      "years": "Years",
+      "objectives": "Objectives",
+      "review": "Review by",
+      "valid": "Valid until",
+      "pdf": "PDF",
+      "approve": "Approve"
+    },
+    "archive": {
+      "intro": "One year per file from the Office (xlsx or CSV). Only the times, the place and the nature are read: the address, the free texts, the crew and the vehicles are never stored. [SIM] years are generated on the distributions of the real 2022 archive until the year's file arrives.",
+      "title": "Loaded years",
+      "year": "Year",
+      "source": "Source",
+      "office": "Office file",
+      "rows": "Interventions",
+      "skipped": "Rows set aside",
+      "by": "Loaded by",
+      "delete": "Delete the year",
+      "confirmDelete": "Delete the interventions of {{year}}?",
+      "import": "Load the year's file",
+      "reading": "Reading the file…",
+      "file": "File",
+      "fileHint": "The Office's export as it is; it replaces the year if already loaded.",
+      "simulate": "Generate {{year}} [SIM]",
+      "unmatched": "Unknown délégation names",
+      "unmatchedIntro": "Names the archive writes that match no délégation. Tie each to its délégation: the stored interventions are fixed and the next files recognise it.",
+      "allMatched": "Every name is recognised.",
+      "rowsCount": "{{count}} interventions",
+      "alias": "Tie to a délégation",
+      "aliasTo": "Tie “{{raw}}” to a délégation",
+      "pick": "Choose the délégation"
+    },
+    "method": {
+      "title": "Method",
+      "steps": {
+        "zones": "Each délégation is classed by its 2024 census density: urban from {{urban}} inhabitants per km², periurban from {{periurban}}, rural below.",
+        "rate": "Frequency of interventions per 1,000 inhabitants a year, over three consecutive years by default.",
+        "arrival": "Time from the call to arrival, at the median and the 90th percentile (NFPA practice), and the share of interventions within the target of the délégation's setting; goal {{goal}} %.",
+        "levels": "Frequency level 1 to 5 by national quintiles; coverage level 1 to 5 by the gap to the goal.",
+        "priority": "Priority = frequency × coverage: high from 15, medium from 8.",
+        "special": "Specific risks: probability × gravity, on each gouvernorat's register (2030 strategy and Sendai Framework).",
+        "cycle": "The plan is reviewed every {{review}} months (the committees' yearly meeting) and remade every {{validity}} years."
+      },
+      "targets": "Arrival targets (goal: {{goal}} % of interventions within them)",
+      "settings": "These values are settings the authorised staff change:",
+      "settingsLink": "Settings → Thresholds",
+      "references": "National and international references"
+    },
+    "use": {
+      "legal_basis": "Legal basis",
+      "committees_and_review": "Committees and review",
+      "special_risks": "Specific risks",
+      "structure_everyday_special_coverage": "Plan structure: everyday risks, specific risks and coverage",
+      "plan_cycle": "Plan cycle",
+      "percentile_indicators": "Percentile indicators",
+      "matrix": "Risk matrix"
+    }
   }
 }

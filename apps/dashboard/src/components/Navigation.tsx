@@ -28,6 +28,7 @@ import {
   canOpenProgrammes,
   canOpenRegister,
   canOpenSchedule,
+  canOpenSnacr,
   canOpenWindowFull,
   canReadAnalytics,
   canReadKnowledge,
@@ -63,7 +64,13 @@ export interface NavGroup {
 }
 
 /** The links the user's roles can open (the API enforces the same rules), in their groups; empty groups dropped. */
-export function navGroups(identity: Identity, t: TFunction, access?: FeatureAccess, windowOpen?: boolean): NavGroup[] {
+export function navGroups(
+  identity: Identity,
+  t: TFunction,
+  access?: FeatureAccess,
+  windowOpen?: boolean,
+  strategies: readonly NavEntry[] = [],
+): NavGroup[] {
   const roles = identity.roles;
   const reads = hasReadAccess(roles);
   const knowledge = canReadKnowledge(roles);
@@ -111,6 +118,22 @@ export function navGroups(identity: Identity, t: TFunction, access?: FeatureAcce
         ...e(canOpenRegister(roles), "/register/dispatches", "campaign", "red", "dispatches"),
         ...e(isCommittee(roles) || canMonitorPerformance(roles), "/committee", "monitoring", "navy", "committee"),
         ...e(canOpenProgrammes(roles), "/programmes", "schedule", "orange", "programmes"),
+      ],
+    },
+    {
+      // Phase S (docs/phase-s/design-s.md §2): the strategies, gathered in one place. Each page also stays in its own
+      // group (the plans and programmes under command, the drills under disasters, the lessons under knowledge).
+      key: "strategies",
+      icon: "insights",
+      tone: "purple",
+      label: t("nav.group.strategies"),
+      items: [
+        ...e(true, "/strategies", "insights", "purple", "strategies", true),
+        ...e(canOpenSnacr(roles), "/snacr", "analytics", "purple", "snacr"),
+        ...e(canOpenRegister(roles), "/plans", "menuBook", "sky", "plans"),
+        ...e(canOpenProgrammes(roles), "/programmes", "schedule", "orange", "programmes"),
+        ...e(false, "/drills", "militaryTech", "amber", "drills"),
+        ...e(knowledge, "/memory", "historyEdu", "purple", "lessons"),
       ],
     },
     {
@@ -194,6 +217,13 @@ export function navGroups(identity: Identity, t: TFunction, access?: FeatureAcce
       ],
     },
   ];
+  // The items the system administrator added (their own page, or a page of the platform not already listed).
+  const own = groups.find((g) => g.key === "strategies");
+  if (own) {
+    own.items.push(...strategies.filter((s) => !own.items.some((i) => i.to === s.to)));
+    // The overview alone is no menu, except for the administrator who adds the items.
+    if (own.items.length === 1 && !(identity.national && roles.includes("sysadmin"))) own.items = [];
+  }
   return groups.filter((g) => g.items.length > 0);
 }
 
@@ -338,6 +368,11 @@ function GroupMenu({ group, rail }: { group: NavGroup; rail: boolean }) {
   );
 }
 
+/** In one flat row, a page the strategies gather from another group is shown once, under its own name and place. */
+function firstOf(groups: readonly NavGroup[], entry: NavEntry, group: NavGroup): boolean {
+  return group.key !== "strategies" || !groups.some((g) => g !== group && g.items.some((i) => i.to === entry.to));
+}
+
 /** The main navigation in the chosen shape; the position only changes where the shell puts it. */
 export function MainNav({
   groups,
@@ -365,7 +400,7 @@ export function MainNav({
                 ))}
               </section>
             ) : (
-              g.items.map((entry) => <NavItem key={entry.to} entry={entry} />)
+              g.items.filter((entry) => firstOf(groups, entry, g)).map((entry) => <NavItem key={entry.to} entry={entry} />)
             ),
           )}
     </nav>

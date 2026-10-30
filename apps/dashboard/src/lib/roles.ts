@@ -725,3 +725,17 @@ export const canManageDrones = canManageSensors;
 export function canAcknowledgeDroneAlerts(roles: readonly string[]): boolean {
   return ["operator", "ops_manager", "field_commander"].some((r) => roles.includes(r));
 }
+
+// ---------- Phase S: SNACR, the risk analysis and coverage plan (docs/phase-s/design-s.md) ----------
+/** Who reads the analysis: the operations manager, both committees, the governor and the minister, in their scope. */
+export const SNACR_ROLES = ["ops_manager", ...COMMITTEE_ROLES, "governor", "minister"] as const;
+/** Who drafts and approves a plan: the committees, the governor and the minister. */
+export const SNACR_PLANNERS = [...COMMITTEE_ROLES, "governor", "minister"] as const;
+
+export function canOpenSnacr(roles: readonly string[]): boolean {
+  return any(SNACR_ROLES, roles);
+}
+
+export function canPlanSnacr(roles: readonly string[]): boolean {
+  return any(SNACR_PLANNERS, roles);
+}

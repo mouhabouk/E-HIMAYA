@@ -9230,3 +9230,144 @@ button.nav-card:hover {
   white-space: nowrap;
   unicode-bidi: isolate;
 }
+
+/* ---------- Phase S: the strategies menu and SNACR (docs/phase-s/design-s.md) ---------- */
+.strategy-cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+}
+.strategy-card {
+  padding: 0;
+}
+.strategy-card__link {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  color: var(--text);
+  text-decoration: none;
+  block-size: 100%;
+}
+.strategy-card__link:hover strong,
+.strategy-card__link:focus-visible strong {
+  text-decoration: underline;
+}
+.strategy-card__link > span {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.strategy-form textarea {
+  inline-size: 100%;
+}
+.strategy-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.strategy-body {
+  padding: 16px 20px;
+}
+.snacr-priority {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.snacr-priority--high {
+  background: var(--error-bg);
+  color: var(--error-text);
+}
+.snacr-priority--medium {
+  background: var(--warn-bg);
+  color: var(--warn-text);
+}
+.snacr-priority--low {
+  background: var(--ok-bg);
+  color: var(--ok-text);
+}
+.map--snacr {
+  block-size: 28rem;
+}
+.snacr-map__picked {
+  margin: 8px 0 0;
+}
+.snacr-matrix {
+  border-collapse: separate;
+  border-spacing: 4px;
+  margin-block: 12px;
+}
+.snacr-matrix th {
+  padding: 6px 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.snacr-matrix__cell {
+  min-inline-size: 4.5rem;
+  padding: 14px 10px;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-radius: var(--radius);
+}
+.snacr-matrix__cell--high {
+  background: var(--error-bg);
+  color: var(--error-text);
+}
+.snacr-matrix__cell--medium {
+  background: var(--warn-bg);
+  color: var(--warn-text);
+}
+.snacr-matrix__cell--low {
+  background: var(--ok-bg);
+  color: var(--ok-text);
+}
+.snacr-legend,
+.snacr-unmatched,
+.snacr-references {
+  list-style: none;
+  margin: 8px 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.snacr-unmatched li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-block: 6px;
+  border-bottom: 1px solid var(--border);
+}
+.snacr-alias {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.snacr-steps li {
+  margin-block: 6px;
+}
+.snacr-heat {
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+.snacr-heat th {
+  padding: 2px 6px;
+  font-weight: 500;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.snacr-heat__cell {
+  inline-size: 1.4rem;
+  block-size: 1.4rem;
+  border: 1px solid var(--surface);
+  /* The share of the busiest hour, from transparent to the red of the fire family. */
+  background: color-mix(in srgb, var(--tone-red) calc(var(--heat, 0) * 100%), transparent);
+}

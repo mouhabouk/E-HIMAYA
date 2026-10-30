@@ -170,7 +170,7 @@ function SettingCard({
   );
 }
 
-const THRESHOLD_GROUPS = ["crisis", "alerts", "rooms", "partners"] as const;
+const THRESHOLD_GROUPS = ["crisis", "alerts", "rooms", "partners", "snacr"] as const;
 
 /**
  * Phase N (docs/phase-n/design-n.md §9, review point 27): the operational thresholds, one setting, one card per group.

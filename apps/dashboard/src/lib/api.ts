@@ -400,6 +400,15 @@ export const ERROR_CODES = [
   "report_not_final",
   "report_without_text",
   "not_waiting_trainer",
+  // SNACR and the strategies menu (docs/phase-s/design-s.md).
+  "alias_empty",
+  "alias_exists",
+  "body_or_link_required",
+  "delegation_not_in_gouvernorat",
+  "no_dataset",
+  "plan_not_draft",
+  "years_not_loaded",
+  "file_columns_missing",
 ] as const;
 export type ErrorCode = (typeof ERROR_CODES)[number];
 
