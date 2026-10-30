@@ -102,6 +102,11 @@ rectangle "Tableau de bord central" {
   usecase "Élever une intervention\nen catastrophe (N)" as S81
   usecase "Saisir un signalement reçu\npar téléphone, radio, sur place (N)" as S82
   usecase "Régler les seuils\nopérationnels (N)" as S83
+  usecase "Charger l'archive des interventions,\nrelier les noms inconnus (S)" as S84
+  usecase "Lire l'analyse SNACR :\ntaux, délais au 90e percentile,\nmatrice, carte (S)" as S85
+  usecase "Tenir le registre\ndes risques particuliers (S)" as S86
+  usecase "Préparer et approuver\nle schéma SNACR (S)" as S87
+  usecase "Créer un élément\ndu menu Stratégies (S)" as S88
 }
 rectangle "Application des équipes (P4a à P4d)" {
   usecase "Se connecter par code\n(MFA, PIN 6 chiffres)" as T0
@@ -302,4 +307,17 @@ SA --> S83
 CC --> S83
 S71 ..> S70 : <<include>>
 S72 ..> S71 : <<extend>>
+OPM --> S84
+CC --> S84
+OPM --> S85
+CL --> S85
+GOV --> S85
+MIN --> S85
+CL --> S86
+GOV --> S86
+CC --> S87
+GOV --> S87
+MIN --> S87
+S87 ..> S85 : <<include>>
+SA --> S88
 @enduml

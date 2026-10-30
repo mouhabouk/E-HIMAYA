@@ -1,0 +1,20 @@
+@startuml
+!include style.iuml
+title Séquence : schéma SNACR, de la commission à l'approbation (S)
+autonumber
+actor "Commission régionale\nou nationale" as C
+participant "Tableau de bord" as UI
+participant "API" as API
+database "PostgreSQL\nsnacr.plan" as DB
+C -> API : POST /staff/snacr/special-risks (aléa, probabilité, gravité)
+API -> DB : registre du gouvernorat (RLS) ; l'entrée [SIM] devient réelle
+C -> UI : « Schéma » → préparer le projet
+UI -> API : POST /staff/snacr/plans {gouvernorat, années}
+API -> DB : version n+1 : analyse figée + registre +\nobjectifs (couverture, données, noms, particulier)
+API --> UI : projet, objectifs
+C -> API : POST /staff/snacr/plans/{id}/approve
+API -> DB : approuvé ; l'ancien schéma approuvé devient « remplacé »\naudit « snacr.plan_approved »
+API --> UI : revue avant (12 mois), valide jusqu'au (5 ans)
+C -> API : GET /staff/snacr/plans/{id}/document?format=pdf
+API --> C : PDF arabe : cadre et références, méthode, territoire,\nrisques courants, couverture, particuliers, objectifs, revue
+@enduml

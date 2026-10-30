@@ -1,0 +1,24 @@
+@startuml
+!include style.iuml
+title Séquence : archive des interventions et analyse SNACR (S)
+autonumber
+actor "Salle centrale ou\ncommission nationale" as N
+actor "Commission régionale" as R
+participant "Tableau de bord" as UI
+participant "API" as API
+database "PostgreSQL\nsnacr.*" as DB
+N -> UI : « Archive » : fichier de l'année (xlsx ou CSV)\nou « Générer [SIM] »
+UI -> API : POST /staff/snacr/datasets?year&file_name (corps brut)
+API -> API : lit 8 colonnes seulement ; famille, délégation\n(alias → exact → souple → réattribuée → inconnue),\ndrapeaux des heures manquantes ou aberrantes
+API -> DB : remplace l'année par lots ; audit « snacr.dataset_imported »
+API --> UI : année, lignes, qualité
+N -> API : POST /staff/snacr/aliases (nom inconnu → délégation)
+API -> DB : alias + correction des interventions stockées
+R -> UI : SNACR, années choisies
+UI -> API : GET /staff/snacr/analysis?years=2023,2024,2025
+API -> DB : par délégation (RLS : son gouvernorat),\nquintiles nationaux calculés au niveau système
+API -> API : taux / 1 000 hab., médiane et 90e percentile,\npart dans le délai, complétude,\nfréquence × couverture → priorité
+API --> UI : indicateurs, matrice 5 × 5, saisons, sous-types ([SIM] si une année l'est)
+UI -> API : GET /geo/boundaries/delegations?gouvernorat
+UI --> R : carte des délégations colorée par priorité
+@enduml
