@@ -26,6 +26,7 @@ import {
   type RecordError,
   type RecordTimes,
   type TimeSource,
+  type TimeSuggestion,
 } from "../lib/missionRecord";
 import type { Assignment } from "../lib/opsTypes";
 import { Stepper } from "./Stepper";
@@ -264,6 +265,76 @@ function TimeField({ step, value, anchor, error, source, changed, clearable, dis
  * the one before, the crew and the resources used. A time the team gave keeps its source until the room changes it,
  * and then needs a reason. Saved in one write; the server checks the same rules.
  */
+/**
+ * Times read from what was written about the mission (phase S2, design-s2 §6): the room's notes, the team's text notes
+ * and a radio log pasted here. Each one is applied to its field only when the operator presses it.
+ */
+function TimeSuggestions({
+  assignmentId,
+  times,
+  disabled,
+  onApply,
+}: {
+  assignmentId: string;
+  times: RecordTimes;
+  disabled: boolean;
+  onApply: (s: TimeSuggestion) => void;
+}) {
+  const { t } = useTranslation();
+  const { api } = useServices();
+  const fmt = useFormat();
+  const id = useId();
+  const [text, setText] = useState("");
+  const read = useMutation({ mutationFn: () => api.suggestMissionTimes(assignmentId, text) });
+  const open = (read.data ?? []).filter((s) => times[s.step]?.getTime() !== new Date(s.at).getTime());
+  return (
+    <details className="record-suggest">
+      <summary>{t("record.suggest.title")}</summary>
+      <p className="muted">{t("record.suggest.intro")}</p>
+      <div className="field">
+        <label htmlFor={id}>{t("record.suggest.paste")}</label>
+        <textarea
+          id={id}
+          rows={3}
+          dir="auto"
+          maxLength={8000}
+          value={text}
+          placeholder={t("record.suggest.placeholder")}
+          onChange={(e) => setText(e.target.value)}
+        />
+      </div>
+      <button type="button" className="btn" disabled={disabled || read.isPending} onClick={() => read.mutate()}>
+        {read.isPending ? t("ops.working") : t("record.suggest.read")}
+      </button>
+      {read.error ? (
+        <p className="alert alert--error" role="alert">
+          {t(errorMessageKey(read.error))}
+        </p>
+      ) : null}
+      {read.data && open.length === 0 && <p className="muted">{t("record.suggest.none")}</p>}
+      {open.length > 0 && (
+        <ul className="record-suggest__list" aria-label={t("record.suggest.title")}>
+          {open.map((s) => (
+            <li key={`${s.step}-${s.at}-${s.source}`}>
+              <span className="record-step__label">{t(`record.step.${s.step}`)}</span>
+              <strong dir="ltr">{clockOf(new Date(s.at), false)}</strong>
+              <span className="record-pill record-pill--room">{t(`record.suggest.source.${s.source}`)}</span>
+              <q dir="auto">{s.words}</q>
+              <span className="muted">{fmt.date(s.written_at)}</span>
+              {s.conflict && (
+                <span className="field__error">{t(`record.error.${s.conflict}`, { defaultValue: s.conflict })}</span>
+              )}
+              <button type="button" className="btn btn--small" disabled={disabled} onClick={() => onApply(s)}>
+                {t("record.suggest.apply")}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </details>
+  );
+}
+
 export function MissionRecordEditor({
   assignment,
   calledAt,
@@ -349,6 +420,15 @@ export function MissionRecordEditor({
           </li>
         ))}
       </ol>
+      <TimeSuggestions
+        assignmentId={assignment.id}
+        times={times}
+        disabled={locked}
+        onApply={(s) => {
+          setTimes((cur) => ({ ...cur, [s.step]: new Date(s.at) }));
+          if (s.source === "pasted" && reason === null) setReason("radio_log");
+        }}
+      />
       {Object.keys(preview).length > 0 && (
         <ul className="record-indicators" aria-label={t("record.indicators")}>
           {INDICATORS.filter((i) => preview[i.key] !== undefined).map((i) => (

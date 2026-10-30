@@ -7,7 +7,7 @@ from typing import Any
 
 import httpx
 
-from app.modules.ops import crew_sms, record, record_checks
+from app.modules.ops import crew_sms, record, record_checks, record_suggest
 from tests.test_crew import Staff, _on_shift, new_incident, write
 from tests.test_operations import make_resource, random_place
 
@@ -180,6 +180,61 @@ async def test_room_records_a_team_without_the_app(client: httpx.AsyncClient, st
     # Out of the gouvernorat: not found.
     tunis = staff(["operator"], 11)
     assert (await client.put(url, json={"crew_count": 2}, headers=tunis)).status_code in (403, 404)
+
+
+def test_times_read_from_the_writing() -> None:
+    """Derja, Arabic and French, Arabic-Indic digits; a quantity or a phone number is not a time."""
+    text = """خرجنا 14:02 ووصلنا على عين المكان 14h11
+غادرنا المكان 14.40، وصلنا للسبيطار 14:55
+رجعنا للوحدة ١٥:٢٠ — 2.50 m3 ماء
+départ des lieux 14h41. Arrivée urgences 14h56
+الهاتف 71123456 الساعة 14:00"""
+    written = record_suggest.Written("pasted", text, datetime(2026, 10, 30, 16, 0, tzinfo=UTC))
+    read = [
+        (step, at.astimezone(record_suggest.TUNIS).strftime("%H:%M")) for step, at, _ in record_suggest.read(written)
+    ]
+    assert read == [
+        ("en_route_at", "14:02"),
+        ("on_scene_at", "14:11"),
+        ("left_scene_at", "14:40"),
+        ("at_hospital_at", "14:55"),
+        ("back_at_unit_at", "15:20"),
+        ("left_scene_at", "14:41"),
+        ("at_hospital_at", "14:56"),
+    ]
+    # Written at 00:10 about a return at 23:50: the day before.
+    late = record_suggest.Written("room_note", "رجعنا 23:50", datetime(2026, 10, 30, 23, 10, tzinfo=UTC))
+    assert record_suggest.read(late)[0][1] == datetime(2026, 10, 30, 23, 50, tzinfo=record_suggest.TUNIS)
+
+
+async def test_times_suggested_to_the_room(client: httpx.AsyncClient, staff: Staff) -> None:
+    resource = await make_resource(client, staff)
+    incident_id, _ = await new_incident(client, staff, random_place())
+    operator = staff(["operator"])
+    r = await client.post(
+        f"/api/v1/staff/incidents/{incident_id}/assignments", json={"resource_id": resource["id"]}, headers=operator
+    )
+    assignment: dict[str, Any] = r.json()
+    # The next minute: after the order, within the two minutes a clock may be ahead.
+    clock = (datetime.now(record_suggest.TUNIS) + timedelta(minutes=1)).strftime("%H:%M")
+    r = await client.post(
+        f"/api/v1/staff/incidents/{incident_id}/notes", json={"text": f"اللاسلكي: خرجوا {clock}"}, headers=operator
+    )
+    assert r.status_code == 201, r.text
+    url = f"/api/v1/staff/assignments/{assignment['id']}/record/suggestions"
+    r = await client.post(url, json={"text": f"وصلنا على عين المكان {clock}"}, headers=operator)
+    assert r.status_code == 200, r.text
+    got = {s["step"]: s for s in r.json()}
+    assert got["en_route_at"]["source"] == "room_note" and got["en_route_at"]["conflict"] is None
+    # The arrival without a departure on the record: suggested, with the rule it would break until the departure is in.
+    assert got["on_scene_at"]["source"] == "pasted" and got["on_scene_at"]["conflict"] == "time_needs_previous"
+    # Nothing was saved.
+    record_url = url.removesuffix("/suggestions")
+    saved = (await client.get(f"/api/v1/staff/incidents/{incident_id}", headers=operator)).json()
+    assert all(a["en_route_at"] is None for a in saved["assignments"])
+    assert record_url.endswith("/record")
+    tunis = staff(["operator"], 11)
+    assert (await client.post(url, json={}, headers=tunis)).status_code in (403, 404)
 
 
 async def test_snacr_year_from_the_records(client: httpx.AsyncClient, staff: Staff) -> None:

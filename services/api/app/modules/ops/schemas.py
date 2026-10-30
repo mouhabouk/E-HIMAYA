@@ -254,6 +254,29 @@ class RecordIn(BaseModel):
     reason: Annotated[Text, StringConstraints(max_length=300)] | None = None
 
 
+SuggestionSource = Literal["room_note", "team_note", "pasted"]
+EditableStep = Literal["en_route_at", "on_scene_at", "left_scene_at", "at_hospital_at", "back_at_unit_at"]
+
+
+class SuggestIn(BaseModel):
+    """A radio log or any text the operator pastes, read next to the notes already on the incident (phase S2)."""
+
+    text: Annotated[str, StringConstraints(max_length=8000)] | None = None
+
+
+class TimeSuggestion(BaseModel):
+    """A time read from what was written about the mission; applied only when the operator presses it."""
+
+    step: EditableStep
+    at: datetime
+    source: SuggestionSource
+    #: The words it was read from.
+    words: str
+    written_at: datetime
+    #: The rule the record would break with this time (record.py), or ``None``.
+    conflict: str | None = None
+
+
 class CalloutIn(BaseModel):
     skill: str
     requested: int = Field(ge=1, le=50)

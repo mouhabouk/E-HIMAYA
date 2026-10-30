@@ -9550,3 +9550,36 @@ button.nav-card:hover {
   color: var(--tone-amber-ink);
   border: 1px solid var(--tone-amber);
 }
+
+/* Phase S2: times read from the notes and the radio log, applied on a click. */
+.record-suggest {
+  margin-block: 12px;
+  padding: 12px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+}
+.record-suggest summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.record-suggest textarea {
+  width: 100%;
+}
+.record-suggest__list {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.record-suggest__list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.record-suggest__list q {
+  flex: 1 1 16rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}

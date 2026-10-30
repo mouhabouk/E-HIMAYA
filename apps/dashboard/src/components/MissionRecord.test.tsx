@@ -129,4 +129,34 @@ describe("the room's editor", () => {
     );
     expect(onSaved).toHaveBeenCalledWith(saved);
   });
+
+  it("applies a time read from the radio log only on a click, with the radio log as the reason", async () => {
+    const suggestion = {
+      step: "left_scene_at" as const,
+      at: iso(at(14, 40)),
+      source: "pasted" as const,
+      words: "غادرنا المكان 14:40",
+      written_at: iso(at(16, 0)),
+      conflict: null,
+    };
+    const api = fakeApi({
+      suggestMissionTimes: vi.fn(() => Promise.resolve([suggestion])),
+      saveMissionRecord: vi.fn(() => Promise.resolve(mission())),
+    });
+    renderApp(<MissionRecordEditor assignment={mission()} onSaved={vi.fn()} onCancel={vi.fn()} />, { api, lang: "ar" });
+    fireEvent.change(screen.getByLabelText("سجل اللاسلكي أو أي نص (اختياري)"), {
+      target: { value: "غادرنا المكان 14:40" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "اقرأ التواقيت" }));
+    await waitFor(() => expect(api.suggestMissionTimes).toHaveBeenCalledWith("a-1", "غادرنا المكان 14:40"));
+    const left = screen.getByLabelText<HTMLInputElement>("مغادرة المكان");
+    expect(left.value).toBe(""); // nothing applied yet
+    fireEvent.click(await screen.findByRole("button", { name: "اعتمد" }));
+    expect(left.value).toBe("14:40:00");
+    expect(screen.queryByRole("button", { name: "اعتمد" })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "حفظ السجل" }));
+    await waitFor(() =>
+      expect(api.saveMissionRecord).toHaveBeenCalledWith("a-1", { times: { left_scene_at: iso(at(14, 40)) } }),
+    );
+  });
 });

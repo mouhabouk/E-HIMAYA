@@ -178,6 +178,16 @@ export function indicators(times: RecordTimes, calledAt: Date | null): Partial<R
   return out;
 }
 
+/** A time read from the notes on the incident, the team's text notes or a pasted radio log (applied on a click). */
+export interface TimeSuggestion {
+  step: EditableStep;
+  at: string;
+  source: "room_note" | "team_note" | "pasted";
+  words: string;
+  written_at: string;
+  conflict: string | null;
+}
+
 export interface RecordBody {
   times?: Partial<Record<EditableStep, string | null>>;
   crew_count?: number | null;

@@ -8092,6 +8092,20 @@
       "return_long": "Back at the unit after over 6 hours",
       "return_missing": "Return to the unit not recorded",
       "crew_missing": "Crew not recorded"
+    },
+    "suggest": {
+      "title": "Times from the notes and the radio log",
+      "intro": "Times are read from the room's notes on the incident, the team's text notes and a text pasted here (the radio log, for instance). None is taken until you press it, and it then goes through the same order rules.",
+      "paste": "Radio log or any text (optional)",
+      "placeholder": "e.g. left 14:02, on scene 14:11, back at unit 15:20",
+      "read": "Read the times",
+      "none": "No new time in what was written.",
+      "apply": "Apply",
+      "source": {
+        "room_note": "Room note",
+        "team_note": "Team note",
+        "pasted": "Pasted text"
+      }
     }
   }
 }

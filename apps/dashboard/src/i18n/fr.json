@@ -8092,6 +8092,20 @@
       "return_long": "Retour à l'unité après plus de 6 h",
       "return_missing": "Retour à l'unité non saisi",
       "crew_missing": "Nombre d'agents non saisi"
+    },
+    "suggest": {
+      "title": "Heures relevées dans les notes et le journal radio",
+      "intro": "Les heures sont lues dans les notes de la salle sur l'incident, les notes écrites de l'équipe et un texte collé ici (le journal radio par exemple). Aucune n'est retenue sans votre clic, puis elle passe les mêmes règles d'ordre.",
+      "paste": "Journal radio ou tout texte (facultatif)",
+      "placeholder": "ex. : départ 14h02, arrivée sur les lieux 14h11, retour à la caserne 15h20",
+      "read": "Lire les heures",
+      "none": "Aucune heure nouvelle dans ce qui est écrit.",
+      "apply": "Retenir",
+      "source": {
+        "room_note": "Note de la salle",
+        "team_note": "Note de l'équipe",
+        "pasted": "Texte collé"
+      }
     }
   }
 }
