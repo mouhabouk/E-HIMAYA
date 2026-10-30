@@ -335,7 +335,7 @@
     "layer_changed": "The layer changed since the preview: preview again.",
     "not_last_import": "Only the last published import can be undone.",
     "duplicate_id": "A place already has this identifier.",
-    "outside_tunisia": "Position outside Tunisia.",
+    "outside_tunisia": "The place is outside Tunisia.",
     "cannot_move": "Cannot move that way.",
     "text_required": "A note, an answer or a reason is needed.",
     "feature_off": "This feature is turned off on the platform.",
@@ -558,7 +558,9 @@
     "audio_too_long": "The recording is longer than a minute.",
     "media_too_large": "The file is too large.",
     "voice_not_found": "This voice message does not exist or is not yours.",
-    "voice_already_sent": "This voice message was already sent."
+    "voice_already_sent": "This voice message was already sent.",
+    "outside_gouvernorat": "The place is outside your gouvernorat: a regional room enters reports of its own gouvernorat.",
+    "invalid_selection": "Invalid selection."
   },
   "kpi": {
     "title": "Key indicators",
@@ -7514,5 +7516,29 @@
     "occupancy": "{{n}} of {{of}}",
     "promote": "Promote to a disaster",
     "promoted": "A disaster promoted from an intervention: it is attached from the start."
+  },
+  "intake": {
+    "open": "Enter a report (phone, radio, in person)",
+    "back": "← Reports",
+    "title": "Enter a report from the room",
+    "intro": "A report that came by telephone, radio or in person becomes a report like the others (tracking code, priority, grouping, follow-up), handled by the room that entered it.",
+    "channel": "Channel",
+    "channels": {
+      "phone": "Telephone",
+      "radio": "Radio",
+      "in_person": "In person",
+      "other": "Other"
+    },
+    "category": "Type",
+    "receivedAt": "Received at (if earlier)",
+    "text": "What the caller said",
+    "where": "Place: click on the map or type the coordinates.",
+    "lat": "Latitude",
+    "lon": "Longitude",
+    "pointRequired": "Give a place in Tunisia.",
+    "point": "Place of the report",
+    "mapAria": "Map to place the report",
+    "submit": "Record the report",
+    "entered": "Entered by the room · {{channel}}"
   }
 }

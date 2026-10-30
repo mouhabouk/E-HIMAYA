@@ -37,6 +37,7 @@ import { preventionApi } from "./preventionApi";
 import type {
   AiSettings,
   AiStatus,
+  Category,
   Certificate,
   CertificateReviewBody,
   CertificateStamp,
@@ -81,6 +82,17 @@ const docPath = (orgId: string, docId: string) => `${orgPath(orgId)}/documents/$
  * (analytics, reports library, national memory, events library, rewards: see phase8Api.ts) and phase 9 (central
  * and regional rooms, national settings, break-glass, accounts, scoped audit: see phase9Api.ts).
  */
+export const INTAKE_CHANNELS = ["phone", "radio", "in_person", "other"] as const;
+export type IntakeChannel = (typeof INTAKE_CHANNELS)[number];
+
+export interface RoomReportBody {
+  category: Category;
+  location: { lat: number; lon: number };
+  channel: IntakeChannel;
+  text?: string;
+  received_at?: string;
+}
+
 export function staffApi(api: ApiClient) {
   return {
     kpis: (since: string, signal?: AbortSignal) =>
@@ -108,6 +120,10 @@ export function staffApi(api: ApiClient) {
       }),
 
     report: (id: string, signal?: AbortSignal) => api.request<StaffReportDetail>(reportPath(id), { signal }),
+
+    /** A report the room writes down from a call, the radio or a visit (phase N, design §5). */
+    enterReport: (body: RoomReportBody) =>
+      api.request<StaffReportDetail>("/api/v1/staff/reports", { method: "POST", body }),
 
     changeStatus: (id: string, status: ReportStatus, note?: string) =>
       api.request<StaffReportDetail>(`${reportPath(id)}/status`, {

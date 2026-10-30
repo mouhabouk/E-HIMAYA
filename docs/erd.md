@@ -2692,6 +2692,9 @@ erDiagram
         smallint credibility_score
         text status
         text source
+        text intake_channel
+        text entered_by
+        text entered_by_name
         vector_768 embedding
         datetime created_at
         datetime received_at

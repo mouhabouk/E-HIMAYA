@@ -22,7 +22,7 @@ from app.modules.moderation import service as moderation
 from app.modules.ops import service as ops
 from app.modules.orgs import service as orgs
 from app.modules.orgs.models import Organization
-from app.modules.reports import jurisdiction, schemas, service
+from app.modules.reports import intake, jurisdiction, schemas, service
 from app.modules.reports.domain import TRANSITIONS, Category, Status
 from app.modules.reports.models import Media, MedicalAttachment, ReporterContext
 from app.modules.reports.uploads import media_url
@@ -35,6 +35,7 @@ WRITE_ROLES = (Role.OPERATOR, Role.OPS_MANAGER, Role.FIELD_COMMANDER)
 StaffReader = Annotated[Principal, Depends(require_roles(*READ_ROLES))]
 StaffWriter = Annotated[Principal, Depends(require_roles(*WRITE_ROLES))]
 # Coarse first gates of the phase 9 actions; core.access decides on the loaded report.
+RoomAgent = Annotated[Principal, Depends(require_roles(Role.OPERATOR, Role.OPS_MANAGER))]
 Referrer = Annotated[Principal, Depends(require_roles(Role.OPERATOR, Role.OPS_MANAGER, Role.CENTRAL_COMMITTEE))]
 ReferralDecider = Annotated[Principal, Depends(require_roles(Role.OPERATOR, Role.OPS_MANAGER, Role.LOCAL_COMMITTEE))]
 GEO_STATES = ("trusted", "pending", "contradictory", "verified")
@@ -364,6 +365,17 @@ async def change_status(
             "gouvernorat_codes": await service.gouvernorat_codes(session, report),
         },
     )
+    await session.commit()
+    return await detail_of(session, principal, report_id)
+
+
+# ---------------------------------------------------------------- reports entered by a room (phase N §5)
+
+
+@router.post("/reports", response_model=schemas.StaffReportDetail, status_code=status.HTTP_201_CREATED)
+async def enter_report(principal: RoomAgent, session: Session, body: schemas.RoomReportIn) -> schemas.StaffReportDetail:
+    """A report that came by telephone, radio or in person, written down by the room that answers it."""
+    report_id = await intake.create(session, principal, body)
     await session.commit()
     return await detail_of(session, principal, report_id)
 

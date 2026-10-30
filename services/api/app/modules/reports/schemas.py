@@ -140,6 +140,21 @@ EscalationKind = Literal[
 ]
 
 
+IntakeChannel = Literal["phone", "radio", "in_person", "other"]
+
+
+class RoomReportIn(BaseModel):
+    """A report a room agent enters by hand (phase N, docs/phase-n/design-n.md §5)."""
+
+    category: Category
+    location: LocationIn
+    channel: IntakeChannel
+    text: str | None = Field(default=None, max_length=4000)
+    lang: Lang = "ar"
+    # When the call or the radio message came in, if earlier than the entry; never in the future.
+    received_at: AwareDatetime | None = None
+
+
 class StaffReport(BaseModel):
     id: uuid.UUID
     tracking_code: str
@@ -180,6 +195,10 @@ class StaffReport(BaseModel):
     claimed_room: str | None = None
     claimed_by_name: str | None = None
     claimed_at: datetime | None = None
+    # How the report came (phase N): the app, an SMS, or a room that entered it by hand.
+    source: str = "app"
+    intake_channel: IntakeChannel | None = None
+    entered_by_name: str | None = None
     sla_band: SlaBand | None = None
     sla_due_at: datetime | None = None
     escalation_state: EscalationState = "none"

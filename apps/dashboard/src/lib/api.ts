@@ -320,6 +320,10 @@ export const ERROR_CODES = [
   "too_many_saved",
   "query_too_long",
   "no_words",
+  // Phase N: reports entered by a room, the disaster view.
+  "outside_gouvernorat",
+  "outside_tunisia",
+  "invalid_selection",
   // Phase L5a: the digital dry run.
   "already_withdrawn",
   "not_a_draft",

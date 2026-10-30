@@ -16,7 +16,7 @@ const KEYS = {
   rules: (ended: boolean) => ["features", "rules", ended] as const,
   preview: (role: string, gouvernorat: string) => ["features", "preview", role, gouvernorat] as const,
 };
-const GROUPS = ["ops", "crisis", "alerts", "people", "orgs", "knowledge", "system"] as const;
+const GROUPS = ["ops", "crisis", "disasters", "alerts", "people", "orgs", "knowledge", "system"] as const;
 
 function useName() {
   const lang = useLanguage();

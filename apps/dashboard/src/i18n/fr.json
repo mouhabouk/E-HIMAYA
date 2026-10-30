@@ -335,7 +335,7 @@
     "layer_changed": "La couche a changé depuis l’aperçu : refaites l’aperçu.",
     "not_last_import": "Seul le dernier import publié peut être annulé.",
     "duplicate_id": "Un lieu a déjà cet identifiant.",
-    "outside_tunisia": "Position hors de Tunisie.",
+    "outside_tunisia": "Lieu hors du territoire tunisien.",
     "cannot_move": "Impossible de déplacer dans ce sens.",
     "text_required": "Une note, une réponse ou un motif est nécessaire.",
     "feature_off": "Cette fonction est désactivée sur la plateforme.",
@@ -558,7 +558,9 @@
     "audio_too_long": "L'enregistrement dépasse une minute.",
     "media_too_large": "Fichier trop volumineux.",
     "voice_not_found": "Ce message vocal est introuvable ou n'est pas le vôtre.",
-    "voice_already_sent": "Ce message vocal a déjà été envoyé."
+    "voice_already_sent": "Ce message vocal a déjà été envoyé.",
+    "outside_gouvernorat": "Lieu hors de votre gouvernorat : une salle régionale saisit les signalements de son gouvernorat.",
+    "invalid_selection": "Sélection invalide."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -7514,5 +7516,29 @@
     "occupancy": "{{n}} sur {{of}}",
     "promote": "Élever en catastrophe",
     "promoted": "Catastrophe élevée depuis une intervention : celle-ci lui est rattachée dès l'ouverture."
+  },
+  "intake": {
+    "open": "Saisir un signalement (téléphone, radio, sur place)",
+    "back": "← Signalements",
+    "title": "Saisie d'un signalement par la salle",
+    "intro": "Un signalement reçu par téléphone, radio ou sur place devient un signalement comme les autres (code de suivi, priorité, regroupement, suivi), pris en charge par la salle qui le saisit.",
+    "channel": "Canal",
+    "channels": {
+      "phone": "Téléphone",
+      "radio": "Radio",
+      "in_person": "Sur place",
+      "other": "Autre"
+    },
+    "category": "Type",
+    "receivedAt": "Heure de réception (si antérieure)",
+    "text": "Ce qu'a dit l'appelant",
+    "where": "Lieu : cliquez sur la carte ou saisissez les coordonnées.",
+    "lat": "Latitude",
+    "lon": "Longitude",
+    "pointRequired": "Indiquez un lieu en Tunisie.",
+    "point": "Lieu du signalement",
+    "mapAria": "Carte pour placer le signalement",
+    "submit": "Enregistrer le signalement",
+    "entered": "Saisi par la salle · {{channel}}"
   }
 }

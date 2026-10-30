@@ -138,6 +138,10 @@ export interface StaffReport {
   sla_band?: SlaBand | null;
   sla_due_at?: string | null;
   escalation_state?: EscalationState;
+  /** How the report came (phase N): `room` when a room entered it from a call, the radio or a visit. */
+  source?: string;
+  intake_channel?: "phone" | "radio" | "in_person" | "other" | null;
+  entered_by_name?: string | null;
   late?: boolean;
   referred_to?: number | null;
 }

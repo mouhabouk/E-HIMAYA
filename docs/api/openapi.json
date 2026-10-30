@@ -30478,6 +30478,68 @@
         "title": "Role",
         "type": "string"
       },
+      "RoomReportIn": {
+        "description": "A report a room agent enters by hand (phase N, docs/phase-n/design-n.md §5).",
+        "properties": {
+          "category": {
+            "$ref": "#/components/schemas/Category"
+          },
+          "channel": {
+            "enum": [
+              "phone",
+              "radio",
+              "in_person",
+              "other"
+            ],
+            "title": "Channel",
+            "type": "string"
+          },
+          "lang": {
+            "default": "ar",
+            "enum": [
+              "ar",
+              "fr",
+              "en"
+            ],
+            "title": "Lang",
+            "type": "string"
+          },
+          "location": {
+            "$ref": "#/components/schemas/LocationIn"
+          },
+          "received_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Received At"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "maxLength": 4000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          }
+        },
+        "required": [
+          "category",
+          "location",
+          "channel"
+        ],
+        "title": "RoomReportIn",
+        "type": "object"
+      },
       "RouteOut": {
         "properties": {
           "assumptions": {
@@ -34110,6 +34172,17 @@
             ],
             "title": "Delegation Id"
           },
+          "entered_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entered By Name"
+          },
           "escalation_state": {
             "default": "none",
             "enum": [
@@ -34173,6 +34246,23 @@
               }
             ],
             "title": "Incident Id"
+          },
+          "intake_channel": {
+            "anyOf": [
+              {
+                "enum": [
+                  "phone",
+                  "radio",
+                  "in_person",
+                  "other"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Intake Channel"
           },
           "lang": {
             "anyOf": [
@@ -34276,6 +34366,11 @@
               }
             ],
             "title": "Sla Due At"
+          },
+          "source": {
+            "default": "app",
+            "title": "Source",
+            "type": "string"
           },
           "status": {
             "$ref": "#/components/schemas/Status"
@@ -34515,6 +34610,17 @@
             ],
             "title": "Delegation Id"
           },
+          "entered_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entered By Name"
+          },
           "escalation_state": {
             "default": "none",
             "enum": [
@@ -34592,6 +34698,23 @@
               }
             ],
             "title": "Incident Id"
+          },
+          "intake_channel": {
+            "anyOf": [
+              {
+                "enum": [
+                  "phone",
+                  "radio",
+                  "in_person",
+                  "other"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Intake Channel"
           },
           "lang": {
             "anyOf": [
@@ -34730,6 +34853,11 @@
               }
             ],
             "title": "Sla Due At"
+          },
+          "source": {
+            "default": "app",
+            "title": "Source",
+            "type": "string"
           },
           "status": {
             "$ref": "#/components/schemas/Status"
@@ -84241,6 +84369,51 @@
           }
         ],
         "summary": "List Reports",
+        "tags": [
+          "staff"
+        ]
+      },
+      "post": {
+        "description": "A report that came by telephone, radio or in person, written down by the room that answers it.",
+        "operationId": "enter_report_api_v1_staff_reports_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoomReportIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaffReportDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Enter Report",
         "tags": [
           "staff"
         ]

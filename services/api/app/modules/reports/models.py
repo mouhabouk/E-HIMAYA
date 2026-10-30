@@ -58,6 +58,10 @@ class Report(Base):
     credibility_score: Mapped[int | None] = mapped_column(SmallInteger)
     status: Mapped[str] = mapped_column(Text, server_default="received")
     source: Mapped[str] = mapped_column(Text, server_default="app")
+    # A report an operations room entered (source "room", phase N, migration 0082): how it came, who wrote it down.
+    intake_channel: Mapped[str | None] = mapped_column(Text)
+    entered_by: Mapped[str | None] = mapped_column(Text)
+    entered_by_name: Mapped[str | None] = mapped_column(Text)
     embedding: Mapped[list[float] | None] = mapped_column(Vector(768), deferred=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     received_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

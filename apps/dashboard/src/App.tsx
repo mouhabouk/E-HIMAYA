@@ -23,6 +23,7 @@ import {
   canOpenProgrammes,
   canOpenAxes,
   canOpenDisasters,
+  canEnterReports,
   canOpenCommand,
   canOpenRegister,
   canOpenSchedule,
@@ -106,6 +107,7 @@ const ReportsLibraryPage = page(() => import("./pages/ReportsLibraryPage"), "Rep
 const ReportSchedulesPage = page(() => import("./pages/ReportSchedulesPage"), "ReportSchedulesPage");
 const CommandPage = page(() => import("./pages/CommandPage"), "CommandPage");
 const AxesPage = page(() => import("./pages/AxesPage"), "AxesPage");
+const RoomReportPage = page(() => import("./pages/RoomReportPage"), "RoomReportPage");
 const DisastersPage = page(() => import("./pages/DisastersPage"), "DisastersPage");
 const AxisPage = page(() => import("./pages/AxisPage"), "AxisPage");
 // Phase L3b: register of plans, decisions and instructions.
@@ -228,6 +230,7 @@ export function AppRoutes() {
         <Route path="reports" element={reports(<ReportsPage />)} />
         <Route path="reports/late" element={scoped(canSeeNationalQueues, <LateReportsPage />)} />
         <Route path="reports/geo-queue" element={scoped(canSeeNationalQueues, <GeoQueuePage />)} />
+        <Route path="reports/new" element={gated(canEnterReports, <RoomReportPage />)} />
         <Route path="reports/:id" element={reports(<ReportDetailPage />)} />
         <Route path="incidents" element={reports(<IncidentsPage />)} />
         <Route path="incidents/:id" element={reports(<IncidentDetailPage />)} />

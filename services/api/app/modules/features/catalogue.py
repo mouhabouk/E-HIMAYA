@@ -97,6 +97,12 @@ CATALOGUE: tuple[Spec, ...] = (
             act_as=R.OPERATOR,
         ),
         button(
+            "reports.enter",
+            ("إدخال بلاغ من القاعة", "Saisir un signalement", "Enter a report"),
+            "POST /reports",
+            act_as=R.OPERATOR,
+        ),
+        button(
             "reports.status",
             ("تغيير حالة البلاغ", "Changer le statut", "Change the status"),
             "POST /reports/{report_id}/status",
@@ -565,7 +571,7 @@ CATALOGUE: tuple[Spec, ...] = (
     # stop button is never hidden from a room taking part in a run (design-l5.md §7).
     page(
         "drill",
-        "crisis",
+        "disasters",
         "/drills",
         ("العملية البيضاء", "Exercice à blanc", "Dry run"),
         ("* /drills",),
@@ -680,8 +686,15 @@ CATALOGUE: tuple[Spec, ...] = (
         ),
     ),
     page(
+        "disasters",
+        "disasters",
+        "/disasters",
+        ("الكوارث: الحوصلة والخريطة", "Catastrophes : bilan et carte", "Disasters: summary and map"),
+        ("GET /crisis/disasters",),
+    ),
+    page(
         "axes",
-        "crisis",
+        "disasters",
         "/axes",
         ("محاور الأزمة", "Axes de crise", "Crisis axes"),
         ("* /crisis",),
@@ -863,7 +876,7 @@ CATALOGUE: tuple[Spec, ...] = (
     ),
     page(
         "coastal",
-        "crisis",
+        "disasters",
         "/coastal",
         ("الشريط الساحلي", "Littoral", "Coast"),
         ("* /coastal",),
