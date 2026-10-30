@@ -33,6 +33,7 @@ from app.modules.reports.service import (
     gouvernorat_codes,
     locate_gouvernorat,
     next_tracking_code,
+    report_ctx,
     staff_report,
 )
 
@@ -83,9 +84,11 @@ async def create(session: AsyncSession, principal: Principal, body: schemas.Room
     await sla.assign(session, report)
     await session.flush()
     # The regional room that wrote it down answers it; one the central room enters goes to its gouvernorat's room,
-    # as any report does (the central room claims only late reports, phase 9 §4.4).
-    locked, ctx = await jurisdiction.load(session, principal, report.id)
+    # as any report does (the central room claims only late reports, phase 9 §4.4). One a team opens from the field
+    # (phase F) is left to its room.
+    ctx = await report_ctx(session, report)
     if (await authorize(session, principal, Action.REPORT_CLAIM, ctx)).allowed:
+        locked, ctx = await jurisdiction.load(session, principal, report.id)
         await jurisdiction.claim(session, principal, locked, ctx)
     await audit.record(
         session,

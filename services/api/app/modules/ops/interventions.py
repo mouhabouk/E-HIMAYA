@@ -159,7 +159,7 @@ async def advance_reports(
 async def assignments_of(session: AsyncSession, incident_id: uuid.UUID) -> list[schemas.AssignmentOut]:
     rows = (
         await session.execute(
-            select(Assignment, Resource, Unit, Volunteer, Profile, Shift, _UNSEEN, _UNIT_DISTANCE)
+            select(Assignment, Resource, Unit, Volunteer, Profile, Shift, _UNSEEN, _UNIT_DISTANCE, *_TARGET)
             .outerjoin(Resource, Resource.id == Assignment.resource_id)
             .outerjoin(Unit, Unit.id == Resource.unit_id)
             .outerjoin(Volunteer, Volunteer.user_id == Assignment.volunteer_id)
@@ -213,6 +213,9 @@ _UNSEEN = (
     .scalar_subquery()
 )
 
+# The point the room picked for the team on the map (phase F).
+_TARGET = (func.ST_Y(cast(Assignment.target_location, Geometry)), func.ST_X(cast(Assignment.target_location, Geometry)))
+
 
 def _assignment_out(
     a: Assignment,
@@ -223,6 +226,8 @@ def _assignment_out(
     sh: Shift | None,
     unseen: int | None = 0,
     distance_m: float | None = None,
+    target_lat: float | None = None,
+    target_lon: float | None = None,
     *,
     position: schemas.VehiclePosition | None = None,
 ) -> schemas.AssignmentOut:
@@ -279,13 +284,19 @@ def _assignment_out(
         ),
         contact_phone=a.contact_phone,
         position=position,
+        target=None if target_lat is None or target_lon is None else schemas.Point(lat=target_lat, lon=target_lon),
+        target_note=a.target_note,
+        crew_nature=a.crew_nature,
+        skipped=a.skipped or {},
+        no_intervention_reason=a.no_intervention_reason,
+        field_initiated=a.field_initiated,
     )
 
 
 async def assignment_out(session: AsyncSession, assignment_id: uuid.UUID) -> schemas.AssignmentOut:
     row = (
         await session.execute(
-            select(Assignment, Resource, Unit, Volunteer, Profile, Shift, _UNSEEN, _UNIT_DISTANCE)
+            select(Assignment, Resource, Unit, Volunteer, Profile, Shift, _UNSEEN, _UNIT_DISTANCE, *_TARGET)
             .outerjoin(Resource, Resource.id == Assignment.resource_id)
             .outerjoin(Unit, Unit.id == Resource.unit_id)
             .outerjoin(Volunteer, Volunteer.user_id == Assignment.volunteer_id)

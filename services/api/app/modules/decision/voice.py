@@ -78,6 +78,7 @@ async def transcribe(
     data: bytes,
     content_type: str,
     lang: str,
+    prompts: dict[str, str] | None = None,
 ) -> s.VoiceOut:
     if content_type not in VOICE_TYPES:
         raise HTTPException(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, "unsupported_media_type")
@@ -89,7 +90,7 @@ async def transcribe(
     await store.put(key, data, content_type)
     try:
         result: dict[str, Any] = await client.transcribe(
-            store.presign_get(key, expires_s=600, internal=True), language=lang, prompt=PROMPTS.get(lang)
+            store.presign_get(key, expires_s=600, internal=True), language=lang, prompt=(prompts or PROMPTS).get(lang)
         )
     except AiUnavailable as exc:
         log.warning("command.voice_unavailable", error=str(exc))

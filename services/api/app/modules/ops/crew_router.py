@@ -8,7 +8,7 @@ but the device registration names the phone in ``X-Staff-Device``; a revoked pho
 
 import uuid
 from datetime import UTC, datetime
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request, status
 from sqlalchemy import func, select
@@ -16,11 +16,16 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_session
 from app.core.security import Principal, Role, require_roles
+from app.core.storage import get_store
+from app.modules.ai.client import get_ai_client
 from app.modules.audit import service as audit
-from app.modules.ops import crew, schemas, templates
+from app.modules.decision import voice
+from app.modules.decision.schemas import VoiceOut
+from app.modules.ops import crew, crew_flow, field_agents, interventions, schemas, templates
 from app.modules.ops import service as incidents
 from app.modules.ops.models import Assignment, CrewAlert, Shift, StaffDevice
 from app.modules.reports.staff_router import READ_ROLES, WRITE_ROLES
+from app.modules.settings import service as settings_service
 
 router = APIRouter(prefix="/api/v1/crew", tags=["crew"])
 staff_router = APIRouter(prefix="/api/v1/staff", tags=["crew"])
@@ -29,6 +34,7 @@ Leader = Annotated[Principal, Depends(require_roles(Role.TEAM_LEADER))]
 # Who may hold a staff phone: team leaders, and inspectors for prevention visits (P4c).
 FieldStaff = Annotated[Principal, Depends(require_roles(*crew.FIELD_ROLES))]
 Reader = Annotated[Principal, Depends(require_roles(*READ_ROLES))]
+Writer = Annotated[Principal, Depends(require_roles(*WRITE_ROLES))]
 DeviceAdmin = Annotated[Principal, Depends(require_roles(Role.REGIONAL_ACCOUNT_ADMIN, Role.SECURITY_ADMIN))]
 # The room marks a team's alert seen (operations, field command, central command).
 AlertReader = Annotated[Principal, Depends(require_roles(*WRITE_ROLES, Role.CENTRAL_COMMITTEE))]
@@ -102,9 +108,23 @@ async def me(principal: FieldStaff, session: Session, device: FieldDevice) -> sc
         gouvernorat_code=crew.gouvernorat_of(principal),
         device=crew.device_out(device, on_shift=shift is not None and shift.device_id == device.id),
         shift=await crew.shift_out(session, shift) if shift is not None else None,
+        field=schemas.FieldSettings(
+            hold_ms=await settings_service.threshold(session, "field.hold_ms"),
+            undo_seconds=await settings_service.threshold(session, "field.undo_seconds"),
+        ),
     )
+    agent = await field_agents.agent_of(session, principal)
+    if agent is not None:
+        out.activated_agent = True
+        out.charter_accepted = agent.charter_accepted_at is not None
     await session.commit()
     return out
+
+
+@router.get("/agents", response_model=list[schemas.CrewAgent])
+async def agents(principal: Leader, session: Session, _device: Device) -> list[schemas.CrewAgent]:
+    """The activated agents the leader picks the crew of a shift from (phase F)."""
+    return await crew.crew_agents(session, principal)
 
 
 @router.get("/resources", response_model=list[schemas.CrewResource])
@@ -142,7 +162,7 @@ async def end_shift(principal: Leader, session: Session, _device: Device) -> sch
 
 
 @router.get("/missions", response_model=schemas.MissionPage)
-async def missions(principal: Leader, session: Session, _device: Device) -> schemas.MissionPage:
+async def missions(principal: FieldStaff, session: Session, _device: FieldDevice) -> schemas.MissionPage:
     items = await crew.missions(session, principal)
     await session.commit()
     return schemas.MissionPage(items=items)
@@ -289,6 +309,87 @@ async def detailed_report(
     return await _answer(session, principal, "crew.detailed_report", assignment)
 
 
+# ---------------------------------------------------------------- the mission flow after the review (phase F)
+
+
+@router.post("/missions/open", response_model=schemas.MissionOut, status_code=status.HTTP_201_CREATED)
+async def open_mission(
+    principal: Leader, session: Session, _device: Device, body: schemas.OpenMissionIn
+) -> schemas.MissionOut:
+    """A mission the team opens from the field: the room sees the new incident at once."""
+    assignment = await crew_flow.open_mission(session, principal, body)
+    return await _answer(session, principal, "crew.open", assignment)
+
+
+@router.post("/missions/{assignment_id}/nature", response_model=schemas.MissionOut)
+async def nature(
+    principal: Leader, session: Session, _device: Device, assignment_id: uuid.UUID, body: schemas.NatureIn
+) -> schemas.MissionOut:
+    assignment = await crew_flow.nature(session, principal, assignment_id, body)
+    return await _answer(session, principal, "crew.nature", assignment)
+
+
+@router.post("/missions/{assignment_id}/skip", response_model=schemas.MissionOut)
+async def skip(
+    principal: Leader, session: Session, _device: Device, assignment_id: uuid.UUID, body: schemas.SkipIn
+) -> schemas.MissionOut:
+    assignment = await crew_flow.skip(session, principal, assignment_id, body)
+    return await _answer(session, principal, "crew.skip", assignment)
+
+
+@router.post("/missions/{assignment_id}/no-intervention", response_model=schemas.MissionOut)
+async def no_intervention(
+    principal: Leader, session: Session, _device: Device, assignment_id: uuid.UUID, body: schemas.NoInterventionIn
+) -> schemas.MissionOut:
+    assignment = await crew_flow.no_intervention(session, principal, assignment_id, body)
+    return await _answer(session, principal, "crew.no_intervention", assignment)
+
+
+@router.post("/missions/{assignment_id}/toll", response_model=schemas.MissionOut)
+async def toll(
+    principal: Leader, session: Session, _device: Device, assignment_id: uuid.UUID, body: schemas.TollIn
+) -> schemas.MissionOut:
+    assignment = await crew_flow.toll(session, principal, assignment_id, body)
+    return await _answer(session, principal, "crew.toll", assignment)
+
+
+@router.post("/missions/{assignment_id}/report", response_model=schemas.MissionOut)
+async def intervention_report(
+    principal: Leader, session: Session, _device: Device, assignment_id: uuid.UUID, body: schemas.InterventionReportIn
+) -> schemas.MissionOut:
+    assignment = await crew_flow.intervention_report(session, principal, assignment_id, body)
+    return await _answer(session, principal, "crew.report", assignment)
+
+
+@router.post(
+    "/missions/{assignment_id}/voice",
+    response_model=VoiceOut,
+    openapi_extra={
+        "requestBody": {
+            "required": True,
+            "content": {t: {"schema": {"type": "string", "format": "binary"}} for t in sorted(voice.VOICE_TYPES)},
+        }
+    },
+)
+async def mission_voice(
+    principal: Leader,
+    session: Session,
+    _device: Device,
+    request: Request,
+    assignment_id: uuid.UUID,
+    lang: Annotated[Literal["ar", "fr"], Query()] = "ar",
+) -> VoiceOut:
+    """A spoken toll or intervention report as the raw request body: transcribed, the audio deleted, the text sent
+    back for the leader to correct; nothing is kept until the corrected text is sent."""
+    content_type = (request.headers.get("content-type") or "").split(";", 1)[0].strip().lower()
+    data = await _body(request, voice.MAX_BYTES)
+    out = await crew_flow.transcribe(
+        session, principal, assignment_id, get_ai_client(), get_store(), data, content_type, lang
+    )
+    await session.commit()
+    return out
+
+
 @router.post("/missions/{assignment_id}/positions", response_model=schemas.PositionsOut)
 async def positions(
     principal: Leader, session: Session, _device: Device, assignment_id: uuid.UUID, body: schemas.PositionsIn
@@ -313,7 +414,6 @@ async def hospitals(
 
 
 class ShiftRow(schemas.ShiftOut):
-    leader_name: str | None
     gouvernorat_code: int
     #: Backup and danger alerts of the team the room has not marked as seen yet (phase P4b).
     unseen_alerts: int = 0
@@ -336,7 +436,6 @@ async def open_shifts(principal: Reader, session: Session) -> list[ShiftRow]:
         out.append(
             ShiftRow(
                 **base.model_dump(),
-                leader_name=shift.leader_name,
                 gouvernorat_code=shift.gouvernorat_code,
                 unseen_alerts=unseen or 0,
             )
@@ -384,6 +483,24 @@ async def revoke_device(principal: DeviceAdmin, session: Session, device_id: uui
         )
         await session.commit()
     return DeviceRow(**crew.device_out(device).model_dump(), gouvernorat_code=device.gouvernorat_code)
+
+
+@staff_router.put("/assignments/{assignment_id}/target", response_model=schemas.AssignmentOut)
+async def set_target(
+    principal: Writer, session: Session, assignment_id: uuid.UUID, body: schemas.TargetIn
+) -> schemas.AssignmentOut:
+    """The room picks the point the team must reach on the map and sends it to the team's phone (phase F)."""
+    assignment = await crew_flow.set_target(session, principal, assignment_id, body)
+    await audit.record(
+        session,
+        actor=audit.actor_of(principal),
+        action="assignment.target",
+        target=f"incident:{assignment.incident_id}",
+        details={"assignment_id": str(assignment.id)},
+        gouvernorats=await incidents.all_gouvernorats(session, assignment.incident_id),
+    )
+    await session.commit()
+    return await interventions.assignment_out(session, assignment.id)
 
 
 @staff_router.post("/crew-alerts/{alert_id}/seen", response_model=schemas.AlertOut)

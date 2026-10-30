@@ -26,7 +26,7 @@ from app.core.security import Principal, Role
 from app.core.storage import get_store
 from app.modules.audit import service as audit
 from app.modules.geo.models import Delegation, Layer, LayerFeature
-from app.modules.ops import interventions, record, resources, schemas, templates
+from app.modules.ops import field_agents, interventions, record, resources, schemas, templates
 from app.modules.ops import service as incidents
 from app.modules.ops.domain import ACTIVE_ASSIGNMENT, classification_allowed
 from app.modules.ops.models import (
@@ -36,6 +36,7 @@ from app.modules.ops.models import (
     CrewAlert,
     CrewEvent,
     CrewPosition,
+    FieldAgent,
     FieldAttachment,
     FieldReport,
     Incident,
@@ -80,8 +81,9 @@ def _who(principal: Principal) -> str:
     return audit.name_of(principal) or audit.actor_of(principal)
 
 
-# Roles that may hold a staff phone: team leaders, and inspectors for prevention visits (phase P4c).
-FIELD_ROLES: tuple[Role, ...] = (Role.TEAM_LEADER, Role.ORG_AUDITOR)
+# Roles that may hold a staff phone: team leaders, inspectors for prevention visits (phase P4c), and the other agents
+# of a crew who read their shift's missions (phase F).
+FIELD_ROLES: tuple[Role, ...] = (Role.TEAM_LEADER, Role.ORG_AUDITOR, Role.FIELD_AGENT)
 
 
 def gouvernorat_of(principal: Principal) -> int:
@@ -150,7 +152,19 @@ def device_out(device: StaffDevice, on_shift: bool = False) -> schemas.DeviceOut
 
 
 async def open_shift(session: AsyncSession, principal: Principal) -> Shift | None:
-    return await session.scalar(select(Shift).where(Shift.subject == principal.subject, Shift.ended_at.is_(None)))
+    """The leader's open shift, or for another agent of the crew (phase F) the open shift they are on."""
+    own = await session.scalar(select(Shift).where(Shift.subject == principal.subject, Shift.ended_at.is_(None)))
+    if own is not None or Role.FIELD_AGENT not in principal.roles:
+        return own
+    agent = await field_agents.agent_of(session, principal)
+    if agent is None:
+        return None
+    return await session.scalar(
+        select(Shift)
+        .where(Shift.ended_at.is_(None), Shift.crew_agent_ids.contains([agent.id]))
+        .order_by(Shift.started_at.desc())
+        .limit(1)
+    )
 
 
 async def shift_out(session: AsyncSession, shift: Shift) -> schemas.ShiftOut:
@@ -159,6 +173,11 @@ async def shift_out(session: AsyncSession, shift: Shift) -> schemas.ShiftOut:
             select(Resource, Unit).join(Unit, Unit.id == Resource.unit_id).where(Resource.id == shift.resource_id)
         )
     ).one()
+    crew = (
+        list(await session.scalars(select(FieldAgent).where(FieldAgent.id.in_(shift.crew_agent_ids))))
+        if shift.crew_agent_ids
+        else []
+    )
     return schemas.ShiftOut(
         id=shift.id,
         resource=schemas.ResourceRef(id=resource.id, label=resource.label, kind=resource.kind, unit_name=unit.name_ar),
@@ -166,7 +185,27 @@ async def shift_out(session: AsyncSession, shift: Shift) -> schemas.ShiftOut:
         crew_names=shift.crew_names,
         started_at=shift.started_at,
         ended_at=shift.ended_at,
+        leader_name=shift.leader_name,
+        crew=[agent_ref(a) for a in crew],
     )
+
+
+def agent_ref(agent: FieldAgent) -> schemas.CrewAgent:
+    return schemas.CrewAgent(id=agent.id, name=agent.name, matricule=agent.matricule, function=agent.function)
+
+
+async def crew_agents(session: AsyncSession, principal: Principal) -> list[schemas.CrewAgent]:
+    """The activated agents of the leader's gouvernorat, for the crew of a shift (phase F)."""
+    rows = await session.scalars(
+        select(FieldAgent)
+        .where(
+            FieldAgent.gouvernorat_code == gouvernorat_of(principal),
+            FieldAgent.status == "active",
+            FieldAgent.function != "leader",
+        )
+        .order_by(FieldAgent.shift_label.nulls_last(), FieldAgent.name)
+    )
+    return [agent_ref(a) for a in rows]
 
 
 async def vehicles(session: AsyncSession, principal: Principal) -> list[schemas.CrewResource]:
@@ -208,8 +247,9 @@ async def start_shift(session: AsyncSession, principal: Principal, device: Staff
         device_id=device.id,
         resource_id=body.resource_id,
         gouvernorat_code=own,
-        crew_size=body.crew_size,
+        crew_size=max(body.crew_size, len(set(body.crew_agent_ids)) + 1),
         crew_names=body.crew_names,
+        crew_agent_ids=await _crew_ids(session, own, body.crew_agent_ids),
     )
     session.add(shift)
     try:
@@ -224,6 +264,25 @@ async def start_shift(session: AsyncSession, principal: Principal, device: Staff
         a.shift_id = shift.id
     await session.refresh(shift)
     return shift
+
+
+async def _crew_ids(session: AsyncSession, gouvernorat_code: int, ids: list[uuid.UUID]) -> list[uuid.UUID]:
+    """The crew's agents: activated agents of the gouvernorat only."""
+    wanted = list(dict.fromkeys(ids))
+    if not wanted:
+        return []
+    found = set(
+        await session.scalars(
+            select(FieldAgent.id).where(
+                FieldAgent.id.in_(wanted),
+                FieldAgent.gouvernorat_code == gouvernorat_code,
+                FieldAgent.status == "active",
+            )
+        )
+    )
+    if found != set(wanted):
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "unknown_agent")
+    return wanted
 
 
 async def end_shift(session: AsyncSession, principal: Principal) -> Shift:
@@ -353,12 +412,9 @@ async def mission_out(session: AsyncSession, assignment: Assignment) -> schemas.
         .order_by(FieldReport.created_at.desc())
         .limit(1)
     )
-    detailed = await session.scalar(
-        select(FieldReport)
-        .where(FieldReport.assignment_id == assignment.id, FieldReport.kind == "detailed")
-        .order_by(FieldReport.created_at.desc())
-        .limit(1)
-    )
+    detailed = await _latest_report(session, assignment.id, "detailed")
+    toll = await _latest_report(session, assignment.id, "toll")
+    written = await _latest_report(session, assignment.id, "report")
     alerts = await session.scalars(
         select(CrewAlert).where(CrewAlert.assignment_id == assignment.id).order_by(CrewAlert.created_at.desc())
     )
@@ -417,7 +473,34 @@ async def mission_out(session: AsyncSession, assignment: Assignment) -> schemas.
         template=templates.template_out(template) if template is not None else None,
         contact_phone=assignment.contact_phone,
         distance_m=last_distance,
+        target=await _target(session, assignment),
+        target_note=assignment.target_note,
+        crew_nature=assignment.crew_nature,
+        skipped=assignment.skipped or {},
+        no_intervention_reason=assignment.no_intervention_reason,
+        field_initiated=assignment.field_initiated,
+        toll=_report_out(toll) if toll is not None else None,
+        intervention_report=_report_out(written) if written is not None else None,
     )
+
+
+async def _latest_report(session: AsyncSession, assignment_id: uuid.UUID, kind: str) -> FieldReport | None:
+    return await session.scalar(
+        select(FieldReport)
+        .where(FieldReport.assignment_id == assignment_id, FieldReport.kind == kind)
+        .order_by(FieldReport.created_at.desc())
+        .limit(1)
+    )
+
+
+async def _target(session: AsyncSession, assignment: Assignment) -> schemas.Point | None:
+    if assignment.target_location is None:
+        return None
+    point = cast(Assignment.target_location, Geometry)
+    row = (
+        await session.execute(select(func.ST_Y(point), func.ST_X(point)).where(Assignment.id == assignment.id))
+    ).one()
+    return schemas.Point(lat=row[0], lon=row[1])
 
 
 async def missions(session: AsyncSession, principal: Principal) -> list[schemas.MissionOut]:

@@ -166,6 +166,14 @@ class AssignmentOut(MissionRecord):
     contact_phone: str | None = None
     #: The vehicle's last position from the team's phone during this mission (phase P4d).
     position: VehiclePosition | None = None
+    #: Phase F: the point the room picked on the map, the nature the team confirmed, the steps it skipped and why,
+    #: the end without intervention and whether the team opened the mission from the field.
+    target: Point | None = None
+    target_note: str | None = None
+    crew_nature: str | None = None
+    skipped: dict[str, str] = Field(default_factory=dict)
+    no_intervention_reason: str | None = None
+    field_initiated: bool = False
 
 
 class Position(BaseModel):
@@ -536,7 +544,7 @@ BackupKind = Literal[
 DangerKind = Literal["fire_spread", "collapse", "gas", "electricity", "violence", "traffic"]
 BACKUP_KINDS: tuple[str, ...] = BackupKind.__args__  # type: ignore[attr-defined]
 DANGER_KINDS: tuple[str, ...] = DangerKind.__args__  # type: ignore[attr-defined]
-ReportKind = Literal["first", "update", "detailed"]
+ReportKind = Literal["first", "update", "detailed", "toll", "report"]
 
 
 class FieldReportOut(BaseModel):
@@ -709,6 +717,15 @@ class ShiftIn(CrewWrite):
     resource_id: uuid.UUID
     crew_size: int = Field(ge=1, le=20)
     crew_names: Annotated[Text, StringConstraints(max_length=300)] | None = None
+    # Phase F: the activated agents of the crew; they read the shift's missions on their own phones.
+    crew_agent_ids: list[uuid.UUID] = Field(default_factory=list, max_length=19)
+
+
+class CrewAgent(BaseModel):
+    id: uuid.UUID
+    name: str
+    matricule: str
+    function: Literal["leader", "agent", "driver"]
 
 
 class ShiftOut(BaseModel):
@@ -718,6 +735,8 @@ class ShiftOut(BaseModel):
     crew_names: str | None
     started_at: datetime
     ended_at: datetime | None
+    leader_name: str | None = None
+    crew: list[CrewAgent] = Field(default_factory=list)
 
 
 class CrewResource(BaseModel):
@@ -729,13 +748,26 @@ class CrewResource(BaseModel):
     on_shift: bool
 
 
+class FieldSettings(BaseModel):
+    """How the round button behaves (phase F, settings ``field.hold_ms`` and ``field.undo_seconds``)."""
+
+    hold_ms: int
+    undo_seconds: int
+
+
 class CrewMe(BaseModel):
     name: str | None
-    # The field roles of the account: ``team_leader`` (shifts, missions), ``org_auditor`` (prevention visits, P4c).
+    # The field roles of the account: ``team_leader`` (shifts, missions), ``org_auditor`` (prevention visits, P4c),
+    # ``field_agent`` (phase F: reads the missions of the shift they are on).
     roles: list[str] = Field(default_factory=list)
     gouvernorat_code: int
     device: DeviceOut
     shift: ShiftOut | None
+    # Phase F: an agent activated with a code (not a Keycloak account), whether they accepted the charter, and the
+    # settings of the round button.
+    activated_agent: bool = False
+    charter_accepted: bool = True
+    field: FieldSettings | None = None
 
 
 class MissionIncident(BaseModel):
@@ -774,6 +806,16 @@ class MissionOut(MissionRecord):
     contact_phone: str | None = None
     #: Distance in metres between the phone and the incident at the last step that carried a position.
     distance_m: int | None = None
+    # Phase F: the point the room picked on the map, the nature the team confirmed, the steps skipped and why, the end
+    # without intervention, a mission opened by the team, its toll and its intervention report.
+    target: Point | None = None
+    target_note: str | None = None
+    crew_nature: str | None = None
+    skipped: dict[str, str] = Field(default_factory=dict)
+    no_intervention_reason: str | None = None
+    field_initiated: bool = False
+    toll: FieldReportOut | None = None
+    intervention_report: FieldReportOut | None = None
 
 
 class MissionPage(BaseModel):
@@ -890,3 +932,176 @@ class NearHospital(BaseModel):
 
 class HospitalChoice(BaseModel):
     feature_id: uuid.UUID
+
+
+# ---------------------------------------------------------------- phase F: field agents and their phones
+
+FieldFunction = Literal["leader", "agent", "driver"]
+FieldAgentStatus = Literal["pending", "active", "disabled", "deleted"]
+Matricule = Annotated[str, StringConstraints(strip_whitespace=True, pattern=r"^[0-9A-Za-z]{3,20}$")]
+AgentName = Annotated[Text, StringConstraints(min_length=2, max_length=120)]
+ShiftLabel = Annotated[Text, StringConstraints(min_length=1, max_length=60)]
+FieldPhone = Annotated[str, StringConstraints(strip_whitespace=True, pattern=r"^\+?[0-9 ]{8,16}$")]
+Imei = Annotated[str, StringConstraints(strip_whitespace=True, pattern=r"^[0-9]{14,16}$")]
+
+
+class FieldAgentIn(BaseModel):
+    matricule: Matricule
+    name: AgentName
+    function: FieldFunction
+    shift_label: ShiftLabel | None = None
+    phone: FieldPhone | None = None
+    # A national account names the gouvernorat; a regional one acts on its own.
+    gouvernorat_code: int | None = Field(default=None, ge=11, le=83)
+
+
+class FieldAgentPatch(BaseModel):
+    name: AgentName | None = None
+    function: FieldFunction | None = None
+    shift_label: ShiftLabel | None = None
+    phone: FieldPhone | None = None
+    # Typed by the room chief from the phone's box (Android does not let an app read it).
+    imei: Imei | None = None
+
+
+class FieldAgentAction(BaseModel):
+    reason: Annotated[Text, StringConstraints(min_length=3, max_length=300)] | None = None
+
+
+class FieldDeviceOut(BaseModel):
+    id: uuid.UUID
+    model: str | None
+    platform: str
+    device_ref: str | None
+    sim_number: str | None
+    imei: str | None
+    created_at: datetime
+    last_seen_at: datetime
+    revoked_at: datetime | None
+
+
+class FieldPosition(BaseModel):
+    lat: float
+    lon: float
+    at: datetime
+
+
+class FieldAgentOut(BaseModel):
+    id: uuid.UUID
+    gouvernorat_code: int
+    matricule: str
+    name: str
+    function: FieldFunction
+    shift_label: str | None
+    phone: str | None
+    status: FieldAgentStatus
+    # The code itself is shown once, in the answer that made it; afterwards only when it expires.
+    code: str | None = None
+    code_expires_at: datetime | None
+    charter_accepted_at: datetime | None
+    activated_at: datetime | None
+    disabled_at: datetime | None
+    disabled_reason: str | None
+    device: FieldDeviceOut | None
+    last_position: FieldPosition | None
+
+
+class FieldActivateDevice(BaseModel):
+    platform: Literal["android", "ios"]
+    model: Annotated[Text, StringConstraints(max_length=80)] | None = None
+    device_ref: Annotated[Text, StringConstraints(max_length=80)] | None = None
+    sim_number: FieldPhone | None = None
+    app_build: int | None = Field(default=None, ge=1, le=1_000_000)
+    push_token: Annotated[str, StringConstraints(max_length=4096)] | None = None
+
+
+class FieldActivateIn(BaseModel):
+    matricule: Matricule
+    code: Annotated[str, StringConstraints(strip_whitespace=True, min_length=8, max_length=12)]
+    device: FieldActivateDevice
+
+
+class FieldRefreshIn(BaseModel):
+    refresh_token: Annotated[str, StringConstraints(min_length=20, max_length=200)]
+
+
+class FieldTokens(BaseModel):
+    access_token: str
+    expires_at: datetime
+    refresh_token: str
+    device_id: uuid.UUID
+    name: str
+    function: FieldFunction
+    gouvernorat_code: int
+    charter_accepted: bool
+
+
+class CharterIn(BaseModel):
+    version: Annotated[Text, StringConstraints(min_length=1, max_length=20)]
+    sms: bool
+    location: bool
+
+
+# Phase F: the natures a team chooses from (the room's category is the first choice), the reasons of a skipped step
+# and of an end without intervention, and the toll's material damage.
+CrewNature = Literal[
+    "fire",
+    "flood",
+    "traffic_accident",
+    "rescue",
+    "medical",
+    "drowning",
+    "landslide",
+    "chemical_leak",
+    "animal",
+    "other",
+]
+SkipStep = Literal["at_hospital", "available"]
+SkipReason = Literal["no_transport", "other_transport", "refused_transport", "not_needed", "other"]
+NoInterventionReason = Literal["false_alarm", "put_out_before", "other_agency", "place_not_found", "cancelled", "other"]
+Damage = Literal["none", "minor", "moderate", "major", "total"]
+VoiceText = Annotated[Text, StringConstraints(min_length=3, max_length=4000)]
+
+
+class NatureIn(CrewWrite):
+    nature: CrewNature
+
+
+class SkipIn(CrewWrite):
+    step: SkipStep
+    reason: SkipReason
+
+
+class NoInterventionIn(CrewWrite):
+    reason: NoInterventionReason
+
+
+class TollIn(CrewWrite):
+    """What the team writes at the end: material damage and a description, typed or spoken and corrected."""
+
+    damage: Damage
+    description: VoiceText | None = None
+    # The transcript the description was corrected from (measure and learning, as the commander's voice).
+    voice_id: uuid.UUID | None = None
+
+
+class InterventionReportIn(CrewWrite):
+    text: VoiceText
+    voice_id: uuid.UUID | None = None
+
+
+class OpenMissionIn(CrewWrite):
+    """A mission the team opens from the field (phase F): the room is told at once."""
+
+    nature: CrewNature
+    lat: float = Field(ge=-90, le=90)
+    lon: float = Field(ge=-180, le=180)
+    note: Annotated[Text, StringConstraints(max_length=500)] | None = None
+
+
+class TargetIn(BaseModel):
+    """The point the room picks on the map for a team (phase F)."""
+
+    lat: float = Field(ge=-90, le=90)
+    lon: float = Field(ge=-180, le=180)
+    note: Annotated[Text, StringConstraints(max_length=500)] | None = None

@@ -20,6 +20,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.requests import HTTPConnection
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
+from app.core import field_tokens
 from app.core.config import get_settings
 from app.core.sessions import is_revoked
 
@@ -56,6 +57,9 @@ class Role(StrEnum):
     # see declared disasters and crises only, never single interventions, and issue recommendations and decisions.
     GOVERNOR = "governor"
     MINISTER = "minister"
+    # Phase F (docs/phase-f/design-f.md §1): a crew member other than the leader, on the staff app; reads the mission
+    # of their shift and never changes it.
+    FIELD_AGENT = "field_agent"
 
 
 REALM_ROLES: dict[Realm, frozenset[Role]] = {
@@ -77,6 +81,7 @@ REALM_ROLES: dict[Realm, frozenset[Role]] = {
             Role.TEAM_LEADER,
             Role.GOVERNOR,
             Role.MINISTER,
+            Role.FIELD_AGENT,
         }
     ),
 }
@@ -184,16 +189,19 @@ class TokenVerifier:
         except jwt.PyJWTError as exc:
             raise _unauthorized("invalid_token") from exc
         issuer = str(unverified.get("iss", "")).rstrip("/")
-        realm = self._issuers.get(issuer)
+        # Phase F: the field agents' phones carry tokens the platform issued itself, HS256 with its own derived key.
+        # That algorithm and key are accepted for this issuer only.
+        field = issuer == field_tokens.ISSUER
+        realm = Realm.STAFF if field else self._issuers.get(issuer)
         if realm is None:
             raise _unauthorized("invalid_token")
         try:
-            key = self._key_resolver(token, issuer)
+            key = field_tokens.signing_key() if field else self._key_resolver(token, issuer)
             claims: dict[str, Any] = jwt.decode(
                 token,
                 key=key,
-                algorithms=["RS256", "ES256", "PS256"],
-                audience=self._audience,
+                algorithms=[field_tokens.ALGORITHM] if field else ["RS256", "ES256", "PS256"],
+                audience=field_tokens.AUDIENCE if field else self._audience,
                 issuer=issuer,
                 options={"require": ["exp", "iat", "iss", "sub", "aud"]},
                 leeway=10,
