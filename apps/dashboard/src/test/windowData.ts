@@ -192,7 +192,7 @@ export const WINDOW_NOW: WindowNow = {
 export const WINDOW_DELEGATION: Delegation = {
   id: "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
   grantee: "gov-nabeul",
-  grantee_name: "[SIM] والي نابل",
+  grantee_name: "[SIM] اللجنة الجهوية بنابل",
   grantee_roles: ["governor"],
   grantee_gouvernorat: 21,
   reason: "[SIM] متابعة حرائق الغابات",
@@ -234,7 +234,7 @@ export const WINDOW_ACCESS_DELEGATED: WindowAccess = {
 };
 
 export const WINDOW_DELEGATES: Delegate[] = [
-  { id: "gov-nabeul", name: "[SIM] والي نابل", roles: ["governor"], gouvernorat_code: 21 },
+  { id: "gov-nabeul", name: "[SIM] اللجنة الجهوية بنابل", roles: ["governor"], gouvernorat_code: 21 },
 ];
 
 export const WINDOW_SAVED: SavedSearch[] = [

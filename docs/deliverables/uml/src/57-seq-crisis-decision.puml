@@ -19,8 +19,8 @@ API -> OPS : notification en direct
 OPS -> API : POST /directives/{id}/status (reçue, en cours, exécutée)
 MIN -> API : POST /axes/{id}/directives\n(même axe, même catégorie)
 API -> KEY : signer
-API -> DB : décision du ministre
-API -> DB : décision du gouverneur non exécutée :\n« en conflit, la décision du ministre prévaut »
+API -> DB : décision du comité national
+API -> DB : décision du comité régional non exécutée :\n« en conflit, la décision du comité national prévaut »
 API -> GOV : notification du conflit
 API -> OPS : nouvelle décision
 WRK -> DB : échéance dans moins d'une heure ?

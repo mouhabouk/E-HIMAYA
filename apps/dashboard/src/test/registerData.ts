@@ -17,7 +17,7 @@ function doc(over: Partial<RegisterDocument> & Pick<RegisterDocument, "id" | "nu
     level: "regional",
     gouvernorat_code: 21,
     gouvernorat_name: "نابل",
-    issuer: "والي نابل",
+    issuer: "اللجنة الجهوية بنابل",
     signatory: "",
     summary: "",
     topics: [],
@@ -49,7 +49,7 @@ export const PLAN = doc({
   id: "reg-plan",
   hazard_key: "floods",
   number: "REG-2026-0027",
-  reference: "قرار والي نابل عدد 27 لسنة 2026",
+  reference: "قرار اللجنة الجهوية بنابل عدد 27 لسنة 2026",
   title: "[SIM] المخطط الجهوي للنجدة عند الفيضانات بولاية نابل",
   summary:
     "يضبط المخطط مراحل اليقظة والإنذار والتدخل عند الفيضانات، ومهام اللجنة الجهوية لتلافي الكوارث، ونقاط التجمع ومراكز الإيواء الاثني عشر، وتوزيع وسائل الضخ بين المعتمديات.",
@@ -67,12 +67,12 @@ export const PLAN = doc({
 export const CIRCULAR = doc({
   id: "reg-circ",
   number: "REG-2026-0031",
-  reference: "منشور وزير الداخلية عدد 12 لسنة 2026",
+  reference: "منشور اللجنة الوطنية عدد 12 لسنة 2026",
   kind: "circular",
   level: "central",
   gouvernorat_code: null,
   gouvernorat_name: null,
-  issuer: "وزير الداخلية",
+  issuer: "اللجنة الوطنية",
   title: "[SIM] منشور حول الاستعداد لموسم الأمطار 2026-2027",
   summary: "تحيين مخططات النجدة الجهوية وجرد وسائل الضخ وتنظيف مجاري الأودية قبل 15 نوفمبر.",
   topics: ["floods", "storms"],
@@ -106,8 +106,8 @@ export const AXIS_DECISION = doc({
   level: "central",
   gouvernorat_code: null,
   gouvernorat_name: null,
-  issuer: "وزير الداخلية",
-  signatory: "[SIM] وزير الداخلية",
+  issuer: "اللجنة الوطنية",
+  signatory: "[SIM] اللجنة الوطنية",
   title: "[SIM] فيضانات نابل، أكتوبر 2026: إخلاء الأحياء المنخفضة بمنزل تميم.",
   summary: "إخلاء الأحياء المنخفضة بمنزل تميم. [SIM]",
   topics: ["floods", "civil_protection"],
@@ -122,11 +122,11 @@ export const AXIS_DECISION = doc({
 export const OLD_PLAN = doc({
   id: "reg-old",
   number: "REG-2024-0011",
-  reference: "قرار والي نابل عدد 14 لسنة 2024",
+  reference: "قرار اللجنة الجهوية بنابل عدد 14 لسنة 2024",
   title: "[SIM] المخطط الجهوي للنجدة عند الفيضانات (نسخة 2024)",
   issued_on: day(900),
   status: "repealed",
-  repeal_reason: "REG-2026-0027 قرار والي نابل عدد 27 لسنة 2026",
+  repeal_reason: "REG-2026-0027 قرار اللجنة الجهوية بنابل عدد 27 لسنة 2026",
   repealed_by: "reg-plan",
   can_edit: false,
 });
@@ -159,7 +159,7 @@ export const SEARCH: RegisterSearch = {
 
 export const PLAN_DETAIL: DocumentDetail = {
   document: PLAN,
-  body: "الفصل 1: تُفعَّل مرحلة الإنذار عند نشرة إنذار برتقالية من المعهد الوطني للرصد الجوي.\nالفصل 2: تُفتح مراكز الإيواء بقرار من الوالي.",
+  body: "الفصل 1: تُفعَّل مرحلة الإنذار عند نشرة إنذار برتقالية من المعهد الوطني للرصد الجوي.\nالفصل 2: تُفتح مراكز الإيواء بقرار من اللجنة الجهوية.",
   axes: [{ id: "ax-nabeul", number: "AX-2026-007", name: "[SIM] فيضانات نابل، أكتوبر 2026", status: "open" }],
   links: [
     { id: "reg-old", number: "REG-2024-0011", title: OLD_PLAN.title, kind: "plan", status: "repealed", relation: "repeals", direction: "out" },

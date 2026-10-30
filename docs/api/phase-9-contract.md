@@ -53,7 +53,7 @@ Staff realm roles (W2 adds the three new ones to `infra/keycloak/realms/ehimaya-
 
 | Function | Roles |
 |---|---|
-| `command` | `central_committee` (committee chair, national), `local_committee` (governor's committee), `field_commander` |
+| `command` | `central_committee` (committee chair, national), `local_committee` (regional committee’s committee), `field_commander` |
 | `operations` | `operator`, `ops_manager` |
 | `technical` | `sysadmin`, **`security_admin`**, **`ai_admin`**, **`regional_account_admin`** |
 | `support` (unchanged) | `content_editor`, `org_auditor` |

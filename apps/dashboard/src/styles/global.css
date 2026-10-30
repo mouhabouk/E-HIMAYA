@@ -4630,6 +4630,13 @@ button.nav-card:hover {
   margin: 0;
 }
 
+/* Phase N §2: who chairs the committee, under the title of its main window. */
+.committee-heading {
+  margin: 0.25rem 0 0;
+  font-weight: 600;
+  color: var(--muted);
+}
+
 /* UI-2: KPI card with its icon tile above the number. */
 .kpi--with-icon {
   display: grid;

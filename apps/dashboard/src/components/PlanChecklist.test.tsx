@@ -57,10 +57,10 @@ describe("PlanChecklist", () => {
     fireEvent.click(await screen.findByRole("button", { name: "أضف مهمة" }));
     fireEvent.click(screen.getByRole("button", { name: "أضف" }));
     expect(await screen.findByRole("alert")).toHaveTextContent("اكتب المهمة");
-    fireEvent.change(screen.getByLabelText("المهمة"), { target: { value: "إعلام الوالي كل ساعتين" } });
+    fireEvent.change(screen.getByLabelText("المهمة"), { target: { value: "إعلام اللجنة الجهوية كل ساعتين" } });
     fireEvent.click(screen.getByRole("button", { name: "أضف" }));
     await waitFor(() =>
-      expect(api.addTask).toHaveBeenCalledWith(AXIS, { action: "إعلام الوالي كل ساعتين", owner: "", resource: "", page: null }),
+      expect(api.addTask).toHaveBeenCalledWith(AXIS, { action: "إعلام اللجنة الجهوية كل ساعتين", owner: "", resource: "", page: null }),
     );
   });
 

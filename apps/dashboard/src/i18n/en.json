@@ -115,8 +115,8 @@
     "regional_account_admin": "Account administrator",
     "medical_coordinator": "Regional medical coordinator",
     "team_leader": "Team leader",
-    "governor": "Governor",
-    "minister": "Minister"
+    "governor": "Regional committee",
+    "minister": "National committee"
   },
   "status": {
     "received": "Received",
@@ -414,7 +414,7 @@
     "request_not_found": "Request not found.",
     "executor_name_required": "Name the partner.",
     "due_in_past": "The deadline is in the past.",
-    "directive_overridden": "Overridden by the minister’s decision.",
+    "directive_overridden": "Overridden by the national committee’s decision.",
     "directive_not_found": "Decision not found.",
     "sitrep_sent": "Report already sent.",
     "sitrep_not_found": "Report not found.",
@@ -477,7 +477,7 @@
     "unknown_role": "Unknown role.",
     "user_rule_has_no_gouvernorat": "An account rule is not limited to a gouvernorat: the account has its own.",
     "window_delegation_required": "This window opens only with a delegation in force.",
-    "delegate_not_allowed": "This account cannot receive a delegation: a governorate's operations manager delegates to its governor and local committee only.",
+    "delegate_not_allowed": "This account cannot receive a delegation: a governorate's operations manager delegates to its regional committee and local committee only.",
     "event_out_of_scope": "This event is outside your scope or the delegate's.",
     "unknown_event": "This event does not exist.",
     "self_delegation": "You cannot delegate to yourself.",
@@ -4098,10 +4098,10 @@
           "published": "Published: the audiences chosen below see it.",
           "paused": "Paused: off every map, its settings are kept."
         },
-        "sensitive": "Sensitive layer (the minister alone)",
-        "sensitiveHelp": "Only the minister and the administrator see it, never a governor, even during an open crisis axis. Every read of its places is in the audit log.",
+        "sensitive": "Sensitive layer (the national committee alone)",
+        "sensitiveHelp": "Only the national committee and the administrator see it, never a regional committee, even during an open crisis axis. Every read of its places is in the audit log.",
         "audiences": "Audiences that see it",
-        "audiencesHelp": "Rooms: operators and room managers. Field: field commanders and team leaders. Command: the governor and the minister. Administration and support: the other staff.",
+        "audiencesHelp": "Rooms: operators and room managers. Field: field commanders and team leaders. Command: the regional and national committees. Administration and support: the other staff.",
         "national": "Scope: national (every gouvernorat)",
         "scope": "Gouvernorats",
         "scopeHelp": "None chosen: staff of every gouvernorat see it. With gouvernorats: among regional staff, only theirs see it; national staff always do.",
@@ -4206,7 +4206,7 @@
       },
       "toReview": "Names to review: {{n}}",
       "duplicates": "Possible duplicates: {{n}}",
-      "ministerOnly": "The minister alone",
+      "ministerOnly": "The national committee alone",
       "listSeparator": ", "
     },
     "groups": {
@@ -5254,8 +5254,8 @@
       "other": "Other"
     },
     "role": {
-      "governor": "Governor",
-      "minister": "Minister"
+      "governor": "Regional committee",
+      "minister": "National committee"
     },
     "fig": {
       "incidentsOpen": "Open interventions",
@@ -5292,8 +5292,8 @@
     },
     "command": {
       "eyebrow": "Disaster and crisis command",
-      "minister": "Minister’s board: national situation",
-      "governor": "Governor of {{name}}",
+      "minister": "National committee chaired by the Minister of the Interior: national situation",
+      "governor": "Regional committee chaired by the Governor of {{name}}",
       "active": "{{count}} active axes",
       "overview": "Overview",
       "axes": "Active crises",
@@ -5328,7 +5328,7 @@
       "intro": "An axis groups the interventions of one major event: area, level, resources and decisions. The commander opens it; the regional room head requests it.",
       "open": "Open an axis",
       "request": "Request an axis",
-      "openConfirm": "Open and notify governor and minister",
+      "openConfirm": "Open and notify the regional and national committees",
       "requestConfirm": "Send to the commander",
       "name": "Axis name",
       "namePlaceholder": "Nabeul floods, October 2026",
@@ -5443,7 +5443,7 @@
         "done": "Done",
         "failed": "Failed (reason)"
       },
-      "overridden": "Conflicts: the minister’s decision prevails",
+      "overridden": "Conflicts: the national committee’s decision prevails",
       "overdue": "Overdue",
       "signed": "Signed (key {{key}})",
       "unsigned": "Unsigned: no signing key on the server.",
@@ -5456,7 +5456,7 @@
       "draft": "Draft",
       "figures": "Interventions {{incidents}} · deaths {{deceased}} · evacuated {{evacuated}} · sheltered {{sheltered}}",
       "assessment": "Assessment",
-      "send": "Send to governor and minister",
+      "send": "Send to the regional and national committees",
       "prepare": "Prepare a report now",
       "dueIn": "Next report in {{h}} h",
       "late": "Situation report overdue"
@@ -5556,9 +5556,9 @@
       "access": "Access",
       "title": "Title",
       "reference": "Official reference",
-      "referencePlaceholder": "Decision of the Governor of Nabeul No. 27 of 2026",
+      "referencePlaceholder": "Decision of the regional committee of Nabeul No. 27 of 2026",
       "issuer": "Issued by",
-      "issuerPlaceholder": "Governor, director general, regional committee…",
+      "issuerPlaceholder": "Regional committee, national committee, director general…",
       "signatory": "Signatory",
       "issuedOn": "Issue date",
       "effectiveFrom": "In force from",
@@ -6392,7 +6392,7 @@
   "permissions": {
     "title": "Permissions",
     "intro": "The system administrator delegates every permission: grants a page, a tab or a button to an account or a role, or hides it, for a period or open-ended. The server refuses what is hidden; every change is audited.",
-    "ceilingNote": "The fixed security rules are a ceiling nobody lifts: no sensitive layers, no personal data for the governor and the minister, no accounts, audit or basemap key, no national scope for a regional account. Hiding is always possible.",
+    "ceilingNote": "The fixed security rules are a ceiling nobody lifts: no sensitive layers, no personal data for the regional and national committees, no accounts, audit or basemap key, no national scope for a regional account. Hiding is always possible.",
     "new": "New rule",
     "feature": "Page, tab or button",
     "choose": "Choose",
@@ -6454,13 +6454,13 @@
       "fixed": "Fixed"
     },
     "flagHint": {
-      "personal": "Never granted to the governor or the minister.",
+      "personal": "Never granted to the regional or national committee.",
       "national": "Granted to a national account only.",
       "fixed": "Never granted; hidden only."
     },
     "ceiling": {
       "fixed": "A fixed feature: never granted, hidden only.",
-      "personal_data": "Personal data: never granted to the governor or the minister.",
+      "personal_data": "Personal data: never granted to the regional or national committee.",
       "national_scope": "A national feature: never granted to a role of one gouvernorat.",
       "technical_account": "Technical accounts never receive operational rights.",
       "not_staff": "Never granted to a citizen account."
@@ -7488,5 +7488,9 @@
     "delete": "Delete",
     "deleteConfirm": "Confirm deletion",
     "by": "Last change: {{name}} · {{time}}"
+  },
+  "committeeHeading": {
+    "regional": "Regional committee chaired by the Governor of {{name}}",
+    "national": "National committee chaired by the Minister of the Interior"
   }
 }

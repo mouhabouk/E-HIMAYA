@@ -115,8 +115,8 @@
     "regional_account_admin": "Administrateur des comptes",
     "medical_coordinator": "Coordinateur médical régional",
     "team_leader": "Chef d'agrès",
-    "governor": "Gouverneur",
-    "minister": "Ministre"
+    "governor": "Comité régional",
+    "minister": "Comité national"
   },
   "status": {
     "received": "Reçu",
@@ -414,7 +414,7 @@
     "request_not_found": "Demande introuvable.",
     "executor_name_required": "Indiquez le partenaire.",
     "due_in_past": "Échéance passée.",
-    "directive_overridden": "Décision remplacée par celle du ministre.",
+    "directive_overridden": "Décision remplacée par celle du comité national.",
     "directive_not_found": "Décision introuvable.",
     "sitrep_sent": "Point déjà envoyé.",
     "sitrep_not_found": "Point introuvable.",
@@ -477,7 +477,7 @@
     "unknown_role": "Rôle inconnu.",
     "user_rule_has_no_gouvernorat": "Une règle de compte ne se limite pas à un gouvernorat : le compte a le sien.",
     "window_delegation_required": "Cette fenêtre ne s'ouvre qu'avec une délégation en cours.",
-    "delegate_not_allowed": "Délégation impossible à ce compte : le directeur des opérations du gouvernorat délègue à son gouverneur et à son comité local seulement.",
+    "delegate_not_allowed": "Délégation impossible à ce compte : le directeur des opérations du gouvernorat délègue à son comité régional et à son comité local seulement.",
     "event_out_of_scope": "Cet événement est hors de votre périmètre ou de celui du délégataire.",
     "unknown_event": "Cet événement n'existe pas.",
     "self_delegation": "Vous ne pouvez pas vous déléguer.",
@@ -4098,10 +4098,10 @@
           "published": "Publiée : les publics choisis ci-dessous la voient.",
           "paused": "Suspendue : retirée de toutes les cartes, ses réglages sont gardés."
         },
-        "sensitive": "Couche sensible (le ministre seul)",
-        "sensitiveHelp": "Seuls le ministre et l'administrateur la voient, jamais le gouverneur, même pendant un axe ouvert. Chaque lecture de ses lieux est inscrite au journal d'audit.",
+        "sensitive": "Couche sensible (le comité national seul)",
+        "sensitiveHelp": "Seuls le comité national et l'administrateur la voient, jamais le comité régional, même pendant un axe ouvert. Chaque lecture de ses lieux est inscrite au journal d'audit.",
         "audiences": "Publics qui la voient",
-        "audiencesHelp": "Salles : opérateurs et chefs de salle. Terrain : commandants d'intervention et chefs d'équipe. Commandement : gouverneur et ministre. Administration et soutien : les autres agents.",
+        "audiencesHelp": "Salles : opérateurs et chefs de salle. Terrain : commandants d'intervention et chefs d'équipe. Commandement : comité régional et comité national. Administration et soutien : les autres agents.",
         "national": "Portée : nationale (tous les gouvernorats)",
         "scope": "Gouvernorats",
         "scopeHelp": "Sans choix : les agents de tous les gouvernorats la voient. Avec des gouvernorats : parmi les agents régionaux, seuls les leurs la voient ; les agents nationaux la voient toujours.",
@@ -4206,7 +4206,7 @@
       },
       "toReview": "Noms à revoir : {{n}}",
       "duplicates": "Doublons possibles : {{n}}",
-      "ministerOnly": "Le ministre seul",
+      "ministerOnly": "Le comité national seul",
       "listSeparator": ", "
     },
     "groups": {
@@ -5254,8 +5254,8 @@
       "other": "Autre"
     },
     "role": {
-      "governor": "Gouverneur",
-      "minister": "Ministre"
+      "governor": "Comité régional",
+      "minister": "Comité national"
     },
     "fig": {
       "incidentsOpen": "Interventions ouvertes",
@@ -5292,8 +5292,8 @@
     },
     "command": {
       "eyebrow": "Commandement des catastrophes et crises",
-      "minister": "Tableau du ministre : situation nationale",
-      "governor": "Tableau du gouverneur de {{name}}",
+      "minister": "Comité national présidé par M. le ministre de l'Intérieur : situation nationale",
+      "governor": "Comité régional présidé par M. le gouverneur de {{name}}",
       "active": "{{count}} axe(s) actif(s)",
       "overview": "Vue d’ensemble",
       "axes": "Crises en cours",
@@ -5328,7 +5328,7 @@
       "intro": "Un axe regroupe les interventions d’un événement majeur : zone, niveau, moyens et décisions. Le commandant l’ouvre ; le chef de salle régionale le demande.",
       "open": "Ouvrir un axe",
       "request": "Demander la déclaration d’un axe",
-      "openConfirm": "Ouvrir et prévenir gouverneur et ministre",
+      "openConfirm": "Ouvrir et prévenir comités régional et national",
       "requestConfirm": "Envoyer au commandant",
       "name": "Nom de l’axe",
       "namePlaceholder": "Inondations de Nabeul, octobre 2026",
@@ -5443,7 +5443,7 @@
         "done": "Exécutée",
         "failed": "Impossible (motif)"
       },
-      "overridden": "En conflit : la décision du ministre prévaut",
+      "overridden": "En conflit : la décision du comité national prévaut",
       "overdue": "Échéance dépassée",
       "signed": "Signée (clé {{key}})",
       "unsigned": "Non signée : clé de signature absente sur le serveur.",
@@ -5456,7 +5456,7 @@
       "draft": "Brouillon",
       "figures": "Interventions {{incidents}} · décès {{deceased}} · évacués {{evacuated}} · hébergés {{sheltered}}",
       "assessment": "Appréciation",
-      "send": "Envoyer au gouverneur et au ministre",
+      "send": "Envoyer aux comités régional et national",
       "prepare": "Préparer un point maintenant",
       "dueIn": "Prochain point dans {{h}} h",
       "late": "Point de situation en retard"
@@ -5556,9 +5556,9 @@
       "access": "Accès",
       "title": "Titre",
       "reference": "Référence officielle",
-      "referencePlaceholder": "Arrêté du gouverneur de Nabeul n° 27 de 2026",
+      "referencePlaceholder": "Décision du comité régional de Nabeul n° 27 de 2026",
       "issuer": "Émetteur",
-      "issuerPlaceholder": "Gouverneur, directeur général, comité régional…",
+      "issuerPlaceholder": "Comité régional, comité national, directeur général…",
       "signatory": "Signataire",
       "issuedOn": "Date d'émission",
       "effectiveFrom": "Date d'effet",
@@ -6392,7 +6392,7 @@
   "permissions": {
     "title": "Autorisations",
     "intro": "L'administrateur système délègue toutes les autorisations : il accorde une page, un onglet ou un bouton à un compte ou à un rôle, ou le masque, pour une période ou sans terme. Le serveur refuse ce qui est masqué ; chaque changement est audité.",
-    "ceilingNote": "Les règles de sécurité fixes sont un plafond que personne ne lève : ni couches sensibles, ni données personnelles au gouverneur et au ministre, ni comptes, audit ou clé du fond de carte, ni portée nationale à un compte régional. Masquer reste toujours possible.",
+    "ceilingNote": "Les règles de sécurité fixes sont un plafond que personne ne lève : ni couches sensibles, ni données personnelles aux comités régional et national, ni comptes, audit ou clé du fond de carte, ni portée nationale à un compte régional. Masquer reste toujours possible.",
     "new": "Nouvelle règle",
     "feature": "Page, onglet ou bouton",
     "choose": "Choisir",
@@ -6454,13 +6454,13 @@
       "fixed": "Fixe"
     },
     "flagHint": {
-      "personal": "Jamais accordé au gouverneur ni au ministre.",
+      "personal": "Jamais accordé au comité régional ni au comité national.",
       "national": "Accordé seulement à un compte national.",
       "fixed": "Jamais accordé ; seulement masqué."
     },
     "ceiling": {
       "fixed": "Fonction fixe : jamais accordée, seulement masquée.",
-      "personal_data": "Données personnelles : jamais accordées au gouverneur ni au ministre.",
+      "personal_data": "Données personnelles : jamais accordées au comité régional ni au comité national.",
       "national_scope": "Fonction nationale : jamais accordée à un rôle d'un seul gouvernorat.",
       "technical_account": "Les comptes techniques ne reçoivent pas de droits opérationnels.",
       "not_staff": "Jamais accordé à un compte citoyen."
@@ -7488,5 +7488,9 @@
     "delete": "Supprimer",
     "deleteConfirm": "Confirmer la suppression",
     "by": "Dernière modification : {{name}} · {{time}}"
+  },
+  "committeeHeading": {
+    "regional": "Comité régional présidé par M. le gouverneur de {{name}}",
+    "national": "Comité national présidé par M. le ministre de l'Intérieur"
   }
 }

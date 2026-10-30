@@ -192,8 +192,8 @@ describe("LayersPage", () => {
     const api = fakeApi({ ...fakeLayersApi(), layers: vi.fn(() => Promise.resolve(list([layer()]))) });
     renderApp(<LayersPage />, { api, auth: fakeAuth(SYSADMIN), lang: "fr" });
     fireEvent.click(await screen.findByRole("button", { name: "Ouvrir" }));
-    fireEvent.click(await screen.findByRole("checkbox", { name: "Couche sensible (le ministre seul)" }));
-    expect(screen.getByText(/jamais le gouverneur/)).toBeInTheDocument();
+    fireEvent.click(await screen.findByRole("checkbox", { name: "Couche sensible (le comité national seul)" }));
+    expect(screen.getByText(/jamais le comité régional/)).toBeInTheDocument();
     expect(screen.getByRole("checkbox", { name: "Citoyen" })).toBeDisabled();
   });
 

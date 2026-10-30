@@ -22,6 +22,7 @@ import {
   isCommittee,
   settableLevels,
 } from "../lib/roles";
+import { CommitteeHeading } from "../components/CommitteeHeading";
 import { PageTitle } from "../components/PageTitle";
 
 export const REASON_MIN = 5;
@@ -688,7 +689,10 @@ export function CommitteePage() {
   return (
     <div className="page">
       <div className="page__head">
-        <PageTitle icon="monitoring" tone="navy">{t("committee.title")}</PageTitle>
+        <div>
+          <PageTitle icon="monitoring" tone="navy">{t("committee.title")}</PageTitle>
+          <CommitteeHeading />
+        </div>
       </div>
       <LevelsSection />
       {isCommittee(roles) && <DirectivesSection />}

@@ -206,7 +206,7 @@ async def test_follow_up_progress_and_copy(client: httpx.AsyncClient, staff: Sta
         f"{URL}/items/{fourth['id']}/status", json={"status": "not_done", "reason": "نقص في الأعوان"}, headers=room
     )
     r = await client.post(
-        f"{URL}/items/{fifth['id']}/status", json={"status": "refused", "reason": "رفض الوالي"}, headers=room
+        f"{URL}/items/{fifth['id']}/status", json={"status": "refused", "reason": "رفض اللجنة الجهوية"}, headers=room
     )
     counts = r.json()["period"]["counts"]
     assert (counts["done"], counts["not_done"], counts["refused"], counts["due"], counts["rate"]) == (3, 1, 1, 5, 0.6)

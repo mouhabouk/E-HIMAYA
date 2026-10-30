@@ -44,7 +44,7 @@ describe("CommandPage", () => {
   it("shows the minister the national picture, the ranking and his decisions", async () => {
     const api = fakeCrisisApi();
     renderApp(<CommandPage />, { api: fakeApi(api), auth: fakeAuth(claims(["minister"])), lang: "ar" });
-    expect((await screen.findAllByText("لوحة الوزير: الوضع الوطني")).length).toBeGreaterThan(0);
+    expect((await screen.findAllByText("اللجنة الوطنية برئاسة السيد وزير الداخلية: الوضع الوطني")).length).toBeGreaterThan(0);
     const ranking = screen.getByRole("table");
     expect(within(ranking).getAllByRole("row")).toHaveLength(4);
     expect(screen.getAllByText("[SIM] بيانات تجريبية").length).toBeGreaterThan(0);
@@ -93,7 +93,7 @@ describe("AxisPage", () => {
     const [attach] = screen.getAllByRole("button", { name: "Rattacher" });
     if (attach) fireEvent.click(attach);
     await waitFor(() => expect(api.attachAxisIncident).toHaveBeenCalledWith("ax-nabeul", "sg-1"));
-    expect(screen.getByText("En conflit : la décision du ministre prévaut")).toBeInTheDocument();
+    expect(screen.getByText("En conflit : la décision du comité national prévaut")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("tab", { name: "Points de situation" }));
     expect(await screen.findByText(/Point de situation 3/)).toBeInTheDocument();
   });

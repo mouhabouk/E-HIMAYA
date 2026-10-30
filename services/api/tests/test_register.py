@@ -56,12 +56,12 @@ def word() -> str:
 
 def doc_body(title: str, **overrides: Any) -> dict[str, Any]:
     body: dict[str, Any] = {
-        "reference": "قرار والي نابل عدد 27 لسنة 2026",
+        "reference": "قرار اللجنة الجهوية بولاية نابل عدد 27 لسنة 2026",
         "kind": "plan",
         "level": "regional",
         "gouvernorat_code": NABEUL,
-        "issuer": "والي نابل",
-        "signatory": "[SIM] الوالي",
+        "issuer": "اللجنة الجهوية بنابل",
+        "signatory": "[SIM] اللجنة الجهوية",
         "title": title,
         "summary": "المخطط الجهوي للنجدة عند الفيضانات وتوزيع المهام على المتدخلين",
         "topics": ["floods", "civil_protection"],
@@ -441,7 +441,7 @@ async def test_axis_directives_recorded_and_plan(client: httpx.AsyncClient, staf
     assert gov_doc["source"] == min_doc["source"] == "axis" and gov_doc["signed"] and min_doc["signed"]
     assert gov_doc["access"] == "command" and gov_doc["kind"] == "decision" and "floods" in gov_doc["topics"]
     assert gov_doc["status"] == "repealed" and gov_doc["repealed_by"] == min_doc["id"]
-    assert min_doc["issuer"] == "وزير الداخلية" and min_doc["status"] == "in_force" and not min_doc["can_edit"]
+    assert min_doc["issuer"] == "اللجنة الوطنية" and min_doc["status"] == "in_force" and not min_doc["can_edit"]
     # An operator does not see the command's documents; documents of an axis are not edited in the register.
     assert numbers(await find(client, staff(["operator"], gouvernorat=NABEUL), axis=axis["id"])) == set()
     commander = staff(["central_committee"], gouvernorat=None)

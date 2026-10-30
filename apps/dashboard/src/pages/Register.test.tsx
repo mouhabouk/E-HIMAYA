@@ -59,7 +59,7 @@ describe("RegisterPage", () => {
     const form = within(screen.getByRole("form", { name: "تدوين وثيقة في السجل" }));
     expect(form.getByLabelText("المستوى")).toBeDisabled();
     fireEvent.change(form.getByLabelText("العنوان"), { target: { value: "مخطط حرائق الغابات" } });
-    fireEvent.change(form.getByLabelText("الجهة المصدرة"), { target: { value: "والي نابل" } });
+    fireEvent.change(form.getByLabelText("الجهة المصدرة"), { target: { value: "اللجنة الجهوية بنابل" } });
     fireEvent.click(form.getByRole("button", { name: "تدوين ونشر" }));
     await waitFor(() => expect(api.createDocument).toHaveBeenCalled());
     expect(vi.mocked(api.createDocument).mock.calls[0]?.[0]).toMatchObject({ level: "regional", gouvernorat_code: 21, publish: true });
